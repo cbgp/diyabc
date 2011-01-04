@@ -5,6 +5,7 @@ from test import Ui_GroupBox
 import os
 
 class plop(QGroupBox):
+    """ comment"""
     def __init__(self,parent=None):
         super(plop,self).__init__(parent)
         self.createWidgets()
