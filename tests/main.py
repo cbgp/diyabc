@@ -6,7 +6,7 @@ import os
 
 # conflit ecluispe zergfer
 class plop(QGroupBox):
-    """ comment """
+    """ commentsdfzez""" 
     def __init__(self,parent=None):
         super(plop,self).__init__(parent)
         self.createWidgets()
