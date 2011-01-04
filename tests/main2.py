@@ -46,6 +46,7 @@ class MainWindowTest(QMainWindow):
         thr = mythread(self)
         thr.start()
 
+    # se deplacer dans la stack
     def stPrec(self):
         self.ui.stackedWidget.setCurrentIndex((self.ui.stackedWidget.currentIndex() - 1)% self.ui.stackedWidget.count())
 
