@@ -4,6 +4,7 @@ from PyQt4.QtGui import *
 from test import Ui_GroupBox
 import os
 
+# conflit shell
 class plop(QGroupBox):
     """ comment """
     def __init__(self,parent=None):
