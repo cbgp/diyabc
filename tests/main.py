@@ -4,7 +4,7 @@ from PyQt4.QtGui import *
 from test import Ui_GroupBox
 import os
 
-# conflit ecluispe
+# conflit ecluispe zergfer
 class plop(QGroupBox):
     """ comment """
     def __init__(self,parent=None):
