@@ -51,158 +51,149 @@
              <attribute name="title">
               <string>Reference Table</string>
              </attribute>
-             <widget class="QGroupBox" name="groupBox">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>40</y>
-                <width>751</width>
-                <height>451</height>
-               </rect>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>541</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="title">
-               <string/>
-              </property>
-              <property name="flat">
-               <bool>false</bool>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_3">
-               <item row="0" column="2">
-                <widget class="QGroupBox" name="groupBox_6">
+             <layout class="QGridLayout" name="gridLayout_4">
+              <item row="0" column="0">
+               <widget class="QSplitter" name="splitter">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <widget class="QWidget" name="horizontalLayoutWidget">
+                 <layout class="QHBoxLayout" name="horizontalLayout">
+                  <item>
+                   <widget class="QLabel" name="label">
+                    <property name="text">
+                     <string>TextLabel</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_4">
+                    <property name="text">
+                     <string>TextLabel</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_5">
+                    <property name="text">
+                     <string>TextLabel</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_3">
+                    <property name="text">
+                     <string>TextLabel</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QGroupBox" name="groupBox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>541</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="title">
-                  <string>Genetic data</string>
+                  <string/>
                  </property>
-                 <widget class="QPushButton" name="pushButton_7">
-                  <property name="geometry">
-                   <rect>
-                    <x>40</x>
-                    <y>30</y>
-                    <width>80</width>
-                    <height>25</height>
-                   </rect>
-                  </property>
-                  <property name="text">
-                   <string>PushButton</string>
-                  </property>
-                 </widget>
-                 <zorder>pushButton_7</zorder>
-                 <zorder>label</zorder>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QGroupBox" name="groupBox_7">
-                 <property name="title">
-                  <string>Historical model</string>
+                 <property name="flat">
+                  <bool>false</bool>
                  </property>
-                 <widget class="QPushButton" name="pushButton_8">
-                  <property name="geometry">
-                   <rect>
-                    <x>60</x>
-                    <y>50</y>
-                    <width>80</width>
-                    <height>25</height>
-                   </rect>
-                  </property>
-                  <property name="text">
-                   <string>PushButton</string>
-                  </property>
-                 </widget>
+                 <layout class="QGridLayout" name="gridLayout_3">
+                  <item row="0" column="2">
+                   <widget class="QGroupBox" name="groupBox_6">
+                    <property name="title">
+                     <string>Genetic data</string>
+                    </property>
+                    <widget class="QPushButton" name="pushButton_7">
+                     <property name="geometry">
+                      <rect>
+                       <x>40</x>
+                       <y>30</y>
+                       <width>80</width>
+                       <height>25</height>
+                      </rect>
+                     </property>
+                     <property name="text">
+                      <string>PushButton</string>
+                     </property>
+                    </widget>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QGroupBox" name="groupBox_7">
+                    <property name="title">
+                     <string>Historical model</string>
+                    </property>
+                    <widget class="QPushButton" name="pushButton_8">
+                     <property name="geometry">
+                      <rect>
+                       <x>60</x>
+                       <y>50</y>
+                       <width>80</width>
+                       <height>25</height>
+                      </rect>
+                     </property>
+                     <property name="text">
+                      <string>PushButton</string>
+                     </property>
+                    </widget>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QGroupBox" name="groupBox_9">
+                    <property name="title">
+                     <string>Summary statistics</string>
+                    </property>
+                    <widget class="QPushButton" name="pushButton_10">
+                     <property name="geometry">
+                      <rect>
+                       <x>60</x>
+                       <y>50</y>
+                       <width>80</width>
+                       <height>25</height>
+                      </rect>
+                     </property>
+                     <property name="text">
+                      <string>PushButton</string>
+                     </property>
+                    </widget>
+                   </widget>
+                  </item>
+                  <item row="1" column="2">
+                   <widget class="QGroupBox" name="groupBox_8">
+                    <property name="title">
+                     <string>Simulated data sets</string>
+                    </property>
+                    <widget class="QPushButton" name="pushButton_9">
+                     <property name="geometry">
+                      <rect>
+                       <x>50</x>
+                       <y>30</y>
+                       <width>80</width>
+                       <height>25</height>
+                      </rect>
+                     </property>
+                     <property name="text">
+                      <string>PushButton</string>
+                     </property>
+                    </widget>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QGroupBox" name="groupBox_9">
-                 <property name="title">
-                  <string>Summary statistics</string>
-                 </property>
-                 <widget class="QPushButton" name="pushButton_10">
-                  <property name="geometry">
-                   <rect>
-                    <x>60</x>
-                    <y>50</y>
-                    <width>80</width>
-                    <height>25</height>
-                   </rect>
-                  </property>
-                  <property name="text">
-                   <string>PushButton</string>
-                  </property>
-                 </widget>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QGroupBox" name="groupBox_8">
-                 <property name="title">
-                  <string>Simulated data sets</string>
-                 </property>
-                 <widget class="QPushButton" name="pushButton_9">
-                  <property name="geometry">
-                   <rect>
-                    <x>50</x>
-                    <y>30</y>
-                    <width>80</width>
-                    <height>25</height>
-                   </rect>
-                  </property>
-                  <property name="text">
-                   <string>PushButton</string>
-                  </property>
-                 </widget>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="horizontalLayoutWidget">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>248</width>
-                <height>17</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout">
-               <item>
-                <widget class="QLabel" name="label">
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_4">
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_5">
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_3">
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
+               </widget>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="tab_2">
              <attribute name="title">
