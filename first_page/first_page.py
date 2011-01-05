@@ -22,18 +22,22 @@ class MainWindowTest(QMainWindow):
 	#mettre plusieurs raccourcis claviers pour le meme menu
 	#action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.addRow)
+        QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
 
         for i in range(self.ui.tableWidget.columnCount()):
             for j in range(self.ui.tableWidget.rowCount()):
                 it = QTableWidgetItem("%i,%i"%(j,i))
                 self.ui.tableWidget.setItem(j,i,it)
 
+    def clcl(self,i,j):
+        print str(i)+","+str(j)
+        self.ui.tableWidget.item(i,j).setFlags(Qt.ItemIsEditable)
     def addRow(self):
         print self.ui.tableWidget.rowCount()
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
         print self.ui.tableWidget.rowCount()
         for i in range(self.ui.tableWidget.columnCount()):
-            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount(),i,QTableWidgetItem("new"))
+            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,i,QTableWidgetItem("new"+str(i)))
             print str(self.ui.tableWidget.rowCount()-1)+","+str(i)
             #self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,i).setText("new")
         #self.ui.tableWidget.insertRow(2)
