@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'Project2.ui'
+# Form implementation generated from reading ui file 'Project.ui'
 #
-# Created: Thu Jan  6 17:01:57 2011
+# Created: Thu Jan  6 17:54:05 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -187,21 +187,7 @@ class Ui_TabWidget(object):
         self.tableWidget = QtGui.QTableWidget(self.tab1)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(6)
-        self.tableWidget.setRowCount(7)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(0, item)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(1, item)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(2, item)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(3, item)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(4, item)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(5, item)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(6, item)
+        self.tableWidget.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
@@ -233,7 +219,7 @@ class Ui_TabWidget(object):
         TabWidget.addTab(self.tab1, "")
 
         self.retranslateUi(TabWidget)
-        TabWidget.setCurrentIndex(0)
+        TabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(TabWidget)
 
     def retranslateUi(self, TabWidget):
@@ -259,13 +245,6 @@ class Ui_TabWidget(object):
         self.label_8.setText(QtGui.QApplication.translate("TabWidget", "Number of simulated data sets in the reference table", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tab), QtGui.QApplication.translate("TabWidget", "Reference table", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.setSortingEnabled(True)
-        self.tableWidget.verticalHeaderItem(0).setText(QtGui.QApplication.translate("TabWidget", "1", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.verticalHeaderItem(1).setText(QtGui.QApplication.translate("TabWidget", "2", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.verticalHeaderItem(2).setText(QtGui.QApplication.translate("TabWidget", "3", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.verticalHeaderItem(3).setText(QtGui.QApplication.translate("TabWidget", "4", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.verticalHeaderItem(4).setText(QtGui.QApplication.translate("TabWidget", "5", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.verticalHeaderItem(5).setText(QtGui.QApplication.translate("TabWidget", "6", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.verticalHeaderItem(6).setText(QtGui.QApplication.translate("TabWidget", "7", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("TabWidget", "name", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("TabWidget", "type", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("TabWidget", "parameters", None, QtGui.QApplication.UnicodeUTF8))

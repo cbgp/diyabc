@@ -37,4 +37,28 @@ class Project(QTabWidget):
         self.mainUi.tabWidget.addTab(self,name)
         self.mainUi.tabWidget.setCurrentWidget(self)
 
+        QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.addRow)
+        QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
+
+        # suppression du premier onglet obligatoire
+        #if self.mainUi.tabWidget.count() == 2:
+
+        #for i in range(self.ui.tableWidget.columnCount()):
+        #    for j in range(self.ui.tableWidget.rowCount()):
+        #        it = QTableWidgetItem("%i,%i"%(j,i))
+        #        self.ui.tableWidget.setItem(j,i,it)
+
+    def clcl(self,i,j):
+        print str(i)+","+str(j)
+        self.ui.tableWidget.item(i,j).setFlags(Qt.ItemIsEditable)
+    def addRow(self):
+        print self.ui.tableWidget.rowCount()
+        self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
+        print self.ui.tableWidget.rowCount()
+        for i in range(self.ui.tableWidget.columnCount()):
+            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,i,QTableWidgetItem("new"+str(i)))
+            print str(self.ui.tableWidget.rowCount()-1)+","+str(i)
+            #self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,i).setText("new")
+        #self.ui.tableWidget.insertRow(2)
+
 
