@@ -29,7 +29,6 @@ class Project(QTabWidget):
 
 
         #it = QTableWidgetItem("%i,%i"%(j,i))
-        self.ui.tableWidget.setCellWidget(0,5,QPushButton("View"))
 
 
         # ajout au tabwidget de l'ui principale
@@ -56,8 +55,11 @@ class Project(QTabWidget):
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
         print self.ui.tableWidget.rowCount()
         for i in range(self.ui.tableWidget.columnCount()):
-            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,i,QTableWidgetItem("new"+str(i)))
-            print str(self.ui.tableWidget.rowCount()-1)+","+str(i)
+            if i == 5:
+                self.ui.tableWidget.setCellWidget(self.ui.tableWidget.rowCount()-1,i,QPushButton("View"))
+            else:
+                self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,i,QTableWidgetItem("new"+str(i)))
+                print str(self.ui.tableWidget.rowCount()-1)+","+str(i)
             #self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,i).setText("new")
         #self.ui.tableWidget.insertRow(2)
 
