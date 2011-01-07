@@ -49,7 +49,7 @@ class Project():
         self.ui.setSummaryButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
         self.ui.setGeneticButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
 
-        self.tab.setTabIcon(0,QIcon("/usr/share/pixmaps/baobab.xpm"))
+        self.tab.setTabIcon(0,QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
         self.tab.setTabIcon(1,QIcon("/usr/share/pixmaps/baobab.xpm"))
 
         # suppression du premier onglet obligatoire
@@ -79,6 +79,7 @@ class Project():
         self.ui.setHistoricalButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
         self.ui.setGeneticButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
         self.ui.setSummaryButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
+        self.tab.setTabIcon(0,QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
 
     def clcl(self,i,j):
         print str(i)+","+str(j)
