@@ -7,9 +7,13 @@
  */
 
 
+#include <fstream>
 #include <iostream>
 #include <string>
-
+#include <cstring>
+#include <sstream>
+//#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 
 struct LocusC
@@ -59,12 +63,14 @@ struct DataC
 
 DataC read_genepop(string filename) {
 	bool fin=false;
-	str s,s2;
+	string s,s2;
+	char* s1;
 	int j;
-
-	gpdata = new DataC;
+	DataC gpdata;
+	stringstream out;
+	//gpdata = new DataC;
 	gpdata.filename = filename;
-	ifstream file(filename, ios::in|ios::nocreate);
+	ifstream file(filename.c_str(), ios::in);
 	if (file == NULL) {
 		gpdata.message = "File not found";
 		return gpdata;
@@ -76,24 +82,30 @@ DataC read_genepop(string filename) {
 		for (int i=0;i<s.length;i++) s[i] =toupper(s[i]);
 		if (s.find("POP")==string::npos){	//il s'agit d'un nom de locus
 			gpdata.nloc +=1;
-			if (nloc==1) gpdata.locus = (LocusC*) malloc(sizeof(LocusC));
-			else		 gpdata.locus = (LocusC*) realloc(gpdata.locus,nloc*sizeof(LocusC));
+			if (gpdata.nloc==1) gpdata.locus = (LocusC*) malloc(sizeof(LocusC));
+			else		        gpdata.locus = (LocusC*) realloc(gpdata.locus,gpdata.nloc*sizeof(LocusC));
 			j=s.find("<");
 			if (j!=string::npos) {         //il y a un type de locus noté après le nom
 				s2=toupper(s[j+1]);
-				if (s2=="A") gpdata.locus[nloc-1].type=0; else
-					if (s2=="H") gpdata.locus[nloc-1].type=1; else
-						if (s2=="X") gpdata.locus[nloc-1].type=2; else
-							if (s2=="Y") gpdata.locus[nloc-1].type=3; else
-								if (s2=="M") gpdata.locus[nloc-1].type=4; else
-									{sprintf(gpdata.message,"unrecoknized type at locus %d",nloc);
+				if (s2=="A") gpdata.locus[gpdata.nloc-1].type=0; else
+					if (s2=="H") gpdata.locus[gpdata.nloc-1].type=1; else
+						if (s2=="X") gpdata.locus[gpdata.nloc-1].type=2; else
+							if (s2=="Y") gpdata.locus[gpdata.nloc-1].type=3; else
+								if (s2=="M") gpdata.locus[gpdata.nloc-1].type=4; else
+									{out << gpdata.nloc;
+									 gpdata.message="unrecoknized type at locus "+out.str();
 									 return gpdata;
 									}
 				s=s.substr(0,j-1);
 			}
-			gpdata.locus.name=s;
+			gpdata.locus[gpdata.nloc-1].name=s;
 		} else fin=true;
 	}
 	return gpdata;
 }
 
+
+int main(){
+	DataC data;
+	data = read_genepop("datatest1.txt");
+}
