@@ -21,6 +21,7 @@ class MainWindowTest(QMainWindow):
 
         #proj1 = Project(self.ui,"ploproj")
         self.ui.tab_6.hide()
+        self.ui.tabWidget.removeTab(0)
 
         # manual alignment set
         #self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)

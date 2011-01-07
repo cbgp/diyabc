@@ -11,33 +11,40 @@ from diyabc_ui import Ui_MainWindow
 from project import *
 from project_ui import *
 
-class Project(QTabWidget):
+class Project():
     def __init__(self,ui,name):
         self.mainUi = ui
+        self.tab = QTabWidget()
+        self.hist_state = 0
 
-        super(Project,self).__init__(None)
+        # utile seulement si on derive de QTabWidget
+        #super(Project,self).__init__(None)
+
         # instanciation du widget project_ui
         self.ui = Ui_TabWidget()
-        self.ui.setupUi(self)
+        self.ui.setupUi(self.tab)
 
         # manual alignment set
         self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)
-        self.ui.projNameLabel.setText(name)
+        self.ui.projNameLabelValue.setText(name)
         self.ui.tableWidget.setColumnWidth(1,150)
         self.ui.tableWidget.setColumnWidth(2,300)
         self.ui.tableWidget.setColumnWidth(3,70)
 
-
-        #it = QTableWidgetItem("%i,%i"%(j,i))
-
-
         # ajout au tabwidget de l'ui principale
         # ajout de l'onglet
-        self.mainUi.tabWidget.addTab(self,name)
-        self.mainUi.tabWidget.setCurrentWidget(self)
+        self.mainUi.tabWidget.addTab(self.tab,name)
+        self.mainUi.tabWidget.setCurrentWidget(self.tab)
 
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.addRow)
         QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
+        QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.changeIcon)
+
+        # inserer image
+        self.ui.setHistoricalButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
+
+        self.tab.setTabIcon(0,QIcon("/usr/share/pixmaps/baobab.xpm"))
+        self.tab.setTabIcon(1,QIcon("/usr/share/pixmaps/baobab.xpm"))
 
         # suppression du premier onglet obligatoire
         #if self.mainUi.tabWidget.count() == 2:
@@ -46,6 +53,11 @@ class Project(QTabWidget):
         #    for j in range(self.ui.tableWidget.rowCount()):
         #        it = QTableWidgetItem("%i,%i"%(j,i))
         #        self.ui.tableWidget.setItem(j,i,it)
+
+    def changeIcon(self):
+        l=["debian-logo.png","ekiga.xpm"]
+        self.hist_state = (self.hist_state+1)% len(l)
+        self.ui.setHistoricalButton.setIcon(QIcon("/usr/share/pixmaps/"+l[self.hist_state%len(l)]))
 
     def clcl(self,i,j):
         print str(i)+","+str(j)
