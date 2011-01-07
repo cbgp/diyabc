@@ -39,9 +39,15 @@ class Project():
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.addRow)
         QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
         QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.changeIcon)
+        QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.changeIcon)
+        QObject.connect(self.ui.setSummaryButton,SIGNAL("clicked()"),self.changeIcon)
+        QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
+        QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
 
         # inserer image
         self.ui.setHistoricalButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
+        self.ui.setSummaryButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
+        self.ui.setGeneticButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
 
         self.tab.setTabIcon(0,QIcon("/usr/share/pixmaps/baobab.xpm"))
         self.tab.setTabIcon(1,QIcon("/usr/share/pixmaps/baobab.xpm"))
@@ -54,10 +60,25 @@ class Project():
         #        it = QTableWidgetItem("%i,%i"%(j,i))
         #        self.ui.tableWidget.setItem(j,i,it)
 
+
+    def dataFileSelection(self):
+        qfd = QFileDialog()
+        qfd.setDirectory(self.ui.dirEdit.text())
+        name = qfd.getOpenFileName()
+        self.ui.dataFileEdit.setText(name)
+
+    def dirSelection(self):
+        qfd = QFileDialog()
+        #qfd.setDirectory("~/")
+        name = qfd.getExistingDirectory()
+        self.ui.dirEdit.setText(name)
+
     def changeIcon(self):
-        l=["debian-logo.png","ekiga.xpm"]
+        l=["ok.png","redcross.png"]
         self.hist_state = (self.hist_state+1)% len(l)
-        self.ui.setHistoricalButton.setIcon(QIcon("/usr/share/pixmaps/"+l[self.hist_state%len(l)]))
+        self.ui.setHistoricalButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
+        self.ui.setGeneticButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
+        self.ui.setSummaryButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
 
     def clcl(self,i,j):
         print str(i)+","+str(j)
