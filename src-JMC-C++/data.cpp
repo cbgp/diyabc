@@ -14,6 +14,7 @@ using namespace std;
 
 struct LocusC
 {
+	string name;
 	int type;  //0 à 9
 	int groupe;    //numero du groupe auquel appartient le locus
 	double coeff;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
@@ -58,7 +59,9 @@ struct DataC
 
 DataC read_genepop(string filename) {
 	bool fin=false;
-	str s;
+	str s,s2;
+	int j;
+
 	gpdata = new DataC;
 	gpdata.filename = filename;
 	ifstream file(filename, ios::in|ios::nocreate);
@@ -69,7 +72,27 @@ DataC read_genepop(string filename) {
 	getline(file,gpdata.title);
 	gpdata.nloc=0;
 	while (not fin) {
-		getline(file,)
+		getline(file,s);
+		for (int i=0;i<s.length;i++) s[i] =toupper(s[i]);
+		if (s.find("POP")==string::npos){	//il s'agit d'un nom de locus
+			gpdata.nloc +=1;
+			if (nloc==1) gpdata.locus = (LocusC*) malloc(sizeof(LocusC));
+			else		 gpdata.locus = (LocusC*) realloc(gpdata.locus,nloc*sizeof(LocusC));
+			j=s.find("<");
+			if (j!=string::npos) {         //il y a un type de locus noté après le nom
+				s2=toupper(s[j+1]);
+				if (s2=="A") gpdata.locus[nloc-1].type=0; else
+					if (s2=="H") gpdata.locus[nloc-1].type=1; else
+						if (s2=="X") gpdata.locus[nloc-1].type=2; else
+							if (s2=="Y") gpdata.locus[nloc-1].type=3; else
+								if (s2=="M") gpdata.locus[nloc-1].type=4; else
+									{sprintf(gpdata.message,"unrecoknized type at locus %d",nloc);
+									 return gpdata;
+									}
+				s=s.substr(0,j-1);
+			}
+			gpdata.locus.name=s;
+		} else fin=true;
 	}
 	return gpdata;
 }
