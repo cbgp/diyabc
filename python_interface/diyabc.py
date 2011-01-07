@@ -6,7 +6,7 @@ import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from first_page_ui import Ui_MainWindow
+from diyabc_ui import Ui_MainWindow
 from project import *
 
 class MainWindowTest(QMainWindow):
