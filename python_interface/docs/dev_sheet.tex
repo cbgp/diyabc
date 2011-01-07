@@ -1,0 +1,74 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{hyperref}
+\author{Veyssier Julien}
+%\institute{Université de Montpellier 2}
+
+\title{Documentation sur le développement de \\
+DIYABC en python}
+\date\today
+%\pagestyle{headings}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\thepage}
+\fancyhead[R]{DIYACB python doc | Veyssier}
+%\fancyhead[LE,RO]{\thesection}
+
+\geometry{hmargin=2.5cm,vmargin=2cm}
+
+\begin{document}
+
+\maketitle
+%\begin{center}powered by \LaTeX\end{center}
+\newpage
+
+\tableofcontents
+
+\newpage
+ 
+
+\section{Introduction}
+Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
+	\subsection{Objectifs}
+        Modulariser le code de sorte à permettre facilement l'ajout de nouveaux blocs, tant graphiques que fonctionnels.
+
+	\subsection{Choix d'outils}
+        La librairie Qt a été choisie pour sa portabilité, sa flexibilité et sa facilité d'utilisation. Le langage python 
+        a été choisi pour sa clarté, sa réutilisabilité et son grand nombre de librairies. QtCreator et/ou QtDesigner sont utilisés pour
+        la production des objets graphiques.
+
+\section{Conception}
+    \subsection{Partie graphique}
+        La partie purement graphique est découplée du fonctionnement. Des fichiers .ui sont produits à partir d'un IDE. Toute entité graphique
+        étant succeptible d'être présente plusieurs fois dans l'application est produite indépendament dans un .ui et une classe associée.
+        
+        L'ui principal est celui de la fenêtre principale.
+        Un ui peut n'être qu'un widget. Un fichier source python produit à partir d'un .ui avec ``pyuic'' contient une classe non graphique
+        qui crée tous les objets graphiques à l'intérieur de l'objet que l'on veut créer.
+
+        Exemple : Création d'une scroll area.
+        \begin{itemize}
+            \item Création d'une ui pour QScrollArea
+            \item Génération du code python avec pyuic4
+            \item Instanciation d'un objet QScrollArea
+            \item Appel de la methode setupUi de la classe générée avec l'objet QScrollArea en paramètre
+        \end{itemize}
+    \subsection{Coeur de l'application}
+        La classe principale de l'application dérive de QMainWindow
+
+
+\section{Documentation}
+
+\section{Construction du projet}
+
+\section{Utilisation}
+
+\section{Limites et améliorations}
+
+
+\end{document}
