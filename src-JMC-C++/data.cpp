@@ -14,6 +14,7 @@
 #include <sstream>
 //#include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 using namespace std;
 
 struct LocusC
@@ -61,10 +62,16 @@ struct DataC
 	LocusC *locus;
 };
 
+string majuscules(string s) {
+	string s2;
+	return s2;
+}
+
 DataC read_genepop(string filename) {
 	bool fin=false;
 	string s,s2;
 	char* s1;
+	char c;
 	int j;
 	DataC gpdata;
 	stringstream out;
@@ -79,7 +86,7 @@ DataC read_genepop(string filename) {
 	gpdata.nloc=0;
 	while (not fin) {
 		getline(file,s);
-		for (int i=0;i<s.length;i++) s[i] =toupper(s[i]);
+		s=majuscules(s);
 		if (s.find("POP")==string::npos){	//il s'agit d'un nom de locus
 			gpdata.nloc +=1;
 			if (gpdata.nloc==1) gpdata.locus = (LocusC*) malloc(sizeof(LocusC));
