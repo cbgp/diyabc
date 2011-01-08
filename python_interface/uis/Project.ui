@@ -203,9 +203,6 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="KSeparator" name="kseparator_2"/>
-           </item>
            <item row="2" column="0">
             <widget class="QPushButton" name="setSummaryButton">
              <property name="minimumSize">
@@ -227,6 +224,16 @@
                <width>50</width>
                <height>50</height>
               </size>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QFrame" name="frame_3">
+             <property name="frameShape">
+              <enum>QFrame::HLine</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
              </property>
             </widget>
            </item>
@@ -452,9 +459,6 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="KSeparator" name="kseparator_4"/>
-           </item>
            <item row="3" column="0">
             <widget class="QPushButton" name="pushButton">
              <property name="minimumSize">
@@ -470,6 +474,16 @@
              </property>
              <property name="text">
               <string>Run computations</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QFrame" name="frame_4">
+             <property name="frameShape">
+              <enum>QFrame::HLine</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
              </property>
             </widget>
            </item>
@@ -502,9 +516,6 @@
               <set>Qt::AlignCenter</set>
              </property>
             </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="KSeparator" name="kseparator_3"/>
            </item>
            <item row="3" column="0">
             <layout class="QGridLayout" name="gridLayout_5">
@@ -560,6 +571,16 @@
              </property>
              <property name="shortcut">
               <string>Ctrl+S</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QFrame" name="frame">
+             <property name="frameShape">
+              <enum>QFrame::HLine</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
              </property>
             </widget>
            </item>
@@ -639,9 +660,6 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="KSeparator" name="kseparator"/>
-           </item>
            <item row="2" column="0">
             <widget class="QPushButton" name="setGeneticButton">
              <property name="minimumSize">
@@ -663,6 +681,16 @@
                <width>50</width>
                <height>50</height>
               </size>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QFrame" name="frame_2">
+             <property name="frameShape">
+              <enum>QFrame::HLine</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
              </property>
             </widget>
            </item>
@@ -760,13 +788,6 @@
    </layout>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KSeparator</class>
-   <extends>QFrame</extends>
-   <header>kseparator.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
