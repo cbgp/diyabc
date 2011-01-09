@@ -45,11 +45,11 @@ class Project():
         QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
 
         # inserer image
-        self.ui.setHistoricalButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
-        self.ui.setSummaryButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
-        self.ui.setGeneticButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
+        self.ui.setHistoricalButton.setIcon(QIcon("docs/ok.png"))
+        self.ui.setSummaryButton.setIcon(QIcon("docs/ok.png"))
+        self.ui.setGeneticButton.setIcon(QIcon("docs/ok.png"))
 
-        self.tab.setTabIcon(0,QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/ok.png"))
+        self.tab.setTabIcon(0,QIcon("docs/ok.png"))
         self.tab.setTabIcon(1,QIcon("/usr/share/pixmaps/baobab.xpm"))
 
         # suppression du premier onglet obligatoire
@@ -59,7 +59,6 @@ class Project():
         #    for j in range(self.ui.tableWidget.rowCount()):
         #        it = QTableWidgetItem("%i,%i"%(j,i))
         #        self.ui.tableWidget.setItem(j,i,it)
-
 
     def dataFileSelection(self):
         qfd = QFileDialog()
@@ -76,10 +75,10 @@ class Project():
     def changeIcon(self):
         l=["ok.png","redcross.png"]
         self.hist_state = (self.hist_state+1)% len(l)
-        self.ui.setHistoricalButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
-        self.ui.setGeneticButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
-        self.ui.setSummaryButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
-        self.tab.setTabIcon(0,QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
+        self.ui.setHistoricalButton.setIcon(QIcon("docs/"+l[self.hist_state%len(l)]))
+        self.ui.setGeneticButton.setIcon(QIcon("docs/"+l[self.hist_state%len(l)]))
+        self.ui.setSummaryButton.setIcon(QIcon("docs/"+l[self.hist_state%len(l)]))
+        self.tab.setTabIcon(0,QIcon("docs/"+l[self.hist_state%len(l)]))
 
         self.ui.progressBar.setValue((self.ui.progressBar.value()+10)%self.ui.progressBar.maximum())
 
@@ -98,5 +97,4 @@ class Project():
                 print str(self.ui.tableWidget.rowCount()-1)+","+str(i)
             #self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,i).setText("new")
         #self.ui.tableWidget.insertRow(2)
-
 
