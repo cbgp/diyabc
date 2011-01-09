@@ -81,6 +81,8 @@ class Project():
         self.ui.setSummaryButton.setIcon(QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
         self.tab.setTabIcon(0,QIcon("/home/julien/vcs/git/diyabc/python_interface/docs/"+l[self.hist_state%len(l)]))
 
+        self.ui.progressBar.setValue((self.ui.progressBar.value()+10)%self.ui.progressBar.maximum())
+
     def clcl(self,i,j):
         print str(i)+","+str(j)
         self.ui.tableWidget.item(i,j).setFlags(Qt.ItemIsEditable)

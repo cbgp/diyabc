@@ -27,8 +27,9 @@ class MainWindowTest(QMainWindow):
         #self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)
 
         file_menu = self.ui.menubar.addMenu("File")
-        file_menu.addAction("Open",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_O))
         file_menu.addAction("New Project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
+        file_menu.addAction("Open",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_O))
+        file_menu.addAction("Save",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_S))
         action = file_menu.addAction("Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
 	
 	#mettre plusieurs raccourcis claviers pour le meme menu
