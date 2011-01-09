@@ -33,8 +33,7 @@ class MainWindowTest(QMainWindow):
 	
 	#mettre plusieurs raccourcis claviers pour le meme menu
 	#action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
-
-
+        QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 
     def file_open(self):
         pass
@@ -43,6 +42,13 @@ class MainWindowTest(QMainWindow):
         text, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if ok:
             self.project_list.append(Project(self.ui,text))
+
+    def closeProject(self,index):
+        reply = QtGui.QMessageBox.question(self, 'Message',
+            "Do you want to save the Project ?", QtGui.QMessageBox.Yes | 
+            QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
+
+        self.ui.tabWidget.removeTab(index)
 
 
 
