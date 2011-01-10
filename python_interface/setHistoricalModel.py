@@ -19,6 +19,8 @@ class setHistoricalModel(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         QObject.connect(self.ui.addScButton,SIGNAL("clicked()"),self.addSc)
+        QObject.connect(self.ui.uniformRadio,SIGNAL("clicked()"),self.setUniformRp)
+        QObject.connect(self.ui.otherRadio,SIGNAL("clicked()"),self.setOtherRp)
 
         # liste des scenarios non effacés
         self.scList = []
@@ -95,12 +97,15 @@ class setHistoricalModel(QMainWindow):
         lineEdit.setSizePolicy(sizePolicy)
         lineEdit.setMinimumSize(QtCore.QSize(0, 26))
         lineEdit.setMaximumSize(QtCore.QSize(40, 26))
-        lineEdit.setObjectName("lineEdit")
+        lineEdit.setObjectName("rpEdit")
         verticalLayout_6.addWidget(lineEdit)
         self.ui.horizontalLayout_6.addWidget(groupBox_r)
 
         # ajout des rp dans la liste locale (plus facile à manipuler)
         self.rpList.append(groupBox_r)
+
+        if self.ui.uniformRadio.isChecked():
+            self.setUniformRp()
 
     def rmSc(self):
         """ Suppression d'un scenario dans l'affichage et dans la liste locale
@@ -118,6 +123,24 @@ class setHistoricalModel(QMainWindow):
         self.rpList.pop(num_scenar).hide()
         for i in range(len(self.rpList)):
             self.rpList[i].findChild(QLabel,"rpLabel").setText("scenario %i"% i)
+
+        if self.ui.uniformRadio.isChecked():
+            self.setUniformRp()
+
+    def setUniformRp(self):
+        val = 100/len(self.scList)
+        # pour chaque pourcentage
+        for rp in self.rpList:
+            lineEdit = rp.findChild(QLineEdit,"rpEdit")
+            lineEdit.setText(str(val))
+            lineEdit.setDisabled(True)
+
+            
+
+    def setOtherRp(self):
+        for rp in self.rpList:
+            lineEdit = rp.findChild(QLineEdit,"rpEdit")
+            lineEdit.setDisabled(False)
 
     def closeEvent(self, event):
         self.parent.setDisabled(False)

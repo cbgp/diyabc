@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'uis/setHistoricalModel.ui'
 #
-# Created: Mon Jan 10 18:05:59 2011
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon Jan 10 21:57:10 2011
+#      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -38,7 +38,7 @@ class Ui_MainWindow(object):
         self.scScroll.setWidgetResizable(True)
         self.scScroll.setObjectName("scScroll")
         self.scScrollContent = QtGui.QWidget(self.scScroll)
-        self.scScrollContent.setGeometry(QtCore.QRect(0, 0, 813, 198))
+        self.scScrollContent.setGeometry(QtCore.QRect(0, 0, 819, 196))
         self.scScrollContent.setObjectName("scScrollContent")
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.scScrollContent)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -82,6 +82,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setMaximumSize(QtCore.QSize(16777215, 150))
+        self.groupBox.setTitle("")
         self.groupBox.setObjectName("groupBox")
         self.horizontalLayout_4 = QtGui.QHBoxLayout(self.groupBox)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
@@ -102,15 +103,18 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox_2.sizePolicy().hasHeightForWidth())
         self.groupBox_2.setSizePolicy(sizePolicy)
+        self.groupBox_2.setTitle("")
         self.groupBox_2.setObjectName("groupBox_2")
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.groupBox_2)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.radioButton = QtGui.QRadioButton(self.groupBox_2)
-        self.radioButton.setObjectName("radioButton")
-        self.verticalLayout_5.addWidget(self.radioButton)
-        self.radioButton_2 = QtGui.QRadioButton(self.groupBox_2)
-        self.radioButton_2.setObjectName("radioButton_2")
-        self.verticalLayout_5.addWidget(self.radioButton_2)
+        self.uniformRadio = QtGui.QRadioButton(self.groupBox_2)
+        self.uniformRadio.setChecked(True)
+        self.uniformRadio.setObjectName("uniformRadio")
+        self.verticalLayout_5.addWidget(self.uniformRadio)
+        self.otherRadio = QtGui.QRadioButton(self.groupBox_2)
+        self.otherRadio.setChecked(False)
+        self.otherRadio.setObjectName("otherRadio")
+        self.verticalLayout_5.addWidget(self.otherRadio)
         self.horizontalLayout_4.addWidget(self.groupBox_2)
         self.repScroll = QtGui.QScrollArea(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -123,7 +127,7 @@ class Ui_MainWindow(object):
         self.repScroll.setWidgetResizable(True)
         self.repScroll.setObjectName("repScroll")
         self.repScrollContent = QtGui.QWidget(self.repScroll)
-        self.repScrollContent.setGeometry(QtCore.QRect(0, 0, 742, 93))
+        self.repScrollContent.setGeometry(QtCore.QRect(0, 0, 761, 91))
         self.repScrollContent.setObjectName("repScrollContent")
         self.horizontalLayout_6 = QtGui.QHBoxLayout(self.repScrollContent)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
@@ -149,7 +153,7 @@ class Ui_MainWindow(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_3 = QtGui.QWidget(self.scrollArea_3)
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 931, 106))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 933, 102))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_3)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -178,6 +182,7 @@ class Ui_MainWindow(object):
         self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
         self.verticalLayout.addWidget(self.scrollArea_3)
         self.groupBox_5 = QtGui.QGroupBox(self.groupBox_4)
+        self.groupBox_5.setTitle("")
         self.groupBox_5.setObjectName("groupBox_5")
         self.horizontalLayout = QtGui.QHBoxLayout(self.groupBox_5)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -197,7 +202,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.groupBox_4)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 977, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 977, 23))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
@@ -215,8 +220,8 @@ class Ui_MainWindow(object):
         self.chkScButton.setText(QtGui.QApplication.translate("MainWindow", "Check scenario", None, QtGui.QApplication.UnicodeUTF8))
         self.defPrButton.setText(QtGui.QApplication.translate("MainWindow", "Define priors", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Scenario", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton.setText(QtGui.QApplication.translate("MainWindow", "Uniform", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton_2.setText(QtGui.QApplication.translate("MainWindow", "Other", None, QtGui.QApplication.UnicodeUTF8))
+        self.uniformRadio.setText(QtGui.QApplication.translate("MainWindow", "Uniform", None, QtGui.QApplication.UnicodeUTF8))
+        self.otherRadio.setText(QtGui.QApplication.translate("MainWindow", "Other", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("MainWindow", "Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_4.setTitle(QtGui.QApplication.translate("MainWindow", "Conditions", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_6.setTitle(QtGui.QApplication.translate("MainWindow", "cond1", None, QtGui.QApplication.UnicodeUTF8))

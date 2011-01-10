@@ -30,7 +30,7 @@
     <item>
      <widget class="QGroupBox" name="groupBox_7">
       <property name="title">
-       <string>GroupBox</string>
+       <string/>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
@@ -61,8 +61,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>813</width>
-            <height>198</height>
+            <width>819</width>
+            <height>196</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_3"/>
@@ -182,16 +182,22 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QRadioButton" name="radioButton">
+           <widget class="QRadioButton" name="uniformRadio">
             <property name="text">
              <string>Uniform</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton_2">
+           <widget class="QRadioButton" name="otherRadio">
             <property name="text">
              <string>Other</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -226,8 +232,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>742</width>
-            <height>93</height>
+            <width>761</width>
+            <height>91</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_6"/>
@@ -281,8 +287,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>931</width>
-            <height>106</height>
+            <width>933</width>
+            <height>102</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -375,7 +381,7 @@
      <x>0</x>
      <y>0</y>
      <width>977</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
