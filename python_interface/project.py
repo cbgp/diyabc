@@ -12,18 +12,19 @@ from project import *
 from project_ui import *
 from setHistoricalModel import setHistoricalModel
 
-class Project():
-    def __init__(self,ui,name):
+class Project(QTabWidget):
+    def __init__(self,ui,name,parent=None):
         self.mainUi = ui
-        self.tab = QTabWidget()
         self.hist_state = 0
 
         # utile seulement si on derive de QTabWidget
-        #super(Project,self).__init__(None)
+        super(Project,self).__init__(parent)
+        # on peut aussi instancier un tabwidget
+        #self.tab = QTabWidget()
 
         # instanciation du widget project_ui
         self.ui = Ui_TabWidget()
-        self.ui.setupUi(self.tab)
+        self.ui.setupUi(self)
 
         # manual alignment set
         self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)
@@ -34,8 +35,8 @@ class Project():
 
         # ajout au tabwidget de l'ui principale
         # ajout de l'onglet
-        self.mainUi.tabWidget.addTab(self.tab,name)
-        self.mainUi.tabWidget.setCurrentWidget(self.tab)
+        self.mainUi.tabWidget.addTab(self,name)
+        self.mainUi.tabWidget.setCurrentWidget(self)
 
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.addRow)
         QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
@@ -50,11 +51,9 @@ class Project():
         self.ui.setSummaryButton.setIcon(QIcon("docs/ok.png"))
         self.ui.setGeneticButton.setIcon(QIcon("docs/ok.png"))
 
-        self.tab.setTabIcon(0,QIcon("docs/ok.png"))
-        self.tab.setTabIcon(1,QIcon("/usr/share/pixmaps/baobab.xpm"))
+        self.setTabIcon(0,QIcon("docs/ok.png"))
+        self.setTabIcon(1,QIcon("/usr/share/pixmaps/baobab.xpm"))
 
-        # suppression du premier onglet obligatoire
-        #if self.mainUi.tabWidget.count() == 2:
 
         #for i in range(self.ui.tableWidget.columnCount()):
         #    for j in range(self.ui.tableWidget.rowCount()):
@@ -79,7 +78,7 @@ class Project():
         self.ui.setHistoricalButton.setIcon(QIcon("docs/"+l[self.hist_state%len(l)]))
         self.ui.setGeneticButton.setIcon(QIcon("docs/"+l[self.hist_state%len(l)]))
         self.ui.setSummaryButton.setIcon(QIcon("docs/"+l[self.hist_state%len(l)]))
-        self.tab.setTabIcon(0,QIcon("docs/"+l[self.hist_state%len(l)]))
+        self.setTabIcon(0,QIcon("docs/"+l[self.hist_state%len(l)]))
 
         self.ui.progressBar.setValue((self.ui.progressBar.value()+10)%self.ui.progressBar.maximum())
 
@@ -100,7 +99,9 @@ class Project():
         #self.ui.tableWidget.insertRow(2)
 
     def setHistorical(self):
-        self.tab.setDisabled(True)
-        self.hist_model_win = setHistoricalModel(self.tab)
+        self.setDisabled(True)
+        self.hist_model_win = setHistoricalModel(self)
         self.hist_model_win.show()
 
+    def setNbScenarios(self,nb):
+        self.ui.nbScLabel.setText(nb)

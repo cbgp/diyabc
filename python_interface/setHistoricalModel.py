@@ -21,10 +21,13 @@ class setHistoricalModel(QMainWindow):
         QObject.connect(self.ui.addScButton,SIGNAL("clicked()"),self.addSc)
         QObject.connect(self.ui.uniformRadio,SIGNAL("clicked()"),self.setUniformRp)
         QObject.connect(self.ui.otherRadio,SIGNAL("clicked()"),self.setOtherRp)
+        QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.addCondition)
+        QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.close)
 
-        # liste des scenarios non effacés
+        # liste des scenarios, pourcentages et conditions non effacés
         self.scList = []
         self.rpList = []
+        self.condList = []
 
     def addSc(self):
         
@@ -77,7 +80,7 @@ class setHistoricalModel(QMainWindow):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(groupBox_r.sizePolicy().hasHeightForWidth())
         groupBox_r.setSizePolicy(sizePolicy)
-        groupBox_r.setMaximumSize(QtCore.QSize(16777215, 50))
+        groupBox_r.setMaximumSize(QtCore.QSize(16777215, 60))
         groupBox_r.setObjectName("groupBox_r")
         verticalLayout_6 = QtGui.QVBoxLayout(groupBox_r)
         verticalLayout_6.setObjectName("verticalLayout_6")
@@ -128,12 +131,13 @@ class setHistoricalModel(QMainWindow):
             self.setUniformRp()
 
     def setUniformRp(self):
-        val = 100/len(self.scList)
-        # pour chaque pourcentage
-        for rp in self.rpList:
-            lineEdit = rp.findChild(QLineEdit,"rpEdit")
-            lineEdit.setText(str(val))
-            lineEdit.setDisabled(True)
+        if len(self.scList) != 0:
+            val = 1.0/float(len(self.scList))
+            # pour chaque pourcentage
+            for rp in self.rpList:
+                lineEdit = rp.findChild(QLineEdit,"rpEdit")
+                lineEdit.setText(str(round(val,2)))
+                lineEdit.setDisabled(True)
 
             
 
@@ -142,5 +146,52 @@ class setHistoricalModel(QMainWindow):
             lineEdit = rp.findChild(QLineEdit,"rpEdit")
             lineEdit.setDisabled(False)
 
+    def addCondition(self,cond_str=""):
+        groupBox_cond = QtGui.QGroupBox(self.ui.scrollAreaWidgetContents_3)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(groupBox_cond.sizePolicy().hasHeightForWidth())
+        groupBox_cond.setSizePolicy(sizePolicy)
+        groupBox_cond.setTitle("")
+        groupBox_cond.setObjectName("groupBox_6")
+        verticalLayout_2 = QtGui.QVBoxLayout(groupBox_cond)
+        verticalLayout_2.setObjectName("verticalLayout_2")
+        label_2 = QtGui.QLabel(str(len(self.condList)),groupBox_cond)
+        label_2.setObjectName("condLabel")
+        label_2.setAlignment(QtCore.Qt.AlignCenter)
+        verticalLayout_2.addWidget(label_2)
+        pushButton_5 = QtGui.QPushButton("remove",groupBox_cond)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(pushButton_5.sizePolicy().hasHeightForWidth())
+        pushButton_5.setSizePolicy(sizePolicy)
+        pushButton_5.setMaximumSize(QtCore.QSize(80, 16777215))
+        pushButton_5.setObjectName("rmCondButton")
+        verticalLayout_2.addWidget(pushButton_5)
+        # ajout dans la GUI
+        self.ui.horizontalLayout_2.addWidget(groupBox_cond)
+
+        # evennement de suppression de la condition
+        QObject.connect(pushButton_5,SIGNAL("clicked()"),self.rmCond)
+
+        self.condList.append(groupBox_cond)
+
+    def rmCond(self):
+        """ Suppression d'une condition sur les variables
+        dans l'affichage et dans la liste locale
+        """
+        self.sender().parent().hide()
+        self.condList.remove(self.sender().parent())
+
+
     def closeEvent(self, event):
         self.parent.setDisabled(False)
+
+        # gestion des valeurs
+        nb_sc = len(self.scList)
+        pluriel = ""
+        if nb_sc > 1:
+            pluriel = "s"
+        self.parent.setNbScenarios("%i scenario%s"%(nb_sc,pluriel))

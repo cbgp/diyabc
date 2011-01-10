@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Mon Jan 10 11:59:08 2011
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon Jan 10 22:55:12 2011
+#      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -86,11 +86,13 @@ class Ui_TabWidget(object):
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setMinimumSize(QtCore.QSize(541, 0))
+        self.groupBox.setTitle("")
         self.groupBox.setFlat(False)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.groupBox_9 = QtGui.QGroupBox(self.groupBox)
+        self.groupBox_9.setTitle("")
         self.groupBox_9.setObjectName("groupBox_9")
         self.gridLayout_12 = QtGui.QGridLayout(self.groupBox_9)
         self.gridLayout_12.setObjectName("gridLayout_12")
@@ -106,6 +108,7 @@ class Ui_TabWidget(object):
         self.label_16.setObjectName("label_16")
         self.gridLayout_9.addWidget(self.label_16, 0, 1, 1, 1)
         self.label_17 = QtGui.QLabel(self.groupBox_9)
+        self.label_17.setText("")
         self.label_17.setObjectName("label_17")
         self.gridLayout_9.addWidget(self.label_17, 0, 0, 1, 1)
         self.gridLayout_12.addLayout(self.gridLayout_9, 3, 0, 1, 1)
@@ -136,6 +139,7 @@ class Ui_TabWidget(object):
         self.gridLayout_12.addWidget(self.frame_3, 1, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox_9, 1, 0, 1, 1)
         self.groupBox_8 = QtGui.QGroupBox(self.groupBox)
+        self.groupBox_8.setTitle("")
         self.groupBox_8.setObjectName("groupBox_8")
         self.gridLayout_11 = QtGui.QGridLayout(self.groupBox_8)
         self.gridLayout_11.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
@@ -249,6 +253,7 @@ class Ui_TabWidget(object):
         self.gridLayout_11.addWidget(self.frame_4, 1, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox_8, 1, 1, 1, 1)
         self.groupBox_7 = QtGui.QGroupBox(self.groupBox)
+        self.groupBox_7.setTitle("")
         self.groupBox_7.setObjectName("groupBox_7")
         self.gridLayout_10 = QtGui.QGridLayout(self.groupBox_7)
         self.gridLayout_10.setObjectName("gridLayout_10")
@@ -266,17 +271,17 @@ class Ui_TabWidget(object):
         self.gridLayout_10.addWidget(self.label_19, 0, 0, 1, 1)
         self.gridLayout_5 = QtGui.QGridLayout()
         self.gridLayout_5.setObjectName("gridLayout_5")
-        self.label_10 = QtGui.QLabel(self.groupBox_7)
-        self.label_10.setObjectName("label_10")
-        self.gridLayout_5.addWidget(self.label_10, 2, 0, 1, 1)
-        self.label_11 = QtGui.QLabel(self.groupBox_7)
+        self.nbScLabel = QtGui.QLabel(self.groupBox_7)
+        self.nbScLabel.setObjectName("nbScLabel")
+        self.gridLayout_5.addWidget(self.nbScLabel, 2, 0, 1, 1)
+        self.nbParamLabel = QtGui.QLabel(self.groupBox_7)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
-        self.label_11.setSizePolicy(sizePolicy)
-        self.label_11.setObjectName("label_11")
-        self.gridLayout_5.addWidget(self.label_11, 2, 2, 1, 1)
+        sizePolicy.setHeightForWidth(self.nbParamLabel.sizePolicy().hasHeightForWidth())
+        self.nbParamLabel.setSizePolicy(sizePolicy)
+        self.nbParamLabel.setObjectName("nbParamLabel")
+        self.gridLayout_5.addWidget(self.nbParamLabel, 2, 2, 1, 1)
         self.gridLayout_10.addLayout(self.gridLayout_5, 3, 0, 1, 1)
         self.setHistoricalButton = QtGui.QPushButton(self.groupBox_7)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
@@ -299,6 +304,7 @@ class Ui_TabWidget(object):
         self.gridLayout_3.addWidget(self.groupBox_7, 0, 0, 1, 1)
         self.groupBox_6 = QtGui.QGroupBox(self.groupBox)
         self.groupBox_6.setAutoFillBackground(False)
+        self.groupBox_6.setTitle("")
         self.groupBox_6.setObjectName("groupBox_6")
         self.gridLayout_8 = QtGui.QGridLayout(self.groupBox_6)
         self.gridLayout_8.setObjectName("gridLayout_8")
@@ -413,8 +419,8 @@ class Ui_TabWidget(object):
         self.label_20.setText(QtGui.QApplication.translate("TabWidget", "Simulated data sets", None, QtGui.QApplication.UnicodeUTF8))
         self.runButton.setText(QtGui.QApplication.translate("TabWidget", "Run computations", None, QtGui.QApplication.UnicodeUTF8))
         self.label_19.setText(QtGui.QApplication.translate("TabWidget", "Historical model", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_10.setText(QtGui.QApplication.translate("TabWidget", "X scenarios", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_11.setText(QtGui.QApplication.translate("TabWidget", "X parameters", None, QtGui.QApplication.UnicodeUTF8))
+        self.nbScLabel.setText(QtGui.QApplication.translate("TabWidget", "X scenarios", None, QtGui.QApplication.UnicodeUTF8))
+        self.nbParamLabel.setText(QtGui.QApplication.translate("TabWidget", "X parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.setHistoricalButton.setText(QtGui.QApplication.translate("TabWidget", "            Set", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("TabWidget", "X DNA sequence loci", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("TabWidget", "X microsatellite loci", None, QtGui.QApplication.UnicodeUTF8))

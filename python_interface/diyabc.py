@@ -42,7 +42,7 @@ class Diyabc(QMainWindow):
     def newProject(self):
         text, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if ok:
-            self.project_list.append(Project(self.ui,text))
+            self.project_list.append(Project(self.ui,text,self))
 
     def closeProject(self,index):
         reply = QtGui.QMessageBox.question(self, 'Message',
