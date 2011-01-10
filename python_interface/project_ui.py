@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Mon Jan 10 22:55:12 2011
+# Created: Mon Jan 10 23:19:46 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -412,7 +412,9 @@ class Ui_TabWidget(object):
         self.label_12.setText(QtGui.QApplication.translate("TabWidget", "X Samples, X individuals and X loci", None, QtGui.QApplication.UnicodeUTF8))
         self.label_16.setText(QtGui.QApplication.translate("TabWidget", "X summary statistics", None, QtGui.QApplication.UnicodeUTF8))
         self.label_18.setText(QtGui.QApplication.translate("TabWidget", "Summary statistics", None, QtGui.QApplication.UnicodeUTF8))
+        self.setSummaryButton.setToolTip(QtGui.QApplication.translate("TabWidget", "(Alt+s)", None, QtGui.QApplication.UnicodeUTF8))
         self.setSummaryButton.setText(QtGui.QApplication.translate("TabWidget", "            Set", None, QtGui.QApplication.UnicodeUTF8))
+        self.setSummaryButton.setShortcut(QtGui.QApplication.translate("TabWidget", "Alt+S", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("TabWidget", "Priority", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("TabWidget", "Required number of simulated data sets", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("TabWidget", "Number of simulated data sets in the reference table", None, QtGui.QApplication.UnicodeUTF8))
@@ -421,12 +423,16 @@ class Ui_TabWidget(object):
         self.label_19.setText(QtGui.QApplication.translate("TabWidget", "Historical model", None, QtGui.QApplication.UnicodeUTF8))
         self.nbScLabel.setText(QtGui.QApplication.translate("TabWidget", "X scenarios", None, QtGui.QApplication.UnicodeUTF8))
         self.nbParamLabel.setText(QtGui.QApplication.translate("TabWidget", "X parameters", None, QtGui.QApplication.UnicodeUTF8))
+        self.setHistoricalButton.setToolTip(QtGui.QApplication.translate("TabWidget", "(Alt+h)", None, QtGui.QApplication.UnicodeUTF8))
         self.setHistoricalButton.setText(QtGui.QApplication.translate("TabWidget", "            Set", None, QtGui.QApplication.UnicodeUTF8))
+        self.setHistoricalButton.setShortcut(QtGui.QApplication.translate("TabWidget", "Alt+H", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("TabWidget", "X DNA sequence loci", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("TabWidget", "X microsatellite loci", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("TabWidget", "X locus groups", None, QtGui.QApplication.UnicodeUTF8))
         self.label_15.setText(QtGui.QApplication.translate("TabWidget", "Genetic data", None, QtGui.QApplication.UnicodeUTF8))
+        self.setGeneticButton.setToolTip(QtGui.QApplication.translate("TabWidget", "(Alt+g)", None, QtGui.QApplication.UnicodeUTF8))
         self.setGeneticButton.setText(QtGui.QApplication.translate("TabWidget", "            Set", None, QtGui.QApplication.UnicodeUTF8))
+        self.setGeneticButton.setShortcut(QtGui.QApplication.translate("TabWidget", "Alt+G", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tabRefTable), QtGui.QApplication.translate("TabWidget", "Reference table", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.setSortingEnabled(True)
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("TabWidget", "name", None, QtGui.QApplication.UnicodeUTF8))

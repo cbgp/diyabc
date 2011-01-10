@@ -10,6 +10,8 @@ from diyabc_ui import Ui_MainWindow
 from project import *
 
 class Diyabc(QMainWindow):
+    """ Classe principale qui est aussi la fenêtre principale de la GUI
+    """
     def __init__(self,parent=None):
         super(Diyabc,self).__init__(parent)
         self.createWidgets()
@@ -23,13 +25,13 @@ class Diyabc(QMainWindow):
         self.ui.tab_6.hide()
         self.ui.tabWidget.removeTab(0)
 
-        # manual alignment set
-        #self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)
-
+        # gestion du menu
         file_menu = self.ui.menubar.addMenu("File")
         file_menu.addAction("New Project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction("Open",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_O))
         file_menu.addAction("Save",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_S))
+        self.closeProjActionMenu = file_menu.addAction("Close current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
+        self.closeProjActionMenu.setDisabled(True)
         action = file_menu.addAction("Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
 	
 	#mettre plusieurs raccourcis claviers pour le meme menu
@@ -40,20 +42,34 @@ class Diyabc(QMainWindow):
         pass
 
     def newProject(self):
+        """ Création d'un projet
+        """
         text, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if ok:
             self.project_list.append(Project(self.ui,text,self))
+            # si c'est le premier projet, on permet la fermeture par le menu
+            if len(self.project_list) == 1:
+                self.closeProjActionMenu.setDisabled(False)
 
     def closeProject(self,index):
+        """ ferme le projet qui est à l'index "index" du tabWidget
+        """
         reply = QtGui.QMessageBox.question(self, 'Message',
             "Do you want to save the Project ?", QtGui.QMessageBox.Yes | 
             QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
-
+        
+        if self.ui.tabWidget.widget(index) != 0:
+            self.project_list.remove(self.ui.tabWidget.widget(index))
         self.ui.tabWidget.removeTab(index)
+        # si c'est le dernier projet, on désactive la fermeture par le menu
+        if len(self.project_list) == 0:
+            self.closeProjActionMenu.setDisabled(True)
 
+    def closeCurrentProject(self):
+        """ ferme le projet courant, celui de l'onglet séléctionné
+        """
+        self.closeProject(self.ui.tabWidget.currentIndex())
 
-
-        #QObject.connect(self.ui.lcdNumber,SIGNAL("sliderMoved(int)"),self.maj_prog)
     def closeEvent(self, event):
         reply = QtGui.QMessageBox.question(self, 'Message',
             "Are you sure to quit?", QtGui.QMessageBox.Yes | 

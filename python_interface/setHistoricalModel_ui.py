@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setHistoricalModel.ui'
 #
-# Created: Mon Jan 10 22:44:04 2011
+# Created: Mon Jan 10 23:24:45 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -194,8 +194,12 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        self.okButton.setToolTip(QtGui.QApplication.translate("MainWindow", "(Alt+o)", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setText(QtGui.QApplication.translate("MainWindow", "OK", None, QtGui.QApplication.UnicodeUTF8))
+        self.okButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+O", None, QtGui.QApplication.UnicodeUTF8))
+        self.addScButton.setToolTip(QtGui.QApplication.translate("MainWindow", "(Alt+a)", None, QtGui.QApplication.UnicodeUTF8))
         self.addScButton.setText(QtGui.QApplication.translate("MainWindow", "Add scenario", None, QtGui.QApplication.UnicodeUTF8))
+        self.addScButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+A", None, QtGui.QApplication.UnicodeUTF8))
         self.chkScButton.setText(QtGui.QApplication.translate("MainWindow", "Check scenario", None, QtGui.QApplication.UnicodeUTF8))
         self.defPrButton.setText(QtGui.QApplication.translate("MainWindow", "Define priors", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Scenario", None, QtGui.QApplication.UnicodeUTF8))

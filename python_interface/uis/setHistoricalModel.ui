@@ -22,8 +22,14 @@
         <pointsize>14</pointsize>
        </font>
       </property>
+      <property name="toolTip">
+       <string>(Alt+o)</string>
+      </property>
       <property name="text">
        <string>OK</string>
+      </property>
+      <property name="shortcut">
+       <string>Alt+O</string>
       </property>
      </widget>
     </item>
@@ -85,8 +91,14 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>(Alt+a)</string>
+           </property>
            <property name="text">
             <string>Add scenario</string>
+           </property>
+           <property name="shortcut">
+            <string>Alt+A</string>
            </property>
           </widget>
          </item>
