@@ -10,6 +10,7 @@ from PyQt4 import QtGui
 from diyabc_ui import Ui_MainWindow
 from project import *
 from project_ui import *
+from setHistoricalModel import setHistoricalModel
 
 class Project():
     def __init__(self,ui,name):
@@ -38,7 +39,7 @@ class Project():
 
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.addRow)
         QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
-        QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.changeIcon)
+        QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.setHistorical)
         QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.changeIcon)
         QObject.connect(self.ui.setSummaryButton,SIGNAL("clicked()"),self.changeIcon)
         QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
@@ -97,4 +98,9 @@ class Project():
                 print str(self.ui.tableWidget.rowCount()-1)+","+str(i)
             #self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,i).setText("new")
         #self.ui.tableWidget.insertRow(2)
+
+    def setHistorical(self):
+        self.tab.setDisabled(True)
+        self.hist_model_win = setHistoricalModel(self.tab)
+        self.hist_model_win.show()
 
