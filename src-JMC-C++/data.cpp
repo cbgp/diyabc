@@ -50,18 +50,6 @@ struct MissingNuc
 	int locus,sample,indiv,nuc;
 };
 
-struct DataC
-{
-	string filename,message,title,**indivname;
-	int nsample,nloc;
-	int *nind;
-	int **indivsexe;
-	double sexratio;
-	MissingHaplo *misshap;
-	MissingNuc   *missnuc;
-	LocusC *locus;
-};
-
 string majuscules(string s) {
 	string s2;
 	char *c;
@@ -74,60 +62,174 @@ string majuscules(string s) {
 	return s2;
 }
 
-DataC read_genepop(string filename) {
-	bool fin=false;
-	string s,s1,s2,locusname;
-	char c;
-	size_t j;
-	DataC gpdata;
-	stringstream out;
-	gpdata.filename = filename;
-	cout << gpdata.filename<<"\n";
-	ifstream file(filename.c_str(), ios::in);
-	if (file == NULL) {
-		gpdata.message = "File not found";
-		return gpdata;
-	}
-	getline(file,gpdata.title);
-	cout <<gpdata.title<<"\n";
-	gpdata.nloc=0;
-	while (not fin) {
-		getline(file,s);
-		s1=majuscules(s);
-		cout << s << "    " << s1 <<"\n";
-		if (s1.find("POP")==string::npos){	//il s'agit d'un nom de locus
-			gpdata.nloc +=1;
-			cout <<"nloc="<<gpdata.nloc<<"\n";
-			if (gpdata.nloc==1) gpdata.locus = (LocusC*) malloc(sizeof(LocusC));
-			else		        gpdata.locus = (LocusC*) realloc(gpdata.locus,gpdata.nloc*sizeof(LocusC));
-			cout <<"s = "<<s<< "\n";
-			j=s.find("<");
-			//cout <<"j="<<j<<"   npos="<<string::npos<<"\n";
-			if (j!=string::npos) {         //il y a un type de locus noté après le nom
-				s2=majuscules(s.substr(j+1,1));
-				if (s2=="A") gpdata.locus[gpdata.nloc-1].type=0; else
-					if (s2=="H") gpdata.locus[gpdata.nloc-1].type=1; else
-						if (s2=="X") gpdata.locus[gpdata.nloc-1].type=2; else
-							if (s2=="Y") gpdata.locus[gpdata.nloc-1].type=3; else
-								if (s2=="M") gpdata.locus[gpdata.nloc-1].type=4; else
-									{out << gpdata.nloc;
-									 gpdata.message="unrecoknized type at locus "+out.str();
-									 return gpdata;
-									}
-				s=s.substr(0,j-1);
+class DataC
+{
+public:
+	string message,title,**indivname,***genotype;
+	int nsample,nloc,nmisshap,nmissnuc;
+	int *nind;
+	int **indivsexe;
+	double sexratio;
+	MissingHaplo *misshap;
+	MissingNuc   *missnuc;
+	LocusC *locus;
+
+	DataC* readfile(string filename){
+		bool fin=false;
+		string s,s1,s2,locusname;
+		int ech,ind,nech,*nind;
+		char c;
+		size_t j;
+		stringstream out;
+		ifstream file(filename.c_str(), ios::in);
+		if (file == NULL) {
+			this->message = "File not found";
+			return this;
+		}
+		getline(file,this->title);
+		this->nloc=0;
+		while (not fin) {
+			getline(file,s);
+			s1=majuscules(s);
+			if (s1.find("POP")==string::npos){	//il s'agit d'un nom de locus
+				this->nloc +=1;
+				if (this->nloc==1) this->locus = (LocusC*) malloc(sizeof(LocusC));
+				else		        this->locus = (LocusC*) realloc(this->locus,this->nloc*sizeof(LocusC));
+				j=s.find("<");
+				if (j!=string::npos) {         //il y a un type de locus noté après le nom
+					s2=majuscules(s.substr(j+1,1));
+					if (s2=="A") this->locus[this->nloc-1].type=0; else
+						if (s2=="H") this->locus[this->nloc-1].type=1; else
+							if (s2=="X") this->locus[this->nloc-1].type=2; else
+								if (s2=="Y") this->locus[this->nloc-1].type=3; else
+									if (s2=="M") this->locus[this->nloc-1].type=4; else
+										{out << this->nloc;
+										 this->message="unrecoknized type at locus "+out.str();
+										 return this;
+										}
+					s=s.substr(0,j-1);
+				} else this->locus[this->nloc-1].type=0;
+				this->locus[this->nloc-1].name = new char[s.length()+1];
+				strncpy(this->locus[this->nloc-1].name, s.c_str(), s.length()+1);
+			} else fin=true;
+		}
+		nech=1;
+		nind = (int*) malloc(sizeof(int));
+		nind[0]=0;
+	    	getline(file,s);
+	    while (not file.eof()) {
+	    	s1=majuscules(s);
+	    	if (s1.find("POP")==string::npos){nind[nech-1] +=1;}
+	    	else {nech +=1;nind = (int*)realloc(nind,nech*sizeof(int));nind[nech-1]=0;}
+	    	getline(file,s);
+		}
+		file.close();
+		this->nsample=nech;
+		this->nind = new int[nech];
+		for (int i=0;i<nech;i++) {this->nind[i]=nind[i];}
+		this->indivname = new string*[nech];
+		this->indivsexe = new int*[nech];
+		this->genotype = new string**[nech];
+		for (int i=0;i<nech;i++) {
+			this->indivname[i]= new string[nind[i]];
+			this->indivsexe[i] = new int[nind[i]];
+			this->genotype[i] = new string*[nind[i]];
+			for(j=0;j<this->nind[i];j++) this->genotype[i][j] = new string[this->nloc];
+		}
+		ifstream file2(filename.c_str(), ios::in);
+		for (int i=0;i<this->nloc+1;i++) {getline(file2,s);}
+		for (ech=0;ech<this->nsample;ech++) {
+			getline(file2,s);  //ligne "POP"
+			for (ind=0;ind<this->nind[ech];ind++) {
+				getline(file2,s);
+				j=s.find(",");
+				this->indivname[ech][ind] = s.substr(0,j);
+				s = s.substr(j+1,s.length());
+			    istringstream iss(s);
+				for (int i=0;i<this->nloc;i++) {
+					iss >> this->genotype[ech][ind][i];
+					if ((this->genotype[ech][ind][i].find("[")!=string::npos)and(this->locus[i].type<5)) this->locus[i].type +=5;
+				}
 			}
-			gpdata.locus[gpdata.nloc-1].name = new char[s.length()+1];
-			strncpy(gpdata.locus[gpdata.nloc-1].name, s.c_str(), s.length()+1);
-			cout << gpdata.locus[gpdata.nloc-1].name<<"\n";
-		} else fin=true;
+		}
+		file2.close();
 	}
-	gpdata.nsample=0;
 
-	return gpdata;
-}
+    void do_microsat(int loc){
+    	string geno,gen[2];
+    	int l,n,gg;
+    	this->locus[loc].haplomic =(int**)malloc(this->nsample*sizeof(int*));
+    	this->locus[loc].ssmic = new int[this->nsample];
+    	this->locus[loc].samplesize = new int[this->nsample];
+    	for (int ech=0;ech<this->nsample;ech++){
+    		this->locus[loc].ssmic[ech] = 0;
+    		this->locus[loc].samplesize[ech] = 0;
+    		for (int ind=0;ind<this->nind[ech];ind++){
+    			geno=this->genotype[ech][ind][loc];
+    			l=geno.length();
+    			if (l>3) n=2; else n=1;
+    			if (n==2) {
+    				gen[0]=geno.substr(0,l/2);
+    				gen[1]=geno.substr(l/2,l/2);
+    				this->locus[loc].ssmic +=2;
+    			}
+    			else {
+    				gen[0]=geno;
+    				if (this->locus[loc].type==2) this->indivsexe[ech][ind]=1;
+    			    if ((this->locus[loc].type==2)and(geno!="000")) this->indivsexe[ech][ind]=1;
+    			    this->locus[loc].ssmic +=1;
+    			}
+    			for (int i=0;i<n;i++) {
+    				if (gen[i]!="000") {
+    					this->locus[loc].samplesize[ech] +=1;
+    					gg = atoi(gen[i].c_str());
+    					if (this->locus[loc].samplesize[ech] ==1) this->locus[loc].haplomic[ech]=(int*)malloc(sizeof(int));
+    					else                                 this->locus[loc].haplomic[ech]=(int*)realloc(this->locus[loc].haplomic[ech],this->locus[loc].samplesize[ech]*sizeof(int));
+    					this->locus[loc].haplomic[ech][this->locus[loc].samplesize[ech]-1] = gg;
+    					if (gg>this->locus[loc].maxi) this->locus[loc].maxi=gg;
+    					if (gg<this->locus[loc].mini) this->locus[loc].mini=gg;
+    				} else {
+    					this->nmisshap +=1;
+    					if (this->nmisshap==1) this->misshap = (MissingHaplo*)malloc(sizeof(MissingHaplo));
+    					else                   this->misshap = (MissingHaplo*)realloc(this->misshap,this->nmisshap*sizeof(MissingHaplo));
+    					this->misshap[this->nmisshap-1].sample=ech;
+    					this->misshap[this->nmisshap-1].locus=loc;
+    					this->misshap[this->nmisshap-1].indiv=ind;
+    				}
+    			}
+    		}
 
+    	}
+    }
+
+
+    void do_sequence(int loc){
+
+    }
+
+	DataC * loadfromfile(string filename) {
+		this->readfile(filename);
+		this->nmisshap=0;
+		this->nmissnuc=0;
+		for (int loc=0;loc<this->nloc;loc++) {
+			if (this->locus[loc].type<5) this->do_microsat(loc);
+			else                         this->do_sequence(loc);
+		}
+	}
+};
 
 int main(){
 	DataC data;
-	data = read_genepop("datatest1.txt");
+//	data = loadfromfile("datatest1.txt");
+	data.readfile("datatest1.txt");
+	cout << data.title << "\nnloc = "<<data.nloc<<"\n";
+	for (int i=0;i<data.nloc;i++) cout << data.locus[i].name <<"\n";
+	for (int i=0;i<data.nsample;i++) cout << data.nind[i] <<"\n";
+	for (int ech=0;ech<data.nsample;ech++) {
+		for (int ind=0;ind<data.nind[ech];ind++) {
+			cout << data.indivname[ech][ind]<<"   ";
+			for (int loc=0;loc<data.nloc;loc++) cout <<data.genotype[ech][ind][loc]<<"  ";
+			cout <<"\n";
+		}
+	}
 }
