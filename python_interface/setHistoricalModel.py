@@ -22,8 +22,13 @@ class setHistoricalModel(QMainWindow):
 
         # liste des scenarios non effacés
         self.scList = []
+        self.rpList = []
 
     def addSc(self):
+        
+        # le numero du nouveau scenario est la taille du tableau actuel de scenarios
+        num_scenario = len(self.scList)
+        
         # creation de la groupbox a ajouter
         groupBox = QtGui.QGroupBox(self.ui.scScrollContent)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
@@ -31,7 +36,7 @@ class setHistoricalModel(QMainWindow):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(groupBox.sizePolicy().hasHeightForWidth())
         groupBox.setSizePolicy(sizePolicy)
-        groupBox.setObjectName("groupBox_"+str(len(self.scList)))
+        groupBox.setObjectName("groupBox_"+str(num_scenario))
         verticalLayout_6 = QtGui.QVBoxLayout(groupBox)
         verticalLayout_6.setObjectName("verticalLayout_6")
         horizontalLayout_6 = QtGui.QHBoxLayout()
@@ -60,12 +65,48 @@ class setHistoricalModel(QMainWindow):
         # evennement de suppression du scenario
         QObject.connect(pushButton_6,SIGNAL("clicked()"),self.rmSc)
 
+        # ajout du scenario dans la liste locale (plus facile à manipuler)
         self.scList.append(groupBox)
+
+        # ajout de la groupbox de repartition
+        groupBox_r = QtGui.QGroupBox(self.ui.repScrollContent)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(groupBox_r.sizePolicy().hasHeightForWidth())
+        groupBox_r.setSizePolicy(sizePolicy)
+        groupBox_r.setMaximumSize(QtCore.QSize(16777215, 50))
+        groupBox_r.setObjectName("groupBox_r")
+        verticalLayout_6 = QtGui.QVBoxLayout(groupBox_r)
+        verticalLayout_6.setObjectName("verticalLayout_6")
+        label_3 = QtGui.QLabel("scenario "+str(num_scenario),groupBox_r)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(label_3.sizePolicy().hasHeightForWidth())
+        label_3.setSizePolicy(sizePolicy)
+        label_3.setObjectName("rpLabel")
+        verticalLayout_6.addWidget(label_3)
+        lineEdit = QtGui.QLineEdit(groupBox_r)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(lineEdit.sizePolicy().hasHeightForWidth())
+        lineEdit.setSizePolicy(sizePolicy)
+        lineEdit.setMinimumSize(QtCore.QSize(0, 26))
+        lineEdit.setMaximumSize(QtCore.QSize(40, 26))
+        lineEdit.setObjectName("lineEdit")
+        verticalLayout_6.addWidget(lineEdit)
+        self.ui.horizontalLayout_6.addWidget(groupBox_r)
+
+        # ajout des rp dans la liste locale (plus facile à manipuler)
+        self.rpList.append(groupBox_r)
 
     def rmSc(self):
         """ Suppression d'un scenario dans l'affichage et dans la liste locale
         """
         self.sender().parent().hide()
+        num_scenar = self.scList.index(self.sender().parent())
         self.scList.remove(self.sender().parent())
         ## mise a jour des index dans le label
         for i in range(len(self.scList)):
@@ -73,6 +114,10 @@ class setHistoricalModel(QMainWindow):
             # manière moins sure mais tout de même intéressante dans le principe
             #self.scList[i].layout().itemAt(0).layout().itemAt(0).widget().setText("scenario %i"% i)
 
+        # suppression et disparition de l'indice de répartition pour le scenario à supprimer
+        self.rpList.pop(num_scenar).hide()
+        for i in range(len(self.rpList)):
+            self.rpList[i].findChild(QLabel,"rpLabel").setText("scenario %i"% i)
 
     def closeEvent(self, event):
         self.parent.setDisabled(False)
