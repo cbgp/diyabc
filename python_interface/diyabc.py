@@ -9,9 +9,9 @@ from PyQt4 import QtGui
 from diyabc_ui import Ui_MainWindow
 from project import *
 
-class MainWindowTest(QMainWindow):
+class Diyabc(QMainWindow):
     def __init__(self,parent=None):
-        super(MainWindowTest,self).__init__(parent)
+        super(Diyabc,self).__init__(parent)
         self.createWidgets()
         self.project_list = []
 
@@ -66,7 +66,7 @@ class MainWindowTest(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    myapp = MainWindowTest()
+    myapp = Diyabc()
     myapp.show()
     sys.exit(app.exec_())
 
