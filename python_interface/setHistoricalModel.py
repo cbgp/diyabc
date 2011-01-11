@@ -169,7 +169,7 @@ class setHistoricalModel(QMainWindow):
         groupBox_cond.setObjectName("groupBox_6")
         verticalLayout_2 = QtGui.QVBoxLayout(groupBox_cond)
         verticalLayout_2.setObjectName("verticalLayout_2")
-        label_2 = QtGui.QLabel(str(len(self.condList)),groupBox_cond)
+        label_2 = QtGui.QLabel(cond_str,groupBox_cond)
         label_2.setObjectName("condLabel")
         label_2.setAlignment(QtCore.Qt.AlignCenter)
         verticalLayout_2.addWidget(label_2)
@@ -311,10 +311,17 @@ class setHistoricalModel(QMainWindow):
         # liste locale des paramètres
         self.paramList.append(groupBox_8)
 
-        if type_param != "conditionable":
-            setCondButton.hide()
+        #if type_param != "conditionable":
+        #    setCondButton.hide()
 
+        # evennement d'ajout d'une condition sur un paramètre
+        QObject.connect(setCondButton,SIGNAL("clicked()"),self.setCondition)
 
+    def setCondition(self):
+        """ methode qui receptionne l'evennement du clic sur "set condition"
+        ajout d'une condition sur un paramètre ou une paire de paramètres
+        """
+        self.addCondition(self.sender().parent().findChild(QLabel,"paramNameLabel").text())
 
     def closeEvent(self, event):
         # gestion des valeurs
@@ -327,4 +334,4 @@ class setHistoricalModel(QMainWindow):
         pluriel = ""
         if nb_params > 1:
             pluriel = "s"
-        self.parent.setNbParams("%i paramter%s"%(nb_params,pluriel))
+        self.parent.setNbParams("%i parameter%s"%(nb_params,pluriel))
