@@ -4,8 +4,8 @@ Created on 8 oct. 2009
 @author: cornuet
 '''
 import copy
-import diyabc_utils
 import param
+from param import isaninteger, isafloat
 
 class Error(Exception):
     """Base class for exceptions in this module"""
@@ -225,7 +225,7 @@ class Scenario(object):
         for l in ls :
             NN = Ne0()
             NNc = Ne0()
-            if diyabc_utils.isaninteger(l): NN.name, NN.val, NNc.name, NNc.val = str(l),int(l),str(l),int(l)
+            if isaninteger(l): NN.name, NN.val, NNc.name, NNc.val = str(l),int(l),str(l),int(l)
             else                          : NN.name, NN.val, NNc.name, NNc.val = l, None, l, None
             self.history.ne0s.append(NN)
             Ncur.append(NNc)
@@ -269,9 +269,9 @@ class Scenario(object):
                         nevent +=1
                         self.cevent.action = "SAMPLE"
                         self.cevent.stime = litem[0]
-                        if diyabc_utils.isaninteger(litem[0]) : self.cevent.time = int(litem[0])
+                        if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
-                        if diyabc_utils.isaninteger(litem[2]):
+                        if isaninteger(litem[2]):
                             self.cevent.pop = int(litem[2]) 
                         else :
                             raise IOScreenError, "Unable to read population number on line {0} of scenario {1}".format(jli0+1,self.number)
@@ -288,13 +288,13 @@ class Scenario(object):
                         nevent +=1
                         self.cevent.action = "VARNE"
                         self.cevent.stime = litem[0]
-                        if diyabc_utils.isaninteger(litem[0]) : self.cevent.time = int(litem[0])
+                        if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
-                        if diyabc_utils.isaninteger(litem[2]):
+                        if isaninteger(litem[2]):
                             self.cevent.pop = int(litem[2]) 
                         else :
                             raise IOScreenError, "Unable to read population number on line {0} of scenario {1}".format(jli0+1,self.number)
-                        if diyabc_utils.isaninteger(litem[3]):
+                        if isaninteger(litem[3]):
                             self.cevent.Ne = int(litem[3]);self.cevent.sNe = None
                         else :
                             self.cevent.sNe = litem[3];self.cevent.Ne = None
@@ -309,13 +309,13 @@ class Scenario(object):
                         nevent +=1
                         self.cevent.action = "MERGE"
                         self.cevent.stime = litem[0]
-                        if diyabc_utils.isaninteger(litem[0]) : self.cevent.time = int(litem[0])
+                        if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
-                        if diyabc_utils.isaninteger(litem[2]):
+                        if isaninteger(litem[2]):
                             self.cevent.pop = int(litem[2]) 
                         else :
                             raise IOScreenError, "Unable to read the first population number on line {0} of scenario {1}".format(jli0+1,self.number)
-                        if diyabc_utils.isaninteger(litem[3]):
+                        if isaninteger(litem[3]):
                             self.cevent.pop1 = int(litem[3]) 
                         else :
                             raise IOScreenError, "Unable to read the second population number on line {0} of scenario {1}".format(jli0+1,self.number)
@@ -329,21 +329,21 @@ class Scenario(object):
                         nevent +=1
                         self.cevent.action = "SPLIT"
                         self.cevent.stime = litem[0]
-                        if diyabc_utils.isaninteger(litem[0]) : self.cevent.time = int(litem[0])
+                        if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
-                        if diyabc_utils.isaninteger(litem[2]):
+                        if isaninteger(litem[2]):
                             self.cevent.pop = int(litem[2]) 
                         else :
                             raise IOScreenError, "Unable to read the first population number on line {0} of scenario {1}".format(jli0+1,self.number)
-                        if diyabc_utils.isaninteger(litem[3]):
+                        if isaninteger(litem[3]):
                             self.cevent.pop1 = int(litem[3]) 
                         else :
                             raise IOScreenError, "Unable to read the second population number on line {0} of scenario {1}".format(jli0+1,self.number)
-                        if diyabc_utils.isaninteger(litem[4]):
+                        if isaninteger(litem[4]):
                             self.cevent.pop2 = int(litem[4]) 
                         else :
                             raise IOScreenError, "Unable to read the third population number on line {0} of scenario {1}".format(jli0+1,self.number)
-                        if diyabc_utils.isafloat(litem[5]):
+                        if isafloat(litem[5]):
                             self.cevent.admixrate = float(litem[5]) 
                         else :
                             self.cevent.sadmixrate = litem[5]

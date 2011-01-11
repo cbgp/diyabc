@@ -5,8 +5,20 @@ Created on 24 sept. 2009
 '''
 
 from math import log as _log, exp as _exp
-from diyabc_utils import isaninteger, isafloat
 
+def isaninteger(s): 
+    try: 
+        a=int(s) 
+        return True 
+    except: 
+        return False 
+ 
+def isafloat(s): 
+    try: 
+        a=float(s) 
+        return True 
+    except: 
+        return False 
 
 class Particle(object):
     def __init__(self,scenario=None,histparam=None,locuslist=None,locusgrouplist=None,statlist=None,dnatrue=None):
