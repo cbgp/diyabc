@@ -15,6 +15,7 @@ from setHistoricalModel import setHistoricalModel
 class Project(QTabWidget):
     def __init__(self,ui,name,parent=None):
         self.mainUi = ui
+        self.name=name
         self.hist_state = 0
 
         # utile seulement si on derive de QTabWidget

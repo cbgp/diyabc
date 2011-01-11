@@ -46,10 +46,19 @@ class Diyabc(QMainWindow):
         """
         text, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if ok:
-            self.project_list.append(Project(self.ui,text,self))
-            # si c'est le premier projet, on permet la fermeture par le menu
-            if len(self.project_list) == 1:
-                self.closeProjActionMenu.setDisabled(False)
+            if text != "":
+                proj_name_list = []
+                for p in self.project_list:
+                    proj_name_list.append(p.name)
+                if not text in proj_name_list:
+                    self.project_list.append(Project(self.ui,text,self))
+                    # si c'est le premier projet, on permet la fermeture par le menu
+                    if len(self.project_list) == 1:
+                        self.closeProjActionMenu.setDisabled(False)
+                else:
+                    QMessageBox.information(self,"Name error","A project named %s is already loaded."%text)
+            else:
+                QMessageBox.information(self,"Name error","The project name cannot be empty.")
 
     def closeProject(self,index):
         """ ferme le projet qui est à l'index "index" du tabWidget
