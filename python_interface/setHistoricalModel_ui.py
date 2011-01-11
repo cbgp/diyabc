@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setHistoricalModel.ui'
 #
-# Created: Tue Jan 11 13:50:26 2011
+# Created: Tue Jan 11 13:56:19 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,6 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
+        MainWindow.setWindowModality(QtCore.Qt.WindowModal)
         MainWindow.resize(977, 707)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")

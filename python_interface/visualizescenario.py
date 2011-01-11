@@ -661,7 +661,7 @@ class PopTree(object):
             
 def testCheckScenario():
 #    ts = ['N1 N2 N3', '0 sample 1', '0 sample 2', '0 sample 3', '50 split 3 1 2 lambda', "100 merge 1 2"]
-    ts = ['N1 N2 N3 N4','0 sample 1', '0 sample 2', '0 sample 3','0 sample 4','t1 split 2 5 3 r1','t2 merge 1 5','t3 split 3 1 4 r2','t4 merge 1 4']
+    ts = ['N1 N2 N3 N4 N5','0 sample 1', '0 sample 2', '0 sample 3','0 sample 4','t1 split 2 5 3 r1','t2 merge 1 5','t3 split 3 1 4 r2','t4 merge 1 4']
     print ts
     s = history.Scenario()
     s.checkread(ts)

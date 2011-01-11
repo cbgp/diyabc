@@ -99,7 +99,6 @@ class Project(QTabWidget):
         #self.ui.tableWidget.insertRow(2)
 
     def setHistorical(self):
-        self.setDisabled(True)
         self.hist_model_win = setHistoricalModel(self)
         self.hist_model_win.show()
 

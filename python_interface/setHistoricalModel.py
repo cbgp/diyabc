@@ -8,6 +8,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from setHistoricalModel_ui import Ui_MainWindow
+from drawScenario import drawScenario
 
 class setHistoricalModel(QMainWindow):
     def __init__(self,parent=None):
@@ -21,8 +22,10 @@ class setHistoricalModel(QMainWindow):
         QObject.connect(self.ui.addScButton,SIGNAL("clicked()"),self.addSc)
         QObject.connect(self.ui.uniformRadio,SIGNAL("clicked()"),self.setUniformRp)
         QObject.connect(self.ui.otherRadio,SIGNAL("clicked()"),self.setOtherRp)
-        QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.addCondition)
+        #TODO
+        #QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.addCondition)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.close)
+        QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.drawScenarios)
 
         # liste des scenarios, pourcentages et conditions non effacés
         self.scList = []
@@ -62,7 +65,7 @@ class setHistoricalModel(QMainWindow):
         verticalLayout_6.addLayout(horizontalLayout_6)
         plainTextEdit = QtGui.QPlainTextEdit(groupBox)
         plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
-        plainTextEdit.setObjectName("plainTextEdit")
+        plainTextEdit.setObjectName("scplainTextEdit")
         verticalLayout_6.addWidget(plainTextEdit)
         # ajout de la groupbox
         self.ui.horizontalLayout_3.addWidget(groupBox)
@@ -131,6 +134,8 @@ class setHistoricalModel(QMainWindow):
             self.setUniformRp()
 
     def setUniformRp(self):
+        """ met les pourcentages à une valeur identique 
+        """
         if len(self.scList) != 0:
             val = 1.0/float(len(self.scList))
             # pour chaque pourcentage
@@ -142,6 +147,8 @@ class setHistoricalModel(QMainWindow):
             
 
     def setOtherRp(self):
+        """ redonne la possibilité de modifier à sa guise les pourcentages
+        """
         for rp in self.rpList:
             lineEdit = rp.findChild(QLineEdit,"rpEdit")
             lineEdit.setDisabled(False)
@@ -185,10 +192,21 @@ class setHistoricalModel(QMainWindow):
         self.sender().parent().hide()
         self.condList.remove(self.sender().parent())
 
+    def drawScenarios(self):
+        """ lance la fenetre ou se trouveront les graphes des scenarios
+        """
+        # construction de la liste de scenarios
+        sc_txt_list = []
+        for sc in self.scList:
+            sc_txt_list.append(str(sc.findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()))
+            #print sc_txt_list
+        # creation de la fenêtre
+        self.draw_sc_win = drawScenario(sc_txt_list,self)
+        self.draw_sc_win.show()
+
+
 
     def closeEvent(self, event):
-        self.parent.setDisabled(False)
-
         # gestion des valeurs
         nb_sc = len(self.scList)
         pluriel = ""
