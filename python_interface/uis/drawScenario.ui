@@ -43,14 +43,14 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="printButton">
          <property name="text">
           <string>PRINT</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="saveButton">
          <property name="text">
           <string>SAVE</string>
          </property>
@@ -89,8 +89,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>780</width>
-         <height>466</height>
+         <width>778</width>
+         <height>467</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -109,7 +109,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

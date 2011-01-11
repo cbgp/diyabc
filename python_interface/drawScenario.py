@@ -44,6 +44,7 @@ class drawScenario(QMainWindow):
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.close)
+        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.saveDraws)
 
     def addDraw(self,segments):
         pix = QPixmap(400,400)
@@ -60,6 +61,12 @@ class drawScenario(QMainWindow):
         label = QLabel()
         label.setPixmap(pix)
         self.ui.horizontalLayout_2.addWidget(label)
+
+    def saveDraws(self):
+        for ind,pix in enumerate(self.pixList):
+            im = pix.toImage()
+            im.save("/tmp/im_%i.jpg"%ind)
+            print 'sauvé dans /tmp/im_%i.jpg'%ind
 
     def closeEvent(self, event):
         pass

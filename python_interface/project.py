@@ -104,3 +104,5 @@ class Project(QTabWidget):
 
     def setNbScenarios(self,nb):
         self.ui.nbScLabel.setText(nb)
+    def setNbParams(self,nb):
+        self.ui.nbParamLabel.setText(nb)

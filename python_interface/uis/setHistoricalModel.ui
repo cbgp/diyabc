@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>977</width>
-    <height>707</height>
+    <height>850</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,8 +88,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>813</width>
-            <height>198</height>
+            <width>819</width>
+            <height>196</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_3"/>
@@ -265,8 +265,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>742</width>
-            <height>93</height>
+            <width>761</width>
+            <height>96</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_6"/>
@@ -585,10 +585,22 @@
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox_8">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>120</height>
+           <height>70</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>70</height>
           </size>
          </property>
          <property name="title">
@@ -850,8 +862,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>931</width>
-            <height>98</height>
+            <width>933</width>
+            <height>96</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2"/>
@@ -905,7 +917,7 @@
      <x>0</x>
      <y>0</y>
      <width>977</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

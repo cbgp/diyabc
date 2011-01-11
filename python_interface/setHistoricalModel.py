@@ -14,6 +14,12 @@ class setHistoricalModel(QMainWindow):
     def __init__(self,parent=None):
         super(setHistoricalModel,self).__init__(parent)
         self.parent=parent
+        # liste des scenarios, pourcentages et conditions non effacés
+        self.scList = []
+        self.rpList = []
+        self.condList = []
+        self.paramList = []
+
         self.createWidgets()
 
     def createWidgets(self):
@@ -27,11 +33,10 @@ class setHistoricalModel(QMainWindow):
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.close)
         QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.drawScenarios)
 
-        # liste des scenarios, pourcentages et conditions non effacés
-        self.scList = []
-        self.rpList = []
-        self.condList = []
-
+        self.addParamGui("plop","plop")
+        self.addParamGui("plop","plop")
+        self.addParamGui("plop","plop")
+        self.addParamGui("plop","plop")
     def addSc(self):
         
         # le numero du nouveau scenario est la taille du tableau actuel de scenarios
@@ -204,6 +209,111 @@ class setHistoricalModel(QMainWindow):
         self.draw_sc_win = drawScenario(sc_txt_list,self)
         self.draw_sc_win.show()
 
+    def addParamGui(self,name,type_param):
+        groupBox_8 = QtGui.QGroupBox(self.ui.groupBox_3)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(groupBox_8.sizePolicy().hasHeightForWidth())
+        groupBox_8.setSizePolicy(sizePolicy)
+        groupBox_8.setMinimumSize(QtCore.QSize(0, 70))
+        groupBox_8.setMaximumSize(QtCore.QSize(16777215, 70))
+        groupBox_8.setObjectName("groupBox_8")
+        horizontalLayout_13 = QtGui.QHBoxLayout(groupBox_8)
+        horizontalLayout_13.setObjectName("horizontalLayout_13")
+        groupBox_9 = QtGui.QGroupBox(groupBox_8)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(groupBox_9.sizePolicy().hasHeightForWidth())
+        groupBox_9.setSizePolicy(sizePolicy)
+        groupBox_9.setMinimumSize(QtCore.QSize(140, 50))
+        groupBox_9.setMaximumSize(QtCore.QSize(140, 50))
+        groupBox_9.setObjectName("groupBox_9")
+        horizontalLayout_8 = QtGui.QHBoxLayout(groupBox_9)
+        horizontalLayout_8.setObjectName("horizontalLayout_8")
+        paramNameLabel = QtGui.QLabel(name,groupBox_9)
+        paramNameLabel.setObjectName("paramNameLabel")
+        horizontalLayout_8.addWidget(paramNameLabel)
+        setCondButton = QtGui.QPushButton("set\ncondition",groupBox_9)
+        setCondButton.setObjectName("setCondButton")
+        horizontalLayout_8.addWidget(setCondButton)
+        horizontalLayout_13.addWidget(groupBox_9)
+        groupBox_10 = QtGui.QGroupBox(groupBox_8)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(groupBox_10.sizePolicy().hasHeightForWidth())
+        groupBox_10.setSizePolicy(sizePolicy)
+        groupBox_10.setMinimumSize(QtCore.QSize(290, 50))
+        groupBox_10.setMaximumSize(QtCore.QSize(290, 50))
+        groupBox_10.setObjectName("groupBox_10")
+        horizontalLayout_9 = QtGui.QHBoxLayout(groupBox_10)
+        horizontalLayout_9.setObjectName("horizontalLayout_9")
+        uniformParamRadio = QtGui.QRadioButton(groupBox_10)
+        uniformParamRadio.setChecked(True)
+        uniformParamRadio.setObjectName("uniformParamRadio")
+        horizontalLayout_9.addWidget(uniformParamRadio)
+        logUniformRadio = QtGui.QRadioButton(groupBox_10)
+        logUniformRadio.setObjectName("logUniformRadio")
+        horizontalLayout_9.addWidget(logUniformRadio)
+        normalRadio = QtGui.QRadioButton(groupBox_10)
+        normalRadio.setObjectName("normalRadio")
+        horizontalLayout_9.addWidget(normalRadio)
+        logNormalRadio = QtGui.QRadioButton(groupBox_10)
+        logNormalRadio.setObjectName("logNormalRadio")
+        horizontalLayout_9.addWidget(logNormalRadio)
+        horizontalLayout_13.addWidget(groupBox_10)
+        groupBox_14 = QtGui.QGroupBox(groupBox_8)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(groupBox_14.sizePolicy().hasHeightForWidth())
+        groupBox_14.setSizePolicy(sizePolicy)
+        groupBox_14.setMinimumSize(QtCore.QSize(0, 50))
+        groupBox_14.setMaximumSize(QtCore.QSize(16777215, 50))
+        groupBox_14.setObjectName("groupBox_14")
+        horizontalLayout_10 = QtGui.QHBoxLayout(groupBox_14)
+        horizontalLayout_10.setObjectName("horizontalLayout_10")
+        minValueParamEdit = QtGui.QLineEdit(groupBox_14)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(minValueParamEdit.sizePolicy().hasHeightForWidth())
+        minValueParamEdit.setSizePolicy(sizePolicy)
+        minValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
+        minValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
+        minValueParamEdit.setObjectName("minValueParamEdit")
+        horizontalLayout_10.addWidget(minValueParamEdit)
+        maxValueParamEdit = QtGui.QLineEdit(groupBox_14)
+        maxValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
+        maxValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
+        maxValueParamEdit.setObjectName("maxValueParamEdit")
+        horizontalLayout_10.addWidget(maxValueParamEdit)
+        meanValueParamEdit = QtGui.QLineEdit(groupBox_14)
+        meanValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
+        meanValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
+        meanValueParamEdit.setObjectName("meanValueParamEdit")
+        horizontalLayout_10.addWidget(meanValueParamEdit)
+        stValueParamEdit = QtGui.QLineEdit(groupBox_14)
+        stValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
+        stValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
+        stValueParamEdit.setObjectName("stValueParamEdit")
+        horizontalLayout_10.addWidget(stValueParamEdit)
+        stepValueParamEdit = QtGui.QLineEdit(groupBox_14)
+        stepValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
+        stepValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
+        stepValueParamEdit.setObjectName("stepValueParamEdit")
+        horizontalLayout_10.addWidget(stepValueParamEdit)
+        horizontalLayout_13.addWidget(groupBox_14)
+        self.ui.verticalLayout_2.addWidget(groupBox_8)
+
+        # liste locale des paramètres
+        self.paramList.append(groupBox_8)
+
+        if type_param != "conditionable":
+            setCondButton.hide()
+
 
 
     def closeEvent(self, event):
@@ -213,3 +323,8 @@ class setHistoricalModel(QMainWindow):
         if nb_sc > 1:
             pluriel = "s"
         self.parent.setNbScenarios("%i scenario%s"%(nb_sc,pluriel))
+        nb_params = len(self.paramList)
+        pluriel = ""
+        if nb_params > 1:
+            pluriel = "s"
+        self.parent.setNbParams("%i paramter%s"%(nb_params,pluriel))

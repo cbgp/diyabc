@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'uis/drawScenario.ui'
 #
-# Created: Tue Jan 11 14:22:53 2011
-#      by: PyQt4 UI code generator 4.6
+# Created: Tue Jan 11 19:08:37 2011
+#      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,15 +26,16 @@ class Ui_MainWindow(object):
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setMinimumSize(QtCore.QSize(0, 60))
         self.groupBox.setMaximumSize(QtCore.QSize(16777215, 60))
+        self.groupBox.setTitle("")
         self.groupBox.setObjectName("groupBox")
         self.horizontalLayout = QtGui.QHBoxLayout(self.groupBox)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.pushButton = QtGui.QPushButton(self.groupBox)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.pushButton)
-        self.pushButton_2 = QtGui.QPushButton(self.groupBox)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.horizontalLayout.addWidget(self.pushButton_2)
+        self.printButton = QtGui.QPushButton(self.groupBox)
+        self.printButton.setObjectName("printButton")
+        self.horizontalLayout.addWidget(self.printButton)
+        self.saveButton = QtGui.QPushButton(self.groupBox)
+        self.saveButton.setObjectName("saveButton")
+        self.horizontalLayout.addWidget(self.saveButton)
         spacerItem = QtGui.QSpacerItem(480, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.closeButton = QtGui.QPushButton(self.groupBox)
@@ -45,7 +46,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 780, 466))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 778, 467))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -56,7 +57,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.scrollArea)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 23))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
@@ -68,7 +69,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("MainWindow", "PRINT", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_2.setText(QtGui.QApplication.translate("MainWindow", "SAVE", None, QtGui.QApplication.UnicodeUTF8))
+        self.printButton.setText(QtGui.QApplication.translate("MainWindow", "PRINT", None, QtGui.QApplication.UnicodeUTF8))
+        self.saveButton.setText(QtGui.QApplication.translate("MainWindow", "SAVE", None, QtGui.QApplication.UnicodeUTF8))
         self.closeButton.setText(QtGui.QApplication.translate("MainWindow", "CLOSE", None, QtGui.QApplication.UnicodeUTF8))
 
