@@ -32,7 +32,7 @@ class setHistoricalModel(QMainWindow):
     def addSc(self):
         
         # le numero du nouveau scenario est la taille du tableau actuel de scenarios
-        num_scenario = len(self.scList)
+        num_scenario = len(self.scList)+1
         
         # creation de la groupbox a ajouter
         groupBox = QtGui.QGroupBox(self.ui.scScrollContent)
@@ -46,7 +46,7 @@ class setHistoricalModel(QMainWindow):
         verticalLayout_6.setObjectName("verticalLayout_6")
         horizontalLayout_6 = QtGui.QHBoxLayout()
         horizontalLayout_6.setObjectName("horizontalLayout_6")
-        label_3 = QtGui.QLabel("scenario "+str(len(self.scList)),groupBox)
+        label_3 = QtGui.QLabel("scenario %i"%num_scenario,groupBox)
         # ne mettre qu'un seul label du nom scLabel pour pouvoir le retrouver avec findChild()
         label_3.setObjectName("scLabel")
         horizontalLayout_6.addWidget(label_3)
@@ -118,14 +118,14 @@ class setHistoricalModel(QMainWindow):
         self.scList.remove(self.sender().parent())
         ## mise a jour des index dans le label
         for i in range(len(self.scList)):
-            self.scList[i].findChild(QLabel,"scLabel").setText("scenario %i"% i)
+            self.scList[i].findChild(QLabel,"scLabel").setText("scenario %i"% (i+1))
             # manière moins sure mais tout de même intéressante dans le principe
             #self.scList[i].layout().itemAt(0).layout().itemAt(0).widget().setText("scenario %i"% i)
 
         # suppression et disparition de l'indice de répartition pour le scenario à supprimer
         self.rpList.pop(num_scenar).hide()
         for i in range(len(self.rpList)):
-            self.rpList[i].findChild(QLabel,"rpLabel").setText("scenario %i"% i)
+            self.rpList[i].findChild(QLabel,"rpLabel").setText("scenario %i"% (i+1))
 
         if self.ui.uniformRadio.isChecked():
             self.setUniformRp()
