@@ -216,13 +216,29 @@ class setHistoricalModel(QMainWindow):
             QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
     def putParameters(self,chk_list):
         """ A partir de la liste des scenarios (vérifiés donc valides), on ajoute les paramètres dans la GUI
+        La liste de paramètres est vidée avant cette opération
         """
+        # on enleve les groupbox de la GUI
+        for paramBox in self.paramList:
+            paramBox.hide()
+            self.ui.verticalLayout_2.removeWidget(paramBox)
+        # on vide la liste locale de paramètres
+        self.paramList = []
         dico_parameters = {}
+        dico_count_per_category = {}
         for sc in chk_list:
             for param in sc["checker"].parameters:
                 dico_parameters[param.name] = param.category
+                # on compte le nombre de param dans chaque categorie
+                if dico_count_per_category.has_key(param.category):
+                    dico_count_per_category[param.category] += 1
+                else:
+                    dico_count_per_category[param.category] = 1
         for pname in dico_parameters.keys():
-            self.addParamGui(pname, dico_parameters[pname])
+            if dico_count_per_category[dico_parameters[pname]] > 1:
+                self.addParamGui(pname,"multiple")
+            else:
+                self.addParamGui(pname,"unique")
 
 
 
@@ -376,8 +392,8 @@ class setHistoricalModel(QMainWindow):
         # liste locale des paramètres
         self.paramList.append(groupBox_8)
 
-        #if type_param != "conditionable":
-        #    setCondButton.hide()
+        if type_param == "unique":
+            setCondButton.hide()
 
         # evennement d'ajout d'une condition sur un paramètre
         QObject.connect(setCondButton,SIGNAL("clicked()"),self.setCondition)
