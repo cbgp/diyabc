@@ -20,8 +20,18 @@ class drawScenario(QMainWindow):
         self.sc_txt_list = sc_txt_list
         self.pixList = []    
 
+
+
+    def createWidgets(self):
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.close)
+        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.saveDraws)
+
+    def drawAll(self):
         for num,sc in enumerate(self.sc_txt_list):
-            scChecker = history.Scenario(number=num)
+            scChecker = history.Scenario(number=num+1)
             try:
                 scChecker.checkread(sc.split('\n'))
                 scChecker.checklogic()
@@ -35,26 +45,22 @@ class drawScenario(QMainWindow):
                 for s in t.segments: 
                     print s
                     print type(s)
-                self.addDraw(t.segments,scChecker)
+                self.addDraw(t.segments,scChecker,t)
             except IOScreenError, e:
                 print "Un scenario a une erreur : ", e
+                QMessageBox.information(self,"Scenario error","%s"%e)
+                self.close()
 
-    def createWidgets(self):
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
 
-        QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.close)
-        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.saveDraws)
-
-    def addDraw(self,segments,scc):
+    def addDraw(self,segments,scc,t):
         """ dessine un scenario et l'ajoute à la fenetre
         """
         
         tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
         NN = scc.history.ne0s
 
-        xmax = 450
-        ymax = 400
+        xmax = 500
+        ymax = 450
         pix = QPixmap(xmax,ymax)
         self.pixList.append(pix)
         pix.fill(Qt.white)
@@ -80,22 +86,71 @@ class drawScenario(QMainWindow):
             painter.setPen(pen)
             painter.drawText( 40,45+20*i, NN[i].name)
         painter.setPen(QPen(Qt.black,20))
-        painter.drawText( 10,15, "Scenario %i"%(scc.number+1))
+        font = QFont()
+        font.setItalic(False)
+        font.setPixelSize(16)
+        painter.setFont(font)
+        painter.drawText( 10,20, "Scenario %i"%(scc.number+1))
 
         # echelle de temps
         pen = QPen(Qt.black,1)
         painter.setPen(pen)
         painter.drawLine(xmax-50,50,xmax-50,ymax-50)
+        pen = QPen(Qt.black,4)
+        painter.setPen(pen)
         for i in range(len(scc.history.events)):
             y = scc.history.events[i].y
-            painter.drawLine(xmax-60,y,xmax-40,y)
+            painter.drawLine(xmax-55,y,xmax-45,y)
+            font = QFont()
+            font.setItalic(False)
+            font.setPixelSize(10)
+            painter.setFont(font)
+            painter.drawText(xmax-30,y+5,scc.history.events[i].stime)
+        font = QFont()
+        font.setItalic(False)
+        font.setPixelSize(10)
+        painter.setFont(font)
+        painter.drawText(xmax-170,14,"(Warning ! Time is not to scale.)");
 
-
+        # echantillons
+        pen = QPen(Qt.black,1)
+        painter.setPen(pen)
+        n=0
+        for i in range(0,len(t.node)):
+            if (t.node[i].category == "sa") or (t.node[i].category == "sa2"):
+                for j in range(0,len(t.node)):
+                    if ((t.node[i].category == "sa") or (t.node[i].category == "sa2")) and (t.node[i].category != t.node[j].category):
+                        if t.node[i].y > t.node[j].y:
+                            t.node[i].category = "sa";
+                            t.node[j].category = "sa2";
+                        else:
+                            t.node[j].category = "sa";
+                            t.node[i].category = "sa2";
+                    for i in range(0,len(t.node)):
+                        if (t.node[i].category == "sa") or (t.node[i].category == "sa2"):
+                            x = t.node[i].x
+                            y = t.node[i].y
+                            n+=1
+                            pen = QPen(Qt.black,1)
+                            painter.setPen(pen)
+                            painter.drawRoundRect(x-15,y+10,35,20)
+                            font = QFont()
+                            font.setItalic(True)
+                            font.setPixelSize(10)
+                            painter.setFont(font)
+                            painter.drawText(x-10,y+25,'Sa %i'%t.node[i].pop)
+                            font = QFont()
+                            font.setItalic(False)
+                            font.setPixelSize(12)
+                            painter.setFont(font)
+                            if t.node[i].category == "sa":
+                                painter.drawText(x-19,y+50,"Pop %i"%t.node[i].pop)
 
 
         # dessin des segments
         for s in segments:
-            if s.ydeb == s.yfin:
+            print "seg",s
+            if s.ydeb == s.yfin and s.xdeb != s.xfin:
                 xmed = (s.xdeb+s.xfin)/2
                 ymed = s.ydeb
                 jj = 0
@@ -108,6 +163,10 @@ class drawScenario(QMainWindow):
                 painter.drawLine(s.xdeb,ymed,xmed,ymed)
                 painter.setPen(QPen(Qt.black,8))
                 x0 = xmed-(2*len(s.sadm))
+                font = QFont()
+                font.setItalic(False)
+                font.setPixelSize(10)
+                painter.setFont(font)
                 painter.drawText( x0, ymed+16, s.sadm)
 
                 jj = 0

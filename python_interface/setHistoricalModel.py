@@ -34,9 +34,6 @@ class setHistoricalModel(QMainWindow):
         QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.drawScenarios)
 
         self.addParamGui("plop","plop")
-        self.addParamGui("plop","plop")
-        self.addParamGui("plop","plop")
-        self.addParamGui("plop","plop")
     def addSc(self):
         
         # le numero du nouveau scenario est la taille du tableau actuel de scenarios
@@ -208,6 +205,7 @@ class setHistoricalModel(QMainWindow):
         # creation de la fenêtre
         self.draw_sc_win = drawScenario(sc_txt_list,self)
         self.draw_sc_win.show()
+        self.draw_sc_win.drawAll()
 
     def addParamGui(self,name,type_param):
         groupBox_8 = QtGui.QGroupBox(self.ui.groupBox_3)
