@@ -83,12 +83,15 @@ class setHistoricalModel(QMainWindow):
 
         # ajout de la groupbox de repartition
         groupBox_r = QtGui.QGroupBox(self.ui.repScrollContent)
+        font = QFont()
+        font.setPixelSize(8)
+        groupBox_r.setFont(font)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(groupBox_r.sizePolicy().hasHeightForWidth())
         groupBox_r.setSizePolicy(sizePolicy)
-        groupBox_r.setMaximumSize(QtCore.QSize(16777215, 60))
+        groupBox_r.setMaximumSize(QtCore.QSize(16777215, 45))
         groupBox_r.setObjectName("groupBox_r")
         verticalLayout_6 = QtGui.QVBoxLayout(groupBox_r)
         verticalLayout_6.setObjectName("verticalLayout_6")
@@ -183,7 +186,7 @@ class setHistoricalModel(QMainWindow):
         pushButton_5.setObjectName("rmCondButton")
         verticalLayout_2.addWidget(pushButton_5)
         # ajout dans la GUI
-        self.ui.horizontalLayout_2.addWidget(groupBox_cond)
+        self.ui.horizontalLayout_6.addWidget(groupBox_cond)
 
         # evennement de suppression de la condition
         QObject.connect(pushButton_5,SIGNAL("clicked()"),self.rmCond)
@@ -221,7 +224,7 @@ class setHistoricalModel(QMainWindow):
         # on enleve les groupbox de la GUI
         for paramBox in self.paramList:
             paramBox.hide()
-            self.ui.verticalLayout_2.removeWidget(paramBox)
+            self.ui.verticalLayout_6.removeWidget(paramBox)
         # on vide la liste locale de paramètres
         self.paramList = []
         dico_parameters = {}
@@ -291,25 +294,26 @@ class setHistoricalModel(QMainWindow):
         self.draw_sc_win.drawAll()
 
     def addParamGui(self,name,type_param):
-        groupBox_8 = QtGui.QGroupBox(self.ui.groupBox_3)
+        groupBox_8 = QtGui.QGroupBox(self.ui.scrollArea)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(groupBox_8.sizePolicy().hasHeightForWidth())
         groupBox_8.setSizePolicy(sizePolicy)
-        groupBox_8.setMinimumSize(QtCore.QSize(0, 70))
-        groupBox_8.setMaximumSize(QtCore.QSize(16777215, 70))
+        groupBox_8.setMinimumSize(QtCore.QSize(0, 50))
+        groupBox_8.setMaximumSize(QtCore.QSize(16777215, 50))
         groupBox_8.setObjectName("groupBox_8")
         horizontalLayout_13 = QtGui.QHBoxLayout(groupBox_8)
         horizontalLayout_13.setObjectName("horizontalLayout_13")
+        horizontalLayout_13.setContentsMargins(-1, 1, -1, 1)
         groupBox_9 = QtGui.QGroupBox(groupBox_8)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(groupBox_9.sizePolicy().hasHeightForWidth())
         groupBox_9.setSizePolicy(sizePolicy)
-        groupBox_9.setMinimumSize(QtCore.QSize(140, 50))
-        groupBox_9.setMaximumSize(QtCore.QSize(140, 50))
+        groupBox_9.setMinimumSize(QtCore.QSize(140, 45))
+        groupBox_9.setMaximumSize(QtCore.QSize(140, 45))
         groupBox_9.setObjectName("groupBox_9")
         horizontalLayout_8 = QtGui.QHBoxLayout(groupBox_9)
         horizontalLayout_8.setObjectName("horizontalLayout_8")
@@ -326,8 +330,8 @@ class setHistoricalModel(QMainWindow):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(groupBox_10.sizePolicy().hasHeightForWidth())
         groupBox_10.setSizePolicy(sizePolicy)
-        groupBox_10.setMinimumSize(QtCore.QSize(290, 50))
-        groupBox_10.setMaximumSize(QtCore.QSize(290, 50))
+        groupBox_10.setMinimumSize(QtCore.QSize(290, 45))
+        groupBox_10.setMaximumSize(QtCore.QSize(290, 45))
         groupBox_10.setObjectName("groupBox_10")
         horizontalLayout_9 = QtGui.QHBoxLayout(groupBox_10)
         horizontalLayout_9.setObjectName("horizontalLayout_9")
@@ -351,8 +355,8 @@ class setHistoricalModel(QMainWindow):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(groupBox_14.sizePolicy().hasHeightForWidth())
         groupBox_14.setSizePolicy(sizePolicy)
-        groupBox_14.setMinimumSize(QtCore.QSize(0, 50))
-        groupBox_14.setMaximumSize(QtCore.QSize(16777215, 50))
+        groupBox_14.setMinimumSize(QtCore.QSize(0, 45))
+        groupBox_14.setMaximumSize(QtCore.QSize(16777215,45))
         groupBox_14.setObjectName("groupBox_14")
         horizontalLayout_10 = QtGui.QHBoxLayout(groupBox_14)
         horizontalLayout_10.setObjectName("horizontalLayout_10")
@@ -387,7 +391,7 @@ class setHistoricalModel(QMainWindow):
         stepValueParamEdit.setObjectName("stepValueParamEdit")
         horizontalLayout_10.addWidget(stepValueParamEdit)
         horizontalLayout_13.addWidget(groupBox_14)
-        self.ui.verticalLayout_2.addWidget(groupBox_8)
+        self.ui.verticalLayout_6.addWidget(groupBox_8)
 
         # liste locale des paramètres
         self.paramList.append(groupBox_8)
