@@ -13,11 +13,11 @@ import history
 from history import IOScreenError
 
 class drawScenario(QMainWindow):
-    def __init__(self,sc_txt_list,parent=None):
+    def __init__(self,sc_info_list,parent=None):
         super(drawScenario,self).__init__(parent)
         self.parent=parent
         self.createWidgets()
-        self.sc_txt_list = sc_txt_list
+        self.sc_info_list = sc_info_list
         self.pixList = []    
 
 
@@ -30,26 +30,11 @@ class drawScenario(QMainWindow):
         QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.saveDraws)
 
     def drawAll(self):
-        for num,sc in enumerate(self.sc_txt_list):
-            scChecker = history.Scenario(number=num+1)
-            try:
-                scChecker.checkread(sc.split('\n'))
-                scChecker.checklogic()
-                t = PopTree(scChecker)
-                t.do_tree()
-                #for ev in scChecker.history.events : print ev
-                #for  no in t.node : print no
-                #print "  "
-                #for  b in t.br : print b
-                #print "  "
-                for s in t.segments: 
-                    print s
-                    print type(s)
-                self.addDraw(t.segments,scChecker,t)
-            except IOScreenError, e:
-                print "Un scenario a une erreur : ", e
-                QMessageBox.information(self,"Scenario error","%s"%e)
-                self.close()
+        """ Pour tous les scenarios (sous forme d'un dico d'infos extraites de la verif)
+        on lance le dessin dans un pixmap
+        """
+        for sc_info in self.sc_info_list:
+            self.addDraw(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"])
 
 
     def addDraw(self,segments,scc,t):
@@ -90,7 +75,7 @@ class drawScenario(QMainWindow):
         font.setItalic(False)
         font.setPixelSize(16)
         painter.setFont(font)
-        painter.drawText( 10,20, "Scenario %i"%(scc.number+1))
+        painter.drawText( 10,20, "Scenario %i"%(scc.number))
 
         # echelle de temps
         pen = QPen(Qt.black,1)

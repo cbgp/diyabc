@@ -9,6 +9,9 @@ from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from setHistoricalModel_ui import Ui_MainWindow
 from drawScenario import drawScenario
+from visualizescenario import *
+import history 
+from history import IOScreenError
 
 class setHistoricalModel(QMainWindow):
     def __init__(self,parent=None):
@@ -31,9 +34,9 @@ class setHistoricalModel(QMainWindow):
         #TODO
         #QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.addCondition)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.close)
-        QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.drawScenarios)
+        QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.checkToDraw)
+        QObject.connect(self.ui.defPrButton,SIGNAL("clicked()"),self.definePriors)
 
-        self.addParamGui("plop","plop")
     def addSc(self):
         
         # le numero du nouveau scenario est la taille du tableau actuel de scenarios
@@ -194,16 +197,80 @@ class setHistoricalModel(QMainWindow):
         self.sender().parent().hide()
         self.condList.remove(self.sender().parent())
 
-    def drawScenarios(self):
-        """ lance la fenetre ou se trouveront les graphes des scenarios
+    def checkToDraw(self):
+        """ clic sur le bouton check scenario pour dessiner les scenarios
+        """
+        chk_list = self.checkScenarios()
+        if chk_list != None:
+            self.drawScenarios(chk_list)
+        else:
+            QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to draw them.")
+
+    def definePriors(self):
+        """ clic sur le bouton de définition des priors
+        """
+        chk_list = self.checkScenarios()
+        if chk_list != None:
+            self.putParameters(chk_list)
+        else:
+            QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
+    def putParameters(self,chk_list):
+        """ A partir de la liste des scenarios (vérifiés donc valides), on ajoute les paramètres dans la GUI
+        """
+        dico_parameters = {}
+        for sc in chk_list:
+            for param in sc["checker"].parameters:
+                dico_parameters[param.name] = param.category
+        for pname in dico_parameters.keys():
+            self.addParamGui(pname, dico_parameters[pname])
+
+
+
+    def checkScenarios(self):
+        """ action de verification des scenarios
         """
         # construction de la liste de scenarios
         sc_txt_list = []
         for sc in self.scList:
             sc_txt_list.append(str(sc.findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()))
             #print sc_txt_list
+        nb_scenarios_invalides = 0
+        scenarios_info_list = []
+        for num,sc in enumerate(sc_txt_list):
+            scChecker = history.Scenario(number=num+1)
+            try:
+                scChecker.checkread(sc.split('\n'))
+                scChecker.checklogic()
+                t = PopTree(scChecker)
+                t.do_tree()
+                #for ev in scChecker.history.events : print ev
+                #for  no in t.node : print no
+                #print "  "
+                #for  b in t.br : print b
+                #print "  "
+                for s in t.segments: 
+                    print s
+                    print type(s)
+                dico_sc_infos = {}
+                dico_sc_infos["text"] = sc.split('\n')
+                dico_sc_infos["checker"] = scChecker
+                dico_sc_infos["tree"] = t
+                scenarios_info_list.append(dico_sc_infos)
+            except IOScreenError, e:
+                print "Un scenario a une erreur : ", e
+                nb_scenarios_invalides += 1
+                QMessageBox.information(self,"Scenario error","%s"%e)
+        # si tous les scenarios sont bons, on renvoie les données utiles, sinon on renvoie None
+        if nb_scenarios_invalides == 0:
+            return scenarios_info_list
+        else:
+            return None
+
+    def drawScenarios(self,scenarios_info_list):
+        """ lance la fenetre ou se trouveront les graphes des scenarios
+        """
         # creation de la fenêtre
-        self.draw_sc_win = drawScenario(sc_txt_list,self)
+        self.draw_sc_win = drawScenario(scenarios_info_list,self)
         self.draw_sc_win.show()
         self.draw_sc_win.drawAll()
 
