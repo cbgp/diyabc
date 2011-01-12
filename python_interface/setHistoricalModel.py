@@ -294,6 +294,8 @@ class setHistoricalModel(QMainWindow):
         self.draw_sc_win.drawAll()
 
     def addParamGui(self,name,type_param):
+        """ ajoute un paramètre à la GUI et à la liste locale de paramètres
+        """
         groupBox_8 = QtGui.QGroupBox(self.ui.scrollArea)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)

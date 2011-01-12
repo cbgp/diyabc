@@ -13,6 +13,9 @@ import history
 from history import IOScreenError
 
 class drawScenario(QMainWindow):
+    """ Classe pour créer une fenêtre à l'intérieur de laquelle on dessine les scénarios (valides car déjà vérifiés)
+    on passe au constructeur une liste de dictionnaires contenant les informations sur chaque scénario
+    """
     def __init__(self,sc_info_list,parent=None):
         super(drawScenario,self).__init__(parent)
         self.parent=parent
