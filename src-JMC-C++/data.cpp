@@ -114,14 +114,22 @@ public:
 		string s,s1,s2,locusname;
 		int ech,ind,nech,*nindi;
 		char c;
-		size_t j;
+		size_t j,j0,j1;
 		stringstream out;
+		cout << "début de la première lecture\n";
 		ifstream file(filename.c_str(), ios::in);
 		if (file == NULL) {
 			this->message = "File "+filename+" not found";
 			return this;
 		} else this->message="";
 		getline(file,this->title);
+		j0=title.find("<NM=");
+		if (j0>0) {
+			j1=title.find("NF>",j0+3);
+			s=title.substr(j0+4,j1-(j0+4));
+			this->sexratio=atof(s.c_str())/(1.0+atof(s.c_str()));
+		} else this->sexratio=0.5;
+		cout <<"sex-ratio="<<this->sexratio<<"\n";
 		this->nloc=0;fin=false;
 		while (not fin) {
 			getline(file,s);
@@ -138,36 +146,40 @@ public:
 	    this->nmisshap=0;
 		this->nmissnuc=0;
 	    while (not file.eof()) {
-	    	s1=majuscules(s);
-	    	if (s1.find("POP")==string::npos) {
-	    		nindi[nech-1] +=1;
-	    		s2=s1.substr(s1.find(","),s1.length());
-//COMPTAGE DES DONNEES MANQUANTES
-	    		j=s2.find("000");
-	    		while (j!=string::npos) {
-	    			this->nmisshap +=1;
-	    			j=s2.find("000",j+3);
-	    		}
-	    		j=s2.find("[]");
-	    		while (j!=string::npos) {
-	    			this->nmisshap +=1;
-	    			j=s2.find("[]",j+2);
-	    		}
-	    		j=s2.find("N");
-	    		while (j!=string::npos) {
-	    			this->nmissnuc +=1;
-	    			j=s2.find("N",j+1);
-	    		}
-	    		j=s2.find("-");
-	    		while (j!=string::npos) {
-	    			this->nmissnuc +=1;
-	    			j=s2.find("-",j+1);
-	    		}
+	    	if (s!="") {
+				s1=majuscules(s);
+				cout << s1<<"\n";
+				if (s1.find("POP")==string::npos) {
+					nindi[nech-1] +=1;
+					s2=s1.substr(s1.find(","),s1.length());
+	//COMPTAGE DES DONNEES MANQUANTES
+					j=s2.find("000");
+					while (j!=string::npos) {
+						this->nmisshap +=1;
+						j=s2.find("000",j+3);
+					}
+					j=s2.find("[]");
+					while (j!=string::npos) {
+						this->nmisshap +=1;
+						j=s2.find("[]",j+2);
+					}
+					j=s2.find("N");
+					while (j!=string::npos) {
+						this->nmissnuc +=1;
+						j=s2.find("N",j+1);
+					}
+					j=s2.find("-");
+					while (j!=string::npos) {
+						this->nmissnuc +=1;
+						j=s2.find("-",j+1);
+					}
+				}
+	    	    else {nech +=1;nindi[nech-1]=0;}
 	    	}
-	    	else {nech +=1;nindi[nech-1]=0;}
 	    	getline(file,s);
 		}
 		file.close();
+		cout << "fin de la première lecture\n";
 		this->nsample=nech;
 		this->nind = new int[nech];
 		for (int i=0;i<nech;i++) {this->nind[i]=nindi[i];}
@@ -181,6 +193,7 @@ public:
 		for (int i=0;i<nech;i++) {
 			this->indivname[i]= new string[nind[i]];
 			this->indivsexe[i] = new int[nind[i]];
+			for(j=0;j<this->nind[i];j++) this->indivsexe[i][j] = 2;
 			this->genotype[i] = new string*[nind[i]];
 			for(j=0;j<this->nind[i];j++) this->genotype[i][j] = new string[this->nloc];
 		}
@@ -192,13 +205,14 @@ public:
 			j=s.find("<");
 			if (j!=string::npos) {         //il y a un type de locus noté après le nom
 			s2=majuscules(s.substr(j+1,1));
+			cout << "s2="<<s2<<"\n";
 			if (s2=="A") this->locus[loc].type=0; else
 				if (s2=="H") this->locus[loc].type=1; else
 					if (s2=="X") this->locus[loc].type=2; else
 						if (s2=="Y") this->locus[loc].type=3; else
 							if (s2=="M") this->locus[loc].type=4; else
 								{out <<loc+1;
-								 this->message="unrecoknized type at locus "+out.str();
+								 this->message="unrecognized type at locus "+out.str();
 								 return this;
 								}
 				s=s.substr(0,j-1);
@@ -209,6 +223,7 @@ public:
 		}
 		for (ech=0;ech<this->nsample;ech++) {
 			getline(file2,s);  //ligne "POP"
+			cout << s <<"\n";
 			for (ind=0;ind<this->nind[ech];ind++) {
 				getline(file2,s);
 				j=s.find(",");
@@ -218,11 +233,13 @@ public:
 				for (int i=0;i<this->nloc;i++) {
 					iss >> this->genotype[ech][ind][i];
 					if ((this->genotype[ech][ind][i].find("[")!=string::npos)and(this->locus[i].type<5)) this->locus[i].type +=5;
+					cout << this->genotype[ech][ind][i] << "   "<<this->locus[i].type<<"\n";
 				}
 			}
 		}
 		file2.close();
 		delete [] nindi;
+		cout << "\nfin de readfile\n";
 	}
 
     void do_microsat(int loc){
@@ -252,7 +269,7 @@ public:
     			else {
     				gen[0]=geno;
     				if (this->locus[loc].type==2) this->indivsexe[ech][ind]=1;
-    			    if ((this->locus[loc].type==2)and(geno!="000")) this->indivsexe[ech][ind]=1;
+    			    if ((this->locus[loc].type==3)and(geno!="000")) this->indivsexe[ech][ind]=1;
     			    this->locus[loc].ss[ech] +=1;
     			}
     			for (int i=0;i<n;i++) {
@@ -264,10 +281,12 @@ public:
     					if (gg<this->locus[loc].mini) this->locus[loc].mini=gg;
 
     				} else {
-   					this->nmisshap +=1;
-					this->misshap[this->nmisshap-1].sample=ech;
-					this->misshap[this->nmisshap-1].locus=loc;
-					this->misshap[this->nmisshap-1].indiv=ind;
+    					if (not ((this->indivsexe[ech][ind]==2)and(this->locus[loc].type==3))) { // on ne prend pas en compte les chromosomes Y des femelles
+							this->nmisshap +=1;
+							this->misshap[this->nmisshap-1].sample=ech;
+							this->misshap[this->nmisshap-1].locus=loc;
+							this->misshap[this->nmisshap-1].indiv=ind;
+    					}
     				}
     			}
     		}
@@ -279,6 +298,8 @@ public:
     	string geno,*gen;
     	int l,ll,n,gg,j0,j1,j2;
     	gen = new string[2];
+    	cout <<"début de do_sequence\n";
+
     	this->locus[loc].haplodna = new char**[this->nsample];
     	for (int ech=0;ech<this->nsample;ech++) {
     		this->locus[loc].haplodna[ech] = new char*[2*this->nind[ech]];
@@ -306,38 +327,44 @@ public:
     				gen[0]=geno.substr(j0,j1-j0);
     				gen[1]=geno.substr(j1+2,j2-(j1+2));
     				this->locus[loc].ss[ech] +=2;
-    			}
-/*
-
-    			l=geno.length();
-    			if (l>3){n=2;} else {n=1;}
-    			if (n==2) {
-    				ll=l/2;
-    				gen[0]=geno.substr(0,ll);
-    				gen[1]=geno.substr(ll,ll);
-    				this->locus[loc].ss[ech] +=2;
-    			}
-    			else {
-    				gen[0]=geno;
+    			}else {
+    				j0=geno.find("[")+1;
+    				j1=geno.find("]");
+    				if ((this->locus[loc].dnalength<0)and(j1-j0>0)) this->locus[loc].dnalength=j1-j0;
+    				if ((this->locus[loc].dnalength>0)and (j1-j0!=this->locus[loc].dnalength)) {
+    					std::stringstream ss;
+    					ss <<"ERROR : At locus "<<loc+1<<" indivividual "<<this->indivname[ech][ind]<<", the sequence length has changed. Please, give it the same length as before.";
+    					this->message=ss.str();
+    					return;
+    				}
+    				gen[0]=geno.substr(j0,j1-j0);
+    				this->locus[loc].ss[ech] +=1;
     				if (this->locus[loc].type==2) this->indivsexe[ech][ind]=1;
-    			    if ((this->locus[loc].type==2)and(geno!="000")) this->indivsexe[ech][ind]=1;
-    			    this->locus[loc].ss[ech] +=1;
+    			    if ((this->locus[loc].type==3)and(geno!="[]")) this->indivsexe[ech][ind]=1;
     			}
     			for (int i=0;i<n;i++) {
-    				if (gen[i]!="000") {
+    				if (gen[i]!="[]") {
     					this->locus[loc].samplesize[ech] +=1;
-    					gg = atoi(gen[i].c_str());
-    					this->locus[loc].haplomic[ech][this->locus[loc].samplesize[ech]-1] = gg;
-    					if (gg>this->locus[loc].maxi) this->locus[loc].maxi=gg;
-    					if (gg<this->locus[loc].mini) this->locus[loc].mini=gg;
-
+    					this->locus[loc].haplodna[ech][this->locus[loc].samplesize[ech]-1] = new char[gen[i].length()+1];
+    					strncpy(this->locus[loc].haplodna[ech][this->locus[loc].samplesize[ech]-1], gen[i].c_str(), gen[i].length());
+    					j0=min(gen[i].find("-"),gen[i].find("N"));
+    					while (j0!=string::npos) {
+    						this->nmissnuc +=1;
+    						this->missnuc[this->nmissnuc-1].sample=ech;
+    						this->missnuc[this->nmissnuc-1].locus=loc;
+   						    this->missnuc[this->nmissnuc-1].indiv=ind;
+    						this->missnuc[this->nmissnuc-1].nuc=j0;
+    						j0=min(gen[i].find("-"),gen[i].find("N"));
+    					}
     				} else {
-   					this->nmisshap +=1;
-					this->misshap[this->nmisshap-1].sample=ech;
-					this->misshap[this->nmisshap-1].locus=loc;
-					this->misshap[this->nmisshap-1].indiv=ind;
+    					if (not ((this->indivsexe[ech][ind]==2)and(this->locus[loc].type==3))) { // on ne prend pas en compte les chromosomes Y des femelles
+							this->nmisshap +=1;
+							this->misshap[this->nmisshap-1].sample=ech;
+							this->misshap[this->nmisshap-1].locus=loc;
+							this->misshap[this->nmisshap-1].indiv=ind;
+    					}
     				}
-    			}*/
+    			}
     		}
     	}
 
@@ -358,7 +385,7 @@ public:
 
 int main(){
 	DataC data;
-	data.loadfromfile("admix1.txt");
+	data.loadfromfile("tout.txt");
 	cout <<"\n\n";
 /*	for (int ech=0;ech<data.nsample;ech++) {
 		for (int ind=0;ind<data.nind[ech];ind++) {
@@ -367,12 +394,16 @@ int main(){
 			cout <<"\n";
 		}
 	}*/
-	cout << data.title << "\n nloc = "<<data.nloc<<"\n";
+	cout << data.title << "\n nloc = "<<data.nloc<<"   nsample = "<<data.nsample<<"\n";
 	for (int i=0;i<data.nloc;i++) cout << data.locus[i].name <<"\n";
-	for (int i=0;i<data.nsample;i++) cout << data.nind[i] <<"\n";
+	for (int ech=0;ech<data.nsample;ech++) {
+		cout << data.nind[ech] <<"\n";
+		for (int ind=0;ind<data.nind[ech];ind++) cout << data.indivname[ech][ind]<<"   sexe = "<<data.indivsexe[ech][ind]<<"\n";
+	}
 	for (int loc=0;loc<data.nloc;loc++) {
 		if (data.locus[loc].type<5)
 		cout << data.locus[loc].name << "   mini = " <<data.locus[loc].mini<<"   maxi = "<<data.locus[loc].maxi<<"\n";
 	}
+	for (int i=0;i<data.nmisshap;i++) cout <<" missing sample "<<data.misshap[i].sample<<"  ind "<<data.misshap[i].indiv<<"  locus "<<data.misshap[i].locus<<"\n";
 //	data.libere();
 }
