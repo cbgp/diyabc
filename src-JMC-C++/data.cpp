@@ -29,9 +29,10 @@ struct LocusC
 //Proprietes des locus sequences
 	double pi_A,pi_C,pi_G,pi_T;
 	double *mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
-	int *sitmut;   //array of dna sites that are changed through a mutation
+	int nsitmut;   // length of array *sitmut;
+	int *sitmut;   //array of nsitmut dna sites that are changed through a mutation
 	int dnalength;
-	int *tabsit;
+	int *tabsit;   //array of dnalength elements giving the number of a dna site;
 	char ***haplodna;  //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
 //	int *haplostate; //array[gene copy] tous les "gene copies" sont mises à la suite les unes des autres (groupées par sample)
 //Proprietes des locus microsatellites
@@ -87,8 +88,8 @@ public:
 			delete [] genotype[ech];
 		}
 		delete [] genotype;
-		if (nmisshap>0) delete [] this->misshap;
-		if (nmissnuc>0) delete [] this->missnuc;
+		if (this->nmisshap>0) delete [] this->misshap;
+		if (this->nmissnuc>0) delete [] this->missnuc;
 
 		for (int loc=0;loc<this->nloc;loc++){
 			delete [] this->locus[loc].name;
@@ -96,10 +97,14 @@ public:
 				for (int  ech=0;ech<this->nsample;ech++) delete [] this->locus[loc].haplomic[ech];
 				delete [] this->locus[loc].haplomic;
 			} else {
-				for (int  ech=0;ech<this->nsample;ech++)free(this->locus[loc].haplodna[ech]);
-				free(this->locus[loc].haplodna);
+				for (int  ech=0;ech<this->nsample;ech++) {
+					for (int ind=0;ind<this->nind[ech];ind++) delete [] this->locus[loc].haplodna[ech][ind];
+					delete [] this->locus[loc].haplodna[ech];
+				}
+				delete [] this->locus[loc].haplodna;
 				delete [] this->locus[loc].tabsit;
-				delete [] this->locus[loc].sitmut;
+				delete [] this->locus[loc].mutsit;
+				if (this->locus[loc].nsitmut>0) delete [] this->locus[loc].sitmut;
 			}
 			delete [] this->locus[loc].samplesize;
 			delete [] this->locus[loc].ss;
@@ -205,7 +210,7 @@ public:
 			j=s.find("<");
 			if (j!=string::npos) {         //il y a un type de locus noté après le nom
 			s2=majuscules(s.substr(j+1,1));
-			cout << "s2="<<s2<<"\n";
+//			cout << "s2="<<s2<<"\n";
 			if (s2=="A") this->locus[loc].type=0; else
 				if (s2=="H") this->locus[loc].type=1; else
 					if (s2=="X") this->locus[loc].type=2; else
@@ -223,7 +228,7 @@ public:
 		}
 		for (ech=0;ech<this->nsample;ech++) {
 			getline(file2,s);  //ligne "POP"
-			cout << s <<"\n";
+//			cout << s <<"\n";
 			for (ind=0;ind<this->nind[ech];ind++) {
 				getline(file2,s);
 				j=s.find(",");
@@ -233,7 +238,7 @@ public:
 				for (int i=0;i<this->nloc;i++) {
 					iss >> this->genotype[ech][ind][i];
 					if ((this->genotype[ech][ind][i].find("[")!=string::npos)and(this->locus[i].type<5)) this->locus[i].type +=5;
-					cout << this->genotype[ech][ind][i] << "   "<<this->locus[i].type<<"\n";
+//					cout << this->genotype[ech][ind][i] << "   "<<this->locus[i].type<<"\n";
 				}
 			}
 		}
@@ -291,6 +296,7 @@ public:
     			}
     		}
     	}
+    	delete [] gen;
     }
 
 
@@ -312,7 +318,9 @@ public:
     		this->locus[loc].samplesize[ech] = 0;
     		for (int ind=0;ind<this->nind[ech];ind++){
     			geno=string(this->genotype[ech][ind][loc]);
+    			if ((loc==4)and(ech==1)and(ind==10)) cout <<"pour lui, ça vaut "<<geno<<"\n";
     			if (geno.find("][")==string::npos) n=1; else n=2;
+    			if ((loc==4)and(ech==1)and(ind==10)) cout <<"pour lui, ça vaut "<<geno<<"  et n = "<<n<<  "\n";
     			if (n==2) {
     				j0=geno.find("[")+1;
     				j1=geno.find("][");
@@ -326,24 +334,29 @@ public:
     				}
     				gen[0]=geno.substr(j0,j1-j0);
     				gen[1]=geno.substr(j1+2,j2-(j1+2));
+    				cout <<indivname[ech][ind]<<"  n=2     "<<gen[0]<<"   "<<gen[1]<<"\n";
     				this->locus[loc].ss[ech] +=2;
     			}else {
     				j0=geno.find("[")+1;
     				j1=geno.find("]");
     				if ((this->locus[loc].dnalength<0)and(j1-j0>0)) this->locus[loc].dnalength=j1-j0;
-    				if ((this->locus[loc].dnalength>0)and (j1-j0!=this->locus[loc].dnalength)) {
+    				if ((this->locus[loc].dnalength>0)and (j1-j0!=this->locus[loc].dnalength)and(j1>j0)) {
     					std::stringstream ss;
     					ss <<"ERROR : At locus "<<loc+1<<" indivividual "<<this->indivname[ech][ind]<<", the sequence length has changed. Please, give it the same length as before.";
     					this->message=ss.str();
     					return;
     				}
+    				if ((loc==4)and(ech==1)and(ind==10)) cout << "j0="<<j0<<"   et j1="<<j1<<"\n";
     				gen[0]=geno.substr(j0,j1-j0);
+    				if ((loc==4)and(ech==1)and(ind==10)) cout << "gen[0]="<<gen[0]<<"\n";
     				this->locus[loc].ss[ech] +=1;
     				if (this->locus[loc].type==2) this->indivsexe[ech][ind]=1;
     			    if ((this->locus[loc].type==3)and(geno!="[]")) this->indivsexe[ech][ind]=1;
+    				cout <<indivname[ech][ind]<<"  n=1     "<<gen[0]<<"\n";
+
     			}
     			for (int i=0;i<n;i++) {
-    				if (gen[i]!="[]") {
+    				if (gen[i]!="") {
     					this->locus[loc].samplesize[ech] +=1;
     					this->locus[loc].haplodna[ech][this->locus[loc].samplesize[ech]-1] = new char[gen[i].length()+1];
     					strncpy(this->locus[loc].haplodna[ech][this->locus[loc].samplesize[ech]-1], gen[i].c_str(), gen[i].length());
@@ -354,10 +367,11 @@ public:
     						this->missnuc[this->nmissnuc-1].locus=loc;
    						    this->missnuc[this->nmissnuc-1].indiv=ind;
     						this->missnuc[this->nmissnuc-1].nuc=j0;
-    						j0=min(gen[i].find("-"),gen[i].find("N"));
+    						j0=min(gen[i].find("-",j0+1),gen[i].find("N",j0+1));
     					}
     				} else {
-    					if (not ((this->indivsexe[ech][ind]==2)and(this->locus[loc].type==3))) { // on ne prend pas en compte les chromosomes Y des femelles
+    					if (not ((this->indivsexe[ech][ind]==2)and(this->locus[loc].type==8))) { // on ne prend pas en compte les chromosomes Y des femelles
+            				cout <<indivname[ech][ind]<<"donnée manquante"<<"   nmisshap="<<this->nmisshap<<  "\n";
 							this->nmisshap +=1;
 							this->misshap[this->nmisshap-1].sample=ech;
 							this->misshap[this->nmisshap-1].locus=loc;
@@ -365,9 +379,13 @@ public:
     					}
     				}
     			}
+    			for (int i=this->locus[loc].samplesize[ech];i<this->locus[loc].ss[ech];i++) this->locus[loc].haplodna[ech][i] = new char[1];
     		}
     	}
-
+    	this->locus[loc].nsitmut=0;
+    	this->locus[loc].tabsit = new int[this->locus[loc].dnalength];
+    	this->locus[loc].mutsit = new double[this->locus[loc].dnalength];
+    	delete [] gen;
     }
 
 	DataC * loadfromfile(string filename) {
@@ -404,6 +422,7 @@ int main(){
 		if (data.locus[loc].type<5)
 		cout << data.locus[loc].name << "   mini = " <<data.locus[loc].mini<<"   maxi = "<<data.locus[loc].maxi<<"\n";
 	}
-	for (int i=0;i<data.nmisshap;i++) cout <<" missing sample "<<data.misshap[i].sample<<"  ind "<<data.misshap[i].indiv<<"  locus "<<data.misshap[i].locus<<"\n";
-//	data.libere();
+	for (int i=0;i<data.nmisshap;i++) cout <<" missing data sample "<<data.misshap[i].sample<<"  ind "<<data.misshap[i].indiv<<"  locus "<<data.misshap[i].locus<<"\n";
+	for (int i=0;i<data.nmissnuc;i++) cout <<" missing nucl sample "<<data.missnuc[i].sample<<"  ind "<<data.missnuc[i].indiv<<"  locus "<<data.missnuc[i].locus<<"  nuc "<<data.missnuc[i].nuc<<"\n";
+	data.libere();
 }
