@@ -12,6 +12,7 @@ from drawScenario import drawScenario
 from visualizescenario import *
 import history 
 from history import IOScreenError
+from set_condition import setCondition
 
 class setHistoricalModel(QMainWindow):
     def __init__(self,parent=None):
@@ -236,7 +237,7 @@ class setHistoricalModel(QMainWindow):
             self.ui.verticalLayout_6.removeWidget(paramBox)
         # on vide la liste locale de paramètres
         self.paramList = []
-        dico_parameters = {}
+        self.dico_parameters = {}
         dico_count_per_category = {}
         params_order_list = []
         # liste des premiers params de chaque categorie
@@ -245,7 +246,7 @@ class setHistoricalModel(QMainWindow):
             print "param list",sc["checker"].parameters
             for param in sc["checker"].parameters:
                 params_order_list.append(param.name)
-                dico_parameters[param.name] = param.category
+                self.dico_parameters[param.name] = param.category
                 # on compte le nombre de param dans chaque categorie
                 if dico_count_per_category.has_key(param.category):
                     dico_count_per_category[param.category] += 1
@@ -258,7 +259,7 @@ class setHistoricalModel(QMainWindow):
         for pname in params_order_list:
             # on n'affiche que ceux qui ne l'ont pas déjà été
             if pname not in l_already_printed:
-                if dico_count_per_category[dico_parameters[pname]] > 1 and (pname not in lprem):
+                if dico_count_per_category[self.dico_parameters[pname]] > 1 and (pname not in lprem):
                     self.addParamGui(pname,"multiple")
                 else:
                     self.addParamGui(pname,"unique")
@@ -441,7 +442,14 @@ class setHistoricalModel(QMainWindow):
         """ methode qui receptionne l'evennement du clic sur "set condition"
         ajout d'une condition sur un paramètre ou une paire de paramètres
         """
-        self.addCondition(self.sender().parent().findChild(QLabel,"paramNameLabel").text())
+        param_src = self.sender().parent().findChild(QLabel,"paramNameLabel").text()
+        # construction de la liste des params qui sont dans la même catégorie que le notre
+        target_list = []
+        for pname in self.dico_parameters.keys():
+            if pname != param_src and self.dico_parameters[str(pname)] == self.dico_parameters[str(param_src)]:
+                target_list.append(pname)
+        self.setCondition = setCondition(self.sender().parent().findChild(QLabel,"paramNameLabel").text(),target_list,self)
+        self.setCondition.show()
 
     def closeEvent(self, event):
         # gestion des valeurs
