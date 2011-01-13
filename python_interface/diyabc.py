@@ -91,6 +91,7 @@ class Diyabc(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyle("cleanlooks")
     myapp = Diyabc()
     myapp.show()
     sys.exit(app.exec_())
