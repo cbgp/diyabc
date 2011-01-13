@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setHistoricalModel.ui'
 #
-# Created: Thu Jan 13 11:50:13 2011
+# Created: Thu Jan 13 13:59:15 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -134,7 +134,7 @@ class Ui_MainWindow(object):
         self.repScrollContent.setObjectName("repScrollContent")
         self.horizontalLayout_6 = QtGui.QHBoxLayout(self.repScrollContent)
         self.horizontalLayout_6.setSpacing(2)
-        self.horizontalLayout_6.setContentsMargins(-1, 1, -1, 1)
+        self.horizontalLayout_6.setContentsMargins(-1, 0, -1, 1)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.repScroll.setWidget(self.repScrollContent)
         self.horizontalLayout.addWidget(self.repScroll)
@@ -145,9 +145,10 @@ class Ui_MainWindow(object):
         self.scrollArea.setFont(font)
         self.scrollArea.setFrameShape(QtGui.QFrame.NoFrame)
         self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 959, 329))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 959, 369))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_6.setSpacing(1)
@@ -298,15 +299,20 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.scrollArea_3.sizePolicy().hasHeightForWidth())
         self.scrollArea_3.setSizePolicy(sizePolicy)
-        self.scrollArea_3.setMinimumSize(QtCore.QSize(0, 100))
-        self.scrollArea_3.setMaximumSize(QtCore.QSize(16777215, 100))
+        self.scrollArea_3.setMinimumSize(QtCore.QSize(0, 60))
+        self.scrollArea_3.setMaximumSize(QtCore.QSize(16777215, 60))
+        font = QtGui.QFont()
+        font.setPointSize(6)
+        self.scrollArea_3.setFont(font)
         self.scrollArea_3.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_3 = QtGui.QWidget(self.scrollArea_3)
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 939, 98))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 939, 58))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_3)
+        self.horizontalLayout_2.setSpacing(1)
+        self.horizontalLayout_2.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
         self.verticalLayout_2.addWidget(self.scrollArea_3)

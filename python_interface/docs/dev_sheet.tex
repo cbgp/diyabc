@@ -44,7 +44,7 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 
 \section{Conception}
     \subsection{Partie graphique}
-        La partie purement graphique est découplée du fonctionnement. Des fichiers .ui sont produits à partir d'un IDE. Toute entité graphique
+        La partie graphique statique est découplée du fonctionnement. Des fichiers .ui sont produits à partir d'un IDE. Toute entité graphique
         étant succeptible d'être présente plusieurs fois dans l'application est produite indépendament dans un .ui et une classe associée.
         
         L'ui principal est celui de la fenêtre principale.
@@ -55,11 +55,17 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         \begin{itemize}
             \item Création d'une ui pour QScrollArea
             \item Génération du code python avec pyuic4
-            \item Instanciation d'un objet QScrollArea
+            \item Instanciation d'un objet QScrollArea (on peut créer une classe qui dérive de QScrollArea ou bien instancier un vrai QScrollArea)
             \item Appel de la methode setupUi de la classe générée avec l'objet QScrollArea en paramètre
         \end{itemize}
     \subsection{Coeur de l'application}
         La classe principale de l'application dérive de QMainWindow
+
+    \subsection{Proposition d'architectures}
+        On pourrait dissocier complètement la partie graphique du fonctionnement, c'est à dire avoir une partie du programme
+        qui ne manipule que des objets conceptuels (projet, historical model...) qui appelle son système d'affichage à souhait.
+
+        On pourrait faire une classe abstraite Displayer dérivée en QtDisplayer et CliDisplayer.
 
 
 \section{Documentation}

@@ -37,6 +37,11 @@ class setHistoricalModel(QMainWindow):
         QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.checkToDraw)
         QObject.connect(self.ui.defPrButton,SIGNAL("clicked()"),self.definePriors)
 
+        self.ui.verticalLayout_6.setAlignment(QtCore.Qt.AlignTop)
+        self.ui.horizontalLayout_6.setAlignment(QtCore.Qt.AlignLeft)
+        self.ui.horizontalLayout_2.setAlignment(QtCore.Qt.AlignLeft)
+        self.ui.horizontalLayout_3.setAlignment(QtCore.Qt.AlignLeft)
+
     def addSc(self):
         
         # le numero du nouveau scenario est la taille du tableau actuel de scenarios
@@ -172,8 +177,10 @@ class setHistoricalModel(QMainWindow):
         groupBox_cond.setSizePolicy(sizePolicy)
         groupBox_cond.setTitle("")
         groupBox_cond.setObjectName("groupBox_6")
+        groupBox_cond.setMaximumSize(QtCore.QSize(100, 38))
         verticalLayout_2 = QtGui.QVBoxLayout(groupBox_cond)
         verticalLayout_2.setObjectName("verticalLayout_2")
+        verticalLayout_2.setContentsMargins(-1, 1, -1, 1)
         label_2 = QtGui.QLabel(cond_str,groupBox_cond)
         label_2.setObjectName("condLabel")
         label_2.setAlignment(QtCore.Qt.AlignCenter)
@@ -184,7 +191,7 @@ class setHistoricalModel(QMainWindow):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(pushButton_5.sizePolicy().hasHeightForWidth())
         pushButton_5.setSizePolicy(sizePolicy)
-        pushButton_5.setMaximumSize(QtCore.QSize(80, 16777215))
+        pushButton_5.setMaximumSize(QtCore.QSize(40, 16777215))
         pushButton_5.setObjectName("rmCondButton")
         verticalLayout_2.addWidget(pushButton_5)
         # ajout dans la GUI
@@ -231,19 +238,31 @@ class setHistoricalModel(QMainWindow):
         self.paramList = []
         dico_parameters = {}
         dico_count_per_category = {}
+        params_order_list = []
+        # liste des premiers params de chaque categorie
+        lprem = []
         for sc in chk_list:
+            print "param list",sc["checker"].parameters
             for param in sc["checker"].parameters:
+                params_order_list.append(param.name)
                 dico_parameters[param.name] = param.category
                 # on compte le nombre de param dans chaque categorie
                 if dico_count_per_category.has_key(param.category):
                     dico_count_per_category[param.category] += 1
                 else:
                     dico_count_per_category[param.category] = 1
-        for pname in dico_parameters.keys():
-            if dico_count_per_category[dico_parameters[pname]] > 1:
-                self.addParamGui(pname,"multiple")
-            else:
-                self.addParamGui(pname,"unique")
+                    # si c'est le premier, on le met ds la liste des premiers pour ne pas afficher "set condition"
+                    lprem.append(param.name)
+        l_already_printed = []
+        #for pname in dico_parameters.keys():
+        for pname in params_order_list:
+            # on n'affiche que ceux qui ne l'ont pas déjà été
+            if pname not in l_already_printed:
+                if dico_count_per_category[dico_parameters[pname]] > 1 and (pname not in lprem):
+                    self.addParamGui(pname,"multiple")
+                else:
+                    self.addParamGui(pname,"unique")
+                l_already_printed.append(pname)
 
 
 
@@ -436,3 +455,8 @@ class setHistoricalModel(QMainWindow):
         if nb_params > 1:
             pluriel = "s"
         self.parent.setNbParams("%i parameter%s"%(nb_params,pluriel))
+        # reactivation des onglets
+        self.parent.setTabEnabled(0,True)
+        self.parent.setTabEnabled(1,True)
+        self.parent.setTabEnabled(2,False)
+        self.parent.setCurrentIndex(0)

@@ -27,6 +27,19 @@ class Project(QTabWidget):
         self.ui = Ui_TabWidget()
         self.ui.setupUi(self)
 
+        # creation des 3 onglets "set ..."
+        self.hist_model_win = setHistoricalModel(self)
+        self.addTab(self.hist_model_win,"set historical model")
+        self.setTabEnabled(2,False)
+
+        self.gen_data_win = None
+        self.addTab(self.gen_data_win,"set genetic data")
+        self.setTabEnabled(3,False)
+
+        self.sum_stats_win = None
+        self.addTab(self.sum_stats_win,"set summary statistics")
+        self.setTabEnabled(4,False)
+
         # manual alignment set
         self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)
         self.ui.projNameLabelValue.setText(name)
@@ -100,8 +113,11 @@ class Project(QTabWidget):
         #self.ui.tableWidget.insertRow(2)
 
     def setHistorical(self):
-        self.hist_model_win = setHistoricalModel(self)
-        self.hist_model_win.show()
+        """ passe sur l'onglet correspondant
+        """
+        self.setTabEnabled(0,False)
+        self.setTabEnabled(1,False)
+        self.setCurrentWidget(self.hist_model_win)
 
     def setNbScenarios(self,nb):
         self.ui.nbScLabel.setText(nb)

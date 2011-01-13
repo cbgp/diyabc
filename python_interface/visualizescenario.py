@@ -553,7 +553,7 @@ class PopTree(object):
                 i1 = self.findfather2(i)
                 k1,k2 = self.findchildren2(i)
                 if (i1>0)and(k1>=0)and(k2>=0) :
-                    if (self.node[k1].y != self.node[11].y) and (self.node[k2].y != self.node[11].y) :
+                    if (self.node[k1].y != self.node[i1].y) and (self.node[k2].y != self.node[i1].y) :
                         x1 = self.node[i1].x + (no.y-self.node[i1].y)*(self.node[k1].x-self.node[i1].x)/(self.node[k1].y-self.node[i1].y)
                         x2 = self.node[i1].x + (no.y-self.node[i1].y)*(self.node[k2].x-self.node[i1].x)/(self.node[k2].y-self.node[i1].y)
                         if x1>x2 : piv=x1;x1=x2;x2=piv

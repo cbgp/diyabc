@@ -180,10 +180,41 @@ class drawScenario(QMainWindow):
         self.ui.horizontalLayout_2.addWidget(label)
 
     def saveDraws(self):
-        for ind,pix in enumerate(self.pixList):
-            im = pix.toImage()
-            im.save("/tmp/im_%i.jpg"%ind)
-            print 'sauvé dans /tmp/im_%i.jpg'%ind
+        nbpix = len(self.pixList)
+        largeur = 2
+        longueur = len(self.pixList)/largeur
+        ind = 0
+        li=0
+        self.pix_result = QPixmap(largeur*500,longueur*450)
+        self.pix_result.fill(Qt.white)
+        ## on fait des lignes tant qu'on a des pix
+        #while (ind < nbpix):
+        #    col = 0
+        #    # une ligne
+        #    while (ind < nbpix) and (col < largeur):
+        #        # ajout
+        #        self.lab = QLabel()
+        #        self.lab.setPixmap(self.pixList[ind])
+        #        self.ui.horizontalLayout_2.addWidget(self.lab)
+        #        print "zzz"
+        #        self.pix_result.fill(self.pixList[ind],QPoint(col*500,li*450))
+        #        print "li:",li," col:",col
+        #        print "xof:",col*500," yof:",li*450
+        #        print "zzz"
+        #        col+=1
+        #        ind+=1
+        #    li+=1
+
+        laba = QLabel()
+        laba.setPixmap(self.pix_result)
+        self.ui.horizontalLayout_2.addWidget(laba)
+        im = self.pix_result.toImage()
+        im.save("/tmp/image.jpg")
+
+        #for ind,pix in enumerate(self.pixList):
+            #im = pix.toImage()
+            #im.save("/tmp/im_%i.jpg"%ind)
+            #print 'sauvé dans /tmp/im_%i.jpg'%ind
 
     def closeEvent(self, event):
         pass
