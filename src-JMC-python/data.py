@@ -278,7 +278,6 @@ class Data(object):
                                
                 #print self.genotype[-1]
             nl +=1
-        self.nloc = self.nloc_seq + self.nloc_mic
         
 
     def __domicrosat(self,loc,iloc):
@@ -396,6 +395,7 @@ class Data(object):
         for iloc,loc in enumerate(self.locuslist):
             if loc.type<5 :  self.__domicrosat(loc,iloc)
             if loc.type>4 :  self.__dosequence(loc,iloc)
+        self.nloc = self.nloc_seq + self.nloc_mic
 
                                 
                                                                    
