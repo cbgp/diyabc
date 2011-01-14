@@ -206,16 +206,16 @@ class drawScenario(QMainWindow):
         #        ind+=1
         #    li+=1
 
-        laba = QLabel()
-        laba.setPixmap(self.pix_result)
-        self.ui.horizontalLayout_2.addWidget(laba)
-        im = self.pix_result.toImage()
-        im.save("/tmp/image.jpg")
+        #laba = QLabel()
+        #laba.setPixmap(self.pix_result)
+        #self.ui.horizontalLayout_2.addWidget(laba)
+        #im = self.pix_result.toImage()
+        #im.save("/tmp/image.jpg")
 
         for ind,pix in enumerate(self.pixList):
             im = pix.toImage()
-            im.save("/tmp/%_scenario_%i.jpg"%(self.parent.parent.name,ind)
-            print 'sauvé dans /tmp/im_%i.jpg'%ind
+            im.save("/tmp/%s_scenario_%i.jpg"%(self.parent.parent.name,ind))
+            print "/tmp/%s_scenario_%i.jpg"%(self.parent.parent.name,ind)
 
     def closeEvent(self, event):
         pass
