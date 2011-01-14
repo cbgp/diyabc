@@ -28,6 +28,15 @@ class Project(QTabWidget):
         self.ui = Ui_TabWidget()
         self.ui.setupUi(self)
 
+        # desactivation des boutons
+        self.ui.setHistoricalButton.setDisabled(True)
+        self.ui.setGeneticButton.setDisabled(True)
+        self.ui.setSummaryButton.setDisabled(True)
+        self.ui.browseDataFileButton.setDisabled(True)
+        self.ui.dataFileEdit.setReadOnly(True)
+        self.ui.dirEdit.setReadOnly(True)
+        self.ui.refTableFileEdit.setReadOnly(True)
+
         # creation des 3 onglets "set ..."
         self.hist_model_win = setHistoricalModel(self)
         self.addTab(self.hist_model_win,"Set historical model")
@@ -43,6 +52,7 @@ class Project(QTabWidget):
 
         # manual alignment set
         self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)
+        self.ui.verticalLayout_3.setAlignment(self.ui.progressBar,Qt.AlignCenter)
         self.ui.projNameLabelValue.setText(name)
         self.ui.tableWidget.setColumnWidth(1,150)
         self.ui.tableWidget.setColumnWidth(2,300)
@@ -62,11 +72,11 @@ class Project(QTabWidget):
         QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
 
         # inserer image
-        self.ui.setHistoricalButton.setIcon(QIcon("docs/ok.png"))
-        self.ui.setSummaryButton.setIcon(QIcon("docs/ok.png"))
-        self.ui.setGeneticButton.setIcon(QIcon("docs/ok.png"))
+        self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
+        self.ui.setSummaryButton.setIcon(QIcon("docs/redcross.png"))
+        self.ui.setGeneticButton.setIcon(QIcon("docs/redcross.png"))
 
-        self.setTabIcon(0,QIcon("docs/ok.png"))
+        self.setTabIcon(0,QIcon("docs/redcross.png"))
         self.setTabIcon(1,QIcon("/usr/share/pixmaps/baobab.xpm"))
 
 
@@ -79,11 +89,11 @@ class Project(QTabWidget):
         qfd = QFileDialog()
         qfd.setDirectory(self.ui.dirEdit.text())
         name = qfd.getOpenFileName()
-        self.ui.dataFileEdit.setText(name)
         self.data = Data(name)
         try:
             self.data.loadfromfile()
             self.ui.dataFileInfoLabel.setText("%s locus (%s microsat and %s sequences), %s individuals" % (self.data.nloc,self.data.nloc_mic,self.data.nloc_seq,self.data.nindtot))
+            self.ui.dataFileEdit.setText(name)
         except Exception,e:
             QMessageBox.information(self,"Data file error","%s"%e)
 
@@ -93,6 +103,7 @@ class Project(QTabWidget):
         #qfd.setDirectory("~/")
         name = qfd.getExistingDirectory()
         self.ui.dirEdit.setText(name)
+        self.ui.browseDataFileButton.setDisabled(False)
 
     def changeIcon(self):
         l=["ok.png","redcross.png"]
