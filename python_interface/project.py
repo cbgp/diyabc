@@ -20,6 +20,7 @@ class Project(QTabWidget):
         self.mainUi = ui
         self.name=name
         self.hist_state = 0
+        self.data = None
 
         # utile seulement si on derive de QTabWidget
         super(Project,self).__init__(parent)
@@ -104,7 +105,7 @@ class Project(QTabWidget):
                 sequences = "%s sequences"%self.data.nloc_seq
             if self.data.nloc_mic > 0 and self.data.nloc_seq > 0:
                 et = "and "
-            self.ui.dataFileInfoLabel.setText("%s loci (%s%s%s), %s individuals" % (self.data.nloc,microsat,et,sequences,self.data.nindtot))
+            self.ui.dataFileInfoLabel.setText("%s loci (%s%s%s)\n%s individuals in %s samples" % (self.data.nloc,microsat,et,sequences,self.data.nindtot,self.data.nsample))
             self.ui.dataFileEdit.setText(name)
             self.ui.browseDirButton.setDisabled(False)
         except Exception,e:

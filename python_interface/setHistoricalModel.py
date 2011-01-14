@@ -280,7 +280,8 @@ class setHistoricalModel(QMainWindow):
         for num,sc in enumerate(sc_txt_list):
             scChecker = history.Scenario(number=num+1)
             try:
-                scChecker.checkread(sc.split('\n'))
+                print self.parent.data
+                scChecker.checkread(sc.split('\n'),self.parent.data)
                 scChecker.checklogic()
                 t = PopTree(scChecker)
                 t.do_tree()

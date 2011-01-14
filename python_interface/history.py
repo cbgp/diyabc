@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on 8 oct. 2009
 
@@ -232,11 +233,16 @@ class Scenario(object):
             if NN.val == None : self.detparam(NN.name,"N")   
         self.nsamp = 0
         nevent = 0
-        for li in textarray[1:]: 
-            if li.upper().find('SAMPLE') : self.nsamp+=1
+        for i,li in enumerate(textarray[1:]): 
+            if li.upper().find('SAMPLE') > -1 : 
+                self.nsamp+=1
+                # verif que le nombre apres "sample" est bien inférieur ou egal au nombre de pop (len(Ncur))
+                if int(li.split(' ')[-1]) > len(Ncur):
+                    raise IOScreenError, "At line %i, the population number (%s) is higher than the number of population (%s) defined at line 1"%((i+2),li.split(' ')[-1],len(Ncur))
         if self.nsamp<1 :
             raise IOScreenError, "You must indicate when samples are taken"
-        if data<>None:
+        if data!=None:
+            print self.nsamp,"========", data.nsample
             if self.nsamp != data.nsample:
                 raise IOScreenError, "The number of samples in scenario {0} does not match the data file".format(self.number)
         if len(textarray)>1 :

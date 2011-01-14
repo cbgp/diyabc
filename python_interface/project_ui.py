@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Fri Jan 14 14:18:42 2011
+# Created: Fri Jan 14 14:50:31 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -81,8 +81,8 @@ class Ui_TabWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.dataFileInfoLabel.sizePolicy().hasHeightForWidth())
         self.dataFileInfoLabel.setSizePolicy(sizePolicy)
-        self.dataFileInfoLabel.setMinimumSize(QtCore.QSize(0, 20))
-        self.dataFileInfoLabel.setMaximumSize(QtCore.QSize(16777215, 20))
+        self.dataFileInfoLabel.setMinimumSize(QtCore.QSize(0, 40))
+        self.dataFileInfoLabel.setMaximumSize(QtCore.QSize(16777215, 40))
         self.dataFileInfoLabel.setObjectName("dataFileInfoLabel")
         self.gridLayout_4.addWidget(self.dataFileInfoLabel, 1, 5, 1, 1)
         self.label_10 = QtGui.QLabel(self.horizontalFrame)
