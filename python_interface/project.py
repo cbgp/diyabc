@@ -12,6 +12,8 @@ from project import *
 from project_ui import *
 from setHistoricalModel import setHistoricalModel
 from data import Data
+from datetime import datetime 
+import os.path
 
 class Project(QTabWidget):
     def __init__(self,ui,name,parent=None):
@@ -32,10 +34,11 @@ class Project(QTabWidget):
         self.ui.setHistoricalButton.setDisabled(True)
         self.ui.setGeneticButton.setDisabled(True)
         self.ui.setSummaryButton.setDisabled(True)
-        self.ui.browseDataFileButton.setDisabled(True)
+        self.ui.runButton.setDisabled(True)
+        self.ui.browseDirButton.setDisabled(True)
         self.ui.dataFileEdit.setReadOnly(True)
         self.ui.dirEdit.setReadOnly(True)
-        self.ui.refTableFileEdit.setReadOnly(True)
+        self.ui.groupBox.hide()
 
         # creation des 3 onglets "set ..."
         self.hist_model_win = setHistoricalModel(self)
@@ -92,18 +95,41 @@ class Project(QTabWidget):
         self.data = Data(name)
         try:
             self.data.loadfromfile()
-            self.ui.dataFileInfoLabel.setText("%s locus (%s microsat and %s sequences), %s individuals" % (self.data.nloc,self.data.nloc_mic,self.data.nloc_seq,self.data.nindtot))
+            microsat = ""
+            sequences = ""
+            et = ""
+            if self.data.nloc_mic > 0:
+                microsat = "%s microsat"%self.data.nloc_mic
+            if self.data.nloc_seq > 0:
+                sequences = "%s sequences"%self.data.nloc_seq
+            if self.data.nloc_mic > 0 and self.data.nloc_seq > 0:
+                et = "and "
+            self.ui.dataFileInfoLabel.setText("%s loci (%s%s%s), %s individuals" % (self.data.nloc,microsat,et,sequences,self.data.nindtot))
             self.ui.dataFileEdit.setText(name)
+            self.ui.browseDirButton.setDisabled(False)
         except Exception,e:
-            QMessageBox.information(self,"Data file error","%s"%e)
+            keep = ""
+            if self.ui.dataFileEdit.text() != "":
+                keep = "\n\nKeeping previous selected file"
+            QMessageBox.information(self,"Data file error","%s%s"%(e,keep))
 
 
     def dirSelection(self):
         qfd = QFileDialog()
         #qfd.setDirectory("~/")
         name = qfd.getExistingDirectory()
-        self.ui.dirEdit.setText(name)
-        self.ui.browseDataFileButton.setDisabled(False)
+        # name_YYYY_MM_DD_num le plus elevé
+        dd = datetime.now()
+        num = 36
+        cd = 100
+        while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i_%i"%(self.name,dd.year,dd.month,dd.day,cd)):
+            cd -= 1
+        if cd == 100:
+            QMessageBox.information(self,"Error","With this version, you cannot have more than 100 project directories")
+        else:
+            self.ui.dirEdit.setText(name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,(cd+1)))
+        self.ui.groupBox.show()
+        self.ui.setHistoricalButton.setDisabled(False)
 
     def changeIcon(self):
         l=["ok.png","redcross.png"]
