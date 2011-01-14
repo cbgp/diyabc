@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Mon Jan 10 23:19:46 2011
-#      by: PyQt4 UI code generator 4.7.3
+# Created: Fri Jan 14 10:10:57 2011
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -76,9 +76,9 @@ class Ui_TabWidget(object):
         self.lineEdit_5 = QtGui.QLineEdit(self.horizontalLayoutWidget)
         self.lineEdit_5.setObjectName("lineEdit_5")
         self.gridLayout_4.addWidget(self.lineEdit_5, 1, 5, 1, 1)
-        self.label_12 = QtGui.QLabel(self.horizontalLayoutWidget)
-        self.label_12.setObjectName("label_12")
-        self.gridLayout_4.addWidget(self.label_12, 2, 2, 1, 1)
+        self.dataFileInfoLabel = QtGui.QLabel(self.horizontalLayoutWidget)
+        self.dataFileInfoLabel.setObjectName("dataFileInfoLabel")
+        self.gridLayout_4.addWidget(self.dataFileInfoLabel, 2, 2, 1, 1)
         self.groupBox = QtGui.QGroupBox(self.splitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored)
         sizePolicy.setHorizontalStretch(0)
@@ -86,13 +86,11 @@ class Ui_TabWidget(object):
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setMinimumSize(QtCore.QSize(541, 0))
-        self.groupBox.setTitle("")
         self.groupBox.setFlat(False)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.groupBox_9 = QtGui.QGroupBox(self.groupBox)
-        self.groupBox_9.setTitle("")
         self.groupBox_9.setObjectName("groupBox_9")
         self.gridLayout_12 = QtGui.QGridLayout(self.groupBox_9)
         self.gridLayout_12.setObjectName("gridLayout_12")
@@ -108,7 +106,6 @@ class Ui_TabWidget(object):
         self.label_16.setObjectName("label_16")
         self.gridLayout_9.addWidget(self.label_16, 0, 1, 1, 1)
         self.label_17 = QtGui.QLabel(self.groupBox_9)
-        self.label_17.setText("")
         self.label_17.setObjectName("label_17")
         self.gridLayout_9.addWidget(self.label_17, 0, 0, 1, 1)
         self.gridLayout_12.addLayout(self.gridLayout_9, 3, 0, 1, 1)
@@ -139,7 +136,6 @@ class Ui_TabWidget(object):
         self.gridLayout_12.addWidget(self.frame_3, 1, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox_9, 1, 0, 1, 1)
         self.groupBox_8 = QtGui.QGroupBox(self.groupBox)
-        self.groupBox_8.setTitle("")
         self.groupBox_8.setObjectName("groupBox_8")
         self.gridLayout_11 = QtGui.QGridLayout(self.groupBox_8)
         self.gridLayout_11.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
@@ -253,7 +249,6 @@ class Ui_TabWidget(object):
         self.gridLayout_11.addWidget(self.frame_4, 1, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox_8, 1, 1, 1, 1)
         self.groupBox_7 = QtGui.QGroupBox(self.groupBox)
-        self.groupBox_7.setTitle("")
         self.groupBox_7.setObjectName("groupBox_7")
         self.gridLayout_10 = QtGui.QGridLayout(self.groupBox_7)
         self.gridLayout_10.setObjectName("gridLayout_10")
@@ -304,7 +299,6 @@ class Ui_TabWidget(object):
         self.gridLayout_3.addWidget(self.groupBox_7, 0, 0, 1, 1)
         self.groupBox_6 = QtGui.QGroupBox(self.groupBox)
         self.groupBox_6.setAutoFillBackground(False)
-        self.groupBox_6.setTitle("")
         self.groupBox_6.setObjectName("groupBox_6")
         self.gridLayout_8 = QtGui.QGridLayout(self.groupBox_6)
         self.gridLayout_8.setObjectName("gridLayout_8")
@@ -409,7 +403,7 @@ class Ui_TabWidget(object):
         self.label_4.setText(QtGui.QApplication.translate("TabWidget", "Data file : ", None, QtGui.QApplication.UnicodeUTF8))
         self.browseDataFileButton.setText(QtGui.QApplication.translate("TabWidget", "Browse", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("TabWidget", "Reference table file", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_12.setText(QtGui.QApplication.translate("TabWidget", "X Samples, X individuals and X loci", None, QtGui.QApplication.UnicodeUTF8))
+        self.dataFileInfoLabel.setText(QtGui.QApplication.translate("TabWidget", "X Samples, X individuals and X loci", None, QtGui.QApplication.UnicodeUTF8))
         self.label_16.setText(QtGui.QApplication.translate("TabWidget", "X summary statistics", None, QtGui.QApplication.UnicodeUTF8))
         self.label_18.setText(QtGui.QApplication.translate("TabWidget", "Summary statistics", None, QtGui.QApplication.UnicodeUTF8))
         self.setSummaryButton.setToolTip(QtGui.QApplication.translate("TabWidget", "(Alt+s)", None, QtGui.QApplication.UnicodeUTF8))

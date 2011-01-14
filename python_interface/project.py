@@ -11,6 +11,7 @@ from diyabc_ui import Ui_MainWindow
 from project import *
 from project_ui import *
 from setHistoricalModel import setHistoricalModel
+from data import Data
 
 class Project(QTabWidget):
     def __init__(self,ui,name,parent=None):
@@ -79,6 +80,9 @@ class Project(QTabWidget):
         qfd.setDirectory(self.ui.dirEdit.text())
         name = qfd.getOpenFileName()
         self.ui.dataFileEdit.setText(name)
+        self.data = Data(name)
+        self.data.loadfromfile()
+        self.ui.dataFileInfoLabel.setText("%s locus (%s microsat et %s sequences), %s individus au total" % (self.data.nloc,self.data.nloc_mic,self.data.nloc_seq,self.data.nindtot))
 
     def dirSelection(self):
         qfd = QFileDialog()

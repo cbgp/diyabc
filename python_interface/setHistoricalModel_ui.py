@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setHistoricalModel.ui'
 #
-# Created: Thu Jan 13 13:59:15 2011
+# Created: Fri Jan 14 10:02:56 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!

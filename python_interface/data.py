@@ -393,25 +393,3 @@ class Data(object):
                                                                    
                         
                 
-                
-        
-
-
-
-
-
-
-
-
-
-
-
- 
-data=Data(filename='tout.txt') 
-data.loadfromfile()
-print "%s locus (%s microsat et %s sequences), %s individus au total" % (data.nloc,data.nloc_mic,data.nloc_seq,data.nindtot)
-for loc in data.locuslist :
-    print loc.name,"   type=",loc.type
-for m in data.missdat: print m
-for m in data.missnuc: print m
-for m in data.haplo:  print m

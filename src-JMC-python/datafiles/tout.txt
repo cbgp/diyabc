@@ -1,0 +1,40 @@
+18/03/2010 17:02:03  N=1000000  <NM=3.00NF>
+locus M_A_1  <A>
+locus M_X_1  <X>
+locus M_Y_1  <Y>
+locus S_A_1  <A>
+locus S_X_1  <X>
+locus S_Y_1  <Y>
+locus S_M_1  <M>
+POP
+1-001 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATC-TTA]>
+1-002 ,  180204    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+1-003 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+1-004 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+1-005 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+1-006 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+1-007 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+1-008 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+1-009 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+1-010 ,  172176    160202    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+1-011 ,  172176    156       216    <[TAGCTA][TAGCTA]>    <[TAGCTA]>           <[GGCTT]>    <[ATCGTTA]>
+1-012 ,  172176    156       216    <[TAGCTA][TAGCTA]>    <[TAGCTA]>           <[GGCTT]>    <[ATCGTTA]>
+1-013 ,  172176    156       216    <[TAGCTA][TAGCTA]>    <[TAGCTA]>           <[GGCTT]>    <[ATCGTTA]>
+1-014 ,  172176    156       216    <[TAGCTA][TAGCTA]>    <[TAGCTA]>           <[GGCTT]>    <[ATCGTTA]>
+1-015 ,  172176    156       222    <[TAGCTA][TAGCTA]>    <[TAGCTA]>           <[GGCTT]>    <[ATCGTTA]>
+POP
+2-001 ,  172176    000000    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+2-002 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+2-003 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+2-004 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+2-005 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+2-006 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+2-007 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+2-008 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+2-009 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+2-010 ,  172176    156172    000    <[TAGCTA][TAGCTA]>    <[TAGCTA][TAGCTA]>   <[]>         <[ATCGTTA]>
+2-011 ,  172176    156       218    <[TAGCTA][TAGCTA]>    <[]>                 <[GGCTT]>    <[ATCGTTA]>
+2-012 ,  172176    156       000    <[TAGCTA][TAGCTA]>    <[TAGCTA]>           <[GGCTT]>    <[ATCGTTA]>
+2-013 ,  172176    156       218    <[TAGCTA][TAGCTA]>    <[TAGCTA]>           <[GGCTT]>    <[ATCGTTA]>
+2-014 ,  172176    156       220    <[TAGCTA][TAGCTA]>    <[TAGCTA]>           <[GGCTT]>    <[ATCGTTA]>
+2-015 ,  172176    156       220    <[TAGCTA][TAGCTA]>    <[TAGCTA]>           <[GGCTT]>    <[ATCGTTA]>
