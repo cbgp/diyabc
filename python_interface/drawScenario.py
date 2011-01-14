@@ -180,13 +180,14 @@ class drawScenario(QMainWindow):
         self.ui.horizontalLayout_2.addWidget(label)
 
     def saveDraws(self):
-        nbpix = len(self.pixList)
-        largeur = 2
-        longueur = len(self.pixList)/largeur
-        ind = 0
-        li=0
-        self.pix_result = QPixmap(largeur*500,longueur*450)
-        self.pix_result.fill(Qt.white)
+        #nbpix = len(self.pixList)
+        #largeur = 2
+        #longueur = len(self.pixList)/largeur
+        #ind = 0
+        #li=0
+        #self.pix_result = QPixmap(largeur*500,longueur*450)
+        #self.pix_result.fill(Qt.white)
+
         ## on fait des lignes tant qu'on a des pix
         #while (ind < nbpix):
         #    col = 0
@@ -211,10 +212,10 @@ class drawScenario(QMainWindow):
         im = self.pix_result.toImage()
         im.save("/tmp/image.jpg")
 
-        #for ind,pix in enumerate(self.pixList):
-            #im = pix.toImage()
-            #im.save("/tmp/im_%i.jpg"%ind)
-            #print 'sauvé dans /tmp/im_%i.jpg'%ind
+        for ind,pix in enumerate(self.pixList):
+            im = pix.toImage()
+            im.save("/tmp/%_scenario_%i.jpg"%(self.parent.parent.name,ind)
+            print 'sauvé dans /tmp/im_%i.jpg'%ind
 
     def closeEvent(self, event):
         pass

@@ -30,15 +30,15 @@ class Project(QTabWidget):
 
         # creation des 3 onglets "set ..."
         self.hist_model_win = setHistoricalModel(self)
-        self.addTab(self.hist_model_win,"set historical model")
+        self.addTab(self.hist_model_win,"Set historical model")
         self.setTabEnabled(2,False)
 
         self.gen_data_win = None
-        self.addTab(self.gen_data_win,"set genetic data")
+        self.addTab(self.gen_data_win,"Set genetic data")
         self.setTabEnabled(3,False)
 
         self.sum_stats_win = None
-        self.addTab(self.sum_stats_win,"set summary statistics")
+        self.addTab(self.sum_stats_win,"Set summary statistics")
         self.setTabEnabled(4,False)
 
         # manual alignment set
@@ -81,8 +81,12 @@ class Project(QTabWidget):
         name = qfd.getOpenFileName()
         self.ui.dataFileEdit.setText(name)
         self.data = Data(name)
-        self.data.loadfromfile()
-        self.ui.dataFileInfoLabel.setText("%s locus (%s microsat et %s sequences), %s individus au total" % (self.data.nloc,self.data.nloc_mic,self.data.nloc_seq,self.data.nindtot))
+        try:
+            self.data.loadfromfile()
+            self.ui.dataFileInfoLabel.setText("%s locus (%s microsat and %s sequences), %s individuals" % (self.data.nloc,self.data.nloc_mic,self.data.nloc_seq,self.data.nindtot))
+        except Exception,e:
+            QMessageBox.information(self,"Data file error","%s"%e)
+
 
     def dirSelection(self):
         qfd = QFileDialog()
