@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setHistoricalModel.ui'
 #
-# Created: Fri Jan 14 10:02:56 2011
+# Created: Fri Jan 14 16:20:49 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -19,12 +19,31 @@ class Ui_MainWindow(object):
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout_4.setSpacing(2)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.okButton = QtGui.QPushButton(self.centralwidget)
+        self.frame_6 = QtGui.QFrame(self.centralwidget)
+        self.frame_6.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame_6.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_6.setObjectName("frame_6")
+        self.horizontalLayout_9 = QtGui.QHBoxLayout(self.frame_6)
+        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
+        self.exitButton = QtGui.QPushButton(self.frame_6)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.exitButton.setFont(font)
+        self.exitButton.setObjectName("exitButton")
+        self.horizontalLayout_9.addWidget(self.exitButton)
+        self.clearButton = QtGui.QPushButton(self.frame_6)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.clearButton.setFont(font)
+        self.clearButton.setObjectName("clearButton")
+        self.horizontalLayout_9.addWidget(self.clearButton)
+        self.okButton = QtGui.QPushButton(self.frame_6)
         font = QtGui.QFont()
         font.setPointSize(14)
         self.okButton.setFont(font)
         self.okButton.setObjectName("okButton")
-        self.verticalLayout_4.addWidget(self.okButton)
+        self.horizontalLayout_9.addWidget(self.okButton)
+        self.verticalLayout_4.addWidget(self.frame_6)
         self.frame_4 = QtGui.QFrame(self.centralwidget)
         self.frame_4.setFrameShape(QtGui.QFrame.NoFrame)
         self.frame_4.setFrameShadow(QtGui.QFrame.Raised)
@@ -148,7 +167,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 959, 369))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 959, 349))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_6.setSpacing(1)
@@ -352,8 +371,12 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.okButton.setToolTip(QtGui.QApplication.translate("MainWindow", "(Alt+o)", None, QtGui.QApplication.UnicodeUTF8))
-        self.okButton.setText(QtGui.QApplication.translate("MainWindow", "OK", None, QtGui.QApplication.UnicodeUTF8))
+        self.exitButton.setToolTip(QtGui.QApplication.translate("MainWindow", "Leave this screen without loosing any change", None, QtGui.QApplication.UnicodeUTF8))
+        self.exitButton.setText(QtGui.QApplication.translate("MainWindow", "EXIT", None, QtGui.QApplication.UnicodeUTF8))
+        self.clearButton.setToolTip(QtGui.QApplication.translate("MainWindow", "Clear all data related to this historical model", None, QtGui.QApplication.UnicodeUTF8))
+        self.clearButton.setText(QtGui.QApplication.translate("MainWindow", "CLEAR", None, QtGui.QApplication.UnicodeUTF8))
+        self.okButton.setToolTip(QtGui.QApplication.translate("MainWindow", "Test and save data (Alt+o)", None, QtGui.QApplication.UnicodeUTF8))
+        self.okButton.setText(QtGui.QApplication.translate("MainWindow", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+O", None, QtGui.QApplication.UnicodeUTF8))
         self.addScButton.setToolTip(QtGui.QApplication.translate("MainWindow", "(Alt+a)", None, QtGui.QApplication.UnicodeUTF8))
         self.addScButton.setText(QtGui.QApplication.translate("MainWindow", "Add scenario", None, QtGui.QApplication.UnicodeUTF8))

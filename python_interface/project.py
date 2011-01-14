@@ -169,3 +169,10 @@ class Project(QTabWidget):
         self.ui.nbScLabel.setText(nb)
     def setNbParams(self,nb):
         self.ui.nbParamLabel.setText(nb)
+    def clearHistoricalModel(self):
+        self.removeTab(self.indexOf(self.hist_model_win))
+        self.hist_model_win = setHistoricalModel(self)
+        self.insertTab(2,self.hist_model_win,"Set historical model")
+        #self.setTabEnabled(2,False)
+        self.setCurrentWidget(self.hist_model_win)
+

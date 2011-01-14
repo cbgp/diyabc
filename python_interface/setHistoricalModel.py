@@ -35,6 +35,8 @@ class setHistoricalModel(QMainWindow):
         #TODO
         #QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.addCondition)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.close)
+        QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.close)
+        QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.close)
         QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.checkToDraw)
         QObject.connect(self.ui.defPrButton,SIGNAL("clicked()"),self.definePriors)
 
@@ -453,19 +455,27 @@ class setHistoricalModel(QMainWindow):
         self.setCondition.show()
 
     def closeEvent(self, event):
-        # gestion des valeurs
-        nb_sc = len(self.scList)
-        pluriel = ""
-        if nb_sc > 1:
-            pluriel = "s"
-        self.parent.setNbScenarios("%i scenario%s"%(nb_sc,pluriel))
-        nb_params = len(self.paramList)
-        pluriel = ""
-        if nb_params > 1:
-            pluriel = "s"
-        self.parent.setNbParams("%i parameter%s"%(nb_params,pluriel))
-        # reactivation des onglets
-        self.parent.setTabEnabled(0,True)
-        self.parent.setTabEnabled(1,True)
-        self.parent.setTabEnabled(2,False)
-        self.parent.setCurrentIndex(0)
+        # le cancel ne vérifie rien
+        if self.sender() == self.ui.clearButton:
+            print "CLEAR"
+            self.parent.clearHistoricalModel()
+        else:
+            if self.sender() == self.ui.okButton:
+                # TODO verifs, si c'est valide, on change l'icone du setHistModel
+                pass
+            # gestion des valeurs
+            nb_sc = len(self.scList)
+            pluriel = ""
+            if nb_sc > 1:
+                pluriel = "s"
+            self.parent.setNbScenarios("%i scenario%s"%(nb_sc,pluriel))
+            nb_params = len(self.paramList)
+            pluriel = ""
+            if nb_params > 1:
+                pluriel = "s"
+            self.parent.setNbParams("%i historical parameter%s"%(nb_params,pluriel))
+            # reactivation des onglets
+            self.parent.setTabEnabled(0,True)
+            self.parent.setTabEnabled(1,True)
+            self.parent.setTabEnabled(2,False)
+            self.parent.setCurrentIndex(0)
