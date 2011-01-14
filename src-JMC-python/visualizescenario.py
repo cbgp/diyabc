@@ -553,7 +553,7 @@ class PopTree(object):
                 i1 = self.findfather2(i)
                 k1,k2 = self.findchildren2(i)
                 if (i1>0)and(k1>=0)and(k2>=0) :
-                    if (self.node[k1].y != self.node[11].y) and (self.node[k2].y != self.node[11].y) :
+                    if (self.node[k1].y != self.node[i1].y) and (self.node[k2].y != self.node[i1].y) :
                         x1 = self.node[i1].x + (no.y-self.node[i1].y)*(self.node[k1].x-self.node[i1].x)/(self.node[k1].y-self.node[i1].y)
                         x2 = self.node[i1].x + (no.y-self.node[i1].y)*(self.node[k2].x-self.node[i1].x)/(self.node[k2].y-self.node[i1].y)
                         if x1>x2 : piv=x1;x1=x2;x2=piv
@@ -660,8 +660,8 @@ class PopTree(object):
             raise PopTreeError, "Scenario {0} seems OK. But the current version of DIYABC is unable to provide a valide graphic representation.".format(self.scenario.number)    
             
 def testCheckScenario():
-#    ts = ['N1 N2 N3', '0 sample 1', '0 sample 2', '0 sample 3', '50 split 3 1 2 lambda', "100 merge 1 2"]
-    ts = ['N1 N2 N3 N4','0 sample 1', '0 sample 2', '0 sample 3','0 sample 4','t1 split 2 5 3 r1','t2 merge 1 5','t3 split 3 1 4 r2','t4 merge 1 4']
+    ts = ['N1 N2 N3', '0 sample 1', '0 sample 2', '0 sample 3', '50 merge 1 3', "100 merge 1 2"]
+#    ts = ['N1 N2 N3 N4 N5','0 sample 1', '0 sample 2', '0 sample 3','0 sample 4','t1 split 2 5 3 r1','t2 merge 1 5','t3 split 3 1 4 r2','t4 merge 1 4']
     print ts
     s = history.Scenario()
     s.checkread(ts)
