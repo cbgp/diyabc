@@ -224,8 +224,8 @@ class Data(object):
         nl = 1
         line = lines[nl].upper()
         iloc=-1
-#        self.nloc_mic = 0
-#        self.nloc_seq = 0
+        self.nloc_mic = 0
+        self.nloc_seq = 0
 # loop to read locus names and parentality
         while (line.find('POP')<0) and (nl<len(lines)) :
             iloc+=1
@@ -268,9 +268,17 @@ class Data(object):
                 line3 = line2[1].split()
                 self.indivname[-1].append(line2[0].strip())
                 self.genotype.append(line3)
+                if len(self.genotype)==1 :
+                    for ig,g in enumerate(self.genotype[0]) :
+                        if self.locuslist[ig].type==0 :
+                            try:
+                                a=int(g)
+                            except:
+                                self.locuslist[ig].type=5
+                               
                 #print self.genotype[-1]
             nl +=1
-        self.nloc_tot = self.nloc_seq + self.nloc_mic
+        self.nloc = self.nloc_seq + self.nloc_mic
         
 
     def __domicrosat(self,loc,iloc):
@@ -407,11 +415,11 @@ class Data(object):
 
 
  
-data=Data(filename='tout.txt') 
+data=Data(filename='admix1.txt') 
 data.loadfromfile()
 print "%s locus (%s microsat et %s sequences), %s individus au total" % (data.nloc,data.nloc_mic,data.nloc_seq,data.nindtot)
 for loc in data.locuslist :
     print loc.name,"   type=",loc.type
-for m in data.missdat: print m
-for m in data.missnuc: print m
-for m in data.haplo:  print m
+#for m in data.missdat: print m
+#for m in data.missnuc: print m
+#for m in data.haplo:  print m
