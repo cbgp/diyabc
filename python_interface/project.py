@@ -40,6 +40,7 @@ class Project(QTabWidget):
         self.ui.dataFileEdit.setReadOnly(True)
         self.ui.dirEdit.setReadOnly(True)
         self.ui.groupBox.hide()
+        #self.ui.groupBox.setVisible(False)
 
         # creation des 3 onglets "set ..."
         self.hist_model_win = setHistoricalModel(self)
@@ -92,12 +93,17 @@ class Project(QTabWidget):
         #        self.ui.tableWidget.setItem(j,i,it)
 
     def dataFileSelection(self):
+        """ dialog pour selectionner le fichier à lire
+        il est lu et vérifié. S'il est invalide, on garde la sélection précédente
+        """
         qfd = QFileDialog()
         qfd.setDirectory(self.ui.dirEdit.text())
         name = qfd.getOpenFileName()
-        self.data = Data(name)
+        new_data = Data(name)
         try:
-            self.data.loadfromfile()
+            new_data.loadfromfile()
+            # on ne garde le data que si le load n'a pas déclenché d'exception
+            self.data = new_data
             microsat = ""
             sequences = ""
             et = ""
@@ -106,7 +112,7 @@ class Project(QTabWidget):
             if self.data.nloc_seq > 0:
                 sequences = "%s sequences"%self.data.nloc_seq
             if self.data.nloc_mic > 0 and self.data.nloc_seq > 0:
-                et = "and "
+                et = " and "
             self.ui.dataFileInfoLabel.setText("%s loci (%s%s%s)\n%s individuals in %s samples" % (self.data.nloc,microsat,et,sequences,self.data.nindtot,self.data.nsample))
             self.ui.dataFileEdit.setText(name)
             self.ui.browseDirButton.setDisabled(False)
