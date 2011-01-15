@@ -173,7 +173,9 @@ class Data(object):
         
     def __test_genepop(self):
         try :    
-            with open(self.filename,'r') as f: read_data = f.read()
+            #with open(self.filename,'r') as f: read_data = f.read()
+            f = open(self.filename,'r')
+            read_data = f.read()
         except :
             raise IOError , "Error when attempting to read data file"
         f=open(self.filename,'r')

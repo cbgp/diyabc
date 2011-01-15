@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Fri Jan 14 14:50:31 2011
-#      by: PyQt4 UI code generator 4.6
+# Created: Sat Jan 15 18:51:57 2011
+#      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -23,6 +23,7 @@ class Ui_TabWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.horizontalFrame.sizePolicy().hasHeightForWidth())
         self.horizontalFrame.setSizePolicy(sizePolicy)
+        self.horizontalFrame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.horizontalFrame.setObjectName("horizontalFrame")
         self.gridLayout_4 = QtGui.QGridLayout(self.horizontalFrame)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -83,6 +84,7 @@ class Ui_TabWidget(object):
         self.dataFileInfoLabel.setSizePolicy(sizePolicy)
         self.dataFileInfoLabel.setMinimumSize(QtCore.QSize(0, 40))
         self.dataFileInfoLabel.setMaximumSize(QtCore.QSize(16777215, 40))
+        self.dataFileInfoLabel.setText("")
         self.dataFileInfoLabel.setObjectName("dataFileInfoLabel")
         self.gridLayout_4.addWidget(self.dataFileInfoLabel, 1, 5, 1, 1)
         self.label_10 = QtGui.QLabel(self.horizontalFrame)
@@ -97,17 +99,19 @@ class Ui_TabWidget(object):
         self.gridLayout_4.addWidget(self.label_10, 1, 3, 1, 1)
         self.verticalLayout.addWidget(self.horizontalFrame)
         self.groupBox = QtGui.QGroupBox(self.tabRefTable)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setMinimumSize(QtCore.QSize(541, 0))
+        self.groupBox.setTitle("")
         self.groupBox.setFlat(False)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.groupBox_9 = QtGui.QGroupBox(self.groupBox)
+        self.groupBox_9.setTitle("")
         self.groupBox_9.setObjectName("groupBox_9")
         self.gridLayout_12 = QtGui.QGridLayout(self.groupBox_9)
         self.gridLayout_12.setObjectName("gridLayout_12")
@@ -155,6 +159,7 @@ class Ui_TabWidget(object):
         self.gridLayout_12.addWidget(self.frame_7, 3, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox_9, 1, 0, 1, 1)
         self.groupBox_8 = QtGui.QGroupBox(self.groupBox)
+        self.groupBox_8.setTitle("")
         self.groupBox_8.setObjectName("groupBox_8")
         self.gridLayout_11 = QtGui.QGridLayout(self.groupBox_8)
         self.gridLayout_11.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
@@ -272,6 +277,7 @@ class Ui_TabWidget(object):
         self.gridLayout_11.addWidget(self.frame_8, 2, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox_8, 1, 1, 1, 1)
         self.groupBox_7 = QtGui.QGroupBox(self.groupBox)
+        self.groupBox_7.setTitle("")
         self.groupBox_7.setObjectName("groupBox_7")
         self.gridLayout_10 = QtGui.QGridLayout(self.groupBox_7)
         self.gridLayout_10.setObjectName("gridLayout_10")
@@ -330,6 +336,7 @@ class Ui_TabWidget(object):
         self.gridLayout_3.addWidget(self.groupBox_7, 0, 0, 1, 1)
         self.groupBox_6 = QtGui.QGroupBox(self.groupBox)
         self.groupBox_6.setAutoFillBackground(False)
+        self.groupBox_6.setTitle("")
         self.groupBox_6.setObjectName("groupBox_6")
         self.gridLayout_8 = QtGui.QGridLayout(self.groupBox_6)
         self.gridLayout_8.setObjectName("gridLayout_8")

@@ -124,8 +124,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>821</width>
-            <height>198</height>
+            <width>823</width>
+            <height>196</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_3"/>
@@ -310,8 +310,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>750</width>
-            <height>58</height>
+            <width>765</width>
+            <height>56</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -353,8 +353,13 @@
          <x>0</x>
          <y>0</y>
          <width>959</width>
-         <height>349</height>
+         <height>358</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <property name="spacing">
@@ -443,6 +448,11 @@
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>parameters</string>
                 </property>
@@ -486,6 +496,11 @@
               </property>
               <item>
                <widget class="QLabel" name="label_3">
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Uniform</string>
                 </property>
@@ -496,6 +511,11 @@
               </item>
               <item>
                <widget class="QLabel" name="label_4">
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Log-uniform</string>
                 </property>
@@ -506,6 +526,11 @@
               </item>
               <item>
                <widget class="QLabel" name="label_5">
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Normal</string>
                 </property>
@@ -516,6 +541,11 @@
               </item>
               <item>
                <widget class="QLabel" name="label_6">
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Log-normal</string>
                 </property>
@@ -577,6 +607,11 @@
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>minimum</string>
                 </property>
@@ -604,6 +639,11 @@
                   <width>80</width>
                   <height>16777215</height>
                  </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
                 </property>
                 <property name="text">
                  <string>maximum</string>
@@ -633,6 +673,11 @@
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>mean</string>
                 </property>
@@ -661,6 +706,11 @@
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>st-deviation</string>
                 </property>
@@ -688,6 +738,11 @@
                   <width>80</width>
                   <height>16777215</height>
                  </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
                 </property>
                 <property name="text">
                  <string>step</string>
@@ -752,8 +807,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>939</width>
-            <height>58</height>
+            <width>937</width>
+            <height>56</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -826,7 +881,7 @@
      <x>0</x>
      <y>0</y>
      <width>977</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

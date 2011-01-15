@@ -55,6 +55,8 @@ class Project(QTabWidget):
         self.setTabEnabled(4,False)
 
         # manual alignment set
+        #self.ui.verticalLayout.setAlignment(self.ui.horizontalFrame,Qt.AlignTop)
+        #self.ui.verticalLayout.setAlignment(self.ui.groupBox,Qt.AlignTop)
         self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)
         self.ui.verticalLayout_3.setAlignment(self.ui.progressBar,Qt.AlignCenter)
         self.ui.projNameLabelValue.setText(name)
@@ -163,6 +165,9 @@ class Project(QTabWidget):
         """
         self.setTabEnabled(0,False)
         self.setTabEnabled(1,False)
+        # nécéssaire seulement sous windows
+        # on dirait que sous linux, le simple setCurrentWidget rend l'onglet enabled
+        self.setTabEnabled(2,True)
         self.setCurrentWidget(self.hist_model_win)
 
     def setNbScenarios(self,nb):
