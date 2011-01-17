@@ -530,7 +530,7 @@ struct ParticleC
 		GeneTreeC gt;
 		int nnod=0,nn,n=0;
 		//cout << "nsample = " << this->data.nsample << "   samplesize[0][0] = " << samplesize[0][0] << "\n";
-		for (int sa=0;sa<this->data.nsample;sa++) {nnod +=this->locuslist[loc].ssmic[sa];}
+		for (int sa=0;sa<this->data.nsample;sa++) {nnod +=this->locuslist[loc].ss[sa];}
 		//cout << "nombre initial de noeuds = " << nnod  <<"\n";
 		gt.ngenes = nnod;
 		gt.nnodes=nnod;
@@ -933,28 +933,27 @@ struct ParticleC
 		// tirage au hasard des gènes avant attribution aux individus
 		ordre.resize(this->data.nsample);ind=0;
 		for (sa=0;sa<this->data.nsample;sa++) {
-			ordre[sa] = melange(this->mw,this->locuslist[loc].ssmic[sa]);
-			if (sa>0) {for (int i=0;i<this->locuslist[loc].ssmic[sa];i++) ordre[sa][i]+=ind;}
-			ind +=this->locuslist[loc].ssmic[sa];
+			ordre[sa] = melange(this->mw,this->locuslist[loc].ss[sa]);
+			if (sa>0) {for (int i=0;i<this->locuslist[loc].ss[sa];i++) ordre[sa][i]+=ind;}
+			ind +=this->locuslist[loc].ss[sa];
 		}
 		if (this->locuslist[loc].type<5) {       //MICROSAT
-			this->locuslist[loc].haplostate = new int[this->gt[loc].ngenes];
 			this->locuslist[loc].haplomic = new int*[this->data.nsample];
-			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplomic[sa] = new int [this->locuslist[loc].ssmic[sa]];
+			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplomic[sa] = new int [this->locuslist[loc].ss[sa]];
 			sa=0;ind=0;
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) return 2;
 				this->locuslist[loc].haplomic[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].state;
-				ind++;if (ind==this->locuslist[loc].ssmic[sa]) {sa++;ind=0;}
+				ind++;if (ind==this->locuslist[loc].ss[sa]) {sa++;ind=0;}
 			}
 		this->locuslist[loc].samplesize =new int[this->data.nsample];
-		for (int sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].samplesize[sa] =this->locuslist[loc].ssmic[sa];
+		for (int sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].samplesize[sa] =this->locuslist[loc].ss[sa];
 //AJOUTER LE TRAITEMENT DES DONNEES MANQUANTES DES MICROSAT
 		//Penser à décrémenter samplesize
 		}
 		else {									//DNA SEQUENCES
-			this->locuslist[loc].haplodna = new string*[this->data.nsample];
-			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplodna[sa] = new string [this->locuslist[loc].ssmic[sa]];
+			this->locuslist[loc].haplodna = new char**[this->data.nsample];
+			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplodna[sa] = new char* [this->locuslist[loc].ss[sa]];
 			sa=0;ind=0;
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {
@@ -974,7 +973,7 @@ struct ParticleC
 					return 2;
 				}
 				this->locuslist[loc].haplodna[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].dna;
-				ind++;if (ind==this->locuslist[loc].ssmic[sa]) {sa++;ind=0;}
+				ind++;if (ind==this->locuslist[loc].ss[sa]) {sa++;ind=0;}
 				}
 //AJOUTER LE TRAITEMENT DES DONNEES MANQUANTES DES SEQUENCES
 		}
@@ -1104,9 +1103,9 @@ struct ParticleC
 				for (int samp=0;samp<this->data.nsample;samp++) {
 					this->locuslist[loc].freq[samp] = new double [this->locuslist[loc].nal];
 					for (int i=0;i<this->locuslist[loc].nal;i++) this->locuslist[loc].freq[samp][i]=0.0;
-					//cout << this->locuslist[loc].ssmic[samp] <<"\n";
+					//cout << this->locuslist[loc].ss[samp] <<"\n";
 					//cout <<this->locuslist[loc].samplesize[samp]<< "\n";
-					for (int i=0;i<this->locuslist[loc].ssmic[samp];i++){
+					for (int i=0;i<this->locuslist[loc].ss[samp];i++){
 						if (this->locuslist[loc].haplomic[samp][i] != MISSING) {
 							//cout <<"  "<<this->locuslist[loc].haplomic[samp][i];
 							this->locuslist[loc].freq[samp][this->locuslist[loc].haplomic[samp][i]-this->locuslist[loc].kmin] +=1.0;
@@ -1233,7 +1232,7 @@ struct ParticleC
 			for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
 				loc=this->grouplist[stat.group].loc[iloc];
 			  v=0.0;s=0.0;n=0;
-			  for (int i=0;i<this->locuslist[loc].ssmic[stat.samp];i++){
+			  for (int i=0;i<this->locuslist[loc].ss[stat.samp];i++){
 				  if (this->locuslist[loc].haplomic[stat.samp][i] != MISSING) {
 					  n++;
 					  s+=this->locuslist[loc].haplomic[stat.samp][i];
@@ -1256,14 +1255,14 @@ struct ParticleC
 		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
 			loc=this->grouplist[stat.group].loc[iloc];
 			v=0.0;s=0.0;n=0;
-			for (int i=0;i<this->locuslist[loc].ssmic[stat.samp];i++){
+			for (int i=0;i<this->locuslist[loc].ss[stat.samp];i++){
 				if (this->locuslist[loc].haplomic[stat.samp][i] != MISSING) {
 					n++;
 					s+=this->locuslist[loc].haplomic[stat.samp][i];
 					v+=sqr(this->locuslist[loc].haplomic[stat.samp][i]);
 				}
 			}
-			for (int i=0;i<this->locuslist[loc].ssmic[stat.samp1];i++){
+			for (int i=0;i<this->locuslist[loc].ss[stat.samp1];i++){
 				if (this->locuslist[loc].haplomic[stat.samp1][i] != MISSING) {
 					n++;
 					s+=this->locuslist[loc].haplomic[stat.samp1][i];
@@ -1317,7 +1316,7 @@ struct ParticleC
 		    		nA=0;AA=0;ni=0;ind=0;
 //ind est le numéro de l'individu (haploïde ou diploïde ou même sans génotype si Y femelle)
 //i est le numéro de la copie du gène
-		    		for (i=0;i<this->locuslist[loc].ssmic[pop];){
+		    		for (i=0;i<this->locuslist[loc].ss[pop];){
 		    			nn=calploidy(loc,pop,ind);
 						ind++;
 		    			switch (nn)
@@ -1379,7 +1378,7 @@ struct ParticleC
 				b = 1.0/(double)nal;
 				a = 1.0/(double)this->data.nind[stat.samp];
 				ind = 0;
-			    for (i=0;i<this->locuslist[loc].ssmic[stat.samp];i++){
+			    for (i=0;i<this->locuslist[loc].ss[stat.samp];i++){
 					nn=calploidy(loc,stat.samp,ind);
 					ind++;
 	    			switch (nn)
@@ -1423,7 +1422,7 @@ struct ParticleC
 				for (int kpop=0;kpop<2;kpop++) {
 					if (kpop==0) pop=stat.samp;	else pop=stat.samp1;
 					s = 0.0;moy[kpop]=0.0;
-					for (int i=0;i<this->locuslist[loc].ssmic[pop];i++) {
+					for (int i=0;i<this->locuslist[loc].ss[pop];i++) {
 						if (this->locuslist[loc].haplomic[pop][i]!=MISSING) s += this->locuslist[loc].haplomic[pop][i];
 					}
 					moy[kpop]=s/(double)this->locuslist[loc].samplesize[pop];
@@ -1440,9 +1439,9 @@ struct ParticleC
 		int iloc,loc,nl=0;
 		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
 			loc=this->grouplist[stat.group].loc[iloc];
-			for (int i=0;i<this->locuslist[loc].ssmic[stat.samp];i++) {
+			for (int i=0;i<this->locuslist[loc].ss[stat.samp];i++) {
 				if (this->locuslist[loc].haplomic[stat.samp][i]!=MISSING) {
-					for (int j=0;j<this->locuslist[loc].ssmic[stat.samp1];j++) {	
+					for (int j=0;j<this->locuslist[loc].ss[stat.samp1];j++) {
 						if (this->locuslist[loc].haplomic[stat.samp1][j]!=MISSING) {
 							nl++;
 							if (this->locuslist[loc].haplomic[stat.samp][i] == this->locuslist[loc].haplomic[stat.samp1][j]) s+=1.0;
@@ -1465,7 +1464,7 @@ struct ParticleC
 				loc=this->grouplist[stat.group].loc[iloc];
 //			    cout << "\n\n locus "<< loc<< "\n";
 			    ind=0;
-			    for (int i=0;i<this->locuslist[loc].ssmic[stat.samp];) {
+			    for (int i=0;i<this->locuslist[loc].ss[stat.samp];) {
 			    	nn = calploidy(loc,stat.samp,ind);
 				ind++;
 	    			switch (nn)

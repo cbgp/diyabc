@@ -1,5 +1,3 @@
-#include <boost/python.hpp>
-
 #include <iostream>
 
 //using namespace boost::python;
@@ -11,7 +9,7 @@
 #endif
 
 #include "particuleC.cpp"
-
+//#include "data.cpp"
 
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			-13 : fst
@@ -30,6 +28,94 @@
  *
  */
 
+int getwordint(string s,int num){
+	s.append(" ");
+	while (s.find(" ")== 0) s=s.substr(1);
+	int i=1,j;
+	while ((i<num)and(s.length()>1)) {
+		j=s.find(" ");
+		s=s.substr(j);
+		while (s.find(" ")== 0) s=s.substr(1);
+		i++;
+	}
+	s=s.substr(0,s.find(" "));
+	if ((s.find("(")==0)or(s.find("[")==0)) s=s.substr(1,s.length()-1);
+	return atoi(s.c_str());
+}
+
+double getwordfloat(string s,int num){
+	s.append(" ");
+	while (s.find(" ")== 0) s=s.substr(1);
+	int i=1,j;
+	while ((i<num)and(s.length()>1)) {
+		j=s.find(" ");
+		s=s.substr(j);
+		while (s.find(" ")== 0) s=s.substr(1);
+		i++;
+	}
+	s=s.substr(0,s.find(" "));
+	if ((s.find("(")==0)or(s.find("[")==0)) s=s.substr(1,s.length()-1);
+	return atof(s.c_str());
+}
+
+string
+
+class Scenario
+{
+public:
+	double *parameters,prior_proba;
+    History  history;
+    int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0;
+    EventC *event;
+    Ne0C *ne0;
+    HistParameterC *histparam;
+
+    void read_events(string *ls){
+
+    }
+};
+
+class Header
+{
+public:
+	string message,datafilename;
+	DataC dataobs;
+	int nparamtot,nstat,nscenarios;
+	Scenario scenario;
+
+
+
+	void readHeader(){
+		string s1,**lscen;
+		int *nlscen;
+		ifstream file("ReftableHeader.txt", ios::in);
+		if (file == NULL) {
+			this->message = "File ReftableHeader.txt not found";
+			return this;
+		} else this->message="";
+		getline(file,this->datafilename);
+		dataobs.loadfromfile(this->datafilename);
+		getline(file,s1);
+		this->nparamtot=getwordint(s1,1);
+		this->nstat=getwordint(s1,4);
+		getline(file,s1);		//ligne vide
+		getline(file,s1);       // nombre de scenarios
+		this->nscenarios=getwordint(s1,1);
+		lscen = new string*[this->nscenarios];
+		nlscen = new int[this->nscenarios];
+		scenario = new Scenario[this->nscenarios];
+		for (int i=0;i<this->nscenarios;i++) nlsecn[i]=getwordint(s1,3+i);
+		for (int i=0;i<this->nscenarios;i++) {
+			lscen[i] = new string[nlscen[i]];
+			getline(file,s1);
+			scenario[i].number = getwordint(s1,2);
+			scenario[i].prior_proba = getwordint(s1,3);
+			scenario[i].nparam = getwordint(s1,4);
+			for (int j=0;j<nlscen[i];j++) getline(file,lscen[i][j]);
+			scenario[i].read_events(lscen[i]);
+		}
+	}
+};
 
 struct ParticleSetC
 {
@@ -439,22 +525,22 @@ struct ParticleSetC
 		setdata(da);
 		setgroup(gri,grd,grs);
 		setloci(loci,locj);
-		int **ssmic;
-		ssmic      = new int* [this->nloc];
+		int **ss;
+		ss      = new int* [this->nloc];
 		for (int loc=0;loc<this->nloc;loc++) {
-			ssmic[loc] = new int [this->nsample];
+			ss[loc] = new int [this->nsample];
 			for (int samp=0;samp<this->nsample;samp++) {
-				ssmic[loc][samp]=calsamplesize(loc,samp);
+				ss[loc][samp]=calsamplesize(loc,samp);
 			}
 		}
 		for (int p=0;p<this->npart;p++) {
 			for (int loc=0;loc<this->nloc;loc++) {
-				this->particule[p].locuslist[loc].ssmic = new int[this->nsample];
-				for (int sa=0;sa<this->nsample;sa++) this->particule[p].locuslist[loc].ssmic[sa] = ssmic[loc][sa];
+				this->particule[p].locuslist[loc].ss = new int[this->nsample];
+				for (int sa=0;sa<this->nsample;sa++) this->particule[p].locuslist[loc].ss[sa] = ss[loc][sa];
 			}
 		}
-		for (int loc=0;loc<this->nloc;loc++) delete []ssmic[loc];
-		delete []ssmic;
+		for (int loc=0;loc<this->nloc;loc++) delete []ss[loc];
+		delete []ss;
 	}
 
 	void setevents (vector<int> eventi, vector<double> eventd, vector<string> events) {
@@ -647,7 +733,7 @@ struct ParticleSetC
 			}
 			if (this->particule[ipart].locuslist[loc].type<5) delete []this->particule[ipart].locuslist[loc].haplomic;
 			if (this->particule[ipart].locuslist[loc].type>4) delete []this->particule[ipart].locuslist[loc].haplodna;
-			delete []this->particule[ipart].locuslist[loc].ssmic;
+			delete []this->particule[ipart].locuslist[loc].ss;
 			delete []this->particule[ipart].locuslist[loc].samplesize;
 			delete []this->particule[ipart].locuslist[loc].freq;
 		}
@@ -800,11 +886,11 @@ struct ParticleSetC
 	void sethaplo(list haplo) {
 		int n=0;
 		for (int loc=0;loc<this->particule[0].nloc;loc++){
-			this->particule[0].locuslist[loc].ssmic = new int[this->nsample];
+			this->particule[0].locuslist[loc].ss = new int[this->nsample];
 			this->particule[0].locuslist[loc].samplesize = new int[this->nsample];
 			for (int sa=0;sa<this->nsample;sa++) {
-				this->particule[0].locuslist[loc].ssmic[sa]=extract<int>(haplo[n]);n++;
-//				cout << this->particule[0].locuslist[loc].ssmic[sa]<<", ";
+				this->particule[0].locuslist[loc].ss[sa]=extract<int>(haplo[n]);n++;
+//				cout << this->particule[0].locuslist[loc].ss[sa]<<", ";
 			}
 		}
 //		cout << "\n";
@@ -812,9 +898,9 @@ struct ParticleSetC
 			this->particule[0].locuslist[loc].haplomic = new int*[this->nsample];
 			for (int sa=0;sa<this->nsample;sa++) {
 				this->particule[0].locuslist[loc].samplesize[sa]=0;
-				this->particule[0].locuslist[loc].haplomic[sa] = new int[this->particule[0].locuslist[loc].ssmic[sa]];
+				this->particule[0].locuslist[loc].haplomic[sa] = new int[this->particule[0].locuslist[loc].ss[sa]];
 
-				for (int i=0;i<this->particule[0].locuslist[loc].ssmic[sa];i++) {
+				for (int i=0;i<this->particule[0].locuslist[loc].ss[sa];i++) {
 					this->particule[0].locuslist[loc].haplomic[sa][i] = extract<int>(haplo[n]);n++;
 					if (this->particule[0].locuslist[loc].haplomic[sa][i]!=MISSING) this->particule[0].locuslist[loc].samplesize[sa]++;
 
