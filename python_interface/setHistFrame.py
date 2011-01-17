@@ -18,11 +18,15 @@ class setHistoricalModel(QFrame):
     def __init__(self,parent=None):
         super(setHistoricalModel,self).__init__(parent)
         self.parent=parent
-        # liste des scenarios, pourcentages et conditions non effacés
+        # [GUI] liste des scenarios, pourcentages et conditions non effacés
         self.scList = []
         self.rpList = []
         self.condList = []
         self.paramList = []
+
+        # liste des infos sur les scenarios valides (donc déjà vérifiés)
+        # voir format dans writeHistoricalConf
+        self.scenarios_info_list = []
 
         self.createWidgets()
 
@@ -278,12 +282,12 @@ class setHistoricalModel(QFrame):
             sc_txt_list.append(str(sc.findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()))
             #print sc_txt_list
         nb_scenarios_invalides = 0
-        scenarios_info_list = []
+        self.scenarios_info_list = []
         for num,sc in enumerate(sc_txt_list):
             scChecker = history.Scenario(number=num+1)
             try:
                 print self.parent.data
-                scChecker.checkread(sc.split('\n'),self.parent.data)
+                scChecker.checkread(sc.strip().split('\n'),self.parent.data)
                 scChecker.checklogic()
                 t = PopTree(scChecker)
                 t.do_tree()
@@ -296,17 +300,17 @@ class setHistoricalModel(QFrame):
                     print s
                     print type(s)
                 dico_sc_infos = {}
-                dico_sc_infos["text"] = sc.split('\n')
+                dico_sc_infos["text"] = sc.strip().split('\n')
                 dico_sc_infos["checker"] = scChecker
                 dico_sc_infos["tree"] = t
-                scenarios_info_list.append(dico_sc_infos)
+                self.scenarios_info_list.append(dico_sc_infos)
             except IOScreenError, e:
                 print "Un scenario a une erreur : ", e
                 nb_scenarios_invalides += 1
                 QMessageBox.information(self,"Scenario error","%s"%e)
         # si tous les scenarios sont bons, on renvoie les données utiles, sinon on renvoie None
         if nb_scenarios_invalides == 0:
-            return scenarios_info_list
+            return self.scenarios_info_list
         else:
             return None
 
@@ -464,7 +468,7 @@ class setHistoricalModel(QFrame):
                 # TODO verifs, si c'est valide, on change l'icone du setHistModel
                 # creation et ecriture du fichier dans le rep choisi
                 # TODO questions : quand est ce qu'on le crée/modifie? Il contient des infos autres que celles du setHist?
-                pass
+                self.writeHistoricalConf()
             # gestion des valeurs
             nb_sc = len(self.scList)
             pluriel = ""
@@ -481,3 +485,34 @@ class setHistoricalModel(QFrame):
             self.parent.setTabEnabled(1,True)
             self.parent.setTabEnabled(2,False)
             self.parent.setCurrentIndex(0)
+
+    def writeHistoricalConf(self):
+        """ ecrit les valeurs dans dossierProjet/conf.hist.tmp
+        """
+        if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.hist.tmp"):
+            os.remove(self.parent.ui.dirEdit.text()+"/conf.hist.tmp")
+
+        if len(self.scenarios_info_list) > 0:
+            f = open(self.parent.ui.dirEdit.text()+"/conf.hist.tmp",'w')
+            f.write("%s parameters and %s summary statisticsi\n\n")
+            f.write("%s scenarios: "%(len(self.scList)))
+
+            sc_info_list = []
+            # pour chaque scenario, on recupère ce qu'on a vérifié ET les pourcentages à priori dans une liste
+            for i in range(len(self.scenarios_info_list)):
+                txt = (self.scenarios_info_list[i]["text"])
+                sc_chk = self.scenarios_info_list[i]["checker"]
+                rp = self.rpList[i]
+                rpval = str(rp.findChild(QLineEdit,"rpEdit").text())
+
+                sc_info_list.append([txt,sc_chk,rpval])
+            # affichage des nombres de lignes des scenarios
+            for sc_info in sc_info_list:
+                f.write("%s "%(len(sc_info[0])))
+            # affichage du contenu des scenarios
+            for sc_info in sc_info_list:
+                f.write("\nscenario %s [%s] (%i)"%(sc_info[1].number,sc_info[2],len(sc_info[1].parameters)))
+                for line in sc_info[0]:
+                    f.write("\n"+line)
+            f.close()
+

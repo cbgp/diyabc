@@ -127,18 +127,25 @@ class Project(QTabWidget):
         qfd = QFileDialog()
         #qfd.setDirectory("~/")
         name = qfd.getExistingDirectory()
-        # name_YYYY_MM_DD_num le plus elevé
-        dd = datetime.now()
-        num = 36
-        cd = 100
-        while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i_%i"%(self.name,dd.year,dd.month,dd.day,cd)):
-            cd -= 1
-        if cd == 100:
-            QMessageBox.information(self,"Error","With this version, you cannot have more than 100 project directories")
-        else:
-            self.ui.dirEdit.setText(name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,(cd+1)))
-        self.ui.groupBox.show()
-        self.ui.setHistoricalButton.setDisabled(False)
+        if name != "":
+            # name_YYYY_MM_DD_num le plus elevé
+            dd = datetime.now()
+            num = 36
+            cd = 100
+            while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i_%i"%(self.name,dd.year,dd.month,dd.day,cd)):
+                cd -= 1
+            if cd == 100:
+                QMessageBox.information(self,"Error","With this version, you cannot have more than 100 project directories")
+            else:
+                newdir = name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,(cd+1))
+                self.ui.dirEdit.setText(newdir)
+                try:
+                    os.mkdir(newdir)
+                    self.ui.groupBox.show()
+                    self.ui.setHistoricalButton.setDisabled(False)
+                except OSError,e:
+                    QMessageBox.information(self,"Error",str(e))
+
 
     def changeIcon(self):
         l=["ok.png","redcross.png"]
