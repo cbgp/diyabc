@@ -10,7 +10,7 @@ from PyQt4 import QtGui
 from diyabc_ui import Ui_MainWindow
 from project import *
 from project_ui import *
-from setHistoricalModel import setHistoricalModel
+from setHistFrame import setHistoricalModel
 from data import Data
 from datetime import datetime 
 import os.path
