@@ -54,6 +54,12 @@ struct PriorC
 	bool constant;
 };
 
+struct ConditionC
+{
+	string param1,param2,operateur;
+
+};
+
 struct StatC
 {
 	int cat,samp,samp1,samp2,group;

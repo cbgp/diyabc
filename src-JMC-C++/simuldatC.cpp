@@ -58,7 +58,38 @@ double getwordfloat(string s,int num){
 	return atof(s.c_str());
 }
 
-string
+string* splitwords(string s,string sep,int *k){
+	int j=0,j0,j1;
+	while (s.find(sep)== 0) s=s.substr(1);
+	*k=0;
+	s.append(sep);
+	string *sb,s0,s1;
+	s1=string();
+	for (int i=0;i<s.length();i++) {
+		s0=s.substr(i,1);
+		if (s0==sep){
+			j++;
+			if (j==1) {
+				s1.append(s0);
+				if (j==1) (*k)++;
+				cout <<" j=1  k="<<*k<<"\n";
+			}
+		} else {
+			s1.append(s0);
+			j=0;
+		}
+	}
+	sb = new string[*k];
+	for (int i=0;i<*k;i++) {
+		j0=s1.find(sep);
+		sb[i]=s1.substr(0,j0);
+		s1=s1.substr(j0+1,s.length());
+
+	}
+	cout <<"k="<<*k<<"\n";
+	return sb;
+}
+
 
 class Scenario
 {
@@ -69,9 +100,44 @@ public:
     EventC *event;
     Ne0C *ne0;
     HistParameterC *histparam;
+    /* action = 0 (varne), 1 (merge), 2 (split), 3 (adsamp)
+     * category=0 (Ne)   , 1 (time),  3 (admixrate)
+    */
 
-    void read_events(string *ls){
-
+    void read_events(int nl,string *ls){
+    	string *ss;
+    	int n;
+    	ss = splitwords(ls[0]," ",&n);
+    	this->nn0=n;
+    	this->ne0 = new Ne0C[this->nn0];
+    	for (int i=0;i<this->nn0;i++) {
+    		if (atoi(ss[i].c_str())!=0) {this->ne0[i].name=n0[i];this->ne0[i].val=-1;}
+    		else               {this->ne0[i].name="";this->ne0[i].val=atoi(ss[i]);}
+    	this->event = new EventC[nl-1];
+    	for (int i=0;i<nl-1;i++) {
+    		ss = splitwords(ls[i+1]," ",&n);
+    		this->event[i].stime="";this->event[i].sNe="";this->event[i].sadmixrate="";
+    		if (ss[0]=="0") {this->event[i].time=0;}
+    		else if (atoi(ss[0].c_str())==0) {this->event[i].time=0;this->event[i].stime=ss[0];}
+    			 else {this->event[i].time=atoi(ss[0].c_str());}
+    		if (majuscules(ss[1])=="SAMPLE") {
+    			this->event[i].action=3;
+    			this->event[i].pop=atoi(ss[2].c_str());
+    		} else if (majuscules(ss[1])=="MERGE") {
+    			this->event[i].pop=atoi(ss[2].c_str());
+    			this->event[i].pop1=atoi(ss[3].c_str());
+    		} else if (majuscules(ss[1])=="SPLIT") {
+    			this->event[i].pop=atoi(ss[2].c_str());
+    			this->event[i].pop1=atoi(ss[3].c_str());
+    			this->event[i].pop2=atoi(ss[4].c_str());
+    			if (atof(ss[5].c_str())!=0.0) this->event[i].admixrate=atof(ss[5].c_str());
+    			else {this->event[i].admixrate=0.0;this->event[i].sadmixrate=ss[5];}
+    		} else if (majuscules(ss[1])=="VARNE") {
+    			this->event[i].pop=atoi(ss[2].c_str());
+    			if (atof(ss[3].c_str())!=0.0) this->event[i].Ne=atoi(ss[3].c_str());
+    			else {this->event[i].Ne=0;this->event[i].sNe=ss[3];}
+    		}
+    	}
     }
 };
 
@@ -80,14 +146,31 @@ class Header
 public:
 	string message,datafilename;
 	DataC dataobs;
-	int nparamtot,nstat,nscenarios;
-	Scenario scenario;
+	int nparamtot,nstat,nscenarios,nconditions;
+	Scenario *scenario;
+	HistParameterC *histparam;
+	ConditionC *condition;
 
+	PriorC readprior(string ss) {
+		PriorC prior;
+		string s1,*sb;
+		int j;
+		s1 = ss.substr(3,ss.length()-4);
+		sb = splitwords(s1,",",&j);
+		if (ss.find("UN[")!=string::npos) {
+			prior.loi="uniforme";
+		} else if (ss.find("LU[")!=string::npos) {
 
+		}else if (ss.find("NO[")!=string::npos) {
+
+		}else if (ss.find("LN[")!=string::npos) {
+
+		}
+	}
 
 	void readHeader(){
-		string s1,**lscen;
-		int *nlscen;
+		string s1,**ss;
+		int *nlscen,nss;
 		ifstream file("ReftableHeader.txt", ios::in);
 		if (file == NULL) {
 			this->message = "File ReftableHeader.txt not found";
@@ -98,21 +181,41 @@ public:
 		getline(file,s1);
 		this->nparamtot=getwordint(s1,1);
 		this->nstat=getwordint(s1,4);
+//Partie Scenarios
 		getline(file,s1);		//ligne vide
 		getline(file,s1);       // nombre de scenarios
 		this->nscenarios=getwordint(s1,1);
-		lscen = new string*[this->nscenarios];
+		ss = new string*[this->nscenarios];
 		nlscen = new int[this->nscenarios];
 		scenario = new Scenario[this->nscenarios];
-		for (int i=0;i<this->nscenarios;i++) nlsecn[i]=getwordint(s1,3+i);
+		for (int i=0;i<this->nscenarios;i++) nlscen[i]=getwordint(s1,3+i);
 		for (int i=0;i<this->nscenarios;i++) {
-			lscen[i] = new string[nlscen[i]];
+			ss[i] = new string[nlscen[i]];
 			getline(file,s1);
 			scenario[i].number = getwordint(s1,2);
 			scenario[i].prior_proba = getwordint(s1,3);
 			scenario[i].nparam = getwordint(s1,4);
-			for (int j=0;j<nlscen[i];j++) getline(file,lscen[i][j]);
-			scenario[i].read_events(lscen[i]);
+			for (int j=0;j<nlscen[i];j++) getline(file,ss[i][j]);
+			scenario[i].read_events(nlscen[i],ss[i]);
+		}
+		for (int i=0;i<this->nscenarios;i++) delete []ss[i];
+		delete [] ss;
+//Partie historical parameters
+		getline(file,s1);		//ligne vide
+		getline(file,s1);
+		ss=splitwords(s1," ",&nss);
+		this->nparamtot = atoi(ss[3].c_str());
+		if (nss>4) this->nconditions =  atoi(ss[4].c_str()); else  this->nconditions = 0;
+		this->histparam = new PriorC[this->nparamtot];
+		if (this->nconditions>0) this->condition = new prior[this->nconditions];
+		for (int i=0;i<this->nparamtot;i++) {
+			getline(file,s1);
+			ss=splitwords(s1," ",nss);
+			this->histparam[i].name=ss[0];
+			if (ss[1]=="N") this->histparam[i].category = 0;
+			else if  (ss[1]=="T") this->histparam[i].category = 1;
+			else if  (ss[1]=="A") this->histparam[i].category = 2;
+			this->histparam[i].prior = this->readprior(ss[2]);
 		}
 	}
 };
