@@ -27,6 +27,7 @@ class setHistoricalModel(QFrame):
         # liste des infos sur les scenarios valides (donc déjà vérifiés)
         # voir format dans writeHistoricalConf
         self.scenarios_info_list = []
+        self.param_info_dico = {}
 
         self.createWidgets()
 
@@ -284,7 +285,7 @@ class setHistoricalModel(QFrame):
         nb_scenarios_invalides = 0
         self.scenarios_info_list = []
         for num,sc in enumerate(sc_txt_list):
-            scChecker = history.Scenario(number=num+1)
+            scChecker = history.Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
             try:
                 print self.parent.data
                 scChecker.checkread(sc.strip().split('\n'),self.parent.data)
@@ -466,10 +467,27 @@ class setHistoricalModel(QFrame):
         else:
             if self.sender() == self.ui.okButton:
                 # TODO verifs, si c'est valide, on change l'icone du setHistModel
+                # recup des valeurs pour les params
+                for param in self.paramList:
+                    pname = str(param.findChild(QLabel,"paramNameLabel").text())
+                    min =   str(param.findChild(QLineEdit,"minValueParamEdit").text())
+                    max =   str(param.findChild(QLineEdit,"maxValueParamEdit").text())
+                    mean =  str(param.findChild(QLineEdit,"meanValueParamEdit").text())
+                    stdev = str(param.findChild(QLineEdit,"stValueParamEdit").text())
+                    step =  str(param.findChild(QLineEdit,"stepValueParamEdit").text())
+                    if param.findChild(QRadioButton,'logNormalRadio').isChecked():
+                        law = "LN"
+                    elif param.findChild(QRadioButton,'normalRadio').isChecked():
+                        law = "NO"
+                    elif param.findChild(QRadioButton,'uniformParamRadio').isChecked():
+                        law = "UN"
+                    elif param.findChild(QRadioButton,'logUniformRadio').isChecked():
+                        law = "LU"
+                    self.param_info_dico[pname] = [self.dico_parameters[pname],law,min,max,mean,stdev,step]
                 # creation et ecriture du fichier dans le rep choisi
                 # TODO questions : quand est ce qu'on le crée/modifie? Il contient des infos autres que celles du setHist?
                 self.writeHistoricalConf()
-            # gestion des valeurs
+            # gestion des valeurs, maj dans la GUI
             nb_sc = len(self.scList)
             pluriel = ""
             if nb_sc > 1:
@@ -495,24 +513,20 @@ class setHistoricalModel(QFrame):
         if len(self.scenarios_info_list) > 0:
             f = open(self.parent.ui.dirEdit.text()+"/conf.hist.tmp",'w')
             f.write("%s parameters and %s summary statisticsi\n\n")
-            f.write("%s scenarios: "%(len(self.scList)))
+            f.write("%s scenarios: "%(len(self.scenarios_info_list)))
 
-            sc_info_list = []
-            # pour chaque scenario, on recupère ce qu'on a vérifié ET les pourcentages à priori dans une liste
-            for i in range(len(self.scenarios_info_list)):
-                txt = (self.scenarios_info_list[i]["text"])
-                sc_chk = self.scenarios_info_list[i]["checker"]
-                rp = self.rpList[i]
-                rpval = str(rp.findChild(QLineEdit,"rpEdit").text())
-
-                sc_info_list.append([txt,sc_chk,rpval])
             # affichage des nombres de lignes des scenarios
-            for sc_info in sc_info_list:
-                f.write("%s "%(len(sc_info[0])))
+            for sc_info in self.scenarios_info_list:
+                f.write("%s "%(len(sc_info["text"])))
             # affichage du contenu des scenarios
-            for sc_info in sc_info_list:
-                f.write("\nscenario %s [%s] (%i)"%(sc_info[1].number,sc_info[2],len(sc_info[1].parameters)))
-                for line in sc_info[0]:
+            for sc_info in self.scenarios_info_list:
+                f.write("\nscenario %s [%s] (%i)"%(sc_info["checker"].number,sc_info["checker"].prior_proba,len(sc_info["checker"].parameters)))
+                for line in sc_info["text"]:
                     f.write("\n"+line)
+            f.write("\n\nhistorical parameters priors (%s)"%(len(self.dico_parameters.keys())))
+            # consultation des valeurs des paramètres
+            for pname in self.param_info_dico.keys():
+                info = self.param_info_dico[pname]
+                f.write("\n%s %s %s[%s,%s,%s,%s,%s]"%(pname,info[0],info[1],info[2],info[3],info[4],info[5],info[6]))
             f.close()
 
