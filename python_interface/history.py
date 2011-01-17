@@ -203,7 +203,7 @@ class Scenario(object):
                     i +=1
                     trouve = pr.name == self.parameters[i].name
                     if trouve and (self.parameters[i].category != category):
-                        raise IOScreenError, "{0} is used as a {1} parameter and {2} parameter".format(pr.name,param.HistParameter.categorydict[category],param.HistParameter.categorydict[self.parameters[i].category] )
+                        raise IOScreenError, "%s is used as a %s parameter and %s parameter"%(pr.name,param.HistParameter.categorydict[category],param.HistParameter.categorydict[self.parameters[i].category] )
                 if not trouve : self.parameters.append(pr)
             else :
                 self.parameters.append(pr)
@@ -244,7 +244,7 @@ class Scenario(object):
         if data!=None:
             print self.nsamp,"========", data.nsample
             if self.nsamp != data.nsample:
-                raise IOScreenError, "The number of samples in scenario {0} does not match the data file".format(self.number)
+                raise IOScreenError, "The number of samples in scenario %s does not match the data file"%(self.number)
         if len(textarray)>1 :
             for ili0 in range(0,len(textarray)-1) :
                 for ili1 in range(ili0+1,len(textarray)) :
@@ -258,7 +258,7 @@ class Scenario(object):
                             idem = (li0tem[j] == li1tem[j])
                             j +=1
                     if idem :
-                        raise IOScreenError,"Lines {0} and {1} of scenario {2} are identical".format(ili0+1,ili1+1,self.number)                 
+                        raise IOScreenError,"Lines %s and %s of scenario %s are identical"%(ili0+1,ili1+1,self.number)                 
             j,ns = 0, 0
             for jli0 in range(1,len(textarray)):
                 if len(textarray[jli0])>0:
@@ -269,7 +269,7 @@ class Scenario(object):
                     nitems = len(litem)
                     if Li.find("SAMPLE")>-1:
                         if nitems<3:
-                            raise IOScreenError, "Line {0} of scenario{1} is incomplete".format(jli0+1,self.number)
+                            raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
                         self.cevent = Event()
                         self.cevent.numevent0 = nevent
                         nevent +=1
@@ -280,7 +280,7 @@ class Scenario(object):
                         if isaninteger(litem[2]):
                             self.cevent.pop = int(litem[2]) 
                         else :
-                            raise IOScreenError, "Unable to read population number on line {0} of scenario {1}".format(jli0+1,self.number)
+                            raise IOScreenError, "Unable to read population number on line %s of scenario %s"%(jli0+1,self.number)
                         self.cevent.Ne=Ncur[self.cevent.pop-1].val
                         self.cevent.sNe=Ncur[self.cevent.pop-1].name
                         ns +=1
@@ -288,7 +288,7 @@ class Scenario(object):
                         self.time_sample.append(self.cevent.time)
                     elif Li.find("VARNE")>-1:
                         if nitems<4:
-                            raise IOScreenError, "Line {0} of scenario{1} is incomplete".format(jli0+1,self.number)
+                            raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
                         self.cevent = Event()
                         self.cevent.numevent0 = nevent
                         nevent +=1
@@ -299,7 +299,7 @@ class Scenario(object):
                         if isaninteger(litem[2]):
                             self.cevent.pop = int(litem[2]) 
                         else :
-                            raise IOScreenError, "Unable to read population number on line {0} of scenario {1}".format(jli0+1,self.number)
+                            raise IOScreenError, "Unable to read population number on line %s of scenario %s"%(jli0+1,self.number)
                         if isaninteger(litem[3]):
                             self.cevent.Ne = int(litem[3]);self.cevent.sNe = None
                         else :
@@ -309,7 +309,7 @@ class Scenario(object):
                         Ncur[self.cevent.pop-1].name=self.cevent.sNe
                     elif Li.find("MERGE")>-1:
                         if nitems<4:
-                            raise IOScreenError, "Line {0} of scenario{1} is incomplete".format(jli0+1,self.number)
+                            raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
                         self.cevent = Event()
                         self.cevent.numevent0 = nevent
                         nevent +=1
@@ -320,16 +320,16 @@ class Scenario(object):
                         if isaninteger(litem[2]):
                             self.cevent.pop = int(litem[2]) 
                         else :
-                            raise IOScreenError, "Unable to read the first population number on line {0} of scenario {1}".format(jli0+1,self.number)
+                            raise IOScreenError, "Unable to read the first population number on line %s of scenario %s"%(jli0+1,self.number)
                         if isaninteger(litem[3]):
                             self.cevent.pop1 = int(litem[3]) 
                         else :
-                            raise IOScreenError, "Unable to read the second population number on line {0} of scenario {1}".format(jli0+1,self.number)
+                            raise IOScreenError, "Unable to read the second population number on line %s of scenario %s"%(jli0+1,self.number)
                         self.cevent.Ne=Ncur[self.cevent.pop-1].val
                         self.cevent.sNe=Ncur[self.cevent.pop-1].name
                     elif Li.find("SPLIT")>-1:
                         if nitems<6:
-                            raise IOScreenError, "Line {0} of scenario{1} is incomplete".format(jli0+1,self.number)
+                            raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
                         self.cevent = Event()
                         self.cevent.numevent0 = nevent
                         nevent +=1
@@ -340,15 +340,15 @@ class Scenario(object):
                         if isaninteger(litem[2]):
                             self.cevent.pop = int(litem[2]) 
                         else :
-                            raise IOScreenError, "Unable to read the first population number on line {0} of scenario {1}".format(jli0+1,self.number)
+                            raise IOScreenError, "Unable to read the first population number on line %s of scenario %s"%(jli0+1,self.number)
                         if isaninteger(litem[3]):
                             self.cevent.pop1 = int(litem[3]) 
                         else :
-                            raise IOScreenError, "Unable to read the second population number on line {0} of scenario {1}".format(jli0+1,self.number)
+                            raise IOScreenError, "Unable to read the second population number on line %s of scenario %s"%(jli0+1,self.number)
                         if isaninteger(litem[4]):
                             self.cevent.pop2 = int(litem[4]) 
                         else :
-                            raise IOScreenError, "Unable to read the third population number on line {0} of scenario {1}".format(jli0+1,self.number)
+                            raise IOScreenError, "Unable to read the third population number on line %s of scenario %s"%(jli0+1,self.number)
                         if isafloat(litem[5]):
                             self.cevent.admixrate = float(litem[5]) 
                         else :
@@ -357,7 +357,7 @@ class Scenario(object):
                         self.cevent.Ne=Ncur[self.cevent.pop-1].val
                         self.cevent.sNe=Ncur[self.cevent.pop-1].name
                     else :
-                        raise IOScreenError,"Uninterpretable line {0} in scenario {1}".format(jli0+1,self.number)
+                        raise IOScreenError,"Uninterpretable line %s in scenario %s"%(jli0+1,self.number)
                     self.history.events.append(self.cevent)
                     if self.cevent.pop>self.popmax : self.popmax=self.cevent.pop
             self.setgraphtime()
@@ -379,43 +379,43 @@ class Scenario(object):
             if ev.pop1>maxpop :  maxpop =ev.pop1 
             if ev.pop2>maxpop :  maxpop =ev.pop2
         if self.npop != maxpop :
-            raise IOScreenError, "In scenario {0}, the number of population sizes in line 1 is different from the number of populations".format(self.number)
+            raise IOScreenError, "In scenario %s, the number of population sizes in line 1 is different from the number of populations"%(self.number)
         popexist = []
         for j in range(0,maxpop+1) : popexist.append(True)
         for iev,ev in enumerate(self.history.events):
             if (ev.action == "SAMPLE") and (not popexist[ev.pop]) :
-                raise IOScreenError, "In scenario {0} line {1}, a sample is taken from population {2} which does not exist anymore".format(self.number,iev+1,ev.pop) 
+                raise IOScreenError, "In scenario %s line %s sample is taken from population %s which does not exist anymore"%(self.number,iev+1,ev.pop) 
             elif ev.action == "MERGE" :
                 if ev.pop == ev.pop1 :
-                    raise IOScreenError, "In scenario {0} line {1}, population {2} merges with itself".format(self.number,iev+1,ev.pop)
+                    raise IOScreenError, "In scenario %s line %s, population %s merges with itself"%(self.number,iev+1,ev.pop)
                 if popexist[ev.pop] and popexist[ev.pop1] :
                     popexist[ev.pop1] = False
                 else :
                     if not popexist[ev.pop] :
-                        raise IOScreenError, "In scenario {0} line {1}, population {2} does not exist anymore".format(self.number,iev+1,ev.pop) 
+                        raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop) 
                     if not popexist[ev.pop1] :
-                        raise IOScreenError, "In scenario {0} line {1}, population {2} does not exist anymore".format(self.number,iev+1,ev.pop1)
+                        raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop1)
             elif ev.action == "SPLIT" :
                 if (ev.pop == ev.pop1) or (ev.pop == ev.pop2) or (ev.pop1 == ev.pop2) :
-                    raise IOScreenError, "In scenario {0} line{1}, admixture must occur between three different populations".format(self.number,iev+1)
+                    raise IOScreenError, "In scenario %s line %s, admixture must occur between three different populations"%(self.number,iev+1)
                 if popexist[ev.pop] and popexist[ev.pop1] and popexist[ev.pop2] :
                     popexist[ev.pop] = False
                 else :
                     if not popexist[ev.pop] :
-                        raise IOScreenError, "In scenario {0} line {1}, population {2} does not exist anymore".format(self.number,iev+1,ev.pop) 
+                        raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop) 
                     if not popexist[ev.pop1] :
-                        raise IOScreenError, "In scenario {0} line {1}, population {2} does not exist anymore".format(self.number,iev+1,ev.pop1)
+                        raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop1)
                     if not popexist[ev.pop2] :
-                        raise IOScreenError, "In scenario {0} line {1}, population {2} does not exist anymore".format(self.number,iev+1,ev.pop2)
+                        raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop2)
         np =0
         popexist[0] = False
         s =""
         for ip,p in enumerate(popexist) :
             if p :
                 np +=1
-                s = s + " {0}".format(ip)
+                s = s + " %s"%(ip)
         if np>1 :
-            raise IOScreenError, "In scenario {0}, more than one population ({1}) are ancestral".format(self.number,s)
+            raise IOScreenError, "In scenario %s, more than one population (%s) are ancestral"%(self.number,s)
         self.refhistory = copy.deepcopy(self.history)        
             
                                            

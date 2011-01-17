@@ -83,7 +83,7 @@ class Locus(object):
         
     def __str__(self):
         if self.type<5 :
-            return "{0} (type={1})".format(self.name, self.type)
+            return "%s (type=%s)"%(self.name, self.type)
         else :
             return "%s(type=%s, length=%s)" % (self.name, self.type, self.dnalength)
     def __repr__(self):
@@ -212,7 +212,7 @@ class Data(object):
                     li3=li2.split(",")
                     li4=li3[1].split()
                     if len(li4)!=nloc :
-                        mes="Individual {0} has a wrong number of loci".format(li3[0].strip())
+                        mes="Individual %s has a wrong number of loci"%(li3[0].strip())
 #an individual has a wrong number of loci
                         raise NotGenepopFileError(mes)
 
@@ -365,7 +365,7 @@ class Data(object):
                     else :
                         if seqlen==-1 : seqlen = len(g)
                         if len(g) != seqlen :
-                            mes="At locus {0}, individual {1} has a sequence length different from previous sequences at the same locus".format(self.locuslist[iloc].name,self.indivname[sample][ind])
+                            mes="At locus %s, individual %s has a sequence length different from previous sequences at the same locus"%(self.locuslist[iloc].name,self.indivname[sample][ind])
                             raise NotsamelengthsequencesError(mes)
                         self.haplo[-1][-1].append((0,g))
                         self.samplesize[-1][-1] += 1

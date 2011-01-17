@@ -25,7 +25,7 @@ class PopTreeBranch(object):
         self.sadm   = sadm
         
     def __repr__(self):
-        return "PopTreeBranch(father={0}, child={1}, nvisit={2}, sadm={3})".format(self.father, self.child, self.nvisit, self.sadm) 
+        return "PopTreeBranch(father=%s, child=%s, nvisit=%s, sadm=%s)"%(self.father, self.child, self.nvisit, self.sadm) 
     
 class PopTreeNode(object):
     def __init__(self,x=0,y=None,nvisit=None,pop=None,ev=None,NP=None,category=None):
@@ -38,7 +38,7 @@ class PopTreeNode(object):
         self.category  = category
         
     def __repr__(self):
-        return "PopTreeNode(x={0}, y={1}, nvisit={2}, pop={3}, ev={4}, NP={5}, category={6})".format(self.x, self.y, self.nvisit, self.pop, self.ev, self.NP, self.category) 
+        return "PopTreeNode(x=%s, y=%s, nvisit=%s, pop=%s, ev=%s, NP=%s, category=%s)"%(self.x, self.y, self.nvisit, self.pop, self.ev, self.NP, self.category) 
        
 class PopTreeSegment(object):    
     def __init__(self,xdeb=None,ydeb=None,xfin=None,yfin=None,popdeb=None,popfin=None,evdeb=None,evfin=None,sNedeb=None,sNefin=None,sadm=None):
@@ -55,7 +55,7 @@ class PopTreeSegment(object):
         self.sadm    = sadm
 
     def __repr__(self):
-        return "PopTreeSegment(xdeb={0}, ydeb={1}, xfin={2}, yfin={3}, popdeb={4}, popfin={5}, evdeb={6}, evfin={7}, sNedeb={8}, sNefin={9}, sadm={10})".format(self.xdeb, self.ydeb, self.xfin, self.yfin, self.popdeb, self.popfin, self.evdeb, self.evfin, self.sNedeb, self.sNefin, self.sadm) 
+        return "PopTreeSegment(xdeb=%s, ydeb=%s, xfin=%s, yfin=%s, popdeb=%s, popfin=%s, evdeb=%s, evfin=%s, sNedeb=%s, sNefin=%s, sadm=%s)"%(self.xdeb, self.ydeb, self.xfin, self.yfin, self.popdeb, self.popfin, self.evdeb, self.evfin, self.sNedeb, self.sNefin, self.sadm) 
 
 class PopTreePopu(object):
     def __init__(self,X=None,Y=None,sampled=None,time=None,sNe=None,col=None):
@@ -67,7 +67,7 @@ class PopTreePopu(object):
         self.col     = col
 
     def __repr__(self):
-        return "PopTreePopu(X={0}, Y={1}, sampled={2}, time={3}, sNe={4}, col={5})".format(self.X, self.Y, self.sampled, self.time, self.sNe, self.col) 
+        return "PopTreePopu(X=%s, Y=%s, sampled=%s, time=%s, sNe=%s, col=%s)"%(self.X, self.Y, self.sampled, self.time, self.sNe, self.col) 
 
 
 
@@ -657,7 +657,7 @@ class PopTree(object):
         if npb<1 :
             if len(self.br) == 1 : self.segments[0].ydeb = self.YHAUT
         else :
-            raise PopTreeError, "Scenario {0} seems OK. But the current version of DIYABC is unable to provide a valide graphic representation.".format(self.scenario.number)    
+            raise PopTreeError, "Scenario %s seems OK. But the current version of DIYABC is unable to provide a valide graphic representation."%(self.scenario.number)    
             
 def testCheckScenario():
 #    ts = ['N1 N2 N3', '0 sample 1', '0 sample 2', '0 sample 3', '50 split 3 1 2 lambda', "100 merge 1 2"]
