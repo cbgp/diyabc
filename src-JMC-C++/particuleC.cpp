@@ -5,12 +5,15 @@
  *      Author: cornuet
  */
 
+#include <math.h>
+#include <cmath>
 #include "data.cpp"
 #include "randomgenerator.cpp"
 #include <vector>
 #include <iostream>
 #include <complex>
 #include <string>
+
 using namespace std;
 #define MISSING -9999
 

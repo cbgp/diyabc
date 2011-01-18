@@ -90,6 +90,15 @@ string* splitwords(string s,string sep,int *k){
 	return sb;
 }
 
+int ndecimales(double pp){
+  double p;
+  int k;
+  p = pp;
+  k = 0;
+  while (abs(p-round(p))>1E-15) {k++;p=10*p;}
+  return k;
+}
+
 
 class Scenario
 {
@@ -150,27 +159,43 @@ public:
 	Scenario *scenario;
 	HistParameterC *histparam;
 	ConditionC *condition;
+	LocusGroupC *groupe;
 
 	PriorC readprior(string ss) {
+		double step;
 		PriorC prior;
 		string s1,*sb;
 		int j;
 		s1 = ss.substr(3,ss.length()-4);
 		sb = splitwords(s1,",",&j);
-		if (ss.find("UN[")!=string::npos) {
-			prior.loi="uniforme";
-		} else if (ss.find("LU[")!=string::npos) {
+		step=atof(sb[4].c_str());
+		prior.ndec=ndecimales(step);
+		prior.mini=atof(sb[0].c_str());
+		prior.maxi=atof(sb[1].c_str());
+		if (ss.find("UN[")!=string::npos) {prior.loi="uniforme";}
+		else if (ss.find("LU[")!=string::npos) {prior.loi="loguniforme";}
+		else if (ss.find("NO[")!=string::npos) {prior.loi="normale";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
+		else if (ss.find("LN[")!=string::npos) {prior.loi="lognormale";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
+		else if (ss.find("GA[")!=string::npos) {prior.loi="gamma";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
+		prior.constant = ((prior.maxi-prior.mini)/prior.maxi<0.000001);
+		return prior;
+	}
 
-		}else if (ss.find("NO[")!=string::npos) {
-
-		}else if (ss.find("LN[")!=string::npos) {
-
-		}
+	ConditionC readcondition(string ss){
+		ConditionC cond;
+		if (ss.find(">=")!=string::npos){
+			cond.operateur=">=";cond.param1=ss.substr(0,ss.find(">="));cond.param2=ss.substr(ss.find(">=")+2,ss.length()-(ss.find(">=")+2));}
+		else if (ss.find("<=")!=string::npos){
+			cond.operateur="<=";cond.param1=ss.substr(0,ss.find("<="));cond.param2=ss.substr(ss.find("<=")+2,ss.length()-(ss.find("<=")+2));}
+		if (ss.find(">")!=string::npos){
+			cond.operateur=">";cond.param1=ss.substr(0,ss.find(">"));cond.param2=ss.substr(ss.find(">")+1,ss.length()-(ss.find(">")+1));}
+		else if (ss.find("<=")!=string::npos){
+			cond.operateur="<";cond.param1=ss.substr(0,ss.find("<"));cond.param2=ss.substr(ss.find("<")+1,ss.length()-(ss.find("<")+1));}
 	}
 
 	void readHeader(){
 		string s1,**ss;
-		int *nlscen,nss;
+		int *nlscen,nss,k,gr,grm;
 		ifstream file("ReftableHeader.txt", ios::in);
 		if (file == NULL) {
 			this->message = "File ReftableHeader.txt not found";
@@ -217,6 +242,36 @@ public:
 			else if  (ss[1]=="A") this->histparam[i].category = 2;
 			this->histparam[i].prior = this->readprior(ss[2]);
 		}
+		if (this->nconditions>0) {
+			this->condition = new prior[this->nconditions];
+			for (int i=0;i<this->nconditions;i++) {
+				getline(file,s1);
+				this->condition[i] = this->readcondition(s1);
+			}
+		}
+//Partie loci description
+		getline(file,s1);		//ligne vide
+		getline(file,s1);		//ligne "loci description"
+		grm=1;
+		for (int loc=0;loc<dataobs.nloc;loc++){
+			getline(file,s1);
+			ss=splitwords(s1," ",nss);
+			k=0;while (ss[k].find("[")==string::npos) k++;
+			if (ss[k]=="[M]") {
+				s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
+				dataobs.locus[loc].motif_size=atoi(ss[k+2].c_str());dataobs.locus[loc].range_size=atoi(ss[k+3].c_str());
+			}
+			else if (ss[k]=="[S]") {
+				s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
+				dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());
+			}
+		}
+//Partie group priors
+		getline(file,s1);		//ligne vide
+		getline(file,s1);		//ligne "group prior"
+		groupe =
+		for (gr=0;)
+
 	}
 };
 
