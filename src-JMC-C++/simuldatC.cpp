@@ -162,6 +162,8 @@ PriorC copyprior(PriorC source) {
 	return dest;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 class Header
 {
 public:
@@ -400,6 +402,8 @@ public:
 	}
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 struct ParticleSetC
 {
 	ParticleC *particule;
@@ -477,154 +481,42 @@ struct ParticleSetC
 	}
 
 	void setloci(int p) {
-		int nloc;
-		nloc = loc_i[0];
-		this->nloc=nloc;
-		this->locuslist = new LocusC[nloc];
-		//for (int i=0;i<loc_j.size();i++) cout <<loc_j[i]<<"  ";cout<<"\n\n";
-		//cout << nloc << " loci à transférer"<<"\n";
-		int n = 0,m=-1;
-		for (int kloc=0;kloc<nloc;kloc++){
-			n +=1;this->locuslist[kloc].groupe =loc_i[n];
-			n +=1;this->locuslist[kloc].type =loc_i[n];
-			if (this->locuslist[kloc].type < 5) {
-				n +=1;this->locuslist[kloc].kmin = loc_i[n];
-				n +=1;this->locuslist[kloc].kmax = loc_i[n];
-				n +=1;this->locuslist[kloc].motif_size = loc_i[n];
-				n +=1;this->locuslist[kloc].motif_range = loc_i[n];
-				m +=1;this->locuslist[kloc].mut_rate = loc_j[m];
-				//cout << "mut_rate=" <<this->locuslist[kloc].mut_rate<<" (m="<<m<<")";
-				if (this->locuslist[kloc].mut_rate<0.0) {
-					this->locuslist[kloc].priormut.loi="GA";
-					m++;this->locuslist[kloc].priormut.mini=loc_j[m];
-					//cout << "  mini=" <<this->locuslist[kloc].priormut.mini<<" (m="<<m<<")";
-					m++;this->locuslist[kloc].priormut.maxi=loc_j[m];
-					//cout << "  maxi=" <<this->locuslist[kloc].priormut.maxi<<" (m="<<m<<")";
-					m++;this->locuslist[kloc].priormut.sdshape=loc_j[m];
-					//cout << "  sdshape=" <<this->locuslist[kloc].priormut.sdshape <<" (m="<<m<<")"<<"\n";
-				}
-				m +=1;this->locuslist[kloc].Pgeom = loc_j[m];
-				//cout <<"\nPgeom = "<<this->locuslist[kloc].Pgeom<<"  (m="<<m<<")";
-				if (this->locuslist[kloc].Pgeom<0.0) {
-					this->locuslist[kloc].priorP.loi="GA";
-					m++;this->locuslist[kloc].priorP.mini=loc_j[m];
-					//cout << "  mini=" <<this->locuslist[kloc].priorP.mini;
-					m++;this->locuslist[kloc].priorP.maxi=loc_j[m];
-					//cout << "  maxi=" <<this->locuslist[kloc].priorP.maxi;
-					m++;this->locuslist[kloc].priorP.sdshape=loc_j[m];
-					//cout << "  sdshape=" <<this->locuslist[kloc].priorP.sdshape <<"\n";
-				}
-				m +=1;this->locuslist[kloc].sni_rate = loc_j[m];
-				//cout <<"\nsni_rate = "<<this->locuslist[kloc].sni_rate<<"  (m="<<m<<")";
-				if (this->locuslist[kloc].sni_rate<0.0) {
-					this->locuslist[kloc].priorsni.loi="GA";
-					m++;this->locuslist[kloc].priorsni.mini=loc_j[m];
-					//cout << "  mini=" <<this->locuslist[kloc].priorsni.mini;
-					m++;this->locuslist[kloc].priorsni.maxi=loc_j[m];
-					//cout << "  maxi=" <<this->locuslist[kloc].priorsni.maxi;
-					m++;this->locuslist[kloc].priorsni.sdshape=loc_j[m];
-					//cout << "  sdshape=" <<this->locuslist[kloc].priorsni.sdshape <<"\n";
-				}
-//cout <<"\nlocus "<< kloc <<"  groupe "<< this->locuslist[kloc].groupe <<"  " <<this->locuslist[kloc].type<<","<< this->locuslist[kloc].kmin<<","<<this->locuslist[kloc].kmax<<","
-//		<<this->locuslist[kloc].motif_size<<","<<this->locuslist[kloc].motif_range<<","<<this->locuslist[kloc].mut_rate<<","<<this->locuslist[kloc].Pgeom<<","
-//		<<this->locuslist[kloc].sni_rate<<"\n";
+		this->particule[p].nloc = dataobs.nloc;
+		this->particule[p].locuslist = new LocusC[dataobs.nloc];
+		for (int kloc=0;kloc<dataobs.nloc;kloc++){
+			this->particule[p].locuslist[kloc].type = dataobs.locus[kloc].type;
+			this->particule[p].locuslist[kloc].groupe = dataobs.locus[kloc].groupe;
+			if (dataobs.locus[kloc].type < 5) {
+				this->particule[p].locuslist[kloc].kmin = dataobs.locus[kloc].kmin;
+				this->particule[p].locuslist[kloc].kmax = dataobs.locus[kloc].kmax;
+				this->particule[p].locuslist[kloc].motif_size = dataobs.locus[kloc].motif_size;
+				this->particule[p].locuslist[kloc].motif_range = dataobs.locus[kloc].motif_range;
+				this->particule[p].locuslist[kloc].mut_rate = dataobs.locus[kloc].mut_rate;
+				if (dataobs.locus[kloc].mut_rate<0.0) this->particule[p].locuslist[kloc].priormut = this->copyprior(dataobs.locus[kloc].priormut);
+				this->particule[p].locuslist[kloc].Pgeom = dataobs.locus[kloc].Pgeom;
+				if (dataobs.locus[kloc].Pgeom<0.0) this->particule[p].locuslist[kloc].priorP = this->copyprior(dataobs.locus[kloc].priorP);
+				this->particule[p].locuslist[kloc].sni_rate = dataobs.locus[kloc].sni_rate;
+				if (dataobs.locus[kloc].sni_rate<0.0) this->particule[p].locuslist[kloc].priorsni = this->copyprior(dataobs.locus[kloc].priorsni);
 				}
 			else {
-				n +=1;this->locuslist[kloc].dnalength = loc_i[n];
-				m +=1;this->locuslist[kloc].mus_rate = loc_j[m];
-				m +=1;this->locuslist[kloc].k1 = loc_j[m];
-				m +=1;this->locuslist[kloc].k2 = loc_j[m];
-				m +=1;this->locuslist[kloc].pi_A = loc_j[m];
-				m +=1;this->locuslist[kloc].pi_C = loc_j[m];
-				m +=1;this->locuslist[kloc].pi_G = loc_j[m];
-				m +=1;this->locuslist[kloc].pi_T = loc_j[m];
-				this->locuslist[kloc].mutsit = new double[this->locuslist[kloc].dnalength];
-				for (int i=0;i<this->locuslist[kloc].dnalength;i++) {
-					m +=1;this->locuslist[kloc].mutsit[i] = loc_j[m];
-					//std::cout << this->locuslist[kloc].mutsit[i]<< "   ";
-					}
+				this->particule[p].locuslist[kloc].dnalength = dataobs.locus[kloc].dnalength;
+				this->particule[p].locuslist[kloc].mus_rate = dataobs.locus[kloc].mus_rate;
+				this->particule[p].locuslist[kloc].k1 = dataobs.locus[kloc].k1;
+				this->particule[p].locuslist[kloc].k2 = dataobs.locus[kloc].k2;
+				this->particule[p].locuslist[kloc].pi_A =dataobs.locus[kloc].pi_A ;
+				this->particule[p].locuslist[kloc].pi_C = dataobs.locus[kloc].pi_C;
+				this->particule[p].locuslist[kloc].pi_G = dataobs.locus[kloc].pi_G;
+				this->particule[p].locuslist[kloc].pi_T = dataobs.locus[kloc].pi_T;
+				this->particule[p].locuslist[kloc].mutsit = new double[dataobs.locus[kloc].dnalength];
+				for (int i=0;i<locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = dataobs.locus[kloc].mutsit[i];
 				//std::cout <<"\n";
 				}
-			double coeff=0.0;
-			//cout << "sex-ratio = " << this->sexratio << "\n";
-			switch (this->locuslist[kloc].type % 5)
-			{	case 0 :  coeff = 16.0range_siz*this->sexratio*(1.0-this->sexratio);break;
-				case 1 :  coeff = 2.0;break;
-				case 2 :  coeff = 18.0*this->sexratio*(1.0-this->sexratio)/(1.0+this->sexratio);break;
-				case 3 :  coeff = 2.0*this->sexratio;break;
-				case 4 :  coeff = 2.0*(1.0-this->sexratio);break;
-			}
-			this->locuslist[kloc].coeff=coeff;
-			//cout << "locus " << kloc << "   type=" << this->locuslist[kloc].type << "   coeff=" << this->locuslist[kloc].coeff << "\n";
+			this->particule[p].locuslist[kloc].coeff = dataobs.locus[kloc].coeff;
+			this->particule[p].locuslist[kloc].ss = new int[dataobs.nsample];
+			for (int sa=0;sa<this->nsample;sa++) this->particule[p].locuslist[kloc].ss[sa] = dataobs.locus[kloc].ss[sa];
+			this->particule[p].locuslist[kloc].samplesize = new int[dataobs.nsample];
+			for (int sa=0;sa<this->nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] = dataobs.locus[kloc].samplesize[sa];
 		}
-		for (int p=0;p<this->npart;p++) {
-			this->particule[p].nloc = nloc;
-			this->particule[p].locuslist = new LocusC[nloc];
-			for (int kloc=0;kloc<nloc;kloc++){
-				this->particule[p].locuslist[kloc].type = this->locuslist[kloc].type;
-				this->particule[p].locuslist[kloc].groupe = this->locuslist[kloc].groupe;
-				if (this->locuslist[kloc].type < 5) {
-					this->particule[p].locuslist[kloc].kmin = this->locuslist[kloc].kmin;
-					this->particule[p].locuslist[kloc].kmax = this->locuslist[kloc].kmax;
-					this->particule[p].locuslist[kloc].motif_size = this->locuslist[kloc].motif_size;
-					this->particule[p].locuslist[kloc].motif_range = this->locuslist[kloc].motif_range;
-					this->particule[p].locuslist[kloc].mut_rate = this->locuslist[kloc].mut_rate;
-					if (this->locuslist[kloc].mut_rate<0.0) this->particule[p].locuslist[kloc].priormut = this->copyprior(this->locuslist[kloc].priormut);
-					this->particule[p].locuslist[kloc].Pgeom = this->locuslist[kloc].Pgeom;
-					if (this->locuslist[kloc].Pgeom<0.0) this->particule[p].locuslist[kloc].priorP = this->copyprior(this->locuslist[kloc].priorP);
-					this->particule[p].locuslist[kloc].sni_rate = this->locuslist[kloc].sni_rate;
-					if (this->locuslist[kloc].sni_rate<0.0) this->particule[p].locuslist[kloc].priorsni = this->copyprior(this->locuslist[kloc].priorsni);
-					}
-				else {
-					this->particule[p].locuslist[kloc].dnalength = this->locuslist[kloc].dnalength;
-					this->particule[p].locuslist[kloc].mus_rate = this->locuslist[kloc].mus_rate;
-					this->particule[p].locuslist[kloc].k1 = this->locuslist[kloc].k1;
-					this->particule[p].locuslist[kloc].k2 = this->locuslist[kloc].k2;
-					this->particule[p].locuslist[kloc].pi_A =this->locuslist[kloc].pi_A ;
-					this->particule[p].locuslist[kloc].pi_C = this->locuslist[kloc].pi_C;
-					this->particule[p].locuslist[kloc].pi_G = this->locuslist[kloc].pi_G;
-					this->particule[p].locuslist[kloc].pi_T = this->locuslist[kloc].pi_T;
-					this->particule[p].locuslist[kloc].mutsit = new double[this->locuslist[kloc].dnalength];
-					for (int i=0;i<locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = this->locuslist[kloc].mutsit[i];
-					//std::cout <<"\n";
-					}
-				this->particule[p].locuslist[kloc].coeff = this->locuslist[kloc].coeff;
-			}
-		}
-	}
-
-		int calsamplesize(int loc,int samp) {
-	    	int nn,ng=0;
-			for (int ind=0;ind<this->nind[samp];ind++) {
-				if ((this->locuslist[loc].type == 0)or((this->locuslist[loc].type == 2)and(this->indivsexe[samp][ind] == 2))) {nn=2;}
-				else if ((this->locuslist[loc].type == 3)and(this->indivsexe[samp][ind] == 2)) {nn=0;}
-				else {nn=1;}
-				ng +=nn;
-			}
-//			cout << "ng=" <<ng << "\n";
-			return ng;
-	    }
-
-	void setdataloc(vector<int> da, verange_sizctor<int> gri, vector<double> grd, vector<string> grs, vector<int> loci, vector<double>locj){
-		setdata(da);
-		setgroup(gri,grd,grs);
-		setloci(loci,locj);
-		int **ss;
-		ss      = new int* [this->nloc];
-		for (int loc=0;loc<this->nloc;loc++) {
-			ss[loc] = new int [this->nsample];
-			for (int samp=0;samp<this->nsample;samp++) {
-				ss[loc][samp]=calsamplesize(loc,samp);
-			}
-		}
-		for (int p=0;p<this->npart;p++) {
-			for (int loc=0;loc<this->nloc;loc++) {
-				this->particule[p].locuslist[loc].ss = new int[this->nsample];
-				for (int sa=0;sa<this->nsample;sa++) this->particule[p].locuslist[loc].ss[sa] = ss[loc][sa];
-			}
-		}
-		for (int loc=0;loc<this->nloc;loc++) delete []ss[loc];
-		delete []ss;
 	}
 
 	void setevents (vector<int> eventi, vector<double> eventd, vector<string> events) {

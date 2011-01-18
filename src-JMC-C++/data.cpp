@@ -304,6 +304,7 @@ public:
     	string geno,*gen;
     	int l,ll,n,gg,j0,j1,j2;
     	gen = new string[2];
+    	char *base = "ACGT";
     	cout <<"début de do_sequence\n";
 
     	this->locus[loc].haplodna = new char**[this->nsample];
@@ -381,25 +382,37 @@ public:
     		}
     	}
 		this->locus[loc].pi_A=0.0;this->locus[loc].pi_C=0.0;this->locus[loc].pi_G=0.0;this->locus[loc].pi_T=0.0;
-		double n=0.0;
+		double nn=0.0;
     	for (int ech=0;ech<this->nsample;ech++){
     		for (int i=0;i<this->locus[loc].samplesize[ech];i++){
     			for (int j=0;j<this->locus[loc].dnalength;j++) {
-    				if (this->locus[loc].haplodna[ech][i][j]=="A") {this->locus[loc].pi_A+=1.0;n+=1.0;}
-    				else if (this->locus[loc].haplodna[ech][i][j]=="C") {this->locus[loc].pi_C+=1.0;n+=1.0;}
-    				else if (this->locus[loc].haplodna[ech][i][j]=="G") {this->locus[loc].pi_G+=1.0;n+=1.0;}
-    				else if (this->locus[loc].haplodna[ech][i][j]=="T") {this->locus[loc].pi_T+=1.0;n+=1.0;}
+    				if (this->locus[loc].haplodna[ech][i][j]==base[0]) {this->locus[loc].pi_A+=1.0;nn+=1.0;}
+    				else if (this->locus[loc].haplodna[ech][i][j]==base[1]) {this->locus[loc].pi_C+=1.0;nn+=1.0;}
+    				else if (this->locus[loc].haplodna[ech][i][j]==base[2]) {this->locus[loc].pi_G+=1.0;nn+=1.0;}
+    				else if (this->locus[loc].haplodna[ech][i][j]==base[3]) {this->locus[loc].pi_T+=1.0;nn+=1.0;}
     			}
     		}
     	}
-    	if (n>0.0) {this->locus[loc].pi_A /=n;this->locus[loc].pi_C /=n;this->locus[loc].pi_G /=n;this->locus[loc].pi_T /=n;}
+    	if (n>0.0) {this->locus[loc].pi_A /=nn;this->locus[loc].pi_C /=nn;this->locus[loc].pi_G /=nn;this->locus[loc].pi_T /=nn;}
     	this->locus[loc].nsitmut=0;
     	this->locus[loc].tabsit = new int[this->locus[loc].dnalength];
     	this->locus[loc].mutsit = new double[this->locus[loc].dnalength];
     	delete [] gen;
     }
 
-	DataC * loadfromfile(string filename) {
+    void cal_coeff(int loc){
+		double coeff=0.0;
+		switch (this->locus[loc].type % 5)
+		{	case 0 :  coeff = 16.0*this->sexratio*(1.0-this->sexratio);break;
+			case 1 :  coeff = 2.0;break;
+			case 2 :  coeff = 18.0*this->sexratio*(1.0-this->sexratio)/(1.0+this->sexratio);break;
+			case 3 :  coeff = 2.0*this->sexratio;break;
+			case 4 :  coeff = 2.0*(1.0-this->sexratio);break;
+		}
+		this->locus[loc].coeff=coeff;
+    }
+
+    DataC * loadfromfile(string filename) {
 		int loc,kloc;
 		this->readfile(filename);
 		kloc=this->nloc;
@@ -407,7 +420,7 @@ public:
 			cout << "locus "<<loc<<"   type = "<<this->locus[loc].type<<"\n";
 			if (this->locus[loc].type<5) this->do_microsat(loc);
 			else                         this->do_sequence(loc);
-
+			this->cal_coeff(loc);
 		}
 	}
 };

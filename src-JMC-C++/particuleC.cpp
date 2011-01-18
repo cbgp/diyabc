@@ -580,11 +580,7 @@ struct ParticleC
 		nGen=this->seqlist[iseq].t1-this->seqlist[iseq].t0;
 		ra= (float) nLineages/ (float)this->seqlist[iseq].N;
 		if (nGen<=30) {
-			if (ra < (0.0031*nGen*nGen - 0.053*nstruct HistoryC
-					{
-
-					};
-Gen + 0.7197)) {OK=1;}
+			if (ra < (0.0031*nGen*nGen - 0.053*nGen + 0.7197)) {OK=1;}
 		}
 		else if (nGen<=100){
 			if (ra < (0.033*nGen + 1.7)) {OK=1;}
