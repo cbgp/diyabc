@@ -495,7 +495,7 @@ class setHistoricalModel(QFrame):
                     self.param_info_dico[pname] = [self.dico_parameters[pname],law,min,max,mean,stdev,step]
                 # creation et ecriture du fichier dans le rep choisi
                 # TODO questions : quand est ce qu'on le crée/modifie? Il contient des infos autres que celles du setHist?
-                self.writeHistoricalConf()
+                self.writeHistoricalConfFromGui()
             # gestion des valeurs, maj dans la GUI
             nb_sc = len(self.scList)
             pluriel = ""
@@ -513,7 +513,7 @@ class setHistoricalModel(QFrame):
             self.parent.setTabEnabled(2,False)
             self.parent.setCurrentIndex(0)
 
-    def writeHistoricalConf(self):
+    def writeHistoricalConfFromAttributes(self):
         """ ecrit les valeurs dans dossierProjet/conf.hist.tmp
         """
         if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.hist.tmp"):
@@ -546,5 +546,83 @@ class setHistoricalModel(QFrame):
             f.write("\n")
             f.close()
 
+    def writeHistoricalConfFromGui(self):
+        """ ecrit les valeurs dans dossierProjet/conf.hist.tmp
+        """
+        if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.hist.tmp"):
+            os.remove("%s/conf.hist.tmp" % self.parent.ui.dirEdit.text())
+
+        f = open(self.parent.ui.dirEdit.text()+"/conf.hist.tmp",'w')
+        f.write("%s\n"%self.parent.dataFileName)
+        f.write("%s parameters and %s summary statisticsi\n\n")
+        f.write("%s scenarios: "%(len(self.scList)))
+
+        # affichage des nombres de lignes des scenarios
+        for scbox in self.scList:
+            txt = str(scbox.findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()).strip().split('\n')
+            f.write("%s "%(len(txt)))
+        # affichage du contenu des scenarios
+        num = 0
+        while num < len(self.scList):
+            txt = str(self.scList[num].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()).strip().split('\n')
+            prior_proba = self.rpList[num].findChild(QLineEdit,"rpEdit").text()
+            f.write("\nscenario %s [%s] (X)"%(num+1,prior_proba))
+            for line in txt:
+                f.write("\n"+line)
+            num+=1
+        f.write("\n\nhistorical parameters priors (%s)"%(len(self.dico_parameters.keys())))
+        # consultation des valeurs des paramètres
+        # la gui est mise a jour uniquement si les scenarios sont valides
+        # DONC on peut se servir des infos hors GUI
+        # Mais on rajoute un truc pour savoir si on affiche ou pas le setConditionButton
+        for pname in self.param_info_dico.keys():
+            info = self.param_info_dico[pname]
+            # recherche de la box du param
+            name = ""
+            i = 0
+            visible = 0
+            while i<len(self.paramList) and name != pname:
+                paramBox = self.paramList[i]
+                name = paramBox.findChild(QLabel,"paramNameLabel").text()                    
+                visible = paramBox.findChild(QPushButton,"setCondButton").isVisible()
+                i+=1
+            f.write("\n%s %s %s[%s,%s,%s,%s,%s] %s"%(pname,info[0],info[1],info[2],info[3],info[4],info[5],info[6],visible))
+        for cond in self.condList:
+            lab = cond.findChild(QLabel,"condLabel")
+            f.write("\n%s"%lab.text().replace(' ',''))
+
+        f.write("\n")
+        f.close()
+
     def loadHistoricalConf(self):
+        """ Charge l'etat de setHistoricalModel à partir de conf.hist.tmp
+        """
+        if os.path.exists(self.parent.dir):
+            if os.path.exists("%s/conf.hist.tmp"%(self.parent.dir)):
+                f = open("%s/conf.hist.tmp"%(self.parent.dir),"r")
+                lines = f.readlines()
+                self.parent.dataFileName = lines[0].strip()
+                self.parent.ui.dataFileEdit.setText(lines[0].strip())
+                self.ui.otherRadio.setChecked(True)
+
+                nb_scenarios = int(lines[3].split(' ')[0])
+                nb_line_sc = []
+                for i in range(nb_scenarios):
+                    nb_line_sc.append(int(lines[3].split(' ')[2+i]))
+                l = 4
+                for i in range(nb_scenarios):
+                    txt=""
+                    prior = lines[l].split('[')[1].split(']')[0]
+                    ldeb_sc_cur = l+1
+                    l+=1
+                    while l < (ldeb_sc_cur+nb_line_sc[i]):
+                        print l," ",l+nb_line_sc[i]+1
+                        txt+="%s"%lines[l]
+                        l+=1
+                    self.addSc()
+                    self.scList[i].findChild(QPlainTextEdit,"scplainTextEdit").setPlainText(txt)
+                    self.rpList[i].findChild(QLineEdit,"rpEdit").setText(prior)
+                
+        else:
+            QMessageBox.information(self,"Error","Le répertoire du projet n'existe plus")
         pass

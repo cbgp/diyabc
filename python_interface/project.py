@@ -17,6 +17,10 @@ from datetime import datetime
 import os.path
 
 class Project(QTabWidget):
+    """ classe qui représente un projet
+    par defaut, un projet est considéré comme nouveau, cad que l'affichage est celui d'un projet vierge
+    pour un projet chargé, on modifie l'affichage en conséquence dans loadFromDir
+    """
     def __init__(self,name,dir=None,parent=None):
         self.name=name
         self.dir=dir
@@ -202,5 +206,14 @@ class Project(QTabWidget):
     def loadFromDir(self):
         """ charge les infos à partir du répertoire self.dir
         """
+        # GUI
+        self.ui.dirEdit.setText(self.dir)
+        self.ui.browseDataFileButton.setDisabled(True)
+        self.ui.groupBox.show()
+        self.ui.setHistoricalButton.setDisabled(False)
 
+        # lecture du meta project
+
+        # lecture de conf.hist.tmp
         self.hist_model_win.loadHistoricalConf()
+        # lecture des autres
