@@ -476,7 +476,7 @@ struct ParticleSetC
 		}
 	}
 
-	void setloci(vector <int>loc_i, vector <double>loc_j) {
+	void setloci(int p) {
 		int nloc;
 		nloc = loc_i[0];
 		this->nloc=nloc;

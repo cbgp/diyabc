@@ -318,9 +318,7 @@ public:
     		this->locus[loc].samplesize[ech] = 0;
     		for (int ind=0;ind<this->nind[ech];ind++){
     			geno=string(this->genotype[ech][ind][loc]);
-    			if ((loc==4)and(ech==1)and(ind==10)) cout <<"pour lui, ça vaut "<<geno<<"\n";
     			if (geno.find("][")==string::npos) n=1; else n=2;
-    			if ((loc==4)and(ech==1)and(ind==10)) cout <<"pour lui, ça vaut "<<geno<<"  et n = "<<n<<  "\n";
     			if (n==2) {
     				j0=geno.find("[")+1;
     				j1=geno.find("][");
@@ -382,6 +380,19 @@ public:
     			for (int i=this->locus[loc].samplesize[ech];i<this->locus[loc].ss[ech];i++) this->locus[loc].haplodna[ech][i] = new char[1];
     		}
     	}
+		this->locus[loc].pi_A=0.0;this->locus[loc].pi_C=0.0;this->locus[loc].pi_G=0.0;this->locus[loc].pi_T=0.0;
+		double n=0.0;
+    	for (int ech=0;ech<this->nsample;ech++){
+    		for (int i=0;i<this->locus[loc].samplesize[ech];i++){
+    			for (int j=0;j<this->locus[loc].dnalength;j++) {
+    				if (this->locus[loc].haplodna[ech][i][j]=="A") {this->locus[loc].pi_A+=1.0;n+=1.0;}
+    				else if (this->locus[loc].haplodna[ech][i][j]=="C") {this->locus[loc].pi_C+=1.0;n+=1.0;}
+    				else if (this->locus[loc].haplodna[ech][i][j]=="G") {this->locus[loc].pi_G+=1.0;n+=1.0;}
+    				else if (this->locus[loc].haplodna[ech][i][j]=="T") {this->locus[loc].pi_T+=1.0;n+=1.0;}
+    			}
+    		}
+    	}
+    	if (n>0.0) {this->locus[loc].pi_A /=n;this->locus[loc].pi_C /=n;this->locus[loc].pi_G /=n;this->locus[loc].pi_T /=n;}
     	this->locus[loc].nsitmut=0;
     	this->locus[loc].tabsit = new int[this->locus[loc].dnalength];
     	this->locus[loc].mutsit = new double[this->locus[loc].dnalength];
