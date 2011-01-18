@@ -81,6 +81,7 @@ struct EventC
 
 };
 
+
 struct Ne0C
 {
 	int val;
@@ -101,7 +102,7 @@ struct LocusGroupC
 	double p_fixe,gams;
 	double musmoy,mutmoy,Pmoy,snimoy;
 	double k1moy,k2moy;
-	int  type,mutmod;
+	int  mutmod;
 	PriorC priormusmoy,priork1moy,priork2moy,priormusloc,priork1loc,priork2loc;
 	PriorC priormutmoy,priorPmoy,priorsnimoy,priormutloc,priorPloc,priorsniloc;
 	StatC *sumstat;
@@ -149,7 +150,6 @@ struct ParticleC
 	EventC *eventlist;
 	SequenceBitC *seqlist;
 	GeneTreeC *gt;
-	StatC *stat;
 	MwcGen mw;
 	Ne0C *ne0list;
 	HistParameterC *parameterlist;
@@ -580,7 +580,11 @@ struct ParticleC
 		nGen=this->seqlist[iseq].t1-this->seqlist[iseq].t0;
 		ra= (float) nLineages/ (float)this->seqlist[iseq].N;
 		if (nGen<=30) {
-			if (ra < (0.0031*nGen*nGen - 0.053*nGen + 0.7197)) {OK=1;}
+			if (ra < (0.0031*nGen*nGen - 0.053*nstruct HistoryC
+					{
+
+					};
+Gen + 0.7197)) {OK=1;}
 		}
 		else if (nGen<=100){
 			if (ra < (0.033*nGen + 1.7)) {OK=1;}
@@ -739,7 +743,11 @@ struct ParticleC
 		}
 	}
 
-	void add_sample(int loc,int iseq) {
+	void add_sample(int loc,int iseq) {struct HistoryC
+		{
+
+		};
+
 		for (int i=0;i<this->gt[loc].nnodes;i++){
 			if (this->gt[loc].nodes[i].sample == this->seqlist[iseq].sample) {
 				this->gt[loc].nodes[i].pop = this->seqlist[iseq].pop;

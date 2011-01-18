@@ -104,7 +104,6 @@ class Scenario
 {
 public:
 	double *parameters,prior_proba;
-    History  history;
     int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0;
     EventC *event;
     Ne0C *ne0;
@@ -122,6 +121,7 @@ public:
     	for (int i=0;i<this->nn0;i++) {
     		if (atoi(ss[i].c_str())!=0) {this->ne0[i].name=n0[i];this->ne0[i].val=-1;}
     		else               {this->ne0[i].name="";this->ne0[i].val=atoi(ss[i]);}
+    	}
     	this->event = new EventC[nl-1];
     	for (int i=0;i<nl-1;i++) {
     		ss = splitwords(ls[i+1]," ",&n);
@@ -149,6 +149,18 @@ public:
     	}
     }
 };
+
+PriorC copyprior(PriorC source) {
+	PriorC dest;
+	dest.loi = source.loi;
+	dest.mini = source.mini;
+	dest.maxi = source.maxi;
+	dest.mean = source.mean;
+	dest.sdshape = source.sdshape;
+	dest.constant = source.constant;
+	dest.ndec  = source.ndec;
+	return dest;
+}
 
 class Header
 {
@@ -273,7 +285,7 @@ public:
 			k=0;while (ss[k].find("[")==string::npos) k++;
 			if (ss[k]=="[M]") {
 				s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
-				dataobs.locus[loc].motif_size=atoi(ss[k+2].c_str());dataobs.locus[loc].range_size=atoi(ss[k+3].c_str());
+				dataobs.locus[loc].motif_size=atoi(ss[k+2].c_str());dataobs.locus[loc].motif_range=atoi(ss[k+3].c_str());
 			}
 			else if (ss[k]=="[S]") {
 				s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
@@ -292,21 +304,32 @@ public:
 			this->assignloc(gr);
 			if (ss[2]=="[M]") {this->groupe[gr].type=0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutmoy = this->readprior(ss1[1]);delete [] ss1;
+				if (this->groupe[gr].priormutmoy.constant) this->groupe[gr].mutmoy=this->groupe[gr].priormutmoy.mini; else this->groupe[gr].mutmoy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readprior(ss1[1]);delete [] ss1;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy   = this->readprior(ss1[1]);delete [] ss1;
+				if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini; else this->groupe[gr].Pmoy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readprior(ss1[1]);delete [] ss1;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsnimoy = this->readprior(ss1[1]);delete [] ss1;
+				if (this->groupe[gr].priorsnimoy.constant) this->groupe[gr].snimoy=this->groupe[gr].priorsnimoy.mini; else this->groupe[gr].snimoy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc = this->readprior(ss1[1]);delete [] ss1;
 			} else if (ss[2]=="[S]") {this->groupe[gr].type=1;
 				this->groupe[gr].p_fixe = atof(ss[3].c_str());
 				this->groupe[gr].gams = atof(ss[4].c_str());
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusmoy = this->readprior(ss1[1]);delete [] ss1;
+				if (this->groupe[gr].priormusmoy.constant) this->groupe[gr].musmoy=this->groupe[gr].priormusmoy.mini; else this->groupe[gr].musmoy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc = this->readprior(ss1[1]);delete [] ss1;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1moy  = this->readprior(ss1[1]);delete [] ss1;
+				if (this->groupe[gr].priork1.constant) this->groupe[gr].k1moy=this->groupe[gr].priork1moy.mini; else this->groupe[gr].k1moy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readprior(ss1[1]);delete [] ss1;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2moy  = this->readprior(ss1[1]);delete [] ss1;
+				if (this->groupe[gr].priork2.constant) this->groupe[gr].k2moy=this->groupe[gr].priork2moy.mini; else this->groupe[gr].k2moy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readprior(ss1[1]);delete [] ss1;
-
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);
+				this->groupe[gr].p_fixe=atof(ss1[2].c_str());this->groupe[gr].gams=atof(ss1[3].c_str());
+				if (ss1[0]=="JK") this->groupe[gr].mutmod=0;
+				else if (ss1[0]=="K2P") this->groupe[gr].mutmod=1;
+				else if (ss1[0]=="HKY") this->groupe[gr].mutmod=2;
+				else if (ss1[0]=="TN") this->groupe[gr].mutmod=3;
 			}
 		}
 		delete [] ss;
@@ -361,6 +384,7 @@ public:
 							ss1=splitwords(ss[i],"&",&nss1);
 							this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
 							this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+							this->groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
 							k++;
 						}
 					}
@@ -385,272 +409,73 @@ struct ParticleSetC
 	int nsample,*nind,**indivsexe;
 	double sexratio;
 
-/*	void setnpart(int npart){
-		this->npart = npart;
-		this->particule = new ParticleC[this->npart];
-
+	void setdata(int p) {
+		this->particule[p].data.nsample = dataobs.nsample;
+		this->particule[p].data.nind = new int[dataobs.nsample];
+		this->particule[p].data.indivsexe = new int*[dataobs.nsample];
+		for (int i=0;i<dataobs.nsample;i++) {
+			this->particule[p].data.nind[i] = dataobs.nind[i];
+			this->particule[p].data.indivsexe[i] = new int[dataobs.nind[i]];
+			for (int j=0;j<data.nind[i];j++) this->particule[p].data.indivsexe[i][j] = dataobs.indivsexe[i][j];
+		}
 	}
 
-	void setdnatrue(bool dnatrue) {
-		for (int p=0;p<this->npart;p++) this->particule[p].dnatrue = dnatrue;
-	}*/
-
-	void setstat(vector<int> stat_i) {
-		StatC *stat;
-		int nstat = stat_i[0];
-		int n=0,jstat=0;
-		stat = new StatC[nstat];
-		while (jstat<nstat) {
-			n +=1;stat[jstat].cat   = stat_i[n];
-			n +=1;stat[jstat].samp  = stat_i[n];
-			n +=1;stat[jstat].samp1 = stat_i[n];
-			n +=1;stat[jstat].samp2 = stat_i[n];
-			n +=1;stat[jstat].group  = stat_i[n];
-			jstat++;
-		}
-		//for (int j=0;j<nstat;j++) cout << "stat "<<j<<"  cat="<<stat[j].cat<<"  group="<<stat[j].group<<"\n";
-		for (int p=0;p<this->npart;p++) {
-			this->particule[p].nstat=nstat;
-			this->particule[p].stat = new StatC[nstat];
-			for (jstat=0;jstat<nstat;jstat++) {
-				this->particule[p].stat[jstat].cat   = stat[jstat].cat;
-				this->particule[p].stat[jstat].samp  = stat[jstat].samp;
-				this->particule[p].stat[jstat].samp1 = stat[jstat].samp1;
-				this->particule[p].stat[jstat].samp2 = stat[jstat].samp2;
-				this->particule[p].stat[jstat].group  = stat[jstat].group;
+	void setgroup(int p) {
+		int ngr = header.ngroupes;
+		this->particule[p].ngr = ngr;
+		this->particule[p].grouplist = new LocusGroupC[ngr];
+		for (int gr=0;gr<this->ngr;gr++) {
+			this->particule[p].grouplist[gr].type =header.groupe[gr].type;
+			this->particule[p].grouplist[gr].nloc = header.groupe[gr].nloc;
+			this->particule[p].grouplist[gr].loc  = new int[header.groupe[gr].nloc];
+			for (int i=0;i<header.groupe[gr].nloc;i++) this->particule[p].grouplist[gr].loc[i] = header.groupe[gr].loc[i];
+			if (header.groupe[gr].type==0) {	//MICROSAT
+				this->particule[p].grouplist[gr].mutmoy = header.groupe[gr].mutmoy;
+				if (header.groupe[gr].mutmoy<0.0) this->particule[p].grouplist[gr].priormutmoy = copyprior(header.groupe[gr].priormutmoy);
+				else this->particule[p].grouplist[gr].priormutmoy.constant=true;
+				this->particule[p].grouplist[gr].priormutloc = copyprior(header.groupe[gr].priormutloc);
+				this->particule[p].grouplist[gr].Pmoy = header.groupe[gr].Pmoy;
+				if (header.groupe[gr].Pmoy<0.0) this->particule[p].grouplist[gr].priorPmoy = copyprior(header.groupe[gr].priorPmoy);
+				else this->particule[p].grouplist[gr].priorPmoy.constant=true;
+				this->particule[p].grouplist[gr].priorPloc = copyprior(header.groupe[gr].priorPloc);
+				this->particule[p].grouplist[gr].snimoy = header.groupe[gr].snimoy;
+				if (header.groupe[gr].snimoy<0.0) this->particule[p].grouplist[gr].priorsnimoy = copyprior(header.groupe[gr].priorsnimoy);
+				else this->particule[p].grouplist[gr].priorsnimoy.constant=true;
+				this->particule[p].grouplist[gr].priorsniloc = copyprior(header.groupe[gr].priorsniloc);
 			}
-		}
-		delete []stat;
-	}
-
-	void setdata(vector <int> da) {
-		this->nsample = da[0];
-		this->nind = new int[this->nsample];
-		this->indivsexe = new int*[this->nsample];
-		//cout << "nsample = " << nsample << "\n";
-		int n = 0;
-		for (int i=0;i<this->nsample;i++) {
-			n +=1;this->nind[i]=da[n];
-			//cout << "nind[" << i << "] = " << nind[i] << "\n";
-			}
-		for (int i=0;i<this->nsample;i++) {
-			this->indivsexe[i] = new int[this->nind[i]];
-			for (int j=0;j<this->nind[i];j++) {
-				n +=1;this->indivsexe[i][j]=da[n];
-				//cout << "indivsex[" << i << "," << j << "] = " << this->indivsexe[i][j] << "\n";
+			else {							//SEQUENCES
+				this->particule[p].grouplist[gr].mutmod = header.groupe[gr].mutmod;	//mutmod
+				this->particule[p].grouplist[gr].p_fixe = header.groupe[gr].p_fixe;	//p_fixe
+				this->particule[p].grouplist[gr].gams   = header.groupe[gr].gams;	//gams
+				this->particule[p].grouplist[gr].musmoy = header.groupe[gr].musmoy;	//musmoy
+				if (header.groupe[gr].musmoy<0.0) this->particule[p].grouplist[gr].priormusmoy = copyprior(header.groupe[gr].priormusmoy);
+				else this->particule[p].grouplist[gr].priormusmoy.constant=true;
+				this->particule[p].grouplist[gr].priormusloc = copyprior(header.groupe[gr].priormusloc);
+				if (header.groupe[gr].mutmod>0){
+					this->particule[p].grouplist[gr].k1moy = header.groupe[gr].k1moy ;	//k1moy
+					if (header.groupe[gr].k1moy<0) this->particule[p].grouplist[gr].priork1moy = copyprior(header.groupe[gr].priork1moy);
+					else this->particule[p].grouplist[gr].priork1moy.constant=true;
+					this->particule[p].grouplist[gr].priork1loc = copyprior(header.groupe[gr].priork1loc);
+				}
+				if (header.groupe[gr].mutmod>2){
+					this->particule[p].grouplist[gr].k2moy = header.groupe[gr].k2moy ;	//k2moy
+					if (header.groupe[gr].k2moy<0) this->particule[p].grouplist[gr].priork2moy = copyprior(header.groupe[gr].priork2moy);
+					else this->particule[p].grouplist[gr].priork2moy.constant=true;
+					this->particule[p].grouplist[gr].priork2loc = copyprior(header.groupe[gr].priork2loc);
 				}
 			}
-		this->sexratio = 0.5;
-		//cout << "sexratio = " << this->sexratio << "\n";
-		for (int p=0;p<this->npart;p++) {
-			this->particule[p].data.nsample = this->nsample;
-			this->particule[p].data.nind = new int[this->nsample];
-			this->particule[p].data.indivsexe = new int*[this->nsample];
-			for (int i=0;i<this->nsample;i++) {
-				this->particule[p].data.nind[i] = this->nind[i];
-				this->particule[p].data.indivsexe[i] = new int[this->nind[i]];
-				for (int j=0;j<this->nind[i];j++) this->particule[p].data.indivsexe[i][j] = this->indivsexe[i][j];
-			}
-		}
-		//cout << "fin de setdata" <<  "\n";
-	}
+			this->particule[p].grouplist[gr].nstat=header.groupe[gr].nstat;
+			this->particule[p].grouplist[gr].stat = new StatC[header.groupe[gr].nstat];
+			for (int i=0;i<header.groupe[gr].nstat;i++){
+				this->particule[p].grouplist[gr].stat[i].cat   = header.groupe[gr].stat[i].cat;
+				this->particule[p].grouplist[gr].stat[i].samp  = header.groupe[gr].stat[i].samp;
+				this->particule[p].grouplist[gr].stat[i].samp1 = header.groupe[gr].stat[i].samp1;
+				this->particule[p].grouplist[gr].stat[i].samp2 = header.groupe[gr].stat[i].samp2;
 
-	void setgroup(vector<int>groupi, vector<double>groupd, vector<string>groups) {
-		int ngr = groupi[0];
-		this->ngr = ngr;
-		this->grouplist = new LocusGroupC[ngr];
-		int ni=0,nd=-1,ns=-1;
-		for (int gr=0;gr<ngr;gr++) {
-			ni++;this->grouplist[gr].type = groupi[ni];
-			ni++;this->grouplist[gr].nloc = groupi[ni];
-			this->grouplist[gr].loc = new int[this->grouplist[gr].nloc];
-			for (int i=0;i<this->grouplist[gr].nloc;i++) {ni++;this->grouplist[gr].loc[i]=groupi[ni];}
-			if (this->grouplist[gr].type==0) {		//MICROSAT
-				nd++;this->grouplist[gr].mutmoy = groupd[nd];	//mutmoy
-				//cout << "mutmoy = "<<this->grouplist[gr].mutmoy<<"\n";
-				if (this->grouplist[gr].mutmoy<0.0) {
-					ns++;this->grouplist[gr].priormutmoy.loi = groups[ns];//cout << this->grouplist[gr].priormutmoy.loi<<",";
-					nd++;this->grouplist[gr].priormutmoy.mini =groupd[nd];//cout << this->grouplist[gr].priormutmoy.mini<<",";
-					nd++;this->grouplist[gr].priormutmoy.maxi =groupd[nd];//cout << this->grouplist[gr].priormutmoy.maxi<<"\n";
-					if (this->grouplist[gr].priormutmoy.maxi!=this->grouplist[gr].priormutmoy.mini) this->grouplist[gr].priormutmoy.constant=false;
-					else this->grouplist[gr].priormutmoy.constant=true; 
-					nd++;this->grouplist[gr].priormutmoy.mean = groupd[nd];
-					nd++;this->grouplist[gr].priormutmoy.sdshape =groupd[nd];
-					ni++;this->grouplist[gr].priormutmoy.ndec =groupi[ni];
-				} else this->grouplist[gr].priormutmoy.constant=true;
-				nd++;this->grouplist[gr].Pmoy = groupd[nd];	//Pmoy
-				//cout << "Pmoy = "<<this->grouplist[gr].Pmoy<<"\n";
-				if (this->grouplist[gr].Pmoy<0.0) {
-					ns++;this->grouplist[gr].priorPmoy.loi = groups[ns];//cout << this->grouplist[gr].priorPmoy.loi<<",";
-					nd++;this->grouplist[gr].priorPmoy.mini =groupd[nd];//cout << this->grouplist[gr].priorPmoy.mini<<",";
-					nd++;this->grouplist[gr].priorPmoy.maxi =groupd[nd];//cout << this->grouplist[gr].priorPmoy.maxi<<"\n";
-					if (this->grouplist[gr].priorPmoy.maxi!=this->grouplist[gr].priorPmoy.mini){this->grouplist[gr].priorPmoy.constant=false;}
-					else this->grouplist[gr].priorPmoy.constant=true; 
-					nd++;this->grouplist[gr].priorPmoy.mean = groupd[nd];
-					nd++;this->grouplist[gr].priorPmoy.sdshape =groupd[nd];
-					ni++;this->grouplist[gr].priorPmoy.ndec =groupi[ni];
-				} else this->grouplist[gr].priorPmoy.constant=true; 
-				nd++;this->grouplist[gr].snimoy = groupd[nd];	//snimoy
-				//cout << "snimoy = "<<this->grouplist[gr].snimoy<<"\n";
-				if (this->grouplist[gr].snimoy<0.0) {
-					ns++;this->grouplist[gr].priorsnimoy.loi = groups[ns];
-					nd++;this->grouplist[gr].priorsnimoy.mini =groupd[nd];
-					nd++;this->grouplist[gr].priorsnimoy.maxi =groupd[nd];
-					if (this->grouplist[gr].priorsnimoy.maxi!=this->grouplist[gr].priorsnimoy.mini){this->grouplist[gr].priorsnimoy.constant=false;}
-					else this->grouplist[gr].priorsnimoy.constant=true; 
-
-					nd++;this->grouplist[gr].priorsnimoy.mean = groupd[nd];
-					nd++;this->grouplist[gr].priorsnimoy.sdshape =groupd[nd];
-					ni++;this->grouplist[gr].priorsnimoy.ndec =groupi[ni];
-				} else this->grouplist[gr].priorsnimoy.constant=true; 
-
-			}
-			else {						//SEQUENCES
-				ni++;this->grouplist[gr].mutmod = groupi[ni];	//mutmod
-				nd++;this->grouplist[gr].p_fixe = groupd[nd];	//p_fixe
-				nd++;this->grouplist[gr].gams   = groupd[nd];	//gams
-				nd++;this->grouplist[gr].musmoy = groupd[nd];	//musmoy
-				if (this->grouplist[gr].musmoy<0) {
-					ns++;this->grouplist[gr].priormusmoy.loi = groups[ns];
-					nd++;this->grouplist[gr].priormusmoy.mini =groupd[nd];
-					nd++;this->grouplist[gr].priormusmoy.maxi =groupd[nd];
-					if (this->grouplist[gr].priormusmoy.maxi!=this->grouplist[gr].priormusmoy.mini){this->grouplist[gr].priormusmoy.constant=false;}
-					else this->grouplist[gr].priormusmoy.constant=true; 
-					nd++;this->grouplist[gr].priormusmoy.mean = groupd[nd];
-					nd++;this->grouplist[gr].priormusmoy.sdshape =groupd[nd];
-					ni++;this->grouplist[gr].priormusmoy.ndec =groupi[ni];
-				} else this->grouplist[gr].priormusmoy.constant=true; 
-				if (this->grouplist[gr].mutmod>0){
-					nd++;this->grouplist[gr].k1moy = groupd[nd];	//k1moy
-					if (this->grouplist[gr].k1moy<0) {
-						ns++;this->grouplist[gr].priork1moy.loi = groups[ns];
-						nd++;this->grouplist[gr].priork1moy.mini =groupd[nd];
-						nd++;this->grouplist[gr].priork1moy.maxi =groupd[nd];
-						if (this->grouplist[gr].priork1moy.maxi!=this->grouplist[gr].priork1moy.mini){this->grouplist[gr].priork1moy.constant=false;}
-						else this->grouplist[gr].priork1moy.constant=true; 
-						nd++;this->grouplist[gr].priork1moy.mean = groupd[nd];
-						nd++;this->grouplist[gr].priork1moy.sdshape =groupd[nd];
-						ni++;this->grouplist[gr].priork1moy.ndec =groupi[ni];
-					} else this->grouplist[gr].priork1moy.constant=true; 
-				}
-				if (this->grouplist[gr].mutmod>2){
-					nd++;this->grouplist[gr].k2moy = groupd[nd];	//k1moy
-					if (this->grouplist[gr].k2moy<0) {
-						ns++;this->grouplist[gr].priork2moy.loi = groups[ns];
-						nd++;this->grouplist[gr].priork2moy.mini =groupd[nd];
-						nd++;this->grouplist[gr].priork2moy.maxi =groupd[nd];
-						if (this->grouplist[gr].priork2moy.maxi!=this->grouplist[gr].priork2moy.mini){this->grouplist[gr].priork2moy.constant=false;}
-						else this->grouplist[gr].priork2moy.constant=true; 
-						nd++;this->grouplist[gr].priork2moy.mean = groupd[nd];
-						nd++;this->grouplist[gr].priork2moy.sdshape =groupd[nd];
-						ni++;this->grouplist[gr].priork2moy.ndec =groupi[ni];
-					} else this->grouplist[gr].priork2moy.constant=true; 
-				}
-			}
-		}
-		//cout <<"fin de lecture des groupes\n\n\n";
-		for (int p=0;p<this->npart;p++) {
-			this->particule[p].ngr = this->ngr;
-			this->particule[p].grouplist = new LocusGroupC[this->ngr];
-			for (int gr=0;gr<this->ngr;gr++) {
-				this->particule[p].grouplist[gr].type = this->grouplist[gr].type;
-				this->particule[p].grouplist[gr].nloc = this->grouplist[gr].nloc;
-				this->particule[p].grouplist[gr].loc  = new int[this->grouplist[gr].nloc];
-				for (int i=0;i<this->grouplist[gr].nloc;i++) this->particule[p].grouplist[gr].loc[i] = this->grouplist[gr].loc[i];
-				if (this->grouplist[gr].type==0) {	//MICROSAT
-					this->particule[p].grouplist[gr].mutmoy = this->grouplist[gr].mutmoy;
-					if (this->grouplist[gr].mutmoy<0.0) {
-						this->particule[p].grouplist[gr].priormutmoy.loi = this->grouplist[gr].priormutmoy.loi ;
-						this->particule[p].grouplist[gr].priormutmoy.mini = this->grouplist[gr].priormutmoy.mini;
-						this->particule[p].grouplist[gr].priormutmoy.maxi = this->grouplist[gr].priormutmoy.maxi;
-						this->particule[p].grouplist[gr].priormutmoy.constant = this->grouplist[gr].priormutmoy.constant; 
-						this->particule[p].grouplist[gr].priormutmoy.mean = this->grouplist[gr].priormutmoy.mean;
-						this->particule[p].grouplist[gr].priormutmoy.sdshape = this->grouplist[gr].priormutmoy.sdshape;
-						this->particule[p].grouplist[gr].priormutmoy.ndec = this->grouplist[gr].priormutmoy.ndec;
-					} 
-					else this->particule[p].grouplist[gr].priormutmoy.constant=true; 					
-					this->particule[p].grouplist[gr].Pmoy = this->grouplist[gr].Pmoy;
-					if (this->grouplist[gr].Pmoy<0.0) {
-						this->particule[p].grouplist[gr].priorPmoy.loi = this->grouplist[gr].priorPmoy.loi ;
-						this->particule[p].grouplist[gr].priorPmoy.mini = this->grouplist[gr].priorPmoy.mini;
-						this->particule[p].grouplist[gr].priorPmoy.maxi = this->grouplist[gr].priorPmoy.maxi;
-						this->particule[p].grouplist[gr].priorPmoy.constant = this->grouplist[gr].priorPmoy.constant;
-						this->particule[p].grouplist[gr].priorPmoy.mean = this->grouplist[gr].priorPmoy.mean;
-						this->particule[p].grouplist[gr].priorPmoy.sdshape = this->grouplist[gr].priorPmoy.sdshape;
-						this->particule[p].grouplist[gr].priorPmoy.ndec = this->grouplist[gr].priorPmoy.ndec;
-					}
-					else this->particule[p].grouplist[gr].priorPmoy.constant=true;
-					this->particule[p].grouplist[gr].snimoy = this->grouplist[gr].snimoy;
-					if (this->grouplist[gr].snimoy<0.0) {
-						this->particule[p].grouplist[gr].priorsnimoy.loi = this->grouplist[gr].priorsnimoy.loi ;
-						this->particule[p].grouplist[gr].priorsnimoy.mini = this->grouplist[gr].priorsnimoy.mini;
-						this->particule[p].grouplist[gr].priorsnimoy.maxi = this->grouplist[gr].priorsnimoy.maxi;
-						this->particule[p].grouplist[gr].priorsnimoy.constant = this->grouplist[gr].priorsnimoy.constant;
-						this->particule[p].grouplist[gr].priorsnimoy.mean = this->grouplist[gr].priorsnimoy.mean;
-						this->particule[p].grouplist[gr].priorsnimoy.sdshape = this->grouplist[gr].priorsnimoy.sdshape;
-						this->particule[p].grouplist[gr].priorsnimoy.ndec = this->grouplist[gr].priorsnimoy.ndec;
-					}
-					else this->particule[p].grouplist[gr].priorsnimoy.constant=true;
-				}
-				else {							//SEQUENCES
-					this->particule[p].grouplist[gr].mutmod = this->grouplist[gr].mutmod;	//mutmod
-					this->particule[p].grouplist[gr].p_fixe = this->grouplist[gr].p_fixe;	//p_fixe
-					this->particule[p].grouplist[gr].gams   = this->grouplist[gr].gams;	//gams
-					this->particule[p].grouplist[gr].musmoy = this->grouplist[gr].musmoy;	//musmoy
-					if (this->grouplist[gr].musmoy<0.0) {
-						this->particule[p].grouplist[gr].priormusmoy.loi = this->grouplist[gr].priormusmoy.loi;
-						this->particule[p].grouplist[gr].priormusmoy.mini = this->grouplist[gr].priormusmoy.mini;
-						this->particule[p].grouplist[gr].priormusmoy.maxi = this->grouplist[gr].priormusmoy.maxi;
-						if (this->grouplist[gr].priormusmoy.maxi!=this->grouplist[gr].priormusmoy.mini){this->particule[p].grouplist[gr].priormusmoy.constant=false;}
-						else this->particule[p].grouplist[gr].priormusmoy.constant=true;
-						this->particule[p].grouplist[gr].priormusmoy.mean = this->grouplist[gr].priormusmoy.mean ;
-						this->particule[p].grouplist[gr].priormusmoy.sdshape = this->grouplist[gr].priormusmoy.sdshape ;
-						this->particule[p].grouplist[gr].priormusmoy.ndec = this->grouplist[gr].priormusmoy.ndec ;
-					} else this->particule[p].grouplist[gr].priormusmoy.constant=true;
-					if (this->grouplist[gr].mutmod>0){
-						this->particule[p].grouplist[gr].k1moy = this->grouplist[gr].k1moy ;	//k1moy
-						if (this->grouplist[gr].k1moy<0) {
-							this->particule[p].grouplist[gr].priork1moy.loi = this->grouplist[gr].priork1moy.loi ;
-							this->particule[p].grouplist[gr].priork1moy.mini = this->grouplist[gr].priork1moy.mini ;
-							this->particule[p].grouplist[gr].priork1moy.maxi = this->grouplist[gr].priork1moy.maxi ;
-							if (this->grouplist[gr].priork1moy.maxi!=this->grouplist[gr].priork1moy.mini){this->particule[p].grouplist[gr].priork1moy.constant=false;}
-							else this->particule[p].grouplist[gr].priork1moy.constant=true;
-							this->particule[p].grouplist[gr].priork1moy.mean = this->grouplist[gr].priork1moy.mean ;
-							this->particule[p].grouplist[gr].priork1moy.sdshape = this->grouplist[gr].priork1moy.sdshape ;
-							this->particule[p].grouplist[gr].priork1moy.ndec = this->grouplist[gr].priork1moy.ndec ;
-						} else this->particule[p].grouplist[gr].priork1moy.constant=true;
-					}
-					if (this->grouplist[gr].mutmod>2){
-						this->particule[p].grouplist[gr].k2moy = this->grouplist[gr].k2moy ;	//k2moy
-						if (this->grouplist[gr].k2moy<0) {
-							this->particule[p].grouplist[gr].priork2moy.loi = this->grouplist[gr].priork2moy.loi ;
-							this->particule[p].grouplist[gr].priork2moy.mini = this->grouplist[gr].priork2moy.mini ;
-							this->particule[p].grouplist[gr].priork2moy.maxi = this->grouplist[gr].priork2moy.maxi ;
-							if (this->grouplist[gr].priork2moy.maxi!=this->grouplist[gr].priork2moy.mini){this->particule[p].grouplist[gr].priork2moy.constant=false;}
-							else this->grouplist[gr].priork2moy.constant=true;
-							this->particule[p].grouplist[gr].priork2moy.mean = this->grouplist[gr].priork2moy.mean ;
-							this->particule[p].grouplist[gr].priork2moy.sdshape = this->grouplist[gr].priork2moy.sdshape ;
-							this->particule[p].grouplist[gr].priork2moy.ndec = this->grouplist[gr].priork2moy.ndec ;
-						} else this->particule[p].grouplist[gr].priork2moy.constant=true;
-
-					}
-
-				}
 			}
 		}
 	}
 
-	PriorC copyprior(PriorC source) {
-		PriorC dest;
-		dest.loi = source.loi;
-		dest.mini = source.mini;
-		dest.maxi = source.maxi;
-		dest.mean = source.mean;
-		dest.sdshape = source.sdshape;
-		dest.constant = source.constant;
-		dest.ndec  = source.ndec;
-		return dest;
-	}
 	void setloci(vector <int>loc_i, vector <double>loc_j) {
 		int nloc;
 		nloc = loc_i[0];
@@ -723,7 +548,7 @@ struct ParticleSetC
 			double coeff=0.0;
 			//cout << "sex-ratio = " << this->sexratio << "\n";
 			switch (this->locuslist[kloc].type % 5)
-			{	case 0 :  coeff = 16.0*this->sexratio*(1.0-this->sexratio);break;
+			{	case 0 :  coeff = 16.0range_siz*this->sexratio*(1.0-this->sexratio);break;
 				case 1 :  coeff = 2.0;break;
 				case 2 :  coeff = 18.0*this->sexratio*(1.0-this->sexratio)/(1.0+this->sexratio);break;
 				case 3 :  coeff = 2.0*this->sexratio;break;
@@ -780,7 +605,7 @@ struct ParticleSetC
 			return ng;
 	    }
 
-	void setdataloc(vector<int> da, vector<int> gri, vector<double> grd, vector<string> grs, vector<int> loci, vector<double>locj){
+	void setdataloc(vector<int> da, verange_sizctor<int> gri, vector<double> grd, vector<string> grs, vector<int> loci, vector<double>locj){
 		setdata(da);
 		setgroup(gri,grd,grs);
 		setloci(loci,locj);
@@ -1023,19 +848,19 @@ struct ParticleSetC
 		delete []this->indivsexe;
 	}
 
-	vector<double> dosimultabref(int npart, bool dnatrue,
-			vector<int>va, 													//data
-			vector<int> vb01, vector<double> vb02, vector<string> vb03,		//locusgroup
-			vector <int> vb1, vector<double> vb2, 							//locus
-			vector<int> vc1, vector<double> vc2, vector<string> vc3,		//events
-			vector<int> vd1, vector <double> vd2,vector<string> vd3, 		//histparameters
-			vector <int> ve)
+	vector<double> dosimultabref(int npart, bool dnatrue)
 		{
 		//cout << "debut de dosimultabref\n";
+		Header header;
+		header.readHeader();
 		this->npart = npart;
 		this->particule = new ParticleC[this->npart];
 		//cout << "apres le new ParticleC\n";
-		for (int p=0;p<this->npart;p++) this->particule[p].dnatrue = dnatrue;
+		for (int p=0;p<this->npart;p++) {
+			this->particule[p].dnatrue = dnatrue;
+			this->setdata(p);
+			this->setgroup(p);
+		}
 		this->setdataloc(va,vb01,vb02,vb03,vb1,vb2);
 		//cout << "apres setdataloc\n";
 		this->setparamn0(vc1,vc2,vc3);
@@ -1187,23 +1012,23 @@ struct ParticleSetC
 
 };
 
-BOOST_PYTHON_MODULE(simuldatC)
-{
-	class_<ParticleSetC>("ParticleSet")
-//		.def("setdnatrue", &ParticleSetC::setdnatrue)
-//		.def("setevents", &ParticleSetC::setevents)
-		.def("dosimultabref", &ParticleSetC::dosimultabref)
-		.def("gethaplostate", &ParticleSetC::gethaplostate)
-		.def("gethaplodna", &ParticleSetC::gethaplodna)
-//		.def("setstat", &ParticleSetC::setstat)
-//		.def("setdataloc", &ParticleSetC::setdataloc)
-//		.def("setparamn0", &ParticleSetC::setparamn0)
-//		.def("setnpart", &ParticleSetC::setnpart)
-		.def("getsumstat", &ParticleSetC::getsumstat)
-		.def("setonepart",  &ParticleSetC::setonepart)
-		.def("getonestat", &ParticleSetC::getonestat)
-    ;
-}
+//BOOST_PYTHON_MODULE(simuldatC)
+//{
+//	class_<ParticleSetC>("ParticleSet")
+////		.def("setdnatrue", &ParticleSetC::setdnatrue)
+////		.def("setevents", &ParticleSetC::setevents)
+//		.def("dosimultabref", &ParticleSetC::dosimultabref)
+//		.def("gethaplostate", &ParticleSetC::gethaplostate)
+//		.def("gethaplodna", &ParticleSetC::gethaplodna)
+////		.def("setstat", &ParticleSetC::setstat)
+////		.def("setdataloc", &ParticleSetC::setdataloc)
+////		.def("setparamn0", &ParticleSetC::setparamn0)
+////		.def("setnpart", &ParticleSetC::setnpart)
+//		.def("getsumstat", &ParticleSetC::getsumstat)
+//		.def("setonepart",  &ParticleSetC::setonepart)
+//		.def("getonestat", &ParticleSetC::getonestat)
+//    ;
+//}
 
 /*void do_main(int npart) {
 	int a[]={3, 30, 30, 30, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
