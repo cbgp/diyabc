@@ -65,11 +65,6 @@ class Project(QTabWidget):
         self.ui.tableWidget.setColumnWidth(2,300)
         self.ui.tableWidget.setColumnWidth(3,70)
 
-        # ajout au tabwidget de l'ui principale
-        # ajout de l'onglet
-        self.mainUi.tabWidget.addTab(self,name)
-        self.mainUi.tabWidget.setCurrentWidget(self)
-
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.addRow)
         QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
         QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.setHistorical)
@@ -132,7 +127,7 @@ class Project(QTabWidget):
             dd = datetime.now()
             num = 36
             cd = 100
-            while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i_%i"%(self.name,dd.year,dd.month,dd.day,cd)):
+            while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,cd)):
                 cd -= 1
             if cd == 100:
                 QMessageBox.information(self,"Error","With this version, you cannot have more than 100 project directories")

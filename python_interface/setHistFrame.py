@@ -267,9 +267,9 @@ class setHistoricalModel(QFrame):
             # on n'affiche que ceux qui ne l'ont pas déjà été
             if pname not in l_already_printed:
                 if dico_count_per_category[self.dico_parameters[pname]] > 1 and (pname not in lprem):
-                    self.addParamGui(pname,"multiple")
+                    self.addParamGui(pname,"multiple",self.dico_parameters[pname])
                 else:
-                    self.addParamGui(pname,"unique")
+                    self.addParamGui(pname,"unique",self.dico_parameters[pname])
                 l_already_printed.append(pname)
 
 
@@ -323,7 +323,7 @@ class setHistoricalModel(QFrame):
         self.draw_sc_win.show()
         self.draw_sc_win.drawAll()
 
-    def addParamGui(self,name,type_param):
+    def addParamGui(self,name,type_param,code_type_param):
         """ ajoute un paramètre à la GUI et à la liste locale de paramètres
         """
         groupBox_8 = QtGui.QFrame(self.ui.scrollArea)
@@ -442,6 +442,15 @@ class setHistoricalModel(QFrame):
 
         if type_param == "unique":
             setCondButton.hide()
+        if code_type_param == "N" or code_type_param == "T":
+            minValueParamEdit.setText("10")
+            maxValueParamEdit.setText("10000")
+            stepValueParamEdit.setText("1")
+        elif code_type_param == "A":
+            minValueParamEdit.setText("0,001")
+            maxValueParamEdit.setText("0,999")
+            stepValueParamEdit.setText("0,001")
+
 
         # evennement d'ajout d'une condition sur un paramètre
         QObject.connect(setCondButton,SIGNAL("clicked()"),self.setCondition)
@@ -508,7 +517,7 @@ class setHistoricalModel(QFrame):
         """ ecrit les valeurs dans dossierProjet/conf.hist.tmp
         """
         if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.hist.tmp"):
-            os.remove(self.parent.ui.dirEdit.text()+"/conf.hist.tmp")
+            os.remove("%s/conf.hist.tmp" % self.parent.ui.dirEdit.text())
 
         if len(self.scenarios_info_list) > 0:
             f = open(self.parent.ui.dirEdit.text()+"/conf.hist.tmp",'w')
@@ -528,5 +537,13 @@ class setHistoricalModel(QFrame):
             for pname in self.param_info_dico.keys():
                 info = self.param_info_dico[pname]
                 f.write("\n%s %s %s[%s,%s,%s,%s,%s]"%(pname,info[0],info[1],info[2],info[3],info[4],info[5],info[6]))
+            for cond in self.condList:
+                # TODO
+                lab = cond.findChild(QLabel,"condLabel")
+                f.write("\n%s"%lab.text().replace(' ',''))
+
+            f.write("\n")
             f.close()
 
+    def loadHistoricalConf(self):
+        pass

@@ -39,11 +39,36 @@ class Diyabc(QMainWindow):
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 
     def file_open(self):
-        pass
+        """ ouverture d'un projet existant
+        """
+        qfd = QFileDialog()
+        dir = qfd.getExistingDirectory()
+        # si le dossier existe et qu'il contient conf.hist.tmp
+        if dir != "" and os.path.exists(dir) and os.path.exists("%s/conf.hist.tmp"%dir):
+            print "ok"
+            project_name = dir.split('/')[-1].split('_')[0]
+            proj_name_list = []
+            for p in self.project_list:
+                proj_name_list.append(p.name)
+            if not project_name in proj_name_list:
+                print "ok2"
+                proj_to_open = Project(self.ui,project_name,self)
+                self.project_list.append(proj_to_open)
+                self.ui.tabWidget.addTab(proj_to_open,proj_to_open.name)
+                self.ui.tabWidget.setCurrentWidget(proj_to_open)
+                # si c'est le premier projet, on permet la fermeture par le menu
+                if len(self.project_list) == 1:
+                    self.closeProjActionMenu.setDisabled(False)
+            else:
+                QMessageBox.information(self,"Name error","A project named %s is already loaded."%text)
+
+
+
 
     def newProject(self):
         """ Création d'un projet
         """
+        # TODO verifier caracteres speciaux dans le nom
         text, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if ok:
             if text != "":
@@ -51,8 +76,14 @@ class Diyabc(QMainWindow):
                 for p in self.project_list:
                     proj_name_list.append(p.name)
                 if not text in proj_name_list:
-                    self.project_list.append(Project(self.ui,text,self))
+                    newProj = Project(self.ui,text,self)
+                    self.project_list.append(newProj)
                     # si c'est le premier projet, on permet la fermeture par le menu
+                    # ajout au tabwidget de l'ui principale
+                    # ajout de l'onglet
+                    self.ui.tabWidget.addTab(newProj,newProj.name)
+                    self.ui.tabWidget.setCurrentWidget(newProj)
+
                     if len(self.project_list) == 1:
                         self.closeProjActionMenu.setDisabled(False)
                 else:
