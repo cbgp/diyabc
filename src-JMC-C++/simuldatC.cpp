@@ -519,7 +519,7 @@ struct ParticleSetC
 		}
 	}
 
-	void setevents (vector<int> eventi, vector<double> eventd, vector<string> events) {
+	void setevents (int p) {
 		//cout << "debut de setevents\n";
 		int nevent,popmax,*time_sample;
 		EventC *eventlist;
@@ -752,15 +752,11 @@ struct ParticleSetC
 			this->particule[p].dnatrue = dnatrue;
 			this->setdata(p);
 			this->setgroup(p);
+			this->setloci(p);
+			this->setevents(p);
 		}
-		this->setdataloc(va,vb01,vb02,vb03,vb1,vb2);
-		//cout << "apres setdataloc\n";
 		this->setparamn0(vc1,vc2,vc3);
 		//cout << "apres setparamn0\n";
-		this->setevents(vd1,vd2,vd3);
-		//cout << "apres setevents\n";
-		this->setstat(ve);
-		//cout << "apres setstat\n";
 		int ipart,tid=0,jpart=0;
 		vector<int> sOK;
 		sOK.resize(this->npart);
