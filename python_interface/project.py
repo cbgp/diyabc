@@ -3,6 +3,7 @@
 import sys
 import time
 import os
+import shutil
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -16,9 +17,11 @@ from datetime import datetime
 import os.path
 
 class Project(QTabWidget):
-    def __init__(self,ui,name,parent=None):
-        self.mainUi = ui
+    def __init__(self,name,dir=None,parent=None):
         self.name=name
+        self.dir=dir
+        self.dataFileSource = ""
+        self.dataFileName = ""
         self.hist_state = 0
         self.data = None
 
@@ -110,6 +113,7 @@ class Project(QTabWidget):
                 et = " and "
             self.ui.dataFileInfoLabel.setText("%s loci (%s%s%s)\n%s individuals in %s samples" % (self.data.nloc,microsat,et,sequences,self.data.nindtot,self.data.nsample))
             self.ui.dataFileEdit.setText(name)
+            self.dataFileSource = name
             self.ui.browseDirButton.setDisabled(False)
         except Exception,e:
             keep = ""
@@ -119,6 +123,8 @@ class Project(QTabWidget):
 
 
     def dirSelection(self):
+        """ selection du repertoire pour un nouveau projet et copie du fichier de données
+        """
         qfd = QFileDialog()
         #qfd.setDirectory("~/")
         name = qfd.getExistingDirectory()
@@ -138,6 +144,9 @@ class Project(QTabWidget):
                     os.mkdir(newdir)
                     self.ui.groupBox.show()
                     self.ui.setHistoricalButton.setDisabled(False)
+                    self.dir = newdir
+                    shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
+                    self.dataFileName = self.dataFileSource.split('/')[-1]
                 except OSError,e:
                     QMessageBox.information(self,"Error",str(e))
 
@@ -189,3 +198,9 @@ class Project(QTabWidget):
         #self.setTabEnabled(2,False)
         self.setCurrentWidget(self.hist_model_win)
 
+
+    def loadFromDir(self):
+        """ charge les infos à partir du répertoire self.dir
+        """
+
+        self.hist_model_win.loadHistoricalConf()

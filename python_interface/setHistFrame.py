@@ -521,6 +521,7 @@ class setHistoricalModel(QFrame):
 
         if len(self.scenarios_info_list) > 0:
             f = open(self.parent.ui.dirEdit.text()+"/conf.hist.tmp",'w')
+            f.write("%s\n"%self.parent.dataFileName)
             f.write("%s parameters and %s summary statisticsi\n\n")
             f.write("%s scenarios: "%(len(self.scenarios_info_list)))
 

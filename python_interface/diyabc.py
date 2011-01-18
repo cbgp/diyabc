@@ -44,23 +44,26 @@ class Diyabc(QMainWindow):
         qfd = QFileDialog()
         dir = qfd.getExistingDirectory()
         # si le dossier existe et qu'il contient conf.hist.tmp
-        if dir != "" and os.path.exists(dir) and os.path.exists("%s/conf.hist.tmp"%dir):
-            print "ok"
-            project_name = dir.split('/')[-1].split('_')[0]
-            proj_name_list = []
-            for p in self.project_list:
-                proj_name_list.append(p.name)
-            if not project_name in proj_name_list:
-                print "ok2"
-                proj_to_open = Project(self.ui,project_name,self)
-                self.project_list.append(proj_to_open)
-                self.ui.tabWidget.addTab(proj_to_open,proj_to_open.name)
-                self.ui.tabWidget.setCurrentWidget(proj_to_open)
-                # si c'est le premier projet, on permet la fermeture par le menu
-                if len(self.project_list) == 1:
-                    self.closeProjActionMenu.setDisabled(False)
+        if dir != "":
+            if os.path.exists(dir) and os.path.exists("%s/conf.hist.tmp"%dir):
+                project_name = dir.split('/')[-1].split('_')[0]
+                proj_name_list = []
+                for p in self.project_list:
+                    proj_name_list.append(p.name)
+                if not project_name in proj_name_list:
+                    proj_to_open = Project(project_name,dir,self)
+                    proj_to_open.loadFromDir()
+                    self.project_list.append(proj_to_open)
+                    self.ui.tabWidget.addTab(proj_to_open,proj_to_open.name)
+                    self.ui.tabWidget.setCurrentWidget(proj_to_open)
+                    # si c'est le premier projet, on permet la fermeture par le menu
+                    if len(self.project_list) == 1:
+                        self.closeProjActionMenu.setDisabled(False)
+                else:
+                    QMessageBox.information(self,"Name error","A project named %s is already loaded"%text)
             else:
-                QMessageBox.information(self,"Name error","A project named %s is already loaded."%text)
+                QMessageBox.information(self,"Load error","This is not a project directory")
+
 
 
 
@@ -76,7 +79,7 @@ class Diyabc(QMainWindow):
                 for p in self.project_list:
                     proj_name_list.append(p.name)
                 if not text in proj_name_list:
-                    newProj = Project(self.ui,text,self)
+                    newProj = Project(text,None,self)
                     self.project_list.append(newProj)
                     # si c'est le premier projet, on permet la fermeture par le menu
                     # ajout au tabwidget de l'ui principale
