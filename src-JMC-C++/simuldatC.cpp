@@ -155,7 +155,7 @@ class Header
 public:
 	string message,datafilename;
 	DataC dataobs;
-	int nparamtot,nstat,nscenarios,nconditions;
+	int nparamtot,nstat,nscenarios,nconditions,ngroupes;
 	Scenario *scenario;
 	HistParameterC *histparam;
 	ConditionC *condition;
@@ -193,9 +193,21 @@ public:
 			cond.operateur="<";cond.param1=ss.substr(0,ss.find("<"));cond.param2=ss.substr(ss.find("<")+1,ss.length()-(ss.find("<")+1));}
 	}
 
+	void assignloc(int gr){
+		this->groupe[gr].nloc = 0;
+		for (int loc=0;loc<dataobs.nloc;loc++) {
+			if (dataobs.locus[loc].groupe==gr+1) this->groupe[gr].nloc++;
+		}
+		this->groupe[gr].loc = new int[this->groupe[gr].nloc];
+		int iloc=-1;
+		for (int i=0;i<dataobsi;loc++) {
+			if (dataobs.locus[i].groupe==gr+1) {iloc++;this->groupe[gr].loc[iloc] = i;}
+		}
+	}
+
 	void readHeader(){
-		string s1,**ss;
-		int *nlscen,nss,k,gr,grm;
+		string s1,**sl,*ss,*ss1;
+		int *nlscen,nss,nss1,j,k,l,gr,grm;
 		ifstream file("ReftableHeader.txt", ios::in);
 		if (file == NULL) {
 			this->message = "File ReftableHeader.txt not found";
@@ -210,21 +222,21 @@ public:
 		getline(file,s1);		//ligne vide
 		getline(file,s1);       // nombre de scenarios
 		this->nscenarios=getwordint(s1,1);
-		ss = new string*[this->nscenarios];
+		sl = new string*[this->nscenarios];
 		nlscen = new int[this->nscenarios];
 		scenario = new Scenario[this->nscenarios];
 		for (int i=0;i<this->nscenarios;i++) nlscen[i]=getwordint(s1,3+i);
 		for (int i=0;i<this->nscenarios;i++) {
-			ss[i] = new string[nlscen[i]];
+			sl[i] = new string[nlscen[i]];
 			getline(file,s1);
 			scenario[i].number = getwordint(s1,2);
 			scenario[i].prior_proba = getwordint(s1,3);
 			scenario[i].nparam = getwordint(s1,4);
-			for (int j=0;j<nlscen[i];j++) getline(file,ss[i][j]);
-			scenario[i].read_events(nlscen[i],ss[i]);
+			for (int j=0;j<nlscen[i];j++) getline(file,sl[i][j]);
+			scenario[i].read_events(nlscen[i],sl[i]);
 		}
-		for (int i=0;i<this->nscenarios;i++) delete []ss[i];
-		delete [] ss;
+		for (int i=0;i<this->nscenarios;i++) delete []sl[i];
+		delete [] sl;
 //Partie historical parameters
 		getline(file,s1);		//ligne vide
 		getline(file,s1);
@@ -233,15 +245,17 @@ public:
 		if (nss>4) this->nconditions =  atoi(ss[4].c_str()); else  this->nconditions = 0;
 		this->histparam = new PriorC[this->nparamtot];
 		if (this->nconditions>0) this->condition = new prior[this->nconditions];
+		delete [] ss;
 		for (int i=0;i<this->nparamtot;i++) {
 			getline(file,s1);
-			ss=splitwords(s1," ",nss);
+			ss=splitwords(s1," ",&nss);
 			this->histparam[i].name=ss[0];
 			if (ss[1]=="N") this->histparam[i].category = 0;
 			else if  (ss[1]=="T") this->histparam[i].category = 1;
 			else if  (ss[1]=="A") this->histparam[i].category = 2;
 			this->histparam[i].prior = this->readprior(ss[2]);
 		}
+		delete [] ss;
 		if (this->nconditions>0) {
 			this->condition = new prior[this->nconditions];
 			for (int i=0;i<this->nconditions;i++) {
@@ -255,7 +269,7 @@ public:
 		grm=1;
 		for (int loc=0;loc<dataobs.nloc;loc++){
 			getline(file,s1);
-			ss=splitwords(s1," ",nss);
+			ss=splitwords(s1," ",&nss);
 			k=0;while (ss[k].find("[")==string::npos) k++;
 			if (ss[k]=="[M]") {
 				s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
@@ -266,11 +280,98 @@ public:
 				dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());
 			}
 		}
+		this->ngroupes=grm;
+		delete [] ss;
 //Partie group priors
 		getline(file,s1);		//ligne vide
 		getline(file,s1);		//ligne "group prior"
-		groupe =
-		for (gr=0;)
+		this->groupe = new LocusGroupC[grm];
+		for (gr=0;gr<grm;gr++){
+			getline(file,s1);
+			ss=splitwords(s1," ",&nss);
+			this->assignloc(gr);
+			if (ss[2]=="[M]") {this->groupe[gr].type=0;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutmoy = this->readprior(ss1[1]);delete [] ss1;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readprior(ss1[1]);delete [] ss1;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy   = this->readprior(ss1[1]);delete [] ss1;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readprior(ss1[1]);delete [] ss1;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsnimoy = this->readprior(ss1[1]);delete [] ss1;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc = this->readprior(ss1[1]);delete [] ss1;
+			} else if (ss[2]=="[S]") {this->groupe[gr].type=1;
+				this->groupe[gr].p_fixe = atof(ss[3].c_str());
+				this->groupe[gr].gams = atof(ss[4].c_str());
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusmoy = this->readprior(ss1[1]);delete [] ss1;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc = this->readprior(ss1[1]);delete [] ss1;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1moy  = this->readprior(ss1[1]);delete [] ss1;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readprior(ss1[1]);delete [] ss1;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2moy  = this->readprior(ss1[1]);delete [] ss1;
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readprior(ss1[1]);delete [] ss1;
+
+			}
+		}
+		delete [] ss;
+//Partie group statistics
+		getline(file,s1);		//ligne vide
+		getline(file,s1);		//ligne "group group statistics"
+		for (gr=0;gr<grm;gr++) {
+			getline(file,s1);
+			ss=splitwords(s1," ",&nss);
+			this->groupe[gr].nstat = atoi(ss[3]);
+			this->groupe[gr].sumstat = new StatC[this->groupe[gr].nstat];
+			delete [] ss;
+			k=0;
+			while (k<this->groupe[gr].nstat) {
+				getline(file,s1);
+				ss=splitwords(s1," ",&nss);
+				j=0;while (ss[0]!=stat_type[j]) j++;
+				this->groupe[gr].sumstat[k].cat=stat_num[j];
+				if (this->groupe[gr].type==0) {
+					if (stat_num[j]<5) {
+						for (int i=1;i<nss;i++) {this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());k++;}
+					} else if (stat_num[j]<12) {
+						for (int i=1;i<nss;i++) {
+							ss1=splitwords(ss[i],"&",&nss1);
+							this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
+							this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+							k++;
+						}
+						delete [] ss1;
+					} else if (stat_num[j]==12) {
+						for (int i=1;i<nss;i++) {
+							ss1=splitwords(ss[i],"&",&nss1);
+							this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
+							this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+							k++;
+						}
+					}
+					delete [] ss1;
+				} else if (this->groupe[gr].type==1) {
+					if (stat_num[j]>-5) {
+						for (int i=1;i<nss;i++) {this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());k++;}
+					} else if (stat_num[j]>-14) {
+						for (int i=1;i<nss;i++) {
+							ss1=splitwords(ss[i],"&",&nss1);
+							this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
+							this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+							k++;
+						}
+						delete [] ss1;
+					} else if (stat_num[j]==-14) {
+						for (int i=1;i<nss;i++) {
+							ss1=splitwords(ss[i],"&",&nss1);
+							this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
+							this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+							k++;
+						}
+					}
+					delete [] ss1;
+				}
+			}
+			delete [] ss;
+		}
+//Entete du fichier reftable
+		getline(file,s1);		//ligne vide
+		getline(file,this->entete);		//ligne entete
 
 	}
 };

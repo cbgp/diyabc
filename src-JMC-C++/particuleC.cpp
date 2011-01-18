@@ -16,8 +16,10 @@
 
 using namespace std;
 #define MISSING -9999
+#define NSTAT 26
 
-
+string stat_type[NSTAT] = {"NAL","HET","MGW","VAR","FST","LIK","DM2","N2P","H2P","V2P","DAS","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","FST","AML"};
+int stat_num[NSTAT]     = {  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 };
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			-13 : fst
  *  2 : het			-2 : nss            -14 : aml
@@ -94,13 +96,15 @@ struct HistParameterC
 };
 struct LocusGroupC
 {
-	int *loc,nloc;           //numeros des locus du groupe
+	int *loc,nloc,nstat;           // *loc=numeros des locus du groupe
+	int type;                      //O= microsat, 1=sequence
 	double p_fixe,gams;
 	double musmoy,mutmoy,Pmoy,snimoy;
 	double k1moy,k2moy;
 	int  type,mutmod;
 	PriorC priormusmoy,priork1moy,priork2moy,priormusloc,priork1loc,priork2loc;
 	PriorC priormutmoy,priorPmoy,priorsnimoy,priormutloc,priorPloc,priorsniloc;
+	StatC *sumstat;
 };
 
 // vector<vector<int>> essai[x][];
