@@ -16,6 +16,9 @@ class Diyabc(QMainWindow):
         super(Diyabc,self).__init__(parent)
         self.createWidgets()
         self.project_list = []
+        self.hist_conf_name = "cont.hist.tmp"
+        self.scenario_pix_dir_name = "scenario_pictures"
+        self.scenario_pix_basename = "scenario"
 
     def createWidgets(self):
         self.ui = Ui_MainWindow()

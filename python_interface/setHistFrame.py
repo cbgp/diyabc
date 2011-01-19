@@ -244,7 +244,7 @@ class setHistoricalModel(QFrame):
             self.ui.verticalLayout_6.removeWidget(paramBox)
         # on vide la liste locale de paramètres
         self.paramList = []
-        self.dico_parameters = {}
+        self.param_info_dico = {}
         dico_count_per_category = {}
         params_order_list = []
         # liste des premiers params de chaque categorie
@@ -253,7 +253,7 @@ class setHistoricalModel(QFrame):
             print "param list",sc["checker"].parameters
             for param in sc["checker"].parameters:
                 params_order_list.append(param.name)
-                self.dico_parameters[param.name] = param.category
+                self.param_info_dico[param.name] = [param.category]
                 # on compte le nombre de param dans chaque categorie
                 if dico_count_per_category.has_key(param.category):
                     dico_count_per_category[param.category] += 1
@@ -262,14 +262,14 @@ class setHistoricalModel(QFrame):
                     # si c'est le premier, on le met ds la liste des premiers pour ne pas afficher "set condition"
                     lprem.append(param.name)
         l_already_printed = []
-        #for pname in dico_parameters.keys():
+        #for pname in param_info_dico.keys():
         for pname in params_order_list:
             # on n'affiche que ceux qui ne l'ont pas déjà été
             if pname not in l_already_printed:
-                if dico_count_per_category[self.dico_parameters[pname]] > 1 and (pname not in lprem):
-                    self.addParamGui(pname,"multiple",self.dico_parameters[pname])
+                if dico_count_per_category[self.param_info_dico[pname][0]] > 1 and (pname not in lprem):
+                    self.addParamGui(pname,"multiple",self.param_info_dico[pname][0])
                 else:
-                    self.addParamGui(pname,"unique",self.dico_parameters[pname])
+                    self.addParamGui(pname,"unique",self.param_info_dico[pname][0])
                 l_already_printed.append(pname)
 
 
@@ -325,6 +325,7 @@ class setHistoricalModel(QFrame):
 
     def addParamGui(self,name,type_param,code_type_param):
         """ ajoute un paramètre à la GUI et à la liste locale de paramètres
+        et retourne la groupBox créée
         """
         groupBox_8 = QtGui.QFrame(self.ui.scrollArea)
         #groupBox_8.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -455,6 +456,8 @@ class setHistoricalModel(QFrame):
         # evennement d'ajout d'une condition sur un paramètre
         QObject.connect(setCondButton,SIGNAL("clicked()"),self.setCondition)
 
+        return groupBox_8
+
     def setCondition(self):
         """ methode qui receptionne l'evennement du clic sur "set condition"
         ajout d'une condition sur un paramètre ou une paire de paramètres
@@ -462,8 +465,8 @@ class setHistoricalModel(QFrame):
         param_src = self.sender().parent().findChild(QLabel,"paramNameLabel").text()
         # construction de la liste des params qui sont dans la même catégorie que le notre
         target_list = []
-        for pname in self.dico_parameters.keys():
-            if pname != param_src and self.dico_parameters[str(pname)] == self.dico_parameters[str(param_src)]:
+        for pname in self.param_info_dico.keys():
+            if pname != param_src and self.param_info_dico[str(pname)][0] == self.param_info_dico[str(param_src)][0]:
                 target_list.append(pname)
         self.setCondition = setCondition(self.sender().parent().findChild(QLabel,"paramNameLabel").text(),target_list,self)
         self.setCondition.show()
@@ -492,7 +495,7 @@ class setHistoricalModel(QFrame):
                         law = "UN"
                     elif param.findChild(QRadioButton,'logUniformRadio').isChecked():
                         law = "LU"
-                    self.param_info_dico[pname] = [self.dico_parameters[pname],law,min,max,mean,stdev,step]
+                    self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,step]
                 # creation et ecriture du fichier dans le rep choisi
                 # TODO questions : quand est ce qu'on le crée/modifie? Il contient des infos autres que celles du setHist?
                 self.writeHistoricalConfFromGui()
@@ -533,7 +536,7 @@ class setHistoricalModel(QFrame):
                 f.write("\nscenario %s [%s] (%i)"%(sc_info["checker"].number,sc_info["checker"].prior_proba,len(sc_info["checker"].parameters)))
                 for line in sc_info["text"]:
                     f.write("\n"+line)
-            f.write("\n\nhistorical parameters priors (%s)"%(len(self.dico_parameters.keys())))
+            f.write("\n\nhistorical parameters priors (%s)"%(len(self.param_info_dico.keys())))
             # consultation des valeurs des paramètres
             for pname in self.param_info_dico.keys():
                 info = self.param_info_dico[pname]
@@ -570,7 +573,7 @@ class setHistoricalModel(QFrame):
             for line in txt:
                 f.write("\n"+line)
             num+=1
-        f.write("\n\nhistorical parameters priors (%s)"%(len(self.dico_parameters.keys())))
+        f.write("\n\nhistorical parameters priors (%s)"%(len(self.param_info_dico.keys())))
         # consultation des valeurs des paramètres
         # la gui est mise a jour uniquement si les scenarios sont valides
         # DONC on peut se servir des infos hors GUI
@@ -622,6 +625,45 @@ class setHistoricalModel(QFrame):
                     self.addSc()
                     self.scList[i].findChild(QPlainTextEdit,"scplainTextEdit").setPlainText(txt)
                     self.rpList[i].findChild(QLineEdit,"rpEdit").setText(prior)
+                # en sortie l est (theoriquement) sur la ligne vide
+                l+=1
+                print lines[l]
+                nbparam = int(lines[l].split('(')[1].split(')')[0])
+                l+=1
+                lfirst_param = l
+                while l<(lfirst_param + nbparam):
+                    pname = lines[l].split(' ')[0]
+                    category = lines[l].split(' ')[1]
+                    values = lines[l].split('[')[1].split(']')[0]
+                    min = values.split(',')[0]
+                    max = values.split(',')[1]
+                    mean = values.split(',')[2]
+                    stdev = values.split(',')[3]
+                    step = values.split(',')[4]
+                    law = lines[l].split(' ')[2].split('[')[0]
+                    visible = lines[l].split(' ')[3].strip()
+                    if visible == "False":
+                        setcond_visible = "unique"
+                    else:
+                        setcond_visible = "multiple"
+                    # ajout graphique et dans l'attribut
+                    self.param_info_dico[pname] = [category,law,min,max,mean,stdev,step]
+                    box = self.addParamGui(pname,setcond_visible,self.param_info_dico[pname][0])
+                    # mise au point valeurs et loi
+                    box.findChild(QLineEdit,"minValueParamEdit").setText(min)
+                    box.findChild(QLineEdit,"maxValueParamEdit").setText(max)
+                    box.findChild(QLineEdit,"meanValueParamEdit").setText(mean)
+                    box.findChild(QLineEdit,"stValueParamEdit").setText(stdev)
+                    box.findChild(QLineEdit,"stepValueParamEdit").setText(step)
+                    if law == "UN":
+                        box.findChild(QRadioButton,"uniformParamRadio").setChecked(True)
+                    elif law == "LU":
+                        box.findChild(QRadioButton,"logUniformRadio").setChecked(True)
+                    elif law == "NO":
+                        box.findChild(QRadioButton,"normalRadio").setChecked(True)
+                    elif law == "LN":
+                        box.findChild(QRadioButton,"logNormalRadio").setChecked(True)
+                    l+=1
                 
         else:
             QMessageBox.information(self,"Error","Le répertoire du projet n'existe plus")
