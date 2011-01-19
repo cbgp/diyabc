@@ -686,7 +686,16 @@ class setHistoricalModel(QFrame):
                         else:
                             self.addCondition(line)
                     l+=1
+            nb_sc = len(self.scList)
+            pluriel = ""
+            if nb_sc > 1:
+                pluriel = "s"
+            self.parent.setNbScenarios("%i scenario%s"%(nb_sc,pluriel))
+            nb_params = len(self.paramList)
+            pluriel = ""
+            if nb_params > 1:
+                pluriel = "s"
+            self.parent.setNbParams("%i historical parameter%s"%(nb_params,pluriel))
                 
         else:
             QMessageBox.information(self,"Error","Le répertoire du projet n'existe plus")
-        pass
