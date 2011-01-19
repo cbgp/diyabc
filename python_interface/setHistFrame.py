@@ -666,7 +666,10 @@ class setHistoricalModel(QFrame):
         # la gui est mise a jour uniquement si les scenarios sont valides
         # DONC on peut se servir des infos hors GUI
         # Mais on rajoute un truc pour savoir si on affiche ou pas le setConditionButton
-        for pname in self.param_info_dico.keys():
+        # pour préserver l'ordre, on consulte la gui pour les noms
+        #for pname in self.param_info_dico.keys():
+        for pbox in self.paramList:
+            pname = str(pbox.findChild(QLabel,"paramNameLabel").text())
             info = self.param_info_dico[pname]
             # recherche de la box du param
             name = ""
