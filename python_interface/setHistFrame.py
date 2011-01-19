@@ -545,6 +545,11 @@ class setHistoricalModel(QFrame):
                 # TODO
                 lab = cond.findChild(QLabel,"condLabel")
                 f.write("\n%s"%lab.text().replace(' ',''))
+            if self.ui.drawUntilRadio.isChecked():
+                draw = "UNTIL"
+            else:
+                draw = "ONCE"
+            f.write("\nDRAW %s"%draw)
 
             f.write("\n")
             f.close()
@@ -593,6 +598,11 @@ class setHistoricalModel(QFrame):
         for cond in self.condList:
             lab = cond.findChild(QLabel,"condLabel")
             f.write("\n%s"%lab.text().replace(' ',''))
+        if self.ui.drawUntilRadio.isChecked():
+            draw = "UNTIL"
+        else:
+            draw = "ONCE"
+        f.write("\nDRAW %s"%draw)
 
         f.write("\n")
         f.close()
@@ -668,7 +678,13 @@ class setHistoricalModel(QFrame):
                 while l < len(lines):
                     line = lines[l].strip()
                     if line != "":
-                        self.addCondition(line)
+                        if line.split(' ')[0] == "DRAW":
+                            if line.split(' ')[1] == "UNTIL":
+                                self.ui.drawUntilRadio.setChecked(True)
+                            else:
+                                self.ui.drawOnceRadio.setChecked(True)
+                        else:
+                            self.addCondition(line)
                     l+=1
                 
         else:

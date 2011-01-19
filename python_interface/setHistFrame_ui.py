@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setHistFrame.ui'
 #
-# Created: Wed Jan 19 11:33:00 2011
+# Created: Wed Jan 19 11:44:23 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -373,19 +373,19 @@ class Ui_Frame(object):
         self.horizontalLayout_8 = QtGui.QHBoxLayout(self.frame_2)
         self.horizontalLayout_8.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        self.radioButton_3 = QtGui.QRadioButton(self.frame_2)
+        self.drawUntilRadio = QtGui.QRadioButton(self.frame_2)
         font = QtGui.QFont()
         font.setPointSize(8)
-        self.radioButton_3.setFont(font)
-        self.radioButton_3.setChecked(True)
-        self.radioButton_3.setObjectName("radioButton_3")
-        self.horizontalLayout_8.addWidget(self.radioButton_3)
-        self.radioButton_4 = QtGui.QRadioButton(self.frame_2)
+        self.drawUntilRadio.setFont(font)
+        self.drawUntilRadio.setChecked(True)
+        self.drawUntilRadio.setObjectName("drawUntilRadio")
+        self.horizontalLayout_8.addWidget(self.drawUntilRadio)
+        self.drawOnceRadio = QtGui.QRadioButton(self.frame_2)
         font = QtGui.QFont()
         font.setPointSize(8)
-        self.radioButton_4.setFont(font)
-        self.radioButton_4.setObjectName("radioButton_4")
-        self.horizontalLayout_8.addWidget(self.radioButton_4)
+        self.drawOnceRadio.setFont(font)
+        self.drawOnceRadio.setObjectName("drawOnceRadio")
+        self.horizontalLayout_8.addWidget(self.drawOnceRadio)
         self.verticalLayout_2.addWidget(self.frame_2)
         self.verticalLayout.addWidget(self.frame)
 
@@ -419,6 +419,6 @@ class Ui_Frame(object):
         self.label_9.setText(QtGui.QApplication.translate("Frame", "mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("Frame", "st-deviation", None, QtGui.QApplication.UnicodeUTF8))
         self.label_11.setText(QtGui.QApplication.translate("Frame", "step", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton_3.setText(QtGui.QApplication.translate("Frame", "Draw parameters values until conditions are fulfilled", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton_4.setText(QtGui.QApplication.translate("Frame", "Draw parameters values only once. Discard if any condition is not fulfilled", None, QtGui.QApplication.UnicodeUTF8))
+        self.drawUntilRadio.setText(QtGui.QApplication.translate("Frame", "Draw parameters values until conditions are fulfilled", None, QtGui.QApplication.UnicodeUTF8))
+        self.drawOnceRadio.setText(QtGui.QApplication.translate("Frame", "Draw parameters values only once. Discard if any condition is not fulfilled", None, QtGui.QApplication.UnicodeUTF8))
 

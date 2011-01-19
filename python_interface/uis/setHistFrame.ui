@@ -840,7 +840,7 @@
           <number>1</number>
          </property>
          <item>
-          <widget class="QRadioButton" name="radioButton_3">
+          <widget class="QRadioButton" name="drawUntilRadio">
            <property name="font">
             <font>
              <pointsize>8</pointsize>
@@ -855,7 +855,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radioButton_4">
+          <widget class="QRadioButton" name="drawOnceRadio">
            <property name="font">
             <font>
              <pointsize>8</pointsize>
