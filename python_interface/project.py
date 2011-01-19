@@ -27,7 +27,7 @@ class Project(QTabWidget):
         self.dir=dir
         self.dataFileSource = ""
         self.dataFileName = ""
-        self.hist_state = 0
+        self.hist_state_valid = False
         self.data = None
 
         # utile seulement si on derive de QTabWidget
@@ -191,6 +191,7 @@ class Project(QTabWidget):
         # on dirait que sous linux, le simple setCurrentWidget rend l'onglet enabled
         self.setTabEnabled(2,True)
         self.setCurrentWidget(self.hist_model_win)
+        self.setHistValid(False)
 
     def setNbScenarios(self,nb):
         self.ui.nbScLabel.setText(nb)
@@ -218,3 +219,11 @@ class Project(QTabWidget):
         # lecture de conf.hist.tmp
         self.hist_model_win.loadHistoricalConf()
         # lecture des autres
+
+    def setHistValid(self,valid):
+        self.hist_state_valid = valid
+        if valid:
+            self.ui.setHistoricalButton.setIcon(QIcon("docs/ok.png"))
+        else:
+            self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
+

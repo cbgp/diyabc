@@ -236,8 +236,10 @@ class Scenario(object):
         for i,li in enumerate(textarray[1:]): 
             if li.upper().find('SAMPLE') > -1 : 
                 self.nsamp+=1
+                if len(li.strip().split(' ')) != 3:
+                    raise IOScreenError, "At line %i, the number of words is incorrect"%(i+2)
                 # verif que le nombre apres "sample" est bien inférieur ou egal au nombre de pop (len(Ncur))
-                if int(li.split(' ')[-1]) > len(Ncur):
+                elif int(li.split(' ')[-1]) > len(Ncur):
                     raise IOScreenError, "At line %i, the population number (%s) is higher than the number of population (%s) defined at line 1"%((i+2),li.split(' ')[-1],len(Ncur))
         if self.nsamp<1 :
             raise IOScreenError, "You must indicate when samples are taken"
@@ -310,6 +312,8 @@ class Scenario(object):
                     elif Li.find("MERGE")>-1:
                         if nitems<4:
                             raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
+                        if nitems>4:
+                            raise IOScreenError, "At line %i, the number of words is incorrect"%(i+2)
                         self.cevent = Event()
                         self.cevent.numevent0 = nevent
                         nevent +=1

@@ -24,6 +24,8 @@ class setHistoricalModel(QFrame):
         self.condList = []
         self.paramList = []
 
+        self.scenarios_modified_since_define_priors = True
+
         # liste des infos sur les scenarios valides (donc déjà vérifiés)
         # voir format dans writeHistoricalConf
         self.scenarios_info_list = []
@@ -39,7 +41,7 @@ class setHistoricalModel(QFrame):
         QObject.connect(self.ui.otherRadio,SIGNAL("clicked()"),self.setOtherRp)
         #TODO
         #QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.addCondition)
-        QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.close)
+        QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.close)
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.close)
         QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.checkToDraw)
@@ -90,6 +92,9 @@ class setHistoricalModel(QFrame):
 
         # evennement de suppression du scenario
         QObject.connect(pushButton_6,SIGNAL("clicked()"),self.rmSc)
+        # modif du texte modifie attribut scenarios_modified_since_define_priors
+        QObject.connect(plainTextEdit,SIGNAL("textChanged()"),self.modifOnScenarios)
+
 
         # ajout du scenario dans la liste locale (plus facile à manipuler)
         self.scList.append(groupBox)
@@ -136,6 +141,12 @@ class setHistoricalModel(QFrame):
         if self.ui.uniformRadio.isChecked():
             self.setUniformRp()
 
+        # on a modifié les scenarios
+        self.modifOnScenarios()
+
+    def modifOnScenarios(self):
+        self.scenarios_modified_since_define_priors = True
+    
     def rmSc(self):
         """ Suppression d'un scenario dans l'affichage et dans la liste locale
         """
@@ -155,6 +166,9 @@ class setHistoricalModel(QFrame):
 
         if self.ui.uniformRadio.isChecked():
             self.setUniformRp()
+
+        # on a modifié les scenarios
+        self.modifOnScenarios()
 
     def setUniformRp(self):
         """ met les pourcentages à une valeur identique 
@@ -232,6 +246,7 @@ class setHistoricalModel(QFrame):
         chk_list = self.checkScenarios()
         if chk_list != None:
             self.putParameters(chk_list)
+            self.scenarios_modified_since_define_priors = False
         else:
             QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
     def putParameters(self,chk_list):
@@ -242,6 +257,8 @@ class setHistoricalModel(QFrame):
         for paramBox in self.paramList:
             paramBox.hide()
             self.ui.verticalLayout_6.removeWidget(paramBox)
+        # localement, on garde le dico d'infos pour restaurer les valeurs si un param existe encore
+        dico_tmp = self.param_info_dico
         # on vide la liste locale de paramètres
         self.paramList = []
         self.param_info_dico = {}
@@ -253,7 +270,12 @@ class setHistoricalModel(QFrame):
             print "param list",sc["checker"].parameters
             for param in sc["checker"].parameters:
                 params_order_list.append(param.name)
-                self.param_info_dico[param.name] = [param.category]
+                # si le paramètre était deja la, il reprend ses valeurs, 
+                # sinon les valeurs seront consultées plus tard à partir de la GUI
+                if param.name in dico_tmp.keys():
+                    self.param_info_dico[param.name] = [param.category,dico_tmp[param.name][1],dico_tmp[param.name][2],dico_tmp[param.name][3],dico_tmp[param.name][4],dico_tmp[param.name][5],dico_tmp[param.name][6]]
+                else:
+                    self.param_info_dico[param.name] = [param.category]
                 # on compte le nombre de param dans chaque categorie
                 if dico_count_per_category.has_key(param.category):
                     dico_count_per_category[param.category] += 1
@@ -267,12 +289,25 @@ class setHistoricalModel(QFrame):
             # on n'affiche que ceux qui ne l'ont pas déjà été
             if pname not in l_already_printed:
                 if dico_count_per_category[self.param_info_dico[pname][0]] > 1 and (pname not in lprem):
-                    self.addParamGui(pname,"multiple",self.param_info_dico[pname][0])
+                    box = self.addParamGui(pname,"multiple",self.param_info_dico[pname][0])
                 else:
-                    self.addParamGui(pname,"unique",self.param_info_dico[pname][0])
+                    box = self.addParamGui(pname,"unique",self.param_info_dico[pname][0])
                 l_already_printed.append(pname)
-
-
+                # conservation des valeurs prévédentes
+                if pname in dico_tmp.keys():
+                    box.findChild(QLineEdit,"minValueParamEdit").setText(dico_tmp[pname][2])
+                    box.findChild(QLineEdit,"maxValueParamEdit").setText(dico_tmp[pname][3])
+                    box.findChild(QLineEdit,"meanValueParamEdit").setText(dico_tmp[pname][4])
+                    box.findChild(QLineEdit,"stValueParamEdit").setText(dico_tmp[pname][5])
+                    box.findChild(QLineEdit,"stepValueParamEdit").setText(dico_tmp[pname][6])
+                    if dico_tmp[pname][1] == "UN":
+                        box.findChild(QRadioButton,"uniformParamRadio").setChecked(True)
+                    elif dico_tmp[pname][1] == "LU":
+                        box.findChild(QRadioButton,"logUniformRadio").setChecked(True)
+                    elif dico_tmp[pname][1] == "NO":
+                        box.findChild(QRadioButton,"normalRadio").setChecked(True)
+                    elif dico_tmp[pname][1] == "LN":
+                        box.findChild(QRadioButton,"logNormalRadio").setChecked(True)
 
     def checkScenarios(self):
         """ action de verification des scenarios
@@ -448,9 +483,11 @@ class setHistoricalModel(QFrame):
             maxValueParamEdit.setText("10000")
             stepValueParamEdit.setText("1")
         elif code_type_param == "A":
-            minValueParamEdit.setText("0,001")
-            maxValueParamEdit.setText("0,999")
-            stepValueParamEdit.setText("0,001")
+            minValueParamEdit.setText("0.001")
+            maxValueParamEdit.setText("0.999")
+            stepValueParamEdit.setText("0.001")
+        meanValueParamEdit.setText("0")
+        stValueParamEdit.setText("0")
 
 
         # evennement d'ajout d'une condition sur un paramètre
@@ -471,34 +508,80 @@ class setHistoricalModel(QFrame):
         self.setCondition = setCondition(self.sender().parent().findChild(QLabel,"paramNameLabel").text(),target_list,self)
         self.setCondition.show()
 
+    def checkAll(self):
+        # VERIFS, si c'est valide, on change l'icone du setHistModel (verifs sur : valeurs, validite des scenarios, et modifs depuis definePriors
+        # pour tous les params, min<=max, tout>0
+        problems = ""
+        for param in self.paramList:
+            pname = str(param.findChild(QLabel,"paramNameLabel").text())
+            try:
+                min =   float(param.findChild(QLineEdit,"minValueParamEdit").text())
+                max =   float(param.findChild(QLineEdit,"maxValueParamEdit").text())
+                mean =  float(param.findChild(QLineEdit,"meanValueParamEdit").text())
+                stdev = float(param.findChild(QLineEdit,"stValueParamEdit").text())
+                step =  float(param.findChild(QLineEdit,"stepValueParamEdit").text())
+                if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0 or step < 0:
+                    problems += "Values for parameter %s are incoherent\n"%pname
+            except Exception,e:
+                problems += "%s\n"%e
+        if problems == "":
+            if self.checkScenarios() != None:
+                if not self.scenarios_modified_since_define_priors:
+                    return True
+                else:
+                    QMessageBox.information(self,"Error","The scenarios were modified since the last 'Define priors'")
+            else:
+                return False
+        else:
+            QMessageBox.information(self,"Value error","%s"%problems)
+            return False
+
+    def validate(self):
+        # recup des valeurs pour les params
+        for param in self.paramList:
+            pname = str(param.findChild(QLabel,"paramNameLabel").text())
+            min =   str(param.findChild(QLineEdit,"minValueParamEdit").text())
+            max =   str(param.findChild(QLineEdit,"maxValueParamEdit").text())
+            mean =  str(param.findChild(QLineEdit,"meanValueParamEdit").text())
+            stdev = str(param.findChild(QLineEdit,"stValueParamEdit").text())
+            step =  str(param.findChild(QLineEdit,"stepValueParamEdit").text())
+            if param.findChild(QRadioButton,'logNormalRadio').isChecked():
+                law = "LN"
+            elif param.findChild(QRadioButton,'normalRadio').isChecked():
+                law = "NO"
+            elif param.findChild(QRadioButton,'uniformParamRadio').isChecked():
+                law = "UN"
+            elif param.findChild(QRadioButton,'logUniformRadio').isChecked():
+                law = "LU"
+            self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,step]
+        # creation et ecriture du fichier dans le rep choisi
+        # TODO questions : quand est ce qu'on le crée/modifie? Il contient des infos autres que celles du setHist?
+        self.writeHistoricalConfFromGui()
+        # VERIFS, si c'est bon, on change d'onglet, sinon on reste
+        if self.checkAll():
+            self.parent.setHistValid(True)
+            # gestion des valeurs, maj dans la GUI
+            nb_sc = len(self.scList)
+            pluriel = ""
+            if nb_sc > 1:
+                pluriel = "s"
+            self.parent.setNbScenarios("%i scenario%s"%(nb_sc,pluriel))
+            nb_params = len(self.paramList)
+            pluriel = ""
+            if nb_params > 1:
+                pluriel = "s"
+            self.parent.setNbParams("%i historical parameter%s"%(nb_params,pluriel))
+            # reactivation des onglets
+            self.parent.setTabEnabled(0,True)
+            self.parent.setTabEnabled(1,True)
+            self.parent.setTabEnabled(2,False)
+            self.parent.setCurrentIndex(0)
+
     def closeEvent(self, event):
         # le cancel ne vérifie rien
         if self.sender() == self.ui.clearButton:
-            print "CLEAR"
             self.parent.clearHistoricalModel()
-        else:
-            if self.sender() == self.ui.okButton:
-                # TODO verifs, si c'est valide, on change l'icone du setHistModel
-                # recup des valeurs pour les params
-                for param in self.paramList:
-                    pname = str(param.findChild(QLabel,"paramNameLabel").text())
-                    min =   str(param.findChild(QLineEdit,"minValueParamEdit").text())
-                    max =   str(param.findChild(QLineEdit,"maxValueParamEdit").text())
-                    mean =  str(param.findChild(QLineEdit,"meanValueParamEdit").text())
-                    stdev = str(param.findChild(QLineEdit,"stValueParamEdit").text())
-                    step =  str(param.findChild(QLineEdit,"stepValueParamEdit").text())
-                    if param.findChild(QRadioButton,'logNormalRadio').isChecked():
-                        law = "LN"
-                    elif param.findChild(QRadioButton,'normalRadio').isChecked():
-                        law = "NO"
-                    elif param.findChild(QRadioButton,'uniformParamRadio').isChecked():
-                        law = "UN"
-                    elif param.findChild(QRadioButton,'logUniformRadio').isChecked():
-                        law = "LU"
-                    self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,step]
-                # creation et ecriture du fichier dans le rep choisi
-                # TODO questions : quand est ce qu'on le crée/modifie? Il contient des infos autres que celles du setHist?
-                self.writeHistoricalConfFromGui()
+        elif self.sender() == self.ui.exitButton:
             # gestion des valeurs, maj dans la GUI
             nb_sc = len(self.scList)
             pluriel = ""
