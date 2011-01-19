@@ -215,6 +215,7 @@ class drawScenario(QMainWindow):
         proj_dir = self.parent.parent.dir
         pic_dir = self.parent.parent.parent.scenario_pix_dir_name
         pic_basename = self.parent.parent.parent.scenario_pix_basename
+        pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
 
         # si le rep contenant les images n'existe pas, on le crée
         if not os.path.exists("%s/%s"%(proj_dir,pic_dir)):
@@ -222,12 +223,13 @@ class drawScenario(QMainWindow):
         else:
             # effacer les anciennes images
             for i in range(100):
-                if os.path.exists("%s/%s/%s_%i"%(proj_dir,pic_dir,pic_basename,i))
+                if os.path.exists("%s_%i.jpg"%(pic_whole_path,i)):
+                    os.remove("%s_%i.jpg"%(pic_whole_path,i))
 
         for ind,pix in enumerate(self.pixList):
             im = pix.toImage()
-            im.save("%s/%s_%s_%i.jpg"%(proj_dir,self.parent.parent.name,pic_basename,ind+1))
-            print "%s/%s_%s_%i.jpg"%(proj_dir,self.parent.parent.name,pic_basename,ind+1)
+            im.save("%s_%i.jpg"%(pic_whole_path,ind+1))
+            print "%s_%i.jpg"%(pic_whole_path,ind+1)
 
     def closeEvent(self, event):
         pass

@@ -124,8 +124,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>823</width>
-            <height>196</height>
+            <width>821</width>
+            <height>198</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_3"/>
@@ -310,8 +310,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>765</width>
-            <height>56</height>
+            <width>750</width>
+            <height>58</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -353,7 +353,7 @@
          <x>0</x>
          <y>0</y>
          <width>959</width>
-         <height>358</height>
+         <height>349</height>
         </rect>
        </property>
        <property name="font">
@@ -793,7 +793,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>6</pointsize>
+           <pointsize>9</pointsize>
           </font>
          </property>
          <property name="verticalScrollBarPolicy">
@@ -807,8 +807,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>937</width>
-            <height>56</height>
+            <width>939</width>
+            <height>58</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -881,7 +881,7 @@
      <x>0</x>
      <y>0</y>
      <width>977</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

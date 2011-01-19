@@ -22,6 +22,7 @@ class Project(QTabWidget):
     pour un projet chargé, on modifie l'affichage en conséquence dans loadFromDir
     """
     def __init__(self,name,dir=None,parent=None):
+        self.parent=parent
         self.name=name
         self.dir=dir
         self.dataFileSource = ""

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setHistFrame.ui'
 #
-# Created: Mon Jan 17 14:36:35 2011
+# Created: Wed Jan 19 11:33:00 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -352,7 +352,7 @@ class Ui_Frame(object):
         self.scrollArea_3.setMinimumSize(QtCore.QSize(0, 60))
         self.scrollArea_3.setMaximumSize(QtCore.QSize(16777215, 60))
         font = QtGui.QFont()
-        font.setPointSize(6)
+        font.setPointSize(8)
         self.scrollArea_3.setFont(font)
         self.scrollArea_3.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.scrollArea_3.setWidgetResizable(True)

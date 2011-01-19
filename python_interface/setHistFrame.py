@@ -199,7 +199,7 @@ class setHistoricalModel(QFrame):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(pushButton_5.sizePolicy().hasHeightForWidth())
         pushButton_5.setSizePolicy(sizePolicy)
-        pushButton_5.setMaximumSize(QtCore.QSize(40, 16777215))
+        pushButton_5.setMaximumSize(QtCore.QSize(50, 16777215))
         pushButton_5.setObjectName("rmCondButton")
         verticalLayout_2.addWidget(pushButton_5)
         # ajout dans la GUI
@@ -663,6 +663,12 @@ class setHistoricalModel(QFrame):
                         box.findChild(QRadioButton,"normalRadio").setChecked(True)
                     elif law == "LN":
                         box.findChild(QRadioButton,"logNormalRadio").setChecked(True)
+                    l+=1
+                # l est à la première condition
+                while l < len(lines):
+                    line = lines[l].strip()
+                    if line != "":
+                        self.addCondition(line)
                     l+=1
                 
         else:
