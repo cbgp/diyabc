@@ -239,7 +239,7 @@ class Scenario(object):
                 if len(li.strip().split(' ')) != 3:
                     raise IOScreenError, "At line %i, the number of words is incorrect"%(i+2)
                 # verif que le nombre apres "sample" est bien inférieur ou egal au nombre de pop (len(Ncur))
-                elif int(li.split(' ')[-1]) > len(Ncur):
+                elif int(li.strip().split(' ')[-1]) > len(Ncur):
                     raise IOScreenError, "At line %i, the population number (%s) is higher than the number of population (%s) defined at line 1"%((i+2),li.split(' ')[-1],len(Ncur))
         if self.nsamp<1 :
             raise IOScreenError, "You must indicate when samples are taken"

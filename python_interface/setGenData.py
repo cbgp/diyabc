@@ -18,6 +18,7 @@ class setGeneticData(QFrame):
         super(setGeneticData,self).__init__(parent)
         self.parent=parent
         self.groupList = []
+        #TODO maj ces infos
         self.group_info_dico = {}
         self.locus_info_list = []
 
@@ -28,7 +29,7 @@ class setGeneticData(QFrame):
         self.ui.setupUi(self)
 
         self.ui.verticalLayout_3.setAlignment(QtCore.Qt.AlignTop)
-        self.ui.tableWidget.setColumnWidth(0,250)
+        self.ui.tableWidget.setColumnWidth(0,230)
         self.ui.tableWidget.setColumnWidth(1,60)
         self.ui.tableWidget.setColumnWidth(2,60)
         self.ui.tableWidget.setColumnWidth(3,60)
@@ -92,6 +93,7 @@ class setGeneticData(QFrame):
         """ ajoute les loci selectionnés au groupe du bouton pressé
         """
         box = self.sender().parent()
+        listwidget = box.findChild(QListWidget,"listWidget")
         row_list = []
         selection = self.ui.tableWidget.selectedIndexes()
         selection.sort()
@@ -100,14 +102,19 @@ class setGeneticData(QFrame):
                 row_list.append(it.row())
 
         # déselection des présents
-        for ind_to_unselect in range(box.findChild(QListWidget,"listWidget").count()):
-            box.findChild(QListWidget,"listWidget").item(ind_to_unselect).setSelected(False)
+        for ind_to_unselect in range(listwidget.count()):
+            listwidget.item(ind_to_unselect).setSelected(False)
         # ajout des nouveaux
         for row in row_list:
             name = self.ui.tableWidget.item(row,0).text()
-            # ajout dans le groupe
-            box.findChild(QListWidget,"listWidget").addItem(name)
-            box.findChild(QListWidget,"listWidget").item(box.findChild(QListWidget,"listWidget").count()-1).setSelected(True)
+            # ajout trié dans le groupe
+            i = 0
+            num_to_insert = int(name.split(' ')[1])
+            while i < listwidget.count() and int(listwidget.item(i).text().split(' ')[1]) < num_to_insert :
+                i+=1
+            #box.findChild(QListWidget,"listWidget").addItem(name)
+            box.findChild(QListWidget,"listWidget").insertItem(i,name)
+            box.findChild(QListWidget,"listWidget").item(i).setSelected(True)
             # on cache la ligne
             self.ui.tableWidget.setRowHidden(row,True)
 
@@ -142,4 +149,14 @@ class setGeneticData(QFrame):
     def validate(self):
         pass
     def clear(self):
-        pass
+        #for i in range(len(self.groupList)):
+        #    self.groupList[i].hide()
+        for box in self.groupList:
+            box.hide()
+            lw = box.findChild(QListWidget,"listWidget")
+            for row in range(lw.count()):
+                name = str(lw.item(row).text())
+                num = int(name.split(' ')[1])
+                # on decouvre la ligne
+                self.ui.tableWidget.setRowHidden(num-1,False)
+        self.groupList = []

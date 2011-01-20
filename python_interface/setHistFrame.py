@@ -476,6 +476,9 @@ class setHistoricalModel(QFrame):
         # liste locale des paramètres
         self.paramList.append(groupBox_8)
 
+        # evennement d'ajout d'une condition sur un paramètre
+        QObject.connect(setCondButton,SIGNAL("clicked()"),self.setConditionAction)
+
         if type_param == "unique":
             setCondButton.hide()
         if code_type_param == "N" or code_type_param == "T":
@@ -490,12 +493,10 @@ class setHistoricalModel(QFrame):
         stValueParamEdit.setText("0")
 
 
-        # evennement d'ajout d'une condition sur un paramètre
-        QObject.connect(setCondButton,SIGNAL("clicked()"),self.setCondition)
 
         return groupBox_8
 
-    def setCondition(self):
+    def setConditionAction(self):
         """ methode qui receptionne l'evennement du clic sur "set condition"
         ajout d'une condition sur un paramètre ou une paire de paramètres
         """

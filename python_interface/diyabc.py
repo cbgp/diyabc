@@ -128,7 +128,10 @@ class Diyabc(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyle("cleanlooks")
+    if sys.platform.startswith('darwin'):
+        app.setStyle("macintosh")
+    else:
+        app.setStyle("cleanlooks")
     myapp = Diyabc()
     myapp.show()
     sys.exit(app.exec_())
