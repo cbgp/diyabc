@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Sat Jan 15 18:51:57 2011
-#      by: PyQt4 UI code generator 4.7.3
+# Created: Thu Jan 20 10:08:54 2011
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -84,7 +84,6 @@ class Ui_TabWidget(object):
         self.dataFileInfoLabel.setSizePolicy(sizePolicy)
         self.dataFileInfoLabel.setMinimumSize(QtCore.QSize(0, 40))
         self.dataFileInfoLabel.setMaximumSize(QtCore.QSize(16777215, 40))
-        self.dataFileInfoLabel.setText("")
         self.dataFileInfoLabel.setObjectName("dataFileInfoLabel")
         self.gridLayout_4.addWidget(self.dataFileInfoLabel, 1, 5, 1, 1)
         self.label_10 = QtGui.QLabel(self.horizontalFrame)
@@ -105,13 +104,11 @@ class Ui_TabWidget(object):
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setMinimumSize(QtCore.QSize(541, 0))
-        self.groupBox.setTitle("")
         self.groupBox.setFlat(False)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.groupBox_9 = QtGui.QGroupBox(self.groupBox)
-        self.groupBox_9.setTitle("")
         self.groupBox_9.setObjectName("groupBox_9")
         self.gridLayout_12 = QtGui.QGridLayout(self.groupBox_9)
         self.gridLayout_12.setObjectName("gridLayout_12")
@@ -159,7 +156,6 @@ class Ui_TabWidget(object):
         self.gridLayout_12.addWidget(self.frame_7, 3, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox_9, 1, 0, 1, 1)
         self.groupBox_8 = QtGui.QGroupBox(self.groupBox)
-        self.groupBox_8.setTitle("")
         self.groupBox_8.setObjectName("groupBox_8")
         self.gridLayout_11 = QtGui.QGridLayout(self.groupBox_8)
         self.gridLayout_11.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
@@ -277,7 +273,6 @@ class Ui_TabWidget(object):
         self.gridLayout_11.addWidget(self.frame_8, 2, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox_8, 1, 1, 1, 1)
         self.groupBox_7 = QtGui.QGroupBox(self.groupBox)
-        self.groupBox_7.setTitle("")
         self.groupBox_7.setObjectName("groupBox_7")
         self.gridLayout_10 = QtGui.QGridLayout(self.groupBox_7)
         self.gridLayout_10.setObjectName("gridLayout_10")
@@ -336,7 +331,6 @@ class Ui_TabWidget(object):
         self.gridLayout_3.addWidget(self.groupBox_7, 0, 0, 1, 1)
         self.groupBox_6 = QtGui.QGroupBox(self.groupBox)
         self.groupBox_6.setAutoFillBackground(False)
-        self.groupBox_6.setTitle("")
         self.groupBox_6.setObjectName("groupBox_6")
         self.gridLayout_8 = QtGui.QGridLayout(self.groupBox_6)
         self.gridLayout_8.setObjectName("gridLayout_8")
@@ -438,7 +432,7 @@ class Ui_TabWidget(object):
         TabWidget.addTab(self.tabAnalyses, "")
 
         self.retranslateUi(TabWidget)
-        TabWidget.setCurrentIndex(0)
+        TabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(TabWidget)
 
     def retranslateUi(self, TabWidget):
@@ -474,7 +468,7 @@ class Ui_TabWidget(object):
         self.label_2.setText(QtGui.QApplication.translate("TabWidget", "X DNA sequence loci", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("TabWidget", "X locus groups", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tabRefTable), QtGui.QApplication.translate("TabWidget", "Reference table", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.setSortingEnabled(True)
+        self.tableWidget.setSortingEnabled(False)
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("TabWidget", "name", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("TabWidget", "type", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("TabWidget", "parameters", None, QtGui.QApplication.UnicodeUTF8))

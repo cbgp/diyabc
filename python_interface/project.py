@@ -12,6 +12,7 @@ from diyabc_ui import Ui_MainWindow
 from project import *
 from project_ui import *
 from setHistFrame import setHistoricalModel
+from setGenData import setGeneticData
 from data import Data
 from datetime import datetime 
 import os.path
@@ -55,9 +56,9 @@ class Project(QTabWidget):
         self.addTab(self.hist_model_win,"Set historical model")
         self.setTabEnabled(2,False)
 
-        self.gen_data_win = None
+        self.gen_data_win = setGeneticData(self)
         self.addTab(self.gen_data_win,"Set genetic data")
-        self.setTabEnabled(3,False)
+        #self.setTabEnabled(3,False)
 
         self.sum_stats_win = None
         self.addTab(self.sum_stats_win,"Set summary statistics")
@@ -168,7 +169,8 @@ class Project(QTabWidget):
 
     def clcl(self,i,j):
         print str(i)+","+str(j)
-        self.ui.tableWidget.item(i,j).setFlags(Qt.ItemIsEditable)
+        #self.ui.tableWidget.item(i,j).setFlags(Qt.ItemIsEditable)
+        self.ui.tableWidget.hideRow(i)
     def addRow(self):
         print self.ui.tableWidget.rowCount()
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())

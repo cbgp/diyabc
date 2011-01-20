@@ -854,7 +854,7 @@
       <item>
        <widget class="QTableWidget" name="tableWidget">
         <property name="sortingEnabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <column>
          <property name="text">
