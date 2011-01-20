@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setHistFrame.ui'
 #
-# Created: Wed Jan 19 11:44:23 2011
+# Created: Thu Jan 20 17:49:41 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -396,11 +396,13 @@ class Ui_Frame(object):
         Frame.setWindowTitle(QtGui.QApplication.translate("Frame", "Frame", None, QtGui.QApplication.UnicodeUTF8))
         self.exitButton.setToolTip(QtGui.QApplication.translate("Frame", "Leave this screen without loosing any change", None, QtGui.QApplication.UnicodeUTF8))
         self.exitButton.setText(QtGui.QApplication.translate("Frame", "EXIT", None, QtGui.QApplication.UnicodeUTF8))
+        self.exitButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+E", None, QtGui.QApplication.UnicodeUTF8))
         self.clearButton.setToolTip(QtGui.QApplication.translate("Frame", "Clear all data related to this historical model", None, QtGui.QApplication.UnicodeUTF8))
         self.clearButton.setText(QtGui.QApplication.translate("Frame", "CLEAR", None, QtGui.QApplication.UnicodeUTF8))
+        self.clearButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+C", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setToolTip(QtGui.QApplication.translate("Frame", "Test and save data (Alt+o)", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
-        self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+O", None, QtGui.QApplication.UnicodeUTF8))
+        self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
         self.addScButton.setToolTip(QtGui.QApplication.translate("Frame", "(Alt+a)", None, QtGui.QApplication.UnicodeUTF8))
         self.addScButton.setText(QtGui.QApplication.translate("Frame", "Add scenario", None, QtGui.QApplication.UnicodeUTF8))
         self.addScButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+A", None, QtGui.QApplication.UnicodeUTF8))

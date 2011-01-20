@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setGenData.ui'
 #
-# Created: Thu Jan 20 11:28:23 2011
+# Created: Thu Jan 20 19:17:24 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -82,34 +82,6 @@ class Ui_Frame(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.groupBox = QtGui.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupBox.setMinimumSize(QtCore.QSize(0, 150))
-        self.groupBox.setMaximumSize(QtCore.QSize(16777215, 150))
-        self.groupBox.setObjectName("groupBox")
-        self.horizontalLayout = QtGui.QHBoxLayout(self.groupBox)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.verticalLayout = QtGui.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.addToButton = QtGui.QPushButton(self.groupBox)
-        self.addToButton.setObjectName("addToButton")
-        self.verticalLayout.addWidget(self.addToButton)
-        self.rmFromButton = QtGui.QPushButton(self.groupBox)
-        self.rmFromButton.setObjectName("rmFromButton")
-        self.verticalLayout.addWidget(self.rmFromButton)
-        self.horizontalLayout.addLayout(self.verticalLayout)
-        self.listWidget = QtGui.QListWidget(self.groupBox)
-        self.listWidget.setObjectName("listWidget")
-        self.horizontalLayout.addWidget(self.listWidget)
-        self.verticalLayout_2 = QtGui.QVBoxLayout()
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.setMutationButton = QtGui.QPushButton(self.groupBox)
-        self.setMutationButton.setObjectName("setMutationButton")
-        self.verticalLayout_2.addWidget(self.setMutationButton)
-        self.setSumButton = QtGui.QPushButton(self.groupBox)
-        self.setSumButton.setObjectName("setSumButton")
-        self.verticalLayout_2.addWidget(self.setSumButton)
-        self.horizontalLayout.addLayout(self.verticalLayout_2)
-        self.verticalLayout_3.addWidget(self.groupBox)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_5.addWidget(self.scrollArea)
         self.horizontalLayout_3.addLayout(self.verticalLayout_5)
@@ -122,11 +94,13 @@ class Ui_Frame(object):
         Frame.setWindowTitle(QtGui.QApplication.translate("Frame", "Frame", None, QtGui.QApplication.UnicodeUTF8))
         self.exitButton.setToolTip(QtGui.QApplication.translate("Frame", "Leave this screen without loosing any change", None, QtGui.QApplication.UnicodeUTF8))
         self.exitButton.setText(QtGui.QApplication.translate("Frame", "EXIT", None, QtGui.QApplication.UnicodeUTF8))
+        self.exitButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+E", None, QtGui.QApplication.UnicodeUTF8))
         self.clearButton.setToolTip(QtGui.QApplication.translate("Frame", "Clear all data related to this historical model", None, QtGui.QApplication.UnicodeUTF8))
         self.clearButton.setText(QtGui.QApplication.translate("Frame", "CLEAR", None, QtGui.QApplication.UnicodeUTF8))
+        self.clearButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+C", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setToolTip(QtGui.QApplication.translate("Frame", "Test and save data (Alt+o)", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
-        self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+O", None, QtGui.QApplication.UnicodeUTF8))
+        self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Frame", "Loci", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("Frame", "locus name", None, QtGui.QApplication.UnicodeUTF8))
@@ -135,11 +109,4 @@ class Ui_Frame(object):
         self.tableWidget.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("Frame", "range", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Frame", "Groups of loci", None, QtGui.QApplication.UnicodeUTF8))
         self.addGroupButton.setText(QtGui.QApplication.translate("Frame", "Add group", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("Frame", "Group 1", None, QtGui.QApplication.UnicodeUTF8))
-        self.addToButton.setText(QtGui.QApplication.translate("Frame", ">>", None, QtGui.QApplication.UnicodeUTF8))
-        self.rmFromButton.setText(QtGui.QApplication.translate("Frame", "<<", None, QtGui.QApplication.UnicodeUTF8))
-        self.setMutationButton.setText(QtGui.QApplication.translate("Frame", "Set Mutation\n"
-"Model", None, QtGui.QApplication.UnicodeUTF8))
-        self.setSumButton.setText(QtGui.QApplication.translate("Frame", "Set Summary\n"
-"Statistics", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -42,6 +42,9 @@
         <property name="text">
          <string>EXIT</string>
         </property>
+        <property name="shortcut">
+         <string>Alt+E</string>
+        </property>
        </widget>
       </item>
       <item>
@@ -56,6 +59,9 @@
         </property>
         <property name="text">
          <string>CLEAR</string>
+        </property>
+        <property name="shortcut">
+         <string>Alt+C</string>
         </property>
        </widget>
       </item>
@@ -73,7 +79,7 @@
          <string>VALIDATE</string>
         </property>
         <property name="shortcut">
-         <string>Alt+O</string>
+         <string>Alt+V</string>
         </property>
        </widget>
       </item>

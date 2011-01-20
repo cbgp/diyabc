@@ -42,6 +42,9 @@
         <property name="text">
          <string>EXIT</string>
         </property>
+        <property name="shortcut">
+         <string>Alt+E</string>
+        </property>
        </widget>
       </item>
       <item>
@@ -56,6 +59,9 @@
         </property>
         <property name="text">
          <string>CLEAR</string>
+        </property>
+        <property name="shortcut">
+         <string>Alt+C</string>
         </property>
        </widget>
       </item>
@@ -73,7 +79,7 @@
          <string>VALIDATE</string>
         </property>
         <property name="shortcut">
-         <string>Alt+O</string>
+         <string>Alt+V</string>
         </property>
        </widget>
       </item>
@@ -154,70 +160,7 @@
             <height>616</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QGroupBox" name="groupBox">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>150</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>150</height>
-              </size>
-             </property>
-             <property name="title">
-              <string>Group 1</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout">
-                <item>
-                 <widget class="QPushButton" name="addToButton">
-                  <property name="text">
-                   <string>&gt;&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="rmFromButton">
-                  <property name="text">
-                   <string>&lt;&lt;</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QListWidget" name="listWidget"/>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_2">
-                <item>
-                 <widget class="QPushButton" name="setMutationButton">
-                  <property name="text">
-                   <string>Set Mutation
-Model</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="setSumButton">
-                  <property name="text">
-                   <string>Set Summary
-Statistics</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
+          <layout class="QVBoxLayout" name="verticalLayout_3"/>
          </widget>
         </widget>
        </item>

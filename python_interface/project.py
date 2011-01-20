@@ -29,6 +29,7 @@ class Project(QTabWidget):
         self.dataFileSource = ""
         self.dataFileName = ""
         self.hist_state_valid = False
+        self.gen_state_valid = False
         self.data = None
 
         # utile seulement si on derive de QTabWidget
@@ -58,7 +59,7 @@ class Project(QTabWidget):
 
         self.gen_data_win = setGeneticData(self)
         self.addTab(self.gen_data_win,"Set genetic data")
-        #self.setTabEnabled(3,False)
+        self.setTabEnabled(3,False)
 
         self.sum_stats_win = None
         self.addTab(self.sum_stats_win,"Set summary statistics")
@@ -77,7 +78,7 @@ class Project(QTabWidget):
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.addRow)
         QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
         QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.setHistorical)
-        QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.changeIcon)
+        QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.setGenetic)
         QObject.connect(self.ui.setSummaryButton,SIGNAL("clicked()"),self.changeIcon)
         QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
         QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
@@ -150,6 +151,7 @@ class Project(QTabWidget):
                     os.mkdir(newdir)
                     self.ui.groupBox.show()
                     self.ui.setHistoricalButton.setDisabled(False)
+                    self.ui.setGeneticButton.setDisabled(False)
                     self.dir = newdir
                     shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
                     self.dataFileName = self.dataFileSource.split('/')[-1]
@@ -195,6 +197,15 @@ class Project(QTabWidget):
         self.setCurrentWidget(self.hist_model_win)
         self.setHistValid(False)
 
+    def setGenetic(self):
+        """ passe sur l'onglet correspondant
+        """
+        self.setTabEnabled(0,False)
+        self.setTabEnabled(1,False)
+        self.setTabEnabled(3,True)
+        self.setCurrentWidget(self.gen_data_win)
+        self.setGenValid(False)
+
     def setNbScenarios(self,nb):
         self.ui.nbScLabel.setText(nb)
     def setNbParams(self,nb):
@@ -215,6 +226,7 @@ class Project(QTabWidget):
         self.ui.browseDataFileButton.setDisabled(True)
         self.ui.groupBox.show()
         self.ui.setHistoricalButton.setDisabled(False)
+        self.ui.setGeneticButton.setDisabled(False)
 
         # lecture du meta project
 
@@ -229,3 +241,9 @@ class Project(QTabWidget):
         else:
             self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
 
+    def setGenValid(self,valid):
+        self.gen_state_valid = valid
+        if valid:
+            self.ui.setGeneticButton.setIcon(QIcon("docs/ok.png"))
+        else:
+            self.ui.setGeneticButton.setIcon(QIcon("docs/redcross.png"))
