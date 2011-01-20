@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setGenData.ui'
 #
-# Created: Thu Jan 20 10:53:12 2011
+# Created: Thu Jan 20 11:28:23 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -70,9 +70,9 @@ class Ui_Frame(object):
         self.label_2 = QtGui.QLabel(Frame)
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_2.addWidget(self.label_2)
-        self.pushButton = QtGui.QPushButton(Frame)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout_2.addWidget(self.pushButton)
+        self.addGroupButton = QtGui.QPushButton(Frame)
+        self.addGroupButton.setObjectName("addGroupButton")
+        self.horizontalLayout_2.addWidget(self.addGroupButton)
         self.verticalLayout_5.addLayout(self.horizontalLayout_2)
         self.scrollArea = QtGui.QScrollArea(Frame)
         self.scrollArea.setWidgetResizable(True)
@@ -83,30 +83,31 @@ class Ui_Frame(object):
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.groupBox = QtGui.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupBox.setMaximumSize(QtCore.QSize(16777215, 200))
+        self.groupBox.setMinimumSize(QtCore.QSize(0, 150))
+        self.groupBox.setMaximumSize(QtCore.QSize(16777215, 150))
         self.groupBox.setObjectName("groupBox")
         self.horizontalLayout = QtGui.QHBoxLayout(self.groupBox)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
-        self.pushButton_2 = QtGui.QPushButton(self.groupBox)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.verticalLayout.addWidget(self.pushButton_2)
-        self.pushButton_3 = QtGui.QPushButton(self.groupBox)
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.verticalLayout.addWidget(self.pushButton_3)
+        self.addToButton = QtGui.QPushButton(self.groupBox)
+        self.addToButton.setObjectName("addToButton")
+        self.verticalLayout.addWidget(self.addToButton)
+        self.rmFromButton = QtGui.QPushButton(self.groupBox)
+        self.rmFromButton.setObjectName("rmFromButton")
+        self.verticalLayout.addWidget(self.rmFromButton)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.listWidget = QtGui.QListWidget(self.groupBox)
         self.listWidget.setObjectName("listWidget")
         self.horizontalLayout.addWidget(self.listWidget)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.pushButton_4 = QtGui.QPushButton(self.groupBox)
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.verticalLayout_2.addWidget(self.pushButton_4)
-        self.pushButton_5 = QtGui.QPushButton(self.groupBox)
-        self.pushButton_5.setObjectName("pushButton_5")
-        self.verticalLayout_2.addWidget(self.pushButton_5)
+        self.setMutationButton = QtGui.QPushButton(self.groupBox)
+        self.setMutationButton.setObjectName("setMutationButton")
+        self.verticalLayout_2.addWidget(self.setMutationButton)
+        self.setSumButton = QtGui.QPushButton(self.groupBox)
+        self.setSumButton.setObjectName("setSumButton")
+        self.verticalLayout_2.addWidget(self.setSumButton)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.verticalLayout_3.addWidget(self.groupBox)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -133,12 +134,12 @@ class Ui_Frame(object):
         self.tableWidget.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("Frame", "motif", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("Frame", "range", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Frame", "Groups of loci", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("Frame", "Add group", None, QtGui.QApplication.UnicodeUTF8))
+        self.addGroupButton.setText(QtGui.QApplication.translate("Frame", "Add group", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Frame", "Group 1", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_2.setText(QtGui.QApplication.translate("Frame", ">>", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_3.setText(QtGui.QApplication.translate("Frame", "<<", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_4.setText(QtGui.QApplication.translate("Frame", "Set Mutation\n"
+        self.addToButton.setText(QtGui.QApplication.translate("Frame", ">>", None, QtGui.QApplication.UnicodeUTF8))
+        self.rmFromButton.setText(QtGui.QApplication.translate("Frame", "<<", None, QtGui.QApplication.UnicodeUTF8))
+        self.setMutationButton.setText(QtGui.QApplication.translate("Frame", "Set Mutation\n"
 "Model", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_5.setText(QtGui.QApplication.translate("Frame", "Set Summary\n"
+        self.setSumButton.setText(QtGui.QApplication.translate("Frame", "Set Summary\n"
 "Statistics", None, QtGui.QApplication.UnicodeUTF8))
 

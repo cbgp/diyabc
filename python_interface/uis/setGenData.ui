@@ -132,7 +132,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="addGroupButton">
            <property name="text">
             <string>Add group</string>
            </property>
@@ -157,10 +157,16 @@
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
             <widget class="QGroupBox" name="groupBox">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>150</height>
+              </size>
+             </property>
              <property name="maximumSize">
               <size>
                <width>16777215</width>
-               <height>200</height>
+               <height>150</height>
               </size>
              </property>
              <property name="title">
@@ -170,14 +176,14 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout">
                 <item>
-                 <widget class="QPushButton" name="pushButton_2">
+                 <widget class="QPushButton" name="addToButton">
                   <property name="text">
                    <string>&gt;&gt;</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_3">
+                 <widget class="QPushButton" name="rmFromButton">
                   <property name="text">
                    <string>&lt;&lt;</string>
                   </property>
@@ -191,7 +197,7 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_2">
                 <item>
-                 <widget class="QPushButton" name="pushButton_4">
+                 <widget class="QPushButton" name="setMutationButton">
                   <property name="text">
                    <string>Set Mutation
 Model</string>
@@ -199,7 +205,7 @@ Model</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_5">
+                 <widget class="QPushButton" name="setSumButton">
                   <property name="text">
                    <string>Set Summary
 Statistics</string>
