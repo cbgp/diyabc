@@ -8,7 +8,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from setGenData_ui import Ui_Frame
-from setMutationModel import SetMutationModel
+#from setMutationModel import SetMutationModel
 from drawScenario import drawScenario
 from visualizescenario import *
 import history 
@@ -108,12 +108,13 @@ class SetGeneticData(QFrame):
         self.groupList.append(groupBox)
 
     def setMutation(self):
-        box = self.sender().parent()
-        frame = SetMutationModel(self)
-        self.setMutation_dico[box] = frame
-        self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
-        self.parent.setTabEnabled(self.parent.indexOf(self),False)
-        self.parent.setCurrentWidget(self.setMutation_dico[box])
+        pass
+        #box = self.sender().parent()
+        #frame = SetMutationModel(self)
+        #self.setMutation_dico[box] = frame
+        #self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
+        #self.parent.setTabEnabled(self.parent.indexOf(self),False)
+        #self.parent.setCurrentWidget(self.setMutation_dico[box])
 
 
     def setSum(self):
@@ -228,7 +229,7 @@ class SetGeneticData(QFrame):
         # reactivation des onglets
         self.parent.setTabEnabled(0,True)
         self.parent.setTabEnabled(1,True)
-        self.parent.setTabEnabled(3,False)
+        self.parent.removeTab(self.parent.indexOf(self))
         self.parent.setCurrentIndex(0)
     def validate(self):
         pass

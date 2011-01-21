@@ -51,14 +51,16 @@ class Project(QTabWidget):
         self.ui.groupBox.hide()
         #self.ui.groupBox.setVisible(False)
 
-        # creation des 3 onglets "set ..."
+        # creation des onglets "set ..."
         self.hist_model_win = SetHistoricalModel(self)
-        self.addTab(self.hist_model_win,"Set historical model")
-        self.setTabEnabled(2,False)
+        self.hist_model_win.hide()
+        #self.addTab(self.hist_model_win,"Set historical model")
+        #self.setTabEnabled(2,False)
 
         self.gen_data_win = SetGeneticData(self)
-        self.addTab(self.gen_data_win,"Set genetic data")
-        self.setTabEnabled(3,False)
+        self.gen_data_win.hide()
+        #self.addTab(self.gen_data_win,"Set genetic data")
+        #self.setTabEnabled(3,False)
 
 
         # manual alignment set
@@ -186,11 +188,13 @@ class Project(QTabWidget):
     def setHistorical(self):
         """ passe sur l'onglet correspondant
         """
+        self.addTab(self.hist_model_win,"Set historical model")
+
         self.setTabEnabled(0,False)
         self.setTabEnabled(1,False)
         # nécéssaire seulement sous windows
         # on dirait que sous linux, le simple setCurrentWidget rend l'onglet enabled
-        self.setTabEnabled(2,True)
+        self.setTabEnabled(self.count()-1,True)
         self.setCurrentWidget(self.hist_model_win)
         self.setHistValid(False)
 
@@ -199,7 +203,7 @@ class Project(QTabWidget):
         """
         self.setTabEnabled(0,False)
         self.setTabEnabled(1,False)
-        self.setTabEnabled(3,True)
+        self.addTab(self.gen_data_win,"Set genetic data")
         self.setCurrentWidget(self.gen_data_win)
         self.setGenValid(False)
 
@@ -209,9 +213,9 @@ class Project(QTabWidget):
         self.ui.nbParamLabel.setText(nb)
     def clearHistoricalModel(self):
         self.removeTab(self.indexOf(self.hist_model_win))
-        self.hist_model_win = setHistoricalModel(self)
+        self.hist_model_win = SetHistoricalModel(self)
         self.insertTab(2,self.hist_model_win,"Set historical model")
-        #self.setTabEnabled(2,False)
+        #self.setTabEnabled(self.indexOf(self.hist_model_win),False)
         self.setCurrentWidget(self.hist_model_win)
 
 

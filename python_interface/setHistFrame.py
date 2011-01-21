@@ -575,7 +575,7 @@ class SetHistoricalModel(QFrame):
             # reactivation des onglets
             self.parent.setTabEnabled(0,True)
             self.parent.setTabEnabled(1,True)
-            self.parent.setTabEnabled(2,False)
+            self.parent.removeTab(self.parent.indexOf(self.parent.hist_model_win))
             self.parent.setCurrentIndex(0)
 
     def closeEvent(self, event):
@@ -597,7 +597,7 @@ class SetHistoricalModel(QFrame):
             # reactivation des onglets
             self.parent.setTabEnabled(0,True)
             self.parent.setTabEnabled(1,True)
-            self.parent.setTabEnabled(2,False)
+            self.parent.removeTab(self.parent.indexOf(self.parent.hist_model_win))
             self.parent.setCurrentIndex(0)
 
     def writeHistoricalConfFromAttributes(self):
