@@ -116,14 +116,23 @@ class setGeneticData(QFrame):
         # verif que les loci deja dans le groupe sont du même type que ceux sélectionnés
         # on compare le premier type trouvé dans la selection avec le type du premier
         # élément du groupe
-        if all_similar and listwidget.count() > 0:
-            name = str(listwidget.item(0).text())
-            num = int(name.split(' ')[1])
-            # info sur le premier locus du groupe
-            type = str(self.ui.tableWidget.item(num-1,1).text())
-            print "\ntype deja present : %s"%type
-            if type != first_type_found:
-                all_similar = False
+        if listwidget.count() > 0:
+            if all_similar:
+                name = str(listwidget.item(0).text())
+                num = int(name.split(' ')[1])
+                # info sur le premier locus du groupe
+                type = str(self.ui.tableWidget.item(num-1,1).text())
+                print "\ntype deja present : %s"%type
+                if type != first_type_found:
+                    all_similar = False
+        else:
+            # le groupe est vide, on set le nom avec le type
+            old_title = str(box.title())
+            if first_type_found == 'M':
+                tt = "Microsatellites"
+            else:
+                tt = "Sequences"
+            box.setTitle("%s %s : %s"%(old_title.split(' ')[0],old_title.split(' ')[1],tt))
 
         if all_similar:
             # déselection des présents
@@ -165,6 +174,11 @@ class setGeneticData(QFrame):
             item = listw_of_group.takeItem(row)
             # on decouvre la ligne
             self.ui.tableWidget.setRowHidden(num-1,False)
+
+        # si le groupe devient vide, on enleve le type dans le nom
+        if listw_of_group.count() == 0:
+            old_title = str(box.title())
+            box.setTitle("%s %s"%(old_title.split(' ')[0],old_title.split(' ')[1]))
 
 
     def exit(self):
