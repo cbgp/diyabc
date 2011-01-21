@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setGenData.ui'
 #
-# Created: Thu Jan 20 19:17:24 2011
+# Created: Fri Jan 21 11:45:45 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -50,6 +50,8 @@ class Ui_Frame(object):
         self.label.setObjectName("label")
         self.verticalLayout_4.addWidget(self.label)
         self.tableWidget = QtGui.QTableWidget(Frame)
+        self.tableWidget.setMinimumSize(QtCore.QSize(460, 0))
+        self.tableWidget.setMaximumSize(QtCore.QSize(460, 16777215))
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setRowCount(0)
@@ -78,7 +80,7 @@ class Ui_Frame(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 507, 616))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 433, 616))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setObjectName("verticalLayout_3")

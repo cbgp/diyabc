@@ -74,9 +74,15 @@ class setGeneticData(QFrame):
         rmFromButton.setObjectName("rmFromButton")
         verticalLayout.addWidget(rmFromButton)
         horizontalLayout.addLayout(verticalLayout)
+        verticalLayout_3 = QtGui.QVBoxLayout()
+        verticalLayout_3.setObjectName("verticalLayout_3")
+        rmButton = QtGui.QPushButton("Remove group",groupBox)
+        rmButton.setObjectName("rmButton")
+        verticalLayout_3.addWidget(rmButton)
         listWidget = QtGui.QListWidget(groupBox)
         listWidget.setObjectName("listWidget")
-        horizontalLayout.addWidget(listWidget)
+        verticalLayout_3.addWidget(listWidget)
+        horizontalLayout.addLayout(verticalLayout_3)
         listWidget.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
         verticalLayout_2 = QtGui.QVBoxLayout()
         verticalLayout_2.setObjectName("verticalLayout_2")
@@ -91,8 +97,24 @@ class setGeneticData(QFrame):
 
         QObject.connect(addToButton,SIGNAL("clicked()"),self.addToGroup)
         QObject.connect(rmFromButton,SIGNAL("clicked()"),self.rmFromGroup)
+        QObject.connect(rmButton,SIGNAL("clicked()"),self.rmGroup)
 
         self.groupList.append(groupBox)
+
+    def rmGroup(self):
+        """ Enlève les loci présents dans le groupe et supprime le groupe
+        """
+        box = self.sender().parent()
+        lw = box.findChild(QListWidget,"listWidget")
+        lw.selectAll()
+        self.rmFromGroup(box)
+        # suppression de la box
+        box.hide()
+        self.groupList.remove(box)
+        # renommage des groupes
+        for i,box in enumerate(self.groupList):
+            old_title = str(box.title())
+            box.setTitle("Group %i %s"%(i+1,' '.join(old_title.split(' ')[2:])))
 
     def addToGroup(self):
         """ ajoute les loci selectionnés au groupe du bouton pressé
@@ -128,11 +150,13 @@ class setGeneticData(QFrame):
         else:
             # le groupe est vide, on set le nom avec le type
             old_title = str(box.title())
+            tt = ''
             if first_type_found == 'M':
                 tt = "Microsatellites"
-            else:
+            elif first_type_found == 'S':
                 tt = "Sequences"
-            box.setTitle("%s %s : %s"%(old_title.split(' ')[0],old_title.split(' ')[1],tt))
+            if tt != '':
+                box.setTitle("%s %s : %s"%(old_title.split(' ')[0],old_title.split(' ')[1],tt))
 
         if all_similar:
             # déselection des présents
@@ -154,10 +178,11 @@ class setGeneticData(QFrame):
         else:
             QMessageBox.information(self,"Group error","In a group, all the loci must have the same type")
 
-    def rmFromGroup(self):
+    def rmFromGroup(self,box=None):
         """ retire les loci selectionnés du groupe du bouton pressé
         """
-        box = self.sender().parent()
+        if box == None:
+            box = self.sender().parent()
         listw_of_group = box.findChild(QListWidget,"listWidget")
         row_list = []
         selection = listw_of_group.selectedIndexes()
