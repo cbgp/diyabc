@@ -44,7 +44,6 @@ class Project(QTabWidget):
         # desactivation des boutons
         self.ui.setHistoricalButton.setDisabled(True)
         self.ui.setGeneticButton.setDisabled(True)
-        self.ui.setSummaryButton.setDisabled(True)
         self.ui.runButton.setDisabled(True)
         self.ui.browseDirButton.setDisabled(True)
         self.ui.dataFileEdit.setReadOnly(True)
@@ -61,9 +60,6 @@ class Project(QTabWidget):
         self.addTab(self.gen_data_win,"Set genetic data")
         self.setTabEnabled(3,False)
 
-        self.sum_stats_win = None
-        self.addTab(self.sum_stats_win,"Set summary statistics")
-        self.setTabEnabled(4,False)
 
         # manual alignment set
         #self.ui.verticalLayout.setAlignment(self.ui.horizontalFrame,Qt.AlignTop)
@@ -79,13 +75,11 @@ class Project(QTabWidget):
         QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
         QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.setHistorical)
         QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.setGenetic)
-        QObject.connect(self.ui.setSummaryButton,SIGNAL("clicked()"),self.changeIcon)
         QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
         QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
 
         # inserer image
         self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
-        self.ui.setSummaryButton.setIcon(QIcon("docs/redcross.png"))
         self.ui.setGeneticButton.setIcon(QIcon("docs/redcross.png"))
 
         self.setTabIcon(0,QIcon("docs/redcross.png"))
