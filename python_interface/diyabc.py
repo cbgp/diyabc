@@ -20,12 +20,14 @@ class Diyabc(QMainWindow):
         self.scenario_pix_dir_name = "scenario_pictures"
         self.scenario_pix_basename = "scenario"
 
-        self.styles = ["cleanlooks","plastique","motif","macintosh","oxygen"]
+        self.styles = []
+        for i in QStyleFactory.keys():
+            self.styles.append(str(i))
         self.style_actions = {}
 
         self.createWidgets()
 
-        self.default_style = self.style_actions["plastique"]
+        self.default_style = self.style_actions["Cleanlooks"]
         self.default_style.activate(QAction.Trigger)
 
     def createWidgets(self):
@@ -147,10 +149,10 @@ class Diyabc(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    if sys.platform.startswith('darwin'):
-        app.setStyle("macintosh")
-    else:
-        app.setStyle("cleanlooks")
+#    if sys.platform.startswith('darwin'):
+#        app.setStyle("macintosh")
+#    else:
+#        app.setStyle("cleanlooks")
     myapp = Diyabc(app)
     myapp.show()
     sys.exit(app.exec_())
