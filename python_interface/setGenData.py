@@ -114,10 +114,16 @@ class setGeneticData(QFrame):
                     if first_type_found != str(self.ui.tableWidget.item(it.row(),1).text()):
                         all_similar = False
         # verif que les loci deja dans le groupe sont du même type que ceux sélectionnés
-        #TODO
-        for row in range(lw.count()):
-            name = str(lw.item(row).text())
+        # on compare le premier type trouvé dans la selection avec le type du premier
+        # élément du groupe
+        if all_similar and listwidget.count() > 0:
+            name = str(listwidget.item(0).text())
             num = int(name.split(' ')[1])
+            # info sur le premier locus du groupe
+            type = str(self.ui.tableWidget.item(num-1,1).text())
+            print "\ntype deja present : %s"%type
+            if type != first_type_found:
+                all_similar = False
 
         if all_similar:
             # déselection des présents
