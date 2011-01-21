@@ -12,11 +12,11 @@ from drawScenario import drawScenario
 from visualizescenario import *
 import history 
 from history import IOScreenError
-from set_condition import setCondition
+from set_condition import SetCondition
 
-class setHistoricalModel(QFrame):
+class SetHistoricalModel(QFrame):
     def __init__(self,parent=None):
-        super(setHistoricalModel,self).__init__(parent)
+        super(SetHistoricalModel,self).__init__(parent)
         self.parent=parent
         # [GUI] liste des scenarios, pourcentages et conditions non effacés
         self.scList = []
@@ -506,7 +506,7 @@ class setHistoricalModel(QFrame):
         for pname in self.param_info_dico.keys():
             if pname != param_src and self.param_info_dico[str(pname)][0] == self.param_info_dico[str(param_src)][0]:
                 target_list.append(pname)
-        self.setCondition = setCondition(self.sender().parent().findChild(QLabel,"paramNameLabel").text(),target_list,self)
+        self.setCondition = SetCondition(self.sender().parent().findChild(QLabel,"paramNameLabel").text(),target_list,self)
         self.setCondition.show()
 
     def checkAll(self):

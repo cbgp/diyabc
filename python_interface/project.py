@@ -11,8 +11,8 @@ from PyQt4 import QtGui
 from diyabc_ui import Ui_MainWindow
 from project import *
 from project_ui import *
-from setHistFrame import setHistoricalModel
-from setGenData import setGeneticData
+from setHistFrame import SetHistoricalModel
+from setGenData import SetGeneticData
 from data import Data
 from datetime import datetime 
 import os.path
@@ -52,11 +52,11 @@ class Project(QTabWidget):
         #self.ui.groupBox.setVisible(False)
 
         # creation des 3 onglets "set ..."
-        self.hist_model_win = setHistoricalModel(self)
+        self.hist_model_win = SetHistoricalModel(self)
         self.addTab(self.hist_model_win,"Set historical model")
         self.setTabEnabled(2,False)
 
-        self.gen_data_win = setGeneticData(self)
+        self.gen_data_win = SetGeneticData(self)
         self.addTab(self.gen_data_win,"Set genetic data")
         self.setTabEnabled(3,False)
 

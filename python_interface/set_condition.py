@@ -5,11 +5,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from set_condition_ui import Ui_MainWindow
 
-class setCondition(QMainWindow):
+class SetCondition(QMainWindow):
     """ Fenetre de definition d'une condition
     """
     def __init__(self,param,target_list,parent=None):
-        super(setCondition,self).__init__(parent)
+        super(SetCondition,self).__init__(parent)
         self.parent=parent
         self.param = param
         self.target_list = target_list

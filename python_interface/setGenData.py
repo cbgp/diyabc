@@ -8,16 +8,20 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from setGenData_ui import Ui_Frame
+from setMutationModel import SetMutationModel
 from drawScenario import drawScenario
 from visualizescenario import *
 import history 
 from history import IOScreenError
 
-class setGeneticData(QFrame):
+class SetGeneticData(QFrame):
     def __init__(self,parent=None):
-        super(setGeneticData,self).__init__(parent)
+        super(SetGeneticData,self).__init__(parent)
         self.parent=parent
+        # liste des box
         self.groupList = []
+        # dico de frames indexé par les box
+        self.setMutation_dico = {}
         #TODO maj ces infos
         self.group_info_dico = {}
         self.locus_info_list = []
@@ -98,8 +102,22 @@ class setGeneticData(QFrame):
         QObject.connect(addToButton,SIGNAL("clicked()"),self.addToGroup)
         QObject.connect(rmFromButton,SIGNAL("clicked()"),self.rmFromGroup)
         QObject.connect(rmButton,SIGNAL("clicked()"),self.rmGroup)
+        QObject.connect(setMutationButton,SIGNAL("clicked()"),self.setMutation)
+        QObject.connect(setSumButton,SIGNAL("clicked()"),self.setSum)
 
         self.groupList.append(groupBox)
+
+    def setMutation(self):
+        box = self.sender().parent()
+        frame = SetMutationModel(self)
+        self.setMutation_dico[box] = frame
+        self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
+        self.parent.setTabEnabled(self.parent.indexOf(self),False)
+        self.parent.setCurrentWidget(self.setMutation_dico[box])
+
+
+    def setSum(self):
+        pass
 
     def rmGroup(self):
         """ Enlève les loci présents dans le groupe et supprime le groupe
