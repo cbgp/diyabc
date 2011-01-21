@@ -12,13 +12,21 @@ from project import *
 class Diyabc(QMainWindow):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
     """
-    def __init__(self,parent=None):
+    def __init__(self,app,parent=None):
         super(Diyabc,self).__init__(parent)
-        self.createWidgets()
+        self.app = app
         self.project_list = []
         self.hist_conf_name = "cont.hist.tmp"
         self.scenario_pix_dir_name = "scenario_pictures"
         self.scenario_pix_basename = "scenario"
+
+        self.styles = ["cleanlooks","plastique","motif","macintosh","oxygen"]
+        self.style_actions = {}
+
+        self.createWidgets()
+
+        self.default_style = self.style_actions["plastique"]
+        self.default_style.activate(QAction.Trigger)
 
     def createWidgets(self):
         self.ui = Ui_MainWindow()
@@ -36,10 +44,21 @@ class Diyabc(QMainWindow):
         self.closeProjActionMenu = file_menu.addAction("Close current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)
         action = file_menu.addAction("Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
+        style_menu = self.ui.menubar.addMenu("Style")
+        action_group = QActionGroup(style_menu)
+        for stxt in self.styles:
+            self.style_actions[stxt] = style_menu.addAction(stxt,self.changeStyle)
+            self.style_actions[stxt].setActionGroup(action_group)
+            self.style_actions[stxt].setCheckable(True)
 	
 	#mettre plusieurs raccourcis claviers pour le meme menu
 	#action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
+
+    def changeStyle(self):
+        for stxt in self.styles:
+            if self.sender() == self.style_actions[stxt]:
+                self.app.setStyle(stxt)
 
     def file_open(self):
         """ ouverture d'un projet existant
@@ -132,7 +151,7 @@ if __name__ == "__main__":
         app.setStyle("macintosh")
     else:
         app.setStyle("cleanlooks")
-    myapp = Diyabc()
+    myapp = Diyabc(app)
     myapp.show()
     sys.exit(app.exec_())
 
