@@ -703,6 +703,8 @@ class setHistoricalModel(QFrame):
                 lines = f.readlines()
                 self.parent.dataFileName = lines[0].strip()
                 self.parent.ui.dataFileEdit.setText(lines[0].strip())
+                # lecture du dataFile pour les infos de Gui Projet
+                self.parent.loadDataFile("%s/%s"%(self.parent.dir,lines[0].strip()))
                 self.ui.otherRadio.setChecked(True)
 
                 nb_scenarios = int(lines[3].split(' ')[0])

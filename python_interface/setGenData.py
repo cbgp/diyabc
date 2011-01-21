@@ -34,8 +34,13 @@ class setGeneticData(QFrame):
         self.ui.tableWidget.setColumnWidth(2,60)
         self.ui.tableWidget.setColumnWidth(3,60)
 
+        t = True
         for i in range(100):
-            self.addRow()
+            if t:
+                self.addRow(type="S")
+            else:
+                self.addRow()
+            t = not t
 
         QObject.connect(self.ui.addGroupButton,SIGNAL("clicked()"),self.addGroup)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
@@ -46,7 +51,7 @@ class setGeneticData(QFrame):
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
         #self.ui.tableWidget.setCellWidget(self.ui.tableWidget.rowCount()-1,i,QPushButton("View"))
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,0,QTableWidgetItem("%s %i"%(name,self.ui.tableWidget.rowCount())))
-        self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,1,QTableWidgetItem("M"))
+        self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,1,QTableWidgetItem("%s"%type))
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,2,QTableWidgetItem("2"))
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,3,QTableWidgetItem("40"))
         self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,0).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,0).flags() & ~Qt.ItemIsEditable)
@@ -92,6 +97,8 @@ class setGeneticData(QFrame):
     def addToGroup(self):
         """ ajoute les loci selectionnés au groupe du bouton pressé
         """
+        all_similar = True
+        first_type_found = ""
         box = self.sender().parent()
         listwidget = box.findChild(QListWidget,"listWidget")
         row_list = []
@@ -100,23 +107,37 @@ class setGeneticData(QFrame):
         for it in selection:
             if it.row() not in row_list:
                 row_list.append(it.row())
+                # verif que tous les loci selectionnés ont le meme type
+                if first_type_found == "":
+                    first_type_found = str(self.ui.tableWidget.item(it.row(),1).text())
+                else:
+                    if first_type_found != str(self.ui.tableWidget.item(it.row(),1).text()):
+                        all_similar = False
+        # verif que les loci deja dans le groupe sont du même type que ceux sélectionnés
+        #TODO
+        for row in range(lw.count()):
+            name = str(lw.item(row).text())
+            num = int(name.split(' ')[1])
 
-        # déselection des présents
-        for ind_to_unselect in range(listwidget.count()):
-            listwidget.item(ind_to_unselect).setSelected(False)
-        # ajout des nouveaux
-        for row in row_list:
-            name = self.ui.tableWidget.item(row,0).text()
-            # ajout trié dans le groupe
-            i = 0
-            num_to_insert = int(name.split(' ')[1])
-            while i < listwidget.count() and int(listwidget.item(i).text().split(' ')[1]) < num_to_insert :
-                i+=1
-            #box.findChild(QListWidget,"listWidget").addItem(name)
-            box.findChild(QListWidget,"listWidget").insertItem(i,name)
-            box.findChild(QListWidget,"listWidget").item(i).setSelected(True)
-            # on cache la ligne
-            self.ui.tableWidget.setRowHidden(row,True)
+        if all_similar:
+            # déselection des présents
+            for ind_to_unselect in range(listwidget.count()):
+                listwidget.item(ind_to_unselect).setSelected(False)
+            # ajout des nouveaux
+            for row in row_list:
+                name = self.ui.tableWidget.item(row,0).text()
+                # ajout trié dans le groupe
+                i = 0
+                num_to_insert = int(name.split(' ')[1])
+                while i < listwidget.count() and int(listwidget.item(i).text().split(' ')[1]) < num_to_insert :
+                    i+=1
+                #box.findChild(QListWidget,"listWidget").addItem(name)
+                box.findChild(QListWidget,"listWidget").insertItem(i,name)
+                box.findChild(QListWidget,"listWidget").item(i).setSelected(True)
+                # on cache la ligne
+                self.ui.tableWidget.setRowHidden(row,True)
+        else:
+            QMessageBox.information(self,"Group error","In a group, all the loci must have the same type")
 
     def rmFromGroup(self):
         """ retire les loci selectionnés du groupe du bouton pressé

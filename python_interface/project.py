@@ -98,6 +98,9 @@ class Project(QTabWidget):
         qfd = QFileDialog()
         qfd.setDirectory(self.ui.dirEdit.text())
         name = qfd.getOpenFileName()
+        self.loadDataFile(name)
+
+    def loadDataFile(self,name):
         new_data = Data(name)
         try:
             new_data.loadfromfile()
