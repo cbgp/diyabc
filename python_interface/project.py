@@ -93,6 +93,27 @@ class Project(QTabWidget):
         #        it = QTableWidgetItem("%i,%i"%(j,i))
         #        self.ui.tableWidget.setItem(j,i,it)
 
+        self.connect(self.ui.startButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
+        self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
+
+    @pyqtSignature("")
+    def on_btnStart_clicked(self):
+        """Start the treatment in the thread"""
+        self.th = MyThread(self)
+        self.th.connect(self.th,SIGNAL("increment"),
+                              self.incProgress)
+        self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
+        self.th.start()
+ 
+    def incProgress(self):
+        """Increment the progress dialog"""
+        self.ui.progressBar.setValue(self.ui.progressBar.value()+1)
+
+    def cancelTh(self):
+        print 'plop'
+        self.emit(SIGNAL("canceled()"))
+
+
     def dataFileSelection(self):
         """ dialog pour selectionner le fichier à lire
         il est lu et vérifié. S'il est invalide, on garde la sélection précédente
@@ -248,3 +269,21 @@ class Project(QTabWidget):
             self.ui.setGeneticButton.setIcon(QIcon("docs/ok.png"))
         else:
             self.ui.setGeneticButton.setIcon(QIcon("docs/redcross.png"))
+
+class MyThread(QThread):
+   def __init__(self,parent):
+      super(MyThread,self).__init__(parent)
+      self.cancel = False
+ 
+   def run (self):
+      for i in range(100):
+         if self.cancel: break
+         time.sleep(1)
+         self.emit(SIGNAL("increment"))
+         print "%d "%(i),
+ 
+   @pyqtSignature("")
+   def cancel(self):
+      """SLOT to cancel treatment"""
+      self.cancel = True
+

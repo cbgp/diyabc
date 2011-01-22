@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Fri Jan 21 15:07:32 2011
-#      by: PyQt4 UI code generator 4.6
+# Created: Sat Jan 22 17:14:11 2011
+#      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_TabWidget(object):
     def setupUi(self, TabWidget):
         TabWidget.setObjectName("TabWidget")
-        TabWidget.resize(975, 738)
+        TabWidget.resize(975, 746)
         self.tabRefTable = QtGui.QWidget()
         self.tabRefTable.setObjectName("tabRefTable")
         self.verticalLayout = QtGui.QVBoxLayout(self.tabRefTable)
@@ -84,6 +84,7 @@ class Ui_TabWidget(object):
         self.dataFileInfoLabel.setSizePolicy(sizePolicy)
         self.dataFileInfoLabel.setMinimumSize(QtCore.QSize(0, 40))
         self.dataFileInfoLabel.setMaximumSize(QtCore.QSize(16777215, 40))
+        self.dataFileInfoLabel.setText("")
         self.dataFileInfoLabel.setObjectName("dataFileInfoLabel")
         self.gridLayout_4.addWidget(self.dataFileInfoLabel, 1, 5, 1, 1)
         self.label_10 = QtGui.QLabel(self.horizontalFrame)
@@ -104,6 +105,7 @@ class Ui_TabWidget(object):
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setMinimumSize(QtCore.QSize(541, 0))
+        self.groupBox.setTitle("")
         self.groupBox.setFlat(False)
         self.groupBox.setObjectName("groupBox")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.groupBox)
@@ -111,6 +113,7 @@ class Ui_TabWidget(object):
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.groupBox_7 = QtGui.QGroupBox(self.groupBox)
+        self.groupBox_7.setTitle("")
         self.groupBox_7.setObjectName("groupBox_7")
         self.gridLayout_10 = QtGui.QGridLayout(self.groupBox_7)
         self.gridLayout_10.setObjectName("gridLayout_10")
@@ -169,6 +172,7 @@ class Ui_TabWidget(object):
         self.horizontalLayout_2.addWidget(self.groupBox_7)
         self.groupBox_6 = QtGui.QGroupBox(self.groupBox)
         self.groupBox_6.setAutoFillBackground(False)
+        self.groupBox_6.setTitle("")
         self.groupBox_6.setObjectName("groupBox_6")
         self.gridLayout_8 = QtGui.QGridLayout(self.groupBox_6)
         self.gridLayout_8.setObjectName("gridLayout_8")
@@ -238,6 +242,7 @@ class Ui_TabWidget(object):
         self.horizontalLayout_2.addWidget(self.groupBox_6)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
         self.groupBox_8 = QtGui.QGroupBox(self.groupBox)
+        self.groupBox_8.setTitle("")
         self.groupBox_8.setObjectName("groupBox_8")
         self.gridLayout_11 = QtGui.QGridLayout(self.groupBox_8)
         self.gridLayout_11.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
@@ -260,7 +265,7 @@ class Ui_TabWidget(object):
         font.setPointSize(13)
         self.runButton.setFont(font)
         self.runButton.setObjectName("runButton")
-        self.gridLayout_11.addWidget(self.runButton, 4, 0, 1, 1)
+        self.gridLayout_11.addWidget(self.runButton, 6, 0, 1, 1)
         self.frame_4 = QtGui.QFrame(self.groupBox_8)
         self.frame_4.setFrameShape(QtGui.QFrame.HLine)
         self.frame_4.setFrameShadow(QtGui.QFrame.Sunken)
@@ -363,12 +368,18 @@ class Ui_TabWidget(object):
         self.progressBar.setSizePolicy(sizePolicy)
         self.progressBar.setMinimumSize(QtCore.QSize(0, 25))
         self.progressBar.setMaximumSize(QtCore.QSize(16777215, 25))
-        self.progressBar.setProperty("value", 24)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setAlignment(QtCore.Qt.AlignCenter)
         self.progressBar.setTextVisible(True)
         self.progressBar.setOrientation(QtCore.Qt.Horizontal)
         self.progressBar.setObjectName("progressBar")
         self.gridLayout_11.addWidget(self.progressBar, 3, 0, 1, 1)
+        self.startButton = QtGui.QPushButton(self.groupBox_8)
+        self.startButton.setObjectName("startButton")
+        self.gridLayout_11.addWidget(self.startButton, 4, 0, 1, 1)
+        self.cancelButton = QtGui.QPushButton(self.groupBox_8)
+        self.cancelButton.setObjectName("cancelButton")
+        self.gridLayout_11.addWidget(self.cancelButton, 5, 0, 1, 1)
         self.verticalLayout_4.addWidget(self.groupBox_8)
         self.verticalLayout.addWidget(self.groupBox)
         TabWidget.addTab(self.tabRefTable, "")
@@ -445,6 +456,8 @@ class Ui_TabWidget(object):
         self.label_6.setText(QtGui.QApplication.translate("TabWidget", "Priority", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("TabWidget", "Number of simulated data sets in the reference table", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("TabWidget", "Required number of simulated data sets", None, QtGui.QApplication.UnicodeUTF8))
+        self.startButton.setText(QtGui.QApplication.translate("TabWidget", "start", None, QtGui.QApplication.UnicodeUTF8))
+        self.cancelButton.setText(QtGui.QApplication.translate("TabWidget", "cancel", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tabRefTable), QtGui.QApplication.translate("TabWidget", "Reference table", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("TabWidget", "name", None, QtGui.QApplication.UnicodeUTF8))
