@@ -229,6 +229,7 @@ class SetHistoricalModel(QFrame):
     def checkToDraw(self):
         """ clic sur le bouton check scenario pour dessiner les scenarios
         """
+        self.majParamInfoDico()
         chk_list = self.checkScenarios()
         if chk_list != None:
             self.drawScenarios(chk_list)
@@ -238,6 +239,7 @@ class SetHistoricalModel(QFrame):
     def definePriors(self):
         """ clic sur le bouton de définition des priors
         """
+        self.majParamInfoDico()
         chk_list = self.checkScenarios()
         if chk_list != None:
             self.putParameters(chk_list)
@@ -267,7 +269,7 @@ class SetHistoricalModel(QFrame):
                 params_order_list.append(param.name)
                 # si le paramètre était deja la, il reprend ses valeurs, 
                 # sinon les valeurs seront consultées plus tard à partir de la GUI
-                if param.name in dico_tmp.keys():
+                if param.name in dico_tmp.keys() and len(dico_tmp[param.name])>6:
                     self.param_info_dico[param.name] = [param.category,dico_tmp[param.name][1],dico_tmp[param.name][2],dico_tmp[param.name][3],dico_tmp[param.name][4],dico_tmp[param.name][5],dico_tmp[param.name][6]]
                 else:
                     self.param_info_dico[param.name] = [param.category]
@@ -532,7 +534,9 @@ class SetHistoricalModel(QFrame):
             QMessageBox.information(self,"Value error","%s"%problems)
             return False
 
-    def validate(self):
+    def majParamInfoDico(self):
+        """ met a jour les infos des paramètres dans l'attribut param_info_dico
+        """
         # recup des valeurs pour les params
         for param in self.paramList:
             pname = str(param.findChild(QLabel,"paramNameLabel").text())
@@ -550,49 +554,54 @@ class SetHistoricalModel(QFrame):
             elif param.findChild(QRadioButton,'logUniformRadio').isChecked():
                 law = "LU"
             self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,step]
+
+
+    def validate(self):
+        self.majParamInfoDico()
         # creation et ecriture du fichier dans le rep choisi
         self.writeHistoricalConfFromGui()
         # VERIFS, si c'est bon, on change d'onglet, sinon on reste
         if self.checkAll():
             self.parent.setHistValid(True)
-            # gestion des valeurs, maj dans la GUI
-            nb_sc = len(self.scList)
-            pluriel = ""
-            if nb_sc > 1:
-                pluriel = "s"
-            self.parent.setNbScenarios("%i scenario%s"%(nb_sc,pluriel))
-            nb_params = len(self.paramList)
-            pluriel = ""
-            if nb_params > 1:
-                pluriel = "s"
-            self.parent.setNbParams("%i historical parameter%s"%(nb_params,pluriel))
-            # reactivation des onglets
-            self.parent.setTabEnabled(0,True)
-            self.parent.setTabEnabled(1,True)
-            self.parent.removeTab(self.parent.indexOf(self.parent.hist_model_win))
-            self.parent.setCurrentIndex(0)
+
+            self.majProjectGui()
+
+            self.returnToProject()
+
+    def majProjectGui(self):
+        """ ecrit les infos sur le nombre de scenarios et de params
+        dans l'ecran general du projet
+        """
+        # gestion des valeurs, maj dans la GUI
+        nb_sc = len(self.scList)
+        pluriel = ""
+        if nb_sc > 1:
+            pluriel = "s"
+        self.parent.setNbScenarios("%i scenario%s"%(nb_sc,pluriel))
+        nb_params = len(self.paramList)
+        pluriel = ""
+        if nb_params > 1:
+            pluriel = "s"
+        self.parent.setNbParams("%i historical parameter%s"%(nb_params,pluriel))
+
+    def returnToProject(self):
+        """ reactive les onglets du projet et efface celui du model historique
+        """
+        # reactivation des onglets
+        self.parent.setTabEnabled(0,True)
+        self.parent.setTabEnabled(1,True)
+        self.parent.removeTab(self.parent.indexOf(self.parent.hist_model_win))
+        self.parent.setCurrentIndex(0)
 
     def closeEvent(self, event):
         # le cancel ne vérifie rien
         if self.sender() == self.ui.clearButton:
             self.parent.clearHistoricalModel()
         elif self.sender() == self.ui.exitButton:
-            # gestion des valeurs, maj dans la GUI
-            nb_sc = len(self.scList)
-            pluriel = ""
-            if nb_sc > 1:
-                pluriel = "s"
-            self.parent.setNbScenarios("%i scenario%s"%(nb_sc,pluriel))
-            nb_params = len(self.paramList)
-            pluriel = ""
-            if nb_params > 1:
-                pluriel = "s"
-            self.parent.setNbParams("%i historical parameter%s"%(nb_params,pluriel))
-            # reactivation des onglets
-            self.parent.setTabEnabled(0,True)
-            self.parent.setTabEnabled(1,True)
-            self.parent.removeTab(self.parent.indexOf(self.parent.hist_model_win))
-            self.parent.setCurrentIndex(0)
+            self.majParamInfoDico()
+            self.writeHistoricalConfFromGui()
+            self.majProjectGui()
+            self.returnToProject()
 
     def writeHistoricalConfFromAttributes(self):
         """ ecrit les valeurs dans dossierProjet/conf.hist.tmp

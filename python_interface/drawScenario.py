@@ -24,7 +24,7 @@ class drawScenario(QMainWindow):
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.close)
-        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.saveDraws)
+        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.saveDrawsToOne)
 
     def drawAll(self):
         """ Pour tous les scenarios (sous forme d'un dico d'infos extraites de la verif)
@@ -173,38 +173,9 @@ class drawScenario(QMainWindow):
         label.setPixmap(pix)
         self.ui.horizontalLayout_2.addWidget(label)
 
-    def saveDraws(self):
-        #nbpix = len(self.pixList)
-        #largeur = 2
-        #longueur = len(self.pixList)/largeur
-        #ind = 0
-        #li=0
-        #self.pix_result = QPixmap(largeur*500,longueur*450)
-        #self.pix_result.fill(Qt.white)
-
-        ## on fait des lignes tant qu'on a des pix
-        #while (ind < nbpix):
-        #    col = 0
-        #    # une ligne
-        #    while (ind < nbpix) and (col < largeur):
-        #        # ajout
-        #        self.lab = QLabel()
-        #        self.lab.setPixmap(self.pixList[ind])
-        #        self.ui.horizontalLayout_2.addWidget(self.lab)
-        #        print "zzz"
-        #        self.pix_result.fill(self.pixList[ind],QPoint(col*500,li*450))
-        #        print "li:",li," col:",col
-        #        print "xof:",col*500," yof:",li*450
-        #        print "zzz"
-        #        col+=1
-        #        ind+=1
-        #    li+=1
-
-        #laba = QLabel()
-        #laba.setPixmap(self.pix_result)
-        #self.ui.horizontalLayout_2.addWidget(laba)
-        #im = self.pix_result.toImage()
-        #im.save("/tmp/image.jpg")
+    def saveEachDraws(self):
+        """ Sauve chaque scenario dans un fichier
+        """
 
         proj_dir = self.parent.parent.dir
         pic_dir = self.parent.parent.parent.scenario_pix_dir_name
@@ -224,6 +195,42 @@ class drawScenario(QMainWindow):
             im = pix.toImage()
             im.save("%s_%i.jpg"%(pic_whole_path,ind+1))
             print "%s_%i.jpg"%(pic_whole_path,ind+1)
+
+    def saveDrawsToOne(self):
+        """ Sauve tous les scenarios dans une seule image
+        """
+        nbpix = len(self.pixList)
+        largeur = 2
+        longueur = (len(self.pixList)/largeur)+1
+        ind = 0
+        li=0
+        self.im_result = QImage(largeur*500,longueur*450,QImage.Format_RGB32)
+        self.im_result.fill(Qt.white)
+        painter = QPainter(self.im_result)
+
+        # on fait des lignes tant qu'on a des pix
+        while (ind < nbpix):
+            col = 0
+            # une ligne
+            while (ind < nbpix) and (col < largeur):
+                # ajout
+                print "zzz"
+                #self.im_result.fill(self.pixList[ind],QPoint(col*500,li*450))
+                painter.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
+                print "li:",li," col:",col
+                print "xof:",col*500," yof:",li*450
+                print "zzz"
+                col+=1
+                ind+=1
+            li+=1
+
+        proj_dir = self.parent.parent.dir
+        pic_dir = self.parent.parent.parent.scenario_pix_dir_name
+        pic_basename = self.parent.parent.parent.scenario_pix_basename
+        pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
+
+        self.im_result.save("%s_all.jpg"%pic_whole_path)
+
 
     def closeEvent(self, event):
         pass
