@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import time
 import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -46,6 +45,8 @@ class Diyabc(QMainWindow):
         self.closeProjActionMenu = file_menu.addAction("Close current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)
         action = file_menu.addAction("Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
+        #mettre plusieurs raccourcis claviers pour le meme menu
+        action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
         style_menu = self.ui.menubar.addMenu("Style")
         action_group = QActionGroup(style_menu)
         for stxt in self.styles:
@@ -53,8 +54,6 @@ class Diyabc(QMainWindow):
             self.style_actions[stxt].setActionGroup(action_group)
             self.style_actions[stxt].setCheckable(True)
 	
-	#mettre plusieurs raccourcis claviers pour le meme menu
-	#action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 
     def changeStyle(self):

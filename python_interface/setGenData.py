@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import time
-import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
 from setGenData_ui import Ui_Frame
 #from setMutationModel import SetMutationModel
-from drawScenario import drawScenario
 from visualizescenario import *
-import history 
-from history import IOScreenError
 
 class SetGeneticData(QFrame):
     def __init__(self,parent=None):
@@ -22,7 +15,6 @@ class SetGeneticData(QFrame):
         self.groupList = []
         # dico de frames indexé par les box
         self.setMutation_dico = {}
-        #TODO maj ces infos
         # dico indexé par la box du groupe
         self.group_info_dico = {}
         self.locus_info_list = []
@@ -226,7 +218,8 @@ class SetGeneticData(QFrame):
             name = str(listw_of_group.item(row).text())
             num = int(name.split(' ')[1])
             # retrait du groupe
-            item = listw_of_group.takeItem(row)
+            #item = listw_of_group.takeItem(row)
+            listw_of_group.takeItem(row)
             # on decouvre la ligne
             self.ui.tableWidget.setRowHidden(num-1,False)
             # on met à jour le dico des groupes

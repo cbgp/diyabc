@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import sys
 import time
 import os
 import shutil
-from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
-from diyabc_ui import Ui_MainWindow
 from project import *
 from project_ui import *
 from setHistFrame import SetHistoricalModel
@@ -156,14 +152,15 @@ class Project(QTabWidget):
         #qfd.setDirectory("~/")
         name = qfd.getExistingDirectory()
         if name != "":
-            # name_YYYY_MM_DD_num le plus elevé
+            # name_YYYY_MM_DD-num le plus elevé
             dd = datetime.now()
-            num = 36
+            #num = 36
             cd = 100
             while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,cd)):
                 cd -= 1
             if cd == 100:
-                QMessageBox.information(self,"Error","With this version, you cannot have more than 100 project directories")
+                QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
+                        project directories\nfor the same project name and in the same directory")
             else:
                 newdir = name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,(cd+1))
                 self.ui.dirEdit.setText(newdir)

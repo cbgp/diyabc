@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from set_condition_ui import Ui_MainWindow

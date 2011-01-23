@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import time
 import os
-from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
 from drawScenario_ui import Ui_MainWindow
 from visualizescenario import *
-import history 
-from history import IOScreenError
 
 class drawScenario(QMainWindow):
     """ Classe pour créer une fenêtre à l'intérieur de laquelle on dessine les scénarios (valides car déjà vérifiés)

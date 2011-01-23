@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import time
 import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
 from setHistFrame_ui import Ui_Frame
 from drawScenario import drawScenario
 from visualizescenario import *
