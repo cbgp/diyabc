@@ -219,12 +219,14 @@ class SetHistoricalModel(QFrame):
 
         self.condList.append(groupBox_cond)
 
-    def rmCond(self):
+    def rmCond(self,condBox=None):
         """ Suppression d'une condition sur les variables
         dans l'affichage et dans la liste locale
         """
-        self.sender().parent().hide()
-        self.condList.remove(self.sender().parent())
+        if condBox == None:
+            condBox = self.sender().parent()
+        condBox.hide()
+        self.condList.remove(condBox)
 
     def checkToDraw(self):
         """ clic sur le bouton check scenario pour dessiner les scenarios
@@ -249,6 +251,7 @@ class SetHistoricalModel(QFrame):
     def putParameters(self,chk_list):
         """ A partir de la liste des scenarios (vérifiés donc valides), on ajoute les paramètres dans la GUI
         La liste de paramètres est vidée avant cette opération
+        La liste des conditions est nettoyée des conditions concernant un paramètre qui n'existe plus
         """
         # on enleve les groupbox de la GUI
         for paramBox in self.paramList:
@@ -305,6 +308,26 @@ class SetHistoricalModel(QFrame):
                         box.findChild(QRadioButton,"normalRadio").setChecked(True)
                     elif dico_tmp[pname][1] == "LN":
                         box.findChild(QRadioButton,"logNormalRadio").setChecked(True)
+        # nettoyage des conditions obsolètes
+        cond_list_to_del = []
+        for cond in self.condList:
+            ctxt = str(cond.findChild(QLabel,"condLabel").text())
+            if '<=' in ctxt:
+                cl = ctxt.split('<=')
+            elif '>=' in ctxt:
+                cl = ctxt.split('>=')
+            elif '>' in ctxt:
+                cl = ctxt.split('>')
+            elif '<' in ctxt:
+                cl = ctxt.split('<')
+            name1 = cl[0].strip()
+            name2 = cl[1].strip()
+            if name1 not in self.param_info_dico.keys() or\
+                name2 not in self.param_info_dico.keys():
+                cond_list_to_del.append(cond)
+        for cond in cond_list_to_del:
+            self.rmCond(cond)
+
 
     def checkScenarios(self):
         """ action de verification des scenarios

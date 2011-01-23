@@ -205,8 +205,9 @@ class drawScenario(QMainWindow):
         ind = 0
         li=0
         self.im_result = QImage(largeur*500,longueur*450,QImage.Format_RGB32)
-        self.im_result.fill(Qt.white)
+        self.im_result.fill(Qt.black)
         painter = QPainter(self.im_result)
+        painter.fillRect(0, 0, largeur*500, longueur*450, Qt.white)
 
         # on fait des lignes tant qu'on a des pix
         while (ind < nbpix):
