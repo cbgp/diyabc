@@ -23,6 +23,7 @@ class SetGeneticData(QFrame):
         # dico de frames indexé par les box
         self.setMutation_dico = {}
         #TODO maj ces infos
+        # dico indexé par la box du groupe
         self.group_info_dico = {}
         self.locus_info_list = []
 
@@ -52,6 +53,8 @@ class SetGeneticData(QFrame):
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
 
     def addRow(self,name="locus",type="M"):
+        """ ajoute un locus à la liste principale (de locus)
+        """
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
         #self.ui.tableWidget.setCellWidget(self.ui.tableWidget.rowCount()-1,i,QPushButton("View"))
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,0,QTableWidgetItem("%s %i"%(name,self.ui.tableWidget.rowCount())))
@@ -63,6 +66,8 @@ class SetGeneticData(QFrame):
 
 
     def addGroup(self):
+        """ dessine un nouveau groupe vide
+        """
         groupBox = QtGui.QGroupBox("Group %i"%(len(self.groupList)+1),self.ui.scrollAreaWidgetContents)
         groupBox.setMinimumSize(QtCore.QSize(0, 150))
         groupBox.setMaximumSize(QtCore.QSize(16777215, 150))
@@ -106,6 +111,7 @@ class SetGeneticData(QFrame):
         QObject.connect(setSumButton,SIGNAL("clicked()"),self.setSum)
 
         self.groupList.append(groupBox)
+        self.group_info_dico[groupBox] = [ "" , [] ]
 
     def setMutation(self):
         pass
@@ -130,6 +136,7 @@ class SetGeneticData(QFrame):
         # suppression de la box
         box.hide()
         self.groupList.remove(box)
+        del self.group_info_dico[box]
         # renommage des groupes
         for i,box in enumerate(self.groupList):
             old_title = str(box.title())
@@ -176,6 +183,8 @@ class SetGeneticData(QFrame):
                 tt = "Sequences"
             if tt != '':
                 box.setTitle("%s %s : %s"%(old_title.split(' ')[0],old_title.split(' ')[1],tt))
+                # on met à jour le dico des groupes
+                self.group_info_dico[box][0] = tt
 
         if all_similar:
             # déselection des présents
@@ -194,6 +203,8 @@ class SetGeneticData(QFrame):
                 box.findChild(QListWidget,"listWidget").item(i).setSelected(True)
                 # on cache la ligne
                 self.ui.tableWidget.setRowHidden(row,True)
+                # on met à jour le dico des groupes
+                self.group_info_dico[box][1].append(num_to_insert)
         else:
             QMessageBox.information(self,"Group error","In a group, all the loci must have the same type")
 
@@ -218,11 +229,15 @@ class SetGeneticData(QFrame):
             item = listw_of_group.takeItem(row)
             # on decouvre la ligne
             self.ui.tableWidget.setRowHidden(num-1,False)
+            # on met à jour le dico des groupes
+            self.group_info_dico[box][1].remove(num)
 
         # si le groupe devient vide, on enleve le type dans le nom
         if listw_of_group.count() == 0:
             old_title = str(box.title())
             box.setTitle("%s %s"%(old_title.split(' ')[0],old_title.split(' ')[1]))
+            # on met à jour le dico des groupes
+            self.group_info_dico[box][0] = ""
 
 
     def exit(self):
@@ -231,8 +246,10 @@ class SetGeneticData(QFrame):
         self.parent.setTabEnabled(1,True)
         self.parent.removeTab(self.parent.indexOf(self))
         self.parent.setCurrentIndex(0)
+
     def validate(self):
-        pass
+        print self.group_info_dico
+
     def clear(self):
         #for i in range(len(self.groupList)):
         #    self.groupList[i].hide()

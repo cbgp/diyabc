@@ -107,7 +107,7 @@ class Project(QTabWidget):
  
     def incProgress(self):
         """Increment the progress dialog"""
-        self.ui.progressBar.setValue(self.ui.progressBar.value()+1)
+        self.ui.progressBar.setValue((self.ui.progressBar.value()+1)%100)
 
     def cancelTh(self):
         print 'plop'
@@ -254,10 +254,11 @@ class Project(QTabWidget):
 
         # lecture de conf.hist.tmp
         self.hist_model_win.loadHistoricalConf()
-        # lecture des autres
+        # TODO lecture des autres
 
     def setHistValid(self,valid):
         self.hist_state_valid = valid
+        self.verifyRefTableValid()
         if valid:
             self.ui.setHistoricalButton.setIcon(QIcon("docs/ok.png"))
         else:
@@ -265,25 +266,36 @@ class Project(QTabWidget):
 
     def setGenValid(self,valid):
         self.gen_state_valid = valid
+        self.verifyRefTableValid()
         if valid:
             self.ui.setGeneticButton.setIcon(QIcon("docs/ok.png"))
         else:
             self.ui.setGeneticButton.setIcon(QIcon("docs/redcross.png"))
+    def verifyRefTableValid(self):
+        """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table
+        """
+        if self.gen_state_valid and self.hist_state_valid:
+            self.setTabIcon(0,QIcon("docs/ok.png"))
+        else:
+            self.setTabIcon(0,QIcon("docs/redcross.png"))
+
 
 class MyThread(QThread):
-   def __init__(self,parent):
-      super(MyThread,self).__init__(parent)
-      self.cancel = False
- 
-   def run (self):
-      for i in range(100):
-         if self.cancel: break
-         time.sleep(1)
-         self.emit(SIGNAL("increment"))
-         print "%d "%(i),
- 
-   @pyqtSignature("")
-   def cancel(self):
-      """SLOT to cancel treatment"""
-      self.cancel = True
+    """ thread de traitement qui met à jour la progressBar
+    """
+    def __init__(self,parent):
+        super(MyThread,self).__init__(parent)
+        self.cancel = False
+
+    def run (self):
+        for i in range(1000):
+            if self.cancel: break
+            time.sleep(0.01)
+            self.emit(SIGNAL("increment"))
+            #print "%d "%(i),
+
+    @pyqtSignature("")
+    def cancel(self):
+        """SLOT to cancel treatment"""
+        self.cancel = True
 

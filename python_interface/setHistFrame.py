@@ -39,8 +39,6 @@ class SetHistoricalModel(QFrame):
         QObject.connect(self.ui.addScButton,SIGNAL("clicked()"),self.addSc)
         QObject.connect(self.ui.uniformRadio,SIGNAL("clicked()"),self.setUniformRp)
         QObject.connect(self.ui.otherRadio,SIGNAL("clicked()"),self.setOtherRp)
-        #TODO
-        #QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.addCondition)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.close)
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.close)
@@ -556,7 +554,6 @@ class SetHistoricalModel(QFrame):
                 law = "LU"
             self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,step]
         # creation et ecriture du fichier dans le rep choisi
-        # TODO questions : quand est ce qu'on le crée/modifie? Il contient des infos autres que celles du setHist?
         self.writeHistoricalConfFromGui()
         # VERIFS, si c'est bon, on change d'onglet, sinon on reste
         if self.checkAll():
@@ -626,7 +623,6 @@ class SetHistoricalModel(QFrame):
                 info = self.param_info_dico[pname]
                 f.write("\n%s %s %s[%s,%s,%s,%s,%s]"%(pname,info[0],info[1],info[2],info[3],info[4],info[5],info[6]))
             for cond in self.condList:
-                # TODO
                 lab = cond.findChild(QLabel,"condLabel")
                 f.write("\n%s"%lab.text().replace(' ',''))
             if self.ui.drawUntilRadio.isChecked():
