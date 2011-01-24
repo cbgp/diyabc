@@ -105,7 +105,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="setMutMsLabel">
      <property name="maximumSize">
       <size>
        <width>16777215</width>

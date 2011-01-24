@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setMutationModelSequences.ui'
 #
-# Created: Mon Jan 24 11:24:58 2011
+# Created: Mon Jan 24 15:14:30 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,14 +45,14 @@ class Ui_Frame(object):
         self.okButton.setObjectName("okButton")
         self.horizontalLayout_9.addWidget(self.okButton)
         self.verticalLayout_28.addWidget(self.frame_6)
-        self.label_33 = QtGui.QLabel(Frame)
-        self.label_33.setMaximumSize(QtCore.QSize(16777215, 80))
+        self.setMutSeqLabel = QtGui.QLabel(Frame)
+        self.setMutSeqLabel.setMaximumSize(QtCore.QSize(16777215, 80))
         font = QtGui.QFont()
         font.setPointSize(16)
-        self.label_33.setFont(font)
-        self.label_33.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_33.setObjectName("label_33")
-        self.verticalLayout_28.addWidget(self.label_33)
+        self.setMutSeqLabel.setFont(font)
+        self.setMutSeqLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.setMutSeqLabel.setObjectName("setMutSeqLabel")
+        self.verticalLayout_28.addWidget(self.setMutSeqLabel)
         self.horizontalLayout_14 = QtGui.QHBoxLayout()
         self.horizontalLayout_14.setObjectName("horizontalLayout_14")
         self.frame = QtGui.QFrame(Frame)
@@ -675,7 +675,7 @@ class Ui_Frame(object):
         self.okButton.setToolTip(QtGui.QApplication.translate("Frame", "Test and save data (Alt+o)", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_33.setText(QtGui.QApplication.translate("Frame", "Set mutation Model (Sequences)", None, QtGui.QApplication.UnicodeUTF8))
+        self.setMutSeqLabel.setText(QtGui.QApplication.translate("Frame", "Set mutation Model (Sequences)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_18.setText(QtGui.QApplication.translate("Frame", "Mean mutation\n"
 "rate (per site\n"
 "per generation)", None, QtGui.QApplication.UnicodeUTF8))
@@ -710,7 +710,7 @@ class Ui_Frame(object):
         self.radioButton_2.setText(QtGui.QApplication.translate("Frame", "Log-u", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_3.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_5.setText(QtGui.QApplication.translate("Frame", "Maximum (2)", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_5.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
@@ -730,7 +730,7 @@ class Ui_Frame(object):
         self.radioButton_14.setText(QtGui.QApplication.translate("Frame", "Log-u", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_15.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
         self.label_24.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_25.setText(QtGui.QApplication.translate("Frame", "Maximum (3)", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_25.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.label_26.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
         self.label_28.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"

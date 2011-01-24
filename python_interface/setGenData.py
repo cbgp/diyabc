@@ -22,6 +22,7 @@ class SetGeneticData(QFrame):
         self.setMutation_dico = {}
         self.setMutationSeq_dico = {}
         self.setSum_dico = {}
+        self.setSumSeq_dico = {}
         # dico indexé par la box du groupe
         self.group_info_dico = {}
         self.locus_info_list = []
@@ -118,6 +119,8 @@ class SetGeneticData(QFrame):
         self.setMutationSeq_dico[groupBox] = frameSeq
         frameSum = SetSummaryStatistics(self)
         self.setSum_dico[groupBox] = frameSum
+        #frameSumSeq = SetSummaryStatisticsSequences(self)
+        #self.setSumSeq_dico[groupBox] = frameSumSeq
 
     def setMutation(self):
         box = self.sender().parent()
@@ -126,19 +129,40 @@ class SetGeneticData(QFrame):
             self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
             self.parent.setTabEnabled(self.parent.indexOf(self),False)
             self.parent.setCurrentWidget(self.setMutation_dico[box])
+            # maj du titre de la frame
+            lab = self.setMutation_dico[box].ui.setMutMsLabel
+            lab.setText("Set mutation model of %s (microsatellites)"%(" ".join(str(box.title()).split()[:2])))
         elif "Sequences" in title:
             self.parent.addTab(self.setMutationSeq_dico[box],"Set mutation model")
             self.parent.setTabEnabled(self.parent.indexOf(self),False)
             self.parent.setCurrentWidget(self.setMutationSeq_dico[box])
+            # maj du titre de la frame
+            lab = self.setMutationSeq_dico[box].ui.setMutSeqLabel
+            lab.setText("Set mutation model of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
         else:
             QMessageBox.information(self,"Set Mutation Model error","Add locus to a group before setting the mutation model")
 
 
     def setSum(self):
         box = self.sender().parent()
-        self.parent.addTab(self.setSum_dico[box],"Set summary statistics")
-        self.parent.setTabEnabled(self.parent.indexOf(self),False)
-        self.parent.setCurrentWidget(self.setSum_dico[box])
+        title = str(box.title())
+        if "Microsatellites" in title:
+            self.parent.addTab(self.setSum_dico[box],"Set summary statistics")
+            self.parent.setTabEnabled(self.parent.indexOf(self),False)
+            self.parent.setCurrentWidget(self.setSum_dico[box])
+            # maj du titre de la frame
+            lab = self.setSum_dico[box].ui.sumStatLabel
+            lab.setText("Set summary statistics of %s (microsatellites)"%(" ".join(str(box.title()).split()[:2])))
+        elif "Sequences" in title:
+            pass
+            #self.parent.addTab(self.setSumSeq_dico[box],"Set summary statistics")
+            #self.parent.setTabEnabled(self.parent.indexOf(self),False)
+            #self.parent.setCurrentWidget(self.setSumSeq_dico[box])
+            ## maj du titre de la frame
+            #lab = self.setSumSeq_dico[box].ui.sumStatLabel
+            #lab.setText("Set summary statistics of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
+        else:
+            QMessageBox.information(self,"Set Summary statistics error","Add locus to a group before setting the summary statistics")
 
     def rmGroup(self):
         """ Enlève les loci présents dans le groupe et supprime le groupe

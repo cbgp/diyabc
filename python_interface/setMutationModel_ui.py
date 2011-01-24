@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setMutationmodel.ui'
 #
-# Created: Fri Jan 21 18:14:50 2011
+# Created: Mon Jan 24 15:14:34 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,14 +45,14 @@ class Ui_Frame(object):
         self.okButton.setObjectName("okButton")
         self.horizontalLayout_9.addWidget(self.okButton)
         self.verticalLayout_6.addWidget(self.frame_6)
-        self.label = QtGui.QLabel(Frame)
-        self.label.setMaximumSize(QtCore.QSize(16777215, 80))
+        self.setMutMsLabel = QtGui.QLabel(Frame)
+        self.setMutMsLabel.setMaximumSize(QtCore.QSize(16777215, 80))
         font = QtGui.QFont()
         font.setPointSize(16)
-        self.label.setFont(font)
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
-        self.label.setObjectName("label")
-        self.verticalLayout_6.addWidget(self.label)
+        self.setMutMsLabel.setFont(font)
+        self.setMutMsLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.setMutMsLabel.setObjectName("setMutMsLabel")
+        self.verticalLayout_6.addWidget(self.setMutMsLabel)
         self.frame = QtGui.QFrame(Frame)
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
@@ -578,7 +578,7 @@ class Ui_Frame(object):
         self.okButton.setToolTip(QtGui.QApplication.translate("Frame", "Test and save data (Alt+o)", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Frame", "Set mutation Model (Microsatellites)", None, QtGui.QApplication.UnicodeUTF8))
+        self.setMutMsLabel.setText(QtGui.QApplication.translate("Frame", "Set mutation Model (Microsatellites)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_18.setText(QtGui.QApplication.translate("Frame", "Mean\n"
 "mutation\n"
 "rate", None, QtGui.QApplication.UnicodeUTF8))
