@@ -66,6 +66,7 @@ class Diyabc(QMainWindow):
         """
         qfd = QFileDialog()
         dir = qfd.getExistingDirectory()
+        proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
         if dir != "":
             if os.path.exists(dir) and os.path.exists("%s/conf.hist.tmp"%dir):
@@ -83,7 +84,7 @@ class Diyabc(QMainWindow):
                     if len(self.project_list) == 1:
                         self.closeProjActionMenu.setDisabled(False)
                 else:
-                    QMessageBox.information(self,"Name error","A project named %s is already loaded"%text)
+                    QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:
                 QMessageBox.information(self,"Load error","This is not a project directory")
 
@@ -98,22 +99,25 @@ class Diyabc(QMainWindow):
         text, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if ok:
             if text != "":
-                proj_name_list = []
-                for p in self.project_list:
-                    proj_name_list.append(p.name)
-                if not text in proj_name_list:
-                    newProj = Project(text,None,self)
-                    self.project_list.append(newProj)
-                    # si c'est le premier projet, on permet la fermeture par le menu
-                    # ajout au tabwidget de l'ui principale
-                    # ajout de l'onglet
-                    self.ui.tabWidget.addTab(newProj,newProj.name)
-                    self.ui.tabWidget.setCurrentWidget(newProj)
+                if ('_' in text) or ('-' in text) or ("'" in text) or ('"' in text) or ('.' in text):
+                    proj_name_list = []
+                    for p in self.project_list:
+                        proj_name_list.append(p.name)
+                    if not text in proj_name_list:
+                        newProj = Project(text,None,self)
+                        self.project_list.append(newProj)
+                        # si c'est le premier projet, on permet la fermeture par le menu
+                        # ajout au tabwidget de l'ui principale
+                        # ajout de l'onglet
+                        self.ui.tabWidget.addTab(newProj,newProj.name)
+                        self.ui.tabWidget.setCurrentWidget(newProj)
 
-                    if len(self.project_list) == 1:
-                        self.closeProjActionMenu.setDisabled(False)
+                        if len(self.project_list) == 1:
+                            self.closeProjActionMenu.setDisabled(False)
+                    else:
+                        QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded."%text)
                 else:
-                    QMessageBox.information(self,"Name error","A project named %s is already loaded."%text)
+                    QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ -")
             else:
                 QMessageBox.information(self,"Name error","The project name cannot be empty.")
 
