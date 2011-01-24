@@ -5,9 +5,13 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData_ui import Ui_Frame
 from setMutationModel import SetMutationModel
+from setMutationModelSequences import SetMutationModelSequences
 from visualizescenario import *
 
 class SetGeneticData(QFrame):
+    """ Frame qui est ouverte dans un onglet pour faire des groupes de locus,
+    déterminer leur modèle mutationnel et leur summary statistics
+    """
     def __init__(self,parent=None):
         super(SetGeneticData,self).__init__(parent)
         self.parent=parent
@@ -113,9 +117,17 @@ class SetGeneticData(QFrame):
 
     def setMutation(self):
         box = self.sender().parent()
-        self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
-        self.parent.setTabEnabled(self.parent.indexOf(self),False)
-        self.parent.setCurrentWidget(self.setMutation_dico[box])
+        title = str(box.title())
+        if "Microsatellites" in title:
+            self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
+            self.parent.setTabEnabled(self.parent.indexOf(self),False)
+            self.parent.setCurrentWidget(self.setMutation_dico[box])
+        elif "Sequences" in title:
+            self.parent.addTab(self.setMutationSeq_dico[box],"Set mutation model")
+            self.parent.setTabEnabled(self.parent.indexOf(self),False)
+            self.parent.setCurrentWidget(self.setMutationSeq_dico[box])
+        else:
+            QMessageBox.information(self,"Set Mutation Model error","Add locus to a group before setting the mutation model")
 
 
     def setSum(self):

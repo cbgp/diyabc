@@ -137,7 +137,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_26">
         <item>
-         <widget class="QFrame" name="frame_5">
+         <widget class="QFrame" name="firstFrame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -400,7 +400,7 @@ per generation)</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_4">
+         <widget class="QFrame" name="secondFrame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -640,7 +640,7 @@ around mean)</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_2">
+         <widget class="QFrame" name="thirdFrame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -802,7 +802,7 @@ k_C/T</string>
                 </size>
                </property>
                <property name="text">
-                <string>Maximum (2)</string>
+                <string>Maximum</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -894,7 +894,7 @@ k_C/T</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_3">
+         <widget class="QFrame" name="fourthFrame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -1122,7 +1122,7 @@ around mean)</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_7">
+         <widget class="QFrame" name="fifthFrame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -1283,7 +1283,7 @@ k_A/G</string>
                 </size>
                </property>
                <property name="text">
-                <string>Maximum (3)</string>
+                <string>Maximum</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1375,7 +1375,7 @@ k_A/G</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_8">
+         <widget class="QFrame" name="sixthFrame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -1633,28 +1633,31 @@ around mean)</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <widget class="QRadioButton" name="radioButton_4">
+            <widget class="QRadioButton" name="jukesRadio">
              <property name="text">
               <string>Jukes Kantor (1969)</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="radioButton_5">
+            <widget class="QRadioButton" name="kimuraRadio">
              <property name="text">
               <string>Kimura 2 Parameters (1980)</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="radioButton_7">
+            <widget class="QRadioButton" name="haseRadio">
              <property name="text">
               <string>Hasegawa-Kishino-Yano (1985)</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="radioButton_8">
+            <widget class="QRadioButton" name="tamuraRadio">
              <property name="text">
               <string>Tamura Nei (1993)</string>
              </property>
