@@ -4,7 +4,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData_ui import Ui_Frame
-#from setMutationModel import SetMutationModel
+from setMutationModel import SetMutationModel
 from visualizescenario import *
 
 class SetGeneticData(QFrame):
@@ -13,8 +13,9 @@ class SetGeneticData(QFrame):
         self.parent=parent
         # liste des box
         self.groupList = []
-        # dico de frames indexé par les box
+        # dicos de frames indexé par les box
         self.setMutation_dico = {}
+        self.setMutationSeq_dico = {}
         # dico indexé par la box du groupe
         self.group_info_dico = {}
         self.locus_info_list = []
@@ -61,8 +62,8 @@ class SetGeneticData(QFrame):
         """ dessine un nouveau groupe vide
         """
         groupBox = QtGui.QGroupBox("Group %i"%(len(self.groupList)+1),self.ui.scrollAreaWidgetContents)
-        groupBox.setMinimumSize(QtCore.QSize(0, 150))
-        groupBox.setMaximumSize(QtCore.QSize(16777215, 150))
+        groupBox.setMinimumSize(QtCore.QSize(0, 200))
+        groupBox.setMaximumSize(QtCore.QSize(16777215, 200))
         groupBox.setObjectName("groupBox")
         horizontalLayout = QtGui.QHBoxLayout(groupBox)
         horizontalLayout.setObjectName("horizontalLayout")
@@ -105,14 +106,16 @@ class SetGeneticData(QFrame):
         self.groupList.append(groupBox)
         self.group_info_dico[groupBox] = [ "" , [] ]
 
+        frame = SetMutationModel(self)
+        self.setMutation_dico[groupBox] = frame
+        frameSeq = SetMutationModelSequences(self)
+        self.setMutationSeq_dico[groupBox] = frameSeq
+
     def setMutation(self):
-        pass
-        #box = self.sender().parent()
-        #frame = SetMutationModel(self)
-        #self.setMutation_dico[box] = frame
-        #self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
-        #self.parent.setTabEnabled(self.parent.indexOf(self),False)
-        #self.parent.setCurrentWidget(self.setMutation_dico[box])
+        box = self.sender().parent()
+        self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
+        self.parent.setTabEnabled(self.parent.indexOf(self),False)
+        self.parent.setCurrentWidget(self.setMutation_dico[box])
 
 
     def setSum(self):
