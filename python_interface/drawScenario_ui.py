@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/drawScenario.ui'
 #
-# Created: Tue Jan 11 19:08:37 2011
+# Created: Mon Jan 24 23:51:15 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -72,4 +72,5 @@ class Ui_MainWindow(object):
         self.printButton.setText(QtGui.QApplication.translate("MainWindow", "PRINT", None, QtGui.QApplication.UnicodeUTF8))
         self.saveButton.setText(QtGui.QApplication.translate("MainWindow", "SAVE", None, QtGui.QApplication.UnicodeUTF8))
         self.closeButton.setText(QtGui.QApplication.translate("MainWindow", "CLOSE", None, QtGui.QApplication.UnicodeUTF8))
+        self.closeButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
 

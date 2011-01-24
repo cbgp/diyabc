@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from drawScenario_ui import Ui_MainWindow
@@ -24,7 +25,7 @@ class drawScenario(QMainWindow):
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.close)
-        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.saveDrawsToOne)
+        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.save)
 
     def drawAll(self):
         """ Pour tous les scenarios (sous forme d'un dico d'infos extraites de la verif)
@@ -173,6 +174,22 @@ class drawScenario(QMainWindow):
         label.setPixmap(pix)
         self.ui.horizontalLayout_2.addWidget(label)
 
+    def save(self):
+        # nettoyage radical : suppression du dossier
+        proj_dir = self.parent.parent.dir
+        pic_dir = self.parent.parent.parent.scenario_pix_dir_name
+        if os.path.exists("%s/%s"%(proj_dir,pic_dir)):
+            shutil.rmtree("%s/%s"%(proj_dir,pic_dir))
+        # puis on le recrée, vide évidemment
+        os.mkdir("%s/%s"%(proj_dir,pic_dir))
+
+        answer = QMessageBox.question(self,"Saving option","Would you like to save all images in one file or in separated files ?",\
+                "All in one","Separated")
+        if answer == 0:
+            self.saveDrawsToOne()
+        elif answer == 1:
+            self.saveEachDraws()
+
     def saveEachDraws(self):
         """ Sauve chaque scenario dans un fichier
         """
@@ -182,14 +199,14 @@ class drawScenario(QMainWindow):
         pic_basename = self.parent.parent.parent.scenario_pix_basename
         pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
 
-        # si le rep contenant les images n'existe pas, on le crée
-        if not os.path.exists("%s/%s"%(proj_dir,pic_dir)):
-            os.mkdir("%s/%s"%(proj_dir,pic_dir))
-        else:
-            # effacer les anciennes images
-            for i in range(100):
-                if os.path.exists("%s_%i.jpg"%(pic_whole_path,i)):
-                    os.remove("%s_%i.jpg"%(pic_whole_path,i))
+        ## si le rep contenant les images n'existe pas, on le crée
+        #if not os.path.exists("%s/%s"%(proj_dir,pic_dir)):
+        #    os.mkdir("%s/%s"%(proj_dir,pic_dir))
+        #else:
+        #    # effacer les anciennes images
+        #    for i in range(100):
+        #        if os.path.exists("%s_%i.jpg"%(pic_whole_path,i)):
+        #            os.remove("%s_%i.jpg"%(pic_whole_path,i))
 
         for ind,pix in enumerate(self.pixList):
             im = pix.toImage()
@@ -199,6 +216,12 @@ class drawScenario(QMainWindow):
     def saveDrawsToOne(self):
         """ Sauve tous les scenarios dans une seule image
         """
+        proj_dir = self.parent.parent.dir
+        pic_dir = self.parent.parent.parent.scenario_pix_dir_name
+        ## si le rep contenant les images n'existe pas, on le crée
+        #if not os.path.exists("%s/%s"%(proj_dir,pic_dir)):
+        #    os.mkdir("%s/%s"%(proj_dir,pic_dir))
+
         nbpix = len(self.pixList)
         largeur = 2
         longueur = (len(self.pixList)/largeur)+1
