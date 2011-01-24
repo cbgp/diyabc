@@ -135,8 +135,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>873</width>
-        <height>179</height>
+        <width>869</width>
+        <height>168</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -763,8 +763,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>873</width>
-        <height>260</height>
+        <width>869</width>
+        <height>234</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -1651,8 +1651,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>873</width>
-        <height>139</height>
+        <width>869</width>
+        <height>168</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1708,7 +1708,7 @@
              <number>1</number>
             </property>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="addAdmixButton">
               <property name="text">
                <string>add</string>
               </property>
@@ -1717,20 +1717,21 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
-               <widget class="QComboBox" name="comboBox"/>
+               <widget class="QComboBox" name="adm1Combo"/>
               </item>
               <item>
-               <widget class="QComboBox" name="comboBox_2"/>
+               <widget class="QComboBox" name="adm2Combo"/>
               </item>
               <item>
-               <widget class="QComboBox" name="comboBox_3"/>
+               <widget class="QComboBox" name="adm3Combo"/>
               </item>
              </layout>
             </item>
             <item>
              <widget class="QLabel" name="label_2">
               <property name="text">
-               <string>Maximum likelihood (Choisy et al, 2004)</string>
+               <string>Maximum likelihood
+(Choisy et al, 2004)</string>
               </property>
              </widget>
             </item>
