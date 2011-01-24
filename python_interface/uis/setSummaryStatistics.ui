@@ -126,7 +126,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QScrollArea" name="scrollArea">
+    <widget class="QScrollArea" name="oneScroll">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -165,13 +165,13 @@
           <widget class="QFrame" name="frame_8">
            <property name="minimumSize">
             <size>
-             <width>200</width>
+             <width>275</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>200</width>
+             <width>275</width>
              <height>16777215</height>
             </size>
            </property>
@@ -182,49 +182,308 @@
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_7">
-            <property name="spacing">
-             <number>1</number>
-            </property>
-            <property name="topMargin">
-             <number>1</number>
-            </property>
-            <property name="bottomMargin">
-             <number>1</number>
-            </property>
             <item>
              <widget class="QLabel" name="label_18">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>14</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>14</height>
+               </size>
+              </property>
               <property name="text">
                <string/>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_19">
-              <property name="text">
-               <string>Mean number of alleles</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_18">
+              <item>
+               <widget class="QLabel" name="label_19">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Mean number of alleles</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allMnoaButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneMnoaButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_20">
-              <property name="text">
-               <string>Mean genic diversity</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_21">
+              <item>
+               <widget class="QLabel" name="label_20">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Mean genic diversity</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allMgdButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneMgdButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_21">
-              <property name="text">
-               <string>Mean size variance</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_20">
+              <item>
+               <widget class="QLabel" name="label_21">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Mean size variance</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allMsvButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneMsvButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_22">
-              <property name="text">
-               <string>Mean Garza-Williamson's M</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_19">
+              <item>
+               <widget class="QLabel" name="label_22">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Mean Garza-Williamson's M</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allMgwButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneMgwButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -233,13 +492,13 @@
           <widget class="QFrame" name="frame_9">
            <property name="minimumSize">
             <size>
-             <width>100</width>
+             <width>85</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>100</width>
+             <width>85</width>
              <height>16777215</height>
             </size>
            </property>
@@ -261,6 +520,23 @@
             </property>
             <item>
              <widget class="QLabel" name="oneSampleLabel">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>14</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>5000</width>
+                <height>14</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Samp 1</string>
               </property>
@@ -289,13 +565,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="layoutDirection">
@@ -341,13 +617,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -390,13 +666,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -439,13 +715,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -478,7 +754,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QScrollArea" name="scrollArea_2">
+    <widget class="QScrollArea" name="twoScroll">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -507,7 +783,7 @@
           </size>
          </property>
          <property name="text">
-          <string>One Sample summary statistics</string>
+          <string>Two Sample summary statistics</string>
          </property>
         </widget>
        </item>
@@ -517,13 +793,13 @@
           <widget class="QFrame" name="frame_10">
            <property name="minimumSize">
             <size>
-             <width>200</width>
+             <width>250</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>200</width>
+             <width>250</width>
              <height>16777215</height>
             </size>
            </property>
@@ -533,71 +809,438 @@
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_10">
-            <property name="spacing">
-             <number>1</number>
-            </property>
-            <property name="topMargin">
-             <number>1</number>
-            </property>
-            <property name="bottomMargin">
-             <number>1</number>
-            </property>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
             <item>
              <widget class="QLabel" name="label_26">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>14</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>14</height>
+               </size>
+              </property>
               <property name="text">
                <string/>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_27">
-              <property name="text">
-               <string>Mean number of alleles</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_22">
+              <item>
+               <widget class="QLabel" name="label_27">
+                <property name="text">
+                 <string>Mean number of alleles</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allMnoa2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneMnoa2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_28">
-              <property name="text">
-               <string>Mean genic diversity</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_23">
+              <item>
+               <widget class="QLabel" name="label_28">
+                <property name="text">
+                 <string>Mean genic diversity</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allMgd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneMgd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_29">
-              <property name="text">
-               <string>Mean size variance</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_24">
+              <item>
+               <widget class="QLabel" name="label_29">
+                <property name="text">
+                 <string>Mean size variance</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allMsv2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneMsv2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_30">
-              <property name="text">
-               <string>Fst</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_25">
+              <item>
+               <widget class="QLabel" name="label_30">
+                <property name="text">
+                 <string>Fst</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allFst2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneFst2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_31">
-              <property name="text">
-               <string>Classification index</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_26">
+              <item>
+               <widget class="QLabel" name="label_31">
+                <property name="text">
+                 <string>Classification index</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allCi2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneCi2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_32">
-              <property name="text">
-               <string>Shared allele distance</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_27">
+              <item>
+               <widget class="QLabel" name="label_32">
+                <property name="text">
+                 <string>Shared allele distance</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allSad2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneSad2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_34">
-              <property name="text">
-               <string>(dµ)² distance</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_28">
+              <item>
+               <widget class="QLabel" name="label_34">
+                <property name="text">
+                 <string>(dµ)² distance</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allDd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneDd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -626,14 +1269,28 @@
             <property name="spacing">
              <number>1</number>
             </property>
-            <property name="topMargin">
-             <number>1</number>
-            </property>
-            <property name="bottomMargin">
+            <property name="margin">
              <number>1</number>
             </property>
             <item>
              <widget class="QLabel" name="twoSampleLabel">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>14</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>14</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Samp 1&amp;2</string>
               </property>
@@ -659,13 +1316,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -708,13 +1365,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -757,13 +1414,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -806,13 +1463,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -842,13 +1499,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -861,13 +1518,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -897,13 +1554,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -946,13 +1603,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>20</width>
-                  <height>16777215</height>
+                  <height>14</height>
                  </size>
                 </property>
                 <property name="text">
@@ -985,7 +1642,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QScrollArea" name="scrollArea_3">
+    <widget class="QScrollArea" name="admixScroll">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -1112,6 +1769,11 @@
             </property>
             <item>
              <widget class="QLabel" name="threeSampleLabel">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Samp 1&amp;2&amp;3</string>
               </property>
@@ -1119,6 +1781,11 @@
             </item>
             <item>
              <widget class="QPushButton" name="rmButton">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>remove</string>
               </property>
