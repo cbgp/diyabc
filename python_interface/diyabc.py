@@ -99,7 +99,7 @@ class Diyabc(QMainWindow):
         text, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if ok:
             if text != "":
-                if ('_' in text) or ('-' in text) or ("'" in text) or ('"' in text) or ('.' in text):
+                if ('_' not in text) and ('-' not in text) and ("'" not in text) and ('"' not in text) and ('.' not in text):
                     proj_name_list = []
                     for p in self.project_list:
                         proj_name_list.append(p.name)

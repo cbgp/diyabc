@@ -6,6 +6,7 @@ from PyQt4.QtGui import *
 from setGenData_ui import Ui_Frame
 from setMutationModel import SetMutationModel
 from setMutationModelSequences import SetMutationModelSequences
+from setSummaryStatistics import SetSummaryStatistics
 from visualizescenario import *
 
 class SetGeneticData(QFrame):
@@ -20,6 +21,7 @@ class SetGeneticData(QFrame):
         # dicos de frames indexé par les box
         self.setMutation_dico = {}
         self.setMutationSeq_dico = {}
+        self.setSum_dico = {}
         # dico indexé par la box du groupe
         self.group_info_dico = {}
         self.locus_info_list = []
@@ -114,6 +116,8 @@ class SetGeneticData(QFrame):
         self.setMutation_dico[groupBox] = frame
         frameSeq = SetMutationModelSequences(self)
         self.setMutationSeq_dico[groupBox] = frameSeq
+        frameSum = SetSummaryStatistics(self)
+        self.setSum_dico[groupBox] = frameSum
 
     def setMutation(self):
         box = self.sender().parent()
@@ -131,7 +135,10 @@ class SetGeneticData(QFrame):
 
 
     def setSum(self):
-        pass
+        box = self.sender().parent()
+        self.parent.addTab(self.setSum_dico[box],"Set summary statistics")
+        self.parent.setTabEnabled(self.parent.indexOf(self),False)
+        self.parent.setCurrentWidget(self.setSum_dico[box])
 
     def rmGroup(self):
         """ Enlève les loci présents dans le groupe et supprime le groupe
