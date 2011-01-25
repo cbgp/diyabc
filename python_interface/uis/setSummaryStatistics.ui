@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>895</width>
-    <height>704</height>
+    <width>891</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -136,7 +136,7 @@
         <x>0</x>
         <y>0</y>
         <width>869</width>
-        <height>168</height>
+        <height>194</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -764,7 +764,7 @@
         <x>0</x>
         <y>0</y>
         <width>869</width>
-        <height>234</height>
+        <height>255</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -1652,7 +1652,7 @@
         <x>0</x>
         <y>0</y>
         <width>869</width>
-        <height>168</height>
+        <height>194</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1681,13 +1681,13 @@
           <widget class="QFrame" name="frame">
            <property name="minimumSize">
             <size>
-             <width>200</width>
+             <width>230</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>200</width>
+             <width>230</width>
              <height>16777215</height>
             </size>
            </property>
@@ -1698,15 +1698,6 @@
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
-            <property name="spacing">
-             <number>1</number>
-            </property>
-            <property name="topMargin">
-             <number>1</number>
-            </property>
-            <property name="bottomMargin">
-             <number>1</number>
-            </property>
             <item>
              <widget class="QPushButton" name="addAdmixButton">
               <property name="text">
@@ -1728,12 +1719,64 @@
              </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Maximum likelihood
+             <layout class="QHBoxLayout" name="horizontalLayout_29">
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Maximum likelihood
 (Choisy et al, 2004)</string>
-              </property>
-             </widget>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allMl3Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneMl3Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>

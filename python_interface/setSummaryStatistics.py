@@ -75,6 +75,9 @@ class SetSummaryStatistics(QFrame):
         QObject.connect(self.ui.noneCi2Button,SIGNAL("clicked()"),self.allPressed)
         QObject.connect(self.ui.noneSad2Button,SIGNAL("clicked()"),self.allPressed)
         QObject.connect(self.ui.noneDd2Button,SIGNAL("clicked()"),self.allPressed)
+        # all and none for admixtures
+        QObject.connect(self.ui.allMl3Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.noneMl3Button,SIGNAL("clicked()"),self.allPressed)
 
         QObject.connect(self.ui.addAdmixButton,SIGNAL("clicked()"),self.addAdmix)
 
@@ -342,13 +345,11 @@ class SetSummaryStatistics(QFrame):
             for box in self.admixSampleList:
                 txt = str(box.findChild(QLabel,"threeSampleLabel").text()).replace('Samp\n','')
                 valbox = (txt.split('&')[0],txt.split('&')[1],txt.split('&')[2])
-                if valbox == (val1,val2,val3) or valbox == (val1,val3,val2)\
-                        or valbox == (val2,val1,val3) or valbox == (val2,val3,val1)\
-                        or valbox == (val3,val1,val2) or valbox == (val3,val2,val1):
+                if valbox == (val1,val2,val3):
                     ok = False
                     break
             if not ok:
-                QMessageBox.information(self,"Value error","This admixture summary statistic is already set (%s,%s,%s)"%valbox)
+                QMessageBox.information(self,"Value error","This admixture summary statistic is already set")
             else:
                 self.addAdmixSampleGui(int(val1),int(val2),int(val3))
 
