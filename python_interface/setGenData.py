@@ -7,6 +7,7 @@ from setGenData_ui import Ui_Frame
 from setMutationModel import SetMutationModel
 from setMutationModelSequences import SetMutationModelSequences
 from setSummaryStatistics import SetSummaryStatistics
+from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from visualizescenario import *
 
 class SetGeneticData(QFrame):
@@ -119,8 +120,8 @@ class SetGeneticData(QFrame):
         self.setMutationSeq_dico[groupBox] = frameSeq
         frameSum = SetSummaryStatistics(self)
         self.setSum_dico[groupBox] = frameSum
-        #frameSumSeq = SetSummaryStatisticsSequences(self)
-        #self.setSumSeq_dico[groupBox] = frameSumSeq
+        frameSumSeq = SetSummaryStatisticsSeq(self)
+        self.setSumSeq_dico[groupBox] = frameSumSeq
 
     def setMutation(self):
         box = self.sender().parent()
@@ -154,13 +155,12 @@ class SetGeneticData(QFrame):
             lab = self.setSum_dico[box].ui.sumStatLabel
             lab.setText("Set summary statistics of %s (microsatellites)"%(" ".join(str(box.title()).split()[:2])))
         elif "Sequences" in title:
-            pass
-            #self.parent.addTab(self.setSumSeq_dico[box],"Set summary statistics")
-            #self.parent.setTabEnabled(self.parent.indexOf(self),False)
-            #self.parent.setCurrentWidget(self.setSumSeq_dico[box])
-            ## maj du titre de la frame
-            #lab = self.setSumSeq_dico[box].ui.sumStatLabel
-            #lab.setText("Set summary statistics of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
+            self.parent.addTab(self.setSumSeq_dico[box],"Set summary statistics")
+            self.parent.setTabEnabled(self.parent.indexOf(self),False)
+            self.parent.setCurrentWidget(self.setSumSeq_dico[box])
+            # maj du titre de la frame
+            lab = self.setSumSeq_dico[box].ui.sumStatLabel
+            lab.setText("Set summary statistics of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
         else:
             QMessageBox.information(self,"Set Summary statistics error","Add locus to a group before setting the summary statistics")
 
