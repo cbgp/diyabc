@@ -219,16 +219,16 @@ public:
 		}
 	}
 
-	HeaderC* readHeader(){
+	HeaderC* readHeader(char* headerfilename){
 		string s1,**sl,*ss,*ss1;
 		int *nlscen,nss,nss1,j,k,l,gr,grm;
-		ifstream file("ReftableHeader.txt", ios::in);
+		ifstream file(headerfilename, ios::in);
 		if (file == NULL) {
 			this->message = "File ReftableHeader.txt not found";
 			return this;
 		} else this->message="";
 		getline(file,this->datafilename);
-		dataobs.loadfromfile(this->datafilename);
+		this->dataobs.loadfromfile(this->datafilename);
 		getline(file,s1);
 		this->nparamtot=getwordint(s1,1);
 		this->nstat=getwordint(s1,4);
@@ -238,7 +238,7 @@ public:
 		this->nscenarios=getwordint(s1,1);
 		sl = new string*[this->nscenarios];
 		nlscen = new int[this->nscenarios];
-		scenario = new Scenario[this->nscenarios];
+		this->scenario = new Scenario[this->nscenarios];
 		for (int i=0;i<this->nscenarios;i++) nlscen[i]=getwordint(s1,3+i);
 		for (int i=0;i<this->nscenarios;i++) {
 			sl[i] = new string[nlscen[i]];
@@ -411,7 +411,8 @@ struct ParticleSetC
 	LocusC *locuslist;
 	LocusGroupC *grouplist;
 	int npart,nloc,ngr;
-	int nsample,*nind,**indivsexe;
+	int nsample,*nind,**indivsexe,nscenarios;
+	ScenarioC *scenario;
 	double sexratio;
 
 	void setdata(int p) {
@@ -515,6 +516,10 @@ struct ParticleSetC
 			this->particule[p].locuslist[kloc].samplesize = new int[ header.dataobs.nsample];
 			for (int sa=0;sa<this->nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] =  header.dataobs.locus[kloc].samplesize[sa];
 		}
+	}
+
+	void setscenarios (int p) {
+		this->particule[p].nscenarios=header.nscenarios;
 	}
 
 	void setevents (int p) {
@@ -738,10 +743,9 @@ struct ParticleSetC
 		delete []this->indivsexe;
 	}
 
-	vector<double> dosimultabref(int npart, bool dnatrue)
+	vector<double> dosimultabref(HeaderC header,int npart, bool dnatrue)
 		{
 		//cout << "debut de dosimultabref\n";
-		header.readHeader();
 		this->npart = npart;
 		this->particule = new ParticleC[this->npart];
 		//cout << "apres le new ParticleC\n";
