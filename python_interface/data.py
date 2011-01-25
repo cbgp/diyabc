@@ -364,7 +364,9 @@ class Data(object):
                             m = MissingData(locus=iloc,sample=sample,indiv=len(self.haplo[-1][-1])-1)
                             self.missdat.append(m)
                     else :
-                        if seqlen==-1 : seqlen = len(g)
+                        if seqlen==-1 : 
+                            seqlen = len(g)
+                            loc.dnalength = seqlen
                         if len(g) != seqlen :
                             mes="At locus %s, individual %s has a sequence length different from previous sequences at the same locus"%(self.locuslist[iloc].name,self.indivname[sample][ind])
                             raise NotsamelengthsequencesError(mes)

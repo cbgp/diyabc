@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -29,8 +30,8 @@ class SetGeneticData(QFrame):
         # dico indexé par la box du groupe
         self.group_info_dico = {}
         self.nbLocusGui = 0
-        # dico indexé par les noms de locus, qui donne le numero du locus
-        self.dico_num_locus = {}
+        # dico indexé par les noms de locus, qui donne le numero du locus et le groupe du locus
+        self.dico_num_and_numgroup_locus = {}
 
         self.createWidgets()
 
@@ -57,7 +58,7 @@ class SetGeneticData(QFrame):
                 self.addRow(name=data.locuslist[i].name,type="S")
             else:
                 self.addRow(name=data.locuslist[i].name,type="M")
-            self.dico_num_locus[data.locuslist[i].name] = i+1
+            self.dico_num_and_numgroup_locus[data.locuslist[i].name] = [i+1,0]
             self.nbLocusGui+=1
 
 
@@ -194,6 +195,11 @@ class SetGeneticData(QFrame):
         for i,box in enumerate(self.groupList):
             old_title = str(box.title())
             box.setTitle("Group %i %s"%(i+1,' '.join(old_title.split(' ')[2:])))
+            # pour chaque groupe, on maj le numero de groupe de tous les locus du groupe
+            lw = box.findChild(QListWidget,"listWidget")
+            for j in range(lw.count()):
+                itemtxt = str(lw.item(j).text())
+                self.dico_num_and_numgroup_locus[itemtxt][1] = i+1
 
     def addToGroup(self):
         """ ajoute les loci selectionnés au groupe du bouton pressé
@@ -221,7 +227,7 @@ class SetGeneticData(QFrame):
             if all_similar:
                 name = str(listwidget.item(0).text())
                 #num = int(name.split(' ')[1])
-                num = self.dico_num_locus[name]
+                num = self.dico_num_and_numgroup_locus[name]
                 # info sur le premier locus du groupe
                 type = str(self.ui.tableWidget.item(num-1,1).text())
                 print "\ntype deja present : %s"%type
@@ -252,7 +258,7 @@ class SetGeneticData(QFrame):
                 i = 0
                 #num_to_insert = int(name.split(' ')[1])
                 num_to_insert = row+1
-                while i < listwidget.count() and self.dico_num_locus[str(listwidget.item(i).text())] < num_to_insert :
+                while i < listwidget.count() and self.dico_num_and_numgroup_locus[str(listwidget.item(i).text())][0] < num_to_insert :
                     i+=1
                 #box.findChild(QListWidget,"listWidget").addItem(name)
                 box.findChild(QListWidget,"listWidget").insertItem(i,name)
@@ -261,6 +267,8 @@ class SetGeneticData(QFrame):
                 self.ui.tableWidget.setRowHidden(row,True)
                 # on met à jour le dico des groupes
                 self.group_info_dico[box][1].append(num_to_insert)
+                # on met à jour le numero du groupe pour ce locus
+                self.dico_num_and_numgroup_locus[str(name)][1] = (self.groupList.index(box)+1)
         else:
             QMessageBox.information(self,"Group error","In a group, all the loci must have the same type")
 
@@ -281,7 +289,7 @@ class SetGeneticData(QFrame):
         for row in row_list:
             name = str(listw_of_group.item(row).text())
             #num = int(name.split(' ')[1])
-            num = self.dico_num_locus[name]
+            num = self.dico_num_and_numgroup_locus[name][0]
             # retrait du groupe
             #item = listw_of_group.takeItem(row)
             listw_of_group.takeItem(row)
@@ -289,6 +297,7 @@ class SetGeneticData(QFrame):
             self.ui.tableWidget.setRowHidden(num-1,False)
             # on met à jour le dico des groupes
             self.group_info_dico[box][1].remove(num)
+            self.dico_num_and_numgroup_locus[name][1] = -1
 
         # si le groupe devient vide, on enleve le type dans le nom
         if listw_of_group.count() == 0:
@@ -307,6 +316,8 @@ class SetGeneticData(QFrame):
 
     def validate(self):
         print self.group_info_dico
+        print self.dico_num_and_numgroup_locus
+        self.writeGeneticConfFromGui()
 
     def clear(self):
         #for i in range(len(self.groupList)):
@@ -316,7 +327,35 @@ class SetGeneticData(QFrame):
             lw = box.findChild(QListWidget,"listWidget")
             for row in range(lw.count()):
                 name = str(lw.item(row).text())
-                num = int(name.split(' ')[1])
+                #num = int(name.split(' ')[1])
+                num = self.dico_num_and_numgroup_locus[name]
                 # on decouvre la ligne
                 self.ui.tableWidget.setRowHidden(num-1,False)
         self.groupList = []
+
+    def writeGeneticConfFromGui(self):
+        if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.gen.tmp"):
+            os.remove("%s/conf.gen.tmp" % self.parent.ui.dirEdit.text())
+
+        f = open(self.parent.ui.dirEdit.text()+"/conf.gen.tmp",'w')
+        f.write("loci description (nloc=%i)\n"%self.nbLocusGui)
+        data = self.parent.data
+        for i in range(data.nloc):
+            name = data.locuslist[i].name
+            type = data.locuslist[i].type
+            group = self.dico_num_and_numgroup_locus[name][1]
+            if type > 4:
+                microSeq = "S"
+                typestr = LOC_TYP[type-5]
+                length = data.locuslist[i].dnalength
+                f.write("%s %s [%s] G%i %s\n"%(name.replace(' ','_'),typestr,microSeq,group,length))
+            else:
+                microSeq = "M"
+                typestr = LOC_TYP[type]
+                indice_dans_table = self.dico_num_and_numgroup_locus[name][0]
+                motif_size = str(self.ui.tableWidget.item(indice_dans_table-1,2).text())
+                motif_range = str(self.ui.tableWidget.item(indice_dans_table-1,3).text())
+                f.write("%s %s [%s] G%i %s %s\n"%(name.replace(' ','_'),typestr,microSeq,group,motif_size,motif_range))
+
+
+
