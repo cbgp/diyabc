@@ -119,8 +119,8 @@ public:
     	this->nn0=n;
     	this->ne0 = new Ne0C[this->nn0];
     	for (int i=0;i<this->nn0;i++) {
-    		if (atoi(ss[i].c_str())!=0) {this->ne0[i].name=n0[i];this->ne0[i].val=-1;}
-    		else               {this->ne0[i].name="";this->ne0[i].val=atoi(ss[i]);}
+    		if (atoi(ss[i].c_str())!=0) {this->ne0[i].name=ss[i];this->ne0[i].val=-1;}
+    		else               {this->ne0[i].name="";this->ne0[i].val=atoi(ss[i].c_str());}
     	}
     	this->event = new EventC[nl-1];
     	for (int i=0;i<nl-1;i++) {
@@ -164,10 +164,10 @@ PriorC copyprior(PriorC source) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class Header
+class HeaderC
 {
 public:
-	string message,datafilename;
+	string message,datafilename,entete;
 	DataC dataobs;
 	int nparamtot,nstat,nscenarios,nconditions,ngroupes;
 	Scenario *scenario;
@@ -214,12 +214,12 @@ public:
 		}
 		this->groupe[gr].loc = new int[this->groupe[gr].nloc];
 		int iloc=-1;
-		for (int i=0;i<dataobsi;loc++) {
+		for (int i=0;i<dataobs.nloc;i++) {
 			if (dataobs.locus[i].groupe==gr+1) {iloc++;this->groupe[gr].loc[iloc] = i;}
 		}
 	}
 
-	void readHeader(){
+	HeaderC* readHeader(){
 		string s1,**sl,*ss,*ss1;
 		int *nlscen,nss,nss1,j,k,l,gr,grm;
 		ifstream file("ReftableHeader.txt", ios::in);
@@ -257,8 +257,8 @@ public:
 		ss=splitwords(s1," ",&nss);
 		this->nparamtot = atoi(ss[3].c_str());
 		if (nss>4) this->nconditions =  atoi(ss[4].c_str()); else  this->nconditions = 0;
-		this->histparam = new PriorC[this->nparamtot];
-		if (this->nconditions>0) this->condition = new prior[this->nconditions];
+		this->histparam = new HistParameterC[this->nparamtot];
+		if (this->nconditions>0) this->condition = new ConditionC[this->nconditions];
 		delete [] ss;
 		for (int i=0;i<this->nparamtot;i++) {
 			getline(file,s1);
@@ -271,7 +271,7 @@ public:
 		}
 		delete [] ss;
 		if (this->nconditions>0) {
-			this->condition = new prior[this->nconditions];
+			this->condition = new ConditionC[this->nconditions];
 			for (int i=0;i<this->nconditions;i++) {
 				getline(file,s1);
 				this->condition[i] = this->readcondition(s1);
@@ -321,10 +321,10 @@ public:
 				if (this->groupe[gr].priormusmoy.constant) this->groupe[gr].musmoy=this->groupe[gr].priormusmoy.mini; else this->groupe[gr].musmoy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc = this->readprior(ss1[1]);delete [] ss1;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1moy  = this->readprior(ss1[1]);delete [] ss1;
-				if (this->groupe[gr].priork1.constant) this->groupe[gr].k1moy=this->groupe[gr].priork1moy.mini; else this->groupe[gr].k1moy=-1.0;
+				if (this->groupe[gr].priork1moy.constant) this->groupe[gr].k1moy=this->groupe[gr].priork1moy.mini; else this->groupe[gr].k1moy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readprior(ss1[1]);delete [] ss1;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2moy  = this->readprior(ss1[1]);delete [] ss1;
-				if (this->groupe[gr].priork2.constant) this->groupe[gr].k2moy=this->groupe[gr].priork2moy.mini; else this->groupe[gr].k2moy=-1.0;
+				if (this->groupe[gr].priork2moy.constant) this->groupe[gr].k2moy=this->groupe[gr].priork2moy.mini; else this->groupe[gr].k2moy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readprior(ss1[1]);delete [] ss1;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);
 				this->groupe[gr].p_fixe=atof(ss1[2].c_str());this->groupe[gr].gams=atof(ss1[3].c_str());
@@ -341,7 +341,7 @@ public:
 		for (gr=0;gr<grm;gr++) {
 			getline(file,s1);
 			ss=splitwords(s1," ",&nss);
-			this->groupe[gr].nstat = atoi(ss[3]);
+			this->groupe[gr].nstat = atoi(ss[3].c_str());
 			this->groupe[gr].sumstat = new StatC[this->groupe[gr].nstat];
 			delete [] ss;
 			k=0;
@@ -398,7 +398,7 @@ public:
 //Entete du fichier reftable
 		getline(file,s1);		//ligne vide
 		getline(file,this->entete);		//ligne entete
-
+		return this;
 	}
 };
 
@@ -406,6 +406,7 @@ public:
 
 struct ParticleSetC
 {
+	HeaderC header;
 	ParticleC *particule;
 	LocusC *locuslist;
 	LocusGroupC *grouplist;
@@ -414,13 +415,13 @@ struct ParticleSetC
 	double sexratio;
 
 	void setdata(int p) {
-		this->particule[p].data.nsample = dataobs.nsample;
-		this->particule[p].data.nind = new int[dataobs.nsample];
-		this->particule[p].data.indivsexe = new int*[dataobs.nsample];
-		for (int i=0;i<dataobs.nsample;i++) {
-			this->particule[p].data.nind[i] = dataobs.nind[i];
-			this->particule[p].data.indivsexe[i] = new int[dataobs.nind[i]];
-			for (int j=0;j<data.nind[i];j++) this->particule[p].data.indivsexe[i][j] = dataobs.indivsexe[i][j];
+		this->particule[p].data.nsample = header.dataobs.nsample;
+		this->particule[p].data.nind = new int[header.dataobs.nsample];
+		this->particule[p].data.indivsexe = new int*[header.dataobs.nsample];
+		for (int i=0;i<header.dataobs.nsample;i++) {
+			this->particule[p].data.nind[i] = header.dataobs.nind[i];
+			this->particule[p].data.indivsexe[i] = new int[header.dataobs.nind[i]];
+			for (int j=0;j<header.dataobs.nind[i];j++) this->particule[p].data.indivsexe[i][j] = header.dataobs.indivsexe[i][j];
 		}
 	}
 
@@ -469,53 +470,50 @@ struct ParticleSetC
 				}
 			}
 			this->particule[p].grouplist[gr].nstat=header.groupe[gr].nstat;
-			this->particule[p].grouplist[gr].stat = new StatC[header.groupe[gr].nstat];
+			this->particule[p].grouplist[gr].sumstat = new StatC[header.groupe[gr].nstat];
 			for (int i=0;i<header.groupe[gr].nstat;i++){
-				this->particule[p].grouplist[gr].stat[i].cat   = header.groupe[gr].stat[i].cat;
-				this->particule[p].grouplist[gr].stat[i].samp  = header.groupe[gr].stat[i].samp;
-				this->particule[p].grouplist[gr].stat[i].samp1 = header.groupe[gr].stat[i].samp1;
-				this->particule[p].grouplist[gr].stat[i].samp2 = header.groupe[gr].stat[i].samp2;
+				this->particule[p].grouplist[gr].sumstat[i].cat   = header.groupe[gr].sumstat[i].cat;
+				this->particule[p].grouplist[gr].sumstat[i].samp  = header.groupe[gr].sumstat[i].samp;
+				this->particule[p].grouplist[gr].sumstat[i].samp1 = header.groupe[gr].sumstat[i].samp1;
+				this->particule[p].grouplist[gr].sumstat[i].samp2 = header.groupe[gr].sumstat[i].samp2;
 
 			}
 		}
 	}
 
 	void setloci(int p) {
-		this->particule[p].nloc = dataobs.nloc;
-		this->particule[p].locuslist = new LocusC[dataobs.nloc];
-		for (int kloc=0;kloc<dataobs.nloc;kloc++){
-			this->particule[p].locuslist[kloc].type = dataobs.locus[kloc].type;
-			this->particule[p].locuslist[kloc].groupe = dataobs.locus[kloc].groupe;
-			if (dataobs.locus[kloc].type < 5) {
-				this->particule[p].locuslist[kloc].kmin = dataobs.locus[kloc].kmin;
-				this->particule[p].locuslist[kloc].kmax = dataobs.locus[kloc].kmax;
-				this->particule[p].locuslist[kloc].motif_size = dataobs.locus[kloc].motif_size;
-				this->particule[p].locuslist[kloc].motif_range = dataobs.locus[kloc].motif_range;
-				this->particule[p].locuslist[kloc].mut_rate = dataobs.locus[kloc].mut_rate;
-				if (dataobs.locus[kloc].mut_rate<0.0) this->particule[p].locuslist[kloc].priormut = this->copyprior(dataobs.locus[kloc].priormut);
-				this->particule[p].locuslist[kloc].Pgeom = dataobs.locus[kloc].Pgeom;
-				if (dataobs.locus[kloc].Pgeom<0.0) this->particule[p].locuslist[kloc].priorP = this->copyprior(dataobs.locus[kloc].priorP);
-				this->particule[p].locuslist[kloc].sni_rate = dataobs.locus[kloc].sni_rate;
-				if (dataobs.locus[kloc].sni_rate<0.0) this->particule[p].locuslist[kloc].priorsni = this->copyprior(dataobs.locus[kloc].priorsni);
+		this->particule[p].nloc = header.dataobs.nloc;
+		this->particule[p].locuslist = new LocusC[header.dataobs.nloc];
+		for (int kloc=0;kloc<header.dataobs.nloc;kloc++){
+			this->particule[p].locuslist[kloc].type = header.dataobs.locus[kloc].type;
+			this->particule[p].locuslist[kloc].groupe = header.dataobs.locus[kloc].groupe;
+			if (header.dataobs.locus[kloc].type < 5) {
+				this->particule[p].locuslist[kloc].kmin = header.dataobs.locus[kloc].kmin;
+				this->particule[p].locuslist[kloc].kmax = header.dataobs.locus[kloc].kmax;
+				this->particule[p].locuslist[kloc].motif_size = header.dataobs.locus[kloc].motif_size;
+				this->particule[p].locuslist[kloc].motif_range = header.dataobs.locus[kloc].motif_range;
+				this->particule[p].locuslist[kloc].mut_rate = header.dataobs.locus[kloc].mut_rate;
+				this->particule[p].locuslist[kloc].Pgeom = header.dataobs.locus[kloc].Pgeom;
+				this->particule[p].locuslist[kloc].sni_rate = header.dataobs.locus[kloc].sni_rate;
 				}
 			else {
-				this->particule[p].locuslist[kloc].dnalength = dataobs.locus[kloc].dnalength;
-				this->particule[p].locuslist[kloc].mus_rate = dataobs.locus[kloc].mus_rate;
-				this->particule[p].locuslist[kloc].k1 = dataobs.locus[kloc].k1;
-				this->particule[p].locuslist[kloc].k2 = dataobs.locus[kloc].k2;
-				this->particule[p].locuslist[kloc].pi_A =dataobs.locus[kloc].pi_A ;
-				this->particule[p].locuslist[kloc].pi_C = dataobs.locus[kloc].pi_C;
-				this->particule[p].locuslist[kloc].pi_G = dataobs.locus[kloc].pi_G;
-				this->particule[p].locuslist[kloc].pi_T = dataobs.locus[kloc].pi_T;
-				this->particule[p].locuslist[kloc].mutsit = new double[dataobs.locus[kloc].dnalength];
-				for (int i=0;i<locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = dataobs.locus[kloc].mutsit[i];
+				this->particule[p].locuslist[kloc].dnalength =  header.dataobs.locus[kloc].dnalength;
+				this->particule[p].locuslist[kloc].mus_rate =  header.dataobs.locus[kloc].mus_rate;
+				this->particule[p].locuslist[kloc].k1 =  header.dataobs.locus[kloc].k1;
+				this->particule[p].locuslist[kloc].k2 =  header.dataobs.locus[kloc].k2;
+				this->particule[p].locuslist[kloc].pi_A = header.dataobs.locus[kloc].pi_A ;
+				this->particule[p].locuslist[kloc].pi_C =  header.dataobs.locus[kloc].pi_C;
+				this->particule[p].locuslist[kloc].pi_G =  header.dataobs.locus[kloc].pi_G;
+				this->particule[p].locuslist[kloc].pi_T =  header.dataobs.locus[kloc].pi_T;
+				this->particule[p].locuslist[kloc].mutsit = new double[ header.dataobs.locus[kloc].dnalength];
+				for (int i=0;i<locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = header.dataobs.locus[kloc].mutsit[i];
 				//std::cout <<"\n";
 				}
-			this->particule[p].locuslist[kloc].coeff = dataobs.locus[kloc].coeff;
-			this->particule[p].locuslist[kloc].ss = new int[dataobs.nsample];
-			for (int sa=0;sa<this->nsample;sa++) this->particule[p].locuslist[kloc].ss[sa] = dataobs.locus[kloc].ss[sa];
-			this->particule[p].locuslist[kloc].samplesize = new int[dataobs.nsample];
-			for (int sa=0;sa<this->nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] = dataobs.locus[kloc].samplesize[sa];
+			this->particule[p].locuslist[kloc].coeff =  header.dataobs.locus[kloc].coeff;
+			this->particule[p].locuslist[kloc].ss = new int[ header.dataobs.nsample];
+			for (int sa=0;sa<this->nsample;sa++) this->particule[p].locuslist[kloc].ss[sa] =  header.dataobs.locus[kloc].ss[sa];
+			this->particule[p].locuslist[kloc].samplesize = new int[ header.dataobs.nsample];
+			for (int sa=0;sa<this->nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] =  header.dataobs.locus[kloc].samplesize[sa];
 		}
 	}
 
@@ -743,7 +741,6 @@ struct ParticleSetC
 	vector<double> dosimultabref(int npart, bool dnatrue)
 		{
 		//cout << "debut de dosimultabref\n";
-		Header header;
 		header.readHeader();
 		this->npart = npart;
 		this->particule = new ParticleC[this->npart];
@@ -792,7 +789,7 @@ struct ParticleSetC
 		return paramstat;
 	}
 
-	list getsumstat(){
+/*	list getsumstat(){
 //		cout << "npart = " << this->npart << "   nstat = " << this->particule[0].nstat << "\n";
 		list stat;
 		for (int ipart=0;ipart<this->npart;ipart++) {
@@ -896,7 +893,7 @@ struct ParticleSetC
 		for (int j=0;j<this->particule[0].nstat;j++) stat.append(this->particule[0].stat[j].val);
 		return stat;
 	}
-
+*/
 
 };
 

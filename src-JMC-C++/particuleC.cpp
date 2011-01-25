@@ -140,6 +140,15 @@ struct GeneTreeC
 	int nmutot,nnodes,nbranches,ngenes;
 };
 
+char* str2char(string x)
+{
+    size_t size = x.size() + 1;
+    char* conv = new char[ size ];
+    strncpy( conv, x.c_str(), size );
+    return(conv);
+}
+
+
 struct ParticleC
 {
 	LocusC *locuslist;
@@ -989,7 +998,7 @@ struct ParticleC
 					cout << "\n";
 					return 2;
 				}
-				this->locuslist[loc].haplodna[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].dna;
+				this->locuslist[loc].haplodna[sa][ind] = str2char(this->gt[loc].nodes[ordre[sa][ind]].dna);
 				ind++;if (ind==this->locuslist[loc].ss[sa]) {sa++;ind=0;}
 				}
 //AJOUTER LE TRAITEMENT DES DONNEES MANQUANTES DES SEQUENCES
@@ -1639,39 +1648,41 @@ struct ParticleC
 	 *
 	 *
 	 */
-	void docalstat() {
+	void docalstat(int gr) {
 //		cout << "avant calfreq\n";
 		calfreq();
 //		cout << "apres calfreq\n";
-		for (int st=0;st<this->nstat;st++) {
+		for (int st=0;st<this->grouplist[gr].nstat;st++) {
 //			cout <<" calcul de la stat "<<st<<"   cat="<<this->stat[st].cat<<"   group="<<stat[st].group<<"\n";
-			switch (this->stat[st].cat)
-			{	case     1 : this->stat[st].val = cal_nal1p(this->stat[st]);break;
-				case     2 : this->stat[st].val = cal_het1p(this->stat[st]);break;
-				case     3 : this->stat[st].val = cal_var1p(this->stat[st]);break;
-				case     4 : this->stat[st].val = cal_mgw1p(this->stat[st]);break;
-				case     5 : this->stat[st].val = cal_Fst2p(this->stat[st]);break;
-				case     6 : this->stat[st].val = cal_lik2p(this->stat[st]);break;
-				case     7 : this->stat[st].val = cal_dmu2p(this->stat[st]);break;
-				case     8 : this->stat[st].val = cal_nal2p(this->stat[st]);break;
-				case     9 : this->stat[st].val = cal_het2p(this->stat[st]);break;
-				case    10 : this->stat[st].val = cal_var2p(this->stat[st]);break;
-				case    11 : this->stat[st].val = cal_das2p(this->stat[st]);break;
-				case    12 : this->stat[st].val = cal_Aml3p(this->stat[st]);break;
-				case    -1 : this->stat[st].val = cal_nha1p(this->stat[st]);break;
-				case    -2 : this->stat[st].val = cal_nss1p(this->stat[st]);break;
-				case    -3 : this->stat[st].val = cal_mpd1p(this->stat[st]);break;
-				case    -4 : this->stat[st].val = cal_vpd1p(this->stat[st]);break;
-				case    -5 : this->stat[st].val = cal_dta1p(this->stat[st]);break;
-				case    -6 : this->stat[st].val = cal_pss1p(this->stat[st]);break;
-				case    -7 : this->stat[st].val = cal_mns1p(this->stat[st]);break;
-				case    -8 : this->stat[st].val = cal_vns1p(this->stat[st]);break;
-				case    -9 : this->stat[st].val = cal_nha2p(this->stat[st]);break;
-				case   -10 : this->stat[st].val = cal_nss2p(this->stat[st]);break;
-				case   -11 : this->stat[st].val = cal_mpw2p(this->stat[st]);break;
-				case   -12 : this->stat[st].val = cal_mpb2p(this->stat[st]);break;
-				case   -13 : this->stat[st].val = cal_fst2p(this->stat[st]);break;
-				case   -14 : this->stat[st].val = cal_aml3p(this->stat[st]);break;
+			int categ;
+			categ=this>grouplist[gr].sumstat[st].cat;
+			switch (categ)
+			{	case     1 : this->grouplist[gr].sumstat[st].val = cal_nal1p(this->grouplist[gr].sumstat[st]);break;
+				case     2 : this->grouplist[gr].sumstat[st].val = cal_het1p(this->grouplist[gr].sumstat[st]);break;
+				case     3 : this->grouplist[gr].sumstat[st].val = cal_var1p(this->grouplist[gr].sumstat[st]);break;
+				case     4 : this->grouplist[gr].sumstat[st].val = cal_mgw1p(this->grouplist[gr].sumstat[st]);break;
+				case     5 : this->grouplist[gr].sumstat[st].val = cal_Fst2p(this->grouplist[gr].sumstat[st]);break;
+				case     6 : this->grouplist[gr].sumstat[st].val = cal_lik2p(this->grouplist[gr].sumstat[st]);break;
+				case     7 : this->grouplist[gr].sumstat[st].val = cal_dmu2p(this->grouplist[gr].sumstat[st]);break;
+				case     8 : this->grouplist[gr].sumstat[st].val = cal_nal2p(this->grouplist[gr].sumstat[st]);break;
+				case     9 : this->grouplist[gr].sumstat[st].val = cal_het2p(this->grouplist[gr].sumstat[st]);break;
+				case    10 : this->grouplist[gr].sumstat[st].val = cal_var2p(this->grouplist[gr].sumstat[st]);break;
+				case    11 : this->grouplist[gr].sumstat[st].val = cal_das2p(this->grouplist[gr].sumstat[st]);break;
+				case    12 : this->grouplist[gr].sumstat[st].val = cal_Aml3p(this->grouplist[gr].sumstat[st]);break;
+				case    -1 : this->grouplist[gr].sumstat[st].val = cal_nha1p(this->grouplist[gr].sumstat[st]);break;
+				case    -2 : this->grouplist[gr].sumstat[st].val = cal_nss1p(this->grouplist[gr].sumstat[st]);break;
+				case    -3 : this->grouplist[gr].sumstat[st].val = cal_mpd1p(this->grouplist[gr].sumstat[st]);break;
+				case    -4 : this->grouplist[gr].sumstat[st].val = cal_vpd1p(this->grouplist[gr].sumstat[st]);break;
+				case    -5 : this->grouplist[gr].sumstat[st].val = cal_dta1p(this->grouplist[gr].sumstat[st]);break;
+				case    -6 : this->grouplist[gr].sumstat[st].val = cal_pss1p(this->grouplist[gr].sumstat[st]);break;
+				case    -7 : this->grouplist[gr].sumstat[st].val = cal_mns1p(this->grouplist[gr].sumstat[st]);break;
+				case    -8 : this->grouplist[gr].sumstat[st].val = cal_vns1p(this->grouplist[gr].sumstat[st]);break;
+				case    -9 : this->grouplist[gr].sumstat[st].val = cal_nha2p(this->grouplist[gr].sumstat[st]);break;
+				case   -10 : this->grouplist[gr].sumstat[st].val = cal_nss2p(this->grouplist[gr].sumstat[st]);break;
+				case   -11 : this->grouplist[gr].sumstat[st].val = cal_mpw2p(this->grouplist[gr].sumstat[st]);break;
+				case   -12 : this->grouplist[gr].sumstat[st].val = cal_mpb2p(this->grouplist[gr].sumstat[st]);break;
+				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(this->grouplist[gr].sumstat[st]);break;
+				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(this->grouplist[gr].sumstat[st]);break;
 			}
 			//cout << "stat["<<st<<"]="<<this->stat[st].val<<"\n";
 		}
