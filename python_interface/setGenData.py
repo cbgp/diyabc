@@ -132,12 +132,16 @@ class SetGeneticData(QFrame):
 
         frame = SetMutationModel(self)
         self.setMutation_dico[groupBox] = frame
+        frame.hide()
         frameSeq = SetMutationModelSequences(self)
         self.setMutationSeq_dico[groupBox] = frameSeq
+        frameSeq.hide()
         frameSum = SetSummaryStatistics(self)
         self.setSum_dico[groupBox] = frameSum
+        frameSum.hide()
         frameSumSeq = SetSummaryStatisticsSeq(self)
         self.setSumSeq_dico[groupBox] = frameSumSeq
+        frameSumSeq.hide()
 
     def setMutation(self):
         box = self.sender().parent()
@@ -201,12 +205,13 @@ class SetGeneticData(QFrame):
                 itemtxt = str(lw.item(j).text())
                 self.dico_num_and_numgroup_locus[itemtxt][1] = i+1
 
-    def addToGroup(self):
+    def addToGroup(self,box=None):
         """ ajoute les loci selectionnés au groupe du bouton pressé
         """
         all_similar = True
         first_type_found = ""
-        box = self.sender().parent()
+        if box == None:
+            box = self.sender().parent()
         listwidget = box.findChild(QListWidget,"listWidget")
         row_list = []
         selection = self.ui.tableWidget.selectedIndexes()
@@ -227,7 +232,7 @@ class SetGeneticData(QFrame):
             if all_similar:
                 name = str(listwidget.item(0).text())
                 #num = int(name.split(' ')[1])
-                num = self.dico_num_and_numgroup_locus[name]
+                num = self.dico_num_and_numgroup_locus[name][0]
                 # info sur le premier locus du groupe
                 type = str(self.ui.tableWidget.item(num-1,1).text())
                 print "\ntype deja present : %s"%type
@@ -328,7 +333,7 @@ class SetGeneticData(QFrame):
             for row in range(lw.count()):
                 name = str(lw.item(row).text())
                 #num = int(name.split(' ')[1])
-                num = self.dico_num_and_numgroup_locus[name]
+                num = self.dico_num_and_numgroup_locus[name][0]
                 # on decouvre la ligne
                 self.ui.tableWidget.setRowHidden(num-1,False)
         self.groupList = []
@@ -354,8 +359,57 @@ class SetGeneticData(QFrame):
                 typestr = LOC_TYP[type]
                 indice_dans_table = self.dico_num_and_numgroup_locus[name][0]
                 motif_size = str(self.ui.tableWidget.item(indice_dans_table-1,2).text())
-                motif_range = str(self.ui.tableWidget.item(indice_dans_table-1,3).text())
+                motif_range = str(self.ui.tableWidget.item(indice_dans_table-1,3).text()).strip()
                 f.write("%s %s [%s] G%i %s %s\n"%(name.replace(' ','_'),typestr,microSeq,group,motif_size,motif_range))
+
+    def loadGeneticConf(self):
+        """ Charge le fichier conf.gen.tmp
+        """
+        # de toute façon, on rempli le tableau de locus
+        self.fillLocusTableFromData()
+        if os.path.exists(self.parent.dir):
+            if os.path.exists("%s/conf.gen.tmp"%(self.parent.dir)):
+                f = open("%s/conf.gen.tmp"%(self.parent.dir),"r")
+                lines = f.readlines()
+                nloc = int(lines[0].split("nloc=")[1].split(')')[0])
+                # determination du nombre de groupes
+                l = 1
+                gmax = 0
+                while l < nloc+1:
+                    g = int(lines[l].split(' ')[3].replace('G',''))
+                    if g > gmax:
+                        gmax = g
+                    l+=1
+                # creation du bon nombre de groupes
+                for it in range(gmax):
+                    self.addGroup()
+
+                # recup des infos de chaque locus
+                l = 1
+                while l < nloc+1:
+                    lname = lines[l].split(' ')[0].replace('_',' ')
+                    ltype = lines[l].split(' ')[1]
+                    ltype_num = LOC_TYP.index(ltype)
+                    lmicroSeq = lines[l].split('[')[1].split(']')[0]
+                    num_group = int(lines[l].split(' ')[3].replace('G',''))
+                    # maj du dico
+                    self.dico_num_and_numgroup_locus[lname] = [l,num_group]
+                    if lmicroSeq == 'M':
+                        # ajout ds le groupe
+                        if num_group != 0:
+                           self.ui.tableWidget.setItemSelected(self.ui.tableWidget.item(l-1,0),True)
+                           self.addToGroup(self.groupList[num_group-1])
+                        # maj des infos dans le table
+                        ranger = lines[l].split(' ')[4]
+                        motif = lines[l].split(' ')[5]
+                        self.ui.tableWidget.setItem(l-1,2,QTableWidgetItem("%s"%(ranger)))
+                        self.ui.tableWidget.setItem(l-1,3,QTableWidgetItem("%s"%(motif)))
+                    else:
+                        # ajout ds le groupe
+                        if num_group != 0:
+                           self.ui.tableWidget.setItemSelected(self.ui.tableWidget.item(l-1,0),True)
+                           self.addToGroup(self.groupList[num_group-1])
+                    l+=1
 
 
 

@@ -254,6 +254,7 @@ class Project(QTabWidget):
 
         # lecture de conf.hist.tmp
         self.hist_model_win.loadHistoricalConf()
+        self.gen_data_win.loadGeneticConf()
         # TODO lecture des autres
 
     def setHistValid(self,valid):
