@@ -29,6 +29,8 @@ class SetGeneticData(QFrame):
         # dico indexé par la box du groupe
         self.group_info_dico = {}
         self.nbLocusGui = 0
+        # dico indexé par les noms de locus, qui donne le numero du locus
+        self.dico_num_locus = {}
 
         self.createWidgets()
 
@@ -55,6 +57,7 @@ class SetGeneticData(QFrame):
                 self.addRow(name=data.locuslist[i].name,type="S")
             else:
                 self.addRow(name=data.locuslist[i].name,type="M")
+            self.dico_num_locus[data.locuslist[i].name] = i+1
             self.nbLocusGui+=1
 
 
@@ -217,24 +220,26 @@ class SetGeneticData(QFrame):
         if listwidget.count() > 0:
             if all_similar:
                 name = str(listwidget.item(0).text())
-                num = int(name.split(' ')[1])
+                #num = int(name.split(' ')[1])
+                num = self.dico_num_locus[name]
                 # info sur le premier locus du groupe
                 type = str(self.ui.tableWidget.item(num-1,1).text())
                 print "\ntype deja present : %s"%type
                 if type != first_type_found:
                     all_similar = False
         else:
-            # le groupe est vide, on set le nom avec le type
-            old_title = str(box.title())
-            tt = ''
-            if first_type_found == 'M':
-                tt = "Microsatellites"
-            elif first_type_found == 'S':
-                tt = "Sequences"
-            if tt != '':
-                box.setTitle("%s %s : %s"%(old_title.split(' ')[0],old_title.split(' ')[1],tt))
-                # on met à jour le dico des groupes
-                self.group_info_dico[box][0] = tt
+            if all_similar:
+                # le groupe est vide, on set le nom avec le type
+                old_title = str(box.title())
+                tt = ''
+                if first_type_found == 'M':
+                    tt = "Microsatellites"
+                elif first_type_found == 'S':
+                    tt = "Sequences"
+                if tt != '':
+                    box.setTitle("%s %s : %s"%(old_title.split(' ')[0],old_title.split(' ')[1],tt))
+                    # on met à jour le dico des groupes
+                    self.group_info_dico[box][0] = tt
 
         if all_similar:
             # déselection des présents
@@ -245,8 +250,9 @@ class SetGeneticData(QFrame):
                 name = self.ui.tableWidget.item(row,0).text()
                 # ajout trié dans le groupe
                 i = 0
-                num_to_insert = int(name.split(' ')[1])
-                while i < listwidget.count() and int(listwidget.item(i).text().split(' ')[1]) < num_to_insert :
+                #num_to_insert = int(name.split(' ')[1])
+                num_to_insert = row+1
+                while i < listwidget.count() and self.dico_num_locus[str(listwidget.item(i).text())] < num_to_insert :
                     i+=1
                 #box.findChild(QListWidget,"listWidget").addItem(name)
                 box.findChild(QListWidget,"listWidget").insertItem(i,name)
@@ -274,7 +280,8 @@ class SetGeneticData(QFrame):
 
         for row in row_list:
             name = str(listw_of_group.item(row).text())
-            num = int(name.split(' ')[1])
+            #num = int(name.split(' ')[1])
+            num = self.dico_num_locus[name]
             # retrait du groupe
             #item = listw_of_group.takeItem(row)
             listw_of_group.takeItem(row)
