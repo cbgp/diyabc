@@ -225,6 +225,9 @@ class Project(QTabWidget):
         self.setCurrentWidget(self.gen_data_win)
         self.setGenValid(False)
 
+        if self.gen_data_win.nbLocusGui == 0:
+            self.gen_data_win.fillLocusTableFromData()
+
     def setNbScenarios(self,nb):
         self.ui.nbScLabel.setText(nb)
     def setNbParams(self,nb):

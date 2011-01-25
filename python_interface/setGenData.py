@@ -9,12 +9,14 @@ from setMutationModelSequences import SetMutationModelSequences
 from setSummaryStatistics import SetSummaryStatistics
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from visualizescenario import *
+from data import *
 
 class SetGeneticData(QFrame):
     """ Frame qui est ouverte dans un onglet pour faire des groupes de locus,
     déterminer leur modèle mutationnel et leur summary statistics
     """
     def __init__(self,parent=None):
+        print LOC_TYP
         super(SetGeneticData,self).__init__(parent)
         self.parent=parent
         # liste des box
@@ -26,7 +28,7 @@ class SetGeneticData(QFrame):
         self.setSumSeq_dico = {}
         # dico indexé par la box du groupe
         self.group_info_dico = {}
-        self.locus_info_list = []
+        self.nbLocusGui = 0
 
         self.createWidgets()
 
@@ -40,30 +42,40 @@ class SetGeneticData(QFrame):
         self.ui.tableWidget.setColumnWidth(2,60)
         self.ui.tableWidget.setColumnWidth(3,60)
 
-        t = True
-        for i in range(100):
-            if t:
-                self.addRow(type="S")
-            else:
-                self.addRow()
-            t = not t
 
         QObject.connect(self.ui.addGroupButton,SIGNAL("clicked()"),self.addGroup)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
 
+    def fillLocusTableFromData(self):
+        data = self.parent.data
+        for i in range(data.nloc):
+            if data.locuslist[i].type > 4:
+                self.addRow(name=data.locuslist[i].name,type="S")
+            else:
+                self.addRow(name=data.locuslist[i].name,type="M")
+            self.nbLocusGui+=1
+
+
     def addRow(self,name="locus",type="M"):
         """ ajoute un locus à la liste principale (de locus)
         """
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
         #self.ui.tableWidget.setCellWidget(self.ui.tableWidget.rowCount()-1,i,QPushButton("View"))
-        self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,0,QTableWidgetItem("%s %i"%(name,self.ui.tableWidget.rowCount())))
+        self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,0,QTableWidgetItem("%s"%(name)))
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,1,QTableWidgetItem("%s"%type))
-        self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,2,QTableWidgetItem("2"))
-        self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,3,QTableWidgetItem("40"))
         self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,0).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,0).flags() & ~Qt.ItemIsEditable)
         self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,1).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,1).flags() & ~Qt.ItemIsEditable)
+        if type == "M":
+            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,2,QTableWidgetItem("2"))
+            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,3,QTableWidgetItem("40"))
+        else:
+            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,2,QTableWidgetItem(" "))
+            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,3,QTableWidgetItem(" "))
+            self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,2).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,2).flags() & ~Qt.ItemIsEditable)
+            self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,3).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,3).flags() & ~Qt.ItemIsEditable)
+
 
 
     def addGroup(self):

@@ -43,14 +43,15 @@ class LocusType(object):
     def __init__(self, type=None):
         self.type = type
         
+
+LOC_TYP    = ('<A>','<H>', '<X>', '<Y>', '<M>')
+LOC_TYP1   = ('_A','_H','_X','_Y','_M')
+LOCUS_TYPE = ('mic_A','mic_H','mic_X','mic_Y','mic_M','seq_A','seq_H','seq_X','seq_Y','seq_M')
+SLOCUS_TYPE= ('Autosomal diploid microsatellites','Autosomal haploid microsatellites','X-linked microsatellites','Y-linked microsatellites','Mitochondrial microsatellites',
+              'Autosomal diploid DNA sequences','Autosomal haploid DNA sequences','X-linked DNA sequences','Y-linked DNA sequences','Mitochondrial DNA sequences')
 class Locus(object):
     """ doc"""
     
-    LOC_TYP    = ('<A>','<H>', '<X>', '<Y>', '<M>')
-    LOC_TYP1   = ('_A','_H','_X','_Y','_M')
-    LOCUS_TYPE = ('mic_A','mic_H','mic_X','mic_Y','mic_M','seq_A','seq_H','seq_X','seq_Y','seq_M')
-    SLOCUS_TYPE= ('Autosomal diploid microsatellites','Autosomal haploid microsatellites','X-linked microsatellites','Y-linked microsatellites','Mitochondrial microsatellites',
-                  'Autosomal diploid DNA sequences','Autosomal haploid DNA sequences','X-linked DNA sequences','Y-linked DNA sequences','Mitochondrial DNA sequences')
     
     def __init__(self, type=None, name=None, group=None,
 #                 pi_A=None, pi_C=None, pi_G=None, pi_T=None,
