@@ -13,6 +13,7 @@
 #include <iostream>
 #include <complex>
 #include <string>
+#include "mesutils.cpp"
 
 using namespace std;
 #define MISSING -9999
@@ -108,7 +109,123 @@ struct LocusGroupC
 	StatC *sumstat;
 };
 
-// vector<vector<int>> essai[x][];
+
+class ScenarioC
+{
+public:
+	double *parameters,prior_proba;
+    int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0;
+    EventC *event;
+    Ne0C *ne0;
+    HistParameterC *histparam;
+    /* action = 0 (varne), 1 (merge), 2 (split), 3 (adsamp)
+     * category=0 (Ne)   , 1 (time),  3 (admixrate)
+    */
+
+    void read_events(int nl,string *ls){
+    	string *ss;
+    	int n;
+    	ss = splitwords(ls[0]," ",&n);
+    	this->nn0=n;
+    	this->ne0 = new Ne0C[this->nn0];
+    	for (int i=0;i<this->nn0;i++) {
+    		if (atoi(ss[i].c_str())!=0) {this->ne0[i].name=ss[i];this->ne0[i].val=-1;}
+    		else               {this->ne0[i].name="";this->ne0[i].val=atoi(ss[i].c_str());}
+    	}
+    	this->event = new EventC[nl-1];
+    	for (int i=0;i<nl-1;i++) {
+    		ss = splitwords(ls[i+1]," ",&n);
+    		this->event[i].stime="";this->event[i].sNe="";this->event[i].sadmixrate="";
+    		if (ss[0]=="0") {this->event[i].time=0;}
+    		else if (atoi(ss[0].c_str())==0) {this->event[i].time=0;this->event[i].stime=ss[0];}
+    			 else {this->event[i].time=atoi(ss[0].c_str());}
+    		if (majuscules(ss[1])=="SAMPLE") {
+    			this->event[i].action=3;
+    			this->event[i].pop=atoi(ss[2].c_str());
+    		} else if (majuscules(ss[1])=="MERGE") {
+    			this->event[i].pop=atoi(ss[2].c_str());
+    			this->event[i].pop1=atoi(ss[3].c_str());
+    		} else if (majuscules(ss[1])=="SPLIT") {
+    			this->event[i].pop=atoi(ss[2].c_str());
+    			this->event[i].pop1=atoi(ss[3].c_str());
+    			this->event[i].pop2=atoi(ss[4].c_str());
+    			if (atof(ss[5].c_str())!=0.0) this->event[i].admixrate=atof(ss[5].c_str());
+    			else {this->event[i].admixrate=0.0;this->event[i].sadmixrate=ss[5];}
+    		} else if (majuscules(ss[1])=="VARNE") {
+    			this->event[i].pop=atoi(ss[2].c_str());
+    			if (atof(ss[3].c_str())!=0.0) this->event[i].Ne=atoi(ss[3].c_str());
+    			else {this->event[i].Ne=0;this->event[i].sNe=ss[3];}
+    		}
+    	}
+    }
+};
+
+PriorC copyprior(PriorC source) {
+	PriorC dest;
+	dest.loi = source.loi;
+	dest.mini = source.mini;
+	dest.maxi = source.maxi;
+	dest.mean = source.mean;
+	dest.sdshape = source.sdshape;
+	dest.constant = source.constant;
+	dest.ndec  = source.ndec;
+	return dest;
+}
+
+EventC copyevent(EventC source) {
+	EventC dest;
+	dest.action =source.action;
+	dest.pop = source.pop;
+	dest.pop1 = source.pop1;
+	dest.pop2 = source.pop2;
+	dest.sample = source.sample;
+	dest.Ne = source.Ne;
+	dest.time = source.time;
+	dest.admixrate = source.admixrate;
+	dest.numevent0 = source.numevent0;
+	dest.stime = source.stime;
+	dest.sNe = source.sNe;
+	dest.sadmixrate = source.admixrate;
+	return dest;
+}
+
+Ne0C copyne0(Ne0C source) {
+	Ne0C dest;
+	dest.name = source.name;
+	dest.val = source.val;
+	return dest;
+}
+
+HistParameterC copyhistparameter(HistParameterC source) {
+	HistParameterC dest;
+	dest.name = source.name;
+	dest.category = source.category;
+	dest.value = source.value;
+	dest.prior = copyprior(source.prior);
+	return dest;
+}
+
+ScenarioC copyscenario(ScenarioC source) {
+	ScenarioC dest;
+	dest.prior_proba = source.prior_proba;
+	dest.number = source.number;
+	dest.popmax = source.popmax;
+	dest.npop = source.npop;
+	dest.nsamp = source.nsamp;
+	dest.nparam = source.nparam;
+	dest.nevent = source.nevent;
+	dest.nn0 = source.nn0;
+	dest.event = new EventC[dest.nevent];
+	for (int i=0;i<dest.nevent;i++) dest.event[i] = copyevent(source.event[i]);
+	dest.ne0 = new Ne0C[dest.nn0];
+	for (int i=0;i<dest.nn0;i++) dest.ne0[i] = copyne0(source.ne0[i]);
+	dest.time_sample = new int[dest.nsamp];
+	for (int i=0;i<dest.nsamp;i++) dest.time_sample[i] = source.time_sample[i];
+	dest.histparam = new HistParameterC[dest.nparam];
+	for (int i=0;i<dest.nparam;i++) dest.histparam[i] = copyhistparameter(source.histparam[i]);
+	return dest;
+}
+
 
 struct SequenceBitC
 {
@@ -156,7 +273,7 @@ struct ParticleC
 	DataC  data;
 	MissingHaplo *mhap;
 	MissingNuc   *mnuc;
-	ScenarioC *scenario;
+	ScenarioC *scenario,scen;
 	SequenceBitC *seqlist;
 	GeneTreeC *gt;
 	MwcGen mw;
@@ -176,6 +293,16 @@ struct ParticleC
 					{return 0;}
 		else 		{return 1;}   //AUTOSOMAL HAPLOID or X-LINKED MALE or MITOCHONDRIAL
 
+	}
+	
+	void drawscenario() {
+		double ra,sp=0.0;
+		ra = this->mw.random();
+		int iscen=-1;
+		while (ra>sp) {
+			iscen++;sp +=this->scenario[iscen].prior_proba;
+		}
+		this->scen = copyscenario(this->scenario[iscen]);
 	}
 
 	GeneTreeC copytree(GeneTreeC source) {
@@ -271,13 +398,14 @@ struct ParticleC
 	}
 
 	void setHistParamValue() {
-		for (int ievent=0;ievent<this->nevent;ievent++) {
-			if (this->eventlist[ievent].Ne<0) {this->eventlist[ievent].Ne = (int)this->getvalue(this->eventlist[ievent].sNe);}
-			if (this->eventlist[ievent].time<0) {this->eventlist[ievent].time = (int)this->getvalue(this->eventlist[ievent].stime);}
-			if ((this->eventlist[ievent].admixrate<0)and(this->eventlist[ievent].action==3)) {this->eventlist[ievent].admixrate = this->getvalue(this->eventlist[ievent].sadmixrate);}
+		
+		for (int ievent=0;ievent<this->scen.nevent;ievent++) {
+			if (this->scen.event[ievent].Ne<0) {this->scen.event[ievent].Ne= (int)this->getvalue(this->scen.event[ievent].sNe);}
+			if (this->scen.event[ievent].time<0) {this->scen.event[ievent].time = (int)this->getvalue(this->scen.event[ievent].stime);}
+			if ((this->scen.event[ievent].admixrate<0)and(this->scen.event[ievent].action==3)) {this->scen.event[ievent].admixrate = this->getvalue(this->scen.event[ievent].sadmixrate);}
 		}
-		for (int i=0;i<this->nn0;i++) {
-			if (this->ne0list[i].val<0) this->ne0list[i].val = (int)this->getvalue(this->ne0list[i].name);
+		for (int i=0;i<this->scen.nn0;i++) {
+			if (this->scen.ne0list[i].val<0) this->scen.ne0list[i].val = (int)this->getvalue(this->scen.ne0list[i].name);
 		}
 	}
 
@@ -1014,6 +1142,7 @@ struct ParticleC
 		this->mw.randinit(mrseed,true);
 		simulOK.resize(this->nloc);
 		GeneTreeC GeneTreeY, GeneTreeM;
+		this->drawscenario();
 		this->setHistParamValue();
 		this->setSequence();
 		bool gtYexist=false, gtMexist=false;
