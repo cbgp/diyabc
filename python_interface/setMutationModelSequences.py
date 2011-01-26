@@ -160,6 +160,11 @@ class SetMutationModelSequences(QFrame):
         
         return result
 
+    def setMutationConf(self,lines):
+        """ set les valeurs depuis la conf
+        """
+        print lines
+
     def exit(self):
         # reactivation des onglets
         self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)

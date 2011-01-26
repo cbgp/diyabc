@@ -424,5 +424,28 @@ class SetGeneticData(QFrame):
                            self.ui.tableWidget.setItemSelected(self.ui.tableWidget.item(l-1,0),True)
                            self.addToGroup(self.groupList[num_group-1])
                     l+=1
+                # chargement des infos sur les groupes
+                l+=1
+                if l < len(lines):
+                    print 'ligne:',lines[l]
+                    nb_groupes = int(lines[l].split('ngroup=')[1].split(')')[0])
+                    num_group_max_done = 0
+                    l+=1
+                    # on va jusqu'à la prochaine ligne vide ou la fin du fichier
+                    while l<len(lines) and lines[l].strip() != "":
+                        print 'prem ligne du groupe:',lines[l]
+                        num_group = int(lines[l].split('group G')[1].split(' ')[0])
+                        num_group_max_done = num_group
+                        type_group = lines[l].split('[')[1].split(']')[0]
+                        l+=1
+                        if type_group == 'S':
+                            self.setMutationSeq_dico[self.groupList[num_group-1]].setMutationConf(lines[l:(l+7)])
+                            l+=7
+                        else:
+                            self.setMutation_dico[self.groupList[num_group-1]].setMutationConf(lines[l:(l+6)])
+                            l+=6
+
+
+
 
 
