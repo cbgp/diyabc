@@ -177,7 +177,6 @@ EventC copyevent(EventC source) {
 	dest.sNe = source.sNe;
 	dest.sadmixrate = source.admixrate;
 }
-<<<<<<< HEAD:src-JMC-C++/simuldatC.cpp
 
 Ne0C copyne0(Ne0C source) {
 	Ne0C dest;
