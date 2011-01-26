@@ -40,7 +40,7 @@ class SetMutationModel(QFrame):
             law = "LN"
         else:
             law = "GA"
-        result += "MEANMU   %s[%s,%s,%s,%s]\n"%(law,mmrMin,mmrMax,mmrMean,mmrShape)
+        result += "MEANMU %s[%s,%s,%s,%s]\n"%(law,mmrMin,mmrMax,mmrMean,mmrShape)
         
         ilmrMin =    str(self.ui.ilmrMinEdit.text())
         ilmrMax =    str(self.ui.ilmrMaxEdit.text())
@@ -51,7 +51,7 @@ class SetMutationModel(QFrame):
         if ilmrShape == "":
             ilmrShape = "2"
         law = "GA"
-        result += "GAMMU   %s[%s,%s,%s,%s]\n"%(law,ilmrMin,ilmrMax,ilmrMean,ilmrShape)
+        result += "GAMMU %s[%s,%s,%s,%s]\n"%(law,ilmrMin,ilmrMax,ilmrMean,ilmrShape)
 
         mcpMin =    str(self.ui.mcpMinEdit.text())
         mcpMax =    str(self.ui.mcpMaxEdit.text())
@@ -68,7 +68,7 @@ class SetMutationModel(QFrame):
             law = "LN"
         else:
             law = "GA"
-        result += "MEANP   %s[%s,%s,%s,%s]\n"%(law,mcpMin,mcpMax,mcpMean,mcpShape)
+        result += "MEANP %s[%s,%s,%s,%s]\n"%(law,mcpMin,mcpMax,mcpMean,mcpShape)
 
         ilcpMin =    str(self.ui.ilcpMinEdit.text())
         ilcpMax =    str(self.ui.ilcpMaxEdit.text())
@@ -80,7 +80,7 @@ class SetMutationModel(QFrame):
             ilcpShape = "2"
 
         law = "GA"
-        result += "GAMP   %s[%s,%s,%s,%s]\n"%(law,ilcpMin,ilcpMax,ilcpMean,ilcpShape)
+        result += "GAMP %s[%s,%s,%s,%s]\n"%(law,ilcpMin,ilcpMax,ilcpMean,ilcpShape)
 
         msrMin =    str(self.ui.msrMinEdit.text())
         msrMax =    str(self.ui.msrMaxEdit.text())
@@ -97,7 +97,7 @@ class SetMutationModel(QFrame):
             law = "LN"
         else:
             law = "GA"
-        result += "MEANSNI   %s[%s,%s,%s,%s]\n"%(law,msrMin,msrMax,msrMean,msrShape)
+        result += "MEANSNI %s[%s,%s,%s,%s]\n"%(law,msrMin,msrMax,msrMean,msrShape)
 
         ilsrMin =    str(self.ui.ilsrMinEdit.text())
         ilsrMax =    str(self.ui.ilsrMaxEdit.text())
@@ -109,7 +109,7 @@ class SetMutationModel(QFrame):
             ilsrShape = "2"
 
         law = "GA"
-        result += "GAMSNI   %s[%s,%s,%s,%s]\n"%(law,ilsrMin,ilsrMax,ilsrMean,ilsrShape)
+        result += "GAMSNI %s[%s,%s,%s,%s]\n"%(law,ilsrMin,ilsrMax,ilsrMean,ilsrShape)
         
         return result
 

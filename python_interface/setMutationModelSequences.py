@@ -85,7 +85,7 @@ class SetMutationModelSequences(QFrame):
             law = "LN"
         else:
             law = "GA"
-        result += "MEANMU   %s[%s,%s,%s,%s]\n"%(law,mmrMin,mmrMax,mmrMean,mmrShape)
+        result += "MEANMU %s[%s,%s,%s,%s]\n"%(law,mmrMin,mmrMax,mmrMean,mmrShape)
         
         ilmrMin =    str(self.ui.ilmrMinEdit.text())
         ilmrMax =    str(self.ui.ilmrMaxEdit.text())
@@ -96,7 +96,7 @@ class SetMutationModelSequences(QFrame):
         if ilmrShape == "":
             ilmrShape = "2"
         law = "GA"
-        result += "GAMMU   %s[%s,%s,%s,%s]\n"%(law,ilmrMin,ilmrMax,ilmrMean,ilmrShape)
+        result += "GAMMU %s[%s,%s,%s,%s]\n"%(law,ilmrMin,ilmrMax,ilmrMean,ilmrShape)
 
         mc1Min =    str(self.ui.mc1MinEdit.text())
         mc1Max =    str(self.ui.mc1MaxEdit.text())
@@ -113,7 +113,7 @@ class SetMutationModelSequences(QFrame):
             law = "LN"
         else:
             law = "GA"
-        result += "MEANK1   %s[%s,%s,%s,%s]\n"%(law,mc1Min,mc1Max,mc1Mean,mc1Shape)
+        result += "MEANK1 %s[%s,%s,%s,%s]\n"%(law,mc1Min,mc1Max,mc1Mean,mc1Shape)
 
         ilc1Min =    str(self.ui.ilc1MinEdit.text())
         ilc1Max =    str(self.ui.ilc1MaxEdit.text())
@@ -125,7 +125,7 @@ class SetMutationModelSequences(QFrame):
             ilc1Shape = "2"
 
         law = "GA"
-        result += "GAMK1   %s[%s,%s,%s,%s]\n"%(law,ilc1Min,ilc1Max,ilc1Mean,ilc1Shape)
+        result += "GAMK1 %s[%s,%s,%s,%s]\n"%(law,ilc1Min,ilc1Max,ilc1Mean,ilc1Shape)
 
 
         mc2Min =    str(self.ui.mc2MinEdit.text())
@@ -143,7 +143,7 @@ class SetMutationModelSequences(QFrame):
             law = "LN"
         else:
             law = "GA"
-        result += "MEANK2   %s[%s,%s,%s,%s]\n"%(law,mc2Min,mc2Max,mc2Mean,mc2Shape)
+        result += "MEANK2 %s[%s,%s,%s,%s]\n"%(law,mc2Min,mc2Max,mc2Mean,mc2Shape)
 
         ilc2Min =    str(self.ui.ilc2MinEdit.text())
         ilc2Max =    str(self.ui.ilc2MaxEdit.text())
@@ -155,15 +155,120 @@ class SetMutationModelSequences(QFrame):
             ilc2Shape = "2"
 
         law = "GA"
-        result += "GAMK2   %s[%s,%s,%s,%s]\n"%(law,ilc2Min,ilc2Max,ilc2Mean,ilc2Shape)
-        result += "MODEL    %s %s %s\n"%(model,self.ui.isEdit.text(),self.ui.sotgEdit.text())
+        result += "GAMK2 %s[%s,%s,%s,%s]\n"%(law,ilc2Min,ilc2Max,ilc2Mean,ilc2Shape)
+        result += "MODEL %s %s %s\n"%(model,self.ui.isEdit.text(),self.ui.sotgEdit.text())
         
         return result
 
     def setMutationConf(self,lines):
         """ set les valeurs depuis la conf
         """
-        print lines
+        mmrValues = lines[0].split('[')[1].split(']')[0].split(',')
+        if mmrValues[2] == "-9":
+            mmrValues[2] = ""
+        if mmrValues[3] == "2":
+            mmrValues[3] = ""
+        self.ui.mmrMinEdit.setText(mmrValues[0])
+        self.ui.mmrMaxEdit.setText(mmrValues[1])    
+        self.ui.mmrMeanEdit.setText(mmrValues[2])   
+        self.ui.mmrShapeEdit.setText(mmrValues[3])  
+        law = lines[0].split('[')[0].split(' ')[-1]
+
+        print "law:",law
+        if law == "UN":
+            self.ui.mmrUnifRadio.setChecked(True)
+        elif law == "LN": 
+            self.ui.mmrLogRadio.setChecked(True)
+        else:
+            self.ui.mmrGammaRadio.setChecked(True)
+        
+        ilmrValues = lines[1].split('[')[1].split(']')[0].split(',')
+        if ilmrValues[2] == "-9":
+            ilmrValues[2] = ""
+        if ilmrValues[3] == "2":
+            ilmrValues[3] = ""
+        self.ui.ilmrMinEdit.setText(ilmrValues[0])
+        self.ui.ilmrMaxEdit.setText(ilmrValues[1])
+        self.ui.ilmrMeanEdit.setText(ilmrValues[2])
+        self.ui.ilmrShapeEdit.setText(ilmrValues[3])
+
+        mc1Values = lines[2].split('[')[1].split(']')[0].split(',')
+        if mc1Values[2] == "-9":
+            mc1Values[2] = ""
+        if mc1Values[3] == "2":
+            mc1Values[3] = ""
+        self.ui.mc1MinEdit.setText(mc1Values[0])
+        self.ui.mc1MaxEdit.setText(mc1Values[1])    
+        self.ui.mc1MeanEdit.setText(mc1Values[2])   
+        self.ui.mc1ShapeEdit.setText(mc1Values[3])  
+        law = lines[2].split('[')[0].split(' ')[-1]
+
+        print "law:",law
+        if law == "UN":
+            self.ui.mc1UnifRadio.setChecked(True)
+        elif law == "LN": 
+            self.ui.mc1LogRadio.setChecked(True)
+        else:
+            self.ui.mc1GammaRadio.setChecked(True)
+
+        ilc1Values = lines[3].split('[')[1].split(']')[0].split(',')
+        if ilc1Values[2] == "-9":
+            ilc1Values[2] = ""
+        if ilc1Values[3] == "2":
+            ilc1Values[3] = ""
+        self.ui.ilc1MinEdit.setText(ilc1Values[0])
+        self.ui.ilc1MaxEdit.setText(ilc1Values[1])
+        self.ui.ilc1MeanEdit.setText(ilc1Values[2])
+        self.ui.ilc1ShapeEdit.setText(ilc1Values[3])
+
+        mc2Values = lines[4].split('[')[1].split(']')[0].split(',')
+        if mc2Values[2] == "-9":
+            mc2Values[2] = ""
+        if mc2Values[3] == "2":
+            mc2Values[3] = ""
+        self.ui.mc2MinEdit.setText(mc2Values[0])
+        self.ui.mc2MaxEdit.setText(mc2Values[1])    
+        self.ui.mc2MeanEdit.setText(mc2Values[2])   
+        self.ui.mc2ShapeEdit.setText(mc2Values[3])  
+        law = lines[4].split('[')[0].split(' ')[-1]
+
+        print "law:",law
+        if law == "UN":
+            self.ui.mc2UnifRadio.setChecked(True)
+        elif law == "LN": 
+            self.ui.mc2LogRadio.setChecked(True)
+        else:
+            self.ui.mc2GammaRadio.setChecked(True)
+
+        ilc2Values = lines[5].split('[')[1].split(']')[0].split(',')
+        if ilc2Values[2] == "-9":
+            ilc2Values[2] = ""
+        if ilc2Values[3] == "2":
+            ilc2Values[3] = ""
+        self.ui.ilc2MinEdit.setText(ilc2Values[0])
+        self.ui.ilc2MaxEdit.setText(ilc2Values[1])
+        self.ui.ilc2MeanEdit.setText(ilc2Values[2])
+        self.ui.ilc2ShapeEdit.setText(ilc2Values[3])
+
+        model = lines[6].split(' ')[1]
+        iss = lines[6].split(' ')[2]
+        sotg = lines[6].split(' ')[3]
+        self.ui.isEdit.setText(iss)
+        self.ui.sotgEdit.setText(sotg)
+        if model == "K2P":
+            self.ui.kimuraRadio.setChecked(True)
+            self.showKimuraHase()
+        elif model == "TN":
+            self.ui.tamuraRadio.setChecked(True)
+            self.showTamura()
+        elif model == "JK":
+            self.ui.jukesRadio.setChecked(True)
+            self.showJukes()
+        elif model == "HKY":
+            self.ui.haseRadio.setChecked(True)
+            self.showKimuraHase()
+
+
 
     def exit(self):
         # reactivation des onglets
