@@ -343,6 +343,7 @@ class SetGeneticData(QFrame):
             os.remove("%s/conf.gen.tmp" % self.parent.ui.dirEdit.text())
 
         f = open(self.parent.ui.dirEdit.text()+"/conf.gen.tmp",'w')
+        # partie description des locus
         f.write("loci description (nloc=%i)\n"%self.nbLocusGui)
         data = self.parent.data
         for i in range(data.nloc):
@@ -361,6 +362,17 @@ class SetGeneticData(QFrame):
                 motif_size = str(self.ui.tableWidget.item(indice_dans_table-1,2).text())
                 motif_range = str(self.ui.tableWidget.item(indice_dans_table-1,3).text()).strip()
                 f.write("%s %s [%s] G%i %s %s\n"%(name.replace(' ','_'),typestr,microSeq,group,motif_size,motif_range))
+
+        # partie mutation model
+        f.write("\ngroup priors (ngroup=%i)\n"%len(self.groupList))
+        for i,box in enumerate(self.groupList):
+            if "Microsatellites" in str(box.title()):
+                f.write("group G%i [M]\n"%i+1)
+                f.write(self.setMutation_dico[box].getMutationConf())
+            elif "Sequences" in str(box.title()):
+                f.write("group G%i [S]\n"%i+1)
+                f.write(self.setMutationSeq_dico[box].getMutationConf())
+
 
     def loadGeneticConf(self):
         """ Charge le fichier conf.gen.tmp
@@ -410,6 +422,5 @@ class SetGeneticData(QFrame):
                            self.ui.tableWidget.setItemSelected(self.ui.tableWidget.item(l-1,0),True)
                            self.addToGroup(self.groupList[num_group-1])
                     l+=1
-
 
 

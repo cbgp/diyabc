@@ -214,7 +214,7 @@ per generation)</string>
                <number>1</number>
               </property>
               <item>
-               <widget class="QRadioButton" name="radioButton_10">
+               <widget class="QRadioButton" name="mmrUnifRadio">
                 <property name="font">
                  <font>
                   <pointsize>8</pointsize>
@@ -229,7 +229,7 @@ per generation)</string>
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_11">
+               <widget class="QRadioButton" name="mmrLogRadio">
                 <property name="font">
                  <font>
                   <pointsize>8</pointsize>
@@ -244,7 +244,7 @@ per generation)</string>
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_12">
+               <widget class="QRadioButton" name="mmrGammaRadio">
                 <property name="font">
                  <font>
                   <pointsize>8</pointsize>
@@ -277,7 +277,7 @@ per generation)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_13">
+              <widget class="QLineEdit" name="mmrMinEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -313,7 +313,7 @@ per generation)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_14">
+              <widget class="QLineEdit" name="mmrMaxEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -349,7 +349,7 @@ per generation)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_15">
+              <widget class="QLineEdit" name="mmrMeanEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -382,7 +382,7 @@ per generation)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_16">
+              <widget class="QLineEdit" name="mmrShapeEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -514,7 +514,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_9">
+              <widget class="QLineEdit" name="ilmrMinEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -550,7 +550,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_10">
+              <widget class="QLineEdit" name="ilmrMaxEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -586,7 +586,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_11">
+              <widget class="QLineEdit" name="ilmrMeanEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -625,7 +625,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_12">
+              <widget class="QLineEdit" name="ilmrShapeEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -723,7 +723,7 @@ k_C/T</string>
                <number>1</number>
               </property>
               <item>
-               <widget class="QRadioButton" name="radioButton">
+               <widget class="QRadioButton" name="mc1UnifRadio">
                 <property name="font">
                  <font>
                   <pointsize>8</pointsize>
@@ -738,7 +738,7 @@ k_C/T</string>
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_2">
+               <widget class="QRadioButton" name="mc1LogRadio">
                 <property name="font">
                  <font>
                   <pointsize>8</pointsize>
@@ -750,7 +750,7 @@ k_C/T</string>
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_3">
+               <widget class="QRadioButton" name="mc1GammaRadio">
                 <property name="font">
                  <font>
                   <pointsize>8</pointsize>
@@ -783,7 +783,7 @@ k_C/T</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit">
+              <widget class="QLineEdit" name="mc1MinEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -819,7 +819,7 @@ k_C/T</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_2">
+              <widget class="QLineEdit" name="mc1MaxEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -855,7 +855,7 @@ k_C/T</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_3">
+              <widget class="QLineEdit" name="mc1MeanEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -888,7 +888,7 @@ k_C/T</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_4">
+              <widget class="QLineEdit" name="mc1ShapeEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1020,7 +1020,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_5">
+              <widget class="QLineEdit" name="ilc1MinEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1056,7 +1056,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_6">
+              <widget class="QLineEdit" name="ilc1MaxEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1092,7 +1092,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_7">
+              <widget class="QLineEdit" name="ilc1MeanEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1125,7 +1125,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_8">
+              <widget class="QLineEdit" name="ilc1ShapeEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1222,7 +1222,7 @@ k_A/G</string>
                <number>1</number>
               </property>
               <item>
-               <widget class="QRadioButton" name="radioButton_13">
+               <widget class="QRadioButton" name="mc2UnifRadio">
                 <property name="font">
                  <font>
                   <pointsize>8</pointsize>
@@ -1237,7 +1237,7 @@ k_A/G</string>
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_14">
+               <widget class="QRadioButton" name="mc2LogRadio">
                 <property name="font">
                  <font>
                   <pointsize>8</pointsize>
@@ -1252,7 +1252,7 @@ k_A/G</string>
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_15">
+               <widget class="QRadioButton" name="mc2GammaRadio">
                 <property name="font">
                  <font>
                   <pointsize>8</pointsize>
@@ -1285,7 +1285,7 @@ k_A/G</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_17">
+              <widget class="QLineEdit" name="mc2MinEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1321,7 +1321,7 @@ k_A/G</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_18">
+              <widget class="QLineEdit" name="mc2MaxEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1357,7 +1357,7 @@ k_A/G</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_19">
+              <widget class="QLineEdit" name="mc2MeanEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1390,7 +1390,7 @@ k_A/G</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_20">
+              <widget class="QLineEdit" name="mc2ShapeEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1522,7 +1522,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_21">
+              <widget class="QLineEdit" name="ilc2MinEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1558,7 +1558,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_22">
+              <widget class="QLineEdit" name="ilc2MaxEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1594,7 +1594,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_23">
+              <widget class="QLineEdit" name="ilc2MeanEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1627,7 +1627,7 @@ around mean)</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_24">
+              <widget class="QLineEdit" name="ilc2ShapeEdit">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>

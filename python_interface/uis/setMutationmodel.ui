@@ -198,7 +198,7 @@ rate</string>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
-             <widget class="QRadioButton" name="radioButton_10">
+             <widget class="QRadioButton" name="mmrUnifRadio">
               <property name="text">
                <string>Unif</string>
               </property>
@@ -208,7 +208,7 @@ rate</string>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_11">
+             <widget class="QRadioButton" name="mmrLogRadio">
               <property name="text">
                <string>Log-u</string>
               </property>
@@ -218,7 +218,7 @@ rate</string>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_12">
+             <widget class="QRadioButton" name="mmrGammaRadio">
               <property name="text">
                <string>Gamma</string>
               </property>
@@ -246,7 +246,7 @@ rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_13">
+            <widget class="QLineEdit" name="mmrMinEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -282,7 +282,7 @@ rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_14">
+            <widget class="QLineEdit" name="mmrMaxEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -318,7 +318,7 @@ rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_15">
+            <widget class="QLineEdit" name="mmrMeanEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -351,7 +351,7 @@ rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_16">
+            <widget class="QLineEdit" name="mmrShapeEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -462,7 +462,7 @@ mutation rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_9">
+            <widget class="QLineEdit" name="ilmrMinEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -498,7 +498,7 @@ mutation rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_10">
+            <widget class="QLineEdit" name="ilmrMaxEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -534,7 +534,7 @@ mutation rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_11">
+            <widget class="QLineEdit" name="ilmrMeanEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -573,7 +573,7 @@ mutation rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_12">
+            <widget class="QLineEdit" name="ilmrShapeEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -656,7 +656,7 @@ coefficient P</string>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QRadioButton" name="radioButton">
+             <widget class="QRadioButton" name="mcpUnifRadio">
               <property name="text">
                <string>Unif</string>
               </property>
@@ -666,14 +666,14 @@ coefficient P</string>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_2">
+             <widget class="QRadioButton" name="mcpLogRadio">
               <property name="text">
                <string>Log-u</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_3">
+             <widget class="QRadioButton" name="mcpGammaRadio">
               <property name="text">
                <string>Gamma</string>
               </property>
@@ -701,7 +701,7 @@ coefficient P</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit">
+            <widget class="QLineEdit" name="mcpMinEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -737,7 +737,7 @@ coefficient P</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_2">
+            <widget class="QLineEdit" name="mcpMaxEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -773,7 +773,7 @@ coefficient P</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_3">
+            <widget class="QLineEdit" name="mcpMeanEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -806,7 +806,7 @@ coefficient P</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_4">
+            <widget class="QLineEdit" name="mcpShapeEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -917,7 +917,7 @@ coefficient P</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_5">
+            <widget class="QLineEdit" name="ilcpMinEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -953,7 +953,7 @@ coefficient P</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_6">
+            <widget class="QLineEdit" name="ilcpMaxEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -989,7 +989,7 @@ coefficient P</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_7">
+            <widget class="QLineEdit" name="ilcpMeanEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -1025,7 +1025,7 @@ coefficient P</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_8">
+            <widget class="QLineEdit" name="ilcpShapeEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -1109,14 +1109,14 @@ rate</string>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_11">
             <item>
-             <widget class="QRadioButton" name="radioButton_13">
+             <widget class="QRadioButton" name="msrUnifRadio">
               <property name="text">
                <string>Unif</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_14">
+             <widget class="QRadioButton" name="msrLogRadio">
               <property name="text">
                <string>Log-u</string>
               </property>
@@ -1126,7 +1126,7 @@ rate</string>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_15">
+             <widget class="QRadioButton" name="msrGammaRadio">
               <property name="text">
                <string>Gamma</string>
               </property>
@@ -1154,7 +1154,7 @@ rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_17">
+            <widget class="QLineEdit" name="msrMinEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -1190,7 +1190,7 @@ rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_18">
+            <widget class="QLineEdit" name="msrMaxEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -1226,7 +1226,7 @@ rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_19">
+            <widget class="QLineEdit" name="msrMeanEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -1259,7 +1259,7 @@ rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_20">
+            <widget class="QLineEdit" name="msrShapeEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -1370,7 +1370,7 @@ locus SNI rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_21">
+            <widget class="QLineEdit" name="ilsrMinEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -1406,7 +1406,7 @@ locus SNI rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_22">
+            <widget class="QLineEdit" name="ilsrMaxEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -1442,7 +1442,7 @@ locus SNI rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_23">
+            <widget class="QLineEdit" name="ilsrMeanEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -1478,7 +1478,7 @@ locus SNI rate</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_24">
+            <widget class="QLineEdit" name="ilsrShapeEdit">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
