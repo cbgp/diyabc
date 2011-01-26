@@ -1,1 +1,5 @@
 virer conditions dont le param n'existe plus : à chaque defpriors
+ameliorer la gestion de l'ecriture/lecture : 
+save -> sauve un fichier conf.proj.tmp
+exit set hist -> sauve conf.hist.tmp
+exit set gen -> 
