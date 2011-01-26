@@ -22,6 +22,6 @@ int main(int argc, char *argv[])
 	strcat(headerfilename,"ReftableHeader.txt");
 	std::cout << headerfilename<<"\n";
 	HeaderC header;
-	header.readheader(headerfilename);
+	header.readHeader(headerfilename);
 	return 0;
 }

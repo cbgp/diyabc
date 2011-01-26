@@ -304,7 +304,8 @@ public:
     	string geno,*gen;
     	int l,ll,n,gg,j0,j1,j2;
     	gen = new string[2];
-    	char *base = "ACGT";
+    	string sbase;
+    	char base[] ="ACGT";
     	cout <<"début de do_sequence\n";
 
     	this->locus[loc].haplodna = new char**[this->nsample];
@@ -425,17 +426,17 @@ public:
 	}
 };
 
-int main(){
+/*int main(){
 	DataC data;
 	data.loadfromfile("tout.txt");
 	cout <<"\n\n";
-/*	for (int ech=0;ech<data.nsample;ech++) {
+	for (int ech=0;ech<data.nsample;ech++) {
 		for (int ind=0;ind<data.nind[ech];ind++) {
 			cout << data.indivname[ech][ind]<<"   ";
 			for (int loc=0;loc<data.nloc;loc++) cout <<data.genotype[ech][ind][loc]<<"  ";
 			cout <<"\n";
 		}
-	}*/
+	}
 	cout << data.title << "\n nloc = "<<data.nloc<<"   nsample = "<<data.nsample<<"\n";
 	for (int i=0;i<data.nloc;i++) cout << data.locus[i].name <<"\n";
 	for (int ech=0;ech<data.nsample;ech++) {
@@ -449,4 +450,4 @@ int main(){
 	for (int i=0;i<data.nmisshap;i++) cout <<" missing data sample "<<data.misshap[i].sample<<"  ind "<<data.misshap[i].indiv<<"  locus "<<data.misshap[i].locus<<"\n";
 	for (int i=0;i<data.nmissnuc;i++) cout <<" missing nucl sample "<<data.missnuc[i].sample<<"  ind "<<data.missnuc[i].indiv<<"  locus "<<data.missnuc[i].locus<<"  nuc "<<data.missnuc[i].nuc<<"\n";
 	data.libere();
-}
+}*/

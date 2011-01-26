@@ -114,10 +114,10 @@ class ScenarioC
 {
 public:
 	double *parameters,prior_proba;
-    int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0;
+    int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0,nparamvar;
     EventC *event;
     Ne0C *ne0;
-    HistParameterC *histparam;
+    HistParameterC *histparam,*histparamvar;
     /* action = 0 (varne), 1 (merge), 2 (split), 3 (adsamp)
      * category=0 (Ne)   , 1 (time),  3 (admixrate)
     */
@@ -405,7 +405,7 @@ struct ParticleC
 			if ((this->scen.event[ievent].admixrate<0)and(this->scen.event[ievent].action==3)) {this->scen.event[ievent].admixrate = this->getvalue(this->scen.event[ievent].sadmixrate);}
 		}
 		for (int i=0;i<this->scen.nn0;i++) {
-			if (this->scen.ne0list[i].val<0) this->scen.ne0list[i].val = (int)this->getvalue(this->scen.ne0list[i].name);
+			if (this->scen.ne0[i].val<0) this->scen.ne0[i].val = (int)this->getvalue(this->scen.ne0[i].name);
 		}
 	}
 
@@ -481,9 +481,9 @@ struct ParticleC
 		int jevent=ievent;
 		while (jevent>0) {
 			jevent -=1;
-			if (this->eventlist[jevent].action == 3) {
-				found = (this->eventlist[jevent].pop1 == (this->eventlist[ievent].pop)or(this->eventlist[jevent].pop2 ==this->eventlist[ievent].pop));}
-			else {found = this->eventlist[jevent].pop == this->eventlist[ievent].pop;}
+			if (this->scen.event[jevent].action == 3) {
+				found = (this->scen.event[jevent].pop1 == (this->scen.event[ievent].pop)or(this->scen.event[jevent].pop2 ==this->scen.event[ievent].pop));}
+			else {found = this->scen.event[jevent].pop == this->scen.event[ievent].pop;}
 			if (found) {break;}
 			}
 		return (not found);
@@ -494,10 +494,10 @@ struct ParticleC
 		bool found;
 		while (ievent>0) {
 			ievent -=1;
-			found = (this->eventlist[ievent].action == 1)and(this->eventlist[ievent].pop == refpop);
+			found = (this->scen.event[ievent].action == 1)and(this->scen.event[ievent].pop == refpop);
 			if (found) {break;}
 			}
-		if (found) {return this->eventlist[ievent].Ne;}
+		if (found) {return this->scen.event[ievent].Ne;}
 		else       {return this->ne0list[refpop-1].val;}
 	}
 
@@ -506,13 +506,13 @@ struct ParticleC
 		bool found = 0; //FALSE
 		while (jevent>0) {
 			jevent -=1;
-			if (this->eventlist[jevent].action == 3) {
-				found = (this->eventlist[jevent].pop1 == refpop)or(this->eventlist[jevent].pop2 == refpop);}
-			else {found = (this->eventlist[jevent].pop == refpop);}
+			if (this->scen.event[jevent].action == 3) {
+				found = (this->scen.event[jevent].pop1 == refpop)or(this->scen.event[jevent].pop2 == refpop);}
+			else {found = (this->scen.event[jevent].pop == refpop);}
 			if (found) {break;}
 			}
-		if (found) {return this->eventlist[jevent].time;}
-		else       {return this->eventlist[ievent].time;}
+		if (found) {return this->scen.event[jevent].time;}
+		else       {return this->scen.event[ievent].time;}
 	}
 
 	void seqCoal(int iseq, int ievent, int refpop) {
@@ -520,39 +520,39 @@ struct ParticleC
 		this->seqlist[iseq].N = findNe(ievent,refpop);
 		this->seqlist[iseq].pop = refpop;
 		this->seqlist[iseq].t0 = findT0(ievent,refpop);
-		this->seqlist[iseq].t1 = this->eventlist[ievent].time;
+		this->seqlist[iseq].t1 = this->scen.event[ievent].time;
 	}
 
 	void seqSamp(int iseq, int ievent) {
 		this->seqlist[iseq].action = 3;
-		this->seqlist[iseq].pop = this->eventlist[ievent].pop;
-		this->seqlist[iseq].t0 = this->eventlist[ievent].time;
-		this->seqlist[iseq].sample = this->eventlist[ievent].sample;
+		this->seqlist[iseq].pop = this->scen.event[ievent].pop;
+		this->seqlist[iseq].t0 = this->scen.event[ievent].time;
+		this->seqlist[iseq].sample = this->scen.event[ievent].sample;
 	}
 
 	void seqMerge(int iseq, int ievent) {
 		this->seqlist[iseq].action = 1;
-		this->seqlist[iseq].pop = this->eventlist[ievent].pop;
-		this->seqlist[iseq].pop1 = this->eventlist[ievent].pop1;
-		this->seqlist[iseq].t0 = this->eventlist[ievent].time;
+		this->seqlist[iseq].pop = this->scen.event[ievent].pop;
+		this->seqlist[iseq].pop1 = this->scen.event[ievent].pop1;
+		this->seqlist[iseq].t0 = this->scen.event[ievent].time;
 	}
 
 	void seqSplit(int iseq, int ievent) {
 		this->seqlist[iseq].action = 2;
-		this->seqlist[iseq].pop = this->eventlist[ievent].pop;
-		this->seqlist[iseq].pop1 = this->eventlist[ievent].pop1;
-		this->seqlist[iseq].pop2 = this->eventlist[ievent].pop2;
-		this->seqlist[iseq].t0 = this->eventlist[ievent].time;
-		this->seqlist[iseq].admixrate = this->eventlist[ievent].admixrate;
+		this->seqlist[iseq].pop = this->scen.event[ievent].pop;
+		this->seqlist[iseq].pop1 = this->scen.event[ievent].pop1;
+		this->seqlist[iseq].pop2 = this->scen.event[ievent].pop2;
+		this->seqlist[iseq].t0 = this->scen.event[ievent].time;
+		this->seqlist[iseq].admixrate = this->scen.event[ievent].admixrate;
 	}
 
 	int compteseq() {
     	int n = 0;
-    	for (int k=0;k<nevent;k++){
-    		if (this->eventlist[k].action == 0) {n +=2;}  //SAMPLE
-    		else if (this->eventlist[k].action == 1) {n +=1;} //VARNE
-    		else if (this->eventlist[k].action == 2) {n +=3;} //MERGE
-    		else if (this->eventlist[k].action == 3) {n +=4;} //SPLIT
+    	for (int k=0;k<this->scen.nevent;k++){
+    		if (this->scen.event[k].action == 0) {n +=2;}  //SAMPLE
+    		else if (this->scen.event[k].action == 1) {n +=1;} //VARNE
+    		else if (this->scen.event[k].action == 2) {n +=3;} //MERGE
+    		else if (this->scen.event[k].action == 3) {n +=4;} //SPLIT
     	}
     	return n;
     }
@@ -564,47 +564,47 @@ struct ParticleC
 		int kseq = compteseq();
 		this->seqlist = new SequenceBitC[kseq];
 		int iseq = 0;
-		for (int ievent=0;ievent<this->nevent;ievent++){
+		for (int ievent=0;ievent<this->scen.nevent;ievent++){
 			if (firstEvent(ievent) == 0) {  // If NOT FirstEvent
-				if (this->eventlist[ievent].action == 1) {   // if action = VARNE
-					seqCoal(iseq,ievent,this->eventlist[ievent].pop);iseq++;
+				if (this->scen.event[ievent].action == 1) {   // if action = VARNE
+					seqCoal(iseq,ievent,this->scen.event[ievent].pop);iseq++;
 				}
-				else if (this->eventlist[ievent].action == 0) {   // if action = SAMPLE
-					seqCoal(iseq,ievent,this->eventlist[ievent].pop);iseq++;
+				else if (this->scen.event[ievent].action == 0) {   // if action = SAMPLE
+					seqCoal(iseq,ievent,this->scen.event[ievent].pop);iseq++;
 					seqSamp(iseq,ievent);iseq++;
 				}
 			}
-			else if (this->eventlist[ievent].action == 0) {   // if action = SAMPLE
+			else if (this->scen.event[ievent].action == 0) {   // if action = SAMPLE
 				seqSamp(iseq,ievent);iseq++;
 			}
-			if (this->eventlist[ievent].action == 2) {   // if action = MERGE
-				seqCoal(iseq,ievent,this->eventlist[ievent].pop);
+			if (this->scen.event[ievent].action == 2) {   // if action = MERGE
+				seqCoal(iseq,ievent,this->scen.event[ievent].pop);
 				if (this->seqlist[iseq].t0 <  this->seqlist[iseq].t1) {iseq++;}
-				seqCoal(iseq,ievent,this->eventlist[ievent].pop1);
+				seqCoal(iseq,ievent,this->scen.event[ievent].pop1);
 				if (this->seqlist[iseq].t0 <  this->seqlist[iseq].t1) {iseq++;}
 				seqMerge(iseq,ievent);iseq++;
 			}
 			if (firstEvent(ievent) == 0) {  // If NOT FirstEvent
-				if(this->eventlist[ievent].action == 3) {   // if action = SPLIT
-					seqCoal(iseq,ievent,this->eventlist[ievent].pop);
+				if(this->scen.event[ievent].action == 3) {   // if action = SPLIT
+					seqCoal(iseq,ievent,this->scen.event[ievent].pop);
 					if (this->seqlist[iseq].t0 <  this->seqlist[iseq].t1) {iseq++;}
-					seqCoal(iseq,ievent,this->eventlist[ievent].pop1);
+					seqCoal(iseq,ievent,this->scen.event[ievent].pop1);
 					if (this->seqlist[iseq].t0 <  this->seqlist[iseq].t1) {iseq++;}
-					seqCoal(iseq,ievent,this->eventlist[ievent].pop2);
+					seqCoal(iseq,ievent,this->scen.event[ievent].pop2);
 					if (this->seqlist[iseq].t0 <  this->seqlist[iseq].t1) {iseq++;}
 					seqSplit(iseq,ievent);iseq++;
 
 				}
 			}
 		}
-		if ((this->eventlist[this->nevent-1].action == 0)or(this->eventlist[this->nevent-1].action == 2)) {
-			this->seqlist[iseq].N = findNe(this->nevent-1,eventlist[this->nevent-1].pop);
+		if ((this->scen.event[this->scen.nevent-1].action == 0)or(this->scen.event[this->scen.nevent-1].action == 2)) {
+			this->seqlist[iseq].N = findNe(this->scen.nevent-1,this->scen.event[this->scen.nevent-1].pop);
 		}
-		else if (this->eventlist[this->nevent-1].action == 1) {
-			this->seqlist[iseq].N = this->eventlist[this->nevent-1].Ne;
+		else if (this->scen.event[this->scen.nevent-1].action == 1) {
+			this->seqlist[iseq].N = this->scen.event[this->scen.nevent-1].Ne;
 		}
-		this->seqlist[iseq].pop = this->eventlist[this->nevent-1].pop;
-		this->seqlist[iseq].t0 = this->eventlist[this->nevent-1].time;
+		this->seqlist[iseq].pop = this->scen.event[this->scen.nevent-1].pop;
+		this->seqlist[iseq].t0 = this->scen.event[this->scen.nevent-1].time;
 		this->seqlist[iseq].t1 = -1;
 		this->seqlist[iseq].action = 0;
 		this->nseq=iseq+1;
@@ -1784,7 +1784,7 @@ struct ParticleC
 		for (int st=0;st<this->grouplist[gr].nstat;st++) {
 //			cout <<" calcul de la stat "<<st<<"   cat="<<this->stat[st].cat<<"   group="<<stat[st].group<<"\n";
 			int categ;
-			categ=this>grouplist[gr].sumstat[st].cat;
+			categ=this->grouplist[gr].sumstat[st].cat;
 			switch (categ)
 			{	case     1 : this->grouplist[gr].sumstat[st].val = cal_nal1p(this->grouplist[gr].sumstat[st]);break;
 				case     2 : this->grouplist[gr].sumstat[st].val = cal_het1p(this->grouplist[gr].sumstat[st]);break;

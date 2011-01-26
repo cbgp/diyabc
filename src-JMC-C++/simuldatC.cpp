@@ -36,7 +36,7 @@ public:
 	string message,datafilename,entete;
 	DataC dataobs;
 	int nparamtot,nstat,nscenarios,nconditions,ngroupes;
-	Scenario *scenario;
+	ScenarioC *scenario;
 	HistParameterC *histparam;
 	ConditionC *condition;
 	LocusGroupC *groupe;
@@ -104,7 +104,7 @@ public:
 		this->nscenarios=getwordint(s1,1);
 		sl = new string*[this->nscenarios];
 		nlscen = new int[this->nscenarios];
-		this->scenario = new Scenario[this->nscenarios];
+		this->scenario = new ScenarioC[this->nscenarios];
 		for (int i=0;i<this->nscenarios;i++) nlscen[i]=getwordint(s1,3+i);
 		for (int i=0;i<this->nscenarios;i++) {
 			sl[i] = new string[nlscen[i]];
@@ -390,7 +390,7 @@ struct ParticleSetC
 		for (int i=0;i<header.nscenarios;i++) this->particule[p].scenario[i] = copyscenario(header.scenario[i]);
 	}
 
-	void setparamn0(vector<int>hpi,vector<double>hpd,vector<string>hps) {
+/*	void setparamn0(vector<int>hpi,vector<double>hpd,vector<string>hps) {
 		PriorC *prior;
 		Ne0C *ne0;
 		int *category;
@@ -470,7 +470,7 @@ struct ParticleSetC
 		delete []paramvar;
 	}
 
-/*	void printevents() {
+	void printevents() {
 		std::cout << "printevents : " << this->nevent << "\n";
 		for (int kloc=0;kloc<this->nevent;kloc++){
 			std::cout << "event " << kloc << "\n";
@@ -502,12 +502,12 @@ struct ParticleSetC
 	}
 */
 	void cleanParticle(int ipart){
+//nettoyage de locuslist
 		for (int loc=0;loc<this->particule[ipart].nloc;loc++) {
 			if (this->particule[ipart].locuslist[loc].type>4) {
 				delete []this->particule[ipart].locuslist[loc].mutsit;
 			    delete []this->particule[ipart].locuslist[loc].tabsit;
 			}
-			delete []this->particule[ipart].locuslist[loc].haplostate;
 			for(int sa=0;sa<this->particule[ipart].data.nsample;sa++) {
 				if (this->particule[ipart].locuslist[loc].type<5) delete []this->particule[ipart].locuslist[loc].haplomic[sa];
 				if (this->particule[ipart].locuslist[loc].type>4) delete []this->particule[ipart].locuslist[loc].haplodna[sa];
@@ -520,20 +520,35 @@ struct ParticleSetC
 			delete []this->particule[ipart].locuslist[loc].freq;
 		}
 		delete []this->particule[ipart].locuslist;
-		for (int gr=0;gr<this->particule[ipart].ngr;gr++) delete []this->particule[ipart].grouplist[gr].loc;
+//nettoyage de grouplist		
+		for (int gr=0;gr<this->particule[ipart].ngr;gr++) {
+			delete []this->particule[ipart].grouplist[gr].loc;
+			delete []this->particule[ipart].grouplist[gr].sumstat;
+		}
 		delete []this->particule[ipart].grouplist;
+//nettoyage de data
 		delete []this->particule[ipart].data.nind;
 		for(int sa=0;sa<this->particule[ipart].data.nsample;sa++) delete []this->particule[ipart].data.indivsexe[sa];
 		delete []this->particule[ipart].data.indivsexe;
-		delete []this->particule[ipart].stat;
-		delete []this->particule[ipart].eventlist;
-		delete []this->particule[ipart].ne0list;
-		delete []this->particule[ipart].seqlist;
-		delete []this->particule[ipart].paramvar;
-		delete []this->particule[ipart].parameterlist;
-		delete []this->particule[ipart].time_sample;
+//nettoyage de scenario
+		for (int i=0;i<this->particule[ipart].nscenarios;i++) {
+			delete []this->particule[ipart].scenario[i].parameters;
+			delete []this->particule[ipart].scenario[i].time_sample;
+			delete []this->particule[ipart].scenario[i].event;
+			delete []this->particule[ipart].scenario[i].ne0;
+			delete []this->particule[ipart].scenario[i].histparam;
+		}
+		delete []this->particule[ipart].scenario;
+//nettoyage de paramvar
+		if (this->particule[ipart].nparamvar>0) delete []this->particule[ipart].paramvar;
+//nettoyage de matQ
+		for (int i=0;i<4;i++) delete []this->particule[ipart].matQ[i];
+		delete []this->particule[ipart].matQ;
+//nettoage des données manquantes		
+	        delete []this->particule[ipart].mhap;
+	        delete []this->particule[ipart].mnuc;
 	}
-
+	
 	void cleanParticleSet(){
 		for (int i=0;i<this->npart;i++) this->cleanParticle(i);
 		delete []this->particule;
@@ -546,7 +561,7 @@ struct ParticleSetC
 		delete []this->indivsexe;
 	}
 
-	vector<double> dosimultabref(HeaderC header,int npart, bool dnatrue)
+	double ** dosimultabref(HeaderC header,int npart, bool dnatrue)
 		{
 		//cout << "debut de dosimultabref\n";
 		this->npart = npart;
@@ -559,35 +574,40 @@ struct ParticleSetC
 			this->setloci(p);
 			this->setscenarios(p);
 		}
-		this->setparamn0(vc1,vc2,vc3);
-		//cout << "apres setparamn0\n";
 		int ipart,tid=0,jpart=0;
-		vector<int> sOK;
-		sOK.resize(this->npart);
-		vector<double> paramstat;
+		int *sOK;
+		sOK = new int[npart];
+		double **paramstat;
+		int nparamstat,k;
 		//cout << "avant pragma\n";
 //debut du pragma
-#pragma omp parallel for shared(sOK) private(ipart,tid) schedule(static)
+//#pragma omp parallel for shared(sOK) private(ipart,tid) schedule(static)
+		paramstat = new double*[npart];
 		for (ipart=0;ipart<this->npart;ipart++){
-			tid = omp_get_thread_num();
+			tid = 0;//omp_get_thread_num();
 			sOK[ipart]=this->particule[ipart].dosimulpart(ipart,tid);
 			//cout << "\nretour de dosimulpart sOK["<<ipart<<"] = "<<sOK[ipart] <<"\n";
-			if (sOK[ipart]==0) {this->particule[ipart].docalstat();
+			nparamstat = this->particule[ipart].scen.nparamvar;
+			for (int gr=0;gr<this->particule[ipart].ngr;gr++) nparamstat +=this->particule[ipart].grouplist[gr].nstat;
+			if (this->particule[ipart].nscenarios>1) nparamstat +=1;
+			paramstat[ipart] = new double[nparamstat];
+			if (sOK[ipart]==0) {
+			 	for(int gr=0;gr<this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
 			//cout << "retour de docalstat \n";
 			}
 		}
 //fin du pragma
 		//cout << "remplissage de paramstat \n";
-		int ips=1;for (int i=0;i<this->npart;i++) {if (sOK[i]==0) {ips +=2+this->particule[i].nparamvar+this->particule[i].nstat;jpart++;}}
-		//paramstat = new double[ips];
-
-		paramstat.push_back((double)jpart);ips=1;
-		for (int i=0;i<this->npart;i++) {
-			if (sOK[i]==0){
-			paramstat.push_back((double)this->particule[i].nparamvar);ips++;
-			for (int j=0;j<this->particule[i].nparam;j++) {if (not this->particule[i].parameterlist[j].prior.constant)   paramstat.push_back(this->particule[i].parameterlist[j].value);ips++;}
-			paramstat.push_back((double)this->particule[i].nstat);ips++;
-			for (int j=0;j<this->particule[i].nstat;j++) {paramstat.push_back(this->particule[i].stat[j].val);ips++;}
+		for (int ipart=0;ipart<this->npart;ipart++) {
+			if (sOK[ipart]==0){
+				k=0;
+				if (this->particule[ipart].nscenarios>1) {paramstat[ipart][k]=this->particule[ipart].scen.number;k++;}
+				for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {paramstat[ipart][k]=this->particule[ipart].scen.histparamvar[j].value;k++;}
+				for(int gr=0;gr<this->particule[ipart].ngr;gr++){
+					for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){paramstat[ipart][k]=this->particule[ipart].grouplist[gr].sumstat[st].val;k++;}
+				}
+				
+				 
 			}
 		}
 		//cout <<"fin du remplissage \n";
@@ -795,5 +815,5 @@ struct ParticleSetC
 	ParticleSetC pc;
 	vector<double> resu;
 	resu = pc.dosimultabref(npart, false, va,vb01,vb02,vb03,vb1,vb2,vc1,vc2,vc3,vd1,vd2,vd3,ve);
-	cout << resu[0] <<" particules simulées avec succès\n";*/
+	cout << resu[0] <<" particules simulées avec succès\n";
 }*/
