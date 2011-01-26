@@ -177,6 +177,46 @@ EventC copyevent(EventC source) {
 	dest.sNe = source.sNe;
 	dest.sadmixrate = source.admixrate;
 }
+
+Ne0C copyne0(Ne0C source) {
+	Ne0C dest;
+	dest.name = source.name;
+	dest.val = source.val;
+}
+
+HistParameterC copyhistparameter(HistParameterC source) {
+	HistparameterC dest;
+	dest.name = source.name;
+	dest.category = source.category;
+	dest.value = source.value;
+	dest.prior = copyprior(source.prior);
+	
+}
+
+ScenarioC copyscenario(ScenarioC source) {
+	dest.prior_proba = source.prior_proba;
+	dest.number = source.number;
+	dest.popmax = source.popmax;
+	dest.npop = source.npop;
+	dest.nsamp = source.nsamp;
+	dest.nparam = source.nparam;
+	dest.nevent = source.nevent;
+	dest.nn0 = source.nn0;
+	dest.event = new EventC[dest.nevent];
+	for (int i=0;i<dest.nevent;i++) dest.event[i] = copyevent(source.event[i]);
+	dest.ne0 = new Ne0C[dest.nn0];
+	for (int i=0;i<dest.nn0;i++) dest.ne0[i] = copyne0(source.ne0[i]);
+	dest.time_sample = new int[dest.nsamp];
+	for (int i=0;i<dest.time_sample;i++) dest.time_sample[i] = source.time_sample[i];
+	dest.hisparam = new HistParameterC[dest.nparam];
+	for (int i=0;i<dest.nparam;i++) dest.histparam[i] = copyhistparameter(source.histaram[i]);
+}
+	double prior_proba;
+    int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0;
+    EventC *event;
+    Ne0C *ne0;
+    HistParameterC *histparam;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class HeaderC
@@ -535,6 +575,8 @@ struct ParticleSetC
 
 	void setscenarios (int p) {
 		this->particule[p].nscenarios=header.nscenarios;
+		this->particule[p].scenario = new ScenarioC[header.nscenarios];
+		for (int i=0;i<header.nscenarios;i++) this->particule[p].scenario[i] = copyscenario(header.scenario[i]);
 	}
 
 	void setevents (int p) {
@@ -769,7 +811,7 @@ struct ParticleSetC
 			this->setdata(p);
 			this->setgroup(p);
 			this->setloci(p);
-			this->setevents(p);
+			this->setscenarios(p);
 		}
 		this->setparamn0(vc1,vc2,vc3);
 		//cout << "apres setparamn0\n";
