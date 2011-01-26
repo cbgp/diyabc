@@ -116,7 +116,93 @@ class SetMutationModel(QFrame):
     def setMutationConf(self,lines):
         """ set les valeurs depuis la conf
         """
-        print lines
+        mmrValues = lines[0].split('[')[1].split(']')[0].split(',')
+        if mmrValues[2] == "-9":
+            mmrValues[2] = ""
+        if mmrValues[3] == "2":
+            mmrValues[3] = ""
+        self.ui.mmrMinEdit.setText(mmrValues[0])
+        self.ui.mmrMaxEdit.setText(mmrValues[1])    
+        self.ui.mmrMeanEdit.setText(mmrValues[2])   
+        self.ui.mmrShapeEdit.setText(mmrValues[3])  
+        law = lines[0].split('[')[0].split(' ')[-1]
+
+        print "law:",law
+        if law == "UN":
+            self.ui.mmrUnifRadio.setChecked(True)
+        elif law == "LN": 
+            self.ui.mmrLogRadio.setChecked(True)
+        else:
+            self.ui.mmrGammaRadio.setChecked(True)
+        
+        ilmrValues = lines[1].split('[')[1].split(']')[0].split(',')
+        if ilmrValues[2] == "-9":
+            ilmrValues[2] = ""
+        if ilmrValues[3] == "2":
+            ilmrValues[3] = ""
+        self.ui.ilmrMinEdit.setText(ilmrValues[0])
+        self.ui.ilmrMaxEdit.setText(ilmrValues[1])
+        self.ui.ilmrMeanEdit.setText(ilmrValues[2])
+        self.ui.ilmrShapeEdit.setText(ilmrValues[3])
+
+        mcpValues = lines[2].split('[')[1].split(']')[0].split(',')
+        if mcpValues[2] == "-9":
+            mcpValues[2] = ""
+        if mcpValues[3] == "2":
+            mcpValues[3] = ""
+        self.ui.mcpMinEdit.setText(mcpValues[0])
+        self.ui.mcpMaxEdit.setText(mcpValues[1])    
+        self.ui.mcpMeanEdit.setText(mcpValues[2])   
+        self.ui.mcpShapeEdit.setText(mcpValues[3])  
+        law = lines[2].split('[')[0].split(' ')[-1]
+
+        print "law:",law
+        if law == "UN":
+            self.ui.mcpUnifRadio.setChecked(True)
+        elif law == "LN": 
+            self.ui.mcpLogRadio.setChecked(True)
+        else:
+            self.ui.mcpGammaRadio.setChecked(True)
+
+        ilcpValues = lines[3].split('[')[1].split(']')[0].split(',')
+        if ilcpValues[2] == "-9":
+            ilcpValues[2] = ""
+        if ilcpValues[3] == "2":
+            ilcpValues[3] = ""
+        self.ui.ilcpMinEdit.setText(ilcpValues[0])
+        self.ui.ilcpMaxEdit.setText(ilcpValues[1])
+        self.ui.ilcpMeanEdit.setText(ilcpValues[2])
+        self.ui.ilcpShapeEdit.setText(ilcpValues[3])
+
+        msrValues = lines[4].split('[')[1].split(']')[0].split(',')
+        if msrValues[2] == "-9":
+            msrValues[2] = ""
+        if msrValues[3] == "2":
+            msrValues[3] = ""
+        self.ui.msrMinEdit.setText(msrValues[0])
+        self.ui.msrMaxEdit.setText(msrValues[1])    
+        self.ui.msrMeanEdit.setText(msrValues[2])   
+        self.ui.msrShapeEdit.setText(msrValues[3])  
+        law = lines[4].split('[')[0].split(' ')[-1]
+
+        print "law:",law
+        if law == "UN":
+            self.ui.msrUnifRadio.setChecked(True)
+        elif law == "LN": 
+            self.ui.msrLogRadio.setChecked(True)
+        else:
+            self.ui.msrGammaRadio.setChecked(True)
+
+        ilsrValues = lines[5].split('[')[1].split(']')[0].split(',')
+        if ilsrValues[2] == "-9":
+            ilsrValues[2] = ""
+        if ilsrValues[3] == "2":
+            ilsrValues[3] = ""
+        self.ui.ilsrMinEdit.setText(ilsrValues[0])
+        self.ui.ilsrMaxEdit.setText(ilsrValues[1])
+        self.ui.ilsrMeanEdit.setText(ilsrValues[2])
+        self.ui.ilsrShapeEdit.setText(ilsrValues[3])
+
 
     def exit(self):
         # reactivation des onglets

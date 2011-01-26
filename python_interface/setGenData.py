@@ -369,7 +369,7 @@ class SetGeneticData(QFrame):
         for i,box in enumerate(self.groupList):
             if "Microsatellites" in str(box.title()):
                 f.write("group G%i [M]\n"%(i+1))
-                f.write(self.setMutation_dico[box].getMutationConf())
+                f.write(u'%s'%self.setMutation_dico[box].getMutationConf())
             elif "Sequences" in str(box.title()):
                 f.write("group G%i [S]\n"%(i+1))
                 to_write = u'%s'%self.setMutationSeq_dico[box].getMutationConf()
@@ -383,7 +383,7 @@ class SetGeneticData(QFrame):
         self.fillLocusTableFromData()
         if os.path.exists(self.parent.dir):
             if os.path.exists("%s/conf.gen.tmp"%(self.parent.dir)):
-                f = open("%s/conf.gen.tmp"%(self.parent.dir),"r")
+                f = codecs.open("%s/conf.gen.tmp"%(self.parent.dir),"r","utf-8")
                 lines = f.readlines()
                 nloc = int(lines[0].split("nloc=")[1].split(')')[0])
                 # determination du nombre de groupes
