@@ -302,7 +302,7 @@ class SetGeneticData(QFrame):
             self.ui.tableWidget.setRowHidden(num-1,False)
             # on met à jour le dico des groupes
             self.group_info_dico[box][1].remove(num)
-            self.dico_num_and_numgroup_locus[name][1] = -1
+            self.dico_num_and_numgroup_locus[name][1] = 0
 
         # si le groupe devient vide, on enleve le type dans le nom
         if listw_of_group.count() == 0:
@@ -389,7 +389,7 @@ class SetGeneticData(QFrame):
                 while l < nloc+1:
                     lname = lines[l].split(' ')[0].replace('_',' ')
                     ltype = lines[l].split(' ')[1]
-                    ltype_num = LOC_TYP.index(ltype)
+                    #ltype_num = LOC_TYP.index(ltype)
                     lmicroSeq = lines[l].split('[')[1].split(']')[0]
                     num_group = int(lines[l].split(' ')[3].replace('G',''))
                     # maj du dico
