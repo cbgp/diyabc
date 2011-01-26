@@ -120,6 +120,9 @@ class Project(QTabWidget):
         self.loadDataFile(name)
 
     def loadDataFile(self,name):
+        """ Charge le fichier de données passé en paramètre. Cette fonction est appelée lors
+        de l'ouverture d'un projet existant et lors du choix du fichier de données pour un nouveau projet
+        """
         new_data = Data(name)
         try:
             new_data.loadfromfile()
@@ -141,7 +144,8 @@ class Project(QTabWidget):
         except Exception,e:
             keep = ""
             if self.ui.dataFileEdit.text() != "":
-                keep = "\n\nKeeping previous selected file"
+                #keep = "\n\nKeeping previous selected file"
+                keep = "\n\nThe file was not loaded, nothing was changed"
             QMessageBox.information(self,"Data file error","%s%s"%(e,keep))
 
 
