@@ -44,7 +44,7 @@ class SetMutationModel(QFrame):
         
         ilmrMin =    str(self.ui.ilmrMinEdit.text())
         ilmrMax =    str(self.ui.ilmrMaxEdit.text())
-        ilmrMean =   str(self.ui.ilmrMeanEdit.text())
+        ilmrMean =   u'%s'%(self.ui.ilmrMeanEdit.text())
         ilmrShape =  str(self.ui.ilmrShapeEdit.text())
         if ilmrMean == "":
             ilmrMean = "-9"
@@ -101,7 +101,7 @@ class SetMutationModel(QFrame):
 
         ilsrMin =    str(self.ui.ilsrMinEdit.text())
         ilsrMax =    str(self.ui.ilsrMaxEdit.text())
-        ilsrMean =   str(self.ui.ilsrMeanEdit.text())
+        ilsrMean =   u'%s'%(self.ui.ilsrMeanEdit.text())
         ilsrShape =  str(self.ui.ilsrShapeEdit.text())
         if ilsrMean == "":
             ilsrMean = "-9"

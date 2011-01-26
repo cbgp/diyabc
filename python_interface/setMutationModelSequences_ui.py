@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setMutationModelSequences.ui'
 #
-# Created: Wed Jan 26 14:12:37 2011
+# Created: Wed Jan 26 14:18:54 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -652,15 +652,15 @@ class Ui_Frame(object):
         self.label = QtGui.QLabel(self.frame_9)
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-        self.lineEdit_25 = QtGui.QLineEdit(self.frame_9)
-        self.lineEdit_25.setObjectName("lineEdit_25")
-        self.gridLayout.addWidget(self.lineEdit_25, 0, 1, 1, 2)
+        self.isEdit = QtGui.QLineEdit(self.frame_9)
+        self.isEdit.setObjectName("isEdit")
+        self.gridLayout.addWidget(self.isEdit, 0, 1, 1, 2)
         self.label_2 = QtGui.QLabel(self.frame_9)
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 1, 0, 1, 2)
-        self.lineEdit_26 = QtGui.QLineEdit(self.frame_9)
-        self.lineEdit_26.setObjectName("lineEdit_26")
-        self.gridLayout.addWidget(self.lineEdit_26, 1, 2, 1, 1)
+        self.sotgEdit = QtGui.QLineEdit(self.frame_9)
+        self.sotgEdit.setObjectName("sotgEdit")
+        self.gridLayout.addWidget(self.sotgEdit, 1, 2, 1, 1)
         self.verticalLayout_27.addLayout(self.gridLayout)
         self.horizontalLayout_14.addWidget(self.frame_9)
         self.verticalLayout_28.addLayout(self.horizontalLayout_14)
@@ -765,7 +765,7 @@ class Ui_Frame(object):
         self.haseRadio.setText(QtGui.QApplication.translate("Frame", "Hasegawa-Kishino-Yano (1985)", None, QtGui.QApplication.UnicodeUTF8))
         self.tamuraRadio.setText(QtGui.QApplication.translate("Frame", "Tamura Nei (1993)", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Frame", "% of invariant sites :", None, QtGui.QApplication.UnicodeUTF8))
-        self.lineEdit_25.setText(QtGui.QApplication.translate("Frame", "10", None, QtGui.QApplication.UnicodeUTF8))
+        self.isEdit.setText(QtGui.QApplication.translate("Frame", "10", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Frame", "Shape of the gamma :", None, QtGui.QApplication.UnicodeUTF8))
-        self.lineEdit_26.setText(QtGui.QApplication.translate("Frame", "2.00", None, QtGui.QApplication.UnicodeUTF8))
+        self.sotgEdit.setText(QtGui.QApplication.translate("Frame", "2.00", None, QtGui.QApplication.UnicodeUTF8))
 

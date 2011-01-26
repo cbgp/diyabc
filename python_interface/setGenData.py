@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -342,7 +343,7 @@ class SetGeneticData(QFrame):
         if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.gen.tmp"):
             os.remove("%s/conf.gen.tmp" % self.parent.ui.dirEdit.text())
 
-        f = open(self.parent.ui.dirEdit.text()+"/conf.gen.tmp",'w')
+        f = codecs.open(self.parent.ui.dirEdit.text()+"/conf.gen.tmp",'w',"utf-8")
         # partie description des locus
         f.write("loci description (nloc=%i)\n"%self.nbLocusGui)
         data = self.parent.data
@@ -367,11 +368,12 @@ class SetGeneticData(QFrame):
         f.write("\ngroup priors (ngroup=%i)\n"%len(self.groupList))
         for i,box in enumerate(self.groupList):
             if "Microsatellites" in str(box.title()):
-                f.write("group G%i [M]\n"%i+1)
+                f.write("group G%i [M]\n"%(i+1))
                 f.write(self.setMutation_dico[box].getMutationConf())
             elif "Sequences" in str(box.title()):
-                f.write("group G%i [S]\n"%i+1)
-                f.write(self.setMutationSeq_dico[box].getMutationConf())
+                f.write("group G%i [S]\n"%(i+1))
+                to_write = u'%s'%self.setMutationSeq_dico[box].getMutationConf()
+                f.write(to_write)
 
 
     def loadGeneticConf(self):
