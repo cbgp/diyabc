@@ -285,7 +285,7 @@ per generation)</string>
                 </size>
                </property>
                <property name="text">
-                <string>1.00E-4</string>
+                <string>1.00E-8</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -321,7 +321,7 @@ per generation)</string>
                 </size>
                </property>
                <property name="text">
-                <string>1.00E-3</string>
+                <string>1.00E-7</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -487,6 +487,9 @@ around mean)</string>
                 <property name="text">
                  <string>Gamma</string>
                 </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
              </layout>
@@ -519,7 +522,7 @@ around mean)</string>
                 </size>
                </property>
                <property name="text">
-                <string>1.00E-5</string>
+                <string>1.00E-9</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -553,6 +556,9 @@ around mean)</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>1.00E-6</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -784,6 +790,9 @@ k_C/T</string>
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="text">
+                <string>0.050</string>
+               </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
                </property>
@@ -816,6 +825,9 @@ k_C/T</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>20</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -981,6 +993,9 @@ around mean)</string>
                 <property name="text">
                  <string>Gamma</string>
                 </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
              </layout>
@@ -1011,6 +1026,9 @@ around mean)</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>0.050</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1044,6 +1062,9 @@ around mean)</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>20</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1110,6 +1131,9 @@ around mean)</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>2</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1207,6 +1231,9 @@ k_A/G</string>
                 <property name="text">
                  <string>Unif</string>
                 </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
               <item>
@@ -1220,7 +1247,7 @@ k_A/G</string>
                  <string>Log-u</string>
                 </property>
                 <property name="checked">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -1265,6 +1292,9 @@ k_A/G</string>
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="text">
+                <string>0.050</string>
+               </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
                </property>
@@ -1297,6 +1327,9 @@ k_A/G</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>20</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1462,6 +1495,9 @@ around mean)</string>
                 <property name="text">
                  <string>Gamma</string>
                 </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
              </layout>
@@ -1492,6 +1528,9 @@ around mean)</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>0.050</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1525,6 +1564,9 @@ around mean)</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>20</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1591,6 +1633,9 @@ around mean)</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>2</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1676,7 +1721,11 @@ around mean)</string>
            </widget>
           </item>
           <item row="0" column="1" colspan="2">
-           <widget class="QLineEdit" name="lineEdit_25"/>
+           <widget class="QLineEdit" name="lineEdit_25">
+            <property name="text">
+             <string>10</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0" colspan="2">
            <widget class="QLabel" name="label_2">
@@ -1686,7 +1735,11 @@ around mean)</string>
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QLineEdit" name="lineEdit_26"/>
+           <widget class="QLineEdit" name="lineEdit_26">
+            <property name="text">
+             <string>2.00</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>

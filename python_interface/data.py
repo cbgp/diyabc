@@ -51,7 +51,7 @@ SLOCUS_TYPE= ('Autosomal diploid microsatellites','Autosomal haploid microsatell
               'Autosomal diploid DNA sequences','Autosomal haploid DNA sequences','X-linked DNA sequences','Y-linked DNA sequences','Mitochondrial DNA sequences')
 class Locus(object):
     """ doc"""
-    
+        
     
     def __init__(self, type=None, name=None, group=None,
 #                 pi_A=None, pi_C=None, pi_G=None, pi_T=None,
@@ -62,7 +62,7 @@ class Locus(object):
         self.name    = name
         self.group   = group
         if type not in (0,1,2,3,4,5,6,7,8,9) :
-            raise ValueError, "type must be in %s, %s given" % (Locus.LOCUS_TYPE,type)
+            raise ValueError, "type must be in %s, %s given" % (LOCUS_TYPE,type)
         self.type    = type
 #Proprietes des locus sequences
 #        self.pi_A   = pi_A
@@ -238,7 +238,7 @@ class Data(object):
                 t=line[c1+1]
                 tt=tp+t
                 itt=0
-                while (tt!=Locus.LOCUS_TYPE[itt]) : itt+=1
+                while (tt!=LOCUS_TYPE[itt]) : itt+=1
                 locusc = Locus(type=itt)
                 mots = lines[nl].split() 
                 locusc.name=lines[nl][0:c1-1]

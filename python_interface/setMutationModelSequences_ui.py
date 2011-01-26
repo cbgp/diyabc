@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setMutationModelSequences.ui'
 #
-# Created: Mon Jan 24 15:14:30 2011
+# Created: Wed Jan 26 11:12:42 2011
 #      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -189,6 +189,7 @@ class Ui_Frame(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.radioButton_9.setFont(font)
+        self.radioButton_9.setChecked(True)
         self.radioButton_9.setObjectName("radioButton_9")
         self.horizontalLayout_6.addWidget(self.radioButton_9)
         self.horizontalLayout_5.addWidget(self.groupBox_3)
@@ -373,6 +374,7 @@ class Ui_Frame(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.radioButton_6.setFont(font)
+        self.radioButton_6.setChecked(True)
         self.radioButton_6.setObjectName("radioButton_6")
         self.horizontalLayout_4.addWidget(self.radioButton_6)
         self.horizontalLayout_3.addWidget(self.groupBox_2)
@@ -458,13 +460,14 @@ class Ui_Frame(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.radioButton_13.setFont(font)
+        self.radioButton_13.setChecked(True)
         self.radioButton_13.setObjectName("radioButton_13")
         self.horizontalLayout_11.addWidget(self.radioButton_13)
         self.radioButton_14 = QtGui.QRadioButton(self.groupBox_5)
         font = QtGui.QFont()
         font.setPointSize(8)
         self.radioButton_14.setFont(font)
-        self.radioButton_14.setChecked(True)
+        self.radioButton_14.setChecked(False)
         self.radioButton_14.setObjectName("radioButton_14")
         self.horizontalLayout_11.addWidget(self.radioButton_14)
         self.radioButton_15 = QtGui.QRadioButton(self.groupBox_5)
@@ -556,6 +559,7 @@ class Ui_Frame(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.radioButton_18.setFont(font)
+        self.radioButton_18.setChecked(True)
         self.radioButton_18.setObjectName("radioButton_18")
         self.horizontalLayout_13.addWidget(self.radioButton_18)
         self.horizontalLayout_12.addWidget(self.groupBox_6)
@@ -684,9 +688,9 @@ class Ui_Frame(object):
         self.radioButton_11.setText(QtGui.QApplication.translate("Frame", "Log-u", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_12.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
         self.label_19.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
-        self.lineEdit_13.setText(QtGui.QApplication.translate("Frame", "1.00E-4", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_13.setText(QtGui.QApplication.translate("Frame", "1.00E-8", None, QtGui.QApplication.UnicodeUTF8))
         self.label_20.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
-        self.lineEdit_14.setText(QtGui.QApplication.translate("Frame", "1.00E-3", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_14.setText(QtGui.QApplication.translate("Frame", "1.00E-7", None, QtGui.QApplication.UnicodeUTF8))
         self.label_21.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_22.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
@@ -696,8 +700,9 @@ class Ui_Frame(object):
         self.groupBox_3.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_9.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
         self.label_14.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
-        self.lineEdit_9.setText(QtGui.QApplication.translate("Frame", "1.00E-5", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_9.setText(QtGui.QApplication.translate("Frame", "1.00E-9", None, QtGui.QApplication.UnicodeUTF8))
         self.label_15.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_10.setText(QtGui.QApplication.translate("Frame", "1.00E-6", None, QtGui.QApplication.UnicodeUTF8))
         self.label_16.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
         self.lineEdit_11.setText(QtGui.QApplication.translate("Frame", "Mean µ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_17.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
@@ -710,7 +715,9 @@ class Ui_Frame(object):
         self.radioButton_2.setText(QtGui.QApplication.translate("Frame", "Log-u", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_3.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit.setText(QtGui.QApplication.translate("Frame", "0.050", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_2.setText(QtGui.QApplication.translate("Frame", "20", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
@@ -720,9 +727,12 @@ class Ui_Frame(object):
         self.groupBox_2.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_6.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_5.setText(QtGui.QApplication.translate("Frame", "0.050", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_6.setText(QtGui.QApplication.translate("Frame", "20", None, QtGui.QApplication.UnicodeUTF8))
         self.label_11.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_8.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_23.setText(QtGui.QApplication.translate("Frame", "Mean coefficient\n"
 "k_A/G", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_5.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
@@ -730,7 +740,9 @@ class Ui_Frame(object):
         self.radioButton_14.setText(QtGui.QApplication.translate("Frame", "Log-u", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_15.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
         self.label_24.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_17.setText(QtGui.QApplication.translate("Frame", "0.050", None, QtGui.QApplication.UnicodeUTF8))
         self.label_25.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_18.setText(QtGui.QApplication.translate("Frame", "20", None, QtGui.QApplication.UnicodeUTF8))
         self.label_26.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
         self.label_28.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
@@ -740,9 +752,12 @@ class Ui_Frame(object):
         self.groupBox_6.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_18.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
         self.label_29.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_21.setText(QtGui.QApplication.translate("Frame", "0.050", None, QtGui.QApplication.UnicodeUTF8))
         self.label_30.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_22.setText(QtGui.QApplication.translate("Frame", "20", None, QtGui.QApplication.UnicodeUTF8))
         self.label_31.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_32.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_24.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_35.setText(QtGui.QApplication.translate("Frame", "(1) Set the shape to 0 if you want all individuals loci to take the same value (=mean)", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_7.setTitle(QtGui.QApplication.translate("Frame", "Mutation model", None, QtGui.QApplication.UnicodeUTF8))
         self.jukesRadio.setText(QtGui.QApplication.translate("Frame", "Jukes Kantor (1969)", None, QtGui.QApplication.UnicodeUTF8))
@@ -750,5 +765,7 @@ class Ui_Frame(object):
         self.haseRadio.setText(QtGui.QApplication.translate("Frame", "Hasegawa-Kishino-Yano (1985)", None, QtGui.QApplication.UnicodeUTF8))
         self.tamuraRadio.setText(QtGui.QApplication.translate("Frame", "Tamura Nei (1993)", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Frame", "% of invariant sites :", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_25.setText(QtGui.QApplication.translate("Frame", "10", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Frame", "Shape of the gamma :", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_26.setText(QtGui.QApplication.translate("Frame", "2.00", None, QtGui.QApplication.UnicodeUTF8))
 
