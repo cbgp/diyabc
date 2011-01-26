@@ -162,6 +162,21 @@ PriorC copyprior(PriorC source) {
 	return dest;
 }
 
+EventC copyevent(EventC source) {
+	EventC dest;
+	dest.action =source.action;
+	dest.pop = source.pop;
+	dest.pop1 = source.pop1;
+	dest.pop2 = source.pop2;
+	dest.sample = source.sample;
+	dest.Ne = source.Ne;
+	dest.time = source.time;
+	dest.admixrate = source.admixrate;
+	dest.numevent0 = source.numevent0;
+	dest.stime = source.stime;
+	dest.sNe = source.sNe;
+	dest.sadmixrate = source.admixrate;
+}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class HeaderC

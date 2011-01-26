@@ -156,7 +156,7 @@ struct ParticleC
 	DataC  data;
 	MissingHaplo *mhap;
 	MissingNuc   *mnuc;
-	EventC *eventlist;
+	ScenarioC *scenario;
 	SequenceBitC *seqlist;
 	GeneTreeC *gt;
 	MwcGen mw;
@@ -164,7 +164,7 @@ struct ParticleC
 	HistParameterC *parameterlist;
 	int *paramvar;
 	bool dnatrue;
-	int npart,nloc,ngr,nevent,nn0,nparam,nparamvar,nseq,popmax,nstat,nsample,*nind,**indivsexe,scenario;
+	int npart,nloc,ngr,nparam,nparamvar,nseq,popmax,nstat,nsample,*nind,**indivsexe,nscenarios;
 	int *time_sample;
 	double matQ[4][4];
 
