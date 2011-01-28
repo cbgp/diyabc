@@ -492,8 +492,21 @@ class SetGeneticData(QFrame):
                                 self.setSum_dico[self.groupList[num_group-1]].setSumConf(lines_group)
 
 
-    # TODO
     def getNbSumStats(self):
-        return 0
+        """ retourne le nombre total de summary statistics (nb de cases cochées)
+        """ 
+        nb_sum_stats = 0
+        for box in self.groupList:
+            if "Microsatellites" in str(box.title()):
+                (nstat,stat_txt) = self.setSum_dico[box].getSumConf()
+                nb_sum_stats += nstat
+            elif "Sequences" in str(box.title()):
+                (nstat_tmp,stat_txt) = self.setSumSeq_dico[box].getSumConf()
+                nb_sum_stats += nstat
+        return nb_sum_stats
+
+    # TODO
     def getNbParam(self):
+        """ retourne le nombre de paramètres mutationnels réels (qui varient. min<max pour le MEAN)
+        """
         return 0
