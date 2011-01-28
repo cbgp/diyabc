@@ -5,3 +5,7 @@ DONE exit set hist -> sauve conf.hist.tmp
 DONE exit set gen -> sauve conf.gen.tmp
 
 ecrire les entetes (fin du reftable header)
+get nb param de genData
+mettre le nombre de paramètres d'un scenarion entre parenthèses dans la première ligne du
+scenario dans le fichier de conf
+gerer la validation du gentData
