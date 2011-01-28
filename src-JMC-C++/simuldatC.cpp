@@ -69,8 +69,9 @@ public:
 			cond.operateur="<=";cond.param1=ss.substr(0,ss.find("<="));cond.param2=ss.substr(ss.find("<=")+2,ss.length()-(ss.find("<=")+2));}
 		if (ss.find(">")!=string::npos){
 			cond.operateur=">";cond.param1=ss.substr(0,ss.find(">"));cond.param2=ss.substr(ss.find(">")+1,ss.length()-(ss.find(">")+1));}
-		else if (ss.find("<=")!=string::npos){
+		else if (ss.find("<")!=string::npos){
 			cond.operateur="<";cond.param1=ss.substr(0,ss.find("<"));cond.param2=ss.substr(ss.find("<")+1,ss.length()-(ss.find("<")+1));}
+			return cond;
 	}
 
 	void assignloc(int gr){
@@ -86,15 +87,18 @@ public:
 	}
 
 	HeaderC* readHeader(char* headerfilename){
-		string s1,**sl,*ss,*ss1;
+		string s1,s2,**sl,*ss,*ss1,*ss2;
 		int *nlscen,nss,nss1,j,k,l,gr,grm;
 		ifstream file(headerfilename, ios::in);
 		if (file == NULL) {
 			this->message = "File ReftableHeader.txt not found";
 			return this;
 		} else this->message="";
+		cout << "début de readHeader\n";
 		getline(file,this->datafilename);
+		cout << "datafilename = >"<<this->datafilename<<"<\n";
 		this->dataobs.loadfromfile(this->datafilename);
+		cout <<"apres dataobs.loadfromfile\n";
 		getline(file,s1);
 		this->nparamtot=getwordint(s1,1);
 		this->nstat=getwordint(s1,4);
@@ -121,8 +125,11 @@ public:
 		getline(file,s1);		//ligne vide
 		getline(file,s1);
 		ss=splitwords(s1," ",&nss);
-		this->nparamtot = atoi(ss[3].c_str());
-		if (nss>4) this->nconditions =  atoi(ss[4].c_str()); else  this->nconditions = 0;
+		s2=ss[3].substr(1,ss[3].length()-2);
+		ss2=splitwords(s2,",",&nss);
+		this->nparamtot = atoi(ss2[0].c_str());
+		this->nconditions = atoi(ss2[1].c_str());
+		delete [] ss2;
 		this->histparam = new HistParameterC[this->nparamtot];
 		if (this->nconditions>0) this->condition = new ConditionC[this->nconditions];
 		delete [] ss;
@@ -135,14 +142,17 @@ public:
 			else if  (ss[1]=="A") this->histparam[i].category = 2;
 			this->histparam[i].prior = this->readprior(ss[2]);
 		}
+		cout<<"avant la lecture des conditions\n";
 		delete [] ss;
 		if (this->nconditions>0) {
 			this->condition = new ConditionC[this->nconditions];
 			for (int i=0;i<this->nconditions;i++) {
 				getline(file,s1);
 				this->condition[i] = this->readcondition(s1);
+				cout << this->condition[i].param1<<"  "<<this->condition[i].operateur<<"   "<<this->condition[i].param2<<"\n";
 			}
 		}
+		exit(1);
 //Partie loci description
 		getline(file,s1);		//ligne vide
 		getline(file,s1);		//ligne "loci description"

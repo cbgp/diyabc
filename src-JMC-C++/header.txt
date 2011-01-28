@@ -1,0 +1,114 @@
+datatestms_001.txt
+13 parameters and  75 summary statistics
+
+3 scenarios 10 9 8
+scenario 1 [0.333333333333333]  (12)                        
+N N N N N N
+0 sample 1
+0 sample 2
+2 sample 3
+4 sample 4
+t1 split 2 5 3 r1
+t2 merge 1 5
+t3 split 3 6 4 r2
+t4 merge 1 6
+t5 merge 1 4
+scenario 2 [0.333333333333333]  (10)                        
+N N N N N
+0 sample 1
+0 sample 2
+2 sample 3
+4 sample 4
+t1 split 2 5 3 r1
+t2 merge 1 5
+t3a merge 4 3
+t5 merge 1 4
+scenario 3 [0.333333333333333]  (8)                        
+N N N N
+0 sample 1
+0 sample 2
+2 sample 3
+4 sample 4
+t2 merge 1 2
+t3a merge 4 3
+t5 merge 1 4
+
+historical parameter priors (9,1)
+N   N   UN[10,10000,0,0,1]
+t1  T   UN[1,100,0,0,1]
+r1  A   UN[0.100,0.900,0.000,0.000,0.001]
+t2  T   UN[100,1000,0,0,1]
+t3  T   UN[5000,50000,0,0,1]
+r2  A   UN[0.100,0.900,0.000,0.000,0.001]
+t4  T   UN[5000,50000,0,0,1]
+t5  T   UN[50000,500000,0,0,1]
+t3a T    UN[5000,50000,0,0,1]
+t4>t3
+
+loci description  (10)
+locus_1 <A> [M] G1 2 40
+locus_2 <A> [M] G1 2 40
+locus_3 <A> [M] G1 2 40
+locus_4 <A> [M] G1 2 40
+locus_5 <X> [M] G1 2 40
+locus_6 <A> [S] G2 985
+locus_7 <A> [S] G2 768
+locus_8 <A> [S] G2 501
+locus_9 <M> [S] G3 2 604
+locus_10 <M> [S] G3 2 702
+
+group priors (3)
+group G1 [M]
+MEANMU    UN[1.00E-004,1.00E-003,-9,-9]
+GAMMU     GA[1.00E-005,1.00E-002,-9.00E+000,2.000]
+MEANP     UN[0.100,0.30,-9.00,-9.00]
+GAMP      GA[1.00E-002,9.00E-001,-9.00E+000,2.000]
+MEANSNI   UN[0.00E+000,0.00E+000,-9,-9]
+GAMSNI    GA[1.00E-009,1.00E-003,-9.00E+000,2.000]
+group G2 [S]
+MEANMU    UN[1.00E-009,1.00E-008,-9,-9]
+GAMMU     GA[1.00E-010,1.00E-007,-9.00E+000,2.00E+000]
+MEANK1    UN[0.050,20.00,-9,-9]
+GAMK1     GA[0.050,20.00,-9.00,2.00]
+MEANK2    UN[0.050,20.00,-9,-9]
+GAMK2     GA[0.050,20.00,-9.00,2.00]
+MODEL	  K2P      10    2.000
+group G3 [S]
+MEANMU    UN[1.00E-009,1.00E-008,-9,-9]
+GAMMU     GA[1.00E-010,1.00E-007,-9.00E+000,2.00E+000]
+MEANK1    UN[0.050,20.00,-9,-9]
+GAMK1     GA[0.050,20.00,-9.00,2.00]
+MEANK2    UN[0.050,20.00,-9,-9]
+GAMK2     GA[0.050,20.00,-9.00,2.00]
+MODEL	  K2P      10    2.000
+
+group summary statistics
+group G1 [M] 25
+NAL 1 3 4
+HET 1 2 3 4
+VAR 1 2 3 4
+MGW 1 2 3 4
+FST 1&2 1&3 1&4 2&3 2&4 3&4
+DM2 1&2 1&3 1&4 2&3 2&4 3&4
+DAS 1&2 1&3 1&4 2&3 2&4 3&4
+AML 2&1&3 3&1&4
+group G2 [S] 25
+NHA 1 2 3 4
+NSS 1 2 3 4
+MPD 1 2 3 4
+VPD 1 2 3 4
+NH2 1&2 1&3 1&4 2&3 2&4 3&4
+NS2 1&2 1&3 1&4 2&3 2&4 3&4
+MP2 1&2 1&3 1&4 2&3 2&4 3&4
+MPB 1&2 1&3 1&4 2&3 2&4 3&4
+group G3 [S] 25
+NHA 1 2 3 4
+NSS 1 2 3 4
+MPD 1 2 3 4
+VPD 1 2 3 4
+NH2 1&2 1&3 1&4 2&3 2&4 3&4
+NS2 1&2 1&3 1&4 2&3 2&4 3&4
+MP2 1&2 1&3 1&4 2&3 2&4 3&4
+MPB 1&2 1&3 1&4 2&3 2&4 3&4
+
+scenario             N            t1            r1            t2            t3            r2            t4            t5           t3a        µmic_A        Pmic_A         µseq_A         k1seq_A       NAL_1_A       NAL_3_A       NAL_4_A       HET_1_A       HET_2_A       HET_3_A       HET_4_A       VAR_1_A       VAR_2_A       VAR_3_A       VAR_4_A       MGW_1_A       MGW_2_A       MGW_3_A       MGW_4_A     FST_1&2_A     FST_1&3_A     FST_1&4_A     FST_2&3_A     FST_2&4_A     FST_3&4_A     DM2_1&2_A     DM2_1&3_A     DM2_1&4_A     DM2_2&3_A     DM2_2&4_A     DM2_3&4_A     DAS_1&2_A     DAS_1&3_A     DAS_1&4_A     DAS_2&3_A     DAS_2&4_A     DAS_3&4_A   AML_2&1&3_A   AML_3&1&4_A      NHA_P1_A      NHA_P2_A      NHA_P3_A      NHA_P4_A      NSS_P1_A      NSS_P2_A      NSS_P3_A      NSS_P4_A      MPD_P1_A      MPD_P2_A      MPD_P3_A      MPD_P4_A      VPD_P1_A      VPD_P2_A      VPD_P3_A      VPD_P4_A    NH2_P1&2_A    NH2_P1&3_A    NH2_P1&4_A    NH2_P2&3_A    NH2_P2&4_A    NH2_P3&4_A    NS2_P1&2_A    NS2_P1&3_A    NS2_P1&4_A    NS2_P2&3_A    NS2_P2&4_A    NS2_P3&4_A    NP2_P1&2_A    NP2_P1&3_A    NP2_P1&4_A    NP2_P2&3_A    NP2_P2&4_A    NP2_P3&4_A    MPB_P1&2_A    MPB_P1&3_A    MPB_P1&4_A    MPB_P2&3_A    MPB_P2&4_A    MPB_P3&4_A

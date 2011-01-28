@@ -46,7 +46,7 @@ string* splitwords(string s,string sep,int *k){
 			if (j==1) {
 				s1.append(s0);
 				if (j==1) (*k)++;
-				cout <<" j=1  k="<<*k<<"\n";
+				//cout <<" j=1  k="<<*k<<"\n";
 			}
 		} else {
 			s1.append(s0);
@@ -60,7 +60,7 @@ string* splitwords(string s,string sep,int *k){
 		s1=s1.substr(j0+1,s.length());
 
 	}
-	cout <<"k="<<*k<<"\n";
+	//cout <<"k="<<*k<<"\n";
 	return sb;
 }
 

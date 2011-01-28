@@ -153,7 +153,7 @@ public:
 	    while (not file.eof()) {
 	    	if (s!="") {
 				s1=majuscules(s);
-				cout << s1<<"\n";
+//				cout << s1<<"\n";
 				if (s1.find("POP")==string::npos) {
 					nindi[nech-1] +=1;
 					s2=s1.substr(s1.find(","),s1.length());
@@ -234,7 +234,7 @@ public:
 				j=s.find(",");
 				this->indivname[ech][ind] = s.substr(0,j);
 				s = s.substr(j+1,s.length());
-			    istringstream iss(s);
+			    	istringstream iss(s);
 				for (int i=0;i<this->nloc;i++) {
 					iss >> this->genotype[ech][ind][i];
 					if ((this->genotype[ech][ind][i].find("[")!=string::npos)and(this->locus[i].type<5)) this->locus[i].type +=5;
@@ -319,7 +319,7 @@ public:
     		this->locus[loc].ss[ech] = 0;
     		this->locus[loc].samplesize[ech] = 0;
     		for (int ind=0;ind<this->nind[ech];ind++){
-    			geno=string(this->genotype[ech][ind][loc]);
+    			geno=this->genotype[ech][ind][loc];
     			if (geno.find("][")==string::npos) n=1; else n=2;
     			if (n==2) {
     				j0=geno.find("[")+1;
@@ -334,7 +334,7 @@ public:
     				}
     				gen[0]=geno.substr(j0,j1-j0);
     				gen[1]=geno.substr(j1+2,j2-(j1+2));
-    				cout <<indivname[ech][ind]<<"  n=2     "<<gen[0]<<"   "<<gen[1]<<"\n";
+    				//cout <<indivname[ech][ind]<<"  n=2     "<<gen[0]<<"   "<<gen[1]<<"\n";
     				this->locus[loc].ss[ech] +=2;
     			}else {
     				j0=geno.find("[")+1;
