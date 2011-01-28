@@ -468,9 +468,27 @@ class SetGeneticData(QFrame):
                         else:
                             self.setMutation_dico[self.groupList[num_group-1]].setMutationConf(lines[l:(l+6)])
                             l+=6
+                    # on avance jusqu'au summary stats
                     while l<len(lines) and "group summary statistics" not in lines[l]:
                         l+=1
                     # on est sur la première ligne
                     nb_sum_stat = int(lines[l].split('(')[1].split(')')[0])
                     print "nbsumstat %s"%nb_sum_stat
+                    l+=1
+                    # parcours de tous les groupes
+                    while l<len(lines) and lines[l].strip() != "":
+                        num_group = int(lines[l].split('group G')[1].split(' ')[0])
+                        type_group = lines[l].split('[')[1].split(']')[0]
+                        l+=1
+                        # parcours des lignes du groupe
+                        lines_group = []
+                        while l<len(lines) and "group" not in lines[l]:
+                            lines_group.append(lines[l].strip())
+                            l+=1
+                        if len(lines_group) > 0:
+                            if type_group == 'S':
+                                self.setSumSeq_dico[self.groupList[num_group-1]].setSumConf(lines_group)
+                            else:
+                                self.setSum_dico[self.groupList[num_group-1]].setSumConf(lines_group)
+
 

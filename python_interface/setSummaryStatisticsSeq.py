@@ -467,6 +467,10 @@ class SetSummaryStatisticsSeq(QFrame):
                 conf_txt += "\n"
         return (nstat,conf_txt)
 
+    def setSumConf(self,lines):
+        """ grace aux lignes du fichier de conf, remet les sum stats
+        """
+        pass
 
     def exit(self):
         # reactivation des onglets

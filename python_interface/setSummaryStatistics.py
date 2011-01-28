@@ -317,6 +317,8 @@ class SetSummaryStatistics(QFrame):
         ml3Check.setMinimumSize(QtCore.QSize(20, 0))
         ml3Check.setMaximumSize(QtCore.QSize(20, 16777215))
         ml3Check.setObjectName("ml3Check")
+        ml3Check.setChecked(True)
+        ml3Check.setDisabled(True)
         horizontalLayout_17.addWidget(ml3Check)
         spacerItem21 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         horizontalLayout_17.addItem(spacerItem21)
@@ -431,6 +433,57 @@ class SetSummaryStatistics(QFrame):
                     conf_txt += "%s "%lsample
                 conf_txt += "\n"
         return (nstat,conf_txt)
+
+    def setSumConf(self,lines):
+        """ grace aux lignes du fichier de conf, remet les sum stats
+        """
+        confToStat = {"NAL" : "mnoa","HET" : "mgd", "VAR": "msv","MGW" : "mgw", "N2P" : "mnoa2", "H2P" : "mgd2", "V2P" : "msv2", "FST" : "fst2", "DAS" : "sad2", "DM2" : "dd2", "AML" : "ml3", "LIK" : "" }
+
+        # construction du dico de stats (le même que dans getSumConf)
+        dico_stats = {}
+        for line in lines:
+            t = line.split(' ')[0]
+            dico_stats[t] = []
+            for sample in line.split(' ')[1:]:
+                dico_stats[t].append(sample)
+        print "dico stats :",dico_stats
+
+        # pour chaque ligne (de case à cocher)
+        for k in dico_stats.keys():
+            name_chk_box = confToStat[k]
+            # pour chaque colonne chaque sample dans one Sample
+            if k in ["NAL","HET","VAR","MGW"]:
+                for box in self.oneSampleList:
+                    num_sample = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1].strip()
+                    if num_sample in dico_stats[k]:
+                        # on coche
+                        box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
+            elif k in ["H2P","V2P","FST","DAS","DM2","N2P"]:
+                for box in self.twoSampleList:
+                    num_sample = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1].strip()
+                    if num_sample in dico_stats[k]:
+                        # on coche
+                        box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
+            elif k == "LIK":
+                for lik in dico_stats[k]:
+                    num1 = int(lik.strip().split('&')[0])
+                    num2 = int(lik.strip().split('&')[1])
+                    ind_box = 0
+                    while ind_box < len(self.twoSampleList) and str(self.twoSampleList[ind_box].findChild(QLabel,"twoSampleLabel").text()).strip().split(' ')[1] != lik.strip() and\
+                            str(self.twoSampleList[ind_box].findChild(QLabel,"twoSampleLabel").text()).strip().split(' ')[1] != "%s&%s"%(num2,num1):
+                        ind_box += 1
+                    if num1 > num2:
+                        self.twoSampleList[ind_box].findChild(QCheckBox,"ci2RightCheck").setChecked(True)
+                    else:
+                        self.twoSampleList[ind_box].findChild(QCheckBox,"ci2LeftCheck").setChecked(True)
+
+            elif k == "AML":
+                for aml in dico_stats[k]:
+                    num1 = aml.strip().split('&')[0]
+                    num2 = aml.strip().split('&')[1]
+                    num3 = aml.strip().split('&')[2]
+                    self.addAdmixSampleGui(int(num1),int(num2),int(num3))
+                    self.admixSampleList[-1].findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
 
 
 
