@@ -365,15 +365,39 @@ class SetGeneticData(QFrame):
                 f.write("%s %s [%s] G%i %s %s\n"%(name.replace(' ','_'),typestr,microSeq,group,motif_size,motif_range))
 
         # partie mutation model
-        f.write("\ngroup priors (ngroup=%i)\n"%len(self.groupList))
+        f.write("\ngroup priors (%i)\n"%len(self.groupList))
         for i,box in enumerate(self.groupList):
             if "Microsatellites" in str(box.title()):
                 f.write("group G%i [M]\n"%(i+1))
                 f.write(u'%s'%self.setMutation_dico[box].getMutationConf())
+                print self.setSum_dico[box].getSumConf()
             elif "Sequences" in str(box.title()):
                 f.write("group G%i [S]\n"%(i+1))
                 to_write = u'%s'%self.setMutationSeq_dico[box].getMutationConf()
                 f.write(to_write)
+                print self.setSumSeq_dico[box].getSumConf()
+
+        # partie sum stats
+        stat_txt_list = []
+        nstat_tot = 0
+        for i,box in enumerate(self.groupList):
+            stat_txt = ""
+            if "Microsatellites" in str(box.title()):
+                (nstat_tmp,stat_txt) = self.setSum_dico[box].getSumConf()
+                stat_header_txt = "group G%i [M] (%i)\n"%((i+1),nstat_tmp)
+                nstat_tot += nstat_tmp
+                # construction de la chaine a ecrire pour ce groupe TODO
+                stat_to_write = stat_header_txt+stat_txt
+            elif "Sequences" in str(box.title()):
+                stat_txt = "group G%i [S] (%i)"%((i+1),self.setSumSeq_dico[box].getNstat())
+                nstat_tot += self.setSumSeq_dico[box].getNstat()
+                stat_txt += self.setSumSeq_dico[box].getSumConf()
+            stat_txt_list.append(stat_to_write)
+
+        f.write("\ngroup summary statistics (%i)\n"%nstat_tot)
+        for txt in stat_txt_list:
+            f.write(txt)
+            print txt
 
 
     def loadGeneticConf(self):
@@ -428,7 +452,7 @@ class SetGeneticData(QFrame):
                 l+=1
                 if l < len(lines):
                     print 'ligne:',lines[l]
-                    nb_groupes = int(lines[l].split('ngroup=')[1].split(')')[0])
+                    nb_groupes = int(lines[l].split('(')[1].split(')')[0])
                     num_group_max_done = 0
                     l+=1
                     # on va jusqu'à la prochaine ligne vide ou la fin du fichier
@@ -444,8 +468,4 @@ class SetGeneticData(QFrame):
                         else:
                             self.setMutation_dico[self.groupList[num_group-1]].setMutationConf(lines[l:(l+6)])
                             l+=6
-
-
-
-
 

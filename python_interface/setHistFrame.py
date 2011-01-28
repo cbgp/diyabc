@@ -687,7 +687,7 @@ class SetHistoricalModel(QFrame):
             for line in txt:
                 f.write("\n"+line)
             num+=1
-        f.write("\n\nhistorical parameters priors (%s)"%(len(self.param_info_dico.keys())))
+        f.write("\n\nhistorical parameters priors (%s,%i)"%(len(self.param_info_dico.keys()),len(self.condList)))
         # consultation des valeurs des paramètres
         # la gui est mise a jour uniquement si les scenarios sont valides
         # DONC on peut se servir des infos hors GUI
@@ -707,14 +707,15 @@ class SetHistoricalModel(QFrame):
                 visible = paramBox.findChild(QPushButton,"setCondButton").isVisible()
                 i+=1
             f.write("\n%s %s %s[%s,%s,%s,%s,%s] %s"%(pname,info[0],info[1],info[2],info[3],info[4],info[5],info[6],visible))
-        for cond in self.condList:
-            lab = cond.findChild(QLabel,"condLabel")
-            f.write("\n%s"%lab.text().replace(' ',''))
-        if self.ui.drawUntilRadio.isChecked():
-            draw = "UNTIL"
-        else:
-            draw = "ONCE"
-        f.write("\nDRAW %s"%draw)
+        if len(self.condList) > 0:
+            for cond in self.condList:
+                lab = cond.findChild(QLabel,"condLabel")
+                f.write("\n%s"%lab.text().replace(' ',''))
+            if self.ui.drawUntilRadio.isChecked():
+                draw = "UNTIL"
+            else:
+                draw = "ONCE"
+            f.write("\nDRAW %s"%draw)
 
         f.write("\n")
         f.close()
@@ -751,8 +752,10 @@ class SetHistoricalModel(QFrame):
                     self.rpList[i].findChild(QLineEdit,"rpEdit").setText(prior)
                 # en sortie l est (theoriquement) sur la ligne vide
                 l+=1
+                if l >= len(lines): return 0
                 print lines[l]
-                nbparam = int(lines[l].split('(')[1].split(')')[0])
+                nbparam = int(lines[l].split('(')[1].split(',')[0])
+                nbcond = int(lines[l].split('(')[1].split(',')[1].split(')')[0])
                 l+=1
                 lfirst_param = l
                 while l<(lfirst_param + nbparam):
@@ -789,7 +792,8 @@ class SetHistoricalModel(QFrame):
                         box.findChild(QRadioButton,"logNormalRadio").setChecked(True)
                     l+=1
                 # l est à la première condition
-                while l < len(lines):
+                num_cond = 0
+                while l < len(lines) and num_cond < nbcond:
                     line = lines[l].strip()
                     if line != "":
                         if line.split(' ')[0] == "DRAW":

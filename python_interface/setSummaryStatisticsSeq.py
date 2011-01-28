@@ -384,6 +384,10 @@ class SetSummaryStatisticsSeq(QFrame):
             else:
                 self.addAdmixSampleGui(int(val1),int(val2),int(val3))
 
+    def getNstat(self):
+        return 0
+    def getSumConf(self):
+        return ""
 
 
     def exit(self):
