@@ -19,7 +19,7 @@ using namespace std;
 #define MISSING -9999
 #define NSTAT 26
 
-string stat_type[NSTAT] = {"NAL","HET","MGW","VAR","FST","LIK","DM2","N2P","H2P","V2P","DAS","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","FST","AML"};
+string stat_type[NSTAT] = {"NAL","HET","MGW","VAR","FST","LIK","DM2","N2P","H2P","V2P","DAS","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"};
 int stat_num[NSTAT]     = {  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 };
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			-13 : fst

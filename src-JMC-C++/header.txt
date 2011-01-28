@@ -44,18 +44,24 @@ t4  T   UN[5000,50000,0,0,1]
 t5  T   UN[50000,500000,0,0,1]
 t3a T    UN[5000,50000,0,0,1]
 t4>t3
+DRAW UNTIL
 
-loci description  (10)
-locus_1 <A> [M] G1 2 40
-locus_2 <A> [M] G1 2 40
-locus_3 <A> [M] G1 2 40
-locus_4 <A> [M] G1 2 40
-locus_5 <X> [M] G1 2 40
-locus_6 <A> [S] G2 985
-locus_7 <A> [S] G2 768
-locus_8 <A> [S] G2 501
-locus_9 <M> [S] G3 2 604
-locus_10 <M> [S] G3 2 702
+loci description  (15)
+locus_1  <A> [M] G1 2 40
+locus_2  <A> [M] G1 2 40
+locus_3  <A> [M] G1 2 40
+locus_4  <A> [M] G1 2 40
+locus_5  <A> [M] G1 2 40
+locus_6  <A> [M] G1 2 40
+locus_7  <A> [M] G1 2 40
+locus_8  <A> [M] G1 2 40
+locus_9  <A> [M] G0 2 40
+locus_10 <A> [M] G0 2 40
+locus_11 <A> [S] G0 1000
+locus_12 <A> [S] G2 1000
+locus_13 <A> [S] G2 1000
+locus_14 <A> [S] G3 1000
+locus_15 <A> [S] G3 1000
 
 group priors (3)
 group G1 [M]
@@ -83,7 +89,7 @@ GAMK2     GA[0.050,20.00,-9.00,2.00]
 MODEL	  K2P      10    2.000
 
 group summary statistics
-group G1 [M] 25
+group G1 [M] 35
 NAL 1 3 4
 HET 1 2 3 4
 VAR 1 2 3 4
@@ -92,7 +98,7 @@ FST 1&2 1&3 1&4 2&3 2&4 3&4
 DM2 1&2 1&3 1&4 2&3 2&4 3&4
 DAS 1&2 1&3 1&4 2&3 2&4 3&4
 AML 2&1&3 3&1&4
-group G2 [S] 25
+group G2 [S] 40
 NHA 1 2 3 4
 NSS 1 2 3 4
 MPD 1 2 3 4
@@ -101,7 +107,7 @@ NH2 1&2 1&3 1&4 2&3 2&4 3&4
 NS2 1&2 1&3 1&4 2&3 2&4 3&4
 MP2 1&2 1&3 1&4 2&3 2&4 3&4
 MPB 1&2 1&3 1&4 2&3 2&4 3&4
-group G3 [S] 25
+group G3 [S] 40
 NHA 1 2 3 4
 NSS 1 2 3 4
 MPD 1 2 3 4

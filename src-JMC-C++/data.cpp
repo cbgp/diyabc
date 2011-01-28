@@ -121,7 +121,6 @@ public:
 		char c;
 		size_t j,j0,j1;
 		stringstream out;
-		cout << "début de la première lecture\n";
 		ifstream file(filename.c_str(), ios::in);
 		if (file == NULL) {
 			this->message = "File "+filename+" not found";
@@ -134,7 +133,6 @@ public:
 			s=title.substr(j0+4,j1-(j0+4));
 			this->sexratio=atof(s.c_str())/(1.0+atof(s.c_str()));
 		} else this->sexratio=0.5;
-		cout <<"sex-ratio="<<this->sexratio<<"\n";
 		this->nloc=0;fin=false;
 		while (not fin) {
 			getline(file,s);
@@ -184,7 +182,6 @@ public:
 	    	getline(file,s);
 		}
 		file.close();
-		cout << "fin de la première lecture\n";
 		this->nsample=nech;
 		this->nind = new int[nech];
 		for (int i=0;i<nech;i++) {this->nind[i]=nindi[i];}
@@ -244,7 +241,6 @@ public:
 		}
 		file2.close();
 		delete [] nindi;
-		cout << "\nfin de readfile\n";
 	}
 
     void do_microsat(int loc){
@@ -306,8 +302,6 @@ public:
     	gen = new string[2];
     	string sbase;
     	char base[] ="ACGT";
-    	cout <<"début de do_sequence\n";
-
     	this->locus[loc].haplodna = new char**[this->nsample];
     	for (int ech=0;ech<this->nsample;ech++) {
     		this->locus[loc].haplodna[ech] = new char*[2*this->nind[ech]];
@@ -346,13 +340,10 @@ public:
     					this->message=ss.str();
     					return;
     				}
-    				if ((loc==4)and(ech==1)and(ind==10)) cout << "j0="<<j0<<"   et j1="<<j1<<"\n";
     				gen[0]=geno.substr(j0,j1-j0);
-    				if ((loc==4)and(ech==1)and(ind==10)) cout << "gen[0]="<<gen[0]<<"\n";
     				this->locus[loc].ss[ech] +=1;
     				if (this->locus[loc].type==2) this->indivsexe[ech][ind]=1;
     			    if ((this->locus[loc].type==3)and(geno!="[]")) this->indivsexe[ech][ind]=1;
-    				cout <<indivname[ech][ind]<<"  n=1     "<<gen[0]<<"\n";
 
     			}
     			for (int i=0;i<n;i++) {
@@ -418,7 +409,7 @@ public:
 		this->readfile(filename);
 		kloc=this->nloc;
 		for (loc=0;loc<kloc;loc++) {
-			cout << "locus "<<loc<<"   type = "<<this->locus[loc].type<<"\n";
+			//cout << "locus "<<loc<<"   type = "<<this->locus[loc].type<<"\n";
 			if (this->locus[loc].type<5) this->do_microsat(loc);
 			else                         this->do_sequence(loc);
 			this->cal_coeff(loc);
