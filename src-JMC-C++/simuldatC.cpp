@@ -118,6 +118,7 @@ public:
 			scenario[i].nparam = getwordint(s1,4);
 			for (int j=0;j<nlscen[i];j++) getline(file,sl[i][j]);
 			scenario[i].read_events(nlscen[i],sl[i]);
+			
 		}
 		for (int i=0;i<this->nscenarios;i++) delete []sl[i];
 		delete [] sl;
