@@ -386,12 +386,14 @@ class SetGeneticData(QFrame):
                 (nstat_tmp,stat_txt) = self.setSum_dico[box].getSumConf()
                 stat_header_txt = "group G%i [M] (%i)\n"%((i+1),nstat_tmp)
                 nstat_tot += nstat_tmp
-                # construction de la chaine a ecrire pour ce groupe TODO
+                # construction de la chaine a ecrire pour ce groupe 
                 stat_to_write = stat_header_txt+stat_txt
             elif "Sequences" in str(box.title()):
-                stat_txt = "group G%i [S] (%i)"%((i+1),self.setSumSeq_dico[box].getNstat())
-                nstat_tot += self.setSumSeq_dico[box].getNstat()
-                stat_txt += self.setSumSeq_dico[box].getSumConf()
+                (nstat_tmp,stat_txt) = self.setSumSeq_dico[box].getSumConf()
+                stat_header_txt = "group G%i [S] (%i)\n"%((i+1),nstat_tmp)
+                nstat_tot += nstat_tmp
+                # construction de la chaine a ecrire pour ce groupe 
+                stat_to_write = stat_header_txt+stat_txt
             stat_txt_list.append(stat_to_write)
 
         f.write("\ngroup summary statistics (%i)\n"%nstat_tot)

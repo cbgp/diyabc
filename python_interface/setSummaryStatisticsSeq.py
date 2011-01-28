@@ -216,7 +216,7 @@ class SetSummaryStatisticsSeq(QFrame):
         verticalLayout_4.addLayout(horizontalLayout_28)
         self.ui.horizontalLayout_4.addWidget(frame_9)
 
-        #self.oneSampleList.append(frame_9)
+        self.oneSampleList.append(frame_9)
 
     def addTwoSample(self,num1,num2):
         frame_11 = QtGui.QFrame(self.ui.scrollAreaWidgetContents_2)
@@ -384,10 +384,88 @@ class SetSummaryStatisticsSeq(QFrame):
             else:
                 self.addAdmixSampleGui(int(val1),int(val2),int(val3))
 
-    def getNstat(self):
-        return 0
+    def getStats(self):
+        """ retourne les stats sous la forme d'un dico indexé par les noms de ligne
+        """
+        nstat = 0
+        # dico indexé par les noms de ligne (NAL,FST...) qui donne la liste des samples concernés
+        dico_stats = {}
+        dico_stats["NHA"] = []
+        dico_stats["NSS"] = []
+        dico_stats["MPD"] = []
+        dico_stats["VPD"] = []
+        dico_stats["DTA"] = []
+        dico_stats["PSS"] = []
+        dico_stats["MNS"] = []
+        dico_stats["VNS"] = []
+
+        dico_stats["NH2"] = []
+        dico_stats["NS2"] = []
+        dico_stats["MP2"] = []
+        dico_stats["MPB"] = []
+        dico_stats["HST"] = []
+
+        dico_stats["SML"] = []
+        for box in self.oneSampleList:
+            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
+            if box.findChild(QCheckBox,"nohCheck").isChecked():
+                dico_stats["NHA"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"nossCheck").isChecked():
+                dico_stats["NSS"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"mopdCheck").isChecked():
+                dico_stats["MPD"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"vopdCheck").isChecked():
+                dico_stats["VPD"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"tdCheck").isChecked():
+                dico_stats["DTA"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"pssCheck").isChecked():
+                dico_stats["PSS"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"monotrCheck").isChecked():
+                dico_stats["MNS"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"vonotrCheck").isChecked():
+                dico_stats["VNS"].append(lab)
+                nstat += 1
+        for box in self.twoSampleList:
+            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
+            if box.findChild(QCheckBox,"noh2Check").isChecked():
+                dico_stats["NH2"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"noss2Check").isChecked():
+                dico_stats["NS2"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"mopdw2Check").isChecked():
+                dico_stats["MP2"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"mopdb2Check").isChecked():
+                dico_stats["MPB"].append(lab)
+                nstat += 1
+            if box.findChild(QCheckBox,"fst2Check").isChecked():
+                dico_stats["HST"].append(lab)
+                nstat += 1
+        for box in self.admixSampleList:
+            lab = str(box.findChild(QLabel,"threeSampleLabel").text()).split('\n')[1]
+            if box.findChild(QCheckBox,"ml3Check").isChecked():
+                dico_stats["SML"].append(lab)
+                nstat +=1
+        return (nstat,dico_stats)
+
     def getSumConf(self):
-        return ""
+        (nstat,dico_stats) = self.getStats()
+        conf_txt = ""
+        for k in dico_stats.keys():
+            if len(dico_stats[k]) > 0:
+                conf_txt += "%s "%k
+                for lsample in dico_stats[k]:
+                    conf_txt += "%s "%lsample
+                conf_txt += "\n"
+        return (nstat,conf_txt)
 
 
     def exit(self):
