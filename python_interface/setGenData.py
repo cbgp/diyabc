@@ -370,12 +370,10 @@ class SetGeneticData(QFrame):
             if "Microsatellites" in str(box.title()):
                 f.write("group G%i [M]\n"%(i+1))
                 f.write(u'%s'%self.setMutation_dico[box].getMutationConf())
-                print self.setSum_dico[box].getSumConf()
             elif "Sequences" in str(box.title()):
                 f.write("group G%i [S]\n"%(i+1))
                 to_write = u'%s'%self.setMutationSeq_dico[box].getMutationConf()
                 f.write(to_write)
-                print self.setSumSeq_dico[box].getSumConf()
 
         # partie sum stats
         stat_txt_list = []
@@ -396,7 +394,7 @@ class SetGeneticData(QFrame):
                 stat_to_write = stat_header_txt+stat_txt
             stat_txt_list.append(stat_to_write)
 
-        f.write("\ngroup summary statistics (%i)\n"%nstat_tot)
+        f.write("group summary statistics (%i)\n"%nstat_tot)
         for txt in stat_txt_list:
             f.write(txt)
             print txt
@@ -470,4 +468,9 @@ class SetGeneticData(QFrame):
                         else:
                             self.setMutation_dico[self.groupList[num_group-1]].setMutationConf(lines[l:(l+6)])
                             l+=6
+                    while l<len(lines) and "group summary statistics" not in lines[l]:
+                        l+=1
+                    # on est sur la première ligne
+                    nb_sum_stat = int(lines[l].split('(')[1].split(')')[0])
+                    print "nbsumstat %s"%nb_sum_stat
 
