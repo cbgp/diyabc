@@ -1,0 +1,39 @@
+loci description (nloc=13)
+locus_M1 <A> [M] G0 2 40
+locus_M2 <A> [M] G3 2 40
+locus_M3 <A> [M] G3 2 40
+locus_M4 <A> [M] G0 2 40
+locus_M5 <A> [M] G0 2 40
+locus_M6 <A> [M] G2 2 40
+locus_M7 <A> [M] G2 2 40
+locus_M8 <A> [M] G0 2 40
+locus_M9 <A> [M] G0 2 40
+locus_M10 <A> [M] G0 2 40
+locus_S1 <A> [S] G1 500
+locus_S2 <A> [S] G1 500
+locus_S3 <A> [S] G0 500
+
+group priors (ngroup=3)
+group G1 [S]
+MEANMU GA[a,a,a,a]
+GAMMU GA[a,a,Mean µ,a]
+MEANK1 GA[a,a,a,a]
+GAMK1 GA[a,a,a,a]
+MEANK2 GA[a,a,a,a]
+GAMK2 GA[a,a,a,a]
+MODEL HKY 10 2.00
+
+group G2 [M]
+MEANMU LN[a,b,c,d]
+GAMMU GA[e,f,Mean µ,g]
+MEANP LN[h,i,j,k]
+GAMP GA[l,m,o,p]
+MEANSNI LN[q,r,s,t]
+GAMSNI GA[u,v,w,x]
+group G3 [M]
+MEANMU GA[a,a,a,a]
+GAMMU GA[a,a,Mean µ,a]
+MEANP GA[a,a,a,a]
+GAMP GA[a,a,a,a]
+MEANSNI GA[a,a,a,a]
+GAMSNI GA[a,a,a,a]
