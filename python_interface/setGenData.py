@@ -492,3 +492,5 @@ class SetGeneticData(QFrame):
                                 self.setSum_dico[self.groupList[num_group-1]].setSumConf(lines_group)
 
 
+    def getNbSumStats(self):
+        return 0

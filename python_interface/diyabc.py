@@ -41,7 +41,7 @@ class Diyabc(QMainWindow):
         file_menu = self.ui.menubar.addMenu("File")
         file_menu.addAction("New Project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction("Open",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_O))
-        file_menu.addAction("Save",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_S))
+        file_menu.addAction("Save",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
         self.closeProjActionMenu = file_menu.addAction("Close current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)
         action = file_menu.addAction("Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
@@ -139,6 +139,10 @@ class Diyabc(QMainWindow):
         """ ferme le projet courant, celui de l'onglet séléctionné
         """
         self.closeProject(self.ui.tabWidget.currentIndex())
+    def saveCurrentProject(self):
+        """ sauve le projet courant, cad ecrit les fichiers temporaires de conf
+        """
+        self.ui.tabWidget.currentWidget().save()
 
     #def closeEvent(self, event):
     #    reply = QtGui.QMessageBox.question(self, 'Message',

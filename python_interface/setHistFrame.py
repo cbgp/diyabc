@@ -358,6 +358,7 @@ class SetHistoricalModel(QFrame):
                 dico_sc_infos = {}
                 dico_sc_infos["text"] = sc.strip().split('\n')
                 dico_sc_infos["checker"] = scChecker
+                #print "nb param du sc ",num," ",scChecker.nparamtot
                 dico_sc_infos["tree"] = t
                 self.scenarios_info_list.append(dico_sc_infos)
             except IOScreenError, e:
@@ -634,8 +635,6 @@ class SetHistoricalModel(QFrame):
 
         if len(self.scenarios_info_list) > 0:
             f = open(self.parent.ui.dirEdit.text()+"/conf.hist.tmp",'w')
-            f.write("%s\n"%self.parent.dataFileName)
-            f.write("%s parameters and %s summary statisticsi\n\n")
             f.write("%s scenarios: "%(len(self.scenarios_info_list)))
 
             # affichage des nombres de lignes des scenarios
@@ -670,8 +669,6 @@ class SetHistoricalModel(QFrame):
             os.remove("%s/conf.hist.tmp" % self.parent.ui.dirEdit.text())
 
         f = open(self.parent.ui.dirEdit.text()+"/conf.hist.tmp",'w')
-        f.write("%s\n"%self.parent.dataFileName)
-        f.write("%s parameters and %s summary statisticsi\n\n")
         f.write("%s scenarios: "%(len(self.scList)))
 
         # affichage des nombres de lignes des scenarios
@@ -727,17 +724,14 @@ class SetHistoricalModel(QFrame):
             if os.path.exists("%s/conf.hist.tmp"%(self.parent.dir)):
                 f = open("%s/conf.hist.tmp"%(self.parent.dir),"r")
                 lines = f.readlines()
-                self.parent.dataFileName = lines[0].strip()
-                self.parent.ui.dataFileEdit.setText(lines[0].strip())
-                # lecture du dataFile pour les infos de Gui Projet
-                self.parent.loadDataFile("%s/%s"%(self.parent.dir,lines[0].strip()))
+
                 self.ui.otherRadio.setChecked(True)
 
-                nb_scenarios = int(lines[3].split(' ')[0])
+                nb_scenarios = int(lines[0].split(' ')[0])
                 nb_line_sc = []
                 for i in range(nb_scenarios):
-                    nb_line_sc.append(int(lines[3].split(' ')[2+i]))
-                l = 4
+                    nb_line_sc.append(int(lines[0].split(' ')[2+i]))
+                l = 1
                 for i in range(nb_scenarios):
                     txt=""
                     prior = lines[l].split('[')[1].split(']')[0]
@@ -817,3 +811,6 @@ class SetHistoricalModel(QFrame):
                 
         else:
             QMessageBox.information(self,"Error","Le répertoire du projet n'existe plus")
+
+    def getNbParam(self):
+        return 0

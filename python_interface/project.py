@@ -255,11 +255,47 @@ class Project(QTabWidget):
         self.ui.setGeneticButton.setDisabled(False)
 
         # lecture du meta project
+        if self.loadMyConf():
+            # lecture de conf.hist.tmp
+            self.hist_model_win.loadHistoricalConf()
+            self.gen_data_win.loadGeneticConf()
+        else:
+            QMessageBox.information(self,"Load error","Impossible to read the project configuration")
 
-        # lecture de conf.hist.tmp
-        self.hist_model_win.loadHistoricalConf()
-        self.gen_data_win.loadGeneticConf()
-        # TODO lecture des autres
+    def loadMyConf(self):
+        """ lit le fichier conf.tmp pour charger le fichier de données
+        """
+        if os.path.exists(self.ui.dirEdit.text()+"/conf.tmp"):
+            f = open("%s/conf.tmp"%(self.dir),"r")
+            lines = f.readlines()
+            self.dataFileName = lines[0].strip()
+            self.ui.dataFileEdit.setText(lines[0].strip())
+            # lecture du dataFile pour les infos de Gui Projet
+            self.loadDataFile("%s/%s"%(self.dir,lines[0].strip()))
+            return True
+        return False
+
+
+
+    def save(self):
+
+        # save meta project
+        if os.path.exists(self.ui.dirEdit.text()+"/conf.tmp"):
+            os.remove("%s/conf.tmp" % self.ui.dirEdit.text())
+
+        f = codecs.open(self.ui.dirEdit.text()+"/conf.tmp",'w',"utf-8")
+        f.write("%s\n"%self.dataFileName)
+        # recup du nombre de params (depuis historical model et les mutational qui varient)
+        nb_param = self.hist_model_win.getNbParam()
+        nb_param += self.gen_data_win.getNbParam()
+        nb_sum_stats = self.gen_data_win.getNbSumStats()
+        f.write("%s parameters and %s summary statisticsi\n\n"%(nb_param,nb_sum_stats))
+        f.close()
+
+        # save hist conf
+        self.hist_model_win.writeHistoricalConfFromGui()
+        # save gen conf
+        self.gen_data_win.writeGeneticConfFromGui()
 
     def setHistValid(self,valid):
         self.hist_state_valid = valid
