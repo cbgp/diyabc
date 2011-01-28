@@ -3,6 +3,7 @@
 import time
 import os
 import shutil
+import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from project import *
@@ -118,6 +119,8 @@ class Project(QTabWidget):
         qfd.setDirectory(self.ui.dirEdit.text())
         name = qfd.getOpenFileName()
         self.loadDataFile(name)
+        # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
+        self.gen_data_win.fillLocusTableFromData()
 
     def loadDataFile(self,name):
         """ Charge le fichier de données passé en paramètre. Cette fonction est appelée lors
@@ -229,9 +232,6 @@ class Project(QTabWidget):
         self.setCurrentWidget(self.gen_data_win)
         self.setGenValid(False)
 
-        if self.gen_data_win.nbLocusGui == 0:
-            self.gen_data_win.fillLocusTableFromData()
-
     def setNbScenarios(self,nb):
         self.ui.nbScLabel.setText(nb)
     def setNbParams(self,nb):
@@ -272,6 +272,8 @@ class Project(QTabWidget):
             self.ui.dataFileEdit.setText(lines[0].strip())
             # lecture du dataFile pour les infos de Gui Projet
             self.loadDataFile("%s/%s"%(self.dir,lines[0].strip()))
+            # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
+            self.gen_data_win.fillLocusTableFromData()
             return True
         return False
 
@@ -279,6 +281,7 @@ class Project(QTabWidget):
 
     def save(self):
 
+        print "je me save"
         # save meta project
         if os.path.exists(self.ui.dirEdit.text()+"/conf.tmp"):
             os.remove("%s/conf.tmp" % self.ui.dirEdit.text())

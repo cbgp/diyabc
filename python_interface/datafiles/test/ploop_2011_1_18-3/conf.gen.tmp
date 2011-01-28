@@ -5,7 +5,7 @@ locus_M3 <A> [M] G2 2 40
 locus_M4 <A> [M] G0 2 40
 locus_M5 <A> [M] G0 2 40
 locus_M6 <A> [M] G1 2 40
-locus_M7 <A> [M] G1 2 40
+locus_M7 <A> [M] G0 2 40
 locus_M8 <A> [M] G0 2 40
 locus_M9 <A> [M] G0 2 40
 locus_M10 <A> [M] G0 2 40

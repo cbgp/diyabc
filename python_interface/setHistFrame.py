@@ -813,4 +813,4 @@ class SetHistoricalModel(QFrame):
             QMessageBox.information(self,"Error","Le répertoire du projet n'existe plus")
 
     def getNbParam(self):
-        return 0
+        return len(self.paramList)

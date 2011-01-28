@@ -404,7 +404,7 @@ class SetGeneticData(QFrame):
         """ Charge le fichier conf.gen.tmp
         """
         # de toute façon, on rempli le tableau de locus
-        self.fillLocusTableFromData()
+        #self.fillLocusTableFromData()
         if os.path.exists(self.parent.dir):
             if os.path.exists("%s/conf.gen.tmp"%(self.parent.dir)):
                 f = codecs.open("%s/conf.gen.tmp"%(self.parent.dir),"r","utf-8")
@@ -492,5 +492,8 @@ class SetGeneticData(QFrame):
                                 self.setSum_dico[self.groupList[num_group-1]].setSumConf(lines_group)
 
 
+    # TODO
     def getNbSumStats(self):
+        return 0
+    def getNbParam(self):
         return 0

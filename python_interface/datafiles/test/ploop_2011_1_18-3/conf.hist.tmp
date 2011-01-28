@@ -23,11 +23,11 @@ t2 merge 1 2
 
 historical parameters priors (7,2)
 N N UN[10,10000,0,0,1] False
-F N UN[10,10000,0,0,1] True
+F N UN[10,10000,0,0,1] False
 t T UN[10,10000,0,0,1] False
-D N UN[10,10000,0,0,1] True
-t2 T UN[10,10000,0,0,1] True
-G N UN[10,10000,0,0,1] True
+D N UN[10,10000,0,0,1] False
+t2 T UN[10,10000,0,0,1] False
+G N UN[10,10000,0,0,1] False
 r1 A UN[0.001,0.999,0,0,0.001] False
 D>G
 F<=N
