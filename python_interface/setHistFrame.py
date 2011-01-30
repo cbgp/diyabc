@@ -186,6 +186,8 @@ class SetHistoricalModel(QFrame):
             lineEdit.setDisabled(False)
 
     def addCondition(self,cond_str=""):
+        """ ajout d'une condition dans la zone du bas réservée à cet effet
+        """
         groupBox_cond = QtGui.QGroupBox(self.ui.scrollAreaWidgetContents_3)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -331,6 +333,8 @@ class SetHistoricalModel(QFrame):
 
     def checkScenarios(self):
         """ action de verification des scenarios
+        retourne la liste des infos sur les scenarios si ceux ci sont tous bons
+        sinon retourne None
         """
         # construction de la liste de scenarios
         sc_txt_list = []
@@ -531,6 +535,8 @@ class SetHistoricalModel(QFrame):
         self.setCondition.show()
 
     def checkAll(self):
+        """ verification de la coherence des valeurs du modèle historique
+        """
         # VERIFS, si c'est valide, on change l'icone du setHistModel (verifs sur : valeurs, validite des scenarios, et modifs depuis definePriors
         # pour tous les params, min<=max, tout>0
         problems = ""

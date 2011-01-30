@@ -53,6 +53,10 @@ class SetGeneticData(QFrame):
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
 
     def fillLocusTableFromData(self):
+        """ rempli le tableau des locus en consultant l'instance de Data
+        On ne peut pas le faire à l'instanciation de l'objet SetGeneticData car on a pas 
+        encore lu le fichier de conf dans le cas d'un load project
+        """
         data = self.parent.data
         for i in range(data.nloc):
             if data.locuslist[i].type > 4:
@@ -145,6 +149,9 @@ class SetGeneticData(QFrame):
         frameSumSeq.hide()
 
     def setMutation(self,box=None):
+        """ déclenché par le clic sur le bouton 'set mutation model' ou par le clic sur 'clear'
+        dans 'set mutation model'. bascule vers la saisie du modèle mutationnel
+        """
         if box == None:
             box = self.sender().parent()
         title = str(box.title())
@@ -167,6 +174,9 @@ class SetGeneticData(QFrame):
 
 
     def setSum(self,box=None):
+        """ déclenché par le clic sur le bouton 'set summary statistics' ou par le clic sur 'clear'
+        dans 'set summary statistics'. bascule vers la saisie des summary statistics
+        """
         if box == None:
             box = self.sender().parent()
         title = str(box.title())
@@ -316,6 +326,8 @@ class SetGeneticData(QFrame):
 
 
     def exit(self):
+        """ on ferme l'onglet 'set genetic data' et on retourne sur l'onglet principal du projet
+        """
         # reactivation des onglets
         self.parent.setTabEnabled(0,True)
         self.parent.setTabEnabled(1,True)
@@ -328,6 +340,8 @@ class SetGeneticData(QFrame):
         self.writeGeneticConfFromGui()
 
     def clear(self):
+        """ On supprime tous les groupes
+        """
         #for i in range(len(self.groupList)):
         #    self.groupList[i].hide()
         for box in self.groupList:
@@ -342,6 +356,8 @@ class SetGeneticData(QFrame):
         self.groupList = []
 
     def writeGeneticConfFromGui(self):
+        """ on ecrit l'etat actuel des genetic data dans conf.gen.tmp
+        """
         if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.gen.tmp"):
             os.remove("%s/conf.gen.tmp" % self.parent.ui.dirEdit.text())
 
