@@ -293,7 +293,7 @@ class SetHistoricalModel(QFrame):
                 else:
                     box = self.addParamGui(pname,"unique",self.param_info_dico[pname][0])
                 l_already_printed.append(pname)
-                # conservation des valeurs prévédentes
+                # conservation des valeurs précédentes
                 if pname in dico_tmp.keys():
                     box.findChild(QLineEdit,"minValueParamEdit").setText(dico_tmp[pname][2])
                     box.findChild(QLineEdit,"maxValueParamEdit").setText(dico_tmp[pname][3])
@@ -577,11 +577,12 @@ class SetHistoricalModel(QFrame):
                 law = "UN"
             elif param.findChild(QRadioButton,'logUniformRadio').isChecked():
                 law = "LU"
-            self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,step]
+            visible = param.findChild(QPushButton,"setCondButton").isVisible()
+            self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,step,visible]
 
 
     def validate(self):
-        self.majParamInfoDico()
+        #self.majParamInfoDico()
         # creation et ecriture du fichier dans le rep choisi
         self.writeHistoricalConfFromGui()
         # VERIFS, si c'est bon, on change d'onglet, sinon on reste
@@ -622,7 +623,7 @@ class SetHistoricalModel(QFrame):
         if self.sender() == self.ui.clearButton:
             self.parent.clearHistoricalModel()
         elif self.sender() == self.ui.exitButton:
-            self.majParamInfoDico()
+            #self.majParamInfoDico()
             self.writeHistoricalConfFromGui()
             self.majProjectGui()
             self.returnToProject()
@@ -665,6 +666,7 @@ class SetHistoricalModel(QFrame):
     def writeHistoricalConfFromGui(self):
         """ ecrit les valeurs dans dossierProjet/conf.hist.tmp
         """
+        self.majParamInfoDico()
         if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.hist.tmp"):
             os.remove("%s/conf.hist.tmp" % self.parent.ui.dirEdit.text())
 
@@ -680,7 +682,12 @@ class SetHistoricalModel(QFrame):
         while num < len(self.scList):
             txt = str(self.scList[num].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()).strip().split('\n')
             prior_proba = self.rpList[num].findChild(QLineEdit,"rpEdit").text()
-            f.write("\nscenario %s [%s] (X)"%(num+1,prior_proba))
+            # l'user fait "save project" alors qu'on vient de charger et que define priors n'a toujours pas été fait
+            # : on ne renseigne pas le nombre de paramètres pour chaque scenario
+            if len(self.scenarios_info_list) > 0:
+                f.write("\nscenario %s [%s] (%s)"%(num+1,prior_proba,len(self.scenarios_info_list[num]["checker"].parameters)))
+            else:
+                f.write("\nscenario %s [%s] (X)"%(num+1,prior_proba))
             for line in txt:
                 f.write("\n"+line)
             num+=1
@@ -701,9 +708,10 @@ class SetHistoricalModel(QFrame):
             while i<len(self.paramList) and name != pname:
                 paramBox = self.paramList[i]
                 name = paramBox.findChild(QLabel,"paramNameLabel").text()                    
-                visible = paramBox.findChild(QPushButton,"setCondButton").isVisible()
+                #visible = paramBox.findChild(QPushButton,"setCondButton").isVisible()
+                #print "visible : %s"%visible
                 i+=1
-            f.write("\n%s %s %s[%s,%s,%s,%s,%s] %s"%(pname,info[0],info[1],info[2],info[3],info[4],info[5],info[6],visible))
+            f.write("\n%s %s %s[%s,%s,%s,%s,%s] %s"%(pname,info[0],info[1],info[2],info[3],info[4],info[5],info[6],info[7]))
         if len(self.condList) > 0:
             for cond in self.condList:
                 lab = cond.findChild(QLabel,"condLabel")

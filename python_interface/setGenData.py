@@ -394,7 +394,7 @@ class SetGeneticData(QFrame):
                 stat_to_write = stat_header_txt+stat_txt
             stat_txt_list.append(stat_to_write)
 
-        f.write("group summary statistics (%i)\n"%nstat_tot)
+        f.write("\ngroup summary statistics (%i)\n"%nstat_tot)
         for txt in stat_txt_list:
             f.write(txt)
             print txt

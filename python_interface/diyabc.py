@@ -69,7 +69,7 @@ class Diyabc(QMainWindow):
         proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
         if dir != "":
-            if os.path.exists(dir) and os.path.exists("%s/conf.hist.tmp"%dir):
+            if os.path.exists(dir) and os.path.exists("%s/conf.tmp"%dir):
                 project_name = dir.split('/')[-1].split('_')[0]
                 proj_name_list = []
                 for p in self.project_list:
