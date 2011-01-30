@@ -10,9 +10,10 @@ from PyQt4 import QtGui
 from setMutationModelSequences_ui import Ui_Frame
 
 class SetMutationModelSequences(QFrame):
-    def __init__(self,parent=None):
+    def __init__(self,parent=None,box_group=None):
         super(SetMutationModelSequences,self).__init__(parent)
         self.parent=parent
+        self.box_group = box_group
         self.createWidgets()
 
         if self.ui.jukesRadio.isChecked():
@@ -34,6 +35,8 @@ class SetMutationModelSequences(QFrame):
         QObject.connect(self.ui.jukesRadio,SIGNAL("clicked()"),self.showJukes)
         QObject.connect(self.ui.haseRadio,SIGNAL("clicked()"),self.showKimuraHase)
         QObject.connect(self.ui.kimuraRadio,SIGNAL("clicked()"),self.showKimuraHase)
+
+        QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
 
     def showJukes(self):
         self.ui.firstFrame.show()
@@ -276,5 +279,7 @@ class SetMutationModelSequences(QFrame):
         self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
 
+    def clear(self):
+        self.parent.clearMutationModelSeq(self.box_group)
 
 

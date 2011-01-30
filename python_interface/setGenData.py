@@ -131,21 +131,22 @@ class SetGeneticData(QFrame):
         self.groupList.append(groupBox)
         self.group_info_dico[groupBox] = [ "" , [] ]
 
-        frame = SetMutationModel(self)
+        frame = SetMutationModel(self,groupBox)
         self.setMutation_dico[groupBox] = frame
         frame.hide()
-        frameSeq = SetMutationModelSequences(self)
+        frameSeq = SetMutationModelSequences(self,groupBox)
         self.setMutationSeq_dico[groupBox] = frameSeq
         frameSeq.hide()
-        frameSum = SetSummaryStatistics(self)
+        frameSum = SetSummaryStatistics(self,groupBox)
         self.setSum_dico[groupBox] = frameSum
         frameSum.hide()
-        frameSumSeq = SetSummaryStatisticsSeq(self)
+        frameSumSeq = SetSummaryStatisticsSeq(self,groupBox)
         self.setSumSeq_dico[groupBox] = frameSumSeq
         frameSumSeq.hide()
 
-    def setMutation(self):
-        box = self.sender().parent()
+    def setMutation(self,box=None):
+        if box == None:
+            box = self.sender().parent()
         title = str(box.title())
         if "Microsatellites" in title:
             self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
@@ -165,8 +166,9 @@ class SetGeneticData(QFrame):
             QMessageBox.information(self,"Set Mutation Model error","Add locus to a group before setting the mutation model")
 
 
-    def setSum(self):
-        box = self.sender().parent()
+    def setSum(self,box=None):
+        if box == None:
+            box = self.sender().parent()
         title = str(box.title())
         if "Microsatellites" in title:
             self.parent.addTab(self.setSum_dico[box],"Set summary statistics")
@@ -510,3 +512,25 @@ class SetGeneticData(QFrame):
         """ retourne le nombre de paramètres mutationnels réels (qui varient. min<max pour le MEAN)
         """
         return 0
+
+    def clearMutationModel(self,box):
+        self.setMutation_dico[box].exit()
+        self.setMutation_dico[box] = SetMutationModel(self,box)
+        self.setMutation(box)
+
+    def clearMutationModelSeq(self,box):
+        self.setMutationSeq_dico[box].exit()
+        self.setMutationSeq_dico[box] = SetMutationModelSequences(self,box)
+        self.setMutation(box)
+
+    def clearSummaryStats(self,box):
+        self.setSum_dico[box].exit()
+        self.setSum_dico[box] = SetSummaryStatistics(self,box)
+        self.setSum(box)
+
+    def clearSummaryStatsSeq(self,box):
+        self.setSumSeq_dico[box].exit()
+        self.setSumSeq_dico[box] = SetSummaryStatisticsSeq(self,box)
+        self.setSum(box)
+
+

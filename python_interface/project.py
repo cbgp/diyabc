@@ -10,6 +10,10 @@ from project import *
 from project_ui import *
 from setHistFrame import SetHistoricalModel
 from setGenData import SetGeneticData
+from setMutationModel import SetMutationModel
+from setMutationModelSequences import SetMutationModelSequences
+from setSummaryStatistics import SetSummaryStatistics
+from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from data import Data
 from datetime import datetime 
 import os.path
@@ -242,7 +246,6 @@ class Project(QTabWidget):
         self.insertTab(2,self.hist_model_win,"Set historical model")
         #self.setTabEnabled(self.indexOf(self.hist_model_win),False)
         self.setCurrentWidget(self.hist_model_win)
-
 
     def loadFromDir(self):
         """ charge les infos à partir du répertoire self.dir

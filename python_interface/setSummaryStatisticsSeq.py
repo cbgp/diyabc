@@ -10,9 +10,10 @@ from PyQt4 import QtGui
 from setSummaryStatisticsSeq_ui import Ui_Frame
 
 class SetSummaryStatisticsSeq(QFrame):
-    def __init__(self,parent=None):
+    def __init__(self,parent=None,box_group=None):
         super(SetSummaryStatisticsSeq,self).__init__(parent)
         self.parent=parent
+        self.box_group=box_group
         self.oneSampleList = []
         self.twoSampleList = []
         self.admixSampleList = []
@@ -47,6 +48,7 @@ class SetSummaryStatisticsSeq(QFrame):
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
+        QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
 
         # all buttons
         QObject.connect(self.ui.allNohButton,SIGNAL("clicked()"),self.allPressed)
@@ -514,5 +516,6 @@ class SetSummaryStatisticsSeq(QFrame):
         self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
 
-
+    def clear(self):
+        self.parent.clearSummaryStatsSeq(self.box_group)
 

@@ -10,9 +10,10 @@ from PyQt4 import QtGui
 from setMutationModel_ui import Ui_Frame
 
 class SetMutationModel(QFrame):
-    def __init__(self,parent=None):
+    def __init__(self,parent=None,box_group=None):
         super(SetMutationModel,self).__init__(parent)
         self.parent=parent
+        self.box_group = box_group
         self.createWidgets()
 
     def createWidgets(self):
@@ -20,6 +21,7 @@ class SetMutationModel(QFrame):
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
+        QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
 
     def getMutationConf(self):
         """ renvoie les lignes à écrire dans la conf
@@ -209,6 +211,9 @@ class SetMutationModel(QFrame):
         self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
         self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
+
+    def clear(self):
+        self.parent.clearMutationModel(self.box_group)
 
 
 
