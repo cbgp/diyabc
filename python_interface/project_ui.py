@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Mon Jan 31 22:08:03 2011
+# Created: Mon Jan 31 22:54:07 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -265,7 +265,7 @@ class Ui_TabWidget(object):
         font.setPointSize(13)
         self.runButton.setFont(font)
         self.runButton.setObjectName("runButton")
-        self.gridLayout_11.addWidget(self.runButton, 6, 0, 1, 1)
+        self.gridLayout_11.addWidget(self.runButton, 4, 0, 1, 1)
         self.frame_4 = QtGui.QFrame(self.groupBox_8)
         self.frame_4.setFrameShape(QtGui.QFrame.HLine)
         self.frame_4.setFrameShadow(QtGui.QFrame.Sunken)
@@ -374,12 +374,6 @@ class Ui_TabWidget(object):
         self.progressBar.setOrientation(QtCore.Qt.Horizontal)
         self.progressBar.setObjectName("progressBar")
         self.gridLayout_11.addWidget(self.progressBar, 3, 0, 1, 1)
-        self.startButton = QtGui.QPushButton(self.groupBox_8)
-        self.startButton.setObjectName("startButton")
-        self.gridLayout_11.addWidget(self.startButton, 4, 0, 1, 1)
-        self.cancelButton = QtGui.QPushButton(self.groupBox_8)
-        self.cancelButton.setObjectName("cancelButton")
-        self.gridLayout_11.addWidget(self.cancelButton, 5, 0, 1, 1)
         self.verticalLayout_4.addWidget(self.groupBox_8)
         self.verticalLayout.addWidget(self.groupBox)
         TabWidget.addTab(self.tabRefTable, "")
@@ -456,8 +450,6 @@ class Ui_TabWidget(object):
         self.label_6.setText(QtGui.QApplication.translate("TabWidget", "Priority", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("TabWidget", "Number of simulated data sets in the reference table", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("TabWidget", "Required number of simulated data sets", None, QtGui.QApplication.UnicodeUTF8))
-        self.startButton.setText(QtGui.QApplication.translate("TabWidget", "start", None, QtGui.QApplication.UnicodeUTF8))
-        self.cancelButton.setText(QtGui.QApplication.translate("TabWidget", "cancel", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tabRefTable), QtGui.QApplication.translate("TabWidget", "Reference table", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("TabWidget", "name", None, QtGui.QApplication.UnicodeUTF8))

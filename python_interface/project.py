@@ -94,17 +94,22 @@ class Project(QTabWidget):
         #        it = QTableWidgetItem("%i,%i"%(j,i))
         #        self.ui.tableWidget.setItem(j,i,it)
 
-        self.connect(self.ui.startButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
-        self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
+        self.connect(self.ui.runButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
+        #self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
+
+        self.th = None
 
     @pyqtSignature("")
     def on_btnStart_clicked(self):
-        """Start the treatment in the thread"""
-        self.th = MyThread(self)
-        self.th.connect(self.th,SIGNAL("increment"),
-                              self.incProgress)
-        self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
-        self.th.start()
+        """Start or stop the treatment in the thread"""
+        if self.th == None or self.th.cancel == True:
+            self.th = MyThread(self)
+            self.th.connect(self.th,SIGNAL("increment"),
+                                  self.incProgress)
+            self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
+            self.th.start()
+        else:
+            self.cancelTh()
  
     def incProgress(self):
         """Increment the progress dialog"""
@@ -340,8 +345,10 @@ class Project(QTabWidget):
         """
         if self.gen_state_valid and self.hist_state_valid:
             self.setTabIcon(0,QIcon("docs/ok.png"))
+            self.ui.runButton.setDisabled(False)
         else:
             self.setTabIcon(0,QIcon("docs/redcross.png"))
+            self.ui.runButton.setDisabled(True)
 
 
 class MyThread(QThread):

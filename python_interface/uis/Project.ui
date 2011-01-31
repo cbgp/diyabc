@@ -527,7 +527,7 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
+          <item row="4" column="0">
            <widget class="QPushButton" name="runButton">
             <property name="minimumSize">
              <size>
@@ -842,20 +842,6 @@
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QPushButton" name="startButton">
-            <property name="text">
-             <string>start</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QPushButton" name="cancelButton">
-            <property name="text">
-             <string>cancel</string>
             </property>
            </widget>
           </item>
