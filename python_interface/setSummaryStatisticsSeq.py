@@ -49,6 +49,7 @@ class SetSummaryStatisticsSeq(QFrame):
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
+        QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
         # all buttons
         QObject.connect(self.ui.allNohButton,SIGNAL("clicked()"),self.allPressed)
@@ -519,6 +520,9 @@ class SetSummaryStatisticsSeq(QFrame):
 
     def clear(self):
         self.parent.clearSummaryStatsSeq(self.box_group)
+
+    def validate(self):
+        self.exit()
 
     def getSumStatsTableHeader(self):
         result = u""

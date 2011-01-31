@@ -183,6 +183,8 @@ class SetGeneticData(QFrame):
             # maj du titre de la frame
             lab = self.setMutation_dico[box].ui.setMutMsLabel
             lab.setText("Set mutation model of %s (microsatellites)"%(" ".join(str(box.title()).split()[:2])))
+            # on considère que le setmutation n'est plus valide, il faut le revalider
+            self.setMutationValid_dico[box] = False
         elif "Sequences" in title:
             self.parent.addTab(self.setMutationSeq_dico[box],"Set mutation model")
             self.parent.setTabEnabled(self.parent.indexOf(self),False)
@@ -190,6 +192,8 @@ class SetGeneticData(QFrame):
             # maj du titre de la frame
             lab = self.setMutationSeq_dico[box].ui.setMutSeqLabel
             lab.setText("Set mutation model of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
+            # on considère que le setmutation n'est plus valide, il faut le revalider
+            self.setMutationSeqValid_dico[box] = False
         else:
             QMessageBox.information(self,"Set Mutation Model error","Add locus to a group before setting the mutation model")
 
