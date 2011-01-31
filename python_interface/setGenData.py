@@ -61,13 +61,29 @@ class SetGeneticData(QFrame):
         encore lu le fichier de conf dans le cas d'un load project
         """
         data = self.parent.data
+        nb_m = 0
+        nb_s = 0
         for i in range(data.nloc):
             if data.locuslist[i].type > 4:
                 self.addRow(name=data.locuslist[i].name,type="S")
+                nb_s += 1
             else:
                 self.addRow(name=data.locuslist[i].name,type="M")
+                nb_m += 1
             self.dico_num_and_numgroup_locus[data.locuslist[i].name] = [i+1,0]
             self.nbLocusGui+=1
+        # affichage du bon nombre de locus dans l'onglet principal du projet
+        self.majProjectGui(m=nb_m,s=nb_s)
+
+    def majProjectGui(self,m=None,s=None,g=None,ss=None):
+        if m != None:
+            self.parent.ui.nbMicrosatLabel.setText("%s microsatellite loci"%m)
+        if s != None:
+            self.parent.ui.nbSequencesLabel.setText("%s DNA sequence loci"%s)
+        if g != None:
+            self.parent.ui.nbGroupLabel.setText("%s locus groups"%g)
+        if ss != None:
+            self.parent.ui.nbSumStatsLabel.setText("%s summary statistics"%ss)
 
 
     def addRow(self,name="locus",type="M"):
@@ -151,6 +167,8 @@ class SetGeneticData(QFrame):
         self.setSumSeq_dico[groupBox] = frameSumSeq
         frameSumSeq.hide()
 
+        self.majProjectGui(g=len(self.groupList))
+
     def setMutation(self,box=None):
         """ déclenché par le clic sur le bouton 'set mutation model' ou par le clic sur 'clear'
         dans 'set mutation model'. bascule vers la saisie du modèle mutationnel
@@ -220,6 +238,8 @@ class SetGeneticData(QFrame):
             for j in range(lw.count()):
                 itemtxt = str(lw.item(j).text())
                 self.dico_num_and_numgroup_locus[itemtxt][1] = i+1
+
+        self.majProjectGui(g=len(self.groupList))
 
     def addToGroup(self,box=None):
         """ ajoute les loci selectionnés au groupe du bouton pressé
@@ -338,8 +358,39 @@ class SetGeneticData(QFrame):
         self.parent.setCurrentIndex(0)
 
     def validate(self):
-        print self.group_info_dico
-        print self.dico_num_and_numgroup_locus
+        """ clic sur le bouton validate
+        verifie la validité de tous les groupes (mutmodel valide && nbsumstats > 0 && nblocus > 0)
+        si valide : sort , maj de l'icone de validité et sauve
+        si non valide : informe et sauve
+        """
+        #print self.group_info_dico
+        #print self.dico_num_and_numgroup_locus
+        problem = u""
+        for i,box in enumerate(self.groupList):
+            title = str(box.title())
+            if "Microsatellites" in title:
+                if box not in self.setMutationValid_dico.keys() or not self.setMutationValid_dico[box]:
+                    problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
+                # recup du nb de stats
+                (nstat,stat_txt) = self.setSum_dico[box].getSumConf()
+                if nstat == 0:
+                    problem += u"No summary statistic asked for group %s\n"%(i+1)
+            elif "Sequences" in title:
+                if box not in self.setMutationSeqValid_dico.keys() or not self.setMutationSeqValid_dico[box]:
+                    problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
+                # recup du nb de stats
+                (nstat,stat_txt) = self.setSumSeq_dico[box].getSumConf()
+                if nstat == 0:
+                    problem += u"No summary statistic asked for group %s\n"%(i+1)
+            else:
+                problem += u"Group %s is empty\n"%(i+1)
+        if problem != u"":
+            QMessageBox.information(self,"Impossible to validate the genetic data",problem)
+            self.parent.setGenValid(False)
+        else:
+            self.exit()
+            self.parent.setGenValid(True)
+        # dans tous les cas, on écrit la conf
         self.writeGeneticConfFromGui()
 
     def clear(self):
@@ -511,6 +562,7 @@ class SetGeneticData(QFrame):
                                 self.setSumSeq_dico[self.groupList[num_group-1]].setSumConf(lines_group)
                             else:
                                 self.setSum_dico[self.groupList[num_group-1]].setSumConf(lines_group)
+                self.majProjectGui(ss=self.getNbSumStats())
 
 
     def getNbSumStats(self):

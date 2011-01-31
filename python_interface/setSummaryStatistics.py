@@ -494,6 +494,7 @@ class SetSummaryStatistics(QFrame):
         self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
         self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
+        self.parent.majProjectGui(ss=self.parent.getNbSumStats())
 
     def clear(self):
         self.parent.clearSummaryStats(self.box_group)
