@@ -295,7 +295,7 @@ class Project(QTabWidget):
         nb_param = self.hist_model_win.getNbParam()
         nb_param += self.gen_data_win.getNbParam()
         nb_sum_stats = self.gen_data_win.getNbSumStats()
-        f.write("%s parameters and %s summary statisticsi\n\n"%(nb_param,nb_sum_stats))
+        f.write("%s parameters and %s summary statistics\n\n"%(nb_param,nb_sum_stats))
         f.close()
 
         # save hist conf

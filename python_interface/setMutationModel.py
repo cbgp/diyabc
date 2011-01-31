@@ -215,5 +215,17 @@ class SetMutationModel(QFrame):
     def clear(self):
         self.parent.clearMutationModel(self.box_group)
 
+    def getNbParam(self):
+        """ retourne le nombre de paramètres (MEAN dont le min<max) pour ce mutation model
+        """
+        nb_param = 0
+        if float(str(self.ui.mmrMinEdit.text())) < float(str(self.ui.mmrMaxEdit.text())):
+            nb_param += 1
+        if float(str(self.ui.mcpMinEdit.text())) < float(str(self.ui.mcpMaxEdit.text())):
+            nb_param += 1
+        if float(str(self.ui.msrMinEdit.text())) < float(str(self.ui.msrMaxEdit.text())):
+            nb_param += 1
+        return nb_param
+
 
 

@@ -519,7 +519,7 @@ class SetGeneticData(QFrame):
                 (nstat,stat_txt) = self.setSum_dico[box].getSumConf()
                 nb_sum_stats += nstat
             elif "Sequences" in str(box.title()):
-                (nstat_tmp,stat_txt) = self.setSumSeq_dico[box].getSumConf()
+                (nstat,stat_txt) = self.setSumSeq_dico[box].getSumConf()
                 nb_sum_stats += nstat
         return nb_sum_stats
 
@@ -527,7 +527,13 @@ class SetGeneticData(QFrame):
     def getNbParam(self):
         """ retourne le nombre de paramètres mutationnels réels (qui varient. min<max pour le MEAN)
         """
-        return 0
+        nb_param = 0
+        for box in self.groupList:
+            if "Microsatellites" in str(box.title()):
+                nb_param += self.setMutation_dico[box].getNbParam()
+            elif "Sequences" in str(box.title()):
+                nb_param += self.setMutationSeq_dico[box].getNbParam()
+        return nb_param
 
     def clearMutationModel(self,box):
         self.setMutation_dico[box].exit()
