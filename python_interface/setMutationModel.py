@@ -22,6 +22,64 @@ class SetMutationModel(QFrame):
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
+        QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
+
+        self.field_names_dico ={self.ui.mmrMinEdit : "Min of mean mutation rate", self.ui.mmrMaxEdit : "Max of mean mutation rate", self.ui.mmrMeanEdit : "Mean of mean mutation rate",self.ui.mmrShapeEdit : "Shape of mean mutation rate",
+                            self.ui.ilmrMinEdit : "Min of individual locus mutation rate", self.ui.ilmrMaxEdit : "Max of individual locus mutation rate" , self.ui.ilmrMeanEdit : "Mean of individual locus mutation rate",
+                            self.ui.ilmrShapeEdit : "Shape of individual locus mutation rate",
+                            self.ui.mcpMinEdit : "Min of mean coefficient P",
+                            self.ui.mcpMaxEdit : "Max of mean coefficient P",
+                            self.ui.mcpMeanEdit :"Mean of mean coefficient P",
+                            self.ui.mcpShapeEdit:"Shape of mean coefficient P", 
+                                             
+                            self.ui.ilcpMinEdit :"Min of individual locus coefficient P",
+                            self.ui.ilcpMaxEdit :"Max of individual locus coefficient P",
+                            self.ui.ilcpMeanEdit:"Mean of individual locus coefficient P", 
+                            self.ui.ilcpShapeEdit:"Shape of individual locus coefficient P",
+                                             
+                            self.ui.msrMinEdit : "Min of mean SNI rate",
+                            self.ui.msrMaxEdit : "Max of mean SNI rate",
+                            self.ui.msrMeanEdit :"Mean of mean SNI rate",
+                            self.ui.msrShapeEdit :"Shape of mean SNI rate",
+                                             
+                            self.ui.ilsrMinEdit :"Min of individual locus SNI rate",
+                            self.ui.ilsrMaxEdit :"Max of individual locus SNI rate",
+                            self.ui.ilsrMeanEdit :"Mean of individual locus SNI rate",
+                            self.ui.ilsrShapeEdit:"Shape of individual locus SNI rate"}
+
+
+
+
+        # [doit_etre_non_vide , doit_être_float]
+        self.constraints_dico = { self.ui.mmrMinEdit : [1,1],
+                           self.ui.mmrMaxEdit : [1,1],
+                           self.ui.mmrMeanEdit : [1,0],
+                           self.ui.mmrShapeEdit : [1,1],
+
+                           self.ui.ilmrMinEdit : [1,1],  
+                           self.ui.ilmrMaxEdit : [1,1], 
+                           self.ui.ilmrMeanEdit : [1,0], 
+                           self.ui.ilmrShapeEdit : [1,1],
+
+                           self.ui.mcpMinEdit : [1,1],   
+                           self.ui.mcpMaxEdit : [1,1],   
+                           self.ui.mcpMeanEdit : [1,0],  
+                           self.ui.mcpShapeEdit : [1,1], 
+
+                           self.ui.ilcpMinEdit : [1,1],  
+                           self.ui.ilcpMaxEdit : [1,1], 
+                           self.ui.ilcpMeanEdit : [1,0], 
+                           self.ui.ilcpShapeEdit : [1,1],
+
+                           self.ui.msrMinEdit : [1,1],   
+                           self.ui.msrMaxEdit : [1,1],   
+                           self.ui.msrMeanEdit : [1,0],  
+                           self.ui.msrShapeEdit : [1,1], 
+
+                           self.ui.ilsrMinEdit : [1,1],  
+                           self.ui.ilsrMaxEdit : [1,1],  
+                           self.ui.ilsrMeanEdit : [1,0],
+                           self.ui.ilsrShapeEdit : [1,1]}
 
     def getMutationConf(self):
         """ renvoie les lignes à écrire dans la conf
@@ -214,6 +272,34 @@ class SetMutationModel(QFrame):
 
     def clear(self):
         self.parent.clearMutationModel(self.box_group)
+
+    def validate(self):
+        """ vérifie la validité des informations entrées dans le mutation model
+        retourne au setGen tab et set la validité du mutation model du groupe
+        """
+        if self.allValid():
+            self.exit()
+            self.parent.setMutationValid_dico[self.box_group] = True
+            self.parent.writeGeneticConfFromGui()
+
+    def allValid(self):
+        """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur
+        et retourne False
+        """
+        try:
+            for field in self.constraints_dico.keys():
+                #print self.field_names_dico[field]
+                valtxt = (u"%s"%(field.text())).strip()
+                if self.constraints_dico[field][0] == 1:
+                    if valtxt == "":
+                        raise Exception("%s should not be empty"%self.field_names_dico[field])
+                if self.constraints_dico[field][1] == 1:
+                    val = float(valtxt)
+        except Exception,e:
+            QMessageBox.information(self,"Value error","%s"%e)
+            return False
+
+        return True
 
     def getNbParam(self):
         """ retourne le nombre de paramètres (MEAN dont le min<max) pour ce mutation model

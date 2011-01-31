@@ -5,8 +5,8 @@ DONE exit set hist -> sauve conf.hist.tmp
 DONE exit set gen -> sauve conf.gen.tmp
 DONE mettre le nombre de paramètres d'un scenarion entre parenthèses dans la première ligne du scenario dans le fichier de conf
 DONE gerer clear genData
+DONE ecrire les entetes (fin du reftable header)
+DONE get nb param de genData
 
-ecrire les entetes (fin du reftable header)
-get nb param de genData
 gerer la validation du gentData
 Verif save de shape ds setmutationModel Microstats

@@ -28,6 +28,9 @@ class SetGeneticData(QFrame):
         self.setMutationSeq_dico = {}
         self.setSum_dico = {}
         self.setSumSeq_dico = {}
+        # dicos de booleens indexé par les box
+        self.setMutationValid_dico = {}
+        self.setMutationSeqValid_dico = {}
         # dico indexé par la box du groupe
         self.group_info_dico = {}
         self.nbLocusGui = 0
@@ -523,7 +526,6 @@ class SetGeneticData(QFrame):
                 nb_sum_stats += nstat
         return nb_sum_stats
 
-    # TODO
     def getNbParam(self):
         """ retourne le nombre de paramètres mutationnels réels (qui varient. min<max pour le MEAN)
         """

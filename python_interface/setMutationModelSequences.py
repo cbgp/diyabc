@@ -37,6 +37,71 @@ class SetMutationModelSequences(QFrame):
         QObject.connect(self.ui.kimuraRadio,SIGNAL("clicked()"),self.showKimuraHase)
 
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
+        QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
+
+        self.field_names_dico = {
+        self.ui.mmrMinEdit:"Min of mean mutation rate",
+        self.ui.mmrMaxEdit:"Max of mean mutation rate",
+        self.ui.mmrMeanEdit:"Mean of mean mutation rate",
+        self.ui.mmrShapeEdit:"Shape of mean mutation rate",
+
+        self.ui.ilmrMinEdit:"Min of individuals locus mutation rate",
+        self.ui.ilmrMaxEdit:"Max of individuals locus mutation rate",
+        self.ui.ilmrMeanEdit:"Mean of individuals locus mutation rate",
+        self.ui.ilmrShapeEdit:"Shape of individuals locus mutation rate",
+
+        self.ui.mc1MinEdit:" Min of mean coefficient k_C/T",
+        self.ui.mc1MaxEdit:"Max of mean coefficient k_C/T",
+        self.ui.mc1MeanEdit:"Mean of mean coefficient k_C/T",
+        self.ui.mc1ShapeEdit:"Shape of mean coefficient k_C/T",
+
+        self.ui.ilc1MinEdit:"Min of individuals locus coefficient k_C/T",
+        self.ui.ilc1MaxEdit:"Max of individuals locus coefficient k_C/T",
+        self.ui.ilc1MeanEdit:"Mean of individuals locus coefficient k_C/T",
+        self.ui.ilc1ShapeEdit:"Shape of individuals locus coefficient k_C/T",
+
+        self.ui.mc2MinEdit:"Min of mean coefficient k_A/G",
+        self.ui.mc2MaxEdit:"Max of mean coefficient k_A/G",
+        self.ui.mc2MeanEdit:"Mean of mean coefficient k_A/G",
+        self.ui.mc2ShapeEdit:"Shape of mean coefficient k_A/G",
+
+        self.ui.ilc2MinEdit:"Min of individuals locus coefficient k_A/G",
+        self.ui.ilc2MaxEdit:"Max of individuals locus coefficient k_A/G",
+        self.ui.ilc2MeanEdit:"Mean of individuals locus coefficient k_A/G",
+        self.ui.ilc2ShapeEdit:"Shape of individuals locus coefficient k_A/G"
+        }
+
+        self.constraints_dico = {
+        self.ui.mmrMinEdit:[1,1],
+        self.ui.mmrMaxEdit:[1,1],
+        self.ui.mmrMeanEdit:[1,0],
+        self.ui.mmrShapeEdit:[1,1],
+
+        self.ui.ilmrMinEdit:[1,1],
+        self.ui.ilmrMaxEdit:[1,1],
+        self.ui.ilmrMeanEdit:[1,0],
+        self.ui.ilmrShapeEdit:[1,1],
+
+        self.ui.mc1MinEdit:[1,1],
+        self.ui.mc1MaxEdit:[1,1],
+        self.ui.mc1MeanEdit:[1,0],
+        self.ui.mc1ShapeEdit:[1,1],
+
+        self.ui.ilc1MinEdit:[1,1],
+        self.ui.ilc1MaxEdit:[1,1],
+        self.ui.ilc1MeanEdit:[1,0],
+        self.ui.ilc1ShapeEdit:[1,1],
+
+        self.ui.mc2MinEdit:[1,1],
+        self.ui.mc2MaxEdit:[1,1],
+        self.ui.mc2MeanEdit:[1,0],
+        self.ui.mc2ShapeEdit:[1,1],
+
+        self.ui.ilc2MinEdit:[1,1],
+        self.ui.ilc2MaxEdit:[1,1],
+        self.ui.ilc2MeanEdit:[1,0],
+        self.ui.ilc2ShapeEdit:[1,1]
+        }
 
     def showJukes(self):
         self.ui.firstFrame.show()
@@ -281,6 +346,44 @@ class SetMutationModelSequences(QFrame):
 
     def clear(self):
         self.parent.clearMutationModelSeq(self.box_group)
+
+    def validate(self):
+        """ vérifie la validité des informations entrées dans le mutation model
+        retourne au setGen tab et set la validité du mutation model du groupe
+        """
+        if self.allValid():
+            self.exit()
+            self.parent.setMutationSeqValid_dico[self.box_group] = True
+            self.parent.writeGeneticConfFromGui()
+
+    def allValid(self):
+        """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur
+        et retourne False
+        """
+        try:
+            for field in self.constraints_dico.keys():
+                #print self.field_names_dico[field]
+                if self.hasToBeVerified(field):
+                    valtxt = (u"%s"%(field.text())).strip()
+                    if self.constraints_dico[field][0] == 1:
+                        if valtxt == "":
+                            raise Exception("%s should not be empty"%self.field_names_dico[field])
+                    if self.constraints_dico[field][1] == 1:
+                        val = float(valtxt)
+        except Exception,e:
+            QMessageBox.information(self,"Value error","%s"%e)
+            return False
+
+        return True
+    def hasToBeVerified(self,field):
+        if self.ui.jukesRadio.isChecked() and field not in [self.ui.mmrMinEdit,self.ui.mmrMaxEdit,
+                self.ui.mmrMeanEdit,self.ui.mmrShapeEdit,self.ui.ilmrMinEdit,self.ui.ilmrMaxEdit,self.ui.ilmrMeanEdit,self.ui.ilmrShapeEdit]:
+            return False
+        elif not self.ui.tamuraRadio.isChecked() and field in [self.ui.mc2MinEdit,self.ui.mc2MaxEdit,
+                self.ui.mc2MeanEdit,self.ui.mc2ShapeEdit,self.ui.ilc2MinEdit,self.ui.ilc2MaxEdit,self.ui.ilc2MeanEdit,self.ui.ilc2ShapeEdit]:
+            return False
+        else:
+            return True
 
     def getNbParam(self):
         """ retourne le nombre de paramètres (MEAN dont le min<max) pour ce mutation model

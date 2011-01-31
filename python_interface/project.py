@@ -303,7 +303,8 @@ class Project(QTabWidget):
         # save gen conf
         self.gen_data_win.writeGeneticConfFromGui()
         # save th conf
-        self.writeThConf()
+        if self.gen_state_valid and self.hist_state_valid:
+            self.writeThConf()
 
     def writeThConf(self):
         """ ecrit le header du tableau de resultat qui sera produit par les calculs
