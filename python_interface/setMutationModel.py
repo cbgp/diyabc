@@ -227,5 +227,26 @@ class SetMutationModel(QFrame):
             nb_param += 1
         return nb_param
 
+    def getParamTableHeader(self):
+        result = u""
+        gnumber = self.parent.groupList.index(self.box_group)+1
+        if float(str(self.ui.mmrMinEdit.text())) < float(str(self.ui.mmrMaxEdit.text())):
+            pname = u"µmic_%s"%(gnumber)
+            result += pname
+            for i in range(14-len(pname)):
+                result += " "
+        if float(str(self.ui.mcpMinEdit.text())) < float(str(self.ui.mcpMaxEdit.text())):
+            pname = u"pmic_%s"%(gnumber)
+            result += pname
+            for i in range(14-len(pname)):
+                result += " "
+        if float(str(self.ui.msrMinEdit.text())) < float(str(self.ui.msrMaxEdit.text())):
+            pname = u"snimic_%s"%(gnumber)
+            result += pname
+            for i in range(14-len(pname)):
+                result += " "
+        print "result %s : %s"%(gnumber,result)
+        return result
+
 
 

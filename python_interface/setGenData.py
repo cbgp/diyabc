@@ -535,6 +535,27 @@ class SetGeneticData(QFrame):
                 nb_param += self.setMutationSeq_dico[box].getNbParam()
         return nb_param
 
+    def getParamTableHeader(self):
+        """ retourne la chaine des noms des paramètres pour le conf.th.tmp
+        """
+        result = u""
+        for box in self.groupList:
+            if "Microsatellites" in str(box.title()):
+                params_txt = self.setMutation_dico[box].getParamTableHeader()
+            elif "Sequences" in str(box.title()):
+                params_txt = self.setMutationSeq_dico[box].getParamTableHeader()
+            result += params_txt
+        return result
+    def getSumStatsTableHeader(self):
+        result = u""
+        for box in self.groupList:
+            if "Microsatellites" in str(box.title()):
+                sums_txt = self.setSum_dico[box].getSumStatsTableHeader()
+            elif "Sequences" in str(box.title()):
+                sums_txt = self.setSumSeq_dico[box].getSumStatsTableHeader()
+            result += sums_txt
+        return result
+
     def clearMutationModel(self,box):
         self.setMutation_dico[box].exit()
         self.setMutation_dico[box] = SetMutationModel(self,box)

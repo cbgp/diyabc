@@ -302,6 +302,22 @@ class Project(QTabWidget):
         self.hist_model_win.writeHistoricalConfFromGui()
         # save gen conf
         self.gen_data_win.writeGeneticConfFromGui()
+        # save th conf
+        self.writeThConf()
+
+    def writeThConf(self):
+        """ ecrit le header du tableau de resultat qui sera produit par les calculs
+        il contient, les paramètres historicaux, les paramètres mutationnels, les summary stats
+        """
+        hist_params_txt = self.hist_model_win.getParamTableHeader()
+        mut_params_txt = self.gen_data_win.getParamTableHeader()
+        sum_stats_txt = self.gen_data_win.getSumStatsTableHeader()
+        if os.path.exists(self.dir+"/conf.th.tmp"):
+            os.remove("%s/conf.th.tmp" % self.dir)
+        f = codecs.open(self.dir+"/conf.th.tmp",'w',"utf-8")
+        f.write("%s%s%s"%(hist_params_txt,mut_params_txt,sum_stats_txt))
+        f.close()
+
 
     def setHistValid(self,valid):
         self.hist_state_valid = valid

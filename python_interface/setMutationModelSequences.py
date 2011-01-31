@@ -296,4 +296,27 @@ class SetMutationModelSequences(QFrame):
                     nb_param += 1
         return nb_param
 
+    def getParamTableHeader(self):
+        result = u""
+        gnumber = self.parent.groupList.index(self.box_group)+1
+        if float(str(self.ui.mmrMinEdit.text())) < float(str(self.ui.mmrMaxEdit.text())):
+            pname = u"µseq_%s"%(gnumber)
+            result += pname
+            for i in range(14-len(pname)):
+                result += " "
+        if not self.ui.jukesRadio.isChecked():
+            if float(str(self.ui.mc1MinEdit.text())) < float(str(self.ui.mc1MaxEdit.text())):
+                pname = u"k1seq_%s"%(gnumber)
+                result += pname
+                for i in range(14-len(pname)):
+                    result += " "
+            if self.ui.tamuraRadio.isChecked():
+                if float(str(self.ui.mc2MinEdit.text())) < float(str(self.ui.mc2MaxEdit.text())):
+                    pname = u"k2seq_%s"%(gnumber)
+                    result += pname
+                    for i in range(14-len(pname)):
+                        result += " "
+        return result
+
+
 

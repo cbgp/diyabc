@@ -828,3 +828,14 @@ class SetHistoricalModel(QFrame):
 
     def getNbParam(self):
         return len(self.paramList)
+
+    def getParamTableHeader(self):
+        """ retourne la chaine des noms des paramètres pour le conf.th.tmp
+        """
+        result = u""
+        for box in self.paramList:
+            pname = str(box.findChild(QLabel,"paramNameLabel").text()).strip()
+            result += pname
+            for i in range(14-len(pname)):
+                result += " "
+        return result

@@ -1,6 +1,6 @@
 3 scenarios: 6 6 6 
 scenario 1 [0.33] (X)
-N N F
+N X F
 0 sample 1
 0 sample 2
 0 sample 3
@@ -21,8 +21,9 @@ N G F
 t split 3 1 2 r1
 t2 merge 1 2
 
-historical parameters priors (7,2)
+historical parameters priors (8,2)
 N N UN[10,10000,0,0,1] False
+X N UN[10,10000,0,0,1] False
 F N UN[10,10000,0,0,1] False
 t T UN[10,10000,0,0,1] False
 D N UN[10,10000,0,0,1] False

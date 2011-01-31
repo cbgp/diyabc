@@ -519,3 +519,84 @@ class SetSummaryStatisticsSeq(QFrame):
     def clear(self):
         self.parent.clearSummaryStatsSeq(self.box_group)
 
+    def getSumStatsTableHeader(self):
+        result = u""
+        gnumber = self.parent.groupList.index(self.box_group)+1
+        for box in self.oneSampleList:
+            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
+            if box.findChild(QCheckBox,"nohCheck").isChecked():
+                stat_name = "NHA_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"nossCheck").isChecked():
+                stat_name = "NSS_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"mopdCheck").isChecked():
+                stat_name = "MPD_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"vopdCheck").isChecked():
+                stat_name = "VPD_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"tdCheck").isChecked():
+                stat_name = "DTA_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"pssCheck").isChecked():
+                stat_name = "PSS_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"monotrCheck").isChecked():
+                stat_name = "MNS_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"vonotrCheck").isChecked():
+                stat_name = "VNS_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+        for box in self.twoSampleList:
+            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
+            if box.findChild(QCheckBox,"noh2Check").isChecked():
+                stat_name = "NH2_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"noss2Check").isChecked():
+                stat_name = "NS2_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"mopdw2Check").isChecked():
+                stat_name = "MP2_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"mopdb2Check").isChecked():
+                stat_name = "MPB_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+            if box.findChild(QCheckBox,"fst2Check").isChecked():
+                stat_name = "HST_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+        for box in self.admixSampleList:
+            lab = str(box.findChild(QLabel,"threeSampleLabel").text()).split('\n')[1]
+            if box.findChild(QCheckBox,"ml3Check").isChecked():
+                stat_name = "SML_%s_%s"%(gnumber,lab)
+                result += stat_name
+                for i in range(14-len(stat_name)):
+                    result += " "
+
+        return result
