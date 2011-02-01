@@ -110,29 +110,32 @@ class Diyabc(QMainWindow):
                     qfd = QFileDialog()
                     dirname = str(qfd.getExistingDirectory(self,"Where to put the clone"))
                     if dirname != "":
-                        # name_YYYY_MM_DD-num le plus elevé
-                        dd = datetime.now()
-                        #num = 36
-                        cd = 100
-                        while cd > 0 and not os.path.exists(dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,cd)):
-                            cd -= 1
-                        if cd == 100:
-                            QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
-                                    project directories\nfor the same project name and in the same directory")
+                        if not self.isProjDir(dirname):
+                            # name_YYYY_MM_DD-num le plus elevé
+                            dd = datetime.now()
+                            #num = 36
+                            cd = 100
+                            while cd > 0 and not os.path.exists(dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,cd)):
+                                cd -= 1
+                            if cd == 100:
+                                QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
+                                        project directories\nfor the same project name and in the same directory")
+                            else:
+                                clonedir = dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,(cd+1))
+                                #self.ui.dirEdit.setText(newdir)
+                                try:
+                                    print current_project.dir, " to ", clonedir
+                                    shutil.copytree(current_project.dir,clonedir)
+                                    # si les noms sont différents, on le charge
+                                    if proj_base_name != current_project.name:
+                                        self.file_open(clonedir)
+                                    else:
+                                        QMessageBox.information(self,"Load error","The cloned has been cloned but can not be opened because\
+                                                it has the same name than the origin project\nClose the origin project if you want to open the clone")
+                                except OSError,e:
+                                    QMessageBox.information(self,"Error",str(e))
                         else:
-                            clonedir = dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,(cd+1))
-                            #self.ui.dirEdit.setText(newdir)
-                            try:
-                                print current_project.dir, " to ", clonedir
-                                shutil.copytree(current_project.dir,clonedir)
-                                # si les noms sont différents, on le charge
-                                if proj_base_name != current_project.name:
-                                    self.file_open(clonedir)
-                                else:
-                                    QMessageBox.information(self,"Load error","The cloned has been cloned but can not be opened because\
-                                            it has the same name than the origin project\nClose the origin project if you want to open the clone")
-                            except OSError,e:
-                                QMessageBox.information(self,"Error",str(e))
+                            QMessageBox.information(self,"Incorrect directory","A project can not be in a project directory")
                 else:
                     QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ -")
             else:
@@ -216,6 +219,16 @@ class Diyabc(QMainWindow):
     def prevProject(self):
         if self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.setCurrentIndex((self.ui.tabWidget.currentIndex() - 1) % self.ui.tabWidget.count())
+
+    def isProjDir(self,dir):
+        """ retourne vrai si le répertoire donné en paramètre est un 
+        repertoire de projet ou s'il est dans un répertoire de projet
+        """
+        if os.path.exists("%s/conf.tmp"%dir) or os.path.exists("%s/conf.tmp"%os.path.abspath(os.path.join(dir, '..'))):
+            return True
+        else:
+            return False
+
 
     #def closeEvent(self, event):
     #    reply = QtGui.QMessageBox.question(self, 'Message',

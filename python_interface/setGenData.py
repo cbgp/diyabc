@@ -442,14 +442,17 @@ class SetGeneticData(QFrame):
 
         # partie mutation model
         f.write("\ngroup priors (%i)\n"%len(self.groupList))
-        for i,box in enumerate(self.groupList):
-            if "Microsatellites" in str(box.title()):
-                f.write("group G%i [M]\n"%(i+1))
-                f.write(u'%s'%self.setMutation_dico[box].getMutationConf())
-            elif "Sequences" in str(box.title()):
-                f.write("group G%i [S]\n"%(i+1))
-                to_write = u'%s'%self.setMutationSeq_dico[box].getMutationConf()
-                f.write(to_write)
+        if len(self.groupList) == 0:
+            f.write("\n")
+        else:
+            for i,box in enumerate(self.groupList):
+                if "Microsatellites" in str(box.title()):
+                    f.write("group G%i [M]\n"%(i+1))
+                    f.write(u'%s'%self.setMutation_dico[box].getMutationConf())
+                elif "Sequences" in str(box.title()):
+                    f.write("group G%i [S]\n"%(i+1))
+                    to_write = u'%s'%self.setMutationSeq_dico[box].getMutationConf()
+                    f.write(to_write)
 
         # partie sum stats
         stat_txt_list = []

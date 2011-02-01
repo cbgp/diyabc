@@ -195,28 +195,31 @@ class Project(QTabWidget):
         #qfd.setDirectory("~/")
         name = str(qfd.getExistingDirectory())
         if name != "":
-            # name_YYYY_MM_DD-num le plus elevé
-            dd = datetime.now()
-            #num = 36
-            cd = 100
-            while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,cd)):
-                cd -= 1
-            if cd == 100:
-                QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
-                        project directories\nfor the same project name and in the same directory")
+            if not self.parent.isProjDir(name):
+                # name_YYYY_MM_DD-num le plus elevé
+                dd = datetime.now()
+                #num = 36
+                cd = 100
+                while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,cd)):
+                    cd -= 1
+                if cd == 100:
+                    QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
+                            project directories\nfor the same project name and in the same directory")
+                else:
+                    newdir = name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,(cd+1))
+                    self.ui.dirEdit.setText(newdir)
+                    try:
+                        os.mkdir(newdir)
+                        self.ui.groupBox.show()
+                        self.ui.setHistoricalButton.setDisabled(False)
+                        self.ui.setGeneticButton.setDisabled(False)
+                        self.dir = newdir
+                        shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
+                        self.dataFileName = self.dataFileSource.split('/')[-1]
+                    except OSError,e:
+                        QMessageBox.information(self,"Error",str(e))
             else:
-                newdir = name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,(cd+1))
-                self.ui.dirEdit.setText(newdir)
-                try:
-                    os.mkdir(newdir)
-                    self.ui.groupBox.show()
-                    self.ui.setHistoricalButton.setDisabled(False)
-                    self.ui.setGeneticButton.setDisabled(False)
-                    self.dir = newdir
-                    shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
-                    self.dataFileName = self.dataFileSource.split('/')[-1]
-                except OSError,e:
-                    QMessageBox.information(self,"Error",str(e))
+                QMessageBox.information(self,"Incorrect directory","A project can not be in a project directory")
 
 
     def changeIcon(self):
@@ -317,26 +320,29 @@ class Project(QTabWidget):
     def save(self):
 
         print "je me save"
-        # save meta project
-        if os.path.exists(self.ui.dirEdit.text()+"/conf.tmp"):
-            os.remove("%s/conf.tmp" % self.ui.dirEdit.text())
+        if self.dir != None:
+            # save meta project
+            if os.path.exists(self.dir+"/conf.tmp"):
+                os.remove("%s/conf.tmp" % self.dir)
 
-        f = codecs.open(self.ui.dirEdit.text()+"/conf.tmp",'w',"utf-8")
-        f.write("%s\n"%self.dataFileName)
-        # recup du nombre de params (depuis historical model et les mutational qui varient)
-        nb_param = self.hist_model_win.getNbParam()
-        nb_param += self.gen_data_win.getNbParam()
-        nb_sum_stats = self.gen_data_win.getNbSumStats()
-        f.write("%s parameters and %s summary statistics\n\n"%(nb_param,nb_sum_stats))
-        f.close()
+            f = codecs.open(self.dir+"/conf.tmp",'w',"utf-8")
+            f.write("%s\n"%self.dataFileName)
+            # recup du nombre de params (depuis historical model et les mutational qui varient)
+            nb_param = self.hist_model_win.getNbParam()
+            nb_param += self.gen_data_win.getNbParam()
+            nb_sum_stats = self.gen_data_win.getNbSumStats()
+            f.write("%s parameters and %s summary statistics\n\n"%(nb_param,nb_sum_stats))
+            f.close()
 
-        # save hist conf
-        self.hist_model_win.writeHistoricalConfFromGui()
-        # save gen conf
-        self.gen_data_win.writeGeneticConfFromGui()
-        # save th conf
-        if self.gen_state_valid and self.hist_state_valid:
-            self.writeThConf()
+            # save hist conf
+            self.hist_model_win.writeHistoricalConfFromGui()
+            # save gen conf
+            self.gen_data_win.writeGeneticConfFromGui()
+            # save th conf
+            if self.gen_state_valid and self.hist_state_valid:
+                self.writeThConf()
+        else:
+            QMessageBox.information(self,"Saving is impossible","Choose a directory before saving the project")
 
     def writeThConf(self):
         """ ecrit le header du tableau de resultat qui sera produit par les calculs
