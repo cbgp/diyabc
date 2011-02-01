@@ -216,6 +216,8 @@ class Project(QTabWidget):
                         self.dir = newdir
                         shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
                         self.dataFileName = self.dataFileSource.split('/')[-1]
+                        # verrouillage du projet
+                        self.lock()
                     except OSError,e:
                         QMessageBox.information(self,"Error",str(e))
             else:
@@ -382,6 +384,23 @@ class Project(QTabWidget):
         else:
             self.setTabIcon(0,QIcon("docs/redcross.png"))
             self.ui.runButton.setDisabled(True)
+    def lock(self):
+        """ crée le fichier de verrouillage pour empêcher l'ouverture 
+        du projet par une autre instance de DIYABC
+        """
+        f = open("%s/.DIYABC_lock"%self.dir,"w")
+        f.write("%s"%os.getpid())
+        f.close()
+    def unlock(self):
+        """ supprime le verrouillage sur le projet ssi le verrouillage 
+        a été effectué par notre instance de DIYABC
+        """
+        if os.path.exists("%s/.DIYABC_lock"%self.dir):
+            f = open("%s/.DIYABC_lock"%self.dir)
+            pid = f.read()
+            # on ne deverrouille que si c'est nous qui avons verrouillé
+            if pid == str(os.getpid()):
+                os.remove("%s/.DIYABC_lock"%self.dir)
 
 
 class MyThread(QThread):

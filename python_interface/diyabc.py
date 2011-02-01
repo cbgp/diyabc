@@ -44,11 +44,14 @@ class Diyabc(QMainWindow):
         file_menu = self.ui.menubar.addMenu("File")
         file_menu.addAction("New Project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction("Open",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_O))
-        file_menu.addAction("Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
-        file_menu.addAction("Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
-        file_menu.addAction("Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_C))
+        self.saveProjActionMenu = file_menu.addAction("Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
+        self.deleteProjActionMenu = file_menu.addAction("Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
+        self.cloneProjActionMenu = file_menu.addAction("Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_C))
         self.closeProjActionMenu = file_menu.addAction("Close current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)
+        self.saveProjActionMenu.setDisabled(True)
+        self.deleteProjActionMenu.setDisabled(True)
+        self.cloneProjActionMenu.setDisabled(True)
         action = file_menu.addAction("Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
@@ -84,14 +87,30 @@ class Diyabc(QMainWindow):
                 for p in self.project_list:
                     proj_name_list.append(p.name)
                 if not project_name in proj_name_list:
-                    proj_to_open = Project(project_name,dir,self)
-                    proj_to_open.loadFromDir()
-                    self.project_list.append(proj_to_open)
-                    self.ui.tabWidget.addTab(proj_to_open,proj_to_open.name)
-                    self.ui.tabWidget.setCurrentWidget(proj_to_open)
-                    # si c'est le premier projet, on permet la fermeture par le menu
-                    if len(self.project_list) == 1:
-                        self.closeProjActionMenu.setDisabled(False)
+                    proj_ready_to_be_opened = True
+                    # si le projet est verrouillé
+                    if os.path.exists("%s/.DIYABC_lock"%dir):
+                        reply = QMessageBox.question(self,"Project is locked","The %s project is currently locked by another instance of DIYABC\
+                                would you like to open it anyway and get the lock for this DIYABC ?"%proj_name,
+                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,QtGui.QMessageBox.No)
+                        if reply == QtGui.QMessageBox.Yes:
+                            os.remove("%s/.DIYABC_lock"%dir)
+                        else:
+                            proj_ready_to_be_opened = False
+                    if proj_ready_to_be_opened:
+                        proj_to_open = Project(project_name,dir,self)
+                        proj_to_open.loadFromDir()
+                        self.project_list.append(proj_to_open)
+                        self.ui.tabWidget.addTab(proj_to_open,proj_to_open.name)
+                        self.ui.tabWidget.setCurrentWidget(proj_to_open)
+                        # si c'est le premier projet, on permet la fermeture/del/save par le menu
+                        if len(self.project_list) == 1:
+                            self.closeProjActionMenu.setDisabled(False)
+                            self.saveProjActionMenu.setDisabled(False)
+                            self.deleteProjActionMenu.setDisabled(False)
+                            self.cloneProjActionMenu.setDisabled(False)
+                        # creation du lock
+                        proj_to_open.lock()
                 else:
                     QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:
@@ -166,6 +185,9 @@ class Diyabc(QMainWindow):
 
                         if len(self.project_list) == 1:
                             self.closeProjActionMenu.setDisabled(False)
+                            self.saveProjActionMenu.setDisabled(False)
+                            self.deleteProjActionMenu.setDisabled(False)
+                            self.cloneProjActionMenu.setDisabled(False)
                     else:
                         QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded."%text)
                 else:
@@ -175,6 +197,7 @@ class Diyabc(QMainWindow):
 
     def closeProject(self,index,save=None):
         """ ferme le projet qui est à l'index "index" du tabWidget
+        le sauvegarde si save == True et le déverrouille
         """
         if save == None:
             reply = QtGui.QMessageBox.question(self, 'Message',
@@ -184,6 +207,8 @@ class Diyabc(QMainWindow):
         
         # est ce que l'index est out of range?
         if self.ui.tabWidget.widget(index) != 0:
+            # deverrouillage du projet
+            self.ui.tabWidget.widget(index).unlock()
             # suppression du projet dans la liste locale
             self.project_list.remove(self.ui.tabWidget.widget(index))
             if save:
@@ -192,6 +217,9 @@ class Diyabc(QMainWindow):
         # si c'est le dernier projet, on désactive la fermeture par le menu
         if len(self.project_list) == 0:
             self.closeProjActionMenu.setDisabled(True)
+            self.saveProjActionMenu.setDisabled(True)
+            self.deleteProjActionMenu.setDisabled(True)
+            self.cloneProjActionMenu.setDisabled(True)
 
     def closeCurrentProject(self):
         """ ferme le projet courant, celui de l'onglet séléctionné
@@ -230,7 +258,10 @@ class Diyabc(QMainWindow):
             return False
 
 
-    #def closeEvent(self, event):
+    def closeEvent(self, event):
+        for proj in self.project_list:
+            proj.unlock()
+        event.accept()
     #    reply = QtGui.QMessageBox.question(self, 'Message',
     #        "Are you sure to quit?", QtGui.QMessageBox.Yes | 
     #        QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
