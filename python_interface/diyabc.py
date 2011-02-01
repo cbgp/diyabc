@@ -90,8 +90,12 @@ class Diyabc(QMainWindow):
                     proj_ready_to_be_opened = True
                     # si le projet est verrouillé
                     if os.path.exists("%s/.DIYABC_lock"%dir):
-                        reply = QMessageBox.question(self,"Project is locked","The %s project is currently locked by another instance of DIYABC\
-                                would you like to open it anyway and get the lock for this DIYABC ?"%proj_name,
+                        reply = QMessageBox.question(self,"Project is locked","The %s project is currently locked.\
+\nThere are two possible reasons for that : \
+\n- The project is currently opened in another instance of DIYABC\
+\n- The last time you opened this project, DIYABC was closed unregularly\n\
+\nWould you like to open the project anyway and get the lock with this DIYABC ?\
+\nIf you say YES, think about closing potential other DIYABCs which manipulate this project"%proj_name,
                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,QtGui.QMessageBox.No)
                         if reply == QtGui.QMessageBox.Yes:
                             os.remove("%s/.DIYABC_lock"%dir)
