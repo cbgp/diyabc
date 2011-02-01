@@ -193,7 +193,7 @@ class Project(QTabWidget):
         """
         qfd = QFileDialog()
         #qfd.setDirectory("~/")
-        name = qfd.getExistingDirectory()
+        name = str(qfd.getExistingDirectory())
         if name != "":
             # name_YYYY_MM_DD-num le plus elevé
             dd = datetime.now()

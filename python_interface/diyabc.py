@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import time
+import shutil
+import codecs
 import sys
 import os
 from PyQt4.QtCore import *
@@ -42,6 +45,7 @@ class Diyabc(QMainWindow):
         file_menu.addAction("New Project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction("Open",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_O))
         file_menu.addAction("Save",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
+        file_menu.addAction("Clone",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_C))
         self.closeProjActionMenu = file_menu.addAction("Close current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)
         action = file_menu.addAction("Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
@@ -61,11 +65,12 @@ class Diyabc(QMainWindow):
             if self.sender() == self.style_actions[stxt]:
                 self.app.setStyle(stxt)
 
-    def file_open(self):
+    def file_open(self,dir=None):
         """ ouverture d'un projet existant
         """
-        qfd = QFileDialog()
-        dir = qfd.getExistingDirectory()
+        if dir == None:
+            qfd = QFileDialog()
+            dir = str(qfd.getExistingDirectory())
         proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
         if dir != "":
@@ -88,6 +93,46 @@ class Diyabc(QMainWindow):
             else:
                 QMessageBox.information(self,"Load error","This is not a project directory")
 
+    def cloneCurrentProject(self):
+        """ duplique un projet vers un autre répertoire
+        demande le nom du clone puis le répertoire dans lequel mettre le clone du projet
+        """ 
+        self.saveCurrentProject()
+        current_project = self.ui.tabWidget.currentWidget()
+        proj_base_name, ok = QtGui.QInputDialog.getText(self, 'Clone project', 'Enter the name of the clone project:')
+        if ok:
+            if proj_base_name != "":
+                if ('_' not in proj_base_name) and ('-' not in proj_base_name) and ("'" not in proj_base_name) and ('"' not in proj_base_name) and ('.' not in proj_base_name):
+                    qfd = QFileDialog()
+                    dirname = str(qfd.getExistingDirectory(self,"Where to put the clone"))
+                    if dirname != "":
+                        # name_YYYY_MM_DD-num le plus elevé
+                        dd = datetime.now()
+                        #num = 36
+                        cd = 100
+                        while cd > 0 and not os.path.exists(dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,cd)):
+                            cd -= 1
+                        if cd == 100:
+                            QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
+                                    project directories\nfor the same project name and in the same directory")
+                        else:
+                            clonedir = dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,(cd+1))
+                            #self.ui.dirEdit.setText(newdir)
+                            try:
+                                print current_project.dir, " to ", clonedir
+                                shutil.copytree(current_project.dir,clonedir)
+                                # si les noms sont différents, on le charge
+                                if proj_base_name != current_project.name:
+                                    self.file_open(clonedir)
+                                else:
+                                    QMessageBox.information(self,"Load error","The cloned has been cloned but can not be opened because\
+                                            it has the same name than the origin project\nClose the origin project if you want to open the clone")
+                            except OSError,e:
+                                QMessageBox.information(self,"Error",str(e))
+                else:
+                    QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ -")
+            else:
+                QMessageBox.information(self,"Name error","The project name cannot be empty.")
 
 
 
@@ -128,8 +173,12 @@ class Diyabc(QMainWindow):
             "Do you want to save the Project ?", QtGui.QMessageBox.Yes | 
             QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
         
+        # est ce que l'index est out of range?
         if self.ui.tabWidget.widget(index) != 0:
+            # suppression du projet dans la liste locale
             self.project_list.remove(self.ui.tabWidget.widget(index))
+            if reply == QtGui.QMessageBox.Yes:
+                self.ui.tabWidget.widget(index).save()
         self.ui.tabWidget.removeTab(index)
         # si c'est le dernier projet, on désactive la fermeture par le menu
         if len(self.project_list) == 0:
