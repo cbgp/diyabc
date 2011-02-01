@@ -416,12 +416,12 @@ class SetGeneticData(QFrame):
     def writeGeneticConfFromGui(self):
         """ on ecrit l'etat actuel des genetic data dans conf.gen.tmp
         """
-        if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.gen.tmp"):
-            os.remove("%s/conf.gen.tmp" % self.parent.ui.dirEdit.text())
+        if os.path.exists(self.parent.dir+"/conf.gen.tmp"):
+            os.remove("%s/conf.gen.tmp" % self.parent.dir)
 
-        f = codecs.open(self.parent.ui.dirEdit.text()+"/conf.gen.tmp",'w',"utf-8")
+        f = codecs.open(self.parent.dir+"/conf.gen.tmp",'w',"utf-8")
         # partie description des locus
-        f.write("loci description (nloc=%i)\n"%self.nbLocusGui)
+        f.write("loci description (%i)\n"%self.nbLocusGui)
         data = self.parent.data
         for i in range(data.nloc):
             name = data.locuslist[i].name
@@ -470,10 +470,11 @@ class SetGeneticData(QFrame):
                 stat_to_write = stat_header_txt+stat_txt
             stat_txt_list.append(stat_to_write)
 
-        f.write("\ngroup summary statistics (%i)\n"%nstat_tot)
+        f.write("group summary statistics (%i)\n"%nstat_tot)
         for txt in stat_txt_list:
             f.write(txt)
             print txt
+        f.write('\n')
 
 
     def loadGeneticConf(self):
@@ -485,7 +486,7 @@ class SetGeneticData(QFrame):
             if os.path.exists("%s/conf.gen.tmp"%(self.parent.dir)):
                 f = codecs.open("%s/conf.gen.tmp"%(self.parent.dir),"r","utf-8")
                 lines = f.readlines()
-                nloc = int(lines[0].split("nloc=")[1].split(')')[0])
+                nloc = int(lines[0].split('(')[1].split(')')[0])
                 # determination du nombre de groupes
                 l = 1
                 gmax = 0

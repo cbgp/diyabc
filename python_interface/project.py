@@ -101,6 +101,7 @@ class Project(QTabWidget):
 
     @pyqtSignature("")
     def on_btnStart_clicked(self):
+        self.writeRefTableHeader()
         """Start or stop the treatment in the thread"""
         if self.th == None or self.th.cancel == True:
             self.th = MyThread(self)
@@ -118,6 +119,32 @@ class Project(QTabWidget):
     def cancelTh(self):
         print 'plop'
         self.emit(SIGNAL("canceled()"))
+
+    def writeRefTableHeader(self):
+        if os.path.exists(self.dir+"/conf.tmp") and os.path.exists(self.dir+"/conf.hist.tmp") and os.path.exists(self.dir+"/conf.gen.tmp") and os.path.exists(self.dir+"/conf.th.tmp"):
+            if os.path.exists(self.dir+"/refTableHeader.txt"):
+                os.remove("%s/refTableHeader.txt" % self.dir)
+            f1 = codecs.open(self.dir+"/conf.tmp","r","utf-8")
+            f1lines = f1.read()
+            f1.close()
+            f2 = codecs.open(self.dir+"/conf.hist.tmp","r","utf-8")
+            f2lines = f2.read()
+            f2.close()
+            f3 = codecs.open(self.dir+"/conf.gen.tmp","r","utf-8")
+            f3lines = f3.read()
+            f3.close()
+            f4 = codecs.open(self.dir+"/conf.th.tmp","r","utf-8")
+            f4lines = f4.read()
+            f4.close()
+
+            f = codecs.open(self.dir+"/refTableHeader.txt","w","utf-8")
+            f.write(f1lines)
+            f.write(f2lines)
+            f.write(f3lines)
+            f.write(f4lines)
+            f.close()
+        else:
+            QMessageBox.information(self,"Header generation problem","One conf file is missing in order to generate the reference table header")
 
 
     def dataFileSelection(self):

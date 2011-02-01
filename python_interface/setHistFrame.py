@@ -666,7 +666,7 @@ class SetHistoricalModel(QFrame):
                 draw = "ONCE"
             f.write("\nDRAW %s"%draw)
 
-            f.write("\n")
+            f.write("\n\n")
             f.close()
 
     def writeHistoricalConfFromGui(self):
@@ -728,7 +728,8 @@ class SetHistoricalModel(QFrame):
                 draw = "ONCE"
             f.write("\nDRAW %s"%draw)
 
-        f.write("\n")
+        print "passage à la ligne!!!"
+        f.write("\n\n")
         f.close()
 
     def loadHistoricalConf(self):

@@ -445,10 +445,11 @@ class SetSummaryStatistics(QFrame):
         # construction du dico de stats (le même que dans getSumConf)
         dico_stats = {}
         for line in lines:
-            t = line.split(' ')[0]
-            dico_stats[t] = []
-            for sample in line.split(' ')[1:]:
-                dico_stats[t].append(sample)
+            if line.strip() != "":
+                t = line.split(' ')[0]
+                dico_stats[t] = []
+                for sample in line.split(' ')[1:]:
+                    dico_stats[t].append(sample)
         print "dico stats :",dico_stats
 
         # pour chaque ligne (de case à cocher)
