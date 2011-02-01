@@ -44,8 +44,9 @@ class Diyabc(QMainWindow):
         file_menu = self.ui.menubar.addMenu("File")
         file_menu.addAction("New Project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction("Open",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_O))
-        file_menu.addAction("Save",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
-        file_menu.addAction("Clone",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_C))
+        file_menu.addAction("Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
+        file_menu.addAction("Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
+        file_menu.addAction("Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_C))
         self.closeProjActionMenu = file_menu.addAction("Close current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)
         action = file_menu.addAction("Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
@@ -166,18 +167,20 @@ class Diyabc(QMainWindow):
             else:
                 QMessageBox.information(self,"Name error","The project name cannot be empty.")
 
-    def closeProject(self,index):
+    def closeProject(self,index,save=None):
         """ ferme le projet qui est à l'index "index" du tabWidget
         """
-        reply = QtGui.QMessageBox.question(self, 'Message',
-            "Do you want to save the Project ?", QtGui.QMessageBox.Yes | 
-            QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
+        if save == None:
+            reply = QtGui.QMessageBox.question(self, 'Message',
+                "Do you want to save the Project ?", QtGui.QMessageBox.Yes | 
+                QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
+            save = (reply == QtGui.QMessageBox.Yes)
         
         # est ce que l'index est out of range?
         if self.ui.tabWidget.widget(index) != 0:
             # suppression du projet dans la liste locale
             self.project_list.remove(self.ui.tabWidget.widget(index))
-            if reply == QtGui.QMessageBox.Yes:
+            if save:
                 self.ui.tabWidget.widget(index).save()
         self.ui.tabWidget.removeTab(index)
         # si c'est le dernier projet, on désactive la fermeture par le menu
@@ -192,6 +195,17 @@ class Diyabc(QMainWindow):
         """ sauve le projet courant, cad ecrit les fichiers temporaires de conf
         """
         self.ui.tabWidget.currentWidget().save()
+    def deleteCurrentProject(self):
+        """ efface le projet courant
+        """
+        self.deleteProject(self.ui.tabWidget.currentIndex())
+    def deleteProject(self,index):
+        """ efface le projet dont l'index est donné en paramètre
+        """
+        projdir = self.ui.tabWidget.widget(index).dir
+        shutil.rmtree(projdir)
+        # on ferme le projet sans sauver
+        self.closeProject(index,False)
 
     #def closeEvent(self, event):
     #    reply = QtGui.QMessageBox.question(self, 'Message',
