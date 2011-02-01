@@ -45,7 +45,7 @@ class Diyabc(QMainWindow):
         file_menu.addAction("New Project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction("Open",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_O))
         file_menu.addAction("Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
-        file_menu.addAction("Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
+        file_menu.addAction("Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
         file_menu.addAction("Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_C))
         self.closeProjActionMenu = file_menu.addAction("Close current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)
@@ -58,6 +58,9 @@ class Diyabc(QMainWindow):
             self.style_actions[stxt] = style_menu.addAction(stxt,self.changeStyle)
             self.style_actions[stxt].setActionGroup(action_group)
             self.style_actions[stxt].setCheckable(True)
+        navigate_menu = self.ui.menubar.addMenu("Navigate")
+        navigate_menu.addAction("Next Project",self.nextProject,QKeySequence(Qt.CTRL + Qt.Key_PageDown))
+        navigate_menu.addAction("Previous Project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
 	
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 
@@ -206,6 +209,13 @@ class Diyabc(QMainWindow):
         shutil.rmtree(projdir)
         # on ferme le projet sans sauver
         self.closeProject(index,False)
+    def nextProject(self):
+        if self.ui.tabWidget.count() > 0:
+            self.ui.tabWidget.setCurrentIndex((self.ui.tabWidget.currentIndex() + 1) % self.ui.tabWidget.count())
+
+    def prevProject(self):
+        if self.ui.tabWidget.count() > 0:
+            self.ui.tabWidget.setCurrentIndex((self.ui.tabWidget.currentIndex() - 1) % self.ui.tabWidget.count())
 
     #def closeEvent(self, event):
     #    reply = QtGui.QMessageBox.question(self, 'Message',
