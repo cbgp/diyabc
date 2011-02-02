@@ -14,6 +14,7 @@ from setMutationModel import SetMutationModel
 from setMutationModelSequences import SetMutationModelSequences
 from setSummaryStatistics import SetSummaryStatistics
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
+from defineNewAnalysis import DefineNewAnalysis
 from data import Data
 from datetime import datetime 
 import os.path
@@ -74,7 +75,7 @@ class Project(QTabWidget):
         self.ui.tableWidget.setColumnWidth(2,300)
         self.ui.tableWidget.setColumnWidth(3,70)
 
-        QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.addRow)
+        QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.defineNewAnalysis)
         QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
         QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.setHistorical)
         QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.setGenetic)
@@ -98,6 +99,15 @@ class Project(QTabWidget):
         #self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
 
         self.th = None
+
+    def defineNewAnalysis(self):
+        def_analysis = DefineNewAnalysis(self)
+        self.addTab(def_analysis,"Define new analysis")
+
+        self.setTabEnabled(0,False)
+        self.setTabEnabled(1,False)
+        self.setCurrentWidget(def_analysis)
+
 
     @pyqtSignature("")
     def on_btnStart_clicked(self):

@@ -5,7 +5,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setHistFrame_ui import Ui_Frame
-from drawScenario import drawScenario
+from drawScenario import DrawScenario
 from visualizescenario import *
 import history 
 from history import IOScreenError
@@ -378,9 +378,18 @@ class SetHistoricalModel(QFrame):
     def drawScenarios(self,scenarios_info_list):
         """ lance la fenetre ou se trouveront les graphes des scenarios
         """
-        # creation de la fenêtre
-        self.draw_sc_win = drawScenario(scenarios_info_list,self)
-        self.draw_sc_win.show()
+        ## creation de la fenêtre
+        #self.draw_sc_win = drawScenario(scenarios_info_list,self)
+        #self.draw_sc_win.show()
+        #self.draw_sc_win.drawAll()
+
+        self.draw_sc_win = DrawScenario(scenarios_info_list,self)
+        self.parent.addTab(self.draw_sc_win,"Draw scenarios")
+
+        self.parent.setTabEnabled(0,False)
+        self.parent.setTabEnabled(1,False)
+        self.parent.setTabEnabled(2,False)
+        self.parent.setCurrentWidget(self.draw_sc_win)
         self.draw_sc_win.drawAll()
 
     def addParamGui(self,name,type_param,code_type_param):
