@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/defineAnalysis.ui'
 #
-# Created: Wed Feb  2 14:18:28 2011
+# Created: Wed Feb  2 16:15:08 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -70,10 +70,10 @@ class Ui_Frame(object):
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.radioButton = QtGui.QRadioButton(self.groupBox)
-        self.radioButton.setChecked(True)
-        self.radioButton.setObjectName("radioButton")
-        self.horizontalLayout.addWidget(self.radioButton)
+        self.preEvRadio = QtGui.QRadioButton(self.groupBox)
+        self.preEvRadio.setChecked(True)
+        self.preEvRadio.setObjectName("preEvRadio")
+        self.horizontalLayout.addWidget(self.preEvRadio)
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.pcaCheck = QtGui.QCheckBox(self.groupBox)
@@ -85,11 +85,11 @@ class Ui_Frame(object):
         self.verticalLayout.addWidget(self.lossCheck)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.verticalLayout_3.addLayout(self.horizontalLayout)
-        self.radioButton_2 = QtGui.QRadioButton(self.groupBox)
-        self.radioButton_2.setMinimumSize(QtCore.QSize(0, 30))
-        self.radioButton_2.setMaximumSize(QtCore.QSize(16777215, 30))
-        self.radioButton_2.setObjectName("radioButton_2")
-        self.verticalLayout_3.addWidget(self.radioButton_2)
+        self.estimateRadio = QtGui.QRadioButton(self.groupBox)
+        self.estimateRadio.setMinimumSize(QtCore.QSize(0, 30))
+        self.estimateRadio.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.estimateRadio.setObjectName("estimateRadio")
+        self.verticalLayout_3.addWidget(self.estimateRadio)
         self.radioButton_3 = QtGui.QRadioButton(self.groupBox)
         self.radioButton_3.setMinimumSize(QtCore.QSize(0, 35))
         self.radioButton_3.setMaximumSize(QtCore.QSize(16777215, 35))
@@ -126,10 +126,10 @@ class Ui_Frame(object):
 "Each record includes 2 parameters\n"
 "The reference table has been built", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Frame", "Do you want to", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton.setText(QtGui.QApplication.translate("Frame", "Pre-evaluate scenario-prior combinations", None, QtGui.QApplication.UnicodeUTF8))
+        self.preEvRadio.setText(QtGui.QApplication.translate("Frame", "Pre-evaluate scenario-prior combinations", None, QtGui.QApplication.UnicodeUTF8))
         self.pcaCheck.setText(QtGui.QApplication.translate("Frame", "Principal Component Analysis", None, QtGui.QApplication.UnicodeUTF8))
         self.lossCheck.setText(QtGui.QApplication.translate("Frame", "Locate observed S.S among simulated S.S.", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton_2.setText(QtGui.QApplication.translate("Frame", "Estimate posterior distributions of parameters and model checking", None, QtGui.QApplication.UnicodeUTF8))
+        self.estimateRadio.setText(QtGui.QApplication.translate("Frame", "Estimate posterior distributions of parameters and model checking", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_3.setText(QtGui.QApplication.translate("Frame", "Compute bias and precision on parameter estimations", None, QtGui.QApplication.UnicodeUTF8))
         self.comparisonRadio.setText(QtGui.QApplication.translate("Frame", "Compute posterior probabilities of scenarios", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_5.setText(QtGui.QApplication.translate("Frame", "Evaluate confidence in scenario choice", None, QtGui.QApplication.UnicodeUTF8))

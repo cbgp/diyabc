@@ -4,15 +4,15 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from comparison_ui import Ui_Frame
+from estimation_ui import Ui_Frame
 
-class Comparison(QFrame):
+class Estimation(QFrame):
     def __init__(self,parent=None):
-        super(Comparison,self).__init__(parent)
+        super(Estimation,self).__init__(parent)
         self.parent=parent
         self.createWidgets()
-        self.ui.verticalLayout_2.setAlignment(Qt.AlignHCenter)
-        self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)
+        self.ui.verticalLayout_3.setAlignment(Qt.AlignHCenter)
+        self.ui.verticalLayout_3.setAlignment(Qt.AlignTop)
 
 
 
@@ -25,7 +25,7 @@ class Comparison(QFrame):
 
 
     def validate(self):
-        self.parent.parent.addRow("scenario choice","params","4","new")
+        self.parent.parent.addRow("parameter estimation","params","5","new")
         self.exit()
 
     def setScenarios(self,scList):

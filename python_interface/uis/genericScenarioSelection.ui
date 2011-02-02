@@ -127,12 +127,18 @@
         <property name="text">
          <string>Scenario 1</string>
         </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="sc2Check">
         <property name="text">
          <string>Scenario 2</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

@@ -6,6 +6,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from defineNewAnalysis_ui import Ui_Frame
 from comparison import Comparison
+from estimation import Estimation
 from genericScenarioSelection import GenericScenarioSelection
 
 class DefineNewAnalysis(QFrame):
@@ -41,6 +42,23 @@ class DefineNewAnalysis(QFrame):
             self.parent.addTab(genSel,"Scenario selection")
             self.parent.removeTab(self.parent.indexOf(self))
             self.parent.setCurrentWidget(genSel)
+        elif self.ui.estimateRadio.isChecked():
+            estimateFrame = Estimation(self)
+            genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",self)
+            self.parent.addTab(genSel,"Scenario selection")
+            self.parent.removeTab(self.parent.indexOf(self))
+            self.parent.setCurrentWidget(genSel)
+        elif self.ui.preEvRadio.isChecked():
+            paramtxt = ""
+            if self.ui.pcaCheck.isChecked():
+                paramtxt+= " PCA "
+            if self.ui.pcaCheck.isChecked() and self.ui.lossCheck.isChecked():
+                paramtxt+="and"
+            if self.ui.lossCheck.isChecked():
+                paramtxt+= " Locate S.S."
+            self.parent.addRow("scenario prior combination",paramtxt,"4","new")
+            self.exit()
+
         else:
             print "NYI"
 
