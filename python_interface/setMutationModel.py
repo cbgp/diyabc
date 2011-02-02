@@ -187,7 +187,7 @@ class SetMutationModel(QFrame):
         self.ui.mmrShapeEdit.setText(mmrValues[3])  
         law = lines[0].split('[')[0].split(' ')[-1]
 
-        print "law:",law
+        #print "law:",law
         if law == "UN":
             self.ui.mmrUnifRadio.setChecked(True)
         elif law == "LN": 
@@ -216,7 +216,7 @@ class SetMutationModel(QFrame):
         self.ui.mcpShapeEdit.setText(mcpValues[3])  
         law = lines[2].split('[')[0].split(' ')[-1]
 
-        print "law:",law
+        #print "law:",law
         if law == "UN":
             self.ui.mcpUnifRadio.setChecked(True)
         elif law == "LN": 
@@ -245,7 +245,7 @@ class SetMutationModel(QFrame):
         self.ui.msrShapeEdit.setText(msrValues[3])  
         law = lines[4].split('[')[0].split(' ')[-1]
 
-        print "law:",law
+        #print "law:",law
         if law == "UN":
             self.ui.msrUnifRadio.setChecked(True)
         elif law == "LN": 
@@ -331,7 +331,7 @@ class SetMutationModel(QFrame):
             result += pname
             for i in range(14-len(pname)):
                 result += " "
-        print "result %s : %s"%(gnumber,result)
+        #print "result %s : %s"%(gnumber,result)
         return result
 
 

@@ -147,7 +147,7 @@ class Diyabc(QMainWindow):
                                 clonedir = dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,(cd+1))
                                 #self.ui.dirEdit.setText(newdir)
                                 try:
-                                    print current_project.dir, " to ", clonedir
+                                    #print current_project.dir, " to ", clonedir
                                     shutil.copytree(current_project.dir,clonedir)
                                     # si les noms sont différents, on le charge
                                     if proj_base_name != current_project.name:

@@ -242,7 +242,7 @@ class SetMutationModelSequences(QFrame):
         self.ui.mmrShapeEdit.setText(mmrValues[3])  
         law = lines[0].split('[')[0].split(' ')[-1]
 
-        print "law:",law
+        #print "law:",law
         if law == "UN":
             self.ui.mmrUnifRadio.setChecked(True)
         elif law == "LN": 
@@ -271,7 +271,7 @@ class SetMutationModelSequences(QFrame):
         self.ui.mc1ShapeEdit.setText(mc1Values[3])  
         law = lines[2].split('[')[0].split(' ')[-1]
 
-        print "law:",law
+        #print "law:",law
         if law == "UN":
             self.ui.mc1UnifRadio.setChecked(True)
         elif law == "LN": 
@@ -300,7 +300,7 @@ class SetMutationModelSequences(QFrame):
         self.ui.mc2ShapeEdit.setText(mc2Values[3])  
         law = lines[4].split('[')[0].split(' ')[-1]
 
-        print "law:",law
+        #print "law:",law
         if law == "UN":
             self.ui.mc2UnifRadio.setChecked(True)
         elif law == "LN": 

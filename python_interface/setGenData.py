@@ -18,7 +18,7 @@ class SetGeneticData(QFrame):
     déterminer leur modèle mutationnel et leur summary statistics
     """
     def __init__(self,parent=None):
-        print LOC_TYP
+        #print LOC_TYP
         super(SetGeneticData,self).__init__(parent)
         self.parent=parent
         # liste des box
@@ -275,7 +275,7 @@ class SetGeneticData(QFrame):
                 num = self.dico_num_and_numgroup_locus[name][0]
                 # info sur le premier locus du groupe
                 type = str(self.ui.tableWidget.item(num-1,1).text())
-                print "\ntype deja present : %s"%type
+                #print "\ntype deja present : %s"%type
                 if type != first_type_found:
                     all_similar = False
         else:
@@ -476,7 +476,7 @@ class SetGeneticData(QFrame):
         f.write("group summary statistics (%i)\n"%nstat_tot)
         for txt in stat_txt_list:
             f.write(txt)
-            print txt
+            #print txt
         f.write('\n')
 
 
@@ -531,13 +531,13 @@ class SetGeneticData(QFrame):
                 # chargement des infos sur les groupes
                 l+=1
                 if l < len(lines):
-                    print 'ligne:',lines[l]
+                    #print 'ligne:',lines[l]
                     nb_groupes = int(lines[l].split('(')[1].split(')')[0])
                     num_group_max_done = 0
                     l+=1
                     # on va jusqu'à la prochaine ligne vide ou la fin du fichier
                     while l<len(lines) and lines[l].strip() != "":
-                        print 'prem ligne du groupe:',lines[l]
+                        #print 'prem ligne du groupe:',lines[l]
                         num_group = int(lines[l].split('group G')[1].split(' ')[0])
                         num_group_max_done = num_group
                         type_group = lines[l].split('[')[1].split(']')[0]
@@ -553,7 +553,7 @@ class SetGeneticData(QFrame):
                         l+=1
                     # on est sur la première ligne
                     nb_sum_stat = int(lines[l].split('(')[1].split(')')[0])
-                    print "nbsumstat %s"%nb_sum_stat
+                    #print "nbsumstat %s"%nb_sum_stat
                     l+=1
                     # parcours de tous les groupes
                     while l<len(lines) and lines[l].strip() != "":

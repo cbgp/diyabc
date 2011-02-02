@@ -450,7 +450,7 @@ class SetSummaryStatistics(QFrame):
                 dico_stats[t] = []
                 for sample in line.split(' ')[1:]:
                     dico_stats[t].append(sample)
-        print "dico stats :",dico_stats
+        #print "dico stats :",dico_stats
 
         # pour chaque ligne (de case à cocher)
         for k in dico_stats.keys():

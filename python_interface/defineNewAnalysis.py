@@ -23,12 +23,16 @@ class DefineNewAnalysis(QFrame):
         self.ui = Ui_Frame()
         self.ui.setupUi(self)
 
-        #QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
-        #QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.save)
+        QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
+        QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
+
+    def validate(self):
+        pass
 
     def exit(self):
         # reactivation des onglets
-        self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
+        self.parent.setTabEnabled(1,True)
+        self.parent.setTabEnabled(0,True)
+        self.parent.removeTab(self.parent.indexOf(self))
+        self.parent.setCurrentIndex(1)
 

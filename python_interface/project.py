@@ -127,7 +127,7 @@ class Project(QTabWidget):
         self.ui.progressBar.setValue((self.ui.progressBar.value()+1)%100)
 
     def cancelTh(self):
-        print 'plop'
+        #print 'plop'
         self.emit(SIGNAL("canceled()"))
 
     def writeRefTableHeader(self):
@@ -245,19 +245,19 @@ class Project(QTabWidget):
         self.ui.progressBar.setValue((self.ui.progressBar.value()+10)%self.ui.progressBar.maximum())
 
     def clcl(self,i,j):
-        print str(i)+","+str(j)
+        #print str(i)+","+str(j)
         #self.ui.tableWidget.item(i,j).setFlags(Qt.ItemIsEditable)
         self.ui.tableWidget.hideRow(i)
     def addRow(self):
-        print self.ui.tableWidget.rowCount()
+        #print self.ui.tableWidget.rowCount()
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
-        print self.ui.tableWidget.rowCount()
+        #print self.ui.tableWidget.rowCount()
         for i in range(self.ui.tableWidget.columnCount()):
             if i == 5:
                 self.ui.tableWidget.setCellWidget(self.ui.tableWidget.rowCount()-1,i,QPushButton("View"))
             else:
                 self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,i,QTableWidgetItem("new"+str(i)))
-                print str(self.ui.tableWidget.rowCount()-1)+","+str(i)
+                #print str(self.ui.tableWidget.rowCount()-1)+","+str(i)
             #self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,i).setText("new")
         #self.ui.tableWidget.insertRow(2)
 
@@ -331,7 +331,7 @@ class Project(QTabWidget):
 
     def save(self):
 
-        print "je me save"
+        #print "je me save"
         if self.dir != None:
             # save meta project
             if os.path.exists(self.dir+"/conf.tmp"):

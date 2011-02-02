@@ -269,7 +269,7 @@ class SetHistoricalModel(QFrame):
         # liste des premiers params de chaque categorie
         lprem = []
         for sc in chk_list:
-            print "param list",sc["checker"].parameters
+            #print "param list",sc["checker"].parameters
             for param in sc["checker"].parameters:
                 params_order_list.append(param.name)
                 # si le paramètre était deja la, il reprend ses valeurs, 
@@ -346,7 +346,7 @@ class SetHistoricalModel(QFrame):
         for num,sc in enumerate(sc_txt_list):
             scChecker = history.Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
             try:
-                print self.parent.data
+                #print self.parent.data
                 scChecker.checkread(sc.strip().split('\n'),self.parent.data)
                 scChecker.checklogic()
                 t = PopTree(scChecker)
@@ -356,9 +356,9 @@ class SetHistoricalModel(QFrame):
                 #print "  "
                 #for  b in t.br : print b
                 #print "  "
-                for s in t.segments: 
-                    print s
-                    print type(s)
+                #for s in t.segments: 
+                #    print s
+                #    print type(s)
                 dico_sc_infos = {}
                 dico_sc_infos["text"] = sc.strip().split('\n')
                 dico_sc_infos["checker"] = scChecker
@@ -366,7 +366,7 @@ class SetHistoricalModel(QFrame):
                 dico_sc_infos["tree"] = t
                 self.scenarios_info_list.append(dico_sc_infos)
             except IOScreenError, e:
-                print "Un scenario a une erreur : ", e
+                #print "Un scenario a une erreur : ", e
                 nb_scenarios_invalides += 1
                 QMessageBox.information(self,"Scenario error","%s"%e)
         # si tous les scenarios sont bons, on renvoie les données utiles, sinon on renvoie None
@@ -737,7 +737,7 @@ class SetHistoricalModel(QFrame):
                 draw = "ONCE"
             f.write("\nDRAW %s"%draw)
 
-        print "passage à la ligne!!!"
+        #print "passage à la ligne!!!"
         f.write("\n\n")
         f.close()
 
@@ -762,7 +762,7 @@ class SetHistoricalModel(QFrame):
                     ldeb_sc_cur = l+1
                     l+=1
                     while l < (ldeb_sc_cur+nb_line_sc[i]):
-                        print l," ",l+nb_line_sc[i]+1
+                        #print l," ",l+nb_line_sc[i]+1
                         txt+="%s"%lines[l]
                         l+=1
                     self.addSc()
@@ -771,7 +771,7 @@ class SetHistoricalModel(QFrame):
                 # en sortie l est (theoriquement) sur la ligne vide
                 l+=1
                 if l >= len(lines): return 0
-                print lines[l]
+                #print lines[l]
                 nbparam = int(lines[l].split('(')[1].split(',')[0])
                 nbcond = int(lines[l].split('(')[1].split(',')[1].split(')')[0])
                 l+=1
