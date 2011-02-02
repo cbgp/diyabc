@@ -230,7 +230,8 @@ class DrawScenario(QFrame):
 
         nbpix = len(self.pixList)
         largeur = 2
-        longueur = (len(self.pixList)/largeur)+1
+        # resultat de la div entière plus le reste (modulo)
+        longueur = (len(self.pixList)/largeur)+(len(self.pixList)%largeur)
         ind = 0
         li=0
         self.im_result = QImage(largeur*500,longueur*450,QImage.Format_RGB32)
