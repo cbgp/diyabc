@@ -47,7 +47,7 @@ class Estimation(QFrame):
         """ repasse sur le choix des scenarios en lui redonnant moi même comme next_widget
         """
         estimateFrame = self
-        genSel = GenericScenarioSelection(len(self.parent.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",self.parent)
+        genSel = GenericScenarioSelection(len(self.parent.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,self.parent)
         self.parent.parent.addTab(genSel,"Scenario selection")
         self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         self.parent.parent.setCurrentWidget(genSel)

@@ -37,17 +37,23 @@ class DefineNewAnalysis(QFrame):
 
     def validate(self):
         if self.ui.comparisonRadio.isChecked():
-            compFrame = Comparison(self)
-            genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",self)
-            self.parent.addTab(genSel,"Scenario selection")
-            self.parent.removeTab(self.parent.indexOf(self))
-            self.parent.setCurrentWidget(genSel)
+            if len(self.parent.hist_model_win.scList) >= 2:
+                compFrame = Comparison(self)
+                genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,self)
+                self.parent.addTab(genSel,"Scenario selection")
+                self.parent.removeTab(self.parent.indexOf(self))
+                self.parent.setCurrentWidget(genSel)
+            else:
+                QMessageBox.information(self,"Scenario error","At least 2 scenarios are needed for this analysis")
         elif self.ui.estimateRadio.isChecked():
-            estimateFrame = Estimation(self)
-            genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",self)
-            self.parent.addTab(genSel,"Scenario selection")
-            self.parent.removeTab(self.parent.indexOf(self))
-            self.parent.setCurrentWidget(genSel)
+            if len(self.parent.hist_model_win.scList) >= 2:
+                estimateFrame = Estimation(self)
+                genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,self)
+                self.parent.addTab(genSel,"Scenario selection")
+                self.parent.removeTab(self.parent.indexOf(self))
+                self.parent.setCurrentWidget(genSel)
+            else:
+                QMessageBox.information(self,"Scenario error","At least 1 scenario is needed for this analysis")
         elif self.ui.preEvRadio.isChecked():
             paramtxt = ""
             if self.ui.pcaCheck.isChecked():
