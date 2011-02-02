@@ -561,6 +561,17 @@ class SetHistoricalModel(QFrame):
                     problems += "Values for parameter %s are incoherent\n"%pname
             except Exception,e:
                 problems += "%s\n"%e
+        rpsum = 0.0
+        for rp in self.rpList:
+            rpscname = str(rp.findChild(QLabel,"rpLabel").text())
+            try:
+                rpfloat = float(str(rp.findChild(QLineEdit,"rpEdit").text()))
+                rpsum+=rpfloat
+            except Exception,e:
+                problems += "On %s posterior probability, %s\n"%(rpscname,e)
+        if rpsum != 1.0:
+            problems += "The sum of all posterior probabilities is not equal to 1"
+
         if problems == "":
             if self.checkScenarios() != None:
                 if not self.scenarios_modified_since_define_priors:
