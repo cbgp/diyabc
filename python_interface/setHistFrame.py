@@ -570,7 +570,7 @@ class SetHistoricalModel(QFrame):
             except Exception,e:
                 problems += "On %s posterior probability, %s\n"%(rpscname,e)
         if rpsum != 1.0:
-            problems += "The sum of all posterior probabilities is not equal to 1"
+            problems += "The sum of all posterior probabilities is equal to %s. It should be equal to 1"%rpsum
 
         if problems == "":
             if self.checkScenarios() != None:

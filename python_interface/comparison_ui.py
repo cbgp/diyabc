@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/comparison.ui'
 #
-# Created: Wed Feb  2 14:51:46 2011
+# Created: Wed Feb  2 18:05:11 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,6 +56,23 @@ class Ui_Frame(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.scenariosLabel = QtGui.QLabel(Frame)
+        self.scenariosLabel.setMinimumSize(QtCore.QSize(0, 20))
+        self.scenariosLabel.setMaximumSize(QtCore.QSize(16777215, 20))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.scenariosLabel.setFont(font)
+        self.scenariosLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.scenariosLabel.setObjectName("scenariosLabel")
+        self.horizontalLayout_2.addWidget(self.scenariosLabel)
+        self.redefButton = QtGui.QPushButton(Frame)
+        self.redefButton.setMinimumSize(QtCore.QSize(100, 0))
+        self.redefButton.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.redefButton.setObjectName("redefButton")
+        self.horizontalLayout_2.addWidget(self.redefButton)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.label_2 = QtGui.QLabel(Frame)
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
@@ -107,6 +124,8 @@ class Ui_Frame(object):
         self.label_8.setObjectName("label_8")
         self.gridLayout.addWidget(self.label_8, 4, 0, 1, 3)
         self.totNumSimEdit = QtGui.QLineEdit(Frame)
+        self.totNumSimEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.totNumSimEdit.setMaximumSize(QtCore.QSize(100, 16777215))
         self.totNumSimEdit.setObjectName("totNumSimEdit")
         self.gridLayout.addWidget(self.totNumSimEdit, 3, 3, 1, 1)
         self.lineEdit_3 = QtGui.QLineEdit(Frame)
@@ -137,6 +156,8 @@ class Ui_Frame(object):
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Frame", "Comparison of scenarios", None, QtGui.QApplication.UnicodeUTF8))
+        self.scenariosLabel.setText(QtGui.QApplication.translate("Frame", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.redefButton.setText(QtGui.QApplication.translate("Frame", "Redefine", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Frame", "Numer of selected data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Frame", "(simulated data closest to observed)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Frame", "Direct Estimate", None, QtGui.QApplication.UnicodeUTF8))
