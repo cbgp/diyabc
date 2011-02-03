@@ -225,7 +225,7 @@ The reference table has been built</string>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton_3">
+         <widget class="QRadioButton" name="biasRadio">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -263,7 +263,7 @@ The reference table has been built</string>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton_5">
+         <widget class="QRadioButton" name="evaluateRadio">
           <property name="minimumSize">
            <size>
             <width>0</width>

@@ -8,6 +8,7 @@ from defineNewAnalysis_ui import Ui_Frame
 from comparison import Comparison
 from estimation import Estimation
 from genericScenarioSelection import GenericScenarioSelection
+from biasScenarioSelection import BiasNEvaluateScenarioSelection
 
 class DefineNewAnalysis(QFrame):
     def __init__(self,parent=None):
@@ -64,6 +65,17 @@ class DefineNewAnalysis(QFrame):
                 paramtxt+= " Locate S.S."
             self.parent.addRow("scenario prior combination",paramtxt,"4","new")
             self.exit()
+        elif self.ui.biasRadio.isChecked():
+            genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),False,self)
+            self.parent.addTab(genSel,"Scenario selection")
+            self.parent.removeTab(self.parent.indexOf(self))
+            self.parent.setCurrentWidget(genSel)
+
+        elif self.ui.evaluateRadio.isChecked():
+            genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),True,self)
+            self.parent.addTab(genSel,"Scenario selection")
+            self.parent.removeTab(self.parent.indexOf(self))
+            self.parent.setCurrentWidget(genSel)
 
         else:
             print "NYI"
