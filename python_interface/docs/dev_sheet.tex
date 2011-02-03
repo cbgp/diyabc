@@ -54,9 +54,15 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         Exemple : Création d'une scroll area.
         \begin{itemize}
             \item Création d'une ui pour QScrollArea
-            \item Génération du code python avec pyuic4 (\begin{verbatim} pyuic4 mon.ui > monui.py \end{verbatim})
+            \item Génération du code python avec pyuic4 :\begin{verbatim} pyuic4 mon.ui > monui.py \end{verbatim}
             \item Instanciation d'un objet QScrollArea (on peut créer une classe qui dérive de QScrollArea ou bien instancier un vrai QScrollArea)
             \item Appel de la methode setupUi de la classe générée avec l'objet QScrollArea en paramètre
+                \begin{verbatim}
+                from monui.py import Ui_QScrollArea
+                maScrollArea = QScrollArea()
+                ui = Ui_QScrollArea()
+                ui.setupUi(maScrollArea)
+                \end{verbatim}
         \end{itemize}
     \subsection{Coeur de l'application}
         La classe principale de l'application dérive de QMainWindow. Elle est instanci\'ee dans le main du fichier qui la contient.

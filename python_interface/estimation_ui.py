@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/estimation.ui'
 #
-# Created: Wed Feb  2 17:59:13 2011
+# Created: Thu Feb  3 10:20:37 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,10 +55,16 @@ class Ui_Frame(object):
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setContentsMargins(-1, -1, 10, -1)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.scenariosLabel = QtGui.QLabel(Frame)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.scenariosLabel.sizePolicy().hasHeightForWidth())
+        self.scenariosLabel.setSizePolicy(sizePolicy)
         self.scenariosLabel.setMinimumSize(QtCore.QSize(0, 20))
         self.scenariosLabel.setMaximumSize(QtCore.QSize(16777215, 20))
         font = QtGui.QFont()
@@ -76,6 +82,11 @@ class Ui_Frame(object):
         self.gridLayout_2 = QtGui.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.label_2 = QtGui.QLabel(Frame)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy)
         self.label_2.setMinimumSize(QtCore.QSize(0, 13))
         self.label_2.setMaximumSize(QtCore.QSize(16777215, 13))
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
@@ -87,6 +98,11 @@ class Ui_Frame(object):
         self.lineEdit.setObjectName("lineEdit")
         self.gridLayout_2.addWidget(self.lineEdit, 0, 1, 2, 1)
         self.label_3 = QtGui.QLabel(Frame)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
+        self.label_3.setSizePolicy(sizePolicy)
         self.label_3.setMinimumSize(QtCore.QSize(0, 13))
         self.label_3.setMaximumSize(QtCore.QSize(16777215, 13))
         font = QtGui.QFont()
@@ -97,6 +113,8 @@ class Ui_Frame(object):
         self.gridLayout_2.addWidget(self.label_3, 1, 0, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout_2)
         self.groupBox_2 = QtGui.QGroupBox(Frame)
+        self.groupBox_2.setMinimumSize(QtCore.QSize(0, 0))
+        self.groupBox_2.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.groupBox_2.setObjectName("groupBox_2")
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.groupBox_2)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -115,7 +133,13 @@ class Ui_Frame(object):
         self.horizontalLayout_2.addWidget(self.radioButton_4)
         self.verticalLayout.addWidget(self.groupBox_2)
         self.horizontalLayout_3.addLayout(self.verticalLayout)
+        self.line = QtGui.QFrame(Frame)
+        self.line.setFrameShape(QtGui.QFrame.VLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.horizontalLayout_3.addWidget(self.line)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
+        self.verticalLayout_2.setContentsMargins(10, -1, -1, -1)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")

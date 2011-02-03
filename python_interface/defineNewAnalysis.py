@@ -46,7 +46,7 @@ class DefineNewAnalysis(QFrame):
             else:
                 QMessageBox.information(self,"Scenario error","At least 2 scenarios are needed for this analysis")
         elif self.ui.estimateRadio.isChecked():
-            if len(self.parent.hist_model_win.scList) >= 2:
+            if len(self.parent.hist_model_win.scList) >= 1:
                 estimateFrame = Estimation(self)
                 genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,self)
                 self.parent.addTab(genSel,"Scenario selection")

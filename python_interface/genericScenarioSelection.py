@@ -18,8 +18,7 @@ class GenericScenarioSelection(QFrame):
         self.createWidgets()
         self.ui.selectionLabel.setText(label)
 
-        if self.nb_sc > 2:
-            self.putChoices()
+        self.putChoices()
 
         self.ui.verticalLayout_3.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout_3.setAlignment(Qt.AlignTop)
@@ -64,6 +63,18 @@ class GenericScenarioSelection(QFrame):
             else:
                 self.ui.verticalLayout_2.addWidget(check)
             left = not left
+        # les deux cas où on a pas le choix des scenarios parce qu'ils sont trop peu
+        if self.nb_sc == 1:
+            self.checklist[0].setChecked(True)
+            self.checklist[0].setDisabled(True)
+            self.next_widget.ui.redefButton.hide()
+        print type(self.next_widget)
+        if self.nb_sc == 2 and "Comparison" in str(type(self.next_widget)):
+            self.checklist[0].setChecked(True)
+            self.checklist[0].setDisabled(True)
+            self.checklist[1].setChecked(True)
+            self.checklist[1].setDisabled(True)
+            self.next_widget.ui.redefButton.hide()
 
 
             

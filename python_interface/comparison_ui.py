@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/comparison.ui'
 #
-# Created: Wed Feb  2 18:05:11 2011
+# Created: Thu Feb  3 10:16:01 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,6 +55,7 @@ class Ui_Frame(object):
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setContentsMargins(-1, -1, 10, -1)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -107,11 +108,19 @@ class Ui_Frame(object):
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.gridLayout_2.addWidget(self.lineEdit_2, 1, 1, 1, 1)
         self.comboBox = QtGui.QComboBox(Frame)
+        self.comboBox.setMinimumSize(QtCore.QSize(100, 0))
+        self.comboBox.setMaximumSize(QtCore.QSize(100, 16777215))
         self.comboBox.setObjectName("comboBox")
         self.gridLayout_2.addWidget(self.comboBox, 1, 2, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout_2)
         self.horizontalLayout.addLayout(self.verticalLayout)
+        self.line = QtGui.QFrame(Frame)
+        self.line.setFrameShape(QtGui.QFrame.VLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.horizontalLayout.addWidget(self.line)
         self.gridLayout = QtGui.QGridLayout()
+        self.gridLayout.setContentsMargins(10, -1, -1, -1)
         self.gridLayout.setObjectName("gridLayout")
         self.label_7 = QtGui.QLabel(Frame)
         self.label_7.setMinimumSize(QtCore.QSize(220, 0))

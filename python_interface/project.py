@@ -76,7 +76,7 @@ class Project(QTabWidget):
         self.ui.tableWidget.setColumnWidth(3,70)
 
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.defineNewAnalysis)
-        QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
+        #QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
         QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.setHistorical)
         QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.setGenetic)
         QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
