@@ -37,6 +37,8 @@ class DefineNewAnalysis(QFrame):
                 self.ui.pcaCheck.setChecked(True)
 
     def validate(self):
+        # pour les cas de comparison et estimate, la selection n'influe pas sur l'écran suivant
+        # on instancie donc Comparison et Estimation maintenant
         if self.ui.comparisonRadio.isChecked():
             if len(self.parent.hist_model_win.scList) >= 2:
                 compFrame = Comparison(self)

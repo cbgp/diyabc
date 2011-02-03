@@ -5,9 +5,10 @@ import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from biasScenarioSelection_ui import Ui_Frame
+from histDrawn import HistDrawn
+from histFixed import HistFixed
 
 class BiasNEvaluateScenarioSelection(QFrame):
-    # TODO refaire nextwidget
     def __init__(self,nb_sc,evaluate,parent=None):
         super(BiasNEvaluateScenarioSelection,self).__init__(parent)
         self.parent=parent
@@ -36,15 +37,32 @@ class BiasNEvaluateScenarioSelection(QFrame):
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
     def validate(self):
-        if evaluate:
+        # le cas du evaluate, les sc à afficher dans le hist model sont ceux selectionnés
+        if self.evaluate:
             if len(self.getListSelectedScenarios()) >= 2:
-                self.next_widget.setScenarios(self.getListSelectedScenarios())
-                self.parent.parent.addTab(self.next_widget,self.next_title)
-                self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-                self.parent.parent.setCurrentWidget(self.next_widget)
+                if self.ui.fixedRadio.isChecked():
+                    next_widget = HistFixed(self.getSelectedScenario(),self.getListSelectedScenarios(),self.parent)
+                else:
+                    next_widget = HistDrawn(self.getSelectedScenario(),self.getListSelectedScenarios(),self.parent)
             else:
                 QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%self.nb_min_sel)
+                return 0
+        # le cas du bias, un sc à afficher, celui du radio button
+        else:
+            # en fonction de fixed ou drawn, l'écran suivant présente un objet différent
+            if self.ui.fixedRadio.isChecked():
+                next_widget = HistFixed(self.getSelectedScenario(),self.parent)
+            else:
+                next_widget = HistDrawn(self.getSelectedScenario(),self.parent)
+        self.parent.parent.addTab(next_widget,"Historical model")
+        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        self.parent.parent.setCurrentWidget(next_widget)
 
+
+    def getSelectedScenario(self):
+        for i,r in enumerate(self.radiolist):
+            if r.isChecked():
+                return i+1
 
     def getListSelectedScenarios(self):
         res = []
@@ -65,6 +83,7 @@ class BiasNEvaluateScenarioSelection(QFrame):
             for i in range(self.nb_sc):
                 num = i+1
                 check = QCheckBox("Scenario %s"%num,self)
+                check.setChecked(True)
                 self.checklist.append(check)
                 self.ui.verticalLayout_6.addWidget(check)
         else:

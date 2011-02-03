@@ -35,25 +35,28 @@ class SetCondition(QMainWindow):
         else:
             op = '>'
         selected_target = self.ui.targetComboBox.currentText()
-        my_condition = "%s %s %s"%(self.param,op,selected_target)
+        my_condition = "%s%s%s"%(self.param,op,selected_target)
         inverseur = {"<":">=",">":"<=",">=":"<","<=":">"}
         mirroir = {"<=":">=",">=":"<=",">":"<","<":">"}
         incoherent = {"<=":"<",">=":">",">":">=","<":"<="}
+        pleft = my_condition.split(op)[0]
+        pright = my_condition.split(op)[1]
         # pour a > b : b < a ; cad la meme ecrite a l'envers
-        my_condition_mirroir = "%s %s %s"%(my_condition.split(' ')[2],mirroir[my_condition.split(' ')[1]],my_condition.split(' ')[0])
+        my_condition_mirroir = "%s%s%s"%(pright,mirroir[op],pleft)
         # pour a > b : opposée vaut a <= b
-        my_condition_opposee = "%s %s %s"%(my_condition.split(' ')[0],inverseur[my_condition.split(' ')[1]],my_condition.split(' ')[2])
+        my_condition_opposee = "%s%s%s"%(pleft,inverseur[op],pright)
         # pour a > b : opp_mirroir vaut b >= a
-        my_condition_mirroir_opposee = "%s %s %s"%(my_condition.split(' ')[2],mirroir[inverseur[my_condition.split(' ')[1]]],my_condition.split(' ')[0])
+        my_condition_mirroir_opposee = "%s%s%s"%(pright,mirroir[inverseur[op]],pleft)
         # pour a > b : a < b
-        my_condition_incompatible = "%s %s %s"%(my_condition.split(' ')[0],mirroir[my_condition.split(' ')[1]],my_condition.split(' ')[2])
+        my_condition_incompatible = "%s%s%s"%(pleft,mirroir[op],pright)
         # pour a > b : b > a
-        my_condition_incompatible_mirroir = "%s %s %s"%(my_condition.split(' ')[2],my_condition.split(' ')[1],my_condition.split(' ')[0])
+        my_condition_incompatible_mirroir = "%s%s%s"%(pright,op,pleft)
         # pour a > b : a >= b
-        my_condition_incoherent = "%s %s %s"%(my_condition.split(' ')[0],incoherent[my_condition.split(' ')[1]],my_condition.split(' ')[2])
+        my_condition_incoherent = "%s%s%s"%(pleft,incoherent[op],pright)
         # pour a > b : b <= a
-        my_condition_incoherent_mirroir = "%s %s %s"%(my_condition.split(' ')[2],mirroir[incoherent[my_condition.split(' ')[1]]],my_condition.split(' ')[0])
+        my_condition_incoherent_mirroir = "%s%s%s"%(pright,mirroir[incoherent[op]],pleft)
         for cond_box in self.parent.condList:
+            print "chaque condbox"
             econdition = str(cond_box.findChild(QLabel,"condLabel").text())
             if my_condition == econdition or econdition == my_condition_mirroir:
                 QMessageBox.information(self,"Error","This condition (%s) already exists (%s)"%(my_condition,econdition))
@@ -105,5 +108,5 @@ class SetCondition(QMainWindow):
         #print cond_dico
 
 
-        self.parent.addCondition("%s %s %s"%(self.param,op,selected_target))
+        self.parent.addCondition("%s%s%s"%(self.param,op,selected_target))
         self.close()

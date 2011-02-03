@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/biasScenarioSelection.ui'
 #
-# Created: Thu Feb  3 11:47:51 2011
+# Created: Thu Feb  3 14:17:23 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -73,13 +73,13 @@ class Ui_Frame(object):
         self.groupBox.setObjectName("groupBox")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.groupBox)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.radioButton = QtGui.QRadioButton(self.groupBox)
-        self.radioButton.setChecked(True)
-        self.radioButton.setObjectName("radioButton")
-        self.verticalLayout_3.addWidget(self.radioButton)
-        self.radioButton_2 = QtGui.QRadioButton(self.groupBox)
-        self.radioButton_2.setObjectName("radioButton_2")
-        self.verticalLayout_3.addWidget(self.radioButton_2)
+        self.fixedRadio = QtGui.QRadioButton(self.groupBox)
+        self.fixedRadio.setChecked(True)
+        self.fixedRadio.setObjectName("fixedRadio")
+        self.verticalLayout_3.addWidget(self.fixedRadio)
+        self.drawnRadio = QtGui.QRadioButton(self.groupBox)
+        self.drawnRadio.setObjectName("drawnRadio")
+        self.verticalLayout_3.addWidget(self.drawnRadio)
         self.verticalLayout.addWidget(self.groupBox)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
@@ -117,8 +117,8 @@ class Ui_Frame(object):
         self.selectionLabel.setText(QtGui.QApplication.translate("Frame", "Select the scenario from which\n"
 "you want to perform computations", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Frame", "Parameter values for this scenario", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton.setText(QtGui.QApplication.translate("Frame", "are fixed by the user", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton_2.setText(QtGui.QApplication.translate("Frame", "are drawn from distributions", None, QtGui.QApplication.UnicodeUTF8))
+        self.fixedRadio.setText(QtGui.QApplication.translate("Frame", "are fixed by the user", None, QtGui.QApplication.UnicodeUTF8))
+        self.drawnRadio.setText(QtGui.QApplication.translate("Frame", "are drawn from distributions", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Frame", "Select candidate scenarios\n"
 "You must choose at least two scenarios", None, QtGui.QApplication.UnicodeUTF8))
 
