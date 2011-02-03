@@ -51,9 +51,9 @@ class BiasNEvaluateScenarioSelection(QFrame):
         else:
             # en fonction de fixed ou drawn, l'écran suivant présente un objet différent
             if self.ui.fixedRadio.isChecked():
-                next_widget = HistFixed(self.getSelectedScenario(),self.parent)
+                next_widget = HistFixed(self.getSelectedScenario(),None,self.parent)
             else:
-                next_widget = HistDrawn(self.getSelectedScenario(),self.parent)
+                next_widget = HistDrawn(self.getSelectedScenario(),None,self.parent)
         self.parent.parent.addTab(next_widget,"Historical model")
         self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         self.parent.parent.setCurrentWidget(next_widget)

@@ -357,15 +357,10 @@ class HistDrawn(QFrame):
         self.condList.remove(condBox)
 
     def validate(self):
-        #self.majParamInfoDico()
+        self.majParamInfoDico()
         # creation et ecriture du fichier dans le rep choisi
-        self.writeHistoricalConfFromGui()
         # VERIFS, si c'est bon, on change d'onglet, sinon on reste
         if self.checkAll():
-            self.parent.setHistValid(True)
-
-            self.majProjectGui()
-
             self.returnToProject()
 
     def exit(self):

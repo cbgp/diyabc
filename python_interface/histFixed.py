@@ -19,23 +19,34 @@ class HistFixed(QFrame):
         self.list_selected_evaluate_sc = list_selected_evaluate_sc
 
         self.paramList = []
+        self.condList = []
+        self.param_info_dico = {}
 
         self.createWidgets()
 
         self.addTheSc()
 
+        self.addTheParams()
+
     def createWidgets(self):
         self.ui = Ui_Frame()
         self.ui.setupUi(self)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
-        QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.close)
+        QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
 
         self.ui.clearButton.hide()
         self.ui.frame_3.hide()
+        self.ui.frame_2.hide()
         self.ui.scrollArea_3.hide()
         self.ui.defPrButton.hide()
         self.ui.chkScButton.hide()
         self.ui.addScButton.hide()
+        self.ui.groupBox_12.hide()
+        self.ui.label_7.hide()
+        self.ui.label_8.hide()
+        self.ui.label_11.hide()
+        self.ui.label_10.hide()
+        self.ui.label_9.setText("Value")
 
         self.ui.verticalLayout_6.setAlignment(QtCore.Qt.AlignTop)
         self.ui.horizontalLayout_6.setAlignment(QtCore.Qt.AlignLeft)
@@ -71,11 +82,35 @@ class HistFixed(QFrame):
 
         # recup du texte du scenario
         plainTextEdit.setPlainText(self.getScText())
+        plainTextEdit.setReadOnly(True)
 
     def getScText(self):
         return self.parent.parent.hist_model_win.scList[self.sc_to_show-1].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()
 
-    def addParamGui(self,name,type_param,code_type_param):
+    def addTheParams(self):
+        sc = str(self.getScText())
+        scChecker = history.Scenario(number=self.sc_to_show)
+        scChecker.checkread(sc.strip().split('\n'),self.parent.parent.data)
+        scChecker.checklogic()
+        t = PopTree(scChecker)
+        t.do_tree()
+        dico_sc_infos = {}
+        dico_sc_infos["text"] = sc.strip().split('\n')
+        dico_sc_infos["checker"] = scChecker
+        #print "nb param du sc ",num," ",scChecker.nparamtot
+        dico_sc_infos["tree"] = t
+
+        visible = False
+        dico_param = self.parent.parent.hist_model_win.param_info_dico
+        for param in scChecker.parameters:
+            pname = param.name
+            pcat = param.category
+            elem = dico_param[pname]
+            val = (float(elem[2]) + float(elem[3])) / 2
+            self.addParamGui(pname,str(val),visible)
+            self.param_info_dico[pname] = [pcat]
+
+    def addParamGui(self,name,val,visible):
         """ ajoute un paramètre à la GUI et à la liste locale de paramètres
         et retourne la groupBox créée
         """
@@ -112,39 +147,12 @@ class HistFixed(QFrame):
         setCondButton.setObjectName("setCondButton")
         setCondButton.setMinimumSize(QtCore.QSize(80, 20))
         setCondButton.setMaximumSize(QtCore.QSize(80, 20))
+        if not visible:
+            setCondButton.hide()
+        else:
+            QObject.connect(setCondButton,SIGNAL("clicked()"),self.setConditionAction)
         horizontalLayout_8.addWidget(setCondButton)
         horizontalLayout_13.addWidget(groupBox_9)
-        groupBox_10 = QtGui.QGroupBox(groupBox_8)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(groupBox_10.sizePolicy().hasHeightForWidth())
-        groupBox_10.setSizePolicy(sizePolicy)
-        groupBox_10.setMinimumSize(QtCore.QSize(290, 25))
-        groupBox_10.setMaximumSize(QtCore.QSize(290, 25))
-        groupBox_10.setObjectName("groupBox_10")
-        horizontalLayout_9 = QtGui.QHBoxLayout(groupBox_10)
-        horizontalLayout_9.setObjectName("horizontalLayout_9")
-        horizontalLayout_9.setContentsMargins(-1, 1, -1, 1)
-        uniformParamRadio = QtGui.QRadioButton(groupBox_10)
-        uniformParamRadio.setChecked(True)
-        uniformParamRadio.setObjectName("uniformParamRadio")
-        horizontalLayout_9.addWidget(uniformParamRadio)
-        logUniformRadio = QtGui.QRadioButton(groupBox_10)
-        logUniformRadio.setObjectName("logUniformRadio")
-        horizontalLayout_9.addWidget(logUniformRadio)
-        normalRadio = QtGui.QRadioButton(groupBox_10)
-        normalRadio.setObjectName("normalRadio")
-        horizontalLayout_9.addWidget(normalRadio)
-        logNormalRadio = QtGui.QRadioButton(groupBox_10)
-        logNormalRadio.setObjectName("logNormalRadio")
-        ## alignement des radio
-        #uniformParamRadio.setAlignment(QtCore.Qt.AlignCenter)
-        #logUniformRadio.setAlignment(QtCore.Qt.AlignCenter)
-        #normalRadio.setAlignment(QtCore.Qt.AlignCenter)
-        #logNormalRadio.setAlignment(QtCore.Qt.AlignCenter)
-        horizontalLayout_9.addWidget(logNormalRadio)
-        horizontalLayout_13.addWidget(groupBox_10)
         groupBox_14 = QtGui.QGroupBox(groupBox_8)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -157,58 +165,19 @@ class HistFixed(QFrame):
         horizontalLayout_10 = QtGui.QHBoxLayout(groupBox_14)
         horizontalLayout_10.setObjectName("horizontalLayout_10")
         horizontalLayout_10.setContentsMargins(-1, 1, -1, 1)
-        minValueParamEdit = QtGui.QLineEdit(groupBox_14)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(minValueParamEdit.sizePolicy().hasHeightForWidth())
-        minValueParamEdit.setSizePolicy(sizePolicy)
-        minValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
-        minValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
-        minValueParamEdit.setObjectName("minValueParamEdit")
-        horizontalLayout_10.addWidget(minValueParamEdit)
-        maxValueParamEdit = QtGui.QLineEdit(groupBox_14)
-        maxValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
-        maxValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
-        maxValueParamEdit.setObjectName("maxValueParamEdit")
-        horizontalLayout_10.addWidget(maxValueParamEdit)
         meanValueParamEdit = QtGui.QLineEdit(groupBox_14)
         meanValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
         meanValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
         meanValueParamEdit.setObjectName("meanValueParamEdit")
         horizontalLayout_10.addWidget(meanValueParamEdit)
-        stValueParamEdit = QtGui.QLineEdit(groupBox_14)
-        stValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
-        stValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
-        stValueParamEdit.setObjectName("stValueParamEdit")
-        horizontalLayout_10.addWidget(stValueParamEdit)
-        stepValueParamEdit = QtGui.QLineEdit(groupBox_14)
-        stepValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
-        stepValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
-        stepValueParamEdit.setObjectName("stepValueParamEdit")
-        horizontalLayout_10.addWidget(stepValueParamEdit)
         horizontalLayout_13.addWidget(groupBox_14)
         self.ui.verticalLayout_6.addWidget(groupBox_8)
 
         # liste locale des paramètres
         self.paramList.append(groupBox_8)
 
-        # TODO modifier
-        if code_type_param == "N" or code_type_param == "T":
-            minValueParamEdit.setText("10")
-            maxValueParamEdit.setText("10000")
-            stepValueParamEdit.setText("1")
-        elif code_type_param == "A":
-            minValueParamEdit.setText("0.001")
-            maxValueParamEdit.setText("0.999")
-            stepValueParamEdit.setText("0.001")
-        meanValueParamEdit.setText("0")
-        stValueParamEdit.setText("0")
-
-
-
+        meanValueParamEdit.setText(val)
         return groupBox_8
-
 
     def majParamInfoDico(self):
         """ met a jour les infos des paramètres dans l'attribut param_info_dico
@@ -216,22 +185,8 @@ class HistFixed(QFrame):
         # recup des valeurs pour les params
         for param in self.paramList:
             pname = str(param.findChild(QLabel,"paramNameLabel").text())
-            min =   str(param.findChild(QLineEdit,"minValueParamEdit").text())
-            max =   str(param.findChild(QLineEdit,"maxValueParamEdit").text())
-            mean =  str(param.findChild(QLineEdit,"meanValueParamEdit").text())
-            stdev = str(param.findChild(QLineEdit,"stValueParamEdit").text())
-            step =  str(param.findChild(QLineEdit,"stepValueParamEdit").text())
-            if param.findChild(QRadioButton,'logNormalRadio').isChecked():
-                law = "LN"
-            elif param.findChild(QRadioButton,'normalRadio').isChecked():
-                law = "NO"
-            elif param.findChild(QRadioButton,'uniformParamRadio').isChecked():
-                law = "UN"
-            elif param.findChild(QRadioButton,'logUniformRadio').isChecked():
-                law = "LU"
-            visible = param.findChild(QPushButton,"setCondButton").isVisible()
-            self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,step,visible]
-
+            val =  str(param.findChild(QLineEdit,"meanValueParamEdit").text())
+            self.param_info_dico[pname] = [self.param_info_dico[pname][0],val]
 
     def validate(self):
         #self.majParamInfoDico()
@@ -245,17 +200,12 @@ class HistFixed(QFrame):
 
             self.returnToProject()
 
-
-    def closeEvent(self, event):
-        # le cancel ne vérifie rien
-        if self.sender() == self.ui.clearButton:
-            self.parent.clearHistoricalModel()
-        elif self.sender() == self.ui.exitButton:
-            #self.majParamInfoDico()
-            self.writeHistoricalConfFromGui()
-            self.majProjectGui()
-            self.returnToProject()
-
+    def exit(self):
+        # reactivation des onglets
+        self.parent.parent.setTabEnabled(1,True)
+        self.parent.parent.setTabEnabled(0,True)
+        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        self.parent.parent.setCurrentIndex(1)
 
     def getNbParam(self):
         return len(self.paramList)
