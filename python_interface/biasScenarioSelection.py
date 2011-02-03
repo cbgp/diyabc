@@ -7,6 +7,7 @@ from PyQt4.QtGui import *
 from biasScenarioSelection_ui import Ui_Frame
 
 class BiasNEvaluateScenarioSelection(QFrame):
+    # TODO refaire nextwidget
     def __init__(self,nb_sc,evaluate,parent=None):
         super(BiasNEvaluateScenarioSelection,self).__init__(parent)
         self.parent=parent
@@ -35,13 +36,14 @@ class BiasNEvaluateScenarioSelection(QFrame):
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
     def validate(self):
-        if len(self.getListSelectedScenarios()) >= self.nb_min_sel:
-            self.next_widget.setScenarios(self.getListSelectedScenarios())
-            self.parent.parent.addTab(self.next_widget,self.next_title)
-            self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-            self.parent.parent.setCurrentWidget(self.next_widget)
-        else:
-            QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%self.nb_min_sel)
+        if evaluate:
+            if len(self.getListSelectedScenarios()) >= 2:
+                self.next_widget.setScenarios(self.getListSelectedScenarios())
+                self.parent.parent.addTab(self.next_widget,self.next_title)
+                self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+                self.parent.parent.setCurrentWidget(self.next_widget)
+            else:
+                QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%self.nb_min_sel)
 
 
     def getListSelectedScenarios(self):
