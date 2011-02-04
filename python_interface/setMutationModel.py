@@ -176,6 +176,7 @@ class SetMutationModel(QFrame):
     def setMutationConf(self,lines):
         """ set les valeurs depuis la conf
         """
+        print "lines[0] : %s"%lines[0]
         mmrValues = lines[0].split('[')[1].split(']')[0].split(',')
         if mmrValues[2] == "-9":
             mmrValues[2] = ""
@@ -298,6 +299,19 @@ class SetMutationModel(QFrame):
                         raise Exception("%s should not be empty"%self.field_names_dico[field])
                 if self.constraints_dico[field][1] == 1:
                     val = float(valtxt)
+            # verifs des min et max
+            if float(self.ui.ilsrMinEdit.text()) > float(self.ui.ilsrMaxEdit.text()):
+                raise Exception("Individuals locus SNI rate has incoherent min and max values")
+            if float(self.ui.msrMinEdit.text()) > float(self.ui.msrMaxEdit.text()):
+                raise Exception("Mean SNI rate has incoherent min and max values")
+            if float(self.ui.ilcpMinEdit.text()) > float(self.ui.ilcpMaxEdit.text()):
+                raise Exception("Individuals locus coefficient P has incoherent min and max values")
+            if float(self.ui.mcpMinEdit.text()) > float(self.ui.mcpMaxEdit.text()):
+                raise Exception("Mean coefficient P has incoherent min and max values")
+            if float(self.ui.ilmrMinEdit.text()) > float(self.ui.ilmrMaxEdit.text()):
+                raise Exception("Individuals locus mutation rate has incoherent min and max values")
+            if float(self.ui.mmrMinEdit.text()) > float(self.ui.mmrMaxEdit.text()):
+                raise Exception("Mean mutation rate has incoherent min and max values")
         except Exception,e:
             QMessageBox.information(self,"Value error","%s"%e)
             return False

@@ -338,24 +338,6 @@ class SetMutationModelSequences(QFrame):
 
 
 
-    def exit(self):
-        # reactivation des onglets
-        self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
-
-    def clear(self):
-        self.parent.clearMutationModelSeq(self.box_group)
-
-    def validate(self):
-        """ vérifie la validité des informations entrées dans le mutation model
-        retourne au setGen tab et set la validité du mutation model du groupe
-        """
-        if self.allValid():
-            self.exit()
-            self.parent.setMutationSeqValid_dico[self.box_group] = True
-            self.parent.writeGeneticConfFromGui()
-
     def allValid(self):
         """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur
         et retourne False
@@ -399,27 +381,6 @@ class SetMutationModelSequences(QFrame):
                     nb_param += 1
         return nb_param
 
-    def getParamTableHeader(self):
-        result = u""
-        gnumber = self.parent.groupList.index(self.box_group)+1
-        if float(str(self.ui.mmrMinEdit.text())) < float(str(self.ui.mmrMaxEdit.text())):
-            pname = u"µseq_%s"%(gnumber)
-            result += pname
-            for i in range(14-len(pname)):
-                result += " "
-        if not self.ui.jukesRadio.isChecked():
-            if float(str(self.ui.mc1MinEdit.text())) < float(str(self.ui.mc1MaxEdit.text())):
-                pname = u"k1seq_%s"%(gnumber)
-                result += pname
-                for i in range(14-len(pname)):
-                    result += " "
-            if self.ui.tamuraRadio.isChecked():
-                if float(str(self.ui.mc2MinEdit.text())) < float(str(self.ui.mc2MaxEdit.text())):
-                    pname = u"k2seq_%s"%(gnumber)
-                    result += pname
-                    for i in range(14-len(pname)):
-                        result += " "
-        return result
 
 
 

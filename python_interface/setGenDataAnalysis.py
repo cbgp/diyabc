@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
-from setMutationModel import SetMutationModel
+from setMutationModelAnalysis import SetMutationModelAnalysis
 from setMutationModelSequences import SetMutationModelSequences
 from setSummaryStatistics import SetSummaryStatistics
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
@@ -20,7 +20,8 @@ class SetGeneticDataAnalysis(SetGeneticData):
         super(SetGeneticDataAnalysis,self).__init__(parent)
 
         self.drawnorfixed = drawnorfixed
-        print drawnorfixed
+
+        self.ui.addGroupButton.hide()
 
         self.fillLocusTableFromData()
 
@@ -36,6 +37,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
             locus_list = gen_data_ref.group_info_dico[box][1]
             self.addGroup()
             self.groupList[-1].setTitle("Group %s : %s"%(len(self.groupList),title))
+            self.groupList[-1].findChild(QPushButton,"rmButton").hide()
 
             # selection pour ajouter dans le groupe
             for locus in locus_list:
@@ -47,10 +49,19 @@ class SetGeneticDataAnalysis(SetGeneticData):
             if drawnorfixed == "drawn":
                 # on instancie des mutationmodel normaux (mais fait pour analysis)
                 if "Microsatellites" in str(box.title()):
-                    self.setMutation_dico[self.groupList[-1]] = 
+                    self.setMutation_dico[self.groupList[-1]] = SetMutationModelAnalysis(self,self.groupList[-1])
+                    self.setMutation_dico[self.groupList[-1]].hide()
+                    # on transfere la conf depuis le mutmod reftable
+                    print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
+                    self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
+                    self.setMutationValid_dico[self.groupList[-1]] = True
                 elif "Sequences" in str(box.title()):
-                    #self.setMutationSeq_dico[self.groupList[-1]] = 
-                    pass
+                    self.setMutationSeq_dico[self.groupList[-1]] = SetMutationModelSeqAnalysis(self,self.groupList[-1])
+                    self.setMutationSeq_dico[self.groupList[-1]].hide()
+                    # on transfere la conf depuis le mutmod reftable
+                    print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
+                    self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
+                    self.setMutationSeqValid_dico[self.groupList[-1]] = True
             else:
                 # on instancie des mutationmodel fixed
                 if "Microsatellites" in str(box.title()):
@@ -79,36 +90,6 @@ class SetGeneticDataAnalysis(SetGeneticData):
     #        self.parent.ui.nbGroupLabel.setText("%s locus groups"%g)
     #    if ss != None:
     #        self.parent.ui.nbSumStatsLabel.setText("%s summary statistics"%ss)
-
-
-
-    def setMutation(self,box=None):
-        """ déclenché par le clic sur le bouton 'set mutation model' ou par le clic sur 'clear'
-        dans 'set mutation model'. bascule vers la saisie du modèle mutationnel
-        """
-        if box == None:
-            box = self.sender().parent()
-        title = str(box.title())
-        if "Microsatellites" in title:
-            self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
-            self.parent.setTabEnabled(self.parent.indexOf(self),False)
-            self.parent.setCurrentWidget(self.setMutation_dico[box])
-            # maj du titre de la frame
-            lab = self.setMutation_dico[box].ui.setMutMsLabel
-            lab.setText("Set mutation model of %s (microsatellites)"%(" ".join(str(box.title()).split()[:2])))
-            # on considère que le setmutation n'est plus valide, il faut le revalider
-            self.setMutationValid_dico[box] = False
-        elif "Sequences" in title:
-            self.parent.addTab(self.setMutationSeq_dico[box],"Set mutation model")
-            self.parent.setTabEnabled(self.parent.indexOf(self),False)
-            self.parent.setCurrentWidget(self.setMutationSeq_dico[box])
-            # maj du titre de la frame
-            lab = self.setMutationSeq_dico[box].ui.setMutSeqLabel
-            lab.setText("Set mutation model of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
-            # on considère que le setmutation n'est plus valide, il faut le revalider
-            self.setMutationSeqValid_dico[box] = False
-        else:
-            QMessageBox.information(self,"Set Mutation Model error","Add locus to a group before setting the mutation model")
 
 
     def setSum(self,box=None):
