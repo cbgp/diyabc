@@ -16,17 +16,61 @@ from data import *
 class SetGeneticDataAnalysis(SetGeneticData):
     """ set genetic data pour les informations concernant une analyse bias ou evaluate
     """
-    def __init__(self,parent=None):
-        super(SetGeneticDataRefTable,self).__init__(parent)
+    def __init__(self,drawnorfixed,parent=None):
+        super(SetGeneticDataAnalysis,self).__init__(parent)
 
-        # TODO remplissage des groupes et set des mutation model et sum stats ac valeurs
+        self.drawnorfixed = drawnorfixed
+        print drawnorfixed
+
+        self.fillLocusTableFromData()
+
+        gen_data_ref = self.parent.gen_data_win
+        # copie des valeurs de range et size
+        for locusrow in range(gen_data_ref.ui.tableWidget.rowCount()):
+            self.ui.tableWidget.setItem(locusrow,2,QTableWidgetItem("%s"%gen_data_ref.ui.tableWidget.item(locusrow,2).text()))
+            self.ui.tableWidget.setItem(locusrow,3,QTableWidgetItem("%s"%gen_data_ref.ui.tableWidget.item(locusrow,3).text()))
+
+        # remplissage des groupes et set des mutation model et sum stats ac valeurs
+        for box in gen_data_ref.groupList:
+            title = gen_data_ref.group_info_dico[box][0]
+            locus_list = gen_data_ref.group_info_dico[box][1]
+            self.addGroup()
+            self.groupList[-1].setTitle("Group %s : %s"%(len(self.groupList),title))
+
+            # selection pour ajouter dans le groupe
+            for locus in locus_list:
+                #index = gen_data_ref.dico_num_and_numgroup_locus[locus]
+                self.ui.tableWidget.setItemSelected(self.ui.tableWidget.item(locus-1,0),True)
+            self.addToGroup(self.groupList[-1])
+
+            # creation des objets mutation model
+            if drawnorfixed == "drawn":
+                # on instancie des mutationmodel normaux (mais fait pour analysis)
+                if "Microsatellites" in str(box.title()):
+                    self.setMutation_dico[self.groupList[-1]] = 
+                elif "Sequences" in str(box.title()):
+                    #self.setMutationSeq_dico[self.groupList[-1]] = 
+                    pass
+            else:
+                # on instancie des mutationmodel fixed
+                if "Microsatellites" in str(box.title()):
+                    #self.setMutation_dico[self.groupList[-1]] = 
+                    pass
+                elif "Sequences" in str(box.title()):
+                    #self.setMutationSeq_dico[self.groupList[-1]] = 
+                    pass
+
+
 
         for box in self.groupList:
             box.findChild(QPushButton,"addToButton").hide()
             box.findChild(QPushButton,"rmFromButton").hide()
+            box.findChild(QPushButton,"setSumButton").hide()
 
 
-    #def majProjectGui(self,m=None,s=None,g=None,ss=None):
+
+    def majProjectGui(self,m=None,s=None,g=None,ss=None):
+        pass
     #    if m != None:
     #        self.parent.ui.nbMicrosatLabel.setText("%s microsatellite loci"%m)
     #    if s != None:
@@ -101,7 +145,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
         self.parent.setTabEnabled(0,True)
         self.parent.setTabEnabled(1,True)
         self.parent.removeTab(self.parent.indexOf(self))
-        self.parent.setCurrentIndex(0)
+        self.parent.setCurrentIndex(1)
 
     def validate(self):
         """ clic sur le bouton validate

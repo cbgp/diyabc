@@ -10,6 +10,7 @@ from visualizescenario import *
 import history 
 from history import IOScreenError
 from set_condition import SetCondition
+from setGenDataAnalysis import SetGeneticDataAnalysis
 
 class HistDrawn(QFrame):
     def __init__(self,sc_to_show,list_selected_evaluate_sc=None,parent=None):
@@ -365,7 +366,10 @@ class HistDrawn(QFrame):
         #    self.returnToProject()
 
         # TODO instancier un setGenAnalysis
-        self
+        gen_data_analysis = SetGeneticDataAnalysis("drawn",self.parent.parent)
+        self.parent.parent.addTab(gen_data_analysis,"Genetic data")
+        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        self.parent.parent.setCurrentWidget(gen_data_analysis)
 
     def exit(self):
         # reactivation des onglets

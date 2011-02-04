@@ -10,6 +10,7 @@ from visualizescenario import *
 import history 
 from history import IOScreenError
 from set_condition import SetCondition
+from setGenDataAnalysis import SetGeneticDataAnalysis
 
 class HistFixed(QFrame):
     def __init__(self,sc_to_show,list_selected_evaluate_sc=None,parent=None):
@@ -190,15 +191,20 @@ class HistFixed(QFrame):
 
     def validate(self):
         #self.majParamInfoDico()
-        # creation et ecriture du fichier dans le rep choisi
-        self.writeHistoricalConfFromGui()
-        # VERIFS, si c'est bon, on change d'onglet, sinon on reste
-        if self.checkAll():
-            self.parent.setHistValid(True)
+        ## creation et ecriture du fichier dans le rep choisi
+        #self.writeHistoricalConfFromGui()
+        ## VERIFS, si c'est bon, on change d'onglet, sinon on reste
+        #if self.checkAll():
+        #    self.parent.setHistValid(True)
 
-            self.majProjectGui()
+        #    self.majProjectGui()
 
-            self.returnToProject()
+        #    self.returnToProject()
+
+        gen_data_analysis = SetGeneticDataAnalysis("fixed",self.parent.parent)
+        self.parent.parent.addTab(gen_data_analysis,"Genetic data")
+        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        self.parent.parent.setCurrentWidget(gen_data_analysis)
 
     def exit(self):
         # reactivation des onglets
