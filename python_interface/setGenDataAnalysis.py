@@ -7,7 +7,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
 from setMutationModelAnalysis import SetMutationModelAnalysis
-from setMutationModelSequences import SetMutationModelSequences
+from setMutationModelSequencesAnalysis import SetMutationModelSequencesAnalysis
 from setSummaryStatistics import SetSummaryStatistics
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from visualizescenario import *
@@ -22,6 +22,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
         self.drawnorfixed = drawnorfixed
 
         self.ui.addGroupButton.hide()
+        self.ui.clearButton.hide()
 
         self.fillLocusTableFromData()
 
@@ -56,7 +57,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
                     self.setMutationValid_dico[self.groupList[-1]] = True
                 elif "Sequences" in str(box.title()):
-                    self.setMutationSeq_dico[self.groupList[-1]] = SetMutationModelSeqAnalysis(self,self.groupList[-1])
+                    self.setMutationSeq_dico[self.groupList[-1]] = SetMutationModelSequencesAnalysis(self,self.groupList[-1])
                     self.setMutationSeq_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
                     print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()

@@ -343,6 +343,18 @@ class SetMutationModelSequences(QFrame):
         et retourne False
         """
         try:
+            if self.hasToBeVerified(self.ui.mmrMinEdit) and float(self.ui.mmrMinEdit.text()) > float(self.ui.mmrMaxEdit.text()):
+                raise Exception("Mean mutation rate has incoherent min and max values")
+            elif self.hasToBeVerified(self.ui.ilmrMinEdit) and float(self.ui.ilmrMinEdit.text()) > float(self.ui.ilmrMaxEdit.text()):
+                raise Exception("Individuals locus mutation rate has incoherent min and max values")
+            elif self.hasToBeVerified(self.ui.mc1MinEdit) and float(self.ui.mc1MinEdit.text()) > float(self.ui.mc1MaxEdit.text()):
+                raise Exception("Mean coefficient k_C/T has incoherent min and max values")
+            elif self.hasToBeVerified(self.ui.ilc1MinEdit) and float(self.ui.ilc1MinEdit.text()) > float(self.ui.ilc1MaxEdit.text()):
+                raise Exception("Individuals locus coefficient k_C/T has incoherent min and max values")
+            elif self.hasToBeVerified(self.ui.mc2MinEdit) and float(self.ui.mc2MinEdit.text()) > float(self.ui.mc2MaxEdit.text()):
+                raise Exception("Mean coefficient k_A/G has incoherent min and max values")
+            elif self.hasToBeVerified(self.ui.ilc2MinEdit) and float(self.ui.ilc2MinEdit.text()) > float(self.ui.ilc2MaxEdit.text()):
+                raise Exception("Individuals locus coefficient k_A/G has incoherent min and max values")
             for field in self.constraints_dico.keys():
                 #print self.field_names_dico[field]
                 if self.hasToBeVerified(field):

@@ -7,6 +7,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
 from setMutationModelRefTable import SetMutationModelRefTable
+from setMutationModelSequencesRefTable import SetMutationModelSequencesRefTable
 from setMutationModelSequences import SetMutationModelSequences
 from setSummaryStatistics import SetSummaryStatistics
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
