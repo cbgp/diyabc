@@ -356,12 +356,16 @@ class HistDrawn(QFrame):
         condBox.hide()
         self.condList.remove(condBox)
 
+    # TODO modifier
     def validate(self):
-        self.majParamInfoDico()
-        # creation et ecriture du fichier dans le rep choisi
-        # VERIFS, si c'est bon, on change d'onglet, sinon on reste
-        if self.checkAll():
-            self.returnToProject()
+        #self.majParamInfoDico()
+        ## creation et ecriture du fichier dans le rep choisi
+        ## VERIFS, si c'est bon, on change d'onglet, sinon on reste
+        #if self.checkAll():
+        #    self.returnToProject()
+
+        # TODO instancier un setGenAnalysis
+        self
 
     def exit(self):
         # reactivation des onglets

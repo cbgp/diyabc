@@ -6,10 +6,9 @@ import shutil
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from project import *
 from project_ui import *
 from setHistFrame import SetHistoricalModel
-from setGenData import SetGeneticData
+from setGenDataRefTable import SetGeneticDataRefTable
 from setMutationModel import SetMutationModel
 from setMutationModelSequences import SetMutationModelSequences
 from setSummaryStatistics import SetSummaryStatistics
@@ -59,7 +58,7 @@ class Project(QTabWidget):
         #self.addTab(self.hist_model_win,"Set historical model")
         #self.setTabEnabled(2,False)
 
-        self.gen_data_win = SetGeneticData(self)
+        self.gen_data_win = SetGeneticDataRefTable(self)
         self.gen_data_win.hide()
         #self.addTab(self.gen_data_win,"Set genetic data")
         #self.setTabEnabled(3,False)
