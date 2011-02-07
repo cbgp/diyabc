@@ -7,6 +7,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
 from setMutationModelAnalysis import SetMutationModelAnalysis
+from setMutationModelFixed import SetMutationModelFixed
 from setMutationModelSequencesAnalysis import SetMutationModelSequencesAnalysis
 from setSummaryStatistics import SetSummaryStatistics
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
@@ -66,11 +67,20 @@ class SetGeneticDataAnalysis(SetGeneticData):
             else:
                 # on instancie des mutationmodel fixed
                 if "Microsatellites" in str(box.title()):
-                    #self.setMutation_dico[self.groupList[-1]] = 
-                    pass
+                    self.setMutation_dico[self.groupList[-1]] = SetMutationModelFixed(self,self.groupList[-1])
+                    self.setMutation_dico[self.groupList[-1]].hide()
+                    # on transfere la conf depuis le mutmod reftable
+                    print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
+                    self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
+                    self.setMutationValid_dico[self.groupList[-1]] = True
                 elif "Sequences" in str(box.title()):
-                    #self.setMutationSeq_dico[self.groupList[-1]] = 
                     pass
+                    #self.setMutationSeq_dico[self.groupList[-1]] = SetMutationModelSequencesAnalysis(self,self.groupList[-1])
+                    #self.setMutationSeq_dico[self.groupList[-1]].hide()
+                    ## on transfere la conf depuis le mutmod reftable
+                    #print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
+                    #self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
+                    #self.setMutationSeqValid_dico[self.groupList[-1]] = True
 
 
 
