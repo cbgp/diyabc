@@ -102,7 +102,7 @@ class SetMutationModelFixed(QFrame):
         self.ui.frame_8.setMaximumSize(QtCore.QSize(250, 50))
 
     def getMutationConf(self):
-        """ renvoie les lignes à écrire dans la conf
+        """ renvoie les valeurs actuelles
         """
         l_result = []
         l_result.append(str(self.ui.mmrMinEdit.text()))
@@ -119,38 +119,26 @@ class SetMutationModelFixed(QFrame):
         """
         print "lines[0] : %s"%lines[0]
         mmrValues = lines[0].split('[')[1].split(']')[0].split(',')
-        self.ui.mmrMinEdit.setText(mmrValues[0])
-        self.ui.mmrMaxEdit.setText(mmrValues[1])    
         valmmr = (float(mmrValues[0]) + float(mmrValues[1]) )/2
         self.ui.mmrMinEdit.setText("%s"%valmmr)
 
         ilmrValues = lines[1].split('[')[1].split(']')[0].split(',')
-        self.ui.ilmrMinEdit.setText(ilmrValues[0])
-        self.ui.ilmrMaxEdit.setText(ilmrValues[1])    
         valilmr = (float(ilmrValues[0]) + float(ilmrValues[1]) )/2
         self.ui.ilmrMinEdit.setText("%s"%valilmr)
 
         ilcpValues = lines[3].split('[')[1].split(']')[0].split(',')
-        self.ui.ilcpMinEdit.setText(ilcpValues[0])
-        self.ui.ilcpMaxEdit.setText(ilcpValues[1])    
         valilcp = (float(ilcpValues[0]) + float(ilcpValues[1]) )/2
         self.ui.ilcpMinEdit.setText("%s"%valilcp)
 
         mcpValues = lines[2].split('[')[1].split(']')[0].split(',')
-        self.ui.mcpMinEdit.setText(mcpValues[0])
-        self.ui.mcpMaxEdit.setText(mcpValues[1])    
         valmcp = (float(mcpValues[0]) + float(mcpValues[1]) )/2
         self.ui.mcpMinEdit.setText("%s"%valmcp)
 
         msrValues = lines[4].split('[')[1].split(']')[0].split(',')
-        self.ui.msrMinEdit.setText(msrValues[0])
-        self.ui.msrMaxEdit.setText(msrValues[1])    
         valmsr = (float(msrValues[0]) + float(msrValues[1]) )/2
         self.ui.msrMinEdit.setText("%s"%valmsr)
 
         ilsrValues = lines[5].split('[')[1].split(']')[0].split(',')
-        self.ui.ilsrMinEdit.setText(ilsrValues[0])
-        self.ui.ilsrMaxEdit.setText(ilsrValues[1])    
         valilsr = (float(ilsrValues[0]) + float(ilsrValues[1]) )/2
         self.ui.ilsrMinEdit.setText("%s"%valilsr)
 
@@ -184,17 +172,17 @@ class SetMutationModelFixed(QFrame):
                 if self.constraints_dico[field][1] == 1:
                     val = float(valtxt)
             # verifs des min et max
-            if float(self.ui.ilsrMinEdit.text()) >= 0:
+            if float(self.ui.ilsrMinEdit.text()) <= 0:
                 raise Exception("Individuals locus SNI rate should be positive")
-            if float(self.ui.msrMinEdit.text()) >= 0:
+            if float(self.ui.msrMinEdit.text()) <= 0:
                 raise Exception("Mean SNI rate should be positive")
-            if float(self.ui.ilcpMinEdit.text()) >= 0:
+            if float(self.ui.ilcpMinEdit.text()) <= 0:
                 raise Exception("Individuals locus coefficient P should be positive")
-            if float(self.ui.mcpMinEdit.text()) >= 0:
+            if float(self.ui.mcpMinEdit.text()) <= 0:
                 raise Exception("Mean coefficient P should be positive")
-            if float(self.ui.ilmrMinEdit.text()) >= 0:
+            if float(self.ui.ilmrMinEdit.text()) <= 0:
                 raise Exception("Individuals locus mutation rate should be positive")
-            if float(self.ui.mmrMinEdit.text()) >= 0:
+            if float(self.ui.mmrMinEdit.text()) <= 0:
                 raise Exception("Mean mutation rate should be positive")
         except Exception,e:
             QMessageBox.information(self,"Value error","%s"%e)
