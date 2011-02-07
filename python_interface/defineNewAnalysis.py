@@ -41,7 +41,8 @@ class DefineNewAnalysis(QFrame):
         # on instancie donc Comparison et Estimation maintenant
         if self.ui.comparisonRadio.isChecked():
             if len(self.parent.hist_model_win.scList) >= 2:
-                compFrame = Comparison(self)
+                analysis = ["compare"]
+                compFrame = Comparison(analysis,self)
                 genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,self)
                 self.parent.addTab(genSel,"Scenario selection")
                 self.parent.removeTab(self.parent.indexOf(self))
@@ -50,7 +51,8 @@ class DefineNewAnalysis(QFrame):
                 QMessageBox.information(self,"Scenario error","At least 2 scenarios are needed for this analysis")
         elif self.ui.estimateRadio.isChecked():
             if len(self.parent.hist_model_win.scList) >= 1:
-                estimateFrame = Estimation(self)
+                analysis = ["estimate"]
+                estimateFrame = Estimation(analysis,self)
                 genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,self)
                 self.parent.addTab(genSel,"Scenario selection")
                 self.parent.removeTab(self.parent.indexOf(self))
@@ -65,7 +67,7 @@ class DefineNewAnalysis(QFrame):
                 paramtxt+="and"
             if self.ui.lossCheck.isChecked():
                 paramtxt+= " Locate S.S."
-            self.parent.addRow("scenario prior combination",paramtxt,"4","new")
+            self.parent.addAnalysis(["pre-ev",paramtxt])
             self.exit()
         elif self.ui.biasRadio.isChecked():
             genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),False,self)

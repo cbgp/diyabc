@@ -8,9 +8,12 @@ from estimation_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 
 class Estimation(QFrame):
-    def __init__(self,parent=None):
+    def __init__(self,analysis,parent=None):
         super(Estimation,self).__init__(parent)
         self.parent=parent
+        self.analysis = analysis
+        self.scNumList = []
+        self.dico_values = {}
         self.createWidgets()
         self.ui.verticalLayout_3.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout_3.setAlignment(Qt.AlignTop)
@@ -27,7 +30,10 @@ class Estimation(QFrame):
 
 
     def validate(self):
-        self.parent.parent.addRow("parameter estimation","params","5","new")
+        self.analysis.append(self.scNumList)
+        self.majDicoValues()
+        self.analysis.append(self.dico_values)
+        self.parent.parent.addAnalysis(self.analysis)
         self.exit()
 
     def setScenarios(self,scList):
@@ -36,8 +42,10 @@ class Estimation(QFrame):
             plur = "s"
             
         lstxt=""
+        self.scNumList = []
         for i in scList:
             lstxt+="%s, "%i
+            self.scNumList.append(i)
         lstxt = lstxt[:-2]
 
         txt = "Chosen scenario%s : %s"%(plur,lstxt)
@@ -52,6 +60,23 @@ class Estimation(QFrame):
         self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         self.parent.parent.setCurrentWidget(genSel)
 
+    def majDicoValues(self):
+        if self.ui.logRadio.isChecked():
+            trans = "log"
+        elif self.ui.logtgRadio.isChecked():
+            trans = "logtg"
+        elif self.ui.noRadio.isChecked():
+            trans = "no"
+        elif self.ui.logitRadio.isChecked():
+            trans = "logit"
+        self.dico_values["transformation"] = trans
+        self.dico_values["numberOfselData"] = str(self.ui.nosdEdit.text())
+        choice = ""
+        if self.ui.oCheck.isChecked():
+            choice += "o"
+        if self.ui.cCheck.isChecked():
+            choice += "c"
+        self.dico_values["choice"] = choice
 
     def exit(self):
         # reactivation des onglets

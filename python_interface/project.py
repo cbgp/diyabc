@@ -32,6 +32,7 @@ class Project(QTabWidget):
         self.hist_state_valid = False
         self.gen_state_valid = False
         self.data = None
+        self.analysisList = []
 
         # utile seulement si on derive de QTabWidget
         super(Project,self).__init__(parent)
@@ -247,7 +248,26 @@ class Project(QTabWidget):
         #print str(i)+","+str(j)
         #self.ui.tableWidget.item(i,j).setFlags(Qt.ItemIsEditable)
         self.ui.tableWidget.hideRow(i)
+
+    def addAnalysis(self,analysis):
+        """ ajoute, dans la liste d'analyses et dans la GUI , l'analyse passée en paramètre
+        """
+        type_analysis = analysis[0]
+        self.analysisList.append(analysis)
+
+        if type_analysis == "pre-ev":
+            self.addRow("scenario prior combination",analysis[1],"4","new")
+        elif type_analysis == "estimate":
+            self.addRow("parameter estimation","params","5","new")
+        elif type_analysis == "bias":
+            pass
+        elif type_analysis == "compare":
+            self.addRow("scenario choice",analysis[2]["de"],"4","new")
+        elif type_analysis == "evaluate":
+            pass
     def addRow(self,atype,params,prio,status):
+        """ ajoute une ligne dans le tableau d'analyses
+        """
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,1,QTableWidgetItem("%s"%atype))
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,2,QTableWidgetItem("%s"%params))

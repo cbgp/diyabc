@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/comparison.ui'
 #
-# Created: Thu Feb  3 10:16:01 2011
+# Created: Mon Feb  7 18:05:31 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -92,21 +92,21 @@ class Ui_Frame(object):
         self.label_4.setMaximumSize(QtCore.QSize(140, 16777215))
         self.label_4.setObjectName("label_4")
         self.gridLayout_2.addWidget(self.label_4, 0, 0, 1, 1)
-        self.lineEdit = QtGui.QLineEdit(Frame)
-        self.lineEdit.setMinimumSize(QtCore.QSize(100, 0))
-        self.lineEdit.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.lineEdit.setObjectName("lineEdit")
-        self.gridLayout_2.addWidget(self.lineEdit, 0, 1, 1, 2)
+        self.deEdit = QtGui.QLineEdit(Frame)
+        self.deEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.deEdit.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.deEdit.setObjectName("deEdit")
+        self.gridLayout_2.addWidget(self.deEdit, 0, 1, 1, 2)
         self.label_5 = QtGui.QLabel(Frame)
         self.label_5.setMinimumSize(QtCore.QSize(140, 0))
         self.label_5.setMaximumSize(QtCore.QSize(140, 16777215))
         self.label_5.setObjectName("label_5")
         self.gridLayout_2.addWidget(self.label_5, 1, 0, 1, 1)
-        self.lineEdit_2 = QtGui.QLineEdit(Frame)
-        self.lineEdit_2.setMinimumSize(QtCore.QSize(100, 0))
-        self.lineEdit_2.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.lineEdit_2.setObjectName("lineEdit_2")
-        self.gridLayout_2.addWidget(self.lineEdit_2, 1, 1, 1, 1)
+        self.lrEdit = QtGui.QLineEdit(Frame)
+        self.lrEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.lrEdit.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.lrEdit.setObjectName("lrEdit")
+        self.gridLayout_2.addWidget(self.lrEdit, 1, 1, 1, 1)
         self.comboBox = QtGui.QComboBox(Frame)
         self.comboBox.setMinimumSize(QtCore.QSize(100, 0))
         self.comboBox.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -137,11 +137,11 @@ class Ui_Frame(object):
         self.totNumSimEdit.setMaximumSize(QtCore.QSize(100, 16777215))
         self.totNumSimEdit.setObjectName("totNumSimEdit")
         self.gridLayout.addWidget(self.totNumSimEdit, 3, 3, 1, 1)
-        self.lineEdit_3 = QtGui.QLineEdit(Frame)
-        self.lineEdit_3.setMinimumSize(QtCore.QSize(100, 0))
-        self.lineEdit_3.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.lineEdit_3.setObjectName("lineEdit_3")
-        self.gridLayout.addWidget(self.lineEdit_3, 4, 3, 1, 1)
+        self.cnosdEdit = QtGui.QLineEdit(Frame)
+        self.cnosdEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.cnosdEdit.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.cnosdEdit.setObjectName("cnosdEdit")
+        self.gridLayout.addWidget(self.cnosdEdit, 4, 3, 1, 1)
         self.refTableNameEdit = QtGui.QLineEdit(Frame)
         self.refTableNameEdit.setObjectName("refTableNameEdit")
         self.gridLayout.addWidget(self.refTableNameEdit, 2, 3, 1, 1)
@@ -172,6 +172,6 @@ class Ui_Frame(object):
         self.label_4.setText(QtGui.QApplication.translate("Frame", "Direct Estimate", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("Frame", "Logistic Regression", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("Frame", "Total number of simulated data :", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_8.setText(QtGui.QApplication.translate("Frame", "Chosen number of simulted data : ", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_8.setText(QtGui.QApplication.translate("Frame", "Chosen number of simulated data : ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("Frame", "Reference table : ", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -8,9 +8,12 @@ from comparison_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 
 class Comparison(QFrame):
-    def __init__(self,parent=None):
+    def __init__(self,analysis,parent=None):
         super(Comparison,self).__init__(parent)
         self.parent=parent
+        self.analysis = analysis
+        self.scNumList = []
+        self.dico_values = {}
         self.createWidgets()
         self.ui.verticalLayout_2.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)
@@ -27,7 +30,11 @@ class Comparison(QFrame):
 
 
     def validate(self):
-        self.parent.parent.addRow("scenario choice","params","4","new")
+        #self.parent.parent.addRow("scenario choice","params","4","new")
+        self.analysis.append(self.scNumList)
+        self.majDicoValues()
+        self.analysis.append(self.dico_values)
+        self.parent.parent.addAnalysis(self.analysis)
         self.exit()
 
     def setScenarios(self,scList):
@@ -36,8 +43,10 @@ class Comparison(QFrame):
             plur = "s"
             
         lstxt=""
+        self.scNumList = []
         for i in scList:
             lstxt+="%s, "%i
+            self.scNumList.append(i)
         lstxt = lstxt[:-2]
 
         txt = "Chosen scenario%s : %s"%(plur,lstxt)
@@ -51,6 +60,11 @@ class Comparison(QFrame):
         self.parent.parent.addTab(genSel,"Scenario selection")
         self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         self.parent.parent.setCurrentWidget(genSel)
+
+    def majDicoValues(self):
+        self.dico_values["chosenNumberOfselData"] = str(self.ui.cnosdEdit.text())
+        self.dico_values["de"] = str(self.ui.deEdit.text())
+        self.dico_values["lr"] = str(self.ui.lrEdit.text())
 
     def exit(self):
         # reactivation des onglets

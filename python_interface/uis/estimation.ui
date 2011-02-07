@@ -199,7 +199,7 @@
             </size>
            </property>
            <property name="text">
-            <string>Numer of selected data</string>
+            <string>Number of selected data</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -207,7 +207,7 @@
           </widget>
          </item>
          <item row="0" column="1" rowspan="2">
-          <widget class="QLineEdit" name="lineEdit">
+          <widget class="QLineEdit" name="nosdEdit">
            <property name="minimumSize">
             <size>
              <width>100</width>
@@ -276,21 +276,21 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QRadioButton" name="radioButton">
+           <widget class="QRadioButton" name="noRadio">
             <property name="text">
              <string>no</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton_2">
+           <widget class="QRadioButton" name="logRadio">
             <property name="text">
              <string>log</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton_3">
+           <widget class="QRadioButton" name="logitRadio">
             <property name="text">
              <string>logit</string>
             </property>
@@ -300,7 +300,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton_4">
+           <widget class="QRadioButton" name="logtgRadio">
             <property name="text">
              <string>log-tg</string>
             </property>
@@ -426,7 +426,7 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="oCheck">
             <property name="text">
              <string>Original</string>
             </property>
@@ -436,7 +436,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox_2">
+           <widget class="QCheckBox" name="cCheck">
             <property name="text">
              <string>Composite</string>
             </property>

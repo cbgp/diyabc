@@ -161,10 +161,12 @@ class SetMutationModelSequencesFixed(QFrame):
         l_result = []
         l_result.append(str(self.ui.mmrMinEdit.text()))
         l_result.append(str(self.ui.ilmrMinEdit.text()))
-        l_result.append(str(self.ui.mc1MinEdit.text()))
-        l_result.append(str(self.ui.ilc1MinEdit.text()))
-        l_result.append(str(self.ui.mc2MinEdit.text()))
-        l_result.append(str(self.ui.ilc2MinEdit.text()))
+        if self.hasToBeVerified(self.ui.mc1MinEdit):
+            l_result.append(str(self.ui.mc1MinEdit.text()))
+            l_result.append(str(self.ui.ilc1MinEdit.text()))
+            if self.hasToBeVerified(self.ui.mc2MinEdit):
+                l_result.append(str(self.ui.mc2MinEdit.text()))
+                l_result.append(str(self.ui.ilc2MinEdit.text()))
 
         return l_result
 
