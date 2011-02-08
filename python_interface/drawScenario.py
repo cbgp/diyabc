@@ -4,6 +4,7 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtSvg import *
 from drawScenario_ui import Ui_Frame
 from visualizescenario import *
 
@@ -17,6 +18,7 @@ class DrawScenario(QFrame):
         self.createWidgets()
         self.sc_info_list = sc_info_list
         self.pixList = []    
+        self.svgList = []
 
 
 
@@ -180,6 +182,275 @@ class DrawScenario(QFrame):
         label.setPixmap(pix)
         self.ui.horizontalLayout_2.addWidget(label)
 
+    def DrawSvg(self,segments,scc,t,savename):
+        """ dessine un scenario dans un fichier svg
+        """
+        
+        tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
+        NN = scc.history.ne0s
+
+        xmax = 500
+        ymax = 450
+        svgpic = QSvgGenerator()
+        svgpic.setFileName(savename)
+        self.svgList.append(svgpic)
+
+        painter = QPainter()
+        pen = QPen(Qt.black,2)
+        painter.setPen(pen)
+        painter.begin(svgpic)
+        
+        # dessin de la cartouche
+        painter.drawLine(2,2,xmax-2,2)
+        painter.drawLine(xmax-2,2,xmax-2,ymax-2)
+        painter.drawLine(xmax-2,ymax-2,2,ymax-2)
+        painter.drawLine(2,ymax-2,2,2)
+        painter.setPen(QPen(Qt.black,6))
+        # TODO verifier la validité de NN qui doit avoir une taille de 1 quand N N N
+        for i in range(len(NN)):
+            pen = QPen(Qt.yellow,6)
+            pen.setCapStyle(Qt.RoundCap)
+            pen.setColor(QColor(tab_colors[(i%20)]))
+            painter.setPen(pen)
+            painter.drawLine(20,40+20*i,30,40+20*i)
+            pen.setColor(QColor("#000000"))
+            painter.setPen(pen)
+            painter.drawText( 40,45+20*i, NN[i].name)
+        painter.setPen(QPen(Qt.black,20))
+        font = QFont()
+        font.setItalic(False)
+        font.setPixelSize(16)
+        painter.setFont(font)
+        painter.drawText( 10,20, "Scenario %i"%(scc.number))
+
+        # echelle de temps
+        pen = QPen(Qt.black,1)
+        painter.setPen(pen)
+        painter.drawLine(xmax-50,50,xmax-50,ymax-50)
+        pen = QPen(Qt.black,4)
+        painter.setPen(pen)
+        for i in range(len(scc.history.events)):
+            y = scc.history.events[i].y
+            painter.drawLine(xmax-55,y,xmax-45,y)
+            font = QFont()
+            font.setItalic(False)
+            font.setPixelSize(10)
+            painter.setFont(font)
+            painter.drawText(xmax-30,y+5,scc.history.events[i].stime)
+        font = QFont()
+        font.setItalic(False)
+        font.setPixelSize(10)
+        painter.setFont(font)
+        painter.drawText(xmax-170,14,"(Warning ! Time is not to scale.)");
+
+        # echantillons
+        pen = QPen(Qt.black,1)
+        painter.setPen(pen)
+        n=0
+        for i in range(0,len(t.node)):
+            if (t.node[i].category == "sa") or (t.node[i].category == "sa2"):
+                for j in range(0,len(t.node)):
+                    if ((t.node[i].category == "sa") or (t.node[i].category == "sa2")) and (t.node[i].category != t.node[j].category):
+                        if t.node[i].y > t.node[j].y:
+                            t.node[i].category = "sa";
+                            t.node[j].category = "sa2";
+                        else:
+                            t.node[j].category = "sa";
+                            t.node[i].category = "sa2";
+                    for i in range(0,len(t.node)):
+                        if (t.node[i].category == "sa") or (t.node[i].category == "sa2"):
+                            x = t.node[i].x
+                            y = t.node[i].y
+                            n+=1
+                            pen = QPen(Qt.black,1)
+                            painter.setPen(pen)
+                            painter.drawRoundRect(x-15,y+10,35,20)
+                            font = QFont()
+                            font.setItalic(True)
+                            font.setPixelSize(10)
+                            painter.setFont(font)
+                            painter.drawText(x-10,y+25,'Sa %i'%t.node[i].pop)
+                            font = QFont()
+                            font.setItalic(False)
+                            font.setPixelSize(12)
+                            painter.setFont(font)
+                            if t.node[i].category == "sa":
+                                painter.drawText(x-19,y+50,"Pop %i"%t.node[i].pop)
+
+
+        # dessin des segments
+        for s in segments:
+            print "seg",s
+            if s.ydeb == s.yfin and s.xdeb != s.xfin:
+                xmed = (s.xdeb+s.xfin)/2
+                ymed = s.ydeb
+                jj = 0
+                while(jj < len(NN)) and (NN[jj].name != s.sNedeb):
+                    jj+=1
+                pen = QPen(Qt.yellow,10)
+                pen.setCapStyle(Qt.RoundCap)
+                pen.setColor(QColor(tab_colors[(jj%20)]))
+                painter.setPen(pen)
+                painter.drawLine(s.xdeb,ymed,xmed,ymed)
+                painter.setPen(QPen(Qt.black,8))
+                x0 = xmed-(2*len(s.sadm))
+                font = QFont()
+                font.setItalic(False)
+                font.setPixelSize(10)
+                painter.setFont(font)
+                painter.drawText( x0, ymed+16, s.sadm)
+
+                jj = 0
+                while(jj < len(NN)) and (NN[jj].name != s.sNefin):
+                    jj+=1
+                pen = QPen(Qt.yellow,10)
+                pen.setCapStyle(Qt.RoundCap)
+                pen.setColor(QColor(tab_colors[(jj%20)]))
+                painter.setPen(pen)
+                painter.drawLine(s.xfin,ymed,xmed,ymed)
+            else:
+                jj = 0
+                while(jj < len(NN)) and (NN[jj].name != s.sNefin):
+                    jj+=1
+                pen = QPen(Qt.black,10)
+                pen.setCapStyle(Qt.RoundCap)
+                pen.setColor(QColor(tab_colors[(jj%20)]))
+                painter.setPen(pen)
+                painter.drawLine(s.xdeb,s.ydeb,s.xfin,s.yfin)
+        painter.end()
+
+    def addToSvg(self,segments,scc,t,painter):
+        """ ajoute un scenario dans un fichier svg
+        """
+        
+        tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
+        NN = scc.history.ne0s
+
+        xmax = 500
+        ymax = 450
+
+        pen = QPen(Qt.black,2)
+        painter.setPen(pen)
+        
+        # dessin de la cartouche
+        painter.drawLine(2,2,xmax-2,2)
+        painter.drawLine(xmax-2,2,xmax-2,ymax-2)
+        painter.drawLine(xmax-2,ymax-2,2,ymax-2)
+        painter.drawLine(2,ymax-2,2,2)
+        painter.setPen(QPen(Qt.black,6))
+        # TODO verifier la validité de NN qui doit avoir une taille de 1 quand N N N
+        for i in range(len(NN)):
+            pen = QPen(Qt.yellow,6)
+            pen.setCapStyle(Qt.RoundCap)
+            pen.setColor(QColor(tab_colors[(i%20)]))
+            painter.setPen(pen)
+            painter.drawLine(20,40+20*i,30,40+20*i)
+            pen.setColor(QColor("#000000"))
+            painter.setPen(pen)
+            painter.drawText( 40,45+20*i, NN[i].name)
+        painter.setPen(QPen(Qt.black,20))
+        font = QFont()
+        font.setItalic(False)
+        font.setPixelSize(16)
+        painter.setFont(font)
+        painter.drawText( 10,20, "Scenario %i"%(scc.number))
+
+        # echelle de temps
+        pen = QPen(Qt.black,1)
+        painter.setPen(pen)
+        painter.drawLine(xmax-50,50,xmax-50,ymax-50)
+        pen = QPen(Qt.black,4)
+        painter.setPen(pen)
+        for i in range(len(scc.history.events)):
+            y = scc.history.events[i].y
+            painter.drawLine(xmax-55,y,xmax-45,y)
+            font = QFont()
+            font.setItalic(False)
+            font.setPixelSize(10)
+            painter.setFont(font)
+            painter.drawText(xmax-30,y+5,scc.history.events[i].stime)
+        font = QFont()
+        font.setItalic(False)
+        font.setPixelSize(10)
+        painter.setFont(font)
+        painter.drawText(xmax-170,14,"(Warning ! Time is not to scale.)");
+
+        # echantillons
+        pen = QPen(Qt.black,1)
+        painter.setPen(pen)
+        n=0
+        for i in range(0,len(t.node)):
+            if (t.node[i].category == "sa") or (t.node[i].category == "sa2"):
+                for j in range(0,len(t.node)):
+                    if ((t.node[i].category == "sa") or (t.node[i].category == "sa2")) and (t.node[i].category != t.node[j].category):
+                        if t.node[i].y > t.node[j].y:
+                            t.node[i].category = "sa";
+                            t.node[j].category = "sa2";
+                        else:
+                            t.node[j].category = "sa";
+                            t.node[i].category = "sa2";
+                    for i in range(0,len(t.node)):
+                        if (t.node[i].category == "sa") or (t.node[i].category == "sa2"):
+                            x = t.node[i].x
+                            y = t.node[i].y
+                            n+=1
+                            pen = QPen(Qt.black,1)
+                            painter.setPen(pen)
+                            painter.drawRoundRect(x-15,y+10,35,20)
+                            font = QFont()
+                            font.setItalic(True)
+                            font.setPixelSize(10)
+                            painter.setFont(font)
+                            painter.drawText(x-10,y+25,'Sa %i'%t.node[i].pop)
+                            font = QFont()
+                            font.setItalic(False)
+                            font.setPixelSize(12)
+                            painter.setFont(font)
+                            if t.node[i].category == "sa":
+                                painter.drawText(x-19,y+50,"Pop %i"%t.node[i].pop)
+
+
+        # dessin des segments
+        for s in segments:
+            print "seg",s
+            if s.ydeb == s.yfin and s.xdeb != s.xfin:
+                xmed = (s.xdeb+s.xfin)/2
+                ymed = s.ydeb
+                jj = 0
+                while(jj < len(NN)) and (NN[jj].name != s.sNedeb):
+                    jj+=1
+                pen = QPen(Qt.yellow,10)
+                pen.setCapStyle(Qt.RoundCap)
+                pen.setColor(QColor(tab_colors[(jj%20)]))
+                painter.setPen(pen)
+                painter.drawLine(s.xdeb,ymed,xmed,ymed)
+                painter.setPen(QPen(Qt.black,8))
+                x0 = xmed-(2*len(s.sadm))
+                font = QFont()
+                font.setItalic(False)
+                font.setPixelSize(10)
+                painter.setFont(font)
+                painter.drawText( x0, ymed+16, s.sadm)
+
+                jj = 0
+                while(jj < len(NN)) and (NN[jj].name != s.sNefin):
+                    jj+=1
+                pen = QPen(Qt.yellow,10)
+                pen.setCapStyle(Qt.RoundCap)
+                pen.setColor(QColor(tab_colors[(jj%20)]))
+                painter.setPen(pen)
+                painter.drawLine(s.xfin,ymed,xmed,ymed)
+            else:
+                jj = 0
+                while(jj < len(NN)) and (NN[jj].name != s.sNefin):
+                    jj+=1
+                pen = QPen(Qt.black,10)
+                pen.setCapStyle(Qt.RoundCap)
+                pen.setColor(QColor(tab_colors[(jj%20)]))
+                painter.setPen(pen)
+                painter.drawLine(s.xdeb,s.ydeb,s.xfin,s.yfin)
+
+
     def save(self):
         # nettoyage radical : suppression du dossier
         proj_dir = self.parent.parent.dir
@@ -217,16 +488,19 @@ class DrawScenario(QFrame):
         for ind,pix in enumerate(self.pixList):
             im = pix.toImage()
             im.save("%s_%i.jpg"%(pic_whole_path,ind+1))
-            print "%s_%i.jpg"%(pic_whole_path,ind+1)
+
+        for ind,sc_info in enumerate(self.sc_info_list):
+            savename = "%s_%i.svg"%(pic_whole_path,ind+1)
+            self.DrawSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
 
     def saveDrawsToOne(self):
-        """ Sauve tous les scenarios dans une seule image
+        """ Sauve tous les scenarios dans une seule image et une seul svg
         """
         proj_dir = self.parent.parent.dir
         pic_dir = self.parent.parent.parent.scenario_pix_dir_name
-        ## si le rep contenant les images n'existe pas, on le crée
-        #if not os.path.exists("%s/%s"%(proj_dir,pic_dir)):
-        #    os.mkdir("%s/%s"%(proj_dir,pic_dir))
+        pic_basename = self.parent.parent.parent.scenario_pix_basename
+        pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
+
 
         nbpix = len(self.pixList)
         largeur = 2
@@ -239,19 +513,29 @@ class DrawScenario(QFrame):
         painter = QPainter(self.im_result)
         painter.fillRect(0, 0, largeur*500, longueur*450, Qt.white)
 
-        self.pic_result = QPicture()
-        painter_pic = QPainter(self.pic_result)
+        self.pic_result = QSvgGenerator()
+        #self.pic_result.setSize(QSize(largeur*500, longueur*450));
+        #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
+        self.pic_result.setFileName("%s_all.svg"%pic_whole_path)
+        painter_pic = QPainter()
+        painter_pic.begin(self.pic_result)
 
         # on fait des lignes tant qu'on a des pix
         while (ind < nbpix):
             col = 0
+            if ind > 0:
+                painter_pic.translate(-2*500,450)
             # une ligne
             while (ind < nbpix) and (col < largeur):
                 # ajout
                 print "zzz"
                 #self.im_result.fill(self.pixList[ind],QPoint(col*500,li*450))
                 painter.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
-                painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
+                #painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
+                sc_info = self.sc_info_list[ind]
+                self.addToSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],painter_pic)
+                # on va a droite
+                painter_pic.translate(500,0)
                 print "li:",li," col:",col
                 print "xof:",col*500," yof:",li*450
                 print "zzz"
@@ -259,15 +543,10 @@ class DrawScenario(QFrame):
                 ind+=1
             li+=1
 
-        proj_dir = self.parent.parent.dir
-        pic_dir = self.parent.parent.parent.scenario_pix_dir_name
-        pic_basename = self.parent.parent.parent.scenario_pix_basename
-        pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
-
         self.im_result.save("%s_all.jpg"%pic_whole_path)
 
         painter_pic.end()
-        self.pic_result.save("%s_all.svg"%pic_whole_path,"svg")
+        #self.pic_result.save("%s_all.svg"%pic_whole_path,"svg")
 
     def closeEvent(self, event):
         pass
