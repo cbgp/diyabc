@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/estimation.ui'
 #
-# Created: Tue Feb  8 13:27:18 2011
+# Created: Tue Feb  8 20:55:04 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Frame(object):
     def setupUi(self, Frame):
         Frame.setObjectName("Frame")
-        Frame.resize(1100, 714)
+        Frame.resize(779, 633)
         Frame.setFrameShape(QtGui.QFrame.StyledPanel)
         Frame.setFrameShadow(QtGui.QFrame.Raised)
         self.verticalLayout_3 = QtGui.QVBoxLayout(Frame)
@@ -109,11 +109,11 @@ class Ui_Frame(object):
         self.label_5.setObjectName("label_5")
         self.verticalLayout_4.addWidget(self.label_5)
         self.horizontalLayout_5.addLayout(self.verticalLayout_4)
-        self.lineEdit = QtGui.QLineEdit(Frame)
-        self.lineEdit.setMinimumSize(QtCore.QSize(100, 0))
-        self.lineEdit.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.lineEdit.setObjectName("lineEdit")
-        self.horizontalLayout_5.addWidget(self.lineEdit)
+        self.notdsEdit = QtGui.QLineEdit(Frame)
+        self.notdsEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.notdsEdit.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.notdsEdit.setObjectName("notdsEdit")
+        self.horizontalLayout_5.addWidget(self.notdsEdit)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
         self.gridLayout_2 = QtGui.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")

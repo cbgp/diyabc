@@ -24,6 +24,17 @@ class Estimation(QFrame):
         self.ui = Ui_Frame()
         self.ui.setupUi(self)
 
+        if self.analysis[0] == "bias":
+            self.ui.label.setText("Bias and Precision")
+            self.ui.redefButton.hide()
+        elif self.analysis[0] == "evaluate":
+            self.ui.label.setText("Evaluate confidence")
+            self.ui.redefButton.hide()
+        else:
+            self.ui.label_5.hide()
+            self.ui.label_4.hide()
+            self.ui.notdsEdit.hide()
+
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.redefButton,SIGNAL("clicked()"),self.redefineScenarios)

@@ -12,6 +12,7 @@ from setMutationModelSequencesFixed import SetMutationModelSequencesFixed
 from setMutationModelSequencesAnalysis import SetMutationModelSequencesAnalysis
 from setSummaryStatistics import SetSummaryStatistics
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
+from estimation import Estimation
 from visualizescenario import *
 from data import *
 
@@ -166,10 +167,18 @@ class SetGeneticDataAnalysis(SetGeneticData):
             QMessageBox.information(self,"Impossible to validate the genetic data",problem)
             self.parent.setGenValid(False)
         else:
-            # c'est valide, on on ajoute l'analyse
+            # c'est valide, on passe à la dernière phase de paramètrage
             self.analysis.append(mutconf_list)
-            self.parent.addAnalysis(self.analysis)
-            self.exit()
+            if self.analysis[0] == "bias":
+                next_title = "bias and precision"
+            else:
+                next_title = "evaluate confidence"
+            last_parametrisation = Estimation(self.analysis,self)
+            self.parent.addTab(last_parametrisation,next_title)
+            self.parent.removeTab(self.parent.indexOf(self))
+            self.parent.setCurrentWidget(last_parametrisation)
+            #self.parent.addAnalysis(self.analysis)
+            #self.exit()
 
     def clear(self):
         """ On supprime tous les groupes
