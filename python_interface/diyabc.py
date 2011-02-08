@@ -10,6 +10,7 @@ from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from diyabc_ui import Ui_MainWindow
 from project import *
+from preferences import Preferences
 
 class Diyabc(QMainWindow):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
@@ -26,6 +27,8 @@ class Diyabc(QMainWindow):
         for i in QStyleFactory.keys():
             self.styles.append(str(i))
         self.style_actions = {}
+
+        self.preferences_win = Preferences(self)
 
         self.createWidgets()
 
@@ -52,6 +55,7 @@ class Diyabc(QMainWindow):
         self.saveProjActionMenu.setDisabled(True)
         self.deleteProjActionMenu.setDisabled(True)
         self.cloneProjActionMenu.setDisabled(True)
+        file_menu.addAction("Preferences",self.setPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
         action = file_menu.addAction("Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
@@ -66,6 +70,10 @@ class Diyabc(QMainWindow):
         navigate_menu.addAction("Previous Project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
 	
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
+
+    def setPreferences(self):
+        self.preferences_win.show()
+
 
     def changeStyle(self):
         for stxt in self.styles:
