@@ -239,6 +239,9 @@ class DrawScenario(QFrame):
         painter = QPainter(self.im_result)
         painter.fillRect(0, 0, largeur*500, longueur*450, Qt.white)
 
+        self.pic_result = QPicture()
+        painter_pic = QPainter(self.pic_result)
+
         # on fait des lignes tant qu'on a des pix
         while (ind < nbpix):
             col = 0
@@ -248,6 +251,7 @@ class DrawScenario(QFrame):
                 print "zzz"
                 #self.im_result.fill(self.pixList[ind],QPoint(col*500,li*450))
                 painter.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
+                painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
                 print "li:",li," col:",col
                 print "xof:",col*500," yof:",li*450
                 print "zzz"
@@ -262,6 +266,8 @@ class DrawScenario(QFrame):
 
         self.im_result.save("%s_all.jpg"%pic_whole_path)
 
+        painter_pic.end()
+        self.pic_result.save("%s_all.svg"%pic_whole_path,"svg")
 
     def closeEvent(self, event):
         pass
