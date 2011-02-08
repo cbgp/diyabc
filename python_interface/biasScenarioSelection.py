@@ -9,9 +9,10 @@ from histDrawn import HistDrawn
 from histFixed import HistFixed
 
 class BiasNEvaluateScenarioSelection(QFrame):
-    def __init__(self,nb_sc,evaluate,parent=None):
+    def __init__(self,nb_sc,evaluate,analysis,parent=None):
         super(BiasNEvaluateScenarioSelection,self).__init__(parent)
         self.parent=parent
+        self.analysis = analysis
         self.nb_sc = nb_sc
         # on affiche ou pas la partie droite "select candidate scenarios"
         self.evaluate = evaluate
@@ -37,13 +38,21 @@ class BiasNEvaluateScenarioSelection(QFrame):
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
     def validate(self):
+        if self.ui.fixedRadio.isChecked():
+            self.analysis.append("fixed")
+        else:
+            self.analysis.append("drawn")
+        # pour evaluate et bias, on a selectionné un scenario
+        self.analysis.append(self.getSelectedScenario())
         # le cas du evaluate, les sc à afficher dans le hist model sont ceux selectionnés
         if self.evaluate:
             if len(self.getListSelectedScenarios()) >= 2:
+                # pour evaluate on a du selectionner au moins deux scenarios 
+                self.analysis.append(self.getListSelectedScenarios())
                 if self.ui.fixedRadio.isChecked():
-                    next_widget = HistFixed(self.getSelectedScenario(),self.getListSelectedScenarios(),self.parent)
+                    next_widget = HistFixed(self.getSelectedScenario(),self.getListSelectedScenarios(),self.analysis,self.parent)
                 else:
-                    next_widget = HistDrawn(self.getSelectedScenario(),self.getListSelectedScenarios(),self.parent)
+                    next_widget = HistDrawn(self.getSelectedScenario(),self.getListSelectedScenarios(),self.analysis,self.parent)
             else:
                 QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%self.nb_min_sel)
                 return 0
@@ -51,9 +60,9 @@ class BiasNEvaluateScenarioSelection(QFrame):
         else:
             # en fonction de fixed ou drawn, l'écran suivant présente un objet différent
             if self.ui.fixedRadio.isChecked():
-                next_widget = HistFixed(self.getSelectedScenario(),None,self.parent)
+                next_widget = HistFixed(self.getSelectedScenario(),None,self.analysis,self.parent)
             else:
-                next_widget = HistDrawn(self.getSelectedScenario(),None,self.parent)
+                next_widget = HistDrawn(self.getSelectedScenario(),None,self.analysis,self.parent)
         self.parent.parent.addTab(next_widget,"Historical model")
         self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         self.parent.parent.setCurrentWidget(next_widget)

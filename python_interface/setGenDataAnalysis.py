@@ -18,10 +18,11 @@ from data import *
 class SetGeneticDataAnalysis(SetGeneticData):
     """ set genetic data pour les informations concernant une analyse bias ou evaluate
     """
-    def __init__(self,drawnorfixed,parent=None):
+    def __init__(self,drawnorfixed,analysis,parent=None):
         super(SetGeneticDataAnalysis,self).__init__(parent)
 
         self.drawnorfixed = drawnorfixed
+        self.analysis = analysis
 
         self.ui.addGroupButton.hide()
         self.ui.clearButton.hide()
@@ -147,6 +148,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
         """
         #print self.group_info_dico
         #print self.dico_num_and_numgroup_locus
+        mutconf_list = []
         problem = u""
         for i,box in enumerate(self.groupList):
             title = str(box.title())
@@ -165,8 +167,9 @@ class SetGeneticDataAnalysis(SetGeneticData):
             self.parent.setGenValid(False)
         else:
             # c'est valide, on on ajoute l'analyse
-            # TODO
-            self.parent.addAnalysis()
+            self.analysis.append(mutconf_list)
+            self.parent.addAnalysis(self.analysis)
+            self.exit()
 
     def clear(self):
         """ On supprime tous les groupes

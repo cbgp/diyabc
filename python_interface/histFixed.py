@@ -13,9 +13,10 @@ from set_condition import SetCondition
 from setGenDataAnalysis import SetGeneticDataAnalysis
 
 class HistFixed(QFrame):
-    def __init__(self,sc_to_show,list_selected_evaluate_sc=None,parent=None):
+    def __init__(self,sc_to_show,list_selected_evaluate_sc,analysis,parent=None):
         super(HistFixed,self).__init__(parent)
         self.parent=parent
+        self.analysis = analysis
         self.sc_to_show = sc_to_show
         self.list_selected_evaluate_sc = list_selected_evaluate_sc
 
@@ -189,22 +190,36 @@ class HistFixed(QFrame):
             val =  str(param.findChild(QLineEdit,"meanValueParamEdit").text())
             self.param_info_dico[pname] = [self.param_info_dico[pname][0],val]
 
+    def checkAll(self):
+        """ verification de la coherence des valeurs du modèle historique
+        """
+        problems = ""
+        for param in self.paramList:
+            pname = str(param.findChild(QLabel,"paramNameLabel").text())
+            try:
+                value =  float(param.findChild(QLineEdit,"meanValueParamEdit").text())
+                if value < 0:
+                    problems += "Values for parameter %s are incoherent\n"%pname
+            except Exception,e:
+                problems += "%s\n"%e
+
+        if problems == "":
+            return True
+        else:
+            QMessageBox.information(self,"Value error","%s"%problems)
+            return False
+
     def validate(self):
-        #self.majParamInfoDico()
-        ## creation et ecriture du fichier dans le rep choisi
-        #self.writeHistoricalConfFromGui()
-        ## VERIFS, si c'est bon, on change d'onglet, sinon on reste
-        #if self.checkAll():
-        #    self.parent.setHistValid(True)
+        """ on vérifie ici que les valeurs sont bien des float et qu'elles sont bien supérieures à 0
+        """
 
-        #    self.majProjectGui()
-
-        #    self.returnToProject()
-
-        gen_data_analysis = SetGeneticDataAnalysis("fixed",self.parent.parent)
-        self.parent.parent.addTab(gen_data_analysis,"Genetic data")
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentWidget(gen_data_analysis)
+        if self.checkAll():
+            self.majParamInfoDico()
+            self.analysis.append(self.param_info_dico)
+            gen_data_analysis = SetGeneticDataAnalysis("fixed",self.analysis,self.parent.parent)
+            self.parent.parent.addTab(gen_data_analysis,"Genetic data")
+            self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+            self.parent.parent.setCurrentWidget(gen_data_analysis)
 
     def exit(self):
         # reactivation des onglets

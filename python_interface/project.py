@@ -255,16 +255,17 @@ class Project(QTabWidget):
         type_analysis = analysis[0]
         self.analysisList.append(analysis)
 
+        print analysis
         if type_analysis == "pre-ev":
             self.addRow("scenario prior combination",analysis[1],"4","new")
         elif type_analysis == "estimate":
             self.addRow("parameter estimation","params","5","new")
         elif type_analysis == "bias":
-            pass
+            self.addRow("bias and precision",str(analysis[2]),"3","new")
         elif type_analysis == "compare":
             self.addRow("scenario choice",analysis[2]["de"],"4","new")
         elif type_analysis == "evaluate":
-            pass
+            self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
     def addRow(self,atype,params,prio,status):
         """ ajoute une ligne dans le tableau d'analyses
         """
@@ -273,6 +274,10 @@ class Project(QTabWidget):
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,2,QTableWidgetItem("%s"%params))
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,3,QTableWidgetItem("%s"%prio))
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,4,QTableWidgetItem("%s"%status))
+
+        self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,1).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,1).flags() & ~Qt.ItemIsEditable)
+        self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,2).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,2).flags() & ~Qt.ItemIsEditable)
+        self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).flags() & ~Qt.ItemIsEditable)
 
         self.ui.tableWidget.setCellWidget(self.ui.tableWidget.rowCount()-1,5,QPushButton("View"))
             #self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,i).setText("new")

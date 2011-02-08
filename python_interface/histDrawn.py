@@ -13,9 +13,10 @@ from set_condition import SetCondition
 from setGenDataAnalysis import SetGeneticDataAnalysis
 
 class HistDrawn(QFrame):
-    def __init__(self,sc_to_show,list_selected_evaluate_sc=None,parent=None):
+    def __init__(self,sc_to_show,list_selected_evaluate_sc,analysis,parent=None):
         super(HistDrawn,self).__init__(parent)
         self.parent=parent
+        self.analysis = analysis
         self.sc_to_show = sc_to_show
         self.list_selected_evaluate_sc = list_selected_evaluate_sc
 
@@ -357,19 +358,41 @@ class HistDrawn(QFrame):
         condBox.hide()
         self.condList.remove(condBox)
 
-    # TODO modifier
-    def validate(self):
-        #self.majParamInfoDico()
-        ## creation et ecriture du fichier dans le rep choisi
-        ## VERIFS, si c'est bon, on change d'onglet, sinon on reste
-        #if self.checkAll():
-        #    self.returnToProject()
+    def checkAll(self):
+        """ verification de la coherence des valeurs du modèle historique
+        """
+        # pour tous les params, min<=max, tout>0
+        problems = ""
+        for param in self.paramList:
+            pname = str(param.findChild(QLabel,"paramNameLabel").text())
+            try:
+                min =   float(param.findChild(QLineEdit,"minValueParamEdit").text())
+                max =   float(param.findChild(QLineEdit,"maxValueParamEdit").text())
+                mean =  float(param.findChild(QLineEdit,"meanValueParamEdit").text())
+                stdev = float(param.findChild(QLineEdit,"stValueParamEdit").text())
+                step =  float(param.findChild(QLineEdit,"stepValueParamEdit").text())
+                if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0 or step < 0:
+                    problems += "Values for parameter %s are incoherent\n"%pname
+            except Exception,e:
+                problems += "%s\n"%e
 
-        # TODO instancier un setGenAnalysis
-        gen_data_analysis = SetGeneticDataAnalysis("drawn",self.parent.parent)
-        self.parent.parent.addTab(gen_data_analysis,"Genetic data")
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentWidget(gen_data_analysis)
+        if problems == "":
+            return True
+        else:
+            QMessageBox.information(self,"Value error","%s"%problems)
+            return False
+
+    def validate(self):
+        """ validation du historical model, nous n'avons ici que les valeurs à vérifier
+        """
+
+        if self.checkAll():
+            self.majParamInfoDico()
+            self.analysis.append(self.param_info_dico)
+            gen_data_analysis = SetGeneticDataAnalysis("drawn",self.analysis,self.parent.parent)
+            self.parent.parent.addTab(gen_data_analysis,"Genetic data")
+            self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+            self.parent.parent.setCurrentWidget(gen_data_analysis)
 
     def exit(self):
         # reactivation des onglets

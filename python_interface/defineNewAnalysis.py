@@ -70,13 +70,15 @@ class DefineNewAnalysis(QFrame):
             self.parent.addAnalysis(["pre-ev",paramtxt])
             self.exit()
         elif self.ui.biasRadio.isChecked():
-            genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),False,self)
+            analysis = ["bias"]
+            genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),False,analysis,self)
             self.parent.addTab(genSel,"Scenario selection")
             self.parent.removeTab(self.parent.indexOf(self))
             self.parent.setCurrentWidget(genSel)
 
         elif self.ui.evaluateRadio.isChecked():
-            genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),True,self)
+            analysis = ["evaluate"]
+            genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),True,analysis,self)
             self.parent.addTab(genSel,"Scenario selection")
             self.parent.removeTab(self.parent.indexOf(self))
             self.parent.setCurrentWidget(genSel)
