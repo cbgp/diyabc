@@ -25,11 +25,19 @@ class Estimation(QFrame):
         self.ui.setupUi(self)
 
         if self.analysis[0] == "bias":
-            self.ui.label.setText("Bias and Precision")
+            self.ui.label.setText("Bias and mean square error")
             self.ui.redefButton.hide()
+            self.ui.candidateLabel.hide()
+            self.setScenarios([self.analysis[2]])
         elif self.analysis[0] == "evaluate":
-            self.ui.label.setText("Evaluate confidence")
+            self.ui.label.setText("Confidence in scenario choice")
+            sctxt = ""
+            for s in self.analysis[3]:
+                sctxt += " %s"%s
+
+            self.ui.candidateLabel.setText("%s %s"%(self.ui.candidateLabel.text(),sctxt))
             self.ui.redefButton.hide()
+            self.setScenarios([self.analysis[2]])
         else:
             self.ui.label_5.hide()
             self.ui.label_4.hide()

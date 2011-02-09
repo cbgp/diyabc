@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/estimation.ui'
 #
-# Created: Tue Feb  8 20:55:04 2011
+# Created: Wed Feb  9 11:13:26 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -79,6 +79,13 @@ class Ui_Frame(object):
         self.redefButton.setObjectName("redefButton")
         self.horizontalLayout_4.addWidget(self.redefButton)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout_6 = QtGui.QHBoxLayout()
+        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        self.candidateLabel = QtGui.QLabel(Frame)
+        self.candidateLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.candidateLabel.setObjectName("candidateLabel")
+        self.horizontalLayout_6.addWidget(self.candidateLabel)
+        self.verticalLayout.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.verticalLayout_4 = QtGui.QVBoxLayout()
@@ -238,6 +245,7 @@ class Ui_Frame(object):
         self.label.setText(QtGui.QApplication.translate("Frame", "ABC parameter estimation", None, QtGui.QApplication.UnicodeUTF8))
         self.scenariosLabel.setText(QtGui.QApplication.translate("Frame", "Chosen scenario :", None, QtGui.QApplication.UnicodeUTF8))
         self.redefButton.setText(QtGui.QApplication.translate("Frame", "Redefine", None, QtGui.QApplication.UnicodeUTF8))
+        self.candidateLabel.setText(QtGui.QApplication.translate("Frame", "Candidate scenarios : ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Frame", "Number of test data sets", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("Frame", "Data sets simulated with know parameter values", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Frame", "Number of selected data", None, QtGui.QApplication.UnicodeUTF8))
