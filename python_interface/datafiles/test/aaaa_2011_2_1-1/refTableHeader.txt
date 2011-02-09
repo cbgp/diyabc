@@ -1,0 +1,110 @@
+admix1.txt
+15 parameters and 37 summary statistics
+
+3 scenarios: 6 6 6 
+scenario 1 [0.33] (4)
+N X F
+0 sample 1
+0 sample 2
+0 sample 3
+t merge 1 2
+t merge 1 3
+scenario 2 [0.33] (5)
+N D F
+0 sample 1
+0 sample 2
+0 sample 3
+t merge 1 2
+t2 merge 1 3
+scenario 3 [11] (6)
+N G F
+0 sample 1
+0 sample 2
+0 sample 3 
+t split 3 1 2 r1
+t2 merge 1 2
+
+historical parameters priors (8,2)
+N N UN[10,10000,0,0,1] False
+X N LU[10,10000,0,0,1] True
+F N NO[10,10000,0,0,1] True
+t T LN[10,10000,0,0,1] False
+D N UN[10,10000,0,0,1] True
+t2 T UN[10,10000,0,0,1] True
+G N UN[10,10000,0,0,1] True
+r1 A UN[0.001,0.999,0,0,0.001] False
+D>G
+F<=N
+DRAW ONCE
+
+loci description (13)
+locus_M1 <A> [M] G0 1 7
+locus_M2 <A> [M] G2 2 40
+locus_M3 <A> [M] G2 2 40
+locus_M4 <A> [M] G0 2 6
+locus_M5 <A> [M] G0 3 5
+locus_M6 <A> [M] G1 2 40
+locus_M7 <A> [M] G0 4 4
+locus_M8 <A> [M] G0 5 3
+locus_M9 <A> [M] G0 6 2
+locus_M10 <A> [M] G0 7 1
+locus_S1 <A> [S] G3 500
+locus_S2 <A> [S] G3 500
+locus_S3 <A> [S] G0 500
+
+group priors (3)
+group G1 [M]
+MEANMU LN[1.00E-005,1.00E-3,1,1]
+GAMMU GA[1.00E-005,1.00E-002,Mean µ,1]
+MEANP UN[1.00E-001,6.00E-001,1,1]
+GAMP GA[1.00E-002,9.00E-001,Mean P,1]
+MEANSNI LN[1.00E-008,1.00E-004,1,1]
+GAMSNI GA[1.00E-009,1.00E-003,Mean µ_SNI,1]
+group G2 [M]
+MEANMU LN[1.00E-005,1.00E-3,1,1]
+GAMMU GA[1.00E-005,1.00E-002,Mean µ,1]
+MEANP UN[1.00E-001,6.00E-001,1,1]
+GAMP GA[1.00E-002,9.00E-001,Mean P,1]
+MEANSNI LN[1.00E-008,1.00E-004,1,1]
+GAMSNI GA[1.00E-009,1.00E-003,Mean µ_SNI,1]
+group G3 [S]
+MEANMU UN[1.00E-8,1.00E-7,1,1]
+GAMMU GA[1.00E-9,1.00E-6,Mean µ,1]
+MEANK1 UN[0.050,20,-9,2]
+GAMK1 GA[0.050,20,-9,2]
+MEANK2 UN[0.050,20,-9,2]
+GAMK2 GA[0.050,20,-9,2]
+MODEL JK 10 2.00
+
+group summary statistics (37)
+group G1 [M] (3)
+NAL 1 2 3 
+group G2 [M] (11)
+HET 2 
+V2P 2&3 
+AML 2&3&1 
+H2P 1&3 
+NAL 1 
+LIK 2&1 
+DM2 2&3 
+DAS 1&3 
+VAR 3 
+FST 1&3 
+N2P 1&2 
+group G3 [S] (23)
+MPD 3 
+NHA 1 
+DTA 1 2 3 
+MNS 1 2 3 
+VPD 2 
+MP2 2&3 
+SML 1&2&3 3&2&1 
+VNS 1 2 3 
+MPB 1&3 
+HST 1&2 
+NH2 1&2 
+PSS 1 2 3 
+NS2 1&3 
+NSS 2 
+
+N             X             F             t             D             t2            G             r1            µmic_1        pmic_1        snimic_1      µmic_2        pmic_2        snimic_2      µseq_3        NAL_1_1       NAL_1_2       NAL_1_3       NAL_2_1       HET_2_2       VAR_2_3       N2P_2_1&2     LIK_2_2&1     H2P_2_1&3     FST_2_1&3     DAS_2_1&3     V2P_2_2&3     DM2_2_2&3     AML_2_2&3&1   NHA_3_1       DTA_3_1       PSS_3_1       MNS_3_1       VNS_3_1       NSS_3_2       VPD_3_2       DTA_3_2       PSS_3_2       MNS_3_2       VNS_3_2       MPD_3_3       DTA_3_3       PSS_3_3       MNS_3_3       VNS_3_3       NH2_3_1&2     HST_3_1&2     NS2_3_1&3     MPB_3_1&3     MP2_3_2&3     SML_3_1&2&3   SML_3_3&2&1   
