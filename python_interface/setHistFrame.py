@@ -378,18 +378,14 @@ class SetHistoricalModel(QFrame):
     def drawScenarios(self,scenarios_info_list):
         """ lance la fenetre ou se trouveront les graphes des scenarios
         """
-        ## creation de la fenêtre
-        #self.draw_sc_win = drawScenario(scenarios_info_list,self)
-        #self.draw_sc_win.show()
-        #self.draw_sc_win.drawAll()
-
         self.draw_sc_win = DrawScenario(scenarios_info_list,self)
-        self.parent.addTab(self.draw_sc_win,"Draw scenarios")
+        self.parent.ui.refTableStack.addWidget(self.draw_sc_win)
+        self.parent.ui.refTableStack.setCurrentWidget(self.draw_sc_win)
 
-        self.parent.setTabEnabled(0,False)
-        self.parent.setTabEnabled(1,False)
-        self.parent.setTabEnabled(2,False)
-        self.parent.setCurrentWidget(self.draw_sc_win)
+        #self.parent.setTabEnabled(0,False)
+        #self.parent.setTabEnabled(1,False)
+        #self.parent.setTabEnabled(2,False)
+        #self.parent.setCurrentWidget(self.draw_sc_win)
         self.draw_sc_win.drawAll()
 
     def addParamGui(self,name,type_param,code_type_param):
@@ -638,11 +634,13 @@ class SetHistoricalModel(QFrame):
     def returnToProject(self):
         """ reactive les onglets du projet et efface celui du model historique
         """
-        # reactivation des onglets
-        self.parent.setTabEnabled(0,True)
-        self.parent.setTabEnabled(1,True)
-        self.parent.removeTab(self.parent.indexOf(self.parent.hist_model_win))
-        self.parent.setCurrentIndex(0)
+        ## reactivation des onglets
+        #self.parent.setTabEnabled(0,True)
+        #self.parent.setTabEnabled(1,True)
+        #self.parent.removeTab(self.parent.indexOf(self.parent.hist_model_win))
+        #self.parent.setCurrentIndex(0)
+        self.parent.ui.refTableStack.removeWidget(self)
+        self.parent.ui.refTableStack.setCurrentIndex(0)
 
     def closeEvent(self, event):
         # le cancel ne vérifie rien

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/drawScenarioFrame.ui'
 #
-# Created: Wed Feb  2 11:05:07 2011
+# Created: Thu Feb 10 15:22:26 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,5 +63,4 @@ class Ui_Frame(object):
         self.printButton.setText(QtGui.QApplication.translate("Frame", "PRINT", None, QtGui.QApplication.UnicodeUTF8))
         self.saveButton.setText(QtGui.QApplication.translate("Frame", "SAVE", None, QtGui.QApplication.UnicodeUTF8))
         self.closeButton.setText(QtGui.QApplication.translate("Frame", "CLOSE", None, QtGui.QApplication.UnicodeUTF8))
-        self.closeButton.setShortcut(QtGui.QApplication.translate("Frame", "Esc", None, QtGui.QApplication.UnicodeUTF8))
 

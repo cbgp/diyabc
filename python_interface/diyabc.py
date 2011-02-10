@@ -11,6 +11,7 @@ from PyQt4 import QtGui
 from diyabc_ui import Ui_MainWindow
 from project import *
 from preferences import Preferences
+from accueilWindow import Accueil
 
 class Diyabc(QMainWindow):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
@@ -38,6 +39,10 @@ class Diyabc(QMainWindow):
     def createWidgets(self):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        pic = QPixmap("/home/julien/images_diyabc/all1.png")
+        self.ui.imgLabel.setPixmap(pic)
+        self.switchToWelcomeStack()
 
         #proj1 = Project(self.ui,"ploproj")
         self.ui.tab_6.hide()
@@ -68,8 +73,30 @@ class Diyabc(QMainWindow):
         navigate_menu = self.ui.menubar.addMenu("Navigate")
         navigate_menu.addAction("Next Project",self.nextProject,QKeySequence(Qt.CTRL + Qt.Key_PageDown))
         navigate_menu.addAction("Previous Project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
+        help_menu = self.ui.menubar.addMenu("Help")
+        help_menu.addAction("About DIYABC",self.switchToWelcomeStack)
 	
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
+
+        QObject.connect(self.ui.openButton,SIGNAL("clicked()"),self.openToMainStack)
+        QObject.connect(self.ui.newButton,SIGNAL("clicked()"),self.newToMainStack)
+        QObject.connect(self.ui.skipButton,SIGNAL("clicked()"),self.switchToMainStack)
+
+    def switchToMainStack(self):
+        self.ui.menubar.show()
+        self.ui.stackedWidget.setCurrentIndex(0)
+
+    def switchToWelcomeStack(self):
+        self.ui.menubar.hide()
+        self.ui.stackedWidget.setCurrentIndex(1)
+
+    def newToMainStack(self):
+        self.newProject()
+        self.switchToMainStack()
+
+    def openToMainStack(self):
+        self.file_open()
+        self.switchToMainStack()
 
     def setPreferences(self):
         self.preferences_win.show()

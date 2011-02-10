@@ -286,23 +286,27 @@ class Project(QTabWidget):
     def setHistorical(self):
         """ passe sur l'onglet correspondant
         """
-        self.addTab(self.hist_model_win,"Set historical model")
+        #self.addTab(self.hist_model_win,"Set historical model")
 
-        self.setTabEnabled(0,False)
-        self.setTabEnabled(1,False)
-        # nécéssaire seulement sous windows
-        # on dirait que sous linux, le simple setCurrentWidget rend l'onglet enabled
-        self.setTabEnabled(self.count()-1,True)
-        self.setCurrentWidget(self.hist_model_win)
+        #self.setTabEnabled(0,False)
+        #self.setTabEnabled(1,False)
+        ## nécéssaire seulement sous windows
+        ## on dirait que sous linux, le simple setCurrentWidget rend l'onglet enabled
+        #self.setTabEnabled(self.count()-1,True)
+        #self.setCurrentWidget(self.hist_model_win)
+        self.ui.refTableStack.addWidget(self.hist_model_win)
+        self.ui.refTableStack.setCurrentWidget(self.hist_model_win)
         self.setHistValid(False)
 
     def setGenetic(self):
         """ passe sur l'onglet correspondant
         """
-        self.setTabEnabled(0,False)
-        self.setTabEnabled(1,False)
-        self.addTab(self.gen_data_win,"Set genetic data")
-        self.setCurrentWidget(self.gen_data_win)
+        #self.setTabEnabled(0,False)
+        #self.setTabEnabled(1,False)
+        #self.addTab(self.gen_data_win,"Set genetic data")
+        #self.setCurrentWidget(self.gen_data_win)
+        self.ui.refTableStack.addWidget(self.gen_data_win)
+        self.ui.refTableStack.setCurrentWidget(self.gen_data_win)
         self.setGenValid(False)
 
     def setNbScenarios(self,nb):

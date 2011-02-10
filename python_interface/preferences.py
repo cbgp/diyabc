@@ -12,6 +12,10 @@ class Preferences(QMainWindow):
         super(Preferences,self).__init__(parent)
         self.createWidgets()
 
+        self.ui.tabWidget.setTabText(0,"Connexion")
+        self.ui.tabWidget.setTabText(1,"def mut mod M")
+        self.ui.tabWidget.setTabText(2,"def mut mod S")
+
 
     def createWidgets(self):
         self.ui = Ui_MainWindow()

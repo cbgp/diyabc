@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Mon Jan 31 22:54:07 2011
+# Created: Thu Feb 10 15:03:46 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,9 +15,15 @@ class Ui_TabWidget(object):
         TabWidget.resize(975, 810)
         self.tabRefTable = QtGui.QWidget()
         self.tabRefTable.setObjectName("tabRefTable")
-        self.verticalLayout = QtGui.QVBoxLayout(self.tabRefTable)
+        self.verticalLayout_5 = QtGui.QVBoxLayout(self.tabRefTable)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.refTableStack = QtGui.QStackedWidget(self.tabRefTable)
+        self.refTableStack.setObjectName("refTableStack")
+        self.page = QtGui.QWidget()
+        self.page.setObjectName("page")
+        self.verticalLayout = QtGui.QVBoxLayout(self.page)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.horizontalFrame = QtGui.QFrame(self.tabRefTable)
+        self.horizontalFrame = QtGui.QFrame(self.page)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -98,7 +104,7 @@ class Ui_TabWidget(object):
         self.label_10.setObjectName("label_10")
         self.gridLayout_4.addWidget(self.label_10, 1, 3, 1, 1)
         self.verticalLayout.addWidget(self.horizontalFrame)
-        self.groupBox = QtGui.QGroupBox(self.tabRefTable)
+        self.groupBox = QtGui.QGroupBox(self.page)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -376,6 +382,8 @@ class Ui_TabWidget(object):
         self.gridLayout_11.addWidget(self.progressBar, 3, 0, 1, 1)
         self.verticalLayout_4.addWidget(self.groupBox_8)
         self.verticalLayout.addWidget(self.groupBox)
+        self.refTableStack.addWidget(self.page)
+        self.verticalLayout_5.addWidget(self.refTableStack)
         TabWidget.addTab(self.tabRefTable, "")
         self.tabAnalyses = QtGui.QWidget()
         self.tabAnalyses.setObjectName("tabAnalyses")

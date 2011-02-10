@@ -30,10 +30,12 @@ class DrawScenario(QFrame):
         QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.save)
 
     def exit(self):
-        # reactivation des onglets
-        self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
+        ## reactivation des onglets
+        #self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
+        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
+        self.parent.parent.ui.refTableStack.removeWidget(self)
+        self.parent.parent.ui.refTableStack.setCurrentWidget(self.parent)
 
     def drawAll(self):
         """ Pour tous les scenarios (sous forme d'un dico d'infos extraites de la verif)
