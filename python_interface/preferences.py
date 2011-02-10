@@ -23,11 +23,28 @@ class Preferences(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        #QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.savePreferences)
+        self.ui.gridLayout.setAlignment(Qt.AlignTop)
+        self.ui.verticalLayout_57.setAlignment(Qt.AlignTop)
+        self.ui.verticalLayout_54.setAlignment(Qt.AlignTop)
+        self.ui.verticalLayout_29.setAlignment(Qt.AlignTop)
+        self.ui.verticalLayout_26.setAlignment(Qt.AlignTop)
+
+        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.savePreferences)
         QObject.connect(self.ui.cancelButton,SIGNAL("clicked()"),self.close)
 
         #QObject.connect(self.ui.saveMMMButton,SIGNAL("clicked()"),self.saveMMM)
         #QObject.connect(self.ui.saveMMSButton,SIGNAL("clicked()"),self.saveMMS)
+
+    def savePreferences(self):
+        self.saveMMM()
+        self.saveMMS()
+        self.saveConnexion()
+        self.saveHM()
+        self.close()
+
+    # TODO
+    def saveHM(self):
+        pass
 
     def saveMMM(self):
         if not os.path.exists(os.path.expanduser("~/.diyabc/")):
@@ -46,18 +63,35 @@ class Preferences(QMainWindow):
     def saveMMS(self):
         pass
 
-    def loadConf(self):
-        if os.path.exists(os.path.expanduser("~/.diyabc/")) and os.path.exists(os.path.expanduser("~/.diyabc/mutationM_default_values")):
+    def saveConnexion(self):
+        pass
+
+    def loadPreferences(self):
+        if os.path.exists(os.path.expanduser("~/.diyabc/")):
+            self.loadMMM()
+            self.loadMMS()
+            self.loadConnexion()
+            self.loadHM()
+
+    def loadMMM(self):
+        if os.path.exists(os.path.expanduser("~/.diyabc/mutationM_default_values")):
             f = codecs.open(os.path.expanduser("~/.diyabc/mutationM_default_values"),"r","utf-8")
             lines = f.readlines()
             f.close()
             self.setMutationConf(lines)
         else:
-            print "no conf found"
+            print "no MMM conf found"
+
+    def loadMMS(self):
+        pass
+    def loadConnexion(self):
+        pass
+    def loadHM(self):
+        pass
         
 
     def getMutationConf(self):
-        """ renvoie les lignes à écrire dans la conf
+        """ renvoie les lignes à écrire dans la conf MMM
         """
         result = ""
         mmrMin =    str(self.ui.mmrMinEdit.text())
@@ -149,7 +183,7 @@ class Preferences(QMainWindow):
         return result
 
     def setMutationConf(self,lines):
-        """ set les valeurs depuis la conf
+        """ set les valeurs depuis la conf MMM
         """
         print "lines[0] : %s"%lines[0]
         mmrValues = lines[0].split('[')[1].split(']')[0].split(',')

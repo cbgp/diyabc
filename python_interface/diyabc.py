@@ -29,9 +29,11 @@ class Diyabc(QMainWindow):
         self.style_actions = {}
 
         self.preferences_win = Preferences(self)
-        self.preferences_win.loadConf()
+        self.preferences_win.loadPreferences()
+        #self.defaultMMMValues = self.preferences.getDicoMMM()
 
         self.createWidgets()
+        self.setWindowIcon(QIcon("docs/accueil_pictures/coccicon.png"))
 
         self.default_style = self.style_actions["Cleanlooks"]
         self.default_style.activate(QAction.Trigger)
