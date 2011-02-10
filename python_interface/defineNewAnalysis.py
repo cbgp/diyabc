@@ -44,9 +44,12 @@ class DefineNewAnalysis(QFrame):
                 analysis = ["compare"]
                 compFrame = Comparison(analysis,self)
                 genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,self)
-                self.parent.addTab(genSel,"Scenario selection")
-                self.parent.removeTab(self.parent.indexOf(self))
-                self.parent.setCurrentWidget(genSel)
+                #self.parent.addTab(genSel,"Scenario selection")
+                #self.parent.removeTab(self.parent.indexOf(self))
+                #self.parent.setCurrentWidget(genSel)
+                self.parent.ui.analysisStack.addWidget(genSel)
+                self.parent.ui.analysisStack.removeWidget(self)
+                self.parent.ui.analysisStack.setCurrentWidget(genSel)
             else:
                 QMessageBox.information(self,"Scenario error","At least 2 scenarios are needed for this analysis")
         elif self.ui.estimateRadio.isChecked():
@@ -54,9 +57,12 @@ class DefineNewAnalysis(QFrame):
                 analysis = ["estimate"]
                 estimateFrame = Estimation(analysis,self)
                 genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,self)
-                self.parent.addTab(genSel,"Scenario selection")
-                self.parent.removeTab(self.parent.indexOf(self))
-                self.parent.setCurrentWidget(genSel)
+                #self.parent.addTab(genSel,"Scenario selection")
+                #self.parent.removeTab(self.parent.indexOf(self))
+                #self.parent.setCurrentWidget(genSel)
+                self.parent.ui.analysisStack.addWidget(genSel)
+                self.parent.ui.analysisStack.removeWidget(self)
+                self.parent.ui.analysisStack.setCurrentWidget(genSel)
             else:
                 QMessageBox.information(self,"Scenario error","At least 1 scenario is needed for this analysis")
         elif self.ui.preEvRadio.isChecked():
@@ -72,24 +78,32 @@ class DefineNewAnalysis(QFrame):
         elif self.ui.biasRadio.isChecked():
             analysis = ["bias"]
             genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),False,analysis,self)
-            self.parent.addTab(genSel,"Scenario selection")
-            self.parent.removeTab(self.parent.indexOf(self))
-            self.parent.setCurrentWidget(genSel)
+            #self.parent.addTab(genSel,"Scenario selection")
+            #self.parent.removeTab(self.parent.indexOf(self))
+            #self.parent.setCurrentWidget(genSel)
+            self.parent.ui.analysisStack.addWidget(genSel)
+            self.parent.ui.analysisStack.removeWidget(self)
+            self.parent.ui.analysisStack.setCurrentWidget(genSel)
 
         elif self.ui.evaluateRadio.isChecked():
             analysis = ["evaluate"]
             genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),True,analysis,self)
-            self.parent.addTab(genSel,"Scenario selection")
-            self.parent.removeTab(self.parent.indexOf(self))
-            self.parent.setCurrentWidget(genSel)
+            #self.parent.addTab(genSel,"Scenario selection")
+            #self.parent.removeTab(self.parent.indexOf(self))
+            #self.parent.setCurrentWidget(genSel)
+            self.parent.ui.analysisStack.addWidget(genSel)
+            self.parent.ui.analysisStack.removeWidget(self)
+            self.parent.ui.analysisStack.setCurrentWidget(genSel)
 
         else:
             print "NYI"
 
     def exit(self):
-        # reactivation des onglets
-        self.parent.setTabEnabled(1,True)
-        self.parent.setTabEnabled(0,True)
-        self.parent.removeTab(self.parent.indexOf(self))
-        self.parent.setCurrentIndex(1)
+        ## reactivation des onglets
+        #self.parent.setTabEnabled(1,True)
+        #self.parent.setTabEnabled(0,True)
+        #self.parent.removeTab(self.parent.indexOf(self))
+        #self.parent.setCurrentIndex(1)
+        self.parent.ui.analysisStack.removeWidget(self)
+        self.parent.ui.analysisStack.setCurrentIndex(0)
 

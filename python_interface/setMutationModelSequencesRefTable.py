@@ -15,10 +15,12 @@ class SetMutationModelSequencesRefTable(SetMutationModelSequences):
         super(SetMutationModelSequencesRefTable,self).__init__(parent,box_group)
 
     def exit(self):
-        # reactivation des onglets
-        self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
+        ## reactivation des onglets
+        #self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
+        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
+        self.parent.parent.ui.refTableStack.removeWidget(self)
+        self.parent.parent.ui.refTableStack.setCurrentWidget(self.parent)
 
     def clear(self):
         self.parent.clearMutationModelSeq(self.box_group)

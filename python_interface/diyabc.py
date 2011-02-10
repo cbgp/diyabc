@@ -11,7 +11,6 @@ from PyQt4 import QtGui
 from diyabc_ui import Ui_MainWindow
 from project import *
 from preferences import Preferences
-from accueilWindow import Accueil
 
 class Diyabc(QMainWindow):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
@@ -40,7 +39,7 @@ class Diyabc(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        pic = QPixmap("/home/julien/images_diyabc/all1.png")
+        pic = QPixmap("docs/accueil_pictures/all1.png")
         self.ui.imgLabel.setPixmap(pic)
         self.switchToWelcomeStack()
 

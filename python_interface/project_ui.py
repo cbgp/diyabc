@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Thu Feb 10 15:03:46 2011
+# Created: Thu Feb 10 15:53:43 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -387,12 +387,18 @@ class Ui_TabWidget(object):
         TabWidget.addTab(self.tabRefTable, "")
         self.tabAnalyses = QtGui.QWidget()
         self.tabAnalyses.setObjectName("tabAnalyses")
-        self.gridLayout_2 = QtGui.QGridLayout(self.tabAnalyses)
-        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.verticalLayout_7 = QtGui.QVBoxLayout(self.tabAnalyses)
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.analysisStack = QtGui.QStackedWidget(self.tabAnalyses)
+        self.analysisStack.setObjectName("analysisStack")
+        self.page_2 = QtGui.QWidget()
+        self.page_2.setObjectName("page_2")
+        self.verticalLayout_6 = QtGui.QVBoxLayout(self.page_2)
+        self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setContentsMargins(0, -1, -1, -1)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.tableWidget = QtGui.QTableWidget(self.tabAnalyses)
+        self.tableWidget = QtGui.QTableWidget(self.page_2)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(6)
         self.tableWidget.setRowCount(0)
@@ -409,7 +415,7 @@ class Ui_TabWidget(object):
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(5, item)
         self.verticalLayout_2.addWidget(self.tableWidget)
-        self.newAnButton = QtGui.QPushButton(self.tabAnalyses)
+        self.newAnButton = QtGui.QPushButton(self.page_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -423,11 +429,16 @@ class Ui_TabWidget(object):
         self.newAnButton.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.newAnButton.setObjectName("newAnButton")
         self.verticalLayout_2.addWidget(self.newAnButton)
-        self.gridLayout_2.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
+        self.verticalLayout_6.addLayout(self.verticalLayout_2)
+        self.analysisStack.addWidget(self.page_2)
+        self.page_3 = QtGui.QWidget()
+        self.page_3.setObjectName("page_3")
+        self.analysisStack.addWidget(self.page_3)
+        self.verticalLayout_7.addWidget(self.analysisStack)
         TabWidget.addTab(self.tabAnalyses, "")
 
         self.retranslateUi(TabWidget)
-        TabWidget.setCurrentIndex(0)
+        TabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(TabWidget)
 
     def retranslateUi(self, TabWidget):

@@ -75,9 +75,13 @@ class Estimation(QFrame):
         """
         estimateFrame = self
         genSel = GenericScenarioSelection(len(self.parent.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,self.parent)
-        self.parent.parent.addTab(genSel,"Scenario selection")
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentWidget(genSel)
+        #self.parent.parent.addTab(genSel,"Scenario selection")
+        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        #self.parent.parent.setCurrentWidget(genSel)
+        self.parent.parent.ui.analysisStack.addWidget(genSel)
+        self.parent.parent.ui.analysisStack.removeWidget(self)
+        self.parent.parent.ui.analysisStack.setCurrentWidget(genSel)
+
 
     def majDicoValues(self):
         if self.ui.logRadio.isChecked():
@@ -98,9 +102,11 @@ class Estimation(QFrame):
         self.dico_values["choice"] = choice
 
     def exit(self):
-        # reactivation des onglets
-        self.parent.parent.setTabEnabled(1,True)
-        self.parent.parent.setTabEnabled(0,True)
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentIndex(1)
+        ## reactivation des onglets
+        #self.parent.parent.setTabEnabled(1,True)
+        #self.parent.parent.setTabEnabled(0,True)
+        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        #self.parent.parent.setCurrentIndex(1)
+        self.parent.parent.ui.analysisStack.removeWidget(self)
+        self.parent.parent.ui.analysisStack.setCurrentIndex(0)
 

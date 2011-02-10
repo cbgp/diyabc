@@ -102,11 +102,13 @@ class Project(QTabWidget):
 
     def defineNewAnalysis(self):
         def_analysis = DefineNewAnalysis(self)
-        self.addTab(def_analysis,"Define new analysis")
+        #self.addTab(def_analysis,"Define new analysis")
 
-        self.setTabEnabled(0,False)
-        self.setTabEnabled(1,False)
-        self.setCurrentWidget(def_analysis)
+        #self.setTabEnabled(0,False)
+        #self.setTabEnabled(1,False)
+        #self.setCurrentWidget(def_analysis)
+        self.ui.analysisStack.addWidget(def_analysis)
+        self.ui.analysisStack.setCurrentWidget(def_analysis)
 
 
     @pyqtSignature("")
@@ -314,11 +316,13 @@ class Project(QTabWidget):
     def setNbParams(self,nb):
         self.ui.nbParamLabel.setText(nb)
     def clearHistoricalModel(self):
-        self.removeTab(self.indexOf(self.hist_model_win))
+        #self.removeTab(self.indexOf(self.hist_model_win))
+        self.ui.refTableStack.removeWidget(self.hist_model_win)
         self.hist_model_win = SetHistoricalModel(self)
-        self.insertTab(2,self.hist_model_win,"Set historical model")
-        #self.setTabEnabled(self.indexOf(self.hist_model_win),False)
-        self.setCurrentWidget(self.hist_model_win)
+        #self.insertTab(2,self.hist_model_win,"Set historical model")
+        self.ui.refTableStack.insertWidget(0,self.hist_model_win)
+        #self.setCurrentWidget(self.hist_model_win)
+        self.ui.refTableStack.setCurrentWidget(self.hist_model_win)
 
     def loadFromDir(self):
         """ charge les infos à partir du répertoire self.dir

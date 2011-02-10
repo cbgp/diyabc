@@ -159,6 +159,11 @@ class SetGeneticData(QFrame):
 
         return groupBox
 
+    def switchTo(self,widget):
+        """ methode virtuelle a redefinir
+        """
+        pass
+
     def setMutation(self,box=None):
         """ déclenché par le clic sur le bouton 'set mutation model' ou par le clic sur 'clear'
         dans 'set mutation model'. bascule vers la saisie du modèle mutationnel
@@ -167,18 +172,20 @@ class SetGeneticData(QFrame):
             box = self.sender().parent()
         title = str(box.title())
         if "Microsatellites" in title:
-            self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
-            self.parent.setTabEnabled(self.parent.indexOf(self),False)
-            self.parent.setCurrentWidget(self.setMutation_dico[box])
+            #self.parent.addTab(self.setMutation_dico[box],"Set mutation model")
+            #self.parent.setTabEnabled(self.parent.indexOf(self),False)
+            #self.parent.setCurrentWidget(self.setMutation_dico[box])
+            self.switchTo(self.setMutation_dico[box])
             # maj du titre de la frame
             lab = self.setMutation_dico[box].ui.setMutMsLabel
             lab.setText("Set mutation model of %s (microsatellites)"%(" ".join(str(box.title()).split()[:2])))
             # on considère que le setmutation n'est plus valide, il faut le revalider
             self.setMutationValid_dico[box] = False
         elif "Sequences" in title:
-            self.parent.addTab(self.setMutationSeq_dico[box],"Set mutation model")
-            self.parent.setTabEnabled(self.parent.indexOf(self),False)
-            self.parent.setCurrentWidget(self.setMutationSeq_dico[box])
+            #self.parent.addTab(self.setMutationSeq_dico[box],"Set mutation model")
+            #self.parent.setTabEnabled(self.parent.indexOf(self),False)
+            #self.parent.setCurrentWidget(self.setMutationSeq_dico[box])
+            self.switchTo(self.setMutationSeq_dico[box])
             # maj du titre de la frame
             lab = self.setMutationSeq_dico[box].ui.setMutSeqLabel
             lab.setText("Set mutation model of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))

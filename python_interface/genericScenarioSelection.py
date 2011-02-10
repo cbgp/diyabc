@@ -38,9 +38,12 @@ class GenericScenarioSelection(QFrame):
     def validate(self):
         if len(self.getListSelectedScenarios()) >= self.nb_min_sel:
             self.next_widget.setScenarios(self.getListSelectedScenarios())
-            self.parent.parent.addTab(self.next_widget,self.next_title)
-            self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-            self.parent.parent.setCurrentWidget(self.next_widget)
+            #self.parent.parent.addTab(self.next_widget,self.next_title)
+            #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+            #self.parent.parent.setCurrentWidget(self.next_widget)
+            self.parent.parent.ui.analysisStack.addWidget(self.next_widget)
+            self.parent.parent.ui.analysisStack.removeWidget(self)
+            self.parent.parent.ui.analysisStack.setCurrentWidget(self.next_widget)
         else:
             QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%self.nb_min_sel)
 
@@ -80,9 +83,11 @@ class GenericScenarioSelection(QFrame):
             
 
     def exit(self):
-        # reactivation des onglets
-        self.parent.parent.setTabEnabled(1,True)
-        self.parent.parent.setTabEnabled(0,True)
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentIndex(1)
+        ## reactivation des onglets
+        #self.parent.parent.setTabEnabled(1,True)
+        #self.parent.parent.setTabEnabled(0,True)
+        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        #self.parent.parent.setCurrentIndex(1)
+        self.parent.parent.ui.analysisStack.removeWidget(self)
+        self.parent.parent.ui.analysisStack.setCurrentIndex(0)
 

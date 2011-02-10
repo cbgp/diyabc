@@ -390,16 +390,21 @@ class HistDrawn(QFrame):
             self.majParamInfoDico()
             self.analysis.append(self.param_info_dico)
             gen_data_analysis = SetGeneticDataAnalysis("drawn",self.analysis,self.parent.parent)
-            self.parent.parent.addTab(gen_data_analysis,"Genetic data")
-            self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-            self.parent.parent.setCurrentWidget(gen_data_analysis)
+            #self.parent.parent.addTab(gen_data_analysis,"Genetic data")
+            #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+            #self.parent.parent.setCurrentWidget(gen_data_analysis)
+            self.parent.parent.ui.analysisStack.addWidget(gen_data_analysis)
+            self.parent.parent.ui.analysisStack.removeWidget(self)
+            self.parent.parent.ui.analysisStack.setCurrentWidget(gen_data_analysis)
 
     def exit(self):
-        # reactivation des onglets
-        self.parent.parent.setTabEnabled(1,True)
-        self.parent.parent.setTabEnabled(0,True)
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentIndex(1)
+        ## reactivation des onglets
+        #self.parent.parent.setTabEnabled(1,True)
+        #self.parent.parent.setTabEnabled(0,True)
+        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        #self.parent.parent.setCurrentIndex(1)
+        self.parent.parent.ui.analysisStack.removeWidget(self)
+        self.parent.parent.ui.analysisStack.setCurrentIndex(0)
 
 
     def getNbParam(self):

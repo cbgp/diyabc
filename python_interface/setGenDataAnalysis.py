@@ -113,16 +113,18 @@ class SetGeneticDataAnalysis(SetGeneticData):
             box = self.sender().parent()
         title = str(box.title())
         if "Microsatellites" in title:
-            self.parent.addTab(self.setSum_dico[box],"Set summary statistics")
-            self.parent.setTabEnabled(self.parent.indexOf(self),False)
-            self.parent.setCurrentWidget(self.setSum_dico[box])
+            #self.parent.addTab(self.setSum_dico[box],"Set summary statistics")
+            #self.parent.setTabEnabled(self.parent.indexOf(self),False)
+            #self.parent.setCurrentWidget(self.setSum_dico[box])
+            self.switchTo(self.setSum_dico[box])
             # maj du titre de la frame
             lab = self.setSum_dico[box].ui.sumStatLabel
             lab.setText("Set summary statistics of %s (microsatellites)"%(" ".join(str(box.title()).split()[:2])))
         elif "Sequences" in title:
-            self.parent.addTab(self.setSumSeq_dico[box],"Set summary statistics")
-            self.parent.setTabEnabled(self.parent.indexOf(self),False)
-            self.parent.setCurrentWidget(self.setSumSeq_dico[box])
+            #self.parent.addTab(self.setSumSeq_dico[box],"Set summary statistics")
+            #self.parent.setTabEnabled(self.parent.indexOf(self),False)
+            #self.parent.setCurrentWidget(self.setSumSeq_dico[box])
+            self.switchTo(self.setSumSeq_dico[box])
             # maj du titre de la frame
             lab = self.setSumSeq_dico[box].ui.sumStatLabel
             lab.setText("Set summary statistics of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
@@ -131,15 +133,20 @@ class SetGeneticDataAnalysis(SetGeneticData):
 
 
 
+    def switchTo(self,widget):
+        """ on switche dans la stack analysis
+        """
+        self.parent.ui.analysisStack.addWidget(widget)
+        self.parent.ui.analysisStack.setCurrentWidget(widget)
 
     def exit(self):
-        """ on ferme l'onglet 'set genetic data' et on retourne sur l'onglet principal du projet
-        """
-        # reactivation des onglets
-        self.parent.setTabEnabled(0,True)
-        self.parent.setTabEnabled(1,True)
-        self.parent.removeTab(self.parent.indexOf(self))
-        self.parent.setCurrentIndex(1)
+        ## reactivation des onglets
+        #self.parent.setTabEnabled(0,True)
+        #self.parent.setTabEnabled(1,True)
+        #self.parent.removeTab(self.parent.indexOf(self))
+        #self.parent.setCurrentIndex(1)
+        self.parent.ui.analysisStack.removeWidget(self)
+        self.parent.ui.analysisStack.setCurrentIndex(0)
 
     def validate(self):
         """ clic sur le bouton validate
@@ -174,9 +181,12 @@ class SetGeneticDataAnalysis(SetGeneticData):
             else:
                 next_title = "evaluate confidence"
             last_parametrisation = Estimation(self.analysis,self)
-            self.parent.addTab(last_parametrisation,next_title)
-            self.parent.removeTab(self.parent.indexOf(self))
-            self.parent.setCurrentWidget(last_parametrisation)
+            #self.parent.addTab(last_parametrisation,next_title)
+            #self.parent.removeTab(self.parent.indexOf(self))
+            #self.parent.setCurrentWidget(last_parametrisation)
+            self.parent.ui.analysisStack.addWidget(last_parametrisation)
+            self.parent.ui.analysisStack.removeWidget(self)
+            self.parent.ui.analysisStack.setCurrentWidget(last_parametrisation)
             #self.parent.addAnalysis(self.analysis)
             #self.exit()
 

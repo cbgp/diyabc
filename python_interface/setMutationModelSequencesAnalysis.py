@@ -17,10 +17,12 @@ class SetMutationModelSequencesAnalysis(SetMutationModelSequences):
         self.ui.clearButton.hide()
 
     def exit(self):
-        # reactivation des onglets
-        self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
-        self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
+        ## reactivation des onglets
+        #self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
+        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
+        #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
+        self.parent.parent.ui.analysisStack.removeWidget(self)
+        self.parent.parent.ui.analysisStack.setCurrentIndex(0)
 
     def clear(self):
         pass
