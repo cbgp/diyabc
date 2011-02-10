@@ -1,19 +1,19 @@
 3 scenarios: 6 6 6 
-scenario 1 [0.33] (4)
+scenario 1 [0.33] (X)
 N X F
 0 sample 1
 0 sample 2
 0 sample 3
 t merge 1 2
 t merge 1 3
-scenario 2 [0.33] (5)
+scenario 2 [0.33] (X)
 N D F
 0 sample 1
 0 sample 2
 0 sample 3
 t merge 1 2
 t2 merge 1 3
-scenario 3 [11] (6)
+scenario 3 [11] (X)
 N G F
 0 sample 1
 0 sample 2
