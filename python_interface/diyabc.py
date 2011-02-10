@@ -29,6 +29,7 @@ class Diyabc(QMainWindow):
         self.style_actions = {}
 
         self.preferences_win = Preferences(self)
+        self.preferences_win.loadConf()
 
         self.createWidgets()
 

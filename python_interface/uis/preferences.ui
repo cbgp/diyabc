@@ -21,7 +21,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -78,20 +78,6 @@
            <widget class="QPushButton" name="connectButton">
             <property name="text">
              <string>Connect</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QPushButton" name="cancelButton">
-            <property name="text">
-             <string>Cancel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QPushButton" name="applyButton">
-            <property name="text">
-             <string>Apply</string>
             </property>
            </widget>
           </item>
@@ -3153,10 +3139,33 @@ around mean)</string>
          </layout>
         </item>
        </layout>
-       <zorder>layoutWidget</zorder>
-       <zorder>setMutSeqLabel</zorder>
-       <zorder>frame_6</zorder>
       </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame_10">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_26">
+       <item>
+        <widget class="QPushButton" name="cancelButton">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="saveButton">
+         <property name="text">
+          <string>Save</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>

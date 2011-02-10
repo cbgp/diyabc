@@ -264,28 +264,6 @@ class SetMutationModel(QFrame):
         self.ui.ilsrMeanEdit.setText(ilsrValues[2])
         self.ui.ilsrShapeEdit.setText(ilsrValues[3])
 
-
-    # TODO fille
-    #def exit(self):
-    #    # reactivation des onglets
-    #    self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
-    #    self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-    #    self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
-
-    # TODO fille
-    #def clear(self):
-    #    self.parent.clearMutationModel(self.box_group)
-
-    # TODO fille
-    #def validate(self):
-    #    """ vérifie la validité des informations entrées dans le mutation model
-    #    retourne au setGen tab et set la validité du mutation model du groupe
-    #    """
-    #    if self.allValid():
-    #        self.exit()
-    #        self.parent.setMutationValid_dico[self.box_group] = True
-    #        self.parent.writeGeneticConfFromGui()
-
     def allValid(self):
         """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur
         et retourne False
@@ -329,28 +307,4 @@ class SetMutationModel(QFrame):
         if float(str(self.ui.msrMinEdit.text())) < float(str(self.ui.msrMaxEdit.text())):
             nb_param += 1
         return nb_param
-
-    # TODO fille
-    #def getParamTableHeader(self):
-    #    result = u""
-    #    gnumber = self.parent.groupList.index(self.box_group)+1
-    #    if float(str(self.ui.mmrMinEdit.text())) < float(str(self.ui.mmrMaxEdit.text())):
-    #        pname = u"µmic_%s"%(gnumber)
-    #        result += pname
-    #        for i in range(14-len(pname)):
-    #            result += " "
-    #    if float(str(self.ui.mcpMinEdit.text())) < float(str(self.ui.mcpMaxEdit.text())):
-    #        pname = u"pmic_%s"%(gnumber)
-    #        result += pname
-    #        for i in range(14-len(pname)):
-    #            result += " "
-    #    if float(str(self.ui.msrMinEdit.text())) < float(str(self.ui.msrMaxEdit.text())):
-    #        pname = u"snimic_%s"%(gnumber)
-    #        result += pname
-    #        for i in range(14-len(pname)):
-    #            result += " "
-    #    #print "result %s : %s"%(gnumber,result)
-    #    return result
-
-
 

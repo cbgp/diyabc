@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Thu Feb 10 10:50:19 2011
+# Created: Thu Feb 10 18:12:31 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,12 +45,6 @@ class Ui_MainWindow(object):
         self.connectButton = QtGui.QPushButton(self.tab)
         self.connectButton.setObjectName("connectButton")
         self.gridLayout.addWidget(self.connectButton, 1, 2, 1, 1)
-        self.cancelButton = QtGui.QPushButton(self.tab)
-        self.cancelButton.setObjectName("cancelButton")
-        self.gridLayout.addWidget(self.cancelButton, 2, 1, 1, 1)
-        self.applyButton = QtGui.QPushButton(self.tab)
-        self.applyButton.setObjectName("applyButton")
-        self.gridLayout.addWidget(self.applyButton, 2, 2, 1, 1)
         self.verticalLayout_2.addLayout(self.gridLayout)
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtGui.QWidget()
@@ -1182,6 +1176,19 @@ class Ui_MainWindow(object):
         self.verticalLayout_56.addLayout(self.horizontalLayout_14)
         self.tabWidget.addTab(self.tab_3, "")
         self.verticalLayout.addWidget(self.tabWidget)
+        self.frame_10 = QtGui.QFrame(self.centralwidget)
+        self.frame_10.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame_10.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_10.setObjectName("frame_10")
+        self.horizontalLayout_26 = QtGui.QHBoxLayout(self.frame_10)
+        self.horizontalLayout_26.setObjectName("horizontalLayout_26")
+        self.cancelButton = QtGui.QPushButton(self.frame_10)
+        self.cancelButton.setObjectName("cancelButton")
+        self.horizontalLayout_26.addWidget(self.cancelButton)
+        self.saveButton = QtGui.QPushButton(self.frame_10)
+        self.saveButton.setObjectName("saveButton")
+        self.horizontalLayout_26.addWidget(self.saveButton)
+        self.verticalLayout.addWidget(self.frame_10)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1218, 23))
@@ -1192,7 +1199,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1200,8 +1207,6 @@ class Ui_MainWindow(object):
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Address of the server", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("MainWindow", "Port", None, QtGui.QApplication.UnicodeUTF8))
         self.connectButton.setText(QtGui.QApplication.translate("MainWindow", "Connect", None, QtGui.QApplication.UnicodeUTF8))
-        self.cancelButton.setText(QtGui.QApplication.translate("MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
-        self.applyButton.setText(QtGui.QApplication.translate("MainWindow", "Apply", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("MainWindow", "Tab 1", None, QtGui.QApplication.UnicodeUTF8))
         self.label_33.setText(QtGui.QApplication.translate("MainWindow", "Default values of mutation model for microsatellites", None, QtGui.QApplication.UnicodeUTF8))
         self.label_18.setText(QtGui.QApplication.translate("MainWindow", "Mean\n"
@@ -1368,4 +1373,6 @@ class Ui_MainWindow(object):
         self.label_66.setText(QtGui.QApplication.translate("MainWindow", "Shape of the gamma :", None, QtGui.QApplication.UnicodeUTF8))
         self.sotgEdit.setText(QtGui.QApplication.translate("MainWindow", "2.00", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("MainWindow", "Page", None, QtGui.QApplication.UnicodeUTF8))
+        self.cancelButton.setText(QtGui.QApplication.translate("MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        self.saveButton.setText(QtGui.QApplication.translate("MainWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
 
