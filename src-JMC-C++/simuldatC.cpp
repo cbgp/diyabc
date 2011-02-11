@@ -207,11 +207,14 @@ public:
                         }
                         if (np==2) {
                             this->scenario[i].condition[nc]=copycondition(this->condition[j]);
+                            this->scenario[i].condition[nc].ecris();
                             nc++;   
                         }                   
                     }
                 }
-            }
+                //cout <<"dans readheader  \n";
+                //this->scenario[i].ecris();
+           }
         }
 //Partie loci description
 		getline(file,s1);		//ligne vide
@@ -467,7 +470,11 @@ struct ParticleSetC
 		this->particule[p].nscenarios=this->header.nscenarios;
 		this->particule[p].drawuntil = this->header.drawuntil;
 		this->particule[p].scenario = new ScenarioC[this->header.nscenarios];
-		for (int i=0;i<this->header.nscenarios;i++) {this->particule[p].scenario[i] = copyscenario(this->header.scenario[i]);}
+		cout<<"dans setscenarios\n";
+		for (int i=0;i<this->header.nscenarios;i++) {
+		    this->particule[p].scenario[i] = copyscenario(this->header.scenario[i]);
+		    //this->particule[p].scenario[i].ecris();
+		}
 		this->particule[p].nparam=this->header.nparamtot;
 		this->particule[p].parameterlist = new HistParameterC[this->header.nparamtot];
 		for (int i=0;i<this->header.nparamtot;i++) this->particule[p].parameterlist[i] = copyhistparameter(this->header.histparam[i]);

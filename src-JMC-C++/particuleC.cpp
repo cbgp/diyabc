@@ -70,6 +70,8 @@ public:
 struct ConditionC
 {
 	string param1,param2,operateur;
+	
+	void ecris(){cout<<this->param1<<this->operateur<<this->param2<<"\n";}
 
 };
 
@@ -245,6 +247,8 @@ int i,j;
     	for (int i=0;i<this->nparam;i++) this->histparam[i].ecris();
     	cout<<"    histparamvar:\n";
      	for (int i=0;i<this->nparamvar;i++) this->histparamvar[i].ecris();
+     	cout <<"   nconditions="<<this->nconditions<<"\n";
+     	if (this->nconditions>0) for (int i=0;i<this->nconditions;i++) this->condition[i].ecris();
     }
 };
 
@@ -296,7 +300,7 @@ HistParameterC copyhistparameter(HistParameterC source) {
 ConditionC copycondition(ConditionC source) {
     ConditionC dest;
     dest.param1 = source.param1;
-    dest.param2 =source.param2;
+    dest.param2 = source.param2;
     dest.operateur = source.operateur;
     return dest;
 }
@@ -326,9 +330,9 @@ ScenarioC copyscenario(ScenarioC source) {
 	//cout<<"fin de la copie des histparam\n"<<flush;
 	dest.histparamvar = new HistParameterC[dest.nparamvar];
 	for (int i=0;i<dest.nparamvar;i++) {dest.histparamvar[i] = copyhistparameter(source.histparamvar[i]);/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
-	return dest;
 	dest.condition = new ConditionC[dest.nconditions];
 	for (int i=0;i<dest.nconditions;i++) dest.condition[i] = copycondition(source.condition[i]);
+	return dest;
 }
 
 
@@ -413,6 +417,7 @@ struct ParticleC
 			iscen++;sp +=this->scenario[iscen].prior_proba;
 		}
 		this->scen = copyscenario(this->scenario[iscen]);
+		this->scen.ecris();
 	}
 
 	GeneTreeC copytree(GeneTreeC source) {
@@ -466,7 +471,7 @@ struct ParticleC
 	double param2val(string paramname){
 		int ip;
 		for (ip=0;ip<this->nparam;ip++) {if (paramname==this->parameterlist[ip].name) break;}
-		if (this->parameterlist[ip].value<0.0) this->parameterlist[ip].value = this->drawfromprior(this->parameterlist[ip].prior);
+		//if (this->parameterlist[ip].value<0.0) this->parameterlist[ip].value = this->drawfromprior(this->parameterlist[ip].prior);
 		return this->parameterlist[ip].value;
 
 	}
@@ -511,23 +516,28 @@ struct ParticleC
 	    bool OK=true;
 	    int ip1,ip2;
 	    int i=0;
-	    while ((OK)and(i<this->nconditions)){
-	        ip1=0;while (this->condition [i].param1!=this->parameterlist[ip1].name) ip1++;
-	        ip2=0;while (this->condition [i].param2!=this->parameterlist[ip2].name) ip2++;
-	        cout << this->condition [i].param1<<" = "<< this->parameterlist[ip1].value<<   "\n";
-	        cout << this->condition [i].param2<<" = "<< this->parameterlist[ip2].value<<   "\n";
-	        if (this->condition[i].operateur==">") OK=(this->parameterlist[ip1].value > this->parameterlist[ip2].value);
-	        else if (this->condition[i].operateur=="<") OK=(this->parameterlist[ip1].value < this->parameterlist[ip2].value);
-	        else if (this->condition[i].operateur==">=") OK=(this->parameterlist[ip1].value >= this->parameterlist[ip2].value);
-	        else if (this->condition[i].operateur=="<=") OK=(this->parameterlist[ip1].value <= this->parameterlist[ip2].value);
+	    while ((OK)and(i<this->scen.nconditions)){
+	    cout<<"coucou\n";
+	        this->scen.condition[i].ecris();
+	        cout<<this->scen.condition[i].param1<<this->scen.condition[i].operateur<<this->scen.condition[i].param2<<"\n";
+	        cout<<"coco\n";
+	        ip1=0;while (this->scen.condition [i].param1!=this->scen.histparam[ip1].name) ip1++;
+	        ip2=0;while (this->scen.condition [i].param2!=this->scen.histparam[ip2].name) ip2++;
+	        cout << this->scen.condition [i].param1<<" = "<< this->scen.histparam[ip1].value<<   "\n";
+	        cout << this->scen.condition [i].param2<<" = "<< this->scen.histparam[ip2].value<<   "\n";
+	        if (this->scen.condition[i].operateur==">")       OK=(this->scen.histparam[ip1].value > this->scen.histparam[ip2].value);
+	        else if (this->scen.condition[i].operateur=="<")  OK=(this->scen.histparam[ip1].value < this->scen.histparam[ip2].value);
+	        else if (this->scen.condition[i].operateur==">=") OK=(this->scen.histparam[ip1].value >= this->scen.histparam[ip2].value);
+	        else if (this->scen.condition[i].operateur=="<=") OK=(this->scen.histparam[ip1].value <= this->scen.histparam[ip2].value);
+	        i++;
 	    }
 	    return OK;
 	}
 
 	bool setHistParamValue() {
 		bool OK;
-		cout <<this->nconditions <<" condition(s)\n";
-		if (this->nconditions>0) {
+		cout <<this->scen.nconditions <<" condition(s)\n";
+		if (this->scen.nconditions>0) {
 			if (drawuntil) {
 			    cout <<"drawuntil\n";
 				OK=false;
