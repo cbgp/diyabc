@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Thu Feb 10 21:52:02 2011
+# Created: Fri Feb 11 11:43:41 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -436,9 +436,24 @@ class Ui_TabWidget(object):
         self.analysisStack.addWidget(self.page_3)
         self.verticalLayout_7.addWidget(self.analysisStack)
         TabWidget.addTab(self.tabAnalyses, "")
+        self.tab = QtGui.QWidget()
+        self.tab.setObjectName("tab")
+        self.verticalLayout_8 = QtGui.QVBoxLayout(self.tab)
+        self.verticalLayout_8.setObjectName("verticalLayout_8")
+        self.drawButton = QtGui.QPushButton(self.tab)
+        self.drawButton.setObjectName("drawButton")
+        self.verticalLayout_8.addWidget(self.drawButton)
+        self.frame_3 = QtGui.QFrame(self.tab)
+        self.frame_3.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame_3.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_3.setObjectName("frame_3")
+        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.frame_3)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.verticalLayout_8.addWidget(self.frame_3)
+        TabWidget.addTab(self.tab, "")
 
         self.retranslateUi(TabWidget)
-        TabWidget.setCurrentIndex(0)
+        TabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(TabWidget)
 
     def retranslateUi(self, TabWidget):
@@ -479,4 +494,6 @@ class Ui_TabWidget(object):
         self.tableWidget.horizontalHeaderItem(5).setText(QtGui.QApplication.translate("TabWidget", "results", None, QtGui.QApplication.UnicodeUTF8))
         self.newAnButton.setText(QtGui.QApplication.translate("TabWidget", "Define new analysis", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tabAnalyses), QtGui.QApplication.translate("TabWidget", "Analyses", None, QtGui.QApplication.UnicodeUTF8))
+        self.drawButton.setText(QtGui.QApplication.translate("TabWidget", "draw", None, QtGui.QApplication.UnicodeUTF8))
+        TabWidget.setTabText(TabWidget.indexOf(self.tab), QtGui.QApplication.translate("TabWidget", "Page", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -17,6 +17,9 @@ from defineNewAnalysis import DefineNewAnalysis
 from data import Data
 from datetime import datetime 
 import os.path
+from PyQt4.Qwt5 import *
+from PyQt4.Qwt5.qplt import *
+
 
 class Project(QTabWidget):
     """ classe qui représente un projet
@@ -82,6 +85,8 @@ class Project(QTabWidget):
         QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
         QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
 
+        QObject.connect(self.ui.drawButton,SIGNAL("clicked()"),self.drawGraph)
+
         # inserer image
         self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
         self.ui.setGeneticButton.setIcon(QIcon("docs/redcross.png"))
@@ -99,6 +104,93 @@ class Project(QTabWidget):
         #self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
 
         self.th = None
+
+    def drawGraph(self):
+        f = open("docs/ACP.out","r")
+        lines = f.readlines()
+        f.close()
+        dico_points = {}
+
+        nb_composantes = (len(lines[0].split("  "))-1)/2
+
+        # pour chaque ligne
+        for i,l in enumerate(lines[1:]):
+            print i
+            tab = l.split("  ")
+            num_sc = int(tab[0])
+            # si le sc n'est pas encore dans le dico
+            if num_sc not in dico_points.keys():
+                dico_points[num_sc] = []
+                # on y ajoute ce qui va etre la liste des coords pour chaque composante
+                for j in range(nb_composantes):
+                    dico_points[num_sc].append({'x':[],'y':[]})
+
+            # on ajoute chaque point dans la composante correspondante
+            c = 1
+            num_compo = 0
+            while c < len(tab):
+                #print "compo %s"%c
+                #print "x: %s"%float(tab[c])
+                #print "y: %s"%float(tab[c+1])
+                dico_points[num_sc][num_compo]['x'].append( float(tab[c]) )
+                dico_points[num_sc][num_compo]['y'].append( float(tab[c+1]) )
+                c+=2
+                num_compo+=1
+
+            if i == 10000: break
+
+
+
+        p = QwtPlot()
+        p.setTitle("plop")
+
+        tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
+
+        compo = 3
+        for i in dico_points.keys():
+            c = QwtPlotCurve("Scenario %s"%i)
+            print "Scenario %s"%i
+            c.setStyle(QwtPlotCurve.Dots)
+            c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+                  QBrush(QColor(tab_colors[(i%20)])),
+                    QPen(Qt.black),
+                      QSize(7, 7)))
+            c.setData(dico_points[i][compo]['x'], dico_points[1][compo]['y'])
+            print dico_points[i][compo]['x']
+            c.attach(p)
+
+        #c2 = QwtPlotCurve("Scenario %s"%1)
+        #c2.setStyle(QwtPlotCurve.Dots)
+        #c2.setPen(QPen(Qt.red))
+        #c2.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+        #      QBrush(Qt.blue),
+        #        QPen(Qt.black),
+        #          QSize(7, 7)))
+        #c2.setData(dico_points[2][0]['x'], dico_points[2][0]['y'])
+        #c2.attach(p)
+
+        rp = QwtPlotCurve("Observed data set")
+        rp.setStyle(QwtPlotCurve.Dots)
+        rp.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+             QBrush(Qt.yellow),
+               QPen(Qt.black),
+                 QSize(17, 17)))
+        rp.setData([float(lines[0].split("  ")[1])],[float(lines[0].split("  ")[2])])
+        rp.attach(p)
+
+        p.replot()
+
+        #pix = QPixmap(400,400)
+        #pix.fill(Qt.white)
+        #painter = QPainter(pix)
+
+        #p.draw(painter,xMap,yMap,QRect(0,0,400,400))
+        #self.ui.drawLabel.setPixmap(pix)
+        self.ui.horizontalLayout_3.addWidget(p)
+
+
+
+
 
     def defineNewAnalysis(self):
         def_analysis = DefineNewAnalysis(self)
