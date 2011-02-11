@@ -13,7 +13,7 @@ int getwordint(string s,int num){
 		i++;
 	}
 	s=s.substr(0,s.find(" "));
-	if ((s.find("(")==0)or(s.find("[")==0)) s=s.substr(1,s.length()-1);
+	if ((s.find("(")==0)or(s.find("[")==0)) s=s.substr(1,s.length()-2);
 	return atoi(s.c_str());
 }
 
@@ -28,7 +28,7 @@ double getwordfloat(string s,int num){
 		i++;
 	}
 	s=s.substr(0,s.find(" "));
-	if ((s.find("(")==0)or(s.find("[")==0)) s=s.substr(1,s.length()-1);
+	if ((s.find("(")==0)or(s.find("[")==0)) s=s.substr(1,s.length()-2);
 	return atof(s.c_str());
 }
 

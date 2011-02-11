@@ -2,7 +2,7 @@ datatestms_001.txt
 13 parameters and  75 summary statistics
 
 3 scenarios 10 9 8
-scenario 1 [0.333333333333333]  (12)                        
+scenario 1 [0.333333333333333]  (8)                        
 N N N N N N
 0 sample 1
 0 sample 2
@@ -13,7 +13,7 @@ t2 merge 1 5
 t3 split 3 6 4 r2
 t4 merge 1 6
 t5 merge 1 4
-scenario 2 [0.333333333333333]  (10)                        
+scenario 2 [0.333333333333333]  (6)                        
 N N N N N
 0 sample 1
 0 sample 2
@@ -23,7 +23,7 @@ t1 split 2 5 3 r1
 t2 merge 1 5
 t3a merge 4 3
 t5 merge 1 4
-scenario 3 [0.333333333333333]  (8)                        
+scenario 3 [0.333333333333333]  (4)                        
 N N N N
 0 sample 1
 0 sample 2

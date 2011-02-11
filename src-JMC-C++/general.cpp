@@ -1,28 +1,20 @@
-/*
- * general.cpp
- *
- *  Created on: 25 jan. 2010
- *      Author: cornuet
- */
-
-#include <fstream>
 #include <iostream>
-#include "simuldatC.cpp"
 #include <string.h>
 
+#include "simuldatC.cpp"
 
-char *dir,*headerfilename,*datafilename,*logfilename;
 
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
+	char *myheaderfilename;
+	double **paramstat;
 	std::cout << argv[1]<<"\n";
-	headerfilename = new char[strlen(argv[1])+12];
-	strcpy(headerfilename,argv[1]);
-	strcat(headerfilename,"header.txt");
-	std::cout << headerfilename<<"\n";
+	myheaderfilename = new char[strlen(argv[1])+12];
+	strcat(myheaderfilename,"header.txt");
 	HeaderC header;
-	header.readHeader(headerfilename);
+	header.readHeader(myheaderfilename);
 	cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";
+	ParticleSetC ps;
+	paramstat = ps.dosimultabref(header,1,true);
 	return 0;
 }
