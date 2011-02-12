@@ -19,7 +19,7 @@ class SetMutationModelRefTable(SetMutationModel):
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
         self.parent.parent.ui.refTableStack.removeWidget(self)
-        self.parent.parent.ui.refTableStack.setCurrentIndex(self.parent)
+        self.parent.parent.ui.refTableStack.setCurrentWidget(self.parent)
 
     def clear(self):
         self.parent.clearMutationModel(self.box_group)
