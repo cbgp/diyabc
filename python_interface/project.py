@@ -87,9 +87,11 @@ class Project(QTabWidget):
 
         #QObject.connect(self.ui.drawButton,SIGNAL("clicked()"),self.drawGraph)
         QObject.connect(self.ui.loadButton,SIGNAL("clicked()"),self.loadACP)
+        QObject.connect(self.ui.saveGraphButton,SIGNAL("clicked()"),self.saveGraph)
         QObject.connect(self.ui.scCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         QObject.connect(self.ui.compoCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         QObject.connect(self.ui.nbpCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
+        self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
 
         # inserer image
         self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
@@ -159,68 +161,72 @@ class Project(QTabWidget):
             if sc != 0:
                 self.ui.scCombo.addItem("%s"%sc)
 
+    def drawGraphToPlot(self,legend,plot,num_sc,compo,nbp):
+        legend_txt = "Scenario %s"%num_sc
+        c = QwtPlotCurve(legend_txt)
+        c.setStyle(QwtPlotCurve.Dots)
+        c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+              QBrush(QColor(self.tab_colors[(num_sc%20)])),
+                QPen(Qt.black),
+                  QSize(7, 7)))
+        c.setData(self.dico_points[num_sc][compo]['x'][:nbp], self.dico_points[num_sc][compo]['y'][:nbp])
+        c.attach(plot)
+        c.updateLegend(legend)
+
+    def drawObservedToPlot(self,legend,plot,compo):
+        rp = QwtPlotCurve("Observed data set")
+        rp.setStyle(QwtPlotCurve.Dots)
+        rp.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+             QBrush(Qt.yellow),
+               QPen(Qt.black),
+                 QSize(17, 17)))
+        rp.setData(self.dico_points[0][compo]['x'],self.dico_points[0][compo]['y'])
+        rp.attach(plot)
+        rp.updateLegend(legend)
+
     def drawGraph(self):
         """ dessine le graphe en fonction des valeurs selectionnées
         """
         if self.ui.scCombo.currentText() != '':
-            p = QwtPlot()
-            p.setTitle("plop")
-
-            tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
-
             compo = int(self.ui.compoCombo.currentText())-1
             nbp = int(self.ui.nbpCombo.currentText())+1
+
+            p = QwtPlot()
+            p.setTitle("Graph of composant %s"%(compo+1))
+            legend = QwtLegend()
+
 
             if self.ui.scCombo.currentText() == "all":
                 for i in self.dico_points.keys():
                     # on ne fait pas le observed pour l'instant
                     if i != 0:
-                        c = QwtPlotCurve("Scenario %s"%i)
-                        #print "Scenario %s"%i
-                        c.setStyle(QwtPlotCurve.Dots)
-                        c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
-                              QBrush(QColor(tab_colors[(i%20)])),
-                                QPen(Qt.black),
-                                  QSize(7, 7)))
-                        c.setData(self.dico_points[i][compo]['x'][:nbp], self.dico_points[i][compo]['y'][:nbp])
-                        #print "len : %s"%len(self.dico_points[i][compo]['x'])
-                        #print dico_points[i][compo]['x']
-                        c.attach(p)
+                        self.drawGraphToPlot(legend,p,i,compo,nbp)
             else:
                 num_sc = int(self.ui.scCombo.currentText())
-                c = QwtPlotCurve("Scenario %s"%num_sc)
-                #print "Scenario %s"%i
-                c.setStyle(QwtPlotCurve.Dots)
-                c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
-                      QBrush(QColor(tab_colors[(num_sc%20)])),
-                        QPen(Qt.black),
-                          QSize(7, 7)))
-                c.setData(self.dico_points[num_sc][compo]['x'][:nbp], self.dico_points[num_sc][compo]['y'][:nbp])
-                #print dico_points[i][compo]['x']
-                c.attach(p)
+                self.drawGraphToPlot(legend,p,num_sc,compo,nbp)
 
-            rp = QwtPlotCurve("Observed data set")
-            rp.setStyle(QwtPlotCurve.Dots)
-            rp.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
-                 QBrush(Qt.yellow),
-                   QPen(Qt.black),
-                     QSize(17, 17)))
-            rp.setData(self.dico_points[0][compo]['x'],self.dico_points[0][compo]['y'])
-            rp.attach(p)
+            self.drawObservedToPlot(legend,p,compo)
 
+            p.insertLegend(legend)
             p.replot()
-
-            #pix = QPixmap(400,400)
-            #pix.fill(Qt.white)
-            #painter = QPainter(pix)
-
-            #p.draw(painter,xMap,yMap,QRect(0,0,400,400))
-            #self.ui.drawLabel.setPixmap(pix)
 
             if self.ui.horizontalLayout_3.itemAt(0) != None:
                 self.ui.horizontalLayout_3.itemAt(0).widget().hide()
             self.ui.horizontalLayout_3.removeItem(self.ui.horizontalLayout_3.itemAt(0))
             self.ui.horizontalLayout_3.addWidget(p)
+
+    def saveGraph(self):
+        if self.ui.horizontalLayout_3.itemAt(0) != None:
+            p = self.ui.horizontalLayout_3.itemAt(0).widget()
+
+            svg = QSvgGenerator()
+            svg.setFileName("/tmp/grapheee.svg")
+            svg.setSize(p.rect().size())
+
+            painter = QPainter(svg)
+            p.print_(painter, p.rect())
+            painter.end()
+
 
     def defineNewAnalysis(self):
         def_analysis = DefineNewAnalysis(self)
