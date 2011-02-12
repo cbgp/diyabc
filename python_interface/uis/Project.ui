@@ -960,10 +960,80 @@
    </attribute>
    <layout class="QVBoxLayout" name="verticalLayout_8">
     <item>
-     <widget class="QPushButton" name="drawButton">
-      <property name="text">
-       <string>draw</string>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QProgressBar" name="ACProgress">
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="loadButton">
+        <property name="text">
+         <string>load</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame_7">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>50</height>
+       </size>
       </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QComboBox" name="scCombo"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="compoCombo"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="nbpCombo">
+         <item>
+          <property name="text">
+           <string>1000</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2000</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>5000</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>10000</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>50000</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item>

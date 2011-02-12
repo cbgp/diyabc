@@ -85,7 +85,11 @@ class Project(QTabWidget):
         QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
         QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
 
-        QObject.connect(self.ui.drawButton,SIGNAL("clicked()"),self.drawGraph)
+        #QObject.connect(self.ui.drawButton,SIGNAL("clicked()"),self.drawGraph)
+        QObject.connect(self.ui.loadButton,SIGNAL("clicked()"),self.loadACP)
+        QObject.connect(self.ui.scCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
+        QObject.connect(self.ui.compoCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
+        QObject.connect(self.ui.nbpCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
 
         # inserer image
         self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
@@ -105,25 +109,31 @@ class Project(QTabWidget):
 
         self.th = None
 
-    def drawGraph(self):
+
+    def loadACP(self):
+        """ charge le fichier ACP dans un dico
+        """
+        self.ui.ACProgress.setValue(0)
+
         f = open("docs/ACP.out","r")
         lines = f.readlines()
         f.close()
-        dico_points = {}
+        self.dico_points = {}
 
         nb_composantes = (len(lines[0].split("  "))-1)/2
+        nb_lignes = len(lines)
 
         # pour chaque ligne
-        for i,l in enumerate(lines[1:]):
-            print i
+        for i,l in enumerate(lines):
+            self.ui.ACProgress.setValue((float(i)/float(nb_lignes)*100)+1)
             tab = l.split("  ")
             num_sc = int(tab[0])
             # si le sc n'est pas encore dans le dico
-            if num_sc not in dico_points.keys():
-                dico_points[num_sc] = []
+            if num_sc not in self.dico_points.keys():
+                self.dico_points[num_sc] = []
                 # on y ajoute ce qui va etre la liste des coords pour chaque composante
                 for j in range(nb_composantes):
-                    dico_points[num_sc].append({'x':[],'y':[]})
+                    self.dico_points[num_sc].append({'x':[],'y':[]})
 
             # on ajoute chaque point dans la composante correspondante
             c = 1
@@ -132,65 +142,85 @@ class Project(QTabWidget):
                 #print "compo %s"%c
                 #print "x: %s"%float(tab[c])
                 #print "y: %s"%float(tab[c+1])
-                dico_points[num_sc][num_compo]['x'].append( float(tab[c]) )
-                dico_points[num_sc][num_compo]['y'].append( float(tab[c+1]) )
+                self.dico_points[num_sc][num_compo]['x'].append( float(tab[c]) )
+                self.dico_points[num_sc][num_compo]['y'].append( float(tab[c+1]) )
                 c+=2
                 num_compo+=1
 
-            if i == 10000: break
+            #if i == 10000: break
 
+        # initialisation des combo
+        self.ui.compoCombo.clear()
+        for i in range(nb_composantes):
+            self.ui.compoCombo.addItem("%s"%(i+1))
+        self.ui.scCombo.clear()
+        self.ui.scCombo.addItem("all")
+        for sc in self.dico_points.keys():
+            if sc != 0:
+                self.ui.scCombo.addItem("%s"%sc)
 
+    def drawGraph(self):
+        """ dessine le graphe en fonction des valeurs selectionnées
+        """
+        if self.ui.scCombo.currentText() != '':
+            p = QwtPlot()
+            p.setTitle("plop")
 
-        p = QwtPlot()
-        p.setTitle("plop")
+            tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
 
-        tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
+            compo = int(self.ui.compoCombo.currentText())-1
+            nbp = int(self.ui.nbpCombo.currentText())+1
 
-        compo = 3
-        for i in dico_points.keys():
-            c = QwtPlotCurve("Scenario %s"%i)
-            print "Scenario %s"%i
-            c.setStyle(QwtPlotCurve.Dots)
-            c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
-                  QBrush(QColor(tab_colors[(i%20)])),
-                    QPen(Qt.black),
-                      QSize(7, 7)))
-            c.setData(dico_points[i][compo]['x'], dico_points[1][compo]['y'])
-            print dico_points[i][compo]['x']
-            c.attach(p)
+            if self.ui.scCombo.currentText() == "all":
+                for i in self.dico_points.keys():
+                    # on ne fait pas le observed pour l'instant
+                    if i != 0:
+                        c = QwtPlotCurve("Scenario %s"%i)
+                        #print "Scenario %s"%i
+                        c.setStyle(QwtPlotCurve.Dots)
+                        c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+                              QBrush(QColor(tab_colors[(i%20)])),
+                                QPen(Qt.black),
+                                  QSize(7, 7)))
+                        c.setData(self.dico_points[i][compo]['x'][:nbp], self.dico_points[i][compo]['y'][:nbp])
+                        #print "len : %s"%len(self.dico_points[i][compo]['x'])
+                        #print dico_points[i][compo]['x']
+                        c.attach(p)
+            else:
+                num_sc = int(self.ui.scCombo.currentText())
+                c = QwtPlotCurve("Scenario %s"%num_sc)
+                #print "Scenario %s"%i
+                c.setStyle(QwtPlotCurve.Dots)
+                c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+                      QBrush(QColor(tab_colors[(num_sc%20)])),
+                        QPen(Qt.black),
+                          QSize(7, 7)))
+                c.setData(self.dico_points[num_sc][compo]['x'][:nbp], self.dico_points[num_sc][compo]['y'][:nbp])
+                #print dico_points[i][compo]['x']
+                c.attach(p)
 
-        #c2 = QwtPlotCurve("Scenario %s"%1)
-        #c2.setStyle(QwtPlotCurve.Dots)
-        #c2.setPen(QPen(Qt.red))
-        #c2.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
-        #      QBrush(Qt.blue),
-        #        QPen(Qt.black),
-        #          QSize(7, 7)))
-        #c2.setData(dico_points[2][0]['x'], dico_points[2][0]['y'])
-        #c2.attach(p)
+            rp = QwtPlotCurve("Observed data set")
+            rp.setStyle(QwtPlotCurve.Dots)
+            rp.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+                 QBrush(Qt.yellow),
+                   QPen(Qt.black),
+                     QSize(17, 17)))
+            rp.setData(self.dico_points[0][compo]['x'],self.dico_points[0][compo]['y'])
+            rp.attach(p)
 
-        rp = QwtPlotCurve("Observed data set")
-        rp.setStyle(QwtPlotCurve.Dots)
-        rp.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
-             QBrush(Qt.yellow),
-               QPen(Qt.black),
-                 QSize(17, 17)))
-        rp.setData([float(lines[0].split("  ")[1])],[float(lines[0].split("  ")[2])])
-        rp.attach(p)
+            p.replot()
 
-        p.replot()
+            #pix = QPixmap(400,400)
+            #pix.fill(Qt.white)
+            #painter = QPainter(pix)
 
-        #pix = QPixmap(400,400)
-        #pix.fill(Qt.white)
-        #painter = QPainter(pix)
+            #p.draw(painter,xMap,yMap,QRect(0,0,400,400))
+            #self.ui.drawLabel.setPixmap(pix)
 
-        #p.draw(painter,xMap,yMap,QRect(0,0,400,400))
-        #self.ui.drawLabel.setPixmap(pix)
-        self.ui.horizontalLayout_3.addWidget(p)
-
-
-
-
+            if self.ui.horizontalLayout_3.itemAt(0) != None:
+                self.ui.horizontalLayout_3.itemAt(0).widget().hide()
+            self.ui.horizontalLayout_3.removeItem(self.ui.horizontalLayout_3.itemAt(0))
+            self.ui.horizontalLayout_3.addWidget(p)
 
     def defineNewAnalysis(self):
         def_analysis = DefineNewAnalysis(self)
