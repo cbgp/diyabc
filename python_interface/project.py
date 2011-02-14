@@ -214,7 +214,7 @@ class Project(QTabWidget):
             # le conteneur auquel on va ajouter des curves
             p = QwtPlot()
             p.setCanvasBackground(Qt.white)
-            p.setTitle("Graph of component %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
+            p.setTitle("Component %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
             legend = QwtLegend()
             #legend.setItemMode(QwtLegend.CheckableItem)
 
@@ -230,33 +230,52 @@ class Project(QTabWidget):
 
             # on fait le observed à la fin pour qu'il soit au dessus des autres
             # et donc visible
-            rp = self.drawObservedToPlot(legend,p,compo_h,compo_v)
+            obs = self.drawObservedToPlot(legend,p,compo_h,compo_v)
 
-            for it in legend.legendItems():
-                f = it.font()
-                f.setPointSize(14)
-                it.setFont(f)
-            litem = legend.find(rp)
-            litem.symbol().setSize(QSize(17,17))
-            litem.setIdentifierWidth(17)
-            legend.setFrameShape(QFrame.Box)
-            legend.setFrameShadow(QFrame.Raised)
-
+            self.fancyfyGraph(legend,p,obs)
             p.insertLegend(legend,QwtPlot.RightLegend)
             p.setAxisTitle(0,"P.C.%s (50%%)"%(compo_v+1))
             p.setAxisTitle(2,"P.C.%s (60%%)"%(compo_h+1))
-            #sd = p.axisScaleDiv(0)
-            #print sd.ticks(QwtScaleDiv.MajorTick)
-            #sd.setTicks()
-            #p.setAxisScaleDiv(0,sd)
-            grid = QwtPlotGrid()
-            grid.attach(p)
             p.replot()
 
             if self.ui.horizontalLayout_3.itemAt(0) != None:
                 self.ui.horizontalLayout_3.itemAt(0).widget().hide()
             self.ui.horizontalLayout_3.removeItem(self.ui.horizontalLayout_3.itemAt(0))
             self.ui.horizontalLayout_3.addWidget(p)
+
+    def fancyfyGraph(self,legend,p,obs):
+            for it in legend.legendItems():
+                f = it.font()
+                f.setPointSize(14)
+                it.setFont(f)
+            litem = legend.find(obs)
+            litem.symbol().setSize(QSize(17,17))
+            litem.setIdentifierWidth(17)
+            legend.setFrameShape(QFrame.Box)
+            legend.setFrameShadow(QFrame.Raised)
+
+            p.replot()
+            sd = p.axisScaleDiv(0)
+            interval = sd.interval()
+            minv = interval.minValue()
+            maxv = interval.maxValue()
+            inc = 1.0
+            if maxv-minv < 9:
+                inc = 0.5
+            if maxv-minv < 5:
+                inc = 0.2
+            if maxv-minv < 3:
+                inc = 0.1
+            ticks = []
+            vv = minv
+            while vv < maxv:
+                ticks.append(round(vv,1))
+                vv += inc
+            #print sd.ticks(QwtScaleDiv.MajorTick)
+            sd.setTicks(QwtScaleDiv.MajorTick,ticks)
+            p.setAxisScaleDiv(0,sd)
+            grid = QwtPlotGrid()
+            grid.attach(p)
 
     def saveGraph(self):
         """ sauvegarde le graphe dans le dossier PCA_pictures du projet
