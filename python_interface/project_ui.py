@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Sat Feb 12 18:39:40 2011
+# Created: Mon Feb 14 10:16:47 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -469,13 +469,13 @@ class Ui_TabWidget(object):
         self.gridLayout_2.addWidget(self.label_3, 0, 1, 1, 1)
         self.label_5 = QtGui.QLabel(self.frame_7)
         self.label_5.setObjectName("label_5")
-        self.gridLayout_2.addWidget(self.label_5, 0, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.label_5, 0, 3, 1, 1)
         self.scCombo = QtGui.QComboBox(self.frame_7)
         self.scCombo.setObjectName("scCombo")
         self.gridLayout_2.addWidget(self.scCombo, 1, 0, 1, 1)
-        self.compoCombo = QtGui.QComboBox(self.frame_7)
-        self.compoCombo.setObjectName("compoCombo")
-        self.gridLayout_2.addWidget(self.compoCombo, 1, 1, 1, 1)
+        self.compoHCombo = QtGui.QComboBox(self.frame_7)
+        self.compoHCombo.setObjectName("compoHCombo")
+        self.gridLayout_2.addWidget(self.compoHCombo, 1, 1, 1, 1)
         self.nbpCombo = QtGui.QComboBox(self.frame_7)
         self.nbpCombo.setObjectName("nbpCombo")
         self.nbpCombo.addItem("")
@@ -483,7 +483,13 @@ class Ui_TabWidget(object):
         self.nbpCombo.addItem("")
         self.nbpCombo.addItem("")
         self.nbpCombo.addItem("")
-        self.gridLayout_2.addWidget(self.nbpCombo, 1, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.nbpCombo, 1, 3, 1, 1)
+        self.label_7 = QtGui.QLabel(self.frame_7)
+        self.label_7.setObjectName("label_7")
+        self.gridLayout_2.addWidget(self.label_7, 0, 2, 1, 1)
+        self.compoVCombo = QtGui.QComboBox(self.frame_7)
+        self.compoVCombo.setObjectName("compoVCombo")
+        self.gridLayout_2.addWidget(self.compoVCombo, 1, 2, 1, 1)
         self.verticalLayout_8.addWidget(self.frame_7)
         self.frame_3 = QtGui.QFrame(self.tab)
         self.frame_3.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -539,12 +545,13 @@ class Ui_TabWidget(object):
         self.loadButton.setText(QtGui.QApplication.translate("TabWidget", "load", None, QtGui.QApplication.UnicodeUTF8))
         self.saveGraphButton.setText(QtGui.QApplication.translate("TabWidget", "save", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("TabWidget", "Scenario to draw", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("TabWidget", "Composant to draw", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("TabWidget", "Horizontal axis component", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("TabWidget", "Number of plots per scenario", None, QtGui.QApplication.UnicodeUTF8))
         self.nbpCombo.setItemText(0, QtGui.QApplication.translate("TabWidget", "1000", None, QtGui.QApplication.UnicodeUTF8))
         self.nbpCombo.setItemText(1, QtGui.QApplication.translate("TabWidget", "2000", None, QtGui.QApplication.UnicodeUTF8))
         self.nbpCombo.setItemText(2, QtGui.QApplication.translate("TabWidget", "5000", None, QtGui.QApplication.UnicodeUTF8))
         self.nbpCombo.setItemText(3, QtGui.QApplication.translate("TabWidget", "10000", None, QtGui.QApplication.UnicodeUTF8))
         self.nbpCombo.setItemText(4, QtGui.QApplication.translate("TabWidget", "50000", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("TabWidget", "Vertical axis component", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tab), QtGui.QApplication.translate("TabWidget", "Page", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -1015,11 +1015,11 @@
        <item row="0" column="1">
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Composant to draw</string>
+          <string>Horizontal axis component</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="0" column="3">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Number of plots per scenario</string>
@@ -1030,9 +1030,9 @@
         <widget class="QComboBox" name="scCombo"/>
        </item>
        <item row="1" column="1">
-        <widget class="QComboBox" name="compoCombo"/>
+        <widget class="QComboBox" name="compoHCombo"/>
        </item>
-       <item row="1" column="2">
+       <item row="1" column="3">
         <widget class="QComboBox" name="nbpCombo">
          <item>
           <property name="text">
@@ -1060,6 +1060,16 @@
           </property>
          </item>
         </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Vertical axis component</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QComboBox" name="compoVCombo"/>
        </item>
       </layout>
      </widget>

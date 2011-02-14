@@ -89,7 +89,8 @@ class Project(QTabWidget):
         QObject.connect(self.ui.loadButton,SIGNAL("clicked()"),self.loadACP)
         QObject.connect(self.ui.saveGraphButton,SIGNAL("clicked()"),self.saveGraph)
         QObject.connect(self.ui.scCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
-        QObject.connect(self.ui.compoCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
+        QObject.connect(self.ui.compoHCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
+        QObject.connect(self.ui.compoVCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         QObject.connect(self.ui.nbpCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
 
@@ -122,7 +123,7 @@ class Project(QTabWidget):
         f.close()
         self.dico_points = {}
 
-        nb_composantes = (len(lines[0].split("  "))-1)/2
+        nb_composantes = (len(lines[0].split("  "))-1)
         nb_lignes = len(lines)
 
         # pour chaque ligne
@@ -135,33 +136,32 @@ class Project(QTabWidget):
                 self.dico_points[num_sc] = []
                 # on y ajoute ce qui va etre la liste des coords pour chaque composante
                 for j in range(nb_composantes):
-                    self.dico_points[num_sc].append({'x':[],'y':[]})
+                    self.dico_points[num_sc].append([])
 
-            # on ajoute chaque point dans la composante correspondante
+            # on ajoute chaque coordonnée dans la composante correspondante
             c = 1
-            num_compo = 0
             while c < len(tab):
                 #print "compo %s"%c
                 #print "x: %s"%float(tab[c])
                 #print "y: %s"%float(tab[c+1])
-                self.dico_points[num_sc][num_compo]['x'].append( float(tab[c]) )
-                self.dico_points[num_sc][num_compo]['y'].append( float(tab[c+1]) )
-                c+=2
-                num_compo+=1
+                self.dico_points[num_sc][c-1].append( float(tab[c]) )
+                c+=1
 
             #if i == 10000: break
 
         # initialisation des combo
-        self.ui.compoCombo.clear()
+        self.ui.compoHCombo.clear()
+        self.ui.compoVCombo.clear()
         for i in range(nb_composantes):
-            self.ui.compoCombo.addItem("%s"%(i+1))
+            self.ui.compoHCombo.addItem("%s"%(i+1))
+            self.ui.compoVCombo.addItem("%s"%(i+1))
         self.ui.scCombo.clear()
         self.ui.scCombo.addItem("all")
         for sc in self.dico_points.keys():
             if sc != 0:
                 self.ui.scCombo.addItem("%s"%sc)
 
-    def drawGraphToPlot(self,legend,plot,num_sc,compo,nbp):
+    def drawGraphToPlot(self,legend,plot,num_sc,compo_h,compo_v,nbp):
         legend_txt = "Scenario %s"%num_sc
         c = QwtPlotCurve(legend_txt)
         c.setStyle(QwtPlotCurve.Dots)
@@ -169,18 +169,18 @@ class Project(QTabWidget):
               QBrush(QColor(self.tab_colors[(num_sc%20)])),
                 QPen(Qt.black),
                   QSize(7, 7)))
-        c.setData(self.dico_points[num_sc][compo]['x'][:nbp], self.dico_points[num_sc][compo]['y'][:nbp])
+        c.setData(self.dico_points[num_sc][compo_h][:nbp], self.dico_points[num_sc][compo_v][:nbp])
         c.attach(plot)
         c.updateLegend(legend)
 
-    def drawObservedToPlot(self,legend,plot,compo):
+    def drawObservedToPlot(self,legend,plot,compo_h,compo_v):
         rp = QwtPlotCurve("Observed data set")
         rp.setStyle(QwtPlotCurve.Dots)
         rp.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
              QBrush(Qt.yellow),
                QPen(Qt.black),
                  QSize(17, 17)))
-        rp.setData(self.dico_points[0][compo]['x'],self.dico_points[0][compo]['y'])
+        rp.setData(self.dico_points[0][compo_h],self.dico_points[0][compo_v])
         rp.attach(plot)
         rp.updateLegend(legend)
 
@@ -188,11 +188,13 @@ class Project(QTabWidget):
         """ dessine le graphe en fonction des valeurs selectionnées
         """
         if self.ui.scCombo.currentText() != '':
-            compo = int(self.ui.compoCombo.currentText())-1
+            compo_h = int(self.ui.compoHCombo.currentText())-1
+            compo_v = int(self.ui.compoVCombo.currentText())-1
             nbp = int(self.ui.nbpCombo.currentText())+1
 
             p = QwtPlot()
-            p.setTitle("Graph of composant %s"%(compo+1))
+            p.setCanvasBackground(Qt.white)
+            p.setTitle("Graph of component %s and %s"%(compo_h+1,compo_v+1))
             legend = QwtLegend()
 
 
@@ -200,14 +202,18 @@ class Project(QTabWidget):
                 for i in self.dico_points.keys():
                     # on ne fait pas le observed pour l'instant
                     if i != 0:
-                        self.drawGraphToPlot(legend,p,i,compo,nbp)
+                        self.drawGraphToPlot(legend,p,i,compo_h,compo_v,nbp)
             else:
                 num_sc = int(self.ui.scCombo.currentText())
-                self.drawGraphToPlot(legend,p,num_sc,compo,nbp)
+                self.drawGraphToPlot(legend,p,num_sc,compo_h,compo_v,nbp)
 
-            self.drawObservedToPlot(legend,p,compo)
+            self.drawObservedToPlot(legend,p,compo_h,compo_v)
 
             p.insertLegend(legend)
+            p.setAxisTitle(0,"P.C.%s (50%%)"%(compo_v+1))
+            p.setAxisTitle(2,"P.C.%s (60%%)"%(compo_h+1))
+            grid = QwtPlotGrid()
+            grid.attach(p)
             p.replot()
 
             if self.ui.horizontalLayout_3.itemAt(0) != None:
