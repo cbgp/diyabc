@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'uis/setMutationmodel.ui'
 #
-# Created: Wed Jan 26 14:12:41 2011
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon Feb 14 13:29:42 2011
+#      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -658,5 +658,5 @@ class Ui_Frame(object):
         self.ilsrShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_35.setText(QtGui.QApplication.translate("Frame", "(1) Set the shape to 0 if you want all individuals loci to take the same value (=mean)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_34.setText(QtGui.QApplication.translate("Frame", "(2) Set the maximum to 0 if you only want a Stepwise Mutation Model (SMM)", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_33.setText(QtGui.QApplication.translate("Frame", "(3) Set the maximum to 0 if you want to exclude Singlz Nucleotide Insertion/deletions", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_33.setText(QtGui.QApplication.translate("Frame", "(3) Set the maximum to 0 if you want to exclude Single Nucleotide Insertion/deletions", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -37,15 +37,21 @@ class SetGeneticDataRefTable(SetGeneticData):
         les setsumstats 
         """
         groupBox = super(SetGeneticDataRefTable,self).addGroup()
+
         frame = SetMutationModelRefTable(self,groupBox)
+        frame.setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))
         self.setMutation_dico[groupBox] = frame
         frame.hide()
+
         frameSeq = SetMutationModelSequencesRefTable(self,groupBox)
+        frame.setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
         self.setMutationSeq_dico[groupBox] = frameSeq
         frameSeq.hide()
+
         frameSum = SetSummaryStatistics(self,groupBox)
         self.setSum_dico[groupBox] = frameSum
         frameSum.hide()
+
         frameSumSeq = SetSummaryStatisticsSeq(self,groupBox)
         self.setSumSeq_dico[groupBox] = frameSumSeq
         frameSumSeq.hide()

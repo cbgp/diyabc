@@ -511,16 +511,46 @@ class SetHistoricalModel(QFrame):
 
         if type_param == "unique":
             setCondButton.hide()
-        if code_type_param == "N" or code_type_param == "T":
-            minValueParamEdit.setText("10")
-            maxValueParamEdit.setText("10000")
-            stepValueParamEdit.setText("1")
+        pref = self.parent.parent.preferences_win
+        if code_type_param == "N":
+            minValueParamEdit.setText(pref.ui.NminEdit.text())
+            maxValueParamEdit.setText(pref.ui.NmaxEdit.text())
+            meanValueParamEdit.setText(pref.ui.NmeanEdit.text())
+            stValueParamEdit.setText(pref.ui.NstdevEdit.text())
+            if pref.ui.NUNRadio.isChecked():
+                uniformParamRadio.setChecked(True)
+            elif pref.ui.NLNRadio.isChecked():
+                logUniformRadio.setChecked(True)
+            elif pref.ui.NLURadio.isChecked():
+                logUniformRadio.setChecked(True)
+            else:
+                normalRadio.setChecked(True)
+        if code_type_param == "T":
+            minValueParamEdit.setText(pref.ui.TminEdit.text())
+            maxValueParamEdit.setText(pref.ui.TmaxEdit.text())
+            meanValueParamEdit.setText(pref.ui.TmeanEdit.text())
+            stValueParamEdit.setText(pref.ui.TstdevEdit.text())
+            if pref.ui.TUNRadio.isChecked():
+                uniformParamRadio.setChecked(True)
+            elif pref.ui.TLNRadio.isChecked():
+                logUniformRadio.setChecked(True)
+            elif pref.ui.TLURadio.isChecked():
+                logUniformRadio.setChecked(True)
+            else:
+                normalRadio.setChecked(True)
         elif code_type_param == "A":
-            minValueParamEdit.setText("0.001")
-            maxValueParamEdit.setText("0.999")
-            stepValueParamEdit.setText("0.001")
-        meanValueParamEdit.setText("0")
-        stValueParamEdit.setText("0")
+            minValueParamEdit.setText(pref.ui.AminEdit.text())
+            maxValueParamEdit.setText(pref.ui.AmaxEdit.text())
+            meanValueParamEdit.setText(pref.ui.AmeanEdit.text())
+            stValueParamEdit.setText(pref.ui.AstdevEdit.text())
+            if pref.ui.AUNRadio.isChecked():
+                uniformParamRadio.setChecked(True)
+            elif pref.ui.ALNRadio.isChecked():
+                logUniformRadio.setChecked(True)
+            elif pref.ui.ALURadio.isChecked():
+                logUniformRadio.setChecked(True)
+            else:
+                normalRadio.setChecked(True)
 
 
 

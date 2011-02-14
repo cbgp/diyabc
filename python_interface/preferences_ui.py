@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Mon Feb 14 12:03:11 2011
+# Created: Mon Feb 14 14:36:59 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -501,6 +501,8 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Address of the server", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("MainWindow", "Port", None, QtGui.QApplication.UnicodeUTF8))
+        self.addrEdit.setText(QtGui.QApplication.translate("MainWindow", "localhost", None, QtGui.QApplication.UnicodeUTF8))
+        self.portEdit.setText(QtGui.QApplication.translate("MainWindow", "666", None, QtGui.QApplication.UnicodeUTF8))
         self.connectButton.setText(QtGui.QApplication.translate("MainWindow", "Connect", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("MainWindow", "Tab 1", None, QtGui.QApplication.UnicodeUTF8))
         self.setMutSeqLabel_2.setText(QtGui.QApplication.translate("MainWindow", "Default values of historical model", None, QtGui.QApplication.UnicodeUTF8))
@@ -514,8 +516,20 @@ class Ui_MainWindow(object):
         self.label_73.setText(QtGui.QApplication.translate("MainWindow", "mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_74.setText(QtGui.QApplication.translate("MainWindow", "st-deviation", None, QtGui.QApplication.UnicodeUTF8))
         self.label_75.setText(QtGui.QApplication.translate("MainWindow", "Type N", None, QtGui.QApplication.UnicodeUTF8))
+        self.NminEdit.setText(QtGui.QApplication.translate("MainWindow", "10", None, QtGui.QApplication.UnicodeUTF8))
+        self.NmaxEdit.setText(QtGui.QApplication.translate("MainWindow", "10000", None, QtGui.QApplication.UnicodeUTF8))
+        self.NmeanEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
+        self.NstdevEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
         self.label_77.setText(QtGui.QApplication.translate("MainWindow", "Type T", None, QtGui.QApplication.UnicodeUTF8))
+        self.TminEdit.setText(QtGui.QApplication.translate("MainWindow", "10", None, QtGui.QApplication.UnicodeUTF8))
+        self.TmaxEdit.setText(QtGui.QApplication.translate("MainWindow", "10000", None, QtGui.QApplication.UnicodeUTF8))
+        self.TmeanEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
+        self.TstdevEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
         self.label_76.setText(QtGui.QApplication.translate("MainWindow", "Type A", None, QtGui.QApplication.UnicodeUTF8))
+        self.AminEdit.setText(QtGui.QApplication.translate("MainWindow", "0.001", None, QtGui.QApplication.UnicodeUTF8))
+        self.AmaxEdit.setText(QtGui.QApplication.translate("MainWindow", "0.999", None, QtGui.QApplication.UnicodeUTF8))
+        self.AmeanEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
+        self.AstdevEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtGui.QApplication.translate("MainWindow", "Page", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelButton.setText(QtGui.QApplication.translate("MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))

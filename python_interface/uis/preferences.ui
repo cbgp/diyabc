@@ -87,10 +87,18 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLineEdit" name="addrEdit"/>
+           <widget class="QLineEdit" name="addrEdit">
+            <property name="text">
+             <string>localhost</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="portEdit"/>
+           <widget class="QLineEdit" name="portEdit">
+            <property name="text">
+             <string>666</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="2">
            <widget class="QPushButton" name="connectButton">
@@ -651,16 +659,32 @@
                <number>1</number>
               </property>
               <item>
-               <widget class="QLineEdit" name="NminEdit"/>
+               <widget class="QLineEdit" name="NminEdit">
+                <property name="text">
+                 <string>10</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="NmaxEdit"/>
+               <widget class="QLineEdit" name="NmaxEdit">
+                <property name="text">
+                 <string>10000</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="NmeanEdit"/>
+               <widget class="QLineEdit" name="NmeanEdit">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="NstdevEdit"/>
+               <widget class="QLineEdit" name="NstdevEdit">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -830,16 +854,32 @@
                <number>1</number>
               </property>
               <item>
-               <widget class="QLineEdit" name="TminEdit"/>
+               <widget class="QLineEdit" name="TminEdit">
+                <property name="text">
+                 <string>10</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="TmaxEdit"/>
+               <widget class="QLineEdit" name="TmaxEdit">
+                <property name="text">
+                 <string>10000</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="TmeanEdit"/>
+               <widget class="QLineEdit" name="TmeanEdit">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="TstdevEdit"/>
+               <widget class="QLineEdit" name="TstdevEdit">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -1009,16 +1049,32 @@
                <number>1</number>
               </property>
               <item>
-               <widget class="QLineEdit" name="AminEdit"/>
+               <widget class="QLineEdit" name="AminEdit">
+                <property name="text">
+                 <string>0.001</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="AmaxEdit"/>
+               <widget class="QLineEdit" name="AmaxEdit">
+                <property name="text">
+                 <string>0.999</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="AmeanEdit"/>
+               <widget class="QLineEdit" name="AmeanEdit">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="AstdevEdit"/>
+               <widget class="QLineEdit" name="AstdevEdit">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
