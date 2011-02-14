@@ -229,10 +229,22 @@ class Project(QTabWidget):
 
     def saveGraph(self):
         if self.ui.horizontalLayout_3.itemAt(0) != None:
+            proj_dir = self.dir
+            graph_dir = self.parent.PCA_dir_name
+            sc_txt = ""
+            if self.ui.scCombo.currentText() != "all":
+                sc_txt = "_sc_%s"%self.ui.scCombo.currentText()
+            if not os.path.exists("%s/%s"%(proj_dir,graph_dir)):
+                os.mkdir("%s/%s"%(proj_dir,graph_dir))
+
+            graph_file_name = "refTable_PCA_%s_%s_%s%s"%(self.ui.compoHCombo.currentText(),self.ui.compoVCombo.currentText(),self.ui.nbpCombo.currentText(),sc_txt)
+            if os.path.exists(graph_file_name):
+                os.remove(graph_file_name)
+
             p = self.ui.horizontalLayout_3.itemAt(0).widget()
 
             svg = QSvgGenerator()
-            svg.setFileName("/tmp/grapheee.svg")
+            svg.setFileName("%s/%s/%s.svg"%(proj_dir,graph_dir,graph_file_name))
             svg.setSize(p.rect().size())
 
             painter = QPainter(svg)

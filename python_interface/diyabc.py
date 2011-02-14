@@ -22,6 +22,7 @@ class Diyabc(QMainWindow):
         self.hist_conf_name = "cont.hist.tmp"
         self.scenario_pix_dir_name = "scenario_pictures"
         self.scenario_pix_basename = "scenario"
+        self.PCA_dir_name = "PCA_pictures"
 
         self.styles = []
         for i in QStyleFactory.keys():
