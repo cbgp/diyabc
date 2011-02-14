@@ -396,3 +396,10 @@ class SetMutationModelSequences(QFrame):
 
 
 
+    def exit(self):
+        pass
+    def clear(self):
+        pass
+    def validate(self):
+        pass
+

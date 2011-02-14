@@ -308,3 +308,10 @@ class SetMutationModel(QFrame):
             nb_param += 1
         return nb_param
 
+    def exit(self):
+        pass
+    def clear(self):
+        pass
+    def validate(self):
+        pass
+

@@ -92,6 +92,7 @@ class Project(QTabWidget):
         QObject.connect(self.ui.compoHCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         QObject.connect(self.ui.compoVCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         QObject.connect(self.ui.nbpCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
+        self.ui.ACProgress.setValue(0)
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
 
         # inserer image
@@ -128,7 +129,9 @@ class Project(QTabWidget):
 
         # pour chaque ligne
         for i,l in enumerate(lines):
-            self.ui.ACProgress.setValue((float(i)/float(nb_lignes)*100)+1)
+            pc = (float(i)/float(nb_lignes)*100)+1
+            if (int(pc) % 2) == 0:
+                self.ui.ACProgress.setValue(pc)
             tab = l.split("  ")
             num_sc = int(tab[0])
             # si le sc n'est pas encore dans le dico
@@ -155,6 +158,9 @@ class Project(QTabWidget):
         for i in range(nb_composantes):
             self.ui.compoHCombo.addItem("%s"%(i+1))
             self.ui.compoVCombo.addItem("%s"%(i+1))
+        if nb_composantes > 1:
+            self.ui.compoHCombo.setCurrentIndex(0)
+            self.ui.compoVCombo.setCurrentIndex(1)
         self.ui.scCombo.clear()
         self.ui.scCombo.addItem("all")
         for sc in self.dico_points.keys():

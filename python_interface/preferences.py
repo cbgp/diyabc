@@ -6,6 +6,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from preferences_ui import Ui_MainWindow
+from setMutationModel import SetMutationModel
+from setMutationModelSequences import SetMutationModelSequences
 
 class Preferences(QMainWindow):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
@@ -15,8 +17,11 @@ class Preferences(QMainWindow):
         self.createWidgets()
 
         self.ui.tabWidget.setTabText(0,"Connexion")
-        self.ui.tabWidget.setTabText(1,"def mut mod M")
-        self.ui.tabWidget.setTabText(2,"def mut mod S")
+        self.ui.tabWidget.setTabText(1,"def hist")
+        self.mutmodM = SetMutationModel(self)
+        self.mutmodS = SetMutationModelSequences(self)
+        self.ui.tabWidget.addTab(self.mutmodM,"MM Microsats")
+        self.ui.tabWidget.addTab(self.mutmodS,"MM Sequences")
 
 
     def createWidgets(self):
@@ -24,10 +29,10 @@ class Preferences(QMainWindow):
         self.ui.setupUi(self)
 
         self.ui.gridLayout.setAlignment(Qt.AlignTop)
-        self.ui.verticalLayout_57.setAlignment(Qt.AlignTop)
-        self.ui.verticalLayout_54.setAlignment(Qt.AlignTop)
-        self.ui.verticalLayout_29.setAlignment(Qt.AlignTop)
-        self.ui.verticalLayout_26.setAlignment(Qt.AlignTop)
+        #self.ui.verticalLayout_57.setAlignment(Qt.AlignTop)
+        #self.ui.verticalLayout_54.setAlignment(Qt.AlignTop)
+        #self.ui.verticalLayout_29.setAlignment(Qt.AlignTop)
+        #self.ui.verticalLayout_26.setAlignment(Qt.AlignTop)
 
         QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.savePreferences)
         QObject.connect(self.ui.cancelButton,SIGNAL("clicked()"),self.close)
@@ -45,7 +50,9 @@ class Preferences(QMainWindow):
     # TODO
     def saveHM(self):
         pass
-
+    def loadHM(self):
+        pass
+        
     def saveMMM(self):
         if not os.path.exists(os.path.expanduser("~/.diyabc/")):
             os.mkdir(os.path.expanduser("~/.diyabc/"))
@@ -61,9 +68,28 @@ class Preferences(QMainWindow):
 
 
     def saveMMS(self):
-        pass
+        if not os.path.exists(os.path.expanduser("~/.diyabc/")):
+            os.mkdir(os.path.expanduser("~/.diyabc/"))
+        else:
+            if os.path.exists(os.path.expanduser("~/.diyabc/mutationS_default_values")):
+                os.remove(os.path.expanduser("~/.diyabc/mutationS_default_values"))
+        lines = self.getMutationSConf()
+        f = codecs.open(os.path.expanduser("~/.diyabc/mutationS_default_values"),"w","utf-8")
+        f.write(lines)
+        f.close()
+
+    def loadMMS(self):
+        if os.path.exists(os.path.expanduser("~/.diyabc/mutationS_default_values")):
+            f = codecs.open(os.path.expanduser("~/.diyabc/mutationS_default_values"),"r","utf-8")
+            lines = f.readlines()
+            f.close()
+            self.setMutationSConf(lines)
+        else:
+            print "no MMM conf found"
 
     def saveConnexion(self):
+        pass
+    def loadConnexion(self):
         pass
 
     def loadPreferences(self):
@@ -74,21 +100,8 @@ class Preferences(QMainWindow):
             self.loadHM()
 
     def loadMMM(self):
-        if os.path.exists(os.path.expanduser("~/.diyabc/mutationM_default_values")):
-            f = codecs.open(os.path.expanduser("~/.diyabc/mutationM_default_values"),"r","utf-8")
-            lines = f.readlines()
-            f.close()
-            self.setMutationConf(lines)
-        else:
-            print "no MMM conf found"
+        pass
 
-    def loadMMS(self):
-        pass
-    def loadConnexion(self):
-        pass
-    def loadHM(self):
-        pass
-        
 
     def getMutationConf(self):
         """ renvoie les lignes à écrire dans la conf MMM

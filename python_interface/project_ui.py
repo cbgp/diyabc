@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Mon Feb 14 10:16:47 2011
+# Created: Mon Feb 14 11:39:20 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -501,7 +501,7 @@ class Ui_TabWidget(object):
         TabWidget.addTab(self.tab, "")
 
         self.retranslateUi(TabWidget)
-        TabWidget.setCurrentIndex(2)
+        TabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(TabWidget)
 
     def retranslateUi(self, TabWidget):
