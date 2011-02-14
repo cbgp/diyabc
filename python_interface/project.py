@@ -234,6 +234,10 @@ class Project(QTabWidget):
 
             self.fancyfyGraph(legend,p,obs)
             p.insertLegend(legend,QwtPlot.RightLegend)
+            pm = QwtPlotMagnifier(p.canvas())
+            pp = QwtPlotPanner(p.canvas())
+            #pz = QwtPlotZoomer(p.canvas())
+            #ppi = QwtPlotPicker(p.canvas())
             p.setAxisTitle(0,"P.C.%s (50%%)"%(compo_v+1))
             p.setAxisTitle(2,"P.C.%s (60%%)"%(compo_h+1))
             p.replot()
