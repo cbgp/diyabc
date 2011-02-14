@@ -18,7 +18,7 @@ N G F
 0 sample 1
 0 sample 2
 0 sample 3 
-t split 3 1 2 r1
+t split 3 1 2 r33
 t2 merge 1 2
 
 historical parameters priors (8,2)
@@ -29,7 +29,7 @@ t T LN[10,10000,0,0,1] False
 D N UN[10,10000,0,0,1] True
 t2 T UN[10,10000,0,0,1] True
 G N UN[10,10000,0,0,1] True
-r1 A UN[0.001,0.999,0,0,0.001] False
+r33 A NO[0.022,0.999,0.0,0.0,] False
 D>G
 F<=N
 DRAW ONCE

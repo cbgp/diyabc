@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Mon Feb 14 14:36:59 2011
+# Created: Mon Feb 14 15:02:34 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -240,6 +240,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_32.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_32.setObjectName("horizontalLayout_32")
         self.label_75 = QtGui.QLabel(self.groupBox_17)
+        self.label_75.setAlignment(QtCore.Qt.AlignCenter)
         self.label_75.setObjectName("label_75")
         self.horizontalLayout_32.addWidget(self.label_75)
         self.horizontalLayout_31.addWidget(self.groupBox_17)
@@ -324,6 +325,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_36.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_36.setObjectName("horizontalLayout_36")
         self.label_77 = QtGui.QLabel(self.groupBox_20)
+        self.label_77.setAlignment(QtCore.Qt.AlignCenter)
         self.label_77.setObjectName("label_77")
         self.horizontalLayout_36.addWidget(self.label_77)
         self.horizontalLayout_35.addWidget(self.groupBox_20)
@@ -408,6 +410,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_40.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_40.setObjectName("horizontalLayout_40")
         self.label_76 = QtGui.QLabel(self.groupBox_23)
+        self.label_76.setAlignment(QtCore.Qt.AlignCenter)
         self.label_76.setObjectName("label_76")
         self.horizontalLayout_40.addWidget(self.label_76)
         self.horizontalLayout_39.addWidget(self.groupBox_23)
@@ -515,17 +518,19 @@ class Ui_MainWindow(object):
         self.label_72.setText(QtGui.QApplication.translate("MainWindow", "maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.label_73.setText(QtGui.QApplication.translate("MainWindow", "mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_74.setText(QtGui.QApplication.translate("MainWindow", "st-deviation", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_75.setText(QtGui.QApplication.translate("MainWindow", "Type N", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_75.setText(QtGui.QApplication.translate("MainWindow", "Effective\n"
+"population size", None, QtGui.QApplication.UnicodeUTF8))
         self.NminEdit.setText(QtGui.QApplication.translate("MainWindow", "10", None, QtGui.QApplication.UnicodeUTF8))
         self.NmaxEdit.setText(QtGui.QApplication.translate("MainWindow", "10000", None, QtGui.QApplication.UnicodeUTF8))
         self.NmeanEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
         self.NstdevEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_77.setText(QtGui.QApplication.translate("MainWindow", "Type T", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_77.setText(QtGui.QApplication.translate("MainWindow", "Time in generation", None, QtGui.QApplication.UnicodeUTF8))
         self.TminEdit.setText(QtGui.QApplication.translate("MainWindow", "10", None, QtGui.QApplication.UnicodeUTF8))
         self.TmaxEdit.setText(QtGui.QApplication.translate("MainWindow", "10000", None, QtGui.QApplication.UnicodeUTF8))
         self.TmeanEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
         self.TstdevEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_76.setText(QtGui.QApplication.translate("MainWindow", "Type A", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_76.setText(QtGui.QApplication.translate("MainWindow", "Admixture\n"
+"coefficient", None, QtGui.QApplication.UnicodeUTF8))
         self.AminEdit.setText(QtGui.QApplication.translate("MainWindow", "0.001", None, QtGui.QApplication.UnicodeUTF8))
         self.AmaxEdit.setText(QtGui.QApplication.translate("MainWindow", "0.999", None, QtGui.QApplication.UnicodeUTF8))
         self.AmeanEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))

@@ -44,7 +44,7 @@ class SetGeneticDataRefTable(SetGeneticData):
         frame.hide()
 
         frameSeq = SetMutationModelSequencesRefTable(self,groupBox)
-        frame.setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
+        frameSeq.setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
         self.setMutationSeq_dico[groupBox] = frameSeq
         frameSeq.hide()
 
@@ -56,9 +56,7 @@ class SetGeneticDataRefTable(SetGeneticData):
         self.setSumSeq_dico[groupBox] = frameSumSeq
         frameSumSeq.hide()
 
-
-
-
+        return groupBox
 
     def setSum(self,box=None):
         """ déclenché par le clic sur le bouton 'set summary statistics' ou par le clic sur 'clear'

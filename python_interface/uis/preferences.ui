@@ -557,7 +557,11 @@
               <item>
                <widget class="QLabel" name="label_75">
                 <property name="text">
-                 <string>Type N</string>
+                 <string>Effective
+population size</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
@@ -752,7 +756,10 @@
               <item>
                <widget class="QLabel" name="label_77">
                 <property name="text">
-                 <string>Type T</string>
+                 <string>Time in generation</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
@@ -947,7 +954,11 @@
               <item>
                <widget class="QLabel" name="label_76">
                 <property name="text">
-                 <string>Type A</string>
+                 <string>Admixture
+coefficient</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
