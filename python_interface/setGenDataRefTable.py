@@ -338,11 +338,13 @@ class SetGeneticDataRefTable(SetGeneticData):
     def clearMutationModel(self,box):
         self.setMutation_dico[box].exit()
         self.setMutation_dico[box] = SetMutationModelRefTable(self,box)
+        self.setMutation_dico[box].setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))
         self.setMutation(box)
 
     def clearMutationModelSeq(self,box):
         self.setMutationSeq_dico[box].exit()
         self.setMutationSeq_dico[box] = SetMutationModelSequences(self,box)
+        self.setMutationSeq_dico[box].setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
         self.setMutation(box)
 
     def clearSummaryStats(self,box):
