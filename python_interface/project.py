@@ -116,6 +116,7 @@ class Project(QTabWidget):
 
     def loadACP(self):
         """ charge le fichier ACP dans un dico
+        et initialise les combo boxes
         """
         self.ui.ACProgress.setValue(0)
 
@@ -168,6 +169,9 @@ class Project(QTabWidget):
                 self.ui.scCombo.addItem("%s"%sc)
 
     def drawGraphToPlot(self,legend,plot,num_sc,compo_h,compo_v,nbp):
+        """ dessine les points pour un scenario, deux components, sur plot et met à jour legend
+        le tout limité à nbp points
+        """
         legend_txt = "Scenario %s"%num_sc
         c = QwtPlotCurve(legend_txt)
         c.setStyle(QwtPlotCurve.Dots)
@@ -180,6 +184,8 @@ class Project(QTabWidget):
         c.updateLegend(legend)
 
     def drawObservedToPlot(self,legend,plot,compo_h,compo_v):
+        """ dessine le point observé sur plot pour les deux components donnés
+        """
         rp = QwtPlotCurve("Observed data set")
         rp.setStyle(QwtPlotCurve.Dots)
         rp.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
@@ -189,19 +195,28 @@ class Project(QTabWidget):
         rp.setData(self.dico_points[0][compo_h],self.dico_points[0][compo_v])
         rp.attach(plot)
         rp.updateLegend(legend)
+        return rp
 
     def drawGraph(self):
-        """ dessine le graphe en fonction des valeurs selectionnées
+        """ dessine le graphe entier en fonction des valeurs selectionnées
         """
+        # on attend que les combo soient initialisés pour dessiner
         if self.ui.scCombo.currentText() != '':
             compo_h = int(self.ui.compoHCombo.currentText())-1
             compo_v = int(self.ui.compoVCombo.currentText())-1
             nbp = int(self.ui.nbpCombo.currentText())+1
 
+            sc_txt = ""
+            if self.ui.scCombo.currentText() != "all":
+                sc_txt = "_sc_%s"%self.ui.scCombo.currentText()
+            graph_file_name = "refTable_PCA_%s_%s_%s%s"%(self.ui.compoHCombo.currentText(),self.ui.compoVCombo.currentText(),self.ui.nbpCombo.currentText(),sc_txt)
+
+            # le conteneur auquel on va ajouter des curves
             p = QwtPlot()
             p.setCanvasBackground(Qt.white)
-            p.setTitle("Graph of component %s and %s"%(compo_h+1,compo_v+1))
+            p.setTitle("Graph of component %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
             legend = QwtLegend()
+            #legend.setItemMode(QwtLegend.CheckableItem)
 
 
             if self.ui.scCombo.currentText() == "all":
@@ -213,11 +228,27 @@ class Project(QTabWidget):
                 num_sc = int(self.ui.scCombo.currentText())
                 self.drawGraphToPlot(legend,p,num_sc,compo_h,compo_v,nbp)
 
-            self.drawObservedToPlot(legend,p,compo_h,compo_v)
+            # on fait le observed à la fin pour qu'il soit au dessus des autres
+            # et donc visible
+            rp = self.drawObservedToPlot(legend,p,compo_h,compo_v)
 
-            p.insertLegend(legend)
+            for it in legend.legendItems():
+                f = it.font()
+                f.setPointSize(14)
+                it.setFont(f)
+            litem = legend.find(rp)
+            litem.symbol().setSize(QSize(17,17))
+            litem.setIdentifierWidth(17)
+            legend.setFrameShape(QFrame.Box)
+            legend.setFrameShadow(QFrame.Raised)
+
+            p.insertLegend(legend,QwtPlot.RightLegend)
             p.setAxisTitle(0,"P.C.%s (50%%)"%(compo_v+1))
             p.setAxisTitle(2,"P.C.%s (60%%)"%(compo_h+1))
+            #sd = p.axisScaleDiv(0)
+            #print sd.ticks(QwtScaleDiv.MajorTick)
+            #sd.setTicks()
+            #p.setAxisScaleDiv(0,sd)
             grid = QwtPlotGrid()
             grid.attach(p)
             p.replot()
@@ -228,6 +259,8 @@ class Project(QTabWidget):
             self.ui.horizontalLayout_3.addWidget(p)
 
     def saveGraph(self):
+        """ sauvegarde le graphe dans le dossier PCA_pictures du projet
+        """
         if self.ui.horizontalLayout_3.itemAt(0) != None:
             proj_dir = self.dir
             graph_dir = self.parent.PCA_dir_name
