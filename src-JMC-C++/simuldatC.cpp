@@ -70,9 +70,9 @@ public:
 		prior.mini=atof(sb[0].c_str());
 		prior.maxi=atof(sb[1].c_str());
 		prior.ndec=ndecimales(0.1*prior.mini);
-		if (ss.find("UN[")!=string::npos) {prior.loi="uniforme";}
-		else if (ss.find("LU[")!=string::npos) {prior.loi="loguniforme";}
-		else if (ss.find("GA[")!=string::npos) {prior.loi="gamma";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
+		if (ss.find("UN[")!=string::npos) {prior.loi="UN";}
+		else if (ss.find("LU[")!=string::npos) {prior.loi="LU";}
+		else if (ss.find("GA[")!=string::npos) {prior.loi="GA";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
 		prior.constant = ((prior.maxi-prior.mini)/prior.maxi<0.000001);
 		return prior;
 	}
@@ -470,14 +470,13 @@ struct ParticleSetC
 		this->particule[p].nscenarios=this->header.nscenarios;
 		this->particule[p].drawuntil = this->header.drawuntil;
 		this->particule[p].scenario = new ScenarioC[this->header.nscenarios];
-		cout<<"dans setscenarios\n";
 		for (int i=0;i<this->header.nscenarios;i++) {
 		    this->particule[p].scenario[i] = copyscenario(this->header.scenario[i]);
 		    //this->particule[p].scenario[i].ecris();
 		}
-		this->particule[p].nparam=this->header.nparamtot;
+		/*this->particule[p].nparam=this->header.nparamtot;
 		this->particule[p].parameterlist = new HistParameterC[this->header.nparamtot];
-		for (int i=0;i<this->header.nparamtot;i++) this->particule[p].parameterlist[i] = copyhistparameter(this->header.histparam[i]);
+		for (int i=0;i<this->header.nparamtot;i++) this->particule[p].parameterlist[i] = copyhistparameter(this->header.histparam[i]);*/
 	}
 
 /*    void setconditions(int p) {
