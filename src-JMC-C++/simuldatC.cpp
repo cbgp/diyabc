@@ -241,6 +241,7 @@ public:
 		getline(file,s1);		//ligne "group prior"
 		this->groupe = new LocusGroupC[this->ngroupes];
 		this->assignloc(0);
+		cout<<"on attaque les groupes\n";
 		for (gr=1;gr<this->ngroupes;gr++){
 			getline(file,s1);
 			ss=splitwords(s1," ",&nss);
@@ -250,12 +251,15 @@ public:
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutmoy = this->readpriormut(ss1[1]);delete [] ss1;
 				if (this->groupe[gr].priormutmoy.constant) this->groupe[gr].mutmoy=this->groupe[gr].priormutmoy.mini; else this->groupe[gr].mutmoy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
+				cout<<"mutloc  ";this->groupe[gr].priormutloc.ecris();
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy   = this->readpriormut(ss1[1]);delete [] ss1;
 				if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini; else this->groupe[gr].Pmoy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readpriormut(ss1[1]);delete [] ss1;
+				cout<<"Ploc    ";this->groupe[gr].priorPloc.ecris();
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsnimoy = this->readpriormut(ss1[1]);delete [] ss1;
 				if (this->groupe[gr].priorsnimoy.constant) this->groupe[gr].snimoy=this->groupe[gr].priorsnimoy.mini; else this->groupe[gr].snimoy=-1.0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc = this->readpriormut(ss1[1]);delete [] ss1;
+				cout<<"sniloc  ";this->groupe[gr].priorsniloc.ecris();
 			} else if (ss[2]=="[S]") {
 				this->groupe[gr].type=1;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusmoy = this->readpriormut(ss1[1]);delete [] ss1;
@@ -458,11 +462,14 @@ struct ParticleSetC
 				for (int i=0;i<this->particule[p].locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = this->header.dataobs.locus[kloc].mutsit[i];
 				//std::cout <<"\n";
 				}
+			this->particule[p].nsample = this->header.dataobs.nsample;
 			this->particule[p].locuslist[kloc].coeff =  this->header.dataobs.locus[kloc].coeff;
 			this->particule[p].locuslist[kloc].ss = new int[ this->header.dataobs.nsample];
 			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].ss[sa] =  this->header.dataobs.locus[kloc].ss[sa];
 			this->particule[p].locuslist[kloc].samplesize = new int[ this->header.dataobs.nsample];
+			
 			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] =  this->header.dataobs.locus[kloc].samplesize[sa];
+			cout << "samplesize[0]="<<this->particule[p].locuslist[kloc].samplesize[0]<<"\n";
 		}
 	}
 
@@ -474,6 +481,7 @@ struct ParticleSetC
 		    this->particule[p].scenario[i] = copyscenario(this->header.scenario[i]);
 		    //this->particule[p].scenario[i].ecris();
 		}
+		
 		/*this->particule[p].nparam=this->header.nparamtot;
 		this->particule[p].parameterlist = new HistParameterC[this->header.nparamtot];
 		for (int i=0;i<this->header.nparamtot;i++) this->particule[p].parameterlist[i] = copyhistparameter(this->header.histparam[i]);*/

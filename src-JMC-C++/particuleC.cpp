@@ -62,7 +62,8 @@ public:
 	
 	void ecris(){
 		cout <<"    loi="<<this->loi<<"   min="<<this->mini<<"   max="<<this->maxi<<"   ndec="<<this->ndec;
-		if (this->constant) cout<<"   constant\n"; else cout<<"   variable";
+		if (this->loi=="GA") cout <<"    shape="<<this->sdshape;
+		if (this->constant) cout<<"   constant\n"; else cout<<"   variable\n";
 	}
 	  
 };
@@ -461,6 +462,9 @@ struct ParticleC
 			return r;
 		}
 		if (prior.loi=="GA") {
+			if (prior.mean<1E-12) return 0;
+			if (prior.sdshape<1E-12) return prior.mean;
+			if (prior.maxi<1E-12) return prior.maxi;
 			do {r = this->mw.ggamma3(prior.mean,prior.sdshape);}
 			while ((r<prior.mini)or(r>prior.maxi));
 			return r;
@@ -616,32 +620,23 @@ struct ParticleC
 		int gr = this->locuslist[loc].groupe;
 		cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
 		if (this->locuslist[loc].type<5) {  //MICROSAT
-			cout << "mutmoy = "<<this->grouplist[gr].mutmoy <<" (avant)";
-			//this->grouplist[gr].priormutmoy.ecris();
-			if (this->grouplist[gr].mutmoy<0) this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
 			this->grouplist[gr].priormutloc.mean = this->grouplist[gr].mutmoy;
-			cout << "   et "<<this->grouplist[gr].mutmoy <<" (apres)\n";
-
 			if ((this->grouplist[gr].priormutloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mut_rate = this->drawfromprior(this->grouplist[gr].priormutloc);
 			else this->locuslist[loc].mut_rate =this->grouplist[gr].mutmoy;
-			cout << "   et "<<this->locuslist[loc].mut_rate <<" (apres)\n";
+			cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
 
-			cout << "Pmoy = "<<this->grouplist[gr].Pmoy <<" (avant)";
-			if (this->grouplist[gr].Pmoy<0) this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
 			this->grouplist[gr].priorPloc.mean = this->grouplist[gr].Pmoy;
-			cout << "   et "<<this->grouplist[gr].Pmoy <<" (apres)\n";
-
 			if ((this->grouplist[gr].priorPloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].Pgeom = this->drawfromprior(this->grouplist[gr].priorPloc);
 			else this->locuslist[loc].Pgeom =this->grouplist[gr].Pmoy;
-			cout << "   et "<<this->locuslist[loc].Pgeom <<" (apres)\n";
+			cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
 
-			if (this->grouplist[gr].snimoy<0) this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
 			this->grouplist[gr].priorsniloc.mean = this->grouplist[gr].snimoy;
-
-			if (this->grouplist[gr].priorsniloc.sdshape>0.001 ) this->locuslist[loc].sni_rate = this->drawfromprior(this->grouplist[gr].priorsniloc);
+			cout <<"coucou\n";fflush(stdin);
+			this->grouplist[gr].priorsniloc.ecris();
+			if ((this->grouplist[gr].priorsniloc.sdshape>0.001 )and(this->grouplist[gr].nloc>1)) this->locuslist[loc].sni_rate = this->drawfromprior(this->grouplist[gr].priorsniloc);
 			else this->locuslist[loc].sni_rate =this->grouplist[gr].snimoy;
-			cout <<"mutmoy = "<< this->grouplist[gr].mutmoy << "  Pmoy = "<<this->grouplist[gr].Pmoy <<"  snimoy="<<this->grouplist[gr].snimoy<<"\n";
-			cout <<"locus "<<loc<<"  groupe "<<gr<< "  mut_rate="<<this->locuslist[loc].mut_rate<<"  Pgeom="<<this->locuslist[loc].Pgeom<<"  sni_rate="<<this->locuslist[loc].sni_rate << "\n";
+			cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
+			
 	
 		 }
 		else		                    //DNA SEQUENCE
@@ -891,12 +886,12 @@ struct ParticleC
 
 
 	GeneTreeC init_tree(int loc) {
-		//cout << "début de init_tree pour le locus " << loc  <<"\n";
+		cout << "début de init_tree pour le locus " << loc  <<"\n";
 		GeneTreeC gt;
 		int nnod=0,nn,n=0;
-		//cout << "nsample = " << this->data.nsample << "   samplesize[0][0] = " << samplesize[0][0] << "\n";
+		cout << "nsample = " << this->data.nsample << "   samplesize[0] = " << this->locuslist[loc].samplesize[0] << "\n";
 		for (int sa=0;sa<this->data.nsample;sa++) {nnod +=this->locuslist[loc].ss[sa];}
-		//cout << "nombre initial de noeuds = " << nnod  <<"\n";
+		cout << "nombre initial de noeuds = " << nnod  <<"\n";
 		gt.ngenes = nnod;
 		gt.nnodes=nnod;
 		gt.nbranches = 0;
@@ -905,21 +900,21 @@ struct ParticleC
 		for (int sa=0;sa<this->data.nsample;sa++) {
 			for (int ind=0;ind<this->data.nind[sa];ind++) {
 				nn=calploidy(loc,sa,ind);
-				//cout << "n=" << n << "     nn=" << nn << "\n";
+				cout << "n=" << n << "     nn=" << nn << "\n";
 				if (nn>0) {
 					for (int i=n;i<n+nn;i++){
 						gt.nodes[i].sample=sa+1;
-						//cout << gt.nodes[i].sample  << "\n";
+						cout << gt.nodes[i].sample  << "\n";
 						gt.nodes[i].height=this->time_sample[sa];
-						//cout << gt.nodes[i].height  << "\n";
+						cout << gt.nodes[i].height  << "\n";
 					}
 				n +=nn;
 				}
 			}
 		}
-		/*for (int i=0;i<gt.nnodes;i++){
+		for (int i=0;i<gt.nnodes;i++){
 			cout << "node " << i << "sample = " << gt.nodes[i].sample << "\n";
-		}*/
+		}
 		return gt;
 
 	}
@@ -1389,12 +1384,12 @@ struct ParticleC
 					if (gtMexist) {this->gt[loc] = copytree(GeneTreeM);treedone=true;}
 				 }
 			if (not treedone) {
-				//cout << "avant init_tree \n";
+				cout << "avant init_tree \n";
 				this->gt[loc] = init_tree(loc);
-				//cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
+				cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
 				for (int p=0;p<this->popmax+1;p++) {emptyPop[p]=1;} //True
 				for (int iseq=0;iseq<this->nseq;iseq++) {
-					//cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action << "\n";
+					cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action << "\n";fflush(stdin);
 					if (this->seqlist[iseq].action == 'C') {	//COAL
 						//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
 						//cout <<"\n";
