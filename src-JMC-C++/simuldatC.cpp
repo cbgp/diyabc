@@ -296,12 +296,16 @@ public:
 				getline(file,s1);
 				ss=splitwords(s1," ",&nss);
 				j=0;while (ss[0]!=stat_type[j]) j++;
-				this->groupe[gr].sumstat[k].cat=stat_num[j];
-				if (this->groupe[gr].type==0) {
+				if (this->groupe[gr].type==0) {   //MICROSAT
 					if (stat_num[j]<5) {
-						for (int i=1;i<nss;i++) {this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());k++;}
+						for (int i=1;i<nss;i++) {
+						      this->groupe[gr].sumstat[k].cat=stat_num[j];
+						      this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());
+						      k++;
+						}
 					} else if (stat_num[j]<12) {
 						for (int i=1;i<nss;i++) {
+							this->groupe[gr].sumstat[k].cat=stat_num[j];
 							ss1=splitwords(ss[i],"&",&nss1);
 							this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
 							this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
@@ -310,18 +314,25 @@ public:
 						delete [] ss1;
 					} else if (stat_num[j]==12) {
 						for (int i=1;i<nss;i++) {
+							this->groupe[gr].sumstat[k].cat=stat_num[j];
 							ss1=splitwords(ss[i],"&",&nss1);
 							this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
 							this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+							this->groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
 							k++;
 						}
 						delete [] ss1;
 					}
-				} else if (this->groupe[gr].type==1) {
+				} else if (this->groupe[gr].type==1) {   //DNA SEQUENCE
 					if (stat_num[j]>-5) {
-						for (int i=1;i<nss;i++) {this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());k++;}
+						for (int i=1;i<nss;i++) {
+						       this->groupe[gr].sumstat[k].cat=stat_num[j];
+						       this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());
+						       k++;
+						}
 					} else if (stat_num[j]>-14) {
 						for (int i=1;i<nss;i++) {
+							this->groupe[gr].sumstat[k].cat=stat_num[j];
 							ss1=splitwords(ss[i],"&",&nss1);
 							this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
 							this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
@@ -330,6 +341,7 @@ public:
 						delete [] ss1;
 					} else if (stat_num[j]==-14) {
 						for (int i=1;i<nss;i++) {
+							this->groupe[gr].sumstat[k].cat=stat_num[j];
 							ss1=splitwords(ss[i],"&",&nss1);
 							this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
 							this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());

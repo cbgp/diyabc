@@ -1521,77 +1521,85 @@ struct ParticleC
 	  
 		double nalm=0.0;
 		int iloc,kloc,nl=0;
-		cout << "nloc = " << this->grouplist[gr].nloc <<"\n";
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		//cout <<"groupe "<<gr<<"  cat "<<this->grouplist[gr].sumstat[st].cat<<"   sample "<<this->grouplist[gr].sumstat[st].samp<<"\n";
+		//cout << "nloc = " << this->grouplist[gr].nloc <<"\n";
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			kloc=this->grouplist[gr].loc[iloc];
-			cout << "cal_n1p  locus = " << kloc <<"   stat.group = "<<gr<<"\n";
 			//cout << this->locuslist[loc].samplesize[stat.samp] <<"\n";
-			if(this->locuslist[kloc].samplesize[this->grouplist[gr].sumstat[st].samp]>0) {
-			for (int k=0;k<this->locuslist[kloc].nal;k++) {if (this->locuslist[kloc].freq[this->grouplist[gr].sumstat[st].samp][k]>0.00001) nalm +=1.0;}
+			if(this->locuslist[kloc].samplesize[sample]>0) {
+			for (int k=0;k<this->locuslist[kloc].nal;k++) {if (this->locuslist[kloc].freq[sample][k]>0.00001) nalm +=1.0;}
 			nl++;
 			}
 		}
-		cout <<"naltot="<<nalm<<"    nl="<<nl<<"    nmoy="<<  "\n";
+		//cout <<"naltot="<<nalm<<"    nl="<<nl<<"    nmoy="<<  "\n";
 		if (nl>0) nalm=nalm/(double)nl; 
 		return nalm;
 	}
 
-	double cal_nal2p(StatC stat){
-		int k,iloc,loc,nl=0;
+	double cal_nal2p(int gr,int st){
+		int k,iloc,kloc,nl=0;
 		double nalm=0.0;
-		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-			loc=this->grouplist[stat.group].loc[iloc];
-			if((this->locuslist[loc].samplesize[stat.samp]>0)and(this->locuslist[loc].samplesize[stat.samp1]>0)) {
-				for (int k=0;k<this->locuslist[loc].nal;k++) {
-					if (this->locuslist[loc].freq[stat.samp][k]+this->locuslist[loc].freq[stat.samp1][k]>0.000001) nalm+=1.0;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			kloc=this->grouplist[gr].loc[iloc];
+			if((this->locuslist[kloc].samplesize[sample]>0)and(this->locuslist[kloc].samplesize[sample1]>0)) {
+				for (int k=0;k<this->locuslist[kloc].nal;k++) {
+					if (this->locuslist[kloc].freq[sample][k]+this->locuslist[kloc].freq[sample1][k]>0.000001) nalm+=1.0;
 				}
 				nl++;
 			}
 			else {
-				if (this->locuslist[loc].samplesize[stat.samp]>0) {
-					for (k=0;k<this->locuslist[loc].nal;k++) {
-						if (this->locuslist[loc].freq[stat.samp][k]>0.000001) nalm+=1.0;
+				if (this->locuslist[kloc].samplesize[sample]>0) {
+					for (k=0;k<this->locuslist[kloc].nal;k++) {
+						if (this->locuslist[kloc].freq[sample][k]>0.000001) nalm+=1.0;
 					}
 					nl++;
 				}
 				else {
-					if (this->locuslist[loc].samplesize[stat.samp1]>0) {
-						for (k=0;k<this->locuslist[loc].nal;k++) {
-							if (this->locuslist[loc].freq[stat.samp1][k]>0.000001) nalm+=1.0;
+					if (this->locuslist[kloc].samplesize[sample1]>0) {
+						for (k=0;k<this->locuslist[kloc].nal;k++) {
+							if (this->locuslist[kloc].freq[sample1][k]>0.000001) nalm+=1.0;
 						}
 						nl++;
 					}
 				}
 			}
 		}
-		if (nl>0) return nalm/(double)nl; else return 0.0;
+		if (nl>0) nalm=nalm/(double)nl; 
+		return nalm;
 	}
 
-	double cal_het1p(StatC stat){
+	double cal_het1p(int gr,int st){
 		double het,hetm=0.0;
-		int iloc,loc,nl=0;
-		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-			loc=this->grouplist[stat.group].loc[iloc];
-			if (this->locuslist[loc].samplesize[stat.samp]>1){
+		int iloc,kloc,nl=0;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			kloc=this->grouplist[gr].loc[iloc];
+			if (this->locuslist[kloc].samplesize[sample]>1){
 				het=1.0;
-				for (int k=0;k<this->locuslist[loc].nal;k++) het -= sqr(this->locuslist[loc].freq[stat.samp][k]);
-				het *= ((double)this->locuslist[loc].samplesize[stat.samp]/((double)this->locuslist[loc].samplesize[stat.samp]-1));
+				for (int k=0;k<this->locuslist[kloc].nal;k++) het -= sqr(this->locuslist[kloc].freq[sample][k]);
+				het *= ((double)this->locuslist[kloc].samplesize[sample]/((double)this->locuslist[kloc].samplesize[sample]-1));
 				hetm += het;
 				nl++;
 			}
 		}
-		if (nl>0) return hetm/(double)nl; else return 0.0;
+		if (nl>0) hetm=hetm/(double)nl;
+		return hetm;
 	}
 
-	double cal_het2p(StatC stat){
+	double cal_het2p(int gr,int st){
 		double het,hetm=0.0;
 		int iloc,loc,n1,n2,nt,nl=0;
-		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-			loc=this->grouplist[stat.group].loc[iloc];
-			n1=this->locuslist[loc].samplesize[stat.samp];n2=this->locuslist[loc].samplesize[stat.samp1];nt=n1+n2;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			n1=this->locuslist[loc].samplesize[sample];n2=this->locuslist[loc].samplesize[sample1];nt=n1+n2;
 			if (nt>1){
 				het=1.0;
-				for (int k=0;k<this->locuslist[loc].nal;k++) {het -= sqr(((double)n1*this->locuslist[loc].freq[stat.samp][k]+(double)n2*this->locuslist[loc].freq[stat.samp1][k])/(double)nt);}
+				for (int k=0;k<this->locuslist[loc].nal;k++) {het -= sqr(((double)n1*this->locuslist[loc].freq[sample][k]+(double)n2*this->locuslist[loc].freq[sample1][k])/(double)nt);}
 				het *= double(nt)/(double)(nt-1);
 				hetm +=het;
 				nl++;
@@ -1600,17 +1608,18 @@ struct ParticleC
 		if (nl>0) return hetm/(double)nl; else return 0.0;
 	}
 
-	double cal_var1p(StatC stat){
-		  double s,v,vm=0.0,m,ms;
-		  int iloc,loc,n,nl=0;
-			for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-				loc=this->grouplist[stat.group].loc[iloc];
+	double cal_var1p(int gr,int st){
+		double s,v,vm=0.0,m,ms;
+		int iloc,loc,n,nl=0;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+			for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+				loc=this->grouplist[gr].loc[iloc];
 			  v=0.0;s=0.0;n=0;
-			  for (int i=0;i<this->locuslist[loc].ss[stat.samp];i++){
-				  if (this->locuslist[loc].haplomic[stat.samp][i] != MISSING) {
+			  for (int i=0;i<this->locuslist[loc].ss[sample];i++){
+				  if (this->locuslist[loc].haplomic[sample][i] != MISSING) {
 					  n++;
-					  s+=this->locuslist[loc].haplomic[stat.samp][i];
-					  v+=sqr(this->locuslist[loc].haplomic[stat.samp][i]);
+					  s+=this->locuslist[loc].haplomic[sample][i];
+					  v+=sqr(this->locuslist[loc].haplomic[sample][i]);
 				  }
 			  }
 			  m = (double)n;
@@ -1623,24 +1632,26 @@ struct ParticleC
 		  if (nl>0) return vm/(double)nl; else return 0.0;
 	}
 
-	double cal_var2p(StatC stat){
+	double cal_var2p(int gr,int st){
 		double s,v,vm=0.0,m,ms;
 		int iloc,loc,n,nl=0;
-		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-			loc=this->grouplist[stat.group].loc[iloc];
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
 			v=0.0;s=0.0;n=0;
-			for (int i=0;i<this->locuslist[loc].ss[stat.samp];i++){
-				if (this->locuslist[loc].haplomic[stat.samp][i] != MISSING) {
+			for (int i=0;i<this->locuslist[loc].ss[sample];i++){
+				if (this->locuslist[loc].haplomic[sample][i] != MISSING) {
 					n++;
-					s+=this->locuslist[loc].haplomic[stat.samp][i];
-					v+=sqr(this->locuslist[loc].haplomic[stat.samp][i]);
+					s+=this->locuslist[loc].haplomic[sample][i];
+					v+=sqr(this->locuslist[loc].haplomic[sample][i]);
 				}
 			}
-			for (int i=0;i<this->locuslist[loc].ss[stat.samp1];i++){
-				if (this->locuslist[loc].haplomic[stat.samp1][i] != MISSING) {
+			for (int i=0;i<this->locuslist[loc].ss[sample1];i++){
+				if (this->locuslist[loc].haplomic[sample1][i] != MISSING) {
 					n++;
-					s+=this->locuslist[loc].haplomic[stat.samp1][i];
-					v+=sqr(this->locuslist[loc].haplomic[stat.samp1][i]);
+					s+=this->locuslist[loc].haplomic[sample1][i];
+					v+=sqr(this->locuslist[loc].haplomic[sample1][i]);
 				}
 			}
 			m = (double)n;
@@ -1653,32 +1664,35 @@ struct ParticleC
 		if (nl>0) return vm/(double)nl; else return 0.0;
 	}
 
-	double cal_mgw1p(StatC stat){
+	double cal_mgw1p(int gr,int st){
 		double num=0.0,den=0.0;
 		int min,max;
 		int iloc,loc;
-		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-			loc=this->grouplist[stat.group].loc[iloc];
-		    if (this->locuslist[loc].samplesize[stat.samp]>0) {
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+		    if (this->locuslist[loc].samplesize[sample]>0) {
 				for (int k=0;k<this->locuslist[loc].nal;k++) {
-					if (this->locuslist[loc].freq[stat.samp][k]>0.00001) num +=1.0;}
+					if (this->locuslist[loc].freq[sample][k]>0.00001) num +=1.0;}
 
-				min=0;while (this->locuslist[loc].freq[stat.samp][min]<0.00001) min++;
-				max=this->locuslist[loc].kmax-this->locuslist[loc].kmin;while (this->locuslist[loc].freq[stat.samp][max]<0.00001) max--;
+				min=0;while (this->locuslist[loc].freq[sample][min]<0.00001) min++;
+				max=this->locuslist[loc].kmax-this->locuslist[loc].kmin;while (this->locuslist[loc].freq[sample][max]<0.00001) max--;
 				den += (double)(1+max-min)/double(this->locuslist[loc].motif_size);
 		    }
 		}
 		if (den>0) return num/den; else return 0.0;
 	}
 
-	double cal_Fst2p(StatC stat){
+	double cal_Fst2p(int gr,int st){
 		double s1=0.0,s3=0.0,s1l,s2l,s3l,sni,sni2,sniA,sniAA;
 		int al,pop,kpop,i,ig1,ig2,nA,AA,ni;
 		double s2A,MSG,MSI,MSP,s2G,s2I,s2P,nc;
 		int iloc,loc,nn,ind;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
 		//cout << "cal_Fst2p\n";
-		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-			loc=this->grouplist[stat.group].loc[iloc];
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
 			//cout << "Fst loc = "<<loc<<"\n";
 		    s1l=0.0;s2l=0.0;s3l=0.0;nc=0;
 //		    cout << "\n\nlocus "<< loc << "\n";
@@ -1686,7 +1700,7 @@ struct ParticleC
 //		    	cout << "\n allele "<< al << "\n";
 		    	sni=0;sni2=0;sniA=0;sniAA=0;s2A=0.0;
 		    	for (kpop=0;kpop<2;kpop++) {
-		    		if (kpop==0) pop=stat.samp; else pop=stat.samp1;
+		    		if (kpop==0) pop=sample; else pop=sample1;
 		    		nA=0;AA=0;ni=0;ind=0;
 //ind est le numéro de l'individu (haploïde ou diploïde ou même sans génotype si Y femelle)
 //i est le numéro de la copie du gène
@@ -1734,14 +1748,16 @@ struct ParticleC
 		if (s3>0.0) return s1/s3; else return 0.0;
 	}
 
-	double cal_lik2p(StatC stat){
+	double cal_lik2p(int gr,int st){
   		int pop,nal,k,i,ind,ig1,ig2;
   		double frt,a,b,num_lik,den_lik,lik;
 		int iloc,loc,nn,nl=0;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
 		lik = 0.0;
-		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-			loc=this->grouplist[stat.group].loc[iloc];
-		    if (this->locuslist[loc].samplesize[stat.samp]*this->locuslist[loc].samplesize[stat.samp1]>0) {
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+		    if (this->locuslist[loc].samplesize[sample]*this->locuslist[loc].samplesize[sample1]>0) {
 				nl++;
 				nal = 0;
 				for (k=0;k<this->locuslist[loc].nal;k++) {
@@ -1750,31 +1766,31 @@ struct ParticleC
 					if (frt>0.000001) nal++;
 				}
 				b = 1.0/(double)nal;
-				a = 1.0/(double)this->data.nind[stat.samp];
+				a = 1.0/(double)this->data.nind[sample];
 				ind = 0;
-			    for (i=0;i<this->locuslist[loc].ss[stat.samp];i++){
-					nn=calploidy(loc,stat.samp,ind);
+			    for (i=0;i<this->locuslist[loc].ss[sample];i++){
+					nn=calploidy(loc,sample,ind);
 					ind++;
 	    			switch (nn)
-	    			{ case 1 :  ig1 = this->locuslist[loc].haplomic[stat.samp][i];
+	    			{ case 1 :  ig1 = this->locuslist[loc].haplomic[sample][i];
 								if (ig1!=MISSING) {
-									num_lik = round(this->locuslist[loc].freq[stat.samp1][ig1-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[stat.samp1])+b;
-									den_lik = (double) (this->locuslist[loc].samplesize[stat.samp1]+1);
+									num_lik = round(this->locuslist[loc].freq[sample1][ig1-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[sample1])+b;
+									den_lik = (double) (this->locuslist[loc].samplesize[sample1]+1);
 									lik -= a*log10(num_lik/den_lik);
 								}
 								break;
-	    			  case 2 :  ig1 = this->locuslist[loc].haplomic[stat.samp][i];
-								ig2 = this->locuslist[loc].haplomic[stat.samp][++i];
+	    			  case 2 :  ig1 = this->locuslist[loc].haplomic[sample][i];
+								ig2 = this->locuslist[loc].haplomic[sample][++i];
 				                if ((ig1!=MISSING)and(ig2!=MISSING)) {
 				                	if (ig1==ig2) {
-				                		num_lik = 1.0+b+arrondi(this->locuslist[loc].freq[stat.samp1][ig1-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[stat.samp1]);
-				                		num_lik *=b+arrondi(this->locuslist[loc].freq[stat.samp1][ig2-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[stat.samp1]);
+				                		num_lik = 1.0+b+arrondi(this->locuslist[loc].freq[sample1][ig1-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[sample1]);
+				                		num_lik *=b+arrondi(this->locuslist[loc].freq[sample1][ig2-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[sample1]);
 				                	}
 				                	else {
-				                		num_lik = 2.0*(b+arrondi(this->locuslist[loc].freq[stat.samp1][ig1-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[stat.samp1]));
-				                		num_lik *=b+arrondi(this->locuslist[loc].freq[stat.samp1][ig2-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[stat.samp1]);
+				                		num_lik = 2.0*(b+arrondi(this->locuslist[loc].freq[sample1][ig1-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[sample1]));
+				                		num_lik *=b+arrondi(this->locuslist[loc].freq[sample1][ig2-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[sample1]);
 				                	}
-				                	den_lik = (double) ((this->locuslist[loc].samplesize[stat.samp1]+2)*(this->locuslist[loc].samplesize[stat.samp1]+1));
+				                	den_lik = (double) ((this->locuslist[loc].samplesize[sample1]+2)*(this->locuslist[loc].samplesize[sample1]+1));
 									lik -= a*log10(num_lik/den_lik);
 				                }	
 				                break;
@@ -1785,16 +1801,18 @@ struct ParticleC
 		if (nl>0) return lik/(double)nl; else return 0.0;
 	}
 
-	double cal_dmu2p(StatC stat){
+	double cal_dmu2p(int gr,int st){
 		double *moy,dmu2=0.0,s;
 		int iloc,loc,pop,nl=0;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
 		moy = new double[2];
-		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-			loc=this->grouplist[stat.group].loc[iloc];
-		    if (this->locuslist[loc].samplesize[stat.samp]*this->locuslist[loc].samplesize[stat.samp1]>0) {
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+		    if (this->locuslist[loc].samplesize[sample]*this->locuslist[loc].samplesize[sample1]>0) {
 				nl++;
 				for (int kpop=0;kpop<2;kpop++) {
-					if (kpop==0) pop=stat.samp;	else pop=stat.samp1;
+					if (kpop==0) pop=sample; else pop=sample1;
 					s = 0.0;moy[kpop]=0.0;
 					for (int i=0;i<this->locuslist[loc].ss[pop];i++) {
 						if (this->locuslist[loc].haplomic[pop][i]!=MISSING) s += this->locuslist[loc].haplomic[pop][i];
@@ -1808,17 +1826,19 @@ struct ParticleC
 		if (nl>0) return dmu2/(double)nl; else return 0.0;
 	}
 
-	double cal_das2p(StatC stat){
+	double cal_das2p(int gr,int st){
 		double s=0.0;
 		int iloc,loc,nl=0;
-		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-			loc=this->grouplist[stat.group].loc[iloc];
-			for (int i=0;i<this->locuslist[loc].ss[stat.samp];i++) {
-				if (this->locuslist[loc].haplomic[stat.samp][i]!=MISSING) {
-					for (int j=0;j<this->locuslist[loc].ss[stat.samp1];j++) {
-						if (this->locuslist[loc].haplomic[stat.samp1][j]!=MISSING) {
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			for (int i=0;i<this->locuslist[loc].ss[sample];i++) {
+				if (this->locuslist[loc].haplomic[sample][i]!=MISSING) {
+					for (int j=0;j<this->locuslist[loc].ss[sample1];j++) {
+						if (this->locuslist[loc].haplomic[sample1][j]!=MISSING) {
 							nl++;
-							if (this->locuslist[loc].haplomic[stat.samp][i] == this->locuslist[loc].haplomic[stat.samp1][j]) s+=1.0;
+							if (this->locuslist[loc].haplomic[sample][i] == this->locuslist[loc].haplomic[sample1][j]) s+=1.0;
 						}
 					}
 				}
@@ -1827,154 +1847,168 @@ struct ParticleC
 		if (nl>0) return s/(double)nl; else return 0.0;
 	}
 
-	complex<double> pente_lik(StatC stat, int i0) {
+	complex<double> pente_lik(int gr,int st, int i0) {
 		double a,freq1,freq2,li0,delta,*li;
 		int ig1,ig2,ind,loc,iloc,nn;
 		li = new double[2];
+		StatC stat=this->grouplist[gr].sumstat[st];
+		int sample=stat.samp-1;
+		int sample1=stat.samp1-1;
+		int sample2=stat.samp2-1;
+		//cout<<"sample ="<<sample<<"   sample1="<<sample1<<"   sample2="<<sample2<<"\n";
 		for (int rep=0;rep<2;rep++) {
 			a=0.001*(double)(i0+rep);li[rep]=0.0;
-//			cout << "rep = " << rep << "   a = "<< a << "lik = "<< li[rep] << "\n";
-			for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-				loc=this->grouplist[stat.group].loc[iloc];
-//			    cout << "\n\n locus "<< loc<< "\n";
+			//cout << "rep = " << rep << "   a = "<< a << "  lik = "<< li[rep] << "\n";
+			for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+				loc=this->grouplist[gr].loc[iloc];
+			    //cout << "\n\n locus "<< loc<< "\n";
 			    ind=0;
-			    for (int i=0;i<this->locuslist[loc].ss[stat.samp];) {
-			    	nn = calploidy(loc,stat.samp,ind);
+			    for (int i=0;i<this->locuslist[loc].ss[sample];) {
+			    	nn = calploidy(loc,sample,ind);
+				//cout <<"ploidie="<<nn<<"\n";
 				ind++;
 	    			switch (nn)
-	    			{ case 1 :  ig1 = this->locuslist[loc].haplomic[stat.samp][i];i++;
+	    			{ case 1 :  ig1 = this->locuslist[loc].haplomic[sample][i];i++;
 								if (ig1!=MISSING) {
-									freq1 = a*this->locuslist[loc].freq[stat.samp1][ig1-this->locuslist[loc].kmin]+(1.0-a)*this->locuslist[loc].freq[stat.samp2][ig1-this->locuslist[loc].kmin];
+									freq1 = a*this->locuslist[loc].freq[sample1][ig1-this->locuslist[loc].kmin]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1-this->locuslist[loc].kmin];
 									if (freq1>0.0) li[rep] +=log(freq1);
 								}
 								break;
-	    			  case 2 :  ig1 = this->locuslist[loc].haplomic[stat.samp][i];i++;
-					        ig2 = this->locuslist[loc].haplomic[stat.samp][i];i++;
+	    			  case 2 :  ig1 = this->locuslist[loc].haplomic[sample][i];i++;
+					        ig2 = this->locuslist[loc].haplomic[sample][i];i++;
 				                if ((ig1!=MISSING)and(ig2!=MISSING)) {
-				                	if (ig1==ig2) {
-				                		freq1 = a*this->locuslist[loc].freq[stat.samp1][ig1-this->locuslist[loc].kmin]+(1.0-a)*this->locuslist[loc].freq[stat.samp2][ig1-this->locuslist[loc].kmin];
+				                	 //cout<<"ig1="<<ig1<<"    ig2="<<ig2<<"   kmin="<<this->locuslist[loc].kmin<<"\n";
+					 //cout<<"freq[samp1][ig1]="<<this->locuslist[loc].freq[sample1][ig1-this->locuslist[loc].kmin]<<"\n";
+					 //cout<<"freq[samp2][ig1]="<<this->locuslist[loc].freq[sample2][ig1-this->locuslist[loc].kmin]<<"\n";
+					 //cout<<"freq[samp1][ig2]="<<this->locuslist[loc].freq[sample1][ig2-this->locuslist[loc].kmin]<<"\n";
+					 //cout<<"freq[samp2][ig2]="<<this->locuslist[loc].freq[sample2][ig2-this->locuslist[loc].kmin]<<"\n";
+									if (ig1==ig2) {
+				                		freq1 = a*this->locuslist[loc].freq[sample1][ig1-this->locuslist[loc].kmin]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1-this->locuslist[loc].kmin];
 				                		if (freq1>0.0) li[rep] +=log(sqr(freq1));
 				                	}
 				                	else {
-				                		freq1 = a*this->locuslist[loc].freq[stat.samp1][ig1-this->locuslist[loc].kmin]+(1.0-a)*this->locuslist[loc].freq[stat.samp2][ig1-this->locuslist[loc].kmin];
-				                		freq2 = a*this->locuslist[loc].freq[stat.samp1][ig2-this->locuslist[loc].kmin]+(1.0-a)*this->locuslist[loc].freq[stat.samp2][ig2-this->locuslist[loc].kmin];
+				                		freq1 = a*this->locuslist[loc].freq[sample1][ig1-this->locuslist[loc].kmin]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1-this->locuslist[loc].kmin];
+				                		//cout<<"freq1 = "<<freq1<<"\n";
+								freq2 = a*this->locuslist[loc].freq[sample1][ig2-this->locuslist[loc].kmin]+(1.0-a)*this->locuslist[loc].freq[sample2][ig2-this->locuslist[loc].kmin];
+				                		//cout<<"freq2 = "<<freq2<<"\n";
 				                		if (freq1*freq2>0.0) li[rep] +=log(2.0*freq1*freq2);
 				                		else {
 				                			if (freq1>0.0) li[rep] +=log(freq1);
 				                			if (freq2>0.0) li[rep] +=log(freq2);
 				                		}
 				                	}
-				                }	
+				                }
+				               // cout<<"coucou\n";
 				                break;
 	    			}
-//	    			cout << "lik = " << li[rep] << "\n";
+	    			//cout << "lik = " << li[rep] << "\n";
     			}
 			}
-//			cout << "rep = " << rep << "   a = "<< a << "lik = "<< li[rep] << "\n";
+			//cout << "rep = " << rep << "   a = "<< a << "lik = "<< li[rep] << "\n";
 		}
-//		cout << "i0 = " <<i0 << "   li[i0] = "<< li[0] << "\n";
+		//cout << "i0 = " <<i0 << "   li[i0] = "<< li[0] << "\n";
 		li0=li[0];
 		delta=li[1]-li[0];
 		delete []li;
 		return complex<double>(li0,delta);
 	}		
 		
-	double cal_Aml3p(StatC stat){
+	double cal_Aml3p(int gr,int st){
 		int i1=1,i2=998,i3;
 		double p1,p2,p3,lik1,lik2,lik3;
 		complex<double> c;
-		c=pente_lik(stat,i1);lik1=real(c);p1=imag(c);
-		c=pente_lik(stat,i2);lik2=real(c);p2=imag(c);
+		c=pente_lik(gr,st,i1);lik1=real(c);p1=imag(c);
+		c=pente_lik(gr,st,i2);lik2=real(c);p2=imag(c);
 		if ((p1<0.0)and(p2<0.0)) return 0.0;
 		if ((p1>0.0)and(p2>0.0)) return 1.0;
 		do {
 			i3 = (i1+i2)/2;
-			c=pente_lik(stat,i3);lik3=real(c);p3=imag(c);
+			c=pente_lik(gr,st,i3);lik3=real(c);p3=imag(c);
 			if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
 			else		   {i1=i3;p1=p3;lik1=lik3;}
 		} while (abs(i2-i1)>1);	
 		if (lik1>lik2) return 0.001*(double)i1; else return 0.001*(double)i2;
 	}
 
-	double cal_nha1p(StatC stat){
+	double cal_nha1p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_nss1p(StatC stat){
+	double cal_nss1p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_mpd1p(StatC stat){
+	double cal_mpd1p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_vpd1p(StatC stat){
+	double cal_vpd1p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_dta1p(StatC stat){
+	double cal_dta1p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_pss1p(StatC stat){
+	double cal_pss1p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_mns1p(StatC stat){
+	double cal_mns1p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_vns1p(StatC stat){
+	double cal_vns1p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_nha2p(StatC stat){
+	double cal_nha2p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_nss2p(StatC stat){
+	double cal_nss2p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_mpw2p(StatC stat){
+	double cal_mpw2p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_mpb2p(StatC stat){
+	double cal_mpb2p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_fst2p(StatC stat){
+	double cal_fst2p(int gr,int st){
 		double res=0.0;
 		return res;
 
 	}
 
-	double cal_aml3p(StatC stat){
+	double cal_aml3p(int gr,int st){
 		double res=0.0;
 		return res;
 
@@ -2001,38 +2035,44 @@ struct ParticleC
 		calfreq();
 //		cout << "apres calfreq\n";
 		for (int st=0;st<this->grouplist[gr].nstat;st++) {
-//			cout <<" calcul de la stat "<<st<<"   cat="<<this->stat[st].cat<<"   group="<<stat[st].group<<"\n";
+			if (this->grouplist[gr].sumstat[st].cat<5)
+			{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp  <<"\n";fflush(stdin);}
+			else if (this->grouplist[gr].sumstat[st].cat<12)
+			{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp <<"   samp1 = "<<this->grouplist[gr].sumstat[st].samp1 <<"\n";fflush(stdin);}
+			else
+			{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp <<"   samp1 = "<<this->grouplist[gr].sumstat[st].samp1 <<"   samp2 = "<<this->grouplist[gr].sumstat[st].samp2<<"\n";fflush(stdin);}
+			  
 			int categ;
 			categ=this->grouplist[gr].sumstat[st].cat;
 			switch (categ)
 			{	case     1 : this->grouplist[gr].sumstat[st].val = cal_nal1p(gr,st);break;
-				case     2 : this->grouplist[gr].sumstat[st].val = cal_het1p(this->grouplist[gr].sumstat[st]);break;
-				case     3 : this->grouplist[gr].sumstat[st].val = cal_var1p(this->grouplist[gr].sumstat[st]);break;
-				case     4 : this->grouplist[gr].sumstat[st].val = cal_mgw1p(this->grouplist[gr].sumstat[st]);break;
-				case     5 : this->grouplist[gr].sumstat[st].val = cal_Fst2p(this->grouplist[gr].sumstat[st]);break;
-				case     6 : this->grouplist[gr].sumstat[st].val = cal_lik2p(this->grouplist[gr].sumstat[st]);break;
-				case     7 : this->grouplist[gr].sumstat[st].val = cal_dmu2p(this->grouplist[gr].sumstat[st]);break;
-				case     8 : this->grouplist[gr].sumstat[st].val = cal_nal2p(this->grouplist[gr].sumstat[st]);break;
-				case     9 : this->grouplist[gr].sumstat[st].val = cal_het2p(this->grouplist[gr].sumstat[st]);break;
-				case    10 : this->grouplist[gr].sumstat[st].val = cal_var2p(this->grouplist[gr].sumstat[st]);break;
-				case    11 : this->grouplist[gr].sumstat[st].val = cal_das2p(this->grouplist[gr].sumstat[st]);break;
-				case    12 : this->grouplist[gr].sumstat[st].val = cal_Aml3p(this->grouplist[gr].sumstat[st]);break;
-				case    -1 : this->grouplist[gr].sumstat[st].val = cal_nha1p(this->grouplist[gr].sumstat[st]);break;
-				case    -2 : this->grouplist[gr].sumstat[st].val = cal_nss1p(this->grouplist[gr].sumstat[st]);break;
-				case    -3 : this->grouplist[gr].sumstat[st].val = cal_mpd1p(this->grouplist[gr].sumstat[st]);break;
-				case    -4 : this->grouplist[gr].sumstat[st].val = cal_vpd1p(this->grouplist[gr].sumstat[st]);break;
-				case    -5 : this->grouplist[gr].sumstat[st].val = cal_dta1p(this->grouplist[gr].sumstat[st]);break;
-				case    -6 : this->grouplist[gr].sumstat[st].val = cal_pss1p(this->grouplist[gr].sumstat[st]);break;
-				case    -7 : this->grouplist[gr].sumstat[st].val = cal_mns1p(this->grouplist[gr].sumstat[st]);break;
-				case    -8 : this->grouplist[gr].sumstat[st].val = cal_vns1p(this->grouplist[gr].sumstat[st]);break;
-				case    -9 : this->grouplist[gr].sumstat[st].val = cal_nha2p(this->grouplist[gr].sumstat[st]);break;
-				case   -10 : this->grouplist[gr].sumstat[st].val = cal_nss2p(this->grouplist[gr].sumstat[st]);break;
-				case   -11 : this->grouplist[gr].sumstat[st].val = cal_mpw2p(this->grouplist[gr].sumstat[st]);break;
-				case   -12 : this->grouplist[gr].sumstat[st].val = cal_mpb2p(this->grouplist[gr].sumstat[st]);break;
-				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(this->grouplist[gr].sumstat[st]);break;
-				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(this->grouplist[gr].sumstat[st]);break;
+				case     2 : this->grouplist[gr].sumstat[st].val = cal_het1p(gr,st);break;
+				case     3 : this->grouplist[gr].sumstat[st].val = cal_var1p(gr,st);break;
+				case     4 : this->grouplist[gr].sumstat[st].val = cal_mgw1p(gr,st);break;
+				case     5 : this->grouplist[gr].sumstat[st].val = cal_Fst2p(gr,st);break;
+				case     6 : this->grouplist[gr].sumstat[st].val = cal_lik2p(gr,st);break;
+				case     7 : this->grouplist[gr].sumstat[st].val = cal_dmu2p(gr,st);break;
+				case     8 : this->grouplist[gr].sumstat[st].val = cal_nal2p(gr,st);break;
+				case     9 : this->grouplist[gr].sumstat[st].val = cal_het2p(gr,st);break;
+				case    10 : this->grouplist[gr].sumstat[st].val = cal_var2p(gr,st);break;
+				case    11 : this->grouplist[gr].sumstat[st].val = cal_das2p(gr,st);break;
+				case    12 : this->grouplist[gr].sumstat[st].val = cal_Aml3p(gr,st);break;
+				case    -1 : this->grouplist[gr].sumstat[st].val = cal_nha1p(gr,st);break;
+				case    -2 : this->grouplist[gr].sumstat[st].val = cal_nss1p(gr,st);break;
+				case    -3 : this->grouplist[gr].sumstat[st].val = cal_mpd1p(gr,st);break;
+				case    -4 : this->grouplist[gr].sumstat[st].val = cal_vpd1p(gr,st);break;
+				case    -5 : this->grouplist[gr].sumstat[st].val = cal_dta1p(gr,st);break;
+				case    -6 : this->grouplist[gr].sumstat[st].val = cal_pss1p(gr,st);break;
+				case    -7 : this->grouplist[gr].sumstat[st].val = cal_mns1p(gr,st);break;
+				case    -8 : this->grouplist[gr].sumstat[st].val = cal_vns1p(gr,st);break;
+				case    -9 : this->grouplist[gr].sumstat[st].val = cal_nha2p(gr,st);break;
+				case   -10 : this->grouplist[gr].sumstat[st].val = cal_nss2p(gr,st);break;
+				case   -11 : this->grouplist[gr].sumstat[st].val = cal_mpw2p(gr,st);break;
+				case   -12 : this->grouplist[gr].sumstat[st].val = cal_mpb2p(gr,st);break;
+				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(gr,st);break;
+				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(gr,st);break;
 			}
-			//cout << "stat["<<st<<"]="<<this->stat[st].val<<"\n";
+			cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
 	}
 
