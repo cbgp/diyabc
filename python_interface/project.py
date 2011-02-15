@@ -646,6 +646,7 @@ class Project(QTabWidget):
         if os.path.exists("%s/.DIYABC_lock"%self.dir):
             f = open("%s/.DIYABC_lock"%self.dir)
             pid = f.read()
+            f.close()
             # on ne deverrouille que si c'est nous qui avons verrouillé
             if pid == str(os.getpid()):
                 os.remove("%s/.DIYABC_lock"%self.dir)
