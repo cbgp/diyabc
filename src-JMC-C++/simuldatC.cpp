@@ -60,6 +60,7 @@ public:
 		prior.constant = ((prior.maxi-prior.mini)/prior.maxi<0.000001);
 		return prior;
 	}
+
 	PriorC readpriormut(string ss) {
 		double step;
 		PriorC prior;
@@ -437,7 +438,7 @@ struct ParticleSetC
 
 	void setloci(int p) {
 	        int kmoy;
-		this->particule[p].nloc = this->header.dataobs.nloc;
+		this->particule[p].nloc = 10;//this->header.dataobs.nloc;
 		this->particule[p].locuslist = new LocusC[this->header.dataobs.nloc];
 		//cout<<"avant la boucle\n";
 		for (int kloc=0;kloc<this->header.dataobs.nloc;kloc++){

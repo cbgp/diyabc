@@ -217,7 +217,7 @@ int i,j;
     			this->event[i].pop2=atoi(ss[4].c_str());
     			if (atof(ss[5].c_str())!=0.0) this->event[i].admixrate=atof(ss[5].c_str());
     			else {this->event[i].admixrate=-1.0;this->event[i].sadmixrate=ss[5];this->detparam(this->event[i].sadmixrate,2);}
-    			cout <<this->event[i].stime<<"  SPLIT"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"   "<<this->event[i].pop2<<"   "<<this->event[i].sadmixrate<<"\n";
+    			//cout <<this->event[i].stime<<"  SPLIT"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"   "<<this->event[i].pop2<<"   "<<this->event[i].sadmixrate<<"\n";
     		} else if (majuscules(ss[1])=="VARNE") {
     			this->event[i].action='V';
     			this->event[i].pop=atoi(ss[2].c_str());
@@ -524,7 +524,7 @@ struct ParticleC
 	    int i=0;
 	    while ((OK)and(i<this->scen.nconditions)){
 	        this->scen.condition[i].ecris();
-	        cout<<this->scen.condition[i].param1<<this->scen.condition[i].operateur<<this->scen.condition[i].param2<<"\n";
+	        //cout<<this->scen.condition[i].param1<<this->scen.condition[i].operateur<<this->scen.condition[i].param2<<"\n";
 	        ip1=0;while (this->scen.condition [i].param1!=this->scen.histparam[ip1].name) ip1++;
 	        ip2=0;while (this->scen.condition [i].param2!=this->scen.histparam[ip2].name) ip2++;
 	        if (this->scen.condition[i].operateur==">")       OK=(this->scen.histparam[ip1].value > this->scen.histparam[ip2].value);
@@ -618,23 +618,23 @@ struct ParticleC
 	
 	void setMutParamValue(int loc){
 		int gr = this->locuslist[loc].groupe;
-		//cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
+		cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
 		if (this->locuslist[loc].type<5) {  //MICROSAT
 			this->grouplist[gr].priormutloc.mean = this->grouplist[gr].mutmoy;
 			if ((this->grouplist[gr].priormutloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mut_rate = this->drawfromprior(this->grouplist[gr].priormutloc);
 			else this->locuslist[loc].mut_rate =this->grouplist[gr].mutmoy;
-			//cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
+			cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
 
 			this->grouplist[gr].priorPloc.mean = this->grouplist[gr].Pmoy;
 			if ((this->grouplist[gr].priorPloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].Pgeom = this->drawfromprior(this->grouplist[gr].priorPloc);
 			else this->locuslist[loc].Pgeom =this->grouplist[gr].Pmoy;
-			//cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
+			cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
 
 			this->grouplist[gr].priorsniloc.mean = this->grouplist[gr].snimoy;
 			//cout <<"coucou\n";fflush(stdin);
 			if ((this->grouplist[gr].priorsniloc.sdshape>0.001 )and(this->grouplist[gr].nloc>1)) this->locuslist[loc].sni_rate = this->drawfromprior(this->grouplist[gr].priorsniloc);
 			else this->locuslist[loc].sni_rate =this->grouplist[gr].snimoy;
-			//cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
+			cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
 			
 	
 		 }
@@ -725,7 +725,7 @@ struct ParticleC
 		this->seqlist[iseq].pop = this->scen.event[ievent].pop;
 		this->seqlist[iseq].t0 = this->scen.event[ievent].time;
 		this->seqlist[iseq].sample = this->scen.event[ievent].sample;
-		cout << " seqlist["<<iseq<<"].sample = "<<this->seqlist[iseq].sample<<"\n";
+		//cout << " seqlist["<<iseq<<"].sample = "<<this->seqlist[iseq].sample<<"\n";
 	}
 
 	void seqMerge(int iseq, int ievent) {
@@ -1085,7 +1085,7 @@ struct ParticleC
 	}
 
 	void add_sample(int loc,int iseq) {
-		cout <<"add sample "<<this->seqlist[iseq].sample<<"\n";
+		//cout <<"add sample "<<this->seqlist[iseq].sample<<"\n";
 		for (int i=0;i<this->gt[loc].nnodes;i++){
 			if (this->gt[loc].nodes[i].sample == this->seqlist[iseq].sample) {
 				this->gt[loc].nodes[i].pop = this->seqlist[iseq].pop;
@@ -1257,7 +1257,7 @@ struct ParticleC
 		int len;
 		while (anc>=this->gt[loc].ngenes) {
 			anc--;
-			cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
+			//cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
 			int i=-1;
 			bool trouve=false;
 			while ((not trouve)and(i<this->gt[loc].nbranches-1)) {
@@ -1286,7 +1286,7 @@ struct ParticleC
 				}
 			}
 		}
-		/*if (this->locuslist[loc].type<5) {    for (int no=0;no<this->gt[loc].nnodes;no++) cout << gt[loc].nodes[no].state << "   ";}
+		/*if (this->locuslist[loc].type<5) {    for (int no=0;no<this->gt[loc].nnodes;no++) {cout << gt[loc].nodes[no].state << "   ";if ((no+1)%20 == 0) cout <<"\n";}}
 		else {for (int no=0;no<this->gt[loc].nnodes;no++) cout << gt[loc].nodes[no].dna << "   ";}
 		cout << "\n";*/
 		int sa,ind;
@@ -1337,12 +1337,12 @@ struct ParticleC
 				}
 //AJOUTER LE TRAITEMENT DES DONNEES MANQUANTES DES SEQUENCES
 		}
+		cout<<"fin de crehaplo\n";
 		return 0;
 	}
 
 	int dosimulpart(int ipart,int mrseed){
 		vector <int> simulOK;
-		int simOK;
 		int *emptyPop;
 		bool treedone;
 		this->mw.randinit(mrseed,true);
@@ -1366,85 +1366,87 @@ struct ParticleC
 		//}
 		//cout << "\n";
 		setMutParammoyValue();
-		for (int loc=0;loc<1/*this->nloc*/;loc++) {
-			setMutParamValue(loc);
-			if (this->locuslist[loc].type >4) {
-				comp_matQ(loc);
+		for (int loc=0;loc<this->nloc;loc++) {
+			if (this->locuslist[loc].groupe>0) {
+				setMutParamValue(loc);
+				if (this->locuslist[loc].type >4) {
+					comp_matQ(loc);
+					}
+				treedone=false;
+				if ((this->locuslist[loc].type % 5) == 3) {
+					if (gtYexist) {this->gt[loc] = copytree(GeneTreeY);treedone=true;}
 				}
-			treedone=false;
-			if ((this->locuslist[loc].type % 5) == 3) {
-				if (gtYexist) {this->gt[loc] = copytree(GeneTreeY);treedone=true;}
-			}
-			else if ((locuslist[loc].type % 5) == 4) {
-				    cout << "coucou   gtMexist=" << gtMexist <<"\n";
-					if (gtMexist) {this->gt[loc] = copytree(GeneTreeM);treedone=true;}
-				 }
-			if (not treedone) {
-				cout << "avant init_tree \n";
-				this->gt[loc] = init_tree(loc);
-				cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
-				for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
-				for (int iseq=0;iseq<this->nseq;iseq++) {
-					cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action << "\n";fflush(stdin);
-					if (this->seqlist[iseq].action == 'C') {	//COAL
-						//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
-						//cout <<"\n";
-						if (((this->seqlist[iseq].t1>this->seqlist[iseq].t0)or(this->seqlist[iseq].t1<0))and(emptyPop[seqlist[iseq].pop]==0)) {
-							//cout << "dosimul appel de coal_pop \n";
-							coal_pop(loc,iseq);
-							//cout << "apres coal_pop\n";
-						}
+				else if ((locuslist[loc].type % 5) == 4) {
+					    cout << "coucou   gtMexist=" << gtMexist <<"\n";
+						if (gtMexist) {this->gt[loc] = copytree(GeneTreeM);treedone=true;}
 					}
-					else if (this->seqlist[iseq].action == 'M') {	//MERGE
-						if ((emptyPop[seqlist[iseq].pop]==0)or(emptyPop[seqlist[iseq].pop1]==0)) {
-							//cout << "dosimul appel de pool_pop \n";
-							pool_pop(loc,iseq);
+				if (not treedone) {
+					cout << "avant init_tree \n";
+					this->gt[loc] = init_tree(loc);
+					cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
+					for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
+					for (int iseq=0;iseq<this->nseq;iseq++) {
+						//cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action << "\n";fflush(stdin);
+						if (this->seqlist[iseq].action == 'C') {	//COAL
+							//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
+							//cout <<"\n";
+							if (((this->seqlist[iseq].t1>this->seqlist[iseq].t0)or(this->seqlist[iseq].t1<0))and(emptyPop[seqlist[iseq].pop]==0)) {
+								//cout << "dosimul appel de coal_pop \n";
+								coal_pop(loc,iseq);
+								//cout << "apres coal_pop\n";
+							}
+						}
+						else if (this->seqlist[iseq].action == 'M') {	//MERGE
+							if ((emptyPop[seqlist[iseq].pop]==0)or(emptyPop[seqlist[iseq].pop1]==0)) {
+								//cout << "dosimul appel de pool_pop \n";
+								pool_pop(loc,iseq);
+								emptyPop[seqlist[iseq].pop]  =0;
+								emptyPop[seqlist[iseq].pop1] =1;
+							}
+						}
+						else if (this->seqlist[iseq].action == 'S') {  //SPLIT
+							if (emptyPop[seqlist[iseq].pop]==0) {
+								//cout << "dosimul appel de split_pop \n";
+								split_pop(loc,iseq);
+								emptyPop[seqlist[iseq].pop]  =1;
+								emptyPop[seqlist[iseq].pop1] =0;
+								emptyPop[seqlist[iseq].pop2] =0;
+							}
+						}
+						else if (this->seqlist[iseq].action == 'A') {  //ADSAMP
+							//cout << "dosimul appel de add_sample \n";
+							add_sample(loc,iseq);
 							emptyPop[seqlist[iseq].pop]  =0;
-							emptyPop[seqlist[iseq].pop1] =1;
+							//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
+							//cout <<"\n";
 						}
-					}
-					else if (this->seqlist[iseq].action == 'S') {  //SPLIT
-						if (emptyPop[seqlist[iseq].pop]==0) {
-							//cout << "dosimul appel de split_pop \n";
-							split_pop(loc,iseq);
-							emptyPop[seqlist[iseq].pop]  =1;
-							emptyPop[seqlist[iseq].pop1] =0;
-							emptyPop[seqlist[iseq].pop2] =0;
-						}
-					}
-					else if (this->seqlist[iseq].action == 'A') {  //ADSAMP
-						//cout << "dosimul appel de add_sample \n";
-						add_sample(loc,iseq);
-						emptyPop[seqlist[iseq].pop]  =0;
-						//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
-						//cout <<"\n";
-					}
-				}	//LOOP ON iseq
-	/* copie de l'arbre si locus sur Y ou mitochondrie */
-				if ((locuslist[loc].type % 5) == 3) {GeneTreeY  = copytree(this->gt[loc]);gtYexist=true;}
+					}	//LOOP ON iseq
+		/* copie de l'arbre si locus sur Y ou mitochondrie */
+					if ((locuslist[loc].type % 5) == 3) {GeneTreeY  = copytree(this->gt[loc]);gtYexist=true;}
 
-				if ((locuslist[loc].type % 5) == 4) {
-					//cout <<"avant copie de genetreeM\n";
-					GeneTreeM  = copytree(this->gt[loc]);gtMexist=true;}
+					if ((locuslist[loc].type % 5) == 4) {
+						//cout <<"avant copie de genetreeM\n";
+						GeneTreeM  = copytree(this->gt[loc]);gtMexist=true;}
+				}
+	/* mutations */
+				put_mutations(loc);
+				//cout << "Locus " <<loc << "  apres put_mutations\n";
+				simulOK[loc]=cree_haplo(loc);
+				cout << "Locus " <<loc << "  apres cree_haplo\n";
+				if (simulOK[loc] != 0) cout <<"    locus "<< loc << "   simOK <> 0\n";
+				//simulOK[loc] = simOK;
+				cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 			}
-/* mutations */
-			put_mutations(loc);
-			//cout << "Locus " <<loc << "  apres put_mutations\n";
-			simOK=cree_haplo(loc);
-			//cout << "Locus " <<loc << "  apres cree_haplo\n";
-			if (simOK!=0) cout <<"    locus "<< loc << "   simOK <> 0\n";
-			simulOK[loc] = simOK;
-			//cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 		}		//LOOP ON loc
 		delete [] emptyPop;
-		for (int loc=0;loc<this->nloc;loc++) deletetree(this->gt[loc]);
+		for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) deletetree(this->gt[loc]);}
 		delete [] this->gt;
 		if (gtYexist) deletetree(GeneTreeY);
 		if (gtMexist) deletetree(GeneTreeM);
 		//for (int loc=0;loc<this->nloc;loc++) cout << extract<int>(simulOK[loc]) << "   ";
 		//cout << "\n";
 		//cout << "Fin de dosimulpart \n";
-		simOK=0;for (int loc=0;loc<this->nloc;loc++) simOK+=simulOK[loc];
+		int simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
 		return simOK;
 	}
 
@@ -1463,6 +1465,7 @@ struct ParticleC
 		int n=0;
 		//cout <<"debut de calfreq nloc = "<<this->nloc<<"  nsample = "<<this->data.nsample <<"\n";
 		for (int loc=0;loc<this->nloc;loc++) {
+		    if (this->locuslist[loc].groupe>0){
 			if (this->locuslist[loc].type<5) {
 				//cout <<"Locus "<< loc <<"\n";
 				this->locuslist[loc].nal = this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;
@@ -1488,6 +1491,7 @@ struct ParticleC
 					//cout << "\n";
 					}
 			}
+		    }
 		}
 /*		for (int loc=0;loc<this->nloc;loc++) {
 			if (this->locuslist[loc].type<5) {
@@ -1513,21 +1517,23 @@ struct ParticleC
 		cout <<"fin de calfreq \n";*/
 	}
 
-	double cal_nal1p(StatC stat){
+	double cal_nal1p(int gr,int st){
+	  
 		double nalm=0.0;
-		int iloc,loc,nl=0;
-		//cout << "nloc = " << stat.nloc <<"\n";
-		for (iloc=0;iloc<this->grouplist[stat.group].nloc;iloc++){
-			loc=this->grouplist[stat.group].loc[iloc];
-			//cout << "cal_n1p  locus = " << loc <<"   stat.group = "<<stat.group<<"\n";
+		int iloc,kloc,nl=0;
+		cout << "nloc = " << this->grouplist[gr].nloc <<"\n";
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			kloc=this->grouplist[gr].loc[iloc];
+			cout << "cal_n1p  locus = " << kloc <<"   stat.group = "<<gr<<"\n";
 			//cout << this->locuslist[loc].samplesize[stat.samp] <<"\n";
-			if(this->locuslist[loc].samplesize[stat.samp]>0) {
-			for (int k=0;k<this->locuslist[loc].nal;k++) {if (this->locuslist[loc].freq[stat.samp][k]>0.00001) nalm +=1.0;}
+			if(this->locuslist[kloc].samplesize[this->grouplist[gr].sumstat[st].samp]>0) {
+			for (int k=0;k<this->locuslist[kloc].nal;k++) {if (this->locuslist[kloc].freq[this->grouplist[gr].sumstat[st].samp][k]>0.00001) nalm +=1.0;}
 			nl++;
 			}
 		}
-		//cout <<"nalm="<<nalm<<"    nl="<<nl<<"\n";
-		if (nl>0) return nalm/(double)nl; else return 0.0;
+		cout <<"naltot="<<nalm<<"    nl="<<nl<<"    nmoy="<<  "\n";
+		if (nl>0) nalm=nalm/(double)nl; 
+		return nalm;
 	}
 
 	double cal_nal2p(StatC stat){
@@ -1999,7 +2005,7 @@ struct ParticleC
 			int categ;
 			categ=this->grouplist[gr].sumstat[st].cat;
 			switch (categ)
-			{	case     1 : this->grouplist[gr].sumstat[st].val = cal_nal1p(this->grouplist[gr].sumstat[st]);break;
+			{	case     1 : this->grouplist[gr].sumstat[st].val = cal_nal1p(gr,st);break;
 				case     2 : this->grouplist[gr].sumstat[st].val = cal_het1p(this->grouplist[gr].sumstat[st]);break;
 				case     3 : this->grouplist[gr].sumstat[st].val = cal_var1p(this->grouplist[gr].sumstat[st]);break;
 				case     4 : this->grouplist[gr].sumstat[st].val = cal_mgw1p(this->grouplist[gr].sumstat[st]);break;
