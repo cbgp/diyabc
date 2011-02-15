@@ -241,7 +241,7 @@ public:
 		getline(file,s1);		//ligne "group prior"
 		this->groupe = new LocusGroupC[this->ngroupes];
 		this->assignloc(0);
-		cout<<"on attaque les groupes\n";
+		cout<<"on attaque les groupes : alayse des priors\n";
 		for (gr=1;gr<this->ngroupes;gr++){
 			getline(file,s1);
 			ss=splitwords(s1," ",&nss);
@@ -273,10 +273,11 @@ public:
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readpriormut(ss1[1]);delete [] ss1;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);
 				this->groupe[gr].p_fixe=atof(ss1[2].c_str());this->groupe[gr].gams=atof(ss1[3].c_str());
-				if (ss1[0]=="JK") this->groupe[gr].mutmod=0;
-				else if (ss1[0]=="K2P") this->groupe[gr].mutmod=1;
-				else if (ss1[0]=="HKY") this->groupe[gr].mutmod=2;
-				else if (ss1[0]=="TN") this->groupe[gr].mutmod=3;
+				if (ss1[1]=="JK") this->groupe[gr].mutmod=0;
+				else if (ss1[1]=="K2P") this->groupe[gr].mutmod=1;
+				else if (ss1[1]=="HKY") this->groupe[gr].mutmod=2;
+				else if (ss1[1]=="TN") this->groupe[gr].mutmod=3;
+				//cout<<"mutmod = "<<this->groupe[gr].mutmod <<"\n";
 			}
 		}
 		delete [] ss;
@@ -386,6 +387,7 @@ struct ParticleSetC
 			this->particule[p].grouplist[gr].loc  = new int[this->header.groupe[gr].nloc];
 			for (int i=0;i<this->header.groupe[gr].nloc;i++) this->particule[p].grouplist[gr].loc[i] = this->header.groupe[gr].loc[i];
 			if (this->header.groupe[gr].type==0) {	//MICROSAT
+				//cout <<"MICROSAT\n";
 				this->particule[p].grouplist[gr].mutmoy = this->header.groupe[gr].mutmoy;
 				if (this->header.groupe[gr].mutmoy<0.0) this->particule[p].grouplist[gr].priormutmoy = copyprior(this->header.groupe[gr].priormutmoy);
 				else this->particule[p].grouplist[gr].priormutmoy.constant=true;
@@ -400,6 +402,7 @@ struct ParticleSetC
 				this->particule[p].grouplist[gr].priorsniloc = copyprior(this->header.groupe[gr].priorsniloc);
 			}
 			else {							//SEQUENCES
+			        //cout<<"SEQUENCE\n";
 				this->particule[p].grouplist[gr].mutmod = this->header.groupe[gr].mutmod;	//mutmod
 				this->particule[p].grouplist[gr].p_fixe = this->header.groupe[gr].p_fixe;	//p_fixe
 				this->particule[p].grouplist[gr].gams   = this->header.groupe[gr].gams;	//gams
@@ -433,6 +436,7 @@ struct ParticleSetC
 	}
 
 	void setloci(int p) {
+	        int kmoy;
 		this->particule[p].nloc = this->header.dataobs.nloc;
 		this->particule[p].locuslist = new LocusC[this->header.dataobs.nloc];
 		//cout<<"avant la boucle\n";
@@ -441,8 +445,10 @@ struct ParticleSetC
 			this->particule[p].locuslist[kloc].groupe = this->header.dataobs.locus[kloc].groupe;
 			//cout<<"kloc="<<kloc<<"\n";
 			if (this->header.dataobs.locus[kloc].type < 5) {
-				this->particule[p].locuslist[kloc].kmin = this->header.dataobs.locus[kloc].kmin;
-				this->particule[p].locuslist[kloc].kmax = this->header.dataobs.locus[kloc].kmax;
+			      	kmoy=(this->header.dataobs.locus[kloc].maxi+this->header.dataobs.locus[kloc].mini)/2;
+				this->particule[p].locuslist[kloc].kmin=kmoy-((this->header.dataobs.locus[kloc].motif_range/2)-1)*this->header.dataobs.locus[kloc].motif_size;
+				this->particule[p].locuslist[kloc].kmax=this->particule[p].locuslist[kloc].kmin+(this->header.dataobs.locus[kloc].motif_range-1)*this->header.dataobs.locus[kloc].motif_size;
+				//cout<<"kmin="<<this->particule[p].locuslist[kloc].kmin<<"     kmax="<<this->particule[p].locuslist[kloc].kmax<<"\n";
 				this->particule[p].locuslist[kloc].motif_size = this->header.dataobs.locus[kloc].motif_size;
 				this->particule[p].locuslist[kloc].motif_range = this->header.dataobs.locus[kloc].motif_range;
 				this->particule[p].locuslist[kloc].mut_rate = this->header.dataobs.locus[kloc].mut_rate;
@@ -469,7 +475,7 @@ struct ParticleSetC
 			this->particule[p].locuslist[kloc].samplesize = new int[ this->header.dataobs.nsample];
 			
 			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] =  this->header.dataobs.locus[kloc].samplesize[sa];
-			cout << "samplesize[0]="<<this->particule[p].locuslist[kloc].samplesize[0]<<"\n";
+			//cout << "samplesize[0]="<<this->particule[p].locuslist[kloc].samplesize[0]<<"\n";
 		}
 	}
 
@@ -482,133 +488,8 @@ struct ParticleSetC
 		    //this->particule[p].scenario[i].ecris();
 		}
 		
-		/*this->particule[p].nparam=this->header.nparamtot;
-		this->particule[p].parameterlist = new HistParameterC[this->header.nparamtot];
-		for (int i=0;i<this->header.nparamtot;i++) this->particule[p].parameterlist[i] = copyhistparameter(this->header.histparam[i]);*/
 	}
 
-/*    void setconditions(int p) {
-        this->particule[p].nconditions=this->header.nconditions;
-        if (this->header.nconditions>0) {
-            this->particule[p].condition = new ConditionC[this->header.nconditions];
-            for (int i=0;i<this->header.nconditions;i++) {
-                this->particule[p].condition[i].param1=this->header.condition[i].param1;
-                this->particule[p].condition[i].param2=this->header.condition[i].param2;
-                this->particule[p].condition[i].operateur=this->header.condition[i].operateur;
-            }
-        }
-    }
-	void setparamn0(vector<int>hpi,vector<double>hpd,vector<string>hps) {
-		PriorC *prior;
-		Ne0C *ne0;
-		int *category;
-		string *name;
-		double *value;
-		int *paramvar;
-		int ni=-1,nd=-1,ns=-1;
-		int nparam,nparamvar=0,nn0;
-		ni++;nparam = hpi[ni];
-		prior = new PriorC[nparam];
-		category = new int[nparam];
-		name = new string[nparam];
-		value = new double[nparam];
-		paramvar =new int[nparam];
-		for (int k=0;k<nparam;k++){
-			ni++;category[k] = hpi[ni];
-			ns++;name[k] = hps[ns];
-			nd++;value[k] = hpd[nd];
-			if (value[k]<0.0){
-				ns++;prior[k].loi = hps[ns];
-				nd++;prior[k].mini =hpd[nd];
-				nd++;prior[k].maxi =hpd[nd];
-				if (prior[k].maxi!=prior[k].mini) {paramvar[nparamvar]=k;nparamvar++;prior[k].constant=false;}
-				else prior[k].constant=true;
-				nd++;prior[k].mean = hpd[nd];
-				nd++;prior[k].sdshape = hpd[nd];
-				ni++;prior[k].ndec = hpi[ni];
-			} else prior[k].constant=true;
-		}
-		ni++;nn0 = hpi[ni];
-		ne0 = new Ne0C[nn0];
-		for (int k=0;k<nn0;k++) {
-			ni++;ne0[k].val = hpi[ni];
-			ns++;ne0[k].name =hps[ns];
-		}
-		for (int p=0;p<this->npart;p++) {
-			this->particule[p].nparamvar=nparamvar;
-			this->particule[p].paramvar = new int[nparamvar];
-			for(int i=0;i<nparamvar;i++)this->particule[p].paramvar[i] =paramvar[i];
-			this->particule[p].nparam = nparam;
-			this->particule[p].parameterlist = new HistParameterC [nparam];
-			for (int k=0;k<nparam;k++){
-				this->particule[p].parameterlist[k].category = category[k];
-				this->particule[p].parameterlist[k].name = name[k];
-				this->particule[p].parameterlist[k].value = value[k];
-				//if (p==0) cout << this->particule[p].parameterlist[k].name << "  " << this->particule[p].parameterlist[k].value << "  " << this->particule[p].parameterlist[k].category <<"   ";
-				this->particule[p].parameterlist[k].prior.constant = prior[k].constant;
-				if (not prior[k].constant) {
-					this->particule[p].parameterlist[k].prior.loi = prior[k].loi;
-					//if (p==0) cout << this->particule[p].parameterlist[k].prior.loi << "  [";
-					this->particule[p].parameterlist[k].prior.mini =prior[k].mini;
-					//if (p==0) cout << this->particule[p].parameterlist[k].prior.mini << "  ";
-					this->particule[p].parameterlist[k].prior.maxi =prior[k].maxi;
-					//if (p==0) cout << this->particule[p].parameterlist[k].prior.maxi << "  ";
-					this->particule[p].parameterlist[k].prior.mean = prior[k].mean;
-					//if (p==0) cout <<this->particule[p].parameterlist[k].prior.mean << "  ";
-					this->particule[p].parameterlist[k].prior.sdshape = prior[k].sdshape;
-					//if (p==0) cout << this->particule[p].parameterlist[k].prior.sdshape << "  ";
-					this->particule[p].parameterlist[k].prior.ndec = prior[k].ndec;
-					//if (p==0) cout <<this->particule[p].parameterlist[k].prior.ndec <<	"]\n";
-				}
-			}
-			this->particule[p].nn0 = nn0;
-			//if (p==0) cout  << "\nnombre de Ne = " << this->particule[p].nn0 <<"\n";
-			this->particule[p].ne0list = new Ne0C[nn0];
-			for (int k=0;k<nn0;k++){
-				this->particule[p].ne0list[k].val = ne0[k].val;
-				this->particule[p].ne0list[k].name = ne0[k].name;
-				//if (p==0) cout << this->particule[p].ne0list[k].name <<"   " << this->particule[p].ne0list[k].val << "\n";
-			}
-		}
-		delete []prior;
-		delete []ne0;
-		delete []category;
-		delete []name;
-		delete []value;
-		delete []paramvar;
-	}
-
-	void printevents() {
-		std::cout << "printevents : " << this->nevent << "\n";
-		for (int kloc=0;kloc<this->nevent;kloc++){
-			std::cout << "event " << kloc << "\n";
-			if (this->eventlist[kloc].action  == 0)
-			{std::cout << this->eventlist[kloc].time << "  SAMPLE   pop=" << this->eventlist[kloc].pop << "   sample =" << this->eventlist[kloc].sample << "  numevent0 =" << this->eventlist[kloc].numevent0 << "\n";}
-			else if (this->eventlist[kloc].action  == 1)
-			{std::cout << this->eventlist[kloc].time << "  VARNE    pop=" << this->eventlist[kloc].pop << "   Ne =" << this->eventlist[kloc].Ne << "  numevent0 =" << this->eventlist[kloc].numevent0 << "\n";}
-			else if (this->eventlist[kloc].action  == 2)
-			{std::cout << this->eventlist[kloc].time << "  MERGE    pop=" << this->eventlist[kloc].pop << "   pop1 =" << this->eventlist[kloc].pop1 << "  numevent0 =" << this->eventlist[kloc].numevent0 << "\n";}
-			else if (this->eventlist[kloc].action  == 3)
-			{std::cout << this->eventlist[kloc].time << "  SPLIT    pop=" << this->eventlist[kloc].pop << "   pop1 =" << this->eventlist[kloc].pop1 << "   pop2 =" << this->eventlist[kloc].pop2 << " admixrate =" << this->eventlist[kloc].admixrate << "  numevent0 =" << this->eventlist[kloc].numevent0 << "\n";}
-
-			}
-		}
-*/
-
-/*
-	list gethaplostate(int loc) {
-		list state;
-//		for (int i=0;i<)
-//		return this->locuslist[loc].haplostate;
-		return state;
-	}
-
-	list gethaplodna(int loc) {
-		list dna;
-//		return this->locuslist[loc].haplodna;
-		return dna;
-	}
-*/
 	void cleanParticle(int ipart){
 //nettoyage de locuslist
 		for (int loc=0;loc<this->particule[ipart].nloc;loc++) {
@@ -714,7 +595,8 @@ struct ParticleSetC
 		paramstat = new double*[npart];
 		for (ipart=0;ipart<this->npart;ipart++){
 			tid = 0;//omp_get_thread_num();
-			cout <<"tid = "<<tid<<"   nparam="<<this->particule[ipart].nparam <<"\n";
+			cout <<"tid = "<<tid <<"\n";
+			//cout <<"dosimultabref   kmin = "<<this->particule[ipart].locuslist[0].kmin<<"    kmax = "<<this->particule[ipart].locuslist[0].kmax<<"\n";
 			sOK[ipart]=this->particule[ipart].dosimulpart(ipart,tid);
 			cout << "\nretour de dosimulpart sOK["<<ipart<<"] = "<<sOK[ipart] <<"\n";
 			nparamstat = this->particule[ipart].scen.nparamvar;

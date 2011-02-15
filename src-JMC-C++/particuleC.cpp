@@ -202,6 +202,7 @@ int i,j;
     			this->event[i].action='E';
     			this->event[i].pop=atoi(ss[2].c_str());
     			this->nsamp++;
+			this->event[i].sample=this->nsamp;
     			//cout <<this->event[i].time<<"  SAMPLE"<<"   "<<this->event[i].pop<<"\n";
     		} else if (majuscules(ss[1])=="MERGE") {
     			this->event[i].action='M';
@@ -216,7 +217,7 @@ int i,j;
     			this->event[i].pop2=atoi(ss[4].c_str());
     			if (atof(ss[5].c_str())!=0.0) this->event[i].admixrate=atof(ss[5].c_str());
     			else {this->event[i].admixrate=-1.0;this->event[i].sadmixrate=ss[5];this->detparam(this->event[i].sadmixrate,2);}
-    			//cout <<this->event[i].stime<<"  SPLIT"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"   "<<this->event[i].pop2<<"   "<<this->event[i].sadmixrate<<"\n";
+    			cout <<this->event[i].stime<<"  SPLIT"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"   "<<this->event[i].pop2<<"   "<<this->event[i].sadmixrate<<"\n";
     		} else if (majuscules(ss[1])=="VARNE") {
     			this->event[i].action='V';
     			this->event[i].pop=atoi(ss[2].c_str());
@@ -229,6 +230,7 @@ int i,j;
     	for (int i=0;i<this->nparam;i++){
     		this->histparam[i].name=histpar[i].name;
     		this->histparam[i].category=histpar[i].category;
+		if (this->histparam[i].category=='T')this->histparam[i].value=-9999; else this->histparam[i].value=-1;
     	}
     	histpar.clear();
     	this->time_sample = new int[this->nsamp];
@@ -246,8 +248,8 @@ int i,j;
     	for (int i=0;i<this->nevent;i++) this->event[i].ecris();
     	cout<<"    histparam:\n";
     	for (int i=0;i<this->nparam;i++) this->histparam[i].ecris();
-    	cout<<"    histparamvar:\n";
-     	for (int i=0;i<this->nparamvar;i++) this->histparamvar[i].ecris();
+    	//cout<<"    histparamvar:\n";
+     	//for (int i=0;i<this->nparamvar;i++) this->histparamvar[i].ecris();
      	cout <<"   nconditions="<<this->nconditions<<"\n";
      	if (this->nconditions>0) for (int i=0;i<this->nconditions;i++) this->condition[i].ecris();
     }
@@ -278,7 +280,7 @@ EventC copyevent(EventC source) {
 	dest.numevent0 = source.numevent0;
 	dest.stime = source.stime;
 	dest.sNe = source.sNe;
-	dest.sadmixrate = source.admixrate;
+	dest.sadmixrate = source.sadmixrate;
 	return dest;
 }
 
@@ -388,12 +390,10 @@ struct ParticleC
 	SequenceBitC *seqlist;
 	GeneTreeC *gt;
 	MwcGen mw;
-//	HistParameterC *parameterlist;
 	ConditionC *condition;
 	int *paramvar;
 	bool dnatrue,drawuntil;
-	int npart,nloc,ngr,nparam,nparamvar,nseq,popmax,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions;
-	int *time_sample;
+	int npart,nloc,ngr,nparam,nparamvar,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions;
 	double matQ[4][4];
 
 	void ecris(){
@@ -474,13 +474,16 @@ struct ParticleC
 
 	double param2val(string paramname){
 		int ip;
+		//cout<<"paramname = "<<paramname<<"\n";
 		for (ip=0;ip<this->scen.nparam;ip++) {if (paramname==this->scen.histparam[ip].name) break;}
+		//cout<<"param "<<ip<<"    value="<<this->scen.histparam[ip].value<<"\n";fflush(stdin);
 		return this->scen.histparam[ip].value;
 
 	}
 	double getvalue(string line) {
 		double result;
 		bool fin=false;
+		//cout<<"line="<<line<<"\n";
 		string operateur,plus="+",minus="-";
 		size_t posign,posplus,posminus;
 		posplus=line.find('+');posminus=line.find('-');
@@ -520,14 +523,10 @@ struct ParticleC
 	    int ip1,ip2;
 	    int i=0;
 	    while ((OK)and(i<this->scen.nconditions)){
-	    cout<<"coucou\n";
 	        this->scen.condition[i].ecris();
 	        cout<<this->scen.condition[i].param1<<this->scen.condition[i].operateur<<this->scen.condition[i].param2<<"\n";
-	        cout<<"coco\n";
 	        ip1=0;while (this->scen.condition [i].param1!=this->scen.histparam[ip1].name) ip1++;
 	        ip2=0;while (this->scen.condition [i].param2!=this->scen.histparam[ip2].name) ip2++;
-	        cout << this->scen.condition [i].param1<<" = "<< this->scen.histparam[ip1].value<<   "\n";
-	        cout << this->scen.condition [i].param2<<" = "<< this->scen.histparam[ip2].value<<   "\n";
 	        if (this->scen.condition[i].operateur==">")       OK=(this->scen.histparam[ip1].value > this->scen.histparam[ip2].value);
 	        else if (this->scen.condition[i].operateur=="<")  OK=(this->scen.histparam[ip1].value < this->scen.histparam[ip2].value);
 	        else if (this->scen.condition[i].operateur==">=") OK=(this->scen.histparam[ip1].value >= this->scen.histparam[ip2].value);
@@ -548,8 +547,8 @@ struct ParticleC
 					for (int p=0;p<this->scen.nparam;p++) {
 					    this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
 					    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-					    cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
-					    cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
+					    //cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
+					    //cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
 					}
 					//cout <<"avant test conditions\n";
 					OK = conditionsOK();
@@ -566,12 +565,13 @@ struct ParticleC
 			for (int p=0;p<this->scen.nparam;p++) {
 			    this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
 			    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
+			    else this->scen.histparam[p].value = this->scen.histparam[p].value;
 			}
 			OK=true;
 		}
-		//cout<<"fin du tirage des parametres\n";
-		//for (int p=0;p<this->scen.nparam;p++) cout<< this->scen.histparam[p].value<<"   ";
-		//cout <<"\n";
+		/*cout<<"fin du tirage des parametres\n";
+		for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";
+		cout <<"\n";*/
 		if (OK) {
 			for (int ievent=0;ievent<this->scen.nevent;ievent++) {
 				if (this->scen.event[ievent].action=='V') { if (this->scen.event[ievent].Ne<0) this->scen.event[ievent].Ne= (int)(0.5+this->getvalue(this->scen.event[ievent].sNe));}
@@ -590,21 +590,21 @@ struct ParticleC
 	void setMutParammoyValue(){
 		int gr;
 		for (gr=1;gr<this->ngr;gr++) {
-		    cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"\n";
+		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"\n";
 		    if (this->grouplist[gr].type==0) {  //microsat
 		        if (this->grouplist[gr].mutmoy<0) this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
-			cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"\n";fflush(stdin);
+			//cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"\n";fflush(stdin);
 			if (this->grouplist[gr].Pmoy<0) this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
-			cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"\n";fflush(stdin);
+			//cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"\n";fflush(stdin);
 			if (this->grouplist[gr].snimoy<0) this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
-			cout<<"snimoy="<<this->grouplist[gr].snimoy<<"\n";fflush(stdin);
+			//cout<<"snimoy="<<this->grouplist[gr].snimoy<<"\n";fflush(stdin);
 		    }
 		    if (this->grouplist[gr].type==1) {  //sequence
 		        if (this->grouplist[gr].musmoy<0) this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
-			cout<<"musmoy="<<this->grouplist[gr].musmoy<<"\n";fflush(stdin);
+			//cout<<"musmoy="<<this->grouplist[gr].musmoy<<"\n";fflush(stdin);
 			if (this->grouplist [gr].mutmod>0){
 			    if (this->grouplist[gr].k1moy<0) this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
-			    cout<<"k1moy="<<this->grouplist[gr].k1moy<<"\n";fflush(stdin);
+			//    cout<<"k1moy="<<this->grouplist[gr].k1moy<<"\n";fflush(stdin);
 			}
 			if (this->grouplist [gr].mutmod>2){
 			    if (this->grouplist[gr].k2moy<0) this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
@@ -618,47 +618,46 @@ struct ParticleC
 	
 	void setMutParamValue(int loc){
 		int gr = this->locuslist[loc].groupe;
-		cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
+		//cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
 		if (this->locuslist[loc].type<5) {  //MICROSAT
 			this->grouplist[gr].priormutloc.mean = this->grouplist[gr].mutmoy;
 			if ((this->grouplist[gr].priormutloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mut_rate = this->drawfromprior(this->grouplist[gr].priormutloc);
 			else this->locuslist[loc].mut_rate =this->grouplist[gr].mutmoy;
-			cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
+			//cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
 
 			this->grouplist[gr].priorPloc.mean = this->grouplist[gr].Pmoy;
 			if ((this->grouplist[gr].priorPloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].Pgeom = this->drawfromprior(this->grouplist[gr].priorPloc);
 			else this->locuslist[loc].Pgeom =this->grouplist[gr].Pmoy;
-			cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
+			//cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
 
 			this->grouplist[gr].priorsniloc.mean = this->grouplist[gr].snimoy;
-			cout <<"coucou\n";fflush(stdin);
-			this->grouplist[gr].priorsniloc.ecris();
+			//cout <<"coucou\n";fflush(stdin);
 			if ((this->grouplist[gr].priorsniloc.sdshape>0.001 )and(this->grouplist[gr].nloc>1)) this->locuslist[loc].sni_rate = this->drawfromprior(this->grouplist[gr].priorsniloc);
 			else this->locuslist[loc].sni_rate =this->grouplist[gr].snimoy;
-			cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
+			//cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
 			
 	
 		 }
 		else		                    //DNA SEQUENCE
 		{
-			cout << "musmoy = "<<this->grouplist[gr].musmoy <<" (avant)";
+			//cout << "musmoy = "<<this->grouplist[gr].musmoy <<" (avant)";
 			if (this->grouplist[gr].musmoy<0) this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
 			this->grouplist[gr].priormusloc.mean = this->grouplist[gr].musmoy;
-			cout << "   et "<<this->grouplist[gr].musmoy <<" (apres)\n";
+			//cout << "   et "<<this->grouplist[gr].musmoy <<" (apres)\n";
 
 			if ((this->grouplist[gr].priormusloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mus_rate = this->drawfromprior(this->grouplist[gr].priormusloc);
 			else this->locuslist[loc].mus_rate =this->grouplist[gr].musmoy;
-			cout << "   et "<<this->locuslist[loc].mut_rate <<" (apres)\n";
+			//cout << "   et "<<this->locuslist[loc].mut_rate <<" (apres)\n";
 
 			if (this->grouplist [gr].mutmod>0) {
-			cout << "Pmoy = "<<this->grouplist[gr].Pmoy <<" (avant)";
+			//cout << "Pmoy = "<<this->grouplist[gr].Pmoy <<" (avant)";
 			if (this->grouplist[gr].k1moy<0) this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
 			this->grouplist[gr].priork1loc.mean = this->grouplist[gr].k1moy;
-			cout << "   et "<<this->grouplist[gr].Pmoy <<" (apres)\n";
+			//cout << "   et "<<this->grouplist[gr].Pmoy <<" (apres)\n";
 
 			if ((this->grouplist[gr].priork1loc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].k1 = this->drawfromprior(this->grouplist[gr].priork1loc);
 			else this->locuslist[loc].k1 =this->grouplist[gr].k1moy;
-			cout << "   et "<<this->locuslist[loc].Pgeom <<" (apres)\n";
+			//cout << "   et "<<this->locuslist[loc].Pgeom <<" (apres)\n";
 			}
 
 			if (this->grouplist [gr].mutmod>2) {
@@ -667,8 +666,8 @@ struct ParticleC
 
 			if (this->grouplist[gr].priork2loc.sdshape>0.001 ) this->locuslist[loc].k2 = this->drawfromprior(this->grouplist[gr].priork2loc);
 			else this->locuslist[loc].k2 =this->grouplist[gr].k2moy;
-			cout <<"mutmoy = "<< this->grouplist[gr].mutmoy << "  Pmoy = "<<this->grouplist[gr].Pmoy <<"  snimoy="<<this->grouplist[gr].snimoy<<"\n";
-			cout <<"locus "<<loc<<"  groupe "<<gr<< "  mut_rate="<<this->locuslist[loc].mut_rate<<"  Pgeom="<<this->locuslist[loc].Pgeom<<"  sni_rate="<<this->locuslist[loc].sni_rate << "\n";
+			//cout <<"mutmoy = "<< this->grouplist[gr].mutmoy << "  Pmoy = "<<this->grouplist[gr].Pmoy <<"  snimoy="<<this->grouplist[gr].snimoy<<"\n";
+			//cout <<"locus "<<loc<<"  groupe "<<gr<< "  mut_rate="<<this->locuslist[loc].mut_rate<<"  Pgeom="<<this->locuslist[loc].Pgeom<<"  sni_rate="<<this->locuslist[loc].sni_rate << "\n";
 			}
 		}
 	}
@@ -715,10 +714,8 @@ struct ParticleC
 
 	void seqCoal(int iseq, int ievent, int refpop) {
 		this->seqlist[iseq].action = 'C';
-		cout<<"avant findNe\n";fflush(stdin);
 		this->seqlist[iseq].N = findNe(ievent,refpop);
 		this->seqlist[iseq].pop = refpop;
-		cout<<"avant findT0\n";fflush(stdin);
 		this->seqlist[iseq].t0 = findT0(ievent,refpop);
 		this->seqlist[iseq].t1 = this->scen.event[ievent].time;
 	}
@@ -728,6 +725,7 @@ struct ParticleC
 		this->seqlist[iseq].pop = this->scen.event[ievent].pop;
 		this->seqlist[iseq].t0 = this->scen.event[ievent].time;
 		this->seqlist[iseq].sample = this->scen.event[ievent].sample;
+		cout << " seqlist["<<iseq<<"].sample = "<<this->seqlist[iseq].sample<<"\n";
 	}
 
 	void seqMerge(int iseq, int ievent) {
@@ -762,11 +760,11 @@ struct ParticleC
 
 	void setSequence() {
 		int kseq = compteseq();
-		cout<<"kseq="<<kseq<<"\n";
+		//cout<<"kseq="<<kseq<<"\n";
 		this->seqlist = new SequenceBitC[kseq];
 		int iseq = 0;
 		for (int ievent=0;ievent<this->scen.nevent;ievent++){
-		     cout<<"event["<<ievent<<"]="<<this->scen.event[ievent].action<<"\n";
+		     //cout<<"event["<<ievent<<"]="<<this->scen.event[ievent].action<<"\n";
 			if (firstEvent(ievent) == 0) {  // If NOT FirstEvent
 				if (this->scen.event[ievent].action == 'V') {   // if action = VARNE
 					seqCoal(iseq,ievent,this->scen.event[ievent].pop);iseq++;
@@ -774,12 +772,12 @@ struct ParticleC
 				else if (this->scen.event[ievent].action == 'E') {   // if action = SAMPLE
 					seqCoal(iseq,ievent,this->scen.event[ievent].pop);iseq++;
 					seqSamp(iseq,ievent);iseq++;
-					cout<<this->seqlist[iseq-1].action<<"\n";
+					//cout<<this->seqlist[iseq-1].action<<"\n";
 				}
 			}
 			else if (this->scen.event[ievent].action == 'E') {   // if action = SAMPLE
 				seqSamp(iseq,ievent);iseq++;
-				cout<<this->seqlist[iseq-1].action<<"\n";
+				//cout<<this->seqlist[iseq-1].action<<"\n";
 			}
 			if (this->scen.event[ievent].action == 'M') {   // if action = MERGE
 				seqCoal(iseq,ievent,this->scen.event[ievent].pop);
@@ -787,21 +785,21 @@ struct ParticleC
 				seqCoal(iseq,ievent,this->scen.event[ievent].pop1);
 				if (this->seqlist[iseq].t0 <  this->seqlist[iseq].t1) {iseq++;}
 				seqMerge(iseq,ievent);iseq++;
-				cout<<this->seqlist[iseq-1].action<<"\n";
+				//cout<<this->seqlist[iseq-1].action<<"\n";
 			}
 			if (firstEvent(ievent) == 0) {  // If NOT FirstEvent
 				if(this->scen.event[ievent].action == 'S') {   // if action = SPLIT
-					cout<<"avant seqcoal\n";fflush(stdin);
+					//cout<<"avant seqcoal\n";fflush(stdin);
 					seqCoal(iseq,ievent,this->scen.event[ievent].pop);
-					cout<<"apres seqcoal\n";fflush(stdin);
+					//cout<<"apres seqcoal\n";fflush(stdin);
 					if (this->seqlist[iseq].t0 <  this->seqlist[iseq].t1) {iseq++;}
-					cout<<"coalpop\n";
+					//cout<<"coalpop\n";
 					seqCoal(iseq,ievent,this->scen.event[ievent].pop1);
 					if (this->seqlist[iseq].t0 <  this->seqlist[iseq].t1) {iseq++;}
-					cout<<"coalpop1\n";
+					//cout<<"coalpop1\n";
 					seqCoal(iseq,ievent,this->scen.event[ievent].pop2);
 					if (this->seqlist[iseq].t0 <  this->seqlist[iseq].t1) {iseq++;}
-					cout<<"coalpop2\n";
+					//cout<<"coalpop2\n";
 					seqSplit(iseq,ievent);iseq++;
 					cout<<this->seqlist[iseq-1].action<<"\n";
 				}
@@ -818,7 +816,7 @@ struct ParticleC
 		this->seqlist[iseq].t1 = -1;
 		this->seqlist[iseq].action = 'C';
 		this->nseq=iseq+1;
-		std::cout << "nombre de SequenceBits alloués = " << kseq << "\n";
+		/*std::cout << "nombre de SequenceBits alloués = " << kseq << "\n";
 		std::cout << "nombre de SequenceBits utilisés = " << iseq << "\n";
 		for (int i=0;i<this->nseq;i++){
 			if (this->seqlist[i].action == 'C') {
@@ -835,7 +833,7 @@ struct ParticleC
 				std::cout << seqlist[i].t0 << "   Adsamp  " << "à la pop " << seqlist[i].pop << "\n";
 			}
 
-		}
+		}*/
 	}
 	void comp_matQ(int loc) {
 		int gr=this->locuslist[loc].groupe;
@@ -886,12 +884,12 @@ struct ParticleC
 
 
 	GeneTreeC init_tree(int loc) {
-		cout << "début de init_tree pour le locus " << loc  <<"\n";
+		//cout << "début de init_tree pour le locus " << loc  <<"\n";
 		GeneTreeC gt;
 		int nnod=0,nn,n=0;
-		cout << "nsample = " << this->data.nsample << "   samplesize[0] = " << this->locuslist[loc].samplesize[0] << "\n";
+		//cout << "nsample = " << this->data.nsample << "   samplesize[0] = " << this->locuslist[loc].samplesize[0] << "\n";
 		for (int sa=0;sa<this->data.nsample;sa++) {nnod +=this->locuslist[loc].ss[sa];}
-		cout << "nombre initial de noeuds = " << nnod  <<"\n";
+		//cout << "nombre initial de noeuds = " << nnod  <<"\n";
 		gt.ngenes = nnod;
 		gt.nnodes=nnod;
 		gt.nbranches = 0;
@@ -900,21 +898,21 @@ struct ParticleC
 		for (int sa=0;sa<this->data.nsample;sa++) {
 			for (int ind=0;ind<this->data.nind[sa];ind++) {
 				nn=calploidy(loc,sa,ind);
-				cout << "n=" << n << "     nn=" << nn << "\n";
+				//cout << "n=" << n << "     nn=" << nn << "\n";
 				if (nn>0) {
 					for (int i=n;i<n+nn;i++){
 						gt.nodes[i].sample=sa+1;
-						cout << gt.nodes[i].sample  << "\n";
-						gt.nodes[i].height=this->time_sample[sa];
-						cout << gt.nodes[i].height  << "\n";
+						//cout << gt.nodes[i].sample  << "\n";
+						gt.nodes[i].height=this->scen.time_sample[sa];
+						//cout << gt.nodes[i].height  << "\n";
 					}
 				n +=nn;
 				}
 			}
 		}
-		for (int i=0;i<gt.nnodes;i++){
+		/*for (int i=0;i<gt.nnodes;i++){
 			cout << "node " << i << "sample = " << gt.nodes[i].sample << "\n";
-		}
+		}*/
 		return gt;
 
 	}
@@ -1086,11 +1084,8 @@ struct ParticleC
 		}
 	}
 
-	void add_sample(int loc,int iseq) {struct HistoryC
-		{
-
-		};
-
+	void add_sample(int loc,int iseq) {
+		cout <<"add sample "<<this->seqlist[iseq].sample<<"\n";
 		for (int i=0;i<this->gt[loc].nnodes;i++){
 			if (this->gt[loc].nodes[i].sample == this->seqlist[iseq].sample) {
 				this->gt[loc].nodes[i].pop = this->seqlist[iseq].pop;
@@ -1233,7 +1228,7 @@ struct ParticleC
 	}
 
 	int cree_haplo(int loc) {
-		//cout <<"CREE_HAPLO\n";
+		cout <<"CREE_HAPLO\n";
 /*		if (loc==10) {
 		cout << "nbranches = " << this->gt[loc].nbranches << "    nnoeuds=" << gt[loc].nnodes <<"\n";
 		for (int br=0;br<this->gt[loc].nbranches;br++)
@@ -1245,23 +1240,24 @@ struct ParticleC
 		vector < vector <int> > ordre;
 		for (int no=0;no<this->gt[loc].nnodes;no++) this->gt[loc].nodes[no].state=10000;
 		int anc=this->gt[loc].nnodes-1;
+		cout<<"kmin = "<<this->locuslist[loc].kmin<<"   kmax = "<<this->locuslist[loc].kmax<<"\n";
 		if (this->locuslist[loc].type<5) {
 			this->gt[loc].nodes[anc].state=this->locuslist[loc].kmin + (int)(0.5*(this->locuslist[loc].kmax-this->locuslist[loc].kmin));
-			//cout << "anc-state = " << this->gt[loc].nodes[anc].state << "\n";
+			cout << "anc-state = " << this->gt[loc].nodes[anc].state << "\n";
 		}
 		else {
 			this->gt[loc].nodes[anc].state=0;
 			this->gt[loc].nodes[anc].dna = init_dnaseq(loc);
-/*			cout << "locus " << loc  << "\n";
+			cout << "locus " << loc  << "\n";
 			cout << "anc-state = " << this->gt[loc].nodes[anc].state << "\n";
-			cout << "anc-dna = " << this->gt[loc].nodes[anc].dna << "\n";*/
+			cout << "anc-dna = " << this->gt[loc].nodes[anc].dna << "\n";
 		}
 		anc++;
 		int numut=-1;
 		int len;
 		while (anc>=this->gt[loc].ngenes) {
 			anc--;
-			//cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
+			cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
 			int i=-1;
 			bool trouve=false;
 			while ((not trouve)and(i<this->gt[loc].nbranches-1)) {
@@ -1353,7 +1349,7 @@ struct ParticleC
 		simulOK.resize(this->nloc);
 		GeneTreeC GeneTreeY, GeneTreeM;
 		this->drawscenario();
-		cout<< "particule " << ipart <<"   scenario="<<this->scen.number<<"   nparam="<<this->scen.nparam<<"\n";
+		cout <<"avant setHistparamValue\n";fflush(stdin);
 		this->setHistParamValue();
 		cout << "apres setHistParamValue\n";fflush(stdin);
 		//cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
@@ -1363,14 +1359,14 @@ struct ParticleC
 		cout <<"apres setSequence\n";
 		bool gtYexist=false, gtMexist=false;
 		this->gt = new GeneTreeC[this->nloc];
-		emptyPop = new int[this->popmax+1];
+		emptyPop = new int[this->scen.popmax+1];
 		//cout << "particule " << ipart <<"   nparam="<<this->scen.nparam<<"\n";
 		//for (int k=0;k<this->scen.nparam;k++){
 		//	cout << this->scen.histparam[k].value << "   ";
 		//}
 		//cout << "\n";
 		setMutParammoyValue();
-		for (int loc=0;loc<this->nloc;loc++) {
+		for (int loc=0;loc<1/*this->nloc*/;loc++) {
 			setMutParamValue(loc);
 			if (this->locuslist[loc].type >4) {
 				comp_matQ(loc);
@@ -1387,7 +1383,7 @@ struct ParticleC
 				cout << "avant init_tree \n";
 				this->gt[loc] = init_tree(loc);
 				cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
-				for (int p=0;p<this->popmax+1;p++) {emptyPop[p]=1;} //True
+				for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 				for (int iseq=0;iseq<this->nseq;iseq++) {
 					cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action << "\n";fflush(stdin);
 					if (this->seqlist[iseq].action == 'C') {	//COAL
