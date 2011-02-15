@@ -209,12 +209,12 @@ class Project(QTabWidget):
             sc_txt = ""
             if self.ui.scCombo.currentText() != "all":
                 sc_txt = "_sc_%s"%self.ui.scCombo.currentText()
-            graph_file_name = "refTable_PCA_%s_%s_%s%s"%(self.ui.compoHCombo.currentText(),self.ui.compoVCombo.currentText(),self.ui.nbpCombo.currentText(),sc_txt)
+            graph_file_name = "PCA_%s_%s_%s%s"%(self.ui.compoHCombo.currentText(),self.ui.compoVCombo.currentText(),self.ui.nbpCombo.currentText(),sc_txt)
 
             # le conteneur auquel on va ajouter des curves
             p = QwtPlot()
             p.setCanvasBackground(Qt.white)
-            p.setTitle("Component %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
+            p.setTitle("Components %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
             legend = QwtLegend()
             #legend.setItemMode(QwtLegend.CheckableItem)
 
