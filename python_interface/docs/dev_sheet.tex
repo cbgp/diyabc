@@ -90,9 +90,10 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         packageur : PyInstaller. L'ex\'ecutable produit ne trouve pas les librairies. 
         La deuxième, Inno setup compiler, pour copier ce qu'il faut. Deux strat\'egies sont possibles. On peut copier en un bloc
         python contenant ses d\'ependances et diyabc. Le problème est le suivant, python.exe refuse de se lancer s'il n'a pas \'et\'e
-        install\'e avec l'installeur officiel Python. Donc il faut tout de même d\eclencher l'installation de Python en incluant
+        install\'e avec l'installeur officiel Python. Donc il faut tout de même d\'eclencher l'installation de Python en incluant
         l'installeur dans le setup de diyabc. Sinon on peut d\'eclencher l'installeur de Python, PyQt, Numpy, PyQwt pendant le setup de
         diyabc ce qui marche à coup sur mais est lourd pour l'utilisateur.
+        La troisème, py2exe est celle qui me semble la plus viable.
         \subsubsection{pyinstaller}
         La version 1.4 nécessite une version de python <= à 2.5. L'utilisation de pyinstaller est assez simple. Il faut, 
         lancer ``python Configure.py'' pour que pyinstaller se configure par rapport au système sur lequel il est. Ensuite il faut
@@ -113,6 +114,25 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 
         La cr\'eation du fichier de config (.iss) est assist\'ee et plutôt ais\'ee. On donne les fichiers à inclure, le dossier de destination
         et quelques options. Pour plus de d\'etails, consulter le fichier .iss inclut dans le d\'epot qui est comment\'e.
+        \subsection{Py2exe}
+        Le site de py2exe contient un tuto simple auquel il faut ajouter quelques d\'etails pour que ça fonctionne parfaitement. Le
+        fonctionnement est simple. On \'ecrit un setup.py puis on ex\'ecute \begin{verbatim} python setup.py py2exe \end{verbatim} Cela Cr\'ee un dossier 
+        Build et Dist. Dans ce dernier se trouve l\'executable ainsi
+        Voici un exemple de setup.py incluant la copie des donn\'ees n\'ecessaires au programme ainsi que la r\'esolution du problème
+        li\'e à la librairie SIP:
+        \begin{verbatim}
+    from distutils.core import setup
+    import py2exe
+    from glob import glob
+    import os
+
+    data_files = [("docs", glob(r'docs\*.*')),("docs/accueil_pictures",
+                    glob(r'docs/accueil_pictures/*.*'))]
+
+    setup(console=[{"script":"diyabc.py"}],data_files=data_files, 
+                options={"py2exe":{"includes":["sip"]}})
+        \end{verbatim}
+        L'option ``window'' plutôt que ``console'' ne fonctionne pas.
     \subsection{Linux}
         \subsubsection{Installer PyQt4}
         PyQt4 est packagé pour toutes les distributions. Aucun problème de ce côté.
@@ -125,7 +145,8 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         \subsubsection{Installer PyQt4}
         PyQt n'est pas disponible en binaire sur MacOs. Il faut donc avoir Qt et gcc pour le compiler. 
         Gcc n'est que très difficilement installable sans Xcode. Il faut donc installer Xcode.
-        En suivant à peu près les instructions données à cette adresse : http://deanezra.com/2010/05/setting-up-pythonqt-pyqt4-on-mac-os-x-snow-leopard/
+        En suivant à peu près les instructions données à cette adresse : \newline
+        http://deanezra.com/2010/05/setting-up-pythonqt-pyqt4-on-mac-os-x-snow-leopard/\newline
         , on arrive à bout de cette installation qui est tout de même un gros morceau pour pas grand chose.
     
         Pour la version 4.8.3 de PyQt, je n'ai trouvé d'autre solution que de commenter les 3 lignes qui concernent
