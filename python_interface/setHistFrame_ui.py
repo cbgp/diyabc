@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'uis/setHistFrame.ui'
 #
-# Created: Thu Jan 20 17:49:41 2011
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon Feb 21 10:31:39 2011
+#      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -60,7 +60,7 @@ class Ui_Frame(object):
         self.scScroll.setWidgetResizable(True)
         self.scScroll.setObjectName("scScroll")
         self.scScrollContent = QtGui.QWidget(self.scScroll)
-        self.scScrollContent.setGeometry(QtCore.QRect(0, 0, 769, 198))
+        self.scScrollContent.setGeometry(QtCore.QRect(0, 0, 769, 196))
         self.scScrollContent.setObjectName("scScrollContent")
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.scScrollContent)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -121,6 +121,7 @@ class Ui_Frame(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox_2.sizePolicy().hasHeightForWidth())
         self.groupBox_2.setSizePolicy(sizePolicy)
+        self.groupBox_2.setTitle("")
         self.groupBox_2.setObjectName("groupBox_2")
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.groupBox_2)
         self.verticalLayout_5.setSpacing(1)
@@ -147,7 +148,7 @@ class Ui_Frame(object):
         self.repScroll.setWidgetResizable(True)
         self.repScroll.setObjectName("repScroll")
         self.repScrollContent = QtGui.QWidget(self.repScroll)
-        self.repScrollContent.setGeometry(QtCore.QRect(0, 0, 698, 58))
+        self.repScrollContent.setGeometry(QtCore.QRect(0, 0, 711, 56))
         self.repScrollContent.setObjectName("repScrollContent")
         self.horizontalLayout_6 = QtGui.QHBoxLayout(self.repScrollContent)
         self.horizontalLayout_6.setSpacing(2)
@@ -165,7 +166,7 @@ class Ui_Frame(object):
         self.scrollArea.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 928, 246))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 905, 271))
         font = QtGui.QFont()
         font.setPointSize(8)
         self.scrollAreaWidgetContents.setFont(font)
@@ -191,6 +192,7 @@ class Ui_Frame(object):
         self.groupBox_11.setSizePolicy(sizePolicy)
         self.groupBox_11.setMinimumSize(QtCore.QSize(140, 20))
         self.groupBox_11.setMaximumSize(QtCore.QSize(140, 20))
+        self.groupBox_11.setTitle("")
         self.groupBox_11.setObjectName("groupBox_11")
         self.horizontalLayout_12 = QtGui.QHBoxLayout(self.groupBox_11)
         self.horizontalLayout_12.setContentsMargins(-1, 1, -1, 1)
@@ -218,6 +220,7 @@ class Ui_Frame(object):
         self.groupBox_12.setSizePolicy(sizePolicy)
         self.groupBox_12.setMinimumSize(QtCore.QSize(290, 20))
         self.groupBox_12.setMaximumSize(QtCore.QSize(290, 20))
+        self.groupBox_12.setTitle("")
         self.groupBox_12.setObjectName("groupBox_12")
         self.horizontalLayout_7 = QtGui.QHBoxLayout(self.groupBox_12)
         self.horizontalLayout_7.setContentsMargins(-1, 1, -1, 1)
@@ -259,6 +262,7 @@ class Ui_Frame(object):
         self.groupBox_13.setSizePolicy(sizePolicy)
         self.groupBox_13.setMinimumSize(QtCore.QSize(0, 20))
         self.groupBox_13.setMaximumSize(QtCore.QSize(16777215, 20))
+        self.groupBox_13.setTitle("")
         self.groupBox_13.setObjectName("groupBox_13")
         self.horizontalLayout_11 = QtGui.QHBoxLayout(self.groupBox_13)
         self.horizontalLayout_11.setContentsMargins(-1, 1, -1, 1)
@@ -319,20 +323,6 @@ class Ui_Frame(object):
         self.label_10.setAlignment(QtCore.Qt.AlignCenter)
         self.label_10.setObjectName("label_10")
         self.horizontalLayout_11.addWidget(self.label_10)
-        self.label_11 = QtGui.QLabel(self.groupBox_13)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
-        self.label_11.setSizePolicy(sizePolicy)
-        self.label_11.setMinimumSize(QtCore.QSize(80, 0))
-        self.label_11.setMaximumSize(QtCore.QSize(80, 16777215))
-        font = QtGui.QFont()
-        font.setPointSize(8)
-        self.label_11.setFont(font)
-        self.label_11.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_11.setObjectName("label_11")
-        self.horizontalLayout_11.addWidget(self.label_11)
         self.horizontalLayout_5.addWidget(self.groupBox_13)
         self.verticalLayout_6.addWidget(self.frame_5)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -358,7 +348,7 @@ class Ui_Frame(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_3 = QtGui.QWidget(self.scrollArea_3)
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 887, 58))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 883, 56))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.scrollAreaWidgetContents_3)
         self.horizontalLayout_2.setSpacing(1)
@@ -420,7 +410,6 @@ class Ui_Frame(object):
         self.label_8.setText(QtGui.QApplication.translate("Frame", "maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("Frame", "mean", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("Frame", "st-deviation", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_11.setText(QtGui.QApplication.translate("Frame", "step", None, QtGui.QApplication.UnicodeUTF8))
         self.drawUntilRadio.setText(QtGui.QApplication.translate("Frame", "Draw parameters values until conditions are fulfilled", None, QtGui.QApplication.UnicodeUTF8))
         self.drawOnceRadio.setText(QtGui.QApplication.translate("Frame", "Draw parameters values only once. Discard if any condition is not fulfilled", None, QtGui.QApplication.UnicodeUTF8))
 

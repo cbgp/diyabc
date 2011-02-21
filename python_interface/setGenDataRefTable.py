@@ -191,8 +191,7 @@ class SetGeneticDataRefTable(SetGeneticData):
                     f.write(u'%s'%self.setMutation_dico[box].getMutationConf())
                 elif "Sequences" in str(box.title()):
                     f.write("group G%i [S]\n"%(i+1))
-                    to_write = u'%s'%self.setMutationSeq_dico[box].getMutationConf()
-                    f.write(to_write)
+                    f.write(u'%s'%self.setMutationSeq_dico[box].getMutationConf())
 
         # partie sum stats
         stat_txt_list = []
@@ -213,7 +212,7 @@ class SetGeneticDataRefTable(SetGeneticData):
                 stat_to_write = stat_header_txt+stat_txt
             stat_txt_list.append(stat_to_write)
 
-        f.write("group summary statistics (%i)\n"%nstat_tot)
+        f.write("\ngroup summary statistics (%i)\n"%nstat_tot)
         for txt in stat_txt_list:
             f.write(txt)
             #print txt

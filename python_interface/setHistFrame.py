@@ -275,7 +275,8 @@ class SetHistoricalModel(QFrame):
                 # si le paramètre était deja la, il reprend ses valeurs, 
                 # sinon les valeurs seront consultées plus tard à partir de la GUI
                 if param.name in dico_tmp.keys() and len(dico_tmp[param.name])>6:
-                    self.param_info_dico[param.name] = [param.category,dico_tmp[param.name][1],dico_tmp[param.name][2],dico_tmp[param.name][3],dico_tmp[param.name][4],dico_tmp[param.name][5],dico_tmp[param.name][6]]
+                    #self.param_info_dico[param.name] = [param.category,dico_tmp[param.name][1],dico_tmp[param.name][2],dico_tmp[param.name][3],dico_tmp[param.name][4],dico_tmp[param.name][5],dico_tmp[param.name][6]]
+                    self.param_info_dico[param.name] = [param.category,dico_tmp[param.name][1],dico_tmp[param.name][2],dico_tmp[param.name][3],dico_tmp[param.name][4],dico_tmp[param.name][5]]
                 else:
                     self.param_info_dico[param.name] = [param.category]
                 # on compte le nombre de param dans chaque categorie
@@ -301,7 +302,7 @@ class SetHistoricalModel(QFrame):
                     box.findChild(QLineEdit,"maxValueParamEdit").setText(dico_tmp[pname][3])
                     box.findChild(QLineEdit,"meanValueParamEdit").setText(dico_tmp[pname][4])
                     box.findChild(QLineEdit,"stValueParamEdit").setText(dico_tmp[pname][5])
-                    box.findChild(QLineEdit,"stepValueParamEdit").setText(dico_tmp[pname][6])
+                    #box.findChild(QLineEdit,"stepValueParamEdit").setText(dico_tmp[pname][6])
                     if dico_tmp[pname][1] == "UN":
                         box.findChild(QRadioButton,"uniformParamRadio").setChecked(True)
                     elif dico_tmp[pname][1] == "LU":
@@ -495,11 +496,11 @@ class SetHistoricalModel(QFrame):
         stValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
         stValueParamEdit.setObjectName("stValueParamEdit")
         horizontalLayout_10.addWidget(stValueParamEdit)
-        stepValueParamEdit = QtGui.QLineEdit(groupBox_14)
-        stepValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
-        stepValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
-        stepValueParamEdit.setObjectName("stepValueParamEdit")
-        horizontalLayout_10.addWidget(stepValueParamEdit)
+        #stepValueParamEdit = QtGui.QLineEdit(groupBox_14)
+        #stepValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
+        #stepValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
+        #stepValueParamEdit.setObjectName("stepValueParamEdit")
+        #horizontalLayout_10.addWidget(stepValueParamEdit)
         horizontalLayout_13.addWidget(groupBox_14)
         self.ui.verticalLayout_6.addWidget(groupBox_8)
 
@@ -582,7 +583,7 @@ class SetHistoricalModel(QFrame):
                 max =   float(param.findChild(QLineEdit,"maxValueParamEdit").text())
                 mean =  float(param.findChild(QLineEdit,"meanValueParamEdit").text())
                 stdev = float(param.findChild(QLineEdit,"stValueParamEdit").text())
-                step =  float(param.findChild(QLineEdit,"stepValueParamEdit").text())
+                #step =  float(param.findChild(QLineEdit,"stepValueParamEdit").text())
                 if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0 or step < 0:
                     problems += "Values for parameter %s are incoherent\n"%pname
             except Exception,e:
@@ -620,7 +621,7 @@ class SetHistoricalModel(QFrame):
             max =   str(param.findChild(QLineEdit,"maxValueParamEdit").text())
             mean =  str(param.findChild(QLineEdit,"meanValueParamEdit").text())
             stdev = str(param.findChild(QLineEdit,"stValueParamEdit").text())
-            step =  str(param.findChild(QLineEdit,"stepValueParamEdit").text())
+            #step =  str(param.findChild(QLineEdit,"stepValueParamEdit").text())
             if param.findChild(QRadioButton,'logNormalRadio').isChecked():
                 law = "LN"
             elif param.findChild(QRadioButton,'normalRadio').isChecked():
@@ -630,7 +631,7 @@ class SetHistoricalModel(QFrame):
             elif param.findChild(QRadioButton,'logUniformRadio').isChecked():
                 law = "LU"
             visible = param.findChild(QPushButton,"setCondButton").isVisible()
-            self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,step,visible]
+            self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,visible]
 
 
     def validate(self):
@@ -682,41 +683,6 @@ class SetHistoricalModel(QFrame):
             self.majProjectGui()
             self.returnToProject()
 
-    def writeHistoricalConfFromAttributes(self):
-        """ ecrit les valeurs dans dossierProjet/conf.hist.tmp
-        """
-        if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.hist.tmp"):
-            os.remove("%s/conf.hist.tmp" % self.parent.ui.dirEdit.text())
-
-        if len(self.scenarios_info_list) > 0:
-            f = open(self.parent.ui.dirEdit.text()+"/conf.hist.tmp",'w')
-            f.write("%s scenarios: "%(len(self.scenarios_info_list)))
-
-            # affichage des nombres de lignes des scenarios
-            for sc_info in self.scenarios_info_list:
-                f.write("%s "%(len(sc_info["text"])))
-            # affichage du contenu des scenarios
-            for sc_info in self.scenarios_info_list:
-                f.write("\nscenario %s [%s] (%i)"%(sc_info["checker"].number,sc_info["checker"].prior_proba,len(sc_info["checker"].parameters)))
-                for line in sc_info["text"]:
-                    f.write("\n"+line)
-            f.write("\n\nhistorical parameters priors (%s)"%(len(self.param_info_dico.keys())))
-            # consultation des valeurs des paramètres
-            for pname in self.param_info_dico.keys():
-                info = self.param_info_dico[pname]
-                f.write("\n%s %s %s[%s,%s,%s,%s,%s]"%(pname,info[0],info[1],info[2],info[3],info[4],info[5],info[6]))
-            for cond in self.condList:
-                lab = cond.findChild(QLabel,"condLabel")
-                f.write("\n%s"%lab.text().replace(' ',''))
-            if self.ui.drawUntilRadio.isChecked():
-                draw = "UNTIL"
-            else:
-                draw = "ONCE"
-            f.write("\nDRAW %s"%draw)
-
-            f.write("\n\n")
-            f.close()
-
     def writeHistoricalConfFromGui(self):
         """ ecrit les valeurs dans dossierProjet/conf.hist.tmp
         """
@@ -765,7 +731,7 @@ class SetHistoricalModel(QFrame):
                 #visible = paramBox.findChild(QPushButton,"setCondButton").isVisible()
                 #print "visible : %s"%visible
                 i+=1
-            f.write("\n%s %s %s[%s,%s,%s,%s,%s] %s"%(pname,info[0],info[1],info[2],info[3],info[4],info[5],info[6],info[7]))
+            f.write("\n%s %s %s[%s,%s,%s,%s] %s"%(pname,info[0],info[1],info[2],info[3],info[4],info[5],info[6]))
         if len(self.condList) > 0:
             for cond in self.condList:
                 lab = cond.findChild(QLabel,"condLabel")
@@ -823,7 +789,7 @@ class SetHistoricalModel(QFrame):
                     max = values.split(',')[1]
                     mean = values.split(',')[2]
                     stdev = values.split(',')[3]
-                    step = values.split(',')[4]
+                    #step = values.split(',')[4]
                     law = lines[l].split(' ')[2].split('[')[0]
                     visible = lines[l].split(' ')[3].strip()
                     if visible == "False":
@@ -831,14 +797,14 @@ class SetHistoricalModel(QFrame):
                     else:
                         setcond_visible = "multiple"
                     # ajout graphique et dans l'attribut
-                    self.param_info_dico[pname] = [category,law,min,max,mean,stdev,step]
+                    self.param_info_dico[pname] = [category,law,min,max,mean,stdev]
                     box = self.addParamGui(pname,setcond_visible,self.param_info_dico[pname][0])
                     # mise au point valeurs et loi
                     box.findChild(QLineEdit,"minValueParamEdit").setText(min)
                     box.findChild(QLineEdit,"maxValueParamEdit").setText(max)
                     box.findChild(QLineEdit,"meanValueParamEdit").setText(mean)
                     box.findChild(QLineEdit,"stValueParamEdit").setText(stdev)
-                    box.findChild(QLineEdit,"stepValueParamEdit").setText(step)
+                    #box.findChild(QLineEdit,"stepValueParamEdit").setText(step)
                     if law == "UN":
                         box.findChild(QRadioButton,"uniformParamRadio").setChecked(True)
                     elif law == "LU":

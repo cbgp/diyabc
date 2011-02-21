@@ -130,7 +130,7 @@
            <x>0</x>
            <y>0</y>
            <width>769</width>
-           <height>198</height>
+           <height>196</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3"/>
@@ -315,8 +315,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>698</width>
-           <height>58</height>
+           <width>711</width>
+           <height>56</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -357,8 +357,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>928</width>
-        <height>246</height>
+        <width>905</width>
+        <height>271</height>
        </rect>
       </property>
       <property name="font">
@@ -724,39 +724,6 @@
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QLabel" name="label_11">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>80</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>8</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>step</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
             </layout>
            </widget>
           </item>
@@ -812,8 +779,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>887</width>
-           <height>58</height>
+           <width>883</width>
+           <height>56</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
