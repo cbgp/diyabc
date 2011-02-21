@@ -285,7 +285,7 @@ per generation)</string>
                 </size>
                </property>
                <property name="text">
-                <string>1.00E-8</string>
+                <string>1.00E-9</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -356,6 +356,9 @@ per generation)</string>
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="text">
+                <string>5E-9</string>
+               </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
                </property>
@@ -388,6 +391,9 @@ per generation)</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>2</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -594,7 +600,7 @@ around mean)</string>
                 </size>
                </property>
                <property name="text">
-                <string>Mean µ</string>
+                <string>Mean_µ</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -862,6 +868,9 @@ k_C/T</string>
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="text">
+                <string>10</string>
+               </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
                </property>
@@ -894,6 +903,9 @@ k_C/T</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>2</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1098,6 +1110,9 @@ around mean)</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>Mean_k1</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1364,6 +1379,9 @@ k_A/G</string>
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="text">
+                <string>10</string>
+               </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
                </property>
@@ -1396,6 +1414,9 @@ k_A/G</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string>2</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1601,6 +1622,9 @@ around mean)</string>
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="text">
+                <string>Mean_k2</string>
+               </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
                </property>
@@ -1683,7 +1707,7 @@ around mean)</string>
               <string>Jukes Kantor (1969)</string>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -1691,6 +1715,9 @@ around mean)</string>
             <widget class="QRadioButton" name="kimuraRadio">
              <property name="text">
               <string>Kimura 2 Parameters (1980)</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>

@@ -203,7 +203,7 @@ rate</string>
                <string>Unif</string>
               </property>
               <property name="checked">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -213,7 +213,7 @@ rate</string>
                <string>Log-u</string>
               </property>
               <property name="checked">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -254,7 +254,7 @@ rate</string>
               </size>
              </property>
              <property name="text">
-              <string>1.00E-005</string>
+              <string>1.00E-004</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -325,6 +325,9 @@ rate</string>
                <height>16777215</height>
               </size>
              </property>
+             <property name="text">
+              <string>0.0005</string>
+             </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
              </property>
@@ -357,6 +360,9 @@ rate</string>
                <width>16777215</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="text">
+              <string>2</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -542,7 +548,7 @@ mutation rate</string>
               </size>
              </property>
              <property name="text">
-              <string>Mean µ</string>
+              <string>Mean_µ</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -780,6 +786,9 @@ coefficient P</string>
                <height>16777215</height>
               </size>
              </property>
+             <property name="text">
+              <string>0.22</string>
+             </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
              </property>
@@ -812,6 +821,9 @@ coefficient P</string>
                <width>16777215</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="text">
+              <string>2</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -997,7 +1009,7 @@ coefficient P</string>
               </size>
              </property>
              <property name="text">
-              <string>Mean P</string>
+              <string>Mean_P</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1198,7 +1210,7 @@ rate</string>
               </size>
              </property>
              <property name="text">
-              <string>1.00E-004</string>
+              <string>1.00E-005</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1233,6 +1245,9 @@ rate</string>
                <height>16777215</height>
               </size>
              </property>
+             <property name="text">
+              <string>1.00E-007</string>
+             </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
              </property>
@@ -1265,6 +1280,9 @@ rate</string>
                <width>16777215</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="text">
+              <string>2</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1414,7 +1432,7 @@ locus SNI rate</string>
               </size>
              </property>
              <property name="text">
-              <string>1.00E-003</string>
+              <string>1.00E-006</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1450,7 +1468,7 @@ locus SNI rate</string>
               </size>
              </property>
              <property name="text">
-              <string>Mean µ_SNI</string>
+              <string>Mean_µ_SNI</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>

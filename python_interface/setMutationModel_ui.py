@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setMutationmodel.ui'
 #
-# Created: Mon Feb 14 13:29:42 2011
+# Created: Mon Feb 21 11:13:25 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,11 +80,11 @@ class Ui_Frame(object):
         self.horizontalLayout_8 = QtGui.QHBoxLayout(self.groupBox_4)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.mmrUnifRadio = QtGui.QRadioButton(self.groupBox_4)
-        self.mmrUnifRadio.setChecked(False)
+        self.mmrUnifRadio.setChecked(True)
         self.mmrUnifRadio.setObjectName("mmrUnifRadio")
         self.horizontalLayout_8.addWidget(self.mmrUnifRadio)
         self.mmrLogRadio = QtGui.QRadioButton(self.groupBox_4)
-        self.mmrLogRadio.setChecked(True)
+        self.mmrLogRadio.setChecked(False)
         self.mmrLogRadio.setObjectName("mmrLogRadio")
         self.horizontalLayout_8.addWidget(self.mmrLogRadio)
         self.mmrGammaRadio = QtGui.QRadioButton(self.groupBox_4)
@@ -590,11 +590,13 @@ class Ui_Frame(object):
         self.mmrLogRadio.setText(QtGui.QApplication.translate("Frame", "Log-u", None, QtGui.QApplication.UnicodeUTF8))
         self.mmrGammaRadio.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
         self.label_19.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
-        self.mmrMinEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-005", None, QtGui.QApplication.UnicodeUTF8))
+        self.mmrMinEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-004", None, QtGui.QApplication.UnicodeUTF8))
         self.label_20.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.mmrMaxEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-3", None, QtGui.QApplication.UnicodeUTF8))
         self.label_21.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
+        self.mmrMeanEdit.setText(QtGui.QApplication.translate("Frame", "0.0005", None, QtGui.QApplication.UnicodeUTF8))
         self.label_22.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
+        self.mmrShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
 "mutation rate", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
@@ -604,7 +606,7 @@ class Ui_Frame(object):
         self.label_15.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.ilmrMaxEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-002", None, QtGui.QApplication.UnicodeUTF8))
         self.label_16.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
-        self.ilmrMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean µ", None, QtGui.QApplication.UnicodeUTF8))
+        self.ilmrMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean_µ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_17.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
         self.ilmrShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Frame", "Mean\n"
@@ -618,7 +620,9 @@ class Ui_Frame(object):
         self.label_5.setText(QtGui.QApplication.translate("Frame", "Maximum (2)", None, QtGui.QApplication.UnicodeUTF8))
         self.mcpMaxEdit.setText(QtGui.QApplication.translate("Frame", "6.00E-001", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
+        self.mcpMeanEdit.setText(QtGui.QApplication.translate("Frame", "0.22", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
+        self.mcpShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
 "coefficient P", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
@@ -628,7 +632,7 @@ class Ui_Frame(object):
         self.label_10.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.ilcpMaxEdit.setText(QtGui.QApplication.translate("Frame", "9.00E-001", None, QtGui.QApplication.UnicodeUTF8))
         self.label_11.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
-        self.ilcpMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean P", None, QtGui.QApplication.UnicodeUTF8))
+        self.ilcpMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean_P", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
         self.ilcpShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_23.setText(QtGui.QApplication.translate("Frame", "Mean\n"
@@ -641,9 +645,11 @@ class Ui_Frame(object):
         self.label_24.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
         self.msrMinEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-008", None, QtGui.QApplication.UnicodeUTF8))
         self.label_25.setText(QtGui.QApplication.translate("Frame", "Maximum (3)", None, QtGui.QApplication.UnicodeUTF8))
-        self.msrMaxEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-004", None, QtGui.QApplication.UnicodeUTF8))
+        self.msrMaxEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-005", None, QtGui.QApplication.UnicodeUTF8))
         self.label_26.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
+        self.msrMeanEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-007", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
+        self.msrShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_28.setText(QtGui.QApplication.translate("Frame", "Individuals\n"
 "locus SNI rate", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_6.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
@@ -651,9 +657,9 @@ class Ui_Frame(object):
         self.label_29.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
         self.ilsrMinEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-009", None, QtGui.QApplication.UnicodeUTF8))
         self.label_30.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
-        self.ilsrMaxEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-003", None, QtGui.QApplication.UnicodeUTF8))
+        self.ilsrMaxEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-006", None, QtGui.QApplication.UnicodeUTF8))
         self.label_31.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
-        self.ilsrMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean µ_SNI", None, QtGui.QApplication.UnicodeUTF8))
+        self.ilsrMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean_µ_SNI", None, QtGui.QApplication.UnicodeUTF8))
         self.label_32.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
         self.ilsrShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_35.setText(QtGui.QApplication.translate("Frame", "(1) Set the shape to 0 if you want all individuals loci to take the same value (=mean)", None, QtGui.QApplication.UnicodeUTF8))

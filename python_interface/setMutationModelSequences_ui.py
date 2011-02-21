@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'uis/setMutationModelSequences.ui'
 #
-# Created: Wed Jan 26 14:18:54 2011
-#      by: PyQt4 UI code generator 4.6
+# Created: Mon Feb 21 11:13:02 2011
+#      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -634,10 +634,11 @@ class Ui_Frame(object):
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.groupBox_7)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.jukesRadio = QtGui.QRadioButton(self.groupBox_7)
-        self.jukesRadio.setChecked(True)
+        self.jukesRadio.setChecked(False)
         self.jukesRadio.setObjectName("jukesRadio")
         self.verticalLayout_6.addWidget(self.jukesRadio)
         self.kimuraRadio = QtGui.QRadioButton(self.groupBox_7)
+        self.kimuraRadio.setChecked(True)
         self.kimuraRadio.setObjectName("kimuraRadio")
         self.verticalLayout_6.addWidget(self.kimuraRadio)
         self.haseRadio = QtGui.QRadioButton(self.groupBox_7)
@@ -688,11 +689,13 @@ class Ui_Frame(object):
         self.mmrLogRadio.setText(QtGui.QApplication.translate("Frame", "Log-u", None, QtGui.QApplication.UnicodeUTF8))
         self.mmrGammaRadio.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
         self.label_19.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
-        self.mmrMinEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-8", None, QtGui.QApplication.UnicodeUTF8))
+        self.mmrMinEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-9", None, QtGui.QApplication.UnicodeUTF8))
         self.label_20.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.mmrMaxEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-7", None, QtGui.QApplication.UnicodeUTF8))
         self.label_21.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
+        self.mmrMeanEdit.setText(QtGui.QApplication.translate("Frame", "5E-9", None, QtGui.QApplication.UnicodeUTF8))
         self.label_22.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
+        self.mmrShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
 "mutation rate\n"
 "(Gamma distribution\n"
@@ -704,7 +707,7 @@ class Ui_Frame(object):
         self.label_15.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.ilmrMaxEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-6", None, QtGui.QApplication.UnicodeUTF8))
         self.label_16.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
-        self.ilmrMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean µ", None, QtGui.QApplication.UnicodeUTF8))
+        self.ilmrMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean_µ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_17.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
         self.ilmrShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Frame", "Mean\n"
@@ -719,7 +722,9 @@ class Ui_Frame(object):
         self.label_5.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.mc1MaxEdit.setText(QtGui.QApplication.translate("Frame", "20", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
+        self.mc1MeanEdit.setText(QtGui.QApplication.translate("Frame", "10", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
+        self.mc1ShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
 "coefficient k_C/T\n"
 "(Gamma distribution\n"
@@ -731,6 +736,7 @@ class Ui_Frame(object):
         self.label_10.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.ilc1MaxEdit.setText(QtGui.QApplication.translate("Frame", "20", None, QtGui.QApplication.UnicodeUTF8))
         self.label_11.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
+        self.ilc1MeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean_k1", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
         self.ilc1ShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_23.setText(QtGui.QApplication.translate("Frame", "Mean coefficient\n"
@@ -744,7 +750,9 @@ class Ui_Frame(object):
         self.label_25.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.mc2MaxEdit.setText(QtGui.QApplication.translate("Frame", "20", None, QtGui.QApplication.UnicodeUTF8))
         self.label_26.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
+        self.mc2MeanEdit.setText(QtGui.QApplication.translate("Frame", "10", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
+        self.mc2ShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_28.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
 "coefficient k_A/G\n"
 "(Gamma distribution\n"
@@ -756,6 +764,7 @@ class Ui_Frame(object):
         self.label_30.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
         self.ilc2MaxEdit.setText(QtGui.QApplication.translate("Frame", "20", None, QtGui.QApplication.UnicodeUTF8))
         self.label_31.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
+        self.ilc2MeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean_k2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_32.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
         self.ilc2ShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.label_35.setText(QtGui.QApplication.translate("Frame", "(1) Set the shape to 0 if you want all individuals loci to take the same value (=mean)", None, QtGui.QApplication.UnicodeUTF8))
