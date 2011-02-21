@@ -116,6 +116,8 @@ public:
 		//prior.ecris();
 	}
 };
+
+
 struct LocusGroupC
 {
 	int *loc,nloc,nstat;           // *loc=numeros des locus du groupe
@@ -132,11 +134,12 @@ struct LocusGroupC
 class ScenarioC
 {
 public:
-	double *parameters,prior_proba;
-    int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0,nparamvar,nconditions;
+	double *paramvar,prior_proba;
+    int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0,nparamvar,nconditions,ipv;
     EventC *event;
     Ne0C *ne0;
-    HistParameterC *histparam,*histparamvar;
+    HistParameterC *histparam;
+    
     vector <HistParameterC> histpar;
     ConditionC *condition;
     
@@ -226,7 +229,7 @@ int i,j;
     		}
     	}
     	this->histparam = new HistParameterC[this->nparam];
-    	this->histparamvar = new HistParameterC[this->nparam];
+    	//this->paramvar = new HistParameterC[this->nparamvar];
     	for (int i=0;i<this->nparam;i++){
     		this->histparam[i].name=histpar[i].name;
     		this->histparam[i].category=histpar[i].category;
@@ -248,8 +251,8 @@ int i,j;
     	for (int i=0;i<this->nevent;i++) this->event[i].ecris();
     	cout<<"    histparam:\n";
     	for (int i=0;i<this->nparam;i++) this->histparam[i].ecris();
-    	//cout<<"    histparamvar:\n";
-     	//for (int i=0;i<this->nparamvar;i++) this->histparamvar[i].ecris();
+    	//cout<<"    paramvar:\n";
+     	//for (int i=0;i<this->nparamvar;i++) this->paramvar[i].ecris();
      	cout <<"   nconditions="<<this->nconditions<<"\n";
      	if (this->nconditions>0) for (int i=0;i<this->nconditions;i++) this->condition[i].ecris();
     }
@@ -331,8 +334,8 @@ ScenarioC copyscenario(ScenarioC source) {
 	dest.histparam = new HistParameterC[dest.nparam];
 	for (int i=0;i<dest.nparam;i++) {dest.histparam[i] = copyhistparameter(source.histparam[i]);/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
 	//cout<<"fin de la copie des histparam\n"<<flush;
-	dest.histparamvar = new HistParameterC[dest.nparamvar];
-	for (int i=0;i<dest.nparamvar;i++) {dest.histparamvar[i] = copyhistparameter(source.histparamvar[i]);/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
+	dest.paramvar = new double[dest.nparamvar];
+	for (int i=0;i<dest.nparamvar;i++) {dest.paramvar[i] = source.paramvar[i];/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
 	dest.condition = new ConditionC[dest.nconditions];
 	for (int i=0;i<dest.nconditions;i++) dest.condition[i] = copycondition(source.condition[i]);
 	return dest;
@@ -418,7 +421,8 @@ struct ParticleC
 			iscen++;sp +=this->scenario[iscen].prior_proba;
 		}
 		this->scen = copyscenario(this->scenario[iscen]);
-		//this->scen.ecris();
+		//cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
+		this->scen.ecris();
 	}
 
 	GeneTreeC copytree(GeneTreeC source) {
@@ -569,6 +573,12 @@ struct ParticleC
 			}
 			OK=true;
 		}
+		this->scen.ipv=0;
+		if (OK) {
+			for (int p=0;p<this->scen.nparam;p++) {
+				if (not this->scen.histparam[p].prior.constant) {this->scen.paramvar[this->scen.ipv]=this->scen.histparam[p].value;this->scen.ipv++;}
+			}
+		}
 		/*cout<<"fin du tirage des parametres\n";
 		for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";
 		cout <<"\n";*/
@@ -592,22 +602,58 @@ struct ParticleC
 		for (gr=1;gr<this->ngr;gr++) {
 		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"\n";
 		    if (this->grouplist[gr].type==0) {  //microsat
-		        if (this->grouplist[gr].mutmoy<0) this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
+		        if (this->grouplist[gr].mutmoy<0) {
+			    this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
+			    if (not this->grouplist[gr].priormutmoy.constant) {
+			        this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
+			        this->scen.ipv++;
+			    }
+			}
 			//cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"\n";fflush(stdin);
-			if (this->grouplist[gr].Pmoy<0) this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
+			if (this->grouplist[gr].Pmoy<0) {
+			    this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
+			    if (not this->grouplist[gr].priorPmoy.constant) {
+			        this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
+			        this->scen.ipv++;
+			    }
+			}
 			//cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"\n";fflush(stdin);
-			if (this->grouplist[gr].snimoy<0) this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
+			if (this->grouplist[gr].snimoy<0) {
+			    this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
+			    if (not this->grouplist[gr].priorsnimoy.constant) {
+			        this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
+			        this->scen.ipv++;
+			    }
+			}
 			//cout<<"snimoy="<<this->grouplist[gr].snimoy<<"\n";fflush(stdin);
 		    }
 		    if (this->grouplist[gr].type==1) {  //sequence
-		        if (this->grouplist[gr].musmoy<0) this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
+		        if (this->grouplist[gr].musmoy<0) {
+			    this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
+			    if (not this->grouplist[gr].priormusmoy.constant) {
+			        this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
+			        this->scen.ipv++;
+			    }
+			}
 			//cout<<"musmoy="<<this->grouplist[gr].musmoy<<"\n";fflush(stdin);
 			if (this->grouplist [gr].mutmod>0){
-			    if (this->grouplist[gr].k1moy<0) this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
+			    if (this->grouplist[gr].k1moy<0) { 
+			        this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
+			        if (not this->grouplist[gr].priork1moy.constant) {
+			            this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
+			            this->scen.ipv++;
+				}
+			    }
 			//    cout<<"k1moy="<<this->grouplist[gr].k1moy<<"\n";fflush(stdin);
 			}
 			if (this->grouplist [gr].mutmod>2){
-			    if (this->grouplist[gr].k2moy<0) this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
+			    if (this->grouplist[gr].k2moy<0) {
+			        this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
+			        if (not this->grouplist[gr].priork2moy.constant) {
+			            this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
+			            this->scen.ipv++;
+				}
+			    }
 			}
 		    }
 		
@@ -2035,13 +2081,13 @@ struct ParticleC
 		calfreq();
 //		cout << "apres calfreq\n";
 		for (int st=0;st<this->grouplist[gr].nstat;st++) {
-			if (this->grouplist[gr].sumstat[st].cat<5)
+			/*if (this->grouplist[gr].sumstat[st].cat<5)
 			{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp  <<"\n";fflush(stdin);}
 			else if (this->grouplist[gr].sumstat[st].cat<12)
 			{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp <<"   samp1 = "<<this->grouplist[gr].sumstat[st].samp1 <<"\n";fflush(stdin);}
 			else
 			{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp <<"   samp1 = "<<this->grouplist[gr].sumstat[st].samp1 <<"   samp2 = "<<this->grouplist[gr].sumstat[st].samp2<<"\n";fflush(stdin);}
-			  
+			*/  
 			int categ;
 			categ=this->grouplist[gr].sumstat[st].cat;
 			switch (categ)
