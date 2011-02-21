@@ -584,8 +584,14 @@ class SetHistoricalModel(QFrame):
                 mean =  float(param.findChild(QLineEdit,"meanValueParamEdit").text())
                 stdev = float(param.findChild(QLineEdit,"stValueParamEdit").text())
                 #step =  float(param.findChild(QLineEdit,"stepValueParamEdit").text())
-                if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0 or step < 0:
+                if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0:
                     problems += "Values for parameter %s are incoherent\n"%pname
+                # pour lognormal et loguniforme le mean doit être different de zero et le stdev aussi
+                if param.findChild(QRadioButton,"logNormalRadio").isChecked() or param.findChild(QRadioButton,"logUniformRadio").isChecked():
+                    if mean <= 0:
+                        problems += "Mean of parameter %s should be positive\n"%pname
+                    if stdev <= 0:
+                        problems += "St-dev of parameter %s should be positive\n"%pname
             except Exception,e:
                 problems += "%s\n"%e
         rpsum = 0.0

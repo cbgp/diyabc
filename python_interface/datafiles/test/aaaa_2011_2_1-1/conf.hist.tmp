@@ -22,14 +22,14 @@ t split 3 1 2 r1
 t2 merge 1 2
 
 historical parameters priors (8,2)
-N N UN[10,10000,0,0] False
-X N LU[10,10000,0,0] False
-F N NO[10,10000,0,0] False
-t T LN[10,10000,0,0] False
-D N NO[10,10000,0,0] False
-t2 T LU[10,10000,0,0] False
-G N UN[10,10000,0,0] False
-r1 A LU[0.001,0.999,0,0] False
+N N LN[10,10000,1,01] False
+X N NO[10,10000,1,01] True
+F N LU[10,10000,01,01] True
+t T UN[10,10000,01,01] False
+D N LU[10,10000,01,01] True
+t2 T NO[10,10000,01,01] True
+G N LN[10,10000,01,01] True
+r1 A NO[0.001,0.999,01,01] False
 D>G
 F<=N
 DRAW ONCE

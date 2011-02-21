@@ -195,7 +195,6 @@ class SetGeneticData(QFrame):
             QMessageBox.information(self,"Set Mutation Model error","Add locus to a group before setting the mutation model")
 
 
-    # TODO fille
     #def setSum(self,box=None):
     #    """ déclenché par le clic sur le bouton 'set summary statistics' ou par le clic sur 'clear'
     #    dans 'set summary statistics'. bascule vers la saisie des summary statistics
