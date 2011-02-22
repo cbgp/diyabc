@@ -1012,7 +1012,7 @@ static unsigned long int multipli [] = {12788298,12788754,12789228,12789669,1278
 #define MODULO 16777216
 
 double sqr(double x) {return x*x;}
-
+ 
 struct MwcGen
 {	unsigned long int mult,mwcx,carry;
 //    int modulo = 16777216;
@@ -1029,10 +1029,10 @@ struct MwcGen
 		}
 		this->mwcx = rand() % MODULO;
 		this->carry= rand() % MODULO;
-		//std::cout << "mwcx = " << this->mwcx << "   carry = " << this->carry << "\n";
+                //std::cout << "mwcx = " << this->mwcx << "   carry = " << this->carry << "\n";
 	}
 
-	double random() {
+        double random() {
 		unsigned long int y ;
 		double r;
 		y = (this->mult)*(this->mwcx) + (this->carry);
@@ -1077,6 +1077,7 @@ struct MwcGen
 		double u,logmin,logmax;
 		logmin=log(min);logmax=log(max);
 		u = logmin + (logmax-logmin)*this->random();
+                //cout <<logmin<<"   "<<logmax<<"   "<<u<<"   "<<exp(u)<<"\n";
 		return exp(u);
 	}
 
@@ -1158,4 +1159,12 @@ struct MwcGen
 		return this->ggamma2(mean,sd);
 	}
 };
+
+MwcGen copymw(MwcGen source) {
+        MwcGen dest;
+        dest.mult = source.mult;
+        dest.mwcx = source.mwcx;
+        dest.carry= source.carry; 
+        return dest;
+}
 

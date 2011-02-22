@@ -47,16 +47,15 @@ public:
 	bool drawuntil;
 
 	PriorC readprior(string ss) {
-		double step;
 		PriorC prior;
 		string s1,*sb;
 		int j;
 		s1 = ss.substr(3,ss.length()-4);
 		sb = splitwords(s1,",",&j);
-		step=atof(sb[4].c_str());
-		prior.ndec=ndecimales(step);
 		prior.mini=atof(sb[0].c_str());
 		prior.maxi=atof(sb[1].c_str());
+                prior.ndec=ndecimales(prior.mini,prior.maxi);
+                //cout << "ndec="<<prior.ndec<<"   (mini="<<prior.mini<<"   maxi="<<prior.maxi<<"\n";
 		if (ss.find("UN[")!=string::npos) {prior.loi="UN";}
 		else if (ss.find("LU[")!=string::npos) {prior.loi="LU";}
 		else if (ss.find("NO[")!=string::npos) {prior.loi="NO";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
@@ -67,7 +66,6 @@ public:
 	}
 
 	PriorC readpriormut(string ss) {
-		double step;
 		PriorC prior;
 		string s1,*sb;
 		int j;
@@ -75,7 +73,7 @@ public:
 		sb = splitwords(s1,",",&j);
 		prior.mini=atof(sb[0].c_str());
 		prior.maxi=atof(sb[1].c_str());
-		prior.ndec=ndecimales(0.1*prior.mini);
+		prior.ndec=ndecimales(prior.mini,prior.maxi);
 		if (ss.find("UN[")!=string::npos) {prior.loi="UN";}
 		else if (ss.find("LU[")!=string::npos) {prior.loi="LU";}
 		else if (ss.find("GA[")!=string::npos) {prior.loi="GA";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
@@ -187,7 +185,7 @@ public:
 					this->scenario[i].nparamvar++;
 				}	
 			}
-			cout<<"scenario "<<i<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
+			//cout<<"scenario "<<i<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
 		}
 //retour sur les conditions spécifiques à chaque scenario
         if (this->nconditions>0) {
@@ -247,7 +245,7 @@ public:
 		getline(file,s1);		//ligne "group prior"
 		this->groupe = new LocusGroupC[this->ngroupes];
 		this->assignloc(0);
-		cout<<"on attaque les groupes : alayse des priors\n";
+		//cout<<"on attaque les groupes : analyse des priors\n";
 		for (gr=1;gr<this->ngroupes;gr++){
 			getline(file,s1);
 			ss=splitwords(s1," ",&nss);
@@ -258,22 +256,25 @@ public:
 				if (this->groupe[gr].priormutmoy.constant) this->groupe[gr].mutmoy=this->groupe[gr].priormutmoy.mini; 
 				else {this->groupe[gr].mutmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
 				
-				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
-				cout<<"mutloc  ";this->groupe[gr].priormutloc.ecris();
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);
+                                //cout<<ss1[1]<<"\n";
+                                
+                                this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
+				//cout<<"mutloc  ";this->groupe[gr].priormutloc.ecris();
 				
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy   = this->readpriormut(ss1[1]);delete [] ss1;
 				if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini; 
 				else {this->groupe[gr].Pmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
 				
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readpriormut(ss1[1]);delete [] ss1;
-				cout<<"Ploc    ";this->groupe[gr].priorPloc.ecris();
+				//cout<<"Ploc    ";this->groupe[gr].priorPloc.ecris();
 				
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsnimoy = this->readpriormut(ss1[1]);delete [] ss1;
 				if (this->groupe[gr].priorsnimoy.constant) this->groupe[gr].snimoy=this->groupe[gr].priorsnimoy.mini; 
 				else {this->groupe[gr].snimoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
 				
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc = this->readpriormut(ss1[1]);delete [] ss1;
-				cout<<"sniloc  ";this->groupe[gr].priorsniloc.ecris();
+				//cout<<"sniloc  ";this->groupe[gr].priorsniloc.ecris();
 				
 			} else if (ss[2]=="[S]") {
 				this->groupe[gr].type=1;
@@ -301,9 +302,10 @@ public:
 				else if (ss1[1]=="K2P") this->groupe[gr].mutmod=1;
 				else if (ss1[1]=="HKY") this->groupe[gr].mutmod=2;
 				else if (ss1[1]=="TN") this->groupe[gr].mutmod=3;
-				//cout<<"mutmod = "<<this->groupe[gr].mutmod <<"\n";
+				cout<<"mutmod = "<<this->groupe[gr].mutmod <<"\n";
 			}
 		}
+		//cout<<"avant la mise à jour des paramvar\n";fflush(stdin);
 		delete [] ss;
 //Mise à jour des paramvar
 		for (int i=0;i<this->nscenarios;i++) {
@@ -312,21 +314,29 @@ public:
 		}
 		
 //Partie group statistics
+         //cout<<"debut des group stat\n";
                 this->nstat=0;
 		getline(file,s1);		//ligne vide
 		getline(file,s1);		//ligne "group group statistics"
-		for (gr=1;gr<this->ngroupes;gr++) {
+		//cout <<"s1="<<s1<<"\n";
+                for (gr=1;gr<this->ngroupes;gr++) {
 			getline(file,s1);
 			ss=splitwords(s1," ",&nss);
-			this->groupe[gr].nstat = atoi(ss[3].c_str());
+                        //cout <<"s1="<<s1<<"   ss[3]="<< ss[3] <<"   atoi = "<< atoi(ss[3].c_str()) <<"\n";
+			this->groupe[gr].nstat = getwordint(ss[3],0);
+                        //cout <<"s1="<<s1<<"   ss[3]="<< ss[3] <<"   atoi = "<< this->groupe[gr].nstat <<"\n";
                         this->nstat +=this->groupe[gr].nstat;
 			this->groupe[gr].sumstat = new StatC[this->groupe[gr].nstat];
 			delete [] ss;
 			k=0;
 			while (k<this->groupe[gr].nstat) {
+                          //cout <<"stat "<<k<<"    groupe "<<gr<<"\n";
 				getline(file,s1);
+                                //cout <<"s1="<<s1<<"\n";
 				ss=splitwords(s1," ",&nss);
+                                //cout << ss[0]<<"\n";
 				j=0;while (ss[0]!=stat_type[j]) j++;
+                                //cout<<"j="<<j<<"\n";
 				if (this->groupe[gr].type==0) {   //MICROSAT
 					if (stat_num[j]<5) {
 						for (int i=1;i<nss;i++) {
@@ -388,6 +398,7 @@ public:
 //Entete du fichier reftable
 		getline(file,s1);		//ligne vide
 		getline(file,this->entete);		//ligne entete
+                //cout<<this->entete<<"\n";fflush(stdin);
 		return this;
 	}
 };
@@ -404,6 +415,7 @@ struct ParticleSetC
 	int nsample,*nind,**indivsexe,nscenarios;
 	ScenarioC *scenario;
 	double sexratio;
+        MwcGen *mw;
 
 	void setdata(int p) {
 		this->particule[p].data.nsample = this->header.dataobs.nsample;
@@ -606,35 +618,32 @@ struct ParticleSetC
 			this->setloci(p);
 			this->setscenarios(p);
 		}
-		int ipart,tid=0,jpart=0;
+		int ipart,tid=0,jpart=0,nthreads,base;
 		int *sOK;
 		sOK = new int[npart];
 		enregC *enreg;
 		int nstat;
-		cout << "avant pragma\n";
+                enreg = new enregC[this->npart];
+		//cout << "avant pragma\n";
+                base=rand() % 10000;
 //debut du pragma
-//#pragma omp parallel for shared(sOK) private(ipart,tid) schedule(static)
-		enreg = new enregC[this->npart];
-		for (ipart=0;ipart<this->npart;ipart++){
-			tid = 0;//omp_get_thread_num();
+//#pragma omp parallel shared(sOK) private(tid)
+//{		
+                //nthreads = omp_get_num_threads();
+                //this->mw = new MwcGen[nthreads];
+                this->mw = new MwcGen[this->npart];
+                for (int i=0;i<this->npart;i++) mw[i].randinit(i+base,false);
+                for (ipart=0;ipart<this->npart;ipart++){
+			tid = omp_get_thread_num();
 			cout <<"tid = "<<tid <<"\n";
-			//cout <<"dosimultabref   kmin = "<<this->particule[ipart].locuslist[0].kmin<<"    kmax = "<<this->particule[ipart].locuslist[0].kmax<<"\n";
-			sOK[ipart]=this->particule[ipart].dosimulpart(ipart,tid);
-			//cout << "\nretour de dosimulpart sOK["<<ipart<<"] = "<<sOK[ipart] <<"\n";
-			//nparamstat = this->particule[ipart].scen.nparamvar;
-			//cout << "nparamvar ="<< this->particule[ipart].scen.nparamvar<<"\n";fflush(stdin);
-			//cout <<"nparamstat = "<<nparamstat<<"\n";fflush(stdin);
-			//for (int gr=1;gr<this->particule[ipart].ngr;gr++) nparamstat +=this->particule[ipart].grouplist[gr].nstat;
-			//cout << "nparamvar ="<< this->particule[ipart].scen.nparamvar<<"   nparamstat = "<<nparamstat<<"\n";fflush(stdin);
-			//if (this->particule[ipart].nscenarios>1) nparamstat +=1;
-			//paramstat[ipart] = new double[nparamstat];
+                        this->particule[ipart].mw = copymw(this->mw[ipart]);
+			sOK[ipart]=this->particule[ipart].dosimulpart(ipart);
 			if (sOK[ipart]==0) {
 			 	for(int gr=1;gr<this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
-			cout << "retour de docalstat \n";
 			}
 		}
+//}
 //fin du pragma
-		cout << "remplissage de enreg \n";
 		for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				enreg[ipart].numscen=0;

@@ -16,23 +16,23 @@ public:
     
     int readheader(char * fname,int nscen,char* datafilename) {
         int nb;
+        //cout <<"debut de readheader\n";
         fstream f0(fname,ios::in|ios::out|ios::binary);
+        //cout<<"apres fstream\n";
+        this->filename = new char[ strlen(fname)+1];
         strcpy(this->filename,fname);
-        if (!f0) {return 1;}  //fichier non ouvrable e.g. inexistant
+        //cout<<"apres strcpy\n";
+        if (!f0) {cout<<"fichier inexistant\n";return 1;}  //fichier non ouvrable e.g. inexistant
         else {
-            strcpy(this->filename,fname);
+            //cout<<"fichier OK\n";
             f0.seekg(0);
-            f0.read((char*)&nb,sizeof(int));
-            this->datapath = new char[nb];
-            f0.read(this->datapath,nb);
-            if (strcmp(this->datapath,datafilename) !=0) {return 2;} // fichier avec un nom du fichier data différent
-            this->posnrec=f0.tellp();
             f0.read((char*)&(this->nrec),sizeof(int));
+            cout <<"nrec = "<<nrec<<"\n";
             this->nrecscen = new int[nscen];
-            for (int i=0;i<nscen;i++) f0.read((char*)&(this->nrecscen[i]),sizeof(int));
-            nparam = new int[nscen];
-            for (int i=0;i<nscen;i++) f0.read((char*)&(this->nparam[i]),sizeof(int));
-            f0.read((char*)&(this->nstat),sizeof(int));
+            for (int i=0;i<nscen;i++) {f0.read((char*)&(this->nrecscen[i]),sizeof(int));cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";}
+            this->nparam = new int[nscen];
+            for (int i=0;i<nscen;i++) {f0.read((char*)&(this->nparam[i]),sizeof(int));cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";}
+            f0.read((char*)&(this->nstat),sizeof(int));cout<<"nstat = "<<this->nstat<<"\n";
             f0.close();
             return 0;  //retour normal
         }
@@ -42,12 +42,9 @@ public:
         int nb;
         ofstream f1(this->filename,ios::out|ios::binary);
         if (!f1.is_open()) {return 1;}  //fichier impossible à ouvrir
-        nb=strlen(this->datapath)+1;
-        f1.write((char*)&nb,sizeof(int));
-        f1.write((char*)&(this->datapath),nb);
         nb=this->nrec;f1.write((char*)&nb,sizeof(int));
-        for (int i=0;i<nscen;i++) {nb=this->nrecscen[i];f1.write((char*)&nb,sizeof(int));}
-        for (int i=0;i<nscen;i++) {nb=this->nparam[i];f1.write((char*)&nb,sizeof(int));}
+        for (int i=0;i<this->nscen;i++) {nb=this->nrecscen[i];f1.write((char*)&nb,sizeof(int));}
+        for (int i=0;i<this->nscen;i++) {nb=this->nparam[i];f1.write((char*)&nb,sizeof(int));cout<<"writeheader nparam = "<<nb<<"\n";}
         nb=this->nstat;f1.write((char*)&nb,sizeof(int));
         f1.close();
         return 0;  //retour normal
@@ -72,10 +69,10 @@ public:
             for (int j=0;j<this->nparam[enr[i].numscen-1];j++) this->fifo.write((char*)&(enr[i].param[j]),sizeof(float));
             for (int j=0;j<this->nstat;j++) this->fifo.write((char*)&(enr[i].stat[j]),sizeof(float));
         }
-        this->fifo.seekp(this->posnrec);
+        this->fifo.seekp(0,ios::beg);
         this->fifo.read((char*)&(this->nrec),sizeof(int));
         for (int i=0;i<nscen;i++) this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));
-        this->fifo.seekp(this->posnrec);
+        this->fifo.seekp(0,ios::beg);
         nb =this->nrec+nenr;this->fifo.write((char*)&nb,sizeof(int));
         for (int i=0;i<nscen;i++) {nb=this->nrecscen[i]+nrs[i];this->fifo.write((char*)&nb,sizeof(int));}
         fifo.flush();

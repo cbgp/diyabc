@@ -64,12 +64,13 @@ string* splitwords(string s,string sep,int *k){
 	return sb;
 }
 
-int ndecimales(double pp){
+int ndecimales(double mini,double maxi){
   double p;
   int k;
-  p = pp;
+  if (mini>=1) return 0; 
+  p = mini/100; 
   k = 0;
-  while (abs(p-round(p))>1E-15) {k++;p=10*p;}
+  while (abs(p-round(p))>1E-12) {k++;p=10*p;}
   return k;
 }
 

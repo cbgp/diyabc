@@ -14,6 +14,7 @@
 #include <complex>
 #include <string>
 #include "mesutils.cpp"
+#include <omp.h>
 
 using namespace std;
 #define MISSING -9999
@@ -422,7 +423,7 @@ struct ParticleC
 		}
 		this->scen = copyscenario(this->scenario[iscen]);
 		//cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
-		this->scen.ecris();
+		//this->scen.ecris();
 	}
 
 	GeneTreeC copytree(GeneTreeC source) {
@@ -551,8 +552,8 @@ struct ParticleC
 					for (int p=0;p<this->scen.nparam;p++) {
 					    this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
 					    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-					    //cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
-					    //cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
+					    cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
+					    cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
 					}
 					//cout <<"avant test conditions\n";
 					OK = conditionsOK();
@@ -570,6 +571,7 @@ struct ParticleC
 			    this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
 			    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
 			    else this->scen.histparam[p].value = this->scen.histparam[p].value;
+			    //cout << this->scen.histparam[p].name<<" = "<<this->scen.histparam[p].value<<"\n";
 			}
 			OK=true;
 		}
@@ -664,23 +666,23 @@ struct ParticleC
 	
 	void setMutParamValue(int loc){
 		int gr = this->locuslist[loc].groupe;
-		cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
+		//cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
 		if (this->locuslist[loc].type<5) {  //MICROSAT
 			this->grouplist[gr].priormutloc.mean = this->grouplist[gr].mutmoy;
 			if ((this->grouplist[gr].priormutloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mut_rate = this->drawfromprior(this->grouplist[gr].priormutloc);
 			else this->locuslist[loc].mut_rate =this->grouplist[gr].mutmoy;
-			cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
+			//cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
 
 			this->grouplist[gr].priorPloc.mean = this->grouplist[gr].Pmoy;
 			if ((this->grouplist[gr].priorPloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].Pgeom = this->drawfromprior(this->grouplist[gr].priorPloc);
 			else this->locuslist[loc].Pgeom =this->grouplist[gr].Pmoy;
-			cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
+			//cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
 
 			this->grouplist[gr].priorsniloc.mean = this->grouplist[gr].snimoy;
 			//cout <<"coucou\n";fflush(stdin);
 			if ((this->grouplist[gr].priorsniloc.sdshape>0.001 )and(this->grouplist[gr].nloc>1)) this->locuslist[loc].sni_rate = this->drawfromprior(this->grouplist[gr].priorsniloc);
 			else this->locuslist[loc].sni_rate =this->grouplist[gr].snimoy;
-			cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
+			//cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
 			
 	
 		 }
@@ -1274,7 +1276,7 @@ struct ParticleC
 	}
 
 	int cree_haplo(int loc) {
-		cout <<"CREE_HAPLO\n";
+		//cout <<"CREE_HAPLO\n";
 /*		if (loc==10) {
 		cout << "nbranches = " << this->gt[loc].nbranches << "    nnoeuds=" << gt[loc].nnodes <<"\n";
 		for (int br=0;br<this->gt[loc].nbranches;br++)
@@ -1286,17 +1288,17 @@ struct ParticleC
 		vector < vector <int> > ordre;
 		for (int no=0;no<this->gt[loc].nnodes;no++) this->gt[loc].nodes[no].state=10000;
 		int anc=this->gt[loc].nnodes-1;
-		cout<<"kmin = "<<this->locuslist[loc].kmin<<"   kmax = "<<this->locuslist[loc].kmax<<"\n";
+		//cout<<"kmin = "<<this->locuslist[loc].kmin<<"   kmax = "<<this->locuslist[loc].kmax<<"\n";
 		if (this->locuslist[loc].type<5) {
 			this->gt[loc].nodes[anc].state=this->locuslist[loc].kmin + (int)(0.5*(this->locuslist[loc].kmax-this->locuslist[loc].kmin));
-			cout << "anc-state = " << this->gt[loc].nodes[anc].state << "\n";
+			//cout << "anc-state = " << this->gt[loc].nodes[anc].state << "\n";
 		}
 		else {
 			this->gt[loc].nodes[anc].state=0;
 			this->gt[loc].nodes[anc].dna = init_dnaseq(loc);
-			cout << "locus " << loc  << "\n";
-			cout << "anc-state = " << this->gt[loc].nodes[anc].state << "\n";
-			cout << "anc-dna = " << this->gt[loc].nodes[anc].dna << "\n";
+			//cout << "locus " << loc  << "\n";
+			//cout << "anc-state = " << this->gt[loc].nodes[anc].state << "\n";
+			//cout << "anc-dna = " << this->gt[loc].nodes[anc].dna << "\n";
 		}
 		anc++;
 		int numut=-1;
@@ -1363,7 +1365,7 @@ struct ParticleC
 			sa=0;ind=0;
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {
-					cout << "nbranches = " << this->gt[loc].nbranches << "    nnoeuds=" << gt[loc].nnodes <<"\n";
+					//cout << "nbranches = " << this->gt[loc].nbranches << "    nnoeuds=" << gt[loc].nnodes <<"\n";
 					for (int br=0;br<this->gt[loc].nbranches;br++)
 						{cout << "branche " << br << "   bottom=" << this->gt[loc].branches[br].bottom ;
 						 cout << "   top=" << this->gt[loc].branches[br].top << "   nmut=" << this->gt[loc].branches[br].nmut;
@@ -1383,26 +1385,26 @@ struct ParticleC
 				}
 //AJOUTER LE TRAITEMENT DES DONNEES MANQUANTES DES SEQUENCES
 		}
-		cout<<"fin de crehaplo\n";
+		//cout<<"fin de crehaplo\n";
 		return 0;
 	}
 
-	int dosimulpart(int ipart,int mrseed){
+	int dosimulpart(int ipart){
 		vector <int> simulOK;
 		int *emptyPop;
 		bool treedone;
-		this->mw.randinit(mrseed,true);
+		
 		simulOK.resize(this->nloc);
 		GeneTreeC GeneTreeY, GeneTreeM;
 		this->drawscenario();
-		cout <<"avant setHistparamValue\n";fflush(stdin);
+		//cout <<"avant setHistparamValue\n";fflush(stdin);
 		this->setHistParamValue();
-		cout << "apres setHistParamValue\n";fflush(stdin);
+		//cout << "apres setHistParamValue\n";fflush(stdin);
 		//cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
 		//for (int k=0;k<this->scen.nparam;k++){
 		//	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
 		this->setSequence();
-		cout <<"apres setSequence\n";
+		//cout <<"apres setSequence\n";
 		bool gtYexist=false, gtMexist=false;
 		this->gt = new GeneTreeC[this->nloc];
 		emptyPop = new int[this->scen.popmax+1];
@@ -1423,13 +1425,13 @@ struct ParticleC
 					if (gtYexist) {this->gt[loc] = copytree(GeneTreeY);treedone=true;}
 				}
 				else if ((locuslist[loc].type % 5) == 4) {
-					    cout << "coucou   gtMexist=" << gtMexist <<"\n";
+					    //cout << "coucou   gtMexist=" << gtMexist <<"\n";
 						if (gtMexist) {this->gt[loc] = copytree(GeneTreeM);treedone=true;}
 					}
 				if (not treedone) {
-					cout << "avant init_tree \n";
+					//cout << "avant init_tree \n";
 					this->gt[loc] = init_tree(loc);
-					cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
+					//cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
 					for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 					for (int iseq=0;iseq<this->nseq;iseq++) {
 						//cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action << "\n";fflush(stdin);
@@ -1478,10 +1480,10 @@ struct ParticleC
 				put_mutations(loc);
 				//cout << "Locus " <<loc << "  apres put_mutations\n";
 				simulOK[loc]=cree_haplo(loc);
-				cout << "Locus " <<loc << "  apres cree_haplo\n";
+				//cout << "Locus " <<loc << "  apres cree_haplo\n";
 				if (simulOK[loc] != 0) cout <<"    locus "<< loc << "   simOK <> 0\n";
 				//simulOK[loc] = simOK;
-				cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
+				//cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 			}
 		}		//LOOP ON loc
 		delete [] emptyPop;
@@ -2118,7 +2120,7 @@ struct ParticleC
 				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(gr,st);break;
 				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(gr,st);break;
 			}
-			cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
+			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
 	}
 

@@ -13,7 +13,8 @@ int main(int argc, char *argv[]){
         enregC *enr;
 	int optchar;
         ReftableC rt;
-	
+	srand(time(NULL));
+        
 	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:")) !=-1) {
 	  switch (optchar) {
 	
@@ -32,10 +33,14 @@ int main(int argc, char *argv[]){
 		       header.readHeader(headerfilename);
 		       cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
 		       datafilename=strdup(header.datafilename.c_str());
+                        cout << datafilename<<"\n";
                        ParticleSetC ps;
 		       k=rt.readheader(reftablefilename,header.nscenarios,datafilename);
+                       //cout<<header.scenario[0].nparamvar<<"    "<<header.scenario[1].nparamvar<<"    "<<header.scenario[2].nparamvar<<"\n";
+                       cout <<"k="<<k<<"\n";
 		       if (k==1) {
                            rt.datapath = datafilename;
+                           rt.nscen = header.nscenarios;
                            rt.nrec=0;
                            rt.nrecscen = new int[header.nscenarios];
                            for (int i=0;i<header.nscenarios;i++) rt.nrecscen[i]=0;
@@ -48,6 +53,7 @@ int main(int argc, char *argv[]){
                        while (nrecneeded>rt.nrec) {
                                enr = ps.dosimultabref(header,nenr,false);
                                rt.writerecords(nenr,enr);
+                               rt.nrec +=nenr;
                                delete [] enr;
                        }
                        rt.closefile();
