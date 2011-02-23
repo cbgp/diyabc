@@ -39,9 +39,14 @@ int main(int argc, char *argv[]){
 	srand(time(NULL));
         
         debut=walltime(&clock_zero);
-        
-	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:")) !=-1) {
+
+	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:h")) !=-1) {
+         
 	  switch (optchar) {
+
+        case 'h' : cout << "USAGE :\n";
+            cout << "-p directory_of_header.txt (choose the header directory)\n-r nb (indicate number of required data sets in the reftable)\n";
+            break;
 	
 	    case 'p' : headerfilename = new char[strlen(optarg)+13];
 		       reftablefilename = new char[strlen(optarg)+15];
