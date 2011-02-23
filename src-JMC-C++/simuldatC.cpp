@@ -659,7 +659,7 @@ struct ParticleSetC
 		//cout << "avant pragma\n";
                 base=rand();
                 
-//#pragma omp parallel for shared(sOK) private(tid,gr)
+#pragma omp parallel for shared(sOK) private(tid,gr)
                 for (ipart=0;ipart<this->npart;ipart++){
 			//tid = omp_get_thread_num();
 			//cout <<"tid = "<<tid <<"\n";
