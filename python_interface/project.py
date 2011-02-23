@@ -655,16 +655,50 @@ class Project(QTabWidget):
 class MyThread(QThread):
     """ thread de traitement qui met à jour la progressBar
     """
-    def __init__(self,parent):
-        super(MyThread,self).__init__(parent)
+    def __init__(self,parent,nb_to_gen):
+        super(RefTableGenThread,self).__init__(parent)
+        self.parent = parent
+        self.nb_to_gen = nb_to_gen
         self.cancel = False
 
     def run (self):
-        for i in range(1000):
-            if self.cancel: break
-            time.sleep(0.01)
-            self.emit(SIGNAL("increment"))
-            #print "%d "%(i),
+        # lance l'executable
+        try:
+            p = subprocess.Popen("/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(nb_to_gen,self.parent.dir), stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
+        except Exception,e:
+            print "Cannot find the executable of the computation program"
+            #QMessageBox.information(self.parent(),"computation problem","Cannot find the executable of the computation program")
+            return
+
+        # boucle toutes les secondes pour verifier les valeurs dans le fichier
+        self.nb_done = 0
+        while self.nb_done < self.nb_to_gen:
+            time.sleep(1)
+            #self.nb_done += 1
+            #self.emit(SIGNAL("increment"))
+            # lecture 
+            f = open("%s/reftable.log","r")
+            lines = f.readlines()
+            f.close()
+            if len(lines) > 1:
+                if lines[0] == "OK":
+                    red = int(lines[1])
+                    if red > self.nb_done:
+                        self.nb_done = red
+                        self.emit(SIGNAL("increment"))
+                else:
+                    QMessageBox.information(self,"problem",lines[0])
+                    return
+            else:
+                QMessageBox.information(self,"problem","Unknown problem")
+                return
+
+
+        #for i in range(1000):
+        #    if self.cancel: break
+        #    time.sleep(0.01)
+        #    self.emit(SIGNAL("increment"))
+        #    #print "%d "%(i),
 
     @pyqtSignature("")
     def cancel(self):
