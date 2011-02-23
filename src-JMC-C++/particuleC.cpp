@@ -602,7 +602,7 @@ struct ParticleC
 
 	void setMutParammoyValue(){
 		int gr;
-		for (gr=1;gr<this->ngr;gr++) {
+		for (gr=1;gr<=this->ngr;gr++) {
 		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"\n";
 		    if (this->grouplist[gr].type==0) {  //microsat
 		        if (this->grouplist[gr].mutmoy<0) {
@@ -1414,7 +1414,9 @@ struct ParticleC
 		//cout << "\n";
 		setMutParammoyValue();
                 int loc;
+                //cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
 		for (loc=0;loc<this->nloc;loc++) {
+                        //cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
 			if (this->locuslist[loc].groupe>0) {
 				setMutParamValue(loc);
 				if (this->locuslist[loc].type >4) {
@@ -1480,13 +1482,16 @@ struct ParticleC
 				put_mutations(loc);
 				//cout << "Locus " <<loc << "  apres put_mutations\n";
 				simulOK[loc]=cree_haplo(loc);
-				//cout << "Locus " <<loc << "  apres cree_haplo\n";
+				//cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
 				if (simulOK[loc] != 0) break;
+				//cout << "apres break interne\n";
 				//simulOK[loc] = simOK;
 				//cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 			}
 			if (simulOK[loc] != 0) break;
+			//cout << "apres break externe\n";
 		}		//LOOP ON loc
+                //cout<<"avant le remplacement des donnees manquantes\n";
                 if (simulOK[loc] == 0) {  //remplacement des données manquantes
                         int locus,sa,indiv,nuc;
                         if (this->data.nmisshap>0) {

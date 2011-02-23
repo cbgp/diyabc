@@ -69,7 +69,6 @@ int strpos(char* st1,char* st2) {
     char *s;
     n1 = strlen(st1);
     n2 = strlen(st2);
-    cout<<"n1="<<n1<<"   n2="<<n2<<"\n";
     if (n2<n1) {
       s = new char[n2+1];
       s[strlen(st2)]='\0';

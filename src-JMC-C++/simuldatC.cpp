@@ -119,18 +119,12 @@ public:
 			return this;
 		} else this->message="";
 		getline(file,this->datafilename);
-                cout<<headerfilename<<"\n";
-                cout<<this->datafilename<<"\n";
                 path = new char[strlen(headerfilename)];
                 strcpy(path,headerfilename);
                 k = strpos(headerfilename,reftable);
-                cout<<"k="<<k<<"\n";
                 path[k]='\0';
-                cout<<path<<"\n"; 
                 strcat(path,this->datafilename.c_str());
-                cout<<path<<"\n";
                 this->datafilename=string(path);
-                cout<<this->datafilename<<"\n";
 		this->dataobs.loadfromfile(path);
 		getline(file,s1);
 		this->nparamtot=getwordint(s1,1);
@@ -148,11 +142,9 @@ public:
 			getline(file,s1);
 			scenario[i].number = getwordint(s1,2);
 			scenario[i].prior_proba = getwordfloat(s1,3);
-			scenario[i].nparam = 0;
+			scenario[i].nparam = 0;scenario[i].nparamvar=0;
 			for (int j=0;j<nlscen[i];j++) getline(file,sl[i][j]);
 			scenario[i].read_events(nlscen[i],sl[i]);
-			//scenario[i].ecris();
-			
 		}
 		for (int i=0;i<this->nscenarios;i++) delete []sl[i];
 		delete [] sl;
@@ -232,9 +224,9 @@ public:
                     }
                 }
                 //cout <<"dans readheader  \n";
-                //this->scenario[i].ecris();
+                
            }
-        }
+        } else for (int i=0;i<this->nscenarios;i++) this->scenario[i].nconditions=0;
 //Partie loci description
 		getline(file,s1);		//ligne vide
 		getline(file,s1);		//ligne "loci description"
@@ -253,15 +245,15 @@ public:
 				//this->dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());  //inutile variable déjà renseignée
 			}
 		}
-		this->ngroupes=grm+1;
 		delete [] ss;
 //Partie group priors
 		getline(file,s1);		//ligne vide
 		getline(file,s1);		//ligne "group prior"
-		this->groupe = new LocusGroupC[this->ngroupes];
+                this->ngroupes=getwordint(s1,3);
+		this->groupe = new LocusGroupC[this->ngroupes+1];
 		this->assignloc(0);
-		//cout<<"on attaque les groupes : analyse des priors\n";
-		for (gr=1;gr<this->ngroupes;gr++){
+		//cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
+		for (gr=1;gr<=this->ngroupes;gr++){
 			getline(file,s1);
 			ss=splitwords(s1," ",&nss);
 			this->assignloc(gr);
@@ -326,6 +318,7 @@ public:
 		for (int i=0;i<this->nscenarios;i++) {
 			this->scenario[i].paramvar = new double[this->scenario[i].nparamvar];
 			for (int j=0;j<this->scenario[i].nparamvar;j++)this->scenario[i].paramvar[j]=-1.0;
+			//this->scenario[i].ecris();
 		}
 		
 //Partie group statistics
@@ -334,7 +327,7 @@ public:
 		getline(file,s1);		//ligne vide
 		getline(file,s1);		//ligne "group group statistics"
 		//cout <<"s1="<<s1<<"\n";
-                for (gr=1;gr<this->ngroupes;gr++) {
+                for (gr=1;gr<=this->ngroupes;gr++) {
 			getline(file,s1);
 			ss=splitwords(s1," ",&nss);
                         //cout <<"s1="<<s1<<"   ss[3]="<< ss[3] <<"   atoi = "<< atoi(ss[3].c_str()) <<"\n";
@@ -466,11 +459,11 @@ struct ParticleSetC
 		int ngr = this->header.ngroupes;
 		//cout<<"ngr="<<ngr<<"\n";
 		this->particule[p].ngr = ngr;
-		this->particule[p].grouplist = new LocusGroupC[ngr];
+		this->particule[p].grouplist = new LocusGroupC[ngr+1];
 		this->particule[p].grouplist[0].nloc = this->header.groupe[0].nloc;
 		this->particule[p].grouplist[0].loc  = new int[this->header.groupe[0].nloc];
 		for (int i=0;i<this->header.groupe[0].nloc;i++) this->particule[p].grouplist[0].loc[i] = this->header.groupe[0].loc[i];
-		for (int gr=1;gr<ngr;gr++) {
+		for (int gr=1;gr<=ngr;gr++) {
 			//cout <<"groupe "<<gr<<"\n";
 			this->particule[p].grouplist[gr].type =this->header.groupe[gr].type;
 			this->particule[p].grouplist[gr].nloc = this->header.groupe[gr].nloc;
@@ -527,13 +520,13 @@ struct ParticleSetC
 
 	void setloci(int p) {
 	        int kmoy;
-		this->particule[p].nloc = 10;//this->header.dataobs.nloc;
+		this->particule[p].nloc = this->header.dataobs.nloc;
 		this->particule[p].locuslist = new LocusC[this->header.dataobs.nloc];
 		//cout<<"avant la boucle\n";
 		for (int kloc=0;kloc<this->header.dataobs.nloc;kloc++){
 			this->particule[p].locuslist[kloc].type = this->header.dataobs.locus[kloc].type;
 			this->particule[p].locuslist[kloc].groupe = this->header.dataobs.locus[kloc].groupe;
-			//cout<<"kloc="<<kloc<<"\n";
+			//cout<<"locus "<<kloc<<"   groupe "<<this->particule[p].locuslist[kloc].groupe<<"\n";
 			if (this->header.dataobs.locus[kloc].type < 5) {
 			      	kmoy=(this->header.dataobs.locus[kloc].maxi+this->header.dataobs.locus[kloc].mini)/2;
 				this->particule[p].locuslist[kloc].kmin=kmoy-((this->header.dataobs.locus[kloc].motif_range/2)-1)*this->header.dataobs.locus[kloc].motif_size;
@@ -640,15 +633,22 @@ struct ParticleSetC
 
 	enregC* dosimultabref(HeaderC header,int npart, bool dnatrue)
 	{
-		this->npart = npart;
+		int gr;
+                this->npart = npart;
 		this->particule = new ParticleC[this->npart];
 		this->header = header;
 		for (int p=0;p<this->npart;p++) {
+                        //cout <<"avant set particule "<<p<<"\n";
 			this->particule[p].dnatrue = dnatrue;
+                        //cout <<"dnatrue\n";
 			this->setdata(p);
+                        //cout <<"setdata\n";
 			this->setgroup(p);
+                        //cout<<"setgroup\n";
 			this->setloci(p);
+                        //cout<<"setloci\n";
 			this->setscenarios(p);
+                        //cout << "                    apres set particule\n";
 		}
 		int ipart,tid=0,jpart=0,nthreads,base;
 		int *sOK;
@@ -659,18 +659,18 @@ struct ParticleSetC
 		//cout << "avant pragma\n";
                 base=rand();
                 
-#pragma omp parallel for shared(sOK) private(tid)
+//#pragma omp parallel for shared(sOK) private(tid,gr)
                 for (ipart=0;ipart<this->npart;ipart++){
-			tid = omp_get_thread_num();
+			//tid = omp_get_thread_num();
 			//cout <<"tid = "<<tid <<"\n";
                         this->particule[ipart].mw.randinit(ipart+base ,false);
 			sOK[ipart]=this->particule[ipart].dosimulpart(ipart);
 			if (sOK[ipart]==0) {
-			 	for(int gr=1;gr<this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
+			 	for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
 			} 
 		}
 //fin du pragma
-
+                //cout << "apres pragma\n";
                 for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				enreg[ipart].numscen=0;
@@ -679,7 +679,7 @@ struct ParticleSetC
 				for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];}
 				enreg[ipart].stat = new float[header.nstat];
                                 nstat=0;
-				for(int gr=1;gr<this->particule[ipart].ngr;gr++){
+				for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 					for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}
 				}
 				enreg[ipart].message="OK";
@@ -690,6 +690,17 @@ struct ParticleSetC
                                 enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
                         }
 		}
+                /*FILE * pFile;
+                pFile = fopen ("courant.log","w");
+                for (int ipart=0;ipart<this->npart;ipart++) {
+                        if (sOK[ipart]==0){
+                          fprintf(pFile,"scen %d",enreg[ipart].numscen);
+                          for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
+                          for (int st=0;st<nstat;st++) fprintf(pFile,"   %6.2f",enreg[ipart].stat[st]);
+                          fprintf(pFile,"\n");
+                        }
+                }
+                fclose(pFile);*/
 		//cout <<"fin du remplissage \n";
 		//cleanParticleSet();
 		//cout << "fin de dosimultabref\n";

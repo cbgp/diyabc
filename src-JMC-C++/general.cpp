@@ -31,7 +31,7 @@ double clock_zero=0.0,debut,duree;
 
 int main(int argc, char *argv[]){
 	char *headerfilename, *reftablefilename,*datafilename;
-	int nrecneeded,nrectodo,k,nenr=200;
+	int nrecneeded,nrectodo,k,nenr=100;
 	double **paramstat;
         enregC *enr;
 	int optchar;
