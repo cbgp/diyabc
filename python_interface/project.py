@@ -332,12 +332,15 @@ class Project(QTabWidget):
                 QMessageBox.information(self,"value error","Check the value of required number of data sets")
                 return
             self.th = RefTableGenThread(self,nb_to_gen)
-            self.th.connect(self.th,SIGNAL("increment"),
-                                  self.incProgress)
+            self.th.connect(self.th,SIGNAL("increment"),self.incProgress)
+            self.th.connect(self.th,SIGNAL("refTableProblem"),self.refTableProblem)
             self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
             self.th.start()
         else:
             self.cancelTh()
+
+    def refTableProblem(self):
+        QMessageBox.information(self,"reftable problem","Something append during the reftable generation : %s"%(self.th.problem))
  
     def incProgress(self):
         """Increment the progress dialog"""
@@ -664,7 +667,8 @@ class Project(QTabWidget):
 
 
 class RefTableGenThread(QThread):
-    """ thread de traitement qui met à jour la progressBar
+    """ thread de traitement qui met à jour la progressBar en fonction de l'avancée de
+    la génération de la reftable
     """
     def __init__(self,parent,nb_to_gen):
         super(RefTableGenThread,self).__init__(parent)
@@ -676,7 +680,8 @@ class RefTableGenThread(QThread):
         # lance l'executable
         try:
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
-            p = subprocess.Popen("/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir), stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
+            cmd_args_list = ["/home/julien/vcs/git/diyabc/src-JMC-C++/gen", "-r" ,"%s"%self.nb_to_gen, "%s"%self.parent.dir]
+            p = subprocess.Popen(cmd_args_list, stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:
             print "Cannot find the executable of the computation program %s"%e
             #QMessageBox.information(self.parent(),"computation problem","Cannot find the executable of the computation program")
@@ -690,20 +695,30 @@ class RefTableGenThread(QThread):
             #print "plop"
             #self.emit(SIGNAL("increment"))
             # lecture 
-            f = open("%s/reftable.log"%(self.parent.dir),"r")
-            lines = f.readlines()
-            f.close()
+            if os.path.exists("%s/reftable.log"%(self.parent.dir)):
+                print 'open'
+                f = open("%s/reftable.log"%(self.parent.dir),"r")
+                lines = f.readlines()
+                f.close()
+            else:
+                lines = ["OK","0"]
             if len(lines) > 1:
-                if lines[0] == "OK":
+                if lines[0].strip() == "OK":
                     red = int(lines[1])
                     if red > self.nb_done:
                         self.nb_done = red
                         self.emit(SIGNAL("increment"))
                 else:
-                    QMessageBox.information(self,"problem",lines[0])
+                    print "lines != OK"
+                    self.problem = lines[0].strip()
+                    self.emit(SIGNAL("refTableProblem"))
+                    #QMessageBox.information(self,"problem",lines[0])
                     return
             else:
-                QMessageBox.information(self,"problem","Unknown problem")
+                self.problem = "unknown problem"
+                self.emit(SIGNAL("refTableProblem"))
+                print "unknown problem"
+                #QMessageBox.information(self,"problem","Unknown problem")
                 return
 
 
