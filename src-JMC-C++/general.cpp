@@ -3,17 +3,42 @@
 #include <unistd.h>
 #include "simuldatC.cpp"
 #include "reftable.cpp"
+#include <sys/time.h>
 
+double walltime( double *t0 )
+{
+  double mic, time;
+  double mega = 0.000001;
+  struct timeval tp;
+  struct timezone tzp;
+  static long base_sec = 0;
+  static long base_usec = 0;
 
+  (void) gettimeofday(&tp,&tzp);
+  if (base_sec == 0)
+    {
+      base_sec = tp.tv_sec;
+      base_usec = tp.tv_usec;
+    }
+
+  time = (double) (tp.tv_sec - base_sec);
+  mic = (double) (tp.tv_usec - base_usec);
+  time = (time + mic * mega) - *t0;
+  return(time);
+}
+
+double clock_zero=0.0,debut,duree;
 
 int main(int argc, char *argv[]){
 	char *headerfilename, *reftablefilename,*datafilename;
-	int nrecneeded,nrectodo,k,nenr=100;
+	int nrecneeded,nrectodo,k,nenr=200;
 	double **paramstat;
         enregC *enr;
 	int optchar;
         ReftableC rt;
 	srand(time(NULL));
+        
+        debut=walltime(&clock_zero);
         
 	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:")) !=-1) {
 	  switch (optchar) {
@@ -37,7 +62,7 @@ int main(int argc, char *argv[]){
                        ParticleSetC ps;
 		       k=rt.readheader(reftablefilename,header.nscenarios,datafilename);
                        //cout<<header.scenario[0].nparamvar<<"    "<<header.scenario[1].nparamvar<<"    "<<header.scenario[2].nparamvar<<"\n";
-                       cout <<"k="<<k<<"\n";
+                       //cout <<"k="<<k<<"\n";
 		       if (k==1) {
                            rt.datapath = datafilename;
                            rt.nscen = header.nscenarios;
@@ -55,6 +80,7 @@ int main(int argc, char *argv[]){
                                rt.writerecords(nenr,enr);
                                rt.nrec +=nenr;
                                delete [] enr;
+                               cout<<rt.nrec<<"\n";
                        }
                        rt.closefile();
 	               break;
@@ -62,5 +88,7 @@ int main(int argc, char *argv[]){
 	    }
 	}
 	
+	duree=walltime(&debut);
+        fprintf(stdout,"durée = %.2f secondes \n",duree);
 	return 0;
 };

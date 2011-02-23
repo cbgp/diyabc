@@ -15,6 +15,9 @@
 //#include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+//#include "particuleC.cpp"
+
 using namespace std;
 
 struct LocusC
@@ -356,7 +359,7 @@ public:
     						this->nmissnuc +=1;
     						this->missnuc[this->nmissnuc-1].sample=ech;
     						this->missnuc[this->nmissnuc-1].locus=loc;
-   						    this->missnuc[this->nmissnuc-1].indiv=ind;
+   						this->missnuc[this->nmissnuc-1].indiv=ind;
     						this->missnuc[this->nmissnuc-1].nuc=j0;
     						j0=min(gen[i].find("-",j0+1),gen[i].find("N",j0+1));
     					}
@@ -407,14 +410,20 @@ public:
     DataC * loadfromfile(string filename) {
 		int loc,kloc;
 		this->readfile(filename);
+                cout <<this->message<<   "\n";
+                if (this->message != "") exit(1);
 		kloc=this->nloc;
 		for (loc=0;loc<kloc;loc++) {
-			//cout << "locus "<<loc<<"   type = "<<this->locus[loc].type<<"\n";
 			if (this->locus[loc].type<5) this->do_microsat(loc);
 			else                         this->do_sequence(loc);
 			this->cal_coeff(loc);
 		}
 	}
+        
+    void calstatobs() {
+        //ParticleC partobs;
+    
+    }
 };
 
 /*int main(){

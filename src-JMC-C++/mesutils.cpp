@@ -64,6 +64,25 @@ string* splitwords(string s,string sep,int *k){
 	return sb;
 }
 
+int strpos(char* st1,char* st2) {
+    int i,p=0,n1,n2;
+    char *s;
+    n1 = strlen(st1);
+    n2 = strlen(st2);
+    cout<<"n1="<<n1<<"   n2="<<n2<<"\n";
+    if (n2<n1) {
+      s = new char[n2+1];
+      s[strlen(st2)]='\0';
+      for (p=0;p<n1-n2;p++) {
+           for (i=0;i<n2;i++) s[i]=st1[p+i];
+           if (strcmp(s,st2)==0) break;
+      }
+    }
+    return p;
+
+}
+
+
 int ndecimales(double mini,double maxi){
   double p;
   int k;
@@ -72,6 +91,17 @@ int ndecimales(double mini,double maxi){
   k = 0;
   while (abs(p-round(p))>1E-12) {k++;p=10*p;}
   return k;
+}
+
+string IntToString ( int number )
+{
+  std::ostringstream oss;
+
+  // Works just like cout
+  oss<< number;
+
+  // Return the underlying string
+  return oss.str();
 }
 
 

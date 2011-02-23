@@ -32,6 +32,7 @@
 struct enregC {
     int numscen;
     float *param,*stat;
+    string message;
 };
 
 class HeaderC
@@ -108,6 +109,8 @@ public:
 	}
 
 	HeaderC* readHeader(char* headerfilename){
+                char reftable[]="header.txt";
+                char *path;
 		string s1,s2,**sl,*ss,*ss1,*ss2;
 		int *nlscen,nss,nss1,j,k,l,gr,grm,k1,k2;
 		ifstream file(headerfilename, ios::in);
@@ -116,7 +119,19 @@ public:
 			return this;
 		} else this->message="";
 		getline(file,this->datafilename);
-		this->dataobs.loadfromfile(this->datafilename);
+                cout<<headerfilename<<"\n";
+                cout<<this->datafilename<<"\n";
+                path = new char[strlen(headerfilename)];
+                strcpy(path,headerfilename);
+                k = strpos(headerfilename,reftable);
+                cout<<"k="<<k<<"\n";
+                path[k]='\0';
+                cout<<path<<"\n"; 
+                strcat(path,this->datafilename.c_str());
+                cout<<path<<"\n";
+                this->datafilename=string(path);
+                cout<<this->datafilename<<"\n";
+		this->dataobs.loadfromfile(path);
 		getline(file,s1);
 		this->nparamtot=getwordint(s1,1);
 		this->nstat=getwordint(s1,4);
@@ -426,6 +441,25 @@ struct ParticleSetC
 			this->particule[p].data.indivsexe[i] = new int[this->header.dataobs.nind[i]];
 			for (int j=0;j<header.dataobs.nind[i];j++) this->particule[p].data.indivsexe[i][j] = this->header.dataobs.indivsexe[i][j];
 		}
+		this->particule[p].data.nmisshap = this->header.dataobs.nmisshap;
+                if (this->particule[p].data.nmisshap>0) {
+                        this->particule[p].data.misshap = new MissingHaplo[this->particule[p].data.nmisshap];
+                        for (int i=0;i<this->header.dataobs.nmisshap;i++) {
+                                this->particule[p].data.misshap[i].locus  = this->header.dataobs.misshap[i].locus;
+                                this->particule[p].data.misshap[i].sample = this->header.dataobs.misshap[i].sample;
+                                this->particule[p].data.misshap[i].indiv  = this->header.dataobs.misshap[i].indiv;
+                        }
+                } 
+                this->particule[p].data.nmissnuc = this->header.dataobs.nmissnuc;
+                if (this->particule[p].data.nmisshap>0) {
+                          this->particule[p].data.missnuc = new MissingNuc[this->particule[p].data.nmissnuc];
+                          for (int i=0;i<this->header.dataobs.nmissnuc;i++) {
+                                  this->particule[p].data.missnuc[i].locus  = this->header.dataobs.missnuc[i].locus;
+                                  this->particule[p].data.missnuc[i].sample = this->header.dataobs.missnuc[i].sample;
+                                  this->particule[p].data.missnuc[i].indiv  = this->header.dataobs.missnuc[i].indiv;
+                                  this->particule[p].data.missnuc[i].nuc    = this->header.dataobs.missnuc[i].nuc;
+                          }
+                } 
 	}
 
 	void setgroup(int p) {
@@ -584,8 +618,6 @@ struct ParticleSetC
 			delete []this->particule[ipart].scenario[i].histparam;
 		}
 		delete []this->particule[ipart].scenario;
-//nettoyage de paramvar
-		if (this->particule[ipart].nparamvar>0) delete []this->particule[ipart].paramvar;
 //nettoyage de matQ
 		for (int i=0;i<4;i++) delete []this->particule[ipart].matQ[i];
 		delete []this->particule[ipart].matQ;
@@ -625,26 +657,21 @@ struct ParticleSetC
 		int nstat;
                 enreg = new enregC[this->npart];
 		//cout << "avant pragma\n";
-                base=rand() % 10000;
-//debut du pragma
-//#pragma omp parallel shared(sOK) private(tid)
-//{		
-                //nthreads = omp_get_num_threads();
-                //this->mw = new MwcGen[nthreads];
-                this->mw = new MwcGen[this->npart];
-                for (int i=0;i<this->npart;i++) mw[i].randinit(i+base,false);
+                base=rand();
+                
+#pragma omp parallel for shared(sOK) private(tid)
                 for (ipart=0;ipart<this->npart;ipart++){
 			tid = omp_get_thread_num();
-			cout <<"tid = "<<tid <<"\n";
-                        this->particule[ipart].mw = copymw(this->mw[ipart]);
+			//cout <<"tid = "<<tid <<"\n";
+                        this->particule[ipart].mw.randinit(ipart+base ,false);
 			sOK[ipart]=this->particule[ipart].dosimulpart(ipart);
 			if (sOK[ipart]==0) {
 			 	for(int gr=1;gr<this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
-			}
+			} 
 		}
-//}
 //fin du pragma
-		for (int ipart=0;ipart<this->npart;ipart++) {
+
+                for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				enreg[ipart].numscen=0;
 				if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
@@ -655,11 +682,13 @@ struct ParticleSetC
 				for(int gr=1;gr<this->particule[ipart].ngr;gr++){
 					for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}
 				}
-                        cout<<"scen "<<enreg[ipart].numscen<<"   ";
-                        for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) cout <<enreg[ipart].param[j]<<"   ";
-                        for (int j=0;j<nstat;j++) cout << enreg[ipart].stat[j]<<"   ";
-			cout<<"\n";	 
+				enreg[ipart].message="OK";
 			}
+			else {
+                                enreg[ipart].message  = "A gene genealogy failed in scenario ";
+                                enreg[ipart].message += IntToString(this->particule[ipart].scen.number);
+                                enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
+                        }
 		}
 		//cout <<"fin du remplissage \n";
 		//cleanParticleSet();
