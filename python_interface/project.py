@@ -680,7 +680,8 @@ class RefTableGenThread(QThread):
         # lance l'executable
         try:
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
-            cmd_args_list = ["/home/julien/vcs/git/diyabc/src-JMC-C++/gen", "-r" ,"%s"%self.nb_to_gen, "%s"%self.parent.dir]
+            cmd_args_list = ["/home/julien/vcs/git/diyabc/src-JMC-C++/gen", "%s"%self.nb_to_gen,"-p", "%s"%self.parent.dir, "-r", "%s"%self.nb_to_gen]
+            print cmd_args_list
             p = subprocess.Popen(cmd_args_list, stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:
             print "Cannot find the executable of the computation program %s"%e
