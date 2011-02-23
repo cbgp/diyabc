@@ -741,7 +741,7 @@
                     </spacer>
                    </item>
                    <item row="3" column="2">
-                    <widget class="QLineEdit" name="lineEdit_3">
+                    <widget class="QLineEdit" name="nbSetsReqEdit">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -763,7 +763,7 @@
                     </widget>
                    </item>
                    <item row="4" column="2">
-                    <widget class="QLineEdit" name="lineEdit_4">
+                    <widget class="QLineEdit" name="nbSetsDoneEdit">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                        <horstretch>0</horstretch>

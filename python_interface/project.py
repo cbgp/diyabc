@@ -4,6 +4,8 @@ import time
 import os
 import shutil
 import codecs
+import subprocess
+from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from project_ui import *
@@ -324,7 +326,12 @@ class Project(QTabWidget):
         self.writeRefTableHeader()
         """Start or stop the treatment in the thread"""
         if self.th == None or self.th.cancel == True:
-            self.th = MyThread(self)
+            try:
+                nb_to_gen = int(self.ui.nbSetsReqEdit.text())
+            except Exception,e:
+                QMessageBox.information(self,"value error","Check the value of required number of data sets")
+                return
+            self.th = RefTableGenThread(self,nb_to_gen)
             self.th.connect(self.th,SIGNAL("increment"),
                                   self.incProgress)
             self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
@@ -334,7 +341,10 @@ class Project(QTabWidget):
  
     def incProgress(self):
         """Increment the progress dialog"""
-        self.ui.progressBar.setValue((self.ui.progressBar.value()+1)%100)
+        done = self.th.nb_done
+        nb_to_do = self.th.nb_to_gen
+        pc = (float(done)/float(nb_to_do))*100
+        self.ui.progressBar.setValue(int(pc))
 
     def cancelTh(self):
         #print 'plop'
@@ -652,7 +662,7 @@ class Project(QTabWidget):
                 os.remove("%s/.DIYABC_lock"%self.dir)
 
 
-class MyThread(QThread):
+class RefTableGenThread(QThread):
     """ thread de traitement qui met à jour la progressBar
     """
     def __init__(self,parent,nb_to_gen):
@@ -664,6 +674,7 @@ class MyThread(QThread):
     def run (self):
         # lance l'executable
         try:
+            print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(nb_to_gen,self.parent.dir)
             p = subprocess.Popen("/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(nb_to_gen,self.parent.dir), stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:
             print "Cannot find the executable of the computation program"
@@ -674,24 +685,24 @@ class MyThread(QThread):
         self.nb_done = 0
         while self.nb_done < self.nb_to_gen:
             time.sleep(1)
-            #self.nb_done += 1
-            #self.emit(SIGNAL("increment"))
-            # lecture 
-            f = open("%s/reftable.log","r")
-            lines = f.readlines()
-            f.close()
-            if len(lines) > 1:
-                if lines[0] == "OK":
-                    red = int(lines[1])
-                    if red > self.nb_done:
-                        self.nb_done = red
-                        self.emit(SIGNAL("increment"))
-                else:
-                    QMessageBox.information(self,"problem",lines[0])
-                    return
-            else:
-                QMessageBox.information(self,"problem","Unknown problem")
-                return
+            self.nb_done += 1
+            self.emit(SIGNAL("increment"))
+            ## lecture 
+            #f = open("%s/reftable.log"%(self.parent.dir),"r")
+            #lines = f.readlines()
+            #f.close()
+            #if len(lines) > 1:
+            #    if lines[0] == "OK":
+            #        red = int(lines[1])
+            #        if red > self.nb_done:
+            #            self.nb_done = red
+            #            self.emit(SIGNAL("increment"))
+            #    else:
+            #        QMessageBox.information(self,"problem",lines[0])
+            #        return
+            #else:
+            #    QMessageBox.information(self,"problem","Unknown problem")
+            #    return
 
 
         #for i in range(1000):

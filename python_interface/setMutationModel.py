@@ -24,6 +24,28 @@ class SetMutationModel(QFrame):
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
+        QObject.connect(self.ui.mmrGammaRadio,SIGNAL("clicked()"),self.mmrGamma)
+        QObject.connect(self.ui.mmrLogRadio,SIGNAL("clicked()"),self.mmrNoGamma)
+        QObject.connect(self.ui.mmrUnifRadio,SIGNAL("clicked()"),self.mmrNoGamma)
+        QObject.connect(self.ui.msrGammaRadio,SIGNAL("clicked()"),self.msrGamma)
+        QObject.connect(self.ui.msrLogRadio,SIGNAL("clicked()"),self.msrNoGamma)
+        QObject.connect(self.ui.msrUnifRadio,SIGNAL("clicked()"),self.msrNoGamma)
+        QObject.connect(self.ui.mcpGammaRadio,SIGNAL("clicked()"),self.mcpGamma)
+        QObject.connect(self.ui.mcpLogRadio,SIGNAL("clicked()"),self.mcpNoGamma)
+        QObject.connect(self.ui.mcpUnifRadio,SIGNAL("clicked()"),self.mcpNoGamma)
+        if self.ui.mcpGammaRadio.isChecked():
+            self.mcpGamma()
+        else:
+            self.mcpNoGamma()
+        if self.ui.mmrGammaRadio.isChecked():
+            self.mmrGamma()
+        else:
+            self.mmrNoGamma()
+        if self.ui.msrGammaRadio.isChecked():
+            self.msrGamma()
+        else:
+            self.msrNoGamma()
+
         self.field_names_dico ={self.ui.mmrMinEdit : "Min of mean mutation rate", self.ui.mmrMaxEdit : "Max of mean mutation rate", self.ui.mmrMeanEdit : "Mean of mean mutation rate",self.ui.mmrShapeEdit : "Shape of mean mutation rate",
                             self.ui.ilmrMinEdit : "Min of individual locus mutation rate", self.ui.ilmrMaxEdit : "Max of individual locus mutation rate" , self.ui.ilmrMeanEdit : "Mean of individual locus mutation rate",
                             self.ui.ilmrShapeEdit : "Shape of individual locus mutation rate",
@@ -80,6 +102,25 @@ class SetMutationModel(QFrame):
                            self.ui.ilsrMaxEdit : [1,1],  
                            self.ui.ilsrMeanEdit : [1,0],
                            self.ui.ilsrShapeEdit : [1,1]}
+
+    def mmrGamma(self):
+        self.ui.mmrMeanEdit.setDisabled(False)
+        self.ui.mmrShapeEdit.setDisabled(False)
+    def mmrNoGamma(self):
+        self.ui.mmrMeanEdit.setDisabled(True)
+        self.ui.mmrShapeEdit.setDisabled(True)
+    def mcpGamma(self):
+        self.ui.mcpMeanEdit.setDisabled(False)
+        self.ui.mcpShapeEdit.setDisabled(False)
+    def mcpNoGamma(self):
+        self.ui.mcpMeanEdit.setDisabled(True)
+        self.ui.mcpShapeEdit.setDisabled(True)
+    def msrGamma(self):
+        self.ui.msrMeanEdit.setDisabled(False)
+        self.ui.msrShapeEdit.setDisabled(False)
+    def msrNoGamma(self):
+        self.ui.msrMeanEdit.setDisabled(True)
+        self.ui.msrShapeEdit.setDisabled(True)
 
     def getMutationConf(self):
         """ renvoie les lignes à écrire dans la conf
@@ -180,8 +221,8 @@ class SetMutationModel(QFrame):
         mmrValues = lines[0].split('[')[1].split(']')[0].split(',')
         if mmrValues[2] == "-9":
             mmrValues[2] = ""
-        if mmrValues[3] == "2":
-            mmrValues[3] = ""
+        #if mmrValues[3] == "2":
+        #    mmrValues[3] = ""
         self.ui.mmrMinEdit.setText(mmrValues[0])
         self.ui.mmrMaxEdit.setText(mmrValues[1])    
         self.ui.mmrMeanEdit.setText(mmrValues[2])   
@@ -199,8 +240,8 @@ class SetMutationModel(QFrame):
         ilmrValues = lines[1].split('[')[1].split(']')[0].split(',')
         if ilmrValues[2] == "-9":
             ilmrValues[2] = ""
-        if ilmrValues[3] == "2":
-            ilmrValues[3] = ""
+        #if ilmrValues[3] == "2":
+        #    ilmrValues[3] = ""
         self.ui.ilmrMinEdit.setText(ilmrValues[0])
         self.ui.ilmrMaxEdit.setText(ilmrValues[1])
         self.ui.ilmrMeanEdit.setText(ilmrValues[2])
@@ -209,8 +250,8 @@ class SetMutationModel(QFrame):
         mcpValues = lines[2].split('[')[1].split(']')[0].split(',')
         if mcpValues[2] == "-9":
             mcpValues[2] = ""
-        if mcpValues[3] == "2":
-            mcpValues[3] = ""
+        #if mcpValues[3] == "2":
+        #    mcpValues[3] = ""
         self.ui.mcpMinEdit.setText(mcpValues[0])
         self.ui.mcpMaxEdit.setText(mcpValues[1])    
         self.ui.mcpMeanEdit.setText(mcpValues[2])   
@@ -228,8 +269,8 @@ class SetMutationModel(QFrame):
         ilcpValues = lines[3].split('[')[1].split(']')[0].split(',')
         if ilcpValues[2] == "-9":
             ilcpValues[2] = ""
-        if ilcpValues[3] == "2":
-            ilcpValues[3] = ""
+        #if ilcpValues[3] == "2":
+        #    ilcpValues[3] = ""
         self.ui.ilcpMinEdit.setText(ilcpValues[0])
         self.ui.ilcpMaxEdit.setText(ilcpValues[1])
         self.ui.ilcpMeanEdit.setText(ilcpValues[2])
@@ -238,8 +279,8 @@ class SetMutationModel(QFrame):
         msrValues = lines[4].split('[')[1].split(']')[0].split(',')
         if msrValues[2] == "-9":
             msrValues[2] = ""
-        if msrValues[3] == "2":
-            msrValues[3] = ""
+        #if msrValues[3] == "2":
+        #    msrValues[3] = ""
         self.ui.msrMinEdit.setText(msrValues[0])
         self.ui.msrMaxEdit.setText(msrValues[1])    
         self.ui.msrMeanEdit.setText(msrValues[2])   
@@ -257,8 +298,8 @@ class SetMutationModel(QFrame):
         ilsrValues = lines[5].split('[')[1].split(']')[0].split(',')
         if ilsrValues[2] == "-9":
             ilsrValues[2] = ""
-        if ilsrValues[3] == "2":
-            ilsrValues[3] = ""
+        #if ilsrValues[3] == "2":
+        #    ilsrValues[3] = ""
         self.ui.ilsrMinEdit.setText(ilsrValues[0])
         self.ui.ilsrMaxEdit.setText(ilsrValues[1])
         self.ui.ilsrMeanEdit.setText(ilsrValues[2])

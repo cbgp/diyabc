@@ -42,8 +42,39 @@ class DrawScenario(QFrame):
         on lance le dessin dans un pixmap
         """
         for sc_info in self.sc_info_list:
-            self.addDraw(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"])
+            if sc_info["tree"] != None:
+                self.addDraw(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"])
+            else:
+                self.addDrawError(sc_info["checker"])
 
+    def addDrawError(self,scc):
+
+        xmax = 500
+        ymax = 450
+        pix = QPixmap(xmax,ymax)
+        self.pixList.append(pix)
+        pix.fill(Qt.white)
+
+        painter = QPainter(pix)
+        pen = QPen(Qt.black,2)
+        painter.setPen(pen)
+        # dessin de la cartouche
+        painter.drawLine(2,2,xmax-2,2)
+        painter.drawLine(xmax-2,2,xmax-2,ymax-2)
+        painter.drawLine(xmax-2,ymax-2,2,ymax-2)
+        painter.drawLine(2,ymax-2,2,2)
+        painter.setPen(QPen(Qt.black,6))
+        painter.setPen(QPen(Qt.black,20))
+        font = QFont()
+        font.setItalic(False)
+        font.setPixelSize(16)
+        painter.setFont(font)
+        painter.drawText( 10,20, "Scenario %i seems OK. But the current version of DIYABC"%(scc.number))
+        painter.drawText( 10,40, "is unable to provide a valide graphic representation")
+
+        label = QLabel()
+        label.setPixmap(pix)
+        self.ui.horizontalLayout_2.addWidget(label)
 
     def addDraw(self,segments,scc,t):
         """ dessine un scenario et l'ajoute à la fenetre
@@ -492,8 +523,9 @@ class DrawScenario(QFrame):
             im.save("%s_%i.jpg"%(pic_whole_path,ind+1))
 
         for ind,sc_info in enumerate(self.sc_info_list):
-            savename = "%s_%i.svg"%(pic_whole_path,ind+1)
-            self.DrawSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
+            if sc_info["tree"] != None:
+                savename = "%s_%i.svg"%(pic_whole_path,ind+1)
+                self.DrawSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
 
     def saveDrawsToOne(self):
         """ Sauve tous les scenarios dans une seule image et une seul svg
@@ -535,7 +567,8 @@ class DrawScenario(QFrame):
                 painter.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
                 #painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
                 sc_info = self.sc_info_list[ind]
-                self.addToSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],painter_pic)
+                if sc_info["tree"] != None:
+                    self.addToSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],painter_pic)
                 # on va a droite
                 painter_pic.translate(500,0)
                 print "li:",li," col:",col

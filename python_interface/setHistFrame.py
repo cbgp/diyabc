@@ -234,7 +234,7 @@ class SetHistoricalModel(QFrame):
         """ clic sur le bouton check scenario pour dessiner les scenarios
         """
         self.majParamInfoDico()
-        chk_list = self.checkScenarios()
+        chk_list = self.checkScenariosGraphic()
         if chk_list != None:
             self.drawScenarios(chk_list)
         else:
@@ -332,8 +332,8 @@ class SetHistoricalModel(QFrame):
             self.rmCond(cond)
 
 
-    def checkScenarios(self):
-        """ action de verification des scenarios
+    def checkScenariosGraphic(self):
+        """ action de verification des scenarios (dessin inclu)
         retourne la liste des infos sur les scenarios si ceux ci sont tous bons
         sinon retourne None
         """
@@ -350,8 +350,6 @@ class SetHistoricalModel(QFrame):
                 #print self.parent.data
                 scChecker.checkread(sc.strip().split('\n'),self.parent.data)
                 scChecker.checklogic()
-                t = PopTree(scChecker)
-                t.do_tree()
                 #for ev in scChecker.history.events : print ev
                 #for  no in t.node : print no
                 #print "  "
@@ -364,7 +362,46 @@ class SetHistoricalModel(QFrame):
                 dico_sc_infos["text"] = sc.strip().split('\n')
                 dico_sc_infos["checker"] = scChecker
                 #print "nb param du sc ",num," ",scChecker.nparamtot
+                t = PopTree(scChecker)
+                t.do_tree()
                 dico_sc_infos["tree"] = t
+                self.scenarios_info_list.append(dico_sc_infos)
+            except IOScreenError, e:
+                #print "Un scenario a une erreur : ", e
+                nb_scenarios_invalides += 1
+                QMessageBox.information(self,"Scenario error","%s"%e)
+            except PopTreeError,e:
+                dico_sc_infos["tree"] = None
+                self.scenarios_info_list.append(dico_sc_infos)
+        # si tous les scenarios sont bons, on renvoie les données utiles, sinon on renvoie None
+        if nb_scenarios_invalides == 0:
+            return self.scenarios_info_list
+        else:
+            return None
+
+    def checkScenarios(self):
+        """ action de verification des scenarios (sans dessin)
+        retourne la liste des infos sur les scenarios si ceux ci sont tous bons
+        sinon retourne None
+        """
+        # construction de la liste de scenarios
+        sc_txt_list = []
+        for sc in self.scList:
+            sc_txt_list.append(str(sc.findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()))
+            #print sc_txt_list
+        nb_scenarios_invalides = 0
+        self.scenarios_info_list = []
+        for num,sc in enumerate(sc_txt_list):
+            scChecker = history.Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
+            try:
+                #print self.parent.data
+                scChecker.checkread(sc.strip().split('\n'),self.parent.data)
+                scChecker.checklogic()
+                dico_sc_infos = {}
+                dico_sc_infos["text"] = sc.strip().split('\n')
+                dico_sc_infos["checker"] = scChecker
+                #print "nb param du sc ",num," ",scChecker.nparamtot
+                dico_sc_infos["tree"] = None
                 self.scenarios_info_list.append(dico_sc_infos)
             except IOScreenError, e:
                 #print "Un scenario a une erreur : ", e
