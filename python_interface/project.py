@@ -345,6 +345,7 @@ class Project(QTabWidget):
         nb_to_do = self.th.nb_to_gen
         pc = (float(done)/float(nb_to_do))*100
         self.ui.progressBar.setValue(int(pc))
+        self.ui.nbSetsDoneEdit.setText("%s"%done)
 
     def cancelTh(self):
         #print 'plop'
@@ -674,35 +675,36 @@ class RefTableGenThread(QThread):
     def run (self):
         # lance l'executable
         try:
-            print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(nb_to_gen,self.parent.dir)
-            p = subprocess.Popen("/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(nb_to_gen,self.parent.dir), stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
+            #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
+            p = subprocess.Popen("/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir), stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:
-            print "Cannot find the executable of the computation program"
+            print "Cannot find the executable of the computation program %s"%e
             #QMessageBox.information(self.parent(),"computation problem","Cannot find the executable of the computation program")
-            return
+            #return
 
         # boucle toutes les secondes pour verifier les valeurs dans le fichier
         self.nb_done = 0
         while self.nb_done < self.nb_to_gen:
             time.sleep(1)
-            self.nb_done += 1
-            self.emit(SIGNAL("increment"))
-            ## lecture 
-            #f = open("%s/reftable.log"%(self.parent.dir),"r")
-            #lines = f.readlines()
-            #f.close()
-            #if len(lines) > 1:
-            #    if lines[0] == "OK":
-            #        red = int(lines[1])
-            #        if red > self.nb_done:
-            #            self.nb_done = red
-            #            self.emit(SIGNAL("increment"))
-            #    else:
-            #        QMessageBox.information(self,"problem",lines[0])
-            #        return
-            #else:
-            #    QMessageBox.information(self,"problem","Unknown problem")
-            #    return
+            #self.nb_done += 1
+            #print "plop"
+            #self.emit(SIGNAL("increment"))
+            # lecture 
+            f = open("%s/reftable.log"%(self.parent.dir),"r")
+            lines = f.readlines()
+            f.close()
+            if len(lines) > 1:
+                if lines[0] == "OK":
+                    red = int(lines[1])
+                    if red > self.nb_done:
+                        self.nb_done = red
+                        self.emit(SIGNAL("increment"))
+                else:
+                    QMessageBox.information(self,"problem",lines[0])
+                    return
+            else:
+                QMessageBox.information(self,"problem","Unknown problem")
+                return
 
 
         #for i in range(1000):

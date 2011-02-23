@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Mon Feb 14 11:39:20 2011
+# Created: Wed Feb 23 15:43:44 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -340,26 +340,26 @@ class Ui_TabWidget(object):
         self.gridLayout.addItem(spacerItem2, 3, 3, 1, 1)
         spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem3, 4, 3, 1, 1)
-        self.lineEdit_3 = QtGui.QLineEdit(self.frame_8)
+        self.nbSetsReqEdit = QtGui.QLineEdit(self.frame_8)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit_3.sizePolicy().hasHeightForWidth())
-        self.lineEdit_3.setSizePolicy(sizePolicy)
-        self.lineEdit_3.setMinimumSize(QtCore.QSize(0, 26))
-        self.lineEdit_3.setMaximumSize(QtCore.QSize(120, 26))
-        self.lineEdit_3.setObjectName("lineEdit_3")
-        self.gridLayout.addWidget(self.lineEdit_3, 3, 2, 1, 1)
-        self.lineEdit_4 = QtGui.QLineEdit(self.frame_8)
+        sizePolicy.setHeightForWidth(self.nbSetsReqEdit.sizePolicy().hasHeightForWidth())
+        self.nbSetsReqEdit.setSizePolicy(sizePolicy)
+        self.nbSetsReqEdit.setMinimumSize(QtCore.QSize(0, 26))
+        self.nbSetsReqEdit.setMaximumSize(QtCore.QSize(120, 26))
+        self.nbSetsReqEdit.setObjectName("nbSetsReqEdit")
+        self.gridLayout.addWidget(self.nbSetsReqEdit, 3, 2, 1, 1)
+        self.nbSetsDoneEdit = QtGui.QLineEdit(self.frame_8)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit_4.sizePolicy().hasHeightForWidth())
-        self.lineEdit_4.setSizePolicy(sizePolicy)
-        self.lineEdit_4.setMinimumSize(QtCore.QSize(0, 26))
-        self.lineEdit_4.setMaximumSize(QtCore.QSize(120, 26))
-        self.lineEdit_4.setObjectName("lineEdit_4")
-        self.gridLayout.addWidget(self.lineEdit_4, 4, 2, 1, 1)
+        sizePolicy.setHeightForWidth(self.nbSetsDoneEdit.sizePolicy().hasHeightForWidth())
+        self.nbSetsDoneEdit.setSizePolicy(sizePolicy)
+        self.nbSetsDoneEdit.setMinimumSize(QtCore.QSize(0, 26))
+        self.nbSetsDoneEdit.setMaximumSize(QtCore.QSize(120, 26))
+        self.nbSetsDoneEdit.setObjectName("nbSetsDoneEdit")
+        self.gridLayout.addWidget(self.nbSetsDoneEdit, 4, 2, 1, 1)
         spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem4, 3, 0, 1, 1)
         spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
