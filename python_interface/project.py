@@ -605,6 +605,7 @@ class Project(QTabWidget):
             # save th conf
             if self.gen_state_valid and self.hist_state_valid:
                 self.writeThConf()
+                self.writeRefTableHeader()
         else:
             QMessageBox.information(self,"Saving is impossible","Choose a directory before saving the project")
 

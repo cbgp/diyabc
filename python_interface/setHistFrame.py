@@ -173,7 +173,7 @@ class SetHistoricalModel(QFrame):
             # pour chaque pourcentage
             for rp in self.rpList:
                 lineEdit = rp.findChild(QLineEdit,"rpEdit")
-                lineEdit.setText(str(round(val,2)))
+                lineEdit.setText(str(round(val,5)))
                 lineEdit.setDisabled(True)
 
             
@@ -639,7 +639,7 @@ class SetHistoricalModel(QFrame):
                 rpsum+=rpfloat
             except Exception,e:
                 problems += "On %s posterior probability, %s\n"%(rpscname,e)
-        if rpsum != 1.0:
+        if rpsum < 0.99999 or rpsum > 1.00001:
             problems += "The sum of all posterior probabilities is equal to %s. It should be equal to 1"%rpsum
 
         if problems == "":
