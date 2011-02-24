@@ -307,7 +307,7 @@ class Diyabc(QMainWindow):
         repertoire de projet ou s'il est dans un répertoire de projet
         """
         if os.path.exists("%s/%s"%(dir,self.main_conf_name))\
-                or os.path.exists("%s/%s"%(os.path.abspath(os.path.join(dir, '..'),self.main_conf_name))):
+                or os.path.exists("%s/%s"%(os.path.abspath(os.path.join(dir, '..')),self.main_conf_name)):
             return True
         else:
             return False

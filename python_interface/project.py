@@ -388,7 +388,9 @@ class Project(QTabWidget):
         qfd = QFileDialog()
         qfd.setDirectory(self.ui.dirEdit.text())
         name = qfd.getOpenFileName()
-        self.loadDataFile(name)
+        if self.loadDataFile(name):
+            # si on a reussi a charger le data file, on vire le bouton browse
+            self.ui.browseDataFileButton.hide()
         # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
         self.gen_data_win.fillLocusTableFromData()
 
@@ -420,6 +422,8 @@ class Project(QTabWidget):
                 #keep = "\n\nKeeping previous selected file"
                 keep = "\n\nThe file was not loaded, nothing was changed"
             QMessageBox.information(self,"Data file error","%s%s"%(e,keep))
+            return False
+        return True
 
 
     def dirSelection(self):
@@ -452,6 +456,8 @@ class Project(QTabWidget):
                         self.dataFileName = self.dataFileSource.split('/')[-1]
                         # verrouillage du projet
                         self.lock()
+                        # on a reussi a creer le dossier, on vire le bouton browse
+                        self.ui.browseDirButton.hide()
                     except OSError,e:
                         QMessageBox.information(self,"Error",str(e))
             else:
@@ -552,6 +558,8 @@ class Project(QTabWidget):
         # GUI
         self.ui.dirEdit.setText(self.dir)
         self.ui.browseDataFileButton.setDisabled(True)
+        self.ui.browseDataFileButton.hide()
+        self.ui.browseDirButton.hide()
         self.ui.groupBox.show()
         self.ui.setHistoricalButton.setDisabled(False)
         self.ui.setGeneticButton.setDisabled(False)
