@@ -16,6 +16,7 @@ public:
     
     int readheader(char * fname,int nscen,char* datafilename) {
         int nb;
+        this->nscen=nscen;
         //cout <<"debut de readheader\n";
         fstream f0(fname,ios::in|ios::out|ios::binary);
         //cout<<"apres fstream\n";
@@ -71,18 +72,21 @@ public:
                  return 1;
              }
         }
+        //cout<<"avant ouverture de reftable.log nscen="<< this->nscen <<"\n";fflush(stdin);
         ofstream f1(this->filelog,ios::out);
         f1<<"OK\n";
         int *nrs,nb;
         nrs = new int[this->nscen];
         for (int i=0;i<this->nscen;i++) nrs[i]=0;
         this->fifo.seekp(0,ios::end);
+        //cout<<"apres le seekp\n";fflush(stdin);
         for (int i=0;i<nenr;i++) {
             this->fifo.write((char*)&(enr[i].numscen),sizeof(int));
             nrs[enr[i].numscen-1]++;
             for (int j=0;j<this->nparam[enr[i].numscen-1];j++) this->fifo.write((char*)&(enr[i].param[j]),sizeof(float));
             for (int j=0;j<this->nstat;j++) this->fifo.write((char*)&(enr[i].stat[j]),sizeof(float));
         }
+        //cout<<"AVANT MODIF      des nombres d'enregistrements\n";fflush(stdin);
         this->fifo.seekp(0,ios::beg);
         this->fifo.read((char*)&(this->nrec),sizeof(int));
         for (int i=0;i<nscen;i++) this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));

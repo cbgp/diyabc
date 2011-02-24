@@ -52,8 +52,8 @@ int main(int argc, char *argv[]){
 		       reftablefilename = new char[strlen(optarg)+15];
 		       strcpy(headerfilename,optarg);
 		       strcpy(reftablefilename,optarg);
-		       strcat(headerfilename,"/header.txt");
-		       strcat(reftablefilename,"/reftable.bin");
+		       strcat(headerfilename,"header.txt");
+		       strcat(reftablefilename,"reftable.bin");
 		       cout<<headerfilename<<"   "<<reftablefilename<<"\n"; 
 		       break;
 		   
@@ -61,9 +61,11 @@ int main(int argc, char *argv[]){
 	               cout <<"nrecneeded = "<<nrecneeded<<"\n";
 		       HeaderC header;
 		       header.readHeader(headerfilename);
+                       //cout<<"avant calstatobs\n";fflush(stdin);
+                       header.calstatobs();
 		       cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
 		       datafilename=strdup(header.datafilename.c_str());
-                        cout << datafilename<<"\n";
+                       //cout << datafilename<<"\n";
                        ParticleSetC ps;
 		       k=rt.readheader(reftablefilename,header.nscenarios,datafilename);
                        //cout<<header.scenario[0].nparamvar<<"    "<<header.scenario[1].nparamvar<<"    "<<header.scenario[2].nparamvar<<"\n";
@@ -82,6 +84,7 @@ int main(int argc, char *argv[]){
                        rt.openfile();
                        while (nrecneeded>rt.nrec) {
                                enr = ps.dosimultabref(header,nenr,false);
+                               //cout<<"avant writerecords\n";fflush(stdin);
                                rt.writerecords(nenr,enr);
                                rt.nrec +=nenr;
                                delete [] enr;

@@ -22,13 +22,13 @@ using namespace std;
 #define NUCMISSING 'N'
 #define NSTAT 26
 
-string stat_type[NSTAT] = {"NAL","HET","MGW","VAR","FST","LIK","DM2","N2P","H2P","V2P","DAS","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"};
+string stat_type[NSTAT] = {"NAL","HET","VAR","MGW","FST","LIK","DM2","N2P","H2P","V2P","DAS","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"};
 int stat_num[NSTAT]     = {  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 };
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			-13 : fst
  *  2 : het			-2 : nss            -14 : aml
- *  3 : MGW			-3 : mpd
- *  4 : var			-4 : vpd
+ *  3 : var			-3 : mpd
+ *  4 : MGW			-4 : vpd
  *  5 : Fst			-5 : dta
  *  6 : lik			-6 : pss
  *  7 : dm2			-7 : mns
@@ -401,7 +401,7 @@ struct ParticleC
 	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar;
 	double matQ[4][4];
 
-	void ecris(){
+        void ecris(){
 		for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();
 	}
 	
@@ -617,7 +617,8 @@ struct ParticleC
 			if (this->grouplist[gr].Pmoy<0) {
 			    this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
 			    if (not this->grouplist[gr].priorPmoy.constant) {
-			        this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
+			      cout<<"prior pmoy non constant ?\n";  
+                              this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
 			        this->scen.ipv++;
 			    }
 			}
@@ -1337,7 +1338,18 @@ struct ParticleC
 				}
 			}
 		}
-		/*if (this->locuslist[loc].type<5) {    for (int no=0;no<this->gt[loc].nnodes;no++) {cout << gt[loc].nodes[no].state << "   ";if ((no+1)%20 == 0) cout <<"\n";}}
+		/*cout<<"locus "<<loc<<"   numut = "<<numut+1<<"  mutloc = "<<this->locuslist[loc].mut_rate<<"\n";
+                int ind2=0,sa0=0,sa2=this->locuslist[loc].ss[sa0];
+		if (this->locuslist[loc].type<5) {    
+                      for (int no=0;no<this->gt[loc].nnodes;no++) {
+                            cout << gt[loc].nodes[no].state << "   ";if ((ind2+1)%20 == 0) cout <<"\n";
+                            ind2++;
+                            if (ind2==sa2) {
+                                cout <<"\n\n";
+                                ind2=0;sa0++;sa2=this->locuslist[loc].ss[sa0];
+                            }
+                      }
+                }
 		else {for (int no=0;no<this->gt[loc].nnodes;no++) cout << gt[loc].nodes[no].dna << "   ";}
 		cout << "\n";*/
 		int sa,ind;
@@ -1359,6 +1371,8 @@ struct ParticleC
 				this->locuslist[loc].haplomic[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].state;
 				ind++;if (ind==this->locuslist[loc].ss[sa]) {sa++;ind=0;}
 			}
+			//cout<<"apres repartition dans le sample 0\n";
+			//for (int i=0;i<this->locuslist[loc].ss[0];i++) {cout <<this->locuslist[loc].haplomic[0][i]<<"  ";if ((i+1)%20 == 0) cout<<"\n";}
 		}
 		else {									//DNA SEQUENCES
 			this->locuslist[loc].haplodna = new char**[this->data.nsample];
@@ -1392,6 +1406,7 @@ struct ParticleC
 		vector <int> simulOK;
 		int *emptyPop;
 		bool treedone;
+                int locus,sa,indiv,nuc;
 		
 		simulOK.resize(this->nloc);
 		GeneTreeC GeneTreeY, GeneTreeM;
@@ -1488,19 +1503,20 @@ struct ParticleC
 				//simulOK[loc] = simOK;
 				//cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 			}
+			locus=loc;
 			if (simulOK[loc] != 0) break;
 			//cout << "apres break externe\n";
 		}		//LOOP ON loc
                 //cout<<"avant le remplacement des donnees manquantes\n";
-                if (simulOK[loc] == 0) {  //remplacement des données manquantes
-                        int locus,sa,indiv,nuc;
+                if (simulOK[locus] == 0) {  //remplacement des données manquantes
+                        //cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<"nucleotides manquants\n";fflush(stdin);
                         if (this->data.nmisshap>0) {
                                 for (int i=0;i<this->data.nmisshap;i++) {
                                       locus=this->data.misshap[i].locus;
                                       if (this->locuslist[locus].groupe>0) {
                                               sa=this->data.misshap[i].sample;indiv=this->data.misshap[i].indiv;
                                               if (this->locuslist[locus].type<5) this->locuslist[locus].haplomic[sa][indiv] = MICMISSING;
-                                              else                               this->locuslist[locus].haplodna[sa][indiv] = '\0';
+                                              else                               this->locuslist[locus].haplodna[sa][indiv] = SEQMISSING;
                                               this->locuslist[locus].samplesize[sa]--;
                                       }  
                                 }
@@ -1517,6 +1533,7 @@ struct ParticleC
                         
                         }
                 }
+                //cout<<"avant les delete\n";fflush(stdin);
                 delete [] emptyPop;
 		for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) deletetree(this->gt[loc]);}
 		delete [] this->gt;
@@ -1526,6 +1543,7 @@ struct ParticleC
 		//cout << "\n";
 		//cout << "Fin de dosimulpart \n";
 		int simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
+		//cout<<"fin de dosimulpart\n";fflush(stdin);
 		return simOK;
 	}
 
@@ -1601,8 +1619,8 @@ struct ParticleC
 		double nalm=0.0;
 		int iloc,kloc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
-		//cout <<"groupe "<<gr<<"  cat "<<this->grouplist[gr].sumstat[st].cat<<"   sample "<<this->grouplist[gr].sumstat[st].samp<<"\n";
-		//cout << "nloc = " << this->grouplist[gr].nloc <<"\n";
+		//cout <<"groupe "<<gr<<"  cat "<<this->grouplist[gr].sumstat[st].cat<<"   sample "<<this->grouplist[gr].sumstat[st].samp;//<<"\n";
+		//cout << "     nloc = " << this->grouplist[gr].nloc;// <<"\n";
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			kloc=this->grouplist[gr].loc[iloc];
 			//cout << this->locuslist[loc].samplesize[stat.samp] <<"\n";
@@ -1611,8 +1629,9 @@ struct ParticleC
 			nl++;
 			}
 		}
-		//cout <<"naltot="<<nalm<<"    nl="<<nl<<"    nmoy="<<  "\n";
-		if (nl>0) nalm=nalm/(double)nl; 
+		//cout <<"    naltot="<<nalm<<"    nl="<<nl;//<<"    nmoy="<<  "\n";
+		if (nl>0) nalm=nalm/(double)nl;
+		//cout<<"    nmoy="<<nalm<<  "\n";
 		return nalm;
 	}
 
@@ -2163,10 +2182,10 @@ struct ParticleC
         }
 
 	/*  Numérotation des stat
-	 * 	1 : nal			-1 : nha	    -13 : fst
+	 *  1 : nal			-1 : nha	    -13 : fst
 	 *  2 : het			-2 : nss            -14 : aml
-	 *  3 : MGW			-3 : mpd
-	 *  4 : var			-4 : vpd
+	 *  3 : var			-3 : mpd
+	 *  4 : MGW			-4 : vpd
 	 *  5 : Fst			-5 : dta
 	 *  6 : lik			-6 : pss
 	 *  7 : dm2			-7 : mns

@@ -78,6 +78,7 @@ public:
 	MissingHaplo *misshap;
 	MissingNuc   *missnuc;
 	LocusC *locus;
+        
 
 	void libere(){
 		for (int  ech=0;ech<this->nsample;ech++) delete [] this->indivname[ech];
@@ -190,7 +191,7 @@ public:
 		for (int i=0;i<nech;i++) {this->nind[i]=nindi[i];}
 		if (this->nmisshap>0) this->misshap = new MissingHaplo[this->nmisshap];
 		if (this->nmissnuc>0) this->missnuc = new MissingNuc[this->nmissnuc];
-	    this->nmisshap=0;
+	        this->nmisshap=0;
 		this->nmissnuc=0;
 		this->indivname = new string*[nech];
 		this->indivsexe = new int*[nech];
@@ -244,6 +245,7 @@ public:
 		}
 		file2.close();
 		delete [] nindi;
+                //cout<<"dans data nsample = "<<this->nsample<<"\n";
 	}
 
     void do_microsat(int loc){
