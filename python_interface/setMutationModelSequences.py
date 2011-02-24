@@ -150,7 +150,7 @@ class SetMutationModelSequences(QFrame):
         if self.ui.mmrUnifRadio.isChecked():
             law = "UN"
         elif self.ui.mmrLogRadio.isChecked():
-            law = "LN"
+            law = "LU"
         else:
             law = "GA"
         result += "MEANMU %s[%s,%s,%s,%s]\n"%(law,mmrMin,mmrMax,mmrMean,mmrShape)
@@ -178,7 +178,7 @@ class SetMutationModelSequences(QFrame):
         if self.ui.mc1UnifRadio.isChecked():
             law = "UN"
         elif self.ui.mc1LogRadio.isChecked():
-            law = "LN"
+            law = "LU"
         else:
             law = "GA"
         result += "MEANK1 %s[%s,%s,%s,%s]\n"%(law,mc1Min,mc1Max,mc1Mean,mc1Shape)
@@ -208,7 +208,7 @@ class SetMutationModelSequences(QFrame):
         if self.ui.mc2UnifRadio.isChecked():
             law = "UN"
         elif self.ui.mc2LogRadio.isChecked():
-            law = "LN"
+            law = "LU"
         else:
             law = "GA"
         result += "MEANK2 %s[%s,%s,%s,%s]\n"%(law,mc2Min,mc2Max,mc2Mean,mc2Shape)
@@ -245,7 +245,7 @@ class SetMutationModelSequences(QFrame):
         #print "law:",law
         if law == "UN":
             self.ui.mmrUnifRadio.setChecked(True)
-        elif law == "LN": 
+        elif law == "LU": 
             self.ui.mmrLogRadio.setChecked(True)
         else:
             self.ui.mmrGammaRadio.setChecked(True)
@@ -274,7 +274,7 @@ class SetMutationModelSequences(QFrame):
         #print "law:",law
         if law == "UN":
             self.ui.mc1UnifRadio.setChecked(True)
-        elif law == "LN": 
+        elif law == "LU": 
             self.ui.mc1LogRadio.setChecked(True)
         else:
             self.ui.mc1GammaRadio.setChecked(True)
@@ -303,7 +303,7 @@ class SetMutationModelSequences(QFrame):
         #print "law:",law
         if law == "UN":
             self.ui.mc2UnifRadio.setChecked(True)
-        elif law == "LN": 
+        elif law == "LU": 
             self.ui.mc2LogRadio.setChecked(True)
         else:
             self.ui.mc2GammaRadio.setChecked(True)

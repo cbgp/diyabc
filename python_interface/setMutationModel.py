@@ -24,27 +24,27 @@ class SetMutationModel(QFrame):
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
-        QObject.connect(self.ui.mmrGammaRadio,SIGNAL("clicked()"),self.mmrGamma)
-        QObject.connect(self.ui.mmrLogRadio,SIGNAL("clicked()"),self.mmrNoGamma)
-        QObject.connect(self.ui.mmrUnifRadio,SIGNAL("clicked()"),self.mmrNoGamma)
-        QObject.connect(self.ui.msrGammaRadio,SIGNAL("clicked()"),self.msrGamma)
-        QObject.connect(self.ui.msrLogRadio,SIGNAL("clicked()"),self.msrNoGamma)
-        QObject.connect(self.ui.msrUnifRadio,SIGNAL("clicked()"),self.msrNoGamma)
-        QObject.connect(self.ui.mcpGammaRadio,SIGNAL("clicked()"),self.mcpGamma)
-        QObject.connect(self.ui.mcpLogRadio,SIGNAL("clicked()"),self.mcpNoGamma)
-        QObject.connect(self.ui.mcpUnifRadio,SIGNAL("clicked()"),self.mcpNoGamma)
+        QObject.connect(self.ui.mmrGammaRadio,SIGNAL("toggled(bool)"),self.mmrGamma)
+        QObject.connect(self.ui.mmrLogRadio,SIGNAL("toggled(bool)"),self.mmrNoGamma)
+        QObject.connect(self.ui.mmrUnifRadio,SIGNAL("toggled(bool)"),self.mmrNoGamma)
+        QObject.connect(self.ui.msrGammaRadio,SIGNAL("toggled(bool)"),self.msrGamma)
+        QObject.connect(self.ui.msrLogRadio,SIGNAL("toggled(bool)"),self.msrNoGamma)
+        QObject.connect(self.ui.msrUnifRadio,SIGNAL("toggled(bool)"),self.msrNoGamma)
+        QObject.connect(self.ui.mcpGammaRadio,SIGNAL("toggled(bool)"),self.mcpGamma)
+        QObject.connect(self.ui.mcpLogRadio,SIGNAL("toggled(bool)"),self.mcpNoGamma)
+        QObject.connect(self.ui.mcpUnifRadio,SIGNAL("toggled(bool)"),self.mcpNoGamma)
         if self.ui.mcpGammaRadio.isChecked():
-            self.mcpGamma()
+            self.mcpGamma(True)
         else:
-            self.mcpNoGamma()
+            self.mcpNoGamma(True)
         if self.ui.mmrGammaRadio.isChecked():
-            self.mmrGamma()
+            self.mmrGamma(True)
         else:
-            self.mmrNoGamma()
+            self.mmrNoGamma(True)
         if self.ui.msrGammaRadio.isChecked():
-            self.msrGamma()
+            self.msrGamma(True)
         else:
-            self.msrNoGamma()
+            self.msrNoGamma(True)
 
         self.field_names_dico ={self.ui.mmrMinEdit : "Min of mean mutation rate", self.ui.mmrMaxEdit : "Max of mean mutation rate", self.ui.mmrMeanEdit : "Mean of mean mutation rate",self.ui.mmrShapeEdit : "Shape of mean mutation rate",
                             self.ui.ilmrMinEdit : "Min of individual locus mutation rate", self.ui.ilmrMaxEdit : "Max of individual locus mutation rate" , self.ui.ilmrMeanEdit : "Mean of individual locus mutation rate",
@@ -103,24 +103,30 @@ class SetMutationModel(QFrame):
                            self.ui.ilsrMeanEdit : [1,0],
                            self.ui.ilsrShapeEdit : [1,1]}
 
-    def mmrGamma(self):
-        self.ui.mmrMeanEdit.setDisabled(False)
-        self.ui.mmrShapeEdit.setDisabled(False)
-    def mmrNoGamma(self):
-        self.ui.mmrMeanEdit.setDisabled(True)
-        self.ui.mmrShapeEdit.setDisabled(True)
-    def mcpGamma(self):
-        self.ui.mcpMeanEdit.setDisabled(False)
-        self.ui.mcpShapeEdit.setDisabled(False)
-    def mcpNoGamma(self):
-        self.ui.mcpMeanEdit.setDisabled(True)
-        self.ui.mcpShapeEdit.setDisabled(True)
-    def msrGamma(self):
-        self.ui.msrMeanEdit.setDisabled(False)
-        self.ui.msrShapeEdit.setDisabled(False)
-    def msrNoGamma(self):
-        self.ui.msrMeanEdit.setDisabled(True)
-        self.ui.msrShapeEdit.setDisabled(True)
+    def mmrGamma(self,act):
+        if act:
+            self.ui.mmrMeanEdit.setDisabled(False)
+            self.ui.mmrShapeEdit.setDisabled(False)
+    def mmrNoGamma(self,act):
+        if act:
+            self.ui.mmrMeanEdit.setDisabled(True)
+            self.ui.mmrShapeEdit.setDisabled(True)
+    def mcpGamma(self,act):
+        if act:
+            self.ui.mcpMeanEdit.setDisabled(False)
+            self.ui.mcpShapeEdit.setDisabled(False)
+    def mcpNoGamma(self,act):
+        if act:
+            self.ui.mcpMeanEdit.setDisabled(True)
+            self.ui.mcpShapeEdit.setDisabled(True)
+    def msrGamma(self,act):
+        if act:
+            self.ui.msrMeanEdit.setDisabled(False)
+            self.ui.msrShapeEdit.setDisabled(False)
+    def msrNoGamma(self,act):
+        if act:
+            self.ui.msrMeanEdit.setDisabled(True)
+            self.ui.msrShapeEdit.setDisabled(True)
 
     def getMutationConf(self):
         """ renvoie les lignes à écrire dans la conf
@@ -138,7 +144,7 @@ class SetMutationModel(QFrame):
         if self.ui.mmrUnifRadio.isChecked():
             law = "UN"
         elif self.ui.mmrLogRadio.isChecked():
-            law = "LN"
+            law = "LU"
         else:
             law = "GA"
         result += "MEANMU %s[%s,%s,%s,%s]\n"%(law,mmrMin,mmrMax,mmrMean,mmrShape)
@@ -166,7 +172,7 @@ class SetMutationModel(QFrame):
         if self.ui.mcpUnifRadio.isChecked():
             law = "UN"
         elif self.ui.mcpLogRadio.isChecked():
-            law = "LN"
+            law = "LU"
         else:
             law = "GA"
         result += "MEANP %s[%s,%s,%s,%s]\n"%(law,mcpMin,mcpMax,mcpMean,mcpShape)
@@ -195,7 +201,7 @@ class SetMutationModel(QFrame):
         if self.ui.msrUnifRadio.isChecked():
             law = "UN"
         elif self.ui.msrLogRadio.isChecked():
-            law = "LN"
+            law = "LU"
         else:
             law = "GA"
         result += "MEANSNI %s[%s,%s,%s,%s]\n"%(law,msrMin,msrMax,msrMean,msrShape)
@@ -232,7 +238,7 @@ class SetMutationModel(QFrame):
         #print "law:",law
         if law == "UN":
             self.ui.mmrUnifRadio.setChecked(True)
-        elif law == "LN": 
+        elif law == "LU": 
             self.ui.mmrLogRadio.setChecked(True)
         else:
             self.ui.mmrGammaRadio.setChecked(True)
@@ -261,7 +267,7 @@ class SetMutationModel(QFrame):
         #print "law:",law
         if law == "UN":
             self.ui.mcpUnifRadio.setChecked(True)
-        elif law == "LN": 
+        elif law == "LU": 
             self.ui.mcpLogRadio.setChecked(True)
         else:
             self.ui.mcpGammaRadio.setChecked(True)
@@ -290,7 +296,7 @@ class SetMutationModel(QFrame):
         #print "law:",law
         if law == "UN":
             self.ui.msrUnifRadio.setChecked(True)
-        elif law == "LN": 
+        elif law == "LU": 
             self.ui.msrLogRadio.setChecked(True)
         else:
             self.ui.msrGammaRadio.setChecked(True)

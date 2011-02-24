@@ -220,6 +220,8 @@ class Diyabc(QMainWindow):
                         proj_name_list.append(p.name)
                     if not text in proj_name_list:
                         newProj = Project(text,None,self)
+                        # un nouveau projet a au moins un scenario
+                        newProj.hist_model_win.addSc()
                         self.project_list.append(newProj)
                         # si c'est le premier projet, on permet la fermeture par le menu
                         # ajout au tabwidget de l'ui principale
