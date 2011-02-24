@@ -191,7 +191,7 @@ class Preferences(QMainWindow):
             f.close()
             self.mutmodM.setMutationConf(lines)
         else:
-            print "no MMS conf found"
+            print "no MMM conf found"
 
 
 

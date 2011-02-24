@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setMutationmodel.ui'
 #
-# Created: Mon Feb 21 11:13:25 2011
+# Created: Thu Feb 24 21:54:27 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!

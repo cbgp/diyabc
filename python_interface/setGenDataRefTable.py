@@ -110,29 +110,32 @@ class SetGeneticDataRefTable(SetGeneticData):
         #print self.group_info_dico
         #print self.dico_num_and_numgroup_locus
         problem = u""
-        for i,box in enumerate(self.groupList):
-            title = str(box.title())
-            if "Microsatellites" in title:
-                if box not in self.setMutationValid_dico.keys():
-                    self.setMutationValid_dico[box] = self.setMutation_dico[box].allValid(silent=True)
-                if not self.setMutationValid_dico[box]:
-                    problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
-                # recup du nb de stats
-                (nstat,stat_txt) = self.setSum_dico[box].getSumConf()
-                if nstat == 0:
-                    problem += u"No summary statistic asked for group %s\n"%(i+1)
-            elif "Sequences" in title:
-                if box not in self.setMutationSeqValid_dico.keys():
-                    self.setMutationSeqValid_dico[box] = self.setMutationSeq_dico[box].allValid(silent=True)
-                    
-                if not self.setMutationSeqValid_dico[box]:
-                    problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
-                # recup du nb de stats
-                (nstat,stat_txt) = self.setSumSeq_dico[box].getSumConf()
-                if nstat == 0:
-                    problem += u"No summary statistic asked for group %s\n"%(i+1)
-            else:
-                problem += u"Group %s is empty\n"%(i+1)
+        if len(self.groupList) > 0:
+            for i,box in enumerate(self.groupList):
+                title = str(box.title())
+                if "Microsatellites" in title:
+                    if box not in self.setMutationValid_dico.keys():
+                        self.setMutationValid_dico[box] = self.setMutation_dico[box].allValid(silent=True)
+                    if not self.setMutationValid_dico[box]:
+                        problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
+                    # recup du nb de stats
+                    (nstat,stat_txt) = self.setSum_dico[box].getSumConf()
+                    if nstat == 0:
+                        problem += u"No summary statistic asked for group %s\n"%(i+1)
+                elif "Sequences" in title:
+                    if box not in self.setMutationSeqValid_dico.keys():
+                        self.setMutationSeqValid_dico[box] = self.setMutationSeq_dico[box].allValid(silent=True)
+                        
+                    if not self.setMutationSeqValid_dico[box]:
+                        problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
+                    # recup du nb de stats
+                    (nstat,stat_txt) = self.setSumSeq_dico[box].getSumConf()
+                    if nstat == 0:
+                        problem += u"No summary statistic asked for group %s\n"%(i+1)
+                else:
+                    problem += u"Group %s is empty\n"%(i+1)
+        else:
+            problem += "You must have at least one group of locus\n"
         if problem != u"":
             if not silent:
                 QMessageBox.information(self,"Impossible to validate the genetic data",problem)
@@ -296,8 +299,9 @@ class SetGeneticDataRefTable(SetGeneticData):
                     # on avance jusqu'au summary stats
                     while l<len(lines) and "group summary statistics" not in lines[l]:
                         l+=1
-                    # on est sur la première ligne
-                    nb_sum_stat = int(lines[l].split('(')[1].split(')')[0])
+                    if l<len(lines):
+                        # on est sur la première ligne
+                        nb_sum_stat = int(lines[l].split('(')[1].split(')')[0])
                     #print "nbsumstat %s"%nb_sum_stat
                     l+=1
                     # parcours de tous les groupes
