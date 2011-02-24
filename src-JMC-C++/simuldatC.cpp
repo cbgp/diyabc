@@ -40,6 +40,7 @@ class HeaderC
 {
 public:
 	string message,datafilename,entete;
+        char * pathbase;
 	DataC dataobs;
 	int nparamtot,nstat,nscenarios,nconditions,ngroupes;
 	ScenarioC *scenario;
@@ -130,6 +131,7 @@ public:
                 k = strpos(headerfilename,reftable);
                 //cout<<"k="<<k<<"\n";fflush(stdin);
                 path[k]='\0';
+                this->pathbase=strdup(path);
                 strcat(path,this->datafilename.c_str());
                 //cout<<path<<"\n";fflush(stdin);
                 this->datafilename=string(path);
@@ -425,7 +427,7 @@ public:
 //Entete du fichier reftable
 		getline(file,s1);		//ligne vide
 		getline(file,this->entete);		//ligne entete
-                //cout<<this->entete<<"\n";fflush(stdin);
+                cout<<this->entete<<"\n";fflush(stdin);
                 //exit(1);
 		return this;
 	}
@@ -806,12 +808,19 @@ struct ParticleSetC
                         }
 		}
                 FILE * pFile;
-                pFile = fopen ("courant.log","w");
+                char  *curfile;
+                //cout<<"avant curfile\n";fflush(stdin);
+                curfile = new char[strlen(this->header.pathbase)+13];
+                strcpy(curfile,this->header.pathbase);
+                strcat(curfile,"courant.log");
+                //cout<<curfile<<"\n";
+                pFile = fopen (curfile,"w");
+                fprintf(pFile,"%s\n",this->header.entete.c_str());
                 for (int ipart=0;ipart<this->npart;ipart++) {
                         if (sOK[ipart]==0){
-                          fprintf(pFile,"scen %d",enreg[ipart].numscen);
+                          fprintf(pFile," %3d  ",enreg[ipart].numscen);
                           for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
-                          for (int st=0;st<nstat;st++) fprintf(pFile,"   %6.2f",enreg[ipart].stat[st]);
+                          for (int st=0;st<nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
                           fprintf(pFile,"\n");
                         }
                 }
