@@ -101,7 +101,7 @@ class SetGeneticDataRefTable(SetGeneticData):
         self.parent.ui.refTableStack.removeWidget(self)
         self.parent.ui.refTableStack.setCurrentIndex(0)
 
-    def validate(self):
+    def validate(self,silent=False):
         """ clic sur le bouton validate
         verifie la validité de tous les groupes (mutmodel valide && nbsumstats > 0 && nblocus > 0)
         si valide : sort , maj de l'icone de validité et sauve
@@ -113,14 +113,19 @@ class SetGeneticDataRefTable(SetGeneticData):
         for i,box in enumerate(self.groupList):
             title = str(box.title())
             if "Microsatellites" in title:
-                if box not in self.setMutationValid_dico.keys() or not self.setMutationValid_dico[box]:
+                if box not in self.setMutationValid_dico.keys():
+                    self.setMutationValid_dico[box] = self.setMutation_dico[box].allValid(silent=True)
+                if not self.setMutationValid_dico[box]:
                     problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
                 # recup du nb de stats
                 (nstat,stat_txt) = self.setSum_dico[box].getSumConf()
                 if nstat == 0:
                     problem += u"No summary statistic asked for group %s\n"%(i+1)
             elif "Sequences" in title:
-                if box not in self.setMutationSeqValid_dico.keys() or not self.setMutationSeqValid_dico[box]:
+                if box not in self.setMutationSeqValid_dico.keys():
+                    self.setMutationSeqValid_dico[box] = self.setMutationSeq_dico[box].allValid(silent=True)
+                    
+                if not self.setMutationSeqValid_dico[box]:
                     problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
                 # recup du nb de stats
                 (nstat,stat_txt) = self.setSumSeq_dico[box].getSumConf()
@@ -129,7 +134,8 @@ class SetGeneticDataRefTable(SetGeneticData):
             else:
                 problem += u"Group %s is empty\n"%(i+1)
         if problem != u"":
-            QMessageBox.information(self,"Impossible to validate the genetic data",problem)
+            if not silent:
+                QMessageBox.information(self,"Impossible to validate the genetic data",problem)
             self.parent.setGenValid(False)
         else:
             self.exit()

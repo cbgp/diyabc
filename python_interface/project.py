@@ -666,6 +666,18 @@ class Project(QTabWidget):
             if pid == str(os.getpid()):
                 os.remove("%s/.DIYABC_lock"%self.dir)
 
+    def checkAll(self):
+        """ vérification du modèle historique et mutationnel
+        cette fonction est appelée au chargement du projet pour restituer l'etat du projet
+        """
+        # historical model : 
+        self.hist_model_win.definePriors(silent=True)
+        if self.hist_model_win.checkAll(silent=True):
+            self.setHistValid(True)
+            self.hist_model_win.majProjectGui()
+        # mutation model : plus facile d'utiliser directement la validation
+        self.gen_data_win.validate(silent=True)
+
 
 class RefTableGenThread(QThread):
     """ thread de traitement qui met à jour la progressBar en fonction de l'avancée de
@@ -686,8 +698,10 @@ class RefTableGenThread(QThread):
             p = subprocess.Popen(cmd_args_list, stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:
             print "Cannot find the executable of the computation program %s"%e
+            self.problem = "Cannot find the executable of the computation program \n%s"%e
+            self.emit(SIGNAL("refTableProblem"))
             #QMessageBox.information(self.parent(),"computation problem","Cannot find the executable of the computation program")
-            #return
+            return
 
         # boucle toutes les secondes pour verifier les valeurs dans le fichier
         self.nb_done = 0

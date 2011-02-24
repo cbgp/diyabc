@@ -311,7 +311,7 @@ class SetMutationModel(QFrame):
         self.ui.ilsrMeanEdit.setText(ilsrValues[2])
         self.ui.ilsrShapeEdit.setText(ilsrValues[3])
 
-    def allValid(self):
+    def allValid(self,silent=False):
         """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur
         et retourne False
         """
@@ -338,7 +338,8 @@ class SetMutationModel(QFrame):
             if float(self.ui.mmrMinEdit.text()) > float(self.ui.mmrMaxEdit.text()):
                 raise Exception("Mean mutation rate has incoherent min and max values")
         except Exception,e:
-            QMessageBox.information(self,"Value error","%s"%e)
+            if not silent:
+                QMessageBox.information(self,"Value error","%s"%e)
             return False
 
         return True

@@ -338,7 +338,7 @@ class SetMutationModelSequences(QFrame):
 
 
 
-    def allValid(self):
+    def allValid(self,silent=False):
         """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur
         et retourne False
         """
@@ -365,7 +365,8 @@ class SetMutationModelSequences(QFrame):
                     if self.constraints_dico[field][1] == 1:
                         val = float(valtxt)
         except Exception,e:
-            QMessageBox.information(self,"Value error","%s"%e)
+            if not silent:
+                QMessageBox.information(self,"Value error","%s"%e)
             return False
 
         return True

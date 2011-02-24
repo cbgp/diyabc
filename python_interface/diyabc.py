@@ -56,7 +56,7 @@ class Diyabc(QMainWindow):
         # gestion du menu
         file_menu = self.ui.menubar.addMenu("File")
         file_menu.addAction("New Project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
-        file_menu.addAction("Open",self.file_open,QKeySequence(Qt.CTRL + Qt.Key_O))
+        file_menu.addAction("Open",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
         self.saveProjActionMenu = file_menu.addAction("Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
         self.deleteProjActionMenu = file_menu.addAction("Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
         self.cloneProjActionMenu = file_menu.addAction("Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_C))
@@ -100,7 +100,7 @@ class Diyabc(QMainWindow):
         self.switchToMainStack()
 
     def openToMainStack(self):
-        self.file_open()
+        self.openProject()
         self.switchToMainStack()
 
     def setPreferences(self):
@@ -112,7 +112,7 @@ class Diyabc(QMainWindow):
             if self.sender() == self.style_actions[stxt]:
                 self.app.setStyle(stxt)
 
-    def file_open(self,dir=None):
+    def openProject(self,dir=None):
         """ ouverture d'un projet existant
         """
         if dir == None:
@@ -147,6 +147,8 @@ class Diyabc(QMainWindow):
                         self.project_list.append(proj_to_open)
                         self.ui.tabWidget.addTab(proj_to_open,proj_to_open.name)
                         self.ui.tabWidget.setCurrentWidget(proj_to_open)
+                        # verification generale pour mettre a jour l'etat du modèle historique et mutationnel
+                        proj_to_open.checkAll()
                         # si c'est le premier projet, on permet la fermeture/del/save par le menu
                         if len(self.project_list) == 1:
                             self.closeProjActionMenu.setDisabled(False)
@@ -191,7 +193,7 @@ class Diyabc(QMainWindow):
                                     shutil.copytree(current_project.dir,clonedir)
                                     # si les noms sont différents, on le charge
                                     if proj_base_name != current_project.name:
-                                        self.file_open(clonedir)
+                                        self.openProject(clonedir)
                                     else:
                                         QMessageBox.information(self,"Load error","The cloned has been cloned but can not be opened because\
                                                 it has the same name than the origin project\nClose the origin project if you want to open the clone")

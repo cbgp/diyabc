@@ -240,16 +240,17 @@ class SetHistoricalModel(QFrame):
         else:
             QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to draw them.")
 
-    def definePriors(self):
+    def definePriors(self,silent=False):
         """ clic sur le bouton de définition des priors
         """
         self.majParamInfoDico()
-        chk_list = self.checkScenarios()
+        chk_list = self.checkScenarios(silent=silent)
         if chk_list != None:
             self.putParameters(chk_list)
             self.scenarios_modified_since_define_priors = False
         else:
-            QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
+            if not silent:
+                QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
     def putParameters(self,chk_list):
         """ A partir de la liste des scenarios (vérifiés donc valides), on ajoute les paramètres dans la GUI
         La liste de paramètres est vidée avant cette opération
@@ -379,7 +380,7 @@ class SetHistoricalModel(QFrame):
         else:
             return None
 
-    def checkScenarios(self):
+    def checkScenarios(self,silent=False):
         """ action de verification des scenarios (sans dessin)
         retourne la liste des infos sur les scenarios si ceux ci sont tous bons
         sinon retourne None
@@ -406,7 +407,8 @@ class SetHistoricalModel(QFrame):
             except IOScreenError, e:
                 #print "Un scenario a une erreur : ", e
                 nb_scenarios_invalides += 1
-                QMessageBox.information(self,"Scenario error","%s"%e)
+                if not silent:
+                    QMessageBox.information(self,"Scenario error","%s"%e)
         # si tous les scenarios sont bons, on renvoie les données utiles, sinon on renvoie None
         if nb_scenarios_invalides == 0:
             return self.scenarios_info_list
@@ -607,7 +609,7 @@ class SetHistoricalModel(QFrame):
         self.setCondition = SetCondition(self.sender().parent().findChild(QLabel,"paramNameLabel").text(),target_list,self)
         self.setCondition.show()
 
-    def checkAll(self):
+    def checkAll(self,silent=False):
         """ verification de la coherence des valeurs du modèle historique
         """
         # VERIFS, si c'est valide, on change l'icone du setHistModel (verifs sur : valeurs, validite des scenarios, et modifs depuis definePriors
@@ -643,15 +645,17 @@ class SetHistoricalModel(QFrame):
             problems += "The sum of all posterior probabilities is equal to %s. It should be equal to 1"%rpsum
 
         if problems == "":
-            if self.checkScenarios() != None:
+            if self.checkScenarios(silent=silent) != None:
                 if not self.scenarios_modified_since_define_priors:
                     return True
                 else:
-                    QMessageBox.information(self,"Error","The scenarios were modified since the last 'Define priors'")
+                    if not silent:
+                        QMessageBox.information(self,"Error","The scenarios were modified since the last 'Define priors'")
             else:
                 return False
         else:
-            QMessageBox.information(self,"Value error","%s"%problems)
+            if not silent:
+                QMessageBox.information(self,"Value error","%s"%problems)
             return False
 
     def majParamInfoDico(self):
