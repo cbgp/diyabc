@@ -429,14 +429,15 @@ class SetSummaryStatistics(QFrame):
     def getSumConf(self):
         (nstat,dico_stats) = self.getStats()
         conf_txt = ""
-        for k in dico_stats.keys():
+        #for k in dico_stats.keys():
+        for k in ["NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML"]:
             if len(dico_stats[k]) > 0:
                 conf_txt += "%s "%k
                 for lsample in dico_stats[k]:
                     conf_txt += "%s "%lsample
                 conf_txt += "\n"
         return (nstat,conf_txt)
-
+ 
     def setSumConf(self,lines):
         """ grace aux lignes du fichier de conf, remet les sum stats
         """

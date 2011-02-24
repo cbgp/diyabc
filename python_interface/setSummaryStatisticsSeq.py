@@ -464,7 +464,8 @@ class SetSummaryStatisticsSeq(QFrame):
     def getSumConf(self):
         (nstat,dico_stats) = self.getStats()
         conf_txt = ""
-        for k in dico_stats.keys():
+        #for k in dico_stats.keys():
+        for k in ["NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"]:
             if len(dico_stats[k]) > 0:
                 conf_txt += "%s "%k
                 for lsample in dico_stats[k]:
@@ -472,7 +473,7 @@ class SetSummaryStatisticsSeq(QFrame):
                 conf_txt += "\n"
         #conf_txt += "\n"
         return (nstat,conf_txt)
-
+ 
     def setSumConf(self,lines):
         """ grace aux lignes du fichier de conf, remet les sum stats
         """
