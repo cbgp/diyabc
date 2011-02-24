@@ -244,7 +244,7 @@ class Scenario(object):
         if self.nsamp<1 :
             raise IOScreenError, "You must indicate when samples are taken"
         if data!=None:
-            print self.nsamp,"========", data.nsample
+            #print self.nsamp,"========", data.nsample
             if self.nsamp != data.nsample:
                 raise IOScreenError, "The number of samples in scenario %s does not match the data file"%(self.number)
         if len(textarray)>1 :

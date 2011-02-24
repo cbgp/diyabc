@@ -223,7 +223,7 @@ class SetMutationModel(QFrame):
     def setMutationConf(self,lines):
         """ set les valeurs depuis la conf
         """
-        print "lines[0] : %s"%lines[0]
+        #print "lines[0] : %s"%lines[0]
         mmrValues = lines[0].split('[')[1].split(']')[0].split(',')
         if mmrValues[2] == "-9":
             mmrValues[2] = ""
