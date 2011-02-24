@@ -355,23 +355,23 @@ class Project(QTabWidget):
         self.emit(SIGNAL("canceled()"))
 
     def writeRefTableHeader(self):
-        if os.path.exists(self.dir+"/conf.tmp") and os.path.exists(self.dir+"/conf.hist.tmp") and os.path.exists(self.dir+"/conf.gen.tmp") and os.path.exists(self.dir+"/conf.th.tmp"):
-            if os.path.exists(self.dir+"/refTableHeader.txt"):
-                os.remove("%s/refTableHeader.txt" % self.dir)
-            f1 = codecs.open(self.dir+"/conf.tmp","r","utf-8")
+        if os.path.exists(self.dir+"/%s"%self.parent.main_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.hist_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.gen_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.table_header_conf_name):
+            if os.path.exists(self.dir+"/%s"%self.parent.reftableheader_name):
+                os.remove("%s/%s" %(self.dir,self.parent.reftableheader_name))
+            f1 = codecs.open(self.dir+"/%s"%self.parent.main_conf_name,"r","utf-8")
             f1lines = f1.read()
             f1.close()
-            f2 = codecs.open(self.dir+"/conf.hist.tmp","r","utf-8")
+            f2 = codecs.open(self.dir+"/%s"%self.parent.hist_conf_name,"r","utf-8")
             f2lines = f2.read()
             f2.close()
-            f3 = codecs.open(self.dir+"/conf.gen.tmp","r","utf-8")
+            f3 = codecs.open(self.dir+"/%s"%self.parent.gen_conf_name,"r","utf-8")
             f3lines = f3.read()
             f3.close()
-            f4 = codecs.open(self.dir+"/conf.th.tmp","r","utf-8")
+            f4 = codecs.open(self.dir+"/%s"%self.parent.table_header_conf_name,"r","utf-8")
             f4lines = f4.read()
             f4.close()
 
-            f = codecs.open(self.dir+"/refTableHeader.txt","w","utf-8")
+            f = codecs.open(self.dir+"/%s"%self.parent.reftableheader_name,"w","utf-8")
             f.write(f1lines)
             f.write(f2lines)
             f.write(f3lines)
@@ -567,8 +567,8 @@ class Project(QTabWidget):
     def loadMyConf(self):
         """ lit le fichier conf.tmp pour charger le fichier de données
         """
-        if os.path.exists(self.ui.dirEdit.text()+"/conf.tmp"):
-            f = open("%s/conf.tmp"%(self.dir),"r")
+        if os.path.exists(self.ui.dirEdit.text()+"/%s"%self.parent.main_conf_name):
+            f = open("%s/%s"%(self.dir,self.parent.main_conf_name),"r")
             lines = f.readlines()
             self.dataFileName = lines[0].strip()
             self.ui.dataFileEdit.setText(lines[0].strip())
@@ -586,10 +586,10 @@ class Project(QTabWidget):
         #print "je me save"
         if self.dir != None:
             # save meta project
-            if os.path.exists(self.dir+"/conf.tmp"):
-                os.remove("%s/conf.tmp" % self.dir)
+            if os.path.exists(self.dir+"/%s"%self.parent.main_conf_name):
+                os.remove("%s/%s"%(self.dir,self.parent.main_conf_name))
 
-            f = codecs.open(self.dir+"/conf.tmp",'w',"utf-8")
+            f = codecs.open(self.dir+"/%s"%self.parent.main_conf_name,'w',"utf-8")
             f.write("%s\n"%self.dataFileName)
             # recup du nombre de params (depuis historical model et les mutational qui varient)
             nb_param = self.hist_model_win.getNbParam()
@@ -616,9 +616,9 @@ class Project(QTabWidget):
         hist_params_txt = self.hist_model_win.getParamTableHeader()
         mut_params_txt = self.gen_data_win.getParamTableHeader()
         sum_stats_txt = self.gen_data_win.getSumStatsTableHeader()
-        if os.path.exists(self.dir+"/conf.th.tmp"):
-            os.remove("%s/conf.th.tmp" % self.dir)
-        f = codecs.open(self.dir+"/conf.th.tmp",'w',"utf-8")
+        if os.path.exists(self.dir+"/%s"%self.parent.table_header_conf_name):
+            os.remove("%s/%s"%(self.dir,self.parent.table_header_conf_name))
+        f = codecs.open(self.dir+"/%s"%self.parent.table_header_conf_name,'w',"utf-8")
         f.write("scenario    %s%s%s"%(hist_params_txt,mut_params_txt,sum_stats_txt))
         f.close()
 
@@ -693,7 +693,7 @@ class RefTableGenThread(QThread):
         # lance l'executable
         try:
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
-            cmd_args_list = ["/home/julien/vcs/git/diyabc/src-JMC-C++/gen", "%s"%self.nb_to_gen,"-p", "%s"%self.parent.dir, "-r", "%s"%self.nb_to_gen]
+            cmd_args_list = ["/home/julien/vcs/git/diyabc/src-JMC-C++/gen","-p", "%s/"%self.parent.dir, "-r", "%s/"%self.nb_to_gen]
             print cmd_args_list
             p = subprocess.Popen(cmd_args_list, stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:

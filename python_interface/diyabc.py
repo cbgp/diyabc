@@ -21,7 +21,13 @@ class Diyabc(QMainWindow):
         super(Diyabc,self).__init__(parent)
         self.app = app
         self.project_list = []
-        self.hist_conf_name = "cont.hist.tmp"
+        
+        self.main_conf_name = "conf.tmp"
+        self.hist_conf_name = "conf.hist.tmp"
+        self.gen_conf_name = "conf.gen.tmp"
+        self.table_header_conf_name = "conf.th.tmp"
+        self.reftableheader_name = "header.txt"
+
         self.scenario_pix_dir_name = "scenario_pictures"
         self.scenario_pix_basename = "scenario"
         self.PCA_dir_name = "PCA_pictures"
@@ -121,7 +127,7 @@ class Diyabc(QMainWindow):
         proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
         if dir != "":
-            if os.path.exists(dir) and os.path.exists("%s/conf.tmp"%dir):
+            if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
                 project_name = dir.split('/')[-1].split('_')[0]
                 proj_name_list = []
                 for p in self.project_list:
@@ -300,7 +306,8 @@ class Diyabc(QMainWindow):
         """ retourne vrai si le répertoire donné en paramètre est un 
         repertoire de projet ou s'il est dans un répertoire de projet
         """
-        if os.path.exists("%s/conf.tmp"%dir) or os.path.exists("%s/conf.tmp"%os.path.abspath(os.path.join(dir, '..'))):
+        if os.path.exists("%s/%s"%(dir,self.main_conf_name))\
+                or os.path.exists("%s/%s"%(os.path.abspath(os.path.join(dir, '..'),self.main_conf_name))):
             return True
         else:
             return False

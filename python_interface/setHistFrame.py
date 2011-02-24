@@ -734,10 +734,10 @@ class SetHistoricalModel(QFrame):
         """ ecrit les valeurs dans dossierProjet/conf.hist.tmp
         """
         self.majParamInfoDico()
-        if os.path.exists(self.parent.ui.dirEdit.text()+"/conf.hist.tmp"):
-            os.remove("%s/conf.hist.tmp" % self.parent.ui.dirEdit.text())
+        if os.path.exists(self.parent.ui.dirEdit.text()+"/%s"%self.parent.parent.hist_conf_name):
+            os.remove("%s/%s"%(self.parent.ui.dirEdit.text(),self.parent.parent.hist_conf_name))
 
-        f = open(self.parent.ui.dirEdit.text()+"/conf.hist.tmp",'w')
+        f = open(self.parent.ui.dirEdit.text()+"/%s"%self.parent.parent.hist_conf_name,'w')
         f.write("%s scenarios: "%(len(self.scList)))
 
         # affichage des nombres de lignes des scenarios
@@ -797,8 +797,8 @@ class SetHistoricalModel(QFrame):
         """ Charge l'etat de setHistoricalModel à partir de conf.hist.tmp
         """
         if os.path.exists(self.parent.dir):
-            if os.path.exists("%s/conf.hist.tmp"%(self.parent.dir)):
-                f = open("%s/conf.hist.tmp"%(self.parent.dir),"r")
+            if os.path.exists("%s/%s"%(self.parent.dir,self.parent.parent.hist_conf_name)):
+                f = open("%s/%s"%(self.parent.dir,self.parent.parent.hist_conf_name),"r")
                 lines = f.readlines()
 
                 self.ui.otherRadio.setChecked(True)

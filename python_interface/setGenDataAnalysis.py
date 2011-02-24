@@ -209,10 +209,10 @@ class SetGeneticDataAnalysis(SetGeneticData):
     def writeGeneticConfFromGui(self):
         """ on ecrit l'etat actuel des genetic data dans conf.gen.tmp
         """
-        if os.path.exists(self.parent.dir+"/conf.gen.tmp"):
-            os.remove("%s/conf.gen.tmp" % self.parent.dir)
+        if os.path.exists(self.parent.dir+"/%s"%self.parent.gen_conf_name):
+            os.remove("%s/%s"%(self.parent.dir,self.parent.gen_conf_name))
 
-        f = codecs.open(self.parent.dir+"/conf.gen.tmp",'w',"utf-8")
+        f = codecs.open(self.parent.dir+"/%s"%self.parent.gen_conf_name,'w',"utf-8")
         # partie description des locus
         f.write("loci description (%i)\n"%self.nbLocusGui)
         data = self.parent.data
@@ -279,8 +279,8 @@ class SetGeneticDataAnalysis(SetGeneticData):
         # de toute façon, on rempli le tableau de locus
         #self.fillLocusTableFromData()
         if os.path.exists(self.parent.dir):
-            if os.path.exists("%s/conf.gen.tmp"%(self.parent.dir)):
-                f = codecs.open("%s/conf.gen.tmp"%(self.parent.dir),"r","utf-8")
+            if os.path.exists("%s/%s"%(self.parent.dir,self.parent.gen_conf_name)):
+                f = codecs.open("%s/%s"%(self.parent.dir,self.parent.gen_conf_name),"r","utf-8")
                 lines = f.readlines()
                 nloc = int(lines[0].split('(')[1].split(')')[0])
                 # determination du nombre de groupes
