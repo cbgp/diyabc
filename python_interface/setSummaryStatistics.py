@@ -510,77 +510,70 @@ class SetSummaryStatistics(QFrame):
     def getSumStatsTableHeader(self):
         result = u""
         gnumber = self.parent.groupList.index(self.box_group)+1
+        dico = {"NAL" : [],
+        "HET" : [],
+        "VAR" : [],
+        "MGW" : [],
+        "N2P" : [],  
+        "H2P" : [],
+        "V2P" : [],
+        "FST" : [],
+        "LIK" : [],
+        "DAS" : [],
+        "DM2" : [], 
+        "AML" : []}
         for box in self.oneSampleList:
             lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
             if box.findChild(QCheckBox,"mnoaCheck").isChecked():
                 stat_name = "NAL_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["NAL"].append(stat_name)
             if box.findChild(QCheckBox,"mgdCheck").isChecked():
                 stat_name = "HET_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["HET"].append(stat_name)
             if box.findChild(QCheckBox,"msvCheck").isChecked():
                 stat_name = "VAR_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["VAR"].append(stat_name)
             if box.findChild(QCheckBox,"mgwCheck").isChecked():
                 stat_name = "MGW_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["MGW"].append(stat_name)
         for box in self.twoSampleList:
             lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
             if box.findChild(QCheckBox,"mnoa2Check").isChecked():
                 stat_name = "N2P_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["N2P"].append(stat_name)
             if box.findChild(QCheckBox,"mgd2Check").isChecked():
                 stat_name = "H2P_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["H2P"].append(stat_name)
             if box.findChild(QCheckBox,"msv2Check").isChecked():
                 stat_name = "V2P_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["V2P"].append(stat_name)
             if box.findChild(QCheckBox,"fst2Check").isChecked():
                 stat_name = "FST_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["FST"].append(stat_name)
             if box.findChild(QCheckBox,"ci2LeftCheck").isChecked():
                 stat_name = "LIK_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["LIK"].append(stat_name)
             if box.findChild(QCheckBox,"ci2RightCheck").isChecked():
                 lab_inverted = "%s&%s"%(lab.split('&')[1],lab.split('&')[0])
                 stat_name = "LIK_%s_%s"%(gnumber,lab_inverted)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["LIK"].append(stat_name)
             if box.findChild(QCheckBox,"sad2Check").isChecked():
                 stat_name = "DAS_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["DAS"].append(stat_name)
             if box.findChild(QCheckBox,"dd2Check").isChecked():
                 stat_name = "DM2_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
-                    result += " "
+                dico["DM2"].append(stat_name)
         for box in self.admixSampleList:
             lab = str(box.findChild(QLabel,"threeSampleLabel").text()).split('\n')[1]
             if box.findChild(QCheckBox,"ml3Check").isChecked():
                 stat_name = "AML_%s_%s"%(gnumber,lab)
-                result += stat_name
-                for i in range(14-len(stat_name)):
+                dico["AML"].append(stat_name)
+
+        for t in ["NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML"]:
+            l = dico[t]
+            for s in l:
+                result += s
+                for i in range(14-len(s)):
                     result += " "
 
         return result

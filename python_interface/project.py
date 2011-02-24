@@ -619,7 +619,7 @@ class Project(QTabWidget):
         if os.path.exists(self.dir+"/conf.th.tmp"):
             os.remove("%s/conf.th.tmp" % self.dir)
         f = codecs.open(self.dir+"/conf.th.tmp",'w',"utf-8")
-        f.write("%s%s%s"%(hist_params_txt,mut_params_txt,sum_stats_txt))
+        f.write("scenario    %s%s%s"%(hist_params_txt,mut_params_txt,sum_stats_txt))
         f.close()
 
 
