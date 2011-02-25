@@ -173,7 +173,7 @@ class DrawScenario(QFrame):
 
         # dessin des segments
         for s in segments:
-            print "seg",s
+            #print "seg",s
             if s.ydeb == s.yfin and s.xdeb != s.xfin:
                 xmed = (s.xdeb+s.xfin)/2
                 ymed = s.ydeb
@@ -313,7 +313,7 @@ class DrawScenario(QFrame):
 
         # dessin des segments
         for s in segments:
-            print "seg",s
+            #print "seg",s
             if s.ydeb == s.yfin and s.xdeb != s.xfin:
                 xmed = (s.xdeb+s.xfin)/2
                 ymed = s.ydeb
@@ -445,7 +445,7 @@ class DrawScenario(QFrame):
 
         # dessin des segments
         for s in segments:
-            print "seg",s
+            #print "seg",s
             if s.ydeb == s.yfin and s.xdeb != s.xfin:
                 xmed = (s.xdeb+s.xfin)/2
                 ymed = s.ydeb
@@ -518,23 +518,26 @@ class DrawScenario(QFrame):
         #        if os.path.exists("%s_%i.jpg"%(pic_whole_path,i)):
         #            os.remove("%s_%i.jpg"%(pic_whole_path,i))
 
-        for ind,pix in enumerate(self.pixList):
-            im = pix.toImage()
-            im.save("%s_%i.jpg"%(pic_whole_path,ind+1))
-
-        for ind,sc_info in enumerate(self.sc_info_list):
-            if sc_info["tree"] != None:
-                savename = "%s_%i.svg"%(pic_whole_path,ind+1)
-                self.DrawSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
+        pic_format = str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText())
+        if pic_format == "jpg":
+            for ind,pix in enumerate(self.pixList):
+                im = pix.toImage()
+                im.save("%s_%i.jpg"%(pic_whole_path,ind+1))
+        else:
+            for ind,sc_info in enumerate(self.sc_info_list):
+                if sc_info["tree"] != None:
+                    savename = "%s_%i.svg"%(pic_whole_path,ind+1)
+                    self.DrawSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
 
     def saveDrawsToOne(self):
-        """ Sauve tous les scenarios dans une seule image et une seul svg
+        """ Sauve tous les scenarios dans une seule image et un seul svg
         """
         proj_dir = self.parent.parent.dir
         pic_dir = self.parent.parent.parent.scenario_pix_dir_name
         pic_basename = self.parent.parent.parent.scenario_pix_basename
         pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
 
+        pic_format = str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText())
 
         nbpix = len(self.pixList)
         largeur = 2
@@ -542,45 +545,50 @@ class DrawScenario(QFrame):
         longueur = (len(self.pixList)/largeur)+(len(self.pixList)%largeur)
         ind = 0
         li=0
-        self.im_result = QImage(largeur*500,longueur*450,QImage.Format_RGB32)
-        self.im_result.fill(Qt.black)
-        painter = QPainter(self.im_result)
-        painter.fillRect(0, 0, largeur*500, longueur*450, Qt.white)
 
-        self.pic_result = QSvgGenerator()
-        #self.pic_result.setSize(QSize(largeur*500, longueur*450));
-        #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
-        self.pic_result.setFileName("%s_all.svg"%pic_whole_path)
-        painter_pic = QPainter()
-        painter_pic.begin(self.pic_result)
+        if pic_format == "jpg":
+            self.im_result = QImage(largeur*500,longueur*450,QImage.Format_RGB32)
+            self.im_result.fill(Qt.black)
+            painter = QPainter(self.im_result)
+            painter.fillRect(0, 0, largeur*500, longueur*450, Qt.white)
+        else:
+            self.pic_result = QSvgGenerator()
+            #self.pic_result.setSize(QSize(largeur*500, longueur*450));
+            #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
+            self.pic_result.setFileName("%s_all.svg"%pic_whole_path)
+            painter_pic = QPainter()
+            painter_pic.begin(self.pic_result)
 
         # on fait des lignes tant qu'on a des pix
         while (ind < nbpix):
             col = 0
-            if ind > 0:
-                painter_pic.translate(-2*500,450)
+            if pic_format == "svg":
+                if ind > 0:
+                    painter_pic.translate(-2*500,450)
             # une ligne
             while (ind < nbpix) and (col < largeur):
                 # ajout
-                print "zzz"
                 #self.im_result.fill(self.pixList[ind],QPoint(col*500,li*450))
-                painter.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
                 #painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
-                sc_info = self.sc_info_list[ind]
-                if sc_info["tree"] != None:
-                    self.addToSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],painter_pic)
-                # on va a droite
-                painter_pic.translate(500,0)
-                print "li:",li," col:",col
-                print "xof:",col*500," yof:",li*450
-                print "zzz"
+                if pic_format == "jpg":
+                    painter.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
+                else:
+                    sc_info = self.sc_info_list[ind]
+                    if sc_info["tree"] != None:
+                        self.addToSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],painter_pic)
+                    # on va a droite
+                    painter_pic.translate(500,0)
+                #print "li:",li," col:",col
+                #print "xof:",col*500," yof:",li*450
+                #print "zzz"
                 col+=1
                 ind+=1
             li+=1
 
-        self.im_result.save("%s_all.jpg"%pic_whole_path)
-
-        painter_pic.end()
+        if pic_format == "jpg":
+            self.im_result.save("%s_all.jpg"%pic_whole_path)
+        else:
+            painter_pic.end()
         #self.pic_result.save("%s_all.svg"%pic_whole_path,"svg")
 
     def closeEvent(self, event):

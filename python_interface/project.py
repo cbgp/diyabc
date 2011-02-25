@@ -485,7 +485,7 @@ class Project(QTabWidget):
         type_analysis = analysis[0]
         self.analysisList.append(analysis)
 
-        print analysis
+        #print analysis
         if type_analysis == "pre-ev":
             self.addRow("scenario prior combination",analysis[1],"4","new")
         elif type_analysis == "estimate":

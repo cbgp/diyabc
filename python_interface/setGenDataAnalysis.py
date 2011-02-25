@@ -57,14 +57,14 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     self.setMutation_dico[self.groupList[-1]] = SetMutationModelAnalysis(self,self.groupList[-1])
                     self.setMutation_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
-                    print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
+                    #print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
                     self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
                     self.setMutationValid_dico[self.groupList[-1]] = True
                 elif "Sequences" in str(box.title()):
                     self.setMutationSeq_dico[self.groupList[-1]] = SetMutationModelSequencesAnalysis(self,self.groupList[-1])
                     self.setMutationSeq_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
-                    print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
+                    #print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
                     self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
                     self.setMutationSeqValid_dico[self.groupList[-1]] = True
             else:
@@ -73,14 +73,14 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     self.setMutation_dico[self.groupList[-1]] = SetMutationModelFixed(self,self.groupList[-1])
                     self.setMutation_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
-                    print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
+                    #print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
                     self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
                     self.setMutationValid_dico[self.groupList[-1]] = True
                 elif "Sequences" in str(box.title()):
                     self.setMutationSeq_dico[self.groupList[-1]] = SetMutationModelSequencesFixed(self,self.groupList[-1])
                     self.setMutationSeq_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
-                    print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
+                    #print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
                     self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
                     self.setMutationSeqValid_dico[self.groupList[-1]] = True
 

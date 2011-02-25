@@ -56,7 +56,7 @@ class SetCondition(QMainWindow):
         # pour a > b : b <= a
         my_condition_incoherent_mirroir = "%s%s%s"%(pright,mirroir[incoherent[op]],pleft)
         for cond_box in self.parent.condList:
-            print "chaque condbox"
+            #print "chaque condbox"
             econdition = str(cond_box.findChild(QLabel,"condLabel").text())
             if my_condition == econdition or econdition == my_condition_mirroir:
                 QMessageBox.information(self,"Error","This condition (%s) already exists (%s)"%(my_condition,econdition))

@@ -117,7 +117,7 @@ class SetMutationModelFixed(QFrame):
     def setMutationConf(self,lines):
         """ set les valeurs depuis la conf
         """
-        print "lines[0] : %s"%lines[0]
+        #print "lines[0] : %s"%lines[0]
         mmrValues = lines[0].split('[')[1].split(']')[0].split(',')
         valmmr = (float(mmrValues[0]) + float(mmrValues[1]) )/2
         self.ui.mmrMinEdit.setText("%s"%valmmr)
