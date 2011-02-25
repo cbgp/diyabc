@@ -318,12 +318,13 @@ class SetMutationModel(QFrame):
         try:
             for field in self.constraints_dico.keys():
                 #print self.field_names_dico[field]
-                valtxt = (u"%s"%(field.text())).strip()
-                if self.constraints_dico[field][0] == 1:
-                    if valtxt == "":
-                        raise Exception("%s should not be empty"%self.field_names_dico[field])
-                if self.constraints_dico[field][1] == 1:
-                    val = float(valtxt)
+                if self.hasToBeVerified(field):
+                    valtxt = (u"%s"%(field.text())).strip()
+                    if self.constraints_dico[field][0] == 1:
+                        if valtxt == "":
+                            raise Exception("%s should not be empty"%self.field_names_dico[field])
+                    if self.constraints_dico[field][1] == 1:
+                        val = float(valtxt)
             # verifs des min et max
             if float(self.ui.ilsrMinEdit.text()) > float(self.ui.ilsrMaxEdit.text()):
                 raise Exception("Individuals locus SNI rate has incoherent min and max values")
@@ -342,6 +343,15 @@ class SetMutationModel(QFrame):
                 QMessageBox.information(self,"Value error","%s"%e)
             return False
 
+        return True
+
+    def hasToBeVerified(self,field):
+        if (field == self.ui.mmrMeanEdit or field == self.ui.mmrShapeEdit) and not self.ui.mmrGammaRadio.isChecked():
+            return False
+        elif (field == self.ui.mcpMeanEdit or field == self.ui.mcpShapeEdit) and not self.ui.mcpGammaRadio.isChecked():
+            return False
+        elif (field == self.ui.msrMeanEdit or field == self.ui.msrShapeEdit) and not self.ui.msrGammaRadio.isChecked():
+            return False
         return True
 
     def getNbParam(self):

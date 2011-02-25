@@ -51,7 +51,7 @@ class Diyabc(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        pic = QPixmap("docs/accueil_pictures/all1.png")
+        pic = QPixmap("docs/accueil_pictures/black_red2.png")
         self.ui.imgLabel.setPixmap(pic)
         self.switchToWelcomeStack()
 

@@ -418,6 +418,12 @@ class SetMutationModelSequences(QFrame):
 
         return True
     def hasToBeVerified(self,field):
+        if (field == self.ui.mmrMeanEdit or field == self.ui.mmrShapeEdit) and not self.ui.mmrGammaRadio.isChecked():
+            return False
+        elif (field == self.ui.mc1MeanEdit or field == self.ui.mc1ShapeEdit) and not self.ui.mc1GammaRadio.isChecked():
+            return False
+        elif (field == self.ui.mc2MeanEdit or field == self.ui.mc2ShapeEdit) and not self.ui.mc2GammaRadio.isChecked():
+            return False
         if self.ui.jukesRadio.isChecked() and field not in [self.ui.mmrMinEdit,self.ui.mmrMaxEdit,
                 self.ui.mmrMeanEdit,self.ui.mmrShapeEdit,self.ui.ilmrMinEdit,self.ui.ilmrMaxEdit,self.ui.ilmrMeanEdit,self.ui.ilmrShapeEdit]:
             return False
