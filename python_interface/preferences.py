@@ -45,6 +45,7 @@ class Preferences(QMainWindow):
 
         self.ui.gridLayout.setAlignment(Qt.AlignTop)
         self.ui.verticalLayout_57.setAlignment(Qt.AlignTop)
+        self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)
         #self.ui.verticalLayout_54.setAlignment(Qt.AlignTop)
         #self.ui.verticalLayout_29.setAlignment(Qt.AlignTop)
         #self.ui.verticalLayout_26.setAlignment(Qt.AlignTop)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/diyabc.ui'
 #
-# Created: Thu Feb 10 14:32:42 2011
+# Created: Fri Feb 25 14:57:10 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -116,10 +116,10 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "DIYABC", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), QtGui.QApplication.translate("MainWindow", "Projet 2", None, QtGui.QApplication.UnicodeUTF8))
         self.imgLabel.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
-        self.skipButton.setText(QtGui.QApplication.translate("MainWindow", "Close this page", None, QtGui.QApplication.UnicodeUTF8))
+        self.skipButton.setText(QtGui.QApplication.translate("MainWindow", "&Close this page", None, QtGui.QApplication.UnicodeUTF8))
         self.skipButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
-        self.openButton.setText(QtGui.QApplication.translate("MainWindow", "Open project", None, QtGui.QApplication.UnicodeUTF8))
-        self.newButton.setText(QtGui.QApplication.translate("MainWindow", "New project", None, QtGui.QApplication.UnicodeUTF8))
+        self.openButton.setText(QtGui.QApplication.translate("MainWindow", "&Open project", None, QtGui.QApplication.UnicodeUTF8))
+        self.newButton.setText(QtGui.QApplication.translate("MainWindow", "&New project", None, QtGui.QApplication.UnicodeUTF8))
         self.actionWeb.setText(QtGui.QApplication.translate("MainWindow", "activer web", None, QtGui.QApplication.UnicodeUTF8))
         self.actionWeb.setToolTip(QtGui.QApplication.translate("MainWindow", "obvious", None, QtGui.QApplication.UnicodeUTF8))
         self.action.setText(QtGui.QApplication.translate("MainWindow", "plap", None, QtGui.QApplication.UnicodeUTF8))

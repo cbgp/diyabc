@@ -63,8 +63,6 @@
          </widget>
         </item>
        </layout>
-       <zorder>tabWidget</zorder>
-       <zorder>tabWidget</zorder>
       </widget>
       <widget class="QWidget" name="page_2">
        <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -122,7 +120,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>Close this page</string>
+                 <string>&amp;Close this page</string>
                 </property>
                 <property name="shortcut">
                  <string>Esc</string>
@@ -137,7 +135,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>Open project</string>
+                 <string>&amp;Open project</string>
                 </property>
                </widget>
               </item>
@@ -149,7 +147,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>New project</string>
+                 <string>&amp;New project</string>
                 </property>
                </widget>
               </item>
