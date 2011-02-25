@@ -1134,6 +1134,28 @@ coefficient</string>
           </layout>
          </widget>
         </item>
+        <item>
+         <widget class="QFrame" name="frame_2">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Style</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="styleCombo"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>

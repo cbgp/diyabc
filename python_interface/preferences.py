@@ -14,6 +14,7 @@ class Preferences(QMainWindow):
     """
     def __init__(self,parent=None):
         super(Preferences,self).__init__(parent)
+        self.parent = parent
         self.createWidgets()
 
         self.ui.tabWidget.setTabText(0,"Connexion")
@@ -29,6 +30,14 @@ class Preferences(QMainWindow):
         self.mutmodS.ui.frame_6.hide()
         self.mutmodS.ui.setMutSeqLabel.setText("Default values for mutation model of Sequences")
 
+        self.styles = []
+        for i in QStyleFactory.keys():
+            self.styles.append(str(i))
+            self.ui.styleCombo.addItem(str(i))
+
+        ind = self.ui.styleCombo.findText("Cleanlooks")
+        if ind != -1:
+            self.ui.styleCombo.setCurrentIndex(ind)
 
     def createWidgets(self):
         self.ui = Ui_MainWindow()
@@ -42,9 +51,14 @@ class Preferences(QMainWindow):
 
         QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.savePreferences)
         QObject.connect(self.ui.cancelButton,SIGNAL("clicked()"),self.close)
+        QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
 
         #QObject.connect(self.ui.saveMMMButton,SIGNAL("clicked()"),self.saveMMM)
         #QObject.connect(self.ui.saveMMSButton,SIGNAL("clicked()"),self.saveMMS)
+
+    def changeStyle(self,stylestr):
+        self.parent.app.setStyle(str(stylestr))
+
 
     def savePreferences(self):
         if self.allValid():
@@ -54,6 +68,7 @@ class Preferences(QMainWindow):
             self.saveMMS()
             self.saveConnexion()
             self.saveHM()
+            self.saveVarious()
             self.close()
 
     def allValid(self):
@@ -65,6 +80,35 @@ class Preferences(QMainWindow):
             self.loadMMS()
             self.loadConnexion()
             self.loadHM()
+            self.loadVarious()
+
+    def saveVarious(self):
+        if os.path.exists(os.path.expanduser("~/.diyabc/various")):
+            os.remove(os.path.expanduser("~/.diyabc/various"))
+
+        style = str(self.ui.styleCombo.currentText())
+        pic_format = str(self.ui.formatCombo.currentText())
+        lines = "style %s\nformat %s"%(style,pic_format)
+        f = codecs.open(os.path.expanduser("~/.diyabc/various"),"w","utf-8")
+        f.write(lines)
+        f.close()
+    def loadVarious(self):
+        if os.path.exists(os.path.expanduser("~/.diyabc/various")):
+            f = codecs.open(os.path.expanduser("~/.diyabc/various"),"r","utf-8")
+            lines = f.readlines()
+            f.close()
+            for l in lines:
+                if len(l.strip()) > 0 and len(l.strip().split(' '))>1:
+                    if l.split(' ')[0] == "style":
+                        ind = self.ui.styleCombo.findText(l.strip().split(' ')[1])
+                        if ind != -1:
+                            self.ui.styleCombo.setCurrentIndex(ind)
+                    if l.split(' ')[0] == "format":
+                        ind = self.ui.formatCombo.findText(l.strip().split(' ')[1])
+                        if ind != -1:
+                            self.ui.formatCombo.setCurrentIndex(ind)
+        else:
+            print "no various conf found"
 
     # TODO
     def saveHM(self):

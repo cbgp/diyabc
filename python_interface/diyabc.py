@@ -32,11 +32,6 @@ class Diyabc(QMainWindow):
         self.scenario_pix_basename = "scenario"
         self.PCA_dir_name = "PCA_pictures"
 
-        self.styles = []
-        for i in QStyleFactory.keys():
-            self.styles.append(str(i))
-        self.style_actions = {}
-
         self.preferences_win = Preferences(self)
         self.preferences_win.loadPreferences()
         #self.defaultMMMValues = self.preferences.getDicoMMM()
@@ -44,8 +39,6 @@ class Diyabc(QMainWindow):
         self.createWidgets()
         self.setWindowIcon(QIcon("docs/accueil_pictures/coccicon.png"))
 
-        self.default_style = self.style_actions["Cleanlooks"]
-        self.default_style.activate(QAction.Trigger)
 
     def createWidgets(self):
         self.ui = Ui_MainWindow()
@@ -75,12 +68,12 @@ class Diyabc(QMainWindow):
         action = file_menu.addAction("Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
-        style_menu = self.ui.menubar.addMenu("Style")
-        action_group = QActionGroup(style_menu)
-        for stxt in self.styles:
-            self.style_actions[stxt] = style_menu.addAction(stxt,self.changeStyle)
-            self.style_actions[stxt].setActionGroup(action_group)
-            self.style_actions[stxt].setCheckable(True)
+        #style_menu = self.ui.menubar.addMenu("Style")
+        #action_group = QActionGroup(style_menu)
+        #for stxt in self.styles:
+        #    self.style_actions[stxt] = style_menu.addAction(stxt,self.changeStyle)
+        #    self.style_actions[stxt].setActionGroup(action_group)
+        #    self.style_actions[stxt].setCheckable(True)
         navigate_menu = self.ui.menubar.addMenu("Navigate")
         navigate_menu.addAction("Next Project",self.nextProject,QKeySequence(Qt.CTRL + Qt.Key_PageDown))
         navigate_menu.addAction("Previous Project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
@@ -113,10 +106,10 @@ class Diyabc(QMainWindow):
         self.preferences_win.show()
 
 
-    def changeStyle(self):
-        for stxt in self.styles:
-            if self.sender() == self.style_actions[stxt]:
-                self.app.setStyle(stxt)
+    #def changeStyle(self):
+    #    for stxt in self.styles:
+    #        if self.sender() == self.style_actions[stxt]:
+    #            self.app.setStyle(stxt)
 
     def openProject(self,dir=None):
         """ ouverture d'un projet existant

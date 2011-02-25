@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Fri Feb 25 14:19:16 2011
+# Created: Fri Feb 25 14:23:07 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -492,6 +492,19 @@ class Ui_MainWindow(object):
         self.formatCombo.addItem("")
         self.horizontalLayout.addWidget(self.formatCombo)
         self.verticalLayout_2.addWidget(self.frame)
+        self.frame_2 = QtGui.QFrame(self.tab_2)
+        self.frame_2.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_2.setObjectName("frame_2")
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.frame_2)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_4 = QtGui.QLabel(self.frame_2)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout_2.addWidget(self.label_4)
+        self.styleCombo = QtGui.QComboBox(self.frame_2)
+        self.styleCombo.setObjectName("styleCombo")
+        self.horizontalLayout_2.addWidget(self.styleCombo)
+        self.verticalLayout_2.addWidget(self.frame_2)
         self.tabWidget.addTab(self.tab_2, "")
         self.verticalLayout.addWidget(self.tabWidget)
         self.frame_10 = QtGui.QFrame(self.centralwidget)
@@ -560,6 +573,7 @@ class Ui_MainWindow(object):
 "(scenario trees, PCA graphics)", None, QtGui.QApplication.UnicodeUTF8))
         self.formatCombo.setItemText(0, QtGui.QApplication.translate("MainWindow", "svg", None, QtGui.QApplication.UnicodeUTF8))
         self.formatCombo.setItemText(1, QtGui.QApplication.translate("MainWindow", "jpg", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("MainWindow", "Style", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("MainWindow", "Page", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelButton.setText(QtGui.QApplication.translate("MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
