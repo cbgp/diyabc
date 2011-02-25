@@ -46,12 +46,12 @@ class HistFixed(QFrame):
         self.ui.groupBox_12.hide()
         self.ui.label_7.hide()
         self.ui.label_8.hide()
-        self.ui.label_11.hide()
+        #self.ui.label_11.hide()
         self.ui.label_10.hide()
         self.ui.label_9.setText("Value")
 
-        self.ui.groupBox_13.setMinimumSize(QtCore.QSize(150, 25))
-        self.ui.groupBox_13.setMaximumSize(QtCore.QSize(150,25))
+        self.ui.groupBox_13.setMinimumSize(QtCore.QSize(150, 20))
+        self.ui.groupBox_13.setMaximumSize(QtCore.QSize(150,20))
 
         self.ui.verticalLayout_6.setAlignment(QtCore.Qt.AlignTop)
         self.ui.horizontalLayout_5.setAlignment(QtCore.Qt.AlignLeft)

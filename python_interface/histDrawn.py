@@ -118,7 +118,7 @@ class HistDrawn(QFrame):
                 visible = True
 
             elem = dico_param[pname]
-            self.addParamGui(pname,elem[1],elem[2],elem[3],elem[4],elem[5],elem[6],visible)
+            self.addParamGui(pname,elem[1],elem[2],elem[3],elem[4],elem[5],visible)
             self.param_info_dico[pname] = [pcat]
 
     def addTheConditions(self):
@@ -138,7 +138,7 @@ class HistDrawn(QFrame):
                 self.addCondition(txt)
 
 
-    def addParamGui(self,name,law,min,max,mean,stdev,step,visible):
+    def addParamGui(self,name,law,min,max,mean,stdev,visible):
         """ ajoute un paramètre à la GUI et à la liste locale de paramètres
         et retourne la groupBox créée
         """
@@ -249,11 +249,6 @@ class HistDrawn(QFrame):
         stValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
         stValueParamEdit.setObjectName("stValueParamEdit")
         horizontalLayout_10.addWidget(stValueParamEdit)
-        stepValueParamEdit = QtGui.QLineEdit(groupBox_14)
-        stepValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
-        stepValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
-        stepValueParamEdit.setObjectName("stepValueParamEdit")
-        horizontalLayout_10.addWidget(stepValueParamEdit)
         horizontalLayout_13.addWidget(groupBox_14)
         self.ui.verticalLayout_6.addWidget(groupBox_8)
 
@@ -262,7 +257,6 @@ class HistDrawn(QFrame):
 
         minValueParamEdit.setText(min)
         maxValueParamEdit.setText(max)
-        stepValueParamEdit.setText(step)
         meanValueParamEdit.setText(mean)
         stValueParamEdit.setText(stdev)
 
@@ -301,7 +295,6 @@ class HistDrawn(QFrame):
             max =   str(param.findChild(QLineEdit,"maxValueParamEdit").text())
             mean =  str(param.findChild(QLineEdit,"meanValueParamEdit").text())
             stdev = str(param.findChild(QLineEdit,"stValueParamEdit").text())
-            step =  str(param.findChild(QLineEdit,"stepValueParamEdit").text())
             if param.findChild(QRadioButton,'logNormalRadio').isChecked():
                 law = "LN"
             elif param.findChild(QRadioButton,'normalRadio').isChecked():
@@ -311,7 +304,7 @@ class HistDrawn(QFrame):
             elif param.findChild(QRadioButton,'logUniformRadio').isChecked():
                 law = "LU"
             visible = param.findChild(QPushButton,"setCondButton").isVisible()
-            self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,step,visible]
+            self.param_info_dico[pname] = [self.param_info_dico[pname][0],law,min,max,mean,stdev,visible]
 
     def addCondition(self,cond_str=""):
         """ ajout d'une condition dans la zone du bas réservée à cet effet
@@ -370,8 +363,8 @@ class HistDrawn(QFrame):
                 max =   float(param.findChild(QLineEdit,"maxValueParamEdit").text())
                 mean =  float(param.findChild(QLineEdit,"meanValueParamEdit").text())
                 stdev = float(param.findChild(QLineEdit,"stValueParamEdit").text())
-                step =  float(param.findChild(QLineEdit,"stepValueParamEdit").text())
-                if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0 or step < 0:
+                #step =  float(param.findChild(QLineEdit,"stepValueParamEdit").text())
+                if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0:
                     problems += "Values for parameter %s are incoherent\n"%pname
             except Exception,e:
                 problems += "%s\n"%e

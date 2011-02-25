@@ -150,7 +150,8 @@ class SetMutationModelFixed(QFrame):
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
         self.parent.parent.ui.analysisStack.removeWidget(self)
-        self.parent.parent.ui.analysisStack.setCurrentIndex(0)
+        #self.parent.parent.ui.analysisStack.setCurrentIndex(0)
+        self.parent.parent.ui.analysisStack.setCurrentWidget(self.parent)
 
     def validate(self):
         """ vérifie la validité des informations entrées dans le mutation model

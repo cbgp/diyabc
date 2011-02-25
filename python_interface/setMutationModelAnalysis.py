@@ -22,7 +22,7 @@ class SetMutationModelAnalysis(SetMutationModel):
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
         self.parent.parent.ui.analysisStack.removeWidget(self)
-        self.parent.parent.ui.analysisStack.setCurrentIndex(self.parent)
+        self.parent.parent.ui.analysisStack.setCurrentWidget(self.parent)
 
     def clear():
         pass
