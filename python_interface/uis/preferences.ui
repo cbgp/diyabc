@@ -1112,7 +1112,8 @@ coefficient</string>
            <item>
             <widget class="QLabel" name="label_3">
              <property name="text">
-              <string>Graphics and pictures save format</string>
+              <string>Graphics and pictures save format
+(scenario trees, PCA graphics)</string>
              </property>
             </widget>
            </item>

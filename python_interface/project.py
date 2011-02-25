@@ -301,13 +301,27 @@ class Project(QTabWidget):
 
             p = self.ui.horizontalLayout_3.itemAt(0).widget()
 
-            svg = QSvgGenerator()
-            svg.setFileName("%s/%s/%s.svg"%(proj_dir,graph_dir,graph_file_name))
-            svg.setSize(p.rect().size())
+            pic_format = str(self.parent.preferences_win.ui.formatCombo.currentText())
 
-            painter = QPainter(svg)
-            p.print_(painter, p.rect())
-            painter.end()
+            if pic_format == "svg":
+                svg = QSvgGenerator()
+                svg.setFileName("%s/%s/%s.svg"%(proj_dir,graph_dir,graph_file_name))
+                svg.setSize(p.rect().size())
+
+                painter = QPainter(svg)
+                p.print_(painter, p.rect())
+                painter.end()
+            elif pic_format == "jpg":
+                pix = QPixmap(p.rect().size().width(),p.rect().size().height())
+                pix.fill(Qt.white)
+
+                painter = QPainter(pix)
+                pen = QPen(Qt.black,2)
+                painter.setPen(pen)
+                p.print_(painter, p.rect())
+                painter.end()
+                im = pix.toImage()
+                im.save("%s/%s/%s.jpg"%(proj_dir,graph_dir,graph_file_name))
 
 
     def defineNewAnalysis(self):
