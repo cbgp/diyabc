@@ -327,6 +327,7 @@ if __name__ == "__main__":
 #        app.setStyle("cleanlooks")
     myapp = Diyabc(app)
     myapp.show()
+    #QTest.mouseClick(myapp.ui.skipButton,Qt.LeftButton)
     sys.exit(app.exec_())
 
 

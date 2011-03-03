@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/diyabc.ui'
 #
-# Created: Fri Feb 25 14:57:10 2011
+# Created: Thu Mar  3 16:45:10 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -111,6 +111,9 @@ class Ui_MainWindow(object):
         self.stackedWidget.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.skipButton, self.openButton)
+        MainWindow.setTabOrder(self.openButton, self.newButton)
+        MainWindow.setTabOrder(self.newButton, self.tabWidget)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "DIYABC", None, QtGui.QApplication.UnicodeUTF8))

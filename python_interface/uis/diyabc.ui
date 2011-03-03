@@ -226,6 +226,12 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>skipButton</tabstop>
+  <tabstop>openButton</tabstop>
+  <tabstop>newButton</tabstop>
+  <tabstop>tabWidget</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
