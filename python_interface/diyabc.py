@@ -85,6 +85,9 @@ class Diyabc(QMainWindow):
         QObject.connect(self.ui.openButton,SIGNAL("clicked()"),self.openToMainStack)
         QObject.connect(self.ui.newButton,SIGNAL("clicked()"),self.newToMainStack)
         QObject.connect(self.ui.skipButton,SIGNAL("clicked()"),self.switchToMainStack)
+        #self.ui.frame.setDisabled(True)
+        #self.ui.frame.setAutoFillBackground(True)
+        #self.ui.frame.setBackgroundColor(Qt.Blue)
 
     def switchToMainStack(self):
         self.ui.menubar.show()
@@ -321,10 +324,6 @@ class Diyabc(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-#    if sys.platform.startswith('darwin'):
-#        app.setStyle("macintosh")
-#    else:
-#        app.setStyle("cleanlooks")
     myapp = Diyabc(app)
     myapp.show()
     #QTest.mouseClick(myapp.ui.skipButton,Qt.LeftButton)

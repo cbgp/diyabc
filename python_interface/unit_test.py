@@ -30,6 +30,11 @@ class testDiyabc(unittest.TestCase):
     def testQuedale2(self):
         #QTest.mouseClick(self.diyabc.ui.skipButton,Qt.LeftButton)
         self.assertEqual(self.diyabc.ui.skipButton.isVisible(), True)
+        self.diyabc.openProject("/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3/")
+        self.assertEqual(len(self.diyabc.project_list) == 1,True)
+        self.diyabc.openProject("/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3xx/")
+        self.assertEqual(len(self.diyabc.project_list) == 1,True)
+        self.diyabc.close()
 
 
 if __name__ == '__main__':
