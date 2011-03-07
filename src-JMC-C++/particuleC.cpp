@@ -22,7 +22,7 @@ using namespace std;
 #define NUCMISSING 'N'
 #define NSTAT 26
 
-string stat_type[NSTAT] = {"NAL","HET","VAR","MGW","FST","LIK","DM2","N2P","H2P","V2P","DAS","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"};
+string stat_type[NSTAT] = {"NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"};
 int stat_num[NSTAT]     = {  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 };
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			-13 : fst
@@ -390,8 +390,6 @@ struct ParticleC
 	LocusC *locuslist;
 	LocusGroupC *grouplist;
 	DataC  data;
-	MissingHaplo *mhap;
-	MissingNuc   *mnuc;
 	ScenarioC *scenario,scen;
 	SequenceBitC *seqlist;
 	GeneTreeC *gt;
@@ -617,7 +615,7 @@ struct ParticleC
 			if (this->grouplist[gr].Pmoy<0) {
 			    this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
 			    if (not this->grouplist[gr].priorPmoy.constant) {
-			      cout<<"prior pmoy non constant ?\n";  
+			      //cout<<"prior pmoy non constant ?\n";  
                               this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
 			        this->scen.ipv++;
 			    }
@@ -1539,8 +1537,6 @@ struct ParticleC
 		delete [] this->gt;
 		if (gtYexist) deletetree(GeneTreeY);
 		if (gtMexist) deletetree(GeneTreeM);
-		//for (int loc=0;loc<this->nloc;loc++) cout << extract<int>(simulOK[loc]) << "   ";
-		//cout << "\n";
 		//cout << "Fin de dosimulpart \n";
 		int simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
 		//cout<<"fin de dosimulpart\n";fflush(stdin);
@@ -2217,13 +2213,13 @@ struct ParticleC
 				case     2 : this->grouplist[gr].sumstat[st].val = cal_het1p(gr,st);break;
 				case     3 : this->grouplist[gr].sumstat[st].val = cal_var1p(gr,st);break;
 				case     4 : this->grouplist[gr].sumstat[st].val = cal_mgw1p(gr,st);break;
-				case     5 : this->grouplist[gr].sumstat[st].val = cal_Fst2p(gr,st);break;
-				case     6 : this->grouplist[gr].sumstat[st].val = cal_lik2p(gr,st);break;
-				case     7 : this->grouplist[gr].sumstat[st].val = cal_dmu2p(gr,st);break;
-				case     8 : this->grouplist[gr].sumstat[st].val = cal_nal2p(gr,st);break;
-				case     9 : this->grouplist[gr].sumstat[st].val = cal_het2p(gr,st);break;
-				case    10 : this->grouplist[gr].sumstat[st].val = cal_var2p(gr,st);break;
-				case    11 : this->grouplist[gr].sumstat[st].val = cal_das2p(gr,st);break;
+				case     5 : this->grouplist[gr].sumstat[st].val = cal_nal2p(gr,st);break;
+				case     6 : this->grouplist[gr].sumstat[st].val = cal_het2p(gr,st);break;
+				case     7 : this->grouplist[gr].sumstat[st].val = cal_var2p(gr,st);break;
+                                case     8 : this->grouplist[gr].sumstat[st].val = cal_Fst2p(gr,st);break;
+                                case     9 : this->grouplist[gr].sumstat[st].val = cal_lik2p(gr,st);break;
+                                case    10 : this->grouplist[gr].sumstat[st].val = cal_das2p(gr,st);break;
+				case    11 : this->grouplist[gr].sumstat[st].val = cal_dmu2p(gr,st);break;
 				case    12 : this->grouplist[gr].sumstat[st].val = cal_Aml3p(gr,st);break;
 				case    -1 : this->grouplist[gr].sumstat[st].val = cal_nha1p(gr,st);break;
 				case    -2 : this->grouplist[gr].sumstat[st].val = cal_nss1p(gr,st);break;

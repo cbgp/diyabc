@@ -78,43 +78,58 @@ public:
 	MissingHaplo *misshap;
 	MissingNuc   *missnuc;
 	LocusC *locus;
+        bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
         
 
 	void libere(){
-		for (int  ech=0;ech<this->nsample;ech++) delete [] this->indivname[ech];
-		delete [] this->indivname;
-		for (int  ech=0;ech<this->nsample;ech++) delete [] this->indivsexe[ech];
-		delete [] this->indivsexe;
-		for (int  ech=0;ech<this->nsample;ech++) {
-			for (int ind=0;ind<this->nind[ech];ind++) {
-				delete [] genotype[ech][ind];
-			}
-			delete [] genotype[ech];
-		}
-		delete [] genotype;
+                if (Aindivname) {
+		    for (int  ech=0;ech<this->nsample;ech++) delete [] this->indivname[ech];
+		    delete [] this->indivname;
+                    //cout<<"delete indivname\n";
+                }
+                if (Aindivsexe) {
+		    for (int  ech=0;ech<this->nsample;ech++) delete [] this->indivsexe[ech];
+		    delete [] this->indivsexe;
+                    //cout<<"delete indivsexe\n";
+                }
+                if (Agenotype) {
+                    for (int  ech=0;ech<this->nsample;ech++) {
+                            for (int ind=0;ind<this->nind[ech];ind++) {
+                                    delete [] this->genotype[ech][ind];
+                                    //cout <<"delete genotype[ech][ind]\n";
+                            }
+                            delete [] this->genotype[ech];
+                            //cout <<"delete genotype[ech]\n";
+                    }
+                    delete [] this->genotype;
+                    //cout<<"delete genotype\n";
+                }
+                //cout<<"apres delete genotype\n";
 		if (this->nmisshap>0) delete [] this->misshap;
 		if (this->nmissnuc>0) delete [] this->missnuc;
-
-		for (int loc=0;loc<this->nloc;loc++){
-			delete [] this->locus[loc].name;
-			if (this->locus[loc].type<5) {
-				for (int  ech=0;ech<this->nsample;ech++) delete [] this->locus[loc].haplomic[ech];
-				delete [] this->locus[loc].haplomic;
-			} else {
-				for (int  ech=0;ech<this->nsample;ech++) {
-					for (int ind=0;ind<this->nind[ech];ind++) delete [] this->locus[loc].haplodna[ech][ind];
-					delete [] this->locus[loc].haplodna[ech];
-				}
-				delete [] this->locus[loc].haplodna;
-				delete [] this->locus[loc].tabsit;
-				delete [] this->locus[loc].mutsit;
-				if (this->locus[loc].nsitmut>0) delete [] this->locus[loc].sitmut;
-			}
-			delete [] this->locus[loc].samplesize;
-			delete [] this->locus[loc].ss;
-		}
-		delete [] this->locus;
-		delete [] this->nind;
+                //cout<<"apres delete misshap et missnuc\n";
+                if (Alocus) {
+                    for (int loc=0;loc<this->nloc;loc++){
+                            delete [] this->locus[loc].name;
+                            if (this->locus[loc].type<5) {
+                                    for (int  ech=0;ech<this->nsample;ech++) delete [] this->locus[loc].haplomic[ech];
+                                    delete [] this->locus[loc].haplomic;
+                            } else {
+                                    for (int  ech=0;ech<this->nsample;ech++) {
+                                            for (int ind=0;ind<this->nind[ech];ind++) delete [] this->locus[loc].haplodna[ech][ind];
+                                            delete [] this->locus[loc].haplodna[ech];
+                                    }
+                                    delete [] this->locus[loc].haplodna;
+                                    delete [] this->locus[loc].tabsit;
+                                    delete [] this->locus[loc].mutsit;
+                                    if (this->locus[loc].nsitmut>0) delete [] this->locus[loc].sitmut;
+                            }
+                            delete [] this->locus[loc].samplesize;
+                            delete [] this->locus[loc].ss;
+                    }
+                    delete [] this->locus;
+                }
+		if (Anind) delete [] this->nind;
 	}
 
 
@@ -124,7 +139,8 @@ public:
 		int ech,ind,nech,*nindi;
 		char c;
 		size_t j,j0,j1;
-		stringstream out;
+		Aindivname=false;Agenotype=false;Anind=false;Aindivsexe=false;Alocus=false;
+                stringstream out;
 		ifstream file(filename.c_str(), ios::in);
 		if (file == NULL) {
 			this->message = "File "+filename+" not found";
@@ -144,7 +160,7 @@ public:
 			if (s1.find("POP")==string::npos) this->nloc +=1;	//il s'agit d'un nom de locus
 			else fin=true;
 		}
-		this->locus = new LocusC [this->nloc];
+		this->locus = new LocusC [this->nloc];this->Alocus=true;
 		this->nsample=1;
 		nindi = new int[1000];
 		nindi[0]=0;
@@ -187,15 +203,15 @@ public:
 		}
 		file.close();
 		this->nsample=nech;
-		this->nind = new int[nech];
+		this->nind = new int[nech];this->Anind=true;
 		for (int i=0;i<nech;i++) {this->nind[i]=nindi[i];}
 		if (this->nmisshap>0) this->misshap = new MissingHaplo[this->nmisshap];
 		if (this->nmissnuc>0) this->missnuc = new MissingNuc[this->nmissnuc];
 	        this->nmisshap=0;
 		this->nmissnuc=0;
-		this->indivname = new string*[nech];
-		this->indivsexe = new int*[nech];
-		this->genotype = new string**[nech];
+		this->indivname = new string*[nech];this->Aindivname=true;
+		this->indivsexe = new int*[nech];this->Aindivsexe=true;
+		this->genotype = new string**[nech];this->Agenotype=true;
 		for (int i=0;i<nech;i++) {
 			this->indivname[i]= new string[nind[i]];
 			this->indivsexe[i] = new int[nind[i]];

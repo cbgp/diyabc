@@ -54,7 +54,7 @@ int main(int argc, char *argv[]){
 		       strcpy(reftablefilename,optarg);
 		       strcat(headerfilename,"header.txt");
 		       strcat(reftablefilename,"reftable.bin");
-		       cout<<headerfilename<<"   "<<reftablefilename<<"\n"; 
+		       cout<<headerfilename<<"\n"<<reftablefilename<<"\n"; 
 		       break;
 		   
 	    case 'r' : nrecneeded = atoi(optarg);
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]){
                        ParticleSetC ps;
 		       k=rt.readheader(reftablefilename,header.nscenarios,datafilename);
                        //cout<<header.scenario[0].nparamvar<<"    "<<header.scenario[1].nparamvar<<"    "<<header.scenario[2].nparamvar<<"\n";
-                       //cout <<"k="<<k<<"\n";
+                       cout <<"k="<<k<<"\n";
 		       if (k==1) {
                            rt.datapath = datafilename;
                            rt.nscen = header.nscenarios;
@@ -81,15 +81,23 @@ int main(int argc, char *argv[]){
                            rt.nstat=header.nstat;
                            rt.writeheader();
                        } else if (k==2) {cout<<"cannot create reftable file\n"; exit(1);} 
+                       ps.defined=false;
                        rt.openfile();
                        while (nrecneeded>rt.nrec) {
                                enr = ps.dosimultabref(header,nenr,false);
                                //cout<<"avant writerecords\n";fflush(stdin);
                                rt.writerecords(nenr,enr);
                                rt.nrec +=nenr;
-                               delete [] enr;
                                cout<<rt.nrec<<"\n";
+                               for (int i=0;i<nenr;i++) {
+                                   delete [] enr[i].param;
+                               }
                        }
+                       for (int i=0;i<nenr;i++) {
+                            //delete [] enr[i].param;
+                            delete [] enr[i].stat;
+                       }
+                       delete [] enr;
                        rt.closefile();
 	               break;
 	

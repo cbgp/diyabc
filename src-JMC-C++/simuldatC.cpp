@@ -43,6 +43,7 @@ public:
         char * pathbase;
 	DataC dataobs;
 	int nparamtot,nstat,nscenarios,nconditions,ngroupes;
+        string *paramname;
 	ScenarioC *scenario;
 	HistParameterC *histparam;
 	ConditionC *condition;
@@ -263,7 +264,7 @@ public:
 		}
 		delete [] ss;
 //Partie group priors
-                cout <<"avant partie group priors\n";fflush(stdin);
+                //cout <<"avant partie group priors\n";fflush(stdin);
 		getline(file,s1);		//ligne vide
 		getline(file,s1);		//ligne "group prior"
                 this->ngroupes=getwordint(s1,3);
@@ -287,8 +288,8 @@ public:
 				//cout<<"mutloc  ";this->groupe[gr].priormutloc.ecris();
 				
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy   = this->readpriormut(ss1[1]);delete [] ss1;
-				this->groupe[gr].priorPmoy.ecris();
-                                if (this->groupe[gr].priorPmoy.constant) cout<<"priorPmoy constant dans readheader\n";
+				//this->groupe[gr].priorPmoy.ecris();
+                                //if (this->groupe[gr].priorPmoy.constant) cout<<"priorPmoy constant dans readheader\n";
                                 if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini; 
 				else {this->groupe[gr].Pmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
 				
@@ -427,7 +428,7 @@ public:
 //Entete du fichier reftable
 		getline(file,s1);		//ligne vide
 		getline(file,this->entete);		//ligne entete
-                cout<<this->entete<<"\n";fflush(stdin);
+                //cout<<this->entete<<"\n";fflush(stdin);
                 //exit(1);
 		return this;
 	}
@@ -436,7 +437,7 @@ public:
 //partie DATA
                 //cout<<"debut de calstatobs\n";
                 this->particuleobs.nsample = this->dataobs.nsample;
-                cout<<this->dataobs.nsample<<"\n";
+                //cout<<this->dataobs.nsample<<"\n";
                 this->particuleobs.data.nsample = this->dataobs.nsample;
                 this->particuleobs.data.nind = new int[this->dataobs.nsample];
                 this->particuleobs.data.indivsexe = new int*[this->dataobs.nsample];
@@ -540,6 +541,7 @@ struct ParticleSetC
 	ScenarioC *scenario;
 	double sexratio;
         MwcGen *mw;
+        bool defined;
 
 	void setdata(int p) {
 		this->particule[p].data.nsample = this->header.dataobs.nsample;
@@ -650,15 +652,15 @@ struct ParticleSetC
 				//cout<<"kmin="<<this->particule[p].locuslist[kloc].kmin<<"     kmax="<<this->particule[p].locuslist[kloc].kmax<<"\n";
 				this->particule[p].locuslist[kloc].motif_size = this->header.dataobs.locus[kloc].motif_size;
 				this->particule[p].locuslist[kloc].motif_range = this->header.dataobs.locus[kloc].motif_range;
-				this->particule[p].locuslist[kloc].mut_rate = this->header.dataobs.locus[kloc].mut_rate;
-				this->particule[p].locuslist[kloc].Pgeom = this->header.dataobs.locus[kloc].Pgeom;
-				this->particule[p].locuslist[kloc].sni_rate = this->header.dataobs.locus[kloc].sni_rate;
+				//this->particule[p].locuslist[kloc].mut_rate = this->header.dataobs.locus[kloc].mut_rate;
+				//this->particule[p].locuslist[kloc].Pgeom = this->header.dataobs.locus[kloc].Pgeom;
+				//this->particule[p].locuslist[kloc].sni_rate = this->header.dataobs.locus[kloc].sni_rate;
 				}
 			else {
 				this->particule[p].locuslist[kloc].dnalength =  this->header.dataobs.locus[kloc].dnalength;
-				this->particule[p].locuslist[kloc].mus_rate =  this->header.dataobs.locus[kloc].mus_rate;
-				this->particule[p].locuslist[kloc].k1 =  this->header.dataobs.locus[kloc].k1;
-				this->particule[p].locuslist[kloc].k2 =  this->header.dataobs.locus[kloc].k2;
+				//this->particule[p].locuslist[kloc].mus_rate =  this->header.dataobs.locus[kloc].mus_rate;
+				//this->particule[p].locuslist[kloc].k1 =  this->header.dataobs.locus[kloc].k1;
+				//this->particule[p].locuslist[kloc].k2 =  this->header.dataobs.locus[kloc].k2;
 				this->particule[p].locuslist[kloc].pi_A = this->header.dataobs.locus[kloc].pi_A ;
 				this->particule[p].locuslist[kloc].pi_C =  this->header.dataobs.locus[kloc].pi_C;
 				this->particule[p].locuslist[kloc].pi_G =  this->header.dataobs.locus[kloc].pi_G;
@@ -688,9 +690,33 @@ struct ParticleSetC
 		}
 		
 	}
+	
+	void resetparticle (int p) {
+                for (int gr=1;gr<=this->particule[p].ngr;gr++) {
+                        if (this->header.groupe[gr].type==0) {  //MICROSAT
+                                //cout <<"MICROSAT "<<p<<"\n";
+                                this->particule[p].grouplist[gr].mutmoy = this->header.groupe[gr].mutmoy;
+                                this->particule[p].grouplist[gr].Pmoy = this->header.groupe[gr].Pmoy;
+                                this->particule[p].grouplist[gr].snimoy = this->header.groupe[gr].snimoy;
+                        }
+                        else {                                                  //SEQUENCES
+                                //cout<<"SEQUENCE\n";
+                                this->particule[p].grouplist[gr].musmoy = this->header.groupe[gr].musmoy;       //musmoy
+                                if (this->header.groupe[gr].mutmod>0){
+                                        this->particule[p].grouplist[gr].k1moy = this->header.groupe[gr].k1moy ;        //k1moy
+                                }
+                                if (this->header.groupe[gr].mutmod>2){
+                                        this->particule[p].grouplist[gr].k2moy = this->header.groupe[gr].k2moy ;        //k2moy
+                                }
+                        }
+                         
+                
+                }
+        }
 
-	void cleanParticle(int ipart){
+/*	void cleanParticle(int ipart){
 //nettoyage de locuslist
+//cout <<"debut du cleanParticle\n";
 		for (int loc=0;loc<this->particule[ipart].nloc;loc++) {
 			if (this->particule[ipart].locuslist[loc].type>4) {
 				delete []this->particule[ipart].locuslist[loc].mutsit;
@@ -708,16 +734,17 @@ struct ParticleSetC
 			delete []this->particule[ipart].locuslist[loc].freq;
 		}
 		delete []this->particule[ipart].locuslist;
+                //cout<<"apres cleanlocuslist\n";
 //nettoyage de grouplist		
 		for (int gr=0;gr<this->particule[ipart].ngr;gr++) {
 			delete []this->particule[ipart].grouplist[gr].loc;
 			delete []this->particule[ipart].grouplist[gr].sumstat;
 		}
 		delete []this->particule[ipart].grouplist;
+                //cout<<"apres cleangroup\n";
 //nettoyage de data
-		delete []this->particule[ipart].data.nind;
-		for(int sa=0;sa<this->particule[ipart].data.nsample;sa++) delete []this->particule[ipart].data.indivsexe[sa];
-		delete []this->particule[ipart].data.indivsexe;
+		this->particule[ipart].data.libere();
+                //cout<<"apres cleandata\n";
 //nettoyage de scenario
 		for (int i=0;i<this->particule[ipart].nscenarios;i++) {
 			delete []this->particule[ipart].scenario[i].paramvar;
@@ -726,61 +753,76 @@ struct ParticleSetC
 			delete []this->particule[ipart].scenario[i].ne0;
 			delete []this->particule[ipart].scenario[i].histparam;
 		}
+                        delete []this->particule[ipart].scen.paramvar;
+                        delete []this->particule[ipart].scen.time_sample;
+                        delete []this->particule[ipart].scen.event;
+                        delete []this->particule[ipart].scen.ne0;
+                        delete []this->particule[ipart].scen.histparam;
+		
 		delete []this->particule[ipart].scenario;
+                //cout<<"apres cleanscenario\n";
 //nettoyage de matQ
-		for (int i=0;i<4;i++) delete []this->particule[ipart].matQ[i];
+		/*for (int i=0;i<4;i++) delete []this->particule[ipart].matQ[i];
+		cout<<"apres clean matQ[i]\n";
 		delete []this->particule[ipart].matQ;
-//nettoyage des données manquantes		
-	        delete []this->particule[ipart].mhap;
-	        delete []this->particule[ipart].mnuc;
-	}
+                cout<<"apres clean matQ\n";
+	}*/
+                
+              
 	
 	void cleanParticleSet(){
-		for (int i=0;i<this->npart;i++) this->cleanParticle(i);
-		delete []this->particule;
-		for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].type>4)   delete []this->locuslist[loc].mutsit;}
-		delete []this->locuslist;
-		for (int gr=0;gr<this->ngr;gr++) delete []this->grouplist[gr].loc;
-		delete []this->grouplist;
-		delete []this->nind;
-		for (int i=0;i<this->nsample;i++) delete[]this->indivsexe[i];
-		delete []this->indivsexe;
+		for (int i=0;i<this->npart;i++) {
+                        delete []this->particule[i].scen.paramvar;
+                        delete []this->particule[i].scen.time_sample;
+                        delete []this->particule[i].scen.event;
+                        delete []this->particule[i].scen.ne0;
+                        delete []this->particule[i].scen.histparam;
+                }
 	}
 
 	enregC* dosimultabref(HeaderC header,int npart, bool dnatrue)
 	{
-		int gr;
-                this->npart = npart;
-		this->particule = new ParticleC[this->npart];
-		this->header = header;
-		for (int p=0;p<this->npart;p++) {
+               int ipart,jpart=0,nthreads,base;
+	       int gr,nstat,pa,ip,iscen;
+               bool trouve;
+               this->npart = npart;
+               int *sOK;
+               enregC *enreg;
+               sOK = new int[npart];
+               //if (this->defined) cout <<"particleSet defined\n";
+               //else cout<<"particleSet UNdefined\n";
+               //this->header = header;
+               if (not this->defined) {                
+                    base=rand();
+                    this->particule = new ParticleC[this->npart];
+                    enreg = new enregC[this->npart];
+                    this->header = header;
+                    for (int p=0;p<this->npart;p++) {
                         //cout <<"avant set particule "<<p<<"\n";
-			this->particule[p].dnatrue = dnatrue;
+                        this->particule[p].dnatrue = dnatrue;
                         //cout <<"dnatrue\n";
-			this->setdata(p);
+                        this->setdata(p);
                         //cout <<"setdata\n";
-			this->setgroup(p);
+                        this->setgroup(p);
                         //cout<<"setgroup\n";
-			this->setloci(p);
+                        this->setloci(p);
                         //cout<<"setloci\n";
-			this->setscenarios(p);
+                        this->setscenarios(p);
                         //cout << "                    apres set particule\n";
-		}
-		int ipart,tid=0,jpart=0,nthreads,base;
-		int *sOK;
-		sOK = new int[npart];
-		enregC *enreg;
-		int nstat;
-                enreg = new enregC[this->npart];
-		//cout << "avant pragma\n";
-                base=rand();
+                        this->particule[p].mw.randinit(p+base ,false);
+                        enreg[p].stat = new float[header.nstat];
+                    }
+                    this->defined=true;
+                }
+                else {
+                     for (int p=0;p<this->npart;p++) this->resetparticle(p);
+                }
+                //cout << "avant pragma npart = "<<npart<<"\n";
                 
-#pragma omp parallel for shared(sOK) private(tid,gr)
+#pragma omp parallel for shared(sOK) private(gr)
                 for (ipart=0;ipart<this->npart;ipart++){
-			//tid = omp_get_thread_num();
-			//cout <<"tid = "<<tid <<"\n";
-                        this->particule[ipart].mw.randinit(ipart+base ,false);
 			sOK[ipart]=this->particule[ipart].dosimulpart(ipart);
+                        //cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 			if (sOK[ipart]==0) {
 			 	for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
 			}
@@ -794,11 +836,12 @@ struct ParticleSetC
 				if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
 				enreg[ipart].param = new float[this->particule[ipart].scen.nparamvar];
 				for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];}
-				enreg[ipart].stat = new float[header.nstat];
+                                //cout<<"apres enreg.param\n";
                                 nstat=0;
 				for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 					for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}
 				}
+                                //cout<<"apres enreg.stat\n";
 				enreg[ipart].message="OK";
 			}
 			else {
@@ -819,15 +862,30 @@ struct ParticleSetC
                 for (int ipart=0;ipart<this->npart;ipart++) {
                         if (sOK[ipart]==0){
                           fprintf(pFile," %3d  ",enreg[ipart].numscen);
-                          for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
+                          iscen=enreg[ipart].numscen-1;
+                          //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
+                          pa=0;
+                          //cout<<header.nparamtot<<"   "<<this->particule[ipart].scen.nparamvar<<"\n";
+                          for (int j=0;j<header.nparamtot;j++) {
+                              trouve=false;ip=-1;
+                              while ((not trouve)and(ip<header.scenario[iscen].nparam-1)) {
+                                  ip++;
+                                  trouve=(header.histparam[j].name == header.scenario[iscen].histparam[ip].name);
+                                  //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
+                              }
+                              if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
+                              else fprintf(pFile,"              ");
+                          }
+                          for (int j=pa;j<this->particule[ipart].scen.nparamvar;j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
                           for (int st=0;st<nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
                           fprintf(pFile,"\n");
                         }
                 }
                 fclose(pFile);
 		//cout <<"fin du remplissage \n";
-		//cleanParticleSet();
+		cleanParticleSet();
 		//cout << "fin de dosimultabref\n";
+                delete [] sOK;
 		return enreg;
 	}
 };
