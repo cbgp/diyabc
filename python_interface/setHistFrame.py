@@ -255,31 +255,37 @@ class SetHistoricalModel(QFrame):
             for l in self.previewLabelList:
                 self.ui.horizontalLayout_3.removeWidget(l)
             self.previewLabelList = []
+            self.pixList = []
             chk_graph = self.checkScenariosGraphic()
             if chk_graph != None:
                 for sc_info in chk_graph:
-                    segments = sc_info["tree"].segments
-                    scc = sc_info["checker"]
-                    t = sc_info["tree"]
+                    if sc_info["tree"] != None:
+                        segments = sc_info["tree"].segments
+                        scc = sc_info["checker"]
+                        t = sc_info["tree"]
 
-                    xmax = 500
-                    ymax = 450
-                    pix = QPixmap(xmax,ymax)
-                    self.pixList.append(pix)
-                    pix.fill(Qt.white)
+                        xmax = 500
+                        ymax = 450
+                        pix = QPixmap(xmax,ymax)
+                        self.pixList.append(pix)
+                        pix.fill(Qt.white)
 
-                    painter = QPainter(pix)
-                    pen = QPen(Qt.black,2)
-                    painter.setPen(pen)
+                        painter = QPainter(pix)
+                        pen = QPen(Qt.black,2)
+                        painter.setPen(pen)
 
-                    dr = DrawScenario()
-                    dr.paintScenario(painter,segments,scc,t,xmax,ymax)
+                        dr = DrawScenario()
+                        dr.paintScenario(painter,segments,scc,t,xmax,ymax)
 
-                    label = QLabel()
-                    pix2 = pix.scaled(200,170)
-                    label.setPixmap(pix2)
-                    self.previewLabelList.append(label)
-                    self.ui.horizontalLayout_3.insertWidget((scc.number*2)-1,label)
+                        label = QLabel()
+                        pix2 = pix.scaled(200,170)
+                        label.setPixmap(pix2)
+                        self.previewLabelList.append(label)
+                        self.ui.horizontalLayout_3.insertWidget((scc.number*2)-1,label)
+                    else:
+                        lab = QLabel("No preview available")
+                        self.previewLabelList.append(lab)
+                        self.ui.horizontalLayout_3.insertWidget((sc_info["checker"].number*2)-1,lab)
 
         else:
             if not silent:
