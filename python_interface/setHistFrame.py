@@ -30,6 +30,9 @@ class SetHistoricalModel(QFrame):
 
         self.createWidgets()
 
+        self.pixList = []
+        self.previewLabelList = []
+
     def createWidgets(self):
         self.ui = Ui_Frame()
         self.ui.setupUi(self)
@@ -248,6 +251,36 @@ class SetHistoricalModel(QFrame):
         if chk_list != None:
             self.putParameters(chk_list)
             self.scenarios_modified_since_define_priors = False
+            # dessin des aperçus
+            for l in self.previewLabelList:
+                self.ui.horizontalLayout_3.removeWidget(l)
+            self.previewLabelList = []
+            chk_graph = self.checkScenariosGraphic()
+            if chk_graph != None:
+                for sc_info in chk_graph:
+                    segments = sc_info["tree"].segments
+                    scc = sc_info["checker"]
+                    t = sc_info["tree"]
+
+                    xmax = 500
+                    ymax = 450
+                    pix = QPixmap(xmax,ymax)
+                    self.pixList.append(pix)
+                    pix.fill(Qt.white)
+
+                    painter = QPainter(pix)
+                    pen = QPen(Qt.black,2)
+                    painter.setPen(pen)
+
+                    dr = DrawScenario()
+                    dr.paintScenario(painter,segments,scc,t,xmax,ymax)
+
+                    label = QLabel()
+                    pix2 = pix.scaled(200,170)
+                    label.setPixmap(pix2)
+                    self.previewLabelList.append(label)
+                    self.ui.horizontalLayout_3.insertWidget((scc.number*2)-1,label)
+
         else:
             if not silent:
                 QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
