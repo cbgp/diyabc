@@ -40,6 +40,8 @@ class Diyabc(QMainWindow):
         self.createWidgets()
         self.setWindowIcon(QIcon("docs/accueil_pictures/coccicon.png"))
 
+        self.illegalProjectNameCharacters = ['_','-',"'",'"','.','/']
+
 
     def createWidgets(self):
         self.ui = Ui_MainWindow()
@@ -174,71 +176,81 @@ class Diyabc(QMainWindow):
                 else:
                     print "This is not a project directory"
 
-    def cloneCurrentProject(self):
+    def cloneCurrentProject(self,cloneBaseName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
         demande le nom du clone puis le répertoire dans lequel mettre le clone du projet
         """ 
         self.saveCurrentProject()
         current_project = self.ui.tabWidget.currentWidget()
-        proj_base_name, ok = QtGui.QInputDialog.getText(self, 'Clone project', 'Enter the name of the clone project:')
+        ok = True
+        if cloneBaseName == None:
+            cloneBaseName, ok = QtGui.QInputDialog.getText(self, 'Clone project', 'Enter the name of the clone project:')
         if ok:
-            if proj_base_name != "":
-                if ('_' not in proj_base_name) and ('-' not in proj_base_name) and ("'" not in proj_base_name) and ('"' not in proj_base_name) and ('.' not in proj_base_name):
+            if self.checkProjectName(cloneBaseName):
+                if cloneDir == None:
                     qfd = QFileDialog()
-                    dirname = str(qfd.getExistingDirectory(self,"Where to put the clone"))
-                    if dirname != "":
-                        if not self.isProjDir(dirname):
-                            # name_YYYY_MM_DD-num le plus elevé
-                            dd = datetime.now()
-                            #num = 36
-                            cd = 100
-                            while cd > 0 and not os.path.exists(dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,cd)):
-                                cd -= 1
-                            if cd == 100:
-                                if not variables.debug:
-                                    QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
-                                            project directories\nfor the same project name and in the same directory")
-                                else:
-                                    print "With this version, you cannot have more than 100 \
-                                        project directories\nfor the same project name and in the same directory"
-                            else:
-                                clonedir = dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,(cd+1))
-                                #self.ui.dirEdit.setText(newdir)
-                                try:
-                                    #print current_project.dir, " to ", clonedir
-                                    shutil.copytree(current_project.dir,clonedir)
-                                    # si les noms sont différents, on le charge
-                                    if proj_base_name != current_project.name:
-                                        self.openProject(clonedir)
-                                    else:
-                                        if not variables.debug:
-                                            QMessageBox.information(self,"Load error","The cloned has been cloned but can not be opened because\
-                                                    it has the same name than the origin project\nClose the origin project if you want to open the clone")
-                                        else:
-                                            print "The cloned has been cloned but can not be opened because\
-                                            it has the same name than the origin project\nClose the origin project if you want to open the clone"
-                                except OSError,e:
-                                    if not variables.debug:
-                                        QMessageBox.information(self,"Error",str(e))
-                                    else:
-                                        print str(e)
-                        else:
+                    cloneDir = str(qfd.getExistingDirectory(self,"Where to put the clone"))
+                if cloneDir != "":
+                    if not self.isProjDir(cloneDir):
+                        # name_YYYY_MM_DD-num le plus elevé
+                        dd = datetime.now()
+                        #num = 36
+                        cd = 100
+                        while cd > 0 and not os.path.exists(cloneDir+"/%s_%i_%i_%i-%i"%(cloneBaseName,dd.year,dd.month,dd.day,cd)):
+                            cd -= 1
+                        if cd == 100:
                             if not variables.debug:
-                                QMessageBox.information(self,"Incorrect directory","A project can not be in a project directory")
+                                QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
+                                        project directories\nfor the same project name and in the same directory")
                             else:
-                                print "A project can not be in a project directory"
-                else:
-                    if not variables.debug:
-                        QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ -")
+                                print "With this version, you cannot have more than 100 \
+                                    project directories\nfor the same project name and in the same directory"
+                        else:
+                            clonedir = cloneDir+"/%s_%i_%i_%i-%i"%(cloneBaseName,dd.year,dd.month,dd.day,(cd+1))
+                            #self.ui.dirEdit.setText(newdir)
+                            try:
+                                #print current_project.dir, " to ", clonedir
+                                shutil.copytree(current_project.dir,clonedir)
+                                # si les noms sont différents, on le charge
+                                if cloneBaseName != current_project.name:
+                                    self.openProject(clonedir)
+                                else:
+                                    if not variables.debug:
+                                        QMessageBox.information(self,"Load error","The cloned has been cloned but can not be opened because\
+                                                it has the same name than the origin project\nClose the origin project if you want to open the clone")
+                                    else:
+                                        print "The cloned has been cloned but can not be opened because\
+                                        it has the same name than the origin project\nClose the origin project if you want to open the clone"
+                            except OSError,e:
+                                if not variables.debug:
+                                    QMessageBox.information(self,"Error",str(e))
+                                else:
+                                    print str(e)
                     else:
-                        print "The following characters are not allowed in project name : . \" ' _ -"
+                        if not variables.debug:
+                            QMessageBox.information(self,"Incorrect directory","A project can not be in a project directory")
+                        else:
+                            print "A project can not be in a project directory"
+
+
+
+    def checkProjectName(self,name):
+        """ vérifie si le nom de projet ne comporte pas de caractères illégaux et s'il n'est pas vide
+        """
+        if name == "":
+            if not variables.debug:
+                QMessageBox.information(self,"Name error","The project name cannot be empty.")
             else:
+                print "The project name cannot be empty."
+            return False
+        for c in self.illegalProjectNameCharacters:
+            if c in name:
                 if not variables.debug:
-                    QMessageBox.information(self,"Name error","The project name cannot be empty.")
+                    QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ - /")
                 else:
-                    print "The project name cannot be empty."
-
-
+                    print "The following characters are not allowed in project name : . \" ' _ - /"
+                return False
+        return True
 
 
     def newProject(self,name=None):
@@ -248,42 +260,31 @@ class Diyabc(QMainWindow):
         if name == None:
             name, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if ok:
-            if name != "":
-                if ('_' not in name) and ('-' not in name) and ("'" not in name) and ('"' not in name) and ('.' not in name):
-                    proj_name_list = []
-                    for p in self.project_list:
-                        proj_name_list.append(p.name)
-                    if not name in proj_name_list:
-                        newProj = Project(name,None,self)
-                        # un nouveau projet a au moins un scenario
-                        newProj.hist_model_win.addSc()
-                        self.project_list.append(newProj)
-                        # si c'est le premier projet, on permet la fermeture par le menu
-                        # ajout au tabwidget de l'ui principale
-                        # ajout de l'onglet
-                        self.ui.tabWidget.addTab(newProj,newProj.name)
-                        self.ui.tabWidget.setCurrentWidget(newProj)
+            if self.checkProjectName(name):
+                proj_name_list = []
+                for p in self.project_list:
+                    proj_name_list.append(p.name)
+                if not name in proj_name_list:
+                    newProj = Project(name,None,self)
+                    # un nouveau projet a au moins un scenario
+                    newProj.hist_model_win.addSc()
+                    self.project_list.append(newProj)
+                    # si c'est le premier projet, on permet la fermeture par le menu
+                    # ajout au tabwidget de l'ui principale
+                    # ajout de l'onglet
+                    self.ui.tabWidget.addTab(newProj,newProj.name)
+                    self.ui.tabWidget.setCurrentWidget(newProj)
 
-                        if len(self.project_list) == 1:
-                            self.closeProjActionMenu.setDisabled(False)
-                            self.saveProjActionMenu.setDisabled(False)
-                            self.deleteProjActionMenu.setDisabled(False)
-                            self.cloneProjActionMenu.setDisabled(False)
-                    else:
-                        if not variables.debug:
-                            QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded."%name)
-                        else:
-                            print "A project named \"%s\" is already loaded."%name
+                    if len(self.project_list) == 1:
+                        self.closeProjActionMenu.setDisabled(False)
+                        self.saveProjActionMenu.setDisabled(False)
+                        self.deleteProjActionMenu.setDisabled(False)
+                        self.cloneProjActionMenu.setDisabled(False)
                 else:
                     if not variables.debug:
-                        QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ -")
+                        QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded."%name)
                     else:
-                        print "The following characters are not allowed in project name : . \" ' _ -"
-            else:
-                if not variables.debug:
-                    QMessageBox.information(self,"Name error","The project name cannot be empty.")
-                else:
-                    print "The project name cannot be empty."
+                        print "A project named \"%s\" is already loaded."%name
 
     def closeProject(self,index,save=None):
         """ ferme le projet qui est à l'index "index" du tabWidget
