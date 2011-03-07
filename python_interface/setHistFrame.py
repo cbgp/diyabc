@@ -75,7 +75,7 @@ class SetHistoricalModel(QFrame):
         sizePolicy.setHeightForWidth(pushButton_6.sizePolicy().hasHeightForWidth())
         pushButton_6.setSizePolicy(sizePolicy)
         pushButton_6.setMaximumSize(QtCore.QSize(80, 16777215))
-        pushButton_6.setObjectName("pushButton_"+str(len(self.scList)))
+        pushButton_6.setObjectName("rmScButton")
         horizontalLayout_6.addWidget(pushButton_6)
         verticalLayout_6.addLayout(horizontalLayout_6)
         plainTextEdit = QtGui.QPlainTextEdit(groupBox)

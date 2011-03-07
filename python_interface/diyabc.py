@@ -13,6 +13,7 @@ from PyQt4 import QtGui
 from diyabc_ui import Ui_MainWindow
 from project import *
 from preferences import Preferences
+import variables
 
 class Diyabc(QMainWindow):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
@@ -132,17 +133,20 @@ class Diyabc(QMainWindow):
                     proj_ready_to_be_opened = True
                     # si le projet est verrouillé
                     if os.path.exists("%s/.DIYABC_lock"%dir):
-                        reply = QMessageBox.question(self,"Project is locked","The %s project is currently locked.\
-\nThere are two possible reasons for that : \
-\n- The project is currently opened in another instance of DIYABC\
-\n- The last time you opened this project, DIYABC was closed unregularly\n\
-\nWould you like to open the project anyway and get the lock with this DIYABC ?\
-\nIf you say YES, think about closing potential other DIYABCs which manipulate this project"%proj_name,
-                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,QtGui.QMessageBox.No)
-                        if reply == QtGui.QMessageBox.Yes:
-                            os.remove("%s/.DIYABC_lock"%dir)
+                        if not variables.debug:
+                            reply = QMessageBox.question(self,"Project is locked","The %s project is currently locked.\
+    \nThere are two possible reasons for that : \
+    \n- The project is currently opened in another instance of DIYABC\
+    \n- The last time you opened this project, DIYABC was closed unregularly\n\
+    \nWould you like to open the project anyway and get the lock with this DIYABC ?\
+    \nIf you say YES, think about closing potential other DIYABCs which manipulate this project"%proj_name,
+                                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,QtGui.QMessageBox.No)
+                            if reply == QtGui.QMessageBox.Yes:
+                                os.remove("%s/.DIYABC_lock"%dir)
+                            else:
+                                proj_ready_to_be_opened = False
                         else:
-                            proj_ready_to_be_opened = False
+                            os.remove("%s/.DIYABC_lock"%dir)
                     if proj_ready_to_be_opened:
                         proj_to_open = Project(project_name,dir,self)
                         proj_to_open.loadFromDir()
@@ -160,9 +164,15 @@ class Diyabc(QMainWindow):
                         # creation du lock
                         proj_to_open.lock()
                 else:
-                    QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
+                    if not variables.debug:
+                        QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
+                    else:
+                        print "A project named \"%s\" is already loaded"%proj_name
             else:
-                QMessageBox.information(self,"Load error","This is not a project directory")
+                if not variables.debug:
+                    QMessageBox.information(self,"Load error","This is not a project directory")
+                else:
+                    print "This is not a project directory"
 
     def cloneCurrentProject(self):
         """ duplique un projet vers un autre répertoire
@@ -185,8 +195,12 @@ class Diyabc(QMainWindow):
                             while cd > 0 and not os.path.exists(dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,cd)):
                                 cd -= 1
                             if cd == 100:
-                                QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
-                                        project directories\nfor the same project name and in the same directory")
+                                if not variables.debug:
+                                    QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
+                                            project directories\nfor the same project name and in the same directory")
+                                else:
+                                    print "With this version, you cannot have more than 100 \
+                                        project directories\nfor the same project name and in the same directory"
                             else:
                                 clonedir = dirname+"/%s_%i_%i_%i-%i"%(proj_base_name,dd.year,dd.month,dd.day,(cd+1))
                                 #self.ui.dirEdit.setText(newdir)
@@ -197,33 +211,50 @@ class Diyabc(QMainWindow):
                                     if proj_base_name != current_project.name:
                                         self.openProject(clonedir)
                                     else:
-                                        QMessageBox.information(self,"Load error","The cloned has been cloned but can not be opened because\
-                                                it has the same name than the origin project\nClose the origin project if you want to open the clone")
+                                        if not variables.debug:
+                                            QMessageBox.information(self,"Load error","The cloned has been cloned but can not be opened because\
+                                                    it has the same name than the origin project\nClose the origin project if you want to open the clone")
+                                        else:
+                                            print "The cloned has been cloned but can not be opened because\
+                                            it has the same name than the origin project\nClose the origin project if you want to open the clone"
                                 except OSError,e:
-                                    QMessageBox.information(self,"Error",str(e))
+                                    if not variables.debug:
+                                        QMessageBox.information(self,"Error",str(e))
+                                    else:
+                                        print str(e)
                         else:
-                            QMessageBox.information(self,"Incorrect directory","A project can not be in a project directory")
+                            if not variables.debug:
+                                QMessageBox.information(self,"Incorrect directory","A project can not be in a project directory")
+                            else:
+                                print "A project can not be in a project directory"
                 else:
-                    QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ -")
+                    if not variables.debug:
+                        QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ -")
+                    else:
+                        print "The following characters are not allowed in project name : . \" ' _ -"
             else:
-                QMessageBox.information(self,"Name error","The project name cannot be empty.")
+                if not variables.debug:
+                    QMessageBox.information(self,"Name error","The project name cannot be empty.")
+                else:
+                    print "The project name cannot be empty."
 
 
 
 
-    def newProject(self):
+    def newProject(self,name=None):
         """ Création d'un projet
         """
-        # TODO verifier caracteres speciaux dans le nom
-        text, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
+        ok = True
+        if name == None:
+            name, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if ok:
-            if text != "":
-                if ('_' not in text) and ('-' not in text) and ("'" not in text) and ('"' not in text) and ('.' not in text):
+            if name != "":
+                if ('_' not in name) and ('-' not in name) and ("'" not in name) and ('"' not in name) and ('.' not in name):
                     proj_name_list = []
                     for p in self.project_list:
                         proj_name_list.append(p.name)
-                    if not text in proj_name_list:
-                        newProj = Project(text,None,self)
+                    if not name in proj_name_list:
+                        newProj = Project(name,None,self)
                         # un nouveau projet a au moins un scenario
                         newProj.hist_model_win.addSc()
                         self.project_list.append(newProj)
@@ -239,21 +270,33 @@ class Diyabc(QMainWindow):
                             self.deleteProjActionMenu.setDisabled(False)
                             self.cloneProjActionMenu.setDisabled(False)
                     else:
-                        QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded."%text)
+                        if not variables.debug:
+                            QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded."%name)
+                        else:
+                            print "A project named \"%s\" is already loaded."%name
                 else:
-                    QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ -")
+                    if not variables.debug:
+                        QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ -")
+                    else:
+                        print "The following characters are not allowed in project name : . \" ' _ -"
             else:
-                QMessageBox.information(self,"Name error","The project name cannot be empty.")
+                if not variables.debug:
+                    QMessageBox.information(self,"Name error","The project name cannot be empty.")
+                else:
+                    print "The project name cannot be empty."
 
     def closeProject(self,index,save=None):
         """ ferme le projet qui est à l'index "index" du tabWidget
         le sauvegarde si save == True et le déverrouille
         """
         if save == None:
-            reply = QtGui.QMessageBox.question(self, 'Message',
-                "Do you want to save the Project ?", QtGui.QMessageBox.Yes | 
-                QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
-            save = (reply == QtGui.QMessageBox.Yes)
+            if not variables.debug:
+                reply = QtGui.QMessageBox.question(self, 'Message',
+                    "Do you want to save the Project ?", QtGui.QMessageBox.Yes | 
+                    QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
+                save = (reply == QtGui.QMessageBox.Yes)
+            else:
+                save = True
         
         # est ce que l'index est out of range?
         if self.ui.tabWidget.widget(index) != 0:

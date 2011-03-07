@@ -21,6 +21,7 @@ from datetime import datetime
 import os.path
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
+import variables
 
 
 class Project(QTabWidget):
@@ -395,13 +396,14 @@ class Project(QTabWidget):
             QMessageBox.information(self,"Header generation problem","One conf file is missing in order to generate the reference table header")
 
 
-    def dataFileSelection(self):
+    def dataFileSelection(self,name=None):
         """ dialog pour selectionner le fichier à lire
         il est lu et vérifié. S'il est invalide, on garde la sélection précédente
         """
-        qfd = QFileDialog()
-        qfd.setDirectory(self.ui.dirEdit.text())
-        name = qfd.getOpenFileName()
+        if name == None:
+            qfd = QFileDialog()
+            qfd.setDirectory(self.ui.dirEdit.text())
+            name = qfd.getOpenFileName()
         if self.loadDataFile(name):
             # si on a reussi a charger le data file, on vire le bouton browse
             self.ui.browseDataFileButton.hide()
@@ -440,12 +442,13 @@ class Project(QTabWidget):
         return True
 
 
-    def dirSelection(self):
+    def dirSelection(self,name=None):
         """ selection du repertoire pour un nouveau projet et copie du fichier de données
         """
-        qfd = QFileDialog()
-        #qfd.setDirectory("~/")
-        name = str(qfd.getExistingDirectory())
+        if name == None:
+            qfd = QFileDialog()
+            #qfd.setDirectory("~/")
+            name = str(qfd.getExistingDirectory())
         if name != "":
             if not self.parent.isProjDir(name):
                 # name_YYYY_MM_DD-num le plus elevé
@@ -455,8 +458,12 @@ class Project(QTabWidget):
                 while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,cd)):
                     cd -= 1
                 if cd == 100:
-                    QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
-                            project directories\nfor the same project name and in the same directory")
+                    if not variables.debug:
+                        QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
+                                project directories\nfor the same project name and in the same directory")
+                    else:
+                        print "With this version, you cannot have more than 100 \
+                                project directories\nfor the same project name and in the same directory"
                 else:
                     newdir = name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,(cd+1))
                     self.ui.dirEdit.setText(newdir)
@@ -473,9 +480,15 @@ class Project(QTabWidget):
                         # on a reussi a creer le dossier, on vire le bouton browse
                         self.ui.browseDirButton.hide()
                     except OSError,e:
-                        QMessageBox.information(self,"Error",str(e))
+                        if not variables.debug:
+                            QMessageBox.information(self,"Error",str(e))
+                        else:
+                            print str(e)
             else:
-                QMessageBox.information(self,"Incorrect directory","A project can not be in a project directory")
+                if not variables.debug:
+                    QMessageBox.information(self,"Incorrect directory","A project can not be in a project directory")
+                else:
+                    print "A project can not be in a project directory"
 
 
     def changeIcon(self):
