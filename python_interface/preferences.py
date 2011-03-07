@@ -17,9 +17,9 @@ class Preferences(QMainWindow):
         self.parent = parent
         self.createWidgets()
 
-        self.ui.tabWidget.setTabText(0,"Connexion")
-        self.ui.tabWidget.setTabText(1,"Historical")
-        self.ui.tabWidget.setTabText(2,"Various")
+        #self.ui.tabWidget.setTabText(0,"Connexion")
+        #self.ui.tabWidget.setTabText(1,"Historical")
+        #self.ui.tabWidget.setTabText(2,"Various")
         self.mutmodM = SetMutationModel(self)
         self.mutmodS = SetMutationModelSequences(self)
         self.ui.tabWidget.addTab(self.mutmodM,"MM Microsats")

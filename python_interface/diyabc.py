@@ -190,7 +190,7 @@ class Diyabc(QMainWindow):
                 if cloneDir == None:
                     qfd = QFileDialog()
                     cloneDir = str(qfd.getExistingDirectory(self,"Where to put the clone"))
-                if cloneDir != "":
+                if cloneDir != "" and os.path.exists(cloneDir):
                     if not self.isProjDir(cloneDir):
                         # name_YYYY_MM_DD-num le plus elevé
                         dd = datetime.now()

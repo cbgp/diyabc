@@ -85,6 +85,12 @@ class testDiyabc(unittest.TestCase):
         self.diyabc.cloneCurrentProject("clone2ppproject","/home/julien/git/diyabc/python_interface/datafiles/test/unittest/nonExistingDir/")
         self.assertEqual(len(self.diyabc.project_list) == nbproj,True)
 
+        # suppression de projet
+        current_project_dir = self.diyabc.ui.tabWidget.currentWidget().dir
+        self.assertEqual(os.path.exists(current_project_dir),True)
+        self.diyabc.deleteCurrentProject()
+        self.assertEqual(os.path.exists(current_project_dir),False)
+
         self.diyabc.close()
 
     def fillHistModel(self,scTxtList,paramDicoValues,hist_model):

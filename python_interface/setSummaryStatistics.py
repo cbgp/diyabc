@@ -91,6 +91,8 @@ class SetSummaryStatistics(QFrame):
         self.ui.frame_12.hide()
         self.ui.frame_11.hide()
         self.ui.frame_9.hide()
+        self.ui.allMl3Button.hide()
+        self.ui.noneMl3Button.hide()
 
     def addOneSample(self,num):
         """ methode d'ajout d'un bloc dans 'one sample sum stats'
@@ -297,7 +299,7 @@ class SetSummaryStatistics(QFrame):
         frame_12.setObjectName("frame_12")
         verticalLayout_6 = QtGui.QVBoxLayout(frame_12)
         verticalLayout_6.setSpacing(1)
-        verticalLayout_6.setAlignment(Qt.AlignHCenter)
+        #verticalLayout_6.setAlignment(Qt.AlignHCenter)
         verticalLayout_6.setContentsMargins(1, 1, 1, 1)
         verticalLayout_6.setObjectName("verticalLayout_6")
         threeSampleLabel = QtGui.QLabel("Samp\n%i&%i&%i"%(num1,num2,num3),frame_12)
@@ -305,6 +307,8 @@ class SetSummaryStatistics(QFrame):
         font.setPointSize(8)
         threeSampleLabel.setFont(font)
         threeSampleLabel.setObjectName("threeSampleLabel")
+        threeSampleLabel.setMinimumSize(QtCore.QSize(0, 48))
+        threeSampleLabel.setMaximumSize(QtCore.QSize(16777215, 48))
         verticalLayout_6.addWidget(threeSampleLabel)
         rmButton = QtGui.QPushButton("remove",frame_12)
         font = QtGui.QFont()

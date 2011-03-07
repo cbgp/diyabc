@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setMutationmodel.ui'
 #
-# Created: Thu Feb 24 21:54:27 2011
+# Created: Mon Mar  7 17:42:26 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -657,7 +657,7 @@ class Ui_Frame(object):
         self.label_29.setText(QtGui.QApplication.translate("Frame", "Minimum", None, QtGui.QApplication.UnicodeUTF8))
         self.ilsrMinEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-009", None, QtGui.QApplication.UnicodeUTF8))
         self.label_30.setText(QtGui.QApplication.translate("Frame", "Maximum", None, QtGui.QApplication.UnicodeUTF8))
-        self.ilsrMaxEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-006", None, QtGui.QApplication.UnicodeUTF8))
+        self.ilsrMaxEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-004", None, QtGui.QApplication.UnicodeUTF8))
         self.label_31.setText(QtGui.QApplication.translate("Frame", "Mean", None, QtGui.QApplication.UnicodeUTF8))
         self.ilsrMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean_µ_SNI", None, QtGui.QApplication.UnicodeUTF8))
         self.label_32.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))

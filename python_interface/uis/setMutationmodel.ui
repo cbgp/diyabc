@@ -1432,7 +1432,7 @@ locus SNI rate</string>
               </size>
              </property>
              <property name="text">
-              <string>1.00E-006</string>
+              <string>1.00E-004</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/diyabc.ui'
 #
-# Created: Thu Mar  3 16:45:10 2011
+# Created: Mon Mar  7 17:54:31 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
