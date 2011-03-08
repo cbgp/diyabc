@@ -1040,7 +1040,7 @@ struct ParticleC
 					this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
 					//cout << "retour noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
 					this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
-					this->gt[loc].nbranches++;
+                                        this->gt[loc].nbranches++;
 					//cout << "nbranches = " << this->gt[loc].nbranches << "\n";
 				}
 			}
@@ -1278,8 +1278,8 @@ struct ParticleC
 	}
 
 	int cree_haplo(int loc) {
-		//cout <<"CREE_HAPLO\n";
-/*		if (loc==10) {
+		/*cout <<"CREE_HAPLO\n";
+		if (loc==0) {
 		cout << "nbranches = " << this->gt[loc].nbranches << "    nnoeuds=" << gt[loc].nnodes <<"\n";
 		for (int br=0;br<this->gt[loc].nbranches;br++)
 			{cout << "branche " << br << "   bottom=" << this->gt[loc].branches[br].bottom ;

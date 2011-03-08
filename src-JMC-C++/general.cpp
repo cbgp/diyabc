@@ -30,7 +30,7 @@ double walltime( double *t0 )
 double clock_zero=0.0,debut,duree;
 
 int main(int argc, char *argv[]){
-	char *headerfilename, *reftablefilename,*datafilename;
+	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename;
 	int nrecneeded,nrectodo,k,nenr=100;
 	double **paramstat;
         enregC *enr;
@@ -50,10 +50,13 @@ int main(int argc, char *argv[]){
 	
 	    case 'p' : headerfilename = new char[strlen(optarg)+13];
 		       reftablefilename = new char[strlen(optarg)+15];
+                       statobsfilename = new char[strlen(optarg)+14];
 		       strcpy(headerfilename,optarg);
 		       strcpy(reftablefilename,optarg);
+                       strcpy(statobsfilename,optarg);
 		       strcat(headerfilename,"header.txt");
 		       strcat(reftablefilename,"reftable.bin");
+                       strcat(statobsfilename,"statobs.txt");
 		       cout<<headerfilename<<"\n"<<reftablefilename<<"\n"; 
 		       break;
 		   
@@ -62,7 +65,7 @@ int main(int argc, char *argv[]){
 		       HeaderC header;
 		       header.readHeader(headerfilename);
                        //cout<<"avant calstatobs\n";fflush(stdin);
-                       header.calstatobs();
+                       header.calstatobs(statobsfilename);
 		       cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
 		       datafilename=strdup(header.datafilename.c_str());
                        //cout << datafilename<<"\n";
@@ -80,26 +83,32 @@ int main(int argc, char *argv[]){
                            for (int i=0;i<header.nscenarios;i++) rt.nparam[i]=header.scenario[i].nparamvar;
                            rt.nstat=header.nstat;
                            rt.writeheader();
-                       } else if (k==2) {cout<<"cannot create reftable file\n"; exit(1);} 
-                       ps.defined=false;
-                       rt.openfile();
-                       while (nrecneeded>rt.nrec) {
-                               enr = ps.dosimultabref(header,nenr,false);
-                               //cout<<"avant writerecords\n";fflush(stdin);
-                               rt.writerecords(nenr,enr);
-                               rt.nrec +=nenr;
-                               cout<<rt.nrec<<"\n";
-                               for (int i=0;i<nenr;i++) {
-                                   delete [] enr[i].param;
-                               }
+                       } else if (k==2) {cout<<"cannot create reftable file\n"; exit(1);}
+                       if (nrecneeded>rt.nrec) {
+                              ps.defined=false;
+                              rt.openfile();
+                              while (nrecneeded>rt.nrec) {
+                                      enr = ps.dosimultabref(header,nenr,false);
+                                      //cout<<"avant writerecords\n";fflush(stdin);
+                                      rt.writerecords(nenr,enr);
+                                      rt.nrec +=nenr;
+                                      cout<<rt.nrec<<"\n";
+                                      for (int i=0;i<nenr;i++) {
+                                          delete [] enr[i].param;
+                                      }
+                              }
+                              for (int i=0;i<nenr;i++) {
+                                    //delete [] enr[i].param;
+                                    delete [] enr[i].stat;
+                              }
+                              delete [] enr;
+                              rt.closefile();
                        }
-                       for (int i=0;i<nenr;i++) {
-                            //delete [] enr[i].param;
-                            delete [] enr[i].stat;
-                       }
-                       delete [] enr;
-                       rt.closefile();
 	               break;
+                   
+            case 'e' : 
+              
+                       break;
 	
 	    }
 	}

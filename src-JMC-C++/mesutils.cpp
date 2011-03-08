@@ -64,6 +64,20 @@ string* splitwords(string s,string sep,int *k){
 	return sb;
 }
 
+string centre(string s,int k){
+        int l=s.length();
+        string sb=s;
+        int av,ap;
+        av=(k-l)/2;
+        ap=k-l-av;
+        if (av<=0) return s;
+        sb=s;
+        for (int i=0;i<av;i++) sb=" "+sb;
+        if (ap==0) return sb;
+        for (int i=0;i<ap;i++) sb=sb+" ";
+        return sb;
+}
+
 int strpos(char* st1,char* st2) {
     int i,p=0,n1,n2;
     char *s;

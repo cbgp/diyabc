@@ -433,7 +433,7 @@ public:
 		return this;
 	}
 	
-	void calstatobs() {
+	void calstatobs(char* statobsfilename) {
 //partie DATA
                 //cout<<"debut de calstatobs\n";
                 this->particuleobs.nsample = this->dataobs.nsample;
@@ -516,11 +516,18 @@ public:
                         }
                       // cout << "samplesize[0]="<<this->particuleobs.locuslist[kloc].samplesize[0]<<"\n";
                 }
+               string *sb,ent;
+               int j;
+               sb = splitwords(this->entete," ",&j);
+               ent="";
+               for (int k=j-this->nstat;k<j;k++) ent=ent+centre(sb[k],14);
+               ent=ent+"\n";
                FILE *fobs;
-               fobs=fopen("statobs.txt","w");
+               fobs=fopen(statobsfilename,"w");
+               fputs(ent.c_str(),fobs);
                for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
                      this->particuleobs.docalstat(gr);
-                     for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs,"  %8.4f",this->particuleobs.grouplist[gr].sumstat[j].val);
+                     for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs," %8.4f     ",this->particuleobs.grouplist[gr].sumstat[j].val);
                }
                fprintf(fobs,"\n");
                fclose(fobs);
@@ -861,7 +868,7 @@ struct ParticleSetC
                 fprintf(pFile,"%s\n",this->header.entete.c_str());
                 for (int ipart=0;ipart<this->npart;ipart++) {
                         if (sOK[ipart]==0){
-                          fprintf(pFile," %3d  ",enreg[ipart].numscen);
+                          fprintf(pFile,"%3d  ",enreg[ipart].numscen);
                           iscen=enreg[ipart].numscen-1;
                           //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
                           pa=0;

@@ -148,11 +148,13 @@ public:
 		} else this->message="";
 		getline(file,this->title);
 		j0=title.find("<NM=");
-		if (j0>0) {
+		if (j0!=string::npos) {
+                        cout<<"j0="<<j0<<"\n";
 			j1=title.find("NF>",j0+3);
 			s=title.substr(j0+4,j1-(j0+4));
 			this->sexratio=atof(s.c_str())/(1.0+atof(s.c_str()));
 		} else this->sexratio=0.5;
+		//cout<<"dans data readfile this->sexratio="<<this->sexratio<<"\n";
 		this->nloc=0;fin=false;
 		while (not fin) {
 			getline(file,s);
@@ -423,6 +425,7 @@ public:
 			case 4 :  coeff = 2.0*(1.0-this->sexratio);break;
 		}
 		this->locus[loc].coeff=coeff;
+                //if (loc==0) cout<<"sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeff<<"\n";
     }
 
     DataC * loadfromfile(string filename) {
