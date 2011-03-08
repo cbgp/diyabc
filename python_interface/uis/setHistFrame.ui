@@ -129,7 +129,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>769</width>
+           <width>762</width>
            <height>196</height>
           </rect>
          </property>
@@ -139,6 +139,21 @@
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="drawPreviewsCheck">
+          <property name="text">
+           <string>Draw previews</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="refreshPreviewsButton">
+          <property name="text">
+           <string>Refresh
+previews</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QPushButton" name="addScButton">
           <property name="sizePolicy">

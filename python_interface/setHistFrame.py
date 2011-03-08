@@ -45,10 +45,37 @@ class SetHistoricalModel(QFrame):
         QObject.connect(self.ui.chkScButton,SIGNAL("clicked()"),self.checkToDraw)
         QObject.connect(self.ui.defPrButton,SIGNAL("clicked()"),self.definePriors)
 
+        QObject.connect(self.ui.drawPreviewsCheck,SIGNAL("stateChanged(int)"),self.displayPreviews)
+        QObject.connect(self.ui.refreshPreviewsButton,SIGNAL("clicked()"),self.displayPreviews)
+
+        self.ui.refreshPreviewsButton.hide()
+
         self.ui.verticalLayout_6.setAlignment(QtCore.Qt.AlignTop)
         self.ui.horizontalLayout_6.setAlignment(QtCore.Qt.AlignLeft)
         self.ui.horizontalLayout_2.setAlignment(QtCore.Qt.AlignLeft)
         self.ui.horizontalLayout_3.setAlignment(QtCore.Qt.AlignLeft)
+
+    def displayPreviews(self,state=None):
+        """ Met à jour ou fait apparaitre ou disparaitre les previews
+        Si state n'est pas spécifié, regarde si "draw previews" est coché
+        """
+        if state == None:
+            if self.ui.drawPreviewsCheck.isChecked():
+                state = 2
+            else:
+                state = 0
+
+        if state == 0:
+            # décoché
+            for l in self.previewLabelList:
+                l.hide()
+                self.ui.horizontalLayout_3.removeWidget(l)
+            self.previewLabelList = []
+            self.pixList = []
+            self.ui.refreshPreviewsButton.hide()
+        else:
+            self.drawPreviews()
+            self.ui.refreshPreviewsButton.show()
 
     def addSc(self):
         
@@ -92,6 +119,7 @@ class SetHistoricalModel(QFrame):
         QObject.connect(pushButton_6,SIGNAL("clicked()"),self.rmSc)
         # modif du texte modifie attribut scenarios_modified_since_define_priors
         QObject.connect(plainTextEdit,SIGNAL("textChanged()"),self.modifOnScenarios)
+        #QObject.connect(plainTextEdit,SIGNAL("textChanged()"),self.drawPreviews)
 
 
         # ajout du scenario dans la liste locale (plus facile à manipuler)
@@ -243,6 +271,47 @@ class SetHistoricalModel(QFrame):
         else:
             QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to draw them.")
 
+    def drawPreviews(self):
+        if self.ui.drawPreviewsCheck.isChecked():
+            # nettoyage
+            for l in self.previewLabelList:
+                self.ui.horizontalLayout_3.removeWidget(l)
+                l.hide()
+            self.previewLabelList = []
+            self.pixList = []
+
+            # dessin
+            for num,sc in enumerate(self.scList):
+                sctxt = str(sc.findChild(QPlainTextEdit,"scplainTextEdit").toPlainText())
+                sc_info = self.checkOneScenario(num,sctxt,True)
+                if sc_info != None and sc_info["tree"] != None and len(sc_info["checker"].history.ne0s) <= 5:
+                    segments = sc_info["tree"].segments
+                    scc = sc_info["checker"]
+                    t = sc_info["tree"]
+
+                    xmax = 500
+                    ymax = 450
+                    pix = QPixmap(xmax,ymax)
+                    self.pixList.append(pix)
+                    pix.fill(Qt.white)
+
+                    painter = QPainter(pix)
+                    pen = QPen(Qt.black,2)
+                    painter.setPen(pen)
+
+                    dr = DrawScenario()
+                    dr.paintScenario(painter,segments,scc,t,xmax,ymax,12)
+
+                    label = QLabel()
+                    pix2 = pix.scaled(200,170)
+                    label.setPixmap(pix2)
+                    self.previewLabelList.append(label)
+                    self.ui.horizontalLayout_3.insertWidget((scc.number*2)-1,label)
+                else:
+                    lab = QLabel("No preview \navailable. You\n may have\n it by\n'Check scenario'")
+                    self.previewLabelList.append(lab)
+                    self.ui.horizontalLayout_3.insertWidget(((num+1)*2)-1,lab)
+
     def definePriors(self,silent=False):
         """ clic sur le bouton de définition des priors
         """
@@ -252,41 +321,7 @@ class SetHistoricalModel(QFrame):
             self.putParameters(chk_list)
             self.scenarios_modified_since_define_priors = False
             # dessin des aperçus
-            for l in self.previewLabelList:
-                self.ui.horizontalLayout_3.removeWidget(l)
-            self.previewLabelList = []
-            self.pixList = []
-            chk_graph = self.checkScenariosGraphic()
-            if chk_graph != None:
-                for sc_info in chk_graph:
-                    if sc_info["tree"] != None:
-                        segments = sc_info["tree"].segments
-                        scc = sc_info["checker"]
-                        t = sc_info["tree"]
-
-                        xmax = 500
-                        ymax = 450
-                        pix = QPixmap(xmax,ymax)
-                        self.pixList.append(pix)
-                        pix.fill(Qt.white)
-
-                        painter = QPainter(pix)
-                        pen = QPen(Qt.black,2)
-                        painter.setPen(pen)
-
-                        dr = DrawScenario()
-                        dr.paintScenario(painter,segments,scc,t,xmax,ymax)
-
-                        label = QLabel()
-                        pix2 = pix.scaled(200,170)
-                        label.setPixmap(pix2)
-                        self.previewLabelList.append(label)
-                        self.ui.horizontalLayout_3.insertWidget((scc.number*2)-1,label)
-                    else:
-                        lab = QLabel("No preview available")
-                        self.previewLabelList.append(lab)
-                        self.ui.horizontalLayout_3.insertWidget((sc_info["checker"].number*2)-1,lab)
-
+            self.drawPreviews()
         else:
             if not silent:
                 QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
@@ -371,8 +406,28 @@ class SetHistoricalModel(QFrame):
         for cond in cond_list_to_del:
             self.rmCond(cond)
 
+    def checkOneScenario(self,num,sc,silent=False):
+        """ verifie un seul scenario et construit son tree pour dessiner les previews
+        """
+        dico_sc_infos = None
+        scChecker = history.Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
+        try:
+            scChecker.checkread(sc.strip().split('\n'),self.parent.data)
+            scChecker.checklogic()
+            dico_sc_infos = {}
+            dico_sc_infos["text"] = sc.strip().split('\n')
+            dico_sc_infos["checker"] = scChecker
+            t = PopTree(scChecker)
+            t.do_tree()
+            dico_sc_infos["tree"] = t
+        except IOScreenError, e:
+            if not silent:
+                QMessageBox.information(self,"Scenario error","%s"%e)
+        except PopTreeError,e:
+            dico_sc_infos["tree"] = None
+        return dico_sc_infos
 
-    def checkScenariosGraphic(self):
+    def checkScenariosGraphic(self,silent=False):
         """ action de verification des scenarios (dessin inclu)
         retourne la liste des infos sur les scenarios si ceux ci sont tous bons
         sinon retourne None
@@ -409,7 +464,8 @@ class SetHistoricalModel(QFrame):
             except IOScreenError, e:
                 #print "Un scenario a une erreur : ", e
                 nb_scenarios_invalides += 1
-                QMessageBox.information(self,"Scenario error","%s"%e)
+                if not silent:
+                    QMessageBox.information(self,"Scenario error","%s"%e)
             except PopTreeError,e:
                 dico_sc_infos["tree"] = None
                 self.scenarios_info_list.append(dico_sc_infos)

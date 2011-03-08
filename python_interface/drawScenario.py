@@ -111,7 +111,7 @@ class DrawScenario(QFrame):
         
         painter.end()
 
-    def paintScenario(self,painter,segments,scc,t,xmax,ymax):
+    def paintScenario(self,painter,segments,scc,t,xmax,ymax,font_inc=0):
         """ dessine le scenario sur le painter
         """
         tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
@@ -134,14 +134,17 @@ class DrawScenario(QFrame):
             painter.setPen(pen)
             painter.drawLine(20,40+20*i,30,40+20*i)
             pen.setColor(QColor("#000000"))
+            font = QFont()
+            font.setPixelSize(10+font_inc)
+            painter.setFont(font)
             painter.setPen(pen)
             painter.drawText( 40,45+20*i, NN[i].name)
         painter.setPen(QPen(Qt.black,20))
         font = QFont()
         font.setItalic(False)
-        font.setPixelSize(16)
+        font.setPixelSize(16+font_inc)
         painter.setFont(font)
-        painter.drawText( 10,20, "Scenario %i"%(scc.number))
+        painter.drawText( 10,20+(font_inc/2), "Scenario %i"%(scc.number))
 
         # echelle de temps
         pen = QPen(Qt.black,1)
@@ -154,7 +157,7 @@ class DrawScenario(QFrame):
             painter.drawLine(xmax-55,y,xmax-45,y)
             font = QFont()
             font.setItalic(False)
-            font.setPixelSize(10)
+            font.setPixelSize(10+font_inc)
             painter.setFont(font)
             painter.drawText(xmax-30,y+5,scc.history.events[i].stime)
         font = QFont()
@@ -187,12 +190,12 @@ class DrawScenario(QFrame):
                             painter.drawRoundRect(x-15,y+10,35,20)
                             font = QFont()
                             font.setItalic(True)
-                            font.setPixelSize(10)
+                            font.setPixelSize(10+font_inc)
                             painter.setFont(font)
                             painter.drawText(x-10,y+25,'Sa %i'%t.node[i].pop)
                             font = QFont()
                             font.setItalic(False)
-                            font.setPixelSize(12)
+                            font.setPixelSize(12+font_inc)
                             painter.setFont(font)
                             if t.node[i].category == "sa":
                                 painter.drawText(x-19,y+50,"Pop %i"%t.node[i].pop)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setHistFrame.ui'
 #
-# Created: Fri Feb 25 13:22:30 2011
+# Created: Tue Mar  8 18:09:27 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -60,7 +60,7 @@ class Ui_Frame(object):
         self.scScroll.setWidgetResizable(True)
         self.scScroll.setObjectName("scScroll")
         self.scScrollContent = QtGui.QWidget(self.scScroll)
-        self.scScrollContent.setGeometry(QtCore.QRect(0, 0, 769, 196))
+        self.scScrollContent.setGeometry(QtCore.QRect(0, 0, 762, 196))
         self.scScrollContent.setObjectName("scScrollContent")
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.scScrollContent)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -68,6 +68,12 @@ class Ui_Frame(object):
         self.horizontalLayout_4.addWidget(self.scScroll)
         self.verticalLayout_3 = QtGui.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.drawPreviewsCheck = QtGui.QCheckBox(self.frame_4)
+        self.drawPreviewsCheck.setObjectName("drawPreviewsCheck")
+        self.verticalLayout_3.addWidget(self.drawPreviewsCheck)
+        self.refreshPreviewsButton = QtGui.QPushButton(self.frame_4)
+        self.refreshPreviewsButton.setObjectName("refreshPreviewsButton")
+        self.verticalLayout_3.addWidget(self.refreshPreviewsButton)
         self.addScButton = QtGui.QPushButton(self.frame_4)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -402,6 +408,9 @@ class Ui_Frame(object):
         self.okButton.setToolTip(QtGui.QApplication.translate("Frame", "Test and save data (Alt+o)", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
+        self.drawPreviewsCheck.setText(QtGui.QApplication.translate("Frame", "Draw previews", None, QtGui.QApplication.UnicodeUTF8))
+        self.refreshPreviewsButton.setText(QtGui.QApplication.translate("Frame", "Refresh\n"
+"previews", None, QtGui.QApplication.UnicodeUTF8))
         self.addScButton.setToolTip(QtGui.QApplication.translate("Frame", "(Alt+a)", None, QtGui.QApplication.UnicodeUTF8))
         self.addScButton.setText(QtGui.QApplication.translate("Frame", "Add scenario", None, QtGui.QApplication.UnicodeUTF8))
         self.addScButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+A", None, QtGui.QApplication.UnicodeUTF8))
