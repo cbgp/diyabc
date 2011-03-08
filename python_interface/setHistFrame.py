@@ -309,6 +309,9 @@ class SetHistoricalModel(QFrame):
                     self.ui.horizontalLayout_3.insertWidget((scc.number*2)-1,label)
                 else:
                     lab = QLabel("No preview \navailable. You\n may have\n it by\n'Check scenario'")
+                    font = QFont()
+                    font.setPixelSize(9)
+                    lab.setFont(font)
                     self.previewLabelList.append(lab)
                     self.ui.horizontalLayout_3.insertWidget(((num+1)*2)-1,lab)
 
