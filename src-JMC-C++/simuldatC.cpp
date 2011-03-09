@@ -47,7 +47,7 @@ public:
 	DataC dataobs;
 	int nparamtot,nstat,nscenarios,nconditions,ngroupes;
         string *paramname;
-	ScenarioC *scenario;
+	ScenarioC *scenario,scen;
 	HistParameterC *histparam;
 	ConditionC *condition;
 	LocusGroupC *groupe;
@@ -117,6 +117,26 @@ public:
 		}
 	}
 
+        /*ScenarioC superscen() {
+                int neventm,nn0m,nsampm,nparamm,nparamvarm,nconditionm;
+                neventm=0;    for (int i=0;i<this->nscenarios;i++) {if (neventm<this->scenario[i].nevent)          neventm=this->scenario[i].nevent;}
+                nn0m=0;       for (int i=0;i<this->nscenarios;i++) {if (nn0m<this->scenario[i].nn0)                nn0m=this->scenario[i].nn0;}
+                nsampm=0;     for (int i=0;i<this->nscenarios;i++) {if (nsampm<this->scenario[i].nsamp)            nsampm=this->scenario[i].nsamp;}
+                nparamm=0;    for (int i=0;i<this->nscenarios;i++) {if (nparamm<this->scenario[i].nparam)         nparamm=this->scenario[i].nparam;}
+                nparamvarm=0; for (int i=0;i<this->nscenarios;i++) {if (nparamvarm<this->scenario[i].nparamvar)    nparamvarm=this->scenario[i].nparamvar;}
+                nconditionm=0;for (int i=0;i<this->nscenarios;i++) {if (nconditionm<this->scenario[i].nconditions) nconditionm=this->scenario[i].nconditions;}
+                cout<<"neventm="<<neventm<<"   nn0m="<<nn0m<<"   nsampm="<<nsampm<<"   nparamm="<<nparamm<<"nparamvarm="<<nparamvarm<<"   ncondm="<<nconditionm<<"\n";
+                this->scen.event = new EventC[neventm];
+                this->scen.ne0   = new Ne0C[nn0m];
+                
+                for (int i=0;i<nn0m;i++) this->scen.ne0[i].name="blabla";
+                this->scen.time_sample = new int[nsampm];
+                this->scen.histparam = new HistParameterC[nparamm];
+                this->scen.paramvar = new double[nparamvarm+3];
+                if (nconditionm>0) this->scen.condition = new ConditionC[nconditionm];
+                
+        }*/
+
 	HeaderC* readHeader(char* headerfilename){
                 char reftable[]="header.txt";
                 char *path;
@@ -156,11 +176,11 @@ public:
 		for (int i=0;i<this->nscenarios;i++) {
 			sl[i] = new string[nlscen[i]];
 			getline(file,s1);
-			scenario[i].number = getwordint(s1,2);
-			scenario[i].prior_proba = getwordfloat(s1,3);
-			scenario[i].nparam = 0;scenario[i].nparamvar=0;
+			this->scenario[i].number = getwordint(s1,2);
+			this->scenario[i].prior_proba = getwordfloat(s1,3);
+			this->scenario[i].nparam = 0;scenario[i].nparamvar=0;
 			for (int j=0;j<nlscen[i];j++) getline(file,sl[i][j]);
-			scenario[i].read_events(nlscen[i],sl[i]);
+			this->scenario[i].read_events(nlscen[i],sl[i]);
 		}
 		for (int i=0;i<this->nscenarios;i++) delete []sl[i];
 		delete [] sl;
@@ -344,6 +364,29 @@ public:
 			//this->scenario[i].ecris();
 		}
 		
+                cout<<"avant superscen\n";
+                this->scen.nevent=0;    
+                for (int i=0;i<this->nscenarios;i++) {if (this->scen.nevent<this->scenario[i].nevent) this->scen.nevent=this->scenario[i].nevent;}
+                this->scen.nn0=0;       
+                for (int i=0;i<this->nscenarios;i++) {if (this->scen.nn0<this->scenario[i].nn0)       this->scen.nn0 =this->scenario[i].nn0;}
+                this->scen.nsamp=0;     
+                for (int i=0;i<this->nscenarios;i++) {if (this->scen.nsamp<this->scenario[i].nsamp)   this->scen.nsamp=this->scenario[i].nsamp;}
+                this->scen.nparam=0;    
+                for (int i=0;i<this->nscenarios;i++) {if (this->scen.nparam<this->scenario[i].nparam)  this->scen.nparam=this->scenario[i].nparam;}
+                this->scen.nparamvar=0; 
+                for (int i=0;i<this->nscenarios;i++) {if (this->scen.nparamvar<this->scenario[i].nparamvar) this->scen.nparamvar=this->scenario[i].nparamvar;}
+                this->scen.nconditions=0;
+                for (int i=0;i<this->nscenarios;i++) {if (this->scen.nconditions<this->scenario[i].nconditions) this->scen.nconditions=this->scenario[i].nconditions;}
+                this->scen.event = new EventC[this->scen.nevent];
+                this->scen.ne0   = new Ne0C[this->scen.nn0];
+                //for (int i=0;i<this->scen.nn0];i++) this->scen.ne0[i].name="blabla";
+                this->scen.time_sample = new int[this->scen.nsamp];
+                this->scen.histparam = new HistParameterC[this->scen.nparam];
+                this->scen.paramvar = new double[this->scen.nparamvar+3];
+                if (this->scen.nconditions>0) this->scen.condition = new ConditionC[this->scen.nconditions];
+                this->scen.ecris();
+                cout<<"apres superscen\n";
+                //exit(1);
 //Partie group statistics
                 //cout<<"debut des group stat\n";
                 this->nstat=0;
@@ -698,6 +741,8 @@ struct ParticleSetC
 		    this->particule[p].scenario[i] = copyscenario(this->header.scenario[i]);
 		    //this->particule[p].scenario[i].ecris();
 		}
+		this->particule[p].scen=copyscenario(this->header.scen);
+                //this->particule[p].scen.ecris();
 		
 	}
 	
@@ -780,15 +825,16 @@ struct ParticleSetC
                 
               
 	
-	void cleanParticleSet(){
+	/*void cleanParticleSet(){
 		for (int i=0;i<this->npart;i++) {
                         delete []this->particule[i].scen.paramvar;
                         delete []this->particule[i].scen.time_sample;
                         delete []this->particule[i].scen.event;
                         delete []this->particule[i].scen.ne0;
                         delete []this->particule[i].scen.histparam;
+                        if (this->particule[i].scen.nconditions>0) delete []this->particule[i].scen.condition;
                 }
-	}
+	}*/
 
 	void dosimultabref(HeaderC header,int npart, bool dnatrue, int numrec)
 	{
@@ -797,8 +843,8 @@ struct ParticleSetC
                bool trouve,trace;
                this->npart = npart;
                int *sOK;
-               trace=(numrec>=32900);
-               //enregC *enreg;
+               trace=false;
+               if (trace) cout <<"debut de dosimultabref\n";fflush(stdin);
                sOK = new int[npart];
                //if (this->defined) cout <<"particleSet defined\n";
                //else cout<<"particleSet UNdefined\n";
@@ -830,19 +876,20 @@ struct ParticleSetC
                         this->resetparticle(p);
                      }
                 }
-                //cout << "avant pragma npart = "<<npart<<"\n";
+                if (trace) cout << "avant pragma npart = "<<npart<<"\n";
                 
-	       //#pragma omp parallel for shared(sOK) private(gr)
+	       #pragma omp parallel for shared(sOK) private(gr)
                 for (ipart=0;ipart<this->npart;ipart++){
+                        if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 			sOK[ipart]=this->particule[ipart].dosimulpart(trace);
                         if (trace) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 			if (sOK[ipart]==0) {
 			 	for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
 			}
-			//cout<<"apres docalstat de la particule "<<ipart<<"\n";
+			if (trace) cout<<"apres docalstat de la particule "<<ipart<<"\n";
 		}
 //fin du pragma
-                //cout << "apres pragma\n";
+                if (trace) cout << "apres pragma\n";
                 for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				enreg[ipart].numscen=1;
@@ -861,7 +908,7 @@ struct ParticleSetC
                                 enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
                         }
 		}
-		//cout<<"apres remplissage des enreg\n";fflush(stdin);
+		if (trace) cout<<"apres remplissage des enreg\n";fflush(stdin);
                 if (not courantdone){
                       FILE * pFile;
                       char  *curfile;
@@ -898,8 +945,9 @@ struct ParticleSetC
                       courantdone=true;
                 }
 		//cout <<"fin de l'ecriture du fichier courant.log' \n";
-		cleanParticleSet();
+		//cleanParticleSet();
 		//cout << "fin de dosimultabref\n";
                 delete [] sOK;
+                if (trace) cout <<"fin de dosimultabref\n";
 	}
 };

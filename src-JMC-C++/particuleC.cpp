@@ -40,6 +40,8 @@ int stat_num[NSTAT]     = {  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  
  *
  *
  */
+    vector <string> histparname;
+    vector <int> histparcat;
 
 int arrondi(double a) {return (int)(a + 0.5);}
 
@@ -103,7 +105,7 @@ public:
 struct Ne0C
 {
 	int val;
-	string name;
+	char *name;
 };
 
 class HistParameterC
@@ -143,8 +145,6 @@ public:
     Ne0C *ne0;
     HistParameterC *histparam;
     
-    vector <string> histparname;
-    vector <int> histparcat;
     ConditionC *condition;
     
     
@@ -154,7 +154,7 @@ public:
 
     void detparam(string s,int cat)
     {	string s1;
-    int i,j;
+        int i,j;
         size_t plus,minus,posigne;
         vector <string> ss;
         bool trouve;
@@ -176,14 +176,14 @@ public:
                             trouve=false;
                             j=0;
                             while ((not trouve)and(j<this->nparam)) {
-                                    trouve= (ss[i].compare(this->histparname[j])==0);
+                                    trouve= (ss[i].compare(histparname[j])==0);
                                     //(pr.name == this->histpar[j]->name);
                                     //cout<<"this->histparname["<<j <<"] = "<<this->histparname[j]<<"   trouve="<<trouve<<"\n";
                                     j++;
                             }
-                            if (not trouve) {this->histparname.push_back(ss[i]);this->histparcat.push_back(cat);this->nparam++;}
+                            if (not trouve) {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;}
                             //else cout<<"deja\n";
-                    } else {this->histparname.push_back(ss[i]);this->histparcat.push_back(cat);this->nparam++;} 
+                    } else {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;} 
             }
         //cout<<"dans detparam  size = "<<this->histparname.size()<<"   nparam="<<this->nparam<<"\n";
         //for (int i=0;i<this->histparname.size();i++) cout<<"histparname = "<<this->histparname[i]<<"\n";
@@ -198,8 +198,10 @@ public:
     	this->nn0=n;this->nparam=0;
     	this->ne0 = new Ne0C[this->nn0];
     	for (int i=0;i<this->nn0;i++) {
-    		if (atoi(ss[i].c_str())==0) {this->ne0[i].name=ss[i];this->ne0[i].val=-1;this->detparam(this->ne0[i].name,0);}
-    		else               {this->ne0[i].name="";this->ne0[i].val=atoi(ss[i].c_str());}
+    		if (atoi(ss[i].c_str())==0) {
+                    this->ne0[i].name = new char[ss[i].length()+1];
+                    strcpy(this->ne0[i].name,ss[i].c_str());this->ne0[i].val=-1;this->detparam(ss[i],0);}
+    		else               {strcpy(this->ne0[i].name,"");this->ne0[i].val=atoi(ss[i].c_str());}
     	}
     	this->nevent = nl-1;
     	this->event = new EventC[nl-1];
@@ -242,12 +244,12 @@ public:
         //cout << "this->nparam = "<<this->nparam<<"   size= "<<histparname.size()<<"\n";
     	for (int i=0;i<this->nparam;i++){
                 //cout<<"i = "<<i<<"\n";
-    		this->histparam[i].name=this->histparname[i];
+    		this->histparam[i].name=histparname[i];
                 //cout << this->histparam[i].name<<"\n";
-    		this->histparam[i].category=this->histparcat[i];
+    		this->histparam[i].category=histparcat[i];
 		if (this->histparam[i].category=='T')this->histparam[i].value=-9999; else this->histparam[i].value=-1;
     	}
-    	this->histparname.clear();this->histparcat.clear();
+    	histparname.clear();histparcat.clear();
     	this->time_sample = new int[this->nsamp];
     	n=-1;
     	for (int i=0;i<this->nevent;i++) {if (this->event[i].action=='E') {n++;this->time_sample[n]=this->event[i].time;}}
@@ -301,7 +303,8 @@ EventC copyevent(EventC source) {
 
 Ne0C copyne0(Ne0C source) {
 	Ne0C dest;
-	dest.name = source.name;
+        dest.name = new char[strlen(source.name)+1];
+	strcpy(dest.name,source.name);
 	dest.val = source.val;
 	return dest;
 }
@@ -337,19 +340,18 @@ ScenarioC copyscenario(ScenarioC source) {
 	dest.nconditions = source.nconditions;
 	dest.event = new EventC[dest.nevent];
 	for (int i=0;i<dest.nevent;i++) dest.event[i] = copyevent(source.event[i]);
-	//cout<<"fin de la copie des events\n"<<flush;
 	dest.ne0 = new Ne0C[dest.nn0];
 	for (int i=0;i<dest.nn0;i++) dest.ne0[i] = copyne0(source.ne0[i]);
 	dest.time_sample = new int[dest.nsamp];
 	for (int i=0;i<dest.nsamp;i++) dest.time_sample[i] = source.time_sample[i];
-	//cout<<"fin de la copie des NeO et des time_sample\n nparam="<<dest.nparam<<"\n"<<flush;
 	dest.histparam = new HistParameterC[dest.nparam];
 	for (int i=0;i<dest.nparam;i++) {dest.histparam[i] = copyhistparameter(source.histparam[i]);/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
-	//cout<<"fin de la copie des histparam\n"<<flush;
 	dest.paramvar = new double[dest.nparamvar];
 	for (int i=0;i<dest.nparamvar;i++) {dest.paramvar[i] = source.paramvar[i];/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
-	dest.condition = new ConditionC[dest.nconditions];
-	for (int i=0;i<dest.nconditions;i++) dest.condition[i] = copycondition(source.condition[i]);
+        if (dest.nconditions>0) {
+            dest.condition = new ConditionC[dest.nconditions];
+            for (int i=0;i<dest.nconditions;i++) dest.condition[i] = copycondition(source.condition[i]);
+        }
 	return dest;
 }
 
@@ -422,14 +424,36 @@ struct ParticleC
 
 	}
 	
-	void drawscenario() {
+	void drawscenario(bool trace) {
 		double ra,sp=0.0;
 		ra = this->mw.random();
 		int iscen=-1;
 		while (ra>sp) {
 			iscen++;sp +=this->scenario[iscen].prior_proba;
 		}
-		this->scen = copyscenario(this->scenario[iscen]);
+                
+                this->scen.prior_proba = this->scenario[iscen].prior_proba;
+                this->scen.number = this->scenario[iscen].number;
+                this->scen.popmax = this->scenario[iscen].popmax;
+                this->scen.npop = this->scenario[iscen].npop;
+                this->scen.nsamp = this->scenario[iscen].nsamp;
+                this->scen.nparam = this->scenario[iscen].nparam;
+                this->scen.nparamvar = this->scenario[iscen].nparamvar;
+                this->scen.nevent = this->scenario[iscen].nevent;
+                this->scen.nn0 = this->scenario[iscen].nn0;
+                this->scen.nconditions = this->scenario[iscen].nconditions;
+                for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i] = this->scenario[iscen].time_sample[i];
+                for (int i=0;i<this->scen.nn0;i++) {
+                      this->scen.ne0[i].val = this->scenario[iscen].ne0[i].val;
+                      strcpy(this->scen.ne0[i].name,this->scenario[iscen].ne0[i].name);
+                }
+                //for (int i=0;i<this->scen.nn0;i++) this->scen.ne0[i] = copyne0(this->scenario[iscen].ne0[i]);
+                for (int i=0;i<this->scen.nevent;i++) this->scen.event[i] = copyevent(this->scenario[iscen].event[i]);
+                for (int i=0;i<this->scen.nparam;i++) {this->scen.histparam[i] = copyhistparameter(this->scenario[iscen].histparam[i]);/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
+                for (int i=0;i<this->scen.nparamvar;i++) {this->scen.paramvar[i] = this->scenario[iscen].paramvar[i];/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
+                if (this->scen.nconditions>0) {
+                    for (int i=0;i<this->scen.nconditions;i++) this->scen.condition[i] = copycondition(this->scenario[iscen].condition[i]);
+                }
 		//cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
 		//this->scen.ecris();
 	}
@@ -1410,21 +1434,23 @@ struct ParticleC
 	}
 
 	int dosimulpart(bool trace){
+                if (trace) cout<<"debut de dosimulpart\n";fflush(stdin);
 		vector <int> simulOK;
 		int *emptyPop;
 		bool treedone;
                 int locus,sa,indiv,nuc;
 		simulOK.resize(this->nloc);
 		GeneTreeC GeneTreeY, GeneTreeM;
-		this->drawscenario();
+                if (trace) cout<<"avant draw scenario\n";fflush(stdin);
+		this->drawscenario(trace);
 		if (trace) cout <<"avant setHistparamValue\n";fflush(stdin);
 		this->setHistParamValue();
-		if (trace) cout << "apres setHistParamValue\n";fflush(stdin);
-		if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
-		if (trace) for (int k=0;k<this->scen.nparam;k++){
-		         	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
+		//if (trace) cout << "apres setHistParamValue\n";fflush(stdin);
+		//if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
+		//if (trace) for (int k=0;k<this->scen.nparam;k++){
+		//         	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
 		this->setSequence();
-		if (trace) cout <<"apres setSequence\n";
+		//if (trace) cout <<"apres setSequence\n";
 		bool gtYexist=false, gtMexist=false;
 		this->gt = new GeneTreeC[this->nloc];
 		emptyPop = new int[this->scen.popmax+1];
@@ -1435,9 +1461,9 @@ struct ParticleC
 		//cout << "\n";
 		setMutParammoyValue();
                 int loc;
-                if (trace) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
+                //if (trace) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
 		for (loc=0;loc<this->nloc;loc++) {
-                        if (trace) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
+                        //if (trace) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
 			if (this->locuslist[loc].groupe>0) {
 				setMutParamValue(loc);
 				if (this->locuslist[loc].type >4) {
@@ -1501,9 +1527,9 @@ struct ParticleC
 				}
 	/* mutations */
 				put_mutations(loc);
-				if (trace) cout << "Locus " <<loc << "  apres put_mutations\n";
+				//if (trace) cout << "Locus " <<loc << "  apres put_mutations\n";
 				simulOK[loc]=cree_haplo(loc);
-				if (trace) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
+				//if (trace) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
 				if (simulOK[loc] != 0) break;
 				//cout << "apres break interne\n";
 				//simulOK[loc] = simOK;
@@ -1511,9 +1537,9 @@ struct ParticleC
 			}
 			locus=loc;
 			if (simulOK[loc] != 0) break;
-			if (trace) cout << "apres break externe\n";
+			//if (trace) cout << "apres break externe\n";
 		}		//LOOP ON loc
-                if (trace) cout<<"avant le remplacement des donnees manquantes\n";
+                //if (trace) cout<<"avant le remplacement des donnees manquantes\n";
                 if (simulOK[locus] == 0) {  //remplacement des données manquantes
                         //cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<"nucleotides manquants\n";fflush(stdin);
                         if (this->data.nmisshap>0) {

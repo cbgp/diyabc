@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include "simuldatC.cpp"
 #include "reftable.cpp"
+#include "estimparam.cpp"
 #include <sys/time.h>
 
 int nenr=100;
@@ -48,7 +49,9 @@ int main(int argc, char *argv[]){
 	  switch (optchar) {
 
         case 'h' : cout << "USAGE :\n";
-            cout << "-p directory_of_header.txt (choose the header directory)\n-r nb (indicate number of required data sets in the reftable)\n";
+            cout << "-p <directory of header.txt>\n-r <number of required data sets in the reftable>\n";
+            cout <<"-e for ABC parameter estimation with parameters as defined below\n";
+            cout <<"-e s:<chosen scenarios separated by a comma>;n:<number of simulated datasets taken from reftable>;ns:<number of simulated datasets used for the local regression>;t:<number of the transformation (1,2,3 or 4)>;p:<o for original, c for composite, oc for both>"<<"\n";
             break;
 	
 	    case 'p' : headerfilename = new char[strlen(optarg)+13];
@@ -97,16 +100,9 @@ int main(int argc, char *argv[]){
                               //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
                               while (nrecneeded>rt.nrec) {
                                       ps.dosimultabref(header,nenr,false,rt.nrec);
-                                      //cout<<"avant writerecords\n";fflush(stdin);
                                       rt.writerecords(nenr,enreg);
-                                      //cout<<"apres writerecords\n";fflush(stdin);
                                       rt.nrec +=nenr;
-                                      if ((rt.nrec%100)==0)cout<<rt.nrec<<"\n";
-                                      //if (rt.nrec>=158500) nenr=1;
-                                      /*for (int i=0;i<nenr;i++) {
-                                          delete [] enr[i].param;
-                                      }*/
-                                      //cout<<"apres delete enr[i].param\n";fflush(stdin);
+                                      cout<<rt.nrec<<"\n";
                               }
                               for (int i=0;i<nenr;i++) {
                                     delete [] enreg[i].param;
@@ -121,6 +117,10 @@ int main(int argc, char *argv[]){
                        cout<<"minimum ="<<nenr;
                        break;
 	
+            /*case 'e' : doestim(headerfilename,reftablefilename,statobsfilename,optarg);
+                       
+                       break;*/
+        
 	    }
 	}
 	
