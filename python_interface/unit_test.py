@@ -26,8 +26,10 @@ class testDiyabc(unittest.TestCase):
 
         self.testDir = "/home/julien/vcs/git/diyabc/python_interface/datafiles/test"
 
-    def testQuedale(self):
+    def testAllClicks(self):
         self.assertEqual(self.diyabc.app, self.app)
+        self.tOpenExistingProject("/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3/")
+
 
     def testGeneral(self):
         QTest.mouseClick(self.diyabc.ui.skipButton,Qt.LeftButton)
@@ -127,6 +129,7 @@ class testDiyabc(unittest.TestCase):
         nbproj = len(self.diyabc.project_list)
         self.diyabc.openProject(pdir)
         self.assertEqual(len(self.diyabc.project_list) == nbproj+1,True)
+        return self.diyabc.project_list[-1]
 
     def tOpenNonExistingProject(self,pdir):
         """ test sur l'ouverture d'un projet inexistant

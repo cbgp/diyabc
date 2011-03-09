@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/genericScenarioSelection.ui'
 #
-# Created: Wed Feb  2 18:22:06 2011
+# Created: Wed Mar  9 11:16:19 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -43,11 +43,35 @@ class Ui_Frame(object):
         self.okButton.setObjectName("okButton")
         self.horizontalLayout_9.addWidget(self.okButton)
         self.verticalLayout_3.addWidget(self.frame_6)
-        self.selectionLabel = QtGui.QLabel(Frame)
-        self.selectionLabel.setMinimumSize(QtCore.QSize(0, 30))
-        self.selectionLabel.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.analysisTypeLabel = QtGui.QLabel(Frame)
+        self.analysisTypeLabel.setMinimumSize(QtCore.QSize(0, 50))
+        self.analysisTypeLabel.setMaximumSize(QtCore.QSize(16777215, 50))
         font = QtGui.QFont()
         font.setPointSize(15)
+        self.analysisTypeLabel.setFont(font)
+        self.analysisTypeLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.analysisTypeLabel.setObjectName("analysisTypeLabel")
+        self.verticalLayout_3.addWidget(self.analysisTypeLabel)
+        self.frame_2 = QtGui.QFrame(Frame)
+        self.frame_2.setFrameShape(QtGui.QFrame.NoFrame)
+        self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_2.setObjectName("frame_2")
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.frame_2)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_6 = QtGui.QLabel(self.frame_2)
+        self.label_6.setMinimumSize(QtCore.QSize(130, 0))
+        self.label_6.setMaximumSize(QtCore.QSize(130, 16777215))
+        self.label_6.setObjectName("label_6")
+        self.horizontalLayout_2.addWidget(self.label_6)
+        self.projectDirEdit = QtGui.QLineEdit(self.frame_2)
+        self.projectDirEdit.setObjectName("projectDirEdit")
+        self.horizontalLayout_2.addWidget(self.projectDirEdit)
+        self.verticalLayout_3.addWidget(self.frame_2)
+        self.selectionLabel = QtGui.QLabel(Frame)
+        self.selectionLabel.setMinimumSize(QtCore.QSize(0, 50))
+        self.selectionLabel.setMaximumSize(QtCore.QSize(16777215, 50))
+        font = QtGui.QFont()
+        font.setPointSize(12)
         self.selectionLabel.setFont(font)
         self.selectionLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.selectionLabel.setObjectName("selectionLabel")
@@ -77,5 +101,7 @@ class Ui_Frame(object):
         self.okButton.setToolTip(QtGui.QApplication.translate("Frame", "Test and save data (Alt+o)", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
+        self.analysisTypeLabel.setText(QtGui.QApplication.translate("Frame", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("Frame", "Project directory : ", None, QtGui.QApplication.UnicodeUTF8))
         self.selectionLabel.setText(QtGui.QApplication.translate("Frame", "Label", None, QtGui.QApplication.UnicodeUTF8))
 

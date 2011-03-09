@@ -18,6 +18,9 @@ class GenericScenarioSelection(QFrame):
         self.createWidgets()
         self.ui.selectionLabel.setText(label)
 
+        self.ui.analysisTypeLabel.setText(self.next_title)
+        self.ui.projectDirEdit.setText(self.parent.parent.dir)
+
         self.putChoices()
 
         self.ui.verticalLayout_3.setAlignment(Qt.AlignHCenter)

@@ -749,7 +749,7 @@ class RefTableGenThread(QThread):
             #self.emit(SIGNAL("increment"))
             # lecture 
             if os.path.exists("%s/reftable.log"%(self.parent.dir)):
-                print 'open'
+                #print 'open'
                 f = open("%s/reftable.log"%(self.parent.dir),"r")
                 lines = f.readlines()
                 f.close()

@@ -114,6 +114,32 @@
     </widget>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="minimumSize">
+        <size>
+         <width>130</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>130</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Project directory : </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="refTableNameEdit"/>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -439,7 +465,8 @@
             </size>
            </property>
            <property name="text">
-            <string>Total number of simulated data :</string>
+            <string>Total number of simulated data
+in the reference table :</string>
            </property>
           </widget>
          </item>
@@ -458,7 +485,7 @@
             </size>
            </property>
            <property name="text">
-            <string>Chosen number of simulted data : </string>
+            <string>Chosen number of simulated data : </string>
            </property>
           </widget>
          </item>
@@ -491,28 +518,6 @@
              <width>100</width>
              <height>16777215</height>
             </size>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3">
-          <widget class="QLineEdit" name="refTableNameEdit"/>
-         </item>
-         <item row="2" column="2">
-          <widget class="QLabel" name="label_6">
-           <property name="minimumSize">
-            <size>
-             <width>220</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>220</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Reference table : </string>
            </property>
           </widget>
          </item>

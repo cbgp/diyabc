@@ -39,6 +39,7 @@ class Estimation(QFrame):
             self.ui.redefButton.hide()
             self.setScenarios([self.analysis[2]])
         else:
+            self.ui.candidateLabel.hide()
             self.ui.label_5.hide()
             self.ui.label_4.hide()
             self.ui.notdsEdit.hide()

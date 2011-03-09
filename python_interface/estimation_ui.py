@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/estimation.ui'
 #
-# Created: Wed Feb  9 11:13:26 2011
+# Created: Wed Mar  9 10:47:21 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -52,6 +52,17 @@ class Ui_Frame(object):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.verticalLayout_3.addWidget(self.label)
+        self.horizontalLayout_7 = QtGui.QHBoxLayout()
+        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.label_6 = QtGui.QLabel(Frame)
+        self.label_6.setMinimumSize(QtCore.QSize(130, 0))
+        self.label_6.setMaximumSize(QtCore.QSize(130, 16777215))
+        self.label_6.setObjectName("label_6")
+        self.horizontalLayout_7.addWidget(self.label_6)
+        self.refTableNameEdit = QtGui.QLineEdit(Frame)
+        self.refTableNameEdit.setObjectName("refTableNameEdit")
+        self.horizontalLayout_7.addWidget(self.refTableNameEdit)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_7)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -206,14 +217,6 @@ class Ui_Frame(object):
         self.lineEdit_3.setMaximumSize(QtCore.QSize(100, 16777215))
         self.lineEdit_3.setObjectName("lineEdit_3")
         self.gridLayout.addWidget(self.lineEdit_3, 4, 3, 1, 1)
-        self.refTableNameEdit = QtGui.QLineEdit(Frame)
-        self.refTableNameEdit.setObjectName("refTableNameEdit")
-        self.gridLayout.addWidget(self.refTableNameEdit, 2, 3, 1, 1)
-        self.label_6 = QtGui.QLabel(Frame)
-        self.label_6.setMinimumSize(QtCore.QSize(220, 0))
-        self.label_6.setMaximumSize(QtCore.QSize(220, 16777215))
-        self.label_6.setObjectName("label_6")
-        self.gridLayout.addWidget(self.label_6, 2, 2, 1, 1)
         self.verticalLayout_2.addLayout(self.gridLayout)
         self.groupBox = QtGui.QGroupBox(Frame)
         self.groupBox.setObjectName("groupBox")
@@ -243,6 +246,7 @@ class Ui_Frame(object):
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Frame", "ABC parameter estimation", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("Frame", "Project directory : ", None, QtGui.QApplication.UnicodeUTF8))
         self.scenariosLabel.setText(QtGui.QApplication.translate("Frame", "Chosen scenario :", None, QtGui.QApplication.UnicodeUTF8))
         self.redefButton.setText(QtGui.QApplication.translate("Frame", "Redefine", None, QtGui.QApplication.UnicodeUTF8))
         self.candidateLabel.setText(QtGui.QApplication.translate("Frame", "Candidate scenarios : ", None, QtGui.QApplication.UnicodeUTF8))
@@ -255,9 +259,9 @@ class Ui_Frame(object):
         self.logRadio.setText(QtGui.QApplication.translate("Frame", "log", None, QtGui.QApplication.UnicodeUTF8))
         self.logitRadio.setText(QtGui.QApplication.translate("Frame", "logit", None, QtGui.QApplication.UnicodeUTF8))
         self.logtgRadio.setText(QtGui.QApplication.translate("Frame", "log-tg", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_7.setText(QtGui.QApplication.translate("Frame", "Total number of simulated data :", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_8.setText(QtGui.QApplication.translate("Frame", "Chosen number of simulted data : ", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_6.setText(QtGui.QApplication.translate("Frame", "Reference table : ", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("Frame", "Total number of simulated data\n"
+"in the reference table :", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_8.setText(QtGui.QApplication.translate("Frame", "Chosen number of simulated data : ", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Frame", "Choice of parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.oCheck.setText(QtGui.QApplication.translate("Frame", "Original", None, QtGui.QApplication.UnicodeUTF8))
         self.cCheck.setText(QtGui.QApplication.translate("Frame", "Composite", None, QtGui.QApplication.UnicodeUTF8))
