@@ -28,7 +28,35 @@ class testDiyabc(unittest.TestCase):
 
     def testAllClicks(self):
         self.assertEqual(self.diyabc.app, self.app)
-        self.tOpenExistingProject("/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3/")
+
+        project = self.tOpenExistingProject("/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3/")
+
+        firstClicks = [project.ui.setHistoricalButton, project.ui.setGeneticButton, project.ui.tabRefTable, project.ui.tabAnalyses]
+        self.dicoPossibleClicks = {}
+        self.dicoPossibleClicks[project.ui.setHistoricalButton] = [project.hist_model_win.ui.exitButton,
+                                                              project.hist_model_win.ui.clearButton,
+                                                              project.hist_model_win.ui.okButton,
+                                                              project.hist_model_win.ui.adScButton,
+                                                              project.hist_model_win.ui.chkScButton,
+                                                              project.hist_model_win.ui.defPrButton
+                                                              ]
+        self.dicoPossibleClicks[project.hist_model_win.ui.exitButton] = firstClicks
+        self.dicoPossibleClicks[project.hist_model_win.ui.clearButton] = self.dicoPossibleClicks[project.ui.setHistoricalButton]
+        self.dicoPossibleClicks[project.hist_model_win.ui.okButton] = firstClicks
+        self.dicoPossibleClicks[project.hist_model_win.ui.adScButton] = self.dicoPossibleClicks[project.ui.setHistoricalButton]
+        self.dicoPossibleClicks[project.hist_model_win.ui.chkScButton] = []
+        self.dicoPossibleClicks[project.hist_model_win.ui.defPrButton] = self.dicoPossibleClicks[project.ui.setHistoricalButton]
+        
+        self.exploreClick(firstClicks)
+
+    def exploreClick(self,lclicks):
+        if lclicks == []:
+            return
+        else:
+            for c in lclicks:
+                QTest.mouseClick(c,Qt.LeftButton)
+                self.exploreClick(self.dicoPossibleClicks[c]
+                        #TODO
 
 
     def testGeneral(self):
