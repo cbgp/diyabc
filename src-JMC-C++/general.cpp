@@ -5,6 +5,8 @@
 #include "reftable.cpp"
 #include <sys/time.h>
 
+int nenr=100;
+
 double walltime( double *t0 )
 {
   double mic, time;
@@ -31,16 +33,17 @@ double clock_zero=0.0,debut,duree;
 
 int main(int argc, char *argv[]){
 	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename;
-	int nrecneeded,nrectodo,k,nenr=100;
+	int nrecneeded,nrectodo,k;
 	double **paramstat;
-        enregC *enr;
 	int optchar;
         ReftableC rt;
-	srand(time(NULL));
-        
+	HeaderC header;
+        ParticleSetC ps;
+        //srand(time(NULL));
+       
         debut=walltime(&clock_zero);
 
-	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:h")) !=-1) {
+	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:g:h")) !=-1) {
          
 	  switch (optchar) {
 
@@ -57,22 +60,20 @@ int main(int argc, char *argv[]){
 		       strcat(headerfilename,"header.txt");
 		       strcat(reftablefilename,"reftable.bin");
                        strcat(statobsfilename,"statobs.txt");
-		       cout<<headerfilename<<"\n"<<reftablefilename<<"\n"; 
+		       //cout<<headerfilename<<"\n"<<reftablefilename<<"\n"; 
 		       break;
 		   
 	    case 'r' : nrecneeded = atoi(optarg);
 	               cout <<"nrecneeded = "<<nrecneeded<<"\n";
-		       HeaderC header;
 		       header.readHeader(headerfilename);
                        //cout<<"avant calstatobs\n";fflush(stdin);
                        header.calstatobs(statobsfilename);
 		       cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
 		       datafilename=strdup(header.datafilename.c_str());
                        //cout << datafilename<<"\n";
-                       ParticleSetC ps;
 		       k=rt.readheader(reftablefilename,header.nscenarios,datafilename);
                        //cout<<header.scenario[0].nparamvar<<"    "<<header.scenario[1].nparamvar<<"    "<<header.scenario[2].nparamvar<<"\n";
-                       cout <<"k="<<k<<"\n";
+                       //cout <<"k="<<k<<"\n";
 		       if (k==1) {
                            rt.datapath = datafilename;
                            rt.nscen = header.nscenarios;
@@ -87,27 +88,37 @@ int main(int argc, char *argv[]){
                        if (nrecneeded>rt.nrec) {
                               ps.defined=false;
                               rt.openfile();
+                              enreg = new enregC[nenr];
+                              for (int p=0;p<nenr;p++) {
+                                  enreg[p].stat = new float[header.nstat];
+                                  enreg[p].param = new float[header.nparamtot+3*header.ngroupes];
+                                  enreg[p].numscen = 1;
+                              }
+                              //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
                               while (nrecneeded>rt.nrec) {
-                                      enr = ps.dosimultabref(header,nenr,false);
+                                      ps.dosimultabref(header,nenr,false,rt.nrec);
                                       //cout<<"avant writerecords\n";fflush(stdin);
-                                      rt.writerecords(nenr,enr);
+                                      rt.writerecords(nenr,enreg);
+                                      //cout<<"apres writerecords\n";fflush(stdin);
                                       rt.nrec +=nenr;
-                                      cout<<rt.nrec<<"\n";
-                                      for (int i=0;i<nenr;i++) {
+                                      if ((rt.nrec%100)==0)cout<<rt.nrec<<"\n";
+                                      //if (rt.nrec>=158500) nenr=1;
+                                      /*for (int i=0;i<nenr;i++) {
                                           delete [] enr[i].param;
-                                      }
+                                      }*/
+                                      //cout<<"apres delete enr[i].param\n";fflush(stdin);
                               }
                               for (int i=0;i<nenr;i++) {
-                                    //delete [] enr[i].param;
-                                    delete [] enr[i].stat;
+                                    delete [] enreg[i].param;
+                                    delete [] enreg[i].stat;
                               }
-                              delete [] enr;
+                              delete [] enreg;
                               rt.closefile();
                        }
 	               break;
                    
-            case 'e' : 
-              
+            case 'g' : nenr = atoi(optarg);
+                       cout<<"minimum ="<<nenr;
                        break;
 	
 	    }

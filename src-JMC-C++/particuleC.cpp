@@ -143,7 +143,8 @@ public:
     Ne0C *ne0;
     HistParameterC *histparam;
     
-    vector <HistParameterC> histpar;
+    vector <string> histparname;
+    vector <int> histparcat;
     ConditionC *condition;
     
     
@@ -151,39 +152,44 @@ public:
      * category=0 (Ne)   , 1 (time),  3 (admixrate)
     */
 
-void detparam(string s,int cat)
-{	string s1;
-int i,j;
-    size_t plus,minus,posigne;
-    vector <string> ss;
-    HistParameterC pr;
-    bool trouve;
-	s1=s;
-	while (s1.length()>0) {
-		plus=s1.find("+");
-		minus=s1.find("-");
-		if ((plus == string::npos)and(minus == string::npos)) {ss.push_back(s1);s1="";}
-		else {
-			if (plus>=0) posigne=plus;
-			else		 posigne=minus;
-			ss.push_back(s1.substr(0,posigne-1));
-			s1=s1.substr(posigne+1);	
-		}	  	
-	}
-	for (i=0;i<ss.size();i++) {
-		pr.category=cat;
-		pr.name=ss[i];
-		if (this->nparam>0) {
-			trouve=false;
-			j=0;
-			while ((not trouve)and(j<this->nparam)) {
-				trouve=(pr.name == this->histpar[j].name);
-				j++;
-			}
-			if (not trouve) {this->histpar.push_back(pr);this->nparam++;}
-		} else {this->histpar.push_back(pr);this->nparam++;} 
-	}
-}
+    void detparam(string s,int cat)
+    {	string s1;
+    int i,j;
+        size_t plus,minus,posigne;
+        vector <string> ss;
+        bool trouve;
+            s1=s;
+            while (s1.length()>0) {
+                    plus=s1.find("+");
+                    minus=s1.find("-");
+                    if ((plus == string::npos)and(minus == string::npos)) {ss.push_back(s1);s1="";}
+                    else {
+                            if (plus>=0) posigne=plus;
+                            else		 posigne=minus;
+                            ss.push_back(s1.substr(0,posigne-1));
+                            s1=s1.substr(posigne+1);	
+                    }	  	
+            }
+            for (i=0;i<ss.size();i++) {
+                    //cout<<"   this->nparam = "<<this->nparam<<"\n";
+                    if (this->nparam>0) {
+                            trouve=false;
+                            j=0;
+                            while ((not trouve)and(j<this->nparam)) {
+                                    trouve= (ss[i].compare(this->histparname[j])==0);
+                                    //(pr.name == this->histpar[j]->name);
+                                    //cout<<"this->histparname["<<j <<"] = "<<this->histparname[j]<<"   trouve="<<trouve<<"\n";
+                                    j++;
+                            }
+                            if (not trouve) {this->histparname.push_back(ss[i]);this->histparcat.push_back(cat);this->nparam++;}
+                            //else cout<<"deja\n";
+                    } else {this->histparname.push_back(ss[i]);this->histparcat.push_back(cat);this->nparam++;} 
+            }
+        //cout<<"dans detparam  size = "<<this->histparname.size()<<"   nparam="<<this->nparam<<"\n";
+        //for (int i=0;i<this->histparname.size();i++) cout<<"histparname = "<<this->histparname[i]<<"\n";
+        //cout<<"\n";
+    }
+    
 
     void read_events(int nl,string *ls){
     	string *ss;
@@ -233,12 +239,15 @@ int i,j;
     	}
     	this->histparam = new HistParameterC[this->nparam];
     	//this->paramvar = new HistParameterC[this->nparamvar];
+        //cout << "this->nparam = "<<this->nparam<<"   size= "<<histparname.size()<<"\n";
     	for (int i=0;i<this->nparam;i++){
-    		this->histparam[i].name=histpar[i].name;
-    		this->histparam[i].category=histpar[i].category;
+                //cout<<"i = "<<i<<"\n";
+    		this->histparam[i].name=this->histparname[i];
+                //cout << this->histparam[i].name<<"\n";
+    		this->histparam[i].category=this->histparcat[i];
 		if (this->histparam[i].category=='T')this->histparam[i].value=-9999; else this->histparam[i].value=-1;
     	}
-    	histpar.clear();
+    	this->histparname.clear();this->histparcat.clear();
     	this->time_sample = new int[this->nsamp];
     	n=-1;
     	for (int i=0;i<this->nevent;i++) {if (this->event[i].action=='E') {n++;this->time_sample[n]=this->event[i].time;}}
@@ -1400,23 +1409,22 @@ struct ParticleC
 		return 0;
 	}
 
-	int dosimulpart(int ipart){
+	int dosimulpart(bool trace){
 		vector <int> simulOK;
 		int *emptyPop;
 		bool treedone;
                 int locus,sa,indiv,nuc;
-		
 		simulOK.resize(this->nloc);
 		GeneTreeC GeneTreeY, GeneTreeM;
 		this->drawscenario();
-		//cout <<"avant setHistparamValue\n";fflush(stdin);
+		if (trace) cout <<"avant setHistparamValue\n";fflush(stdin);
 		this->setHistParamValue();
-		//cout << "apres setHistParamValue\n";fflush(stdin);
-		//cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
-		//for (int k=0;k<this->scen.nparam;k++){
-		//	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
+		if (trace) cout << "apres setHistParamValue\n";fflush(stdin);
+		if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
+		if (trace) for (int k=0;k<this->scen.nparam;k++){
+		         	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
 		this->setSequence();
-		//cout <<"apres setSequence\n";
+		if (trace) cout <<"apres setSequence\n";
 		bool gtYexist=false, gtMexist=false;
 		this->gt = new GeneTreeC[this->nloc];
 		emptyPop = new int[this->scen.popmax+1];
@@ -1427,9 +1435,9 @@ struct ParticleC
 		//cout << "\n";
 		setMutParammoyValue();
                 int loc;
-                //cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
+                if (trace) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
 		for (loc=0;loc<this->nloc;loc++) {
-                        //cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
+                        if (trace) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
 			if (this->locuslist[loc].groupe>0) {
 				setMutParamValue(loc);
 				if (this->locuslist[loc].type >4) {
@@ -1493,9 +1501,9 @@ struct ParticleC
 				}
 	/* mutations */
 				put_mutations(loc);
-				//cout << "Locus " <<loc << "  apres put_mutations\n";
+				if (trace) cout << "Locus " <<loc << "  apres put_mutations\n";
 				simulOK[loc]=cree_haplo(loc);
-				//cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
+				if (trace) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
 				if (simulOK[loc] != 0) break;
 				//cout << "apres break interne\n";
 				//simulOK[loc] = simOK;
@@ -1503,9 +1511,9 @@ struct ParticleC
 			}
 			locus=loc;
 			if (simulOK[loc] != 0) break;
-			//cout << "apres break externe\n";
+			if (trace) cout << "apres break externe\n";
 		}		//LOOP ON loc
-                //cout<<"avant le remplacement des donnees manquantes\n";
+                if (trace) cout<<"avant le remplacement des donnees manquantes\n";
                 if (simulOK[locus] == 0) {  //remplacement des données manquantes
                         //cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<"nucleotides manquants\n";fflush(stdin);
                         if (this->data.nmisshap>0) {
@@ -1531,15 +1539,15 @@ struct ParticleC
                         
                         }
                 }
-                //cout<<"avant les delete\n";fflush(stdin);
+                if (trace) cout<<"avant les delete\n";fflush(stdin);
                 delete [] emptyPop;
 		for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) deletetree(this->gt[loc]);}
 		delete [] this->gt;
 		if (gtYexist) deletetree(GeneTreeY);
 		if (gtMexist) deletetree(GeneTreeM);
-		//cout << "Fin de dosimulpart \n";
+		if (trace) cout << "Fin de dosimulpart \n";
 		int simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
-		//cout<<"fin de dosimulpart\n";fflush(stdin);
+		if (trace) cout<<"fin de dosimulpart\n";fflush(stdin);
 		return simOK;
 	}
 

@@ -36,6 +36,9 @@ struct enregC {
     string message;
 };
 
+enregC *enreg;
+bool courantdone=false;
+
 class HeaderC
 {
 public:
@@ -200,7 +203,7 @@ public:
 			this->scenario[i].nparamvar=0;
 			for (int j=0;j<this->scenario[i].nparam;j++) {
 				int k=0;
-				while (this->scenario[i].histparam[j].name!=this->histparam[k].name) k++;
+				while (this->scenario[i].histparam[j].name!=this->histparam[k].name) {k++;}
 				this->scenario[i].histparam[j].prior = copyprior(this->histparam[k].prior);
 				if (not this->histparam[k].prior.constant) {
 					//this->scenario[i].paramvar[this->scenario[i].nparamvar].prior = copyprior(this->histparam[k].prior);
@@ -787,22 +790,24 @@ struct ParticleSetC
                 }
 	}
 
-	enregC* dosimultabref(HeaderC header,int npart, bool dnatrue)
+	void dosimultabref(HeaderC header,int npart, bool dnatrue, int numrec)
 	{
                int ipart,jpart=0,nthreads,base;
 	       int gr,nstat,pa,ip,iscen;
-               bool trouve;
+               bool trouve,trace;
                this->npart = npart;
                int *sOK;
-               enregC *enreg;
+               trace=(numrec>=32900);
+               //enregC *enreg;
                sOK = new int[npart];
                //if (this->defined) cout <<"particleSet defined\n";
                //else cout<<"particleSet UNdefined\n";
                //this->header = header;
                if (not this->defined) {                
-                    base=rand();
+                    //srand(time(NULL));
+                    srand(1);  
+                    base=0;//rand();
                     this->particule = new ParticleC[this->npart];
-                    enreg = new enregC[this->npart];
                     this->header = header;
                     for (int p=0;p<this->npart;p++) {
                         //cout <<"avant set particule "<<p<<"\n";
@@ -817,19 +822,20 @@ struct ParticleSetC
                         this->setscenarios(p);
                         //cout << "                    apres set particule\n";
                         this->particule[p].mw.randinit(p+base ,false);
-                        enreg[p].stat = new float[header.nstat];
                     }
                     this->defined=true;
                 }
                 else {
-                     for (int p=0;p<this->npart;p++) this->resetparticle(p);
+                     for (int p=0;p<this->npart;p++) {
+                        this->resetparticle(p);
+                     }
                 }
                 //cout << "avant pragma npart = "<<npart<<"\n";
                 
-#pragma omp parallel for shared(sOK) private(gr)
+	       //#pragma omp parallel for shared(sOK) private(gr)
                 for (ipart=0;ipart<this->npart;ipart++){
-			sOK[ipart]=this->particule[ipart].dosimulpart(ipart);
-                        //cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
+			sOK[ipart]=this->particule[ipart].dosimulpart(trace);
+                        if (trace) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 			if (sOK[ipart]==0) {
 			 	for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
 			}
@@ -840,15 +846,13 @@ struct ParticleSetC
                 for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				enreg[ipart].numscen=1;
-				if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
-				enreg[ipart].param = new float[this->particule[ipart].scen.nparamvar];
+                                if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
+                                
 				for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];}
-                                //cout<<"apres enreg.param\n";
                                 nstat=0;
 				for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 					for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}
 				}
-                                //cout<<"apres enreg.stat\n";
 				enreg[ipart].message="OK";
 			}
 			else {
@@ -857,42 +861,45 @@ struct ParticleSetC
                                 enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
                         }
 		}
-                FILE * pFile;
-                char  *curfile;
-                //cout<<"avant curfile\n";fflush(stdin);
-                curfile = new char[strlen(this->header.pathbase)+13];
-                strcpy(curfile,this->header.pathbase);
-                strcat(curfile,"courant.log");
-                //cout<<curfile<<"\n";
-                pFile = fopen (curfile,"w");
-                fprintf(pFile,"%s\n",this->header.entete.c_str());
-                for (int ipart=0;ipart<this->npart;ipart++) {
-                        if (sOK[ipart]==0){
-                          fprintf(pFile,"%3d  ",enreg[ipart].numscen);
-                          iscen=enreg[ipart].numscen-1;
-                          //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
-                          pa=0;
-                          //cout<<header.nparamtot<<"   "<<this->particule[ipart].scen.nparamvar<<"\n";
-                          for (int j=0;j<header.nparamtot;j++) {
-                              trouve=false;ip=-1;
-                              while ((not trouve)and(ip<header.scenario[iscen].nparam-1)) {
-                                  ip++;
-                                  trouve=(header.histparam[j].name == header.scenario[iscen].histparam[ip].name);
-                                  //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
+		//cout<<"apres remplissage des enreg\n";fflush(stdin);
+                if (not courantdone){
+                      FILE * pFile;
+                      char  *curfile;
+                      //cout<<"avant curfile\n";fflush(stdin);
+                      curfile = new char[strlen(this->header.pathbase)+13];
+                      strcpy(curfile,this->header.pathbase);
+                      strcat(curfile,"courant.log");
+                      //cout<<curfile<<"\n";
+                      pFile = fopen (curfile,"w");
+                      fprintf(pFile,"%s\n",this->header.entete.c_str());
+                      for (int ipart=0;ipart<this->npart;ipart++) {
+                              if (sOK[ipart]==0){
+                                fprintf(pFile,"%3d  ",enreg[ipart].numscen);
+                                iscen=enreg[ipart].numscen-1;
+                                //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
+                                pa=0;
+                                //cout<<header.nparamtot<<"   "<<this->particule[ipart].scen.nparamvar<<"\n";
+                                for (int j=0;j<header.nparamtot;j++) {
+                                    trouve=false;ip=-1;
+                                    while ((not trouve)and(ip<header.scenario[iscen].nparam-1)) {
+                                        ip++;
+                                        trouve=(header.histparam[j].name == header.scenario[iscen].histparam[ip].name);
+                                        //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
+                                    }
+                                    if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
+                                    else fprintf(pFile,"              ");
+                                }
+                                for (int j=pa;j<this->particule[ipart].scen.nparamvar;j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
+                                for (int st=0;st<nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
+                                fprintf(pFile,"\n");
                               }
-                              if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
-                              else fprintf(pFile,"              ");
-                          }
-                          for (int j=pa;j<this->particule[ipart].scen.nparamvar;j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
-                          for (int st=0;st<nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
-                          fprintf(pFile,"\n");
-                        }
+                      }
+                      fclose(pFile);
+                      courantdone=true;
                 }
-                fclose(pFile);
-		//cout <<"fin du remplissage \n";
+		//cout <<"fin de l'ecriture du fichier courant.log' \n";
 		cleanParticleSet();
 		//cout << "fin de dosimultabref\n";
                 delete [] sOK;
-		return enreg;
 	}
 };

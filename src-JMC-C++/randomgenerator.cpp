@@ -1019,7 +1019,7 @@ struct MwcGen
 
 	void randinit(unsigned int indice, bool reseed) {
 		this->mult = multipli[indice % 10000];
-		srand((unsigned) time (NULL));
+		//srand((unsigned) time (NULL));
 		if (reseed) {
 			long sec;
 			time (&sec);
