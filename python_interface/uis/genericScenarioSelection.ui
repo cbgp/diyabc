@@ -142,7 +142,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="projectDirEdit"/>
+       <widget class="QLineEdit" name="projectDirEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

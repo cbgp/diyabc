@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/biasScenarioSelection.ui'
 #
-# Created: Thu Feb  3 14:17:23 2011
+# Created: Wed Mar  9 11:46:45 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -43,6 +43,33 @@ class Ui_Frame(object):
         self.okButton.setObjectName("okButton")
         self.horizontalLayout_9.addWidget(self.okButton)
         self.verticalLayout_5.addWidget(self.frame_6)
+        self.analysisTypeLabel = QtGui.QLabel(Frame)
+        self.analysisTypeLabel.setMinimumSize(QtCore.QSize(0, 40))
+        self.analysisTypeLabel.setMaximumSize(QtCore.QSize(16777215, 40))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.analysisTypeLabel.setFont(font)
+        self.analysisTypeLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.analysisTypeLabel.setObjectName("analysisTypeLabel")
+        self.verticalLayout_5.addWidget(self.analysisTypeLabel)
+        self.frame_2 = QtGui.QFrame(Frame)
+        self.frame_2.setMinimumSize(QtCore.QSize(0, 100))
+        self.frame_2.setMaximumSize(QtCore.QSize(16777215, 100))
+        self.frame_2.setFrameShape(QtGui.QFrame.NoFrame)
+        self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_2.setObjectName("frame_2")
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.frame_2)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_6 = QtGui.QLabel(self.frame_2)
+        self.label_6.setMinimumSize(QtCore.QSize(130, 0))
+        self.label_6.setMaximumSize(QtCore.QSize(130, 16777215))
+        self.label_6.setObjectName("label_6")
+        self.horizontalLayout_2.addWidget(self.label_6)
+        self.projectDirEdit = QtGui.QLineEdit(self.frame_2)
+        self.projectDirEdit.setReadOnly(True)
+        self.projectDirEdit.setObjectName("projectDirEdit")
+        self.horizontalLayout_2.addWidget(self.projectDirEdit)
+        self.verticalLayout_5.addWidget(self.frame_2)
         self.frame = QtGui.QFrame(Frame)
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
@@ -55,7 +82,7 @@ class Ui_Frame(object):
         self.selectionLabel.setMinimumSize(QtCore.QSize(0, 50))
         self.selectionLabel.setMaximumSize(QtCore.QSize(500, 50))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(13)
         self.selectionLabel.setFont(font)
         self.selectionLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.selectionLabel.setObjectName("selectionLabel")
@@ -88,7 +115,7 @@ class Ui_Frame(object):
         self.label.setMinimumSize(QtCore.QSize(0, 50))
         self.label.setMaximumSize(QtCore.QSize(16777215, 50))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(13)
         self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
@@ -114,6 +141,8 @@ class Ui_Frame(object):
         self.okButton.setToolTip(QtGui.QApplication.translate("Frame", "Test and save data (Alt+o)", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
+        self.analysisTypeLabel.setText(QtGui.QApplication.translate("Frame", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("Frame", "Project directory : ", None, QtGui.QApplication.UnicodeUTF8))
         self.selectionLabel.setText(QtGui.QApplication.translate("Frame", "Select the scenario from which\n"
 "you want to perform computations", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Frame", "Parameter values for this scenario", None, QtGui.QApplication.UnicodeUTF8))

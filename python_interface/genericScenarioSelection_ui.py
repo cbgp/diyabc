@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/genericScenarioSelection.ui'
 #
-# Created: Wed Mar  9 11:16:19 2011
+# Created: Wed Mar  9 11:44:52 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -64,6 +64,7 @@ class Ui_Frame(object):
         self.label_6.setObjectName("label_6")
         self.horizontalLayout_2.addWidget(self.label_6)
         self.projectDirEdit = QtGui.QLineEdit(self.frame_2)
+        self.projectDirEdit.setReadOnly(True)
         self.projectDirEdit.setObjectName("projectDirEdit")
         self.horizontalLayout_2.addWidget(self.projectDirEdit)
         self.verticalLayout_3.addWidget(self.frame_2)

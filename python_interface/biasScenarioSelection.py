@@ -37,6 +37,12 @@ class BiasNEvaluateScenarioSelection(QFrame):
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
+        if self.analysis[0] == "bias":
+            self.ui.analysisTypeLabel.setText("Bias and mean square error")
+        else:
+            self.ui.analysisTypeLabel.setText("Confidence in scenario choice")
+        self.ui.projectDirEdit.setText(self.parent.parent.dir)
+
     def validate(self):
         if self.ui.fixedRadio.isChecked():
             self.analysis.append("fixed")
