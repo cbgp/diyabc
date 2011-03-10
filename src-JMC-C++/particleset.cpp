@@ -1,4 +1,3 @@
-#include <iostream>
 
 
 //using namespace boost::python;
@@ -6,10 +5,16 @@
 //#include <vector>
 
 #ifdef _OPENMP
+#ifndef OMPH
 #include <omp.h>
+#define OMPH
+#endif
 #endif
 
+#ifndef HEADER
 #include "header.cpp"
+#define HEADER
+#endif
 
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			-13 : fst

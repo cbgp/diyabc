@@ -1,7 +1,20 @@
+
+#ifndef FSTREAM
 #include <fstream>
-#include <cstring>
+#define FSTREAM
+#endif
+#ifndef IOSTREAM
 #include <iostream>
+#define IOSTREAM
+#endif
+#ifndef STRING
 #include <string>
+#define STRING
+#endif
+#ifndef CSTRING
+#include <cstring>
+#define CSTRING
+#endif
 
 
 class ReftableC 

@@ -1,5 +1,8 @@
-#include <string.h>
-
+#ifndef STRING
+#include <string>
+#define STRING
+#endif
+using namespace std;
 
 
 int getwordint(string s,int num){
@@ -117,5 +120,23 @@ string IntToString ( int number )
   return oss.str();
 }
 
+string majuscules(string s) {
+    string s2;
+    char *c;
+    c = new char[s.length()+1];
+    for (int i=0;i<s.length();i++) {
+        c[i]=s[i];
+        c[i]=toupper(c[i]);
+    }
+    s2 = string(c,s.length());
+    delete [] c;
+    return s2;
+}
+
+string char2string(char *c) {
+    stringstream s;
+    s<<c;
+    return s.str();
+}
 
 

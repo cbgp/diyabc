@@ -3,9 +3,14 @@
 
 
 */
-
+#ifndef PARTICULEC
 #include "particuleC.cpp"
+#define PARTICULEC
+#endif
+#ifndef DATA
 #include "data.cpp"
+#define DATA
+#endif
 
 class HeaderC
 {
@@ -350,24 +355,39 @@ public:
                 for (int i=0;i<this->nscenarios;i++) {
                     for (int j=0;j<this->scenario[i].nevent;j++) {if (lonmax<this->scenario[i].event[j].ltime) lonmax=this->scenario[i].event[j].ltime;}
                 }
-                for (int i=0;i<this->scen.nevent;i++) {this->scen.event[i].stime = new char[lonmax];}
+                for (int i=0;i<this->scen.nevent;i++) {
+                    this->scen.event[i].stime = new char[lonmax];
+                    this->scen.event[i].ltime=0;
+                    for (int j=0;j<lonmax;j++) this->scen.event[i].stime[j]='\0';
+                }
                 lonmax=0;
                 for (int i=0;i<this->nscenarios;i++) {
                     for (int j=0;j<this->scenario[i].nevent;j++) {if (lonmax<this->scenario[i].event[j].lNe) lonmax=this->scenario[i].event[j].lNe;}
                 }
-                for (int i=0;i<this->scen.nevent;i++) {this->scen.event[i].sNe = new char[lonmax];}
+                for (int i=0;i<this->scen.nevent;i++) {
+                    this->scen.event[i].sNe = new char[lonmax];
+                    this->scen.event[i].lNe=0;
+                    for (int j=0;j<lonmax;j++) this->scen.event[i].sNe[j]='\0';
+                }
                  lonmax=0;
                 for (int i=0;i<this->nscenarios;i++) {
                     for (int j=0;j<this->scenario[i].nevent;j++) {if (lonmax<this->scenario[i].event[j].ladmixrate) lonmax=this->scenario[i].event[j].ladmixrate;}
                 }
-                for (int i=0;i<this->scen.nevent;i++) {this->scen.event[i].sadmixrate = new char[lonmax];}
+                for (int i=0;i<this->scen.nevent;i++) {
+                  this->scen.event[i].sadmixrate = new char[lonmax];
+                  this->scen.event[i].ladmixrate=0;
+                  for (int j=0;j<lonmax;j++) this->scen.event[i].sadmixrate[j]='\0';
+               }
                
                 this->scen.ne0   = new Ne0C[this->scen.nn0];
                 lonmax=0;
                 for (int i=0;i<this->nscenarios;i++) {
                     for (int j=0;j<this->scenario[i].nn0;j++) {if (lonmax<this->scenario[i].ne0[j].lon) lonmax=this->scenario[i].ne0[j].lon;};
                 }
-                for (int i=0;i<this->scen.nn0;i++) {this->scen.ne0[i].lon=lonmax;this->scen.ne0[i].name = new char[lonmax];}
+                for (int i=0;i<this->scen.nn0;i++) {
+                    this->scen.ne0[i].lon=lonmax;
+                    this->scen.ne0[i].name = new char[lonmax];
+                }
                 this->scen.time_sample = new int[this->scen.nsamp];
                 this->scen.histparam = new HistParameterC[this->scen.nparam];
                 this->scen.paramvar = new double[this->scen.nparamvar+3];

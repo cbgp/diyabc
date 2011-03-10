@@ -36,9 +36,16 @@
 #include "mesutils.cpp"
 #define MESUTILS
 #endif
+#ifndef DATA
+#include "data.cpp"
+#define DATA
+#endif
+
+#ifdef _OPENMP
 #ifndef OMPH
 #include <omp.h>
 #define OMPH
+#endif
 #endif
 
 
@@ -123,7 +130,8 @@ public:
     	char *stime,*sNe,*sadmixrate;
         int ltime,lNe,ladmixrate;
 	void ecris(){
-		cout<<"    "<<this->stime<<"   "<<this->action<<"   "<<this->sadmixrate<<"\n";
+		cout <<"ltime="<<this->ltime<<"\n";
+      //cout<<"    "<<this->stime<<"   "<<this->action<<"   "<<this->sadmixrate<<"\n";
 	}
 };
 
@@ -235,10 +243,10 @@ public:
     	this->nsamp=0;this->npop=this->nn0;this->popmax=this->nn0;
     	for (int i=0;i<nl-1;i++) {
     		ss = splitwords(ls[i+1]," ",&n);
-                this->event[i].ltime=1;this->event[i].lNe=1;this->event[i].ladmixrate=1;
-    		this->event[i].stime=new char[this->event[i].ltime];this->event[i].stime[0]='\0';
-                this->event[i].sNe=new char[this->event[i].lNe];this->event[i].sNe[0]='\0';
-                this->event[i].sadmixrate=new char[this->event[i].ladmixrate];this->event[i].sadmixrate[0]='\0';
+            this->event[i].ltime=0;this->event[i].lNe=0;this->event[i].ladmixrate=0;
+    		//this->event[i].stime=new char[this->event[i].ltime];this->event[i].stime[0]='\0';
+            //this->event[i].sNe=new char[this->event[i].lNe];this->event[i].sNe[0]='\0';
+            //this->event[i].sadmixrate=new char[this->event[i].ladmixrate];this->event[i].sadmixrate[0]='\0';
      		if (ss[0]=="0") {this->event[i].time=0;}
     		else if (atoi(ss[0].c_str())==0) {
                      this->event[i].time=-9999;
@@ -341,22 +349,28 @@ EventC copyevent(EventC source) {
 	dest.time = source.time;
 	dest.admixrate = source.admixrate;
 	dest.numevent0 = source.numevent0;
-        dest.ltime = source.ltime;
-        dest.stime = new char[source.ltime];
-	strcpy(dest.stime , source.stime);
-        dest.lNe = source.lNe;
+    //cout<<"apres les copie event simples source.ltime = "<<source.ltime <<"\n";
+    dest.ltime = source.ltime;
+    //cout<<"apres les copie event simples dest.ltime = "<<dest.ltime <<"\n";
+    dest.stime = new char[source.ltime];
+    if (dest.ltime>0)for (int i=0;i<dest.ltime;i++)dest.stime[i]=source.stime[i];
+    dest.lNe = source.lNe;
+    //cout<<"apres copie event stime\n";
 	dest.sNe = new char[source.lNe];
-        strcpy(dest.sNe,source.sNe);
-        dest.ladmixrate = source.ladmixrate;
-        dest.sadmixrate = new char[source.ladmixrate];
-	strcpy(dest.sadmixrate,source.sadmixrate);
+    if (dest.lNe>0) for (int i=0;i<dest.lNe;i++)dest.sNe[i]=source.sNe[i];
+    dest.ladmixrate = source.ladmixrate;
+    //cout<<"apres les copie event sne\n";
+    dest.sadmixrate = new char[source.ladmixrate];
+    if (dest.ladmixrate>0) for (int i=0;i<dest.ladmixrate;i++)dest.sadmixrate[i]=source.sadmixrate[i];
+    //cout<<"apres les copie event sadmixrate\n";
 	return dest;
 }
 
 Ne0C copyne0(Ne0C source) {
 	Ne0C dest;
-        dest.name = new char[strlen(source.name)+1];
-	strcpy(dest.name,source.name);
+    dest.lon=source.lon;
+    dest.name = new char[source.lon];
+    if (dest.lon>0) for (int i=0;i<dest.lon;i++) dest.name[i]=source.name[i];
 	dest.val = source.val;
 	return dest;
 }
@@ -391,8 +405,10 @@ ScenarioC copyscenario(ScenarioC source) {
 	dest.nevent = source.nevent;
 	dest.nn0 = source.nn0;
 	dest.nconditions = source.nconditions;
-	dest.event = new EventC[dest.nevent];
+    //cout<<"    fin des copy simples  dest.nevent ="<<dest.nevent<<"\n";
+    dest.event = new EventC[dest.nevent];
 	for (int i=0;i<dest.nevent;i++) dest.event[i] = copyevent(source.event[i]);
+        //cout<<"   apres copyevent\n";
 	dest.ne0 = new Ne0C[dest.nn0];
 	for (int i=0;i<dest.nn0;i++) dest.ne0[i] = copyne0(source.ne0[i]);
         //cout<<"   apres copyne0\n";
@@ -401,9 +417,11 @@ ScenarioC copyscenario(ScenarioC source) {
         //cout<<"   apres copytime_sample\n";
 	dest.histparam = new HistParameterC[dest.nparam];
 	for (int i=0;i<dest.nparam;i++) {dest.histparam[i] = copyhistparameter(source.histparam[i]);/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
+        //cout<<"   apres copyhistparam\n";
 	dest.paramvar = new double[dest.nparamvar];
 	for (int i=0;i<dest.nparamvar;i++) {dest.paramvar[i] = source.paramvar[i];/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
-        if (dest.nconditions>0) {
+        //cout<<"   apres copyparamvar\n";
+    if (dest.nconditions>0) {
             dest.condition = new ConditionC[dest.nconditions];
             for (int i=0;i<dest.nconditions;i++) dest.condition[i] = copycondition(source.condition[i]);
         }

@@ -4,9 +4,15 @@
  *  Created on: 23 sept. 2010
  *      Author: cornuet
  */
+#ifndef MATHH
 #include <math.h>
+#define MATHH
+#endif
+#ifndef STDLIBH
 #include <stdlib.h>
-#include <time.h>
+#define STDLIBH
+#endif
+//#include <time.h>
 
 static unsigned long int multipli [] = {12788298,12788754,12789228,12789669,12789810,12790245,12790848,12790890,12790953,12791154,
 						   12791580,12791868,12792045,12792069,12792498,12793563,12793584,12793599,12793695,12794760,

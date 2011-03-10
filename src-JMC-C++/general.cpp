@@ -73,7 +73,7 @@ int main(int argc, char *argv[]){
         case 'h' : cout << "USAGE :\n";
             cout << "-p <directory of header.txt>\n-r <number of required data sets in the reftable>\n";
             cout <<"-e for ABC parameter estimation with parameters as defined below\n";
-            cout <<"-e s:<chosen scenarios separated by a comma>;n:<number of simulated datasets taken from reftable>;ns:<number of simulated datasets used for the local regression>;t:<number of the transformation (1,2,3 or 4)>;p:<o for original, c for composite, oc for both>"<<"\n";
+            cout <<"-e s:<chosen scenarios separated by a comma>;n:<number of simulated datasets taken from reftable>;m:<number of simulated datasets used for the local regression>;t:<number of the transformation (1,2,3 or 4)>;p:<o for original, c for composite, oc for both>"<<"\n";
             break;
 	
 	    case 'p' : headerfilename = new char[strlen(optarg)+13];
@@ -142,9 +142,9 @@ int main(int argc, char *argv[]){
             case 'm' : 
                        multithread=true;
 	               break;
-            /*case 'e' : doestim(headerfilename,reftablefilename,statobsfilename,optarg);
+            case 'e' : doestim(headerfilename,reftablefilename,statobsfilename,optarg);
                        
-                       break;*/
+                       break;
         
 	    }
 	}
