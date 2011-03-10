@@ -12,6 +12,7 @@ from setSummaryStatistics import SetSummaryStatistics
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from visualizescenario import *
 from data import *
+import output
 
 class SetGeneticData(QFrame):
     """ Frame qui est ouverte dans un onglet pour faire des groupes de locus,
@@ -192,7 +193,7 @@ class SetGeneticData(QFrame):
             # on considère que le setmutation n'est plus valide, il faut le revalider
             self.setMutationSeqValid_dico[box] = False
         else:
-            QMessageBox.information(self,"Set Mutation Model error","Add locus to a group before setting the mutation model")
+            output.notify(self,"Set Mutation Model error","Add locus to a group before setting the mutation model")
 
 
     #def setSum(self,box=None):
@@ -217,7 +218,7 @@ class SetGeneticData(QFrame):
     #        lab = self.setSumSeq_dico[box].ui.sumStatLabel
     #        lab.setText("Set summary statistics of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
     #    else:
-    #        QMessageBox.information(self,"Set Summary statistics error","Add locus to a group before setting the summary statistics")
+    #        output.notify(self,"Set Summary statistics error","Add locus to a group before setting the summary statistics")
 
     def rmGroup(self):
         """ Enlève les loci présents dans le groupe et supprime le groupe
@@ -312,7 +313,7 @@ class SetGeneticData(QFrame):
                 # on met à jour le numero du groupe pour ce locus
                 self.dico_num_and_numgroup_locus[str(name)][1] = (self.groupList.index(box)+1)
         else:
-            QMessageBox.information(self,"Group error","In a group, all the loci must have the same type")
+            output.notify(self,"Group error","In a group, all the loci must have the same type")
 
     def rmFromGroup(self,box=None):
         """ retire les loci selectionnés du groupe du bouton pressé

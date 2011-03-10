@@ -13,6 +13,7 @@ from setSummaryStatistics import SetSummaryStatistics
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from visualizescenario import *
 from data import *
+import output
 
 class SetGeneticDataRefTable(SetGeneticData):
     """ set genetic data pour les informations concernant la reftable
@@ -82,7 +83,7 @@ class SetGeneticDataRefTable(SetGeneticData):
             lab = self.setSumSeq_dico[box].ui.sumStatLabel
             lab.setText("Set summary statistics of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
         else:
-            QMessageBox.information(self,"Set Summary statistics error","Add locus to a group before setting the summary statistics")
+            output.notify(self,"Set Summary statistics error","Add locus to a group before setting the summary statistics")
 
     def switchTo(self,widget):
         """ on switche dans la stack reftable
@@ -138,7 +139,7 @@ class SetGeneticDataRefTable(SetGeneticData):
             problem += "You must have at least one group of locus\n"
         if problem != u"":
             if not silent:
-                QMessageBox.information(self,"Impossible to validate the genetic data",problem)
+                output.notify(self,"Impossible to validate the genetic data",problem)
             self.parent.setGenValid(False)
         else:
             self.exit()

@@ -43,51 +43,41 @@ class testDiyabc(unittest.TestCase):
 
         project = self.tOpenExistingProject(diyabc,self.testProjectDir)
 
-        
-        self.dico_names = {project.ui.setHistoricalButton : "setHistoricalButton",
-                project.ui.setGeneticButton : "setGeneticButton",
-                project.ui.tabRefTable : "tabRefTable",
-                project.ui.tabAnalyses :"tabAnalyses",
-                project.hist_model_win.ui.exitButton : "histExitButton",
-                project.hist_model_win.ui.clearButton : "histClearButton",
-                project.hist_model_win.ui.okButton : "histOkButton",
-                project.hist_model_win.ui.addScButton : "histAddScButton",
-                project.hist_model_win.ui.chkScButton : "histChkScButton",
-                project.hist_model_win.ui.defPrButton : "histDefPrButton",
-                0 : "root"
-                }
         self.dicoPossibleClicks = {}
 
-        root = 0
-        self.dicoPossibleClicks[root] = [project.ui.setHistoricalButton, project.ui.setGeneticButton, project.ui.tabRefTable, project.ui.tabAnalyses]
-        self.dicoPossibleClicks[project.ui.setHistoricalButton] = [project.hist_model_win.ui.exitButton,
-                                                              project.hist_model_win.ui.clearButton,
-                                                              project.hist_model_win.ui.okButton,
-                                                              project.hist_model_win.ui.addScButton,
-                                                              project.hist_model_win.ui.chkScButton,
-                                                              project.hist_model_win.ui.defPrButton
-                                                              ]
-        self.dicoPossibleClicks[project.hist_model_win.ui.exitButton] = self.dicoPossibleClicks[root]
-        self.dicoPossibleClicks[project.hist_model_win.ui.clearButton] = self.dicoPossibleClicks[project.ui.setHistoricalButton]
-        self.dicoPossibleClicks[project.hist_model_win.ui.okButton] = self.dicoPossibleClicks[root]
-        self.dicoPossibleClicks[project.hist_model_win.ui.addScButton] = self.dicoPossibleClicks[project.ui.setHistoricalButton]
-        self.dicoPossibleClicks[project.hist_model_win.ui.chkScButton] = []
-        self.dicoPossibleClicks[project.hist_model_win.ui.defPrButton] = self.dicoPossibleClicks[project.ui.setHistoricalButton]
-        self.dicoPossibleClicks[project.ui.setGeneticButton] = []
-        self.dicoPossibleClicks[project.ui.tabRefTable] = []
-        self.dicoPossibleClicks[project.ui.tabAnalyses] = []
+        self.dicoPossibleClicks["root"] = ["setHistoricalButton","setGeneticButton", "tabRefTable","tabAnalyses"]
+        self.dicoPossibleClicks["setHistoricalButton"] = ["histExitButton","histClearButton","histOkButton","histAddScButton","histChkScButton","histDefPrButton"]
+        #self.dicoPossibleClicks["setHistoricalButton"] = []
+        self.dicoPossibleClicks["histExitButton"] = self.dicoPossibleClicks["root"]
+        self.dicoPossibleClicks["histClearButton"] = self.dicoPossibleClicks["setHistoricalButton"]
+        self.dicoPossibleClicks["histOkButton"] = self.dicoPossibleClicks["root"]
+        self.dicoPossibleClicks["histAddScButton"] = self.dicoPossibleClicks["setHistoricalButton"]
+        self.dicoPossibleClicks["histChkScButton"] = []
+        self.dicoPossibleClicks["histDefPrButton"] = self.dicoPossibleClicks["setHistoricalButton"]
+        self.dicoPossibleClicks["setGeneticButton"] = ["genClearButton","genOkButton","genExitButton","genAddGroupButton"]
+        self.dicoPossibleClicks["tabRefTable"] = []
+        self.dicoPossibleClicks["tabAnalyses"] = ["newAnButton"]
+        self.dicoPossibleClicks["newAnButton"] = []
+        self.dicoPossibleClicks["genClearButton"] = self.dicoPossibleClicks["setGeneticButton"]
+        self.dicoPossibleClicks["genOkButton"] = self.dicoPossibleClicks["root"]
+        self.dicoPossibleClicks["genExitButton"] = self.dicoPossibleClicks["root"]
+        self.dicoPossibleClicks["genAddGroupButton"] = self.dicoPossibleClicks["setGeneticButton"]
         
         self.butCount = {}
-        #f = open("/tmp/plop","w")
-        #for l in self.buildClickLists(root):
-        #    f.write(str(l)+"\n\n")
-        #f.close()
-        l = self.buildClickLists(root,0)
+        l = self.buildClickLists("root",0)
         print l
 
         nbproj = len(diyabc.project_list)
         diyabc.closeCurrentProject(False)
         self.assertEqual(len(diyabc.project_list) == nbproj-1,True)
+
+        to_remove = []
+        for chain in l:
+            if len(chain) < 3:
+                to_remove.append(chain)
+        for c in to_remove:
+            l.remove(c)
+        print "épurée : %s"%l
 
         # on a la liste des noms de boutons à cliquer
         # pour chaque combinaison possible de clics, on charge un projet et on effectue la suite de clic
@@ -106,22 +96,26 @@ class testDiyabc(unittest.TestCase):
                     "histAddScButton" : project.hist_model_win.ui.addScButton,
                     "histChkScButton" : project.hist_model_win.ui.chkScButton,
                     "histDefPrButton" : project.hist_model_win.ui.defPrButton,
-                    "root" : 0
+                    "genClearButton" : project.gen_data_win.ui.clearButton,
+                    "genOkButton" : project.gen_data_win.ui.okButton,
+                    "genExitButton" : project.gen_data_win.ui.exitButton,
+                    "genAddGroupButton" : project.gen_data_win.ui.addGroupButton,
+                    "newAnButton" : project.ui.newAnButton
                     }
-            # on effectue le suite de clics
+            # on effectue la suite de clics
             for bname in chain:
                 QTest.mouseClick(self.dico_but_from_names[bname],Qt.LeftButton)
                 QCoreApplication.processEvents()
-
 
             print "j'ai fini la chaine : %s\n"%chain
             nbproj = len(diyabc.project_list)
             diyabc.closeCurrentProject(False)
             self.assertEqual(len(diyabc.project_list) == nbproj-1,True)
 
-        # restitution de sauvegarde du projet
-        shutil.rmtree(self.testProjectDir)
-        shutil.copytree(self.saveTestProjectDir,self.testProjectDir)
+            # restitution de la sauvegarde du projet
+            shutil.rmtree(self.testProjectDir)
+            shutil.copytree(self.saveTestProjectDir,self.testProjectDir)
+
 
         diyabc.close()
 
@@ -129,7 +123,7 @@ class testDiyabc(unittest.TestCase):
     def buildClickLists(self,but,level):
         if self.dicoPossibleClicks[but] == []:
             #print "[%s] fin sur %s\n"%(level,self.dico_names[but])
-            return [[self.dico_names[but]]]
+            return [[but]]
         else:
             if but in self.butCount.keys():
                 self.butCount[but] += 1
@@ -145,8 +139,8 @@ class testDiyabc(unittest.TestCase):
                     for sublist in lexp:
                         #print "[%s] j'ajoute une liste (%s) a mon resultat\n"%(level,sublist)
                         new_l = []
-                        if self.dico_names[but] != "root":
-                            new_l.append(self.dico_names[but])
+                        if but != "root":
+                            new_l.append(but)
                         new_l.extend(list(sublist))
                         lr.append(new_l)
                         #print "[%s] lr : %s"%(level,lr)
