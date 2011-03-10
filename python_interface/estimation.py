@@ -86,15 +86,20 @@ class Estimation(QFrame):
 
     def majDicoValues(self):
         if self.ui.logRadio.isChecked():
-            trans = "log"
+            #trans = "log"
+            trans = "2"
         elif self.ui.logtgRadio.isChecked():
-            trans = "logtg"
+            #trans = "logtg"
+            trans = "4"
         elif self.ui.noRadio.isChecked():
-            trans = "no"
+            #trans = "no"
+            trans = "1"
         elif self.ui.logitRadio.isChecked():
-            trans = "logit"
+            #trans = "logit"
+            trans = "3"
         self.dico_values["transformation"] = trans
         self.dico_values["numberOfselData"] = str(self.ui.nosdEdit.text())
+        self.dico_values["choNumberOfsimData"] = str(self.ui.cnosdEdit.text())
         choice = ""
         if self.ui.oCheck.isChecked():
             choice += "o"

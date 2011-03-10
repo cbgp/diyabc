@@ -508,6 +508,13 @@ class Project(QTabWidget):
         if type_analysis == "pre-ev":
             self.addRow("scenario prior combination",analysis[1],"4","new")
         elif type_analysis == "estimate":
+            chosen_scs_txt = ""
+            for cs in analysis[-2]:
+                chosen_scs_txt+="%s,"%str(cs)
+            chosen_scs_txt = chosen_scs_txt[:-1]
+            dico_est = analysis[-1]
+            analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['numberOfselData'],dico_est['choNumberOfsimData'],dico_est['transformation'],dico_est['choice']))
+            #print "\n",analysis[-1],"\n"
             self.addRow("parameter estimation","params","5","new")
         elif type_analysis == "bias":
             self.addRow("bias and precision",str(analysis[2]),"3","new")

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/estimation.ui'
 #
-# Created: Wed Mar  9 10:47:21 2011
+# Created: Thu Mar 10 16:32:03 2011
 #      by: PyQt4 UI code generator 4.7.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -212,11 +212,11 @@ class Ui_Frame(object):
         self.totNumSimEdit.setMaximumSize(QtCore.QSize(100, 16777215))
         self.totNumSimEdit.setObjectName("totNumSimEdit")
         self.gridLayout.addWidget(self.totNumSimEdit, 3, 3, 1, 1)
-        self.lineEdit_3 = QtGui.QLineEdit(Frame)
-        self.lineEdit_3.setMinimumSize(QtCore.QSize(100, 0))
-        self.lineEdit_3.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.lineEdit_3.setObjectName("lineEdit_3")
-        self.gridLayout.addWidget(self.lineEdit_3, 4, 3, 1, 1)
+        self.cnosdEdit = QtGui.QLineEdit(Frame)
+        self.cnosdEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.cnosdEdit.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.cnosdEdit.setObjectName("cnosdEdit")
+        self.gridLayout.addWidget(self.cnosdEdit, 4, 3, 1, 1)
         self.verticalLayout_2.addLayout(self.gridLayout)
         self.groupBox = QtGui.QGroupBox(Frame)
         self.groupBox.setObjectName("groupBox")

@@ -506,7 +506,7 @@ in the reference table :</string>
           </widget>
          </item>
          <item row="4" column="3">
-          <widget class="QLineEdit" name="lineEdit_3">
+          <widget class="QLineEdit" name="cnosdEdit">
            <property name="minimumSize">
             <size>
              <width>100</width>

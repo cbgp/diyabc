@@ -104,8 +104,7 @@ class testDiyabc(unittest.TestCase):
                     }
             # on effectue la suite de clics
             for bname in chain:
-                QTest.mouseClick(self.dico_but_from_names[bname],Qt.LeftButton)
-                QCoreApplication.processEvents()
+                self.clickOn(self.dico_but_from_names[bname],project)
 
             print "j'ai fini la chaine : %s\n"%chain
             nbproj = len(diyabc.project_list)
@@ -116,8 +115,16 @@ class testDiyabc(unittest.TestCase):
             shutil.rmtree(self.testProjectDir)
             shutil.copytree(self.saveTestProjectDir,self.testProjectDir)
 
-
         diyabc.close()
+
+    def clickOn(self,button,project):
+        if button == self.dico_but_from_names["tabAnalyses"]:
+            project.setCurrentIndex(1)
+        elif button == self.dico_but_from_names["tabRefTable"]:
+            project.setCurrentIndex(0)
+        else:
+            QTest.mouseClick(button,Qt.LeftButton)
+        QCoreApplication.processEvents()
 
 
     def buildClickLists(self,but,level):
