@@ -4,17 +4,43 @@
  *  Created on: 23 sept. 2010
  *      Author: cornuet
  */
-
+#ifndef MATHH
 #include <math.h>
+#define MATHH
+#endif
+#ifndef CMATH
 #include <cmath>
-#include "data.cpp"
+#define CMATH
+#endif
+#ifndef RANDOMGENERATOR
 #include "randomgenerator.cpp"
+#define RANDOMGENERATOR
+#endif
+#ifndef VECTOR
 #include <vector>
+#define VECTOR
+#endif
+#ifndef IOSTREAM
 #include <iostream>
+#define IOSTREAM
+#endif
+#ifndef COMPLEX
 #include <complex>
+#define COMPLEX
+#endif
+#ifndef STRING
 #include <string>
+#define STRING
+#endif
+#ifndef MESUTILS
 #include "mesutils.cpp"
+#define MESUTILS
+#endif
+#ifndef OMPH
 #include <omp.h>
+#define OMPH
+#endif
+
 
 using namespace std;
 #define MICMISSING -9999
@@ -94,17 +120,17 @@ public:
 	int pop,pop1,pop2,sample,Ne,time;
     	double admixrate;
     	int numevent0;
-    	string stime,sNe,sadmixrate;
-
+    	char *stime,*sNe,*sadmixrate;
+        int ltime,lNe,ladmixrate;
 	void ecris(){
-		cout<<"    "<<this->stime<<"   "<<this->action<<"   "<<"\n";
+		cout<<"    "<<this->stime<<"   "<<this->action<<"   "<<this->sadmixrate<<"\n";
 	}
 };
 
 
 struct Ne0C
 {
-	int val;
+	int val,lon;
 	char *name;
 };
 
@@ -199,18 +225,26 @@ public:
     	this->ne0 = new Ne0C[this->nn0];
     	for (int i=0;i<this->nn0;i++) {
     		if (atoi(ss[i].c_str())==0) {
-                    this->ne0[i].name = new char[ss[i].length()+1];
-                    strcpy(this->ne0[i].name,ss[i].c_str());this->ne0[i].val=-1;this->detparam(ss[i],0);}
-    		else               {strcpy(this->ne0[i].name,"");this->ne0[i].val=atoi(ss[i].c_str());}
+                    this->ne0[i].lon = ss[i].length()+1;
+                    this->ne0[i].name = new char[this->ne0[i].lon];
+                   strcpy(this->ne0[i].name,ss[i].c_str());this->ne0[i].val=-1;this->detparam(ss[i],0);}
+    		else               {strcpy(this->ne0[i].name,"");this->ne0[i].val=atoi(ss[i].c_str());this->ne0[i].lon=1;}
     	}
     	this->nevent = nl-1;
     	this->event = new EventC[nl-1];
     	this->nsamp=0;this->npop=this->nn0;this->popmax=this->nn0;
     	for (int i=0;i<nl-1;i++) {
     		ss = splitwords(ls[i+1]," ",&n);
-    		this->event[i].stime="";this->event[i].sNe="";this->event[i].sadmixrate="";
+                this->event[i].ltime=1;this->event[i].lNe=1;this->event[i].ladmixrate=1;
+    		this->event[i].stime=new char[this->event[i].ltime];this->event[i].stime[0]='\0';
+                this->event[i].sNe=new char[this->event[i].lNe];this->event[i].sNe[0]='\0';
+                this->event[i].sadmixrate=new char[this->event[i].ladmixrate];this->event[i].sadmixrate[0]='\0';
      		if (ss[0]=="0") {this->event[i].time=0;}
-    		else if (atoi(ss[0].c_str())==0) {this->event[i].time=-9999;this->event[i].stime=ss[0];this->detparam(this->event[i].stime,1);}
+    		else if (atoi(ss[0].c_str())==0) {
+                     this->event[i].time=-9999;
+                     this->event[i].ltime=ss[0].length()+1;
+                     this->event[i].stime=new char[this->event[i].ltime];
+                     strcpy(this->event[i].stime,ss[0].c_str());this->detparam(ss[0],1);}
     			 else {this->event[i].time=atoi(ss[0].c_str());}
     		if (majuscules(ss[1])=="SAMPLE") {
     			this->event[i].action='E';
@@ -230,13 +264,25 @@ public:
     			this->event[i].pop1=atoi(ss[3].c_str());
     			this->event[i].pop2=atoi(ss[4].c_str());
     			if (atof(ss[5].c_str())!=0.0) this->event[i].admixrate=atof(ss[5].c_str());
-    			else {this->event[i].admixrate=-1.0;this->event[i].sadmixrate=ss[5];this->detparam(this->event[i].sadmixrate,2);}
+    			else {
+                              this->event[i].admixrate=-1.0;
+                              this->event[i].ladmixrate=ss[5].length()+1;
+                              this->event[i].sadmixrate=new char[this->event[i].ladmixrate];
+                              strcpy(this->event[i].sadmixrate,ss[5].c_str());
+                              this->detparam(ss[5],2);
+                        }
     			//cout <<this->event[i].stime<<"  SPLIT"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"   "<<this->event[i].pop2<<"   "<<this->event[i].sadmixrate<<"\n";
     		} else if (majuscules(ss[1])=="VARNE") {
     			this->event[i].action='V';
     			this->event[i].pop=atoi(ss[2].c_str());
     			if (atof(ss[3].c_str())!=0.0) this->event[i].Ne=atoi(ss[3].c_str());
-    			else {this->event[i].Ne=-1;this->event[i].sNe=ss[3];this->detparam(this->event[i].sNe,0);}
+    			else {
+                              this->event[i].Ne=-1;
+                              this->event[i].lNe=ss[3].length()+1;
+                              this->event[i].sNe=new char[this->event[i].lNe];
+                              strcpy(this->event[i].sNe,ss[3].c_str());
+                              this->detparam(ss[3],0);
+                        }
     		}
     	}
     	this->histparam = new HistParameterC[this->nparam];
@@ -295,9 +341,15 @@ EventC copyevent(EventC source) {
 	dest.time = source.time;
 	dest.admixrate = source.admixrate;
 	dest.numevent0 = source.numevent0;
-	dest.stime = source.stime;
-	dest.sNe = source.sNe;
-	dest.sadmixrate = source.sadmixrate;
+        dest.ltime = source.ltime;
+        dest.stime = new char[source.ltime];
+	strcpy(dest.stime , source.stime);
+        dest.lNe = source.lNe;
+	dest.sNe = new char[source.lNe];
+        strcpy(dest.sNe,source.sNe);
+        dest.ladmixrate = source.ladmixrate;
+        dest.sadmixrate = new char[source.ladmixrate];
+	strcpy(dest.sadmixrate,source.sadmixrate);
 	return dest;
 }
 
@@ -327,6 +379,7 @@ ConditionC copycondition(ConditionC source) {
 }
 
 ScenarioC copyscenario(ScenarioC source) {
+  //cout<<"debut de copyscenario\n";
 	ScenarioC dest;
 	dest.prior_proba = source.prior_proba;
 	dest.number = source.number;
@@ -342,8 +395,10 @@ ScenarioC copyscenario(ScenarioC source) {
 	for (int i=0;i<dest.nevent;i++) dest.event[i] = copyevent(source.event[i]);
 	dest.ne0 = new Ne0C[dest.nn0];
 	for (int i=0;i<dest.nn0;i++) dest.ne0[i] = copyne0(source.ne0[i]);
+        //cout<<"   apres copyne0\n";
 	dest.time_sample = new int[dest.nsamp];
 	for (int i=0;i<dest.nsamp;i++) dest.time_sample[i] = source.time_sample[i];
+        //cout<<"   apres copytime_sample\n";
 	dest.histparam = new HistParameterC[dest.nparam];
 	for (int i=0;i<dest.nparam;i++) {dest.histparam[i] = copyhistparameter(source.histparam[i]);/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
 	dest.paramvar = new double[dest.nparamvar];
@@ -424,14 +479,16 @@ struct ParticleC
 
 	}
 	
-	void drawscenario(bool trace) {
+	void drawscenario() {
 		double ra,sp=0.0;
 		ra = this->mw.random();
 		int iscen=-1;
-		while (ra>sp) {
+		while ((ra>sp)and(iscen<this->nscenarios-1)) {
 			iscen++;sp +=this->scenario[iscen].prior_proba;
 		}
-                
+		if (iscen>2) {cout<<"iscen="<<iscen<<"    ra = "<<ra<<"   sp="<<sp<<"\n";exit(1);}
+                //cout <<"scenario tire = "<<iscen+1<<"\n";
+                //this->scenario[iscen].ecris();
                 this->scen.prior_proba = this->scenario[iscen].prior_proba;
                 this->scen.number = this->scenario[iscen].number;
                 this->scen.popmax = this->scenario[iscen].popmax;
@@ -444,6 +501,7 @@ struct ParticleC
                 this->scen.nconditions = this->scenario[iscen].nconditions;
                 for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i] = this->scenario[iscen].time_sample[i];
                 for (int i=0;i<this->scen.nn0;i++) {
+                      if ((i>5)or(iscen>2)) cout <<"i="<<i<<"   iscen="<<iscen<<"\n";
                       this->scen.ne0[i].val = this->scenario[iscen].ne0[i].val;
                       strcpy(this->scen.ne0[i].name,this->scenario[iscen].ne0[i].name);
                 }
@@ -1434,16 +1492,16 @@ struct ParticleC
 	}
 
 	int dosimulpart(bool trace){
-                if (trace) cout<<"debut de dosimulpart\n";fflush(stdin);
+                //if (trace) cout<<"debut de dosimulpart\n";fflush(stdin);
 		vector <int> simulOK;
 		int *emptyPop;
 		bool treedone;
                 int locus,sa,indiv,nuc;
 		simulOK.resize(this->nloc);
 		GeneTreeC GeneTreeY, GeneTreeM;
-                if (trace) cout<<"avant draw scenario\n";fflush(stdin);
-		this->drawscenario(trace);
-		if (trace) cout <<"avant setHistparamValue\n";fflush(stdin);
+                //if (trace) cout<<"avant draw scenario\n";fflush(stdin);
+		this->drawscenario();
+		//if (trace) cout <<"avant setHistparamValue\n";fflush(stdin);
 		this->setHistParamValue();
 		//if (trace) cout << "apres setHistParamValue\n";fflush(stdin);
 		//if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
@@ -1565,15 +1623,15 @@ struct ParticleC
                         
                         }
                 }
-                if (trace) cout<<"avant les delete\n";fflush(stdin);
+                //if (trace) cout<<"avant les delete\n";fflush(stdin);
                 delete [] emptyPop;
 		for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) deletetree(this->gt[loc]);}
 		delete [] this->gt;
 		if (gtYexist) deletetree(GeneTreeY);
 		if (gtMexist) deletetree(GeneTreeM);
-		if (trace) cout << "Fin de dosimulpart \n";
+		//if (trace) cout << "Fin de dosimulpart \n";
 		int simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
-		if (trace) cout<<"fin de dosimulpart\n";fflush(stdin);
+		//if (trace) cout<<"fin de dosimulpart\n";fflush(stdin);
 		return simOK;
 	}
 

@@ -1,10 +1,31 @@
+#ifndef IOSTREAM
 #include <iostream>
+#define IOSTREAM
+#endif
+#ifndef STRINGH
 #include <string.h>
+#define STRINGH
+#endif
+#ifndef UNISTDH
 #include <unistd.h>
-#include "simuldatC.cpp"
+#define UNISTDH
+#endif
+#ifndef PARTICLESET
+#include "particleset.cpp"
+#define PARTICLESET
+#endif
+#ifndef REFTABLE
 #include "reftable.cpp"
+#define REFTABLE
+#endif
+#ifndef ESTIMPARAM
 #include "estimparam.cpp"
+#define ESTIMPARAM
+#endif
+#ifndef SYS_TIMEH
 #include <sys/time.h>
+#define SYS_TIMEH
+#endif
 
 int nenr=100;
 
@@ -34,6 +55,7 @@ double clock_zero=0.0,debut,duree;
 
 int main(int argc, char *argv[]){
 	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename;
+    bool multithread=false;
 	int nrecneeded,nrectodo,k;
 	double **paramstat;
 	int optchar;
@@ -44,7 +66,7 @@ int main(int argc, char *argv[]){
        
         debut=walltime(&clock_zero);
 
-	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:g:h")) !=-1) {
+	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:g:hm")) !=-1) {
          
 	  switch (optchar) {
 
@@ -99,7 +121,7 @@ int main(int argc, char *argv[]){
                               }
                               //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
                               while (nrecneeded>rt.nrec) {
-                                      ps.dosimultabref(header,nenr,false,rt.nrec);
+                                      ps.dosimultabref(header,nenr,false,rt.nrec,multithread);
                                       rt.writerecords(nenr,enreg);
                                       rt.nrec +=nenr;
                                       cout<<rt.nrec<<"\n";
@@ -116,7 +138,10 @@ int main(int argc, char *argv[]){
             case 'g' : nenr = atoi(optarg);
                        cout<<"minimum ="<<nenr;
                        break;
-	
+              
+            case 'm' : 
+                       multithread=true;
+	               break;
             /*case 'e' : doestim(headerfilename,reftablefilename,statobsfilename,optarg);
                        
                        break;*/

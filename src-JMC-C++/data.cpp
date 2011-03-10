@@ -6,17 +6,35 @@
  *
  */
 
-
+#ifndef FSTREAM
 #include <fstream>
+#define FSTREAM
+#endif
+#ifndef IOSTREAM
 #include <iostream>
+#define IOSTREAM
+#endif
+#ifndef STRING
 #include <string>
+#define STRING
+#endif
+#ifndef CSTRING
 #include <cstring>
+#define CSTRING
+#endif
+#ifndef SSTREAM
 #include <sstream>
-//#include <stdio.h>
+#define SSTREAM
+#endif
+#ifndef STDLIBH
 #include <stdlib.h>
+#define STDLIBH
+#endif
+#ifndef CTYPEH
 #include <ctype.h>
+#define CTYPEH
+#endif
 
-//#include "particuleC.cpp"
 
 using namespace std;
 
