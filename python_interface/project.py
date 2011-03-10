@@ -21,7 +21,7 @@ from datetime import datetime
 import os.path
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
-import variables
+import output
 
 
 class Project(QTabWidget):
@@ -346,7 +346,7 @@ class Project(QTabWidget):
             try:
                 nb_to_gen = int(self.ui.nbSetsReqEdit.text())
             except Exception,e:
-                QMessageBox.information(self,"value error","Check the value of required number of data sets")
+                output.notify(self,"value error","Check the value of required number of data sets")
                 return
             self.th = RefTableGenThread(self,nb_to_gen)
             self.th.connect(self.th,SIGNAL("increment"),self.incProgress)
@@ -357,7 +357,7 @@ class Project(QTabWidget):
             self.cancelTh()
 
     def refTableProblem(self):
-        QMessageBox.information(self,"reftable problem","Something append during the reftable generation : %s"%(self.th.problem))
+        output.notify(self,"reftable problem","Something append during the reftable generation : %s"%(self.th.problem))
  
     def incProgress(self):
         """Increment the progress dialog"""
@@ -395,7 +395,7 @@ class Project(QTabWidget):
             f.write(f4lines)
             f.close()
         else:
-            QMessageBox.information(self,"Header generation problem","One conf file is missing in order to generate the reference table header")
+            output.notify(self,"Header generation problem","One conf file is missing in order to generate the reference table header")
 
 
     def dataFileSelection(self,name=None):
@@ -439,7 +439,7 @@ class Project(QTabWidget):
             if self.ui.dataFileEdit.text() != "":
                 #keep = "\n\nKeeping previous selected file"
                 keep = "\n\nThe file was not loaded, nothing was changed"
-            QMessageBox.information(self,"Data file error","%s%s"%(e,keep))
+            output.notify(self,"Data file error","%s%s"%(e,keep))
             return False
         return True
 
@@ -460,12 +460,8 @@ class Project(QTabWidget):
                 while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,cd)):
                     cd -= 1
                 if cd == 100:
-                    if not variables.debug:
-                        QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
+                    output.notify(self,"Error","With this version, you cannot have more than 100 \
                                 project directories\nfor the same project name and in the same directory")
-                    else:
-                        print "With this version, you cannot have more than 100 \
-                                project directories\nfor the same project name and in the same directory"
                 else:
                     newdir = name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,(cd+1))
                     self.ui.dirEdit.setText(newdir)
@@ -482,15 +478,9 @@ class Project(QTabWidget):
                         # on a reussi a creer le dossier, on vire le bouton browse
                         self.ui.browseDirButton.hide()
                     except OSError,e:
-                        if not variables.debug:
-                            QMessageBox.information(self,"Error",str(e))
-                        else:
-                            print str(e)
+                        output.notify(self,"Error",str(e))
             else:
-                if not variables.debug:
-                    QMessageBox.information(self,"Incorrect directory","A project can not be in a project directory")
-                else:
-                    print "A project can not be in a project directory"
+                output.notify(self,"Incorrect directory","A project can not be in a project directory")
 
 
     def changeIcon(self):
@@ -599,7 +589,7 @@ class Project(QTabWidget):
             self.hist_model_win.loadHistoricalConf()
             self.gen_data_win.loadGeneticConf()
         else:
-            QMessageBox.information(self,"Load error","Impossible to read the project configuration")
+            output.notify(self,"Load error","Impossible to read the project configuration")
 
     def loadMyConf(self):
         """ lit le fichier conf.tmp pour charger le fichier de données
@@ -644,7 +634,7 @@ class Project(QTabWidget):
                 self.writeThConf()
                 self.writeRefTableHeader()
         else:
-            QMessageBox.information(self,"Saving is impossible","Choose a directory before saving the project")
+            output.notify(self,"Saving is impossible","Choose a directory before saving the project")
 
     def writeThConf(self):
         """ ecrit le header du tableau de resultat qui sera produit par les calculs
@@ -737,7 +727,7 @@ class RefTableGenThread(QThread):
             print "Cannot find the executable of the computation program %s"%e
             self.problem = "Cannot find the executable of the computation program \n%s"%e
             self.emit(SIGNAL("refTableProblem"))
-            #QMessageBox.information(self.parent(),"computation problem","Cannot find the executable of the computation program")
+            #output.notify(self.parent(),"computation problem","Cannot find the executable of the computation program")
             return
 
         # boucle toutes les secondes pour verifier les valeurs dans le fichier
@@ -765,13 +755,13 @@ class RefTableGenThread(QThread):
                     print "lines != OK"
                     self.problem = lines[0].strip()
                     self.emit(SIGNAL("refTableProblem"))
-                    #QMessageBox.information(self,"problem",lines[0])
+                    #output.notify(self,"problem",lines[0])
                     return
             else:
                 self.problem = "unknown problem"
                 self.emit(SIGNAL("refTableProblem"))
                 print "unknown problem"
-                #QMessageBox.information(self,"problem","Unknown problem")
+                #output.notify(self,"problem","Unknown problem")
                 return
 
 

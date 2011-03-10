@@ -5,6 +5,7 @@ from project import *
 import time
 import unittest
 import sys
+import shutil
 from diyabc import Diyabc
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -20,16 +21,27 @@ class testDiyabc(unittest.TestCase):
         set up data used in the tests.
         setUp is called before each test function execution.
         """
-        self.app = QApplication(sys.argv)
-        self.diyabc = Diyabc(self.app)
-        self.diyabc.show()
 
         self.testDir = "/home/julien/vcs/git/diyabc/python_interface/datafiles/test"
+        self.testProjectDir = "/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3"
+        self.saveTestProjectDir = "/tmp/ploopsave"
 
     def testAllClicks(self):
-        self.assertEqual(self.diyabc.app, self.app)
+        app = QApplication(sys.argv)
+        diyabc = Diyabc(app)
+        diyabc.show()
 
-        project = self.tOpenExistingProject("/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3/")
+        # copie de sauvegarde du projet dans /tmp
+        if os.path.exists(self.saveTestProjectDir): 
+            shutil.rmtree(self.saveTestProjectDir)
+        shutil.copytree(self.testProjectDir,self.saveTestProjectDir)
+
+        QTest.mouseClick(diyabc.ui.skipButton,Qt.LeftButton)
+        self.assertEqual(diyabc.ui.skipButton.isVisible(), False)
+
+        self.assertEqual(diyabc.app, app)
+
+        project = self.tOpenExistingProject(diyabc,self.testProjectDir)
 
         
         self.dico_names = {project.ui.setHistoricalButton : "setHistoricalButton",
@@ -73,20 +85,46 @@ class testDiyabc(unittest.TestCase):
         l = self.buildClickLists(root,0)
         print l
 
-    def buildDicoButtonFromName(self,project,name):
-        dico_but_from_names = {"setHistoricalButton" : project.ui.setHistoricalButton,
-                "setGeneticButton" :project.ui.setGeneticButton,
-                "tabRefTable" : project.ui.tabRefTable,
-                "tabAnalyses" : project.ui.tabAnalyses,
-                "histExitButton" : project.hist_model_win.ui.exitButton,
-                "histClearButton" : project.hist_model_win.ui.clearButton,
-                "histOkButton" : project.hist_model_win.ui.okButton,
-                "histAddScButton" : project.hist_model_win.ui.addScButton,
-                "histChkScButton" : project.hist_model_win.ui.chkScButton,
-                "histDefPrButton" : project.hist_model_win.ui.defPrButton,
-                "root" : 0
-                }
-        return dico_but_from_names
+        nbproj = len(diyabc.project_list)
+        diyabc.closeCurrentProject(False)
+        self.assertEqual(len(diyabc.project_list) == nbproj-1,True)
+
+        # on a la liste des noms de boutons à cliquer
+        # pour chaque combinaison possible de clics, on charge un projet et on effectue la suite de clic
+        for chain in l:
+            print "j'effectue la chaine : %s\n"%chain
+            # on charge un projet
+            project = self.tOpenExistingProject(diyabc,self.testProjectDir)
+            # on associe les noms aux boutons de cette instance de projet
+            self.dico_but_from_names = {"setHistoricalButton" : project.ui.setHistoricalButton,
+                    "setGeneticButton" :project.ui.setGeneticButton,
+                    "tabRefTable" : project.ui.tabRefTable,
+                    "tabAnalyses" : project.ui.tabAnalyses,
+                    "histExitButton" : project.hist_model_win.ui.exitButton,
+                    "histClearButton" : project.hist_model_win.ui.clearButton,
+                    "histOkButton" : project.hist_model_win.ui.okButton,
+                    "histAddScButton" : project.hist_model_win.ui.addScButton,
+                    "histChkScButton" : project.hist_model_win.ui.chkScButton,
+                    "histDefPrButton" : project.hist_model_win.ui.defPrButton,
+                    "root" : 0
+                    }
+            # on effectue le suite de clics
+            for bname in chain:
+                QTest.mouseClick(self.dico_but_from_names[bname],Qt.LeftButton)
+                QCoreApplication.processEvents()
+
+
+            print "j'ai fini la chaine : %s\n"%chain
+            nbproj = len(diyabc.project_list)
+            diyabc.closeCurrentProject(False)
+            self.assertEqual(len(diyabc.project_list) == nbproj-1,True)
+
+        # restitution de sauvegarde du projet
+        shutil.rmtree(self.testProjectDir)
+        shutil.copytree(self.saveTestProjectDir,self.testProjectDir)
+
+        diyabc.close()
+
 
     def buildClickLists(self,but,level):
         if self.dicoPossibleClicks[but] == []:
@@ -106,7 +144,9 @@ class testDiyabc(unittest.TestCase):
                     lexp = list(self.buildClickLists(c,level+1))
                     for sublist in lexp:
                         #print "[%s] j'ajoute une liste (%s) a mon resultat\n"%(level,sublist)
-                        new_l = [self.dico_names[but]]
+                        new_l = []
+                        if self.dico_names[but] != "root":
+                            new_l.append(self.dico_names[but])
                         new_l.extend(list(sublist))
                         lr.append(new_l)
                         #print "[%s] lr : %s"%(level,lr)
@@ -119,18 +159,23 @@ class testDiyabc(unittest.TestCase):
 
 
     def testGeneral(self):
-        QTest.mouseClick(self.diyabc.ui.skipButton,Qt.LeftButton)
-        self.assertEqual(self.diyabc.ui.skipButton.isVisible(), False)
+
+        app = QApplication(sys.argv)
+        diyabc = Diyabc(app)
+        diyabc.show()
+
+        QTest.mouseClick(diyabc.ui.skipButton,Qt.LeftButton)
+        self.assertEqual(diyabc.ui.skipButton.isVisible(), False)
         # test sur l'ouverture d'un projet existant
-        self.tOpenExistingProject("/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3/")
+        self.tOpenExistingProject(diyabc,"/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3/")
         # test sur l'ouverture d'un projet inexistant
-        self.tOpenNonExistingProject("/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3xx/")
+        self.tOpenNonExistingProject(diyabc,"/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3xx/")
         # tests sur la creation de projets ayant un nom non valide
         for c in ['_','-',"'",'"','.','/']:
-            self.tNewIllegalProject("pppro%sject"%c,"/home/julien/vcs/git/diyabc/python_interface/datafiles/admix1.txt","/home/julien/vcs/git/diyabc/python_interface/datafiles/test/unittest/")
+            self.tNewIllegalProject(diyabc,"pppro%sject"%c,"/home/julien/vcs/git/diyabc/python_interface/datafiles/admix1.txt","/home/julien/vcs/git/diyabc/python_interface/datafiles/test/unittest/")
 
 
-        project = self.tNewProject("ppproject","/home/julien/vcs/git/diyabc/python_interface/datafiles/admix1.txt","/home/julien/vcs/git/diyabc/python_interface/datafiles/test/unittest/")
+        project = self.tNewProject(diyabc,"ppproject","/home/julien/vcs/git/diyabc/python_interface/datafiles/admix1.txt","/home/julien/vcs/git/diyabc/python_interface/datafiles/test/unittest/")
         self.assertEqual(project.hist_model_win.ui.addScButton.isVisible(),False)
         QTest.mouseClick(project.ui.setHistoricalButton,Qt.LeftButton)
         self.assertEqual(project.hist_model_win.isVisible(),True)
@@ -167,20 +212,20 @@ class testDiyabc(unittest.TestCase):
         self.assertEqual(project.gen_data_win.isVisible(),True)
 
         # test sur le clonage
-        nbproj = len(self.diyabc.project_list)
-        self.diyabc.cloneCurrentProject("cloneppproject","/home/julien/vcs/git/diyabc/python_interface/datafiles/test/unittest/")
-        self.assertEqual(len(self.diyabc.project_list) == nbproj+1,True)
-        nbproj = len(self.diyabc.project_list)
-        self.diyabc.cloneCurrentProject("clone2ppproject","/home/julien/git/diyabc/python_interface/datafiles/test/unittest/nonExistingDir/")
-        self.assertEqual(len(self.diyabc.project_list) == nbproj,True)
+        nbproj = len(diyabc.project_list)
+        diyabc.cloneCurrentProject("cloneppproject","/home/julien/vcs/git/diyabc/python_interface/datafiles/test/unittest/")
+        self.assertEqual(len(diyabc.project_list) == nbproj+1,True)
+        nbproj = len(diyabc.project_list)
+        diyabc.cloneCurrentProject("clone2ppproject","/home/julien/git/diyabc/python_interface/datafiles/test/unittest/nonExistingDir/")
+        self.assertEqual(len(diyabc.project_list) == nbproj,True)
 
         # suppression de projet
-        current_project_dir = self.diyabc.ui.tabWidget.currentWidget().dir
+        current_project_dir = diyabc.ui.tabWidget.currentWidget().dir
         self.assertEqual(os.path.exists(current_project_dir),True)
-        self.diyabc.deleteCurrentProject()
+        diyabc.deleteCurrentProject()
         self.assertEqual(os.path.exists(current_project_dir),False)
 
-        self.diyabc.close()
+        diyabc.close()
 
     def fillHistModel(self,scTxtList,paramDicoValues,hist_model):
         # suppression des scenarios existants
@@ -210,34 +255,34 @@ class testDiyabc(unittest.TestCase):
             paramBox.findChild(QLineEdit,"meanValueParamEdit").setText(str(values[3]))
             paramBox.findChild(QLineEdit,"stValueParamEdit").setText(str(values[4]))
 
-    def tOpenExistingProject(self,pdir):
+    def tOpenExistingProject(self,diyabc,pdir):
         """ test sur l'ouverture d'un projet existant
         """
-        nbproj = len(self.diyabc.project_list)
-        self.diyabc.openProject(pdir)
-        self.assertEqual(len(self.diyabc.project_list) == nbproj+1,True)
-        return self.diyabc.project_list[-1]
+        nbproj = len(diyabc.project_list)
+        diyabc.openProject(pdir)
+        self.assertEqual(len(diyabc.project_list) == nbproj+1,True)
+        return diyabc.project_list[-1]
 
-    def tOpenNonExistingProject(self,pdir):
+    def tOpenNonExistingProject(self,diyabc,pdir):
         """ test sur l'ouverture d'un projet inexistant
         """
-        nbproj = len(self.diyabc.project_list)
-        self.diyabc.openProject(pdir)
-        self.assertEqual(len(self.diyabc.project_list) == nbproj,True)
+        nbproj = len(diyabc.project_list)
+        diyabc.openProject(pdir)
+        self.assertEqual(len(diyabc.project_list) == nbproj,True)
 
-    def tNewIllegalProject(self,name,datafile,projectdir):
+    def tNewIllegalProject(self,diyabc,name,datafile,projectdir):
         """ si on crée un projet avec un nouveau nom, 
         on ne doit pas faire augmenter le nombre de projets
         """
-        nbproj = len(self.diyabc.project_list)        
-        self.diyabc.newProject(name)
-        self.assertEqual(len(self.diyabc.project_list) == nbproj,True)
+        nbproj = len(diyabc.project_list)        
+        diyabc.newProject(name)
+        self.assertEqual(len(diyabc.project_list) == nbproj,True)
 
-    def tNewProject(self,name,datafile,projectdir):
-        nbproj = len(self.diyabc.project_list)        
-        self.diyabc.newProject(name)
-        self.assertEqual(len(self.diyabc.project_list) == nbproj+1,True)
-        project = self.diyabc.project_list[-1]
+    def tNewProject(self,diyabc,name,datafile,projectdir):
+        nbproj = len(diyabc.project_list)        
+        diyabc.newProject(name)
+        self.assertEqual(len(diyabc.project_list) == nbproj+1,True)
+        project = diyabc.project_list[-1]
         self.assertEqual(project.name == name,True)
         self.assertEqual(project.ui.browseDataFileButton.isVisible(),True)
         project.dataFileSelection(datafile)

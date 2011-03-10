@@ -13,7 +13,7 @@ from PyQt4 import QtGui
 from diyabc_ui import Ui_MainWindow
 from project import *
 from preferences import Preferences
-import variables
+import output
 
 class Diyabc(QMainWindow):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
@@ -135,7 +135,7 @@ class Diyabc(QMainWindow):
                     proj_ready_to_be_opened = True
                     # si le projet est verrouillé
                     if os.path.exists("%s/.DIYABC_lock"%dir):
-                        if not variables.debug:
+                        if not output.debug:
                             reply = QMessageBox.question(self,"Project is locked","The %s project is currently locked.\
     \nThere are two possible reasons for that : \
     \n- The project is currently opened in another instance of DIYABC\
@@ -166,15 +166,9 @@ class Diyabc(QMainWindow):
                         # creation du lock
                         proj_to_open.lock()
                 else:
-                    if not variables.debug:
-                        QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
-                    else:
-                        print "A project named \"%s\" is already loaded"%proj_name
+                    output.notify(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:
-                if not variables.debug:
-                    QMessageBox.information(self,"Load error","This is not a project directory")
-                else:
-                    print "This is not a project directory"
+               output.notify(self,"Load error","This is not a project directory")
 
     def cloneCurrentProject(self,cloneBaseName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
@@ -199,12 +193,8 @@ class Diyabc(QMainWindow):
                         while cd > 0 and not os.path.exists(cloneDir+"/%s_%i_%i_%i-%i"%(cloneBaseName,dd.year,dd.month,dd.day,cd)):
                             cd -= 1
                         if cd == 100:
-                            if not variables.debug:
-                                QMessageBox.information(self,"Error","With this version, you cannot have more than 100 \
+                                output.notify(self,"Error","With this version, you cannot have more than 100 \
                                         project directories\nfor the same project name and in the same directory")
-                            else:
-                                print "With this version, you cannot have more than 100 \
-                                    project directories\nfor the same project name and in the same directory"
                         else:
                             clonedir = cloneDir+"/%s_%i_%i_%i-%i"%(cloneBaseName,dd.year,dd.month,dd.day,(cd+1))
                             #self.ui.dirEdit.setText(newdir)
@@ -215,22 +205,12 @@ class Diyabc(QMainWindow):
                                 if cloneBaseName != current_project.name:
                                     self.openProject(clonedir)
                                 else:
-                                    if not variables.debug:
-                                        QMessageBox.information(self,"Load error","The cloned has been cloned but can not be opened because\
+                                    output.notify(self,"Load error","The cloned has been cloned but can not be opened because\
                                                 it has the same name than the origin project\nClose the origin project if you want to open the clone")
-                                    else:
-                                        print "The cloned has been cloned but can not be opened because\
-                                        it has the same name than the origin project\nClose the origin project if you want to open the clone"
                             except OSError,e:
-                                if not variables.debug:
-                                    QMessageBox.information(self,"Error",str(e))
-                                else:
-                                    print str(e)
+                                output.notify(self,"Error",str(e))
                     else:
-                        if not variables.debug:
-                            QMessageBox.information(self,"Incorrect directory","A project can not be in a project directory")
-                        else:
-                            print "A project can not be in a project directory"
+                        output.notify(self,"Incorrect directory","A project can not be in a project directory")
 
 
 
@@ -238,17 +218,11 @@ class Diyabc(QMainWindow):
         """ vérifie si le nom de projet ne comporte pas de caractères illégaux et s'il n'est pas vide
         """
         if name == "":
-            if not variables.debug:
-                QMessageBox.information(self,"Name error","The project name cannot be empty.")
-            else:
-                print "The project name cannot be empty."
+            output.notify(self,"Name error","The project name cannot be empty.")
             return False
         for c in self.illegalProjectNameCharacters:
             if c in name:
-                if not variables.debug:
-                    QMessageBox.information(self,"Name error","The following characters are not allowed in project name : . \" ' _ - /")
-                else:
-                    print "The following characters are not allowed in project name : . \" ' _ - /"
+                output.notify(self,"Name error","The following characters are not allowed in project name : . \" ' _ - /")
                 return False
         return True
 
@@ -281,17 +255,14 @@ class Diyabc(QMainWindow):
                         self.deleteProjActionMenu.setDisabled(False)
                         self.cloneProjActionMenu.setDisabled(False)
                 else:
-                    if not variables.debug:
-                        QMessageBox.information(self,"Name error","A project named \"%s\" is already loaded."%name)
-                    else:
-                        print "A project named \"%s\" is already loaded."%name
+                    output.notify(self,"Name error","A project named \"%s\" is already loaded."%name)
 
     def closeProject(self,index,save=None):
         """ ferme le projet qui est à l'index "index" du tabWidget
         le sauvegarde si save == True et le déverrouille
         """
         if save == None:
-            if not variables.debug:
+            if not output.debug:
                 reply = QtGui.QMessageBox.question(self, 'Message',
                     "Do you want to save the Project ?", QtGui.QMessageBox.Yes | 
                     QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
@@ -315,10 +286,10 @@ class Diyabc(QMainWindow):
             self.deleteProjActionMenu.setDisabled(True)
             self.cloneProjActionMenu.setDisabled(True)
 
-    def closeCurrentProject(self):
+    def closeCurrentProject(self,save=None):
         """ ferme le projet courant, celui de l'onglet séléctionné
         """
-        self.closeProject(self.ui.tabWidget.currentIndex())
+        self.closeProject(self.ui.tabWidget.currentIndex(),save)
     def saveCurrentProject(self):
         """ sauve le projet courant, cad ecrit les fichiers temporaires de conf
         """

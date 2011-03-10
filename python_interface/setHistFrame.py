@@ -10,6 +10,7 @@ from visualizescenario import *
 import history 
 from history import IOScreenError
 from set_condition import SetCondition
+import output
 
 class SetHistoricalModel(QFrame):
     def __init__(self,parent=None):
@@ -269,7 +270,7 @@ class SetHistoricalModel(QFrame):
         if chk_list != None:
             self.drawScenarios(chk_list)
         else:
-            QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to draw them.")
+            output.notify(self,"Scenario error","Correct your scenarios to be able to draw them.")
 
     def drawPreviews(self):
         if self.ui.drawPreviewsCheck.isChecked():
@@ -327,7 +328,7 @@ class SetHistoricalModel(QFrame):
             self.drawPreviews()
         else:
             if not silent:
-                QMessageBox.information(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
+                output.notify(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
     def putParameters(self,chk_list):
         """ A partir de la liste des scenarios (vérifiés donc valides), on ajoute les paramètres dans la GUI
         La liste de paramètres est vidée avant cette opération
@@ -425,7 +426,7 @@ class SetHistoricalModel(QFrame):
             dico_sc_infos["tree"] = t
         except IOScreenError, e:
             if not silent:
-                QMessageBox.information(self,"Scenario error","%s"%e)
+                output.notify(self,"Scenario error","%s"%e)
         except PopTreeError,e:
             dico_sc_infos["tree"] = None
         return dico_sc_infos
@@ -468,7 +469,7 @@ class SetHistoricalModel(QFrame):
                 #print "Un scenario a une erreur : ", e
                 nb_scenarios_invalides += 1
                 if not silent:
-                    QMessageBox.information(self,"Scenario error","%s"%e)
+                    output.notify(self,"Scenario error","%s"%e)
             except PopTreeError,e:
                 dico_sc_infos["tree"] = None
                 self.scenarios_info_list.append(dico_sc_infos)
@@ -506,7 +507,7 @@ class SetHistoricalModel(QFrame):
                 #print "Un scenario a une erreur : ", e
                 nb_scenarios_invalides += 1
                 if not silent:
-                    QMessageBox.information(self,"Scenario error","%s"%e)
+                    output.notify(self,"Scenario error","%s"%e)
         # si tous les scenarios sont bons, on renvoie les données utiles, sinon on renvoie None
         if nb_scenarios_invalides == 0:
             return self.scenarios_info_list
@@ -748,12 +749,12 @@ class SetHistoricalModel(QFrame):
                     return True
                 else:
                     if not silent:
-                        QMessageBox.information(self,"Error","The scenarios were modified since the last 'Define priors'")
+                        output.notify(self,"Error","The scenarios were modified since the last 'Define priors'")
             else:
                 return False
         else:
             if not silent:
-                QMessageBox.information(self,"Value error","%s"%problems)
+                output.notify(self,"Value error","%s"%problems)
             return False
 
     def majParamInfoDico(self):
@@ -974,7 +975,7 @@ class SetHistoricalModel(QFrame):
                     l+=1
             self.majProjectGui()                
         else:
-            QMessageBox.information(self,"Error","Le répertoire du projet n'existe plus")
+            output.notify(self,"Error","Le répertoire du projet n'existe plus")
 
     def getNbParam(self):
         return len(self.paramList)
