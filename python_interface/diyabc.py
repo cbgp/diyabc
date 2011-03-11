@@ -6,7 +6,7 @@ import codecs
 import sys
 if sys.platform.startswith('win'):
     sys.path.append("Python26/Lib/site-packages")
-sys.path.append("./")
+#sys.path.append("./")
 import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *

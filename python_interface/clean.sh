@@ -1,0 +1,1 @@
+rm `find ./ -iname "*.pyc"`

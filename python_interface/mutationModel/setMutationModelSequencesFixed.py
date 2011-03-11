@@ -7,7 +7,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from setMutationModelSequences_ui import Ui_Frame
+from uis.setMutationModelSequences_ui import Ui_Frame
 
 class SetMutationModelSequencesFixed(QFrame):
     def __init__(self,parent=None,box_group=None):

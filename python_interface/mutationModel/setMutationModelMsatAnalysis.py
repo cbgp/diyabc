@@ -7,7 +7,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from setMutationModelMsat_ui import Ui_Frame
+from uis.setMutationModelMsat_ui import Ui_Frame
 from setMutationModelMsat import SetMutationModelMsat
 
 class SetMutationModelMsatAnalysis(SetMutationModelMsat):
