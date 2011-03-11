@@ -13,8 +13,8 @@ from mutationModel.setMutationModelSequencesAnalysis import SetMutationModelSequ
 from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from estimation import Estimation
-from visualizescenario import *
-from data import *
+from utils.visualizescenario import *
+from utils.data import *
 
 class SetGeneticDataAnalysis(SetGeneticData):
     """ set genetic data pour les informations concernant une analyse bias ou evaluate

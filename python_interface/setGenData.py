@@ -10,8 +10,8 @@ from mutationModel.setMutationModelMsatRefTable import SetMutationModelMsatRefTa
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 #from setSummaryStatistics import SetSummaryStatistics
 #from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
-from visualizescenario import *
-from data import *
+from utils.visualizescenario import *
+from utils.data import *
 import output
 
 class SetGeneticData(QFrame):

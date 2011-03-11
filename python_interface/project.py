@@ -16,7 +16,7 @@ from mutationModel.setMutationModelSequences import SetMutationModelSequences
 from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from defineNewAnalysis import DefineNewAnalysis
-from data import Data
+from utils.data import Data
 from datetime import datetime 
 import os.path
 from PyQt4.Qwt5 import *

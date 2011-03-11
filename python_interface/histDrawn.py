@@ -6,9 +6,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setHistFrame_ui import Ui_Frame
 from drawScenario import DrawScenario
-from visualizescenario import *
-import history 
-from history import IOScreenError
+from utils.visualizescenario import *
+import utils.history 
+from utils.history import IOScreenError
 from set_condition import SetCondition
 from setGenDataAnalysis import SetGeneticDataAnalysis
 

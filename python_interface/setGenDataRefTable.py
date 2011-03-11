@@ -11,8 +11,8 @@ from mutationModel.setMutationModelSequencesRefTable import SetMutationModelSequ
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
-from visualizescenario import *
-from data import *
+from utils.visualizescenario import *
+from utils.data import *
 import output
 
 class SetGeneticDataRefTable(SetGeneticData):

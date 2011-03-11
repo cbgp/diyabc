@@ -6,7 +6,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from drawScenario_ui import Ui_Frame
-from visualizescenario import *
+from utils.visualizescenario import *
 
 class DrawScenario(QFrame):
     """ Classe pour créer une fenêtre à l'intérieur de laquelle on dessine les scénarios (valides car déjà vérifiés)
