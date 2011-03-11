@@ -6,7 +6,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from preferences_ui import Ui_MainWindow
-from setMutationModel import SetMutationModel
+from setMutationModelMsat import SetMutationModelMsat
 from setMutationModelSequences import SetMutationModelSequences
 
 class Preferences(QMainWindow):
@@ -20,7 +20,7 @@ class Preferences(QMainWindow):
         #self.ui.tabWidget.setTabText(0,"Connexion")
         #self.ui.tabWidget.setTabText(1,"Historical")
         #self.ui.tabWidget.setTabText(2,"Various")
-        self.mutmodM = SetMutationModel(self)
+        self.mutmodM = SetMutationModelMsat(self)
         self.mutmodS = SetMutationModelSequences(self)
         self.ui.tabWidget.addTab(self.mutmodM,"MM Microsats")
         self.ui.tabWidget.addTab(self.mutmodS,"MM Sequences")

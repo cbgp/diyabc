@@ -7,11 +7,14 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from setMutationModel_ui import Ui_Frame
+from setMutationModelMsat_ui import Ui_Frame
 
-class SetMutationModelFixed(QFrame):
+class SetMutationModelMsatFixed(QFrame):
+    """ Classe qui utilise le fichier graphique des SetMutationModel.
+    On ne remplit ici qu'une valeur fixe pour chaque ligne
+    """
     def __init__(self,parent=None,box_group=None):
-        super(SetMutationModelFixed,self).__init__(parent)
+        super(SetMutationModelMsatFixed,self).__init__(parent)
         self.parent=parent
         self.box_group = box_group
         self.createWidgets()

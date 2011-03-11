@@ -781,6 +781,8 @@ class SetHistoricalModel(QFrame):
 
 
     def validate(self):
+        """ vérifie la validité du modèle historique et quitte
+        """
         #self.majParamInfoDico()
         # VERIFS, si c'est bon, on change d'onglet, sinon on reste
         if self.checkAll():

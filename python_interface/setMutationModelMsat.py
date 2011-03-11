@@ -7,11 +7,11 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from setMutationModel_ui import Ui_Frame
+from setMutationModelMsat_ui import Ui_Frame
 
-class SetMutationModel(QFrame):
+class SetMutationModelMsat(QFrame):
     def __init__(self,parent=None,box_group=None):
-        super(SetMutationModel,self).__init__(parent)
+        super(SetMutationModelMsat,self).__init__(parent)
         self.parent=parent
         self.box_group = box_group
         self.createWidgets()

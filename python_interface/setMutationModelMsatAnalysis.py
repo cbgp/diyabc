@@ -7,12 +7,14 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from setMutationModel_ui import Ui_Frame
-from setMutationModel import SetMutationModel
+from setMutationModelMsat_ui import Ui_Frame
+from setMutationModelMsat import SetMutationModelMsat
 
-class SetMutationModelAnalysis(SetMutationModel):
+class SetMutationModelMsatAnalysis(SetMutationModelMsat):
+    """ Spécialisation de SetMutationModel pour la définition d'une analyse
+    """
     def __init__(self,parent=None,box_group=None):
-        super(SetMutationModelAnalysis,self).__init__(parent,box_group)
+        super(SetMutationModelMsatAnalysis,self).__init__(parent,box_group)
 
         self.ui.clearButton.hide()
 

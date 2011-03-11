@@ -7,11 +7,11 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from setSummaryStatistics_ui import Ui_Frame
+from setSummaryStatisticsMsat_ui import Ui_Frame
 
-class SetSummaryStatistics(QFrame):
+class SetSummaryStatisticsMsat(QFrame):
     def __init__(self,parent=None,box_group=None):
-        super(SetSummaryStatistics,self).__init__(parent)
+        super(SetSummaryStatisticsMsat,self).__init__(parent)
         self.parent=parent
         self.box_group = box_group
         self.oneSampleList = []

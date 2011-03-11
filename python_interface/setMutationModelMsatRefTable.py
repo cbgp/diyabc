@@ -7,11 +7,14 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from setMutationModel import SetMutationModel
+from setMutationModelMsat import SetMutationModelMsat
 
-class SetMutationModelRefTable(SetMutationModel):
+class SetMutationModelMsatRefTable(SetMutationModelMsat):
+    """ spécialisation de SetMutationModel pour les genetic data 
+    dans le cadre de la génération de la table de référence
+    """
     def __init__(self,parent=None,box_group=None):
-        super(SetMutationModelRefTable,self).__init__(parent,box_group)
+        super(SetMutationModelMsatRefTable,self).__init__(parent,box_group)
 
     def exit(self):
         ## reactivation des onglets

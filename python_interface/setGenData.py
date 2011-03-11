@@ -6,10 +6,10 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData_ui import Ui_Frame
-from setMutationModelRefTable import SetMutationModelRefTable
+from setMutationModelMsatRefTable import SetMutationModelMsatRefTable
 from setMutationModelSequences import SetMutationModelSequences
-from setSummaryStatistics import SetSummaryStatistics
-from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
+#from setSummaryStatistics import SetSummaryStatistics
+#from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from visualizescenario import *
 from data import *
 import output

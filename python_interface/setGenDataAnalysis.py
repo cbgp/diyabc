@@ -6,11 +6,11 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
-from setMutationModelAnalysis import SetMutationModelAnalysis
-from setMutationModelFixed import SetMutationModelFixed
+from setMutationModelMsatAnalysis import SetMutationModelMsatAnalysis
+from setMutationModelMsatFixed import SetMutationModelMsatFixed
 from setMutationModelSequencesFixed import SetMutationModelSequencesFixed
 from setMutationModelSequencesAnalysis import SetMutationModelSequencesAnalysis
-from setSummaryStatistics import SetSummaryStatistics
+from setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from estimation import Estimation
 from visualizescenario import *
@@ -54,7 +54,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
             if drawnorfixed == "drawn":
                 # on instancie des mutationmodel normaux (mais fait pour analysis)
                 if "Microsatellites" in str(box.title()):
-                    self.setMutation_dico[self.groupList[-1]] = SetMutationModelAnalysis(self,self.groupList[-1])
+                    self.setMutation_dico[self.groupList[-1]] = SetMutationModelMsatAnalysis(self,self.groupList[-1])
                     self.setMutation_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
                     #print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
@@ -70,7 +70,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
             else:
                 # on instancie des mutationmodel fixed
                 if "Microsatellites" in str(box.title()):
-                    self.setMutation_dico[self.groupList[-1]] = SetMutationModelFixed(self,self.groupList[-1])
+                    self.setMutation_dico[self.groupList[-1]] = SetMutationModelMsatFixed(self,self.groupList[-1])
                     self.setMutation_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
                     #print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
@@ -389,7 +389,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
 
     def clearMutationModel(self,box):
         self.setMutation_dico[box].exit()
-        self.setMutation_dico[box] = SetMutationModel(self,box)
+        self.setMutation_dico[box] = SetMutationModelMsat(self,box)
         self.setMutation(box)
 
     def clearMutationModelSeq(self,box):
@@ -399,7 +399,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
 
     def clearSummaryStats(self,box):
         self.setSum_dico[box].exit()
-        self.setSum_dico[box] = SetSummaryStatistics(self,box)
+        self.setSum_dico[box] = SetSummaryStatisticsMsat(self,box)
         self.setSum(box)
 
     def clearSummaryStatsSeq(self,box):

@@ -6,10 +6,10 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
-from setMutationModelRefTable import SetMutationModelRefTable
+from setMutationModelMsatRefTable import SetMutationModelMsatRefTable
 from setMutationModelSequencesRefTable import SetMutationModelSequencesRefTable
 from setMutationModelSequences import SetMutationModelSequences
-from setSummaryStatistics import SetSummaryStatistics
+from setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from visualizescenario import *
 from data import *
@@ -39,7 +39,7 @@ class SetGeneticDataRefTable(SetGeneticData):
         """
         groupBox = super(SetGeneticDataRefTable,self).addGroup()
 
-        frame = SetMutationModelRefTable(self,groupBox)
+        frame = SetMutationModelMsatRefTable(self,groupBox)
         frame.setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))
         self.setMutation_dico[groupBox] = frame
         frame.hide()
@@ -49,7 +49,7 @@ class SetGeneticDataRefTable(SetGeneticData):
         self.setMutationSeq_dico[groupBox] = frameSeq
         frameSeq.hide()
 
-        frameSum = SetSummaryStatistics(self,groupBox)
+        frameSum = SetSummaryStatisticsMsat(self,groupBox)
         self.setSum_dico[groupBox] = frameSum
         frameSum.hide()
 
@@ -359,7 +359,7 @@ class SetGeneticDataRefTable(SetGeneticData):
 
     def clearSummaryStats(self,box):
         self.setSum_dico[box].exit()
-        self.setSum_dico[box] = SetSummaryStatistics(self,box)
+        self.setSum_dico[box] = SetSummaryStatisticsMsat(self,box)
         self.setSum(box)
 
     def clearSummaryStatsSeq(self,box):

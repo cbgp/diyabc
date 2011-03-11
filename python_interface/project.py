@@ -11,9 +11,9 @@ from PyQt4.QtGui import *
 from project_ui import *
 from setHistFrame import SetHistoricalModel
 from setGenDataRefTable import SetGeneticDataRefTable
-from setMutationModel import SetMutationModel
+from setMutationModelMsat import SetMutationModelMsat
 from setMutationModelSequences import SetMutationModelSequences
-from setSummaryStatistics import SetSummaryStatistics
+from setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from defineNewAnalysis import DefineNewAnalysis
 from data import Data
@@ -251,38 +251,40 @@ class Project(QTabWidget):
             self.ui.horizontalLayout_3.addWidget(p)
 
     def fancyfyGraph(self,legend,p,obs):
-            for it in legend.legendItems():
-                f = it.font()
-                f.setPointSize(14)
-                it.setFont(f)
-            litem = legend.find(obs)
-            litem.symbol().setSize(QSize(17,17))
-            litem.setIdentifierWidth(17)
-            legend.setFrameShape(QFrame.Box)
-            legend.setFrameShadow(QFrame.Raised)
+        """ met en forme la légende et calcule l'intervale des divisions des axes
+        """
+        for it in legend.legendItems():
+            f = it.font()
+            f.setPointSize(14)
+            it.setFont(f)
+        litem = legend.find(obs)
+        litem.symbol().setSize(QSize(17,17))
+        litem.setIdentifierWidth(17)
+        legend.setFrameShape(QFrame.Box)
+        legend.setFrameShadow(QFrame.Raised)
 
-            p.replot()
-            sd = p.axisScaleDiv(0)
-            interval = sd.interval()
-            minv = interval.minValue()
-            maxv = interval.maxValue()
-            inc = 1.0
-            if maxv-minv < 9:
-                inc = 0.5
-            if maxv-minv < 5:
-                inc = 0.2
-            if maxv-minv < 3:
-                inc = 0.1
-            ticks = []
-            vv = minv
-            while vv < maxv:
-                ticks.append(round(vv,1))
-                vv += inc
-            #print sd.ticks(QwtScaleDiv.MajorTick)
-            sd.setTicks(QwtScaleDiv.MajorTick,ticks)
-            p.setAxisScaleDiv(0,sd)
-            grid = QwtPlotGrid()
-            grid.attach(p)
+        p.replot()
+        sd = p.axisScaleDiv(0)
+        interval = sd.interval()
+        minv = interval.minValue()
+        maxv = interval.maxValue()
+        inc = 1.0
+        if maxv-minv < 9:
+            inc = 0.5
+        if maxv-minv < 5:
+            inc = 0.2
+        if maxv-minv < 3:
+            inc = 0.1
+        ticks = []
+        vv = minv
+        while vv < maxv:
+            ticks.append(round(vv,1))
+            vv += inc
+        #print sd.ticks(QwtScaleDiv.MajorTick)
+        sd.setTicks(QwtScaleDiv.MajorTick,ticks)
+        p.setAxisScaleDiv(0,sd)
+        grid = QwtPlotGrid()
+        grid.attach(p)
 
     def saveGraph(self):
         """ sauvegarde le graphe dans le dossier PCA_pictures du projet
@@ -326,6 +328,8 @@ class Project(QTabWidget):
 
 
     def defineNewAnalysis(self):
+        """ démarre la définition d'une nouvelle analyse
+        """
         def_analysis = DefineNewAnalysis(self)
         #self.addTab(def_analysis,"Define new analysis")
 

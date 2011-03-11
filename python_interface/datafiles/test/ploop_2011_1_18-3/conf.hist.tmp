@@ -23,12 +23,12 @@ t2 merge 1 2
 
 historical parameters priors (8,2)
 N N NO[10,10000,1,01] False
-X N LU[10,10000,01,01] True
-F N UN[10,10000,01,01] True
+X N LU[10,10000,01,01] False
+F N UN[10,10000,01,01] False
 t T LU[10,10000,01,01] False
-D N NO[10,10000,01,01] True
-t2 T LN[10,10000,01,01] True
-G N NO[10,10000,01,01] True
+D N NO[10,10000,01,01] False
+t2 T LN[10,10000,01,01] False
+G N NO[10,10000,01,01] False
 r33 A LU[0.022,0.999,0.01,0.01] False
 D>G
 F<=N
