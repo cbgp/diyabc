@@ -68,12 +68,10 @@ public:
         return 0;  //retour normal
     }
     
-    enregC readrecord() {
-        enregC enr; 
-        this->fifo.read((char*)&(enr.numscen),sizeof(int));
-        for (int i=0;i<this->nparam[enr.numscen-1];i++) this->fifo.read((char*)&(enr.param[i]),sizeof(float));
-        for (int i=0;i<this->nstat;i++) this->fifo.read((char*)&(enr.stat[i]),sizeof(float));
-        return enr;
+    void readrecord(enregC *enr) {
+        this->fifo.read((char*)&(enr->numscen),sizeof(int));
+        for (int i=0;i<this->nparam[enr->numscen-1];i++) this->fifo.read((char*)&(enr->param[i]),sizeof(float));
+        for (int i=0;i<this->nstat;i++) this->fifo.read((char*)&(enr->stat[i]),sizeof(float));
     }
     
     int writerecords(int nenr, enregC *enr) {
@@ -105,10 +103,11 @@ public:
         for (int i=0;i<nscen;i++) this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));
         this->fifo.seekp(0,ios::beg);
         nb =this->nrec+nenr;this->fifo.write((char*)&nb,sizeof(int));
-        for (int i=0;i<nscen;i++) {nb=this->nrecscen[i]+nrs[i];this->fifo.write((char*)&nb,sizeof(int));}
+        for (int i=0;i<this->nscen;i++) {nb=this->nrecscen[i]+nrs[i];this->fifo.write((char*)&nb,sizeof(int));}
         fifo.flush();
         f1<<this->nrec+nenr<<"\n";
         f1.close();
+        delete []nrs;
         return 0;
     }
   
@@ -117,6 +116,18 @@ public:
         return 0;
     }
     
+    int openfile2() {
+        this->fifo.open(this->filename,ios::in|ios::binary);
+        this->fifo.seekg(0);
+        this->fifo.read((char*)&(this->nrec),sizeof(int));
+        //cout <<"nrec = "<<nrec<<"\n";
+        this->nrecscen = new int[nscen];
+        for (int i=0;i<nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
+        this->nparam = new int[nscen];
+        for (int i=0;i<nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
+        this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
+        return 0;
+    }
     int closefile() {
         this->fifo.close();
         return 0;

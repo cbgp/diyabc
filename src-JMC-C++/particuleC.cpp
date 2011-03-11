@@ -129,7 +129,14 @@ public:
     	int numevent0;
     	char *stime,*sNe,*sadmixrate;
         int ltime,lNe,ladmixrate;
-	void ecris(){
+	
+    void libere() {
+        if (ltime>0) delete []stime;
+        if (lNe>0) delete []sNe;
+        if (ladmixrate>0) delete []sadmixrate;
+    }    
+        
+    void ecris(){
 		cout <<"ltime="<<this->ltime<<"\n";
       //cout<<"    "<<this->stime<<"   "<<this->action<<"   "<<this->sadmixrate<<"\n";
 	}
@@ -140,6 +147,10 @@ struct Ne0C
 {
 	int val,lon;
 	char *name;
+    
+    void libere() {
+        delete []this->name;
+    }
 };
 
 class HistParameterC
@@ -149,6 +160,10 @@ public:
 	int category;   //0 pour N, 1 pour T et 2 pour A
 	double value;
 	PriorC prior;
+    
+    void libere(){ 
+        //delete &(this->prior);
+    }
 	
 	void ecris() {
 		cout<<"    name="<<this->name<<"   val="<<this->value<<"   category="<<this->category<<"\n";
@@ -168,6 +183,14 @@ struct LocusGroupC
 	PriorC priormusmoy,priork1moy,priork2moy,priormusloc,priork1loc,priork2loc;
 	PriorC priormutmoy,priorPmoy,priorsnimoy,priormutloc,priorPloc,priorsniloc;
 	StatC *sumstat;
+    
+    void libere() {
+        delete []loc;
+        for (int i=0;i<this->nstat;i++) free(&(this->sumstat[i]));
+        delete []this->sumstat;
+    
+    }
+    
 };
 
 class ScenarioC
@@ -186,6 +209,24 @@ public:
      * category=0 (Ne)   , 1 (time),  3 (admixrate)
     */
 
+    void libere() {
+        //cout<<"avant delete paramvar\n";
+        delete []this->paramvar;
+        //cout<<"avant delete event\n";
+        for (int i=0;i<this->nevent;i++) this->event[i].libere();
+        delete []this->event;
+        //cout<<"avant delete ne0\n";
+        for (int i=0;i<this->nn0;i++) this->ne0[i].libere();
+        delete []this->ne0;
+        //cout<<"avant delete histparam\n";
+        for (int i=0;i<this->nparam;i++) this->histparam[i].libere();
+        delete []this->histparam;
+        //cout<<"avant delete condition\n";
+        if (this->nconditions>0) delete []this->condition;
+        //cout<<"         apres libere scenario\n";
+        delete []this->time_sample;
+    }
+    
     void detparam(string s,int cat)
     {	string s1;
         int i,j;
@@ -349,20 +390,21 @@ EventC copyevent(EventC source) {
 	dest.time = source.time;
 	dest.admixrate = source.admixrate;
 	dest.numevent0 = source.numevent0;
-    //cout<<"apres les copie event simples source.ltime = "<<source.ltime <<"\n";
     dest.ltime = source.ltime;
-    //cout<<"apres les copie event simples dest.ltime = "<<dest.ltime <<"\n";
-    dest.stime = new char[source.ltime];
-    if (dest.ltime>0)for (int i=0;i<dest.ltime;i++)dest.stime[i]=source.stime[i];
+    if (source.ltime>0) {
+        dest.stime = new char[source.ltime];
+        for (int i=0;i<dest.ltime;i++)dest.stime[i]=source.stime[i];
+    }
     dest.lNe = source.lNe;
-    //cout<<"apres copie event stime\n";
-	dest.sNe = new char[source.lNe];
-    if (dest.lNe>0) for (int i=0;i<dest.lNe;i++)dest.sNe[i]=source.sNe[i];
+	if (source.lNe>0) {
+        dest.sNe = new char[source.lNe];
+        for (int i=0;i<dest.lNe;i++)dest.sNe[i]=source.sNe[i];
+    }
     dest.ladmixrate = source.ladmixrate;
-    //cout<<"apres les copie event sne\n";
-    dest.sadmixrate = new char[source.ladmixrate];
-    if (dest.ladmixrate>0) for (int i=0;i<dest.ladmixrate;i++)dest.sadmixrate[i]=source.sadmixrate[i];
-    //cout<<"apres les copie event sadmixrate\n";
+    if (source.ladmixrate>0) {
+        dest.sadmixrate = new char[source.ladmixrate];
+        for (int i=0;i<dest.ladmixrate;i++)dest.sadmixrate[i]=source.sadmixrate[i];
+    }
 	return dest;
 }
 
@@ -483,7 +525,13 @@ struct ParticleC
 	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar;
 	double matQ[4][4];
 
-        void ecris(){
+    void libere() {
+         for (int i=0;i<this->nloc;i++) locuslist[i].libere(this->nsample);
+         delete []locuslist;
+    
+    }
+    
+    void ecris(){
 		for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();
 	}
 	
@@ -519,12 +567,15 @@ struct ParticleC
                 this->scen.nconditions = this->scenario[iscen].nconditions;
                 for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i] = this->scenario[iscen].time_sample[i];
                 for (int i=0;i<this->scen.nn0;i++) {
-                      if ((i>5)or(iscen>2)) cout <<"i="<<i<<"   iscen="<<iscen<<"\n";
+                      //if ((i>5)or(iscen>2)) cout <<"i="<<i<<"   iscen="<<iscen<<"\n";
                       this->scen.ne0[i].val = this->scenario[iscen].ne0[i].val;
                       strcpy(this->scen.ne0[i].name,this->scenario[iscen].ne0[i].name);
                 }
                 //for (int i=0;i<this->scen.nn0;i++) this->scen.ne0[i] = copyne0(this->scenario[iscen].ne0[i]);
-                for (int i=0;i<this->scen.nevent;i++) this->scen.event[i] = copyevent(this->scenario[iscen].event[i]);
+                for (int i=0;i<this->scen.nevent;i++) {
+                      this->scen.event[i].libere();
+                      this->scen.event[i] = copyevent(this->scenario[iscen].event[i]);
+                }
                 for (int i=0;i<this->scen.nparam;i++) {this->scen.histparam[i] = copyhistparameter(this->scenario[iscen].histparam[i]);/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
                 for (int i=0;i<this->scen.nparamvar;i++) {this->scen.paramvar[i] = this->scenario[iscen].paramvar[i];/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
                 if (this->scen.nconditions>0) {
@@ -1642,7 +1693,8 @@ struct ParticleC
                         }
                 }
                 //if (trace) cout<<"avant les delete\n";fflush(stdin);
-                delete [] emptyPop;
+        delete [] emptyPop;
+        delete [] this->seqlist;
 		for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) deletetree(this->gt[loc]);}
 		delete [] this->gt;
 		if (gtYexist) deletetree(GeneTreeY);
@@ -1719,6 +1771,20 @@ struct ParticleC
 		}
 		cout <<"fin de calfreq \n";*/
 	}
+
+    void liberefreq() {
+        for (int loc=0;loc<this->nloc;loc++) {
+            if (this->locuslist[loc].groupe>0){
+                if (this->locuslist[loc].type<5) {
+                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].freq[samp];
+                    delete []this->locuslist[loc].freq;
+                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].haplomic[samp];
+                    delete []this->locuslist[loc].haplomic;
+                    delete []this->locuslist[loc].samplesize;
+                }
+            }
+        }
+    }
 
 	double cal_nal1p(int gr,int st){
 	  
@@ -2348,6 +2414,7 @@ struct ParticleC
 			}
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
+		if (this->grouplist[gr].type == 0) liberefreq();
 	}
 
 };

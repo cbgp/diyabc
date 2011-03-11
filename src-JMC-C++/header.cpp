@@ -16,16 +16,28 @@ class HeaderC
 {
 public:
     string message,datafilename,entete;
-        char * pathbase;
+    char * pathbase;
     DataC dataobs;
     int nparamtot,nstat,nscenarios,nconditions,ngroupes;
-        string *paramname;
+    string *paramname;
     ScenarioC *scenario,scen;
     HistParameterC *histparam;
     ConditionC *condition;
     LocusGroupC *groupe;
     bool drawuntil;
-        ParticleC particuleobs;
+    ParticleC particuleobs;
+    
+    void libere() {
+        this->dataobs.libere();
+        //delete []this->pathbase;
+        //delete []this->paramname;
+        if(this->nconditions>0) delete []this->condition;
+        for(int i=0;i<this->nscenarios;i++) this->scenario[i].libere();
+        delete []this->scenario;
+        this->scen.libere();
+        //for(int i=1;i<ngroupes+1;i++) this->groupe[i].libere();
+        delete []this->groupe;
+    }
 
     PriorC readprior(string ss) {
         PriorC prior;
@@ -43,6 +55,7 @@ public:
         else if (ss.find("LN[")!=string::npos) {prior.loi="LN";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
         else if (ss.find("GA[")!=string::npos) {prior.loi="GA";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
         prior.constant = ((prior.maxi-prior.mini)/prior.maxi<0.000001);
+        delete []sb;
         return prior;
     }
 
@@ -61,6 +74,7 @@ public:
                 if (prior.maxi==0.0) prior.constant=true;
                 else if ((prior.maxi-prior.mini)/prior.maxi<0.000001) prior.constant=true;
                 else prior.constant=false;
+        delete []sb;
         return prior;
     }
 
@@ -276,17 +290,9 @@ public:
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutmoy = this->readpriormut(ss1[1]);delete [] ss1;
                 if (this->groupe[gr].priormutmoy.constant) this->groupe[gr].mutmoy=this->groupe[gr].priormutmoy.mini; 
                 else {this->groupe[gr].mutmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
-                
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);
-                                //cout<<ss1[1]<<"\n";
-                                
-                                this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
-                //cout<<"mutloc  ";this->groupe[gr].priormutloc.ecris();
-                
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy   = this->readpriormut(ss1[1]);delete [] ss1;
-                //this->groupe[gr].priorPmoy.ecris();
-                                //if (this->groupe[gr].priorPmoy.constant) cout<<"priorPmoy constant dans readheader\n";
-                                if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini; 
+                if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini; 
                 else {this->groupe[gr].Pmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
                 
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readpriormut(ss1[1]);delete [] ss1;
@@ -434,8 +440,8 @@ public:
                             this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
                             this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
                             k++;
+                            delete [] ss1;
                         }
-                        delete [] ss1;
                     } else if (stat_num[j]==12) {
                         for (int i=1;i<nss;i++) {
                             this->groupe[gr].sumstat[k].cat=stat_num[j];
@@ -444,8 +450,8 @@ public:
                             this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
                             this->groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
                             k++;
+                            delete [] ss1;
                         }
-                        delete [] ss1;
                     }
                 } else if (this->groupe[gr].type==1) {   //DNA SEQUENCE
                     if (stat_num[j]>-5) {
@@ -461,8 +467,8 @@ public:
                             this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
                             this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
                             k++;
+                            delete [] ss1;
                         }
-                        delete [] ss1;
                     } else if (stat_num[j]==-14) {
                         for (int i=1;i<nss;i++) {
                             this->groupe[gr].sumstat[k].cat=stat_num[j];
@@ -471,8 +477,8 @@ public:
                             this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
                             this->groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
                             k++;
+                            delete [] ss1;
                         }
-                        delete [] ss1;
                     }
                 }
                     //cout<<"fin de la stat "<<k<<"\n";
@@ -538,6 +544,8 @@ public:
                         this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type;
                         this->particuleobs.locuslist[kloc].groupe = this->dataobs.locus[kloc].groupe;
                         this->particuleobs.locuslist[kloc].coeff =  this->dataobs.locus[kloc].coeff;
+                        this->particuleobs.locuslist[kloc].name =  new char[strlen(this->dataobs.locus[kloc].name)+1];
+                        strcpy(this->particuleobs.locuslist[kloc].name,this->dataobs.locus[kloc].name);
                         this->particuleobs.locuslist[kloc].ss = new int[ this->dataobs.nsample];
                         for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].ss[sa] =  this->dataobs.locus[kloc].ss[sa];
                         this->particuleobs.locuslist[kloc].samplesize = new int[ this->dataobs.nsample];
@@ -579,6 +587,7 @@ public:
                ent="";
                for (int k=j-this->nstat;k<j;k++) ent=ent+centre(sb[k],14);
                ent=ent+"\n";
+               delete []sb;
                FILE *fobs;
                fobs=fopen(statobsfilename,"w");
                fputs(ent.c_str(),fobs);
@@ -588,6 +597,7 @@ public:
                }
                fprintf(fobs,"\n");
                fclose(fobs);
+               this->particuleobs.libere();
                //exit(1);
         }
 };

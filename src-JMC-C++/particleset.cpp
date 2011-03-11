@@ -37,11 +37,11 @@
 struct enregC {
     int numscen;
     float *param,*stat;
+    double dist;
     string message;
 };
 
 enregC *enreg;
-bool courantdone=false;
 
 
 struct ParticleSetC
@@ -55,7 +55,6 @@ struct ParticleSetC
 	ScenarioC *scenario;
 	double sexratio;
         MwcGen *mw;
-        bool defined;
 
 	void setdata(int p) {
 		this->particule[p].data.nsample = this->header.dataobs.nsample;
@@ -301,7 +300,7 @@ struct ParticleSetC
                 }
 	}*/
 
-	void dosimultabref(HeaderC header,int npart, bool dnatrue, int numrec,bool multithread)
+	void dosimultabref(HeaderC header,int npart, bool dnatrue, int numrec,bool multithread,bool firsttime)
 	{
                int ipart,jpart=0,nthreads,base;
 	       int gr,nstat,pa,ip,iscen;
@@ -314,7 +313,7 @@ struct ParticleSetC
                //if (this->defined) cout <<"particleSet defined\n";
                //else cout<<"particleSet UNdefined\n";
                //this->header = header;
-               if (not this->defined) {                
+               if (firsttime) {                
                     //srand(time(NULL));
                     srand(1);  
                     base=0;//rand();
@@ -334,7 +333,6 @@ struct ParticleSetC
                         //cout << "                    apres set particule\n";
                         this->particule[p].mw.randinit(p+base ,false);
                     }
-                    this->defined=true;
                 }
                 else {
                      for (int p=0;p<this->npart;p++) {
@@ -373,7 +371,7 @@ struct ParticleSetC
                         }
 		}
 		//if (trace) cout<<"apres remplissage des enreg\n";fflush(stdin);
-                if (not courantdone){
+                if (firsttime){
                       FILE * pFile;
                       char  *curfile;
                       //cout<<"avant curfile\n";fflush(stdin);
@@ -406,7 +404,6 @@ struct ParticleSetC
                               }
                       }
                       fclose(pFile);
-                      courantdone=true;
                 }
 		//cout <<"fin de l'ecriture du fichier courant.log' \n";
 		//cleanParticleSet();

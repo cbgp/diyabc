@@ -55,13 +55,14 @@ double clock_zero=0.0,debut,duree;
 
 int main(int argc, char *argv[]){
 	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename;
-    bool multithread=false;
+    bool multithread=false,firsttime;
 	int nrecneeded,nrectodo,k;
 	double **paramstat;
 	int optchar;
-        ReftableC rt;
+    ReftableC rt;
 	HeaderC header;
-        ParticleSetC ps;
+    ParticleSetC ps;
+    //string a;
         //srand(time(NULL));
        
         debut=walltime(&clock_zero);
@@ -76,7 +77,8 @@ int main(int argc, char *argv[]){
             cout <<"-e s:<chosen scenarios separated by a comma>;n:<number of simulated datasets taken from reftable>;m:<number of simulated datasets used for the local regression>;t:<number of the transformation (1,2,3 or 4)>;p:<o for original, c for composite, oc for both>"<<"\n";
             break;
 	
-	    case 'p' : headerfilename = new char[strlen(optarg)+13];
+	    case 'p' : 
+               headerfilename = new char[strlen(optarg)+13];
 		       reftablefilename = new char[strlen(optarg)+15];
                        statobsfilename = new char[strlen(optarg)+14];
 		       strcpy(headerfilename,optarg);
@@ -111,7 +113,6 @@ int main(int argc, char *argv[]){
                            rt.writeheader();
                        } else if (k==2) {cout<<"cannot create reftable file\n"; exit(1);}
                        if (nrecneeded>rt.nrec) {
-                              ps.defined=false;
                               rt.openfile();
                               enreg = new enregC[nenr];
                               for (int p=0;p<nenr;p++) {
@@ -120,8 +121,10 @@ int main(int argc, char *argv[]){
                                   enreg[p].numscen = 1;
                               }
                               //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
+                              firsttime=true;
                               while (nrecneeded>rt.nrec) {
-                                      ps.dosimultabref(header,nenr,false,rt.nrec,multithread);
+                                      ps.dosimultabref(header,nenr,false,rt.nrec,multithread,firsttime);
+                                      if (firsttime) firsttime=false;
                                       rt.writerecords(nenr,enreg);
                                       rt.nrec +=nenr;
                                       cout<<rt.nrec<<"\n";
@@ -132,7 +135,10 @@ int main(int argc, char *argv[]){
                               }
                               delete [] enreg;
                               rt.closefile();
+                              header.libere();
+                              
                        }
+                   delete []datafilename;    
 	               break;
                    
             case 'g' : nenr = atoi(optarg);
@@ -148,8 +154,9 @@ int main(int argc, char *argv[]){
         
 	    }
 	}
-	
+	delete [] headerfilename;delete [] reftablefilename;
 	duree=walltime(&debut);
-        fprintf(stdout,"durée = %.2f secondes \n",duree);
+    fprintf(stdout,"durée = %.2f secondes \n",duree);
+    //cin >> a;
 	return 0;
 };

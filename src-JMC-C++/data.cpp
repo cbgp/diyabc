@@ -64,6 +64,28 @@ struct LocusC
 	int mini,maxi,kmin,kmax,motif_size,motif_range,nal;
 	double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
 	int **haplomic; //array[sample][gene copy]
+	
+	void libere(int nsample) {
+      //cout<<"debut  nsample="<<nsample<<"\n";
+       delete []this->name;
+       delete []this->ss;
+       //delete []this->samplesize;
+      //cout<<"milieu\n";
+       if (this->type<5) {
+       //   for (int i=0;i<nsample;i++) delete []this->haplomic[i];
+       //   delete []this->haplomic;
+       } else {
+           delete []mutsit;
+           delete []sitmut;
+           delete []tabsit;
+           for (int i=0;i<nsample;i++) {
+               for (int j;j<nsample;j++) delete[]this->haplodna[i][j];
+               delete []this->haplodna[i];
+           } 
+           delete []this->haplodna;
+       }
+      //cout<<"fin\n";
+    }
 };
 
 struct MissingHaplo
@@ -118,7 +140,10 @@ public:
 		if (this->nmissnuc>0) delete [] this->missnuc;
                 //cout<<"apres delete misshap et missnuc\n";
                 if (Alocus) {
-                    for (int loc=0;loc<this->nloc;loc++){
+                    for (int loc=0;loc<this->nloc;loc++) this->locus[loc].libere(this->nsample);
+                    
+                    
+                    /*{
                             delete [] this->locus[loc].name;
                             if (this->locus[loc].type<5) {
                                     for (int  ech=0;ech<this->nsample;ech++) delete [] this->locus[loc].haplomic[ech];
@@ -135,7 +160,7 @@ public:
                             }
                             delete [] this->locus[loc].samplesize;
                             delete [] this->locus[loc].ss;
-                    }
+                    }*/
                     delete [] this->locus;
                 }
 		if (Anind) delete [] this->nind;
