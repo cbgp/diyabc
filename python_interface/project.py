@@ -340,23 +340,38 @@ class Project(QTabWidget):
         self.ui.analysisStack.addWidget(def_analysis)
         self.ui.analysisStack.setCurrentWidget(def_analysis)
 
-    def genScript(self):
-        return "for i in $(seq 1 5) ; do qsub gen -rock ; done"
+    def genMasterScript(self):
+        return "for i in $(seq 1 5) ; do qsub node.sh -n $i ; done"
+
+    def genNodeScript(self):
+        return "cp ; ./gen -rock -i 10000 ; cpback"
 
     def generateComputationTar(self):
         name = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","(TAR archive) *.tar"))
         if name != "":
             if os.path.exists(name):
                 os.remove(name)
-            script = self.genScript()
-            if os.path.exists('scf'):
-                os.remove('scf')
-            scf = open('scf','w')
-            scf.write(script)
-            scf.close()
-            os.chmod('scf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
+            # generation du master script
+            script = self.genMasterScript()
+            if os.path.exists('scmf'):
+                os.remove('scfm')
+            scmf = open('scmf','w')
+            scmf.write(script)
+            scmf.close()
+            os.chmod('scmf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
             tar = tarfile.open(name,"w")
-            tar.add('scf','launch.sh')
+            tar.add('scmf','launch.sh')
+            # generation du node script
+            script = self.genNodeScript()
+            if os.path.exists('scnf'):
+                os.remove('scfn')
+            scmf = open('scnf','w')
+            scmf.write(script)
+            scmf.close()
+            os.chmod('scmf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
+            tar = tarfile.open(name,"w")
+            tar.add('scmf','launch.sh')
+
             tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),self.parent.reftableheader_name)
             tar.add(self.dataFileSource,self.dataFileName)
             tar.close()
