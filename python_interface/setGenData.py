@@ -5,7 +5,7 @@ import codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from setGenData_ui import Ui_Frame
+from uis.setGenData_ui import Ui_Frame
 from mutationModel.setMutationModelMsatRefTable import SetMutationModelMsatRefTable
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 #from setSummaryStatistics import SetSummaryStatistics

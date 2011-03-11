@@ -5,7 +5,7 @@ import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
-from drawScenario_ui import Ui_Frame
+from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
 
 class DrawScenario(QFrame):

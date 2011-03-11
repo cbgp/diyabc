@@ -4,7 +4,7 @@ import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from setHistFrame_ui import Ui_Frame
+from uis.setHistFrame_ui import Ui_Frame
 from drawScenario import DrawScenario
 from utils.visualizescenario import *
 import utils.history 

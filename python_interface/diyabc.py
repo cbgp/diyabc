@@ -11,7 +11,7 @@ import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from diyabc_ui import Ui_MainWindow
+from uis.diyabc_ui import Ui_MainWindow
 from project import *
 from preferences import Preferences
 import output

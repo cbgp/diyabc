@@ -4,7 +4,7 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from defineNewAnalysis_ui import Ui_Frame
+from uis.defineNewAnalysis_ui import Ui_Frame
 from comparison import Comparison
 from estimation import Estimation
 from genericScenarioSelection import GenericScenarioSelection

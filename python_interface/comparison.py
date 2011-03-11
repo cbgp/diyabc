@@ -4,7 +4,7 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from comparison_ui import Ui_Frame
+from uis.comparison_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 
 class Comparison(QFrame):

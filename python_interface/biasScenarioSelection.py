@@ -4,7 +4,7 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from biasScenarioSelection_ui import Ui_Frame
+from uis.biasScenarioSelection_ui import Ui_Frame
 from histDrawn import HistDrawn
 from histFixed import HistFixed
 

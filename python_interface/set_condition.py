@@ -2,7 +2,7 @@
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from set_condition_ui import Ui_MainWindow
+from uis.set_condition_ui import Ui_MainWindow
 
 class SetCondition(QMainWindow):
     """ Fenetre de definition d'une condition

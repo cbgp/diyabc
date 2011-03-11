@@ -4,7 +4,7 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from estimation_ui import Ui_Frame
+from uis.estimation_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 
 class Estimation(QFrame):

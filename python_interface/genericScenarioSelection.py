@@ -4,7 +4,7 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from genericScenarioSelection_ui import Ui_Frame
+from uis.genericScenarioSelection_ui import Ui_Frame
 
 class GenericScenarioSelection(QFrame):
     def __init__(self,nb_sc,label,next_widget,next_title,nb_min_sel,parent=None):
