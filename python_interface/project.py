@@ -11,10 +11,10 @@ from PyQt4.QtGui import *
 from project_ui import *
 from setHistFrame import SetHistoricalModel
 from setGenDataRefTable import SetGeneticDataRefTable
-from setMutationModelMsat import SetMutationModelMsat
-from setMutationModelSequences import SetMutationModelSequences
-from setSummaryStatisticsMsat import SetSummaryStatisticsMsat
-from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
+from mutationModel.setMutationModelMsat import SetMutationModelMsat
+from mutationModel.setMutationModelSequences import SetMutationModelSequences
+from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
+from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from defineNewAnalysis import DefineNewAnalysis
 from data import Data
 from datetime import datetime 

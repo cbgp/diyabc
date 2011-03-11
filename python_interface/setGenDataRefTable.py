@@ -6,11 +6,11 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
-from setMutationModelMsatRefTable import SetMutationModelMsatRefTable
-from setMutationModelSequencesRefTable import SetMutationModelSequencesRefTable
-from setMutationModelSequences import SetMutationModelSequences
-from setSummaryStatisticsMsat import SetSummaryStatisticsMsat
-from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
+from mutationModel.setMutationModelMsatRefTable import SetMutationModelMsatRefTable
+from mutationModel.setMutationModelSequencesRefTable import SetMutationModelSequencesRefTable
+from mutationModel.setMutationModelSequences import SetMutationModelSequences
+from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
+from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from visualizescenario import *
 from data import *
 import output

@@ -6,8 +6,8 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData_ui import Ui_Frame
-from setMutationModelMsatRefTable import SetMutationModelMsatRefTable
-from setMutationModelSequences import SetMutationModelSequences
+from mutationModel.setMutationModelMsatRefTable import SetMutationModelMsatRefTable
+from mutationModel.setMutationModelSequences import SetMutationModelSequences
 #from setSummaryStatistics import SetSummaryStatistics
 #from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from visualizescenario import *

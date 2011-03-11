@@ -6,8 +6,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from preferences_ui import Ui_MainWindow
-from setMutationModelMsat import SetMutationModelMsat
-from setMutationModelSequences import SetMutationModelSequences
+from mutationModel.setMutationModelMsat import SetMutationModelMsat
+from mutationModel.setMutationModelSequences import SetMutationModelSequences
 
 class Preferences(QMainWindow):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
