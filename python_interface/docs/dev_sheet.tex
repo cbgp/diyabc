@@ -93,15 +93,9 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         install\'e avec l'installeur officiel Python. Donc il faut tout de même d\'eclencher l'installation de Python en incluant
         l'installeur dans le setup de diyabc. Sinon on peut d\'eclencher l'installeur de Python, PyQt, Numpy, PyQwt pendant le setup de
         diyabc ce qui marche à coup sur mais est lourd pour l'utilisateur.
-        La troisème, py2exe est celle qui me semble la plus viable.
+        La troisème, py2exe est celle qui me semblait la plus viable mais pyinstaller 1.5 marche parfaitement.
         \subsubsection{pyinstaller}
-        La version 1.4 nécessite une version de python <= à 2.5. L'utilisation de pyinstaller est assez simple. Il faut, 
-        lancer ``python Configure.py'' pour que pyinstaller se configure par rapport au système sur lequel il est. Ensuite il faut
-        lancer ``python Makespec.py --onefile path\_to\_python\_main\_source.py'' qui génère le specfile dans un dossier du même nom que
-        notre source python. Ensuite ``python Build.py specfile.spec'' construit l'exécutable qui se trouvera dans le même dossier que le spec file
-        dans un dossier nommé ``dist''.
-
-        Je n'ai pas testé la version 1.5 mais elle doit fonctionner.
+        Utilisation : \begin{verbatim} python pyinstaller.py --onefile -w --icon=path\to\icon.ico \end{verbatim}
 
         \subsubsection{Installer PyQt4}
         Un installer python 2.5.4 est disponible ici : http://www.python.org/download/releases/2.5.4/ . 
@@ -157,6 +151,8 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         La version 1.4 de pyinstaller ne contient pas de bootloader précompilé. Il faut la 1.5 pour MacOs.
         En suivant à peu près les instructions à cette adresse : http://diotavelli.net/PyQtWiki/PyInstallerOnMacOSX, on arrive à créer un 
         .app qui fonctionne. Le tuto dit de ne pas utiliser l'option ``--onefile'' mais elle fonctionne.
+
+        Pour installer numpy correctement, ajouter l'option -atlas à la commande port.
 
 \section{Utilisation}
 
