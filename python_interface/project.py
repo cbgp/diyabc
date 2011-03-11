@@ -5,6 +5,7 @@ import os
 import shutil
 import codecs
 import subprocess
+import tarfile,stat
 from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -339,12 +340,34 @@ class Project(QTabWidget):
         self.ui.analysisStack.addWidget(def_analysis)
         self.ui.analysisStack.setCurrentWidget(def_analysis)
 
+    def genScript(self):
+        return "for i in $(seq 1 5) ; do qsub gen -rock ; done"
+
+    def generateComputationTar(self):
+        name = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","(TAR archive) *.tar"))
+        if name != "":
+            if os.path.exists(name):
+                os.remove(name)
+            script = self.genScript()
+            if os.path.exists('scf'):
+                os.remove('scf')
+            scf = open('scf','w')
+            scf.write(script)
+            scf.close()
+            os.chmod('scf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
+            tar = tarfile.open(name,"w")
+            tar.add('scf','launch.sh')
+            tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),self.parent.reftableheader_name)
+            tar.add(self.dataFileSource,self.dataFileName)
+            tar.close()
 
     @pyqtSignature("")
     def on_btnStart_clicked(self):
         self.writeRefTableHeader()
         qfd = QFileDialog()
         self.parent.executablePath = str(qfd.getOpenFileName())
+        self.generateComputationTar()
+        return
         """Start or stop the treatment in the thread"""
         if self.th == None or self.th.cancel == True:
             try:
