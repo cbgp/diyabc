@@ -86,23 +86,34 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
     \end{itemize}
     
     \subsection{Windows}
-        Sous windows, plusieurs solutions sont envisageables. La première, plus simple pour l'utilisateur mais un enfer pour le
-        packageur : PyInstaller. L'ex\'ecutable produit ne trouve pas les librairies. 
-        La deuxième, Inno setup compiler, pour copier ce qu'il faut. Deux strat\'egies sont possibles. On peut copier en un bloc
+        Sous windows, plusieurs solutions sont envisageables. La première, plus simple pour l'utilisateur et le
+        packageur : PyInstaller. L'ex\'ecutable produit est ind\'ependant et l\'eger. \newline
+
+        La deuxième, Inno setup compiler, pour cr\'eer un installateur qui effectue une copie de fichier et certaines actions.
+        Deux strat\'egies sont possibles. On peut copier en un bloc
         python contenant ses d\'ependances et diyabc. Le problème est le suivant, python.exe refuse de se lancer s'il n'a pas \'et\'e
         install\'e avec l'installeur officiel Python. Donc il faut tout de même d\'eclencher l'installation de Python en incluant
         l'installeur dans le setup de diyabc. Sinon on peut d\'eclencher l'installeur de Python, PyQt, Numpy, PyQwt pendant le setup de
-        diyabc ce qui marche à coup sur mais est lourd pour l'utilisateur.
-        La troisème, py2exe est celle qui me semblait la plus viable mais pyinstaller 1.5 marche parfaitement.
-        \subsubsection{pyinstaller}
-        Utilisation : \begin{verbatim} python pyinstaller.py --onefile -w --icon=path\to\icon.ico \end{verbatim}
+        diyabc ce qui marche à coup sur mais est lourd pour l'utilisateur.\newline
+        
+        La troisème, py2exe est satisfaisante mais impose l'installation à part de certaines dll.\newline
 
-        \subsubsection{Installer PyQt4}
-        Un installer python 2.5.4 est disponible ici : http://www.python.org/download/releases/2.5.4/ . 
-        Un installer PyQt4 est dispo ici : http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/ .
-        Expérience personnelle : PyQt4 pour python 2.5 ne marche pas. Donc j'ai installé python 2.6 puis 
-        PyQt4 pour python 2.6. Dans le path système, j'ai donné le chemin pour que la version de python utilisée
-        soit la 2.5 mais pour que PyQt4 soit celui installé dans le dossier de python 2.6 et ça marche.
+        Pour ces trois solutions j'utilise python2.6 et les librairies ``impos\'ees'' par PyQwt5 (http://pyqwt.sourceforge.net/download.html).
+        \subsubsection{pyinstaller}
+        \paragraph{Anciennes versions}
+        La version 1.4 nécessite une version de python <= à 2.5. L'utilisation de pyinstaller est assez simple. Il faut, 
+        lancer ``python Configure.py'' pour que pyinstaller se configure par rapport au système sur lequel il est. Ensuite il faut
+        lancer ``python Makespec.py --onefile path\_to\_python\_main\_source.py'' qui génère le specfile dans un dossier du même nom que
+        notre source python. Ensuite ``python Build.py specfile.spec'' construit l'exécutable qui se trouvera dans le même dossier que le spec file
+        dans un dossier nommé ``dist''.
+        \paragraph{Solution}
+        La version svn est de loin la meilleure solution. Elle marche sans aucun problème sous windows. Son utilisation est simplifi\'ee.
+        Il suffit d'appeler le script pyinstaller.py avec le programme cible en paramètre. Les trois \'etapes (configure, makespec et build)
+        sont ex\'ecut\'ees automatiquement si besoin. Dans le fichier .spec produit, on peut ajouter l'option icon pour personnaliser l'icone 
+        de l'ex\'ecutable.
+		dev doc et icones
+		Utilisation : \begin{verbatim} python pyinstaller.py --onefile -w --icon=path\to\icon.ico \end{verbatim}
+
         \subsection{Inno setup compiler}
         http://www.jrsoftware.org/isdl.php
 
@@ -129,14 +140,25 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         L'option ``window'' plutôt que ``console'' ne fonctionne pas.
     \subsection{Linux}
         \subsubsection{Installer PyQt4}
-        PyQt4 est packagé pour toutes les distributions. Aucun problème de ce côté.
+        PyQt4 et PyQwt5 sont packagés pour toutes les distributions. Aucun problème de ce côté.
         \subsubsection{pyinstaller}
         Pyinstaller semble ne pas fonctionner parfaitement sous linux. L'exécutable produit ne marche que
         sur la machine qui l'a créé. Je suis d'avis qu'il faut plutôt faire un paquet debian et/ou rpm
         et distribuer le programme de cette façon.
 
     \subsection{MacOs 10.6 Snow Leopard}
+        Sous MacOs, on pourrait cr\'eer un pkg qui installe python et les d\'ependances de DIYABC. C'est un peu lourd
+        pour l'utilisateur. Py2app ne fonctionne pas, après avoir compil\'e un apptemplate pour i386\_x64
+        il subsiste un problème dont l'origine m'est inconnue. Au lancement
+        du .app, ``DIYABC error'' apparait et je n'ai aucun moyen de savoir pourquoi. J'ai donc retenu pyinstaller qui fonctionne parfaitement.
+
+        Sur la machine qui va g\'en\'erer le .app, il faut avoir un environnement de d\'eveloppement complet, à savoir
+        python2.6, PyQt4 et PyQwt5.
+
         \subsubsection{Installer PyQt4}
+
+        \paragraph{Problèmes}
+
         PyQt n'est pas disponible en binaire sur MacOs. Il faut donc avoir Qt et gcc pour le compiler. 
         Gcc n'est que très difficilement installable sans Xcode. Il faut donc installer Xcode.
         En suivant à peu près les instructions données à cette adresse : \newline
@@ -147,12 +169,35 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         ``designer'' pour que la compilation fonctionne. En cas d'erreurs incompréhensibles, bien penser à faire un ``make clean''
         pour effacer les .o déjà compilés qui peuvent provenir d'une compilation précédente mal paramétrée.
 
-        \subsubsection{pyinstaller}
-        La version 1.4 de pyinstaller ne contient pas de bootloader précompilé. Il faut la 1.5 pour MacOs.
-        En suivant à peu près les instructions à cette adresse : http://diotavelli.net/PyQtWiki/PyInstallerOnMacOSX, on arrive à créer un 
-        .app qui fonctionne. Le tuto dit de ne pas utiliser l'option ``--onefile'' mais elle fonctionne.
+        \paragraph{Solution}
 
-        Pour installer numpy correctement, ajouter l'option -atlas à la commande port.
+        La solution est d'utiliser les macports pour installer PyQwt (py26-pyqwt), ce qui installera tout le n\'ecessaire. Il faut tout de même
+        faire attention à numpy qui pose un problème de version de lib vector. La solution est de d\'esinstaller numpy et de l'installer avec l'option
+        ``-atlas''. 
+        
+        \subsubsection{pyinstaller}
+
+        Les version 1.4 et 1.5 ne fonctionnent pas. Par contre,
+        pyinstaller svn est tout à fait op\'erationnel avec python2.6. Il faut tout de même effectuer une s\'erie d'op\'erations avant et après
+        le build pour que le .app soit op\'erationnel.Se r\'er\'erer à \newline
+        http://deanezra.com/2010/05/setting-up-pythonqt-pyqt4-on-mac-os-x-snow-leopard/\newline
+        Protocole : 
+        \begin{itemize}
+            \item Lancer une première fois ``python pyinstaller.py diyabc.py''
+            \item Ajouter à la fin de diyabc.spec :
+        \begin{verbatim}
+    import sys 
+    if sys.platform.startswith(``darwin''): 
+        app = BUNDLE(exe, 
+        appname='DIYABC', 
+        version='1.0')
+        \end{verbatim}
+            \item Relancer pyinstaller sur le specfile: ``python pyinstaller diyabc/diyabc.spec''
+            \item Changer une valeur dans le fichier Info.list
+            \item Copier le contenu du dossier dist/nom\_du\_projet dans le dossier MacOs du .app
+            \item Copier /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt\_menu.nib dans le dossier Ressources du .app
+            \item Copier l'icone dans le dossier Ressources avec le nom ``App.icns''.
+        \end{itemize}
 
 \section{Utilisation}
 
