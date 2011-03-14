@@ -348,10 +348,10 @@ class Project(QTabWidget):
         nbLastQsub = nbToGen % 10000
 
         return 'for i in $(seq 1 %s); do \n\
-qsub -wd /tmp/diyabc "node.sh 10000 `pwd` $i"\n\
+qsub -cwd node.sh 10000 `pwd` $i\n\
 done;\n\
 let last=$i+1\n\
-qsub "node.sh %s `pwd` $last"'%(nbFullQsub,nbLastQsub)
+qsub -cwd node.sh %s `pwd` $last'%(nbFullQsub,nbLastQsub)
 
     def genNodeScript(self):
         """ génération du script a exécuter sur chaque noeud
@@ -361,8 +361,9 @@ qsub "node.sh %s `pwd` $last"'%(nbFullQsub,nbLastQsub)
 cp general $TMPDIR\n\
 cp %s $TMPDIR\n\
 cp %s $TMPDIR\n\
-$TMPDIR/general -p $TMPDIR -r $1\n\
-cp $TMPDIR/reftable.bin $2/reftable_$3.bin'%(self.parent.reftableheader_name, self.dataFileName)
+$TMPDIR/general -p $TMPDIR/ -r $1\n\
+cp $TMPDIR/reftable.bin $2/reftable_$3.bin\n\
+cp $TMPDIR/reftable.log $2/reftable_$3.log'%(self.parent.reftableheader_name, self.dataFileName)
 
     def generateComputationTar(self):
         name = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","(TAR archive) *.tar"))
