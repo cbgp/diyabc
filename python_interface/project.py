@@ -347,11 +347,54 @@ class Project(QTabWidget):
         nbFullQsub = nbToGen / 10000
         nbLastQsub = nbToGen % 10000
 
-        return 'for i in $(seq 1 %s); do \n\
+        return '\n\
+function progress(){\n\
+res=0\n\
+nbfin=%s\n\
+sum=0\n\
+# for each log file, if it exists, do the sum of done values\n\
+for i in $(seq 1 $1); do\n\
+    if [ -e reftable_$i.log ]; then\n\
+        let sum=$sum+`head -n 2 reftable_$i.log | tail -n 1`\n\
+    fi\n\
+done\n\
+let pct=$sum*100\n\
+let pct=$pct/$nbfin\n\
+echo `nbOk $1` "/ $1 finished"\n\
+echo " $pct %%"\n\
+echo "somme $sum"\n\
+}\n\
+function nbOk(){\n\
+nb=0\n\
+# for each log file, check if the computation is terminated\n\
+for i in $(seq 1 $1); do\n\
+    if [ -e reftable_$i.log ]; then\n\
+        numdone=`head -n 2 reftable_$i.log | tail -n 1`\n\
+        # case of last computation, less thant 10000\n\
+        if [ $i -eq %s ]; then\n\
+            if [ $numdone -eq %s ]; then\n\
+                let nb=$nb+1\n\
+            fi\n\
+        else\n\
+            if [ $numdone -eq 10000 ]; then\n\
+                let nb=$nb+1\n\
+            fi\n\
+        fi\n\
+    fi\n\
+done\n\
+echo $nb\n\
+}\n\
+for i in $(seq 1 %s); do \n\
 qsub -cwd node.sh 10000 `pwd` $i\n\
 done;\n\
 let last=$i+1\n\
-qsub -cwd node.sh %s `pwd` $last'%(nbFullQsub,nbLastQsub)
+qsub -cwd node.sh %s `pwd` $last\n\
+while ! [ "`nbOk %s`" = "%s" ]; do\n\
+echo `progress %s`\n\
+sleep 3\n\
+done\n\
+echo `progress %s`\n\
+'%(nbToGen,nbFullQsub+1,nbLastQsub,nbFullQsub,nbLastQsub,nbFullQsub+1,nbFullQsub+1,nbFullQsub+1,nbFullQsub+1)
 
     def genNodeScript(self):
         """ génération du script a exécuter sur chaque noeud
@@ -361,15 +404,18 @@ qsub -cwd node.sh %s `pwd` $last'%(nbFullQsub,nbLastQsub)
 cp general $TMPDIR\n\
 cp %s $TMPDIR\n\
 cp %s $TMPDIR\n\
-$TMPDIR/general -p $TMPDIR/ -r $1\n\
+$TMPDIR/general -p $TMPDIR/ -r $1 & \n\
+while ! [ "`head -n 2 $TMPDIR/reftable.log | tail -n 1`" -eq $1 ]; do\n\
+    cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
+    sleep 5\n\
+done\n\
 cp $TMPDIR/reftable.bin $2/reftable_$3.bin\n\
-cp $TMPDIR/reftable.log $2/reftable_$3.log'%(self.parent.reftableheader_name, self.dataFileName)
+cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
+'%(self.parent.reftableheader_name, self.dataFileName)
 
     def generateComputationTar(self):
         name = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","(TAR archive) *.tar"))
         if name != "":
-            if os.path.exists(name):
-                os.remove(name)
             # generation du master script
             script = self.genMasterScript()
             if os.path.exists('scmf'):
@@ -388,6 +434,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log'%(self.parent.reftableheader_name, se
             scnf.close()
             os.chmod('scnf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
 
+            # ajout des fichiers dans l'archive
             tarRepName = self.dir.split('/')[-1]
             if os.path.exists(name):
                 os.remove(name)
@@ -398,6 +445,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log'%(self.parent.reftableheader_name, se
             tar.add(self.dataFileSource,"%s/%s"%(tarRepName,self.dataFileName))
             tar.add(self.parent.executablePath,"%s/general"%tarRepName)
             tar.close()
+
+            # nettoyage des fichiers temporaires de script
+            if os.path.exists('scmf'):
+                os.remove('scmf')
+            if os.path.exists('scnf'):
+                os.remove('scnf')
 
     @pyqtSignature("")
     def on_btnStart_clicked(self):
