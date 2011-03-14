@@ -49,7 +49,7 @@ public:
             this->nrecscen = new int[nscen];
             for (int i=0;i<nscen;i++) {f0.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
             this->nparam = new int[nscen];
-            for (int i=0;i<nscen;i++) {f0.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
+            for (int i=0;i<nscen;i++) {f0.read((char*)&(this->nparam[i]),sizeof(int));cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";}
             f0.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
             f0.close();
             return 0;  //retour normal
