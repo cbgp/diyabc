@@ -341,10 +341,28 @@ class Project(QTabWidget):
         self.ui.analysisStack.setCurrentWidget(def_analysis)
 
     def genMasterScript(self):
-        return "for i in $(seq 1 5) ; do qsub node.sh -n $i ; done"
+        """ génération du script à exécuter sur le noeud maitre
+        """
+        nbToGen = int(self.ui.nbSetsReqEdit.text())
+        nbFullQsub = nbToGen / 10000
+        nbLastQsub = nbToGen % 10000
+
+        return 'for i in $(seq 1 %s); do \n\
+qsub -wd /tmp/diyabc "node.sh 10000 `pwd` $i"\n\
+done;\n\
+let last=$i+1\n\
+qsub "node.sh %s `pwd` $last"'%(nbFullQsub,nbLastQsub)
 
     def genNodeScript(self):
-        return "cp ; ./gen -rock -i 10000 ; cpback"
+        """ génération du script a exécuter sur chaque noeud
+        """
+
+        return 'if ! [ -d $TMPDIR ]; then mkdir -p $TMPDIR ; fi \n\
+cp general $TMPDIR\n\
+cp %s $TMPDIR\n\
+cp %s $TMPDIR\n\
+$TMPDIR/general -p $TMPDIR -r $1\n\
+cp $TMPDIR/reftable.bin $2/reftable_$3.bin'%(self.parent.reftableheader_name, self.dataFileName)
 
     def generateComputationTar(self):
         name = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","(TAR archive) *.tar"))
@@ -354,33 +372,37 @@ class Project(QTabWidget):
             # generation du master script
             script = self.genMasterScript()
             if os.path.exists('scmf'):
-                os.remove('scfm')
+                os.remove('scmf')
             scmf = open('scmf','w')
             scmf.write(script)
             scmf.close()
             os.chmod('scmf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
             tar = tarfile.open(name,"w")
-            tar.add('scmf','launch.sh')
             # generation du node script
             script = self.genNodeScript()
             if os.path.exists('scnf'):
-                os.remove('scfn')
-            scmf = open('scnf','w')
-            scmf.write(script)
-            scmf.close()
-            os.chmod('scmf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
-            tar = tarfile.open(name,"w")
-            tar.add('scmf','launch.sh')
+                os.remove('scnf')
+            scnf = open('scnf','w')
+            scnf.write(script)
+            scnf.close()
+            os.chmod('scnf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
 
-            tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),self.parent.reftableheader_name)
-            tar.add(self.dataFileSource,self.dataFileName)
+            tarRepName = self.dir.split('/')[-1]
+            if os.path.exists(name):
+                os.remove(name)
+            tar = tarfile.open(name,"w")
+            tar.add('scmf','%s/launch.sh'%tarRepName)
+            tar.add('scnf','%s/node.sh'%tarRepName)
+            tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
+            tar.add(self.dataFileSource,"%s/%s"%(tarRepName,self.dataFileName))
+            tar.add(self.parent.executablePath,"%s/general"%tarRepName)
             tar.close()
 
     @pyqtSignature("")
     def on_btnStart_clicked(self):
         self.writeRefTableHeader()
         qfd = QFileDialog()
-        self.parent.executablePath = str(qfd.getOpenFileName())
+        self.parent.executablePath = str(qfd.getOpenFileName(self,"Where is your executable file ?"))
         self.generateComputationTar()
         return
         """Start or stop the treatment in the thread"""
