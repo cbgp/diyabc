@@ -22,8 +22,10 @@
 enregC *enrsel;
 ReftableC rt;
 HeaderC header;
-double *var_stat,*stat_obs;
-int nparamax;
+double *var_stat,*stat_obs, *parmin, *parmax, *diff;
+int nparamax,nparamcom;
+double borne=10.0;
+
 
 using namespace std;
 
@@ -144,9 +146,10 @@ struct compenreg
             cout << "noms des parametres communs : ";
             for (int i=0;i<npar;i++) cout<<parname[i]<<"   ";
             cout <<"\n";
-        }     
+        } 
+        nparamcom = npar+rt.nparam[scenchoisi[0]-1]-header.scenario[scenchoisi[0]-1].nparam;
         for (int j=0;j<nscenchoisi;j++) {
-            numpar[j] = new int[npar+rt.nparam[scenchoisi[j]-1]-header.scenario[scenchoisi[j]-1].nparam];
+            numpar[j] = new int[nparamcom];
             ii=0;
             for (int i=0;i<npar;i++) {
                 for (int k=0;k<header.scenario[scenchoisi[j]-1].nparam;k++) {
@@ -166,14 +169,56 @@ struct compenreg
     
     
     
-  /*  void recalparam(int n,int numtransf, **alpsimrat) {
-       
-    
+    void recalparam(int n,int numtransf, int **numpar, double **alpsimrat) {
+        double coefmarge=0.001,marge;
+        int k;
         alpsimrat = new double*[n];
-        for(int i=0;i<n;i++) alpsimrat[i] = new double[rt.]
+        for(int i=0;i<n;i++) alpsimrat[i] = new double[nparamcom];
+        switch (numtransf) {
+        
+          case 1 :  //no transform
+                   for (int i=0;i<n;i++) {
+                       for (int j=0;j<nparamcom;j++) {
+                           k = enrsel[i].numscen-1;
+                           alpsimrat[i][j] = enrsel[i].param[numpar[k][j]];
+                       }    
+                   }
+                   break;
+          case 2 : // log transform
+                   for (int i=0;i<n;i++) {
+                       for (int j=0;j<nparamcom;j++) {
+                           k = enrsel[i].numscen-1;
+                           if (enrsel[i].param[numpar[k][j]]<=0.00000000001) enrsel[i].param[numpar[k][j]]=1E-11;
+                           alpsimrat[i][j] = log(enrsel[i].param[numpar[k][j]]);
+                       }    
+                   }
+                   break;
+          case 3 : //logit transform
+                   parmin = new double[nparamcom]; parmax = new double[nparamcom]; diff = new double[nparamcom];
+                   if (borne<0.0000000001) {
+                       for (int j=0;j<nparamcom;j++) {parmin[j]=1E100;parmax[j]=-1E100;}
+                       for (int i=0;i<n;i++) {
+                            for (int j=0;j<nparamcom;j++) {
+                                k = enrsel[i].numscen-1;
+                                if (enrsel[i].param[numpar[k][j]]<parmin[j]) parmin[j]=enrsel[i].param[numpar[k][j]];
+                                if (enrsel[i].param[numpar[k][j]]>parmax[j]) parmax[j]=enrsel[i].param[numpar[k][j]];
+                           }
+                       }
+                       for (int j=0;j<nparamcom;j++) {
+                           diff[j]=parmax[j]-parmin[j];
+                           marge=coefmarge*diff[j];
+                           parmin[j] -=marge;
+                           parmax[j] +=marge;
+                       }
+                   }
+                   for (int i=0;i<n;i++) {
+                       
+                   
+                   }
+        }
+        
+    }   
     
-    } */  
-    
     
 
 
@@ -183,7 +228,7 @@ struct compenreg
 
 
 
-    void doestim(char *headerfilename,char *reftablefilename,char *statobsfilename,char *options) {
+    void doestim(char *headerfilename,char *reftablefilename,char *reftablelogfilename,char *statobsfilename,char *options) {
         char *datafilename;
         int rtOK,nstatOK;
         int nscenchoisi,*scenchoisi,nrec,nsel,numtransf,ns,ns1, **numpar;
@@ -229,7 +274,7 @@ struct compenreg
         header.readHeader(headerfilename);
         for (int i=0;i<header.nscenarios;i++) cout<<"scenario "<<i<<"    nparam = "<<header.scenario[i].nparam<<"\n";
         datafilename=strdup(header.datafilename.c_str());
-        rtOK=rt.readheader(reftablefilename,header.nscenarios,datafilename);
+        rtOK=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
         if (rtOK==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}          
         rt.openfile2();
         nstatOK = cal_varstat();
@@ -238,7 +283,7 @@ struct compenreg
         rt.openfile2();
         cal_dist(nrec,nsel,nscenchoisi,scenchoisi);
         det_numpar(nscenchoisi,scenchoisi,numpar);
-        //recalparam(nsel,numtransf,alpsimrat);
+        recalparam(nsel,numtransf,numpar,alpsimrat);
         //rempli_mat(n,matX0,vecW,parsim)
     
     }
