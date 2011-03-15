@@ -512,6 +512,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.emit(SIGNAL("canceled()"))
 
     def writeRefTableHeader(self):
+        """ écriture du header.txt à partir des conf
+        """
         if os.path.exists(self.dir+"/%s"%self.parent.main_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.hist_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.gen_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.table_header_conf_name):
             if os.path.exists(self.dir+"/%s"%self.parent.reftableheader_name):
                 os.remove("%s/%s" %(self.dir,self.parent.reftableheader_name))
@@ -622,22 +624,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             else:
                 output.notify(self,"Incorrect directory","A project can not be in a project directory")
 
-
-    def changeIcon(self):
-        l=["ok.png","redcross.png"]
-        self.hist_state = (self.hist_state+1)% len(l)
-        self.ui.setHistoricalButton.setIcon(QIcon("docs/"+l[self.hist_state%len(l)]))
-        self.ui.setGeneticButton.setIcon(QIcon("docs/"+l[self.hist_state%len(l)]))
-        self.ui.setSummaryButton.setIcon(QIcon("docs/"+l[self.hist_state%len(l)]))
-        self.setTabIcon(0,QIcon("docs/"+l[self.hist_state%len(l)]))
-
-        self.ui.progressBar.setValue((self.ui.progressBar.value()+10)%self.ui.progressBar.maximum())
-
-    def clcl(self,i,j):
-        #print str(i)+","+str(j)
-        #self.ui.tableWidget.item(i,j).setFlags(Qt.ItemIsEditable)
-        self.ui.tableWidget.hideRow(i)
-
     def addAnalysis(self,analysis):
         """ ajoute, dans la liste d'analyses et dans la GUI , l'analyse passée en paramètre
         """
@@ -706,10 +692,18 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.setGenValid(False)
 
     def setNbScenarios(self,nb):
+        """ ecrit le nombre de scenarios dans la zone "historical model"
+        """
         self.ui.nbScLabel.setText(nb)
+
     def setNbParams(self,nb):
+        """ écrit le nombre de paramètres dans la zone "historical model"
+        """ 
         self.ui.nbParamLabel.setText(nb)
+
     def clearHistoricalModel(self):
+        """ détruit le modèle historique et en instancie un nouveau
+        """
         #self.removeTab(self.indexOf(self.hist_model_win))
         self.ui.refTableStack.removeWidget(self.hist_model_win)
         self.hist_model_win = SetHistoricalModel(self)
@@ -756,7 +750,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
 
     def save(self):
-
+        """ sauvegarde du projet -> mainconf, histconf, genconf, theadconf
+        Si le gen et hist sont valides, on génère le header
+        """
         #print "je me save"
         if self.dir != None:
             # save meta project
@@ -798,6 +794,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
 
     def setHistValid(self,valid):
+        """ met à jour l'état du modèle historique
+        et change l'icone du bouton en fonction de sa validité
+        """
         self.hist_state_valid = valid
         self.verifyRefTableValid()
         if valid:
@@ -806,12 +805,16 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
 
     def setGenValid(self,valid):
+        """ met à jour l'état des genetic data
+        et change l'icone du bouton en fonction de la validité
+        """
         self.gen_state_valid = valid
         self.verifyRefTableValid()
         if valid:
             self.ui.setGeneticButton.setIcon(QIcon("docs/ok.png"))
         else:
             self.ui.setGeneticButton.setIcon(QIcon("docs/redcross.png"))
+
     def verifyRefTableValid(self):
         """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table
         """
@@ -821,6 +824,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         else:
             self.setTabIcon(0,QIcon("docs/redcross.png"))
             self.ui.runButton.setDisabled(True)
+
     def lock(self):
         """ crée le fichier de verrouillage pour empêcher l'ouverture 
         du projet par une autre instance de DIYABC
@@ -828,6 +832,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         f = open("%s/.DIYABC_lock"%self.dir,"w")
         f.write("%s"%os.getpid())
         f.close()
+
     def unlock(self):
         """ supprime le verrouillage sur le projet ssi le verrouillage 
         a été effectué par notre instance de DIYABC

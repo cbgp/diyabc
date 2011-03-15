@@ -58,10 +58,14 @@ class Preferences(QMainWindow):
         #QObject.connect(self.ui.saveMMSButton,SIGNAL("clicked()"),self.saveMMS)
 
     def changeStyle(self,stylestr):
+        """ change le style de l'application (toutes les fenêtres)
+        """
         self.parent.app.setStyle(str(stylestr))
 
 
     def savePreferences(self):
+        """ sauve les préférences si elles sont valides
+        """
         if self.allValid():
             if not os.path.exists(os.path.expanduser("~/.diyabc/")):
                 os.mkdir(os.path.expanduser("~/.diyabc/"))
@@ -73,9 +77,13 @@ class Preferences(QMainWindow):
             self.close()
 
     def allValid(self):
+        """ vérifie la validité des préférences
+        """
         return (self.mutmodM.allValid() and self.mutmodS.allValid() and self.histModelValid() and self.connexionValid())
 
     def loadPreferences(self):
+        """ charge les préférences de l'utilisateur si elles existent
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/")):
             self.loadMMM()
             self.loadMMS()
@@ -84,6 +92,8 @@ class Preferences(QMainWindow):
             self.loadVarious()
 
     def saveVarious(self):
+        """ sauvegarde de la partie various des préférences
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/various")):
             os.remove(os.path.expanduser("~/.diyabc/various"))
 
@@ -93,7 +103,10 @@ class Preferences(QMainWindow):
         f = codecs.open(os.path.expanduser("~/.diyabc/various"),"w","utf-8")
         f.write(lines)
         f.close()
+
     def loadVarious(self):
+        """ chargement de la partie various des préférences
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/various")):
             f = codecs.open(os.path.expanduser("~/.diyabc/various"),"r","utf-8")
             lines = f.readlines()
@@ -111,8 +124,9 @@ class Preferences(QMainWindow):
         else:
             print "no various conf found"
 
-    # TODO
     def saveHM(self):
+        """ sauvegarde de la partie historical model des préférences
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/hist_model_default_values")):
             os.remove(os.path.expanduser("~/.diyabc/hist_model_default_values"))
 
@@ -172,7 +186,10 @@ class Preferences(QMainWindow):
         f = codecs.open(os.path.expanduser("~/.diyabc/hist_model_default_values"),"w","utf-8")
         f.write(lines)
         f.close()
+
     def loadHM(self):
+        """ chargement de la partie historical model des préférences
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/hist_model_default_values")):
             f = codecs.open(os.path.expanduser("~/.diyabc/hist_model_default_values"),"r","utf-8")
             lines = f.readlines()
@@ -223,6 +240,8 @@ class Preferences(QMainWindow):
             print "no hist conf found"
         
     def saveMMM(self):
+        """ sauvegarde de la partie mutation model microsats des préférences
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/mutationM_default_values")):
             os.remove(os.path.expanduser("~/.diyabc/mutationM_default_values"))
 
@@ -230,7 +249,10 @@ class Preferences(QMainWindow):
         f = codecs.open(os.path.expanduser("~/.diyabc/mutationM_default_values"),"w","utf-8")
         f.write(lines)
         f.close()
+
     def loadMMM(self):
+        """ chargement de la partie mutation model microsats des préférences
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/mutationM_default_values")):
             f = codecs.open(os.path.expanduser("~/.diyabc/mutationM_default_values"),"r","utf-8")
             lines = f.readlines()
@@ -242,6 +264,8 @@ class Preferences(QMainWindow):
 
 
     def saveMMS(self):
+        """ sauvegarde de la partie mutation model sequences des préférences
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/mutationS_default_values")):
             os.remove(os.path.expanduser("~/.diyabc/mutationS_default_values"))
 
@@ -251,6 +275,8 @@ class Preferences(QMainWindow):
         f.close()
 
     def loadMMS(self):
+        """ chargement de la partie mutation model sequences des préférences
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/mutationS_default_values")):
             f = codecs.open(os.path.expanduser("~/.diyabc/mutationS_default_values"),"r","utf-8")
             lines = f.readlines()
@@ -260,6 +286,8 @@ class Preferences(QMainWindow):
             print "no MMS conf found"
 
     def saveConnexion(self):
+        """ sauvegarde de la partie connexion des préférences
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/connexion")):
             os.remove(os.path.expanduser("~/.diyabc/connexion"))
 
@@ -269,7 +297,10 @@ class Preferences(QMainWindow):
         f = codecs.open(os.path.expanduser("~/.diyabc/connexion"),"w","utf-8")
         f.write(lines)
         f.close()
+
     def loadConnexion(self):
+        """ chargement de la partie connexion des préférences
+        """
         if os.path.exists(os.path.expanduser("~/.diyabc/connexion")):
             f = codecs.open(os.path.expanduser("~/.diyabc/connexion"),"r","utf-8")
             lines = f.readlines()
@@ -285,6 +316,8 @@ class Preferences(QMainWindow):
             print "no connexion conf found"
 
     def connexionValid(self):
+        """ vérifie la validité de la partie connexion
+        """
         problems = ""
         try:
             port = int(self.ui.portEdit.text())
@@ -298,6 +331,8 @@ class Preferences(QMainWindow):
             return False
 
     def histModelValid(self):
+        """ vérifie la validité de la partie hist model
+        """
         problems = ""
         try:
             nmin = float(self.ui.NminEdit.text())
@@ -322,8 +357,4 @@ class Preferences(QMainWindow):
         else:
             QMessageBox.information(self,"Value error","%s"%problems)
             return False
-
-
-
-
 

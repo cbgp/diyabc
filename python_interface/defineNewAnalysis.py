@@ -11,6 +11,9 @@ from genericScenarioSelection import GenericScenarioSelection
 from biasScenarioSelection import BiasNEvaluateScenarioSelection
 
 class DefineNewAnalysis(QFrame):
+    """ écran de définition d'une nouvelle analyse. demande
+    le type d'analyse souhaitée
+    """
     def __init__(self,parent=None):
         super(DefineNewAnalysis,self).__init__(parent)
         self.parent=parent
@@ -30,6 +33,8 @@ class DefineNewAnalysis(QFrame):
         QObject.connect(self.ui.lossCheck,SIGNAL("clicked()"),self.preEvaluateCheck)
 
     def preEvaluateCheck(self):
+        """ empêche qu'aucune des deux cases ne soit cochée
+        """
         if not self.ui.pcaCheck.isChecked() and not self.ui.lossCheck.isChecked():
             if self.sender() == self.ui.pcaCheck:
                 self.ui.lossCheck.setChecked(True)
@@ -37,6 +42,8 @@ class DefineNewAnalysis(QFrame):
                 self.ui.pcaCheck.setChecked(True)
 
     def validate(self):
+        """ on poursuit la définition de l'analyse
+        """
         # pour les cas de comparison et estimate, la selection n'influe pas sur l'écran suivant
         # on instancie donc Comparison et Estimation maintenant
         if self.ui.comparisonRadio.isChecked():

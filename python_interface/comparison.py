@@ -8,6 +8,8 @@ from uis.comparison_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 
 class Comparison(QFrame):
+    """ dernière étape de définition d'une analyse de type comparison
+    """
     def __init__(self,analysis,parent=None):
         super(Comparison,self).__init__(parent)
         self.parent=parent
@@ -38,6 +40,8 @@ class Comparison(QFrame):
         self.exit()
 
     def setScenarios(self,scList):
+        """ écrit la liste des scenarios à comparer
+        """
         plur= ""
         if len(scList)>1:
             plur = "s"
@@ -53,7 +57,7 @@ class Comparison(QFrame):
         self.ui.scenariosLabel.setText(txt)
 
     def redefineScenarios(self):
-        """ repasse sur le choix des scenarios en lui redonnant moi même comme next_widget
+        """ retourne au choix des scenarios en lui redonnant moi même comme next_widget
         """
         compFrame = self
         genSel = GenericScenarioSelection(len(self.parent.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,self.parent)

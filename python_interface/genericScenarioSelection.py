@@ -7,6 +7,8 @@ from PyQt4.QtGui import *
 from uis.genericScenarioSelection_ui import Ui_Frame
 
 class GenericScenarioSelection(QFrame):
+    """ Sélection du scenario dans la cadre d'une analyse de type comparison ou estimate
+    """
     def __init__(self,nb_sc,label,next_widget,next_title,nb_min_sel,parent=None):
         super(GenericScenarioSelection,self).__init__(parent)
         self.parent=parent
@@ -39,6 +41,8 @@ class GenericScenarioSelection(QFrame):
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
     def validate(self):
+        """ passe à l'étape suivante de définition de l'analyse
+        """
         if len(self.getListSelectedScenarios()) >= self.nb_min_sel:
             self.next_widget.setScenarios(self.getListSelectedScenarios())
             #self.parent.parent.addTab(self.next_widget,self.next_title)
@@ -52,6 +56,8 @@ class GenericScenarioSelection(QFrame):
 
 
     def getListSelectedScenarios(self):
+        """ retourne la liste des scenarios choisis
+        """
         res = []
         for i,ch in enumerate(self.checklist):
             if ch.isChecked():
@@ -59,6 +65,8 @@ class GenericScenarioSelection(QFrame):
         return res
 
     def putChoices(self):
+        """ met les choix de scenario en place
+        """
         left = True
         for i in range(self.nb_sc):
             num = i+1

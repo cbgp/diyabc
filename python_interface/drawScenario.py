@@ -347,6 +347,3 @@ class DrawScenario(QFrame):
             self.im_result.save("%s_all.jpg"%pic_whole_path)
         else:
             painter_pic.end()
-
-    def closeEvent(self, event):
-        pass

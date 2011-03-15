@@ -13,6 +13,9 @@ from set_condition import SetCondition
 from setGenDataAnalysis import SetGeneticDataAnalysis
 
 class HistDrawn(QFrame):
+    """ définition du modèle historique dans le cadre d'une analyse
+    les valeurs ne sont pas fixées
+    """
     def __init__(self,sc_to_show,list_selected_evaluate_sc,analysis,parent=None):
         super(HistDrawn,self).__init__(parent)
         self.parent=parent
@@ -83,9 +86,13 @@ class HistDrawn(QFrame):
         plainTextEdit.setReadOnly(True)
 
     def getScText(self):
+        """ récupère le texte du scenario concerné dans le modèle historique de la reftable
+        """
         return self.parent.parent.hist_model_win.scList[self.sc_to_show-1].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()
 
     def addTheParams(self):
+        """ trouve et ajoute les paramètres du scenario concerné
+        """
         sc = str(self.getScText())
         scChecker = history.Scenario(number=self.sc_to_show)
         scChecker.checkread(sc.strip().split('\n'),self.parent.parent.data)
@@ -122,6 +129,9 @@ class HistDrawn(QFrame):
             self.param_info_dico[pname] = [pcat]
 
     def addTheConditions(self):
+        """ récupère les conditions du modèle historique de la reftable contenant
+        uniquement des paramètre du scenarion concerné
+        """
         self.majParamInfoDico()
         for condbox in self.parent.parent.hist_model_win.condList:
             txt = str(condbox.findChild(QLabel,"condLabel").text())

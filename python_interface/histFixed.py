@@ -13,6 +13,9 @@ from set_condition import SetCondition
 from setGenDataAnalysis import SetGeneticDataAnalysis
 
 class HistFixed(QFrame):
+    """ définition du modèle historique dans le cadre d'une analyse
+    les valeurs sont fixées
+    """
     def __init__(self,sc_to_show,list_selected_evaluate_sc,analysis,parent=None):
         super(HistFixed,self).__init__(parent)
         self.parent=parent
@@ -91,9 +94,13 @@ class HistFixed(QFrame):
         plainTextEdit.setReadOnly(True)
 
     def getScText(self):
+        """ récupère le texte du scenario concerné dans le modèle historique de la reftable
+        """
         return self.parent.parent.hist_model_win.scList[self.sc_to_show-1].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()
 
     def addTheParams(self):
+        """ trouve et ajoute les paramètres du scenario concerné
+        """
         sc = str(self.getScText())
         scChecker = history.Scenario(number=self.sc_to_show)
         scChecker.checkread(sc.strip().split('\n'),self.parent.parent.data)

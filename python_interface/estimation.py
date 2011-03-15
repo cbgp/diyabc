@@ -8,6 +8,8 @@ from uis.estimation_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 
 class Estimation(QFrame):
+    """ dernière étape de définition d'une analyse de type estimation
+    """
     def __init__(self,analysis,parent=None):
         super(Estimation,self).__init__(parent)
         self.parent=parent
@@ -50,6 +52,8 @@ class Estimation(QFrame):
 
 
     def validate(self):
+        """ termine la définition de l'analyse
+        """
         self.analysis.append(self.scNumList)
         self.majDicoValues()
         self.analysis.append(self.dico_values)
@@ -57,6 +61,8 @@ class Estimation(QFrame):
         self.exit()
 
     def setScenarios(self,scList):
+        """ écrit la liste des scenarios à estimer
+        """
         plur= ""
         if len(scList)>1:
             plur = "s"

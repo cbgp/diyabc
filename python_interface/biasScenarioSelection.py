@@ -9,6 +9,8 @@ from histDrawn import HistDrawn
 from histFixed import HistFixed
 
 class BiasNEvaluateScenarioSelection(QFrame):
+    """ Sélection du scenario dans la cadre d'une analyse de type bias ou evaluate
+    """
     def __init__(self,nb_sc,evaluate,analysis,parent=None):
         super(BiasNEvaluateScenarioSelection,self).__init__(parent)
         self.parent=parent
@@ -44,6 +46,8 @@ class BiasNEvaluateScenarioSelection(QFrame):
         self.ui.projectDirEdit.setText(self.parent.parent.dir)
 
     def validate(self):
+        """ passe à l'étape suivante de la définition de l'analyse
+        """
         if self.ui.fixedRadio.isChecked():
             self.analysis.append("fixed")
         else:
@@ -79,11 +83,15 @@ class BiasNEvaluateScenarioSelection(QFrame):
 
 
     def getSelectedScenario(self):
+        """ retourne le numero du scenario choisi
+        """
         for i,r in enumerate(self.radiolist):
             if r.isChecked():
                 return i+1
 
     def getListSelectedScenarios(self):
+        """ retourne la liste des scenarios choisis
+        """
         res = []
         for i,ch in enumerate(self.checklist):
             if ch.isChecked():
@@ -91,6 +99,8 @@ class BiasNEvaluateScenarioSelection(QFrame):
         return res
 
     def putChoices(self):
+        """ met les choix de scenario en place
+        """
         for i in range(self.nb_sc):
             num = i+1
             radio = QRadioButton("Scenario %s"%num,self)
@@ -108,23 +118,6 @@ class BiasNEvaluateScenarioSelection(QFrame):
         else:
             self.ui.label.hide()
             self.ui.frame_3.hide()
-
-
-        ## les deux cas où on a pas le choix des scenarios parce qu'ils sont trop peu
-        #if self.nb_sc == 1:
-        #    self.checklist[0].setChecked(True)
-        #    self.checklist[0].setDisabled(True)
-        #    self.next_widget.ui.redefButton.hide()
-        #print type(self.next_widget)
-        #if self.nb_sc == 2 and "Comparison" in str(type(self.next_widget)):
-        #    self.checklist[0].setChecked(True)
-        #    self.checklist[0].setDisabled(True)
-        #    self.checklist[1].setChecked(True)
-        #    self.checklist[1].setDisabled(True)
-        #    self.next_widget.ui.redefButton.hide()
-
-
-            
 
     def exit(self):
         ## reactivation des onglets

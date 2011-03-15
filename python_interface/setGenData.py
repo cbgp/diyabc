@@ -15,7 +15,7 @@ from utils.data import *
 import output
 
 class SetGeneticData(QFrame):
-    """ Frame qui est ouverte dans un onglet pour faire des groupes de locus,
+    """ Frame qui est créée pour faire des groupes de locus,
     déterminer leur modèle mutationnel et leur summary statistics
     """
     def __init__(self,parent=None):
@@ -75,19 +75,6 @@ class SetGeneticData(QFrame):
         # affichage du bon nombre de locus dans l'onglet principal du projet
         self.majProjectGui(m=nb_m,s=nb_s)
 
-
-    # TODO fille
-    #def majProjectGui(self,m=None,s=None,g=None,ss=None):
-    #    if m != None:
-    #        self.parent.ui.nbMicrosatLabel.setText("%s microsatellite loci"%m)
-    #    if s != None:
-    #        self.parent.ui.nbSequencesLabel.setText("%s DNA sequence loci"%s)
-    #    if g != None:
-    #        self.parent.ui.nbGroupLabel.setText("%s locus groups"%g)
-    #    if ss != None:
-    #        self.parent.ui.nbSumStatsLabel.setText("%s summary statistics"%ss)
-
-
     def addRow(self,name="locus",type="M"):
         """ ajoute un locus à la liste principale (de locus)
         """
@@ -105,8 +92,6 @@ class SetGeneticData(QFrame):
             self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,3,QTableWidgetItem(" "))
             self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,2).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,2).flags() & ~Qt.ItemIsEditable)
             self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,3).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,3).flags() & ~Qt.ItemIsEditable)
-
-
 
     def addGroup(self):
         """ dessine un nouveau groupe vide
@@ -194,31 +179,6 @@ class SetGeneticData(QFrame):
             self.setMutationSeqValid_dico[box] = False
         else:
             output.notify(self,"Set Mutation Model error","Add locus to a group before setting the mutation model")
-
-
-    #def setSum(self,box=None):
-    #    """ déclenché par le clic sur le bouton 'set summary statistics' ou par le clic sur 'clear'
-    #    dans 'set summary statistics'. bascule vers la saisie des summary statistics
-    #    """
-    #    if box == None:
-    #        box = self.sender().parent()
-    #    title = str(box.title())
-    #    if "Microsatellites" in title:
-    #        self.parent.addTab(self.setSum_dico[box],"Set summary statistics")
-    #        self.parent.setTabEnabled(self.parent.indexOf(self),False)
-    #        self.parent.setCurrentWidget(self.setSum_dico[box])
-    #        # maj du titre de la frame
-    #        lab = self.setSum_dico[box].ui.sumStatLabel
-    #        lab.setText("Set summary statistics of %s (microsatellites)"%(" ".join(str(box.title()).split()[:2])))
-    #    elif "Sequences" in title:
-    #        self.parent.addTab(self.setSumSeq_dico[box],"Set summary statistics")
-    #        self.parent.setTabEnabled(self.parent.indexOf(self),False)
-    #        self.parent.setCurrentWidget(self.setSumSeq_dico[box])
-    #        # maj du titre de la frame
-    #        lab = self.setSumSeq_dico[box].ui.sumStatLabel
-    #        lab.setText("Set summary statistics of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
-    #    else:
-    #        output.notify(self,"Set Summary statistics error","Add locus to a group before setting the summary statistics")
 
     def rmGroup(self):
         """ Enlève les loci présents dans le groupe et supprime le groupe
@@ -372,4 +332,42 @@ class SetGeneticData(QFrame):
             elif "Sequences" in str(box.title()):
                 nb_param += self.setMutationSeq_dico[box].getNbParam()
         return nb_param
+
+    def getParamTableHeader(self):
+        """ retourne la chaine des noms des paramètres pour le conf.th.tmp
+        """
+        result = u""
+        for box in self.groupList:
+            if "Microsatellites" in str(box.title()):
+                params_txt = self.setMutation_dico[box].getParamTableHeader()
+            elif "Sequences" in str(box.title()):
+                params_txt = self.setMutationSeq_dico[box].getParamTableHeader()
+            result += params_txt
+        return result
+
+    def getSumStatsTableHeader(self):
+        """ retourne la partie sumstats du table header
+        """
+        result = u""
+        for box in self.groupList:
+            if "Microsatellites" in str(box.title()):
+                sums_txt = self.setSum_dico[box].getSumStatsTableHeader()
+            elif "Sequences" in str(box.title()):
+                sums_txt = self.setSumSeq_dico[box].getSumStatsTableHeader()
+            result += sums_txt
+        return result
+
+    def clearSummaryStats(self,box):
+        """ vide les summary statistics des microsats
+        """
+        self.setSum_dico[box].exit()
+        self.setSum_dico[box] = SetSummaryStatisticsMsat(self,box)
+        self.setSum(box)
+
+    def clearSummaryStatsSeq(self,box):
+        """ vide les summary statistics des sequences
+        """
+        self.setSumSeq_dico[box].exit()
+        self.setSumSeq_dico[box] = SetSummaryStatisticsSeq(self,box)
+        self.setSum(box)
 

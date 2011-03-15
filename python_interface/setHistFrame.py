@@ -13,6 +13,9 @@ from set_condition import SetCondition
 import output
 
 class SetHistoricalModel(QFrame):
+    """ Classe pour la définition du modèle historique dans le cadre 
+    de la génération de la table de référence
+    """
     def __init__(self,parent=None):
         super(SetHistoricalModel,self).__init__(parent)
         self.parent=parent
@@ -79,7 +82,8 @@ class SetHistoricalModel(QFrame):
             self.ui.refreshPreviewsButton.show()
 
     def addSc(self):
-        
+        """ ajout graphique d'un scenario vide
+        """
         # le numero du nouveau scenario est la taille du tableau actuel de scenarios
         num_scenario = len(self.scList)+1
         
@@ -172,6 +176,8 @@ class SetHistoricalModel(QFrame):
         self.modifOnScenarios()
 
     def modifOnScenarios(self):
+        """ déclenché par une modification dans le contenu d'un des scenarios
+        """
         self.scenarios_modified_since_define_priors = True
     
     def rmSc(self):
@@ -273,6 +279,8 @@ class SetHistoricalModel(QFrame):
             output.notify(self,"Scenario error","Correct your scenarios to be able to draw them.")
 
     def drawPreviews(self):
+        """ Dessine les aperçus à côté des textes des scenarios
+        """
         if self.ui.drawPreviewsCheck.isChecked():
             # nettoyage
             for l in self.previewLabelList:
@@ -980,6 +988,8 @@ class SetHistoricalModel(QFrame):
             output.notify(self,"Error","Le répertoire du projet n'existe plus")
 
     def getNbParam(self):
+        """ retourne le nombre de paramètres du modèle historique
+        """
         return len(self.paramList)
 
     def getParamTableHeader(self):
