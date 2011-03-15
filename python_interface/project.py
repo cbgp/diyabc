@@ -422,7 +422,7 @@ echo `progress %s`\n\
 cp general $TMPDIR\n\
 cp %s $TMPDIR\n\
 cp %s $TMPDIR\n\
-$TMPDIR/general -p $TMPDIR/ -r $1 & \n\
+$TMPDIR/general -s "$3" -p $TMPDIR/ -r $1 & \n\
 while ! [ "`head -n 2 $TMPDIR/reftable.log | tail -n 1`" -eq $1 ]; do\n\
     cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     sleep 5\n\
