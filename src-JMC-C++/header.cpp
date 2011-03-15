@@ -12,13 +12,28 @@
 #define DATA
 #endif
 
+class MutParameterC
+{
+public:
+    int groupe;
+    int category;   //0 pour mutmoy, 1 pour Pmoy, 2 pour snimoy, 3 pour musmoy, 4 pour k1moy et 5 pour k2moy
+    double value;
+    PriorC prior;
+        
+    void ecris() {
+        cout<<"    groupe="<<this->groupe<<"   category="<<this->category<<"\n";
+        //prior.ecris();
+    }
+};
+
+
 class HeaderC
 {
 public:
     string message,datafilename,entete;
     char * pathbase;
     DataC dataobs;
-    int nparamtot,nstat,nscenarios,nconditions,ngroupes;
+    int nparamtot,nstat,nscenarios,nconditions,ngroupes,nparamut;
     string *paramname;
     ScenarioC *scenario,scen;
     HistParameterC *histparam;
@@ -26,6 +41,7 @@ public:
     LocusGroupC *groupe;
     bool drawuntil;
     ParticleC particuleobs;
+    MutParameterC *mutparam;
     
     void libere() {
         this->dataobs.libere();
@@ -407,7 +423,7 @@ public:
         getline(file,s1);       //ligne vide
         getline(file,s1);       //ligne "group group statistics"
         //cout <<"s1="<<s1<<"\n";
-                for (gr=1;gr<=this->ngroupes;gr++) {
+        for (gr=1;gr<=this->ngroupes;gr++) {
             getline(file,s1);
             ss=splitwords(s1," ",&nss);
                         //cout <<"s1="<<s1<<"   ss[3]="<< ss[3] <<"   atoi = "<< atoi(ss[3].c_str()) <<"\n";
@@ -485,7 +501,63 @@ public:
                         }
             delete [] ss;
         }
-//Entete du fichier reftable
+        this->nparamut=0;
+        for (gr=1;gr<=this->ngroupes;gr++) {
+            if (this->groupe[gr].type==0) {
+                if (not this->groupe[gr].priormutmoy.constant) this->nparamut++;
+                if (not this->groupe[gr].priorPmoy.constant) this->nparamut++;
+                if (not this->groupe[gr].priorsnimoy.constant) this->nparamut++;
+            } else {
+                if (not this->groupe[gr].priormusmoy.constant) this->nparamut++;
+                if (not this->groupe[gr].priork1moy.constant) this->nparamut++;
+                if (not this->groupe[gr].priork2moy.constant) this->nparamut++;
+            }  
+        }
+        this->mutparam = new MutParameterC[nparamut];
+        this->nparamut=0;
+        for (gr=1;gr<=this->ngroupes;gr++) {
+            if (this->groupe[gr].type==0) {
+                if (not this->groupe[gr].priormutmoy.constant) {
+                    this->mutparam[nparamut].groupe=gr;
+                    this->mutparam[nparamut].category=0;
+                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priormutmoy);
+                    this->nparamut++;
+                }
+                if (not this->groupe[gr].priorPmoy.constant) {
+                    this->mutparam[nparamut].groupe=gr;
+                    this->mutparam[nparamut].category=1;
+                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priorPmoy);
+                    this->nparamut++;
+                }
+                if (not this->groupe[gr].priorsnimoy.constant) {
+                    this->mutparam[nparamut].groupe=gr;
+                    this->mutparam[nparamut].category=2;
+                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priorsnimoy);
+                    this->nparamut++;
+              }
+            } else {
+                if (not this->groupe[gr].priormusmoy.constant){
+                    this->mutparam[nparamut].groupe=gr;
+                    this->mutparam[nparamut].category=3;
+                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priormusmoy);
+                    this->nparamut++;
+               }
+                if (not this->groupe[gr].priork1moy.constant) {
+                    this->mutparam[nparamut].groupe=gr;
+                    this->mutparam[nparamut].category=4;
+                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priork1moy);
+                    this->nparamut++;
+                }
+                if (not this->groupe[gr].priork2moy.constant) {
+                     this->mutparam[nparamut].groupe=gr;
+                    this->mutparam[nparamut].category=5;
+                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priork2moy);
+                    this->nparamut++;
+               }
+            }  
+        }
+        
+  //Entete du fichier reftable
         getline(file,s1);       //ligne vide
         getline(file,this->entete);     //ligne entete
                 //cout<<"scenarios à la fin de readheader\n";

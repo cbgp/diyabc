@@ -171,7 +171,6 @@ public:
 	}
 };
 
-
 struct LocusGroupC
 {
 	int *loc,nloc,nstat;           // *loc=numeros des locus du groupe
@@ -201,7 +200,6 @@ public:
     EventC *event;
     Ne0C *ne0;
     HistParameterC *histparam;
-    
     ConditionC *condition;
     
     

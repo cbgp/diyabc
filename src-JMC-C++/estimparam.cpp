@@ -23,7 +23,7 @@ enregC *enrsel;
 ReftableC rt;
 HeaderC header;
 double *var_stat,*stat_obs, *parmin, *parmax, *diff;
-int nparamax,nparamcom;
+int nparamax,nparamcom,**numpar;
 double borne=10.0,xborne;
 
 
@@ -130,7 +130,7 @@ struct compenreg
             cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/rt.nstat<<"    distmax = "<<enrsel[nsel-1].dist/rt.nstat<<"\n";
     }
     
-    void det_numpar(int nscenchoisi,int *scenchoisi,int **numpar) {
+    void det_numpar(int nscenchoisi,int *scenchoisi) {
         vector <string>  parname;
         int npar=0,ii;
         bool commun,trouve;
@@ -178,9 +178,9 @@ struct compenreg
     
     }
     
-    void recalparam(int *scenchoisi, int n,int numtransf, int **numpar, double **alpsimrat) {
+    void recalparam(int *scenchoisi, int n,int numtransf, double **alpsimrat) {
         double coefmarge=0.001,marge;
-        int k;
+        int jj,k,kk;
         alpsimrat = new double*[n];
         for(int i=0;i<n;i++) alpsimrat[i] = new double[nparamcom];
         switch (numtransf) {
@@ -223,20 +223,30 @@ struct compenreg
                        }
                    } else{
                        xborne=borne;
-                       for (int j=0;j<nparamcom;j++) {
-                           k=scenchoisi[0]-1;
-                           if (j<header.scenario[k].nparam) {
-                               if (header.scenario[k].histparam[numpar[k][j]].category<2) {
-                                   parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.5;
-                                   parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.5;
-                               } else {
-                                   parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.0005;
-                                   parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.0005;
-                               }
+                       k=scenchoisi[0]-1;
+                       for (int j=0;j<nparamcom-header.nparamut;j++) {
+                           if (header.scenario[k].histparam[numpar[k][j]].category<2) {
+                               parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.5;
+                               parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.5;
+                           } else {
+                               parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.0005;
+                               parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.0005;
                            }
                            diff[j]=parmax[j]-parmin[j];
+                           //cout<<header.scenario[k].histparam[numpar[k][j]].name<<"   ";
+                           //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
+                       }
+                       for (int j=nparamcom-header.nparamut;j<nparamcom;j++) {
+                               jj=j-(nparamcom-header.nparamut);
+                               //cout<<"jj="<<jj<<"\n";
+                               parmin[j]=0.95*header.mutparam[jj].prior.mini;
+                               parmax[j]=1.05*header.mutparam[jj].prior.maxi;
+                               //cout<<header.mutparam[jj].category<<"   ";
+                               //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
+                               //diff[j]=parmax[j]-parmin[j];
                        }
                    }
+                   //cout <<"fin du calcul de parmin/parmax\n";
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {
                            k = enrsel[i].numscen-1;
@@ -268,20 +278,30 @@ struct compenreg
                        }
                    } else{
                        xborne=borne;
-                       for (int j=0;j<nparamcom;j++) {
-                           k=scenchoisi[0]-1;
-                           if (j<header.scenario[k].nparam) {
-                               if (header.scenario[k].histparam[numpar[k][j]].category<2) {
-                                   parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.5;
-                                   parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.5;
-                               } else {
-                                   parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.0005;
-                                   parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.0005;
-                               }
+                       k=scenchoisi[0]-1;
+                       for (int j=0;j<nparamcom-header.nparamut;j++) {
+                           if (header.scenario[k].histparam[numpar[k][j]].category<2) {
+                               parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.5;
+                               parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.5;
+                           } else {
+                               parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.0005;
+                               parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.0005;
                            }
                            diff[j]=parmax[j]-parmin[j];
+                           //cout<<header.scenario[k].histparam[numpar[k][j]].name<<"   ";
+                           //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
+                       }
+                       for (int j=nparamcom-header.nparamut;j<nparamcom;j++) {
+                               jj=j-(nparamcom-header.nparamut);
+                               cout<<"jj="<<jj<<"\n";
+                               parmin[j]=0.95*header.mutparam[jj].prior.mini;
+                               parmax[j]=1.05*header.mutparam[jj].prior.maxi;
+                               cout<<header.mutparam[jj].category<<"   ";
+                               //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
+                               //diff[j]=parmax[j]-parmin[j];
                        }
                    }
+                   //cout <<"fin du calcul de parmin/parmax\n";
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {
                            k = enrsel[i].numscen-1;
@@ -307,7 +327,7 @@ struct compenreg
     void doestim(char *headerfilename,char *reftablefilename,char *reftablelogfilename,char *statobsfilename,char *options) {
         char *datafilename;
         int rtOK,nstatOK;
-        int nscenchoisi,*scenchoisi,nrec,nsel,numtransf,ns,ns1, **numpar;
+        int nscenchoisi,*scenchoisi,nrec,nsel,numtransf,ns,ns1;
         bool original,composite;
         string opt,*ss,s,*ss1,s0,s1;
         double **matX0, *vecW, **alpsimrat;
@@ -363,8 +383,8 @@ struct compenreg
         rt.openfile2();
         cout <<"apres rt.openfiles2\n";
         cal_dist(nrec,nsel,nscenchoisi,scenchoisi);
-        det_numpar(nscenchoisi,scenchoisi,numpar);
-        recalparam(scenchoisi,nsel,numtransf,numpar,alpsimrat);
+        det_numpar(nscenchoisi,scenchoisi);
+        recalparam(scenchoisi,nsel,numtransf,alpsimrat);
         //rempli_mat(n,matX0,vecW,parsim);
     
     }
