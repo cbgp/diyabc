@@ -347,7 +347,12 @@ class Project(QTabWidget):
         nbFullQsub = nbToGen / 10000
         nbLastQsub = nbToGen % 10000
 
-        return '\n\
+        if nbLastQsub == 0:
+            nbQsub = nbFullQsub
+        else:
+            nbQsub = nbFullQsub+1
+
+        res = '\n\
 function progress(){\n\
 res=0\n\
 nbfin=%s\n\
@@ -369,8 +374,10 @@ nb=0\n\
 # for each log file, check if the computation is terminated\n\
 for i in $(seq 1 $1); do\n\
     if [ -e reftable_$i.log ]; then\n\
-        numdone=`head -n 2 reftable_$i.log | tail -n 1`\n\
-        # case of last computation, less thant 10000\n\
+        numdone=`head -n 2 reftable_$i.log | tail -n 1`\n'%nbToGen
+
+        if nbLastQsub != 0:
+            res+='        # case of last computation, less thant 10000\n\
         if [ $i -eq %s ]; then\n\
             if [ $numdone -eq %s ]; then\n\
                 let nb=$nb+1\n\
@@ -379,22 +386,33 @@ for i in $(seq 1 $1); do\n\
             if [ $numdone -eq 10000 ]; then\n\
                 let nb=$nb+1\n\
             fi\n\
-        fi\n\
-    fi\n\
+        fi\n'%(nbFullQsub+1,nbLastQsub)
+        else:
+            res+='        if [ $numdone -eq 10000 ]; then\n\
+            let nb=$nb+1\n\
+        fi\n'
+
+        res+='    fi\n\
 done\n\
 echo $nb\n\
 }\n\
 for i in $(seq 1 %s); do \n\
 qsub -cwd node.sh 10000 `pwd` $i\n\
-done;\n\
-let last=$i+1\n\
-qsub -cwd node.sh %s `pwd` $last\n\
-while ! [ "`nbOk %s`" = "%s" ]; do\n\
+done;\n'%nbFullQsub
+        
+        if nbLastQsub != 0:
+            res+='let last=$i+1\n\
+qsub -cwd node.sh %s `pwd` $last\n'%nbLastQsub
+        
+        res+='while ! [ "`nbOk %s`" = "%s" ]; do\n\
 echo `progress %s`\n\
 sleep 3\n\
 done\n\
 echo `progress %s`\n\
-'%(nbToGen,nbFullQsub+1,nbLastQsub,nbFullQsub,nbLastQsub,nbFullQsub+1,nbFullQsub+1,nbFullQsub+1,nbFullQsub+1)
+./general -p "`pwd`"/ -q\n\
+'%(nbQsub,nbQsub,nbQsub,nbQsub)
+        
+        return res
 
     def genNodeScript(self):
         """ génération du script a exécuter sur chaque noeud
