@@ -49,7 +49,7 @@ struct compenreg
         enr.stat = new float[rt.nstat];
         nparamax = 0;for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         enr.param = new float[nparamax];
-        for (int i=0;i<10000;i++) bidon=rt.readrecord(&enr);
+        for (int i=0;i<20000;i++) bidon=rt.readrecord(&enr);
         for (int i=0;i<nrecutil;i++) {
             bidon=rt.readrecord(&enr);
             iscen=enr.numscen;
@@ -363,8 +363,8 @@ struct compenreg
         rt.openfile2();
         cout <<"apres rt.openfiles2\n";
         cal_dist(nrec,nsel,nscenchoisi,scenchoisi);
-        //det_numpar(nscenchoisi,scenchoisi,numpar);
-        //recalparam(scenchoisi,nsel,numtransf,numpar,alpsimrat);
+        det_numpar(nscenchoisi,scenchoisi,numpar);
+        recalparam(scenchoisi,nsel,numtransf,numpar,alpsimrat);
         //rempli_mat(n,matX0,vecW,parsim);
     
     }
