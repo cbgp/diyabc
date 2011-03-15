@@ -23,7 +23,8 @@ enregC *enrsel;
 ReftableC rt;
 HeaderC header;
 double *var_stat,*stat_obs, *parmin, *parmax, *diff;
-int nparamax,nparamcom,**numpar;
+ double **alpsimrat,**parsim,**matX0,*vecW;
+ int nparamax,nparamcom,**numpar;
 double borne=10.0,xborne;
 
 
@@ -177,8 +178,8 @@ struct compenreg
         }
     
     }
-    
-    void recalparam(int *scenchoisi, int n,int numtransf, double **alpsimrat) {
+
+    void recalparam(int *scenchoisi, int n,int numtransf) {
         double coefmarge=0.001,marge;
         int jj,k,kk;
         alpsimrat = new double*[n];
@@ -314,6 +315,52 @@ struct compenreg
         }
     }   
 
+    void rempli_mat(int n) {
+        int icc,nstatOKsel=0;
+        double delta,som,x,*var_statsel,nn;
+        double *sx,*sx2,*mo;
+        nn=(double)n;
+        delta = enrsel[n-1].dist;
+        sx  = new double[rt.nstat];
+        sx2 = new double[rt.nstat];
+        mo  = new double[rt.nstat];
+        var_statsel = new double[rt.nstat];
+        for (int i=0;i<rt.nstat;i++){sx[i]=0.0;sx2[i]=0.0;mo[i]=0.0;}
+        for (int i=0;i<n;i++){
+            for (int j=0;j<rt.nstat;j++) {
+                x = enrsel[i].stat[j];
+                sx[j] +=x;
+                sx2[j] +=x*x;
+            }
+        }
+        for (int j=0;j<rt.nstat;j++) {
+            var_statsel[j]=(sx2[j]-sx[j]/nn*sx[j])/(nn-1.0);
+            if (var_statsel[j]>0.0) nstatOKsel++;
+            mo[j] = sx[j]/nn;
+        }
+        matX0 = new double*[n];
+        for (int i=0;i<n;i++)matX0[i]=new double[nstatOKsel];
+        vecW = new double[n];
+        som=0.0;
+        for (int i;i<n;i++) {
+            icc=-1;
+            for (int j=0;j<rt.nstat;j++) {
+                if (var_statsel[j]>0.0) {
+                    icc++;
+                    matX0[icc][j]=(enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
+                }
+            }
+            x=enrsel[i].dist/delta;
+            vecW[i]=(1.5/delta)*(1.0-x*x);
+            som +=vecW[i];
+        }
+        for (int i;i<n;i++) vecW[i]/=som;
+        parsim = new double*[n];
+        for (int i;i<n;i++) parsim[i] = new double[nparamcom];
+        for (int i;i<n;i++) {
+            for (int j=0;j<nparamcom;j++)parsim[i][j]=alpsimrat[i][j];
+        }
+    }
 
     
 
@@ -330,7 +377,7 @@ struct compenreg
         int nscenchoisi,*scenchoisi,nrec,nsel,numtransf,ns,ns1;
         bool original,composite;
         string opt,*ss,s,*ss1,s0,s1;
-        double **matX0, *vecW, **alpsimrat;
+        double **matX0, *vecW, **alpsimrat,**parsim;
         
         opt=char2string(options);
         ss = splitwords(opt,";",&ns);
@@ -384,7 +431,8 @@ struct compenreg
         cout <<"apres rt.openfiles2\n";
         cal_dist(nrec,nsel,nscenchoisi,scenchoisi);
         det_numpar(nscenchoisi,scenchoisi);
-        recalparam(scenchoisi,nsel,numtransf,alpsimrat);
-        //rempli_mat(n,matX0,vecW,parsim);
+        recalparam(scenchoisi,nsel,numtransf);
+        cout<<"avant rempli_mat\n";
+        rempli_mat(nsel);
     
     }
