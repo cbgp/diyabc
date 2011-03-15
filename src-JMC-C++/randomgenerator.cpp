@@ -1023,19 +1023,13 @@ struct MwcGen
 {	unsigned long int mult,mwcx,carry;
 //    int modulo = 16777216;
 
-	void randinit(unsigned int indice, bool reseed) {
+	void randinit(unsigned int indice, unsigned int indice2) {
 		this->mult = multipli[indice % 10000];
-		//srand((unsigned) time (NULL));
-		if (reseed) {
-			long sec;
-			time (&sec);
-			sec +=indice;
-			//std::cout << "indice=" << indice << "   sec=" << sec <<  "\n";
-			srand((unsigned) sec);
-		}
-		this->mwcx = rand() % MODULO;
-		this->carry= rand() % MODULO;
-                //std::cout << "mwcx = " << this->mwcx << "   carry = " << this->carry << "\n";
+        srand(indice2);
+        this->mwcx = rand() % MODULO;
+		srand((unsigned) time (NULL));
+        this->carry= rand() % MODULO;
+        //std::cout << "mwcx = " << this->mwcx << "   carry = " << this->carry << "\n";
 	}
 
         double random() {

@@ -160,7 +160,7 @@ int main(int argc, char *argv[]){
                                   //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
                                   firsttime=true;
                                   while (nrecneeded>rt.nrec) {
-                                          ps.dosimultabref(header,nenr,false,rt.nrec,multithread,firsttime);
+                                          ps.dosimultabref(header,nenr,false,rt.nrec,multithread,firsttime,seed);
                                           if (firsttime) firsttime=false;
                                           rt.writerecords(nenr,enreg);
                                           rt.nrec +=nenr;

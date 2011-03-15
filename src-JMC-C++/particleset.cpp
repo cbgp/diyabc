@@ -300,7 +300,7 @@ struct ParticleSetC
                 }
 	}*/
 
-	void dosimultabref(HeaderC header,int npart, bool dnatrue, int numrec,bool multithread,bool firsttime)
+	void dosimultabref(HeaderC header,int npart, bool dnatrue, int numrec,bool multithread,bool firsttime,int seed)
 	{
                int ipart,jpart=0,nthreads,base;
 	       int gr,nstat,pa,ip,iscen;
@@ -316,7 +316,7 @@ struct ParticleSetC
                if (firsttime) {                
                     srand(time(NULL));
                     //srand(1);  
-                    base=rand();
+                    base=seed;
                     this->particule = new ParticleC[this->npart];
                     this->header = header;
                     for (int p=0;p<this->npart;p++) {
@@ -331,7 +331,7 @@ struct ParticleSetC
                         //cout<<"setloci\n";
                         this->setscenarios(p);
                         //cout << "                    apres set particule\n";
-                        this->particule[p].mw.randinit(p+base ,false);
+                        this->particule[p].mw.randinit(p,base);
                     }
                 }
                 else {
