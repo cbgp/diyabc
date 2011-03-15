@@ -54,58 +54,91 @@ double walltime( double *t0 )
 double clock_zero=0.0,debut,duree;
 
 int main(int argc, char *argv[]){
-	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename;
+	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*estpar;
     bool multithread=false,firsttime;
-	int nrecneeded,nrectodo,k;
+	int nrecneeded,nrectodo,k,seed;
 	double **paramstat;
 	int optchar;
     ReftableC rt;
 	HeaderC header;
     ParticleSetC ps;
+    char action='a';
     //string a;
         //srand(time(NULL));
        
         debut=walltime(&clock_zero);
 
-	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:g:hmq")) !=-1) {
+	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:g:hmqs:")) !=-1) {
          
 	  switch (optchar) {
 
         case 'h' : cout << "USAGE :\n";
             cout << "-p <directory of header.txt>\n-r <number of required data sets in the reftable>\n";
-            cout <<"-e for ABC parameter estimation with parameters as defined below\n";
-            cout <<"-e s:<chosen scenarios separated by a comma>;n:<number of simulated datasets taken from reftable>;m:<number of simulated datasets used for the local regression>;t:<number of the transformation (1,2,3 or 4)>;p:<o for original, c for composite, oc for both>"<<"\n";
-            cout <<"-q to merge all reftable_$j.bin \n";
+            cout << "-g <minimum number of particles simulated in a single bunch (default=100)>\n";
+            cout << "-m <multithreaded version of the program (default single threaded)\n";
+            cout << "-e for ABC parameter estimation with parameters as defined below\n";
+            cout << "-e s:<chosen scenarios separated by a comma>;n:<number of simulated datasets taken from reftable>;m:<number of simulated datasets used for the local regression>;t:<number of the transformation (1,2,3 or 4)>;p:<o for original, c for composite, oc for both>"<<"\n";
+            cout << "-q to merge all reftable_$j.bin \n";
+            cout << "-r for building/appending a reference table <required number of simulated datasets (default 10^6/scenario)>\n";
             break;
 	
 	    case 'p' : 
-               headerfilename = new char[strlen(optarg)+13];
-		       reftablefilename = new char[strlen(optarg)+15];
-               reftablelogfilename = new char[strlen(optarg)+15];
-               statobsfilename = new char[strlen(optarg)+14];
-		       strcpy(headerfilename,optarg);
-		       strcpy(reftablefilename,optarg);
-               strcpy(reftablelogfilename,optarg);
-               strcpy(statobsfilename,optarg);
-		       strcat(headerfilename,"header.txt");
-		       strcat(reftablefilename,"reftable.bin");
-               strcat(reftablelogfilename,"reftable.log");
-               strcat(statobsfilename,"statobs.txt");
-		       //cout<<headerfilename<<"\n"<<reftablefilename<<"\n"; 
-		       break;
+            headerfilename = new char[strlen(optarg)+13];
+            reftablefilename = new char[strlen(optarg)+15];
+            reftablelogfilename = new char[strlen(optarg)+15];
+            statobsfilename = new char[strlen(optarg)+14];
+            strcpy(headerfilename,optarg);
+            strcpy(reftablefilename,optarg);
+            strcpy(reftablelogfilename,optarg);
+            strcpy(statobsfilename,optarg);
+            strcat(headerfilename,"header.txt");
+            strcat(reftablefilename,"reftable.bin");
+            strcat(reftablelogfilename,"reftable.log");
+            strcat(statobsfilename,"statobs.txt");
+            //cout<<headerfilename<<"\n"<<reftablefilename<<"\n"; 
+            break;
 		   
-	    case 'r' : nrecneeded = atoi(optarg);
-	               cout <<"nrecneeded = "<<nrecneeded<<"\n";
-		           header.readHeader(headerfilename);
+        case 's' :  
+            seed=atoi(optarg);
+            break;
+            
+        case 'r' :  
+            nrecneeded = atoi(optarg);
+            action='r';
+            break;
+                   
+        case 'g' :  
+            nenr = atoi(optarg);
+            break;
+          
+        case 'm' :  
+            multithread=true;
+            break;
+
+        case 'e' :  
+            estpar=strdup(optarg);
+            action='e';
+            break;        
+                    
+        case 'q' : 
+            header.readHeader(headerfilename);
+            k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
+            rt.concat();
+            break;
+	    }
+	}
+	switch (action) {
+    
+      case 'r' :   header.readHeader(headerfilename);
                    //cout<<"avant calstatobs\n";fflush(stdin);
                    header.calstatobs(statobsfilename);
-		           cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
-		           datafilename=strdup(header.datafilename.c_str());
+                   cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
+                   datafilename=strdup(header.datafilename.c_str());
                    //cout << datafilename<<"\n";
-		           k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
+                   k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
                    //cout<<header.scenario[0].nparamvar<<"    "<<header.scenario[1].nparamvar<<"    "<<header.scenario[2].nparamvar<<"\n";
                    //cout <<"k="<<k<<"\n";
-                  if (k==1) {
+                   if (k==1) {
                               rt.datapath = datafilename;
                               rt.nscen = header.nscenarios;
                               rt.nrec=0;
@@ -142,27 +175,14 @@ int main(int argc, char *argv[]){
                                   header.libere();
                                   
                           }
-                      delete []datafilename;    
+                      //delete []datafilename;
                       break;
-                   
-            case 'g' : nenr = atoi(optarg);
-                       cout<<"minimum ="<<nenr;
-                       break;
-              
-            case 'm' : 
-                       multithread=true;
-	                   break;
-            case 'e' : doestim(headerfilename,reftablefilename,reftablelogfilename,statobsfilename,optarg);
-                       
-                       break;
-            case 'q' : 
-                       header.readHeader(headerfilename);
-                       k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
-                       rt.concat();
-                       break;
-	    }
-	}
-	delete [] headerfilename;delete [] reftablefilename;
+                      
+      case 'e'  : doestim(headerfilename,reftablefilename,reftablelogfilename,statobsfilename,estpar);
+                  break;
+    
+    }
+	//delete [] headerfilename;delete [] reftablefilename;
 	duree=walltime(&debut);
     fprintf(stdout,"durée = %.2f secondes \n",duree);
     //cin >> a;

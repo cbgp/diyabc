@@ -24,7 +24,7 @@ ReftableC rt;
 HeaderC header;
 double *var_stat,*stat_obs, *parmin, *parmax, *diff;
 int nparamax,nparamcom;
-double borne=10.0;
+double borne=10.0,xborne;
 
 
 using namespace std;
@@ -37,10 +37,10 @@ struct compenreg
    }
 };
     int cal_varstat() {
-        int nrecutil,iscen,nsOK;
+        int nrecutil,iscen,nsOK,bidon;
         double *sx,*sx2,x,an;
         enregC enr;
-        nrecutil=300000;if (nrecutil>rt.nrec) nrecutil=rt.nrec;
+        nrecutil=10000;if (nrecutil>rt.nrec) nrecutil=rt.nrec;
         an=1.0*(double)nrecutil;
         sx  = new double[rt.nstat];
         sx2 = new double[rt.nstat];
@@ -49,8 +49,9 @@ struct compenreg
         enr.stat = new float[rt.nstat];
         nparamax = 0;for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         enr.param = new float[nparamax];
+        for (int i=0;i<10000;i++) bidon=rt.readrecord(&enr);
         for (int i=0;i<nrecutil;i++) {
-            rt.readrecord(&enr);
+            bidon=rt.readrecord(&enr);
             iscen=enr.numscen;
             for (int j=0;j<rt.nstat;j++) {
                 x = (double)enr.stat[j];
@@ -62,7 +63,7 @@ struct compenreg
         for (int j=0;j<rt.nstat;j++) {
             var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
             if (var_stat[j]>0) nsOK++;
-            //cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
+            cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
         }
         return nsOK;
     }
@@ -85,19 +86,28 @@ struct compenreg
     }
 
     void cal_dist(int nrec, int nsel, int nscenchoisi,int *scenchoisi) {
-        int nn=10000,nreclus=0,nparamax,nrecOK=0,iscen;
+        int nn=10000,nreclus=0,nparamax,nrecOK=0,iscen,bidon;
         bool firstloop=true,scenOK;
         double diff;
         if (nn<nsel) nn=nsel;
         nparamax = 0;for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
-        enrsel = new enregC[2*nn]; 
+        cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<rt.nstat<<"   2*nn="<<2*nn<<"\n";
+        enrsel = new enregC[2*nn];
+        //cout<<" apres allocation de enrsel\n";
         while (nreclus<nrec) {
             if (firstloop) {nrecOK=0;firstloop=false;}
             else nrecOK=nn;
-            while (nrecOK<2*nn) {
+            //cout<<"nrecOK = "<<nrecOK<<"\n";
+            while ((nrecOK<2*nn)and(nreclus<nrec)) {
                 enrsel[nrecOK].param = new float[nparamax];
                 enrsel[nrecOK].stat  = new float[rt.nstat];
-                rt.readrecord(&enrsel[nrecOK]);
+                //cout<<"avant readrecord\n";
+                bidon=rt.readrecord(&enrsel[nrecOK]);
+                //cout<<"apres readrecord\n";
+                //cout<<enrsel[nrecOK].numscen<<"   "<<scenchoisi[0]<<"\n";
+                //for (int j=0;j<rt.nstat;j++) cout <<enrsel[nrecOK].stat[j]<<"  ";
+                //cout <<"\n";
+                //cin >>bidon;
                 nreclus++;
                 scenOK=false;iscen=0;
                 while((not scenOK)and(iscen<nscenchoisi)) {
@@ -111,11 +121,13 @@ struct compenreg
                       enrsel[nrecOK].dist += diff*diff/var_stat[j];
                     }
                     nrecOK++;
+                if (nreclus==nrec) break;
                 }
             }
             sort(&enrsel[0],&enrsel[2*nn],compenreg()); 
-            cout<<"distmin = "<<enrsel[0].dist/rt.nstat<<"    distmax = "<<enrsel[nsel-1].dist/rt.nstat<<"\n";
+            //cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/rt.nstat<<"    distmax = "<<enrsel[nsel-1].dist/rt.nstat<<"\n";
         }
+            cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/rt.nstat<<"    distmax = "<<enrsel[nsel-1].dist/rt.nstat<<"\n";
     }
     
     void det_numpar(int nscenchoisi,int *scenchoisi,int **numpar) {
@@ -166,10 +178,7 @@ struct compenreg
     
     }
     
-    
-    
-    
-    void recalparam(int n,int numtransf, int **numpar, double **alpsimrat) {
+    void recalparam(int *scenchoisi, int n,int numtransf, int **numpar, double **alpsimrat) {
         double coefmarge=0.001,marge;
         int k;
         alpsimrat = new double*[n];
@@ -196,6 +205,7 @@ struct compenreg
           case 3 : //logit transform
                    parmin = new double[nparamcom]; parmax = new double[nparamcom]; diff = new double[nparamcom];
                    if (borne<0.0000000001) {
+                       xborne=1E100;
                        for (int j=0;j<nparamcom;j++) {parmin[j]=1E100;parmax[j]=-1E100;}
                        for (int i=0;i<n;i++) {
                             for (int j=0;j<nparamcom;j++) {
@@ -209,16 +219,82 @@ struct compenreg
                            marge=coefmarge*diff[j];
                            parmin[j] -=marge;
                            parmax[j] +=marge;
+                           diff[j]=parmax[j]-parmin[j];
+                       }
+                   } else{
+                       xborne=borne;
+                       for (int j=0;j<nparamcom;j++) {
+                           k=scenchoisi[0]-1;
+                           if (j<header.scenario[k].nparam) {
+                               if (header.scenario[k].histparam[numpar[k][j]].category<2) {
+                                   parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.5;
+                                   parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.5;
+                               } else {
+                                   parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.0005;
+                                   parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.0005;
+                               }
+                           }
+                           diff[j]=parmax[j]-parmin[j];
                        }
                    }
                    for (int i=0;i<n;i++) {
-                       
-                   
+                       for (int j=0;j<nparamcom;j++) {
+                           k = enrsel[i].numscen-1;
+                           if (enrsel[i].param[numpar[k][j]]<=parmin[j]) alpsimrat[i][j] = -xborne;
+                           else if (enrsel[i].param[numpar[k][j]]>=parmax[j]) alpsimrat[i][j] = xborne;
+                           else alpsimrat[i][j] =log((enrsel[i].param[numpar[k][j]]-parmin[j])/(parmax[j]-enrsel[i].param[numpar[k][j]]));
+                       }
                    }
+                   break;
+          case 4 : //log(tg) transform
+                   double   c=1.5707963267948966192313216916398;
+                   parmin = new double[nparamcom]; parmax = new double[nparamcom]; diff = new double[nparamcom];
+                   if (borne<0.0000000001) {
+                       xborne=1E100;
+                       for (int j=0;j<nparamcom;j++) {parmin[j]=1E100;parmax[j]=-1E100;}
+                       for (int i=0;i<n;i++) {
+                            for (int j=0;j<nparamcom;j++) {
+                                k = enrsel[i].numscen-1;
+                                if (enrsel[i].param[numpar[k][j]]<parmin[j]) parmin[j]=enrsel[i].param[numpar[k][j]];
+                                if (enrsel[i].param[numpar[k][j]]>parmax[j]) parmax[j]=enrsel[i].param[numpar[k][j]];
+                           }
+                       }
+                       for (int j=0;j<nparamcom;j++) {
+                           diff[j]=parmax[j]-parmin[j];
+                           marge=coefmarge*diff[j];
+                           parmin[j] -=marge;
+                           parmax[j] +=marge;
+                           diff[j]=parmax[j]-parmin[j];
+                       }
+                   } else{
+                       xborne=borne;
+                       for (int j=0;j<nparamcom;j++) {
+                           k=scenchoisi[0]-1;
+                           if (j<header.scenario[k].nparam) {
+                               if (header.scenario[k].histparam[numpar[k][j]].category<2) {
+                                   parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.5;
+                                   parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.5;
+                               } else {
+                                   parmin[j] = header.scenario[k].histparam[numpar[k][j]].prior.mini-0.0005;
+                                   parmax[j] = header.scenario[k].histparam[numpar[k][j]].prior.maxi+0.0005;
+                               }
+                           }
+                           diff[j]=parmax[j]-parmin[j];
+                       }
+                   }
+                   for (int i=0;i<n;i++) {
+                       for (int j=0;j<nparamcom;j++) {
+                           k = enrsel[i].numscen-1;
+                           if (enrsel[i].param[numpar[k][j]]<=parmin[j]) alpsimrat[i][j] = -xborne;
+                           else if (enrsel[i].param[numpar[k][j]]>=parmax[j]) alpsimrat[i][j] = xborne;
+                           else alpsimrat[i][j] =log(tan((enrsel[i].param[numpar[k][j]]-parmin[j])*c/diff[j]));
+                       }
+                   }
+                   break;
         }
-        
     }   
-    
+
+
     
 
 
@@ -275,15 +351,20 @@ struct compenreg
         for (int i=0;i<header.nscenarios;i++) cout<<"scenario "<<i<<"    nparam = "<<header.scenario[i].nparam<<"\n";
         datafilename=strdup(header.datafilename.c_str());
         rtOK=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
+        cout <<"\napres rt.readheader\n";
         if (rtOK==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}          
         rt.openfile2();
+        cout<<"apres rt.openfile2\n";
         nstatOK = cal_varstat();
         rt.closefile();
+        cout<<"fermeture du fichier apres cal_varstat\n";
         read_statobs(statobsfilename);
+        cout <<"avant rt.openfiles2\n";
         rt.openfile2();
+        cout <<"apres rt.openfiles2\n";
         cal_dist(nrec,nsel,nscenchoisi,scenchoisi);
-        det_numpar(nscenchoisi,scenchoisi,numpar);
-        recalparam(nsel,numtransf,numpar,alpsimrat);
-        //rempli_mat(n,matX0,vecW,parsim)
+        //det_numpar(nscenchoisi,scenchoisi,numpar);
+        //recalparam(scenchoisi,nsel,numtransf,numpar,alpsimrat);
+        //rempli_mat(n,matX0,vecW,parsim);
     
     }

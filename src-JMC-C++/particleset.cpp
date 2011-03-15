@@ -314,9 +314,9 @@ struct ParticleSetC
                //else cout<<"particleSet UNdefined\n";
                //this->header = header;
                if (firsttime) {                
-                    //srand(time(NULL));
-                    srand(1);  
-                    base=0;//rand();
+                    srand(time(NULL));
+                    //srand(1);  
+                    base=rand();
                     this->particule = new ParticleC[this->npart];
                     this->header = header;
                     for (int p=0;p<this->npart;p++) {
