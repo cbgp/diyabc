@@ -431,9 +431,13 @@ cp $TMPDIR/reftable.bin $2/reftable_$3.bin\n\
 cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 '%(self.parent.reftableheader_name, self.dataFileName)
 
-    def generateComputationTar(self):
-        name = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","(TAR archive) *.tar"))
-        if name != "":
+    def generateComputationTar(self,tarname=None):
+        """ génère une archive tar contenant l'exécutable, les scripts node et master,
+        le datafile et le reftableheader.
+        """
+        if tarname == None:
+            tarname = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","(TAR archive) *.tar"))
+        if tarname != "":
             # generation du master script
             script = self.genMasterScript()
             if os.path.exists('scmf'):
@@ -442,7 +446,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             scmf.write(script)
             scmf.close()
             os.chmod('scmf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
-            tar = tarfile.open(name,"w")
+            tar = tarfile.open(tarname,"w")
             # generation du node script
             script = self.genNodeScript()
             if os.path.exists('scnf'):
@@ -454,9 +458,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
             # ajout des fichiers dans l'archive
             tarRepName = self.dir.split('/')[-1]
-            if os.path.exists(name):
-                os.remove(name)
-            tar = tarfile.open(name,"w")
+            if os.path.exists(tarname):
+                os.remove(tarname)
+            tar = tarfile.open(tarname,"w")
             tar.add('scmf','%s/launch.sh'%tarRepName)
             tar.add('scnf','%s/node.sh'%tarRepName)
             tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
