@@ -80,7 +80,7 @@ int main(int argc, char *argv[]){
             cout << "-e s:<chosen scenarios separated by a comma>;n:<number of simulated datasets taken from reftable>;m:<number of simulated datasets used for the local regression>;t:<number of the transformation (1,2,3 or 4)>;p:<o for original, c for composite, oc for both>"<<"\n";
             cout << "-q to merge all reftable_$j.bin \n";
             cout << "-r for building/appending a reference table <required number of simulated datasets (default 10^6/scenario)>\n";
-            cout << "-s <seed for the random generator>\n"
+            cout << "-s <seed for the random generator>\n";
             break;
 	
 	    case 'p' : 

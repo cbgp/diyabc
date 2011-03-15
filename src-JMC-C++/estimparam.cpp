@@ -40,7 +40,7 @@ struct compenreg
         int nrecutil,iscen,nsOK,bidon;
         double *sx,*sx2,x,an;
         enregC enr;
-        nrecutil=10000;if (nrecutil>rt.nrec) nrecutil=rt.nrec;
+        nrecutil=100000;if (nrecutil>rt.nrec) nrecutil=rt.nrec;
         an=1.0*(double)nrecutil;
         sx  = new double[rt.nstat];
         sx2 = new double[rt.nstat];
@@ -49,7 +49,7 @@ struct compenreg
         enr.stat = new float[rt.nstat];
         nparamax = 0;for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         enr.param = new float[nparamax];
-        for (int i=0;i<20000;i++) bidon=rt.readrecord(&enr);
+        //for (int i=0;i<20000;i++) bidon=rt.readrecord(&enr);
         for (int i=0;i<nrecutil;i++) {
             bidon=rt.readrecord(&enr);
             iscen=enr.numscen;
