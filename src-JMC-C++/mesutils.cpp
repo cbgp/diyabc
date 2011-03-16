@@ -73,7 +73,8 @@ string centre(string s,int k){
         int av,ap;
         av=(k-l)/2;
         ap=k-l-av;
-        if (av<=0) return s;
+        if ((av<=0)and(ap<=0)) return s;
+        if (av<=0) return s+" ";
         sb=s;
         for (int i=0;i<av;i++) sb=" "+sb;
         if (ap==0) return sb;

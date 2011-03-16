@@ -33,11 +33,17 @@ int nparamax,nparamcom,nparcompo,**numpar,nstatOKsel,numtransf,npar,npar0;
 double borne=10.0,xborne;
 bool composite,original;
 int nscenchoisi,*scenchoisi;
+string entete;
 
 using namespace std;
 
 #define c 1.5707963267948966192313216916398
 
+
+/** 
+* définit l'opérateur de comparaison de deux enregistrements de type enregC
+* pour l'utilisation de la fonction sort du module algorithm
+*/
 struct compenreg
 {
    bool operator() (const enregC & lhs, const enregC & rhs) const
@@ -45,6 +51,11 @@ struct compenreg
       return lhs.dist < rhs.dist;
    }
 };
+
+/** 
+* calcule les variances des statistiques résumées 
+* sur les 100000 premiers enregistrements de la table de référence
+*/
     int cal_varstat() {
         int nrecutil,iscen,nsOK,bidon;
         double *sx,*sx2,x,an;
@@ -72,11 +83,14 @@ struct compenreg
         for (int j=0;j<rt.nstat;j++) {
             var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
             if (var_stat[j]>0) nsOK++;
-            cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
+            //cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
         }
         return nsOK;
     }
 
+/** 
+* lit le fichier des statistiques observées (placées dans double *stat_obs)
+*/
     void read_statobs(char *statobsfilename) {
        string entete,ligne,*ss;
        int ns;
@@ -85,7 +99,7 @@ struct compenreg
        getline(file,ligne);
        file.close();
        ss=splitwords(ligne," ",&ns);
-       cout<<"statobs ns="<<ns<<"\n";
+       //cout<<"statobs ns="<<ns<<"\n";
        if (ns!=rt.nstat) exit(1);
        stat_obs = new double[ns];
        for (int i=0;i<ns;i++) stat_obs[i]=atof(ss[i].c_str());
@@ -94,13 +108,17 @@ struct compenreg
        //cout<<"\n";
     }
 
+/** 
+* calcule la distance de chaque jeu de données simulé au jeu observé
+* et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
+*/
     void cal_dist(int nrec, int nsel) {
         int nn=10000,nreclus=0,nparamax,nrecOK=0,iscen,bidon;
         bool firstloop=true,scenOK;
         double diff;
         if (nn<nsel) nn=nsel;
         nparamax = 0;for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
-        cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<rt.nstat<<"   2*nn="<<2*nn<<"\n";
+        //cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<rt.nstat<<"   2*nn="<<2*nn<<"\n";
         enrsel = new enregC[2*nn];
         //cout<<" apres allocation de enrsel\n";
         while (nreclus<nrec) {
@@ -139,6 +157,10 @@ struct compenreg
             cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/rt.nstat<<"    distmax = "<<enrsel[nsel-1].dist/rt.nstat<<"\n";
     }
     
+/** 
+* compte les paramètres communs aux scénarios choisis (nparamcom), le nombre de paramètres composites
+* rempli le tableau numpar des numéros de paramètres communs par scénario
+*/
     void det_numpar() {
         vector <string>  parname;
         int ii;
@@ -191,6 +213,9 @@ struct compenreg
         
     }
 
+/** 
+* recalcule les valeurs de paramètres en fonction de la transformation choisie 
+*/
     void recalparam(int n) {
         double coefmarge=0.001,marge;
         int jj,k,kk;
@@ -326,12 +351,17 @@ struct compenreg
         }
     }   
 
+/** 
+* effectue le remplissage de la matrice matX0, du vecteur des poids vecW et 
+* de la matrice des paramètres parsim (éventuellement transformés)
+*/
     void rempli_mat(int n) {
         int icc;
         double delta,som,x,*var_statsel,nn;
         double *sx,*sx2,*mo;
         nn=(double)n;
         delta = enrsel[n-1].dist;
+        //cout<<"delta="<<delta<<"\n";
         sx  = new double[rt.nstat];
         sx2 = new double[rt.nstat];
         mo  = new double[rt.nstat];
@@ -353,27 +383,34 @@ struct compenreg
         matX0 = new double*[n];
         for (int i=0;i<n;i++)matX0[i]=new double[nstatOKsel];
         vecW = new double[n];
+
         som=0.0;
-        for (int i;i<n;i++) {
+        for (int i=0;i<n;i++) {
             icc=-1;
             for (int j=0;j<rt.nstat;j++) {
                 if (var_statsel[j]>0.0) {
                     icc++;
-                    matX0[icc][j]=(enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
+                    matX0[i][icc]=(enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
                 }
             }
             x=enrsel[i].dist/delta;
             vecW[i]=(1.5/delta)*(1.0-x*x);
-            som +=vecW[i];
+            som = som + vecW[i];
         }
-        for (int i;i<n;i++) vecW[i]/=som;
+
+        for (int i=0;i<n;i++) vecW[i]/=som;
+        //for (int i=0;i<10;i++) cout<<vecW[i]<<"  ";
+        //cout<<"\n";
         parsim = new double*[n];
-        for (int i;i<n;i++) parsim[i] = new double[nparamcom];
-        for (int i;i<n;i++) {
+        for (int i=0;i<n;i++) parsim[i] = new double[nparamcom];
+        for (int i=0;i<n;i++) {
             for (int j=0;j<nparamcom;j++)parsim[i][j]=alpsimrat[i][j];
         }
     }
 
+/** 
+* effectue la régression locale à partir de la matrice matX0 et le vecteur des poids vecW
+*/
     void local_regression(int n, bool multithread) {
         double **matX,**matXT,**matA,**matB,**matAA,**matC;
         
@@ -385,23 +422,31 @@ struct compenreg
             matX[i][0] = 1.0;
             for (int j=1;j<nstatOKsel+1;j++) matX[i][j] = matX0[i][j-1];
         }
+        //ecrimat("matX0",10,nstatOKsel,matX0);
+        //ecrimat("matX",10,nstatOKsel+1,matX);
         matXT = transpose(n,nstatOKsel+1,matX);
         for (int i=0;i<n;i++) {
             for (int j=0;j<nstatOKsel+1;j++) matA[j][i] = matXT[j][i]*vecW[i];
         }
+        //ecrimat("matA",nstatOKsel+1,nstatOKsel+1,matA);
         matAA = prodM(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
+        //ecrimat("matAA",nstatOKsel+1,nstatOKsel+1,matAA);
         matB = inverse(nstatOKsel+1,matAA,multithread);
         matC = prodM(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
         beta = prodM(nstatOKsel+1,n,nparamcom,matC,parsim);
+        //ecrimat("beta",nstatOKsel+1,nparamcom,beta);
         libereM(nstatOKsel+1,matA);
         libereM(n,matX);
         libereM(nstatOKsel+1,matB);
         libereM(nstatOKsel+1,matAA);
         libereM(nstatOKsel+1,matC);
-    
     }
 
+/** 
+* calcule les phistars pour les paramètres originaux et composites
+*/
     void calphistar(int n){
+        cout<<"debut de calphistar\n";
         int k,kk,qq;
         double pmut;
         phistar = new double*[n];
@@ -409,7 +454,9 @@ struct compenreg
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparamcom;j++) {
                 phistar[i][j] = alpsimrat[i][j];
+                //if (i==0) cout<< phistar[i][j]<<"   ";
                 for (int k=0;k<nstatOKsel;k++) phistar[i][j] -= matX0[i][k]*beta[k+1][j];
+                //if(i==0) cout<< phistar[i][j]<<"   ";
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phistar[i][j]<100.0) phistar[i][j] = exp(phistar[i][j]); else phistar[i][j]=exp(100.0);
@@ -417,9 +464,12 @@ struct compenreg
                   case 3 : if (phistar[i][j]<=-xborne) phistar[i][j] = parmin[j];
                            else if (phistar[i][j]>=xborne) phistar[i][j] = parmax[j];
                            else phistar[i][j] = (exp(phistar[i][j])*parmax[j]+parmin[j])/(1.0+exp(phistar[i][j]));
+                           //if(i==0) cout<< phistar[i][j]<<"\n";
+                           break;
                   case 4 : if (phistar[i][j]<=-xborne) phistar[i][j] = parmin[j];
                            else if (phistar[i][j]>=xborne) phistar[i][j] = parmax[j];
-                           else phistar[i][j] =parmin[j] +(diff[j]/c*atan(exp(phistar[i][j])));                
+                           else phistar[i][j] =parmin[j] +(diff[j]/c*atan(exp(phistar[i][j])));
+                           break;
                 }
             }
         }
@@ -443,7 +493,7 @@ struct compenreg
                             for (int j=0;j<npar;j++) {
                                 if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                     for (int i=0;i<n;i++) {
-                                        pmut = header.groupe[gr].mutmoy+phistar[i][kk];
+                                        pmut = header.groupe[gr].mutmoy+phistar[i][npar+kk];
                                         phistar[i][nparamcom+k] = pmut*phistar[i][j];
                                     }    
                                     k++;
@@ -456,7 +506,7 @@ struct compenreg
                             for (int j=0;j<npar;j++) {
                                 if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                     for (int i=0;i<n;i++) {
-                                        pmut =phistar[i][kk] +header.groupe[gr].snimoy;
+                                        pmut =phistar[i][npar+kk] +header.groupe[gr].snimoy;
                                         phistar[i][nparamcom+k] = pmut*phistar[i][j];
                                     }    
                                     k++;
@@ -468,7 +518,8 @@ struct compenreg
                             for (int j=0;j<npar;j++) {
                                 if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                     for (int i=0;i<n;i++) {
-                                        pmut =phistar[i][kk]+phistar[i][qq];
+                                        pmut =phistar[i][npar+kk]+phistar[i][npar+qq];
+                                        
                                         phistar[i][nparamcom+k] = pmut*phistar[i][j];
                                     }    
                                     k++;
@@ -493,7 +544,7 @@ struct compenreg
                         for (int j=0;j<npar;j++) {
                             if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                 for (int i=0;i<n;i++) {
-                                    pmut = phistar[i][kk];
+                                    pmut = phistar[i][npar+kk];
                                     phistar[i][nparamcom+k] = pmut*phistar[i][j];
                                 }    
                                 k++;
@@ -506,12 +557,48 @@ struct compenreg
         cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
     }
         
+/** 
+* effectue la sauvegarde des phistars dans le fichier path/ident/phistar.txt
+*/
+    void savephistar(int n, char* path,char* ident) {
+        char *nomphistar ;
+        string pp;
+        entete="scenario";
+        for (int j=0;j<npar;j++) {entete += centre(header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].name,15);}
+        for (int j=npar;j<nparamcom;j++) {entete += centre(header.mutparam[j-npar].name,15);}
+        if (nparcompo>0) {
+            for (int gr=1;gr<header.ngroupes+1;gr++) {
+                for (int j=0;j<npar;j++) {
+                    if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                        pp=header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].name;
+                        if (header.groupe[gr].type==0) pp = pp+"(µ+sni)_"+IntToString(gr);
+                        if (header.groupe[gr].type==1) pp = pp+"µseq_"+IntToString(gr);
+                        entete += centre(pp,16);
+                    }
+                }
+            }
+        }
+        nomphistar = new char[strlen(path)+strlen(ident)+20];
+        strcpy(nomphistar,path);
+        strcat(nomphistar,ident);
+        strcat(nomphistar,"_phistar.txt");
+        cout <<nomphistar<<"\n";
+        FILE *f1;
+        f1=fopen(nomphistar,"w");
+        fprintf(f1,"%s\n",entete.c_str());
+        for (int i=0;i<n;i++) {
+            fprintf(f1,"  %d    ",enrsel[i].numscen);
+            for (int j=0;j<nparamcom+nparcompo;j++) fprintf(f1,"  %8.5e  ",phistar[i][j]);
+            //if(i<10) for (int j=0;j<nparamcom+nparcompo;j++) printf(" %8.5e",phistar[i][j]);
+            fprintf(f1,"\n");
+        }
+        fclose(f1);
+    }
 
-
-
-
-
-    void doestim(char *headerfilename,char *reftablefilename,char *reftablelogfilename,char *statobsfilename,char *options,bool multithread) {
+/** 
+* effectue l'estimation ABC des paramètres (directe + régression locale)
+*/
+    void doestim(char* path, char* ident, char *headerfilename,char *reftablefilename,char *reftablelogfilename,char *statobsfilename,char *options,bool multithread) {
         char *datafilename;
         int rtOK,nstatOK;
         int nrec,nsel,ns,ns1;
@@ -553,6 +640,7 @@ struct compenreg
                 }
             }
         }
+        
         header.readHeader(headerfilename);
         for (int i=0;i<header.nscenarios;i++) cout<<"scenario "<<i<<"    nparam = "<<header.scenario[i].nparam<<"\n";
         datafilename=strdup(header.datafilename.c_str());
@@ -578,4 +666,5 @@ struct compenreg
         cout<<"apres local_regression\n";
         calphistar(nsel);
         cout<<"apres calphistar\n";
+        savephistar(nsel,path,ident);
     }

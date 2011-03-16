@@ -15,6 +15,7 @@
 class MutParameterC
 {
 public:
+    string name;
     int groupe;
     int category;   //0 pour mutmoy, 1 pour Pmoy, 2 pour snimoy, 3 pour musmoy, 4 pour k1moy et 5 pour k2moy
     double value;
@@ -518,18 +519,21 @@ public:
         for (gr=1;gr<=this->ngroupes;gr++) {
             if (this->groupe[gr].type==0) {
                 if (not this->groupe[gr].priormutmoy.constant) {
+                    this->mutparam[nparamut].name="µmic_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=0;
                     this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priormutmoy);
                     this->nparamut++;
                 }
                 if (not this->groupe[gr].priorPmoy.constant) {
+                    this->mutparam[nparamut].name="Pmic_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=1;
                     this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priorPmoy);
                     this->nparamut++;
                 }
                 if (not this->groupe[gr].priorsnimoy.constant) {
+                    this->mutparam[nparamut].name="snimic_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=2;
                     this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priorsnimoy);
@@ -537,19 +541,22 @@ public:
               }
             } else {
                 if (not this->groupe[gr].priormusmoy.constant){
+                    this->mutparam[nparamut].name="µseq_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=3;
                     this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priormusmoy);
                     this->nparamut++;
                }
                 if (not this->groupe[gr].priork1moy.constant) {
+                    this->mutparam[nparamut].name="k1seq_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=4;
                     this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priork1moy);
                     this->nparamut++;
                 }
                 if (not this->groupe[gr].priork2moy.constant) {
-                     this->mutparam[nparamut].groupe=gr;
+                    this->mutparam[nparamut].name="k2seq_"+IntToString(gr);
+                    this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=5;
                     this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priork2moy);
                     this->nparamut++;

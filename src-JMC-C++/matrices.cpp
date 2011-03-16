@@ -1,9 +1,27 @@
-
+/** 
+* libere la mémoire occupée par une matrice de doubles 
+*/
 void libereM(int n,double **A) {
     for (int i=0;i<n;i++) delete[] A[i];
     delete [] A;
 }
 
+/** 
+* écrit les n premières lignes et j premières colonnes d'une matrice de doubles' 
+*/
+void ecrimat(string nomat, int n, int m, double **A) {
+    cout<<"\n"<<nomat<<"\n";
+    for (int i=0;i<n;i++) {
+        for (int j=0;j<m;j++) cout<< A[i][j]<<"  ";
+        cout<<"\n";
+    }
+    cout<<"\n";
+}
+
+
+/** 
+* transpose une matrice de doubles 
+*/
 double** transpose(int n, int m, double **A) {
     double **C;
     C = new double*[m];
@@ -14,6 +32,9 @@ double** transpose(int n, int m, double **A) {
     return C;
 }
 
+/** 
+* effectue le produit matriciel de deux matrices de doubles 
+*/
 double** prodM(int n, int m, int p, double **A,double **B) {
     double **C;
     C = new double*[n];
@@ -29,6 +50,9 @@ double** prodM(int n, int m, int p, double **A,double **B) {
     return C;
 }
 
+/** 
+* effectue l'inversion matricielle d'une matrice (carrée) de doubles 
+*/
   double** inverse(int n, double **A, bool multithread)
 {
     int i,j,k,l,err=0;

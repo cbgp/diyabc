@@ -54,7 +54,7 @@ double walltime( double *t0 )
 double clock_zero=0.0,debut,duree;
 
 int main(int argc, char *argv[]){
-	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*estpar;
+	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*estpar,*path,*ident;
     bool multithread=false,firsttime;
 	int nrecneeded,nrectodo,k,seed;
 	double **paramstat;
@@ -68,12 +68,13 @@ int main(int argc, char *argv[]){
        
         debut=walltime(&clock_zero);
 
-	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:p:f:g:hmqs:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:p:f:g:hmqs:")) !=-1) {
          
 	  switch (optchar) {
 
         case 'h' : cout << "USAGE :\n";
             cout << "-p <directory of header.txt>\n-r <number of required data sets in the reftable>\n";
+            cout << "-i <name given to the analysis\n";
             cout << "-g <minimum number of particles simulated in a single bunch (default=100)>\n";
             cout << "-m <multithreaded version of the program (default single threaded)\n";
             cout << "-e for ABC parameter estimation with parameters as defined below\n";
@@ -83,11 +84,17 @@ int main(int argc, char *argv[]){
             cout << "-s <seed for the random generator>\n";
             break;
 	
-	    case 'p' : 
+        case 'i' :
+            ident=strdup(optarg);
+            break;
+        
+        case 'p' : 
             headerfilename = new char[strlen(optarg)+13];
             reftablefilename = new char[strlen(optarg)+15];
             reftablelogfilename = new char[strlen(optarg)+15];
             statobsfilename = new char[strlen(optarg)+14];
+            path = new char[strlen(optarg)+1];
+            strcpy(path,optarg);
             strcpy(headerfilename,optarg);
             strcpy(reftablefilename,optarg);
             strcpy(reftablelogfilename,optarg);
@@ -179,7 +186,7 @@ int main(int argc, char *argv[]){
                       //delete []datafilename;
                       break;
                       
-      case 'e'  : doestim(headerfilename,reftablefilename,reftablelogfilename,statobsfilename,estpar,multithread);
+      case 'e'  : doestim(path,ident,headerfilename,reftablefilename,reftablelogfilename,statobsfilename,estpar,multithread);
                   break;
     
     }
