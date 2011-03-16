@@ -10,7 +10,7 @@ from subprocess import Popen, PIPE, STDOUT
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from uis.project_ui import *
-from setHistFrame import SetHistoricalModel
+from setHistoricalModel import SetHistoricalModel
 from setGenDataRefTable import SetGeneticDataRefTable
 from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences

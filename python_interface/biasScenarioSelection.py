@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import os
-import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from uis.biasScenarioSelection_ui import Ui_Frame
-from histDrawn import HistDrawn
-from histFixed import HistFixed
+from setHistDrawnAnalysis import HistDrawn
+from setHistFixedAnalysis import HistFixed
 
 class BiasNEvaluateScenarioSelection(QFrame):
     """ Sélection du scenario dans la cadre d'une analyse de type bias ou evaluate

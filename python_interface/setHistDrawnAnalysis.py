@@ -48,6 +48,8 @@ class HistDrawn(QFrame):
         self.ui.defPrButton.hide()
         self.ui.chkScButton.hide()
         self.ui.addScButton.hide()
+        self.ui.drawPreviewsCheck.hide()
+        self.ui.refreshPreviewsButton.hide()
 
         self.ui.verticalLayout_6.setAlignment(QtCore.Qt.AlignTop)
         self.ui.horizontalLayout_6.setAlignment(QtCore.Qt.AlignLeft)

@@ -52,6 +52,8 @@ class HistFixed(QFrame):
         #self.ui.label_11.hide()
         self.ui.label_10.hide()
         self.ui.label_9.setText("Value")
+        self.ui.drawPreviewsCheck.hide()
+        self.ui.refreshPreviewsButton.hide()
 
         self.ui.groupBox_13.setMinimumSize(QtCore.QSize(150, 20))
         self.ui.groupBox_13.setMaximumSize(QtCore.QSize(150,20))
