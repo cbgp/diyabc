@@ -24,6 +24,22 @@
 #define MATRICES
 #endif
 
+
+using namespace std;
+
+#define c 1.5707963267948966192313216916398
+
+/**
+* définition de la densité d'un paramètre
+*/
+struct pardensC {
+    double *x,*priord,*postd;
+    double xmin,xmax,xdelta;
+    int ncl;
+};
+
+//variables globales du module;
+pardensC *pardens;
 enregC *enrsel;
 ReftableC rt;
 HeaderC header;
@@ -34,11 +50,6 @@ double borne=10.0,xborne;
 bool composite,original;
 int nscenchoisi,*scenchoisi;
 string entete;
-
-using namespace std;
-
-#define c 1.5707963267948966192313216916398
-
 
 /** 
 * définit l'opérateur de comparaison de deux enregistrements de type enregC
@@ -593,6 +604,35 @@ struct compenreg
             fprintf(f1,"\n");
         }
         fclose(f1);
+    }
+
+/**
+* calcul de la densité par noyau gaussien 
+* x : vecteur des abcisses
+* y vecteur des 
+*/
+
+
+/**
+* traitement global du calcul de la densité des paramètres variables
+* si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
+* sinon la densité est évaluée pour 1000 points du min au max 
+*/
+    void histodens() {
+        pardens = new pardensC[nparamcom+nparcompo];
+//traitement des parametres historiques
+        for (int i=0;i<npar;i++) {
+            pardens[i].ncl=1000;
+            if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2) {
+                if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].maxi-header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].mini<=30) 
+                    pardens[i].ncl=30;
+            }
+            pardens[i].xmin=header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior.mini;
+            pardens[i].xmax=header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior.maxi;
+            pardens[i].xdelta = (pardens[i].xmax-pardens[i].xmin)/(double)pardens[i].ncl;           
+        }    
+    
+    
     }
 
 /** 
