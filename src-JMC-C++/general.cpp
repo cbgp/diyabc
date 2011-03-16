@@ -179,7 +179,7 @@ int main(int argc, char *argv[]){
                       //delete []datafilename;
                       break;
                       
-      case 'e'  : doestim(headerfilename,reftablefilename,reftablelogfilename,statobsfilename,estpar);
+      case 'e'  : doestim(headerfilename,reftablefilename,reftablelogfilename,statobsfilename,estpar,multithread);
                   break;
     
     }

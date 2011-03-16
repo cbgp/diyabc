@@ -19,16 +19,24 @@
 #define VECTOR
 #endif
 
+#ifndef MATRICES
+#include "matrices.cpp"
+#define MATRICES
+#endif
+
 enregC *enrsel;
 ReftableC rt;
 HeaderC header;
 double *var_stat,*stat_obs, *parmin, *parmax, *diff;
- double **alpsimrat,**parsim,**matX0,*vecW;
- int nparamax,nparamcom,**numpar;
+double **alpsimrat,**parsim,**matX0,*vecW,**beta, **phistar;
+int nparamax,nparamcom,nparcompo,**numpar,nstatOKsel,numtransf,npar,npar0;
 double borne=10.0,xborne;
-
+bool composite,original;
+int nscenchoisi,*scenchoisi;
 
 using namespace std;
+
+#define c 1.5707963267948966192313216916398
 
 struct compenreg
 {
@@ -86,7 +94,7 @@ struct compenreg
        //cout<<"\n";
     }
 
-    void cal_dist(int nrec, int nsel, int nscenchoisi,int *scenchoisi) {
+    void cal_dist(int nrec, int nsel) {
         int nn=10000,nreclus=0,nparamax,nrecOK=0,iscen,bidon;
         bool firstloop=true,scenOK;
         double diff;
@@ -131,10 +139,11 @@ struct compenreg
             cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/rt.nstat<<"    distmax = "<<enrsel[nsel-1].dist/rt.nstat<<"\n";
     }
     
-    void det_numpar(int nscenchoisi,int *scenchoisi) {
+    void det_numpar() {
         vector <string>  parname;
-        int npar=0,ii;
+        int ii;
         bool commun,trouve;
+        npar=0;npar0=0;
         numpar = new int*[nscenchoisi]; 
         if (nscenchoisi==1) {
             numpar[0] = new int[rt.nparam[scenchoisi[0]-1]];
@@ -154,12 +163,15 @@ struct compenreg
                 if (commun) {
                     npar++;
                     parname.push_back(header.scenario[scenchoisi[0]-1].histparam[i].name);
+                    if (header.scenario[scenchoisi[0]-1].histparam[i].category<2) npar0++;
                 }
             }
             cout << "noms des parametres communs : ";
             for (int i=0;i<npar;i++) cout<<parname[i]<<"   ";
             cout <<"\n";
         } 
+        if (composite) nparcompo=npar0*header.ngroupes; else nparcompo=0;
+        cout<<"nombre de parametres composites : "<<nparcompo<<"\n";
         nparamcom = npar+rt.nparam[scenchoisi[0]-1]-header.scenario[scenchoisi[0]-1].nparam;
         for (int j=0;j<nscenchoisi;j++) {
             numpar[j] = new int[nparamcom];
@@ -176,10 +188,10 @@ struct compenreg
             }
             cout<<"\n";
         }
-    
+        
     }
 
-    void recalparam(int *scenchoisi, int n,int numtransf) {
+    void recalparam(int n) {
         double coefmarge=0.001,marge;
         int jj,k,kk;
         alpsimrat = new double*[n];
@@ -258,7 +270,6 @@ struct compenreg
                    }
                    break;
           case 4 : //log(tg) transform
-                   double   c=1.5707963267948966192313216916398;
                    parmin = new double[nparamcom]; parmax = new double[nparamcom]; diff = new double[nparamcom];
                    if (borne<0.0000000001) {
                        xborne=1E100;
@@ -316,7 +327,7 @@ struct compenreg
     }   
 
     void rempli_mat(int n) {
-        int icc,nstatOKsel=0;
+        int icc;
         double delta,som,x,*var_statsel,nn;
         double *sx,*sx2,*mo;
         nn=(double)n;
@@ -333,6 +344,7 @@ struct compenreg
                 sx2[j] +=x*x;
             }
         }
+        nstatOKsel=0;
         for (int j=0;j<rt.nstat;j++) {
             var_statsel[j]=(sx2[j]-sx[j]/nn*sx[j])/(nn-1.0);
             if (var_statsel[j]>0.0) nstatOKsel++;
@@ -362,20 +374,147 @@ struct compenreg
         }
     }
 
+    void local_regression(int n, bool multithread) {
+        double **matX,**matXT,**matA,**matB,**matAA,**matC;
+        
+        matA = new double*[nstatOKsel+1];
+        for (int j=0;j<nstatOKsel+1;j++) matA[j] = new double[n];
+        matX = new double*[n];
+        for (int i=0;i<n;i++) {
+            matX[i] = new double[nstatOKsel+1];
+            matX[i][0] = 1.0;
+            for (int j=1;j<nstatOKsel+1;j++) matX[i][j] = matX0[i][j-1];
+        }
+        matXT = transpose(n,nstatOKsel+1,matX);
+        for (int i=0;i<n;i++) {
+            for (int j=0;j<nstatOKsel+1;j++) matA[j][i] = matXT[j][i]*vecW[i];
+        }
+        matAA = prodM(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
+        matB = inverse(nstatOKsel+1,matAA,multithread);
+        matC = prodM(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
+        beta = prodM(nstatOKsel+1,n,nparamcom,matC,parsim);
+        libereM(nstatOKsel+1,matA);
+        libereM(n,matX);
+        libereM(nstatOKsel+1,matB);
+        libereM(nstatOKsel+1,matAA);
+        libereM(nstatOKsel+1,matC);
     
+    }
+
+    void calphistar(int n){
+        int k,kk,qq;
+        double pmut;
+        phistar = new double*[n];
+        for (int i=0;i<n;i++) phistar[i] = new double[nparamcom+nparcompo];
+        for (int i=0;i<n;i++) {
+            for (int j=0;j<nparamcom;j++) {
+                phistar[i][j] = alpsimrat[i][j];
+                for (int k=0;k<nstatOKsel;k++) phistar[i][j] -= matX0[i][k]*beta[k+1][j];
+                switch(numtransf) {
+                  case 1 : break;
+                  case 2 : if (phistar[i][j]<100.0) phistar[i][j] = exp(phistar[i][j]); else phistar[i][j]=exp(100.0);
+                           break; 
+                  case 3 : if (phistar[i][j]<=-xborne) phistar[i][j] = parmin[j];
+                           else if (phistar[i][j]>=xborne) phistar[i][j] = parmax[j];
+                           else phistar[i][j] = (exp(phistar[i][j])*parmax[j]+parmin[j])/(1.0+exp(phistar[i][j]));
+                  case 4 : if (phistar[i][j]<=-xborne) phistar[i][j] = parmin[j];
+                           else if (phistar[i][j]>=xborne) phistar[i][j] = parmax[j];
+                           else phistar[i][j] =parmin[j] +(diff[j]/c*atan(exp(phistar[i][j])));                
+                }
+            }
+        }
+        if (nparcompo>0) {
+            k=0;
+            for (int gr=1;gr<header.ngroupes+1;gr++) {
+                if (header.groupe[gr].type==0) {
+                    if (header.groupe[gr].priormutmoy.constant) {
+                        if (header.groupe[gr].priorsnimoy.constant) {
+                            pmut = header.groupe[gr].mutmoy+header.groupe[gr].snimoy;
+                            for (int j=0;j<npar;j++) {
+                                if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                    for (int i=0;i<n;i++) {
+                                          phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                    }    
+                                    k++;
+                                }
+                            }
+                        } else {
+                            kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==2))) kk++;
+                            for (int j=0;j<npar;j++) {
+                                if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                    for (int i=0;i<n;i++) {
+                                        pmut = header.groupe[gr].mutmoy+phistar[i][kk];
+                                        phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                    }    
+                                    k++;
+                                }
+                            }
+                        }
+                    } else {
+                        if (header.groupe[gr].priorsnimoy.constant) {
+                            kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
+                            for (int j=0;j<npar;j++) {
+                                if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                    for (int i=0;i<n;i++) {
+                                        pmut =phistar[i][kk] +header.groupe[gr].snimoy;
+                                        phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                    }    
+                                    k++;
+                                }
+                            }
+                        } else {
+                            kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
+                            qq=0;while (not ((header.mutparam[qq].groupe == gr)and(header.mutparam[qq].category ==2))) qq++;
+                            for (int j=0;j<npar;j++) {
+                                if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                    for (int i=0;i<n;i++) {
+                                        pmut =phistar[i][kk]+phistar[i][qq];
+                                        phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                    }    
+                                    k++;
+                                }
+                            }
+                        }
+                    }
+                } 
+                if (header.groupe[gr].type==1) {    
+                    if (header.groupe[gr].priormusmoy.constant) {
+                        pmut = header.groupe[gr].musmoy;
+                        for (int j=0;j<npar;j++) {
+                            if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                for (int i=0;i<n;i++) {
+                                    phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                }    
+                                k++;
+                            }
+                        }
+                    } else {
+                        kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==3))) kk++;
+                        for (int j=0;j<npar;j++) {
+                            if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                for (int i=0;i<n;i++) {
+                                    pmut = phistar[i][kk];
+                                    phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                }    
+                                k++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
+    }
+        
 
 
-    
 
 
 
-
-
-    void doestim(char *headerfilename,char *reftablefilename,char *reftablelogfilename,char *statobsfilename,char *options) {
+    void doestim(char *headerfilename,char *reftablefilename,char *reftablelogfilename,char *statobsfilename,char *options,bool multithread) {
         char *datafilename;
         int rtOK,nstatOK;
-        int nscenchoisi,*scenchoisi,nrec,nsel,numtransf,ns,ns1;
-        bool original,composite;
+        int nrec,nsel,ns,ns1;
         string opt,*ss,s,*ss1,s0,s1;
         double **matX0, *vecW, **alpsimrat,**parsim;
         
@@ -429,10 +568,14 @@ struct compenreg
         cout <<"avant rt.openfiles2\n";
         rt.openfile2();
         cout <<"apres rt.openfiles2\n";
-        cal_dist(nrec,nsel,nscenchoisi,scenchoisi);
-        det_numpar(nscenchoisi,scenchoisi);
-        recalparam(scenchoisi,nsel,numtransf);
-        cout<<"avant rempli_mat\n";
+        cal_dist(nrec,nsel);
+        det_numpar();
+        recalparam(nsel);
+        cout<<"apres recalparam\n";
         rempli_mat(nsel);
-    
+        cout<<"apres rempli_mat\n";
+        local_regression(nsel,multithread);
+        cout<<"apres local_regression\n";
+        calphistar(nsel);
+        cout<<"apres calphistar\n";
     }
