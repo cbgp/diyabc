@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import time
-import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from uis.setMutationModelSequences_ui import Ui_Frame
 from setMutationModelSequences import SetMutationModelSequences
 
 class SetMutationModelSequencesAnalysis(SetMutationModelSequences):
+    """ Spécialisation de SetMutationModelSequences pour la définition d'une analyse
+    """
     def __init__(self,parent=None,box_group=None):
         super(SetMutationModelSequencesAnalysis,self).__init__(parent,box_group)
 

@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import time
-import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
 from uis.setMutationModelMsat_ui import Ui_Frame
 
 class SetMutationModelMsatFixed(QFrame):
-    """ Classe qui utilise le fichier graphique des SetMutationModel.
+    """ Classe qui utilise le fichier graphique des SetMutationModelMsat.
     On ne remplit ici qu'une valeur fixe pour chaque ligne
     """
     def __init__(self,parent=None,box_group=None):

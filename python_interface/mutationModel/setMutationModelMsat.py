@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import time
-import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
 from uis.setMutationModelMsat_ui import Ui_Frame
 
 class SetMutationModelMsat(QFrame):
+    """ définition du modèle mutationnel pour les microsats
+    """
     def __init__(self,parent=None,box_group=None):
         super(SetMutationModelMsat,self).__init__(parent)
         self.parent=parent
@@ -104,26 +102,38 @@ class SetMutationModelMsat(QFrame):
                            self.ui.ilsrShapeEdit : [1,1]}
 
     def mmrGamma(self,act):
+        """ [mmr] désactive mean et shape si gamma est coché
+        """
         if act:
             self.ui.mmrMeanEdit.setDisabled(False)
             self.ui.mmrShapeEdit.setDisabled(False)
     def mmrNoGamma(self,act):
+        """ [mmr] active mean et shape si gamma est décoché
+        """
         if act:
             self.ui.mmrMeanEdit.setDisabled(True)
             self.ui.mmrShapeEdit.setDisabled(True)
     def mcpGamma(self,act):
+        """ [mcp] désactive mean et shape si gamma est coché
+        """
         if act:
             self.ui.mcpMeanEdit.setDisabled(False)
             self.ui.mcpShapeEdit.setDisabled(False)
     def mcpNoGamma(self,act):
+        """ [mcp] active mean et shape si gamma est décoché
+        """
         if act:
             self.ui.mcpMeanEdit.setDisabled(True)
             self.ui.mcpShapeEdit.setDisabled(True)
     def msrGamma(self,act):
+        """ [msr] désactive mean et shape si gamma est coché
+        """
         if act:
             self.ui.msrMeanEdit.setDisabled(False)
             self.ui.msrShapeEdit.setDisabled(False)
     def msrNoGamma(self,act):
+        """ [msr] active mean et shape si gamma est décoché
+        """
         if act:
             self.ui.msrMeanEdit.setDisabled(True)
             self.ui.msrShapeEdit.setDisabled(True)
@@ -346,6 +356,8 @@ class SetMutationModelMsat(QFrame):
         return True
 
     def hasToBeVerified(self,field):
+        """ détermine si field doit être vérifié en fonction des lois sélectionnées
+        """
         if (field == self.ui.mmrMeanEdit or field == self.ui.mmrShapeEdit) and not self.ui.mmrGammaRadio.isChecked():
             return False
         elif (field == self.ui.mcpMeanEdit or field == self.ui.mcpShapeEdit) and not self.ui.mcpGammaRadio.isChecked():

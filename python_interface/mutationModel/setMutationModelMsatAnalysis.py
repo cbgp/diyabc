@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import time
-import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from uis.setMutationModelMsat_ui import Ui_Frame
 from setMutationModelMsat import SetMutationModelMsat
 
 class SetMutationModelMsatAnalysis(SetMutationModelMsat):
-    """ Spécialisation de SetMutationModel pour la définition d'une analyse
+    """ Spécialisation de SetMutationModelMsat pour la définition d'une analyse
     """
     def __init__(self,parent=None,box_group=None):
         super(SetMutationModelMsatAnalysis,self).__init__(parent,box_group)

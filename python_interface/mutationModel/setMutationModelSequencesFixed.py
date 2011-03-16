@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import time
-import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
 from uis.setMutationModelSequences_ui import Ui_Frame
 
 class SetMutationModelSequencesFixed(QFrame):
+    """ Classe qui utilise le fichier graphique des SetMutationModelSequences.
+    On ne remplit ici qu'une valeur fixe pour chaque ligne
+    """
     def __init__(self,parent=None,box_group=None):
         super(SetMutationModelSequencesFixed,self).__init__(parent)
         self.parent=parent
@@ -137,6 +136,8 @@ class SetMutationModelSequencesFixed(QFrame):
 
 
     def showJukes(self):
+        """ clic sur le modèle jukes kantor, montre les deux premières lignes
+        """
         self.ui.firstFrame.show()
         self.ui.secondFrame.show()
         self.ui.thirdFrame.hide()
@@ -144,6 +145,8 @@ class SetMutationModelSequencesFixed(QFrame):
         self.ui.fifthFrame.hide()
         self.ui.sixthFrame.hide()
     def showKimuraHase(self):
+        """ clic sur le modèle kimura ou hase, montre les quatres premières lignes
+        """
         self.ui.firstFrame.show()
         self.ui.secondFrame.show()
         self.ui.thirdFrame.show()
@@ -151,6 +154,8 @@ class SetMutationModelSequencesFixed(QFrame):
         self.ui.fifthFrame.hide()
         self.ui.sixthFrame.hide()
     def showTamura(self):
+        """ clic sur le modèle tamura, montre toutes les lignes
+        """
         self.ui.firstFrame.show()
         self.ui.secondFrame.show()
         self.ui.thirdFrame.show()
@@ -255,6 +260,8 @@ class SetMutationModelSequencesFixed(QFrame):
         return True
 
     def hasToBeVerified(self,field):
+        """ détermine si field doit être vérifié en fonction du modèle choisi
+        """
         if self.ui.jukesRadio.isChecked() and field not in [self.ui.mmrMinEdit,self.ui.mmrMaxEdit,
                 self.ui.mmrMeanEdit,self.ui.mmrShapeEdit,self.ui.ilmrMinEdit,self.ui.ilmrMaxEdit,self.ui.ilmrMeanEdit,self.ui.ilmrShapeEdit]:
             return False

@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import time
-import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
-from uis.setMutationModelSequences_ui import Ui_Frame
 from setMutationModelSequences import SetMutationModelSequences
 
 class SetMutationModelSequencesRefTable(SetMutationModelSequences):
+    """ spécialisation de SetMutationModelSequences pour les genetic data 
+    dans le cadre de la génération de la table de référence
+    """
     def __init__(self,parent=None,box_group=None):
         super(SetMutationModelSequencesRefTable,self).__init__(parent,box_group)
 
@@ -35,6 +33,9 @@ class SetMutationModelSequencesRefTable(SetMutationModelSequences):
             self.parent.writeGeneticConfFromGui()
 
     def getParamTableHeader(self):
+        """ retourne une chaine contenant les paramètres (valeurs qui varient)
+        pour l'écriture du conf.th
+        """
         result = u""
         gnumber = self.parent.groupList.index(self.box_group)+1
         if float(str(self.ui.mmrMinEdit.text())) < float(str(self.ui.mmrMaxEdit.text())):

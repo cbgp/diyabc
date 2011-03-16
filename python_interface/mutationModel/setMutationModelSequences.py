@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import time
-import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
 from uis.setMutationModelSequences_ui import Ui_Frame
 
 class SetMutationModelSequences(QFrame):
+    """ définition du modèle mutationnel pour les séquences
+    """
     def __init__(self,parent=None,box_group=None):
         super(SetMutationModelSequences,self).__init__(parent)
         self.parent=parent
@@ -417,7 +415,10 @@ class SetMutationModelSequences(QFrame):
             return False
 
         return True
+
     def hasToBeVerified(self,field):
+        """ détermine si field doit être vérifié en fonction du modèle choisi et de la loi sélectionnée
+        """
         if (field == self.ui.mmrMeanEdit or field == self.ui.mmrShapeEdit) and not self.ui.mmrGammaRadio.isChecked():
             return False
         elif (field == self.ui.mc1MeanEdit or field == self.ui.mc1ShapeEdit) and not self.ui.mc1GammaRadio.isChecked():
