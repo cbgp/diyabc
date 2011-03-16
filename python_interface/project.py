@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import socket
 import time
 import os
 import shutil
@@ -474,21 +475,22 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if os.path.exists('scnf'):
                 os.remove('scnf')
 
+        return tarname
+
     @pyqtSignature("")
     def on_btnStart_clicked(self):
         self.writeRefTableHeader()
         qfd = QFileDialog()
         self.parent.executablePath = str(qfd.getOpenFileName(self,"Where is your executable file ?"))
-        self.generateComputationTar()
-        return
+        tname = self.generateComputationTar()
         """Start or stop the treatment in the thread"""
-        if self.th == None or self.th.cancel == True:
+        if self.th == None:
             try:
                 nb_to_gen = int(self.ui.nbSetsReqEdit.text())
             except Exception,e:
                 output.notify(self,"value error","Check the value of required number of data sets")
                 return
-            self.th = RefTableGenThread(self,nb_to_gen)
+            self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             self.th.connect(self.th,SIGNAL("increment"),self.incProgress)
             self.th.connect(self.th,SIGNAL("refTableProblem"),self.refTableProblem)
             self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
@@ -857,6 +859,53 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         # mutation model : plus facile d'utiliser directement la validation
         self.gen_data_win.validate(silent=True)
 
+class RefTableGenThreadCluster(QThread):
+    """ thread de traitement qui met à jour la progressBar en fonction de l'avancée de
+    la génération de la reftable sur le cluster
+    """
+    def __init__(self,parent,tarname,nb_to_gen):
+        super(RefTableGenThreadCluster,self).__init__(parent)
+        self.parent = parent
+        self.tarname = tarname
+        self.nb_done = 0
+        self.nb_to_gen = nb_to_gen
+
+
+    def run (self):
+        filename = self.tarname
+        host = str(self.parent.parent.preferences_win.ui.addrEdit.text())
+        port = int(str(self.parent.parent.preferences_win.ui.portEdit.text()))
+
+
+        f=open(filename, 'rb')
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((host, port))
+
+        size = os.path.getsize(filename)
+        s.send(str(size))
+
+
+        while True:
+            data = f.read(8192)
+            if not data:
+                break
+            else:
+                s.sendall(data)
+
+        f.close()
+        s.send("end")
+        print filename, " Sent!\n"
+        while True:
+            line = s.recv(8000)
+            print line
+            if len(line.split('somme '))>1:
+                self.nb_done = int(line.split('somme ')[1].strip())
+                self.emit(SIGNAL("increment"))
+            # TODO fix on ne va pas jusqu'à 100 parce qu'on lit la ligne du temps de merge au lieu de la derniere (modifs dans launch)
+            if self.nb_done == int(str(self.parent.ui.nbSetsReqEdit.text())):
+                break
+
+        s.close()
 
 class RefTableGenThread(QThread):
     """ thread de traitement qui met à jour la progressBar en fonction de l'avancée de
