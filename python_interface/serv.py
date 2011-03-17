@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import hashlib
 import socket
 import time
 import string
@@ -14,21 +15,27 @@ def treatment(csock,qued):
     f=open( filename, 'wb')
 
     size=csock.recv(8192)
-    print "size : %s"%size
+    print "size : '%s'"%size
+    received = 0
     #data = csock.recv(int(size))
     #f.write(data)
     # 2. receive data
-    while True:
+    while received < int(size):
+        print "reception"
         data = csock.recv(8192)
+        received = received + len(data)
         if (not data):
-            print "je break"
+            print "je break, plus de data"
             break
         f.write(data)
-        if str(os.path.getsize(filename)) == str(size):
-            break
+    print "sortie de boucle de reception"
      #3.close file
     f.close()
     print filename, "Received\n"
+    f=open(filename,'r')
+    print hashlib.md5(f.read()).hexdigest.()
+    return
+
     
     os.mkdir("%s/tmp"%os.getcwd())
     os.chdir("%s/tmp"%os.getcwd())
@@ -39,7 +46,7 @@ def treatment(csock,qued):
     f=open("command_output","w")
     subprocess.Popen(["sh","%s/launch.sh"%os.getcwd()],stdout=f)
     while True:
-        time.sleep(3)
+        time.sleep(2)
         a=os.popen("tail -n 1 command_output")
         line = a.read()
         print line,"--------"

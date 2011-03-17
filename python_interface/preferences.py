@@ -52,10 +52,17 @@ class Preferences(QMainWindow):
 
         QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.savePreferences)
         QObject.connect(self.ui.cancelButton,SIGNAL("clicked()"),self.close)
+        QObject.connect(self.ui.execBrowseButton,SIGNAL("clicked()"),self.browseExec)
         QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
 
         #QObject.connect(self.ui.saveMMMButton,SIGNAL("clicked()"),self.saveMMM)
         #QObject.connect(self.ui.saveMMSButton,SIGNAL("clicked()"),self.saveMMS)
+
+    def browseExec(self):
+        qfd = QFileDialog()
+        path = str(qfd.getOpenFileName(self,"Where is your executable file ?"))
+        self.ui.execPathEdit.setText(path)
+
 
     def changeStyle(self,stylestr):
         """ change le style de l'application (toutes les fenêtres)
@@ -99,7 +106,8 @@ class Preferences(QMainWindow):
 
         style = str(self.ui.styleCombo.currentText())
         pic_format = str(self.ui.formatCombo.currentText())
-        lines = "style %s\nformat %s"%(style,pic_format)
+        ex_path = str(self.ui.execPathEdit.text())
+        lines = "style %s\nformat %s\nexecPath %s"%(style,pic_format,ex_path)
         f = codecs.open(os.path.expanduser("~/.diyabc/various"),"w","utf-8")
         f.write(lines)
         f.close()
@@ -121,6 +129,8 @@ class Preferences(QMainWindow):
                         ind = self.ui.formatCombo.findText(l.strip().split(' ')[1])
                         if ind != -1:
                             self.ui.formatCombo.setCurrentIndex(ind)
+                    if l.split(' ')[0] == "execPath":
+                        self.ui.execPathEdit.setText(l.strip().split(' ')[1])
         else:
             print "no various conf found"
 

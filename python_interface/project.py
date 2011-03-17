@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import socket
+from socket import *
 import time
 import os
 import shutil
@@ -439,6 +440,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if tarname == None:
             tarname = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","(TAR archive) *.tar"))
         if tarname != "":
+            executablePath = str(self.parent.preferences_win.ui.execPathEdit.text())
             # generation du master script
             script = self.genMasterScript()
             if os.path.exists('scmf'):
@@ -466,7 +468,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             tar.add('scnf','%s/node.sh'%tarRepName)
             tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
             tar.add(self.dataFileSource,"%s/%s"%(tarRepName,self.dataFileName))
-            tar.add(self.parent.executablePath,"%s/general"%tarRepName)
+            tar.add(executablePath,"%s/general"%tarRepName)
             tar.close()
 
             # nettoyage des fichiers temporaires de script
@@ -480,9 +482,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     @pyqtSignature("")
     def on_btnStart_clicked(self):
         self.writeRefTableHeader()
-        qfd = QFileDialog()
-        self.parent.executablePath = str(qfd.getOpenFileName(self,"Where is your executable file ?"))
-        tname = self.generateComputationTar()
+        tname = self.generateComputationTar("/tmp/aaaa.tar")
         """Start or stop the treatment in the thread"""
         if self.th == None:
             try:
@@ -493,10 +493,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             self.th.connect(self.th,SIGNAL("increment"),self.incProgress)
             self.th.connect(self.th,SIGNAL("refTableProblem"),self.refTableProblem)
-            self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
+            #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
             self.th.start()
         else:
-            self.cancelTh()
+            #self.cancelTh()
+            pass
 
     def refTableProblem(self):
         output.notify(self,"reftable problem","Something append during the reftable generation : %s"%(self.th.problem))
@@ -878,28 +879,36 @@ class RefTableGenThreadCluster(QThread):
 
 
         f=open(filename, 'rb')
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s = socket(AF_INET, SOCK_STREAM)
         s.connect((host, port))
 
-        size = os.path.getsize(filename)
-        s.send(str(size))
+        #size = os.path.getsize(filename)
+        #s.send(str(size))
 
-
-        while True:
-            data = f.read(8192)
-            if not data:
-                break
-            else:
-                s.sendall(data)
-
+        data = f.read()
         f.close()
-        s.send("end")
+        s.send("%s\n"%len(data))
+        time.sleep(1)
+
+        s.sendall(data)
+        #s.shutdown(SHUT_WR)
+
+
+        #while True:
+        #    if not data:
+        #        break
+        #    else:
+        #        s.sendall(data)
+
         print filename, " Sent!\n"
         while True:
             line = s.recv(8000)
             print line
             if len(line.split('somme '))>1:
                 self.nb_done = int(line.split('somme ')[1].strip())
+                self.emit(SIGNAL("increment"))
+            if "durée" in line:
+                self.nb_done = int(str(self.parent.ui.nbSetsReqEdit.text()))
                 self.emit(SIGNAL("increment"))
             # TODO fix on ne va pas jusqu'à 100 parce qu'on lit la ligne du temps de merge au lieu de la derniere (modifs dans launch)
             if self.nb_done == int(str(self.parent.ui.nbSetsReqEdit.text())):
