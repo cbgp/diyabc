@@ -400,12 +400,12 @@ done\n\
 echo $nb\n\
 }\n\
 for i in $(seq 1 %s); do \n\
-qsub -cwd node.sh 10000 `pwd` $i\n\
+qsub -q short_queue.q -cwd node.sh 10000 `pwd` $i\n\
 done;\n'%nbFullQsub
         
         if nbLastQsub != 0:
             res+='let last=$i+1\n\
-qsub -cwd node.sh %s `pwd` $last\n'%nbLastQsub
+qsub -q short_queue.q -cwd node.sh %s `pwd` $last\n'%nbLastQsub
         
         res+='while ! [ "`nbOk %s`" = "%s" ]; do\n\
 echo `progress %s`\n\
@@ -888,7 +888,7 @@ class RefTableGenThreadCluster(QThread):
 
         data = f.read()
         f.close()
-        s.send("%s\n"%hashlib.md5(data).hexdigest())
+        s.send("%s\n"%str(hashlib.md5(data).hexdigest()))
         s.send("%s\n"%len(data))
         time.sleep(1)
 

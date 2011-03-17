@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+from datetime import *
 import hashlib
 import socket
 import time
@@ -11,12 +13,16 @@ from subprocess import Popen, PIPE, STDOUT
 
 
 def treatment(csock,qued):
-    filename = sys.argv[2]
+    #filename = sys.argv[2]
+    filename = str(datetime.now())
+    filename = filename.replace(' ','_').replace(":",".")
+    filename+=".tar"
     f=open( filename, 'wb')
 
-    md5=csock.recv(8192)
+    md5=csock.recv(33)
+    md5 = str(md5).strip()
     print "md5 : '%s'"%md5
-    size=csock.recv(8192)
+    size=csock.recv(10)
     print "size : '%s'"%size
     received = 0
     #data = csock.recv(int(size))
@@ -36,31 +42,32 @@ def treatment(csock,qued):
     print filename, "Received\n"
     f=open(filename,'r')
     fdata = f.read()
-    print hashlib.md5(data).hexdigest()
-    print str(md5) == str(hashlib.md5(data).hexdigest())
-    print "'%s' == '%s'"%(md5,hashlib.md5(data).hexdigest())
-    return
-
-    
-    os.mkdir("%s/tmp"%os.getcwd())
-    os.chdir("%s/tmp"%os.getcwd())
-    a = os.popen("tar xvf ../%s"%(filename))
-    a.close()
-    print "archive extracted"
-    os.chdir("./SBCN_jm/")
-    f=open("command_output","w")
-    subprocess.Popen(["sh","%s/launch.sh"%os.getcwd()],stdout=f)
-    while True:
-        time.sleep(2)
-        a=os.popen("tail -n 1 command_output")
-        line = a.read()
-        print line,"--------"
-        csock.send(line)
-        a.close()
-        if len(line.split("%%"))>1 and "100 %%" in line:
-            break
     f.close()
-    csock.close()
+    print str(hashlib.md5(fdata).hexdigest())
+    checkfile = (md5 == str(hashlib.md5(fdata).hexdigest()))
+    print "'%s' == '%s'"%(md5,hashlib.md5(fdata).hexdigest())
+
+    if checkfile:
+        dirname = filename.replace('.tar','')
+        os.mkdir("%s/%s"%(os.getcwd(),dirname))
+        #os.chdir("%s/%s"%(os.getcwd(),dirname))
+        a = os.popen("tar xvf %s -C ""%s"""%(filename,dirname))
+        a.close()
+        print "archive extracted"
+        #os.chdir("./SBCN_jm/")
+        f=open("%s/SBCN_jm/command_output"%dirname,"w")
+        subprocess.Popen(["sh","./launch.sh"],stdout=f,cwd="%s/SBCN_jm/"%dirname)
+        while True:
+            time.sleep(2)
+            a=os.popen("tail -n 1 %s/SBCN_jm/command_output"%dirname)
+            line = a.read()
+            print "[",dirname,"] ",line,"--------"
+            csock.send(line)
+            a.close()
+            if len(line.split("%%"))>1 and "100 %%" in line:
+                break
+        f.close()
+        csock.close()
 
 
 
