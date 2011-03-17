@@ -24,10 +24,17 @@
 #define MATRICES
 #endif
 
+#ifndef MESUTILS
+#include "mesutils.cpp"
+#define MESUTILS
+#endif
 
 using namespace std;
 
 #define c 1.5707963267948966192313216916398
+#define co 2.506628274631000502415765284811   //sqrt(pi)
+#define coefbw 1.8                            //coefficient multiplicateur de la bandwidth pour le calcul de la densité 
+
 
 /**
 * définition de la densité d'un paramètre
@@ -38,18 +45,25 @@ struct pardensC {
     int ncl;
 };
 
+struct parstatC {
+    double moy,med,mod,q025,q050,q250,q750,q950,q975;
+};
+
 //variables globales du module;
 pardensC *pardens;
 enregC *enrsel;
 ReftableC rt;
 HeaderC header;
 double *var_stat,*stat_obs, *parmin, *parmax, *diff;
-double **alpsimrat,**parsim,**matX0,*vecW,**beta, **phistar;
+double **alpsimrat,**parsim,**matX0,*vecW,**beta, **phistar,**simpar;
 int nparamax,nparamcom,nparcompo,**numpar,nstatOKsel,numtransf,npar,npar0;
 double borne=10.0,xborne;
 bool composite,original;
 int nscenchoisi,*scenchoisi;
 string entete;
+int nsimpar=100000;
+string *nomparam;
+parstatC *parstat;
 
 /** 
 * définit l'opérateur de comparaison de deux enregistrements de type enregC
@@ -530,7 +544,6 @@ struct compenreg
                                 if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                     for (int i=0;i<n;i++) {
                                         pmut =phistar[i][npar+kk]+phistar[i][npar+qq];
-                                        
                                         phistar[i][nparamcom+k] = pmut*phistar[i][j];
                                     }    
                                     k++;
@@ -573,17 +586,25 @@ struct compenreg
 */
     void savephistar(int n, char* path,char* ident) {
         char *nomphistar ;
+        int k;
+        nomparam =new string[nparamcom+nparcompo];
         string pp;
         entete="scenario";
-        for (int j=0;j<npar;j++) {entete += centre(header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].name,15);}
-        for (int j=npar;j<nparamcom;j++) {entete += centre(header.mutparam[j-npar].name,15);}
+        for (int j=0;j<npar;j++) {
+            nomparam[j]=string(header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].name);
+            entete += centre(header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].name,15);}
+        for (int j=npar;j<nparamcom;j++) {
+            nomparam[j]=string(header.mutparam[j-npar].name);
+            entete += centre(header.mutparam[j-npar].name,15);}
         if (nparcompo>0) {
+            k=nparamcom;
             for (int gr=1;gr<header.ngroupes+1;gr++) {
                 for (int j=0;j<npar;j++) {
                     if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                         pp=header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].name;
                         if (header.groupe[gr].type==0) pp = pp+"(µ+sni)_"+IntToString(gr);
                         if (header.groupe[gr].type==1) pp = pp+"µseq_"+IntToString(gr);
+                        nomparam[k]=pp;k++;
                         entete += centre(pp,16);
                     }
                 }
@@ -614,25 +635,258 @@ struct compenreg
 
 
 /**
+* lit les paramètres des enregistrements simulés pour l'établissement des distributions a priori'
+*/
+    void lisimpar(int nsel){
+        int bidon,iscen,k,kk,qq;
+        bool scenOK;
+        double pmut;
+        if (nsimpar>rt.nrec) nsimpar=rt.nrec;
+        simpar = new double*[nsimpar];
+        enregC enr;
+        enr.stat = new float[rt.nstat];
+        enr.param = new float[nparamax];
+        int i=-1;
+        while (i<nsimpar-1) {
+            bidon=rt.readrecord(&enr);
+            scenOK=false;iscen=0;
+            while((not scenOK)and(iscen<nscenchoisi)) {
+                scenOK=(enr.numscen==scenchoisi[iscen]);
+                iscen++;
+            }
+            if (scenOK) {
+              i++;
+              simpar[i] = new double[nparamcom+nparcompo];
+              for (int j=0;j<nparamcom;j++) simpar[i][j] = enr.param[numpar[enr.numscen-1][j]];
+              if (nparcompo>0) {
+                  k=0;
+                  for (int gr=1;gr<header.ngroupes+1;gr++) {
+                      if (header.groupe[gr].type==0) {
+                          if (header.groupe[gr].priormutmoy.constant) {
+                              if (header.groupe[gr].priorsnimoy.constant) {
+                                  pmut = header.groupe[gr].mutmoy+header.groupe[gr].snimoy;
+                                  for (int j=0;j<npar;j++) {
+                                      if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                          simpar[i][nparamcom+k] = pmut*enr.param[numpar[enr.numscen-1][j]];
+                                          k++;
+                                      }
+                                  }
+                              } else {
+                                  kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==2))) kk++;
+                                  for (int j=0;j<npar;j++) {
+                                      if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                          pmut = header.groupe[gr].mutmoy+enr.param[numpar[enr.numscen-1][npar+kk]];
+                                          simpar[i][nparamcom+k] = pmut*enr.param[numpar[enr.numscen-1][j]];
+                                          k++;
+                                      }
+                                  }
+                              }
+                          } else {
+                              if (header.groupe[gr].priorsnimoy.constant) {
+                                  kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
+                                  for (int j=0;j<npar;j++) {
+                                      if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                          pmut =enr.param[numpar[enr.numscen-1][npar+kk]]+header.groupe[gr].snimoy;
+                                          simpar[i][nparamcom+k] = pmut*enr.param[numpar[enr.numscen-1][j]];
+                                          k++;
+                                      }
+                                  }
+                              } else {
+                                  kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
+                                  qq=0;while (not ((header.mutparam[qq].groupe == gr)and(header.mutparam[qq].category ==2))) qq++;
+                                  for (int j=0;j<npar;j++) {
+                                      if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                          pmut =enr.param[numpar[enr.numscen-1][npar+kk]]+enr.param[numpar[enr.numscen-1][npar+qq]];
+                                          simpar[i][nparamcom+k] = pmut*enr.param[numpar[enr.numscen-1][j]];
+                                          k++;
+                                      }
+                                  }
+                              }
+                          }
+                      } 
+                      if (header.groupe[gr].type==1) {    
+                          if (header.groupe[gr].priormusmoy.constant) {
+                              pmut = header.groupe[gr].musmoy;
+                              for (int j=0;j<npar;j++) {
+                                  if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                      simpar[i][nparamcom+k] = pmut*enr.param[numpar[enr.numscen-1][j]];
+                                      k++;
+                                  }
+                              }
+                          } else {
+                              kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==3))) kk++;
+                              for (int j=0;j<npar;j++) {
+                                  if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                      pmut = enr.param[numpar[enr.numscen-1][npar+kk]];
+                                      simpar[i][nparamcom+k] = pmut*enr.param[numpar[enr.numscen-1][j]];
+                                      k++;
+                                  }
+                              }
+                          }
+                      }
+                  }
+               }
+            }
+        }
+        //ecrimat("simpar",10,nparamcom+nparcompo,simpar);
+    }
+
+/**
+* calcule la densité à partir de la loi fournie dans le prior
+*/
+    double* caldensexact(int ncl,double *x,PriorC pr) {
+      
+        double *dens,xb,som;
+        dens = new double[ncl];
+        if (pr.loi=="UN") for(int i=0;i<ncl;i++) dens[i]=1.0/(pr.maxi-pr.mini);
+        if (pr.loi=="LU") for(int i=0;i<ncl;i++) dens[i]=1.0/(pr.maxi-pr.mini)/x[i];
+        if (pr.loi=="NO") for(int i=0;i<ncl;i++) dens[i]=exp(-(x[i]-pr.mean)*(x[i]-pr.mean)/2.0/(pr.sdshape*pr.sdshape))/(pr.sdshape*co);
+        if (pr.loi=="LN") for(int i=0;i<ncl;i++) dens[i]=exp(-(log(x[i])/pr.mean)*(log(x[i])/pr.mean)/2.0/(pr.sdshape*pr.sdshape))/(pr.sdshape*co*x[i]);
+        if (pr.loi=="GA") for(int i=0;i<ncl;i++) {
+            xb=x[i]*pr.sdshape/pr.mean;
+            dens[i]=exp((pr.sdshape-1.0)*log(xb)-xb);
+        }
+        som=0.0;for(int i=0;i<ncl;i++) som +=dens[i];
+        for(int i=0;i<ncl;i++) dens[i] /= som;
+        return dens;
+    }
+
+/**
+* calcule la densité à partir d'un échantillon de valeurs'
+*/
+    double* calculdensite(int ncl,int n, double *x, double **y,int j,bool multithread) { 
+        double bw,*dens,sd,*z,denom,som;
+        dens = new double[ncl];
+        z = new double[n];
+        for (int i=0;i<n;i++) z[i]=y[i][j];
+        sd =cal_sd(n,z);
+        if (sd>0.0) bw=coefbw*exp(-0.2*log((double)n))*sd;
+        else bw=1.0;
+        cout<<"sd="<<sd<<"    bw="<<bw<<"\n";
+#pragma omp parallel for shared(dens,z,x,bw) private(denom,i) if(multithread)
+        for (int j=0;j<ncl;j++) {
+            dens[j]=0.0;
+            for (int i=0;i<n;i++) dens[j] +=exp(lnormal_dens(z[i],x[j],bw));
+            if(2*j==ncl-1) cout<<" avant denom dens["<<j<<"] = "<< dens[j]<<"\n"; 
+            denom=pnorm5((x[ncl-1]-x[j])/bw,0.0,1.0)-pnorm5((x[0]-x[j])/bw,0.0,1.0);
+            if (denom>0.0) dens[j] /=denom;
+            if(2*j==ncl-1) cout<<" apres denom dens["<<j<<"] = "<< dens[j]<<"   (denom="<<denom<<")\n"; 
+        }
+        som=0.0;for (int j=0;j<ncl;j++) {som +=dens[j];}
+        if (som>0.0) for (int j=0;j<ncl;j++) dens[j] /=som;
+        return dens;
+    }
+
+/**
 * traitement global du calcul de la densité des paramètres variables
 * si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
 * sinon la densité est évaluée pour 1000 points du min au max 
 */
-    void histodens() {
+    void histodens(int n, bool multithread) {
+        bool condition;
         pardens = new pardensC[nparamcom+nparcompo];
-//traitement des parametres historiques
-        for (int i=0;i<npar;i++) {
-            pardens[i].ncl=1000;
-            if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2) {
-                if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].maxi-header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].mini<=30) 
-                    pardens[i].ncl=30;
-            }
-            pardens[i].xmin=header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior.mini;
-            pardens[i].xmax=header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior.maxi;
-            pardens[i].xdelta = (pardens[i].xmax-pardens[i].xmin)/(double)pardens[i].ncl;           
-        }    
-    
-    
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            pardens[j].ncl=1001;
+            condition=false;
+            if (j<npar) {  //histparam
+                if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2) {
+                    if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior.maxi-header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior.mini<=30) 
+                        pardens[j].ncl=header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior.maxi-header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior.mini+1;
+                }
+                pardens[j].xmin=header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior.mini;
+                pardens[j].xmax=header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior.maxi;
+                if (header.nconditions>0) {
+                    for (int i=0;i<header.nconditions;i++) {
+                        condition=((header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].name==header.condition[i].param1)or(header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].name==header.condition[i].param2));
+                        if (condition) break;
+                    }
+                }
+            } else if (j<nparamcom){  //mutparam
+                pardens[j].xmin=header.mutparam[j-npar].prior.mini;
+                pardens[j].xmax=header.mutparam[j-npar].prior.maxi;
+            } else {  //parametres composites
+                pardens[j].xmin=1E100;pardens[j].xmax=0;
+                for (int i=0;i<nsimpar;i++) {
+                    if (pardens[j].xmin>simpar[i][j]) pardens[j].xmin=simpar[i][j];
+                    if (pardens[j].xmax<simpar[i][j]) pardens[j].xmax=simpar[i][j];
+                }
+                for (int i=0;i<n;i++) {
+                    if (pardens[j].xmin>phistar[i][j]) pardens[j].xmin=phistar[i][j];
+                    if (pardens[j].xmax<phistar[i][j]) pardens[j].xmax=phistar[i][j];
+                }
+            } 
+            pardens[j].xdelta = (pardens[j].xmax-pardens[j].xmin)/(double)(pardens[j].ncl-1);
+            cout<<nomparam[j]<<"   xmin="<<pardens[j].xmin<<"   xmax="<<pardens[j].xmax<<"   xdelta="<<pardens[j].xdelta<<"\n";
+            pardens[j].x = new double[pardens[j].ncl];
+            for (int k=0;k<pardens[j].ncl;k++) pardens[j].x[k]=pardens[j].xmin+k*pardens[j].xdelta;
+            if (pardens[j].ncl>31) {
+                if ((condition)or(j>=npar)) pardens[j].priord = calculdensite(pardens[j].ncl,nsimpar,pardens[j].x,simpar,j,multithread);
+                else pardens[j].priord =caldensexact(pardens[j].ncl,pardens[j].x,header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior);
+                pardens[j].postd = calculdensite(pardens[j].ncl,n,pardens[j].x,phistar,j,multithread);
+            } else {
+/*                if ((condition)or(j>=npar)) pardens[j].priord = calculhisto(pardens[j].x,simpar,j,pardens[j].ncl);
+                else pardens[j].priord =calhistsexact(header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior,pardens[j].ncl);
+                pardens[j].postd = calculhisto(pardens[j].x,phistar,j,pardens[j].ncl);
+*/            }
+           cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom+nparcompo<<"\n";
+        }
+     }
+ 
+/**
+*calcule les statistiques des paramètres
+*/
+    void calparstat(int n) {
+        double sx,*x;  
+        parstat = new parstatC[nparamcom+nparcompo];
+        x = new double[n];
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            for (int i=0;i<n;i++) x[i] = phistar[i][j];
+            sort(&x[0],&x[n]);
+            parstat[j].med = x[(int)floor(0.5*n+0.5)-1];
+            parstat[j].q025 = x[(int)floor(0.025*n+0.5)-1];
+            parstat[j].q050 = x[(int)floor(0.050*n+0.5)-1];
+            parstat[j].q250 = x[(int)floor(0.250*n+0.5)-1];
+            parstat[j].q750 = x[(int)floor(0.750*n+0.5)-1];
+            parstat[j].q950 = x[(int)floor(0.950*n+0.5)-1];
+            parstat[j].q975 = x[(int)floor(0.975*n+0.5)-1];
+            parstat[j].moy = cal_moy(n,x);
+            parstat[j].mod = cal_mode(n,x);
+            cout<<nomparam[j]<<"   "<<parstat[j].moy<<"   "<< parstat[j].med<<"   "<<parstat[j].mod<<"\n";
+            cout<<nomparam[j]<<"   "<<parstat[j].q025<<"   "<< parstat[j].q050<<"   "<<parstat[j].q250<<"   "<<parstat[j].q750<<"   "<< parstat[j].q950<<"   "<<parstat[j].q975<<"\n";
+        }
+    }
+
+/**
+*sauvegarde les statistiques et les densités des paramètres
+*/
+    void saveparstat(char *path, char *ident) {
+        char *nomfiparstat;
+        nomfiparstat = new char[strlen(path)+strlen(ident)+20];
+        strcpy(nomfiparstat,path);
+        strcat(nomfiparstat,ident);
+        strcat(nomfiparstat,"_paramstatdens.txt");
+        cout <<nomfiparstat<<"\n";
+        FILE *f1;
+        f1=fopen(nomfiparstat,"w");
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            fprintf(f1,"%s\n",nomparam[j].c_str());
+            fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
+            fprintf(f1,"%d\n",pardens[j].ncl);
+            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].x[i]);fprintf(f1,"\n");
+            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].priord[i]);fprintf(f1,"\n");
+            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].postd[i]);fprintf(f1,"\n");
+        }
+        fclose(f1);
+        strcpy(nomfiparstat,path);
+        strcat(nomfiparstat,ident);
+        strcat(nomfiparstat,"_psd.txt");
+        cout <<nomfiparstat<<"\n";
+        f1=fopen(nomfiparstat,"w");
+        for (int i=0;i<pardens[0].ncl;i++) {
+            for (int j=0;j<nparamcom+nparcompo;j++) fprintf(f1,"%8.5e   %8.5e   %8.5e   ",pardens[j].x[i],pardens[j].priord[i],pardens[j].postd[i]);
+            fprintf(f1,"\n");
+        }
+        fclose(f1);
     }
 
 /** 
@@ -697,6 +951,7 @@ struct compenreg
         rt.openfile2();
         cout <<"apres rt.openfiles2\n";
         cal_dist(nrec,nsel);
+        rt.closefile();
         det_numpar();
         recalparam(nsel);
         cout<<"apres recalparam\n";
@@ -707,4 +962,11 @@ struct compenreg
         calphistar(nsel);
         cout<<"apres calphistar\n";
         savephistar(nsel,path,ident);
+        cout<<"apres savephistar\n";
+        rt.openfile2();
+        lisimpar(nsel);
+        rt.closefile();
+        histodens(nsel,multithread);
+        calparstat(nsel);
+        saveparstat(path,ident);
     }

@@ -140,12 +140,12 @@ public:
         this->fifo.seekg(0);
         this->fifo.read((char*)&(this->nrec),sizeof(int));
         this->fifo.read((char*)&(this->nscen),sizeof(int));
-        cout <<"nrec = "<<nrec<<"\n";
+        //cout <<"nrec = "<<nrec<<"\n";
         this->nrecscen = new int[this->nscen];
-        for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";}
+        for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
         this->nparam = new int[nscen];
-        for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";}
-        this->fifo.read((char*)&(this->nstat),sizeof(int));cout<<"nstat = "<<this->nstat<<"\n";
+        for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
+        this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
         return 0;
     }
     int closefile() {
