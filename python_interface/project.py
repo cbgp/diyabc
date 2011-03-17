@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import hashlib
 import socket
 from socket import *
 import time
@@ -887,6 +888,7 @@ class RefTableGenThreadCluster(QThread):
 
         data = f.read()
         f.close()
+        s.send("%s\n"%hashlib.md5(data).hexdigest())
         s.send("%s\n"%len(data))
         time.sleep(1)
 

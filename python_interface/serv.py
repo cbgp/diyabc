@@ -14,6 +14,8 @@ def treatment(csock,qued):
     filename = sys.argv[2]
     f=open( filename, 'wb')
 
+    md5=csock.recv(8192)
+    print "md5 : '%s'"%md5
     size=csock.recv(8192)
     print "size : '%s'"%size
     received = 0
@@ -33,7 +35,10 @@ def treatment(csock,qued):
     f.close()
     print filename, "Received\n"
     f=open(filename,'r')
-    print hashlib.md5(f.read()).hexdigest.()
+    fdata = f.read()
+    print hashlib.md5(data).hexdigest()
+    print str(md5) == str(hashlib.md5(data).hexdigest())
+    print "'%s' == '%s'"%(md5,hashlib.md5(data).hexdigest())
     return
 
     
