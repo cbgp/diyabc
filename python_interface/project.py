@@ -888,8 +888,11 @@ class RefTableGenThreadCluster(QThread):
 
         data = f.read()
         f.close()
-        s.send("%s\n"%str(hashlib.md5(data).hexdigest()))
-        s.send("%s\n"%len(data))
+        s.send("%s"%str(hashlib.md5(data).hexdigest()))
+        size = str(len(data))
+        while len(size)<20:
+            size+=" "
+        s.send("%s"%size)
         time.sleep(1)
 
         s.sendall(data)

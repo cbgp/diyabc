@@ -22,7 +22,7 @@ def treatment(csock,qued):
     md5=csock.recv(33)
     md5 = str(md5).strip()
     print "md5 : '%s'"%md5
-    size=csock.recv(10)
+    size=csock.recv(20)
     print "size : '%s'"%size
     received = 0
     #data = csock.recv(int(size))
