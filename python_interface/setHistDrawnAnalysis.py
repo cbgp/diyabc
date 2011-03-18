@@ -95,17 +95,19 @@ class HistDrawn(QFrame):
     def addTheParams(self):
         """ trouve et ajoute les paramètres du scenario concerné
         """
-        sc = str(self.getScText())
-        scChecker = history.Scenario(number=self.sc_to_show)
-        scChecker.checkread(sc.strip().split('\n'),self.parent.parent.data)
-        scChecker.checklogic()
-        t = PopTree(scChecker)
-        t.do_tree()
-        dico_sc_infos = {}
-        dico_sc_infos["text"] = sc.strip().split('\n')
-        dico_sc_infos["checker"] = scChecker
-        #print "nb param du sc ",num," ",scChecker.nparamtot
-        dico_sc_infos["tree"] = t
+        try:
+            sc = str(self.getScText())
+            scChecker = history.Scenario(number=self.sc_to_show)
+            scChecker.checkread(sc.strip().split('\n'),self.parent.parent.data)
+            scChecker.checklogic()
+            dico_sc_infos = {}
+            dico_sc_infos["text"] = sc.strip().split('\n')
+            dico_sc_infos["checker"] = scChecker
+            #print "nb param du sc ",num," ",scChecker.nparamtot
+        except Exception,e:
+            output.notify(str(e))
+            self.exit()
+            return
 
         # calcul des infos pour savoir si on peut setCondition sur ce param
         dico_cat = {}

@@ -43,6 +43,7 @@ class Project(QTabWidget):
         self.gen_state_valid = False
         self.data = None
         self.analysisList = []
+        self.dicoFrameAnalysis = {}
 
         # utile seulement si on derive de QTabWidget
         super(Project,self).__init__(parent)
@@ -119,6 +120,8 @@ class Project(QTabWidget):
         #self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
 
         self.th = None
+
+        self.ui.verticalLayout_9.setAlignment(Qt.AlignTop)
 
 
     def loadACP(self):
@@ -637,6 +640,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         #print analysis
         if type_analysis == "pre-ev":
             self.addRow("scenario prior combination",analysis[1],"4","new")
+            self.addAnalysisGui(analysis,"scenario prior combination",analysis[1],"new")
         elif type_analysis == "estimate":
             chosen_scs_txt = ""
             for cs in analysis[-2]:
@@ -646,12 +650,79 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['numberOfselData'],dico_est['choNumberOfsimData'],dico_est['transformation'],dico_est['choice']))
             #print "\n",analysis[-1],"\n"
             self.addRow("parameter estimation","params","5","new")
+            self.addAnalysisGui(analysis,"parameter estimation","params","new")
         elif type_analysis == "bias":
             self.addRow("bias and precision",str(analysis[2]),"3","new")
+            self.addAnalysisGui(analysis,"bias and precision",str(analysis[2]),"new")
         elif type_analysis == "compare":
             self.addRow("scenario choice",analysis[2]["de"],"4","new")
+            self.addAnalysisGui(analysis,"scenario choice",analysis[2]["de"],"new")
         elif type_analysis == "evaluate":
             self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
+            self.addAnalysisGui(analysis,"evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"new")
+
+    def addAnalysisGui(self,analysis,atype,params,status):
+
+        frame_9 = QtGui.QFrame(self.ui.scrollAreaWidgetContents)
+        frame_9.setFrameShape(QtGui.QFrame.StyledPanel)
+        frame_9.setFrameShadow(QtGui.QFrame.Raised)
+        frame_9.setObjectName("frame_9")
+        frame_9.setMinimumSize(QtCore.QSize(0, 36))
+        frame_9.setMaximumSize(QtCore.QSize(9999, 36))
+        horizontalLayout_4 = QtGui.QHBoxLayout(frame_9)
+        horizontalLayout_4.setObjectName("horizontalLayout_4")
+        analysisUpButton = QtGui.QPushButton("up",frame_9)
+        analysisUpButton.setMinimumSize(QtCore.QSize(50, 0))
+        analysisUpButton.setMaximumSize(QtCore.QSize(50, 16777215))
+        analysisUpButton.setObjectName("analysisUpButton")
+        horizontalLayout_4.addWidget(analysisUpButton)
+        analysisDownButton = QtGui.QPushButton("down",frame_9)
+        analysisDownButton.setMinimumSize(QtCore.QSize(50, 0))
+        analysisDownButton.setMaximumSize(QtCore.QSize(50, 16777215))
+        analysisDownButton.setObjectName("analysisDownButton")
+        horizontalLayout_4.addWidget(analysisDownButton)
+        analysisNameEdit = QtGui.QLineEdit(frame_9)
+        analysisNameEdit.setMinimumSize(QtCore.QSize(100, 0))
+        analysisNameEdit.setMaximumSize(QtCore.QSize(100, 16777215))
+        analysisNameEdit.setObjectName("analysisNameEdit")
+        analysisNameEdit.setMaximumSize(QtCore.QSize(70, 16777215))
+        horizontalLayout_4.addWidget(analysisNameEdit)
+        analysisTypeLabel = QtGui.QLabel(atype,frame_9)
+        analysisTypeLabel.setObjectName("analysisTypeLabel")
+        analysisTypeLabel.setMaximumSize(QtCore.QSize(70, 16777215))
+        horizontalLayout_4.addWidget(analysisTypeLabel)
+        analysisParamsLabel = QtGui.QLabel(str(params),frame_9)
+        analysisParamsLabel.setObjectName("analysisParamsLabel")
+        analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
+        horizontalLayout_4.addWidget(analysisParamsLabel)
+        analysisStatusLabel = QtGui.QLabel(status,frame_9)
+        analysisStatusLabel.setObjectName("analysisStatusLabel")
+        analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
+        horizontalLayout_4.addWidget(analysisStatusLabel)
+        analysisButton = QtGui.QPushButton("launch",frame_9)
+        analysisButton.setObjectName("analysisButton")
+        horizontalLayout_4.addWidget(analysisButton)
+        horizontalLayout_4.setContentsMargins(-1, 1, -1, 1)
+        self.ui.verticalLayout_9.addWidget(frame_9)
+
+        self.dicoFrameAnalysis[frame_9] = analysis
+        QObject.connect(analysisDownButton,SIGNAL("clicked()"),self.moveAnalysisDown)
+        QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
+
+    def moveAnalysisDown(self):
+        frame = self.sender().parent()
+        cur_index = self.ui.verticalLayout_9.indexOf(frame)
+        nb_items = self.ui.verticalLayout_9.count()
+        if cur_index < (nb_items-1):
+            self.ui.verticalLayout_9.removeWidget(frame)
+            self.ui.verticalLayout_9.insertWidget(cur_index+1,frame)
+    def moveAnalysisUp(self):
+        frame = self.sender().parent()
+        cur_index = self.ui.verticalLayout_9.indexOf(frame)
+        if cur_index > 0:
+            self.ui.verticalLayout_9.removeWidget(frame)
+            self.ui.verticalLayout_9.insertWidget(cur_index-1,frame)
+
     def addRow(self,atype,params,prio,status):
         """ ajoute une ligne dans le tableau d'analyses
         """
