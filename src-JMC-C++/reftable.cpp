@@ -15,6 +15,12 @@
 #include <cstring>
 #define CSTRING
 #endif
+#ifndef ALGORITHM
+#include <algorithm>
+#define ALGORITHM
+#endif
+
+
 using namespace std;
 
 
@@ -24,9 +30,14 @@ public:
     int nrec,*nrecscen,nscen;
     long posnrec;
     char *datapath, *filename, *filelog, *pch;
-    int *nparam,nstat,po;
+    int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi;
     float *param,*sumstat;
     fstream fifo;
+    int nstatOK,nsel,nenr;
+    enregC* enrsel;
+    double *stat_obs;
+    double *var_stat;
+    
     
     int readheader(char * fname,char *flogname, char* datafilename) {
         int nb;
@@ -221,7 +232,116 @@ public:
             } else break;
         }
         this->fifo.close();
-        
     }
   
+/** 
+* définit l'opérateur de comparaison de deux enregistrements de type enregC
+* pour l'utilisation de la fonction sort du module algorithm
+*/
+struct compenreg
+{
+   bool operator() (const enregC & lhs, const enregC & rhs) const
+   {
+      return lhs.dist < rhs.dist;
+   }
+};
+
+/** 
+* calcule les variances des statistiques résumées 
+* sur les 100000 premiers enregistrements de la table de référence
+*/
+    int cal_varstat() {
+        int nrecutil,iscen,nsOK,bidon,i;
+        double *sx,*sx2,x,an;
+        bool scenOK;
+        enregC enr;
+        nrecutil=100000;if (nrecutil>this->nrec) nrecutil=this->nrec;
+        an=1.0*(double)nrecutil;
+        sx  = new double[this->nstat];
+        sx2 = new double[this->nstat];
+        var_stat = new double[this->nstat];
+        for (int j=0;j<this->nstat;j++) {sx[j]=0.0;sx2[j]=0.0;}
+        enr.stat = new float[this->nstat];
+        this->nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>this->nparamax) this->nparamax=this->nparam[i];
+        enr.param = new float[this->nparamax];
+        //for (int i=0;i<20000;i++) bidon=this->readrecord(&enr);
+        i=0;
+        while (i<nrecutil) {
+            bidon=this->readrecord(&enr);
+            scenOK=false;iscen=0;
+            while((not scenOK)and(iscen<nscenchoisi)) {
+                scenOK=(enr.numscen==scenchoisi[iscen]);
+                iscen++;
+            }
+            if (scenOK) {
+                i++;
+                for (int j=0;j<this->nstat;j++) {
+                    x = (double)enr.stat[j];
+                    sx[j] += x;
+                    sx2[j] += x*x;
+                }
+            }
+        }
+        nsOK=0;
+        for (int j=0;j<this->nstat;j++) {
+            var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
+            if (var_stat[j]>0) nsOK++;
+            //cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
+        }
+        cout<<"nstatOK = "<<nsOK<<"\n";
+        return nsOK;
+    }
+    
+/** 
+* calcule la distance de chaque jeu de données simulé au jeu observé
+* et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
+*/
+    void cal_dist(int nrec, int nsel) {
+        int nn=10000,nreclus=0,nparamax,nrecOK=0,iscen,bidon;
+        bool firstloop=true,scenOK;
+        double diff,dj;
+        float dd,di;
+        if (nn<nsel) nn=nsel;
+        nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
+        //cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
+        enrsel = new enregC[2*nn];
+        //cout<<" apres allocation de enrsel\n";
+        while (nreclus<nrec) {
+            if (firstloop) {nrecOK=0;firstloop=false;}
+            else nrecOK=nn;
+            //cout<<"nrecOK = "<<nrecOK<<"\n";
+            while ((nrecOK<2*nn)and(nreclus<nrec)) {
+                enrsel[nrecOK].param = new float[nparamax];
+                enrsel[nrecOK].stat  = new float[this->nstat];
+                //cout<<"avant readrecord\n";
+                bidon=this->readrecord(&enrsel[nrecOK]);
+                //cout<<"apres readrecord\n";
+                //cout<<enrsel[nrecOK].numscen<<"   "<<scenchoisi[0]<<"\n";
+                //for (int j=0;j<this->nstat;j++) cout <<enrsel[nrecOK].stat[j]<<"  ";
+                //cout <<"\n";
+                //cin >>bidon;
+                nreclus++;
+                scenOK=false;iscen=0;
+                while((not scenOK)and(iscen<nscenchoisi)) {
+                    scenOK=(enrsel[nrecOK].numscen==scenchoisi[iscen]);
+                    iscen++;
+                }
+                if (scenOK) {
+                   enrsel[nrecOK].dist=0.0; 
+                    for (int j=0;j<this->nstat;j++) if (var_stat[j]>0.0) {
+                        diff =(double)enrsel[nrecOK].stat[j] - (double)stat_obs[j]; 
+                      enrsel[nrecOK].dist += diff*diff/var_stat[j];
+                    }
+                    enrsel[nrecOK].dist =sqrt(enrsel[nrecOK].dist);
+                    nrecOK++;
+                if (nreclus==nrec) break;
+                }
+            }
+            sort(&enrsel[0],&enrsel[2*nn],compenreg()); 
+            //cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/this->nstat<<"    distmax = "<<enrsel[nsel-1].dist/this->nstat<<"\n";
+        }
+            cout<<"nrec_lus = "<<nreclus<<"   nrecOK = "<<nrecOK;
+            cout<<"    distmin = "<<enrsel[0].dist/(double)this->nstat<<"    distmax = "<<enrsel[nsel-1].dist/(double)this->nstat<<"\n";
+    }
+    
 };
