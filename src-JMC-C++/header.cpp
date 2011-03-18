@@ -571,7 +571,7 @@ public:
                 //exit(1);
                 //for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();
                 //this->scen.ecris();
-                cout<<"fin de readheader\n\n\n";
+                //cout<<"fin de readheader\n\n\n";
         return this;
     }
     

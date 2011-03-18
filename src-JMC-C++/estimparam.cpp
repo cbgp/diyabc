@@ -82,8 +82,9 @@ struct compenreg
 * sur les 100000 premiers enregistrements de la table de référence
 */
     int cal_varstat() {
-        int nrecutil,iscen,nsOK,bidon;
+        int nrecutil,iscen,nsOK,bidon,i;
         double *sx,*sx2,x,an;
+        bool scenOK;
         enregC enr;
         nrecutil=100000;if (nrecutil>rt.nrec) nrecutil=rt.nrec;
         an=1.0*(double)nrecutil;
@@ -95,7 +96,24 @@ struct compenreg
         nparamax = 0;for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         enr.param = new float[nparamax];
         //for (int i=0;i<20000;i++) bidon=rt.readrecord(&enr);
-        for (int i=0;i<nrecutil;i++) {
+        i=0;
+        while (i<nrecutil) {
+            bidon=rt.readrecord(&enr);
+            scenOK=false;iscen=0;
+            while((not scenOK)and(iscen<nscenchoisi)) {
+                scenOK=(enr.numscen==scenchoisi[iscen]);
+                iscen++;
+            }
+            if (scenOK) {
+                i++;
+                for (int j=0;j<rt.nstat;j++) {
+                    x = (double)enr.stat[j];
+                    sx[j] += x;
+                    sx2[j] += x*x;
+                }
+            }
+        }
+/*        for (int i=0;i<nrecutil;i++) {
             bidon=rt.readrecord(&enr);
             iscen=enr.numscen;
             for (int j=0;j<rt.nstat;j++) {
@@ -103,13 +121,14 @@ struct compenreg
                 sx[j] += x;
                 sx2[j] += x*x;
             }
-        }
+        }*/
         nsOK=0;
         for (int j=0;j<rt.nstat;j++) {
             var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
             if (var_stat[j]>0) nsOK++;
             //cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
         }
+        cout<<"nstatOK = "<<nsOK<<"\n";
         return nsOK;
     }
 
@@ -140,7 +159,8 @@ struct compenreg
     void cal_dist(int nrec, int nsel) {
         int nn=10000,nreclus=0,nparamax,nrecOK=0,iscen,bidon;
         bool firstloop=true,scenOK;
-        double diff;
+        double diff,dj;
+        float dd,di;
         if (nn<nsel) nn=nsel;
         nparamax = 0;for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         //cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<rt.nstat<<"   2*nn="<<2*nn<<"\n";
@@ -167,11 +187,12 @@ struct compenreg
                     iscen++;
                 }
                 if (scenOK) {
-                    enrsel[nrecOK].dist=0.0; 
+                   enrsel[nrecOK].dist=0.0; 
                     for (int j=0;j<rt.nstat;j++) if (var_stat[j]>0.0) {
                         diff =(double)enrsel[nrecOK].stat[j] - (double)stat_obs[j]; 
                       enrsel[nrecOK].dist += diff*diff/var_stat[j];
                     }
+                    enrsel[nrecOK].dist =sqrt(enrsel[nrecOK].dist);
                     nrecOK++;
                 if (nreclus==nrec) break;
                 }
@@ -179,7 +200,8 @@ struct compenreg
             sort(&enrsel[0],&enrsel[2*nn],compenreg()); 
             //cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/rt.nstat<<"    distmax = "<<enrsel[nsel-1].dist/rt.nstat<<"\n";
         }
-            cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/rt.nstat<<"    distmax = "<<enrsel[nsel-1].dist/rt.nstat<<"\n";
+            cout<<"nrec_lus = "<<nreclus<<"   nrecOK = "<<nrecOK;
+            cout<<"    distmin = "<<enrsel[0].dist/(double)rt.nstat<<"    distmax = "<<enrsel[nsel-1].dist/(double)rt.nstat<<"\n";
     }
     
 /** 
@@ -195,6 +217,13 @@ struct compenreg
         if (nscenchoisi==1) {
             numpar[0] = new int[rt.nparam[scenchoisi[0]-1]];
             for (int i=0;i<rt.nparam[scenchoisi[0]-1];i++) numpar[0][i]=i;
+            for (int i=0;i<header.scenario[scenchoisi[0]-1].nparam;i++) {
+                if (not header.scenario[scenchoisi[0]-1].histparam[i].prior.constant){
+                    npar++;
+                    parname.push_back(header.scenario[scenchoisi[0]-1].histparam[i].name);
+                    if (header.scenario[scenchoisi[0]-1].histparam[i].category<2) npar0++;
+                }
+            }
         } else {
             for (int i=0;i<header.scenario[scenchoisi[0]-1].nparam;i++) {
                 commun=true;
@@ -208,18 +237,22 @@ struct compenreg
                     if (not commun) break;
                 }
                 if (commun) {
-                    npar++;
-                    parname.push_back(header.scenario[scenchoisi[0]-1].histparam[i].name);
-                    if (header.scenario[scenchoisi[0]-1].histparam[i].category<2) npar0++;
+                    if (not header.scenario[scenchoisi[0]-1].histparam[i].prior.constant){
+                        npar++;
+                        parname.push_back(header.scenario[scenchoisi[0]-1].histparam[i].name);
+                        if (header.scenario[scenchoisi[0]-1].histparam[i].category<2) npar0++;
+                    }
                 }
             }
             cout << "noms des parametres communs : ";
             for (int i=0;i<npar;i++) cout<<parname[i]<<"   ";
             cout <<"\n";
         } 
+        //cout<<"npar0="<<npar0<<"   npar="<<npar<<"   nombre de groupes="<<header.ngroupes<<"\n";
         if (composite) nparcompo=npar0*header.ngroupes; else nparcompo=0;
         cout<<"nombre de parametres composites : "<<nparcompo<<"\n";
         nparamcom = npar+rt.nparam[scenchoisi[0]-1]-header.scenario[scenchoisi[0]-1].nparam;
+        cout<<"nombre de parametres communs : "<<nparamcom<<"\n";
         for (int j=0;j<nscenchoisi;j++) {
             numpar[j] = new int[nparamcom];
             ii=0;
@@ -229,10 +262,10 @@ struct compenreg
                 }
             }
             for (int k=header.scenario[scenchoisi[j]-1].nparam;k<rt.nparam[scenchoisi[j]-1];k++) {numpar[j][ii]=k;ii++;}
-            for (int kk=0;kk<npar+rt.nparam[scenchoisi[j]-1]-header.scenario[scenchoisi[j]-1].nparam;kk++) {
+            /*for (int kk=0;kk<npar+rt.nparam[scenchoisi[j]-1]-header.scenario[scenchoisi[j]-1].nparam;kk++) {
               cout <<numpar[j][kk]<<"  ";
               if (kk<npar) cout<<"("<<header.scenario[scenchoisi[j]-1].histparam[numpar[j][kk]].name<<")  ";
-            }
+            }*/
             cout<<"\n";
         }
         
@@ -471,7 +504,7 @@ struct compenreg
 * calcule les phistars pour les paramètres originaux et composites
 */
     void calphistar(int n){
-        cout<<"debut de calphistar\n";
+        //cout<<"debut de calphistar\n";
         int k,kk,qq;
         double pmut;
         phistar = new double*[n];
@@ -578,7 +611,7 @@ struct compenreg
                 }
             }
         }
-        cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
+        //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
     }
         
 /** 
@@ -602,8 +635,8 @@ struct compenreg
                 for (int j=0;j<npar;j++) {
                     if (header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                         pp=header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].name;
-                        if (header.groupe[gr].type==0) pp = pp+"(µ+sni)_"+IntToString(gr);
-                        if (header.groupe[gr].type==1) pp = pp+"µseq_"+IntToString(gr);
+                        if (header.groupe[gr].type==0) pp = pp+"(µ+sni)_"+IntToString(gr)+" ";
+                        if (header.groupe[gr].type==1) pp = pp+"µseq_"+IntToString(gr)+" ";
                         nomparam[k]=pp;k++;
                         entete += centre(pp,16);
                     }
@@ -614,7 +647,7 @@ struct compenreg
         strcpy(nomphistar,path);
         strcat(nomphistar,ident);
         strcat(nomphistar,"_phistar.txt");
-        cout <<nomphistar<<"\n";
+        //cout <<nomphistar<<"\n";
         FILE *f1;
         f1=fopen(nomphistar,"w");
         fprintf(f1,"%s\n",entete.c_str());
@@ -762,15 +795,15 @@ struct compenreg
         sd =cal_sd(n,z);
         if (sd>0.0) bw=coefbw*exp(-0.2*log((double)n))*sd;
         else bw=1.0;
-        cout<<"sd="<<sd<<"    bw="<<bw<<"\n";
+        //cout<<"sd="<<sd<<"    bw="<<bw<<"\n";
 #pragma omp parallel for shared(dens,z,x,bw) private(denom,i) if(multithread)
         for (int j=0;j<ncl;j++) {
             dens[j]=0.0;
             for (int i=0;i<n;i++) dens[j] +=exp(lnormal_dens(z[i],x[j],bw));
-            if(2*j==ncl-1) cout<<" avant denom dens["<<j<<"] = "<< dens[j]<<"\n"; 
+            //if(2*j==ncl-1) cout<<" avant denom dens["<<j<<"] = "<< dens[j]<<"\n"; 
             denom=pnorm5((x[ncl-1]-x[j])/bw,0.0,1.0)-pnorm5((x[0]-x[j])/bw,0.0,1.0);
             if (denom>0.0) dens[j] /=denom;
-            if(2*j==ncl-1) cout<<" apres denom dens["<<j<<"] = "<< dens[j]<<"   (denom="<<denom<<")\n"; 
+            //if(2*j==ncl-1) cout<<" apres denom dens["<<j<<"] = "<< dens[j]<<"   (denom="<<denom<<")\n"; 
         }
         som=0.0;for (int j=0;j<ncl;j++) {som +=dens[j];}
         if (som>0.0) for (int j=0;j<ncl;j++) dens[j] /=som;
@@ -816,7 +849,7 @@ struct compenreg
                 }
             } 
             pardens[j].xdelta = (pardens[j].xmax-pardens[j].xmin)/(double)(pardens[j].ncl-1);
-            cout<<nomparam[j]<<"   xmin="<<pardens[j].xmin<<"   xmax="<<pardens[j].xmax<<"   xdelta="<<pardens[j].xdelta<<"\n";
+            //cout<<nomparam[j]<<"   xmin="<<pardens[j].xmin<<"   xmax="<<pardens[j].xmax<<"   xdelta="<<pardens[j].xdelta<<"\n";
             pardens[j].x = new double[pardens[j].ncl];
             for (int k=0;k<pardens[j].ncl;k++) pardens[j].x[k]=pardens[j].xmin+k*pardens[j].xdelta;
             if (pardens[j].ncl>31) {
@@ -828,7 +861,7 @@ struct compenreg
                 else pardens[j].priord =calhistsexact(header.scenario[scenchoisi[0]-1].histparam[numpar[0][j]].prior,pardens[j].ncl);
                 pardens[j].postd = calculhisto(pardens[j].x,phistar,j,pardens[j].ncl);
 */            }
-           cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom+nparcompo<<"\n";
+           //cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom+nparcompo<<"\n";
         }
      }
  
@@ -851,8 +884,9 @@ struct compenreg
             parstat[j].q975 = x[(int)floor(0.975*n+0.5)-1];
             parstat[j].moy = cal_moy(n,x);
             parstat[j].mod = cal_mode(n,x);
-            cout<<nomparam[j]<<"   "<<parstat[j].moy<<"   "<< parstat[j].med<<"   "<<parstat[j].mod<<"\n";
-            cout<<nomparam[j]<<"   "<<parstat[j].q025<<"   "<< parstat[j].q050<<"   "<<parstat[j].q250<<"   "<<parstat[j].q750<<"   "<< parstat[j].q950<<"   "<<parstat[j].q975<<"\n";
+            for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
+            cout<<nomparam[j];
+            printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q950,parstat[j].q975);
         }
     }
 
@@ -901,32 +935,39 @@ struct compenreg
         
         opt=char2string(options);
         ss = splitwords(opt,";",&ns);
-        for (int i=0;i<ns;i++) { cout<<ss[i]<<"\n";
+        for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
             if (s0=="s:") {
                 ss1 = splitwords(s1,",",&nscenchoisi);
                 scenchoisi = new int[nscenchoisi];
                 for (int j=0;j<nscenchoisi;j++) scenchoisi[j] = atoi(ss1[j].c_str());
-                cout <<"scenario(s) choisi(s) ";for (int j=0;j<nscenchoisi;j++) cout<<scenchoisi[j]<<",";cout<<"\n";
+                cout <<"scenario(s) choisi(s) : ";
+                for (int j=0;j<nscenchoisi;j++) {cout<<scenchoisi[j]; if (j<nscenchoisi-1) cout <<",";}cout<<"\n";
             } else {
                 if (s0=="n:") {
                     nrec=atoi(s1.c_str());    
-                    cout<<"nrec = "<<nrec<<"\n";
+                    cout<<"nombre total de jeux de données considérés (tous scénarios confondus)= "<<nrec<<"\n";
                 } else {
                     if (s0=="m:") {
                         nsel=atoi(s1.c_str());    
-                        cout<<"nsel = "<<nsel<<"\n";
+                        cout<<"nombre de jeux de données considérés pour la régression locale = "<<nsel<<"\n";
                     } else {
                         if (s0=="t:") {
-                            numtransf=atoi(s1.c_str());    
-                            cout<<"numtransf = "<<numtransf<<"\n";
+                            numtransf=atoi(s1.c_str()); 
+                            switch (numtransf) {
+                              case 1 : cout <<" pas de transformation des paramètres\n";break;
+                              case 2 : cout <<" transformation log des paramètres\n";break;
+                              case 3 : cout <<" transformation logit des paramètres\n";break;
+                              case 4 : cout <<" transformation log(tg) des paramètres\n";break;
+                            }
                         } else {
                             if (s0=="p:") {
                                 original=(s1.find("o")!=string::npos);
                                 composite=(s1.find("c")!=string::npos);
-                                if (original) cout <<"  original  ";
-                                if (composite) cout<<"  composite  ";
+                                if (original) cout <<"paramètres  originaux  ";
+                                if ((s1=="oc")or(s1=="co")) cout <<"et ";
+                                if (composite) cout<<"paramètres  composite  ";
                                 cout<< "\n";
                             }            
                         }
@@ -936,33 +977,34 @@ struct compenreg
         }
         
         header.readHeader(headerfilename);
-        for (int i=0;i<header.nscenarios;i++) cout<<"scenario "<<i<<"    nparam = "<<header.scenario[i].nparam<<"\n";
+        //for (int i=0;i<header.nscenarios;i++) cout<<"scenario "<<i<<"    nparam = "<<header.scenario[i].nparam<<"\n";
         datafilename=strdup(header.datafilename.c_str());
         rtOK=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
-        cout <<"\napres rt.readheader\n";
+        //cout <<"\napres rt.readheader\n";
         if (rtOK==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}          
         rt.openfile2();
-        cout<<"apres rt.openfile2\n";
+        //cout<<"apres rt.openfile2\n";
         nstatOK = cal_varstat();
         rt.closefile();
-        cout<<"fermeture du fichier apres cal_varstat\n";
+        //cout<<"fermeture du fichier apres cal_varstat\n";
         read_statobs(statobsfilename);
-        cout <<"avant rt.openfiles2\n";
+        //cout <<"avant rt.openfiles2\n";
         rt.openfile2();
-        cout <<"apres rt.openfiles2\n";
+        //cout <<"apres rt.openfiles2\n";
         cal_dist(nrec,nsel);
         rt.closefile();
         det_numpar();
+        //cout<<"apres det_numpar\n";
         recalparam(nsel);
-        cout<<"apres recalparam\n";
+        //cout<<"apres recalparam\n";
         rempli_mat(nsel);
-        cout<<"apres rempli_mat\n";
+        //cout<<"apres rempli_mat\n";
         local_regression(nsel,multithread);
-        cout<<"apres local_regression\n";
+        //cout<<"apres local_regression\n";
         calphistar(nsel);
-        cout<<"apres calphistar\n";
+        //cout<<"apres calphistar\n";
         savephistar(nsel,path,ident);
-        cout<<"apres savephistar\n";
+        //cout<<"apres savephistar\n";
         rt.openfile2();
         lisimpar(nsel);
         rt.closefile();

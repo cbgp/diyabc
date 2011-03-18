@@ -22,6 +22,11 @@
 #include "estimparam.cpp"
 #define ESTIMPARAM
 #endif
+#ifndef COMPARSCEN
+#include "comparscen.cpp"
+#define COMPARSCEN
+#endif
+
 #ifndef SYS_TIMEH
 #include <sys/time.h>
 #define SYS_TIMEH
@@ -54,7 +59,8 @@ double walltime( double *t0 )
 double clock_zero=0.0,debut,duree;
 
 int main(int argc, char *argv[]){
-	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*estpar,*path,*ident;
+	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
+    char *estpar,*compar;
     bool multithread=false,firsttime;
 	int nrecneeded,nrectodo,k,seed;
 	double **paramstat;
@@ -79,6 +85,8 @@ int main(int argc, char *argv[]){
             cout << "-m <multithreaded version of the program (default single threaded)\n";
             cout << "-e for ABC parameter estimation with parameters as defined below\n";
             cout << "-e s:<chosen scenarios separated by a comma>;n:<number of simulated datasets taken from reftable>;m:<number of simulated datasets used for the local regression>;t:<number of the transformation (1,2,3 or 4)>;p:<o for original, c for composite, oc for both>"<<"\n";
+            cout << "-c for ABC computation of posterior probability of scenarios with parameters as defined below\n";
+            cout << "-c s:<chosen scenarios separated by a comma;n:<number of simulated datasets taken from reftable>;d:<number of simulated datasets used in the direct approach>;l:<number of simulated datasets used in the logistic regression;m:<number of required logistic regressions>\n";
             cout << "-q to merge all reftable_$j.bin \n";
             cout << "-r for building/appending a reference table <required number of simulated datasets (default 10^6/scenario)>\n";
             cout << "-s <seed for the random generator>\n";
@@ -123,12 +131,17 @@ int main(int argc, char *argv[]){
             multithread=true;
             break;
 
-        case 'e' :  
+        case 'c' :  
+            compar=strdup(optarg);
+            action='c';
+            break;        
+                    
+         case 'e' :  
             estpar=strdup(optarg);
             action='e';
             break;        
                     
-        case 'q' : 
+       case 'q' : 
             header.readHeader(headerfilename);
             k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
             rt.concat();
@@ -187,6 +200,9 @@ int main(int argc, char *argv[]){
                       break;
                       
       case 'e'  : doestim(path,ident,headerfilename,reftablefilename,reftablelogfilename,statobsfilename,estpar,multithread);
+                  break;
+                  
+      case 'c'  : docompscen(path,ident,headerfilename,reftablefilename,reftablelogfilename,statobsfilename,compar,multithread);
                   break;
     
     }
