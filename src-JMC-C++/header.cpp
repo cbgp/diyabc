@@ -43,6 +43,7 @@ public:
     bool drawuntil;
     ParticleC particuleobs;
     MutParameterC *mutparam;
+    double *stat_obs;
     
     void libere() {
         this->dataobs.libere();
@@ -679,4 +680,26 @@ public:
                this->particuleobs.libere();
                //exit(1);
         }
+        /** 
+* lit le fichier des statistiques observées (placées dans double *stat_obs)
+*/
+    double* read_statobs(char *statobsfilename) {
+       string entete,ligne,*ss;
+       int ns;
+       ifstream file(statobsfilename, ios::in);
+       getline(file,entete);
+       getline(file,ligne);
+       file.close();
+       ss=splitwords(ligne," ",&ns);
+       //cout<<"statobs ns="<<ns<<"\n";
+       if (ns!=this->nstat) exit(1);
+       this->stat_obs = new double[ns];
+       for (int i=0;i<ns;i++) this->stat_obs[i]=atof(ss[i].c_str());
+       delete []ss;
+       return this->stat_obs;
+       //for (int i=0;i<ns;i++) cout<<stat_obs[i]<<"   ";
+       //cout<<"\n";
+    }
+
+
 };

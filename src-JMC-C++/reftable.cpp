@@ -264,7 +264,7 @@ struct compenreg
         enr.stat = new float[this->nstat];
         this->nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>this->nparamax) this->nparamax=this->nparam[i];
         enr.param = new float[this->nparamax];
-        //for (int i=0;i<20000;i++) bidon=this->readrecord(&enr);
+        this->openfile2();
         i=0;
         while (i<nrecutil) {
             bidon=this->readrecord(&enr);
@@ -282,6 +282,7 @@ struct compenreg
                 }
             }
         }
+        this->closefile();
         nsOK=0;
         for (int j=0;j<this->nstat;j++) {
             var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
@@ -296,7 +297,7 @@ struct compenreg
 * calcule la distance de chaque jeu de données simulé au jeu observé
 * et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
 */
-    void cal_dist(int nrec, int nsel) {
+    void cal_dist(int nrec, int nsel, double *stat_obs) {
         int nn=10000,nreclus=0,nparamax,nrecOK=0,iscen,bidon;
         bool firstloop=true,scenOK;
         double diff,dj;
@@ -306,6 +307,7 @@ struct compenreg
         //cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
         enrsel = new enregC[2*nn];
         //cout<<" apres allocation de enrsel\n";
+        this->openfile2();
         while (nreclus<nrec) {
             if (firstloop) {nrecOK=0;firstloop=false;}
             else nrecOK=nn;
@@ -315,11 +317,11 @@ struct compenreg
                 enrsel[nrecOK].stat  = new float[this->nstat];
                 //cout<<"avant readrecord\n";
                 bidon=this->readrecord(&enrsel[nrecOK]);
-                //cout<<"apres readrecord\n";
-                //cout<<enrsel[nrecOK].numscen<<"   "<<scenchoisi[0]<<"\n";
-                //for (int j=0;j<this->nstat;j++) cout <<enrsel[nrecOK].stat[j]<<"  ";
-                //cout <<"\n";
-                //cin >>bidon;
+                /*cout<<"apres readrecord\n";
+                cout<<enrsel[nrecOK].numscen<<"   "<<scenchoisi[0]<<"\n";
+                for (int j=0;j<this->nstat;j++) cout <<enrsel[nrecOK].stat[j]<<"  ";
+                cout <<"\n";
+                cin >>bidon;*/
                 nreclus++;
                 scenOK=false;iscen=0;
                 while((not scenOK)and(iscen<nscenchoisi)) {
@@ -329,7 +331,7 @@ struct compenreg
                 if (scenOK) {
                    enrsel[nrecOK].dist=0.0; 
                     for (int j=0;j<this->nstat;j++) if (var_stat[j]>0.0) {
-                        diff =(double)enrsel[nrecOK].stat[j] - (double)stat_obs[j]; 
+                        diff =(double)enrsel[nrecOK].stat[j] - stat_obs[j]; 
                       enrsel[nrecOK].dist += diff*diff/var_stat[j];
                     }
                     enrsel[nrecOK].dist =sqrt(enrsel[nrecOK].dist);
@@ -340,8 +342,9 @@ struct compenreg
             sort(&enrsel[0],&enrsel[2*nn],compenreg()); 
             //cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/this->nstat<<"    distmax = "<<enrsel[nsel-1].dist/this->nstat<<"\n";
         }
-            cout<<"nrec_lus = "<<nreclus<<"   nrecOK = "<<nrecOK;
-            cout<<"    distmin = "<<enrsel[0].dist/(double)this->nstat<<"    distmax = "<<enrsel[nsel-1].dist/(double)this->nstat<<"\n";
+        this->closefile();
+        cout<<"nrec_lus = "<<nreclus<<"   nrecOK = "<<nrecOK;
+        cout<<"    distmin = "<<enrsel[0].dist/(double)this->nstat<<"    distmax = "<<enrsel[nsel-1].dist/(double)this->nstat<<"\n";
     }
     
 };

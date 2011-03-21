@@ -48,8 +48,7 @@ struct parstatC {
 pardensC *pardens;
 ReftableC rt;
 HeaderC header;
-double *var_stat
-, *parmin, *parmax, *diff;
+double *var_stat, *parmin, *parmax, *diff;
 double **alpsimrat,**parsim,**matX0,*vecW,**beta, **phistar,**simpar;
 int nparamcom,nparcompo,**numpar,nstatOKsel,numtransf,npar,npar0;
 double borne=10.0,xborne;
@@ -58,27 +57,6 @@ string entete;
 int nsimpar=100000;
 string *nomparam;
 parstatC *parstat;
-
-
-/** 
-* lit le fichier des statistiques observées (placées dans double *stat_obs)
-*/
-    void read_statobs(char *statobsfilename) {
-       string entete,ligne,*ss;
-       int ns;
-       ifstream file(statobsfilename, ios::in);
-       getline(file,entete);
-       getline(file,ligne);
-       file.close();
-       ss=splitwords(ligne," ",&ns);
-       //cout<<"statobs ns="<<ns<<"\n";
-       if (ns!=rt.nstat) exit(1);
-       rt.stat_obs = new double[ns];
-       for (int i=0;i<ns;i++) rt.stat_obs[i]=atof(ss[i].c_str());
-       delete []ss;
-       //for (int i=0;i<ns;i++) cout<<stat_obs[i]<<"   ";
-       //cout<<"\n";
-    }
 
     
 /** 
@@ -290,7 +268,7 @@ parstatC *parstat;
 * effectue le remplissage de la matrice matX0, du vecteur des poids vecW et 
 * de la matrice des paramètres parsim (éventuellement transformés)
 */
-    void rempli_mat(int n) {
+    void rempli_mat(int n,double* stat_obs) {
         int icc;
         double delta,som,x,*var_statsel,nn;
         double *sx,*sx2,*mo;
@@ -318,14 +296,14 @@ parstatC *parstat;
         matX0 = new double*[n];
         for (int i=0;i<n;i++)matX0[i]=new double[nstatOKsel];
         vecW = new double[n];
-
+        //cout <<"hello\n";  
         som=0.0;
         for (int i=0;i<n;i++) {
             icc=-1;
             for (int j=0;j<rt.nstat;j++) {
                 if (var_statsel[j]>0.0) {
                     icc++;
-                    matX0[i][icc]=(rt.enrsel[i].stat[j]-rt.stat_obs[j])/sqrt(var_statsel[j]);
+                    matX0[i][icc]=(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
                 }
             }
             x=rt.enrsel[i].dist/delta;
@@ -557,6 +535,7 @@ parstatC *parstat;
         enr.stat = new float[rt.nstat];
         enr.param = new float[rt.nparamax];
         int i=-1;
+        rt.openfile2();
         while (i<nsimpar-1) {
             bidon=rt.readrecord(&enr);
             scenOK=false;iscen=0;
@@ -638,7 +617,7 @@ parstatC *parstat;
                }
             }
         }
-        //ecrimat("simpar",10,nparamcom+nparcompo,simpar);
+        rt.closefile();
     }
 
 /**
@@ -808,7 +787,7 @@ parstatC *parstat;
         int rtOK,nstatOK;
         int nrec,nsel,ns,ns1;
         string opt,*ss,s,*ss1,s0,s1;
-        double **matX0, *vecW, **alpsimrat,**parsim;
+        double **matX0, *vecW, **alpsimrat,**parsim, *stat_obs;
         
         opt=char2string(options);
         ss = splitwords(opt,";",&ns);
@@ -857,35 +836,25 @@ parstatC *parstat;
         //for (int i=0;i<header.nscenarios;i++) cout<<"scenario "<<i<<"    nparam = "<<header.scenario[i].nparam<<"\n";
         datafilename=strdup(header.datafilename.c_str());
         rtOK=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
-        cout <<"\napres rt.readheader\n";
+        //cout <<"\napres rt.readheader\n";
         if (rtOK==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}          
-        rt.openfile2();
-        cout<<"apres rt.openfile2\n";
         nstatOK = rt.cal_varstat();
-        rt.closefile();
-        cout<<"fermeture du fichier apres cal_varstat\n";
-        read_statobs(statobsfilename);
-        cout <<"avant rt.openfiles2\n";
-        rt.openfile2();
-        cout <<"apres rt.openfiles2\n";
-        rt.cal_dist(nrec,nsel);
-        rt.closefile();
+        stat_obs = header.read_statobs(statobsfilename);
+        rt.cal_dist(nrec,nsel,stat_obs);
         det_numpar();
-        cout<<"apres det_numpar\n";
+                                        //cout<<"apres det_numpar\n";
         recalparam(nsel);
-        cout<<"apres recalparam\n";
-        rempli_mat(nsel);
-        cout<<"apres rempli_mat\n";
+                                       //cout<<"apres recalparam\n";
+        rempli_mat(nsel,stat_obs);
+                                        //cout<<"apres rempli_mat\n";
         local_regression(nsel,multithread);
-        cout<<"apres local_regression\n";
+                                        //cout<<"apres local_regression\n";
         calphistar(nsel);
-        cout<<"apres calphistar\n";
+                                        //cout<<"apres calphistar\n";
         savephistar(nsel,path,ident);
-        cout<<"apres savephistar\n";
-        rt.openfile2();
+                                        //cout<<"apres savephistar\n";
         lisimpar(nsel);
-        rt.closefile();
-        cout<<"apres lisimpar\n";
+                                         //cout<<"apres lisimpar\n";
         histodens(nsel,multithread);
         calparstat(nsel);
         saveparstat(path,ident);

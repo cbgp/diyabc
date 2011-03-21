@@ -114,11 +114,21 @@ int ndecimales(double mini,double maxi){
 string IntToString ( int number )
 {
   std::ostringstream oss;
-
-  // Works just like cout
   oss<< number;
+  return oss.str();
+}
+string FloatToString ( float number )
+{
+  std::ostringstream oss;
+  oss<< number;
+  return oss.str();
+}
 
-  // Return the underlying string
+
+string DoubleToString ( double number )
+{
+  std::ostringstream oss;
+  oss<< number;
   return oss.str();
 }
 
