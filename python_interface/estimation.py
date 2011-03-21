@@ -59,6 +59,12 @@ class Estimation(QFrame):
         self.analysis.append(self.scNumList)
         self.majDicoValues()
         self.analysis.append(self.dico_values)
+        chosen_scs_txt = ""
+        for cs in self.analysis[-2]:
+            chosen_scs_txt+="%s,"%str(cs)
+        chosen_scs_txt = chosen_scs_txt[:-1]
+        dico_est = self.analysis[-1]
+        self.analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['numberOfselData'],dico_est['choNumberOfsimData'],dico_est['transformation'],dico_est['choice']))
         self.parent.parent.addAnalysis(self.analysis)
         self.exit()
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import hashlib
+import hashlib,pickle
 import socket
 from socket import *
 import time
@@ -643,12 +643,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.addRow("scenario prior combination",analysis[1],"4","new")
             self.addAnalysisGui(analysis,analysis[1],"scenario prior combination",analysis[2],"new")
         elif type_analysis == "estimate":
-            chosen_scs_txt = ""
-            for cs in analysis[-2]:
-                chosen_scs_txt+="%s,"%str(cs)
-            chosen_scs_txt = chosen_scs_txt[:-1]
-            dico_est = analysis[-1]
-            analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['numberOfselData'],dico_est['choNumberOfsimData'],dico_est['transformation'],dico_est['choice']))
             #print "\n",analysis[-1],"\n"
             self.addRow("parameter estimation","params","5","new")
             self.addAnalysisGui(analysis,analysis[1],"parameter estimation","params","new")
@@ -856,6 +850,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             # lecture de conf.hist.tmp
             self.hist_model_win.loadHistoricalConf()
             self.gen_data_win.loadGeneticConf()
+            self.loadAnalysis()
         else:
             output.notify(self,"Load error","Impossible to read the project configuration")
 
@@ -875,6 +870,20 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         return False
 
 
+    def saveAnalysis(self):
+        l_to_save = []
+        for a in self.analysisList:
+            l_to_save.append(a)
+        f=open("%s/conf.analysis"%self.dir,"wb")
+        pickle.dump(l_to_save,f)
+        f.close()
+
+    def loadAnalysis(self):
+        f=open("%s/conf.analysis"%self.dir,"rb")
+        l = pickle.load(f)
+        f.close()
+        for a in l:
+            self.addAnalysis(a)
 
     def save(self):
         """ sauvegarde du projet -> mainconf, histconf, genconf, theadconf
@@ -903,6 +912,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if self.gen_state_valid and self.hist_state_valid:
                 self.writeThConf()
                 self.writeRefTableHeader()
+            self.saveAnalysis()
         else:
             output.notify(self,"Saving is impossible","Choose a directory before saving the project")
 
