@@ -122,6 +122,7 @@ class Project(QTabWidget):
         self.th = None
 
         self.ui.verticalLayout_9.setAlignment(Qt.AlignTop)
+        self.ui.tableWidget.hide()
 
 
     def loadACP(self):
@@ -640,7 +641,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         #print analysis
         if type_analysis == "pre-ev":
             self.addRow("scenario prior combination",analysis[1],"4","new")
-            self.addAnalysisGui(analysis,"scenario prior combination",analysis[1],"new")
+            self.addAnalysisGui(analysis,analysis[1],"scenario prior combination",analysis[2],"new")
         elif type_analysis == "estimate":
             chosen_scs_txt = ""
             for cs in analysis[-2]:
@@ -650,25 +651,25 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['numberOfselData'],dico_est['choNumberOfsimData'],dico_est['transformation'],dico_est['choice']))
             #print "\n",analysis[-1],"\n"
             self.addRow("parameter estimation","params","5","new")
-            self.addAnalysisGui(analysis,"parameter estimation","params","new")
+            self.addAnalysisGui(analysis,analysis[1],"parameter estimation","params","new")
         elif type_analysis == "bias":
             self.addRow("bias and precision",str(analysis[2]),"3","new")
-            self.addAnalysisGui(analysis,"bias and precision",str(analysis[2]),"new")
+            self.addAnalysisGui(analysis,analysis[1],"bias and precision",str(analysis[2]),"new")
         elif type_analysis == "compare":
             self.addRow("scenario choice",analysis[2]["de"],"4","new")
-            self.addAnalysisGui(analysis,"scenario choice",analysis[2]["de"],"new")
+            self.addAnalysisGui(analysis,analysis[1],"scenario choice",analysis[2]["de"],"new")
         elif type_analysis == "evaluate":
             self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
-            self.addAnalysisGui(analysis,"evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"new")
+            self.addAnalysisGui(analysis,analysis[1],"evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"new")
 
-    def addAnalysisGui(self,analysis,atype,params,status):
+    def addAnalysisGui(self,analysis,name,atype,params,status):
 
         frame_9 = QtGui.QFrame(self.ui.scrollAreaWidgetContents)
         frame_9.setFrameShape(QtGui.QFrame.StyledPanel)
         frame_9.setFrameShadow(QtGui.QFrame.Raised)
         frame_9.setObjectName("frame_9")
-        frame_9.setMinimumSize(QtCore.QSize(0, 36))
-        frame_9.setMaximumSize(QtCore.QSize(9999, 36))
+        frame_9.setMinimumSize(QtCore.QSize(0, 32))
+        frame_9.setMaximumSize(QtCore.QSize(9999, 32))
         horizontalLayout_4 = QtGui.QHBoxLayout(frame_9)
         horizontalLayout_4.setObjectName("horizontalLayout_4")
         analysisUpButton = QtGui.QPushButton("up",frame_9)
@@ -681,26 +682,38 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         analysisDownButton.setMaximumSize(QtCore.QSize(50, 16777215))
         analysisDownButton.setObjectName("analysisDownButton")
         horizontalLayout_4.addWidget(analysisDownButton)
-        analysisNameEdit = QtGui.QLineEdit(frame_9)
-        analysisNameEdit.setMinimumSize(QtCore.QSize(100, 0))
-        analysisNameEdit.setMaximumSize(QtCore.QSize(100, 16777215))
-        analysisNameEdit.setObjectName("analysisNameEdit")
-        analysisNameEdit.setMaximumSize(QtCore.QSize(70, 16777215))
-        horizontalLayout_4.addWidget(analysisNameEdit)
+        analysisNameLabel = QtGui.QLabel(name,frame_9)
+        analysisNameLabel.setAlignment(Qt.AlignCenter)
+        analysisNameLabel.setMinimumSize(QtCore.QSize(100, 0))
+        analysisNameLabel.setMaximumSize(QtCore.QSize(100, 16777215))
+        analysisNameLabel.setObjectName("analysisNameLabel")
+        analysisNameLabel.setFrameShape(QtGui.QFrame.StyledPanel)
+        analysisNameLabel.setMaximumSize(QtCore.QSize(70, 16777215))
+        horizontalLayout_4.addWidget(analysisNameLabel)
         analysisTypeLabel = QtGui.QLabel(atype,frame_9)
+        analysisTypeLabel.setAlignment(Qt.AlignCenter)
         analysisTypeLabel.setObjectName("analysisTypeLabel")
+        analysisTypeLabel.setFrameShape(QtGui.QFrame.StyledPanel)
         analysisTypeLabel.setMaximumSize(QtCore.QSize(70, 16777215))
         horizontalLayout_4.addWidget(analysisTypeLabel)
         analysisParamsLabel = QtGui.QLabel(str(params),frame_9)
+        analysisParamsLabel.setAlignment(Qt.AlignCenter)
         analysisParamsLabel.setObjectName("analysisParamsLabel")
+        analysisParamsLabel.setFrameShape(QtGui.QFrame.StyledPanel)
         analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
         horizontalLayout_4.addWidget(analysisParamsLabel)
         analysisStatusLabel = QtGui.QLabel(status,frame_9)
+        analysisStatusLabel.setMinimumSize(QtCore.QSize(50, 0))
+        analysisStatusLabel.setMaximumSize(QtCore.QSize(50, 16777215))
+        analysisStatusLabel.setAlignment(Qt.AlignCenter)
+        analysisStatusLabel.setFrameShape(QtGui.QFrame.StyledPanel)
         analysisStatusLabel.setObjectName("analysisStatusLabel")
         analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
         horizontalLayout_4.addWidget(analysisStatusLabel)
         analysisButton = QtGui.QPushButton("launch",frame_9)
         analysisButton.setObjectName("analysisButton")
+        analysisButton.setMinimumSize(QtCore.QSize(50, 0))
+        analysisButton.setMaximumSize(QtCore.QSize(50, 16777215))
         horizontalLayout_4.addWidget(analysisButton)
         horizontalLayout_4.setContentsMargins(-1, 1, -1, 1)
         self.ui.verticalLayout_9.addWidget(frame_9)
@@ -708,15 +721,54 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.dicoFrameAnalysis[frame_9] = analysis
         QObject.connect(analysisDownButton,SIGNAL("clicked()"),self.moveAnalysisDown)
         QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
+        QObject.connect(analysisButton,SIGNAL("clicked()"),self.launchAnalysis)
+
+    def launchAnalysis(self):
+        """ clic sur le bouton launch d'une analyse
+        """
+        if not os.path.exists("%s/analysis/"%self.dir):
+            os.mkdir("%s/analysis/"%self.dir)
+
+        executablePath = str(self.parent.preferences_win.ui.execPathEdit.text())
+        frame = self.sender().parent()
+        analysis = self.dicoFrameAnalysis[frame]
+        if analysis[0] == "estimate":
+            params = analysis[-1]
+            cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "-e", '"%s"'%params]
+            print cmd_args_list
+            f = open("estimation.out","w")
+            p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
+            f.close()
+
+            f = open("estimation.out","r")
+            data= f.read()
+            f.close()
+
+            if os.path.exists("%s/statobs.txt"%self.dir) and os.path.exists("%s/courant.log"%self.dir):
+                frame.findChild(QPushButton,"analysisButton").setText("Done")
+                # deplacement des fichiers de résultat
+                aDirName = "estimation_%s"%analysis[1]
+                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                shutil.move("%s/statobs.txt"%self.dir,"%s/analysis/%s/statobs.txt"%(self.dir,aDirName))
+                shutil.move("%s/courant.log"%self.dir,"%s/analysis/%s/courant.log"%(self.dir,aDirName))
+
+            else:
+                frame.findChild(QPushButton,"analysisButton").setText("Fail")
+
 
     def moveAnalysisDown(self):
+        """ déplace d'un cran vers le bas une analyse
+        """
         frame = self.sender().parent()
         cur_index = self.ui.verticalLayout_9.indexOf(frame)
         nb_items = self.ui.verticalLayout_9.count()
         if cur_index < (nb_items-1):
             self.ui.verticalLayout_9.removeWidget(frame)
             self.ui.verticalLayout_9.insertWidget(cur_index+1,frame)
+
     def moveAnalysisUp(self):
+        """ déplace d'un cran vers le haut une analyse
+        """
         frame = self.sender().parent()
         cur_index = self.ui.verticalLayout_9.indexOf(frame)
         if cur_index > 0:

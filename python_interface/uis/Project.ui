@@ -926,7 +926,11 @@
                <height>313</height>
               </rect>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_9"/>
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <property name="spacing">
+               <number>1</number>
+              </property>
+             </layout>
             </widget>
            </widget>
           </item>

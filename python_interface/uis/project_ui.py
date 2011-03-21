@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Fri Mar 18 11:19:13 2011
+# Created: Mon Mar 21 14:14:58 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -427,6 +427,7 @@ class Ui_TabWidget(object):
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 929, 313))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_9.setSpacing(1)
         self.verticalLayout_9.setObjectName(_fromUtf8("verticalLayout_9"))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_2.addWidget(self.scrollArea)

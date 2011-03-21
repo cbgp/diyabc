@@ -26,6 +26,8 @@ class Comparison(QFrame):
         self.ui = Ui_Frame()
         self.ui.setupUi(self)
 
+        self.ui.projectNameEdit.setText(self.parent.parent.dir)
+
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.redefButton,SIGNAL("clicked()"),self.redefineScenarios)

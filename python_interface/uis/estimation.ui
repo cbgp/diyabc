@@ -135,7 +135,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="refTableNameEdit"/>
+      <widget class="QLineEdit" name="projectNameEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
