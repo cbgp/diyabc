@@ -486,9 +486,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
     @pyqtSignature("")
     def on_btnStart_clicked(self):
+        """ Lance un thread de generation de la reftable
+        """
         self.writeRefTableHeader()
         tname = self.generateComputationTar("/tmp/aaaa.tar")
-        """Start or stop the treatment in the thread"""
         if self.th == None:
             try:
                 nb_to_gen = int(self.ui.nbSetsReqEdit.text())
@@ -501,8 +502,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
             self.th.start()
         else:
+            # si l'ancien thread a fini, on en relance un
+            if not self.th.isRunning():
+                self.th = None
+                self.on_btnStart_clicked()
             #self.cancelTh()
-            pass
 
     def refTableProblem(self):
         output.notify(self,"reftable problem","Something append during the reftable generation : %s"%(self.th.problem))
@@ -688,17 +692,19 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         analysisTypeLabel.setAlignment(Qt.AlignCenter)
         analysisTypeLabel.setObjectName("analysisTypeLabel")
         analysisTypeLabel.setFrameShape(QtGui.QFrame.StyledPanel)
-        analysisTypeLabel.setMaximumSize(QtCore.QSize(70, 16777215))
+        analysisTypeLabel.setMaximumSize(QtCore.QSize(200, 16777215))
+        analysisTypeLabel.setMinimumSize(QtCore.QSize(200, 0))
         horizontalLayout_4.addWidget(analysisTypeLabel)
         analysisParamsLabel = QtGui.QLabel(str(params),frame_9)
         analysisParamsLabel.setAlignment(Qt.AlignCenter)
         analysisParamsLabel.setObjectName("analysisParamsLabel")
         analysisParamsLabel.setFrameShape(QtGui.QFrame.StyledPanel)
-        analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
+        analysisParamsLabel.setMaximumSize(QtCore.QSize(200, 16777215))
+        analysisParamsLabel.setMinimumSize(QtCore.QSize(200, 0))
         horizontalLayout_4.addWidget(analysisParamsLabel)
         analysisStatusLabel = QtGui.QLabel(status,frame_9)
-        analysisStatusLabel.setMinimumSize(QtCore.QSize(50, 0))
-        analysisStatusLabel.setMaximumSize(QtCore.QSize(50, 16777215))
+        analysisStatusLabel.setMinimumSize(QtCore.QSize(40, 0))
+        analysisStatusLabel.setMaximumSize(QtCore.QSize(40, 16777215))
         analysisStatusLabel.setAlignment(Qt.AlignCenter)
         analysisStatusLabel.setFrameShape(QtGui.QFrame.StyledPanel)
         analysisStatusLabel.setObjectName("analysisStatusLabel")
@@ -706,8 +712,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         horizontalLayout_4.addWidget(analysisStatusLabel)
         analysisButton = QtGui.QPushButton("launch",frame_9)
         analysisButton.setObjectName("analysisButton")
-        analysisButton.setMinimumSize(QtCore.QSize(50, 0))
-        analysisButton.setMaximumSize(QtCore.QSize(50, 16777215))
+        analysisButton.setMinimumSize(QtCore.QSize(70, 0))
+        analysisButton.setMaximumSize(QtCore.QSize(70, 16777215))
         horizontalLayout_4.addWidget(analysisButton)
         horizontalLayout_4.setContentsMargins(-1, 1, -1, 1)
         self.ui.verticalLayout_9.addWidget(frame_9)
@@ -1027,7 +1033,11 @@ class RefTableGenThreadCluster(QThread):
 
         f=open(filename, 'rb')
         s = socket(AF_INET, SOCK_STREAM)
-        s.connect((host, port))
+        try:
+            s.connect((host, port))
+        except error,msg:
+            print "could not contact any server on %s:%s"%(host, port)
+            return
 
         #size = os.path.getsize(filename)
         #s.send(str(size))

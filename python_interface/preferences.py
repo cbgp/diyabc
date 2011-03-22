@@ -316,7 +316,7 @@ class Preferences(QMainWindow):
             lines = f.readlines()
             f.close()
             for l in lines:
-                tab = l.split(' ')
+                tab = l.strip().split(' ')
                 if len(tab)>1:
                     if tab[0] == "host":
                         self.ui.addrEdit.setText(tab[1])
