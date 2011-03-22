@@ -36,17 +36,24 @@
 
 using namespace std;
 
+struct matligneC
+{
+    double* x;
+};
+
+
 /** 
 * définit l'opérateur de comparaison de deux lignes de la matrice matA
 * pour l'utilisation de la fonction sort du module algorithm
 */
 struct complignes
 {
-   bool operator() (const double* & lhs, const double* & rhs) const
+   bool operator() (const matligneC & lhs, const matligneC & rhs) const
    {
-      return lhs[0] < rhs[0];
+      return lhs.x[0] < rhs.x[0];
    }
 };
+
 
     void comp_direct(int n, char *path, char *ident) {
         int ncs=100,nts,bidon,iscen,k,i;
@@ -397,8 +404,9 @@ struct complignes
     }
       
     void call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil, double *moyP, double *moyPinf, double *moyPsup) {
-      int *vecY,ntt,j;
-      double **matA;
+      int *vecY,ntt,j,dtt;
+      double som,*vecYY, *px,*pxi,*pxs;
+      matligneC *matA;
       for(int i=0;i<rt.nscenchoisi;i++) {
               if (i==0) {moyP[i]=1.0;moyPinf[i]=1.0;moyPsup[i]=1.0;}
               else      {moyP[i]=0.0;moyPinf[i]=0.0;moyPsup[i]=0.0;}  
@@ -412,15 +420,35 @@ struct complignes
             else {vecY[i]=-1;ntt--;}
         }
         if (ntt<=nts) {
-            matA = new double*[nts];
-            for (int i=0;i<nts;i++) matA[i] = new double[nstatOKsel+2];
+            matA = new matligneC[nts];
+            for (int i=0;i<nts;i++) matA[i].x = new double[nstatOKsel+2];
             for (int i=0;i<nts;i++) {
-                matA[i][0]=(double)vecY[i];
-                matA[i][1]=vecW[i];
-                for (int j=0;j<nstatOKsel;j++) matA[i][2+j] = matX0[i][j];
+                matA[i].x[0]=(double)vecY[i];
+                matA[i].x[1]=vecW[i];
+                for (int j=0;j<nstatOKsel;j++) matA[i].x[2+j] = matX0[i][j];
             }
-            //sort(&matA[0],&matA[nts],complignes());
+            sort(&matA[0],&matA[nts],complignes());
+            for (int i=0;i<50;i++){for (int j=0;j<6;j++) cout<<matA[i].x[j]<<"   ";cout <<"\n";}
+            dtt=nts-ntt;
+            vecYY = new double[ntt];
+            for (int i=0;i<ntt;i++) {
+                vecYY[i]=matA[i+dtt].x[0];
+                vecW[i]=matA[i+dtt].x[1];
+                for (int j=0;j<nstatOKsel;j++) matX0[i][j]=matA[i+dtt].x[j];
+            }
         }
+        som=0.0;for (int i=0;i<ntt;i++) som += vecW[i];
+        for (int i=0;i<ntt;i++) vecW[i] = vecW[i]/som*(double)ntt;
+        px = new double[nscenutil];pxi = new double[nscenutil];pxs = new double[nscenutil];
+        polytom_logistic_regression(nts, nstatOKsel, matX0, vecYY, vecW, px, pxi, pxs);
+
+        
+        
+        for (int i=0;i<nts;i++) delete [] matA[i].x; delete [] matA;
+        for (int i=0;i<nts;i++) delete [] matX0[i]; delete [] matX0;
+        delete [] vecY;
+        delete [] vecYY;
+        delete [] vecW;
     }  
       
       
