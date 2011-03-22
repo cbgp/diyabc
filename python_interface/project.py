@@ -723,31 +723,43 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if not os.path.exists("%s/analysis/"%self.dir):
             os.mkdir("%s/analysis/"%self.dir)
 
-        executablePath = str(self.parent.preferences_win.ui.execPathEdit.text())
         frame = self.sender().parent()
         analysis = self.dicoFrameAnalysis[frame]
-        if analysis[0] == "estimate":
-            params = analysis[-1]
-            cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "-e", '"%s"'%params]
-            print cmd_args_list
-            f = open("estimation.out","w")
-            p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
-            f.close()
+        self.thAnalysis = AnalysisThread(self,analysis)
+        self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress"),self.analysisProgress)
+        self.thAnalysis.start()
+        frame.findChild(QPushButton,"analysisButton").setText("Running")
 
-            f = open("estimation.out","r")
-            data= f.read()
-            f.close()
+    def analysisProgress(self):
+        prog = self.thAnalysis.progress
+        frame = None
+        for fr in self.dicoFrameAnalysis.keys():
+            if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
+                frame = fr
+                break
+        frame.findChild(QLabel,"analysisStatusLabel").setText("%s%%"%prog)
 
-            if os.path.exists("%s/statobs.txt"%self.dir) and os.path.exists("%s/courant.log"%self.dir):
-                frame.findChild(QPushButton,"analysisButton").setText("Done")
+        if str(prog) == "100":
+            self.terminateAnalysis()
+
+    def terminateAnalysis(self):
+
+        self.thAnalysis.terminate()
+        aid = self.thAnalysis.analysis[1]
+        atype = self.thAnalysis.analysis[0]
+        self.thAnalysis = None
+
+        if atype == "estimate":
+            if os.path.exists("%s/%s_phistar.txt"%(self.dir,aid)) and os.path.exists("%s/%s_psd.txt"%(self.dir,aid))
+            os.path.exists("%s/%s_paramstatdens.txt"%(self.dir,aid)):
+                #frame.findChild(QPushButton,"analysisButton").setText("Done")
                 # deplacement des fichiers de résultat
-                aDirName = "estimation_%s"%analysis[1]
+                aDirName = "estimation_%s"%aid
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                shutil.move("%s/statobs.txt"%self.dir,"%s/analysis/%s/statobs.txt"%(self.dir,aDirName))
-                shutil.move("%s/courant.log"%self.dir,"%s/analysis/%s/courant.log"%(self.dir,aDirName))
+                shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
+                shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
+                shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
 
-            else:
-                frame.findChild(QPushButton,"analysisButton").setText("Fail")
 
 
     def moveAnalysisDown(self):
@@ -1123,4 +1135,42 @@ class RefTableGenThread(QThread):
     def cancel(self):
         """SLOT to cancel treatment"""
         self.cancel = True
+
+class AnalysisThread(QThread):
+    def __init__(self,parent,analysis):
+        super(AnalysisThread,self).__init__(parent)
+        self.parent = parent
+        self.analysis = analysis
+        self.progress = 0
+
+    def run(self):
+        executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
+        if self.analysis[0] == "estimate":
+            params = self.analysis[-1]
+            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-e", '"%s"'%params, "-i", '"%s"'%self.analysis[1], "-m"]
+            print cmd_args_list
+            f = open("estimation.out","w")
+            p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
+            f.close()
+            print "popen ok"
+
+            f = open("estimation.out","r")
+            data= f.read()
+            f.close()
+
+            self.progress = 1
+            self.emit(SIGNAL("analysisProgress"))
+            while True:
+                a=os.popen("head -n 1 %s/%s_progress.txt"%(self.parent.dir,self.analysis[1]))
+                b=a.read()
+                a.close()
+                # on a bougé
+                if len(b.split(' ')) > 1:
+                    t1 = float(b.split(' ')[0])
+                    t2 = float(b.split(' ')[1])
+                    tmpp = int(t1*100/t2)
+                if tmpp != self.progress
+                    self.progress = tmpp
+                    self.emit(SIGNAL("analysisProgress"))
+                time.sleep(5)
 
