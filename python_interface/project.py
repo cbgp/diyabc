@@ -750,8 +750,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.thAnalysis = None
 
         if atype == "estimate":
-            if os.path.exists("%s/%s_phistar.txt"%(self.dir,aid)) and os.path.exists("%s/%s_psd.txt"%(self.dir,aid))
-            os.path.exists("%s/%s_paramstatdens.txt"%(self.dir,aid)):
+            if os.path.exists("%s/%s_phistar.txt"%(self.dir,aid)) and os.path.exists("%s/%s_psd.txt"%(self.dir,aid))\
+                    and os.path.exists("%s/%s_paramstatdens.txt"%(self.dir,aid)):
                 #frame.findChild(QPushButton,"analysisButton").setText("Done")
                 # deplacement des fichiers de résultat
                 aDirName = "estimation_%s"%aid
@@ -891,11 +891,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         f.close()
 
     def loadAnalysis(self):
-        f=open("%s/conf.analysis"%self.dir,"rb")
-        l = pickle.load(f)
-        f.close()
-        for a in l:
-            self.addAnalysis(a)
+        if os.path.exists("%s/conf.analysis"%self.dir):
+            f=open("%s/conf.analysis"%self.dir,"rb")
+            l = pickle.load(f)
+            f.close()
+            for a in l:
+                self.addAnalysis(a)
 
     def save(self):
         """ sauvegarde du projet -> mainconf, histconf, genconf, theadconf
@@ -1159,6 +1160,7 @@ class AnalysisThread(QThread):
             f.close()
 
             self.progress = 1
+            tmpp = 1
             self.emit(SIGNAL("analysisProgress"))
             while True:
                 a=os.popen("head -n 1 %s/%s_progress.txt"%(self.parent.dir,self.analysis[1]))
@@ -1169,7 +1171,7 @@ class AnalysisThread(QThread):
                     t1 = float(b.split(' ')[0])
                     t2 = float(b.split(' ')[1])
                     tmpp = int(t1*100/t2)
-                if tmpp != self.progress
+                if tmpp != self.progress:
                     self.progress = tmpp
                     self.emit(SIGNAL("analysisProgress"))
                 time.sleep(5)
