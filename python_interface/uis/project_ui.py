@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Tue Mar 22 17:42:25 2011
+# Created: Tue Mar 22 18:02:19 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -429,11 +429,13 @@ class Ui_TabWidget(object):
         self.label_17 = QtGui.QLabel(self.frame_9)
         self.label_17.setMinimumSize(QtCore.QSize(50, 0))
         self.label_17.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.label_17.setText(_fromUtf8(""))
         self.label_17.setObjectName(_fromUtf8("label_17"))
         self.horizontalLayout_4.addWidget(self.label_17)
         self.label_16 = QtGui.QLabel(self.frame_9)
         self.label_16.setMinimumSize(QtCore.QSize(50, 0))
         self.label_16.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.label_16.setText(_fromUtf8(""))
         self.label_16.setObjectName(_fromUtf8("label_16"))
         self.horizontalLayout_4.addWidget(self.label_16)
         self.label_13 = QtGui.QLabel(self.frame_9)
@@ -463,6 +465,7 @@ class Ui_TabWidget(object):
         self.label_18 = QtGui.QLabel(self.frame_9)
         self.label_18.setMinimumSize(QtCore.QSize(70, 0))
         self.label_18.setMaximumSize(QtCore.QSize(70, 16777215))
+        self.label_18.setText(_fromUtf8(""))
         self.label_18.setObjectName(_fromUtf8("label_18"))
         self.horizontalLayout_4.addWidget(self.label_18)
         self.verticalLayout_2.addWidget(self.frame_9)
@@ -563,7 +566,7 @@ class Ui_TabWidget(object):
         TabWidget.addTab(self.tab, _fromUtf8(""))
 
         self.retranslateUi(TabWidget)
-        TabWidget.setCurrentIndex(1)
+        TabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(TabWidget)
 
     def retranslateUi(self, TabWidget):
@@ -602,13 +605,10 @@ class Ui_TabWidget(object):
         self.tableWidget.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("TabWidget", "priority", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(4).setText(QtGui.QApplication.translate("TabWidget", "status", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(5).setText(QtGui.QApplication.translate("TabWidget", "results", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_17.setText(QtGui.QApplication.translate("TabWidget", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_16.setText(QtGui.QApplication.translate("TabWidget", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("TabWidget", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("TabWidget", "Type", None, QtGui.QApplication.UnicodeUTF8))
         self.label_11.setText(QtGui.QApplication.translate("TabWidget", "Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.label_14.setText(QtGui.QApplication.translate("TabWidget", "Status", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_18.setText(QtGui.QApplication.translate("TabWidget", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
         self.newAnButton.setText(QtGui.QApplication.translate("TabWidget", "Define new analysis", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tabAnalyses), QtGui.QApplication.translate("TabWidget", "Analyses", None, QtGui.QApplication.UnicodeUTF8))
         self.loadButton.setText(QtGui.QApplication.translate("TabWidget", "load", None, QtGui.QApplication.UnicodeUTF8))

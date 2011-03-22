@@ -64,7 +64,7 @@ class testDiyabc(unittest.TestCase):
         self.dicoPossibleClicks["genAddGroupButton"] = self.dicoPossibleClicks["setGeneticButton"]
         
         self.butCount = {}
-        l = self.buildClickLists("root",0)
+        l = self.buildClickLists("root",0,2)
         print l
 
         nbproj = len(diyabc.project_list)
@@ -127,7 +127,10 @@ class testDiyabc(unittest.TestCase):
         QCoreApplication.processEvents()
 
 
-    def buildClickLists(self,but,level):
+    def buildClickLists(self,but,level,nbMaxSameButton):
+        """ construit récursivement la liste de clics possible à partir du bouton donné
+        passe au maximum nbMaxSameButton fois sur le même bouton
+        """
         if self.dicoPossibleClicks[but] == []:
             #print "[%s] fin sur %s\n"%(level,self.dico_names[but])
             return [[but]]
@@ -138,11 +141,11 @@ class testDiyabc(unittest.TestCase):
             else:
                 #print "[%s] premiere fois sur %s"%(level,self.dico_names[but])
                 self.butCount[but] = 1
-            if self.butCount[but] < 2:
+            if self.butCount[but] <= nbMaxSameButton:
                 lr = []
                 for c in self.dicoPossibleClicks[but]:
                     #print "[%s] exploration de %s"%(level,self.dico_names[c])
-                    lexp = list(self.buildClickLists(c,level+1))
+                    lexp = list(self.buildClickLists(c,level+1,nbMaxSameButton))
                     for sublist in lexp:
                         #print "[%s] j'ajoute une liste (%s) a mon resultat\n"%(level,sublist)
                         new_l = []

@@ -4,7 +4,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-debug = False
+debug = True
 
 def notify(parent,title,message):
     if debug:
