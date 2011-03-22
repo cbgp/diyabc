@@ -26,6 +26,10 @@
 #include "comparscen.cpp"
 #define COMPARSCEN
 #endif
+#ifndef GLOBALH
+#include "global.h"
+#define GLOBALH
+#endif
 
 #ifndef SYS_TIMEH
 #include <sys/time.h>
@@ -58,15 +62,22 @@ double walltime( double *t0 )
 
 double clock_zero=0.0,debut,duree;
 
+
+int readheaders() {
+    int k;
+    header.readHeader(headerfilename);
+    header.calstatobs(statobsfilename);
+    datafilename=strdup(header.datafilename.c_str());
+    k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
+    return k;
+}
+
 int main(int argc, char *argv[]){
-	char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
     char *estpar,*compar;
     bool multithread=false,firsttime;
 	int nrecneeded,nrectodo,k,seed;
 	double **paramstat;
 	int optchar;
-    ReftableC rt;
-	HeaderC header;
     ParticleSetC ps;
     char action='a';
     //string a;
@@ -150,13 +161,15 @@ int main(int argc, char *argv[]){
 	}
 	switch (action) {
     
-      case 'r' :   header.readHeader(headerfilename);
-                   //cout<<"avant calstatobs\n";fflush(stdin);
-                   header.calstatobs(statobsfilename);
+      case 'r' :   k=readheaders(); 
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
-                   datafilename=strdup(header.datafilename.c_str());
+                   //header.readHeader(headerfilename);
+                   //cout<<"avant calstatobs\n";fflush(stdin);
+                   //header.calstatobs(statobsfilename);
+                   //cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
+                   //datafilename=strdup(header.datafilename.c_str());
                    //cout << datafilename<<"\n";
-                   k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
+                   //k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
                    //cout<<header.scenario[0].nparamvar<<"    "<<header.scenario[1].nparamvar<<"    "<<header.scenario[2].nparamvar<<"\n";
                    //cout <<"k="<<k<<"\n";
                    if (k==1) {
@@ -199,10 +212,15 @@ int main(int argc, char *argv[]){
                       //delete []datafilename;
                       break;
                       
-      case 'e'  : doestim(path,ident,headerfilename,reftablefilename,reftablelogfilename,statobsfilename,estpar,multithread);
+      case 'e'  : k=readheaders();
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  doestim(estpar,multithread);
+                  //doestim(path,ident,headerfilename,reftablefilename,reftablelogfilename,statobsfilename,estpar,multithread);
                   break;
                   
-      case 'c'  : docompscen(path,ident,headerfilename,reftablefilename,reftablelogfilename,statobsfilename,compar,multithread);
+      case 'c'  : k=readheaders();
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  docompscen(compar,multithread);
                   break;
     
     }

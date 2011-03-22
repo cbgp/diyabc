@@ -24,6 +24,11 @@
 #define MESUTILS
 #endif
 
+#ifndef GLOBALH
+#include "global.h"
+#define GLOBALH
+#endif
+
 using namespace std;
 
 #define c 1.5707963267948966192313216916398
@@ -46,8 +51,6 @@ struct parstatC {
 
 //variables globales du module;
 pardensC *pardens;
-ReftableC rt;
-HeaderC header;
 double *var_stat, *parmin, *parmax, *diff;
 double **alpsimrat,**parsim,**matX0,*vecW,**beta, **phistar,**simpar;
 int nparamcom,nparcompo,**numpar,nstatOKsel,numtransf,npar,npar0;
@@ -782,13 +785,14 @@ parstatC *parstat;
 /** 
 * effectue l'estimation ABC des paramètres (directe + régression locale)
 */
-    void doestim(char* path, char* ident, char *headerfilename,char *reftablefilename,char *reftablelogfilename,char *statobsfilename,char *options,bool multithread) {
+    void doestim(char *options,bool multithread) {
         char *datafilename;
         int rtOK,nstatOK;
         int nrec,nsel,ns,ns1;
         string opt,*ss,s,*ss1,s0,s1;
         double **matX0, *vecW, **alpsimrat,**parsim, *stat_obs;
         
+        cout<<"debut doestim  options : "<<options<<"\n";
         opt=char2string(options);
         ss = splitwords(opt,";",&ns);
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
@@ -832,30 +836,17 @@ parstatC *parstat;
             }
         }
         
-        header.readHeader(headerfilename);
-        //for (int i=0;i<header.nscenarios;i++) cout<<"scenario "<<i<<"    nparam = "<<header.scenario[i].nparam<<"\n";
-        datafilename=strdup(header.datafilename.c_str());
-        rtOK=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
-        //cout <<"\napres rt.readheader\n";
-        if (rtOK==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}          
-        nstatOK = rt.cal_varstat();
-        stat_obs = header.read_statobs(statobsfilename);
-        rt.cal_dist(nrec,nsel,stat_obs);
-        det_numpar();
-                                        //cout<<"apres det_numpar\n";
-        recalparam(nsel);
-                                       //cout<<"apres recalparam\n";
-        rempli_mat(nsel,stat_obs);
-                                        //cout<<"apres rempli_mat\n";
-        local_regression(nsel,multithread);
-                                        //cout<<"apres local_regression\n";
-        calphistar(nsel);
-                                        //cout<<"apres calphistar\n";
-        savephistar(nsel,path,ident);
-                                        //cout<<"apres savephistar\n";
-        lisimpar(nsel);
-                                         //cout<<"apres lisimpar\n";
-        histodens(nsel,multithread);
-        calparstat(nsel);
+        nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
+        stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
+        rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
+        det_numpar();                                     cout<<"apres det_numpar\n";
+        recalparam(nsel);                                 cout<<"apres recalparam\n";
+        rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
+        local_regression(nsel,multithread);               cout<<"apres local_regression\n";
+        calphistar(nsel);                                 cout<<"apres calphistar\n";
+        savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
+        lisimpar(nsel);                                   cout<<"apres lisimpar\n";
+        histodens(nsel,multithread);                      cout<<"apres histodens\n";
+        calparstat(nsel);                                 cout<<"apres calparstat\n";
         saveparstat(path,ident);
     }

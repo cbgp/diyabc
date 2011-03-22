@@ -23,6 +23,18 @@
 
 using namespace std;
 
+/** 
+* définit l'opérateur de comparaison de deux enregistrements de type enregC
+* pour l'utilisation de la fonction sort du module algorithm
+*/
+struct compenreg
+{
+   bool operator() (const enregC & lhs, const enregC & rhs) const
+   {
+      return lhs.dist < rhs.dist;
+   }
+};
+
 
 class ReftableC 
 {
@@ -235,18 +247,6 @@ public:
     }
   
 /** 
-* définit l'opérateur de comparaison de deux enregistrements de type enregC
-* pour l'utilisation de la fonction sort du module algorithm
-*/
-struct compenreg
-{
-   bool operator() (const enregC & lhs, const enregC & rhs) const
-   {
-      return lhs.dist < rhs.dist;
-   }
-};
-
-/** 
 * calcule les variances des statistiques résumées 
 * sur les 100000 premiers enregistrements de la table de référence
 */
@@ -268,9 +268,10 @@ struct compenreg
         i=0;
         while (i<nrecutil) {
             bidon=this->readrecord(&enr);
+            //cout<<"coucou\n";
             scenOK=false;iscen=0;
-            while((not scenOK)and(iscen<nscenchoisi)) {
-                scenOK=(enr.numscen==scenchoisi[iscen]);
+            while((not scenOK)and(iscen<this->nscenchoisi)) {
+                scenOK=(enr.numscen==this->scenchoisi[iscen]);
                 iscen++;
             }
             if (scenOK) {
@@ -285,8 +286,8 @@ struct compenreg
         this->closefile();
         nsOK=0;
         for (int j=0;j<this->nstat;j++) {
-            var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
-            if (var_stat[j]>0) nsOK++;
+            this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
+            if (this->var_stat[j]>0) nsOK++;
             //cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
         }
         cout<<"nstatOK = "<<nsOK<<"\n";
@@ -305,7 +306,7 @@ struct compenreg
         if (nn<nsel) nn=nsel;
         nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
         //cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
-        enrsel = new enregC[2*nn];
+        this->enrsel = new enregC[2*nn];
         //cout<<" apres allocation de enrsel\n";
         this->openfile2();
         while (nreclus<nrec) {
@@ -313,10 +314,10 @@ struct compenreg
             else nrecOK=nn;
             //cout<<"nrecOK = "<<nrecOK<<"\n";
             while ((nrecOK<2*nn)and(nreclus<nrec)) {
-                enrsel[nrecOK].param = new float[nparamax];
-                enrsel[nrecOK].stat  = new float[this->nstat];
+                this->enrsel[nrecOK].param = new float[nparamax];
+                this->enrsel[nrecOK].stat  = new float[this->nstat];
                 //cout<<"avant readrecord\n";
-                bidon=this->readrecord(&enrsel[nrecOK]);
+                bidon=this->readrecord(&(this->enrsel[nrecOK]));
                 /*cout<<"apres readrecord\n";
                 cout<<enrsel[nrecOK].numscen<<"   "<<scenchoisi[0]<<"\n";
                 for (int j=0;j<this->nstat;j++) cout <<enrsel[nrecOK].stat[j]<<"  ";
@@ -324,27 +325,30 @@ struct compenreg
                 cin >>bidon;*/
                 nreclus++;
                 scenOK=false;iscen=0;
-                while((not scenOK)and(iscen<nscenchoisi)) {
-                    scenOK=(enrsel[nrecOK].numscen==scenchoisi[iscen]);
+                while((not scenOK)and(iscen<this->nscenchoisi)) {
+                    scenOK=(this->enrsel[nrecOK].numscen==this->scenchoisi[iscen]);
                     iscen++;
                 }
                 if (scenOK) {
-                   enrsel[nrecOK].dist=0.0; 
-                    for (int j=0;j<this->nstat;j++) if (var_stat[j]>0.0) {
-                        diff =(double)enrsel[nrecOK].stat[j] - stat_obs[j]; 
-                      enrsel[nrecOK].dist += diff*diff/var_stat[j];
+                   this->enrsel[nrecOK].dist=0.0; 
+                    for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>0.0) {
+                        diff =(double)this->enrsel[nrecOK].stat[j] - stat_obs[j]; 
+                      this->enrsel[nrecOK].dist += diff*diff/this->var_stat[j];
                     }
-                    enrsel[nrecOK].dist =sqrt(enrsel[nrecOK].dist);
+                    this->enrsel[nrecOK].dist =sqrt(this->enrsel[nrecOK].dist);
                     nrecOK++;
                 if (nreclus==nrec) break;
                 }
             }
-            sort(&enrsel[0],&enrsel[2*nn],compenreg()); 
+            sort(&this->enrsel[0],&this->enrsel[2*nn],compenreg()); 
             //cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/this->nstat<<"    distmax = "<<enrsel[nsel-1].dist/this->nstat<<"\n";
         }
         this->closefile();
         cout<<"nrec_lus = "<<nreclus<<"   nrecOK = "<<nrecOK;
-        cout<<"    distmin = "<<enrsel[0].dist/(double)this->nstat<<"    distmax = "<<enrsel[nsel-1].dist/(double)this->nstat<<"\n";
+        cout<<"    distmin = "<<this->enrsel[0].dist/(double)this->nstat<<"    distmax = "<<this->enrsel[nsel-1].dist/(double)this->nstat<<"\n";
     }
     
 };
+
+
+

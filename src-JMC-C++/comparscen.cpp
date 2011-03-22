@@ -29,6 +29,11 @@
 #define MESUTILS
 #endif
 
+#ifndef GLOBALH
+#include "global.h"
+#define GLOBALH
+#endif
+
 using namespace std;
 
     void comp_direct(int n, char *path, char *ident) {
@@ -328,10 +333,10 @@ using namespace std;
         delete[] px0;
     }
         
-    void docompscen(char *path, char *ident, char *headerfilename, char *reftablefilename, char *reftablelogfilename, char *statobsfilename, char *compar,bool multithread){
+    void docompscen(char *compar,bool multithread){
         char *datafilename;
         int rtOK,nstatOK;
-        int nrec,nseld,nselr,nsel,ns,ns1,nlogreg;
+        int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,nts,nscenutil;
         string opt,*ss,s,*ss1,s0,s1;
         double **matX0, *vecW, **alpsimrat,**parsim, *stat_obs;
         
@@ -370,17 +375,17 @@ using namespace std;
             }
         }
         nsel=nseld;if(nsel<nselr)nsel=nselr;
-        header.readHeader(headerfilename);
-        //for (int i=0;i<header.nscenarios;i++) cout<<"scenario "<<i<<"    nparam = "<<header.scenario[i].nparam<<"\n";
-        datafilename=strdup(header.datafilename.c_str());
-        rtOK=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
-        cout <<"\napres rt.readheader\n";
-        if (rtOK==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}          
         nstatOK = rt.cal_varstat();
         stat_obs = header.read_statobs(statobsfilename);
         rt.cal_dist(nrec,nsel,stat_obs);
         comp_direct(nseld,path,ident);
         if (nlogreg>0) {
+            k=0;
+            while(k<nlogreg) {
+                nts=(nselr/nlogreg)*(k+1);
+                nscenutil=0;
+                
+            }
         }
     
     }
