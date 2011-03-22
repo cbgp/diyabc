@@ -846,7 +846,7 @@ parstatC *parstat;
         
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
-        nprog=1000;iprog=1;
+        nprog=100;iprog=1;
         flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
         rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
         iprog+=8;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
