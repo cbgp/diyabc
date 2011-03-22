@@ -36,6 +36,18 @@
 
 using namespace std;
 
+/** 
+* définit l'opérateur de comparaison de deux lignes de la matrice matA
+* pour l'utilisation de la fonction sort du module algorithm
+*/
+struct complignes
+{
+   bool operator() (const double* & lhs, const double* & rhs) const
+   {
+      return lhs[0] < rhs[0];
+   }
+};
+
     void comp_direct(int n, char *path, char *ident) {
         int ncs=100,nts,bidon,iscen,k,i;
         double **postscen, **postinf, **postsup,d,p;
@@ -83,6 +95,57 @@ using namespace std;
             fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",postscen[i][j],postinf[i][j],postsup[i][j]);fprintf(f1,"\n");
         }
         fclose(f1);        
+    }
+
+/** 
+* effectue le remplissage de la matrice matX0 et du vecteur des poids vecW 
+*/
+    void rempli_mat0(int n,double* stat_obs) {
+        int icc;
+        double delta,som,x,*var_statsel,nn;
+        double *sx,*sx2,*mo;
+        nn=(double)n;
+        delta = rt.enrsel[n-1].dist;
+        //cout<<"delta="<<delta<<"\n";
+        sx  = new double[rt.nstat];
+        sx2 = new double[rt.nstat];
+        mo  = new double[rt.nstat];
+        var_statsel = new double[rt.nstat];
+        for (int i=0;i<rt.nstat;i++){sx[i]=0.0;sx2[i]=0.0;mo[i]=0.0;}
+        for (int i=0;i<n;i++){
+            for (int j=0;j<rt.nstat;j++) {
+                x = rt.enrsel[i].stat[j];
+                sx[j] +=x;
+                sx2[j] +=x*x;
+            }
+        }
+        nstatOKsel=0;
+        for (int j=0;j<rt.nstat;j++) {
+            var_statsel[j]=(sx2[j]-sx[j]/nn*sx[j])/(nn-1.0);
+            if (var_statsel[j]>0.0) nstatOKsel++;
+            mo[j] = sx[j]/nn;
+        }
+        matX0 = new double*[n];
+        for (int i=0;i<n;i++)matX0[i]=new double[nstatOKsel];
+        vecW = new double[n];
+        //cout <<"hello\n";  
+        som=0.0;
+        for (int i=0;i<n;i++) {
+            icc=-1;
+            for (int j=0;j<rt.nstat;j++) {
+                if (var_statsel[j]>0.0) {
+                    icc++;
+                    matX0[i][icc]=(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
+                }
+            }
+            x=rt.enrsel[i].dist/delta;
+            vecW[i]=(1.5/delta)*(1.0-x*x);
+            som = som + vecW[i];
+        }
+
+        for (int i=0;i<n;i++) vecW[i]/=som;
+        //for (int i=0;i<10;i++) cout<<vecW[i]<<"  ";
+        //cout<<"\n";
     }
 
     void expbeta(int bsize, double *b, double *eb)
@@ -332,13 +395,42 @@ using namespace std;
         delete[] bet;
         delete[] px0;
     }
-        
+      
+    void call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil, double *moyP, double *moyPinf, double *moyPsup) {
+      int *vecY,ntt,j;
+      double **matA;
+      for(int i=0;i<rt.nscenchoisi;i++) {
+              if (i==0) {moyP[i]=1.0;moyPinf[i]=1.0;moyPsup[i]=1.0;}
+              else      {moyP[i]=0.0;moyPinf[i]=0.0;moyPsup[i]=0.0;}  
+        }
+        rempli_mat0(nts,stat_obs);
+        vecY = new int[nts];
+        ntt=nts;
+        for (int i=0;i<nts;i++)  {
+            j=0;while ((j<nscenutil)and(scenchoisiutil[j]!=rt.enrsel[i].numscen)) j++;
+            if (scenchoisiutil[j]==rt.enrsel[i].numscen) vecY[i]=j;
+            else {vecY[i]=-1;ntt--;}
+        }
+        if (ntt<=nts) {
+            matA = new double*[nts];
+            for (int i=0;i<nts;i++) matA[i] = new double[nstatOKsel+2];
+            for (int i=0;i<nts;i++) {
+                matA[i][0]=(double)vecY[i];
+                matA[i][1]=vecW[i];
+                for (int j=0;j<nstatOKsel;j++) matA[i][2+j] = matX0[i][j];
+            }
+            //sort(&matA[0],&matA[nts],complignes());
+        }
+    }  
+      
+      
+      
     void docompscen(char *compar,bool multithread){
         char *datafilename;
-        int rtOK,nstatOK;
-        int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,nts,nscenutil;
+        int rtOK,nstatOK, *postsc;
+        int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,kk,nts,nscenutil,*scenchoisiutil;
         string opt,*ss,s,*ss1,s0,s1;
-        double **matX0, *vecW, **alpsimrat,**parsim, *stat_obs;
+        double  *stat_obs, **moyP,**moyPsup,**moyPinf;
         
         opt=char2string(compar);
         ss = splitwords(opt,";",&ns);
@@ -351,40 +443,60 @@ using namespace std;
                 for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());
                 cout <<"scenario(s) choisi(s) : ";
                 for (int j=0;j<rt.nscenchoisi;j++) {cout<<rt.scenchoisi[j]; if (j<rt.nscenchoisi-1) cout <<",";}cout<<"\n";
-            } else {
-                if (s0=="n:") {
-                    nrec=atoi(s1.c_str());    
-                    cout<<"nombre total de jeux de données considérés (tous scénarios confondus)= "<<nrec<<"\n";
-                } else {
-                    if (s0=="d:") {
-                        nseld=atoi(s1.c_str());    
-                        cout<<"nombre de jeux de données considérés pour la méthode directe = "<<nseld<<"\n";
-                    } else {
-                        if (s0=="l:") {
-                        nselr=atoi(s1.c_str());    
-                        cout<<"nombre de jeux de données considérés pour la régression logistique = "<<nselr<<"\n";
-                        } else {
-                            if (s0=="m:") {
-                            	nlogreg=atoi(s1.c_str());
-                                if (nlogreg==0) nselr=0;
-                                cout<< "nombre de régressions logistiques à effectuer\n";
-                            }            
-                        }
-                    }
-                }
-            }
+            } else if (s0=="n:") {
+                nrec=atoi(s1.c_str());    
+                cout<<"nombre total de jeux de données considérés (tous scénarios confondus)= "<<nrec<<"\n";
+            } else if (s0=="d:") {
+                nseld=atoi(s1.c_str());    
+                cout<<"nombre de jeux de données considérés pour la méthode directe = "<<nseld<<"\n";
+            } else if (s0=="l:") {
+                nselr=atoi(s1.c_str());    
+                cout<<"nombre de jeux de données considérés pour la régression logistique = "<<nselr<<"\n";
+            } else if (s0=="m:") {
+                nlogreg=atoi(s1.c_str());
+                if (nlogreg==0) nselr=0;
+                cout<< "nombre de régressions logistiques à effectuer = "<<nlogreg<<"\n";
+            }            
         }
         nsel=nseld;if(nsel<nselr)nsel=nselr;
         nstatOK = rt.cal_varstat();
         stat_obs = header.read_statobs(statobsfilename);
         rt.cal_dist(nrec,nsel,stat_obs);
         comp_direct(nseld,path,ident);
+        moyP = new double*[nlogreg];
+        moyPinf = new double*[nlogreg];
+        moyPsup = new double*[nlogreg];
         if (nlogreg>0) {
             k=0;
             while(k<nlogreg) {
                 nts=(nselr/nlogreg)*(k+1);
+                moyP[k] = new double[rt.nscenchoisi];
+                moyPinf[k] = new double[rt.nscenchoisi];
+                moyPsup[k] = new double[rt.nscenchoisi];
+                postsc= new int[rt.nscenchoisi];
+                for (int i=0;i<rt.nscenchoisi;i++) {
+                    postsc[i]=0;
+                    for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postsc[i]++;
+                }
+                for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"  : "<<postsc[i]<<"\n";
+                cout<<"\n";
                 nscenutil=0;
-                
+                for (int i=0;i<rt.nscenchoisi;i++) if((postsc[i]>2)and(postsc[i]>nts/1000)) nscenutil++;
+                moyP[k] = new double[nscenutil];
+                moyPinf[k] = new double[nscenutil];
+                moyPsup[k] = new double[nscenutil];
+                scenchoisiutil = new int[nscenutil];
+                kk=0;for (int i=0;i<rt.nscenchoisi;i++) if((postsc[i]>2)and(postsc[i]>nts/1000)) {scenchoisiutil[kk]=rt.scenchoisi[i];kk++;}
+                if (nscenutil==1) {
+                    for (int i=0;i<rt.nscenchoisi;i++) {
+                      if((postsc[i]>2)and(postsc[i]>nts/1000)) {moyP[k][i]=1.0;moyPinf[k][i]=1.0;moyPsup[k][i]=1.0;}
+                      else                                     {moyP[k][i]=0.0;moyPinf[k][i]=0.0;moyPsup[k][i]=0.0;}
+                    }
+                } else call_polytom_logistic_regression(nts,stat_obs,nscenutil,scenchoisiutil,moyP[k],moyPinf[k],moyPsup[k]);
+                for (int i=0;i<rt.nscenchoisi;i++) cout<<moyP[k][i]<<"   "<<moyPinf[k][i]<<"   "<<moyPsup[k][i]<<"\n";
+                delete []postsc;
+                delete []scenchoisiutil;
+                k++;
             }
         }
     

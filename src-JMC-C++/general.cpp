@@ -26,14 +26,13 @@
 #include "comparscen.cpp"
 #define COMPARSCEN
 #endif
-#ifndef GLOBALH
-#include "global.h"
-#define GLOBALH
-#endif
-
 #ifndef SYS_TIMEH
 #include <sys/time.h>
 #define SYS_TIMEH
+#endif
+#ifndef GLOBALH
+#include "global.h"
+#define GLOBALH
 #endif
 
 int nenr=100;
@@ -80,6 +79,7 @@ int main(int argc, char *argv[]){
 	int optchar;
     ParticleSetC ps;
     char action='a';
+    bool flagp=false,flagi=false;
     //string a;
         //srand(time(NULL));
        
@@ -105,6 +105,7 @@ int main(int argc, char *argv[]){
 	
         case 'i' :
             ident=strdup(optarg);
+            flagi=true;
             break;
         
         case 'p' : 
@@ -122,6 +123,7 @@ int main(int argc, char *argv[]){
             strcat(reftablefilename,"reftable.bin");
             strcat(reftablelogfilename,"reftable.log");
             strcat(statobsfilename,"statobs.txt");
+            flagp=true;
             //cout<<headerfilename<<"\n"<<reftablefilename<<"\n"; 
             break;
 		   
@@ -159,6 +161,11 @@ int main(int argc, char *argv[]){
             break;
 	    }
 	}
+	 if (not flagp) {cout << "option -p is compulsory\n";exit(1);}
+	 if (not flagi) {if (action=='e') ident=strdup("estim1");
+                     if (action=='c') ident=strdup("compar1");
+     }
+	
 	switch (action) {
     
       case 'r' :   k=readheaders(); 

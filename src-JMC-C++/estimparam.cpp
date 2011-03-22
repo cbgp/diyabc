@@ -52,8 +52,8 @@ struct parstatC {
 //variables globales du module;
 pardensC *pardens;
 double *var_stat, *parmin, *parmax, *diff;
-double **alpsimrat,**parsim,**matX0,*vecW,**beta, **phistar,**simpar;
-int nparamcom,nparcompo,**numpar,nstatOKsel,numtransf,npar,npar0;
+double **beta, **phistar,**simpar;
+int nparamcom,nparcompo,**numpar,numtransf,npar,npar0;
 double borne=10.0,xborne;
 bool composite,original;
 string entete;
@@ -674,8 +674,9 @@ parstatC *parstat;
 * si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
 * sinon la densité est évaluée pour 1000 points du min au max 
 */
-    void histodens(int n, bool multithread) {
+    void histodens(int n, bool multithread, char* progressfilename,int* iprog,int* nprog) {
         bool condition;
+        FILE *flog;
         pardens = new pardensC[nparamcom+nparcompo];
         for (int j=0;j<nparamcom+nparcompo;j++) {
             pardens[j].ncl=1001;
@@ -721,6 +722,7 @@ parstatC *parstat;
                 pardens[j].postd = calculhisto(pardens[j].x,phistar,j,pardens[j].ncl);
 */            }
            //cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom+nparcompo<<"\n";
+        *iprog+=10;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",*iprog,*nprog);fclose(flog);
         }
      }
  
@@ -786,12 +788,18 @@ parstatC *parstat;
 * effectue l'estimation ABC des paramètres (directe + régression locale)
 */
     void doestim(char *options,bool multithread) {
-        char *datafilename;
-        int rtOK,nstatOK;
+        char *datafilename, *progressfilename;
+        int rtOK,nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1;
         string opt,*ss,s,*ss1,s0,s1;
-        double **matX0, *vecW, **alpsimrat,**parsim, *stat_obs;
+        double  *stat_obs;
         
+        FILE *flog;
+        
+        progressfilename = new char[strlen(path)+strlen(ident)+20];
+        strcpy(progressfilename,path);
+        strcat(progressfilename,ident);
+        strcat(progressfilename,"_progress.txt");
         cout<<"debut doestim  options : "<<options<<"\n";
         opt=char2string(options);
         ss = splitwords(opt,";",&ns);
@@ -838,15 +846,23 @@ parstatC *parstat;
         
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
+        nprog=1000;iprog=1;
+        flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
         rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
+        iprog+=8;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
         det_numpar();                                     cout<<"apres det_numpar\n";
+        nprog=(nparamcom+nparcompo)*10+14;
         recalparam(nsel);                                 cout<<"apres recalparam\n";
         rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
         local_regression(nsel,multithread);               cout<<"apres local_regression\n";
+        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
         calphistar(nsel);                                 cout<<"apres calphistar\n";
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
+        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
         lisimpar(nsel);                                   cout<<"apres lisimpar\n";
-        histodens(nsel,multithread);                      cout<<"apres histodens\n";
+        iprog+=2;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
+        histodens(nsel,multithread,progressfilename,&iprog,&nprog);                      cout<<"apres histodens\n";
         calparstat(nsel);                                 cout<<"apres calparstat\n";
         saveparstat(path,ident);
+        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
     }

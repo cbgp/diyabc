@@ -1,8 +1,8 @@
     ReftableC rt;
     HeaderC header;
     char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
-    
-    
+    double **matX0, *vecW, **alpsimrat,**parsim;    
+    int nstatOKsel;
     
     
     
