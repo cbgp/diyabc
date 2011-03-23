@@ -254,6 +254,7 @@ public:
         int nrecutil,iscen,nsOK,bidon,i;
         double *sx,*sx2,x,an;
         bool scenOK;
+        cout <<"debut de cal_varstat\n";
         enregC enr;
         nrecutil=100000;if (nrecutil>this->nrec) nrecutil=this->nrec;
         an=1.0*(double)nrecutil;

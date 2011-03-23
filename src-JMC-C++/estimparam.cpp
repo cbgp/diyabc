@@ -739,7 +739,7 @@ parstatC *parstat;
                 pardens[j].postd = calculhisto(pardens[j].x,phistar,j,pardens[j].ncl);
 */            }
            //cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom+nparcompo<<"\n";
-        *iprog+=10;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",*iprog,*nprog);fclose(flog);
+        *iprog+=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
         }
      }
  
@@ -866,22 +866,22 @@ parstatC *parstat;
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
         nprog=100;iprog=1;
-        flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
+        flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
-        iprog+=8;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
+        iprog+=8;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         det_numpar();                                     cout<<"apres det_numpar\n";
         nprog=(nparamcom+nparcompo)*10+14;
         recalparam(nsel);                                 cout<<"apres recalparam\n";
         rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
         local_regression(nsel,multithread);               cout<<"apres local_regression\n";
-        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
+        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         calphistar(nsel);                                 cout<<"apres calphistar\n";
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
-        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
+        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         lisimpar(nsel);                                   cout<<"apres lisimpar\n";
-        iprog+=2;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
+        iprog+=2;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         histodens(nsel,multithread,progressfilename,&iprog,&nprog);                      cout<<"apres histodens\n";
         calparstat(nsel);                                 cout<<"apres calparstat\n";
         saveparstat(path,ident);
-        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%3d   %3d",iprog,nprog);fclose(flog);
+        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }
