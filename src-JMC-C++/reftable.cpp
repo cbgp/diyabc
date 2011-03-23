@@ -305,31 +305,24 @@ public:
         float dd,di;
         if (nn<nsel) nn=nsel;
         nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
-        //cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
+        cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
         this->enrsel = new enregC[2*nn];
         //cout<<" apres allocation de enrsel\n";
         this->openfile2();
         while (nreclus<nrec) {
             if (firstloop) {nrecOK=0;firstloop=false;}
             else nrecOK=nn;
-            //cout<<"nrecOK = "<<nrecOK<<"\n";
             while ((nrecOK<2*nn)and(nreclus<nrec)) {
                 this->enrsel[nrecOK].param = new float[nparamax];
                 this->enrsel[nrecOK].stat  = new float[this->nstat];
-                //cout<<"avant readrecord\n";
                 bidon=this->readrecord(&(this->enrsel[nrecOK]));
-                /*cout<<"apres readrecord\n";
-                cout<<enrsel[nrecOK].numscen<<"   "<<scenchoisi[0]<<"\n";
-                for (int j=0;j<this->nstat;j++) cout <<enrsel[nrecOK].stat[j]<<"  ";
-                cout <<"\n";
-                cin >>bidon;*/
-                nreclus++;
                 scenOK=false;iscen=0;
                 while((not scenOK)and(iscen<this->nscenchoisi)) {
                     scenOK=(this->enrsel[nrecOK].numscen==this->scenchoisi[iscen]);
                     iscen++;
                 }
                 if (scenOK) {
+                   nreclus++;
                    this->enrsel[nrecOK].dist=0.0; 
                     for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>0.0) {
                         diff =(double)this->enrsel[nrecOK].stat[j] - stat_obs[j]; 
@@ -341,10 +334,9 @@ public:
                 }
             }
             sort(&this->enrsel[0],&this->enrsel[2*nn],compenreg()); 
-            //cout<<"nrec_lus = "<<nreclus<<"    distmin = "<<enrsel[0].dist/this->nstat<<"    distmax = "<<enrsel[nsel-1].dist/this->nstat<<"\n";
         }
         this->closefile();
-        cout<<"nrec_lus = "<<nreclus<<"   nrecOK = "<<nrecOK;
+        cout<<"\nnrec_lus = "<<nreclus<<"   nrecOK = "<<nrecOK;
         cout<<"    distmin = "<<this->enrsel[0].dist/(double)this->nstat<<"    distmax = "<<this->enrsel[nsel-1].dist/(double)this->nstat<<"\n";
     }
     
