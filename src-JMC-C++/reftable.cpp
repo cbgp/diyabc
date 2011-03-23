@@ -300,11 +300,11 @@ public:
 * et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
 */
     void cal_dist(int nrec, int nsel, double *stat_obs) {
-        int nn=10000,nreclus=0,nparamax,nrecOK=0,iscen,bidon;
+        int nn,nreclus=0,nparamax,nrecOK=0,iscen,bidon;
         bool firstloop=true,scenOK;
         double diff,dj;
         float dd,di;
-        if (nn<nsel) nn=nsel;
+        nn=nsel;
         nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
         cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
         this->enrsel = new enregC[2*nn];
@@ -339,6 +339,9 @@ public:
         this->closefile();
         cout<<"\nnrec_lus = "<<nreclus<<"   nrecOK = "<<nrecOK;
         cout<<"    distmin = "<<this->enrsel[0].dist/(double)this->nstat<<"    distmax = "<<this->enrsel[nsel-1].dist/(double)this->nstat<<"\n";
+        //for (int i=0;i<nsel;i++)           cout<<this->enrsel[i].numscen<<"  ";
+        //cout<<"\n";
+        //exit(1);
     }
     
 };

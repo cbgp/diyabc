@@ -213,15 +213,21 @@ parstatC *parstat;
                    //for (int i=0;i<10;i++) cout <<rt.enrsel[i].numscen<<"\n";
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {
-                           k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
+                           //cout<<"numscen = "<<rt.enrsel[i].numscen<<"  ";
+                           //for (int k0=0;k0<rt.nscenchoisi;k0++) cout<<rt.scenchoisi[k0]<<"  ";cout<<"\n";
+                           k=0;while(rt.enrsel[i].numscen != rt.scenchoisi[k])k++;
                            //k = rt.enrsel[i].numscen-1;
                            //cout <<"k="<<k<<"   j="<<j<<"\n";
                            //cout<<numpar[k][j]<<"\n";
                            if (rt.enrsel[i].param[numpar[k][j]]<=parmin[j]) alpsimrat[i][j] = -xborne;
                            else if (rt.enrsel[i].param[numpar[k][j]]>=parmax[j]) alpsimrat[i][j] = xborne;
-                           else alpsimrat[i][j] =log((rt.enrsel[i].param[numpar[k][j]]-parmin[j])/(parmax[j]-rt.enrsel[i].param[numpar[k][j]]));
+                           else {
+                             //cout<<rt.enrsel[i].param[numpar[k][j]]<<"   "<<parmin[j]<<"   "<<parmax[j]<<"\n";
+                             alpsimrat[i][j] =log((rt.enrsel[i].param[numpar[k][j]]-parmin[j])/(parmax[j]-rt.enrsel[i].param[numpar[k][j]]));
+                           }
                        }
                    }
+                   //cout<<"fin de la transformation logit\n";
                    break;
           case 4 : //log(tg) transform
                    parmin = new double[nparamcom]; parmax = new double[nparamcom]; diff = new double[nparamcom];
@@ -261,7 +267,7 @@ parstatC *parstat;
                        }
                        for (int j=nparamcom-header.nparamut;j<nparamcom;j++) {
                                jj=j-(nparamcom-header.nparamut);
-                               cout<<"jj="<<jj<<"\n";
+                               //cout<<"jj="<<jj<<"\n";
                                parmin[j]=0.95*header.mutparam[jj].prior.mini;
                                parmax[j]=1.05*header.mutparam[jj].prior.maxi;
                                cout<<header.mutparam[jj].category<<"   ";
