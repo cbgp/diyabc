@@ -1158,7 +1158,7 @@ class AnalysisThread(QThread):
         executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
         if self.analysis[0] == "estimate":
             params = self.analysis[-1]
-            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-e", '"%s"'%params, "-i", '"%s"'%self.analysis[1], "-m"]
+            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-e", '%s'%params, "-i", '%s'%self.analysis[1], "-m"]
             print cmd_args_list
             f = open("estimation.out","w")
             p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 

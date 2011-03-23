@@ -751,7 +751,7 @@ coefficient P</string>
               </size>
              </property>
              <property name="text">
-              <string>6.00E-001</string>
+              <string>3.00E-001</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
