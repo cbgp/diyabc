@@ -535,11 +535,17 @@ struct complignes
       
       
     void docompscen(char *compar,bool multithread){
-        char *datafilename;
-        int rtOK,nstatOK, *postsc;
+        char *datafilename, *progressfilename;
+        int rtOK,nstatOK, *postsc,iprog,nprog;;
         int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,kk,nts,nscenutil,*scenchoisiutil;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs, **moyP,**moyPsup,**moyPinf;
+        FILE *flog;
+        
+        progressfilename = new char[strlen(path)+strlen(ident)+20];
+        strcpy(progressfilename,path);
+        strcat(progressfilename,ident);
+        strcat(progressfilename,"_progress.txt");
         
         opt=char2string(compar);
         ss = splitwords(opt,";",&ns);
@@ -568,9 +574,12 @@ struct complignes
             }            
         }
         nsel=nseld;if(nsel<nselr)nsel=nselr;
+        nprog=5+nlogreg;
+        iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         nstatOK = rt.cal_varstat();
         stat_obs = header.read_statobs(statobsfilename);
         rt.cal_dist(nrec,nsel,stat_obs);
+        iprog+=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         comp_direct(nseld,path,ident);
         moyP    = new double*[nlogreg];
         moyPinf = new double*[nlogreg];
@@ -607,6 +616,7 @@ struct complignes
                 delete []postsc;
                 delete []scenchoisiutil;
                 k++;
+                iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             }
                 char *nomfiparstat;
                 nomfiparstat = new char[strlen(path)+strlen(ident)+20];
