@@ -363,7 +363,7 @@ parstatC *parstat;
         //ecrimat("matA",nstatOKsel+1,nstatOKsel+1,matA);
         matAA = prodM(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
         //ecrimat("matAA",nstatOKsel+1,nstatOKsel+1,matAA);
-        matB = inverse(nstatOKsel+1,matAA,multithread);
+        matB = invM(nstatOKsel+1,matAA,multithread);
         matC = prodM(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
         beta = prodM(nstatOKsel+1,n,nparamcom,matC,parsim);
         //ecrimat("beta",nstatOKsel+1,nparamcom,beta);

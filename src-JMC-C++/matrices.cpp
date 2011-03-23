@@ -53,7 +53,7 @@ double** prodM(int n, int m, int p, double **A,double **B) {
 /** 
 * effectue l'inversion matricielle d'une matrice (carrée) de doubles 
 */
-  double** inverse(int n, double **A, bool multithread)
+  double** invM(int n, double **A, bool multithread)
 {
     int i,j,k,l,err=0;
     double max,pivot,coef, **T, **C;
@@ -100,6 +100,55 @@ double** prodM(int n, int m, int p, double **A,double **B) {
         }
     for (i=0;i<n;i++) delete[] T[i];delete[] T;
     return C; 
+}
+
+int inverse(int n, double **A, double **C)
+{
+    int i,j,k,l,err=0;
+    double max,pivot,coef, **T;
+    double debut,duree;
+    T = new double*[n];for (i=0;i<n;i++) T[i]= new double[2*n]; 
+
+    for (i=0;i<n;i++) 
+        {for (j=0;j<n;j++) 
+            {T[i][j]=A[i][j];
+             if(i==j) T[i][j+n]=1.0; else T[i][j+n]=0.0;
+            }
+        }
+    k=0;
+    while ((err==0)&&(k<n))
+        {max=fabs(T[k][k]);
+         l=k;
+         for (i=k+1;i<n;i++)
+            {if (max<fabs(T[i][k])) {max=fabs(T[i][k]);l=i;}
+            }
+         if (max!=0.0)
+            {for (j=k;j<2*n;j++)
+                {pivot=T[k][j];
+                 T[k][j]=T[l][j];
+                 T[l][j]=pivot;
+                }
+             pivot=T[k][k];
+             if (pivot!=0.0)
+                {
+                 for (j=k+1;j<2*n;j++) T[k][j]/=pivot;
+#pragma omp parallel for private(coef,j)
+                 for (i=0;i<n;i++)
+                    {if (i!=k) 
+                        {coef=T[i][k];
+                         for (j=k+1;j<2*n;j++) T[i][j]-=coef*T[k][j];
+                        }
+                    }
+                } else err=3;
+            } else err=4;
+         k++;   
+        }
+    if (err==0)
+        {for (i=0;i<n;i++)
+            {for (j=0;j<n;j++) C[i][j]=T[i][j+n];}
+        }
+    for (i=0;i<n;i++) delete[] T[i];delete[] T;
+    return err; 
 }
 
   

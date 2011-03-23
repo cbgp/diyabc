@@ -57,8 +57,9 @@ struct complignes
 
     void comp_direct(int n, char *path, char *ident) {
         int ncs=100,nts,bidon,iscen,k,i;
-        double **postscen, **postinf, **postsup,d,p;
+        double **postscen, **postinf, **postsup,d,p,delta;
         bool scenOK;
+        delta = rt.enrsel[n-1].dist;
         postscen = new double*[ncs];postinf = new double*[ncs];postsup = new double*[ncs];
         for (int i=0;i<ncs;i++) {
             postscen[i] = new double[rt.nscenchoisi];
@@ -74,7 +75,7 @@ struct complignes
                 postscen[i][k] +=(1.0/(double)nts);
             }
         }
-        cout<<"apres calcul des postscen\n";
+        //cout<<"apres calcul des postscen\n";
         for (int i=0;i<ncs;i++) {
              nts=n/ncs;
              for (k=0;k<rt.nscenchoisi;k++) {
@@ -85,7 +86,7 @@ struct complignes
                  postsup[i][k] =p+d;if(postsup[i][k]>1.0)postsup[i][k]=1.0;
              }
         }
-        cout<<"apres calcul des postinf/postsup\n";
+        //cout<<"apres calcul des postinf/postsup\n";
         char *nomfiparstat;
         nomfiparstat = new char[strlen(path)+strlen(ident)+20];
         strcpy(nomfiparstat,path);
@@ -129,6 +130,7 @@ struct complignes
         nstatOKsel=0;
         for (int j=0;j<rt.nstat;j++) {
             var_statsel[j]=(sx2[j]-sx[j]/nn*sx[j])/(nn-1.0);
+            //cout <<"var_statsel["<<j<<"]="<<var_statsel[j]<<"\n";
             if (var_statsel[j]>0.0) nstatOKsel++;
             mo[j] = sx[j]/nn;
         }
@@ -149,10 +151,13 @@ struct complignes
             vecW[i]=(1.5/delta)*(1.0-x*x);
             som = som + vecW[i];
         }
-
+        /*cout <<"\n matX0:\n";
+        for (int i=0;i<5;i++) { cout<<rt.enrsel[i].numscen<<"   ";
+            for (int j=0;j<nstatOKsel;j++) cout<<matX0[i][j]<<"  ";cout<<"\n";
+        }*/
         for (int i=0;i<n;i++) vecW[i]/=som;
-        //for (int i=0;i<10;i++) cout<<vecW[i]<<"  ";
-        //cout<<"\n";
+        /*cout <<"\nvecW:\n";for (int i=0;i<10;i++) cout<<vecW[i]<<"  ";
+        cout<<"\n";*/
     }
 
     void expbeta(int bsize, double *b, double *eb)
@@ -182,10 +187,11 @@ struct complignes
             for (imod=0;imod<nmodel;imod++) {matP[i][imod]=ebetax[imod];smatP[i]+=matP[i][imod];}
             }
         for (i=0;i<nmodel*(nco+1);i++) matYP[i]=0.0;
-        for (imod=0;imod<nmodel;imod++)
-            {for (j=0;j<nco+1;j++)
-                {for (i=0;i<nli;i++) matYP[imod*(nco+1)+j]+=(matY[i][imod]-matP[i][imod])*matX[i][j]*vecW[i];}
-            }   
+        for (imod=0;imod<nmodel;imod++){
+            for (j=0;j<nco+1;j++){
+                for (i=0;i<nli;i++) matYP[imod*(nco+1)+j]+=(matY[i][imod]-matP[i][imod])*matX[i][j]*vecW[i];
+            }
+        }
     }
 
     bool cal_loglik(int nli, int nmodel, int rep, double *loglik, double **matY, double **matP, double *vecW, double *smatY, double *smatP)
@@ -270,15 +276,66 @@ struct complignes
             }
     } 
 
+    void ordonne(int nmodel,int nli,int nco,double *vecY,int *numod) {
+        double swm,*sw,*vecW2,*vecY2,**matX2;
+        int k,ii;
+        //cout<<"debut de ordonne\n";
+        sw =new double[nmodel+1];
+        vecW2=new double[nli];vecY2 = new double[nli];
+        matX2 = new double*[nli];for (int i=0;i<nli;i++) matX2[i] = new double[nco];
+        for (int i=0;i<nmodel+1;i++) sw[i]=0.0;
+        swm=0.0;
+        for (int i=0;i<nli;i++) sw[int(vecY[i])] +=vecW[i];
+        for (int i=0;i<nmodel+1;i++) numod[i]=-1;
+        for (int i=0;i<nmodel+1;i++) {
+            swm +=sw[i];
+            k=0;
+            for (int j=0;j<nmodel+1;j++) if((i!=j)and(sw[i]<sw[j])) k++;
+            while (numod[k]!=-1) k++;
+            numod[k]=i;    
+        }
+        //for (int i=0;i<nmodel+1;i++) cout<<"numod["<<i<<"]="<<numod[i]<<"\n";
+        ii=-1;
+        for (k=0;k<nmodel+1;k++) {
+            for (int i=0;i<nli;i++){
+                if(int(vecY[i])==numod[k]) {
+                    ii++;
+                    vecY2[ii]=(double)k;
+                    vecW2[ii]=vecW[i];
+                    for (int j=0;j<nco;j++) matX2[ii][j]=matX0[i][j];
+                }
+            }
+        }
+        //cout<<"apres la première recopie\n";
+        for (int i=0;i<nli;i++) {
+            vecY[i]=vecY2[i];
+            vecW[i]=vecW2[i];
+            for(int j=0;j<nco;j++) matX0[i][j]=matX2[i][j];
+        }
+    }
+
+    void reordonne(int nmodel,int *numod,double *px, double *pxi,double *pxs) {
+        double *qx,*qxi,*qxs;
+        qx = new double[nmodel+1];qxi = new double[nmodel+1];qxs = new double[nmodel+1];
+        for (int i=0;i<nmodel+1;i++) {
+            qx[numod[i]]=px[i];qxi[numod[i]]=pxi[i];qxs[numod[i]]=pxs[i];
+        }
+        for (int i=0;i<nmodel+1;i++) {
+            px[i]=qx[i];pxi[i]=qxi[i];pxs[i]=qxs[i];
+        }
+    }
+
     int polytom_logistic_regression(int nli, int nco, double **matX0, double *vecY, double *vecW, double *px, double *pxi, double *pxs)
     {
         int nmodel=0;
         double debut,duree,de1,du1;
-        
+        int *numod;
         for (int i=1;i<nli;i++) {if (vecY[i]>1.0*nmodel) nmodel=vecY[i]+0.1;}
         if (nmodel<1) {px[0]=1.0;pxi[0]=1.0;pxs[0]=1.0;return 0;}
-        cout << "   nmodel="<<nmodel<<endl;
-        
+        //cout << "   nmodel="<<nmodel<<endl;
+        numod=new int[nmodel+1];
+        ordonne(nmodel,nli,nco,vecY,numod);
+        //cout <<"apres ordonne\n";
         int i,j,l,m,n,nmodnco=nmodel*(nco+1),imod,rep;
         double **matA,**matB,**matX,**matXT,**matC,*deltabeta,*beta0,*beta,**matP,**matY,*matYP,*loglik,*sd,*bet,*px0;
         double imody,betmin,betmax,*smatY,*smatP;
@@ -338,8 +395,18 @@ struct complignes
                     }           
                 }
               }
+            /*cout<<"\n matC:\n";
+            for (i=0;i<5;i++){
+                 for (j=0;j<9;j++) cout<<matC[i][j]<<"   ";
+                 cout<<"\n";
+            }*/
             inverse(nmodnco,matC,matB);
             //InvdiagMat(nmodnco,matC,matB);
+            /*cout<<"\n matB:\n";
+            for (i=0;i<5;i++){
+                 for (j=0;j<9;j++) cout<<matC[i][j]<<"   ";
+                 cout<<"\n";
+            }*/
             for (i=0;i<nmodnco;i++) {deltabeta[i]=0.0;for (j=0;j<nmodnco;j++) deltabeta[i]+=matB[i][j]*matYP[j];}
             for (i=0;i<nmodnco;i++) beta[i]=beta0[i]+deltabeta[i];
             remplimatriceYP(nli,nco,nmodel,matP,matYP,beta,matX,vecW,matY,smatP);
@@ -374,18 +441,21 @@ struct complignes
             for (i=0;i<nmodel+1;i++) {if (betmax<bet[i]) betmax=bet[i];}
             fin=true;i=0;while ((fin==true)&&(i<nmodel+1)) {fin= (fabs(px[i]-px0[i])<0.0001);i++;}
             fin=(fin||(betmax-betmin>50));
-            for (i=0;i<nmodel+1;i++) {std::cout << bet[i] <<"   ";}
-            std::cout << "\n";
-            for (i=0;i<nmodel+1;i++) {std::cout << px[i] <<"   ";}
-            std::cout << "\n";std::cout << "\n";
+            //cout <<"\nbet:\n";
+            //for (i=0;i<nmodel+1;i++) {std::cout << bet[i] <<"   ";}
+            //std::cout << "\npx:\n";
+            //for (i=0;i<nmodel+1;i++) {std::cout << px[i] <<"   ";}
+            //std::cout << "\n";std::cout << "\n";
             }
         for (imod=0;imod<nmodel+1;imod++)
                 {pxi[imod]=px[imod]-1.96*sd[imod];
                 if (pxi[imod]<0.0) pxi[imod]=0.0;
                 pxs[imod]=px[imod]+1.96*sd[imod];
                 if (pxs[imod]>1.0) pxs[imod]=1.0;
+                //cout<<"model "<<imod<<"  "<<px[imod]<<"  ["<<pxi[imod]<<","<<pxs[imod]<<"]   sd="<<sd[imod]<<"\n";
                 }
-            
+        reordonne(nmodel,numod,px,pxi,pxs);    
+        //for (imod=0;imod<nmodel+1;imod++) cout<<"model "<<imod<<"  "<<px[imod]<<"  ["<<pxi[imod]<<","<<pxs[imod]<<"]\n";
         for (i=0;i<nmodel;i++) delete[] matA[i];delete[] matA;
         for (i=0;i<nmodnco;i++) delete[] matB[i];delete[] matB;
         for (i=0;i<nmodnco;i++) delete[] matC[i];delete[] matC;
@@ -404,10 +474,10 @@ struct complignes
     }
       
     void call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil, double *moyP, double *moyPinf, double *moyPsup) {
-      int *vecY,ntt,j,dtt;
-      double som,*vecYY, *px,*pxi,*pxs;
+      int *vecY,ntt,j,dtt,k,kk;
+      double som,*vecYY, *px,*pxi,*pxs,somw;
       matligneC *matA;
-      for(int i=0;i<rt.nscenchoisi;i++) {
+      for (int i=0;i<rt.nscenchoisi;i++) {
               if (i==0) {moyP[i]=1.0;moyPinf[i]=1.0;moyPsup[i]=1.0;}
               else      {moyP[i]=0.0;moyPinf[i]=0.0;moyPsup[i]=0.0;}  
         }
@@ -420,28 +490,39 @@ struct complignes
             else {vecY[i]=-1;ntt--;}
         }
         if (ntt<=nts) {
-            matA = new matligneC[nts];
+            matA = new matligneC[ntt];
             for (int i=0;i<nts;i++) matA[i].x = new double[nstatOKsel+2];
-            for (int i=0;i<nts;i++) {
-                matA[i].x[0]=(double)vecY[i];
-                matA[i].x[1]=vecW[i];
-                for (int j=0;j<nstatOKsel;j++) matA[i].x[2+j] = matX0[i][j];
+            kk=0;
+            for (int k=0;k<nscenutil;k++) {
+                for (int i=0;i<nts;i++) { 
+                    if (vecY[i]==k) {
+                        matA[kk].x[0]=(double)vecY[i];
+                        matA[kk].x[1]= vecW[i];
+                        for (int j=0;j<nstatOKsel;j++) matA[kk].x[2+j] = matX0[i][j];
+                        kk++;
+                    }
+                }
             }
-            sort(&matA[0],&matA[nts],complignes());
-            for (int i=0;i<50;i++){for (int j=0;j<6;j++) cout<<matA[i].x[j]<<"   ";cout <<"\n";}
-            dtt=nts-ntt;
             vecYY = new double[ntt];
             for (int i=0;i<ntt;i++) {
-                vecYY[i]=matA[i+dtt].x[0];
-                vecW[i]=matA[i+dtt].x[1];
-                for (int j=0;j<nstatOKsel;j++) matX0[i][j]=matA[i+dtt].x[j];
+                vecYY[i]=matA[i].x[0];
+                vecW[i]=matA[i].x[1];
+                for (int j=0;j<nstatOKsel;j++) matX0[i][j]=matA[i].x[j+2];
             }
         }
         som=0.0;for (int i=0;i<ntt;i++) som += vecW[i];
         for (int i=0;i<ntt;i++) vecW[i] = vecW[i]/som*(double)ntt;
         px = new double[nscenutil];pxi = new double[nscenutil];pxs = new double[nscenutil];
         polytom_logistic_regression(nts, nstatOKsel, matX0, vecYY, vecW, px, pxi, pxs);
-
+        if (nscenutil==rt.nscenchoisi) for (int i=0;i<nscenutil;i++) {moyP[i]=px[i];moyPinf[i]=pxi[i];moyPsup[i]=pxs[i];}
+        else {
+            for (int i=0;i<rt.nscenchoisi;i++) {moyP[i]=0.0;moyPinf[i]=0.0;moyPsup[i]=0.0;}
+            for  (int i=0;i<nscenutil;i++)  {
+                kk=0;
+                while (scenchoisiutil[i]!=rt.scenchoisi[kk]) kk++;
+                moyP[kk]=px[i];moyPinf[kk]=pxi[i];moyPsup[kk]=pxs[i];
+            }
+        }
         
         
         for (int i=0;i<nts;i++) delete [] matA[i].x; delete [] matA;
@@ -491,7 +572,7 @@ struct complignes
         stat_obs = header.read_statobs(statobsfilename);
         rt.cal_dist(nrec,nsel,stat_obs);
         comp_direct(nseld,path,ident);
-        moyP = new double*[nlogreg];
+        moyP    = new double*[nlogreg];
         moyPinf = new double*[nlogreg];
         moyPsup = new double*[nlogreg];
         if (nlogreg>0) {
@@ -521,11 +602,28 @@ struct complignes
                       else                                     {moyP[k][i]=0.0;moyPinf[k][i]=0.0;moyPsup[k][i]=0.0;}
                     }
                 } else call_polytom_logistic_regression(nts,stat_obs,nscenutil,scenchoisiutil,moyP[k],moyPinf[k],moyPsup[k]);
-                for (int i=0;i<rt.nscenchoisi;i++) cout<<moyP[k][i]<<"   "<<moyPinf[k][i]<<"   "<<moyPsup[k][i]<<"\n";
+                cout<<"\n";
+                for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"   "<<moyP[k][i]<<"   ["<<moyPinf[k][i]<<","<<moyPsup[k][i]<<"]\n";
                 delete []postsc;
                 delete []scenchoisiutil;
                 k++;
             }
+                char *nomfiparstat;
+                nomfiparstat = new char[strlen(path)+strlen(ident)+20];
+                strcpy(nomfiparstat,path);
+                strcat(nomfiparstat,ident);
+                strcat(nomfiparstat,"_complogreg.txt");
+                cout <<nomfiparstat<<"\n";
+                FILE *f1;
+                f1=fopen(nomfiparstat,"w");
+                printf("     %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) printf("          scenario %d       ",rt.scenchoisi[i]);printf("\n");
+                fprintf(f1,"   %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"          scenario %d       ",rt.scenchoisi[i]);fprintf(f1,"\n");
+                for (int i=0;i<nlogreg;i++) {
+                    nts = (nselr/nlogreg)*(i+1);
+                    printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",moyP[i][j],moyPinf[i][j],moyPsup[i][j]);printf("\n");
+                    fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",moyP[i][j],moyPinf[i][j],moyPsup[i][j]);fprintf(f1,"\n");
+                }
+                fclose(f1);        
         }
     
     }
