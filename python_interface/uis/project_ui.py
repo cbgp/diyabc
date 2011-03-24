@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Tue Mar 22 18:02:19 2011
+# Created: Thu Mar 24 11:05:44 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -473,7 +473,7 @@ class Ui_TabWidget(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 929, 291))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 929, 264))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_9.setSpacing(1)
@@ -494,6 +494,20 @@ class Ui_TabWidget(object):
         self.newAnButton.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.newAnButton.setObjectName(_fromUtf8("newAnButton"))
         self.verticalLayout_2.addWidget(self.newAnButton)
+        self.frame_10 = QtGui.QFrame(self.page_2)
+        self.frame_10.setMinimumSize(QtCore.QSize(0, 0))
+        self.frame_10.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame_10.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_10.setObjectName(_fromUtf8("frame_10"))
+        self.horizontalLayout_7 = QtGui.QHBoxLayout(self.frame_10)
+        self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
+        self.analysisListCombo = QtGui.QComboBox(self.frame_10)
+        self.analysisListCombo.setObjectName(_fromUtf8("analysisListCombo"))
+        self.horizontalLayout_7.addWidget(self.analysisListCombo)
+        self.analysisResultsButton = QtGui.QPushButton(self.frame_10)
+        self.analysisResultsButton.setObjectName(_fromUtf8("analysisResultsButton"))
+        self.horizontalLayout_7.addWidget(self.analysisResultsButton)
+        self.verticalLayout_2.addWidget(self.frame_10)
         self.verticalLayout_6.addLayout(self.verticalLayout_2)
         self.analysisStack.addWidget(self.page_2)
         self.page_3 = QtGui.QWidget()
@@ -566,7 +580,7 @@ class Ui_TabWidget(object):
         TabWidget.addTab(self.tab, _fromUtf8(""))
 
         self.retranslateUi(TabWidget)
-        TabWidget.setCurrentIndex(0)
+        TabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(TabWidget)
 
     def retranslateUi(self, TabWidget):
@@ -610,6 +624,7 @@ class Ui_TabWidget(object):
         self.label_11.setText(QtGui.QApplication.translate("TabWidget", "Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.label_14.setText(QtGui.QApplication.translate("TabWidget", "Status", None, QtGui.QApplication.UnicodeUTF8))
         self.newAnButton.setText(QtGui.QApplication.translate("TabWidget", "Define new analysis", None, QtGui.QApplication.UnicodeUTF8))
+        self.analysisResultsButton.setText(QtGui.QApplication.translate("TabWidget", "View results", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tabAnalyses), QtGui.QApplication.translate("TabWidget", "Analyses", None, QtGui.QApplication.UnicodeUTF8))
         self.loadButton.setText(QtGui.QApplication.translate("TabWidget", "load", None, QtGui.QApplication.UnicodeUTF8))
         self.saveGraphButton.setText(QtGui.QApplication.translate("TabWidget", "save", None, QtGui.QApplication.UnicodeUTF8))

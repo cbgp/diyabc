@@ -20,6 +20,7 @@ from mutationModel.setMutationModelSequences import SetMutationModelSequences
 from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from defineNewAnalysis import DefineNewAnalysis
+from drawAnalysisResult import DrawAnalysisResult
 from utils.data import Data
 from datetime import datetime 
 import os.path
@@ -123,6 +124,25 @@ class Project(QTabWidget):
 
         self.ui.verticalLayout_9.setAlignment(Qt.AlignTop)
         self.ui.tableWidget.hide()
+
+        # remplissage du combo liste des analyses deja effectuées
+        self.fillAnalysisCombo()
+        QObject.connect(self.ui.analysisResultsButton,SIGNAL("clicked()"),self.viewAnalysisResult)
+
+    def fillAnalysisCombo(self):
+        self.ui.analysisListCombo.clear()
+        if os.path.exists("%s/analysis/"%self.dir):
+            l = os.listdir("%s/analysis/"%self.dir)
+            for e in l:
+                self.ui.analysisListCombo.addItem(e.replace('_',' '))
+
+    def viewAnalysisResult(self):
+        anDir = str(self.ui.analysisListCombo.currentText())
+        if anDir.strip() != "":
+            directory = anDir.replace(' ','_')
+            self.drawAnalysisFrame = DrawAnalysisResult(directory,self)
+            self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
+            self.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
 
 
     def loadACP(self):
