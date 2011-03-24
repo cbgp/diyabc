@@ -71,6 +71,7 @@ class testDiyabc(unittest.TestCase):
         diyabc.closeCurrentProject(False)
         self.assertEqual(len(diyabc.project_list) == nbproj-1,True)
 
+        # on supprime les chaines dont la taille est trop faible
         to_remove = []
         for chain in l:
             if len(chain) < 3:

@@ -737,6 +737,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame.findChild(QPushButton,"analysisButton").setText("Running")
 
     def analysisProgress(self):
+        """ met à jour l'indicateur de progression de l'analyse en cours
+        """
         prog = self.thAnalysis.progress
         frame = None
         for fr in self.dicoFrameAnalysis.keys():
@@ -746,10 +748,14 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame.findChild(QLabel,"analysisStatusLabel").setText("%s%%"%prog)
 
         if str(prog) == "100":
+            print "terminate analysis"
+            frame.findChild(QPushButton,"analysisButton").setText("Done")
             self.terminateAnalysis()
 
     def terminateAnalysis(self):
-
+        """ arrête le thread de l'analyse et range les résultats
+        dans un dossier
+        """
         self.thAnalysis.terminate()
         aid = self.thAnalysis.analysis[1]
         atype = self.thAnalysis.analysis[0]
@@ -758,13 +764,13 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if atype == "estimate":
             if os.path.exists("%s/%s_phistar.txt"%(self.dir,aid)) and os.path.exists("%s/%s_psd.txt"%(self.dir,aid))\
                     and os.path.exists("%s/%s_paramstatdens.txt"%(self.dir,aid)):
-                #frame.findChild(QPushButton,"analysisButton").setText("Done")
                 # deplacement des fichiers de résultat
                 aDirName = "estimation_%s"%aid
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
+                os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
 
 
@@ -1182,6 +1188,7 @@ class AnalysisThread(QThread):
                     t2 = float(b.split(' ')[1])
                     tmpp = int(t1*100/t2)
                 if tmpp != self.progress:
+                    print "on a progressé"
                     self.progress = tmpp
                     self.emit(SIGNAL("analysisProgress"))
                 time.sleep(5)
