@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/drawScenarioFrame.ui'
 #
-# Created: Thu Mar 24 11:24:03 2011
+# Created: Thu Mar 24 14:11:17 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!

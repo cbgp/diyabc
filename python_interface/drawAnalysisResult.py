@@ -18,7 +18,7 @@ class DrawAnalysisResult(QFrame):
         self.parent=parent
         self.directory=directory
         self.createWidgets()
-        self.pixList = []    
+        self.plotList = []    
         self.svgList = []
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
         
@@ -56,9 +56,20 @@ class DrawAnalysisResult(QFrame):
 
     def addDraw(self,name,values,absv,ordpr,ordpo):
         
+        tabvalues = values.strip().split('  ')
+        av = tabvalues[0]
+        median = tabvalues[1]
+        mode = tabvalues[2]
+        q2_5 = tabvalues[3]
+        q5 = tabvalues[4]
+        q25 = tabvalues[5]
+        q75 = tabvalues[6]
+        q95 = tabvalues[7]
+        q975 = tabvalues[8]
+
         p = QwtPlot()
         p.setCanvasBackground(Qt.white)
-        p.setTitle(name)
+        p.setTitle("%s [%s]"%(name,median))
         legend = QwtLegend()
 
         labs = []
@@ -74,7 +85,7 @@ class DrawAnalysisResult(QFrame):
         legend_txt = "prior"
         pr = QwtPlotCurve(legend_txt)
         pr.setStyle(QwtPlotCurve.Lines)
-        pr.setPen(QPen(QColor(self.tab_colors[1]),3))
+        pr.setPen(QPen(QColor(self.tab_colors[2]),2))
         pr.setSymbol(QwtSymbol(Qwt.QwtSymbol.NoSymbol,
               QBrush(QColor(self.tab_colors[1])),
                 QPen(QColor(self.tab_colors[1])),
@@ -86,7 +97,7 @@ class DrawAnalysisResult(QFrame):
         legend_txt = "posterior"
         post = QwtPlotCurve(legend_txt)
         post.setStyle(QwtPlotCurve.Lines)
-        post.setPen(QPen(QColor(self.tab_colors[2]),3))
+        post.setPen(QPen(QColor(self.tab_colors[1]),2))
         post.setSymbol(QwtSymbol(Qwt.QwtSymbol.NoSymbol,
               QBrush(QColor(self.tab_colors[2])),
                 QPen(QColor(self.tab_colors[2])),
@@ -97,7 +108,7 @@ class DrawAnalysisResult(QFrame):
 
         for it in legend.legendItems():
             f = it.font()
-            f.setPointSize(14)
+            f.setPointSize(11)
             it.setFont(f)
         #litem = legend.find(obs)
         #litem.symbol().setSize(QSize(17,17))
@@ -106,31 +117,79 @@ class DrawAnalysisResult(QFrame):
         legend.setFrameShadow(QFrame.Raised)
 
         p.replot()
-        sd = p.axisScaleDiv(0)
-        interval = sd.interval()
-        minv = interval.minValue()
-        maxv = interval.maxValue()
-        inc = 1.0
-        if maxv-minv < 9:
-            inc = 0.5
-        if maxv-minv < 5:
-            inc = 0.2
-        if maxv-minv < 3:
-            inc = 0.1
-        ticks = []
-        vv = minv
-        while vv < maxv:
-            ticks.append(round(vv,1))
-            vv += inc
-        #print sd.ticks(QwtScaleDiv.MajorTick)
-        sd.setTicks(QwtScaleDiv.MajorTick,ticks)
-        p.setAxisScaleDiv(0,sd)
         grid = QwtPlotGrid()
+        grid.setPen(QPen(Qt.black,0.5))
         grid.attach(p)
+        p.insertLegend(legend,QwtPlot.BottomLegend)
 
-        self.ui.horizontalLayout_2.addWidget(p)
-        self.ui.horizontalLayout_3.addWidget(QLabel("plop"))
-        self.pixList.append(p)
+        fr = QFrame(self)
+        fr.setFrameShape(QFrame.StyledPanel)
+        fr.setFrameShadow(QFrame.Raised)
+        fr.setObjectName("frame")
+        fr.setMinimumSize(QSize(400, 0))
+        fr.setMaximumSize(QSize(400, 300))
+        vert = QVBoxLayout(fr)
+        vert.addWidget(p)
+
+        self.ui.horizontalLayout_2.addWidget(fr)
+        self.plotList.append(p)
+
+        # frame des valeurs
+        frame = QFrame(self.ui.scrollAreaWidgetContents)
+        frame.setFrameShape(QFrame.StyledPanel)
+        frame.setFrameShadow(QFrame.Raised)
+        frame.setObjectName("frame")
+        verticalLayout_3 = QVBoxLayout(frame)
+        verticalLayout_3.setObjectName("verticalLayout_3")
+        avLabel = QLabel("Average   :  %s"%av,frame)
+        avLabel.setObjectName("avLabel")
+        avLabel.setAlignment(Qt.AlignCenter)
+        avLabel.setFont(QFont("Courrier",10))
+        verticalLayout_3.addWidget(avLabel)
+        medLabel = QLabel("Median    :  %s"%median,frame)
+        medLabel.setObjectName("medLabel")
+        medLabel.setAlignment(Qt.AlignCenter)
+        medLabel.setFont(QFont("Courrier",10))
+        verticalLayout_3.addWidget(medLabel)
+        modeLabel = QLabel("Mode       :  %s"%mode,frame)
+        modeLabel.setObjectName("modeLabel")
+        modeLabel.setAlignment(Qt.AlignCenter)
+        modeLabel.setFont(QFont("Courrier",10))
+        verticalLayout_3.addWidget(modeLabel)
+        q2_5Label = QLabel("q(0.025)  :  %s"%q2_5,frame)
+        q2_5Label.setObjectName("q2_5Label")
+        q2_5Label.setAlignment(Qt.AlignCenter)
+        q2_5Label.setFont(QFont("Courrier",10))
+        verticalLayout_3.addWidget(q2_5Label)
+        q5Label = QLabel("q(0.050)  :  %s"%q5,frame)
+        q5Label.setObjectName("q5Label")
+        q5Label.setAlignment(Qt.AlignCenter)
+        q5Label.setFont(QFont("Courrier",10))
+        verticalLayout_3.addWidget(q5Label)
+        q25Label = QLabel("q(0.250)  :  %s"%q25,frame)
+        q25Label.setObjectName("q25Label")
+        q25Label.setAlignment(Qt.AlignCenter)
+        q25Label.setFont(QFont("Courrier",10))
+        verticalLayout_3.addWidget(q25Label)
+        q75Label = QLabel("q(0.750)  :  %s"%q75,frame)
+        q75Label.setObjectName("q75")
+        q75Label.setAlignment(Qt.AlignCenter)
+        q75Label.setFont(QFont("Courrier",10))
+        verticalLayout_3.addWidget(q75Label)
+        q95Label = QLabel("q(0.950)  :  %s"%q95,frame)
+        q95Label.setObjectName("q95Label")
+        q95Label.setAlignment(Qt.AlignCenter)
+        q95Label.setFont(QFont("Courrier",10))
+        verticalLayout_3.addWidget(q95Label)
+        q975Label = QLabel("q(0.975)  :  %s"%q975,frame)
+        q975Label.setObjectName("q975Label")
+        q975Label.setAlignment(Qt.AlignCenter)
+        q975Label.setFont(QFont("Courrier",10))
+        verticalLayout_3.addWidget(q975Label)
+        frame.setMinimumSize(QSize(400, 0))
+        frame.setMaximumSize(QSize(400, 9000))
+        self.ui.horizontalLayout_3.addWidget(frame)
+
 
     def DrawSvg(self,segments,scc,t,savename):
         """ dessine un scenario dans un fichier svg
