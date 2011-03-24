@@ -239,10 +239,10 @@ class DrawAnalysisResult(QFrame):
         pic_whole_path = "%s/%s_"%(pic_dir,pic_basename)
 
         pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
-        if pic_format == "jpg":
+        if pic_format == "jpg" or pic_format == "png":
             for name in self.dicoPlot.keys():
                 p = self.dicoPlot[name]
-                savename = "%s%s.jpg"%(pic_whole_path,name)
+                savename = "%s%s.%s"%(pic_whole_path,name,pic_format)
                 pix = QPixmap(p.rect().size().width(),p.rect().size().height())
                 pix.fill(Qt.white)
                 painter = QPainter(pix)
@@ -267,60 +267,52 @@ class DrawAnalysisResult(QFrame):
     def saveDrawsToOne(self):
         """ Sauve tous les scenarios dans une seule image et un seul svg
         """
-        proj_dir = self.parent.parent.dir
-        pic_dir = self.parent.parent.parent.scenario_pix_dir_name
-        pic_basename = self.parent.parent.parent.scenario_pix_basename
-        pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
+        proj_dir = self.parent.dir
+        pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)
+        pic_basename = "posterior"
+        pic_whole_path = "%s/%s_"%(pic_dir,pic_basename)
 
-        pic_format = str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText())
+        pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
 
-        nbpix = len(self.pixList)
+        nbPlot = len(self.dicoPlot.keys())
         largeur = 2
         # resultat de la div entière plus le reste (modulo)
-        longueur = (len(self.pixList)/largeur)+(len(self.pixList)%largeur)
+        longueur = (nbPlot/largeur)+(nbPlot%largeur)
         ind = 0
         li=0
 
-        if pic_format == "jpg":
-            self.im_result = QImage(largeur*500,longueur*450,QImage.Format_RGB32)
+        # on prend un des graphes pour savoir ses dimensions
+        size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
+
+        if pic_format == "jpg" or pic_format == "png":
+            self.im_result = QImage(largeur*(size.width()),longueur*(size.height()),QImage.Format_RGB32)
             self.im_result.fill(Qt.black)
             painter = QPainter(self.im_result)
-            painter.fillRect(0, 0, largeur*500, longueur*450, Qt.white)
+            painter.fillRect(0, 0, largeur*(size.width()), longueur*(size.height()), Qt.white)
         else:
             self.pic_result = QSvgGenerator()
             #self.pic_result.setSize(QSize(largeur*500, longueur*450));
             #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
-            self.pic_result.setFileName("%s_all.svg"%pic_whole_path)
-            painter_pic = QPainter()
-            painter_pic.begin(self.pic_result)
+            self.pic_result.setFileName("%sall.svg"%pic_whole_path)
+            painter_svg = QPainter()
+            painter_svg.begin(self.pic_result)
 
+        keys = self.dicoPlot.keys()
         # on fait des lignes tant qu'on a des pix
-        while (ind < nbpix):
+        while (ind < nbPlot):
             col = 0
-            if pic_format == "svg":
-                if ind > 0:
-                    painter_pic.translate(-2*500,450)
             # une ligne
-            while (ind < nbpix) and (col < largeur):
-                # ajout
-                #self.im_result.fill(self.pixList[ind],QPoint(col*500,li*450))
-                #painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
-                if pic_format == "jpg":
-                    painter.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
+            while (ind < nbPlot) and (col < largeur):
+                plot = self.dicoPlot[keys[ind]]
+                if pic_format == "jpg" or pic_format == "png":
+                    plot.print_(painter, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
                 else:
-                    sc_info = self.sc_info_list[ind]
-                    if sc_info["tree"] != None:
-                        self.paintScenario(painter_pic,sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],500,450)
-                    # on va a droite
-                    painter_pic.translate(500,0)
-                #print "li:",li," col:",col
-                #print "xof:",col*500," yof:",li*450
-                #print "zzz"
+                    plot.print_(painter_svg, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
                 col+=1
                 ind+=1
             li+=1
 
-        if pic_format == "jpg":
-            self.im_result.save("%s_all.jpg"%pic_whole_path)
+        if pic_format == "jpg" or pic_format == "png":
+            self.im_result.save("%sall.%s"%(pic_whole_path,pic_format))
         else:
-            painter_pic.end()
+            painter_svg.end()

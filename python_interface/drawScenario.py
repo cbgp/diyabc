@@ -277,10 +277,10 @@ class DrawScenario(QFrame):
         #            os.remove("%s_%i.jpg"%(pic_whole_path,i))
 
         pic_format = str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText())
-        if pic_format == "jpg":
+        if pic_format == "jpg" or pic_format == "png":
             for ind,pix in enumerate(self.pixList):
                 im = pix.toImage()
-                im.save("%s_%i.jpg"%(pic_whole_path,ind+1))
+                im.save("%s_%i.%s"%(pic_whole_path,ind+1,pic_format))
         else:
             for ind,sc_info in enumerate(self.sc_info_list):
                 if sc_info["tree"] != None:
@@ -304,7 +304,7 @@ class DrawScenario(QFrame):
         ind = 0
         li=0
 
-        if pic_format == "jpg":
+        if pic_format == "jpg" or pic_format == "png":
             self.im_result = QImage(largeur*500,longueur*450,QImage.Format_RGB32)
             self.im_result.fill(Qt.black)
             painter = QPainter(self.im_result)
@@ -328,7 +328,7 @@ class DrawScenario(QFrame):
                 # ajout
                 #self.im_result.fill(self.pixList[ind],QPoint(col*500,li*450))
                 #painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
-                if pic_format == "jpg":
+                if pic_format == "jpg" or pic_format == "png":
                     painter.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
                 else:
                     sc_info = self.sc_info_list[ind]
@@ -343,7 +343,7 @@ class DrawScenario(QFrame):
                 ind+=1
             li+=1
 
-        if pic_format == "jpg":
-            self.im_result.save("%s_all.jpg"%pic_whole_path)
+        if pic_format == "jpg" or pic_format == "png":
+            self.im_result.save("%s_all.%s"%pic_whole_path,pic_format)
         else:
             painter_pic.end()

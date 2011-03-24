@@ -342,7 +342,7 @@ class Project(QTabWidget):
                 painter = QPainter(svg)
                 p.print_(painter, p.rect())
                 painter.end()
-            elif pic_format == "jpg":
+            elif pic_format == "jpg" or pic_format == "png":
                 pix = QPixmap(p.rect().size().width(),p.rect().size().height())
                 pix.fill(Qt.white)
 
@@ -352,7 +352,7 @@ class Project(QTabWidget):
                 p.print_(painter, p.rect())
                 painter.end()
                 im = pix.toImage()
-                im.save("%s/%s/%s.jpg"%(proj_dir,graph_dir,graph_file_name))
+                im.save("%s/%s/%s.%s"%(proj_dir,graph_dir,graph_file_name,pic_format))
 
 
     def defineNewAnalysis(self):

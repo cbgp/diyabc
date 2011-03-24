@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Thu Mar 17 11:29:09 2011
+# Created: Thu Mar 24 17:36:13 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -90,6 +90,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.label_3)
         self.formatCombo = QtGui.QComboBox(self.frame)
         self.formatCombo.setObjectName(_fromUtf8("formatCombo"))
+        self.formatCombo.addItem(_fromUtf8(""))
         self.formatCombo.addItem(_fromUtf8(""))
         self.formatCombo.addItem(_fromUtf8(""))
         self.horizontalLayout.addWidget(self.formatCombo)
@@ -551,7 +552,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -568,6 +569,7 @@ class Ui_MainWindow(object):
 "(scenario trees, PCA graphics)", None, QtGui.QApplication.UnicodeUTF8))
         self.formatCombo.setItemText(0, QtGui.QApplication.translate("MainWindow", "svg", None, QtGui.QApplication.UnicodeUTF8))
         self.formatCombo.setItemText(1, QtGui.QApplication.translate("MainWindow", "jpg", None, QtGui.QApplication.UnicodeUTF8))
+        self.formatCombo.setItemText(2, QtGui.QApplication.translate("MainWindow", "png", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("MainWindow", "Style", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("MainWindow", "Various", None, QtGui.QApplication.UnicodeUTF8))
         self.setMutSeqLabel_2.setText(QtGui.QApplication.translate("MainWindow", "Default values of historical model", None, QtGui.QApplication.UnicodeUTF8))
