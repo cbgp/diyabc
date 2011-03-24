@@ -26,6 +26,10 @@
 #include "comparscen.cpp"
 #define COMPARSCEN
 #endif
+#ifndef BIAS
+#include "bias.cpp"
+#define BIAS
+#endif
 #ifndef SYS_TIMEH
 #include <sys/time.h>
 #define SYS_TIMEH
@@ -72,7 +76,7 @@ int readheaders() {
 }
 
 int main(int argc, char *argv[]){
-    char *estpar,*compar;
+    char *estpar,*compar,*biaspar,*confpar;
     bool multithread=false,firsttime;
 	int nrecneeded,nrectodo,k,seed;
 	double **paramstat;
@@ -98,6 +102,10 @@ int main(int argc, char *argv[]){
             cout << "-e s:<chosen scenarios separated by a comma>;n:<number of simulated datasets taken from reftable>;m:<number of simulated datasets used for the local regression>;t:<number of the transformation (1,2,3 or 4)>;p:<o for original, c for composite, oc for both>"<<"\n";
             cout << "-c for ABC computation of posterior probability of scenarios with parameters as defined below\n";
             cout << "-c s:<chosen scenarios separated by a comma;n:<number of simulated datasets taken from reftable>;d:<number of simulated datasets used in the direct approach>;l:<number of simulated datasets used in the logistic regression;m:<number of required logistic regressions>\n";
+            cout << "-b for bias/precision computations with parameters as defined below\n";
+            cout << "-b s:<chosen scenario;h:<histparameter values/priors (see below);u:<mutparameter values/priors for successive groups (see below);n:,m:,t:,p: as for ABC parameter estimation;d:<number of test data sets\n";
+            cout << "-b histparameter values (separated by a comma): <parameter name>=<parameter value> histparameter priors <parameter name>=<parameter prior as in header.txt\n";
+            cout << "-b mutparameter values of group 1 and 2 : G1(0.0005,2,0.22,2,0,0)G2(0.0003,...) mutparameter priors of group 1 and 2 : G1(UN[0.0001,0.001,0,0],GA[,,,],UN[,,, ...\n)";
             cout << "-q to merge all reftable_$j.bin \n";
             cout << "-r for building/appending a reference table <required number of simulated datasets (default 10^6/scenario)>\n";
             cout << "-s <seed for the random generator>\n";
@@ -154,7 +162,12 @@ int main(int argc, char *argv[]){
             action='e';
             break;        
                     
-       case 'q' : 
+          case 'b' :  
+            biaspar=strdup(optarg);
+            action='b';
+            break;        
+                    
+      case 'q' : 
             header.readHeader(headerfilename);
             k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
             rt.concat();
@@ -164,6 +177,7 @@ int main(int argc, char *argv[]){
 	 if (not flagp) {cout << "option -p is compulsory\n";exit(1);}
 	 if (not flagi) {if (action=='e') ident=strdup("estim1");
                      if (action=='c') ident=strdup("compar1");
+                     if (action=='b') ident=strdup("bias1");
      }
 	
 	switch (action) {
@@ -222,7 +236,6 @@ int main(int argc, char *argv[]){
       case 'e'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
                   doestim(estpar,multithread);
-                  //doestim(path,ident,headerfilename,reftablefilename,reftablelogfilename,statobsfilename,estpar,multithread);
                   break;
                   
       case 'c'  : k=readheaders();
@@ -230,7 +243,12 @@ int main(int argc, char *argv[]){
                   docompscen(compar,multithread);
                   break;
     
-    }
+       case 'b'  : k=readheaders();
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  dobias(biaspar,multithread);
+                  break;
+                  
+   }
 	//delete [] headerfilename;delete [] reftablefilename;
 	duree=walltime(&debut);
     fprintf(stdout,"durée = %.2f secondes \n",duree);

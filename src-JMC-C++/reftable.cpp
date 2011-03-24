@@ -39,7 +39,7 @@ struct compenreg
 class ReftableC 
 {
 public:
-    int nrec,*nrecscen,nscen;
+    int nrec,*nrecscen,nscen,nreclus;
     long posnrec;
     char *datapath, *filename, *filelog, *pch;
     int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi;
@@ -300,20 +300,21 @@ public:
 * et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
 */
     void cal_dist(int nrec, int nsel, double *stat_obs) {
-        int nn,nreclus=0,nparamax,nrecOK=0,iscen,bidon;
+        int nn,nparamax,nrecOK=0,iscen,bidon;
         bool firstloop=true,scenOK;
         double diff,dj;
         float dd,di;
+        this->nreclus=0;
         nn=nsel;
         nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
-        cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
+        cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
         this->enrsel = new enregC[2*nn];
         //cout<<" apres allocation de enrsel\n";
         this->openfile2();
-        while (nreclus<nrec) {
+        while (this->nreclus<nrec) {
             if (firstloop) {nrecOK=0;firstloop=false;}
             else nrecOK=nn;
-            while ((nrecOK<2*nn)and(nreclus<nrec)) {
+            while ((nrecOK<2*nn)and(this->nreclus<nrec)) {
                 this->enrsel[nrecOK].param = new float[nparamax];
                 this->enrsel[nrecOK].stat  = new float[this->nstat];
                 bidon=this->readrecord(&(this->enrsel[nrecOK]));
@@ -323,7 +324,7 @@ public:
                     iscen++;
                 }
                 if (scenOK) {
-                   nreclus++;
+                   this->nreclus++;
                    this->enrsel[nrecOK].dist=0.0; 
                     for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>0.0) {
                         diff =(double)this->enrsel[nrecOK].stat[j] - stat_obs[j]; 
@@ -331,13 +332,13 @@ public:
                     }
                     this->enrsel[nrecOK].dist =sqrt(this->enrsel[nrecOK].dist);
                     nrecOK++;
-                if (nreclus==nrec) break;
+                if (this->nreclus==nrec) break;
                 }
             }
             sort(&this->enrsel[0],&this->enrsel[2*nn],compenreg()); 
         }
         this->closefile();
-        cout<<"\nnrec_lus = "<<nreclus<<"   nrecOK = "<<nrecOK;
+        cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK;
         cout<<"    distmin = "<<this->enrsel[0].dist/(double)this->nstat<<"    distmax = "<<this->enrsel[nsel-1].dist/(double)this->nstat<<"\n";
         //for (int i=0;i<nsel;i++)           cout<<this->enrsel[i].numscen<<"  ";
         //cout<<"\n";

@@ -2390,9 +2390,9 @@ struct ParticleC
 				case     5 : this->grouplist[gr].sumstat[st].val = cal_nal2p(gr,st);break;
 				case     6 : this->grouplist[gr].sumstat[st].val = cal_het2p(gr,st);break;
 				case     7 : this->grouplist[gr].sumstat[st].val = cal_var2p(gr,st);break;
-                                case     8 : this->grouplist[gr].sumstat[st].val = cal_Fst2p(gr,st);break;
-                                case     9 : this->grouplist[gr].sumstat[st].val = cal_lik2p(gr,st);break;
-                                case    10 : this->grouplist[gr].sumstat[st].val = cal_das2p(gr,st);break;
+                case     8 : this->grouplist[gr].sumstat[st].val = cal_Fst2p(gr,st);break;
+                case     9 : this->grouplist[gr].sumstat[st].val = cal_lik2p(gr,st);break;
+                case    10 : this->grouplist[gr].sumstat[st].val = cal_das2p(gr,st);break;
 				case    11 : this->grouplist[gr].sumstat[st].val = cal_dmu2p(gr,st);break;
 				case    12 : this->grouplist[gr].sumstat[st].val = cal_Aml3p(gr,st);break;
 				case    -1 : this->grouplist[gr].sumstat[st].val = cal_nha1p(gr,st);break;

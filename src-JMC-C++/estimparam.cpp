@@ -515,8 +515,8 @@ parstatC *parstat;
                 for (int j=0;j<npar;j++) {
                     if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                         pp=header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].name;
-                        if (header.groupe[gr].type==0) pp = pp+"(µ+sni)_"+IntToString(gr)+" ";
-                        if (header.groupe[gr].type==1) pp = pp+"µseq_"+IntToString(gr)+" ";
+                        if (header.groupe[gr].type==0) pp = pp+"(u+sni)_"+IntToString(gr)+" ";
+                        if (header.groupe[gr].type==1) pp = pp+"useq_"+IntToString(gr)+" ";
                         nomparam[k]=pp;k++;
                         entete += centre(pp,16);
                     }
@@ -777,7 +777,11 @@ parstatC *parstat;
 /**
 *sauvegarde les statistiques et les densités des paramètres
 */
-    void saveparstat(char *path, char *ident) {
+    void saveparstat(int nsel,char *path, char *ident) {
+        time_t rawtime;
+        struct tm * timeinfo;
+        time ( &rawtime );
+        timeinfo = localtime ( &rawtime );
         char *nomfiparstat;
         nomfiparstat = new char[strlen(path)+strlen(ident)+20];
         strcpy(nomfiparstat,path);
@@ -797,12 +801,27 @@ parstatC *parstat;
         fclose(f1);
         strcpy(nomfiparstat,path);
         strcat(nomfiparstat,ident);
-        strcat(nomfiparstat,"_psd.txt");
+        strcat(nomfiparstat,"_mmmq.txt");
         cout <<nomfiparstat<<"\n";
         f1=fopen(nomfiparstat,"w");
-        for (int i=0;i<pardens[0].ncl;i++) {
-            for (int j=0;j<nparamcom+nparcompo;j++) fprintf(f1,"%8.5e   %8.5e   %8.5e   ",pardens[j].x[i],pardens[j].priord[i],pardens[j].postd[i]);
-            fprintf(f1,"\n");
+        fprintf(f1,"DIYABC :                      ABC parameter estimation                         %s\n",asctime(timeinfo));
+        fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
+        fprintf(f1,"Reference table : %s\n",rt.filename);
+        switch (numtransf) {
+              case 1 : fprintf(f1,"No transformation of parameters\n");break;
+              case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
+              case 3 : fprintf(f1,"Transformation LOGIT of parameters\n");break;
+              case 4 : fprintf(f1,"Transformation LOG(TG) of parameters\n");break;
+        }
+        fprintf(f1,"Chosen scenario(s) : ");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"%d ",rt.scenchoisi[i]);fprintf(f1,"\n");
+        fprintf(f1,"Number of simulated data sets : %d\n",rt.nreclus);
+        fprintf(f1,"Number of selected data sets  : %d\n\n",nsel);
+        fprintf(f1,"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n");
+        fprintf(f1,"------------------------------------------------------------------------------------------------------\n");
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            fprintf(f1,"%s",nomparam[j].c_str());
+            for(int i=0;i<16-nomparam[j].length();i++)fprintf(f1," ");
+            fprintf(f1,"%8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
         }
         fclose(f1);
     }
@@ -836,37 +855,29 @@ parstatC *parstat;
                 nrecpos=0;for (int j=0;j<rt.nscenchoisi;j++) nrecpos +=rt.nrecscen[rt.scenchoisi[j]-1];
                 cout <<"scenario(s) choisi(s) : ";
                 for (int j=0;j<rt.nscenchoisi;j++) {cout<<rt.scenchoisi[j]; if (j<rt.nscenchoisi-1) cout <<",";}cout<<"\n";
-            } else {
-                if (s0=="n:") {
-                    nrec=atoi(s1.c_str());
-                    if(nrec>nrecpos) nrec=nrecpos;
-                    cout<<"nombre total de jeux de données considérés (pour le(s) scénario(s) choisi(s) )= "<<nrec<<"\n";
-                } else {
-                    if (s0=="m:") {
-                        nsel=atoi(s1.c_str());    
-                        cout<<"nombre de jeux de données considérés pour la régression locale = "<<nsel<<"\n";
-                    } else {
-                        if (s0=="t:") {
-                            numtransf=atoi(s1.c_str()); 
-                            switch (numtransf) {
-                              case 1 : cout <<" pas de transformation des paramètres\n";break;
-                              case 2 : cout <<" transformation log des paramètres\n";break;
-                              case 3 : cout <<" transformation logit des paramètres\n";break;
-                              case 4 : cout <<" transformation log(tg) des paramètres\n";break;
-                            }
-                        } else {
-                            if (s0=="p:") {
-                                original=(s1.find("o")!=string::npos);
-                                composite=(s1.find("c")!=string::npos);
-                                if (original) cout <<"paramètres  originaux  ";
-                                if ((s1=="oc")or(s1=="co")) cout <<"et ";
-                                if (composite) cout<<"paramètres  composite  ";
-                                cout<< "\n";
-                            }            
-                        }
-                    }
+            } else if (s0=="n:") {
+                nrec=atoi(s1.c_str());
+                if(nrec>nrecpos) nrec=nrecpos;
+                cout<<"nombre total de jeux de données considérés (pour le(s) scénario(s) choisi(s) )= "<<nrec<<"\n";
+            } else if (s0=="m:") {
+                nsel=atoi(s1.c_str());    
+                cout<<"nombre de jeux de données considérés pour la régression locale = "<<nsel<<"\n";
+            } else if (s0=="t:") {
+                numtransf=atoi(s1.c_str()); 
+                switch (numtransf) {
+                  case 1 : cout <<" pas de transformation des paramètres\n";break;
+                  case 2 : cout <<" transformation log des paramètres\n";break;
+                  case 3 : cout <<" transformation logit des paramètres\n";break;
+                  case 4 : cout <<" transformation log(tg) des paramètres\n";break;
                 }
-            }
+            } else if (s0=="p:") {
+                original=(s1.find("o")!=string::npos);
+                composite=(s1.find("c")!=string::npos);
+                if (original) cout <<"paramètres  originaux  ";
+                if ((s1=="oc")or(s1=="co")) cout <<"et ";
+                if (composite) cout<<"paramètres  composite  ";
+                cout<< "\n";
+            }            
         }
         
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
@@ -888,6 +899,6 @@ parstatC *parstat;
         iprog+=2;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         histodens(nsel,multithread,progressfilename,&iprog,&nprog);                      cout<<"apres histodens\n";
         calparstat(nsel);                                 cout<<"apres calparstat\n";
-        saveparstat(path,ident);
+        saveparstat(nsel,path,ident);
         iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }
