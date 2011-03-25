@@ -12,7 +12,8 @@ from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 
 class DrawAnalysisResult(QFrame):
-    """ Classe pour créer une fenêtre à l'intérieur de laquelle on dessine les resultats d'une analyse
+    """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse
+    pour l'instant : estimation
     """
     def __init__(self,directory,parent=None):
         super(DrawAnalysisResult,self).__init__(parent)
@@ -37,6 +38,8 @@ class DrawAnalysisResult(QFrame):
         self.parent.ui.analysisStack.setCurrentIndex(0)
 
     def drawAll(self):
+        """ dessine les graphes de tous les paramètres
+        """
         if os.path.exists("%s/analysis/%s/paramstatdens.txt"%(self.parent.dir,self.directory)):
             f = codecs.open("%s/analysis/%s/paramstatdens.txt"%(self.parent.dir,self.directory),"r","utf-8")
             lines = f.readlines()
@@ -190,28 +193,6 @@ class DrawAnalysisResult(QFrame):
         frame.setMinimumSize(QSize(400, 0))
         frame.setMaximumSize(QSize(400, 9000))
         self.ui.horizontalLayout_3.addWidget(frame)
-
-
-    def DrawSvg(self,segments,scc,t,savename):
-        """ dessine un scenario dans un fichier svg
-        """
-        
-        xmax = 500
-        ymax = 450
-        svgpic = QSvgGenerator()
-        svgpic.setFileName(savename)
-        self.svgList.append(svgpic)
-
-        painter = QPainter()
-        painter.begin(svgpic)
-
-        self.paintScenario(painter,segments,scc,t,xmax,ymax)
-        
-        painter.end()
-
-    def paintScenario(self,painter,segments,scc,t,xmax,ymax,font_inc=0):
-        """ dessine le scenario sur le painter
-        """
 
     def save(self):
         """ clic sur le bouton save
