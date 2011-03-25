@@ -1,8 +1,15 @@
-    ReftableC rt;
-    HeaderC header;
-    char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
-    double **matX0, *vecW, **alpsimrat,**parsim;    
-    int nstatOKsel;
+#ifdef GLOBAL
+#define Global
+#else
+#define Global extern
+#endif
+    Global 
+    Global 
+    Global 
+
+    Global 
+    Global 
+    Global                                                                                             
     
     
     

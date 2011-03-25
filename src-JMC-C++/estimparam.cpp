@@ -24,16 +24,13 @@
 #define MESUTILS
 #endif
 
-#ifndef GLOBALH
-#include "global.h"
-#define GLOBALH
-#endif
 
 using namespace std;
 
 #define c 1.5707963267948966192313216916398
 #define co 2.506628274631000502415765284811   //sqrt(pi)
 #define coefbw 1.8                            //coefficient multiplicateur de la bandwidth pour le calcul de la densité 
+
 
 
 /**
@@ -49,7 +46,12 @@ struct parstatC {
     double moy,med,mod,q025,q050,q250,q750,q950,q975;
 };
 
-//variables globales du module;
+extern ReftableC rt;
+extern HeaderC header;
+double **matX0, *vecW, **alpsimrat,**parsim;    
+int nstatOKsel;
+extern char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
+
 pardensC *pardens;
 double *var_stat, *parmin, *parmax, *diff;
 double **beta, **phistar,**simpar;
@@ -64,7 +66,7 @@ parstatC *parstat;
     
 /** 
 * compte les paramètres communs aux scénarios choisis (nparamcom), le nombre de paramètres composites
-* rempli le tableau numpar des numéros de paramètres communs par scénario
+* remplit le tableau numpar des numéros de paramètres communs par scénario
 */
     void det_numpar() {
         vector <string>  parname;
@@ -383,30 +385,31 @@ parstatC *parstat;
 /** 
 * calcule les phistars pour les paramètres originaux et composites
 */
-    void calphistar(int n){
+    double** calphistar(int n){
         //cout<<"debut de calphistar\n";
         int k,kk,qq;
         double pmut;
-        phistar = new double*[n];
-        for (int i=0;i<n;i++) phistar[i] = new double[nparamcom+nparcompo];
+        double **phista;
+        phista = new double*[n];
+        for (int i=0;i<n;i++) phista[i] = new double[nparamcom+nparcompo];
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparamcom;j++) {
-                phistar[i][j] = alpsimrat[i][j];
-                //if (i==0) cout<< phistar[i][j]<<"   ";
-                for (int k=0;k<nstatOKsel;k++) phistar[i][j] -= matX0[i][k]*beta[k+1][j];
-                //if(i==0) cout<< phistar[i][j]<<"   ";
+                phista[i][j] = alpsimrat[i][j];
+                //if (i==0) cout<< phista[i][j]<<"   ";
+                for (int k=0;k<nstatOKsel;k++) phista[i][j] -= matX0[i][k]*beta[k+1][j];
+                //if(i==0) cout<< phista[i][j]<<"   ";
                 switch(numtransf) {
                   case 1 : break;
-                  case 2 : if (phistar[i][j]<100.0) phistar[i][j] = exp(phistar[i][j]); else phistar[i][j]=exp(100.0);
+                  case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
                            break; 
-                  case 3 : if (phistar[i][j]<=-xborne) phistar[i][j] = parmin[j];
-                           else if (phistar[i][j]>=xborne) phistar[i][j] = parmax[j];
-                           else phistar[i][j] = (exp(phistar[i][j])*parmax[j]+parmin[j])/(1.0+exp(phistar[i][j]));
-                           //if(i==0) cout<< phistar[i][j]<<"\n";
+                  case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parmin[j];
+                           else if (phista[i][j]>=xborne) phista[i][j] = parmax[j];
+                           else phista[i][j] = (exp(phista[i][j])*parmax[j]+parmin[j])/(1.0+exp(phista[i][j]));
+                           //if(i==0) cout<< phista[i][j]<<"\n";
                            break;
-                  case 4 : if (phistar[i][j]<=-xborne) phistar[i][j] = parmin[j];
-                           else if (phistar[i][j]>=xborne) phistar[i][j] = parmax[j];
-                           else phistar[i][j] =parmin[j] +(diff[j]/c*atan(exp(phistar[i][j])));
+                  case 4 : if (phista[i][j]<=-xborne) phista[i][j] = parmin[j];
+                           else if (phista[i][j]>=xborne) phista[i][j] = parmax[j];
+                           else phista[i][j] =parmin[j] +(diff[j]/c*atan(exp(phista[i][j])));
                            break;
                 }
             }
@@ -421,7 +424,7 @@ parstatC *parstat;
                             for (int j=0;j<npar;j++) {
                                 if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                     for (int i=0;i<n;i++) {
-                                          phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                          phista[i][nparamcom+k] = pmut*phista[i][j];
                                     }    
                                     k++;
                                 }
@@ -431,8 +434,8 @@ parstatC *parstat;
                             for (int j=0;j<npar;j++) {
                                 if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                     for (int i=0;i<n;i++) {
-                                        pmut = header.groupe[gr].mutmoy+phistar[i][npar+kk];
-                                        phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                        pmut = header.groupe[gr].mutmoy+phista[i][npar+kk];
+                                        phista[i][nparamcom+k] = pmut*phista[i][j];
                                     }    
                                     k++;
                                 }
@@ -444,8 +447,8 @@ parstatC *parstat;
                             for (int j=0;j<npar;j++) {
                                 if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                     for (int i=0;i<n;i++) {
-                                        pmut =phistar[i][npar+kk] +header.groupe[gr].snimoy;
-                                        phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                        pmut =phista[i][npar+kk] +header.groupe[gr].snimoy;
+                                        phista[i][nparamcom+k] = pmut*phista[i][j];
                                     }    
                                     k++;
                                 }
@@ -456,8 +459,8 @@ parstatC *parstat;
                             for (int j=0;j<npar;j++) {
                                 if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                     for (int i=0;i<n;i++) {
-                                        pmut =phistar[i][npar+kk]+phistar[i][npar+qq];
-                                        phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                        pmut =phista[i][npar+kk]+phista[i][npar+qq];
+                                        phista[i][nparamcom+k] = pmut*phista[i][j];
                                     }    
                                     k++;
                                 }
@@ -471,7 +474,7 @@ parstatC *parstat;
                         for (int j=0;j<npar;j++) {
                             if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                 for (int i=0;i<n;i++) {
-                                    phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                    phista[i][nparamcom+k] = pmut*phista[i][j];
                                 }    
                                 k++;
                             }
@@ -481,8 +484,8 @@ parstatC *parstat;
                         for (int j=0;j<npar;j++) {
                             if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                 for (int i=0;i<n;i++) {
-                                    pmut = phistar[i][npar+kk];
-                                    phistar[i][nparamcom+k] = pmut*phistar[i][j];
+                                    pmut = phista[i][npar+kk];
+                                    phista[i][nparamcom+k] = pmut*phista[i][j];
                                 }    
                                 k++;
                             }
@@ -492,13 +495,10 @@ parstatC *parstat;
             }
         }
         //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
+        return phista;
     }
         
-/** 
-* effectue la sauvegarde des phistars dans le fichier path/ident/phistar.txt
-*/
-    void savephistar(int n, char* path,char* ident) {
-        char *nomphistar ;
+    void det_nomparam() {
         int k;
         nomparam =new string[nparamcom+nparcompo];
         string pp;
@@ -523,6 +523,41 @@ parstatC *parstat;
                 }
             }
         }
+        //for (int j=0;j<nparamcom+nparcompo;j++) cout<<nomparam[j]<<"\n";
+    
+    
+    }    
+        
+        
+/** 
+* effectue la sauvegarde des phistars dans le fichier path/ident/phistar.txt
+*/
+    void savephistar(int n, char* path,char* ident) {
+        char *nomphistar ;
+        /*int k;
+        nomparam =new string[nparamcom+nparcompo];
+        string pp;
+        entete="scenario";
+        for (int j=0;j<npar;j++) {
+            nomparam[j]=string(header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].name);
+            entete += centre(header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].name,15);}
+        for (int j=npar;j<nparamcom;j++) {
+            nomparam[j]=string(header.mutparam[j-npar].name);
+            entete += centre(header.mutparam[j-npar].name,15);}
+        if (nparcompo>0) {
+            k=nparamcom;
+            for (int gr=1;gr<header.ngroupes+1;gr++) {
+                for (int j=0;j<npar;j++) {
+                    if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                        pp=header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].name;
+                        if (header.groupe[gr].type==0) pp = pp+"(u+sni)_"+IntToString(gr)+" ";
+                        if (header.groupe[gr].type==1) pp = pp+"useq_"+IntToString(gr)+" ";
+                        nomparam[k]=pp;k++;
+                        entete += centre(pp,16);
+                    }
+                }
+            }
+        }*/
         nomphistar = new char[strlen(path)+strlen(ident)+20];
         strcpy(nomphistar,path);
         strcat(nomphistar,ident);
@@ -752,13 +787,17 @@ parstatC *parstat;
 /**
 *calcule les statistiques des paramètres
 */
-    void calparstat(int n) {
+    parstatC* calparstat(int n) {
         double sx,*x;  
         parstat = new parstatC[nparamcom+nparcompo];
         x = new double[n];
+        //cout <<"avant la boucle sur les parametres nparamcom="<<nparamcom<<"  nparcompo="<<nparcompo<<"   nsel="<<n<<"\n";
         for (int j=0;j<nparamcom+nparcompo;j++) {
             for (int i=0;i<n;i++) x[i] = phistar[i][j];
+            //if (j==0) for (int i=0;i<20;i++) cout <<phistar[i][j]<<"  "; cout<<"\n";
+            //cout<<"allocation des x du parametre "<<j<<"\n";
             sort(&x[0],&x[n]);
+            //cout<<"apres le sort\n";
             parstat[j].med = x[(int)floor(0.5*n+0.5)-1];
             parstat[j].q025 = x[(int)floor(0.025*n+0.5)-1];
             parstat[j].q050 = x[(int)floor(0.050*n+0.5)-1];
@@ -767,11 +806,14 @@ parstatC *parstat;
             parstat[j].q950 = x[(int)floor(0.950*n+0.5)-1];
             parstat[j].q975 = x[(int)floor(0.975*n+0.5)-1];
             parstat[j].moy = cal_moy(n,x);
+            //cout<<"apres cal_moy\n";
             parstat[j].mod = cal_mode(n,x);
-            for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
-            cout<<nomparam[j];
-            printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q950,parstat[j].q975);
+            //cout<<"apres cal_mode\n";
+            //for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
+            //cout<<nomparam[j];
+            //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q950,parstat[j].q975);
         }
+        return parstat;
     }
 
 /**
@@ -892,13 +934,14 @@ parstatC *parstat;
         rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
         local_regression(nsel,multithread);               cout<<"apres local_regression\n";
         iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-        calphistar(nsel);                                 cout<<"apres calphistar\n";
+        phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
+        det_nomparam();
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
         iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         lisimpar(nsel);                                   cout<<"apres lisimpar\n";
         iprog+=2;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         histodens(nsel,multithread,progressfilename,&iprog,&nprog);                      cout<<"apres histodens\n";
-        calparstat(nsel);                                 cout<<"apres calparstat\n";
+        parstat = calparstat(nsel);                                 cout<<"apres calparstat\n";
         saveparstat(nsel,path,ident);
         iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }

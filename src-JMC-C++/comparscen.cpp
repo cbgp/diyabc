@@ -29,11 +29,6 @@
 #define MESUTILS
 #endif
 
-#ifndef GLOBALH
-#include "global.h"
-#define GLOBALH
-#endif
-
 using namespace std;
 
 struct matligneC

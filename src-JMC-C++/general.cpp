@@ -34,10 +34,12 @@
 #include <sys/time.h>
 #define SYS_TIMEH
 #endif
-#ifndef GLOBALH
-#include "global.h"
-#define GLOBALH
-#endif
+ 
+ReftableC rt;
+HeaderC header;    
+ParticleSetC ps;
+
+char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
 
 int nenr=100;
 
@@ -81,9 +83,8 @@ int main(int argc, char *argv[]){
 	int nrecneeded,nrectodo,k,seed;
 	double **paramstat;
 	int optchar;
-    ParticleSetC ps;
     char action='a';
-    bool flagp=false,flagi=false;
+    bool flagp=false,flagi=false,flags=false;
     //string a;
         //srand(time(NULL));
        
@@ -137,6 +138,7 @@ int main(int argc, char *argv[]){
 		   
         case 's' :  
             seed=atoi(optarg);
+            flags=true;
             break;
             
         case 'r' :  
@@ -179,7 +181,7 @@ int main(int argc, char *argv[]){
                      if (action=='c') ident=strdup("compar1");
                      if (action=='b') ident=strdup("bias1");
      }
-	
+     if (not flags) seed=time(NULL);	
 	switch (action) {
     
       case 'r' :   k=readheaders(); 
@@ -215,7 +217,7 @@ int main(int argc, char *argv[]){
                                   //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
                                   firsttime=true;
                                   while (nrecneeded>rt.nrec) {
-                                          ps.dosimultabref(header,nenr,false,rt.nrec,multithread,firsttime,seed);
+                                          ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed);
                                           if (firsttime) firsttime=false;
                                           rt.writerecords(nenr,enreg);
                                           rt.nrec +=nenr;
@@ -245,7 +247,7 @@ int main(int argc, char *argv[]){
     
        case 'b'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
-                  dobias(biaspar,multithread);
+                  dobias(biaspar,multithread,seed);
                   break;
                   
    }

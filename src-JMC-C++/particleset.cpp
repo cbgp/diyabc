@@ -300,9 +300,9 @@ struct ParticleSetC
                 }
 	}*/
 
-	void dosimultabref(HeaderC header,int npart, bool dnatrue, int numrec,bool multithread,bool firsttime,int seed)
+	void dosimultabref(HeaderC header,int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed)
 	{
-               int ipart,jpart=0,nthreads,base;
+               int ipart,jpart=0,nthreads;
 	       int gr,nstat,pa,ip,iscen;
                bool trouve,trace;
                this->npart = npart;
@@ -314,9 +314,6 @@ struct ParticleSetC
                //else cout<<"particleSet UNdefined\n";
                //this->header = header;
                if (firsttime) {                
-                    srand(time(NULL));
-                    //srand(1);  
-                    base=seed;
                     this->particule = new ParticleC[this->npart];
                     this->header = header;
                     for (int p=0;p<this->npart;p++) {
@@ -331,7 +328,7 @@ struct ParticleSetC
                         //cout<<"setloci\n";
                         this->setscenarios(p);
                         //cout << "                    apres set particule\n";
-                        this->particule[p].mw.randinit(p,base);
+                        this->particule[p].mw.randinit(p,seed);
                     }
                 }
                 else {
@@ -343,7 +340,7 @@ struct ParticleSetC
 	       #pragma omp parallel for shared(sOK) private(gr) if(multithread)
                 for (ipart=0;ipart<this->npart;ipart++){
                         //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
-			sOK[ipart]=this->particule[ipart].dosimulpart(trace);
+			sOK[ipart]=this->particule[ipart].dosimulpart(trace,numscen);
                         //if (trace) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 			if (sOK[ipart]==0) {
 			 	for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
@@ -355,10 +352,15 @@ struct ParticleSetC
                 for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				enreg[ipart].numscen=1;
-                                if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
-                                
-				for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];}
-                                nstat=0;
+                if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
+                
+                //cout<<"dans particleset\n";
+				for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
+                    enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
+                    //cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+                }
+                //cout <<"\n";
+                nstat=0;
 				for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 					for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}
 				}

@@ -48,7 +48,6 @@
 #endif
 #endif
 
-
 using namespace std;
 #define MICMISSING -9999
 #define SEQMISSING '\0'
@@ -543,42 +542,42 @@ struct ParticleC
 
 	}
 	
-	void drawscenario() {
+	void drawscenario(int numscen) {
 		double ra,sp=0.0;
-		ra = this->mw.random();
-		int iscen=-1;
-		while ((ra>sp)and(iscen<this->nscenarios-1)) {
-			iscen++;sp +=this->scenario[iscen].prior_proba;
-		}
-		if (iscen>2) {cout<<"iscen="<<iscen<<"    ra = "<<ra<<"   sp="<<sp<<"\n";exit(1);}
-                //cout <<"scenario tire = "<<iscen+1<<"\n";
-                //this->scenario[iscen].ecris();
-                this->scen.prior_proba = this->scenario[iscen].prior_proba;
-                this->scen.number = this->scenario[iscen].number;
-                this->scen.popmax = this->scenario[iscen].popmax;
-                this->scen.npop = this->scenario[iscen].npop;
-                this->scen.nsamp = this->scenario[iscen].nsamp;
-                this->scen.nparam = this->scenario[iscen].nparam;
-                this->scen.nparamvar = this->scenario[iscen].nparamvar;
-                this->scen.nevent = this->scenario[iscen].nevent;
-                this->scen.nn0 = this->scenario[iscen].nn0;
-                this->scen.nconditions = this->scenario[iscen].nconditions;
-                for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i] = this->scenario[iscen].time_sample[i];
-                for (int i=0;i<this->scen.nn0;i++) {
-                      //if ((i>5)or(iscen>2)) cout <<"i="<<i<<"   iscen="<<iscen<<"\n";
-                      this->scen.ne0[i].val = this->scenario[iscen].ne0[i].val;
-                      strcpy(this->scen.ne0[i].name,this->scenario[iscen].ne0[i].name);
-                }
-                //for (int i=0;i<this->scen.nn0;i++) this->scen.ne0[i] = copyne0(this->scenario[iscen].ne0[i]);
-                for (int i=0;i<this->scen.nevent;i++) {
-                      this->scen.event[i].libere();
-                      this->scen.event[i] = copyevent(this->scenario[iscen].event[i]);
-                }
-                for (int i=0;i<this->scen.nparam;i++) {this->scen.histparam[i] = copyhistparameter(this->scenario[iscen].histparam[i]);/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
-                for (int i=0;i<this->scen.nparamvar;i++) {this->scen.paramvar[i] = this->scenario[iscen].paramvar[i];/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
-                if (this->scen.nconditions>0) {
-                    for (int i=0;i<this->scen.nconditions;i++) this->scen.condition[i] = copycondition(this->scenario[iscen].condition[i]);
-                }
+        int iscen;
+        if (numscen<1) {
+            ra = this->mw.random();
+            iscen=-1;
+            while ((ra>sp)and(iscen<this->nscenarios-1)) {
+                iscen++;sp +=this->scenario[iscen].prior_proba;
+            }
+        } else iscen=numscen-1;
+        this->scen.prior_proba = this->scenario[iscen].prior_proba;
+        this->scen.number = this->scenario[iscen].number;
+        this->scen.popmax = this->scenario[iscen].popmax;
+        this->scen.npop = this->scenario[iscen].npop;
+        this->scen.nsamp = this->scenario[iscen].nsamp;
+        this->scen.nparam = this->scenario[iscen].nparam;
+        this->scen.nparamvar = this->scenario[iscen].nparamvar;
+        this->scen.nevent = this->scenario[iscen].nevent;
+        this->scen.nn0 = this->scenario[iscen].nn0;
+        this->scen.nconditions = this->scenario[iscen].nconditions;
+        for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i] = this->scenario[iscen].time_sample[i];
+        for (int i=0;i<this->scen.nn0;i++) {
+              //if ((i>5)or(iscen>2)) cout <<"i="<<i<<"   iscen="<<iscen<<"\n";
+              this->scen.ne0[i].val = this->scenario[iscen].ne0[i].val;
+              strcpy(this->scen.ne0[i].name,this->scenario[iscen].ne0[i].name);
+        }
+        //for (int i=0;i<this->scen.nn0;i++) this->scen.ne0[i] = copyne0(this->scenario[iscen].ne0[i]);
+        for (int i=0;i<this->scen.nevent;i++) {
+              this->scen.event[i].libere();
+              this->scen.event[i] = copyevent(this->scenario[iscen].event[i]);
+        }
+        for (int i=0;i<this->scen.nparam;i++) {this->scen.histparam[i] = copyhistparameter(this->scenario[iscen].histparam[i]);/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
+        for (int i=0;i<this->scen.nparamvar;i++) {this->scen.paramvar[i] = this->scenario[iscen].paramvar[i];/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
+        if (this->scen.nconditions>0) {
+            for (int i=0;i<this->scen.nconditions;i++) this->scen.condition[i] = copycondition(this->scenario[iscen].condition[i]);
+        }
 		//cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
 		//this->scen.ecris();
 	}
@@ -698,7 +697,7 @@ struct ParticleC
 	    return OK;
 	}
 
-	bool setHistParamValue() {
+	bool setHistParamValue(int numscen) {
 		bool OK;
 		//cout <<this->scen.nconditions <<" condition(s)\n";
 		if (this->scen.nconditions>0) {
@@ -709,7 +708,7 @@ struct ParticleC
 					for (int p=0;p<this->scen.nparam;p++) {
 					    this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
 					    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-					    //cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
+					    cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
 					    //cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
 					}
 					//cout <<"avant test conditions\n";
@@ -1558,7 +1557,7 @@ struct ParticleC
 		return 0;
 	}
 
-	int dosimulpart(bool trace){
+	int dosimulpart(bool trace,int numscen){
                 //if (trace) cout<<"debut de dosimulpart\n";fflush(stdin);
 		vector <int> simulOK;
 		int *emptyPop;
@@ -1567,9 +1566,9 @@ struct ParticleC
 		simulOK.resize(this->nloc);
 		GeneTreeC GeneTreeY, GeneTreeM;
                 //if (trace) cout<<"avant draw scenario\n";fflush(stdin);
-		this->drawscenario();
+		this->drawscenario(numscen);
 		//if (trace) cout <<"avant setHistparamValue\n";fflush(stdin);
-		this->setHistParamValue();
+		this->setHistParamValue(numscen);
 		//if (trace) cout << "apres setHistParamValue\n";fflush(stdin);
 		//if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
 		//if (trace) for (int k=0;k<this->scen.nparam;k++){
