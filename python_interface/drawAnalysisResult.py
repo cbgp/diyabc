@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
@@ -37,7 +38,7 @@ class DrawAnalysisResult(QFrame):
 
     def drawAll(self):
         if os.path.exists("%s/analysis/%s/paramstatdens.txt"%(self.parent.dir,self.directory)):
-            f = open("%s/analysis/%s/paramstatdens.txt"%(self.parent.dir,self.directory),"r")
+            f = codecs.open("%s/analysis/%s/paramstatdens.txt"%(self.parent.dir,self.directory),"r","utf-8")
             lines = f.readlines()
             f.close()
             l = 0
@@ -57,19 +58,19 @@ class DrawAnalysisResult(QFrame):
     def addDraw(self,name,values,absv,ordpr,ordpo):
         
         tabvalues = values.strip().split('  ')
-        av = tabvalues[0]
-        median = tabvalues[1]
-        mode = tabvalues[2]
-        q2_5 = tabvalues[3]
-        q5 = tabvalues[4]
-        q25 = tabvalues[5]
-        q75 = tabvalues[6]
-        q95 = tabvalues[7]
-        q975 = tabvalues[8]
+        av = float(tabvalues[0])
+        median = float(tabvalues[1])
+        mode = float(tabvalues[2])
+        q2_5 = float(tabvalues[3])
+        q5 = float(tabvalues[4])
+        q25 = float(tabvalues[5])
+        q75 = float(tabvalues[6])
+        q95 = float(tabvalues[7])
+        q975 = float(tabvalues[8])
 
         p = QwtPlot()
         p.setCanvasBackground(Qt.white)
-        p.setTitle("%s [%s]"%(name,median))
+        p.setTitle("%s [%6.2e]"%(name,median))
         legend = QwtLegend()
 
         labs = []
@@ -141,47 +142,47 @@ class DrawAnalysisResult(QFrame):
         frame.setObjectName("frame")
         verticalLayout_3 = QVBoxLayout(frame)
         verticalLayout_3.setObjectName("verticalLayout_3")
-        avLabel = QLabel("Average   :  %s"%av,frame)
+        avLabel = QLabel("Average   :  %6.2e"%av,frame)
         avLabel.setObjectName("avLabel")
         avLabel.setAlignment(Qt.AlignCenter)
         avLabel.setFont(QFont("Courrier",10))
         verticalLayout_3.addWidget(avLabel)
-        medLabel = QLabel("Median    :  %s"%median,frame)
+        medLabel = QLabel("Median    :  %6.2e"%median,frame)
         medLabel.setObjectName("medLabel")
         medLabel.setAlignment(Qt.AlignCenter)
         medLabel.setFont(QFont("Courrier",10))
         verticalLayout_3.addWidget(medLabel)
-        modeLabel = QLabel("Mode       :  %s"%mode,frame)
+        modeLabel = QLabel("Mode       :  %6.2e"%mode,frame)
         modeLabel.setObjectName("modeLabel")
         modeLabel.setAlignment(Qt.AlignCenter)
         modeLabel.setFont(QFont("Courrier",10))
         verticalLayout_3.addWidget(modeLabel)
-        q2_5Label = QLabel("q(0.025)  :  %s"%q2_5,frame)
+        q2_5Label = QLabel("q(0.025)  :  %6.2e"%q2_5,frame)
         q2_5Label.setObjectName("q2_5Label")
         q2_5Label.setAlignment(Qt.AlignCenter)
         q2_5Label.setFont(QFont("Courrier",10))
         verticalLayout_3.addWidget(q2_5Label)
-        q5Label = QLabel("q(0.050)  :  %s"%q5,frame)
+        q5Label = QLabel("q(0.050)  :  %6.2e"%q5,frame)
         q5Label.setObjectName("q5Label")
         q5Label.setAlignment(Qt.AlignCenter)
         q5Label.setFont(QFont("Courrier",10))
         verticalLayout_3.addWidget(q5Label)
-        q25Label = QLabel("q(0.250)  :  %s"%q25,frame)
+        q25Label = QLabel("q(0.250)  :  %6.2e"%q25,frame)
         q25Label.setObjectName("q25Label")
         q25Label.setAlignment(Qt.AlignCenter)
         q25Label.setFont(QFont("Courrier",10))
         verticalLayout_3.addWidget(q25Label)
-        q75Label = QLabel("q(0.750)  :  %s"%q75,frame)
+        q75Label = QLabel("q(0.750)  :  %6.2e"%q75,frame)
         q75Label.setObjectName("q75")
         q75Label.setAlignment(Qt.AlignCenter)
         q75Label.setFont(QFont("Courrier",10))
         verticalLayout_3.addWidget(q75Label)
-        q95Label = QLabel("q(0.950)  :  %s"%q95,frame)
+        q95Label = QLabel("q(0.950)  :  %6.2e"%q95,frame)
         q95Label.setObjectName("q95Label")
         q95Label.setAlignment(Qt.AlignCenter)
         q95Label.setFont(QFont("Courrier",10))
         verticalLayout_3.addWidget(q95Label)
-        q975Label = QLabel("q(0.975)  :  %s"%q975,frame)
+        q975Label = QLabel("q(0.975)  :  %6.2e"%q975,frame)
         q975Label.setObjectName("q975Label")
         q975Label.setAlignment(Qt.AlignCenter)
         q975Label.setFont(QFont("Courrier",10))
