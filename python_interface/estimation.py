@@ -54,7 +54,8 @@ class Estimation(QFrame):
 
 
     def validate(self):
-        """ termine la définition de l'analyse
+        """ termine la définition de l'analyse en lui ajoutant la chaine
+        de paramètres
         """
         self.analysis.append(self.scNumList)
         self.majDicoValues()
@@ -64,7 +65,7 @@ class Estimation(QFrame):
             chosen_scs_txt+="%s,"%str(cs)
         chosen_scs_txt = chosen_scs_txt[:-1]
         dico_est = self.analysis[-1]
-        self.analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['numberOfselData'],dico_est['choNumberOfsimData'],dico_est['transformation'],dico_est['choice']))
+        self.analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['choNumberOfsimData'],dico_est['numberOfselData'],dico_est['transformation'],dico_est['choice']))
         self.parent.parent.addAnalysis(self.analysis)
         self.exit()
 

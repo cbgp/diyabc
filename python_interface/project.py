@@ -21,6 +21,7 @@ from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from defineNewAnalysis import DefineNewAnalysis
 from drawAnalysisResult import DrawAnalysisResult
+from drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from utils.data import Data
 from datetime import datetime 
 import os.path
@@ -140,7 +141,10 @@ class Project(QTabWidget):
         anDir = str(self.ui.analysisListCombo.currentText())
         if anDir.strip() != "":
             directory = anDir.replace(' ','_')
-            self.drawAnalysisFrame = DrawAnalysisResult(directory,self)
+            if directory.split('_')[0] == 'estimation':
+                self.drawAnalysisFrame = DrawAnalysisResult(directory,self)
+            else:
+                self.drawAnalysisFrame = DrawComparisonAnalysisResult(directory,self)
             self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
             self.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
 
@@ -664,20 +668,21 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         #print analysis
         if type_analysis == "pre-ev":
-            self.addRow("scenario prior combination",analysis[1],"4","new")
+            #self.addRow("scenario prior combination",analysis[1],"4","new")
             self.addAnalysisGui(analysis,analysis[1],"scenario prior combination",analysis[2],"new")
         elif type_analysis == "estimate":
-            #print "\n",analysis[-1],"\n"
-            self.addRow("parameter estimation","params","5","new")
+            print "\n",analysis[-1],"\n"
+            #self.addRow("parameter estimation","params","5","new")
             self.addAnalysisGui(analysis,analysis[1],"parameter estimation","params","new")
         elif type_analysis == "bias":
-            self.addRow("bias and precision",str(analysis[2]),"3","new")
+            #self.addRow("bias and precision",str(analysis[2]),"3","new")
             self.addAnalysisGui(analysis,analysis[1],"bias and precision",str(analysis[2]),"new")
         elif type_analysis == "compare":
-            self.addRow("scenario choice",analysis[2]["de"],"4","new")
-            self.addAnalysisGui(analysis,analysis[1],"scenario choice",analysis[2]["de"],"new")
+            #print "\n",analysis[-1],"\n"
+            #self.addRow("scenario choice",analysis[2]["de"],"4","new")
+            self.addAnalysisGui(analysis,analysis[1],"scenario choice",analysis[3]["de"],"new")
         elif type_analysis == "evaluate":
-            self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
+            #self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
             self.addAnalysisGui(analysis,analysis[1],"evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"new")
 
     def addAnalysisGui(self,analysis,name,atype,params,status):
@@ -750,6 +755,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             os.mkdir("%s/analysis/"%self.dir)
 
         frame = self.sender().parent()
+        # on associe l'analyse a sa frame
         analysis = self.dicoFrameAnalysis[frame]
         self.thAnalysis = AnalysisThread(self,analysis)
         self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress"),self.analysisProgress)
@@ -782,7 +788,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.thAnalysis = None
 
         if atype == "estimate":
-            if os.path.exists("%s/%s_phistar.txt"%(self.dir,aid)) and os.path.exists("%s/%s_psd.txt"%(self.dir,aid))\
+            if os.path.exists("%s/%s_phistar.txt"%(self.dir,aid))\
                     and os.path.exists("%s/%s_paramstatdens.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
                 aDirName = "estimation_%s"%aid
@@ -791,6 +797,19 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
                 os.remove("%s/%s_progress.txt"%(self.dir,aid))
+
+        if atype == "compare":
+            if os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) and\
+                    os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid)):
+                # deplacement des fichiers de résultat
+                aDirName = "comparison_%s"%aid
+                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
+                shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))
+                os.remove("%s/%s_progress.txt"%(self.dir,aid))
+
+        # on met à jour la liste des analyses terminées
+        self.fillAnalysisCombo()
 
 
 
@@ -1192,6 +1211,37 @@ class AnalysisThread(QThread):
             print "popen ok"
 
             f = open("estimation.out","r")
+            data= f.read()
+            f.close()
+
+            self.progress = 1
+            tmpp = 1
+            self.emit(SIGNAL("analysisProgress"))
+            while True:
+                a=os.popen("head -n 1 %s/%s_progress.txt"%(self.parent.dir,self.analysis[1]))
+                b=a.read()
+                a.close()
+                # on a bougé
+                if len(b.split(' ')) > 1:
+                    t1 = float(b.split(' ')[0])
+                    t2 = float(b.split(' ')[1])
+                    tmpp = int(t1*100/t2)
+                if tmpp != self.progress:
+                    print "on a progressé"
+                    self.progress = tmpp
+                    self.emit(SIGNAL("analysisProgress"))
+                time.sleep(5)
+
+        elif self.analysis[0] == "compare":
+            params = self.analysis[-1]
+            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-c", '%s'%params, "-i", '%s'%self.analysis[1], "-m"]
+            print cmd_args_list
+            f = open("comparison.out","w")
+            p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
+            f.close()
+            print "popen ok"
+
+            f = open("comparison.out","r")
             data= f.read()
             f.close()
 

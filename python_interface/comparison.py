@@ -38,6 +38,12 @@ class Comparison(QFrame):
         self.analysis.append(self.scNumList)
         self.majDicoValues()
         self.analysis.append(self.dico_values)
+        chosen_scs_txt = ""
+        for cs in self.scNumList:
+            chosen_scs_txt+="%s,"%str(cs)
+        chosen_scs_txt = chosen_scs_txt[:-1]
+        dico_comp = self.analysis[-1]
+        self.analysis.append("s:%s;n:%s;d:%s;l:%s;m:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg']))
         self.parent.parent.addAnalysis(self.analysis)
         self.exit()
 
@@ -71,9 +77,10 @@ class Comparison(QFrame):
         self.parent.parent.ui.analysisStack.setCurrentWidget(genSel)
 
     def majDicoValues(self):
-        self.dico_values["chosenNumberOfselData"] = str(self.ui.cnosdEdit.text())
+        self.dico_values["choNumberOfsimData"] = str(self.ui.cnosdEdit.text())
         self.dico_values["de"] = str(self.ui.deEdit.text())
         self.dico_values["lr"] = str(self.ui.lrEdit.text())
+        self.dico_values["numReg"] = str(self.ui.numRegCombo.currentText())
 
     def exit(self):
         ## reactivation des onglets

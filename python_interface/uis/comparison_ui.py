@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/comparison.ui'
 #
-# Created: Mon Mar 21 14:59:20 2011
+# Created: Mon Mar 28 11:08:15 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -124,11 +124,22 @@ class Ui_Frame(object):
         self.lrEdit.setMaximumSize(QtCore.QSize(100, 16777215))
         self.lrEdit.setObjectName(_fromUtf8("lrEdit"))
         self.gridLayout_2.addWidget(self.lrEdit, 1, 1, 1, 1)
-        self.comboBox = QtGui.QComboBox(Frame)
-        self.comboBox.setMinimumSize(QtCore.QSize(100, 0))
-        self.comboBox.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.comboBox.setObjectName(_fromUtf8("comboBox"))
-        self.gridLayout_2.addWidget(self.comboBox, 1, 2, 1, 1)
+        self.numRegCombo = QtGui.QComboBox(Frame)
+        self.numRegCombo.setMinimumSize(QtCore.QSize(100, 0))
+        self.numRegCombo.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.numRegCombo.setObjectName(_fromUtf8("numRegCombo"))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.numRegCombo.addItem(_fromUtf8(""))
+        self.gridLayout_2.addWidget(self.numRegCombo, 1, 2, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout_2)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.line = QtGui.QFrame(Frame)
@@ -181,6 +192,17 @@ class Ui_Frame(object):
         self.label_3.setText(QtGui.QApplication.translate("Frame", "(simulated data closest to observed)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Frame", "Direct Estimate", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("Frame", "Logistic Regression", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(0, QtGui.QApplication.translate("Frame", "0", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(1, QtGui.QApplication.translate("Frame", "1", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(2, QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(3, QtGui.QApplication.translate("Frame", "3", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(4, QtGui.QApplication.translate("Frame", "4", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(5, QtGui.QApplication.translate("Frame", "5", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(6, QtGui.QApplication.translate("Frame", "6", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(7, QtGui.QApplication.translate("Frame", "7", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(8, QtGui.QApplication.translate("Frame", "8", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(9, QtGui.QApplication.translate("Frame", "9", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRegCombo.setItemText(10, QtGui.QApplication.translate("Frame", "10", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("Frame", "Total number of simulated data :", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("Frame", "Chosen number of simulated data : ", None, QtGui.QApplication.UnicodeUTF8))
 
