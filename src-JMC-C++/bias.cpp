@@ -40,7 +40,7 @@ struct enreC {
 
 parstatC **paramest;
 enreC *enreg2;
-double **br,*rrmise,*rmad,**rmse,*cov50,*cov95,**fac2;
+double **br,*rrmise,*rmad,**rmse,*cov50,*cov95,**fac2,**medbr,*rmedad,**rmae;
 double ***paretoil;
 
 using namespace std;
@@ -199,6 +199,48 @@ using namespace std;
                 }
             }
         }
+/////////////////// medianes du biais relatif
+        medbr = new double*[3];
+        double *b;
+        b = new double[ntest];
+        for (int k=0;k<3;k++) {
+            medbr[k] = new double[nparamcom+nparcompo];
+            for (int j=0;j<nparamcom+nparcompo;j++) {
+                switch (k) {
+                  case 0 : for (int p=0;p<ntest;p++) b[p]=(paramest[p][j].moy-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];medbr[k][j] = cal_med(ntest,b);break; 
+                  case 1 : for (int p=0;p<ntest;p++) b[p]=(paramest[p][j].med-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];medbr[k][j] = cal_med(ntest,b);break; 
+                  case 2 : for (int p=0;p<ntest;p++) b[p]=(paramest[p][j].mod-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];medbr[k][j] = cal_med(ntest,b);break; 
+                }
+            }
+        }
+///////////////// Relative Median Absolute Deviation
+        rmedad = new double [nparamcom+nparcompo];
+        double *cc;
+        cc = new double[nsel];
+        
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            for (int p=0;p<ntest;p++) {
+                for (int i=0;i<nsel;i++) cc[i] = (abs(paretoil[p][i][j]-enreg2[p].paramvv[j]))/enreg2[p].paramvv[j];b[p] = cal_med(nsel,cc);
+            }
+            rmedad[j] = cal_med(ntest,b);
+        } 
+////////////  RMAE
+        rmae = new double*[3];
+        double *e;
+        e = new double [ntest];
+        for (int k=0;k<3;k++) {
+            rmae[k] = new double[nparamcom+nparcompo];
+            for (int j=0;j<nparamcom+nparcompo;j++) {
+                for (int p=0;p<ntest;p++) {
+                    switch (k) {
+                      case 0 : e[p]=abs(paramest[p][j].moy-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break; 
+                      case 1 : e[p]=abs(paramest[p][j].med-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break; 
+                      case 2 : e[p]=abs(paramest[p][j].mod-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break; 
+                    }
+                }
+                rmae[k][j] = cal_med(ntest,e);
+            } 
+        }
     }
     
     void ecrires(int ntest,int npv,int nsel) {
@@ -252,8 +294,8 @@ using namespace std;
             if (br[j][1]<0) fprintf(f1,"         %5.3f",br[j][1]); else fprintf(f1,"          %5.3f",br[j][1]); 
             if (br[j][2]<0) fprintf(f1,"         %5.3f\n",br[j][2]); else fprintf(f1,"          %5.3f\n",br[j][2]); 
         }
-        fprintf(f1,"\nParameter                   RRMISE            RMeanAD            Square root of mean square error/true value\n");
-        fprintf(f1,"                                                                  Mean             Median             Mode\n");
+        fprintf(f1,"\n                            RRMISE            RMeanAD            Square root of mean square error/true value\n");
+        fprintf(f1,"Parameter                                                         Mean             Median             Mode\n");
         for (int j=0;j<nparamcom+nparcompo;j++) {
             cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
@@ -261,14 +303,32 @@ using namespace std;
             fprintf(f1,"     %5.3f             %5.3f             %5.3f              %5.3f            %5.3f\n",rrmise[j],rmad[j],rmse[0][j],rmse[1][j],rmse[2][j]);
         }
         fprintf(f1,"\n                                                                 Factor 2        Factor 2        Factor 2\n");
-        fprintf(f1,"Parameter               50% Coverage        95% Coverage         (Mean)          (Median)        (Mode)  \n");
+        fprintf(f1,"Parameter               50%% Coverage        95%% Coverage         (Mean)          (Median)        (Mode)  \n");
         for (int j=0;j<nparamcom+nparcompo;j++) {
             cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
-            fprintf(f1,"     %5.3f             %5.3f             %5.3f              %5.3f            %5.3f\n",cov50[j],cov95[j],fac2[0][j],fac[1][j],fac[2][j]);
-        
-        fclose(f1);
+            fprintf(f1,"     %5.3f             %5.3f             %5.3f              %5.3f            %5.3f\n",cov50[j],cov95[j],fac2[0][j],fac2[1][j],fac2[2][j]);
+        }
+        fprintf(f1,"\n                                          Median Relative Bias\n");
+        fprintf(f1,"Parameter                                     Means          Medians        Modes\n");
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+             cout<<nomparam[j]<<"\n";
+           fprintf(f1,"%s",nomparam[j].c_str());
+            for(int i=0;i<43-nomparam[j].length();i++)fprintf(f1," ");
+            if (medbr[0][j]<0) fprintf(f1,"  %5.3f",medbr[0][j]); else fprintf(f1,"   %5.3f",medbr[0][j]); 
+            if (medbr[1][j]<0) fprintf(f1,"         %5.3f",medbr[1][j]); else fprintf(f1,"          %5.3f",medbr[1][j]); 
+            if (medbr[2][j]<0) fprintf(f1,"         %5.3f\n",medbr[2][j]); else fprintf(f1,"          %5.3f\n",medbr[2][j]); 
+        }
+        fprintf(f1,"\n                             RMedAD        Median of the absolute error/true value\n");
+        fprintf(f1,"Parameter                                     Means          Medians        Modes\n");
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            cout<<nomparam[j]<<"\n";
+            fprintf(f1,"%s",nomparam[j].c_str());
+            for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
+            fprintf(f1,"      %5.3f           %5.3f          %5.3f          %5.3f\n",rmedad[j],rmae[0][j],rmae[1][j],rmae[2][j]);
+        }
+         fclose(f1);
     }
     
     void setcompo(int p) {

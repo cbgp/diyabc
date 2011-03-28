@@ -159,15 +159,20 @@ int main(int argc, char *argv[]){
             action='c';
             break;        
                     
-         case 'e' :  
+        case 'e' :  
             estpar=strdup(optarg);
             action='e';
             break;        
                     
-          case 'b' :  
+        case 'b' :  
             biaspar=strdup(optarg);
             action='b';
-            break;        
+            break;
+            
+        case 'f' :
+            confpar=strdup(optarg);
+            action='f';
+            break;
                     
       case 'q' : 
             header.readHeader(headerfilename);
@@ -248,6 +253,11 @@ int main(int argc, char *argv[]){
        case 'b'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
                   dobias(biaspar,multithread,seed);
+                  break;
+ 
+       case 'f'  : k=readheaders();
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  doconf(confpar,multithread,seed);
                   break;
                   
    }

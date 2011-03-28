@@ -2,6 +2,12 @@
 #include <string>
 #define STRING
 #endif
+
+#ifndef ALGORITHM
+#include <algorithm>
+#define ALGORITHM
+#endif
+
 using namespace std;
 
 #define PI 3.141592653589793
@@ -175,6 +181,11 @@ double cal_mode(int n, double *x) {
     return x[l0-1];
 }
 
+double cal_med(int n,double *x) {
+    sort(&x[0],&x[n]);
+    if ((n%2)==0) return 0.5*(x[n/2-1]+x[n/2]);
+    else return x[n/2];
+}
 
 double cal_sd(int n,double *x) {
     double sx,sx2,a=x[0];
