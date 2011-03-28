@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os,re
 import shutil
 import codecs
 from PyQt4.QtCore import *
@@ -36,81 +36,88 @@ class DrawComparisonAnalysisResult(QFrame):
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)
 
+    def getCoord(self,filepath):
+        """ extrait les coordonnées du fichier passé en paramètre
+        """
+        f = codecs.open(filepath,"r","utf-8")
+        lines = f.readlines()
+        f.close()
+        l = 0
+        pat = re.compile(r'\s+')
+        # on remplace les suites d'espace par un seul espace
+        first_line_tab = pat.sub(' ',lines[0].strip()).split(' ')
+        # on vire le 'n'
+        first_line_tab = first_line_tab[1:]
+
+        for i in range(first_line_tab.count('scenario')):
+            first_line_tab.remove('scenario')
+
+        dico_coord = {}
+        # initialisation du dico des coordonnées
+        for i in range(len(first_line_tab)):
+            dico_coord[first_line_tab[i]] = []
+        dico_coord['n'] = []
+
+        l=1
+        while l < (len(lines)):
+            if lines[l].strip() != "":
+                line_tab = pat.sub(' ',lines[l].strip()).split(' ')
+                # on ajoute une abcisse
+                dico_coord['n'].append(float(line_tab[0]))
+                line_tab = line_tab[1:]
+                # on supprime les intervalles de confiance
+                l_to_del = []
+                for i in range(len(line_tab)):
+                    if (i%2) == 1:
+                        l_to_del.append(i)
+                l_to_del.reverse()
+                for i in l_to_del:
+                    line_tab.pop(i)
+                # pour chaque scenario, on ajoute une ordonnée
+                for i in range(len(first_line_tab)):
+                    dico_coord[first_line_tab[i]].append(float(line_tab[i]))
+            l += 1
+        return (first_line_tab,dico_coord)
+
     def drawAll(self):
         """ dessine les graphes de tous les paramètres
         """
         if os.path.exists("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory)):
-            f = codecs.open("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory),"r","utf-8")
-            lines = f.readlines()
-            f.close()
-            l = 0
-            while l < (len(lines) - 1):
-                name = lines[l].strip()
-                values = lines[l+1]
-                absv = lines[l+3]
-                ordpr = lines[l+4]
-                ordpo = lines[l+5]
-                self.addDirectDraw(name,values,absv,ordpr,ordpo)
-                l += 6
+            (first_line_tab,dico_coord) = self.getCoord("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory))
+            self.addDraw(first_line_tab,dico_coord,True)
             if os.path.exists("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory)):
-                pass
+                (first_line_tab,dico_coord) = self.getCoord("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory))
+                self.addDraw(first_line_tab,dico_coord,False)
             else:
                 print "complogreg.txt not found"
         else:
             print "compdirect.txt not found"
 
 
-    def addDraw(self,name,values,absv,ordpr,ordpo):
+    def addDraw(self,first_line_tab,dico_coord,direct):
         
-        tabvalues = values.strip().split('  ')
-        av = float(tabvalues[0])
-        median = float(tabvalues[1])
-        mode = float(tabvalues[2])
-        q2_5 = float(tabvalues[3])
-        q5 = float(tabvalues[4])
-        q25 = float(tabvalues[5])
-        q75 = float(tabvalues[6])
-        q95 = float(tabvalues[7])
-        q975 = float(tabvalues[8])
-
         p = QwtPlot()
         p.setCanvasBackground(Qt.white)
-        p.setTitle("%s [%6.2e]"%(name,median))
+        if direct:
+            p.setTitle("Direct")
+        else:
+            p.setTitle("Logistic regression")
         legend = QwtLegend()
 
-        labs = []
-        for num in absv.strip().split('  '):
-            labs.append(float(num))
-        lpr = []
-        for num in ordpr.strip().split('  '):
-            lpr.append(float(num))
-        lpo = []
-        for num in ordpo.strip().split('  '):
-            lpo.append(float(num))
+        labs = dico_coord['n']
             
-        legend_txt = "prior"
-        pr = QwtPlotCurve(legend_txt)
-        pr.setStyle(QwtPlotCurve.Lines)
-        pr.setPen(QPen(QColor(self.tab_colors[2]),2))
-        pr.setSymbol(QwtSymbol(Qwt.QwtSymbol.NoSymbol,
-              QBrush(QColor(self.tab_colors[1])),
-                QPen(QColor(self.tab_colors[1])),
-                  QSize(7, 7)))
-        pr.setData(labs,lpr)
-        pr.attach(p)
-        pr.updateLegend(legend)
-
-        legend_txt = "posterior"
-        post = QwtPlotCurve(legend_txt)
-        post.setStyle(QwtPlotCurve.Lines)
-        post.setPen(QPen(QColor(self.tab_colors[1]),2))
-        post.setSymbol(QwtSymbol(Qwt.QwtSymbol.NoSymbol,
-              QBrush(QColor(self.tab_colors[2])),
-                QPen(QColor(self.tab_colors[2])),
-                  QSize(7, 7)))
-        post.setData(labs,lpo)
-        post.attach(p)
-        post.updateLegend(legend)
+        for i in range(len(first_line_tab)):    
+            legend_txt = "Scenario %s"%first_line_tab[i]
+            pr = QwtPlotCurve(legend_txt)
+            pr.setStyle(QwtPlotCurve.Lines)
+            pr.setPen(QPen(QColor(self.tab_colors[i]),2))
+            pr.setSymbol(QwtSymbol(Qwt.QwtSymbol.NoSymbol,
+                  QBrush(QColor(self.tab_colors[1])),
+                    QPen(QColor(self.tab_colors[1])),
+                      QSize(7, 7)))
+            pr.setData(labs,dico_coord[first_line_tab[i]])
+            pr.attach(p)
+            pr.updateLegend(legend)
 
         for it in legend.legendItems():
             f = it.font()
@@ -138,63 +145,10 @@ class DrawComparisonAnalysisResult(QFrame):
         vert.addWidget(p)
 
         self.ui.horizontalLayout_2.addWidget(fr)
-        self.dicoPlot[name] = p
-
-        # frame des valeurs
-        frame = QFrame(self.ui.scrollAreaWidgetContents)
-        frame.setFrameShape(QFrame.StyledPanel)
-        frame.setFrameShadow(QFrame.Raised)
-        frame.setObjectName("frame")
-        verticalLayout_3 = QVBoxLayout(frame)
-        verticalLayout_3.setObjectName("verticalLayout_3")
-        avLabel = QLabel("Average   :  %6.2e"%av,frame)
-        avLabel.setObjectName("avLabel")
-        avLabel.setAlignment(Qt.AlignCenter)
-        avLabel.setFont(QFont("Courrier",10))
-        verticalLayout_3.addWidget(avLabel)
-        medLabel = QLabel("Median    :  %6.2e"%median,frame)
-        medLabel.setObjectName("medLabel")
-        medLabel.setAlignment(Qt.AlignCenter)
-        medLabel.setFont(QFont("Courrier",10))
-        verticalLayout_3.addWidget(medLabel)
-        modeLabel = QLabel("Mode       :  %6.2e"%mode,frame)
-        modeLabel.setObjectName("modeLabel")
-        modeLabel.setAlignment(Qt.AlignCenter)
-        modeLabel.setFont(QFont("Courrier",10))
-        verticalLayout_3.addWidget(modeLabel)
-        q2_5Label = QLabel("q(0.025)  :  %6.2e"%q2_5,frame)
-        q2_5Label.setObjectName("q2_5Label")
-        q2_5Label.setAlignment(Qt.AlignCenter)
-        q2_5Label.setFont(QFont("Courrier",10))
-        verticalLayout_3.addWidget(q2_5Label)
-        q5Label = QLabel("q(0.050)  :  %6.2e"%q5,frame)
-        q5Label.setObjectName("q5Label")
-        q5Label.setAlignment(Qt.AlignCenter)
-        q5Label.setFont(QFont("Courrier",10))
-        verticalLayout_3.addWidget(q5Label)
-        q25Label = QLabel("q(0.250)  :  %6.2e"%q25,frame)
-        q25Label.setObjectName("q25Label")
-        q25Label.setAlignment(Qt.AlignCenter)
-        q25Label.setFont(QFont("Courrier",10))
-        verticalLayout_3.addWidget(q25Label)
-        q75Label = QLabel("q(0.750)  :  %6.2e"%q75,frame)
-        q75Label.setObjectName("q75")
-        q75Label.setAlignment(Qt.AlignCenter)
-        q75Label.setFont(QFont("Courrier",10))
-        verticalLayout_3.addWidget(q75Label)
-        q95Label = QLabel("q(0.950)  :  %6.2e"%q95,frame)
-        q95Label.setObjectName("q95Label")
-        q95Label.setAlignment(Qt.AlignCenter)
-        q95Label.setFont(QFont("Courrier",10))
-        verticalLayout_3.addWidget(q95Label)
-        q975Label = QLabel("q(0.975)  :  %6.2e"%q975,frame)
-        q975Label.setObjectName("q975Label")
-        q975Label.setAlignment(Qt.AlignCenter)
-        q975Label.setFont(QFont("Courrier",10))
-        verticalLayout_3.addWidget(q975Label)
-        frame.setMinimumSize(QSize(400, 0))
-        frame.setMaximumSize(QSize(400, 9000))
-        self.ui.horizontalLayout_3.addWidget(frame)
+        if direct:
+            self.dicoPlot['direct'] = p
+        else:
+            self.dicoPlot['logistic'] = p
 
     def save(self):
         """ clic sur le bouton save
@@ -219,7 +173,7 @@ class DrawComparisonAnalysisResult(QFrame):
         """
         proj_dir = self.parent.dir
         pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)
-        pic_basename = "posterior"
+        pic_basename = "comparison"
         pic_whole_path = "%s/%s_"%(pic_dir,pic_basename)
 
         pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
