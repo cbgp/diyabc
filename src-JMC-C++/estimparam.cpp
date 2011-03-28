@@ -802,6 +802,7 @@ parstatC *parstat;
             parstat[j].q025 = x[(int)floor(0.025*n+0.5)-1];
             parstat[j].q050 = x[(int)floor(0.050*n+0.5)-1];
             parstat[j].q250 = x[(int)floor(0.250*n+0.5)-1];
+            parstat[j].med  = x[(int)floor(0.500*n+0.5)-1];
             parstat[j].q750 = x[(int)floor(0.750*n+0.5)-1];
             parstat[j].q950 = x[(int)floor(0.950*n+0.5)-1];
             parstat[j].q975 = x[(int)floor(0.975*n+0.5)-1];

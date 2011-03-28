@@ -40,7 +40,7 @@ struct enreC {
 
 parstatC **paramest;
 enreC *enreg2;
-double **br,rrmise;
+double **br,*rrmise,*rmad,**rmse,*cov50,*cov95,**fac2;
 double ***paretoil;
 
 using namespace std;
@@ -111,24 +111,94 @@ using namespace std;
        } 
        cout<<"fin de resetmutparam\n";
     }
-    
-    void biaisrel(int ntest,int npv) {
+
+/**
+* calcule les différentes statistiques de biais, rmse...
+*/
+    void biaisrel(int ntest,int nsel,int npv) {
         int ntestOK;
+//////////////// mean relative bias
         br = new double* [npv];
-        for (int j=0;j<npv;j++) {
+        for (int j=0;j<nparamcom+nparcompo;j++) {
             br[j] = new double[3];
             br[j][0]=0.0;br[j][1]=0.0;br[j][2]=0.0;ntestOK=0.0;
-            for (int i=0;i<ntest;i++) if (enreg2[i].paramvv[j]>0.0) {
-                 br[j][0] +=(paramest[i][j].moy-enreg2[i].paramvv[j])/enreg2[i].paramvv[j];
-                 br[j][1] +=(paramest[i][j].med-enreg2[i].paramvv[j])/enreg2[i].paramvv[j];
-                 br[j][2] +=(paramest[i][j].mod-enreg2[i].paramvv[j])/enreg2[i].paramvv[j];
+            for (int p=0;p<ntest;p++) if (enreg2[p].paramvv[j]>0.0) {
+                 br[j][0] +=(paramest[p][j].moy-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];
+                 br[j][1] +=(paramest[p][j].med-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];
+                 br[j][2] +=(paramest[p][j].mod-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];
                  ntestOK++;
             }
             if (ntestOK>0) br[j][0] /= (double)ntestOK; else br[j][0]=-9.0;
             if (ntestOK>0) br[j][1] /= (double)ntestOK; else br[j][1]=-9.0;
             if (ntestOK>0) br[j][2] /= (double)ntestOK; else br[j][2]=-9.0;
         }
-        
+////////////  RRMISE
+        double s,d;
+        rrmise = new double [nparamcom+nparcompo];
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            rrmise[j]=0.0;
+            for (int p=0;p<ntest;p++) {
+                s=0.0;
+                for (int i=0;i<nsel;i++) {d=paretoil[p][i][j]-enreg2[p].paramvv[j];s += d*d;}
+                rrmise[j] +=s/enreg2[p].paramvv[j]/enreg2[p].paramvv[j]/double(nsel);
+            }
+            rrmise[j] = sqrt(rrmise[j]/(double)ntest);
+        } 
+////////////  RMAD
+        rmad = new double [nparamcom+nparcompo];
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            rmad[j]=0.0;
+            for (int p=0;p<ntest;p++) {
+                s=0.0;
+                for (int i=0;i<nsel;i++) s += abs(paretoil[p][i][j]-enreg2[p].paramvv[j]);
+                rmad[j] +=s/abs(enreg2[p].paramvv[j])/double(nsel);
+            }
+            rmad[j] = rmad[j]/(double)ntest;
+        } 
+////////////  RMSE
+        rmse = new double*[3];
+        for (int k=0;k<3;k++) {
+            rmse[k] = new double[nparamcom+nparcompo];
+            for (int j=0;j<nparamcom+nparcompo;j++) {
+                rmse[k][j]=0.0;
+                for (int p=0;p<ntest;p++)  if (enreg2[p].paramvv[j]>0.0) {
+                    switch (k) {
+                      case 0 : d=paramest[p][j].moy-enreg2[p].paramvv[j];break; 
+                      case 1 : d=paramest[p][j].med-enreg2[p].paramvv[j];break; 
+                      case 2 : d=paramest[p][j].mod-enreg2[p].paramvv[j];break; 
+                    }
+                    rmse[k][j] += d*d/enreg2[p].paramvv[j]/enreg2[p].paramvv[j];
+                }
+                rmse[k][j] =sqrt(rmse[k][j]/double(ntest));
+            } 
+        }
+/////////////// coverages
+        cov50 = new double[nparamcom+nparcompo];
+        cov95 = new double[nparamcom+nparcompo];
+        double atest=1.0/(double)ntest;
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+             cov50[j]=0.0;
+             cov95[j]=0.0;
+             for (int p=0;p<ntest;p++) {
+                 if((paramest[p][j].q025<=enreg2[p].paramvv[j])and(paramest[p][j].q975>=enreg2[p].paramvv[j])) cov95[j] += atest;
+                 if((paramest[p][j].q250<=enreg2[p].paramvv[j])and(paramest[p][j].q750>=enreg2[p].paramvv[j])) cov50[j] += atest;
+             }
+        }
+///////////////// factors 2
+        fac2 = new double*[3];
+        for (int k=0;k<3;k++) {
+            fac2[k] = new double[nparamcom+nparcompo];
+            for (int j=0;j<nparamcom+nparcompo;j++) {
+                fac2[k][j]=0.0;
+                for (int p=0;p<ntest;p++) {
+                    switch (k) {
+                      case 0 : if((paramest[p][j].moy>=0.5*enreg2[p].paramvv[j])and(paramest[p][j].moy<=2.0*enreg2[p].paramvv[j])) fac2[k][j] += atest;break; 
+                      case 1 : if((paramest[p][j].med>=0.5*enreg2[p].paramvv[j])and(paramest[p][j].med<=2.0*enreg2[p].paramvv[j])) fac2[k][j] += atest;break; 
+                      case 2 : if((paramest[p][j].mod>=0.5*enreg2[p].paramvv[j])and(paramest[p][j].mod<=2.0*enreg2[p].paramvv[j])) fac2[k][j] += atest;break; 
+                    }
+                }
+            }
+        }
     }
     
     void ecrires(int ntest,int npv,int nsel) {
@@ -162,7 +232,8 @@ using namespace std;
         fprintf(f1,"Results based on %d test data sets\n\n",ntest);
         fprintf(f1,"                                               Averages\n");
         fprintf(f1,"Parameter                True values           Means             Medians             Modes\n");
-        for (int j=0;j<npv;j++) {
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for (int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
             for (int i=0;i<ntest;i++) x[i]=enreg2[i].paramvv[j];mo[0]=cal_moy(ntest,x);
@@ -173,17 +244,103 @@ using namespace std;
         }
         fprintf(f1,"\n                                           Mean Relative Bias\n");
         fprintf(f1,"Parameter                           Means          Medians        Modes\n");
-        for (int j=0;j<npv;j++) {
-            fprintf(f1,"%s",nomparam[j].c_str());
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+             cout<<nomparam[j]<<"\n";
+           fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<33-nomparam[j].length();i++)fprintf(f1," ");
             if (br[j][0]<0) fprintf(f1,"  %5.3f",br[j][0]); else fprintf(f1,"   %5.3f",br[j][0]); 
-            if (br[j][1]<0) fprintf(f1,"         %5.3f",br[j][0]); else fprintf(f1,"          %5.3f",br[j][0]); 
-            if (br[j][2]<0) fprintf(f1,"         %5.3f\n",br[j][0]); else fprintf(f1,"          %5.3f\n",br[j][0]); 
+            if (br[j][1]<0) fprintf(f1,"         %5.3f",br[j][1]); else fprintf(f1,"          %5.3f",br[j][1]); 
+            if (br[j][2]<0) fprintf(f1,"         %5.3f\n",br[j][2]); else fprintf(f1,"          %5.3f\n",br[j][2]); 
         }
+        fprintf(f1,"\nParameter                   RRMISE            RMeanAD            Square root of mean square error/true value\n");
+        fprintf(f1,"                                                                  Mean             Median             Mode\n");
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            cout<<nomparam[j]<<"\n";
+            fprintf(f1,"%s",nomparam[j].c_str());
+            for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
+            fprintf(f1,"     %5.3f             %5.3f             %5.3f              %5.3f            %5.3f\n",rrmise[j],rmad[j],rmse[0][j],rmse[1][j],rmse[2][j]);
+        }
+        fprintf(f1,"\n                                                                 Factor 2        Factor 2        Factor 2\n");
+        fprintf(f1,"Parameter               50% Coverage        95% Coverage         (Mean)          (Median)        (Mode)  \n");
+        for (int j=0;j<nparamcom+nparcompo;j++) {
+            cout<<nomparam[j]<<"\n";
+            fprintf(f1,"%s",nomparam[j].c_str());
+            for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
+            fprintf(f1,"     %5.3f             %5.3f             %5.3f              %5.3f            %5.3f\n",cov50[j],cov95[j],fac2[0][j],fac[1][j],fac[2][j]);
         
         fclose(f1);
     }
     
+    void setcompo(int p) {
+      double pmut;
+        int kk,qq,k=0;
+        for (int gr=1;gr<header.ngroupes+1;gr++) {
+            if (header.groupe[gr].type==0) {
+                if (header.groupe[gr].priormutmoy.constant) {
+                    if (header.groupe[gr].priorsnimoy.constant) {
+                        pmut = header.groupe[gr].mutmoy+header.groupe[gr].snimoy;
+                        for (int j=0;j<npar;j++) {
+                            if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                  enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
+                                k++;
+                            }
+                        }
+                    } else {
+                        kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==2))) kk++;
+                        for (int j=0;j<npar;j++) {
+                            if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                pmut = header.groupe[gr].mutmoy+enreg2[p].paramvv[npar+kk];
+                                enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
+                                k++;
+                            }
+                        }
+                    }
+                } else {
+                    if (header.groupe[gr].priorsnimoy.constant) {
+                        kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
+                        for (int j=0;j<npar;j++) {
+                            if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                pmut =enreg2[p].paramvv[npar+kk] +header.groupe[gr].snimoy;
+                                enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
+                                k++;
+                            }
+                        }
+                    } else {
+                        kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
+                        qq=0;while (not ((header.mutparam[qq].groupe == gr)and(header.mutparam[qq].category ==2))) qq++;
+                        for (int j=0;j<npar;j++) {
+                            if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                                pmut =enreg2[p].paramvv[npar+kk]+enreg2[p].paramvv[npar+qq];
+                                enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
+                                k++;
+                            }
+                        }
+                    }
+                }
+            } 
+            if (header.groupe[gr].type==1) {    
+                if (header.groupe[gr].priormusmoy.constant) {
+                    pmut = header.groupe[gr].musmoy;
+                    for (int j=0;j<npar;j++) {
+                        if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                            enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
+                            k++;
+                        }
+                    }
+                } else {
+                    kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==3))) kk++;
+                    for (int j=0;j<npar;j++) {
+                        if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                            pmut = enreg2[p].paramvv[npar+kk];
+                            enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
+                            k++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     void dobias(char *options, bool multithread, int seed){
         char *datafilename, *progressfilename, *courantfilename;
         int rtOK,nstatOK, iprog,nprog;
@@ -267,10 +424,12 @@ using namespace std;
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         for (int p=0;p<ntest;p++) {delete []enreg[p].param;delete []enreg[p].stat;}delete []enreg;
 
+        det_numpar();                                   
+        cout<<"naparmcom = "<<nparamcom<<"   nparcomp = "<<nparcompo<<"\n";
         enreg2 = new enreC[ntest];
         for (int p=0;p<ntest;p++) {
             enreg2[p].stat = new double[header.nstat];
-            enreg2[p].paramvv = new double[npv];
+            enreg2[p].paramvv = new double[nparamcom+nparcompo];
             enreg2[p].numscen = rt.scenchoisi[0];
         }
         ifstream file(courantfilename, ios::in);
@@ -282,6 +441,7 @@ using namespace std;
           //cout<<"ns="<<ns<<"\n";
           enreg2[p].numscen=atoi(ss[0].c_str());
           for (int i=0;i<npv;i++) enreg2[p].paramvv[i]=atof(ss[i+1].c_str());
+          if(nparcompo>0) setcompo(p);
           for (int i=0;i<rt.nstat;i++) enreg2[p].stat[i]=atof(ss[i+1+npv].c_str());
         }
         file.close();
@@ -298,7 +458,7 @@ using namespace std;
         for (int p=0;p<ntest;p++) {
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg2[p].stat[j];
             rt.cal_dist(nrec,nsel,stat_obs);                  //cout<<"apres cal_dist\n";
-            if (p<1) det_numpar();                            //cout<<"apres det_numpar\n";
+            //if (p<1) det_numpar();                            //cout<<"apres det_numpar\n";
             if (p<1) det_nomparam();
             recalparam(nsel);                                 //cout<<"apres recalparam\n";
             rempli_mat(nsel,stat_obs);                        //cout<<"apres rempli_mat\n";
@@ -312,9 +472,11 @@ using namespace std;
                 paretoil[p][i] = new double[nparamcom+nparcompo];
                 for (int j=0;j<nparamcom+nparcompo;j++) paretoil[p][i][j] = phistar[i][j];
             }
-            printf(" test n° %3d   ",p+1);
-            for (int j=0;j<npar;j++) printf(" %8.3e (%8.3e)   ",enreg2[p].paramvv[j],paramest[p][j].med);cout<<"\n";    
+            printf("test %3d ",p+1);
+            for (int j=0;j<npar;j++) printf(" %6.0e (%8.2e %8.2e %8.2e) ",enreg2[p].paramvv[j],paramest[p][j].moy,paramest[p][j].med,paramest[p][j].mod);cout<<"\n";    
         }
-        biaisrel(ntest,npv);
+        cout<<"avant biasrel\n";
+        biaisrel(ntest,nsel,npv);
+        cout<<"avant ecrires\n";
         ecrires(ntest,npv,nsel);
     }
