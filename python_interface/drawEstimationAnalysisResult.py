@@ -11,12 +11,12 @@ from utils.visualizescenario import *
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 
-class DrawAnalysisResult(QFrame):
+class DrawEstimationAnalysisResult(QFrame):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse
     pour l'instant : estimation
     """
     def __init__(self,directory,parent=None):
-        super(DrawAnalysisResult,self).__init__(parent)
+        super(DrawEstimationAnalysisResult,self).__init__(parent)
         self.parent=parent
         self.directory=directory
         self.createWidgets()

@@ -20,7 +20,7 @@ from mutationModel.setMutationModelSequences import SetMutationModelSequences
 from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from defineNewAnalysis import DefineNewAnalysis
-from drawAnalysisResult import DrawAnalysisResult
+from drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from utils.data import Data
 from datetime import datetime 
@@ -142,7 +142,7 @@ class Project(QTabWidget):
         if anDir.strip() != "":
             directory = anDir.replace(' ','_')
             if directory.split('_')[0] == 'estimation':
-                self.drawAnalysisFrame = DrawAnalysisResult(directory,self)
+                self.drawAnalysisFrame = DrawEstimationAnalysisResult(directory,self)
             else:
                 self.drawAnalysisFrame = DrawComparisonAnalysisResult(directory,self)
             self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
