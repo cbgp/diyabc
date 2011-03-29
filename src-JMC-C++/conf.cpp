@@ -94,7 +94,6 @@ Candidate scenarios : 1, 2, 3.*/
         
         
     void doconf(char *options, bool multithread, int seed) {
-        cout<<"debut de doconf\n";
         char *datafilename, *progressfilename, *courantfilename;
         int rtOK,nstatOK, iprog,nprog;
         int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg;
@@ -157,7 +156,7 @@ Candidate scenarios : 1, 2, 3.*/
             } else if (s0=="u:") {
                 smut = s1;
                 cout<<s1<<"\n";
-                ss1 = splitwords(s1,"-",&ng);
+                ss1 = splitwords(s1,"_",&ng);
                 if (ng != header.ngroupes) {
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);

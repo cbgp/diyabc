@@ -38,7 +38,11 @@
 #include <sys/time.h>
 #define SYS_TIMEH
 #endif
- 
+#ifndef ACPLOC
+#include "acploc.cpp"
+#define ACPLOC
+#endif
+
 ReftableC rt;
 HeaderC header;    
 ParticleSetC ps;
@@ -82,7 +86,7 @@ int readheaders() {
 }
 
 int main(int argc, char *argv[]){
-    char *estpar,*compar,*biaspar,*confpar;
+    char *estpar,*compar,*biaspar,*confpar,*priorpar;
     bool multithread=false,firsttime;
 	int nrecneeded,nrectodo,k,seed;
 	double **paramstat;
@@ -94,7 +98,7 @@ int main(int argc, char *argv[]){
        
         debut=walltime(&clock_zero);
 
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:hmqs:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:d:hmq")) !=-1) {
          
 	  switch (optchar) {
 
@@ -148,6 +152,9 @@ int main(int argc, char *argv[]){
             cout << "           m:<number of requested logistic regressions>\n";
             cout << "           h:<histparameter values/priors (as in bias/precision)>\n";
             cout << "           u:<mutparameter values/priors for successive groups (as in bias/precision)\n";
+            
+            cout << "\n-d for ABC PRIOR/SCENARIO CHECKING (idem)\n";
+            cout << "           a:<p for PCA, l for locate observed, pl for both>\n";
             break;
 	
         case 'i' :
@@ -212,7 +219,12 @@ int main(int argc, char *argv[]){
             action='f';
             break;
                     
-      case 'q' : 
+        case 'd' :
+            priorpar=strdup(optarg);
+            action='d';
+            break;
+        
+        case 'q' : 
             header.readHeader(headerfilename);
             k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
             rt.concat();
@@ -288,6 +300,10 @@ int main(int argc, char *argv[]){
        case 'f'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
                   doconf(confpar,multithread,seed);
+                  break;
+       case 'd'  : k=readheaders();
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  doacpl(priorpar,multithread,seed);
                   break;
                   
    }
