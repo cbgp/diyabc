@@ -19,9 +19,9 @@ from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
-from defineNewAnalysis import DefineNewAnalysis
-from drawEstimationAnalysisResult import DrawEstimationAnalysisResult
-from drawComparisonAnalysisResult import DrawComparisonAnalysisResult
+from analysis.defineNewAnalysis import DefineNewAnalysis
+from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
+from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from utils.data import Data
 from datetime import datetime 
 import os.path

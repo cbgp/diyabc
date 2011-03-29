@@ -12,7 +12,7 @@ from mutationModel.setMutationModelSequencesFixed import SetMutationModelSequenc
 from mutationModel.setMutationModelSequencesAnalysis import SetMutationModelSequencesAnalysis
 from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
-from estimation import Estimation
+from analysis.estimation import Estimation
 from utils.visualizescenario import *
 from utils.data import *
 
