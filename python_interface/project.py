@@ -1359,5 +1359,15 @@ class AnalysisThread(QThread):
                     self.emit(SIGNAL("analysisProgress"))
                 time.sleep(5)
         elif self.analysis[0] == "bias":
-            pass
+            params = self.analysis[-1]
+            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-b", '%s'%params, "-i", '%s'%self.analysis[1], "-m"]
+            print cmd_args_list
+            f = open("comparison.out","w")
+            p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
+            f.close()
+            print "popen ok"
+
+            f = open("comparison.out","r")
+            data= f.read()
+            f.close()
 
