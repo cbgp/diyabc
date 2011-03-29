@@ -30,6 +30,10 @@
 #include "bias.cpp"
 #define BIAS
 #endif
+#ifndef CONF
+#include "conf.cpp"
+#define CONF
+#endif
 #ifndef SYS_TIMEH
 #include <sys/time.h>
 #define SYS_TIMEH
@@ -90,7 +94,7 @@ int main(int argc, char *argv[]){
        
         debut=walltime(&clock_zero);
 
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:p:f:g:hmqs:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:hmqs:")) !=-1) {
          
 	  switch (optchar) {
 
@@ -185,6 +189,7 @@ int main(int argc, char *argv[]){
 	 if (not flagi) {if (action=='e') ident=strdup("estim1");
                      if (action=='c') ident=strdup("compar1");
                      if (action=='b') ident=strdup("bias1");
+                     if (action=='f') ident=strdup("conf1");
      }
      if (not flags) seed=time(NULL);	
 	switch (action) {

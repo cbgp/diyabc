@@ -116,24 +116,26 @@ using namespace std;
 * calcule les différentes statistiques de biais, rmse...
 */
     void biaisrel(int ntest,int nsel,int npv) {
-        int ntestOK;
+        double s,d;
 //////////////// mean relative bias
-        br = new double* [npv];
-        for (int j=0;j<nparamcom+nparcompo;j++) {
-            br[j] = new double[3];
-            br[j][0]=0.0;br[j][1]=0.0;br[j][2]=0.0;ntestOK=0.0;
-            for (int p=0;p<ntest;p++) if (enreg2[p].paramvv[j]>0.0) {
-                 br[j][0] +=(paramest[p][j].moy-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];
-                 br[j][1] +=(paramest[p][j].med-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];
-                 br[j][2] +=(paramest[p][j].mod-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];
-                 ntestOK++;
+        br = new double* [3];
+        for (int k=0;k<3;k++) {
+            br[k] = new double[nparamcom+nparcompo];
+            for (int j=0;j<nparamcom+nparcompo;j++) {
+                br[k][j]=0.0;
+                for (int p=0;p<ntest;p++) {
+                    switch (k) {
+                      case 0 : d=paramest[p][j].moy-enreg2[p].paramvv[j];break; 
+                      case 1 : d=paramest[p][j].med-enreg2[p].paramvv[j];break; 
+                      case 2 : d=paramest[p][j].mod-enreg2[p].paramvv[j];break; 
+                    }
+                    br[k][j] +=d/enreg2[p].paramvv[j];
+                }
+                br[k][j] /= (double)ntest;
+                cout << "br["<<k<<"]["<<j<<"]="<<br[k][j]<<"\n";
             }
-            if (ntestOK>0) br[j][0] /= (double)ntestOK; else br[j][0]=-9.0;
-            if (ntestOK>0) br[j][1] /= (double)ntestOK; else br[j][1]=-9.0;
-            if (ntestOK>0) br[j][2] /= (double)ntestOK; else br[j][2]=-9.0;
         }
 ////////////  RRMISE
-        double s,d;
         rrmise = new double [nparamcom+nparcompo];
         for (int j=0;j<nparamcom+nparcompo;j++) {
             rrmise[j]=0.0;
@@ -241,6 +243,7 @@ using namespace std;
                 rmae[k][j] = cal_med(ntest,e);
             } 
         }
+        cout<<br[1][0]<<"   "<<br[1][1]<<"   "<<br[1][2]<<"\n";
     }
     
     void ecrires(int ntest,int npv,int nsel) {
@@ -287,17 +290,17 @@ using namespace std;
         fprintf(f1,"\n                                           Mean Relative Bias\n");
         fprintf(f1,"Parameter                           Means          Medians        Modes\n");
         for (int j=0;j<nparamcom+nparcompo;j++) {
-             cout<<nomparam[j]<<"\n";
-           fprintf(f1,"%s",nomparam[j].c_str());
+            //cout<<nomparam[j]<<"\n";
+            fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<33-nomparam[j].length();i++)fprintf(f1," ");
-            if (br[j][0]<0) fprintf(f1,"  %5.3f",br[j][0]); else fprintf(f1,"   %5.3f",br[j][0]); 
-            if (br[j][1]<0) fprintf(f1,"         %5.3f",br[j][1]); else fprintf(f1,"          %5.3f",br[j][1]); 
-            if (br[j][2]<0) fprintf(f1,"         %5.3f\n",br[j][2]); else fprintf(f1,"          %5.3f\n",br[j][2]); 
+            if (br[0][j]<0) fprintf(f1,"  %5.3f",br[0][j]); else fprintf(f1,"   %5.3f",br[0][j]); 
+            if (br[1][j]<0) fprintf(f1,"         %5.3f",br[1][j]); else fprintf(f1,"          %5.3f",br[1][j]); 
+            if (br[2][j]<0) fprintf(f1,"         %5.3f\n",br[2][j]); else fprintf(f1,"          %5.3f\n",br[2][j]); 
         }
         fprintf(f1,"\n                            RRMISE            RMeanAD            Square root of mean square error/true value\n");
         fprintf(f1,"Parameter                                                         Mean             Median             Mode\n");
         for (int j=0;j<nparamcom+nparcompo;j++) {
-            cout<<nomparam[j]<<"\n";
+            //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
             fprintf(f1,"     %5.3f             %5.3f             %5.3f              %5.3f            %5.3f\n",rrmise[j],rmad[j],rmse[0][j],rmse[1][j],rmse[2][j]);
@@ -305,7 +308,7 @@ using namespace std;
         fprintf(f1,"\n                                                                 Factor 2        Factor 2        Factor 2\n");
         fprintf(f1,"Parameter               50%% Coverage        95%% Coverage         (Mean)          (Median)        (Mode)  \n");
         for (int j=0;j<nparamcom+nparcompo;j++) {
-            cout<<nomparam[j]<<"\n";
+            //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
             fprintf(f1,"     %5.3f             %5.3f             %5.3f              %5.3f            %5.3f\n",cov50[j],cov95[j],fac2[0][j],fac2[1][j],fac2[2][j]);
@@ -313,8 +316,8 @@ using namespace std;
         fprintf(f1,"\n                                          Median Relative Bias\n");
         fprintf(f1,"Parameter                                     Means          Medians        Modes\n");
         for (int j=0;j<nparamcom+nparcompo;j++) {
-             cout<<nomparam[j]<<"\n";
-           fprintf(f1,"%s",nomparam[j].c_str());
+            //cout<<nomparam[j]<<"\n";
+            fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<43-nomparam[j].length();i++)fprintf(f1," ");
             if (medbr[0][j]<0) fprintf(f1,"  %5.3f",medbr[0][j]); else fprintf(f1,"   %5.3f",medbr[0][j]); 
             if (medbr[1][j]<0) fprintf(f1,"         %5.3f",medbr[1][j]); else fprintf(f1,"          %5.3f",medbr[1][j]); 
@@ -323,7 +326,7 @@ using namespace std;
         fprintf(f1,"\n                             RMedAD        Median of the absolute error/true value\n");
         fprintf(f1,"Parameter                                     Means          Medians        Modes\n");
         for (int j=0;j<nparamcom+nparcompo;j++) {
-            cout<<nomparam[j]<<"\n";
+            //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
             fprintf(f1,"      %5.3f           %5.3f          %5.3f          %5.3f\n",rmedad[j],rmae[0][j],rmae[1][j],rmae[2][j]);
@@ -485,7 +488,7 @@ using namespace std;
         for (int p=0;p<ntest;p++) {delete []enreg[p].param;delete []enreg[p].stat;}delete []enreg;
 
         det_numpar();                                   
-        cout<<"naparmcom = "<<nparamcom<<"   nparcomp = "<<nparcompo<<"\n";
+        //cout<<"naparmcom = "<<nparamcom<<"   nparcomp = "<<nparcompo<<"\n";
         enreg2 = new enreC[ntest];
         for (int p=0;p<ntest;p++) {
             enreg2[p].stat = new double[header.nstat];
@@ -532,11 +535,11 @@ using namespace std;
                 paretoil[p][i] = new double[nparamcom+nparcompo];
                 for (int j=0;j<nparamcom+nparcompo;j++) paretoil[p][i][j] = phistar[i][j];
             }
-            printf("test %3d ",p+1);
-            for (int j=0;j<npar;j++) printf(" %6.0e (%8.2e %8.2e %8.2e) ",enreg2[p].paramvv[j],paramest[p][j].moy,paramest[p][j].med,paramest[p][j].mod);cout<<"\n";    
+            printf("analysing data test %3d \n",p+1);
+            //for (int j=0;j<npar;j++) printf(" %6.0e (%8.2e %8.2e %8.2e) ",enreg2[p].paramvv[j],paramest[p][j].moy,paramest[p][j].med,paramest[p][j].mod);cout<<"\n";    
         }
-        cout<<"avant biasrel\n";
+        //cout<<"avant biasrel\n";
         biaisrel(ntest,nsel,npv);
-        cout<<"avant ecrires\n";
+        //cout<<"avant ecrires\n";
         ecrires(ntest,npv,nsel);
     }

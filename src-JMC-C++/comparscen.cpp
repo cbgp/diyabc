@@ -36,6 +36,10 @@ struct matligneC
     double* x;
 };
 
+struct posteriorscenC
+{
+    double x,inf,sup;
+};
 
 /** 
 * définit l'opérateur de comparaison de deux lignes de la matrice matA
@@ -49,39 +53,44 @@ struct complignes
    }
 };
 
+int ncs=100;
 
-    void comp_direct(int n, char *path, char *ident) {
-        int ncs=100,nts,bidon,iscen,k,i;
-        double **postscen, **postinf, **postsup,d,p,delta;
+    posteriorscenC** comp_direct(int n) {
+        int nts,bidon,iscen,k,i;
+        posteriorscenC **posts;
+        double d,p,delta;
         bool scenOK;
         delta = rt.enrsel[n-1].dist;
-        postscen = new double*[ncs];postinf = new double*[ncs];postsup = new double*[ncs];
+        posts = new posteriorscenC*[ncs];
         for (int i=0;i<ncs;i++) {
-            postscen[i] = new double[rt.nscenchoisi];
-            postinf[i] = new double[rt.nscenchoisi];
-            postsup[i] = new double[rt.nscenchoisi];
+            posts[i] = new posteriorscenC[rt.nscenchoisi];
         }
         for (int i=0;i<ncs;i++) {
-            for (int j=0;j<rt.nscenchoisi;j++) postscen[i][j]=0.0;
+            for (int j=0;j<rt.nscenchoisi;j++) posts[i][j].x=0.0;
             nts = (n/ncs)*(i+1);
             for (int j=0;j<nts;j++) {
                 k=0;
                 while ((k<rt.nscenchoisi)and(rt.scenchoisi[k]!=rt.enrsel[j].numscen)) k++;
-                postscen[i][k] +=(1.0/(double)nts);
+                posts[i][k].x +=(1.0/(double)nts);
             }
         }
-        //cout<<"apres calcul des postscen\n";
+        //cout<<"apres calcul des posts\n";
         for (int i=0;i<ncs;i++) {
              nts=n/ncs;
              for (k=0;k<rt.nscenchoisi;k++) {
-                 p=postscen[i][k];
+                 p=posts[i][k].x;
                  if ((abs(p)<0.00001)or(abs(1.0-p)<0.00001)) d=0.0;
                  else d=1.96*sqrt(p*(1.0-p)/(double)nts);
-                 postinf[i][k] =p-d;if(postinf[i][k]<0.0)postinf[i][k]=0.0; 
-                 postsup[i][k] =p+d;if(postsup[i][k]>1.0)postsup[i][k]=1.0;
+                 posts[i][k].inf =p-d;if(posts[i][k].inf<0.0)posts[i][k].inf=0.0; 
+                 posts[i][k].sup =p+d;if(posts[i][k].sup>1.0)posts[i][k].sup=1.0;
              }
         }
+        return posts;
+    }
+    
+    void  save_comp_direct(int n, posteriorscenC** posts, char *path, char *ident){
         //cout<<"apres calcul des postinf/postsup\n";
+        int nts;
         char *nomfiparstat;
         nomfiparstat = new char[strlen(path)+strlen(ident)+20];
         strcpy(nomfiparstat,path);
@@ -94,12 +103,33 @@ struct complignes
         fprintf(f1,"   %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"          scenario %d       ",rt.scenchoisi[i]);fprintf(f1,"\n");
         for (int i=0;i<ncs;i++) {
             nts = (n/ncs)*(i+1);
-            if (nts%50==0){printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",postscen[i][j],postinf[i][j],postsup[i][j]);printf("\n");}
-            fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",postscen[i][j],postinf[i][j],postsup[i][j]);fprintf(f1,"\n");
+            if (nts%50==0){printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",posts[i][j].x,posts[i][j].inf,posts[i][j].sup);printf("\n");}
+            fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",posts[i][j].x,posts[i][j].inf,posts[i][j].sup);fprintf(f1,"\n");
+        }
+        fclose(f1);
+    }
+
+    void save_comp_logistic(int nlogreg,int nselr,posteriorscenC** postscenlog,char *path, char *ident) {
+        int nts;
+        char *nomfiparstat;
+        nomfiparstat = new char[strlen(path)+strlen(ident)+20];
+        strcpy(nomfiparstat,path);
+        strcat(nomfiparstat,ident);
+        strcat(nomfiparstat,"_complogreg.txt");
+        cout <<nomfiparstat<<"\n";
+        FILE *f1;
+        f1=fopen(nomfiparstat,"w");
+        printf("     %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) printf("          scenario %d       ",rt.scenchoisi[i]);printf("\n");
+        fprintf(f1,"   %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"          scenario %d       ",rt.scenchoisi[i]);fprintf(f1,"\n");
+        for (int i=0;i<nlogreg;i++) {
+            nts = (nselr/nlogreg)*(i+1);
+            printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
+            fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");
         }
         fclose(f1);        
     }
-
+   
+    
 /** 
 * effectue le remplissage de la matrice matX0 et du vecteur des poids vecW 
 */
@@ -468,13 +498,15 @@ struct complignes
         delete[] px0;
     }
       
-    void call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil, double *moyP, double *moyPinf, double *moyPsup) {
-      int *vecY,ntt,j,dtt,k,kk;
-      double som,*vecYY, *px,*pxi,*pxs,somw;
-      matligneC *matA;
-      for (int i=0;i<rt.nscenchoisi;i++) {
-              if (i==0) {moyP[i]=1.0;moyPinf[i]=1.0;moyPsup[i]=1.0;}
-              else      {moyP[i]=0.0;moyPinf[i]=0.0;moyPsup[i]=0.0;}  
+    posteriorscenC* call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil) {
+        posteriorscenC *postlog;
+        int *vecY,ntt,j,dtt,k,kk;
+        double som,*vecYY, *px,*pxi,*pxs,somw;
+        matligneC *matA;
+        postlog = new posteriorscenC[rt.nscenchoisi];
+        for (int i=0;i<rt.nscenchoisi;i++) {
+              if (i==0) {postlog[i].x=1.0;postlog[i].inf=1.0;postlog[i].sup=1.0;}
+              else      {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}  
         }
         rempli_mat0(nts,stat_obs);
         vecY = new int[nts];
@@ -509,33 +541,59 @@ struct complignes
         for (int i=0;i<ntt;i++) vecW[i] = vecW[i]/som*(double)ntt;
         px = new double[nscenutil];pxi = new double[nscenutil];pxs = new double[nscenutil];
         polytom_logistic_regression(nts, nstatOKsel, matX0, vecYY, vecW, px, pxi, pxs);
-        if (nscenutil==rt.nscenchoisi) for (int i=0;i<nscenutil;i++) {moyP[i]=px[i];moyPinf[i]=pxi[i];moyPsup[i]=pxs[i];}
+        if (nscenutil==rt.nscenchoisi) for (int i=0;i<nscenutil;i++) {postlog[i].x=px[i];postlog[i].inf=pxi[i];postlog[i].sup=pxs[i];}
         else {
-            for (int i=0;i<rt.nscenchoisi;i++) {moyP[i]=0.0;moyPinf[i]=0.0;moyPsup[i]=0.0;}
+            for (int i=0;i<rt.nscenchoisi;i++) {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}
             for  (int i=0;i<nscenutil;i++)  {
                 kk=0;
                 while (scenchoisiutil[i]!=rt.scenchoisi[kk]) kk++;
-                moyP[kk]=px[i];moyPinf[kk]=pxi[i];moyPsup[kk]=pxs[i];
+                postlog[kk].x=px[i];postlog[kk].inf=pxi[i];postlog[kk].sup=pxs[i];
             }
         }
-        
-        
         for (int i=0;i<nts;i++) delete [] matA[i].x; delete [] matA;
         for (int i=0;i<nts;i++) delete [] matX0[i]; delete [] matX0;
         delete [] vecY;
         delete [] vecYY;
         delete [] vecW;
+        return postlog;
     }  
       
-      
+    posteriorscenC* comp_logistic(int nts,double *stat_obs) {
+        int *postdir,nscenutil,*scenchoisiutil,kk;
+        posteriorscenC *postlog;
+        postdir= new int[rt.nscenchoisi];
+        for (int i=0;i<rt.nscenchoisi;i++) {
+            postdir[i]=0;
+            for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postdir[i]++;
+        }
+        for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"  : "<<postdir[i]<<"\n";
+        cout<<"\n";
+        nscenutil=0;
+        for (int i=0;i<rt.nscenchoisi;i++) if((postdir[i]>2)and(postdir[i]>nts/1000)) nscenutil++;
+        scenchoisiutil = new int[nscenutil];
+        kk=0;for (int i=0;i<rt.nscenchoisi;i++) if((postdir[i]>2)and(postdir[i]>nts/1000)) {scenchoisiutil[kk]=rt.scenchoisi[i];kk++;}
+        if (nscenutil==1) {
+            postlog = new posteriorscenC[rt.nscenchoisi];
+            for (int i=0;i<rt.nscenchoisi;i++) {
+              if((postdir[i]>2)and(postdir[i]>nts/1000)) {postlog[i].x=1.0;postlog[i].inf=1.0;postlog[i].sup=1.0;}
+              else                                       {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}
+            }
+        } else postlog = call_polytom_logistic_regression(nts,stat_obs,nscenutil,scenchoisiutil);
+        cout<<"\n";
+        for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"   "<<postlog[i].x<<"   ["<<postlog[i].inf<<","<<postlog[i].sup<<"]\n";
+        delete []postdir;
+        delete []scenchoisiutil;
+        return postlog;
+    }  
       
     void docompscen(char *compar,bool multithread){
         char *datafilename, *progressfilename;
-        int rtOK,nstatOK, *postsc,iprog,nprog;;
-        int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,kk,nts,nscenutil,*scenchoisiutil;
+        int rtOK,nstatOK,iprog,nprog;;
+        int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,kk,nts;
         string opt,*ss,s,*ss1,s0,s1;
-        double  *stat_obs, **moyP,**moyPsup,**moyPinf;
+        double  *stat_obs;
         FILE *flog;
+        posteriorscenC **postscendir,**postscenlog;
         
         progressfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(progressfilename,path);
@@ -575,60 +633,19 @@ struct complignes
         stat_obs = header.read_statobs(statobsfilename);
         rt.cal_dist(nrec,nsel,stat_obs);
         iprog+=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-        comp_direct(nseld,path,ident);
-        moyP    = new double*[nlogreg];
-        moyPinf = new double*[nlogreg];
-        moyPsup = new double*[nlogreg];
+        postscendir = comp_direct(nseld);
+        save_comp_direct(nseld,postscendir,path,ident);
+        
+        postscenlog = new posteriorscenC*[nlogreg];
         if (nlogreg>0) {
             k=0;
-            while(k<nlogreg) {
+            while(k<nlogreg){ 
                 nts=(nselr/nlogreg)*(k+1);
-                moyP[k] = new double[rt.nscenchoisi];
-                moyPinf[k] = new double[rt.nscenchoisi];
-                moyPsup[k] = new double[rt.nscenchoisi];
-                postsc= new int[rt.nscenchoisi];
-                for (int i=0;i<rt.nscenchoisi;i++) {
-                    postsc[i]=0;
-                    for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postsc[i]++;
-                }
-                for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"  : "<<postsc[i]<<"\n";
-                cout<<"\n";
-                nscenutil=0;
-                for (int i=0;i<rt.nscenchoisi;i++) if((postsc[i]>2)and(postsc[i]>nts/1000)) nscenutil++;
-                moyP[k] = new double[nscenutil];
-                moyPinf[k] = new double[nscenutil];
-                moyPsup[k] = new double[nscenutil];
-                scenchoisiutil = new int[nscenutil];
-                kk=0;for (int i=0;i<rt.nscenchoisi;i++) if((postsc[i]>2)and(postsc[i]>nts/1000)) {scenchoisiutil[kk]=rt.scenchoisi[i];kk++;}
-                if (nscenutil==1) {
-                    for (int i=0;i<rt.nscenchoisi;i++) {
-                      if((postsc[i]>2)and(postsc[i]>nts/1000)) {moyP[k][i]=1.0;moyPinf[k][i]=1.0;moyPsup[k][i]=1.0;}
-                      else                                     {moyP[k][i]=0.0;moyPinf[k][i]=0.0;moyPsup[k][i]=0.0;}
-                    }
-                } else call_polytom_logistic_regression(nts,stat_obs,nscenutil,scenchoisiutil,moyP[k],moyPinf[k],moyPsup[k]);
-                cout<<"\n";
-                for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"   "<<moyP[k][i]<<"   ["<<moyPinf[k][i]<<","<<moyPsup[k][i]<<"]\n";
-                delete []postsc;
-                delete []scenchoisiutil;
+                postscenlog[k] = comp_logistic(nts,stat_obs);
                 k++;
                 iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             }
-                char *nomfiparstat;
-                nomfiparstat = new char[strlen(path)+strlen(ident)+20];
-                strcpy(nomfiparstat,path);
-                strcat(nomfiparstat,ident);
-                strcat(nomfiparstat,"_complogreg.txt");
-                cout <<nomfiparstat<<"\n";
-                FILE *f1;
-                f1=fopen(nomfiparstat,"w");
-                printf("     %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) printf("          scenario %d       ",rt.scenchoisi[i]);printf("\n");
-                fprintf(f1,"   %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"          scenario %d       ",rt.scenchoisi[i]);fprintf(f1,"\n");
-                for (int i=0;i<nlogreg;i++) {
-                    nts = (nselr/nlogreg)*(i+1);
-                    printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",moyP[i][j],moyPinf[i][j],moyPsup[i][j]);printf("\n");
-                    fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",moyP[i][j],moyPinf[i][j],moyPsup[i][j]);fprintf(f1,"\n");
-                }
-                fclose(f1);        
+            save_comp_logistic(nlogreg,nselr,postscenlog,path,ident);
         }
     
     }

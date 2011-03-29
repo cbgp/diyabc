@@ -42,7 +42,7 @@ public:
     int nrec,*nrecscen,nscen,nreclus;
     long posnrec;
     char *datapath, *filename, *filelog, *pch;
-    int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi;
+    int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste;
     float *param,*sumstat;
     fstream fifo;
     int nstatOK,nsel,nenr;
