@@ -100,7 +100,7 @@ class Estimation(QFrame):
                                 strparam += "%s "%to_add
                         # virer le dernier espace
                         strparam = strparam[:-1]
-                        strparam += ")-"
+                        strparam += ")_"
                 else:
                     for ind,gr in enumerate(self.analysis[5]):
                         strparam += "g%s("%(ind+1)
@@ -108,7 +108,7 @@ class Estimation(QFrame):
                             strparam += "%s "%num
                         # virer le dernier espace
                         strparam = strparam[:-1]
-                        strparam += ")-"
+                        strparam += ")_"
                 # virer le dernier '-'
                 strparam = strparam[:-1]
             print "ursulla : %s"%strparam
