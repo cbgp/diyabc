@@ -53,63 +53,67 @@ using namespace std;
         return spr;
     }
 
-    void resethistparam(string s) {
+    bool resethistparam(string s) {
         string *ss,name,sprior,smini,smaxi;
+        bool useprior=true;
         int n,i;
         double mini,maxi;
         ss = splitwords(s,"=",&n);
         name=ss[0];
-        i=0;while((i<header.scenario[rt.scenchoisi[0]-1].nparam)and(name != header.scenario[rt.scenchoisi[0]-1].histparam[i].name)) i++;
+        i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
         //cout<<"parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
-            header.scenario[rt.scenchoisi[0]-1].histparam[i].prior = header.readprior(ss[1]);
-             header.scenario[rt.scenchoisi[0]-1].histparam[i].prior.ecris();
+            header.scenario[rt.scenteste-1].histparam[i].prior = header.readprior(ss[1]);
+             header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
         }
         else {
-            header.scenario[rt.scenchoisi[0]-1].histparam[i].prior = header.readprior(pseudoprior(ss[1]));
-            //header.scenario[rt.scenchoisi[0]-1].histparam[i].value = atof(ss[1].c_str()) ;
+            header.scenario[rt.scenteste-1].histparam[i].prior = header.readprior(pseudoprior(ss[1]));
+            useprior=false;
+            //header.scenario[rt.scenteste-1].histparam[i].value = atof(ss[1].c_str()) ;
         }
+        return useprior;
     }
 
-    void resetmutparam(string s) {
+    bool resetmutparam(string s) {
         string *ss,numgr,s1;
+        bool useprior=true;
         int n,i,gr,i0,i1;
         numgr = s.substr(1,s.find("(")-1);  gr=atoi(numgr.c_str());
         i0=s.find("(");i1=s.find(")"); cout <<"i0="<<i0<<"  i1="<<i1<<"\n";
         s1 = s.substr(i0+1,i1-i0-1); cout <<"groupe "<<gr<<"  "<<s1<<"\n";
         ss = splitwords(s1," ",&n);
         if (header.groupe[gr].type==0) {
-            if (ss[0].find("[")==string::npos) header.groupe[gr].priormutmoy =header.readpriormut(pseudoprior(ss[0]));
+            if (ss[0].find("[")==string::npos) {header.groupe[gr].priormutmoy =header.readpriormut(pseudoprior(ss[0]));useprior=false;}
             else header.groupe[gr].priormutmoy = header.readpriormut(ss[0]);
             if (ss[1].find("[")==string::npos) header.groupe[gr].priormutloc.sdshape=atof(ss[1].c_str());
             else header.groupe[gr].priormutloc = header.readpriormut(ss[1]);
             
-            if (ss[2].find("[")==string::npos) header.groupe[gr].priorPmoy=header.readpriormut(pseudoprior(ss[2]));
+            if (ss[2].find("[")==string::npos) {header.groupe[gr].priorPmoy=header.readpriormut(pseudoprior(ss[2]));useprior=false;}
             else header.groupe[gr].priorPmoy = header.readpriormut(ss[2]);
              if (ss[3].find("[")==string::npos) header.groupe[gr].priorPloc.sdshape=atof(ss[3].c_str());
             else header.groupe[gr].priorPloc = header.readpriormut(ss[3]);
             
-            if (ss[4].find("[")==string::npos) header.groupe[gr].priorsnimoy=header.readpriormut(pseudoprior(ss[4]));
+            if (ss[4].find("[")==string::npos) {header.groupe[gr].priorsnimoy=header.readpriormut(pseudoprior(ss[4]));useprior=false;}
             else header.groupe[gr].priorsnimoy = header.readpriormut(ss[4]);
             if (ss[5].find("[")==string::npos) header.groupe[gr].priorsniloc.sdshape=atof(ss[5].c_str());
             else header.groupe[gr].priorsniloc = header.readpriormut(ss[5]);
        } else {
-             if (ss[0].find("[")==string::npos) header.groupe[gr].priormusmoy=header.readpriormut(pseudoprior(ss[0]));
+             if (ss[0].find("[")==string::npos) {header.groupe[gr].priormusmoy=header.readpriormut(pseudoprior(ss[0]));useprior=false;}
             else header.groupe[gr].priormusmoy = header.readpriormut(ss[0]);
             if (ss[1].find("[")==string::npos) header.groupe[gr].priormusloc.sdshape=atof(ss[1].c_str());
             else header.groupe[gr].priormusloc = header.readpriormut(ss[1]);
             
-            if (ss[2].find("[")==string::npos) header.groupe[gr].priork1moy=header.readpriormut(pseudoprior(ss[2]));
+            if (ss[2].find("[")==string::npos) {header.groupe[gr].priork1moy=header.readpriormut(pseudoprior(ss[2]));useprior=false;}
             else header.groupe[gr].priork1moy = header.readpriormut(ss[2]);
              if (ss[3].find("[")==string::npos) header.groupe[gr].priork1loc.sdshape=atof(ss[3].c_str());
             else header.groupe[gr].priork1loc = header.readpriormut(ss[3]);
             
-            if (ss[4].find("[")==string::npos) header.groupe[gr].priork2moy=header.readpriormut(pseudoprior(ss[4]));
+            if (ss[4].find("[")==string::npos) {header.groupe[gr].priork2moy=header.readpriormut(pseudoprior(ss[4]));useprior=false;}
             else header.groupe[gr].priork2moy = header.readpriormut(ss[4]);
             if (ss[5].find("[")==string::npos) header.groupe[gr].priork2loc.sdshape=atof(ss[5].c_str());
             else header.groupe[gr].priork2loc = header.readpriormut(ss[5]);
        } 
-       cout<<"fin de resetmutparam\n";
+       return useprior;
     }
 
 /**
@@ -271,7 +275,7 @@ using namespace std;
               case 3 : fprintf(f1,"Transformation LOGIT of parameters\n");break;
               case 4 : fprintf(f1,"Transformation LOG(TG) of parameters\n");break;
         }
-        fprintf(f1,"Chosen scenario(s) : ");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"%d ",rt.scenchoisi[i]);fprintf(f1,"\n");
+        fprintf(f1,"Chosen scenario : %d\n",rt.scenteste);
         fprintf(f1,"Number of simulated data sets : %d\n",rt.nreclus);
         fprintf(f1,"Number of selected data sets  : %d\n",nsel);
         fprintf(f1,"Results based on %d test data sets\n\n",ntest);
@@ -343,7 +347,7 @@ using namespace std;
                     if (header.groupe[gr].priorsnimoy.constant) {
                         pmut = header.groupe[gr].mutmoy+header.groupe[gr].snimoy;
                         for (int j=0;j<npar;j++) {
-                            if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                            if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                                   enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
                                 k++;
                             }
@@ -351,7 +355,7 @@ using namespace std;
                     } else {
                         kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==2))) kk++;
                         for (int j=0;j<npar;j++) {
-                            if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                            if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                                 pmut = header.groupe[gr].mutmoy+enreg2[p].paramvv[npar+kk];
                                 enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
                                 k++;
@@ -362,7 +366,7 @@ using namespace std;
                     if (header.groupe[gr].priorsnimoy.constant) {
                         kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
                         for (int j=0;j<npar;j++) {
-                            if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                            if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                                 pmut =enreg2[p].paramvv[npar+kk] +header.groupe[gr].snimoy;
                                 enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
                                 k++;
@@ -372,7 +376,7 @@ using namespace std;
                         kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
                         qq=0;while (not ((header.mutparam[qq].groupe == gr)and(header.mutparam[qq].category ==2))) qq++;
                         for (int j=0;j<npar;j++) {
-                            if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                            if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                                 pmut =enreg2[p].paramvv[npar+kk]+enreg2[p].paramvv[npar+qq];
                                 enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
                                 k++;
@@ -385,7 +389,7 @@ using namespace std;
                 if (header.groupe[gr].priormusmoy.constant) {
                     pmut = header.groupe[gr].musmoy;
                     for (int j=0;j<npar;j++) {
-                        if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                        if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                             enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
                             k++;
                         }
@@ -393,7 +397,7 @@ using namespace std;
                 } else {
                     kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==3))) kk++;
                     for (int j=0;j<npar;j++) {
-                        if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+                        if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                             pmut = enreg2[p].paramvv[npar+kk];
                             enreg2[p].paramvv[nparamcom+k]=pmut*enreg2[p].paramvv[j];
                             k++;
@@ -407,9 +411,10 @@ using namespace std;
     void dobias(char *options, bool multithread, int seed){
         char *datafilename, *progressfilename, *courantfilename;
         int rtOK,nstatOK, iprog,nprog;
-        int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv;
+        int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,st,pa;
+        bool usepriorhist,usepriormut;
         string bidon;
         bidon = new char[1000];
         FILE *flog, *fcur;
@@ -428,12 +433,10 @@ using namespace std;
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
             if (s0=="s:") {
-                ss1 = splitwords(s1,",",&rt.nscenchoisi);
-                rt.scenchoisi = new int[rt.nscenchoisi];
-                for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());
-                nrecpos=0;for (int j=0;j<rt.nscenchoisi;j++) nrecpos +=rt.nrecscen[rt.scenchoisi[j]-1];
-                cout <<"scenario choisi : ";
-                for (int j=0;j<rt.nscenchoisi;j++) {cout<<rt.scenchoisi[j]; if (j<rt.nscenchoisi-1) cout <<",";}cout<<"\n";
+                ss1 = splitwords(s1,",",&nn);
+                rt.scenteste = atoi(ss1[0].c_str());
+                nrecpos=0;nrecpos +=rt.nrecscen[rt.scenteste-1];
+                cout <<"scenario choisi : "<<rt.scenteste<<"\n";
             } else if (s0=="n:") {
                 nrec=atoi(s1.c_str());
                 if(nrec>nrecpos) nrec=nrecpos;
@@ -461,11 +464,11 @@ using namespace std;
                 cout<<"nombre de jeux-tests à simuler = "<<ntest<<"\n";
             } else if (s0=="h:") {
                 ss1 = splitwords(s1," ",&np);
-                if (np != header.scenario[rt.scenchoisi[0]-1].nparam) {
-                    cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenchoisi[0]<<" est de "<<header.scenario[rt.scenchoisi[0]-1].nparam<<"\n";
+                if (np != header.scenario[rt.scenteste-1].nparam) {
+                    cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenteste<<" est de "<<header.scenario[rt.scenteste-1].nparam<<"\n";
                     exit(1);
                 }
-                for (int j=0;j<np;j++) resethistparam(ss1[j]);
+                for (int j=0;j<np;j++) usepriorhist = resethistparam(ss1[j]);
             } else if (s0=="u:") {
                 cout<<s1<<"\n";
                 ss1 = splitwords(s1,"-",&ng);
@@ -473,22 +476,22 @@ using namespace std;
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);
                 }
-                for (int j=0;j<ng;j++) resetmutparam(ss1[j]);
+                for (int j=0;j<ng;j++) usepriormut = resetmutparam(ss1[j]);
             }
         }
-        npv = rt.nparam[rt.scenchoisi[0]-1];
+        npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[ntest];
         for (int p=0;p<ntest;p++) {
             enreg[p].stat = new float[header.nstat];
             enreg[p].param = new float[npv];
-            enreg[p].numscen = rt.scenchoisi[0];
+            enreg[p].numscen = rt.scenteste;
         }
-        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenchoisi[0],seed);
+        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed);
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         for (int p=0;p<ntest;p++) {delete []enreg[p].param;delete []enreg[p].stat;}delete []enreg;
-
+        rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
         det_numpar();                                   
-        //cout<<"naparmcom = "<<nparamcom<<"   nparcomp = "<<nparcompo<<"\n";
+        cout<<"naparmcom = "<<nparamcom<<"   nparcomp = "<<nparcompo<<"\n";
         enreg2 = new enreC[ntest];
         for (int p=0;p<ntest;p++) {
             enreg2[p].stat = new double[header.nstat];

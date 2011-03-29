@@ -456,7 +456,7 @@ int ncs=100;
                     }
                 }       
             for (i=0;i<nmodnco;i++)beta0[i]=beta[i];
-            std::cout << "iteration " << rep <<"   log-lik= " << loglik[rep-1] << "\n";
+            //std::cout << "iteration " << rep <<"   log-lik= " << loglik[rep-1] << "\n";
             for (i=0;i<nmodel;i++) {for (j=0;j<nmodel;j++) matA[i][j]=matB[i*(nco+1)][j*(nco+1)];}
             bet[0]=0.0;for(i=0;i<nmodel;i++) bet[i+1]=beta0[i*(nco+1)];
             if (rep==1) {for (i=0;i<nmodel+1;i++) px0[i]=2.0;} else {for (i=0;i<nmodel+1;i++) px0[i]=px[i];}
@@ -566,8 +566,8 @@ int ncs=100;
             postdir[i]=0;
             for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postdir[i]++;
         }
-        for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"  : "<<postdir[i]<<"\n";
-        cout<<"\n";
+        //for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"  : "<<postdir[i]<<"\n";
+        //cout<<"\n";
         nscenutil=0;
         for (int i=0;i<rt.nscenchoisi;i++) if((postdir[i]>2)and(postdir[i]>nts/1000)) nscenutil++;
         scenchoisiutil = new int[nscenutil];
@@ -579,8 +579,8 @@ int ncs=100;
               else                                       {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}
             }
         } else postlog = call_polytom_logistic_regression(nts,stat_obs,nscenutil,scenchoisiutil);
-        cout<<"\n";
-        for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"   "<<postlog[i].x<<"   ["<<postlog[i].inf<<","<<postlog[i].sup<<"]\n";
+        //cout<<"\n";
+        //for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"   "<<postlog[i].x<<"   ["<<postlog[i].inf<<","<<postlog[i].sup<<"]\n";
         delete []postdir;
         delete []scenchoisiutil;
         return postlog;
