@@ -471,7 +471,7 @@ using namespace std;
                 for (int j=0;j<np;j++) usepriorhist = resethistparam(ss1[j]);
             } else if (s0=="u:") {
                 cout<<s1<<"\n";
-                ss1 = splitwords(s1,"_",&ng);
+                ss1 = splitwords(s1,"*",&ng);
                 if (ng != header.ngroupes) {
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);

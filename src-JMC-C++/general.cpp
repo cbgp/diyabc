@@ -135,7 +135,7 @@ int main(int argc, char *argv[]){
             cout << "           h:<histparameter values/priors (see below)>\n";
             cout << "                histparameter values (separated by a space): <parameter name>=<parameter value>\n";
             cout << "                histparameter priors (separated by a space): <parameter name>=<parameter prior as in header.txt>\n";
-            cout << "           u:<mutparameter values/priors for successive groups (see below)> groups are named G1, G2 and separated by hyphens : G1-G2-...\n";
+            cout << "           u:<mutparameter values/priors for successive groups (see below)> groups are named G1, G2 and separated by a star : G1*G2-...\n";
             cout << "                mutparameter values/priors of a given as a set of 6 values/priors : Gx(vx1,vx2,vx3,vx4,vx5,vx6) with :\n";
             cout << "                vx1=<mean mutation rate/prior for group x>    vx2=<shape value/locus mutation rate prior for group x>\n";
             cout << "                vx3=<mean P value/mean P prior for group x>   vx4=<shape value/locus P prior for group x>\n";
