@@ -99,21 +99,55 @@ int main(int argc, char *argv[]){
 	  switch (optchar) {
 
         case 'h' : cout << "USAGE :\n";
-            cout << "-p <directory of header.txt>\n-r <number of required data sets in the reftable>\n";
+            cout << "-p <directory of header.txt>\n";
+            cout << "-r <number of required data sets in the reftable>\n";
             cout << "-i <name given to the analysis\n";
             cout << "-g <minimum number of particles simulated in a single bunch (default=100)>\n";
             cout << "-m <multithreaded version of the program (default single threaded)\n";
-            cout << "-e for ABC parameter estimation with parameters as defined below\n";
-            cout << "-e s:<chosen scenarios separated by a comma>;n:<number of simulated datasets taken from reftable>;m:<number of simulated datasets used for the local regression>;t:<number of the transformation (1,2,3 or 4)>;p:<o for original, c for composite, oc for both>"<<"\n";
-            cout << "-c for ABC computation of posterior probability of scenarios with parameters as defined below\n";
-            cout << "-c s:<chosen scenarios separated by a comma;n:<number of simulated datasets taken from reftable>;d:<number of simulated datasets used in the direct approach>;l:<number of simulated datasets used in the logistic regression;m:<number of required logistic regressions>\n";
-            cout << "-b for bias/precision computations with parameters as defined below\n";
-            cout << "-b s:<chosen scenario;h:<histparameter values/priors (see below);u:<mutparameter values/priors for successive groups (see below);n:,m:,t:,p: as for ABC parameter estimation;d:<number of test data sets\n";
-            cout << "-b histparameter values (separated by a comma): <parameter name>=<parameter value> histparameter priors <parameter name>=<parameter prior as in header.txt\n";
-            cout << "-b mutparameter values of group 1 and 2 : G1(0.0005,2,0.22,2,0,0)G2(0.0003,...) mutparameter priors of group 1 and 2 : G1(UN[0.0001,0.001,0,0],GA[,,,],UN[,,, ...\n)";
             cout << "-q to merge all reftable_$j.bin \n";
-            cout << "-r for building/appending a reference table <required number of simulated datasets (default 10^6/scenario)>\n";
             cout << "-s <seed for the random generator>\n";
+
+            cout << "\n-e for ABC PARAMETER ESTIMATION (with parameters as a string including the following options separated par a semi-colon)\n";
+            cout << "           s:<chosen scenario[s separated by a comma]>\n";
+            cout << "           n:<number of simulated datasets taken from reftable>\n";
+            cout << "           m:<number of simulated datasets used for the local regression>\n";
+            cout << "           t:<number of the transformation (1,2,3 or 4)>\n";
+            cout << "           p:<o for original, c for composite, oc for both>\n";
+
+            cout << "\n-c for ABC COMPUTATION OF POSTERIOR PROBALITY OF SCENARIOS (idem)\n";
+            cout << "           s:<chosen scenarios separated by a comma>\n";
+            cout << "           n:<number of simulated datasets taken from reftable>\n";
+            cout << "           d:<number of simulated datasets used in the direct approach>\n";
+            cout << "           l:<number of simulated datasets used in the logistic regression>\n";
+            cout << "           m:<number of requested logistic regressions>\n";
+            
+            cout << "\n-b for BIAS/PRECISION COMPUTATIONS (idem)\n";
+            cout << "           s:<chosen scenario<\n";
+            cout << "           n:<number of simulated datasets taken from reftable>\n";
+            cout << "           m:<number of simulated datasets used for the local regression>\n";
+            cout << "           t:<number of the transformation (1,2,3 or 4)>\n";
+            cout << "           p:<o for original, c for composite, oc for both>\n";
+            cout << "           d:<number of requested test data sets>\n";
+            cout << "           h:<histparameter values/priors (see below)>\n";
+            cout << "                histparameter values (separated by a space): <parameter name>=<parameter value>\n";
+            cout << "                histparameter priors (separated by a space): <parameter name>=<parameter prior as in header.txt>\n";
+            cout << "           u:<mutparameter values/priors for successive groups (see below)> groups are named G1, G2 and separated by hyphens : G1-G2-...\n";
+            cout << "                mutparameter values/priors of a given as a set of 6 values/priors : Gx(vx1,vx2,vx3,vx4,vx5,vx6) with :\n";
+            cout << "                vx1=<mean mutation rate/prior for group x>    vx2=<shape value/locus mutation rate prior for group x>\n";
+            cout << "                vx3=<mean P value/mean P prior for group x>   vx4=<shape value/locus P prior for group x>\n";
+            cout << "                vx5 and vx6 correspond to sni mutation rate.\n";
+            cout << "                For a DNA sequence group, replace P and sni by k1 and k2 respectively\n";
+            
+            cout << "\n-f for CONFIDENCE IN SCENARIO CHOICE COMPUTATIONS (idem)\n";
+            cout << "           s:<chosen scenarios among which to choose<\n";
+            cout << "           r:<chosen scenario to be tested<\n";
+            cout << "           n:<number of simulated datasets taken from reftable>\n";
+            cout << "           t:<number of requested test data sets>\n";
+            cout << "           d:<number of simulated datasets used in the direct approach>\n";
+            cout << "           l:<number of simulated datasets used in the logistic regression>\n";
+            cout << "           m:<number of requested logistic regressions>\n";
+            cout << "           h:<histparameter values/priors (as in bias/precision)>\n";
+            cout << "           u:<mutparameter values/priors for successive groups (as in bias/precision)\n";
             break;
 	
         case 'i' :
@@ -196,15 +230,6 @@ int main(int argc, char *argv[]){
     
       case 'r' :   k=readheaders(); 
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
-                   //header.readHeader(headerfilename);
-                   //cout<<"avant calstatobs\n";fflush(stdin);
-                   //header.calstatobs(statobsfilename);
-                   //cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
-                   //datafilename=strdup(header.datafilename.c_str());
-                   //cout << datafilename<<"\n";
-                   //k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
-                   //cout<<header.scenario[0].nparamvar<<"    "<<header.scenario[1].nparamvar<<"    "<<header.scenario[2].nparamvar<<"\n";
-                   //cout <<"k="<<k<<"\n";
                    if (k==1) {
                               rt.datapath = datafilename;
                               rt.nscen = header.nscenarios;
