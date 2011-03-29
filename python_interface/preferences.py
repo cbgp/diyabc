@@ -55,8 +55,17 @@ class Preferences(QMainWindow):
         QObject.connect(self.ui.execBrowseButton,SIGNAL("clicked()"),self.browseExec)
         QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
 
+        QObject.connect(self.ui.serverCheck,SIGNAL("toggled(bool)"),self.toggleServer)
+
+        self.ui.addrEdit.setDisabled(True)
+        self.ui.portEdit.setDisabled(True)
+
         #QObject.connect(self.ui.saveMMMButton,SIGNAL("clicked()"),self.saveMMM)
         #QObject.connect(self.ui.saveMMSButton,SIGNAL("clicked()"),self.saveMMS)
+
+    def toggleServer(self,state):
+        self.ui.addrEdit.setDisabled(not state)
+        self.ui.portEdit.setDisabled(not state)
 
     def browseExec(self):
         qfd = QFileDialog()
@@ -303,6 +312,7 @@ class Preferences(QMainWindow):
 
         lines = "host %s\n"%self.ui.addrEdit.text()
         lines += "port %s\n"%self.ui.portEdit.text()
+        lines += "useServer %s\n"%self.ui.serverCheck.isChecked()
 
         f = codecs.open(os.path.expanduser("~/.diyabc/connexion"),"w","utf-8")
         f.write(lines)
@@ -322,6 +332,9 @@ class Preferences(QMainWindow):
                         self.ui.addrEdit.setText(tab[1])
                     elif tab[0] == "port":
                         self.ui.portEdit.setText(tab[1])
+                    elif tab[0] == "useServer":
+                        yesno = (tab[1] == 'True')
+                        self.ui.serverCheck.setChecked(yesno)
         else:
             print "no connexion conf found"
 

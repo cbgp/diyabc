@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Thu Mar 24 17:36:13 2011
+# Created: Tue Mar 29 14:39:38 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,21 +42,24 @@ class Ui_MainWindow(object):
         self.label.setMinimumSize(QtCore.QSize(0, 20))
         self.label.setMaximumSize(QtCore.QSize(16777215, 20))
         self.label.setObjectName(_fromUtf8("label"))
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.label, 1, 0, 1, 1)
         self.label_2 = QtGui.QLabel(self.tab)
         self.label_2.setMinimumSize(QtCore.QSize(0, 20))
         self.label_2.setMaximumSize(QtCore.QSize(16777215, 20))
         self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.gridLayout.addWidget(self.label_2, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.label_2, 1, 1, 1, 1)
         self.addrEdit = QtGui.QLineEdit(self.tab)
         self.addrEdit.setObjectName(_fromUtf8("addrEdit"))
-        self.gridLayout.addWidget(self.addrEdit, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.addrEdit, 2, 0, 1, 1)
         self.portEdit = QtGui.QLineEdit(self.tab)
         self.portEdit.setObjectName(_fromUtf8("portEdit"))
-        self.gridLayout.addWidget(self.portEdit, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.portEdit, 2, 1, 1, 1)
         self.connectButton = QtGui.QPushButton(self.tab)
         self.connectButton.setObjectName(_fromUtf8("connectButton"))
-        self.gridLayout.addWidget(self.connectButton, 1, 2, 1, 1)
+        self.gridLayout.addWidget(self.connectButton, 2, 2, 1, 1)
+        self.serverCheck = QtGui.QCheckBox(self.tab)
+        self.serverCheck.setObjectName(_fromUtf8("serverCheck"))
+        self.gridLayout.addWidget(self.serverCheck, 0, 0, 1, 1)
         self.verticalLayout_56.addLayout(self.gridLayout)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
@@ -562,6 +565,7 @@ class Ui_MainWindow(object):
         self.addrEdit.setText(QtGui.QApplication.translate("MainWindow", "localhost", None, QtGui.QApplication.UnicodeUTF8))
         self.portEdit.setText(QtGui.QApplication.translate("MainWindow", "666", None, QtGui.QApplication.UnicodeUTF8))
         self.connectButton.setText(QtGui.QApplication.translate("MainWindow", "Connect", None, QtGui.QApplication.UnicodeUTF8))
+        self.serverCheck.setText(QtGui.QApplication.translate("MainWindow", "Use a server (don\'t check if you don\'t know what it is)", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("MainWindow", "Connexion", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("MainWindow", "Path to the executable file", None, QtGui.QApplication.UnicodeUTF8))
         self.execBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "browse", None, QtGui.QApplication.UnicodeUTF8))

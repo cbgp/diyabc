@@ -520,7 +520,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             except Exception,e:
                 output.notify(self,"value error","Check the value of required number of data sets")
                 return
-            self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
+            # on demarre le thread local ou cluster
+            if self.parent.preferences_win.ui.serverCheck.isChecked():
+                self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
+            else:
+                self.th = RefTableGenThread(self,nb_to_gen)
             self.th.connect(self.th,SIGNAL("increment"),self.incProgress)
             self.th.connect(self.th,SIGNAL("refTableProblem"),self.refTableProblem)
             #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
@@ -1227,7 +1231,8 @@ class RefTableGenThread(QThread):
         # lance l'executable
         try:
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
-            cmd_args_list = [self.parent.parent.executablePath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m"]
+            exPath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
+            cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m"]
             print cmd_args_list
             p = subprocess.Popen(cmd_args_list, stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:
