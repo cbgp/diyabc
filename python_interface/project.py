@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import hashlib,pickle
+import hashlib,pickle,array
 import socket
 from socket import *
 import time
@@ -916,6 +916,75 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.loadAnalysis()
         else:
             output.notify(self,"Load error","Impossible to read the project configuration")
+
+    def putRefTableSize(self):
+        """ met à jour l'affichage de la taille de la reftable
+        """
+        size = self.readRefTableSize()
+        if size != None:
+            self.ui.nbSetsDoneEdit.setText("%s"%size)
+            self.freezeHistModel()
+            self.freezeGenData()
+
+    def freezeGenData(self,yesno=True):
+        self.gen_data_win.ui.clearButton.setDisabled(yesno)
+        self.gen_data_win.ui.tableWidget.setDisabled(yesno)
+        self.gen_data_win.ui.addGroupButton.setDisabled(yesno)
+        for g in self.gen_data_win.groupList:
+            for b in g.findChildren(QPushButton,"rmFromButton"):
+                b.setDisabled(yesno)
+            for b in g.findChildren(QPushButton,"addToButton"):
+                b.setDisabled(yesno)
+            for b in g.findChildren(QPushButton,"rmButton"):
+                b.setDisabled(yesno)
+            self.gen_data_win.setMutation_dico[g].setDisabled(yesno)
+            self.gen_data_win.setMutation_dico[g].ui.exitButton.setDisabled(False)
+            self.gen_data_win.setMutation_dico[g].ui.okButton.setDisabled(False)
+
+            self.gen_data_win.setMutationSeq_dico[g].setDisabled(yesno)
+            self.gen_data_win.setMutationSeq_dico[g].ui.exitButton.setDisabled(False)
+            self.gen_data_win.setMutationSeq_dico[g].ui.okButton.setDisabled(False)
+
+            self.gen_data_win.setSum_dico[g].setDisabled(yesno)
+            self.gen_data_win.setSum_dico[g].ui.exitButton.setDisabled(False)
+            self.gen_data_win.setSum_dico[g].ui.okButton.setDisabled(False)
+
+            self.gen_data_win.setSumSeq_dico[g].setDisabled(yesno)
+            self.gen_data_win.setSumSeq_dico[g].ui.exitButton.setDisabled(False)
+            self.gen_data_win.setSumSeq_dico[g].ui.okButton.setDisabled(False)
+
+    def freezeHistModel(self,yesno=True):
+        self.hist_model_win.ui.clearButton.setDisabled(yesno)
+        for e in self.hist_model_win.findChildren(QLineEdit):
+            e.setReadOnly(yesno)
+        for e in self.hist_model_win.findChildren(QRadioButton):
+            e.setDisabled(yesno)
+        for e in self.hist_model_win.findChildren(QPushButton,"remove"):
+            e.setDisabled(yesno)
+        self.hist_model_win.findChild(QPushButton,"addScButton").setDisabled(yesno) 
+        self.hist_model_win.findChild(QPushButton,"defPrButton").setDisabled(yesno)
+        for param in self.hist_model_win.paramList:
+            for e in param.findChildren(QLineEdit):
+                e.setReadOnly(yesno)
+            for e in param.findChildren(QPushButton):
+                e.setDisabled(yesno)
+        for e in self.hist_model_win.findChildren(QPlainTextEdit):
+            e.setReadOnly(yesno)
+
+    def readRefTableSize(self):
+        """ lit la table de référence binaire pour en extraire la taille et la retourner
+        """
+        reftablefile = "%s/reftable.bin"%self.dir
+        if os.path.exists(reftablefile):
+            binint = array.array('i')
+            f = open(reftablefile,'rb')
+            binint.read(f,1)
+            f.close()
+            rtSize = binint[0]
+            return rtSize
+        else:
+            return None
+
 
     def loadMyConf(self):
         """ lit le fichier conf.tmp pour charger le fichier de données

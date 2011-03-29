@@ -159,6 +159,7 @@ class Diyabc(QMainWindow):
                         self.ui.tabWidget.setCurrentWidget(proj_to_open)
                         # verification generale pour mettre a jour l'etat du modèle historique et mutationnel
                         proj_to_open.checkAll()
+                        proj_to_open.putRefTableSize()
                         # si c'est le premier projet, on permet la fermeture/del/save par le menu
                         if len(self.project_list) == 1:
                             self.closeProjActionMenu.setDisabled(False)
