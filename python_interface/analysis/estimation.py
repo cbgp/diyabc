@@ -61,7 +61,7 @@ class Estimation(QFrame):
         self.majDicoValues()
         self.analysis.append(self.dico_values)
         chosen_scs_txt = ""
-        print "analysis: %s"%self.analysis
+        #print "analysis: %s"%self.analysis
         for cs in self.analysis[3]:
             chosen_scs_txt+="%s,"%str(cs)
         chosen_scs_txt = chosen_scs_txt[:-1]
@@ -86,7 +86,7 @@ class Estimation(QFrame):
                     strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
             strparam = strparam[:-1]
             strparam += ";u:"
-            print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
+            #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
             if len(self.analysis[5])>0:
                 if type(self.analysis[5][0]) == type(u'plop'):
                     for ind,gr in enumerate(self.analysis[5]):
@@ -100,7 +100,7 @@ class Estimation(QFrame):
                                 strparam += "%s "%to_add
                         # virer le dernier espace
                         strparam = strparam[:-1]
-                        strparam += ")_"
+                        strparam += ")*"
                 else:
                     for ind,gr in enumerate(self.analysis[5]):
                         strparam += "g%s("%(ind+1)
@@ -108,10 +108,10 @@ class Estimation(QFrame):
                             strparam += "%s "%num
                         # virer le dernier espace
                         strparam = strparam[:-1]
-                        strparam += ")_"
+                        strparam += ")*"
                 # virer le dernier '-'
                 strparam = strparam[:-1]
-            print "ursulla : %s"%strparam
+            #print "ursulla : %s"%strparam
 
             self.analysis.append(strparam)
         elif self.analysis[0] == "evaluate":
