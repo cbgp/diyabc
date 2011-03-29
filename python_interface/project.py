@@ -1358,4 +1358,6 @@ class AnalysisThread(QThread):
                     self.progress = tmpp
                     self.emit(SIGNAL("analysisProgress"))
                 time.sleep(5)
+        elif self.analysis[0] == "bias":
+            pass
 

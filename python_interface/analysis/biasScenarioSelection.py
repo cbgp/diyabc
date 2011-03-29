@@ -51,7 +51,7 @@ class BiasNEvaluateScenarioSelection(QFrame):
         else:
             self.analysis.append("drawn")
         # pour evaluate et bias, on a selectionné un scenario
-        self.analysis.append(self.getSelectedScenario())
+        self.analysis.append([self.getSelectedScenario()])
         # le cas du evaluate, les sc à afficher dans le hist model sont ceux selectionnés
         if self.evaluate:
             if len(self.getListSelectedScenarios()) >= 2:

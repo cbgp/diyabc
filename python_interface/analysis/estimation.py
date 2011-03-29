@@ -8,7 +8,7 @@ from uis.estimation_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 
 class Estimation(QFrame):
-    """ dernière étape de définition d'une analyse de type estimation
+    """ dernière étape de définition d'une analyse de type estimation ou bias precision
     """
     def __init__(self,analysis,parent=None):
         super(Estimation,self).__init__(parent)
@@ -61,11 +61,62 @@ class Estimation(QFrame):
         self.majDicoValues()
         self.analysis.append(self.dico_values)
         chosen_scs_txt = ""
-        for cs in self.analysis[-2]:
+        print "analysis: %s"%self.analysis
+        for cs in self.analysis[3]:
             chosen_scs_txt+="%s,"%str(cs)
         chosen_scs_txt = chosen_scs_txt[:-1]
         dico_est = self.analysis[-1]
-        self.analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['choNumberOfsimData'],dico_est['numberOfselData'],dico_est['transformation'],dico_est['choice']))
+        if self.analysis[0] == "estimate":
+            self.analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['choNumberOfsimData'],dico_est['numberOfselData'],dico_est['transformation'],dico_est['choice']))
+        elif self.analysis[0] == "bias":
+            strparam = "s:%s;"%chosen_scs_txt
+            strparam += "n:%s;"%dico_est['choNumberOfsimData']
+            strparam += "m:%s;"%dico_est['numberOfselData']
+            strparam += "d:%s;"%dico_est['numberOfTestData']
+            strparam += "t:%s;"%dico_est['transformation']
+            strparam += "p:%s;"%dico_est['choice']
+            print "robert ", self.analysis[4]
+            strparam += "h:"
+            for paramname in self.analysis[4].keys():
+                l = self.analysis[4][paramname]
+                strparam += "%s="%paramname
+                if len(l) == 2:
+                    strparam += "%s "%l[1]
+                else:
+                    strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
+            strparam = strparam[:-1]
+            strparam += ";u:"
+            print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
+            if len(self.analysis[5])>0:
+                if type(self.analysis[5][0]) == type(u'plop'):
+                    for ind,gr in enumerate(self.analysis[5]):
+                        strparam += "g%s("%(ind+1)
+                        strgr = gr.strip()
+                        strgr = strgr.split('\n')
+                        print "\nstrgr %s\n"%strgr
+                        for j,elem in enumerate(strgr):
+                            if elem.split(' ')[0] != "MODEL":
+                                to_add = strgr[j].split(' ')[1]
+                                strparam += "%s "%to_add
+                        # virer le dernier espace
+                        strparam = strparam[:-1]
+                        strparam += ")-"
+                else:
+                    for ind,gr in enumerate(self.analysis[5]):
+                        strparam += "g%s("%(ind+1)
+                        for num in gr:
+                            strparam += "%s "%num
+                        # virer le dernier espace
+                        strparam = strparam[:-1]
+                        strparam += ")-"
+                # virer le dernier '-'
+                strparam = strparam[:-1]
+            print "ursulla : %s"%strparam
+
+            self.analysis.append(strparam)
+        elif self.analysis[0] == "evaluate":
+            # TODO
+            pass
         self.parent.parent.addAnalysis(self.analysis)
         self.exit()
 
@@ -115,6 +166,7 @@ class Estimation(QFrame):
         self.dico_values["transformation"] = trans
         self.dico_values["numberOfselData"] = str(self.ui.nosdEdit.text())
         self.dico_values["choNumberOfsimData"] = str(self.ui.cnosdEdit.text())
+        self.dico_values["numberOfTestData"] = str(self.ui.notdsEdit.text())
         choice = ""
         if self.ui.oCheck.isChecked():
             choice += "o"
