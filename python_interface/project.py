@@ -542,6 +542,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         pc = (float(done)/float(nb_to_do))*100
         self.ui.progressBar.setValue(int(pc))
         self.ui.nbSetsDoneEdit.setText("%s"%done)
+        # si on a fini, on met à jour l'affichage de la taille de la reftable
+        # et on verrouille eventuellement histmodel et gendata
+        if int(pc) == 100:
+            self.putRefTableSize()
 
     def cancelTh(self):
         #print 'plop'
@@ -919,6 +923,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
     def putRefTableSize(self):
         """ met à jour l'affichage de la taille de la reftable
+        et verrouille les modèles hist et gen si une reftable existe
         """
         size = self.readRefTableSize()
         if size != None:
@@ -928,6 +933,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
     def freezeGenData(self,yesno=True):
         self.gen_data_win.ui.clearButton.setDisabled(yesno)
+        self.gen_data_win.ui.exitButton.setDisabled(yesno)
         self.gen_data_win.ui.tableWidget.setDisabled(yesno)
         self.gen_data_win.ui.addGroupButton.setDisabled(yesno)
         for g in self.gen_data_win.groupList:
@@ -937,24 +943,40 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 b.setDisabled(yesno)
             for b in g.findChildren(QPushButton,"rmButton"):
                 b.setDisabled(yesno)
-            self.gen_data_win.setMutation_dico[g].setDisabled(yesno)
-            self.gen_data_win.setMutation_dico[g].ui.exitButton.setDisabled(False)
-            self.gen_data_win.setMutation_dico[g].ui.okButton.setDisabled(False)
 
-            self.gen_data_win.setMutationSeq_dico[g].setDisabled(yesno)
-            self.gen_data_win.setMutationSeq_dico[g].ui.exitButton.setDisabled(False)
-            self.gen_data_win.setMutationSeq_dico[g].ui.okButton.setDisabled(False)
+            for e in self.gen_data_win.setMutation_dico[g].findChildren(QLineEdit):
+                e.setDisabled(yesno)
+            for e in self.gen_data_win.setMutation_dico[g].findChildren(QRadioButton):
+                e.setDisabled(yesno)
+            self.gen_data_win.setMutation_dico[g].ui.clearButton.setDisabled(yesno)
+            self.gen_data_win.setMutation_dico[g].ui.exitButton.setDisabled(yesno)
 
-            self.gen_data_win.setSum_dico[g].setDisabled(yesno)
-            self.gen_data_win.setSum_dico[g].ui.exitButton.setDisabled(False)
-            self.gen_data_win.setSum_dico[g].ui.okButton.setDisabled(False)
+            for e in self.gen_data_win.setMutationSeq_dico[g].findChildren(QLineEdit):
+                e.setDisabled(yesno)
+            for e in self.gen_data_win.setMutationSeq_dico[g].findChildren(QRadioButton):
+                e.setDisabled(yesno)
+            self.gen_data_win.setMutationSeq_dico[g].ui.clearButton.setDisabled(yesno)
+            self.gen_data_win.setMutationSeq_dico[g].ui.exitButton.setDisabled(yesno)
 
-            self.gen_data_win.setSumSeq_dico[g].setDisabled(yesno)
-            self.gen_data_win.setSumSeq_dico[g].ui.exitButton.setDisabled(False)
-            self.gen_data_win.setSumSeq_dico[g].ui.okButton.setDisabled(False)
+            for e in self.gen_data_win.setSum_dico[g].findChildren(QLineEdit):
+                e.setDisabled(yesno)
+            for e in self.gen_data_win.setSum_dico[g].findChildren(QCheckBox):
+                e.setDisabled(yesno)
+            self.gen_data_win.setSum_dico[g].ui.clearButton.setDisabled(yesno)
+            self.gen_data_win.setSum_dico[g].ui.exitButton.setDisabled(yesno)
+            self.gen_data_win.setSum_dico[g].ui.addAdmixButton.setDisabled(yesno)
+
+            for e in self.gen_data_win.setSumSeq_dico[g].findChildren(QLineEdit):
+                e.setDisabled(yesno)
+            for e in self.gen_data_win.setSumSeq_dico[g].findChildren(QCheckBox):
+                e.setDisabled(yesno)
+            self.gen_data_win.setSumSeq_dico[g].ui.clearButton.setDisabled(yesno)
+            self.gen_data_win.setSumSeq_dico[g].ui.exitButton.setDisabled(yesno)
+            self.gen_data_win.setSumSeq_dico[g].ui.addAdmixButton.setDisabled(yesno)
 
     def freezeHistModel(self,yesno=True):
         self.hist_model_win.ui.clearButton.setDisabled(yesno)
+        self.hist_model_win.ui.exitButton.setDisabled(yesno)
         for e in self.hist_model_win.findChildren(QLineEdit):
             e.setReadOnly(yesno)
         for e in self.hist_model_win.findChildren(QRadioButton):
@@ -1006,13 +1028,13 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         l_to_save = []
         for a in self.analysisList:
             l_to_save.append(a)
-        f=open("%s/conf.analysis"%self.dir,"wb")
+        f=open("%s/%s"%(self.dir,self.parent.analysis_conf_name),"wb")
         pickle.dump(l_to_save,f)
         f.close()
 
     def loadAnalysis(self):
-        if os.path.exists("%s/conf.analysis"%self.dir):
-            f=open("%s/conf.analysis"%self.dir,"rb")
+        if os.path.exists("%s/%s"%(self.dir,self.parent.analysis_conf_name)):
+            f=open("%s/%s"%(self.dir,self.parent.analysis_conf_name),"rb")
             l = pickle.load(f)
             f.close()
             for a in l:
@@ -1205,7 +1227,7 @@ class RefTableGenThread(QThread):
         # lance l'executable
         try:
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
-            cmd_args_list = [self.parent.parent.executablePath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen]
+            cmd_args_list = [self.parent.parent.executablePath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m"]
             print cmd_args_list
             p = subprocess.Popen(cmd_args_list, stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:

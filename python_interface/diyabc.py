@@ -28,6 +28,7 @@ class Diyabc(QMainWindow):
         self.main_conf_name = "conf.tmp"
         self.hist_conf_name = "conf.hist.tmp"
         self.gen_conf_name = "conf.gen.tmp"
+        self.analysis_conf_name = "conf.analysis"
         self.table_header_conf_name = "conf.th.tmp"
         self.reftableheader_name = "header.txt"
 
@@ -159,6 +160,8 @@ class Diyabc(QMainWindow):
                         self.ui.tabWidget.setCurrentWidget(proj_to_open)
                         # verification generale pour mettre a jour l'etat du modèle historique et mutationnel
                         proj_to_open.checkAll()
+                        # si la reftable existe, on affiche le nombre d'enregistrement de celle ci et on 
+                        # verrouille (freeze) les modèles historique et génétique
                         proj_to_open.putRefTableSize()
                         # si c'est le premier projet, on permet la fermeture/del/save par le menu
                         if len(self.project_list) == 1:
@@ -203,7 +206,18 @@ class Diyabc(QMainWindow):
                             #self.ui.dirEdit.setText(newdir)
                             try:
                                 #print current_project.dir, " to ", clonedir
-                                shutil.copytree(current_project.dir,clonedir)
+                                #shutil.copytree(current_project.dir,clonedir)
+                                #os.remove("%s/reftable.bin"%clonedir)
+
+                                # on crée le dossier de destination et on y copie les fichiers utiles
+                                os.mkdir(clonedir)
+                                shutil.copy("%s/%s"%(current_project.dir,self.main_conf_name),"%s/%s"%(clonedir,self.main_conf_name))
+                                shutil.copy("%s/%s"%(current_project.dir,self.hist_conf_name),"%s/%s"%(clonedir,self.hist_conf_name))
+                                shutil.copy("%s/%s"%(current_project.dir,self.gen_conf_name),"%s/%s"%(clonedir,self.gen_conf_name))
+                                shutil.copy("%s/%s"%(current_project.dir,self.table_header_conf_name),"%s/%s"%(clonedir,self.table_header_conf_name))
+                                shutil.copy("%s/%s"%(current_project.dir,self.reftableheader_name),"%s/%s"%(clonedir,self.reftableheader_name))
+                                shutil.copy("%s/%s"%(current_project.dir,current_project.dataFileName),"%s/%s"%(clonedir,current_project.dataFileName))
+                                shutil.copy("%s/%s"%(current_project.dir,self.analysis_conf_name),"%s/%s"%(clonedir,self.analysis_conf_name))
                                 # si les noms sont différents, on le charge
                                 if cloneBaseName != current_project.name:
                                     self.openProject(clonedir)
