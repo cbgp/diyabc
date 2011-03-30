@@ -5,8 +5,8 @@ import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from uis.defineNewAnalysis_ui import Ui_Frame
-from comparison import Comparison
-from estimation import Estimation
+from setupComparisonEvaluation import SetupComparisonEvaluation
+from setupEstimationBias import SetupEstimationBias
 from genericScenarioSelection import GenericScenarioSelection
 from biasScenarioSelection import BiasNEvaluateScenarioSelection
 from analysis import Analysis
@@ -67,7 +67,7 @@ class DefineNewAnalysis(QFrame):
             if self.ui.comparisonRadio.isChecked():
                 if len(self.parent.hist_model_win.scList) >= 2:
                     analysis = Analysis(name,"compare")
-                    compFrame = Comparison(analysis,self)
+                    compFrame = SetupComparisonEvaluation(analysis,self)
                     genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,analysis,self)
                     #self.parent.addTab(genSel,"Scenario selection")
                     #self.parent.removeTab(self.parent.indexOf(self))
@@ -80,7 +80,7 @@ class DefineNewAnalysis(QFrame):
             elif self.ui.estimateRadio.isChecked():
                 if len(self.parent.hist_model_win.scList) >= 1:
                     analysis = Analysis(name,"estimate")
-                    estimateFrame = Estimation(analysis,self)
+                    estimateFrame = SetupEstimationBias(analysis,self)
                     genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,analysis,self)
                     #self.parent.addTab(genSel,"Scenario selection")
                     #self.parent.removeTab(self.parent.indexOf(self))

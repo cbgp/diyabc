@@ -4,14 +4,14 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.comparison_ui import Ui_Frame
+from uis.setupComparisonEvaluation_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 
-class Comparison(QFrame):
+class SetupComparisonEvaluation(QFrame):
     """ dernière étape de définition d'une analyse de type comparison ou evaluate
     """
     def __init__(self,analysis,parent=None):
-        super(Comparison,self).__init__(parent)
+        super(SetupComparisonEvaluation,self).__init__(parent)
         self.parent=parent
         self.analysis = analysis
         self.scNumList = []

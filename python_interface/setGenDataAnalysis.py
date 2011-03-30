@@ -12,8 +12,8 @@ from mutationModel.setMutationModelSequencesFixed import SetMutationModelSequenc
 from mutationModel.setMutationModelSequencesAnalysis import SetMutationModelSequencesAnalysis
 from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
-from analysis.estimation import Estimation
-from analysis.comparison import Comparison
+from analysis.setupEstimationBias import SetupEstimationBias
+from analysis.setupComparisonEvaluation import SetupComparisonEvaluation
 from utils.visualizescenario import *
 from utils.data import *
 
@@ -179,10 +179,10 @@ class SetGeneticDataAnalysis(SetGeneticData):
             self.analysis.mutationModel = mutconf_list
             if self.analysis.category == "bias":
                 next_title = "bias and precision"
-                last_parametrisation = Estimation(self.analysis,self)
+                last_parametrisation = SetupEstimationBias(self.analysis,self)
             else:
                 next_title = "evaluate confidence"
-                last_parametrisation = Comparison(self.analysis,self)
+                last_parametrisation = SetupComparisonEvaluation(self.analysis,self)
             #self.parent.addTab(last_parametrisation,next_title)
             #self.parent.removeTab(self.parent.indexOf(self))
             #self.parent.setCurrentWidget(last_parametrisation)

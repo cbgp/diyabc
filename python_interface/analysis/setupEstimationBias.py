@@ -4,14 +4,14 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.estimation_ui import Ui_Frame
+from uis.setupEstimationBias_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 
-class Estimation(QFrame):
+class SetupEstimationBias(QFrame):
     """ dernière étape de définition d'une analyse de type estimation ou bias precision
     """
     def __init__(self,analysis,parent=None):
-        super(Estimation,self).__init__(parent)
+        super(SetupEstimationBias,self).__init__(parent)
         self.parent=parent
         self.analysis = analysis
         self.scNumList = []
