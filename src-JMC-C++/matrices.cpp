@@ -50,6 +50,19 @@ double** prodM(int n, int m, int p, double **A,double **B) {
     return C;
 }
 
+/**
+*effectue le produit d'une matrice (**double) par un scalaire (double)'
+*/
+double** prodMs(int n,int m, double **A, double b) {
+    double **C;
+    C = new double*[n];
+    for (int i=0;i<n;i++) {
+        C[i] = new double[m];
+        for(int j=0;j<m;j++) C[i][j]=A[i][j]*b;
+    }
+    return C;
+}
+
 /** 
 * effectue l'inversion matricielle d'une matrice (carrée) de doubles 
 */

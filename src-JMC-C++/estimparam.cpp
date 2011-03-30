@@ -380,6 +380,7 @@ parstatC *parstat;
         libereM(nstatOKsel+1,matB);
         libereM(nstatOKsel+1,matAA);
         libereM(nstatOKsel+1,matC);
+        for (int i=0;i<n;i++) delete []parsim[i];delete []parsim;
     }
 
 /** 
@@ -414,6 +415,7 @@ parstatC *parstat;
                 }
             }
         }
+        delete []parmin; delete []parmax;delete []diff;
         if (nparcompo>0) {
             k=0;
             for (int gr=1;gr<header.ngroupes+1;gr++) {
@@ -495,6 +497,9 @@ parstatC *parstat;
             }
         }
         //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
+        for (int i=0;i<n;i++) delete []alpsimrat[i];delete []alpsimrat;
+        for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
+        for (int i=0;i<nstatOKsel+1;i++) delete []beta[i]; delete []beta;
         return phista;
     }
         
@@ -927,6 +932,7 @@ parstatC *parstat;
         stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
         nprog=100;iprog=1;
         flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        rt.alloue_enrsel(nsel);
         rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
         iprog+=8;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         det_numpar();                                     cout<<"apres det_numpar\n";
@@ -945,4 +951,5 @@ parstatC *parstat;
         parstat = calparstat(nsel);                                 cout<<"apres calparstat\n";
         saveparstat(nsel,path,ident);
         iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        rt.desalloue_enrsel(nsel);
     }

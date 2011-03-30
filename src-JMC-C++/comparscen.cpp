@@ -337,6 +337,8 @@ int ncs=100;
             vecW[i]=vecW2[i];
             for(int j=0;j<nco;j++) matX0[i][j]=matX2[i][j];
         }
+        delete []sw;delete []vecW2;delete []vecY2;
+        for (int i=0;i<nli;i++) delete []matX2[i];delete []matX2;
     }
 
     void reordonne(int nmodel,int *numod,double *px, double *pxi,double *pxs) {
@@ -348,6 +350,7 @@ int ncs=100;
         for (int i=0;i<nmodel+1;i++) {
             px[i]=qx[i];pxi[i]=qxi[i];pxs[i]=qxs[i];
         }
+        delete []qx;delete []qxi;delete []qxs;
     }
 
     int polytom_logistic_regression(int nli, int nco, double **matX0, double *vecY, double *vecW, double *px, double *pxi, double *pxs)
@@ -496,7 +499,8 @@ int ncs=100;
         delete[] sd;
         delete[] bet;
         delete[] px0;
-    }
+        delete[] smatY;delete[] smatP;
+   }
       
     posteriorscenC* call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil) {
         posteriorscenC *postlog;
@@ -508,6 +512,7 @@ int ncs=100;
               if (i==0) {postlog[i].x=1.0;postlog[i].inf=1.0;postlog[i].sup=1.0;}
               else      {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}  
         }
+        cout<<"\ncall_polytom_logistic_regression avant rempli_mat0\n";
         rempli_mat0(nts,stat_obs);
         vecY = new int[nts];
         ntt=nts;
@@ -555,6 +560,7 @@ int ncs=100;
         delete [] vecY;
         delete [] vecYY;
         delete [] vecW;
+        delete [] px; delete []pxi; delete []pxs;
         return postlog;
     }  
       
@@ -631,6 +637,7 @@ int ncs=100;
         iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         nstatOK = rt.cal_varstat();
         stat_obs = header.read_statobs(statobsfilename);
+        rt.alloue_enrsel(nsel);
         rt.cal_dist(nrec,nsel,stat_obs);
         iprog+=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         postscendir = comp_direct(nseld);

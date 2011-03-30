@@ -291,10 +291,35 @@ public:
             if (this->var_stat[j]>0) nsOK++;
             //cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
         }
+        delete []sx;delete []sx2;
         cout<<"nstatOK = "<<nsOK<<"\n";
         return nsOK;
     }
-    
+ 
+/**
+* alloue la mémoire pour enrsel
+*/
+    void alloue_enrsel(int nsel) {
+        int nparamax=0;
+        for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
+        this->enrsel = new enregC[2*nsel];
+        for (int i=0;i<2*nsel;i++) {
+           this->enrsel[i].param = new float[nparamax];
+           this->enrsel[i].stat  = new float[this->nstat];
+        }
+    } 
+
+/**
+* desalloue la mémoire de enrsel
+*/
+    void desalloue_enrsel(int nsel) {
+        for (int i=0;i<2*nsel;i++) {
+          delete []this->enrsel[i].param;
+          delete []this->enrsel[i].stat;
+        }
+        delete []this->enrsel;
+    }
+
 /** 
 * calcule la distance de chaque jeu de données simulé au jeu observé
 * et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
@@ -308,15 +333,12 @@ public:
         nn=nsel;
         nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
         //cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
-        this->enrsel = new enregC[2*nn];
         //cout<<" apres allocation de enrsel\n";
         this->openfile2();
         while (this->nreclus<nrec) {
             if (firstloop) {nrecOK=0;firstloop=false;}
             else nrecOK=nn;
             while ((nrecOK<2*nn)and(this->nreclus<nrec)) {
-                this->enrsel[nrecOK].param = new float[nparamax];
-                this->enrsel[nrecOK].stat  = new float[this->nstat];
                 bidon=this->readrecord(&(this->enrsel[nrecOK]));
                 scenOK=false;iscen=0;
                 while((not scenOK)and(iscen<this->nscenchoisi)) {

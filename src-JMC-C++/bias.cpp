@@ -64,7 +64,7 @@ using namespace std;
         //cout<<"parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
             header.scenario[rt.scenteste-1].histparam[i].prior = header.readprior(ss[1]);
-             header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
+             //header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
         }
         else {
             header.scenario[rt.scenteste-1].histparam[i].prior = header.readprior(pseudoprior(ss[1]));
@@ -136,7 +136,7 @@ using namespace std;
                     br[k][j] +=d/enreg2[p].paramvv[j];
                 }
                 br[k][j] /= (double)ntest;
-                cout << "br["<<k<<"]["<<j<<"]="<<br[k][j]<<"\n";
+                //cout << "br["<<k<<"]["<<j<<"]="<<br[k][j]<<"\n";
             }
         }
 ////////////  RRMISE
@@ -247,7 +247,7 @@ using namespace std;
                 rmae[k][j] = cal_med(ntest,e);
             } 
         }
-        cout<<br[1][0]<<"   "<<br[1][1]<<"   "<<br[1][2]<<"\n";
+        //cout<<br[1][0]<<"   "<<br[1][1]<<"   "<<br[1][2]<<"\n";
     }
     
     void ecrires(int ntest,int npv,int nsel) {
@@ -263,7 +263,7 @@ using namespace std;
         strcpy(nomfiresult,path);
         strcat(nomfiresult,ident);
         strcat(nomfiresult,"_bias.txt");
-        cout <<nomfiresult<<"\n";
+        cout <<"Les résultats sont dans "<<nomfiresult<<"\n";
         FILE *f1;
         f1=fopen(nomfiresult,"w");
         fprintf(f1,"DIYABC :                 Bias and Mean Square Error Analysis                         %s\n",asctime(timeinfo));
@@ -282,7 +282,7 @@ using namespace std;
         fprintf(f1,"                                               Averages\n");
         fprintf(f1,"Parameter                True values           Means             Medians             Modes\n");
         for (int j=0;j<nparamcom+nparcompo;j++) {
-            cout<<nomparam[j]<<"\n";
+            //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for (int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
             for (int i=0;i<ntest;i++) x[i]=enreg2[i].paramvv[j];mo[0]=cal_moy(ntest,x);
@@ -336,6 +336,7 @@ using namespace std;
             fprintf(f1,"      %5.3f           %5.3f          %5.3f          %5.3f\n",rmedad[j],rmae[0][j],rmae[1][j],rmae[2][j]);
         }
          fclose(f1);
+        
     }
     
     void setcompo(int p) {
@@ -521,26 +522,30 @@ using namespace std;
         stat_obs = new double[rt.nstat];
         paramest = new parstatC*[ntest];
         paretoil = new double**[ntest];
+        for (int p=0;p<ntest;p++) {paretoil[p] = new double* [nsel];for (int i=0;i<nsel;i++)paretoil[p][i] = new double[nparamcom+nparcompo];} 
+        rt.alloue_enrsel(nsel);
+        cout<<"apres rt.alloue_enrsel\n";
         for (int p=0;p<ntest;p++) {
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg2[p].stat[j];
             rt.cal_dist(nrec,nsel,stat_obs);                  //cout<<"apres cal_dist\n";
-            //if (p<1) det_numpar();                            //cout<<"apres det_numpar\n";
+            //if (p<1) det_numpar();                            cout<<"apres det_numpar\n";
             if (p<1) det_nomparam();
             recalparam(nsel);                                 //cout<<"apres recalparam\n";
             rempli_mat(nsel,stat_obs);                        //cout<<"apres rempli_mat\n";
             local_regression(nsel,multithread);               //cout<<"apres local_regression\n";
             iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             phistar = calphistar(nsel);                                 //cout<<"apres calphistar\n";
-            if(p<1) det_nomparam();
+            //if(p<1) det_nomparam();
             paramest[p] = calparstat(nsel);                             //cout<<"apres calparstat\n";
-            paretoil[p] = new double* [nsel];
             for (int i=0;i<nsel;i++) {
-                paretoil[p][i] = new double[nparamcom+nparcompo];
                 for (int j=0;j<nparamcom+nparcompo;j++) paretoil[p][i][j] = phistar[i][j];
             }
+            for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
             printf("analysing data test %3d \n",p+1);
             //for (int j=0;j<npar;j++) printf(" %6.0e (%8.2e %8.2e %8.2e) ",enreg2[p].paramvv[j],paramest[p][j].moy,paramest[p][j].med,paramest[p][j].mod);cout<<"\n";    
+
         }
+        rt.desalloue_enrsel(nsel);
         //cout<<"avant biasrel\n";
         biaisrel(ntest,nsel,npv);
         //cout<<"avant ecrires\n";

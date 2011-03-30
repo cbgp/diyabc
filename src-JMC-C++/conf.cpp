@@ -79,19 +79,6 @@ char *nomficonfresult;
         fprintf(f1,"\n");
         fclose(f1);
     }
-/*
-data set  scen 1  scen 2  scen 3          scenario  1                         scenario  2                         scenario  3               
-    1      1.000   0.000   0.000  0.99998783 [0.99997648,0.99999918]  0.00001120 [0.00000000,0.00002249]  0.00000097 [0.00000
-Number of simulated data sets :3000000
-Direct approach : number of selected data sets 500
-Logistic regression  : number of selected data sets 30000
-Results obtained with plain summary statistics
-Peudo-observed data sets simulated with scenario 1 and parameter values drawn from priors : 
-N1:UN[100,5000,0,0,1], N2:UN[100,5000,0,0,1], N3:UN[100,5000,0,0,1], N4:UN[100,5000,0,0,1], N5:UN[100,5000,0,0,1], N6:UN[100,5000,0,0,1], t4:UN[1,200,0,0,1], r1:UN[0.001,0.999,0.000,0.000,0.001], ta:UN[200,10000,0,0,1], t3:UN[200,10000,0,0,1], r2:UN[0.001,0.999,0.000,0.000,0.001], t2:UN[10000,100000,0,0,1], t1:UN[100000,500000,0,0,1].
-Autosomaldiploidmicrosatellites, MEANMU:LU[1.00E-005,1.00E-003,-9,-9], GAMMU:GA[1.00E-005,1.00E-002,-9.00E+000,2.000], MEANP:UN[0.100,0.60,-9.00,-9.00], GAMP:GA[1.00E-002,9.00E-001,-9.00E+000,2.000], MEANSNILU[1.00E-008,1.00E-004,-9,-9], GAMSNI:GA[1.00E-009,1.00E-003,-9.00E+000,2.000].
-Candidate scenarios : 1, 2, 3.*/
-        
-        
         
     void doconf(char *options, bool multithread, int seed) {
         char *datafilename, *progressfilename, *courantfilename;
@@ -176,19 +163,33 @@ Candidate scenarios : 1, 2, 3.*/
         nstatOK = rt.cal_varstat();                       
         stat_obs = new double[rt.nstat];
         nsel=nseld;if(nsel<nselr) nsel=nselr;
-        ecrientete(nrec,ntest,nseld,nselr,nlogreg,usepriorhist,usepriormut,shist,smut);
-        ofstream f1(nomficonfresult,ios::app);
+        ecrientete(nrec,ntest,nseld,nselr,nlogreg,usepriorhist,usepriormut,shist,smut); cout<<"apres ecrientete\n";
+        ofstream f11(nomficonfresult,ios::app);
+        rt.alloue_enrsel(nsel);
         for (int p=0;p<ntest;p++) {
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
-            rt.cal_dist(nrec,nsel,stat_obs);
+            rt.cal_dist(nrec,nsel,stat_obs); 
             postsd = comp_direct(nseld);
+            cout<<"test"<<setiosflags(ios::fixed)<<setw(4)<<p+1<<"  ";
             for (int i=0;i<rt.nscenchoisi;i++) printf(" %5.3f ",postsd[ncs-1][i].x);
-            if (nlogreg==1) postsr = comp_logistic(nselr,stat_obs);
-            for (int i=0;i<rt.nscenchoisi;i++) printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);printf("\n");
-            f1<<setw(5)<<setprecision(0)<<p+1;f1<<"   ";
-            for (int i=0;i<rt.nscenchoisi;i++) f1<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs-1][i].x;
-            for (int i=0;i<rt.nscenchoisi;i++) f1<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";
-            f1<<"\n";
+            delete []postsd;
+            if (nlogreg==1) {
+                postsr = comp_logistic(nselr,stat_obs);
+                for (int i=0;i<rt.nscenchoisi;i++) printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);printf("\n");
+                cout<<"avant ecriture dans fichier\n";
+                if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);
+                if (p<9) cout<<"    "<<(p+1)<<"\n"; else if (p<99) cout<<"   "<<(p+1)<<"\n"; else if (p<999) cout<<"  "<<(p+1)<<"\n";else cout<<" "<<(p+1)<<"\n";
+                f11<<"   ";
+                for (int i=0;i<rt.nscenchoisi;i++) f11<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs-1][i].x;
+                cout<<setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs-1][0].x<<"\n";
+                for (int i=0;i<rt.nscenchoisi;i++) f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";
+                cout <<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[0].x<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[0].inf<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[0].sup<<"]"<<"\n";                
+                f11<<"\n";
+                cout<<"avant delete postsr\n";
+                delete []postsr;
+                cout<<"apres delete postsr\n";
+            }
         }        
-        f1.close();
+        rt.desalloue_enrsel(nsel);
+        f11.close();
     }
