@@ -13,16 +13,16 @@ from mutationModel.setMutationModelSequencesAnalysis import SetMutationModelSequ
 from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from analysis.estimation import Estimation
+from analysis.comparison import Comparison
 from utils.visualizescenario import *
 from utils.data import *
 
 class SetGeneticDataAnalysis(SetGeneticData):
     """ set genetic data pour les informations concernant une analyse bias ou evaluate
     """
-    def __init__(self,drawnorfixed,analysis,parent=None):
+    def __init__(self,analysis,parent=None):
         super(SetGeneticDataAnalysis,self).__init__(parent)
 
-        self.drawnorfixed = drawnorfixed
         self.analysis = analysis
 
         self.ui.addGroupButton.hide()
@@ -51,7 +51,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
             self.addToGroup(self.groupList[-1])
 
             # creation des objets mutation model
-            if drawnorfixed == "drawn":
+            if self.analysis.drawn == True:
                 # on instancie des mutationmodel normaux (mais fait pour analysis)
                 if "Microsatellites" in str(box.title()):
                     self.setMutation_dico[self.groupList[-1]] = SetMutationModelMsatAnalysis(self,self.groupList[-1])
@@ -175,12 +175,13 @@ class SetGeneticDataAnalysis(SetGeneticData):
             self.parent.setGenValid(False)
         else:
             # c'est valide, on passe à la dernière phase de paramètrage
-            self.analysis.append(mutconf_list)
-            if self.analysis[0] == "bias":
+            self.analysis.mutationmodel = mutconf_list
+            if self.analysis.category == "bias":
                 next_title = "bias and precision"
+                last_parametrisation = Estimation(self.analysis,self)
             else:
                 next_title = "evaluate confidence"
-            last_parametrisation = Estimation(self.analysis,self)
+                last_parametrisation = Comparison(self.analysis,self)
             #self.parent.addTab(last_parametrisation,next_title)
             #self.parent.removeTab(self.parent.indexOf(self))
             #self.parent.setCurrentWidget(last_parametrisation)

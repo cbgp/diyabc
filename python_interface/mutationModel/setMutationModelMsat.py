@@ -71,36 +71,36 @@ class SetMutationModelMsat(QFrame):
 
 
 
-        # [doit_etre_non_vide , doit_être_float]
-        self.constraints_dico = { self.ui.mmrMinEdit : [1,1],
-                           self.ui.mmrMaxEdit : [1,1],
-                           self.ui.mmrMeanEdit : [1,0],
-                           self.ui.mmrShapeEdit : [1,1],
+        # [doit_etre_non_vide , doit_être_float, doit être positif]
+        self.constraints_dico = { self.ui.mmrMinEdit : [1,1,1],
+                           self.ui.mmrMaxEdit : [1,1,1],
+                           self.ui.mmrMeanEdit : [1,0,0],
+                           self.ui.mmrShapeEdit : [1,1,1],
 
-                           self.ui.ilmrMinEdit : [1,1],  
-                           self.ui.ilmrMaxEdit : [1,1], 
-                           self.ui.ilmrMeanEdit : [1,0], 
-                           self.ui.ilmrShapeEdit : [1,1],
+                           self.ui.ilmrMinEdit : [1,1,1],  
+                           self.ui.ilmrMaxEdit : [1,1,1], 
+                           self.ui.ilmrMeanEdit : [1,0,0], 
+                           self.ui.ilmrShapeEdit : [1,1,1],
 
-                           self.ui.mcpMinEdit : [1,1],   
-                           self.ui.mcpMaxEdit : [1,1],   
-                           self.ui.mcpMeanEdit : [1,0],  
-                           self.ui.mcpShapeEdit : [1,1], 
+                           self.ui.mcpMinEdit : [1,1,1],   
+                           self.ui.mcpMaxEdit : [1,1,1],   
+                           self.ui.mcpMeanEdit : [1,0,0],  
+                           self.ui.mcpShapeEdit : [1,1,1], 
 
-                           self.ui.ilcpMinEdit : [1,1],  
-                           self.ui.ilcpMaxEdit : [1,1], 
-                           self.ui.ilcpMeanEdit : [1,0], 
-                           self.ui.ilcpShapeEdit : [1,1],
+                           self.ui.ilcpMinEdit : [1,1,1],  
+                           self.ui.ilcpMaxEdit : [1,1,1], 
+                           self.ui.ilcpMeanEdit : [1,0,0], 
+                           self.ui.ilcpShapeEdit : [1,1,1],
 
-                           self.ui.msrMinEdit : [1,1],   
-                           self.ui.msrMaxEdit : [1,1],   
-                           self.ui.msrMeanEdit : [1,0],  
-                           self.ui.msrShapeEdit : [1,1], 
+                           self.ui.msrMinEdit : [1,1,1],   
+                           self.ui.msrMaxEdit : [1,1,1],   
+                           self.ui.msrMeanEdit : [1,0,0],  
+                           self.ui.msrShapeEdit : [1,1,1], 
 
-                           self.ui.ilsrMinEdit : [1,1],  
-                           self.ui.ilsrMaxEdit : [1,1],  
-                           self.ui.ilsrMeanEdit : [1,0],
-                           self.ui.ilsrShapeEdit : [1,1]}
+                           self.ui.ilsrMinEdit : [1,1,1],  
+                           self.ui.ilsrMaxEdit : [1,1,1],  
+                           self.ui.ilsrMeanEdit : [1,0,0],
+                           self.ui.ilsrShapeEdit : [1,1,1]}
 
     def mmrGamma(self,act):
         """ [mmr] désactive mean et shape si gamma est coché
@@ -336,6 +336,9 @@ class SetMutationModelMsat(QFrame):
                             raise Exception("%s should not be empty"%self.field_names_dico[field])
                     if self.constraints_dico[field][1] == 1:
                         val = float(valtxt)
+                    if self.constraints_dico[field][2] == 1:
+                        if float(val) < 0:
+                            raise Exception("%s should not be negative"%self.field_names_dico[field])
             # verifs des min et max
             if float(self.ui.ilsrMinEdit.text()) > float(self.ui.ilsrMaxEdit.text()):
                 raise Exception("Individuals locus SNI rate has incoherent min and max values")

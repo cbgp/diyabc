@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Tue Mar 29 11:11:26 2011
+# Created: Wed Mar 30 10:39:39 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -449,7 +449,7 @@ class Ui_TabWidget(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 929, 264))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 96, 26))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_9.setSpacing(1)
@@ -586,6 +586,7 @@ class Ui_TabWidget(object):
         self.runButton.setText(QtGui.QApplication.translate("TabWidget", "Run computations", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("TabWidget", "Number of simulated data sets in the reference table", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("TabWidget", "Required number of simulated data sets", None, QtGui.QApplication.UnicodeUTF8))
+        self.nbSetsDoneEdit.setText(QtGui.QApplication.translate("TabWidget", "0", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tabRefTable), QtGui.QApplication.translate("TabWidget", "Reference table", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("TabWidget", "name", None, QtGui.QApplication.UnicodeUTF8))

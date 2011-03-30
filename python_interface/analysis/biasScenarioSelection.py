@@ -9,13 +9,11 @@ from setHistFixedAnalysis import HistFixed
 class BiasNEvaluateScenarioSelection(QFrame):
     """ Sélection du scenario dans la cadre d'une analyse de type bias ou evaluate
     """
-    def __init__(self,nb_sc,evaluate,analysis,parent=None):
+    def __init__(self,nb_sc,analysis,parent=None):
         super(BiasNEvaluateScenarioSelection,self).__init__(parent)
         self.parent=parent
         self.analysis = analysis
         self.nb_sc = nb_sc
-        # on affiche ou pas la partie droite "select candidate scenarios"
-        self.evaluate = evaluate
         self.checklist = []
         self.radiolist = []
         self.createWidgets()
@@ -37,7 +35,7 @@ class BiasNEvaluateScenarioSelection(QFrame):
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
-        if self.analysis[0] == "bias":
+        if self.analysis.category == "bias":
             self.ui.analysisTypeLabel.setText("Bias and mean square error")
         else:
             self.ui.analysisTypeLabel.setText("Confidence in scenario choice")
@@ -47,20 +45,20 @@ class BiasNEvaluateScenarioSelection(QFrame):
         """ passe à l'étape suivante de la définition de l'analyse
         """
         if self.ui.fixedRadio.isChecked():
-            self.analysis.append("fixed")
+            self.analysis.drawn = False
         else:
-            self.analysis.append("drawn")
+            self.analysis.drawn = True
         # pour evaluate et bias, on a selectionné un scenario
-        self.analysis.append([self.getSelectedScenario()])
+        self.analysis.chosenSc = self.getSelectedScenario()
         # le cas du evaluate, les sc à afficher dans le hist model sont ceux selectionnés
-        if self.evaluate:
+        if self.analysis.category == "evaluate":
             if len(self.getListSelectedScenarios()) >= 2:
                 # pour evaluate on a du selectionner au moins deux scenarios 
-                self.analysis.append(self.getListSelectedScenarios())
+                self.analysis.candidateScList = self.getListSelectedScenarios()
                 if self.ui.fixedRadio.isChecked():
-                    next_widget = HistFixed(self.getSelectedScenario(),self.getListSelectedScenarios(),self.analysis,self.parent)
+                    next_widget = HistFixed(self.analysis,self.parent)
                 else:
-                    next_widget = HistDrawn(self.getSelectedScenario(),self.getListSelectedScenarios(),self.analysis,self.parent)
+                    next_widget = HistDrawn(self.analysis,self.parent)
             else:
                 QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%self.nb_min_sel)
                 return 0
@@ -68,9 +66,9 @@ class BiasNEvaluateScenarioSelection(QFrame):
         else:
             # en fonction de fixed ou drawn, l'écran suivant présente un objet différent
             if self.ui.fixedRadio.isChecked():
-                next_widget = HistFixed(self.getSelectedScenario(),None,self.analysis,self.parent)
+                next_widget = HistFixed(self.analysis,self.parent)
             else:
-                next_widget = HistDrawn(self.getSelectedScenario(),None,self.analysis,self.parent)
+                next_widget = HistDrawn(self.analysis,self.parent)
         #self.parent.parent.addTab(next_widget,"Historical model")
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentWidget(next_widget)
@@ -106,7 +104,7 @@ class BiasNEvaluateScenarioSelection(QFrame):
             self.ui.verticalLayout_4.addWidget(radio)
         self.radiolist[0].setChecked(True)
 
-        if self.evaluate:
+        if self.analysis.category == "evaluate":
             for i in range(self.nb_sc):
                 num = i+1
                 check = QCheckBox("Scenario %s"%num,self)

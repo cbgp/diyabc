@@ -9,6 +9,7 @@ from comparison import Comparison
 from estimation import Estimation
 from genericScenarioSelection import GenericScenarioSelection
 from biasScenarioSelection import BiasNEvaluateScenarioSelection
+from analysis import Analysis
 import output
 
 class DefineNewAnalysis(QFrame):
@@ -65,9 +66,9 @@ class DefineNewAnalysis(QFrame):
             # on instancie donc Comparison et Estimation maintenant
             if self.ui.comparisonRadio.isChecked():
                 if len(self.parent.hist_model_win.scList) >= 2:
-                    analysis = ["compare",name]
+                    analysis = Analysis(name,"compare")
                     compFrame = Comparison(analysis,self)
-                    genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,self)
+                    genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,analysis,self)
                     #self.parent.addTab(genSel,"Scenario selection")
                     #self.parent.removeTab(self.parent.indexOf(self))
                     #self.parent.setCurrentWidget(genSel)
@@ -78,9 +79,9 @@ class DefineNewAnalysis(QFrame):
                     QMessageBox.information(self,"Scenario error","At least 2 scenarios are needed for this analysis")
             elif self.ui.estimateRadio.isChecked():
                 if len(self.parent.hist_model_win.scList) >= 1:
-                    analysis = ["estimate",name]
+                    analysis = Analysis(name,"estimate")
                     estimateFrame = Estimation(analysis,self)
-                    genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,self)
+                    genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,analysis,self)
                     #self.parent.addTab(genSel,"Scenario selection")
                     #self.parent.removeTab(self.parent.indexOf(self))
                     #self.parent.setCurrentWidget(genSel)
@@ -97,11 +98,13 @@ class DefineNewAnalysis(QFrame):
                     paramtxt+="and"
                 if self.ui.lossCheck.isChecked():
                     paramtxt+= " Locate S.S."
-                self.parent.addAnalysis(["pre-ev",name,paramtxt])
+                analysis = Analysis(name,"pre-ev")
+                analysis.params = paramtxt
+                self.parent.addAnalysis(analysis)
                 self.exit()
             elif self.ui.biasRadio.isChecked():
-                analysis = ["bias",name]
-                genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),False,analysis,self)
+                analysis = (name,"bias")
+                genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
                 #self.parent.addTab(genSel,"Scenario selection")
                 #self.parent.removeTab(self.parent.indexOf(self))
                 #self.parent.setCurrentWidget(genSel)
@@ -110,8 +113,8 @@ class DefineNewAnalysis(QFrame):
                 self.parent.ui.analysisStack.setCurrentWidget(genSel)
 
             elif self.ui.evaluateRadio.isChecked():
-                analysis = ["evaluate",name]
-                genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),True,analysis,self)
+                analysis = Analysis(name,"evaluate")
+                genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
                 #self.parent.addTab(genSel,"Scenario selection")
                 #self.parent.removeTab(self.parent.indexOf(self))
                 #self.parent.setCurrentWidget(genSel)

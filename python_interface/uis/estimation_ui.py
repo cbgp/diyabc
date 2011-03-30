@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/estimation.ui'
 #
-# Created: Mon Mar 21 14:53:03 2011
+# Created: Wed Mar 30 10:37:15 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -216,6 +216,7 @@ class Ui_Frame(object):
         self.totNumSimEdit = QtGui.QLineEdit(Frame)
         self.totNumSimEdit.setMinimumSize(QtCore.QSize(100, 0))
         self.totNumSimEdit.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.totNumSimEdit.setReadOnly(True)
         self.totNumSimEdit.setObjectName(_fromUtf8("totNumSimEdit"))
         self.gridLayout.addWidget(self.totNumSimEdit, 3, 3, 1, 1)
         self.cnosdEdit = QtGui.QLineEdit(Frame)

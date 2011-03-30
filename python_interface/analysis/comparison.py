@@ -35,7 +35,7 @@ class Comparison(QFrame):
 
     def validate(self):
         #self.parent.parent.addRow("scenario choice","params","4","new")
-        self.analysis.append(self.scNumList)
+        self.analysis.candidateScList = self.scNumList
         self.majDicoValues()
         self.analysis.append(self.dico_values)
         chosen_scs_txt = ""

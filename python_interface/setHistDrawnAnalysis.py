@@ -395,8 +395,8 @@ class HistDrawn(QFrame):
 
         if self.checkAll():
             self.majParamInfoDico()
-            self.analysis.append(self.param_info_dico)
-            gen_data_analysis = SetGeneticDataAnalysis("drawn",self.analysis,self.parent.parent)
+            self.analysis.histParams = self.param_info_dico
+            gen_data_analysis = SetGeneticDataAnalysis(self.analysis,self.parent.parent)
             #self.parent.parent.addTab(gen_data_analysis,"Genetic data")
             #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
             #self.parent.parent.setCurrentWidget(gen_data_analysis)

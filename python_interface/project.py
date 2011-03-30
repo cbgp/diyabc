@@ -671,27 +671,27 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def addAnalysis(self,analysis):
         """ ajoute, dans la liste d'analyses et dans la GUI , l'analyse passée en paramètre
         """
-        type_analysis = analysis[0]
+        type_analysis = analysis.category
         self.analysisList.append(analysis)
 
         #print analysis
         if type_analysis == "pre-ev":
             #self.addRow("scenario prior combination",analysis[1],"4","new")
-            self.addAnalysisGui(analysis,analysis[1],"scenario prior combination",analysis[2],"new")
+            self.addAnalysisGui(analysis,analysis.name,"scenario prior combination",analysis.computationParameters,"new")
         elif type_analysis == "estimate":
-            print "\n",analysis[-1],"\n"
+            print "\n",analysis.computationParameters,"\n"
             #self.addRow("parameter estimation","params","5","new")
-            self.addAnalysisGui(analysis,analysis[1],"parameter estimation","params","new")
+            self.addAnalysisGui(analysis,analysis.name,"parameter estimation","params","new")
         elif type_analysis == "bias":
             #self.addRow("bias and precision",str(analysis[2]),"3","new")
-            self.addAnalysisGui(analysis,analysis[1],"bias and precision",str(analysis[2]),"new")
+            self.addAnalysisGui(analysis,analysis.name,"bias and precision",str(analysis[2]),"new")
         elif type_analysis == "compare":
             #print "\n",analysis[-1],"\n"
             #self.addRow("scenario choice",analysis[2]["de"],"4","new")
-            self.addAnalysisGui(analysis,analysis[1],"scenario choice",analysis[3]["de"],"new")
+            self.addAnalysisGui(analysis,analysis.name,"scenario choice",analysis[3]["de"],"new")
         elif type_analysis == "evaluate":
             #self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
-            self.addAnalysisGui(analysis,analysis[1],"evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"new")
+            self.addAnalysisGui(analysis,analysis.name,"evaluate confidence","%s | %s"%(analysis.candidateScList,analysis.chosenSc),"new")
 
     def addAnalysisGui(self,analysis,name,atype,params,status):
 
@@ -791,8 +791,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         dans un dossier
         """
         self.thAnalysis.terminate()
-        aid = self.thAnalysis.analysis[1]
-        atype = self.thAnalysis.analysis[0]
+        aid = self.thAnalysis.analysis.name
+        atype = self.thAnalysis.analysis.category
         self.thAnalysis = None
 
         if atype == "estimate":
@@ -1289,6 +1289,8 @@ class RefTableGenThread(QThread):
         self.cancel = True
 
 class AnalysisThread(QThread):
+    """ classe qui gère l'execution du programme qui effectue une analyse
+    """
     def __init__(self,parent,analysis):
         super(AnalysisThread,self).__init__(parent)
         self.parent = parent
@@ -1297,9 +1299,9 @@ class AnalysisThread(QThread):
 
     def run(self):
         executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
-        if self.analysis[0] == "estimate":
-            params = self.analysis[-1]
-            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-e", '%s'%params, "-i", '%s'%self.analysis[1], "-m"]
+        if self.analysis.category == "estimate":
+            params = self.analysis.computationParameters
+            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-e", '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
             print cmd_args_list
             f = open("estimation.out","w")
             p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
@@ -1310,27 +1312,9 @@ class AnalysisThread(QThread):
             data= f.read()
             f.close()
 
-            self.progress = 1
-            tmpp = 1
-            self.emit(SIGNAL("analysisProgress"))
-            while True:
-                a=os.popen("head -n 1 %s/%s_progress.txt"%(self.parent.dir,self.analysis[1]))
-                b=a.read()
-                a.close()
-                # on a bougé
-                if len(b.split(' ')) > 1:
-                    t1 = float(b.split(' ')[0])
-                    t2 = float(b.split(' ')[1])
-                    tmpp = int(t1*100/t2)
-                if tmpp != self.progress:
-                    print "on a progressé"
-                    self.progress = tmpp
-                    self.emit(SIGNAL("analysisProgress"))
-                time.sleep(5)
-
-        elif self.analysis[0] == "compare":
-            params = self.analysis[-1]
-            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-c", '%s'%params, "-i", '%s'%self.analysis[1], "-m"]
+        elif self.analysis.category == "compare":
+            params = self.analysis.computationParameters
+            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-c", '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
             print cmd_args_list
             f = open("comparison.out","w")
             p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
@@ -1341,26 +1325,9 @@ class AnalysisThread(QThread):
             data= f.read()
             f.close()
 
-            self.progress = 1
-            tmpp = 1
-            self.emit(SIGNAL("analysisProgress"))
-            while True:
-                a=os.popen("head -n 1 %s/%s_progress.txt"%(self.parent.dir,self.analysis[1]))
-                b=a.read()
-                a.close()
-                # on a bougé
-                if len(b.split(' ')) > 1:
-                    t1 = float(b.split(' ')[0])
-                    t2 = float(b.split(' ')[1])
-                    tmpp = int(t1*100/t2)
-                if tmpp != self.progress:
-                    print "on a progressé"
-                    self.progress = tmpp
-                    self.emit(SIGNAL("analysisProgress"))
-                time.sleep(5)
-        elif self.analysis[0] == "bias":
-            params = self.analysis[-1]
-            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-b", '%s'%params, "-i", '%s'%self.analysis[1], "-m"]
+        elif self.analysis.category == "bias":
+            params = self.analysis.computationParameters
+            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-b", '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
             print cmd_args_list
             f = open("comparison.out","w")
             p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
@@ -1371,3 +1338,21 @@ class AnalysisThread(QThread):
             data= f.read()
             f.close()
 
+        # la scrutation de la progression est identique pour toutes les analyses
+        self.progress = 1
+        tmpp = 1
+        self.emit(SIGNAL("analysisProgress"))
+        while True:
+            a=os.popen("head -n 1 %s/%s_progress.txt"%(self.parent.dir,self.analysis.name))
+            b=a.read()
+            a.close()
+            # on a bougé
+            if len(b.split(' ')) > 1:
+                t1 = float(b.split(' ')[0])
+                t2 = float(b.split(' ')[1])
+                tmpp = int(t1*100/t2)
+            if tmpp != self.progress:
+                print "on a progressé"
+                self.progress = tmpp
+                self.emit(SIGNAL("analysisProgress"))
+            time.sleep(5)

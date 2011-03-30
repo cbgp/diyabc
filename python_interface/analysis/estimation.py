@@ -30,7 +30,7 @@ class Estimation(QFrame):
             self.ui.label.setText("Bias and mean square error")
             self.ui.redefButton.hide()
             self.ui.candidateLabel.hide()
-            self.setScenarios([self.analysis[2]])
+            self.setScenarios([self.analysis[3]])
         elif self.analysis[0] == "evaluate":
             self.ui.label.setText("Confidence in scenario choice")
             sctxt = ""
@@ -39,7 +39,7 @@ class Estimation(QFrame):
 
             self.ui.candidateLabel.setText("%s %s"%(self.ui.candidateLabel.text(),sctxt))
             self.ui.redefButton.hide()
-            self.setScenarios([self.analysis[2]])
+            self.setScenarios([self.analysis[3]])
         else:
             self.ui.candidateLabel.hide()
             self.ui.label_5.hide()
@@ -52,6 +52,11 @@ class Estimation(QFrame):
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.redefButton,SIGNAL("clicked()"),self.redefineScenarios)
 
+        nbSetsDone = str(self.parent.parent.ui.nbSetsDoneEdit.text()).strip()
+        self.ui.totNumSimEdit.setText(nbSetsDone)
+
+    def checkAll(self):
+        return True
 
     def validate(self):
         """ termine la définition de l'analyse en lui ajoutant la chaine
@@ -59,70 +64,72 @@ class Estimation(QFrame):
         """
         self.analysis.append(self.scNumList)
         self.majDicoValues()
-        self.analysis.append(self.dico_values)
-        chosen_scs_txt = ""
-        #print "analysis: %s"%self.analysis
-        for cs in self.analysis[3]:
-            chosen_scs_txt+="%s,"%str(cs)
-        chosen_scs_txt = chosen_scs_txt[:-1]
-        dico_est = self.analysis[-1]
-        if self.analysis[0] == "estimate":
-            self.analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['choNumberOfsimData'],dico_est['numberOfselData'],dico_est['transformation'],dico_est['choice']))
-        elif self.analysis[0] == "bias":
-            strparam = "s:%s;"%chosen_scs_txt
-            strparam += "n:%s;"%dico_est['choNumberOfsimData']
-            strparam += "m:%s;"%dico_est['numberOfselData']
-            strparam += "d:%s;"%dico_est['numberOfTestData']
-            strparam += "t:%s;"%dico_est['transformation']
-            strparam += "p:%s;"%dico_est['choice']
-            print "robert ", self.analysis[4]
-            strparam += "h:"
-            for paramname in self.analysis[4].keys():
-                l = self.analysis[4][paramname]
-                strparam += "%s="%paramname
-                if len(l) == 2:
-                    strparam += "%s "%l[1]
-                else:
-                    strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
-            strparam = strparam[:-1]
-            strparam += ";u:"
-            #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
-            if len(self.analysis[5])>0:
-                if type(self.analysis[5][0]) == type(u'plop'):
-                    for ind,gr in enumerate(self.analysis[5]):
-                        strparam += "g%s("%(ind+1)
-                        strgr = gr.strip()
-                        strgr = strgr.split('\n')
-                        print "\nstrgr %s\n"%strgr
-                        for j,elem in enumerate(strgr):
-                            if elem.split(' ')[0] != "MODEL":
-                                to_add = strgr[j].split(' ')[1]
-                                strparam += "%s "%to_add
-                        # virer le dernier espace
-                        strparam = strparam[:-1]
-                        strparam += ")*"
-                else:
-                    for ind,gr in enumerate(self.analysis[5]):
-                        strparam += "g%s("%(ind+1)
-                        for num in gr:
-                            strparam += "%s "%num
-                        # virer le dernier espace
-                        strparam = strparam[:-1]
-                        strparam += ")*"
-                # virer le dernier '-'
+        if self.checkAll():
+            self.analysis.append(self.dico_values)
+            chosen_scs_txt = ""
+            #print "analysis: %s"%self.analysis
+            for cs in self.analysis[3]:
+                chosen_scs_txt+="%s,"%str(cs)
+            chosen_scs_txt = chosen_scs_txt[:-1]
+            dico_est = self.analysis[-1]
+            if self.analysis[0] == "estimate":
+                self.analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['choNumberOfsimData'],dico_est['numberOfselData'],dico_est['transformation'],dico_est['choice']))
+            elif self.analysis[0] == "bias":
+                strparam = "s:%s;"%chosen_scs_txt
+                strparam += "n:%s;"%dico_est['choNumberOfsimData']
+                strparam += "m:%s;"%dico_est['numberOfselData']
+                strparam += "d:%s;"%dico_est['numberOfTestData']
+                strparam += "t:%s;"%dico_est['transformation']
+                strparam += "p:%s;"%dico_est['choice']
+                print "robert ", self.analysis[4]
+                strparam += "h:"
+                for paramname in self.analysis[4].keys():
+                    l = self.analysis[4][paramname]
+                    strparam += "%s="%paramname
+                    if len(l) == 2:
+                        strparam += "%s "%l[1]
+                    else:
+                        strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
                 strparam = strparam[:-1]
-            #print "ursulla : %s"%strparam
+                strparam += ";u:"
+                #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
+                if len(self.analysis[5])>0:
+                    if type(self.analysis[5][0]) == type(u'plop'):
+                        for ind,gr in enumerate(self.analysis[5]):
+                            strparam += "g%s("%(ind+1)
+                            strgr = gr.strip()
+                            strgr = strgr.split('\n')
+                            print "\nstrgr %s\n"%strgr
+                            for j,elem in enumerate(strgr):
+                                if elem.split(' ')[0] != "MODEL":
+                                    to_add = strgr[j].split(' ')[1]
+                                    strparam += "%s "%to_add
+                            # virer le dernier espace
+                            strparam = strparam[:-1]
+                            strparam += ")*"
+                    else:
+                        for ind,gr in enumerate(self.analysis[5]):
+                            strparam += "g%s("%(ind+1)
+                            for num in gr:
+                                strparam += "%s "%num
+                            # virer le dernier espace
+                            strparam = strparam[:-1]
+                            strparam += ")*"
+                    # virer le dernier '-'
+                    strparam = strparam[:-1]
+                #print "ursulla : %s"%strparam
 
-            self.analysis.append(strparam)
-        elif self.analysis[0] == "evaluate":
-            # TODO
-            pass
-        self.parent.parent.addAnalysis(self.analysis)
-        self.exit()
+                self.analysis.append(strparam)
+            elif self.analysis[0] == "evaluate":
+                # TODO
+                pass
+            self.parent.parent.addAnalysis(self.analysis)
+            self.exit()
 
     def setScenarios(self,scList):
         """ écrit la liste des scenarios à estimer
         """
+        print scList
         plur= ""
         if len(scList)>1:
             plur = "s"
