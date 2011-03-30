@@ -26,20 +26,11 @@ class Estimation(QFrame):
         self.ui = Ui_Frame()
         self.ui.setupUi(self)
 
-        if self.analysis[0] == "bias":
+        if self.analysis.category == "bias":
             self.ui.label.setText("Bias and mean square error")
             self.ui.redefButton.hide()
             self.ui.candidateLabel.hide()
-            self.setScenarios([self.analysis[3]])
-        elif self.analysis[0] == "evaluate":
-            self.ui.label.setText("Confidence in scenario choice")
-            sctxt = ""
-            for s in self.analysis[3]:
-                sctxt += " %s"%s
-
-            self.ui.candidateLabel.setText("%s %s"%(self.ui.candidateLabel.text(),sctxt))
-            self.ui.redefButton.hide()
-            self.setScenarios([self.analysis[3]])
+            self.setScenarios([self.analysis.chosenSc])
         else:
             self.ui.candidateLabel.hide()
             self.ui.label_5.hide()
@@ -62,29 +53,29 @@ class Estimation(QFrame):
         """ termine la définition de l'analyse en lui ajoutant la chaine
         de paramètres
         """
-        self.analysis.append(self.scNumList)
+        #self.analysis.append(self.scNumList)
         self.majDicoValues()
         if self.checkAll():
-            self.analysis.append(self.dico_values)
+            #self.analysis.append(self.dico_values)
             chosen_scs_txt = ""
             #print "analysis: %s"%self.analysis
-            for cs in self.analysis[3]:
+            for cs in self.analysis.candidateScList:
                 chosen_scs_txt+="%s,"%str(cs)
             chosen_scs_txt = chosen_scs_txt[:-1]
-            dico_est = self.analysis[-1]
-            if self.analysis[0] == "estimate":
-                self.analysis.append("s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,dico_est['choNumberOfsimData'],dico_est['numberOfselData'],dico_est['transformation'],dico_est['choice']))
-            elif self.analysis[0] == "bias":
+            #dico_est = self.analysis[-1]
+            if self.analysis.category == "estimate":
+                self.analysis.computationParameters = "s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['numberOfselData'],self.dico_values['transformation'],self.dico_values['choice'])
+            elif self.analysis.category == "bias":
                 strparam = "s:%s;"%chosen_scs_txt
-                strparam += "n:%s;"%dico_est['choNumberOfsimData']
-                strparam += "m:%s;"%dico_est['numberOfselData']
-                strparam += "d:%s;"%dico_est['numberOfTestData']
-                strparam += "t:%s;"%dico_est['transformation']
-                strparam += "p:%s;"%dico_est['choice']
-                print "robert ", self.analysis[4]
+                strparam += "n:%s;"%self.dico_values['choNumberOfsimData']
+                strparam += "m:%s;"%self.dico_values['numberOfselData']
+                strparam += "d:%s;"%self.dico_values['numberOfTestData']
+                strparam += "t:%s;"%self.dico_values['transformation']
+                strparam += "p:%s;"%self.dico_values['choice']
+                #print "robert ", self.analysis
                 strparam += "h:"
-                for paramname in self.analysis[4].keys():
-                    l = self.analysis[4][paramname]
+                for paramname in self.analysis.histParams.keys():
+                    l = self.analysis.histParams[paramname]
                     strparam += "%s="%paramname
                     if len(l) == 2:
                         strparam += "%s "%l[1]
@@ -93,9 +84,9 @@ class Estimation(QFrame):
                 strparam = strparam[:-1]
                 strparam += ";u:"
                 #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
-                if len(self.analysis[5])>0:
-                    if type(self.analysis[5][0]) == type(u'plop'):
-                        for ind,gr in enumerate(self.analysis[5]):
+                if len(self.analysis.mutationModel)>0:
+                    if type(self.analysis.mutationModel[0]) == type(u'plop'):
+                        for ind,gr in enumerate(self.analysis.mutationModel):
                             strparam += "g%s("%(ind+1)
                             strgr = gr.strip()
                             strgr = strgr.split('\n')
@@ -108,7 +99,7 @@ class Estimation(QFrame):
                             strparam = strparam[:-1]
                             strparam += ")*"
                     else:
-                        for ind,gr in enumerate(self.analysis[5]):
+                        for ind,gr in enumerate(self.analysis.mutationModel):
                             strparam += "g%s("%(ind+1)
                             for num in gr:
                                 strparam += "%s "%num
@@ -119,10 +110,7 @@ class Estimation(QFrame):
                     strparam = strparam[:-1]
                 #print "ursulla : %s"%strparam
 
-                self.analysis.append(strparam)
-            elif self.analysis[0] == "evaluate":
-                # TODO
-                pass
+                self.analysis.computationParameters = strparam
             self.parent.parent.addAnalysis(self.analysis)
             self.exit()
 
@@ -148,7 +136,8 @@ class Estimation(QFrame):
         """ repasse sur le choix des scenarios en lui redonnant moi même comme next_widget
         """
         estimateFrame = self
-        genSel = GenericScenarioSelection(len(self.parent.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,self.parent)
+        print type(self.parent)
+        genSel = GenericScenarioSelection(len(self.parent.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,self.analysis,self.parent)
         #self.parent.parent.addTab(genSel,"Scenario selection")
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentWidget(genSel)

@@ -201,6 +201,16 @@
         </layout>
        </item>
        <item>
+        <widget class="QLabel" name="candidateLabel">
+         <property name="text">
+          <string>Candidate scenarios : </string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Numer of selected data</string>

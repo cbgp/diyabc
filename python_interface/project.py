@@ -684,11 +684,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.addAnalysisGui(analysis,analysis.name,"parameter estimation","params","new")
         elif type_analysis == "bias":
             #self.addRow("bias and precision",str(analysis[2]),"3","new")
-            self.addAnalysisGui(analysis,analysis.name,"bias and precision",str(analysis[2]),"new")
+            self.addAnalysisGui(analysis,analysis.name,"bias and precision",str(analysis.candidateScList),"new")
         elif type_analysis == "compare":
             #print "\n",analysis[-1],"\n"
             #self.addRow("scenario choice",analysis[2]["de"],"4","new")
-            self.addAnalysisGui(analysis,analysis.name,"scenario choice",analysis[3]["de"],"new")
+            self.addAnalysisGui(analysis,analysis.name,"scenario choice","%s | %s"%(analysis.candidateScList,analysis.chosenSc),"new")
         elif type_analysis == "evaluate":
             #self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
             self.addAnalysisGui(analysis,analysis.name,"evaluate confidence","%s | %s"%(analysis.candidateScList,analysis.chosenSc),"new")

@@ -51,7 +51,7 @@ class DefineNewAnalysis(QFrame):
             output.notify(self,"name error","Name cannot be empty or more than 10 characters long")
             return False
         for an in self.parent.analysisList:
-            n = an[1]
+            n = an.name
             if name.strip() == n.strip():
                 output.notify(self,"name error","Name already used")
                 return False
@@ -103,7 +103,7 @@ class DefineNewAnalysis(QFrame):
                 self.parent.addAnalysis(analysis)
                 self.exit()
             elif self.ui.biasRadio.isChecked():
-                analysis = (name,"bias")
+                analysis = Analysis(name,"bias")
                 genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
                 #self.parent.addTab(genSel,"Scenario selection")
                 #self.parent.removeTab(self.parent.indexOf(self))

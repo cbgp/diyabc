@@ -17,12 +17,12 @@ class HistFixed(QFrame):
     """ définition du modèle historique dans le cadre d'une analyse
     les valeurs sont fixées
     """
-    def __init__(self,sc_to_show,list_selected_evaluate_sc,analysis,parent=None):
+    def __init__(self,analysis,parent=None):
         super(HistFixed,self).__init__(parent)
         self.parent=parent
         self.analysis = analysis
-        self.sc_to_show = sc_to_show
-        self.list_selected_evaluate_sc = list_selected_evaluate_sc
+        self.sc_to_show = self.analysis.chosenSc
+        self.list_selected_evaluate_sc = self.analysis.candidateScList
 
         self.paramList = []
         self.condList = []

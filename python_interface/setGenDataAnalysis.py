@@ -175,7 +175,8 @@ class SetGeneticDataAnalysis(SetGeneticData):
             self.parent.setGenValid(False)
         else:
             # c'est valide, on passe à la dernière phase de paramètrage
-            self.analysis.mutationmodel = mutconf_list
+            print "ppp"
+            self.analysis.mutationModel = mutconf_list
             if self.analysis.category == "bias":
                 next_title = "bias and precision"
                 last_parametrisation = Estimation(self.analysis,self)

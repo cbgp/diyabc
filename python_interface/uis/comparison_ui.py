@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/comparison.ui'
 #
-# Created: Mon Mar 28 11:08:15 2011
+# Created: Wed Mar 30 14:56:51 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -91,6 +91,10 @@ class Ui_Frame(object):
         self.redefButton.setObjectName(_fromUtf8("redefButton"))
         self.horizontalLayout_2.addWidget(self.redefButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.candidateLabel = QtGui.QLabel(Frame)
+        self.candidateLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.candidateLabel.setObjectName(_fromUtf8("candidateLabel"))
+        self.verticalLayout.addWidget(self.candidateLabel)
         self.label_2 = QtGui.QLabel(Frame)
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName(_fromUtf8("label_2"))
@@ -188,6 +192,7 @@ class Ui_Frame(object):
         self.label_6.setText(QtGui.QApplication.translate("Frame", "Project directory : ", None, QtGui.QApplication.UnicodeUTF8))
         self.scenariosLabel.setText(QtGui.QApplication.translate("Frame", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
         self.redefButton.setText(QtGui.QApplication.translate("Frame", "Redefine", None, QtGui.QApplication.UnicodeUTF8))
+        self.candidateLabel.setText(QtGui.QApplication.translate("Frame", "Candidate scenarios : ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Frame", "Numer of selected data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Frame", "(simulated data closest to observed)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Frame", "Direct Estimate", None, QtGui.QApplication.UnicodeUTF8))

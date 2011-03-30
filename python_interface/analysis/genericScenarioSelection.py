@@ -9,7 +9,7 @@ from uis.genericScenarioSelection_ui import Ui_Frame
 class GenericScenarioSelection(QFrame):
     """ Sélection du scenario dans la cadre d'une analyse de type comparison ou estimate
     """
-    def __init__(self,nb_sc,label,next_widget,next_title,nb_min_sel,analysis,parent=None):
+    def __init__(self,nb_sc,label,next_widget,next_title,nb_min_sel,analysis,parent):
         super(GenericScenarioSelection,self).__init__(parent)
         self.parent=parent
         self.analysis = analysis
@@ -46,6 +46,7 @@ class GenericScenarioSelection(QFrame):
         """
         if len(self.getListSelectedScenarios()) >= self.nb_min_sel:
             self.analysis.candidateScList = self.getListSelectedScenarios()
+            self.next_widget.setScenarios(self.analysis.candidateScList)
             #self.parent.parent.addTab(self.next_widget,self.next_title)
             #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
             #self.parent.parent.setCurrentWidget(self.next_widget)

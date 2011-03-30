@@ -8,7 +8,7 @@ from uis.comparison_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 
 class Comparison(QFrame):
-    """ dernière étape de définition d'une analyse de type comparison
+    """ dernière étape de définition d'une analyse de type comparison ou evaluate
     """
     def __init__(self,analysis,parent=None):
         super(Comparison,self).__init__(parent)
@@ -32,20 +32,43 @@ class Comparison(QFrame):
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.redefButton,SIGNAL("clicked()"),self.redefineScenarios)
 
+        if self.analysis.category == "evaluate":
+            self.ui.label.setText("Confidence in scenario choice")
+            self.setScenarios([self.analysis.chosenSc])
+            self.setCandidateScenarios(self.analysis.candidateScList)
+            self.ui.redefButton.hide()
+
 
     def validate(self):
         #self.parent.parent.addRow("scenario choice","params","4","new")
         self.analysis.candidateScList = self.scNumList
         self.majDicoValues()
-        self.analysis.append(self.dico_values)
+        #self.analysis.append(self.dico_values)
         chosen_scs_txt = ""
         for cs in self.scNumList:
             chosen_scs_txt+="%s,"%str(cs)
         chosen_scs_txt = chosen_scs_txt[:-1]
-        dico_comp = self.analysis[-1]
-        self.analysis.append("s:%s;n:%s;d:%s;l:%s;m:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg']))
+        #dico_comp = self.analysis[-1]
+        self.analysis.computationParameters = "s:%s;n:%s;d:%s;l:%s;m:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg'])
         self.parent.parent.addAnalysis(self.analysis)
         self.exit()
+
+    def setCandidateScenarios(self,scList):
+        """ écrit la liste des scenarios candidats
+        """
+        plur= ""
+        if len(scList)>1:
+            plur = "s"
+            
+        lstxt=""
+        self.scNumList = []
+        for i in scList:
+            lstxt+="%s, "%i
+            self.scNumList.append(i)
+        lstxt = lstxt[:-2]
+
+        txt = "Candidate scenario%s : %s"%(plur,lstxt)
+        self.ui.candidateLabel.setText(txt)
 
     def setScenarios(self,scList):
         """ écrit la liste des scenarios à comparer
@@ -68,7 +91,7 @@ class Comparison(QFrame):
         """ retourne au choix des scenarios en lui redonnant moi même comme next_widget
         """
         compFrame = self
-        genSel = GenericScenarioSelection(len(self.parent.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,self.parent)
+        genSel = GenericScenarioSelection(len(self.parent.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,self.analysis,self.parent)
         #self.parent.parent.addTab(genSel,"Scenario selection")
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentWidget(genSel)
