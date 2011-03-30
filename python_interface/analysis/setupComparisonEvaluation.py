@@ -49,7 +49,54 @@ class SetupComparisonEvaluation(QFrame):
             chosen_scs_txt+="%s,"%str(cs)
         chosen_scs_txt = chosen_scs_txt[:-1]
         #dico_comp = self.analysis[-1]
-        self.analysis.computationParameters = "s:%s;n:%s;d:%s;l:%s;m:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg'])
+        if self.analysis.category == "compare":
+            self.analysis.computationParameters = "s:%s;n:%s;d:%s;l:%s;m:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg'])
+        elif self.analysis.category == "evaluate":
+            strparam = "s:%s;"%chosen_scs_txt
+            strparam += "n:%s;"%self.dico_values['choNumberOfsimData']
+            #strparam += "m:%s;"%self.dico_values['numberOfselData']
+            strparam += "d:%s;"%self.dico_values['de']
+            strparam += "l:%s;"%self.dico_values['lr']
+            #strparam += "p:%s;"%self.dico_values['choice']
+            #print "robert ", self.analysis
+            strparam += "h:"
+            for paramname in self.analysis.histParams.keys():
+                l = self.analysis.histParams[paramname]
+                strparam += "%s="%paramname
+                if len(l) == 2:
+                    strparam += "%s "%l[1]
+                else:
+                    strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
+            strparam = strparam[:-1]
+            strparam += ";u:"
+            #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
+            if len(self.analysis.mutationModel)>0:
+                if type(self.analysis.mutationModel[0]) == type(u'plop'):
+                    for ind,gr in enumerate(self.analysis.mutationModel):
+                        strparam += "g%s("%(ind+1)
+                        strgr = gr.strip()
+                        strgr = strgr.split('\n')
+                        print "\nstrgr %s\n"%strgr
+                        for j,elem in enumerate(strgr):
+                            if elem.split(' ')[0] != "MODEL":
+                                to_add = strgr[j].split(' ')[1]
+                                strparam += "%s "%to_add
+                        # virer le dernier espace
+                        strparam = strparam[:-1]
+                        strparam += ")*"
+                else:
+                    for ind,gr in enumerate(self.analysis.mutationModel):
+                        strparam += "g%s("%(ind+1)
+                        for num in gr:
+                            strparam += "%s "%num
+                        # virer le dernier espace
+                        strparam = strparam[:-1]
+                        strparam += ")*"
+                # virer le dernier '-'
+                strparam = strparam[:-1]
+            #print "ursulla : %s"%strparam
+
+            self.analysis.computationParameters = strparam
         self.parent.parent.addAnalysis(self.analysis)
         self.exit()
 
