@@ -674,7 +674,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         type_analysis = analysis.category
         self.analysisList.append(analysis)
 
-        #print analysis
+        print analysis.computationParameters
         if type_analysis == "pre-ev":
             #self.addRow("scenario prior combination",analysis[1],"4","new")
             self.addAnalysisGui(analysis,analysis.name,"scenario prior combination",analysis.computationParameters,"new")

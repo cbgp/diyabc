@@ -66,7 +66,7 @@ class SetupEstimationBias(QFrame):
             if self.analysis.category == "estimate":
                 self.analysis.computationParameters = "s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['numberOfselData'],self.dico_values['transformation'],self.dico_values['choice'])
             elif self.analysis.category == "bias":
-                strparam = "s:%s;"%chosen_scs_txt
+                strparam = "s:%s;"%self.analysis.chosenSc
                 strparam += "n:%s;"%self.dico_values['choNumberOfsimData']
                 strparam += "m:%s;"%self.dico_values['numberOfselData']
                 strparam += "d:%s;"%self.dico_values['numberOfTestData']

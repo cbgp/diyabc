@@ -355,10 +355,11 @@ class Diyabc(QMainWindow):
     #        event.ignore()
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    nargv = sys.argv
+    nargv.extend(["-title","DIYABC v2.0.0.0"])
+    app = QApplication(nargv)
     myapp = Diyabc(app)
     myapp.show()
     #QTest.mouseClick(myapp.ui.skipButton,Qt.LeftButton)
     sys.exit(app.exec_())
-
 

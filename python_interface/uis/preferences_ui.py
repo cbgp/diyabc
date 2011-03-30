@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Tue Mar 29 14:39:38 2011
+# Created: Wed Mar 30 16:51:53 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -111,6 +111,26 @@ class Ui_MainWindow(object):
         self.styleCombo.setObjectName(_fromUtf8("styleCombo"))
         self.horizontalLayout_2.addWidget(self.styleCombo)
         self.verticalLayout_2.addWidget(self.frame_2)
+        self.frame_4 = QtGui.QFrame(self.tab_2)
+        self.frame_4.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame_4.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_4.setObjectName(_fromUtf8("frame_4"))
+        self.horizontalLayout_4 = QtGui.QHBoxLayout(self.frame_4)
+        self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
+        self.label_6 = QtGui.QLabel(self.frame_4)
+        self.label_6.setObjectName(_fromUtf8("label_6"))
+        self.horizontalLayout_4.addWidget(self.label_6)
+        self.bgColorCombo = QtGui.QComboBox(self.frame_4)
+        self.bgColorCombo.setObjectName(_fromUtf8("bgColorCombo"))
+        self.bgColorCombo.addItem(_fromUtf8(""))
+        self.bgColorCombo.addItem(_fromUtf8(""))
+        self.bgColorCombo.addItem(_fromUtf8(""))
+        self.bgColorCombo.addItem(_fromUtf8(""))
+        self.bgColorCombo.addItem(_fromUtf8(""))
+        self.bgColorCombo.addItem(_fromUtf8(""))
+        self.bgColorCombo.addItem(_fromUtf8(""))
+        self.horizontalLayout_4.addWidget(self.bgColorCombo)
+        self.verticalLayout_2.addWidget(self.frame_4)
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
         self.tab_4 = QtGui.QWidget()
         self.tab_4.setObjectName(_fromUtf8("tab_4"))
@@ -555,7 +575,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -575,6 +595,14 @@ class Ui_MainWindow(object):
         self.formatCombo.setItemText(1, QtGui.QApplication.translate("MainWindow", "jpg", None, QtGui.QApplication.UnicodeUTF8))
         self.formatCombo.setItemText(2, QtGui.QApplication.translate("MainWindow", "png", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("MainWindow", "Style", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("MainWindow", "Window background color", None, QtGui.QApplication.UnicodeUTF8))
+        self.bgColorCombo.setItemText(0, QtGui.QApplication.translate("MainWindow", "grey", None, QtGui.QApplication.UnicodeUTF8))
+        self.bgColorCombo.setItemText(1, QtGui.QApplication.translate("MainWindow", "blue", None, QtGui.QApplication.UnicodeUTF8))
+        self.bgColorCombo.setItemText(2, QtGui.QApplication.translate("MainWindow", "pink", None, QtGui.QApplication.UnicodeUTF8))
+        self.bgColorCombo.setItemText(3, QtGui.QApplication.translate("MainWindow", "red", None, QtGui.QApplication.UnicodeUTF8))
+        self.bgColorCombo.setItemText(4, QtGui.QApplication.translate("MainWindow", "green", None, QtGui.QApplication.UnicodeUTF8))
+        self.bgColorCombo.setItemText(5, QtGui.QApplication.translate("MainWindow", "yellow", None, QtGui.QApplication.UnicodeUTF8))
+        self.bgColorCombo.setItemText(6, QtGui.QApplication.translate("MainWindow", "white", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("MainWindow", "Various", None, QtGui.QApplication.UnicodeUTF8))
         self.setMutSeqLabel_2.setText(QtGui.QApplication.translate("MainWindow", "Default values of historical model", None, QtGui.QApplication.UnicodeUTF8))
         self.label_64.setText(QtGui.QApplication.translate("MainWindow", "parameters", None, QtGui.QApplication.UnicodeUTF8))

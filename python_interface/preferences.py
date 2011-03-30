@@ -17,6 +17,8 @@ class Preferences(QMainWindow):
         self.parent = parent
         self.createWidgets()
 
+        self.tabColor = {"green": "#c3ffa6","blue":"#7373ff","red":"#ffb2a6","yellow":"#ffffb2","pink":"#ffbff2"}
+
         #self.ui.tabWidget.setTabText(0,"Connexion")
         #self.ui.tabWidget.setTabText(1,"Historical")
         #self.ui.tabWidget.setTabText(2,"Various")
@@ -38,6 +40,9 @@ class Preferences(QMainWindow):
         ind = self.ui.styleCombo.findText("Cleanlooks")
         if ind != -1:
             self.ui.styleCombo.setCurrentIndex(ind)
+        ind = self.ui.styleCombo.findText("white")
+        if ind != -1:
+            self.ui.bgColorCombo.setCurrentIndex(ind)
 
     def createWidgets(self):
         self.ui = Ui_MainWindow()
@@ -54,6 +59,7 @@ class Preferences(QMainWindow):
         QObject.connect(self.ui.cancelButton,SIGNAL("clicked()"),self.close)
         QObject.connect(self.ui.execBrowseButton,SIGNAL("clicked()"),self.browseExec)
         QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
+        QObject.connect(self.ui.bgColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
 
         QObject.connect(self.ui.serverCheck,SIGNAL("toggled(bool)"),self.toggleServer)
 
@@ -72,6 +78,11 @@ class Preferences(QMainWindow):
         path = str(qfd.getOpenFileName(self,"Where is your executable file ?"))
         self.ui.execPathEdit.setText(path)
 
+    def changeBackgroundColor(self,colorstr):
+        if str(colorstr) in self.tabColor.keys():
+            self.parent.setStyleSheet("background-color: %s;"%self.tabColor[str(colorstr)])
+        else:
+            self.parent.setStyleSheet("background-color: %s;"%colorstr)
 
     def changeStyle(self,stylestr):
         """ change le style de l'application (toutes les fenêtres)
@@ -114,9 +125,10 @@ class Preferences(QMainWindow):
             os.remove(os.path.expanduser("~/.diyabc/various"))
 
         style = str(self.ui.styleCombo.currentText())
+        bgColor = str(self.ui.bgColorCombo.currentText())
         pic_format = str(self.ui.formatCombo.currentText())
         ex_path = str(self.ui.execPathEdit.text())
-        lines = "style %s\nformat %s\nexecPath %s"%(style,pic_format,ex_path)
+        lines = "style %s\nformat %s\nexecPath %s\nbgColor %s"%(style,pic_format,ex_path,bgColor)
         f = codecs.open(os.path.expanduser("~/.diyabc/various"),"w","utf-8")
         f.write(lines)
         f.close()
@@ -130,6 +142,10 @@ class Preferences(QMainWindow):
             f.close()
             for l in lines:
                 if len(l.strip()) > 0 and len(l.strip().split(' '))>1:
+                    if l.split(' ')[0] == "bgColor":
+                        ind = self.ui.bgColorCombo.findText(l.strip().split(' ')[1])
+                        if ind != -1:
+                            self.ui.bgColorCombo.setCurrentIndex(ind)
                     if l.split(' ')[0] == "style":
                         ind = self.ui.styleCombo.findText(l.strip().split(' ')[1])
                         if ind != -1:

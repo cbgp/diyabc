@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uis/comparison.ui'
+# Form implementation generated from reading ui file 'uis/setupComparisonEvaluation.ui'
 #
-# Created: Wed Mar 30 14:56:51 2011
+# Created: Wed Mar 30 16:31:15 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -144,6 +144,14 @@ class Ui_Frame(object):
         self.numRegCombo.addItem(_fromUtf8(""))
         self.numRegCombo.addItem(_fromUtf8(""))
         self.gridLayout_2.addWidget(self.numRegCombo, 1, 2, 1, 1)
+        self.notdsLabel = QtGui.QLabel(Frame)
+        self.notdsLabel.setObjectName(_fromUtf8("notdsLabel"))
+        self.gridLayout_2.addWidget(self.notdsLabel, 2, 0, 1, 1)
+        self.notdsEdit = QtGui.QLineEdit(Frame)
+        self.notdsEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.notdsEdit.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.notdsEdit.setObjectName(_fromUtf8("notdsEdit"))
+        self.gridLayout_2.addWidget(self.notdsEdit, 2, 1, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout_2)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.line = QtGui.QFrame(Frame)
@@ -167,6 +175,7 @@ class Ui_Frame(object):
         self.totNumSimEdit = QtGui.QLineEdit(Frame)
         self.totNumSimEdit.setMinimumSize(QtCore.QSize(100, 0))
         self.totNumSimEdit.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.totNumSimEdit.setReadOnly(True)
         self.totNumSimEdit.setObjectName(_fromUtf8("totNumSimEdit"))
         self.gridLayout.addWidget(self.totNumSimEdit, 3, 3, 1, 1)
         self.cnosdEdit = QtGui.QLineEdit(Frame)
@@ -208,6 +217,8 @@ class Ui_Frame(object):
         self.numRegCombo.setItemText(8, QtGui.QApplication.translate("Frame", "8", None, QtGui.QApplication.UnicodeUTF8))
         self.numRegCombo.setItemText(9, QtGui.QApplication.translate("Frame", "9", None, QtGui.QApplication.UnicodeUTF8))
         self.numRegCombo.setItemText(10, QtGui.QApplication.translate("Frame", "10", None, QtGui.QApplication.UnicodeUTF8))
+        self.notdsLabel.setText(QtGui.QApplication.translate("Frame", "Number of requested\n"
+" test data sets", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("Frame", "Total number of simulated data :", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("Frame", "Chosen number of simulated data : ", None, QtGui.QApplication.UnicodeUTF8))
 

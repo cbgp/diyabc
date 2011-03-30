@@ -37,6 +37,14 @@ class SetupComparisonEvaluation(QFrame):
             self.setScenarios([self.analysis.chosenSc])
             self.setCandidateScenarios(self.analysis.candidateScList)
             self.ui.redefButton.hide()
+            self.ui.numRegCombo.clear()
+            self.ui.numRegCombo.addItem("0")
+            self.ui.numRegCombo.addItem("1")
+        else:
+            self.ui.notdsEdit.hide()
+            self.ui.notdsLabel.hide()
+
+        self.ui.totNumSimEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
 
 
     def validate(self):
@@ -52,11 +60,17 @@ class SetupComparisonEvaluation(QFrame):
         if self.analysis.category == "compare":
             self.analysis.computationParameters = "s:%s;n:%s;d:%s;l:%s;m:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg'])
         elif self.analysis.category == "evaluate":
-            strparam = "s:%s;"%chosen_scs_txt
+            candListTxt = ""
+            for cs in self.analysis.candidateScList:
+                candListTxt+="%s,"%str(cs)
+            candListTxt = candListTxt[:-1]
+            strparam = "s:%s;"%candListTxt
+            strparam = "r:%s;"%self.analysis.chosenSc
             strparam += "n:%s;"%self.dico_values['choNumberOfsimData']
-            #strparam += "m:%s;"%self.dico_values['numberOfselData']
+            strparam += "m:%s;"%self.dico_values['numReg']
             strparam += "d:%s;"%self.dico_values['de']
             strparam += "l:%s;"%self.dico_values['lr']
+            strparam += "t:%s;"%self.dico_values['notds']
             #strparam += "p:%s;"%self.dico_values['choice']
             #print "robert ", self.analysis
             strparam += "h:"
@@ -151,6 +165,7 @@ class SetupComparisonEvaluation(QFrame):
         self.dico_values["de"] = str(self.ui.deEdit.text())
         self.dico_values["lr"] = str(self.ui.lrEdit.text())
         self.dico_values["numReg"] = str(self.ui.numRegCombo.currentText())
+        self.dico_values["notds"] = str(self.ui.notdsEdit.text())
 
     def exit(self):
         ## reactivation des onglets
