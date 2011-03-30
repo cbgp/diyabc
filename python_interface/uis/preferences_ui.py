@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Wed Mar 30 16:51:53 2011
+# Created: Wed Mar 30 17:11:26 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -575,7 +575,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

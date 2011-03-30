@@ -6,6 +6,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from uis.setupEstimationBias_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
+import output
 
 class SetupEstimationBias(QFrame):
     """ dernière étape de définition d'une analyse de type estimation ou bias precision
@@ -47,7 +48,24 @@ class SetupEstimationBias(QFrame):
         self.ui.totNumSimEdit.setText(nbSetsDone)
 
     def checkAll(self):
-        return True
+        problems = ""
+        try:
+            if self.ui.totNumSimEdit.text() != "" and int(self.ui.totNumSimEdit.text()) < int(self.ui.cnosdEdit.text()):
+                problems += "Impossible to select more data than it exists in the reference table\n"
+            if self.analysis.category == "bias":
+                notds = int(self.ui.notdsEdit.text())
+            nosd = int(self.ui.nosdEdit.text())
+            cnosd = int(self.ui.cnosdEdit.text())
+
+        except Exception,e:
+            problems += "Only non-empty integer values are accepted\n"
+        print "plop"
+
+        if problems == "":
+            return True
+        else:
+            output.notify(self,"value problem",problems)
+            return False
 
     def validate(self):
         """ termine la définition de l'analyse en lui ajoutant la chaine
