@@ -164,11 +164,11 @@ struct resACPC
         res.vectprop = new double*[nco];
         for (int i=0;i<nco;i++) {
             res.vectprop[i] = new double[res.nlambda];
-            for (int j=0;j<nlambda) res.vectprop[i][j] = vcprop[i][j];
+            for (int j=0;j<res.nlambda;j++) res.vectprop[i][j] = vcprop[i][j];
         }
         res.princomp = new double*[nli];
         for (int i=0;i<nli;i++) {
-            for (int j=0;j<nlambda;j++) {
+            for (int j=0;j<res.nlambda;j++) {
                 res.princomp[i][j]=0.0;
                 for (int k=0;k<nco;k++) res.princomp[i][j] +=matX[i][k]*res.vectprop[k][j];
             } 
