@@ -229,7 +229,7 @@ struct resACPC
         fprintf(f1,"%d %d",nacp,rACP.nlambda);
         for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
         for (int i=0;i<nacp;i++){
-            fprintf(f1," %5d",numscen[i]);
+            fprintf(f1,"%d",numscen[i]);
             for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3f",rACP.princomp[i][j]);fprintf(f1,"\n");
         }
         fclose(f1);

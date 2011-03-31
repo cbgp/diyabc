@@ -320,7 +320,10 @@ int ncs=100;
             numod[k]=i;    
         }
         cout<<"dans ordonne nmodel="<<nmodel<<"\n";
-        for (int i=0;i<nmodel+1;i++) cout<<"numod["<<i<<"]="<<numod[i]<<"\n";
+        //for (int i=0;i<nli)
+        
+        
+        /*for (int i=0;i<nmodel+1;i++) cout<<"numod["<<i<<"]="<<numod[i]<<"\n";
         cout<<"\n";
         ii=-1;
         for (k=0;k<nmodel+1;k++) {
@@ -345,7 +348,8 @@ int ncs=100;
         delete []vecY2;        cout<<"vecY2 OK\n";
         for (int i=0;i<nli;i++) delete []matX2[i];cout<<"matX2[i] OK\n";
         delete []matX2;cout<<"matX2 OK\n";
-        cout<<"apres les delete\n";
+        cout<<"apres les delete\n";*/
+        
     }
 
     void reordonne(int nmodel,int *numod,double *px, double *pxi,double *pxs) {
