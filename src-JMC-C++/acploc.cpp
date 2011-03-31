@@ -42,10 +42,9 @@ struct resACPC
 };
 
     int jacobi(int n, double **A, double *D, double **V) {
-        int nrot=0;
+        char bidon;
+        int nrot=0,ng=0;
         double *b,*z,tresh,theta,tau,t,sm,s,h,g,cc;
-        V = new double*[n];for (int i=0;i<n;i++) V[i]=new double [n];
-        D = new double[n];
         b = new double[n];
         z = new double[n];
         for (int ip=0;ip<n;ip++) {for (int iq=0;iq<n;iq++) V[ip][iq]=0.0; V[ip][ip]=1.0;}
@@ -76,23 +75,23 @@ struct resACPC
                         D[ip] -=h;
                         D[iq] +=h;
                         A[ip][iq]=0.0;
-                        for (int j=0;j<ip-1;j++) {
+                        for (int j=0;j<ip;j++) {
                             g=A[j][ip];
                             h=A[j][iq];
                             A[j][ip] = g-s*(h+g*tau);
                             A[j][iq] = h+s*(g-h*tau);
                         }
-                        for (int j=ip;j<iq-1;j++) {
+                        for (int j=ip+1;j<iq;j++) {
                             g=A[ip][j];
                             h=A[j][iq];
                             A[ip][j] = g-s*(h+g*tau);
                             A[j][iq] = h+s*(g-h*tau);
                         }
-                        for (int j=iq;j<n;j++) {
-                            g=A[ip][j];
-                            h=A[iq][j];
-                            A[ip][j] = g-s*(h+g*tau);
-                            A[iq][j] = h+s*(g-h*tau);
+                       for (int j=iq+1;j<n;j++) {
+                            g=A[ip][j];  
+                            h=A[iq][j];  
+                            A[ip][j] = g-s*(h+g*tau);   
+                            A[iq][j] = h+s*(g-h*tau);   
                         }
                         for (int j=0;j<n;j++) {
                             g=V[j][ip];
@@ -100,10 +99,10 @@ struct resACPC
                             V[j][ip] = g-s*(h+g*tau);
                             V[j][iq] = h+s*(g-h*tau);
                         }
-                        nrot++;
                     }
                 }  
-            }
+            } 
+            nrot++;
         }
         for (int ip=0;ip<n-1;ip++) {
             b[ip]=b[ip]+z[ip];
@@ -124,11 +123,13 @@ struct resACPC
         y = new double[nli];
         res.moy = new double[nco];
         res.sd  = new double[nco];
+        
         for (int j=0;j<nco;j++) {
             for (int i=0;i<nli;i++) y[i] = X[i][j];
             res.moy[j] = cal_moy(nli,y);
             res.sd[j]  = cal_sd(nli,y)*sqrt((double)(nli-1)/(double(nli)));
         }
+        matX = new double*[nli];for (int i=0;i<nli;i++)matX[i] = new double[nco];
         if (index==0) {
             for (int i=0;i<nli;i++) {
                 for (int j=0;j<nco;j++){ 
@@ -144,7 +145,12 @@ struct resACPC
         matXTX = prodM(nco,nli,nco,matXT,matX);
         matM = prodMs(nco,nco,matXTX,anli);
         for (int i=0;i<nco;i++) {for (int j=0;j<nco;j++) matM[i][j]=matXTX[i][j]*anli;}
+        vcprop  = new double*[nco];for (int i=0;i<nco;i++) vcprop[i]=new double [nco];
+        valprop = new double[nco];
+        ecrimat("matM",nco,nco,matM);
         jacobi(nco,matM,valprop,vcprop);
+        cout<<"valeurs propres :\n";
+        for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout<<"\n";
         for (int i=0;i<nco-1;i++) {
             for (int j=i+1;j<nco;j++) {
                 if (valprop[i]<valprop[j]) {
@@ -156,7 +162,9 @@ struct resACPC
             }
         }
         res.slambda=0.0;
-        for (int i=0;i<nco-1;i++) res.slambda +=valprop[i];
+        for (int i=0;i<nco;i++) res.slambda +=valprop[i];
+        for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout <<"\n";
+        cout<<res.slambda<<"\n";
         res.nlambda=1;sl=valprop[0];
         while (sl/res.slambda<prop) {sl+=valprop[res.nlambda];res.nlambda++;}
         res.lambda = new double[res.nlambda];
@@ -168,13 +176,15 @@ struct resACPC
         }
         res.princomp = new double*[nli];
         for (int i=0;i<nli;i++) {
+            res.princomp[i] = new double[res.nlambda];
             for (int j=0;j<res.nlambda;j++) {
                 res.princomp[i][j]=0.0;
                 for (int k=0;k<nco;k++) res.princomp[i][j] +=matX[i][k]*res.vectprop[k][j];
             } 
         }  
         delete []valprop;
-        for (int i=0;i<nco;i++) delete []vcprop; delete []vcprop;
+        for (int i=0;i<nco;i++) delete []vcprop[i]; delete []vcprop;
+        return res;
     }
 
     void cal_acp(){
@@ -194,13 +204,30 @@ struct resACPC
                 bidon=rt.readrecord(&(enreg[p]));
             
         }
-        rt.closefile();
+        rt.closefile();   cout<<"apres la lecture des "<<nacp<<" enregistrements\n";
         matstat = new double*[nacp];
         for (int i=0;i<nacp;i++) {
             matstat[i] = new double[rt.nstat];
             for (int j=0;j<rt.nstat;j++) matstat[i][j] = enreg[i].stat[j];
         }
+        cout<<"avant ACP\n";
         rACP = ACP(nacp,rt.nstat,matstat,1.0,0);
+        cout<<"apres ACP  path ="<<path<<"\n";
+        char *nomfiACP;
+        nomfiACP = new char[strlen(path)+strlen(ident)+20];
+        strcpy(nomfiACP,path);
+        strcat(nomfiACP,ident);
+        strcat(nomfiACP,"_ACP.txt");
+        cout <<nomfiACP<<"\n";
+        FILE *f1;
+        f1=fopen(nomfiACP,"w");
+        fprintf(f1,"%d %d",nacp,rACP.nlambda);
+        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
+        for (int i=0;i<nacp;i++){
+            fprintf(f1," %5d",enreg[i].numscen);
+            for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3f",rACP.princomp[i][j]);fprintf(f1,"\n");
+        }
+        fclose(f1);
     }
 
     void doacpl(char *options,bool multithread, int seed){
@@ -222,4 +249,5 @@ struct resACPC
             }            
         }
         if (dopca) cal_acp();
+        
    }

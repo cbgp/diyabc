@@ -1,3 +1,8 @@
+#ifndef IOMANIP
+#include <iomanip>
+#define IOMANIP
+#endif
+
 /** 
 * libere la mémoire occupée par une matrice de doubles 
 */
@@ -12,7 +17,7 @@ void libereM(int n,double **A) {
 void ecrimat(string nomat, int n, int m, double **A) {
     cout<<"\n"<<nomat<<"\n";
     for (int i=0;i<n;i++) {
-        for (int j=0;j<m;j++) cout<< A[i][j]<<"  ";
+        for (int j=0;j<m;j++) cout<<setiosflags(ios::fixed)<<setw(10)<<setprecision(6)<< A[i][j]<<"  ";
         cout<<"\n";
     }
     cout<<"\n";

@@ -319,7 +319,9 @@ int ncs=100;
             while (numod[k]!=-1) k++;
             numod[k]=i;    
         }
-        //for (int i=0;i<nmodel+1;i++) cout<<"numod["<<i<<"]="<<numod[i]<<"\n";
+        cout<<"dans ordonne\n";
+        for (int i=0;i<nmodel+1;i++) cout<<"numod["<<i<<"]="<<numod[i]<<"\n";
+        cout<<"\n";
         ii=-1;
         for (k=0;k<nmodel+1;k++) {
             for (int i=0;i<nli;i++){

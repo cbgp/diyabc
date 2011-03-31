@@ -236,6 +236,7 @@ int main(int argc, char *argv[]){
                      if (action=='c') ident=strdup("compar1");
                      if (action=='b') ident=strdup("bias1");
                      if (action=='f') ident=strdup("conf1");
+                     if (action=='d') ident=strdup("pcaloc1");
      }
      if (not flags) seed=time(NULL);	
 	switch (action) {
