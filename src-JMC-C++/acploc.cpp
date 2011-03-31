@@ -29,6 +29,11 @@
 #define MATRICES
 #endif
 
+#ifndef IOMANIP
+#include <iomanip>
+#define IOMANIP
+#endif
+
 
 using namespace std;
 extern enregC* enreg;
@@ -189,27 +194,25 @@ struct resACPC
 
     void cal_acp(){
         double *stat_obs,**matstat;
+        enregC enr;
         int bidon;
         resACPC rACP;
         stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
         int nparamax = 0;
         for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         cout<<nparamax<<"\n";
+        enr.param = new float[nparamax];
+        enr.stat  = new float[rt.nstat];
         if (nacp>rt.nrec) nacp=rt.nrec;
-        enreg = new enregC[nacp];
+        matstat = new double*[nacp];
         rt.openfile2();
         for (int p=0;p<nacp;p++) {
-                enreg[p].param = new float[nparamax];
-                enreg[p].stat  = new float[rt.nstat];
-                bidon=rt.readrecord(&(enreg[p]));
-            
+                bidon=rt.readrecord(&enr);
+                matstat[p] = new double[rt.nstat];
+                for (int j=0;j<rt.nstat;j++) matstat[p][j] = enr.stat[j];
         }
         rt.closefile();   cout<<"apres la lecture des "<<nacp<<" enregistrements\n";
-        matstat = new double*[nacp];
-        for (int i=0;i<nacp;i++) {
-            matstat[i] = new double[rt.nstat];
-            for (int j=0;j<rt.nstat;j++) matstat[i][j] = enreg[i].stat[j];
-        }
+        
         cout<<"avant ACP\n";
         rACP = ACP(nacp,rt.nstat,matstat,1.0,0);
         cout<<"apres ACP  path ="<<path<<"\n";
@@ -230,6 +233,51 @@ struct resACPC
         fclose(f1);
     }
 
+    void cal_loc() {
+        double *stat_obs,**qobs,diff,quant;
+        int scen,**avant,**apres,**egal,bidon,nparamax = 0;
+        enregC enr;
+        string **star;
+        stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
+        for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
+        cout<<nparamax<<"\n";
+        enr.param = new float[nparamax];
+        enr.stat  = new float[rt.nstat];
+        qobs = new double*[rt.nscen];
+        for (int i=0;i<rt.nscen;i++) qobs[i]=new double[rt.nstat];
+        star = new string*[rt.nscen];
+        for (int i=0;i<rt.nscen;i++) star[i]=new string[rt.nstat];
+        avant = new int*[rt.nscen];for (int i=0;i<rt.nscen;i++) {avant[i] = new int[rt.nstat];for (int j=0;j<rt.nstat;j++) avant[i][j]=0;}
+        apres = new int*[rt.nscen];for (int i=0;i<rt.nscen;i++) {apres[i] = new int[rt.nstat];for (int j=0;j<rt.nstat;j++) apres[i][j]=0;}
+        egal = new int*[rt.nscen]; for (int i=0;i<rt.nscen;i++) {egal[i]  = new int[rt.nstat];for (int j=0;j<rt.nstat;j++)  egal[i][j]=0;}
+        rt.openfile2();
+        for (int p=0;p<rt.nrec;p++) {
+            bidon=rt.readrecord(&enr);
+            scen=enr.numscen-1;
+            for (int j=0;j<rt.nstat;j++) {
+                diff=stat_obs[j]-enr.stat[j];
+                if (diff>0.001) avant[scen][j]++;
+                else if (diff<-0.001) apres[scen][j]++; else egal[scen][j]++;
+            }
+        }
+        rt.closefile();   cout<<"apres la lecture des "<<rt.nrec<<" enregistrements\n";
+        for (int j=0;j<rt.nstat;j++) {
+             for (int i=0;i<rt.nscen;i++) {
+                 qobs[i][j] = (double)(avant[i][j]+apres[i][j]+egal[i][j]);
+                 if (qobs[i][j]>0.0) qobs[i][j] = (0.5*(double)egal[i][j]+(double)avant[i][j])/qobs[i][j]; else qobs[i][j]=-1;
+                 star[i][j]="      ";
+                 if ((qobs[i][j]>0.95)or(qobs[i][j]<0.05)) star[i][j]=" (*)  ";
+                 if ((qobs[i][j]>0.99)or(qobs[i][j]<0.01)) star[i][j]=" (**) ";
+                 if ((qobs[i][j]>0.999)or(qobs[i][j]<0.001)) star[i][j]=" (***)";
+            }
+            cout<<"SS "<<j+1<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<stat_obs[j]<<")   ";
+            for (int i=0;i<rt.nscen;i++) cout<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<qobs[i][j]<<star[i][j]<<"  ";
+            cout<<"\n";
+        }
+        
+    }
+
+
     void doacpl(char *options,bool multithread, int seed){
         string opt,*ss,s,*ss1,s0,s1;
         bool dopca,doloc;
@@ -249,5 +297,5 @@ struct resACPC
             }            
         }
         if (dopca) cal_acp();
-        
+        if (doloc) cal_loc();
    }
