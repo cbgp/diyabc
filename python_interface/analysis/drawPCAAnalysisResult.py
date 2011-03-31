@@ -195,6 +195,8 @@ class DrawPCAAnalysisResult(QFrame):
             self.ui.horizontalLayout_3.removeItem(self.ui.horizontalLayout_3.itemAt(0))
             self.ui.horizontalLayout_3.addWidget(fr)
 
+            self.plot = p
+
 
     def fancyfyGraph(self,legend,p,obs):
         """ met en forme la légende et calcule l'intervale des divisions des axes
@@ -249,7 +251,8 @@ class DrawPCAAnalysisResult(QFrame):
             if os.path.exists(graph_file_path):
                 os.remove(graph_file_path)
 
-            p = self.ui.horizontalLayout_3.itemAt(0).widget()
+            #p = self.ui.horizontalLayout_3.itemAt(0).widget()
+            p = self.plot
 
             pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
 

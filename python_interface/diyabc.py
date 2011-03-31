@@ -8,7 +8,6 @@ import os
 if sys.platform.startswith('win'):
     sys.path.append("Python26/Lib/site-packages")
 sys.path.append("/".join(os.getcwd().split('/')[:-1]))
-print sys.path
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
