@@ -302,12 +302,10 @@ int ncs=100;
     } 
 
     void ordonne(int nmodel,int nli,int nco,double *vecY,int *numod) {
-        double swm,*sw,*vecW2,*vecY2,**matX2,xpiv;
-        int k,ii,ki,kj,ipiv;
+        double swm,*sw,xpiv;
+        int k,ii,ki,kj;
         //cout<<"debut de ordonne\n";
         sw =new double[nmodel+1];
-        vecW2=new double[nli];vecY2 = new double[nli];
-        matX2 = new double*[nli];for (int i=0;i<nli;i++) matX2[i] = new double[nco];
         for (int i=0;i<nmodel+1;i++) sw[i]=0.0;
         swm=0.0;
         for (int i=0;i<nli;i++) sw[int(vecY[i])] +=vecW[i];
@@ -328,12 +326,12 @@ int ncs=100;
             for (int j=i+1;j<nli;j++) {
                 if (vecY[i]>vecY[j]) {
                     xpiv=vecY[i];vecY[i]=vecY[j];vecY[j]=xpiv;                 
-                    xpiv=vecW[i];vecW2[i]=vecW[j];
-                
+                    xpiv=vecW[i];vecW[i]=vecW[j];vecW[j]=xpiv;
+                    for (int k=0;k<nco;k++) {xpiv=matX0[i][k];matX0[i][k]=matX0[j][k];matX0[j][k]=xpiv;}
                 }
             }
         }
-        
+        delete []sw;
         
         /*for (int i=0;i<nmodel+1;i++) cout<<"numod["<<i<<"]="<<numod[i]<<"\n";
         cout<<"\n";
@@ -359,8 +357,8 @@ int ncs=100;
         delete []vecW2;        cout<<"vecW2 OK\n";
         delete []vecY2;        cout<<"vecY2 OK\n";
         for (int i=0;i<nli;i++) delete []matX2[i];cout<<"matX2[i] OK\n";
-        delete []matX2;cout<<"matX2 OK\n";
-        cout<<"apres les delete\n";*/
+        delete []matX2;cout<<"matX2 OK\n";*/
+        cout<<"apres delete sw\n";
         
     }
 
@@ -386,7 +384,7 @@ int ncs=100;
         //cout << "   nmodel="<<nmodel<<endl;
         numod=new int[nmodel+1];
         ordonne(nmodel,nli,nco,vecY,numod);
-        //cout <<"apres ordonne\n";
+        cout <<"apres ordonne\n";
         int i,j,l,m,n,nmodnco=nmodel*(nco+1),imod,rep;
         double **matA,**matB,**matX,**matXT,**matC,*deltabeta,*beta0,*beta,**matP,**matY,*matYP,*loglik,*sd,*bet,*px0;
         double imody,betmin,betmax,*smatY,*smatP;
@@ -420,6 +418,7 @@ int ncs=100;
         for (i=0;i<nli;i++) {for (j=0;j<nco+1;j++) matXT[j][i]=matX[i][j];}  //transposition
         for (i=0;i<nmodnco;i++) {beta0[i]=0.0;beta[i]=0.0;}
         rep=0;fin=false;
+        cout<<"avant le grand while \n";
         while (fin==false)
             {rep++;
               remplimatriceYP(nli,nco,nmodel,matP,matYP,beta,matX,vecW,matY,smatP);
