@@ -8,6 +8,7 @@ from PyQt4 import QtGui
 from uis.preferences_ui import Ui_MainWindow
 from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
+import output
 
 class Preferences(QMainWindow):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
@@ -56,7 +57,7 @@ class Preferences(QMainWindow):
         #self.ui.verticalLayout_26.setAlignment(Qt.AlignTop)
 
         QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.savePreferences)
-        QObject.connect(self.ui.cancelButton,SIGNAL("clicked()"),self.close)
+        QObject.connect(self.ui.cancelButton,SIGNAL("clicked()"),self.cancel)
         QObject.connect(self.ui.execBrowseButton,SIGNAL("clicked()"),self.browseExec)
         QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
         QObject.connect(self.ui.bgColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
@@ -68,6 +69,12 @@ class Preferences(QMainWindow):
 
         #QObject.connect(self.ui.saveMMMButton,SIGNAL("clicked()"),self.saveMMM)
         #QObject.connect(self.ui.saveMMSButton,SIGNAL("clicked()"),self.saveMMS)
+
+    def cancel(self):
+        """ pour annuler, on recharge depuis la derniere configuration sauvée
+        """
+        self.loadPreferences()
+        self.close()
 
     def toggleServer(self,state):
         self.ui.addrEdit.setDisabled(not state)
@@ -81,6 +88,8 @@ class Preferences(QMainWindow):
     def changeBackgroundColor(self,colorstr):
         if str(colorstr) in self.tabColor.keys():
             self.parent.setStyleSheet("background-color: %s;"%self.tabColor[str(colorstr)])
+        elif colorstr == "default":
+            output.notify(self,"advice","Restart DIYABC in order to load the default color scheme")
         else:
             self.parent.setStyleSheet("background-color: %s;"%colorstr)
 

@@ -32,6 +32,9 @@ class DrawComparisonAnalysisResult(QFrame):
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.save)
 
+        self.ui.PCAFrame.hide()
+        self.ui.ACProgress.hide()
+
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)

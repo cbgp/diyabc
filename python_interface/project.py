@@ -22,6 +22,7 @@ from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from analysis.defineNewAnalysis import DefineNewAnalysis
 from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
+from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from utils.data import Data
 from datetime import datetime 
 import os.path
@@ -141,12 +142,22 @@ class Project(QTabWidget):
         anDir = str(self.ui.analysisListCombo.currentText())
         if anDir.strip() != "":
             directory = anDir.replace(' ','_')
-            if directory.split('_')[0] == 'estimation':
+            typestr = directory.split('_')[0]
+            if typestr == 'estimation':
                 self.drawAnalysisFrame = DrawEstimationAnalysisResult(directory,self)
-            else:
+            elif typestr == 'comparison':
                 self.drawAnalysisFrame = DrawComparisonAnalysisResult(directory,self)
+            elif typestr == "pca":
+                self.drawAnalysisFrame = DrawPCAAnalysisResult(directory,self)
+            #elif typestr == "bias":
+            #    self.drawAnalysisFrame = DrawBiasAnalysisResult(directory,self)
+            #elif typestr == "evaluation":
+            #    self.drawAnalysisFrame = DrawEvaluationAnalysisResult(directory,self)
             self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
             self.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
+
+            if typestr == "pca":
+                self.drawAnalysisFrame.loadACP()
 
 
     def loadACP(self):
@@ -162,6 +173,7 @@ class Project(QTabWidget):
 
         nb_composantes = (len(lines[0].split("  "))-1)
         nb_lignes = len(lines)
+        #self.dico_points[0] = lines[0].split("  ")[1:]
 
         # pour chaque ligne
         for i,l in enumerate(lines):
@@ -273,8 +285,8 @@ class Project(QTabWidget):
             pp = QwtPlotPanner(p.canvas())
             #pz = QwtPlotZoomer(p.canvas())
             #ppi = QwtPlotPicker(p.canvas())
-            p.setAxisTitle(0,"P.C.%s (50%%)"%(compo_v+1))
-            p.setAxisTitle(2,"P.C.%s (60%%)"%(compo_h+1))
+            p.setAxisTitle(0,"P.C.%s (%8.2f%%)"%(compo_v+1,self.dico_points[0][compo_v][0]))
+            p.setAxisTitle(2,"P.C.%s (%8.2f%%)"%(compo_h+1,self.dico_points[0][compo_h][0]))
             p.replot()
 
             if self.ui.horizontalLayout_3.itemAt(0) != None:
@@ -1302,7 +1314,7 @@ class AnalysisThread(QThread):
         if self.analysis.category == "estimate":
             params = self.analysis.computationParameters
             cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-e", '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
-            print cmd_args_list
+            print " ".join(cmd_args_list)
             f = open("estimation.out","w")
             p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
             f.close()
