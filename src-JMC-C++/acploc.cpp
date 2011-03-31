@@ -171,7 +171,7 @@ struct resACPC
         for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout <<"\n";
         cout<<res.slambda<<"\n";
         res.nlambda=1;sl=valprop[0];
-        while (sl/res.slambda<prop) {sl+=valprop[res.nlambda];res.nlambda++;}
+        while ((sl/res.slambda<prop)and(res.nlambda<nco)) {sl+=valprop[res.nlambda];res.nlambda++;}
         cout<<"nombre de composantes : "<<res.nlambda<<"\n";
         res.lambda = new double[res.nlambda];
         for (int i=0;i<res.nlambda;i++) res.lambda[i]=valprop[i];
