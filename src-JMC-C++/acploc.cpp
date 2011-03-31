@@ -193,9 +193,9 @@ struct resACPC
     }
 
     void cal_acp(){
-        double *stat_obs,**matstat;
+        double *stat_obs,**matstat,*pca_statobs;
         enregC enr;
-        int bidon,*numscen;
+        int bidon,*numscen,k;
         resACPC rACP;
         stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
         int nparamax = 0;
@@ -206,6 +206,7 @@ struct resACPC
         if (nacp>rt.nrec) nacp=rt.nrec;
         matstat = new double*[nacp];
         numscen = new int [nacp];
+        pca_statobs = new double[rt.nstat];
         rt.openfile2();
         for (int p=0;p<nacp;p++) {
                 bidon=rt.readrecord(&enr);
@@ -218,6 +219,10 @@ struct resACPC
         cout<<"avant ACP\n";
         rACP = ACP(nacp,rt.nstat,matstat,1.0,0);
         cout<<"apres ACP  path ="<<path<<"\n";
+        for (int j=0;j<rACP.nlambda;j++){
+            pca_statobs[j]=0.0;
+            for(k=0;k<rt.nstat;k++) pca_statobs[j] +=(stat_obs[k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
+        }
         char *nomfiACP;
         nomfiACP = new char[strlen(path)+strlen(ident)+20];
         strcpy(nomfiACP,path);
@@ -228,6 +233,8 @@ struct resACPC
         f1=fopen(nomfiACP,"w");
         fprintf(f1,"%d %d",nacp,rACP.nlambda);
         for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
+        fprintf(f1,"%d",0);
+        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",pca_statobs[i]);fprintf(f1,"\n");
         for (int i=0;i<nacp;i++){
             fprintf(f1,"%d",numscen[i]);
             for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3f",rACP.princomp[i][j]);fprintf(f1,"\n");

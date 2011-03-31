@@ -302,8 +302,8 @@ int ncs=100;
     } 
 
     void ordonne(int nmodel,int nli,int nco,double *vecY,int *numod) {
-        double swm,*sw,*vecW2,*vecY2,**matX2;
-        int k,ii;
+        double swm,*sw,*vecW2,*vecY2,**matX2,xpiv;
+        int k,ii,ki,kj,ipiv;
         //cout<<"debut de ordonne\n";
         sw =new double[nmodel+1];
         vecW2=new double[nli];vecY2 = new double[nli];
@@ -320,7 +320,19 @@ int ncs=100;
             numod[k]=i;    
         }
         cout<<"dans ordonne nmodel="<<nmodel<<"\n";
-        //for (int i=0;i<nli)
+        for (int i=0;i<nli-1;i++) {
+            ki=0;while (int(vecY[i])!=numod[ki]) ki++;
+            vecY[i]=(double)ki;
+        }
+        for (int i=0;i<nli-1;i++) {
+            for (int j=i+1;j<nli;j++) {
+                if (vecY[i]>vecY[j]) {
+                    xpiv=vecY[i];vecY[i]=vecY[j];vecY[j]=xpiv;                 
+                    xpiv=vecW[i];vecW2[i]=vecW[j];
+                
+                }
+            }
+        }
         
         
         /*for (int i=0;i<nmodel+1;i++) cout<<"numod["<<i<<"]="<<numod[i]<<"\n";
