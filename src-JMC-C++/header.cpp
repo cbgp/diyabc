@@ -36,7 +36,7 @@ public:
     char * pathbase;
     DataC dataobs;
     int nparamtot,nstat,nscenarios,nconditions,ngroupes,nparamut;
-    string *paramname;
+    string *paramname, *statname;
     ScenarioC *scenario,scen;
     HistParameterC *histparam;
     ConditionC *condition;
@@ -569,6 +569,11 @@ public:
   //Entete du fichier reftable
         getline(file,s1);       //ligne vide
         getline(file,this->entete);     //ligne entete
+        this->statname =new string[this->nstat];
+        ss=splitwords(entete," ",&nss);
+        for (int i=nstat-1;i>=0;i--) this->statname[i]=ss[--nss];
+        //for (int i=0;i<this->nstat;i++) cout<<this->statname[i]<<"   ";cout<<"\n";
+        delete []ss;
                 //cout<<"scenarios à la fin de readheader\n";
                 //exit(1);
                 //for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();

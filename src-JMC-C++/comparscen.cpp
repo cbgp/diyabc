@@ -319,7 +319,7 @@ int ncs=100;
             while (numod[k]!=-1) k++;
             numod[k]=i;    
         }
-        cout<<"dans ordonne\n";
+        cout<<"dans ordonne nmodel="<<nmodel<<"\n";
         for (int i=0;i<nmodel+1;i++) cout<<"numod["<<i<<"]="<<numod[i]<<"\n";
         cout<<"\n";
         ii=-1;
@@ -333,14 +333,19 @@ int ncs=100;
                 }
             }
         }
-        //cout<<"apres la première recopie\n";
+        cout<<"apres la première recopie\n";
         for (int i=0;i<nli;i++) {
             vecY[i]=vecY2[i];
             vecW[i]=vecW2[i];
             for(int j=0;j<nco;j++) matX0[i][j]=matX2[i][j];
         }
-        delete []sw;delete []vecW2;delete []vecY2;
-        for (int i=0;i<nli;i++) delete []matX2[i];delete []matX2;
+        cout<<"avant les delete\n";
+        delete []sw;           cout<<"sw OK\n";
+        delete []vecW2;        cout<<"vecW2 OK\n";
+        delete []vecY2;        cout<<"vecY2 OK\n";
+        for (int i=0;i<nli;i++) delete []matX2[i];cout<<"matX2[i] OK\n";
+        delete []matX2;cout<<"matX2 OK\n";
+        cout<<"apres les delete\n";
     }
 
     void reordonne(int nmodel,int *numod,double *px, double *pxi,double *pxs) {

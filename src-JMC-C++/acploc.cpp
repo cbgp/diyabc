@@ -195,7 +195,7 @@ struct resACPC
     void cal_acp(){
         double *stat_obs,**matstat;
         enregC enr;
-        int bidon;
+        int bidon,*numscen;
         resACPC rACP;
         stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
         int nparamax = 0;
@@ -205,10 +205,12 @@ struct resACPC
         enr.stat  = new float[rt.nstat];
         if (nacp>rt.nrec) nacp=rt.nrec;
         matstat = new double*[nacp];
+        numscen = new int [nacp];
         rt.openfile2();
         for (int p=0;p<nacp;p++) {
                 bidon=rt.readrecord(&enr);
                 matstat[p] = new double[rt.nstat];
+                numscen[p] = enr.numscen;
                 for (int j=0;j<rt.nstat;j++) matstat[p][j] = enr.stat[j];
         }
         rt.closefile();   cout<<"apres la lecture des "<<nacp<<" enregistrements\n";
@@ -227,7 +229,7 @@ struct resACPC
         fprintf(f1,"%d %d",nacp,rACP.nlambda);
         for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
         for (int i=0;i<nacp;i++){
-            fprintf(f1," %5d",enreg[i].numscen);
+            fprintf(f1," %5d",numscen[i]);
             for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3f",rACP.princomp[i][j]);fprintf(f1,"\n");
         }
         fclose(f1);
@@ -270,11 +272,36 @@ struct resACPC
                  if ((qobs[i][j]>0.99)or(qobs[i][j]<0.01)) star[i][j]=" (**) ";
                  if ((qobs[i][j]>0.999)or(qobs[i][j]<0.001)) star[i][j]=" (***)";
             }
-            cout<<"SS "<<j+1<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<stat_obs[j]<<")   ";
+            cout<<setiosflags(ios::left)<<setw(15)<<header.statname[j]<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<stat_obs[j]<<")   ";
             for (int i=0;i<rt.nscen;i++) cout<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<qobs[i][j]<<star[i][j]<<"  ";
             cout<<"\n";
         }
-        
+        char *nomfiloc;
+        nomfiloc = new char[strlen(path)+strlen(ident)+20];
+        strcpy(nomfiloc,path);
+        strcat(nomfiloc,ident);
+        strcat(nomfiloc,"_locate.txt");
+        cout <<nomfiloc<<"\n";
+        time_t rawtime;
+        struct tm * timeinfo;
+        time ( &rawtime );
+        timeinfo = localtime ( &rawtime );
+        ofstream f12(nomfiloc,ios::out);
+        f12<<"DIYABC :                   PRIOR CHECKING                         "<<asctime(timeinfo)<<"\n";
+        f12<<"Data file                     : "<<header.datafilename<<"\n";
+        f12<<"Reference table               : "<<rt.filename<<"\n";
+        f12<<"Number of simulated data sets : "<<rt.nrec<<"\n\n";
+        f12<<"Values indicate for each summary statistics the proportion \nof simulated data sets which have a value below the observed one\n";
+        f12<<" Summary           observed";for (int i=0;i<rt.nscen;i++) f12<< "    scenario   ";f12<<"\n";
+        f12<<"statistics           value ";for (int i=0;i<rt.nscen;i++) f12<< "      "<<setw(3)<<i+1<< "      ";f12<<"\n";
+        for (int j=0;j<rt.nstat;j++) {
+             f12<<setiosflags(ios::left)<<setw(15)<<header.statname[j]<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<stat_obs[j]<<")   ";
+             for (int i=0;i<rt.nscen;i++) {
+                 f12<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<qobs[i][j]<<star[i][j]<<"   ";
+             }
+             f12<<"\n";
+        }
+        f12.close();
     }
 
 
