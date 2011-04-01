@@ -53,6 +53,9 @@ int nenr=100;
 
 double clock_zero=0.0,debut,duree;
 
+/**
+* lecture du fichier header.txt, calcul des stat_obs et lecture de l'entête de reftable.bin' 
+*/
 
 int readheaders() {
     int k;
@@ -63,6 +66,10 @@ int readheaders() {
     return k;
 }
 
+/**
+* programme principal : lecture et interprétation des options et lancement des calculs choisis
+*/
+
 int main(int argc, char *argv[]){
     char *estpar,*compar,*biaspar,*confpar,*priorpar;
     bool firsttime;
@@ -71,8 +78,6 @@ int main(int argc, char *argv[]){
 	int optchar;
     char action='a';
     bool flagp=false,flagi=false,flags=false;
-    //string a;
-        //srand(time(NULL));
        
         debut=walltime(&clock_zero);
 
@@ -156,7 +161,6 @@ int main(int argc, char *argv[]){
             strcat(reftablelogfilename,"reftable.log");
             strcat(statobsfilename,"statobs.txt");
             flagp=true;
-            //cout<<headerfilename<<"\n"<<reftablefilename<<"\n"; 
             break;
 		   
         case 's' :  
@@ -258,7 +262,6 @@ int main(int argc, char *argv[]){
                                   header.libere();
                                   
                           }
-                      //delete []datafilename;
                       break;
                       
       case 'e'  : k=readheaders();
@@ -286,12 +289,10 @@ int main(int argc, char *argv[]){
                   break;
                   
    }
-	//delete [] headerfilename;delete [] reftablefilename;
 	duree=walltime(&debut);
     fprintf(stdout,"durée = %.2f secondes (%.2f)\n",duree,time_loglik);
-    fprintf(stdout,"durée dans le remplissage de matC = %.2f secondes\n",time_matC);
-     fprintf(stdout,"durée dans call_polytom = %.2f secondes\n",time_call);
-     fprintf(stdout,"durée dans la lecture de la reftable et le tri des enregistrements = %.2f secondes\n",time_readfile);
-   //cin >> a;
+     //fprintf(stdout,"durée dans le remplissage de matC = %.2f secondes\n",time_matC);
+     //fprintf(stdout,"durée dans call_polytom = %.2f secondes\n",time_call);
+     //fprintf(stdout,"durée dans la lecture de la reftable et le tri des enregistrements = %.2f secondes\n",time_readfile);
 	return 0;
 };

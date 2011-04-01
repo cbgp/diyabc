@@ -77,6 +77,9 @@ int stat_num[NSTAT]     = {  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  
 
 int arrondi(double a) {return (int)(a + 0.5);}
 
+/**
+* retourne un ordre aléatoire pour les éléments d'un vecteur 
+*/
 vector <int> melange(MwcGen mw, int n) {
 	vector <double> ra;
 	vector <int> ord;

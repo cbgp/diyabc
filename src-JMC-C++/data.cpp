@@ -111,7 +111,9 @@ public:
 	LocusC *locus;
         bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
         
-
+/**
+* liberation de la mémoire occupée par la classe DataC
+*/
 	void libere(){
                 if (Aindivname) {
 		    for (int  ech=0;ech<this->nsample;ech++) delete [] this->indivname[ech];
@@ -166,7 +168,9 @@ public:
 		if (Anind) delete [] this->nind;
 	}
 
-
+/**
+* lecture d'un fichier de donnée et stockage des informations dans une structure DataC
+*/
 	DataC* readfile(string filename){
 		bool fin;
 		string s,s1,s2,locusname;
@@ -300,6 +304,9 @@ public:
                 //cout<<"dans data nsample = "<<this->nsample<<"\n";
 	}
 
+/**
+* traitement des génotypes microsat au locus loc
+*/
     void do_microsat(int loc){
     	string geno,*gen;
     	int l,ll,n,gg;
@@ -353,6 +360,9 @@ public:
     }
 
 
+/**
+* traitement des génotypes DNA sequence au locus loc
+*/
     void do_sequence(int loc){
     	string geno,*gen;
     	int l,ll,n,gg,j0,j1,j2;
@@ -449,6 +459,10 @@ public:
     	delete [] gen;
     }
 
+/**
+* calcul du coefficient dans la formule de coalescence en fonction du type de locus 
+* 0:autosomal diploide, 1:autosomal haploïde, 2:X-linked, 3:Y-linked, 4:mitochondrial
+*/
     void cal_coeff(int loc){
 		double coeff=0.0;
 		switch (this->locus[loc].type % 5)
@@ -462,6 +476,10 @@ public:
                 //if (loc==0) cout<<"sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeff<<"\n";
     }
 
+
+/**
+* chargement des données dans une structure DataC 
+*/
     DataC * loadfromfile(string filename) {
 		int loc,kloc;
 		this->readfile(filename);
@@ -475,34 +493,4 @@ public:
 		}
 	}
         
-    void calstatobs() {
-        //ParticleC partobs;
-    
-    }
 };
-
-/*int main(){
-	DataC data;
-	data.loadfromfile("tout.txt");
-	cout <<"\n\n";
-	for (int ech=0;ech<data.nsample;ech++) {
-		for (int ind=0;ind<data.nind[ech];ind++) {
-			cout << data.indivname[ech][ind]<<"   ";
-			for (int loc=0;loc<data.nloc;loc++) cout <<data.genotype[ech][ind][loc]<<"  ";
-			cout <<"\n";
-		}
-	}
-	cout << data.title << "\n nloc = "<<data.nloc<<"   nsample = "<<data.nsample<<"\n";
-	for (int i=0;i<data.nloc;i++) cout << data.locus[i].name <<"\n";
-	for (int ech=0;ech<data.nsample;ech++) {
-		cout << data.nind[ech] <<"\n";
-		for (int ind=0;ind<data.nind[ech];ind++) cout << data.indivname[ech][ind]<<"   sexe = "<<data.indivsexe[ech][ind]<<"\n";
-	}
-	for (int loc=0;loc<data.nloc;loc++) {
-		if (data.locus[loc].type<5)
-		cout << data.locus[loc].name << "   mini = " <<data.locus[loc].mini<<"   maxi = "<<data.locus[loc].maxi<<"\n";
-	}
-	for (int i=0;i<data.nmisshap;i++) cout <<" missing data sample "<<data.misshap[i].sample<<"  ind "<<data.misshap[i].indiv<<"  locus "<<data.misshap[i].locus<<"\n";
-	for (int i=0;i<data.nmissnuc;i++) cout <<" missing nucl sample "<<data.missnuc[i].sample<<"  ind "<<data.missnuc[i].indiv<<"  locus "<<data.missnuc[i].locus<<"  nuc "<<data.missnuc[i].nuc<<"\n";
-	data.libere();
-}*/
