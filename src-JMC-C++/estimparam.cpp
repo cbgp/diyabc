@@ -51,7 +51,7 @@ extern HeaderC header;
 double **matX0, *vecW, **alpsimrat,**parsim;    
 int nstatOKsel;
 extern char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
-
+extern bool multithread;
 pardensC *pardens;
 double *var_stat, *parmin, *parmax, *diff;
 double **beta, **phistar,**simpar;
@@ -351,7 +351,7 @@ parstatC *parstat;
 /** 
 * effectue la régression locale à partir de la matrice matX0 et le vecteur des poids vecW
 */
-    void local_regression(int n, bool multithread) {
+    void local_regression(int n) {
         double **matX,**matXT,**matA,**matB,**matAA,**matC;
         
         matA = new double*[nstatOKsel+1];
@@ -371,7 +371,7 @@ parstatC *parstat;
         //ecrimat("matA",nstatOKsel+1,nstatOKsel+1,matA);
         matAA = prodM(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
         //ecrimat("matAA",nstatOKsel+1,nstatOKsel+1,matAA);
-        matB = invM(nstatOKsel+1,matAA,multithread);
+        matB = invM(nstatOKsel+1,matAA);
         matC = prodM(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
         beta = prodM(nstatOKsel+1,n,nparamcom,matC,parsim);
         //ecrimat("beta",nstatOKsel+1,nparamcom,beta);
@@ -877,7 +877,7 @@ parstatC *parstat;
 /** 
 * effectue l'estimation ABC des paramètres (directe + régression locale)
 */
-    void doestim(char *options,bool multithread) {
+    void doestim(char *options) {
         char *datafilename, *progressfilename;
         int rtOK,nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos;
@@ -939,7 +939,7 @@ parstatC *parstat;
         nprog=(nparamcom+nparcompo)*10+14;
         recalparam(nsel);                                 cout<<"apres recalparam\n";
         rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
-        local_regression(nsel,multithread);               cout<<"apres local_regression\n";
+        local_regression(nsel);               cout<<"apres local_regression\n";
         iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
         det_nomparam();

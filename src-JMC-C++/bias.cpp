@@ -32,6 +32,7 @@
 
 extern ParticleSetC ps;
 extern enregC* enreg;
+extern bool multithread;
 
 struct enreC {
     int numscen;
@@ -409,7 +410,7 @@ using namespace std;
         }
     }
 
-    void dobias(char *options, bool multithread, int seed){
+    void dobias(char *options,  int seed){
         char *datafilename, *progressfilename, *courantfilename;
         int rtOK,nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn;
@@ -532,7 +533,7 @@ using namespace std;
             if (p<1) det_nomparam();
             recalparam(nsel);                                 //cout<<"apres recalparam\n";
             rempli_mat(nsel,stat_obs);                        //cout<<"apres rempli_mat\n";
-            local_regression(nsel,multithread);               //cout<<"apres local_regression\n";
+            local_regression(nsel);               //cout<<"apres local_regression\n";
             iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             phistar = calphistar(nsel);                                 //cout<<"apres calphistar\n";
             //if(p<1) det_nomparam();

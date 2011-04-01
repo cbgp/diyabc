@@ -48,30 +48,8 @@ HeaderC header;
 ParticleSetC ps;
 
 char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
-
+bool multithread=false;
 int nenr=100;
-
-double walltime( double *t0 )
-{
-  double mic, time;
-  double mega = 0.000001;
-  struct timeval tp;
-  struct timezone tzp;
-  static long base_sec = 0;
-  static long base_usec = 0;
-
-  (void) gettimeofday(&tp,&tzp);
-  if (base_sec == 0)
-    {
-      base_sec = tp.tv_sec;
-      base_usec = tp.tv_usec;
-    }
-
-  time = (double) (tp.tv_sec - base_sec);
-  mic = (double) (tp.tv_usec - base_usec);
-  time = (time + mic * mega) - *t0;
-  return(time);
-}
 
 double clock_zero=0.0,debut,duree;
 
@@ -87,7 +65,7 @@ int readheaders() {
 
 int main(int argc, char *argv[]){
     char *estpar,*compar,*biaspar,*confpar,*priorpar;
-    bool multithread=false,firsttime;
+    bool firsttime;
 	int nrecneeded,nrectodo,k,seed;
 	double **paramstat;
 	int optchar;
@@ -285,22 +263,22 @@ int main(int argc, char *argv[]){
                       
       case 'e'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
-                  doestim(estpar,multithread);
+                  doestim(estpar);
                   break;
                   
       case 'c'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
-                  docompscen(compar,multithread);
+                  docompscen(compar);
                   break;
     
        case 'b'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
-                  dobias(biaspar,multithread,seed);
+                  dobias(biaspar,seed);
                   break;
  
        case 'f'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
-                  doconf(confpar,multithread,seed);
+                  doconf(confpar,seed);
                   break;
        case 'd'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
@@ -310,7 +288,7 @@ int main(int argc, char *argv[]){
    }
 	//delete [] headerfilename;delete [] reftablefilename;
 	duree=walltime(&debut);
-    fprintf(stdout,"durée = %.2f secondes \n",duree);
+    fprintf(stdout,"durée = %.2f secondes (%.2f)\n",duree,time_loglik);
     //cin >> a;
 	return 0;
 };

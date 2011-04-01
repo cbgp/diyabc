@@ -80,7 +80,7 @@ char *nomficonfresult;
         fclose(f1);
     }
         
-    void doconf(char *options, bool multithread, int seed) {
+    void doconf(char *options, int seed) {
         char *datafilename, *progressfilename, *courantfilename;
         int rtOK,nstatOK, iprog,nprog,ncs1;
         int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg;
@@ -166,6 +166,7 @@ char *nomficonfresult;
         ecrientete(nrec,ntest,nseld,nselr,nlogreg,usepriorhist,usepriormut,shist,smut); cout<<"apres ecrientete\n";
         ofstream f11(nomficonfresult,ios::app);
         rt.alloue_enrsel(nsel);
+        if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
         for (int p=0;p<ntest;p++) {
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
             rt.cal_dist(nrec,nsel,stat_obs); 
@@ -175,24 +176,16 @@ char *nomficonfresult;
             if (nlogreg==1) {
                 postsr = comp_logistic(nselr,stat_obs);
                 for (int i=0;i<rt.nscenchoisi;i++) printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);printf("\n");
-                cout<<"avant ecriture dans fichier\n";
                 if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);
-                if (p<9) cout<<"    "<<(p+1)<<"\n"; else if (p<99) cout<<"   "<<(p+1)<<"\n"; else if (p<999) cout<<"  "<<(p+1)<<"\n";else cout<<" "<<(p+1)<<"\n";
                 f11<<"   ";
-                cout<<"rt.nscenchoisi = "<<rt.nscenchoisi<<"   ncs="<<ncs<<"\n";
                 ncs1=ncs-1;
-                printf("postsd[ncs1][0] = %5.3f\n",postsd[ncs1][0].x);
-                cout<<"    postsd[ncs-1][1] = "<<postsd[ncs1][1].inf<<"\n";
-                cout<<"    postsd[ncs-1][2] = "<<postsd[ncs1][2].sup<<"\n";
                 for (int i=0;i<rt.nscenchoisi;i++) f11<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;
-                cout<<setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][0].x<<"\n";
+                //cout<<setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][0].x<<"\n";
                 for (int i=0;i<rt.nscenchoisi;i++) f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";
-                cout <<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[0].x<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[0].inf<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[0].sup<<"]"<<"\n";                
+                //cout <<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[0].x<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[0].inf<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[0].sup<<"]"<<"\n";                
                 f11<<"\n";
                 delete []postsd;
-                cout<<"avant delete postsr\n";
                 delete []postsr;
-                cout<<"apres delete postsr\n";
             }
         }        
         rt.desalloue_enrsel(nsel);

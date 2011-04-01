@@ -1027,7 +1027,7 @@ struct MwcGen
 		this->mult = multipli[indice % 10000];
         srand(indice2);
         this->mwcx = rand() % MODULO;
-		srand((unsigned) time (NULL));
+		srand(indice2*indice);
         this->carry= rand() % MODULO;
         //std::cout << "mwcx = " << this->mwcx << "   carry = " << this->carry << "\n";
 	}

@@ -3,6 +3,8 @@
 #define IOMANIP
 #endif
 
+extern bool multithread;
+
 /** 
 * libere la mémoire occupée par une matrice de doubles 
 */
@@ -71,7 +73,7 @@ double** prodMs(int n,int m, double **A, double b) {
 /** 
 * effectue l'inversion matricielle d'une matrice (carrée) de doubles 
 */
-  double** invM(int n, double **A, bool multithread)
+  double** invM(int n, double **A)
 {
     int i,j,k,l,err=0;
     double max,pivot,coef, **T, **C;
