@@ -53,6 +53,8 @@ struct complignes
    }
 };
 
+extern double time_readfile;
+
 int ncs=100;
 double time_loglik=0.0,time_matC=0.0,time_call=0.0;
 double **cmatA,**cmatB,**cmatX,**cmatXT,**cmatC,*cdeltabeta,*cbeta0,*cbeta,**cmatP,**cmatY,*cmatYP,*cloglik,*csd,*cbet,*cpx0,*csmatY,*csmatP,**cgdb ;
