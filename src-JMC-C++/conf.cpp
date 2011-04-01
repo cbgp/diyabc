@@ -94,10 +94,12 @@ char *nomficonfresult;
         string shist,smut;
         bidon = new char[1000];
         FILE *flog, *fcur;
+
         progressfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(progressfilename,path);
         strcat(progressfilename,ident);
         strcat(progressfilename,"_progress.txt");
+
         courantfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(courantfilename,path);
         strcat(courantfilename,"courant.log");
@@ -160,7 +162,10 @@ char *nomficonfresult;
             enreg[p].param = new float[npv];
             enreg[p].numscen = rt.scenchoisi[0];
         }
+        if (nlogreg==1){nprog=10*(ntest+1);iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
+        else           {nprog=ntest+10;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenchoisi[0],seed);
+        iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         nstatOK = rt.cal_varstat();                       
         stat_obs = new double[rt.nstat];
@@ -173,12 +178,14 @@ char *nomficonfresult;
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
             clock_zero=0.0;debut=walltime(&clock_zero);
             rt.cal_dist(nrec,nsel,stat_obs); 
+            iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             duree=walltime(&debut);time_readfile += duree;
             postsd = comp_direct(nseld);
             cout<<"test"<<setiosflags(ios::fixed)<<setw(4)<<p+1<<"  ";
             for (int i=0;i<rt.nscenchoisi;i++) printf(" %5.3f ",postsd[ncs-1][i].x);
             if (nlogreg==1) {
                 postsr = comp_logistic(nselr,stat_obs);
+                iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
                 for (int i=0;i<rt.nscenchoisi;i++) printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);printf("\n");
                 if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);
                 f11<<"   ";
@@ -190,6 +197,8 @@ char *nomficonfresult;
                 f11<<"\n";
                 delete []postsd;
                 delete []postsr;
+            } else {
+                iprog +=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             }
         }        
         rt.desalloue_enrsel(nsel);

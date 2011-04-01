@@ -420,10 +420,12 @@ using namespace std;
         string bidon;
         bidon = new char[1000];
         FILE *flog, *fcur;
+
         progressfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(progressfilename,path);
         strcat(progressfilename,ident);
         strcat(progressfilename,"_progress.txt");
+
         courantfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(courantfilename,path);
         strcat(courantfilename,"courant.log");
@@ -489,6 +491,7 @@ using namespace std;
             enreg[p].numscen = rt.scenteste;
         }
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed);
+        nprog=10*ntest+5;iprog=5;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         for (int p=0;p<ntest;p++) {delete []enreg[p].param;delete []enreg[p].stat;}delete []enreg;
         rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
@@ -513,12 +516,6 @@ using namespace std;
           for (int i=0;i<rt.nstat;i++) enreg2[p].stat[i]=atof(ss[i+1+npv].c_str());
         }
         file.close();
-        /*cout<<"nombre de parametres dans courant.log = "<<rt.nparam[rt.scenchoisi[0]-1]<<"\n";
-        for (int p=0;p<ntest;p++) {
-            cout <<"numscen="<<enreg2[p].numscen<<"\n";
-            cout <<"stat   =";for (int j=0;j<rt.nstat;j++) cout<<enreg2[p].stat[j]<<"  ";cout<<"\n";
-            cout <<"param  =";for (int j=0;j<rt.nparam[rt.scenchoisi[0]-1];j++) cout<<enreg2[p].param[j]<<"  ";cout<<"\n";
-        }*/
         nstatOK = rt.cal_varstat();                       //cout<<"apres cal_varstat\n";
         stat_obs = new double[rt.nstat];
         paramest = new parstatC*[ntest];
@@ -529,14 +526,12 @@ using namespace std;
         for (int p=0;p<ntest;p++) {
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg2[p].stat[j];
             rt.cal_dist(nrec,nsel,stat_obs);                  //cout<<"apres cal_dist\n";
-            //if (p<1) det_numpar();                            cout<<"apres det_numpar\n";
+            iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             if (p<1) det_nomparam();
             recalparam(nsel);                                 //cout<<"apres recalparam\n";
             rempli_mat(nsel,stat_obs);                        //cout<<"apres rempli_mat\n";
             local_regression(nsel);               //cout<<"apres local_regression\n";
-            iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             phistar = calphistar(nsel);                                 //cout<<"apres calphistar\n";
-            //if(p<1) det_nomparam();
             paramest[p] = calparstat(nsel);                             //cout<<"apres calparstat\n";
             for (int i=0;i<nsel;i++) {
                 for (int j=0;j<nparamcom+nparcompo;j++) paretoil[p][i][j] = phistar[i][j];
@@ -544,11 +539,9 @@ using namespace std;
             for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
             printf("analysing data test %3d \n",p+1);
             //for (int j=0;j<npar;j++) printf(" %6.0e (%8.2e %8.2e %8.2e) ",enreg2[p].paramvv[j],paramest[p][j].moy,paramest[p][j].med,paramest[p][j].mod);cout<<"\n";    
-
+            iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         }
         rt.desalloue_enrsel(nsel);
-        //cout<<"avant biasrel\n";
         biaisrel(ntest,nsel,npv);
-        //cout<<"avant ecrires\n";
         ecrires(ntest,npv,nsel);
     }
