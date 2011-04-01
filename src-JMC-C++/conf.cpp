@@ -38,6 +38,8 @@
 
 extern ParticleSetC ps;
 extern enregC* enreg;
+double time_readfile=0.0;
+
 char *nomficonfresult;
 
     void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,bool usepriorhist, bool usepriormut,string shist,string smut) {
@@ -85,7 +87,7 @@ char *nomficonfresult;
         int rtOK,nstatOK, iprog,nprog,ncs1;
         int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg;
         string opt,*ss,s,*ss1,s0,s1;
-        double  *stat_obs,st,pa;
+        double  *stat_obs,st,pa,duree,debut,clock_zero;
         bool usepriorhist,usepriormut;
         string bidon;
         posteriorscenC **postsd,*postsr;
@@ -169,7 +171,9 @@ char *nomficonfresult;
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
         for (int p=0;p<ntest;p++) {
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
+            clock_zero=0.0;debut=walltime(&clock_zero);
             rt.cal_dist(nrec,nsel,stat_obs); 
+            duree=walltime(&debut);time_readfile += duree;
             postsd = comp_direct(nseld);
             cout<<"test"<<setiosflags(ios::fixed)<<setw(4)<<p+1<<"  ";
             for (int i=0;i<rt.nscenchoisi;i++) printf(" %5.3f ",postsd[ncs-1][i].x);

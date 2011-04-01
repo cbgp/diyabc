@@ -289,6 +289,9 @@ int main(int argc, char *argv[]){
 	//delete [] headerfilename;delete [] reftablefilename;
 	duree=walltime(&debut);
     fprintf(stdout,"durée = %.2f secondes (%.2f)\n",duree,time_loglik);
-    //cin >> a;
+    fprintf(stdout,"durée dans le remplissage de matC = %.2f secondes\n",time_matC);
+     fprintf(stdout,"durée dans call_polytom = %.2f secondes\n",time_call);
+     fprintf(stdout,"durée dans la lecture de la reftable et le tri des enregistrements = %.2f secondes\n",time_readfile);
+   //cin >> a;
 	return 0;
 };

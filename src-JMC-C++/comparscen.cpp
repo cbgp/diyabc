@@ -54,7 +54,7 @@ struct complignes
 };
 
 int ncs=100;
-double time_loglik=0.0;
+double time_loglik=0.0,time_matC=0.0,time_call=0.0;
 double **cmatA,**cmatB,**cmatX,**cmatXT,**cmatC,*cdeltabeta,*cbeta0,*cbeta,**cmatP,**cmatY,*cmatYP,*cloglik,*csd,*cbet,*cpx0,*csmatY,*csmatP,**cgdb ;
 double *vecY,*vecYY,*cvecW,**cmatX0;
 matligneC *matA;
@@ -250,9 +250,8 @@ matligneC *matA;
     bool cal_loglik(int nli, int nmodel, int rep, double *cloglik, double **cmatY, double **cmatP, double *vecW, double *csmatY, double *csmatP)
     {
         int i,imod;
-        double a,llik;
+        double a,llik=0.0;
         double debut,duree,clock_zero=0.0;
-        llik=0.0;
         debut=walltime(&clock_zero);
     #pragma omp parallel for private(a,imod) if(multithread)\
       reduction( + : llik )
@@ -407,6 +406,7 @@ matligneC *matA;
 
     int polytom_logistic_regression(int nli, int nco, double **cmatX0, double *vecY, double *cvecW, double *px, double *pxi, double *pxs)
     {
+        double clock_zero;
         int nmodel=0;
         double debut,duree,de1,du1;
         int *numod;
@@ -429,8 +429,11 @@ matligneC *matA;
         for (i=0;i<nli;i++) {for (j=0;j<nco+1;j++) cmatXT[j][i]=cmatX[i][j];} //transposition
         for (i=0;i<nmodnco;i++) {cbeta0[i]=0.0;cbeta[i]=0.0;}
         rep=0;fin=false;
+        
         while (fin==false)
-            {rep++;
+            {
+              clock_zero=0.0;debut=walltime(&clock_zero);
+              rep++;
               remplimatriceYP(nli,nco,nmodel,cmatP,cmatYP,cbeta,cmatX,cvecW,cmatY,csmatP);
             for (i=0;i<nmodnco;i++) {for (j=0;j<nmodnco;j++) cmatC[i][j]=0.0;}
             #pragma omp parallel shared(cmatC,cvecW,cmatP,cmatX) private(i,m,n,j,l)
@@ -455,6 +458,7 @@ matligneC *matA;
                     }           
                 }
               }
+        duree=walltime(&debut);time_matC += duree;
             inverse(nmodnco,cmatC,cmatB);
             for (i=0;i<nmodnco;i++) {cdeltabeta[i]=0.0;for (j=0;j<nmodnco;j++) cdeltabeta[i]+=cmatB[i][j]*cmatYP[j];}
             for (i=0;i<nmodnco;i++) cbeta[i]=cbeta0[i]+cdeltabeta[i];
@@ -502,7 +506,8 @@ matligneC *matA;
     posteriorscenC* call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil) {
         posteriorscenC *postlog;
         int ntt,j,dtt,k,kk;
-        double som, *px,*pxi,*pxs,somw;
+        double som, *px,*pxi,*pxs,somw,duree,debut,clock_zero;
+        clock_zero=0.0;debut=walltime(&clock_zero);
         postlog = new posteriorscenC[rt.nscenchoisi];
         for (int i=0;i<rt.nscenchoisi;i++) {
               if (i==0) {postlog[i].x=1.0;postlog[i].inf=1.0;postlog[i].sup=1.0;}
@@ -548,6 +553,7 @@ matligneC *matA;
             }
         }
         delete [] px; delete []pxi; delete []pxs;
+        duree=walltime(&debut);time_call += duree;
         return postlog;
     }  
       
