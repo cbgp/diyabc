@@ -590,7 +590,7 @@ matligneC *matA;
         int rtOK,nstatOK,iprog,nprog;;
         int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,kk,nts;
         string opt,*ss,s,*ss1,s0,s1;
-        double  *stat_obs;
+        double  *stat_obs,duree,debut,clock_zero;
         FILE *flog;
         posteriorscenC **postscendir,**postscenlog;
         
@@ -631,7 +631,9 @@ matligneC *matA;
         nstatOK = rt.cal_varstat();
         stat_obs = header.read_statobs(statobsfilename);
         rt.alloue_enrsel(nsel);
+        clock_zero=0.0;debut=walltime(&clock_zero);
         rt.cal_dist(nrec,nsel,stat_obs);
+        duree=walltime(&debut);time_readfile += duree;
         iprog+=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         postscendir = comp_direct(nseld);
         save_comp_direct(nseld,postscendir,path,ident);
