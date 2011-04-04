@@ -93,6 +93,9 @@ class SetMutationModelMsatFixed(QFrame):
         self.ui.ilmrLabel.setText("%s\n(shape of the gamma)"%self.ui.ilmrLabel.text())
         self.ui.ilcpLabel.setText("%s\n(shape of the gamma)"%self.ui.ilcpLabel.text())
         self.ui.ilsrLabel.setText("%s\n(shape of the gamma)"%self.ui.ilsrLabel.text())
+        self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0)) 
+        self.ui.ilcpLabel.setMinimumSize(QtCore.QSize(150,0))
+        self.ui.ilsrLabel.setMinimumSize(QtCore.QSize(150,0))
 
         for field in self.field_names_dico.keys():
             field.setMaximumSize(QtCore.QSize(100, 25))
@@ -126,12 +129,14 @@ class SetMutationModelMsatFixed(QFrame):
         self.ui.mmrMinEdit.setText("%s"%valmmr)
 
         ilmrValues = lines[1].split('[')[1].split(']')[0].split(',')
-        valilmr = (float(ilmrValues[0]) + float(ilmrValues[1]) )/2
-        self.ui.ilmrMinEdit.setText("%s"%valilmr)
+        #valilmr = (float(ilmrValues[0]) + float(ilmrValues[1]) )/2
+        #self.ui.ilmrMinEdit.setText("%s"%valilmr)
+        self.ui.ilmrMinEdit.setText("2")
 
         ilcpValues = lines[3].split('[')[1].split(']')[0].split(',')
-        valilcp = (float(ilcpValues[0]) + float(ilcpValues[1]) )/2
-        self.ui.ilcpMinEdit.setText("%s"%valilcp)
+        #valilcp = (float(ilcpValues[0]) + float(ilcpValues[1]) )/2
+        #self.ui.ilcpMinEdit.setText("%s"%valilcp)
+        self.ui.ilcpMinEdit.setText("2")
 
         mcpValues = lines[2].split('[')[1].split(']')[0].split(',')
         valmcp = (float(mcpValues[0]) + float(mcpValues[1]) )/2
@@ -142,8 +147,9 @@ class SetMutationModelMsatFixed(QFrame):
         self.ui.msrMinEdit.setText("%s"%valmsr)
 
         ilsrValues = lines[5].split('[')[1].split(']')[0].split(',')
-        valilsr = (float(ilsrValues[0]) + float(ilsrValues[1]) )/2
-        self.ui.ilsrMinEdit.setText("%s"%valilsr)
+        #valilsr = (float(ilsrValues[0]) + float(ilsrValues[1]) )/2
+        #self.ui.ilsrMinEdit.setText("%s"%valilsr)
+        self.ui.ilsrMinEdit.setText("2")
 
 
 

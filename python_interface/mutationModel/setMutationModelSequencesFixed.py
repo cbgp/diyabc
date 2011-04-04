@@ -106,6 +106,13 @@ class SetMutationModelSequencesFixed(QFrame):
         self.ui.label_35.hide()
         self.ui.clearButton.hide()
 
+        self.ui.ilmrLabel.setText("%s\n(shape of the gamma)"%self.ui.ilmrLabel.text())
+        self.ui.ilc1Label.setText("%s\n(shape of the gamma)"%self.ui.ilc1Label.text())
+        self.ui.ilc2Label.setText("%s\n(shape of the gamma)"%self.ui.ilc2Label.text())
+        self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0)) 
+        self.ui.ilc1Label.setMinimumSize(QtCore.QSize(150,0))
+        self.ui.ilc2Label.setMinimumSize(QtCore.QSize(150,0))
+
         for field in self.field_names_dico.keys():
             field.setMaximumSize(QtCore.QSize(100, 25))
 
@@ -188,8 +195,9 @@ class SetMutationModelSequencesFixed(QFrame):
         self.ui.mmrMinEdit.setText("%s"%valmmr)
 
         ilmrValues = lines[1].split('[')[1].split(']')[0].split(',')
-        valilmr = (float(ilmrValues[0]) + float(ilmrValues[1]) )/2
-        self.ui.ilmrMinEdit.setText("%s"%valilmr)
+        #valilmr = (float(ilmrValues[0]) + float(ilmrValues[1]) )/2
+        #self.ui.ilmrMinEdit.setText("%s"%valilmr)
+        self.ui.ilmrMinEdit.setText("2")
 
         mc2Values = lines[4].split('[')[1].split(']')[0].split(',')
         valmc2 = (float(mc2Values[0]) + float(mc2Values[1]) )/2
@@ -200,12 +208,14 @@ class SetMutationModelSequencesFixed(QFrame):
         self.ui.mc1MinEdit.setText("%s"%valmc1)
 
         ilc1Values = lines[3].split('[')[1].split(']')[0].split(',')
-        valilc1 = (float(ilc1Values[0]) + float(ilc1Values[1]) )/2
-        self.ui.ilc1MinEdit.setText("%s"%valilc1)
+        #valilc1 = (float(ilc1Values[0]) + float(ilc1Values[1]) )/2
+        #self.ui.ilc1MinEdit.setText("%s"%valilc1)
+        self.ui.ilc1MinEdit.setText("2")
 
         ilc2Values = lines[5].split('[')[1].split(']')[0].split(',')
-        valilc2 = (float(ilc2Values[0]) + float(ilc2Values[1]) )/2
-        self.ui.ilc2MinEdit.setText("%s"%valilc2)
+        #valilc2 = (float(ilc2Values[0]) + float(ilc2Values[1]) )/2
+        #self.ui.ilc2MinEdit.setText("%s"%valilc2)
+        self.ui.ilc2MinEdit.setText("2")
 
         model = lines[6].split(' ')[1]
         iss = lines[6].split(' ')[2]
