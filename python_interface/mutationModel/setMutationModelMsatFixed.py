@@ -90,6 +90,10 @@ class SetMutationModelMsatFixed(QFrame):
                            self.ui.msrMinEdit : [1,1],   
                            self.ui.ilsrMinEdit : [1,1]}
 
+        self.ui.ilmrLabel.setText("%s\n(shape of the gamma)"%self.ui.ilmrLabel.text())
+        self.ui.ilcpLabel.setText("%s\n(shape of the gamma)"%self.ui.ilcpLabel.text())
+        self.ui.ilsrLabel.setText("%s\n(shape of the gamma)"%self.ui.ilsrLabel.text())
+
         for field in self.field_names_dico.keys():
             field.setMaximumSize(QtCore.QSize(100, 25))
 

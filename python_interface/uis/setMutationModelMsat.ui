@@ -156,7 +156,7 @@
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_18">
+          <widget class="QLabel" name="mmrLabel">
            <property name="minimumSize">
             <size>
              <width>110</width>
@@ -396,7 +396,7 @@ rate</string>
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_13">
+          <widget class="QLabel" name="ilmrLabel">
            <property name="minimumSize">
             <size>
              <width>110</width>
@@ -621,7 +621,7 @@ mutation rate</string>
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="mcpLabel">
            <property name="minimumSize">
             <size>
              <width>110</width>
@@ -857,7 +857,7 @@ coefficient P</string>
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_8">
+          <widget class="QLabel" name="ilcpLabel">
            <property name="minimumSize">
             <size>
              <width>110</width>
@@ -1079,7 +1079,7 @@ coefficient P</string>
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_23">
+          <widget class="QLabel" name="msrLabel">
            <property name="minimumSize">
             <size>
              <width>110</width>
@@ -1316,7 +1316,7 @@ rate</string>
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_28">
+          <widget class="QLabel" name="ilsrLabel">
            <property name="minimumSize">
             <size>
              <width>110</width>

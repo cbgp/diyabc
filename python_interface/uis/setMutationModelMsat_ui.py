@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mutationModel/uis/setMutationModelMsat.ui'
+# Form implementation generated from reading ui file 'uis/setMutationModelMsat.ui'
 #
-# Created: Wed Mar 23 09:45:37 2011
+# Created: Mon Apr  4 14:26:32 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -72,12 +72,12 @@ class Ui_Frame(object):
         self.horizontalLayout_7 = QtGui.QHBoxLayout(self.frame_5)
         self.horizontalLayout_7.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
-        self.label_18 = QtGui.QLabel(self.frame_5)
-        self.label_18.setMinimumSize(QtCore.QSize(110, 0))
-        self.label_18.setMaximumSize(QtCore.QSize(110, 16777215))
-        self.label_18.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_18.setObjectName(_fromUtf8("label_18"))
-        self.horizontalLayout_7.addWidget(self.label_18)
+        self.mmrLabel = QtGui.QLabel(self.frame_5)
+        self.mmrLabel.setMinimumSize(QtCore.QSize(110, 0))
+        self.mmrLabel.setMaximumSize(QtCore.QSize(110, 16777215))
+        self.mmrLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.mmrLabel.setObjectName(_fromUtf8("mmrLabel"))
+        self.horizontalLayout_7.addWidget(self.mmrLabel)
         self.groupBox_4 = QtGui.QGroupBox(self.frame_5)
         self.groupBox_4.setMinimumSize(QtCore.QSize(240, 0))
         self.groupBox_4.setMaximumSize(QtCore.QSize(240, 16777215))
@@ -157,12 +157,12 @@ class Ui_Frame(object):
         self.horizontalLayout_5 = QtGui.QHBoxLayout(self.frame_4)
         self.horizontalLayout_5.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
-        self.label_13 = QtGui.QLabel(self.frame_4)
-        self.label_13.setMinimumSize(QtCore.QSize(110, 0))
-        self.label_13.setMaximumSize(QtCore.QSize(110, 16777215))
-        self.label_13.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_13.setObjectName(_fromUtf8("label_13"))
-        self.horizontalLayout_5.addWidget(self.label_13)
+        self.ilmrLabel = QtGui.QLabel(self.frame_4)
+        self.ilmrLabel.setMinimumSize(QtCore.QSize(110, 0))
+        self.ilmrLabel.setMaximumSize(QtCore.QSize(110, 16777215))
+        self.ilmrLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.ilmrLabel.setObjectName(_fromUtf8("ilmrLabel"))
+        self.horizontalLayout_5.addWidget(self.ilmrLabel)
         self.groupBox_3 = QtGui.QGroupBox(self.frame_4)
         self.groupBox_3.setMinimumSize(QtCore.QSize(240, 0))
         self.groupBox_3.setMaximumSize(QtCore.QSize(240, 16777215))
@@ -236,12 +236,12 @@ class Ui_Frame(object):
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.frame_2)
         self.horizontalLayout_2.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.label_3 = QtGui.QLabel(self.frame_2)
-        self.label_3.setMinimumSize(QtCore.QSize(110, 0))
-        self.label_3.setMaximumSize(QtCore.QSize(110, 16777215))
-        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.horizontalLayout_2.addWidget(self.label_3)
+        self.mcpLabel = QtGui.QLabel(self.frame_2)
+        self.mcpLabel.setMinimumSize(QtCore.QSize(110, 0))
+        self.mcpLabel.setMaximumSize(QtCore.QSize(110, 16777215))
+        self.mcpLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.mcpLabel.setObjectName(_fromUtf8("mcpLabel"))
+        self.horizontalLayout_2.addWidget(self.mcpLabel)
         self.groupBox = QtGui.QGroupBox(self.frame_2)
         self.groupBox.setMinimumSize(QtCore.QSize(240, 0))
         self.groupBox.setMaximumSize(QtCore.QSize(240, 16777215))
@@ -320,12 +320,12 @@ class Ui_Frame(object):
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.frame_3)
         self.horizontalLayout_3.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
-        self.label_8 = QtGui.QLabel(self.frame_3)
-        self.label_8.setMinimumSize(QtCore.QSize(110, 0))
-        self.label_8.setMaximumSize(QtCore.QSize(110, 16777215))
-        self.label_8.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_8.setObjectName(_fromUtf8("label_8"))
-        self.horizontalLayout_3.addWidget(self.label_8)
+        self.ilcpLabel = QtGui.QLabel(self.frame_3)
+        self.ilcpLabel.setMinimumSize(QtCore.QSize(110, 0))
+        self.ilcpLabel.setMaximumSize(QtCore.QSize(110, 16777215))
+        self.ilcpLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.ilcpLabel.setObjectName(_fromUtf8("ilcpLabel"))
+        self.horizontalLayout_3.addWidget(self.ilcpLabel)
         self.groupBox_2 = QtGui.QGroupBox(self.frame_3)
         self.groupBox_2.setMinimumSize(QtCore.QSize(240, 0))
         self.groupBox_2.setMaximumSize(QtCore.QSize(240, 16777215))
@@ -398,12 +398,12 @@ class Ui_Frame(object):
         self.horizontalLayout_10 = QtGui.QHBoxLayout(self.frame_7)
         self.horizontalLayout_10.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
-        self.label_23 = QtGui.QLabel(self.frame_7)
-        self.label_23.setMinimumSize(QtCore.QSize(110, 0))
-        self.label_23.setMaximumSize(QtCore.QSize(110, 16777215))
-        self.label_23.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_23.setObjectName(_fromUtf8("label_23"))
-        self.horizontalLayout_10.addWidget(self.label_23)
+        self.msrLabel = QtGui.QLabel(self.frame_7)
+        self.msrLabel.setMinimumSize(QtCore.QSize(110, 0))
+        self.msrLabel.setMaximumSize(QtCore.QSize(110, 16777215))
+        self.msrLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.msrLabel.setObjectName(_fromUtf8("msrLabel"))
+        self.horizontalLayout_10.addWidget(self.msrLabel)
         self.groupBox_5 = QtGui.QGroupBox(self.frame_7)
         self.groupBox_5.setMinimumSize(QtCore.QSize(240, 0))
         self.groupBox_5.setMaximumSize(QtCore.QSize(240, 16777215))
@@ -482,12 +482,12 @@ class Ui_Frame(object):
         self.horizontalLayout_12 = QtGui.QHBoxLayout(self.frame_8)
         self.horizontalLayout_12.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout_12.setObjectName(_fromUtf8("horizontalLayout_12"))
-        self.label_28 = QtGui.QLabel(self.frame_8)
-        self.label_28.setMinimumSize(QtCore.QSize(110, 0))
-        self.label_28.setMaximumSize(QtCore.QSize(110, 16777215))
-        self.label_28.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_28.setObjectName(_fromUtf8("label_28"))
-        self.horizontalLayout_12.addWidget(self.label_28)
+        self.ilsrLabel = QtGui.QLabel(self.frame_8)
+        self.ilsrLabel.setMinimumSize(QtCore.QSize(110, 0))
+        self.ilsrLabel.setMaximumSize(QtCore.QSize(110, 16777215))
+        self.ilsrLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.ilsrLabel.setObjectName(_fromUtf8("ilsrLabel"))
+        self.horizontalLayout_12.addWidget(self.ilsrLabel)
         self.groupBox_6 = QtGui.QGroupBox(self.frame_8)
         self.groupBox_6.setMinimumSize(QtCore.QSize(240, 0))
         self.groupBox_6.setMaximumSize(QtCore.QSize(240, 16777215))
@@ -587,7 +587,7 @@ class Ui_Frame(object):
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
         self.setMutMsLabel.setText(QtGui.QApplication.translate("Frame", "Set mutation Model (Microsatellites)", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_18.setText(QtGui.QApplication.translate("Frame", "Mean\n"
+        self.mmrLabel.setText(QtGui.QApplication.translate("Frame", "Mean\n"
 "mutation\n"
 "rate", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_4.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
@@ -602,7 +602,7 @@ class Ui_Frame(object):
         self.mmrMeanEdit.setText(QtGui.QApplication.translate("Frame", "0.0005", None, QtGui.QApplication.UnicodeUTF8))
         self.label_22.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
         self.mmrShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_13.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
+        self.ilmrLabel.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
 "mutation rate", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_9.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
@@ -614,7 +614,7 @@ class Ui_Frame(object):
         self.ilmrMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean_µ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_17.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
         self.ilmrShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("Frame", "Mean\n"
+        self.mcpLabel.setText(QtGui.QApplication.translate("Frame", "Mean\n"
 "coefficient P", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
         self.mcpUnifRadio.setText(QtGui.QApplication.translate("Frame", "Unif", None, QtGui.QApplication.UnicodeUTF8))
@@ -628,7 +628,7 @@ class Ui_Frame(object):
         self.mcpMeanEdit.setText(QtGui.QApplication.translate("Frame", "0.22", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
         self.mcpShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_8.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
+        self.ilcpLabel.setText(QtGui.QApplication.translate("Frame", "Individuals locus\n"
 "coefficient P", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_6.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
@@ -640,7 +640,7 @@ class Ui_Frame(object):
         self.ilcpMeanEdit.setText(QtGui.QApplication.translate("Frame", "Mean_P", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("Frame", "Shape (1)", None, QtGui.QApplication.UnicodeUTF8))
         self.ilcpShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_23.setText(QtGui.QApplication.translate("Frame", "Mean\n"
+        self.msrLabel.setText(QtGui.QApplication.translate("Frame", "Mean\n"
 "SNI\n"
 "rate", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_5.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
@@ -655,7 +655,7 @@ class Ui_Frame(object):
         self.msrMeanEdit.setText(QtGui.QApplication.translate("Frame", "1.00E-007", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setText(QtGui.QApplication.translate("Frame", "Shape", None, QtGui.QApplication.UnicodeUTF8))
         self.msrShapeEdit.setText(QtGui.QApplication.translate("Frame", "2", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_28.setText(QtGui.QApplication.translate("Frame", "Individuals\n"
+        self.ilsrLabel.setText(QtGui.QApplication.translate("Frame", "Individuals\n"
 "locus SNI rate", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_6.setTitle(QtGui.QApplication.translate("Frame", "Prior distribution", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_18.setText(QtGui.QApplication.translate("Frame", "Gamma", None, QtGui.QApplication.UnicodeUTF8))
