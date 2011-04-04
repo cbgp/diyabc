@@ -48,10 +48,10 @@ class DrawPCAAnalysisResult(QFrame):
         """
         self.ui.ACProgress.setValue(0)
 
-        if not os.path.exists("%s/analysis/%s/pca.txt"%(self.parent.dir,self.directory)):
-            output.notify(self,"error","pca.txt not found")
+        if not os.path.exists("%s/analysis/%s/ACP.txt"%(self.parent.dir,self.directory)):
+            output.notify(self,"error","ACP.txt not found")
         else:
-            f = codecs.open("%s/analysis/%s/pca.txt"%(self.parent.dir,self.directory),"r","utf-8")
+            f = codecs.open("%s/analysis/%s/ACP.txt"%(self.parent.dir,self.directory),"r","utf-8")
             lines = f.readlines()
             f.close()
             self.dico_points = {}
@@ -104,7 +104,7 @@ class DrawPCAAnalysisResult(QFrame):
             self.ui.scCombo.clear()
             self.ui.scCombo.addItem("all")
             for sc in self.dico_points.keys():
-                if sc != 0:
+                if sc != 0 and sc != -1:
                     self.ui.scCombo.addItem("%s"%sc)
 
     def drawGraphToPlot(self,legend,plot,num_sc,compo_h,compo_v,nbp):

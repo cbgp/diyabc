@@ -848,7 +848,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_locate.txt"%(self.dir,aid),"%s/analysis/%s/locate.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_ACP.txt"%(self.dir,aid),"%s/analysis/%s/ACP.txt"%(self.dir,aDirName))
-                os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
         # on met à jour la liste des analyses terminées
         self.fillAnalysisCombo()

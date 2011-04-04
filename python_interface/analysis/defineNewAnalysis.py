@@ -92,14 +92,18 @@ class DefineNewAnalysis(QFrame):
                     QMessageBox.information(self,"Scenario error","At least 1 scenario is needed for this analysis")
             elif self.ui.preEvRadio.isChecked():
                 paramtxt = ""
+                compParamtxt = "a:"
                 if self.ui.pcaCheck.isChecked():
                     paramtxt+= " PCA "
+                    compParamtxt += "p"
                 if self.ui.pcaCheck.isChecked() and self.ui.lossCheck.isChecked():
                     paramtxt+="and"
                 if self.ui.lossCheck.isChecked():
                     paramtxt+= " Locate S.S."
+                    compParamtxt += "l"
                 analysis = Analysis(name,"pre-ev")
                 analysis.params = paramtxt
+                analysis.computationParameters = compParamtxt
                 self.parent.addAnalysis(analysis)
                 self.exit()
             elif self.ui.biasRadio.isChecked():
