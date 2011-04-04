@@ -101,6 +101,16 @@ class DefineNewAnalysis(QFrame):
                     self.parent.ui.analysisStack.setCurrentWidget(genSel)
                 else:
                     QMessageBox.information(self,"Scenario error","At least 1 scenario is needed for this analysis")
+            elif self.ui.modCheckRadio.isChecked():
+                if len(self.parent.hist_model_win.scList) >= 1:
+                    analysis = Analysis(name,"modelChecking")
+                    modCheckFrame = SetupEstimationBias(analysis,self)
+                    genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",modCheckFrame,"Model Checking",1,analysis,self)
+                    self.parent.ui.analysisStack.addWidget(genSel)
+                    self.parent.ui.analysisStack.removeWidget(self)
+                    self.parent.ui.analysisStack.setCurrentWidget(genSel)
+                else:
+                    QMessageBox.information(self,"Scenario error","At least 1 scenario is needed for this analysis")
             elif self.ui.preEvRadio.isChecked():
                 paramtxt = ""
                 compParamtxt = "a:"

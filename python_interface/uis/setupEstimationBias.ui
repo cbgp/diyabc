@@ -531,7 +531,29 @@ in the reference table :</string>
         </layout>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QFrame" name="redefSumStatsFrame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QPushButton" name="redefSumStatsButton">
+            <property name="text">
+             <string>Redefine summary statistics of group :</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="redefSumStatsCombo"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="paramChoiceBox">
          <property name="title">
           <string>Choice of parameters</string>
          </property>

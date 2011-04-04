@@ -6,6 +6,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from uis.setupEstimationBias_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
+from summaryStatistics.setSummaryStatisticsMsatAnalysis import SetSummaryStatisticsMsatAnalysis
+from summaryStatistics.setSummaryStatisticsSeqAnalysis import SetSummaryStatisticsSeqAnalysis
 import output
 
 class SetupEstimationBias(QFrame):
@@ -32,20 +34,59 @@ class SetupEstimationBias(QFrame):
             self.ui.redefButton.hide()
             self.ui.candidateLabel.hide()
             self.setScenarios([self.analysis.chosenSc])
+            self.ui.redefSumStatsButton.hide()
+        elif self.analysis.category == "modelChecking":
+            self.ui.label.setText("Model Checking")
+            self.ui.candidateLabel.hide()
+            self.ui.label_5.hide()
+            self.ui.label_4.hide()
+            self.ui.notdsEdit.hide()
+            self.ui.paramChoiceBox.hide()
         else:
             self.ui.candidateLabel.hide()
             self.ui.label_5.hide()
             self.ui.label_4.hide()
             self.ui.notdsEdit.hide()
+            self.ui.redefSumStatsButton.hide()
 
         self.ui.projectNameEdit.setText(self.parent.parent.dir)
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.redefButton,SIGNAL("clicked()"),self.redefineScenarios)
+        QObject.connect(self.ui.redefSumStatsButton,SIGNAL("clicked()"),self.redefineSumStats)
+        # TODO
+        for i in range(5):
+            self.ui.redefSumStatsCombo.addItem(str(i+1))
 
         nbSetsDone = str(self.parent.parent.ui.nbSetsDoneEdit.text()).strip()
         self.ui.totNumSimEdit.setText(nbSetsDone)
+
+    def redefineSumStats(self):
+        num_gr = int(self.ui.redefSumStatsCombo.currentText())
+        # test pour savoir si msat ou seq
+        groupList = self.parent.parent.gen_data_win.groupList
+        greft = None
+        for g in groupList:
+            print g.title()
+            if "Group %s"%num_gr in g.title():
+                greft = g
+                break
+        if "Microsat" in greft.title():
+            sumStatFrame = SetSummaryStatisticsMsatAnalysis(self.parent,self)
+            print self.parent.parent.gen_data_win.setSum_dico[g].getSumConf()[1]
+            sumStatFrame.setSumConf(self.parent.parent.gen_data_win.setSum_dico[g].getSumConf()[1].strip().split('\n'))
+        elif "Sequence" in greft.title():
+            sumStatFrame = SetSummaryStatisticsSeqAnalysis(self.parent,self)
+            sumStatFrame.setSumConf(self.parent.parent.gen_data_win.setSumSeq_dico[g].getSumConf()[1].strip().split('\n'))
+        else:
+            return
+
+        sumStatFrame.ui.sumStatLabel.setText("%s of group %s"%(sumStatFrame.ui.sumStatLabel.text(),num_gr))
+
+        self.parent.parent.ui.analysisStack.addWidget(sumStatFrame)
+        self.parent.parent.ui.analysisStack.setCurrentWidget(sumStatFrame)
+
 
     def checkAll(self):
         problems = ""
