@@ -412,7 +412,7 @@ using namespace std;
 
     void dobias(char *options,  int seed){
         char *datafilename, *progressfilename, *courantfilename;
-        int rtOK,nstatOK, iprog,nprog;
+        int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,st,pa;

@@ -878,8 +878,8 @@ parstatC *parstat;
 * effectue l'estimation ABC des paramètres (directe + régression locale)
 */
     void doestim(char *options) {
-        char *datafilename, *progressfilename;
-        int rtOK,nstatOK, iprog,nprog;
+        char  *progressfilename;
+        int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs;

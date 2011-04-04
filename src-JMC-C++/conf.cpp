@@ -50,10 +50,10 @@ char *nomficonfresult;
         double *x,*mo;
         x=new double[ntest];
         mo=new double[4];
-        nomficonfresult = new char[strlen(path)+strlen(ident)+20];
+        nomficonfresult = new char[strlen(path)+strlen(ident)+30];
         strcpy(nomficonfresult,path);
         strcat(nomficonfresult,ident);
-        strcat(nomficonfresult,"_conf.txt");
+        strcat(nomficonfresult,"_confidence.txt");
         cout <<nomficonfresult<<"\n";
         FILE *f1;
         f1=fopen(nomficonfresult,"w");
@@ -84,7 +84,7 @@ char *nomficonfresult;
         
     void doconf(char *options, int seed) {
         char *datafilename, *progressfilename, *courantfilename;
-        int rtOK,nstatOK, iprog,nprog,ncs1;
+        int nstatOK, iprog,nprog,ncs1;
         int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,st,pa,duree,debut,clock_zero;

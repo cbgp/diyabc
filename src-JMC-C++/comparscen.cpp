@@ -589,7 +589,7 @@ matligneC *matA;
       
     void docompscen(char *compar){
         char *datafilename, *progressfilename;
-        int rtOK,nstatOK,iprog,nprog;;
+        int nstatOK,iprog,nprog;;
         int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,kk,nts;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,duree,debut,clock_zero;

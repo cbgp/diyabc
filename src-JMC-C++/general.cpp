@@ -42,6 +42,10 @@
 #include "acploc.cpp"
 #define ACPLOC
 #endif
+#ifndef MODCHEC
+#include "modchec.cpp"
+#define MODCHEC
+#endif
 
 ReftableC rt;
 HeaderC header;    
@@ -138,7 +142,14 @@ int main(int argc, char *argv[]){
             
             cout << "\n-d for ABC PRIOR/SCENARIO CHECKING (idem)\n";
             cout << "           a:<p for PCA, l for locate observed, pl for both>\n";
-            break;
+
+            cout << "\n-j for ABC MODEL CHECKING (idem)\n";
+            cout << "           s:<chosen scenario[s separated by a comma]>\n";
+            cout << "           n:<number of simulated datasets taken from reftable>\n";
+            cout << "           m:<number of simulated datasets used for the local regression>\n";
+            cout << "           t:<number of the transformation (1,2,3 or 4)>\n";
+            cout << "           v:<list of summary stat names separated by a comma (if empty keep those of reftable)>\n";
+           break;
 	
         case 'i' :
             ident=strdup(optarg);
@@ -211,6 +222,11 @@ int main(int argc, char *argv[]){
             k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
             rt.concat();
             break;
+
+        case 'j' :  
+            estpar=strdup(optarg);
+            action='j';
+            break;        
 	    }
 	}
 	 if (not flagp) {cout << "option -p is compulsory\n";exit(1);}
@@ -219,6 +235,7 @@ int main(int argc, char *argv[]){
                      if (action=='b') ident=strdup("bias1");
                      if (action=='f') ident=strdup("conf1");
                      if (action=='d') ident=strdup("pcaloc1");
+                     if (action=='j') ident=strdup("modchec1");
      }
      if (not flags) seed=time(NULL);	
 	switch (action) {
@@ -288,7 +305,12 @@ int main(int argc, char *argv[]){
                   doacpl(priorpar,multithread,seed);
                   break;
                   
-   }
+       case 'j'  : k=readheaders();
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  domodchec(estpar);
+                  break;
+                  
+  }
 	duree=walltime(&debut);
     fprintf(stdout,"durée = %.2f secondes (%.2f)\n",duree,time_loglik);
      //fprintf(stdout,"durée dans le remplissage de matC = %.2f secondes\n",time_matC);
