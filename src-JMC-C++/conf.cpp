@@ -163,7 +163,7 @@ char *nomficonfresult;
             enreg[p].numscen = rt.scenchoisi[0];
         }
         if (nlogreg==1){nprog=10*(ntest+1);iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
-        else           {nprog=ntest+10;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
+        else           {nprog=6*ntest+10;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenchoisi[0],seed);
         iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
@@ -198,7 +198,7 @@ char *nomficonfresult;
                 delete []postsd;
                 delete []postsr;
             } else {
-                iprog +=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+                cout<<"\n";
             }
         }        
         rt.desalloue_enrsel(nsel);

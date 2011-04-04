@@ -136,8 +136,11 @@ using namespace std;
                   case 4 : cout <<" transformation log(tg) des paramètres\n";break;
                 }
             } else if (s0=="v:") {
-                cout<< "\n";
+                   
+              cout<<""<< "\n";
                 usestats = resetstats(s1);
+            } else if (s0=="q:") {
+            
             }            
         }
         
@@ -155,6 +158,8 @@ using namespace std;
         local_regression(nsel);               cout<<"apres local_regression\n";
         iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
-        
+        det_nomparam();
+        savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
+        //drawphistar();
     
     }

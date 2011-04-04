@@ -147,6 +147,7 @@ int main(int argc, char *argv[]){
             cout << "           s:<chosen scenario[s separated by a comma]>\n";
             cout << "           n:<number of simulated datasets taken from reftable>\n";
             cout << "           m:<number of simulated datasets used for the local regression>\n";
+            cout << "           q:<number of datasets simulated from posterior>\n";
             cout << "           t:<number of the transformation (1,2,3 or 4)>\n";
             cout << "           v:<list of summary stat names separated by a comma (if empty keep those of reftable)>\n";
            break;
