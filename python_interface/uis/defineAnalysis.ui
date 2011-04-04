@@ -296,14 +296,14 @@ The reference table has been built</string>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
-             <widget class="QCheckBox" name="pcaCheck_2">
+             <widget class="QCheckBox" name="modCheckPcaCheck">
               <property name="text">
                <string>Principal Component Analysis</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="lossCheck_2">
+             <widget class="QCheckBox" name="modCheckLossCheck">
               <property name="text">
                <string>Locate observed S.S among simulated S.S.</string>
               </property>

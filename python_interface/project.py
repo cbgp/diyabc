@@ -793,7 +793,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 break
         frame.findChild(QLabel,"analysisStatusLabel").setText("%s%%"%prog)
 
-        if str(prog) == "100":
+        if int(prog) >= 100:
             print "terminate analysis"
             frame.findChild(QPushButton,"analysisButton").setText("Done")
             self.terminateAnalysis()
@@ -815,7 +815,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
-                shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
+                #shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
                 os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
         elif atype == "compare":
@@ -829,6 +829,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 os.remove("%s/%s_progress.txt"%(self.dir,aid))
         elif atype == "bias":
             if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
+                #print "les fichiers existent"
                 # deplacement des fichiers de résultat
                 aDirName = "bias_%s"%aid
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))

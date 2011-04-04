@@ -33,6 +33,8 @@ class DefineNewAnalysis(QFrame):
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.pcaCheck,SIGNAL("clicked()"),self.preEvaluateCheck)
         QObject.connect(self.ui.lossCheck,SIGNAL("clicked()"),self.preEvaluateCheck)
+        QObject.connect(self.ui.modCheckPcaCheck,SIGNAL("clicked()"),self.modCheckCheck)
+        QObject.connect(self.ui.modCheckLossCheck,SIGNAL("clicked()"),self.modCheckCheck)
 
     def preEvaluateCheck(self):
         """ empêche qu'aucune des deux cases ne soit cochée
@@ -42,6 +44,15 @@ class DefineNewAnalysis(QFrame):
                 self.ui.lossCheck.setChecked(True)
             else:
                 self.ui.pcaCheck.setChecked(True)
+
+    def modCheckCheck(self):
+        """ empêche qu'aucune des deux cases ne soit cochée
+        """
+        if not self.ui.modCheckPcaCheck.isChecked() and not self.ui.modCheckLossCheck.isChecked():
+            if self.sender() == self.ui.modCheckPcaCheck:
+                self.ui.modCheckLossCheck.setChecked(True)
+            else:
+                self.ui.modCheckPcaCheck.setChecked(True)
 
     def checkName(self):
         """ vérifie si le nom est valide et libre

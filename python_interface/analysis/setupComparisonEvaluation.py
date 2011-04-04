@@ -65,7 +65,7 @@ class SetupComparisonEvaluation(QFrame):
                 candListTxt+="%s,"%str(cs)
             candListTxt = candListTxt[:-1]
             strparam = "s:%s;"%candListTxt
-            strparam = "r:%s;"%self.analysis.chosenSc
+            strparam += "r:%s;"%self.analysis.chosenSc
             strparam += "n:%s;"%self.dico_values['choNumberOfsimData']
             strparam += "m:%s;"%self.dico_values['numReg']
             strparam += "d:%s;"%self.dico_values['de']
