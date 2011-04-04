@@ -818,7 +818,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
                 os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
-        if atype == "compare":
+        elif atype == "compare":
             if os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) and\
                     os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
@@ -826,6 +826,28 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))
+                os.remove("%s/%s_progress.txt"%(self.dir,aid))
+        elif atype == "bias":
+            if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
+                # deplacement des fichiers de résultat
+                aDirName = "bias_%s"%aid
+                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias.txt"%(self.dir,aDirName))
+                os.remove("%s/%s_progress.txt"%(self.dir,aid))
+        elif atype == "evaluate":
+            if os.path.exists("%s/%s_confidence.txt"%(self.dir,aid)):
+                # deplacement des fichiers de résultat
+                aDirName = "evaluation_%s"%aid
+                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                shutil.move("%s/%s_confidence.txt"%(self.dir,aid),"%s/analysis/%s/confidence.txt"%(self.dir,aDirName))
+                os.remove("%s/%s_progress.txt"%(self.dir,aid))
+        elif atype == "pre-ev":
+            if os.path.exists("%s/%s_locate.txt"%(self.dir,aid)) or os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
+                # deplacement des fichiers de résultat
+                aDirName = "pca_%s"%aid
+                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                shutil.move("%s/%s_locate.txt"%(self.dir,aid),"%s/analysis/%s/locate.txt"%(self.dir,aDirName))
+                shutil.move("%s/%s_ACP.txt"%(self.dir,aid),"%s/analysis/%s/ACP.txt"%(self.dir,aDirName))
                 os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
         # on met à jour la liste des analyses terminées
@@ -1311,44 +1333,43 @@ class AnalysisThread(QThread):
 
     def run(self):
         executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
+        params = self.analysis.computationParameters
         if self.analysis.category == "estimate":
-            params = self.analysis.computationParameters
-            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-e", '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
-            print " ".join(cmd_args_list)
-            f = open("estimation.out","w")
-            p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
-            f.close()
-            print "popen ok"
-
-            f = open("estimation.out","r")
-            data= f.read()
-            f.close()
-
+            option = "-e"
         elif self.analysis.category == "compare":
-            params = self.analysis.computationParameters
-            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-c", '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
-            print cmd_args_list
-            f = open("comparison.out","w")
-            p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
-            f.close()
-            print "popen ok"
-
-            f = open("comparison.out","r")
-            data= f.read()
-            f.close()
-
+            option = "-c"
         elif self.analysis.category == "bias":
-            params = self.analysis.computationParameters
-            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-b", '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
+            option = "-b"
+        elif self.analysis.category == "evaluate":
+            option = "-f"
+        elif self.analysis.category == "pre-ev":
+            # pour cette analyse on attend que l'executable ait fini
+            # on ne scrute pas de fichier de progression
+            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
             print cmd_args_list
-            f = open("comparison.out","w")
-            p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
+            f = open("pre-ev.out","w")
+            p = subprocess.call(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
             f.close()
-            print "popen ok"
+            print "call ok"
 
-            f = open("comparison.out","r")
+            f = open("pre-ev.out","r")
             data= f.read()
             f.close()
+            self.progress = 100
+            self.emit(SIGNAL("analysisProgress"))
+            return
+
+        # pour toutes les autres analyses le schema est le même
+        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
+        print " ".join(cmd_args_list)
+        f = open("%s.out"%self.analysis.category,"w")
+        p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
+        f.close()
+        print "popen ok"
+
+        f = open("%s.out"%self.analysis.category,"r")
+        data= f.read()
+        f.close()
 
         # la scrutation de la progression est identique pour toutes les analyses
         self.progress = 1
