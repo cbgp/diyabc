@@ -308,7 +308,7 @@ int main(int argc, char *argv[]){
                   
        case 'j'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
-                  domodchec(estpar);
+                  domodchec(estpar,seed);
                   break;
                   
   }

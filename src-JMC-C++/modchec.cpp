@@ -27,6 +27,9 @@
 
 using namespace std;
 
+extern ParticleSetC ps;
+extern enregC* enreg;
+
     bool resetstats(string s) {
         int j,ns,nq,nss1,gr,k=0;
         string *ss,*qq,*ss1;
@@ -92,12 +95,55 @@ using namespace std;
         return true;
     }
 
+    string pseudoprior2(double x) {
+        string spr;
+        double mini=0.99999*x,maxi=1.00001*x;
+        spr="UN["+DoubleToString(mini)+","+DoubleToString(maxi)+",0.0,0.0";
+        return spr;
+    }
 
+    void drawphistar(int newpart,int nsel,int seed) {
+        MwcGen MWC;
+        bool phistarOK;
+        int k,npv,ip1,ip2,npart=0;
+        npv = rt.nparam[rt.scenchoisi[0]-1];
+        enreg = new enregC[newpart];
+        for (int p=0;p<newpart;p++) {
+            enreg[p].stat = new float[header.nstat];
+            enreg[p].param = new float[npv];
+            enreg[p].numscen = rt.scenchoisi[0];
+        }
+        MWC.randinit(625,seed);
+        while (npart<newpart) {
+            k=MWC.rand0(nsel); 
+            phistarOK=true;
+            if (header.scenario[rt.scenchoisi[0]-1].nconditions>0) {
+                for (int i=0;i<header.scenario[rt.scenchoisi[0]-1].nconditions;i++) {
+                    ip1=0;while (header.scenario[rt.scenchoisi[0]-1].condition [i].param1!=header.scenario[rt.scenchoisi[0]-1].histparam[ip1].name) ip1++;
+                    ip2=0;while (header.scenario[rt.scenchoisi[0]-1].condition [i].param2!=header.scenario[rt.scenchoisi[0]-1].histparam[ip2].name) ip2++;
+                    if (header.scenario[rt.scenchoisi[0]-1].condition[i].operateur==">")       phistarOK=(phistar[k][ip1] >  phistar[k][ip2]);
+                    else if (header.scenario[rt.scenchoisi[0]-1].condition[i].operateur=="<")  phistarOK=(phistar[k][ip1] <  phistar[k][ip2]);
+                    else if (header.scenario[rt.scenchoisi[0]-1].condition[i].operateur==">=") phistarOK=(phistar[k][ip1] >= phistar[k][ip2]);
+                    else if (header.scenario[rt.scenchoisi[0]-1].condition[i].operateur=="<=") phistarOK=(phistar[k][ip1] <= phistar[k][ip2]);
+                    if (not phistarOK) break;
+                }
+            }
+            if (phistarOK) {
+                for (int i=0;i<rt.nparam[rt.scenchoisi[0]-1];i++) header.scenario[rt.scenchoisi[0]-1].histparam[i].prior = header.readprior(pseudoprior2(phistar[k][i]));
+            
+            
+            }
+        
+            
+        }
+    
+    
+    }
 
-    void domodchec(char *options){
+    void domodchec(char *options,int seed){
         char  *progressfilename;
         int nstatOK, iprog,nprog;
-        int nrec,nsel,ns,ns1,nrecpos;
+        int nrec,nsel,ns,ns1,nrecpos,newpart;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs;
         bool usestats;
@@ -136,11 +182,11 @@ using namespace std;
                   case 4 : cout <<" transformation log(tg) des paramètres\n";break;
                 }
             } else if (s0=="v:") {
-                   
-              cout<<""<< "\n";
+                cout<<""<< "\n";
                 usestats = resetstats(s1);
             } else if (s0=="q:") {
-            
+                newpart=atoi(s1.c_str());
+                cout<<"nombre de particules à simuler à partir du posterior = "<<newpart<<"\n";
             }            
         }
         
@@ -160,6 +206,6 @@ using namespace std;
         phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
         det_nomparam();
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
-        //drawphistar();
+        drawphistar(newpart,nsel,seed);
     
     }

@@ -48,8 +48,10 @@ char *nomficonfresult;
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
         double *x,*mo;
+        string s;
         x=new double[ntest];
         mo=new double[4];
+        string aprdir,aprlog;
         nomficonfresult = new char[strlen(path)+strlen(ident)+30];
         strcpy(nomficonfresult,path);
         strcat(nomficonfresult,ident);
@@ -75,7 +77,10 @@ char *nomficonfresult;
         fprintf(f1,"%s\n",smut.c_str());
         fprintf(f1,"Candidate scenarios : ");
         for (int i=0;i<rt.nscenchoisi;i++) {fprintf(f1,"%d",rt.scenchoisi[i]);if (i<rt.nscenchoisi-1) fprintf(f1,", "); else fprintf(f1,"\n\n");}
-        fprintf(f1,"data set ");
+        fprintf(f1,"         ");
+        aprdir="direct approach";aprlog="logistic approach";
+        s=centre(aprdir,9*rt.nscenchoisi);
+        fprintf(f1,"data set ");fprintf(f1,"%s",s.c_str());
         for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"  scen %2d",rt.scenchoisi[i]);
         for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"        scenario %2d       ",rt.scenchoisi[i]);
         fprintf(f1,"\n");
@@ -182,7 +187,6 @@ char *nomficonfresult;
             duree=walltime(&debut);time_readfile += duree;
             postsd = comp_direct(nseld);
             cout<<"test"<<setiosflags(ios::fixed)<<setw(4)<<p+1<<"  ";
-            for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(5)<<setprecision(3)<<postsd[ncs-1][i].x;
             if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);
             f11<<"   ";
             ncs1=ncs-1;
@@ -192,10 +196,11 @@ char *nomficonfresult;
                 iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
                 for (int i=0;i<rt.nscenchoisi;i++) printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);printf("\n");
                 for (int i=0;i<rt.nscenchoisi;i++) f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";
-                f11<<"\n";
+                
                 delete []postsd;
                 delete []postsr;
             } else {
+                f11<<"\n";
                 cout<<"\n";
             }
         }        
