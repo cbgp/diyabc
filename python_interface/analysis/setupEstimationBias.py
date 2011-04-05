@@ -34,7 +34,7 @@ class SetupEstimationBias(QFrame):
             self.ui.redefButton.hide()
             self.ui.candidateLabel.hide()
             self.setScenarios([self.analysis.chosenSc])
-            self.ui.redefSumStatsButton.hide()
+            self.ui.redefSumStatsFrame.hide()
         elif self.analysis.category == "modelChecking":
             self.ui.label.setText("Model Checking")
             self.ui.candidateLabel.hide()
@@ -47,7 +47,7 @@ class SetupEstimationBias(QFrame):
             self.ui.label_5.hide()
             self.ui.label_4.hide()
             self.ui.notdsEdit.hide()
-            self.ui.redefSumStatsButton.hide()
+            self.ui.redefSumStatsFrame.hide()
 
         self.ui.projectNameEdit.setText(self.parent.parent.dir)
 
@@ -158,6 +158,8 @@ class SetupEstimationBias(QFrame):
                         strparam += "%s "%l[1]
                     else:
                         strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
+                for ctxt in self.analysis.condTxtList:
+                    strparam += "%s "%ctxt
                 strparam = strparam[:-1]
                 strparam += ";u:"
                 #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]

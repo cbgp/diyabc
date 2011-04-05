@@ -10,6 +10,7 @@ class Analysis():
         self.mutationModel = None
         self.sumStatsDico = {}
         self.histParams = None
+        self.condTxtList = []
         self.drawn = True
         self.params = ""
         self.aParams = None

@@ -81,6 +81,8 @@ class SetupComparisonEvaluation(QFrame):
                     strparam += "%s "%l[1]
                 else:
                     strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
+            for ctxt in self.analysis.condTxtList:
+                strparam += "%s "%ctxt
             strparam = strparam[:-1]
             strparam += ";u:"
             #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]

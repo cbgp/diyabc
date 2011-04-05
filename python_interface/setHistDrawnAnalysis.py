@@ -396,6 +396,10 @@ class HistDrawn(QFrame):
         if self.checkAll():
             self.majParamInfoDico()
             self.analysis.histParams = self.param_info_dico
+            lCond = []
+            for cb in self.condList:
+                lCond.append(str(cb.findChild(QLabel,"condLabel").text()))
+            self.analysis.condTxtList = lCond
             gen_data_analysis = SetGeneticDataAnalysis(self.analysis,self.parent.parent)
             #self.parent.parent.addTab(gen_data_analysis,"Genetic data")
             #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
