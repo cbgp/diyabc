@@ -4,12 +4,12 @@
 //using namespace std;
 //#include <vector>
 
-#ifdef _OPENMP
+//#ifdef _OPENMP
 #ifndef OMPH
 #include <omp.h>
 #define OMPH
 #endif
-#endif
+//#endif
 
 #ifndef HEADER
 #include "header.cpp"
@@ -42,7 +42,7 @@ struct enregC {
 };
 
 enregC *enreg;
-
+extern double **phistar;
 
 struct ParticleSetC
 {
@@ -89,7 +89,7 @@ struct ParticleSetC
 	void setgroup(int p) {
 		int ngr = this->header.ngroupes;
 		//cout<<"ngr="<<ngr<<"\n";
-		this->particule[p].ngr = ngr;
+		this->particule[p].ngr = ngr; 
 		this->particule[p].grouplist = new LocusGroupC[ngr+1];
 		this->particule[p].grouplist[0].nloc = this->header.groupe[0].nloc;
 		this->particule[p].grouplist[0].loc  = new int[this->header.groupe[0].nloc];
@@ -144,7 +144,10 @@ struct ParticleSetC
 				this->particule[p].grouplist[gr].sumstat[i].samp  = header.groupe[gr].sumstat[i].samp;
 				this->particule[p].grouplist[gr].sumstat[i].samp1 = header.groupe[gr].sumstat[i].samp1;
 				this->particule[p].grouplist[gr].sumstat[i].samp2 = header.groupe[gr].sumstat[i].samp2;
-
+                cout<<"cat="<<this->particule[p].grouplist[gr].sumstat[i].cat;
+                cout<<"   samp="<<this->particule[p].grouplist[gr].sumstat[i].samp;
+                cout<<"   samp1="<<this->particule[p].grouplist[gr].sumstat[i].samp1;
+                cout<<"   samp2="<<this->particule[p].grouplist[gr].sumstat[i].samp2<<"\n";
 			}
 		}
 	}
@@ -233,80 +236,130 @@ struct ParticleSetC
                 }
         }
 
-/*	void cleanParticle(int ipart){
-//nettoyage de locuslist
-//cout <<"debut du cleanParticle\n";
-		for (int loc=0;loc<this->particule[ipart].nloc;loc++) {
-			if (this->particule[ipart].locuslist[loc].type>4) {
-				delete []this->particule[ipart].locuslist[loc].mutsit;
-			    delete []this->particule[ipart].locuslist[loc].tabsit;
-			}
-			for(int sa=0;sa<this->particule[ipart].data.nsample;sa++) {
-				if (this->particule[ipart].locuslist[loc].type<5) delete []this->particule[ipart].locuslist[loc].haplomic[sa];
-				if (this->particule[ipart].locuslist[loc].type>4) delete []this->particule[ipart].locuslist[loc].haplodna[sa];
-				delete []this->particule[ipart].locuslist[loc].freq[sa];
-			}
-			if (this->particule[ipart].locuslist[loc].type<5) delete []this->particule[ipart].locuslist[loc].haplomic;
-			if (this->particule[ipart].locuslist[loc].type>4) delete []this->particule[ipart].locuslist[loc].haplodna;
-			delete []this->particule[ipart].locuslist[loc].ss;
-			delete []this->particule[ipart].locuslist[loc].samplesize;
-			delete []this->particule[ipart].locuslist[loc].freq;
-		}
-		delete []this->particule[ipart].locuslist;
-                //cout<<"apres cleanlocuslist\n";
-//nettoyage de grouplist		
-		for (int gr=0;gr<this->particule[ipart].ngr;gr++) {
-			delete []this->particule[ipart].grouplist[gr].loc;
-			delete []this->particule[ipart].grouplist[gr].sumstat;
-		}
-		delete []this->particule[ipart].grouplist;
-                //cout<<"apres cleangroup\n";
-//nettoyage de data
-		this->particule[ipart].data.libere();
-                //cout<<"apres cleandata\n";
-//nettoyage de scenario
-		for (int i=0;i<this->particule[ipart].nscenarios;i++) {
-			delete []this->particule[ipart].scenario[i].paramvar;
-			delete []this->particule[ipart].scenario[i].time_sample;
-			delete []this->particule[ipart].scenario[i].event;
-			delete []this->particule[ipart].scenario[i].ne0;
-			delete []this->particule[ipart].scenario[i].histparam;
-		}
-                        delete []this->particule[ipart].scen.paramvar;
-                        delete []this->particule[ipart].scen.time_sample;
-                        delete []this->particule[ipart].scen.event;
-                        delete []this->particule[ipart].scen.ne0;
-                        delete []this->particule[ipart].scen.histparam;
-		
-		delete []this->particule[ipart].scenario;
-                //cout<<"apres cleanscenario\n";
-//nettoyage de matQ
-		/*for (int i=0;i<4;i++) delete []this->particule[ipart].matQ[i];
-		cout<<"apres clean matQ[i]\n";
-		delete []this->particule[ipart].matQ;
-                cout<<"apres clean matQ\n";
-	}*/
-                
-              
-	
-	/*void cleanParticleSet(){
-		for (int i=0;i<this->npart;i++) {
-                        delete []this->particule[i].scen.paramvar;
-                        delete []this->particule[i].scen.time_sample;
-                        delete []this->particule[i].scen.event;
-                        delete []this->particule[i].scen.ne0;
-                        delete []this->particule[i].scen.histparam;
-                        if (this->particule[i].scen.nconditions>0) delete []this->particule[i].scen.condition;
+    void dosimulphistar(HeaderC header,int scen, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut
+                        ,int nsel) {
+        int ii,ip1,ip2,ipart,gr,nstat,pa,ip,iscen,k,nparam=header.scenario[scen].nparam;
+        bool trouve,trace,phistarOK;
+        this->npart = npart;
+        int *sOK;
+        sOK = new int[npart];
+        cout<<"avant firsttime\n";
+        if (firsttime) {                
+            this->particule = new ParticleC[this->npart];
+            this->header = header;
+            for (int p=0;p<this->npart;p++) {
+                //cout <<"avant set particule "<<p<<"\n";
+                this->particule[p].dnatrue = dnatrue;
+                //cout <<"dnatrue\n";
+                this->setdata(p);
+                //cout <<"setdata\n";
+                this->setgroup(p);
+                //cout<<"setgroup\n";
+                this->setloci(p);
+                //cout<<"setloci\n";
+                this->setscenarios(p);
+                //cout << "                    apres set particule\n";
+                this->particule[p].mw.randinit(p,seed);
+            }
+        }
+        cout<<"apres firsttime\n";
+        for (int p=0;p<this->npart;p++) {
+            do {
+                phistarOK=true;
+                k=this->particule[0].mw.rand0(nsel);
+                if (header.scenario[scen].nconditions>0) {
+                    for (int j=0;j<header.scenario[scen].nconditions;j++) {
+                        ip1=0;while (header.scenario[scen].condition [j].param1!=header.scenario[scen].histparam[ip1].name) ip1++;
+                        ip2=0;while (header.scenario[scen].condition [j].param2!=header.scenario[scen].histparam[ip2].name) ip2++;
+                        if (header.scenario[scen].condition[j].operateur==">")       phistarOK=(phistar[k][ip1] >  phistar[k][ip2]);
+                        else if (header.scenario[scen].condition[j].operateur=="<")  phistarOK=(phistar[k][ip1] <  phistar[k][ip2]);
+                        else if (header.scenario[scen].condition[j].operateur==">=") phistarOK=(phistar[k][ip1] >= phistar[k][ip2]);
+                        else if (header.scenario[scen].condition[j].operateur=="<=") phistarOK=(phistar[k][ip1] <= phistar[k][ip2]);
+                        if (not phistarOK) break;
+                    }
                 }
-	}*/
-    
-    
-    //void dosimulphistar()
+            } while(not phistarOK);
+            ii=0;
+            for (int i=0;i<nparam;i++) {
+                if (not header.scenario[scen].histparam[i].prior.constant) {
+                  //cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"\n";
+                    this->particule[p].scenario[scen].histparam[i].value=phistar[k][ii];
+                    ii++;
+                }
+            }
+            //cout<<"apres la copie des paramètres historiques\n";
+            for (gr=1;gr<=header.ngroupes;gr++)
+                if (header.groupe[gr].type==0) {  //MICROSAT
+                        //cout <<"MICROSAT "<<p<<"\n";
+                        //cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    \n";
+                        if (not header.groupe[gr].priormutmoy.constant) {this->particule[p].grouplist[gr].mutmoy = phistar[k][ii];ii++;}
+                        //cout<<this->particule[p].grouplist[gr].mutmoy<<"\n";
+                        //cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    ";
+                        if (not header.groupe[gr].priorPmoy.constant)   {this->particule[p].grouplist[gr].Pmoy  =  phistar[k][ii];ii++;}
+                        //cout<<this->particule[p].grouplist[gr].Pmoy<<"\n";
+                        //cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
+                        if (not header.groupe[gr].priorsnimoy.constant) {this->particule[p].grouplist[gr].snimoy = phistar[k][ii];ii++;}
+                        //cout<<this->particule[p].grouplist[gr].snimoy<<"\n";
+                }
+                else {                                                  //SEQUENCES
+                        //cout<<"SEQUENCE\n";
+                        if (not header.groupe[gr].priormutmoy.constant) {this->particule[p].grouplist[gr].musmoy = phistar[k][ii];ii++;}   //musmoy
+                        if (header.groupe[gr].mutmod>0){
+                                if (not header.groupe[gr].priormutmoy.constant){this->particule[p].grouplist[gr].k1moy =phistar[k][ii];ii++;}        //k1moy
+                        }
+                        if (header.groupe[gr].mutmod>2){
+                                if (not header.groupe[gr].priormutmoy.constant){this->particule[p].grouplist[gr].k2moy =phistar[k][ii];ii++;}        //k2moy
+                        }
+                }
+                //cout<<"\n";
+        }
+        cout<<"apres le remplissage des particules\n";
+    #pragma omp parallel for shared(sOK) private(gr) if(multithread)
+        for (ipart=0;ipart<this->npart;ipart++){
+                //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
+            sOK[ipart]=this->particule[ipart].dosimulpart(trace,numscen,usepriorhist,usepriormut);
+                //if (trace) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
+            if (sOK[ipart]==0) {
+                for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
+            }
+    //if (trace) cout<<"apres docalstat de la particule "<<ipart<<"\n";
+        }
+//fin du pragma
+        for (int ipart=0;ipart<this->npart;ipart++) {
+            if (sOK[ipart]==0){
+                enreg[ipart].numscen=1;
+                if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
+                
+                //cout<<"dans particleset\n";
+                for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
+                    enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
+                    //cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+                }
+                //cout <<"\n";
+                nstat=0;
+                for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
+                    for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){
+                        enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;
+                        cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<"  ";
+                        nstat++;
+                    }
+                    cout<<"\n";
+                }
+                enreg[ipart].message="OK";
+            }
+            else {
+                                enreg[ipart].message  = "A gene genealogy failed in scenario ";
+                                enreg[ipart].message += IntToString(this->particule[ipart].scen.number);
+                                enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
+                        }
+        }
+      
+      
+    }
 
 	void dosimultabref(HeaderC header,int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut)
 	{
-               int ipart,jpart=0,nthreads;
-	       int gr,nstat,pa,ip,iscen;
+               int ipart,gr,nstat,pa,ip,iscen;
                bool trouve,trace;
                this->npart = npart;
                int *sOK;
@@ -343,13 +396,13 @@ struct ParticleSetC
 	       #pragma omp parallel for shared(sOK) private(gr) if(multithread)
                 for (ipart=0;ipart<this->npart;ipart++){
                         //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
-			sOK[ipart]=this->particule[ipart].dosimulpart(trace,numscen,usepriorhist,usepriormut);
+			        sOK[ipart]=this->particule[ipart].dosimulpart(trace,numscen,usepriorhist,usepriormut);
                         //if (trace) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
-			if (sOK[ipart]==0) {
-			 	for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
-			}
+			        if (sOK[ipart]==0) {
+			 	        for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
+			        }
 			//if (trace) cout<<"apres docalstat de la particule "<<ipart<<"\n";
-		}
+		        }
 //fin du pragma
                 //if (trace) cout << "apres pragma\n";
                 for (int ipart=0;ipart<this->npart;ipart++) {

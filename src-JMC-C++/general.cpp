@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
        
         debut=walltime(&clock_zero);
 
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:d:hmq")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:d:hmqj:")) !=-1) {
          
 	  switch (optchar) {
 

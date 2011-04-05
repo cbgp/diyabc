@@ -29,25 +29,37 @@ using namespace std;
 
 extern ParticleSetC ps;
 extern enregC* enreg;
+extern int nenr;
+
+double **ssphistar;
 
     bool resetstats(string s) {
+      cout<<s<<"\n";
         int j,ns,nq,nss1,gr,k=0;
         string *ss,*qq,*ss1;
 //comptage des stat        
         for (gr=1;gr<=header.ngroupes;gr++) {header.groupe[gr].nstat=0;} header.nstat=0;
-        ss =splitwords(s,",",&ns);
+        //cout<<header.ngroupes<<" groupe\n";
+        ss =splitwords(s," ",&ns);
+        cout<<"ns="<<ns<<"\n";
         for (int i=0;i<ns;i++) { 
             qq=splitwords(ss[j],"_",&nq);
             if (nq!=3) return false;
+            //cout<<"nq="<<nq<<"   qq[1]="<<qq[1]<<"\n";
             gr=atoi(qq[1].c_str());
-            header.groupe[gr].nstat++;header.nstat++;
-        }    
+            //cout<<"gr="<<gr<<"\n";
+            header.groupe[gr].nstat++;
+            header.nstat++;
+            delete []qq;
+       } 
+        //cout <<"dans resetstat nstat = "<<header.nstat++<<"\n";
         for (gr=1;gr<=header.ngroupes;gr++) header.groupe[gr].sumstat = new StatC[header.groupe[gr].nstat];     
-        ss =splitwords(s,",",&ns);
+        ss =splitwords(s," ",&ns);
         for (int i=0;i<ns;i++) { 
-            qq=splitwords(ss[j],"_",&nq);
+            qq=splitwords(ss[i],"_",&nq);
             gr=atoi(qq[1].c_str());
             j=0;while (qq[0]!=stat_type[j]) j++;
+            cout<<"qq[0] = "<<qq[0]<<"   j="<<j<<"\n";
             if (header.groupe[gr].type==0) {   //MICROSAT
                 if (stat_num[j]<5) {
                       header.groupe[gr].sumstat[k].cat=stat_num[j];
@@ -90,7 +102,8 @@ extern enregC* enreg;
                         k++;
                         delete [] ss1;
                 }
-            }            
+            }
+            delete []qq;
         }
         return true;
     }
@@ -102,25 +115,32 @@ extern enregC* enreg;
         return spr;
     }
 
-    int detphistarOK(int nsel,double **phistarOK) {
+    int detphistarOK(int nsel,double **phistar,double **phistarOK) {
         MwcGen MWC;
         bool OK;
-        int k,npv,ip1,ip2,nphistarOK=0;
-        npv = rt.nparam[rt.scenchoisi[0]-1];
+        int k,npv,ip1,ip2,nphistarOK=0,scen=rt.scenteste-1;
+        npv = rt.nparam[scen];
        for (int i=0;i<nsel;i++) {
             OK=true;
-            if (header.scenario[rt.scenchoisi[0]-1].nconditions>0) {
-                for (int j=0;j<header.scenario[rt.scenchoisi[0]-1].nconditions;j++) {
-                    ip1=0;while (header.scenario[rt.scenchoisi[0]-1].condition [j].param1!=header.scenario[rt.scenchoisi[0]-1].histparam[ip1].name) ip1++;
-                    ip2=0;while (header.scenario[rt.scenchoisi[0]-1].condition [j].param2!=header.scenario[rt.scenchoisi[0]-1].histparam[ip2].name) ip2++;
-                    if (header.scenario[rt.scenchoisi[0]-1].condition[j].operateur==">")       OK=(phistar[k][ip1] >  phistar[k][ip2]);
-                    else if (header.scenario[rt.scenchoisi[0]-1].condition[j].operateur=="<")  OK=(phistar[k][ip1] <  phistar[k][ip2]);
-                    else if (header.scenario[rt.scenchoisi[0]-1].condition[j].operateur==">=") OK=(phistar[k][ip1] >= phistar[k][ip2]);
-                    else if (header.scenario[rt.scenchoisi[0]-1].condition[j].operateur=="<=") OK=(phistar[k][ip1] <= phistar[k][ip2]);
+            if (header.scenario[scen].nconditions>0) {
+                for (int j=0;j<header.scenario[scen].nconditions;j++) {
+                    ip1=0;while (header.scenario[scen].condition [j].param1!=header.scenario[scen].histparam[ip1].name) ip1++;
+                    ip2=0;while (header.scenario[scen].condition [j].param2!=header.scenario[scen].histparam[ip2].name) ip2++;
+                    if (header.scenario[scen].condition[j].operateur==">")       OK=(phistar[i][ip1] >  phistar[i][ip2]);
+                    else if (header.scenario[scen].condition[j].operateur=="<")  OK=(phistar[i][ip1] <  phistar[i][ip2]);
+                    else if (header.scenario[scen].condition[j].operateur==">=") OK=(phistar[i][ip1] >= phistar[i][ip2]);
+                    else if (header.scenario[scen].condition[j].operateur=="<=") OK=(phistar[i][ip1] <= phistar[i][ip2]);
                     if (not OK) break;
                 }
             }
-            if (OK) nphistarOK++;
+            if (OK) { cout<<nphistarOK<<"    ";
+                for (int j=0;j<npv;j++) {
+                    phistarOK[nphistarOK][j] = phistar[i][j];
+                    cout <<phistarOK[nphistarOK][j]<<"  ";               
+                } 
+                cout<<"\n";
+                nphistarOK++;
+            }
         }
         cout<<"nphistarOK="<<nphistarOK<<"\n";
         return nphistarOK;
@@ -129,10 +149,10 @@ extern enregC* enreg;
     void domodchec(char *options,int seed){
         char  *progressfilename;
         int nstatOK, iprog,nprog;
-        int nrec,nsel,ns,ns1,nrecpos,newpart;
-        string opt,*ss,s,*ss1,s0,s1;
-        double  *stat_obs,**phistarOK;
-        bool usestats;
+        int nrec,nsel,ns,ns1,nrecpos,newpart,npv,nphistarOK;
+        string opt,*ss,s,*ss1,s0,s1,newstat;
+        double  *stat_obs;
+        bool usestats,firsttime,dopca,doloc;
         
         FILE *flog;
         
@@ -152,6 +172,7 @@ extern enregC* enreg;
                 for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());
                 nrecpos=0;for (int j=0;j<rt.nscenchoisi;j++) nrecpos +=rt.nrecscen[rt.scenchoisi[j]-1];
                 cout <<"scenario choisi : "<<rt.scenchoisi[0]<<"\n";
+                rt.scenteste = rt.scenchoisi[0]; 
             } else if (s0=="n:") {
                 nrec=atoi(s1.c_str());
                 if(nrec>nrecpos) nrec=nrecpos;
@@ -169,13 +190,21 @@ extern enregC* enreg;
                 }
             } else if (s0=="v:") {
                 cout<<""<< "\n";
-                usestats = resetstats(s1);
+                newstat=s1;
             } else if (s0=="q:") {
                 newpart=atoi(s1.c_str());
                 cout<<"nombre de particules à simuler à partir du posterior = "<<newpart<<"\n";
-            }            
+            } else if (s0=="a:") {
+                dopca=(s1.find("p")!=string::npos);
+                doloc=(s1.find("l")!=string::npos);
+                if (dopca) cout <<"Perform ACP  ";
+                if ((s1=="pl")or(s1=="lp")) cout <<"et ";
+                if (doloc) cout<<"locate  ";
+                cout<< "\n";
+                 
+            }           
         }
-        
+        original=true;composite=false;
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
         nprog=100;iprog=1;
@@ -192,6 +221,33 @@ extern enregC* enreg;
         phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
         det_nomparam();
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
-        detphistarOK(nsel,phistarOK);
-    
+        //phistarOK = new double*[nsel];
+        //for (int i=0;i<nsel;i++) phistarOK[i] = new double[header.scenario[rt.scenteste-1].nparam];
+        //nphistarOK=detphistarOK(nsel,phistar,phistarOK);
+        cout<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr<<"\n";
+        npv = rt.nparam[rt.scenteste-1];
+        enreg = new enregC[nenr];
+        for (int p=0;p<nenr;p++) {
+            enreg[p].stat = new float[header.nstat];
+            enreg[p].param = new float[npv];
+            enreg[p].numscen = rt.scenteste;
+        }
+        ns=0;
+        firsttime=true;
+        cout<<"ns="<<ns<<"\n";
+        //cout<<phistarOK[0][0]<<"\n";
+        usestats = resetstats(newstat);
+        cout<<"header.nstat = "<<header.nstat<<"\n";
+        ssphistar = new double*[newpart];
+        for (int i=0;i<newpart;i++) ssphistar[i] = new double[header.nstat];
+        while (ns<newpart) {
+            ps.dosimulphistar(header,(rt.scenteste-1),nenr,false,multithread,firsttime,rt.scenteste,seed,false,false,nsel);
+            for (int i=0;i<nenr;i++) {
+                for (int j=0;j<header.nstat;j++) ssphistar[i+ns][j]=enreg[i].stat[j];
+                for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+ns][j]<<"   ";cout<<"\n";
+            }
+            firsttime=false;
+            ns+=nenr;
+            cout<<ns<<"\n";
+        }
     }
