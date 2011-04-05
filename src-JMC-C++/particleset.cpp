@@ -299,8 +299,11 @@ struct ParticleSetC
                         if (this->particule[i].scen.nconditions>0) delete []this->particule[i].scen.condition;
                 }
 	}*/
+    
+    
+    //void dosimulphistar()
 
-	void dosimultabref(HeaderC header,int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed)
+	void dosimultabref(HeaderC header,int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut)
 	{
                int ipart,jpart=0,nthreads;
 	       int gr,nstat,pa,ip,iscen;
@@ -340,7 +343,7 @@ struct ParticleSetC
 	       #pragma omp parallel for shared(sOK) private(gr) if(multithread)
                 for (ipart=0;ipart<this->npart;ipart++){
                         //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
-			sOK[ipart]=this->particule[ipart].dosimulpart(trace,numscen);
+			sOK[ipart]=this->particule[ipart].dosimulpart(trace,numscen,usepriorhist,usepriormut);
                         //if (trace) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 			if (sOK[ipart]==0) {
 			 	for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);

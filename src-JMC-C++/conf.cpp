@@ -77,12 +77,17 @@ char *nomficonfresult;
         fprintf(f1,"%s\n",smut.c_str());
         fprintf(f1,"Candidate scenarios : ");
         for (int i=0;i<rt.nscenchoisi;i++) {fprintf(f1,"%d",rt.scenchoisi[i]);if (i<rt.nscenchoisi-1) fprintf(f1,", "); else fprintf(f1,"\n\n");}
-        fprintf(f1,"         ");
+        //fprintf(f1,"         ");
         aprdir="direct approach";aprlog="logistic approach";
         s=centre(aprdir,9*rt.nscenchoisi);
         fprintf(f1,"data set ");fprintf(f1,"%s",s.c_str());
+        if (nlogreg>0) {
+            s=centre(aprlog,26*rt.nscenchoisi);
+            fprintf(f1,"%s",s.c_str());
+        }
+        fprintf(f1,"\n         ");
         for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"  scen %2d",rt.scenchoisi[i]);
-        for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"        scenario %2d       ",rt.scenchoisi[i]);
+        if (nlogreg>0) for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"        scenario %2d       ",rt.scenchoisi[i]);
         fprintf(f1,"\n");
         fclose(f1);
     }
@@ -90,7 +95,7 @@ char *nomficonfresult;
     void doconf(char *options, int seed) {
         char *datafilename, *progressfilename, *courantfilename;
         int nstatOK, iprog,nprog,ncs1;
-        int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg;
+        int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,st,pa,duree,debut,clock_zero;
         bool usepriorhist,usepriormut;
@@ -144,11 +149,21 @@ char *nomficonfresult;
             } else if (s0=="h:") {
                 shist = s1;  
                 ss1 = splitwords(s1," ",&np);
-                if (np != header.scenario[rt.scenteste-1].nparam) {
+                if (np < header.scenario[rt.scenteste-1].nparam) {
                     cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenteste<<" est de "<<header.scenario[rt.scenteste-1].nparam<<"\n";
                     exit(1);
                 }
-                for (int j=0;j<np;j++) usepriorhist = resethistparam(ss1[j]);
+                ncond=np-header.scenario[rt.scenteste-1].nparam;
+                for (int j=0;j<header.scenario[rt.scenteste-1].nparam;j++) usepriorhist = resethistparam(ss1[j]);
+                if (ncond>0) {
+                  cout<<header.scenario[rt.scenteste-1].nconditions<<"\n";
+                    if (header.scenario[rt.scenteste-1].nconditions != ncond) {
+                        if (header.scenario[rt.scenteste-1].nconditions>0) delete []header.scenario[rt.scenteste-1].condition;
+                        header.scenario[rt.scenteste-1].condition = new ConditionC[ncond];
+                    }
+                    for (int j=0;j<ncond;j++) 
+                         header.scenario[rt.scenteste-1].condition[j] = header.readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]); 
+                } 
             } else if (s0=="u:") {
                 smut = s1;
                 cout<<s1<<"\n";
@@ -169,7 +184,7 @@ char *nomficonfresult;
         }
         if (nlogreg==1){nprog=10*(ntest+1);iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         else           {nprog=6*ntest+10;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
-        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenchoisi[0],seed);
+        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenchoisi[0],seed,usepriorhist,usepriormut);
         iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         nstatOK = rt.cal_varstat();                       
@@ -191,18 +206,18 @@ char *nomficonfresult;
             f11<<"   ";
             ncs1=ncs-1;
             for (int i=0;i<rt.nscenchoisi;i++) f11<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;
+            for (int i=0;i<rt.nscenchoisi;i++) cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;
             if (nlogreg==1) {
                 postsr = comp_logistic(nselr,stat_obs);
                 iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-                for (int i=0;i<rt.nscenchoisi;i++) printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);printf("\n");
+                for (int i=0;i<rt.nscenchoisi;i++) printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);
                 for (int i=0;i<rt.nscenchoisi;i++) f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";
                 
                 delete []postsd;
                 delete []postsr;
-            } else {
-                f11<<"\n";
-                cout<<"\n";
             }
+            f11<<"\n";
+            cout<<"\n";
         }        
         rt.desalloue_enrsel(nsel);
         f11.close();

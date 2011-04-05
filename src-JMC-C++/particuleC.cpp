@@ -700,40 +700,40 @@ struct ParticleC
 	    return OK;
 	}
 
-	bool setHistParamValue(int numscen) {
-		bool OK;
-		//cout <<this->scen.nconditions <<" condition(s)\n";
-		if (this->scen.nconditions>0) {
-			if (drawuntil) {
-			    //cout <<"drawuntil\n";
-				OK=false;
-				while (not OK) {
-					for (int p=0;p<this->scen.nparam;p++) {
-					    this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
-					    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-					    cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
-					    //cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
-					}
-					//cout <<"avant test conditions\n";
-					OK = conditionsOK();
-					//if (OK) cout <<"condition OK\n";
-				}
-			} else {
-				for (int p=0;p<this->scen.nparam;p++) {
-				    this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
-				    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-				}  
-				OK = conditionsOK();
-			}
-		}else {
-			for (int p=0;p<this->scen.nparam;p++) {
-			    this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
-			    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-			    else this->scen.histparam[p].value = this->scen.histparam[p].value;
-			    //cout << this->scen.histparam[p].name<<" = "<<this->scen.histparam[p].value<<"\n";
-			}
-			OK=true;
-		}
+	bool setHistParamValue(int numscen, bool usepriorhist) {
+		bool OK=true;
+        if (usepriorhist) {
+            if (this->scen.nconditions>0) {
+                if (drawuntil) {
+                    //cout <<"drawuntil\n";
+                    OK=false;
+                    while (not OK) {
+                        for (int p=0;p<this->scen.nparam;p++) {
+                            this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+                            if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
+                            cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
+                            //cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
+                        }
+                        //cout <<"avant test conditions\n";
+                        OK = conditionsOK();
+                        //if (OK) cout <<"condition OK\n";
+                    }
+                } else {
+                    for (int p=0;p<this->scen.nparam;p++) {
+                        this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+                        if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
+                    }  
+                    OK = conditionsOK();
+                }
+            }else {
+                for (int p=0;p<this->scen.nparam;p++) {
+                    this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+                    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
+                    //cout << this->scen.histparam[p].name<<" = "<<this->scen.histparam[p].value<<"\n";
+                }
+                OK=true;
+            }
+        }
 		this->scen.ipv=0;
 		if (OK) {
 			for (int p=0;p<this->scen.nparam;p++) {
@@ -758,7 +758,7 @@ struct ParticleC
 		return OK;
 	}
 
-	void setMutParammoyValue(){
+	void setMutParammoyValue(bool usepriormut){
 		int gr;
 		for (gr=1;gr<=this->ngr;gr++) {
 		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"\n";
@@ -1173,7 +1173,7 @@ struct ParticleC
 		}
 		//cout << "\n";
 		if (this->seqlist[iseq].t1<0) {final=true;}
-		if (this->seqlist[iseq].N<1) {std::cout << "coal_pop : population size <1 \n" ;exit(100);}
+		if (this->seqlist[iseq].N<1) {std::cout << "coal_pop : population size <1 ("<<this->seqlist[iseq].N<<") \n" ;exit(100);}
 
 		if (evalcriterium(iseq,nLineages) == 1) {		//CONTINUOUS APPROXIMATION
 			//cout << "Approximation continue final="<< final << "   nLineages=" << nLineages << "  pop=" <<this->seqlist[iseq].pop << "\n";
@@ -1560,7 +1560,7 @@ struct ParticleC
 		return 0;
 	}
 
-	int dosimulpart(bool trace,int numscen){
+	int dosimulpart(bool trace,int numscen,bool usepriorhist, bool usepriormut){
                 //if (trace) cout<<"debut de dosimulpart\n";fflush(stdin);
 		vector <int> simulOK;
 		int *emptyPop;
@@ -1571,7 +1571,7 @@ struct ParticleC
                 //if (trace) cout<<"avant draw scenario\n";fflush(stdin);
 		this->drawscenario(numscen);
 		//if (trace) cout <<"avant setHistparamValue\n";fflush(stdin);
-		this->setHistParamValue(numscen);
+		this->setHistParamValue(numscen,usepriorhist);
 		//if (trace) cout << "apres setHistParamValue\n";fflush(stdin);
 		//if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
 		//if (trace) for (int k=0;k<this->scen.nparam;k++){
@@ -1586,7 +1586,7 @@ struct ParticleC
 		//	cout << this->scen.histparam[k].value << "   ";
 		//}
 		//cout << "\n";
-		setMutParammoyValue();
+		setMutParammoyValue(usepriormut);
                 int loc;
                 //if (trace) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
 		for (loc=0;loc<this->nloc;loc++) {

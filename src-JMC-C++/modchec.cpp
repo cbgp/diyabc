@@ -102,42 +102,28 @@ extern enregC* enreg;
         return spr;
     }
 
-    void drawphistar(int newpart,int nsel,int seed) {
+    int detphistarOK(int nsel,double **phistarOK) {
         MwcGen MWC;
-        bool phistarOK;
-        int k,npv,ip1,ip2,npart=0;
+        bool OK;
+        int k,npv,ip1,ip2,nphistarOK=0;
         npv = rt.nparam[rt.scenchoisi[0]-1];
-        enreg = new enregC[newpart];
-        for (int p=0;p<newpart;p++) {
-            enreg[p].stat = new float[header.nstat];
-            enreg[p].param = new float[npv];
-            enreg[p].numscen = rt.scenchoisi[0];
-        }
-        MWC.randinit(625,seed);
-        while (npart<newpart) {
-            k=MWC.rand0(nsel); 
-            phistarOK=true;
+       for (int i=0;i<nsel;i++) {
+            OK=true;
             if (header.scenario[rt.scenchoisi[0]-1].nconditions>0) {
-                for (int i=0;i<header.scenario[rt.scenchoisi[0]-1].nconditions;i++) {
-                    ip1=0;while (header.scenario[rt.scenchoisi[0]-1].condition [i].param1!=header.scenario[rt.scenchoisi[0]-1].histparam[ip1].name) ip1++;
-                    ip2=0;while (header.scenario[rt.scenchoisi[0]-1].condition [i].param2!=header.scenario[rt.scenchoisi[0]-1].histparam[ip2].name) ip2++;
-                    if (header.scenario[rt.scenchoisi[0]-1].condition[i].operateur==">")       phistarOK=(phistar[k][ip1] >  phistar[k][ip2]);
-                    else if (header.scenario[rt.scenchoisi[0]-1].condition[i].operateur=="<")  phistarOK=(phistar[k][ip1] <  phistar[k][ip2]);
-                    else if (header.scenario[rt.scenchoisi[0]-1].condition[i].operateur==">=") phistarOK=(phistar[k][ip1] >= phistar[k][ip2]);
-                    else if (header.scenario[rt.scenchoisi[0]-1].condition[i].operateur=="<=") phistarOK=(phistar[k][ip1] <= phistar[k][ip2]);
-                    if (not phistarOK) break;
+                for (int j=0;j<header.scenario[rt.scenchoisi[0]-1].nconditions;j++) {
+                    ip1=0;while (header.scenario[rt.scenchoisi[0]-1].condition [j].param1!=header.scenario[rt.scenchoisi[0]-1].histparam[ip1].name) ip1++;
+                    ip2=0;while (header.scenario[rt.scenchoisi[0]-1].condition [j].param2!=header.scenario[rt.scenchoisi[0]-1].histparam[ip2].name) ip2++;
+                    if (header.scenario[rt.scenchoisi[0]-1].condition[j].operateur==">")       OK=(phistar[k][ip1] >  phistar[k][ip2]);
+                    else if (header.scenario[rt.scenchoisi[0]-1].condition[j].operateur=="<")  OK=(phistar[k][ip1] <  phistar[k][ip2]);
+                    else if (header.scenario[rt.scenchoisi[0]-1].condition[j].operateur==">=") OK=(phistar[k][ip1] >= phistar[k][ip2]);
+                    else if (header.scenario[rt.scenchoisi[0]-1].condition[j].operateur=="<=") OK=(phistar[k][ip1] <= phistar[k][ip2]);
+                    if (not OK) break;
                 }
             }
-            if (phistarOK) {
-                for (int i=0;i<rt.nparam[rt.scenchoisi[0]-1];i++) header.scenario[rt.scenchoisi[0]-1].histparam[i].prior = header.readprior(pseudoprior2(phistar[k][i]));
-            
-            
-            }
-        
-            
+            if (OK) nphistarOK++;
         }
-    
-    
+        cout<<"nphistarOK="<<nphistarOK<<"\n";
+        return nphistarOK;
     }
 
     void domodchec(char *options,int seed){
@@ -145,7 +131,7 @@ extern enregC* enreg;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos,newpart;
         string opt,*ss,s,*ss1,s0,s1;
-        double  *stat_obs;
+        double  *stat_obs,**phistarOK;
         bool usestats;
         
         FILE *flog;
@@ -206,6 +192,6 @@ extern enregC* enreg;
         phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
         det_nomparam();
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
-        drawphistar(newpart,nsel,seed);
+        detphistarOK(nsel,phistarOK);
     
     }

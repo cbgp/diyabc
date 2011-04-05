@@ -100,6 +100,7 @@ public:
 
     ConditionC readcondition(string ss){
         ConditionC cond;
+        //cout<<"condition : "<<ss<<"\n";
         if (ss.find(">=")!=string::npos){
             cond.operateur=">=";cond.param1=ss.substr(0,ss.find(">="));cond.param2=ss.substr(ss.find(">=")+2,ss.length()-(ss.find(">=")+2));}
         else if (ss.find("<=")!=string::npos){

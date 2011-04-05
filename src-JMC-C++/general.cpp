@@ -265,7 +265,7 @@ int main(int argc, char *argv[]){
                                   //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
                                   firsttime=true;
                                   while (nrecneeded>rt.nrec) {
-                                          ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed);
+                                          ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
                                           if (firsttime) firsttime=false;
                                           rt.writerecords(nenr,enreg);
                                           rt.nrec +=nenr;
