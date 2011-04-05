@@ -8,9 +8,11 @@ class Analysis():
         self.candidateScList = []
         self.computationParameters = ""
         self.mutationModel = None
+        self.sumStatsDico = {}
         self.histParams = None
         self.drawn = True
         self.params = ""
+        self.aParams = None
 
     def getChosenSc(self):
         return self.chosenSc

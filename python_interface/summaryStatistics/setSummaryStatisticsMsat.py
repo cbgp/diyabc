@@ -13,8 +13,8 @@ from setSummaryStatistics import SetSummaryStatistics
 class SetSummaryStatisticsMsat(SetSummaryStatistics):
     """ ecran de selection des summary statistics pour les microsats
     """
-    def __init__(self,parent=None,box_group=None):
-        super(SetSummaryStatisticsMsat,self).__init__(parent,box_group)
+    def __init__(self,parent=None,box_group=None,numGroup=0):
+        super(SetSummaryStatisticsMsat,self).__init__(parent,box_group,numGroup)
 
         self.statList = ["NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML"]
 
@@ -383,7 +383,10 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics):
         """ retourne l'en-tête pour le tableau à écrire dans conf.th
         """
         result = u""
-        gnumber = self.parent.groupList.index(self.box_group)+1
+        if self.numGroup == 0:
+            gnumber = self.parent.groupList.index(self.box_group)+1
+        else:
+            gnumber = self.numGroup
         dico = {"NAL" : [],
         "HET" : [],
         "VAR" : [],

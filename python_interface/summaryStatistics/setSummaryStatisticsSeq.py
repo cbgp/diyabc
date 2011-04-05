@@ -13,8 +13,8 @@ from setSummaryStatistics import SetSummaryStatistics
 class SetSummaryStatisticsSeq(SetSummaryStatistics):
     """ ecran de selection des summary statistics pour les sequences
     """
-    def __init__(self,parent=None,box_group=None):
-        super(SetSummaryStatisticsSeq,self).__init__(parent,box_group)
+    def __init__(self,parent=None,box_group=None,numGroup=0):
+        super(SetSummaryStatisticsSeq,self).__init__(parent,box_group,numGroup)
 
         self.statList = ["NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"]
 
@@ -398,7 +398,10 @@ class SetSummaryStatisticsSeq(SetSummaryStatistics):
 
     def getSumStatsTableHeader(self):
         result = u""
-        gnumber = self.parent.groupList.index(self.box_group)+1
+        if self.numGroup == 0:
+            gnumber = self.parent.groupList.index(self.box_group)+1
+        else:
+            gnumber = self.numGroup
         dico = {"NHA":[],"NSS":[],"MPD":[],"VPD":[],"DTA":[],"PSS":[],"MNS":[],"VNS":[],"NH2":[],"NS2":[],"MP2":[],"MPB":[],"HST":[],"SML":[]}
         for box in self.oneSampleList:
             lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]

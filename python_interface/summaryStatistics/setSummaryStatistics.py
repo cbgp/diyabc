@@ -14,10 +14,11 @@ class SetSummaryStatistics(QFrame):
     les deux classes filles n'ont pas la même interface graphique, l'import de l'UI n'est donc pas
     effectué ici
     """
-    def __init__(self,parent=None,box_group=None):
+    def __init__(self,parent=None,box_group=None,numGroup=0):
         super(SetSummaryStatistics,self).__init__(parent)
         self.parent=parent
         self.box_group = box_group
+        self.numGroup = numGroup
         self.oneSampleList = []
         self.twoSampleList = []
         self.admixSampleList = []

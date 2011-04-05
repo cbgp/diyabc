@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os,re
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -55,14 +55,23 @@ class SetupEstimationBias(QFrame):
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.redefButton,SIGNAL("clicked()"),self.redefineScenarios)
         QObject.connect(self.ui.redefSumStatsButton,SIGNAL("clicked()"),self.redefineSumStats)
-        # TODO
-        for i in range(5):
-            self.ui.redefSumStatsCombo.addItem(str(i+1))
+
+        # remplissage de la liste des groupes
+        l_groups_to_add = []
+        for gb in self.parent.parent.gen_data_win.groupList:
+            if "Micro" in gb.title() or "Sequen" in gb.title():
+                l_groups_to_add.append(str(gb.title()).split(' ')[1])
+
+        l_groups_to_add.sort()
+        for i in l_groups_to_add:
+            self.ui.redefSumStatsCombo.addItem(i)
 
         nbSetsDone = str(self.parent.parent.ui.nbSetsDoneEdit.text()).strip()
         self.ui.totNumSimEdit.setText(nbSetsDone)
 
     def redefineSumStats(self):
+        """ clic sur le bouton de redéfinition des sumstats pour le groupe sélectionné
+        """
         num_gr = int(self.ui.redefSumStatsCombo.currentText())
         # test pour savoir si msat ou seq
         groupList = self.parent.parent.gen_data_win.groupList
@@ -73,11 +82,11 @@ class SetupEstimationBias(QFrame):
                 greft = g
                 break
         if "Microsat" in greft.title():
-            sumStatFrame = SetSummaryStatisticsMsatAnalysis(self.parent,self)
+            sumStatFrame = SetSummaryStatisticsMsatAnalysis(self.parent,self,num_gr)
             print self.parent.parent.gen_data_win.setSum_dico[g].getSumConf()[1]
             sumStatFrame.setSumConf(self.parent.parent.gen_data_win.setSum_dico[g].getSumConf()[1].strip().split('\n'))
         elif "Sequence" in greft.title():
-            sumStatFrame = SetSummaryStatisticsSeqAnalysis(self.parent,self)
+            sumStatFrame = SetSummaryStatisticsSeqAnalysis(self.parent,self,num_gr)
             sumStatFrame.setSumConf(self.parent.parent.gen_data_win.setSumSeq_dico[g].getSumConf()[1].strip().split('\n'))
         else:
             return
@@ -122,8 +131,17 @@ class SetupEstimationBias(QFrame):
                 chosen_scs_txt+="%s,"%str(cs)
             chosen_scs_txt = chosen_scs_txt[:-1]
             #dico_est = self.analysis[-1]
-            if self.analysis.category == "estimate":
+            if self.analysis.category == "estimate" or self.analysis.category == "modelChecking":
                 self.analysis.computationParameters = "s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['numberOfselData'],self.dico_values['transformation'],self.dico_values['choice'])
+                if self.analysis.category == "modelChecking":
+                    pat = re.compile(r'\s+')
+                    statsStr = ""
+                    for k in self.analysis.sumStatsDico.keys():
+                        statsStr += pat.sub(' ',self.analysis.sumStatsDico[k])
+                        statsStr += " "
+
+                    self.analysis.computationParameters += ";v:%s;"%statsStr.strip()
+                    self.analysis.computationParameters += self.analysis.aParams
             elif self.analysis.category == "bias":
                 strparam = "s:%s;"%self.analysis.chosenSc
                 strparam += "n:%s;"%self.dico_values['choNumberOfsimData']

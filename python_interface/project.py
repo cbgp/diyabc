@@ -704,6 +704,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         elif type_analysis == "evaluate":
             #self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
             self.addAnalysisGui(analysis,analysis.name,"evaluate confidence","%s | %s"%(analysis.candidateScList,analysis.chosenSc),"new")
+        elif type_analysis == "modelChecking":
+            self.addAnalysisGui(analysis,analysis.name,"model checking","%s | %s"%(analysis.candidateScList,analysis.chosenSc),"new")
 
     def addAnalysisGui(self,analysis,name,atype,params,status):
 

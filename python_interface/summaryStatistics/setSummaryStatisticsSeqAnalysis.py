@@ -14,8 +14,8 @@ class SetSummaryStatisticsSeqAnalysis(SetSummaryStatisticsSeq):
     """ ecran de selection des summary statistics pour les sequences dans le cadre d'une
     analyse de model checking
     """
-    def __init__(self,parent=None,stackTarget=None):
-        super(SetSummaryStatisticsSeqAnalysis,self).__init__(parent)
+    def __init__(self,parent=None,stackTarget=None,numGroup=0):
+        super(SetSummaryStatisticsSeqAnalysis,self).__init__(parent,numGroup=numGroup)
         self.stackTarget = stackTarget
 
         self.ui.clearButton.hide()
@@ -23,7 +23,8 @@ class SetSummaryStatisticsSeqAnalysis(SetSummaryStatisticsSeq):
     def exit(self):
         self.parent.parent.ui.analysisStack.removeWidget(self)
         self.parent.parent.ui.analysisStack.setCurrentWidget(self.stackTarget)
-        # TODO : maj le dico de sum stats de l'analyse
-        print "je sors de sumseqana"
+        # maj le dico de sum stats de l'analyse
+        self.stackTarget.analysis.sumStatsDico[self.numGroup] = self.getSumStatsTableHeader()
+        print self.stackTarget.analysis.sumStatsDico
 
 

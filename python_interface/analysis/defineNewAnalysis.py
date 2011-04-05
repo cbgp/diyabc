@@ -103,7 +103,13 @@ class DefineNewAnalysis(QFrame):
                     QMessageBox.information(self,"Scenario error","At least 1 scenario is needed for this analysis")
             elif self.ui.modCheckRadio.isChecked():
                 if len(self.parent.hist_model_win.scList) >= 1:
+                    compParamtxt = "a:"
+                    if self.ui.modCheckPcaCheck.isChecked():
+                        compParamtxt += "p"
+                    if self.ui.modCheckLossCheck.isChecked():
+                        compParamtxt += "l"
                     analysis = Analysis(name,"modelChecking")
+                    analysis.aParams = compParamtxt
                     modCheckFrame = SetupEstimationBias(analysis,self)
                     genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",modCheckFrame,"Model Checking",1,analysis,self)
                     self.parent.ui.analysisStack.addWidget(genSel)
