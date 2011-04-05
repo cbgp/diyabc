@@ -140,7 +140,7 @@ class SetupEstimationBias(QFrame):
                         statsStr += pat.sub(' ',self.analysis.sumStatsDico[k])
                         statsStr += " "
 
-                    self.analysis.computationParameters += ";v:%s;"%statsStr.strip()
+                    self.analysis.computationParameters += ";v:%s;q:%s;"%(statsStr.strip(),self.dico_values["numberOfDataFromPost"])
                     self.analysis.computationParameters += self.analysis.aParams
             elif self.analysis.category == "bias":
                 strparam = "s:%s;"%self.analysis.chosenSc
@@ -242,6 +242,7 @@ class SetupEstimationBias(QFrame):
         self.dico_values["numberOfselData"] = str(self.ui.nosdEdit.text())
         self.dico_values["choNumberOfsimData"] = str(self.ui.cnosdEdit.text())
         self.dico_values["numberOfTestData"] = str(self.ui.notdsEdit.text())
+        self.dico_values["numberOfDataFromPost"] = str(self.ui.nodssftpEdit.text())
         choice = ""
         if self.ui.oCheck.isChecked():
             choice += "o"

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setupEstimationBias.ui'
 #
-# Created: Mon Apr  4 18:05:50 2011
+# Created: Tue Apr  5 17:24:08 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -229,14 +229,20 @@ class Ui_Frame(object):
         self.redefSumStatsFrame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.redefSumStatsFrame.setFrameShadow(QtGui.QFrame.Raised)
         self.redefSumStatsFrame.setObjectName(_fromUtf8("redefSumStatsFrame"))
-        self.horizontalLayout_8 = QtGui.QHBoxLayout(self.redefSumStatsFrame)
-        self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
+        self.gridLayout_3 = QtGui.QGridLayout(self.redefSumStatsFrame)
+        self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.redefSumStatsButton = QtGui.QPushButton(self.redefSumStatsFrame)
         self.redefSumStatsButton.setObjectName(_fromUtf8("redefSumStatsButton"))
-        self.horizontalLayout_8.addWidget(self.redefSumStatsButton)
+        self.gridLayout_3.addWidget(self.redefSumStatsButton, 0, 0, 1, 1)
         self.redefSumStatsCombo = QtGui.QComboBox(self.redefSumStatsFrame)
         self.redefSumStatsCombo.setObjectName(_fromUtf8("redefSumStatsCombo"))
-        self.horizontalLayout_8.addWidget(self.redefSumStatsCombo)
+        self.gridLayout_3.addWidget(self.redefSumStatsCombo, 0, 1, 1, 1)
+        self.label_9 = QtGui.QLabel(self.redefSumStatsFrame)
+        self.label_9.setObjectName(_fromUtf8("label_9"))
+        self.gridLayout_3.addWidget(self.label_9, 1, 0, 1, 1)
+        self.nodssftpEdit = QtGui.QLineEdit(self.redefSumStatsFrame)
+        self.nodssftpEdit.setObjectName(_fromUtf8("nodssftpEdit"))
+        self.gridLayout_3.addWidget(self.nodssftpEdit, 1, 1, 1, 1)
         self.verticalLayout_2.addWidget(self.redefSumStatsFrame)
         self.paramChoiceBox = QtGui.QGroupBox(Frame)
         self.paramChoiceBox.setObjectName(_fromUtf8("paramChoiceBox"))
@@ -283,6 +289,8 @@ class Ui_Frame(object):
 "in the reference table :", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("Frame", "Chosen number of simulated data : ", None, QtGui.QApplication.UnicodeUTF8))
         self.redefSumStatsButton.setText(QtGui.QApplication.translate("Frame", "Redefine summary statistics of group :", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_9.setText(QtGui.QApplication.translate("Frame", "Number of data sets simulated \n"
+"from the posterior", None, QtGui.QApplication.UnicodeUTF8))
         self.paramChoiceBox.setTitle(QtGui.QApplication.translate("Frame", "Choice of parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.oCheck.setText(QtGui.QApplication.translate("Frame", "Original", None, QtGui.QApplication.UnicodeUTF8))
         self.cCheck.setText(QtGui.QApplication.translate("Frame", "Composite", None, QtGui.QApplication.UnicodeUTF8))

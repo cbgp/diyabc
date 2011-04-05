@@ -48,6 +48,8 @@ class SetupComparisonEvaluation(QFrame):
 
 
     def validate(self):
+        """ défini les computation parameters de l'analyse et ajoute celle-ci au projet
+        """
         #self.parent.parent.addRow("scenario choice","params","4","new")
         self.analysis.candidateScList = self.scNumList
         self.majDicoValues()
