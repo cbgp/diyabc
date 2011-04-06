@@ -59,8 +59,10 @@ class DrawPCAAnalysisResult(QFrame):
             lines = f.readlines()
             f.close()
             self.dico_points = {}
+            self.dico_points_posterior = {}
 
             nb_composantes = (len(lines[0].split(" "))-2)
+            nb_prior = int(lines[0].split(" ")[0])
             nb_lignes = len(lines)
             self.dico_points[-1] = lines[0].split(" ")[2:]
             self.dico_points[0] = lines[1].split(" ")[1:]
@@ -69,7 +71,8 @@ class DrawPCAAnalysisResult(QFrame):
 
             # pour chaque ligne
             i=2
-            while i < len(lines):
+            #while i < len(lines):
+            while i < nb_prior+2:
             #for i,l in enumerate(lines):
                 l=lines[i]
                 pc = (float(i)/float(nb_lignes)*100)+1
@@ -94,7 +97,27 @@ class DrawPCAAnalysisResult(QFrame):
                     c+=1
                 i+=1
 
-                #if i == 10000: break
+            while i < nb_lignes:
+                l=lines[i]
+                pc = (float(i)/float(nb_lignes)*100)+1
+                if (int(pc) % 2) == 0:
+                    self.ui.ACProgress.setValue(pc)
+                tab = l.split(" ")
+                num_sc = int(tab[0])
+                # si le sc n'est pas encore dans le dico
+                if num_sc not in self.dico_points_posterior.keys():
+                    self.dico_points_posterior[num_sc] = []
+                    # on y ajoute ce qui va etre la liste des coords pour chaque composante
+                    for j in range(nb_composantes):
+                        self.dico_points_posterior[num_sc].append([])
+
+                # on ajoute chaque coordonnée dans la composante correspondante
+                c = 1
+                while c < len(tab):
+                    print num_sc," ",c-1," ",tab[c]," ",self.dico_points_posterior.keys()
+                    self.dico_points_posterior[num_sc][c-1].append( float(tab[c]) )
+                    c+=1
+                i+=1
 
             # initialisation des combo
             self.ui.compoHCombo.clear()
@@ -113,7 +136,7 @@ class DrawPCAAnalysisResult(QFrame):
 
     def drawGraphToPlot(self,legend,plot,num_sc,compo_h,compo_v,nbp):
         """ dessine les points pour un scenario, deux components, sur plot et met à jour legend
-        le tout limité à nbp points
+        le tout limité à nbp points. retourne le curve du posterior ou None s'il n'y en a pas
         """
         legend_txt = "Scenario %s"%num_sc
         c = QwtPlotCurve(legend_txt)
@@ -125,6 +148,21 @@ class DrawPCAAnalysisResult(QFrame):
         c.setData(self.dico_points[num_sc][compo_h][:nbp], self.dico_points[num_sc][compo_v][:nbp])
         c.attach(plot)
         c.updateLegend(legend)
+        # si on a des coordonnées pour le posterior, on les dessine
+        # avec la meme couleur mais plus gros
+        if num_sc in self.dico_points_posterior.keys():
+            legend_txt = "Scenario %s posterior"%num_sc
+            c = QwtPlotCurve(legend_txt)
+            c.setStyle(QwtPlotCurve.Dots)
+            c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+                  QBrush(QColor(self.tab_colors[(num_sc%20)])),
+                    QPen(Qt.black),
+                      QSize(12, 12)))
+            c.setData(self.dico_points_posterior[num_sc][compo_h][:nbp], self.dico_points_posterior[num_sc][compo_v][:nbp])
+            c.attach(plot)
+            c.updateLegend(legend)
+            return c
+        return None
 
     def drawObservedToPlot(self,legend,plot,compo_h,compo_v):
         """ dessine le point observé sur plot pour les deux components donnés
@@ -162,20 +200,21 @@ class DrawPCAAnalysisResult(QFrame):
             #legend.setItemMode(QwtLegend.CheckableItem)
 
 
+            posteriorList = []
             if self.ui.scCombo.currentText() == "all":
                 for i in self.dico_points.keys():
                     # on ne fait pas le observed pour l'instant
                     if i != 0 and i != -1:
-                        self.drawGraphToPlot(legend,p,i,compo_h,compo_v,nbp)
+                        posteriorList.append(self.drawGraphToPlot(legend,p,i,compo_h,compo_v,nbp))
             else:
                 num_sc = int(self.ui.scCombo.currentText())
-                self.drawGraphToPlot(legend,p,num_sc,compo_h,compo_v,nbp)
+                posteriorList.append(self.drawGraphToPlot(legend,p,num_sc,compo_h,compo_v,nbp))
 
             # on fait le observed à la fin pour qu'il soit au dessus des autres
             # et donc visible
             obs = self.drawObservedToPlot(legend,p,compo_h,compo_v)
 
-            self.fancyfyGraph(legend,p,obs)
+            self.fancyfyGraph(legend,p,obs,posteriorList)
             p.insertLegend(legend,QwtPlot.RightLegend)
             pm = QwtPlotMagnifier(p.canvas())
             pp = QwtPlotPanner(p.canvas())
@@ -202,7 +241,7 @@ class DrawPCAAnalysisResult(QFrame):
             self.plot = p
 
 
-    def fancyfyGraph(self,legend,p,obs):
+    def fancyfyGraph(self,legend,p,obs,posteriorList):
         """ met en forme la légende et calcule l'intervale des divisions des axes
         """
         for it in legend.legendItems():
@@ -214,6 +253,10 @@ class DrawPCAAnalysisResult(QFrame):
         litem.setIdentifierWidth(17)
         legend.setFrameShape(QFrame.Box)
         legend.setFrameShadow(QFrame.Raised)
+        for postcurve in posteriorList:
+            litem = legend.find(postcurve)
+            litem.symbol().setSize(QSize(12,12))
+            litem.setIdentifierWidth(12)
 
         p.replot()
         sd = p.axisScaleDiv(0)
