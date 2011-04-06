@@ -296,7 +296,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             tar.add('scmf','%s/launch.sh'%tarRepName)
             tar.add('scnf','%s/node.sh'%tarRepName)
             tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
-            tar.add(self.dataFileSource,"%s/%s"%(tarRepName,self.dataFileName))
+            tar.add(self.dataFileSource,"%s/%s"%(str(tarRepName),str(self.dataFileName)))
             tar.add(executablePath,"%s/general"%tarRepName)
             tar.close()
 
@@ -312,8 +312,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def on_btnStart_clicked(self):
         """ Lance un thread de generation de la reftable
         """
+        self.save()
         self.writeRefTableHeader()
-        tname = self.generateComputationTar("/tmp/aaaa.tar")
         if self.th == None:
             try:
                 nb_to_gen = int(self.ui.nbSetsReqEdit.text())
@@ -322,6 +322,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 return
             # on demarre le thread local ou cluster
             if self.parent.preferences_win.ui.serverCheck.isChecked():
+                tname = self.generateComputationTar("/tmp/aaaa.tar")
                 self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
                 self.th = RefTableGenThread(self,nb_to_gen)
@@ -337,10 +338,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             #self.cancelTh()
 
     def refTableProblem(self):
-        output.notify(self,"reftable problem","Something append during the reftable generation : %s"%(self.th.problem))
+        output.notify(self,"reftable problem","Something happened during the reftable generation : %s"%(self.th.problem))
  
     def incProgress(self):
-        """Increment the progress dialog"""
+        """Increment the progress dialog
+        """
         done = self.th.nb_done
         nb_to_do = self.th.nb_to_gen
         pc = (float(done)/float(nb_to_do))*100
@@ -494,6 +496,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.addAnalysisGui(analysis,analysis.name,"evaluate confidence","%s | %s"%(analysis.candidateScList,analysis.chosenSc),"new")
         elif type_analysis == "modelChecking":
             self.addAnalysisGui(analysis,analysis.name,"model checking","%s | %s"%(analysis.candidateScList,analysis.chosenSc),"new")
+
+        self.save()
 
     def addAnalysisGui(self,analysis,name,atype,params,status):
 
