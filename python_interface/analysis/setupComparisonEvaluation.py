@@ -6,6 +6,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from uis.setupComparisonEvaluation_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
+import output
 
 class SetupComparisonEvaluation(QFrame):
     """ dernière étape de définition d'une analyse de type comparison ou evaluate
@@ -46,6 +47,26 @@ class SetupComparisonEvaluation(QFrame):
 
         self.ui.totNumSimEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
 
+    def checkAll(self):
+        problems = ""
+        try:
+            if (self.ui.totNumSimEdit.text() != "" or self.ui.totNumSimEdit.text() != "0") and int(self.ui.totNumSimEdit.text()) < int(self.ui.cnosdEdit.text()):
+                problems += "Impossible to select more data than it exists in the reference table\n"
+            if self.analysis.category == "evaluate":
+                notds = int(self.ui.notdsEdit.text())
+            lr = int(self.ui.lrEdit.text())
+            de = int(self.ui.deEdit.text())
+            cnosd = int(self.ui.cnosdEdit.text())
+
+        except Exception,e:
+            problems += "Only non-empty integer values are accepted\n"
+
+        if problems == "":
+            return True
+        else:
+            output.notify(self,"value problem",problems)
+            return False
+
 
     def validate(self):
         """ défini les computation parameters de l'analyse et ajoute celle-ci au projet
@@ -59,64 +80,65 @@ class SetupComparisonEvaluation(QFrame):
             chosen_scs_txt+="%s,"%str(cs)
         chosen_scs_txt = chosen_scs_txt[:-1]
         #dico_comp = self.analysis[-1]
-        if self.analysis.category == "compare":
-            self.analysis.computationParameters = "s:%s;n:%s;d:%s;l:%s;m:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg'])
-        elif self.analysis.category == "evaluate":
-            candListTxt = ""
-            for cs in self.analysis.candidateScList:
-                candListTxt+="%s,"%str(cs)
-            candListTxt = candListTxt[:-1]
-            strparam = "s:%s;"%candListTxt
-            strparam += "r:%s;"%self.analysis.chosenSc
-            strparam += "n:%s;"%self.dico_values['choNumberOfsimData']
-            strparam += "m:%s;"%self.dico_values['numReg']
-            strparam += "d:%s;"%self.dico_values['de']
-            strparam += "l:%s;"%self.dico_values['lr']
-            strparam += "t:%s;"%self.dico_values['notds']
-            #strparam += "p:%s;"%self.dico_values['choice']
-            #print "robert ", self.analysis
-            strparam += "h:"
-            for paramname in self.analysis.histParams.keys():
-                l = self.analysis.histParams[paramname]
-                strparam += "%s="%paramname
-                if len(l) == 2:
-                    strparam += "%s "%l[1]
-                else:
-                    strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
-            for ctxt in self.analysis.condTxtList:
-                strparam += "%s "%ctxt
-            strparam = strparam[:-1]
-            strparam += ";u:"
-            #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
-            if len(self.analysis.mutationModel)>0:
-                if type(self.analysis.mutationModel[0]) == type(u'plop'):
-                    for ind,gr in enumerate(self.analysis.mutationModel):
-                        strparam += "g%s("%(ind+1)
-                        strgr = gr.strip()
-                        strgr = strgr.split('\n')
-                        print "\nstrgr %s\n"%strgr
-                        for j,elem in enumerate(strgr):
-                            if elem.split(' ')[0] != "MODEL":
-                                to_add = strgr[j].split(' ')[1]
-                                strparam += "%s "%to_add
-                        # virer le dernier espace
-                        strparam = strparam[:-1]
-                        strparam += ")*"
-                else:
-                    for ind,gr in enumerate(self.analysis.mutationModel):
-                        strparam += "g%s("%(ind+1)
-                        for num in gr:
-                            strparam += "%s "%num
-                        # virer le dernier espace
-                        strparam = strparam[:-1]
-                        strparam += ")*"
-                # virer le dernier '-'
+        if self.checkAll():
+            if self.analysis.category == "compare":
+                self.analysis.computationParameters = "s:%s;n:%s;d:%s;l:%s;m:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg'])
+            elif self.analysis.category == "evaluate":
+                candListTxt = ""
+                for cs in self.analysis.candidateScList:
+                    candListTxt+="%s,"%str(cs)
+                candListTxt = candListTxt[:-1]
+                strparam = "s:%s;"%candListTxt
+                strparam += "r:%s;"%self.analysis.chosenSc
+                strparam += "n:%s;"%self.dico_values['choNumberOfsimData']
+                strparam += "m:%s;"%self.dico_values['numReg']
+                strparam += "d:%s;"%self.dico_values['de']
+                strparam += "l:%s;"%self.dico_values['lr']
+                strparam += "t:%s;"%self.dico_values['notds']
+                #strparam += "p:%s;"%self.dico_values['choice']
+                #print "robert ", self.analysis
+                strparam += "h:"
+                for paramname in self.analysis.histParams.keys():
+                    l = self.analysis.histParams[paramname]
+                    strparam += "%s="%paramname
+                    if len(l) == 2:
+                        strparam += "%s "%l[1]
+                    else:
+                        strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
+                for ctxt in self.analysis.condTxtList:
+                    strparam += "%s "%ctxt
                 strparam = strparam[:-1]
-            #print "ursulla : %s"%strparam
+                strparam += ";u:"
+                #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
+                if len(self.analysis.mutationModel)>0:
+                    if type(self.analysis.mutationModel[0]) == type(u'plop'):
+                        for ind,gr in enumerate(self.analysis.mutationModel):
+                            strparam += "g%s("%(ind+1)
+                            strgr = gr.strip()
+                            strgr = strgr.split('\n')
+                            print "\nstrgr %s\n"%strgr
+                            for j,elem in enumerate(strgr):
+                                if elem.split(' ')[0] != "MODEL":
+                                    to_add = strgr[j].split(' ')[1]
+                                    strparam += "%s "%to_add
+                            # virer le dernier espace
+                            strparam = strparam[:-1]
+                            strparam += ")*"
+                    else:
+                        for ind,gr in enumerate(self.analysis.mutationModel):
+                            strparam += "g%s("%(ind+1)
+                            for num in gr:
+                                strparam += "%s "%num
+                            # virer le dernier espace
+                            strparam = strparam[:-1]
+                            strparam += ")*"
+                    # virer le dernier '-'
+                    strparam = strparam[:-1]
+                #print "ursulla : %s"%strparam
 
-            self.analysis.computationParameters = strparam
-        self.parent.parent.addAnalysis(self.analysis)
-        self.exit()
+                self.analysis.computationParameters = strparam
+            self.parent.parent.addAnalysis(self.analysis)
+            self.exit()
 
     def setCandidateScenarios(self,scList):
         """ écrit la liste des scenarios candidats

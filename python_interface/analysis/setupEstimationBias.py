@@ -100,16 +100,17 @@ class SetupEstimationBias(QFrame):
     def checkAll(self):
         problems = ""
         try:
-            if self.ui.totNumSimEdit.text() != "" and int(self.ui.totNumSimEdit.text()) < int(self.ui.cnosdEdit.text()):
+            if (self.ui.totNumSimEdit.text() != "" or self.ui.totNumSimEdit.text() != "0") and int(self.ui.totNumSimEdit.text()) < int(self.ui.cnosdEdit.text()):
                 problems += "Impossible to select more data than it exists in the reference table\n"
             if self.analysis.category == "bias":
                 notds = int(self.ui.notdsEdit.text())
+            elif self.analysis.category == "modelChecking":
+                nodssftp = int(self.ui.nodssftpEdit.text())
             nosd = int(self.ui.nosdEdit.text())
             cnosd = int(self.ui.cnosdEdit.text())
 
         except Exception,e:
             problems += "Only non-empty integer values are accepted\n"
-        print "plop"
 
         if problems == "":
             return True
