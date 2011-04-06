@@ -64,7 +64,7 @@ class Diyabc(QMainWindow):
         file_menu.addAction("&Open",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
         self.saveProjActionMenu = file_menu.addAction("&Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
         self.deleteProjActionMenu = file_menu.addAction("&Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
-        self.cloneProjActionMenu = file_menu.addAction("&Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_C))
+        self.cloneProjActionMenu = file_menu.addAction("&Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
         self.closeProjActionMenu = file_menu.addAction("C&lose current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)
         self.saveProjActionMenu.setDisabled(True)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 class Analysis():
-    def __init__(self,name,category,state="new"):
+    def __init__(self,name,category,status="new"):
         self.name = name
         self.category = category
         self.chosenSc = 0
@@ -15,7 +15,7 @@ class Analysis():
         self.params = ""
         self.aParams = None
 
-        self.state = state
+        self.status = status
 
     def getChosenSc(self):
         return self.chosenSc

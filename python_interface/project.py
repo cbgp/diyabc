@@ -479,23 +479,23 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         print analysis.computationParameters
         if type_analysis == "pre-ev":
             #self.addRow("scenario prior combination",analysis[1],"4","new")
-            self.addAnalysisGui(analysis,analysis.name,"scenario prior combination",analysis.computationParameters,"new")
+            self.addAnalysisGui(analysis,analysis.name,"scenario prior combination",analysis.computationParameters,analysis.status)
         elif type_analysis == "estimate":
             print "\n",analysis.computationParameters,"\n"
             #self.addRow("parameter estimation","params","5","new")
-            self.addAnalysisGui(analysis,analysis.name,"parameter estimation","params","new")
+            self.addAnalysisGui(analysis,analysis.name,"parameter estimation","params",analysis.status)
         elif type_analysis == "bias":
             #self.addRow("bias and precision",str(analysis[2]),"3","new")
-            self.addAnalysisGui(analysis,analysis.name,"bias and precision",str(analysis.chosenSc),"new")
+            self.addAnalysisGui(analysis,analysis.name,"bias and precision",str(analysis.chosenSc),analysis.status)
         elif type_analysis == "compare":
             #print "\n",analysis[-1],"\n"
             #self.addRow("scenario choice",analysis[2]["de"],"4","new")
-            self.addAnalysisGui(analysis,analysis.name,"scenario choice","%s | %s"%(analysis.candidateScList,analysis.chosenSc),"new")
+            self.addAnalysisGui(analysis,analysis.name,"scenario choice","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
         elif type_analysis == "evaluate":
             #self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
-            self.addAnalysisGui(analysis,analysis.name,"evaluate confidence","%s | %s"%(analysis.candidateScList,analysis.chosenSc),"new")
+            self.addAnalysisGui(analysis,analysis.name,"evaluate confidence","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
         elif type_analysis == "modelChecking":
-            self.addAnalysisGui(analysis,analysis.name,"model checking","%s | %s"%(analysis.candidateScList,analysis.chosenSc),"new")
+            self.addAnalysisGui(analysis,analysis.name,"model checking","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
 
         self.save()
 
@@ -575,6 +575,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress"),self.analysisProgress)
         self.thAnalysis.start()
         frame.findChild(QPushButton,"analysisButton").setText("Running")
+        analysis.status = "running"
 
     def analysisProgress(self):
         """ met à jour l'indicateur de progression de l'analyse en cours
@@ -598,6 +599,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """
         self.thAnalysis.terminate()
         aid = self.thAnalysis.analysis.name
+        self.thAnalysis.analysis.status = "finished"
         atype = self.thAnalysis.analysis.category
         self.thAnalysis = None
 
