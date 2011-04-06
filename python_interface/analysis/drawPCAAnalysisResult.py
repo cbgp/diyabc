@@ -72,7 +72,7 @@ class DrawPCAAnalysisResult(QFrame):
             # pour chaque ligne
             i=2
             #while i < len(lines):
-            while i < nb_prior+2:
+            while i < nb_prior+2 and i < nb_lignes:
             #for i,l in enumerate(lines):
                 l=lines[i]
                 pc = (float(i)/float(nb_lignes)*100)+1
