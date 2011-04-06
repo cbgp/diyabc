@@ -53,8 +53,11 @@ double **ssphistar,**ssref;
             delete []qq;
        } 
         //cout <<"dans resetstat nstat = "<<header.nstat++<<"\n";
-        for (gr=1;gr<=header.ngroupes;gr++) header.groupe[gr].sumstat = new StatC[header.groupe[gr].nstat];     
+        
+        for (gr=1;gr<=header.ngroupes;gr++) {delete []header.groupe[gr].sumstat;header.groupe[gr].sumstat = new StatC[header.groupe[gr].nstat];}     
         ss =splitwords(s," ",&ns);
+        delete []header.statname;header.statname = new string[ns];
+        for (int i=0;i<ns;i++) header.statname[i]=ss[i];
         for (int i=0;i<ns;i++) { 
             qq=splitwords(ss[i],"_",&nq);
             gr=atoi(qq[1].c_str());
@@ -145,7 +148,105 @@ double **ssphistar,**ssref;
         cout<<"nphistarOK="<<nphistarOK<<"\n";
         return nphistarOK;
     }
-
+    
+    void call_loc(int npart,int nstat, int nrec,int nsel,double **ss, double *stat_obs) {
+        int *avant,*apres,*egal;
+        double *qobs,diff,quant;
+        string *star;
+        cout<<"coucou\n";
+        qobs = new double[header.nstat];
+        star = new string[header.nstat];
+        avant = new int[header.nstat];for (int i=0;i<header.nstat;i++) avant[i] = 0;
+        apres = new int[header.nstat];for (int i=0;i<header.nstat;i++) apres[i] = 0;
+        egal  = new int[header.nstat];for (int i=0;i<header.nstat;i++) egal[i] = 0;
+        for (int p=0;p<npart;p++) {
+            for (int j=0;j<header.nstat;j++) {
+                diff=stat_obs[j]-ss[p][j];
+                if (diff>0.001) avant[j]++;
+                else if (diff<-0.001) apres[j]++; else egal[j]++;
+            }
+        }
+        for (int j=0;j<header.nstat;j++) {
+              qobs[j] = (double)(avant[j]+apres[j]+egal[j]);
+              if (qobs[j]>0.0) qobs[j] = (0.5*(double)egal[j]+(double)avant[j])/qobs[j]; else qobs[j]=-1;
+              star[j]="      ";
+              if ((qobs[j]>0.95)or(qobs[j]<0.05)) star[j]=" (*)  ";
+              if ((qobs[j]>0.99)or(qobs[j]<0.01)) star[j]=" (**) ";
+              if ((qobs[j]>0.999)or(qobs[j]<0.001)) star[j]=" (***)";
+              cout<<setiosflags(ios::left)<<setw(15)<<header.statname[j]<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<stat_obs[j]<<")   ";
+              cout<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<qobs[j]<<star[j]<<"  ";
+              cout<<"\n";
+        }
+        char *nomfiloc;
+        nomfiloc = new char[strlen(path)+strlen(ident)+20];
+        strcpy(nomfiloc,path);
+        strcat(nomfiloc,ident);
+        strcat(nomfiloc,"_locate.txt");
+        cout <<nomfiloc<<"\n";
+        time_t rawtime;
+        struct tm * timeinfo;
+        time ( &rawtime );
+        timeinfo = localtime ( &rawtime );
+        ofstream f12(nomfiloc,ios::out);
+        f12<<"DIYABC :                   POSTERIOR CHECKING                         "<<asctime(timeinfo)<<"\n";
+        f12<<"Data file                     : "<<header.datafilename<<"\n";
+        f12<<"Reference table               : "<<rt.filename<<"\n";
+        f12<<"Number of simulated data sets used to compute posterior    : "<<nrec<<"\n";
+        f12<<"Number of simulated data sets used in the local regression : "<<nsel<<"\n";
+        f12<<"Number of data sets simulated from the posterior           : "<<npart<<"\n";
+        f12<<"Values indicate for each summary statistics the proportion \nof simulated data sets which have a value below the observed one\n";
+        f12<<" Summary           observed    scenario   ";f12<<"\n";
+        f12<<"statistics           value ";f12<< "      "<<setw(3)<<rt.scenteste<< "      ";f12<<"\n";
+        for (int j=0;j<header.nstat;j++) {
+             f12<<setiosflags(ios::left)<<setw(15)<<header.statname[j]<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<stat_obs[j]<<")   ";
+             f12<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<qobs[j]<<star[j]<<"   ";
+             f12<<"\n";
+        }
+        f12.close();
+    
+    
+    }
+    
+    void call_acp(int nr, int ns, int nstat, int *numscen,double **ssref, double **ssphistar, double *stat_obs) {
+        resACPC rACP;
+        double *pca_statobs,**pca_ss;
+        pca_statobs = new double[nstat];
+        pca_ss = new double*[ns];
+        for (int i=0;i<ns;i++) pca_ss[i] = new double[nstat];
+        rACP = ACP(nr,nstat,ssref,1.0,0);
+        for (int j=0;j<rACP.nlambda;j++){
+            pca_statobs[j]=0.0;
+            for(int k=0;k<nstat;k++) pca_statobs[j] +=(stat_obs[k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
+        }
+        for (int i=0;i<ns;i++) {
+            for (int j=0;j<rACP.nlambda;j++){
+                pca_ss[i][j]=0.0;
+                for(int k=0;k<nstat;k++) pca_ss[i][j] +=(ssphistar[i][k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
+            }
+        }
+        char *nomfiACP;
+        nomfiACP = new char[strlen(path)+strlen(ident)+20];
+        strcpy(nomfiACP,path);
+        strcat(nomfiACP,ident);
+        strcat(nomfiACP,"_ACP.txt");
+        cout <<nomfiACP<<"\n";
+        FILE *f1;
+        f1=fopen(nomfiACP,"w");
+        fprintf(f1,"%d %d",nacp,rACP.nlambda);
+        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
+        fprintf(f1,"%d",0);
+        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",pca_statobs[i]);fprintf(f1,"\n");
+        for (int i=0;i<nr;i++){
+            fprintf(f1,"%d",numscen[i]);
+            for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3f",rACP.princomp[i][j]);fprintf(f1,"\n");
+        }
+        for (int i=0;i<ns;i++){
+            fprintf(f1,"%d",rt.scenteste);
+            for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3f",pca_ss[i][j]);fprintf(f1,"\n");
+        }
+        fclose(f1);
+    }
+    
     void domodchec(char *options,int seed){
         char  *progressfilename;
         int nstatOK, iprog,nprog;
@@ -170,7 +271,7 @@ double **ssphistar,**ssref;
                 ss1 = splitwords(s1,",",&rt.nscenchoisi);
                 rt.scenchoisi = new int[rt.nscenchoisi];
                 for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());
-                nrecpos=0;for (int j=0;j<rt.nscenchoisi;j++) nrecpos +=rt.nrecscen[rt.scenchoisi[j]-1];
+                nrecpos=rt.nrecscen[rt.scenchoisi[0]-1];
                 cout <<"scenario choisi : "<<rt.scenchoisi[0]<<"\n";
                 rt.scenteste = rt.scenchoisi[0]; 
             } else if (s0=="n:") {
@@ -205,23 +306,24 @@ double **ssphistar,**ssref;
                  
             }           
         }
+        nprog=newsspart+100;
+        if ((newstat)and(dopca)) nprog += header.nscenarios*10000; 
+        iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         original=true;composite=false;
         nstatOK = rt.cal_varstat();                       //cout<<"apres cal_varstat\n";
         stat_obs = header.read_statobs(statobsfilename);  //cout<<"apres read_statobs\n";
-        nprog=100;iprog=1;
-        flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         rt.alloue_enrsel(nsel);
         rt.cal_dist(nrec,nsel,stat_obs);                  //cout<<"apres cal_dist\n";
-        iprog+=8;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=40;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         det_numpar();                                     //cout<<"apres det_numpar\n";
-        nprog=nparamcom*10+14;
         recalparam(nsel);                                 //cout<<"apres recalparam\n";
         rempli_mat(nsel,stat_obs);                        //cout<<"apres rempli_mat\n";
         local_regression(nsel);               //cout<<"apres local_regression\n";
-        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=20;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         phistar = calphistar(nsel);                                 //cout<<"apres calphistar\n";
         det_nomparam();
         savephistar(nsel,path,ident);                     //cout<<"apres savephistar\n";
+        iprog+=20;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         //phistarOK = new double*[nsel];
         //for (int i=0;i<nsel;i++) phistarOK[i] = new double[header.scenario[rt.scenteste-1].nparam];
         //nphistarOK=detphistarOK(nsel,phistar,phistarOK);
@@ -250,46 +352,52 @@ double **ssphistar,**ssref;
             }
             firsttime=false;
             nss+=nenr;
+            iprog+=nenr;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             cout<<nss<<"\n";
         }
-        if (newstat) {
-            header.readHeader(headerfilename);cout<<"apres readHeader nscenarios= "<<header.nscenarios<<"\n";
-            usestats = resetstats(snewstat);
-            stat_obs = header.read_statobs(statobsfilename);  //cout<<"apres read_statobs\n";
-            newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n"; 
-            numscen = new int[newrefpart];
-            ssref = new double*[newrefpart];
-            for (int i=0;i<newrefpart;i++) ssref[i] = new double[header.nstat];
-            nsr=0;
-            firsttime=true;
-            while (nsr<newrefpart) {
-                ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
-                for (int i=0;i<nenr;i++) {
-                  numscen[i+nsr] = enreg[i].numscen;  
-                  for (int j=0;j<header.nstat;j++) ssref[i+nsr][j]=enreg[i].stat[j];
-                    //for (int j=0;j<header.nstat;j++) cout<<ssref[i+nsr][j]<<"   ";cout<<"\n";
+        if (newstat) {header.calstatobs(statobsfilename);stat_obs = header.read_statobs(statobsfilename);}
+        if (doloc) call_loc(newsspart,header.nstat,nrec,nsel,ssphistar,stat_obs);
+        if (dopca) {
+            if (newstat) {
+                header.readHeader(headerfilename);cout<<"apres readHeader nscenarios= "<<header.nscenarios<<"\n";
+                usestats = resetstats(snewstat);
+                newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n"; 
+                numscen = new int[newrefpart];
+                ssref = new double*[newrefpart];
+                for (int i=0;i<newrefpart;i++) ssref[i] = new double[header.nstat];
+                nsr=0;
+                firsttime=true;
+                while (nsr<newrefpart) {
+                    ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
+                    for (int i=0;i<nenr;i++) {
+                      numscen[i+nsr] = enreg[i].numscen;  
+                      for (int j=0;j<header.nstat;j++) ssref[i+nsr][j]=enreg[i].stat[j];
+                        //for (int j=0;j<header.nstat;j++) cout<<ssref[i+nsr][j]<<"   ";cout<<"\n";
+                    }
+                    firsttime=false;
+                    nsr+=nenr;
+                    iprog+=nenr;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+                    cout<<nsr<<"\n";
                 }
-                firsttime=false;
-                nsr+=nenr;
-                cout<<nsr<<"\n";
+            } else {
+                rt.openfile2();
+                enregC enr;
+                nparamax=0;for (int i=0;i<rt.nscen;i++)  if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
+                enr.stat = new float[rt.nstat];
+                enr.param = new float[nparamax];
+                newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n"; 
+                numscen = new int[newrefpart];
+                ssref = new double*[newrefpart];
+                for (int i=0;i<newrefpart;i++) ssref[i] = new double[header.nstat];
+                nsr=0;
+                while (nsr<newrefpart) {
+                    bidon = rt.readrecord(&enr);
+                    numscen[nsr] = enr.numscen;
+                    for (int j=0;j<rt.nstat;j++) ssref[nsr][j]=enr.stat[j];
+                    nsr++;
+                }
             }
-        } else {
-            rt.openfile2();
-            enregC enr;
-            nparamax=0;for (int i=0;i<rt.nscen;i++)  if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
-            enr.stat = new float[rt.nstat];
-            enr.param = new float[nparamax];
-            newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n"; 
-            numscen = new int[newrefpart];
-            ssref = new double*[newrefpart];
-            for (int i=0;i<newrefpart;i++) ssref[i] = new double[header.nstat];
-            nsr=0;
-            while (nsr<newrefpart) {
-                bidon = rt.readrecord(&enr);
-                numscen[nsr] = enr.numscen;
-                for (int j=0;j<rt.nstat;j++) ssref[nsr][j]=enr.stat[j];
-                nsr++;
-            }
-            
+            call_acp(newrefpart,newsspart,header.nstat,numscen,ssref,ssphistar,stat_obs);
         }
+        iprog+=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }

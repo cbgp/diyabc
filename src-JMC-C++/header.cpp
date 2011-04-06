@@ -599,7 +599,7 @@ public:
                 //cout<<"apres DATA\n";
 //partie GROUPES
                 int ngr = this->ngroupes;
-                //cout<<"ngr="<<ngr<<"\n";
+                cout<<"ngr="<<ngr<<"\n";
                 this->particuleobs.ngr = ngr;
                 this->particuleobs.grouplist = new LocusGroupC[ngr+1];
                 this->particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
@@ -613,6 +613,7 @@ public:
                         for (int i=0;i<this->groupe[gr].nloc;i++) this->particuleobs.grouplist[gr].loc[i] = this->groupe[gr].loc[i];
                         this->particuleobs.grouplist[gr].nstat=this->groupe[gr].nstat;
                         this->particuleobs.grouplist[gr].sumstat = new StatC[this->groupe[gr].nstat];
+                        cout<<"calstatobs nstat["<<gr<<"]="<<this->groupe[gr].nstat<<"\n";
                         for (int i=0;i<this->groupe[gr].nstat;i++){
                                 this->particuleobs.grouplist[gr].sumstat[i].cat   = this->groupe[gr].sumstat[i].cat;
                                 this->particuleobs.grouplist[gr].sumstat[i].samp  = this->groupe[gr].sumstat[i].samp;

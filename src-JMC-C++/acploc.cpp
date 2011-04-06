@@ -152,10 +152,10 @@ struct resACPC
         for (int i=0;i<nco;i++) {for (int j=0;j<nco;j++) matM[i][j]=matXTX[i][j]*anli;}
         vcprop  = new double*[nco];for (int i=0;i<nco;i++) vcprop[i]=new double [nco];
         valprop = new double[nco];
-        ecrimat("matM",nco,nco,matM);
+        //ecrimat("matM",nco,nco,matM);
         jacobi(nco,matM,valprop,vcprop);
-        cout<<"valeurs propres :\n";
-        for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout<<"\n";
+        //cout<<"valeurs propres :\n";
+        //for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout<<"\n";
         for (int i=0;i<nco-1;i++) {
             for (int j=i+1;j<nco;j++) {
                 if (valprop[i]<valprop[j]) {
@@ -169,10 +169,10 @@ struct resACPC
         res.slambda=0.0;
         for (int i=0;i<nco;i++) res.slambda +=valprop[i];
         for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout <<"\n";
-        cout<<res.slambda<<"\n";
+        //cout<<res.slambda<<"\n";
         res.nlambda=1;sl=valprop[0];
         while ((sl/res.slambda<prop)and(res.nlambda<nco)) {sl+=valprop[res.nlambda];res.nlambda++;}
-        cout<<"nombre de composantes : "<<res.nlambda<<"\n";
+        //cout<<"nombre de composantes : "<<res.nlambda<<"\n";
         res.lambda = new double[res.nlambda];
         for (int i=0;i<res.nlambda;i++) res.lambda[i]=valprop[i];
         res.vectprop = new double*[nco];
