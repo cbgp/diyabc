@@ -31,7 +31,7 @@ extern ParticleSetC ps;
 extern enregC* enreg;
 extern int nenr;
 
-double **ssphistar;
+double **ssphistar,**ssref;
 
     bool resetstats(string s) {
       cout<<s<<"\n";
@@ -59,7 +59,7 @@ double **ssphistar;
             qq=splitwords(ss[i],"_",&nq);
             gr=atoi(qq[1].c_str());
             j=0;while (qq[0]!=stat_type[j]) j++;
-            cout<<"qq[0] = "<<qq[0]<<"   j="<<j<<"\n";
+            //cout<<"qq[0] = "<<qq[0]<<"   j="<<j<<"\n";
             if (header.groupe[gr].type==0) {   //MICROSAT
                 if (stat_num[j]<5) {
                       header.groupe[gr].sumstat[k].cat=stat_num[j];
@@ -149,10 +149,10 @@ double **ssphistar;
     void domodchec(char *options,int seed){
         char  *progressfilename;
         int nstatOK, iprog,nprog;
-        int nrec,nsel,ns,ns1,nrecpos,newpart,npv,nphistarOK;
-        string opt,*ss,s,*ss1,s0,s1,newstat;
+        int nrec,nsel,ns,ns1,nrecpos,newsspart,npv,nphistarOK,nss,nsr,newrefpart,*numscen,nparamax,bidon;
+        string opt,*ss,s,*ss1,s0,s1,snewstat;
         double  *stat_obs;
-        bool usestats,firsttime,dopca,doloc;
+        bool usestats,firsttime,dopca,doloc,newstat=false;
         
         FILE *flog;
         
@@ -190,10 +190,11 @@ double **ssphistar;
                 }
             } else if (s0=="v:") {
                 cout<<""<< "\n";
-                newstat=s1;
+                snewstat=s1;
+                newstat = (s1.length()>0);
             } else if (s0=="q:") {
-                newpart=atoi(s1.c_str());
-                cout<<"nombre de particules à simuler à partir du posterior = "<<newpart<<"\n";
+                newsspart=atoi(s1.c_str());
+                cout<<"nombre de particules à simuler à partir du posterior = "<<newsspart<<"\n";
             } else if (s0=="a:") {
                 dopca=(s1.find("p")!=string::npos);
                 doloc=(s1.find("l")!=string::npos);
@@ -205,26 +206,26 @@ double **ssphistar;
             }           
         }
         original=true;composite=false;
-        nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
-        stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
+        nstatOK = rt.cal_varstat();                       //cout<<"apres cal_varstat\n";
+        stat_obs = header.read_statobs(statobsfilename);  //cout<<"apres read_statobs\n";
         nprog=100;iprog=1;
         flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         rt.alloue_enrsel(nsel);
-        rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
+        rt.cal_dist(nrec,nsel,stat_obs);                  //cout<<"apres cal_dist\n";
         iprog+=8;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-        det_numpar();                                     cout<<"apres det_numpar\n";
+        det_numpar();                                     //cout<<"apres det_numpar\n";
         nprog=nparamcom*10+14;
-        recalparam(nsel);                                 cout<<"apres recalparam\n";
-        rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
-        local_regression(nsel);               cout<<"apres local_regression\n";
+        recalparam(nsel);                                 //cout<<"apres recalparam\n";
+        rempli_mat(nsel,stat_obs);                        //cout<<"apres rempli_mat\n";
+        local_regression(nsel);               //cout<<"apres local_regression\n";
         iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-        phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
+        phistar = calphistar(nsel);                                 //cout<<"apres calphistar\n";
         det_nomparam();
-        savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
+        savephistar(nsel,path,ident);                     //cout<<"apres savephistar\n";
         //phistarOK = new double*[nsel];
         //for (int i=0;i<nsel;i++) phistarOK[i] = new double[header.scenario[rt.scenteste-1].nparam];
         //nphistarOK=detphistarOK(nsel,phistar,phistarOK);
-        cout<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr<<"\n";
+        //cout<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr<<"\n";
         npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[nenr];
         for (int p=0;p<nenr;p++) {
@@ -232,22 +233,63 @@ double **ssphistar;
             enreg[p].param = new float[npv];
             enreg[p].numscen = rt.scenteste;
         }
-        ns=0;
+        nss=0;
         firsttime=true;
-        cout<<"ns="<<ns<<"\n";
+        //cout<<"ns="<<ns<<"\n";
         //cout<<phistarOK[0][0]<<"\n";
-        usestats = resetstats(newstat);
+        if (newstat) usestats = resetstats(snewstat);
+        
         cout<<"header.nstat = "<<header.nstat<<"\n";
-        ssphistar = new double*[newpart];
-        for (int i=0;i<newpart;i++) ssphistar[i] = new double[header.nstat];
-        while (ns<newpart) {
-            ps.dosimulphistar(header,(rt.scenteste-1),nenr,false,multithread,firsttime,rt.scenteste,seed,false,false,nsel);
+        ssphistar = new double*[newsspart];
+        for (int i=0;i<newsspart;i++) ssphistar[i] = new double[header.nstat];
+        while (nss<newsspart) {
+            ps.dosimulphistar(header,nenr,false,multithread,firsttime,rt.scenteste,seed,false,false,nsel);
             for (int i=0;i<nenr;i++) {
-                for (int j=0;j<header.nstat;j++) ssphistar[i+ns][j]=enreg[i].stat[j];
-                for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+ns][j]<<"   ";cout<<"\n";
+                for (int j=0;j<header.nstat;j++) ssphistar[i+nss][j]=enreg[i].stat[j];
+                //for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+ns][j]<<"   ";cout<<"\n";
             }
             firsttime=false;
-            ns+=nenr;
-            cout<<ns<<"\n";
+            nss+=nenr;
+            cout<<nss<<"\n";
+        }
+        if (newstat) {
+            header.readHeader(headerfilename);cout<<"apres readHeader nscenarios= "<<header.nscenarios<<"\n";
+            usestats = resetstats(snewstat);
+            stat_obs = header.read_statobs(statobsfilename);  //cout<<"apres read_statobs\n";
+            newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n"; 
+            numscen = new int[newrefpart];
+            ssref = new double*[newrefpart];
+            for (int i=0;i<newrefpart;i++) ssref[i] = new double[header.nstat];
+            nsr=0;
+            firsttime=true;
+            while (nsr<newrefpart) {
+                ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
+                for (int i=0;i<nenr;i++) {
+                  numscen[i+nsr] = enreg[i].numscen;  
+                  for (int j=0;j<header.nstat;j++) ssref[i+nsr][j]=enreg[i].stat[j];
+                    //for (int j=0;j<header.nstat;j++) cout<<ssref[i+nsr][j]<<"   ";cout<<"\n";
+                }
+                firsttime=false;
+                nsr+=nenr;
+                cout<<nsr<<"\n";
+            }
+        } else {
+            rt.openfile2();
+            enregC enr;
+            nparamax=0;for (int i=0;i<rt.nscen;i++)  if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
+            enr.stat = new float[rt.nstat];
+            enr.param = new float[nparamax];
+            newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n"; 
+            numscen = new int[newrefpart];
+            ssref = new double*[newrefpart];
+            for (int i=0;i<newrefpart;i++) ssref[i] = new double[header.nstat];
+            nsr=0;
+            while (nsr<newrefpart) {
+                bidon = rt.readrecord(&enr);
+                numscen[nsr] = enr.numscen;
+                for (int j=0;j<rt.nstat;j++) ssref[nsr][j]=enr.stat[j];
+                nsr++;
+            }
+            
         }
     }

@@ -144,10 +144,6 @@ struct ParticleSetC
 				this->particule[p].grouplist[gr].sumstat[i].samp  = header.groupe[gr].sumstat[i].samp;
 				this->particule[p].grouplist[gr].sumstat[i].samp1 = header.groupe[gr].sumstat[i].samp1;
 				this->particule[p].grouplist[gr].sumstat[i].samp2 = header.groupe[gr].sumstat[i].samp2;
-                cout<<"cat="<<this->particule[p].grouplist[gr].sumstat[i].cat;
-                cout<<"   samp="<<this->particule[p].grouplist[gr].sumstat[i].samp;
-                cout<<"   samp1="<<this->particule[p].grouplist[gr].sumstat[i].samp1;
-                cout<<"   samp2="<<this->particule[p].grouplist[gr].sumstat[i].samp2<<"\n";
 			}
 		}
 	}
@@ -236,14 +232,15 @@ struct ParticleSetC
                 }
         }
 
-    void dosimulphistar(HeaderC header,int scen, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut
+    void dosimulphistar(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut
                         ,int nsel) {
+        int scen=numscen-1;
         int ii,ip1,ip2,ipart,gr,nstat,pa,ip,iscen,k,nparam=header.scenario[scen].nparam;
         bool trouve,trace,phistarOK;
         this->npart = npart;
         int *sOK;
         sOK = new int[npart];
-        cout<<"avant firsttime\n";
+        //cout<<"avant firsttime\n";
         if (firsttime) {                
             this->particule = new ParticleC[this->npart];
             this->header = header;
@@ -262,7 +259,7 @@ struct ParticleSetC
                 this->particule[p].mw.randinit(p,seed);
             }
         }
-        cout<<"apres firsttime\n";
+        //cout<<"apres firsttime\n";
         for (int p=0;p<this->npart;p++) {
             do {
                 phistarOK=true;
@@ -313,7 +310,7 @@ struct ParticleSetC
                 }
                 //cout<<"\n";
         }
-        cout<<"apres le remplissage des particules\n";
+        //cout<<"apres le remplissage des particules\n";
     #pragma omp parallel for shared(sOK) private(gr) if(multithread)
         for (ipart=0;ipart<this->npart;ipart++){
                 //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
@@ -340,10 +337,10 @@ struct ParticleSetC
                 for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
                     for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){
                         enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;
-                        cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<"  ";
+                        //cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<"  ";
                         nstat++;
                     }
-                    cout<<"\n";
+                    //cout<<"\n";
                 }
                 enreg[ipart].message="OK";
             }

@@ -193,7 +193,7 @@ struct resACPC
         return res;
     }
 
-    void cal_acp(){
+    void cal_acp(int npost){
         double *stat_obs,**matstat,*pca_statobs;
         enregC enr;
         int bidon,*numscen,k;
@@ -232,7 +232,7 @@ struct resACPC
         cout <<nomfiACP<<"\n";
         FILE *f1;
         f1=fopen(nomfiACP,"w");
-        fprintf(f1,"%d %d",nacp,rACP.nlambda);
+        fprintf(f1,"%d %d %d",npost,nacp,rACP.nlambda);
         for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
         fprintf(f1,"%d",0);
         for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",pca_statobs[i]);fprintf(f1,"\n");
@@ -331,6 +331,6 @@ struct resACPC
                 cout<< "\n";
             }            
         }
-        if (dopca) cal_acp();
+        if (dopca) cal_acp(0);
         if (doloc) cal_loc();
    }
