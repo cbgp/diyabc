@@ -189,16 +189,23 @@ double **ssphistar,**ssref;
         timeinfo = localtime ( &rawtime );
         ofstream f12(nomfiloc,ios::out);
         f12<<"DIYABC :                   POSTERIOR CHECKING                         "<<asctime(timeinfo)<<"\n";
-        f12<<"Data file                     : "<<header.datafilename<<"\n";
-        f12<<"Reference table               : "<<rt.filename<<"\n";
+        f12<<"Data file       : "<<header.datafilename<<"\n";
+        f12<<"Reference table : "<<rt.filename<<"\n";
+        f12<<"Chosen scenario : "<<rt.scenteste<<"\n";
         f12<<"Number of simulated data sets used to compute posterior    : "<<nrec<<"\n";
         f12<<"Number of simulated data sets used in the local regression : "<<nsel<<"\n";
         f12<<"Number of data sets simulated from the posterior           : "<<npart<<"\n";
-        f12<<"Values indicate for each summary statistics the proportion \nof simulated data sets which have a value below the observed one\n";
-        f12<<" Summary           observed    scenario   ";f12<<"\n";
-        f12<<"statistics           value ";f12<< "      "<<setw(3)<<rt.scenteste<< "      ";f12<<"\n";
+        switch (numtransf) {
+          case 1 : f12 << "No transformation of parameters\n\n";break;
+          case 2 : f12 <<"Transformation of parameters : Log\n\n";break;
+          case 3 : f12 <<"Transformation of parameters : Logit\n\n";break;
+          case 4 : f12 <<"Transformation of parameters : Log(tg)\n\n";break;
+        }
+        
+        f12<<" summary           observed       proportion   \n";
+        f12<<"statistics           value    (simulated<observed)\n";
         for (int j=0;j<header.nstat;j++) {
-             f12<<setiosflags(ios::left)<<setw(15)<<header.statname[j]<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<stat_obs[j]<<")   ";
+             f12<<setiosflags(ios::left)<<setw(15)<<header.statname[j]<<"     "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<stat_obs[j]<<"       ";
              f12<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<qobs[j]<<star[j]<<"   ";
              f12<<"\n";
         }

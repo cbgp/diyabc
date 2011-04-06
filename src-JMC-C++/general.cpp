@@ -63,10 +63,11 @@ double clock_zero=0.0,debut,duree;
 
 int readheaders() {
     int k;
-    header.readHeader(headerfilename);
+    header.readHeader(headerfilename); 
     header.calstatobs(statobsfilename);
-    datafilename=strdup(header.datafilename.c_str());
+    datafilename=strdup(header.datafilename.c_str()); cout<<"datafile name : "<<header.datafilename<<"\n";
     k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
+    cout<<"k="<<k<<"\n";
     return k;
 }
 
@@ -81,9 +82,11 @@ int main(int argc, char *argv[]){
 	double **paramstat;
 	int optchar;
     char action='a';
-    bool flagp=false,flagi=false,flags=false;
-       
-        debut=walltime(&clock_zero);
+    bool flagp=false,flagi=false,flags=false,simOK;
+    string message;
+    FILE *flog;   
+        
+    debut=walltime(&clock_zero);
 
 	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:d:hmqj:")) !=-1) {
          
@@ -267,9 +270,15 @@ int main(int argc, char *argv[]){
                                   while (nrecneeded>rt.nrec) {
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
                                           if (firsttime) firsttime=false;
-                                          rt.writerecords(nenr,enreg);
-                                          rt.nrec +=nenr;
-                                          cout<<rt.nrec<<"\n";
+                                          simOK=true;
+                                          for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}
+                                          if (simOK) {
+                                              rt.writerecords(nenr,enreg);
+                                              rt.nrec +=nenr;
+                                              cout<<rt.nrec<<"\n";
+                                          } else {
+                                              flog=fopen(reftablelogfilename,"w");fprintf(flog,"%s",message.c_str());fclose(flog);
+                                          }
                                   }
                                   for (int i=0;i<nenr;i++) {
                                         delete [] enreg[i].param;

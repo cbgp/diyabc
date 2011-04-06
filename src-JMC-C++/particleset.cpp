@@ -361,7 +361,7 @@ struct ParticleSetC
                this->npart = npart;
                int *sOK;
                trace=true;
-               //if (trace) cout <<"debut de dosimultabref\n";fflush(stdin);
+               cout <<"debut de dosimultabref\n";fflush(stdin);
                sOK = new int[npart];
                //if (this->defined) cout <<"particleSet defined\n";
                //else cout<<"particleSet UNdefined\n";
@@ -389,7 +389,7 @@ struct ParticleSetC
                         this->resetparticle(p);
                      }
                 }
-                //if (trace) cout << "avant pragma npart = "<<npart<<"\n";
+                cout << "avant pragma npart = "<<npart<<"\n";
 	       #pragma omp parallel for shared(sOK) private(gr) if(multithread)
                 for (ipart=0;ipart<this->npart;ipart++){
                         //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
@@ -401,7 +401,7 @@ struct ParticleSetC
 			//if (trace) cout<<"apres docalstat de la particule "<<ipart<<"\n";
 		        }
 //fin du pragma
-                //if (trace) cout << "apres pragma\n";
+                cout << "apres pragma\n";
                 for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				enreg[ipart].numscen=1;
