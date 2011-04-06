@@ -11,7 +11,7 @@ from summaryStatistics.setSummaryStatisticsSeqAnalysis import SetSummaryStatisti
 import output
 
 class SetupEstimationBias(QFrame):
-    """ dernière étape de définition d'une analyse de type estimation ou bias precision
+    """ dernière étape de définition d'une analyse de type estimation ou bias precision ou model checking
     """
     def __init__(self,analysis,parent=None):
         super(SetupEstimationBias,self).__init__(parent)
