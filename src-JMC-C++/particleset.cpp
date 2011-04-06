@@ -392,13 +392,13 @@ struct ParticleSetC
                 cout << "avant pragma npart = "<<npart<<"\n";
 	       #pragma omp parallel for shared(sOK) private(gr) if(multithread)
                 for (ipart=0;ipart<this->npart;ipart++){
-                        //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
+                        cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 			        sOK[ipart]=this->particule[ipart].dosimulpart(trace,numscen,usepriorhist,usepriormut);
-                        //if (trace) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
+                        cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 			        if (sOK[ipart]==0) {
 			 	        for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
 			        }
-			//if (trace) cout<<"apres docalstat de la particule "<<ipart<<"\n";
+			        cout<<"apres docalstat de la particule "<<ipart<<"\n";
 		        }
 //fin du pragma
                 cout << "apres pragma\n";
