@@ -249,14 +249,16 @@ class DrawPCAAnalysisResult(QFrame):
             f.setPointSize(14)
             it.setFont(f)
         litem = legend.find(obs)
-        litem.symbol().setSize(QSize(17,17))
-        litem.setIdentifierWidth(17)
+        if litem != None:
+            litem.symbol().setSize(QSize(17,17))
+            litem.setIdentifierWidth(17)
         legend.setFrameShape(QFrame.Box)
         legend.setFrameShadow(QFrame.Raised)
         for postcurve in posteriorList:
             litem = legend.find(postcurve)
-            litem.symbol().setSize(QSize(12,12))
-            litem.setIdentifierWidth(12)
+            if litem != None:
+                litem.symbol().setSize(QSize(12,12))
+                litem.setIdentifierWidth(12)
 
         p.replot()
         sd = p.axisScaleDiv(0)
