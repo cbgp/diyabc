@@ -75,6 +75,7 @@ int stat_num[NSTAT]     = {  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  
     vector <string> histparname;
     vector <int> histparcat;
 
+extern int debuglevel;
 int arrondi(double a) {return (int)(a + 0.5);}
 
 /**
@@ -144,6 +145,13 @@ public:
 	}
 };
 
+struct compevent
+{
+   bool operator() (const EventC & lhs, const EventC & rhs) const
+   {
+      return lhs.time < rhs.time;
+   }
+};
 
 struct Ne0C
 {
@@ -749,6 +757,8 @@ struct ParticleC
 				if (this->scen.event[ievent].time==-9999) {this->scen.event[ievent].time = (int)(0.5+this->getvalue(this->scen.event[ievent].stime));}
 				if (this->scen.event[ievent].action=='S') {if (this->scen.event[ievent].admixrate<0) this->scen.event[ievent].admixrate = this->getvalue(this->scen.event[ievent].sadmixrate);}
 			}
+//TRI SUR LES TEMPS DES EVENEMENTS
+            sort(&this->scen.event[0],&this->scen.event[this->scen.nevent],compevent());
 			//cout<<"fin des events\n";
 			for (int i=0;i<this->scen.nn0;i++) {
 				if (this->scen.ne0[i].val<0) this->scen.ne0[i].val = (int)this->getvalue(this->scen.ne0[i].name);
@@ -882,6 +892,10 @@ struct ParticleC
 		}
 	}
 
+//////////////////////////////////////////
+//  Création de la séquence d'(événements)
+/////////////////////////////////////////
+
 	bool firstEvent(int ievent) {
 		if (ievent == 0) {return 1;} //1 pour TRUE
 		bool found;
@@ -964,9 +978,6 @@ struct ParticleC
     	}
     	return n;
     }
-
-
-
 
 	void setSequence() {
 		int kseq = compteseq();
@@ -1115,11 +1126,13 @@ struct ParticleC
 						//cout << gt.nodes[i].sample  << "\n";
 						gt.nodes[i].height=this->scen.time_sample[sa];
 						//cout << gt.nodes[i].height  << "\n";
+                        gt.nodes[i].pop=0;
 					}
 				n +=nn;
 				}
 			}
 		}
+		for (int i=gt.nnodes;i<2*nnod+1;i++) {gt.nodes[i].sample=0;gt.nodes[i].pop=0;}
 		/*for (int i=0;i<gt.nnodes;i++){
 			cout << "node " << i << "sample = " << gt.nodes[i].sample << "\n";
 		}*/
@@ -1164,44 +1177,46 @@ struct ParticleC
 
 	void coal_pop(int loc,int iseq) {
 		//cout <<"\n";
-		//cout << "debut COAL nbranches=" << this->gt[loc].nbranches << "\n";
+		//cout << "debut COAL nbranches=" << this->gt[loc].nbranches <<"   nnodes="<<this->gt[loc].nnodes <<"\n";
 		int nLineages=0;
 		bool final=false;
+        bool trace = ((loc==12)/*and(iseq==5)*/);
+        //cout << "coucou 1 \n";
 		for (int i=0;i<this->gt[loc].nnodes;i++){
 			//cout << gt[loc].nodes[i].pop << "  ";
 			if (this->gt[loc].nodes[i].pop == this->seqlist[iseq].pop) {nLineages +=1;}
 		}
-		//cout << "\n";
+		//cout<<"debut coal_pop nbranches="<< this->gt[loc].nbranches << "  nLineages=" << nLineages << "\n";
 		if (this->seqlist[iseq].t1<0) {final=true;}
 		if (this->seqlist[iseq].N<1) {std::cout << "coal_pop : population size <1 ("<<this->seqlist[iseq].N<<") \n" ;exit(100);}
-
+        //if (trace) cout<<"pop size>=1\n"; 
 		if (evalcriterium(iseq,nLineages) == 1) {		//CONTINUOUS APPROXIMATION
-			//cout << "Approximation continue final="<< final << "   nLineages=" << nLineages << "  pop=" <<this->seqlist[iseq].pop << "\n";
+			//if (trace) cout << "Approximation continue final="<< final << "   nLineages=" << nLineages << "  pop=" <<this->seqlist[iseq].pop << "\n";
 			double start = this->seqlist[iseq].t0;
-			//cout << "start initial= " << start << "\n";
+			//if (trace) cout << "start initial= " << start << "\n";
 			while ((nLineages>1)and((final)or((not final)and(start<this->seqlist[iseq].t1)))) {
 				double ra = this->mw.random();
 				while (ra == 0.0) {ra = this->mw.random();}
 				double lra; lra = log(ra);
 				start -= (this->locuslist[loc].coeff*this->seqlist[iseq].N/nLineages/(nLineages-1.0))*log(ra);
-				//cout << "coeff = " << this->locuslist[loc].coeff << "   N = " << this->seqlist[iseq].N << "nl*(nl-1) = " << nLineages/(nLineages-1.0) << "\n";
-				//cout << "start courant= " << start << "  log(ra)=" << lra << "\n";
+				//if (trace)  cout << "coeff = " << this->locuslist[loc].coeff << "   N = " << this->seqlist[iseq].N << "nl*(nl-1) = " << nLineages/(nLineages-1.0) << "\n";
+				//if (trace) cout << "start courant= " << start << "  log(ra)=" << lra << "\n";
 				if ((final)or((not final)and(start<this->seqlist[iseq].t1))) {
 					this->gt[loc].nodes[this->gt[loc].nnodes].pop=this->seqlist[iseq].pop;
 					this->gt[loc].nodes[this->gt[loc].nnodes].height=start;
-					this->gt[loc].nnodes++;
+					this->gt[loc].nnodes++;//if (trace) cout <<"nouveau noeud = "<<this->gt[loc].nnodes-1<<"    nLineages = "<<nLineages<<"\n";
 					this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
 					this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
-					//cout << "retour noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
+					//if (trace) cout << "retour premier noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
 					nLineages--;
 					this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
 					this->gt[loc].nbranches++;
 					this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
 					this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
-					//cout << "retour noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
+					//if (trace) cout << "retour second noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
 					this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
                                         this->gt[loc].nbranches++;
-					//cout << "nbranches = " << this->gt[loc].nbranches << "\n";
+					//if (trace) cout << "nbranches = " << this->gt[loc].nbranches << "\n";
 				}
 			}
 		}
@@ -1274,7 +1289,6 @@ struct ParticleC
 			//cout << "fin coal_pop nbranches=" << this->gt[loc].nbranches << "  nLineages=" << nLineages << "\n";
 		}
 		//cout << "fin coal_pop nbranches=" << this->gt[loc].nbranches << "  nLineages=" << nLineages << "\n";flush(cout);
-
 	}
 
 	void pool_pop(int loc,int iseq) {
@@ -1296,12 +1310,15 @@ struct ParticleC
 
 	void add_sample(int loc,int iseq) {
 		//cout <<"add sample "<<this->seqlist[iseq].sample<<"\n";
+        //int nn=0;
 		for (int i=0;i<this->gt[loc].nnodes;i++){
 			if (this->gt[loc].nodes[i].sample == this->seqlist[iseq].sample) {
 				this->gt[loc].nodes[i].pop = this->seqlist[iseq].pop;
+                //nn++;
+                //cout<<i<<"  ";
 			}
 		}
-
+        //cout<<"\naddsample nn="<<nn<<"   sample = "<<this->seqlist[iseq].sample<<"\n";
 	}
 
 	int gpoisson(double lambda) {
@@ -1438,10 +1455,11 @@ struct ParticleC
 	}
 
 	int cree_haplo(int loc) {
-		/*cout <<"CREE_HAPLO\n";
-		if (loc==0) {
+		if (debuglevel==10) cout <<"CREE_HAPLO\n";
+		/*if (debuglevel==10) {
 		cout << "nbranches = " << this->gt[loc].nbranches << "    nnoeuds=" << gt[loc].nnodes <<"\n";
-		for (int br=0;br<this->gt[loc].nbranches;br++)
+        
+        for (int br=0;br<this->gt[loc].nbranches;br++)
 			{cout << "branche " << br << "   bottom=" << this->gt[loc].branches[br].bottom ;
 			 cout << "   top=" << this->gt[loc].branches[br].top << "   nmut=" << this->gt[loc].branches[br].nmut;
 			 cout << "   length=" << this->gt[loc].branches[br].length << "\n";
@@ -1450,7 +1468,7 @@ struct ParticleC
 		vector < vector <int> > ordre;
 		for (int no=0;no<this->gt[loc].nnodes;no++) this->gt[loc].nodes[no].state=10000;
 		int anc=this->gt[loc].nnodes-1;
-		//cout<<"kmin = "<<this->locuslist[loc].kmin<<"   kmax = "<<this->locuslist[loc].kmax<<"\n";
+		if (debuglevel==10) cout<<"kmin = "<<this->locuslist[loc].kmin<<"   kmax = "<<this->locuslist[loc].kmax<<"\n";
 		if (this->locuslist[loc].type<5) {
 			this->gt[loc].nodes[anc].state=this->locuslist[loc].kmin + (int)(0.5*(this->locuslist[loc].kmax-this->locuslist[loc].kmin));
 			//cout << "anc-state = " << this->gt[loc].nodes[anc].state << "\n";
@@ -1458,24 +1476,69 @@ struct ParticleC
 		else {
 			this->gt[loc].nodes[anc].state=0;
 			this->gt[loc].nodes[anc].dna = init_dnaseq(loc);
-			//cout << "locus " << loc  << "\n";
-			//cout << "anc-state = " << this->gt[loc].nodes[anc].state << "\n";
+			if (debuglevel==10) cout << "locus " << loc  << "\n";
+			if (debuglevel==10) cout << "anc-state = " << this->gt[loc].nodes[anc].state << "\n";
 			//cout << "anc-dna = " << this->gt[loc].nodes[anc].dna << "\n";
 		}
-		anc++;
-		int numut=-1;
+		//anc++;
+		int br, numut=-1;
+        bool trouve;
 		int len;
 		while (anc>=this->gt[loc].ngenes) {
-			anc--;
-			//cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
+			//anc--;
+			//if (debuglevel==10) cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
+			br=0;
+			while (br<this->gt[loc].nbranches) {
+                trouve = (this->gt[loc].branches[br].top == anc);
+                if ((trouve)and(this->gt[loc].nodes[this->gt[loc].branches[br].bottom].state == 10000)) {
+                    this->gt[loc].nodes[this->gt[loc].branches[br].bottom].state = this->gt[loc].nodes[this->gt[loc].branches[br].top].state;
+                    if (this->locuslist[loc].type>4) {
+                        len=-1;
+                        do len++; while (this->gt[loc].nodes[this->gt[loc].branches[br].top].dna[len]!='\0');
+                        //cout << "len = " << len << "\n";
+                        this->gt[loc].nodes[this->gt[loc].branches[br].bottom].dna = new char[len+1];
+                        for (int j=0;j<len+1;j++) this->gt[loc].nodes[this->gt[loc].branches[br].bottom].dna[j]=this->gt[loc].nodes[this->gt[loc].branches[br].top].dna[j];
+                        //cout << "node " << this->gt[loc].branches[i].bottom << "   dna = " << this->gt[loc].nodes[this->gt[loc].branches[i].bottom].dna << "\n";
+                    }
+                    if (this->gt[loc].branches[br].nmut>0) {
+                        for (int j=0;j<this->gt[loc].branches[br].nmut;j++) {
+                            numut++;
+                            mute(loc,numut,br);
+                        }
+                    }
+                }
+                br++;
+            }
+            anc--;
+			//if (anc==300) cout<<"branche[0].bottom = "<<this->gt[loc].branches[0].bottom<<"   branche[1].bottom = "<<this->gt[loc].branches[1].bottom<<"\n";
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			/*
 			int i=-1;
 			bool trouve=false;
 			while ((not trouve)and(i<this->gt[loc].nbranches-1)) {
-				i++;
+				i++;if ((anc==313)and(i<30)) cout<<"i = "<<i<<"   ";
 				trouve = (this->gt[loc].branches[i].top == anc);
-				/*if (this->locuslist[loc].type>4) {
+                if ((loc==1)and(anc==313)and(i>25)and(i<30)) cout<<"branche="<<i<<"   top="<<this->gt[loc].branches[i].top<<"   trouve="<<trouve<<"\n";
+                if ((loc==1)and(anc==313)and(this->gt[loc].branches[i].top == anc)) {
+                    cout<<"(avant)branche="<<i<<"   bottom="<<this->gt[loc].branches[i].bottom<<"     bottom-state = "<<this->gt[loc].nodes[this->gt[loc].branches[i].bottom].state<<"\n";
+                    cout<<"(avant)branche="<<i+1<<"   bottom="<<this->gt[loc].branches[i+1].bottom<<"     top = "<<this->gt[loc].branches[i+1].top<<"     bottom-state = "<<this->gt[loc].nodes[this->gt[loc].branches[i+1].bottom].state<<"\n";
+
+                }
+                    /*if (this->locuslist[loc].type>4) {
 					cout << "branche " << i << "  top = " << anc << "   state = " << gt[loc].nodes[this->gt[loc].branches[i].bottom].state << "\n";
-				}*/
+				}
 				if ((trouve)and(this->gt[loc].nodes[this->gt[loc].branches[i].bottom].state == 10000)) {
 					this->gt[loc].nodes[this->gt[loc].branches[i].bottom].state = this->gt[loc].nodes[this->gt[loc].branches[i].top].state;
 					if (this->locuslist[loc].type>4) {
@@ -1494,32 +1557,36 @@ struct ParticleC
 					}
 					trouve=false;
 				}
-			}
+                    trouve=false;
+                if ((loc==1)and(anc==313)and(this->gt[loc].branches[i].top == anc)) cout<<"(apres)branche="<<i<<"   bottom="<<this->gt[loc].branches[i].bottom<<"     bottom-state = "<<this->gt[loc].nodes[this->gt[loc].branches[i].bottom].state<<"\n";            
+                if ((loc==1)and(anc==313)and(this->gt[loc].branches[i].top == anc)) cout<<"(apres)branche="<<i+1<<"   bottom="<<this->gt[loc].branches[i+1].bottom<<"     bottom-state = "<<this->gt[loc].nodes[this->gt[loc].branches[i+1].bottom].state<<"\n";            
+			}*/
 		}
-		/*cout<<"locus "<<loc<<"   numut = "<<numut+1<<"  mutloc = "<<this->locuslist[loc].mut_rate<<"\n";
-                int ind2=0,sa0=0,sa2=this->locuslist[loc].ss[sa0];
+		//if (debuglevel==10) cout<<"locus "<<loc<<"   numut = "<<numut+1<<"  mutloc = "<<this->locuslist[loc].mut_rate<<"\n";
+        int ind2=0,sa0=0,sa2=this->locuslist[loc].ss[sa0];
 		if (this->locuslist[loc].type<5) {    
-                      for (int no=0;no<this->gt[loc].nnodes;no++) {
-                            cout << gt[loc].nodes[no].state << "   ";if ((ind2+1)%20 == 0) cout <<"\n";
-                            ind2++;
-                            if (ind2==sa2) {
-                                cout <<"\n\n";
-                                ind2=0;sa0++;sa2=this->locuslist[loc].ss[sa0];
-                            }
-                      }
-                }
-		else {for (int no=0;no<this->gt[loc].nnodes;no++) cout << gt[loc].nodes[no].dna << "   ";}
-		cout << "\n";*/
+              for (int no=0;no<this->gt[loc].nnodes;no++) {
+                    //if (debuglevel==10) {cout << gt[loc].nodes[no].state << "   ";if ((ind2+1)%20 == 0) cout <<"\n";}
+                    ind2++;
+                    if (ind2==sa2) {
+                        ind2=0;sa0++;sa2=this->locuslist[loc].ss[sa0];
+                    }
+              }
+        }
+		else {for (int no=0;no<this->gt[loc].nnodes;no++) if (debuglevel==10) cout << gt[loc].nodes[no].dna << "   ";}
+		if (debuglevel==10) cout << "\n";
 		int sa,ind;
-		// tirage au hasard des gènes avant attribution aux individus
+		if (debuglevel==10) cout<< "tirage au hasard des gènes avant attribution aux individus\n";
 		ordre.resize(this->data.nsample);ind=0;
+        if (debuglevel==10) cout<<"apres resize de ordre\n";
 		for (sa=0;sa<this->data.nsample;sa++) {
 			ordre[sa] = melange(this->mw,this->locuslist[loc].ss[sa]);
 			if (sa>0) {for (int i=0;i<this->locuslist[loc].ss[sa];i++) ordre[sa][i]+=ind;}
 			ind +=this->locuslist[loc].ss[sa];
 		}
-                this->locuslist[loc].samplesize =new int[this->data.nsample];
-                for (int sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].samplesize[sa] =this->locuslist[loc].ss[sa];
+		if (debuglevel==10) cout<<"apres ordre\n";
+        this->locuslist[loc].samplesize =new int[this->data.nsample];
+        for (int sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].samplesize[sa] =this->locuslist[loc].ss[sa];
 		if (this->locuslist[loc].type<5) {       //MICROSAT
 			this->locuslist[loc].haplomic = new int*[this->data.nsample];
 			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplomic[sa] = new int [this->locuslist[loc].ss[sa]];
@@ -1529,7 +1596,7 @@ struct ParticleC
 				this->locuslist[loc].haplomic[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].state;
 				ind++;if (ind==this->locuslist[loc].ss[sa]) {sa++;ind=0;}
 			}
-			//cout<<"apres repartition dans le sample 0\n";
+			if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
 			//for (int i=0;i<this->locuslist[loc].ss[0];i++) {cout <<this->locuslist[loc].haplomic[0][i]<<"  ";if ((i+1)%20 == 0) cout<<"\n";}
 		}
 		else {									//DNA SEQUENCES
@@ -1540,17 +1607,17 @@ struct ParticleC
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {
 					//cout << "nbranches = " << this->gt[loc].nbranches << "    nnoeuds=" << gt[loc].nnodes <<"\n";
 					for (int br=0;br<this->gt[loc].nbranches;br++)
-						{cout << "branche " << br << "   bottom=" << this->gt[loc].branches[br].bottom ;
-						 cout << "   top=" << this->gt[loc].branches[br].top << "   nmut=" << this->gt[loc].branches[br].nmut;
-						 cout << "   length=" << this->gt[loc].branches[br].length << "\n";
+						{if (debuglevel==10) cout << "branche " << br << "   bottom=" << this->gt[loc].branches[br].bottom ;
+						 if (debuglevel==10) cout << "   top=" << this->gt[loc].branches[br].top << "   nmut=" << this->gt[loc].branches[br].nmut;
+						 if (debuglevel==10) cout << "   length=" << this->gt[loc].branches[br].length << "\n";
 						}
-					cout <<"\n";
+					if (debuglevel==10) cout <<"\n";
 					for (int n=0;n<this->gt[loc].nnodes;n++) {
-						cout << "noeud  " << n << "   state = " << this->gt[loc].nodes[n].state << "   dna = " ;
-						for (int j=0;j<len+1;j++) cout << this->gt[loc].nodes[n].dna[j];
-						cout << "\n";
+						if (debuglevel==10) cout << "noeud  " << n << "   state = " << this->gt[loc].nodes[n].state << "   dna = " ;
+						if (debuglevel==10) for (int j=0;j<len+1;j++) cout << this->gt[loc].nodes[n].dna[j];
+						if (debuglevel==10) cout << "\n";
 					}
-					cout << "\n";
+					if (debuglevel==10) cout << "\n";
 					return 2;
 				}
 				this->locuslist[loc].haplodna[sa][ind] = str2char(this->gt[loc].nodes[ordre[sa][ind]].dna);
@@ -1560,24 +1627,24 @@ struct ParticleC
 		return 0;
 	}
 
-	int dosimulpart(bool trace,int numscen,bool usepriorhist, bool usepriormut){
+	int dosimulpart(int numscen,bool usepriorhist, bool usepriormut){
                 //if (trace) cout<<"debut de dosimulpart\n";fflush(stdin);
 		vector <int> simulOK;
-		int *emptyPop;
+		int *emptyPop,loc;
 		bool treedone;
                 int locus,sa,indiv,nuc;
 		simulOK.resize(this->nloc);
 		GeneTreeC GeneTreeY, GeneTreeM;
-                //if (trace) cout<<"avant draw scenario\n";fflush(stdin);
+        if (debuglevel==10) cout<<"avant draw scenario\n";fflush(stdin);
 		this->drawscenario(numscen);
-		//if (trace) cout <<"avant setHistparamValue\n";fflush(stdin);
+		if (debuglevel==10) cout <<"avant setHistparamValue\n";fflush(stdin);
 		this->setHistParamValue(numscen,usepriorhist);
-		//if (trace) cout << "apres setHistParamValue\n";fflush(stdin);
+		if (debuglevel==10) cout << "apres setHistParamValue\n";fflush(stdin);
 		//if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
 		//if (trace) for (int k=0;k<this->scen.nparam;k++){
 		//         	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
 		this->setSequence();
-		//if (trace) cout <<"apres setSequence\n";
+		if (debuglevel==10) cout <<"apres setSequence\n";
 		bool gtYexist=false, gtMexist=false;
 		this->gt = new GeneTreeC[this->nloc];
 		emptyPop = new int[this->scen.popmax+1];
@@ -1587,8 +1654,7 @@ struct ParticleC
 		//}
 		//cout << "\n";
 		setMutParammoyValue(usepriormut);
-                int loc;
-                //if (trace) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
+        if (debuglevel==10) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
 		for (loc=0;loc<this->nloc;loc++) {
                         //if (trace) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
 			if (this->locuslist[loc].groupe>0) {
@@ -1601,16 +1667,16 @@ struct ParticleC
 					if (gtYexist) {this->gt[loc] = copytree(GeneTreeY);treedone=true;}
 				}
 				else if ((locuslist[loc].type % 5) == 4) {
-					    //cout << "coucou   gtMexist=" << gtMexist <<"\n";
+					    if (debuglevel==10) cout << "coucou   gtMexist=" << gtMexist <<"\n";
 						if (gtMexist) {this->gt[loc] = copytree(GeneTreeM);treedone=true;}
 					}
 				if (not treedone) {
-					//cout << "avant init_tree \n";
+					if (debuglevel==10) cout << "avant init_tree \n";
 					this->gt[loc] = init_tree(loc);
-					//cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
+					if (debuglevel==10) cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
 					for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 					for (int iseq=0;iseq<this->nseq;iseq++) {
-						//cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action << "\n";fflush(stdin);
+						if (debuglevel==10) cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action << "\n";fflush(stdin);
 						if (this->seqlist[iseq].action == 'C') {	//COAL
 							//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
 							//cout <<"\n";
@@ -1654,45 +1720,41 @@ struct ParticleC
 				}
 	/* mutations */
 				put_mutations(loc);
-				//if (trace) cout << "Locus " <<loc << "  apres put_mutations\n";
+				 if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
 				simulOK[loc]=cree_haplo(loc);
-				//if (trace) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
-				if (simulOK[loc] != 0) break;
-				//cout << "apres break interne\n";
-				//simulOK[loc] = simOK;
+				if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
+                
+				locus=loc;
+                if (simulOK[loc] != 0) {if (debuglevel==10) cout << "avant break interne\n";break;}
 				//cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 			}
-			locus=loc;
-			if (simulOK[loc] != 0) break;
-			//if (trace) cout << "apres break externe\n";
 		}		//LOOP ON loc
-                //if (trace) cout<<"avant le remplacement des donnees manquantes\n";
-                if (simulOK[locus] == 0) {  //remplacement des données manquantes
-                        //cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<"nucleotides manquants\n";fflush(stdin);
-                        if (this->data.nmisshap>0) {
-                                for (int i=0;i<this->data.nmisshap;i++) {
-                                      locus=this->data.misshap[i].locus;
-                                      if (this->locuslist[locus].groupe>0) {
-                                              sa=this->data.misshap[i].sample;indiv=this->data.misshap[i].indiv;
-                                              if (this->locuslist[locus].type<5) this->locuslist[locus].haplomic[sa][indiv] = MICMISSING;
-                                              else                               this->locuslist[locus].haplodna[sa][indiv] = SEQMISSING;
-                                              this->locuslist[locus].samplesize[sa]--;
-                                      }  
-                                }
-                        
+        if (simulOK[locus]==0) {
+                //cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<"nucleotides manquants\n";fflush(stdin);
+                if (this->data.nmisshap>0) {
+                        for (int i=0;i<this->data.nmisshap;i++) {
+                              locus=this->data.misshap[i].locus;
+                              if (this->locuslist[locus].groupe>0) {
+                                      sa=this->data.misshap[i].sample;indiv=this->data.misshap[i].indiv;
+                                      if (this->locuslist[locus].type<5) this->locuslist[locus].haplomic[sa][indiv] = MICMISSING;
+                                      else                               this->locuslist[locus].haplodna[sa][indiv] = SEQMISSING;
+                                      this->locuslist[locus].samplesize[sa]--;
+                              }  
                         }
-                         if (this->data.nmissnuc>0) {
-                                for (int i=0;i<this->data.nmissnuc;i++) {
-                                      locus=this->data.missnuc[i].locus;
-                                      if (this->locuslist[locus].groupe>0) {
-                                              sa=this->data.missnuc[i].sample;indiv=this->data.missnuc[i].indiv;nuc=this->data.missnuc[i].nuc;
-                                              this->locuslist[locus].haplodna[sa][indiv][nuc] = NUCMISSING;
-                                      }  
-                                }
-                        
-                        }
+                
                 }
-                //if (trace) cout<<"avant les delete\n";fflush(stdin);
+                  if (this->data.nmissnuc>0) {
+                        for (int i=0;i<this->data.nmissnuc;i++) {
+                              locus=this->data.missnuc[i].locus;
+                              if (this->locuslist[locus].groupe>0) {
+                                      sa=this->data.missnuc[i].sample;indiv=this->data.missnuc[i].indiv;nuc=this->data.missnuc[i].nuc;
+                                      this->locuslist[locus].haplodna[sa][indiv][nuc] = NUCMISSING;
+                              }  
+                        }
+                
+                }
+        }
+        //cout<<"avant les delete\n";fflush(stdin);
         delete [] emptyPop;
         delete [] this->seqlist;
 		for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) deletetree(this->gt[loc]);}
@@ -1701,7 +1763,7 @@ struct ParticleC
 		if (gtMexist) deletetree(GeneTreeM);
 		//if (trace) cout << "Fin de dosimulpart \n";
 		int simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
-		//if (trace) cout<<"fin de dosimulpart\n";fflush(stdin);
+		//cout<<"fin de dosimulpart   simOK="<<simOK<<"\n";fflush(stdin);
 		return simOK;
 	}
 

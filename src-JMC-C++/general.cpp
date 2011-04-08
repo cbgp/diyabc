@@ -46,16 +46,22 @@
 #include "modchec.cpp"
 #define MODCHEC
 #endif
+#ifndef SYSSTATH
+#include <sys/stat.h>
+#define SYSSTATH
+#endif
 
 ReftableC rt;
 HeaderC header;    
 ParticleSetC ps;
+struct stat stFileInfo; 
 
-char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
+char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename;
 bool multithread=false;
-int nenr=100;
-
-double clock_zero=0.0,debut,duree;
+int nrecneeded,nenr=100;
+int debuglevel=0;
+string sremtime;
+double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,debutr,dureer,remtime;
 
 /**
 * lecture du fichier header.txt, calcul des stat_obs et lecture de l'entête de reftable.bin' 
@@ -63,11 +69,10 @@ double clock_zero=0.0,debut,duree;
 
 int readheaders() {
     int k;
-    header.readHeader(headerfilename); 
-    header.calstatobs(statobsfilename);
-    datafilename=strdup(header.datafilename.c_str()); cout<<"datafile name : "<<header.datafilename<<"\n";
-    k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
-    cout<<"k="<<k<<"\n";
+    header.readHeader(headerfilename);                                   if (debuglevel==1) cout<<"apres header.readHeader\n";
+    header.calstatobs(statobsfilename);                                  if (debuglevel==1) cout <<"apres header.calstatobs\n";
+    datafilename=strdup(header.datafilename.c_str());                    if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
+    k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
     return k;
 }
 
@@ -78,17 +83,16 @@ int readheaders() {
 int main(int argc, char *argv[]){
     char *estpar,*compar,*biaspar,*confpar,*priorpar;
     bool firsttime;
-	int nrecneeded,nrectodo,k,seed;
+	int k,seed;
 	double **paramstat;
 	int optchar;
     char action='a';
-    bool flagp=false,flagi=false,flags=false,simOK;
+    bool flagp=false,flagi=false,flags=false,simOK,stoprun=false;
     string message;
     FILE *flog;   
         
     debut=walltime(&clock_zero);
-
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:d:hmqj:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:d:hmqj:a:")) !=-1) {
          
 	  switch (optchar) {
 
@@ -155,6 +159,10 @@ int main(int argc, char *argv[]){
             cout << "           v:<list of summary stat names separated by a comma (if empty keep those of reftable)>\n";
            break;
 	
+        case 'a' :
+            debuglevel=atoi(optarg);
+            break;
+           
         case 'i' :
             ident=strdup(optarg);
             flagi=true;
@@ -165,17 +173,21 @@ int main(int argc, char *argv[]){
             reftablefilename = new char[strlen(optarg)+15];
             reftablelogfilename = new char[strlen(optarg)+15];
             statobsfilename = new char[strlen(optarg)+14];
+            stopfilename = new char[strlen(optarg)+13];
             path = new char[strlen(optarg)+1];
             strcpy(path,optarg);
             strcpy(headerfilename,optarg);
             strcpy(reftablefilename,optarg);
             strcpy(reftablelogfilename,optarg);
             strcpy(statobsfilename,optarg);
+            strcpy(stopfilename,optarg);
             strcat(headerfilename,"header.txt");
             strcat(reftablefilename,"reftable.bin");
             strcat(reftablelogfilename,"reftable.log");
             strcat(statobsfilename,"statobs.txt");
+            strcat(stopfilename,".stop");
             flagp=true;
+            if (stat(stopfilename,&stFileInfo)==0) remove(stopfilename);
             break;
 		   
         case 's' :  
@@ -266,18 +278,25 @@ int main(int argc, char *argv[]){
                                       enreg[p].numscen = 1;
                                   }
                                   //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
-                                  firsttime=true;
-                                  while (nrecneeded>rt.nrec) {
+                                  firsttime=true;stoprun=false;
+                                  debutr=walltime(&clock_zero);
+                                  while ((not stoprun)and(nrecneeded>rt.nrec)) {
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
                                           if (firsttime) firsttime=false;
                                           simOK=true;
                                           for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}
                                           if (simOK) {
+                                              debutf=walltime(&clock_zero);
                                               rt.writerecords(nenr,enreg);
+                                              dureef=walltime(&debutf);time_file += dureef;
                                               rt.nrec +=nenr;
-                                              cout<<rt.nrec<<"\n";
+                                              cout<<rt.nrec;
+                                              if ((rt.nrec%1000)==0)cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
+                                              stoprun = (stat(stopfilename,&stFileInfo)==0);
+                                              if (stoprun) remove(stopfilename);
                                           } else {
                                               flog=fopen(reftablelogfilename,"w");fprintf(flog,"%s",message.c_str());fclose(flog);
+                                              stoprun=true;
                                           }
                                   }
                                   for (int i=0;i<nenr;i++) {
@@ -287,7 +306,7 @@ int main(int argc, char *argv[]){
                                   delete [] enreg;
                                   rt.closefile();
                                   header.libere();
-                                  
+                                  exit(1);
                           }
                       break;
                       
@@ -322,7 +341,7 @@ int main(int argc, char *argv[]){
                   
   }
 	duree=walltime(&debut);
-    fprintf(stdout,"durée = %.2f secondes (%.2f)\n",duree,time_loglik);
+    fprintf(stdout,"durée = %.2f secondes (%.6f)\n",duree,time_file);
      //fprintf(stdout,"durée dans le remplissage de matC = %.2f secondes\n",time_matC);
      //fprintf(stdout,"durée dans call_polytom = %.2f secondes\n",time_call);
      //fprintf(stdout,"durée dans la lecture de la reftable et le tri des enregistrements = %.2f secondes\n",time_readfile);

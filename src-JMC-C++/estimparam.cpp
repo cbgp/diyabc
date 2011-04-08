@@ -211,7 +211,7 @@ parstatC *parstat;
                                diff[j]=parmax[j]-parmin[j];
                        }
                    }
-                   //cout <<"fin du calcul de parmin/parmax rt.scenchoisi[0] = "<<rt.scenchoisi[0]<<"\n";
+                   cout <<"fin du calcul de parmin/parmax rt.scenchoisi[0] = "<<rt.scenchoisi[0]<<"\n";
                    //for (int i=0;i<10;i++) cout <<rt.enrsel[i].numscen<<"\n";
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {

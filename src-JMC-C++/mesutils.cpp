@@ -183,6 +183,27 @@ string char2string(char *c) {
     return s.str();
 }
 
+string TimeToStr(double ti) {
+    string stime="";
+    int m_s,sec,min,hou,day;
+    day = int(ti)/86400; ti=ti-(double)day*86400;
+    hou = int(ti)/3600;  ti=ti-(double)hou*3600;
+    min = int(ti)/60;    ti=ti-(double)min*60;
+    sec = int(ti)   ;    ti=ti-(double)sec; 
+    m_s = int(1000*ti);
+    if (day>0) { 
+        stime=IntToString(day)+" day";
+        if (day>1) stime+="s "; else stime+=" ";
+    }
+    if (hou>0) stime += IntToString(hou)+" h ";
+    if (min>0) stime += IntToString(min)+" min ";
+    if ((day>0)or(hou>0)) return stime;
+    if (sec>0) stime += IntToString(sec)+" s ";
+    if (min>0) return stime; 
+    if (m_s>0) stime += IntToString(m_s)+" ms ";
+    return stime;
+}
+
 double cal_moy(int n, double *x) {
     double sx=0;
     for (int i=0;i<n;i++) sx +=x[i];

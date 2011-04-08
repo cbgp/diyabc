@@ -19,9 +19,16 @@
 #include <algorithm>
 #define ALGORITHM
 #endif
-
+#ifndef MESUTILS
+#include "mesutils.cpp"
+#define MESUTILS
+#endif
 
 using namespace std;
+
+
+extern int nrecneeded;
+extern double remtime,debutr;
 
 /** 
 * définit l'opérateur de comparaison de deux enregistrements de type enregC
@@ -39,7 +46,7 @@ struct compenreg
 class ReftableC 
 {
 public:
-    int nrec,*nrecscen,nscen,nreclus;
+    int nrec,*nrecscen,nscen,nreclus,nrec0;
     long posnrec;
     char *datapath, *filename, *filelog, *pch;
     int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste;
@@ -77,6 +84,7 @@ public:
             for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
             f0.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
             f0.close();
+            this->nrec0=this->nrec;
             return 0;  //retour normal
         }
     }
@@ -147,7 +155,9 @@ public:
         
         for (int i=0;i<this->nscen;i++) {nb=this->nrecscen[i]+nrs[i];this->fifo.write((char*)&nb,sizeof(int));}
         fifo.flush();
+        remtime=walltime(&debutr)*(nrecneeded-this->nrec-nenr)/(this->nrec+nenr-this->nrec0);
         f1<<this->nrec+nenr<<"\n";
+        f1<<TimeToStr(remtime)<<"\n";
         f1.close();
         delete []nrs;
         return 0;

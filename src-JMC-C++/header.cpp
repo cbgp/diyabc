@@ -149,9 +149,11 @@ public:
                 char *path;
         string s1,s2,**sl,*ss,*ss1,*ss2;
         int *nlscen,nss,nss1,j,k,l,gr,grm,k1,k2;
+        cout<<"debut de readheader\n";
         ifstream file(headerfilename, ios::in);
         if (file == NULL) {
-            this->message = "File ReftableHeader.txt not found";
+            this->message = "File "+string(headerfilename)+" not found";
+            cout<<this->message<<"\n";
             return this;
         } else this->message="";
         getline(file,this->datafilename);
@@ -192,7 +194,7 @@ public:
         for (int i=0;i<this->nscenarios;i++) delete []sl[i];
         delete [] sl;
 //Partie historical parameters
-                //cout <<"avant histparam\n";fflush(stdin);
+                cout <<"avant histparam\n";fflush(stdin);
         getline(file,s1);       //ligne vide
         getline(file,s1);
         ss=splitwords(s1," ",&nss);
@@ -298,6 +300,7 @@ public:
         getline(file,s1);       //ligne vide
         getline(file,s1);       //ligne "group prior"
                 this->ngroupes=getwordint(s1,3);
+        cout<<"header.ngroupes="<<this->ngroupes;        
         this->groupe = new LocusGroupC[this->ngroupes+1];
         this->assignloc(0);
         //cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";

@@ -43,6 +43,7 @@ struct enregC {
 
 enregC *enreg;
 extern double **phistar;
+extern int debuglevel;
 
 struct ParticleSetC
 {
@@ -240,26 +241,26 @@ struct ParticleSetC
         this->npart = npart;
         int *sOK;
         sOK = new int[npart];
-        //cout<<"avant firsttime\n";
+        if (debuglevel==5) cout<<"avant firsttime\n";
         if (firsttime) {                
             this->particule = new ParticleC[this->npart];
             this->header = header;
             for (int p=0;p<this->npart;p++) {
-                //cout <<"avant set particule "<<p<<"\n";
+                if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
                 this->particule[p].dnatrue = dnatrue;
-                //cout <<"dnatrue\n";
+                if (debuglevel==5) cout <<"dnatrue\n";
                 this->setdata(p);
-                //cout <<"setdata\n";
+                if (debuglevel==5) cout <<"setdata\n";
                 this->setgroup(p);
-                //cout<<"setgroup\n";
+                if (debuglevel==5) cout<<"setgroup\n";
                 this->setloci(p);
-                //cout<<"setloci\n";
+                if (debuglevel==5) cout<<"setloci\n";
                 this->setscenarios(p);
-                //cout << "                    apres set particule\n";
+                if (debuglevel==5) cout<< "                    apres set particule\n";
                 this->particule[p].mw.randinit(p,seed);
             }
         }
-        //cout<<"apres firsttime\n";
+        if (debuglevel==5) cout<<"apres firsttime\n";
         for (int p=0;p<this->npart;p++) {
             do {
                 phistarOK=true;
@@ -279,7 +280,7 @@ struct ParticleSetC
             ii=0;
             for (int i=0;i<nparam;i++) {
                 if (not header.scenario[scen].histparam[i].prior.constant) {
-                  //cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"\n";
+                  if (debuglevel==5) cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"\n";
                     this->particule[p].scenario[scen].histparam[i].value=phistar[k][ii];
                     ii++;
                 }
@@ -314,7 +315,7 @@ struct ParticleSetC
     #pragma omp parallel for shared(sOK) private(gr) if(multithread)
         for (ipart=0;ipart<this->npart;ipart++){
                 //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
-            sOK[ipart]=this->particule[ipart].dosimulpart(trace,numscen,usepriorhist,usepriormut);
+            sOK[ipart]=this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
                 //if (trace) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
             if (sOK[ipart]==0) {
                 for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
@@ -360,8 +361,7 @@ struct ParticleSetC
                bool trouve,trace;
                this->npart = npart;
                int *sOK;
-               trace=true;
-               cout <<"debut de dosimultabref\n";fflush(stdin);
+              if (debuglevel==5)  cout <<"debut de dosimultabref\n";fflush(stdin);
                sOK = new int[npart];
                //if (this->defined) cout <<"particleSet defined\n";
                //else cout<<"particleSet UNdefined\n";
@@ -370,17 +370,17 @@ struct ParticleSetC
                     this->particule = new ParticleC[this->npart];
                     this->header = header;
                     for (int p=0;p<this->npart;p++) {
-                        //cout <<"avant set particule "<<p<<"\n";
+                        if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
                         this->particule[p].dnatrue = dnatrue;
-                        //cout <<"dnatrue\n";
+                        //if (debuglevel==5) cout <<"dnatrue\n";
                         this->setdata(p);
-                        //cout <<"setdata\n";
+                        if (debuglevel==5) cout <<"setdata\n";
                         this->setgroup(p);
-                        //cout<<"setgroup\n";
+                        if (debuglevel==5) cout<<"setgroup\n";
                         this->setloci(p);
-                        //cout<<"setloci\n";
+                        if (debuglevel==5) cout<<"setloci\n";
                         this->setscenarios(p);
-                        //cout << "                    apres set particule\n";
+                        if (debuglevel==5) cout << "                    apres set particule\n";
                         this->particule[p].mw.randinit(p,seed);
                     }
                 }
@@ -389,19 +389,19 @@ struct ParticleSetC
                         this->resetparticle(p);
                      }
                 }
-                cout << "avant pragma npart = "<<npart<<"\n";
+                if (debuglevel==5) cout << "avant pragma npart = "<<npart<<"\n";
 	       #pragma omp parallel for shared(sOK) private(gr) if(multithread)
                 for (ipart=0;ipart<this->npart;ipart++){
-                        cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
-			        sOK[ipart]=this->particule[ipart].dosimulpart(trace,numscen,usepriorhist,usepriormut);
-                        cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
+                        if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
+			        sOK[ipart]=this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
+                        if (debuglevel==5) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 			        if (sOK[ipart]==0) {
 			 	        for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
 			        }
-			        cout<<"apres docalstat de la particule "<<ipart<<"\n";
+			        if (debuglevel==5) cout<<"apres docalstat de la particule "<<ipart<<"\n";
 		        }
 //fin du pragma
-                cout << "apres pragma\n";
+                if (debuglevel==5) cout << "apres pragma\n";
                 for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				enreg[ipart].numscen=1;
