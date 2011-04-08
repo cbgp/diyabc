@@ -133,12 +133,13 @@ class Project(QTabWidget):
         QObject.connect(self.ui.analysisResultsButton,SIGNAL("clicked()"),self.viewAnalysisResult)
 
     def stopRefTableGen(self):
-        f = open("%s/.stop"%self.dir)
+        f = open("%s/.stop"%self.dir,"w")
         f.write(" ")
         f.close()
         if self.th != None:
             self.th.terminate()
             self.th = None
+        self.ui.progressLabel.setText("")
 
     def fillAnalysisCombo(self):
         self.ui.analysisListCombo.clear()
@@ -354,6 +355,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """
         done = self.th.nb_done
         nb_to_do = self.th.nb_to_gen
+        time_remaining = self.th.time
+        self.ui.progressLabel.setText('%s remaining'%time_remaining)
         pc = (float(done)/float(nb_to_do))*100
         self.ui.progressBar.setValue(int(pc))
         self.ui.nbSetsDoneEdit.setText("%s"%done)
@@ -1077,6 +1080,7 @@ class RefTableGenThread(QThread):
         self.parent = parent
         self.nb_to_gen = nb_to_gen
         self.cancel = False
+        self.time = "unknown time\n"
 
     def run (self):
         # lance l'executable
@@ -1111,6 +1115,8 @@ class RefTableGenThread(QThread):
             if len(lines) > 1:
                 if lines[0].strip() == "OK":
                     red = int(lines[1])
+                    if len(lines)>2:
+                        self.time = lines[2]
                     if red > self.nb_done:
                         self.nb_done = red
                         self.emit(SIGNAL("increment"))

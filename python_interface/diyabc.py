@@ -343,6 +343,7 @@ class Diyabc(QMainWindow):
 
     def closeEvent(self, event):
         for proj in self.project_list:
+            proj.stopRefTableGen()
             proj.unlock()
         event.accept()
     #    reply = QtGui.QMessageBox.question(self, 'Message',
