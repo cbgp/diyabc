@@ -120,6 +120,7 @@ class Project(QTabWidget):
         #        self.ui.tableWidget.setItem(j,i,it)
 
         self.connect(self.ui.runButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
+        self.connect(self.ui.stopButton, SIGNAL("clicked()"),self.stopRefTableGen)
         #self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
 
         self.th = None
@@ -130,6 +131,14 @@ class Project(QTabWidget):
         # remplissage du combo liste des analyses deja effectuées
         self.fillAnalysisCombo()
         QObject.connect(self.ui.analysisResultsButton,SIGNAL("clicked()"),self.viewAnalysisResult)
+
+    def stopRefTableGen(self):
+        f = open("%s/.stop"%self.dir)
+        f.write(" ")
+        f.close()
+        if self.th != None:
+            self.th.terminate()
+            self.th = None
 
     def fillAnalysisCombo(self):
         self.ui.analysisListCombo.clear()

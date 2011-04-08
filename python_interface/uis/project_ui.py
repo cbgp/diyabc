@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Tue Apr  5 16:06:23 2011
+# Created: Fri Apr  8 10:20:22 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -361,6 +361,9 @@ class Ui_TabWidget(object):
         self.progressBar.setOrientation(QtCore.Qt.Horizontal)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
         self.gridLayout_11.addWidget(self.progressBar, 3, 0, 1, 1)
+        self.stopButton = QtGui.QPushButton(self.groupBox_8)
+        self.stopButton.setObjectName(_fromUtf8("stopButton"))
+        self.gridLayout_11.addWidget(self.stopButton, 5, 0, 1, 1)
         self.verticalLayout_4.addWidget(self.groupBox_8)
         self.verticalLayout.addWidget(self.groupBox)
         self.refTableStack.addWidget(self.page)
@@ -524,6 +527,7 @@ class Ui_TabWidget(object):
         self.label_8.setText(QtGui.QApplication.translate("TabWidget", "Number of simulated data sets in the reference table", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("TabWidget", "Required number of simulated data sets", None, QtGui.QApplication.UnicodeUTF8))
         self.nbSetsDoneEdit.setText(QtGui.QApplication.translate("TabWidget", "0", None, QtGui.QApplication.UnicodeUTF8))
+        self.stopButton.setText(QtGui.QApplication.translate("TabWidget", "Stop", None, QtGui.QApplication.UnicodeUTF8))
         TabWidget.setTabText(TabWidget.indexOf(self.tabRefTable), QtGui.QApplication.translate("TabWidget", "Reference table", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("TabWidget", "name", None, QtGui.QApplication.UnicodeUTF8))
