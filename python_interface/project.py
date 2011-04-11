@@ -23,6 +23,7 @@ from analysis.defineNewAnalysis import DefineNewAnalysis
 from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
+from viewAnalysisParameters import ViewAnalysisParameters
 from utils.data import Data
 from datetime import datetime 
 import os.path
@@ -148,26 +149,36 @@ class Project(QTabWidget):
             for e in l:
                 self.ui.analysisListCombo.addItem(e.replace('_',' '))
 
-    def viewAnalysisResult(self):
-        anDir = str(self.ui.analysisListCombo.currentText())
-        if anDir.strip() != "":
-            directory = anDir.replace(' ','_')
-            typestr = directory.split('_')[0]
-            if typestr == 'estimation':
-                self.drawAnalysisFrame = DrawEstimationAnalysisResult(directory,self)
-            elif typestr == 'comparison':
-                self.drawAnalysisFrame = DrawComparisonAnalysisResult(directory,self)
-            elif typestr == "pca" or typestr == "modelChecking":
-                self.drawAnalysisFrame = DrawPCAAnalysisResult(directory,self)
-            #elif typestr == "bias":
-            #    self.drawAnalysisFrame = DrawBiasAnalysisResult(directory,self)
-            #elif typestr == "evaluation":
-            #    self.drawAnalysisFrame = DrawEvaluationAnalysisResult(directory,self)
-            self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
-            self.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
+    def viewAnalysisResult(self,analysis=None):
+        anCat = analysis.category
+        dicoCategoryDirName = {
+                "estimate" : "estimation",
+                "compare" : "comparison",
+                "evaluate" : "evaluation",
+                "modelChecking" : "modelChecking",
+                "pre-ev" : "pca",
+                "bias" : "bias"
+                }
+        anDir = dicoCategoryDirName[analysis.category]
+        anDir += "_"
+        anDir += analysis.name
 
-            if typestr == "pca" or typestr == "modelChecking":
-                self.drawAnalysisFrame.loadACP()
+        typestr = dicoCategoryDirName[analysis.category]
+        if typestr == 'estimation':
+            self.drawAnalysisFrame = DrawEstimationAnalysisResult(anDir,self)
+        elif typestr == 'comparison':
+            self.drawAnalysisFrame = DrawComparisonAnalysisResult(anDir,self)
+        elif typestr == "pca" or typestr == "modelChecking":
+            self.drawAnalysisFrame = DrawPCAAnalysisResult(anDir,self)
+        #elif typestr == "bias":
+        #    self.drawAnalysisFrame = DrawBiasAnalysisResult(anDir,self)
+        #elif typestr == "evaluation":
+        #    self.drawAnalysisFrame = DrawEvaluationAnalysisResult(anDir,self)
+        self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
+        self.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
+
+        if typestr == "pca" or typestr == "modelChecking":
+            self.drawAnalysisFrame.loadACP()
 
     def defineNewAnalysis(self):
         """ démarre la définition d'une nouvelle analyse
@@ -546,22 +557,42 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         analysisTypeLabel.setMaximumSize(QtCore.QSize(200, 16777215))
         analysisTypeLabel.setMinimumSize(QtCore.QSize(200, 0))
         horizontalLayout_4.addWidget(analysisTypeLabel)
-        analysisParamsLabel = QtGui.QLabel(str(params),frame_9)
-        analysisParamsLabel.setAlignment(Qt.AlignCenter)
-        analysisParamsLabel.setObjectName("analysisParamsLabel")
-        analysisParamsLabel.setFrameShape(QtGui.QFrame.StyledPanel)
-        analysisParamsLabel.setMaximumSize(QtCore.QSize(200, 16777215))
-        analysisParamsLabel.setMinimumSize(QtCore.QSize(200, 0))
-        horizontalLayout_4.addWidget(analysisParamsLabel)
-        analysisStatusLabel = QtGui.QLabel(status,frame_9)
-        analysisStatusLabel.setMinimumSize(QtCore.QSize(40, 0))
-        analysisStatusLabel.setMaximumSize(QtCore.QSize(40, 16777215))
-        analysisStatusLabel.setAlignment(Qt.AlignCenter)
-        analysisStatusLabel.setFrameShape(QtGui.QFrame.StyledPanel)
-        analysisStatusLabel.setObjectName("analysisStatusLabel")
-        analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
-        horizontalLayout_4.addWidget(analysisStatusLabel)
-        analysisButton = QtGui.QPushButton("launch",frame_9)
+        #analysisParamsLabel = QtGui.QLabel(str(params),frame_9)
+        #analysisParamsLabel.setAlignment(Qt.AlignCenter)
+        #analysisParamsLabel.setObjectName("analysisParamsLabel")
+        #analysisParamsLabel.setFrameShape(QtGui.QFrame.StyledPanel)
+        #analysisParamsLabel.setMaximumSize(QtCore.QSize(200, 16777215))
+        #analysisParamsLabel.setMinimumSize(QtCore.QSize(200, 0))
+        #analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
+        #horizontalLayout_4.addWidget(analysisParamsLabel)
+        analysisParamsButton = QtGui.QPushButton("View",frame_9)
+        analysisParamsButton.setObjectName("analysisParamsLabel")
+        analysisParamsButton.setMaximumSize(QtCore.QSize(200, 16777215))
+        analysisParamsButton.setMinimumSize(QtCore.QSize(200, 0))
+        analysisParamsButton.setMaximumSize(QtCore.QSize(70, 16777215))
+        horizontalLayout_4.addWidget(analysisParamsButton)
+        #analysisStatusLabel = QtGui.QLabel(status,frame_9)
+        #analysisStatusLabel.setMinimumSize(QtCore.QSize(40, 0))
+        #analysisStatusLabel.setMaximumSize(QtCore.QSize(40, 16777215))
+        #analysisStatusLabel.setAlignment(Qt.AlignCenter)
+        #analysisStatusLabel.setFrameShape(QtGui.QFrame.StyledPanel)
+        #analysisStatusLabel.setObjectName("analysisStatusLabel")
+        #analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
+        #horizontalLayout_4.addWidget(analysisStatusLabel)
+        analysisStatusBar = QtGui.QProgressBar(frame_9)
+        analysisStatusBar.setMinimumSize(QtCore.QSize(40, 0))
+        analysisStatusBar.setMaximumSize(QtCore.QSize(40, 16777215))
+        analysisStatusBar.setAlignment(Qt.AlignCenter)
+        #analysisStatusBar.setFrameShape(QtGui.QFrame.StyledPanel)
+        analysisStatusBar.setObjectName("analysisStatusBar")
+        horizontalLayout_4.addWidget(analysisStatusBar)
+        if status == "finished":
+            buttonLabel = "view"
+            analysisStatusBar.setValue(100)
+        else:
+            buttonLabel = "launch"
+            analysisStatusBar.setValue(0)
+        analysisButton = QtGui.QPushButton(buttonLabel,frame_9)
         analysisButton.setObjectName("analysisButton")
         analysisButton.setMinimumSize(QtCore.QSize(70, 0))
         analysisButton.setMaximumSize(QtCore.QSize(70, 16777215))
@@ -572,10 +603,20 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.dicoFrameAnalysis[frame_9] = analysis
         QObject.connect(analysisDownButton,SIGNAL("clicked()"),self.moveAnalysisDown)
         QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
-        QObject.connect(analysisButton,SIGNAL("clicked()"),self.launchAnalysis)
+        QObject.connect(analysisButton,SIGNAL("clicked()"),self.launchViewAnalysis)
+        QObject.connect(analysisParamsButton,SIGNAL("clicked()"),self.viewAnalysisParameters)
 
-    def launchAnalysis(self):
-        """ clic sur le bouton launch d'une analyse
+    def viewAnalysisParameters(self):
+        frame = self.sender().parent()
+        # on associe l'analyse a sa frame
+        analysis = self.dicoFrameAnalysis[frame]
+        viewFrame = ViewAnalysisParameters(self,analysis)
+        self.ui.analysisStack.addWidget(viewFrame)
+        self.ui.analysisStack.setCurrentWidget(viewFrame)
+
+
+    def launchViewAnalysis(self):
+        """ clic sur le bouton launch/view d'une analyse
         """
         if not os.path.exists("%s/analysis/"%self.dir):
             os.mkdir("%s/analysis/"%self.dir)
@@ -583,11 +624,18 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame = self.sender().parent()
         # on associe l'analyse a sa frame
         analysis = self.dicoFrameAnalysis[frame]
+        if analysis.status == "finished":
+            self.viewAnalysisResult(analysis)
+        else:
+            self.launchAnalysis(analysis)
+            frame.findChild(QPushButton,"analysisButton").setText("Running")
+            analysis.status = "running"
+
+    def launchAnalysis(self,analysis):            
+        self.save()
         self.thAnalysis = AnalysisThread(self,analysis)
         self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress"),self.analysisProgress)
         self.thAnalysis.start()
-        frame.findChild(QPushButton,"analysisButton").setText("Running")
-        analysis.status = "running"
 
     def analysisProgress(self):
         """ met à jour l'indicateur de progression de l'analyse en cours
@@ -598,11 +646,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
                 frame = fr
                 break
-        frame.findChild(QLabel,"analysisStatusLabel").setText("%s%%"%prog)
+        #frame.findChild(QLabel,"analysisStatusLabel").setText("%s%%"%prog)
+        frame.findChild(QProgressBar,"analysisStatusBar").setValue(int(prog))
 
         if int(prog) >= 100:
             print "terminate analysis"
-            frame.findChild(QPushButton,"analysisButton").setText("Done")
+            frame.findChild(QPushButton,"analysisButton").setText("View")
             self.terminateAnalysis()
 
     def terminateAnalysis(self):
@@ -672,6 +721,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         # on met à jour la liste des analyses terminées
         self.fillAnalysisCombo()
+        self.save()
 
 
 
