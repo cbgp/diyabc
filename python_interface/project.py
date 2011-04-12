@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import hashlib,pickle,array
+import hashlib,pickle,array,sys
 import socket
 from socket import *
 import time
@@ -24,6 +24,7 @@ from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from viewAnalysisParameters import ViewAnalysisParameters
+from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from utils.data import Data
 from datetime import datetime 
 import os.path
@@ -170,8 +171,20 @@ class Project(QTabWidget):
             self.drawAnalysisFrame = DrawComparisonAnalysisResult(anDir,self)
         elif typestr == "pca" or typestr == "modelChecking":
             self.drawAnalysisFrame = DrawPCAAnalysisResult(anDir,self)
-        #elif typestr == "bias":
-        #    self.drawAnalysisFrame = DrawBiasAnalysisResult(anDir,self)
+        elif typestr == "bias":
+            f = open("%s/analysis/%s/bias.txt"%(self.dir,anDir),'r')
+            data = f.read()
+            f.close()
+            self.drawAnalysisFrame = QFrame(self)
+            ui = ui_viewTextFile()
+            ui.setupUi(self.drawAnalysisFrame)
+            ui.dataPlain.setPlainText(data)
+            font = "FreeMono"
+            if sys.platform.startswith('win'):
+                print "winwinwinwinwinwinwin\n\n"
+                font = "Courier New"
+            ui.dataPlain.setFont(QFont(font,10))
+            QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
         #elif typestr == "evaluation":
         #    self.drawAnalysisFrame = DrawEvaluationAnalysisResult(anDir,self)
         self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
@@ -179,6 +192,11 @@ class Project(QTabWidget):
 
         if typestr == "pca" or typestr == "modelChecking":
             self.drawAnalysisFrame.loadACP()
+
+    def returnToAnalysisList(self):
+        self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)
+        self.ui.analysisStack.setCurrentIndex(0)
+
 
     def defineNewAnalysis(self):
         """ démarre la définition d'une nouvelle analyse
