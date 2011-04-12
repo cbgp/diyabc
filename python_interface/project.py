@@ -565,7 +565,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         #analysisParamsLabel.setMinimumSize(QtCore.QSize(200, 0))
         #analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
         #horizontalLayout_4.addWidget(analysisParamsLabel)
-        analysisParamsButton = QtGui.QPushButton("View",frame_9)
+        analysisParamsButton = QtGui.QPushButton("View values",frame_9)
         analysisParamsButton.setObjectName("analysisParamsLabel")
         analysisParamsButton.setMaximumSize(QtCore.QSize(200, 16777215))
         analysisParamsButton.setMinimumSize(QtCore.QSize(200, 0))

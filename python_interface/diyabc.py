@@ -17,6 +17,18 @@ from project import *
 from preferences import Preferences
 import output
 
+#class HelpBrowser(QTextBrowser):
+#    def __init__(self,parent=None,qhe=None):
+#        super(HelpBrowser,self).__init__(parent)
+#        self.qhe = qhe
+#
+#    def loadResource(self,typee,url):
+#        if (url.scheme() == "qthelp"):
+#            return QVariant(qhe.fileData(url))
+#        else:
+#            return QTextBrowser.loadResource(type, url)
+
+
 class Diyabc(QMainWindow):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
     """
@@ -94,6 +106,12 @@ class Diyabc(QMainWindow):
         #self.ui.frame.setDisabled(True)
         #self.ui.frame.setAutoFillBackground(True)
         #self.ui.frame.setBackgroundColor(Qt.Blue)
+
+        #self.setCursor(QCursor(QPixmap("/home/julien/vcs/git/diyabc.git/python_interface/docs/accueil_pictures/coccicon.png")))
+        #self.ghe = QHelpEngine("/home/julien/qtdoc/qch.qch")
+        #self.qhb = HelpBrowser(self,self.ghe)
+        #self.ui.verticalLayout.addWidget(self.qhb)
+        #self.ui.verticalLayout.addWidget(QHelpContentWidget())
 
     def switchToMainStack(self):
         self.ui.menubar.show()
@@ -354,6 +372,18 @@ class Diyabc(QMainWindow):
     #        event.accept()
     #    else:
     #        event.ignore()
+
+    #def mousePressEvent(self,event):
+    #    print self.sender()
+    #    print "plop"
+    def event(self,event):
+        if event.type() == QEvent.MouseButtonRelease and event.button() == 4:
+            for c in self.findChildren(QLabel):
+                if c.underMouse():
+                    print c.objectName()
+            print event.button()
+            print "ow yeah"
+        return QWidget.event(self,event)
 
 if __name__ == "__main__":
     nargv = sys.argv
