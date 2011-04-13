@@ -5,7 +5,10 @@ class Documentator():
     """
     def __init__(self,parent=None):
         self.parent=parent
-        self.dicoDoc = {}
+        self.dicoDoc = {
+                "nbScLabel":"Number of scenario set in the historical model",
+                "nbParamLabel":"Number of parameters set in the historical model",
+                }
 
     def getDocString(self,key):
         """ retourne la doc liée à key

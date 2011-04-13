@@ -15,6 +15,7 @@ from PyQt4 import QtGui
 from uis.diyabc_ui import Ui_MainWindow
 from project import *
 from preferences import Preferences
+from documentator import Documentator
 import output
 
 #class HelpBrowser(QTextBrowser):
@@ -57,6 +58,7 @@ class Diyabc(QMainWindow):
 
         self.illegalProjectNameCharacters = ['_','-',"'",'"','.','/']
 
+        self.documentator = Documentator(self)
 
     def createWidgets(self):
         self.ui = Ui_MainWindow()
@@ -72,6 +74,7 @@ class Diyabc(QMainWindow):
 
         # gestion du menu
         file_menu = self.ui.menubar.addMenu("&File")
+        self.file_menu = file_menu
         file_menu.addAction("&New Project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction("&Open",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
         self.saveProjActionMenu = file_menu.addAction("&Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
@@ -373,10 +376,16 @@ class Diyabc(QMainWindow):
     #    print self.sender()
     #    print "plop"
     def event(self,event):
-        if event.type() == QEvent.MouseButtonRelease and event.button() == 4:
+        if event.type() == QEvent.MouseButtonRelease and event.button() == 2:
             for c in self.findChildren(QLabel):
                 if c.underMouse():
-                    print c.objectName()
+                    self.file_menu.popup(QCursor.pos())
+
+                    on = str(c.objectName())
+                    if self.documentator.getDocString(on) != None:
+                        output.notify(self,"Documentation",self.documentator.getDocString(on))
+                    else:
+                        output.notify(self,"Documentation","No documentation found")
             print event.button()
             print "ow yeah"
         return QWidget.event(self,event)
