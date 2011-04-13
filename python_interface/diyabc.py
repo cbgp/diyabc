@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+#import dataImages
 import shutil
 import codecs
 import sys
@@ -64,6 +65,9 @@ class Diyabc(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        #im = QImage(dataImages.dada,200,200)
+        #pic = QPixmap()
+        #pic.convertFromImage(im)
         pic = QPixmap("docs/accueil_pictures/correct.png")
         self.ui.imgLabel.setPixmap(pic)
         self.switchToWelcomeStack()
