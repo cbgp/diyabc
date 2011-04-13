@@ -107,11 +107,7 @@ class Diyabc(QMainWindow):
         #self.ui.frame.setAutoFillBackground(True)
         #self.ui.frame.setBackgroundColor(Qt.Blue)
 
-        self.setCursor(QCursor(QPixmap("/home/julien/vcs/git/diyabc.git/python_interface/docs/accueil_pictures/coccicon.png").scaled(32,32)))
-        #self.ghe = QHelpEngine("/home/julien/qtdoc/qch.qch")
-        #self.qhb = HelpBrowser(self,self.ghe)
-        #self.ui.verticalLayout.addWidget(self.qhb)
-        #self.ui.verticalLayout.addWidget(QHelpContentWidget())
+        #self.setCursor(QCursor(QPixmap("/home/julien/vcs/git/diyabc.git/python_interface/docs/accueil_pictures/coccicon.png").scaled(32,32)))
 
     def switchToMainStack(self):
         self.ui.menubar.show()

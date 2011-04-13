@@ -1157,12 +1157,16 @@ class RefTableGenThread(QThread):
             exPath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m"]
             print cmd_args_list
-            p = subprocess.Popen(cmd_args_list, stdout=PIPE, stdin=PIPE, stderr=STDOUT) 
+            if os.path.exists("general.out"):
+                os.remove("general.out")
+            fg = open("general.out","w")
+            p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:
             print "Cannot find the executable of the computation program %s"%e
             self.problem = "Cannot find the executable of the computation program \n%s"%e
             self.emit(SIGNAL("refTableProblem"))
             #output.notify(self.parent(),"computation problem","Cannot find the executable of the computation program")
+            fg.close()
             return
 
         # boucle toutes les secondes pour verifier les valeurs dans le fichier
@@ -1180,6 +1184,7 @@ class RefTableGenThread(QThread):
                 f.close()
             else:
                 lines = ["OK","0"]
+            print lines
             if len(lines) > 1:
                 if lines[0].strip() == "OK":
                     red = int(lines[1])
@@ -1188,19 +1193,26 @@ class RefTableGenThread(QThread):
                     if red > self.nb_done:
                         self.nb_done = red
                         self.emit(SIGNAL("increment"))
+                elif lines[0].strip() == "END":
+                    fg.close()
+                    return
                 else:
                     print "lines != OK"
                     self.problem = lines[0].strip()
                     self.emit(SIGNAL("refTableProblem"))
                     #output.notify(self,"problem",lines[0])
+                    fg.close()
                     return
-            else:
-                self.problem = "unknown problem"
-                self.emit(SIGNAL("refTableProblem"))
-                print "unknown problem"
-                #output.notify(self,"problem","Unknown problem")
-                return
+            # TODO à revoir ac JM
+            #else:
+            #    self.problem = "unknown problem"
+            #    self.emit(SIGNAL("refTableProblem"))
+            #    print "unknown problem"
+            #    #output.notify(self,"problem","Unknown problem")
+            #    fg.close()
+            #    return
 
+        fg.close()
 
         #for i in range(1000):
         #    if self.cancel: break
