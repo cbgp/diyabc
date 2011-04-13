@@ -174,7 +174,7 @@ int main(int argc, char *argv[]){
                  firsttime=true;stoprun=false;
                  header.scenario[0].histparam[0].prior.mini=99.9;header.scenario[0].histparam[0].prior.maxi=100.1;
                  hetmoy=0.0;
-                 for (k=0;k<niter;k++) {  
+                 for (k=0;k<niter;k++) { 
                      ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
                      firsttime=false;
                      seed +=nenr;
