@@ -81,7 +81,7 @@ int readheaders() {
 */
 
 int main(int argc, char *argv[]){
-    char *estpar,*compar,*biaspar,*confpar,*priorpar;
+    char *estpar,*compar,*biaspar,*confpar,*priorpar,*testpar;
     bool firsttime;
 	int k,seed;
 	double **paramstat;
@@ -243,6 +243,7 @@ int main(int argc, char *argv[]){
             estpar=strdup(optarg);
             action='j';
             break;        
+
 	    }
 	}
 	 if (not flagp) {cout << "option -p is compulsory\n";exit(1);}
@@ -335,10 +336,10 @@ int main(int argc, char *argv[]){
                   break;
                   
        case 'j'  : k=readheaders();
-                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
-                  domodchec(estpar,seed);
-                  break;
-                  
+                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                   domodchec(estpar,seed);
+                   break;
+                   
   }
 	duree=walltime(&debut);
     fprintf(stdout,"durée = %.2f secondes (%.6f)\n",duree,time_file);

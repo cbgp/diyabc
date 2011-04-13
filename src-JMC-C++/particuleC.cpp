@@ -241,36 +241,38 @@ public:
         size_t plus,minus,posigne;
         vector <string> ss;
         bool trouve;
-            s1=s;
-            while (s1.length()>0) {
-                    plus=s1.find("+");
-                    minus=s1.find("-");
-                    if ((plus == string::npos)and(minus == string::npos)) {ss.push_back(s1);s1="";}
-                    else {
-                            if (plus>=0) posigne=plus;
-                            else		 posigne=minus;
-                            ss.push_back(s1.substr(0,posigne-1));
-                            s1=s1.substr(posigne+1);	
-                    }	  	
-            }
-            for (i=0;i<ss.size();i++) {
-                    //cout<<"   this->nparam = "<<this->nparam<<"\n";
-                    if (this->nparam>0) {
-                            trouve=false;
-                            j=0;
-                            while ((not trouve)and(j<this->nparam)) {
-                                    trouve= (ss[i].compare(histparname[j])==0);
-                                    //(pr.name == this->histpar[j]->name);
-                                    //cout<<"this->histparname["<<j <<"] = "<<this->histparname[j]<<"   trouve="<<trouve<<"\n";
-                                    j++;
-                            }
-                            if (not trouve) {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;}
-                            //else cout<<"deja\n";
-                    } else {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;} 
-            }
-        //cout<<"dans detparam  size = "<<this->histparname.size()<<"   nparam="<<this->nparam<<"\n";
-        //for (int i=0;i<this->histparname.size();i++) cout<<"histparname = "<<this->histparname[i]<<"\n";
-        //cout<<"\n";
+        s1=s;
+        //cout<<"s1="<<s1<<"\n";
+        while (s1.length()>0) {
+                plus=s1.find("+");
+                minus=s1.find("-");
+                if ((plus == string::npos)and(minus == string::npos)) {ss.push_back(s1);s1="";}
+                else {
+                        if (plus>=0) posigne=plus;
+                        else		 posigne=minus;
+                        ss.push_back(s1.substr(0,posigne));
+                        s1=s1.substr(posigne+1);	
+                }	  	
+        }
+        for (i=0;i<ss.size();i++) {
+            //cout<<"ss["<<i<<"]="<<ss[i]<<"\n";
+                //cout<<"   this->nparam = "<<this->nparam<<"\n";
+                if (this->nparam>0) {
+                        trouve=false;
+                        j=0;
+                        while ((not trouve)and(j<this->nparam)) {
+                                trouve= (ss[i].compare(histparname[j])==0);
+                                //(pr.name == this->histpar[j]->name);
+                                cout<<"histparname["<<j <<"] = "<<histparname[j]<<"   trouve="<<trouve<<"\n";
+                                j++;
+                        }
+                        if (not trouve) {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;}
+                        //else cout<<"deja\n";
+                } else {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;} 
+        }
+        /*cout<<"dans detparam  size = "<<histparname.size()<<"   nparam="<<this->nparam<<"\n";
+        for (int i=0;i<histparname.size();i++) cout<<"histparname = "<<histparname[i]<<"\n";
+        cout<<"\n";*/
     }
     
 
@@ -748,9 +750,9 @@ struct ParticleC
 				if (not this->scen.histparam[p].prior.constant) {this->scen.paramvar[this->scen.ipv]=this->scen.histparam[p].value;this->scen.ipv++;}
 			}
 		}
-		/*cout<<"fin du tirage des parametres\n";
-		for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";
-		cout <<"\n";*/
+		//cout<<"fin du tirage des parametres\n";
+		//for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";
+		//cout <<"\n";
 		if (OK) {
 			for (int ievent=0;ievent<this->scen.nevent;ievent++) {
 				if (this->scen.event[ievent].action=='V') { if (this->scen.event[ievent].Ne<0) this->scen.event[ievent].Ne= (int)(0.5+this->getvalue(this->scen.event[ievent].sNe));}
@@ -762,6 +764,7 @@ struct ParticleC
 			//cout<<"fin des events\n";
 			for (int i=0;i<this->scen.nn0;i++) {
 				if (this->scen.ne0[i].val<0) this->scen.ne0[i].val = (int)this->getvalue(this->scen.ne0[i].name);
+                //cout<<this->scen.ne0[i].name<<" = "<<this->scen.ne0[i].val<<"\n";
 			}
 		}
 		//cout<<OK<<"\n";
@@ -911,7 +914,7 @@ struct ParticleC
 	}
 
 	int findNe(int ievent, int refpop) {
-		if (ievent == 0) {return this->scen.ne0[refpop].val;}
+		if (ievent == 0) {return this->scen.ne0[refpop-1].val;}
 		bool found;
 		while (ievent>0) {
 			ievent --;
@@ -1028,6 +1031,7 @@ struct ParticleC
 		}
 		if ((this->scen.event[this->scen.nevent-1].action == 'M')or(this->scen.event[this->scen.nevent-1].action == 'E')) {
 			this->seqlist[iseq].N = findNe(this->scen.nevent-1,this->scen.event[this->scen.nevent-1].pop);
+            //cout<<"coucou\n  this->seqlist[iseq].N ="<<this->seqlist[iseq].N<<"  event="<<this->scen.nevent-1<<"   pop="<<this->scen.event[this->scen.nevent-1].pop <<"\n";
 		}
 		else if (this->scen.event[this->scen.nevent-1].action == 'V') {
 			this->seqlist[iseq].N = this->scen.event[this->scen.nevent-1].Ne;
@@ -1038,7 +1042,7 @@ struct ParticleC
 		this->seqlist[iseq].action = 'C';
 		this->nseq=iseq+1;
 		/*std::cout << "nombre de SequenceBits alloués = " << kseq << "\n";
-		std::cout << "nombre de SequenceBits utilisés = " << iseq << "\n";
+		std::cout << "nombre de SequenceBits utilisés = " << nseq << "\n";
 		for (int i=0;i<this->nseq;i++){
 			if (this->seqlist[i].action == 'C') {
 				std::cout << seqlist[i].t0 << " à " << seqlist[i].t1 << "   coal  pop=" << seqlist[i].pop;

@@ -149,15 +149,16 @@ public:
                 char *path;
         string s1,s2,**sl,*ss,*ss1,*ss2;
         int *nlscen,nss,nss1,j,k,l,gr,grm,k1,k2;
-        cout<<"debut de readheader\n";
+        //cout<<"debut de readheader\n";
+        //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
         ifstream file(headerfilename, ios::in);
         if (file == NULL) {
-            this->message = "File "+string(headerfilename)+" not found";
+            this->message = "Header  File "+string(headerfilename)+" not found";
             cout<<this->message<<"\n";
             return this;
         } else this->message="";
         getline(file,this->datafilename);
-                //cout<<this->datafilename<<"\n";fflush(stdin);
+                cout<<this->datafilename<<"\n";fflush(stdin);
                 path = new char[strlen(headerfilename)+this->datafilename.length()];
                 strcpy(path,headerfilename);
                 cout<<path<<"\n";fflush(stdin);
@@ -166,9 +167,9 @@ public:
                 path[k]='\0';
                 this->pathbase=strdup(path);
                 strcat(path,this->datafilename.c_str());
-                //cout<<path<<"\n";fflush(stdin);
+                //cout<<"Path = "<<path<<"\n";fflush(stdin);
                 this->datafilename=string(path);
-                //cout<<this->datafilename<<"\n";fflush(stdin);
+                //cout<<"Data = "<<this->datafilename<<"\n";fflush(stdin);
         this->dataobs.loadfromfile(path);
         getline(file,s1);
         this->nparamtot=getwordint(s1,1);
@@ -187,14 +188,15 @@ public:
             getline(file,s1);
             this->scenario[i].number = getwordint(s1,2);
             this->scenario[i].prior_proba = getwordfloat(s1,3);
-            this->scenario[i].nparam = 0;scenario[i].nparamvar=0;
+            this->scenario[i].nparam = 0;
+            this->scenario[i].nparamvar=0;
             for (int j=0;j<nlscen[i];j++) getline(file,sl[i][j]);
             this->scenario[i].read_events(nlscen[i],sl[i]);
         }
         for (int i=0;i<this->nscenarios;i++) delete []sl[i];
         delete [] sl;
 //Partie historical parameters
-                cout <<"avant histparam\n";fflush(stdin);
+                //cout <<"avant histparam\n";fflush(stdin);
         getline(file,s1);       //ligne vide
         getline(file,s1);
         ss=splitwords(s1," ",&nss);
@@ -300,7 +302,7 @@ public:
         getline(file,s1);       //ligne vide
         getline(file,s1);       //ligne "group prior"
                 this->ngroupes=getwordint(s1,3);
-        cout<<"header.ngroupes="<<this->ngroupes;        
+        //cout<<"header.ngroupes="<<this->ngroupes;        
         this->groupe = new LocusGroupC[this->ngroupes+1];
         this->assignloc(0);
         //cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
@@ -602,7 +604,7 @@ public:
                 //cout<<"apres DATA\n";
 //partie GROUPES
                 int ngr = this->ngroupes;
-                cout<<"ngr="<<ngr<<"\n";
+                //cout<<"ngr="<<ngr<<"\n";
                 this->particuleobs.ngr = ngr;
                 this->particuleobs.grouplist = new LocusGroupC[ngr+1];
                 this->particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
@@ -616,7 +618,7 @@ public:
                         for (int i=0;i<this->groupe[gr].nloc;i++) this->particuleobs.grouplist[gr].loc[i] = this->groupe[gr].loc[i];
                         this->particuleobs.grouplist[gr].nstat=this->groupe[gr].nstat;
                         this->particuleobs.grouplist[gr].sumstat = new StatC[this->groupe[gr].nstat];
-                        cout<<"calstatobs nstat["<<gr<<"]="<<this->groupe[gr].nstat<<"\n";
+                        //cout<<"calstatobs nstat["<<gr<<"]="<<this->groupe[gr].nstat<<"\n";
                         for (int i=0;i<this->groupe[gr].nstat;i++){
                                 this->particuleobs.grouplist[gr].sumstat[i].cat   = this->groupe[gr].sumstat[i].cat;
                                 this->particuleobs.grouplist[gr].sumstat[i].samp  = this->groupe[gr].sumstat[i].samp;
@@ -625,7 +627,7 @@ public:
 
                         }
                 }
-                cout<<"apres GROUPS\n";
+                //cout<<"apres GROUPS\n";
 //partie LOCUSLIST
                 int kmoy;
                 this->particuleobs.nloc = this->dataobs.nloc;
@@ -672,22 +674,22 @@ public:
                         }
                       // cout << "samplesize[0]="<<this->particuleobs.locuslist[kloc].samplesize[0]<<"\n";
                 }
-               cout<<"avant entete\n"; 
+               //cout<<"avant entete\n"; 
                string *sb,ent;
                int j;
                sb = splitwords(this->entete," ",&j);
                ent="";
                for (int k=j-this->nstat;k<j;k++) ent=ent+centre(sb[k],14);
                ent=ent+"\n";
-               cout<<"entete : "<<entete<<"\n";
+               //cout<<"entete : "<<entete<<"\n";
                delete []sb;
                FILE *fobs;
                fobs=fopen(statobsfilename,"w");
                fputs(ent.c_str(),fobs);
                for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
-                     cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
+                     //cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
                      this->particuleobs.docalstat(gr);
-                     cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
+                     //cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
                      for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs," %8.4f     ",this->particuleobs.grouplist[gr].sumstat[j].val);
                }
                fprintf(fobs,"\n");

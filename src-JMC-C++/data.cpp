@@ -181,7 +181,7 @@ public:
                 stringstream out;
 		ifstream file(filename.c_str(), ios::in);
 		if (file == NULL) {
-			this->message = "File "+filename+" not found";
+			this->message = "Data.cpp File "+filename+" not found";
 			return this;
 		} else this->message="";
 		getline(file,this->title);
