@@ -49,14 +49,46 @@ public:
     int nrec,*nrecscen,nscen,nreclus,nrec0;
     long posnrec;
     char *datapath, *filename, *filelog, *pch;
-    int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste;
+    int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste,nparamut,*nhistparam;
     float *param,*sumstat;
+    HistParameterC **histparam;
+    MutParameterC  *mutparam;
     fstream fifo;
     int nstatOK,nsel,nenr;
     enregC* enrsel;
     double *stat_obs;
     double *var_stat;
     
+    void sethistparamname(HeaderC header) {
+        int nparamvar=0,pp;
+        this->nparamut = header.nparamut;
+        this->nhistparam = new int[header.nscenarios];
+        this->histparam = new HistParameterC*[header.nscenarios];
+        this->mutparam = new MutParameterC[header.nparamut];
+        for (int i=0;i<header.nscenarios;i++) {
+            for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) nparamvar++;
+            //cout<<"nparamvar = "<<nparamvar<<"\n";
+            this->histparam[i] = new HistParameterC[nparamvar];
+            this->nhistparam[i] =nparamvar;
+            pp=-1;
+            for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) {
+                pp++;//cout<<"pp="<<pp;
+                this->histparam[i][pp].name = header.scenario[i].histparam[p].name;
+                this->histparam[i][pp].prior = copyprior( header.scenario[i].histparam[p].prior);
+                this->histparam[i][pp].category = header.scenario[i].histparam[p].category;
+                //cout<<"  OK\n";
+            }
+            //cout<<"coucou\n";
+            if (this->nparam[i]!=nparamvar+header.nparamut) {
+                cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
+                exit(1);
+            }
+            for (int p=0;p<this->nparamut;p++) {
+                this->mutparam[p].name = header.mutparam[p].name;
+                this->mutparam[p].prior = copyprior(header.mutparam[p].prior);
+            }
+        }
+    }
     
     int readheader(char * fname,char *flogname, char* datafilename) {
         int nb;
@@ -97,7 +129,7 @@ public:
         //cout <<"reftable.writeheader     nscen = "<<this->nscen<<"\n";
         nb=this->nscen;f1.write((char*)&nb,sizeof(int));
         for (int i=0;i<this->nscen;i++) {nb=this->nrecscen[i];f1.write((char*)&nb,sizeof(int));}
-        for (int i=0;i<this->nscen;i++) {nb=this->nparam[i];f1.write((char*)&nb,sizeof(int));}
+        for (int i=0;i<this->nscen;i++) {nb=this->nparam[i];f1.write((char*)&nb,sizeof(int));cout<<"nparam="<<this->nparam[i]<<"\n";}
         nb=this->nstat;f1.write((char*)&nb,sizeof(int));
         f1.close();
         return 0;  //retour normal

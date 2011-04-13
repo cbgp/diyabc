@@ -292,7 +292,7 @@ int main(int argc, char *argv[]){
                                               dureef=walltime(&debutf);time_file += dureef;
                                               rt.nrec +=nenr;
                                               cout<<rt.nrec;
-                                              if ((rt.nrec%1000)==0)cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
+                                              if (((rt.nrec%1000)==0)and(rt.nrec<nrecneeded))cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
                                               stoprun = (stat(stopfilename,&stFileInfo)==0);
                                               if (stoprun) remove(stopfilename);
                                           } else {
@@ -306,9 +306,10 @@ int main(int argc, char *argv[]){
                                   }
                                   delete [] enreg;
                                   rt.closefile();
+                                  if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename,ios::out);f1<<"END\n\n";f1.close();}
                                   header.libere();
-                                  exit(1);
-                          }
+                                  //exit(1);
+                          } else {ofstream f1(reftablelogfilename,ios::out);f1<<"END\n\n";f1.close();}
                       break;
                       
       case 'e'  : k=readheaders();

@@ -69,69 +69,82 @@ parstatC *parstat;
 * remplit le tableau numpar des numéros de paramètres communs par scénario
 */
     void det_numpar() {
+        //cout<<"debut de det_numpar\n";
         vector <string>  parname;
-        int ii;
+        int ii,iscen;
         bool commun,trouve;
+        rt.sethistparamname(header);
+        //cout<<"apres rt.setparamname\n";
         npar=0;npar0=0;
         numpar = new int*[rt.nscenchoisi]; 
         if (rt.nscenchoisi==1) {
-            numpar[0] = new int[rt.nparam[rt.scenchoisi[0]-1]];
-            for (int i=0;i<rt.nparam[rt.scenchoisi[0]-1];i++) numpar[0][i]=i;
-            for (int i=0;i<header.scenario[rt.scenchoisi[0]-1].nparam;i++) {
-                if (not header.scenario[rt.scenchoisi[0]-1].histparam[i].prior.constant){
-                    npar++;
-                    parname.push_back(header.scenario[rt.scenchoisi[0]-1].histparam[i].name);
-                    if (header.scenario[rt.scenchoisi[0]-1].histparam[i].category<2) npar0++;
-                }
+            iscen=rt.scenchoisi[0]-1;
+            cout<<"rt.nparam[rt.scenchoisi[0]-1] = "<<rt.nparam[iscen]<<"\n";
+            numpar[0] = new int[rt.nparam[iscen]];
+            for (int i=0;i<rt.nhistparam[iscen];i++){ 
+                numpar[0][i]=i;
+                npar++;
+                parname.push_back(rt.histparam[rt.scenchoisi[0]-1][i].name);
+                if (rt.histparam[iscen][i].category<2) npar0++;
             }
-            cout << "noms des parametres communs : ";
-            for (int i=0;i<npar;i++) cout<<parname[i]<<"   ";
-            cout <<"\n";
+            nparamcom = npar+rt.nparamut;//rt.nparam[rt.scenchoisi[0]-1]-header.scenario[rt.scenchoisi[0]-1].nparam;
+            for (int i=rt.nhistparam[iscen];i<nparamcom;i++) numpar[0][i]=i;
+            /*cout << "noms des parametres communs : ";
+            for (int i=0;i<rt.nhistparam[iscen];i++) cout<<rt.histparam[iscen][i].name<<"   ";
+            for (int i=0;i<rt.nparamut;i++) cout<<rt.mutparam[i].name<<"   ";
+            cout <<"\n";*/
         } else {
-            for (int i=0;i<header.scenario[rt.scenchoisi[0]-1].nparam;i++) {
+            iscen=rt.scenchoisi[0]-1;  //on prend les paramètres du premier scénario choisi et on les compare à ceux des autres scénarios
+            for (int i=0;i<rt.nparam[iscen];i++) {
                 commun=true;
                 for (int j=1;j<rt.nscenchoisi;j++) {
                     trouve=false;
-                    for (int k=0;k<header.scenario[rt.scenchoisi[j]-1].nparam;k++) {
-                        trouve=(header.scenario[rt.scenchoisi[0]-1].histparam[i].name.compare(header.scenario[rt.scenchoisi[j]-1].histparam[k].name)==0);
+                    for (int k=0;k<rt.nhistparam[rt.scenchoisi[j]-1];k++) {
+                        trouve=(rt.histparam[rt.scenchoisi[0]-1][i].name.compare(rt.histparam[rt.scenchoisi[j]-1][k].name)==0);
                         if (trouve) break;
                     }
                     commun=trouve;
                     if (not commun) break;
                 }
                 if (commun) {
-                    if (not header.scenario[rt.scenchoisi[0]-1].histparam[i].prior.constant){
+                    if (not rt.histparam[rt.scenchoisi[0]-1][i].prior.constant){
                         npar++;
-                        parname.push_back(header.scenario[rt.scenchoisi[0]-1].histparam[i].name);
-                        if (header.scenario[rt.scenchoisi[0]-1].histparam[i].category<2) npar0++;
+                        parname.push_back(rt.histparam[rt.scenchoisi[0]-1][i].name);
+                        if (rt.histparam[rt.scenchoisi[0]-1][i].category<2) npar0++;
                     }
                 }
+            }
+            nparamcom = npar+rt.nparamut;//rt.nparam[rt.scenchoisi[0]-1]-header.scenario[rt.scenchoisi[0]-1].nparam;
+            for (int j=0;j<rt.nscenchoisi;j++) {
+                numpar[j] = new int[nparamcom];
+                ii=0;
+                for (int i=0;i<npar;i++) {
+                    for (int k=0;k<rt.nhistparam[rt.scenchoisi[j]-1];k++) {
+                        if (rt.histparam[rt.scenchoisi[j]-1][k].name.compare(parname[i])==0) {numpar[j][ii]=k;ii++;}  
+                    }
+                 }
+                for (int k=rt.nhistparam[rt.scenchoisi[j]-1];k<rt.nparam[rt.scenchoisi[j]-1];k++) {numpar[j][ii]=k;ii++;}
+                for (int kk=0;kk<npar+header.nparamut;kk++) {
+                  cout <<numpar[j][kk]<<"  ";
+                  if (kk<npar) cout<<"("<<rt.histparam[rt.scenchoisi[j]-1][numpar[j][kk]].name<<")  ";
+                  else cout<<"("<<rt.mutparam[kk-npar].name<<")  ";
+                }
+                cout<<"\n";
             }
             cout << "noms des parametres communs : ";
             for (int i=0;i<npar;i++) cout<<parname[i]<<"   ";
             cout <<"\n";
         } 
-        //cout<<"npar0="<<npar0<<"   npar="<<npar<<"   nombre de groupes="<<header.ngroupes<<"\n";
-        if (composite) nparcompo=npar0*header.ngroupes; else nparcompo=0;
-        cout<<"nombre de parametres composites : "<<nparcompo<<"\n";
-        nparamcom = npar+rt.nparam[rt.scenchoisi[0]-1]-header.scenario[rt.scenchoisi[0]-1].nparam;
-        cout<<"nombre de parametres communs : "<<nparamcom<<"\n";
+        cout << "noms des parametres communs : ";
         for (int j=0;j<rt.nscenchoisi;j++) {
-            numpar[j] = new int[nparamcom];
-            ii=0;
-            for (int i=0;i<npar;i++) {
-                for (int k=0;k<header.scenario[rt.scenchoisi[j]-1].nparam;k++) {
-                    if (header.scenario[rt.scenchoisi[j]-1].histparam[k].name.compare(parname[i])==0) {numpar[j][ii]=k;ii++;}  
-                }
+            cout<<"scenario "<<rt.scenchoisi[j]<<"\n";
+            for (int i=0;i<nparamcom;i++) {cout<<numpar[j][i]<<" ";
+                if (i<npar) cout<<"("<<rt.histparam[rt.scenchoisi[j]-1][numpar[j][i]].name<<")  ";
+                else cout<<"("<<rt.mutparam[i-npar].name<<")  ";
             }
-            for (int k=header.scenario[rt.scenchoisi[j]-1].nparam;k<rt.nparam[rt.scenchoisi[j]-1];k++) {numpar[j][ii]=k;ii++;}
-            for (int kk=0;kk<npar+rt.nparam[rt.scenchoisi[j]-1]-header.scenario[rt.scenchoisi[j]-1].nparam;kk++) {
-              cout <<numpar[j][kk]<<"  ";
-              if (kk<npar) cout<<"("<<header.scenario[rt.scenchoisi[j]-1].histparam[numpar[j][kk]].name<<")  ";
-            }
-            cout<<"\n";
+            cout <<"\n";
         }
-        
+        if (composite) nparcompo=npar0*header.ngroupes; else nparcompo=0;
     }
 
 /** 
@@ -148,7 +161,6 @@ parstatC *parstat;
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {
                            k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
-                           //k = rt.enrsel[i].numscen-1;
                            alpsimrat[i][j] = rt.enrsel[i].param[numpar[k][j]];
                        }    
                    }
@@ -157,7 +169,6 @@ parstatC *parstat;
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {
                            k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
-                           //k = rt.enrsel[i].numscen-1;
                            if (rt.enrsel[i].param[numpar[k][j]]<=0.00000000001) rt.enrsel[i].param[numpar[k][j]]=1E-11;
                            alpsimrat[i][j] = log(rt.enrsel[i].param[numpar[k][j]]);
                        }    
@@ -172,7 +183,6 @@ parstatC *parstat;
                        for (int i=0;i<n;i++) {
                             for (int j=0;j<nparamcom;j++) {
                                 k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
-                                //k = rt.enrsel[i].numscen-1;
                                 if (rt.enrsel[i].param[numpar[k][j]]<parmin[j]) parmin[j]=rt.enrsel[i].param[numpar[k][j]];
                                 if (rt.enrsel[i].param[numpar[k][j]]>parmax[j]) parmax[j]=rt.enrsel[i].param[numpar[k][j]];
                            }
@@ -189,30 +199,30 @@ parstatC *parstat;
                        //k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k]) k++;
                        //k=rt.scenchoisi[0]-1;
                        //cout<<"k="<<k<<"\n";
-                       for (int j=0;j<nparamcom-header.nparamut;j++) {
-                           if (header.scenario[k].histparam[numpar[k][j]].category<2) {
-                               parmin[j] = header.scenario[k].histparam[numpar[0][j]].prior.mini-0.5;
-                               parmax[j] = header.scenario[k].histparam[numpar[0][j]].prior.maxi+0.5;
+                       for (int j=0;j<rt.nhistparam[rt.scenchoisi[0]-1];j++) {
+                           if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].category<2) {
+                               parmin[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini-0.5;
+                               parmax[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi+0.5;
                            } else {
-                               parmin[j] = header.scenario[k].histparam[numpar[0][j]].prior.mini-0.0005;
-                               parmax[j] = header.scenario[k].histparam[numpar[0][j]].prior.maxi+0.0005;
+                               parmin[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini-0.0005;
+                               parmax[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi+0.0005;
                            }
                            diff[j]=parmax[j]-parmin[j];
                            //cout<<header.scenario[k].histparam[numpar[k][j]].name<<"   ";
                            //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
                        }
-                       for (int j=nparamcom-header.nparamut;j<nparamcom;j++) {
-                               jj=j-(nparamcom-header.nparamut);
+                       for (int j=rt.nhistparam[rt.scenchoisi[0]-1];j<nparamcom;j++) {
+                               jj=j-rt.nhistparam[rt.scenchoisi[0]-1];
                                //cout<<"jj="<<jj<<"\n";
-                               parmin[j]=0.95*header.mutparam[jj].prior.mini;
-                               parmax[j]=1.05*header.mutparam[jj].prior.maxi;
+                               parmin[j]=0.95*rt.mutparam[jj].prior.mini;
+                               parmax[j]=1.05*rt.mutparam[jj].prior.maxi;
                                //cout<<header.mutparam[jj].category<<"   ";
                                //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
                                diff[j]=parmax[j]-parmin[j];
                        }
                    }
                    cout <<"fin du calcul de parmin/parmax rt.scenchoisi[0] = "<<rt.scenchoisi[0]<<"\n";
-                   //for (int i=0;i<10;i++) cout <<rt.enrsel[i].numscen<<"\n";
+                   for (int i=0;i<nparamcom;i++) cout <<parmin[i]<<"   "<<parmax[i]<<"\n";
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {
                            //cout<<"numscen = "<<rt.enrsel[i].numscen<<"  ";
@@ -255,24 +265,24 @@ parstatC *parstat;
                        xborne=borne;
                        //k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
                        //k=rt.scenchoisi[0]-1;
-                       for (int j=0;j<nparamcom-header.nparamut;j++) {
-                           if (header.scenario[k].histparam[numpar[k][j]].category<2) {
-                               parmin[j] = header.scenario[k].histparam[numpar[0][j]].prior.mini-0.5;
-                               parmax[j] = header.scenario[k].histparam[numpar[0][j]].prior.maxi+0.5;
+                       for (int j=0;j<rt.nhistparam[rt.scenchoisi[0]-1];j++) {
+                           if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].category<2) {
+                               parmin[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini-0.5;
+                               parmax[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi+0.5;
                            } else {
-                               parmin[j] = header.scenario[k].histparam[numpar[0][j]].prior.mini-0.0005;
-                               parmax[j] = header.scenario[k].histparam[numpar[0][j]].prior.maxi+0.0005;
+                               parmin[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini-0.0005;
+                               parmax[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi+0.0005;
                            }
                            diff[j]=parmax[j]-parmin[j];
                            //cout<<header.scenario[k].histparam[numpar[k][j]].name<<"   ";
                            //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
                        }
-                       for (int j=nparamcom-header.nparamut;j<nparamcom;j++) {
-                               jj=j-(nparamcom-header.nparamut);
+                       for (int j=rt.nhistparam[rt.scenchoisi[0]-1];j<nparamcom;j++) {
+                               jj=j-(nparamcom-rt.nparamut);
                                //cout<<"jj="<<jj<<"\n";
-                               parmin[j]=0.95*header.mutparam[jj].prior.mini;
-                               parmax[j]=1.05*header.mutparam[jj].prior.maxi;
-                               cout<<header.mutparam[jj].category<<"   ";
+                               parmin[j]=0.95*rt.mutparam[jj].prior.mini;
+                               parmax[j]=1.05*rt.mutparam[jj].prior.maxi;
+                               //cout<<rt.mutparam[jj].category<<"   ";
                                //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
                                //diff[j]=parmax[j]-parmin[j];
                        }
@@ -505,21 +515,22 @@ parstatC *parstat;
         
     void det_nomparam() {
         int k;
+        cout<<"debut de det_nomparam\n";
         nomparam =new string[nparamcom+nparcompo];
         string pp;
         entete="scenario";
         for (int j=0;j<npar;j++) {
-            nomparam[j]=string(header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].name);
-            entete += centre(header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].name,15);}
+            nomparam[j]=string(rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].name);
+            entete += centre(rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].name,15);}
         for (int j=npar;j<nparamcom;j++) {
-            nomparam[j]=string(header.mutparam[j-npar].name);
-            entete += centre(header.mutparam[j-npar].name,15);}
+            nomparam[j]=string(rt.mutparam[j-npar].name);
+            entete += centre(rt.mutparam[j-npar].name,15);}
         if (nparcompo>0) {
             k=nparamcom;
             for (int gr=1;gr<header.ngroupes+1;gr++) {
                 for (int j=0;j<npar;j++) {
-                    if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
-                        pp=header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].name;
+                    if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].category<2){
+                        pp=rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].name;
                         if (header.groupe[gr].type==0) pp = pp+"(u+sni)_"+IntToString(gr)+" ";
                         if (header.groupe[gr].type==1) pp = pp+"useq_"+IntToString(gr)+" ";
                         nomparam[k]=pp;k++;
@@ -528,8 +539,8 @@ parstatC *parstat;
                 }
             }
         }
-        //for (int j=0;j<nparamcom+nparcompo;j++) cout<<nomparam[j]<<"\n";
-    
+        for (int j=0;j<nparamcom+nparcompo;j++) cout<<nomparam[j]<<"\n";
+        cout<<"nparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"\n";
     
     }    
         
@@ -745,21 +756,21 @@ parstatC *parstat;
             pardens[j].ncl=1001;
             condition=false;
             if (j<npar) {  //histparam
-                if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2) {
-                    if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].prior.maxi-header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].prior.mini<=30) 
-                        pardens[j].ncl=header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].prior.maxi-header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].prior.mini+1;
+                if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].category<2) {
+                    if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi-rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini<=30) 
+                        pardens[j].ncl=rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi-rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini+1;
                 }
-                pardens[j].xmin=header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].prior.mini;
-                pardens[j].xmax=header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].prior.maxi;
+                pardens[j].xmin=rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini;
+                pardens[j].xmax=rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi;
                 if (header.nconditions>0) {
                     for (int i=0;i<header.nconditions;i++) {
-                        condition=((header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].name==header.condition[i].param1)or(header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].name==header.condition[i].param2));
+                        condition=((rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].name==header.condition[i].param1)or(rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].name==header.condition[i].param2));
                         if (condition) break;
                     }
                 }
             } else if (j<nparamcom){  //mutparam
-                pardens[j].xmin=header.mutparam[j-npar].prior.mini;
-                pardens[j].xmax=header.mutparam[j-npar].prior.maxi;
+                pardens[j].xmin=rt.mutparam[j-npar].prior.mini;
+                pardens[j].xmax=rt.mutparam[j-npar].prior.maxi;
             } else {  //parametres composites
                 pardens[j].xmin=1E100;pardens[j].xmax=0;
                 for (int i=0;i<nsimpar;i++) {
@@ -772,19 +783,19 @@ parstatC *parstat;
                 }
             } 
             pardens[j].xdelta = (pardens[j].xmax-pardens[j].xmin)/(double)(pardens[j].ncl-1);
-            //cout<<nomparam[j]<<"   xmin="<<pardens[j].xmin<<"   xmax="<<pardens[j].xmax<<"   xdelta="<<pardens[j].xdelta<<"\n";
+            cout<<nomparam[j]<<"   xmin="<<pardens[j].xmin<<"   xmax="<<pardens[j].xmax<<"   xdelta="<<pardens[j].xdelta<<"\n";
             pardens[j].x = new double[pardens[j].ncl];
             for (int k=0;k<pardens[j].ncl;k++) pardens[j].x[k]=pardens[j].xmin+k*pardens[j].xdelta;
             if (pardens[j].ncl>31) {
                 if ((condition)or(j>=npar)) pardens[j].priord = calculdensite(pardens[j].ncl,nsimpar,pardens[j].x,simpar,j,multithread);
-                else pardens[j].priord =caldensexact(pardens[j].ncl,pardens[j].x,header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].prior);
+                else pardens[j].priord =caldensexact(pardens[j].ncl,pardens[j].x,rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior);
                 pardens[j].postd = calculdensite(pardens[j].ncl,n,pardens[j].x,phistar,j,multithread);
             } else {
 /*                if ((condition)or(j>=npar)) pardens[j].priord = calculhisto(pardens[j].x,simpar,j,pardens[j].ncl);
-                else pardens[j].priord =calhistsexact(header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].prior,pardens[j].ncl);
+                else pardens[j].priord =calhistsexact(rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior,pardens[j].ncl);
                 pardens[j].postd = calculhisto(pardens[j].x,phistar,j,pardens[j].ncl);
 */            }
-           //cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom+nparcompo<<"\n";
+           cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom+nparcompo<<"\n";
         *iprog+=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
         }
      }
@@ -839,14 +850,17 @@ parstatC *parstat;
         FILE *f1;
         f1=fopen(nomfiparstat,"w");
         for (int j=0;j<nparamcom+nparcompo;j++) {
-            fprintf(f1,"%s\n",nomparam[j].c_str());
+          cout<<nomparam[j]<<"\n";
+            fprintf(f1,"%s\n",nomparam[j].c_str());cout<<"1\n";
             fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
-            fprintf(f1,"%d\n",pardens[j].ncl);
-            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].x[i]);fprintf(f1,"\n");
-            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].priord[i]);fprintf(f1,"\n");
-            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].postd[i]);fprintf(f1,"\n");
+            cout<<"2\n";
+            fprintf(f1,"%d\n",pardens[j].ncl);cout<<"3\n";
+            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].x[i]);fprintf(f1,"\n");cout<<"3\n";
+            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].priord[i]);fprintf(f1,"\n");cout<<"4\n";
+            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].postd[i]);fprintf(f1,"\n");cout<<"5\n";
         }
         fclose(f1);
+        cout<<"apres close(f1)\n";
         strcpy(nomfiparstat,path);
         strcat(nomfiparstat,ident);
         strcat(nomfiparstat,"_mmmq.txt");

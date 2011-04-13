@@ -263,7 +263,7 @@ public:
                         while ((not trouve)and(j<this->nparam)) {
                                 trouve= (ss[i].compare(histparname[j])==0);
                                 //(pr.name == this->histpar[j]->name);
-                                cout<<"histparname["<<j <<"] = "<<histparname[j]<<"   trouve="<<trouve<<"\n";
+                                //cout<<"histparname["<<j <<"] = "<<histparname[j]<<"   trouve="<<trouve<<"\n";
                                 j++;
                         }
                         if (not trouve) {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;}
@@ -721,7 +721,7 @@ struct ParticleC
                         for (int p=0;p<this->scen.nparam;p++) {
                             this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
                             if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-                            cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
+                            //cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
                             //cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
                         }
                         //cout <<"avant test conditions\n";
@@ -747,6 +747,8 @@ struct ParticleC
 		this->scen.ipv=0;
 		if (OK) {
 			for (int p=0;p<this->scen.nparam;p++) {
+                //cout<<this->scen.histparam[p].name;
+                //if (this->scen.histparam[p].prior.constant) cout<<"   constant\n"; else cout<<"   variable\n";
 				if (not this->scen.histparam[p].prior.constant) {this->scen.paramvar[this->scen.ipv]=this->scen.histparam[p].value;this->scen.ipv++;}
 			}
 		}

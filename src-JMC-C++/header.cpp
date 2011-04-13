@@ -73,7 +73,10 @@ public:
         else if (ss.find("NO[")!=string::npos) {prior.loi="NO";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
         else if (ss.find("LN[")!=string::npos) {prior.loi="LN";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
         else if (ss.find("GA[")!=string::npos) {prior.loi="GA";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
-        prior.constant = ((prior.maxi-prior.mini)/prior.maxi<0.000001);
+        if (prior.maxi==0.0) prior.constant=true;
+        else prior.constant = ((prior.maxi-prior.mini)/prior.maxi<0.000001);
+        //cout<<ss<<"   ";
+        //if (prior.constant) cout<<"constant\n"; else cout<<"variable\n";
         delete []sb;
         return prior;
     }
@@ -93,6 +96,8 @@ public:
                 if (prior.maxi==0.0) prior.constant=true;
                 else if ((prior.maxi-prior.mini)/prior.maxi<0.000001) prior.constant=true;
                 else prior.constant=false;
+        cout<<ss<<"   ";
+        if (prior.constant) cout<<"constant\n"; else cout<<"variable\n";
         delete []sb;
         return prior;
     }
@@ -210,6 +215,7 @@ public:
         delete [] ss;
         for (int i=0;i<this->nparamtot;i++) {
             getline(file,s1);
+            //cout<<s1<<"\n";
             ss=splitwords(s1," ",&nss);
             this->histparam[i].name=ss[0];
             //cout<<this->histparam[i].name<<"\n";
@@ -217,6 +223,8 @@ public:
             else if  (ss[1]=="T") this->histparam[i].category = 1;
             else if  (ss[1]=="A") this->histparam[i].category = 2;
             this->histparam[i].prior = this->readprior(ss[2]);
+            //    cout<<"readHeader "<<this->histparam[i].name;
+            //    if (this->histparam[i].prior.constant) cout<<"   constant\n"; else cout<<"   variable\n";
         }
         delete [] ss;
         if (this->nconditions>0) {
