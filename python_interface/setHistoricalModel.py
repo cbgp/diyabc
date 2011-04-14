@@ -997,8 +997,11 @@ class SetHistoricalModel(QFrame):
         """
         result = u""
         for box in self.paramList:
-            pname = str(box.findChild(QLabel,"paramNameLabel").text()).strip()
-            result += pname
-            for i in range(14-len(pname)):
-                result += " "
+            mini = float(box.findChild(QLineEdit,"minValueParamEdit").text())
+            maxi = float(box.findChild(QLineEdit,"maxValueParamEdit").text())
+            if (maxi > 0) and (maxi-mini > 0.000001):
+                pname = str(box.findChild(QLabel,"paramNameLabel").text()).strip()
+                result += pname
+                for i in range(14-len(pname)):
+                    result += " "
         return result
