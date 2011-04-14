@@ -1001,7 +1001,7 @@ class SetHistoricalModel(QFrame):
             maxi = float(box.findChild(QLineEdit,"maxValueParamEdit").text())
             if (maxi > 0) and (maxi-mini > 0.000001):
                 pname = str(box.findChild(QLabel,"paramNameLabel").text()).strip()
-                result += pname
-                for i in range(14-len(pname)):
-                    result += " "
+                result += output.centerHeader(pname,14)
+                #for i in range(14-len(pname)):
+                #    result += " "
         return result

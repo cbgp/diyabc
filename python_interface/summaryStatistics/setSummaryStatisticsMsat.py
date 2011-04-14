@@ -9,6 +9,7 @@ from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from uis.setSummaryStatisticsMsat_ui import Ui_Frame
 from setSummaryStatistics import SetSummaryStatistics
+import output
 
 class SetSummaryStatisticsMsat(SetSummaryStatistics):
     """ ecran de selection des summary statistics pour les microsats
@@ -449,9 +450,7 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics):
         for t in ["NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML"]:
             l = dico[t]
             for s in l:
-                result += s
-                for i in range(14-len(s)):
-                    result += " "
+                result += output.centerHeader(s,14)
 
         return result
 

@@ -4,6 +4,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setMutationModelSequences import SetMutationModelSequences
+import output
 
 class SetMutationModelSequencesRefTable(SetMutationModelSequences):
     """ spécialisation de SetMutationModelSequences pour les genetic data 
@@ -40,21 +41,15 @@ class SetMutationModelSequencesRefTable(SetMutationModelSequences):
         gnumber = self.parent.groupList.index(self.box_group)+1
         if float(str(self.ui.mmrMinEdit.text())) < float(str(self.ui.mmrMaxEdit.text())):
             pname = u"µseq_%s"%(gnumber)
-            result += pname
-            for i in range(14-len(pname)):
-                result += " "
+            result += output.centerHeader(pname,14)
         if not self.ui.jukesRadio.isChecked():
             if float(str(self.ui.mc1MinEdit.text())) < float(str(self.ui.mc1MaxEdit.text())):
                 pname = u"k1seq_%s"%(gnumber)
-                result += pname
-                for i in range(14-len(pname)):
-                    result += " "
+                result += output.centerHeader(pname,14)
             if self.ui.tamuraRadio.isChecked():
                 if float(str(self.ui.mc2MinEdit.text())) < float(str(self.ui.mc2MaxEdit.text())):
                     pname = u"k2seq_%s"%(gnumber)
-                    result += pname
-                    for i in range(14-len(pname)):
-                        result += " "
+                    result += output.centerHeader(pname,14)
         return result
 
 

@@ -4,6 +4,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setMutationModelMsat import SetMutationModelMsat
+import output
 
 class SetMutationModelMsatRefTable(SetMutationModelMsat):
     """ spécialisation de SetMutationModelMsat pour les genetic data 
@@ -43,19 +44,19 @@ class SetMutationModelMsatRefTable(SetMutationModelMsat):
         gnumber = self.parent.groupList.index(self.box_group)+1
         if float(str(self.ui.mmrMinEdit.text())) < float(str(self.ui.mmrMaxEdit.text())):
             pname = u"µmic_%s"%(gnumber)
-            result += pname
-            for i in range(14-len(pname)):
-                result += " "
+            result += output.centerHeader(pname,14)
+            #for i in range(14-len(pname)):
+            #    result += " "
         if float(str(self.ui.mcpMinEdit.text())) < float(str(self.ui.mcpMaxEdit.text())):
             pname = u"pmic_%s"%(gnumber)
-            result += pname
-            for i in range(14-len(pname)):
-                result += " "
+            result += output.centerHeader(pname,14)
+            #for i in range(14-len(pname)):
+            #    result += " "
         if float(str(self.ui.msrMinEdit.text())) < float(str(self.ui.msrMaxEdit.text())):
             pname = u"snimic_%s"%(gnumber)
-            result += pname
-            for i in range(14-len(pname)):
-                result += " "
+            result += output.centerHeader(pname,14)
+            #for i in range(14-len(pname)):
+            #    result += " "
         #print "result %s : %s"%(gnumber,result)
         return result
 

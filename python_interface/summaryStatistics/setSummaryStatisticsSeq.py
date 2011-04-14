@@ -9,6 +9,7 @@ from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from uis.setSummaryStatisticsSeq_ui import Ui_Frame
 from setSummaryStatistics import SetSummaryStatistics
+import output
 
 class SetSummaryStatisticsSeq(SetSummaryStatistics):
     """ ecran de selection des summary statistics pour les sequences
@@ -455,7 +456,5 @@ class SetSummaryStatisticsSeq(SetSummaryStatistics):
         for t in ["NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"]:
             l = dico[t]
             for s in l:
-                result += s
-                for i in range(14-len(s)):
-                    result += " "
+                result += output.centerHeader(s,14)
         return result

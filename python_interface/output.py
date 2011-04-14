@@ -12,4 +12,18 @@ def notify(parent,title,message):
     else:
         QMessageBox.information(parent,title,message)
 
+def centerHeader(name,nbChar):
+    if len(name) > nbChar:
+        return name
+    else:
+        nbSpToAdd = nbChar - len(name)
+        spBef = ""
+        for i in range(nbSpToAdd/2):
+            spBef+=" "
+        if (nbSpToAdd % 2) == 1:
+            spAft = spBef+" "
+        else:
+            spAft = spBef
+        return spBef+name+spAft
+
 
