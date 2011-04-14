@@ -65,6 +65,10 @@ class Diyabc(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        #pal = QPalette()
+        #pal.setBrush(self.backgroundRole(), QBrush(QImage("docs/accueil_pictures/correct.png")))
+        #self.setPalette(pal)
+
         #im = QImage(dataImages.dada,200,200)
         #pic = QPixmap()
         #pic.convertFromImage(im)
