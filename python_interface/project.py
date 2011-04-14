@@ -151,6 +151,8 @@ class Project(QTabWidget):
                 self.ui.analysisListCombo.addItem(e.replace('_',' '))
 
     def viewAnalysisResult(self,analysis=None):
+        """
+        """
         anCat = analysis.category
         dicoCategoryDirName = {
                 "estimate" : "estimation",
@@ -170,7 +172,38 @@ class Project(QTabWidget):
         elif typestr == 'comparison':
             self.drawAnalysisFrame = DrawComparisonAnalysisResult(anDir,self)
         elif typestr == "pca" or typestr == "modelChecking":
-            self.drawAnalysisFrame = DrawPCAAnalysisResult(anDir,self)
+            if os.path.exists("%s/analysis/%s/ACP.txt"%(self.dir,anDir)) or os.path.exists("%s/analysis/%s/mcACP.txt"%(self.dir,anDir)):
+                self.drawAnalysisFrame = DrawPCAAnalysisResult(anDir,self)
+            else:
+                if typestr == "pca":
+                    f = open("%s/analysis/%s/locate.txt"%(self.dir,anDir),'r')
+                elif typestr == "modelChecking":
+                    f = open("%s/analysis/%s/mclocate.txt"%(self.dir,anDir),'r')
+                data = f.read()
+                f.close()
+                self.drawAnalysisFrame = QFrame(self)
+                ui = ui_viewTextFile()
+                ui.setupUi(self.drawAnalysisFrame)
+                ui.dataPlain.setPlainText(data)
+                font = "FreeMono"
+                if sys.platform.startswith('win'):
+                    font = "Courier New"
+                ui.dataPlain.setFont(QFont(font,10))
+                QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
+
+        elif typestr == "evaluation":
+            f = open("%s/analysis/%s/confidence.txt"%(self.dir,anDir),'r')
+            data = f.read()
+            f.close()
+            self.drawAnalysisFrame = QFrame(self)
+            ui = ui_viewTextFile()
+            ui.setupUi(self.drawAnalysisFrame)
+            ui.dataPlain.setPlainText(data)
+            font = "FreeMono"
+            if sys.platform.startswith('win'):
+                font = "Courier New"
+            ui.dataPlain.setFont(QFont(font,10))
+            QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
         elif typestr == "bias":
             f = open("%s/analysis/%s/bias.txt"%(self.dir,anDir),'r')
             data = f.read()
@@ -181,7 +214,6 @@ class Project(QTabWidget):
             ui.dataPlain.setPlainText(data)
             font = "FreeMono"
             if sys.platform.startswith('win'):
-                print "winwinwinwinwinwinwin\n\n"
                 font = "Courier New"
             ui.dataPlain.setFont(QFont(font,10))
             QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
@@ -190,7 +222,9 @@ class Project(QTabWidget):
         self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
         self.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
 
-        if typestr == "pca" or typestr == "modelChecking":
+        if (typestr == "pca" or typestr == "modelChecking")\
+        and (os.path.exists("%s/analysis/%s/ACP.txt"%(self.dir,anDir))\
+        or os.path.exists("%s/analysis/%s/mcACP.txt"%(self.dir,anDir))):
             self.drawAnalysisFrame.loadACP()
 
     def returnToAnalysisList(self):
@@ -1007,7 +1041,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if os.path.exists(self.dir+"/%s"%self.parent.table_header_conf_name):
             os.remove("%s/%s"%(self.dir,self.parent.table_header_conf_name))
         f = codecs.open(self.dir+"/%s"%self.parent.table_header_conf_name,'w',"utf-8")
-        f.write("scenario    %s%s%s"%(hist_params_txt,mut_params_txt,sum_stats_txt))
+        f.write("scenario%s%s%s"%(hist_params_txt,mut_params_txt,sum_stats_txt))
         f.close()
 
 

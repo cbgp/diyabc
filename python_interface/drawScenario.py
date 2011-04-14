@@ -29,6 +29,11 @@ class DrawScenario(QFrame):
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.save)
 
+        self.ui.ACProgress.hide()
+        self.ui.viewLocateButton.hide()
+        self.ui.PCAFrame.hide()
+        self.ui.PCAGraphFrame.hide()
+
     def exit(self):
         ## reactivation des onglets
         #self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
@@ -344,6 +349,6 @@ class DrawScenario(QFrame):
             li+=1
 
         if pic_format == "jpg" or pic_format == "png":
-            self.im_result.save("%s_all.%s"%pic_whole_path,pic_format)
+            self.im_result.save("%s_all.%s"%(pic_whole_path,pic_format))
         else:
             painter_pic.end()

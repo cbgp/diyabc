@@ -66,6 +66,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="viewLocateButton">
+        <property name="text">
+         <string>View locate results</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -189,7 +196,7 @@
         <x>0</x>
         <y>0</y>
         <width>930</width>
-        <height>482</height>
+        <height>454</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -201,6 +208,17 @@
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="PCAGraphFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3"/>
     </widget>
    </item>
   </layout>

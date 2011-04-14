@@ -34,6 +34,7 @@ class DrawPCAAnalysisResult(QFrame):
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.saveGraph)
+        QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewLocate)
 
         QObject.connect(self.ui.scCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         QObject.connect(self.ui.compoHCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
@@ -45,6 +46,30 @@ class DrawPCAAnalysisResult(QFrame):
         #QObject.connect(self.ui.loadButton,SIGNAL("clicked()"),self.loadACP)
         # replaced by :
         #self.loadACP()
+        self.ui.scrollArea.hide()
+        if not os.path.exists("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory))\
+                and not os.path.exists("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory)):
+            self.ui.viewLocateButton.hide()
+
+    def viewLocate(self):
+        if os.path.exists("%s/analysis/%s/mcACP.txt"%(self.parent.dir,self.directory)):
+            # TODO
+            f = open("%s/analysis/%s/locate.txt"%(self.dir,anDir),'r')
+        elif typestr == "modelChecking":
+            f = open("%s/analysis/%s/mclocate.txt"%(self.dir,anDir),'r')
+        data = f.read()
+        f.close()
+        self.drawAnalysisFrame = QFrame(self)
+        ui = ui_viewTextFile()
+        ui.setupUi(self.drawAnalysisFrame)
+        ui.dataPlain.setPlainText(data)
+        font = "FreeMono"
+        if sys.platform.startswith('win'):
+            font = "Courier New"
+        ui.dataPlain.setFont(QFont(font,10))
+        QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
+        self.parent.ui.analysisStack.addWidget(self.drawAnalysisFrame)
+        self.parent.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
 
     def loadACP(self):
         """ charge le fichier ACP dans un dico
@@ -228,15 +253,19 @@ class DrawPCAAnalysisResult(QFrame):
             fr.setFrameShape(QFrame.StyledPanel)
             fr.setFrameShadow(QFrame.Raised)
             fr.setObjectName("frame")
-            fr.setMinimumSize(QSize(800, 0))
-            fr.setMaximumSize(QSize(800, 440))
+            #fr.setMinimumSize(QSize(800, 0))
+            #fr.setMaximumSize(QSize(800, 440))
             vert = QVBoxLayout(fr)
             vert.addWidget(p)
 
-            if self.ui.horizontalLayout_3.itemAt(0) != None:
-                self.ui.horizontalLayout_3.itemAt(0).widget().hide()
-            self.ui.horizontalLayout_3.removeItem(self.ui.horizontalLayout_3.itemAt(0))
-            self.ui.horizontalLayout_3.addWidget(fr)
+            #if self.ui.horizontalLayout_3.itemAt(0) != None:
+            #    self.ui.horizontalLayout_3.itemAt(0).widget().hide()
+            #self.ui.horizontalLayout_3.removeItem(self.ui.horizontalLayout_3.itemAt(0))
+            #self.ui.horizontalLayout_3.addWidget(fr)
+            if self.ui.verticalLayout_3.itemAt(0) != None:
+                self.ui.verticalLayout_3.itemAt(0).widget().hide()
+            self.ui.verticalLayout_3.removeItem(self.ui.verticalLayout_3.itemAt(0))
+            self.ui.verticalLayout_3.addWidget(fr)
 
             self.plot = p
 
@@ -286,7 +315,7 @@ class DrawPCAAnalysisResult(QFrame):
     def saveGraph(self):
         """ sauvegarde le graphe dans le dossier PCA_pictures du projet
         """
-        if self.ui.horizontalLayout_3.itemAt(0) != None:
+        if self.ui.verticalLayout_3.itemAt(0) != None:
             proj_dir = self.parent.dir
             graph_dir = self.parent.parent.PCA_dir_name
             sc_txt = ""

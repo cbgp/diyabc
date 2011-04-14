@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/drawScenarioFrame.ui'
 #
-# Created: Thu Mar 31 14:48:58 2011
+# Created: Thu Apr 14 11:56:11 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -44,6 +44,9 @@ class Ui_Frame(object):
         self.ACProgress.setProperty(_fromUtf8("value"), 24)
         self.ACProgress.setObjectName(_fromUtf8("ACProgress"))
         self.horizontalLayout.addWidget(self.ACProgress)
+        self.viewLocateButton = QtGui.QPushButton(self.groupBox)
+        self.viewLocateButton.setObjectName(_fromUtf8("viewLocateButton"))
+        self.horizontalLayout.addWidget(self.viewLocateButton)
         spacerItem = QtGui.QSpacerItem(480, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.closeButton = QtGui.QPushButton(self.groupBox)
@@ -92,7 +95,7 @@ class Ui_Frame(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 930, 482))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 930, 454))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
@@ -104,6 +107,13 @@ class Ui_Frame(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout.addWidget(self.scrollArea)
+        self.PCAGraphFrame = QtGui.QFrame(Frame)
+        self.PCAGraphFrame.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.PCAGraphFrame.setFrameShadow(QtGui.QFrame.Raised)
+        self.PCAGraphFrame.setObjectName(_fromUtf8("PCAGraphFrame"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout(self.PCAGraphFrame)
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.verticalLayout.addWidget(self.PCAGraphFrame)
 
         self.retranslateUi(Frame)
         QtCore.QMetaObject.connectSlotsByName(Frame)
@@ -112,6 +122,7 @@ class Ui_Frame(object):
         Frame.setWindowTitle(QtGui.QApplication.translate("Frame", "Frame", None, QtGui.QApplication.UnicodeUTF8))
         self.printButton.setText(QtGui.QApplication.translate("Frame", "PRINT", None, QtGui.QApplication.UnicodeUTF8))
         self.saveButton.setText(QtGui.QApplication.translate("Frame", "SAVE", None, QtGui.QApplication.UnicodeUTF8))
+        self.viewLocateButton.setText(QtGui.QApplication.translate("Frame", "View locate results", None, QtGui.QApplication.UnicodeUTF8))
         self.closeButton.setText(QtGui.QApplication.translate("Frame", "CLOSE", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Frame", "Scenario to draw", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Frame", "Horizontal axis component", None, QtGui.QApplication.UnicodeUTF8))
