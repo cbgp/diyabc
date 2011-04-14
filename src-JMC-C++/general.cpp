@@ -77,43 +77,47 @@ int readheaders() {
 }
 
 void writecourant() {
-    int iscen,pa,ip;
+    int iscen,pa,ip,ns,np;
     bool trouve;
     FILE * pFile;
     char  *curfile;
+    string *ss;
     rt.sethistparamname(header);
     //cout<<"avant curfile\n";fflush(stdin);
     curfile = new char[strlen(header.pathbase)+13];
     strcpy(curfile,header.pathbase);
     strcat(curfile,"courant.log");
-    cout<<header.entete<<"\n";
-    cout<<curfile<<"\n";
+    //cout<<header.entete<<"\n";
+    //cout<<curfile<<"\n";
     pFile = fopen (curfile,"w");
     fprintf(pFile,"%s\n",header.entete.c_str());
+    ss=splitwords(header.entete," ",&ns);
+    np=ns-header.nstat-1;
+    for (int i=1;i<np+1;i++) cout<<ss[i]<<"\n";
     for (int ipart=0;ipart<nenr;ipart++) {
-         cout<<"avant l'ecriture de l'enregistrement "<<ipart<<"\n";
+         //cout<<"avant l'ecriture de l'enregistrement "<<ipart<<"\n";
          cout<<enreg[ipart].numscen<<"\n";
               fprintf(pFile,"%3d  ",enreg[ipart].numscen);
               iscen=enreg[ipart].numscen-1;
               //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
               pa=0;
-              cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"\n";
-              for (int j=0;j<header.nparamtot;j++) {
+              //cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"\n";
+              for (int j=1;j<np+1-rt.nparamut;j++) {
                   trouve=false;ip=-1;
                   while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
                       ip++;
-                      trouve=(header.histparam[j].name == rt.histparam[iscen][ip].name);
+                      trouve=(ss[j] == rt.histparam[iscen][ip].name);
                       //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
                   }
                   if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
                   else fprintf(pFile,"              ");
               }
+              //cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
               for (int j=pa;j<rt.nparam[iscen];j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
               for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
               fprintf(pFile,"\n");
     }
     fclose(pFile);
-
 }
 
 
