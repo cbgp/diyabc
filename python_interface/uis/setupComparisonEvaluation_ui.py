@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/setupComparisonEvaluation.ui'
 #
-# Created: Wed Mar 30 16:31:15 2011
+# Created: Thu Apr 14 16:38:19 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -187,6 +187,7 @@ class Ui_Frame(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout)
 
         self.retranslateUi(Frame)
+        self.numRegCombo.setCurrentIndex(10)
         QtCore.QMetaObject.connectSlotsByName(Frame)
 
     def retranslateUi(self, Frame):

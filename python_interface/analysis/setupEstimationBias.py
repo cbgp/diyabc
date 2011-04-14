@@ -35,6 +35,7 @@ class SetupEstimationBias(QFrame):
             self.ui.candidateLabel.hide()
             self.setScenarios([self.analysis.chosenSc])
             self.ui.redefSumStatsFrame.hide()
+            self.ui.notdsEdit.setText("500")
         elif self.analysis.category == "modelChecking":
             self.ui.label.setText("Model Checking")
             self.ui.candidateLabel.hide()
@@ -68,6 +69,14 @@ class SetupEstimationBias(QFrame):
 
         nbSetsDone = str(self.parent.parent.ui.nbSetsDoneEdit.text()).strip()
         self.ui.totNumSimEdit.setText(nbSetsDone)
+        self.ui.cnosdEdit.setText(nbSetsDone)
+        onePc = int(nbSetsDone) / 100
+        if onePc < 1000:
+            if nbSetsDone < 1000:
+                onePc = nbSetsDone
+            else:
+                onePc = 1000
+        self.ui.nosdEdit.setText(str(onePc))
 
     def redefineSumStats(self):
         """ clic sur le bouton de redéfinition des sumstats pour le groupe sélectionné

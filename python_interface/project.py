@@ -50,6 +50,8 @@ class Project(QTabWidget):
         self.analysisList = []
         self.dicoFrameAnalysis = {}
 
+        self.thAnalysis = None
+
         # utile seulement si on derive de QTabWidget
         super(Project,self).__init__(parent)
         # on peut aussi instancier un tabwidget
@@ -679,9 +681,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if analysis.status == "finished":
             self.viewAnalysisResult(analysis)
         else:
-            self.launchAnalysis(analysis)
-            frame.findChild(QPushButton,"analysisButton").setText("Running")
-            analysis.status = "running"
+            if self.thAnalysis == None:
+                self.launchAnalysis(analysis)
+                frame.findChild(QPushButton,"analysisButton").setText("Running")
+                analysis.status = "running"
 
     def launchAnalysis(self,analysis):            
         self.save()

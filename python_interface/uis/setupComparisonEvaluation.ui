@@ -321,6 +321,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="currentIndex">
+            <number>10</number>
+           </property>
            <item>
             <property name="text">
              <string>0</string>

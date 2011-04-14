@@ -73,6 +73,8 @@ class GenericScenarioSelection(QFrame):
         for i in range(self.nb_sc):
             num = i+1
             check = QCheckBox("Scenario %s"%num,self)
+            if self.analysis.category == "compare":
+                check.setChecked(True)
             self.checklist.append(check)
             if left:
                 self.ui.verticalLayout.addWidget(check)

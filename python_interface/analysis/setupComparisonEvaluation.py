@@ -41,9 +41,21 @@ class SetupComparisonEvaluation(QFrame):
             self.ui.numRegCombo.clear()
             self.ui.numRegCombo.addItem("0")
             self.ui.numRegCombo.addItem("1")
+            self.ui.numRegCombo.setCurrentIndex(1)
+            self.ui.notdsEdit.setText("500")
         else:
             self.ui.notdsEdit.hide()
             self.ui.notdsLabel.hide()
+
+        self.ui.cnosdEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
+        self.ui.deEdit.setText("500")
+        onePc = int(self.parent.parent.ui.nbSetsDoneEdit.text()) / 100
+        if onePc < 1000:
+            if int(self.parent.parent.ui.nbSetsDoneEdit.text()) < 1000:
+                onePc = nbSetsDone
+            else:
+                onePc = 1000
+        self.ui.lrEdit.setText(str(onePc))
 
         self.ui.totNumSimEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
 
