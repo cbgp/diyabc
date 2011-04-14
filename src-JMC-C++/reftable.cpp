@@ -30,6 +30,12 @@ using namespace std;
 extern int nrecneeded;
 extern double remtime,debutr;
 
+struct enregC {
+    int numscen;
+    float *param,*stat;
+    double dist;
+    string message;
+};
 /** 
 * définit l'opérateur de comparaison de deux enregistrements de type enregC
 * pour l'utilisation de la fonction sort du module algorithm

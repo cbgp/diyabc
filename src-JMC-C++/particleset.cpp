@@ -16,6 +16,11 @@
 #define HEADER
 #endif
 
+#ifndef REFTABLE
+#include "reftable.cpp"
+#define REFTABLE
+#endif
+
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			-13 : fst
  *  2 : het			-2 : nss            -14 : aml
@@ -34,16 +39,17 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct enregC {
+/*struct enregC {
     int numscen;
     float *param,*stat;
     double dist;
     string message;
-};
+};*/
 
 enregC *enreg;
 extern double **phistar;
 extern int debuglevel;
+extern ReftableC rt;
 
 struct ParticleSetC
 {
@@ -357,10 +363,11 @@ struct ParticleSetC
 
 	void dosimultabref(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut)
 	{
-               int ipart,gr,nstat,pa,ip,iscen;
+               int ipart,gr,nstat,pa,ip,iscen,np,ns;
                bool trouve,trace;
                this->npart = npart;
                int *sOK;
+               string *ss;
               if (debuglevel==5)  cout <<"debut de dosimultabref\n";fflush(stdin);
                sOK = new int[npart];
                //if (this->defined) cout <<"particleSet defined\n";
@@ -426,17 +433,44 @@ struct ParticleSetC
                         }
 		}
 		//if (trace) cout<<"apres remplissage des enreg\n";fflush(stdin);
-        /*        if (firsttime){
+                if (firsttime){
                       FILE * pFile;
                       char  *curfile;
-                      //cout<<"avant curfile\n";fflush(stdin);
+                      rt.sethistparamname(header);
+//cout<<"avant curfile\n";fflush(stdin);
                       curfile = new char[strlen(this->header.pathbase)+13];
                       strcpy(curfile,this->header.pathbase);
                       strcat(curfile,"courant.log");
                       //cout<<curfile<<"\n";
                       pFile = fopen (curfile,"w");
                       fprintf(pFile,"%s\n",this->header.entete.c_str());
+                      ss=splitwords(header.entete," ",&ns);
+                      np=ns-header.nstat-1;
                       for (int ipart=0;ipart<this->npart;ipart++) {
+                          if (sOK[ipart]==0){
+                              cout<<enreg[ipart].numscen<<"\n";
+                              fprintf(pFile,"%3d  ",enreg[ipart].numscen);
+                              iscen=enreg[ipart].numscen-1;
+                              //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
+                              pa=0;
+                              //cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"\n";
+                              for (int j=1;j<np+1-rt.nparamut;j++) {
+                                  trouve=false;ip=-1;
+                                  while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
+                                      ip++;
+                                      trouve=(ss[j] == rt.histparam[iscen][ip].name);
+                                      //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
+                                  }
+                                  if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
+                                  else fprintf(pFile,"              ");
+                              }
+                              //cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
+                              for (int j=pa;j<rt.nparam[iscen];j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
+                              for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
+                              fprintf(pFile,"\n");
+                          }
+                      }
+                     /* for (int ipart=0;ipart<this->npart;ipart++) {
                               if (sOK[ipart]==0){
                                 fprintf(pFile,"%3d  ",enreg[ipart].numscen);
                                 iscen=enreg[ipart].numscen-1;
@@ -457,9 +491,9 @@ struct ParticleSetC
                                 for (int st=0;st<nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
                                 fprintf(pFile,"\n");
                               }
-                      }
+                      }*/
                       fclose(pFile);
-                }*/
+                }
 		//cout <<"fin de l'ecriture du fichier courant.log' \n";
 		//cleanParticleSet();
 		//cout << "fin de dosimultabref\n";

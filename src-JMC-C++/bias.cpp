@@ -523,16 +523,16 @@ using namespace std;
         getline(file,bidon);
         for (int p=0;p<ntest;p++) {
           getline(file,bidon);
-          //cout<<bidon<<"\n";
+          cout<<bidon<<"\n";
           ss = splitwords(bidon," ",&ns);
-          //cout<<"ns="<<ns<<"\n";
+          cout<<"ns="<<ns<<"\n";
           enreg2[p].numscen=atoi(ss[0].c_str());
           for (int i=0;i<npv;i++) enreg2[p].paramvv[i]=atof(ss[i+1].c_str());
           if(nparcompo>0) setcompo(p);
           for (int i=0;i<rt.nstat;i++) enreg2[p].stat[i]=atof(ss[i+1+npv].c_str());
         }
         file.close();
-        nstatOK = rt.cal_varstat();                       //cout<<"apres cal_varstat\n";
+        nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         stat_obs = new double[rt.nstat];
         paramest = new parstatC*[ntest];
         paretoil = new double**[ntest];
