@@ -76,6 +76,47 @@ int readheaders() {
     return k;
 }
 
+void writecourant() {
+    int iscen,pa,ip;
+    bool trouve;
+    FILE * pFile;
+    char  *curfile;
+    rt.sethistparamname(header);
+    //cout<<"avant curfile\n";fflush(stdin);
+    curfile = new char[strlen(header.pathbase)+13];
+    strcpy(curfile,header.pathbase);
+    strcat(curfile,"courant.log");
+    cout<<header.entete<<"\n";
+    cout<<curfile<<"\n";
+    pFile = fopen (curfile,"w");
+    fprintf(pFile,"%s\n",header.entete.c_str());
+    for (int ipart=0;ipart<nenr;ipart++) {
+         cout<<"avant l'ecriture de l'enregistrement "<<ipart<<"\n";
+         cout<<enreg[ipart].numscen<<"\n";
+              fprintf(pFile,"%3d  ",enreg[ipart].numscen);
+              iscen=enreg[ipart].numscen-1;
+              //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
+              pa=0;
+              cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"\n";
+              for (int j=0;j<header.nparamtot;j++) {
+                  trouve=false;ip=-1;
+                  while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
+                      ip++;
+                      trouve=(header.histparam[j].name == rt.histparam[iscen][ip].name);
+                      //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
+                  }
+                  if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
+                  else fprintf(pFile,"              ");
+              }
+              for (int j=pa;j<rt.nparam[iscen];j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
+              for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
+              fprintf(pFile,"\n");
+    }
+    fclose(pFile);
+
+}
+
+
 /**
 * programme principal : lecture et interprétation des options et lancement des calculs choisis
 */
@@ -283,7 +324,7 @@ int main(int argc, char *argv[]){
                                   debutr=walltime(&clock_zero);
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
-                                          if (firsttime) firsttime=false;
+                                          cout<<"retour de dosimultabref\n";
                                           simOK=true;
                                           for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}
                                           if (simOK) {
@@ -292,6 +333,7 @@ int main(int argc, char *argv[]){
                                               dureef=walltime(&debutf);time_file += dureef;
                                               rt.nrec +=nenr;
                                               cout<<rt.nrec;
+                                              if (firsttime) writecourant();
                                               if (((rt.nrec%1000)==0)and(rt.nrec<nrecneeded))cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
                                               stoprun = (stat(stopfilename,&stFileInfo)==0);
                                               if (stoprun) remove(stopfilename);
@@ -299,6 +341,7 @@ int main(int argc, char *argv[]){
                                               flog=fopen(reftablelogfilename,"w");fprintf(flog,"%s",message.c_str());fclose(flog);
                                               stoprun=true;
                                           }
+                                          if (firsttime) firsttime=false;
                                   }
                                   for (int i=0;i<nenr;i++) {
                                         delete [] enreg[i].param;

@@ -66,8 +66,9 @@ public:
         this->histparam = new HistParameterC*[header.nscenarios];
         this->mutparam = new MutParameterC[header.nparamut];
         for (int i=0;i<header.nscenarios;i++) {
+            nparamvar=0;
             for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) nparamvar++;
-            //cout<<"nparamvar = "<<nparamvar<<"\n";
+            cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
             this->histparam[i] = new HistParameterC[nparamvar];
             this->nhistparam[i] =nparamvar;
             pp=-1;

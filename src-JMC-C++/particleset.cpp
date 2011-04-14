@@ -355,7 +355,7 @@ struct ParticleSetC
       
     }
 
-	void dosimultabref(HeaderC header,int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut)
+	void dosimultabref(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut)
 	{
                int ipart,gr,nstat,pa,ip,iscen;
                bool trouve,trace;
@@ -426,7 +426,7 @@ struct ParticleSetC
                         }
 		}
 		//if (trace) cout<<"apres remplissage des enreg\n";fflush(stdin);
-                if (firsttime){
+        /*        if (firsttime){
                       FILE * pFile;
                       char  *curfile;
                       //cout<<"avant curfile\n";fflush(stdin);
@@ -447,7 +447,7 @@ struct ParticleSetC
                                     trouve=false;ip=-1;
                                     while ((not trouve)and(ip<header.scenario[iscen].nparam-1)) {
                                         ip++;
-                                        trouve=(header.histparam[j].name == header.scenario[iscen].histparam[ip].name);
+                                        trouve=(header.histparam[j].name == rt.histparam[iscen][ip].name);
                                         //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
                                     }
                                     if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
@@ -459,7 +459,7 @@ struct ParticleSetC
                               }
                       }
                       fclose(pFile);
-                }
+                }*/
 		//cout <<"fin de l'ecriture du fichier courant.log' \n";
 		//cleanParticleSet();
 		//cout << "fin de dosimultabref\n";
