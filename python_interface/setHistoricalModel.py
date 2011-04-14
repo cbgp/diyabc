@@ -992,6 +992,17 @@ class SetHistoricalModel(QFrame):
         """
         return len(self.paramList)
 
+    def getNbVariableParam(self):
+        """ retourne le nombre de paramètres du modèle historique
+        """
+        nbParam = 0
+        for box in self.paramList:
+            mini = float(box.findChild(QLineEdit,"minValueParamEdit").text())
+            maxi = float(box.findChild(QLineEdit,"maxValueParamEdit").text())
+            if (maxi > 0) and (maxi-mini > 0.000001):
+                nbParam+=1
+        return nbParam
+
     def getParamTableHeader(self):
         """ retourne la chaine des noms des paramètres pour le conf.th.tmp
         """

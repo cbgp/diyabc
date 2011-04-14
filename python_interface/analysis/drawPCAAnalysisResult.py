@@ -11,6 +11,7 @@ from utils.visualizescenario import *
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 import output
+from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 
 class DrawPCAAnalysisResult(QFrame):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse
@@ -52,24 +53,23 @@ class DrawPCAAnalysisResult(QFrame):
             self.ui.viewLocateButton.hide()
 
     def viewLocate(self):
-        if os.path.exists("%s/analysis/%s/mcACP.txt"%(self.parent.dir,self.directory)):
-            # TODO
-            f = open("%s/analysis/%s/locate.txt"%(self.dir,anDir),'r')
-        elif typestr == "modelChecking":
-            f = open("%s/analysis/%s/mclocate.txt"%(self.dir,anDir),'r')
+        if os.path.exists("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory)):
+            f = open("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory),'r')
+        elif os.path.exists("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory)):
+            f = open("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory),'r')
         data = f.read()
         f.close()
-        self.drawAnalysisFrame = QFrame(self)
+        self.parent.drawAnalysisFrame = QFrame(self)
         ui = ui_viewTextFile()
-        ui.setupUi(self.drawAnalysisFrame)
+        ui.setupUi(self.parent.drawAnalysisFrame)
         ui.dataPlain.setPlainText(data)
         font = "FreeMono"
         if sys.platform.startswith('win'):
             font = "Courier New"
         ui.dataPlain.setFont(QFont(font,10))
-        QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
-        self.parent.ui.analysisStack.addWidget(self.drawAnalysisFrame)
-        self.parent.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
+        QObject.connect(ui.okButton,SIGNAL("clicked()"),self.parent.returnToAnalysisList)
+        self.parent.ui.analysisStack.addWidget(self.parent.drawAnalysisFrame)
+        self.parent.ui.analysisStack.setCurrentWidget(self.parent.drawAnalysisFrame)
 
     def loadACP(self):
         """ charge le fichier ACP dans un dico

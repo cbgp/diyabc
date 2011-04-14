@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/Project.ui'
 #
-# Created: Fri Apr  8 14:02:57 2011
+# Created: Thu Apr 14 16:11:57 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -424,6 +424,7 @@ class Ui_TabWidget(object):
         self.frame_9.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_9.setObjectName(_fromUtf8("frame_9"))
         self.horizontalLayout_4 = QtGui.QHBoxLayout(self.frame_9)
+        self.horizontalLayout_4.setSpacing(1)
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
         self.label_17 = QtGui.QLabel(self.frame_9)
         self.label_17.setMinimumSize(QtCore.QSize(50, 0))
@@ -450,14 +451,14 @@ class Ui_TabWidget(object):
         self.label_12.setObjectName(_fromUtf8("label_12"))
         self.horizontalLayout_4.addWidget(self.label_12)
         self.label_11 = QtGui.QLabel(self.frame_9)
-        self.label_11.setMinimumSize(QtCore.QSize(200, 0))
-        self.label_11.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.label_11.setMinimumSize(QtCore.QSize(100, 0))
+        self.label_11.setMaximumSize(QtCore.QSize(100, 16777215))
         self.label_11.setAlignment(QtCore.Qt.AlignCenter)
         self.label_11.setObjectName(_fromUtf8("label_11"))
         self.horizontalLayout_4.addWidget(self.label_11)
         self.label_14 = QtGui.QLabel(self.frame_9)
-        self.label_14.setMinimumSize(QtCore.QSize(40, 0))
-        self.label_14.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.label_14.setMinimumSize(QtCore.QSize(110, 0))
+        self.label_14.setMaximumSize(QtCore.QSize(110, 16777215))
         self.label_14.setAlignment(QtCore.Qt.AlignCenter)
         self.label_14.setObjectName(_fromUtf8("label_14"))
         self.horizontalLayout_4.addWidget(self.label_14)

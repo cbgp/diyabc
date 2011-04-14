@@ -36,6 +36,19 @@ class DefineNewAnalysis(QFrame):
         QObject.connect(self.ui.modCheckPcaCheck,SIGNAL("clicked()"),self.modCheckCheck)
         QObject.connect(self.ui.modCheckLossCheck,SIGNAL("clicked()"),self.modCheckCheck)
 
+        self.ui.horizontalLayout_3.setAlignment(Qt.AlignHCenter)
+
+        nbsets = str(self.parent.ui.nbSetsDoneEdit.text()).strip()
+        nbScenario = len(self.parent.hist_model_win.scList)
+        nbStat = self.parent.gen_data_win.getNbSumStats()
+        verb = "is"
+        plur = ""
+        if nbScenario > 1:
+            verb = "are"
+            plur = 's'
+        text = "The reference table contains %s records.\nEach record includes %s parameters and %s summary statistics.\nThere %s %s scenario%s."%(nbsets,self.parent.hist_model_win.getNbVariableParam(),nbStat,verb,nbScenario,plur)
+        self.ui.titleLabel.setText(text)
+
     def preEvaluateCheck(self):
         """ empêche qu'aucune des deux cases ne soit cochée
         """
@@ -57,9 +70,11 @@ class DefineNewAnalysis(QFrame):
     def checkName(self):
         """ vérifie si le nom est valide et libre
         """
+        # TODO verifier que l'analyse n'existe pas deja
+        # TODO verifier les caractères interdits
         name = str(self.ui.analysisNameEdit.text())
-        if name.strip() == "" or len(name.strip()) > 10:
-            output.notify(self,"name error","Name cannot be empty or more than 10 characters long")
+        if name.strip() == "":
+            output.notify(self,"name error","Analysis name cannot be empty")
             return False
         for an in self.parent.analysisList:
             n = an.name

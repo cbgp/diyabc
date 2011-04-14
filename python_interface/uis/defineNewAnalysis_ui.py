@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/defineAnalysis.ui'
 #
-# Created: Mon Apr  4 11:54:27 2011
+# Created: Thu Apr 14 16:09:13 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,12 +57,25 @@ class Ui_Frame(object):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout_2.addWidget(self.label)
-        self.label_2 = QtGui.QLabel(Frame)
-        self.label_2.setMinimumSize(QtCore.QSize(0, 80))
-        self.label_2.setMaximumSize(QtCore.QSize(16777215, 80))
-        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.verticalLayout_2.addWidget(self.label_2)
+        self.titleLabel = QtGui.QLabel(Frame)
+        self.titleLabel.setMinimumSize(QtCore.QSize(0, 80))
+        self.titleLabel.setMaximumSize(QtCore.QSize(16777215, 80))
+        self.titleLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.titleLabel.setObjectName(_fromUtf8("titleLabel"))
+        self.verticalLayout_2.addWidget(self.titleLabel)
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.label_3 = QtGui.QLabel(Frame)
+        self.label_3.setMinimumSize(QtCore.QSize(100, 0))
+        self.label_3.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.horizontalLayout_3.addWidget(self.label_3)
+        self.analysisNameEdit = QtGui.QLineEdit(Frame)
+        self.analysisNameEdit.setMinimumSize(QtCore.QSize(200, 0))
+        self.analysisNameEdit.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.analysisNameEdit.setObjectName(_fromUtf8("analysisNameEdit"))
+        self.horizontalLayout_3.addWidget(self.analysisNameEdit)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -131,17 +144,6 @@ class Ui_Frame(object):
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
-        self.horizontalLayout_3 = QtGui.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
-        self.label_3 = QtGui.QLabel(Frame)
-        self.label_3.setMinimumSize(QtCore.QSize(100, 0))
-        self.label_3.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.horizontalLayout_3.addWidget(self.label_3)
-        self.analysisNameEdit = QtGui.QLineEdit(Frame)
-        self.analysisNameEdit.setObjectName(_fromUtf8("analysisNameEdit"))
-        self.horizontalLayout_3.addWidget(self.analysisNameEdit)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
 
         self.retranslateUi(Frame)
         QtCore.QMetaObject.connectSlotsByName(Frame)
@@ -155,9 +157,10 @@ class Ui_Frame(object):
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Frame", "CHOOSE AN ANALYSIS", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("Frame", "The reference table...\n"
+        self.titleLabel.setText(QtGui.QApplication.translate("Frame", "The reference table contains...\n"
 "Each record includes 2 parameters\n"
 "The reference table has been built", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("Frame", "Analysis name : ", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Frame", "Do you want to", None, QtGui.QApplication.UnicodeUTF8))
         self.preEvRadio.setText(QtGui.QApplication.translate("Frame", "Pre-evaluate scenario-prior combinations", None, QtGui.QApplication.UnicodeUTF8))
         self.pcaCheck.setText(QtGui.QApplication.translate("Frame", "Principal Component Analysis", None, QtGui.QApplication.UnicodeUTF8))
@@ -169,5 +172,4 @@ class Ui_Frame(object):
         self.modCheckRadio.setText(QtGui.QApplication.translate("Frame", "Model checking", None, QtGui.QApplication.UnicodeUTF8))
         self.modCheckPcaCheck.setText(QtGui.QApplication.translate("Frame", "Principal Component Analysis", None, QtGui.QApplication.UnicodeUTF8))
         self.modCheckLossCheck.setText(QtGui.QApplication.translate("Frame", "Locate observed S.S among simulated S.S.", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("Frame", "Analysis name : ", None, QtGui.QApplication.UnicodeUTF8))
 
