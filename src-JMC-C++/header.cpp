@@ -96,8 +96,8 @@ public:
                 if (prior.maxi==0.0) prior.constant=true;
                 else if ((prior.maxi-prior.mini)/prior.maxi<0.000001) prior.constant=true;
                 else prior.constant=false;
-        cout<<ss<<"   ";
-        if (prior.constant) cout<<"constant\n"; else cout<<"variable\n";
+        //cout<<ss<<"   ";
+        //if (prior.constant) cout<<"constant\n"; else cout<<"variable\n";
         delete []sb;
         return prior;
     }
@@ -163,10 +163,10 @@ public:
             return this;
         } else this->message="";
         getline(file,this->datafilename);
-                cout<<this->datafilename<<"\n";fflush(stdin);
+                //cout<<this->datafilename<<"\n";fflush(stdin);
                 path = new char[strlen(headerfilename)+this->datafilename.length()];
                 strcpy(path,headerfilename);
-                cout<<path<<"\n";fflush(stdin);
+                //cout<<path<<"\n";fflush(stdin);
                 k = strpos(headerfilename,reftable);
                 //cout<<"k="<<k<<"\n";fflush(stdin);
                 path[k]='\0';

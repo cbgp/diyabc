@@ -76,7 +76,6 @@ int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  
     vector <int> histparcat;
 
 extern int debuglevel;
-int arrondi(double a) {return (int)(a + 0.5);}
 
 /**
 * retourne un ordre aléatoire pour les éléments d'un vecteur 
@@ -93,6 +92,9 @@ vector <int> melange(MwcGen mw, int n) {
 	return ord;  	
 }
 
+/**
+* Classe PriorC :éléments de définition d'un prior de paramètre historique
+*/
 class PriorC
 {
 public:
@@ -109,6 +111,10 @@ public:
 	  
 };
 
+/**
+* Classe ConditionC :éléments de définition d'une condition sur un couple de paramètres historiques
+*/
+
 struct ConditionC
 {
 	string param1,param2,operateur;
@@ -117,12 +123,18 @@ struct ConditionC
 
 };
 
+/**
+* struct StatC :éléments de définition d'une summary statistic
+*/
 struct StatC
 {
 	int cat,samp,samp1,samp2,group;
 	double val;
 };
 
+/**
+* Classe EventC :éléments de définition d'un événement populationnel 
+*/
 class EventC
 {
 public:
@@ -145,6 +157,9 @@ public:
 	}
 };
 
+/**
+* Définition de l'opérateur pour le tri des événements populationnels  
+*/
 struct compevent
 {
    bool operator() (const EventC & lhs, const EventC & rhs) const
@@ -153,6 +168,9 @@ struct compevent
    }
 };
 
+/**
+* struct Ne0C : éléments de définition d'un effectif efficace à la ligne 1 d'un scénario  
+*/
 struct Ne0C
 {
 	int val,lon;
@@ -163,6 +181,9 @@ struct Ne0C
     }
 };
 
+/**
+* Classe HistparameterC :éléments de définition d'un paramètre historique 
+*/
 class HistParameterC
 {
 public:
@@ -181,6 +202,9 @@ public:
 	}
 };
 
+/**
+* struct LocusGroupC : éléments de définition d'un groupe de locus  
+*/
 struct LocusGroupC
 {
 	int *loc,nloc,nstat;           // *loc=numeros des locus du groupe
@@ -202,6 +226,9 @@ struct LocusGroupC
     
 };
 
+/**
+* Classe ScenarioC :éléments de définition d'un scénario 
+*/
 class ScenarioC
 {
 public:
@@ -235,6 +262,9 @@ public:
         delete []this->time_sample;
     }
     
+/**
+* Classe ScenarioC : détermination du ou des paramètres contenus dans la string s 
+*/
     void detparam(string s,int cat)
     {	string s1;
         int i,j;
@@ -276,6 +306,9 @@ public:
     }
     
 
+/**
+* Classe ScenarioC : lecture/interprétation des lignes d'un scénario 
+*/
     void read_events(int nl,string *ls){
     	string *ss;
     	int n;
@@ -377,6 +410,9 @@ public:
     }
 };
 
+/**
+* Copie du contenu d'une classe PriorC 
+*/
 PriorC copyprior(PriorC source) {
 	PriorC dest;
 	dest.loi = source.loi;
@@ -389,6 +425,9 @@ PriorC copyprior(PriorC source) {
 	return dest;
 }
 
+/**
+* Copie du contenu d'une classe EventC 
+*/
 EventC copyevent(EventC source) {
 	EventC dest;
 	dest.action =source.action;
@@ -418,6 +457,9 @@ EventC copyevent(EventC source) {
 	return dest;
 }
 
+/**
+* Copie du contenu d'une classe Ne0C 
+*/
 Ne0C copyne0(Ne0C source) {
 	Ne0C dest;
     dest.lon=source.lon;
@@ -427,6 +469,9 @@ Ne0C copyne0(Ne0C source) {
 	return dest;
 }
 
+/**
+* Copie du contenu d'une classe HistParameterC 
+*/
 HistParameterC copyhistparameter(HistParameterC source) {
 	HistParameterC dest;
 	dest.name = source.name;
@@ -436,6 +481,9 @@ HistParameterC copyhistparameter(HistParameterC source) {
 	return dest;
 }
 
+/**
+* Copie du contenu d'une classe ConditionC 
+*/
 ConditionC copycondition(ConditionC source) {
     ConditionC dest;
     dest.param1 = source.param1;
@@ -444,6 +492,9 @@ ConditionC copycondition(ConditionC source) {
     return dest;
 }
 
+/**
+* Copie du contenu d'une classe ScenarioC 
+*/
 ScenarioC copyscenario(ScenarioC source) {
   //cout<<"debut de copyscenario\n";
 	ScenarioC dest;
@@ -481,6 +532,9 @@ ScenarioC copyscenario(ScenarioC source) {
 }
 
 
+/**
+* Struct SequenceBitC : éléments de définition d'un segment (vertical) de l'arbre de coalescence' 
+*/
 struct SequenceBitC
 {
     /* action = "C" (coal), "M" (merge), "S" (split), "A" (adsamp)
@@ -492,6 +546,9 @@ struct SequenceBitC
 
 };
 
+/**
+* Struct NodeC : éléments de définition d'un noeud de l'arbre de coalescence 
+*/
 struct NodeC
 {
 	int pop,sample,state;
@@ -499,12 +556,18 @@ struct NodeC
 	string dna;
 };
 
+/**
+* Struct BranchC : éléments de définition d'une branche de l'arbre de coalescence 
+*/
 struct BranchC
 {
 	int bottom,top,nmut;
 	double length;
 };
 
+/**
+* Struct BranchC : éléments de définition d'un arbre de coalescence 
+*/
 struct GeneTreeC
 {
 	NodeC *nodes;
@@ -512,15 +575,10 @@ struct GeneTreeC
 	int nmutot,nnodes,nbranches,ngenes;
 };
 
-char* str2char(string x)
-{
-    size_t size = x.size() + 1;
-    char* conv = new char[ size ];
-    strncpy( conv, x.c_str(), size );
-    return(conv);
-}
 
-
+/**
+* Struct ParticleC : éléments de définition d'une particule 
+*/
 struct ParticleC
 {
 	LocusC *locuslist;
@@ -545,6 +603,9 @@ struct ParticleC
 		for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();
 	}
 	
+/**
+* Struct ParticleC : calcule le nombre de copies de gènes de l'individu i de l'échantillon sa au locus loc 
+*/
 	int calploidy(int loc, int sa,int i) {
 		if ((this->locuslist[loc].type == 0)  //AUTOSOMAL DIPLOID
 				or((this->locuslist[loc].type == 2)and(this->data.indivsexe[sa][i] == 2))) //X-LINKED + FEMALE
@@ -555,6 +616,10 @@ struct ParticleC
 
 	}
 	
+/**
+* Struct ParticleC : recopie le scénario numscen dans this->scen. 
+* Si numscen<1, tirage au sort préalable du scenario dans le prior 
+*/
 	void drawscenario(int numscen) {
 		double ra,sp=0.0;
         int iscen;
@@ -595,6 +660,9 @@ struct ParticleC
 		//this->scen.ecris();
 	}
 
+/**
+* Struct ParticleC : copie le contenu d'une structure GeneTreeC 
+*/
 	GeneTreeC copytree(GeneTreeC source) {
 		GeneTreeC dest;
 		dest.nnodes = source.nnodes;
@@ -615,11 +683,17 @@ struct ParticleC
 		return dest;
 	}
 
+/**
+* Struct ParticleC : libère le contenu d'une structure GeneTreeC 
+*/
 	void deletetree(GeneTreeC tree) {
 		delete [] tree.nodes;
 		delete [] tree.branches;
 	}
 
+/**
+* Struct ParticleC : tire une valeurde type double dans un prior 
+*/
 	double drawfromprior(PriorC prior) {
 		double r;
 		if (prior.mini==prior.maxi) return prior.mini;
@@ -646,6 +720,9 @@ struct ParticleC
 		return -1.0;
 	}
 
+/**
+* Struct ParticleC : retourne la valeur d'un paramètre à partir de son nom (propriété name) 
+*/
 	double param2val(string paramname){
 		int ip;
 		//cout<<"paramname = "<<paramname<<"\n";
@@ -654,6 +731,10 @@ struct ParticleC
 		return this->scen.histparam[ip].value;
 
 	}
+	
+/**
+* Struct ParticleC : retourne la valeur d'une expression du genre param1 +param2-param3 
+*/
 	double getvalue(string line) {
 		double result;
 		bool fin=false;
@@ -692,6 +773,9 @@ struct ParticleC
 		return result;
 	}
 	
+/**
+* Struct ParticleC : indique si toutes les conditions sur les paramètres sont vérifiées 
+*/
 	bool conditionsOK() {
 	    bool OK=true;
 	    int ip1,ip2;
@@ -710,7 +794,10 @@ struct ParticleC
 	    return OK;
 	}
 
-	bool setHistParamValue(int numscen, bool usepriorhist) {
+/**
+* Struct ParticleC : génère les valeurs des paramètres historiques d'un scénario donné' 
+*/
+	bool setHistParamValue(bool usepriorhist) {
 		bool OK=true;
         if (usepriorhist) {
             if (this->scen.nconditions>0) {
@@ -773,6 +860,9 @@ struct ParticleC
 		return OK;
 	}
 
+/**
+* Struct ParticleC : génère les valeurs des paramètres mutationnels moyens des différents groupes de locus 
+*/
 	void setMutParammoyValue(bool usepriormut){
 		int gr;
 		for (gr=1;gr<=this->ngr;gr++) {
@@ -838,9 +928,10 @@ struct ParticleC
 		}
 		this->scen.nparamvar=this->scen.ipv;
 	}
-	  
 	
-	
+/**
+* Struct ParticleC : génère les valeurs des paramètres mutationnels du locus loc 
+*/
 	void setMutParamValue(int loc){
 		int gr = this->locuslist[loc].groupe;
 		//cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
@@ -901,6 +992,9 @@ struct ParticleC
 //  Création de la séquence d'(événements)
 /////////////////////////////////////////
 
+/**
+* Struct ParticleC : retourne vrai si et seulement si l'événement ievent est basal (??) 
+*/
 	bool firstEvent(int ievent) {
 		if (ievent == 0) {return 1;} //1 pour TRUE
 		bool found;
@@ -915,6 +1009,9 @@ struct ParticleC
 		return (not found);
 	}
 
+/**
+* Struct ParticleC : retourne la valeur du Ne pour l'événement ievent et la pop refpop
+*/
 	int findNe(int ievent, int refpop) {
 		if (ievent == 0) {return this->scen.ne0[refpop-1].val;}
 		bool found;
@@ -927,6 +1024,9 @@ struct ParticleC
 		else       {return this->scen.ne0[refpop-1].val;}
 	}
 
+/**
+* Struct ParticleC : retourne la valeur du time pour l'événement ievent et la pop refpop
+*/
 	int findT0(int ievent, int refpop) {
 		int jevent = ievent;
 		bool found = 0; //FALSE
@@ -941,6 +1041,9 @@ struct ParticleC
 		else       {return this->scen.event[ievent].time;}
 	}
 
+/**
+* Struct ParticleC : établit les paramètres d'un segment de l'arbre de coalescence
+*/
 	void seqCoal(int iseq, int ievent, int refpop) {
 		this->seqlist[iseq].action = 'C';
 		this->seqlist[iseq].N = findNe(ievent,refpop);
@@ -949,6 +1052,9 @@ struct ParticleC
 		this->seqlist[iseq].t1 = this->scen.event[ievent].time;
 	}
 
+/**
+* Struct ParticleC : établit les paramètres d'un événement "ajout d'un échantllon" à l'arbre de coalescence
+*/
 	void seqSamp(int iseq, int ievent) {
 		this->seqlist[iseq].action = 'A';
 		this->seqlist[iseq].pop = this->scen.event[ievent].pop;
@@ -957,6 +1063,9 @@ struct ParticleC
 		//cout << " seqlist["<<iseq<<"].sample = "<<this->seqlist[iseq].sample<<"\n";
 	}
 
+/**
+* Struct ParticleC : établit les paramètres d'un événement "merge" à l'arbre de coalescence
+*/
 	void seqMerge(int iseq, int ievent) {
 		this->seqlist[iseq].action = 'M';
 		this->seqlist[iseq].pop = this->scen.event[ievent].pop;
@@ -964,6 +1073,9 @@ struct ParticleC
 		this->seqlist[iseq].t0 = this->scen.event[ievent].time;
 	}
 
+/**
+* Struct ParticleC : établit les paramètres d'un événement "split" à l'arbre de coalescence
+*/
 	void seqSplit(int iseq, int ievent) {
 		this->seqlist[iseq].action = 'S';
 		this->seqlist[iseq].pop = this->scen.event[ievent].pop;
@@ -973,6 +1085,9 @@ struct ParticleC
 		this->seqlist[iseq].admixrate = this->scen.event[ievent].admixrate;
 	}
 
+/**
+* Struct ParticleC : compte le nombre nécessaires d'éléments de la séquence définissant l'arbre de coalescence
+*/
 	int compteseq() {
     	int n = 0;
     	for (int k=0;k<this->scen.nevent;k++){
@@ -984,6 +1099,9 @@ struct ParticleC
     	return n;
     }
 
+/**
+* Struct ParticleC : établit la séquence d'événements populationnels définissant l'arbre de coalescence
+*/
 	void setSequence() {
 		int kseq = compteseq();
 		//cout<<"kseq="<<kseq<<"\n";
@@ -1062,6 +1180,7 @@ struct ParticleC
 
 		}*/
 	}
+	
 	void comp_matQ(int loc) {
 		int gr=this->locuslist[loc].groupe;
 		this->matQ[0][0] = this->matQ[1][1] = this->matQ[2][2] = this->matQ[3][3] = 0.0;
@@ -1644,7 +1763,7 @@ struct ParticleC
         if (debuglevel==10) cout<<"avant draw scenario\n";fflush(stdin);
 		this->drawscenario(numscen);
 		if (debuglevel==10) cout <<"avant setHistparamValue\n";fflush(stdin);
-		this->setHistParamValue(numscen,usepriorhist);
+		this->setHistParamValue(usepriorhist);
 		if (debuglevel==10) cout << "apres setHistParamValue\n";fflush(stdin);
 		//if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
 		//if (trace) for (int k=0;k<this->scen.nparam;k++){

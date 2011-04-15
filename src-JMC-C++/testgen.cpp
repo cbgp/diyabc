@@ -58,7 +58,7 @@ struct stat stFileInfo;
 
 char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename;
 bool multithread=false;
-int nrecneeded,nenr=100,niter=1000;
+int nrecneeded,nenr=1000,niter=1000;
 int debuglevel=0;
 string sremtime;
 double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,debutr,dureer,remtime;
@@ -92,29 +92,13 @@ int main(int argc, char *argv[]){
     FILE *flog;   
         
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"n:d:h:s:mp:")) !=-1) {
+	while((optchar = getopt(argc,argv,"p:n:s:m")) !=-1) {
          
 	  switch (optchar) {
 
         case 'n' : numtest = atoi(optarg);
                    break;
         
-        case 'h' :headername = new char[strlen(optarg)+1];
-                  strcpy(headername,optarg);
-                  headerfilename = new char[strlen(path)+strlen(headername)+2];
-                  strcpy(headerfilename,path);
-                  strcat(headerfilename,headername);
-                  cout<<"header = "<<headerfilename<<"\n";
-                  break;
-	
-        case 'd' :dataname = new char[strlen(optarg)+1];
-                  strcpy(dataname,optarg);
-                  datafilename = new char[strlen(path)+strlen(dataname)+2];
-                  strcpy(datafilename,path);
-                  strcat(datafilename,dataname);
-                  cout<<"data  = "<<datafilename<<"\n"; 
-                  break;
-           
         case 'p' :
                   headerfilename = new char[strlen(optarg)+13];
                   reftablefilename = new char[strlen(optarg)+15];
@@ -167,7 +151,7 @@ int main(int argc, char *argv[]){
                      enreg[p].param = new float[header.nparamtot+3*header.ngroupes];
                      enreg[p].numscen = 1;
                                   }
-                 cout<<"TEST DE l'HETEROZYGOTIE MOYENNE D'UN LOCUS SOUS SRICT SMM\n";
+                 cout<<"TEST DE l'HETEROZYGOTIE MOYENNE ET DE LA PROBABILITE MOYENNE D'IDENTITE\n D'UN LOCUS SOUS SRICT SMM\n";
                  
                  hetheo=1.0-1.0/sqrt(1.04);pidtheo=0.9805595780769629;
                  cout<<"\ntheta=0.02"<<"\n";
@@ -180,7 +164,7 @@ int main(int argc, char *argv[]){
                      seed +=nenr;
                      for (int i=0;i<nenr;i++) {hetmoy += enreg[i].stat[0];pidmoy += enreg[i].stat[1];}
                  }
-                 hetmoy /= (nenr*niter);pidmoy /= (nenr*niter);
+                 hetmoy /= (double)(nenr*niter);pidmoy /= (double)(nenr*niter);
                  cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
                  if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
@@ -197,14 +181,14 @@ int main(int argc, char *argv[]){
                      seed +=nenr;
                      for (int i=0;i<nenr;i++) {hetmoy += enreg[i].stat[0];pidmoy += enreg[i].stat[1];}
                  }
-                 hetmoy /= (nenr*niter);pidmoy /= (nenr*niter);
+                 hetmoy /= (double)(nenr*niter);pidmoy /= (double)(nenr*niter);
                  cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
                  if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
                  if(abs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  
                  hetheo=1.0-1.0/sqrt(5);pidtheo=0.44707336192772973;
-                 cout<<"\ntheta=2.0"<<"\n""         valeur attendue=1-1/sqrt(1+2theta) = "<<hetheo<<"\n";
+                 cout<<"\ntheta=2.0"<<"\n";
                  firsttime=true;stoprun=false;
                  header.scenario[0].histparam[0].prior.mini=999.9;header.scenario[0].histparam[0].prior.maxi=1000.1;
                  hetmoy=0.0;pidmoy=0.0;
@@ -214,7 +198,7 @@ int main(int argc, char *argv[]){
                      seed +=nenr;
                      for (int i=0;i<nenr;i++) {hetmoy += enreg[i].stat[0];pidmoy += enreg[i].stat[1];}
                  }
-                 hetmoy /= (nenr*niter);pidmoy /= (nenr*niter);
+                 hetmoy /=(double) (nenr*niter);pidmoy /= (double)(nenr*niter);
                  cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
                  if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
@@ -231,7 +215,7 @@ int main(int argc, char *argv[]){
                      seed +=nenr;
                      for (int i=0;i<nenr;i++) {hetmoy += enreg[i].stat[0];pidmoy += enreg[i].stat[1];}
                  }
-                 hetmoy /= (nenr*niter);pidmoy /= (nenr*niter);
+                 hetmoy /= (double)(nenr*niter);pidmoy /= (double)(nenr*niter);
                  cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
                  if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;

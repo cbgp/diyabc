@@ -183,6 +183,16 @@ string char2string(char *c) {
     return s.str();
 }
 
+char* str2char(string x)
+{
+    size_t size = x.size() + 1;
+    char* conv = new char[ size ];
+    strncpy( conv, x.c_str(), size );
+    return(conv);
+}
+
+int arrondi(double a) {return (int)(a + 0.5);}
+
 string TimeToStr(double ti) {
     string stime="";
     int m_s,sec,min,hou,day;
