@@ -448,7 +448,7 @@ struct ParticleSetC
                       np=ns-header.nstat-1;
                       for (int ipart=0;ipart<this->npart;ipart++) {
                           if (sOK[ipart]==0){
-                              cout<<enreg[ipart].numscen<<"\n";
+                              //cout<<enreg[ipart].numscen<<"\n";
                               fprintf(pFile,"%3d  ",enreg[ipart].numscen);
                               iscen=enreg[ipart].numscen-1;
                               //cout<<"scenario "<<enreg[ipart].numscen<<"\n";

@@ -52,10 +52,10 @@ using namespace std;
 #define MICMISSING -9999
 #define SEQMISSING '\0'
 #define NUCMISSING 'N'
-#define NSTAT 26
+#define NSTAT 27
 
-string stat_type[NSTAT] = {"NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"};
-int stat_num[NSTAT]     = {  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 };
+string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"};
+int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 };
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			-13 : fst
  *  2 : het			-2 : nss            -14 : aml
@@ -1854,6 +1854,29 @@ struct ParticleC
         }
     }
 
+	double cal_pid1p(int gr,int st){
+        double pidm=0.0;
+        int iloc,kloc,nl=0,nt=0,ni=0;
+        int sample=this->grouplist[gr].sumstat[st].samp-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            if(this->locuslist[kloc].samplesize[sample]>1) {
+                for (int i=0;i<this->locuslist[kloc].ss[sample]-1;i++){
+                    if (this->locuslist[kloc].haplomic[sample][i] != MICMISSING) {
+                        for (int j=i+1;j<this->locuslist[kloc].ss[sample];j++){
+                            if (this->locuslist[kloc].haplomic[sample][j] != MICMISSING) {
+                                nt++;
+                                if (this->locuslist[kloc].haplomic[sample][i]==this->locuslist[kloc].haplomic[sample][j]) ni++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //cout<<ni<<" sur "<<nt<<"\n";
+        if (nt>0) return (double)ni/(double)nt;
+    }
+	
 	double cal_nal1p(int gr,int st){
 	  
 		double nalm=0.0;
@@ -1865,8 +1888,8 @@ struct ParticleC
 			kloc=this->grouplist[gr].loc[iloc];
 			//cout << this->locuslist[loc].samplesize[stat.samp] <<"\n";
 			if(this->locuslist[kloc].samplesize[sample]>0) {
-			for (int k=0;k<this->locuslist[kloc].nal;k++) {if (this->locuslist[kloc].freq[sample][k]>0.00001) nalm +=1.0;}
-			nl++;
+                for (int k=0;k<this->locuslist[kloc].nal;k++) {if (this->locuslist[kloc].freq[sample][k]>0.00001) nalm +=1.0;}
+                nl++;
 			}
 		}
 		//cout <<"    naltot="<<nalm<<"    nl="<<nl;//<<"    nmoy="<<  "\n";
@@ -2453,7 +2476,8 @@ struct ParticleC
 			int categ;
 			categ=this->grouplist[gr].sumstat[st].cat;
 			switch (categ)
-			{	case     1 : this->grouplist[gr].sumstat[st].val = cal_nal1p(gr,st);break;
+			{	case     0 : this->grouplist[gr].sumstat[st].val = cal_pid1p(gr,st);break;
+                case     1 : this->grouplist[gr].sumstat[st].val = cal_nal1p(gr,st);break;
 				case     2 : this->grouplist[gr].sumstat[st].val = cal_het1p(gr,st);break;
 				case     3 : this->grouplist[gr].sumstat[st].val = cal_var1p(gr,st);break;
 				case     4 : this->grouplist[gr].sumstat[st].val = cal_mgw1p(gr,st);break;

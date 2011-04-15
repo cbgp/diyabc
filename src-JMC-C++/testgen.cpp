@@ -84,7 +84,7 @@ int main(int argc, char *argv[]){
     char *dataname,*headername,*reftablename,aaa;
     bool firsttime;
 	int k,seed,numtest;
-	double **paramstat,hetmoy,hetheo;
+	double **paramstat,hetmoy,hetheo,pidmoy,pidtheo;
 	int optchar;
     char action='a';
     bool flagp=false,flagi=false,flags=false,simOK,stoprun=false;
@@ -169,50 +169,73 @@ int main(int argc, char *argv[]){
                                   }
                  cout<<"TEST DE l'HETEROZYGOTIE MOYENNE D'UN LOCUS SOUS SRICT SMM\n";
                  
-                 hetheo=1.0-1.0/sqrt(1.4);
-                 cout<<"\ntheta=0.2         valeur attendue=1-1/sqrt(1+2theta) = "<<hetheo<<"\n";
+                 hetheo=1.0-1.0/sqrt(1.04);pidtheo=0.9805595780769629;
+                 cout<<"\ntheta=0.02"<<"\n";
                  firsttime=true;stoprun=false;
-                 header.scenario[0].histparam[0].prior.mini=99.9;header.scenario[0].histparam[0].prior.maxi=100.1;
-                 hetmoy=0.0;
+                 header.scenario[0].histparam[0].prior.mini=9.9;header.scenario[0].histparam[0].prior.maxi=10.1;
+                 hetmoy=0.0;pidmoy=0.0;
                  for (k=0;k<niter;k++) { 
                      ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
                      firsttime=false;
                      seed +=nenr;
-                     for (int i=0;i<nenr;i++) hetmoy += enreg[i].stat[0];
+                     for (int i=0;i<nenr;i++) {hetmoy += enreg[i].stat[0];pidmoy += enreg[i].stat[1];}
                  }
-                 hetmoy /= (nenr*niter);
-                 cout<<hetmoy<<"     "<<hetheo<<"\n";
-                 if(abs(hetmoy-hetheo)<0.001) cout <<"test OK\n"; else cout<<"PROBLEME !!!\n";
+                 hetmoy /= (nenr*niter);pidmoy /= (nenr*niter);
+                 cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
+                 if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
+                 if(abs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  
-                 hetheo=1.0-1.0/sqrt(5);
-                 cout<<"\ntheta=0.2         valeur attendue=1-1/sqrt(1+2theta) = "<<hetheo<<"\n";
+                 hetheo=1.0-1.0/sqrt(1.4);pidtheo=0.845026245742127;
+                 cout<<"\ntheta=0.2"<<"\n";
+                 firsttime=true;stoprun=false;
+                 header.scenario[0].histparam[0].prior.mini=99.9;header.scenario[0].histparam[0].prior.maxi=100.1;
+                 hetmoy=0.0;pidmoy=0.0;
+                 for (k=0;k<niter;k++) { 
+                     ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
+                     firsttime=false;
+                     seed +=nenr;
+                     for (int i=0;i<nenr;i++) {hetmoy += enreg[i].stat[0];pidmoy += enreg[i].stat[1];}
+                 }
+                 hetmoy /= (nenr*niter);pidmoy /= (nenr*niter);
+                 cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
+                 if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
+                 if(abs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 
+                 hetheo=1.0-1.0/sqrt(5);pidtheo=0.44707336192772973;
+                 cout<<"\ntheta=2.0"<<"\n""         valeur attendue=1-1/sqrt(1+2theta) = "<<hetheo<<"\n";
                  firsttime=true;stoprun=false;
                  header.scenario[0].histparam[0].prior.mini=999.9;header.scenario[0].histparam[0].prior.maxi=1000.1;
-                 hetmoy=0.0;
+                 hetmoy=0.0;pidmoy=0.0;
                  for (k=0;k<niter;k++) {  
                      ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
                      firsttime=false;
                      seed +=nenr;
-                     for (int i=0;i<nenr;i++) hetmoy += enreg[i].stat[0];
+                     for (int i=0;i<nenr;i++) {hetmoy += enreg[i].stat[0];pidmoy += enreg[i].stat[1];}
                  }
-                 hetmoy /= (nenr*niter);
-                 cout<<hetmoy<<"     "<<hetheo<<"\n";
-                 if(abs(hetmoy-hetheo)<0.001) cout <<"test OK\n"; else cout<<"PROBLEME !!!\n";
+                 hetmoy /= (nenr*niter);pidmoy /= (nenr*niter);
+                 cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
+                 if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
+                 if(abs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  
-                  hetheo=1.0-1.0/sqrt(41);
-                 cout<<"\ntheta=0.2         valeur attendue=1-1/sqrt(1+2theta) = "<<hetheo<<"\n";
+                  hetheo=1.0-1.0/sqrt(41);pidtheo=0.1561449771153935;
+                 cout<<"\ntheta=20.0"<<"\n";
                  firsttime=true;stoprun=false;
                  header.scenario[0].histparam[0].prior.mini=9999.9;header.scenario[0].histparam[0].prior.maxi=10000.1;
-                 hetmoy=0.0;
+                 hetmoy=0.0;pidmoy=0.0;
                  for (k=0;k<niter;k++) {  
                      ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
                      firsttime=false;
                      seed +=nenr;
-                     for (int i=0;i<nenr;i++) hetmoy += enreg[i].stat[0];
+                     for (int i=0;i<nenr;i++) {hetmoy += enreg[i].stat[0];pidmoy += enreg[i].stat[1];}
                  }
-                 hetmoy /= (nenr*niter);
-                 cout<<hetmoy<<"     "<<hetheo<<"\n";
-                 if(abs(hetmoy-hetheo)<0.001) cout <<"test OK\n"; else cout<<"PROBLEME !!!\n";
+                 hetmoy /= (nenr*niter);pidmoy /= (nenr*niter);
+                 cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
+                 if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
+                 if(abs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
               
                  break;
                       
