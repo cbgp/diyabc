@@ -89,9 +89,9 @@ class Project(QTabWidget):
         self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)
         self.ui.verticalLayout_3.setAlignment(self.ui.progressBar,Qt.AlignCenter)
         self.ui.projNameLabelValue.setText(name)
-        self.ui.tableWidget.setColumnWidth(1,150)
-        self.ui.tableWidget.setColumnWidth(2,300)
-        self.ui.tableWidget.setColumnWidth(3,70)
+        #self.ui.tableWidget.setColumnWidth(1,150)
+        #self.ui.tableWidget.setColumnWidth(2,300)
+        #self.ui.tableWidget.setColumnWidth(3,70)
 
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.defineNewAnalysis)
         #QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
@@ -99,16 +99,6 @@ class Project(QTabWidget):
         QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.setGenetic)
         QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
         QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
-
-        ##QObject.connect(self.ui.drawButton,SIGNAL("clicked()"),self.drawGraph)
-        #QObject.connect(self.ui.loadButton,SIGNAL("clicked()"),self.loadACP)
-        #QObject.connect(self.ui.saveGraphButton,SIGNAL("clicked()"),self.saveGraph)
-        #QObject.connect(self.ui.scCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
-        #QObject.connect(self.ui.compoHCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
-        #QObject.connect(self.ui.compoVCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
-        #QObject.connect(self.ui.nbpCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
-        #self.ui.ACProgress.setValue(0)
-        #self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
 
         # inserer image
         self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
@@ -130,13 +120,15 @@ class Project(QTabWidget):
         self.th = None
 
         self.ui.verticalLayout_9.setAlignment(Qt.AlignTop)
-        self.ui.tableWidget.hide()
 
-        # remplissage du combo liste des analyses deja effectuées
-        self.fillAnalysisCombo()
-        QObject.connect(self.ui.analysisResultsButton,SIGNAL("clicked()"),self.viewAnalysisResult)
+        ## remplissage du combo liste des analyses deja effectuées
+        #self.fillAnalysisCombo()
+        #QObject.connect(self.ui.analysisResultsButton,SIGNAL("clicked()"),self.viewAnalysisResult)
 
     def stopRefTableGen(self):
+        """ tue le thread de génération et crée le fichier .stop pour 
+        arrêter la génération de la reftable
+        """
         f = open("%s/.stop"%self.dir,"w")
         f.write(" ")
         f.close()
@@ -145,15 +137,8 @@ class Project(QTabWidget):
             self.th = None
         self.ui.progressLabel.setText("")
 
-    def fillAnalysisCombo(self):
-        self.ui.analysisListCombo.clear()
-        if os.path.exists("%s/analysis/"%self.dir):
-            l = os.listdir("%s/analysis/"%self.dir)
-            for e in l:
-                self.ui.analysisListCombo.addItem(e.replace('_',' '))
-
     def viewAnalysisResult(self,analysis=None):
-        """
+        """ en fonction du type d'analyse, met en forme les résultats
         """
         anCat = analysis.category
         dicoCategoryDirName = {
@@ -390,6 +375,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.save()
         self.writeRefTableHeader()
         if self.th == None:
+            if not os.path.exists("%s/reftable.bin"%self.dir) and os.path.exists("%s/reftable.log"%self.dir):
+                os.remove("%s/reftable.log"%self.dir)
             try:
                 nb_to_gen = int(self.ui.nbSetsReqEdit.text())
             except Exception,e:
@@ -774,8 +761,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 if os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
                     shutil.move("%s/%s_ACP.txt"%(self.dir,aid),"%s/analysis/%s/ACP.txt"%(self.dir,aDirName))
 
-        # on met à jour la liste des analyses terminées
-        self.fillAnalysisCombo()
         self.save()
 
 

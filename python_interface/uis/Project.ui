@@ -867,43 +867,6 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QTableWidget" name="tableWidget">
-            <property name="sortingEnabled">
-             <bool>false</bool>
-            </property>
-            <column>
-             <property name="text">
-              <string>name</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>type</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>parameters</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>priority</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>status</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>results</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-          <item>
            <widget class="QFrame" name="frame_9">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
@@ -1074,7 +1037,7 @@
                <x>0</x>
                <y>0</y>
                <width>929</width>
-               <height>264</height>
+               <height>593</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -1116,34 +1079,6 @@
             <property name="text">
              <string>Define new analysis</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QFrame" name="frame_10">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <item>
-              <widget class="QComboBox" name="analysisListCombo"/>
-             </item>
-             <item>
-              <widget class="QPushButton" name="analysisResultsButton">
-               <property name="text">
-                <string>View results</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
            </widget>
           </item>
          </layout>

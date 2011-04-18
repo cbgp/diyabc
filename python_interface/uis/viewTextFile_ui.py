@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/viewTextFile.ui'
 #
-# Created: Tue Apr 12 16:24:32 2011
+# Created: Mon Apr 18 11:07:19 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -22,12 +22,21 @@ class Ui_Frame(object):
         Frame.setFrameShadow(QtGui.QFrame.Raised)
         self.verticalLayout = QtGui.QVBoxLayout(Frame)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.okButton = QtGui.QPushButton(Frame)
+        self.frame = QtGui.QFrame(Frame)
+        self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame.setObjectName(_fromUtf8("frame"))
+        self.horizontalLayout = QtGui.QHBoxLayout(self.frame)
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.okButton = QtGui.QPushButton(self.frame)
+        self.okButton.setMinimumSize(QtCore.QSize(0, 35))
+        self.okButton.setMaximumSize(QtCore.QSize(16777215, 35))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.okButton.setFont(font)
         self.okButton.setObjectName(_fromUtf8("okButton"))
-        self.verticalLayout.addWidget(self.okButton)
+        self.horizontalLayout.addWidget(self.okButton)
+        self.verticalLayout.addWidget(self.frame)
         self.dataPlain = QtGui.QPlainTextEdit(Frame)
         self.dataPlain.setTextInteractionFlags(QtCore.Qt.TextSelectableByKeyboard|QtCore.Qt.TextSelectableByMouse)
         self.dataPlain.setObjectName(_fromUtf8("dataPlain"))
