@@ -1,12 +1,33 @@
 #!/bin/bash
 
+function printUsage(){
+echo "usage : 
+mac_generation.sh  path_to_pyinstaller.py  [path_to_icon.icns  output_path  path_to_diyabc.py] 
+"
+}
+
+
 pyinst=$1
 icon=$2
 output=$3
 pysrc=$4
 
+if [ $# -eq 0 ] ; then
+    printUsage
+    exit
+else
+    if [ $# -eq 1 ]; then
+        icon="../accueil_pictures/coccicon.icns"
+        output="./macgeneration_"+`date +%e-%m-%Y_%R`
+        echo "Your application will be generated in $output . Press enter to continue..."
+        read
+        pysrc="../../diyabc.py"
+    fi
+    echo "I assume you've intalled python-2.6, pyqwt, numpy, PyQt"
+fi
+
 # generation of the spec
-python $pyinst -o $output $pysrc
+python $pyinst -y -o $output $pysrc
 # modification of the spec to generate .app
 echo "
 import sys
@@ -15,7 +36,7 @@ if sys.platform.startswith('darwin'):
     appname='DIYABC',
     version='1.0')" >> $output/diyabc.spec
 # .app build
-python $pyinst $output/diyabc.spec
+python $pyinst -y $output/diyabc.spec
 # icon copy
 cp $icon $output/Macdiyabc.app/Contents/Resources/App.icns
 # dist rep copy
