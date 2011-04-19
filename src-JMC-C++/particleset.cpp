@@ -364,6 +364,7 @@ struct ParticleSetC
 	void dosimultabref(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut)
 	{
                int ipart,gr,nstat,pa,ip,iscen,np,ns;
+               float *pp;
                bool trouve,trace;
                this->npart = npart;
                int *sOK;
@@ -433,71 +434,46 @@ struct ParticleSetC
                         }
 		}
 		//if (trace) cout<<"apres remplissage des enreg\n";fflush(stdin);
-                if (firsttime){
-                      FILE * pFile;
-                      char  *curfile;
-                      rt.sethistparamname(header);
-//cout<<"avant curfile\n";fflush(stdin);
-                      curfile = new char[strlen(this->header.pathbase)+13];
-                      strcpy(curfile,this->header.pathbase);
-                      strcat(curfile,"courant.log");
-                      //cout<<curfile<<"\n";
-                      pFile = fopen (curfile,"w");
-                      fprintf(pFile,"%s\n",this->header.entete.c_str());
-                      ss=splitwords(header.entete," ",&ns);
-                      np=ns-header.nstat-1;
-                      for (int ipart=0;ipart<this->npart;ipart++) {
-                          if (sOK[ipart]==0){
-                              //cout<<enreg[ipart].numscen<<"\n";
-                              fprintf(pFile,"%3d  ",enreg[ipart].numscen);
-                              iscen=enreg[ipart].numscen-1;
-                              //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
-                              pa=0;
-                              //cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"\n";
-                              for (int j=1;j<np+1-rt.nparamut;j++) {
-                                  trouve=false;ip=-1;
-                                  while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
-                                      ip++;
-                                      trouve=(ss[j] == rt.histparam[iscen][ip].name);
-                                      //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
-                                  }
-                                  if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
-                                  else fprintf(pFile,"              ");
-                              }
-                              //cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
-                              for (int j=pa;j<rt.nparam[iscen];j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
-                              for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
-                              fprintf(pFile,"\n");
+        if (firsttime){
+              //cout<<"FIRSTTIME\n";
+              FILE * pFile;
+              char  *curfile;
+              curfile = new char[strlen(this->header.pathbase)+13];
+              strcpy(curfile,this->header.pathbase);
+              strcat(curfile,"courant.log");
+              //cout<<curfile<<"\n";
+              pFile = fopen (curfile,"w");
+              fprintf(pFile,"%s\n",this->header.entete.c_str());
+              ss=splitwords(header.entete," ",&ns);
+              np=ns-header.nstat-1;
+              for (int ipart=0;ipart<this->npart;ipart++) {
+                  if (sOK[ipart]==0){
+                      //cout<<enreg[ipart].numscen<<"\n";
+                      fprintf(pFile,"%3d  ",enreg[ipart].numscen);
+                      iscen=enreg[ipart].numscen-1;
+                      //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
+                      //cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"\n";
+                      pa=0;
+                      for (int j=1;j<np+1-rt.nparamut;j++) {
+                          trouve=false;ip=-1;
+                          while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
+                              ip++;
+                              trouve=(ss[j] == rt.histparam[iscen][ip].name);
+                              //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
                           }
+                          if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
+                          else fprintf(pFile,"              ");
                       }
-                     /* for (int ipart=0;ipart<this->npart;ipart++) {
-                              if (sOK[ipart]==0){
-                                fprintf(pFile,"%3d  ",enreg[ipart].numscen);
-                                iscen=enreg[ipart].numscen-1;
-                                //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
-                                pa=0;
-                                //cout<<header.nparamtot<<"   "<<this->particule[ipart].scen.nparamvar<<"\n";
-                                for (int j=0;j<header.nparamtot;j++) {
-                                    trouve=false;ip=-1;
-                                    while ((not trouve)and(ip<header.scenario[iscen].nparam-1)) {
-                                        ip++;
-                                        trouve=(header.histparam[j].name == rt.histparam[iscen][ip].name);
-                                        //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
-                                    }
-                                    if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
-                                    else fprintf(pFile,"              ");
-                                }
-                                for (int j=pa;j<this->particule[ipart].scen.nparamvar;j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
-                                for (int st=0;st<nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
-                                fprintf(pFile,"\n");
-                              }
-                      }*/
-                      fclose(pFile);
-                }
-		//cout <<"fin de l'ecriture du fichier courant.log' \n";
-		//cleanParticleSet();
-		//cout << "fin de dosimultabref\n";
-                delete [] sOK;
-                //if (trace) cout <<"fin de dosimultabref\n";
+                      //cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
+                      for (int j=pa;j<rt.nparam[iscen];j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
+                      for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
+                      fprintf(pFile,"\n");
+                  }
+              }
+              fclose(pFile);
+              cout<<"apres fclose\n";
+        }
+        //cout<<"apres remise en ordre des enreg.param\n";
+        delete [] sOK;
 	}
 };

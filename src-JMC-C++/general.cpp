@@ -73,6 +73,7 @@ int readheaders() {
     header.calstatobs(statobsfilename);                                  if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename=strdup(header.datafilename.c_str());                    if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
     k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
+    if (k==0) {rt.sethistparamname(header);cout<<"sethistparamname"<<"\n";}
     return k;
 }
 
@@ -82,7 +83,6 @@ void writecourant() {
     FILE * pFile;
     char  *curfile;
     string *ss;
-    rt.sethistparamname(header);
     //cout<<"avant curfile\n";fflush(stdin);
     curfile = new char[strlen(header.pathbase)+13];
     strcpy(curfile,header.pathbase);
@@ -314,6 +314,7 @@ int main(int argc, char *argv[]){
                               for (int i=0;i<header.nscenarios;i++) rt.nparam[i]=header.scenario[i].nparamvar;
                               rt.nstat=header.nstat;
                               rt.writeheader();
+                              rt.sethistparamname(header);
                           } else if (k==2) {cout<<"cannot create reftable file\n"; exit(1);}
                           if (nrecneeded>rt.nrec) {
                                   rt.openfile();
@@ -323,12 +324,13 @@ int main(int argc, char *argv[]){
                                       enreg[p].param = new float[header.nparamtot+3*header.ngroupes];
                                       enreg[p].numscen = 1;
                                   }
-                                  //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
+                                  cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
                                   firsttime=true;stoprun=false;
                                   debutr=walltime(&clock_zero);
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
+                                          //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"\n";
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
-                                          cout<<"retour de dosimultabref\n";
+                                          //cout<<"retour de dosimultabref\n";
                                           simOK=true;
                                           for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}
                                           if (simOK) {
@@ -337,7 +339,8 @@ int main(int argc, char *argv[]){
                                               dureef=walltime(&debutf);time_file += dureef;
                                               rt.nrec +=nenr;
                                               cout<<rt.nrec;
-                                              if (firsttime) writecourant();
+                                              //if (firsttime) writecourant();
+                                              //cout<<"à la place de writecourant\n";
                                               if (((rt.nrec%1000)==0)and(rt.nrec<nrecneeded))cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
                                               stoprun = (stat(stopfilename,&stFileInfo)==0);
                                               if (stoprun) remove(stopfilename);

@@ -45,7 +45,7 @@ public:
     ParticleC particuleobs;
     MutParameterC *mutparam;
     double *stat_obs;
-    
+        
     void libere() {
         this->dataobs.libere();
         //delete []this->pathbase;
@@ -247,7 +247,8 @@ public:
                 if (not this->histparam[k].prior.constant) {
                     //this->scenario[i].paramvar[this->scenario[i].nparamvar].prior = copyprior(this->histparam[k].prior);
                     this->scenario[i].nparamvar++;
-                }   
+                }
+                //this->scenario[i].histparam[j].ecris();
             }
             //cout<<"scenario "<<i<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
         }

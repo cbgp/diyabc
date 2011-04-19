@@ -198,7 +198,7 @@ public:
 	
 	void ecris() {
 		cout<<"    name="<<this->name<<"   val="<<this->value<<"   category="<<this->category<<"\n";
-		//prior.ecris();
+		prior.ecris();
 	}
 };
 
@@ -1801,7 +1801,17 @@ struct ParticleC
 					if (debuglevel==10) cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
 					for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 					for (int iseq=0;iseq<this->nseq;iseq++) {
-						if (debuglevel==10) cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action << "\n";fflush(stdin);
+						if (debuglevel==10) {
+                            cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
+                            
+                           if (this->seqlist[iseq].action == 'C') cout <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
+                           else  cout <<"   "<<this->seqlist[iseq].t0;
+                           cout<<"    pop="<<this->seqlist[iseq].pop;
+                           if (this->seqlist[iseq].action == 'M') cout <<"   pop1="<<this->seqlist[iseq].pop1;
+                           if (this->seqlist[iseq].action == 'S') cout <<"   pop2="<<this->seqlist[iseq].pop2;
+                           cout<<"\n";
+                           fflush(stdin);
+                        }
 						if (this->seqlist[iseq].action == 'C') {	//COAL
 							//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
 							//cout <<"\n";

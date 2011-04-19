@@ -73,8 +73,6 @@ parstatC *parstat;
         vector <string>  parname;
         int ii,iscen;
         bool commun,trouve;
-        rt.sethistparamname(header);
-        //cout<<"apres rt.setparamname\n";
         npar=0;npar0=0;
         numpar = new int*[rt.nscenchoisi]; 
         if (rt.nscenchoisi==1) {
