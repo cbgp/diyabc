@@ -36,6 +36,7 @@ mkdir $TMPBUILD
 SOURCEDIR=`dirname $pysrc`
 cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $TMPBUILD/
 pysrctmp=$TMPBUILD/`basename $pysrc`
+sed -i "" "s/development\ version/$VERSION/g" $TMPBUILD/$APPNAME.py
 
 # generation of the spec
 python $pyinst -y -o $output $pysrctmp
@@ -57,3 +58,6 @@ cp -r /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt_menu.nib $outp
 # config file modification
 sed -i "" "s/string>1</string>0</g" $output/Mac$APPNAME.app/Contents/Info.plist
 mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
+# copy of needed images
+mkdir $output/docs
+cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/*.png $output/docs/
