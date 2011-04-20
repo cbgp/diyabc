@@ -152,6 +152,11 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         Pyinstaller semble ne pas fonctionner parfaitement sous linux. L'exécutable produit ne marche que
         sur la machine qui l'a créé. Je suis d'avis qu'il faut plutôt faire un paquet debian et/ou rpm
         et distribuer le programme de cette façon.
+        \subsection{Script de génération du paquet Debian}
+        Ce script se situe dans python\_interface/docs/project_builders/debian . Il utilise le template se trouvant dans le même
+        répertoire. Dans un premier temps, il modifie les fichiers d'information du paquet pour coller avec la version. Ensuite, il 
+        copie les sources nécessaires dans l'arborescence du paquet. Il écrit enfin le contenu du script de lancement qui sera dans
+        /usr/local/bin.
 
     \subsection{MacOs 10.6 Snow Leopard}
         Sous MacOs, on pourrait cr\'eer un pkg qui installe python et les d\'ependances de DIYABC. C'est un peu lourd
