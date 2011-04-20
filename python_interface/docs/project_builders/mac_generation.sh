@@ -13,6 +13,7 @@ output=$3
 pysrc=$4
 VERSION=$5
 
+
 if [ $# -eq 0 ] ; then
     printUsage
     exit
@@ -28,11 +29,13 @@ else
     echo "I assume you've intalled python-2.6, pyqwt, numpy, PyQt"
 fi
 
-TMPBUILD=/tmp/diyabc_tmp_build-$VERSION
-mkdir TMPBUILD
+APPNAME=`basename $pysrc | cut -d . -f 1`
+
+TMPBUILD=/tmp/$APPNAME-tmp_build-$VERSION
+mkdir $TMPBUILD
 SOURCEDIR=`dirname $pysrc`
 cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $TMPBUILD/
-pysrctmp=$SOURCEDIR/`basename $pysrc`
+pysrctmp=$TMPBUILD/`basename $pysrc`
 
 # generation of the spec
 python $pyinst -y -o $output $pysrctmp
@@ -41,16 +44,16 @@ echo "
 import sys
 if sys.platform.startswith('darwin'):
     app = BUNDLE(exe,
-    appname='`basename pysrc | cut -d '.' -f 1` $VERSION',
-    version='$VERSION')" >> $output/diyabc.spec
+    appname='$APPNAME',
+    version='$VERSION')" >> $output/$APPNAME.spec
 # .app build
-python $pyinst -y $output/diyabc.spec
+python $pyinst -y $output/$APPNAME.spec
 # icon copy
-cp $icon $output/Macdiyabc.app/Contents/Resources/App.icns
+cp $icon $output/Mac$APPNAME.app/Contents/Resources/App.icns
 # dist rep copy
-cp -r $output/dist/diyabc/* $output/Macdiyabc.app/Contents/MacOS/
+cp -r $output/dist/$APPNAME/* $output/Mac$APPNAME.app/Contents/MacOS/
 # qmenu copy
-cp -r /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt_menu.nib/ $output/Macdiyabc.app/Contents/Resources/
+cp -r /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt_menu.nib $output/Mac$APPNAME.app/Contents/Resources/
 # config file modification
-sed -i "" "s/string>1</string>0</g" $output/Macdiyabc.app/Contents/Info.plist
-mv $output/Macdiyabc.app $output/diyabc-$VERSION.app
+sed -i "" "s/string>1</string>0</g" $output/Mac$APPNAME.app/Contents/Info.plist
+mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
