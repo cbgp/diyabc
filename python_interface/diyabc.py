@@ -403,9 +403,10 @@ class Diyabc(QMainWindow):
 
 if __name__ == "__main__":
     nargv = sys.argv
-    nargv.extend(["-title","DIYABC v%s"%VERSION])
+    #nargv.extend(["-title","DIYABC v%s"%VERSION])
     app = QApplication(nargv)
     myapp = Diyabc(app)
+    myapp.setWindowTitle("DIYABC %s"%VERSION)
     myapp.show()
     #QTest.mouseClick(myapp.ui.skipButton,Qt.LeftButton)
     sys.exit(app.exec_())
