@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+VERSION='development version'
+
 import time
 #import dataImages
 import shutil
@@ -114,6 +116,7 @@ class Diyabc(QMainWindow):
         QObject.connect(self.ui.openButton,SIGNAL("clicked()"),self.openToMainStack)
         QObject.connect(self.ui.newButton,SIGNAL("clicked()"),self.newToMainStack)
         QObject.connect(self.ui.skipButton,SIGNAL("clicked()"),self.switchToMainStack)
+        self.ui.versionLabel.setText('%s'%VERSION)
         #self.ui.frame.setDisabled(True)
         #self.ui.frame.setAutoFillBackground(True)
         #self.ui.frame.setBackgroundColor(Qt.Blue)
@@ -400,7 +403,7 @@ class Diyabc(QMainWindow):
 
 if __name__ == "__main__":
     nargv = sys.argv
-    nargv.extend(["-title","DIYABC v2.0.0.0"])
+    nargv.extend(["-title","DIYABC v%s"%VERSION])
     app = QApplication(nargv)
     myapp = Diyabc(app)
     myapp.show()
