@@ -1225,6 +1225,18 @@ class RefTableGenThread(QThread):
                     #output.notify(self,"problem",lines[0])
                     fg.close()
                     return
+            # verification de l'arret du programme
+            if p.poll() != None:
+                fg.close()
+                g = open("general.out","r")
+                data= g.readlines()
+                #print "data:%s"%data
+                #print "poll:%s"%p.poll()
+                g.close()
+                if self.nb_done < self.nb_to_gen:
+                    self.problem = "Reftable generation program exited anormaly"
+                    self.emit(SIGNAL("refTableProblem"))
+                    return
             # TODO à revoir ac JM
             #else:
             #    self.problem = "unknown problem"
@@ -1291,21 +1303,25 @@ class AnalysisThread(QThread):
         print " ".join(cmd_args_list)
         f = open("%s.out"%self.analysis.category,"w")
         p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
-        f.close()
+        #f.close()
         print "popen ok"
 
-        f = open("%s.out"%self.analysis.category,"r")
-        data= f.read()
-        f.close()
 
         # la scrutation de la progression est identique pour toutes les analyses
         self.progress = 1
         tmpp = 1
         self.emit(SIGNAL("analysisProgress"))
         while True:
-            a=os.popen("head -n 1 %s/%s_progress.txt"%(self.parent.dir,self.analysis.name))
-            b=a.read()
-            a.close()
+            #a=os.popen("head -n 1 %s/%s_progress.txt"%(self.parent.dir,self.analysis.name))
+            #b=a.read()
+            #a.close()
+            if os.path.exists("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name)):
+                a = open("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name),"r")
+                b = a.readlines()[0]
+                a.close()
+            else:
+                b = ""
+            print "prog:%s"%b
             # on a bougé
             if len(b.split(' ')) > 1:
                 t1 = float(b.split(' ')[0])
@@ -1315,4 +1331,14 @@ class AnalysisThread(QThread):
                 print "on a progressé"
                 self.progress = tmpp
                 self.emit(SIGNAL("analysisProgress"))
-            time.sleep(5)
+            time.sleep(2)
+            # verification de l'arret du programme
+            if p.poll() != None:
+                f.close()
+                g = open("%s.out"%self.analysis.category,"r")
+                data= g.readlines()
+                #print "data:%s"%data
+                #print "poll:%s"%p.poll()
+                g.close()
+                if self.progress < 100:
+                    print "Analysis program exited before the end of the analysis"
