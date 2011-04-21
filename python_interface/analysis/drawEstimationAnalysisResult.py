@@ -35,6 +35,8 @@ class DrawEstimationAnalysisResult(QFrame):
 
         self.ui.PCAFrame.hide()
         self.ui.ACProgress.hide()
+        self.ui.viewLocateButton.hide()
+        self.ui.PCAGraphFrame.hide()
 
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)
