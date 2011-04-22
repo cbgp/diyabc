@@ -2420,22 +2420,59 @@ struct ParticleC
 		if (lik1>lik2) return 0.001*(double)i1; else return 0.001*(double)i2;
 	}
 
+	bool identseq(int loc, char* seq1, char* seq2) {
+	    bool ident=true;
+	    int k=0;
+	    while ((ident)and(k<this->locuslist[loc].dnavar)) {
+	        ident = ((seq1[k]=='N')or(seq2[k]=='N')or(seq1[k]==seq2[k]));
+	        if (ident) k++;
+	    }
+	    return ident;
+	}
+
 	double cal_nha1p(int gr,int st){
+	    char **haplo;
+	    int iloc,kloc,k,j,nhl=0,nhm=0,nl=0;
+	    bool trouve,ident;
 		double res=0.0;
-                int iloc,kloc,nhl=0,nhm=0,nl=0;
-                int sample=this->grouplist[gr].sumstat[st].samp-1;
-                for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-                     kloc=this->grouplist[gr].loc[iloc]; 
-                     if(this->locuslist[kloc].samplesize[sample]>0) {
-                         if (nvar[iloc]==0) { nhl=1;
-                         } else {
-                             for (int i=0;i<this->locuslist[kloc].ss[sample];i++)
-                                 if (strlen(this->locuslist[kloc].haplodna[sample][i])>0) ;
-                         }
-                     }
+        int sample=this->grouplist[gr].sumstat[st].samp-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            nhl=0; 
+            kloc=this->grouplist[gr].loc[iloc]; 
+            if(this->locuslist[kloc].samplesize[sample]>0) {
+                nl++;
+                if (this->locuslist[kloc].dnavar==0) nhl=1;
+                else {
+                    haplo = new char*[this->locuslist[kloc].samplesize[sample]]; 
+                    for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
+                        if (this->locuslist[kloc].haplodna[sample][i])!=SEQMISSING) ; {
+                            if (nhl==0) { 
+                                haplo[nhl] = new char[this->locuslist[kloc].dnavar];
+                                for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhl][k] = this->locuslist[kloc].haplodnavar[sample][i][k]; 
+                                nhl++;
+                            } else {
+                                trouve=false;j=0;
+                                while ((not trouve)and(j<nhl)) {
+                                	trouve=identseq(kloc,haplo[j],this->locuslist[kloc].haplodnavar[sample][i]);
+                                	if (trouve) j++;
+                                }
+                                if (trouve) {
+                                	for (int k=0;k<this->locuslist[kloc].dnavar;k++) if (haplo[j][k]=='N') haplo[nhaplo][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
+                                } else {
+                                haplo[nhl] = new char[this->locuslist[kloc].dnavar];
+                                for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhl][k] = this->locuslist[kloc].haplodnavar[sample][i][k]; 
+                                nhl++;                                    
+                                }
+                            }
+                        }    
+                    }
                 }
-                return res;
+            }            
+            nhm += nhl;
         }
+        if (nl==0) return 0.0;
+        else return (double)nhl/(double)nl;
+    }
                 
 
 	double cal_nss1p(int gr,int st){
@@ -2516,62 +2553,78 @@ struct ParticleC
 
 	}
 
-        void cal_numvar(int gr) {
-                int i,j,k,ns,pop,j0,lonseq;
-                int locus,nlocs=this->grouplist[gr].nloc;
-                char *site;
-                bool ident;
-                this->nvar = new int[nlocs];
-                this->numvar = new int*[nlocs];
-                vector <int> nuvar;
+	void cal_numvar(int gr) {
+        int i,j,k,ns,pop,j0,lonseq;
+        int locus,nlocs=this->grouplist[gr].nloc;
+        char *site;
+        bool ident;
+        //this->nvar = new int[nlocs];
+        //this->numvar = new int*[nlocs];
+        vector <int> nuvar;
 
-                for (int iloc=0;iloc<nlocs;iloc++) {
-                      if (not nuvar.empty()) nuvar.clear();
-                      locus= this->grouplist[gr].loc[iloc];
-                      ns=0; for (pop=0;pop<this->data.nsample;pop++) ns += this->locuslist[locus].ss[pop];
-                      site = new char[ns];
-                      nvar[iloc]=0;
-                      if (this->dnatrue) lonseq=this->locuslist[locus].dnalength;
-                      else {
-                            lonseq=0;
-                            for (pop=0;pop<this->data.nsample;pop++) {
-                                for (i=0;i<this->locuslist[locus].ss[pop];i++) {                      
-                                    lonseq = strlen(this->locuslist[locus].haplodna[pop][i]);
-                                    if (lonseq>0) break;
-                                }
-                                if (lonseq>0) break;
-                            }
-                      }
-                      if (lonseq>0) {
-                           for (k=0;k<lonseq;k++) {
-                               j=-1;
-                               for (pop=0;pop<this->data.nsample;pop++) {
-                                   for (i=0;i<this->locuslist[locus].ss[pop];i++) {
-                                       j++;
-                                       if (this->locuslist[locus].haplodna[pop][i] == '\0') site[j]='N';
-                                       else site[j] = this->locuslist[locus].haplodna[pop][i][k];
-                                   
-                                   }     
-                               }
-                               j0=0;
-                               while ((site[j0]=='N')and(j0<ns)) j0++; //recherche du premier nucléotide non N
-                               j=j0+1;
-                               ident=true;
-                               while ((ident)and(j<ns)) {
-                                   ident=((site[j]=='N')or(site[j]==site[j0]));
-                                   j++;
-                               }
-                               if (not ident) {
-                                   nvar[iloc]++;
-                                   nuvar.push_back(k);
-                               }
-                           }
-                           numvar[iloc] = new int[nvar[iloc]];
-                           for (i=0;i<nvar[iloc];i++) numvar[iloc][i] = nuvar[i];
-                      }
+		if (not this->dnatrue) {
+            for (int iloc=0;iloc<nlocs;iloc++) {
+                locus= this->grouplist[gr].loc[iloc];
+                this->locuslist[locus].haplodnavar = new char**[data.nsample];
+            	for (pop=0;pop<this->data.nsample;pop++) {
+               	    this->locuslist[locus].haplodnavar[pop] = new char*[this->locuslist[locus].ss[pop]];
+                	for (i=0;i<this->locuslist[locus].ss[pop];i++) {
+                   	    this->locuslist[locus].dnavar = strlen(this->locuslist[locus].haplodna[pop][i]);
+                   	    this->locuslist[locus].haplodnavar[pop][i] = new char[this->locuslist[locus].dnavar];
+                    	for (int k=0;k<this->locuslist[locus].dnavar;k++) this->locuslist[locus].haplodnavar[pop][i][k] = this->locuslist[locus].haplodna[pop][i][k]
                 }
-                if (not nuvar.empty()) nuvar.clear();
-        }
+            }
+		} else {
+            for (int iloc=0;iloc<nlocs;iloc++) {
+                locus= this->grouplist[gr].loc[iloc];
+                this->locuslist[locus].haplodnavar = new char**[data.nsample];
+                ns=0; for (pop=0;pop<this->data.nsample;pop++) ns += this->locuslist[locus].ss[pop];
+                site = new char[ns];
+                this->locuslist[locus].dnavar=0;
+                lonseq=0;
+                for (pop=0;pop<this->data.nsample;pop++) {
+                    for (i=0;i<this->locuslist[locus].ss[pop];i++) { 
+                        lonseq = strlen(this->locuslist[locus].haplodna[pop][i]);
+                        if (lonseq>0) break;
+                    }
+                    if (lonseq>0) break;
+                }
+                if (lonseq>0) {
+                    for (k=0;k<lonseq;k++) {
+                        j=-1;
+                        for (pop=0;pop<this->data.nsample;pop++) {
+                            for (i=0;i<this->locuslist[locus].ss[pop];i++) {
+                                j++;
+                                if (this->locuslist[locus].haplodna[pop][i] == '\0') site[j]='N';
+                                else site[j] = this->locuslist[locus].haplodna[pop][i][k];               
+                            }     
+                        }
+                        j0=0;
+                        while ((site[j0]=='N')and(j0<ns)) j0++; //recherche du premier nucléotide non N
+                        j=j0+1;
+                        ident=true;
+                        while ((ident)and(j<ns)) {
+                            ident=((site[j]=='N')or(site[j]==site[j0]));
+                            j++;
+                        }
+                        if (not ident) {
+                           this->locuslist[locus].dnavar++;
+                           nuvar.push_back(k);
+                        }
+                    }
+                }
+                for (pop=0;pop<this->data.nsample;pop++) {
+               	    this->locuslist[locus].haplodnavar[pop] = new char*[this->locuslist[locus].ss[pop]];
+                	for (i=0;i<this->locuslist[locus].ss[pop];i++) {
+                   	    this->locuslist[locus].haplodnavar[pop][i] = new char[this->locuslist[locus].dnavar];
+                   	    for (int k=0;k<this->locuslist[locus].dnavar;k++) this->locuslist[locus].haplodnavar[pop][i][k] = this->locuslist[locus].haplodna[pop][i][nuvar[k]];
+                   	}
+                }
+		    	if (not nuvar.empty()) nuvar.clear();
+		    	delete []site;
+		    }
+		}
+    }
 
 	/*  Numérotation des stat
 	 *  1 : nal			-1 : nha	    -13 : fst

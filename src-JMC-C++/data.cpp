@@ -56,9 +56,10 @@ struct LocusC
 	double *mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
 	int nsitmut;   // length of array *sitmut;
 	int *sitmut;   //array of nsitmut dna sites that are changed through a mutation
-	int dnalength;
+	int dnalength,dnavar;
 	int *tabsit;   //array of dnalength elements giving the number of a dna site;
 	char ***haplodna;  //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
+	char ***haplodnavar; //seulement les sites variables
 //	int *haplostate; //array[gene copy] tous les "gene copies" sont mises à la suite les unes des autres (groupées par sample)
 //Proprietes des locus microsatellites
 	int mini,maxi,kmin,kmax,motif_size,motif_range,nal;
