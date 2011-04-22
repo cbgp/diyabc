@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /usr/local/src/diyabc-X
+cd /usr/local/src/diyabc
 ./clean.sh
 cd -
 echo DIYABC removed
