@@ -17,6 +17,8 @@ mkdir $PACKAGEDIR/usr/local/src/diyabc-$VERSION/
 cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $PACKAGEDIR/usr/local/src/diyabc-$VERSION/
 # version modification
 sed -i "s/VERSION='development version'/VERSION='$VERSION'/" $PACKAGEDIR/usr/local/src/diyabc-$VERSION/diyabc.py
+sed -i "s/VERSION/$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
+mv $PACKAGEDIR/usr/share/menu/diyabc $PACKAGEDIR/usr/share/menu/diyabc-$VERSION
 mkdir $PACKAGEDIR/usr/local/src/diyabc-$VERSION/docs
 cp -r $SOURCEDIR/docs/accueil_pictures $PACKAGEDIR/usr/local/src/diyabc-$VERSION/docs/
 cp $SOURCEDIR/docs/*.png $PACKAGEDIR/usr/local/src/diyabc-$VERSION/docs/
