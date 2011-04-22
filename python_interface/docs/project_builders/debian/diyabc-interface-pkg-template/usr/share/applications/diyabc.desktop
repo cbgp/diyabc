@@ -1,11 +1,11 @@
 [Desktop Entry]
 Categories=Biology;CBGP;Qt;GNOME;
 Name=DIYABC NAMEVERSION
-Name[fr]=Do It Yourself ABC NAMEVERSION
+Name[fr]=DIYABC NAMEVERSION
 GenericName=Inference on Bayesian
 GenericName[fr]=Inférence avec des modèles bayésiens
-Comment=Comments
-Comment[fr]=Commentaires
+Comment=Do It Yourself ABC
+Comment[fr]=DIY (faites par vous même) de l'ABC
 Version=VVERSION
 Exec=DIYABCEXEC
 Icon=ICON
