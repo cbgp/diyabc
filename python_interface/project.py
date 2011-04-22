@@ -403,7 +403,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         output.notify(self,"reftable problem","Something happened during the reftable generation : %s"%(self.th.problem))
  
     def incProgress(self):
-        """Increment the progress dialog
+        """Incremente la barre de progression de la générationd e la reftable
         """
         done = self.th.nb_done
         nb_to_do = self.th.nb_to_gen
@@ -564,6 +564,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.save()
 
     def addAnalysisGui(self,analysis,name,atype,params,status):
+        """ crée les objets graphiques pour une analyse et les ajoute
+        """
 
         frame_9 = QtGui.QFrame(self.ui.scrollAreaWidgetContents)
         frame_9.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -648,6 +650,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         QObject.connect(analysisParamsButton,SIGNAL("clicked()"),self.viewAnalysisParameters)
 
     def viewAnalysisParameters(self):
+        """ bascule sur une frame qui affiche les valeurs des paramètres
+        d'une analyse
+        """
         frame = self.sender().parent()
         # on associe l'analyse a sa frame
         analysis = self.dicoFrameAnalysis[frame]
@@ -674,10 +679,23 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 analysis.status = "running"
 
     def launchAnalysis(self,analysis):            
+        """ lance un thread de traitement d'une analyse
+        """
         self.save()
         self.thAnalysis = AnalysisThread(self,analysis)
         self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress"),self.analysisProgress)
+        self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProblem"),self.analysisProblem)
         self.thAnalysis.start()
+
+    def analysisProblem(self):
+        output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,self.thAnalysis.problem))
+        frame = None
+        for fr in self.dicoFrameAnalysis.keys():
+            if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
+                frame = fr
+                break
+        frame.findChild(QPushButton,"analysisButton").setText("re-launch")
+        self.thAnalysis = None
 
     def analysisProgress(self):
         """ met à jour l'indicateur de progression de l'analyse en cours
@@ -880,6 +898,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.freezeGenData()
 
     def freezeGenData(self,yesno=True):
+        """ empêche la modification des genetic data tout en laissant
+        la possibilité de les consulter
+        """
         self.gen_data_win.ui.clearButton.setDisabled(yesno)
         self.gen_data_win.ui.exitButton.setDisabled(yesno)
         self.gen_data_win.ui.tableWidget.setDisabled(yesno)
@@ -923,6 +944,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.gen_data_win.setSumSeq_dico[g].ui.addAdmixButton.setDisabled(yesno)
 
     def freezeHistModel(self,yesno=True):
+        """ empêche la modification du modèle historique tout en laissant
+        la possibilité de le consulter
+        """
         self.hist_model_win.ui.clearButton.setDisabled(yesno)
         self.hist_model_win.ui.exitButton.setDisabled(yesno)
         for e in self.hist_model_win.findChildren(QLineEdit):
@@ -973,6 +997,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
 
     def saveAnalysis(self):
+        """ sauvegarde la liste des analyses dans le dossier du projet
+        """
         l_to_save = []
         for a in self.analysisList:
             l_to_save.append(a)
@@ -981,6 +1007,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         f.close()
 
     def loadAnalysis(self):
+        """ charge les analyses suavegardées
+        """
         if os.path.exists("%s/%s"%(self.dir,self.parent.analysis_conf_name)):
             f=open("%s/%s"%(self.dir,self.parent.analysis_conf_name),"rb")
             l = pickle.load(f)
@@ -1337,8 +1365,11 @@ class AnalysisThread(QThread):
                 f.close()
                 g = open("%s.out"%self.analysis.category,"r")
                 data= g.readlines()
-                #print "data:%s"%data
+                print "data:%s"%data
                 #print "poll:%s"%p.poll()
                 g.close()
                 if self.progress < 100:
-                    print "Analysis program exited before the end of the analysis"
+                    # TODO
+                    self.problem = "Analysis program exited before the end of the analysis (%s%%)"%self.progress
+                    self.emit(SIGNAL("analysisProblem"))
+                    return
