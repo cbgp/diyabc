@@ -689,6 +689,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
     def analysisProblem(self):
         output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,self.thAnalysis.problem))
+
+        # nettoyage du progress.txt
+        aid = self.thAnalysis.analysis.name
+        if os.path.exists("%s/%s_progress.txt"%(self.dir,aid)):
+            os.remove("%s/%s_progress.txt"%(self.dir,aid))
+
         frame = None
         for fr in self.dicoFrameAnalysis.keys():
             if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
@@ -723,6 +729,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.thAnalysis.analysis.status = "finished"
         atype = self.thAnalysis.analysis.category
         self.thAnalysis = None
+
+        # nettoyage du progress.txt
+        if os.path.exists("%s/%s_progress.txt"%(self.dir,aid)):
+            os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
         if atype == "estimate":
             if os.path.exists("%s/%s_phistar.txt"%(self.dir,aid))\
