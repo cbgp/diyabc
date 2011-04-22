@@ -2445,7 +2445,7 @@ struct ParticleC
                 else {
                     haplo = new char*[this->locuslist[kloc].samplesize[sample]]; 
                     for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
-                        if (this->locuslist[kloc].haplodna[sample][i])!=SEQMISSING) ; {
+                        if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) ; {
                             if (nhl==0) { 
                                 haplo[nhl] = new char[this->locuslist[kloc].dnavar];
                                 for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhl][k] = this->locuslist[kloc].haplodnavar[sample][i][k]; 
@@ -2457,7 +2457,7 @@ struct ParticleC
                                 	if (trouve) j++;
                                 }
                                 if (trouve) {
-                                	for (int k=0;k<this->locuslist[kloc].dnavar;k++) if (haplo[j][k]=='N') haplo[nhaplo][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
+                                	for (int k=0;k<this->locuslist[kloc].dnavar;k++) if (haplo[j][k]=='N') haplo[nhl][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
                                 } else {
                                 haplo[nhl] = new char[this->locuslist[kloc].dnavar];
                                 for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhl][k] = this->locuslist[kloc].haplodnavar[sample][i][k]; 
@@ -2571,7 +2571,8 @@ struct ParticleC
                 	for (i=0;i<this->locuslist[locus].ss[pop];i++) {
                    	    this->locuslist[locus].dnavar = strlen(this->locuslist[locus].haplodna[pop][i]);
                    	    this->locuslist[locus].haplodnavar[pop][i] = new char[this->locuslist[locus].dnavar];
-                    	for (int k=0;k<this->locuslist[locus].dnavar;k++) this->locuslist[locus].haplodnavar[pop][i][k] = this->locuslist[locus].haplodna[pop][i][k]
+                    	for (int k=0;k<this->locuslist[locus].dnavar;k++) this->locuslist[locus].haplodnavar[pop][i][k] = this->locuslist[locus].haplodna[pop][i][k];
+                    }
                 }
             }
 		} else {
