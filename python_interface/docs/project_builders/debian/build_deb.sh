@@ -33,13 +33,21 @@ cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SO
 # version modification
 sed -i "s/VERSION='development version'/VERSION='$VERSION'/" $PACKAGESRCDIR/diyabc.py
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
+sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 if [ $MAIN == "MAIN" ]; then
     sed -i "s/ NAMEVERSION//" $PACKAGEDIR/usr/share/menu/diyabc
+    sed -i "s/ICON/\/usr\/local\/src\/diyabc\/docs\/accueil_pictures\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
+    sed -i "s/ NAMEVERSION//" $PACKAGEDIR/usr/share/applications/diyabc.desktop
+    sed -i "s/DIYABCEXEC/\/usr\/local\/bin\/diyabc/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
     sed -i "s/COMMANDVERSION//" $PACKAGEDIR/usr/share/menu/diyabc
 else
     sed -i "s/ NAMEVERSION/ $VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
+    sed -i "s/ NAMEVERSION/ $VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
+    sed -i "s/ICON/\/usr\/local\/src\/diyabc-$VERSION\/docs\/accueil_pictures\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
+    sed -i "s/DIYABCEXEC/\/usr\/local\/bin\/diyabc-$VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
     sed -i "s/COMMANDVERSION/-$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
     mv $PACKAGEDIR/usr/share/menu/diyabc $PACKAGEDIR/usr/share/menu/diyabc-$VERSION
+    mv $PACKAGEDIR/usr/share/applications/diyabc.desktop $PACKAGEDIR/usr/share/applications/diyabc-$VERSION.desktop
 fi
 mkdir $PACKAGESRCDIR/docs
 cp -r $SOURCEDIR/docs/accueil_pictures $PACKAGESRCDIR/docs/
@@ -49,14 +57,14 @@ if [ $MAIN == "MAIN" ]; then
 cd /usr/local/src/diyabc/
 python /usr/local/src/diyabc/diyabc.py" > $PACKAGEDIR/usr/local/bin/diyabc
     # change owner:group to root
-    echo "chown -R 0:0 /usr/local/bin/diyabc /usr/local/src/diyabc" >> $PACKAGEDIR/DEBIAN/postinst
+    echo "chown -R 0:0 /usr/local/bin/diyabc /usr/local/src/diyabc /usr/share/applications/diyabc.desktop /usr/share/menu/diyabc" >> $PACKAGEDIR/DEBIAN/postinst
     chmod +x $PACKAGEDIR/usr/local/bin/diyabc
 else
     echo "#!/bin/bash
 cd /usr/local/src/diyabc-$VERSION/
 python /usr/local/src/diyabc-$VERSION/diyabc.py" > $PACKAGEDIR/usr/local/bin/diyabc-$VERSION
     # change owner:group to root
-    echo "chown -R 0:0 /usr/local/bin/diyabc-$VERSION /usr/local/src/diyabc-$VERSION/" >> $PACKAGEDIR/DEBIAN/postinst
+    echo "chown -R 0:0 /usr/local/bin/diyabc-$VERSION /usr/local/src/diyabc-$VERSION/ /usr/share/applications/diyabc-$VERSION.desktop /usr/share/menu/diyabc-$VERSION" >> $PACKAGEDIR/DEBIAN/postinst
     chmod +x $PACKAGEDIR/usr/local/bin/diyabc-$VERSION
 fi
 

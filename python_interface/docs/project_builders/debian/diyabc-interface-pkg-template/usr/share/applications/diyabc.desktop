@@ -1,0 +1,15 @@
+[Desktop Entry]
+Categories=Biology;CBGP;Qt;GNOME;
+Name=DIYABC NAMEVERSION
+Name[fr]=Do It Yourself ABC NAMEVERSION
+GenericName=Inference on Bayesian
+GenericName[fr]=Inférence avec des modèles bayésiens
+Comment=Comments
+Comment[fr]=Commentaires
+Version=VVERSION
+Exec=DIYABCEXEC
+Icon=ICON
+StartupNotify=true
+#StartupWMClass=Diyabc
+Terminal=false
+Type=Application
