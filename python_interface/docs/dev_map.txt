@@ -14,6 +14,7 @@
     - ajout d'un ou plusieurs QwtPlotCurve dans le QwtPlot
     - ajout éventuel d'une grille ou d'un zoomer
     - insertion du QwtPlot dans la GUI
+    fonction drawGraph()
 
 == La documentation interne
     L'unique exemple est à la fin du fichier diyabc.py dans la surcharge
