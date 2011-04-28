@@ -36,3 +36,22 @@
     - si le programme s'arrête avant que la progression n'indique 100%, 
       envoi d'un signal pour témoigner graphiquement de l'erreur 
     
+== ajout d'une serie d'objets graphiques (comme les textes de scenario)
+    fichier : setHistoricalModel.py
+    méthodes addSc, rmSc, addParameter...
+
+== manipulation de tableau
+    fichier : setGenData.py
+    methode : createWidget, addRow
+
+== inclusion d'ui dans une autre
+    instanciation de l'ui conteneur, puis ui.objet.addWidget(uicontenue)
+
+    f = Qframe()
+    uif = Ui_Frame()
+    uif.setupUi(f)
+
+    frcontenue = QFrame()
+    uic = Ui_FrameContenue()
+    uic.setupUi(frcontenue)
+    uif.tab6.addWidget(frcontenue)

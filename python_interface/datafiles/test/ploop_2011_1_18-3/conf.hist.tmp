@@ -11,7 +11,7 @@ N D F
 0 sample 1
 0 sample 2
 0 sample 3
-t merge 1 2
+t3 merge 1 2
 t2 merge 1 3
 scenario 3 [0.33333] (6)
 N G F
@@ -21,14 +21,15 @@ N G F
 t split 3 1 2 r33
 t2 merge 1 2
 
-historical parameters priors (8,2)
+historical parameters priors (9,2)
 N N NO[10,10000,1,01] False
-X N LU[10,10000,01,01] False
-F N UN[10,10000,01,01] False
+X N LU[10,10000,01,01] True
+F N UN[10,10000,01,01] True
 t T LU[10,10000,01,01] False
-D N NO[10,10000,01,01] False
-t2 T LN[10,10000,01,01] False
-G N NO[10,10000,01,01] False
+D N NO[10,10000,01,01] True
+t3 T NO[10.0,10000.0,0.0,0.0] True
+t2 T LN[10,10000,01,01] True
+G N NO[10,10000,01,01] True
 r33 A LU[0.022,0.999,0.01,0.01] False
 D>G
 F<=N
