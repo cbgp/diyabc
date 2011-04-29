@@ -61,7 +61,7 @@ class Diyabc(QMainWindow):
 
         self.illegalProjectNameCharacters = ['_','-',"'",'"','.','/']
 
-        self.documentator = Documentator(self)
+        self.documentator = Documentator("docs/documentation.xml",self)
 
     def createWidgets(self):
         self.ui = Ui_MainWindow()
