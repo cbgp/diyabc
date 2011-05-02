@@ -1,6 +1,19 @@
 #!/bin/bash
 
-# si main vaut vrai, on doit générer un paquet qui n'a pas de numero de version
+function printUsage(){
+echo "usage : 
+build_deb.sh  version  directory_of_main_source  main_flag
+
+if main_flag is equal to 'MAIN', a main package will be generated, otherwise a packet with the name of the version will be generated.
+"
+}
+
+if [ $# -eq 0 ] ; then
+    printUsage
+    exit
+fi
+
+# si MAIN vaut "MAIN", on doit générer un paquet qui n'a pas de numero de version
 MAIN=$3
 
 VERSION=$1
@@ -51,8 +64,9 @@ else
 fi
 mkdir $PACKAGESRCDIR/docs
 cp -r $SOURCEDIR/docs/accueil_pictures $PACKAGESRCDIR/docs/
-cp $SOURCEDIR/docs/*.png $PACKAGESRCDIR/docs/
+cp $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $PACKAGESRCDIR/docs/
 if [ $MAIN == "MAIN" ]; then
+    # generation of the launch script placed in /usr/local/bin
     echo "#!/bin/bash
 cd /usr/local/src/diyabc/
 python /usr/local/src/diyabc/diyabc.py" > $PACKAGEDIR/usr/local/bin/diyabc
@@ -60,6 +74,7 @@ python /usr/local/src/diyabc/diyabc.py" > $PACKAGEDIR/usr/local/bin/diyabc
     echo "chown -R 0:0 /usr/local/bin/diyabc /usr/local/src/diyabc /usr/share/applications/diyabc.desktop /usr/share/menu/diyabc" >> $PACKAGEDIR/DEBIAN/postinst
     chmod +x $PACKAGEDIR/usr/local/bin/diyabc
 else
+    # generation of the launch script placed in /usr/local/bin
     echo "#!/bin/bash
 cd /usr/local/src/diyabc-$VERSION/
 python /usr/local/src/diyabc-$VERSION/diyabc.py" > $PACKAGEDIR/usr/local/bin/diyabc-$VERSION
@@ -69,3 +84,4 @@ python /usr/local/src/diyabc-$VERSION/diyabc.py" > $PACKAGEDIR/usr/local/bin/diy
 fi
 
 dpkg-deb -b $PACKAGEDIR
+
