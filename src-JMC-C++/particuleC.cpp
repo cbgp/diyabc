@@ -2451,46 +2451,85 @@ struct ParticleC
         return res;
     }
                 
+    int cal_nsspl(int kloc,int sample,bool *OK) {
+        char c0;
+        bool trouve,ident;
+        int k,j,nssl=0;
+        if(this->locuslist[kloc].samplesize[sample]>0) {
+            *OK=true;
+            if (not this->locuslist[kloc].dnavar==0) {
+                for (j=0;j<this->locuslist[kloc].dnavar;j++) {
+                    c0='\0';ident=true;
+                    for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
+                        if ((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodnavar[sample][i][j]!='N')) {
+                            if (c0=='\0') c0=this->locuslist[kloc].haplodnavar[sample][i][j];
+                            else ident=(c0==this->locuslist[kloc].haplodnavar[sample][i][j]);
+                            //if (not ident) cout<<"nucleotide "<<j<<"   c0="<<c0<<"   c1="<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   i="<<i<<"\n";
+                        }
+                        if (not ident) break;
+                    }
+                    if (not ident) nssl++;
+                }
+            }
+        } else *OK=false;
+        return nssl;
+    }
 
 	double cal_nss1p(int gr,int st){
         int iloc,kloc,k,j,j0,nssl,nssm=0,nl=0;
-        bool trouve,ident;
 		double res=0.0;
-        char c0;
+        bool OK;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-            nssl=0; 
             kloc=this->grouplist[gr].loc[iloc]; 
-            if(this->locuslist[kloc].samplesize[sample]>0) {
-                nl++;
-                if (not this->locuslist[kloc].dnavar==0) {
-                    for (j=0;j<this->locuslist[kloc].dnavar;j++) {
-                        c0='\0';ident=true;
-                        for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
-                            if ((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodnavar[sample][i][j]!='N')) {
-                                if (c0=='\0') c0=this->locuslist[kloc].haplodnavar[sample][i][j];
-                                else ident=(c0==this->locuslist[kloc].haplodnavar[sample][i][j]);
-                                //if (not ident) cout<<"nucleotide "<<j<<"   c0="<<c0<<"   c1="<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   i="<<i<<"\n";
-                            }
-                            if (not ident) break;
-                       }
-                       if (not ident) nssl++;
-                    }
-                }
-            }
-            //cout<<"   locus "<<kloc<< "   nssl = "<<nssl<<"\n";
-            nssm += nssl;
+            nssl = cal_nsspl(kloc,sample,&OK);
+            if (OK) {nl++;nssm += nssl;}
         }
         if (nl>0) res=(double)nssm/(double)nl;
  		return res;
 	}
 
+    double cal_mpdpl(int kloc,int sample,int *nd) {
+        int npdl=0,di,k,ndd=0;
+        double res=0.0;
+        for (int i=0;i<this->locuslist[kloc].ss[sample]-1;i++) {
+            for (int j=i+1;j<this->locuslist[kloc].ss[sample];j++) {
+                if ((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodna[sample][j]!=SEQMISSING)) {
+                    ndd++;
+                    di=0;
+                    for (k=0;k<this->locuslist[kloc].dnavar;k++) {
+                        if ((this->locuslist[kloc].haplodnavar[sample][i][k]!='N')and(this->locuslist[kloc].haplodnavar[sample][j][k]!='N')and(this->locuslist[kloc].haplodnavar[sample][i][k]!=this->locuslist[kloc].haplodnavar[sample][j][k])) di++;
+                    }
+                    npdl +=di;
+                }
+            }
+        }
+        if (ndd>0) res=(double)npdl/(double)ndd;
+        *nd=ndd;
+        return res;
+    }
+
 	double cal_mpd1p(int gr,int st){
-        int iloc,kloc,k,j,npdl,nd=0,di,nl=0;;
-		double npdm=0.0,res=0.0;
+        int iloc,kloc,j,npdl,nd=0,di,nl=0;
+		double npdm=0.0,res=0.0,mpdp;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-            npdl=0;nd=0;
+            npdl=0;
+            kloc=this->grouplist[gr].loc[iloc];
+            mpdp=cal_mpdpl(kloc,sample,&nd);
+            if (nd>0){npdm +=mpdp;nl++;}
+        }
+        if (nl>0) res=(double)npdm/(double)nl;
+		return res;
+
+	}
+
+	double cal_vpd1p(int gr,int st){
+		int iloc,kloc,k,di,nl=0,nd;
+		double res=0.0,mpd,spd,vpd=0.0;
+        int sample=this->grouplist[gr].sumstat[st].samp-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            nd=0;mpd=0.0;spd=0.0;
             kloc=this->grouplist[gr].loc[iloc]; 
             for (int i=0;i<this->locuslist[kloc].ss[sample]-1;i++) {
                 for (int j=i+1;j<this->locuslist[kloc].ss[sample];j++) {
@@ -2500,29 +2539,58 @@ struct ParticleC
                         for (k=0;k<this->locuslist[kloc].dnavar;k++) {
                             if ((this->locuslist[kloc].haplodnavar[sample][i][k]!='N')and(this->locuslist[kloc].haplodnavar[sample][j][k]!='N')and(this->locuslist[kloc].haplodnavar[sample][i][k]!=this->locuslist[kloc].haplodnavar[sample][j][k])) di++;
                         }
-                        npdl +=di;
+                        mpd +=(double)di;
+                        spd +=(double)di*(double)di;
                     }
                 }
             }
-            if (nd>0){npdm +=(double)npdl/(double)nd;nl++;}
+            if (nd>1){spd =(spd -mpd*mpd/(double)nd)/(double)(nd-1);nl++;vpd +=spd;}
         }
-        if (nl>0) res=(double)npdm/(double)nl;
+        if (nl>0) res=vpd/(double)nl;
 		return res;
 
 	}
 
-	double cal_vpd1p(int gr,int st){
+	double cal_dta1pl(int kloc,int sample,bool *OKK){
+        double a1,a2,b1,b2,c1,c2,e1,e2,S,pi;
+        int nd,n=0;
+        bool OK;
+        *OKK=true;
+       if (this->locuslist[kloc].dnavar<1) return 0.0;
 		double res=0.0;
+        for (int i=0;i<this->locuslist[kloc].ss[sample];i++) if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) n++;
+        if (n<2) {*OKK=false;return 0.0;}
+        a1=0;for(int i=1;i<n;i++) a1 += 1.0/(double)i;
+        a2=0;for(int i=1;i<n;i++) a2 += 1.0/(double)(i*i);
+        b1=(double)(n+1)/(double)(n-1)/3.0;
+        b2=2.0*((double)(n*n+n)+3.0)/9.0/(double(n*n-n));
+        c1=b1-1.0/a1;
+        c2=b2-((double)(n+2)/a1/(double)n) + (a2/a1/a1);
+        e1=c1/a1;
+        e2=c2/(a1*a1+a2);
+        pi=cal_mpdpl(kloc,sample,&nd);
+        S =cal_nsspl(kloc,sample,&OK);
+        if ((nd>0)and(OK)and(e1*S+e2*S*(S-1.0)>0.0)) res=(pi-S/a1)/sqrt(e1*S+e2*S*(S-1.0));
+        //cout<<"a1="<<a1<<"  a2="<<a2<<"b1="<<b1<<"  b2="<<b2<<"c1="<<c1<<"  c2="<<c2<<"e1="<<e1<<"  e2="<<e2<<"\n";
+        //cout<<"nd="<<nd<<"   OK="<<OK<<"   pi="<<pi<<"   S="<<S<<"   res="<<res<<"\n";
 		return res;
-
 	}
 
-	double cal_dta1p(int gr,int st){
-		double res=0.0;
-		return res;
-
-	}
-
+    double cal_dta1p(int gr,int st) {
+        int iloc,kloc,nl=0;
+        double res=0.0,tal;
+        bool OK;
+        int sample=this->grouplist[gr].sumstat[st].samp-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            tal=cal_dta1pl(kloc,sample,&OK);
+            if (OK) {nl++;res +=tal;}
+        }
+        //cout<<"nl="<<nl<<"   res="<<res<<"\n";
+        if(nl>0) res /=nl;
+        return res;
+    }
+    
 	double cal_pss1p(int gr,int st){
 		double res=0.0;
 		return res;

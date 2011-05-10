@@ -524,7 +524,7 @@ public:
                         }
                     }
                 } else if (this->groupe[gr].type==1) {   //DNA SEQUENCE
-                    if (stat_num[j]>-5) {
+                    if (stat_num[j]>-9) {
                         for (int i=1;i<nss;i++) {
                                this->groupe[gr].sumstat[k].cat=stat_num[j];
                                this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());
