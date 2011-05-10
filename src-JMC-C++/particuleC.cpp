@@ -2447,21 +2447,66 @@ struct ParticleC
             }            
             nhm += nhl;
         }
-        if (nl==0) res= 0.0;
-        else res=(double)nhm/(double)nl;
-        //cout<<res<<"\n";
+        if (nl>0) res=(double)nhm/(double)nl;
         return res;
     }
                 
 
 	double cal_nss1p(int gr,int st){
+        int iloc,kloc,k,j,j0,nssl,nssm=0,nl=0;
+        bool trouve,ident;
 		double res=0.0;
-		return res;
-
+        char c0;
+        int sample=this->grouplist[gr].sumstat[st].samp-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            nssl=0; 
+            kloc=this->grouplist[gr].loc[iloc]; 
+            if(this->locuslist[kloc].samplesize[sample]>0) {
+                nl++;
+                if (not this->locuslist[kloc].dnavar==0) {
+                    for (j=0;j<this->locuslist[kloc].dnavar;j++) {
+                        c0='\0';ident=true;
+                        for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
+                            if ((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodnavar[sample][i][j]!='N')) {
+                                if (c0=='\0') c0=this->locuslist[kloc].haplodnavar[sample][i][j];
+                                else ident=(c0==this->locuslist[kloc].haplodnavar[sample][i][j]);
+                                //if (not ident) cout<<"nucleotide "<<j<<"   c0="<<c0<<"   c1="<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   i="<<i<<"\n";
+                            }
+                            if (not ident) break;
+                       }
+                       if (not ident) nssl++;
+                    }
+                }
+            }
+            //cout<<"   locus "<<kloc<< "   nssl = "<<nssl<<"\n";
+            nssm += nssl;
+        }
+        if (nl>0) res=(double)nssm/(double)nl;
+ 		return res;
 	}
 
 	double cal_mpd1p(int gr,int st){
-		double res=0.0;
+        int iloc,kloc,k,j,npdl,nd=0,di,nl=0;;
+		double npdm=0.0,res=0.0;
+        int sample=this->grouplist[gr].sumstat[st].samp-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            npdl=0;nd=0;
+            kloc=this->grouplist[gr].loc[iloc]; 
+            for (int i=0;i<this->locuslist[kloc].ss[sample]-1;i++) {
+                for (int j=i+1;j<this->locuslist[kloc].ss[sample];j++) {
+                    if ((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodna[sample][j]!=SEQMISSING)) {
+                        nd++;
+                        di=0;
+                        for (k=0;k<this->locuslist[kloc].dnavar;k++) {
+                            if ((this->locuslist[kloc].haplodnavar[sample][i][k]!='N')and(this->locuslist[kloc].haplodnavar[sample][j][k]!='N')and(this->locuslist[kloc].haplodnavar[sample][i][k]!=this->locuslist[kloc].haplodnavar[sample][j][k])) di++;
+                        }
+                        npdl +=di;
+                    }
+                }
+            }
+            if (nd>0){npdm +=(double)npdl/(double)nd;nl++;}
+        }
+        if (nl>0) res=(double)npdm/(double)nl;
 		return res;
 
 	}
@@ -2540,7 +2585,7 @@ struct ParticleC
         //this->nvar = new int[nlocs];
         //this->numvar = new int*[nlocs];
         vector <int> nuvar;
-//cout <<"debut de cal_numvar dnatrue ="<<this->dnatrue<<"\n";
+        //cout <<"debut de cal_numvar dnatrue ="<<this->dnatrue<<"\n";
 		if (not this->dnatrue) {
             for (int iloc=0;iloc<nlocs;iloc++) {
                 locus= this->grouplist[gr].loc[iloc];
@@ -2602,7 +2647,7 @@ struct ParticleC
                         this->locuslist[locus].haplodnavar[pop][i] = new char[this->locuslist[locus].dnavar+1];
                         for (int k=0;k<this->locuslist[locus].dnavar;k++) this->locuslist[locus].haplodnavar[pop][i][k] = this->locuslist[locus].haplodna[pop][i][nuvar[k]];
                         this->locuslist[locus].haplodnavar[pop][i][this->locuslist[locus].dnavar]='\0';
-                        //cout<<"pop="<<pop<<"   ind="<<i<<"   "<<this->locuslist[locus].haplodnavar[pop][i];
+                        //cout<<"pop="<<pop<<"   ind="<<i<<"   "<<this->locuslist[locus].haplodnavar[pop][i]<<"\n";
                         //for(int k=0;k<this->locuslist[locus].dnavar;k++) cout<<"   " <<nuvar[k]; cout<<"\n";
                     }
                 }

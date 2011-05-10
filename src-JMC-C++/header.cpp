@@ -729,15 +729,15 @@ public:
                ent="";
                for (int k=j-this->nstat;k<j;k++) ent=ent+centre(sb[k],14);
                ent=ent+"\n";
-               //cout<<"entete : "<<entete<<"\n";
+               cout<<"entete : "<<entete<<"\n";
                delete []sb;
                FILE *fobs;
                fobs=fopen(statobsfilename,"w");
                fputs(ent.c_str(),fobs);
                for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
-                     //cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
+                     cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
                      this->particuleobs.docalstat(gr);
-                     //cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
+                     cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
                      for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs," %8.4f     ",this->particuleobs.grouplist[gr].sumstat[j].val);
                }
                fprintf(fobs,"\n");
