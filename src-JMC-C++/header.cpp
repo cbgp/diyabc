@@ -277,7 +277,7 @@ public:
                                 }
                                 if (np==2) {
                                     this->scenario[i].condition[nc]=copycondition(this->condition[j]);
-                                    this->scenario[i].condition[nc].ecris();
+                                    //this->scenario[i].condition[nc].ecris();
                                     nc++;   
                                 }                   
                             }
@@ -301,6 +301,7 @@ public:
             }
             else if (ss[k]=="[S]") {
                 s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());this->dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
+                this->dataobs.locus[loc].mutsit = new double[this->dataobs.locus[loc].dnalength];
                 //cout<<this->dataobs.locus[loc].dnalength<<"\n";  
                 //this->dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());  //inutile variable déjà renseignée
             }
@@ -349,13 +350,13 @@ public:
                 
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1moy  = this->readpriormut(ss1[1]);delete [] ss1;
                 if (this->groupe[gr].priork1moy.constant) this->groupe[gr].k1moy=this->groupe[gr].priork1moy.mini; 
-                else {this->groupe[gr].k1moy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
+                else this->groupe[gr].k1moy=-1.0;
                 
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readpriormut(ss1[1]);delete [] ss1;
                 
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2moy  = this->readpriormut(ss1[1]);delete [] ss1;
                 if (this->groupe[gr].priork2moy.constant) this->groupe[gr].k2moy=this->groupe[gr].priork2moy.mini; 
-                else {this->groupe[gr].k2moy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
+                else this->groupe[gr].k2moy=-1.0;
                 
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readpriormut(ss1[1]);delete [] ss1;
                 
@@ -365,9 +366,44 @@ public:
                 else if (ss1[1]=="K2P") this->groupe[gr].mutmod=1;
                 else if (ss1[1]=="HKY") this->groupe[gr].mutmod=2;
                 else if (ss1[1]=="TN") this->groupe[gr].mutmod=3;
-                cout<<"mutmod = "<<this->groupe[gr].mutmod <<"\n";
+                //cout<<"mutmod = "<<this->groupe[gr].mutmod <<"\n";
+                if (this->groupe[gr].mutmod>0) {
+                    if (not this->groupe[gr].priork1moy.constant)for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}
+                }
+                if (this->groupe[gr].mutmod==3) {
+                    if (not this->groupe[gr].priork2moy.constant)for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}
+                }
             }
         }
+//Mise à jour des locus séquences
+        MwcGen mwc;
+        mwc.randinit(999,time(NULL));
+        int nsv;
+        bool nouveau;
+        for (int loc=0;loc<this->dataobs.nloc;loc++){
+            gr=this->dataobs.locus[loc].groupe;
+            if ((this->dataobs.locus[loc].type>4)and(gr>0)){
+                nsv = floor(this->dataobs.locus[loc].dnalength*(1.0-0.01*this->groupe[gr].p_fixe)+0.5);
+                for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] = mwc.ggamma3(1.0,this->groupe[gr].gams);
+                int *sitefix;
+                sitefix=new int[this->dataobs.locus[loc].dnalength-nsv];
+                for (int i=0;i<this->dataobs.locus[loc].dnalength-nsv;i++) {
+                    if (i==0) sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
+                    else {
+                        do {
+                            sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
+                            nouveau=true;j=0;
+                            while((nouveau)and(j<i)) {nouveau=(sitefix[i]!=sitefix[j]);j++;}
+                        } while (not nouveau);
+                    }
+                    this->dataobs.locus[loc].mutsit[i] = 0.0;
+                }
+                delete [] sitefix;
+                double s=0.0;
+                for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) s += this->dataobs.locus[loc].mutsit[i];
+                for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] /=s;
+            }    
+}
         //cout<<"avant la mise à jour des paramvar\n";fflush(stdin);
         delete [] ss;
 //Mise à jour des paramvar
@@ -527,8 +563,10 @@ public:
                 if (not this->groupe[gr].priorsnimoy.constant) this->nparamut++;
             } else {
                 if (not this->groupe[gr].priormusmoy.constant) this->nparamut++;
-                if (not this->groupe[gr].priork1moy.constant) this->nparamut++;
-                if (not this->groupe[gr].priork2moy.constant) this->nparamut++;
+                //cout<<"calcul de nparamut\n";
+                if (this->groupe[gr].mutmod>0) {if (not this->groupe[gr].priork1moy.constant) this->nparamut++;}
+                if (this->groupe[gr].mutmod==3){if (not this->groupe[gr].priork2moy.constant) this->nparamut++;}
+                //cout<<"fin du calcul de nparamut = "<<this->nparamut<<"\n";
             }  
         }
         this->mutparam = new MutParameterC[nparamut];
@@ -564,14 +602,14 @@ public:
                     this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priormusmoy);
                     this->nparamut++;
                }
-                if (not this->groupe[gr].priork1moy.constant) {
+                if ((this->groupe[gr].mutmod>0)and(not this->groupe[gr].priork1moy.constant)) {
                     this->mutparam[nparamut].name="k1seq_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=4;
                     this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priork1moy);
                     this->nparamut++;
                 }
-                if (not this->groupe[gr].priork2moy.constant) {
+                if ((this->groupe[gr].mutmod==3)and(not this->groupe[gr].priork2moy.constant)) {
                     this->mutparam[nparamut].name="k2seq_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=5;
@@ -600,6 +638,7 @@ public:
     void calstatobs(char* statobsfilename) {
 //partie DATA
                 //cout<<"debut de calstatobs\n";
+                this->particuleobs.dnatrue = true;
                 this->particuleobs.nsample = this->dataobs.nsample;
                 //cout<<this->dataobs.nsample<<"\n";
                 this->particuleobs.data.nsample = this->dataobs.nsample;
@@ -676,8 +715,8 @@ public:
                                 for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
                                       this->particuleobs.locuslist[kloc].haplodna[sa] = new char*[this->particuleobs.locuslist[kloc].ss[sa]];
                                       for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++){
-                                           this->particuleobs.locuslist[kloc].haplodna[sa][i] = new char[strlen(this->dataobs.locus[kloc].haplodna[sa][i])+1];
-                                           for (int jj=0;jj<=strlen(this->dataobs.locus[kloc].haplodna[sa][i]);jj++) this->particuleobs.locuslist[kloc].haplodna[sa][i][jj] = this->dataobs.locus[kloc].haplodna[sa][i][jj];
+                                           this->particuleobs.locuslist[kloc].haplodna[sa][i] = new char[this->dataobs.locus[kloc].dnalength+1];
+                                           for (int jj=0;jj<this->dataobs.locus[kloc].dnalength+1;jj++) this->particuleobs.locuslist[kloc].haplodna[sa][i][jj] = this->dataobs.locus[kloc].haplodna[sa][i][jj];
                                       }
                                  }
                         }
@@ -703,7 +742,7 @@ public:
                }
                fprintf(fobs,"\n");
                fclose(fobs);
-               this->particuleobs.libere();
+               this->particuleobs.libere(true);
                //exit(1);
         }
         /** 

@@ -177,8 +177,8 @@ struct ParticleSetC
 				}
 			else {
 				this->particule[p].locuslist[kloc].dnalength =  this->header.dataobs.locus[kloc].dnalength;
-				//this->particule[p].locuslist[kloc].mus_rate =  this->header.dataobs.locus[kloc].mus_rate;
-				//this->particule[p].locuslist[kloc].k1 =  this->header.dataobs.locus[kloc].k1;
+				this->particule[p].locuslist[kloc].kmin =  0;
+				this->particule[p].locuslist[kloc].kmax =  0;
 				//this->particule[p].locuslist[kloc].k2 =  this->header.dataobs.locus[kloc].k2;
 				this->particule[p].locuslist[kloc].pi_A = this->header.dataobs.locus[kloc].pi_A ;
 				this->particule[p].locuslist[kloc].pi_C =  this->header.dataobs.locus[kloc].pi_C;
@@ -438,6 +438,8 @@ struct ParticleSetC
               //cout<<"FIRSTTIME\n";
               FILE * pFile;
               char  *curfile;
+              int categ,iq;
+              bool trouve2;
               curfile = new char[strlen(this->header.pathbase)+13];
               strcpy(curfile,this->header.pathbase);
               strcat(curfile,"courant.log");
@@ -446,6 +448,7 @@ struct ParticleSetC
               fprintf(pFile,"%s\n",this->header.entete.c_str());
               ss=splitwords(header.entete," ",&ns);
               np=ns-header.nstat-1;
+              //cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
               for (int ipart=0;ipart<this->npart;ipart++) {
                   if (sOK[ipart]==0){
                       //cout<<enreg[ipart].numscen<<"\n";
@@ -459,19 +462,29 @@ struct ParticleSetC
                           while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
                               ip++;
                               trouve=(ss[j] == rt.histparam[iscen][ip].name);
-                              //cout<<"->"<<header.histparam[j].name<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
+                              //cout<<"->"<<ss[j]<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
                           }
-                          if (trouve) {fprintf(pFile,"  %12.6f",enreg[ipart].param[ip]);pa++;}
+                          if (trouve) {
+                              trouve2=false;iq=-1;
+                              while ((not trouve2)and(iq<header.nparamtot-1)) {
+                                  iq++;
+                                  trouve2=(ss[j] == header.histparam[iq].name);
+                              }
+                              if (trouve2) categ=header.histparam[iq].category; else categ=0;
+                              if (categ<2) fprintf(pFile,"  %12.0f",enreg[ipart].param[ip]);
+                              else fprintf(pFile,"  %12.3f",enreg[ipart].param[ip]);
+                              pa++;
+                          }
                           else fprintf(pFile,"              ");
                       }
                       //cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
-                      for (int j=pa;j<rt.nparam[iscen];j++) fprintf(pFile,"  %12.6f",enreg[ipart].param[j]);
+                      for (int j=pa;j<rt.nparam[iscen];j++) fprintf(pFile,"  %12.3e",enreg[ipart].param[j]);
                       for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
                       fprintf(pFile,"\n");
                   }
               }
               fclose(pFile);
-              cout<<"apres fclose\n";
+              //cout<<"apres fclose\n";
         }
         //cout<<"apres remise en ordre des enreg.param\n";
         delete [] sOK;

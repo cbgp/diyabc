@@ -66,7 +66,7 @@ public:
     double *var_stat;
     
     void sethistparamname(HeaderC header) {
-      cout<<"debut de sethistparamname\n";
+      //cout<<"debut de sethistparamname\n";
         int nparamvar=0,pp,iscen,pa,ns,np,ip;
         bool trouve;
         string *ss;
@@ -74,11 +74,11 @@ public:
         this->nhistparam = new int[header.nscenarios];
         this->histparam = new HistParameterC*[header.nscenarios];
         this->mutparam = new MutParameterC[header.nparamut];
-        cout<<"avant la boucle des scenarios\n";
+        //cout<<"avant la boucle des scenarios\n";
         for (int i=0;i<header.nscenarios;i++) {
             nparamvar=0;
             for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) nparamvar++;
-            cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
+            //cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
             this->histparam[i] = new HistParameterC[nparamvar];
             this->nhistparam[i] =nparamvar;
             pp=-1;
@@ -89,18 +89,18 @@ public:
                 this->histparam[i][pp].category = header.scenario[i].histparam[p].category;
                 //cout<<"  OK\n";
             }
-            cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
+            //cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
             if (this->nparam[i]!=nparamvar+header.nparamut) {
                 cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
                 exit(1);
             }
-            cout<<"couicou2\n";
+            //cout<<"couicou2\n";
             for (int p=0;p<this->nparamut;p++) {
                 this->mutparam[p].name = header.mutparam[p].name;
                 this->mutparam[p].prior = copyprior(header.mutparam[p].prior);
             }
         }
-        cout<<"fin de sethisparamname\n";
+        //cout<<"fin de sethisparamname\n";
     }
     
     int readheader(char * fname,char *flogname, char* datafilename) {

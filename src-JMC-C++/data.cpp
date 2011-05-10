@@ -66,7 +66,7 @@ struct LocusC
 	double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
 	int **haplomic; //array[sample][gene copy]
 	
-	void libere(int nsample) {
+	void libere(bool obs, int nsample) {
       //cout<<"debut  nsample="<<nsample<<"\n";
        delete []this->name;
        delete []this->ss;
@@ -76,9 +76,11 @@ struct LocusC
        //   for (int i=0;i<nsample;i++) delete []this->haplomic[i];
        //   delete []this->haplomic;
        } else {
-           delete []mutsit;
-           delete []sitmut;
-           delete []tabsit;
+           if (not obs) {
+              delete []mutsit;
+              delete []sitmut;
+              delete []tabsit;
+           }
            for (int i=0;i<nsample;i++) {
                for (int j;j<nsample;j++) delete[]this->haplodna[i][j];
                delete []this->haplodna[i];
@@ -143,7 +145,7 @@ public:
 		if (this->nmissnuc>0) delete [] this->missnuc;
                 //cout<<"apres delete misshap et missnuc\n";
                 if (Alocus) {
-                    for (int loc=0;loc<this->nloc;loc++) this->locus[loc].libere(this->nsample);
+                    for (int loc=0;loc<this->nloc;loc++) this->locus[loc].libere(true,this->nsample);
                     
                     
                     /*{

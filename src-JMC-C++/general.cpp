@@ -73,7 +73,7 @@ int readheaders() {
     header.calstatobs(statobsfilename);                                  if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename=strdup(header.datafilename.c_str());                    if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
     k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
-    if (k==0) {rt.sethistparamname(header);cout<<"sethistparamname"<<"\n";}
+    if (k==0) {rt.sethistparamname(header);if (debuglevel==1) cout<<"sethistparamname"<<"\n";}
     return k;
 }
 
@@ -324,7 +324,7 @@ int main(int argc, char *argv[]){
                                       enreg[p].param = new float[header.nparamtot+3*header.ngroupes];
                                       enreg[p].numscen = 1;
                                   }
-                                  cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
+                                  //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
                                   firsttime=true;stoprun=false;
                                   debutr=walltime(&clock_zero);
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
