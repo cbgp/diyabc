@@ -591,7 +591,10 @@ struct ParticleC
 	ConditionC *condition;
 	bool dnatrue,drawuntil;
     vector < vector <bool> > afsdone;
-	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar,***t_afs,**n_afs;
+    vector < vector < vector <int> > > t_afs;
+    vector < vector <int> > n_afs;
+    
+	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar;
 	double matQ[4][4];
 
     void libere(bool obs) {
@@ -2611,11 +2614,11 @@ struct ParticleC
             nssa = new int[this->data.nsample];
       //on cherche les sites variables des différents échantillons
             for (int sa=0;sa<this->data.nsample;sa++) ssa[sa]=this->cal_nsspl(kloc,sa,&nssa[sa],&OK);
-            cout<<"\nlocus "<<kloc<<"\n";
+            //cout<<"\nlocus "<<kloc<<"\n";
             for (int sa=0;sa<this->data.nsample;sa++) {
-                cout<<"sample "<<sa+1<<"   nssa="<<nssa[sa]<<"\n";
-                for (int k=0;k<nssa[sa];k++) cout<<"   "<<ssa[sa][k];
-                cout<<"\n";
+                //cout<<"sample "<<sa+1<<"   nssa="<<nssa[sa]<<"\n";
+                //for (int k=0;k<nssa[sa];k++) cout<<"   "<<ssa[sa][k];
+                //cout<<"\n";
             }
       //on compte le nombre de sites variables de l'échantillon cible qui ne sont pas variables dans les autres échantillons
             nl++;
@@ -2634,17 +2637,42 @@ struct ParticleC
             } 
         }
         if (nl>0) res = (double)nps/(double)nl;
-        cout<<"PSS_"<<this->grouplist[gr].sumstat[st].samp<<" = "<<res<<"   (nps="<<nps<<" nl="<<nl<<")\n";
+        //cout<<"PSS_"<<this->grouplist[gr].sumstat[st].samp<<" = "<<res<<"   (nps="<<nps<<" nl="<<nl<<")\n";
 		return res;
 	}
 
     void afs(int sample,int iloc,int kloc) {
+        int nf[4],ii,jj;
+        this->n_afs[sample][iloc]=0;
+        //cout<<"sample "<<sample<<"  locus "<<kloc<<"   dnavar = "<<this->locuslist[kloc].dnavar <<"\n";
         if (this->locuslist[kloc].dnavar==0) this->n_afs[sample][iloc]=0;
         else {
-        
-        }    
-        
-    
+            for (int j=0;j<this->locuslist[kloc].dnavar;j++) {
+                //cout <<"site "<<j+1<<" sur "<<this->locuslist[kloc].dnavar<<"\n";
+                for (int k=0;k<4;k++) nf[k]=0;
+                for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
+                    if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
+                        switch(this->locuslist[kloc].haplodnavar[sample][i][j])
+                        { case 'A' :nf[0]++;break;
+                          case 'C' :nf[1]++;break;
+                          case 'G' :nf[2]++;break;
+                          case 'T' :nf[3]++;break;
+                        }
+                    }
+                }
+//tri des frequences dans l'ordre croissant
+                for (int i=0;i<3;i++) {for (int k=i+1;k<4;k++) if (nf[i]>nf[k]) {ii=nf[i];nf[i]=nf[k];nf[k]=ii;}}
+                //for (int i=0;i<4;i++) cout <<nf[i]<<"  ";cout<<"\n";
+//recherche de la plus petite fréquence non nulle
+                jj=0;while ((nf[jj]==0)and(jj<4)) jj++;
+                if (jj<3) {
+                    this->n_afs[sample][iloc]++;
+                    this->t_afs[sample][iloc].push_back(nf[jj]); 
+                }
+            }
+        }
+        //cout<<"sample "<<sample<<"  locus "<<iloc<<"   n_afs = "<<this->n_afs[sample][iloc]<<"\n";
+        //if (this->n_afs[sample][iloc]>0) {for (int i=0;i<n_afs[sample][iloc];i++) cout<<"  "<<t_afs[sample][iloc][i];cout<<"\n";}
         this->afsdone[sample][iloc]=true;
     }
 
@@ -2664,19 +2692,24 @@ struct ParticleC
 
 	double cal_vns1p(int gr,int st){
         int iloc,kloc,nl=0;
-		double res=0.0,sx=0.0,sx2=0.0,a;
+		double res=0.0,sx,sx2,a,v;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
             if (not afsdone[sample][iloc]) afs(sample,iloc,kloc);
-            for (int i=0;i<n_afs[sample][iloc];i++) {
-              a = (double)t_afs[sample][iloc][i];
-              sx += a;
-              sx2 +=a*a;
-            }
+            if (n_afs[sample][iloc]>1) {
+                sx=0.0;sx2=0.0;
+                for (int i=0;i<n_afs[sample][iloc];i++) {
+                  a = (double)t_afs[sample][iloc][i];
+                  sx += a;
+                  sx2 +=a*a;
+                }
+                a = (double)n_afs[sample][iloc];
+                v = (sx2-sx*sx/a)/a;
+            } else v=0.0;
             nl++;
-            a = (double)n_afs[sample][iloc];
-            res += (sx2-sx*sx/a)/(a-1.0);
+            //cout<<"sample "<<sample<<"   locus "<<kloc<<"  sx="<<sx<<"  sx2="<<sx2<<"  n="<<a<<"   vns="<<v<<"\n";
+            if (a>1.0) res += v;
         }
 		if (nl>0) res /=(double)nl;
 		return res;
@@ -2823,12 +2856,12 @@ struct ParticleC
         for (int st=0;st<this->grouplist[gr].nstat;st++) {
             if ((this->grouplist[gr].sumstat[st].cat==-7)or(this->grouplist[gr].sumstat[st].cat==-8)) {
                 this->afsdone.resize(this->data.nsample);
-                this->t_afs = new int**[this->data.nsample];
-                this->n_afs = new int*[this->data.nsample];
+                this->t_afs.resize(this->data.nsample);
+                this->n_afs.resize(this->data.nsample);
                 for (int sa=0;sa<this->data.nsample;sa++) {
                     this->afsdone[sa].resize(this->grouplist[gr].nloc);
-                    this->t_afs[sa] = new int*[this->grouplist[gr].nloc];
-                    this->n_afs[sa] = new int[this->grouplist[gr].nloc];
+                    this->t_afs[sa].resize(this->grouplist[gr].nloc);
+                    this->n_afs[sa].resize(this->grouplist[gr].nloc);
                     for (int loc=0;loc<this->grouplist[gr].nloc;loc++) this->afsdone[sa][loc]=false;
                 }
             }
@@ -2878,13 +2911,13 @@ struct ParticleC
         if (not this->afsdone.empty()) {
             for (int sa=0;sa<this->data.nsample;sa++) {
                 this->afsdone[sa].clear();
-                for (int loc=0;loc<this->grouplist[gr].nloc;loc++) delete []this->t_afs[sa][loc];
-                delete []this->t_afs[sa];
-                delete []this->n_afs[sa];
+                for (int loc=0;loc<this->grouplist[gr].nloc;loc++) if (not this->t_afs[sa][loc].empty()) this->t_afs[sa][loc].clear();
+                this->t_afs[sa].clear();
+                this->n_afs[sa].clear();
             }
             this->afsdone.clear();
-            delete []this->t_afs;
-            delete []this->n_afs;
+            this->t_afs.clear();
+            this->n_afs.clear();
         }
 	}
 
