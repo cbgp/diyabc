@@ -743,7 +743,7 @@ public:
                fprintf(fobs,"\n");
                fclose(fobs);
                this->particuleobs.libere(true);
-               //exit(1);
+               exit(1);
         }
         /** 
 * lit le fichier des statistiques observées (placées dans double *stat_obs)

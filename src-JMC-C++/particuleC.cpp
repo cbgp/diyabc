@@ -590,7 +590,8 @@ struct ParticleC
 	MwcGen mw;
 	ConditionC *condition;
 	bool dnatrue,drawuntil;
-	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar;
+    vector < vector <bool> > afsdone;
+	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar,***t_afs,**n_afs;
 	double matQ[4][4];
 
     void libere(bool obs) {
@@ -2451,10 +2452,11 @@ struct ParticleC
         return res;
     }
                 
-    int cal_nsspl(int kloc,int sample,bool *OK) {
+    int* cal_nsspl(int kloc,int sample, int *nssl,bool *OK) {
         char c0;
         bool trouve,ident;
-        int k,j,nssl=0;
+        int k,j,*ss,nss=0;
+        vector <int> nuvar;
         if(this->locuslist[kloc].samplesize[sample]>0) {
             *OK=true;
             if (not this->locuslist[kloc].dnavar==0) {
@@ -2468,21 +2470,27 @@ struct ParticleC
                         }
                         if (not ident) break;
                     }
-                    if (not ident) nssl++;
+                    if (not ident) {nss++;nuvar.push_back(j);}
                 }
             }
         } else *OK=false;
-        return nssl;
+        ss = new int[nss];
+        for (j=0;j<nss;j++) ss[j]=nuvar[j];
+        if (not nuvar.empty()) nuvar.clear();
+        *nssl=nss;
+        return ss;
     }
 
 	double cal_nss1p(int gr,int st){
-        int iloc,kloc,k,j,j0,nssl,nssm=0,nl=0;
+        int iloc,kloc,k,j,j0,nssl,nssm=0,nl=0,*ss;
 		double res=0.0;
         bool OK;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc]; 
-            nssl = cal_nsspl(kloc,sample,&OK);
+            ss = this->cal_nsspl(kloc,sample,&nssl,&OK);
+            //cout<<"nss1p   nssl="<<nssl<<"\n";
+            //for (int k=0;k<nssl;k++) cout<<"  "<<ss[k];if(nssl>0) cout<<"\n";
             if (OK) {nl++;nssm += nssl;}
         }
         if (nl>0) res=(double)nssm/(double)nl;
@@ -2516,7 +2524,7 @@ struct ParticleC
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             npdl=0;
             kloc=this->grouplist[gr].loc[iloc];
-            mpdp=cal_mpdpl(kloc,sample,&nd);
+            mpdp=this->cal_mpdpl(kloc,sample,&nd);
             if (nd>0){npdm +=mpdp;nl++;}
         }
         if (nl>0) res=(double)npdm/(double)nl;
@@ -2553,7 +2561,7 @@ struct ParticleC
 
 	double cal_dta1pl(int kloc,int sample,bool *OKK){
         double a1,a2,b1,b2,c1,c2,e1,e2,S,pi;
-        int nd,n=0;
+        int nd,n=0,*ss,kS;
         bool OK;
         *OKK=true;
        if (this->locuslist[kloc].dnavar<1) return 0.0;
@@ -2569,7 +2577,8 @@ struct ParticleC
         e1=c1/a1;
         e2=c2/(a1*a1+a2);
         pi=cal_mpdpl(kloc,sample,&nd);
-        S =cal_nsspl(kloc,sample,&OK);
+        ss =cal_nsspl(kloc,sample,&kS,&OK);
+        S = (double)kS;
         if ((nd>0)and(OK)and(e1*S+e2*S*(S-1.0)>0.0)) res=(pi-S/a1)/sqrt(e1*S+e2*S*(S-1.0));
         //cout<<"a1="<<a1<<"  a2="<<a2<<"b1="<<b1<<"  b2="<<b2<<"c1="<<c1<<"  c2="<<c2<<"e1="<<e1<<"  e2="<<e2<<"\n";
         //cout<<"nd="<<nd<<"   OK="<<OK<<"   pi="<<pi<<"   S="<<S<<"   res="<<res<<"\n";
@@ -2583,7 +2592,7 @@ struct ParticleC
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
-            tal=cal_dta1pl(kloc,sample,&OK);
+            tal=this->cal_dta1pl(kloc,sample,&OK);
             if (OK) {nl++;res +=tal;}
         }
         //cout<<"nl="<<nl<<"   res="<<res<<"\n";
@@ -2592,21 +2601,85 @@ struct ParticleC
     }
     
 	double cal_pss1p(int gr,int st){
+        int iloc,kloc,nl=0,*ss,nps=0,nss,**ssa,*nssa;
+        bool trouve,OK;
 		double res=0.0;
+        int sample=this->grouplist[gr].sumstat[st].samp-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            ssa = new int*[this->data.nsample];
+            nssa = new int[this->data.nsample];
+      //on cherche les sites variables des différents échantillons
+            for (int sa=0;sa<this->data.nsample;sa++) ssa[sa]=this->cal_nsspl(kloc,sa,&nssa[sa],&OK);
+            cout<<"\nlocus "<<kloc<<"\n";
+            for (int sa=0;sa<this->data.nsample;sa++) {
+                cout<<"sample "<<sa+1<<"   nssa="<<nssa[sa]<<"\n";
+                for (int k=0;k<nssa[sa];k++) cout<<"   "<<ssa[sa][k];
+                cout<<"\n";
+            }
+      //on compte le nombre de sites variables de l'échantillon cible qui ne sont pas variables dans les autres échantillons
+            nl++;
+            for (int j=0;j<nssa[sample];j++) { 
+                trouve=false;
+                for (int sa=0;sa<this->data.nsample;sa++) {
+                    if ((sa!=sample)and(nssa[sa]>0)) {
+                        for (int k=0;k<nssa[sa];k++) {
+                            trouve = (ssa[sample][j]==ssa[sa][k]);
+                            if (trouve) break;
+                        }
+                    }
+                    if (trouve) break;
+              }
+              if (not trouve) nps++;
+            } 
+        }
+        if (nl>0) res = (double)nps/(double)nl;
+        cout<<"PSS_"<<this->grouplist[gr].sumstat[st].samp<<" = "<<res<<"   (nps="<<nps<<" nl="<<nl<<")\n";
 		return res;
-
 	}
 
-	double cal_mns1p(int gr,int st){
-		double res=0.0;
-		return res;
+    void afs(int sample,int iloc,int kloc) {
+        if (this->locuslist[kloc].dnavar==0) this->n_afs[sample][iloc]=0;
+        else {
+        
+        }    
+        
+    
+        this->afsdone[sample][iloc]=true;
+    }
 
+    double cal_mns1p(int gr,int st){
+        int iloc,kloc,nl=0;
+		double res=0.0;
+        int sample=this->grouplist[gr].sumstat[st].samp-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            if (not this->afsdone[sample][iloc]) this->afs(sample,iloc,kloc);
+            for (int i=0;i<this->n_afs[sample][iloc];i++) res += (double)this->t_afs[sample][iloc][i]/(double)this->n_afs[sample][iloc];
+            nl++;
+        }
+        if (nl>0) res /=(double)nl;
+		return res;
 	}
 
 	double cal_vns1p(int gr,int st){
-		double res=0.0;
+        int iloc,kloc,nl=0;
+		double res=0.0,sx=0.0,sx2=0.0,a;
+        int sample=this->grouplist[gr].sumstat[st].samp-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            if (not afsdone[sample][iloc]) afs(sample,iloc,kloc);
+            for (int i=0;i<n_afs[sample][iloc];i++) {
+              a = (double)t_afs[sample][iloc][i];
+              sx += a;
+              sx2 +=a*a;
+            }
+            nl++;
+            a = (double)n_afs[sample][iloc];
+            res += (sx2-sx*sx/a)/(a-1.0);
+        }
+		if (nl>0) res /=(double)nl;
 		return res;
-
 	}
 
 	double cal_nha2p(int gr,int st){
@@ -2747,6 +2820,19 @@ struct ParticleC
 		if (this->grouplist[gr].type == 0)  calfreq();
                 else this->cal_numvar(gr);
 //		cout << "apres calfreq\n";
+        for (int st=0;st<this->grouplist[gr].nstat;st++) {
+            if ((this->grouplist[gr].sumstat[st].cat==-7)or(this->grouplist[gr].sumstat[st].cat==-8)) {
+                this->afsdone.resize(this->data.nsample);
+                this->t_afs = new int**[this->data.nsample];
+                this->n_afs = new int*[this->data.nsample];
+                for (int sa=0;sa<this->data.nsample;sa++) {
+                    this->afsdone[sa].resize(this->grouplist[gr].nloc);
+                    this->t_afs[sa] = new int*[this->grouplist[gr].nloc];
+                    this->n_afs[sa] = new int[this->grouplist[gr].nloc];
+                    for (int loc=0;loc<this->grouplist[gr].nloc;loc++) this->afsdone[sa][loc]=false;
+                }
+            }
+        }
 		for (int st=0;st<this->grouplist[gr].nstat;st++) {
 			/*if (this->grouplist[gr].sumstat[st].cat<5)
 			{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp  <<"\n";fflush(stdin);}
@@ -2789,6 +2875,17 @@ struct ParticleC
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
 		if (this->grouplist[gr].type == 0) liberefreq();
+        if (not this->afsdone.empty()) {
+            for (int sa=0;sa<this->data.nsample;sa++) {
+                this->afsdone[sa].clear();
+                for (int loc=0;loc<this->grouplist[gr].nloc;loc++) delete []this->t_afs[sa][loc];
+                delete []this->t_afs[sa];
+                delete []this->n_afs[sa];
+            }
+            this->afsdone.clear();
+            delete []this->t_afs;
+            delete []this->n_afs;
+        }
 	}
 
 };
