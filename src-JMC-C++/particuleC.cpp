@@ -2724,7 +2724,7 @@ struct ParticleC
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
         cout <<"samples "<<samp0<<" & "<<samp1<<"\n";
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-            nhl=0; 
+            nhl=0;  
             kloc=this->grouplist[gr].loc[iloc]; 
             cout<<"locus "<<kloc<<"\n";
             if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
