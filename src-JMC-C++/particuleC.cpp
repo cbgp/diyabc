@@ -2716,7 +2716,57 @@ struct ParticleC
 	}
 
 	double cal_nha2p(int gr,int st){
-		double res=0.0;
+        char **haplo;
+        int iloc,kloc,k,j,nhl=0,nhm=0,nl=0,sample;
+        bool trouve,ident;
+        double res=0.0;
+        int samp0=this->grouplist[gr].sumstat[st].samp-1;
+        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+        cout <<"samples "<<samp0<<" & "<<samp1<<"\n";
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            nhl=0; 
+            kloc=this->grouplist[gr].loc[iloc]; 
+            cout<<"locus "<<kloc<<"\n";
+            if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
+                nl++;
+                if (this->locuslist[kloc].dnavar==0) nhl++;
+                else {
+                    haplo = new char*[this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]];
+                    for (int samp=0;samp<2;samp++) {
+                        if (samp==0) sample=samp0; else sample=samp1;
+                        for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
+                            if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) ; {
+                                if (nhl==0) { 
+                                    haplo[nhl] = new char[this->locuslist[kloc].dnavar+1];
+                                    for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhl][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
+                                    haplo[nhl][this->locuslist[kloc].dnavar]='\0';
+                                    nhl++;
+                                    cout<<"nl="<<nl<<"   nhl="<<nhl<<"    "<<haplo[nhl-1]<<"\n";
+                                } else {
+                                    trouve=false;j=0;
+                                    while ((not trouve)and(j<nhl)) {
+                                        trouve=identseq(kloc,haplo[j],this->locuslist[kloc].haplodnavar[sample][i]);
+                                        if (not trouve) j++;
+                                    }
+                                    if (trouve) {
+                                        for (int k=0;k<this->locuslist[kloc].dnavar;k++) if (haplo[j][k]=='N') haplo[nhl][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
+                                    } else {
+                                    haplo[nhl] = new char[this->locuslist[kloc].dnavar+1];
+                                    for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhl][k] = this->locuslist[kloc].haplodnavar[sample][i][k]; 
+                                    haplo[nhl][this->locuslist[kloc].dnavar]='\0';
+                                    nhl++;
+                                    cout<<"nl="<<nl<<"   nhl="<<nhl<<"    "<<haplo[nhl-1]<<"\n";                                    
+                                    }
+                                }
+                            }    
+                        }
+                    }
+                }
+            }            
+            nhm += nhl;
+            cout<<"nhm = "<<nhm<<"\n";
+        }
+        if (nl>0) res=(double)nhm/(double)nl;
 		return res;
 
 	}
