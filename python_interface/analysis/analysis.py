@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 
 class Analysis():
+    """ classe pour représenter une analyse, contient toutes les informations nécessaires
+    au lancement du calcul lié à l'analyse
+    """
     def __init__(self,name,category,status="new"):
         self.name = name
         self.category = category
-        self.chosenSc = 0
+        self.chosenSc = None
         self.candidateScList = []
         self.computationParameters = ""
         self.mutationModel = None
         self.sumStatsDico = {}
         self.histParams = None
         self.condTxtList = []
-        self.drawn = True
+        self.drawn = None
         self.params = ""
         self.aParams = None
 
