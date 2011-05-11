@@ -16,7 +16,7 @@
   <creator role="author">
     <personname>Veyssier Julien</personname>
   </creator>
-  <date role="creation">April 29, 2011</date>
+  <date role="creation">May 11, 2011</date>
   <ERROR class="undefined">\fancyhf</ERROR>
   <ERROR class="undefined">\fancyhead</ERROR>
   <para xml:id="p1">
@@ -36,6 +36,12 @@
     <para xml:id="S2.p1">
       <p>nb group quoi</p>
     </para>
+    <paragraph xml:id="S2.SS0.SSS0.P1" labels="LABEL:doc_versionLabel">
+      <title>plop</title>
+      <para xml:id="S2.SS0.SSS0.P1.p1">
+        <p>Version of DIYABC. This number is incremented each time a new build is done.</p>
+      </para>
+    </paragraph>
     <subsection refnum="2.1" xml:id="S2.SS1" labels="LABEL:doc_nbMicrosatLabel">
       <title>exemple</title>
       <para xml:id="S2.SS1.p1">
@@ -44,14 +50,14 @@
       <paragraph xml:id="S2.SS1.SSS0.P1" labels="LABEL:doc_nbSequencesLabel">
         <title>ploup</title>
         <para xml:id="S2.SS1.SSS0.P1.p1">
-          <p>nbSequencesLabel doc</p>
+          <p>nbSequencesLabel doc
+<!-- %**** documentation.tex Line 50 **** --></p>
         </para>
       </paragraph>
       <subsubsection refnum="2.1.1" xml:id="S2.SS1.SSS1" labels="LABEL:doc_nbSumStatsLabel">
         <title>subsub</title>
         <para xml:id="S2.SS1.SSS1.p1">
-          <p>nbSumStatsLabel doc
-<!-- %**** documentation.tex Line 50 **** --></p>
+          <p>nbSumStatsLabel doc</p>
         </para>
       </subsubsection>
     </subsection>

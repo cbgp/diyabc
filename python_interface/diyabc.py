@@ -74,7 +74,7 @@ class Diyabc(QMainWindow):
         #im = QImage(dataImages.dada,200,200)
         #pic = QPixmap()
         #pic.convertFromImage(im)
-        pic = QPixmap("docs/accueil_pictures/correct.png")
+        pic = QPixmap("docs/accueil_pictures/black_red.png")
         self.ui.imgLabel.setPixmap(pic)
         self.switchToWelcomeStack()
 
