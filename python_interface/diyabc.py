@@ -388,7 +388,9 @@ class Diyabc(QMainWindow):
     #    print "plop"
     def event(self,event):
         if event.type() == QEvent.MouseButtonRelease and event.button() == 2:
-            for c in self.findChildren(QLabel):
+            elemList = self.findChildren(QLabel)
+            elemList += self.findChildren(QPushButton)
+            for c in elemList:
                 if c.underMouse():
                     self.file_menu.popup(QCursor.pos())
 

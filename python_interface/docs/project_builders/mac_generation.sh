@@ -2,7 +2,7 @@
 
 function printUsage(){
 echo "usage : 
-mac_generation.sh  path_to_pyinstaller.py  [path_to_icon.icns  output_path  path_to_main.py  version] 
+mac_generation.sh  path_to_pyinstaller.py  [path_to_icon.icns  output_path  path_to_main.py] 
 "
 }
 
@@ -11,7 +11,9 @@ pyinst=$1
 icon=$2
 output=$3
 pysrc=$4
-VERSION=$5
+VERSIONFILE="`dirname $pysrc`/version.txt"
+VERSION="`head -n 1 $VERSIONFILE`"
+BUILDDATE=`date +%d-%b-%Y`
 
 
 if [ $# -eq 0 ] ; then
@@ -36,7 +38,7 @@ mkdir $TMPBUILD
 SOURCEDIR=`dirname $pysrc`
 cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $TMPBUILD/
 pysrctmp=$TMPBUILD/`basename $pysrc`
-sed -i "" "s/development\ version/$VERSION/g" $TMPBUILD/$APPNAME.py
+sed -i "" "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
 
 # generation of the spec
 python $pyinst -y -o $output $pysrctmp
@@ -60,6 +62,6 @@ sed -i "" "s/string>1</string>0</g" $output/Mac$APPNAME.app/Contents/Info.plist
 mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
 # copy of needed images
 mkdir $output/docs
-cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev* $output/docs/
+cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/docs/
 # clean
 rm -rf $TMPBUILD

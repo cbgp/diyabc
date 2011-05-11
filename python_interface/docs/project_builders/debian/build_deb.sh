@@ -2,7 +2,7 @@
 
 function printUsage(){
 echo "usage : 
-build_deb.sh  version  directory_of_main_source  main_flag
+build_deb.sh  directory_of_main_source  main_flag
 
 if main_flag is equal to 'MAIN', a main package will be generated, otherwise a packet with the name of the version will be generated.
 "
@@ -14,15 +14,18 @@ if [ $# -eq 0 ] ; then
 fi
 
 # si MAIN vaut "MAIN", on doit générer un paquet qui n'a pas de numero de version
-MAIN=$3
+MAIN=$2
+SOURCEDIR=$1
 
-VERSION=$1
+VERSIONFILE="$SOURCEDIR/version.txt"
+VERSION="`head -n 1 $VERSIONFILE`"
+BUILDDATE=`LANG=en_EN.utf8 date +%d-%b-%Y`
+
 if [ $MAIN == "MAIN" ]; then
     PACKAGEDIR=diyabc\_$VERSION\_all
 else
     PACKAGEDIR=diyabc-$VERSION\_$VERSION\_all
 fi
-SOURCEDIR=$2
 
 # template copy 
 cp -r diyabc-interface-pkg-template/ $PACKAGEDIR
@@ -44,7 +47,7 @@ fi
 mkdir $PACKAGESRCDIR
 cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $PACKAGESRCDIR/
 # version modification
-sed -i "s/VERSION='development version'/VERSION='$VERSION'/" $PACKAGESRCDIR/diyabc.py
+sed -i "s/VERSION='development version'/VERSION='$VERSION ($BUILDDATE)'/" $PACKAGESRCDIR/diyabc.py
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 if [ $MAIN == "MAIN" ]; then

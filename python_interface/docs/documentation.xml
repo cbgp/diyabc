@@ -39,7 +39,8 @@
     <paragraph xml:id="S2.SS0.SSS0.P1" labels="LABEL:doc_versionLabel">
       <title>plop</title>
       <para xml:id="S2.SS0.SSS0.P1.p1">
-        <p>Version of DIYABC. This number is incremented each time a new build is done.</p>
+        <p>Version of DIYABC. This number is incremented each time a new build is done.
+plop</p>
       </para>
     </paragraph>
     <subsection refnum="2.1" xml:id="S2.SS1" labels="LABEL:doc_nbMicrosatLabel">
@@ -49,9 +50,9 @@
       </para>
       <paragraph xml:id="S2.SS1.SSS0.P1" labels="LABEL:doc_nbSequencesLabel">
         <title>ploup</title>
+        <!-- %**** documentation.tex Line 50 **** -->
         <para xml:id="S2.SS1.SSS0.P1.p1">
-          <p>nbSequencesLabel doc
-<!-- %**** documentation.tex Line 50 **** --></p>
+          <p>nbSequencesLabel doc</p>
         </para>
       </paragraph>
       <subsubsection refnum="2.1.1" xml:id="S2.SS1.SSS1" labels="LABEL:doc_nbSumStatsLabel">
