@@ -35,21 +35,33 @@ DIYABC en python}
 \section{Introduction}
 Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 	\subsection{Objectifs}
-        Modulariser le code de sorte à permettre facilement l'ajout de nouveaux blocs, tant graphiques que fonctionnels.
+        Modulariser le code de sorte à permettre facilement l'ajout de nouveaux
+        blocs, tant graphiques que fonctionnels.
 
 	\subsection{Choix d'outils}
-        La librairie Qt a été choisie pour sa portabilité, sa flexibilité et sa facilité d'utilisation. Le langage python 
-        a été choisi pour sa clarté, sa réutilisabilité et son grand nombre de librairies. QtCreator est utilis\'e pour
-        la production des objets graphiques.
+        La librairie Qt a été choisie pour sa portabilité, sa flexibilité et sa
+        facilité d'utilisation. Le langage python a été choisi pour sa clarté,
+        sa réutilisabilité et son grand nombre de librairies. QtCreator est
+        utilis\'e pour la production des objets graphiques.
 
 \section{Conception}
+    
+    \subsection{Documentation}
+    L'intégralité du code est documenté façon javadoc. Ces docstrings sont donc
+    interprêtables par beaucoup de générateurs de documentation.  Je génère une
+    documentation html du code avec Doxygen. Un fichier de configuration de
+    doxygen nommé doxyconfig est versionné. Il se trouve à la racine des sources
+    python, c'est à dire le dossier python\_interface.
     \subsection{Partie graphique}
-        La partie graphique statique est découplée du fonctionnement. Des fichiers .ui sont produits à partir d'un IDE. Toute entité graphique
-        étant succeptible d'être présente plusieurs fois dans l'application est produite indépendament dans un .ui et une classe associée.
+        La partie graphique statique est découplée du fonctionnement. Des
+        fichiers .ui sont produits à partir d'un IDE. Toute entité graphique
+        étant succeptible d'être présente plusieurs fois dans l'application est
+        produite indépendament dans un .ui et une classe associée.
         
-        L'ui principal est celui de la fenêtre principale.
-        Un ui peut n'être qu'un widget. Un fichier source python produit à partir d'un .ui avec ``pyuic'' contient une classe non graphique
-        qui crée tous les objets graphiques à l'intérieur de l'objet que l'on veut créer.
+        L'ui principal est celui de la fenêtre principale.  Un ui peut n'être
+        qu'un widget. Un fichier source python produit à partir d'un .ui avec
+        ``pyuic'' contient une classe non graphique qui crée tous les objets
+        graphiques à l'intérieur de l'objet que l'on veut créer.
 
         Exemple : Création d'une scroll area.
         \begin{itemize}
@@ -65,23 +77,105 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
                 \end{verbatim}
         \end{itemize}
     \subsection{Coeur de l'application}
-        La classe principale de l'application dérive de QMainWindow. Elle est instanci\'ee dans le main du fichier qui la contient.
+        La classe principale de l'application dérive de QMainWindow. Elle est
+        instanci\'ee dans le main du fichier qui la contient. La QMainWindow
+        contient une zone à onglet. Chaque onglet est un projet. Un projet est
+        un ensemble de plusieurs informations :\\
 
+        \begin{itemize}
+            \item Un fichier de données
+            \item Un modèle historique
+            \item Des données génétiques
+            \item Une table de référence
+            \item Des analyses
+        \end{itemize}
+
+        Un projet peut être sauvegardé et chargé par la suite. La sauvegarde
+        consiste en l'écriture de plusieurs fichiers de sauvegarde qui se
+        trouvent dans le dossier du projet.\\
+
+        \begin{itemize}
+            \item conf.hist : modèle historique
+            \item conf.gen : données génétiques
+            \item conf.analysis : sérialisation des analyses
+            \item conf.th : table header (dernière partie du reftable header)
+            \item conf.tmp : entête du reftable header
+        \end{itemize}
+
+        Ces fichiers sont lu lors du chargement d'un projet pour rétablir son état.
 
     \subsection{Proposition d'architectures}
-        On pourrait dissocier complètement la partie graphique du fonctionnement, c'est à dire avoir une partie du programme
-        qui ne manipule que des objets conceptuels (projet, historical model...) qui appelle son système d'affichage à souhait.
+        On pourrait dissocier complètement la partie graphique du
+        fonctionnement, c'est à dire avoir une partie du programme qui ne
+        manipule que des objets conceptuels (projet, historical model...) qui
+        appelle son système d'affichage à souhait.
 
-        On pourrait faire une classe abstraite Displayer dérivée en QtDisplayer et CliDisplayer.
+        On pourrait faire une classe abstraite Displayer dérivée en QtDisplayer
+        et CliDisplayer.
+
+    \subsection{Le modèle historique}
+        La conception du modèle historique n'est pas très complexe. La gestion
+        des scénarios, de conditions et des paramètres est similaire, du moins
+        en ce qui concerne la GUI. Les méthodes addSc, addCondition et
+        addParamGui ajoutent graphiquement ces entités et les mémorisent dans
+        des attributs de la classe SetHistoricalModel .
+
+    \subsection{Les données génétiques}
+        La classe SetGenData contient un tableau de locus et une liste de
+        groupes de locus. Pour chaque groupe, elle instancie deux modèles
+        mutationnels et deux ensembles de summary statistics (microsats et
+        sequences). Lorsque l'utilisateur veut définir le modèle mutationnel
+        d'un groupe contenant des locus, le modèle mutationnel correspondant
+        (microsats ou sequences), déjà instancié, est affiché.
+
+    \subsection{Les préférences}
+        Les préférences sont stockées dans le dossier personnel de
+        l'utilisateur. Elles sont divisées en plusieures catégories chacune
+        représentée par un fichier. Les valeurs sont stockées sous la forme clé
+        $\rightarrow$ valeur sauf dans le cas des valeurs par défaut qui sont
+        représentées comme dans le reftable header. Les préférences sont
+        appliquées dès leur modification dans la fenêtre. Un clic sur annuler
+        recharge les préférences à partir des fichiers, c'est à dire avant les
+        modifications effectuées.
+        
+
+    \subsection{La génération de la table de référence}
+        Elle s'effectue dans un QThread qui scrute l'avancement dans le fichier
+        progress.txt . Pour stopper l'exécutable de calcul, il faut créer un
+        ficher .stop dans le dossier du projet.\\
+
+        Un signal est prévu en cas de problème comme la fin prématurée de
+        l'exécutable de calcul. La gui l'indique alors dans une popup
+        d'information.  Il en est de même pour le calcul des analyses.
+
+
+    \subsection{Les analyses}
+        L'écran principale de définition d'une analyse se trouve ans le fichier
+        defineNewAnalysis.py . En fonction du type d'analyse sélectionné,
+        l'écran suivant est instancié. Pour certains cas, comme l'écran de
+        sélection de scénario, l'écran qui doit succéder est passé en paramètre
+        au constructeur de l'écran. Pour les autres cas, la classe qui
+        implémente l'écran instancie l'écran suivant directement en fonction de
+        l'analyse dont il est question. Chaque écran ajoute les informations qui
+        lui sont propres à l'analyse. Le dernier écran est chargé de donner
+        l'analyse à la classe projet pour qu'elle l'ajoute à la GUI.\\
+
+        Le lancement des analyse est effectué dans un QThread qui scrute
+        l'avancement dans le fichier prévu à cet effet. A chaque avancement, il
+        emet un signal capté par le thread principal qui met à jour la GUI. Une
+        fois l'analyse terminée, c'est la méthode qui capte le signal
+        d'avancement qui appelle la méthode qui termine le thread d'analyse et
+        qui range les résultats dans un dossier du nom de l'analyse.
 
 
 \section{Documentation}
 
 \section{Construction du projet}
 
-    Pour construire le projet en vue de le distribuer, on dispose de trois scripts, un pour chaque système, qui vont 
-    générer un exécutable, une application ou un paquet. Cet objet généré est transportable et distribuable tel quel avec,
-    pour Windows et MacOS, un dossier contenant les données.\\
+    Pour construire le projet en vue de le distribuer, on dispose de trois
+    scripts, un pour chaque système, qui vont générer un exécutable, une
+    application ou un paquet. Cet objet généré est transportable et distribuable
+    tel quel avec, pour Windows et MacOS, un dossier contenant les données.\\
 
     Pour générer un exécutable sous MacOS et Windows, il faut : 
     \begin{itemize}
@@ -94,19 +188,26 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 
     
     \subsection{Windows}
-        Sous windows, plusieurs solutions sont envisageables. La première, plus simple pour l'utilisateur et le
-        packageur : PyInstaller. L'ex\'ecutable produit est ind\'ependant et l\'eger. \newline
+        Sous windows, plusieurs solutions sont envisageables. La première, plus
+        simple pour l'utilisateur et le packageur : PyInstaller. L'ex\'ecutable
+        produit est ind\'ependant et l\'eger. \newline
 
-        La deuxième, Inno setup compiler, pour cr\'eer un installateur qui effectue une copie de fichier et certaines actions.
-        Deux strat\'egies sont possibles. On peut copier en un bloc
-        python contenant ses d\'ependances et diyabc. Le problème est le suivant, python.exe refuse de se lancer s'il n'a pas \'et\'e
-        install\'e avec l'installeur officiel Python. Donc il faut tout de même d\'eclencher l'installation de Python en incluant
-        l'installeur dans le setup de diyabc. Sinon on peut d\'eclencher l'installeur de Python, PyQt, Numpy, PyQwt pendant le setup de
-        diyabc ce qui marche à coup sur mais est lourd pour l'utilisateur.\newline
+        La deuxième, Inno setup compiler, pour cr\'eer un installateur qui
+        effectue une copie de fichier et certaines actions.  Deux strat\'egies
+        sont possibles. On peut copier en un bloc python contenant ses
+        d\'ependances et diyabc. Le problème est le suivant, python.exe refuse
+        de se lancer s'il n'a pas \'et\'e install\'e avec l'installeur officiel
+        Python. Donc il faut tout de même d\'eclencher l'installation de Python
+        en incluant l'installeur dans le setup de diyabc. Sinon on peut
+        d\'eclencher l'installeur de Python, PyQt, Numpy, PyQwt pendant le setup
+        de diyabc ce qui marche à coup sur mais est lourd pour
+        l'utilisateur.\newline
         
-        La troisème, py2exe est satisfaisante mais impose l'installation à part de certaines dll.\newline
+        La troisème, py2exe est satisfaisante mais impose l'installation à part
+        de certaines dll.\newline
 
-        Pour ces trois solutions j'utilise python2.6 et les librairies ``impos\'ees'' par PyQwt5 (http://pyqwt.sourceforge.net/download.html).
+        Pour ces trois solutions j'utilise python2.6 et les librairies
+        ``impos\'ees'' par PyQwt5 (http://pyqwt.sourceforge.net/download.html).
         Il faut installer les versions suivantes des logiciels :
         \begin{itemize}
             \item python-2.6.2.msi
@@ -119,32 +220,42 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 
         \paragraph{Anciennes versions}
 
-        La version 1.4 nécessite une version de python <= à 2.5. L'utilisation de pyinstaller est assez simple. Il faut, 
-        lancer ``python Configure.py'' pour que pyinstaller se configure par rapport au système sur lequel il est. Ensuite il faut
-        lancer ``python Makespec.py --onefile path\_to\_python\_main\_source.py'' qui génère le specfile dans un dossier du même nom que
-        notre source python. Ensuite ``python Build.py specfile.spec'' construit l'exécutable qui se trouvera dans le même dossier que le spec file
-        dans un dossier nommé ``dist''.
+        La version 1.4 nécessite une version de python <= à 2.5. L'utilisation
+        de pyinstaller est assez simple. Il faut, lancer ``python Configure.py''
+        pour que pyinstaller se configure par rapport au système sur lequel il
+        est. Ensuite il faut lancer ``python Makespec.py --onefile
+        path\_to\_python\_main\_source.py'' qui génère le specfile dans un
+        dossier du même nom que notre source python. Ensuite ``python Build.py
+        specfile.spec'' construit l'exécutable qui se trouvera dans le même
+        dossier que le spec file dans un dossier nommé ``dist''.
 
         \paragraph{Solution fonctionnelle}
 
-        La version svn est de loin la meilleure solution. Elle marche sans aucun problème sous windows. Son utilisation est simplifi\'ee.
-        Il suffit d'appeler le script pyinstaller.py avec le programme cible en paramètre. Les trois \'etapes (configure, makespec et build)
-        sont ex\'ecut\'ees automatiquement si besoin. Dans le fichier .spec produit, on peut ajouter l'option icon pour personnaliser l'icone 
-        de l'ex\'ecutable.
-		dev doc et icones
+        La version svn est de loin la meilleure solution. Elle marche sans aucun
+        problème sous windows. Son utilisation est simplifi\'ee.  Il suffit
+        d'appeler le script pyinstaller.py avec le programme cible en paramètre.
+        Les trois \'etapes (configure, makespec et build) sont ex\'ecut\'ees
+        automatiquement si besoin. Dans le fichier .spec produit, on peut
+        ajouter l'option icon pour personnaliser l'icone de l'ex\'ecutable.
 		Utilisation : \begin{verbatim} python pyinstaller.py --onefile -w --icon=path\to\icon.ico main.py \end{verbatim}
 
         \subsubsection{Inno setup compiler}
         http://www.jrsoftware.org/isdl.php
 
-        La cr\'eation du fichier de config (.iss) est assist\'ee et plutôt ais\'ee. On donne les fichiers à inclure, le dossier de destination
-        et quelques options. Pour plus de d\'etails, consulter le fichier .iss inclut dans le d\'epot qui est comment\'e.
+        La cr\'eation du fichier de config (.iss) est assist\'ee et plutôt
+        ais\'ee. On donne les fichiers à inclure, le dossier de destination et
+        quelques options. Pour plus de d\'etails, consulter le fichier .iss
+        inclut dans le d\'epot qui est comment\'e.
+
         \subsubsection{Py2exe}
-        Le site de py2exe contient un tuto simple auquel il faut ajouter quelques d\'etails pour que ça fonctionne parfaitement. Le
-        fonctionnement est simple. On \'ecrit un setup.py puis on ex\'ecute \begin{verbatim} python setup.py py2exe \end{verbatim} Cela Cr\'ee un dossier 
-        Build et Dist. Dans ce dernier se trouve l\'executable ainsi
-        Voici un exemple de setup.py incluant la copie des donn\'ees n\'ecessaires au programme ainsi que la r\'esolution du problème
-        li\'e à la librairie SIP:
+        Le site de py2exe contient un tuto simple auquel il faut ajouter
+        quelques d\'etails pour que ça fonctionne parfaitement. Le
+        fonctionnement est simple. On \'ecrit un setup.py puis on ex\'ecute
+        \begin{verbatim} python setup.py py2exe \end{verbatim} Cela Cr\'ee un
+        dossier Build et Dist. Dans ce dernier se trouve l\'executable ainsi
+        Voici un exemple de setup.py incluant la copie des donn\'ees
+        n\'ecessaires au programme ainsi que la r\'esolution du problème li\'e à
+        la librairie SIP:
         \begin{verbatim}
     from distutils.core import setup
     import py2exe
@@ -159,37 +270,47 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         \end{verbatim}
         L'option ``window'' plutôt que ``console'' ne fonctionne pas.
         \subsubsection{Solution choisie}
-        Sous windows, j'utilise pyinstaller (révision 1355). Après avoir renoncé à l'écriture d'un script batch,
-        j'ai découvert que git installait un bash tout à fait fonctionnel. J'ai donc écrit le script de génération 
+        Sous windows, j'utilise pyinstaller (révision 1355). Après avoir renoncé
+        à l'écriture d'un script batch, j'ai découvert que git installait un
+        bash tout à fait fonctionnel. J'ai donc écrit le script de génération
         d'un exécutable en bash.
         \paragraph{Utilisation}
 
         Ce script est : python\_interface/docs/project\_builders/windows\_generation.sh . Une 
         exécution sans paramètre affiche les paramètres à fournir : \\
+
         \begin{itemize}
             \item path\_to\_pyinstaller.py : chemin vers le script python de pyinstaller
             \item path\_to\_icon.ico : chemin vers le fichier ico qui sera l'icone du fichier .exe
             \item output\_path : dossier cible (existant ou non) dans lequel se trouvera l'executable et les données du programme
             \item path\_to\_main.py : chemin vers le script python principal (diyabc.py dans notre cas)\\
         \end{itemize}
-        Après exécution de ce script de génération, un dossier nommé diyabc-VERSION se trouve dans le dossier 
-        spécifié en output. A l'intérieur de ce dossier se trouve l'exécutable ainsi que le dossier docs contenant des images et la documentation.
+
+        Après exécution de ce script de génération, un dossier nommé
+        diyabc-VERSION se trouve dans le dossier spécifié en output. A
+        l'intérieur de ce dossier se trouve l'exécutable ainsi que le dossier
+        docs contenant des images et la documentation.
 
         \paragraph{Fonctionnement}
 
-        Ce script récupère le numéro de version dans le fichier version.txt qui se trouve avec les sources python de l'interface. Il crée ensuite un
-        dossier temporaire où il copie tout le nécessaire à la construction de l'exécutable. Il modifie la variable VERSION dans les sources (diyabc.py).
-        Il lance la génération avec pyinstaller puis copie les données à côté du .exe .
+        Ce script récupère le numéro de version dans le fichier version.txt qui
+        se trouve avec les sources python de l'interface. Il crée ensuite un
+        dossier temporaire où il copie tout le nécessaire à la construction de
+        l'exécutable. Il modifie la variable VERSION dans les sources
+        (diyabc.py).  Il lance la génération avec pyinstaller puis copie les
+        données à côté du .exe .
 
     \subsection{Linux}
         \subsubsection{Installer PyQt4}
 
-        PyQt4 et PyQwt5 sont packagés pour toutes les distributions. Aucun problème de ce côté.
+        PyQt4 et PyQwt5 sont packagés pour toutes les distributions. Aucun
+        problème de ce côté.
         \subsubsection{pyinstaller}
 
-        Pyinstaller semble ne pas fonctionner parfaitement sous linux. L'exécutable produit ne marche que
-        sur la machine qui l'a créé. Je suis d'avis qu'il faut plutôt faire un paquet debian et/ou rpm
-        et distribuer le programme de cette façon. C'est donc la solution que j'ai choisi.
+        Pyinstaller semble ne pas fonctionner parfaitement sous linux.
+        L'exécutable produit ne marche que sur la machine qui l'a créé. Je suis
+        d'avis qu'il faut plutôt faire un paquet debian et/ou rpm et distribuer
+        le programme de cette façon. C'est donc la solution que j'ai choisi.
         \subsubsection{Script de génération du paquet Debian}
 
         Ce script se situe dans python\_interface/docs/project\_builders/debian/ .
@@ -206,47 +327,58 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         Après exécution de ce script, le paquet debian se trouve dans le dossier courant.
 
         \paragraph{Fonctionnement}
-        Ce script utilise le template se trouvant dans le même
-        répertoire. Dans un premier temps, il modifie les fichiers d'information du paquet pour coller avec la version. Ensuite, il 
-        copie les sources nécessaires dans l'arborescence du paquet, modifie les fichiers nécessaires aux menus gnome et autres
-        Il écrit enfin le contenu du script de lancement qui sera dans
-        /usr/local/bin.
+        Ce script utilise le template se trouvant dans le même répertoire. Dans
+        un premier temps, il modifie les fichiers d'information du paquet pour
+        coller avec la version. Ensuite, il copie les sources nécessaires dans
+        l'arborescence du paquet, modifie les fichiers nécessaires aux menus
+        gnome et autres Il écrit enfin le contenu du script de lancement qui
+        sera dans /usr/local/bin.
 
     \subsection{MacOS 10.6 Snow Leopard}
-        Sous MacOS, on pourrait cr\'eer un pkg qui installe python et les d\'ependances de DIYABC. C'est un peu lourd
-        pour l'utilisateur. Py2app ne fonctionne pas, après avoir compil\'e un apptemplate pour i386\_x64
-        il subsiste un problème dont l'origine m'est inconnue. Au lancement
-        du .app, ``DIYABC error'' apparait et je n'ai aucun moyen de savoir pourquoi. J'ai donc retenu pyinstaller qui fonctionne parfaitement.
+        Sous MacOS, on pourrait cr\'eer un pkg qui installe python et les
+        d\'ependances de DIYABC. C'est un peu lourd pour l'utilisateur. Py2app
+        ne fonctionne pas, après avoir compil\'e un apptemplate pour i386\_x64
+        il subsiste un problème dont l'origine m'est inconnue. Au lancement du
+        .app, ``DIYABC error'' apparait et je n'ai aucun moyen de savoir
+        pourquoi. J'ai donc retenu pyinstaller qui fonctionne parfaitement.
 
-        Sur la machine qui va g\'en\'erer le .app, il faut avoir un environnement de d\'eveloppement complet, à savoir
-        python2.6, PyQt4 et PyQwt5.
+        Sur la machine qui va g\'en\'erer le .app, il faut avoir un
+        environnement de d\'eveloppement complet, à savoir python2.6, PyQt4 et
+        PyQwt5.
 
         \subsubsection{Installer PyQt4}
 
         \paragraph{Problèmes}
 
-        PyQt n'est pas disponible en binaire sur MacOS. Il faut donc avoir Qt et gcc pour le compiler. 
-        Gcc n'est que très difficilement installable sans Xcode. Il faut donc installer Xcode.
-        En suivant à peu près les instructions données à cette adresse : \newline
+        PyQt n'est pas disponible en binaire sur MacOS. Il faut donc avoir Qt et
+        gcc pour le compiler.  Gcc n'est que très difficilement installable sans
+        Xcode. Il faut donc installer Xcode.  En suivant à peu près les
+        instructions données à cette adresse : \newline
         http://deanezra.com/2010/05/setting-up-pythonqt-pyqt4-on-mac-os-x-snow-leopard/\newline
-        , on arrive à bout de cette installation qui est tout de même un gros morceau pour pas grand chose.
+        , on arrive à bout de cette installation qui est tout de même un gros
+        morceau pour pas grand chose.
     
-        Pour la version 4.8.3 de PyQt, je n'ai trouvé d'autre solution que de commenter les 3 lignes qui concernent
-        ``designer'' pour que la compilation fonctionne. En cas d'erreurs incompréhensibles, bien penser à faire un ``make clean''
-        pour effacer les .o déjà compilés qui peuvent provenir d'une compilation précédente mal paramétrée.
+        Pour la version 4.8.3 de PyQt, je n'ai trouvé d'autre solution que de
+        commenter les 3 lignes qui concernent ``designer'' pour que la
+        compilation fonctionne. En cas d'erreurs incompréhensibles, bien penser
+        à faire un ``make clean'' pour effacer les .o déjà compilés qui peuvent
+        provenir d'une compilation précédente mal paramétrée.
 
         \paragraph{Solution}
 
-        La solution est d'utiliser les macports pour installer PyQwt (py26-pyqwt), ce qui installera tout le n\'ecessaire. Il faut tout de même
-        faire attention à numpy qui pose un problème de version de lib vector. La solution est de d\'esinstaller numpy et de l'installer avec l'option
-        ``-atlas''. 
+        La solution est d'utiliser les macports pour installer PyQwt
+        (py26-pyqwt), ce qui installera tout le n\'ecessaire. Il faut tout de
+        même faire attention à numpy qui pose un problème de version de lib
+        vector. La solution est de d\'esinstaller numpy et de l'installer avec
+        l'option ``-atlas''. 
         
         \subsubsection{pyinstaller}
 
-        Les version 1.4 et 1.5 ne fonctionnent pas. Par contre,
-        pyinstaller svn est tout à fait op\'erationnel avec python2.6. Il faut tout de même effectuer une s\'erie d'op\'erations avant et après
-        le build pour que le .app soit op\'erationnel.Se r\'er\'erer à \newline
-        http ://diotavelli.net/PyQtWiki/PyInstallerOnMacOSX \newline
+        Les version 1.4 et 1.5 ne fonctionnent pas. Par contre, pyinstaller svn
+        est tout à fait op\'erationnel avec python2.6. Il faut tout de même
+        effectuer une s\'erie d'op\'erations avant et après le build pour que le
+        .app soit op\'erationnel.Se r\'er\'erer à \newline http
+        ://diotavelli.net/PyQtWiki/PyInstallerOnMacOSX \newline
         Protocole : 
         \label{mac_pyinstaller}
         \begin{itemize}
@@ -269,8 +401,10 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         \subsubsection{Solution choisie}
         \paragraph{Utilisation}
 
-        Comme sous windows, j'ai écrit un script bash qui utilise pyinstaller (révision 1355). Ce script se trouve dans python\_interface/docs/project\_builders/ .
-        Une exécution sans paramètre affiche les paramètres à fournir : \\
+        Comme sous windows, j'ai écrit un script bash qui utilise pyinstaller
+        (révision 1355). Ce script se trouve dans
+        python\_interface/docs/project\_builders/ .  Une exécution sans
+        paramètre affiche les paramètres à fournir : \\
 
         \begin{itemize}
             \item path\_to\_pyinstaller.py : chemin vers le script python de pyinstaller
@@ -281,14 +415,18 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 
         \paragraph{Fonctionnement}
 
-        Comme les autres, ce script crée un dossier temporaire où il copie tout le nécessaire à la construction du .app .
-        Il récupère le numero de version dans le fichier version.txt . Il modifie les sources en conséquence. Il lance pyinstaller
-        une première fois pour générer le .spec . Il modifie le .spec pour produire un .app puis lance à nouveau pyinstaller pour générer le .app .
-        Ensuite il effectue les opérations décrites 
-        dans la section \ref{mac_pyinstaller} afin d'obtenir un .app fonctionnel.
+        Comme les autres, ce script crée un dossier temporaire où il copie tout
+        le nécessaire à la construction du .app .  Il récupère le numero de
+        version dans le fichier version.txt . Il modifie les sources en
+        conséquence. Il lance pyinstaller une première fois pour générer le
+        .spec . Il modifie le .spec pour produire un .app puis lance à nouveau
+        pyinstaller pour générer le .app .  Ensuite il effectue les opérations
+        décrites dans la section \ref{mac_pyinstaller} afin d'obtenir un .app
+        fonctionnel.
 
-        Après exécution de ce script de génération, à l'intérieur du dossier d'output se trouve l'application ainsi que le dossier
-        docs contenant des images et la documentation.
+        Après exécution de ce script de génération, à l'intérieur du dossier
+        d'output se trouve l'application ainsi que le dossier docs contenant des
+        images et la documentation.
 
 
 \section{Utilisation}
