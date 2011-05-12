@@ -2332,8 +2332,8 @@ struct ParticleC
 			    ind=0;
 			    for (int i=0;i<this->locuslist[loc].ss[sample];) {
 			    	nn = calploidy(loc,sample,ind);
-				//cout <<"ploidie="<<nn<<"\n";
-				ind++;
+				    //cout <<"ploidie="<<nn<<"\n";
+				    ind++;
 	    			switch (nn)
 	    			{ case 1 :  ig1 = this->locuslist[loc].haplomic[sample][i];i++;
 								if (ig1!=MICMISSING) {
@@ -2717,11 +2717,12 @@ struct ParticleC
 
 	double cal_nha2p(int gr,int st){
         char **haplo;
-        int iloc,kloc,k,j,nhl=0,nhm=0,nl=0,sample;
+        int iloc,kloc,k,j,nhl=0,nhm=0,nl=0,sample,dmax;
         bool trouve,ident;
         double res=0.0;
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+        dmax=this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1];
         cout <<"samples "<<samp0<<" & "<<samp1<<"\n";
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             nhl=0;  
@@ -2731,7 +2732,7 @@ struct ParticleC
                 nl++;
                 if (this->locuslist[kloc].dnavar==0) nhl++;
                 else {
-                    haplo = new char*[this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]];
+                    haplo = new char*[dmax];
                     for (int samp=0;samp<2;samp++) {
                         if (samp==0) sample=samp0; else sample=samp1;
                         for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
@@ -2761,14 +2762,15 @@ struct ParticleC
                             }    
                         }
                     }
+                    for (int i=0;i<nhl;i++) delete [] haplo[i]; delete [] haplo;
                 }
-            }            
+            } 
             nhm += nhl;
             cout<<"nhm = "<<nhm<<"\n";
         }
+        
         if (nl>0) res=(double)nhm/(double)nl;
 		return res;
-
 	}
 
     int* cal_nss2pl(int kloc,int samp0, int samp1, int *nssl,bool *OK) {
@@ -2938,10 +2940,116 @@ struct ParticleC
 
 	}
 
-	double cal_aml3p(int gr,int st){
-		double res=0.0;
-		return res;
-
+    void cal_freq(int gr,int st) {
+        int iloc,kloc,nhaplo,isamp,sample,dmax,j,k;
+        double d;
+        int samp0=this->grouplist[gr].sumstat[st].samp-1;
+        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+        int samp2=this->grouplist[gr].sumstat[st].samp2-1;
+        char **haplo;
+        bool trouve;
+        dmax=this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]+this->locuslist[kloc].samplesize[samp2];
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            cout<<"Locus "<<kloc<<"\n";
+            this->locuslist[kloc].freq = new double*[this->data.nsample];
+            this->locuslist[kloc].haplomic = new int*[this->data.nsample];
+            this->locuslist[kloc].kmin=100;
+            nhaplo=0;
+            if (this->locuslist[kloc].dnavar==0) {
+                for (isamp=0;isamp<3;isamp++) {
+                    if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
+                    this->locuslist[kloc].freq[sample] = new double[1];
+                    cout<<"apres le new pour sample="<<sample<<"\n";
+                    this->locuslist[kloc].freq[sample][0]=1.0;
+                    this->locuslist[kloc].haplomic[sample] = new int[this->locuslist[kloc].ss[sample]];
+                    for (int j=0;j<this->locuslist[kloc].ss[sample];j++) this->locuslist[kloc].haplomic[sample][j]=this->locuslist[kloc].kmin;
+                }
+                nhaplo++;
+            } else {
+                haplo = new char*[dmax];
+                for (isamp=0;isamp<3;isamp++) {
+                    if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
+                    for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
+                        if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
+                            if (nhaplo==0) { 
+                                haplo[nhaplo] = new char[this->locuslist[kloc].dnavar+1];
+                                for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhaplo][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
+                                haplo[nhaplo][this->locuslist[kloc].dnavar]='\0';
+                                nhaplo++;
+                                cout<<"nhaplo="<<nhaplo<<"    "<<haplo[nhaplo-1]<<"\n";
+                            } else {
+                                trouve=false;j=0;
+                                while ((not trouve)and(j<nhaplo)) {
+                                    trouve=identseq(kloc,haplo[j],this->locuslist[kloc].haplodnavar[sample][i]);
+                                    if (not trouve) j++;
+                                }
+                                if (trouve) {
+                                    for (int k=0;k<this->locuslist[kloc].dnavar;k++) if (haplo[j][k]=='N') haplo[nhaplo][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
+                                } else {
+                                haplo[nhaplo] = new char[this->locuslist[kloc].dnavar+1];
+                                for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhaplo][k] = this->locuslist[kloc].haplodnavar[sample][i][k]; 
+                                haplo[nhaplo][this->locuslist[kloc].dnavar]='\0';
+                                nhaplo++;
+                                cout<<"nhaplo="<<nhaplo<<"    "<<haplo[nhaplo-1]<<"\n";                                    
+                                }
+                            }
+                        }
+                    }
+                }
+                for (isamp=0;isamp<3;isamp++) {
+                    if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
+                    this->locuslist[kloc].freq[sample] = new double[nhaplo];
+                    for (j=0;j<nhaplo;j++) this->locuslist[kloc].freq[sample][j] = 0.0;
+                    d=1.0/(double)this->locuslist[kloc].samplesize[sample];
+                    this->locuslist[kloc].haplomic[sample] = new int[this->locuslist[kloc].ss[sample]];
+                    for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
+                        if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
+                            trouve=false;j=0;
+                            while ((not trouve)and(j<nhaplo)) {
+                                trouve=identseq(kloc,haplo[j],this->locuslist[kloc].haplodnavar[sample][i]);
+                                if (not trouve) j++;
+                            }
+                            this->locuslist[kloc].freq[sample][j] +=d;
+                            this->locuslist[kloc].haplomic[sample][i]=this->locuslist[kloc].kmin+j;
+                        } else this->locuslist[kloc].haplomic[sample][i]=MICMISSING;
+                    }
+                }
+            }
+        }
+    }
+    
+    double cal_aml3p(int gr,int st){
+        int iloc,kloc,nlocutil=0,*ss,nssl;
+        double p1,p2,p3,lik1,lik2,lik3,***fr;
+        int i1=1,i2=998,i3;
+        bool OK;
+        double res=0.0;
+        complex<double> c;
+        int samp0=this->grouplist[gr].sumstat[st].samp-1;
+        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+        int samp2=this->grouplist[gr].sumstat[st].samp2-1;
+        
+        
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            ss = this->cal_nss2pl(kloc,samp1,samp2,&nssl,&OK);
+            if ((OK)and(nssl>0)) nlocutil++;
+        }
+        if (nlocutil<1) return 0.5;
+        cal_freq(gr,st);
+        c=pente_lik(gr,st,i1);lik1=real(c);p1=imag(c);
+        c=pente_lik(gr,st,i2);lik2=real(c);p2=imag(c);
+        if ((p1<0.0)and(p2<0.0)) return 0.0;
+        if ((p1>0.0)and(p2>0.0)) return 1.0;
+        do {
+            i3 = (i1+i2)/2;
+            c=pente_lik(gr,st,i3);lik3=real(c);p3=imag(c);
+            if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
+            else           {i1=i3;p1=p3;lik1=lik3;}
+        } while (abs(i2-i1)>1); 
+        if (lik1>lik2) res=0.001*(double)i1; else res = 0.001*(double)i2;
+        return res;
 	}
 
 	void cal_numvar(int gr) {
