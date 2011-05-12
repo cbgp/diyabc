@@ -2830,73 +2830,24 @@ struct ParticleC
 
 	}
 
-	double cal_mpw2p(int gr,int st){
-        int iloc,kloc,nd,di,isamp,samp,nl=0,mdl;
-		double res=0.0,md=0.0;
-        int samp0=this->grouplist[gr].sumstat[st].samp-1;
-        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
-        //cout<<"\nsamples "<<samp0<<" et "<<samp1<<"\n";
-        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-            kloc=this->grouplist[gr].loc[iloc];
-            //cout<<"Locus "<<kloc<<"\n";
-            mdl=0;nd=0;
-            if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
-                nl++;
-                if (not this->locuslist[kloc].dnavar==0) {
-                    for (isamp=0;isamp<2;isamp++) {
-                        if (isamp==0) samp=samp0; else samp=samp1;
-                        //cout<<" sample "<<samp<<"   ss="<< this->locuslist[kloc].ss[samp]<<"\n";
-                        for (int i=0;i<this->locuslist[kloc].ss[samp]-1;i++) {
-                            if (this->locuslist[kloc].haplodna[samp][i]!=SEQMISSING) {
-                                //cout <<"coucou i\n";
-                                for (int j=i+1;j<this->locuslist[kloc].ss[samp];j++) {
-                                    if (this->locuslist[kloc].haplodna[samp][j]!=SEQMISSING) {
-                                        //cout<<"coucou j\n";
-                                        nd++;
-                                        di=0;
-                                        for (int k=0;k<this->locuslist[kloc].dnavar;k++) {
-                                            if ((this->locuslist[kloc].haplodnavar[samp][i][k]!='N')and(this->locuslist[kloc].haplodnavar[samp][j][k]!='N')and(this->locuslist[kloc].haplodnavar[samp][i][k]!=this->locuslist[kloc].haplodnavar[samp][j][k])) di++;
-                                        }
-                                        mdl +=di;
-                                    }
-                                    //cout<<"individus "<<i<<" et "<<j<<"   di="<<di<<"  nd="<<nd<<"   mdl="<<mdl<<"\n";
-                                }
-                            } //else cout <<"MISSING  ";
-                        }
-                    }
-                }
-            }
-            if (nd>0) md += (double)mdl/(double)nd;
-            //cout<<"nombre de locus = "<<nl<<"   cumul md = "<<md<<"\n";
-        }
-        if (nl>0) res = md/(double)nl;
-		return res;
-
-	}
-
-	double cal_mpb2p(int gr,int st){
-        int iloc,kloc,nd,di,isamp,nl=0,mdl;
-        double res=0.0,md=0.0;
-        int samp0=this->grouplist[gr].sumstat[st].samp-1;
-        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
-        cout<<"\nsamples "<<samp0<<" et "<<samp1<<"\n";
-        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-            kloc=this->grouplist[gr].loc[iloc];
-            cout<<"Locus "<<kloc<<"\n";
-            mdl=0;nd=0;
-            if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
-                nl++;
-                if (not this->locuslist[kloc].dnavar==0) {
-                    for (int i=0;i<this->locuslist[kloc].ss[samp0];i++) {
-                        if (this->locuslist[kloc].haplodna[samp0][i]!=SEQMISSING) {
+    double cal_mpw2pl(int kloc,int samp0, int samp1, bool *OK) {
+        int isamp,samp,di,mdl=0,nd=0;
+        if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
+            *OK=true;
+            if (not this->locuslist[kloc].dnavar==0) {
+                for (isamp=0;isamp<2;isamp++) {
+                    if (isamp==0) samp=samp0; else samp=samp1;
+                    //cout<<" sample "<<samp<<"   ss="<< this->locuslist[kloc].ss[samp]<<"\n";
+                    for (int i=0;i<this->locuslist[kloc].ss[samp]-1;i++) {
+                        if (this->locuslist[kloc].haplodna[samp][i]!=SEQMISSING) {
                             //cout <<"coucou i\n";
-                            for (int j=0;j<this->locuslist[kloc].ss[samp1];j++) {
-                                if (this->locuslist[kloc].haplodna[samp1][j]!=SEQMISSING) {
+                            for (int j=i+1;j<this->locuslist[kloc].ss[samp];j++) {
+                                if (this->locuslist[kloc].haplodna[samp][j]!=SEQMISSING) {
                                     //cout<<"coucou j\n";
                                     nd++;
                                     di=0;
                                     for (int k=0;k<this->locuslist[kloc].dnavar;k++) {
-                                        if ((this->locuslist[kloc].haplodnavar[samp0][i][k]!='N')and(this->locuslist[kloc].haplodnavar[samp1][j][k]!='N')and(this->locuslist[kloc].haplodnavar[samp0][i][k]!=this->locuslist[kloc].haplodnavar[samp1][j][k])) di++;
+                                        if ((this->locuslist[kloc].haplodnavar[samp][i][k]!='N')and(this->locuslist[kloc].haplodnavar[samp][j][k]!='N')and(this->locuslist[kloc].haplodnavar[samp][i][k]!=this->locuslist[kloc].haplodnavar[samp][j][k])) di++;
                                     }
                                     mdl +=di;
                                 }
@@ -2906,8 +2857,64 @@ struct ParticleC
                     }
                 }
             }
-            if (nd>0) md += (double)mdl/(double)nd;
-            cout<<"nombre de locus = "<<nl<<"   mdl="<<mdl<<"  nd = "<<nd<<"   cumul md = "<<md<<"\n";
+        } else *OK=false;
+        if (nd>0) return(double)mdl/(double)nd; else return (double)mdl;
+    
+    }
+
+
+	double cal_mpw2p(int gr,int st){
+        int iloc,kloc,nl=0;
+		double res=0.0,md=0.0,mdl;
+        bool OK;
+        int samp0=this->grouplist[gr].sumstat[st].samp-1;
+        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            mdl= cal_mpw2pl(kloc,samp0,samp1,&OK);
+            if (OK) {nl++;md+=mdl;}
+        }
+        if (nl>0) res = md/(double)nl;
+		return res;
+	}
+
+    double cal_mpb2pl(int kloc,int samp0, int samp1, bool *OK) {
+        int di,mdl=0,nd=0;
+        if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
+            *OK=true;
+            if (not this->locuslist[kloc].dnavar==0) {
+                for (int i=0;i<this->locuslist[kloc].ss[samp0];i++) {
+                    if (this->locuslist[kloc].haplodna[samp0][i]!=SEQMISSING) {
+                        //cout <<"coucou i\n";
+                        for (int j=0;j<this->locuslist[kloc].ss[samp1];j++) {
+                            if (this->locuslist[kloc].haplodna[samp1][j]!=SEQMISSING) {
+                                //cout<<"coucou j\n";
+                                nd++;
+                                di=0;
+                                for (int k=0;k<this->locuslist[kloc].dnavar;k++) {
+                                    if ((this->locuslist[kloc].haplodnavar[samp0][i][k]!='N')and(this->locuslist[kloc].haplodnavar[samp1][j][k]!='N')and(this->locuslist[kloc].haplodnavar[samp0][i][k]!=this->locuslist[kloc].haplodnavar[samp1][j][k])) di++;
+                                }
+                                mdl +=di;
+                            }
+                            //cout<<"individus "<<i<<" et "<<j<<"   di="<<di<<"  nd="<<nd<<"   mdl="<<mdl<<"\n";
+                        }
+                    } //else cout <<"MISSING  ";
+                }
+            }
+        } else *OK=false;
+        if (nd>0) return (double)mdl/(double)nd; else  return (double)mdl;
+    }
+
+    double cal_mpb2p(int gr,int st){
+        int iloc,kloc,nl=0;
+        double res=0.0,md=0.0,mdl;
+        bool OK;
+        int samp0=this->grouplist[gr].sumstat[st].samp-1;
+        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            mdl = cal_mpb2pl(kloc,samp0,samp1,&OK);
+            if (OK) {nl++;md+=mdl;}
         }
         if (nl>0) res = md/(double)nl;
 		return res;
@@ -2915,7 +2922,18 @@ struct ParticleC
 	}
 
 	double cal_fst2p(int gr,int st){
-		double res=0.0;
+		int iloc,kloc,nl=0;
+        double res=0.0,num=0.0,den=0.0,Hw,Hb;
+        bool OKw,OKb;
+        int samp0=this->grouplist[gr].sumstat[st].samp-1;
+        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            Hw = cal_mpw2pl(kloc,samp0,samp1,&OKw);
+            Hb = cal_mpb2pl(kloc,samp0,samp1,&OKb);
+            if ((OKw)and(OKb)) {nl++;num+=Hb-Hw;den+=Hb;}
+        }
+        if (den>0) res=num/den;
 		return res;
 
 	}
