@@ -2771,8 +2771,61 @@ struct ParticleC
 
 	}
 
+    int* cal_nss2pl(int kloc,int samp0, int samp1, int *nssl,bool *OK) {
+        char c0;
+        bool trouve,ident;
+        int k,j,*ss,nss=0;
+        vector <int> nuvar;
+        if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
+            *OK=true;
+            if (not this->locuslist[kloc].dnavar==0) {
+                for (j=0;j<this->locuslist[kloc].dnavar;j++) {
+                    c0='\0';ident=true;
+                    for (int i=0;i<this->locuslist[kloc].ss[samp0];i++) {
+                        if ((this->locuslist[kloc].haplodna[samp0][i]!=SEQMISSING)and(this->locuslist[kloc].haplodnavar[samp0][i][j]!='N')) {
+                            if (c0=='\0') c0=this->locuslist[kloc].haplodnavar[samp0][i][j];
+                            else ident=(c0==this->locuslist[kloc].haplodnavar[samp0][i][j]);
+                            //if (not ident) cout<<"nucleotide "<<j<<"   c0="<<c0<<"   c1="<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   i="<<i<<"\n";
+                        }
+                        if (not ident) break;
+                    }
+                    if (ident) {
+                        for (int i=0;i<this->locuslist[kloc].ss[samp1];i++) {
+                            if ((this->locuslist[kloc].haplodna[samp1][i]!=SEQMISSING)and(this->locuslist[kloc].haplodnavar[samp1][i][j]!='N')) {
+                                if (c0=='\0') c0=this->locuslist[kloc].haplodnavar[samp1][i][j];
+                                else ident=(c0==this->locuslist[kloc].haplodnavar[samp1][i][j]);
+                                //if (not ident) cout<<"nucleotide "<<j<<"   c0="<<c0<<"   c1="<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   i="<<i<<"\n";
+                            }
+                            if (not ident) break;
+                        }
+                    }
+                    if (not ident) {nss++;nuvar.push_back(j);}
+                }
+            }
+        } else *OK=false;
+        ss = new int[nss];
+        for (j=0;j<nss;j++) ss[j]=nuvar[j];
+        if (not nuvar.empty()) nuvar.clear();
+        *nssl=nss;
+        return ss;
+    }
+
 	double cal_nss2p(int gr,int st){
-		double res=0.0;
+        int iloc,kloc,k,j,j0,nssl,nssm=0,nl=0,*ss;
+        double res=0.0;
+        bool OK,trouve;
+        cout<<"\n";
+        int samp0=this->grouplist[gr].sumstat[st].samp-1;
+        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc]; 
+            ss = this->cal_nss2pl(kloc,samp0,samp1,&nssl,&OK);
+            cout<<"nssl = "<<nssl<<"\n";
+            for (int k=0;k<nssl;k++) cout<<"  "<<ss[k];if(nssl>0) cout<<"\n";
+            if (OK) {nl++;nssm += nssl;}
+            cout<<"cumul nl="<<nl<<"   cumul nssm="<<nssm<<"\n";
+        }
+        if (nl>0) res=(double)nssm/(double)nl;
 		return res;
 
 	}
