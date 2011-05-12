@@ -2814,16 +2814,16 @@ struct ParticleC
         int iloc,kloc,k,j,j0,nssl,nssm=0,nl=0,*ss;
         double res=0.0;
         bool OK,trouve;
-        cout<<"\n";
+        //cout<<"\n";
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc]; 
             ss = this->cal_nss2pl(kloc,samp0,samp1,&nssl,&OK);
-            cout<<"nssl = "<<nssl<<"\n";
-            for (int k=0;k<nssl;k++) cout<<"  "<<ss[k];if(nssl>0) cout<<"\n";
+            //cout<<"nssl = "<<nssl<<"\n";
+            //for (int k=0;k<nssl;k++) cout<<"  "<<ss[k];if(nssl>0) cout<<"\n";
             if (OK) {nl++;nssm += nssl;}
-            cout<<"cumul nl="<<nl<<"   cumul nssm="<<nssm<<"\n";
+            //cout<<"cumul nl="<<nl<<"   cumul nssm="<<nssm<<"\n";
         }
         if (nl>0) res=(double)nssm/(double)nl;
 		return res;
@@ -2831,7 +2831,45 @@ struct ParticleC
 	}
 
 	double cal_mpw2p(int gr,int st){
-		double res=0.0;
+        int iloc,kloc,nd,di,isamp,samp,nl=0,mdl;
+		double res=0.0,md=0.0;
+        int samp0=this->grouplist[gr].sumstat[st].samp-1;
+        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+        //cout<<"\nsamples "<<samp0<<" et "<<samp1<<"\n";
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            //cout<<"Locus "<<kloc<<"\n";
+            mdl=0;nd=0;
+            if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
+                nl++;
+                if (not this->locuslist[kloc].dnavar==0) {
+                    for (isamp=0;isamp<2;isamp++) {
+                        if (isamp==0) samp=samp0; else samp=samp1;
+                        //cout<<" sample "<<samp<<"   ss="<< this->locuslist[kloc].ss[samp]<<"\n";
+                        for (int i=0;i<this->locuslist[kloc].ss[samp]-1;i++) {
+                            if (this->locuslist[kloc].haplodna[samp][i]!=SEQMISSING) {
+                                //cout <<"coucou i\n";
+                                for (int j=i+1;j<this->locuslist[kloc].ss[samp];j++) {
+                                    if (this->locuslist[kloc].haplodna[samp][j]!=SEQMISSING) {
+                                        //cout<<"coucou j\n";
+                                        nd++;
+                                        di=0;
+                                        for (int k=0;k<this->locuslist[kloc].dnavar;k++) {
+                                            if ((this->locuslist[kloc].haplodnavar[samp][i][k]!='N')and(this->locuslist[kloc].haplodnavar[samp][j][k]!='N')and(this->locuslist[kloc].haplodnavar[samp][i][k]!=this->locuslist[kloc].haplodnavar[samp][j][k])) di++;
+                                        }
+                                        mdl +=di;
+                                    }
+                                    //cout<<"individus "<<i<<" et "<<j<<"   di="<<di<<"  nd="<<nd<<"   mdl="<<mdl<<"\n";
+                                }
+                            } //else cout <<"MISSING  ";
+                        }
+                    }
+                }
+            }
+            if (nd>0) md += (double)mdl/(double)nd;
+            //cout<<"nombre de locus = "<<nl<<"   cumul md = "<<md<<"\n";
+        }
+        if (nl>0) res = md/(double)nl;
 		return res;
 
 	}
