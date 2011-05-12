@@ -78,12 +78,20 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 \section{Documentation}
 
 \section{Construction du projet}
-    Pour générer un exécutable compatible avec un système, il faut : 
+
+    Pour construire le projet en vue de le distribuer, on dispose de trois scripts, un pour chaque système, qui vont 
+    générer un exécutable, une application ou un paquet. Cet objet généré est transportable et distribuable tel quel avec,
+    pour Windows et MacOS, un dossier contenant les données.\\
+
+    Pour générer un exécutable sous MacOS et Windows, il faut : 
     \begin{itemize}
-    \item Se trouver sur ce système
+    \item Se trouver sur le système en question
     \item Posséder python et toutes les librairies nécessaires au programme
-    \item Disposer de pyinstaller
+    \item Disposer de pyinstaller\\
     \end{itemize}
+
+    Pas de dépendance particulière pour générer un paquet sous Debian ou Ubuntu.
+
     
     \subsection{Windows}
         Sous windows, plusieurs solutions sont envisageables. La première, plus simple pour l'utilisateur et le
@@ -106,27 +114,32 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
             \item PyQt-Py2.6-gpl-4.5.4-1.exe
             \item PyQwt5.2.0-Python2.6-PyQt4.5.4-NumPy1.3.0-1.exe
         \end{itemize}
+
         \subsubsection{pyinstaller}
+
         \paragraph{Anciennes versions}
+
         La version 1.4 nécessite une version de python <= à 2.5. L'utilisation de pyinstaller est assez simple. Il faut, 
         lancer ``python Configure.py'' pour que pyinstaller se configure par rapport au système sur lequel il est. Ensuite il faut
         lancer ``python Makespec.py --onefile path\_to\_python\_main\_source.py'' qui génère le specfile dans un dossier du même nom que
         notre source python. Ensuite ``python Build.py specfile.spec'' construit l'exécutable qui se trouvera dans le même dossier que le spec file
         dans un dossier nommé ``dist''.
-        \paragraph{Solution}
+
+        \paragraph{Solution fonctionnelle}
+
         La version svn est de loin la meilleure solution. Elle marche sans aucun problème sous windows. Son utilisation est simplifi\'ee.
         Il suffit d'appeler le script pyinstaller.py avec le programme cible en paramètre. Les trois \'etapes (configure, makespec et build)
         sont ex\'ecut\'ees automatiquement si besoin. Dans le fichier .spec produit, on peut ajouter l'option icon pour personnaliser l'icone 
         de l'ex\'ecutable.
 		dev doc et icones
-		Utilisation : \begin{verbatim} python pyinstaller.py --onefile -w --icon=path\to\icon.ico \end{verbatim}
+		Utilisation : \begin{verbatim} python pyinstaller.py --onefile -w --icon=path\to\icon.ico main.py \end{verbatim}
 
-        \subsection{Inno setup compiler}
+        \subsubsection{Inno setup compiler}
         http://www.jrsoftware.org/isdl.php
 
         La cr\'eation du fichier de config (.iss) est assist\'ee et plutôt ais\'ee. On donne les fichiers à inclure, le dossier de destination
         et quelques options. Pour plus de d\'etails, consulter le fichier .iss inclut dans le d\'epot qui est comment\'e.
-        \subsection{Py2exe}
+        \subsubsection{Py2exe}
         Le site de py2exe contient un tuto simple auquel il faut ajouter quelques d\'etails pour que ça fonctionne parfaitement. Le
         fonctionnement est simple. On \'ecrit un setup.py puis on ex\'ecute \begin{verbatim} python setup.py py2exe \end{verbatim} Cela Cr\'ee un dossier 
         Build et Dist. Dans ce dernier se trouve l\'executable ainsi
@@ -145,21 +158,62 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
                 options={"py2exe":{"includes":["sip"]}})
         \end{verbatim}
         L'option ``window'' plutôt que ``console'' ne fonctionne pas.
+        \subsubsection{Solution choisie}
+        Sous windows, j'utilise pyinstaller (révision 1355). Après avoir renoncé à l'écriture d'un script batch,
+        j'ai découvert que git installait un bash tout à fait fonctionnel. J'ai donc écrit le script de génération 
+        d'un exécutable en bash.
+        \paragraph{Utilisation}
+
+        Ce script est : python\_interface/docs/project\_builders/windows\_generation.sh . Une 
+        exécution sans paramètre affiche les paramètres à fournir : \\
+        \begin{itemize}
+            \item path\_to\_pyinstaller.py : chemin vers le script python de pyinstaller
+            \item path\_to\_icon.ico : chemin vers le fichier ico qui sera l'icone du fichier .exe
+            \item output\_path : dossier cible (existant ou non) dans lequel se trouvera l'executable et les données du programme
+            \item path\_to\_main.py : chemin vers le script python principal (diyabc.py dans notre cas)\\
+        \end{itemize}
+        Après exécution de ce script de génération, un dossier nommé diyabc-VERSION se trouve dans le dossier 
+        spécifié en output. A l'intérieur de ce dossier se trouve l'exécutable ainsi que le dossier docs contenant des images et la documentation.
+
+        \paragraph{Fonctionnement}
+
+        Ce script récupère le numéro de version dans le fichier version.txt qui se trouve avec les sources python de l'interface. Il crée ensuite un
+        dossier temporaire où il copie tout le nécessaire à la construction de l'exécutable. Il modifie la variable VERSION dans les sources (diyabc.py).
+        Il lance la génération avec pyinstaller puis copie les données à côté du .exe .
+
     \subsection{Linux}
         \subsubsection{Installer PyQt4}
+
         PyQt4 et PyQwt5 sont packagés pour toutes les distributions. Aucun problème de ce côté.
         \subsubsection{pyinstaller}
+
         Pyinstaller semble ne pas fonctionner parfaitement sous linux. L'exécutable produit ne marche que
         sur la machine qui l'a créé. Je suis d'avis qu'il faut plutôt faire un paquet debian et/ou rpm
-        et distribuer le programme de cette façon.
-        \subsection{Script de génération du paquet Debian}
-        Ce script se situe dans python\_interface/docs/project_builders/debian . Il utilise le template se trouvant dans le même
+        et distribuer le programme de cette façon. C'est donc la solution que j'ai choisi.
+        \subsubsection{Script de génération du paquet Debian}
+
+        Ce script se situe dans python\_interface/docs/project\_builders/debian/ .
+        \paragraph{Utilisation}
+
+        Une exécution du script sans paramètre affiche la liste des paramètres à fournir :\\
+
+        \begin{itemize}
+            \item directory\_of\_main\_source : chemin vers le dossier contenant le script python principal (python\_interface dans notre cas)
+            \item main\_flag : flag qui détermine si le paquet généré comprendra ou pas la version dans son nom. S'il vaut MAIN, le paquet généré
+                se nommera diyabc\ldots.deb, s'il vaut autre chose, le paquet se nommera diyabc-VERSION\ldots.deb .\\
+        \end{itemize}
+
+        Après exécution de ce script, le paquet debian se trouve dans le dossier courant.
+
+        \paragraph{Fonctionnement}
+        Ce script utilise le template se trouvant dans le même
         répertoire. Dans un premier temps, il modifie les fichiers d'information du paquet pour coller avec la version. Ensuite, il 
-        copie les sources nécessaires dans l'arborescence du paquet. Il écrit enfin le contenu du script de lancement qui sera dans
+        copie les sources nécessaires dans l'arborescence du paquet, modifie les fichiers nécessaires aux menus gnome et autres
+        Il écrit enfin le contenu du script de lancement qui sera dans
         /usr/local/bin.
 
-    \subsection{MacOs 10.6 Snow Leopard}
-        Sous MacOs, on pourrait cr\'eer un pkg qui installe python et les d\'ependances de DIYABC. C'est un peu lourd
+    \subsection{MacOS 10.6 Snow Leopard}
+        Sous MacOS, on pourrait cr\'eer un pkg qui installe python et les d\'ependances de DIYABC. C'est un peu lourd
         pour l'utilisateur. Py2app ne fonctionne pas, après avoir compil\'e un apptemplate pour i386\_x64
         il subsiste un problème dont l'origine m'est inconnue. Au lancement
         du .app, ``DIYABC error'' apparait et je n'ai aucun moyen de savoir pourquoi. J'ai donc retenu pyinstaller qui fonctionne parfaitement.
@@ -171,7 +225,7 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 
         \paragraph{Problèmes}
 
-        PyQt n'est pas disponible en binaire sur MacOs. Il faut donc avoir Qt et gcc pour le compiler. 
+        PyQt n'est pas disponible en binaire sur MacOS. Il faut donc avoir Qt et gcc pour le compiler. 
         Gcc n'est que très difficilement installable sans Xcode. Il faut donc installer Xcode.
         En suivant à peu près les instructions données à cette adresse : \newline
         http://deanezra.com/2010/05/setting-up-pythonqt-pyqt4-on-mac-os-x-snow-leopard/\newline
@@ -194,6 +248,7 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         le build pour que le .app soit op\'erationnel.Se r\'er\'erer à \newline
         http ://diotavelli.net/PyQtWiki/PyInstallerOnMacOSX \newline
         Protocole : 
+        \label{mac_pyinstaller}
         \begin{itemize}
             \item Lancer une première fois ``python pyinstaller.py diyabc.py''
             \item Ajouter à la fin de diyabc.spec :
@@ -208,8 +263,33 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
             \item Changer une valeur dans le fichier Info.list
             \item Copier le contenu du dossier dist/nom\_du\_projet dans le dossier MacOs du .app
             \item Copier /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt\_menu.nib dans le dossier Ressources du .app
-            \item Copier l'icone dans le dossier Ressources avec le nom ``App.icns''.
+            \item Copier l'icone dans le dossier Ressources avec le nom ``App.icns''.\\
         \end{itemize}
+
+        \subsubsection{Solution choisie}
+        \paragraph{Utilisation}
+
+        Comme sous windows, j'ai écrit un script bash qui utilise pyinstaller (révision 1355). Ce script se trouve dans python\_interface/docs/project\_builders/ .
+        Une exécution sans paramètre affiche les paramètres à fournir : \\
+
+        \begin{itemize}
+            \item path\_to\_pyinstaller.py : chemin vers le script python de pyinstaller
+            \item path\_to\_icon.icns : chemin vers le fichier icns qui sera l'icone de l'application (.app)
+            \item output\_path : dossier cible (existant ou non) dans lequel se trouvera l'application et les données du programme
+            \item path\_to\_main.py : chemin vers le script python principal (diyabc.py dans notre cas)\\
+        \end{itemize}
+
+        \paragraph{Fonctionnement}
+
+        Comme les autres, ce script crée un dossier temporaire où il copie tout le nécessaire à la construction du .app .
+        Il récupère le numero de version dans le fichier version.txt . Il modifie les sources en conséquence. Il lance pyinstaller
+        une première fois pour générer le .spec . Il modifie le .spec pour produire un .app puis lance à nouveau pyinstaller pour générer le .app .
+        Ensuite il effectue les opérations décrites 
+        dans la section \ref{mac_pyinstaller} afin d'obtenir un .app fonctionnel.
+
+        Après exécution de ce script de génération, à l'intérieur du dossier d'output se trouve l'application ainsi que le dossier
+        docs contenant des images et la documentation.
+
 
 \section{Utilisation}
 

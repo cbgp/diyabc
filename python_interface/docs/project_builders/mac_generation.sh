@@ -11,8 +11,6 @@ pyinst=$1
 icon=$2
 output=$3
 pysrc=$4
-VERSIONFILE="`dirname $pysrc`/version.txt"
-VERSION="`head -n 1 $VERSIONFILE`"
 BUILDDATE=`date +%d-%b-%Y`
 
 
@@ -30,6 +28,8 @@ else
     fi
     echo "I assume you've intalled python-2.6, pyqwt, numpy, PyQt"
 fi
+VERSIONFILE="`dirname $pysrc`/version.txt"
+VERSION="`head -n 1 $VERSIONFILE`"
 
 APPNAME=`basename $pysrc | cut -d . -f 1`
 

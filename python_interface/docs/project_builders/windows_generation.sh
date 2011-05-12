@@ -11,11 +11,7 @@ pyinst=$1
 icon=$2
 output=$3
 pysrc=$4
-VERSIONFILE="`dirname $pysrc`/version.txt"
-VERSION="`head -n 1 $VERSIONFILE`"
 BUILDDATE=`date +%d-%b-%Y`
-
-echo "version $VERSION"
 
 if [ $# -eq 0 ] ; then
     printUsage
@@ -31,6 +27,8 @@ else
     fi
     echo "I assume you've intalled python-2.6, pyqwt, numpy, PyQt"
 fi
+VERSIONFILE="`dirname $pysrc`/version.txt"
+VERSION="`head -n 1 $VERSIONFILE`"
 
 APPNAME=`basename $pysrc | cut -d . -f 1`
 
@@ -51,3 +49,4 @@ cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev
 rm -rf $TMPBUILD
 sleep 3
 mv $output/dist/$APPNAME.exe $output/dist/$APPNAME-$VERSION.exe
+mv $output/dist $output/$APPNAME-$VERSION

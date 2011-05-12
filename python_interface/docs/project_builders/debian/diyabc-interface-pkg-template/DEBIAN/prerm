@@ -2,4 +2,4 @@
 cd /usr/local/src/diyabc
 ./clean.sh
 cd -
-echo DIYABC removed
+echo DIYABC source dir cleaned

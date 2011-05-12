@@ -43,7 +43,7 @@ if [ $MAIN == "MAIN" ]; then
 else
     PACKAGESRCDIR=$PACKAGEDIR/usr/local/src/diyabc-$VERSION
 fi
-# copy of all the usefull file into usr/local/src
+# copy of all the usefull files into usr/local/src
 mkdir $PACKAGESRCDIR
 cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $PACKAGESRCDIR/
 # version modification
