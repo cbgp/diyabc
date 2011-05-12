@@ -356,7 +356,7 @@ int main(int argc, char *argv[]){
                                   }
                                   delete [] enreg;
                                   rt.closefile();
-                                  if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename,ios::out);f1<<"END\n\n";f1.close();}
+                                  if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename,ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}
                                   header.libere();
                                   //exit(1);
                           } else {ofstream f1(reftablelogfilename,ios::out);f1<<"END\n\n";f1.close();}

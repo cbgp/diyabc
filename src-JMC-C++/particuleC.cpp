@@ -2723,11 +2723,11 @@ struct ParticleC
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
         dmax=this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1];
-        cout <<"samples "<<samp0<<" & "<<samp1<<"\n";
+        //cout <<"samples "<<samp0<<" & "<<samp1<<"\n";
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             nhl=0;  
             kloc=this->grouplist[gr].loc[iloc]; 
-            cout<<"locus "<<kloc<<"\n";
+            //cout<<"locus "<<kloc<<"\n";
             if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
                 nl++;
                 if (this->locuslist[kloc].dnavar==0) nhl++;
@@ -2742,7 +2742,7 @@ struct ParticleC
                                     for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhl][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
                                     haplo[nhl][this->locuslist[kloc].dnavar]='\0';
                                     nhl++;
-                                    cout<<"nl="<<nl<<"   nhl="<<nhl<<"    "<<haplo[nhl-1]<<"\n";
+                                    //cout<<"nl="<<nl<<"   nhl="<<nhl<<"    "<<haplo[nhl-1]<<"\n";
                                 } else {
                                     trouve=false;j=0;
                                     while ((not trouve)and(j<nhl)) {
@@ -2756,7 +2756,7 @@ struct ParticleC
                                     for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhl][k] = this->locuslist[kloc].haplodnavar[sample][i][k]; 
                                     haplo[nhl][this->locuslist[kloc].dnavar]='\0';
                                     nhl++;
-                                    cout<<"nl="<<nl<<"   nhl="<<nhl<<"    "<<haplo[nhl-1]<<"\n";                                    
+                                    //cout<<"nl="<<nl<<"   nhl="<<nhl<<"    "<<haplo[nhl-1]<<"\n";                                    
                                     }
                                 }
                             }    
@@ -2766,7 +2766,7 @@ struct ParticleC
                 }
             } 
             nhm += nhl;
-            cout<<"nhm = "<<nhm<<"\n";
+            //cout<<"nhm = "<<nhm<<"\n";
         }
         
         if (nl>0) res=(double)nhm/(double)nl;
@@ -2951,7 +2951,7 @@ struct ParticleC
         dmax=this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]+this->locuslist[kloc].samplesize[samp2];
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
-            cout<<"Locus "<<kloc<<"\n";
+            //cout<<"Locus "<<kloc<<"\n";
             this->locuslist[kloc].freq = new double*[this->data.nsample];
             this->locuslist[kloc].haplomic = new int*[this->data.nsample];
             this->locuslist[kloc].kmin=100;
@@ -2960,7 +2960,6 @@ struct ParticleC
                 for (isamp=0;isamp<3;isamp++) {
                     if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
                     this->locuslist[kloc].freq[sample] = new double[1];
-                    cout<<"apres le new pour sample="<<sample<<"\n";
                     this->locuslist[kloc].freq[sample][0]=1.0;
                     this->locuslist[kloc].haplomic[sample] = new int[this->locuslist[kloc].ss[sample]];
                     for (int j=0;j<this->locuslist[kloc].ss[sample];j++) this->locuslist[kloc].haplomic[sample][j]=this->locuslist[kloc].kmin;
@@ -2977,7 +2976,7 @@ struct ParticleC
                                 for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhaplo][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
                                 haplo[nhaplo][this->locuslist[kloc].dnavar]='\0';
                                 nhaplo++;
-                                cout<<"nhaplo="<<nhaplo<<"    "<<haplo[nhaplo-1]<<"\n";
+                                //cout<<"nhaplo="<<nhaplo<<"    "<<haplo[nhaplo-1]<<"\n";
                             } else {
                                 trouve=false;j=0;
                                 while ((not trouve)and(j<nhaplo)) {
@@ -2991,7 +2990,7 @@ struct ParticleC
                                 for (int k=0;k<this->locuslist[kloc].dnavar;k++) haplo[nhaplo][k] = this->locuslist[kloc].haplodnavar[sample][i][k]; 
                                 haplo[nhaplo][this->locuslist[kloc].dnavar]='\0';
                                 nhaplo++;
-                                cout<<"nhaplo="<<nhaplo<<"    "<<haplo[nhaplo-1]<<"\n";                                    
+                                //cout<<"nhaplo="<<nhaplo<<"    "<<haplo[nhaplo-1]<<"\n";                                    
                                 }
                             }
                         }
