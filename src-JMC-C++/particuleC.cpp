@@ -2875,7 +2875,41 @@ struct ParticleC
 	}
 
 	double cal_mpb2p(int gr,int st){
-		double res=0.0;
+        int iloc,kloc,nd,di,isamp,nl=0,mdl;
+        double res=0.0,md=0.0;
+        int samp0=this->grouplist[gr].sumstat[st].samp-1;
+        int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+        cout<<"\nsamples "<<samp0<<" et "<<samp1<<"\n";
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            cout<<"Locus "<<kloc<<"\n";
+            mdl=0;nd=0;
+            if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
+                nl++;
+                if (not this->locuslist[kloc].dnavar==0) {
+                    for (int i=0;i<this->locuslist[kloc].ss[samp0];i++) {
+                        if (this->locuslist[kloc].haplodna[samp0][i]!=SEQMISSING) {
+                            //cout <<"coucou i\n";
+                            for (int j=0;j<this->locuslist[kloc].ss[samp1];j++) {
+                                if (this->locuslist[kloc].haplodna[samp1][j]!=SEQMISSING) {
+                                    //cout<<"coucou j\n";
+                                    nd++;
+                                    di=0;
+                                    for (int k=0;k<this->locuslist[kloc].dnavar;k++) {
+                                        if ((this->locuslist[kloc].haplodnavar[samp0][i][k]!='N')and(this->locuslist[kloc].haplodnavar[samp1][j][k]!='N')and(this->locuslist[kloc].haplodnavar[samp0][i][k]!=this->locuslist[kloc].haplodnavar[samp1][j][k])) di++;
+                                    }
+                                    mdl +=di;
+                                }
+                                //cout<<"individus "<<i<<" et "<<j<<"   di="<<di<<"  nd="<<nd<<"   mdl="<<mdl<<"\n";
+                            }
+                        } //else cout <<"MISSING  ";
+                    }
+                }
+            }
+            if (nd>0) md += (double)mdl/(double)nd;
+            cout<<"nombre de locus = "<<nl<<"   mdl="<<mdl<<"  nd = "<<nd<<"   cumul md = "<<md<<"\n";
+        }
+        if (nl>0) res = md/(double)nl;
 		return res;
 
 	}
