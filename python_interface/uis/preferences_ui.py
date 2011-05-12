@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Thu Mar 31 10:30:39 2011
+# Created: Thu May 12 17:19:59 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -66,6 +66,17 @@ class Ui_MainWindow(object):
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.tab_2)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.frame_5 = QtGui.QFrame(self.tab_2)
+        self.frame_5.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame_5.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_5.setObjectName(_fromUtf8("frame_5"))
+        self.horizontalLayout_5 = QtGui.QHBoxLayout(self.frame_5)
+        self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
+        self.useDefaultExeCheck = QtGui.QCheckBox(self.frame_5)
+        self.useDefaultExeCheck.setChecked(True)
+        self.useDefaultExeCheck.setObjectName(_fromUtf8("useDefaultExeCheck"))
+        self.horizontalLayout_5.addWidget(self.useDefaultExeCheck)
+        self.verticalLayout_2.addWidget(self.frame_5)
         self.frame_3 = QtGui.QFrame(self.tab_2)
         self.frame_3.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtGui.QFrame.Raised)
@@ -588,6 +599,7 @@ class Ui_MainWindow(object):
         self.connectButton.setText(QtGui.QApplication.translate("MainWindow", "Connect", None, QtGui.QApplication.UnicodeUTF8))
         self.serverCheck.setText(QtGui.QApplication.translate("MainWindow", "Use a server (don\'t check if you don\'t know what it is)", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("MainWindow", "Connexion", None, QtGui.QApplication.UnicodeUTF8))
+        self.useDefaultExeCheck.setText(QtGui.QApplication.translate("MainWindow", "Use default executable file", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("MainWindow", "Path to the executable file", None, QtGui.QApplication.UnicodeUTF8))
         self.execBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "browse", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("MainWindow", "Graphics and pictures save format\n"

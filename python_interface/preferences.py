@@ -63,9 +63,13 @@ class Preferences(QMainWindow):
         QObject.connect(self.ui.bgColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
 
         QObject.connect(self.ui.serverCheck,SIGNAL("toggled(bool)"),self.toggleServer)
+        QObject.connect(self.ui.useDefaultExeCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
 
         self.ui.addrEdit.setDisabled(True)
         self.ui.portEdit.setDisabled(True)
+
+        self.toggleExeSelection(self.ui.useDefaultExeCheck.isChecked())
+
 
         #QObject.connect(self.ui.saveMMMButton,SIGNAL("clicked()"),self.saveMMM)
         #QObject.connect(self.ui.saveMMSButton,SIGNAL("clicked()"),self.saveMMS)
@@ -80,10 +84,21 @@ class Preferences(QMainWindow):
         self.ui.addrEdit.setDisabled(not state)
         self.ui.portEdit.setDisabled(not state)
 
+    def toggleExeSelection(self,state):
+        self.ui.execBrowseButton.setDisabled(state)
+        self.ui.execPathEdit.setDisabled(state)
+
     def browseExec(self):
         qfd = QFileDialog()
         path = str(qfd.getOpenFileName(self,"Where is your executable file ?"))
         self.ui.execPathEdit.setText(path)
+
+    def getExecutablePath(self):
+        if self.ui.useDefaultExeCheck.isChecked():
+            # TODO cas de l'executable par defaut (pour win : os.env->PROCESSOR_ARCHITECTURE, pour macos/linux : platform.machine plat.architecture .uname
+            pass
+        else:
+            return str(self.ui.execPathEdit.text())
 
     def changeBackgroundColor(self,colorstr):
         if str(colorstr) in self.tabColor.keys():
@@ -137,7 +152,8 @@ class Preferences(QMainWindow):
         bgColor = str(self.ui.bgColorCombo.currentText())
         pic_format = str(self.ui.formatCombo.currentText())
         ex_path = str(self.ui.execPathEdit.text())
-        lines = "style %s\nformat %s\nexecPath %s\nbgColor %s"%(style,pic_format,ex_path,bgColor)
+        ex_default = str(self.ui.useDefaultExeCheck.isChecked())
+        lines = "style %s\nformat %s\nexecPath %s\nbgColor %s\nuseDefaultExecutable %s"%(style,pic_format,ex_path,bgColor,ex_default)
         f = codecs.open(os.path.expanduser("~/.diyabc/various"),"w","utf-8")
         f.write(lines)
         f.close()
@@ -151,6 +167,11 @@ class Preferences(QMainWindow):
             f.close()
             for l in lines:
                 if len(l.strip()) > 0 and len(l.strip().split(' '))>1:
+                    if l.split(' ')[0] == "useDefaultExecutable":
+                        state = self.ui.bgColorCombo.findText(l.strip().split(' ')[1])
+                        checked = (state == "True")
+                        self.ui.useDefaultExeCheck.setChecked(checked)
+                        self.toggleExeSelection(checked)
                     if l.split(' ')[0] == "bgColor":
                         ind = self.ui.bgColorCombo.findText(l.strip().split(' ')[1])
                         if ind != -1:

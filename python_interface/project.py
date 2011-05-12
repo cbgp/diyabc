@@ -329,7 +329,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if tarname == None:
             tarname = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","(TAR archive) *.tar"))
         if tarname != "":
-            executablePath = str(self.parent.preferences_win.ui.execPathEdit.text())
+            #executablePath = str(self.parent.preferences_win.ui.execPathEdit.text())
+            executablePath = self.parent.preferences_win.getExecutablePath()
             # generation du master script
             script = self.genMasterScript()
             if os.path.exists('scmf'):
@@ -1214,7 +1215,8 @@ class RefTableGenThread(QThread):
         # lance l'executable
         try:
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
-            exPath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
+            #exPath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
+            exPath = self.parent.parent.preferences_win.getExecutablePath()
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m"]
             print cmd_args_list
             if os.path.exists("general.out"):
@@ -1307,7 +1309,8 @@ class AnalysisThread(QThread):
         self.progress = 0
 
     def run(self):
-        executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
+        #executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
+        executablePath = self.parent.parent.preferences_win.getExecutablePath()
         params = self.analysis.computationParameters
         if self.analysis.category == "estimate":
             option = "-e"
