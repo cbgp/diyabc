@@ -45,7 +45,7 @@ python $pyinst $pysrctmp --onefile -w --icon="$icon" -o "$output"
 
 # copy of needed images
 mkdir $output/dist/docs
-cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/dist/docs/
+cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/executables $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/dist/docs/
 rm -rf $TMPBUILD
 sleep 3
 mv $output/dist/$APPNAME.exe $output/dist/$APPNAME-$VERSION.exe

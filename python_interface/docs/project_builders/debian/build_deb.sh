@@ -66,7 +66,7 @@ else
     mv $PACKAGEDIR/usr/share/applications/diyabc.desktop $PACKAGEDIR/usr/share/applications/diyabc-$VERSION.desktop
 fi
 mkdir $PACKAGESRCDIR/docs
-cp -r $SOURCEDIR/docs/accueil_pictures $PACKAGESRCDIR/docs/
+cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/executables $PACKAGESRCDIR/docs/
 cp $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $PACKAGESRCDIR/docs/
 if [ $MAIN == "MAIN" ]; then
     # generation of the launch script placed in /usr/local/bin
