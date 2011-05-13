@@ -136,6 +136,8 @@ class Project(QTabWidget):
             self.th.terminate()
             self.th = None
         self.ui.progressLabel.setText("")
+        if os.path.exists("%s/reftable.log"%(self.dir)):
+            os.remove("%s/reftable.log"%(self.dir))
 
     def viewAnalysisResult(self,analysis=None):
         """ en fonction du type d'analyse, met en forme les résultats
@@ -1256,7 +1258,11 @@ class RefTableGenThread(QThread):
                         self.nb_done = red
                         self.emit(SIGNAL("increment"))
                 elif lines[0].strip() == "END":
+                    red = int(lines[1])
+                    self.nb_done = red
+                    self.emit(SIGNAL("increment"))
                     fg.close()
+                    os.remove("%s/reftable.log"%(self.parent.dir))
                     return
                 else:
                     print "lines != OK"

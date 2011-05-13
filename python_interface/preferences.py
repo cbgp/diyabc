@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os,sys,platform
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -94,11 +94,29 @@ class Preferences(QMainWindow):
         self.ui.execPathEdit.setText(path)
 
     def getExecutablePath(self):
+        exPath = ""
         if self.ui.useDefaultExeCheck.isChecked():
-            # TODO cas de l'executable par defaut (pour win : os.env->PROCESSOR_ARCHITECTURE, pour macos/linux : platform.machine plat.architecture .uname
-            pass
+            # LINUX
+            if "linux" in sys.platform:
+                if "86" in platform.machine():
+                    exPath = "docs/executables/diyabc-comput-linux-i386"
+                else:
+                    exPath = "docs/executables/diyabc-comput-linux-x64"
+            # WINDOWS
+            elif "win" in sys.platform:
+                if os.environ.has_key("PROCESSOR_ARCHITECTURE") and "86" not in os.environ["PROCESSOR_ARCHITECTURE"]:
+                    exPath = "docs/executables/diyabc-comput-win-x64"
+                else:
+                    exPath = "docs/executables/diyabc-comput-win-i386"
+            # MACOS
+            elif "darwin" in sys.platform:
+                if "86" in platform.machine():
+                    exPath = "docs/executables/diyabc-comput-mac-i386"
+                else:
+                    exPath = "docs/executables/diyabc-comput-mac-x64"
         else:
             return str(self.ui.execPathEdit.text())
+        return exPath
 
     def changeBackgroundColor(self,colorstr):
         if str(colorstr) in self.tabColor.keys():
@@ -168,7 +186,7 @@ class Preferences(QMainWindow):
             for l in lines:
                 if len(l.strip()) > 0 and len(l.strip().split(' '))>1:
                     if l.split(' ')[0] == "useDefaultExecutable":
-                        state = self.ui.bgColorCombo.findText(l.strip().split(' ')[1])
+                        state = l.strip().split(' ')[1]
                         checked = (state == "True")
                         self.ui.useDefaultExeCheck.setChecked(checked)
                         self.toggleExeSelection(checked)
