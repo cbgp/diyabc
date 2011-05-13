@@ -69,6 +69,7 @@ double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,
 
 int readheaders() {
     int k;
+    if (debuglevel==1) cout<<"lecture des entêtes\n";
     header.readHeader(headerfilename);                                   if (debuglevel==1) cout<<"apres header.readHeader\n";
     header.calstatobs(statobsfilename);                                  if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename=strdup(header.datafilename.c_str());                    if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";

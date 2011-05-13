@@ -112,7 +112,7 @@ public:
 	MissingHaplo *misshap;
 	MissingNuc   *missnuc;
 	LocusC *locus;
-        bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
+    bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
         
 /**
 * liberation de la mémoire occupée par la classe DataC
@@ -312,18 +312,17 @@ public:
 */
     void do_microsat(int loc){
     	string geno,*gen;
-    	int l,ll,n,gg;
+    	int l,ll,n,gg,ng;
     	gen = new string[2];
+        vector <int> haplo;
     	this->locus[loc].mini=1000;this->locus[loc].maxi=0;
     	this->locus[loc].haplomic = new int*[this->nsample];
-    	for (int ech=0;ech<this->nsample;ech++) {
-    		this->locus[loc].haplomic[ech] = new int[2*this->nind[ech]];
-    	}
     	this->locus[loc].ss = new int[this->nsample];
     	this->locus[loc].samplesize = new int[this->nsample];
     	for (int ech=0;ech<this->nsample;ech++){
     		this->locus[loc].ss[ech] = 0;
     		this->locus[loc].samplesize[ech] = 0;
+            ng=0;
     		for (int ind=0;ind<this->nind[ech];ind++){
     			geno=string(this->genotype[ech][ind][loc]);
     			l=geno.length();
@@ -332,19 +331,18 @@ public:
     				ll=l/2;
     				gen[0]=geno.substr(0,ll);
     				gen[1]=geno.substr(ll,ll);
-    				this->locus[loc].ss[ech] +=2;
     			}
     			else {
     				gen[0]=geno;
     				if (this->locus[loc].type==2) this->indivsexe[ech][ind]=1;
     			    if ((this->locus[loc].type==3)and(geno!="000")) this->indivsexe[ech][ind]=1;
-    			    this->locus[loc].ss[ech] +=1;
     			}
     			for (int i=0;i<n;i++) {
     				if (gen[i]!="000") {
+                        ng++;
     					this->locus[loc].samplesize[ech] +=1;
     					gg = atoi(gen[i].c_str());
-    					this->locus[loc].haplomic[ech][this->locus[loc].samplesize[ech]-1] = gg;
+    					haplo.push_back(gg);
     					if (gg>this->locus[loc].maxi) this->locus[loc].maxi=gg;
     					if (gg<this->locus[loc].mini) this->locus[loc].mini=gg;
 
@@ -354,12 +352,18 @@ public:
 							this->misshap[this->nmisshap-1].sample=ech;
 							this->misshap[this->nmisshap-1].locus=loc;
 							this->misshap[this->nmisshap-1].indiv=ind;
+                            haplo.push_back(-9999);ng++;
     					}
     				}
     			}
     		}
+    		this->locus[loc].ss[ech] = ng;
+    		this->locus[loc].haplomic[ech] = new int[ng];
+            for (int i=0;i<ng;i++) this->locus[loc].haplomic[ech][i]=haplo[i];
+            if (not haplo.empty()) haplo.clear();
     	}
     	delete [] gen;
+        
     }
 
 

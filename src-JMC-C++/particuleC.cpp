@@ -272,16 +272,18 @@ public:
         vector <string> ss;
         bool trouve;
         s1=s;
-        //cout<<"s1="<<s1<<"\n";
+        //cout<<"detparam s1="<<s1<<"\n";
         while (s1.length()>0) {
                 plus=s1.find("+");
-                minus=s1.find("-");
+                minus=s1.find("-"); //cout<<"minus="<<minus<<"\n";
                 if ((plus == string::npos)and(minus == string::npos)) {ss.push_back(s1);s1="";}
                 else {
-                        if (plus>=0) posigne=plus;
+                        if (plus!= string::npos) posigne=plus;
                         else		 posigne=minus;
+                        //cout<<"posigne = "<<posigne<<"\n";
                         ss.push_back(s1.substr(0,posigne));
-                        s1=s1.substr(posigne+1);	
+                        s1=s1.substr(posigne+1);
+                        //cout<<"s1="<<s1<<"\n";;
                 }	  	
         }
         for (i=0;i<ss.size();i++) {
@@ -333,16 +335,17 @@ public:
             //this->event[i].sadmixrate=new char[this->event[i].ladmixrate];this->event[i].sadmixrate[0]='\0';
      		if (ss[0]=="0") {this->event[i].time=0;}
     		else if (atoi(ss[0].c_str())==0) {
-                     this->event[i].time=-9999;
+		     this->event[i].time=-9999;
                      this->event[i].ltime=ss[0].length()+1;
                      this->event[i].stime=new char[this->event[i].ltime];
-                     strcpy(this->event[i].stime,ss[0].c_str());this->detparam(ss[0],1);}
-    			 else {this->event[i].time=atoi(ss[0].c_str());}
+                     strcpy(this->event[i].stime,ss[0].c_str());this->detparam(ss[0],1);
+		}
+    		else {this->event[i].time=atoi(ss[0].c_str());}
     		if (majuscules(ss[1])=="SAMPLE") {
     			this->event[i].action='E';
     			this->event[i].pop=atoi(ss[2].c_str());
     			this->nsamp++;
-			this->event[i].sample=this->nsamp;
+			    this->event[i].sample=this->nsamp;
     			//cout <<this->event[i].time<<"  SAMPLE"<<"   "<<this->event[i].pop<<"\n";
     		} else if (majuscules(ss[1])=="MERGE") {
     			this->event[i].action='M';
@@ -375,6 +378,7 @@ public:
                               strcpy(this->event[i].sNe,ss[3].c_str());
                               this->detparam(ss[3],0);
                         }
+                //cout <<this->event[i].stime<<"  VARNE"<<"   "<<this->event[i].pop<<"\n";
     		}
     	}
     	this->histparam = new HistParameterC[this->nparam];
@@ -1882,72 +1886,43 @@ struct ParticleC
 
 /***********************************************************************************************************************/
 
-	void calfreq() {
-/*		double **fre;
-		fre = new double*[this->nloc];
-		for (int loc=0;loc<this->nloc;loc++) {
-			fre[loc] = new double[this->locuslist[loc].kmax-this->locuslist[loc].kmin+1];
-			for (int i=0;i<this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;i++) fre[loc][i] = 0.0;
-			}*/
-
-
-		int n=0;
-		//cout <<"debut de calfreq nloc = "<<this->nloc<<"  nsample = "<<this->data.nsample <<"\n";
-		for (int loc=0;loc<this->nloc;loc++) {
-		    if (this->locuslist[loc].groupe>0){
-			if (this->locuslist[loc].type<5) {
-				//cout <<"Locus "<< loc <<"\n";
-				this->locuslist[loc].nal = this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;
-				this->locuslist[loc].freq = new double* [this->data.nsample];
-				//cout <<"nal ="<<this->locuslist[loc].nal<<"\n";
-				for (int samp=0;samp<this->data.nsample;samp++) {
-					this->locuslist[loc].freq[samp] = new double [this->locuslist[loc].nal];
-					for (int i=0;i<this->locuslist[loc].nal;i++) this->locuslist[loc].freq[samp][i]=0.0;
-					//cout << this->locuslist[loc].ss[samp] <<"\n";
-					//cout <<this->locuslist[loc].samplesize[samp]<< "\n";
-					for (int i=0;i<this->locuslist[loc].ss[samp];i++){
-						if (this->locuslist[loc].haplomic[samp][i] != MICMISSING) {
-							//cout <<"  "<<this->locuslist[loc].haplomic[samp][i];
-							this->locuslist[loc].freq[samp][this->locuslist[loc].haplomic[samp][i]-this->locuslist[loc].kmin] +=1.0;
-							n++;
-						}
-					}
-					//cout <<" fini\n";
-					if (this->locuslist[loc].samplesize[samp]<1) cout << "samplesize["<<loc<<"]["<<samp<<"]="<<this->locuslist[loc].samplesize[samp]<<"\n";
-					for (int k=0;k<this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;k++) this->locuslist[loc].freq[samp][k]/=this->locuslist[loc].samplesize[samp];
-					//cout << "loc "<<loc <<"  sa "<<samp;
-					//for (int k=0;k<this->locuslist[loc].nal;k++) {if (this->locuslist[loc].freq[samp][k]>0.0) cout << "   "<<this->locuslist[loc].freq[samp][k]<<"("<<k+this->locuslist[loc].kmin<<")";}
-					//cout << "\n";
-					}
-			}
+	void calfreq(int gr) {
+		//int n=0;
+		//cout <<"debut de calfreq nloc = "<<this->nloc<<"  groupe = "<<gr <<"\n";
+        int loc,iloc;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            loc=this->grouplist[gr].loc[iloc];
+            cout <<"Locus "<< loc <<"\n";
+            this->locuslist[loc].nal = this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;
+            this->locuslist[loc].freq = new double* [this->data.nsample];
+            //cout <<"nal ="<<this->locuslist[loc].nal<<"\n";
+            for (int samp=0;samp<this->data.nsample;samp++) {
+                this->locuslist[loc].freq[samp] = new double [this->locuslist[loc].nal];
+                for (int i=0;i<this->locuslist[loc].nal;i++) this->locuslist[loc].freq[samp][i]=0.0;
+                //cout << this->locuslist[loc].ss[samp] <<"\n";
+                //cout <<this->locuslist[loc].samplesize[samp]<< "\n";
+                for (int i=0;i<this->locuslist[loc].ss[samp];i++){
+                    if (this->locuslist[loc].haplomic[samp][i] != MICMISSING) {
+                        cout <<"  "<<this->locuslist[loc].haplomic[samp][i];
+                        this->locuslist[loc].freq[samp][this->locuslist[loc].haplomic[samp][i]-this->locuslist[loc].kmin] +=1.0;
+                        //n++;
+                    }
+                }
+                cout <<" fini\n";
+                if (this->locuslist[loc].samplesize[samp]<1) cout << "samplesize["<<loc<<"]["<<samp<<"]="<<this->locuslist[loc].samplesize[samp]<<"\n";
+                for (int k=0;k<this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;k++) this->locuslist[loc].freq[samp][k]/=this->locuslist[loc].samplesize[samp];
+                /*cout << "loc "<<loc <<"  sa "<<samp;
+                for (int k=0;k<this->locuslist[loc].nal;k++) {if (this->locuslist[loc].freq[samp][k]>0.0) cout << "   "<<this->locuslist[loc].freq[samp][k]<<"("<<k+this->locuslist[loc].kmin<<")";}
+                cout << "\n";*/
 		    }
 		}
-/*		for (int loc=0;loc<this->nloc;loc++) {
-			if (this->locuslist[loc].type<5) {
-				for (int samp=0;samp<this->data.nsample;samp++) {
-					for (int i=0;i<this->locuslist[loc].nal;i++) {
-						fre[loc][i] +=this->locuslist[loc].freq[samp][i];
-					}
-				}
-			}
-		}
-		for (int loc=0;loc<this->nloc;loc++) {
-			if (this->locuslist[loc].type<5) {
-				cout << "\nLocus "<<loc+1 << "\n    ";
-				for (int i=0;i<this->locuslist[loc].nal;i++) {if (fre[loc][i] > 0.0) cout << "    "<<i+this->locuslist[loc].kmin;}
-				cout << "\n";
-				for (int samp=0;samp<this->data.nsample;samp++) {
-					cout <<"Pop " <<samp+1;
-					for (int i=0;i<this->locuslist[loc].nal;i++) {if (fre[loc][i] > 0.0) printf(" %6.3f",this->locuslist[loc].freq[samp][i]);}
-					cout <<"\n";
-				}
-			}
-		}
-		cout <<"fin de calfreq \n";*/
+		//cout <<"fin de calfreq \n";
 	}
 
-    void liberefreq() {
-        for (int loc=0;loc<this->nloc;loc++) {
+    void liberefreq(int gr) {
+        int loc,iloc;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            loc=this->grouplist[gr].loc[iloc];
             if (this->locuslist[loc].groupe>0){
                 if (this->locuslist[loc].type<5) {
                     for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].freq[samp];
@@ -1957,6 +1932,30 @@ struct ParticleC
                     delete []this->locuslist[loc].samplesize;
                 }
             }
+        }
+    }
+
+    void libere_freq(int gr) {
+        int kloc,iloc;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[kloc].freq[samp];
+            delete []this->locuslist[kloc].freq;
+            for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[kloc].haplomic[samp];
+            delete []this->locuslist[kloc].haplomic;
+        }
+    }
+
+    void liberednavar(int gr) {
+        int kloc,iloc;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            kloc=this->grouplist[gr].loc[iloc];
+            for (int samp=0;samp<this->data.nsample;samp++) {
+                for (int ind=0;ind<this->locuslist[kloc].ss[samp];ind++) delete []this->locuslist[kloc].haplodnavar[samp][ind];
+                delete []this->locuslist[kloc].haplodnavar[samp];
+            }
+            delete []this->locuslist[kloc].haplodnavar;
+            delete []this->locuslist[kloc].samplesize;
         }
     }
 
@@ -2452,6 +2451,8 @@ struct ParticleC
             nhm += nhl;
         }
         if (nl>0) res=(double)nhm/(double)nl;
+        for (int i=0;i<this->locuslist[kloc].ss[sample];i++) delete []haplo[i];
+        delete []haplo;
         return res;
     }
                 
@@ -2495,6 +2496,7 @@ struct ParticleC
             //cout<<"nss1p   nssl="<<nssl<<"\n";
             //for (int k=0;k<nssl;k++) cout<<"  "<<ss[k];if(nssl>0) cout<<"\n";
             if (OK) {nl++;nssm += nssl;}
+            delete []ss;
         }
         if (nl>0) res=(double)nssm/(double)nl;
  		return res;
@@ -2634,7 +2636,9 @@ struct ParticleC
                     if (trouve) break;
               }
               if (not trouve) nps++;
-            } 
+            }
+            for (int sa=0;sa<this->data.nsample;sa++) if (nssa[sa]>0) delete [] ssa[sa];
+            delete []ssa;delete []nssa;
         }
         if (nl>0) res = (double)nps/(double)nl;
         //cout<<"PSS_"<<this->grouplist[gr].sumstat[st].samp<<" = "<<res<<"   (nps="<<nps<<" nl="<<nl<<")\n";
@@ -2826,6 +2830,7 @@ struct ParticleC
             //for (int k=0;k<nssl;k++) cout<<"  "<<ss[k];if(nssl>0) cout<<"\n";
             if (OK) {nl++;nssm += nssl;}
             //cout<<"cumul nl="<<nl<<"   cumul nssm="<<nssm<<"\n";
+            if (nssl>0) delete []ss;
         }
         if (nl>0) res=(double)nssm/(double)nl;
 		return res;
@@ -3014,13 +3019,15 @@ struct ParticleC
                         } else this->locuslist[kloc].haplomic[sample][i]=MICMISSING;
                     }
                 }
+                for (int i=0;i<nhaplo;i++) delete [] haplo[i];
+                delete []haplo;
             }
         }
     }
     
     double cal_aml3p(int gr,int st){
         int iloc,kloc,nlocutil=0,*ss,nssl;
-        double p1,p2,p3,lik1,lik2,lik3,***fr;
+        double p1,p2,p3,lik1,lik2,lik3;
         int i1=1,i2=998,i3;
         bool OK;
         double res=0.0;
@@ -3035,6 +3042,7 @@ struct ParticleC
             ss = this->cal_nss2pl(kloc,samp1,samp2,&nssl,&OK);
             if ((OK)and(nssl>0)) nlocutil++;
         }
+        delete []ss;
         if (nlocutil<1) return 0.5;
         cal_freq(gr,st);
         c=pente_lik(gr,st,i1);lik1=real(c);p1=imag(c);
@@ -3048,6 +3056,7 @@ struct ParticleC
             else           {i1=i3;p1=p3;lik1=lik3;}
         } while (abs(i2-i1)>1); 
         if (lik1>lik2) res=0.001*(double)i1; else res = 0.001*(double)i2;
+        libere_freq(gr);
         return res;
 	}
 
@@ -3150,7 +3159,7 @@ struct ParticleC
 	 */
 	void docalstat(int gr) {
 //		cout << "avant calfreq\n";
-		if (this->grouplist[gr].type == 0)  calfreq();
+		if (this->grouplist[gr].type == 0)  calfreq(gr);
                 else this->cal_numvar(gr);
 //		cout << "apres calfreq\n";
         for (int st=0;st<this->grouplist[gr].nstat;st++) {
@@ -3207,7 +3216,8 @@ struct ParticleC
 			}
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
-		if (this->grouplist[gr].type == 0) liberefreq();
+		if (this->grouplist[gr].type == 0) liberefreq(gr);
+        else liberednavar(gr);
         if (not this->afsdone.empty()) {
             for (int sa=0;sa<this->data.nsample;sa++) {
                 this->afsdone[sa].clear();
