@@ -334,6 +334,53 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         gnome et autres Il écrit enfin le contenu du script de lancement qui
         sera dans /usr/local/bin.
 
+        \paragraph{Dépôt debian}
+        Peut-être auront nous par la suite envie de mettre en place un dépôt
+        debian pour distribuer plus facilement DIYABC aux utilisateur de Debian,
+        d'Ubuntu et autres dérivés de Debian. Pour mettre en place un dépôt, il
+        suffit d'avoir un serveur web opérationnel. Un dépôt n'est en fait
+        simplement qu'un ensemble de dossier et de fichiers respectant un
+        certain standart. Il existe plusieurs outils facilitant la création de
+        cette arborescence. J'ai utilisé reprepro pour tester. En résumé, il
+        suffit de créer un dossier qui sera la racine de notre dépôt :\\
+
+        \begin{verbatim}mkdir debian \end{verbatim}
+
+        Puis d'y créer deux répertoires conf et incoming :\\
+
+        \begin{verbatim}mkdir debian/conf
+mkdir debian/incoming \end{verbatim}
+
+        Il faut ensuite éditer le fichier conf/distributions qui va contenir les
+        types de distributions que l'on veut servir. Notre paquet étant
+        fonctionnel sur toute distribution Linux, nous ne mettrons qu'une
+        distribution dans ce fichier et tout le monde s'adressera au dépôt comme
+        s'il possédait cette distribution. Le contenu du fichier distributions
+        est de la forme : \\
+
+        \begin{verbatim}Origin: CBGP
+Label: INRA
+Suite: stable
+Codename: squeeze
+Version: 1.0
+Architectures: i386 amd64
+Components: main
+Description: Repository of CBGP softwares \end{verbatim}
+
+        Une fois qu'on a un paquet prêt à être ajouté au dépôt, on utilise
+        reprepro pour éviter de créer à la main toute l'arborescence dans le
+        dépôt. L'ajout d'un paquet s'effectue de la manière suivante :\\
+
+        \begin{verbatim}reprepro -Vb path/to/my/repo includedeb stable path/to/my/package.deb \end{verbatim}
+
+        Voici deux sources de documentation pour aller plus loin avec reprepro
+        :\newline
+        \url{http://www.isalo.org/wiki.debian-fr/index.php?title=Reprepro}
+        et\newline
+        \url{http://doc.ubuntu-fr.org/tutoriel/comment_creer_depot} . On peut
+        vouloir signer un dépôt avec une clé GPG ou encore faire un mirroir d'un
+        autre dépôt.
+
     \subsection{MacOS 10.6 Snow Leopard}
         Sous MacOS, on pourrait cr\'eer un pkg qui installe python et les
         d\'ependances de DIYABC. C'est un peu lourd pour l'utilisateur. Py2app
