@@ -239,13 +239,24 @@ class Diyabc(QMainWindow):
 
                                 # on crée le dossier de destination et on y copie les fichiers utiles
                                 os.mkdir(clonedir)
-                                shutil.copy("%s/%s"%(current_project.dir,self.main_conf_name),"%s/%s"%(clonedir,self.main_conf_name))
-                                shutil.copy("%s/%s"%(current_project.dir,self.hist_conf_name),"%s/%s"%(clonedir,self.hist_conf_name))
-                                shutil.copy("%s/%s"%(current_project.dir,self.gen_conf_name),"%s/%s"%(clonedir,self.gen_conf_name))
-                                shutil.copy("%s/%s"%(current_project.dir,self.table_header_conf_name),"%s/%s"%(clonedir,self.table_header_conf_name))
-                                shutil.copy("%s/%s"%(current_project.dir,self.reftableheader_name),"%s/%s"%(clonedir,self.reftableheader_name))
-                                shutil.copy("%s/%s"%(current_project.dir,current_project.dataFileName),"%s/%s"%(clonedir,current_project.dataFileName))
-                                shutil.copy("%s/%s"%(current_project.dir,self.analysis_conf_name),"%s/%s"%(clonedir,self.analysis_conf_name))
+                                for filepath in [self.main_conf_name,
+                                        self.hist_conf_name,
+                                        self.gen_conf_name,
+                                        self.table_header_conf_name,
+                                        self.reftableheader_name,
+                                        current_project.dataFileName,
+                                        self.analysis_conf_name]:
+                                    if os.path.exists("%s/%s"%(current_project.dir,filepath)):
+                                         shutil.copy("%s/%s"%(current_project.dir,filepath),"%s/%s"%(clonedir,filepath))
+
+                                #shutil.copy("%s/%s"%(current_project.dir,self.main_conf_name),"%s/%s"%(clonedir,self.main_conf_name))
+                                #shutil.copy("%s/%s"%(current_project.dir,self.hist_conf_name),"%s/%s"%(clonedir,self.hist_conf_name))
+                                #shutil.copy("%s/%s"%(current_project.dir,self.gen_conf_name),"%s/%s"%(clonedir,self.gen_conf_name))
+                                #shutil.copy("%s/%s"%(current_project.dir,self.table_header_conf_name),"%s/%s"%(clonedir,self.table_header_conf_name))
+                                #shutil.copy("%s/%s"%(current_project.dir,self.reftableheader_name),"%s/%s"%(clonedir,self.reftableheader_name))
+                                #shutil.copy("%s/%s"%(current_project.dir,current_project.dataFileName),"%s/%s"%(clonedir,current_project.dataFileName))
+                                #shutil.copy("%s/%s"%(current_project.dir,self.analysis_conf_name),"%s/%s"%(clonedir,self.analysis_conf_name))
+
                                 # si les noms sont différents, on le charge
                                 if cloneBaseName != current_project.name:
                                     self.openProject(clonedir)

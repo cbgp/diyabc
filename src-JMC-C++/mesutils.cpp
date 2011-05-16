@@ -11,6 +11,10 @@
 #include <sys/time.h>
 #define SYS_TIMEH
 #endif
+#ifndef MATHH
+#include <math.h>
+#define MATHH
+#endif
 
 using namespace std;
 
@@ -139,7 +143,7 @@ int ndecimales(double mini,double maxi){
   if (mini>=1) return 0; 
   p = mini/100; 
   k = 0;
-  while (abs(p-round(p))>1E-12) {k++;p=10*p;}
+  while (abs((long int)(p-round(p)))>1E-12) {k++;p=10*p;}
   return k;
 }
 

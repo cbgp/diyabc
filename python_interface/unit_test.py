@@ -22,8 +22,8 @@ class testDiyabc(unittest.TestCase):
         setUp is called before each test function execution.
         """
 
-        self.testDir = "/home/julien/vcs/git/diyabc/python_interface/datafiles/test"
-        self.testProjectDir = "/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3"
+        self.testDir = "/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test"
+        self.testProjectDir = "/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test/ploop_2011_1_18-3"
         self.saveTestProjectDir = "/tmp/ploopsave"
 
     def testAllClicks(self):
@@ -172,15 +172,15 @@ class testDiyabc(unittest.TestCase):
         QTest.mouseClick(diyabc.ui.skipButton,Qt.LeftButton)
         self.assertEqual(diyabc.ui.skipButton.isVisible(), False)
         # test sur l'ouverture d'un projet existant
-        self.tOpenExistingProject(diyabc,"/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3/")
+        self.tOpenExistingProject(diyabc,"/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test/ploop_2011_1_18-3/")
         # test sur l'ouverture d'un projet inexistant
-        self.tOpenNonExistingProject(diyabc,"/home/julien/vcs/git/diyabc/python_interface/datafiles/test/ploop_2011_1_18-3xx/")
+        self.tOpenNonExistingProject(diyabc,"/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test/ploop_2011_1_18-3xx/")
         # tests sur la creation de projets ayant un nom non valide
         for c in ['_','-',"'",'"','.','/']:
-            self.tNewIllegalProject(diyabc,"pppro%sject"%c,"/home/julien/vcs/git/diyabc/python_interface/datafiles/admix1.txt","/home/julien/vcs/git/diyabc/python_interface/datafiles/test/unittest/")
+            self.tNewIllegalProject(diyabc,"pppro%sject"%c,"/home/julien/vcs/git/diyabc.git/python_interface/datafiles/admix1.txt","/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test/unittest/")
 
 
-        project = self.tNewProject(diyabc,"ppproject","/home/julien/vcs/git/diyabc/python_interface/datafiles/admix1.txt","/home/julien/vcs/git/diyabc/python_interface/datafiles/test/unittest/")
+        project = self.tNewProject(diyabc,"ppproject","/home/julien/vcs/git/diyabc.git/python_interface/datafiles/admix1.txt","/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test/unittest/")
         self.assertEqual(project.hist_model_win.ui.addScButton.isVisible(),False)
         QTest.mouseClick(project.ui.setHistoricalButton,Qt.LeftButton)
         self.assertEqual(project.hist_model_win.isVisible(),True)
@@ -218,10 +218,10 @@ class testDiyabc(unittest.TestCase):
 
         # test sur le clonage
         nbproj = len(diyabc.project_list)
-        diyabc.cloneCurrentProject("cloneppproject","/home/julien/vcs/git/diyabc/python_interface/datafiles/test/unittest/")
+        diyabc.cloneCurrentProject("cloneppproject","/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test/unittest/")
         self.assertEqual(len(diyabc.project_list) == nbproj+1,True)
         nbproj = len(diyabc.project_list)
-        diyabc.cloneCurrentProject("clone2ppproject","/home/julien/git/diyabc/python_interface/datafiles/test/unittest/nonExistingDir/")
+        diyabc.cloneCurrentProject("clone2ppproject","/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test/unittest/nonExistingDir/")
         self.assertEqual(len(diyabc.project_list) == nbproj,True)
 
         # suppression de projet

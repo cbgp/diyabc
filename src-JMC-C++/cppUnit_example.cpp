@@ -1,3 +1,11 @@
+#include "data.cpp"
+#include <vector>
+#ifndef ALGORITHM
+#include <algorithm>
+#define ALGORITHM
+#endif
+
+
 
 #include <cppunit/TestResult.h>
 #include <cppunit/CompilerOutputter.h>
@@ -8,18 +16,38 @@
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/extensions/HelperMacros.h>
 
+#ifndef MATHH
+#include <math.h>
+#define MATHH
+#endif
+
+using namespace std;
+
 class DiyTest : public CppUnit::TestFixture
 {
 public:
    CPPUNIT_TEST_SUITE( DiyTest );
-   CPPUNIT_TEST( testsRates );
-   CPPUNIT_TEST( testsReussis );
+   //CPPUNIT_TEST( testsRates );
+   CPPUNIT_TEST( testsDataC );
+
    CPPUNIT_TEST_SUITE_END();
    /// Méthode dont les tests réussissent
-   void testsReussis()
+   void testsDataC()
    {
-     CPPUNIT_ASSERT( 1 == 1 );
-     CPPUNIT_ASSERT( !(1 == 2) );
+     DataC d;
+     int *a;
+     a = new int[2];
+     a[0] = 3;
+     d.loadfromfile("/home/julien/vcs/git/diyabc.git/src-JMC-C++/gptestA_001.txt");
+     CPPUNIT_ASSERT(d.nsample == 3);
+     CPPUNIT_ASSERT(d.sexratio == 0.76);
+     CPPUNIT_ASSERT(d.nloc == 14);
+
+     //d.nind = &a;
+     //CPPUNIT_ASSERT(*(d.nind) == 3);
+     //cout << "plop";
+     //d.libere();
+     //CPPUNIT_ASSERT(d.nind == NULL);
    }
    /// Méthode dont les tests ratent
    void testsRates()

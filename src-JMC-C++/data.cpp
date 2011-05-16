@@ -38,6 +38,10 @@
 #include "mesutils.cpp"
 #define MESUTILS
 #endif
+#ifndef VECTOR
+#include <vector>
+#define VECTOR
+#endif
 
 
 using namespace std;
