@@ -10,13 +10,13 @@
 %\institute{Université de Montpellier 2}
 
 \title{Documentation sur le développement de \\
-DIYABC en python}
+DIYABC version 2 en python}
 \date\today
 %\pagestyle{headings}
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\thepage}
-\fancyhead[R]{DIYABC python doc | Veyssier}
+\fancyhead[R]{DIYABC 2 python doc | Veyssier}
 %\fancyhead[LE,RO]{\thesection}
 
 %\geometry{hmargin=2.5cm,vmargin=2cm}
@@ -66,7 +66,7 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
     \begin{verbatim}\label{doc_objectName}
 La description du bouton ou du label\end{verbatim}
     La description s'arrête au prochain délimiteur de section comme un
-    paragraphe, une section, une sous section \ldots
+    paragraphe, une section, une sous section \ldots \\
 
     Voici la liste des labels pour lesquels il me semble utile de fournir une
     aide :\\
@@ -98,7 +98,7 @@ La description du bouton ou du label\end{verbatim}
         \item ilc2Label : individual locus k\_a/g \\
     \end{itemize}
 
-    Et la liste des boutons :
+    Et la liste des boutons :\\
 
     \begin{itemize} 
         \item setHistoricalButton : aller vers l'écran de définition du modèle
@@ -116,14 +116,14 @@ La description du bouton ou du label\end{verbatim}
         fonctionnement. Des
         fichiers .ui sont produits à partir d'un IDE. Toute entité graphique
         étant succeptible d'être présente plusieurs fois dans l'application est
-        produite indépendament dans un .ui et une classe associée.
+        produite indépendament dans un .ui et une classe associée.\\
         
         L'ui principal est celui de la fenêtre principale.  Un ui peut n'être
         qu'un widget. Un fichier source python produit à partir d'un .ui avec
         ``pyuic'' contient une classe non graphique qui crée tous les objets
-        graphiques à l'intérieur de l'objet que l'on veut créer.
+        graphiques à l'intérieur de l'objet que l'on veut créer.\\
 
-        Exemple : Création d'une scroll area.
+        Exemple : Création d'une scroll area.\\
         \begin{itemize}
             \item Création d'un fichier .ui pour QScrollArea avec QtCreator par
                 exemple
@@ -148,7 +148,7 @@ La description du bouton ou du label\end{verbatim}
             \item Un modèle historique
             \item Des données génétiques
             \item Une table de référence
-            \item Des analyses
+            \item Des analyses\\
         \end{itemize}
 
         Un projet peut être sauvegardé et chargé par la suite. La sauvegarde
@@ -160,7 +160,7 @@ La description du bouton ou du label\end{verbatim}
             \item conf.gen : données génétiques
             \item conf.analysis : sérialisation des analyses
             \item conf.th : table header (dernière partie du reftable header)
-            \item conf.tmp : entête du reftable header
+            \item conf.tmp : entête du reftable header\\
         \end{itemize}
 
         Ces fichiers sont lu lors du chargement d'un projet pour rétablir son état.
@@ -192,6 +192,7 @@ La description du bouton ou du label\end{verbatim}
         
 
     \subsection{La génération de la table de référence}
+        \paragraph{En local}
         Elle s'effectue dans un QThread qui scrute l'avancement dans le fichier
         progress.txt . Pour stopper l'exécutable de calcul, il faut créer un
         ficher .stop dans le dossier du projet.\\
@@ -201,8 +202,27 @@ La description du bouton ou du label\end{verbatim}
         d'information.  Il en est de même pour le calcul des analyses.
 
 
+        \paragraph{Sur le cluster}
+        J'ai implémenté un fonctionnalité permettant à l'interface de lancer une
+        génération sur un cluster qui marche avec SGE ou un système compatible.
+        L'interface crée une archive tar, se connecte (par socket) à un serveur
+        écrit en python qui se trouve sur un des noeuds du cluster. Elle
+        transfere l'archive par cette connexion.  Le serveur, une fois
+        l'archive réceptionnée, extrait son contenu et exécute le script
+        launch.sh qui s'occupe de lancer les qsub. Chaque job lance l'exécutable
+        de calcul en arrière plan et transfère le fichier d'avancement local au
+        noeud maitre à intervalle de temps régulier. Le serveur fait
+        régulièrement la somme des avancements et la transmet à intervalle
+        régulier à l'interface par le réseau afin qu'elle se mette à jour.
+
+
     \subsection{Les analyses}
-        L'écran principale de définition d'une analyse se trouve ans le fichier
+        Nous n'avons pas jugé nécessaire de prévoir l'exécution des analyses sur
+        le cluster. Il faudrait transférer la table de référence et le temps de
+        calcul n'est souvent pas très long, le gain serait peut-être donc
+        négatif.\\
+
+        L'écran principal de définition d'une analyse se trouve ans le fichier
         defineNewAnalysis.py . En fonction du type d'analyse sélectionné,
         l'écran suivant est instancié. Pour certains cas, comme l'écran de
         sélection de scénario, l'écran qui doit succéder est passé en paramètre
@@ -483,7 +503,7 @@ Description: Repository of CBGP softwares \end{verbatim}
         ne fonctionne pas, après avoir compil\'e un apptemplate pour i386\_x64
         il subsiste un problème dont l'origine m'est inconnue. Au lancement du
         .app, ``DIYABC error'' apparait et je n'ai aucun moyen de savoir
-        pourquoi. J'ai donc retenu pyinstaller qui fonctionne parfaitement.
+        pourquoi. J'ai donc retenu pyinstaller qui fonctionne parfaitement.\\
 
         Sur la machine qui va g\'en\'erer le .app, il faut avoir un
         environnement de d\'eveloppement complet, à savoir python2.6, PyQt4 et
@@ -499,7 +519,7 @@ Description: Repository of CBGP softwares \end{verbatim}
         instructions données à cette adresse : \newline
         http://deanezra.com/2010/05/setting-up-pythonqt-pyqt4-on-mac-os-x-snow-leopard/\newline
         , on arrive à bout de cette installation qui est tout de même un gros
-        morceau pour pas grand chose.
+        morceau pour pas grand chose.\\
     
         Pour la version 4.8.3 de PyQt, je n'ai trouvé d'autre solution que de
         commenter les 3 lignes qui concernent ``designer'' pour que la
@@ -522,7 +542,8 @@ Description: Repository of CBGP softwares \end{verbatim}
         effectuer une s\'erie d'op\'erations avant et après le build pour que le
         .app soit op\'erationnel.Se r\'er\'erer à \newline http
         ://diotavelli.net/PyQtWiki/PyInstallerOnMacOSX \newline
-        Protocole : 
+        Protocole : \\
+
         \label{mac_pyinstaller}
         \begin{itemize}
             \item Lancer une première fois ``python pyinstaller.py diyabc.py''
@@ -565,16 +586,24 @@ Description: Repository of CBGP softwares \end{verbatim}
         .spec . Il modifie le .spec pour produire un .app puis lance à nouveau
         pyinstaller pour générer le .app .  Ensuite il effectue les opérations
         décrites dans la section \ref{mac_pyinstaller} afin d'obtenir un .app
-        fonctionnel.
+        fonctionnel.\\
 
         Après exécution de ce script de génération, à l'intérieur du dossier
         d'output se trouve l'application ainsi que le dossier docs contenant des
         images et la documentation.
 
-
-\section{Utilisation}
-
-\section{Limites et améliorations}
+\section{Améliorations à apporter}
+    La partie sur le lancement des calculs sur le cluster est à améliorer. Elle
+    n'a pas été testée ni lancé un grand nombre de fois et la finition est à
+    revoir.\\
+    
+    Il faudrait aussi effectuer le transfert de la table de référence
+    générée une fois le calcul effectué sur le cluster.\\
+    
+    L'interruption de
+    connexion n'est pas gérée, les calculs continuent de tourner sur le cluster
+    même en cas d'arrêt de l'interface mais on ne peut pas se connecter à
+    nouveau pour voir l'avancement.
 
 
 \end{document}
