@@ -64,7 +64,7 @@ class Project(QTabWidget):
         # desactivation des boutons
         self.ui.setHistoricalButton.setDisabled(True)
         self.ui.setGeneticButton.setDisabled(True)
-        self.ui.runButton.setDisabled(True)
+        self.ui.runReftableButton.setDisabled(True)
         self.ui.browseDirButton.setDisabled(True)
         self.ui.dataFileEdit.setReadOnly(True)
         self.ui.dirEdit.setReadOnly(True)
@@ -113,8 +113,8 @@ class Project(QTabWidget):
         #        it = QTableWidgetItem("%i,%i"%(j,i))
         #        self.ui.tableWidget.setItem(j,i,it)
 
-        self.connect(self.ui.runButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
-        self.connect(self.ui.stopButton, SIGNAL("clicked()"),self.stopRefTableGen)
+        self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
+        self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopRefTableGen)
         #self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
 
         self.th = None
@@ -135,7 +135,7 @@ class Project(QTabWidget):
         if self.th != None:
             self.th.terminate()
             self.th = None
-        self.ui.progressLabel.setText("")
+        self.ui.reftableProgressLabel.setText("")
         if os.path.exists("%s/reftable.log"%(self.dir)):
             os.remove("%s/reftable.log"%(self.dir))
 
@@ -411,7 +411,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         done = self.th.nb_done
         nb_to_do = self.th.nb_to_gen
         time_remaining = self.th.time
-        self.ui.progressLabel.setText('%s remaining'%time_remaining)
+        self.ui.reftableProgressLabel.setText('%s remaining'%time_remaining)
         pc = (float(done)/float(nb_to_do))*100
         self.ui.progressBar.setValue(int(pc))
         self.ui.nbSetsDoneEdit.setText("%s"%done)
@@ -866,7 +866,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def setNbParams(self,nb):
         """ écrit le nombre de paramètres dans la zone "historical model"
         """ 
-        self.ui.nbParamLabel.setText(nb)
+        self.ui.nbHistParamLabel.setText(nb)
 
     def clearHistoricalModel(self):
         """ détruit le modèle historique et en instancie un nouveau
@@ -1101,10 +1101,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """
         if self.gen_state_valid and self.hist_state_valid:
             self.setTabIcon(0,QIcon("docs/ok.png"))
-            self.ui.runButton.setDisabled(False)
+            self.ui.runReftableButton.setDisabled(False)
         else:
             self.setTabIcon(0,QIcon("docs/redcross.png"))
-            self.ui.runButton.setDisabled(True)
+            self.ui.runReftableButton.setDisabled(True)
 
     def lock(self):
         """ crée le fichier de verrouillage pour empêcher l'ouverture 
@@ -1220,7 +1220,7 @@ class RefTableGenThread(QThread):
             #exPath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
             exPath = self.parent.parent.preferences_win.getExecutablePath()
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m"]
-            print cmd_args_list
+            print " ".join(cmd_args_list)
             if os.path.exists("general.out"):
                 os.remove("general.out")
             fg = open("general.out","w")

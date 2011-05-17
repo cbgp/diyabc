@@ -51,9 +51,67 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
     interprêtables par beaucoup de générateurs de documentation.  Je génère une
     documentation html du code avec Doxygen. Un fichier de configuration de
     doxygen nommé doxyconfig est versionné. Il se trouve à la racine des sources
-    python, c'est à dire le dossier python\_interface.
+    python, c'est à dire le dossier python\_interface.\\
+
+    Une aide à l'utilisateur est intégrée à l'interface. Elle est construite à
+    partir d'un fichier xml lui même généré à partir des sources \LaTeX de la
+    notice de DIYABC. Pendant l'utilisation de l'interface, cette aide est
+    consultable en effectuant un clic droit sur un label ou un bouton.
+    L'identifiant d'un label ou d'un bouton est son ``objectName'' dans les
+    sources python. Pour écrire le contenu qui sera affiché lors d'un clic droit
+    sur ce label/bouton, il suffit d'insérer dans le source \LaTeX de la notice
+    un bloc de la forme : 
+    \begin{verbatim}\label{doc_objectName}
+La description du bouton ou du label\end{verbatim}
+    La description s'arrête au prochain délimiteur de section comme un
+    paragraphe, une section, une sous section \ldots
+
+    Voici la liste des labels pour lesquels il me semble utile de fournir une
+    aide :\\
+
+    \begin{itemize} 
+        \item versionLabel : numero de version dans la page d'accueil de
+            l'interface.
+        \item projNameLabelValue : nom du project dans l'écran principal d'un projet
+        \item dataFileInfoLabel : informations sur le datafile dans l'écran
+            principal d'un projet
+        \item nbScLabel : nombre de scenarios
+        \item nbHistParamLabel : nombre de paramètres historiques
+        \item nbMicrosatLabel : nombre de microsatellites dans le datafile
+        \item nbSequencesLabel : nombre de sequences dans le datafile
+        \item nbGroupLabel : nombre de groupes de locus dans les données
+            génétiques
+        \item nbSumStatsLabel : nombre de summary stats demandées
+        \item reftableProgressLabel : estmation du temps restant pour la
+            generation de la table de reference
+        \item mmrLabel : mean mutation rate
+        \item ilmrLabel : individual locus mutation rate
+        \item mcpLabel : mean coefficient P
+        \item ilcpLabel : individual locus coefficient P
+        \item msrLabel : mean SNI rate
+        \item ilsrLabel : individual locus SNI rate
+        \item mc1Label : mean coefficient k\_c/t
+        \item ilc1Label : individual locus k\_c/t
+        \item mc2Label : mean coefficient k\_a/g
+        \item ilc2Label : individual locus k\_a/g \\
+    \end{itemize}
+
+    Et la liste des boutons :
+
+    \begin{itemize} 
+        \item setHistoricalButton : aller vers l'écran de définition du modèle
+            historique
+        \item setGeneticButton : aller vers l'écran de définition des données
+            génétiques
+        \item runReftableButton : lancer la génération de la reftable en
+            appelant l'exécutable de calcul
+        \item stopReftableButton : arrêter l'exécutable de calcul
+        \item newAnButton : définir une nouvelle analyse
+    \end{itemize}
+
     \subsection{Partie graphique}
-        La partie graphique statique est découplée du fonctionnement. Des
+        La partie graphique statique est partiellement découplée du
+        fonctionnement. Des
         fichiers .ui sont produits à partir d'un IDE. Toute entité graphique
         étant succeptible d'être présente plusieurs fois dans l'application est
         produite indépendament dans un .ui et une classe associée.
@@ -65,16 +123,17 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 
         Exemple : Création d'une scroll area.
         \begin{itemize}
-            \item Création d'une ui pour QScrollArea
+            \item Création d'un fichier .ui pour QScrollArea avec QtCreator par
+                exemple
             \item Génération du code python avec pyuic4 :\begin{verbatim} pyuic4 mon.ui > monui.py \end{verbatim}
             \item Instanciation d'un objet QScrollArea (on peut créer une classe qui dérive de QScrollArea ou bien instancier un vrai QScrollArea)
-            \item Appel de la methode setupUi de la classe générée avec l'objet QScrollArea en paramètre
+            \item Appel de la methode setupUi de la classe générée dans monui.py avec l'objet QScrollArea en paramètre
                 \begin{verbatim}
-                from monui.py import Ui_QScrollArea
-                maScrollArea = QScrollArea()
-                ui = Ui_QScrollArea()
-                ui.setupUi(maScrollArea)
-                \end{verbatim}
+        from monui import Ui_QScrollArea
+        maScrollArea = QScrollArea()
+        ui = Ui_QScrollArea()
+        ui.setupUi(maScrollArea)
+\end{verbatim}
         \end{itemize}
     \subsection{Coeur de l'application}
         La classe principale de l'application dérive de QMainWindow. Elle est
@@ -103,15 +162,6 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         \end{itemize}
 
         Ces fichiers sont lu lors du chargement d'un projet pour rétablir son état.
-
-    \subsection{Proposition d'architectures}
-        On pourrait dissocier complètement la partie graphique du
-        fonctionnement, c'est à dire avoir une partie du programme qui ne
-        manipule que des objets conceptuels (projet, historical model...) qui
-        appelle son système d'affichage à souhait.
-
-        On pourrait faire une classe abstraite Displayer dérivée en QtDisplayer
-        et CliDisplayer.
 
     \subsection{Le modèle historique}
         La conception du modèle historique n'est pas très complexe. La gestion

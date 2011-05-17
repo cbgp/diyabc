@@ -34,7 +34,7 @@ class DrawPCAAnalysisResult(QFrame):
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
-        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.saveGraph)
+        QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.saveGraph)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewLocate)
 
         QObject.connect(self.ui.scCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)

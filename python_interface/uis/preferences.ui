@@ -1296,7 +1296,7 @@ coefficient</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_26">
        <item>
-        <widget class="QPushButton" name="cancelButton">
+        <widget class="QPushButton" name="cancelPreferencesButton">
          <property name="text">
           <string>Cancel</string>
          </property>
@@ -1306,7 +1306,7 @@ coefficient</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="saveButton">
+        <widget class="QPushButton" name="savePreferencesButton">
          <property name="text">
           <string>Save</string>
          </property>

@@ -33,6 +33,8 @@ class Preferences(QMainWindow):
         self.mutmodS.ui.frame_6.hide()
         self.mutmodS.ui.setMutSeqLabel.setText("Default values for mutation model of Sequences")
 
+        self.ui.connectButton.hide()
+
         self.styles = []
         for i in QStyleFactory.keys():
             self.styles.append(str(i))
@@ -56,8 +58,8 @@ class Preferences(QMainWindow):
         #self.ui.verticalLayout_29.setAlignment(Qt.AlignTop)
         #self.ui.verticalLayout_26.setAlignment(Qt.AlignTop)
 
-        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.savePreferences)
-        QObject.connect(self.ui.cancelButton,SIGNAL("clicked()"),self.cancel)
+        QObject.connect(self.ui.savePreferencesButton,SIGNAL("clicked()"),self.savePreferences)
+        QObject.connect(self.ui.cancelPreferencesButton,SIGNAL("clicked()"),self.cancel)
         QObject.connect(self.ui.execBrowseButton,SIGNAL("clicked()"),self.browseExec)
         QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
         QObject.connect(self.ui.bgColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)

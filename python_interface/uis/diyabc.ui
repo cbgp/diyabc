@@ -137,7 +137,7 @@
                <number>1</number>
               </property>
               <item>
-               <widget class="QPushButton" name="skipButton">
+               <widget class="QPushButton" name="skipWelcomeButton">
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
@@ -152,7 +152,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="openButton">
+               <widget class="QPushButton" name="openProjectButton">
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
@@ -164,7 +164,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="newButton">
+               <widget class="QPushButton" name="newProjectButton">
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
@@ -251,9 +251,9 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>skipButton</tabstop>
-  <tabstop>openButton</tabstop>
-  <tabstop>newButton</tabstop>
+  <tabstop>skipWelcomeButton</tabstop>
+  <tabstop>openProjectButton</tabstop>
+  <tabstop>newProjectButton</tabstop>
   <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>

@@ -31,7 +31,7 @@ class DrawEstimationAnalysisResult(QFrame):
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
-        QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.save)
+        QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
 
         self.ui.PCAFrame.hide()
         self.ui.ACProgress.hide()

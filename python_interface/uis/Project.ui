@@ -311,7 +311,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLabel" name="nbParamLabel">
+                    <widget class="QLabel" name="nbHistParamLabel">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                        <horstretch>0</horstretch>
@@ -777,7 +777,7 @@
                   <number>1</number>
                  </property>
                  <item>
-                  <widget class="QLabel" name="progressLabel">
+                  <widget class="QLabel" name="reftableProgressLabel">
                    <property name="minimumSize">
                     <size>
                      <width>100</width>
@@ -796,7 +796,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="runButton">
+                  <widget class="QPushButton" name="runReftableButton">
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
@@ -814,7 +814,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="stopButton">
+                  <widget class="QPushButton" name="stopReftableButton">
                    <property name="minimumSize">
                     <size>
                      <width>60</width>

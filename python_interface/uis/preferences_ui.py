@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uis/preferences.ui'
+# Form implementation generated from reading ui file 'preferences.ui'
 #
-# Created: Thu May 12 17:19:59 2011
+# Created: Tue May 17 11:22:37 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -570,12 +570,12 @@ class Ui_MainWindow(object):
         self.frame_10.setObjectName(_fromUtf8("frame_10"))
         self.horizontalLayout_26 = QtGui.QHBoxLayout(self.frame_10)
         self.horizontalLayout_26.setObjectName(_fromUtf8("horizontalLayout_26"))
-        self.cancelButton = QtGui.QPushButton(self.frame_10)
-        self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
-        self.horizontalLayout_26.addWidget(self.cancelButton)
-        self.saveButton = QtGui.QPushButton(self.frame_10)
-        self.saveButton.setObjectName(_fromUtf8("saveButton"))
-        self.horizontalLayout_26.addWidget(self.saveButton)
+        self.cancelPreferencesButton = QtGui.QPushButton(self.frame_10)
+        self.cancelPreferencesButton.setObjectName(_fromUtf8("cancelPreferencesButton"))
+        self.horizontalLayout_26.addWidget(self.cancelPreferencesButton)
+        self.savePreferencesButton = QtGui.QPushButton(self.frame_10)
+        self.savePreferencesButton.setObjectName(_fromUtf8("savePreferencesButton"))
+        self.horizontalLayout_26.addWidget(self.savePreferencesButton)
         self.verticalLayout.addWidget(self.frame_10)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
@@ -646,7 +646,7 @@ class Ui_MainWindow(object):
         self.AmeanEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
         self.AstdevEdit.setText(QtGui.QApplication.translate("MainWindow", "0", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtGui.QApplication.translate("MainWindow", "Historical", None, QtGui.QApplication.UnicodeUTF8))
-        self.cancelButton.setText(QtGui.QApplication.translate("MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
-        self.cancelButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveButton.setText(QtGui.QApplication.translate("MainWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
+        self.cancelPreferencesButton.setText(QtGui.QApplication.translate("MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        self.cancelPreferencesButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
+        self.savePreferencesButton.setText(QtGui.QApplication.translate("MainWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
 

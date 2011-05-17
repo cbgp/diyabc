@@ -113,9 +113,9 @@ class Diyabc(QMainWindow):
 	
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 
-        QObject.connect(self.ui.openButton,SIGNAL("clicked()"),self.openToMainStack)
-        QObject.connect(self.ui.newButton,SIGNAL("clicked()"),self.newToMainStack)
-        QObject.connect(self.ui.skipButton,SIGNAL("clicked()"),self.switchToMainStack)
+        QObject.connect(self.ui.openProjectButton,SIGNAL("clicked()"),self.openToMainStack)
+        QObject.connect(self.ui.newProjectButton,SIGNAL("clicked()"),self.newToMainStack)
+        QObject.connect(self.ui.skipWelcomeButton,SIGNAL("clicked()"),self.switchToMainStack)
         self.ui.versionLabel.setText('%s'%VERSION)
         #self.ui.frame.setDisabled(True)
         #self.ui.frame.setAutoFillBackground(True)
@@ -421,6 +421,6 @@ if __name__ == "__main__":
     myapp = Diyabc(app)
     myapp.setWindowTitle("DIYABC %s"%VERSION)
     myapp.show()
-    #QTest.mouseClick(myapp.ui.skipButton,Qt.LeftButton)
+    #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)
     sys.exit(app.exec_())
 

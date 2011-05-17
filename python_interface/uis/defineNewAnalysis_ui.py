@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uis/defineAnalysis.ui'
+# Form implementation generated from reading ui file 'defineAnalysis.ui'
 #
-# Created: Thu Apr 14 16:09:13 2011
+# Created: Tue May 17 11:56:53 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,12 +57,12 @@ class Ui_Frame(object):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout_2.addWidget(self.label)
-        self.titleLabel = QtGui.QLabel(Frame)
-        self.titleLabel.setMinimumSize(QtCore.QSize(0, 80))
-        self.titleLabel.setMaximumSize(QtCore.QSize(16777215, 80))
-        self.titleLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.titleLabel.setObjectName(_fromUtf8("titleLabel"))
-        self.verticalLayout_2.addWidget(self.titleLabel)
+        self.titleInfoLabel = QtGui.QLabel(Frame)
+        self.titleInfoLabel.setMinimumSize(QtCore.QSize(0, 80))
+        self.titleInfoLabel.setMaximumSize(QtCore.QSize(16777215, 80))
+        self.titleInfoLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.titleInfoLabel.setObjectName(_fromUtf8("titleInfoLabel"))
+        self.verticalLayout_2.addWidget(self.titleInfoLabel)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.label_3 = QtGui.QLabel(Frame)
@@ -157,7 +157,7 @@ class Ui_Frame(object):
         self.okButton.setText(QtGui.QApplication.translate("Frame", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setShortcut(QtGui.QApplication.translate("Frame", "Alt+V", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Frame", "CHOOSE AN ANALYSIS", None, QtGui.QApplication.UnicodeUTF8))
-        self.titleLabel.setText(QtGui.QApplication.translate("Frame", "The reference table contains...\n"
+        self.titleInfoLabel.setText(QtGui.QApplication.translate("Frame", "The reference table contains...\n"
 "Each record includes 2 parameters\n"
 "The reference table has been built", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Frame", "Analysis name : ", None, QtGui.QApplication.UnicodeUTF8))

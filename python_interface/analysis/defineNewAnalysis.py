@@ -47,7 +47,7 @@ class DefineNewAnalysis(QFrame):
             verb = "are"
             plur = 's'
         text = "The reference table contains %s records.\nEach record includes %s parameters and %s summary statistics.\nThere %s %s scenario%s."%(nbsets,self.parent.hist_model_win.getNbVariableParam(),nbStat,verb,nbScenario,plur)
-        self.ui.titleLabel.setText(text)
+        self.ui.titleInfoLabel.setText(text)
 
     def preEvaluateCheck(self):
         """ empêche qu'aucune des deux cases ne soit cochée

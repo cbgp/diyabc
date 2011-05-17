@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uis/diyabc.ui'
+# Form implementation generated from reading ui file 'diyabc.ui'
 #
-# Created: Wed Apr 20 17:34:22 2011
+# Created: Tue May 17 11:46:43 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,24 +80,24 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtGui.QHBoxLayout(self.frame)
         self.horizontalLayout.setContentsMargins(-1, 1, -1, 1)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.skipButton = QtGui.QPushButton(self.frame)
+        self.skipWelcomeButton = QtGui.QPushButton(self.frame)
         font = QtGui.QFont()
         font.setPointSize(14)
-        self.skipButton.setFont(font)
-        self.skipButton.setObjectName(_fromUtf8("skipButton"))
-        self.horizontalLayout.addWidget(self.skipButton)
-        self.openButton = QtGui.QPushButton(self.frame)
+        self.skipWelcomeButton.setFont(font)
+        self.skipWelcomeButton.setObjectName(_fromUtf8("skipWelcomeButton"))
+        self.horizontalLayout.addWidget(self.skipWelcomeButton)
+        self.openProjectButton = QtGui.QPushButton(self.frame)
         font = QtGui.QFont()
         font.setPointSize(14)
-        self.openButton.setFont(font)
-        self.openButton.setObjectName(_fromUtf8("openButton"))
-        self.horizontalLayout.addWidget(self.openButton)
-        self.newButton = QtGui.QPushButton(self.frame)
+        self.openProjectButton.setFont(font)
+        self.openProjectButton.setObjectName(_fromUtf8("openProjectButton"))
+        self.horizontalLayout.addWidget(self.openProjectButton)
+        self.newProjectButton = QtGui.QPushButton(self.frame)
         font = QtGui.QFont()
         font.setPointSize(14)
-        self.newButton.setFont(font)
-        self.newButton.setObjectName(_fromUtf8("newButton"))
-        self.horizontalLayout.addWidget(self.newButton)
+        self.newProjectButton.setFont(font)
+        self.newProjectButton.setObjectName(_fromUtf8("newProjectButton"))
+        self.horizontalLayout.addWidget(self.newProjectButton)
         self.verticalLayout_4.addWidget(self.frame)
         self.verticalLayout_5.addWidget(self.accueilFrame)
         self.stackedWidget.addWidget(self.page_2)
@@ -125,18 +125,18 @@ class Ui_MainWindow(object):
         self.stackedWidget.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        MainWindow.setTabOrder(self.skipButton, self.openButton)
-        MainWindow.setTabOrder(self.openButton, self.newButton)
-        MainWindow.setTabOrder(self.newButton, self.tabWidget)
+        MainWindow.setTabOrder(self.skipWelcomeButton, self.openProjectButton)
+        MainWindow.setTabOrder(self.openProjectButton, self.newProjectButton)
+        MainWindow.setTabOrder(self.newProjectButton, self.tabWidget)
 
     def retranslateUi(self, MainWindow):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), QtGui.QApplication.translate("MainWindow", "Projet 2", None, QtGui.QApplication.UnicodeUTF8))
         self.imgLabel.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
         self.versionLabel.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
-        self.skipButton.setText(QtGui.QApplication.translate("MainWindow", "&Close this page", None, QtGui.QApplication.UnicodeUTF8))
-        self.skipButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
-        self.openButton.setText(QtGui.QApplication.translate("MainWindow", "&Open project", None, QtGui.QApplication.UnicodeUTF8))
-        self.newButton.setText(QtGui.QApplication.translate("MainWindow", "&New project", None, QtGui.QApplication.UnicodeUTF8))
+        self.skipWelcomeButton.setText(QtGui.QApplication.translate("MainWindow", "&Close this page", None, QtGui.QApplication.UnicodeUTF8))
+        self.skipWelcomeButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
+        self.openProjectButton.setText(QtGui.QApplication.translate("MainWindow", "&Open project", None, QtGui.QApplication.UnicodeUTF8))
+        self.newProjectButton.setText(QtGui.QApplication.translate("MainWindow", "&New project", None, QtGui.QApplication.UnicodeUTF8))
         self.actionWeb.setText(QtGui.QApplication.translate("MainWindow", "activer web", None, QtGui.QApplication.UnicodeUTF8))
         self.actionWeb.setToolTip(QtGui.QApplication.translate("MainWindow", "obvious", None, QtGui.QApplication.UnicodeUTF8))
         self.action.setText(QtGui.QApplication.translate("MainWindow", "plap", None, QtGui.QApplication.UnicodeUTF8))
