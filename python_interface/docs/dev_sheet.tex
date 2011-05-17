@@ -55,7 +55,9 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 
     Une aide à l'utilisateur est intégrée à l'interface. Elle est construite à
     partir d'un fichier xml lui même généré à partir des sources \LaTeX de la
-    notice de DIYABC. Pendant l'utilisation de l'interface, cette aide est
+    notice de DIYABC. La génération de cette documentation est décrite en 
+    \ref{howtoLatexml}
+    Pendant l'utilisation de l'interface, cette aide est
     consultable en effectuant un clic droit sur un label ou un bouton.
     L'identifiant d'un label ou d'un bouton est son ``objectName'' dans les
     sources python. Pour écrire le contenu qui sera affiché lors d'un clic droit
@@ -218,10 +220,46 @@ La description du bouton ou du label\end{verbatim}
         qui range les résultats dans un dossier du nom de l'analyse.
 
 
-\section{Documentation}
+\section{Tests}
+    Les tests sont tous dans le fichier unit\_test.py . Ils utilisent le module
+    python unittest.
+    \subsection{Conception}
+    \paragraph{Test général}
+    Les opérations de haut niveau sur un projet sont testées dans la méthode
+    testGeneral . Attention, ce test nécessite l'existence d'un projet. 
+    Un projet existant étant versionné, ce test est opérationnel mais dans le
+    cas où ce projet n'existe pas ou bien qu'il a été rendu incohérent par une
+    modification à la main, on peut toujours changer les sources du test afin de
+    définir correctement les chemins qui pointent statiquement sur un projet
+    existant.
+    \paragraph{Test des clics}
+    La méthode testAllClicks simule une intéraction avec l'interface graphique.
+    Un arbre des clics possibles est généré pour ensuite former une liste de
+    toutes les séquences de clic possibles. L'arbre de clics permet de
+    connaitre, pour un bouton donné, la liste des boutons candidats (les fils)
+    pour le clic suivant. Il est evidemment possible de trouver des cycles dans
+    les séquences générées. Un paramètre permet de fixer une borne maximum sur
+    le nombre de fois que l'on clique sur un même bouton dans une séquence. \\
+
+    Ce test n'utilise pas d'assertion, il a pour but d'identifier une suite
+    d'opérations provoquant l'arrêt prématuré de l'interface.
+
+    \subsection{Lancement}
+    Pour effectuer les tests, il suffit de lancer le script python unit\_test.py
+    qui contient une procédure principale. Il est conseillé de mettre la
+    constante ``debug'' à True dans output.py pour éviter les popups
+    d'information qui sont bloquants.\\
+
+    Le premier échec sur une assertion ou plantage provoque l'arrêt des tests.\\
+
+    A la fin des tests, si tout s'est bien passé, un résumé est affiché.
+    L'erreur de segmentation à la toute fin des tests semble inévitable. Elle
+    survient après tous les affichages et n'est donc pas gênante.
+
 
 \section{Construction du projet}
 
+    \subsection{Introduction}
     Pour construire le projet en vue de le distribuer, on dispose de trois
     scripts, un pour chaque système, qui vont générer un exécutable, une
     application ou un paquet. Cet objet généré est transportable et distribuable
@@ -234,7 +272,15 @@ La description du bouton ou du label\end{verbatim}
     \item Disposer de pyinstaller\\
     \end{itemize}
 
-    Pas de dépendance particulière pour générer un paquet sous Debian ou Ubuntu.
+    Pas de dépendance particulière pour générer un paquet sous Debian ou
+    Ubuntu.\\
+
+    \paragraph{La génération de l'aide interne} est très simple.
+    \label{howtoLatexml}
+    Pour n'importe lequel de ces systèmes (Mac, Windows, GNU/Linux), il faut
+    générer un xml à partir de la notice \LaTeX . Cette opération s'effectue
+    avec ``latexml'' présent dans les dépôts Debian et Ubuntu. \\
+    \begin{verbatim}latexml notice.tex > documentation.xml\end{verbatim}
 
     
     \subsection{Windows}
