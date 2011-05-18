@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from xml.dom.minidom import parse
+import output
+import os.path
 
 class Documentator():
-    """ classe qui extrait la documentation à partir de mots clés
+    """ classe qui extrait la documentation interne en lisant un fichier xml 
+    généré à partir des sources latex de la notice de DIYABC. Cette classe permet aussi
+    la consultation de cette documentation à partir de mots clés (l'objectName en l'occurence)
     """
     def __init__(self,xmlFile,parent=None):
         self.parent=parent
@@ -12,9 +16,14 @@ class Documentator():
                 "nbScLabel":"Number of scenario set in the historical model",
                 "nbParamLabel":"Number of parameters set in the historical model",
                 }
-        self.loadDocFile()
+        if os.path.exists(xmlFile):
+            self.loadDocFile()
+        else:
+            output.notify(self.parent,"documentation not found","The xml documentation file %s was not found"%xmlFile)
 
     def loadDocFile(self):
+        """ charge le fichier xml pour remplir le dico de documentation
+        """
         doc = parse(self.xmlFile)
 
         elemList = []

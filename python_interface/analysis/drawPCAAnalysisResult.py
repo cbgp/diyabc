@@ -53,6 +53,8 @@ class DrawPCAAnalysisResult(QFrame):
             self.ui.viewLocateButton.hide()
 
     def viewLocate(self):
+        """ clic sur le bouton view locate
+        """
         if os.path.exists("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory)):
             f = open("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory),'r')
         elif os.path.exists("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory)):

@@ -64,7 +64,8 @@ class DrawEstimationAnalysisResult(QFrame):
 
 
     def addDraw(self,name,values,absv,ordpr,ordpo):
-        
+        """ dessine et affiche un graphe
+        """        
         tabvalues = values.strip().split('  ')
         av = float(tabvalues[0])
         median = float(tabvalues[1])

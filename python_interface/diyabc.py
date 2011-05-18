@@ -179,6 +179,7 @@ class Diyabc(QMainWindow):
                             else:
                                 proj_ready_to_be_opened = False
                         else:
+                            # si on est en mode debug, on vire le verrou sans sommation
                             os.remove("%s/.DIYABC_lock"%dir)
                     if proj_ready_to_be_opened:
                         proj_to_open = Project(project_name,dir,self)

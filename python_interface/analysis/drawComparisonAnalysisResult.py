@@ -100,7 +100,8 @@ class DrawComparisonAnalysisResult(QFrame):
 
 
     def addDraw(self,first_line_tab,dico_coord,direct):
-        
+        """ dessine et affiche un graphe
+        """        
         p = QwtPlot()
         p.setCanvasBackground(Qt.white)
         if direct:
@@ -174,7 +175,7 @@ class DrawComparisonAnalysisResult(QFrame):
             self.saveEachDraws()
 
     def saveEachDraws(self):
-        """ Sauve chaque scenario dans un fichier
+        """ Sauve chaque graphe dans un fichier
         """
         proj_dir = self.parent.dir
         pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)
@@ -208,7 +209,7 @@ class DrawComparisonAnalysisResult(QFrame):
                 painter.end()
 
     def saveDrawsToOne(self):
-        """ Sauve tous les scenarios dans une seule image et un seul svg
+        """ Sauve tous les graphes dans une seule image ou un seul svg
         """
         proj_dir = self.parent.dir
         pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)

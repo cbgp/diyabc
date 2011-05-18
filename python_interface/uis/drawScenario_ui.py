@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/drawScenarioFrame.ui'
 #
-# Created: Thu Apr 14 11:56:11 2011
+# Created: Wed May 18 11:08:16 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -37,9 +37,9 @@ class Ui_Frame(object):
         self.printButton = QtGui.QPushButton(self.groupBox)
         self.printButton.setObjectName(_fromUtf8("printButton"))
         self.horizontalLayout.addWidget(self.printButton)
-        self.saveButton = QtGui.QPushButton(self.groupBox)
-        self.saveButton.setObjectName(_fromUtf8("saveButton"))
-        self.horizontalLayout.addWidget(self.saveButton)
+        self.savePicturesButton = QtGui.QPushButton(self.groupBox)
+        self.savePicturesButton.setObjectName(_fromUtf8("savePicturesButton"))
+        self.horizontalLayout.addWidget(self.savePicturesButton)
         self.ACProgress = QtGui.QProgressBar(self.groupBox)
         self.ACProgress.setProperty(_fromUtf8("value"), 24)
         self.ACProgress.setObjectName(_fromUtf8("ACProgress"))
@@ -121,7 +121,7 @@ class Ui_Frame(object):
     def retranslateUi(self, Frame):
         Frame.setWindowTitle(QtGui.QApplication.translate("Frame", "Frame", None, QtGui.QApplication.UnicodeUTF8))
         self.printButton.setText(QtGui.QApplication.translate("Frame", "PRINT", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveButton.setText(QtGui.QApplication.translate("Frame", "SAVE", None, QtGui.QApplication.UnicodeUTF8))
+        self.savePicturesButton.setText(QtGui.QApplication.translate("Frame", "SAVE", None, QtGui.QApplication.UnicodeUTF8))
         self.viewLocateButton.setText(QtGui.QApplication.translate("Frame", "View locate results", None, QtGui.QApplication.UnicodeUTF8))
         self.closeButton.setText(QtGui.QApplication.translate("Frame", "CLOSE", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Frame", "Scenario to draw", None, QtGui.QApplication.UnicodeUTF8))

@@ -2,7 +2,7 @@
 
 function printUsage(){
 echo "usage : 
-build_deb.sh  directory_of_main_source  main_flag
+build_deb.sh  directory_of_main_source  main_flag [clean_flag]
 
 if main_flag is equal to 'MAIN', a main package will be generated, otherwise a packet with the name of the version will be generated.
 "
@@ -11,6 +11,11 @@ if main_flag is equal to 'MAIN', a main package will be generated, otherwise a p
 if [ $# -eq 0 ] ; then
     printUsage
     exit
+fi
+if [ $# -eq 3 ] ; then
+    clean=false
+else
+    clean=true
 fi
 
 # si MAIN vaut "MAIN", on doit générer un paquet qui n'a pas de numero de version
@@ -87,4 +92,9 @@ python /usr/local/src/diyabc-$VERSION/diyabc.py" > $PACKAGEDIR/usr/local/bin/diy
 fi
 
 dpkg-deb -b $PACKAGEDIR
+if $clean; then
+    rm -rf $PACKAGEDIR
+else
+    echo "The package directory was not removed"
+fi
 
