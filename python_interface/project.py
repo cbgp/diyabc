@@ -176,6 +176,7 @@ class Project(QTabWidget):
                 ui = ui_viewTextFile()
                 ui.setupUi(self.drawAnalysisFrame)
                 ui.dataPlain.setPlainText(data)
+                ui.dataPlain.setLineWrapMode(0)
                 font = "FreeMono"
                 if sys.platform.startswith('win'):
                     font = "Courier New"
@@ -190,6 +191,7 @@ class Project(QTabWidget):
             ui = ui_viewTextFile()
             ui.setupUi(self.drawAnalysisFrame)
             ui.dataPlain.setPlainText(data)
+            ui.dataPlain.setLineWrapMode(0)
             font = "FreeMono"
             if sys.platform.startswith('win'):
                 font = "Courier New"
@@ -203,6 +205,7 @@ class Project(QTabWidget):
             ui = ui_viewTextFile()
             ui.setupUi(self.drawAnalysisFrame)
             ui.dataPlain.setPlainText(data)
+            ui.dataPlain.setLineWrapMode(0)
             font = "FreeMono"
             if sys.platform.startswith('win'):
                 font = "Courier New"
