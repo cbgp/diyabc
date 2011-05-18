@@ -835,7 +835,8 @@ class SetHistoricalModel(QFrame):
             self.parent.clearHistoricalModel()
         elif self.sender() == self.ui.exitButton:
             #self.majParamInfoDico()
-            self.writeHistoricalConfFromGui()
+            # si on fait exit, ça ne sauve pas
+            #self.writeHistoricalConfFromGui()
             self.majProjectGui()
             self.returnToProject()
 

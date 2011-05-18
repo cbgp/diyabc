@@ -122,7 +122,7 @@ class SetGeneticDataRefTable(SetGeneticData):
                     # recup du nb de stats
                     (nstat,stat_txt) = self.setSum_dico[box].getSumConf()
                     if nstat == 0:
-                        problem += u"No summary statistic asked for group %s\n"%(i+1)
+                        problem += u"No summary statistic defined for group %s\n"%(i+1)
                 elif "Sequences" in title:
                     if box not in self.setMutationSeqValid_dico.keys():
                         self.setMutationSeqValid_dico[box] = self.setMutationSeq_dico[box].allValid(silent=True)
@@ -132,7 +132,7 @@ class SetGeneticDataRefTable(SetGeneticData):
                     # recup du nb de stats
                     (nstat,stat_txt) = self.setSumSeq_dico[box].getSumConf()
                     if nstat == 0:
-                        problem += u"No summary statistic asked for group %s\n"%(i+1)
+                        problem += u"No summary statistic defined for group %s\n"%(i+1)
                 else:
                     problem += u"Group %s is empty\n"%(i+1)
         else:

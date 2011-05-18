@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'preferences.ui'
+# Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Tue May 17 11:22:37 2011
+# Created: Wed May 18 18:41:42 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -93,6 +93,19 @@ class Ui_MainWindow(object):
         self.execPathEdit.setObjectName(_fromUtf8("execPathEdit"))
         self.horizontalLayout_3.addWidget(self.execPathEdit)
         self.verticalLayout_2.addWidget(self.frame_3)
+        self.frame_6 = QtGui.QFrame(self.tab_2)
+        self.frame_6.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame_6.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_6.setObjectName(_fromUtf8("frame_6"))
+        self.horizontalLayout_6 = QtGui.QHBoxLayout(self.frame_6)
+        self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
+        self.label_7 = QtGui.QLabel(self.frame_6)
+        self.label_7.setObjectName(_fromUtf8("label_7"))
+        self.horizontalLayout_6.addWidget(self.label_7)
+        self.maxThreadCombo = QtGui.QComboBox(self.frame_6)
+        self.maxThreadCombo.setObjectName(_fromUtf8("maxThreadCombo"))
+        self.horizontalLayout_6.addWidget(self.maxThreadCombo)
+        self.verticalLayout_2.addWidget(self.frame_6)
         self.frame = QtGui.QFrame(self.tab_2)
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
@@ -602,6 +615,7 @@ class Ui_MainWindow(object):
         self.useDefaultExeCheck.setText(QtGui.QApplication.translate("MainWindow", "Use default executable file", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("MainWindow", "Path to the executable file", None, QtGui.QApplication.UnicodeUTF8))
         self.execBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "browse", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("MainWindow", "Maximum number of thread", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("MainWindow", "Graphics and pictures save format\n"
 "(scenario trees, PCA graphics)", None, QtGui.QApplication.UnicodeUTF8))
         self.formatCombo.setItemText(0, QtGui.QApplication.translate("MainWindow", "svg", None, QtGui.QApplication.UnicodeUTF8))

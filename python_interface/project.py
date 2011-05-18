@@ -73,11 +73,13 @@ class Project(QTabWidget):
 
         # creation des onglets "set ..."
         self.hist_model_win = SetHistoricalModel(self)
+        self.hist_model_win.ui.okButton.setText("VALIDATE AND SAVE")
         self.hist_model_win.hide()
         #self.addTab(self.hist_model_win,"Set historical model")
         #self.setTabEnabled(2,False)
 
         self.gen_data_win = SetGeneticDataRefTable(self)
+        self.gen_data_win.ui.okButton.setText("VALIDATE AND SAVE")
         self.gen_data_win.hide()
         #self.addTab(self.gen_data_win,"Set genetic data")
         #self.setTabEnabled(3,False)
@@ -909,6 +911,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.ui.nbSetsDoneEdit.setText("%s"%size)
             self.freezeHistModel()
             self.freezeGenData()
+            self.ui.newAnButton.setDisabled(False)
+        else:
+            # si on n'a pas de reftable, on empêche la définition d'analyse
+            self.ui.newAnButton.setDisabled(True)
 
     def freezeGenData(self,yesno=True):
         """ empêche la modification des genetic data tout en laissant
@@ -1219,7 +1225,8 @@ class RefTableGenThread(QThread):
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
             #exPath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
             exPath = self.parent.parent.preferences_win.getExecutablePath()
-            cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m"]
+            nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
+            cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m", "-t", "%s"%nbMaxThread]
             print " ".join(cmd_args_list)
             if os.path.exists("general.out"):
                 os.remove("general.out")

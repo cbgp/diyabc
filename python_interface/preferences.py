@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os,sys,platform
+import os,sys,platform,multiprocessing
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -46,6 +46,12 @@ class Preferences(QMainWindow):
         ind = self.ui.styleCombo.findText("white")
         if ind != -1:
             self.ui.bgColorCombo.setCurrentIndex(ind)
+
+        # initialisation du combo pour le nombre max de thread
+        for i in range(multiprocessing.cpu_count()):
+            self.ui.maxThreadCombo.addItem("%s"%(i+1))
+        self.ui.maxThreadCombo.setCurrentIndex(self.ui.maxThreadCombo.count()-1)
+
 
     def createWidgets(self):
         self.ui = Ui_MainWindow()
@@ -94,6 +100,9 @@ class Preferences(QMainWindow):
         qfd = QFileDialog()
         path = str(qfd.getOpenFileName(self,"Where is your executable file ?"))
         self.ui.execPathEdit.setText(path)
+
+    def getMaxThreadNumber(self):
+        return int(self.ui.maxThreadCombo.currentText())
 
     def getExecutablePath(self):
         exPath = ""
@@ -173,7 +182,8 @@ class Preferences(QMainWindow):
         pic_format = str(self.ui.formatCombo.currentText())
         ex_path = str(self.ui.execPathEdit.text())
         ex_default = str(self.ui.useDefaultExeCheck.isChecked())
-        lines = "style %s\nformat %s\nexecPath %s\nbgColor %s\nuseDefaultExecutable %s"%(style,pic_format,ex_path,bgColor,ex_default)
+        max_thread = str(self.ui.maxThreadCombo.currentText())
+        lines = "style %s\nformat %s\nexecPath %s\nbgColor %s\nuseDefaultExecutable %s\nmaxThreadNumber %s"%(style,pic_format,ex_path,bgColor,ex_default,max_thread)
         f = codecs.open(os.path.expanduser("~/.diyabc/various"),"w","utf-8")
         f.write(lines)
         f.close()
@@ -204,6 +214,10 @@ class Preferences(QMainWindow):
                         ind = self.ui.formatCombo.findText(l.strip().split(' ')[1])
                         if ind != -1:
                             self.ui.formatCombo.setCurrentIndex(ind)
+                    if l.split(' ')[0] == "maxThreadNumber":
+                        ind = self.ui.maxThreadCombo.findText(l.strip().split(' ')[1])
+                        if ind != -1:
+                            self.ui.maxThreadCombo.setCurrentIndex(ind)
                     if l.split(' ')[0] == "execPath":
                         self.ui.execPathEdit.setText(l.strip().split(' ')[1])
         else:
