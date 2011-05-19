@@ -307,6 +307,7 @@ public:
     	this->locus[loc].haplomic = new int*[this->nsample];
     	this->locus[loc].ss = new int[this->nsample];
     	this->locus[loc].samplesize = new int[this->nsample];
+        //cout<<"data Locus="<<loc<<"\n";
     	for (int ech=0;ech<this->nsample;ech++){
     		this->locus[loc].ss[ech] = 0;
     		this->locus[loc].samplesize[ech] = 0;
@@ -349,6 +350,9 @@ public:
     		this->locus[loc].haplomic[ech] = new int[ng];
             for (int i=0;i<ng;i++) this->locus[loc].haplomic[ech][i]=haplo[i];
             if (not haplo.empty()) haplo.clear();
+            //cout<<"sample "<<ech<<"\n";
+            //for (int i=0;i<this->locus[loc].ss[ech];i++) cout<<"  "<<this->locus[loc].haplomic[ech][i];
+            //cout<<"\n";
     	}
     	delete [] gen;
         
@@ -433,13 +437,11 @@ public:
             this->locus[loc].ss[ech] = ng;
             this->locus[loc].haplodna[ech] = new string[ng];
             for (int i=0;i<ng;i++) {
-                //this->locus[loc].haplodna[ech][i] = new char[haplo[i].length()+1];
-                //for (int k=0;k<haplo[i].length();k++ )this->locus[loc].haplodna[ech][i][k]=haplo[i][k];
-                //this->locus[loc].haplodna[ech][i][haplo[i].length()] = '\0';
                 this->locus[loc].haplodna[ech][i]=haplo[i];
                 haplo[i].clear();
+                //cout<<"  "<<this->locus[loc].haplodna[ech][i]<<"("<<this->locus[loc].haplodna[ech][i].length()<<")";
             }
-            
+            //cout<<"\n\n";
             if (not haplo.empty()) haplo.clear();
             //cout<<"coucou\n";
     	}

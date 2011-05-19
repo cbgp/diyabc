@@ -713,14 +713,17 @@ public:
                                 kmoy=(this->dataobs.locus[kloc].maxi+this->dataobs.locus[kloc].mini)/2;
                                 this->particuleobs.locuslist[kloc].kmin=kmoy-((this->dataobs.locus[kloc].motif_range/2)-1)*this->dataobs.locus[kloc].motif_size;
                                 this->particuleobs.locuslist[kloc].kmax=this->particuleobs.locuslist[kloc].kmin+(this->dataobs.locus[kloc].motif_range-1)*this->dataobs.locus[kloc].motif_size;
-                                //cout<<"kmin="<<this->particuleobs.locuslist[kloc].kmin<<"     kmax="<<this->particuleobs.locuslist[kloc].kmax<<"\n";
                                 this->particuleobs.locuslist[kloc].motif_size = this->dataobs.locus[kloc].motif_size;
                                 this->particuleobs.locuslist[kloc].motif_range = this->dataobs.locus[kloc].motif_range;
+                                if ((this->particuleobs.locuslist[kloc].kmin>this->dataobs.locus[kloc].mini)or(this->particuleobs.locuslist[kloc].kmax<this->dataobs.locus[kloc].maxi)) {
+                                    cout <<"Job aborted : motif range at locus "<<kloc+1<<" is not large enough to include all observed alleles.\n";
+                                    exit(1);
+                                }
                                 this->particuleobs.locuslist[kloc].haplomic = new int*[this->particuleobs.data.nsample];
                                 for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
                                       this->particuleobs.locuslist[kloc].haplomic[sa] = new int[this->particuleobs.locuslist[kloc].ss[sa]]; 
                                       for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplomic[sa][i]=this->dataobs.locus[kloc].haplomic[sa][i];
-                                }
+                                 }
                         }else {
                                 this->particuleobs.locuslist[kloc].dnalength =  this->dataobs.locus[kloc].dnalength;
                                 this->particuleobs.locuslist[kloc].pi_A = this->dataobs.locus[kloc].pi_A ;
@@ -731,16 +734,6 @@ public:
                                 for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
                                       this->particuleobs.locuslist[kloc].haplodna[sa] = new string[this->particuleobs.locuslist[kloc].ss[sa]];
                                       for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i]; 
-                                           /*if (this->dataobs.locus[kloc].haplodna[sa][i][0]!='\0') {
-                                              this->particuleobs.locuslist[kloc].haplodna[sa][i] = new char[this->dataobs.locus[kloc].dnalength+1];
-                                              for (int jj=0;jj<this->dataobs.locus[kloc].dnalength+1;jj++) this->particuleobs.locuslist[kloc].haplodna[sa][i][jj] = this->dataobs.locus[kloc].haplodna[sa][i][jj];
-                                              //cout<<"haplodna["<<sa<<"]["<<i<<"]"<<"\n";  
-                                           } else {
-                                             //cout<<"coucou\n";
-                                              this->particuleobs.locuslist[kloc].haplodna[sa][i] = new char[1];
-                                              this->particuleobs.locuslist[kloc].haplodna[sa][i][0]='\0';
-                                           }
-                                       }*/
                                  }
                         }
                        if (debuglevel==2) cout <<"Locus"<<kloc<< "  samplesize[0]="<<this->particuleobs.locuslist[kloc].samplesize[0]<<"\n";
