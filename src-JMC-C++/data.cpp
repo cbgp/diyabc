@@ -57,13 +57,15 @@ struct LocusC
 	int *samplesize;  //comptabilise les "gene copies" non-manquantes
 //Proprietes des locus sequences
 	double pi_A,pi_C,pi_G,pi_T;
-	double *mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
+	vector <double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
 	int nsitmut;   // length of array *sitmut;
 	int *sitmut;   //array of nsitmut dna sites that are changed through a mutation
 	int dnalength,dnavar;
-	int *tabsit;   //array of dnalength elements giving the number of a dna site;
-	char ***haplodna;  //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
-	char ***haplodnavar; //seulement les sites variables
+	vector <char> tabsit;   //array of dnalength elements giving the number of a dna site;
+	//char ***haplodna;  //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
+	//char ***haplodnavar; //seulement les sites variables
+    string **haplodna;
+    string **haplodnavar;
 //	int *haplostate; //array[gene copy] tous les "gene copies" sont mises à la suite les unes des autres (groupées par sample)
 //Proprietes des locus microsatellites
 	int mini,maxi,kmin,kmax,motif_size,motif_range,nal;
@@ -73,25 +75,27 @@ struct LocusC
 	void libere(bool obs, int nsample) {
       //cout<<"debut  nsample="<<nsample<<"\n";
        delete []this->name;
+       //cout<<"apres delete name\n";
        delete []this->ss;
+       //cout<<"apres delete ss\n";
        //delete []this->samplesize;
-      //cout<<"milieu\n";
+       //cout<<"apres delete samplesize\n";
        if (this->type<5) {
-       //   for (int i=0;i<nsample;i++) delete []this->haplomic[i];
-       //   delete []this->haplomic;
+          /*for (int i=0;i<nsample;i++) delete []this->haplomic[i];
+          delete []this->haplomic;*/
        } else {
            if (not obs) {
-              delete []mutsit;
+              if (not mutsit.empty()) mutsit.clear();
               delete []sitmut;
-              delete []tabsit;
+              if (not tabsit.empty())tabsit.clear();
            }
-           for (int i=0;i<nsample;i++) {
+           /*for (int i=0;i<nsample;i++) {
                for (int j;j<nsample;j++) delete[]this->haplodna[i][j];
                delete []this->haplodna[i];
            } 
-           delete []this->haplodna;
+           delete []this->haplodna;*/
        }
-      //cout<<"fin\n";
+       //cout<<"fin\n";
     }
 };
 
@@ -150,26 +154,6 @@ public:
                 //cout<<"apres delete misshap et missnuc\n";
                 if (Alocus) {
                     for (int loc=0;loc<this->nloc;loc++) this->locus[loc].libere(true,this->nsample);
-                    
-                    
-                    /*{
-                            delete [] this->locus[loc].name;
-                            if (this->locus[loc].type<5) {
-                                    for (int  ech=0;ech<this->nsample;ech++) delete [] this->locus[loc].haplomic[ech];
-                                    delete [] this->locus[loc].haplomic;
-                            } else {
-                                    for (int  ech=0;ech<this->nsample;ech++) {
-                                            for (int ind=0;ind<this->nind[ech];ind++) delete [] this->locus[loc].haplodna[ech][ind];
-                                            delete [] this->locus[loc].haplodna[ech];
-                                    }
-                                    delete [] this->locus[loc].haplodna;
-                                    delete [] this->locus[loc].tabsit;
-                                    delete [] this->locus[loc].mutsit;
-                                    if (this->locus[loc].nsitmut>0) delete [] this->locus[loc].sitmut;
-                            }
-                            delete [] this->locus[loc].samplesize;
-                            delete [] this->locus[loc].ss;
-                    }*/
                     delete [] this->locus;
                 }
 		if (Anind) delete [] this->nind;
@@ -194,7 +178,7 @@ public:
 		getline(file,this->title);
 		j0=title.find("<NM=");
 		if (j0!=string::npos) {
-                        cout<<"j0="<<j0<<"\n";
+                        //cout<<"j0="<<j0<<"\n";
 			j1=title.find("NF>",j0+3);
 			s=title.substr(j0+4,j1-(j0+4));
 			this->sexratio=atof(s.c_str())/(1.0+atof(s.c_str()));
@@ -342,8 +326,8 @@ public:
     			    if ((this->locus[loc].type==3)and(geno!="000")) this->indivsexe[ech][ind]=1;
     			}
     			for (int i=0;i<n;i++) {
-    				if (gen[i]!="000") {
-                        ng++;
+    				ng++;
+                    if (gen[i]!="000") {
     					this->locus[loc].samplesize[ech] +=1;
     					gg = atoi(gen[i].c_str());
     					haplo.push_back(gg);
@@ -351,13 +335,13 @@ public:
     					if (gg<this->locus[loc].mini) this->locus[loc].mini=gg;
 
     				} else {
-    					if (not ((this->indivsexe[ech][ind]==2)and(this->locus[loc].type==3))) { // on ne prend pas en compte les chromosomes Y des femelles
-							this->nmisshap +=1;
-							this->misshap[this->nmisshap-1].sample=ech;
-							this->misshap[this->nmisshap-1].locus=loc;
-							this->misshap[this->nmisshap-1].indiv=ind;
-                            haplo.push_back(-9999);ng++;
-    					}
+    					//if (not ((this->indivsexe[ech][ind]==2)and(this->locus[loc].type==3))) { // on ne prend pas en compte les chromosomes Y des femelles
+                        this->nmisshap +=1;
+                        this->misshap[this->nmisshap-1].sample=ech;
+                        this->misshap[this->nmisshap-1].locus=loc;
+                        this->misshap[this->nmisshap-1].indiv=ind;
+                        haplo.push_back(-9999);
+    					//}
     				}
     			}
     		}
@@ -375,21 +359,21 @@ public:
 * traitement des génotypes DNA sequence au locus loc
 */
     void do_sequence(int loc){
+        //cout<<"do_sequence locus"<<loc<<"\n";
     	string geno,*gen;
-    	int l,ll,n,gg,j0,j1,j2;
+    	int l,ll,n,gg,j0,j1,j2,ng;
     	gen = new string[2];
-    	string sbase;
+    	string sbase,seq;
     	char base[] ="ACGT";
-    	this->locus[loc].haplodna = new char**[this->nsample];
-    	for (int ech=0;ech<this->nsample;ech++) {
-    		this->locus[loc].haplodna[ech] = new char*[2*this->nind[ech]];
-    	}
+        vector <string> haplo;
+    	this->locus[loc].haplodna = new string*[this->nsample];
     	this->locus[loc].ss = new int[this->nsample];
     	this->locus[loc].samplesize = new int[this->nsample];
     	this->locus[loc].dnalength = -1;
     	for (int ech=0;ech<this->nsample;ech++){
     		this->locus[loc].ss[ech] = 0;
     		this->locus[loc].samplesize[ech] = 0;
+            ng=0;
     		for (int ind=0;ind<this->nind[ech];ind++){
     			geno=this->genotype[ech][ind][loc];
     			if (geno.find("][")==string::npos) n=1; else n=2;
@@ -407,7 +391,6 @@ public:
     				gen[0]=geno.substr(j0,j1-j0);
     				gen[1]=geno.substr(j1+2,j2-(j1+2));
     				//cout <<indivname[ech][ind]<<"  n=2     "<<gen[0]<<"   "<<gen[1]<<"\n";
-    				this->locus[loc].ss[ech] +=2;
     			}else {
     				j0=geno.find("[")+1;
     				j1=geno.find("]");
@@ -419,16 +402,15 @@ public:
     					return;
     				}
     				gen[0]=geno.substr(j0,j1-j0);
-    				this->locus[loc].ss[ech] +=1;
     				if (this->locus[loc].type==2) this->indivsexe[ech][ind]=1;
     			    if ((this->locus[loc].type==3)and(geno!="[]")) this->indivsexe[ech][ind]=1;
 
     			}
     			for (int i=0;i<n;i++) {
+                    ng++;
+                    haplo.push_back(gen[i]);
     				if (gen[i]!="") {
     					this->locus[loc].samplesize[ech] +=1;
-    					this->locus[loc].haplodna[ech][this->locus[loc].samplesize[ech]-1] = new char[gen[i].length()+1];
-    					strncpy(this->locus[loc].haplodna[ech][this->locus[loc].samplesize[ech]-1], gen[i].c_str(), gen[i].length());
     					j0=min(gen[i].find("-"),gen[i].find("N"));
     					while (j0!=string::npos) {
     						this->nmissnuc +=1;
@@ -439,35 +421,48 @@ public:
     						j0=min(gen[i].find("-",j0+1),gen[i].find("N",j0+1));
     					}
     				} else {
-    					if (not ((this->indivsexe[ech][ind]==2)and(this->locus[loc].type==8))) { // on ne prend pas en compte les chromosomes Y des femelles
-            				cout <<indivname[ech][ind]<<"donnée manquante"<<"   nmisshap="<<this->nmisshap<<  "\n";
-							this->nmisshap +=1;
-							this->misshap[this->nmisshap-1].sample=ech;
-							this->misshap[this->nmisshap-1].locus=loc;
-							this->misshap[this->nmisshap-1].indiv=ind;
-    					}
+                        //cout <<indivname[ech][ind]<<"donnée manquante"<<"   nmisshap="<<this->nmisshap<<  "\n";
+                        this->nmisshap +=1;
+                        this->misshap[this->nmisshap-1].sample=ech;
+                        this->misshap[this->nmisshap-1].locus=loc;
+                        this->misshap[this->nmisshap-1].indiv=ind;
     				}
     			}
-    			for (int i=this->locus[loc].samplesize[ech];i<this->locus[loc].ss[ech];i++) this->locus[loc].haplodna[ech][i] = new char[1];
     		}
+    		//cout <<"ng="<<ng<<"\n";
+            this->locus[loc].ss[ech] = ng;
+            this->locus[loc].haplodna[ech] = new string[ng];
+            for (int i=0;i<ng;i++) {
+                //this->locus[loc].haplodna[ech][i] = new char[haplo[i].length()+1];
+                //for (int k=0;k<haplo[i].length();k++ )this->locus[loc].haplodna[ech][i][k]=haplo[i][k];
+                //this->locus[loc].haplodna[ech][i][haplo[i].length()] = '\0';
+                this->locus[loc].haplodna[ech][i]=haplo[i];
+                haplo[i].clear();
+            }
+            
+            if (not haplo.empty()) haplo.clear();
+            //cout<<"coucou\n";
     	}
 		this->locus[loc].pi_A=0.0;this->locus[loc].pi_C=0.0;this->locus[loc].pi_G=0.0;this->locus[loc].pi_T=0.0;
 		double nn=0.0;
     	for (int ech=0;ech<this->nsample;ech++){
-    		for (int i=0;i<this->locus[loc].samplesize[ech];i++){
-    			for (int j=0;j<this->locus[loc].dnalength;j++) {
-    				if (this->locus[loc].haplodna[ech][i][j]==base[0]) {this->locus[loc].pi_A+=1.0;nn+=1.0;}
-    				else if (this->locus[loc].haplodna[ech][i][j]==base[1]) {this->locus[loc].pi_C+=1.0;nn+=1.0;}
-    				else if (this->locus[loc].haplodna[ech][i][j]==base[2]) {this->locus[loc].pi_G+=1.0;nn+=1.0;}
-    				else if (this->locus[loc].haplodna[ech][i][j]==base[3]) {this->locus[loc].pi_T+=1.0;nn+=1.0;}
-    			}
+    		for (int i=0;i<this->locus[loc].ss[ech];i++){
+                if (not this->locus[loc].haplodna[ech][i].empty()) {
+                    for (int j=0;j<this->locus[loc].dnalength;j++) {
+                        if (this->locus[loc].haplodna[ech][i][j]==base[0]) {this->locus[loc].pi_A+=1.0;nn+=1.0;}
+                        else if (this->locus[loc].haplodna[ech][i][j]==base[1]) {this->locus[loc].pi_C+=1.0;nn+=1.0;}
+                        else if (this->locus[loc].haplodna[ech][i][j]==base[2]) {this->locus[loc].pi_G+=1.0;nn+=1.0;}
+                        else if (this->locus[loc].haplodna[ech][i][j]==base[3]) {this->locus[loc].pi_T+=1.0;nn+=1.0;}
+                    }
+                }
     		}
     	}
-    	if (n>0.0) {this->locus[loc].pi_A /=nn;this->locus[loc].pi_C /=nn;this->locus[loc].pi_G /=nn;this->locus[loc].pi_T /=nn;}
+    	if (nn>0.0) {this->locus[loc].pi_A /=nn;this->locus[loc].pi_C /=nn;this->locus[loc].pi_G /=nn;this->locus[loc].pi_T /=nn;}
     	this->locus[loc].nsitmut=0;
-    	this->locus[loc].tabsit = new int[this->locus[loc].dnalength];
-    	this->locus[loc].mutsit = new double[this->locus[loc].dnalength];
+    	this->locus[loc].tabsit.resize(this->locus[loc].dnalength);
+    	this->locus[loc].mutsit.resize(this->locus[loc].dnalength);
     	delete [] gen;
+        //if (loc==12) for (int i=0;i<this->locus[loc].ss[0];i++) cout<<i<<"   "<<this->locus[loc].haplodna[0][i]<<"\n";
     }
 
 /**

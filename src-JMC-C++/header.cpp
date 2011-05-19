@@ -305,7 +305,7 @@ public:
             }
             else if (ss[k]=="[S]") {
                 s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());this->dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
-                this->dataobs.locus[loc].mutsit = new double[this->dataobs.locus[loc].dnalength];
+                this->dataobs.locus[loc].mutsit.resize(this->dataobs.locus[loc].dnalength);
                 //cout<<this->dataobs.locus[loc].dnalength<<"\n";  
                 //this->dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());  //inutile variable déjà renseignée
             }
@@ -440,8 +440,10 @@ public:
                 }
                 for (int i=0;i<this->scen.nevent;i++) {
                     this->scen.event[i].stime = new char[lonmax];
-                    this->scen.event[i].ltime=0;
+                    this->scen.event[i].ltime=2;this->scen.event[i].time=-9999;this->scen.event[i].stime[0]='0';this->scen.event[i].stime[1]='\0';
                     for (int j=0;j<lonmax;j++) this->scen.event[i].stime[j]='\0';
+                    this->scen.event[i].action='E';
+                    this->scen.event[i].pop=1;
                 }
                 lonmax=0;
                 for (int i=0;i<this->nscenarios;i++) {
@@ -475,9 +477,13 @@ public:
                 this->scen.histparam = new HistParameterC[this->scen.nparam];
                 this->scen.paramvar = new double[this->scen.nparamvar+3];
                 if (this->scen.nconditions>0) this->scen.condition = new ConditionC[this->scen.nconditions];
+                for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i]=0;
+                for (int i=0;i<this->scen.nparamvar+3;i++) this->scen.paramvar[i]=-1;
+                PriorC pr;pr.loi="uniforme";pr.mini=0.0;pr.maxi=1.0;pr.ndec=3;pr.constant=false;
+                HistParameterC pp;pp.name="bidon";pp.category=0;pp.value=-1;pp.prior=copyprior(pr);
+                for (int i=0;i<this->scen.nparam;i++)  this->scen.histparam[i]=copyhistparameter(pp);
                 //this->scen.ecris();
                 //cout<<"apres superscen\n";
-                //exit(1);
         if (debuglevel==2) cout<<"header.txt : fin de l'établissement du superscen\n";
 //Partie group statistics
                 //cout<<"debut des group stat\n";
@@ -647,7 +653,7 @@ public:
     
     void calstatobs(char* statobsfilename) {
 //partie DATA
-                cout<<"debut de calstatobs\n";
+                //cout<<"debut de calstatobs\n";
                 this->particuleobs.dnatrue = true;
                 this->particuleobs.nsample = this->dataobs.nsample;
                 //cout<<this->dataobs.nsample<<"\n";
@@ -659,10 +665,10 @@ public:
                         this->particuleobs.data.indivsexe[i] = new int[this->dataobs.nind[i]];
                         for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
                 }
-                cout<<"apres DATA\n";
+                //cout<<"apres DATA\n";
 //partie GROUPES
                 int ngr = this->ngroupes;
-                cout<<"ngr="<<ngr<<"\n";
+                //cout<<"ngr="<<ngr<<"\n";
                 this->particuleobs.ngr = ngr;
                 this->particuleobs.grouplist = new LocusGroupC[ngr+1];
                 this->particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
@@ -685,7 +691,7 @@ public:
 
                         }
                 }
-                cout<<"apres GROUPS\n";
+                //cout<<"apres GROUPS\n";
 //partie LOCUSLIST
                 int kmoy;
                 this->particuleobs.nloc = this->dataobs.nloc;
@@ -721,11 +727,11 @@ public:
                                 this->particuleobs.locuslist[kloc].pi_C =  this->dataobs.locus[kloc].pi_C;
                                 this->particuleobs.locuslist[kloc].pi_G =  this->dataobs.locus[kloc].pi_G;
                                 this->particuleobs.locuslist[kloc].pi_T =  this->dataobs.locus[kloc].pi_T;
-                                this->particuleobs.locuslist[kloc].haplodna = new char**[this->particuleobs.data.nsample];
+                                this->particuleobs.locuslist[kloc].haplodna = new string*[this->particuleobs.data.nsample];
                                 for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
-                                      this->particuleobs.locuslist[kloc].haplodna[sa] = new char*[this->particuleobs.locuslist[kloc].ss[sa]];
-                                      for (int i=0;i<this->particuleobs.locuslist[kloc].samplesize[sa];i++){
-                                           if (this->dataobs.locus[kloc].haplodna[sa][i][0]!='\0') {
+                                      this->particuleobs.locuslist[kloc].haplodna[sa] = new string[this->particuleobs.locuslist[kloc].ss[sa]];
+                                      for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i]; 
+                                           /*if (this->dataobs.locus[kloc].haplodna[sa][i][0]!='\0') {
                                               this->particuleobs.locuslist[kloc].haplodna[sa][i] = new char[this->dataobs.locus[kloc].dnalength+1];
                                               for (int jj=0;jj<this->dataobs.locus[kloc].dnalength+1;jj++) this->particuleobs.locuslist[kloc].haplodna[sa][i][jj] = this->dataobs.locus[kloc].haplodna[sa][i][jj];
                                               //cout<<"haplodna["<<sa<<"]["<<i<<"]"<<"\n";  
@@ -734,7 +740,7 @@ public:
                                               this->particuleobs.locuslist[kloc].haplodna[sa][i] = new char[1];
                                               this->particuleobs.locuslist[kloc].haplodna[sa][i][0]='\0';
                                            }
-                                       }
+                                       }*/
                                  }
                         }
                        if (debuglevel==2) cout <<"Locus"<<kloc<< "  samplesize[0]="<<this->particuleobs.locuslist[kloc].samplesize[0]<<"\n";
@@ -760,7 +766,7 @@ public:
                fprintf(fobs,"\n");
                fclose(fobs);
                this->particuleobs.libere(true);
-               exit(1);
+               //exit(1);
         }
         /** 
 * lit le fichier des statistiques observées (placées dans double *stat_obs)

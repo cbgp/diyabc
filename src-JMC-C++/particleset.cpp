@@ -158,6 +158,7 @@ struct ParticleSetC
 	void setloci(int p) {
 	        int kmoy;
 		this->particule[p].nloc = this->header.dataobs.nloc;
+        //cout<<"setloci nloc="<<this->particule[p].nloc<<"\n";
 		this->particule[p].locuslist = new LocusC[this->header.dataobs.nloc];
 		//cout<<"avant la boucle\n";
 		for (int kloc=0;kloc<this->header.dataobs.nloc;kloc++){
@@ -184,7 +185,7 @@ struct ParticleSetC
 				this->particule[p].locuslist[kloc].pi_C =  this->header.dataobs.locus[kloc].pi_C;
 				this->particule[p].locuslist[kloc].pi_G =  this->header.dataobs.locus[kloc].pi_G;
 				this->particule[p].locuslist[kloc].pi_T =  this->header.dataobs.locus[kloc].pi_T;
-				this->particule[p].locuslist[kloc].mutsit = new double[ this->header.dataobs.locus[kloc].dnalength];
+				this->particule[p].locuslist[kloc].mutsit.resize(this->header.dataobs.locus[kloc].dnalength);
 				for (int i=0;i<this->particule[p].locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = this->header.dataobs.locus[kloc].mutsit[i];
 				//std::cout <<"\n";
 				}
@@ -204,15 +205,19 @@ struct ParticleSetC
 		this->particule[p].drawuntil = this->header.drawuntil;
 		this->particule[p].scenario = new ScenarioC[this->header.nscenarios];
 		for (int i=0;i<this->header.nscenarios;i++) {
-                    //cout<<"avant la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
-                    //cout << "\nscenario source\n";
-                    //this->header.scenario[i].ecris();
+            //cout<<"avant la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
+            //cout << "\nscenario source\n";
+            //this->header.scenario[i].ecris();
 		    this->particule[p].scenario[i] = copyscenario(this->header.scenario[i]);
+            //cout<<"apres la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
 		    //this->particule[p].scenario[i].ecris();
 		}
+        //cout<<"\navant la copie du superscenario\n";
+        //this->header.scen.ecris();
 		this->particule[p].scen=copyscenario(this->header.scen);
-                //cout<<"\n\n";
-                //this->particule[p].scen.ecris();
+        //cout<<"\napres la copie du superscenario\n";
+        //this->particule[p].scen.ecris();
+        //cout<<"setscenarios nloc="<<this->particule[p].nloc<<"\n";
 		
 	}
 	
@@ -234,7 +239,7 @@ struct ParticleSetC
                                         this->particule[p].grouplist[gr].k2moy = this->header.groupe[gr].k2moy ;        //k2moy
                                 }
                         }
-                         
+                 //for (int loc=0;loc<this->nloc;loc++) this->particule[p].libere(false);        
                 
                 }
         }
@@ -318,13 +323,13 @@ struct ParticleSetC
                 //cout<<"\n";
         }
         //cout<<"apres le remplissage des particules\n";
+        //if (num_threads>0) omp_set_num_threads(num_threads);_
     #pragma omp parallel for shared(sOK) private(gr) if(multithread)
         for (ipart=0;ipart<this->npart;ipart++){
                 //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
             sOK[ipart]=this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
-                //if (trace) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
             if (sOK[ipart]==0) {
-                for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
+                for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr);}
             }
     //if (trace) cout<<"apres docalstat de la particule "<<ipart<<"\n";
         }
@@ -388,7 +393,7 @@ struct ParticleSetC
                         this->setloci(p);
                         if (debuglevel==5) cout<<"setloci\n";
                         this->setscenarios(p);
-                        if (debuglevel==5) cout << "                    apres set particule\n";
+                        if (debuglevel==5) cout << "                    apres set particule "<<p<<"\n";
                         this->particule[p].mw.randinit(p,seed);
                     }
                 }
@@ -397,10 +402,12 @@ struct ParticleSetC
                         this->resetparticle(p);
                      }
                 }
-                if (debuglevel==5) cout << "avant pragma npart = "<<npart<<"\n";
+                if (debuglevel==5) cout << "avant pragma npart = "<<this->npart<<"\n";
+                //if (num_threads>0) omp_set_num_threads(num_threads);_
 	       #pragma omp parallel for shared(sOK) private(gr) if(multithread)
                 for (ipart=0;ipart<this->npart;ipart++){
                         if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
+                         //cout <<"   nloc="<<this->particule[ipart].nloc<<"\n";
 			        sOK[ipart]=this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
                         if (debuglevel==5) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 			        if (sOK[ipart]==0) {
@@ -410,6 +417,7 @@ struct ParticleSetC
 		        }
 //fin du pragma
                 if (debuglevel==5) cout << "apres pragma\n";
+                //exit(1);
                 for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				enreg[ipart].numscen=1;

@@ -60,6 +60,7 @@ char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftabl
 bool multithread=false;
 int nrecneeded,nenr=100;
 int debuglevel=0;
+int num_threads=0;
 string sremtime;
 double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,debutr,dureer,remtime;
 
@@ -138,7 +139,7 @@ int main(int argc, char *argv[]){
     FILE *flog;   
         
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:d:hmqj:a:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:d:hmqj:a:t:")) !=-1) {
          
 	  switch (optchar) {
 
@@ -147,9 +148,10 @@ int main(int argc, char *argv[]){
             cout << "-r <number of required data sets in the reftable>\n";
             cout << "-i <name given to the analysis\n";
             cout << "-g <minimum number of particles simulated in a single bunch (default=100)>\n";
-            cout << "-m <multithreaded version of the program (default single threaded)\n";
+            cout << "-m <multithreaded version of the program\n";
             cout << "-q to merge all reftable_$j.bin \n";
             cout << "-s <seed for the random generator>\n";
+            cout << "-t <required number of threads>\n";
 
             cout << "\n-e for ABC PARAMETER ESTIMATION (with parameters as a string including the following options separated par a semi-colon)\n";
             cout << "           s:<chosen scenario[s separated by a comma]>\n";
@@ -290,6 +292,11 @@ int main(int argc, char *argv[]){
             action='j';
             break;        
 
+        case 't' :  
+            num_threads = atoi(optarg);
+            multithread=true;
+            break;        
+
 	    }
 	}
 	 if (not flagp) {cout << "option -p is compulsory\n";exit(1);}
@@ -300,7 +307,8 @@ int main(int argc, char *argv[]){
                      if (action=='d') ident=strdup("pcaloc1");
                      if (action=='j') ident=strdup("modchec1");
      }
-     if (not flags) seed=time(NULL);	
+     if (not flags) seed=time(NULL);
+     if (num_threads>0) omp_set_num_threads(num_threads);
 	switch (action) {
     
       case 'r' :   k=readheaders(); 
