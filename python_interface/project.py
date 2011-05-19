@@ -340,39 +340,41 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             executablePath = self.parent.preferences_win.getExecutablePath()
             # generation du master script
             script = self.genMasterScript()
-            if os.path.exists('scmf'):
-                os.remove('scmf')
-            scmf = open('scmf','w')
+            scmffile = "%s/scmf"%self.dir
+            if os.path.exists(scmffile):
+                os.remove(scmffile)
+            scmf = open(scmffile,'w')
             scmf.write(script)
             scmf.close()
-            os.chmod('scmf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
+            os.chmod(scmffile,stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
             tar = tarfile.open(tarname,"w")
             # generation du node script
             script = self.genNodeScript()
-            if os.path.exists('scnf'):
-                os.remove('scnf')
-            scnf = open('scnf','w')
+            scnffile = "%s/scnf"%self.dir
+            if os.path.exists(scnffile):
+                os.remove(scnffile)
+            scnf = open(scnffile,'w')
             scnf.write(script)
             scnf.close()
-            os.chmod('scnf',stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
+            os.chmod(scnffile,stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
 
             # ajout des fichiers dans l'archive
             tarRepName = self.dir.split('/')[-1]
             if os.path.exists(tarname):
                 os.remove(tarname)
             tar = tarfile.open(tarname,"w")
-            tar.add('scmf','%s/launch.sh'%tarRepName)
-            tar.add('scnf','%s/node.sh'%tarRepName)
+            tar.add(scmffile,'%s/launch.sh'%tarRepName)
+            tar.add(scnffile,'%s/node.sh'%tarRepName)
             tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
             tar.add(self.dataFileSource,"%s/%s"%(str(tarRepName),str(self.dataFileName)))
             tar.add(executablePath,"%s/general"%tarRepName)
             tar.close()
 
             # nettoyage des fichiers temporaires de script
-            if os.path.exists('scmf'):
-                os.remove('scmf')
-            if os.path.exists('scnf'):
-                os.remove('scnf')
+            if os.path.exists(scmffile):
+                os.remove(scmffile)
+            if os.path.exists(scnffile):
+                os.remove(scnffile)
 
         return tarname
 
