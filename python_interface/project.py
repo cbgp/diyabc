@@ -1286,7 +1286,7 @@ class RefTableGenThread(QThread):
             # verification de l'arret du programme
             if p.poll() != None:
                 fg.close()
-                g = open("general.out","r")
+                g = open(outfile,"r")
                 data= g.readlines()
                 #print "data:%s"%data
                 #print "poll:%s"%p.poll()
@@ -1329,6 +1329,7 @@ class AnalysisThread(QThread):
     def run(self):
         #executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
         executablePath = self.parent.parent.preferences_win.getExecutablePath()
+        nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
         params = self.analysis.computationParameters
         if self.analysis.category == "estimate":
             option = "-e"
@@ -1343,14 +1344,15 @@ class AnalysisThread(QThread):
         elif self.analysis.category == "pre-ev":
             # pour cette analyse on attend que l'executable ait fini
             # on ne scrute pas de fichier de progression
-            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
-            print cmd_args_list
-            f = open("pre-ev.out","w")
+            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
+            print " ".join(cmd_args_list)
+            outfile = "%s/pre-ev.out"%self.parent.dir
+            f = open(outfile,"w")
             p = subprocess.call(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
             f.close()
             print "call ok"
 
-            f = open("pre-ev.out","r")
+            f = open(outfile,"r")
             data= f.read()
             f.close()
             self.progress = 100
@@ -1358,9 +1360,10 @@ class AnalysisThread(QThread):
             return
 
         # pour toutes les autres analyses le schema est le même
-        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name, "-m"]
+        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
         print " ".join(cmd_args_list)
-        f = open("%s.out"%self.analysis.category,"w")
+        outfile = "%s/%s.out"%(self.parent.dir,self.analysis.category)
+        f = open(outfile,"w")
         p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
         #f.close()
         print "popen ok"
@@ -1394,7 +1397,7 @@ class AnalysisThread(QThread):
             # verification de l'arret du programme
             if p.poll() != None:
                 f.close()
-                g = open("%s.out"%self.analysis.category,"r")
+                g = open(outfile,"r")
                 data= g.readlines()
                 print "data:%s"%data
                 #print "poll:%s"%p.poll()
@@ -1404,3 +1407,4 @@ class AnalysisThread(QThread):
                     self.problem = "Analysis program exited before the end of the analysis (%s%%)"%self.progress
                     self.emit(SIGNAL("analysisProblem"))
                     return
+
