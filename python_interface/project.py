@@ -1231,9 +1231,11 @@ class RefTableGenThread(QThread):
             nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m", "-t", "%s"%nbMaxThread]
             print " ".join(cmd_args_list)
-            if os.path.exists("general.out"):
-                os.remove("general.out")
-            fg = open("general.out","w")
+            #outfile = os.path.expanduser("~/.diyabc/general.out")
+            outfile = "%s/general.out"%self.parent.dir
+            if os.path.exists(outfile):
+                os.remove(outfile)
+            fg = open(outfile,"w")
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:
             print "Cannot find the executable of the computation program %s"%e

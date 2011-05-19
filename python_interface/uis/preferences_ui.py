@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/preferences.ui'
 #
-# Created: Wed May 18 18:41:42 2011
+# Created: Thu May 19 09:44:54 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -615,7 +615,7 @@ class Ui_MainWindow(object):
         self.useDefaultExeCheck.setText(QtGui.QApplication.translate("MainWindow", "Use default executable file", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("MainWindow", "Path to the executable file", None, QtGui.QApplication.UnicodeUTF8))
         self.execBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "browse", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_7.setText(QtGui.QApplication.translate("MainWindow", "Maximum number of thread", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("MainWindow", "Maximum number of threads", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("MainWindow", "Graphics and pictures save format\n"
 "(scenario trees, PCA graphics)", None, QtGui.QApplication.UnicodeUTF8))
         self.formatCombo.setItemText(0, QtGui.QApplication.translate("MainWindow", "svg", None, QtGui.QApplication.UnicodeUTF8))

@@ -186,7 +186,7 @@
            <item>
             <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>Maximum number of thread</string>
+              <string>Maximum number of threads</string>
              </property>
             </widget>
            </item>
