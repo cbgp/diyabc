@@ -708,7 +708,6 @@ parstatC *parstat;
 * calcule la densité à partir de la loi fournie dans le prior
 */
     double* caldensexact(int ncl,double *x,PriorC pr) {
-      
         double *dens,xb,som;
         dens = new double[ncl];
         if (pr.loi=="UN") for(int i=0;i<ncl;i++) dens[i]=1.0/(pr.maxi-pr.mini);
@@ -723,6 +722,49 @@ parstatC *parstat;
         for(int i=0;i<ncl;i++) dens[i] /= som;
         return dens;
     }
+
+/**
+* calcule un histogramme à partir de la loi fournie dans le prior
+*/
+    double* calhistexact(int ncl,double *x,PriorC pr) {
+        double *dens,xb,som,z,pas=x[1]-x[0];
+        int ncl2=11;
+        dens = new double[ncl];
+        if (pr.loi=="UN") for(int i=0;i<ncl;i++) dens[i]=1.0/(pr.maxi-pr.mini);
+        if (pr.loi=="LU") for(int i=0;i<ncl;i++) {
+            dens[i]=0.0; 
+            for (int j=0;j<ncl2-1;j++){
+                z=x[i]+(double)j*pas/(double)(ncl2-1);
+                dens[i]+=1.0/(pr.maxi-pr.mini)/z/(ncl2-1);
+            }
+        }
+        if (pr.loi=="NO") for(int i=0;i<ncl;i++){
+            dens[i]=0.0; 
+            for (int j=0;j<ncl2-1;j++){
+                z=x[i]+(double)j*pas/(double)(ncl2-1);
+                dens[i]+=exp(-(z-pr.mean)*(z-pr.mean)/2.0/(pr.sdshape*pr.sdshape))/(pr.sdshape*co);
+            }
+        }
+        if (pr.loi=="LN") for(int i=0;i<ncl;i++) {
+            dens[i]=0.0; 
+            for (int j=0;j<ncl2-1;j++){
+                z=x[i]+(double)j*pas/(double)(ncl2-1);
+                dens[i]+=exp(-(log(z)/pr.mean)*(log(z)/pr.mean)/2.0/(pr.sdshape*pr.sdshape))/(pr.sdshape*co*x[i]);
+            }
+        }
+        if (pr.loi=="GA") for(int i=0;i<ncl;i++) {
+            dens[i]=0.0; 
+            for (int j=0;j<ncl2-1;j++){
+                z=x[i]+(double)j*pas/(double)(ncl2-1);
+                xb=z*pr.sdshape/pr.mean;
+                dens[i]+=exp((pr.sdshape-1.0)*log(xb)-xb);
+            }
+        }
+        som=0.0;for(int i=0;i<ncl;i++) som +=dens[i];
+        for(int i=0;i<ncl;i++) dens[i] /= som;
+        return dens;
+    }
+
 
 /**
 * calcule la densité à partir d'un échantillon de valeurs'
@@ -747,6 +789,31 @@ parstatC *parstat;
         }
         som=0.0;for (int j=0;j<ncl;j++) {som +=dens[j];}
         if (som>0.0) for (int j=0;j<ncl;j++) dens[j] /=som;
+        delete []z;
+        return dens;
+    }
+
+/**
+* calcule un histogramme à partir d'un échantillon de valeurs'
+*/
+    double* calculhisto(int ncl, int n, double *x, double **y,int j,bool multithread) {
+        int k;  
+        double som,*dens,*z,d,demipas=0.5*(x[1]-x[0]);
+        dens = new double[ncl];
+        z = new double[n];
+        for (int i=0;i<n;i++) z[i]=y[i][j];
+        //for (int i=0;i<n;i++) cout <<"  "<<z[i];cout<<"\n";
+        for (int i=0;i<ncl;i++) dens[i]=0.0;
+        d=1.0/(double)n;
+#pragma omp parallel for shared(dens,z,x) private(k) if(multithread)      
+        for (int i=0;i<n;i++) {
+            for (k=0;k<ncl;k++) if (abs(z[i]-x[k])<=demipas) break;
+            dens[k] += d;
+            if((k==0)or(k==ncl-1)) dens[k] += d;
+        }
+        som=0.0;for (int k=0;k<ncl;k++) {som +=dens[k];}
+        if (som>0.0) for (int k=0;k<ncl;k++) dens[k] /=som;
+        delete []z;
         return dens;
     }
 
@@ -757,6 +824,8 @@ parstatC *parstat;
 */
     void histodens(int n, bool multithread, char* progressfilename,int* iprog,int* nprog) {
         bool condition;
+        double *densprior,*denspost,*x,delta;
+        int ncl,ii;
         FILE *flog;
         pardens = new pardensC[nparamcom+nparcompo];
         for (int j=0;j<nparamcom+nparcompo;j++) {
@@ -798,10 +867,37 @@ parstatC *parstat;
                 else pardens[j].priord =caldensexact(pardens[j].ncl,pardens[j].x,rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior);
                 pardens[j].postd = calculdensite(pardens[j].ncl,n,pardens[j].x,phistar,j,multithread);
             } else {
-/*                if ((condition)or(j>=npar)) pardens[j].priord = calculhisto(pardens[j].x,simpar,j,pardens[j].ncl);
-                else pardens[j].priord =calhistsexact(rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior,pardens[j].ncl);
-                pardens[j].postd = calculhisto(pardens[j].x,phistar,j,pardens[j].ncl);
-*/            }
+                /*if ((condition)or(j>=npar)) pardens[j].priord = calculhisto(pardens[j].ncl,nsimpar,pardens[j].x,simpar,j,multithread);
+                else pardens[j].priord =calhistexact(pardens[j].ncl,pardens[j].x,rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior);
+                pardens[j].postd = calculhisto(pardens[j].ncl,n,pardens[j].x,phistar,j,multithread);*/
+                if ((condition)or(j>=npar)) densprior = calculhisto(pardens[j].ncl,nsimpar,pardens[j].x,simpar,j,multithread);
+                else densprior =calhistexact(pardens[j].ncl,pardens[j].x,rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior);
+                denspost = calculhisto(pardens[j].ncl,n,pardens[j].x,phistar,j,multithread);
+                ncl=pardens[j].ncl;
+                for (int k=0;k<ncl;k++) cout<<"   "<<pardens[j].x[k];cout<<"\n";
+                for (int k=0;k<ncl;k++) cout<<"   "<<densprior[k];cout<<"\n";
+                for (int k=0;k<ncl;k++) cout<<"   "<<denspost[k];cout<<"\n";
+                x=new double[ncl];
+                for (int k=0;k<ncl;k++) x[k]=pardens[j].x[k];
+                delete []pardens[j].x;
+                pardens[j].ncl = 1001;
+                pardens[j].x = new double[pardens[j].ncl];
+                pardens[j].priord = new double[pardens[j].ncl];
+                pardens[j].postd = new double[pardens[j].ncl];
+                pardens[j].xdelta = (x[ncl-1]-x[0])/(double)(pardens[j].ncl-1);
+                delta = x[1]-x[0];
+                for (int k=0;k<pardens[j].ncl;k++) {
+                    pardens[j].x[k]=x[0]+k*pardens[j].xdelta;
+                    for (ii=0;ii<ncl-1;ii++) {
+                        if ((pardens[j].x[k]>=x[ii])and(pardens[j].x[k]<=x[ii+1])) break;
+                    }
+                    pardens[j].priord[k]=0.5*(densprior[ii]+densprior[ii+1]);
+                    pardens[j].postd[k]=0.5*(denspost[ii]+denspost[ii+1]);
+                    //cout<<"x="<<pardens[j].x[k]<<"   priord="<<pardens[j].priord[k]<<"   postd="<<pardens[j].postd[k]<<"   ii="<<ii<<"\n";
+                }
+                delete [] densprior;
+                delete [] denspost;
+            }
            cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom+nparcompo<<"\n";
         *iprog+=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
         }
