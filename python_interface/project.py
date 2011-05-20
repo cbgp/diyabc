@@ -1403,7 +1403,7 @@ class AnalysisThread(QThread):
             if p.poll() != None:
                 f.close()
                 g = open(outfile,"r")
-                data= g.readlines()
+                data= g.read()
                 print "data:%s"%data
                 #print "poll:%s"%p.poll()
                 g.close()
