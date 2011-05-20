@@ -8,17 +8,20 @@ from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
+from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
+from datetime import datetime 
 
 class DrawComparisonAnalysisResult(QFrame):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse
     comparison
     """
-    def __init__(self,directory,parent=None):
+    def __init__(self,analysis,directory,parent=None):
         super(DrawComparisonAnalysisResult,self).__init__(parent)
         self.parent=parent
         self.directory=directory
+        self.analysis = analysis
         self.createWidgets()
         self.dicoPlot = {}  
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
@@ -31,15 +34,67 @@ class DrawComparisonAnalysisResult(QFrame):
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
+        QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewCompDirectLogReg)
 
         self.ui.PCAFrame.hide()
         self.ui.ACProgress.hide()
-        self.ui.viewLocateButton.hide()
+        self.ui.viewLocateButton.setText("view numerical results")
         self.ui.PCAGraphFrame.hide()
 
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)
+
+    def viewCompDirectLogReg(self):
+        """ clic sur le bouton view numerical results
+        """
+        if os.path.exists("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory)) and os.path.exists("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory)):
+            f = open("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory),'r')
+            g = open("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory),'r')
+            datareg = f.read()
+            datadir = g.readlines()
+            f.close()
+            g.close()
+            dd = datetime.now()
+            date = "%s/%s/%s"%(dd.day,dd.month,dd.year)
+            textToDisplay = "\
+            COMPARISON OF SCENARIOS\n\
+            (%s)\n\n\
+Project directory : %s\n\
+Candidate scenarios : %s\n\
+Number of simulated data sets : %s\n\n\
+Direct approach\n\n"%(date,self.parent.dir,self.analysis.candidateScList,self.parent.ui.nbSetsDoneEdit.text())
+            textDirect = datadir[0].replace("   n   ","closest")
+            #i=-1
+            #while datadir[i].strip() == "":
+            #    i = i - 1
+            #pat = re.compile(r'\s+')
+            #num = int(pat.sub(' ',datadir[i].strip()).split(' ')[0])
+            #interval = num/10
+            i = 10
+            while i < len(datadir):
+                textDirect += datadir[i]
+                i+=10
+
+            textToDisplay += textDirect
+            textToDisplay += "\n\n Logistic approach\n\n"
+            textToDisplay += datareg
+            self.parent.drawAnalysisFrame = QFrame(self)
+            ui = ui_viewTextFile()
+            ui.setupUi(self.parent.drawAnalysisFrame)
+            ui.dataPlain.setPlainText(textToDisplay)
+            ui.dataPlain.setLineWrapMode(0)
+            font = "FreeMono"
+            if sys.platform.startswith('win'):
+                font = "Courier New"
+            ui.dataPlain.setFont(QFont(font,10))
+            #QObject.connect(ui.okButton,SIGNAL("clicked()"),self.parent.returnToAnalysisList)
+            QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToMe)
+            self.parent.ui.analysisStack.addWidget(self.parent.drawAnalysisFrame)
+            self.parent.ui.analysisStack.setCurrentWidget(self.parent.drawAnalysisFrame)
+
+    def returnToMe(self):
+        self.parent.returnTo(self)
 
     def getCoord(self,filepath):
         """ extrait les coordonnées du fichier passé en paramètre

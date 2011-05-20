@@ -161,7 +161,7 @@ class Project(QTabWidget):
         if typestr == 'estimation':
             self.drawAnalysisFrame = DrawEstimationAnalysisResult(anDir,self)
         elif typestr == 'comparison':
-            self.drawAnalysisFrame = DrawComparisonAnalysisResult(anDir,self)
+            self.drawAnalysisFrame = DrawComparisonAnalysisResult(analysis,anDir,self)
         elif typestr == "pca" or typestr == "modelChecking":
             if os.path.exists("%s/analysis/%s/ACP.txt"%(self.dir,anDir)) or os.path.exists("%s/analysis/%s/mcACP.txt"%(self.dir,anDir)):
                 self.drawAnalysisFrame = DrawPCAAnalysisResult(anDir,self)
@@ -225,6 +225,9 @@ class Project(QTabWidget):
         self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)
         self.ui.analysisStack.setCurrentIndex(0)
 
+    def returnTo(self,elem):
+        self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)
+        self.ui.analysisStack.setCurrentWidget(elem)
 
     def defineNewAnalysis(self):
         """ démarre la définition d'une nouvelle analyse

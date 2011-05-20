@@ -65,13 +65,18 @@ class DrawPCAAnalysisResult(QFrame):
         ui = ui_viewTextFile()
         ui.setupUi(self.parent.drawAnalysisFrame)
         ui.dataPlain.setPlainText(data)
+        ui.dataPlain.setLineWrapMode(0)
         font = "FreeMono"
         if sys.platform.startswith('win'):
             font = "Courier New"
         ui.dataPlain.setFont(QFont(font,10))
-        QObject.connect(ui.okButton,SIGNAL("clicked()"),self.parent.returnToAnalysisList)
+        #QObject.connect(ui.okButton,SIGNAL("clicked()"),self.parent.returnToAnalysisList)
+        QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToMe)
         self.parent.ui.analysisStack.addWidget(self.parent.drawAnalysisFrame)
         self.parent.ui.analysisStack.setCurrentWidget(self.parent.drawAnalysisFrame)
+
+    def returnToMe(self):
+        self.parent.returnTo(self)
 
     def loadACP(self):
         """ charge le fichier ACP dans un dico
