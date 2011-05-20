@@ -1561,58 +1561,60 @@ struct ParticleC
       if (debuglevel==10) cout<<"debut de init_dnaseq  dnatrue = "<<this->dnatrue<<"\n";
 		this->locuslist[loc].tabsit.resize(this->locuslist[loc].dnalength);
 		int *sitmut2;
-		string dna;
-		sitmut2 = new int[this->gt[loc].nmutot];
-		this->locuslist[loc].sitmut = new int[this->gt[loc].nmutot];
-		for (int i=0;i<this->gt[loc].nmutot;i++){
-			double ra=this->mw.random();
-			double s=0.0;
-			int k=-1;
-			while (s<ra) {k++;s+=this->locuslist[loc].mutsit[k];}
-			sitmut2[i]=k;
-		}
-		if (this->dnatrue) {			//TRUE DNA SEQUENCE
-			for (int i=0;i<this->gt[loc].nmutot;i++) this->locuslist[loc].sitmut[i]=sitmut2[i];
-			dna.resize(this->locuslist[loc].dnalength);
-			for (int i=0;i<this->locuslist[loc].dnalength;i++){
-				this->locuslist[loc].tabsit[i] = i;
-				dna[i]=draw_nuc(loc);
-			}
-		}
-		else {							//ARTIFICIAL SEQUENCE MADE ONLY OF VARIABLE SITES
-			string dna2;
-            if (debuglevel==9) cout<<"nmutot="<<this->gt[loc].nmutot<<"\n";
-			dna.resize(this->gt[loc].nmutot+1);
-			dna2.resize(this->locuslist[loc].dnalength);
-			for (int i=0;i<this->locuslist[loc].dnalength;i++){
-				dna2[i] = 'z';
-				this->locuslist[loc].tabsit[i] = -1;
-			}
-			int k=0;
-			for (int i=0;i<this->gt[loc].nmutot;i++) {
-				if (dna2[sitmut2[i]] == 'z') {
-					this->locuslist[loc].tabsit[sitmut2[i]] = k;
-					//this->locuslist[loc].sitmut[i]=k;
-					k++;
-					dna2[sitmut2[i]] = draw_nuc(loc);
-					dna[k-1]=dna2[sitmut2[i]];
-				}
-			}
-			for (int i=0;i<this->gt[loc].nmutot;i++) this->locuslist[loc].sitmut[i]=this->locuslist[loc].tabsit[sitmut2[i]];
-			dna.resize(k);
-            dna2.clear();
-		}
-		if (debuglevel==10) cout <<dna<<"\n";
-		if (debuglevel==9) {            
-            cout<<"sitmut2\n";
-            for (int i=0;i<this->gt[loc].nmutot;i++) cout<<sitmut2[i]<<"  ";cout<<"\n";
+		string dna="";
+        if (this->gt[loc].nmutot>0) {
+            sitmut2 = new int[this->gt[loc].nmutot];
+            this->locuslist[loc].sitmut.resize(this->gt[loc].nmutot);
+            for (int i=0;i<this->gt[loc].nmutot;i++){
+                double ra=this->mw.random();
+                double s=0.0;
+                int k=-1;
+                while (s<ra) {k++;s+=this->locuslist[loc].mutsit[k];}
+                sitmut2[i]=k;
+            }
+            if (this->dnatrue) {			//TRUE DNA SEQUENCE
+                for (int i=0;i<this->gt[loc].nmutot;i++) this->locuslist[loc].sitmut[i]=sitmut2[i];
+                dna.resize(this->locuslist[loc].dnalength);
+                for (int i=0;i<this->locuslist[loc].dnalength;i++){
+                    this->locuslist[loc].tabsit[i] = i;
+                    dna[i]=draw_nuc(loc);
+                }
+            }
+            else {							//ARTIFICIAL SEQUENCE MADE ONLY OF VARIABLE SITES
+                string dna2;
+                if (debuglevel==9) cout<<"nmutot="<<this->gt[loc].nmutot<<"\n";
+                dna.resize(this->gt[loc].nmutot+1);
+                dna2.resize(this->locuslist[loc].dnalength);
+                for (int i=0;i<this->locuslist[loc].dnalength;i++){
+                    dna2[i] = 'z';
+                    this->locuslist[loc].tabsit[i] = -1;
+                }
+                int k=0;
+                for (int i=0;i<this->gt[loc].nmutot;i++) {
+                    if (dna2[sitmut2[i]] == 'z') {
+                        this->locuslist[loc].tabsit[sitmut2[i]] = k;
+                        //this->locuslist[loc].sitmut[i]=k;
+                        k++;
+                        dna2[sitmut2[i]] = draw_nuc(loc);
+                        dna[k-1]=dna2[sitmut2[i]];
+                    }
+                }
+                for (int i=0;i<this->gt[loc].nmutot;i++) this->locuslist[loc].sitmut[i]=this->locuslist[loc].tabsit[sitmut2[i]];
+                dna.resize(k);
+                dna2.clear();
+            }
+            if (debuglevel==10) cout <<dna<<"\n";
+            if (debuglevel==9) {            
+                cout<<"sitmut2\n";
+                for (int i=0;i<this->gt[loc].nmutot;i++) cout<<sitmut2[i]<<"  ";cout<<"\n";
 
-            cout<<"sitmut\n";
-            for (int i=0;i<this->gt[loc].nmutot;i++) cout<<this->locuslist[loc].sitmut[i]<<"  ";cout<<"\n";
+                cout<<"sitmut\n";
+                for (int i=0;i<this->gt[loc].nmutot;i++) cout<<this->locuslist[loc].sitmut[i]<<"  ";cout<<"\n";
+            }
+            delete []sitmut2;
+            this->locuslist[loc].tabsit.clear();
+            this->locuslist[loc].mutsit.clear();
         }
-		delete []sitmut2;
-        this->locuslist[loc].tabsit.clear();
-        this->locuslist[loc].mutsit.clear();
 		return dna;
 	}
 
@@ -1659,6 +1661,7 @@ struct ParticleC
             }
             anc--;
         }
+        this->locuslist[loc].sitmut.clear();
         int ind2=0,sa0=0,sa2=this->locuslist[loc].ss[sa0];
         if (debuglevel==10) cout<<"sa2="<<sa2<<"\n";
 		int sa,ind;
@@ -1678,7 +1681,7 @@ struct ParticleC
 			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplomic[sa] = new int [this->locuslist[loc].ss[sa]];
 			sa=0;ind=0;
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
-				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) return 2;
+				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
 				this->locuslist[loc].haplomic[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].state;
 				ind++;if (ind==this->locuslist[loc].ss[sa]) {sa++;ind=0;}
 			}
@@ -1702,6 +1705,7 @@ struct ParticleC
 						if (debuglevel==10) cout << "\n";
 					}
 					if (debuglevel==10) cout << "\n";
+					ordre.clear();
 					return 2;
 				}
 				this->locuslist[loc].haplodna[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].dna;

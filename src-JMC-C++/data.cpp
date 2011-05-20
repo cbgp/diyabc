@@ -58,8 +58,7 @@ struct LocusC
 //Proprietes des locus sequences
 	double pi_A,pi_C,pi_G,pi_T;
 	vector <double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
-	int nsitmut;   // length of array *sitmut;
-	int *sitmut;   //array of nsitmut dna sites that are changed through a mutation
+	vector <int> sitmut;   //array of nsitmut dna sites that are changed through a mutation
 	int dnalength,dnavar;
 	vector <char> tabsit;   //array of dnalength elements giving the number of a dna site;
 	//char ***haplodna;  //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
@@ -86,14 +85,8 @@ struct LocusC
        } else {
            if (not obs) {
               if (not mutsit.empty()) mutsit.clear();
-              delete []sitmut;
               if (not tabsit.empty())tabsit.clear();
            }
-           /*for (int i=0;i<nsample;i++) {
-               for (int j;j<nsample;j++) delete[]this->haplodna[i][j];
-               delete []this->haplodna[i];
-           } 
-           delete []this->haplodna;*/
        }
        //cout<<"fin\n";
     }
@@ -460,7 +453,6 @@ public:
     		}
     	}
     	if (nn>0.0) {this->locus[loc].pi_A /=nn;this->locus[loc].pi_C /=nn;this->locus[loc].pi_G /=nn;this->locus[loc].pi_T /=nn;}
-    	this->locus[loc].nsitmut=0;
     	this->locus[loc].tabsit.resize(this->locus[loc].dnalength);
     	this->locus[loc].mutsit.resize(this->locus[loc].dnalength);
     	delete [] gen;
