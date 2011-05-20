@@ -24,11 +24,6 @@
 #define MESUTILS
 #endif
 
-#ifndef MATRICES
-#include "matrices.cpp"
-#define MATRICES
-#endif
-
 #ifndef IOMANIP
 #include <iomanip>
 #define IOMANIP
