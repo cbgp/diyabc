@@ -40,6 +40,7 @@ class DrawComparisonAnalysisResult(QFrame):
         self.ui.ACProgress.hide()
         self.ui.viewLocateButton.setText("view numerical results")
         self.ui.PCAGraphFrame.hide()
+        self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
 
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)

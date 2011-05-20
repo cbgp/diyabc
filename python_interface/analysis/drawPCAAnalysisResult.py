@@ -17,10 +17,11 @@ class DrawPCAAnalysisResult(QFrame):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse
     Pre-evaluate PCA ou model checking
     """
-    def __init__(self,directory,parent=None):
+    def __init__(self,analysis,directory,parent=None):
         super(DrawPCAAnalysisResult,self).__init__(parent)
         self.parent=parent
         self.directory=directory
+        self.analysis = analysis
         if self.directory.split('_')[0] == "modelChecking":
             self.acpFile = "%s/analysis/%s/mcACP.txt"%(self.parent.dir,self.directory)
         else:
@@ -51,6 +52,8 @@ class DrawPCAAnalysisResult(QFrame):
         if not os.path.exists("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory))\
                 and not os.path.exists("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory)):
             self.ui.viewLocateButton.hide()
+
+        self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
 
     def viewLocate(self):
         """ clic sur le bouton view locate
@@ -361,6 +364,7 @@ class DrawPCAAnalysisResult(QFrame):
                 im = pix.toImage()
                 im.save("%s.%s"%(graph_file_path,pic_format))
     def exit(self):
+        del self.dico_points
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)
 

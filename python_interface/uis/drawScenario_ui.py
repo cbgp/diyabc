@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/drawScenarioFrame.ui'
 #
-# Created: Wed May 18 11:08:16 2011
+# Created: Fri May 20 16:15:17 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,8 +47,18 @@ class Ui_Frame(object):
         self.viewLocateButton = QtGui.QPushButton(self.groupBox)
         self.viewLocateButton.setObjectName(_fromUtf8("viewLocateButton"))
         self.horizontalLayout.addWidget(self.viewLocateButton)
-        spacerItem = QtGui.QSpacerItem(480, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(200, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.analysisNameLabel = QtGui.QLabel(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        font.setWeight(75)
+        font.setBold(True)
+        self.analysisNameLabel.setFont(font)
+        self.analysisNameLabel.setObjectName(_fromUtf8("analysisNameLabel"))
+        self.horizontalLayout.addWidget(self.analysisNameLabel)
+        spacerItem1 = QtGui.QSpacerItem(480, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
         self.closeButton = QtGui.QPushButton(self.groupBox)
         self.closeButton.setObjectName(_fromUtf8("closeButton"))
         self.horizontalLayout.addWidget(self.closeButton)
@@ -123,6 +133,7 @@ class Ui_Frame(object):
         self.printButton.setText(QtGui.QApplication.translate("Frame", "PRINT", None, QtGui.QApplication.UnicodeUTF8))
         self.savePicturesButton.setText(QtGui.QApplication.translate("Frame", "SAVE", None, QtGui.QApplication.UnicodeUTF8))
         self.viewLocateButton.setText(QtGui.QApplication.translate("Frame", "View locate results", None, QtGui.QApplication.UnicodeUTF8))
+        self.analysisNameLabel.setText(QtGui.QApplication.translate("Frame", "plop", None, QtGui.QApplication.UnicodeUTF8))
         self.closeButton.setText(QtGui.QApplication.translate("Frame", "CLOSE", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Frame", "Scenario to draw", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Frame", "Horizontal axis component", None, QtGui.QApplication.UnicodeUTF8))

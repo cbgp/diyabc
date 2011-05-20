@@ -163,7 +163,14 @@ La description du bouton ou du label\end{verbatim}
             \item conf.tmp : entête du reftable header\\
         \end{itemize}
 
-        Ces fichiers sont lu lors du chargement d'un projet pour rétablir son état.
+        Ces fichiers sont lu lors du chargement d'un projet pour rétablir son
+        état. Pendant la manipulation d'un projet, un fichier de verrou (.lock)
+        est créé dans le dossier du projet. Il permet de s'assurer que l'on ne
+        manipule pas le même projet avec deux instances de DIYABC. Si
+        l'interface a été arrêtée brutalement, le verrou n'est pas enlevé. Un
+        message d'avertissement expliquant la situation est donc présenté au
+        chargement du projet. On peut outrepasser le verrou si on est sur de ce
+        que l'on fait.
 
     \subsection{Le modèle historique}
         La conception du modèle historique n'est pas très complexe. La gestion

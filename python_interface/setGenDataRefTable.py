@@ -124,7 +124,7 @@ class SetGeneticDataRefTable(SetGeneticData):
                     kmoy = (mini + maxi)/2
                     kmin = kmoy - (( (motif_range/2)-1 ) * motif_size)
                     kmax = kmin + ((motif_range-1) * motif_size)
-                    print "%s %s %s %s %s"%(mini,maxi,kmoy,kmin,kmax)
+                    #print "%s %s %s %s %s"%(mini,maxi,kmoy,kmin,kmax)
                     if (kmin > mini) or (kmax < maxi):
                         problematicLocus += "%s,"%(i+1)
 

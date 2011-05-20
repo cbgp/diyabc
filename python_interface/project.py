@@ -164,7 +164,7 @@ class Project(QTabWidget):
             self.drawAnalysisFrame = DrawComparisonAnalysisResult(analysis,anDir,self)
         elif typestr == "pca" or typestr == "modelChecking":
             if os.path.exists("%s/analysis/%s/ACP.txt"%(self.dir,anDir)) or os.path.exists("%s/analysis/%s/mcACP.txt"%(self.dir,anDir)):
-                self.drawAnalysisFrame = DrawPCAAnalysisResult(anDir,self)
+                self.drawAnalysisFrame = DrawPCAAnalysisResult(analysis,anDir,self)
             else:
                 if typestr == "pca":
                     f = open("%s/analysis/%s/locate.txt"%(self.dir,anDir),'r')
