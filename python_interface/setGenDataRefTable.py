@@ -113,7 +113,19 @@ class SetGeneticDataRefTable(SetGeneticData):
         problem = u""
         if len(self.groupList) > 0:
             # verification des valeurs de motif et range
-            #TODO
+            for i in range(self.ui.tableWidget.rowCount()):
+                if self.parent.data.locuslist[i].type < 5:
+                    motif_size = int(str(self.ui.tableWidget.item(i,2).text()))
+                    motif_range = int(str(self.ui.tableWidget.item(i,3).text()).strip())
+                    #print "size:%s range:%s"%(motif_size,motif_range)
+                    mini = self.parent.data.locuslist[i].mini
+                    maxi = self.parent.data.locuslist[i].maxi
+                    kmoy = (mini + maxi)/2
+                    kmin = kmoy - (( (motif_range/2)-1 ) * motif_size)
+                    kmax = kmin + ((motif_range-1) * motif_size)
+                    print "%s %s %s %s %s"%(mini,maxi,kmoy,kmin,kmax)
+                    if (kmin > mini) or (kmax < maxi):
+                        problem += "Motif range at locus %s is not large enough to include all observed alleles\n"%(i+1)
 
             for i,box in enumerate(self.groupList):
                 title = str(box.title())

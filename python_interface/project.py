@@ -753,7 +753,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
                 #shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
-                os.remove("%s/%s_progress.txt"%(self.dir,aid))
+                #os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
         elif atype == "compare":
             if os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) and\
@@ -763,7 +763,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))
-                os.remove("%s/%s_progress.txt"%(self.dir,aid))
+                #os.remove("%s/%s_progress.txt"%(self.dir,aid))
         elif atype == "bias":
             if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
                 #print "les fichiers existent"
@@ -771,14 +771,14 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 aDirName = "bias_%s"%aid
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias.txt"%(self.dir,aDirName))
-                os.remove("%s/%s_progress.txt"%(self.dir,aid))
+                #os.remove("%s/%s_progress.txt"%(self.dir,aid))
         elif atype == "evaluate":
             if os.path.exists("%s/%s_confidence.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
                 aDirName = "evaluation_%s"%aid
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_confidence.txt"%(self.dir,aid),"%s/analysis/%s/confidence.txt"%(self.dir,aDirName))
-                os.remove("%s/%s_progress.txt"%(self.dir,aid))
+                #os.remove("%s/%s_progress.txt"%(self.dir,aid))
         elif atype == "modelChecking":
             if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)) or os.path.exists("%s/%s_mclocate.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
@@ -788,7 +788,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     shutil.move("%s/%s_mclocate.txt"%(self.dir,aid),"%s/analysis/%s/mclocate.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)):
                     shutil.move("%s/%s_mcACP.txt"%(self.dir,aid),"%s/analysis/%s/mcACP.txt"%(self.dir,aDirName))
-                os.remove("%s/%s_progress.txt"%(self.dir,aid))
+                #os.remove("%s/%s_progress.txt"%(self.dir,aid))
         elif atype == "pre-ev":
             if os.path.exists("%s/%s_locate.txt"%(self.dir,aid)) or os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
