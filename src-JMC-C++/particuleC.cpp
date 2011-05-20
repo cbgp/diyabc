@@ -1942,10 +1942,13 @@ struct ParticleC
                   //cout<<"avant delete this->locuslist["<<kloc<<"].haplodnavar["<<samp<<"]["<<ind<<"]\n";  
                   //delete []this->locuslist[kloc].haplodnavar[samp][ind];
                   this->locuslist[kloc].haplodnavar[samp][ind].clear();
+                  this->locuslist[kloc].haplodna[samp][ind].clear();
                 }
                 delete []this->locuslist[kloc].haplodnavar[samp];
+                delete []this->locuslist[kloc].haplodna[samp];
             }
             delete []this->locuslist[kloc].haplodnavar;
+            delete []this->locuslist[kloc].haplodna;
             delete []this->locuslist[kloc].samplesize;
         }
     }
@@ -3205,7 +3208,6 @@ struct ParticleC
 			categ=this->grouplist[gr].sumstat[st].cat;
             //cout<<"avant calcul stat categ="<<categ<<"\n";
             
-            //if ((gr==4)and(categ<-14)) exit(1);
 			switch (categ)
 			{	case     0 : this->grouplist[gr].sumstat[st].val = cal_pid1p(gr,st);break;
                 case     1 : this->grouplist[gr].sumstat[st].val = cal_nal1p(gr,st);break;
