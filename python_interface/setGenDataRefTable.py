@@ -112,6 +112,9 @@ class SetGeneticDataRefTable(SetGeneticData):
         #print self.dico_num_and_numgroup_locus
         problem = u""
         if len(self.groupList) > 0:
+            # verification des valeurs de motif et range
+            #TODO
+
             for i,box in enumerate(self.groupList):
                 title = str(box.title())
                 if "Microsatellites" in title:

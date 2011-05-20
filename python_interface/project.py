@@ -1328,6 +1328,28 @@ class AnalysisThread(QThread):
         self.analysis = analysis
         self.progress = 0
 
+    def readProgress(self):
+        if os.path.exists("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name)):
+            a = open("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name),"r")
+            b = a.readlines()[0]
+            a.close()
+        else:
+            b = ""
+        print "prog:%s"%b
+        return b
+
+    def updateProgress(self):
+        b = self.readProgress()
+        # on a bougé
+        if len(b.split(' ')) > 1:
+            t1 = float(b.split(' ')[0])
+            t2 = float(b.split(' ')[1])
+            tmpp = int(t1*100/t2)
+        if tmpp != self.progress:
+            print "on a progressé"
+            self.progress = tmpp
+            self.emit(SIGNAL("analysisProgress"))
+
     def run(self):
         #executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
         executablePath = self.parent.parent.preferences_win.getExecutablePath()
@@ -1376,26 +1398,7 @@ class AnalysisThread(QThread):
         tmpp = 1
         self.emit(SIGNAL("analysisProgress"))
         while True:
-            #a=os.popen("head -n 1 %s/%s_progress.txt"%(self.parent.dir,self.analysis.name))
-            #b=a.read()
-            #a.close()
-            if os.path.exists("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name)):
-                a = open("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name),"r")
-                b = a.readlines()[0]
-                a.close()
-            else:
-                b = ""
-            print "prog:%s"%b
-            # on a bougé
-            if len(b.split(' ')) > 1:
-                t1 = float(b.split(' ')[0])
-                t2 = float(b.split(' ')[1])
-                tmpp = int(t1*100/t2)
-            if tmpp != self.progress:
-                print "on a progressé"
-                self.progress = tmpp
-                self.emit(SIGNAL("analysisProgress"))
-            time.sleep(2)
+            self.updateProgress()
             # verification de l'arret du programme
             if p.poll() != None:
                 f.close()
@@ -1404,9 +1407,13 @@ class AnalysisThread(QThread):
                 print "data:%s"%data
                 #print "poll:%s"%p.poll()
                 g.close()
+                # on attend un peu pour etre sur que l'ecriture de la progression a été effectué
+                time.sleep(2)
+                self.updateProgress()
                 if self.progress < 100:
                     # TODO
                     self.problem = "Analysis program exited before the end of the analysis (%s%%)"%self.progress
                     self.emit(SIGNAL("analysisProblem"))
                     return
+            time.sleep(2)
 
