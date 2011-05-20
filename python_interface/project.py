@@ -1344,10 +1344,10 @@ class AnalysisThread(QThread):
         if len(b.split(' ')) > 1:
             t1 = float(b.split(' ')[0])
             t2 = float(b.split(' ')[1])
-            tmpp = int(t1*100/t2)
-        if tmpp != self.progress:
+            self.tmpp = int(t1*100/t2)
+        if self.tmpp != self.progress:
             print "on a progressé"
-            self.progress = tmpp
+            self.progress = self.tmpp
             self.emit(SIGNAL("analysisProgress"))
 
     def run(self):
@@ -1395,7 +1395,7 @@ class AnalysisThread(QThread):
 
         # la scrutation de la progression est identique pour toutes les analyses
         self.progress = 1
-        tmpp = 1
+        self.tmpp = 1
         self.emit(SIGNAL("analysisProgress"))
         while True:
             self.updateProgress()
@@ -1411,7 +1411,6 @@ class AnalysisThread(QThread):
                 time.sleep(2)
                 self.updateProgress()
                 if self.progress < 100:
-                    # TODO
                     self.problem = "Analysis program exited before the end of the analysis (%s%%)"%self.progress
                     self.emit(SIGNAL("analysisProblem"))
                     return
