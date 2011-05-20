@@ -15,12 +15,14 @@ class DrawEstimationAnalysisResult(QFrame):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse
     pour l'instant : estimation
     """
-    def __init__(self,directory,parent=None):
+    def __init__(self,analysis,directory,parent=None):
         super(DrawEstimationAnalysisResult,self).__init__(parent)
         self.parent=parent
         self.directory=directory
+        self.analysis = analysis
         self.createWidgets()
         self.dicoPlot = {}  
+        self.dicoFrame = {}
         self.svgList = []
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
         
@@ -32,15 +34,47 @@ class DrawEstimationAnalysisResult(QFrame):
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
+        QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printMe)
 
         self.ui.PCAFrame.hide()
         self.ui.ACProgress.hide()
         self.ui.viewLocateButton.hide()
         self.ui.PCAGraphFrame.hide()
+        self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
 
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)
+    def printMe(self):
+
+        #printer = QPrinter(QPrinter.HighResolution)
+        #painter = QPainter()
+        #painter.begin(printer)
+        #painter.drawPixmap (0, 0, pix)
+        #painter.end()
+
+        #qpd = QPrintDialog(printer)
+        #qpd.exec_()
+        #print printer.printerName()
+
+        Printer = QPrinter(QPrinter.ScreenResolution)
+        Printer.setPageSize(QPrinter.A4)
+        #Printer.setOrientation(QPrinter.Landscape)
+        dialog = QPrintDialog(Printer, self)
+        if (dialog.exec_() == QDialog.Accepted):
+            Painter = QPainter()
+            Painter.begin(Printer)
+            Painter.setPen(Qt.blue)
+            Painter.setFont(QFont("Arial", 30))
+            #Painter.drawText(rect(), Qt.AlignCenter, "Qt");
+            for name in self.dicoPlot.keys():
+                pix = QPixmap.grabWidget(self.dicoPlot[name])
+                Painter.drawPixmap (0, 0, pix)
+                pix2 = QPixmap.grabWidget(self.dicoFrame[name])
+                Painter.drawPixmap (0, pix.height(), pix2)
+                Printer.newPage()
+            Painter.end()
+
 
     def drawAll(self):
         """ dessine les graphes de tous les paramètres
@@ -146,6 +180,9 @@ class DrawEstimationAnalysisResult(QFrame):
 
         # frame des valeurs
         frame = QFrame(self.ui.scrollAreaWidgetContents)
+
+        self.dicoFrame[name] = frame
+
         frame.setFrameShape(QFrame.StyledPanel)
         frame.setFrameShadow(QFrame.Raised)
         frame.setObjectName("frame")

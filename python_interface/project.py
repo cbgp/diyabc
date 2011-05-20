@@ -159,7 +159,7 @@ class Project(QTabWidget):
 
         typestr = dicoCategoryDirName[analysis.category]
         if typestr == 'estimation':
-            self.drawAnalysisFrame = DrawEstimationAnalysisResult(anDir,self)
+            self.drawAnalysisFrame = DrawEstimationAnalysisResult(analysis,anDir,self)
         elif typestr == 'comparison':
             self.drawAnalysisFrame = DrawComparisonAnalysisResult(analysis,anDir,self)
         elif typestr == "pca" or typestr == "modelChecking":
