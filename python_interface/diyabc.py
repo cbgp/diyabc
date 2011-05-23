@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# variable qui sera changée par le générateur d'exécutable
 VERSION='development version'
 
 import time
@@ -11,29 +12,21 @@ import sys
 import os
 if sys.platform.startswith('win'):
     sys.path.append("Python26/Lib/site-packages")
+# pour connaitre les modules, on manipule le pythonpath
 sys.path.append("/".join(os.getcwd().split('/')[:-1]))
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from uis.diyabc_ui import Ui_MainWindow
+from PyQt4 import uic
+#from uis.diyabc_ui import Ui_MainWindow
 from project import *
 from preferences import Preferences
 from documentator import Documentator
 import output
 
-#class HelpBrowser(QTextBrowser):
-#    def __init__(self,parent=None,qhe=None):
-#        super(HelpBrowser,self).__init__(parent)
-#        self.qhe = qhe
-#
-#    def loadResource(self,typee,url):
-#        if (url.scheme() == "qthelp"):
-#            return QVariant(qhe.fileData(url))
-#        else:
-#            return QTextBrowser.loadResource(type, url)
+formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
-
-class Diyabc(QMainWindow):
+class Diyabc(formDiyabc,baseDiyabc):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
     """
     def __init__(self,app,parent=None):
@@ -64,7 +57,7 @@ class Diyabc(QMainWindow):
         self.documentator = Documentator("docs/documentation.xml",self)
 
     def createWidgets(self):
-        self.ui = Ui_MainWindow()
+        self.ui=self
         self.ui.setupUi(self)
 
         #pal = QPalette()

@@ -7,11 +7,14 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from uis.setSummaryStatisticsMsat_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setSummaryStatisticsMsat_ui import Ui_Frame
 from setSummaryStatistics import SetSummaryStatistics
 import output
 
-class SetSummaryStatisticsMsat(SetSummaryStatistics):
+formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat = uic.loadUiType("uis/setSummaryStatisticsMsat.ui")
+
+class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat):
     """ ecran de selection des summary statistics pour les microsats
     """
     def __init__(self,parent=None,box_group=None,numGroup=0):
@@ -20,7 +23,7 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics):
         self.statList = ["NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML"]
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)

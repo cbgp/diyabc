@@ -4,9 +4,12 @@ import sys
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.setMutationModelMsat_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setMutationModelMsat_ui import Ui_Frame
 
-class SetMutationModelMsat(QFrame):
+formSetMutationModelMsat,baseSetMutationModelMsat = uic.loadUiType("uis/setMutationModelMsat.ui")
+
+class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
     """ définition du modèle mutationnel pour les microsats
     """
     def __init__(self,parent=None,box_group=None):
@@ -16,7 +19,7 @@ class SetMutationModelMsat(QFrame):
         self.createWidgets()
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)

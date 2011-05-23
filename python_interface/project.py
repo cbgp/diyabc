@@ -12,8 +12,9 @@ import tarfile,stat
 from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4 import QtGui,QtCore
 from PyQt4 import uic
-from uis.project_ui import *
+#from uis.project_ui import *
 from setHistoricalModel import SetHistoricalModel
 from setGenDataRefTable import SetGeneticDataRefTable
 from mutationModel.setMutationModelMsat import SetMutationModelMsat
@@ -25,7 +26,7 @@ from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from analysis.viewAnalysisParameters import ViewAnalysisParameters
-from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
+#from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from utils.data import Data
 from datetime import datetime 
 import os.path
@@ -180,9 +181,13 @@ class Project(baseProject,formProject):
                     f = open("%s/analysis/%s/mclocate.txt"%(self.dir,anDir),'r')
                 data = f.read()
                 f.close()
-                self.drawAnalysisFrame = QFrame(self)
-                ui = ui_viewTextFile()
-                ui.setupUi(self.drawAnalysisFrame)
+                #self.drawAnalysisFrame = QFrame(self)
+                self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
+                self.drawAnalysisFrame.parent = self
+                ui = self.drawAnalysisFrame
+                print "yeepa"
+                #ui = ui_viewTextFile()
+                #ui.setupUi(self.drawAnalysisFrame)
                 ui.dataPlain.setPlainText(data)
                 ui.dataPlain.setLineWrapMode(0)
                 font = "FreeMono"
@@ -195,9 +200,13 @@ class Project(baseProject,formProject):
             f = open("%s/analysis/%s/confidence.txt"%(self.dir,anDir),'r')
             data = f.read()
             f.close()
-            self.drawAnalysisFrame = QFrame(self)
-            ui = ui_viewTextFile()
-            ui.setupUi(self.drawAnalysisFrame)
+            #self.drawAnalysisFrame = QFrame(self)
+            self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
+            self.drawAnalysisFrame.parent = self
+            ui = self.drawAnalysisFrame
+            print "yeepi"
+            #ui = ui_viewTextFile()
+            #ui.setupUi(self.drawAnalysisFrame)
             ui.dataPlain.setPlainText(data)
             ui.dataPlain.setLineWrapMode(0)
             font = "FreeMono"
@@ -209,9 +218,13 @@ class Project(baseProject,formProject):
             f = open("%s/analysis/%s/bias.txt"%(self.dir,anDir),'r')
             data = f.read()
             f.close()
-            self.drawAnalysisFrame = QFrame(self)
-            ui = ui_viewTextFile()
-            ui.setupUi(self.drawAnalysisFrame)
+            #self.drawAnalysisFrame = QFrame(self)
+            self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
+            self.drawAnalysisFrame.parent = self
+            ui = self.drawAnalysisFrame
+            print "yeepo"
+            #ui = ui_viewTextFile()
+            #ui.setupUi(self.drawAnalysisFrame)
             ui.dataPlain.setPlainText(data)
             ui.dataPlain.setLineWrapMode(0)
             font = "FreeMono"

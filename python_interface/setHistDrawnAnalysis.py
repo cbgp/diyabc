@@ -4,7 +4,8 @@ import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.setHistFrame_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setHistFrame_ui import Ui_Frame
 from drawScenario import DrawScenario
 from utils.visualizescenario import *
 import utils.history 
@@ -12,7 +13,9 @@ from utils.history import IOScreenError
 from set_condition import SetCondition
 from setGenDataAnalysis import SetGeneticDataAnalysis
 
-class HistDrawn(QFrame):
+formHistModelDrawn,baseHistModelDrawn = uic.loadUiType("uis/setHistFrame.ui")
+
+class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
     """ définition du modèle historique dans le cadre d'une analyse
     les valeurs ne sont pas fixées
     """
@@ -36,7 +39,7 @@ class HistDrawn(QFrame):
         self.addTheConditions()
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)

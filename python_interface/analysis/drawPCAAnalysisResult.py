@@ -7,12 +7,12 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
-from uis.drawScenario_ui import Ui_Frame
+#from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 import output
-from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
+#from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 
 formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 
@@ -67,9 +67,12 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             f = open("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory),'r')
         data = f.read()
         f.close()
-        self.parent.drawAnalysisFrame = QFrame(self)
-        ui = ui_viewTextFile()
-        ui.setupUi(self.parent.drawAnalysisFrame)
+        #self.parent.drawAnalysisFrame = QFrame(self)
+        self.parent.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
+        self.parent.drawAnalysisFrame.parent = self.parent
+        ui = self.parent.drawAnalysisFrame
+        #ui = ui_viewTextFile()
+        #ui.setupUi(self.parent.drawAnalysisFrame)
         ui.dataPlain.setPlainText(data)
         ui.dataPlain.setLineWrapMode(0)
         font = "FreeMono"

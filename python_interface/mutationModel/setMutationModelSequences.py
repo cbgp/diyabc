@@ -3,9 +3,12 @@
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.setMutationModelSequences_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setMutationModelSequences_ui import Ui_Frame
 
-class SetMutationModelSequences(QFrame):
+formSetMutationModelSequences,baseSetMutationModelSequences = uic.loadUiType("uis/setMutationModelSequences.ui")
+
+class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationModelSequences):
     """ définition du modèle mutationnel pour les séquences
     """
     def __init__(self,parent=None,box_group=None):
@@ -25,7 +28,7 @@ class SetMutationModelSequences(QFrame):
         self.ui.verticalLayout_26.setAlignment(Qt.AlignTop)
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)

@@ -4,13 +4,16 @@ import os,re
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.setupEstimationBias_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setupEstimationBias_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 from summaryStatistics.setSummaryStatisticsMsatAnalysis import SetSummaryStatisticsMsatAnalysis
 from summaryStatistics.setSummaryStatisticsSeqAnalysis import SetSummaryStatisticsSeqAnalysis
 import output
 
-class SetupEstimationBias(QFrame):
+formSetupEstimationBias,baseSetupEstimationBias = uic.loadUiType("uis/setupEstimationBias.ui")
+
+class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
     """ dernière étape de définition d'une analyse de type estimation ou bias precision ou model checking
     """
     def __init__(self,analysis,parent=None):
@@ -26,7 +29,7 @@ class SetupEstimationBias(QFrame):
 
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         if self.analysis.category == "bias":

@@ -3,9 +3,12 @@
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.setMutationModelMsat_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setMutationModelMsat_ui import Ui_Frame
 
-class SetMutationModelMsatFixed(QFrame):
+formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed = uic.loadUiType("uis/setMutationModelMsat.ui")
+
+class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed):
     """ Classe qui utilise le fichier graphique des SetMutationModelMsat.
     On ne remplit ici qu'une valeur fixe pour chaque ligne
     """
@@ -16,7 +19,7 @@ class SetMutationModelMsatFixed(QFrame):
         self.createWidgets()
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         self.ui.mmrMaxEdit.hide()

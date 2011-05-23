@@ -7,7 +7,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from uis.setSummaryStatisticsMsat_ui import Ui_Frame
+#from uis.setSummaryStatisticsMsat_ui import Ui_Frame
 from setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 
 class SetSummaryStatisticsMsatAnalysis(SetSummaryStatisticsMsat):

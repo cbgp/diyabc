@@ -7,11 +7,14 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from uis.setSummaryStatisticsSeq_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setSummaryStatisticsSeq_ui import Ui_Frame
 from setSummaryStatistics import SetSummaryStatistics
 import output
 
-class SetSummaryStatisticsSeq(SetSummaryStatistics):
+formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq = uic.loadUiType("uis/setSummaryStatisticsSeq.ui")
+
+class SetSummaryStatisticsSeq(SetSummaryStatistics,formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq):
     """ ecran de selection des summary statistics pour les sequences
     """
     def __init__(self,parent=None,box_group=None,numGroup=0):
@@ -20,7 +23,7 @@ class SetSummaryStatisticsSeq(SetSummaryStatistics):
         self.statList = ["NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"]
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)

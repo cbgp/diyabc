@@ -9,7 +9,7 @@ from PyQt4.QtSvg import *
 from PyQt4 import uic
 #from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
-from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
+#from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 from datetime import datetime 
@@ -83,9 +83,12 @@ Direct approach\n\n"%(date,self.parent.dir,self.analysis.candidateScList,self.pa
             textToDisplay += textDirect
             textToDisplay += "\n\n Logistic approach\n\n"
             textToDisplay += datareg
-            self.parent.drawAnalysisFrame = QFrame(self)
-            ui = ui_viewTextFile()
-            ui.setupUi(self.parent.drawAnalysisFrame)
+            #self.parent.drawAnalysisFrame = QFrame(self)
+            #ui = ui_viewTextFile()
+            self.parent.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
+            self.parent.drawAnalysisFrame.parent = self.parent
+            ui = self.parent.drawAnalysisFrame
+            #ui.setupUi(self.parent.drawAnalysisFrame)
             ui.dataPlain.setPlainText(textToDisplay)
             ui.dataPlain.setLineWrapMode(0)
             font = "FreeMono"

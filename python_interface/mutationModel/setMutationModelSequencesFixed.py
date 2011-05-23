@@ -3,9 +3,12 @@
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.setMutationModelSequences_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setMutationModelSequences_ui import Ui_Frame
 
-class SetMutationModelSequencesFixed(QFrame):
+formSetMutationModelSequencesFixed,baseSetMutationModelSequencesFixed = uic.loadUiType("uis/setMutationModelSequences.ui")
+
+class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetMutationModelSequencesFixed):
     """ Classe qui utilise le fichier graphique des SetMutationModelSequences.
     On ne remplit ici qu'une valeur fixe pour chaque ligne
     """
@@ -26,7 +29,7 @@ class SetMutationModelSequencesFixed(QFrame):
         self.ui.verticalLayout_26.setAlignment(Qt.AlignTop)
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)

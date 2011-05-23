@@ -7,8 +7,8 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from uis.setSummaryStatisticsMsat_ui import Ui_Frame
 from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
+
 
 class SetSummaryStatisticsSeqAnalysis(SetSummaryStatisticsSeq):
     """ ecran de selection des summary statistics pour les sequences dans le cadre d'une
