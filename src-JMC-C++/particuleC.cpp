@@ -51,7 +51,7 @@
 using namespace std;
 #define MICMISSING -9999
 #define SEQMISSING ""
-#define NUCMISSING 'N'
+#define NUCMISSING "N"
 #define NSTAT 27
 
 string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"};
@@ -1560,20 +1560,21 @@ struct ParticleC
 	string init_dnaseq(int loc) {
       if (debuglevel==10) cout<<"debut de init_dnaseq  dnatrue = "<<this->dnatrue<<"\n";
 		this->locuslist[loc].tabsit.resize(this->locuslist[loc].dnalength);
-		int *sitmut2;
+		//int *sitmut2;
 		string dna="";
         if (this->gt[loc].nmutot>0) {
-            sitmut2 = new int[this->gt[loc].nmutot];
+            //sitmut2 = new int[this->gt[loc].nmutot];
+             this->locuslist[loc].sitmut2.resize(this->gt[loc].nmutot);
             this->locuslist[loc].sitmut.resize(this->gt[loc].nmutot);
             for (int i=0;i<this->gt[loc].nmutot;i++){
                 double ra=this->mw.random();
                 double s=0.0;
                 int k=-1;
                 while (s<ra) {k++;s+=this->locuslist[loc].mutsit[k];}
-                sitmut2[i]=k;
+                this->locuslist[loc].sitmut2[i]=k;
             }
             if (this->dnatrue) {			//TRUE DNA SEQUENCE
-                for (int i=0;i<this->gt[loc].nmutot;i++) this->locuslist[loc].sitmut[i]=sitmut2[i];
+                for (int i=0;i<this->gt[loc].nmutot;i++) this->locuslist[loc].sitmut[i]=this->locuslist[loc].sitmut2[i];
                 dna.resize(this->locuslist[loc].dnalength);
                 for (int i=0;i<this->locuslist[loc].dnalength;i++){
                     this->locuslist[loc].tabsit[i] = i;
@@ -1591,27 +1592,27 @@ struct ParticleC
                 }
                 int k=0;
                 for (int i=0;i<this->gt[loc].nmutot;i++) {
-                    if (dna2[sitmut2[i]] == 'z') {
-                        this->locuslist[loc].tabsit[sitmut2[i]] = k;
+                    if (dna2[this->locuslist[loc].sitmut2[i]] == 'z') {
+                        this->locuslist[loc].tabsit[this->locuslist[loc].sitmut2[i]] = k;
                         //this->locuslist[loc].sitmut[i]=k;
                         k++;
-                        dna2[sitmut2[i]] = draw_nuc(loc);
-                        dna[k-1]=dna2[sitmut2[i]];
+                        dna2[this->locuslist[loc].sitmut2[i]] = draw_nuc(loc);
+                        dna[k-1]=dna2[this->locuslist[loc].sitmut2[i]];
                     }
                 }
-                for (int i=0;i<this->gt[loc].nmutot;i++) this->locuslist[loc].sitmut[i]=this->locuslist[loc].tabsit[sitmut2[i]];
+                for (int i=0;i<this->gt[loc].nmutot;i++) this->locuslist[loc].sitmut[i]=this->locuslist[loc].tabsit[this->locuslist[loc].sitmut2[i]];
                 dna.resize(k);
                 dna2.clear();
             }
             if (debuglevel==10) cout <<dna<<"\n";
             if (debuglevel==9) {            
                 cout<<"sitmut2\n";
-                for (int i=0;i<this->gt[loc].nmutot;i++) cout<<sitmut2[i]<<"  ";cout<<"\n";
+                for (int i=0;i<this->gt[loc].nmutot;i++) cout<<this->locuslist[loc].sitmut2[i]<<"  ";cout<<"\n";
 
                 cout<<"sitmut\n";
                 for (int i=0;i<this->gt[loc].nmutot;i++) cout<<this->locuslist[loc].sitmut[i]<<"  ";cout<<"\n";
             }
-            delete []sitmut2;
+            //delete []sitmut2;
             this->locuslist[loc].tabsit.clear();
             this->locuslist[loc].mutsit.clear();
         }
@@ -1713,6 +1714,7 @@ struct ParticleC
 				}
 		}
 		ordre.clear();
+        //cout<<"nmutotdans cree_haplo = "<<this->gt[loc].nmutot<<"\n";
 		return 0;
 	}
 
@@ -1720,7 +1722,7 @@ struct ParticleC
                 //if (trace) cout<<"debut de dosimulpart\n";fflush(stdin);
 		vector <int> simulOK;
 		int *emptyPop,loc;
-		bool treedone,dnaloc=false;;
+		bool treedone,dnaloc=false,trouve;
         int locus,sa,indiv,nuc;
         //cout<<"this->nloc="<<this->nloc<<"\n";       
 		simulOK.resize(this->nloc);
@@ -1746,7 +1748,7 @@ struct ParticleC
 		setMutParammoyValue(usepriormut);
         if (debuglevel==10) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
 		for (loc=0;loc<this->nloc;loc++) {
-                        //if (trace) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
+             if (debuglevel==10) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
 			if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
 				setMutParamValue(loc);
 				if (this->locuslist[loc].type >4) {
@@ -1829,6 +1831,7 @@ struct ParticleC
                 if (simulOK[loc] != 0) {if (debuglevel==10) cout << "avant break interne\n";break;}
 				if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 			}
+			//cout<<"   OK\n";
 		}		//LOOP ON loc
         if (simulOK[locus]==0) {
                 //cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
@@ -1837,6 +1840,7 @@ struct ParticleC
                               locus=this->data.misshap[i].locus;
                               if (this->locuslist[locus].groupe>0) {
                                       sa=this->data.misshap[i].sample;indiv=this->data.misshap[i].indiv;
+                                      //cout<<"MISSHAP   locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"\n";
                                       if (this->locuslist[locus].type<5) this->locuslist[locus].haplomic[sa][indiv] = MICMISSING;
                                       else                               this->locuslist[locus].haplodna[sa][indiv] = SEQMISSING;
                                       this->locuslist[locus].samplesize[sa]--;
@@ -1844,17 +1848,33 @@ struct ParticleC
                         }
                 
                 }
-                  if (this->data.nmissnuc>0) {
+                if (this->data.nmissnuc>0) {
                         for (int i=0;i<this->data.nmissnuc;i++) {
                               locus=this->data.missnuc[i].locus;
-                              if (this->locuslist[locus].groupe>0) {
-                                      sa=this->data.missnuc[i].sample;indiv=this->data.missnuc[i].indiv;nuc=this->data.missnuc[i].nuc;
-                                      this->locuslist[locus].haplodna[sa][indiv][nuc] = NUCMISSING;
-                              }  
+                              if ((this->locuslist[locus].groupe>0)and(this->gt[locus].nmutot>0)) {
+                                      sa=this->data.missnuc[i].sample;
+                                      indiv=this->data.missnuc[i].indiv;
+                                      nuc=this->data.missnuc[i].nuc;
+                                      //cout<<"MISSNUC  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc<<"\n";
+                                      int k=0;trouve=false;
+                                      while ((k<this->gt[locus].nmutot)and(not trouve)) {
+                                          trouve = (nuc==this->locuslist[locus].sitmut2[k]);
+                                          if (not trouve) k++;
+                                      }
+                                      if (trouve) {
+                                          //cout<<"MISSNUC  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc<<"  k="<<k<<"\n";
+                                          //cout<<this->locuslist[locus].haplodna[sa][indiv]<<"<  ("<<this->locuslist[locus].haplodna[sa][indiv].length()<<")\n";                                      
+                                          this->locuslist[locus].haplodna[sa][indiv].replace(k,1,NUCMISSING);
+                                          //cout<<this->locuslist[locus].haplodna[sa][indiv]<<"\n";
+                                      }                              
+                              } 
+                              
                         }
                 
                 }
         }
+        //cout<<"avant le sitmut2.clear()\n";
+        for (loc=0;loc<this->nloc;loc++) if (this->locuslist[loc].type>4) this->locuslist[loc].sitmut2.clear();
         if (debuglevel==10) cout<<"avant les delete\n";fflush(stdin);
         delete [] emptyPop;
         delete [] this->seqlist;

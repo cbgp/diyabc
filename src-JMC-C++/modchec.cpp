@@ -153,7 +153,6 @@ double **ssphistar,**ssref;
         int *avant,*apres,*egal;
         double *qobs,diff,quant;
         string *star;
-        cout<<"coucou\n";
         qobs = new double[header.nstat];
         star = new string[header.nstat];
         avant = new int[header.nstat];for (int i=0;i<header.nstat;i++) avant[i] = 0;
@@ -221,14 +220,17 @@ double **ssphistar,**ssref;
         pca_ss = new double*[ns];
         for (int i=0;i<ns;i++) pca_ss[i] = new double[nstat];
         rACP = ACP(nr,nstat,ssref,1.0,0);
-        for (int j=0;j<rACP.nlambda;j++){
+        //for (int k=0;k<nstat;k++) cout<<stat_obs[k]<<"   "<<rACP.moy[k]<<"   "<<rACP.sd[k]<<"\n";
+        for (int j=0;j<rACP.nlambda;j++) {
             pca_statobs[j]=0.0;
-            for(int k=0;k<nstat;k++) pca_statobs[j] +=(stat_obs[k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
+            for(int k=0;k<nstat;k++) if (rACP.sd[k]>0) pca_statobs[j] +=(stat_obs[k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
+            cout<<"  "<<pca_statobs[j];
         }
+        cout<<"\n";
         for (int i=0;i<ns;i++) {
             for (int j=0;j<rACP.nlambda;j++){
                 pca_ss[i][j]=0.0;
-                for(int k=0;k<nstat;k++) pca_ss[i][j] +=(ssphistar[i][k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
+                for(int k=0;k<nstat;k++) if (rACP.sd[k]>0) pca_ss[i][j] +=(ssphistar[i][k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
             }
         }
         char *nomfiACP;

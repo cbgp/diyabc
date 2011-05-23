@@ -59,6 +59,7 @@ struct LocusC
 	double pi_A,pi_C,pi_G,pi_T;
 	vector <double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
 	vector <int> sitmut;   //array of nsitmut dna sites that are changed through a mutation
+	vector <int> sitmut2;  //
 	int dnalength,dnavar;
 	vector <char> tabsit;   //array of dnalength elements giving the number of a dna site;
 	//char ***haplodna;  //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
@@ -413,7 +414,7 @@ public:
     						this->nmissnuc +=1;
     						this->missnuc[this->nmissnuc-1].sample=ech;
     						this->missnuc[this->nmissnuc-1].locus=loc;
-   						this->missnuc[this->nmissnuc-1].indiv=ind;
+   						    this->missnuc[this->nmissnuc-1].indiv=ind;
     						this->missnuc[this->nmissnuc-1].nuc=j0;
     						j0=min(gen[i].find("-",j0+1),gen[i].find("N",j0+1));
     					}
