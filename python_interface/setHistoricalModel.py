@@ -4,7 +4,8 @@ import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.setHistFrame_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setHistFrame_ui import Ui_Frame
 from drawScenario import DrawScenario
 from utils.visualizescenario import *
 import utils.history 
@@ -12,7 +13,9 @@ from utils.history import IOScreenError
 from set_condition import SetCondition
 import output
 
-class SetHistoricalModel(QFrame):
+formHistModel,baseHistModel = uic.loadUiType("uis/setHistFrame.ui")
+
+class SetHistoricalModel(formHistModel,baseHistModel):
     """ Classe pour la définition du modèle historique dans le cadre 
     de la génération de la table de référence
     """
@@ -38,8 +41,11 @@ class SetHistoricalModel(QFrame):
         self.previewLabelList = []
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
-        self.ui.setupUi(self)
+        #self.ui = Ui_Frame()
+        #self.ui.setupUi(self)
+        self.setupUi(self)
+        self.ui = self
+
         QObject.connect(self.ui.addScButton,SIGNAL("clicked()"),self.addSc)
         QObject.connect(self.ui.uniformRadio,SIGNAL("clicked()"),self.setUniformRp)
         QObject.connect(self.ui.otherRadio,SIGNAL("clicked()"),self.setOtherRp)

@@ -12,6 +12,7 @@ import tarfile,stat
 from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4 import uic
 from uis.project_ui import *
 from setHistoricalModel import SetHistoricalModel
 from setGenDataRefTable import SetGeneticDataRefTable
@@ -32,8 +33,9 @@ from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 import output
 
+formProject,baseProject = uic.loadUiType("uis/Project.ui")
 
-class Project(QTabWidget):
+class Project(baseProject,formProject):
     """ classe qui représente un projet
     par defaut, un projet est considéré comme nouveau, cad que l'affichage est celui d'un projet vierge
     pour un projet chargé, on modifie l'affichage en conséquence dans loadFromDir
@@ -58,8 +60,10 @@ class Project(QTabWidget):
         #self.tab = QTabWidget()
 
         # instanciation du widget project_ui
-        self.ui = Ui_TabWidget()
-        self.ui.setupUi(self)
+        #self.ui = Ui_TabWidget()
+        #self.ui.setupUi(self)
+        self.setupUi(self)
+        self.ui = self
 
         # desactivation des boutons
         self.ui.setHistoricalButton.setDisabled(True)
