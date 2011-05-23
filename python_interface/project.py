@@ -588,6 +588,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame_9.setMaximumSize(QtCore.QSize(9999, 32))
         horizontalLayout_4 = QtGui.QHBoxLayout(frame_9)
         horizontalLayout_4.setObjectName("horizontalLayout_4")
+        analysisRmButton = QtGui.QPushButton("remove",frame_9)
+        analysisRmButton.setMinimumSize(QtCore.QSize(50, 0))
+        analysisRmButton.setMaximumSize(QtCore.QSize(50, 16777215))
+        analysisRmButton.setObjectName("analysisRmButton")
+        horizontalLayout_4.addWidget(analysisRmButton)
         analysisUpButton = QtGui.QPushButton("up",frame_9)
         analysisUpButton.setMinimumSize(QtCore.QSize(50, 0))
         analysisUpButton.setMaximumSize(QtCore.QSize(50, 16777215))
@@ -657,10 +662,19 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.ui.verticalLayout_9.addWidget(frame_9)
 
         self.dicoFrameAnalysis[frame_9] = analysis
+        QObject.connect(analysisRmButton,SIGNAL("clicked()"),self.removeAnalysis)
         QObject.connect(analysisDownButton,SIGNAL("clicked()"),self.moveAnalysisDown)
         QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
         QObject.connect(analysisButton,SIGNAL("clicked()"),self.launchViewAnalysis)
         QObject.connect(analysisParamsButton,SIGNAL("clicked()"),self.viewAnalysisParameters)
+
+    def removeAnalysis(self):
+        frame = self.sender().parent()
+        frame.hide()
+        self.analysisList.remove(self.dicoFrameAnalysis[frame])
+        del self.dicoFrameAnalysis[frame]
+        self.ui.verticalLayout_9.removeWidget(frame)
+        self.save()
 
     def viewAnalysisParameters(self):
         """ bascule sur une frame qui affiche les valeurs des paramètres
@@ -803,8 +817,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     shutil.move("%s/%s_ACP.txt"%(self.dir,aid),"%s/analysis/%s/ACP.txt"%(self.dir,aDirName))
 
         self.save()
-
-
 
     def moveAnalysisDown(self):
         """ déplace d'un cran vers le bas une analyse
@@ -1032,6 +1044,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         f=open("%s/%s"%(self.dir,self.parent.analysis_conf_name),"wb")
         pickle.dump(l_to_save,f)
         f.close()
+        print "save analysis"
 
     def loadAnalysis(self):
         """ charge les analyses suavegardées
