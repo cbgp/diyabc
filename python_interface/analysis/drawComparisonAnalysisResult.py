@@ -6,14 +6,17 @@ import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
-from uis.drawScenario_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
 from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 from datetime import datetime 
 
-class DrawComparisonAnalysisResult(QFrame):
+formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
+
+class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse
     comparison
     """
@@ -29,7 +32,7 @@ class DrawComparisonAnalysisResult(QFrame):
         self.drawAll()
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)

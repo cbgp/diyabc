@@ -4,7 +4,8 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.defineNewAnalysis_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.defineNewAnalysis_ui import Ui_Frame
 from setupComparisonEvaluation import SetupComparisonEvaluation
 from setupEstimationBias import SetupEstimationBias
 from genericScenarioSelection import GenericScenarioSelection
@@ -12,7 +13,9 @@ from biasScenarioSelection import BiasNEvaluateScenarioSelection
 from analysis import Analysis
 import output
 
-class DefineNewAnalysis(QFrame):
+formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType("uis/defineAnalysis.ui")
+
+class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
     """ écran de définition d'une nouvelle analyse. demande
     le type d'analyse souhaitée
     """
@@ -26,7 +29,7 @@ class DefineNewAnalysis(QFrame):
 
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)

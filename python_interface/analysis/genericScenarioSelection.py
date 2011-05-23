@@ -4,9 +4,12 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.genericScenarioSelection_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.genericScenarioSelection_ui import Ui_Frame
 
-class GenericScenarioSelection(QFrame):
+formGenericScenarioSelection,baseGenericScenarioSelection = uic.loadUiType("uis/genericScenarioSelection.ui")
+
+class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioSelection):
     """ Sélection du scenario dans la cadre d'une analyse de type comparison ou estimate
     """
     def __init__(self,nb_sc,label,next_widget,next_title,nb_min_sel,analysis,parent):
@@ -34,7 +37,7 @@ class GenericScenarioSelection(QFrame):
         self.ui.verticalLayout.setAlignment(Qt.AlignTop)
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
 

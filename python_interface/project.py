@@ -59,6 +59,10 @@ class Project(baseProject,formProject):
         # on peut aussi instancier un tabwidget
         #self.tab = QTabWidget()
 
+        self.createWidgets()
+
+    def createWidgets(self):
+
         # instanciation du widget project_ui
         #self.ui = Ui_TabWidget()
         #self.ui.setupUi(self)
@@ -94,7 +98,7 @@ class Project(baseProject,formProject):
         #self.ui.verticalLayout.setAlignment(self.ui.groupBox,Qt.AlignTop)
         self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)
         self.ui.verticalLayout_3.setAlignment(self.ui.progressBar,Qt.AlignCenter)
-        self.ui.projNameLabelValue.setText(name)
+        self.ui.projNameLabelValue.setText(self.name)
         #self.ui.tableWidget.setColumnWidth(1,150)
         #self.ui.tableWidget.setColumnWidth(2,300)
         #self.ui.tableWidget.setColumnWidth(3,70)

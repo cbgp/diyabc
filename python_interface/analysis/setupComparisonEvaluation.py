@@ -4,11 +4,14 @@ import os
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.setupComparisonEvaluation_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setupComparisonEvaluation_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 import output
 
-class SetupComparisonEvaluation(QFrame):
+formSetupComparisonEvaluation,baseSetupComparisonEvaluation = uic.loadUiType("uis/setupComparisonEvaluation.ui")
+
+class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupComparisonEvaluation):
     """ dernière étape de définition d'une analyse de type comparison ou evaluate
     """
     def __init__(self,analysis,parent=None):
@@ -24,7 +27,7 @@ class SetupComparisonEvaluation(QFrame):
 
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         self.ui.projectNameEdit.setText(self.parent.parent.dir)
