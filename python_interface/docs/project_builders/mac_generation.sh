@@ -63,5 +63,6 @@ mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
 # copy of needed images
 mkdir $output/docs
 cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/executables $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/docs/
+cp -r $SOURCEDIR/uis/ $output/
 # clean
 rm -rf $TMPBUILD

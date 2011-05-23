@@ -4,13 +4,15 @@ import os,sys,platform,multiprocessing
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
-from uis.preferences_ui import Ui_MainWindow
+from PyQt4 import QtGui,uic
+#from uis.preferences_ui import Ui_MainWindow
 from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 import output
 
-class Preferences(QMainWindow):
+formPreferences,basePreferences = uic.loadUiType("uis/preferences.ui")
+
+class Preferences(formPreferences,basePreferences):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
     """
     def __init__(self,parent=None):
@@ -54,7 +56,7 @@ class Preferences(QMainWindow):
 
 
     def createWidgets(self):
-        self.ui = Ui_MainWindow()
+        self.ui=self
         self.ui.setupUi(self)
 
         self.ui.gridLayout.setAlignment(Qt.AlignTop)

@@ -5,10 +5,13 @@ import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
-from uis.viewAnalysisParameters_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.viewAnalysisParameters_ui import Ui_Frame
 import output
 
-class ViewAnalysisParameters(QFrame):
+formViewAnalysisParameters,baseViewAnalysisParameters = uic.loadUiType("uis/viewAnalysisParameters.ui")
+
+class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParameters):
     def __init__(self,parent,analysis):
         super(ViewAnalysisParameters,self).__init__(parent)
         self.parent = parent
@@ -16,8 +19,10 @@ class ViewAnalysisParameters(QFrame):
         self.createWidgets()
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
-        self.ui.setupUi(self)
+        #self.ui = Ui_Frame()
+        self.ui = self
+        self.setupUi(self)
+
         self.ui.tableWidget.setColumnWidth(0,250)
         self.ui.tableWidget.setColumnWidth(1,600)
 

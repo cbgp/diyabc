@@ -2,11 +2,14 @@
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.biasScenarioSelection_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.biasScenarioSelection_ui import Ui_Frame
 from setHistDrawnAnalysis import HistDrawn
 from setHistFixedAnalysis import HistFixed
 
-class BiasNEvaluateScenarioSelection(QFrame):
+formBiasScenarioSelection,baseBiasScenarioSelection = uic.loadUiType("uis/biasScenarioSelection.ui")
+
+class BiasNEvaluateScenarioSelection(formBiasScenarioSelection,baseBiasScenarioSelection):
     """ Sélection du scenario dans la cadre d'une analyse de type bias ou evaluate
     """
     def __init__(self,nb_sc,analysis,parent=None):
@@ -28,7 +31,7 @@ class BiasNEvaluateScenarioSelection(QFrame):
         self.ui.verticalLayout.setAlignment(Qt.AlignTop)
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
 

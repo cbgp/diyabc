@@ -5,10 +5,13 @@ import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
-from uis.drawScenario_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
 
-class DrawScenario(QFrame):
+formDrawScenario,baseDrawScenario = uic.loadUiType("uis/drawScenarioFrame.ui")
+
+class DrawScenario(formDrawScenario,baseDrawScenario):
     """ Classe pour créer une fenêtre à l'intérieur de laquelle on dessine les scénarios (valides car déjà vérifiés)
     on passe au constructeur une liste de dictionnaires contenant les informations sur chaque scénario
     """
@@ -23,7 +26,7 @@ class DrawScenario(QFrame):
 
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        self.ui=self
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)

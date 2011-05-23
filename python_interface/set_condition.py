@@ -2,9 +2,12 @@
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.set_condition_ui import Ui_MainWindow
+from PyQt4 import uic
+#from uis.set_condition_ui import Ui_MainWindow
 
-class SetCondition(QMainWindow):
+formSetCondition,baseSetCondition= uic.loadUiType("uis/setCondition.ui")
+
+class SetCondition(formSetCondition,baseSetCondition):
     """ Fenetre de definition d'une condition
     """
     def __init__(self,param,target_list,parent=None):
@@ -15,7 +18,7 @@ class SetCondition(QMainWindow):
         self.createWidgets()
 
     def createWidgets(self):
-        self.ui = Ui_MainWindow()
+        self.ui=self
         self.ui.setupUi(self)
         self.ui.paramLabel.setText(self.param)
         for t in self.target_list:

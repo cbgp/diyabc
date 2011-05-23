@@ -5,7 +5,8 @@ import codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from uis.setGenData_ui import Ui_Frame
+from PyQt4 import uic
+#from uis.setGenData_ui import Ui_Frame
 from mutationModel.setMutationModelMsatRefTable import SetMutationModelMsatRefTable
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 #from setSummaryStatistics import SetSummaryStatistics
@@ -14,7 +15,9 @@ from utils.visualizescenario import *
 from utils.data import *
 import output
 
-class SetGeneticData(QFrame):
+formGenData,baseGenData = uic.loadUiType("uis/setGenData.ui")
+
+class SetGeneticData(formGenData,baseGenData):
     """ Frame qui est créée pour faire des groupes de locus,
     déterminer leur modèle mutationnel et leur summary statistics
     """
@@ -40,7 +43,8 @@ class SetGeneticData(QFrame):
         self.createWidgets()
 
     def createWidgets(self):
-        self.ui = Ui_Frame()
+        #self.ui = Ui_Frame()
+        self.ui = self
         self.ui.setupUi(self)
 
         self.ui.verticalLayout_3.setAlignment(QtCore.Qt.AlignTop)
