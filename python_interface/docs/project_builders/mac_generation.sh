@@ -40,6 +40,8 @@ cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SO
 pysrctmp=$TMPBUILD/`basename $pysrc`
 sed -i "" "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
 
+# nettoyage de la config de pyinstaller
+rm -f `dirname $pyinst`/config.dat
 # generation of the spec
 python $pyinst -y -o $output $pysrctmp
 # modification of the spec to generate .app

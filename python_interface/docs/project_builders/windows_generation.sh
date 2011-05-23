@@ -41,6 +41,9 @@ sed -i "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
 echo "sed -i 's/development\ version/$VERSION ($BUILDDATE)/g' $TMPBUILD/$APPNAME.py"
 echo `cat $TMPBUILD/$APPNAME.py | grep VERSION`
 
+# nettoyage de la config de pyinstaller
+rm -f `dirname $pyinst`/config.dat
+# lancement de la generation
 python $pyinst $pysrctmp --onefile -w --icon="$icon" -o "$output"
 
 # copy of needed images
