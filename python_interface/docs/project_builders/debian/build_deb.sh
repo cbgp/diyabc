@@ -33,7 +33,8 @@ else
 fi
 
 # template copy 
-cp -r diyabc-interface-pkg-template/ $PACKAGEDIR
+echo $PACKAGEDIR
+cp -rp diyabc-interface-pkg-template/ $PACKAGEDIR
 
 # control file edition
 sed -i "s/Version: X/Version: $VERSION/" $PACKAGEDIR/DEBIAN/control
@@ -49,8 +50,14 @@ else
     PACKAGESRCDIR=$PACKAGEDIR/usr/local/src/diyabc-$VERSION
 fi
 # copy of all the usefull files into usr/local/src
-mkdir $PACKAGESRCDIR
-cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $PACKAGESRCDIR/
+mkdir  -p $PACKAGESRCDIR
+
+# for git errors
+mkdir -p $PACKAGEDIR/usr/local/bin 
+chmod 755 diyabc-interface-pkg-template/DEBIAN/*
+
+
+cp -rp $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $PACKAGESRCDIR/
 # version modification
 sed -i "s/VERSION='development version'/VERSION='$VERSION ($BUILDDATE)'/" $PACKAGESRCDIR/diyabc.py
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
@@ -71,7 +78,7 @@ else
     mv $PACKAGEDIR/usr/share/applications/diyabc.desktop $PACKAGEDIR/usr/share/applications/diyabc-$VERSION.desktop
 fi
 mkdir $PACKAGESRCDIR/docs
-cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/executables $PACKAGESRCDIR/docs/
+cp -rp $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/executables $PACKAGESRCDIR/docs/
 cp $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $PACKAGESRCDIR/docs/
 if [ $MAIN == "MAIN" ]; then
     # generation of the launch script placed in /usr/local/bin
