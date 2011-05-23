@@ -23,7 +23,7 @@ from analysis.defineNewAnalysis import DefineNewAnalysis
 from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
-from viewAnalysisParameters import ViewAnalysisParameters
+from analysis.viewAnalysisParameters import ViewAnalysisParameters
 from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from utils.data import Data
 from datetime import datetime 

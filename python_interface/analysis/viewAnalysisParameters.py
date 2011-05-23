@@ -75,6 +75,13 @@ class ViewAnalysisParameters(QFrame):
 
         self.addRow("computation parameters",self.analysis.computationParameters)
 
+        executablePath = self.parent.parent.preferences_win.getExecutablePath()
+        nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
+        params = self.analysis.computationParameters
+        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
+        command_line = " ".join(cmd_args_list)
+        self.addRow("executed command line",command_line)
+
         
     def addRow(self,name,value):
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
