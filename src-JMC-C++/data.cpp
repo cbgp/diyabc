@@ -61,7 +61,7 @@ struct LocusC
 	vector <int> sitmut;   //array of nsitmut dna sites that are changed through a mutation
 	vector <int> sitmut2;  //
 	int dnalength,dnavar;
-	vector <char> tabsit;   //array of dnalength elements giving the number of a dna site;
+	vector <int> tabsit;   //array of dnalength elements giving the number of a dna site;
 	//char ***haplodna;  //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
 	//char ***haplodnavar; //seulement les sites variables
     string **haplodna;

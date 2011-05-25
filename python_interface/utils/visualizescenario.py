@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on 10 juin 2010
 
@@ -259,12 +260,15 @@ class PopTree(object):
         while (not trouve)and(b>0) :
             b -=1
             trouve = (self.br[b].father == fa)
+        if trouve  : print "b=%s  ch1=%s"%(b,self.br[b].child)
         if trouve : ch1 = self.br[b].child
         else      : return -1, -1
+        trouve = False
         if b>0 :
             while (not trouve)and(b>0) :
                 b -=1
                 trouve = (self.br[b].father == fa)
+            if trouve  : print "b=%s  ch2=%s"%(b,self.br[b].child)
             if trouve : ch2 = self.br[b].child
             else      : ch2 = -1
         else   : ch2 = -1
@@ -290,19 +294,20 @@ class PopTree(object):
             
     def findchildren2(self,fa):
         c1,c2 = self.findchildren(fa)
+        print "fa=%s  c1=%s  c2=%s"%(fa,c1,c2)
         if c1<0  : ch1 = c1
         else     : 
             while self.node[c1].category == "vn" :
                 fa1 = c1
-                c1,c2 = self.findchildren(fa1)
-                if c1<0 : c1 = c2
+                c1,c3 = self.findchildren(fa1)
+                if c1<0 : c1 = c3
             ch1 = c1      
         if c2<0  : ch2 = c2
         else     : 
             while self.node[c2].category == "vn" :
                 fa1 = c2
-                c1,c2 = self.findchildren(fa1)
-                if c2<0 : c2 = c1
+                c3,c2 = self.findchildren(fa1)
+                if c2<0 : c2 = c3
             ch2 = c2
         return ch1,ch2
     
@@ -338,14 +343,12 @@ class PopTree(object):
     def findline(self,n):
         k = n
         pente = (self.node[self.nanc].x - self.node[n].x)/(self.node[self.nanc].y - self.node[n].y)
-        if pente>0  : slope1,slope2 = pente, None 
-        else        : slope1,slope2 = None, pente
         while k != self.nanc :
             b = self.findbranchchild(k,False)
             k = self.br[b].father
             if self.node[k].x == 0 :
                 self.node[k].x = self.node[n].x+ int(round(pente*(self.node[k].y-self.node[n].y)))
-        return slope1,slope2
+        return pente
     
     def findgoodchild(self,n):
         j1,j2 = self.findchildren(n)
@@ -382,6 +385,10 @@ class PopTree(object):
                     n = self.br[i].father
         if self.nanc<len(self.node)-1 :
             for i in range(self.nanc,len(self.node)) : self.node[i].x = self.XMAX//2
+        """print "\n draw_tree etape 1\n"
+        for i,no in enumerate(self.node) :
+            print no 
+        print "\n"""
         if self.nanc == 0 : return
         n = 0
         while self.node[n].x == 0 :
@@ -389,10 +396,14 @@ class PopTree(object):
         nmin,nmax = n,n
         for i in range(n+1,self.nanc+1) :
             if (self.node[i].x>0) and (self.node[i].x<self.node[nmin].x) : nmin = i
-        slope1,slope2 = self.findline(nmin)
+        slope1 = self.findline(nmin)
         for i in range(n+1,self.nanc+1) :
             if (self.node[i].x>0) and (self.node[i].x>self.node[nmax].x) : nmax = i
-        slope1,slope2 = self.findline(nmax)
+        slope2 = self.findline(nmax)
+        if slope1<slope2 : 
+            slope=slope1
+            slope1=slope2
+            slope2=slope
         n=-1
         found = False
         while (n<self.nanc-1) and (not found):
@@ -407,10 +418,10 @@ class PopTree(object):
                 found2 = self.node[n].category == "sp0" 
             found = found2    
         nrest0 = 0
+        #print "\n draw_tree etape 2\n"
         for i in range(0,len(self.node)) : 
             if self.node[i].x == 0 : nrest0 +=1
-            print self.node[i]
-        print "1  nrest0=",nrest0
+            #print self.node[i]
         nforce = 0
         while nrest0>0 :
             nrest = nrest0
@@ -421,7 +432,6 @@ class PopTree(object):
                     n +=1
                     found = (self.node[n].x == 0)
                 if found :
-                    print "n=",n,"  ",self.node[n]
                     if (self.node[n].category == "vn")or(self.node[n].category == "sa2") :
                         j = self.findgoodchild(n)
                         k = self.findgoodfather(n)
@@ -468,7 +478,8 @@ class PopTree(object):
                         else  :
                             j1,j2 = self.findfathers(n)
                             if (self.node[j1].x > 0) and (self.node[j2].x > 0) : self.node[n].x = (self.node[j1].x+self.node[j2].x)//2
-                        if self.node[j1].x > 0 : nrest -=1
+                        if self.node[n].x > 0 : 
+                            nrest -=1
                     elif (self.node[n].category == "sp1") :
                         j = self.findbranchchild(n,False)
                         if self.node[self.br[j].father].x > 0 :
@@ -487,7 +498,7 @@ class PopTree(object):
                                     if self.node[self.br[j].father].x > self.node[j1].x : 
                                         self.node[n].x = self.node[self.br[j].father].x+int(round(slope1*(self.node[n].y-self.node[self.br[j].father].y)))
                                     else :
-                                        self.node[n].x = self.node[self.br[j].father].x+int(round(slope2*(self.node[n].y-self.node[self.br[j].father].y)))
+                                        self.node[n].x = self.node[self.br[j].father].x+int(round(slope2*(self.node[n].y-self.node[self.br[j].father].y)))                                        
                                     nrest -=1
                         if nforce == 1 :
                             j1,j2 = self.findchildren(n)
@@ -504,7 +515,9 @@ class PopTree(object):
             if nrest == nrest0 : nforce +=1
             else               : nforce = 0
             nrest0 = nrest
-        print "2"
+        """print "\nDraw_tree etape 2"
+        for i,no in enumerate(self.node) :
+            print no """       
         n = -1
         while n < (len(self.node)-1) :
             found = False
@@ -515,6 +528,9 @@ class PopTree(object):
                     j1,j2 = self.findfathers(n)                    
                     self.node[n].x = (self.node[j1].x+self.node[j2].x)//2    
         for i in range(0,len(self.node)) : self.node[i].x = self.XMAX - 30 - self.node[i].x        
+        """print "\nDraw_tree etape 3"
+        for i,no in enumerate(self.node) :
+            print no"""        
                 
     def improve_draw(self):
         for i,no in enumerate(self.node) :
@@ -548,16 +564,21 @@ class PopTree(object):
                         if (no.y == self.node[i1].y)and(no.x != self.node[i1].x) :
                             no.x = self.node[i1].x
                             nr +=1
+        """print "\nImprove_tree etape 1"
+        for i,no in enumerate(self.node) :
+            print no"""        
         for i,no in enumerate(self.node) :
             if no.category == "me" :
                 i1 = self.findfather2(i)
                 k1,k2 = self.findchildren2(i)
-                if (i1>0)and(k1>=0)and(k2>=0) :
+                #print "i=%s  i1=%s  k1=%s  k2=%s" %(i,i1,k1,k2) 
+                if (i1>0)and(k1>0)and(k2>0) :
                     if (self.node[k1].y != self.node[i1].y) and (self.node[k2].y != self.node[i1].y) :
                         x1 = self.node[i1].x + (no.y-self.node[i1].y)*(self.node[k1].x-self.node[i1].x)/(self.node[k1].y-self.node[i1].y)
                         x2 = self.node[i1].x + (no.y-self.node[i1].y)*(self.node[k2].x-self.node[i1].x)/(self.node[k2].y-self.node[i1].y)
                         if x1>x2 : piv=x1;x1=x2;x2=piv
-                        if (no.x<int(round(x1))-5) or (no.x<int(round(x2))+5) :
+                        #print "x1=%s  x2=%s" %(x1,x2)
+                        if (no.x<int(round(x1))-5) or (no.x>int(round(x2))+5) :
                             no.x = int(round(0.5*(x1+x2)))
                             i2=i
                             while i2!=i1 :
@@ -566,6 +587,7 @@ class PopTree(object):
                                 i2 = self.br[j].father
                                 if (self.node[i2].category == "vn")and(self.node[i1].y != no.y) :
                                     self.node[i2].x = no.x + int(round((self.node[i2].y-no.y)*(self.node[i1].x-no.x)/(self.node[i1].y-no.y)))
+                                    #print "premier while node[i2].x=%s"%(self.node[i2].x)
                             i2=i
                             while i2!=k1 :
                                 jj=len(self.br)-1
@@ -573,13 +595,21 @@ class PopTree(object):
                                 i2 = self.br[j].child
                                 if (self.node[i2].category == "vn")and(self.node[k1].y != no.y) :
                                     self.node[i2].x = no.x + int(round((self.node[i2].y-no.y)*(self.node[k1].x-no.x)/(self.node[k1].y-no.y)))
+                                    #print "deuxieme while node[i2].x=%s"%(self.node[i2].x)
                             i2=i
                             while i2!=k2 :
-                                while self.br[j].father != i2 : j -=1
-                                i2 = self.br[j].child
-                                if (self.node[i2].category == "vn")and(self.node[i1].y != no.y) :
-                                    self.node[i2].x = no.x + int(round((self.node[i2].y-no.y)*(self.node[k2].x-no.x)/(self.node[k2].y-no.y)))
-                            
+                                while (self.br[j].father != i2)and(j>0) : 
+                                    j -=1
+                                if i2 == self.br[j].father :
+                                    i2 = self.br[j].child;
+                                    if (self.node[i2].category == "vn")and(self.node[i1].y != no.y) :
+                                        self.node[i2].x = no.x + int(round((self.node[i2].y-no.y)*(self.node[k2].x-no.x)/(self.node[k2].y-no.y)))
+                                        #print "troisieme while node[i2].x=%s"%(self.node[i2].x)
+                                    else: break
+        """print "\nImprove_tree etape 2"
+        for i,no in enumerate(self.node) :
+            print no """       
+                           
     def signe(self,a):
         if a>0   :return 1
         elif a<0 :return -1
@@ -644,7 +674,7 @@ class PopTree(object):
         self.initNN()
         ntrial = 0
         npb   = 2
-        while (ntrial<100) and (npb>0) :
+        while (ntrial<10) and (npb>0) :
             self.build_tree()
             print "apres build"
             self.draw_tree()
@@ -654,10 +684,11 @@ class PopTree(object):
             self.segments = self.creesegment()
             npb= self.countpb(self.segments)
             ntrial +=1
+            print "%s : %s problèmes\n"%(ntrial,npb)
         if npb<1 :
             if len(self.br) == 1 : self.segments[0].ydeb = self.YHAUT
         else :
-            raise PopTreeError, "Scenario %s seems OK. But the current version of DIYABC is unable to provide a valide graphic representation."%(self.scenario.number)    
+            raise PopTreeError, "Scenario %s seems OK. But the current version of DIYABC is unable to provide a valid graphic representation."%(self.scenario.number)    
             
 def testCheckScenario():
 #    ts = ['N1 N2 N3', '0 sample 1', '0 sample 2', '0 sample 3', '50 split 3 1 2 lambda', "100 merge 1 2"]

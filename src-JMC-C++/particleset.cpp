@@ -441,9 +441,9 @@ struct ParticleSetC
                                 enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
                         }
 		}
-		//if (trace) cout<<"apres remplissage des enreg\n";fflush(stdin);
+		if (debuglevel==5) cout<<"apres remplissage des enreg\n";fflush(stdin);
         if (firsttime){
-              //cout<<"FIRSTTIME\n";
+              if (debuglevel==5) cout<<"FIRSTTIME\n";
               FILE * pFile;
               char  *curfile;
               int categ,iq;
@@ -451,7 +451,7 @@ struct ParticleSetC
               curfile = new char[strlen(this->header.pathbase)+13];
               strcpy(curfile,this->header.pathbase);
               strcat(curfile,"courant.log");
-              //cout<<curfile<<"\n";
+              if (debuglevel==5) cout<<curfile<<"\n";
               pFile = fopen (curfile,"w");
               fprintf(pFile,"%s\n",this->header.entete.c_str());
               ss=splitwords(header.entete," ",&ns);
@@ -492,7 +492,7 @@ struct ParticleSetC
                   }
               }
               fclose(pFile);
-              //cout<<"apres fclose\n";
+              if (debuglevel==5) cout<<"apres fclose\n";
         }
         //cout<<"apres remise en ordre des enreg.param\n";
         delete [] sOK;

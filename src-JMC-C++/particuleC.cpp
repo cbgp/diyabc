@@ -1486,11 +1486,12 @@ struct ParticleC
 		this->gt[loc].nmutot=0;
 		double mutrate;
 		if (this->locuslist[loc].type <5) mutrate=this->locuslist[loc].mut_rate+this->locuslist[loc].sni_rate;
-		else                        mutrate=this->locuslist[loc].mus_rate;
+		else                        mutrate=this->locuslist[loc].mus_rate*(double)this->locuslist[loc].dnalength;
 		for (int b=0;b<this->gt[loc].nbranches;b++) {
 			this->gt[loc].branches[b].nmut = this->mw.poisson(this->gt[loc].branches[b].length*mutrate);
 			this->gt[loc].nmutot += this->gt[loc].branches[b].nmut;
 		}
+        //cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
 	}
 
 	void mute(int loc, int numut, int b) {
@@ -1522,6 +1523,11 @@ struct ParticleC
 			int n =this->locuslist[loc].sitmut[numut];
             //cout<<"numut="<<numut<<"   n="<<n<<"\n";
 			dnb = dna[n];
+            if (n<0) {cout<<"probleme n="<<n<<"\n";exit(1);}
+            if ((dna[n]!='A')and(dna[n]!='C')and(dna[n]!='G')and(dna[n]!='T')) {
+                cout<<"probleme dna[n]="<<dna[n]<<"\n";
+                exit(1);
+            }
 			switch (dna[n])
 			{  	case 'A' :
 					if (ra<this->matQ[0][1])                        dnb = 'C';
@@ -1544,8 +1550,12 @@ struct ParticleC
 					else                                            dnb = 'G';
 					break;
 			}
-			dna[n] = dnb;
+            if((debuglevel==9)and(loc==10)) cout<<"mutation "<<numut<<"    site mute = "<<n<<"  de "<<dna[n]<<"  vers "<<dnb<<"\n";
+           if (debuglevel==8) cout<<"mutation "<<numut<<"   dna["<<n<<"]="<<dna[n]<<"   dnb="<<dnb<<"\n";
+            if (debuglevel==8) cout<<dna<<"\n";
+            dna[n] = dnb;
 			this->gt[loc].nodes[this->gt[loc].branches[b].bottom].dna = dna;
+            if (debuglevel==8) cout<<dna<<"\n";
 		}
 	}
 
@@ -1558,7 +1568,7 @@ struct ParticleC
 	}
 
 	string init_dnaseq(int loc) {
-      if (debuglevel==10) cout<<"debut de init_dnaseq  dnatrue = "<<this->dnatrue<<"\n";
+      if (debuglevel==9) cout<<"debut de init_dnaseq  dnatrue = "<<this->dnatrue<<"   dnalength="<<this->locuslist[loc].dnalength<<"\n";
 		this->locuslist[loc].tabsit.resize(this->locuslist[loc].dnalength);
 		//int *sitmut2;
 		string dna="";
@@ -1590,7 +1600,7 @@ struct ParticleC
                     dna2[i] = 'z';
                     this->locuslist[loc].tabsit[i] = -1;
                 }
-                int k=0;
+               int k=0;
                 for (int i=0;i<this->gt[loc].nmutot;i++) {
                     if (dna2[this->locuslist[loc].sitmut2[i]] == 'z') {
                         this->locuslist[loc].tabsit[this->locuslist[loc].sitmut2[i]] = k;
@@ -1598,6 +1608,7 @@ struct ParticleC
                         k++;
                         dna2[this->locuslist[loc].sitmut2[i]] = draw_nuc(loc);
                         dna[k-1]=dna2[this->locuslist[loc].sitmut2[i]];
+                        //cout<<"i="<<i<<"   sitmut2="<<this->locuslist[loc].sitmut2[i]<<"   dna2="<<dna2[this->locuslist[loc].sitmut2[i]]<<"\n";
                     }
                 }
                 for (int i=0;i<this->gt[loc].nmutot;i++) this->locuslist[loc].sitmut[i]=this->locuslist[loc].tabsit[this->locuslist[loc].sitmut2[i]];
@@ -1605,18 +1616,22 @@ struct ParticleC
                 dna2.clear();
             }
             if (debuglevel==10) cout <<dna<<"\n";
-            if (debuglevel==9) {            
+            if ((debuglevel==9)and(loc==10)) {            
                 cout<<"sitmut2\n";
                 for (int i=0;i<this->gt[loc].nmutot;i++) cout<<this->locuslist[loc].sitmut2[i]<<"  ";cout<<"\n";
 
                 cout<<"sitmut\n";
                 for (int i=0;i<this->gt[loc].nmutot;i++) cout<<this->locuslist[loc].sitmut[i]<<"  ";cout<<"\n";
-            }
+                 cout<<"tabsit\n";
+                for (int i=0;i<this->locuslist[loc].dnalength;i++) if (this->locuslist[loc].tabsit[i]!=-1)cout<<this->locuslist[loc].tabsit[i]<<"  ";cout<<"\n";
+           }
             //delete []sitmut2;
             this->locuslist[loc].tabsit.clear();
             this->locuslist[loc].mutsit.clear();
         }
-		return dna;
+        
+        if ((debuglevel==9)and(loc==10)) cout<<dna<<"\n";
+        return dna;
 	}
 
 	int cree_haplo(int loc) {
@@ -1642,7 +1657,7 @@ struct ParticleC
 		int len;
         if (debuglevel==10) cout <<"avant la boucle while ngenes="<<this->gt[loc].ngenes<<"\n";
 		while (anc>=this->gt[loc].ngenes) {
-			if (debuglevel==10) cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
+			if (debuglevel>10) cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
 			br=0;
 			while (br<this->gt[loc].nbranches) {
                 trouve = (this->gt[loc].branches[br].top == anc);
@@ -1662,6 +1677,12 @@ struct ParticleC
             }
             anc--;
         }
+        if((debuglevel==9)and(loc==10)) {
+            for (int sa=0;sa<this->nsample;sa++) {
+                cout<<"sample "<<sa<<"\n";
+                for (int ind=0;ind<this->locuslist[loc].ss[sa];ind++) cout<<ind<<"  "<<this->gt[loc].nodes[ind+sa*this->locuslist[loc].ss[sa]].dna<<"\n";
+            }
+        }
         this->locuslist[loc].sitmut.clear();
         int ind2=0,sa0=0,sa2=this->locuslist[loc].ss[sa0];
         if (debuglevel==10) cout<<"sa2="<<sa2<<"\n";
@@ -1674,6 +1695,11 @@ struct ParticleC
 			if (sa>0) {for (int i=0;i<this->locuslist[loc].ss[sa];i++) ordre[sa][i]+=ind;}
 			ind +=this->locuslist[loc].ss[sa];
 		}
+		if((debuglevel==9)and(loc==10)) {
+            for (int sa=0;sa<this->nsample;sa++) {
+                for (int ind=0;ind<this->locuslist[loc].ss[sa];ind++) cout<<"ordre["<<sa<<"]["<<ind<<"] = "<<ordre[sa][ind]<<"\n";
+            }
+        }
 		if (debuglevel==10) cout<<"apres ordre\n";
         this->locuslist[loc].samplesize =new int[this->data.nsample];
         for (int sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].samplesize[sa] =this->locuslist[loc].ss[sa];
@@ -1714,7 +1740,7 @@ struct ParticleC
 				}
 		}
 		ordre.clear();
-        //cout<<"nmutotdans cree_haplo = "<<this->gt[loc].nmutot<<"\n";
+        if (debuglevel==7)cout<<"Locus "<<loc<<"    nmutotdans cree_haplo = "<<this->gt[loc].nmutot<<"\n";
 		return 0;
 	}
 
@@ -1890,6 +1916,12 @@ struct ParticleC
 		//if (trace) cout << "Fin de dosimulpart \n";
 		int simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
 		if (debuglevel==10) cout<<"fin de dosimulpart   simOK="<<simOK<<"\n";fflush(stdin);
+        if (debuglevel==7) {
+            for (int loc=0;loc<this->nloc;loc++) if(this->locuslist[loc].type>4) {
+                cout<<"Locus "<<loc<<"\n";
+                for(int sa=0;sa<this->nsample;sa++) {cout<<this->locuslist[loc].haplodna[sa][0]<<"\n";cout<<this->locuslist[loc].haplodna[sa][1]<<"\n\n";}
+            }
+        }
         //exit(1);
 		return simOK;
 	}
@@ -2489,14 +2521,23 @@ struct ParticleC
         vector <int> nuvar;
         if(this->locuslist[kloc].samplesize[sample]>0) {
             *OK=true;
-            if (not this->locuslist[kloc].dnavar==0) {
+            if((debuglevel==9)and(kloc==10)) cout<<"OK=true  dnavar="<<this->locuslist[kloc].dnavar<<"\n";
+            if (this->locuslist[kloc].dnavar>0) {
                 for (j=0;j<this->locuslist[kloc].dnavar;j++) {
-                    c0='\0';ident=true;
+                    if((debuglevel==9)and(kloc==10)) cout<<"j="<<j<<"  ss="<<this->locuslist[kloc].ss[sample]<<"\n";
+                    c0='z';ident=true;
                     for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
+                        /*if((debuglevel==9)and(kloc==10)) {
+                              cout<<this->locuslist[kloc].haplodnavar[sample][i]<<"   "<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   "<<c0;  
+                              cout<<"  "<<(this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING);
+                              cout<<"  "<<(this->locuslist[kloc].haplodnavar[sample][i][j]!='N');
+                              cout<<"  "<<((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodnavar[sample][i][j]!='N'))<<"\n";
+                        }*/
                         if ((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodnavar[sample][i][j]!='N')) {
-                            if (c0=='\0') c0=this->locuslist[kloc].haplodnavar[sample][i][j];
+                            if((debuglevel==9)and(kloc==10)) cout<<"c0="<<c0<<"\n";
+                            if (c0=='z') c0=this->locuslist[kloc].haplodnavar[sample][i][j];
                             else ident=(c0==this->locuslist[kloc].haplodnavar[sample][i][j]);
-                            //if (not ident) cout<<"nucleotide "<<j<<"   c0="<<c0<<"   c1="<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   i="<<i<<"\n";
+                            if((debuglevel==9)and(kloc==10)) {if (not ident) cout<<"nucleotide "<<j<<"   c0="<<c0<<"   c1="<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   i="<<i<<"\n";}
                         }
                         if (not ident) break;
                     }
@@ -2508,6 +2549,7 @@ struct ParticleC
         for (j=0;j<nss;j++) ss[j]=nuvar[j];
         if (not nuvar.empty()) nuvar.clear();
         *nssl=nss;
+        //cout<<"locus "<<kloc<<"   nss="<<nss<<"\n";
         return ss;
     }
 
@@ -2523,8 +2565,17 @@ struct ParticleC
             //for (int k=0;k<nssl;k++) cout<<"  "<<ss[k];if(nssl>0) cout<<"\n";
             if (OK) {nl++;nssm += nssl;}
             delete []ss;
+        if((debuglevel==9)and(kloc==10)) {
+          cout<<"\ndnavar ="<<this->locuslist[kloc].dnavar<<"\n";
+            for (int sa=0;sa<this->nsample;sa++) {
+                cout<<" dans cal_nss1p   sample "<<sa<<"\n";
+                for (int ind=0;ind<this->locuslist[kloc].ss[sa];ind++) cout<<ind<<"  "<<this->locuslist[kloc].haplodna[sa][ind]<<"\n";
+            }
+            cout <<"nssl = "<<nssl<<"\n";
+        }
         }
         if (nl>0) res=(double)nssm/(double)nl;
+        if ((debuglevel==9)and(kloc==10)) {cout<<"nombre de sites segregeant = "<<res<<"\n"; if (not this->dnatrue) exit(1);}
  		return res;
 	}
 
@@ -3112,7 +3163,7 @@ struct ParticleC
             	for (pop=0;pop<this->data.nsample;pop++) {
                	    this->locuslist[locus].haplodnavar[pop] = new string[this->locuslist[locus].ss[pop]];
                 	for (i=0;i<this->locuslist[locus].ss[pop];i++) {
-                   	    if (this->locuslist[locus].haplodna[pop][i].length()==this->locuslist[locus].dnavar+1) {
+                   	    if (this->locuslist[locus].haplodna[pop][i].length()==this->locuslist[locus].dnavar) {
                             this->locuslist[locus].haplodnavar[pop][i] = this->locuslist[locus].haplodna[pop][i];
                         } else {
                             this->locuslist[locus].haplodnavar[pop][i] = "";
@@ -3128,14 +3179,6 @@ struct ParticleC
                 ns=0; for (pop=0;pop<this->data.nsample;pop++) ns += this->locuslist[locus].ss[pop];
                 site = new char[ns];
                 this->locuslist[locus].dnavar=0;
-                /*lonseq=0;
-                for (pop=0;pop<this->data.nsample;pop++) {
-                    for (i=0;i<this->locuslist[locus].ss[pop];i++) { 
-                        lonseq = strlen(this->locuslist[locus].dnalength);
-                        if (lonseq>0) break;
-                    }
-                    if (lonseq>0) break;
-                }*/
                 if (this->locuslist[locus].dnalength>0) {
                     //cout <<"longseq = "<<this->locuslist[locus].dnalength<<"\n";;
                     for (k=0;k<this->locuslist[locus].dnalength;k++) {
