@@ -140,6 +140,10 @@ matligneC *matA;
             fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",posts[i][j].x,posts[i][j].inf,posts[i][j].sup);fprintf(f1,"\n");
         }
         fclose(f1);
+        for (int i=0;i<rt.nscenchoisi;i++) delete []posts[i];
+        delete []posts;
+        delete []nomfiparstat;
+        
     }
 
     void save_comp_logistic(int nlogreg,int nselr,posteriorscenC** postscenlog,char *path, char *ident) {
@@ -159,7 +163,10 @@ matligneC *matA;
             printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
             fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");
         }
-        fclose(f1);        
+        fclose(f1);
+        for (int i=0;i<nlogreg;i++) delete []postscenlog[i];
+        delete []postscenlog;
+        delete []nomfiparstat;
     }
    
     
@@ -213,6 +220,7 @@ matligneC *matA;
         for (int i=0;i<n;i++) cvecW[i]/=som;
         /*cout <<"\ncvecW:\n";for (int i=0;i<10;i++) cout<<cvecW[i]<<"  ";
         cout<<"\n";*/
+        delete []sx;delete []sx2;delete []mo;delete []var_statsel;
     }
 
     void expbeta(int bsize, double *b, double *eb)
@@ -652,5 +660,7 @@ matligneC *matA;
             }
             save_comp_logistic(nlogreg,nselr,postscenlog,path,ident);
         }
-    
+        delete []ss;
+        delete []ss1;
+        
     }

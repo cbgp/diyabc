@@ -777,6 +777,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.thAnalysis.analysis.status = "finished"
         atype = self.thAnalysis.analysis.category
         self.thAnalysis = None
+        #print "type = %s"%(atype) 
 
         # nettoyage du progress.txt
         if os.path.exists("%s/%s_progress.txt"%(self.dir,aid)):
@@ -809,6 +810,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 aDirName = "bias_%s"%aid
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias.txt"%(self.dir,aDirName))
+                #print "déplacement de %s/%s_bias.txt vers %s/analysis/%s/bias.txt"%(self.dir,aid,self.dir,aDirName)
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
         elif atype == "evaluate":
             if os.path.exists("%s/%s_confidence.txt"%(self.dir,aid)):
