@@ -207,10 +207,11 @@ struct ParticleSetC
 		for (int i=0;i<this->header.nscenarios;i++) {
             //cout<<"avant la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
             //cout << "\nscenario source\n";
-            //this->header.scenario[i].ecris();
+            //if (p==0) cout<<"header nconditions="<<this->header.scenario[i].nconditions<<"\n";
 		    this->particule[p].scenario[i] = copyscenario(this->header.scenario[i]);
             //cout<<"apres la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
-		    //this->particule[p].scenario[i].ecris();
+		    //if (p==0) this->particule[p].scenario[i].ecris();
+            //if (p==0) cout<<"dans particule[0] scenario["<<i<<"] nconditions="<<this->particule[p].scenario[i].nconditions<<"\n";
 		}
         //cout<<"\navant la copie du superscenario\n";
         //this->header.scen.ecris();
@@ -218,6 +219,7 @@ struct ParticleSetC
         //cout<<"\napres la copie du superscenario\n";
         //this->particule[p].scen.ecris();
         //cout<<"setscenarios nloc="<<this->particule[p].nloc<<"\n";
+        //exit(1);
 		
 	}
 	

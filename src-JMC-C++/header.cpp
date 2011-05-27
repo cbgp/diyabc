@@ -110,10 +110,11 @@ public:
             cond.operateur=">=";cond.param1=ss.substr(0,ss.find(">="));cond.param2=ss.substr(ss.find(">=")+2,ss.length()-(ss.find(">=")+2));}
         else if (ss.find("<=")!=string::npos){
             cond.operateur="<=";cond.param1=ss.substr(0,ss.find("<="));cond.param2=ss.substr(ss.find("<=")+2,ss.length()-(ss.find("<=")+2));}
-        if (ss.find(">")!=string::npos){
+        if ((ss.find(">")!=string::npos)and(ss.find(">=")==string::npos)){
             cond.operateur=">";cond.param1=ss.substr(0,ss.find(">"));cond.param2=ss.substr(ss.find(">")+1,ss.length()-(ss.find(">")+1));}
-        else if (ss.find("<")!=string::npos){
+        else if ((ss.find("<")!=string::npos)and(ss.find("<=")==string::npos)){
             cond.operateur="<";cond.param1=ss.substr(0,ss.find("<"));cond.param2=ss.substr(ss.find("<")+1,ss.length()-(ss.find("<")+1));}
+            //cond.ecris();
             return cond;
     }
 
@@ -207,11 +208,13 @@ public:
                 //cout <<"avant histparam\n";fflush(stdin);
         getline(file,s1);       //ligne vide
         getline(file,s1);
+        cout<<s1<<"\n";
         ss=splitwords(s1," ",&nss);
         s2=ss[3].substr(1,ss[3].length()-2);
         ss2=splitwords(s2,",",&nss);
         this->nparamtot = atoi(ss2[0].c_str());
         this->nconditions = atoi(ss2[1].c_str());
+        //cout<<"dans header nconditions="<<this->nconditions<<"\n";
         delete [] ss2;
         this->histparam = new HistParameterC[this->nparamtot];
         if (this->nconditions>0) this->condition = new ConditionC[this->nconditions];
@@ -264,12 +267,14 @@ public:
                         for (j=0;j<this->nconditions;j++) {
                             int np=0;
                             for (k=0;k<this->scenario[i].nparam;k++) {
+                                //cout<<this->condition[j].param1<<"   "<<this->condition[j].param2<<"   "<<this->scenario[i].histparam[k].name<<"  np="<<np<<"\n";
                                 if (this->condition[j].param1 == this->scenario[i].histparam[k].name) np++;
                                 if (this->condition[j].param2 == this->scenario[i].histparam[k].name) np++;
                             }
                             if (np==2) nc++;
                         }
                         this->scenario[i].nconditions=nc;
+                        //cout <<"header.scenario["<<i<<"].nconditons="<<this->scenario[i].nconditions<<"\n";
                         this->scenario[i].condition = new ConditionC[nc];
                         nc=0;
                         while (nc<this->scenario[i].nconditions) {

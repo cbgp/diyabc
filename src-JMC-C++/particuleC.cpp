@@ -119,7 +119,7 @@ struct ConditionC
 {
 	string param1,param2,operateur;
 	
-	void ecris(){cout<<this->param1<<this->operateur<<this->param2<<"\n";}
+	void ecris(){cout<<this->param1<<"  "<<this->operateur<<"  "<<this->param2<<"\n";}
 
 };
 
@@ -797,16 +797,18 @@ struct ParticleC
 	    bool OK=true;
 	    int ip1,ip2;
 	    int i=0;
+        if (debuglevel==10) cout<<this->scen.nconditions<<" conditions à remplir\n";
 	    while ((OK)and(i<this->scen.nconditions)){
 	        //this->scen.condition[i].ecris();
-	        //cout<<this->scen.condition[i].param1<<this->scen.condition[i].operateur<<this->scen.condition[i].param2<<"\n";
+	        
 	        ip1=0;while (this->scen.condition [i].param1!=this->scen.histparam[ip1].name) ip1++;
 	        ip2=0;while (this->scen.condition [i].param2!=this->scen.histparam[ip2].name) ip2++;
 	        if (this->scen.condition[i].operateur==">")       OK=(this->scen.histparam[ip1].value > this->scen.histparam[ip2].value);
 	        else if (this->scen.condition[i].operateur=="<")  OK=(this->scen.histparam[ip1].value < this->scen.histparam[ip2].value);
 	        else if (this->scen.condition[i].operateur==">=") OK=(this->scen.histparam[ip1].value >= this->scen.histparam[ip2].value);
 	        else if (this->scen.condition[i].operateur=="<=") OK=(this->scen.histparam[ip1].value <= this->scen.histparam[ip2].value);
-	        i++;
+	        if (debuglevel==10) cout<<this->scen.condition[i].param1<<this->scen.condition[i].operateur<<this->scen.condition[i].param2<<"  "<<OK<<"\n";
+            i++;
 	    }
 	    return OK;
 	}
@@ -815,6 +817,7 @@ struct ParticleC
 * Struct ParticleC : génère les valeurs des paramètres historiques d'un scénario donné' 
 */
 	bool setHistParamValue(bool usepriorhist) {
+        //cout<<"dans sethistparamvalue nconditions="<<this->scen.nconditions<<"   drawuntil="<<drawuntil<<"\n";
 		bool OK=true;
         if (usepriorhist) {
             if (this->scen.nconditions>0) {
@@ -857,8 +860,7 @@ struct ParticleC
 			}
 		}
 		//cout<<"fin du tirage des parametres\n";
-		//for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";
-		//cout <<"\n";
+		if (debuglevel==10) {for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";cout <<"\n";}
 		if (OK) {
 			for (int ievent=0;ievent<this->scen.nevent;ievent++) {
 				if (this->scen.event[ievent].action=='V') { if (this->scen.event[ievent].Ne<0) this->scen.event[ievent].Ne= (int)(0.5+this->getvalue(this->scen.event[ievent].sNe));}
@@ -1793,7 +1795,10 @@ struct ParticleC
 				if (not treedone) {
 					if (debuglevel==10) cout << "avant init_tree \n";
 					this->gt[loc] = init_tree(loc);
-					if (debuglevel==10) cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
+					if (debuglevel==10){ 
+                        cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
+                        cout<< "scenario "<<this->scen.number<<"\n";
+                    }
 					for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 					for (int iseq=0;iseq<this->nseq;iseq++) {
 						if (debuglevel==10) {
@@ -1802,7 +1807,7 @@ struct ParticleC
                            if (this->seqlist[iseq].action == 'C') cout <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
                            else  cout <<"   "<<this->seqlist[iseq].t0;
                            cout<<"    pop="<<this->seqlist[iseq].pop;
-                           if (this->seqlist[iseq].action == 'M') cout <<"   pop1="<<this->seqlist[iseq].pop1;
+                           if ((this->seqlist[iseq].action == 'M')or(this->seqlist[iseq].action == 'S')) cout <<"   pop1="<<this->seqlist[iseq].pop1;
                            if (this->seqlist[iseq].action == 'S') cout <<"   pop2="<<this->seqlist[iseq].pop2;
                            cout<<"\n";
                            fflush(stdin);
@@ -1954,8 +1959,8 @@ struct ParticleC
                     }
                 }
                 //cout <<" fini\n";
-                if (this->locuslist[loc].samplesize[samp]<1) cout << "samplesize["<<loc<<"]["<<samp<<"]="<<this->locuslist[loc].samplesize[samp]<<"\n";
-                for (int k=0;k<this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;k++) this->locuslist[loc].freq[samp][k]/=this->locuslist[loc].samplesize[samp];
+                //if (this->locuslist[loc].samplesize[samp]<1) cout << "samplesize["<<loc<<"]["<<samp<<"]="<<this->locuslist[loc].samplesize[samp]<<"\n";
+                for (int k=0;k<this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;k++)if (this->locuslist[loc].samplesize[samp]>0) this->locuslist[loc].freq[samp][k]/=this->locuslist[loc].samplesize[samp];
                 /*cout << "loc "<<loc <<"  sa "<<samp;
                 for (int k=0;k<this->locuslist[loc].nal;k++) {if (this->locuslist[loc].freq[samp][k]>0.0) cout << "   "<<this->locuslist[loc].freq[samp][k]<<"("<<k+this->locuslist[loc].kmin<<")";}
                 cout << "\n";*/
