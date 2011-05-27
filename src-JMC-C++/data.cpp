@@ -197,7 +197,8 @@ public:
 	    	if (s!="") {
 				s1=majuscules(s);
 //				cout << s1<<"\n";
-				if (s1.find("POP")==string::npos) {
+				if ((s1.find("POP")!=string::npos)and(s1.find(",")==string::npos)) {nech +=1;nindi[nech-1]=0;}
+                else {
 					nindi[nech-1] +=1;
 					s2=s1.substr(s1.find(","),s1.length());
 	//COMPTAGE DES DONNEES MANQUANTES
@@ -222,7 +223,6 @@ public:
 						j=s2.find("-",j+1);
 					}
 				}
-	    	    else {nech +=1;nindi[nech-1]=0;}
 	    	}
 	    	getline(file,s);
 		}

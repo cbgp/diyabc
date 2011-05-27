@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on 24 sept. 2009
 
@@ -189,14 +190,15 @@ class Data(object):
         npop=0
         for li in lines :
             lim= li.upper()
-            if (lim.find('POP')>-1) : npop +=1
+            if (lim.find('POP')>-1)and(lim.find(',')<1) : npop +=1
+            #print lim,"   npop=%s"%(npop)
         if npop<1 :
 #data file with no keyword "POP"
             raise NotGenepopFileError('data file with no keyword "POP"')
         npop=0
         for li in lines :
             lim= li.upper()
-            if (lim.find('POP')>-1) : npop +=1
+            if (lim.find('POP')>-1)and(lim.find(',')<1) : npop +=1
             if (npop>0) and (lim.find('POP')<0)and (li.find(',')<1) :
 #data file with missing comma between individual name and genotype
                raise NotGenepopFileError("either Genepop file with missing comma between individual name and genotype or not a Genepop file")
@@ -257,7 +259,7 @@ class Data(object):
 # loop to read genotypes
         while nl<len(lines) :
             line = lines[nl].upper()
-            if line.find('POP')>-1 :
+            if (line.find('POP')>-1) and(line.find(',')<1):
                 self.nsample +=1
                 self.nind.append(0)
                 self.indivname[-1].append([])

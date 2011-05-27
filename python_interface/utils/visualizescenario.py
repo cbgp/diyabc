@@ -453,7 +453,7 @@ class PopTree(object):
                             nrest -=1
                         else :
                             if nforce == 1 :
-                                j = self.findbranchchild(n)
+                                j = self.findbranchchild(n,False)
                                 if self.node[self.br[j].father].x > 0 :
                                     j1,j2 = self.findchildren(self.br[j].father)
                                     if (j1<0) or (j2<0) :

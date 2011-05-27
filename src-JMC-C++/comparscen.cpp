@@ -88,6 +88,33 @@ matligneC *matA;
         vecYY = new double[nli];
     }
 
+    void liberecmat(int nmodel, int nli, int nco) {
+        int nmodnco = nmodel*(nco+1);
+        
+        for (int i=0;i<nmodel;i++) delete []cmatA[i];delete cmatA;
+        for (int i=0;i<nmodnco;i++) delete []cmatB[i];delete cmatB;
+        for (int i=0;i<nmodnco;i++) delete []cmatC[i];delete cmatC;
+        for (int i=0;i<nli;i++) delete []cmatX[i];delete cmatX;
+        for (int i=0;i<nco+1;i++) delete []cmatXT[i];delete cmatXT;
+        delete []cdeltabeta;
+        delete []cbeta0;
+        delete []cbeta;
+        delete []cmatYP;
+        for (int i=0;i<nli;i++) delete []cmatP[i];delete cmatP;
+        for (int i=0;i<nli;i++) delete []cmatY[i];delete cmatY;
+        delete []cloglik;        
+        delete []csd;        
+        delete []cbet;        
+        delete []cpx0;        
+        delete []csmatY;        
+        delete []csmatP;        
+        for (int i=0;i<nli;i++) delete []cmatX0[i];delete cmatX0;
+        delete [] matA;        
+        delete []cvecW;        
+        delete [] vecY;
+        delete [] vecYY;
+    }
+
     posteriorscenC** comp_direct(int n) {
         int nts,bidon,iscen,k,i;
         posteriorscenC **posts;
@@ -659,6 +686,7 @@ matligneC *matA;
                 iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             }
             save_comp_logistic(nlogreg,nselr,postscenlog,path,ident);
+            liberecmat(rt.nscenchoisi, nselr, rt.nstat);
         }
         delete []ss;
         delete []ss1;

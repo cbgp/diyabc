@@ -1771,6 +1771,7 @@ struct ParticleC
 		//	cout << this->scen.histparam[k].value << "   ";
 		//}
 		//cout << "\n";
+        for (loc=0;loc<this->nloc;loc++) simulOK[loc]=-1;
 		setMutParammoyValue(usepriormut);
         if (debuglevel==10) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
 		for (loc=0;loc<this->nloc;loc++) {
@@ -1900,12 +1901,13 @@ struct ParticleC
                 }
         }
         //cout<<"avant le sitmut2.clear()\n";
-        for (loc=0;loc<this->nloc;loc++) if (this->locuslist[loc].type>4) this->locuslist[loc].sitmut2.clear();
+        for (loc=0;loc<this->nloc;loc++) if ((this->locuslist[loc].type>4)and(simulOK[loc]>-1)) this->locuslist[loc].sitmut2.clear();
         if (debuglevel==10) cout<<"avant les delete\n";fflush(stdin);
         delete [] emptyPop;
         delete [] this->seqlist;
 		for (int loc=0;loc<this->nloc;loc++) {
-            if (this->locuslist[loc].groupe>0) {
+            if ((this->locuslist[loc].groupe>0)and(simulOK[loc]>-1)) {
+                if (debuglevel==10) cout<<"deletetree du locus "<<loc<<"\n";
                 if(this->locuslist[loc].type>4) deletetree(this->gt[loc],true);
                 else deletetree(this->gt[loc],false);
             }
