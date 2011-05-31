@@ -153,8 +153,10 @@ public:
         //cout<<"debut de readrecord\n";
         this->fifo.read((char*)&(enr->numscen),sizeof(int));
         //cout<<"numscen = "<<enr->numscen<<"\n";
-        for (int i=0;i<this->nparam[enr->numscen-1];i++) {this->fifo.read((char*)&(enr->param[i]),sizeof(float));}
-        for (int i=0;i<this->nstat;i++) {this->fifo.read((char*)&(enr->stat[i]),sizeof(float));}
+        for (int i=0;i<this->nparam[enr->numscen-1];i++) {this->fifo.read((char*)&(enr->param[i]),sizeof(float));/*cout<<enr->param[i]<<"  ";*/}
+        //cout <<"\n";
+        for (int i=0;i<this->nstat;i++) {this->fifo.read((char*)&(enr->stat[i]),sizeof(float));/*cout<<enr->stat[i]<<"  ";if ((i%10)==9) cout<<"\n";*/}
+        //cout <<"\n";
         //cout<<"fin de readrecord\n";
         //cin>>bidon;
         return 0;

@@ -554,6 +554,16 @@ struct SequenceBitC
     int pop,pop1,pop2,sample;
     int N,t0,t1;
     double admixrate;
+    bool *popfull;
+    
+    void ecris() {
+        switch (action){
+          case 'C' : cout <<"coalescence dans pop "<<this->pop<<"   N="<<this->N<<"   t0="<<this->t0<<"   t1="<<this->t1<<"\n";break;
+          case 'M' : cout << "merge pop="<<this->pop<<"  pop1="<<this->pop1<<"  à t0="<<this->t0<<"\n";break;
+          case 'S' : cout <<"split de pop="<<this->pop<<"  vers pop1="<<this->pop1<<" et pop2="<<this->pop2<<"  à t0="<<this->t0<<"\n";break;
+          case 'A' : cout <<"add sample à pop="<<this->pop<<"  à t0="<<this->t0<<"\n";break;
+        }
+    }
 
 };
 
@@ -812,6 +822,97 @@ struct ParticleC
 	    }
 	    return OK;
 	}
+	
+/**
+*Struct ParticleC : vérifie l'ordre des événements quand il a y en a plusieurs à la même génération
+*/
+
+    void checkorder() {
+        vector < vector <int> > exaequo;
+        vector <int> bonordre;
+        int ng=0,kscen,numpiv=-1,g,gg,kk;
+        EventC piv;
+        bool deja,trouve;
+        for (int iev=0;iev<this->scen.nevent-1;iev++) {
+            for (int jev=iev+1;jev<this->scen.nevent;jev++) {
+                if (this->scen.event[iev].time==this->scen.event[jev].time) {
+                    //cout<<"iev="<<iev<<"   jev="<<jev<<"\n";
+                    if (ng==0) {
+                        ng++;
+                        exaequo.resize(ng);
+                        exaequo[ng-1].clear();
+                        exaequo[ng-1].push_back(iev);
+                        exaequo[ng-1].push_back(jev);
+                        //cout<<"debut ng="<<ng;
+                        //for (int k=0;k<exaequo[ng-1].size();k++) cout<<"  "<<exaequo[ng-1][k];cout<<"\n";
+                    } else {
+                        deja=false;
+                        for (g=0;g<ng;g++) {
+                            for (int k=0;k<exaequo[g].size();k++) if (exaequo[g][k]==iev) {deja=true;gg=g;kk=k;break;}
+                        }
+                        //cout<<"deja="<<deja<<"   g="<<gg<<"   k="<<kk<<"\n";
+                        if (deja) {
+                          trouve=false;
+                          //cout<<"exaequo[g].size()="<<exaequo[gg].size()<<"\n";
+                          for (int k=0;k<exaequo[gg].size();k++)if (exaequo[gg][k]==jev){trouve=true;break;}
+                          //cout<<"trouve="<<trouve<<"\n";
+                          if (not trouve) exaequo[gg].push_back(jev);
+                          //cout<<"deja ng="<<ng;
+                          //for (int k=0;k<exaequo[gg].size();k++) cout<<"  "<<exaequo[gg][k];cout<<"\n";
+                        }
+                        else {
+                            ng++;
+                            exaequo.resize(ng);
+                            exaequo[ng-1].clear();
+                            exaequo[ng-1].push_back(iev);
+                            exaequo[ng-1].push_back(jev);
+                            //cout<<"nouveau groupe ng="<<ng;
+                            //for (int k=0;k<exaequo[ng-1].size();k++) cout<<"  "<<exaequo[ng-1][k];cout<<"\n";
+                        }
+                    }
+                } 
+            }
+        }
+        if (ng==0) return;
+        for (kscen=0;kscen<this->nscenarios;kscen++) if (this->scenario[kscen].number==this->scen.number) break;
+        //cout<<"scenario de référence = "<<kscen+1<<"\n";
+        //cout<<"avant de réordonner\n";
+        /*for (g=0;g<ng;g++) {
+            for (int iev=0;iev<exaequo[g].size();iev++) this->scen.event[exaequo[g][iev]].ecris();
+            cout<<"\n";
+        }*/
+        //cout<<"apres remise en ordre\n";
+        for (g=0;g<ng;g++) {
+            //cout<<"dans le groupe "<<g<<"\n";
+            bonordre.clear();
+            for (int iev=0;iev<exaequo[g].size();iev++) {
+                for (int jev=0;jev<this->scen.nevent;jev++) {
+                    if (this->scen.event[exaequo[g][iev]].action==this->scenario[kscen].event[jev].action) {
+                          if (this->scen.event[exaequo[g][iev]].pop==this->scenario[kscen].event[jev].pop) {
+                              if (this->scen.event[exaequo[g][iev]].action!='M') bonordre.push_back(jev);
+                              else {if (this->scen.event[exaequo[g][iev]].pop1==this->scenario[kscen].event[jev].pop1) bonordre.push_back(jev);}
+                          }
+                    }
+                }
+            }
+            //for (int iev=0;iev<exaequo[g].size();iev++) cout<<"iev="<<iev<<"   exaequo="<<exaequo[g][iev]<<"   bonordre="<<bonordre[iev]<<"\n";
+            for (int iev=0;iev<exaequo[g].size()-1;iev++) {
+                for (int jev=iev+1;jev<exaequo[g].size();jev++) {
+                    if (bonordre[iev]>bonordre[jev]) {
+                        //cout<<"echange entre "<<iev<<" et "<<jev<<"\n"; 
+                        piv = copyevent(this->scen.event[exaequo[g][iev]]);
+                        this->scen.event[exaequo[g][iev]] = copyevent(this->scen.event[exaequo[g][jev]]);
+                        this->scen.event[exaequo[g][jev]] =copyevent(piv);
+                        kk=bonordre[iev];bonordre[iev]=bonordre[jev];bonordre[jev]=kk;
+                    }
+                }
+            }
+            //for (int iev=0;iev<exaequo[g].size();iev++) this->scen.event[exaequo[g][iev]].ecris();cout<<"\n";
+        }
+        //cout<<"--------------------------------------------------\n";
+        bonordre.clear();
+    }
+
 
 /**
 * Struct ParticleC : génère les valeurs des paramètres historiques d'un scénario donné' 
@@ -869,6 +970,9 @@ struct ParticleC
 			}
 //TRI SUR LES TEMPS DES EVENEMENTS
             sort(&this->scen.event[0],&this->scen.event[this->scen.nevent],compevent());
+            checkorder();
+            
+            
 			//cout<<"fin des events\n";
 			for (int i=0;i<this->scen.nn0;i++) {
 				if (this->scen.ne0[i].val<0) this->scen.ne0[i].val = (int)this->getvalue(this->scen.ne0[i].name);
@@ -1326,10 +1430,9 @@ struct ParticleC
 		//cout << "debut COAL nbranches=" << this->gt[loc].nbranches <<"   nnodes="<<this->gt[loc].nnodes <<"\n";
 		int nLineages=0;
 		bool final=false;
+        double lra;
         bool trace = ((loc==12)/*and(iseq==5)*/);
-        //cout << "coucou 1 \n";
 		for (int i=0;i<this->gt[loc].nnodes;i++){
-			//cout << gt[loc].nodes[i].pop << "  ";
 			if (this->gt[loc].nodes[i].pop == this->seqlist[iseq].pop) {nLineages +=1;}
 		}
 		//cout<<"debut coal_pop nbranches="<< this->gt[loc].nbranches << "  nLineages=" << nLineages << "\n";
@@ -1343,8 +1446,8 @@ struct ParticleC
 			while ((nLineages>1)and((final)or((not final)and(start<this->seqlist[iseq].t1)))) {
 				double ra = this->mw.random();
 				while (ra == 0.0) {ra = this->mw.random();}
-				double lra; lra = log(ra);
-				start -= (this->locuslist[loc].coeff*this->seqlist[iseq].N/nLineages/(nLineages-1.0))*log(ra);
+				lra = log(ra);
+				start -= (this->locuslist[loc].coeff*this->seqlist[iseq].N/nLineages/(nLineages-1.0))*lra;
 				//if (trace)  cout << "coeff = " << this->locuslist[loc].coeff << "   N = " << this->seqlist[iseq].N << "nl*(nl-1) = " << nLineages/(nLineages-1.0) << "\n";
 				//if (trace) cout << "start courant= " << start << "  log(ra)=" << lra << "\n";
 				if ((final)or((not final)and(start<this->seqlist[iseq].t1))) {
@@ -1746,9 +1849,55 @@ struct ParticleC
 		return 0;
 	}
 
+    string verifytree() {
+        bool *popleine;
+        popleine = new bool[this->scen.popmax+1];
+        for (int p=1;p<this->scen.popmax+1;p++) {popleine[p]=false;}
+        for (int iseq=0;iseq<this->nseq;iseq++) {
+            this->seqlist[iseq].popfull = new bool[this->scen.popmax+1];
+            if (iseq==0) for (int p=1;p<this->scen.popmax+1;p++) this->seqlist[iseq].popfull[p]=false;
+            else for (int p=1;p<this->scen.popmax+1;p++) this->seqlist[iseq].popfull[p]=this->seqlist[iseq-1].popfull[p];
+            if (this->seqlist[iseq].action == 'C') {
+                if ((this->seqlist[iseq].t1>-1)and(this->seqlist[iseq].t1<this->seqlist[iseq].t0)) {
+                    this->seqlist[iseq].ecris();
+                    return "probleme coal avec t1<t0";
+                }
+                if ((not popleine[this->seqlist[iseq].pop])and(this->seqlist[iseq].t1>this->seqlist[iseq].t0)) {
+                    for (int jseq=0;jseq<=iseq;jseq++) {
+                        this->seqlist[jseq].ecris();
+                        for (int p=1;p<this->scen.popmax+1;p++) if (this->seqlist[jseq].popfull[p]) cout<<p<<"  ";
+                        cout<<"\n";
+                    }
+                    cout<<"\n"; 
+                    this->seqlist[iseq].ecris();return "probleme coal avec pop vide";
+                }
+            }    
+            else if (this->seqlist[iseq].action == 'M') {
+                if ((not popleine[this->seqlist[iseq].pop])and (not popleine[this->seqlist[iseq].pop1])) {
+                    this->seqlist[iseq].ecris();return "probleme merge de deux pop vides";
+                } 
+                popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
+                popleine[this->seqlist[iseq].pop1]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=false;
+            }
+            else if (this->seqlist[iseq].action == 'S') {
+                if (not popleine[this->seqlist[iseq].pop]) {this->seqlist[iseq].ecris();return "probleme split avec pop vide";}
+                popleine[this->seqlist[iseq].pop]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=false;
+                popleine[this->seqlist[iseq].pop1]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=true;
+                popleine[this->seqlist[iseq].pop2]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop2]=true;
+            }
+            else if (this->seqlist[iseq].action == 'A') {
+                popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;  
+            }
+       }
+        for (int iseq=0;iseq<this->nseq;iseq++) delete []this->seqlist[iseq].popfull;
+        delete []popleine;
+        return "";
+    }
+
 	int dosimulpart(int numscen,bool usepriorhist, bool usepriormut){
-                //if (trace) cout<<"debut de dosimulpart\n";fflush(stdin);
+        if (debuglevel==5)        {cout<<"debut de dosimulpart\n";fflush(stdin);}
 		vector <int> simulOK;
+        string checktree;
 		int *emptyPop,loc;
 		bool treedone,dnaloc=false,trouve;
         int locus,sa,indiv,nuc;
@@ -1765,6 +1914,10 @@ struct ParticleC
 		//         	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
 		this->setSequence();
 		if (debuglevel==10) cout <<"apres setSequence\n";
+		if (debuglevel==5) cout <<"avant checktree\n"; 
+        checktree=this->verifytree();
+        if (checktree!="") {cout<<checktree<<"\n"; this->scen.ecris();exit(1);}
+        if (debuglevel==5) cout <<"apres checktree\n";
 		bool gtYexist=false, gtMexist=false;
 		this->gt = new GeneTreeC[this->nloc];
 		emptyPop = new int[this->scen.popmax+1];
@@ -1783,7 +1936,7 @@ struct ParticleC
 				if (this->locuslist[loc].type >4) {
 					comp_matQ(loc);
                     dnaloc=true;
-					}
+					} else dnaloc=false;
 				treedone=false;
 				if ((this->locuslist[loc].type % 5) == 3) {
 					if (gtYexist) {this->gt[loc] = copytree(GeneTreeY);treedone=true;}
@@ -1847,11 +2000,9 @@ struct ParticleC
 						}
 					}	//LOOP ON iseq
 		/* copie de l'arbre si locus sur Y ou mitochondrie */
-					if ((locuslist[loc].type % 5) == 3) {GeneTreeY  = copytree(this->gt[loc]);gtYexist=true;}
+					if (not gtYexist) {if ((locuslist[loc].type % 5) == 3) {GeneTreeY  = copytree(this->gt[loc]);gtYexist=true;}}
 
-					if ((locuslist[loc].type % 5) == 4) {
-						//cout <<"avant copie de genetreeM\n";
-						GeneTreeM  = copytree(this->gt[loc]);gtMexist=true;}
+					if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = copytree(this->gt[loc]);gtMexist=true;}}
 				}
 	/* mutations */
 				put_mutations(loc);
