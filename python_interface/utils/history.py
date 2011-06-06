@@ -18,7 +18,7 @@ class IOScreenError(Error):
 
 class Event(object):
 
-    EVENT_TYPE    = ('SAMPLE','VARNE', 'MERGE', 'SPLIT')
+    EVENT_TYPE    = ('SAMPLE','VARNE', 'MERGE', 'SPLIT', 'SEXUAL')
 
     
     def __init__(self, action=None, pop=None, pop1=None, pop2=None, sample=None, Ne=None, N=None, time=None, graphtime =None, admixrate=None, numevent0=None,
@@ -217,7 +217,7 @@ class Scenario(object):
         else : self.parametersbackup = []
         ligne0 = textarray[0]   #take the first line of the scenario 
         ligne  =ligne0.upper()  #put it in uppercase
-        if ligne.find('SAMPLE')+ligne.find('MERGE')+ligne.find('VARNE')+ligne.find('SPLIT')>-4: 
+        if ligne.find('SAMPLE')+ligne.find('MERGE')+ligne.find('VARNE')+ligne.find('SPLIT')+ligne.find('SEXUAL')>-4: 
             raise IOScreenError, "The first line must provide population effective sizes"
         ls = ligne0.split()
         self.npop = len(ls)
@@ -360,6 +360,25 @@ class Scenario(object):
                             self.detparam(litem[5],"A")    
                         self.cevent.Ne=Ncur[self.cevent.pop-1].val
                         self.cevent.sNe=Ncur[self.cevent.pop-1].name
+                    elif Li.find("SEXUAL")>-1:
+                        if nitems<3:
+                            raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
+                        self.cevent = Event()
+                        self.cevent.numevent0 = nevent
+                        nevent +=1
+                        self.cevent.action = "SEXUAL"
+                        self.cevent.stime = litem[0]
+                        if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
+                        else : self.detparam(litem[0],"T")
+                        if isaninteger(litem[2]):
+                            self.cevent.pop = int(litem[2]) 
+                        else :
+                            raise IOScreenError, "Unable to read population number on line %s of scenario %s"%(jli0+1,self.number)
+                        self.cevent.Ne=Ncur[self.cevent.pop-1].val
+                        self.cevent.sNe=Ncur[self.cevent.pop-1].name
+                        ns +=1
+                        self.cevent.sample = ns
+                        self.time_sample.append(self.cevent.time)
                     else :
                         raise IOScreenError,"Uninterpretable line %s in scenario %s"%(jli0+1,self.number)
                     self.history.events.append(self.cevent)

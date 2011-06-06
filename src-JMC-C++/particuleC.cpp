@@ -1304,7 +1304,12 @@ struct ParticleC
 		}*/
 	}
 	
-	void comp_matQ(int loc) {
+/**
+* Struct ParticleC : calcule les éléments de la matrice de transition Q qui fournit 
+*                    la probabilité de mutation d'un nucléotide à un autre en fonction 
+*                    du modèle mutationnel choisi
+*/
+    void comp_matQ(int loc) {
 		int gr=this->locuslist[loc].groupe;
 		this->matQ[0][0] = this->matQ[1][1] = this->matQ[2][2] = this->matQ[3][3] = 0.0;
 		this->matQ[0][1] = this->matQ[0][2] = this->matQ[0][3] = 1.0;
@@ -1352,6 +1357,11 @@ struct ParticleC
 	}
 
 
+/**
+* Struct ParticleC : initialise l'arbre de coalescence, i.e. alloue la mémoire pour les noeuds et les branches, 
+*                    initialise les propriétés "sample" et "height" des noeuds terminaux 
+*                    initialise à 0 la propriété "pop" de tous les noeuds et à 0 la propriété "sample" des noeuds non-terminaux 
+*/
 	GeneTreeC init_tree(int loc) {
 		//cout << "début de init_tree pour le locus " << loc  <<"\n";
 		GeneTreeC gt;
@@ -1390,6 +1400,9 @@ struct ParticleC
 
 	}
 
+/**
+* Struct ParticleC : évalue la pertinence de l'approximation continue pour le traitement de la coalescence 
+*/
 	int evalcriterium(int iseq,int nLineages) {
 		if(this->seqlist[iseq].t1<0) {return 1;}
 		int nGen;
@@ -1407,6 +1420,9 @@ struct ParticleC
 		return OK;
 	}
 
+/**
+* Struct ParticleC : tire au hasard (uniformément) une lignée ancestrale parmi celles de la population requise 
+*/
 	int draw_node(int loc,int iseq,int nLineages) {
 		int k = this->mw.rand0(nLineages);
 		//cout << "draw_node nLineages = " << nLineages << "   k=" << k << "\n";
@@ -1425,6 +1441,9 @@ struct ParticleC
 		return -1;
 	}
 
+/**
+* Struct ParticleC : coalesce les lignées ancestrales de la population requise 
+*/
 	void coal_pop(int loc,int iseq) {
 		//cout <<"\n";
 		//cout << "debut COAL nbranches=" << this->gt[loc].nbranches <<"   nnodes="<<this->gt[loc].nnodes <<"\n";

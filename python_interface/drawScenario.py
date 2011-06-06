@@ -218,8 +218,12 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 jj = 0
                 while(jj < len(NN)) and (NN[jj].name != s.sNedeb):
                     jj+=1
-                pen = QPen(Qt.yellow,10)
+                pen = QPen(Qt.yellow,5)
                 pen.setCapStyle(Qt.RoundCap)
+                if s.style == "dot" :
+                    pen.setStyle(Qt.DotLine)
+                else :
+                    pen.setStyle(Qt.SolidLine)
                 pen.setColor(QColor(tab_colors[(jj%20)]))
                 painter.setPen(pen)
                 painter.drawLine(s.xdeb,ymed,xmed,ymed)
@@ -234,8 +238,12 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 jj = 0
                 while(jj < len(NN)) and (NN[jj].name != s.sNefin):
                     jj+=1
-                pen = QPen(Qt.yellow,10)
+                pen = QPen(Qt.yellow,5)
                 pen.setCapStyle(Qt.RoundCap)
+                if s.style == "dot" :
+                    pen.setStyle(Qt.DotLine)
+                else :
+                    pen.setStyle(Qt.SolidLine)
                 pen.setColor(QColor(tab_colors[(jj%20)]))
                 painter.setPen(pen)
                 painter.drawLine(s.xfin,ymed,xmed,ymed)
@@ -243,8 +251,12 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 jj = 0
                 while(jj < len(NN)) and (NN[jj].name != s.sNefin):
                     jj+=1
-                pen = QPen(Qt.black,10)
+                pen = QPen(Qt.black,5)
                 pen.setCapStyle(Qt.RoundCap)
+                if s.style == "dot" :
+                    pen.setStyle(Qt.DotLine)
+                else :
+                    pen.setStyle(Qt.SolidLine)
                 pen.setColor(QColor(tab_colors[(jj%20)]))
                 painter.setPen(pen)
                 painter.drawLine(s.xdeb,s.ydeb,s.xfin,s.yfin)

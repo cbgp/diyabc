@@ -19,17 +19,18 @@ class PopTreeError(Error):
     pass
 
 class PopTreeBranch(object):
-    def __init__(self,father=None,child=None,nvisit=None,sadm=None):
+    def __init__(self,father=None,child=None,nvisit=None,sadm=None,style=""):
         self.father = father
         self.child  = child
         self.nvisit = nvisit
         self.sadm   = sadm
+        self.style  = style
         
     def __repr__(self):
-        return "PopTreeBranch(father=%s, child=%s, nvisit=%s, sadm=%s)"%(self.father, self.child, self.nvisit, self.sadm) 
+        return "PopTreeBranch(father=%s, child=%s, nvisit=%s, sadm=%s, style=%s)"%(self.father, self.child, self.nvisit, self.sadm, self.style) 
     
 class PopTreeNode(object):
-    def __init__(self,x=0,y=None,nvisit=None,pop=None,ev=None,NP=None,category=None):
+    def __init__(self,x=0,y=None,nvisit=None,pop=None,ev=None,NP=None,category=None,style=""):
         self.x         = x
         self.y         = y
         self.nvisit    = nvisit
@@ -37,12 +38,13 @@ class PopTreeNode(object):
         self.ev        = ev
         self.NP        = NP
         self.category  = category
+        self.style  = style
         
     def __repr__(self):
-        return "PopTreeNode(x=%s, y=%s, nvisit=%s, pop=%s, ev=%s, NP=%s, category=%s)"%(self.x, self.y, self.nvisit, self.pop, self.ev, self.NP, self.category) 
+        return "PopTreeNode(x=%s, y=%s, nvisit=%s, pop=%s, ev=%s, NP=%s, category=%s, style=%s)"%(self.x, self.y, self.nvisit, self.pop, self.ev, self.NP, self.category, self.style) 
        
 class PopTreeSegment(object):    
-    def __init__(self,xdeb=None,ydeb=None,xfin=None,yfin=None,popdeb=None,popfin=None,evdeb=None,evfin=None,sNedeb=None,sNefin=None,sadm=None):
+    def __init__(self,xdeb=None,ydeb=None,xfin=None,yfin=None,popdeb=None,popfin=None,evdeb=None,evfin=None,sNedeb=None,sNefin=None,sadm=None,style=""):
         self.xdeb    = xdeb
         self.ydeb    = ydeb
         self.xfin    = xfin
@@ -54,9 +56,10 @@ class PopTreeSegment(object):
         self.sNedeb  = sNedeb
         self.sNefin  = sNefin
         self.sadm    = sadm
+        self.style   = style
 
     def __repr__(self):
-        return "PopTreeSegment(xdeb=%s, ydeb=%s, xfin=%s, yfin=%s, popdeb=%s, popfin=%s, evdeb=%s, evfin=%s, sNedeb=%s, sNefin=%s, sadm=%s)"%(self.xdeb, self.ydeb, self.xfin, self.yfin, self.popdeb, self.popfin, self.evdeb, self.evfin, self.sNedeb, self.sNefin, self.sadm) 
+        return "PopTreeSegment(xdeb=%s, ydeb=%s, xfin=%s, yfin=%s, popdeb=%s, popfin=%s, evdeb=%s, evfin=%s, sNedeb=%s, sNefin=%s, sadm=%s, style=%s)"%(self.xdeb, self.ydeb, self.xfin, self.yfin, self.popdeb, self.popfin, self.evdeb, self.evfin, self.sNedeb, self.sNefin, self.sadm, self.style) 
 
 class PopTreePopu(object):
     def __init__(self,X=None,Y=None,sampled=None,time=None,sNe=None,col=None):
@@ -123,6 +126,7 @@ class PopTree(object):
         if   ev.action == "SAMPLE" :cnode.category = "sa"
         elif ev.action == "VARNE"  :cnode.category = "vn"
         elif ev.action == "MERGE"  :cnode.category = "me"
+        elif ev.action == "SEXUAL" :cnode.category = "se"
         elif ev.action == "SPLIT"  :
             if numpop == 0 :cnode.category = "sp0"
             else           :cnode.category = "sp1"
@@ -171,6 +175,14 @@ class PopTree(object):
             if ev.action == "VARNE" :
                 cnode = self.cree_node(ev,iev,0,t0)
                 cnode.NP = ev.sNe
+                ev.y = cnode.y
+                self.node.append(cnode)
+                self.cree_branch(ev,0)
+
+            if ev.action == "SEXUAL" :
+                cnode = self.cree_node(ev,iev,0,t0)
+                cnode.NP = ev.sNe
+                cnode.style = "dot"
                 ev.y = cnode.y
                 self.node.append(cnode)
                 self.cree_branch(ev,0)
@@ -297,14 +309,14 @@ class PopTree(object):
         print "fa=%s  c1=%s  c2=%s"%(fa,c1,c2)
         if c1<0  : ch1 = c1
         else     : 
-            while self.node[c1].category == "vn" :
+            while (self.node[c1].category == "vn")or(self.node[c1].category == "se") :
                 fa1 = c1
                 c1,c3 = self.findchildren(fa1)
                 if c1<0 : c1 = c3
             ch1 = c1      
         if c2<0  : ch2 = c2
         else     : 
-            while self.node[c2].category == "vn" :
+            while (self.node[c2].category == "vn")or(self.node[c2].category == "se") :
                 fa1 = c2
                 c3,c2 = self.findchildren(fa1)
                 if c2<0 : c2 = c3
@@ -314,7 +326,7 @@ class PopTree(object):
     def findfather2(self,ch):
         f1,f2 = self.findfathers(ch)
         if f1<0 : f1 = f2
-        while (f1>=0)and(self.node[f1].category == "vn") :
+        while (f1>=0)and((self.node[f1].category == "vn"or(self.node[f1].category == "se"))) :
             c = f1
             f1,f2 = self.findfathers(c)
             if f1<0 : f1 = f2
@@ -432,7 +444,7 @@ class PopTree(object):
                     n +=1
                     found = (self.node[n].x == 0)
                 if found :
-                    if (self.node[n].category == "vn")or(self.node[n].category == "sa2") :
+                    if (self.node[n].category == "vn")or(self.node[n].category == "sa2")or(self.node[n].category == "se") :
                         j = self.findgoodchild(n)
                         k = self.findgoodfather(n)
                         if (self.node[j].x>0) and (self.node[k].x>0) :
@@ -585,7 +597,7 @@ class PopTree(object):
                                 j=0
                                 while self.br[j].child != i2 : j +=1
                                 i2 = self.br[j].father
-                                if (self.node[i2].category == "vn")and(self.node[i1].y != no.y) :
+                                if ((self.node[i2].category == "vn")or(self.node[i2].category == "se"))and(self.node[i1].y != no.y) :
                                     self.node[i2].x = no.x + int(round((self.node[i2].y-no.y)*(self.node[i1].x-no.x)/(self.node[i1].y-no.y)))
                                     #print "premier while node[i2].x=%s"%(self.node[i2].x)
                             i2=i
@@ -593,7 +605,7 @@ class PopTree(object):
                                 jj=len(self.br)-1
                                 while self.br[j].father != i2 : j -=1
                                 i2 = self.br[j].child
-                                if (self.node[i2].category == "vn")and(self.node[k1].y != no.y) :
+                                if ((self.node[i2].category == "vn")or(self.node[i2].category == "se"))and(self.node[k1].y != no.y) :
                                     self.node[i2].x = no.x + int(round((self.node[i2].y-no.y)*(self.node[k1].x-no.x)/(self.node[k1].y-no.y)))
                                     #print "deuxieme while node[i2].x=%s"%(self.node[i2].x)
                             i2=i
@@ -602,14 +614,24 @@ class PopTree(object):
                                     j -=1
                                 if i2 == self.br[j].father :
                                     i2 = self.br[j].child;
-                                    if (self.node[i2].category == "vn")and(self.node[i1].y != no.y) :
+                                    if ((self.node[i2].category == "vn")or(self.node[i2].category == "se"))and(self.node[i1].y != no.y) :
                                         self.node[i2].x = no.x + int(round((self.node[i2].y-no.y)*(self.node[k2].x-no.x)/(self.node[k2].y-no.y)))
                                         #print "troisieme while node[i2].x=%s"%(self.node[i2].x)
                                     else: break
         """print "\nImprove_tree etape 2"
         for i,no in enumerate(self.node) :
             print no """       
-                           
+    def setbranchstyle(self):
+        fin = False;
+        while (not fin) :
+            fin = True
+            for b in self.br :
+                print self.node[b.father].style,self.node[b.child].style
+                if (self.node[b.father].style == "dot")and(self.node[b.child].style != "dot") :
+                    self.node[b.child].style = "dot"
+                    fin = False
+    
+    
     def signe(self,a):
         if a>0   :return 1
         elif a<0 :return -1
@@ -623,6 +645,7 @@ class PopTree(object):
             seg.xdeb, seg.ydeb, seg.xfin, seg.yfin = self.node[b.father].x, self.node[b.father].y, self.node[b.child].x, self.node[b.child].y
             seg.popdeb, seg.popfin, seg.evdeb, seg.evfin = self.node[b.father].pop, self.node[b.child].pop, self.node[b.father].ev, self.node[b.child].ev
             seg.sNedeb, seg.sNefin, seg.sadm = self.node[b.father].NP, self.node[b.child].NP, b.sadm
+            seg.style = self.node[b.father].style
             segment.append(seg)
         return segment
     
@@ -674,13 +697,15 @@ class PopTree(object):
         self.initNN()
         ntrial = 0
         npb   = 2
-        while (ntrial<10) and (npb>0) :
+        while (ntrial<100) and (npb>0) :
             self.build_tree()
             print "apres build"
             self.draw_tree()
             print "apres draw"
             self.improve_draw()
             print "apres improve"
+            self.setbranchstyle()
+            print "apres setbranchstyle"
             self.segments = self.creesegment()
             npb= self.countpb(self.segments)
             ntrial +=1
