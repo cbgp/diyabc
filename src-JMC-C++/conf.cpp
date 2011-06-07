@@ -99,12 +99,10 @@ char *nomficonfresult;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,st,pa,duree,debut,clock_zero;
         bool usepriorhist,usepriormut;
-        string bidon;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
-        bidon = new char[1000];
         FILE *flog, *fcur;
-
+        cout <<"debut de doconf\n";
         progressfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(progressfilename,path);
         strcat(progressfilename,ident);
@@ -172,20 +170,25 @@ char *nomficonfresult;
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);
                 }
+                cout<<"avant resetmutparam\n";
                 for (int j=0;j<ng;j++) usepriormut = resetmutparam(ss1[j]);
+                cout<<"apres resetmutparam\n";
             }
         }
-        npv = rt.nparam[rt.scenchoisi[0]-1];
+        cout<<"fin de l'analyse de confpar\n";
+        npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[ntest];
         for (int p=0;p<ntest;p++) {
             enreg[p].stat = new float[header.nstat];
             enreg[p].param = new float[npv];
-            enreg[p].numscen = rt.scenchoisi[0];
+            enreg[p].numscen = rt.scenteste;
         }
         if (nlogreg==1){nprog=10*(ntest+1);iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         else           {nprog=6*ntest+10;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
-        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenchoisi[0],seed,usepriorhist,usepriormut);
+        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,usepriorhist,usepriormut);
+        cout<<"apres ps.dosimultabref\n";
         iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        cout<<"apres ecriture dans progress\n";
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         nstatOK = rt.cal_varstat();                       
         stat_obs = new double[rt.nstat];
@@ -195,11 +198,10 @@ char *nomficonfresult;
         rt.alloue_enrsel(nsel);
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
         for (int p=0;p<ntest;p++) {
-            for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
             clock_zero=0.0;debut=walltime(&clock_zero);
+            for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
             rt.cal_dist(nrec,nsel,stat_obs); 
             iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-            duree=walltime(&debut);time_readfile += duree;
             postsd = comp_direct(nseld);
             cout<<"test"<<setiosflags(ios::fixed)<<setw(4)<<p+1<<"  ";
             if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);
@@ -218,6 +220,8 @@ char *nomficonfresult;
             }
             f11<<"\n";
             cout<<"\n";
+            duree=walltime(&debut);
+            cout<<"durée ="<<TimeToStr(duree)<<"\n";
         }        
         rt.desalloue_enrsel(nsel);
         f11.close();

@@ -381,6 +381,7 @@ struct ParticleSetC
                //if (this->defined) cout <<"particleSet defined\n";
                //else cout<<"particleSet UNdefined\n";
                //this->header = header;
+               if (debuglevel==5) cout <<"dosimultabref npart = "<<npart<<"\n";
                if (firsttime) {                
                     this->particule = new ParticleC[this->npart];
                     this->header = header;
@@ -497,6 +498,8 @@ struct ParticleSetC
               if (debuglevel==5) cout<<"apres fclose\n";
         }
         //cout<<"apres remise en ordre des enreg.param\n";
+        if (debuglevel==5) cout<<"avant delete sOK\n";
         delete [] sOK;
+        if (debuglevel==5) cout<<"apres delete sOK\n";
 	}
 };
