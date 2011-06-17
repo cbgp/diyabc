@@ -150,6 +150,7 @@ int main(int argc, char *argv[]){
             cout << "           m:<number of requested logistic regressions>\n";
             cout << "           h:<histparameter values/priors (as in bias/precision)>\n";
             cout << "           u:<mutparameter values/priors for successive groups (as in bias/precision)\n";
+            cout << "           f:<0 if logistic regression on SS, 1 if logistic regression on FDA components>\n";
             
             cout << "\n-d for ABC PRIOR/SCENARIO CHECKING (idem)\n";
             cout << "           a:<p for PCA, l for locate observed, pl for both>\n";

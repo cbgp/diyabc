@@ -320,3 +320,67 @@ double pnorm5(double x,double mu, double sigma){
     }
     return cum;
 }
+
+void covarianceponderee(int nl, int nc, double **A, double *w, double *mu, double **cov) {
+    mu = new double[nl];
+    cov = new *double[nc];
+    for (int i=0;i<nc;i++) cov[i] = new double[nc];
+    double *sx,*wn,**sxy,sw2,sw;
+    sx = new double[nc];
+    wn = new double[nl];
+    sxy = new double[nc];
+    for (int i=0;i<nc;i++) sxy[i] = new double[nc];
+    sw=0.0;for (int k=0;k<nl;k++) sw +=w[k];
+    for (int k=0;k<nl:k++) wn[k] /=sw;
+    sw2=0.0;for (int k=0;k<nl;k++) sw2 +=wn[k]*wn[k];
+    for (int i=0;i<nc;i++) {
+        sx[i]=0.0;for (int k=0;k<nl;k++) sw2 +=wn[k]*A[k][i];
+        mu[i]=sx[i];
+        for (int j=0;j<=i;j++){
+            sxy[i][j]=0.0;
+            for (int k=0;k<nl;k++) sxy[i][j] +=wn[k]*A[k][i]*A[k][j];
+            sxy[j][i]=sxy[i][j];
+        }
+    }
+    for (int i=0;i<nc;i++) {
+        for (int j=0;j<nc;j++) cov[i][j] = (sxy[i][j]-sx[i]*sx[j])/(1.0-sw2);
+    }
+}
+
+struct resAFD{
+   int nlambda;      
+   double proportion,*lambda,slambda,**vectprop,**princomp,*moy;
+};
+
+resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
+    resACPC res;
+    res.proportion = prop;
+    vector <int> nk,numpop;   //npop est remplace par numpop.size() ou nk.size()
+    bool trouve;
+    double **matC,**matCT,**matT,**matTI,**matM,**valprop,**mk,anl,piv,sl,co,sy,sy2,somega,*w,*wk;
+    int snk,j;
+    
+    if (not numpop.empty()) numpop.clear();numpop.push_back(pop[0]);
+    if (not nk.empty()) nk.clear();nk.push_back(1);
+    for (int i=1;i<nl;i++) {
+        trouve=false;j=-1;
+        while ((not trouve)and(j<numpop.size())) {j++;trouve=(numpop[j]==pop[i]);}
+        if (trouve) nk[j]++;
+        else {numpop.push_back(pop[i]);nk.push_back(1);}
+    }
+    snk=0;for (int i=0;i<nk.size();i++) snk += nk[i];
+    if (nl!=snk) {cout<< "dans AFD nl!=snk\n";exit(1);}
+    matC = new *double[nc];for (int i=0;i<nc;i++) matC[i] = new double[numpop.size()];
+    matM = new *double[nc];for (int i=0;i<nc;i++) matM[i] = new double[nc];
+    valprop = new *double[nc];for (int i=0;i<nc;i++) valprop[i] = new double[nc];
+    anl=1.0/(double)nl;
+    somega=0.0;for (int i=1;i<nl;i++) somega +=omega[i];
+    w = new double[nl];for (int i=1;i<nl;i++) w[i]=omega[i]/somega;
+    covarianceponderee(nl,nc,X,w,moy,matT);
+    mk = new *double[numpop.size()];for (int i=0;i<numpop.size();i++) mk[i] = new double[nc];
+    wk = new double[numpop.size()];
+    for (int k=0;k<numpop.size();k++) {
+        
+    }
+    
+}

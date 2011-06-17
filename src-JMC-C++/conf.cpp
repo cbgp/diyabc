@@ -98,7 +98,7 @@ char *nomficonfresult;
         int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,st,pa,duree,debut,clock_zero;
-        bool usepriorhist,usepriormut;
+        bool usepriorhist,usepriormut,AFD;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
         FILE *flog, *fcur;
@@ -173,6 +173,9 @@ char *nomficonfresult;
                 cout<<"avant resetmutparam\n";
                 for (int j=0;j<ng;j++) usepriormut = resetmutparam(ss1[j]);
                 cout<<"apres resetmutparam\n";
+            } else if (s0=="f:") {
+                AFD=(s1=="1");
+                if (AFD) cout<<"Factorial Discriminant Analysis\n";
             }
         }
         cout<<"fin de l'analyse de confpar\n";
