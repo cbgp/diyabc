@@ -389,8 +389,8 @@ public:
         this->nreclus=0;
         nn=nsel;
         nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
-        cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
-        cout<<" apres allocation de enrsel\n";
+        //cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
+        //cout<<" apres allocation de enrsel\n";
         this->openfile2();
         while (this->nreclus<nrec) {
             if (firstloop) {nrecOK=0;firstloop=false;}
@@ -417,8 +417,8 @@ public:
             sort(&this->enrsel[0],&this->enrsel[2*nn],compenreg()); 
         }
         this->closefile();
-        cout<<"nrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK;
-        cout<<"    distmin = "<<this->enrsel[0].dist/(double)this->nstat<<"    distmax = "<<this->enrsel[nsel-1].dist/(double)this->nstat<<"\n";
+        //cout<<"nrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK;
+        //cout<<"    distmin = "<<this->enrsel[0].dist/(double)this->nstat<<"    distmax = "<<this->enrsel[nsel-1].dist/(double)this->nstat<<"\n";
         //for (int i=0;i<nsel;i++)           cout<<this->enrsel[i].numscen<<"  ";
         //cout<<"\n";
         //exit(1);

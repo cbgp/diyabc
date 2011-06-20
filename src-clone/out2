@@ -1,0 +1,191 @@
+
+historical parameters priors (4,0)
+06/06/2011 14:26:17  N=10000  t1=10000  t2=50000
+ nloc = 3   nsample = 3
+
+Sous-arbre 3   locus 0
+debut coal_pop nbranches=0  nLineages=6   nnodes=18
+sequencebit[3]  node[18]  verif kseq=3
+fin coal_pop nbranches=2  nLineages=5  nnodes=19
+
+           gt[0].nodes[0].pop = 1  popseq[3]=1
+           gt[0].nodes[1].pop = 1  popseq[3]=1
+           gt[0].nodes[2].pop = 1  popseq[3]=1
+           gt[0].nodes[3].pop = 1  popseq[3]=1
+           gt[0].nodes[4].pop = 0  popseq[3]=1
+           gt[0].nodes[5].pop = 0  popseq[3]=1
+           gt[0].nodes[6].pop = 2  popseq[3]=0
+           gt[0].nodes[7].pop = 2  popseq[3]=0
+           gt[0].nodes[8].pop = 2  popseq[3]=0
+           gt[0].nodes[9].pop = 2  popseq[3]=0
+           gt[0].nodes[10].pop = 3  popseq[3]=0
+           gt[0].nodes[11].pop = 3  popseq[3]=0
+           gt[0].nodes[12].pop = 3  popseq[3]=0
+           gt[0].nodes[13].pop = 3  popseq[3]=0
+           gt[0].nodes[14].pop = 3  popseq[3]=0
+           gt[0].nodes[15].pop = 3  popseq[3]=0
+           gt[0].nodes[16].pop = 3  popseq[3]=0
+           gt[0].nodes[17].pop = 3  popseq[3]=0
+           gt[0].nodes[18].pop = 1  popseq[3]=1
+
+Sous-arbre 4   locus 0
+debut coal_pop nbranches=2  nLineages=4   nnodes=19
+fin coal_pop nbranches=2  nLineages=4  nnodes=19
+
+           gt[0].nodes[0].pop = 1  popseq[4]=0
+           gt[0].nodes[1].pop = 1  popseq[4]=0
+           gt[0].nodes[2].pop = 1  popseq[4]=0
+           gt[0].nodes[3].pop = 1  popseq[4]=0
+           gt[0].nodes[4].pop = 0  popseq[4]=0
+           gt[0].nodes[5].pop = 0  popseq[4]=0
+           gt[0].nodes[6].pop = 2  popseq[4]=2
+           gt[0].nodes[7].pop = 2  popseq[4]=2
+           gt[0].nodes[8].pop = 2  popseq[4]=2
+           gt[0].nodes[9].pop = 2  popseq[4]=2
+           gt[0].nodes[10].pop = 3  popseq[4]=0
+           gt[0].nodes[11].pop = 3  popseq[4]=0
+           gt[0].nodes[12].pop = 3  popseq[4]=0
+           gt[0].nodes[13].pop = 3  popseq[4]=0
+           gt[0].nodes[14].pop = 3  popseq[4]=0
+           gt[0].nodes[15].pop = 3  popseq[4]=0
+           gt[0].nodes[16].pop = 3  popseq[4]=0
+           gt[0].nodes[17].pop = 3  popseq[4]=0
+           gt[0].nodes[18].pop = 1  popseq[4]=0
+
+Sous-arbre 6   locus 0
+debut coal_pop nbranches=2  nLineages=9   nnodes=19
+sequencebit[6]  node[19]  verif kseq=6
+sequencebit[6]  node[20]  verif kseq=6
+sequencebit[6]  node[21]  verif kseq=6
+sequencebit[6]  node[22]  verif kseq=6
+sequencebit[6]  node[23]  verif kseq=6
+sequencebit[6]  node[24]  verif kseq=6
+sequencebit[6]  node[25]  verif kseq=6
+fin coal_pop nbranches=16  nLineages=2  nnodes=26
+
+           gt[0].nodes[0].pop = 0  popseq[6]=1
+           gt[0].nodes[1].pop = 0  popseq[6]=1
+           gt[0].nodes[2].pop = 0  popseq[6]=1
+           gt[0].nodes[3].pop = 0  popseq[6]=1
+           gt[0].nodes[4].pop = 0  popseq[6]=0
+           gt[0].nodes[5].pop = 0  popseq[6]=0
+           gt[0].nodes[6].pop = 1  popseq[6]=1
+           gt[0].nodes[7].pop = 0  popseq[6]=1
+           gt[0].nodes[8].pop = 0  popseq[6]=1
+           gt[0].nodes[9].pop = 0  popseq[6]=1
+           gt[0].nodes[10].pop = 3  popseq[6]=0
+           gt[0].nodes[11].pop = 3  popseq[6]=0
+           gt[0].nodes[12].pop = 3  popseq[6]=0
+           gt[0].nodes[13].pop = 3  popseq[6]=0
+           gt[0].nodes[14].pop = 3  popseq[6]=0
+           gt[0].nodes[15].pop = 3  popseq[6]=0
+           gt[0].nodes[16].pop = 3  popseq[6]=0
+           gt[0].nodes[17].pop = 3  popseq[6]=0
+           gt[0].nodes[18].pop = 0  popseq[6]=1
+           gt[0].nodes[19].pop = 0  popseq[6]=1
+           gt[0].nodes[20].pop = 0  popseq[6]=1
+           gt[0].nodes[21].pop = 0  popseq[6]=1
+           gt[0].nodes[22].pop = 0  popseq[6]=1
+           gt[0].nodes[23].pop = 0  popseq[6]=1
+           gt[0].nodes[24].pop = 0  popseq[6]=1
+           gt[0].nodes[25].pop = 1  popseq[6]=1
+
+Sous-arbre 7   locus 0
+debut coal_pop nbranches=16  nLineages=2   nnodes=26
+sequencebit[7]  node[26]  verif kseq=7
+fin coal_pop nbranches=18  nLineages=1  nnodes=27
+
+           gt[0].nodes[0].pop = 0  popseq[7]=0
+           gt[0].nodes[1].pop = 0  popseq[7]=0
+           gt[0].nodes[2].pop = 0  popseq[7]=0
+           gt[0].nodes[3].pop = 0  popseq[7]=0
+           gt[0].nodes[4].pop = 0  popseq[7]=0
+           gt[0].nodes[5].pop = 0  popseq[7]=0
+           gt[0].nodes[6].pop = 0  popseq[7]=1
+           gt[0].nodes[7].pop = 0  popseq[7]=0
+           gt[0].nodes[8].pop = 0  popseq[7]=0
+           gt[0].nodes[9].pop = 0  popseq[7]=0
+           gt[0].nodes[10].pop = 3  popseq[7]=0
+           gt[0].nodes[11].pop = 3  popseq[7]=0
+           gt[0].nodes[12].pop = 3  popseq[7]=0
+           gt[0].nodes[13].pop = 3  popseq[7]=0
+           gt[0].nodes[14].pop = 3  popseq[7]=0
+           gt[0].nodes[15].pop = 3  popseq[7]=0
+           gt[0].nodes[16].pop = 3  popseq[7]=0
+           gt[0].nodes[17].pop = 3  popseq[7]=0
+           gt[0].nodes[18].pop = 0  popseq[7]=0
+           gt[0].nodes[19].pop = 0  popseq[7]=0
+           gt[0].nodes[20].pop = 0  popseq[7]=0
+           gt[0].nodes[21].pop = 0  popseq[7]=0
+           gt[0].nodes[22].pop = 0  popseq[7]=0
+           gt[0].nodes[23].pop = 0  popseq[7]=0
+           gt[0].nodes[24].pop = 0  popseq[7]=0
+           gt[0].nodes[25].pop = 0  popseq[7]=1
+           gt[0].nodes[26].pop = 1  popseq[7]=1
+
+Sous-arbre 8   locus 0
+debut coal_pop nbranches=18  nLineages=8   nnodes=27
+sequencebit[8]  node[27]  verif kseq=8
+sequencebit[8]  node[28]  verif kseq=8
+sequencebit[8]  node[29]  verif kseq=8
+sequencebit[8]  node[30]  verif kseq=8
+sequencebit[8]  node[31]  verif kseq=8
+fin coal_pop nbranches=28  nLineages=3  nnodes=32
+
+           gt[0].nodes[0].pop = 0  popseq[8]=0
+           gt[0].nodes[1].pop = 0  popseq[8]=0
+           gt[0].nodes[2].pop = 0  popseq[8]=0
+           gt[0].nodes[3].pop = 0  popseq[8]=0
+           gt[0].nodes[4].pop = 0  popseq[8]=0
+           gt[0].nodes[5].pop = 0  popseq[8]=0
+           gt[0].nodes[6].pop = 0  popseq[8]=0
+           gt[0].nodes[7].pop = 0  popseq[8]=0
+           gt[0].nodes[8].pop = 0  popseq[8]=0
+           gt[0].nodes[9].pop = 0  popseq[8]=0
+           gt[0].nodes[10].pop = 0  popseq[8]=3
+           gt[0].nodes[11].pop = 0  popseq[8]=3
+           gt[0].nodes[12].pop = 0  popseq[8]=3
+           gt[0].nodes[13].pop = 0  popseq[8]=3
+           gt[0].nodes[14].pop = 3  popseq[8]=3
+           gt[0].nodes[15].pop = 0  popseq[8]=3
+           gt[0].nodes[16].pop = 0  popseq[8]=3
+           gt[0].nodes[17].pop = 0  popseq[8]=3
+           gt[0].nodes[18].pop = 0  popseq[8]=0
+           gt[0].nodes[19].pop = 0  popseq[8]=0
+           gt[0].nodes[20].pop = 0  popseq[8]=0
+           gt[0].nodes[21].pop = 0  popseq[8]=0
+           gt[0].nodes[22].pop = 0  popseq[8]=0
+           gt[0].nodes[23].pop = 0  popseq[8]=0
+           gt[0].nodes[24].pop = 0  popseq[8]=0
+           gt[0].nodes[25].pop = 0  popseq[8]=0
+           gt[0].nodes[26].pop = 1  popseq[8]=0
+           gt[0].nodes[27].pop = 0  popseq[8]=3
+           gt[0].nodes[28].pop = 0  popseq[8]=3
+           gt[0].nodes[29].pop = 0  popseq[8]=3
+           gt[0].nodes[30].pop = 3  popseq[8]=3
+           gt[0].nodes[31].pop = 3  popseq[8]=3
+
+Sous-arbre 10   locus 0
+debut coal_pop nbranches=28  nLineages=4   nnodes=32
+sequencebit[10]  node[32]  verif kseq=10
+sequencebit[10]  node[33]  verif kseq=10
+sequencebit[10]  node[34]  verif kseq=10
+fin coal_pop nbranches=34  nLineages=1  nnodes=35
+
+           gt[0].nodes[0].pop = 0  popseq[10]=0
+           gt[0].nodes[1].pop = 0  popseq[10]=0
+           gt[0].nodes[2].pop = 0  popseq[10]=0
+           gt[0].nodes[3].pop = 0  popseq[10]=0
+           gt[0].nodes[4].pop = 0  popseq[10]=0
+           gt[0].nodes[5].pop = 0  popseq[10]=0
+           gt[0].nodes[6].pop = 0  popseq[10]=0
+           gt[0].nodes[7].pop = 0  popseq[10]=0
+           gt[0].nodes[8].pop = 0  popseq[10]=0
+           gt[0].nodes[9].pop = 0  popseq[10]=0
+           gt[0].nodes[10].pop = 0  popseq[10]=0
+           gt[0].nodes[11].pop = 0  popseq[10]=0
+           gt[0].nodes[12].pop = 0  popseq[10]=0
+           gt[0].nodes[13].pop = 0  popseq[10]=0
+           gt[0].nodes[14].pop = 0  popseq[10]=1
+           gt[0].nodes[15].pop = 0  popseq[10]=0
+           gt[0].node

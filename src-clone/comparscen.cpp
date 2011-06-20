@@ -557,7 +557,6 @@ matligneC *matA;
             if (scenchoisiutil[j]==rt.enrsel[i].numscen) vecY[i]=j;
             else {vecY[i]=-1;ntt--;}
         }
-        cout<<"call_polytom_logistic_regression 1\n";
         if (ntt<=nts) {
             for (int i=0;i<nts;i++) matA[i].x = new double[nstatOKsel+2];
             kk=0;
@@ -577,7 +576,6 @@ matligneC *matA;
                 for (int j=0;j<nstatOKsel;j++) cmatX0[i][j]=matA[i].x[j+2];
             }
         }
-        cout<<"call_polytom_logistic_regression 2\n";
         som=0.0;for (int i=0;i<ntt;i++) som += cvecW[i];
         for (int i=0;i<ntt;i++) cvecW[i] = cvecW[i]/som*(double)ntt;
         px = new double[nscenutil];pxi = new double[nscenutil];pxs = new double[nscenutil];
@@ -593,7 +591,6 @@ matligneC *matA;
         }
         delete [] px; delete []pxi; delete []pxs;
         duree=walltime(&debut);time_call += duree;
-        cout<<"call_polytom_logistic_regression 3\n";
         return postlog;
     }  
       
@@ -605,8 +602,8 @@ matligneC *matA;
             postdir[i]=0;
             for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postdir[i]++;
         }
-        for (int i=0;i<rt.nscenchoisi;i++) cout<<"\nscenario "<<rt.scenchoisi[i]<<"  : "<<postdir[i]<<"\n";
-        cout<<"\n";
+        //for (int i=0;i<rt.nscenchoisi;i++) cout<<"scenario "<<rt.scenchoisi[i]<<"  : "<<postdir[i]<<"\n";
+        //cout<<"\n";
         nscenutil=0;
         for (int i=0;i<rt.nscenchoisi;i++) if((postdir[i]>2)and(postdir[i]>nts/1000)) nscenutil++;
         scenchoisiutil = new int[nscenutil];

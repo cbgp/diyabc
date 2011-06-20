@@ -34,7 +34,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
-        QObject.connect(self.ui.pcaCheck,SIGNAL("clicked()"),self.preEvaluateCheck)
+        QObject.connect(self.ui.confPcaCheck,SIGNAL("clicked()"),self.preEvaluateCheck)
         QObject.connect(self.ui.lossCheck,SIGNAL("clicked()"),self.preEvaluateCheck)
         QObject.connect(self.ui.modCheckPcaCheck,SIGNAL("clicked()"),self.modCheckCheck)
         QObject.connect(self.ui.modCheckLossCheck,SIGNAL("clicked()"),self.modCheckCheck)
