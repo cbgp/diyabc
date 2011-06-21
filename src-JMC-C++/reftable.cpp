@@ -340,6 +340,7 @@ public:
                     sx2[j] += x*x;
                 }
             }
+            if ((i % 1000)==0) {cout<<"\r"<<i;fflush(stdout);}
         }
         this->closefile();
         nsOK=0;
@@ -349,7 +350,7 @@ public:
             //cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
         }
         delete []sx;delete []sx2;
-        cout<<"nstatOK = "<<nsOK<<"\n";
+        cout<<"\nnstatOK = "<<nsOK<<"\n";
         return nsOK;
     }
  
@@ -413,11 +414,12 @@ public:
                     nrecOK++;
                 if (this->nreclus==nrec) break;
                 }
+                if ((this->nreclus % 1000)==0) {cout<<"\r"<<this->nreclus;fflush(stdout);}
             }
-            sort(&this->enrsel[0],&this->enrsel[2*nn],compenreg()); 
+            sort(&this->enrsel[0],&this->enrsel[2*nn],compenreg());
         }
         this->closefile();
-        cout<<"nrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK;
+        cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK;
         cout<<"    distmin = "<<this->enrsel[0].dist/(double)this->nstat<<"    distmax = "<<this->enrsel[nsel-1].dist/(double)this->nstat<<"\n";
         //for (int i=0;i<nsel;i++)           cout<<this->enrsel[i].numscen<<"  ";
         //cout<<"\n";

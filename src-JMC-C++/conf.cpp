@@ -96,6 +96,7 @@ char *nomficonfresult;
         double delta,rdelta,*w,a,**X,*statpiv;
         int *scenar;
         resAFD afd;
+        //cout<<"debut transfAFD\n";
         delta=rt.enrsel[nsel-1].dist;
         rdelta=1.5/delta;
         w = new double[nsel];
@@ -104,7 +105,9 @@ char *nomficonfresult;
         X = new double*[nsel];for (int i=0;i<nsel;i++) X[i] = new double[rt.nstat];
         statpiv = new double[rt.nstat];
         for (int i=0;i<nsel;i++) {for (int j=0;j<rt.nstat;j++) X[i][j]=rt.enrsel[i].stat[j];}
+        //cout<<"avant AFD\n";
         afd = AFD(nsel,rt.nstat,scenar,w,X,1.0);
+        //cout<<"apresAFD\n";
         for (int i=0;i<nsel;i++) {
             for (int j=0;j<afd.nlambda;j++) {
                 statpiv[j]=0.0;
@@ -118,7 +121,11 @@ char *nomficonfresult;
             for (int k=0;k<rt.nstat;k++) statpiv[j] += (enreg[p].stat[k]-afd.moy[k])*afd.vectprop[k][j];
             }
         for (int j=0;j<afd.nlambda;j++) enreg[p].stat[j] = statpiv[j];
-        for (int j=afd.nlambda;j<rt.nstat;j++) enreg[p].stat[j] = 0.0;
+        for (int j=afd.nlambda;j<rt.nstat;j++) {enreg[p].stat[j] = 0.0;statpiv[j] = 0.0;}
+        delete []w;
+        //delete []statpiv;
+        for (int i=0;i<nsel;i++) delete []X[i];delete []X;
+        return statpiv;
     } 
      
     void doconf(char *options, int seed) {
@@ -131,7 +138,7 @@ char *nomficonfresult;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
         FILE *flog, *fcur;
-        cout <<"debut de doconf\n";
+        //cout <<"debut de doconf\n";
         progressfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(progressfilename,path);
         strcat(progressfilename,ident);
@@ -144,9 +151,9 @@ char *nomficonfresult;
         cout<<"options : "<<options<<"\n";
         opt=char2string(options);
         ss = splitwords(opt,";",&ns);
-        for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
+        for (int i=0;i<ns;i++) { 
             s0=ss[i].substr(0,2);
-            s1=ss[i].substr(2);
+            s1=ss[i].substr(2);cout<<ss[i]<<"   s0="<<s0<<"s1="<<s1<<"\n";
             if (s0=="s:") {
                 ss1 = splitwords(s1,",",&rt.nscenchoisi);
                 rt.scenchoisi = new int[rt.nscenchoisi];
@@ -223,7 +230,7 @@ char *nomficonfresult;
         iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         cout<<"apres ecriture dans progress\n";
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
-        nstatOK = rt.cal_varstat();                       
+        //nstatOK = rt.cal_varstat();                       
         stat_obs = new double[rt.nstat];
         ecrientete(nrec,ntest,nseld,nselr,nlogreg,usepriorhist,usepriormut,shist,smut); cout<<"apres ecrientete\n";
         ofstream f11(nomficonfresult,ios::app);

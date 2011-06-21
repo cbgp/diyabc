@@ -91,20 +91,47 @@ char *nomficonfresult;
         fprintf(f1,"\n");
         fclose(f1);
     }
-        
+     
+    double* transfAFD(int nrec,int nsel, int p) {
+        double delta,rdelta,*w,a,**X,*statpiv;
+        int *scenar;
+        resAFD afd;
+        delta=rt.enrsel[nsel-1].dist;
+        rdelta=1.5/delta;
+        w = new double[nsel];
+        for (int i=0;i<nsel;i++) {a=rt.enrsel[i].dist/delta;w[i]=rdelta*(1.0-a*a);}
+        scenar = new int[nsel];for (int i=0;i<nsel;i++) scenar[i] = rt.enrsel[i].numscen;
+        X = new double*[nsel];for (int i=0;i<nsel;i++) X[i] = new double[rt.nstat];
+        statpiv = new double[rt.nstat];
+        for (int i=0;i<nsel;i++) {for (int j=0;j<rt.nstat;j++) X[i][j]=rt.enrsel[i].stat[j];}
+        afd = AFD(nsel,rt.nstat,scenar,w,X,1.0);
+        for (int i=0;i<nsel;i++) {
+            for (int j=0;j<afd.nlambda;j++) {
+                statpiv[j]=0.0;
+                for (int k=0;k<rt.nstat;k++) statpiv[j] += (rt.enrsel[i].stat[k]-afd.moy[k])*afd.vectprop[k][j];
+            }
+            for (int j=0;j<afd.nlambda;j++) rt.enrsel[i].stat[j] = statpiv[j];
+            for (int j=afd.nlambda;j<rt.nstat;j++) rt.enrsel[i].stat[j] = 0.0;
+        }
+        for (int j=0;j<afd.nlambda;j++) {
+            statpiv[j]=0.0;
+            for (int k=0;k<rt.nstat;k++) statpiv[j] += (enreg[p].stat[k]-afd.moy[k])*afd.vectprop[k][j];
+            }
+        for (int j=0;j<afd.nlambda;j++) enreg[p].stat[j] = statpiv[j];
+        for (int j=afd.nlambda;j<rt.nstat;j++) enreg[p].stat[j] = 0.0;
+    } 
+     
     void doconf(char *options, int seed) {
         char *datafilename, *progressfilename, *courantfilename;
         int nstatOK, iprog,nprog,ncs1;
         int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,st,pa,duree,debut,clock_zero;
-        bool usepriorhist,usepriormut;
-        string bidon;
+        bool usepriorhist,usepriormut,AFD=false;;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
-        bidon = new char[1000];
         FILE *flog, *fcur;
-
+        cout <<"debut de doconf\n";
         progressfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(progressfilename,path);
         strcat(progressfilename,ident);
@@ -117,9 +144,9 @@ char *nomficonfresult;
         cout<<"options : "<<options<<"\n";
         opt=char2string(options);
         ss = splitwords(opt,";",&ns);
-        for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
+        for (int i=0;i<ns;i++) { 
             s0=ss[i].substr(0,2);
-            s1=ss[i].substr(2);
+            s1=ss[i].substr(2);cout<<ss[i]<<"   s0="<<s0<<"s1="<<s1<<"\n";
             if (s0=="s:") {
                 ss1 = splitwords(s1,",",&rt.nscenchoisi);
                 rt.scenchoisi = new int[rt.nscenchoisi];
@@ -172,34 +199,46 @@ char *nomficonfresult;
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);
                 }
+                cout<<"avant resetmutparam\n";
                 for (int j=0;j<ng;j++) usepriormut = resetmutparam(ss1[j]);
+                cout<<"apres resetmutparam\n";
+            } else if (s0=="f:") {
+                AFD=(s1=="1");
+                if (AFD) cout<<"Factorial Discriminant Analysis\n";
+                exit(1);
             }
         }
-        npv = rt.nparam[rt.scenchoisi[0]-1];
+        cout<<"fin de l'analyse de confpar\n";
+        npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[ntest];
         for (int p=0;p<ntest;p++) {
             enreg[p].stat = new float[header.nstat];
             enreg[p].param = new float[npv];
-            enreg[p].numscen = rt.scenchoisi[0];
+            enreg[p].numscen = rt.scenteste;
         }
+        nsel=nseld;if(nsel<nselr) nsel=nselr;
         if (nlogreg==1){nprog=10*(ntest+1);iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         else           {nprog=6*ntest+10;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
-        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenchoisi[0],seed,usepriorhist,usepriormut);
+        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,usepriorhist,usepriormut);
+        cout<<"apres ps.dosimultabref\n";
         iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        cout<<"apres ecriture dans progress\n";
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         nstatOK = rt.cal_varstat();                       
         stat_obs = new double[rt.nstat];
-        nsel=nseld;if(nsel<nselr) nsel=nselr;
         ecrientete(nrec,ntest,nseld,nselr,nlogreg,usepriorhist,usepriormut,shist,smut); cout<<"apres ecrientete\n";
         ofstream f11(nomficonfresult,ios::app);
         rt.alloue_enrsel(nsel);
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
         for (int p=0;p<ntest;p++) {
-            for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
             clock_zero=0.0;debut=walltime(&clock_zero);
+            for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
+            nstatOK = rt.cal_varstat();                       
             rt.cal_dist(nrec,nsel,stat_obs); 
+            cout<<"apres cal_dist\n";
             iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-            duree=walltime(&debut);time_readfile += duree;
+            if (AFD) stat_obs = transfAFD(nrec,nsel,p);
+            cout<<"avant postsd\n";
             postsd = comp_direct(nseld);
             cout<<"test"<<setiosflags(ios::fixed)<<setw(4)<<p+1<<"  ";
             if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);
@@ -218,6 +257,8 @@ char *nomficonfresult;
             }
             f11<<"\n";
             cout<<"\n";
+            duree=walltime(&debut);
+            cout<<"durée ="<<TimeToStr(duree)<<"\n";
         }        
         rt.desalloue_enrsel(nsel);
         f11.close();

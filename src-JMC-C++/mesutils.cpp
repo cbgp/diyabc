@@ -326,28 +326,36 @@ double pnorm5(double x,double mu, double sigma){
     return cum;
 }
 
-void covarianceponderee(int nl, int nc, double **A, double *w, double *mu, double **cov) {
-    mu = new double[nl];
-    cov = new double*[nc];for (int i=0;i<nc;i++) cov[i] = new double[nc];
-    double *sx,*wn,**sxy,sw2,sw;
-    sx = new double[nc];
+struct rescov {
+    int n;
+    double *mu,**cov;
+};
+
+rescov covarianceponderee(int nl, int nc, double **A, double *w) {
+    rescov mcv;
+    mcv.n=nc;
+    mcv.mu = new double[nc];
+    mcv.cov = new double*[nc];for (int i=0;i<nc;i++) mcv.cov[i] = new double[nc];
+    double *wn,sw2,sw;
+    //sx = new double[nc];
     wn = new double[nl];
-    sxy = new double*[nc];for (int i=0;i<nc;i++) sxy[i] = new double[nc];
     sw=0.0;for (int k=0;k<nl;k++) sw +=w[k];
-    for (int k=0;k<nl;k++) wn[k] /=sw;
+    for (int k=0;k<nl;k++) wn[k] =w[k]/sw;
     sw2=0.0;for (int k=0;k<nl;k++) sw2 +=wn[k]*wn[k];
     for (int i=0;i<nc;i++) {
-        sx[i]=0.0;for (int k=0;k<nl;k++) sw2 +=wn[k]*A[k][i];
-        mu[i]=sx[i];
+        mcv.mu[i]=0.0;for (int k=0;k<nl;k++) mcv.mu[i] +=wn[k]*A[k][i];
+        //mu[i]=sx[i];
         for (int j=0;j<=i;j++){
-            sxy[i][j]=0.0;
-            for (int k=0;k<nl;k++) sxy[i][j] +=wn[k]*A[k][i]*A[k][j];
-            sxy[j][i]=sxy[i][j];
+            mcv.cov[i][j]=0.0;
+            for (int k=0;k<nl;k++) mcv.cov[i][j] +=wn[k]*A[k][i]*A[k][j];
+            mcv.cov[j][i]=mcv.cov[i][j];
         }
     }
     for (int i=0;i<nc;i++) {
-        for (int j=0;j<nc;j++) cov[i][j] = (sxy[i][j]-sx[i]*sx[j])/(1.0-sw2);
+        for (int j=0;j<nc;j++) mcv.cov[i][j] = (mcv.cov[i][j]-mcv.mu[i]*mcv.mu[j])/(1.0-sw2);
     }
+    delete []wn;
+    return mcv;
 }
 
 struct resAFD{
@@ -357,49 +365,66 @@ struct resAFD{
 
 resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
     resAFD res;
+    rescov mcv;
     res.proportion = prop;
     vector <int> nk,numpop;   //npop est remplace par numpop.size() ou nk.size()
     bool trouve;
-    double **matC,**matCT,**matT,**matTI,**matM,*valprop,**mk,anl,piv,sl,co,sy,sy2,somega,*w,*wk;
+    double **matC,**matCT,**matTI,**matM,*valprop,**mk,anl,piv,sl,co,sy,sy2,somega,*w,*wk;
     int snk,j;
-    
+    cout<<"debut AFD  nl="<<nl<<"\n";
     if (not numpop.empty()) numpop.clear();numpop.push_back(pop[0]);
     if (not nk.empty()) nk.clear();nk.push_back(1);
     for (int i=1;i<nl;i++) {
-        trouve=false;j=-1;
-        while ((not trouve)and(j<numpop.size())) {j++;trouve=(numpop[j]==pop[i]);}
-        if (trouve) nk[j]++;
+        trouve=false;
+        for (j=0;j<numpop.size();j++) {
+            trouve=(numpop[j]==pop[i]);
+            if (trouve) break;
+        }
+        if (trouve) {nk[j]++;}
         else {numpop.push_back(pop[i]);nk.push_back(1);}
     }
     snk=0;for (int i=0;i<nk.size();i++) snk += nk[i];
+    cout<<"apres calcul snk\n";
     if (nl!=snk) {cout<< "dans AFD nl!=snk\n";exit(1);}
     matC = new double*[nc];for (int i=0;i<nc;i++) matC[i] = new double[numpop.size()];
     matCT = new double*[numpop.size()];for (int i=0;i<numpop.size();i++) matCT[i] = new double[nc];
     //matM = new *double[nc];for (int i=0;i<nc;i++) matM[i] = new double[nc];
     valprop = new double[nc];
     res.vectprop = new double*[nc];for (int i=0;i<nc;i++) res.vectprop[i] = new double[nc];
-    anl=1.0/(double)nl;
-    somega=0.0;for (int i=1;i<nl;i++) somega +=omega[i];
-    w = new double[nl];for (int i=1;i<nl;i++) w[i]=omega[i]/somega;
-    covarianceponderee(nl,nc,X,w,res.moy,matT);
+    //anl=1.0/(double)nl;
+    somega=0.0;for (int i=0;i<nl;i++) somega +=omega[i];
+    cout<<"somega="<<somega<<"\n";
+    w = new double[nl];for (int i=0;i<nl;i++) w[i]=omega[i]/somega;
+    cout<<"avant covarianceponderee\n";
+    mcv=covarianceponderee(nl,nc,X,w);
+    cout<<"apres covarianceponderee\n";
+    res.moy=new double[mcv.n];for (j=0;j<mcv.n;j++) res.moy[j]=mcv.mu[j];
     mk = new double*[numpop.size()];for (int i=0;i<numpop.size();i++) mk[i] = new double[nc];
     wk = new double[numpop.size()];
+    cout<<"numpop.size="<<numpop.size()<<"\n";
     for (int k=0;k<numpop.size();k++) {
-        wk[k]=0.0;for (int i=0;i<nl;i++) if (pop[i]==numpop[k]) wk[k] +=w[i];
+        wk[k]=0.0;for (int i=0;i<nl;i++) {if (pop[i]==numpop[k]) {wk[k] +=w[i];}}
+        //cout<<"wk["<<k<<"]="<<wk[k]<<"\n";
         for (j=0;j<nc;j++) {
             mk[k][j]=0.0;
             for (int i=0;i<nl;i++) if (pop[i]==numpop[k]) mk[k][j] += w[i]*X[i][j]/wk[k];
         }
     }
+    cout<<"apres la premiere boucle\n";
     for (int k=0;k<numpop.size();k++) {
+        //cout<<"k="<<k<<"\n";
+        //cout<<"   w[k]="<<wk[k]<<"\n";
         co=sqrt(wk[k]);
         for (j=0;j<nc;j++) {
             matC[j][k] = co*(mk[k][j]-res.moy[j]);
             matCT[k][j] = matC[j][k];
+            //cout<<"k="<<k<<"   j="<<j<<"   co="<<co<<"   mk[k][j]="<<mk[k][j]<<"   res.moy[j]="<<res.moy[j]<<"\n";
         }
     }
-    matTI = invM(nc,matT);
+    //cout<<"avant invM\n";
+    matTI = invM(mcv.n,mcv.cov);
     matM = prodM(numpop.size(),nc,numpop.size(),prodM(numpop.size(),nc,nc,matCT,matTI),matC);
+    //cout<<"avant jacobi\n";
     jacobi(numpop.size(),matM,valprop,res.vectprop);
     res.vectprop = prodM(nc,numpop.size(),numpop.size(),prodM(nc,nc,numpop.size(),matTI,matC),res.vectprop);
 //tri des valeurs et vecteurs propres par ordre décroissant des valeurs propres
@@ -425,9 +450,10 @@ resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
             for (int k=0;k<nc;k++) res.princomp[i][j] += (X[i][k]-res.moy[k])*res.vectprop[k][j];
         }
     }
+    for (j=0;j<mcv.n;j++) delete []mcv.cov[j];delete []mcv.cov;
+    delete []mcv.mu;
     for (int i=0;i<nc;i++) delete []matC[i];delete []matC;
     for (int i=0;i<numpop.size();i++) delete []matCT[i];delete []matCT;
-    for (int i=0;i<nc;i++) delete []matT[i];delete []matT;
     for (int i=0;i<nc;i++) delete []matTI[i];delete []matTI;
     for (int i=0;i<numpop.size();i++) delete []matM[i];delete []matM;
     for (int i=0;i<numpop.size();i++) delete []mk[i];delete []mk;

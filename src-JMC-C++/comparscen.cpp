@@ -206,7 +206,7 @@ matligneC *matA;
         double *sx,*sx2,*mo;
         nn=(double)n;
         delta = rt.enrsel[n-1].dist;
-        //cout<<"delta="<<delta<<"\n";
+        cout<<"delta="<<delta<<"\n";
         sx  = new double[rt.nstat];
         sx2 = new double[rt.nstat];
         mo  = new double[rt.nstat];
@@ -222,17 +222,17 @@ matligneC *matA;
         nstatOKsel=0;
         for (int j=0;j<rt.nstat;j++) {
             var_statsel[j]=(sx2[j]-sx[j]/nn*sx[j])/(nn-1.0);
-            //cout <<"var_statsel["<<j<<"]="<<var_statsel[j]<<"\n";
+            cout <<"var_statsel["<<j<<"]="<<var_statsel[j]<<"\n";
             if (var_statsel[j]>0.0) nstatOKsel++;
             mo[j] = sx[j]/nn;
         }
-        //cout <<"hello\n";  
+        cout <<"hello\n";  
         som=0.0;
         for (int i=0;i<n;i++) {
             icc=-1;
             for (int j=0;j<rt.nstat;j++) {
                 if (var_statsel[j]>0.0) {
-                    icc++;
+                    icc++; 
                     cmatX0[i][icc]=(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
                 }
             }
@@ -240,13 +240,13 @@ matligneC *matA;
             cvecW[i]=(1.5/delta)*(1.0-x*x);
             som = som + cvecW[i];
         }
-        /*cout <<"\n cmatX0:\n";
+        cout <<"\n cmatX0:\n";
         for (int i=0;i<5;i++) { cout<<rt.enrsel[i].numscen<<"   ";
             for (int j=0;j<nstatOKsel;j++) cout<<cmatX0[i][j]<<"  ";cout<<"\n";
-        }*/
+        }
         for (int i=0;i<n;i++) cvecW[i]/=som;
-        /*cout <<"\ncvecW:\n";for (int i=0;i<10;i++) cout<<cvecW[i]<<"  ";
-        cout<<"\n";*/
+        cout <<"\ncvecW:\n";for (int i=0;i<10;i++) cout<<cvecW[i]<<"  ";
+        cout<<"\n";
         delete []sx;delete []sx2;delete []mo;delete []var_statsel;
     }
 
@@ -313,29 +313,40 @@ matligneC *matA;
         int imod,i,j,l;
         double esd=0, ebma, sum=0.0, mi=b0[0], ma=b0[0];
         double vecD[nmodel];
+        cout<<"debut calcul_psd nmodel="<<nmodel<<"\n";
         if (nmodel>0) {for (i=1;i<nmodel;i++) {if (mi>b0[i]) mi=b0[i];if (ma<b0[i]) ma=b0[i];}}
-        if (ma-mi<1000.0)
-            {sum=0.0;for (i=0;i<nmodel+1;i++) sum+=exp(b0[i]-ma);
-            for (imod=1;imod<nmodel+1;imod++)
-                {ebma=exp(b0[imod]-ma);
+        if (ma-mi<1000.0){
+            cout<<"ma-mi="<<ma-mi<<"\n";
+            sum=0.0;for (i=0;i<nmodel+1;i++) sum+=exp(b0[i]-ma);
+            cout<<"sum="<<sum<<"\n";
+            for (imod=1;imod<nmodel+1;imod++) {
+                cout<<"imod="<<imod;fflush(stdout);
+                cout<<"   b0[imod]="<<b0[imod]<<"\n";
+                ebma=exp(b0[imod]-ma);
+                cout<<"ebma="<<ebma<<"\n";
                 px[imod]=ebma/sum;
+                cout<<"px["<<imod<<"]="<< px[imod]<<"\n";
                 esd=ebma/pow(sum,2);
                 for (j=1;j<nmodel+1;j++) {if (imod==j) vecD[j-1]=esd*(sum-ebma); else vecD[j-1]=-esd*ebma;}
+                cout<<"esd="<<esd<<"\n";
                 sd[imod]=0.0;
                 for (j=0;j<nmodel;j++) {for (l=0;l<nmodel;l++) sd[imod]+=matV[j][l]*vecD[j]*vecD[l];}
-                if (sd[imod]>0.0) sd[imod]=sqrt(sd[imod]); else sd[imod]=0.0;   
-                }
+                if (sd[imod]>0.0) sd[imod]=sqrt(sd[imod]); else sd[imod]=0.0;
+                cout<<"sd["<<imod<<"]="<<sd[imod]<<"\n";
+            }
             px[0]=exp(b0[0]-ma)/sum;
             for (j=0;j<nmodel;j++) vecD[j]=-pow(exp(0.5*b0[j+1]-ma)/sum,2);
             sd[0]=0.0;
             for (j=0;j<nmodel;j++) {for (l=0;l<nmodel;l++) sd[0]+=matV[j][l]*vecD[j]*vecD[l];}
             if (sd[0]>0.0) sd[0]=sqrt(sd[0]); else sd[0]=0.0;
-            }
-            else
-            {sum=0.0;for (i=1;i<nmodel+1;i++) {if (b0[i]>ma-1000) sum+=exp(b0[i]-ma);}
-            for (imod=1;imod<nmodel+1;imod++)
-                {if (b0[imod]>ma-1000)
-                    {ebma=exp(b0[imod]-ma);
+            cout<<"px[0]="<<px[0]<<"   sd[0]"<<sd[0]<<"\n";
+        }
+        else{
+            cout<<"ma-mi="<<ma-mi<<"\n";
+            sum=0.0;for (i=1;i<nmodel+1;i++) {if (b0[i]>ma-1000) sum+=exp(b0[i]-ma);}
+            for (imod=1;imod<nmodel+1;imod++){
+                if (b0[imod]>ma-1000){
+                    ebma=exp(b0[imod]-ma);
                     px[imod]=ebma/sum;
                     esd=ebma/pow(sum,2);
                     for (j=1;j<nmodel+1;j++) 
@@ -345,25 +356,26 @@ matligneC *matA;
                     sd[imod]=0.0;
                     for (j=0;j<nmodel;j++) {for (l=0;l<nmodel;l++) sd[imod]+=matV[j][l]*vecD[j]*vecD[l];}
                     if (sd[imod]>0.0) sd[imod]=sqrt(sd[imod]); else sd[imod]=0.0;   
-        }
-                    else
-                    {px[imod]=0.0;
-                    sd[imod]=0.0;
-                    }
                 }
-            if (b0[0]>ma-1000)
-                    {px[0]=exp(b0[0]-ma)/sum;
-                    for (j=0;j<nmodel;j++) 
-                        {if (0.5*b0[j+1]>ma-1000) vecD[j]=-pow(exp(0.5*b0[j+1]-ma)/sum,2); else vecD[j]=0.0;}
-                    sd[0]=0.0;
-                    for (j=0;j<nmodel;j++) {for (l=0;l<nmodel;l++) sd[0]+=matV[j][l]*vecD[j]*vecD[l];}
-                    if (sd[0]>0.0) sd[0]=sqrt(sd[0]); else sd[0]=0.0;
-                    }
-                    else
-                    {px[0]=0.0;
-                    sd[0]=0.0;
-                    }
+                else {
+                    px[imod]=0.0;
+                    sd[imod]=0.0;
+                }
             }
+            if (b0[0]>ma-1000) {
+                px[0]=exp(b0[0]-ma)/sum;
+                for (j=0;j<nmodel;j++) 
+                    {if (0.5*b0[j+1]>ma-1000) vecD[j]=-pow(exp(0.5*b0[j+1]-ma)/sum,2); else vecD[j]=0.0;}
+                sd[0]=0.0;
+                for (j=0;j<nmodel;j++) {for (l=0;l<nmodel;l++) sd[0]+=matV[j][l]*vecD[j]*vecD[l];}
+                if (sd[0]>0.0) sd[0]=sqrt(sd[0]); else sd[0]=0.0;
+            }
+            else {
+                px[0]=0.0;
+                sd[0]=0.0;
+            }
+        }
+        cout<<"fin calcul_psd\n";
     } 
 
     void ordonne(int nmodel,int nli,int nco,double *vecY,int *numod) {
@@ -542,6 +554,7 @@ matligneC *matA;
       
     posteriorscenC* call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil) {
         posteriorscenC *postlog;
+        bool trouve;
         int ntt,j,dtt,k,kk;
         double som, *px,*pxi,*pxs,somw,duree,debut,clock_zero;
         clock_zero=0.0;debut=walltime(&clock_zero);
@@ -551,10 +564,14 @@ matligneC *matA;
               else      {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}  
         }
         rempli_mat0(nts,stat_obs);
+        cout<<"call_polytom_logistic_regression 0  nts="<<nts<<"   nscenutil="<<nscenutil<<"\n";
+        for (j=0;j<nscenutil;j++) cout<<scenchoisiutil[j]<<"\n";
         ntt=nts;
         for (int i=0;i<nts;i++)  {
-            j=0;while ((j<nscenutil)and(scenchoisiutil[j]!=rt.enrsel[i].numscen)) j++;
-            if (scenchoisiutil[j]==rt.enrsel[i].numscen) vecY[i]=j;
+            //cout<<"rt.enrsel["<<i<<"].numscen="<<rt.enrsel[i].numscen<<"\n";
+            trouve=false;
+            for (j=0;j<nscenutil;j++) {trouve=(scenchoisiutil[j]==rt.enrsel[i].numscen);if (trouve) break;}
+            if (trouve) vecY[i]=j;
             else {vecY[i]=-1;ntt--;}
         }
         cout<<"call_polytom_logistic_regression 1\n";
@@ -611,6 +628,7 @@ matligneC *matA;
         for (int i=0;i<rt.nscenchoisi;i++) if((postdir[i]>2)and(postdir[i]>nts/1000)) nscenutil++;
         scenchoisiutil = new int[nscenutil];
         kk=0;for (int i=0;i<rt.nscenchoisi;i++) if((postdir[i]>2)and(postdir[i]>nts/1000)) {scenchoisiutil[kk]=rt.scenchoisi[i];kk++;}
+        cout <<"nscenutil="<<nscenutil<<"\n";
         if (nscenutil==1) {
             postlog = new posteriorscenC[rt.nscenchoisi];
             for (int i=0;i<rt.nscenchoisi;i++) {
