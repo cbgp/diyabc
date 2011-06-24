@@ -42,7 +42,7 @@ double time_readfile=0.0;
 
 char *nomficonfresult;
 
-    void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,bool usepriorhist, bool usepriormut,string shist,string smut) {
+    void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,bool usepriorhist, bool usepriormut,string shist,string smut, bool AFD) {
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
@@ -76,7 +76,8 @@ char *nomficonfresult;
         else  {fprintf(f1,"Mutation parameters are given the following values :");}
         fprintf(f1,"%s\n",smut.c_str());
         fprintf(f1,"Candidate scenarios : ");
-        for (int i=0;i<rt.nscenchoisi;i++) {fprintf(f1,"%d",rt.scenchoisi[i]);if (i<rt.nscenchoisi-1) fprintf(f1,", "); else fprintf(f1,"\n\n");}
+        for (int i=0;i<rt.nscenchoisi;i++) {fprintf(f1,"%d",rt.scenchoisi[i]);if (i<rt.nscenchoisi-1) fprintf(f1,", "); else fprintf(f1,"\n");}
+        if (AFD) fprintf(f1,"Summary statistics have been replaced by components of a Factorial Discriminant Analysis\n\n"); else fprintf(f1,"\n");
         //fprintf(f1,"         ");
         aprdir="direct approach";aprlog="logistic approach";
         s=centre(aprdir,9*rt.nscenchoisi);
@@ -131,10 +132,10 @@ char *nomficonfresult;
     void doconf(char *options, int seed) {
         char *datafilename, *progressfilename, *courantfilename;
         int nstatOK, iprog,nprog,ncs1;
-        int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond;
+        int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond,ite;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,st,pa,duree,debut,clock_zero;
-        bool usepriorhist,usepriormut,AFD=false;;
+        bool usepriorhist,usepriormut,AFD=false;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
         FILE *flog, *fcur;
@@ -232,19 +233,21 @@ char *nomficonfresult;
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         //nstatOK = rt.cal_varstat();                       
         stat_obs = new double[rt.nstat];
-        ecrientete(nrec,ntest,nseld,nselr,nlogreg,usepriorhist,usepriormut,shist,smut); cout<<"apres ecrientete\n";
+        ecrientete(nrec,ntest,nseld,nselr,nlogreg,usepriorhist,usepriormut,shist,smut,AFD); cout<<"apres ecrientete\n";
         ofstream f11(nomficonfresult,ios::app);
         rt.alloue_enrsel(nsel);
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
         for (int p=0;p<ntest;p++) {
+          for (ite=0;ite<2;ite++) {
             clock_zero=0.0;debut=walltime(&clock_zero);
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
             nstatOK = rt.cal_varstat();                       
             rt.cal_dist(nrec,nsel,stat_obs); 
-            cout<<"apres cal_dist\n";
+            //cout<<"apres cal_dist\n";
             iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-            if (AFD) stat_obs = transfAFD(nrec,nsel,p);
-            cout<<"avant postsd\n";
+            //if (AFD) stat_obs = transfAFD(nrec,nsel,p);
+            if (ite==1) stat_obs = transfAFD(nrec,nsel,p);
+            //cout<<"avant postsd\n";
             postsd = comp_direct(nseld);
             cout<<"test"<<setiosflags(ios::fixed)<<setw(4)<<p+1<<"  ";
             if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);
@@ -261,10 +264,11 @@ char *nomficonfresult;
                 delete []postsd;
                 delete []postsr;
             }
-            f11<<"\n";
+            f11<<"\n";f11.flush();
             cout<<"\n";
             duree=walltime(&debut);
-            cout<<"durée ="<<TimeToStr(duree)<<"\n";
+            cout<<"durée ="<<TimeToStr(duree)<<"\n\n\n";
+          }
         }        
         rt.desalloue_enrsel(nsel);
         f11.close();

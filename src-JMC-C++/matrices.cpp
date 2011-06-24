@@ -125,12 +125,12 @@ double** prodMs(int n,int m, double **A, double b) {
 /** 
 * effectue l'inversion matricielle d'une matrice (carrée) de doubles 
 */
-int inverse(int n, double **A, double **C)
+int inverse(int n, long double **A, long double **C)
 {
     int i,j,k,l,err=0;
-    double max,pivot,coef, **T;
+    long double max,pivot,coef, **T;
     double debut,duree;
-    T = new double*[n];for (i=0;i<n;i++) T[i]= new double[2*n]; 
+    T = new long double*[n];for (i=0;i<n;i++) T[i]= new long double[2*n]; 
 
     for (i=0;i<n;i++) 
         {for (j=0;j<n;j++) 

@@ -57,35 +57,35 @@ extern double time_readfile;
 
 int ncs=100;
 double time_loglik=0.0,time_matC=0.0,time_call=0.0;
-double **cmatA,**cmatB,**cmatX,**cmatXT,**cmatC,*cdeltabeta,*cbeta0,*cbeta,**cmatP,**cmatY,*cmatYP,*cloglik,*csd,*cbet,*cpx0,*csmatY,*csmatP,**cgdb ;
-double *vecY,*vecYY,*cvecW,**cmatX0;
+long double **cmatA,**cmatB,**cmatX,**cmatXT,**cmatC,*cdeltabeta,*cbeta0,*cbeta,**cmatP,**cmatY,*cmatYP,*cloglik,*csd,*cbet,*cpx0,*csmatY,*csmatP,**cgdb ;
+long double *vecY,*vecYY,*cvecW,**cmatX0;
 matligneC *matA;
 
     void allouecmat(int nmodel, int nli, int nco) {
         int nmodnco = nmodel*(nco+1);
         
-        cmatA = new double*[nmodel];for (int i=0;i<nmodel;i++) cmatA[i]= new double[nmodel];
-        cmatB = new double*[nmodnco];for (int i=0;i<nmodnco;i++) cmatB[i]= new double[nmodnco];
-        cmatC = new double*[nmodnco];for (int i=0;i<nmodnco;i++) cmatC[i]= new double[nmodnco];
-        cmatX = new double*[nli];for (int i=0;i<nli;i++) cmatX[i]= new double[nco+1];
-        cmatXT = new double*[nco+1];for (int i=0;i<nco+1;i++) cmatXT[i]= new double[nli];
-        cdeltabeta = new double[nmodnco];
-        cbeta0  = new double[nmodnco];
-        cbeta   = new double[nmodnco];
-        cmatYP  = new double[nmodnco];
-        cmatP   = new double*[nli];;for (int i=0;i<nli;i++) cmatP[i]= new double[nmodel];
-        cmatY   = new double*[nli];;for (int i=0;i<nli;i++) cmatY[i]= new double[nmodel];
-        cloglik = new double[50];
-        csd     = new double[nmodel+1];
-        cbet    = new double[nmodel+1];
-        cpx0    = new double[nmodel+1];
-        csmatY  = new double[nli];
-        csmatP  = new double[nli];
-        cmatX0 = new double*[nli];for (int i=0;i<nli;i++)cmatX0[i]=new double[nco];
+        cmatA = new long double*[nmodel];for (int i=0;i<nmodel;i++) cmatA[i]= new long double[nmodel];
+        cmatB = new long double*[nmodnco];for (int i=0;i<nmodnco;i++) cmatB[i]= new long double[nmodnco];
+        cmatC = new long double*[nmodnco];for (int i=0;i<nmodnco;i++) cmatC[i]= new long double[nmodnco];
+        cmatX = new long double*[nli];for (int i=0;i<nli;i++) cmatX[i]= new long double[nco+1];
+        cmatXT = new long double*[nco+1];for (int i=0;i<nco+1;i++) cmatXT[i]= new long double[nli];
+        cdeltabeta = new long double[nmodnco];
+        cbeta0  = new long double[nmodnco];
+        cbeta   = new long double[nmodnco];
+        cmatYP  = new long double[nmodnco];
+        cmatP   = new long double*[nli];;for (int i=0;i<nli;i++) cmatP[i]= new long double[nmodel];
+        cmatY   = new long double*[nli];;for (int i=0;i<nli;i++) cmatY[i]= new long double[nmodel];
+        cloglik = new long double[50];
+        csd     = new long double[nmodel+1];
+        cbet    = new long double[nmodel+1];
+        cpx0    = new long double[nmodel+1];
+        csmatY  = new long double[nli];
+        csmatP  = new long double[nli];
+        cmatX0 = new long double*[nli];for (int i=0;i<nli;i++)cmatX0[i]=new long double[nco];
         matA = new matligneC[nli];
-        cvecW = new double[nli];
-        vecY  = new double[nli];
-        vecYY = new double[nli];
+        cvecW = new long double[nli];
+        vecY  = new long double[nli];
+        vecYY = new long double[nli];
     }
 
     void liberecmat(int nmodel, int nli, int nco) {
@@ -206,7 +206,7 @@ matligneC *matA;
         double *sx,*sx2,*mo;
         nn=(double)n;
         delta = rt.enrsel[n-1].dist;
-        cout<<"delta="<<delta<<"\n";
+        //cout<<"delta="<<delta<<"\n";
         sx  = new double[rt.nstat];
         sx2 = new double[rt.nstat];
         mo  = new double[rt.nstat];
@@ -222,11 +222,11 @@ matligneC *matA;
         nstatOKsel=0;
         for (int j=0;j<rt.nstat;j++) {
             var_statsel[j]=(sx2[j]-sx[j]/nn*sx[j])/(nn-1.0);
-            cout <<"var_statsel["<<j<<"]="<<var_statsel[j]<<"\n";
+            //cout <<"var_statsel["<<j<<"]="<<var_statsel[j]<<"\n";
             if (var_statsel[j]>0.0) nstatOKsel++;
             mo[j] = sx[j]/nn;
         }
-        cout <<"hello\n";  
+        //cout <<"hello\n";  
         som=0.0;
         for (int i=0;i<n;i++) {
             icc=-1;
@@ -240,19 +240,19 @@ matligneC *matA;
             cvecW[i]=(1.5/delta)*(1.0-x*x);
             som = som + cvecW[i];
         }
-        cout <<"\n cmatX0:\n";
-        for (int i=0;i<5;i++) { cout<<rt.enrsel[i].numscen<<"   ";
+        //cout <<"\n cmatX0:\n";
+        /*for (int i=0;i<5;i++) { cout<<rt.enrsel[i].numscen<<"   ";
             for (int j=0;j<nstatOKsel;j++) cout<<cmatX0[i][j]<<"  ";cout<<"\n";
-        }
+        }*/
         for (int i=0;i<n;i++) cvecW[i]/=som;
-        cout <<"\ncvecW:\n";for (int i=0;i<10;i++) cout<<cvecW[i]<<"  ";
-        cout<<"\n";
+        //cout <<"\ncvecW:\n";for (int i=0;i<10;i++) cout<<cvecW[i]<<"  ";
+        //cout<<"\n";
         delete []sx;delete []sx2;delete []mo;delete []var_statsel;
     }
 
-    void expbeta(int bsize, double *b, double *eb)
+    void expbeta(int bsize, long double *b, long double *eb)
     {
-        double mi=b[0],ma=b[0],s=0;
+        long double mi=b[0],ma=b[0],s=0;
         int i;
         for (i=1;i<bsize;i++)
             {if (mi>b[i]) mi=b[i];if (ma<b[i]) ma=b[i];}
@@ -260,11 +260,12 @@ matligneC *matA;
             {if (ma-b[i]>1000.0) eb[i]=0.0; else eb[i]=exp(b[i]-ma);s+=eb[i];}
         if (s>0.0) 
             {for (i=0;i<bsize;i++) eb[i]=eb[i]/s;}
+        for (i=0;i<bsize;i++) if (eb[i]==0.0) eb[i]=0.00000001;
     }
 
-    void remplimatriceYP(int nli, int nco, int nmodel, double **cmatP, double *cmatYP, double *cbeta, double **cmatX, double *cvecW, double **cmatY, double *csmatP)
+    void remplimatriceYP(int nli, int nco, int nmodel, long double **cmatP, long double *cmatYP, long double *cbeta, long double **cmatX, long double *cvecW, long double **cmatY, long double *csmatP)
     {
-        double betax[nmodel+1],ebetax[nmodel+1];
+        long double betax[nmodel+1],ebetax[nmodel+1];
         int i,j,imod;
         
         for (i=0;i<nli;i++)
@@ -275,6 +276,11 @@ matligneC *matA;
                 } 
             expbeta((nmodel+1),betax,ebetax);
             for (imod=0;imod<nmodel;imod++) {cmatP[i][imod]=ebetax[imod];csmatP[i]+=cmatP[i][imod];}
+            if (csmatP[i]==1.0) {
+                  //for (imod=0;imod<nmodel;imod++) cout<<cmatP[i][imod]<<"  ";cout<<"  csmatP["<<i<<"]="<<csmatP[i]<<"\n";
+                  //for (imod=0;imod<nmodel;imod++)  cout<<betax[imod]<<"  ";cout<<"\n";
+                  csmatP[i]=0.99999999;
+            }
             }
         for (i=0;i<nmodel*(nco+1);i++) cmatYP[i]=0.0;
         for (imod=0;imod<nmodel;imod++){
@@ -284,65 +290,70 @@ matligneC *matA;
         }
     }
 
-    bool cal_loglik(int nli, int nmodel, int rep, double *cloglik, double **cmatY, double **cmatP, double *vecW, double *csmatY, double *csmatP)
+    bool cal_loglik(int nli, int nmodel, int rep, long double *cloglik, long double **cmatY, long double **cmatP, long double *vecW, long double *csmatY, long double *csmatP)
     {
         int i,imod;
-        double a,llik=0.0;
+        long double a,llik=0.0;
         double debut,duree,clock_zero=0.0;
         debut=walltime(&clock_zero);
-    #pragma omp parallel for private(a,imod) if(multithread)\
-      reduction( + : llik )
+        bool OK=true;
+//    #pragma omp parallel for private(a,imod) if(multithread)\
+//      reduction( + : llik )
         for (i=0;i<nli;i++)
             {a=0.0;
-            for (imod=0;imod<nmodel;imod++)
-              {//if ((cmatY[i][imod]>0.5)&&(cmatP[i][imod]<=0.0)) {std::cout << "caloglik=false\n";return false;}
-                  if (cmatY[i][imod]>0.5) a+=log(cmatP[i][imod]);
+            for (imod=0;imod<nmodel;imod++) {
+              if ((cmatY[i][imod]>0.5)and(cmatP[i][imod]<=0.0)) {std::cout << "caloglik=false\n";return false;}
+                  //if (cmatP[i][imod]<=0.0) {cout<<"cmatP["<<i<<"]["<<imod<<"]="<<cmatP[i][imod]<<"\n";OK=false;}
+              if (cmatY[i][imod]>0.5) a+=log(cmatP[i][imod]);
                 }
-            //if ((csmatP[i]>=1.0)&&(csmatY[i]<0.9)) {std::cout << "caloglik=false\n";return false;}
+            if ((csmatP[i]>=1.0)and(csmatY[i]<0.9)) {
+                //cout<<"csmatP["<<i<<"]="<< setiosflags(ios::fixed)<<setw(12)<<setprecision(9)<<csmatP[i]<<"   csmatY["<<i<<"]="<<csmatY[i]<<"\n";
+                csmatP[i]=0.99999999;
+            }
             if (csmatY[i]<0.9) a+=log(1.0-csmatP[i]);
             llik=llik+cvecW[i]*a;
-                    //if (rep>1) {if(loglik[rep-1]<loglik[rep-2]-0.000001) {std::cout << "loglik decroit\n";return false;}}
             }
         cloglik[rep-1]=llik;
+        if (rep>1) {if(cloglik[rep-1]<cloglik[rep-2]-0.000001) {std::cout << "loglik decroit\n";return false;}}
         duree=walltime(&debut);time_loglik += duree;
-        return true;
+        return OK;
     }
 
-    void calcul_psd(int nmodel, double *b0, double **matV, double *sd, double *px)
+    void calcul_psd(int nmodel, long double *b0, long double **matV, long double *sd, double *px)
     {
         int imod,i,j,l;
-        double esd=0, ebma, sum=0.0, mi=b0[0], ma=b0[0];
-        double vecD[nmodel];
-        cout<<"debut calcul_psd nmodel="<<nmodel<<"\n";
+        long double esd=0, ebma, sum=0.0, mi=b0[0], ma=b0[0];
+        long double vecD[nmodel];
+        //cout<<"debut calcul_psd nmodel="<<nmodel<<"\n";
         if (nmodel>0) {for (i=1;i<nmodel;i++) {if (mi>b0[i]) mi=b0[i];if (ma<b0[i]) ma=b0[i];}}
         if (ma-mi<1000.0){
-            cout<<"ma-mi="<<ma-mi<<"\n";
+            //cout<<"ma-mi="<<ma-mi<<"\n";
             sum=0.0;for (i=0;i<nmodel+1;i++) sum+=exp(b0[i]-ma);
-            cout<<"sum="<<sum<<"\n";
+            //cout<<"sum="<<sum<<"\n";
             for (imod=1;imod<nmodel+1;imod++) {
-                cout<<"imod="<<imod;fflush(stdout);
-                cout<<"   b0[imod]="<<b0[imod]<<"\n";
+                //cout<<"imod="<<imod;fflush(stdout);
+                //cout<<"   b0[imod]="<<b0[imod]<<"\n";
                 ebma=exp(b0[imod]-ma);
-                cout<<"ebma="<<ebma<<"\n";
+                //cout<<"ebma="<<ebma<<"   sum="<<sum<<"   ebma/sum="<<ebma/sum<<"\n";
                 px[imod]=ebma/sum;
-                cout<<"px["<<imod<<"]="<< px[imod]<<"\n";
+                //cout<<"px["<<imod<<"]="<< px[imod]<<"\n";
                 esd=ebma/pow(sum,2);
                 for (j=1;j<nmodel+1;j++) {if (imod==j) vecD[j-1]=esd*(sum-ebma); else vecD[j-1]=-esd*ebma;}
-                cout<<"esd="<<esd<<"\n";
+                //cout<<"esd="<<esd<<"\n";
                 sd[imod]=0.0;
                 for (j=0;j<nmodel;j++) {for (l=0;l<nmodel;l++) sd[imod]+=matV[j][l]*vecD[j]*vecD[l];}
                 if (sd[imod]>0.0) sd[imod]=sqrt(sd[imod]); else sd[imod]=0.0;
-                cout<<"sd["<<imod<<"]="<<sd[imod]<<"\n";
+                //cout<<"sd["<<imod<<"]="<<sd[imod]<<"\n";
             }
             px[0]=exp(b0[0]-ma)/sum;
             for (j=0;j<nmodel;j++) vecD[j]=-pow(exp(0.5*b0[j+1]-ma)/sum,2);
             sd[0]=0.0;
             for (j=0;j<nmodel;j++) {for (l=0;l<nmodel;l++) sd[0]+=matV[j][l]*vecD[j]*vecD[l];}
             if (sd[0]>0.0) sd[0]=sqrt(sd[0]); else sd[0]=0.0;
-            cout<<"px[0]="<<px[0]<<"   sd[0]"<<sd[0]<<"\n";
+            //cout<<"px[0]="<<px[0]<<"   sd[0]"<<sd[0]<<"\n";
         }
         else{
-            cout<<"ma-mi="<<ma-mi<<"\n";
+            //cout<<"ma-mi="<<ma-mi<<"\n";
             sum=0.0;for (i=1;i<nmodel+1;i++) {if (b0[i]>ma-1000) sum+=exp(b0[i]-ma);}
             for (imod=1;imod<nmodel+1;imod++){
                 if (b0[imod]>ma-1000){
@@ -375,14 +386,14 @@ matligneC *matA;
                 sd[0]=0.0;
             }
         }
-        cout<<"fin calcul_psd\n";
+        //cout<<"fin calcul_psd\n";
     } 
 
-    void ordonne(int nmodel,int nli,int nco,double *vecY,int *numod) {
-        double swm,*sw,xpiv;
+    void ordonne(int nmodel,int nli,int nco,long double *vecY,int *numod) {
+        long double swm,*sw,xpiv;
         int k,ii,ki,kj;
         //cout<<"debut de ordonne\n";
-        sw =new double[nmodel+1];
+        sw =new long double[nmodel+1];
         for (int i=0;i<nmodel+1;i++) sw[i]=0.0;
         swm=0.0;
         for (int i=0;i<nli;i++) sw[int(vecY[i])] +=cvecW[i];
@@ -442,8 +453,8 @@ matligneC *matA;
     }
 
     void reordonne(int nmodel,int *numod,double *px, double *pxi,double *pxs) {
-        double *qx,*qxi,*qxs;
-        qx = new double[nmodel+1];qxi = new double[nmodel+1];qxs = new double[nmodel+1];
+        long double *qx,*qxi,*qxs;
+        qx = new long double[nmodel+1];qxi = new long double[nmodel+1];qxs = new long double[nmodel+1];
         for (int i=0;i<nmodel+1;i++) {
             qx[numod[i]]=px[i];qxi[numod[i]]=pxi[i];qxs[numod[i]]=pxs[i];
         }
@@ -453,23 +464,23 @@ matligneC *matA;
         delete []qx;delete []qxi;delete []qxs;
     }
 
-    int polytom_logistic_regression(int nli, int nco, double **cmatX0, double *vecY, double *cvecW, double *px, double *pxi, double *pxs)
+    int polytom_logistic_regression(int nli, int nco, long double **cmatX0, long double *vecY, long double *cvecW, double *px, double *pxi, double *pxs)
     {
         double clock_zero;
         int nmodel=0;
-        double debut,duree,de1,du1;
+        double debut,duree,de1,du1,sx,sx2;
         int *numod;
         for (int i=1;i<nli;i++) {if (vecY[i]>1.0*nmodel) nmodel=vecY[i]+0.1;}
         if (nmodel<1) {px[0]=1.0;pxi[0]=1.0;pxs[0]=1.0;return 0;}
-        //cout << "   nmodel="<<nmodel<<endl;
+        //cout << "   nmodel="<<nmodel<<"   nco="<<nco<<"   nmodnco="<<nmodel*(nco+1)<<endl;
         numod=new int[nmodel+1];
         ordonne(nmodel,nli,nco,vecY,numod);
         //cout <<"apres ordonne\n";
         int i,j,l,m,n,nmodnco=nmodel*(nco+1),imod,rep;
-        double imody,betmin,betmax;
+        long double imody,betmin,betmax;
         bool fin,caloglik;
         for (i=0;i<nli;i++) {cmatX[i][0]=1.0; for (j=0;j<nco;j++) cmatX[i][j+1]=cmatX0[i][j];}
-        //save_mat(nli,nco+1,matX0,"matX0.txt");
+        //cout<<"\n";cout<<"\n";for (i=0;i<10;i++) {for (j=0;j<11;j++) cout<<cmatX[i][j]<<"  "; cout<<"\n";} cout<<"\n";
         for (imod=0;imod<nmodel;imod++) 
             {imody=imod+1;
             for (i=0;i<nli;i++) {if(fabs(vecY[i]-imody)<0.1) cmatY[i][imod]=1.0; else cmatY[i][imod]=0.0;}
@@ -542,7 +553,26 @@ matligneC *matA;
             for (i=0;i<nmodel+1;i++) {if (betmax<cbet[i]) betmax=cbet[i];}
             fin=true;i=0;while ((fin==true)&&(i<nmodel+1)) {fin= (fabs(px[i]-cpx0[i])<0.0001);i++;}
             fin=(fin||(betmax-betmin>50));
+/////////////////////////
+            if (rep<=20) {
+                cout<<"\ncbet       : ";
+                for(i=0;i<nmodel;i++) cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<cbet[i+1]<<"  ";cout<<"\n";
+                cout<<"cdeltabeta : ";
+                for(i=0;i<nmodel;i++) cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<cdeltabeta[i*(nco+1)]<<"  ";cout<<"\n\n";
+                //for(i=0;i<nmodel;i++) {for (j=0;j<nmodel;j++) cout<<cmatB[i*(nco+1)][i*(nco+1)]<<"  ";cout<<"\n";} 
             }
+
+            cout<<"\niteration "<<rep;
+            for (i=0;i<nmodel+1;i++) {cout<<"  ";cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<px[i];}
+            sx=0.0;sx2=0.0;for(i=0;i<nmodel+1;i++) {sx+=px[i];sx2+=px[i]*px[i];}
+            //if ((sx<0.001)or(sx2>0.999)) {
+                cout<<"\nsx="<<sx<<"   sx2="<<sx2<<"   loglik="<<cloglik[rep-1]<<"\n";
+                //for (i=0;i<nmodnco;i++) cout<<cbeta[i]<<"\n";
+            //    exit(1);
+            //}
+//////////////////////////
+            }
+        cout<<"\n";
         for (imod=0;imod<nmodel+1;imod++)
                 {pxi[imod]=px[imod]-1.96*csd[imod];
                 if (pxi[imod]<0.0) pxi[imod]=0.0;
@@ -550,6 +580,10 @@ matligneC *matA;
                 if (pxs[imod]>1.0) pxs[imod]=1.0;
                 }
         reordonne(nmodel,numod,px,pxi,pxs);
+        cout<<"\niteration "<<rep;
+        for (i=0;i<nmodel+1;i++) {cout<<"  ";cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<px[i];}
+        cout<<"\n";
+        if ((rep==2)and(sx2>0.9999)) exit(1);
    }
       
     posteriorscenC* call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil) {
@@ -564,8 +598,8 @@ matligneC *matA;
               else      {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}  
         }
         rempli_mat0(nts,stat_obs);
-        cout<<"call_polytom_logistic_regression 0  nts="<<nts<<"   nscenutil="<<nscenutil<<"\n";
-        for (j=0;j<nscenutil;j++) cout<<scenchoisiutil[j]<<"\n";
+        //cout<<"call_polytom_logistic_regression 0  nts="<<nts<<"   nscenutil="<<nscenutil<<"\n";
+        //for (j=0;j<nscenutil;j++) cout<<scenchoisiutil[j]<<"\n";
         ntt=nts;
         for (int i=0;i<nts;i++)  {
             //cout<<"rt.enrsel["<<i<<"].numscen="<<rt.enrsel[i].numscen<<"\n";
@@ -574,7 +608,7 @@ matligneC *matA;
             if (trouve) vecY[i]=j;
             else {vecY[i]=-1;ntt--;}
         }
-        cout<<"call_polytom_logistic_regression 1\n";
+        //cout<<"call_polytom_logistic_regression 1\n";
         if (ntt<=nts) {
             for (int i=0;i<nts;i++) matA[i].x = new double[nstatOKsel+2];
             kk=0;
@@ -594,10 +628,10 @@ matligneC *matA;
                 for (int j=0;j<nstatOKsel;j++) cmatX0[i][j]=matA[i].x[j+2];
             }
         }
-        cout<<"call_polytom_logistic_regression 2\n";
+        //cout<<"call_polytom_logistic_regression 2\n";
         som=0.0;for (int i=0;i<ntt;i++) som += cvecW[i];
         for (int i=0;i<ntt;i++) cvecW[i] = cvecW[i]/som*(double)ntt;
-        px = new double[nscenutil];pxi = new double[nscenutil];pxs = new double[nscenutil];
+        px = new double[rt.nscenchoisi];pxi = new double[rt.nscenchoisi];pxs = new double[rt.nscenchoisi];
         polytom_logistic_regression(nts, nstatOKsel, cmatX0, vecYY, cvecW, px, pxi, pxs);
         if (nscenutil==rt.nscenchoisi) for (int i=0;i<nscenutil;i++) {postlog[i].x=px[i];postlog[i].inf=pxi[i];postlog[i].sup=pxs[i];}
         else {
@@ -610,7 +644,7 @@ matligneC *matA;
         }
         delete [] px; delete []pxi; delete []pxs;
         duree=walltime(&debut);time_call += duree;
-        cout<<"call_polytom_logistic_regression 3\n";
+        //cout<<"call_polytom_logistic_regression 3\n";
         return postlog;
     }  
       
@@ -622,13 +656,13 @@ matligneC *matA;
             postdir[i]=0;
             for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postdir[i]++;
         }
-        for (int i=0;i<rt.nscenchoisi;i++) cout<<"\nscenario "<<rt.scenchoisi[i]<<"  : "<<postdir[i]<<"\n";
-        cout<<"\n";
+        //for (int i=0;i<rt.nscenchoisi;i++) cout<<"\nscenario "<<rt.scenchoisi[i]<<"  : "<<postdir[i]<<"\n";
+        //cout<<"\n";
         nscenutil=0;
         for (int i=0;i<rt.nscenchoisi;i++) if((postdir[i]>2)and(postdir[i]>nts/1000)) nscenutil++;
         scenchoisiutil = new int[nscenutil];
         kk=0;for (int i=0;i<rt.nscenchoisi;i++) if((postdir[i]>2)and(postdir[i]>nts/1000)) {scenchoisiutil[kk]=rt.scenchoisi[i];kk++;}
-        cout <<"nscenutil="<<nscenutil<<"\n";
+        //cout <<"nscenutil="<<nscenutil<<"\n";
         if (nscenutil==1) {
             postlog = new posteriorscenC[rt.nscenchoisi];
             for (int i=0;i<rt.nscenchoisi;i++) {

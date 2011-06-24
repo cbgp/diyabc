@@ -371,7 +371,7 @@ resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
     bool trouve;
     double **matC,**matCT,**matTI,**matM,*valprop,**mk,anl,piv,sl,co,sy,sy2,somega,*w,*wk;
     int snk,j;
-    cout<<"debut AFD  nl="<<nl<<"\n";
+    //cout<<"debut AFD  nl="<<nl<<"\n";
     if (not numpop.empty()) numpop.clear();numpop.push_back(pop[0]);
     if (not nk.empty()) nk.clear();nk.push_back(1);
     for (int i=1;i<nl;i++) {
@@ -384,7 +384,7 @@ resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
         else {numpop.push_back(pop[i]);nk.push_back(1);}
     }
     snk=0;for (int i=0;i<nk.size();i++) snk += nk[i];
-    cout<<"apres calcul snk\n";
+    //cout<<"apres calcul snk\n";
     if (nl!=snk) {cout<< "dans AFD nl!=snk\n";exit(1);}
     matC = new double*[nc];for (int i=0;i<nc;i++) matC[i] = new double[numpop.size()];
     matCT = new double*[numpop.size()];for (int i=0;i<numpop.size();i++) matCT[i] = new double[nc];
@@ -393,15 +393,15 @@ resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
     res.vectprop = new double*[nc];for (int i=0;i<nc;i++) res.vectprop[i] = new double[nc];
     //anl=1.0/(double)nl;
     somega=0.0;for (int i=0;i<nl;i++) somega +=omega[i];
-    cout<<"somega="<<somega<<"\n";
+    //cout<<"somega="<<somega<<"\n";
     w = new double[nl];for (int i=0;i<nl;i++) w[i]=omega[i]/somega;
-    cout<<"avant covarianceponderee\n";
+    //cout<<"avant covarianceponderee\n";
     mcv=covarianceponderee(nl,nc,X,w);
-    cout<<"apres covarianceponderee\n";
+    //cout<<"apres covarianceponderee\n";
     res.moy=new double[mcv.n];for (j=0;j<mcv.n;j++) res.moy[j]=mcv.mu[j];
     mk = new double*[numpop.size()];for (int i=0;i<numpop.size();i++) mk[i] = new double[nc];
     wk = new double[numpop.size()];
-    cout<<"numpop.size="<<numpop.size()<<"\n";
+    //cout<<"numpop.size="<<numpop.size()<<"\n";
     for (int k=0;k<numpop.size();k++) {
         wk[k]=0.0;for (int i=0;i<nl;i++) {if (pop[i]==numpop[k]) {wk[k] +=w[i];}}
         //cout<<"wk["<<k<<"]="<<wk[k]<<"\n";
@@ -410,7 +410,7 @@ resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
             for (int i=0;i<nl;i++) if (pop[i]==numpop[k]) mk[k][j] += w[i]*X[i][j]/wk[k];
         }
     }
-    cout<<"apres la premiere boucle\n";
+    //cout<<"apres la premiere boucle\n";
     for (int k=0;k<numpop.size();k++) {
         //cout<<"k="<<k<<"\n";
         //cout<<"   w[k]="<<wk[k]<<"\n";

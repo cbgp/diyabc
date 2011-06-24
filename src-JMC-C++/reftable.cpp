@@ -308,10 +308,10 @@ public:
 * sur les 100000 premiers enregistrements de la table de référence
 */
     int cal_varstat() {
-        int nrecutil,iscen,nsOK,bidon,i;
+        int nrecutil,iscen,nsOK,bidon,i,step;
         double *sx,*sx2,x,an;
         bool scenOK;
-        cout <<"debut de cal_varstat\n";
+        //cout <<"debut de cal_varstat\n";
         enregC enr;
         nrecutil=100000;if (nrecutil>this->nrec) nrecutil=this->nrec;
         an=1.0*(double)nrecutil;
@@ -323,7 +323,7 @@ public:
         this->nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>this->nparamax) this->nparamax=this->nparam[i];
         enr.param = new float[this->nparamax];
         this->openfile2();
-        i=0;
+        i=0;step=nrecutil/100;
         while (i<nrecutil) {
             bidon=this->readrecord(&enr);
             //cout<<"coucou\n";
@@ -340,7 +340,7 @@ public:
                     sx2[j] += x*x;
                 }
             }
-            if ((i % 1000)==0) {cout<<"\r"<<i;fflush(stdout);}
+            //if ((i % step)==0) {cout<<"\rcal_varstat : "<<i/step<<"%";fflush(stdout);}
         }
         this->closefile();
         nsOK=0;
@@ -350,7 +350,7 @@ public:
             //cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
         }
         delete []sx;delete []sx2;
-        cout<<"\nnstatOK = "<<nsOK<<"\n";
+        //cout<<"\nnstatOK = "<<nsOK<<"\n";
         return nsOK;
     }
  
@@ -383,15 +383,15 @@ public:
 * et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
 */
     void cal_dist(int nrec, int nsel, double *stat_obs) {
-        int nn,nparamax,nrecOK=0,iscen,bidon;
+        int nn,nparamax,nrecOK=0,iscen,bidon,step;
         bool firstloop=true,scenOK;
         double diff,dj;
         float dd,di;
-        this->nreclus=0;
+        this->nreclus=0;step=nrec/100;
         nn=nsel;
         nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
-        cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
-        cout<<" apres allocation de enrsel\n";
+        //cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
+        //cout<<" apres allocation de enrsel\n";
         this->openfile2();
         while (this->nreclus<nrec) {
             if (firstloop) {nrecOK=0;firstloop=false;}
@@ -414,13 +414,14 @@ public:
                     nrecOK++;
                 if (this->nreclus==nrec) break;
                 }
-                if ((this->nreclus % 1000)==0) {cout<<"\r"<<this->nreclus;fflush(stdout);}
+                if ((this->nreclus % step)==0) {cout<<"\rcal_dist : "<<this->nreclus/step<<"%";fflush(stdout);}
             }
             sort(&this->enrsel[0],&this->enrsel[2*nn],compenreg());
         }
+        cout<<"\rcal_dist : fini\n";
         this->closefile();
-        cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK;
-        cout<<"    distmin = "<<this->enrsel[0].dist/(double)this->nstat<<"    distmax = "<<this->enrsel[nsel-1].dist/(double)this->nstat<<"\n";
+        //cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK;
+        //cout<<"    distmin = "<<this->enrsel[0].dist/(double)this->nstat<<"    distmax = "<<this->enrsel[nsel-1].dist/(double)this->nstat<<"\n";
         //for (int i=0;i<nsel;i++)           cout<<this->enrsel[i].numscen<<"  ";
         //cout<<"\n";
         //exit(1);
