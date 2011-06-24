@@ -63,6 +63,7 @@ class History(object):
         else              : self.ne0s   = ne0s
         self.time0 = time0
         self.time1 = time1
+        self.NN = []
         
     def sortEvents(self):
         self.events.sort()

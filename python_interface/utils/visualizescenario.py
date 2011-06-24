@@ -104,7 +104,12 @@ class PopTree(object):
             if ev.action == "VARNE" :
                 if ev.Ne == None :self.NN.append(ev.sNe)
                 if ev.sNe == None : self.NN.append(str(ev.Ne))
-        self.NN = list(set(self.NN))           
+        print "avant"
+        print self.NN
+        self.NN = list(set(self.NN))
+        print "apres"
+        print self.NN
+        self.scenario.history.NN = self.NN
                 
     def reset_tree(self):
         self.br = []

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # variable qui sera changée par le générateur d'exécutable
-VERSION='development version'
+VERSION='version 2.0.0'
 
 import time
 #import dataImages

@@ -123,8 +123,9 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         """ dessine le scenario sur le painter
         """
         tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
-        NN = scc.history.ne0s
-
+        NN = scc.history.NN
+        print "paintScenario"
+        print NN
         pen = QPen(Qt.black,2)
         painter.setPen(pen)
 
@@ -146,7 +147,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
             font.setPixelSize(10+font_inc)
             painter.setFont(font)
             painter.setPen(pen)
-            painter.drawText( 40,45+20*i, NN[i].name)
+            painter.drawText( 40,45+20*i, NN[i])
         painter.setPen(QPen(Qt.black,20))
         font = QFont()
         font.setItalic(False)
@@ -216,7 +217,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 xmed = (s.xdeb+s.xfin)/2
                 ymed = s.ydeb
                 jj = 0
-                while(jj < len(NN)) and (NN[jj].name != s.sNedeb):
+                while(jj < len(NN)) and (NN[jj] != s.sNedeb):
                     jj+=1
                 pen = QPen(Qt.yellow,5)
                 pen.setCapStyle(Qt.RoundCap)
@@ -236,7 +237,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 painter.drawText( x0, ymed+16, s.sadm)
 
                 jj = 0
-                while(jj < len(NN)) and (NN[jj].name != s.sNefin):
+                while(jj < len(NN)) and (NN[jj] != s.sNefin):
                     jj+=1
                 pen = QPen(Qt.yellow,5)
                 pen.setCapStyle(Qt.RoundCap)
@@ -249,7 +250,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 painter.drawLine(s.xfin,ymed,xmed,ymed)
             else:
                 jj = 0
-                while(jj < len(NN)) and (NN[jj].name != s.sNefin):
+                while(jj < len(NN)) and (NN[jj] != s.sNefin):
                     jj+=1
                 pen = QPen(Qt.black,5)
                 pen.setCapStyle(Qt.RoundCap)
