@@ -29,7 +29,7 @@ formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 class Diyabc(formDiyabc,baseDiyabc):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
     """
-    def __init__(self,app,parent=None):
+    def __init__(self,app,parent=None,projects=None):
         super(Diyabc,self).__init__(parent)
         self.app = app
         self.project_list = []
@@ -55,6 +55,12 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.illegalProjectNameCharacters = ['_','-',"'",'"','.','/']
 
         self.documentator = Documentator("docs/documentation.xml",self)
+
+        # ouverture des projets donnés en paramètre au lancement
+        if len(projects) > 0:
+            self.switchToMainStack()
+        for projDirName in projects:
+            self.openProject(projDirName)
 
     def createWidgets(self):
         self.ui=self
@@ -147,6 +153,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         if dir == None:
             qfd = QFileDialog()
             dir = str(qfd.getExistingDirectory())
+        # on enlève le dernier '/' s'il y en a un
+        if dir != "" and dir[-1] == "/":
+            dir = dir[:-1]
         proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
         if dir != "":
@@ -196,7 +205,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:
-               output.notify(self,"Load error","This is not a project directory")
+               output.notify(self,"Load error","\"%s\" is not a project directory"%dir)
 
     def cloneCurrentProject(self,cloneBaseName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
@@ -376,8 +385,10 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def closeEvent(self, event):
         for proj in self.project_list:
-            proj.stopRefTableGen()
-            proj.unlock()
+            # si le projet est bien créé (et pas en cours de création)
+            if proj.dir != None:
+                proj.stopRefTableGen()
+                proj.unlock()
         event.accept()
     #    reply = QtGui.QMessageBox.question(self, 'Message',
     #        "Are you sure to quit?", QtGui.QMessageBox.Yes | 
@@ -410,9 +421,10 @@ class Diyabc(formDiyabc,baseDiyabc):
 
 if __name__ == "__main__":
     nargv = sys.argv
+    projects_to_open = nargv[1:]
     #nargv.extend(["-title","DIYABC v%s"%VERSION])
     app = QApplication(nargv)
-    myapp = Diyabc(app)
+    myapp = Diyabc(app,projects=projects_to_open)
     myapp.setWindowTitle("DIYABC %s"%VERSION)
     myapp.show()
     #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)

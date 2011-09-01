@@ -75,6 +75,7 @@ class Project(baseProject,formProject):
         self.ui.setGeneticButton.setDisabled(True)
         self.ui.runReftableButton.setDisabled(True)
         self.ui.browseDirButton.setDisabled(True)
+        self.ui.newAnButton.setDisabled(True)
         self.ui.dataFileEdit.setReadOnly(True)
         self.ui.dirEdit.setReadOnly(True)
         self.ui.groupBox.hide()
