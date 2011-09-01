@@ -79,6 +79,7 @@ class Project(baseProject,formProject):
         self.ui.dataFileEdit.setReadOnly(True)
         self.ui.dirEdit.setReadOnly(True)
         self.ui.groupBox.hide()
+        self.ui.browseDirButton.hide()
         #self.ui.groupBox.setVisible(False)
 
         # creation des onglets "set ..."
@@ -109,8 +110,10 @@ class Project(baseProject,formProject):
         #QObject.connect(self.ui.tableWidget,SIGNAL("cellClicked(int,int)"),self.clcl)
         QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.setHistorical)
         QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.setGenetic)
-        QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
-        QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
+        #QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
+        QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelectionAndCopy)
+        #QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
+        QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirCreation)
 
         # inserer image
         self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
@@ -484,10 +487,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         else:
             output.notify(self,"Header generation problem","One conf file is missing in order to generate the reference table header")
 
-
-    def dataFileSelection(self,name=None):
+    def dataFileSelectionAndCopy(self,name=None):
         """ dialog pour selectionner le fichier à lire
         il est lu et vérifié. S'il est invalide, on garde la sélection précédente
+        S'il est valide, on le copie dans le dossier du projet
         """
         if name == None:
             qfd = QFileDialog()
@@ -496,8 +499,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if self.loadDataFile(name):
             # si on a reussi a charger le data file, on vire le bouton browse
             self.ui.browseDataFileButton.hide()
-        # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
-        self.gen_data_win.fillLocusTableFromData()
+            # et on copie ce datafile dans le dossier projet
+            shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
+            self.dataFileName = self.dataFileSource.split('/')[-1]
+            self.ui.groupBox.show()
+            # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
+            self.gen_data_win.fillLocusTableFromData()
 
     def loadDataFile(self,name):
         """ Charge le fichier de données passé en paramètre. Cette fonction est appelée lors
@@ -530,6 +537,35 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             return False
         return True
 
+    def dirCreation(self,path):
+        """ selection du repertoire pour un nouveau projet et copie du fichier de données
+        """
+        if path != "":
+            if not self.parent.isProjDir(path):
+                # name_YYYY_MM_DD-num le plus elevé
+                dd = datetime.now()
+                #num = 36
+                cd = 100
+                while cd > 0 and not os.path.exists(path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,cd)):
+                    cd -= 1
+                if cd == 100:
+                    output.notify(self,"Error","With this version, you cannot have more than 100 \
+                                project directories\nfor the same project name and in the same directory")
+                else:
+                    newdir = path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,(cd+1))
+                    self.ui.dirEdit.setText(newdir)
+                    try:
+                        os.mkdir(newdir)
+                        #self.ui.groupBox.show()
+                        self.ui.setHistoricalButton.setDisabled(False)
+                        self.ui.setGeneticButton.setDisabled(False)
+                        self.dir = newdir
+                        # verrouillage du projet
+                        self.lock()
+                    except OSError,e:
+                        output.notify(self,"Error",str(e))
+            else:
+                output.notify(self,"Incorrect directory","A project can not be in a project directory")
 
     def dirSelection(self,name=None):
         """ selection du repertoire pour un nouveau projet et copie du fichier de données

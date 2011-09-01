@@ -290,8 +290,20 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ Création d'un projet
         """
         ok = True
+        #if name == None:
+        #    name, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if name == None:
-            name, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
+            path = QtGui.QFileDialog.getSaveFileName(self,"Project location")
+            path = "%s"%path
+            print path
+            # on enleve l'eventuel '/' de fin et on extrait le nom du projet
+            if path != None and len(path) > 0 and len(path.split('/')) > 0 :
+                if path[-1] == "/":
+                    path = path[:-1]
+                name = path.split("/")[-1]
+            else:
+                ok = False
+
         if ok:
             if self.checkProjectName(name):
                 proj_name_list = []
@@ -307,6 +319,9 @@ class Diyabc(formDiyabc,baseDiyabc):
                     # ajout de l'onglet
                     self.ui.tabWidget.addTab(newProj,newProj.name)
                     self.ui.tabWidget.setCurrentWidget(newProj)
+
+                    # creation du dir en attendant la selection du datafile
+                    newProj.dirCreation(path)
 
                     if len(self.project_list) == 1:
                         self.closeProjActionMenu.setDisabled(False)
