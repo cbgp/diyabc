@@ -17,6 +17,7 @@ class Analysis():
         self.drawn = None
         self.params = ""
         self.aParams = None
+        self.fda = None
 
         self.status = status
 

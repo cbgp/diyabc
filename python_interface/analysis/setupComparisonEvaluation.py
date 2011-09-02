@@ -110,6 +110,7 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
                 strparam += "d:%s;"%self.dico_values['de']
                 strparam += "l:%s;"%self.dico_values['lr']
                 strparam += "t:%s;"%self.dico_values['notds']
+                strparam += "f:%s;"%self.analysis.fda
                 #strparam += "p:%s;"%self.dico_values['choice']
                 #print "robert ", self.analysis
                 strparam += "h:"

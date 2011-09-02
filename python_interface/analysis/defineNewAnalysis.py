@@ -55,11 +55,11 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
     def preEvaluateCheck(self):
         """ empêche qu'aucune des deux cases ne soit cochée
         """
-        if not self.ui.pcaCheck.isChecked() and not self.ui.lossCheck.isChecked():
-            if self.sender() == self.ui.pcaCheck:
+        if not self.ui.confPcaCheck.isChecked() and not self.ui.lossCheck.isChecked():
+            if self.sender() == self.ui.confPcaCheck:
                 self.ui.lossCheck.setChecked(True)
             else:
-                self.ui.pcaCheck.setChecked(True)
+                self.ui.confPcaCheck.setChecked(True)
 
     def modCheckCheck(self):
         """ empêche qu'aucune des deux cases ne soit cochée
@@ -138,10 +138,10 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
             elif self.ui.preEvRadio.isChecked():
                 paramtxt = ""
                 compParamtxt = "a:"
-                if self.ui.pcaCheck.isChecked():
+                if self.ui.confPcaCheck.isChecked():
                     paramtxt+= " PCA "
                     compParamtxt += "p"
-                if self.ui.pcaCheck.isChecked() and self.ui.lossCheck.isChecked():
+                if self.ui.confPcaCheck.isChecked() and self.ui.lossCheck.isChecked():
                     paramtxt+="and"
                 if self.ui.lossCheck.isChecked():
                     paramtxt+= " Locate S.S."
@@ -162,7 +162,12 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 self.parent.ui.analysisStack.setCurrentWidget(genSel)
 
             elif self.ui.evaluateRadio.isChecked():
+                if self.ui.confFdaCheck.isChecked():
+                    paramtxt="1"
+                else:
+                    paramtxt="0"
                 analysis = Analysis(name,"evaluate")
+                analysis.fda = paramtxt
                 genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
                 #self.parent.addTab(genSel,"Scenario selection")
                 #self.parent.removeTab(self.parent.indexOf(self))

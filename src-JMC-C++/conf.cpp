@@ -132,7 +132,7 @@ char *nomficonfresult;
     void doconf(char *options, int seed) {
         char *datafilename, *progressfilename, *courantfilename;
         int nstatOK, iprog,nprog,ncs1;
-        int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond,ite;
+        int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,st,pa,duree,debut,clock_zero;
         bool usepriorhist,usepriormut,AFD=false;
@@ -238,15 +238,14 @@ char *nomficonfresult;
         rt.alloue_enrsel(nsel);
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
         for (int p=0;p<ntest;p++) {
-          for (ite=0;ite<2;ite++) {
             clock_zero=0.0;debut=walltime(&clock_zero);
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
             nstatOK = rt.cal_varstat();                       
             rt.cal_dist(nrec,nsel,stat_obs); 
             //cout<<"apres cal_dist\n";
             iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-            //if (AFD) stat_obs = transfAFD(nrec,nsel,p);
-            if (ite==1) stat_obs = transfAFD(nrec,nsel,p);
+            if (AFD) stat_obs = transfAFD(nrec,nsel,p);
+            //if (ite==1) stat_obs = transfAFD(nrec,nsel,p);
             //cout<<"avant postsd\n";
             postsd = comp_direct(nseld);
             cout<<"test"<<setiosflags(ios::fixed)<<setw(4)<<p+1<<"  ";
@@ -268,7 +267,6 @@ char *nomficonfresult;
             cout<<"\n";
             duree=walltime(&debut);
             cout<<"durée ="<<TimeToStr(duree)<<"\n\n\n";
-          }
         }        
         rt.desalloue_enrsel(nsel);
         f11.close();

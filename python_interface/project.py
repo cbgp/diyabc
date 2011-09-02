@@ -140,6 +140,8 @@ class Project(baseProject,formProject):
         #self.fillAnalysisCombo()
         #QObject.connect(self.ui.analysisResultsButton,SIGNAL("clicked()"),self.viewAnalysisResult)
 
+        self.stopUiGenReftable()
+
     def stopRefTableGen(self):
         """ tue le thread de génération et crée le fichier .stop pour 
         arrêter la génération de la reftable
@@ -150,7 +152,8 @@ class Project(baseProject,formProject):
         if self.th != None:
             self.th.terminate()
             self.th = None
-        self.ui.reftableProgressLabel.setText("")
+        #self.ui.reftableProgressLabel.setText("")
+        self.stopUiGenReftable()
         if os.path.exists("%s/reftable.log"%(self.dir)):
             os.remove("%s/reftable.log"%(self.dir))
 
@@ -410,6 +413,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def on_btnStart_clicked(self):
         """ Lance un thread de generation de la reftable
         """
+        self.startUiGenReftable()
+
         self.save()
         self.writeRefTableHeader()
         if self.th == None:
@@ -439,6 +444,17 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
     def refTableProblem(self):
         output.notify(self,"reftable problem","Something happened during the reftable generation : %s"%(self.th.problem))
+        self.stopUiGenReftable()
+
+    def stopUiGenReftable(self):
+        self.ui.runReftableButton.setText("Run computations")
+        self.ui.runReftableButton.setDisabled(False)
+        self.ui.progressBar.hide()
+
+    def startUiGenReftable(self):
+        self.ui.runReftableButton.setText("Running ...")
+        self.ui.runReftableButton.setDisabled(True)
+        self.ui.progressBar.show()
  
     def incProgress(self):
         """Incremente la barre de progression de la générationd e la reftable
@@ -446,7 +462,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         done = self.th.nb_done
         nb_to_do = self.th.nb_to_gen
         time_remaining = self.th.time
-        self.ui.reftableProgressLabel.setText('%s remaining'%time_remaining)
+        #self.ui.reftableProgressLabel.setText('%s remaining'%time_remaining)
+        self.ui.runReftableButton.setText("Running ... %s remaining"%(time_remaining.replace('\n',' ')))
         pc = (float(done)/float(nb_to_do))*100
         self.ui.progressBar.setValue(int(pc))
         self.ui.nbSetsDoneEdit.setText("%s"%done)
@@ -454,6 +471,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         # et on verrouille eventuellement histmodel et gendata
         if int(pc) == 100:
             self.putRefTableSize()
+            self.stopUiGenReftable()
 
     def cancelTh(self):
         #print 'plop'

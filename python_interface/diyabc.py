@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # variable qui sera changée par le générateur d'exécutable
-VERSION='version 2.0.0'
+VERSION='development version'
 
 import time
 #import dataImages
@@ -19,7 +19,8 @@ from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from PyQt4 import uic
 #from uis.diyabc_ui import Ui_MainWindow
-from project import *
+#from project import *
+from project import Project
 from preferences import Preferences
 from documentator import Documentator
 import output
