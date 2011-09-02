@@ -299,7 +299,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             for num,sc in enumerate(self.scList):
                 sctxt = str(sc.findChild(QPlainTextEdit,"scplainTextEdit").toPlainText())
                 sc_info = self.checkOneScenario(num,sctxt,True)
-                if sc_info != None and sc_info["tree"] != None and len(sc_info["checker"].history.ne0s) <= 5:
+                if sc_info != None and sc_info["tree"] != None and sc_info["checker"].nsamp <= 5:
                     segments = sc_info["tree"].segments
                     scc = sc_info["checker"]
                     t = sc_info["tree"]
