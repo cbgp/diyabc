@@ -112,8 +112,8 @@ class Diyabc(formDiyabc,baseDiyabc):
 	
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 
-        QObject.connect(self.ui.openProjectButton,SIGNAL("clicked()"),self.openToMainStack)
-        QObject.connect(self.ui.newProjectButton,SIGNAL("clicked()"),self.newToMainStack)
+        QObject.connect(self.ui.openProjectButton,SIGNAL("clicked()"),self.openProject)
+        QObject.connect(self.ui.newProjectButton,SIGNAL("clicked()"),self.newProject)
         QObject.connect(self.ui.skipWelcomeButton,SIGNAL("clicked()"),self.switchToMainStack)
         self.ui.versionLabel.setText('%s'%VERSION)
         #self.ui.frame.setDisabled(True)
@@ -129,14 +129,6 @@ class Diyabc(formDiyabc,baseDiyabc):
     def switchToWelcomeStack(self):
         self.ui.menubar.hide()
         self.ui.stackedWidget.setCurrentIndex(1)
-
-    def newToMainStack(self):
-        self.newProject()
-        self.switchToMainStack()
-
-    def openToMainStack(self):
-        self.openProject()
-        self.switchToMainStack()
 
     def setPreferences(self):
         self.preferences_win.show()
@@ -335,6 +327,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.saveProjActionMenu.setDisabled(False)
                         self.deleteProjActionMenu.setDisabled(False)
                         self.cloneProjActionMenu.setDisabled(False)
+                    self.switchToMainStack()
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded."%name)
 
@@ -366,6 +359,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.saveProjActionMenu.setDisabled(True)
             self.deleteProjActionMenu.setDisabled(True)
             self.cloneProjActionMenu.setDisabled(True)
+            self.switchToWelcomeStack()
 
     def closeCurrentProject(self,save=None):
         """ ferme le projet courant, celui de l'onglet séléctionné
