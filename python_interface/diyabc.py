@@ -200,6 +200,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                             self.saveProjActionMenu.setDisabled(False)
                             self.deleteProjActionMenu.setDisabled(False)
                             self.cloneProjActionMenu.setDisabled(False)
+                        # on quitte la page d'accueil si on y était
+                        self.switchToMainStack()
                         # creation du lock
                         proj_to_open.lock()
                 else:
@@ -439,6 +441,22 @@ class Diyabc(formDiyabc,baseDiyabc):
             print "ow yeah"
         return QWidget.event(self,event)
 
+    def dropEvent(self,event):
+        """ Ouverture du projet par glisser deposer
+        """
+        for url in event.mimeData().urls():
+            path = url.toString()
+            # WINDOWS n'a pas de /
+            if "win" in sys.platform and len(path) > 0:
+                print "winwin"
+                self.openProject(path.replace("file:///",""))
+            else:
+                self.openProject(path.replace("file://",""))
+        event.acceptProposedAction()
+
+    def dragEnterEvent(self,event):
+        event.acceptProposedAction()
+
 if __name__ == "__main__":
     nargv = sys.argv
     projects_to_open = nargv[1:]
@@ -447,6 +465,7 @@ if __name__ == "__main__":
     myapp = Diyabc(app,projects=projects_to_open)
     myapp.setWindowTitle("DIYABC %s"%VERSION)
     myapp.show()
+    myapp.setAcceptDrops(True)
     #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)
     sys.exit(app.exec_())
 
