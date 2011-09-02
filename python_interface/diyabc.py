@@ -293,16 +293,21 @@ class Diyabc(formDiyabc,baseDiyabc):
         #if name == None:
         #    name, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if name == None:
-            path = QtGui.QFileDialog.getSaveFileName(self,"Project location")
+            fileDial = QtGui.QFileDialog(self,"Select location of the new project")
+            fileDial.setLabelText(QtGui.QFileDialog.Accept,"Create project")
+            fileDial.setLabelText(QtGui.QFileDialog.FileName,"Project name")
+            ok = (fileDial.exec_() == 1)
+            result = fileDial.selectedFiles()
+            if len(result) > 0:
+                path = result[0]
+            #path = fileDial.getSaveFileName(self,"Project location")
             path = "%s"%path
-            print path
+            print ok,";",path
             # on enleve l'eventuel '/' de fin et on extrait le nom du projet
             if path != None and len(path) > 0 and len(path.split('/')) > 0 :
                 if path[-1] == "/":
                     path = path[:-1]
                 name = path.split("/")[-1]
-            else:
-                ok = False
 
         if ok:
             if self.checkProjectName(name):
