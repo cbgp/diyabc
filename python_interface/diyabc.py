@@ -475,17 +475,18 @@ class Tee(object):
         self.file.write(data)
         self.stdout.write(data)
     def logRotate(self,name):
-        f=open(name,'r')
-        lines = f.readlines()
-        # si on a plus de 5000 lignes, on ne garde que les 4000 dernières
-        if len(lines) > 5000:
-            keptLines = lines[-4000:]
+        if os.path.exists(name):
+            f=open(name,'r')
+            lines = f.readlines()
+            # si on a plus de 5000 lignes, on ne garde que les 4000 dernières
+            if len(lines) > 5000:
+                keptLines = lines[-4000:]
+                f.close()
+                fw=open(name,'w')
+                fw.write(''.join(keptLines))
+                fw.close()
+                return
             f.close()
-            fw=open(name,'w')
-            fw.write(''.join(keptLines))
-            fw.close()
-            return
-        f.close()
 
 
 if __name__ == "__main__":
