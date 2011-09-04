@@ -452,6 +452,42 @@ class Diyabc(formDiyabc,baseDiyabc):
     def dragEnterEvent(self,event):
         event.acceptProposedAction()
 
+class Tee(object):
+    """ Classe qui remplace stdout et stderr pour logger sur 
+    la sortie standard (ancienne stdout) et dans un fichier simultanément.
+    Effectue aussi une sorte de logrotate
+    ATTENTION effet de bord : stderr n'est plus différentié
+    il est écrit dans stdout et un fichier
+    """
+    def __init__(self, name, mode):
+        """ raccourci le fichier de log s'il est trop grand 
+        et remplace stdout
+        """
+        self.logRotate(name)
+
+        self.file = open(name, mode)
+        self.stdout = sys.stdout
+        #sys.stdout = self
+    def __del__(self):
+        sys.stdout = self.stdout
+        self.file.close()
+    def write(self, data):
+        self.file.write(data)
+        self.stdout.write(data)
+    def logRotate(self,name):
+        f=open(name,'r')
+        lines = f.readlines()
+        # si on a plus de 5000 lignes, on ne garde que les 4000 dernières
+        if len(lines) > 5000:
+            keptLines = lines[-4000:]
+            f.close()
+            fw=open(name,'w')
+            fw.write(''.join(keptLines))
+            fw.close()
+            return
+        f.close()
+
+
 if __name__ == "__main__":
     nargv = sys.argv
     projects_to_open = nargv[1:]
@@ -460,7 +496,12 @@ if __name__ == "__main__":
     myapp = Diyabc(app,projects=projects_to_open)
     myapp.setWindowTitle("DIYABC %s"%VERSION)
     myapp.show()
+    # pour le dragNdrop des dossier projet
     myapp.setAcceptDrops(True)
+    # pour les logs dans un fichier et sur le terminal
+    mylog = Tee("diyabc.log","a")
+    sys.stdout = mylog
+    sys.stderr = mylog
     #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)
     sys.exit(app.exec_())
 
