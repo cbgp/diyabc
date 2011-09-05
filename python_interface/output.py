@@ -10,12 +10,11 @@ debug = False
 LOG_LEVEL = 3
 
 def notify(parent,title,message):
-    if debug:
-        print message
-    else:
-        QMessageBox.information(parent,title,message)
     # dans tous les cas, on logue
     log(2,message)
+    # en temps normal on signale aussi à l'utilisateur
+    if not debug:
+        QMessageBox.information(parent,title,message)
 
 def centerHeader(name,nbChar):
     if len(name) > nbChar:

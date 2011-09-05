@@ -33,6 +33,7 @@ import os.path
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 import output
+from output import log
 
 formProject,baseProject = uic.loadUiType("uis/Project.ui")
 
@@ -156,10 +157,12 @@ class Project(baseProject,formProject):
         self.stopUiGenReftable()
         if os.path.exists("%s/reftable.log"%(self.dir)):
             os.remove("%s/reftable.log"%(self.dir))
+        log(1,"Generation of reference table stopped")
 
     def viewAnalysisResult(self,analysis=None):
         """ en fonction du type d'analyse, met en forme les résultats
         """
+        log(1,"Asking results of analysis %s, project %s"%(analysis.name,self.dir))
         anCat = analysis.category
         dicoCategoryDirName = {
                 "estimate" : "estimation",
@@ -260,6 +263,7 @@ class Project(baseProject,formProject):
     def defineNewAnalysis(self):
         """ démarre la définition d'une nouvelle analyse
         """
+        log(1,"Entering in new analysis definition")
         def_analysis = DefineNewAnalysis(self)
         #self.addTab(def_analysis,"Define new analysis")
 
@@ -413,6 +417,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def on_btnStart_clicked(self):
         """ Lance un thread de generation de la reftable
         """
+        log(1,"Starting generation of the reference table")
         self.startUiGenReftable()
 
         self.save()
@@ -457,7 +462,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.ui.progressBar.show()
  
     def incProgress(self):
-        """Incremente la barre de progression de la générationd e la reftable
+        """Incremente la barre de progression de la génération de la reftable
         """
         done = self.th.nb_done
         nb_to_do = self.th.nb_to_gen
@@ -483,25 +488,33 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if os.path.exists(self.dir+"/%s"%self.parent.main_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.hist_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.gen_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.table_header_conf_name):
             if os.path.exists(self.dir+"/%s"%self.parent.reftableheader_name):
                 os.remove("%s/%s" %(self.dir,self.parent.reftableheader_name))
-            f1 = codecs.open(self.dir+"/%s"%self.parent.main_conf_name,"r","utf-8")
-            f1lines = f1.read()
-            f1.close()
-            f2 = codecs.open(self.dir+"/%s"%self.parent.hist_conf_name,"r","utf-8")
-            f2lines = f2.read()
-            f2.close()
-            f3 = codecs.open(self.dir+"/%s"%self.parent.gen_conf_name,"r","utf-8")
-            f3lines = f3.read()
-            f3.close()
-            f4 = codecs.open(self.dir+"/%s"%self.parent.table_header_conf_name,"r","utf-8")
-            f4lines = f4.read()
-            f4.close()
+            log(2,"Writing reference table header from the conf files")
+            #f1 = codecs.open(self.dir+"/%s"%self.parent.main_conf_name,"r","utf-8")
+            #f1lines = f1.read()
+            #f1.close()
+            #f2 = codecs.open(self.dir+"/%s"%self.parent.hist_conf_name,"r","utf-8")
+            #f2lines = f2.read()
+            #f2.close()
+            #f3 = codecs.open(self.dir+"/%s"%self.parent.gen_conf_name,"r","utf-8")
+            #f3lines = f3.read()
+            #f3.close()
+            #f4 = codecs.open(self.dir+"/%s"%self.parent.table_header_conf_name,"r","utf-8")
+            #f4lines = f4.read()
+            #f4.close()
 
-            f = codecs.open(self.dir+"/%s"%self.parent.reftableheader_name,"w","utf-8")
-            f.write(f1lines)
-            f.write(f2lines)
-            f.write(f3lines)
-            f.write(f4lines)
-            f.close()
+            #f = codecs.open(self.dir+"/%s"%self.parent.reftableheader_name,"w","utf-8")
+            #f.write(f1lines)
+            #f.write(f2lines)
+            #f.write(f3lines)
+            #f.write(f4lines)
+            #f.close()
+            fdest = codecs.open(self.dir+"/%s"%self.parent.reftableheader_name,"w","utf-8")
+            for name in [self.parent.main_conf_name,self.parent.hist_conf_name,self.parent.gen_conf_name,self.parent.table_header_conf_name]:
+                fo = codecs.open(self.dir+"/%s"%name,"r","utf-8")
+                folines = fo.read()
+                fo.close()
+                fdest.write(folines)
+            fdest.close()
         else:
             output.notify(self,"Header generation problem","One conf file is missing in order to generate the reference table header")
 
@@ -528,6 +541,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """ Charge le fichier de données passé en paramètre. Cette fonction est appelée lors
         de l'ouverture d'un projet existant et lors du choix du fichier de données pour un nouveau projet
         """
+        log(2,"Loading datafile '%s'"%name)
         new_data = Data(name)
         try:
             new_data.loadfromfile()
@@ -558,6 +572,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def dirCreation(self,path):
         """ selection du repertoire pour un nouveau projet et copie du fichier de données
         """
+        log(2,"Creation and files copy of folder '%s'"%path)
         if path != "":
             if not self.parent.isProjDir(path):
                 # name_YYYY_MM_DD-num le plus elevé
@@ -626,6 +641,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def addAnalysis(self,analysis):
         """ ajoute, dans la liste d'analyses et dans la GUI , l'analyse passée en paramètre
         """
+        log(1,"Adding analysis '%s'"%analysis.name)
         type_analysis = analysis.category
         self.analysisList.append(analysis)
 
@@ -746,6 +762,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
     def removeAnalysis(self):
         frame = self.sender().parent()
+        log(1,"Removing analysis '%s'"%self.dicoFrameAnalysis[frame].name)
         frame.hide()
         self.analysisList.remove(self.dicoFrameAnalysis[frame])
         del self.dicoFrameAnalysis[frame]
@@ -759,6 +776,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame = self.sender().parent()
         # on associe l'analyse a sa frame
         analysis = self.dicoFrameAnalysis[frame]
+        log(1,"View parameters of analysis '%s'"%analysis.name)
         viewFrame = ViewAnalysisParameters(self,analysis)
         self.ui.analysisStack.addWidget(viewFrame)
         self.ui.analysisStack.setCurrentWidget(viewFrame)
@@ -784,6 +802,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def launchAnalysis(self,analysis):            
         """ lance un thread de traitement d'une analyse
         """
+        log(1,"Launch of analysis '%s'"%analysis.name)
         self.save()
         self.thAnalysis = AnalysisThread(self,analysis)
         self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress"),self.analysisProgress)
@@ -827,6 +846,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """ arrête le thread de l'analyse et range les résultats
         dans un dossier
         """
+        log(2,"Analysis '%s' is terminated"%self.thAnalysis.analysis.name)
         self.thAnalysis.terminate()
         aid = self.thAnalysis.analysis.name
         self.thAnalysis.analysis.status = "finished"
@@ -935,6 +955,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def setHistorical(self):
         """ passe sur l'onglet correspondant
         """
+        log(1,"Entering in Historical Model Setting")
         #self.addTab(self.hist_model_win,"Set historical model")
 
         #self.setTabEnabled(0,False)
@@ -950,6 +971,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def setGenetic(self):
         """ passe sur l'onglet correspondant
         """
+        log(1,"Entering in Genetic Data Setting")
         #self.setTabEnabled(0,False)
         #self.setTabEnabled(1,False)
         #self.addTab(self.gen_data_win,"Set genetic data")
@@ -971,6 +993,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def clearHistoricalModel(self):
         """ détruit le modèle historique et en instancie un nouveau
         """
+        log(1,"Clearing historical model")
         #self.removeTab(self.indexOf(self.hist_model_win))
         self.ui.refTableStack.removeWidget(self.hist_model_win)
         self.hist_model_win = SetHistoricalModel(self)
@@ -982,6 +1005,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def loadFromDir(self):
         """ charge les infos à partir du répertoire self.dir
         """
+        log(2,"Launching load procedures")
         # GUI
         self.ui.dirEdit.setText(self.dir)
         self.ui.browseDataFileButton.setDisabled(True)
@@ -1018,6 +1042,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """ empêche la modification des genetic data tout en laissant
         la possibilité de les consulter
         """
+        un=""
+        if yesno: un="un"
+        log(2,"%sfreezing Genetic Data"%un)
         self.gen_data_win.ui.clearButton.setDisabled(yesno)
         self.gen_data_win.ui.exitButton.setDisabled(yesno)
         self.gen_data_win.ui.tableWidget.setDisabled(yesno)
@@ -1064,6 +1091,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """ empêche la modification du modèle historique tout en laissant
         la possibilité de le consulter
         """
+        un=""
+        if yesno: un="un"
+        log(2,"%sfreezing Historical Model"%un)
         self.hist_model_win.ui.clearButton.setDisabled(yesno)
         self.hist_model_win.ui.exitButton.setDisabled(yesno)
         for e in self.hist_model_win.findChildren(QLineEdit):
@@ -1100,6 +1130,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def loadMyConf(self):
         """ lit le fichier conf.tmp pour charger le fichier de données
         """
+        log(2,"Reading '%s' to load datafile"%self.parent.main_conf_name)
         if os.path.exists(self.ui.dirEdit.text()+"/%s"%self.parent.main_conf_name):
             f = open("%s/%s"%(self.dir,self.parent.main_conf_name),"r")
             lines = f.readlines()
@@ -1116,17 +1147,18 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def saveAnalysis(self):
         """ sauvegarde la liste des analyses dans le dossier du projet
         """
+        log(2,"Saving analysis into %s"%self.parent.analysis_conf_name)
         l_to_save = []
         for a in self.analysisList:
             l_to_save.append(a)
         f=open("%s/%s"%(self.dir,self.parent.analysis_conf_name),"wb")
         pickle.dump(l_to_save,f)
         f.close()
-        print "save analysis"
 
     def loadAnalysis(self):
-        """ charge les analyses suavegardées
+        """ charge les analyses sauvegardées
         """
+        log(2,"Loading analysis from %s"%self.parent.analysis_conf_name)
         if os.path.exists("%s/%s"%(self.dir,self.parent.analysis_conf_name)):
             f=open("%s/%s"%(self.dir,self.parent.analysis_conf_name),"rb")
             l = pickle.load(f)
@@ -1139,6 +1171,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         Si le gen et hist sont valides, on génère le header
         """
         #print "je me save"
+        log(2,"Saving project '%s'"%self.dir)
         if self.dir != None:
             # save meta project
             if os.path.exists(self.dir+"/%s"%self.parent.main_conf_name):
@@ -1169,6 +1202,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """ ecrit le header du tableau de resultat qui sera produit par les calculs
         il contient, les paramètres historicaux, les paramètres mutationnels, les summary stats
         """
+        log(2,"Writing last part of the header (the parameter table header) in %s"%self.parent.table_header_conf_name)
         hist_params_txt = self.hist_model_win.getParamTableHeader()
         mut_params_txt = self.gen_data_win.getParamTableHeader()
         sum_stats_txt = self.gen_data_win.getSumStatsTableHeader()
@@ -1215,6 +1249,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """ crée le fichier de verrouillage pour empêcher l'ouverture 
         du projet par une autre instance de DIYABC
         """
+        log(2,"Locking the project '%s'"%self.dir)
         f = open("%s/.DIYABC_lock"%self.dir,"w")
         f.write("%s"%os.getpid())
         f.close()
@@ -1223,6 +1258,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """ supprime le verrouillage sur le projet ssi le verrouillage 
         a été effectué par notre instance de DIYABC
         """
+        log(2,"Unlocking the project '%s'"%self.dir)
         if os.path.exists("%s/.DIYABC_lock"%self.dir):
             f = open("%s/.DIYABC_lock"%self.dir)
             pid = f.read()
@@ -1235,6 +1271,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """ vérification du modèle historique et mutationnel
         cette fonction est appelée au chargement du projet pour restituer l'etat du projet
         """
+        log(2,"Checking validity of Historical Model and Genetic Data")
         # historical model : 
         self.hist_model_win.definePriors(silent=True)
         if self.hist_model_win.checkAll(silent=True):
@@ -1321,12 +1358,14 @@ class RefTableGenThread(QThread):
     def run (self):
         # lance l'executable
         try:
+            log(2,"Running the executable for the reference table generation")
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
             #exPath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
             exPath = self.parent.parent.preferences_win.getExecutablePath()
             nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m", "-t", "%s"%nbMaxThread]
-            print " ".join(cmd_args_list)
+            #print " ".join(cmd_args_list)
+            log(3,"Command launched : %s"%" ".join(cmd_args_list))
             #outfile = os.path.expanduser("~/.diyabc/general.out")
             outfile = "%s/general.out"%self.parent.dir
             if os.path.exists(outfile):
@@ -1334,7 +1373,7 @@ class RefTableGenThread(QThread):
             fg = open(outfile,"w")
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=PIPE, stderr=STDOUT) 
         except Exception,e:
-            print "Cannot find the executable of the computation program %s"%e
+            #print "Cannot find the executable of the computation program %s"%e
             self.problem = "Cannot find the executable of the computation program \n%s"%e
             self.emit(SIGNAL("refTableProblem"))
             #output.notify(self.parent(),"computation problem","Cannot find the executable of the computation program")
@@ -1356,7 +1395,8 @@ class RefTableGenThread(QThread):
                 f.close()
             else:
                 lines = ["OK","0"]
-            print lines
+            #print lines
+            log(3,"Line red from reftable.log : %s"%lines)
             if len(lines) > 1:
                 if lines[0].strip() == "OK":
                     red = int(lines[1])
@@ -1373,7 +1413,8 @@ class RefTableGenThread(QThread):
                     os.remove("%s/reftable.log"%(self.parent.dir))
                     return
                 else:
-                    print "lines != OK"
+                    #print "lines != OK"
+                    log(3,"The line does not contain 'OK'")
                     self.problem = lines[0].strip()
                     self.emit(SIGNAL("refTableProblem"))
                     #output.notify(self,"problem",lines[0])
@@ -1429,7 +1470,8 @@ class AnalysisThread(QThread):
             a.close()
         else:
             b = ""
-        print "prog:%s"%b
+        #print "prog:%s"%b
+        log(3,"Analysis '%s' progress : %s"%(self.analysis.name,b))
         return b
 
     def updateProgress(self):
@@ -1440,11 +1482,13 @@ class AnalysisThread(QThread):
             t2 = float(b.split(' ')[1])
             self.tmpp = int(t1*100/t2)
         if self.tmpp != self.progress:
-            print "on a progressé"
+            #print "on a progressé"
+            log(3,"The analysis '%s' has progressed"%self.analysis.name)
             self.progress = self.tmpp
             self.emit(SIGNAL("analysisProgress"))
 
     def run(self):
+        log(2,"Running analysis '%s' execution"%self.analysis.name)
         #executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
         executablePath = self.parent.parent.preferences_win.getExecutablePath()
         nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
@@ -1463,12 +1507,14 @@ class AnalysisThread(QThread):
             # pour cette analyse on attend que l'executable ait fini
             # on ne scrute pas de fichier de progression
             cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
-            print " ".join(cmd_args_list)
+            #print " ".join(cmd_args_list)
+            log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
             outfile = "%s/pre-ev.out"%self.parent.dir
             f = open(outfile,"w")
             p = subprocess.call(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
             f.close()
-            print "call ok"
+            #print "call ok"
+            log(3,"Call procedure success")
 
             f = open(outfile,"r")
             data= f.read()
@@ -1479,12 +1525,14 @@ class AnalysisThread(QThread):
 
         # pour toutes les autres analyses le schema est le même
         cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
-        print " ".join(cmd_args_list)
+        #print " ".join(cmd_args_list)
+        log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
         outfile = "%s/%s.out"%(self.parent.dir,self.analysis.category)
         f = open(outfile,"w")
         p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
         #f.close()
-        print "popen ok"
+        #print "popen ok"
+        log(3,"Popen procedure success")
 
 
         # la scrutation de la progression est identique pour toutes les analyses
@@ -1498,7 +1546,7 @@ class AnalysisThread(QThread):
                 f.close()
                 g = open(outfile,"r")
                 data= g.read()
-                print "data:%s"%data
+                #print "data:%s"%data
                 #print "poll:%s"%p.poll()
                 g.close()
                 # on attend un peu pour etre sur que l'ecriture de la progression a été effectué

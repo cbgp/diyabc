@@ -390,20 +390,20 @@ class Diyabc(formDiyabc,baseDiyabc):
         """
         cdir = self.ui.tabWidget.currentWidget().dir
         self.closeProject(self.ui.tabWidget.currentIndex(),save)
-        log(1,"Project %s closed"%(cdir))
+        log(1,"Project '%s' closed"%(cdir))
 
     def saveCurrentProject(self):
         """ sauve le projet courant, cad ecrit les fichiers temporaires de conf
         """
         self.ui.tabWidget.currentWidget().save()
-        log(1,"Project %s saved"%(self.ui.tabWidget.currentWidget().name))
+        log(1,"Project '%s' saved"%(self.ui.tabWidget.currentWidget().name))
 
     def deleteCurrentProject(self):
         """ efface le projet courant
         """
         ddir = self.ui.tabWidget.currentWidget().dir
         self.deleteProject(self.ui.tabWidget.currentIndex())
-        log(1,"Project %s deleted"%(ddir))
+        log(1,"Project '%s' deleted"%(ddir))
 
     def deleteProject(self,index):
         """ efface le projet dont l'index est donné en paramètre
