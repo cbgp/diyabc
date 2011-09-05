@@ -23,6 +23,8 @@ class ShowLogFile(formLogFile,baseLogFile):
         self.ui=self
         self.ui.setupUi(self)
 
+        self.ui.logText.setCenterOnScroll(True)
+
         QObject.connect(self.ui.updateButton,SIGNAL("clicked()"),self.updateLogFile)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.close)
         QObject.connect(self.ui.saveButton,SIGNAL("clicked()"),self.saveFile)
@@ -43,11 +45,12 @@ class ShowLogFile(formLogFile,baseLogFile):
 
 
     def updateLogFile(self):
-        f=open("diyabc.log",'r')
-        text=f.read()
-        f.close()
-        self.ui.logText.setPlainText(text)
-        self.ui.logText.setLineWrapMode(0)
+        if os.path.exists("diyabc.log"):
+            f=open("diyabc.log",'r')
+            text=f.read()
+            f.close()
+            self.ui.logText.setPlainText(text)
+            self.ui.logText.setLineWrapMode(0)
 
 
 

@@ -502,7 +502,7 @@ if __name__ == "__main__":
     # pour le dragNdrop des dossier projet
     myapp.setAcceptDrops(True)
     # pour les logs dans un fichier et sur le terminal
-    myOutMux = output.Tee("diyabc.log","a")
+    myOutMux = output.Tee("diyabc.log","a",myapp)
     sys.stdout = myOutMux
     sys.stderr = myOutMux
     log(1,"DIYABC launched")

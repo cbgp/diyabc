@@ -43,10 +43,11 @@ class Tee(object):
     ATTENTION effet de bord : stderr n'est plus différentié
     il est écrit dans stdout et un fichier
     """
-    def __init__(self, name, mode):
+    def __init__(self, name, mode, app):
         """ raccourci le fichier de log s'il est trop grand 
         et remplace stdout
         """
+        self.app=app
         self.logRotate(name)
 
         self.file = open(name, mode)
@@ -56,7 +57,11 @@ class Tee(object):
         sys.stdout = self.stdout
         self.file.close()
     def write(self, data):
-        self.file.write(data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,''))
+        data_without_color = data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,'')
+        #self.app.showLogFile_win.logText.moveCursor(QTextCursor.End)
+        #self.app.showLogFile_win.logText.appendHtml("%s"%data_without_color.strip())
+        #self.app.showLogFile_win.logText.insert("%s"%data_without_color.strip(),checkNewLine=True)
+        self.file.write(data_without_color)
         self.file.flush()
         self.stdout.write(data)
     def logRotate(self,name):
