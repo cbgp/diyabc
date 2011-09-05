@@ -16,6 +16,8 @@ from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonEvaluation import SetupComparisonEvaluation
 from utils.visualizescenario import *
 from utils.data import *
+import output
+from output import log
 
 class SetGeneticDataAnalysis(SetGeneticData):
     """ set genetic data pour les informations concernant une analyse bias ou evaluate
