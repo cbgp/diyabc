@@ -9,6 +9,7 @@ from PyQt4 import QtGui,uic
 from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 import output
+from output import log
 
 formPreferences,basePreferences = uic.loadUiType("uis/preferences.ui")
 
@@ -223,7 +224,7 @@ class Preferences(formPreferences,basePreferences):
                     if l.split(' ')[0] == "execPath":
                         self.ui.execPathEdit.setText(l.strip().split(' ')[1])
         else:
-            print "no various conf found"
+            log(3,"No various conf found")
 
     def saveHM(self):
         """ sauvegarde de la partie historical model des préférences
@@ -338,7 +339,7 @@ class Preferences(formPreferences,basePreferences):
             if dico_val["tlaw"] == "NO":
                 self.ui.TNORadio.setChecked(True)
         else:
-            print "no hist conf found"
+            log(3,"No hist conf found")
         
     def saveMMM(self):
         """ sauvegarde de la partie mutation model microsats des préférences
@@ -360,7 +361,7 @@ class Preferences(formPreferences,basePreferences):
             f.close()
             self.mutmodM.setMutationConf(lines)
         else:
-            print "no MMM conf found"
+            log(3,"No MMM conf found")
 
 
 
@@ -384,7 +385,7 @@ class Preferences(formPreferences,basePreferences):
             f.close()
             self.mutmodS.setMutationConf(lines)
         else:
-            print "no MMS conf found"
+            log(3,"No MMS conf found")
 
     def saveConnexion(self):
         """ sauvegarde de la partie connexion des préférences
@@ -418,7 +419,7 @@ class Preferences(formPreferences,basePreferences):
                         yesno = (tab[1] == 'True')
                         self.ui.serverCheck.setChecked(yesno)
         else:
-            print "no connexion conf found"
+            log(3,"No connexion conf found")
 
     def connexionValid(self):
         """ vérifie la validité de la partie connexion

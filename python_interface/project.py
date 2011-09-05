@@ -195,7 +195,7 @@ class Project(baseProject,formProject):
                 self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
                 self.drawAnalysisFrame.parent = self
                 ui = self.drawAnalysisFrame
-                print "yeepa"
+                log(3,"Viewing analysis results, PCA or modelChecking")
                 #ui = ui_viewTextFile()
                 #ui.setupUi(self.drawAnalysisFrame)
                 ui.dataPlain.setPlainText(data)
@@ -214,7 +214,7 @@ class Project(baseProject,formProject):
             self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
             self.drawAnalysisFrame.parent = self
             ui = self.drawAnalysisFrame
-            print "yeepi"
+            log(3,"Viewing analysis results, confidence in scenario choice")
             #ui = ui_viewTextFile()
             #ui.setupUi(self.drawAnalysisFrame)
             ui.dataPlain.setPlainText(data)
@@ -232,7 +232,7 @@ class Project(baseProject,formProject):
             self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
             self.drawAnalysisFrame.parent = self
             ui = self.drawAnalysisFrame
-            print "yeepo"
+            log(3,"Viewing analysis results, bias")
             #ui = ui_viewTextFile()
             #ui.setupUi(self.drawAnalysisFrame)
             ui.dataPlain.setPlainText(data)
@@ -645,12 +645,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         type_analysis = analysis.category
         self.analysisList.append(analysis)
 
-        print analysis.computationParameters
+        log(3,"Computation parameters : %s"%analysis.computationParameters)
         if type_analysis == "pre-ev":
             #self.addRow("scenario prior combination",analysis[1],"4","new")
             self.addAnalysisGui(analysis,analysis.name,"scenario prior combination",analysis.computationParameters,analysis.status)
         elif type_analysis == "estimate":
-            print "\n",analysis.computationParameters,"\n"
             #self.addRow("parameter estimation","params","5","new")
             self.addAnalysisGui(analysis,analysis.name,"parameter estimation","params",analysis.status)
         elif type_analysis == "bias":
@@ -838,7 +837,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame.findChild(QProgressBar,"analysisStatusBar").setValue(int(prog))
 
         if int(prog) >= 100:
-            print "terminate analysis"
+            log(3,"Terminating analysis because progression indicated 100%%")
             frame.findChild(QPushButton,"analysisButton").setText("View")
             self.terminateAnalysis()
 
@@ -852,7 +851,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.thAnalysis.analysis.status = "finished"
         atype = self.thAnalysis.analysis.category
         self.thAnalysis = None
-        print "type = %s"%(atype) 
 
         # nettoyage du progress.txt
         if os.path.exists("%s/%s_progress.txt"%(self.dir,aid)):
@@ -1303,7 +1301,7 @@ class RefTableGenThreadCluster(QThread):
         try:
             s.connect((host, port))
         except error,msg:
-            print "could not contact any server on %s:%s"%(host, port)
+            log(3,"could not contact any server on diyabc://%s:%s"%(host, port))
             return
 
         #size = os.path.getsize(filename)
@@ -1328,10 +1326,10 @@ class RefTableGenThreadCluster(QThread):
         #    else:
         #        s.sendall(data)
 
-        print filename, " Sent!\n"
+        log(3,"%s Sent!"%filename)
         while True:
             line = s.recv(8000)
-            print line
+            log(3,"Line received : %s"%line)
             if len(line.split('somme '))>1:
                 self.nb_done = int(line.split('somme ')[1].strip())
                 self.emit(SIGNAL("increment"))

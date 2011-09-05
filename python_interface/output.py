@@ -57,6 +57,7 @@ class Tee(object):
         self.file.close()
     def write(self, data):
         self.file.write(data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,''))
+        self.file.flush()
         self.stdout.write(data)
     def logRotate(self,name):
         if os.path.exists(name):

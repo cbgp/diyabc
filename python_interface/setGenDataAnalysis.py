@@ -154,6 +154,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
         si valide : sort , maj de l'icone de validité et sauve
         si non valide : informe et sauve
         """
+        log(3,"Validation of Genetic Data of analysis")
         #print self.group_info_dico
         #print self.dico_num_and_numgroup_locus
         mutconf_list = []
@@ -175,7 +176,6 @@ class SetGeneticDataAnalysis(SetGeneticData):
             self.parent.setGenValid(False)
         else:
             # c'est valide, on passe à la dernière phase de paramètrage
-            print "ppp"
             self.analysis.mutationModel = mutconf_list
             if self.analysis.category == "bias":
                 next_title = "bias and precision"

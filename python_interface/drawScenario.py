@@ -8,6 +8,8 @@ from PyQt4.QtSvg import *
 from PyQt4 import uic
 #from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
+import output
+from output import log
 
 formDrawScenario,baseDrawScenario = uic.loadUiType("uis/drawScenarioFrame.ui")
 
@@ -124,8 +126,8 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         """
         tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
         NN = scc.history.NN
-        print "paintScenario"
-        print NN
+        log(4,"Painting Scenario")
+        # print NN
         pen = QPen(Qt.black,2)
         painter.setPen(pen)
 
