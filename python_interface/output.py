@@ -9,6 +9,12 @@ from datetime import datetime
 debug = False
 LOG_LEVEL = 3
 
+RED='\033[31m'
+WHITE='\033[37m'
+BLUE='\033[35m'
+GREEN='\033[32m'
+tabcolors=[WHITE,RED,BLUE,GREEN]
+
 def notify(parent,title,message):
     # dans tous les cas, on logue
     log(2,message)
@@ -50,15 +56,15 @@ class Tee(object):
         sys.stdout = self.stdout
         self.file.close()
     def write(self, data):
-        self.file.write(data)
+        self.file.write(data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,''))
         self.stdout.write(data)
     def logRotate(self,name):
         if os.path.exists(name):
             f=open(name,'r')
             lines = f.readlines()
-            # si on a plus de 5000 lignes, on ne garde que les 4000 dernières
+            # si on a plus de 5000 lignes, on ne garde que les 3000 dernières
             if len(lines) > 5000:
-                keptLines = lines[-4000:]
+                keptLines = lines[-3000:]
                 f.close()
                 fw=open(name,'w')
                 fw.write(''.join(keptLines))
@@ -69,5 +75,6 @@ class Tee(object):
 def log(level,message):
     if level <= LOG_LEVEL:
         dd = datetime.now()
-        print "[%s/%s/%s %s:%s:%s] {%s} : %s"%(dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,message)
+        color = tabcolors[level]
+        print "%s[%02d/%02d/%s %02d:%02d:%02d] {%s}%s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,WHITE,message)
 

@@ -14,6 +14,7 @@ from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from utils.visualizescenario import *
 from utils.data import *
 import output
+from output import log
 
 class SetGeneticDataRefTable(SetGeneticData):
     """ set genetic data pour les informations concernant la reftable
@@ -126,8 +127,8 @@ class SetGeneticDataRefTable(SetGeneticData):
                     kmax = kmin + ((motif_range-1) * motif_size)
                     if (kmin > mini) or (kmax < maxi):
                         problematicLocus += "%s,"%(i+1)
-                        print "locus %s  size:%s range:%s   mini=%s maxi=%s kmoy=%s kmin=%s kmax=%s"%(self.parent.data.locuslist[i].name,motif_size,motif_range,mini,maxi,kmoy,kmin,kmax)
-            print "\n"; 
+                        log(4,"locus %s  size:%s range:%s   mini=%s maxi=%s kmoy=%s kmin=%s kmax=%s"%(self.parent.data.locuslist[i].name,motif_size,motif_range,mini,maxi,kmoy,kmin,kmax))
+            #print "\n"; 
             if problematicLocus != "":
                 problematicLocus = problematicLocus[:-1]
                 problem += "Motif range at locus %s is not large enough to include all observed alleles\n"%problematicLocus
@@ -299,7 +300,7 @@ class SetGeneticDataRefTable(SetGeneticData):
                     l+=1
                 # chargement des infos sur les groupes
                 if lines[l].strip() == "":
-                    print 'yep'
+                    #print 'yep'
                     l+=1
                 if l < len(lines):
                     #print 'ligne:',lines[l]
@@ -308,7 +309,7 @@ class SetGeneticDataRefTable(SetGeneticData):
                     l+=1
                     # on va jusqu'à la prochaine ligne vide ou la fin du fichier
                     while l<len(lines) and lines[l].strip() != "" and num_group_max_done < nb_groupes:
-                        print 'prem ligne du groupe:',lines[l]
+                        log(4,'prem ligne du groupe:%s'%lines[l])
                         num_group = int(lines[l].split('group G')[1].split(' ')[0])
                         num_group_max_done = num_group
                         type_group = lines[l].split('[')[1].split(']')[0]
