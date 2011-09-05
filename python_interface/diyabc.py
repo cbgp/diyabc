@@ -24,6 +24,8 @@ from project import Project
 from preferences import Preferences
 from documentator import Documentator
 import output
+from output import log
+from datetime import datetime
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
@@ -149,6 +151,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         # on enlève le dernier '/' s'il y en a un
         if dir != "" and dir[-1] == "/":
             dir = dir[:-1]
+        log(1,"attempting to open the project : %s"%dir)
         proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
         if dir != "":
@@ -197,6 +200,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.switchToMainStack()
                         # creation du lock
                         proj_to_open.lock()
+                        log(1,"Project '%s' openend successfully"%dir)
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:
@@ -207,28 +211,44 @@ class Diyabc(formDiyabc,baseDiyabc):
         demande le nom du clone puis le répertoire dans lequel mettre le clone du projet
         """ 
         self.saveCurrentProject()
+        cloneName = cloneBaseName
         current_project = self.ui.tabWidget.currentWidget()
+        log(1,"attempting to clone the project : %s"%current_project.dir)
         ok = True
         if cloneBaseName == None:
-            cloneBaseName, ok = QtGui.QInputDialog.getText(self, 'Clone project', 'Enter the name of the clone project:')
+            fileDial = QtGui.QFileDialog(self,"Select location of the clone project")
+            fileDial.setLabelText(QtGui.QFileDialog.Accept,"Clone project")
+            fileDial.setLabelText(QtGui.QFileDialog.FileName,"Clone project name")
+            ok = (fileDial.exec_() == 1)
+            if not ok:
+                return
+            result = fileDial.selectedFiles()
+            if len(result) > 0:
+                path = result[0]
+            #path = fileDial.getSaveFileName(self,"Project location")
+            path = "%s"%path
+            # on enleve l'eventuel '/' de fin et on extrait le nom du projet
+            if path != None and len(path) > 0 and len(path.split('/')) > 0 :
+                if path[-1] == "/":
+                    path = path[:-1]
+                cloneName = path.split("/")[-1]
         if ok:
-            if self.checkProjectName(cloneBaseName):
-                if cloneDir == None:
-                    qfd = QFileDialog()
-                    cloneDir = str(qfd.getExistingDirectory(self,"Where to put the clone"))
+            if self.checkProjectName(cloneName):
+                # on vire le nom à la fin du path pour obtenir le dossier du clone
+                cloneDir = "/".join(path.split("/")[:-1])
                 if cloneDir != "" and os.path.exists(cloneDir):
                     if not self.isProjDir(cloneDir):
                         # name_YYYY_MM_DD-num le plus elevé
                         dd = datetime.now()
                         #num = 36
                         cd = 100
-                        while cd > 0 and not os.path.exists(cloneDir+"/%s_%i_%i_%i-%i"%(cloneBaseName,dd.year,dd.month,dd.day,cd)):
+                        while cd > 0 and not os.path.exists(cloneDir+"/%s_%i_%i_%i-%i"%(cloneName,dd.year,dd.month,dd.day,cd)):
                             cd -= 1
                         if cd == 100:
                                 output.notify(self,"Error","With this version, you cannot have more than 100 \
                                         project directories\nfor the same project name and in the same directory")
                         else:
-                            clonedir = cloneDir+"/%s_%i_%i_%i-%i"%(cloneBaseName,dd.year,dd.month,dd.day,(cd+1))
+                            clonedir = cloneDir+"/%s_%i_%i_%i-%i"%(cloneName,dd.year,dd.month,dd.day,(cd+1))
                             #self.ui.dirEdit.setText(newdir)
                             try:
                                 #print current_project.dir, " to ", clonedir
@@ -256,11 +276,12 @@ class Diyabc(formDiyabc,baseDiyabc):
                                 #shutil.copy("%s/%s"%(current_project.dir,self.analysis_conf_name),"%s/%s"%(clonedir,self.analysis_conf_name))
 
                                 # si les noms sont différents, on le charge
-                                if cloneBaseName != current_project.name:
+                                if cloneName != current_project.name:
                                     self.openProject(clonedir)
                                 else:
-                                    output.notify(self,"Load error","The cloned has been cloned but can not be opened because\
+                                    output.notify(self,"Load error","The clone project was successfully created but can not be opened because\
                                                 it has the same name than the origin project\nClose the origin project if you want to open the clone")
+                                log(1,"Project %s was successfully cloned in %s"%(current_project.dir,clonedir))
                             except OSError,e:
                                 output.notify(self,"Error",str(e))
                     else:
@@ -284,6 +305,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     def newProject(self,name=None):
         """ Création d'un projet
         """
+        log(1,'Attempting to create a new project')
         ok = True
         #if name == None:
         #    name, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
@@ -297,7 +319,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                 path = result[0]
             #path = fileDial.getSaveFileName(self,"Project location")
             path = "%s"%path
-            print ok,";",path
             # on enleve l'eventuel '/' de fin et on extrait le nom du projet
             if path != None and len(path) > 0 and len(path.split('/')) > 0 :
                 if path[-1] == "/":
@@ -305,6 +326,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 name = path.split("/")[-1]
 
         if ok:
+            log(1,'The name of the new project will be %s\nIt will be saved in %s'%(name,path))
             if self.checkProjectName(name):
                 proj_name_list = []
                 for p in self.project_list:
@@ -329,6 +351,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.deleteProjActionMenu.setDisabled(False)
                         self.cloneProjActionMenu.setDisabled(False)
                     self.switchToMainStack()
+                    log(1,'Project %s successfully created in %s'%(newProj.name,newProj.dir))
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded."%name)
 
@@ -365,19 +388,27 @@ class Diyabc(formDiyabc,baseDiyabc):
     def closeCurrentProject(self,save=None):
         """ ferme le projet courant, celui de l'onglet séléctionné
         """
+        cdir = self.ui.tabWidget.currentWidget().dir
         self.closeProject(self.ui.tabWidget.currentIndex(),save)
+        log(1,"Project %s closed"%(cdir))
+
     def saveCurrentProject(self):
         """ sauve le projet courant, cad ecrit les fichiers temporaires de conf
         """
         self.ui.tabWidget.currentWidget().save()
+        log(1,"Project %s saved"%(self.ui.tabWidget.currentWidget().name))
+
     def deleteCurrentProject(self):
         """ efface le projet courant
         """
+        ddir = self.ui.tabWidget.currentWidget().dir
         self.deleteProject(self.ui.tabWidget.currentIndex())
+        log(1,"Project %s deleted"%(ddir))
+
     def deleteProject(self,index):
         """ efface le projet dont l'index est donné en paramètre
         """
-        projdir = self.ui.tabWidget.widget(index).dir
+        projdir = str(self.ui.tabWidget.widget(index).dir)
         shutil.rmtree(projdir)
         # on ferme le projet sans sauver
         self.closeProject(index,False)
@@ -428,12 +459,12 @@ class Diyabc(formDiyabc,baseDiyabc):
                     self.file_menu.popup(QCursor.pos())
 
                     on = str(c.objectName())
+                    log(1,"Asking documentation of %s"%on)
                     if self.documentator.getDocString(on) != None:
                         output.notify(self,"Documentation",self.documentator.getDocString(on))
                     else:
                         output.notify(self,"Documentation","No documentation found")
-            print event.button()
-            print "ow yeah"
+            log(3,"Button '%s' pressed"%event.button())
         return QWidget.event(self,event)
 
     def dropEvent(self,event):
@@ -441,9 +472,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         """
         for url in event.mimeData().urls():
             path = url.toString()
+            log(1,"Folder %s was dragNdroped to be opened"%path)
             # WINDOWS n'a pas de /
             if "win" in sys.platform and len(path) > 0:
-                print "winwin"
                 self.openProject(path.replace("file:///",""))
             else:
                 self.openProject(path.replace("file://",""))
@@ -451,43 +482,6 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def dragEnterEvent(self,event):
         event.acceptProposedAction()
-
-class Tee(object):
-    """ Classe qui remplace stdout et stderr pour logger sur 
-    la sortie standard (ancienne stdout) et dans un fichier simultanément.
-    Effectue aussi une sorte de logrotate
-    ATTENTION effet de bord : stderr n'est plus différentié
-    il est écrit dans stdout et un fichier
-    """
-    def __init__(self, name, mode):
-        """ raccourci le fichier de log s'il est trop grand 
-        et remplace stdout
-        """
-        self.logRotate(name)
-
-        self.file = open(name, mode)
-        self.stdout = sys.stdout
-        #sys.stdout = self
-    def __del__(self):
-        sys.stdout = self.stdout
-        self.file.close()
-    def write(self, data):
-        self.file.write(data)
-        self.stdout.write(data)
-    def logRotate(self,name):
-        if os.path.exists(name):
-            f=open(name,'r')
-            lines = f.readlines()
-            # si on a plus de 5000 lignes, on ne garde que les 4000 dernières
-            if len(lines) > 5000:
-                keptLines = lines[-4000:]
-                f.close()
-                fw=open(name,'w')
-                fw.write(''.join(keptLines))
-                fw.close()
-                return
-            f.close()
-
 
 if __name__ == "__main__":
     nargv = sys.argv
@@ -500,9 +494,10 @@ if __name__ == "__main__":
     # pour le dragNdrop des dossier projet
     myapp.setAcceptDrops(True)
     # pour les logs dans un fichier et sur le terminal
-    mylog = Tee("diyabc.log","a")
-    sys.stdout = mylog
-    sys.stderr = mylog
+    myOutMux = output.Tee("diyabc.log","a")
+    sys.stdout = myOutMux
+    sys.stderr = myOutMux
+    log(1,"DIYABC launched")
     #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)
     sys.exit(app.exec_())
 

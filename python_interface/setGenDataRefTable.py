@@ -298,15 +298,17 @@ class SetGeneticDataRefTable(SetGeneticData):
                            self.addToGroup(self.groupList[num_group-1])
                     l+=1
                 # chargement des infos sur les groupes
-                l+=1
+                if lines[l].strip() == "":
+                    print 'yep'
+                    l+=1
                 if l < len(lines):
                     #print 'ligne:',lines[l]
                     nb_groupes = int(lines[l].split('(')[1].split(')')[0])
                     num_group_max_done = 0
                     l+=1
                     # on va jusqu'à la prochaine ligne vide ou la fin du fichier
-                    while l<len(lines) and lines[l].strip() != "":
-                        #print 'prem ligne du groupe:',lines[l]
+                    while l<len(lines) and lines[l].strip() != "" and num_group_max_done < nb_groupes:
+                        print 'prem ligne du groupe:',lines[l]
                         num_group = int(lines[l].split('group G')[1].split(' ')[0])
                         num_group_max_done = num_group
                         type_group = lines[l].split('[')[1].split(']')[0]
