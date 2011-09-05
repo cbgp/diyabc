@@ -22,6 +22,7 @@ from PyQt4 import uic
 #from project import *
 from project import Project
 from preferences import Preferences
+from showLogFile import ShowLogFile
 from documentator import Documentator
 import output
 from output import log
@@ -51,6 +52,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.preferences_win = Preferences(self)
         self.preferences_win.loadPreferences()
         #self.defaultMMMValues = self.preferences.getDicoMMM()
+
+        self.showLogFile_win = ShowLogFile(self)
 
         self.createWidgets()
         self.setWindowIcon(QIcon("docs/accueil_pictures/coccicon.png"))
@@ -112,6 +115,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         navigate_menu.addAction("&Previous Project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
         help_menu = self.ui.menubar.addMenu("&Help")
         help_menu.addAction("&About DIYABC",self.switchToWelcomeStack)
+        help_menu.addAction("&Show logfile",self.showLogFile)
 	
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 
@@ -124,6 +128,10 @@ class Diyabc(formDiyabc,baseDiyabc):
         #self.ui.frame.setBackgroundColor(Qt.Blue)
 
         #self.setCursor(QCursor(QPixmap("/home/julien/vcs/git/diyabc.git/python_interface/docs/accueil_pictures/coccicon.png").scaled(32,32)))
+
+    def showLogFile(self):
+        self.showLogFile_win.show()
+
 
     def switchToMainStack(self):
         self.ui.menubar.show()
