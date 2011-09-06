@@ -502,9 +502,10 @@ if __name__ == "__main__":
     # pour le dragNdrop des dossier projet
     myapp.setAcceptDrops(True)
     # pour les logs dans un fichier et sur le terminal
-    myOutMux = output.Tee("diyabc.log","a",myapp)
-    sys.stdout = myOutMux
-    sys.stderr = myOutMux
+    myOut = output.TeeLogger("diyabc.log","a",myapp,True)
+    myErr = output.TeeLogger("diyabc.log","a",myapp,False)
+    sys.stdout = myOut
+    sys.stderr = myErr
     log(1,"DIYABC launched")
     #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)
     sys.exit(app.exec_())

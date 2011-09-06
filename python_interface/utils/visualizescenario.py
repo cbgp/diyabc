@@ -714,7 +714,7 @@ class PopTree(object):
             self.segments = self.creesegment()
             npb= self.countpb(self.segments)
             ntrial +=1
-            print "%s : %s problèmes\n"%(ntrial,npb)
+            print "%s : %s problemes\n"%(ntrial,npb)
         if npb<1 :
             if len(self.br) == 1 : self.segments[0].ydeb = self.YHAUT
         else :

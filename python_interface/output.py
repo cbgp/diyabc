@@ -5,6 +5,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import os,sys
 from datetime import datetime 
+import codecs
 
 debug = False
 LOG_LEVEL = 3
@@ -36,37 +37,49 @@ def centerHeader(name,nbChar):
             spAft = spBef
         return spBef+name+spAft
 
-class Tee(object):
+class TeeLogger(object):
     """ Classe qui remplace stdout et stderr pour logger sur 
-    la sortie standard (ancienne stdout) et dans un fichier simultanément.
+    la sortie standard (ancienne stdout), dans un fichier et dans
+    la fenetre de log simultanément
     Effectue aussi une sorte de logrotate
     ATTENTION effet de bord : stderr n'est plus différentié
-    il est écrit dans stdout et un fichier
+    il est écrit dans les trois sorties
     """
-    def __init__(self, name, mode, app):
+    def __init__(self, name, mode, app, out_or_err):
         """ raccourci le fichier de log s'il est trop grand 
         et remplace stdout
         """
         self.app=app
         self.logRotate(name)
 
-        self.file = open(name, mode)
-        self.stdout = sys.stdout
-        #sys.stdout = self
+        #self.file = open(name, mode)
+        self.filename = name 
+        self.out_or_err = out_or_err
+        # on sauvegarde le out que l'on remplace
+        if out_or_err:
+            self.out = sys.stdout
+        else:
+            self.out = sys.stderr
     def __del__(self):
-        sys.stdout = self.stdout
-        self.file.close()
+        if self.out_or_err:
+            sys.stdout = self.out
+        else:
+            sys.stderr = self.out
+        #self.file.close()
     def write(self, data):
         data_without_color = data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,'')
-        #self.app.showLogFile_win.logText.moveCursor(QTextCursor.End)
-        #self.app.showLogFile_win.logText.appendHtml("%s"%data_without_color.strip())
-        #self.app.showLogFile_win.logText.insert("%s"%data_without_color.strip(),checkNewLine=True)
-        self.file.write(data_without_color)
-        self.file.flush()
-        self.stdout.write(data)
+        # on bouge le curseur au début de la dernière ligne
+        self.app.showLogFile_win.logText.moveCursor(QTextCursor.End)
+        self.app.showLogFile_win.logText.moveCursor(QTextCursor.StartOfLine)
+        self.app.showLogFile_win.logText.appendPlainText("%s"%data_without_color.strip())
+        ftmp = open(self.filename,'a')
+        ftmp.write(data_without_color)
+        #ftmp.file.flush()
+        ftmp.close()
+        self.out.write(data)
     def logRotate(self,name):
         if os.path.exists(name):
-            f=open(name,'r')
+            f = open(name,'r')
             lines = f.readlines()
             # si on a plus de 5000 lignes, on ne garde que les 3000 dernières
             if len(lines) > 5000:
