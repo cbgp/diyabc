@@ -444,6 +444,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             # si le projet est bien créé (et pas en cours de création)
             if proj.dir != None:
                 proj.stopRefTableGen()
+                proj.stopAnalysis()
                 proj.unlock()
         event.accept()
     #    reply = QtGui.QMessageBox.question(self, 'Message',

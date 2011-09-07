@@ -52,6 +52,7 @@ class Project(baseProject,formProject):
         self.gen_state_valid = False
         self.data = None
         self.analysisList = []
+        self.analysisQueue = []
         self.dicoFrameAnalysis = {}
 
         self.thAnalysis = None
@@ -150,6 +151,7 @@ class Project(baseProject,formProject):
         f = open("%s/.stop"%self.dir,"w")
         f.write(" ")
         f.close()
+        need_to_start_analysis = (self.th != None and len(self.analysisQueue)>0)
         if self.th != None:
             self.th.terminate()
             self.th = None
@@ -158,6 +160,13 @@ class Project(baseProject,formProject):
         if os.path.exists("%s/reftable.log"%(self.dir)):
             os.remove("%s/reftable.log"%(self.dir))
         log(1,"Generation of reference table stopped")
+        # on démarre les analyses programmées
+        if need_to_start_analysis:
+            self.nextAnalysisInQueue()
+
+    def stopAnalysis(self):
+        if self.thAnalysis != None:
+            self.thAnalysis.killProcess()
 
     def viewAnalysisResult(self,analysis=None):
         """ en fonction du type d'analyse, met en forme les résultats
@@ -418,11 +427,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """ Lance un thread de generation de la reftable
         """
         log(1,"Starting generation of the reference table")
-        self.startUiGenReftable()
 
         self.save()
         self.writeRefTableHeader()
-        if self.th == None:
+        if self.th == None and self.thAnalysis == None:
             if not os.path.exists("%s/reftable.bin"%self.dir) and os.path.exists("%s/reftable.log"%self.dir):
                 os.remove("%s/reftable.log"%self.dir)
             try:
@@ -430,6 +438,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             except Exception,e:
                 output.notify(self,"value error","Check the value of required number of data sets")
                 return
+            self.startUiGenReftable()
             # on demarre le thread local ou cluster
             if self.parent.preferences_win.ui.serverCheck.isChecked():
                 tname = self.generateComputationTar("/tmp/aaaa.tar")
@@ -441,15 +450,17 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
             self.th.start()
         else:
-            # si l'ancien thread a fini, on en relance un
-            if not self.th.isRunning():
-                self.th = None
-                self.on_btnStart_clicked()
-            #self.cancelTh()
+            #if not self.th.isRunning():
+            #    self.th = None
+            #    self.on_btnStart_clicked()
+            output.notify(self,"Impossible to launch","An analysis is processing,\
+                    \nimpossible to launch reftable generation")
 
     def refTableProblem(self):
         output.notify(self,"reftable problem","Something happened during the reftable generation : %s"%(self.th.problem))
         self.stopUiGenReftable()
+        self.th = None
+        self.nextAnalysisInQueue()
 
     def stopUiGenReftable(self):
         self.ui.runReftableButton.setText("Run computations")
@@ -477,6 +488,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if int(pc) == 100:
             self.putRefTableSize()
             self.stopUiGenReftable()
+            self.th = None
+            self.nextAnalysisInQueue()
 
     def cancelTh(self):
         #print 'plop'
@@ -746,8 +759,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             analysisStatusBar.setValue(0)
         analysisButton = QtGui.QPushButton(buttonLabel,frame_9)
         analysisButton.setObjectName("analysisButton")
-        analysisButton.setMinimumSize(QtCore.QSize(70, 0))
-        analysisButton.setMaximumSize(QtCore.QSize(70, 16777215))
+        analysisButton.setMinimumSize(QtCore.QSize(80, 0))
+        analysisButton.setMaximumSize(QtCore.QSize(80, 16777215))
         horizontalLayout_4.addWidget(analysisButton)
         horizontalLayout_4.setContentsMargins(-1, 1, -1, 1)
         self.ui.verticalLayout_9.addWidget(frame_9)
@@ -756,17 +769,39 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         QObject.connect(analysisRmButton,SIGNAL("clicked()"),self.removeAnalysis)
         QObject.connect(analysisDownButton,SIGNAL("clicked()"),self.moveAnalysisDown)
         QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
-        QObject.connect(analysisButton,SIGNAL("clicked()"),self.launchViewAnalysis)
+        QObject.connect(analysisButton,SIGNAL("clicked()"),self.tryLaunchViewAnalysis)
         QObject.connect(analysisParamsButton,SIGNAL("clicked()"),self.viewAnalysisParameters)
 
     def removeAnalysis(self):
         frame = self.sender().parent()
-        log(1,"Removing analysis '%s'"%self.dicoFrameAnalysis[frame].name)
+        analysis = self.dicoFrameAnalysis[frame]
+        log(1,"Removing analysis '%s'"%analysis.name)
         frame.hide()
-        self.analysisList.remove(self.dicoFrameAnalysis[frame])
+        self.analysisList.remove(analysis)
+
+        # on la vire de la queue si elle y était (dans le cas ou elle etait
+        # running, elle n'y etait plus)
+        if analysis in self.analysisQueue:
+            log(1,"'%s' was in the queue, i deleted it"%analysis.name)
+            self.analysisQueue.remove(analysis)
+        # si elle tournait, on arrete le thread et on lance la suivante
+        if self.thAnalysis != None and self.thAnalysis.analysis == analysis:
+            log(1,"'%s' was running, i stopped the thread and launched the follower"%analysis.name)
+            self.thAnalysis.terminate()
+            self.thAnalysis.killProcess()
+            self.thAnalysis = None
+            self.nextAnalysisInQueue()
+
+        # on met à jour les queue numbers
+        for the_frame in self.dicoFrameAnalysis.keys():
+            anatmp = self.dicoFrameAnalysis[the_frame]
+            if anatmp in self.analysisQueue:
+                index = self.analysisQueue.index(anatmp)
+                the_frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
+
         del self.dicoFrameAnalysis[frame]
         self.ui.verticalLayout_9.removeWidget(frame)
-        self.save()
+        #self.save()
 
     def viewAnalysisParameters(self):
         """ bascule sur une frame qui affiche les valeurs des paramètres
@@ -781,7 +816,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.ui.analysisStack.setCurrentWidget(viewFrame)
 
 
-    def launchViewAnalysis(self):
+    def tryLaunchViewAnalysis(self):
         """ clic sur le bouton launch/view d'une analyse
         """
         if not os.path.exists("%s/analysis/"%self.dir):
@@ -790,29 +825,65 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame = self.sender().parent()
         # on associe l'analyse a sa frame
         analysis = self.dicoFrameAnalysis[frame]
+        log(1,"Trying to launch analysis %s (%s)"%(analysis.name,analysis.status))
         if analysis.status == "finished":
             self.viewAnalysisResult(analysis)
+        elif analysis.status == "running":
+            # TODO on la stoppe
+            pass        
+        elif analysis.status == "queued":
+            output.notify(self,"Action impossible","This analysis is already queued")
         else:
-            if self.thAnalysis == None:
+            # on veut la lancer
+            self.analysisQueue.append(analysis)
+            if analysis == self.analysisQueue[0] and self.thAnalysis == None and self.th == None:
+                # si c'est la premiere, qu'aucune autre ne tourne et que la generation de 
+                # reftable est down, on la lance
                 self.launchAnalysis(analysis)
-                frame.findChild(QPushButton,"analysisButton").setText("Running")
-                analysis.status = "running"
+            else:
+                # sinon on la met en wait
+                index = self.analysisQueue.index(analysis)
+                log(3,"I try to queue %s at index %s"%(analysis.name,index))
+                frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
+                analysis.status = "queued"
 
     def launchAnalysis(self,analysis):            
         """ lance un thread de traitement d'une analyse
         """
-        log(1,"Launch of analysis '%s'"%analysis.name)
-        self.save()
-        self.thAnalysis = AnalysisThread(self,analysis)
-        self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress"),self.analysisProgress)
-        self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProblem"),self.analysisProblem)
-        self.thAnalysis.start()
+        if self.thAnalysis == None:
+            # on retrouve la frame
+            the_frame = None
+            for frame in self.dicoFrameAnalysis.keys():
+                if self.dicoFrameAnalysis[frame] == analysis:
+                    the_frame = frame
+                    break
+            the_frame.findChild(QPushButton,"analysisButton").setText("Running")
+            analysis.status = "running"
+
+            log(1,"Launching analysis '%s'"%analysis.name)
+            self.save()
+            log(3,"Cleaning '%s_progress.txt' file"%analysis.name)
+            if os.path.exists("%s/%s_progress.txt"%(self.dir,analysis.name)):
+                os.remove("%s/%s_progress.txt"%(self.dir,analysis.name))
+            self.thAnalysis = AnalysisThread(self,analysis)
+            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress"),self.analysisProgress)
+            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProblem"),self.analysisProblem)
+            self.thAnalysis.start()
+            # on la vire de la queue
+            self.analysisQueue.remove(analysis)
+            # on met à jour les queue numbers
+            for frame in self.dicoFrameAnalysis.keys():
+                anatmp = self.dicoFrameAnalysis[frame]
+                if anatmp in self.analysisQueue:
+                    index = self.analysisQueue.index(anatmp)
+                    frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
 
     def analysisProblem(self):
         output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,self.thAnalysis.problem))
 
         # nettoyage du progress.txt
         aid = self.thAnalysis.analysis.name
+        self.thAnalysis.analysis.status = "new"
         if os.path.exists("%s/%s_progress.txt"%(self.dir,aid)):
             os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
@@ -822,7 +893,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 frame = fr
                 break
         frame.findChild(QPushButton,"analysisButton").setText("re-launch")
+        self.thAnalysis.killProcess()
         self.thAnalysis = None
+
+        self.nextAnalysisInQueue()
 
     def analysisProgress(self):
         """ met à jour l'indicateur de progression de l'analyse en cours
@@ -913,6 +987,16 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     shutil.move("%s/%s_ACP.txt"%(self.dir,aid),"%s/analysis/%s/ACP.txt"%(self.dir,aDirName))
 
         self.save()
+        # on lance la suivante
+        self.nextAnalysisInQueue()
+
+    def nextAnalysisInQueue(self):
+        """ Si il reste des analyses à faire, on lance la premiere
+        """
+        log(3,"Launching next analysis in queue")
+        if len(self.analysisQueue) > 0:
+            log(3,"Launching analysis %s because it is the first in the queue"%self.analysisQueue[0].name)
+            self.launchAnalysis(self.analysisQueue[0])
 
     def moveAnalysisDown(self):
         """ déplace d'un cran vers le bas une analyse
@@ -1162,6 +1246,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             l = pickle.load(f)
             f.close()
             for a in l:
+                if a.status == "running" or a.status == "queued":
+                    a.status = "new"
                 self.addAnalysis(a)
 
     def save(self):
@@ -1352,6 +1438,13 @@ class RefTableGenThread(QThread):
         self.nb_to_gen = nb_to_gen
         self.cancel = False
         self.time = "unknown time\n"
+        self.processus = None
+
+    def killProcess(self):
+        if self.processus != None:
+            if self.processus.poll() == None:
+                log(3,"Killing analysis process (pid:%s) of analysis %s"%(self.processus.pid,self.analysis.name))
+                self.processus.kill()
 
     def run (self):
         # lance l'executable
@@ -1370,6 +1463,7 @@ class RefTableGenThread(QThread):
                 os.remove(outfile)
             fg = open(outfile,"w")
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=PIPE, stderr=STDOUT) 
+            self.processus = p
         except Exception,e:
             #print "Cannot find the executable of the computation program %s"%e
             self.problem = "Cannot find the executable of the computation program \n%s"%e
@@ -1460,6 +1554,13 @@ class AnalysisThread(QThread):
         self.parent = parent
         self.analysis = analysis
         self.progress = 0
+        self.processus = None
+
+    def killProcess(self):
+        if self.processus != None:
+            if self.processus.poll() == None:
+                log(3,"Killing analysis process (pid:%s) of analysis %s"%(self.processus.pid,self.analysis.name))
+                self.processus.kill()
 
     def readProgress(self):
         if os.path.exists("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name)):
@@ -1528,6 +1629,7 @@ class AnalysisThread(QThread):
         outfile = "%s/%s.out"%(self.parent.dir,self.analysis.category)
         f = open(outfile,"w")
         p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
+        self.processus = p
         #f.close()
         #print "popen ok"
         log(3,"Popen procedure success")
