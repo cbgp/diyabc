@@ -160,6 +160,12 @@ class Diyabc(formDiyabc,baseDiyabc):
         if dir != "" and dir[-1] == "/":
             dir = dir[:-1]
         log(1,"attempting to open the project : %s"%dir)
+        qmb = QMessageBox(self)
+        qmb.setText("Opening project %s"%dir)
+        qmb.setWindowTitle("Opening project %s"%dir)
+        qmb.setDetailedText("Opening project %s"%dir)
+        qmb.show()
+
         proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
         if dir != "":
@@ -213,6 +219,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     output.notify(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:
                output.notify(self,"Load error","\"%s\" is not a project directory"%dir)
+        qmb.hide()
 
     def cloneCurrentProject(self,cloneBaseName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
