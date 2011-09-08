@@ -121,7 +121,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         QObject.connect(self.ui.openProjectButton,SIGNAL("clicked()"),self.openProject)
         QObject.connect(self.ui.newProjectButton,SIGNAL("clicked()"),self.newProject)
-        QObject.connect(self.ui.skipWelcomeButton,SIGNAL("clicked()"),self.switchToMainStack)
+        #QObject.connect(self.ui.skipWelcomeButton,SIGNAL("clicked()"),self.switchToMainStack)
         self.ui.versionLabel.setText('%s'%VERSION)
         #self.ui.frame.setDisabled(True)
         #self.ui.frame.setAutoFillBackground(True)
@@ -149,11 +149,11 @@ class Diyabc(formDiyabc,baseDiyabc):
 
 
     def switchToMainStack(self):
-        self.ui.menubar.show()
+        #self.ui.menubar.show()
         self.ui.stackedWidget.setCurrentIndex(0)
 
     def switchToWelcomeStack(self):
-        self.ui.menubar.hide()
+        #self.ui.menubar.hide()
         self.ui.stackedWidget.setCurrentIndex(1)
 
     def setPreferences(self):

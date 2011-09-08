@@ -137,21 +137,6 @@
                <number>1</number>
               </property>
               <item>
-               <widget class="QPushButton" name="skipWelcomeButton">
-                <property name="font">
-                 <font>
-                  <pointsize>14</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>&amp;Close this page</string>
-                </property>
-                <property name="shortcut">
-                 <string>Esc</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QPushButton" name="openProjectButton">
                 <property name="font">
                  <font>
@@ -252,7 +237,6 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>skipWelcomeButton</tabstop>
   <tabstop>openProjectButton</tabstop>
   <tabstop>newProjectButton</tabstop>
   <tabstop>tabWidget</tabstop>

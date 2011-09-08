@@ -106,8 +106,7 @@
       </font>
      </property>
      <property name="text">
-      <string>CHOOSE AN ANALYSIS NAME
-AND TYPE</string>
+      <string>CHOOSE AN ANALYSIS NAME AND TYPE</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -381,7 +380,7 @@ The reference table has been built</string>
           <item>
            <widget class="QRadioButton" name="modCheckRadio">
             <property name="text">
-             <string>Model checking</string>
+             <string>Perform model checking</string>
             </property>
             <property name="checked">
              <bool>false</bool>

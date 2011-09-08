@@ -658,7 +658,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         type_analysis = analysis.category
         self.analysisList.append(analysis)
 
-        log(3,"Computation parameters : %s"%analysis.computationParameters)
+        log(3,u"Computation parameters : %s"%analysis.computationParameters.replace(u'\xb5','u'))
         if type_analysis == "pre-ev":
             #self.addRow("scenario prior combination",analysis[1],"4","new")
             self.addAnalysisGui(analysis,analysis.name,"scenario prior combination",analysis.computationParameters,analysis.status)
@@ -1258,7 +1258,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         log(2,"Saving project '%s'"%self.dir)
         self.parent.showStatus("Saving project %s"%self.name)
 
-        if self.dir != None:
+        if self.dir != None and self.dataFileName != "":
             # save meta project
             if os.path.exists(self.dir+"/%s"%self.parent.main_conf_name):
                 os.remove("%s/%s"%(self.dir,self.parent.main_conf_name))
@@ -1284,7 +1284,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.parent.clearStatus()
             self.parent.showStatus("Project %s successfully saved"%self.name,2000)
         else:
-            output.notify(self,"Saving is impossible","Choose a directory before saving the project")
+            output.notify(self,"Saving is impossible","The project is not yet completly created")
             self.parent.clearStatus()
 
     def writeThConf(self):
