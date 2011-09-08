@@ -634,13 +634,13 @@
                      </property>
                      <property name="minimumSize">
                       <size>
-                       <width>340</width>
+                       <width>370</width>
                        <height>40</height>
                       </size>
                      </property>
                      <property name="maximumSize">
                       <size>
-                       <width>340</width>
+                       <width>370</width>
                        <height>40</height>
                       </size>
                      </property>
@@ -668,13 +668,13 @@
                      </property>
                      <property name="minimumSize">
                       <size>
-                       <width>340</width>
+                       <width>370</width>
                        <height>40</height>
                       </size>
                      </property>
                      <property name="maximumSize">
                       <size>
-                       <width>340</width>
+                       <width>370</width>
                        <height>40</height>
                       </size>
                      </property>

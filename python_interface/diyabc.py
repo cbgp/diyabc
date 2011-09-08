@@ -83,6 +83,12 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.imgLabel.setPixmap(pic)
         self.switchToWelcomeStack()
 
+        # about window
+        self.aboutWindow = uic.loadUi("uis/about.ui")
+        self.aboutWindow.parent = self
+        ui = self.aboutWindow
+        QObject.connect(ui.okButton,SIGNAL("clicked()"),self.aboutWindow.close)
+
         #proj1 = Project(self.ui,"ploproj")
         self.ui.tab_6.hide()
         self.ui.tabWidget.removeTab(0)
@@ -90,8 +96,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         # gestion du menu
         file_menu = self.ui.menubar.addMenu("&File")
         self.file_menu = file_menu
-        file_menu.addAction("&New Project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
-        file_menu.addAction("&Open",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
+        file_menu.addAction("&New project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
+        file_menu.addAction("&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
         self.saveProjActionMenu = file_menu.addAction("&Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
         self.deleteProjActionMenu = file_menu.addAction("&Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
         self.cloneProjActionMenu = file_menu.addAction("&Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
@@ -111,10 +117,13 @@ class Diyabc(formDiyabc,baseDiyabc):
         #    self.style_actions[stxt].setActionGroup(action_group)
         #    self.style_actions[stxt].setCheckable(True)
         navigate_menu = self.ui.menubar.addMenu("&Navigate")
-        navigate_menu.addAction("&Next Project",self.nextProject,QKeySequence(Qt.CTRL + Qt.Key_PageDown))
-        navigate_menu.addAction("&Previous Project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
+        self.nextProjectActionMenu = navigate_menu.addAction("&Next project",self.nextProject,QKeySequence(Qt.CTRL + Qt.Key_PageDown))
+        self.prevProjectActionMenu = navigate_menu.addAction("&Previous project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
+        self.nextProjectActionMenu.setDisabled(True)
+        self.prevProjectActionMenu.setDisabled(True)
         help_menu = self.ui.menubar.addMenu("&Help")
-        help_menu.addAction("&About DIYABC",self.switchToWelcomeStack)
+        #help_menu.addAction("&About DIYABC",self.switchToWelcomeStack)
+        help_menu.addAction("&About DIYABC",self.aboutWindow.show)
         help_menu.addAction("&Show logfile",self.showLogFile)
 	
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
@@ -133,6 +142,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #statusLabel.setAlignment(Qt.AlignLeft)
         #self.statusBar.setAlignment(Qt.AlignLeft)
         #self.ui.statusBar.hide()
+
 
     def showLogFile(self):
         self.showLogFile_win.show()
@@ -223,6 +233,9 @@ class Diyabc(formDiyabc,baseDiyabc):
                             self.saveProjActionMenu.setDisabled(False)
                             self.deleteProjActionMenu.setDisabled(False)
                             self.cloneProjActionMenu.setDisabled(False)
+                        if len(self.project_list) == 2:
+                            self.nextProjectActionMenu.setDisabled(False)
+                            self.prevProjectActionMenu.setDisabled(False)
                         # on quitte la page d'accueil si on y était
                         self.switchToMainStack()
                         # creation du lock
@@ -378,6 +391,9 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.saveProjActionMenu.setDisabled(False)
                         self.deleteProjActionMenu.setDisabled(False)
                         self.cloneProjActionMenu.setDisabled(False)
+                    if len(self.project_list) == 2:
+                        self.nextProjectActionMenu.setDisabled(False)
+                        self.prevProjectActionMenu.setDisabled(False)
                     self.switchToMainStack()
                     log(1,'Project %s successfully created in %s'%(newProj.name,newProj.dir))
                 else:
@@ -412,6 +428,9 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.deleteProjActionMenu.setDisabled(True)
             self.cloneProjActionMenu.setDisabled(True)
             self.switchToWelcomeStack()
+        if len(self.project_list) == 1:
+            self.nextProjectActionMenu.setDisabled(True)
+            self.prevProjectActionMenu.setDisabled(True)
 
     def closeCurrentProject(self,save=None):
         """ ferme le projet courant, celui de l'onglet séléctionné
