@@ -87,6 +87,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.aboutWindow = uic.loadUi("uis/about.ui")
         self.aboutWindow.parent = self
         ui = self.aboutWindow
+        txt = str(self.aboutWindow.infoLabel.text())
+        txt = txt.replace('vvv',VERSION).replace('ddd','08/09/2011')
+        self.aboutWindow.infoLabel.setText(txt)
         QObject.connect(ui.okButton,SIGNAL("clicked()"),self.aboutWindow.close)
 
         #proj1 = Project(self.ui,"ploproj")
