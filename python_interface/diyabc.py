@@ -132,10 +132,20 @@ class Diyabc(formDiyabc,baseDiyabc):
         #statusLabel = QLabel("No info",self)
         #statusLabel.setAlignment(Qt.AlignLeft)
         #self.statusBar.setAlignment(Qt.AlignLeft)
-        self.ui.statusBar.hide()
+        #self.ui.statusBar.hide()
 
     def showLogFile(self):
         self.showLogFile_win.show()
+        
+    def showStatus(self,msg,time=None):
+        if time!=None:
+            self.ui.statusBar.showMessage(msg,time)
+        else:
+            self.ui.statusBar.showMessage(msg)
+        QCoreApplication.processEvents()
+
+    def clearStatus(self):
+        self.ui.statusBar.clearMessage()
 
 
     def switchToMainStack(self):
@@ -167,9 +177,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         log(1,"attempting to open the project : %s"%dir)
         #self.ui.infoPlain.setPlainText("Opening project %s"%dir)
         #self.ui.infoPlain.show()
-        self.ui.statusBar.show()
-        self.ui.statusBar.showMessage("Loading project %s"%dir.split('/')[-1])
-        QCoreApplication.processEvents()
+        self.showStatus("Loading project %s"%dir.split('/')[-1])
 
         proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
@@ -224,8 +232,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     output.notify(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:
                output.notify(self,"Load error","\"%s\" is not a project directory"%dir)
-        self.ui.statusBar.clearMessage()
-        self.ui.statusBar.hide()
+        self.clearStatus()
 
     def cloneCurrentProject(self,cloneBaseName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire

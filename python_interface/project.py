@@ -678,7 +678,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         elif type_analysis == "modelChecking":
             self.addAnalysisGui(analysis,analysis.name,"model checking","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
 
-        self.save()
+        #self.save()
 
     def addAnalysisGui(self,analysis,name,atype,params,status):
         """ crée les objets graphiques pour une analyse et les ajoute
@@ -1256,6 +1256,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """
         #print "je me save"
         log(2,"Saving project '%s'"%self.dir)
+        self.parent.showStatus("Saving project %s"%self.name)
+
         if self.dir != None:
             # save meta project
             if os.path.exists(self.dir+"/%s"%self.parent.main_conf_name):
@@ -1279,8 +1281,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 self.writeThConf()
                 self.writeRefTableHeader()
             self.saveAnalysis()
+            self.parent.clearStatus()
+            self.parent.showStatus("Project %s successfully saved"%self.name,2000)
         else:
             output.notify(self,"Saving is impossible","Choose a directory before saving the project")
+            self.parent.clearStatus()
 
     def writeThConf(self):
         """ ecrit le header du tableau de resultat qui sera produit par les calculs
