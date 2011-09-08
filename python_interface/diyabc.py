@@ -129,6 +129,11 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         #self.setCursor(QCursor(QPixmap("/home/julien/vcs/git/diyabc.git/python_interface/docs/accueil_pictures/coccicon.png").scaled(32,32)))
 
+        #statusLabel = QLabel("No info",self)
+        #statusLabel.setAlignment(Qt.AlignLeft)
+        #self.statusBar.setAlignment(Qt.AlignLeft)
+        self.ui.statusBar.hide()
+
     def showLogFile(self):
         self.showLogFile_win.show()
 
@@ -160,11 +165,11 @@ class Diyabc(formDiyabc,baseDiyabc):
         if dir != "" and dir[-1] == "/":
             dir = dir[:-1]
         log(1,"attempting to open the project : %s"%dir)
-        qmb = QMessageBox(self)
-        qmb.setText("Opening project %s"%dir)
-        qmb.setWindowTitle("Opening project %s"%dir)
-        qmb.setDetailedText("Opening project %s"%dir)
-        qmb.show()
+        #self.ui.infoPlain.setPlainText("Opening project %s"%dir)
+        #self.ui.infoPlain.show()
+        self.ui.statusBar.show()
+        self.ui.statusBar.showMessage("Loading project %s"%dir.split('/')[-1])
+        QCoreApplication.processEvents()
 
         proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
@@ -219,7 +224,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                     output.notify(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:
                output.notify(self,"Load error","\"%s\" is not a project directory"%dir)
-        qmb.hide()
+        self.ui.statusBar.clearMessage()
+        self.ui.statusBar.hide()
 
     def cloneCurrentProject(self,cloneBaseName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
