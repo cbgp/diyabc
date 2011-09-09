@@ -118,20 +118,32 @@
           <property name="text">
            <string>locus name</string>
           </property>
+          <property name="textAlignment">
+           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          </property>
          </column>
          <column>
           <property name="text">
            <string>type</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
           </property>
          </column>
          <column>
           <property name="text">
            <string>motif</string>
           </property>
+          <property name="textAlignment">
+           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          </property>
          </column>
          <column>
           <property name="text">
            <string>range</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
           </property>
          </column>
         </widget>
@@ -168,8 +180,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>433</width>
-            <height>616</height>
+            <width>429</width>
+            <height>614</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3"/>

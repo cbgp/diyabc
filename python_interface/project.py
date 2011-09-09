@@ -541,9 +541,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         S'il est valide, on le copie dans le dossier du projet
         """
         if name == None:
-            qfd = QFileDialog()
-            qfd.setDirectory(self.ui.dirEdit.text())
-            name = qfd.getOpenFileName()
+            name = QFileDialog.getOpenFileName(self,"Select datafile")
         if self.loadDataFile(name):
             # si on a reussi a charger le data file, on vire le bouton browse
             self.ui.browseDataFileButton.hide()

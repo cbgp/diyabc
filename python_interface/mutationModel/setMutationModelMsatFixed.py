@@ -64,9 +64,9 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
         self.ui.label_30.hide()
         self.ui.label_31.hide()
         self.ui.label_32.hide()
-        self.ui.label_35.hide()
-        self.ui.label_34.hide()
-        self.ui.label_33.hide()
+        #self.ui.label_35.hide()
+        self.ui.label_34.setText(str(self.ui.label_34.text()).replace("the maximum ",""))
+        self.ui.label_33.setText(str(self.ui.label_33.text()).replace("the maximum ",""))
         self.ui.groupBox.hide()
         self.ui.groupBox_2.hide()
         self.ui.groupBox_3.hide()
@@ -93,7 +93,9 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
                            self.ui.msrMinEdit : [1,1],   
                            self.ui.ilsrMinEdit : [1,1]}
 
-        self.ui.ilmrLabel.setText("%s\n(shape of the gamma)"%self.ui.ilmrLabel.text())
+        self.ui.ilmrLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilmrLabel.text())
+        self.ui.mcpLabel.setText("%s\n(2)"%self.ui.mcpLabel.text())
+        self.ui.msrLabel.setText("%s (3)"%self.ui.msrLabel.text())
         self.ui.ilcpLabel.setText("%s\n(shape of the gamma)"%self.ui.ilcpLabel.text())
         self.ui.ilsrLabel.setText("%s\n(shape of the gamma)"%self.ui.ilsrLabel.text())
         self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0)) 
@@ -103,12 +105,12 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
         for field in self.field_names_dico.keys():
             field.setMaximumSize(QtCore.QSize(100, 25))
 
-        self.ui.frame_5.setMaximumSize(QtCore.QSize(250, 50))
-        self.ui.frame_2.setMaximumSize(QtCore.QSize(250, 50))
-        self.ui.frame_3.setMaximumSize(QtCore.QSize(250, 50))
-        self.ui.frame_4.setMaximumSize(QtCore.QSize(250, 50))
-        self.ui.frame_7.setMaximumSize(QtCore.QSize(250, 50))
-        self.ui.frame_8.setMaximumSize(QtCore.QSize(250, 50))
+        self.ui.frame_5.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.frame_2.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.frame_3.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.frame_4.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.frame_7.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.frame_8.setMaximumSize(QtCore.QSize(250, 80))
 
     def getMutationConf(self):
         """ renvoie les valeurs actuelles

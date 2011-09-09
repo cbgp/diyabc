@@ -288,10 +288,15 @@ class SetGeneticDataRefTable(SetGeneticData):
                            self.ui.tableWidget.setItemSelected(self.ui.tableWidget.item(l-1,0),True)
                            self.addToGroup(self.groupList[num_group-1])
                         # maj des infos dans le table
-                        ranger = lines[l].split(' ')[4]
-                        motif = lines[l].split(' ')[5]
-                        self.ui.tableWidget.setItem(l-1,2,QTableWidgetItem("%s"%(ranger)))
-                        self.ui.tableWidget.setItem(l-1,3,QTableWidgetItem("%s"%(motif)))
+                        ranger = lines[l].split(' ')[5]
+                        motif = lines[l].split(' ')[4]
+                        ran = QTableWidgetItem("%s"%(ranger))
+                        mot = QTableWidgetItem("%s"%(motif))
+                        ran.setTextAlignment(Qt.AlignRight|Qt.AlignVCenter)
+                        mot.setTextAlignment(Qt.AlignRight|Qt.AlignVCenter)
+                        self.ui.tableWidget.setItem(l-1,3,ran)
+                        self.ui.tableWidget.setItem(l-1,2,mot)
+                        log(3,"Loading a locus (%s)(%s)"%(mot.textAlignment(),ran.textAlignment()))
                     else:
                         # ajout ds le groupe
                         if num_group != 0:

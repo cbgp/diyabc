@@ -14,6 +14,7 @@ from mutationModel.setMutationModelSequences import SetMutationModelSequences
 from utils.visualizescenario import *
 from utils.data import *
 import output
+from output import log
 
 formGenData,baseGenData = uic.loadUiType("uis/setGenData.ui")
 
@@ -89,8 +90,18 @@ class SetGeneticData(formGenData,baseGenData):
         self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,0).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,0).flags() & ~Qt.ItemIsEditable)
         self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,1).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,1).flags() & ~Qt.ItemIsEditable)
         if type == "M":
-            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,2,QTableWidgetItem("2"))
-            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,3,QTableWidgetItem("40"))
+            #self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,2,QTableWidgetItem("2"))
+            #self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,3,QTableWidgetItem("40"))
+            #self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,2).setTextAlignment(Qt.AlignRight)
+            #self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,3).setTextAlignment(Qt.AlignRight)
+
+            dos = QTableWidgetItem("2")
+            tres = QTableWidgetItem("40")
+            dos.setTextAlignment(Qt.AlignRight|Qt.AlignTop)
+            tres.setTextAlignment(Qt.AlignRight|Qt.AlignTop)
+            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,2,dos)
+            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,3,tres)
+            log(3,"Adding a locus (%s)"%tres.textAlignment())
         else:
             self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,2,QTableWidgetItem(" "))
             self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,3,QTableWidgetItem(" "))

@@ -60,6 +60,8 @@ class Preferences(formPreferences,basePreferences):
         self.ui=self
         self.ui.setupUi(self)
 
+        self.setWindowTitle("Settings")
+
         self.ui.gridLayout.setAlignment(Qt.AlignTop)
         self.ui.verticalLayout_57.setAlignment(Qt.AlignTop)
         self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)

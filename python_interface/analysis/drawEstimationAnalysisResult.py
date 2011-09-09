@@ -37,7 +37,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
-        QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printMe)
+        #QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printMe)
 
         self.ui.PCAFrame.hide()
         self.ui.ACProgress.hide()
@@ -48,6 +48,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)
+
     def printMe(self):
 
         #printer = QPrinter(QPrinter.HighResolution)

@@ -45,20 +45,6 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QPushButton" name="printButton">
-        <property name="text">
-         <string>PRINT</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="savePicturesButton">
-        <property name="text">
-         <string>SAVE</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QProgressBar" name="ACProgress">
         <property name="value">
          <number>24</number>
@@ -95,7 +81,7 @@
          </font>
         </property>
         <property name="text">
-         <string>   </string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -111,6 +97,13 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="savePicturesButton">
+        <property name="text">
+         <string>SAVE</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="closeButton">
@@ -222,8 +215,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>934</width>
-        <height>460</height>
+        <width>930</width>
+        <height>454</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">

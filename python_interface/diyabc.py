@@ -109,7 +109,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.saveProjActionMenu.setDisabled(True)
         self.deleteProjActionMenu.setDisabled(True)
         self.cloneProjActionMenu.setDisabled(True)
-        file_menu.addAction(QIcon("docs/redhat-system_settings.png"),"&Preferences",self.setPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
+        file_menu.addAction(QIcon("docs/redhat-system_settings.png"),"&Settings",self.setPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
         action = file_menu.addAction(QIcon("docs/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
