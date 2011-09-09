@@ -80,7 +80,11 @@ class Project(baseProject,formProject):
         self.ui.newAnButton.setDisabled(True)
         self.ui.dataFileEdit.setReadOnly(True)
         self.ui.dirEdit.setReadOnly(True)
-        self.ui.groupBox.hide()
+        #self.ui.groupBox.hide()
+        self.ui.groupBox_6.hide()
+        self.ui.groupBox_7.hide()
+        self.ui.groupBox_8.hide()
+
         self.ui.browseDirButton.hide()
         #self.ui.groupBox.setVisible(False)
 
@@ -546,7 +550,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             # et on copie ce datafile dans le dossier projet
             shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
             self.dataFileName = self.dataFileSource.split('/')[-1]
-            self.ui.groupBox.show()
+            #self.ui.groupBox.show()
+            self.ui.groupBox_6.show()
+            self.ui.groupBox_7.show()
+            self.ui.groupBox_8.show()
             # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
             self.gen_data_win.fillLocusTableFromData()
 
@@ -661,20 +668,20 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         log(3,u"Computation parameters : %s"%analysis.computationParameters.replace(u'\xb5','u'))
         if type_analysis == "pre-ev":
             #self.addRow("scenario prior combination",analysis[1],"4","new")
-            self.addAnalysisGui(analysis,analysis.name,"scenario prior combination",analysis.computationParameters,analysis.status)
+            self.addAnalysisGui(analysis,analysis.name,"evaluate scenarios and priors",analysis.computationParameters,analysis.status)
         elif type_analysis == "estimate":
             #self.addRow("parameter estimation","params","5","new")
-            self.addAnalysisGui(analysis,analysis.name,"parameter estimation","params",analysis.status)
+            self.addAnalysisGui(analysis,analysis.name,"estimate parameters","params",analysis.status)
         elif type_analysis == "bias":
             #self.addRow("bias and precision",str(analysis[2]),"3","new")
             self.addAnalysisGui(analysis,analysis.name,"bias and precision",str(analysis.chosenSc),analysis.status)
         elif type_analysis == "compare":
             #print "\n",analysis[-1],"\n"
             #self.addRow("scenario choice",analysis[2]["de"],"4","new")
-            self.addAnalysisGui(analysis,analysis.name,"scenario choice","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
+            self.addAnalysisGui(analysis,analysis.name,"compare scenarios","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
         elif type_analysis == "evaluate":
             #self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
-            self.addAnalysisGui(analysis,analysis.name,"evaluate confidence","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
+            self.addAnalysisGui(analysis,analysis.name,"confidence in scenario choice","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
         elif type_analysis == "modelChecking":
             self.addAnalysisGui(analysis,analysis.name,"model checking","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
 
@@ -693,24 +700,24 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         horizontalLayout_4 = QtGui.QHBoxLayout(frame_9)
         horizontalLayout_4.setObjectName("horizontalLayout_4")
         analysisRmButton = QtGui.QPushButton("remove",frame_9)
-        analysisRmButton.setMinimumSize(QtCore.QSize(50, 0))
-        analysisRmButton.setMaximumSize(QtCore.QSize(50, 16777215))
+        analysisRmButton.setMinimumSize(QtCore.QSize(70, 0))
+        analysisRmButton.setMaximumSize(QtCore.QSize(70, 16777215))
         analysisRmButton.setObjectName("analysisRmButton")
         horizontalLayout_4.addWidget(analysisRmButton)
-        analysisUpButton = QtGui.QPushButton("up",frame_9)
-        analysisUpButton.setMinimumSize(QtCore.QSize(50, 0))
-        analysisUpButton.setMaximumSize(QtCore.QSize(50, 16777215))
-        analysisUpButton.setObjectName("analysisUpButton")
-        horizontalLayout_4.addWidget(analysisUpButton)
-        analysisDownButton = QtGui.QPushButton("down",frame_9)
-        analysisDownButton.setMinimumSize(QtCore.QSize(50, 0))
-        analysisDownButton.setMaximumSize(QtCore.QSize(50, 16777215))
-        analysisDownButton.setObjectName("analysisDownButton")
-        horizontalLayout_4.addWidget(analysisDownButton)
+        #analysisUpButton = QtGui.QPushButton("up",frame_9)
+        #analysisUpButton.setMinimumSize(QtCore.QSize(50, 0))
+        #analysisUpButton.setMaximumSize(QtCore.QSize(50, 16777215))
+        #analysisUpButton.setObjectName("analysisUpButton")
+        #horizontalLayout_4.addWidget(analysisUpButton)
+        #analysisDownButton = QtGui.QPushButton("down",frame_9)
+        #analysisDownButton.setMinimumSize(QtCore.QSize(50, 0))
+        #analysisDownButton.setMaximumSize(QtCore.QSize(50, 16777215))
+        #analysisDownButton.setObjectName("analysisDownButton")
+        #horizontalLayout_4.addWidget(analysisDownButton)
         analysisNameLabel = QtGui.QLabel(name,frame_9)
         analysisNameLabel.setAlignment(Qt.AlignCenter)
-        analysisNameLabel.setMinimumSize(QtCore.QSize(100, 0))
-        analysisNameLabel.setMaximumSize(QtCore.QSize(100, 16777215))
+        analysisNameLabel.setMinimumSize(QtCore.QSize(140, 0))
+        analysisNameLabel.setMaximumSize(QtCore.QSize(140, 16777215))
         analysisNameLabel.setObjectName("analysisNameLabel")
         analysisNameLabel.setFrameShape(QtGui.QFrame.StyledPanel)
         analysisNameLabel.setMaximumSize(QtCore.QSize(70, 16777215))
@@ -767,8 +774,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         self.dicoFrameAnalysis[frame_9] = analysis
         QObject.connect(analysisRmButton,SIGNAL("clicked()"),self.removeAnalysis)
-        QObject.connect(analysisDownButton,SIGNAL("clicked()"),self.moveAnalysisDown)
-        QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
+        #QObject.connect(analysisDownButton,SIGNAL("clicked()"),self.moveAnalysisDown)
+        #QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
         QObject.connect(analysisButton,SIGNAL("clicked()"),self.tryLaunchViewAnalysis)
         QObject.connect(analysisParamsButton,SIGNAL("clicked()"),self.viewAnalysisParameters)
 
@@ -1093,7 +1100,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.ui.browseDataFileButton.setDisabled(True)
         self.ui.browseDataFileButton.hide()
         self.ui.browseDirButton.hide()
-        self.ui.groupBox.show()
+        #self.ui.groupBox.show()
+        self.ui.groupBox_6.show()
+        self.ui.groupBox_7.show()
+        self.ui.groupBox_8.show()
         self.ui.setHistoricalButton.setDisabled(False)
         self.ui.setGeneticButton.setDisabled(False)
 
