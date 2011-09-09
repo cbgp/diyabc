@@ -126,7 +126,7 @@ class Project(baseProject,formProject):
         self.ui.setGeneticButton.setIcon(QIcon("docs/redcross.png"))
 
         self.setTabIcon(0,QIcon("docs/redcross.png"))
-        self.setTabIcon(1,QIcon("/usr/share/pixmaps/baobab.xpm"))
+        self.setTabIcon(1,QIcon("docs/gnome-color-browser.png"))
 
 
         #for i in range(self.ui.tableWidget.columnCount()):
