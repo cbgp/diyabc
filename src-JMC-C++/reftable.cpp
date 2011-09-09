@@ -309,12 +309,13 @@ public:
 */
     int cal_varstat() {
         int nrecutil,iscen,nsOK,bidon,i,step;
-        double *sx,*sx2,x,an;
+        double *sx,*sx2,x,an,nr;
         bool scenOK;
         //cout <<"debut de cal_varstat\n";
         enregC enr;
         nrecutil=100000;if (nrecutil>this->nrec) nrecutil=this->nrec;
-        an=1.0*(double)nrecutil;
+        nr=0;for (int i=0;i<nscenchoisi;i++) nr+=nrecscen[this->scenchoisi[i]-1];
+        if (nrecutil>nr) nrecutil=nr;
         sx  = new double[this->nstat];
         sx2 = new double[this->nstat];
         var_stat = new double[this->nstat];
@@ -342,15 +343,19 @@ public:
             }
             //if ((i % step)==0) {cout<<"\rcal_varstat : "<<i/step<<"%";fflush(stdout);}
         }
+            cout<<i<<"   "<<nrecutil<<"\n";
+        if (i<nrecutil) nrecutil=i;
+            cout<<i<<"   "<<nrecutil<<"\n";
         this->closefile();
         nsOK=0;
+        an=1.0*(double)nrecutil;
         for (int j=0;j<this->nstat;j++) {
             this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
             if (this->var_stat[j]>0) nsOK++;
-            //cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
+            cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
         }
         delete []sx;delete []sx2;
-        //cout<<"\nnstatOK = "<<nsOK<<"\n";
+        cout<<"\nnstatOK = "<<nsOK<<"\n";
         return nsOK;
     }
  

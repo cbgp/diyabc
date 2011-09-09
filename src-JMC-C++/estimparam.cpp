@@ -609,10 +609,12 @@ parstatC *parstat;
 * lit les paramètres des enregistrements simulés pour l'établissement des distributions a priori'
 */
     void lisimpar(int nsel){
-      int bidon,iscen,m,k,kk,qq;
+      int bidon,iscen,m,k,kk,qq,nr;
         bool scenOK;
         double pmut;
         if (nsimpar>rt.nrec) nsimpar=rt.nrec;
+        nr=0;for (int i=0;i<rt.nscenchoisi;i++) nr+=rt.nrecscen[rt.scenchoisi[i]-1];
+        if (nsimpar>nr) nsimpar=nr;
         simpar = new double*[nsimpar];
         enregC enr;
         enr.stat = new float[rt.nstat];
