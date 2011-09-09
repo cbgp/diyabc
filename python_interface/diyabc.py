@@ -86,6 +86,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         # about window
         self.aboutWindow = uic.loadUi("uis/about.ui")
         self.aboutWindow.parent = self
+        self.aboutWindow.setWindowTitle('About DIYABC')
         ui = self.aboutWindow
         txt = str(self.aboutWindow.infoLabel.text())
         txt = txt.replace('vvv',VERSION).replace('ddd','08/09/2011')
@@ -99,18 +100,18 @@ class Diyabc(formDiyabc,baseDiyabc):
         # gestion du menu
         file_menu = self.ui.menubar.addMenu("&File")
         self.file_menu = file_menu
-        file_menu.addAction(QIcon("docs/folder-new.png"),"&New project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
-        file_menu.addAction(QIcon("docs/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
-        self.saveProjActionMenu = file_menu.addAction(QIcon("docs/document-save.png"),"&Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
-        self.deleteProjActionMenu = file_menu.addAction(QIcon("docs/edit-delete.png"),"&Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
-        self.cloneProjActionMenu = file_menu.addAction(QIcon("docs/tab-duplicate.png"),"&Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
-        self.closeProjActionMenu = file_menu.addAction(QIcon("docs/project-close.png"),"C&lose current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
+        file_menu.addAction(QIcon("docs/icons/folder-new.png"),"&New project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
+        file_menu.addAction(QIcon("docs/icons/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
+        self.saveProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save.png"),"&Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
+        self.deleteProjActionMenu = file_menu.addAction(QIcon("docs/icons/edit-delete.png"),"&Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
+        self.cloneProjActionMenu = file_menu.addAction(QIcon("docs/icons/tab-duplicate.png"),"&Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
+        self.closeProjActionMenu = file_menu.addAction(QIcon("docs/icons/project-close.png"),"C&lose current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)
         self.saveProjActionMenu.setDisabled(True)
         self.deleteProjActionMenu.setDisabled(True)
         self.cloneProjActionMenu.setDisabled(True)
-        file_menu.addAction(QIcon("docs/redhat-system_settings.png"),"&Settings",self.setPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
-        action = file_menu.addAction(QIcon("docs/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
+        file_menu.addAction(QIcon("docs/icons/redhat-system_settings.png"),"&Settings",self.setPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
+        action = file_menu.addAction(QIcon("docs/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
         #style_menu = self.ui.menubar.addMenu("Style")
@@ -120,14 +121,14 @@ class Diyabc(formDiyabc,baseDiyabc):
         #    self.style_actions[stxt].setActionGroup(action_group)
         #    self.style_actions[stxt].setCheckable(True)
         navigate_menu = self.ui.menubar.addMenu("&Navigate")
-        self.prevProjectActionMenu = navigate_menu.addAction(QIcon("docs/arrow-up.png"),"&Previous project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
-        self.nextProjectActionMenu = navigate_menu.addAction(QIcon("docs/arrow-down.png"),"&Next project",self.nextProject,QKeySequence(Qt.CTRL + Qt.Key_PageDown))
+        self.prevProjectActionMenu = navigate_menu.addAction(QIcon("docs/icons/arrow-up.png"),"&Previous project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
+        self.nextProjectActionMenu = navigate_menu.addAction(QIcon("docs/icons/arrow-down.png"),"&Next project",self.nextProject,QKeySequence(Qt.CTRL + Qt.Key_PageDown))
         self.nextProjectActionMenu.setDisabled(True)
         self.prevProjectActionMenu.setDisabled(True)
         help_menu = self.ui.menubar.addMenu("&Help")
         #help_menu.addAction("&About DIYABC",self.switchToWelcomeStack)
-        help_menu.addAction(QIcon("docs/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
-        help_menu.addAction(QIcon("docs/gnome-mime-text.png"),"&Show logfile",self.showLogFile)
+        help_menu.addAction(QIcon("docs/icons/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
+        help_menu.addAction(QIcon("docs/icons/gnome-mime-text.png"),"&Show logfile",self.showLogFile)
 	
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 

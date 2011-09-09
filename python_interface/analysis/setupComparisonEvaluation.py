@@ -49,6 +49,7 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
         else:
             self.ui.notdsEdit.hide()
             self.ui.notdsLabel.hide()
+            self.ui.candidateLabel.hide()
 
         self.ui.cnosdEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
         self.ui.deEdit.setText("500")

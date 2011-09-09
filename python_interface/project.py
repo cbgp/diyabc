@@ -122,11 +122,11 @@ class Project(baseProject,formProject):
         QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirCreation)
 
         # inserer image
-        self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
-        self.ui.setGeneticButton.setIcon(QIcon("docs/redcross.png"))
+        self.ui.setHistoricalButton.setIcon(QIcon("docs/icons/redcross.png"))
+        self.ui.setGeneticButton.setIcon(QIcon("docs/icons/redcross.png"))
 
-        self.setTabIcon(0,QIcon("docs/redcross.png"))
-        self.setTabIcon(1,QIcon("docs/gnome-color-browser.png"))
+        self.setTabIcon(0,QIcon("docs/icons/redcross.png"))
+        self.setTabIcon(1,QIcon("docs/icons/gnome-color-browser.png"))
 
 
         #for i in range(self.ui.tableWidget.columnCount()):
@@ -1317,9 +1317,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.hist_state_valid = valid
         self.verifyRefTableValid()
         if valid:
-            self.ui.setHistoricalButton.setIcon(QIcon("docs/ok.png"))
+            self.ui.setHistoricalButton.setIcon(QIcon("docs/icons/ok.png"))
         else:
-            self.ui.setHistoricalButton.setIcon(QIcon("docs/redcross.png"))
+            self.ui.setHistoricalButton.setIcon(QIcon("docs/icons/redcross.png"))
 
     def setGenValid(self,valid):
         """ met à jour l'état des genetic data
@@ -1328,18 +1328,18 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.gen_state_valid = valid
         self.verifyRefTableValid()
         if valid:
-            self.ui.setGeneticButton.setIcon(QIcon("docs/ok.png"))
+            self.ui.setGeneticButton.setIcon(QIcon("docs/icons/ok.png"))
         else:
-            self.ui.setGeneticButton.setIcon(QIcon("docs/redcross.png"))
+            self.ui.setGeneticButton.setIcon(QIcon("docs/icons/redcross.png"))
 
     def verifyRefTableValid(self):
         """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table
         """
         if self.gen_state_valid and self.hist_state_valid:
-            self.setTabIcon(0,QIcon("docs/ok.png"))
+            self.setTabIcon(0,QIcon("docs/icons/ok.png"))
             self.ui.runReftableButton.setDisabled(False)
         else:
-            self.setTabIcon(0,QIcon("docs/redcross.png"))
+            self.setTabIcon(0,QIcon("docs/icons/redcross.png"))
             self.ui.runReftableButton.setDisabled(True)
 
     def lock(self):
