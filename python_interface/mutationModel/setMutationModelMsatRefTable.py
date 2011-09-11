@@ -34,6 +34,12 @@ class SetMutationModelMsatRefTable(SetMutationModelMsat):
             self.exit()
             self.parent.setMutationValid_dico[self.box_group] = True
             self.parent.writeGeneticConfFromGui()
+            # on met le bouton en police normale pour signaler qu'il est valide
+            set_mut_button = self.box_group.findChild(QPushButton,"setMutationButton")
+            fontt = set_mut_button.font()
+            fontt.setBold(False)
+            fontt.setPointSize(9)
+            set_mut_button.setFont(fontt)
 
 
     def getParamTableHeader(self):

@@ -170,4 +170,17 @@ class SetSummaryStatistics(QFrame):
 
     def validate(self):
         self.exit()
+        if self.box_group != None:
+            (nstat,stat_txt) = self.getSumConf()
+            # on met le bouton en police normale pour signaler qu'il est valide
+            set_sum_button = self.box_group.findChild(QPushButton,"setSumButton")
+            fontt = set_sum_button.font()
+            if nstat > 0:
+                fontt.setBold(False)
+                fontt.setPointSize(9)
+            else:
+                fontt.setBold(True)
+                fontt.setPointSize(10)
+            set_sum_button.setFont(fontt)
+
 

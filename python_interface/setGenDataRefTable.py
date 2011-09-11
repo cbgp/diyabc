@@ -58,6 +58,15 @@ class SetGeneticDataRefTable(SetGeneticData):
         self.setSumSeq_dico[groupBox] = frameSumSeq
         frameSumSeq.hide()
 
+        # on met les boutons en gras pour signaler qu'il faut les valider/définir
+        set_mut_button = groupBox.findChild(QPushButton,"setMutationButton")
+        set_sum_button = groupBox.findChild(QPushButton,"setSumButton")
+        fontt = set_mut_button.font()
+        fontt.setBold(True)
+        fontt.setPointSize(fontt.pointSize() + 1)
+        set_mut_button.setFont(fontt)
+        set_sum_button.setFont(fontt)
+
         return groupBox
 
     def setSum(self,box=None):

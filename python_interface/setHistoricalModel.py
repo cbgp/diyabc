@@ -186,6 +186,11 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         """ déclenché par une modification dans le contenu d'un des scenarios
         """
         self.scenarios_modified_since_define_priors = True
+        fontt = self.ui.defPrButton.font()
+        fontt.setBold(True)
+        fontt.setPointSize(fontt.pointSize() + 1)
+        self.ui.defPrButton.setText("Define\npriors")
+        self.ui.defPrButton.setFont(fontt)
     
     def rmSc(self):
         """ Suppression d'un scenario dans l'affichage et dans la liste locale
@@ -339,6 +344,11 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         if chk_list != None:
             self.putParameters(chk_list)
             self.scenarios_modified_since_define_priors = False
+            fontt = self.ui.defPrButton.font()
+            fontt.setBold(False)
+            fontt.setPointSize(fontt.pointSize() - 1)
+            self.ui.defPrButton.setFont(fontt)
+            self.ui.defPrButton.setText("Define priors")
             # dessin des aperçus
             self.drawPreviews()
         else:
@@ -768,7 +778,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                     return True
                 else:
                     if not silent:
-                        output.notify(self,"Error","The scenarios were modified since the last 'Define priors'")
+                        output.notify(self,"Error","The scenarios were modified since the last 'Define priors'\nPriors must be defined in order to validate the historical model")
             else:
                 return False
         else:

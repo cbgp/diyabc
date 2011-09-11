@@ -222,7 +222,12 @@ class Diyabc(formDiyabc,baseDiyabc):
                             os.remove("%s/.DIYABC_lock"%dir)
                     if proj_ready_to_be_opened:
                         proj_to_open = Project(project_name,dir,self)
-                        proj_to_open.loadFromDir()
+                        try:
+                            proj_to_open.loadFromDir()
+                        except Exception,e:
+                            output.notify(self,"opening error","An error occured during the opening of the project\
+ %s :\n\n%s\n\nThe cause may be a dirty user handmade modification of the project files or a bug"%(dir,e))
+                            return
                         self.project_list.append(proj_to_open)
                         self.ui.tabWidget.addTab(proj_to_open,proj_to_open.name)
                         self.ui.tabWidget.setCurrentWidget(proj_to_open)
