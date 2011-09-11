@@ -546,8 +546,16 @@ if __name__ == "__main__":
     # pour le dragNdrop des dossier projet
     myapp.setAcceptDrops(True)
     # pour les logs dans un fichier et sur le terminal
-    myOut = output.TeeLogger("diyabc.log","a",myapp,True)
-    myErr = output.TeeLogger("diyabc.log","a",myapp,False)
+    if not os.path.exists(os.path.expanduser("~/.diyabc/")):
+        os.mkdir(os.path.expanduser("~/.diyabc/"))
+    if not os.path.exists(os.path.expanduser("~/.diyabc/logs/")):
+        os.mkdir(os.path.expanduser("~/.diyabc/logs/"))
+    dd = datetime.now()
+    logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%s.log"%(dd.day,dd.month,dd.year,os.getpid()))
+    # chaque TeeLogger remplace une sortie et écrit dans 
+    # le fichier qu'on lui donne
+    myOut = output.TeeLogger(logfile,"a",myapp,True)
+    myErr = output.TeeLogger(logfile,"a",myapp,False)
     sys.stdout = myOut
     sys.stderr = myErr
     log(1,"DIYABC launched")

@@ -7,6 +7,7 @@ from PyQt4 import QtGui,uic
 #from uis.preferences_ui import Ui_MainWindow
 import output
 from output import log
+from datetime import datetime 
 
 formLogFile,baseLogFile = uic.loadUiType("uis/showLogFile.ui")
 
@@ -16,6 +17,8 @@ class ShowLogFile(formLogFile,baseLogFile):
     def __init__(self,parent=None):
         super(ShowLogFile,self).__init__(parent)
         self.parent = parent
+        dd = datetime.now()
+        self.logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%s.log"%(dd.day,dd.month,dd.year,os.getpid()))
         self.createWidgets()
         self.updateLogFile()
 
@@ -36,7 +39,7 @@ class ShowLogFile(formLogFile,baseLogFile):
                 fname = "%s.log"%fname
             sf=open(fname,'w')
 
-            lf=open("diyabc.log",'r')
+            lf=open(self.logfile,'r')
             text=lf.read()
             lf.close()
 
@@ -45,8 +48,8 @@ class ShowLogFile(formLogFile,baseLogFile):
 
 
     def updateLogFile(self):
-        if os.path.exists("diyabc.log"):
-            f=open("diyabc.log",'r')
+        if os.path.exists(self.logfile):
+            f=open(self.logfile,'r')
             text=f.read()
             f.close()
             self.ui.logText.setPlainText(text)
