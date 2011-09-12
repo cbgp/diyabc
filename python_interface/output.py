@@ -67,13 +67,15 @@ class TeeLogger(object):
             sys.stderr = self.out
         #self.file.close()
     def write(self, data):
+        data = data.replace(u'\xb5','u')
         data_without_color = data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,'')
         # on bouge le curseur au début de la dernière ligne
         self.app.showLogFile_win.logText.moveCursor(QTextCursor.End)
         self.app.showLogFile_win.logText.moveCursor(QTextCursor.StartOfLine)
         self.app.showLogFile_win.logText.appendPlainText("%s"%data_without_color.strip())
         ftmp = open(self.filename,'a')
-        ftmp.write(data_without_color.replace(u'\xb5','u'))
+        ftmpdata = data_without_color
+        ftmp.write(ftmpdata)
         #ftmp.file.flush()
         ftmp.close()
         self.out.write(data)

@@ -54,6 +54,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #self.defaultMMMValues = self.preferences.getDicoMMM()
 
         self.showLogFile_win = ShowLogFile(self)
+        self.showLogFile_win.setWindowTitle("Logfile viewer")
 
         self.createWidgets()
         self.setWindowIcon(QIcon("docs/accueil_pictures/coccicon.png"))
