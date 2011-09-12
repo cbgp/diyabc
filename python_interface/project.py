@@ -964,6 +964,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 aDirName = "bias_%s"%aid
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias.txt"%(self.dir,aDirName))
+                log(3,"Copy of '%s/%s_bias.txt' to '%s/analysis/%s/bias.txt' done"%(self.dir,aid,self.dir,aDirName))
                 #print "déplacement de %s/%s_bias.txt vers %s/analysis/%s/bias.txt"%(self.dir,aid,self.dir,aDirName)
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
         elif atype == "evaluate":

@@ -73,7 +73,7 @@ class TeeLogger(object):
         self.app.showLogFile_win.logText.moveCursor(QTextCursor.StartOfLine)
         self.app.showLogFile_win.logText.appendPlainText("%s"%data_without_color.strip())
         ftmp = open(self.filename,'a')
-        ftmp.write(data_without_color)
+        ftmp.write(data_without_color.replace(u'\xb5','u'))
         #ftmp.file.flush()
         ftmp.close()
         self.out.write(data)

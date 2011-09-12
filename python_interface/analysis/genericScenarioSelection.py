@@ -72,10 +72,15 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
     def putChoices(self):
         """ met les choix de scenario en place
         """
+        bg = QButtonGroup(self)
         left = True
         for i in range(self.nb_sc):
             num = i+1
-            check = QCheckBox("Scenario %s"%num,self)
+            if self.analysis.category == "modelChecking":
+                check = QRadioButton("Scenario %s"%num,self)
+                bg.addButton(check)
+            else:
+                check = QCheckBox("Scenario %s"%num,self)
             if self.analysis.category == "compare":
                 check.setChecked(True)
             self.checklist.append(check)
@@ -96,9 +101,6 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
             self.checklist[1].setChecked(True)
             self.checklist[1].setDisabled(True)
             self.next_widget.ui.redefButton.hide()
-
-
-            
 
     def exit(self):
         ## reactivation des onglets
