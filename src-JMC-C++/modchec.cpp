@@ -273,6 +273,7 @@ double **ssphistar,**ssref;
         cout<<"debut domodchec  options : "<<options<<"\n";
         opt=char2string(options);
         ss = splitwords(opt,";",&ns);
+        numtransf=3;
         for (int i=0;i<ns;i++) { cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
