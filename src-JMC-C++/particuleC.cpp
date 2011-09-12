@@ -991,7 +991,7 @@ struct ParticleC
 		for (gr=1;gr<=this->ngr;gr++) {
 		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"\n";
 		    if (this->grouplist[gr].type==0) {  //microsat
-		        if (this->grouplist[gr].mutmoy<0) {
+		        if ((this->grouplist[gr].mutmoy<0)and(usepriormut)) {
 			    this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
                             //this->grouplist[gr].priormutmoy.ecris();
 			    if (not this->grouplist[gr].priormutmoy.constant) {
@@ -1000,7 +1000,7 @@ struct ParticleC
 			    }
 			}
 			//cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"\n";fflush(stdin);
-			if (this->grouplist[gr].Pmoy<0) {
+			if ((this->grouplist[gr].Pmoy<0)and(usepriormut)) {
 			    this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
 			    if (not this->grouplist[gr].priorPmoy.constant) {
 			      //cout<<"prior pmoy non constant ?\n";  
@@ -1009,7 +1009,7 @@ struct ParticleC
 			    }
 			}
 			//cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"\n";fflush(stdin);
-			if (this->grouplist[gr].snimoy<0) {
+			if ((this->grouplist[gr].snimoy<0)and(usepriormut)) {
 			    this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
 			    if (not this->grouplist[gr].priorsnimoy.constant) {
 			        this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
@@ -1019,7 +1019,7 @@ struct ParticleC
 			//cout<<"snimoy="<<this->grouplist[gr].snimoy<<"\n";fflush(stdin);
 		    }
 		    if (this->grouplist[gr].type==1) {  //sequence
-		        if (this->grouplist[gr].musmoy<0) {
+		        if ((this->grouplist[gr].musmoy<0)and(usepriormut)) {
 			    this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
 			    if (not this->grouplist[gr].priormusmoy.constant) {
 			        this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
@@ -1028,7 +1028,7 @@ struct ParticleC
 			}
 			//cout<<"musmoy="<<this->grouplist[gr].musmoy<<"\n";fflush(stdin);
 			if (this->grouplist [gr].mutmod>0){
-			    if (this->grouplist[gr].k1moy<0) { 
+			    if ((this->grouplist[gr].k1moy<0)and(usepriormut)) { 
 			        this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
 			        if (not this->grouplist[gr].priork1moy.constant) {
 			            this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
@@ -1038,7 +1038,7 @@ struct ParticleC
 			//    cout<<"k1moy="<<this->grouplist[gr].k1moy<<"\n";fflush(stdin);
 			}
 			if (this->grouplist [gr].mutmod>2){
-			    if (this->grouplist[gr].k2moy<0) {
+			    if ((this->grouplist[gr].k2moy<0)and(usepriormut)) {
 			        this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
 			        if (not this->grouplist[gr].priork2moy.constant) {
 			            this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;

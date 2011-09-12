@@ -519,10 +519,12 @@ using namespace std;
             enreg2[p].paramvv = new double[nparamcom+nparcompo];
             enreg2[p].numscen = rt.scenchoisi[0];
         }
+        cout<<"courantfilename="<<courantfilename<<"\n";
         ifstream file(courantfilename, ios::in);
         getline(file,bidon);
         for (int p=0;p<ntest;p++) {
           getline(file,bidon);
+          cout<<"bidon="<<bidon<<"\n";
           cout<<bidon<<"\n";
           ss = splitwords(bidon," ",&ns);
           cout<<"ns="<<ns<<"\n";
