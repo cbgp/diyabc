@@ -89,12 +89,25 @@ class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParamete
                     self.addRow("Number of requested test data sets",e.split(':')[1])
 
         #self.addRow("computation parameters",self.analysis.computationParameters)
+        c = self.analysis.category
+        if c == "estimate":
+            option = "-e"
+        elif c == "modelChecking":
+            option = "-j"
+        elif c == "bias":
+            option = "-b"
+        elif c == "compare":
+            option = "-c"
+        elif c == "evaluate":
+            option = "-f"
+        elif c == "pre-ev":
+            option = "-d"
 
 
         executablePath = self.parent.parent.preferences_win.getExecutablePath()
         nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
         params = self.analysis.computationParameters
-        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
+        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, option, '"%s"'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
         command_line = " ".join(cmd_args_list)
         self.addRow("executed command line",command_line)
         self.ui.tableWidget.setRowHeight(self.ui.tableWidget.rowCount()-1,execRowSize)
