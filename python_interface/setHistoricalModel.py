@@ -188,8 +188,9 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         self.scenarios_modified_since_define_priors = True
         fontt = self.ui.defPrButton.font()
         fontt.setBold(True)
-        fontt.setPointSize(fontt.pointSize() + 1)
-        self.ui.defPrButton.setText("Define\npriors")
+        self.ui.defPrButton.setStyleSheet("background-color: #EFB1B3")
+        #fontt.setPointSize(fontt.pointSize() + 1)
+        #self.ui.defPrButton.setText("Define\npriors")
         self.ui.defPrButton.setFont(fontt)
     
     def rmSc(self):
@@ -346,8 +347,9 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             self.scenarios_modified_since_define_priors = False
             fontt = self.ui.defPrButton.font()
             fontt.setBold(False)
-            fontt.setPointSize(fontt.pointSize() - 1)
+            #fontt.setPointSize(fontt.pointSize() - 1)
             self.ui.defPrButton.setFont(fontt)
+            self.ui.defPrButton.setStyleSheet("border-color: #000000")
             self.ui.defPrButton.setText("Define priors")
             # dessin des aperçus
             self.drawPreviews()
