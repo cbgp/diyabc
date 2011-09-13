@@ -177,10 +177,10 @@ class SetSummaryStatistics(QFrame):
             fontt = set_sum_button.font()
             if nstat > 0:
                 fontt.setBold(False)
-                fontt.setPointSize(9)
+                set_sum_button.setStyleSheet("border-color: #000000")
             else:
                 fontt.setBold(True)
-                fontt.setPointSize(10)
+                set_sum_button.setStyleSheet("background-color: #EFB1B3")
             set_sum_button.setFont(fontt)
 
 

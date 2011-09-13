@@ -1166,19 +1166,30 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
             for e in self.gen_data_win.setSum_dico[g].findChildren(QLineEdit):
                 e.setDisabled(yesno)
+            for e in self.gen_data_win.setSum_dico[g].findChildren(QPushButton):
+                e.setDisabled(yesno)
             for e in self.gen_data_win.setSum_dico[g].findChildren(QCheckBox):
                 e.setDisabled(yesno)
             self.gen_data_win.setSum_dico[g].ui.clearButton.setDisabled(yesno)
             self.gen_data_win.setSum_dico[g].ui.exitButton.setDisabled(yesno)
+            self.gen_data_win.setSum_dico[g].ui.okButton.setDisabled(False)
             self.gen_data_win.setSum_dico[g].ui.addAdmixButton.setDisabled(yesno)
 
             for e in self.gen_data_win.setSumSeq_dico[g].findChildren(QLineEdit):
+                e.setDisabled(yesno)
+            for e in self.gen_data_win.setSumSeq_dico[g].findChildren(QPushButton):
                 e.setDisabled(yesno)
             for e in self.gen_data_win.setSumSeq_dico[g].findChildren(QCheckBox):
                 e.setDisabled(yesno)
             self.gen_data_win.setSumSeq_dico[g].ui.clearButton.setDisabled(yesno)
             self.gen_data_win.setSumSeq_dico[g].ui.exitButton.setDisabled(yesno)
+            self.gen_data_win.setSumSeq_dico[g].ui.okButton.setDisabled(False)
             self.gen_data_win.setSumSeq_dico[g].ui.addAdmixButton.setDisabled(yesno)
+
+        if yesno:
+            self.gen_data_win.findChild(QPushButton,"okButton").setText("OK")
+        else:
+            self.gen_data_win.findChild(QPushButton,"okButton").setText("VALIDATE AND SAVE")
 
     def freezeHistModel(self,yesno=True):
         """ empêche la modification du modèle historique tout en laissant
@@ -1204,6 +1215,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 e.setDisabled(yesno)
         for e in self.hist_model_win.findChildren(QPlainTextEdit):
             e.setReadOnly(yesno)
+
+        if yesno:
+            self.hist_model_win.findChild(QPushButton,"okButton").setText("OK")
+        else:
+            self.hist_model_win.findChild(QPushButton,"okButton").setText("VALIDATE AND SAVE")
 
     def readRefTableSize(self):
         """ lit la table de référence binaire pour en extraire la taille et la retourner

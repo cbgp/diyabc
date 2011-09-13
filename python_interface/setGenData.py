@@ -326,9 +326,10 @@ class SetGeneticData(formGenData,baseGenData):
             # on remet en gras les boutons de mutation model et sum stats
             set_mut_button = box.findChild(QPushButton,"setMutationButton")
             set_sum_button = box.findChild(QPushButton,"setSumButton")
+            set_mut_button.setStyleSheet("background-color: #EFB1B3")
+            set_sum_button.setStyleSheet("background-color: #EFB1B3")
             fontt = set_mut_button.font()
             fontt.setBold(True)
-            fontt.setPointSize(10)
             set_mut_button.setFont(fontt)
             set_sum_button.setFont(fontt)
 

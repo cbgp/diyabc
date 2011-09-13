@@ -25,13 +25,29 @@ class SetGeneticDataRefTable(SetGeneticData):
 
     def majProjectGui(self,m=None,s=None,g=None,ss=None):
         if m != None:
-            self.parent.ui.nbMicrosatLabel.setText("%s microsatellite loci"%m)
+            if int(m) > 1:
+                plur='loci'
+            else:
+                plur='locus'
+            self.parent.ui.nbMicrosatLabel.setText("%s microsatellite %s"%(m,plur))
         if s != None:
-            self.parent.ui.nbSequencesLabel.setText("%s DNA sequence loci"%s)
+            if int(s) > 1:
+                plur='loci'
+            else:
+                plur='locus'
+            self.parent.ui.nbSequencesLabel.setText("%s DNA sequence %s"%(s,plur))
         if g != None:
-            self.parent.ui.nbGroupLabel.setText("%s locus groups"%g)
+            if int(g) > 1:
+                plur='s'
+            else:
+                plur=''
+            self.parent.ui.nbGroupLabel.setText("%s locus group%s"%(g,plur))
         if ss != None:
-            self.parent.ui.nbSumStatsLabel.setText("%s summary statistics"%ss)
+            if int(ss) > 1:
+                plur='s'
+            else:
+                plur=''
+            self.parent.ui.nbSumStatsLabel.setText("%s summary statistic%s"%(ss,plur))
 
 
     def addGroup(self):
@@ -62,8 +78,10 @@ class SetGeneticDataRefTable(SetGeneticData):
         set_mut_button = groupBox.findChild(QPushButton,"setMutationButton")
         set_sum_button = groupBox.findChild(QPushButton,"setSumButton")
         fontt = set_mut_button.font()
+        set_mut_button.setStyleSheet("background-color: #EFB1B3")
+        set_sum_button.setStyleSheet("background-color: #EFB1B3")
         fontt.setBold(True)
-        fontt.setPointSize(fontt.pointSize() + 1)
+        #fontt.setPointSize(fontt.pointSize() + 1)
         set_mut_button.setFont(fontt)
         set_sum_button.setFont(fontt)
 
