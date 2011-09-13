@@ -699,7 +699,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame_9.setMaximumSize(QtCore.QSize(9999, 32))
         horizontalLayout_4 = QtGui.QHBoxLayout(frame_9)
         horizontalLayout_4.setObjectName("horizontalLayout_4")
-        analysisRmButton = QtGui.QPushButton("remove",frame_9)
+        analysisRmButton = QtGui.QPushButton("Remove",frame_9)
         analysisRmButton.setMinimumSize(QtCore.QSize(70, 0))
         analysisRmButton.setMaximumSize(QtCore.QSize(70, 16777215))
         analysisRmButton.setObjectName("analysisRmButton")
@@ -759,15 +759,15 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         analysisStatusBar.setObjectName("analysisStatusBar")
         horizontalLayout_4.addWidget(analysisStatusBar)
         if status == "finished":
-            buttonLabel = "view"
+            buttonLabel = "View results"
             analysisStatusBar.setValue(100)
         else:
-            buttonLabel = "launch"
+            buttonLabel = "Launch"
             analysisStatusBar.setValue(0)
         analysisButton = QtGui.QPushButton(buttonLabel,frame_9)
         analysisButton.setObjectName("analysisButton")
-        analysisButton.setMinimumSize(QtCore.QSize(80, 0))
-        analysisButton.setMaximumSize(QtCore.QSize(80, 16777215))
+        analysisButton.setMinimumSize(QtCore.QSize(90, 0))
+        analysisButton.setMaximumSize(QtCore.QSize(90, 16777215))
         horizontalLayout_4.addWidget(analysisButton)
         horizontalLayout_4.setContentsMargins(-1, 1, -1, 1)
         self.ui.verticalLayout_9.addWidget(frame_9)
