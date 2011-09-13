@@ -3,6 +3,8 @@
 
 # variable qui sera changée par le générateur d'exécutable
 VERSION='development version'
+from datetime import datetime
+VERSION_DATE='01/01/1970'
 
 #import dataImages
 import shutil
@@ -24,7 +26,6 @@ from showLogFile import ShowLogFile
 from documentator import Documentator
 import output
 from output import log
-from datetime import datetime
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
@@ -87,8 +88,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.aboutWindow.parent = self
         self.aboutWindow.setWindowTitle('About DIYABC')
         ui = self.aboutWindow
+        ui.logoLabel.setPixmap(QPixmap("docs/accueil_pictures/coccicon.png"))
         txt = str(self.aboutWindow.infoLabel.text())
-        txt = txt.replace('vvv',VERSION).replace('ddd','08/09/2011')
+        txt = txt.replace('vvv',VERSION).replace('ddd',VERSION_DATE)
         self.aboutWindow.infoLabel.setText(txt)
         QObject.connect(ui.okButton,SIGNAL("clicked()"),self.aboutWindow.close)
 
