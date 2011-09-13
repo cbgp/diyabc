@@ -106,12 +106,12 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
         self.ui.label_19.hide()
         self.ui.label_9.hide()
         self.ui.label_29.hide()
-        self.ui.label_35.hide()
+        #self.ui.label_35.hide()
         self.ui.clearButton.hide()
 
-        self.ui.ilmrLabel.setText("%s\n(shape of the gamma)"%self.ui.ilmrLabel.text())
-        self.ui.ilc1Label.setText("%s\n(shape of the gamma)"%self.ui.ilc1Label.text())
-        self.ui.ilc2Label.setText("%s\n(shape of the gamma)"%self.ui.ilc2Label.text())
+        self.ui.ilmrLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilmrLabel.text())
+        self.ui.ilc1Label.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilc1Label.text())
+        self.ui.ilc2Label.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilc2Label.text())
         self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0)) 
         self.ui.ilc1Label.setMinimumSize(QtCore.QSize(150,0))
         self.ui.ilc2Label.setMinimumSize(QtCore.QSize(150,0))
@@ -247,16 +247,16 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
         try:
             if self.hasToBeVerified(self.ui.mmrMinEdit) and float(self.ui.mmrMinEdit.text()) <= 0:
                 raise Exception("Mean mutation rate should be positive")
-            elif self.hasToBeVerified(self.ui.ilmrMinEdit) and float(self.ui.ilmrMinEdit.text()) <= 0:
-                raise Exception("Individuals locus mutation rate should be positive")
+            elif self.hasToBeVerified(self.ui.ilmrMinEdit) and float(self.ui.ilmrMinEdit.text()) < 0:
+                raise Exception("Individuals locus mutation rate should not be negative")
             elif self.hasToBeVerified(self.ui.mc1MinEdit) and float(self.ui.mc1MinEdit.text()) <= 0:
                 raise Exception("Mean coefficient k_C/T should be positive")
-            elif self.hasToBeVerified(self.ui.ilc1MinEdit) and float(self.ui.ilc1MinEdit.text()) <= 0:
-                raise Exception("Individuals locus coefficient k_C/T should be positive")
+            elif self.hasToBeVerified(self.ui.ilc1MinEdit) and float(self.ui.ilc1MinEdit.text()) < 0:
+                raise Exception("Individuals locus coefficient k_C/T should not be negative")
             elif self.hasToBeVerified(self.ui.mc2MinEdit) and float(self.ui.mc2MinEdit.text()) <= 0:
                 raise Exception("Mean coefficient k_A/G should be positive")
-            elif self.hasToBeVerified(self.ui.ilc2MinEdit) and float(self.ui.ilc2MinEdit.text()) <= 0:
-                raise Exception("Individuals locus coefficient k_A/G should be positive")
+            elif self.hasToBeVerified(self.ui.ilc2MinEdit) and float(self.ui.ilc2MinEdit.text()) < 0:
+                raise Exception("Individuals locus coefficient k_A/G should not be negative")
             for field in self.constraints_dico.keys():
                 #print self.field_names_dico[field]
                 if self.hasToBeVerified(field):

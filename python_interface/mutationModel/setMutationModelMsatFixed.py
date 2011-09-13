@@ -96,8 +96,8 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
         self.ui.ilmrLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilmrLabel.text())
         self.ui.mcpLabel.setText("%s\n(2)"%self.ui.mcpLabel.text())
         self.ui.msrLabel.setText("%s (3)"%self.ui.msrLabel.text())
-        self.ui.ilcpLabel.setText("%s\n(shape of the gamma)"%self.ui.ilcpLabel.text())
-        self.ui.ilsrLabel.setText("%s\n(shape of the gamma)"%self.ui.ilsrLabel.text())
+        self.ui.ilcpLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilcpLabel.text())
+        self.ui.ilsrLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilsrLabel.text())
         self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0)) 
         self.ui.ilcpLabel.setMinimumSize(QtCore.QSize(150,0))
         self.ui.ilsrLabel.setMinimumSize(QtCore.QSize(150,0))
@@ -189,18 +189,18 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
                 if self.constraints_dico[field][1] == 1:
                     val = float(valtxt)
             # verifs des min et max
-            if float(self.ui.ilsrMinEdit.text()) <= 0:
-                raise Exception("Individuals locus SNI rate should be positive")
-            if float(self.ui.msrMinEdit.text()) <= 0:
-                raise Exception("Mean SNI rate should be positive")
-            if float(self.ui.ilcpMinEdit.text()) <= 0:
-                raise Exception("Individuals locus coefficient P should be positive")
-            if float(self.ui.mcpMinEdit.text()) <= 0:
-                raise Exception("Mean coefficient P should be positive")
+            if float(self.ui.ilsrMinEdit.text()) < 0:
+                raise Exception("Individuals locus SNI rate should not be negative")
+            if float(self.ui.msrMinEdit.text()) < 0:
+                raise Exception("Mean SNI rate should be negative")
+            if float(self.ui.ilcpMinEdit.text()) < 0:
+                raise Exception("Individuals locus coefficient P should not be negative")
+            if float(self.ui.mcpMinEdit.text()) < 0:
+                raise Exception("Mean coefficient P not should be negative")
             if float(self.ui.ilmrMinEdit.text()) <= 0:
                 raise Exception("Individuals locus mutation rate should be positive")
-            if float(self.ui.mmrMinEdit.text()) <= 0:
-                raise Exception("Mean mutation rate should be positive")
+            if float(self.ui.mmrMinEdit.text()) < 0:
+                raise Exception("Mean mutation rate should not be negative")
         except Exception,e:
             QMessageBox.information(self,"Value error","%s"%e)
             return False
