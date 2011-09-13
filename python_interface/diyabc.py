@@ -4,10 +4,8 @@
 # variable qui sera changée par le générateur d'exécutable
 VERSION='development version'
 
-import time
 #import dataImages
 import shutil
-import codecs
 import sys
 import os
 if sys.platform.startswith('win'):

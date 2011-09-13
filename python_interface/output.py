@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtCore, QtGui
+#from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import os,sys
 from datetime import datetime 
-import codecs
+#import codecs
 
 debug = False
 LOG_LEVEL = 3

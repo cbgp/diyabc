@@ -9,7 +9,7 @@ import shutil
 import codecs
 import subprocess
 import tarfile,stat
-from subprocess import Popen, PIPE, STDOUT 
+#from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui,QtCore
@@ -17,10 +17,10 @@ from PyQt4 import uic
 #from uis.project_ui import *
 from setHistoricalModel import SetHistoricalModel
 from setGenDataRefTable import SetGeneticDataRefTable
-from mutationModel.setMutationModelMsat import SetMutationModelMsat
-from mutationModel.setMutationModelSequences import SetMutationModelSequences
-from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
-from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
+#from mutationModel.setMutationModelMsat import SetMutationModelMsat
+#from mutationModel.setMutationModelSequences import SetMutationModelSequences
+#from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
+#from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from analysis.defineNewAnalysis import DefineNewAnalysis
 from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
@@ -177,7 +177,7 @@ class Project(baseProject,formProject):
         """ en fonction du type d'analyse, met en forme les résultats
         """
         log(1,"Asking results of analysis %s, project %s"%(analysis.name,self.dir))
-        anCat = analysis.category
+        #anCat = analysis.category
         dicoCategoryDirName = {
                 "estimate" : "estimation",
                 "compare" : "comparison",
@@ -441,7 +441,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             try:
                 nb_to_gen = int(self.ui.nbSetsReqEdit.text())
             except Exception,e:
-                output.notify(self,"value error","Check the value of required number of data sets")
+                output.notify(self,"value error","Check the value of required number of data sets\n\n%s"%e)
                 return
             self.startUiGenReftable()
             # on demarre le thread local ou cluster
@@ -720,7 +720,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         analysisNameLabel.setMaximumSize(QtCore.QSize(140, 16777215))
         analysisNameLabel.setObjectName("analysisNameLabel")
         analysisNameLabel.setFrameShape(QtGui.QFrame.StyledPanel)
-        analysisNameLabel.setMaximumSize(QtCore.QSize(70, 16777215))
+        #analysisNameLabel.setMaximumSize(QtCore.QSize(70, 16777215))
         horizontalLayout_4.addWidget(analysisNameLabel)
         analysisTypeLabel = QtGui.QLabel(atype,frame_9)
         analysisTypeLabel.setAlignment(Qt.AlignCenter)
@@ -1419,7 +1419,7 @@ class RefTableGenThreadCluster(QThread):
         try:
             s.connect((host, port))
         except error,msg:
-            log(3,"could not contact any server on diyabc://%s:%s"%(host, port))
+            log(3,"could not contact any server on diyabc://%s:%s\n%s"%(host, port,msg))
             return
 
         #size = os.path.getsize(filename)
@@ -1548,7 +1548,7 @@ class RefTableGenThread(QThread):
             if p.poll() != None:
                 fg.close()
                 g = open(outfile,"r")
-                data= g.readlines()
+                #data= g.readlines()
                 #print "data:%s"%data
                 #print "poll:%s"%p.poll()
                 g.close()
@@ -1648,7 +1648,7 @@ class AnalysisThread(QThread):
             log(3,"Call procedure success")
 
             f = open(outfile,"r")
-            data= f.read()
+            #data= f.read()
             f.close()
             self.progress = 100
             self.emit(SIGNAL("analysisProgress"))
@@ -1660,7 +1660,7 @@ class AnalysisThread(QThread):
         log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
         outfile = "%s/%s.out"%(self.parent.dir,self.analysis.category)
         f = open(outfile,"w")
-        p = subprocess.Popen(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
+        p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
         self.processus = p
         #f.close()
         #print "popen ok"
@@ -1677,7 +1677,7 @@ class AnalysisThread(QThread):
             if p.poll() != None:
                 f.close()
                 g = open(outfile,"r")
-                data= g.read()
+                #data= g.read()
                 #print "data:%s"%data
                 #print "poll:%s"%p.poll()
                 g.close()

@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import os
-import codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.setGenData_ui import Ui_Frame
-from mutationModel.setMutationModelMsatRefTable import SetMutationModelMsatRefTable
-from mutationModel.setMutationModelSequences import SetMutationModelSequences
+#from mutationModel.setMutationModelMsatRefTable import SetMutationModelMsatRefTable
+#from mutationModel.setMutationModelSequences import SetMutationModelSequences
 #from setSummaryStatistics import SetSummaryStatistics
 #from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from utils.visualizescenario import *

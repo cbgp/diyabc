@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import os,sys,platform,multiprocessing
+import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui,uic
+from PyQt4 import uic
 #from uis.preferences_ui import Ui_MainWindow
-import output
 from output import log
 from datetime import datetime 
 
@@ -45,6 +44,7 @@ class ShowLogFile(formLogFile,baseLogFile):
 
             sf.write(text)
             sf.close()
+            log(1,"Saving logfile into %s"%fname)
 
 
     def updateLogFile(self):

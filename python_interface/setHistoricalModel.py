@@ -8,8 +8,7 @@ from PyQt4 import uic
 #from uis.setHistFrame_ui import Ui_Frame
 from drawScenario import DrawScenario
 from utils.visualizescenario import *
-import utils.history 
-from utils.history import IOScreenError
+from utils.history import *
 from set_condition import SetCondition
 import output
 
@@ -441,7 +440,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         """ verifie un seul scenario et construit son tree pour dessiner les previews
         """
         dico_sc_infos = None
-        scChecker = history.Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
+        scChecker = Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
         try:
             scChecker.checkread(sc.strip().split('\n'),self.parent.data)
             scChecker.checklogic()
@@ -471,7 +470,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         nb_scenarios_invalides = 0
         self.scenarios_info_list = []
         for num,sc in enumerate(sc_txt_list):
-            scChecker = history.Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
+            scChecker = Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
             try:
                 #print self.parent.data
                 scChecker.checkread(sc.strip().split('\n'),self.parent.data)
@@ -519,7 +518,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         nb_scenarios_invalides = 0
         self.scenarios_info_list = []
         for num,sc in enumerate(sc_txt_list):
-            scChecker = history.Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
+            scChecker = Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
             try:
                 #print self.parent.data
                 scChecker.checkread(sc.strip().split('\n'),self.parent.data)
@@ -608,21 +607,30 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         uniformParamRadio = QtGui.QRadioButton(groupBox_10)
         uniformParamRadio.setChecked(True)
         uniformParamRadio.setObjectName("uniformParamRadio")
+        uniformParamRadio.setMinimumSize(QtCore.QSize(20, 0))
         horizontalLayout_9.addWidget(uniformParamRadio)
         logUniformRadio = QtGui.QRadioButton(groupBox_10)
         logUniformRadio.setObjectName("logUniformRadio")
+        logUniformRadio.setMinimumSize(QtCore.QSize(20, 0))
         horizontalLayout_9.addWidget(logUniformRadio)
         normalRadio = QtGui.QRadioButton(groupBox_10)
         normalRadio.setObjectName("normalRadio")
+        normalRadio.setMinimumSize(QtCore.QSize(20, 0))
         horizontalLayout_9.addWidget(normalRadio)
         logNormalRadio = QtGui.QRadioButton(groupBox_10)
         logNormalRadio.setObjectName("logNormalRadio")
+        logNormalRadio.setMinimumSize(QtCore.QSize(20, 0))
         ## alignement des radio
         #uniformParamRadio.setAlignment(QtCore.Qt.AlignCenter)
         #logUniformRadio.setAlignment(QtCore.Qt.AlignCenter)
         #normalRadio.setAlignment(QtCore.Qt.AlignCenter)
         #logNormalRadio.setAlignment(QtCore.Qt.AlignCenter)
         horizontalLayout_9.addWidget(logNormalRadio)
+        horizontalLayout_9.insertStretch(4)
+        horizontalLayout_9.insertStretch(3)
+        horizontalLayout_9.insertStretch(2)
+        horizontalLayout_9.insertStretch(1)
+        horizontalLayout_9.insertStretch(0)
         horizontalLayout_13.addWidget(groupBox_10)
         groupBox_14 = QtGui.QGroupBox(groupBox_8)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
@@ -904,7 +912,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             # recherche de la box du param
             name = ""
             i = 0
-            visible = 0
+            #visible = 0
             while i<len(self.paramList) and name != pname:
                 paramBox = self.paramList[i]
                 name = paramBox.findChild(QLabel,"paramNameLabel").text()                    

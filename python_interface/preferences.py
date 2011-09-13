@@ -4,7 +4,7 @@ import os,sys,platform,multiprocessing
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui,uic
+from PyQt4 import uic
 #from uis.preferences_ui import Ui_MainWindow
 from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences

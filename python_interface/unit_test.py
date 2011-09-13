@@ -2,14 +2,13 @@
 
 from project import *
 
-import time
+#import time
 import unittest
 import sys
 import shutil
 from diyabc import Diyabc
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
 
 class testDiyabc(unittest.TestCase):
     """

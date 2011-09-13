@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.setHistFrame_ui import Ui_Frame
-from drawScenario import DrawScenario
 from utils.visualizescenario import *
-import utils.history 
-from utils.history import IOScreenError
-from set_condition import SetCondition
+from utils.history import *
 from setGenDataAnalysis import SetGeneticDataAnalysis
 from output import *
 
@@ -109,7 +105,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
         """
         try:
             sc = str(self.getScText())
-            scChecker = history.Scenario(number=self.sc_to_show)
+            scChecker = Scenario(number=self.sc_to_show)
             scChecker.checkread(sc.strip().split('\n'),self.parent.parent.data)
             scChecker.checklogic()
             dico_sc_infos = {}

@@ -505,6 +505,13 @@ previews</string>
              </widget>
             </item>
             <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="label_4">
               <property name="font">
                <font>
@@ -520,6 +527,13 @@ previews</string>
              </widget>
             </item>
             <item>
+             <widget class="Line" name="line_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="label_5">
               <property name="font">
                <font>
@@ -531,6 +545,13 @@ previews</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
               </property>
              </widget>
             </item>
@@ -592,13 +613,13 @@ previews</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>80</width>
+                <width>70</width>
                 <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>80</width>
+                <width>70</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -625,13 +646,13 @@ previews</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>80</width>
+                <width>70</width>
                 <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>80</width>
+                <width>70</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -658,13 +679,13 @@ previews</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>80</width>
+                <width>70</width>
                 <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>80</width>
+                <width>70</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -691,13 +712,13 @@ previews</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>80</width>
+                <width>70</width>
                 <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>80</width>
+                <width>70</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -745,7 +766,7 @@ previews</string>
         <x>0</x>
         <y>0</y>
         <width>905</width>
-        <height>242</height>
+        <height>243</height>
        </rect>
       </property>
       <property name="font">

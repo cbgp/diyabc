@@ -2,7 +2,6 @@
 
 import os
 import codecs
-from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
@@ -303,7 +302,7 @@ class SetGeneticDataRefTable(SetGeneticData):
                 l = 1
                 while l < nloc+1:
                     lname = lines[l].split(' ')[0].replace('_',' ')
-                    ltype = lines[l].split(' ')[1]
+                    #ltype = lines[l].split(' ')[1]
                     #ltype_num = LOC_TYP.index(ltype)
                     lmicroSeq = lines[l].split('[')[1].split(']')[0]
                     num_group = int(lines[l].split(' ')[3].replace('G',''))
@@ -357,7 +356,8 @@ class SetGeneticDataRefTable(SetGeneticData):
                         l+=1
                     if l<len(lines):
                         # on est sur la première ligne
-                        nb_sum_stat = int(lines[l].split('(')[1].split(')')[0])
+                        #nb_sum_stat = int(lines[l].split('(')[1].split(')')[0])
+                        pass
                     #print "nbsumstat %s"%nb_sum_stat
                     l+=1
                     # parcours de tous les groupes

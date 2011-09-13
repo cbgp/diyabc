@@ -2,7 +2,6 @@
 
 import os
 import codecs
-from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
@@ -10,13 +9,12 @@ from mutationModel.setMutationModelMsatAnalysis import SetMutationModelMsatAnaly
 from mutationModel.setMutationModelMsatFixed import SetMutationModelMsatFixed
 from mutationModel.setMutationModelSequencesFixed import SetMutationModelSequencesFixed
 from mutationModel.setMutationModelSequencesAnalysis import SetMutationModelSequencesAnalysis
-from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
-from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
+#from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
+#from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonEvaluation import SetupComparisonEvaluation
 from utils.visualizescenario import *
 from utils.data import *
-import output
 from output import log
 
 class SetGeneticDataAnalysis(SetGeneticData):
@@ -180,10 +178,10 @@ class SetGeneticDataAnalysis(SetGeneticData):
             # c'est valide, on passe à la dernière phase de paramètrage
             self.analysis.mutationModel = mutconf_list
             if self.analysis.category == "bias":
-                next_title = "bias and precision"
+                #next_title = "bias and precision"
                 last_parametrisation = SetupEstimationBias(self.analysis,self)
             else:
-                next_title = "evaluate confidence"
+                #next_title = "evaluate confidence"
                 last_parametrisation = SetupComparisonEvaluation(self.analysis,self)
             #self.parent.addTab(last_parametrisation,next_title)
             #self.parent.removeTab(self.parent.indexOf(self))
@@ -303,7 +301,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
                 l = 1
                 while l < nloc+1:
                     lname = lines[l].split(' ')[0].replace('_',' ')
-                    ltype = lines[l].split(' ')[1]
+                    #ltype = lines[l].split(' ')[1]
                     #ltype_num = LOC_TYP.index(ltype)
                     lmicroSeq = lines[l].split('[')[1].split(']')[0]
                     num_group = int(lines[l].split(' ')[3].replace('G',''))
@@ -329,14 +327,14 @@ class SetGeneticDataAnalysis(SetGeneticData):
                 l+=1
                 if l < len(lines):
                     #print 'ligne:',lines[l]
-                    nb_groupes = int(lines[l].split('(')[1].split(')')[0])
-                    num_group_max_done = 0
+                    #nb_groupes = int(lines[l].split('(')[1].split(')')[0])
+                    #num_group_max_done = 0
                     l+=1
                     # on va jusqu'à la prochaine ligne vide ou la fin du fichier
                     while l<len(lines) and lines[l].strip() != "":
                         #print 'prem ligne du groupe:',lines[l]
                         num_group = int(lines[l].split('group G')[1].split(' ')[0])
-                        num_group_max_done = num_group
+                        #num_group_max_done = num_group
                         type_group = lines[l].split('[')[1].split(']')[0]
                         l+=1
                         if type_group == 'S':
@@ -349,7 +347,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     while l<len(lines) and "group summary statistics" not in lines[l]:
                         l+=1
                     # on est sur la première ligne
-                    nb_sum_stat = int(lines[l].split('(')[1].split(')')[0])
+                    #nb_sum_stat = int(lines[l].split('(')[1].split(')')[0])
                     #print "nbsumstat %s"%nb_sum_stat
                     l+=1
                     # parcours de tous les groupes
