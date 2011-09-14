@@ -21,7 +21,7 @@ public:
     int category;   //0 pour mutmoy, 1 pour Pmoy, 2 pour snimoy, 3 pour musmoy, 4 pour k1moy et 5 pour k2moy
     double value;
     PriorC prior;
-        
+
     void ecris() {
         cout<<"    groupe="<<this->groupe<<"   category="<<this->category<<"\n";
         //prior.ecris();
@@ -32,7 +32,7 @@ public:
 class HeaderC
 {
 public:
-    string message,datafilename,entete;
+    string message,datafilename,entete,entetehist,entetemut,entetemut0,entetestat;
     char * pathbase;
     DataC dataobs;
     int nparamtot,nstat,nscenarios,nconditions,ngroupes,nparamut;
@@ -45,7 +45,7 @@ public:
     ParticleC particuleobs;
     MutParameterC *mutparam;
     double *stat_obs;
-        
+
     void libere() {
         this->dataobs.libere();
         //delete []this->pathbase;
@@ -141,13 +141,13 @@ public:
                 cout<<"neventm="<<neventm<<"   nn0m="<<nn0m<<"   nsampm="<<nsampm<<"   nparamm="<<nparamm<<"nparamvarm="<<nparamvarm<<"   ncondm="<<nconditionm<<"\n";
                 this->scen.event = new EventC[neventm];
                 this->scen.ne0   = new Ne0C[nn0m];
-                
+
                 for (int i=0;i<nn0m;i++) this->scen.ne0[i].name="blabla";
                 this->scen.time_sample = new int[nsampm];
                 this->scen.histparam = new HistParameterC[nparamm];
                 this->scen.paramvar = new double[nparamvarm+3];
                 if (nconditionm>0) this->scen.condition = new ConditionC[nconditionm];
-                
+
         }*/
 
     HeaderC* readHeader(char* headerfilename){
@@ -287,12 +287,12 @@ public:
                                 if (np==2) {
                                     this->scenario[i].condition[nc]=copycondition(this->condition[j]);
                                     //this->scenario[i].condition[nc].ecris();
-                                    nc++;   
-                                }                   
+                                    nc++;
+                                }
                             }
                         }
                         //cout <<"dans readheader  \n";
-                        
+
                   }
                 } else for (int i=0;i<this->nscenarios;i++) this->scenario[i].nconditions=0;
 //Partie loci description
@@ -311,7 +311,7 @@ public:
             else if (ss[k]=="[S]") {
                 s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());this->dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
                 this->dataobs.locus[loc].mutsit.resize(this->dataobs.locus[loc].dnalength);
-                //cout<<this->dataobs.locus[loc].dnalength<<"\n";  
+                //cout<<this->dataobs.locus[loc].dnalength<<"\n";
                 //this->dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());  //inutile variable déjà renseignée
             }
         }
@@ -322,10 +322,10 @@ public:
         getline(file,s1);       //ligne vide
         getline(file,s1);       //ligne "group prior"
                 this->ngroupes=getwordint(s1,3);
-        //cout<<"header.ngroupes="<<this->ngroupes;        
+        //cout<<"header.ngroupes="<<this->ngroupes;
         this->groupe = new LocusGroupC[this->ngroupes+1];
         this->assignloc(0);
-        //cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
+        cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
         for (gr=1;gr<=this->ngroupes;gr++){
             getline(file,s1);
             ss=splitwords(s1," ",&nss);
@@ -333,43 +333,48 @@ public:
             if (ss[2]=="[M]") {
                 this->groupe[gr].type=0;
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutmoy = this->readpriormut(ss1[1]);delete [] ss1;
-                if (this->groupe[gr].priormutmoy.constant) this->groupe[gr].mutmoy=this->groupe[gr].priormutmoy.mini; 
+                this->groupe[gr].priormutmoy.fixed=false;
+                if (this->groupe[gr].priormutmoy.constant) this->groupe[gr].mutmoy=this->groupe[gr].priormutmoy.mini;
                 else {this->groupe[gr].mutmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy   = this->readpriormut(ss1[1]);delete [] ss1;
-                if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini; 
+                this->groupe[gr].priorPmoy.fixed=false;
+                if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini;
                 else {this->groupe[gr].Pmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
-                
+
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readpriormut(ss1[1]);delete [] ss1;
                 //cout<<"Ploc    ";this->groupe[gr].priorPloc.ecris();
-                
+
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsnimoy = this->readpriormut(ss1[1]);delete [] ss1;
-                if (this->groupe[gr].priorsnimoy.constant) this->groupe[gr].snimoy=this->groupe[gr].priorsnimoy.mini; 
+                this->groupe[gr].priorsnimoy.fixed=false;
+                if (this->groupe[gr].priorsnimoy.constant) this->groupe[gr].snimoy=this->groupe[gr].priorsnimoy.mini;
                 else {this->groupe[gr].snimoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
-                
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc = this->readpriormut(ss1[1]);delete [] ss1;
                 //cout<<"sniloc  ";this->groupe[gr].priorsniloc.ecris();
-                
+
             } else if (ss[2]=="[S]") {
                 this->groupe[gr].type=1;
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusmoy = this->readpriormut(ss1[1]);delete [] ss1;
-                if (this->groupe[gr].priormusmoy.constant) this->groupe[gr].musmoy=this->groupe[gr].priormusmoy.mini; 
+                this->groupe[gr].priormusmoy.fixed=false;
+                if (this->groupe[gr].priormusmoy.constant) this->groupe[gr].musmoy=this->groupe[gr].priormusmoy.mini;
                 else {this->groupe[gr].musmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
-                
+
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc = this->readpriormut(ss1[1]);delete [] ss1;
-                
+
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1moy  = this->readpriormut(ss1[1]);delete [] ss1;
-                if (this->groupe[gr].priork1moy.constant) this->groupe[gr].k1moy=this->groupe[gr].priork1moy.mini; 
+                this->groupe[gr].priork1moy.fixed=false;
+                if (this->groupe[gr].priork1moy.constant) this->groupe[gr].k1moy=this->groupe[gr].priork1moy.mini;
                 else this->groupe[gr].k1moy=-1.0;
-                
+
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readpriormut(ss1[1]);delete [] ss1;
-                
+
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2moy  = this->readpriormut(ss1[1]);delete [] ss1;
-                if (this->groupe[gr].priork2moy.constant) this->groupe[gr].k2moy=this->groupe[gr].priork2moy.mini; 
+                this->groupe[gr].priork2moy.fixed=false;
+                if (this->groupe[gr].priork2moy.constant) this->groupe[gr].k2moy=this->groupe[gr].priork2moy.mini;
                 else this->groupe[gr].k2moy=-1.0;
-                
+
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readpriormut(ss1[1]);delete [] ss1;
-                
+
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);
                 this->groupe[gr].p_fixe=atof(ss1[2].c_str());this->groupe[gr].gams=atof(ss1[3].c_str());
                 if (ss1[1]=="JK") this->groupe[gr].mutmod=0;
@@ -413,7 +418,7 @@ public:
                 double s=0.0;
                 for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) s += this->dataobs.locus[loc].mutsit[i];
                 for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] /=s;
-            }    
+            }
         }
         if (debuglevel==2) cout<<"header.txt : fin de la mise à jour des locus séquences\n";
         //cout<<"avant la mise à jour des paramvar\n";fflush(stdin);
@@ -424,17 +429,17 @@ public:
             for (int j=0;j<this->scenario[i].nparamvar;j++)this->scenario[i].paramvar[j]=-1.0;
             //this->scenario[i].ecris();
         }
-        
+
                 //cout<<"avant superscen\n";
-                this->scen.nevent=0;    
+                this->scen.nevent=0;
                 for (int i=0;i<this->nscenarios;i++) {if (this->scen.nevent<this->scenario[i].nevent) this->scen.nevent=this->scenario[i].nevent;}
-                this->scen.nn0=0;       
+                this->scen.nn0=0;
                 for (int i=0;i<this->nscenarios;i++) {if (this->scen.nn0<this->scenario[i].nn0)       this->scen.nn0 =this->scenario[i].nn0;}
-                this->scen.nsamp=0;     
+                this->scen.nsamp=0;
                 for (int i=0;i<this->nscenarios;i++) {if (this->scen.nsamp<this->scenario[i].nsamp)   this->scen.nsamp=this->scenario[i].nsamp;}
-                this->scen.nparam=0;    
+                this->scen.nparam=0;
                 for (int i=0;i<this->nscenarios;i++) {if (this->scen.nparam<this->scenario[i].nparam)  this->scen.nparam=this->scenario[i].nparam;}
-                this->scen.nparamvar=0; 
+                this->scen.nparamvar=0;
                 for (int i=0;i<this->nscenarios;i++) {if (this->scen.nparamvar<this->scenario[i].nparamvar) this->scen.nparamvar=this->scenario[i].nparamvar;}
                 this->scen.nconditions=0;
                 for (int i=0;i<this->nscenarios;i++) {if (this->scen.nconditions<this->scenario[i].nconditions) this->scen.nconditions=this->scenario[i].nconditions;}
@@ -468,7 +473,7 @@ public:
                   this->scen.event[i].ladmixrate=0;
                   for (int j=0;j<lonmax;j++) this->scen.event[i].sadmixrate[j]='\0';
                }
-               
+
                 this->scen.ne0   = new Ne0C[this->scen.nn0];
                 lonmax=0;
                 for (int i=0;i<this->nscenarios;i++) {
@@ -587,7 +592,7 @@ public:
                 if (this->groupe[gr].mutmod>0) {if (not this->groupe[gr].priork1moy.constant) this->nparamut++;}
                 if (this->groupe[gr].mutmod==3){if (not this->groupe[gr].priork2moy.constant) this->nparamut++;}
                 //cout<<"fin du calcul de nparamut = "<<this->nparamut<<"\n";
-            }  
+            }
         }
         this->mutparam = new MutParameterC[nparamut];
         this->nparamut=0;
@@ -636,16 +641,23 @@ public:
                     this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priork2moy);
                     this->nparamut++;
                }
-            }  
+            }
         }
         if (debuglevel==2) cout<<"header.txt : fin de l'a lecture des summary statsétablissement des paramètres mutationnels'\n";
-        
+
   //Entete du fichier reftable
         getline(file,s1);       //ligne vide
         getline(file,this->entete);     //ligne entete
         this->statname =new string[this->nstat];
         ss=splitwords(entete," ",&nss);
         for (int i=nstat-1;i>=0;i--) this->statname[i]=ss[--nss];
+		this->entetehist=this->entete.substr(0,this->entete.length()-14*(nparamut+nstat)+2);
+		this->entetemut=this->entete.substr(this->entetehist.length(),14*nparamut);
+		this->entetestat=this->entete.substr(this->entetehist.length()+this->entetemut.length(),14*nstat);
+		cout<<"les trois entetes\n";
+		cout<<">>>"<<this->entetehist<<"<<<\n";
+		cout<<">>>"<<this->entetemut<<"<<<\n";
+		cout<<">>>"<<this->entetestat<<"<<<\n";
         //for (int i=0;i<this->nstat;i++) cout<<this->statname[i]<<"   ";cout<<"\n";
         delete []ss;
                 //cout<<"scenarios à la fin de readheader\n";
@@ -655,7 +667,7 @@ public:
                 //cout<<"fin de readheader\n\n\n";
         return this;
     }
-    
+
     void calstatobs(char* statobsfilename) {
 //partie DATA
                 //cout<<"debut de calstatobs\n";
@@ -711,7 +723,7 @@ public:
                         this->particuleobs.locuslist[kloc].ss = new int[ this->dataobs.nsample];
                         for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].ss[sa] =  this->dataobs.locus[kloc].ss[sa];
                         this->particuleobs.locuslist[kloc].samplesize = new int[ this->dataobs.nsample];
-                        
+
                         for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].samplesize[sa] =  this->dataobs.locus[kloc].samplesize[sa];
                         //cout<<"locus "<<kloc<<"   groupe "<<this->particuleobs.locuslist[kloc].groupe<<"\n";
                         if (this->dataobs.locus[kloc].type < 5) {
@@ -726,7 +738,7 @@ public:
                                 }
                                 this->particuleobs.locuslist[kloc].haplomic = new int*[this->particuleobs.data.nsample];
                                 for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
-                                      this->particuleobs.locuslist[kloc].haplomic[sa] = new int[this->particuleobs.locuslist[kloc].ss[sa]]; 
+                                      this->particuleobs.locuslist[kloc].haplomic[sa] = new int[this->particuleobs.locuslist[kloc].ss[sa]];
                                       for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplomic[sa][i]=this->dataobs.locus[kloc].haplomic[sa][i];
                                  }
                         }else {
@@ -738,12 +750,12 @@ public:
                                 this->particuleobs.locuslist[kloc].haplodna = new string*[this->particuleobs.data.nsample];
                                 for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
                                       this->particuleobs.locuslist[kloc].haplodna[sa] = new string[this->particuleobs.locuslist[kloc].ss[sa]];
-                                      for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i]; 
+                                      for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i];
                                  }
                         }
                        if (debuglevel==2) cout <<"Locus"<<kloc<< "  samplesize[0]="<<this->particuleobs.locuslist[kloc].samplesize[0]<<"\n";
                 }
-               if (debuglevel==2)cout<<"avant entete\n"; 
+               if (debuglevel==2)cout<<"avant entete\n";
                string *sb,ent;
                int j;
                sb = splitwords(this->entete," ",&j);
@@ -766,7 +778,7 @@ public:
                this->particuleobs.libere(true);
                //exit(1);
         }
-        /** 
+        /**
 * lit le fichier des statistiques observées (placées dans double *stat_obs)
 */
     double* read_statobs(char *statobsfilename) {

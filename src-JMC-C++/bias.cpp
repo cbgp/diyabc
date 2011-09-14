@@ -77,12 +77,12 @@ using namespace std;
     }
 
     void resetcondition(int j,string s) {
-       header.scenario[rt.scenteste-1].condition[j] = header.readcondition(s); 
-    
+       header.scenario[rt.scenteste-1].condition[j] = header.readcondition(s);
+
     }
 
     bool resetmutparam(string s) {
-        string *ss,numgr,s1;
+        string *ss,numgr,s1,sg;
         bool useprior=true;
         int n,i,gr,i0,i1;
         numgr = s.substr(1,s.find("(")-1);  gr=atoi(numgr.c_str());
@@ -90,36 +90,64 @@ using namespace std;
         s1 = s.substr(i0+1,i1-i0-1); cout <<"groupe "<<gr<<"  "<<s1<<"\n";
         ss = splitwords(s1," ",&n);
         if (header.groupe[gr].type==0) {
-            if (ss[0].find("[")==string::npos) {header.groupe[gr].mutmoy =atof(ss[0].c_str());useprior=false;}
-            else header.groupe[gr].priormutmoy = header.readpriormut(ss[0]);
+            if (header.groupe[gr].priormutmoy.constant) header.groupe[gr].mutmoy=header.groupe[gr].priormutmoy.mini;
+			else {
+				if (ss[0].find("[")==string::npos) {header.groupe[gr].mutmoy =atof(ss[0].c_str());useprior=false;header.groupe[gr].priormutmoy.fixed=true;}
+				else {header.groupe[gr].priormutmoy = header.readpriormut(ss[0]);header.groupe[gr].priormutmoy.fixed=false;}
+			}
             if (ss[1].find("[")==string::npos) header.groupe[gr].priormutloc.sdshape=atof(ss[1].c_str());
             else header.groupe[gr].priormutloc = header.readpriormut(ss[1]);
-            
-            if (ss[2].find("[")==string::npos) {header.groupe[gr].Pmoy=atof(ss[2].c_str());useprior=false;}
-            else header.groupe[gr].priorPmoy = header.readpriormut(ss[2]);
-             if (ss[3].find("[")==string::npos) header.groupe[gr].priorPloc.sdshape=atof(ss[3].c_str());
+
+			if (header.groupe[gr].priorPmoy.constant) header.groupe[gr].Pmoy=header.groupe[gr].priorPmoy.mini;
+			else{
+				if (ss[2].find("[")==string::npos) {header.groupe[gr].Pmoy=atof(ss[2].c_str());useprior=false;header.groupe[gr].priorPmoy.fixed=true;}
+				else {header.groupe[gr].priorPmoy = header.readpriormut(ss[2]);header.groupe[gr].priorPmoy.fixed=false;}
+			}
+            if (ss[3].find("[")==string::npos) header.groupe[gr].priorPloc.sdshape=atof(ss[3].c_str());
             else header.groupe[gr].priorPloc = header.readpriormut(ss[3]);
-            
-            if (ss[4].find("[")==string::npos) {header.groupe[gr].snimoy=atof(ss[4].c_str());useprior=false;}
-            else header.groupe[gr].priorsnimoy = header.readpriormut(ss[4]);
+ cout<<"bias.cpp ligne 108 header.groupe[gr].priorsnimoy.constant="<<header.groupe[gr].priorsnimoy.constant<<"\n";
+			if (header.groupe[gr].priorsnimoy.constant) header.groupe[gr].snimoy=header.groupe[gr].priorsnimoy.mini;
+			else {
+				if (ss[4].find("[")==string::npos) {header.groupe[gr].snimoy=atof(ss[4].c_str());useprior=false;header.groupe[gr].priorsnimoy.fixed=true;}
+				else {header.groupe[gr].priorsnimoy = header.readpriormut(ss[4]);header.groupe[gr].priorsnimoy.fixed=false;}
+			}
             if (ss[5].find("[")==string::npos) header.groupe[gr].priorsniloc.sdshape=atof(ss[5].c_str());
             else header.groupe[gr].priorsniloc = header.readpriormut(ss[5]);
        } else {
-             if (ss[0].find("[")==string::npos) {header.groupe[gr].musmoy==atof(ss[0].c_str());useprior=false;}
-            else header.groupe[gr].priormusmoy = header.readpriormut(ss[0]);
-            if (ss[1].find("[")==string::npos) header.groupe[gr].priormusloc.sdshape=atof(ss[1].c_str());
+		    //cout<<"resetmutparam type sequence\n";
+			//cout<<"modele "<< header.groupe[gr].mutmod<<"\n";
+			if (header.groupe[gr].priormusmoy.constant) header.groupe[gr].musmoy=header.groupe[gr].priormusmoy.mini;
+			else {
+				if (ss[0].find("[")==string::npos) {header.groupe[gr].musmoy=atof(ss[0].c_str());useprior=false;header.groupe[gr].priormusmoy.fixed=true;}
+				else {header.groupe[gr].priormusmoy = header.readpriormut(ss[0]);header.groupe[gr].priormusmoy.fixed=false;}
+			}
+            //cout<<"ss[0] : >"<<ss[0]<<"<      musmoy="<<header.groupe[gr].musmoy<<"\n";
+			if (ss[1].find("[")==string::npos) header.groupe[gr].priormusloc.sdshape=atof(ss[1].c_str());
             else header.groupe[gr].priormusloc = header.readpriormut(ss[1]);
-            
-            if (ss[2].find("[")==string::npos) {header.groupe[gr].k1moy=atof(ss[2].c_str());useprior=false;}
-            else header.groupe[gr].priork1moy = header.readpriormut(ss[2]);
-             if (ss[3].find("[")==string::npos) header.groupe[gr].priork1loc.sdshape=atof(ss[3].c_str());
-            else header.groupe[gr].priork1loc = header.readpriormut(ss[3]);
-            
-            if (ss[4].find("[")==string::npos) {header.groupe[gr].k2moy=atof(ss[4].c_str());useprior=false;}
-            else header.groupe[gr].priork2moy = header.readpriormut(ss[4]);
-            if (ss[5].find("[")==string::npos) header.groupe[gr].priork2loc.sdshape=atof(ss[5].c_str());
-            else header.groupe[gr].priork2loc = header.readpriormut(ss[5]);
-       } 
+            //cout<<"musloc"<<"\n";
+			if (header.groupe[gr].mutmod>0) {
+                if (header.groupe[gr].priork1moy.constant) header.groupe[gr].k1moy=header.groupe[gr].priork1moy.mini;
+                else {
+					if (ss[2].find("[")==string::npos) {header.groupe[gr].k1moy=atof(ss[2].c_str());useprior=false;header.groupe[gr].priork1moy.fixed=true;}
+					else {header.groupe[gr].priork1moy = header.readpriormut(ss[2]);header.groupe[gr].priork1moy.fixed=false;}
+                }
+				//cout<<"k1moy="<<header.groupe[gr].k1moy<<"\n";
+				if (ss[3].find("[")==string::npos) header.groupe[gr].priork1loc.sdshape=atof(ss[3].c_str());
+				else header.groupe[gr].priork1loc = header.readpriormut(ss[3]);
+				//cout<<"k1loc\n";
+				if (header.groupe[gr].mutmod>2) {
+					if (header.groupe[gr].priork1moy.constant) header.groupe[gr].k1moy=header.groupe[gr].priork1moy.mini;
+					else {
+						if (ss[4].find("[")==string::npos) {header.groupe[gr].k2moy=atof(ss[4].c_str());useprior=false;header.groupe[gr].priork2moy.fixed=true;}
+						else {header.groupe[gr].priork2moy = header.readpriormut(ss[4]);header.groupe[gr].priork2moy.fixed=false;}
+                    }
+					//cout<<"k2moy="<<header.groupe[gr].k2moy<<"\n";
+					if (ss[5].find("[")==string::npos) header.groupe[gr].priork2loc.sdshape=atof(ss[5].c_str());
+					else header.groupe[gr].priork2loc = header.readpriormut(ss[5]);
+				}
+				//cout<<"fin\n";
+			}
+       }
        return useprior;
     }
 
@@ -136,9 +164,9 @@ using namespace std;
                 br[k][j]=0.0;
                 for (int p=0;p<ntest;p++) {
                     switch (k) {
-                      case 0 : d=paramest[p][j].moy-enreg2[p].paramvv[j];break; 
-                      case 1 : d=paramest[p][j].med-enreg2[p].paramvv[j];break; 
-                      case 2 : d=paramest[p][j].mod-enreg2[p].paramvv[j];break; 
+                      case 0 : d=paramest[p][j].moy-enreg2[p].paramvv[j];break;
+                      case 1 : d=paramest[p][j].med-enreg2[p].paramvv[j];break;
+                      case 2 : d=paramest[p][j].mod-enreg2[p].paramvv[j];break;
                     }
                     br[k][j] +=d/enreg2[p].paramvv[j];
                 }
@@ -156,7 +184,7 @@ using namespace std;
                 rrmise[j] +=s/enreg2[p].paramvv[j]/enreg2[p].paramvv[j]/double(nsel);
             }
             rrmise[j] = sqrt(rrmise[j]/(double)ntest);
-        } 
+        }
 ////////////  RMAD
         rmad = new double [nparamcom+nparcompo];
         for (int j=0;j<nparamcom+nparcompo;j++) {
@@ -167,7 +195,7 @@ using namespace std;
                 rmad[j] +=s/abs(enreg2[p].paramvv[j])/double(nsel);
             }
             rmad[j] = rmad[j]/(double)ntest;
-        } 
+        }
 ////////////  RMSE
         rmse = new double*[3];
         for (int k=0;k<3;k++) {
@@ -176,14 +204,14 @@ using namespace std;
                 rmse[k][j]=0.0;
                 for (int p=0;p<ntest;p++)  if (enreg2[p].paramvv[j]>0.0) {
                     switch (k) {
-                      case 0 : d=paramest[p][j].moy-enreg2[p].paramvv[j];break; 
-                      case 1 : d=paramest[p][j].med-enreg2[p].paramvv[j];break; 
-                      case 2 : d=paramest[p][j].mod-enreg2[p].paramvv[j];break; 
+                      case 0 : d=paramest[p][j].moy-enreg2[p].paramvv[j];break;
+                      case 1 : d=paramest[p][j].med-enreg2[p].paramvv[j];break;
+                      case 2 : d=paramest[p][j].mod-enreg2[p].paramvv[j];break;
                     }
                     rmse[k][j] += d*d/enreg2[p].paramvv[j]/enreg2[p].paramvv[j];
                 }
                 rmse[k][j] =sqrt(rmse[k][j]/double(ntest));
-            } 
+            }
         }
 /////////////// coverages
         cov50 = new double[nparamcom+nparcompo];
@@ -205,9 +233,9 @@ using namespace std;
                 fac2[k][j]=0.0;
                 for (int p=0;p<ntest;p++) {
                     switch (k) {
-                      case 0 : if((paramest[p][j].moy>=0.5*enreg2[p].paramvv[j])and(paramest[p][j].moy<=2.0*enreg2[p].paramvv[j])) fac2[k][j] += atest;break; 
-                      case 1 : if((paramest[p][j].med>=0.5*enreg2[p].paramvv[j])and(paramest[p][j].med<=2.0*enreg2[p].paramvv[j])) fac2[k][j] += atest;break; 
-                      case 2 : if((paramest[p][j].mod>=0.5*enreg2[p].paramvv[j])and(paramest[p][j].mod<=2.0*enreg2[p].paramvv[j])) fac2[k][j] += atest;break; 
+                      case 0 : if((paramest[p][j].moy>=0.5*enreg2[p].paramvv[j])and(paramest[p][j].moy<=2.0*enreg2[p].paramvv[j])) fac2[k][j] += atest;break;
+                      case 1 : if((paramest[p][j].med>=0.5*enreg2[p].paramvv[j])and(paramest[p][j].med<=2.0*enreg2[p].paramvv[j])) fac2[k][j] += atest;break;
+                      case 2 : if((paramest[p][j].mod>=0.5*enreg2[p].paramvv[j])and(paramest[p][j].mod<=2.0*enreg2[p].paramvv[j])) fac2[k][j] += atest;break;
                     }
                 }
             }
@@ -220,9 +248,9 @@ using namespace std;
             medbr[k] = new double[nparamcom+nparcompo];
             for (int j=0;j<nparamcom+nparcompo;j++) {
                 switch (k) {
-                  case 0 : for (int p=0;p<ntest;p++) b[p]=(paramest[p][j].moy-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];medbr[k][j] = cal_med(ntest,b);break; 
-                  case 1 : for (int p=0;p<ntest;p++) b[p]=(paramest[p][j].med-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];medbr[k][j] = cal_med(ntest,b);break; 
-                  case 2 : for (int p=0;p<ntest;p++) b[p]=(paramest[p][j].mod-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];medbr[k][j] = cal_med(ntest,b);break; 
+                  case 0 : for (int p=0;p<ntest;p++) b[p]=(paramest[p][j].moy-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];medbr[k][j] = cal_med(ntest,b);break;
+                  case 1 : for (int p=0;p<ntest;p++) b[p]=(paramest[p][j].med-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];medbr[k][j] = cal_med(ntest,b);break;
+                  case 2 : for (int p=0;p<ntest;p++) b[p]=(paramest[p][j].mod-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];medbr[k][j] = cal_med(ntest,b);break;
                 }
             }
         }
@@ -230,13 +258,13 @@ using namespace std;
         rmedad = new double [nparamcom+nparcompo];
         double *cc;
         cc = new double[nsel];
-        
+
         for (int j=0;j<nparamcom+nparcompo;j++) {
             for (int p=0;p<ntest;p++) {
                 for (int i=0;i<nsel;i++) cc[i] = (abs(paretoil[p][i][j]-enreg2[p].paramvv[j]))/enreg2[p].paramvv[j];b[p] = cal_med(nsel,cc);
             }
             rmedad[j] = cal_med(ntest,b);
-        } 
+        }
 ////////////  RMAE
         rmae = new double*[3];
         double *e;
@@ -246,17 +274,17 @@ using namespace std;
             for (int j=0;j<nparamcom+nparcompo;j++) {
                 for (int p=0;p<ntest;p++) {
                     switch (k) {
-                      case 0 : e[p]=abs(paramest[p][j].moy-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break; 
-                      case 1 : e[p]=abs(paramest[p][j].med-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break; 
-                      case 2 : e[p]=abs(paramest[p][j].mod-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break; 
+                      case 0 : e[p]=abs(paramest[p][j].moy-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break;
+                      case 1 : e[p]=abs(paramest[p][j].med-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break;
+                      case 2 : e[p]=abs(paramest[p][j].mod-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break;
                     }
                 }
                 rmae[k][j] = cal_med(ntest,e);
-            } 
+            }
         }
         //cout<<br[1][0]<<"   "<<br[1][1]<<"   "<<br[1][2]<<"\n";
     }
-    
+
     void ecrires(int ntest,int npv,int nsel) {
         time_t rawtime;
         struct tm * timeinfo;
@@ -304,9 +332,9 @@ using namespace std;
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<33-nomparam[j].length();i++)fprintf(f1," ");
-            if (br[0][j]<0) fprintf(f1,"  %5.3f",br[0][j]); else fprintf(f1,"   %5.3f",br[0][j]); 
-            if (br[1][j]<0) fprintf(f1,"         %5.3f",br[1][j]); else fprintf(f1,"          %5.3f",br[1][j]); 
-            if (br[2][j]<0) fprintf(f1,"         %5.3f\n",br[2][j]); else fprintf(f1,"          %5.3f\n",br[2][j]); 
+            if (br[0][j]<0) fprintf(f1,"  %5.3f",br[0][j]); else fprintf(f1,"   %5.3f",br[0][j]);
+            if (br[1][j]<0) fprintf(f1,"         %5.3f",br[1][j]); else fprintf(f1,"          %5.3f",br[1][j]);
+            if (br[2][j]<0) fprintf(f1,"         %5.3f\n",br[2][j]); else fprintf(f1,"          %5.3f\n",br[2][j]);
         }
         fprintf(f1,"\n                            RRMISE            RMeanAD            Square root of mean square error/true value\n");
         fprintf(f1,"Parameter                                                         Mean             Median             Mode\n");
@@ -330,9 +358,9 @@ using namespace std;
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<43-nomparam[j].length();i++)fprintf(f1," ");
-            if (medbr[0][j]<0) fprintf(f1,"  %5.3f",medbr[0][j]); else fprintf(f1,"   %5.3f",medbr[0][j]); 
-            if (medbr[1][j]<0) fprintf(f1,"         %5.3f",medbr[1][j]); else fprintf(f1,"          %5.3f",medbr[1][j]); 
-            if (medbr[2][j]<0) fprintf(f1,"         %5.3f\n",medbr[2][j]); else fprintf(f1,"          %5.3f\n",medbr[2][j]); 
+            if (medbr[0][j]<0) fprintf(f1,"  %5.3f",medbr[0][j]); else fprintf(f1,"   %5.3f",medbr[0][j]);
+            if (medbr[1][j]<0) fprintf(f1,"         %5.3f",medbr[1][j]); else fprintf(f1,"          %5.3f",medbr[1][j]);
+            if (medbr[2][j]<0) fprintf(f1,"         %5.3f\n",medbr[2][j]); else fprintf(f1,"          %5.3f\n",medbr[2][j]);
         }
         fprintf(f1,"\n                             RMedAD        Median of the absolute error/true value\n");
         fprintf(f1,"Parameter                                     Means          Medians        Modes\n");
@@ -343,9 +371,9 @@ using namespace std;
             fprintf(f1,"      %5.3f           %5.3f          %5.3f          %5.3f\n",rmedad[j],rmae[0][j],rmae[1][j],rmae[2][j]);
         }
          fclose(f1);
-        
+
     }
-    
+
     void setcompo(int p) {
       double pmut;
         int kk,qq,k=0;
@@ -392,8 +420,8 @@ using namespace std;
                         }
                     }
                 }
-            } 
-            if (header.groupe[gr].type==1) {    
+            }
+            if (header.groupe[gr].type==1) {
                 if (header.groupe[gr].priormusmoy.constant) {
                     pmut = header.groupe[gr].musmoy;
                     for (int j=0;j<npar;j++) {
@@ -420,7 +448,7 @@ using namespace std;
         char *datafilename, *progressfilename, *courantfilename;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn,ncond;
-        string opt,*ss,s,*ss1,s0,s1;
+        string opt,*ss,s,*ss1,s0,s1,sg;
         double  *stat_obs,st,pa;
         bool usepriorhist,usepriormut;
         string bidon;
@@ -452,10 +480,10 @@ using namespace std;
                 if(nrec>nrecpos) nrec=nrecpos;
                 cout<<"nombre total de jeux de données considérés (pour le(s) scénario(s) choisi(s) )= "<<nrec<<"\n";
             } else if (s0=="m:") {
-                nsel=atoi(s1.c_str());    
+                nsel=atoi(s1.c_str());
                 cout<<"nombre de jeux de données considérés pour la régression locale = "<<nsel<<"\n";
             } else if (s0=="t:") {
-                numtransf=atoi(s1.c_str()); 
+                numtransf=atoi(s1.c_str());
                 switch (numtransf) {
                   case 1 : cout <<" pas de transformation des paramètres\n";break;
                   case 2 : cout <<" transformation log des paramètres\n";break;
@@ -486,9 +514,9 @@ using namespace std;
                         if (header.scenario[rt.scenteste-1].nconditions>0) delete []header.scenario[rt.scenteste-1].condition;
                         header.scenario[rt.scenteste-1].condition = new ConditionC[ncond];
                     }
-                    for (int j=0;j<ncond;j++) 
-                         header.scenario[rt.scenteste-1].condition[j] = header.readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]); 
-                } 
+                    for (int j=0;j<ncond;j++)
+                         header.scenario[rt.scenteste-1].condition[j] = header.readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]);
+                }
             } else if (s0=="u:") {
                 cout<<s1<<"\n";
                 ss1 = splitwords(s1,"*",&ng);
@@ -497,6 +525,29 @@ using namespace std;
                     //exit(1);
                 }
                 for (int j=0;j<ng;j++) usepriormut = resetmutparam(ss1[j]);
+				/*if (not usepriormut) {
+				    header.entetemut0=header.entetemut;
+					header.entetemut="";
+				    for (int j=1;j<=ng;j++){
+					    sg=IntToString(j);
+						if (header.groupe[j].type==0) {
+							header.entetemut=header.entetemut+"µmic_"+sg+"        pmic_"+sg+"        snimic_"+sg+"       ";
+						}
+						if (header.groupe[j].type==1) {
+							header.entetemut=header.entetemut+"µseq_"+sg+"        ";
+							if (header.groupe[j].mutmod>0){
+								header.entetemut=header.entetemut+"k1seq_"+sg+"       ";
+								if (header.groupe[j].mutmod>2){
+									header.entetemut=header.entetemut+"k2seq_"+sg+"       ";
+								}
+							}
+						}
+
+					}
+					header.entete=header.entetehist+header.entetemut+header.entetestat;
+					cout<<"dans bias.cpp l'entete devient \n";
+					cout<<header.entete<<"\n";
+				}*/
             }
         }
         npv = rt.nparam[rt.scenteste-1];
@@ -506,12 +557,15 @@ using namespace std;
             enreg[p].param = new float[npv];
             enreg[p].numscen = rt.scenteste;
         }
+
+        //cout<<header.entete<<"\n";
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,usepriorhist,usepriormut);
+		//header.entete=header.entetehist+header.entetemut0+header.entetestat;
         nprog=10*ntest+5;iprog=5;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         for (int p=0;p<ntest;p++) {delete []enreg[p].param;delete []enreg[p].stat;}delete []enreg;
         rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
-        det_numpar();                                   
+        det_numpar();
         cout<<"naparmcom = "<<nparamcom<<"   nparcomp = "<<nparcompo<<"\n";
         enreg2 = new enreC[ntest];
         for (int p=0;p<ntest;p++) {
@@ -529,6 +583,7 @@ using namespace std;
           ss = splitwords(bidon," ",&ns);
           cout<<"ns="<<ns<<"\n";
           enreg2[p].numscen=atoi(ss[0].c_str());
+		  cout<<"bias.cpp   npv="<<npv<<"\n";
           for (int i=0;i<npv;i++) enreg2[p].paramvv[i]=atof(ss[i+1].c_str());
           if(nparcompo>0) setcompo(p);
           for (int i=0;i<rt.nstat;i++) enreg2[p].stat[i]=atof(ss[i+1+npv].c_str());
@@ -538,7 +593,7 @@ using namespace std;
         stat_obs = new double[rt.nstat];
         paramest = new parstatC*[ntest];
         paretoil = new double**[ntest];
-        for (int p=0;p<ntest;p++) {paretoil[p] = new double* [nsel];for (int i=0;i<nsel;i++)paretoil[p][i] = new double[nparamcom+nparcompo];} 
+        for (int p=0;p<ntest;p++) {paretoil[p] = new double* [nsel];for (int i=0;i<nsel;i++)paretoil[p][i] = new double[nparamcom+nparcompo];}
         rt.alloue_enrsel(nsel);
         cout<<"apres rt.alloue_enrsel\n";
         for (int p=0;p<ntest;p++) {
@@ -556,7 +611,7 @@ using namespace std;
             }
             for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
             printf("analysing data test %3d \n",p+1);
-            //for (int j=0;j<npar;j++) printf(" %6.0e (%8.2e %8.2e %8.2e) ",enreg2[p].paramvv[j],paramest[p][j].moy,paramest[p][j].med,paramest[p][j].mod);cout<<"\n";    
+            //for (int j=0;j<npar;j++) printf(" %6.0e (%8.2e %8.2e %8.2e) ",enreg2[p].paramvv[j],paramest[p][j].moy,paramest[p][j].med,paramest[p][j].mod);cout<<"\n";
             iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         }
         rt.desalloue_enrsel(nsel);

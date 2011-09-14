@@ -80,7 +80,7 @@ struct ParticleSetC
                                 this->particule[p].data.misshap[i].sample = this->header.dataobs.misshap[i].sample;
                                 this->particule[p].data.misshap[i].indiv  = this->header.dataobs.misshap[i].indiv;
                         }
-                } 
+                }
                 this->particule[p].data.nmissnuc = this->header.dataobs.nmissnuc;
                 if (this->particule[p].data.nmisshap>0) {
                           this->particule[p].data.missnuc = new MissingNuc[this->particule[p].data.nmissnuc];
@@ -90,13 +90,13 @@ struct ParticleSetC
                                   this->particule[p].data.missnuc[i].indiv  = this->header.dataobs.missnuc[i].indiv;
                                   this->particule[p].data.missnuc[i].nuc    = this->header.dataobs.missnuc[i].nuc;
                           }
-                } 
+                }
 	}
 
-	void setgroup(int p) {
+void setgroup(int p) {
 		int ngr = this->header.ngroupes;
 		//cout<<"ngr="<<ngr<<"\n";
-		this->particule[p].ngr = ngr; 
+		this->particule[p].ngr = ngr;
 		this->particule[p].grouplist = new LocusGroupC[ngr+1];
 		this->particule[p].grouplist[0].nloc = this->header.groupe[0].nloc;
 		this->particule[p].grouplist[0].loc  = new int[this->header.groupe[0].nloc];
@@ -112,14 +112,28 @@ struct ParticleSetC
 				this->particule[p].grouplist[gr].mutmoy = this->header.groupe[gr].mutmoy;
 				if (this->header.groupe[gr].mutmoy<0.0) this->particule[p].grouplist[gr].priormutmoy = copyprior(this->header.groupe[gr].priormutmoy);
 				else this->particule[p].grouplist[gr].priormutmoy.constant=true;
+				this->particule[p].grouplist[gr].priormutmoy.fixed=this->header.groupe[gr].priormutmoy.fixed;
+				if ((this->particule[p].grouplist[gr].priormutmoy.constant)and(this->header.groupe[gr].priormutmoy.fixed)) {
+                    this->particule[p].grouplist[gr].priormutmoy.constant=false;
+				}
 				this->particule[p].grouplist[gr].priormutloc = copyprior(this->header.groupe[gr].priormutloc);
+
 				this->particule[p].grouplist[gr].Pmoy = this->header.groupe[gr].Pmoy;
 				if (this->header.groupe[gr].Pmoy<0.0) this->particule[p].grouplist[gr].priorPmoy = copyprior(this->header.groupe[gr].priorPmoy);
 				else this->particule[p].grouplist[gr].priorPmoy.constant=true;
+				this->particule[p].grouplist[gr].priorPmoy.fixed=this->header.groupe[gr].priorPmoy.fixed;
+				if ((this->particule[p].grouplist[gr].priorPmoy.constant)and(this->header.groupe[gr].priorPmoy.fixed)) {
+                    this->particule[p].grouplist[gr].priorPmoy.constant=false;
+				}
 				this->particule[p].grouplist[gr].priorPloc = copyprior(this->header.groupe[gr].priorPloc);
+
 				this->particule[p].grouplist[gr].snimoy = this->header.groupe[gr].snimoy;
 				if (this->header.groupe[gr].snimoy<0.0) this->particule[p].grouplist[gr].priorsnimoy = copyprior(this->header.groupe[gr].priorsnimoy);
 				else this->particule[p].grouplist[gr].priorsnimoy.constant=true;
+				this->particule[p].grouplist[gr].priorsnimoy.fixed=this->header.groupe[gr].priorsnimoy.fixed;
+				if ((this->particule[p].grouplist[gr].priorsnimoy.constant)and(this->header.groupe[gr].priorsnimoy.fixed)) {
+                    this->particule[p].grouplist[gr].priorsnimoy.constant=false;
+				}
 				this->particule[p].grouplist[gr].priorsniloc = copyprior(this->header.groupe[gr].priorsniloc);
 			}
 			else {							//SEQUENCES
@@ -127,20 +141,34 @@ struct ParticleSetC
 				this->particule[p].grouplist[gr].mutmod = this->header.groupe[gr].mutmod;	//mutmod
 				this->particule[p].grouplist[gr].p_fixe = this->header.groupe[gr].p_fixe;	//p_fixe
 				this->particule[p].grouplist[gr].gams   = this->header.groupe[gr].gams;	//gams
+
 				this->particule[p].grouplist[gr].musmoy = this->header.groupe[gr].musmoy;	//musmoy
 				if (this->header.groupe[gr].musmoy<0.0) this->particule[p].grouplist[gr].priormusmoy = copyprior(this->header.groupe[gr].priormusmoy);
 				else this->particule[p].grouplist[gr].priormusmoy.constant=true;
+				this->particule[p].grouplist[gr].priormusmoy.fixed=this->header.groupe[gr].priormusmoy.fixed;
+				if ((this->particule[p].grouplist[gr].priormusmoy.constant)and(this->header.groupe[gr].priormusmoy.fixed)) {
+                    this->particule[p].grouplist[gr].priormusmoy.constant=false;
+				}
 				this->particule[p].grouplist[gr].priormusloc = copyprior(this->header.groupe[gr].priormusloc);
+
 				if (this->header.groupe[gr].mutmod>0){
 					this->particule[p].grouplist[gr].k1moy = this->header.groupe[gr].k1moy ;	//k1moy
 					if (header.groupe[gr].k1moy<0) this->particule[p].grouplist[gr].priork1moy = copyprior(this->header.groupe[gr].priork1moy);
 					else this->particule[p].grouplist[gr].priork1moy.constant=true;
+                    this->particule[p].grouplist[gr].priork1moy.fixed=this->header.groupe[gr].priork1moy.fixed;
+                    if ((this->particule[p].grouplist[gr].priork1moy.constant)and(this->header.groupe[gr].priork1moy.fixed)) {
+                        this->particule[p].grouplist[gr].priork1moy.constant=false;
+                    }
 					this->particule[p].grouplist[gr].priork1loc = copyprior(this->header.groupe[gr].priork1loc);
 				}
 				if (this->header.groupe[gr].mutmod>2){
 					this->particule[p].grouplist[gr].k2moy = this->header.groupe[gr].k2moy ;	//k2moy
 					if (header.groupe[gr].k2moy<0) this->particule[p].grouplist[gr].priork2moy = copyprior(this->header.groupe[gr].priork2moy);
 					else this->particule[p].grouplist[gr].priork2moy.constant=true;
+                    this->particule[p].grouplist[gr].priork2moy.fixed=this->header.groupe[gr].priork2moy.fixed;
+                    if ((this->particule[p].grouplist[gr].priork2moy.constant)and(this->header.groupe[gr].priork2moy.fixed)) {
+                        this->particule[p].grouplist[gr].priork2moy.constant=false;
+                    }
 					this->particule[p].grouplist[gr].priork2loc = copyprior(this->header.groupe[gr].priork2loc);
 				}
 			}
@@ -194,7 +222,7 @@ struct ParticleSetC
 			this->particule[p].locuslist[kloc].ss = new int[ this->header.dataobs.nsample];
 			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].ss[sa] =  this->header.dataobs.locus[kloc].ss[sa];
 			this->particule[p].locuslist[kloc].samplesize = new int[ this->header.dataobs.nsample];
-			
+
 			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] =  this->header.dataobs.locus[kloc].samplesize[sa];
 			//cout << "samplesize[0]="<<this->particule[p].locuslist[kloc].samplesize[0]<<"\n";
 		}
@@ -220,9 +248,9 @@ struct ParticleSetC
         //this->particule[p].scen.ecris();
         //cout<<"setscenarios nloc="<<this->particule[p].nloc<<"\n";
         //exit(1);
-		
+
 	}
-	
+
 	void resetparticle (int p) {
                 for (int gr=1;gr<=this->particule[p].ngr;gr++) {
                         if (this->header.groupe[gr].type==0) {  //MICROSAT
@@ -241,8 +269,8 @@ struct ParticleSetC
                                         this->particule[p].grouplist[gr].k2moy = this->header.groupe[gr].k2moy ;        //k2moy
                                 }
                         }
-                 //for (int loc=0;loc<this->nloc;loc++) this->particule[p].libere(false);        
-                
+                 //for (int loc=0;loc<this->nloc;loc++) this->particule[p].libere(false);
+
                 }
         }
 
@@ -255,7 +283,7 @@ struct ParticleSetC
         int *sOK;
         sOK = new int[npart];
         if (debuglevel==5) cout<<"avant firsttime\n";
-        if (firsttime) {                
+        if (firsttime) {
             this->particule = new ParticleC[this->npart];
             this->header = header;
             for (int p=0;p<this->npart;p++) {
@@ -340,7 +368,7 @@ struct ParticleSetC
             if (sOK[ipart]==0){
                 enreg[ipart].numscen=1;
                 if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
-                
+
                 //cout<<"dans particleset\n";
                 for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
                     enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
@@ -364,8 +392,8 @@ struct ParticleSetC
                                 enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
                         }
         }
-      
-      
+
+
     }
 
 	void dosimultabref(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut)
@@ -382,7 +410,7 @@ struct ParticleSetC
                //else cout<<"particleSet UNdefined\n";
                //this->header = header;
                if (debuglevel==5) cout <<"dosimultabref npart = "<<npart<<"\n";
-               if (firsttime) {                
+               if (firsttime) {
                     this->particule = new ParticleC[this->npart];
                     this->header = header;
                     for (int p=0;p<this->npart;p++) {
@@ -425,13 +453,13 @@ struct ParticleSetC
 			if (sOK[ipart]==0){
 				enreg[ipart].numscen=1;
                 if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
-                
-                //cout<<"dans particleset\n";
+
+                cout<<"dans particleset\n";
 				for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
                     enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
-                    //cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+                    cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
                 }
-                //cout <<"\n";
+                cout <<"\n";
                 nstat=0;
 				for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 					for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}
@@ -457,25 +485,31 @@ struct ParticleSetC
               if (debuglevel==5) cout<<curfile<<"\n";
               pFile = fopen (curfile,"w");
               fprintf(pFile,"%s\n",this->header.entete.c_str());
+			  cout<<"FISTTIME\n";
+			  cout<<header.entete<<"\n";
+			  int nph,npm;
+			  ss=splitwords(header.entetehist," ",&nph);
+			  ss=splitwords(header.entetemut," ",&npm);
               ss=splitwords(header.entete," ",&ns);
               np=ns-header.nstat-1;
-              //cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
+              cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
+			  cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
               for (int ipart=0;ipart<this->npart;ipart++) {
                   if (sOK[ipart]==0){
                       //cout<<enreg[ipart].numscen<<"\n";
                       fprintf(pFile,"%3d  ",enreg[ipart].numscen);
                       iscen=enreg[ipart].numscen-1;
                       //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
-                      //cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"\n";
+                      cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"   "<<np<<"\n";
                       pa=0;
-                      for (int j=1;j<np+1-rt.nparamut;j++) {
+                      for (int j=1;j<nph;j++) {
                           trouve=false;ip=-1;
                           while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
                               ip++;
                               trouve=(ss[j] == rt.histparam[iscen][ip].name);
                               //cout<<"->"<<ss[j]<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
                           }
-                          if (trouve) {
+						  if (trouve) {
                               trouve2=false;iq=-1;
                               while ((not trouve2)and(iq<header.nparamtot-1)) {
                                   iq++;
@@ -488,10 +522,13 @@ struct ParticleSetC
                           }
                           else fprintf(pFile,"              ");
                       }
-                      //cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
-                      for (int j=pa;j<rt.nparam[iscen];j++) fprintf(pFile,"  %12.3e",enreg[ipart].param[j]);
+                      cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
+                      for (int j=0;j<npm;j++) fprintf(pFile,"  %12.3e",enreg[ipart].param[pa+j]);
                       for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
                       fprintf(pFile,"\n");
+					  cout<<"\nstat de la particule "<<ipart<<"\n";
+					  for (int st=0;st<header.nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";
+					  cout<<"\n";
                   }
               }
               fclose(pFile);

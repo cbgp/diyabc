@@ -52,9 +52,9 @@
 #endif
 
 ReftableC rt;
-HeaderC header;    
+HeaderC header;
 ParticleSetC ps;
-struct stat stFileInfo; 
+struct stat stFileInfo;
 
 char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename;
 bool multithread=false;
@@ -65,7 +65,7 @@ string sremtime;
 double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,debutr,dureer,remtime;
 
 /**
-* lecture du fichier header.txt, calcul des stat_obs et lecture de l'entête de reftable.bin' 
+* lecture du fichier header.txt, calcul des stat_obs et lecture de l'entête de reftable.bin'
 */
 
 int readheaders() {
@@ -92,11 +92,11 @@ int main(int argc, char *argv[]){
     char action='a';
     bool flagp=false,flagi=false,flags=false,simOK,stoprun=false;
     string message;
-    FILE *flog;   
-        
+    FILE *flog;
+
     debut=walltime(&clock_zero);
 	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:d:hmqj:a:t:")) !=-1) {
-         
+
 	  switch (optchar) {
 
         case 'h' : cout << "USAGE :\n";
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]){
             cout << "           d:<number of simulated datasets used in the direct approach>\n";
             cout << "           l:<number of simulated datasets used in the logistic regression>\n";
             cout << "           m:<number of requested logistic regressions>\n";
-            
+
             cout << "\n-b for BIAS/PRECISION COMPUTATIONS (idem)\n";
             cout << "           s:<chosen scenario<\n";
             cout << "           n:<number of simulated datasets taken from reftable>\n";
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]){
             cout << "                vx3=<mean P value/mean P prior for group x>   vx4=<shape value/locus P prior for group x>\n";
             cout << "                vx5 and vx6 correspond to sni mutation rate.\n";
             cout << "                For a DNA sequence group, replace P and sni by k1 and k2 respectively\n";
-            
+
             cout << "\n-f for CONFIDENCE IN SCENARIO CHOICE COMPUTATIONS (idem)\n";
             cout << "           s:<chosen scenarios among which to choose<\n";
             cout << "           r:<chosen scenario to be tested<\n";
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]){
             cout << "           h:<histparameter values/priors (as in bias/precision)>\n";
             cout << "           u:<mutparameter values/priors for successive groups (as in bias/precision)\n";
             cout << "           f:<0 if logistic regression on SS, 1 if logistic regression on FDA components>\n";
-            
+
             cout << "\n-d for ABC PRIOR/SCENARIO CHECKING (idem)\n";
             cout << "           a:<p for PCA, l for locate observed, pl for both>\n";
 
@@ -163,17 +163,17 @@ int main(int argc, char *argv[]){
             cout << "           t:<number of the transformation (1,2,3 or 4)>\n";
             cout << "           v:<list of summary stat names separated by a comma (if empty keep those of reftable)>\n";
            break;
-	
+
         case 'a' :
             debuglevel=atoi(optarg);
             break;
-           
+
         case 'i' :
             ident=strdup(optarg);
             flagi=true;
             break;
-        
-        case 'p' : 
+
+        case 'p' :
             headerfilename = new char[strlen(optarg)+13];
             reftablefilename = new char[strlen(optarg)+15];
             reftablelogfilename = new char[strlen(optarg)+15];
@@ -194,65 +194,65 @@ int main(int argc, char *argv[]){
             flagp=true;
             if (stat(stopfilename,&stFileInfo)==0) remove(stopfilename);
             break;
-		   
-        case 's' :  
+
+        case 's' :
             seed=atoi(optarg);
             flags=true;
             break;
-            
-        case 'r' :  
+
+        case 'r' :
             nrecneeded = atoi(optarg);
             action='r';
             break;
-                   
-        case 'g' :  
+
+        case 'g' :
             nenr = atoi(optarg);
             break;
-          
-        case 'm' :  
+
+        case 'm' :
             multithread=true;
             break;
 
-        case 'c' :  
+        case 'c' :
             compar=strdup(optarg);
             action='c';
-            break;        
-                    
-        case 'e' :  
+            break;
+
+        case 'e' :
             estpar=strdup(optarg);
             action='e';
-            break;        
-                    
-        case 'b' :  
+            break;
+
+        case 'b' :
             biaspar=strdup(optarg);
             action='b';
             break;
-            
+
         case 'f' :
             confpar=strdup(optarg);
             action='f';
             break;
-                    
+
         case 'd' :
             priorpar=strdup(optarg);
             action='d';
             break;
-        
-        case 'q' : 
+
+        case 'q' :
             header.readHeader(headerfilename);
             k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
             rt.concat();
             break;
 
-        case 'j' :  
+        case 'j' :
             estpar=strdup(optarg);
             action='j';
-            break;        
+            break;
 
-        case 't' :  
+        case 't' :
             num_threads = atoi(optarg);
             multithread=true;
-            break;        
+            break;
 
 	    }
 	}
@@ -267,8 +267,8 @@ int main(int argc, char *argv[]){
      if (not flags) seed=time(NULL);
      if (num_threads>0) omp_set_num_threads(num_threads);
 	switch (action) {
-    
-      case 'r' :   k=readheaders(); 
+
+      case 'r' :   k=readheaders();
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
                    if (k==1) {
                               rt.datapath = datafilename;
@@ -327,36 +327,36 @@ int main(int argc, char *argv[]){
                                   //exit(1);
                           } else {ofstream f1(reftablelogfilename,ios::out);f1<<"END\n\n";f1.close();}
                       break;
-                      
+
       case 'e'  : k=readheaders();
-                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                   doestim(estpar);
                   break;
-                  
+
       case 'c'  : k=readheaders();
-                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                   docompscen(compar);
                   break;
-    
+
        case 'b'  : k=readheaders();
-                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                   dobias(biaspar,seed);
                   break;
- 
+
        case 'f'  : k=readheaders();
-                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                   doconf(confpar,seed);
                   break;
        case 'd'  : k=readheaders();
-                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                   doacpl(priorpar,multithread,seed);
                   break;
-                  
+
        case 'j'  : k=readheaders();
-                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);} 
+                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                    domodchec(estpar,seed);
                    break;
-                   
+
   }
 	duree=walltime(&debut);
     cout<<"durée ="<<TimeToStr(duree)<<"\n";

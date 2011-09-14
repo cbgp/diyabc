@@ -78,7 +78,7 @@ int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  
 extern int debuglevel;
 
 /**
-* retourne un ordre aléatoire pour les éléments d'un vecteur 
+* retourne un ordre aléatoire pour les éléments d'un vecteur
 */
 vector <int> melange(MwcGen mw, int n) {
 	vector <double> ra;
@@ -89,7 +89,7 @@ vector <int> melange(MwcGen mw, int n) {
 		ord[i] = 0;
 		for (int j=0;j<n;j++) {if (ra[i]>ra[j]) ord[i]++;}
 	}
-	return ord;  	
+	return ord;
 }
 
 /**
@@ -101,14 +101,14 @@ public:
 	string loi;
 	double mini,maxi,mean,sdshape;
 	int ndec;
-	bool constant;
-	
+	bool constant,fixed;
+
 	void ecris(){
 		cout <<"    loi="<<this->loi<<"   min="<<this->mini<<"   max="<<this->maxi<<"   ndec="<<this->ndec;
 		if (this->loi=="GA") cout <<"    shape="<<this->sdshape;
 		if (this->constant) cout<<"   constant\n"; else cout<<"   variable\n";
 	}
-	  
+
 };
 
 /**
@@ -118,7 +118,7 @@ public:
 struct ConditionC
 {
 	string param1,param2,operateur;
-	
+
 	void ecris(){cout<<this->param1<<"  "<<this->operateur<<"  "<<this->param2<<"\n";}
 
 };
@@ -133,24 +133,24 @@ struct StatC
 };
 
 /**
-* Classe EventC :éléments de définition d'un événement populationnel 
+* Classe EventC :éléments de définition d'un événement populationnel
 */
 class EventC
 {
 public:
-	char action;   //"V"=VarNe "M"=Merge  "S"=Split  "E" = sample/echantillon  
+	char action;   //"V"=VarNe "M"=Merge  "S"=Split  "E" = sample/echantillon
 	int pop,pop1,pop2,sample,Ne,time;
     	double admixrate;
     	int numevent0;
     	char *stime,*sNe,*sadmixrate;
         int ltime,lNe,ladmixrate;
-	
+
     void libere() {
         if (ltime>0) delete []stime;
         if (lNe>0) delete []sNe;
         if (ladmixrate>0) delete []sadmixrate;
-    }    
-        
+    }
+
     void ecris(){
         string sstime;
         if (this->time!=-9999) sstime=IntToString(this->time);
@@ -160,12 +160,12 @@ public:
         else if (this->action=='M') cout<<"    "<<sstime<<"   merge  pop="<<this->pop<<"   pop1="<<this->pop1<<"\n";
         else if (this->action=='S') cout<<"    "<<sstime<<"   split  pop="<<this->pop<<"   pop1="<<this->pop1<<"   pop2="<<this->pop2<<"   "<<this->sadmixrate<<"\n";
         else if (this->action=='E') cout<<"    "<<sstime<<"   samp   pop="<<this->pop<<"\n";
-        
+
 	}
 };
 
 /**
-* Définition de l'opérateur pour le tri des événements populationnels  
+* Définition de l'opérateur pour le tri des événements populationnels
 */
 struct compevent
 {
@@ -176,20 +176,20 @@ struct compevent
 };
 
 /**
-* struct Ne0C : éléments de définition d'un effectif efficace à la ligne 1 d'un scénario  
+* struct Ne0C : éléments de définition d'un effectif efficace à la ligne 1 d'un scénario
 */
 struct Ne0C
 {
 	int val,lon;
 	char *name;
-    
+
     void libere() {
         delete []this->name;
     }
 };
 
 /**
-* Classe HistparameterC :éléments de définition d'un paramètre historique 
+* Classe HistparameterC :éléments de définition d'un paramètre historique
 */
 class HistParameterC
 {
@@ -198,11 +198,11 @@ public:
 	int category;   //0 pour N, 1 pour T et 2 pour A
 	double value;
 	PriorC prior;
-    
-    void libere(){ 
+
+    void libere(){
         //delete &(this->prior);
     }
-	
+
 	void ecris() {
 		cout<<"    name="<<this->name<<"   val="<<this->value<<"   category="<<this->category<<"\n";
 		prior.ecris();
@@ -210,7 +210,7 @@ public:
 };
 
 /**
-* struct LocusGroupC : éléments de définition d'un groupe de locus  
+* struct LocusGroupC : éléments de définition d'un groupe de locus
 */
 struct LocusGroupC
 {
@@ -223,18 +223,18 @@ struct LocusGroupC
 	PriorC priormusmoy,priork1moy,priork2moy,priormusloc,priork1loc,priork2loc;
 	PriorC priormutmoy,priorPmoy,priorsnimoy,priormutloc,priorPloc,priorsniloc;
 	StatC *sumstat;
-    
+
     void libere() {
         delete []loc;
         for (int i=0;i<this->nstat;i++) free(&(this->sumstat[i]));
         delete []this->sumstat;
-    
+
     }
-    
+
 };
 
 /**
-* Classe ScenarioC :éléments de définition d'un scénario 
+* Classe ScenarioC :éléments de définition d'un scénario
 */
 class ScenarioC
 {
@@ -245,8 +245,8 @@ public:
     Ne0C *ne0;
     HistParameterC *histparam;
     ConditionC *condition;
-    
-    
+
+
     /* action = 0 (varne), 1 (merge), 2 (split), 3 (adsamp)
      * category=0 (Ne)   , 1 (time),  3 (admixrate)
     */
@@ -268,9 +268,9 @@ public:
         //cout<<"         apres libere scenario\n";
         delete []this->time_sample;
     }
-    
+
 /**
-* Classe ScenarioC : détermination du ou des paramètres contenus dans la string s 
+* Classe ScenarioC : détermination du ou des paramètres contenus dans la string s
 */
     void detparam(string s,int cat)
     {	string s1;
@@ -291,7 +291,7 @@ public:
                         ss.push_back(s1.substr(0,posigne));
                         s1=s1.substr(posigne+1);
                         //cout<<"s1="<<s1<<"\n";;
-                }	  	
+                }
         }
         for (i=0;i<ss.size();i++) {
             //cout<<"ss["<<i<<"]="<<ss[i]<<"\n";
@@ -307,16 +307,16 @@ public:
                         }
                         if (not trouve) {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;}
                         //else cout<<"deja\n";
-                } else {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;} 
+                } else {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;}
         }
         /*cout<<"dans detparam  size = "<<histparname.size()<<"   nparam="<<this->nparam<<"\n";
         for (int i=0;i<histparname.size();i++) cout<<"histparname = "<<histparname[i]<<"\n";
         cout<<"\n";*/
     }
-    
+
 
 /**
-* Classe ScenarioC : lecture/interprétation des lignes d'un scénario 
+* Classe ScenarioC : lecture/interprétation des lignes d'un scénario
 */
     void read_events(int nl,string *ls){
     	string *ss;
@@ -359,7 +359,7 @@ public:
     			this->event[i].pop=atoi(ss[2].c_str());
     			this->event[i].pop1=atoi(ss[3].c_str());
     			//cout <<this->event[i].stime<<"  MERGE"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"\n";
-    			
+
     		} else if (majuscules(ss[1])=="SPLIT") {
     			this->event[i].action='S';
     			this->event[i].pop=atoi(ss[2].c_str());
@@ -403,7 +403,7 @@ public:
     	n=-1;
     	for (int i=0;i<this->nevent;i++) {if (this->event[i].action=='E') {n++;this->time_sample[n]=this->event[i].time;}}
     }
-    
+
     void ecris() {
     	cout <<"scenario "<<this->number<<"   ("<<this->prior_proba<<")\n";
     	cout <<"    nevent="<<this->nevent<<"   nne0="<<nn0<<"\n";
@@ -422,7 +422,7 @@ public:
 };
 
 /**
-* Copie du contenu d'une classe PriorC 
+* Copie du contenu d'une classe PriorC
 */
 PriorC copyprior(PriorC source) {
 	PriorC dest;
@@ -433,11 +433,12 @@ PriorC copyprior(PriorC source) {
 	dest.sdshape = source.sdshape;
 	dest.constant = source.constant;
 	dest.ndec  = source.ndec;
+	dest.fixed = source.fixed;
 	return dest;
 }
 
 /**
-* Copie du contenu d'une classe EventC 
+* Copie du contenu d'une classe EventC
 */
 EventC copyevent(EventC source) {
 	EventC dest;
@@ -469,7 +470,7 @@ EventC copyevent(EventC source) {
 }
 
 /**
-* Copie du contenu d'une classe Ne0C 
+* Copie du contenu d'une classe Ne0C
 */
 Ne0C copyne0(Ne0C source) {
 	Ne0C dest;
@@ -481,7 +482,7 @@ Ne0C copyne0(Ne0C source) {
 }
 
 /**
-* Copie du contenu d'une classe HistParameterC 
+* Copie du contenu d'une classe HistParameterC
 */
 HistParameterC copyhistparameter(HistParameterC source) {
 	HistParameterC dest;
@@ -493,7 +494,7 @@ HistParameterC copyhistparameter(HistParameterC source) {
 }
 
 /**
-* Copie du contenu d'une classe ConditionC 
+* Copie du contenu d'une classe ConditionC
 */
 ConditionC copycondition(ConditionC source) {
     ConditionC dest;
@@ -504,7 +505,7 @@ ConditionC copycondition(ConditionC source) {
 }
 
 /**
-* Copie du contenu d'une classe ScenarioC 
+* Copie du contenu d'une classe ScenarioC
 */
 ScenarioC copyscenario(ScenarioC source) {
   //cout<<"debut de copyscenario\n";
@@ -544,7 +545,7 @@ ScenarioC copyscenario(ScenarioC source) {
 
 
 /**
-* Struct SequenceBitC : éléments de définition d'un segment (vertical) de l'arbre de coalescence' 
+* Struct SequenceBitC : éléments de définition d'un segment (vertical) de l'arbre de coalescence'
 */
 struct SequenceBitC
 {
@@ -555,7 +556,7 @@ struct SequenceBitC
     int N,t0,t1;
     double admixrate;
     bool *popfull;
-    
+
     void ecris() {
         switch (action){
           case 'C' : cout <<"coalescence dans pop "<<this->pop<<"   N="<<this->N<<"   t0="<<this->t0<<"   t1="<<this->t1<<"\n";break;
@@ -568,7 +569,7 @@ struct SequenceBitC
 };
 
 /**
-* Struct NodeC : éléments de définition d'un noeud de l'arbre de coalescence 
+* Struct NodeC : éléments de définition d'un noeud de l'arbre de coalescence
 */
 struct NodeC
 {
@@ -578,7 +579,7 @@ struct NodeC
 };
 
 /**
-* Struct BranchC : éléments de définition d'une branche de l'arbre de coalescence 
+* Struct BranchC : éléments de définition d'une branche de l'arbre de coalescence
 */
 struct BranchC
 {
@@ -587,7 +588,7 @@ struct BranchC
 };
 
 /**
-* Struct BranchC : éléments de définition d'un arbre de coalescence 
+* Struct BranchC : éléments de définition d'un arbre de coalescence
 */
 struct GeneTreeC
 {
@@ -598,7 +599,7 @@ struct GeneTreeC
 
 
 /**
-* Struct ParticleC : éléments de définition d'une particule 
+* Struct ParticleC : éléments de définition d'une particule
 */
 struct ParticleC
 {
@@ -614,22 +615,22 @@ struct ParticleC
     vector < vector <bool> > afsdone;
     vector < vector < vector <int> > > t_afs;
     vector < vector <int> > n_afs;
-    
+
 	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar;
 	double matQ[4][4];
 
     void libere(bool obs) {
          for (int i=0;i<this->nloc;i++) locuslist[i].libere(obs,this->nsample);
          delete []locuslist;
-    
+
     }
-    
+
     void ecris(){
 		for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();
 	}
-	
+
 /**
-* Struct ParticleC : calcule le nombre de copies de gènes de l'individu i de l'échantillon sa au locus loc 
+* Struct ParticleC : calcule le nombre de copies de gènes de l'individu i de l'échantillon sa au locus loc
 */
 	int calploidy(int loc, int sa,int i) {
       int typ = this->locuslist[loc].type%5;
@@ -641,10 +642,10 @@ struct ParticleC
 		else 		{return 1;}   //AUTOSOMAL HAPLOID or X-LINKED MALE or MITOCHONDRIAL
 
 	}
-	
+
 /**
-* Struct ParticleC : recopie le scénario numscen dans this->scen. 
-* Si numscen<1, tirage au sort préalable du scenario dans le prior 
+* Struct ParticleC : recopie le scénario numscen dans this->scen.
+* Si numscen<1, tirage au sort préalable du scenario dans le prior
 */
 	void drawscenario(int numscen) {
 		double ra,sp=0.0;
@@ -687,7 +688,7 @@ struct ParticleC
 	}
 
 /**
-* Struct ParticleC : copie le contenu d'une structure GeneTreeC 
+* Struct ParticleC : copie le contenu d'une structure GeneTreeC
 */
 	GeneTreeC copytree(GeneTreeC source) {
 		GeneTreeC dest;
@@ -710,16 +711,16 @@ struct ParticleC
 	}
 
 /**
-* Struct ParticleC : libère le contenu d'une structure GeneTreeC 
+* Struct ParticleC : libère le contenu d'une structure GeneTreeC
 */
 	void deletetree(GeneTreeC tree,bool dna) {
-        if (dna) for (int i=0;i<tree.nnodes;i++) tree.nodes[i].dna.clear(); 
+        if (dna) for (int i=0;i<tree.nnodes;i++) tree.nodes[i].dna.clear();
 		delete [] tree.nodes;
 		delete [] tree.branches;
 	}
 
 /**
-* Struct ParticleC : tire une valeurde type double dans un prior 
+* Struct ParticleC : tire une valeurde type double dans un prior
 */
 	double drawfromprior(PriorC prior) {
 		double r;
@@ -748,7 +749,7 @@ struct ParticleC
 	}
 
 /**
-* Struct ParticleC : retourne la valeur d'un paramètre à partir de son nom (propriété name) 
+* Struct ParticleC : retourne la valeur d'un paramètre à partir de son nom (propriété name)
 */
 	double param2val(string paramname){
 		int ip;
@@ -758,9 +759,9 @@ struct ParticleC
 		return this->scen.histparam[ip].value;
 
 	}
-	
+
 /**
-* Struct ParticleC : retourne la valeur d'une expression du genre param1 +param2-param3 
+* Struct ParticleC : retourne la valeur d'une expression du genre param1 +param2-param3
 */
 	double getvalue(string line) {
 		double result;
@@ -799,9 +800,9 @@ struct ParticleC
 		}
 		return result;
 	}
-	
+
 /**
-* Struct ParticleC : indique si toutes les conditions sur les paramètres sont vérifiées 
+* Struct ParticleC : indique si toutes les conditions sur les paramètres sont vérifiées
 */
 	bool conditionsOK() {
 	    bool OK=true;
@@ -810,7 +811,7 @@ struct ParticleC
         if (debuglevel==10) cout<<this->scen.nconditions<<" conditions à remplir\n";
 	    while ((OK)and(i<this->scen.nconditions)){
 	        //this->scen.condition[i].ecris();
-	        
+
 	        ip1=0;while (this->scen.condition [i].param1!=this->scen.histparam[ip1].name) ip1++;
 	        ip2=0;while (this->scen.condition [i].param2!=this->scen.histparam[ip2].name) ip2++;
 	        if (this->scen.condition[i].operateur==">")       OK=(this->scen.histparam[ip1].value > this->scen.histparam[ip2].value);
@@ -822,7 +823,7 @@ struct ParticleC
 	    }
 	    return OK;
 	}
-	
+
 /**
 *Struct ParticleC : vérifie l'ordre des événements quand il a y en a plusieurs à la même génération
 */
@@ -870,7 +871,7 @@ struct ParticleC
                             //for (int k=0;k<exaequo[ng-1].size();k++) cout<<"  "<<exaequo[ng-1][k];cout<<"\n";
                         }
                     }
-                } 
+                }
             }
         }
         if (ng==0) return;
@@ -899,7 +900,7 @@ struct ParticleC
             for (int iev=0;iev<exaequo[g].size()-1;iev++) {
                 for (int jev=iev+1;jev<exaequo[g].size();jev++) {
                     if (bonordre[iev]>bonordre[jev]) {
-                        //cout<<"echange entre "<<iev<<" et "<<jev<<"\n"; 
+                        //cout<<"echange entre "<<iev<<" et "<<jev<<"\n";
                         piv = copyevent(this->scen.event[exaequo[g][iev]]);
                         this->scen.event[exaequo[g][iev]] = copyevent(this->scen.event[exaequo[g][jev]]);
                         this->scen.event[exaequo[g][jev]] =copyevent(piv);
@@ -915,7 +916,7 @@ struct ParticleC
 
 
 /**
-* Struct ParticleC : génère les valeurs des paramètres historiques d'un scénario donné' 
+* Struct ParticleC : génère les valeurs des paramètres historiques d'un scénario donné'
 */
 	bool setHistParamValue(bool usepriorhist) {
         //cout<<"dans sethistparamvalue nconditions="<<this->scen.nconditions<<"   drawuntil="<<drawuntil<<"\n";
@@ -940,7 +941,7 @@ struct ParticleC
                     for (int p=0;p<this->scen.nparam;p++) {
                         this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
                         if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-                    }  
+                    }
                     OK = conditionsOK();
                 }
             }else {
@@ -971,8 +972,8 @@ struct ParticleC
 //TRI SUR LES TEMPS DES EVENEMENTS
             sort(&this->scen.event[0],&this->scen.event[this->scen.nevent],compevent());
             checkorder();
-            
-            
+
+
 			//cout<<"fin des events\n";
 			for (int i=0;i<this->scen.nn0;i++) {
 				if (this->scen.ne0[i].val<0) this->scen.ne0[i].val = (int)this->getvalue(this->scen.ne0[i].name);
@@ -984,76 +985,94 @@ struct ParticleC
 	}
 
 /**
-* Struct ParticleC : génère les valeurs des paramètres mutationnels moyens des différents groupes de locus 
+* Struct ParticleC : génère les valeurs des paramètres mutationnels moyens des différents groupes de locus
 */
 	void setMutParammoyValue(bool usepriormut){
 		int gr;
 		for (gr=1;gr<=this->ngr;gr++) {
-		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"\n";
+		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"   usepriormut="<<usepriormut<<"\n";
 		    if (this->grouplist[gr].type==0) {  //microsat
-		        if ((this->grouplist[gr].mutmoy<0)and(usepriormut)) {
-			    this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
-                            //this->grouplist[gr].priormutmoy.ecris();
-			    if (not this->grouplist[gr].priormutmoy.constant) {
-			        this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
-			        this->scen.ipv++;
-			    }
-			}
-			//cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"\n";fflush(stdin);
-			if ((this->grouplist[gr].Pmoy<0)and(usepriormut)) {
-			    this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
-			    if (not this->grouplist[gr].priorPmoy.constant) {
-			      //cout<<"prior pmoy non constant ?\n";  
-                              this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
-			        this->scen.ipv++;
-			    }
-			}
-			//cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"\n";fflush(stdin);
-			if ((this->grouplist[gr].snimoy<0)and(usepriormut)) {
-			    this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
-			    if (not this->grouplist[gr].priorsnimoy.constant) {
-			        this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
-			        this->scen.ipv++;
-			    }
-			}
-			//cout<<"snimoy="<<this->grouplist[gr].snimoy<<"\n";fflush(stdin);
+		        if (not this->grouplist[gr].priormutmoy.constant) {
+                    if ((this->grouplist[gr].mutmoy<0)and(usepriormut)) this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
+                    this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
+                    this->scen.ipv++;
+		        }
+				cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";fflush(stdin);
+				if ((this->grouplist[gr].Pmoy<0)and(usepriormut)) {
+					this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
+					if (not this->grouplist[gr].priorPmoy.constant) {
+					  //cout<<"prior pmoy non constant ?\n";
+								  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
+						this->scen.ipv++;
+					}
+				}
+				if ((not usepriormut)and(not this->grouplist[gr].priorPmoy.constant)) {
+						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
+						this->scen.ipv++;
+				}
+				cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";fflush(stdin);
+				if ((this->grouplist[gr].snimoy<0)and(usepriormut)) {
+					this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
+					if (not this->grouplist[gr].priorsnimoy.constant) {
+						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
+						this->scen.ipv++;
+					}
+				}
+				if ((not usepriormut)and(not this->grouplist[gr].priorsnimoy.constant)) {
+						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
+						this->scen.ipv++;
+				}
+				cout<<"snimoy="<<this->grouplist[gr].snimoy<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";fflush(stdin);
 		    }
 		    if (this->grouplist[gr].type==1) {  //sequence
 		        if ((this->grouplist[gr].musmoy<0)and(usepriormut)) {
-			    this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
-			    if (not this->grouplist[gr].priormusmoy.constant) {
-			        this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
-			        this->scen.ipv++;
-			    }
-			}
-			//cout<<"musmoy="<<this->grouplist[gr].musmoy<<"\n";fflush(stdin);
-			if (this->grouplist [gr].mutmod>0){
-			    if ((this->grouplist[gr].k1moy<0)and(usepriormut)) { 
-			        this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
-			        if (not this->grouplist[gr].priork1moy.constant) {
-			            this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
-			            this->scen.ipv++;
+					this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
+					if (not this->grouplist[gr].priormusmoy.constant) {
+						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
+						this->scen.ipv++;
+					}
 				}
-			    }
-			//    cout<<"k1moy="<<this->grouplist[gr].k1moy<<"\n";fflush(stdin);
-			}
-			if (this->grouplist [gr].mutmod>2){
-			    if ((this->grouplist[gr].k2moy<0)and(usepriormut)) {
-			        this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
-			        if (not this->grouplist[gr].priork2moy.constant) {
-			            this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
-			            this->scen.ipv++;
+				if ((not usepriormut)and(not this->grouplist[gr].priormusmoy.constant)) {
+						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
+						this->scen.ipv++;
 				}
-			    }
-			}
+				cout<<"musmoy="<<this->grouplist[gr].musmoy<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";fflush(stdin);
+				if (this->grouplist [gr].mutmod>0){
+					if ((this->grouplist[gr].k1moy<0)and(usepriormut)) {
+						  this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
+						  if (not this->grouplist[gr].priork1moy.constant) {
+							  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
+							  this->scen.ipv++;
+						  }
+					  }
+					  if ((not usepriormut)and(not this->grouplist[gr].priork1moy.constant)) {
+							  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
+							  this->scen.ipv++;
+					  }
+					cout<<"k1moy="<<this->grouplist[gr].k1moy<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";fflush(stdin);
+				}
+				if (this->grouplist [gr].mutmod>2){
+					if ((this->grouplist[gr].k2moy<0)and(usepriormut)) {
+						this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
+						if (not this->grouplist[gr].priork2moy.constant) {
+							this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
+							this->scen.ipv++;
+						}
+					}
+					if ((not usepriormut)and(not this->grouplist[gr].priork2moy.constant)) {
+							this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
+							this->scen.ipv++;
+					}
+				}
 		    }
-		
+
 		}
 		this->scen.nparamvar=this->scen.ipv;
+
 	}
-	
+
 /**
-* Struct ParticleC : génère les valeurs des paramètres mutationnels du locus loc 
+* Struct ParticleC : génère les valeurs des paramètres mutationnels du locus loc
 */
 	void setMutParamValue(int loc){
 		int gr = this->locuslist[loc].groupe;
@@ -1074,8 +1093,8 @@ struct ParticleC
 			if ((this->grouplist[gr].priorsniloc.sdshape>0.001 )and(this->grouplist[gr].nloc>1)) this->locuslist[loc].sni_rate = this->drawfromprior(this->grouplist[gr].priorsniloc);
 			else this->locuslist[loc].sni_rate =this->grouplist[gr].snimoy;
 			//cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
-			
-	
+
+
 		 }
 		else		                    //DNA SEQUENCE
 		{
@@ -1116,7 +1135,7 @@ struct ParticleC
 /////////////////////////////////////////
 
 /**
-* Struct ParticleC : retourne vrai si et seulement si l'événement ievent est basal (??) 
+* Struct ParticleC : retourne vrai si et seulement si l'événement ievent est basal (??)
 */
 	bool firstEvent(int ievent) {
 		if (ievent == 0) {return 1;} //1 pour TRUE
@@ -1303,10 +1322,10 @@ struct ParticleC
 
 		}*/
 	}
-	
+
 /**
-* Struct ParticleC : calcule les éléments de la matrice de transition Q qui fournit 
-*                    la probabilité de mutation d'un nucléotide à un autre en fonction 
+* Struct ParticleC : calcule les éléments de la matrice de transition Q qui fournit
+*                    la probabilité de mutation d'un nucléotide à un autre en fonction
 *                    du modèle mutationnel choisi
 */
     void comp_matQ(int loc) {
@@ -1358,9 +1377,9 @@ struct ParticleC
 
 
 /**
-* Struct ParticleC : initialise l'arbre de coalescence, i.e. alloue la mémoire pour les noeuds et les branches, 
-*                    initialise les propriétés "sample" et "height" des noeuds terminaux 
-*                    initialise à 0 la propriété "pop" de tous les noeuds et à 0 la propriété "sample" des noeuds non-terminaux 
+* Struct ParticleC : initialise l'arbre de coalescence, i.e. alloue la mémoire pour les noeuds et les branches,
+*                    initialise les propriétés "sample" et "height" des noeuds terminaux
+*                    initialise à 0 la propriété "pop" de tous les noeuds et à 0 la propriété "sample" des noeuds non-terminaux
 */
 	GeneTreeC init_tree(int loc) {
 		//cout << "début de init_tree pour le locus " << loc  <<"\n";
@@ -1401,7 +1420,7 @@ struct ParticleC
 	}
 
 /**
-* Struct ParticleC : évalue la pertinence de l'approximation continue pour le traitement de la coalescence 
+* Struct ParticleC : évalue la pertinence de l'approximation continue pour le traitement de la coalescence
 */
 	int evalcriterium(int iseq,int nLineages) {
 		if(this->seqlist[iseq].t1<0) {return 1;}
@@ -1421,7 +1440,7 @@ struct ParticleC
 	}
 
 /**
-* Struct ParticleC : tire au hasard (uniformément) une lignée ancestrale parmi celles de la population requise 
+* Struct ParticleC : tire au hasard (uniformément) une lignée ancestrale parmi celles de la population requise
 */
 	int draw_node(int loc,int iseq,int nLineages) {
 		int k = this->mw.rand0(nLineages);
@@ -1442,7 +1461,7 @@ struct ParticleC
 	}
 
 /**
-* Struct ParticleC : coalesce les lignées ancestrales de la population requise 
+* Struct ParticleC : coalesce les lignées ancestrales de la population requise
 */
 	void coal_pop(int loc,int iseq) {
 		//cout <<"\n";
@@ -1457,7 +1476,7 @@ struct ParticleC
 		//cout<<"debut coal_pop nbranches="<< this->gt[loc].nbranches << "  nLineages=" << nLineages << "\n";
 		if (this->seqlist[iseq].t1<0) {final=true;}
 		if (this->seqlist[iseq].N<1) {std::cout << "coal_pop : population size <1 ("<<this->seqlist[iseq].N<<") \n" ;exit(100);}
-        //if (trace) cout<<"pop size>=1\n"; 
+        //if (trace) cout<<"pop size>=1\n";
 		if (evalcriterium(iseq,nLineages) == 1) {		//CONTINUOUS APPROXIMATION
 			//if (trace) cout << "Approximation continue final="<< final << "   nLineages=" << nLineages << "  pop=" <<this->seqlist[iseq].pop << "\n";
 			double start = this->seqlist[iseq].t0;
@@ -1740,7 +1759,7 @@ struct ParticleC
                 dna2.clear();
             }
             if (debuglevel==10) cout <<dna<<"\n";
-            if ((debuglevel==9)and(loc==10)) {            
+            if ((debuglevel==9)and(loc==10)) {
                 cout<<"sitmut2\n";
                 for (int i=0;i<this->gt[loc].nmutot;i++) cout<<this->locuslist[loc].sitmut2[i]<<"  ";cout<<"\n";
 
@@ -1753,7 +1772,7 @@ struct ParticleC
             this->locuslist[loc].tabsit.clear();
             this->locuslist[loc].mutsit.clear();
         }
-        
+
         if ((debuglevel==9)and(loc==10)) cout<<dna<<"\n";
         return dna;
 	}
@@ -1887,14 +1906,14 @@ struct ParticleC
                         for (int p=1;p<this->scen.popmax+1;p++) if (this->seqlist[jseq].popfull[p]) cout<<p<<"  ";
                         cout<<"\n";
                     }
-                    cout<<"\n"; 
+                    cout<<"\n";
                     this->seqlist[iseq].ecris();return "probleme coal avec pop vide";
                 }
-            }    
+            }
             else if (this->seqlist[iseq].action == 'M') {
                 if ((not popleine[this->seqlist[iseq].pop])and (not popleine[this->seqlist[iseq].pop1])) {
                     this->seqlist[iseq].ecris();return "probleme merge de deux pop vides";
-                } 
+                }
                 popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
                 popleine[this->seqlist[iseq].pop1]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=false;
             }
@@ -1905,7 +1924,7 @@ struct ParticleC
                 popleine[this->seqlist[iseq].pop2]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop2]=true;
             }
             else if (this->seqlist[iseq].action == 'A') {
-                popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;  
+                popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
             }
        }
         for (int iseq=0;iseq<this->nseq;iseq++) delete []this->seqlist[iseq].popfull;
@@ -1920,7 +1939,7 @@ struct ParticleC
 		int *emptyPop,loc;
 		bool treedone,dnaloc=false,trouve;
         int locus,sa,indiv,nuc;
-        //cout<<"this->nloc="<<this->nloc<<"\n";       
+        //cout<<"this->nloc="<<this->nloc<<"\n";
 		simulOK.resize(this->nloc);
 		GeneTreeC GeneTreeY, GeneTreeM;
         if (debuglevel==10) cout<<"avant draw scenario\n";fflush(stdin);
@@ -1933,7 +1952,7 @@ struct ParticleC
 		//         	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
 		this->setSequence();
 		if (debuglevel==10) cout <<"apres setSequence\n";
-		if (debuglevel==5) cout <<"avant checktree\n"; 
+		if (debuglevel==5) cout <<"avant checktree\n";
         checktree=this->verifytree();
         if (checktree!="") {cout<<checktree<<"\n"; this->scen.ecris();exit(1);}
         if (debuglevel==5) cout <<"apres checktree\n";
@@ -1967,7 +1986,7 @@ struct ParticleC
 				if (not treedone) {
 					if (debuglevel==10) cout << "avant init_tree \n";
 					this->gt[loc] = init_tree(loc);
-					if (debuglevel==10){ 
+					if (debuglevel==10){
                         cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
                         cout<< "scenario "<<this->scen.number<<"\n";
                     }
@@ -1975,7 +1994,7 @@ struct ParticleC
 					for (int iseq=0;iseq<this->nseq;iseq++) {
 						if (debuglevel==10) {
                             cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
-                            
+
                            if (this->seqlist[iseq].action == 'C') cout <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
                            else  cout <<"   "<<this->seqlist[iseq].t0;
                            cout<<"    pop="<<this->seqlist[iseq].pop;
@@ -2028,7 +2047,7 @@ struct ParticleC
 				 if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
 				simulOK[loc]=cree_haplo(loc);
 				if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
-                
+
 				locus=loc;
                 if (simulOK[loc] != 0) {if (debuglevel==10) cout << "avant break interne\n";break;}
 				if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
@@ -2046,9 +2065,9 @@ struct ParticleC
                                       if (this->locuslist[locus].type<5) this->locuslist[locus].haplomic[sa][indiv] = MICMISSING;
                                       else                               this->locuslist[locus].haplodna[sa][indiv] = SEQMISSING;
                                       this->locuslist[locus].samplesize[sa]--;
-                              }  
+                              }
                         }
-                
+
                 }
                 if (this->data.nmissnuc>0) {
                         for (int i=0;i<this->data.nmissnuc;i++) {
@@ -2065,14 +2084,14 @@ struct ParticleC
                                       }
                                       if (trouve) {
                                           //cout<<"MISSNUC  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc<<"  k="<<k<<"\n";
-                                          //cout<<this->locuslist[locus].haplodna[sa][indiv]<<"<  ("<<this->locuslist[locus].haplodna[sa][indiv].length()<<")\n";                                      
+                                          //cout<<this->locuslist[locus].haplodna[sa][indiv]<<"<  ("<<this->locuslist[locus].haplodna[sa][indiv].length()<<")\n";
                                           this->locuslist[locus].haplodna[sa][indiv].replace(k,1,NUCMISSING);
                                           //cout<<this->locuslist[locus].haplodna[sa][indiv]<<"\n";
-                                      }                              
-                              } 
-                              
+                                      }
+                              }
+
                         }
-                
+
                 }
         }
         //cout<<"avant le sitmut2.clear()\n";
@@ -2171,8 +2190,8 @@ struct ParticleC
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
             for (int samp=0;samp<this->data.nsample;samp++) {
-                for (int ind=0;ind<this->locuslist[kloc].ss[samp];ind++) { 
-                  //cout<<"avant delete this->locuslist["<<kloc<<"].haplodnavar["<<samp<<"]["<<ind<<"]\n";  
+                for (int ind=0;ind<this->locuslist[kloc].ss[samp];ind++) {
+                  //cout<<"avant delete this->locuslist["<<kloc<<"].haplodnavar["<<samp<<"]["<<ind<<"]\n";
                   //delete []this->locuslist[kloc].haplodnavar[samp][ind];
                   this->locuslist[kloc].haplodnavar[samp][ind].clear();
                   this->locuslist[kloc].haplodna[samp][ind].clear();
@@ -2208,9 +2227,9 @@ struct ParticleC
         //cout<<ni<<" sur "<<nt<<"\n";
         if (nt>0) return (double)ni/(double)nt;
     }
-	
+
 	double cal_nal1p(int gr,int st){
-	  
+
 		double nalm=0.0;
 		int iloc,kloc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -2260,7 +2279,7 @@ struct ParticleC
 				}
 			}
 		}
-		if (nl>0) nalm=nalm/(double)nl; 
+		if (nl>0) nalm=nalm/(double)nl;
 		return nalm;
 	}
 
@@ -2405,7 +2424,7 @@ struct ParticleC
 		    			{ case 1 :  ig1 = this->locuslist[loc].haplomic[pop][i];i++;
 									if (ig1==al) {AA++;nA+=2;}
 									if (ig1!=MICMISSING) ni++;
-	
+
 									break;
 		    			  case 2 :  ig1 = this->locuslist[loc].haplomic[pop][i];i++;
 									ig2 = this->locuslist[loc].haplomic[pop][i];i++;
@@ -2487,7 +2506,7 @@ struct ParticleC
 				                	}
 				                	den_lik = (double) ((this->locuslist[loc].samplesize[sample1]+2)*(this->locuslist[loc].samplesize[sample1]+1));
 									lik -= a*log10(num_lik/den_lik);
-				                }	
+				                }
 				                break;
 	    			}
     			}
@@ -2606,8 +2625,8 @@ struct ParticleC
 		delta=li[1]-li[0];
 		delete []li;
 		return complex<double>(li0,delta);
-	}		
-		
+	}
+
 	double cal_Aml3p(int gr,int st){
 		int i1=1,i2=998,i3;
 		double p1,p2,p3,lik1,lik2,lik3;
@@ -2621,7 +2640,7 @@ struct ParticleC
 			c=pente_lik(gr,st,i3);lik3=real(c);p3=imag(c);
 			if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
 			else		   {i1=i3;p1=p3;lik1=lik3;}
-		} while (abs(i2-i1)>1);	
+		} while (abs(i2-i1)>1);
 		if (lik1>lik2) return 0.001*(double)i1; else return 0.001*(double)i2;
 	}
 
@@ -2651,7 +2670,7 @@ struct ParticleC
 		double res=0.0;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-            nhl=0; 
+            nhl=0;
             kloc=this->grouplist[gr].loc[iloc];
             haplo = new string[this->locuslist[kloc].ss[sample]];
             if(this->locuslist[kloc].samplesize[sample]>0) {
@@ -2663,7 +2682,7 @@ struct ParticleC
                     for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
                         if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
                             //cout<<"not seqmissing nhl="<<nhl<<"\n";
-                            if (nhl==0) { 
+                            if (nhl==0) {
                                 haplo[nhl] = this->locuslist[kloc].haplodnavar[sample][i];
                                 nhl++;
                                //cout<<"nl="<<nl<<"   nhl="<<nhl<<"    "<<haplo[nhl-1]<<"\n";
@@ -2683,14 +2702,14 @@ struct ParticleC
                         }
                     }
                 }
-            }            
+            }
             nhm += nhl;
             delete []haplo;
         }
         if (nl>0) res=(double)nhm/(double)nl;
         return res;
     }
-                
+
     int* cal_nsspl(int kloc,int sample, int *nssl,bool *OK) {
         char c0;
         bool trouve,ident;
@@ -2705,7 +2724,7 @@ struct ParticleC
                     c0='z';ident=true;
                     for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
                         /*if((debuglevel==9)and(kloc==10)) {
-                              cout<<this->locuslist[kloc].haplodnavar[sample][i]<<"   "<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   "<<c0;  
+                              cout<<this->locuslist[kloc].haplodnavar[sample][i]<<"   "<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   "<<c0;
                               cout<<"  "<<(this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING);
                               cout<<"  "<<(this->locuslist[kloc].haplodnavar[sample][i][j]!='N');
                               cout<<"  "<<((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodnavar[sample][i][j]!='N'))<<"\n";
@@ -2736,7 +2755,7 @@ struct ParticleC
         bool OK;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-            kloc=this->grouplist[gr].loc[iloc]; 
+            kloc=this->grouplist[gr].loc[iloc];
             ss = this->cal_nsspl(kloc,sample,&nssl,&OK);
             //cout<<"nss1p   nssl="<<nssl<<"\n";
             //for (int k=0;k<nssl;k++) cout<<"  "<<ss[k];if(nssl>0) cout<<"\n";
@@ -2797,7 +2816,7 @@ struct ParticleC
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             nd=0;mpd=0.0;spd=0.0;
-            kloc=this->grouplist[gr].loc[iloc]; 
+            kloc=this->grouplist[gr].loc[iloc];
             for (int i=0;i<this->locuslist[kloc].ss[sample]-1;i++) {
                 for (int j=i+1;j<this->locuslist[kloc].ss[sample];j++) {
                     if ((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodna[sample][j]!=SEQMISSING)) {
@@ -2858,7 +2877,7 @@ struct ParticleC
         if(nl>0) res /=nl;
         return res;
     }
-    
+
 	double cal_pss1p(int gr,int st){
         int iloc,kloc,nl=0,*ss,nps=0,nss,**ssa,*nssa;
         bool trouve,OK;
@@ -2878,7 +2897,7 @@ struct ParticleC
             }
       //on compte le nombre de sites variables de l'échantillon cible qui ne sont pas variables dans les autres échantillons
             nl++;
-            for (int j=0;j<nssa[sample];j++) { 
+            for (int j=0;j<nssa[sample];j++) {
                 trouve=false;
                 for (int sa=0;sa<this->data.nsample;sa++) {
                     if ((sa!=sample)and(nssa[sa]>0)) {
@@ -2926,7 +2945,7 @@ struct ParticleC
                 jj=0;while ((nf[jj]==0)and(jj<4)) jj++;
                 if (jj<3) {
                     this->n_afs[sample][iloc]++;
-                    this->t_afs[sample][iloc].push_back(nf[jj]); 
+                    this->t_afs[sample][iloc].push_back(nf[jj]);
                 }
             }
         }
@@ -2987,8 +3006,8 @@ struct ParticleC
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
         //cout <<"samples "<<samp0<<" & "<<samp1<<"\n";
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-            nhl=0;  
-            kloc=this->grouplist[gr].loc[iloc]; 
+            nhl=0;
+            kloc=this->grouplist[gr].loc[iloc];
             dmax=this->locuslist[kloc].ss[samp0]+this->locuslist[kloc].ss[samp1];
             haplo = new string[dmax];
             if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
@@ -3001,7 +3020,7 @@ struct ParticleC
                         if (samp==0) sample=samp0; else sample=samp1;
                         for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
                             if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) ; {
-                                if (nhl==0) { 
+                                if (nhl==0) {
                                     haplo[nhl] = this->locuslist[kloc].haplodnavar[sample][i];
                                     nhl++;
                                 } else {
@@ -3017,11 +3036,11 @@ struct ParticleC
                                     nhl++;
                                     }
                                 }
-                            }    
+                            }
                         }
                     }
                 }
-            } 
+            }
             nhm += nhl;
             delete [] haplo;
         }
@@ -3076,7 +3095,7 @@ struct ParticleC
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-            kloc=this->grouplist[gr].loc[iloc]; 
+            kloc=this->grouplist[gr].loc[iloc];
             ss = this->cal_nss2pl(kloc,samp0,samp1,&nssl,&OK);
             //cout<<"nssl = "<<nssl<<"\n";
             //for (int k=0;k<nssl;k++) cout<<"  "<<ss[k];if(nssl>0) cout<<"\n";
@@ -3118,7 +3137,7 @@ struct ParticleC
             }
         } else *OK=false;
         if (nd>0) return(double)mdl/(double)nd; else return (double)mdl;
-    
+
     }
 
 
@@ -3229,7 +3248,7 @@ struct ParticleC
                     if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
                     for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
                         if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
-                            if (nhaplo==0) { 
+                            if (nhaplo==0) {
                                 haplo[nhaplo] = this->locuslist[kloc].haplodnavar[sample][i];
                                 nhaplo++;
                             } else {
@@ -3270,7 +3289,7 @@ struct ParticleC
             }
         }
     }
-    
+
     double cal_aml3p(int gr,int st){
         int iloc,kloc,nlocutil=0,*ss,nssl;
         double p1,p2,p3,lik1,lik2,lik3;
@@ -3282,8 +3301,8 @@ struct ParticleC
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
         int samp2=this->grouplist[gr].sumstat[st].samp2-1;
-        
-        
+
+
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
             ss = this->cal_nss2pl(kloc,samp1,samp2,&nssl,&OK);
@@ -3302,7 +3321,7 @@ struct ParticleC
             c=pente_lik(gr,st,i3);lik3=real(c);p3=imag(c);
             if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
             else           {i1=i3;p1=p3;lik1=lik3;}
-        } while (abs(i2-i1)>1); 
+        } while (abs(i2-i1)>1);
         if (lik1>lik2) res=0.001*(double)i1; else res = 0.001*(double)i2;
         libere_freq(gr);
         return res;
@@ -3329,7 +3348,7 @@ struct ParticleC
                             //cout<<"  >"<<this->locuslist[locus].haplodna[pop][i]<<"<  ("<<this->locuslist[locus].haplodna[pop][i].length()<<")\n";
                         }
                     }
-                    if (this->locuslist[locus].dnavar<0) { 
+                    if (this->locuslist[locus].dnavar<0) {
                         cout<<"Locus "<<locus<<"   sample "<<pop <<"   dnavar="<<this->locuslist[locus].dnavar<<"\n";
                          //this->locuslist[locus].dnavar = 0;
                         exit(1);
@@ -3365,10 +3384,10 @@ struct ParticleC
                                 j++;
                                 if (this->locuslist[locus].haplodna[pop][i] == SEQMISSING) site[j]='N';
                                 else site[j] = this->locuslist[locus].haplodna[pop][i][k];
-                                //if ((locus==13)and(j<1000)) cout<<"locus"<<locus<<"   site["<<j<<"] = "<<site[j]<<"\n";               
-                            }     
+                                //if ((locus==13)and(j<1000)) cout<<"locus"<<locus<<"   site["<<j<<"] = "<<site[j]<<"\n";
+                            }
                         }
-                        
+
                         j0=0;
                         while ((site[j0]=='N')and(j0<ns-1)) j0++; //recherche du premier nucléotide non N
                         j=j0+1;
@@ -3447,11 +3466,11 @@ struct ParticleC
 			{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp <<"   samp1 = "<<this->grouplist[gr].sumstat[st].samp1 <<"\n";fflush(stdin);}
 			else
 			{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp <<"   samp1 = "<<this->grouplist[gr].sumstat[st].samp1 <<"   samp2 = "<<this->grouplist[gr].sumstat[st].samp2<<"\n";fflush(stdin);}
-			*/  
+			*/
 			int categ;
 			categ=this->grouplist[gr].sumstat[st].cat;
             //cout<<"avant calcul stat categ="<<categ<<"\n";
-            
+
 			switch (categ)
 			{	case     0 : this->grouplist[gr].sumstat[st].val = cal_pid1p(gr,st);break;
                 case     1 : this->grouplist[gr].sumstat[st].val = cal_nal1p(gr,st);break;
