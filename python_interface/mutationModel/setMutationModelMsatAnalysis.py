@@ -22,7 +22,7 @@ class SetMutationModelMsatAnalysis(SetMutationModelMsat):
         self.parent.parent.ui.analysisStack.removeWidget(self)
         self.parent.parent.ui.analysisStack.setCurrentWidget(self.parent)
 
-    def clear():
+    def clear(self):
         pass
 
     def validate(self):

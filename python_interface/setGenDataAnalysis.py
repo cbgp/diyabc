@@ -37,7 +37,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
             self.ui.tableWidget.setItem(locusrow,3,QTableWidgetItem("%s"%gen_data_ref.ui.tableWidget.item(locusrow,3).text()))
 
         # remplissage des groupes et set des mutation model et sum stats ac valeurs
-        for box in gen_data_ref.groupList:
+        for numgr,box in enumerate(gen_data_ref.groupList):
             title = gen_data_ref.group_info_dico[box][0]
             locus_list = gen_data_ref.group_info_dico[box][1]
             self.addGroup()
@@ -60,6 +60,14 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     #print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
                     self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
                     self.setMutationValid_dico[self.groupList[-1]] = True
+                    # on grise ce qui ne varie pas
+                    if float(str(gen_data_ref.setMutation_dico[box].mmrMinEdit.text())) == float(str(gen_data_ref.setMutation_dico[box].mmrMaxEdit.text())):
+                        self.setMutation_dico[self.groupList[-1]].frame_5.setDisabled(True)
+                    if float(str(gen_data_ref.setMutation_dico[box].mcpMinEdit.text())) == float(str(gen_data_ref.setMutation_dico[box].mcpMaxEdit.text())):
+                        self.setMutation_dico[self.groupList[-1]].frame_2.setDisabled(True)
+                    if float(str(gen_data_ref.setMutation_dico[box].msrMinEdit.text())) == float(str(gen_data_ref.setMutation_dico[box].msrMaxEdit.text())):
+                        self.setMutation_dico[self.groupList[-1]].frame_7.setDisabled(True)
+
                 elif "Sequences" in str(box.title()):
                     self.setMutationSeq_dico[self.groupList[-1]] = SetMutationModelSequencesAnalysis(self,self.groupList[-1])
                     self.setMutationSeq_dico[self.groupList[-1]].hide()
@@ -67,6 +75,14 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     #print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
                     self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
                     self.setMutationSeqValid_dico[self.groupList[-1]] = True
+                    # on grise ce qui ne varie pas
+                    if float(str(gen_data_ref.setMutationSeq_dico[box].mmrMinEdit.text())) == float(str(gen_data_ref.setMutationSeq_dico[box].mmrMaxEdit.text())):
+                        self.setMutationSeq_dico[self.groupList[-1]].firstFrame.setDisabled(True)
+                    if float(str(gen_data_ref.setMutationSeq_dico[box].mc1MinEdit.text())) == float(str(gen_data_ref.setMutationSeq_dico[box].mc1MaxEdit.text())):
+                        self.setMutationSeq_dico[self.groupList[-1]].thirdFrame.setDisabled(True)
+                    if float(str(gen_data_ref.setMutationSeq_dico[box].mc2MinEdit.text())) == float(str(gen_data_ref.setMutationSeq_dico[box].mc2MaxEdit.text())):
+                        self.setMutationSeq_dico[self.groupList[-1]].fifthFrame.setDisabled(True)
+
             else:
                 # on instancie des mutationmodel fixed
                 if "Microsatellites" in str(box.title()):

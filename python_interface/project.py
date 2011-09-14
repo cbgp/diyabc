@@ -1494,7 +1494,7 @@ class RefTableGenThread(QThread):
             if os.path.exists(outfile):
                 os.remove(outfile)
             fg = open(outfile,"w")
-            p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=PIPE, stderr=STDOUT) 
+            p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             self.processus = p
         except Exception,e:
             #print "Cannot find the executable of the computation program %s"%e
@@ -1642,7 +1642,7 @@ class AnalysisThread(QThread):
             log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
             outfile = "%s/pre-ev.out"%self.parent.dir
             f = open(outfile,"w")
-            p = subprocess.call(cmd_args_list, stdout=f, stdin=PIPE, stderr=STDOUT) 
+            p = subprocess.call(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             f.close()
             #print "call ok"
             log(3,"Call procedure success")

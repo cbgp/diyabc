@@ -367,6 +367,18 @@ class SetGeneticData(formGenData,baseGenData):
             result += params_txt
         return result
 
+    def getConstantParameters(self):
+        """ retourne une liste de noms de paramètres mutationnels qui sont constants
+        pour chaque groupe, le tout rangé dans un dico indexé par le numero de groupe
+        """
+        result = {}
+        for i,box in enumerate(self.groupList):
+            if "Microsatellites" in str(box.title()):
+                result[i] = self.setMutation_dico[box].getConstantParameters()
+            elif "Sequences" in str(box.title()):
+                result[i] = self.setMutationSeq_dico[box].getConstantParameters()
+        return result
+
     def getSumStatsTableHeader(self):
         """ retourne la partie sumstats du table header
         """
