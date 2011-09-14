@@ -92,6 +92,13 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     #print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
                     self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
                     self.setMutationValid_dico[self.groupList[-1]] = True
+                    # on grise ce qui ne varie pas
+                    if float(str(gen_data_ref.setMutation_dico[box].mmrMinEdit.text())) == float(str(gen_data_ref.setMutation_dico[box].mmrMaxEdit.text())):
+                        self.setMutation_dico[self.groupList[-1]].frame_5.setDisabled(True)
+                    if float(str(gen_data_ref.setMutation_dico[box].mcpMinEdit.text())) == float(str(gen_data_ref.setMutation_dico[box].mcpMaxEdit.text())):
+                        self.setMutation_dico[self.groupList[-1]].frame_2.setDisabled(True)
+                    if float(str(gen_data_ref.setMutation_dico[box].msrMinEdit.text())) == float(str(gen_data_ref.setMutation_dico[box].msrMaxEdit.text())):
+                        self.setMutation_dico[self.groupList[-1]].frame_7.setDisabled(True)
                 elif "Sequences" in str(box.title()):
                     self.setMutationSeq_dico[self.groupList[-1]] = SetMutationModelSequencesFixed(self,self.groupList[-1])
                     self.setMutationSeq_dico[self.groupList[-1]].hide()
@@ -99,6 +106,13 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     #print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
                     self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
                     self.setMutationSeqValid_dico[self.groupList[-1]] = True
+                    # on grise ce qui ne varie pas
+                    if float(str(gen_data_ref.setMutationSeq_dico[box].mmrMinEdit.text())) == float(str(gen_data_ref.setMutationSeq_dico[box].mmrMaxEdit.text())):
+                        self.setMutationSeq_dico[self.groupList[-1]].firstFrame.setDisabled(True)
+                    if float(str(gen_data_ref.setMutationSeq_dico[box].mc1MinEdit.text())) == float(str(gen_data_ref.setMutationSeq_dico[box].mc1MaxEdit.text())):
+                        self.setMutationSeq_dico[self.groupList[-1]].thirdFrame.setDisabled(True)
+                    if float(str(gen_data_ref.setMutationSeq_dico[box].mc2MinEdit.text())) == float(str(gen_data_ref.setMutationSeq_dico[box].mc2MaxEdit.text())):
+                        self.setMutationSeq_dico[self.groupList[-1]].fifthFrame.setDisabled(True)
 
 
 

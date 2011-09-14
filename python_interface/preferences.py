@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os,sys,platform,multiprocessing
+import os,sys,platform,multiprocessing,subprocess
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -175,6 +175,14 @@ class Preferences(formPreferences,basePreferences):
             self.loadConnexion()
             self.loadHM()
             self.loadVarious()
+        else:
+            # c'est sans doute la première fois qu'on lance diyabc
+            # sous linux, on appelle gconf pour voir les icones dans les menus et boutons
+            if "linux" in sys.platform:
+                cmd_args_list = ["gconftool-2", "--type", "boolean", "--set", "/desktop/gnome/interface/buttons_have_icons", "true"]
+                p = subprocess.Popen(cmd_args_list) 
+                cmd_args_list = ["gconftool-2", "--type", "boolean", "--set", "/desktop/gnome/interface/menus_have_icons", "true"]
+                p = subprocess.Popen(cmd_args_list) 
 
     def saveVarious(self):
         """ sauvegarde de la partie various des préférences

@@ -72,6 +72,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui=self
         self.ui.setupUi(self)
 
+        #self.setStyleSheet("background-image: url(docs/accueil_pictures/greens.png);")
+        #self.stackedWidget.setStyleSheet("background-image: url();")
+
         #pal = QPalette()
         #pal.setBrush(self.backgroundRole(), QBrush(QImage("docs/accueil_pictures/correct.png")))
         #self.setPalette(pal)
@@ -541,7 +544,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     def dragEnterEvent(self,event):
         event.acceptProposedAction()
 
-if __name__ == "__main__":
+def main():
     nargv = sys.argv
     projects_to_open = nargv[1:]
     #nargv.extend(["-title","DIYABC v%s"%VERSION])
@@ -567,4 +570,7 @@ if __name__ == "__main__":
     log(1,"DIYABC launched")
     #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)
     sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()
 
