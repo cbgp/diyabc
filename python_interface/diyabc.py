@@ -36,6 +36,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         super(Diyabc,self).__init__(parent)
         self.app = app
         self.project_list = []
+        self.recentList = []
+        self.recentMenuEntries = []
         
         self.main_conf_name = "conf.tmp"
         self.hist_conf_name = "conf.hist.tmp"
@@ -48,14 +50,14 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.scenario_pix_basename = "scenario"
         self.PCA_dir_name = "PCA_pictures"
 
-        self.preferences_win = Preferences(self)
-        self.preferences_win.loadPreferences()
-        #self.defaultMMMValues = self.preferences.getDicoMMM()
-
         self.showLogFile_win = ShowLogFile(self)
         self.showLogFile_win.setWindowTitle("Logfile viewer")
 
         self.createWidgets()
+
+        self.preferences_win = Preferences(self)
+        self.preferences_win.loadPreferences()
+
         self.setWindowIcon(QIcon("docs/accueil_pictures/coccicon.png"))
 
         self.illegalProjectNameCharacters = ['_','-',"'",'"','.','/']
@@ -120,6 +122,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         action = file_menu.addAction(QIcon("docs/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
+        file_menu.addSeparator()
         #style_menu = self.ui.menubar.addMenu("Style")
         #action_group = QActionGroup(style_menu)
         #for stxt in self.styles:
@@ -189,6 +192,42 @@ class Diyabc(formDiyabc,baseDiyabc):
         QObject.connect(saveAllButton,SIGNAL("clicked()"),self.saveAllProjects)
         self.ui.toolBar.addWidget(saveAllButton)
         saveAllButton.setDisabled(True)
+
+    def setRecent(self,rlist):
+        self.recentList = rlist
+        self.redrawRecent()
+
+    def redrawRecent(self):
+        rlist = self.recentList
+        # cleaning
+        for ac in self.recentMenuEntries:
+            self.file_menu.removeAction(ac)
+        self.recentMenuEntries = []
+        self.entryToRecent = {}
+
+        # drawing
+        nb_added = 0
+        for i,rec in enumerate(rlist):
+            if os.path.exists(str(rec)):
+                self.recentMenuEntries.append( self.file_menu.addAction(rec.split('/')[-1],self.openRecent) )
+                self.entryToRecent[ self.recentMenuEntries[-1] ] = rec
+                nb_added += 1
+            if nb_added == 5:
+                return
+
+    def getRecent(self):
+        return self.recentList
+
+    def addRecent(self,rec):
+        self.recentList.insert(0,rec)
+        while len(self.recentList) > 20:
+            self.recentList.pop()
+        self.redrawRecent()
+
+    def openRecent(self):
+        ac = self.sender()
+        self.openProject(self.entryToRecent[ac])
+
 
     def showLogFile(self):
         self.showLogFile_win.show()
@@ -296,6 +335,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                         # creation du lock
                         proj_to_open.lock()
                         log(1,"Project '%s' opened successfully"%dir)
+                        self.addRecent(dir)
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:
@@ -562,6 +602,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 proj.stopRefTableGen()
                 proj.stopAnalysis()
                 proj.unlock()
+            self.preferences_win.saveRecent()
         event.accept()
     #    reply = QtGui.QMessageBox.question(self, 'Message',
     #        "Are you sure to quit?", QtGui.QMessageBox.Yes | 

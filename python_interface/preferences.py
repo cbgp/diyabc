@@ -159,6 +159,7 @@ class Preferences(formPreferences,basePreferences):
             self.saveConnexion()
             self.saveHM()
             self.saveVarious()
+            self.saveRecent()
             self.close()
 
     def allValid(self):
@@ -175,6 +176,7 @@ class Preferences(formPreferences,basePreferences):
             self.loadConnexion()
             self.loadHM()
             self.loadVarious()
+            self.loadRecent()
         #else:
         #    # c'est sans doute la première fois qu'on lance diyabc
         #    # sous linux, on appelle gconf pour voir les icones dans les menus et boutons
@@ -183,6 +185,27 @@ class Preferences(formPreferences,basePreferences):
         #        p = subprocess.Popen(cmd_args_list) 
         #        cmd_args_list = ["gconftool-2", "--type", "boolean", "--set", "/desktop/gnome/interface/menus_have_icons", "true"]
         #        p = subprocess.Popen(cmd_args_list) 
+
+    def loadRecent(self):
+        if os.path.exists(os.path.expanduser("~/.diyabc/recent")):
+            f = codecs.open(os.path.expanduser("~/.diyabc/recent"),"r","utf-8")
+            lines = f.readlines()
+            f.close()
+            recent_list = []
+            for l in lines:
+                if len(l) > 0 and l.strip() != "":
+                    recent_list.append(l.strip())
+            self.parent.setRecent(recent_list)
+
+    def saveRecent(self):
+        if os.path.exists(os.path.expanduser("~/.diyabc/recent")):
+            os.remove(os.path.expanduser("~/.diyabc/recent"))
+        f = codecs.open(os.path.expanduser("~/.diyabc/recent"),"w","utf-8")
+        for rec in self.parent.getRecent():
+            f.write("%s\n"%rec)
+        f.close()
+
+
 
     def saveVarious(self):
         """ sauvegarde de la partie various des préférences
