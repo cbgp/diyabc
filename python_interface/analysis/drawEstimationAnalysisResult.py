@@ -170,6 +170,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         grid.attach(p)
         p.insertLegend(legend,QwtPlot.BottomLegend)
 
+        p.axisWidget(QwtPlot.yLeft).hide()
+
         fr = QFrame(self)
         fr.setFrameShape(QFrame.StyledPanel)
         fr.setFrameShadow(QFrame.Raised)
