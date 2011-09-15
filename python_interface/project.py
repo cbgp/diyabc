@@ -1316,7 +1316,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.parent.clearStatus()
             self.parent.showStatus("Project %s successfully saved"%self.name,2000)
         else:
-            output.notify(self,"Saving is impossible","The project is not yet completly created")
+            output.notify(self,"Saving is impossible","Project %s is not yet completly created"%self.name)
             self.parent.clearStatus()
 
     def writeThConf(self):

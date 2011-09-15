@@ -107,10 +107,12 @@ class Diyabc(formDiyabc,baseDiyabc):
         file_menu.addAction(QIcon("docs/icons/folder-new.png"),"&New project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction(QIcon("docs/icons/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
         self.saveProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save.png"),"&Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
-        self.deleteProjActionMenu = file_menu.addAction(QIcon("docs/icons/edit-delete.png"),"&Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
+        self.saveAllProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save-all.png"),"&Save all projects",self.saveAllProjects,QKeySequence(Qt.CTRL + Qt.Key_A))
+        self.deleteProjActionMenu = file_menu.addAction(QIcon("docs/icons/user-trash.png"),"&Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
         self.cloneProjActionMenu = file_menu.addAction(QIcon("docs/icons/tab-duplicate.png"),"&Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
         self.closeProjActionMenu = file_menu.addAction(QIcon("docs/icons/project-close.png"),"C&lose current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)
+        self.saveAllProjActionMenu.setDisabled(True)
         self.saveProjActionMenu.setDisabled(True)
         self.deleteProjActionMenu.setDisabled(True)
         self.cloneProjActionMenu.setDisabled(True)
@@ -151,6 +153,42 @@ class Diyabc(formDiyabc,baseDiyabc):
         #self.statusBar.setAlignment(Qt.AlignLeft)
         #self.ui.statusBar.hide()
 
+        # TOOLBAR
+        newButton = QPushButton(QIcon("docs/icons/folder-new.png"),"New",self)
+        newButton.setToolTip("New project")
+        newButton.setMaximumSize(QSize(50, 22))
+        #newButton.setMinimumSize(QSize(16, 18))
+        newButton.setFlat(True)
+        QObject.connect(newButton,SIGNAL("clicked()"),self.newProject)
+        self.ui.toolBar.addWidget(newButton)
+
+        openButton = QPushButton(QIcon("docs/icons/fileopen.png"),"Open",self)
+        openButton.setToolTip("Open project")
+        openButton.setMaximumSize(QSize(57, 22))
+        #openButton.setMinimumSize(QSize(16, 18))
+        openButton.setFlat(True)
+        QObject.connect(openButton,SIGNAL("clicked()"),self.openProject)
+        self.ui.toolBar.addWidget(openButton)
+
+        saveButton = QPushButton(QIcon("docs/icons/document-save.png"),"Save",self)
+        self.saveButton = saveButton
+        saveButton.setToolTip("Save current project")
+        saveButton.setMaximumSize(QSize(53, 22))
+        #saveButton.setMinimumSize(QSize(16, 18))
+        saveButton.setFlat(True)
+        QObject.connect(saveButton,SIGNAL("clicked()"),self.saveCurrentProject)
+        self.ui.toolBar.addWidget(saveButton)
+        saveButton.setDisabled(True)
+
+        saveAllButton = QPushButton(QIcon("docs/icons/document-save-all.png"),"Save all",self)
+        self.saveAllButton = saveAllButton
+        saveAllButton.setToolTip("Save all projects")
+        saveAllButton.setMaximumSize(QSize(72, 22))
+        #saveButton.setMinimumSize(QSize(16, 18))
+        saveAllButton.setFlat(True)
+        QObject.connect(saveAllButton,SIGNAL("clicked()"),self.saveAllProjects)
+        self.ui.toolBar.addWidget(saveAllButton)
+        saveAllButton.setDisabled(True)
 
     def showLogFile(self):
         self.showLogFile_win.show()
@@ -246,6 +284,10 @@ class Diyabc(formDiyabc,baseDiyabc):
                             self.saveProjActionMenu.setDisabled(False)
                             self.deleteProjActionMenu.setDisabled(False)
                             self.cloneProjActionMenu.setDisabled(False)
+                            self.saveAllProjActionMenu.setDisabled(False)
+                            self.saveAllButton.setDisabled(False)
+                            self.saveProjActionMenu.setDisabled(False)
+                            self.saveButton.setDisabled(False)
                         if len(self.project_list) == 2:
                             self.nextProjectActionMenu.setDisabled(False)
                             self.prevProjectActionMenu.setDisabled(False)
@@ -404,6 +446,10 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.saveProjActionMenu.setDisabled(False)
                         self.deleteProjActionMenu.setDisabled(False)
                         self.cloneProjActionMenu.setDisabled(False)
+                        self.saveAllProjActionMenu.setDisabled(False)
+                        self.saveAllButton.setDisabled(False)
+                        self.saveProjActionMenu.setDisabled(False)
+                        self.saveButton.setDisabled(False)
                     if len(self.project_list) == 2:
                         self.nextProjectActionMenu.setDisabled(False)
                         self.prevProjectActionMenu.setDisabled(False)
@@ -440,6 +486,10 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.saveProjActionMenu.setDisabled(True)
             self.deleteProjActionMenu.setDisabled(True)
             self.cloneProjActionMenu.setDisabled(True)
+            self.saveAllProjActionMenu.setDisabled(True)
+            self.saveAllButton.setDisabled(True)
+            self.saveProjActionMenu.setDisabled(True)
+            self.saveButton.setDisabled(True)
             self.switchToWelcomeStack()
         if len(self.project_list) == 1:
             self.nextProjectActionMenu.setDisabled(True)
@@ -458,12 +508,26 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.tabWidget.currentWidget().save()
         log(1,"Project '%s' saved"%(self.ui.tabWidget.currentWidget().name))
 
+    def saveAllProjects(self):
+        """ sauve tous les projets
+        """
+        for proj in self.project_list:
+            proj.save()
+
     def deleteCurrentProject(self):
         """ efface le projet courant
         """
-        ddir = self.ui.tabWidget.currentWidget().dir
-        self.deleteProject(self.ui.tabWidget.currentIndex())
-        log(1,"Project '%s' deleted"%(ddir))
+        if not output.debug:
+            reply = QtGui.QMessageBox.question(self, 'Deletion confirmation',
+                "Are you sure you want to delete Project %s ?"%(self.ui.tabWidget.currentWidget().name), QtGui.QMessageBox.Yes | 
+                QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
+            ok = (reply == QtGui.QMessageBox.Yes)
+        else:
+            ok = True
+        if ok:
+            ddir = self.ui.tabWidget.currentWidget().dir
+            self.deleteProject(self.ui.tabWidget.currentIndex())
+            log(1,"Project '%s' deleted"%(ddir))
 
     def deleteProject(self,index):
         """ efface le projet dont l'index est donné en paramètre
@@ -545,6 +609,15 @@ class Diyabc(formDiyabc,baseDiyabc):
         event.acceptProposedAction()
 
 def main():
+    if not os.path.exists(os.path.expanduser("~/.diyabc/")):
+        # c'est sans doute la première fois qu'on lance diyabc
+        # sous linux, on appelle gconf pour voir les icones dans les menus et boutons
+        if "linux" in sys.platform:
+            cmd_args_list = ["gconftool-2", "--type", "boolean", "--set", "/desktop/gnome/interface/buttons_have_icons", "true"]
+            p = subprocess.Popen(cmd_args_list) 
+            cmd_args_list = ["gconftool-2", "--type", "boolean", "--set", "/desktop/gnome/interface/menus_have_icons", "true"]
+            p = subprocess.Popen(cmd_args_list) 
+
     nargv = sys.argv
     projects_to_open = nargv[1:]
     #nargv.extend(["-title","DIYABC v%s"%VERSION])
