@@ -145,8 +145,8 @@ int strpos(char* st1,char* st2) {
 int ndecimales(double mini,double maxi){
   double p;
   int k;
-  if (mini>=1) return 0; 
-  p = mini/100; 
+  if (mini>=1) return 0;
+  p = mini/100;
   k = 0;
   while (abs((long int)(p-round(p)))>1E-12) {k++;p=10*p;}
   return k;
@@ -208,9 +208,9 @@ string TimeToStr(double ti) {
     day = int(ti)/86400; ti=ti-(double)day*86400;
     hou = int(ti)/3600;  ti=ti-(double)hou*3600;
     min = int(ti)/60;    ti=ti-(double)min*60;
-    sec = int(ti)   ;    ti=ti-(double)sec; 
+    sec = int(ti)   ;    ti=ti-(double)sec;
     m_s = int(1000*ti);
-    if (day>0) { 
+    if (day>0) {
         stime=IntToString(day)+" day";
         if (day>1) stime+="s "; else stime+=" ";
     }
@@ -218,8 +218,8 @@ string TimeToStr(double ti) {
     if (min>0) stime += IntToString(min)+" min ";
     if ((day>0)or(hou>0)) return stime;
     if (sec>0) stime += IntToString(sec)+" s ";
-    if (min>0) return stime; 
-    if (m_s>0) stime += IntToString(m_s)+" ms ";
+    if (min>0) return stime;
+    //if (m_s>0) stime += IntToString(m_s)+" ms ";
     return stime;
 }
 
@@ -278,7 +278,7 @@ double do_del(double temp, double x) {  //calcule cum avec ccum=1.0-cum
     del= (x-xsq)*(x+xsq);
     return exp(-0.5*xsq*xsq)*exp(-0.5*del)*temp;
 }
-    
+
 double pnorm5(double x,double mu, double sigma){
     double a[5] = {2.2352520354606839287,161.02823106855587881,1067.6894854603709582,18154.981253343561249,0.065682337918207449113};
     double b[4] = {47.20258190468824187,976.09855173777669322,10260.932208618978205,45507.789335026729956};
@@ -290,7 +290,7 @@ double pnorm5(double x,double mu, double sigma){
     double sqrt2PI=2.506628274631000502415765284811;
     double pp,xden,xnum,temp,eps,xsq,y,cum,ccum;
     int i;
-    
+
     if (sigma<=0.0) {if (x<mu) return 0.0; else return 1.0;}
     pp = (x-mu)/sigma;
     if (pp<0) y=-pp; else y=pp;
@@ -359,7 +359,7 @@ rescov covarianceponderee(int nl, int nc, double **A, double *w) {
 }
 
 struct resAFD{
-   int nlambda;      
+   int nlambda;
    double proportion,*lambda,slambda,**vectprop,**princomp,*moy;
 };
 
