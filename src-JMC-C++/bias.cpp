@@ -105,7 +105,6 @@ using namespace std;
 			}
             if (ss[3].find("[")==string::npos) header.groupe[gr].priorPloc.sdshape=atof(ss[3].c_str());
             else header.groupe[gr].priorPloc = header.readpriormut(ss[3]);
- cout<<"bias.cpp ligne 108 header.groupe[gr].priorsnimoy.constant="<<header.groupe[gr].priorsnimoy.constant<<"\n";
 			if (header.groupe[gr].priorsnimoy.constant) header.groupe[gr].snimoy=header.groupe[gr].priorsnimoy.mini;
 			else {
 				if (ss[4].find("[")==string::npos) {header.groupe[gr].snimoy=atof(ss[4].c_str());useprior=false;header.groupe[gr].priorsnimoy.fixed=true;}
@@ -332,9 +331,9 @@ using namespace std;
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<33-nomparam[j].length();i++)fprintf(f1," ");
-            if (br[0][j]<0) fprintf(f1,"  %5.3f",br[0][j]); else fprintf(f1,"   %5.3f",br[0][j]);
-            if (br[1][j]<0) fprintf(f1,"         %5.3f",br[1][j]); else fprintf(f1,"          %5.3f",br[1][j]);
-            if (br[2][j]<0) fprintf(f1,"         %5.3f\n",br[2][j]); else fprintf(f1,"          %5.3f\n",br[2][j]);
+            if (br[0][j]<0) fprintf(f1,"  %6.3f",br[0][j]); else fprintf(f1,"  %6.3f",br[0][j]);
+            if (br[1][j]<0) fprintf(f1,"         %6.3f",br[1][j]); else fprintf(f1,"         %6.3f",br[1][j]);
+            if (br[2][j]<0) fprintf(f1,"         %6.3f\n",br[2][j]); else fprintf(f1,"         %6.3f\n",br[2][j]);
         }
         fprintf(f1,"\n                            RRMISE            RMeanAD            Square root of mean square error/true value\n");
         fprintf(f1,"Parameter                                                         Mean             Median             Mode\n");
@@ -342,7 +341,7 @@ using namespace std;
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
-            fprintf(f1,"     %5.3f             %5.3f             %5.3f              %5.3f            %5.3f\n",rrmise[j],rmad[j],rmse[0][j],rmse[1][j],rmse[2][j]);
+            fprintf(f1,"    %6.3f            %6.3f            %6.3f             %6.3f           %6.3f\n",rrmise[j],rmad[j],rmse[0][j],rmse[1][j],rmse[2][j]);
         }
         fprintf(f1,"\n                                                                 Factor 2        Factor 2        Factor 2\n");
         fprintf(f1,"Parameter               50%% Coverage        95%% Coverage         (Mean)          (Median)        (Mode)  \n");
@@ -350,7 +349,7 @@ using namespace std;
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
-            fprintf(f1,"     %5.3f             %5.3f             %5.3f              %5.3f            %5.3f\n",cov50[j],cov95[j],fac2[0][j],fac2[1][j],fac2[2][j]);
+            fprintf(f1,"    %6.3f            %6.3f            %6.3f             %6.3f           %6.3f\n",cov50[j],cov95[j],fac2[0][j],fac2[1][j],fac2[2][j]);
         }
         fprintf(f1,"\n                                          Median Relative Bias\n");
         fprintf(f1,"Parameter                                     Means          Medians        Modes\n");
@@ -358,9 +357,9 @@ using namespace std;
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<43-nomparam[j].length();i++)fprintf(f1," ");
-            if (medbr[0][j]<0) fprintf(f1,"  %5.3f",medbr[0][j]); else fprintf(f1,"   %5.3f",medbr[0][j]);
-            if (medbr[1][j]<0) fprintf(f1,"         %5.3f",medbr[1][j]); else fprintf(f1,"          %5.3f",medbr[1][j]);
-            if (medbr[2][j]<0) fprintf(f1,"         %5.3f\n",medbr[2][j]); else fprintf(f1,"          %5.3f\n",medbr[2][j]);
+            if (medbr[0][j]<0) fprintf(f1,"  %6.3f",medbr[0][j]); else fprintf(f1,"  %6.3f",medbr[0][j]);
+            if (medbr[1][j]<0) fprintf(f1,"         %6.3f",medbr[1][j]); else fprintf(f1,"         %6.3f",medbr[1][j]);
+            if (medbr[2][j]<0) fprintf(f1,"         %6.3f\n",medbr[2][j]); else fprintf(f1,"         %6.3f\n",medbr[2][j]);
         }
         fprintf(f1,"\n                             RMedAD        Median of the absolute error/true value\n");
         fprintf(f1,"Parameter                                     Means          Medians        Modes\n");
@@ -368,7 +367,7 @@ using namespace std;
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
             for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
-            fprintf(f1,"      %5.3f           %5.3f          %5.3f          %5.3f\n",rmedad[j],rmae[0][j],rmae[1][j],rmae[2][j]);
+            fprintf(f1,"     %6.3f          %6.3f         %6.3f         %6.3f\n",rmedad[j],rmae[0][j],rmae[1][j],rmae[2][j]);
         }
          fclose(f1);
 
@@ -561,7 +560,7 @@ using namespace std;
         //cout<<header.entete<<"\n";
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,usepriorhist,usepriormut);
 		//header.entete=header.entetehist+header.entetemut0+header.entetestat;
-        nprog=10*ntest+5;iprog=5;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        nprog=10*ntest+6;iprog=5;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         for (int p=0;p<ntest;p++) {delete []enreg[p].param;delete []enreg[p].stat;}delete []enreg;
         rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
@@ -617,4 +616,5 @@ using namespace std;
         rt.desalloue_enrsel(nsel);
         biaisrel(ntest,nsel,npv);
         ecrires(ntest,npv,nsel);
+        iprog +=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }

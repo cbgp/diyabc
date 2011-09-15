@@ -92,7 +92,7 @@ char *nomficonfresult;
         fprintf(f1,"\n");
         fclose(f1);
     }
-     
+
     double* transfAFD(int nrec,int nsel, int p) {
         double delta,rdelta,*w,a,**X,*statpiv;
         int *scenar;
@@ -127,8 +127,8 @@ char *nomficonfresult;
         //delete []statpiv;
         for (int i=0;i<nsel;i++) delete []X[i];delete []X;
         return statpiv;
-    } 
-     
+    }
+
     void doconf(char *options, int seed) {
         char *datafilename, *progressfilename, *courantfilename;
         int nstatOK, iprog,nprog,ncs1;
@@ -152,7 +152,7 @@ char *nomficonfresult;
         cout<<"options : "<<options<<"\n";
         opt=char2string(options);
         ss = splitwords(opt,";",&ns);
-        for (int i=0;i<ns;i++) { 
+        for (int i=0;i<ns;i++) {
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);cout<<ss[i]<<"   s0="<<s0<<"s1="<<s1<<"\n";
             if (s0=="s:") {
@@ -170,10 +170,10 @@ char *nomficonfresult;
                 if(nrec>nrecpos) nrec=nrecpos;
                 cout<<"nombre total de jeux de données considérés (pour les scénarios choisis )= "<<nrec<<"\n";
            } else if (s0=="d:") {
-                nseld=atoi(s1.c_str());    
+                nseld=atoi(s1.c_str());
                 cout<<"nombre de jeux de données considérés pour l'approche directe = "<<nseld<<"\n";
             } else if (s0=="l:") {
-                nselr=atoi(s1.c_str());    
+                nselr=atoi(s1.c_str());
                 cout<<"nombre de jeux de données considérés pour la régression logistique = "<<nselr<<"\n";
            } else if (s0=="t:") {
                 ntest=atoi(s1.c_str());
@@ -182,7 +182,7 @@ char *nomficonfresult;
                 nlogreg=atoi(s1.c_str());
                 cout<<"nombre de régressions logistiques = "<<nlogreg<<"\n";
             } else if (s0=="h:") {
-                shist = s1;  
+                shist = s1;
                 ss1 = splitwords(s1," ",&np);
                 if (np < header.scenario[rt.scenteste-1].nparam) {
                     cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenteste<<" est de "<<header.scenario[rt.scenteste-1].nparam<<"\n";
@@ -196,9 +196,9 @@ char *nomficonfresult;
                         if (header.scenario[rt.scenteste-1].nconditions>0) delete []header.scenario[rt.scenteste-1].condition;
                         header.scenario[rt.scenteste-1].condition = new ConditionC[ncond];
                     }
-                    for (int j=0;j<ncond;j++) 
-                         header.scenario[rt.scenteste-1].condition[j] = header.readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]); 
-                } 
+                    for (int j=0;j<ncond;j++)
+                         header.scenario[rt.scenteste-1].condition[j] = header.readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]);
+                }
             } else if (s0=="u:") {
                 smut = s1;
                 cout<<s1<<"\n";
@@ -224,14 +224,14 @@ char *nomficonfresult;
             enreg[p].numscen = rt.scenteste;
         }
         nsel=nseld;if(nsel<nselr) nsel=nselr;
-        if (nlogreg==1){nprog=10*(ntest+1);iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
-        else           {nprog=6*ntest+10;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
+        if (nlogreg==1){nprog=10*(ntest+1)+1;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
+        else           {nprog=6*ntest+11;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,usepriorhist,usepriormut);
         cout<<"apres ps.dosimultabref\n";
         iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         cout<<"apres ecriture dans progress\n";
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
-        //nstatOK = rt.cal_varstat();                       
+        //nstatOK = rt.cal_varstat();
         stat_obs = new double[rt.nstat];
         ecrientete(nrec,ntest,nseld,nselr,nlogreg,usepriorhist,usepriormut,shist,smut,AFD); cout<<"apres ecrientete\n";
         ofstream f11(nomficonfresult,ios::app);
@@ -240,8 +240,8 @@ char *nomficonfresult;
         for (int p=0;p<ntest;p++) {
             clock_zero=0.0;debut=walltime(&clock_zero);
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
-            nstatOK = rt.cal_varstat();                       
-            rt.cal_dist(nrec,nsel,stat_obs); 
+            nstatOK = rt.cal_varstat();
+            rt.cal_dist(nrec,nsel,stat_obs);
             //cout<<"apres cal_dist\n";
             iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             if (AFD) stat_obs = transfAFD(nrec,nsel,p);
@@ -259,7 +259,7 @@ char *nomficonfresult;
                 iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
                 for (int i=0;i<rt.nscenchoisi;i++) printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);
                 for (int i=0;i<rt.nscenchoisi;i++) f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";
-                
+
                 delete []postsd;
                 delete []postsr;
             }
@@ -267,7 +267,8 @@ char *nomficonfresult;
             cout<<"\n";
             duree=walltime(&debut);
             cout<<"durée ="<<TimeToStr(duree)<<"\n\n\n";
-        }        
+        }
         rt.desalloue_enrsel(nsel);
         f11.close();
-    }
+        iprog +=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+}

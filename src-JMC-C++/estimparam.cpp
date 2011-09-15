@@ -29,7 +29,7 @@ using namespace std;
 
 #define c 1.5707963267948966192313216916398
 #define co 2.506628274631000502415765284811   //sqrt(pi)
-#define coefbw 1.8                            //coefficient multiplicateur de la bandwidth pour le calcul de la densité 
+#define coefbw 1.8                            //coefficient multiplicateur de la bandwidth pour le calcul de la densité
 
 
 
@@ -48,7 +48,7 @@ struct parstatC {
 
 extern ReftableC rt;
 extern HeaderC header;
-double **matX0, *vecW, **alpsimrat,**parsim;    
+double **matX0, *vecW, **alpsimrat,**parsim;
 int nstatOKsel;
 extern char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
 extern bool multithread;
@@ -63,8 +63,8 @@ int nsimpar=100000;
 string *nomparam;
 parstatC *parstat;
 
-    
-/** 
+
+/**
 * compte les paramètres communs aux scénarios choisis (nparamcom), le nombre de paramètres composites
 * remplit le tableau numpar des numéros de paramètres communs par scénario
 */
@@ -74,12 +74,12 @@ parstatC *parstat;
         int ii,iscen;
         bool commun,trouve;
         npar=0;npar0=0;
-        numpar = new int*[rt.nscenchoisi]; 
+        numpar = new int*[rt.nscenchoisi];
         if (rt.nscenchoisi==1) {
             iscen=rt.scenchoisi[0]-1;
             //cout<<"rt.nparam[rt.scenchoisi[0]-1] = "<<rt.nparam[iscen]<<"\n";
             numpar[0] = new int[rt.nparam[iscen]];
-            for (int i=0;i<rt.nhistparam[iscen];i++){ 
+            for (int i=0;i<rt.nhistparam[iscen];i++){
                 numpar[0][i]=i;
                 npar++;
                 parname.push_back(rt.histparam[rt.scenchoisi[0]-1][i].name);
@@ -125,7 +125,7 @@ parstatC *parstat;
                 ii=0;
                 for (int i=0;i<npar;i++) {
                     for (int k=0;k<rt.nhistparam[rt.scenchoisi[j]-1];k++) {
-                        if (rt.histparam[rt.scenchoisi[j]-1][k].name.compare(parname[i])==0) {numpar[j][ii]=k;ii++;}  
+                        if (rt.histparam[rt.scenchoisi[j]-1][k].name.compare(parname[i])==0) {numpar[j][ii]=k;ii++;}
                     }
                  }
                 for (int k=rt.nhistparam[rt.scenchoisi[j]-1];k<rt.nparam[rt.scenchoisi[j]-1];k++) {numpar[j][ii]=k;ii++;}
@@ -139,7 +139,7 @@ parstatC *parstat;
             /*cout << "noms des parametres communs : ";
             for (int i=0;i<npar;i++) cout<<parname[i]<<"   ";
             cout <<"\n";*/
-        } 
+        }
         /*cout << "noms des parametres communs : ";
         for (int j=0;j<rt.nscenchoisi;j++) {
             cout<<"scenario "<<rt.scenchoisi[j]<<"\n";
@@ -152,8 +152,8 @@ parstatC *parstat;
         if (composite) nparcompo=npar0*header.ngroupes; else nparcompo=0;
     }
 
-/** 
-* recalcule les valeurs de paramètres en fonction de la transformation choisie 
+/**
+* recalcule les valeurs de paramètres en fonction de la transformation choisie
 */
     void recalparam(int n) {
         double coefmarge=0.001,marge;
@@ -161,13 +161,13 @@ parstatC *parstat;
         alpsimrat = new double*[n];
         for(int i=0;i<n;i++) alpsimrat[i] = new double[nparamcom];
         switch (numtransf) {
-        
+
           case 1 :  //no transform
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {
                            k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
                            alpsimrat[i][j] = rt.enrsel[i].param[numpar[k][j]];
-                       }    
+                       }
                    }
                    break;
           case 2 : // log transform
@@ -176,7 +176,7 @@ parstatC *parstat;
                            k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
                            if (rt.enrsel[i].param[numpar[k][j]]<=0.00000000001) rt.enrsel[i].param[numpar[k][j]]=1E-11;
                            alpsimrat[i][j] = log(rt.enrsel[i].param[numpar[k][j]]);
-                       }    
+                       }
                    }
                    break;
           case 3 : //logit transform
@@ -306,10 +306,10 @@ parstatC *parstat;
                    }
                    break;
         }
-    }   
+    }
 
-/** 
-* effectue le remplissage de la matrice matX0, du vecteur des poids vecW et 
+/**
+* effectue le remplissage de la matrice matX0, du vecteur des poids vecW et
 * de la matrice des paramètres parsim (éventuellement transformés)
 */
     void rempli_mat(int n,double* stat_obs) {
@@ -340,7 +340,7 @@ parstatC *parstat;
         matX0 = new double*[n];
         for (int i=0;i<n;i++)matX0[i]=new double[nstatOKsel];
         vecW = new double[n];
-        //cout <<"hello\n";  
+        //cout <<"hello\n";
         som=0.0;
         for (int i=0;i<n;i++) {
             icc=-1;
@@ -365,12 +365,12 @@ parstatC *parstat;
         }
     }
 
-/** 
+/**
 * effectue la régression locale à partir de la matrice matX0 et le vecteur des poids vecW
 */
     void local_regression(int n) {
         double **matX,**matXT,**matA,**matB,**matAA,**matC;
-        
+
         matA = new double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) matA[j] = new double[n];
         matX = new double*[n];
@@ -400,7 +400,7 @@ parstatC *parstat;
         for (int i=0;i<n;i++) delete []parsim[i];delete []parsim;
     }
 
-/** 
+/**
 * calcule les phistars pour les paramètres originaux et composites
 */
     double** calphistar(int n){
@@ -419,7 +419,7 @@ parstatC *parstat;
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
-                           break; 
+                           break;
                   case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parmin[j];
                            else if (phista[i][j]>=xborne) phista[i][j] = parmax[j];
                            else phista[i][j] = (exp(phista[i][j])*parmax[j]+parmin[j])/(1.0+exp(phista[i][j]));
@@ -444,7 +444,7 @@ parstatC *parstat;
                                 if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                     for (int i=0;i<n;i++) {
                                           phista[i][nparamcom+k] = pmut*phista[i][j];
-                                    }    
+                                    }
                                     k++;
                                 }
                             }
@@ -455,7 +455,7 @@ parstatC *parstat;
                                     for (int i=0;i<n;i++) {
                                         pmut = header.groupe[gr].mutmoy+phista[i][npar+kk];
                                         phista[i][nparamcom+k] = pmut*phista[i][j];
-                                    }    
+                                    }
                                     k++;
                                 }
                             }
@@ -468,7 +468,7 @@ parstatC *parstat;
                                     for (int i=0;i<n;i++) {
                                         pmut =phista[i][npar+kk] +header.groupe[gr].snimoy;
                                         phista[i][nparamcom+k] = pmut*phista[i][j];
-                                    }    
+                                    }
                                     k++;
                                 }
                             }
@@ -480,21 +480,21 @@ parstatC *parstat;
                                     for (int i=0;i<n;i++) {
                                         pmut =phista[i][npar+kk]+phista[i][npar+qq];
                                         phista[i][nparamcom+k] = pmut*phista[i][j];
-                                    }    
+                                    }
                                     k++;
                                 }
                             }
                         }
                     }
-                } 
-                if (header.groupe[gr].type==1) {    
+                }
+                if (header.groupe[gr].type==1) {
                     if (header.groupe[gr].priormusmoy.constant) {
                         pmut = header.groupe[gr].musmoy;
                         for (int j=0;j<npar;j++) {
                             if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
                                 for (int i=0;i<n;i++) {
                                     phista[i][nparamcom+k] = pmut*phista[i][j];
-                                }    
+                                }
                                 k++;
                             }
                         }
@@ -505,7 +505,7 @@ parstatC *parstat;
                                 for (int i=0;i<n;i++) {
                                     pmut = phista[i][npar+kk];
                                     phista[i][nparamcom+k] = pmut*phista[i][j];
-                                }    
+                                }
                                 k++;
                             }
                         }
@@ -519,7 +519,7 @@ parstatC *parstat;
         for (int i=0;i<nstatOKsel+1;i++) delete []beta[i]; delete []beta;
         return phista;
     }
-        
+
     void det_nomparam() {
         int k;
         cout<<"debut de det_nomparam\n";
@@ -548,11 +548,11 @@ parstatC *parstat;
         }
         for (int j=0;j<nparamcom+nparcompo;j++) cout<<nomparam[j]<<"\n";
         cout<<"nparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"\n";
-    
-    }    
-        
-        
-/** 
+
+    }
+
+
+/**
 * effectue la sauvegarde des phistars dans le fichier path/ident/phistar.txt
 */
     void savephistar(int n, char* path,char* ident) {
@@ -599,9 +599,9 @@ parstatC *parstat;
     }
 
 /**
-* calcul de la densité par noyau gaussien 
+* calcul de la densité par noyau gaussien
 * x : vecteur des abcisses
-* y vecteur des 
+* y vecteur des
 */
 
 
@@ -678,8 +678,8 @@ parstatC *parstat;
                                   }
                               }
                           }
-                      } 
-                      if (header.groupe[gr].type==1) {    
+                      }
+                      if (header.groupe[gr].type==1) {
                           if (header.groupe[gr].priormusmoy.constant) {
                               pmut = header.groupe[gr].musmoy;
                               for (int j=0;j<npar;j++) {
@@ -734,28 +734,28 @@ parstatC *parstat;
         dens = new double[ncl];
         if (pr.loi=="UN") for(int i=0;i<ncl;i++) dens[i]=1.0/(pr.maxi-pr.mini);
         if (pr.loi=="LU") for(int i=0;i<ncl;i++) {
-            dens[i]=0.0; 
+            dens[i]=0.0;
             for (int j=0;j<ncl2-1;j++){
                 z=x[i]+(double)j*pas/(double)(ncl2-1);
                 dens[i]+=1.0/(pr.maxi-pr.mini)/z/(ncl2-1);
             }
         }
         if (pr.loi=="NO") for(int i=0;i<ncl;i++){
-            dens[i]=0.0; 
+            dens[i]=0.0;
             for (int j=0;j<ncl2-1;j++){
                 z=x[i]+(double)j*pas/(double)(ncl2-1);
                 dens[i]+=exp(-(z-pr.mean)*(z-pr.mean)/2.0/(pr.sdshape*pr.sdshape))/(pr.sdshape*co);
             }
         }
         if (pr.loi=="LN") for(int i=0;i<ncl;i++) {
-            dens[i]=0.0; 
+            dens[i]=0.0;
             for (int j=0;j<ncl2-1;j++){
                 z=x[i]+(double)j*pas/(double)(ncl2-1);
                 dens[i]+=exp(-(log(z)/pr.mean)*(log(z)/pr.mean)/2.0/(pr.sdshape*pr.sdshape))/(pr.sdshape*co*x[i]);
             }
         }
         if (pr.loi=="GA") for(int i=0;i<ncl;i++) {
-            dens[i]=0.0; 
+            dens[i]=0.0;
             for (int j=0;j<ncl2-1;j++){
                 z=x[i]+(double)j*pas/(double)(ncl2-1);
                 xb=z*pr.sdshape/pr.mean;
@@ -771,7 +771,7 @@ parstatC *parstat;
 /**
 * calcule la densité à partir d'un échantillon de valeurs'
 */
-    double* calculdensite(int ncl,int n, double *x, double **y,int j,bool multithread) { 
+    double* calculdensite(int ncl,int n, double *x, double **y,int j,bool multithread) {
         double bw,*dens,sd,*z,denom,som;
         dens = new double[ncl];
         z = new double[n];
@@ -784,10 +784,10 @@ parstatC *parstat;
         for (int j=0;j<ncl;j++) {
             dens[j]=0.0;
             for (int i=0;i<n;i++) dens[j] +=exp(lnormal_dens(z[i],x[j],bw));
-            //if(2*j==ncl-1) cout<<" avant denom dens["<<j<<"] = "<< dens[j]<<"\n"; 
+            //if(2*j==ncl-1) cout<<" avant denom dens["<<j<<"] = "<< dens[j]<<"\n";
             denom=pnorm5((x[ncl-1]-x[j])/bw,0.0,1.0)-pnorm5((x[0]-x[j])/bw,0.0,1.0);
             if (denom>0.0) dens[j] /=denom;
-            //if(2*j==ncl-1) cout<<" apres denom dens["<<j<<"] = "<< dens[j]<<"   (denom="<<denom<<")\n"; 
+            //if(2*j==ncl-1) cout<<" apres denom dens["<<j<<"] = "<< dens[j]<<"   (denom="<<denom<<")\n";
         }
         som=0.0;for (int j=0;j<ncl;j++) {som +=dens[j];}
         if (som>0.0) for (int j=0;j<ncl;j++) dens[j] /=som;
@@ -799,7 +799,7 @@ parstatC *parstat;
 * calcule un histogramme à partir d'un échantillon de valeurs'
 */
     double* calculhisto(int ncl, int n, double *x, double **y,int j,bool multithread) {
-        int k;  
+        int k;
         double som,*dens,*z,d,demipas=0.5*(x[1]-x[0]);
         dens = new double[ncl];
         z = new double[n];
@@ -807,7 +807,7 @@ parstatC *parstat;
         //for (int i=0;i<n;i++) cout <<"  "<<z[i];cout<<"\n";
         for (int i=0;i<ncl;i++) dens[i]=0.0;
         d=1.0/(double)n;
-#pragma omp parallel for shared(dens,z,x) private(k) if(multithread)      
+#pragma omp parallel for shared(dens,z,x) private(k) if(multithread)
         for (int i=0;i<n;i++) {
             for (k=0;k<ncl;k++) if (abs(z[i]-x[k])<=demipas) break;
             dens[k] += d;
@@ -822,7 +822,7 @@ parstatC *parstat;
 /**
 * traitement global du calcul de la densité des paramètres variables
 * si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
-* sinon la densité est évaluée pour 1000 points du min au max 
+* sinon la densité est évaluée pour 1000 points du min au max
 */
     void histodens(int n, bool multithread, char* progressfilename,int* iprog,int* nprog) {
         bool condition;
@@ -835,7 +835,7 @@ parstatC *parstat;
             condition=false;
             if (j<npar) {  //histparam
                 if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].category<2) {
-                    if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi-rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini<=30) 
+                    if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi-rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini<=30)
                         pardens[j].ncl=rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi-rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini+1;
                 }
                 pardens[j].xmin=rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini;
@@ -859,7 +859,7 @@ parstatC *parstat;
                     if (pardens[j].xmin>phistar[i][j]) pardens[j].xmin=phistar[i][j];
                     if (pardens[j].xmax<phistar[i][j]) pardens[j].xmax=phistar[i][j];
                 }
-            } 
+            }
             pardens[j].xdelta = (pardens[j].xmax-pardens[j].xmin)/(double)(pardens[j].ncl-1);
             cout<<nomparam[j]<<"   xmin="<<pardens[j].xmin<<"   xmax="<<pardens[j].xmax<<"   xdelta="<<pardens[j].xdelta<<"\n";
             pardens[j].x = new double[pardens[j].ncl];
@@ -904,12 +904,12 @@ parstatC *parstat;
         *iprog+=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
         }
      }
- 
+
 /**
 *calcule les statistiques des paramètres
 */
     parstatC* calparstat(int n) {
-        double sx,*x;  
+        double sx,*x;
         parstat = new parstatC[nparamcom+nparcompo];
         x = new double[n];
         //cout <<"avant la boucle sur les parametres nparamcom="<<nparamcom<<"  nparcompo="<<nparcompo<<"   nsel="<<n<<"\n";
@@ -993,7 +993,7 @@ parstatC *parstat;
         fclose(f1);
     }
 
-/** 
+/**
 * effectue l'estimation ABC des paramètres (directe + régression locale)
 */
     void doestim(char *options) {
@@ -1002,9 +1002,9 @@ parstatC *parstat;
         int nrec,nsel,ns,ns1,nrecpos;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs;
-        
+
         FILE *flog;
-        
+
         progressfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(progressfilename,path);
         strcat(progressfilename,ident);
@@ -1027,10 +1027,10 @@ parstatC *parstat;
                 if(nrec>nrecpos) nrec=nrecpos;
                 cout<<"nombre total de jeux de données considérés (pour le(s) scénario(s) choisi(s) )= "<<nrec<<"\n";
             } else if (s0=="m:") {
-                nsel=atoi(s1.c_str());    
+                nsel=atoi(s1.c_str());
                 cout<<"nombre de jeux de données considérés pour la régression locale = "<<nsel<<"\n";
             } else if (s0=="t:") {
-                numtransf=atoi(s1.c_str()); 
+                numtransf=atoi(s1.c_str());
                 switch (numtransf) {
                   case 1 : cout <<" pas de transformation des paramètres\n";break;
                   case 2 : cout <<" transformation log des paramètres\n";break;
@@ -1044,9 +1044,9 @@ parstatC *parstat;
                 if ((s1=="oc")or(s1=="co")) cout <<"et ";
                 if (composite) cout<<"paramètres  composite  ";
                 cout<< "\n";
-            }            
+            }
         }
-        
+
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
         nprog=100;iprog=1;
@@ -1069,6 +1069,6 @@ parstatC *parstat;
         histodens(nsel,multithread,progressfilename,&iprog,&nprog);                      cout<<"apres histodens\n";
         parstat = calparstat(nsel);                                 cout<<"apres calparstat\n";
         saveparstat(nsel,path,ident);
-        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         rt.desalloue_enrsel(nsel);
+        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }
