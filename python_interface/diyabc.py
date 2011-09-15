@@ -253,7 +253,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.switchToMainStack()
                         # creation du lock
                         proj_to_open.lock()
-                        log(1,"Project '%s' openend successfully"%dir)
+                        log(1,"Project '%s' opened successfully"%dir)
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:

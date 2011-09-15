@@ -155,7 +155,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 # on ajoute chaque coordonnée dans la composante correspondante
                 c = 1
                 while c < len(tab):
-                    print num_sc," ",c-1," ",tab[c]," ",self.dico_points_posterior.keys()
+                    #print num_sc," ",c-1," ",tab[c]," ",self.dico_points_posterior.keys()
                     self.dico_points_posterior[num_sc][c-1].append( float(tab[c]) )
                     c+=1
                 i+=1

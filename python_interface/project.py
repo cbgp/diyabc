@@ -917,16 +917,16 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         #frame.findChild(QLabel,"analysisStatusLabel").setText("%s%%"%prog)
         frame.findChild(QProgressBar,"analysisStatusBar").setValue(int(prog))
 
-        if int(prog) >= 100:
-            log(3,"Terminating analysis because progression indicated 100%%")
-            frame.findChild(QPushButton,"analysisButton").setText("View")
+        if prog >= 100.0:
+            log(3,"Terminating analysis because progression indicated 100 %%")
+            frame.findChild(QPushButton,"analysisButton").setText("View results")
             self.terminateAnalysis()
 
     def terminateAnalysis(self):
         """ arrête le thread de l'analyse et range les résultats
         dans un dossier
         """
-        log(2,"Analysis '%s' is terminated"%self.thAnalysis.analysis.name)
+        log(2,"Analysis '%s' is terminated. Starting results move"%self.thAnalysis.analysis.name)
         self.thAnalysis.terminate()
         aid = self.thAnalysis.analysis.name
         self.thAnalysis.analysis.status = "finished"
@@ -959,6 +959,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
         elif atype == "bias":
             if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
+                log(3,"File %s/%s_bias.txt exists"%(self.dir,aid))
                 #print "les fichiers existent"
                 # deplacement des fichiers de résultat
                 aDirName = "bias_%s"%aid
@@ -967,6 +968,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 log(3,"Copy of '%s/%s_bias.txt' to '%s/analysis/%s/bias.txt' done"%(self.dir,aid,self.dir,aDirName))
                 #print "déplacement de %s/%s_bias.txt vers %s/analysis/%s/bias.txt"%(self.dir,aid,self.dir,aDirName)
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
+            else:
+                log(3,"File %s/%s_bias.txt doesn't exist. Results cannot be moved"%(self.dir,aid))
         elif atype == "evaluate":
             if os.path.exists("%s/%s_confidence.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
@@ -1005,6 +1008,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if len(self.analysisQueue) > 0:
             log(3,"Launching analysis %s because it is the first in the queue"%self.analysisQueue[0].name)
             self.launchAnalysis(self.analysisQueue[0])
+        else:
+            log(3,"No analysis in queue. Waiting orders")
 
     def moveAnalysisDown(self):
         """ déplace d'un cran vers le bas une analyse
@@ -1595,12 +1600,13 @@ class AnalysisThread(QThread):
                 self.processus.kill()
 
     def readProgress(self):
+        b = ""
         if os.path.exists("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name)):
             a = open("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name),"r")
-            b = a.readlines()[0]
+            lines = a.readlines()
             a.close()
-        else:
-            b = ""
+            if len(lines) > 0:
+                b = lines[0]
         #print "prog:%s"%b
         log(3,"Analysis '%s' progress : %s"%(self.analysis.name,b))
         return b
@@ -1611,10 +1617,10 @@ class AnalysisThread(QThread):
         if len(b.split(' ')) > 1:
             t1 = float(b.split(' ')[0])
             t2 = float(b.split(' ')[1])
-            self.tmpp = int(t1*100/t2)
+            self.tmpp = (t1*100/t2)
         if self.tmpp != self.progress:
             #print "on a progressé"
-            log(3,"The analysis '%s' has progressed"%self.analysis.name)
+            log(3,"The analysis '%s' has progressed (%s%%)"%(self.analysis.name,self.tmpp))
             self.progress = self.tmpp
             self.emit(SIGNAL("analysisProgress"))
 
