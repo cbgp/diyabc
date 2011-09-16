@@ -37,12 +37,12 @@ double **ssphistar,**ssref;
       cout<<s<<"\n";
         int j,ns,nq,nss1,gr,k=0;
         string *ss,*qq,*ss1;
-//comptage des stat        
+//comptage des stat
         for (gr=1;gr<=header.ngroupes;gr++) {header.groupe[gr].nstat=0;} header.nstat=0;
         //cout<<header.ngroupes<<" groupe\n";
         ss =splitwords(s," ",&ns);
         cout<<"ns="<<ns<<"\n";
-        for (int i=0;i<ns;i++) { 
+        for (int i=0;i<ns;i++) {
             qq=splitwords(ss[j],"_",&nq);
             if (nq!=3) return false;
             //cout<<"nq="<<nq<<"   qq[1]="<<qq[1]<<"\n";
@@ -51,14 +51,14 @@ double **ssphistar,**ssref;
             header.groupe[gr].nstat++;
             header.nstat++;
             delete []qq;
-       } 
+       }
         //cout <<"dans resetstat nstat = "<<header.nstat++<<"\n";
-        
-        for (gr=1;gr<=header.ngroupes;gr++) {delete []header.groupe[gr].sumstat;header.groupe[gr].sumstat = new StatC[header.groupe[gr].nstat];}     
+
+        for (gr=1;gr<=header.ngroupes;gr++) {delete []header.groupe[gr].sumstat;header.groupe[gr].sumstat = new StatC[header.groupe[gr].nstat];}
         ss =splitwords(s," ",&ns);
         delete []header.statname;header.statname = new string[ns];
         for (int i=0;i<ns;i++) header.statname[i]=ss[i];
-        for (int i=0;i<ns;i++) { 
+        for (int i=0;i<ns;i++) {
             qq=splitwords(ss[i],"_",&nq);
             gr=atoi(qq[1].c_str());
             j=0;while (qq[0]!=stat_type[j]) j++;
@@ -139,8 +139,8 @@ double **ssphistar,**ssref;
             if (OK) { cout<<nphistarOK<<"    ";
                 for (int j=0;j<npv;j++) {
                     phistarOK[nphistarOK][j] = phistar[i][j];
-                    cout <<phistarOK[nphistarOK][j]<<"  ";               
-                } 
+                    cout <<phistarOK[nphistarOK][j]<<"  ";
+                }
                 cout<<"\n";
                 nphistarOK++;
             }
@@ -148,7 +148,7 @@ double **ssphistar,**ssref;
         cout<<"nphistarOK="<<nphistarOK<<"\n";
         return nphistarOK;
     }
-    
+
     void call_loc(int npart,int nstat, int nrec,int nsel,double **ss, double *stat_obs) {
         int *avant,*apres,*egal;
         double *qobs,diff,quant;
@@ -200,7 +200,7 @@ double **ssphistar,**ssref;
           case 3 : f12 <<"Transformation of parameters : Logit\n\n";break;
           case 4 : f12 <<"Transformation of parameters : Log(tg)\n\n";break;
         }
-        
+
         f12<<" summary           observed       proportion   \n";
         f12<<"statistics           value    (simulated<observed)\n";
         for (int j=0;j<header.nstat;j++) {
@@ -209,10 +209,10 @@ double **ssphistar,**ssref;
              f12<<"\n";
         }
         f12.close();
-    
-    
+
+
     }
-    
+
     void call_acp(int nr, int ns, int nstat, int *numscen,double **ssref, double **ssphistar, double *stat_obs) {
         resACPC rACP;
         double *pca_statobs,**pca_ss;
@@ -255,7 +255,7 @@ double **ssphistar,**ssref;
         }
         fclose(f1);
     }
-    
+
     void domodchec(char *options,int seed){
         char  *progressfilename;
         int nstatOK, iprog,nprog;
@@ -263,9 +263,9 @@ double **ssphistar,**ssref;
         string opt,*ss,s,*ss1,s0,s1,snewstat;
         double  *stat_obs;
         bool usestats,firsttime,dopca,doloc,newstat=false;
-        
+
         FILE *flog;
-        
+
         progressfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(progressfilename,path);
         strcat(progressfilename,ident);
@@ -284,16 +284,16 @@ double **ssphistar,**ssref;
                 for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());
                 nrecpos=rt.nrecscen[rt.scenchoisi[0]-1];
                 cout <<"scenario choisi : "<<rt.scenchoisi[0]<<"\n";
-                rt.scenteste = rt.scenchoisi[0]; 
+                rt.scenteste = rt.scenchoisi[0];
             } else if (s0=="n:") {
                 nrec=atoi(s1.c_str());
                 if(nrec>nrecpos) nrec=nrecpos;
                 cout<<"nombre total de jeux de données considérés (pour le scénario choisi )= "<<nrec<<"\n";
             } else if (s0=="m:") {
-                nsel=atoi(s1.c_str());    
+                nsel=atoi(s1.c_str());
                 cout<<"nombre de jeux de données considérés pour la régression locale = "<<nsel<<"\n";
             } else if (s0=="t:") {
-                numtransf=atoi(s1.c_str()); 
+                numtransf=atoi(s1.c_str());
                 switch (numtransf) {
                   case 1 : cout <<" pas de transformation des paramètres\n";break;
                   case 2 : cout <<" transformation log des paramètres\n";break;
@@ -314,11 +314,11 @@ double **ssphistar,**ssref;
                 if ((s1=="pl")or(s1=="lp")) cout <<"et ";
                 if (doloc) cout<<"locate  ";
                 cout<< "\n";
-                 
-            }           
+
+            }
         }
         nprog=newsspart+100;
-        if ((newstat)and(dopca)) nprog += header.nscenarios*10000; 
+        if ((newstat)and(dopca)) nprog += header.nscenarios*10000;
         iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         original=true;composite=false;
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
@@ -352,15 +352,16 @@ double **ssphistar,**ssref;
         cout<<"ns="<<ns<<"\n";
         //cout<<phistarOK[0][0]<<"\n";
         if (newstat) usestats = resetstats(snewstat);
-        
+
         cout<<"header.nstat = "<<header.nstat<<"\n";
         ssphistar = new double*[newsspart];
         for (int i=0;i<newsspart;i++) ssphistar[i] = new double[header.nstat];
+        cout<<"newstat ="<<newstat<<"   newsspart="<<newsspart<<"     nenr="<<nenr<<"\n";
         while (nss<newsspart) {
             ps.dosimulphistar(header,nenr,false,multithread,firsttime,rt.scenteste,seed,false,false,nsel);
             for (int i=0;i<nenr;i++) {
                 for (int j=0;j<header.nstat;j++) ssphistar[i+nss][j]=enreg[i].stat[j];
-                //for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+ns][j]<<"   ";cout<<"\n";
+                for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+ns][j]<<"   ";cout<<"\n";
             }
             firsttime=false;
             nss+=nenr;
@@ -373,7 +374,7 @@ double **ssphistar,**ssref;
             if (newstat) {
                 header.readHeader(headerfilename);cout<<"apres readHeader nscenarios= "<<header.nscenarios<<"\n";
                 usestats = resetstats(snewstat);
-                newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n"; 
+                newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n";
                 numscen = new int[newrefpart];
                 ssref = new double*[newrefpart];
                 for (int i=0;i<newrefpart;i++) ssref[i] = new double[header.nstat];
@@ -382,7 +383,7 @@ double **ssphistar,**ssref;
                 while (nsr<newrefpart) {
                     ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
                     for (int i=0;i<nenr;i++) {
-                      numscen[i+nsr] = enreg[i].numscen;  
+                      numscen[i+nsr] = enreg[i].numscen;
                       for (int j=0;j<header.nstat;j++) ssref[i+nsr][j]=enreg[i].stat[j];
                         //for (int j=0;j<header.nstat;j++) cout<<ssref[i+nsr][j]<<"   ";cout<<"\n";
                     }
@@ -397,7 +398,7 @@ double **ssphistar,**ssref;
                 nparamax=0;for (int i=0;i<rt.nscen;i++)  if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
                 enr.stat = new float[rt.nstat];
                 enr.param = new float[nparamax];
-                newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n"; 
+                newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n";
                 numscen = new int[newrefpart];
                 ssref = new double*[newrefpart];
                 for (int i=0;i<newrefpart;i++) ssref[i] = new double[header.nstat];

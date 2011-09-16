@@ -290,13 +290,13 @@ int main(int argc, char *argv[]){
                                       enreg[p].param = new float[header.nparamtot+3*header.ngroupes];
                                       enreg[p].numscen = 1;
                                   }
-                                  //cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
+                                  cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
                                   firsttime=true;stoprun=false;
                                   debutr=walltime(&clock_zero);
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
-                                          //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"\n";
+                                          cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"\n";
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
-                                          //cout<<"retour de dosimultabref\n";
+                                          cout<<"retour de dosimultabref\n";
                                           simOK=true;
                                           for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}
                                           if (simOK) {
