@@ -71,7 +71,7 @@ class TeeLogger(object):
 
         #self.file.close()
     def write(self, data):
-        data = data.replace(u'\xb5','u')
+        #data = data.replace(u'\xb5','u')
         data_without_color = data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,'')
         # on bouge le curseur au début de la dernière ligne
         self.app.showLogFile_win.logText.moveCursor(QTextCursor.End)
