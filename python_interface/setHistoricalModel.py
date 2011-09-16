@@ -121,6 +121,9 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         plainTextEdit = QtGui.QPlainTextEdit(groupBox)
         plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         plainTextEdit.setObjectName("scplainTextEdit")
+        ff = plainTextEdit.font()
+        ff.setPointSize(8)
+        plainTextEdit.setFont(ff)
         verticalLayout_6.addWidget(plainTextEdit)
         # ajout de la groupbox
         self.ui.horizontalLayout_3.addWidget(groupBox)
@@ -138,7 +141,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         # ajout de la groupbox de repartition
         groupBox_r = QtGui.QGroupBox(self.ui.repScrollContent)
         font = QFont()
-        font.setPixelSize(8)
+        font.setPixelSize(9)
         groupBox_r.setFont(font)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
