@@ -122,7 +122,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         action = file_menu.addAction(QIcon("docs/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
-        file_menu.addSeparator()
+        sepAc = QAction("Open recent projects",self)
+        sepAc.setSeparator(True)
+        file_menu.addAction(sepAc)
         #style_menu = self.ui.menubar.addMenu("Style")
         #action_group = QActionGroup(style_menu)
         #for stxt in self.styles:
@@ -164,6 +166,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         newButton.setFlat(True)
         QObject.connect(newButton,SIGNAL("clicked()"),self.newProject)
         self.ui.toolBar.addWidget(newButton)
+        self.ui.toolBar.addSeparator()
 
         openButton = QPushButton(QIcon("docs/icons/fileopen.png"),"Open",self)
         openButton.setToolTip("Open project")
@@ -172,6 +175,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         openButton.setFlat(True)
         QObject.connect(openButton,SIGNAL("clicked()"),self.openProject)
         self.ui.toolBar.addWidget(openButton)
+        self.ui.toolBar.addSeparator()
 
         saveButton = QPushButton(QIcon("docs/icons/document-save.png"),"Save",self)
         self.saveButton = saveButton
@@ -182,6 +186,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         QObject.connect(saveButton,SIGNAL("clicked()"),self.saveCurrentProject)
         self.ui.toolBar.addWidget(saveButton)
         saveButton.setDisabled(True)
+        self.ui.toolBar.addSeparator()
 
         saveAllButton = QPushButton(QIcon("docs/icons/document-save-all.png"),"Save all",self)
         self.saveAllButton = saveAllButton
@@ -198,27 +203,38 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.redrawRecent()
 
     def redrawRecent(self):
-        rlist = self.recentList
         # cleaning
         for ac in self.recentMenuEntries:
             self.file_menu.removeAction(ac)
         self.recentMenuEntries = []
         self.entryToRecent = {}
 
+        future_recent_list = []
+        for re in self.recentList:
+            future_recent_list.append(re)
         # drawing
         nb_added = 0
-        for i,rec in enumerate(rlist):
+        for i,rec in enumerate(self.recentList):
             if os.path.exists(str(rec)):
-                self.recentMenuEntries.append( self.file_menu.addAction(rec.split('/')[-1],self.openRecent) )
+                self.recentMenuEntries.append( self.file_menu.addAction(QIcon("docs/icons/document-open-recent.png"),rec.split('/')[-1],self.openRecent) )
                 self.entryToRecent[ self.recentMenuEntries[-1] ] = rec
                 nb_added += 1
+            else:
+                # le project n'existe plus, on supprime celui ci des recent
+                future_recent_list.remove(rec)
             if nb_added == 5:
+                self.recentList = future_recent_list
                 return
+        self.recentList = future_recent_list
 
     def getRecent(self):
         return self.recentList
 
     def addRecent(self,rec):
+        # on vire les eventuelles occurences du projet que l'on veut ajouter
+        while self.recentList.count(rec) > 0:
+            self.recentList.remove(rec)
+
         self.recentList.insert(0,rec)
         while len(self.recentList) > 20:
             self.recentList.pop()
@@ -602,7 +618,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 proj.stopRefTableGen()
                 proj.stopAnalysis()
                 proj.unlock()
-            self.preferences_win.saveRecent()
+        self.preferences_win.saveRecent()
         event.accept()
     #    reply = QtGui.QMessageBox.question(self, 'Message',
     #        "Are you sure to quit?", QtGui.QMessageBox.Yes | 

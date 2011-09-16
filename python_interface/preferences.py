@@ -202,6 +202,7 @@ class Preferences(formPreferences,basePreferences):
             os.remove(os.path.expanduser("~/.diyabc/recent"))
         f = codecs.open(os.path.expanduser("~/.diyabc/recent"),"w","utf-8")
         for rec in self.parent.getRecent():
+            log(3,"Saving recent %s"%rec)
             f.write("%s\n"%rec)
         f.close()
 
