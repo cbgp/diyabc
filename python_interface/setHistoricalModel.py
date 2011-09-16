@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os,sys
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -63,6 +63,11 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         self.ui.horizontalLayout_6.setAlignment(QtCore.Qt.AlignLeft)
         self.ui.horizontalLayout_2.setAlignment(QtCore.Qt.AlignLeft)
         self.ui.horizontalLayout_3.setAlignment(QtCore.Qt.AlignLeft)
+        if "darwin" in sys.platform:
+        	for lab in [self.ui.label_2,self.ui.label_3,self.ui.label_4,self.ui.label_5,self.ui.label_6,self.ui.label_7,self.ui.label_8,self.ui.label_9,self.ui.label_10]:
+			ff = lab.font()
+			ff.setPointSize(10)
+			lab.setFont(ff)
 
     def displayPreviews(self,state=None):
         """ Met à jour ou fait apparaitre ou disparaitre les previews
@@ -121,9 +126,14 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         plainTextEdit = QtGui.QPlainTextEdit(groupBox)
         plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         plainTextEdit.setObjectName("scplainTextEdit")
-        ff = plainTextEdit.font()
-        ff.setPointSize(8)
-        plainTextEdit.setFont(ff)
+        if "darwin" not in sys.platform:
+		ff = plainTextEdit.font()
+		ff.setPointSize(8)
+		plainTextEdit.setFont(ff)
+        else:
+		ff = plainTextEdit.font()
+		ff.setPointSize(9)
+		plainTextEdit.setFont(ff)
         verticalLayout_6.addWidget(plainTextEdit)
         # ajout de la groupbox
         self.ui.horizontalLayout_3.addWidget(groupBox)
@@ -140,9 +150,6 @@ class SetHistoricalModel(formHistModel,baseHistModel):
 
         # ajout de la groupbox de repartition
         groupBox_r = QtGui.QGroupBox(self.ui.repScrollContent)
-        font = QFont()
-        font.setPixelSize(9)
-        groupBox_r.setFont(font)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -170,10 +177,18 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         sizePolicy.setHeightForWidth(lineEdit.sizePolicy().hasHeightForWidth())
         lineEdit.setSizePolicy(sizePolicy)
         lineEdit.setMinimumSize(QtCore.QSize(0, 26))
-        lineEdit.setMaximumSize(QtCore.QSize(40, 26))
+        lineEdit.setMaximumSize(QtCore.QSize(45, 26))
         lineEdit.setObjectName("rpEdit")
         verticalLayout_6.addWidget(lineEdit)
         self.ui.horizontalLayout_6.addWidget(groupBox_r)
+
+        font = QFont()
+        if "darwin" in sys.platform:
+        	si = 9
+        else:
+        	si = 9
+        font.setPointSize(si)
+        groupBox_r.setFont(font)
 
         # ajout des rp dans la liste locale (plus facile à manipuler)
         self.rpList.append(groupBox_r)
@@ -593,6 +608,10 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         setCondButton.setObjectName("setCondButton")
         setCondButton.setMinimumSize(QtCore.QSize(80, 20))
         setCondButton.setMaximumSize(QtCore.QSize(80, 20))
+        if "darwin" in sys.platform:
+        	ff = setCondButton.font()
+        	ff.setPointSize(10)
+        	setCondButton.setFont(ff)
         horizontalLayout_8.addWidget(setCondButton)
         horizontalLayout_13.addWidget(groupBox_9)
         groupBox_10 = QtGui.QGroupBox(groupBox_8)
