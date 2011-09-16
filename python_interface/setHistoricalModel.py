@@ -186,7 +186,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         if "darwin" in sys.platform:
         	si = 9
         else:
-        	si = 9
+        	si = 7
         font.setPointSize(si)
         groupBox_r.setFont(font)
 
