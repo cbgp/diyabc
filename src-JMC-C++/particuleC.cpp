@@ -76,6 +76,7 @@ int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  
     vector <int> histparcat;
 
 extern int debuglevel;
+extern char *reftablelogfilename;
 
 /**
 * retourne un ordre aléatoire pour les éléments d'un vecteur
@@ -1954,7 +1955,14 @@ struct ParticleC
 		if (debuglevel==10) cout <<"apres setSequence\n";
 		if (debuglevel==5) cout <<"avant checktree\n";
         checktree=this->verifytree();
-        if (checktree!="") {cout<<checktree<<"\n"; this->scen.ecris();exit(1);}
+        if (checktree!="") {
+            FILE *flog;
+            cout<<checktree<<"\n";
+            this->scen.ecris();
+            checktree="A gene genealogy failed in scenario "+IntToString(numscen+1)+". Check scenario and prior consistency.\n  ";
+            flog=fopen(reftablelogfilename,"w");fprintf(flog,"%s",checktree.c_str());fclose(flog);
+            exit(1);
+        }
         if (debuglevel==5) cout <<"apres checktree\n";
 		bool gtYexist=false, gtMexist=false;
 		this->gt = new GeneTreeC[this->nloc];

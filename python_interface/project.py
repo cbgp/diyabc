@@ -464,7 +464,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     \nimpossible to launch reftable generation")
 
     def refTableProblem(self):
-        output.notify(self,"reftable problem","Something happened during the reftable generation : %s"%(self.th.problem))
+        output.notify(self,"reftable problem","Something happened during the reftable generation :\n %s"%(self.th.problem))
         self.stopUiGenReftable()
         self.th = None
         self.nextAnalysisInQueue()
