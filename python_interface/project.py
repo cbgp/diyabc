@@ -448,6 +448,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if self.parent.preferences_win.ui.serverCheck.isChecked():
                 #tname = self.generateComputationTar("/tmp/aaaa.tar")
                 tname = self.generateComputationTar("%s/aaaa.tar"%tempfile.mkdtemp())
+                log(3,"Tar file created in %s"%tname)
                 self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
                 self.th = RefTableGenThread(self,nb_to_gen)

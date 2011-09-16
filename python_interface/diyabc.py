@@ -279,6 +279,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     def openProject(self,dir=None):
         """ ouverture d'un projet existant
         """
+        #from project import Project
         if dir == None:
             qfd = QFileDialog()
             dir = str(qfd.getExistingDirectory())
@@ -457,6 +458,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     def newProject(self,name=None):
         """ Création d'un projet
         """
+        #from project import Project
         log(1,'Attempting to create a new project')
         ok = True
         #if name == None:

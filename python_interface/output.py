@@ -61,10 +61,14 @@ class TeeLogger(object):
         else:
             self.out = sys.stderr
     def __del__(self):
-        if self.out_or_err:
-            sys.stdout = self.out
-        else:
-            sys.stderr = self.out
+        pass
+        ## genere une exception que je ne comprends pas
+        # Exception AttributeError: "'NoneType' object has no attribute 'stdout'" in <bound method TeeLogger.__del__ of <output.TeeLogger object at 0x92ce5ec>> ignored
+        #if self.out_or_err:
+        #    sys.stdout = self.out
+        #else:
+        #    sys.stderr = self.out
+
         #self.file.close()
     def write(self, data):
         data = data.replace(u'\xb5','u')
