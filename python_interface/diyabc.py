@@ -26,6 +26,7 @@ from showLogFile import ShowLogFile
 from documentator import Documentator
 import output
 from output import log
+import subprocess
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
@@ -86,6 +87,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #pic.convertFromImage(im)
         pic = QPixmap("docs/accueil_pictures/black_red.png")
         self.ui.imgLabel.setPixmap(pic)
+        pic.scaled(100,100)
         self.switchToWelcomeStack()
 
         # about window
@@ -162,11 +164,12 @@ class Diyabc(formDiyabc,baseDiyabc):
         newButton = QPushButton(QIcon("docs/icons/folder-new.png"),"New",self)
         newButton.setToolTip("New project")
         newButton.setMaximumSize(QSize(50, 22))
+        #newButton.setObjectName("newButton")
         #newButton.setMinimumSize(QSize(16, 18))
         newButton.setFlat(True)
         QObject.connect(newButton,SIGNAL("clicked()"),self.newProject)
         self.ui.toolBar.addWidget(newButton)
-        self.ui.toolBar.addSeparator()
+        #self.ui.toolBar.addSeparator()
 
         openButton = QPushButton(QIcon("docs/icons/fileopen.png"),"Open",self)
         openButton.setToolTip("Open project")
@@ -175,7 +178,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         openButton.setFlat(True)
         QObject.connect(openButton,SIGNAL("clicked()"),self.openProject)
         self.ui.toolBar.addWidget(openButton)
-        self.ui.toolBar.addSeparator()
+        #self.ui.toolBar.addSeparator()
 
         saveButton = QPushButton(QIcon("docs/icons/document-save.png"),"Save",self)
         self.saveButton = saveButton
@@ -186,7 +189,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         QObject.connect(saveButton,SIGNAL("clicked()"),self.saveCurrentProject)
         self.ui.toolBar.addWidget(saveButton)
         saveButton.setDisabled(True)
-        self.ui.toolBar.addSeparator()
+        #self.ui.toolBar.addSeparator()
 
         saveAllButton = QPushButton(QIcon("docs/icons/document-save-all.png"),"Save all",self)
         self.saveAllButton = saveAllButton
@@ -197,6 +200,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         QObject.connect(saveAllButton,SIGNAL("clicked()"),self.saveAllProjects)
         self.ui.toolBar.addWidget(saveAllButton)
         saveAllButton.setDisabled(True)
+
+        for but in [newButton,openButton,saveButton,saveAllButton]:
+            but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
     def setRecent(self,rlist):
         self.recentList = rlist
