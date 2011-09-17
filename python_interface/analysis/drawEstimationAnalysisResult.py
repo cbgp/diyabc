@@ -11,6 +11,7 @@ from PyQt4 import uic
 from utils.visualizescenario import *
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
+from output import log
 
 formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 
@@ -98,7 +99,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
                 l += 6
 
         else:
-            print "paramstatdens.txt not found"
+            log(3, "paramstatdens.txt not found for analysis %s"%self.analysis.name)
 
 
     def addDraw(self,name,values,absv,ordpr,ordpo):

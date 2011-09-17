@@ -89,13 +89,13 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         groupList = self.parent.parent.gen_data_win.groupList
         greft = None
         for g in groupList:
-            print g.title()
+            #print g.title()
             if "Group %s"%num_gr in g.title():
                 greft = g
                 break
         if "Microsat" in greft.title():
             sumStatFrame = SetSummaryStatisticsMsatAnalysis(self.parent,self,num_gr)
-            print self.parent.parent.gen_data_win.setSum_dico[g].getSumConf()[1]
+            #print self.parent.parent.gen_data_win.setSum_dico[g].getSumConf()[1]
             sumStatFrame.setSumConf(self.parent.parent.gen_data_win.setSum_dico[g].getSumConf()[1].strip().split('\n'))
         elif "Sequence" in greft.title():
             sumStatFrame = SetSummaryStatisticsSeqAnalysis(self.parent,self,num_gr)
@@ -182,7 +182,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                             strparam += "g%s("%(ind+1)
                             strgr = gr.strip()
                             strgr = strgr.split('\n')
-                            print "\nstrgr %s\n"%strgr
+                            #print "\nstrgr %s\n"%strgr
                             for j,elem in enumerate(strgr):
                                 if elem.split(' ')[0] != "MODEL":
                                     to_add = strgr[j].split(' ')[1]
@@ -209,7 +209,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
     def setScenarios(self,scList):
         """ écrit la liste des scenarios à estimer
         """
-        print scList
+        #print scList
         plur= ""
         if len(scList)>1:
             plur = "s"
@@ -228,7 +228,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         """ repasse sur le choix des scenarios en lui redonnant moi même comme next_widget
         """
         estimateFrame = self
-        print type(self.parent)
+        #print type(self.parent)
         genSel = GenericScenarioSelection(len(self.parent.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,self.analysis,self.parent)
         #self.parent.parent.addTab(genSel,"Scenario selection")
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))

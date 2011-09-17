@@ -12,6 +12,7 @@ from genericScenarioSelection import GenericScenarioSelection
 from biasScenarioSelection import BiasNEvaluateScenarioSelection
 from analysis import Analysis
 import output
+from output import log
 
 formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType("uis/defineAnalysis.ui")
 
@@ -177,7 +178,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 self.parent.ui.analysisStack.setCurrentWidget(genSel)
 
             else:
-                print "NYI"
+                log(3, "This analysis type is NYI")
 
     def exit(self):
         ## reactivation des onglets

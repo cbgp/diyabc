@@ -13,6 +13,7 @@ from utils.visualizescenario import *
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 from datetime import datetime 
+from output import log
 
 formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 
@@ -156,9 +157,9 @@ Direct approach\n\n"%(date,self.parent.dir,self.analysis.candidateScList,self.pa
                 (first_line_tab,dico_coord) = self.getCoord("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory))
                 self.addDraw(first_line_tab,dico_coord,False)
             else:
-                print "complogreg.txt not found"
+                log(3, "complogreg.txt not found")
         else:
-            print "compdirect.txt not found"
+            log(3, "compdirect.txt not found")
 
 
     def addDraw(self,first_line_tab,dico_coord,direct):

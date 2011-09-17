@@ -94,7 +94,7 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
             self.checklist[0].setChecked(True)
             self.checklist[0].setDisabled(True)
             self.next_widget.ui.redefButton.hide()
-        print type(self.next_widget)
+        log(4,"type of next widget : %s"%type(self.next_widget))
         if self.nb_sc == 2 and "Comparison" in str(type(self.next_widget)):
             self.checklist[0].setChecked(True)
             self.checklist[0].setDisabled(True)

@@ -25,6 +25,6 @@ class SetSummaryStatisticsSeqAnalysis(SetSummaryStatisticsSeq):
         self.parent.parent.ui.analysisStack.setCurrentWidget(self.stackTarget)
         # maj le dico de sum stats de l'analyse
         self.stackTarget.analysis.sumStatsDico[self.numGroup] = self.getSumStatsTableHeader()
-        print self.stackTarget.analysis.sumStatsDico
+        #print self.stackTarget.analysis.sumStatsDico
 
 

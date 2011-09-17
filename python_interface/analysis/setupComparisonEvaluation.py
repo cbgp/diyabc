@@ -133,7 +133,7 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
                             strparam += "g%s("%(ind+1)
                             strgr = gr.strip()
                             strgr = strgr.split('\n')
-                            print "\nstrgr %s\n"%strgr
+                            #print "\nstrgr %s\n"%strgr
                             for j,elem in enumerate(strgr):
                                 if elem.split(' ')[0] != "MODEL":
                                     to_add = strgr[j].split(' ')[1]
