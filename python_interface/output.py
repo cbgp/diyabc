@@ -11,7 +11,7 @@ debug = False
 LOG_LEVEL = 4
 
 RED='\033[31m'
-WHITE='\033[37m'
+WHITE='\033[00m'
 BLUE='\033[35m'
 GREEN='\033[32m'
 YELLOW='\033[33m'

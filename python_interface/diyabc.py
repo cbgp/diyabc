@@ -18,16 +18,21 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from PyQt4 import uic
+print "plop"
 #from uis.diyabc_ui import Ui_MainWindow
 #from project import *
 #from project import Project
 from preferences import Preferences
+print "plop"
 from showLogFile import ShowLogFile
+print "plop"
 from documentator import Documentator
+print "plop"
 import output
 from output import log
 import subprocess
 from threading import Thread
+print "plop"
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 

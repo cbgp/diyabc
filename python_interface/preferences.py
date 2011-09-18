@@ -201,9 +201,12 @@ class Preferences(formPreferences,basePreferences):
         if os.path.exists(os.path.expanduser("~/.diyabc/recent")):
             os.remove(os.path.expanduser("~/.diyabc/recent"))
         f = codecs.open(os.path.expanduser("~/.diyabc/recent"),"w","utf-8")
-        for rec in self.parent.getRecent():
-            log(3,"Saving recent %s"%rec)
-            f.write("%s\n"%rec)
+        recList = self.parent.getRecent()
+        for ind,rec in enumerate(recList):
+            # si on a qu'un seul exemplaire de ce recent ou bien, si on est le premier
+            if (recList.count(rec) > 1 and recList.index(rec) == ind) or recList.count(rec) == 1 :
+                log(3,"Saving recent %s"%rec)
+                f.write("%s\n"%rec)
         f.close()
 
 
