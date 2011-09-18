@@ -20,13 +20,14 @@ from PyQt4 import QtGui
 from PyQt4 import uic
 #from uis.diyabc_ui import Ui_MainWindow
 #from project import *
-from project import Project
+#from project import Project
 from preferences import Preferences
 from showLogFile import ShowLogFile
 from documentator import Documentator
 import output
 from output import log
 import subprocess
+from threading import Thread
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
@@ -285,7 +286,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     def openProject(self,dir=None):
         """ ouverture d'un projet existant
         """
-        #from project import Project
+        from project import Project
         if dir == None:
             qfd = QFileDialog()
             dir = str(qfd.getExistingDirectory())
@@ -464,7 +465,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     def newProject(self,name=None):
         """ Création d'un projet
         """
-        #from project import Project
+        from project import Project
         log(1,'Attempting to create a new project')
         ok = True
         #if name == None:
@@ -673,6 +674,20 @@ class Diyabc(formDiyabc,baseDiyabc):
     def dragEnterEvent(self,event):
         event.acceptProposedAction()
 
+
+class ImportProjectThread(Thread):
+    """ Classe qui effectue l'import de la classe project en parallèle au chargement
+    du programme. L'interface démarre beaucoup plus vite et charge la classe projet 
+    en même temps qu'elle apparait
+    """
+    def __init__(self):
+        super(ImportProjectThread,self).__init__()
+        self.start()
+    def run(self):
+        log(4,"Pre-loading of Project class STARTING")
+        from project import Project
+        log(4,"Pre-loading of Project class FINISHED")
+
 def main():
     if not os.path.exists(os.path.expanduser("~/.diyabc/")):
         # c'est sans doute la première fois qu'on lance diyabc
@@ -706,6 +721,7 @@ def main():
     sys.stdout = myOut
     sys.stderr = myErr
     log(1,"DIYABC launched")
+    yop = ImportProjectThread()
     #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)
     sys.exit(app.exec_())
 

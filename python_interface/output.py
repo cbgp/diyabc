@@ -8,13 +8,14 @@ from datetime import datetime
 #import codecs
 
 debug = False
-LOG_LEVEL = 3
+LOG_LEVEL = 4
 
 RED='\033[31m'
 WHITE='\033[37m'
 BLUE='\033[35m'
 GREEN='\033[32m'
-tabcolors=[WHITE,RED,BLUE,GREEN]
+YELLOW='\033[33m'
+tabcolors=[WHITE,RED,BLUE,GREEN,YELLOW]
 
 def notify(parent,title,message):
     # dans tous les cas, on logue
