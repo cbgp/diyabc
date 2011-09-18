@@ -18,21 +18,16 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from PyQt4 import uic
-print "plop"
 #from uis.diyabc_ui import Ui_MainWindow
 #from project import *
 #from project import Project
 from preferences import Preferences
-print "plop"
 from showLogFile import ShowLogFile
-print "plop"
 from documentator import Documentator
-print "plop"
 import output
 from output import log
 import subprocess
 from threading import Thread
-print "plop"
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
@@ -725,7 +720,7 @@ def main():
     myErr = output.TeeLogger(logfile,"a",myapp,False)
     sys.stdout = myOut
     sys.stderr = myErr
-    log(1,"DIYABC launched")
+    log(1,"\033[5;36m DIYABC launched \033[00m")
     yop = ImportProjectThread()
     #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)
     sys.exit(app.exec_())

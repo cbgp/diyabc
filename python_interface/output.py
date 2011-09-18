@@ -15,7 +15,8 @@ WHITE='\033[00m'
 BLUE='\033[35m'
 GREEN='\033[32m'
 YELLOW='\033[33m'
-tabcolors=[WHITE,RED,BLUE,GREEN,YELLOW]
+CYAN='\033[36m'
+tabcolors=[WHITE,RED,BLUE,GREEN,YELLOW,CYAN]
 
 def notify(parent,title,message):
     # dans tous les cas, on logue
