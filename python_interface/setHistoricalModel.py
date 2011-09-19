@@ -11,6 +11,7 @@ from utils.visualizescenario import *
 from utils.history import *
 from set_condition import SetCondition
 import output
+from output import log
 
 formHistModel,baseHistModel = uic.loadUiType("uis/setHistFrame.ui")
 
@@ -421,18 +422,22 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 l_already_printed.append(pname)
                 # conservation des valeurs précédentes
                 if pname in dico_tmp.keys():
-                    box.findChild(QLineEdit,"minValueParamEdit").setText(dico_tmp[pname][2])
-                    box.findChild(QLineEdit,"maxValueParamEdit").setText(dico_tmp[pname][3])
-                    box.findChild(QLineEdit,"meanValueParamEdit").setText(dico_tmp[pname][4])
-                    box.findChild(QLineEdit,"stValueParamEdit").setText(dico_tmp[pname][5])
+                    if box.findChild(QLineEdit,"minValueParamEdit") != None:
+                        box.findChild(QLineEdit,"minValueParamEdit").setText(dico_tmp[pname][2])
+                    if box.findChild(QLineEdit,"maxValueParamEdit") != None:
+                        box.findChild(QLineEdit,"maxValueParamEdit").setText(dico_tmp[pname][3])
+                    if box.findChild(QLineEdit,"meanValueParamEdit") != None:
+                        box.findChild(QLineEdit,"meanValueParamEdit").setText(dico_tmp[pname][4])
+                    if box.findChild(QLineEdit,"stValueParamEdit") != None:
+                        box.findChild(QLineEdit,"stValueParamEdit").setText(dico_tmp[pname][5])
                     #box.findChild(QLineEdit,"stepValueParamEdit").setText(dico_tmp[pname][6])
-                    if dico_tmp[pname][1] == "UN":
+                    if box.findChild(QRadioButton,"uniformParamRadio") != None and dico_tmp[pname][1] == "UN":
                         box.findChild(QRadioButton,"uniformParamRadio").setChecked(True)
-                    elif dico_tmp[pname][1] == "LU":
+                    elif box.findChild(QRadioButton,"logUniformRadio") != None and dico_tmp[pname][1] == "LU":
                         box.findChild(QRadioButton,"logUniformRadio").setChecked(True)
-                    elif dico_tmp[pname][1] == "NO":
+                    elif box.findChild(QRadioButton,"normalRadio") != None and dico_tmp[pname][1] == "NO":
                         box.findChild(QRadioButton,"normalRadio").setChecked(True)
-                    elif dico_tmp[pname][1] == "LN":
+                    elif box.findChild(QRadioButton,"logNormalRadio") != None and dico_tmp[pname][1] == "LN":
                         box.findChild(QRadioButton,"logNormalRadio").setChecked(True)
         # nettoyage des conditions obsolètes
         cond_list_to_del = []
@@ -536,6 +541,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         nb_scenarios_invalides = 0
         self.scenarios_info_list = []
         for num,sc in enumerate(sc_txt_list):
+            log(3,"Checking scenario. Data : %s"%self.parent.data)
             scChecker = Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
             try:
                 #print self.parent.data

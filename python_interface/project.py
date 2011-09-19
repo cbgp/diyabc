@@ -153,21 +153,22 @@ class Project(baseProject,formProject):
         """ tue le thread de génération et crée le fichier .stop pour 
         arrêter la génération de la reftable
         """
-        f = open("%s/.stop"%self.dir,"w")
-        f.write(" ")
-        f.close()
-        need_to_start_analysis = (self.th != None and len(self.analysisQueue)>0)
-        if self.th != None:
-            self.th.terminate()
-            self.th = None
-        #self.ui.reftableProgressLabel.setText("")
-        self.stopUiGenReftable()
-        if os.path.exists("%s/reftable.log"%(self.dir)):
-            os.remove("%s/reftable.log"%(self.dir))
-        log(1,"Generation of reference table stopped")
-        # on démarre les analyses programmées
-        if need_to_start_analysis:
-            self.nextAnalysisInQueue()
+        if os.path.exists("%s"%self.dir):
+            f = open("%s/.stop"%self.dir,"w")
+            f.write(" ")
+            f.close()
+            need_to_start_analysis = (self.th != None and len(self.analysisQueue)>0)
+            if self.th != None:
+                self.th.terminate()
+                self.th = None
+            #self.ui.reftableProgressLabel.setText("")
+            self.stopUiGenReftable()
+            if os.path.exists("%s/reftable.log"%(self.dir)):
+                os.remove("%s/reftable.log"%(self.dir))
+            log(1,"Generation of reference table stopped")
+            # on démarre les analyses programmées
+            if need_to_start_analysis:
+                self.nextAnalysisInQueue()
 
     def stopAnalysis(self):
         if self.thAnalysis != None:
@@ -343,13 +344,16 @@ for i in $(seq 1 $1); do\n\
 done\n\
 echo $nb\n\
 }\n\
+seed=$RANDOM\n\
 for i in $(seq 1 %s); do \n\
-qsub -q short_queue.q -cwd node.sh 10000 `pwd` $i\n\
+let seed=$seed+1\n\
+qsub -q short_queue.q -cwd node.sh 10000 `pwd` $i $seed\n\
 done;\n'%nbFullQsub
         
         if nbLastQsub != 0:
             res+='let last=$i+1\n\
-qsub -q short_queue.q -cwd node.sh %s `pwd` $last\n'%nbLastQsub
+let seed=$seed+1\n\
+qsub -q short_queue.q -cwd node.sh %s `pwd` $last $seed\n'%nbLastQsub
         
         res+='while ! [ "`nbOk %s`" = "%s" ]; do\n\
 echo `progress %s`\n\
@@ -369,7 +373,7 @@ echo `progress %s`\n\
 cp general $TMPDIR\n\
 cp %s $TMPDIR\n\
 cp %s $TMPDIR\n\
-$TMPDIR/general -s "$3" -p $TMPDIR/ -r $1 & \n\
+$TMPDIR/general -s "$4" -p $TMPDIR/ -r $1 & \n\
 while ! [ "`head -n 2 $TMPDIR/reftable.log | tail -n 1`" -eq $1 ]; do\n\
     cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     sleep 5\n\

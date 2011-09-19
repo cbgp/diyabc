@@ -21,6 +21,7 @@ from PyQt4 import uic
 #from uis.diyabc_ui import Ui_MainWindow
 #from project import *
 #from project import Project
+#from simulationProject import SimulationProject
 from preferences import Preferences
 from showLogFile import ShowLogFile
 from documentator import Documentator
@@ -28,6 +29,7 @@ import output
 from output import log
 import subprocess
 from threading import Thread
+
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
@@ -122,7 +124,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.deleteProjActionMenu.setDisabled(True)
         self.cloneProjActionMenu.setDisabled(True)
         file_menu.addAction(QIcon("docs/icons/redhat-system_settings.png"),"&Settings",self.setPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
-        file_menu.addAction(QIcon("docs/icons/redhat-system_settings.png"),"&Simulate data set(s)",self.setPreferences)
+        file_menu.addAction(QIcon("docs/icons/redhat-system_settings.png"),"&Simulate data set(s)",self.simulateDataSets,QKeySequence(Qt.CTRL + Qt.Key_D))
         action = file_menu.addAction(QIcon("docs/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
@@ -205,6 +207,50 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         for but in [newButton,openButton,saveButton,saveAllButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
+
+    def simulateDataSets(self):
+        from simulationProject import SimulationProject
+        fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)")
+        fileDial.setLabelText(QtGui.QFileDialog.Accept,"Ok")
+        fileDial.setLabelText(QtGui.QFileDialog.FileName,"Data file\ngeneric name")
+        ok = (fileDial.exec_() == 1)
+        result = fileDial.selectedFiles()
+        if len(result) > 0:
+            path = result[0]
+        #path = fileDial.getSaveFileName(self,"Project location")
+        path = "%s"%path
+        # on enleve l'eventuel '/' de fin et on extrait le nom
+        if path != None and len(path) > 0 and len(path.split('/')) > 0 :
+            if path[-1] == "/":
+                path = path[:-1]
+            name = path.split("/")[-1]
+            directory = os.path.dirname(path)
+
+        if ok:
+            newSimProj = SimulationProject(name,directory,self)
+            # un nouveau projet a au moins un scenario
+            newSimProj.hist_model_win.addSc()
+            self.project_list.append(newSimProj)
+            # si c'est le premier projet, on permet la fermeture par le menu
+            # ajout au tabwidget de l'ui principale
+            # ajout de l'onglet
+            self.ui.tabWidget.addTab(newSimProj,"[SIM]%s"%newSimProj.name)
+            self.ui.tabWidget.setCurrentWidget(newSimProj)
+
+            if len(self.project_list) == 1:
+                self.closeProjActionMenu.setDisabled(False)
+                self.saveProjActionMenu.setDisabled(False)
+                self.deleteProjActionMenu.setDisabled(False)
+                self.cloneProjActionMenu.setDisabled(False)
+                self.saveAllProjActionMenu.setDisabled(False)
+                self.saveProjActionMenu.setDisabled(False)
+                self.saveButton.setDisabled(False)
+            if len(self.project_list) == 2:
+                self.nextProjectActionMenu.setDisabled(False)
+                self.prevProjectActionMenu.setDisabled(False)
+                self.saveAllButton.setDisabled(False)
+            self.switchToMainStack()
+            log(1,"Simulation project '%s' successfully created"%(newSimProj.name))
 
     def setRecent(self,rlist):
         self.recentList = rlist
@@ -349,10 +395,10 @@ class Diyabc(formDiyabc,baseDiyabc):
                             self.deleteProjActionMenu.setDisabled(False)
                             self.cloneProjActionMenu.setDisabled(False)
                             self.saveAllProjActionMenu.setDisabled(False)
-                            self.saveAllButton.setDisabled(False)
                             self.saveProjActionMenu.setDisabled(False)
                             self.saveButton.setDisabled(False)
                         if len(self.project_list) == 2:
+                            self.saveAllButton.setDisabled(False)
                             self.nextProjectActionMenu.setDisabled(False)
                             self.prevProjectActionMenu.setDisabled(False)
                         # on quitte la page d'accueil si on y était
@@ -513,12 +559,12 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.deleteProjActionMenu.setDisabled(False)
                         self.cloneProjActionMenu.setDisabled(False)
                         self.saveAllProjActionMenu.setDisabled(False)
-                        self.saveAllButton.setDisabled(False)
                         self.saveProjActionMenu.setDisabled(False)
                         self.saveButton.setDisabled(False)
                     if len(self.project_list) == 2:
                         self.nextProjectActionMenu.setDisabled(False)
                         self.prevProjectActionMenu.setDisabled(False)
+                        self.saveAllButton.setDisabled(False)
                     self.switchToMainStack()
                     log(1,'Project %s successfully created in %s'%(newProj.name,newProj.dir))
                 else:
@@ -553,13 +599,13 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.deleteProjActionMenu.setDisabled(True)
             self.cloneProjActionMenu.setDisabled(True)
             self.saveAllProjActionMenu.setDisabled(True)
-            self.saveAllButton.setDisabled(True)
             self.saveProjActionMenu.setDisabled(True)
             self.saveButton.setDisabled(True)
             self.switchToWelcomeStack()
         if len(self.project_list) == 1:
             self.nextProjectActionMenu.setDisabled(True)
             self.prevProjectActionMenu.setDisabled(True)
+            self.saveAllButton.setDisabled(True)
 
     def closeCurrentProject(self,save=None):
         """ ferme le projet courant, celui de l'onglet séléctionné
@@ -687,6 +733,7 @@ class ImportProjectThread(Thread):
     def run(self):
         log(4,"Pre-loading of Project class STARTING")
         from project import Project
+        from simulationProject import SimulationProject
         log(4,"Pre-loading of Project class FINISHED")
 
 def main():
