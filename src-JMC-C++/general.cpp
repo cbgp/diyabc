@@ -95,7 +95,7 @@ int main(int argc, char *argv[]){
     FILE *flog;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:q:f:g:d:hmqj:a:t:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qf:g:d:hmqj:a:t:")) !=-1) {
 
 	  switch (optchar) {
 

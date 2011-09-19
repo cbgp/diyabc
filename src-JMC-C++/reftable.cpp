@@ -36,7 +36,7 @@ struct enregC {
     double dist;
     string message;
 };
-/** 
+/**
 * définit l'opérateur de comparaison de deux enregistrements de type enregC
 * pour l'utilisation de la fonction sort du module algorithm
 */
@@ -49,7 +49,7 @@ struct compenreg
 };
 
 
-class ReftableC 
+class ReftableC
 {
 public:
     int nrec,*nrecscen,nscen,nreclus,nrec0;
@@ -64,7 +64,7 @@ public:
     enregC* enrsel;
     double *stat_obs;
     double *var_stat;
-    
+
     void sethistparamname(HeaderC header) {
       //cout<<"debut de sethistparamname\n";
         int nparamvar=0,pp,iscen,pa,ns,np,ip;
@@ -102,7 +102,7 @@ public:
         }
         //cout<<"fin de sethisparamname\n";
     }
-    
+
     int readheader(char * fname,char *flogname, char* datafilename) {
         int nb;
         //cout <<"debut de readheader\n";
@@ -115,7 +115,7 @@ public:
         //int p=strcspn(this->filelog,".");
         //this->filelog[p]='\0';
         //strcat(this->filelog,".log");
-        
+
         if (!f0) {return 1;}  //fichier non ouvrable e.g. inexistant
         else {
             //cout<<"fichier OK\n";
@@ -147,7 +147,7 @@ public:
         f1.close();
         return 0;  //retour normal
     }
-    
+
     int readrecord(enregC *enr) {
         int bidon;
         //cout<<"debut de readrecord\n";
@@ -161,10 +161,10 @@ public:
         //cin>>bidon;
         return 0;
     }
-    
+
     int writerecords(int nenr, enregC *enr) {
         int bidon;
-        for (int i=0;i<nenr;i++){ 
+        for (int i=0;i<nenr;i++){
              if (enr[i].message != "OK") {
                  ofstream f1(this->filelog,ios::out);
                  f1<<enr[i].message<<"\n";
@@ -199,7 +199,7 @@ public:
         //cout<< "position avant écriture de this->nscen: "<<this->fifo.tellg()<<"\n";
         nb=this->nscen;this->fifo.write((char*)&nb,sizeof(int));
         //cout<< "position avant écriture des this->nrecscen: "<<this->fifo.tellg()<<"\n";
-        
+
         for (int i=0;i<this->nscen;i++) {nb=this->nrecscen[i]+nrs[i];this->fifo.write((char*)&nb,sizeof(int));}
         fifo.flush();
         remtime=walltime(&debutr)*(nrecneeded-this->nrec-nenr)/(this->nrec+nenr-this->nrec0);
@@ -209,12 +209,12 @@ public:
         delete []nrs;
         return 0;
     }
-  
+
     int openfile() {
         this->fifo.open(this->filename,ios::in|ios::out|ios::binary);
         return 0;
     }
-    
+
     int openfile2() {
         this->fifo.open(this->filename,ios::in|ios::binary);
         this->fifo.seekg(0);
@@ -232,7 +232,7 @@ public:
         this->fifo.close();
         return 0;
     }
-  
+
     void concat() {
         cout<<"debut de concat\n";
         enregC *enr;
@@ -252,9 +252,12 @@ public:
         num = new char[9];
         n=sprintf (num, "_%d",nu++);
         strcpy(reftabname,reftab);
-        strcat(reftabname,num);strcpy(reflogname,reftabname);
+        strcat(reftabname,num);
+        cout<<reftabname<<"\n";
+
+        strcpy(reflogname,reftabname);
         strcat(reftabname,extbin);strcat(reflogname,extlog);
-        //cout<<reftabname<<"\n";
+        cout<<reftabname<<"\n";
         //cout<<reflogname<<"\n";
         fstream f0(reftabname,ios::in|ios::binary);
         if(f0) {f0.close();i=rename(reftabname,this->filename);}
@@ -302,9 +305,9 @@ public:
         }
         this->fifo.close();
     }
-  
-/** 
-* calcule les variances des statistiques résumées 
+
+/**
+* calcule les variances des statistiques résumées
 * sur les 100000 premiers enregistrements de la table de référence
 */
     int cal_varstat() {
@@ -358,7 +361,7 @@ public:
         //cout<<"\nnstatOK = "<<nsOK<<"\n";
         return nsOK;
     }
- 
+
 /**
 * alloue la mémoire pour enrsel
 */
@@ -370,7 +373,7 @@ public:
            this->enrsel[i].param = new float[nparamax];
            this->enrsel[i].stat  = new float[this->nstat];
         }
-    } 
+    }
 
 /**
 * desalloue la mémoire de enrsel
@@ -383,7 +386,7 @@ public:
         delete []this->enrsel;
     }
 
-/** 
+/**
 * calcule la distance de chaque jeu de données simulé au jeu observé
 * et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
 */
@@ -410,9 +413,9 @@ public:
                 }
                 if (scenOK) {
                    this->nreclus++;
-                   this->enrsel[nrecOK].dist=0.0; 
+                   this->enrsel[nrecOK].dist=0.0;
                     for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>0.0) {
-                        diff =(double)this->enrsel[nrecOK].stat[j] - stat_obs[j]; 
+                        diff =(double)this->enrsel[nrecOK].stat[j] - stat_obs[j];
                       this->enrsel[nrecOK].dist += diff*diff/this->var_stat[j];
                     }
                     this->enrsel[nrecOK].dist =sqrt(this->enrsel[nrecOK].dist);
@@ -431,7 +434,7 @@ public:
         //cout<<"\n";
         //exit(1);
     }
-    
+
 };
 
 
