@@ -265,9 +265,10 @@ public:
         i=rename(reflogname,this->filelog);
         cout <<reftabname<<"\n";
         cout<<reflogname<<"\n";
+        cout<<this->filename<<"\n";
         this->openfile2();this->closefile();
         this->openfile();
-        for (nu=2;nu>1;nu++) {
+        for (nu=2;nu<10000;nu++) {
             n=sprintf (num, "_%d",nu);
             strcpy(reftabname,reftab);
             strcat(reftabname,num);strcpy(reflogname,reftabname);
@@ -301,7 +302,7 @@ public:
                 f1<<"OK\n";
                 f1<<this->nrec<<"\n";
                 f1.close();
-            } else break;
+            }
         }
         this->fifo.close();
     }
