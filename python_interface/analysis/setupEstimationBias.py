@@ -10,6 +10,7 @@ from genericScenarioSelection import GenericScenarioSelection
 from summaryStatistics.setSummaryStatisticsMsatAnalysis import SetSummaryStatisticsMsatAnalysis
 from summaryStatistics.setSummaryStatisticsSeqAnalysis import SetSummaryStatisticsSeqAnalysis
 import output
+from output import log
 
 formSetupEstimationBias,baseSetupEstimationBias = uic.loadUiType("uis/setupEstimationBias.ui")
 
@@ -70,16 +71,16 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         for i in l_groups_to_add:
             self.ui.redefSumStatsCombo.addItem(i)
 
-        nbSetsDone = str(self.parent.parent.ui.nbSetsDoneEdit.text()).strip()
-        self.ui.totNumSimEdit.setText(nbSetsDone)
-        self.ui.cnosdEdit.setText(nbSetsDone)
-        onePc = int(nbSetsDone) / 100
-        if onePc < 1000:
-            if nbSetsDone < 1000:
-                onePc = nbSetsDone
-            else:
-                onePc = 1000
-        self.ui.nosdEdit.setText(str(onePc))
+        #nbSetsDone = str(self.parent.parent.ui.nbSetsDoneEdit.text()).strip()
+        #self.ui.totNumSimEdit.setText(nbSetsDone)
+        #self.ui.cnosdEdit.setText(nbSetsDone)
+        #onePc = int(nbSetsDone) / 100
+        #if onePc < 1000:
+        #    if nbSetsDone < 1000:
+        #        onePc = nbSetsDone
+        #    else:
+        #        onePc = 1000
+        #self.ui.nosdEdit.setText(str(onePc))
 
     def redefineSumStats(self):
         """ clic sur le bouton de redéfinition des sumstats pour le groupe sélectionné
@@ -209,6 +210,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
     def setScenarios(self,scList):
         """ écrit la liste des scenarios à estimer
         """
+        sumRec = 0
         #print scList
         plur= ""
         if len(scList)>1:
@@ -218,11 +220,19 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         self.scNumList = []
         for i in scList:
             lstxt+="%s, "%i
+            sumRec+=self.parent.parent.readNbRecordsOfScenario(int(i))
+            log(3,"Sum of scenarios records : %s"%sumRec)
             self.scNumList.append(i)
         lstxt = lstxt[:-2]
 
         txt = "Chosen scenario%s : %s"%(plur,lstxt)
         self.ui.scenariosLabel.setText(txt)
+        self.ui.cnosdEdit.setText(str(sumRec))
+        self.ui.totNumSimEdit.setText(str(sumRec))
+        nosdDefault = sumRec/100
+        if nosdDefault < 1000:
+            nosdDefault = 1000
+        self.ui.nosdEdit.setText(str(nosdDefault))
 
     def redefineScenarios(self):
         """ repasse sur le choix des scenarios en lui redonnant moi même comme next_widget

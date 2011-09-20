@@ -1281,7 +1281,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         else:
             return None
 
-    def readnbRecordsOfScenario(self,numSc):
+    def readNbRecordsOfScenario(self,numSc):
         """ lit la table de référence binaire pour en extraire la taille et la retourner
         """
         reftablefile = "%s/reftable.bin"%self.dir
