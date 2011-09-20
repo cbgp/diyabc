@@ -111,6 +111,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         # gestion du menu
         file_menu = self.ui.menubar.addMenu("&File")
         self.file_menu = file_menu
+        #self.file_menu.setStyleSheet('color:black')
         file_menu.addAction(QIcon("docs/icons/folder-new.png"),"&New project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction(QIcon("docs/icons/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
         self.saveProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save.png"),"&Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))

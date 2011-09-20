@@ -53,37 +53,10 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
     def viewCompDirectLogReg(self):
         """ clic sur le bouton view numerical results
         """
-        if os.path.exists("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory)) and os.path.exists("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory)):
-            f = open("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory),'r')
-            g = open("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory),'r')
-            datareg = f.read()
-            datadir = g.readlines()
+        if os.path.exists("%s/analysis/%s/compdirlog.txt"%(self.parent.dir,self.directory)):
+            f = open("%s/analysis/%s/compdirlog.txt"%(self.parent.dir,self.directory))
+            textToDisplay = f.read()
             f.close()
-            g.close()
-            dd = datetime.now()
-            date = "%s/%s/%s"%(dd.day,dd.month,dd.year)
-            textToDisplay = "\
-            COMPARISON OF SCENARIOS\n\
-            (%s)\n\n\
-Project directory : %s\n\
-Candidate scenarios : %s\n\
-Number of simulated data sets : %s\n\n\
-Direct approach\n\n"%(date,self.parent.dir,self.analysis.candidateScList,self.parent.ui.nbSetsDoneEdit.text())
-            textDirect = datadir[0].replace("   n   ","closest")
-            #i=-1
-            #while datadir[i].strip() == "":
-            #    i = i - 1
-            #pat = re.compile(r'\s+')
-            #num = int(pat.sub(' ',datadir[i].strip()).split(' ')[0])
-            #interval = num/10
-            i = 10
-            while i < len(datadir):
-                textDirect += datadir[i]
-                i+=10
-
-            textToDisplay += textDirect
-            textToDisplay += "\n\n Logistic approach\n\n"
-            textToDisplay += datareg
             #self.parent.drawAnalysisFrame = QFrame(self)
             #ui = ui_viewTextFile()
             self.parent.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")

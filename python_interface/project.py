@@ -933,6 +933,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """
         log(2,"Analysis '%s' is terminated. Starting results move"%self.thAnalysis.analysis.name)
         self.thAnalysis.terminate()
+        the_analysis = self.thAnalysis.analysis
         aid = self.thAnalysis.analysis.name
         self.thAnalysis.analysis.status = "finished"
         atype = self.thAnalysis.analysis.category
@@ -963,6 +964,40 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
+                if os.path.exists("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName)) and os.path.exists("%s/analysis/%s/complogreg.txt"%(self.dir,aDirName)):
+                    f = open("%s/analysis/%s/complogreg.txt"%(self.dir,aDirName),'r')
+                    g = open("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName),'r')
+                    datareg = f.read()
+                    datadir = g.readlines()
+                    f.close()
+                    g.close()
+                    dd = datetime.now()
+                    date = "%s/%s/%s"%(dd.day,dd.month,dd.year)
+                    textToDisplay = "\
+                    COMPARISON OF SCENARIOS\n\
+                    (%s)\n\n\
+        Project directory : %s\n\
+        Candidate scenarios : %s\n\
+        Number of simulated data sets : %s\n\n\
+        Direct approach\n\n"%(date,self.dir,the_analysis.candidateScList,self.ui.nbSetsDoneEdit.text())
+                    textDirect = datadir[0].replace("   n   ","closest")
+                    #i=-1
+                    #while datadir[i].strip() == "":
+                    #    i = i - 1
+                    #pat = re.compile(r'\s+')
+                    #num = int(pat.sub(' ',datadir[i].strip()).split(' ')[0])
+                    #interval = num/10
+                    i = 10
+                    while i < len(datadir):
+                        textDirect += datadir[i]
+                        i+=10
+
+                    textToDisplay += textDirect
+                    textToDisplay += "\n\n Logistic approach\n\n"
+                    textToDisplay += datareg
+                    dest = open("%s/analysis/%s/compdirlog.txt"%(self.dir,aDirName),'w')
+                    dest.write(textToDisplay)
+                    dest.close()
         elif atype == "bias":
             if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
                 log(3,"File %s/%s_bias.txt exists"%(self.dir,aid))
