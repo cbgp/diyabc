@@ -84,7 +84,7 @@ int readheaders() {
 */
 
 int main(int argc, char *argv[]){
-    char *estpar,*compar,*biaspar,*confpar,*priorpar,*testpar;
+    char *estpar,*compar,*biaspar,*confpar,*priorpar,*testpar,*simfpar;
     bool firsttime;
 	int k,seed;
 	double **paramstat;
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]){
     FILE *flog;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qf:g:d:hmqj:a:t:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qk:f:g:d:hmqj:a:t:")) !=-1) {
 
 	  switch (optchar) {
 
@@ -162,6 +162,18 @@ int main(int argc, char *argv[]){
             cout << "           q:<number of datasets simulated from posterior>\n";
             cout << "           t:<number of the transformation (1,2,3 or 4)>\n";
             cout << "           v:<list of summary stat names separated by a comma (if empty keep those of reftable)>\n";
+
+            cout << "\n-k for SIMULATE GENEPOP DATA FILES (idem)\n";
+            cout << "           d:<number of requested test data sets>\n";
+            cout << "           h:<histparameter values (see below)>\n";
+            cout << "                histparameter values (separated by a space): <parameter name>=<parameter value>\n";
+            cout << "           u:<mutparameter values/priors for successive groups (see below)> groups are named G1, G2 and separated by a star : G1*G2-...\n";
+            cout << "                mutparameter values/priors of a given as a set of 6 values/priors : Gx(vx1,vx2,vx3,vx4,vx5,vx6) with :\n";
+            cout << "                vx1=<mean mutation rate/prior for group x>    vx2=<shape value/locus mutation rate prior for group x>\n";
+            cout << "                vx3=<mean P value/mean P prior for group x>   vx4=<shape value/locus P prior for group x>\n";
+            cout << "                vx5 and vx6 correspond to sni mutation rate.\n";
+            cout << "                For a DNA sequence group, replace P and sni by k1 and k2 respectively\n";
+
            break;
 
         case 'a' :
@@ -236,6 +248,11 @@ int main(int argc, char *argv[]){
         case 'd' :
             priorpar=strdup(optarg);
             action='d';
+            break;
+
+        case 'k' :
+            simfpar=strdup(optarg);
+            action='k';
             break;
 
         case 'q' :
@@ -347,6 +364,12 @@ int main(int argc, char *argv[]){
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                   doconf(confpar,seed);
                   break;
+
+       case 'k'  : k=readheaders();
+                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
+                  dosimfile(simfpar,seed);
+                  break;
+
        case 'd'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                   doacpl(priorpar,multithread,seed);
