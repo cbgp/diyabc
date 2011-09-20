@@ -539,4 +539,28 @@ void setgroup(int p) {
         delete [] sOK;
         if (debuglevel==5) cout<<"apres delete sOK\n";
 	}
+
+	string* simulgenepop(HeaderC header, int npart, bool multithread, int seed, bool usepriormut) {
+        bool dnatrue=true, usepriorhist=false;
+        int numscen=1;
+        this->npart=npart;
+        int *sOK;
+        string *ss;
+        sOK = new int[npart];
+        this->particule = new ParticleC[this->npart];
+        ss = new string[npart];
+        this->header = header;
+        for (int p=0;p<this->npart;p++) {
+            this->particule[p].dnatrue = dnatrue;
+            this->setdata(p);
+            this->setloci(p);
+            this->setscenarios(p);
+            this->particule[p].mw.randinit(p,seed);
+        }
+    #pragma omp parallel for shared(sOK) if(multithread)
+        for (int ipart=0;ipart<this->npart;ipart++){
+            sOK[ipart] = this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
+            if (sOK[ipart]==0) ss[ipart] = this->particule[ipart].dogenepop();
+        }
+	}
 };

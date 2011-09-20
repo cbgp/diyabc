@@ -462,3 +462,16 @@ resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
     delete []wk;
     return res;
 }
+
+int* randperm(int n, MwcGen mw) {
+    int *index,j;
+    index = new int[n];
+    index[0] = 0;
+    for (int i=1;i<n;i++) {
+        j = mw.rand0(i+1);
+        index[i] = index[j];
+        index[j] = i;
+    }
+    return index;
+}
+

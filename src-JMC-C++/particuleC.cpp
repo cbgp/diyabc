@@ -2129,7 +2129,81 @@ struct ParticleC
         //exit(1);
 		return simOK;
 	}
+/***********************************************************************************************************************/
 
+    string dogenepop(){
+        string sgp,sind,snum;
+        int iloc, ***index,offset,*k,ty;
+        k = new int[this->nloc];
+        index = new int**[this->nloc];
+        for (int loc=0;loc<this->nloc;loc++) {
+            index[loc] = new int*[this->data.nsample];
+            offset = 0;
+            for (int sa=0;sa<this->data.nsample;sa++) {
+                index[loc][sa] = randperm(this->locuslist[loc].samplesize[sa],this->mw);
+                for (int i=0;i<this->locuslist[loc].samplesize[sa];i++) index[loc][sa][i] += offset;
+                offset += this->locuslist[loc].samplesize[sa];
+            }
+        }
+        sgp="Simulated genepop file \n";
+        for (iloc=0;iloc<this->nloc;iloc++) {
+            switch (this->grouplist[iloc].type)
+            if (this->grouplist[iloc].type==0) sgp +="Locus M_A_"+IntToString(iloc+1)+"  <A>\n";
+            if (this->grouplist[iloc].type==1) sgp +="Locus M_H_"+IntToString(iloc+1)+"  <H>\n";
+            if (this->grouplist[iloc].type==2) sgp +="Locus M_X_"+IntToString(iloc+1)+"  <X>\n";
+            if (this->grouplist[iloc].type==3) sgp +="Locus M_Y_"+IntToString(iloc+1)+"  <Y>\n";
+            if (this->grouplist[iloc].type==4) sgp +="Locus M_M_"+IntToString(iloc+1)+"  <M>\n";
+            if (this->grouplist[iloc].type==5) sgp +="Locus S_A_"+IntToString(iloc+1)+"  <A>\n";
+            if (this->grouplist[iloc].type==6) sgp +="Locus S_H_"+IntToString(iloc+1)+"  <H>\n";
+            if (this->grouplist[iloc].type==7) sgp +="Locus S_X_"+IntToString(iloc+1)+"  <X>\n";
+            if (this->grouplist[iloc].type==8) sgp +="Locus S_Y_"+IntToString(iloc+1)+"  <Y>\n";
+            if (this->grouplist[iloc].type==9) sgp +="Locus S_M_"+IntToString(iloc+1)+"  <M>\n";
+        }
+        for (int ech=0;ech<this->data.nsample;ech++) {
+            sgp += "POP\n";
+            for (int loc=0;loc<this->nloc;loc++) k[loc] = 0;
+            for (int ind=0;ind<this->data.nind[ech];ind++) {
+                snum = IntToString(ind+1);
+                if (ind<9)  snum ="0"+snum;
+                if (ind<99) snum ="0"+snum;
+                sgp += "  "+IntToString(ech+1)+"-"+snum+"  , ";
+                for (iloc=0;iloc<this->nloc;iloc++) {
+                    ty = this->grouplist[iloc].type;
+                    if (ty==0) {
+                        sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;
+                        sgp +=IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;
+                    }
+                    if (ty==1) {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;}
+                    if (ty==2) {
+                        sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;
+                        if (this->data.indivsexe[ech][ind]==2) {sgp +=IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;}
+                        else sgp += "   ";
+                    }
+                    if (ty==3) {
+                        if (this->data.indivsexe[ech][ind]==2) sgp +="   000";
+                        else {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;}
+                    }
+                    if (ty==4) {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;}
+                    if (ty==5) {
+                        sgp +="   <["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"][";k[iloc]++;
+                        sgp += this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]>";k[iloc]++;
+                    }
+                    if (ty==6) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]>";k[iloc]++;}
+                    if (ty==7) {
+                        sgp +="   <["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]";k[iloc]++;
+                        if (this->data.indivsexe[ech][ind]==2) {sgp += "["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]>";k[iloc]++;}
+                        else sgp += ">";
+                    }
+                    if (ty==8) {
+                        if (this->data.indivsexe[ech][ind]==2) sgp +="   [<>]";
+                        else {sgp +="   <["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]>";k[iloc]++;}
+                    }
+                    if (ty==9) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]>";k[iloc]++;}
+                }
+            }
+        }
+        return sgp;
+    }
 
 /***********************************************************************************************************************/
 

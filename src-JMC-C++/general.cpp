@@ -34,6 +34,10 @@
 #include "conf.cpp"
 #define CONF
 #endif
+#ifndef SIMF
+#include "simfile.cpp"
+#define SIMF
+#endif
 #ifndef SYS_TIMEH
 #include <sys/time.h>
 #define SYS_TIMEH
