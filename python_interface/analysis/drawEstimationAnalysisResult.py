@@ -38,17 +38,45 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
+        QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewMmmq)
         #QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printMe)
 
         self.ui.PCAFrame.hide()
         self.ui.ACProgress.hide()
-        self.ui.viewLocateButton.hide()
+        self.ui.viewLocateButton.setText("view numerical results")
         self.ui.PCAGraphFrame.hide()
         self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
 
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)
+
+    def viewMmmq(self):
+        """ clic sur le bouton view numerical
+        """
+        if os.path.exists("%s/analysis/%s/mmmq.txt"%(self.parent.dir,self.directory)):
+            f = open("%s/analysis/%s/mmmq.txt"%(self.parent.dir,self.directory),'r')
+            data = f.read()
+            f.close()
+            #self.parent.drawAnalysisFrame = QFrame(self)
+            self.parent.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
+            self.parent.drawAnalysisFrame.parent = self.parent
+            ui = self.parent.drawAnalysisFrame
+            #ui = ui_viewTextFile()
+            #ui.setupUi(self.parent.drawAnalysisFrame)
+            ui.dataPlain.setPlainText(data)
+            ui.dataPlain.setLineWrapMode(0)
+            font = "FreeMono"
+            if sys.platform.startswith('win'):
+                font = "Courier New"
+            ui.dataPlain.setFont(QFont(font,10))
+            #QObject.connect(ui.okButton,SIGNAL("clicked()"),self.parent.returnToAnalysisList)
+            QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToMe)
+            self.parent.ui.analysisStack.addWidget(self.parent.drawAnalysisFrame)
+            self.parent.ui.analysisStack.setCurrentWidget(self.parent.drawAnalysisFrame)
+
+    def returnToMe(self):
+        self.parent.returnTo(self)
 
     def printMe(self):
 

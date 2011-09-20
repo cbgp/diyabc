@@ -950,6 +950,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
+                shutil.move("%s/%s_mmmq.txt"%(self.dir,aid),"%s/analysis/%s/mmmq.txt"%(self.dir,aDirName))
                 #shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
@@ -1242,6 +1243,20 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             f.close()
             rtSize = binint[0]
             return rtSize
+        else:
+            return None
+
+    def readnbRecordsOfScenario(self,numSc):
+        """ lit la table de référence binaire pour en extraire la taille et la retourner
+        """
+        reftablefile = "%s/reftable.bin"%self.dir
+        if os.path.exists(reftablefile):
+            binint = array.array('i')
+            f = open(reftablefile,'rb')
+            binint.read(f,numSc+2)
+            f.close()
+            nbRec = binint[-1]
+            return nbRec
         else:
             return None
 

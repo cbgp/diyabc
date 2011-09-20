@@ -78,13 +78,13 @@ else
     mv $PACKAGEDIR/usr/share/applications/diyabc.desktop $PACKAGEDIR/usr/share/applications/diyabc-$VERSION.desktop
 fi
 mkdir $PACKAGESRCDIR/docs
-cp -rp $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/executables $PACKAGESRCDIR/docs/
-cp $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $PACKAGESRCDIR/docs/
+cp -rp $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $PACKAGESRCDIR/docs/
+cp $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $PACKAGESRCDIR/docs/
 if [ $MAIN == "MAIN" ]; then
     # generation of the launch script placed in /usr/local/bin
     echo "#!/bin/bash
 cd /usr/local/src/diyabc/
-python /usr/local/src/diyabc/diyabc.py" > $PACKAGEDIR/usr/local/bin/diyabc
+python /usr/local/src/diyabc/diyabc.py \$@" > $PACKAGEDIR/usr/local/bin/diyabc
     # change owner:group to root
     echo "chown -R 0:0 /usr/local/bin/diyabc /usr/local/src/diyabc /usr/share/applications/diyabc.desktop /usr/share/menu/diyabc" >> $PACKAGEDIR/DEBIAN/postinst
     chmod +x $PACKAGEDIR/usr/local/bin/diyabc
@@ -92,15 +92,19 @@ else
     # generation of the launch script placed in /usr/local/bin
     echo "#!/bin/bash
 cd /usr/local/src/diyabc-$VERSION/
-python /usr/local/src/diyabc-$VERSION/diyabc.py" > $PACKAGEDIR/usr/local/bin/diyabc-$VERSION
+python /usr/local/src/diyabc-$VERSION/diyabc.py \$@" > $PACKAGEDIR/usr/local/bin/diyabc-$VERSION
     # change owner:group to root
     echo "chown -R 0:0 /usr/local/bin/diyabc-$VERSION /usr/local/src/diyabc-$VERSION/ /usr/share/applications/diyabc-$VERSION.desktop /usr/share/menu/diyabc-$VERSION" >> $PACKAGEDIR/DEBIAN/postinst
     chmod +x $PACKAGEDIR/usr/local/bin/diyabc-$VERSION
 fi
 
-dpkg-deb -b $PACKAGEDIR
+cp -r $PACKAGEDIR /tmp
+chown -R root:root /tmp/$PACKAGEDIR
+
+dpkg-deb -b /tmp/$PACKAGEDIR
+mv /tmp/$PACKAGEDIR.deb ./
 if $clean; then
-    rm -rf $PACKAGEDIR
+    rm -rf /tmp/$PACKAGEDIR $PACKAGEDIR
 else
     echo "The package directory was not removed"
 fi
