@@ -63,5 +63,20 @@ class SimulationProject(Project):
     def save(self):
         pass
 
+    def setGenetic(self):
+        """ passe sur l'onglet correspondant
+        """
+        log(1,"Entering in Genetic Data Setting")
+        locusNumberFrame = uic.loadUi("uis/setLocusNumber.ui")
+        locusNumberFrame.parent = self
+        QObject.connect(locusNumberFrame.okButton,SIGNAL("clicked()"),self.returnToMe)
+        self.ui.refTableStack.addWidget(locusNumberFrame)
+        self.ui.refTableStack.setCurrentWidget(locusNumberFrame)
+        self.setGenValid(False)
+
+    def returnToMe(self):
+        self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
+        self.ui.refTableStack.setCurrentIndex(0)
+
 
 

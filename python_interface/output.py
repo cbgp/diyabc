@@ -6,6 +6,7 @@ from PyQt4.QtGui import *
 import os,sys
 from datetime import datetime 
 import inspect
+import re
 #import codecs
 
 debug = False
@@ -75,7 +76,9 @@ class TeeLogger(object):
         #self.file.close()
     def write(self, data):
         #data = data.replace(u'\xb5','u')
-        data_without_color = data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,'')
+        data_without_color = data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,'').replace(YELLOW,'').replace(CYAN,'')
+        pattern = re.compile(r' \[\[.*\]\]')
+        data_short = pattern.sub('',data)
         # on bouge le curseur au début de la dernière ligne
         self.app.showLogFile_win.logText.moveCursor(QTextCursor.End)
         self.app.showLogFile_win.logText.moveCursor(QTextCursor.StartOfLine)
@@ -85,7 +88,7 @@ class TeeLogger(object):
         ftmp.write(ftmpdata)
         #ftmp.file.flush()
         ftmp.close()
-        self.out.write(data)
+        self.out.write(data_short)
     def logRotate(self,name):
         if os.path.exists(name):
             f = open(name,'r')
@@ -104,5 +107,16 @@ def log(level,message):
     if level <= LOG_LEVEL:
         dd = datetime.now()
         color = tabcolors[level]
-        print "%s[%02d/%02d/%s %02d:%02d:%02d] {%s} %s %s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,inspect.stack()[2][3],WHITE,message)
+
+        lastFrame = inspect.stack()[1][0]
+        params = lastFrame.f_locals
+
+        params = inspect.currentframe().f_back.f_locals
+
+        if len(inspect.stack()) > 3:
+            func = "%s >> %s(%s)"%(inspect.stack()[3][3],inspect.stack()[2][3],params)
+        else:
+            func = "%s(%s)"%(inspect.stack()[2][3],params)
+
+        print "%s[%02d/%02d/%s %02d:%02d:%02d] {%s} [[%s]] %s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,func,WHITE,message)
 

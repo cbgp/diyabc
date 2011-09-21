@@ -12,6 +12,7 @@ from utils.visualizescenario import *
 from utils.history import *
 from set_condition import SetCondition
 import output
+from output import log
 
 class SetHistoricalModelSimulation(SetHistoricalModel):
     """ Classe pour la définition du modèle historique dans le cadre 
@@ -19,9 +20,12 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
     """
     def __init__(self,parent=None):
         super(SetHistoricalModelSimulation,self).__init__(parent)
+
+        self.sampleSizeList = []
+
         self.ui.addScButton.hide()
         self.ui.frame_3.hide()
-        self.ui.frame.hide()
+        self.ui.frame_2.hide()
 
         self.ui.label_7.hide()
         self.ui.label_8.hide()
@@ -38,6 +42,72 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         self.ui.horizontalLayout_6.setAlignment(QtCore.Qt.AlignLeft)
         self.ui.horizontalLayout_2.setAlignment(QtCore.Qt.AlignLeft)
         self.ui.horizontalLayout_3.setAlignment(QtCore.Qt.AlignLeft)
+
+        self.ui.scrollArea_3.setMaximumSize(9999,90)
+        self.ui.scrollArea_3.setMinimumSize(0,90)
+
+        defSampleSizeButton = QPushButton("Define sample size")
+        self.ui.verticalLayout_3.addWidget(defSampleSizeButton)
+        QObject.connect(defSampleSizeButton,SIGNAL("clicked()"),self.defineSampleSize)
+
+        self.ui.horizontalLayout_2.addWidget(QLabel("Define number of individuals in :"))
+
+    def defineSampleSize(self):
+        # nettoyage
+        rmList = []
+        for ssizeBox in self.sampleSizeList:
+            ssizeBox.hide()
+            rmList.append(ssizeBox)
+        for ss in rmList:
+            self.sampleSizeList.remove(ss)
+
+        # remplissage
+        scTxt = str(self.scList[0].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText())
+
+        scChecker = Scenario(number=1,prior_proba="1")
+        try:
+            log(3,"sc text %s"%scTxt)
+            scChecker.checkread(scTxt.strip().split('\n'),None)
+            scChecker.checklogic()
+            dico_sc_infos = {}
+            dico_sc_infos["text"] = scTxt.strip().split('\n')
+            dico_sc_infos["checker"] = scChecker
+        except IOScreenError, e:
+            if not silent:
+                output.notify(self,"Scenario error","%s"%e)
+
+        for i in range(scChecker.nsamp):
+            self.addSampleSizeBox(i+1)
+
+
+    def addSampleSizeBox(self,num):
+        groupBoxSampleSize = QtGui.QGroupBox(self.ui.scrollAreaWidgetContents_3)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(groupBoxSampleSize.sizePolicy().hasHeightForWidth())
+        groupBoxSampleSize.setSizePolicy(sizePolicy)
+        groupBoxSampleSize.setTitle("")
+        groupBoxSampleSize.setObjectName("groupBox_6")
+        groupBoxSampleSize.setMaximumSize(QtCore.QSize(100, 80))
+        verticalLayout_2 = QtGui.QVBoxLayout(groupBoxSampleSize)
+        verticalLayout_2.setObjectName("verticalLayout_2")
+        verticalLayout_2.setContentsMargins(-1, 1, -1, 1)
+        label_2 = QtGui.QLabel("sample %s"%num,groupBoxSampleSize)
+        label_2.setObjectName("sampleLabel")
+        label_2.setAlignment(QtCore.Qt.AlignCenter)
+        verticalLayout_2.addWidget(label_2)
+        sizeEdit = QtGui.QLineEdit("50")
+        sizeEdit.setObjectName("sizeEdit")
+        sizeEdit.setMaximumSize(30,20)
+        sizeEdit.setMinimumSize(30,20)
+        sizeEdit.setAlignment(QtCore.Qt.AlignRight)
+        verticalLayout_2.addWidget(sizeEdit)
+        # ajout dans la GUI
+        self.ui.horizontalLayout_2.addWidget(groupBoxSampleSize)
+
+        self.sampleSizeList.append(groupBoxSampleSize)
+
 
     def hideRemoveScButtons(self):
         for e in self.findChildren(QPushButton,"rmScButton"):
@@ -105,6 +175,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         meanValueParamEdit.setMinimumSize(QtCore.QSize(60, 0))
         meanValueParamEdit.setMaximumSize(QtCore.QSize(60, 16777215))
         meanValueParamEdit.setObjectName("meanValueParamEdit")
+        meanValueParamEdit.setAlignment(QtCore.Qt.AlignRight)
         horizontalLayout_10.addWidget(meanValueParamEdit)
         horizontalLayout_13.addWidget(groupBox_14)
         self.ui.verticalLayout_6.addWidget(groupBox_8)
@@ -133,10 +204,22 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         """ vérifie la validité du modèle historique et quitte
         """
         # VERIFS, si c'est bon, on change d'onglet, sinon on reste
-        if self.checkAll():
+        if self.checkAll() and self.checkSampleSize():
             self.parent.setHistValid(True)
 
             self.majProjectGui()
 
             self.returnToProject()
+
+    def checkSampleSize(self):
+        try:
+            for ssBox in self.sampleSizeList:
+                size = int(ssBox.findChild(QLineEdit,"sizeEdit").text())
+                if size < 1:
+                    output.notify(self,"Sample size values error","Sample sizes must be positive integers")
+                    return False
+        except Exception,e:
+            output.notify(self,"Sample size values error","%s"%e)
+            return False
+        return True
 

@@ -26,6 +26,7 @@ class ShowLogFile(formLogFile,baseLogFile):
         self.ui.setupUi(self)
 
         self.ui.logText.setCenterOnScroll(True)
+        self.ui.pathEdit.setText(self.logfile)
 
         QObject.connect(self.ui.updateButton,SIGNAL("clicked()"),self.updateLogFile)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.close)
