@@ -784,19 +784,27 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         for param in self.paramList:
             pname = str(param.findChild(QLabel,"paramNameLabel").text())
             try:
-                min =   float(param.findChild(QLineEdit,"minValueParamEdit").text())
-                max =   float(param.findChild(QLineEdit,"maxValueParamEdit").text())
-                mean =  float(param.findChild(QLineEdit,"meanValueParamEdit").text())
-                stdev = float(param.findChild(QLineEdit,"stValueParamEdit").text())
+                if param.findChild(QLineEdit,"minValueParamEdit") != None:
+                    min =   float(param.findChild(QLineEdit,"minValueParamEdit").text())
+                if param.findChild(QLineEdit,"maxValueParamEdit") != None:
+                    max =   float(param.findChild(QLineEdit,"maxValueParamEdit").text())
+                if param.findChild(QLineEdit,"meanValueParamEdit") != None:
+                    mean =  float(param.findChild(QLineEdit,"meanValueParamEdit").text())
+                if param.findChild(QLineEdit,"stValueParamEdit") != None:
+                    stdev = float(param.findChild(QLineEdit,"stValueParamEdit").text())
                 #step =  float(param.findChild(QLineEdit,"stepValueParamEdit").text())
-                if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0:
-                    problems += "Values for parameter %s are incoherent\n"%pname
+                if param.findChild(QLineEdit,"minValueParamEdit") != None and param.findChild(QLineEdit,"maxValueParamEdit") != None\
+                and param.findChild(QLineEdit,"meanValueParamEdit") != None and param.findChild(QLineEdit,"stValueParamEdit") != None:
+                    if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0:
+                        problems += "Values for parameter %s are incoherent\n"%pname
                 # pour lognormal et loguniforme le mean doit être different de zero et le stdev aussi
-                if param.findChild(QRadioButton,"logNormalRadio").isChecked() or param.findChild(QRadioButton,"logUniformRadio").isChecked():
-                    if mean <= 0:
-                        problems += "Mean of parameter %s should be positive\n"%pname
-                    if stdev <= 0:
-                        problems += "St-dev of parameter %s should be positive\n"%pname
+                if param.findChild(QRadioButton,"logNormalRadio") != None and param.findChild(QRadioButton,"logUniformRadio")\
+                and param.findChild(QLineEdit,"meanValueParamEdit") != None:
+                    if param.findChild(QRadioButton,"logNormalRadio").isChecked() or param.findChild(QRadioButton,"logUniformRadio").isChecked():
+                        if mean <= 0:
+                            problems += "Mean of parameter %s should be positive\n"%pname
+                        if stdev <= 0:
+                            problems += "St-dev of parameter %s should be positive\n"%pname
             except Exception,e:
                 problems += "%s\n"%e
         rpsum = 0.0
@@ -902,6 +910,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
     def writeHistoricalConfFromGui(self):
         """ ecrit les valeurs dans dossierProjet/conf.hist.tmp
         """
+        log(3,"Writing historical save file of project %s"%self.parent.name)
         self.majParamInfoDico()
         if os.path.exists(self.parent.ui.dirEdit.text()+"/%s"%self.parent.parent.hist_conf_name):
             os.remove("%s/%s"%(self.parent.ui.dirEdit.text(),self.parent.parent.hist_conf_name))

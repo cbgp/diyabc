@@ -5,6 +5,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import os,sys
 from datetime import datetime 
+import inspect
 #import codecs
 
 debug = False
@@ -103,5 +104,5 @@ def log(level,message):
     if level <= LOG_LEVEL:
         dd = datetime.now()
         color = tabcolors[level]
-        print "%s[%02d/%02d/%s %02d:%02d:%02d] {%s}%s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,WHITE,message)
+        print "%s[%02d/%02d/%s %02d:%02d:%02d] {%s} %s %s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,inspect.stack()[2][3],WHITE,message)
 

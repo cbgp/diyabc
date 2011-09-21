@@ -21,6 +21,27 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         super(SetHistoricalModelSimulation,self).__init__(parent)
         self.ui.addScButton.hide()
         self.ui.frame_3.hide()
+        self.ui.frame.hide()
+
+        self.ui.label_7.hide()
+        self.ui.label_8.hide()
+        #self.ui.label_11.hide()
+        self.ui.label_10.hide()
+        self.ui.label_9.setText("Value")
+        self.ui.groupBox_12.hide()
+
+        self.ui.groupBox_13.setMinimumSize(QtCore.QSize(150, 20))
+        self.ui.groupBox_13.setMaximumSize(QtCore.QSize(150,20))
+
+        self.ui.verticalLayout_6.setAlignment(QtCore.Qt.AlignTop)
+        self.ui.horizontalLayout_5.setAlignment(QtCore.Qt.AlignLeft)
+        self.ui.horizontalLayout_6.setAlignment(QtCore.Qt.AlignLeft)
+        self.ui.horizontalLayout_2.setAlignment(QtCore.Qt.AlignLeft)
+        self.ui.horizontalLayout_3.setAlignment(QtCore.Qt.AlignLeft)
+
+    def hideRemoveScButtons(self):
+        for e in self.findChildren(QPushButton,"rmScButton"):
+            e.hide()
 
     def addParamGui(self,name,type_param,code_type_param):
         """ ajoute un paramètre à la GUI et à la liste locale de paramètres
@@ -107,4 +128,15 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
             pname = str(param.findChild(QLabel,"paramNameLabel").text())
             val =  str(param.findChild(QLineEdit,"meanValueParamEdit").text())
             self.param_info_dico[pname] = [self.param_info_dico[pname][0],val,val,val,val]
+
+    def validate(self):
+        """ vérifie la validité du modèle historique et quitte
+        """
+        # VERIFS, si c'est bon, on change d'onglet, sinon on reste
+        if self.checkAll():
+            self.parent.setHistValid(True)
+
+            self.majProjectGui()
+
+            self.returnToProject()
 

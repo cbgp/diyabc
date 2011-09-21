@@ -231,6 +231,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             newSimProj = SimulationProject(name,directory,self)
             # un nouveau projet a au moins un scenario
             newSimProj.hist_model_win.addSc()
+            newSimProj.hist_model_win.hideRemoveScButtons()
             self.project_list.append(newSimProj)
             # si c'est le premier projet, on permet la fermeture par le menu
             # ajout au tabwidget de l'ui principale
