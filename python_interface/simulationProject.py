@@ -17,7 +17,7 @@ from PyQt4 import QtGui,QtCore
 from PyQt4 import uic
 #from uis.project_ui import *
 from setHistoricalModelSimulation import SetHistoricalModelSimulation
-from setGenDataRefTable import SetGeneticDataRefTable
+from setGenDataSimulation import SetGeneticDataSimulation
 #from mutationModel.setMutationModelMsat import SetMutationModelMsat
 #from mutationModel.setMutationModelSequences import SetMutationModelSequences
 #from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
@@ -60,6 +60,13 @@ class SimulationProject(Project):
         self.hist_model_win = SetHistoricalModelSimulation(self)
         self.hist_model_win.hide()
 
+        self.locusNumberFrame = uic.loadUi("uis/setLocusNumber.ui")
+        self.locusNumberFrame.parent = self
+        QObject.connect(self.locusNumberFrame.okButton,SIGNAL("clicked()"),self.checkSampleNSetGenetic)
+
+        self.gen_data_win = SetGeneticDataSimulation(self)
+        self.gen_data_win.hide()
+
     def save(self):
         pass
 
@@ -67,12 +74,35 @@ class SimulationProject(Project):
         """ passe sur l'onglet correspondant
         """
         log(1,"Entering in Genetic Data Setting")
-        locusNumberFrame = uic.loadUi("uis/setLocusNumber.ui")
-        locusNumberFrame.parent = self
-        QObject.connect(locusNumberFrame.okButton,SIGNAL("clicked()"),self.returnToMe)
-        self.ui.refTableStack.addWidget(locusNumberFrame)
-        self.ui.refTableStack.setCurrentWidget(locusNumberFrame)
+        self.ui.refTableStack.addWidget(self.locusNumberFrame)
+        self.ui.refTableStack.setCurrentWidget(self.locusNumberFrame)
         self.setGenValid(False)
+
+    def checkSampleNSetGenetic(self):
+        dico_loc_nb = {}
+        editList = self.locusNumberFrame.findChildren(QLineEdit)
+        nbpos = 0
+        try:
+            for le in editList:
+                dico_loc_nb[str(le.objectName())[:2]] = int(le.text())
+                if int(le.text()) < 0:
+                    output.notify(self,"Number of sample error","Number of sample must be positive integers")
+                    return
+                elif int(le.text()) > 0:
+                    nbpos += 1
+            if nbpos == 0:
+                output.notify(self,"Number of sample error","You must have at leat one sample")
+                return
+        except Exception,e:
+            output.notify(self,"Number of sample error","Input error : \n%s"%e)
+            return
+        log(3,"Numbers of locus : %s"%dico_loc_nb)
+        self.gen_data_win.fillLocusTable(dico_loc_nb)
+
+        self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
+        self.ui.refTableStack.addWidget(self.gen_data_win)
+        self.ui.refTableStack.setCurrentWidget(self.gen_data_win)
+
 
     def returnToMe(self):
         self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())

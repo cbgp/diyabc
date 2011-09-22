@@ -1581,29 +1581,34 @@ class RefTableGenThread(QThread):
                 lines = ["OK","0"]
             #print lines
             log(3,"Line red from reftable.log : %s"%lines)
-            if len(lines) > 1:
-                if lines[0].strip() == "OK":
-                    red = int(lines[1])
-                    if len(lines)>2:
-                        self.time = lines[2]
-                    if red > self.nb_done:
+            try:
+                if len(lines) > 1:
+                    if lines[0].strip() == "OK":
+                        red = int(lines[1])
+                        if len(lines)>2:
+                            self.time = lines[2]
+                        if red > self.nb_done:
+                            self.nb_done = red
+                            self.emit(SIGNAL("increment"))
+                    elif lines[0].strip() == "END":
+                        red = int(lines[1])
                         self.nb_done = red
                         self.emit(SIGNAL("increment"))
-                elif lines[0].strip() == "END":
-                    red = int(lines[1])
-                    self.nb_done = red
-                    self.emit(SIGNAL("increment"))
-                    fg.close()
-                    os.remove("%s/reftable.log"%(self.parent.dir))
-                    return
-                else:
-                    #print "lines != OK"
-                    log(3,"The line does not contain 'OK'")
-                    self.problem = lines[0].strip()
-                    self.emit(SIGNAL("refTableProblem"))
-                    #output.notify(self,"problem",lines[0])
-                    fg.close()
-                    return
+                        fg.close()
+                        os.remove("%s/reftable.log"%(self.parent.dir))
+                        return
+                    else:
+                        #print "lines != OK"
+                        log(3,"The line does not contain 'OK'")
+                        self.problem = lines[0].strip()
+                        self.emit(SIGNAL("refTableProblem"))
+                        #output.notify(self,"problem",lines[0])
+                        fg.close()
+                        return
+            except Exception,e:
+                # certainement un problème de convertion en int
+                log(3,"There was an exception during progress file reading : %s"%e)
+
             # verification de l'arret du programme
             if p.poll() != None:
                 fg.close()
