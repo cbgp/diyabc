@@ -1540,6 +1540,11 @@ class RefTableGenThread(QThread):
 
     def run (self):
         # lance l'executable
+        #outfile = os.path.expanduser("~/.diyabc/general.out")
+        outfile = "%s/general.out"%self.parent.dir
+        if os.path.exists(outfile):
+            os.remove(outfile)
+        fg = open(outfile,"w")
         try:
             log(2,"Running the executable for the reference table generation")
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
@@ -1549,11 +1554,6 @@ class RefTableGenThread(QThread):
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m", "-t", "%s"%nbMaxThread]
             #print " ".join(cmd_args_list)
             log(3,"Command launched : %s"%" ".join(cmd_args_list))
-            #outfile = os.path.expanduser("~/.diyabc/general.out")
-            outfile = "%s/general.out"%self.parent.dir
-            if os.path.exists(outfile):
-                os.remove(outfile)
-            fg = open(outfile,"w")
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             self.processus = p
         except Exception,e:
