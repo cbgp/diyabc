@@ -1534,10 +1534,11 @@ class RefTableGenThread(QThread):
         self.processus = None
 
     def killProcess(self):
+        log(3,"Attempting to kill reftable generation process")
         if self.processus != None:
             if self.processus.poll() == None:
-                log(3,"Killing reftable generation process (pid:%s)"%(self.processus.pid))
                 self.processus.kill()
+                log(3,"Killing reftable generation process (pid:%s) DONE"%(self.processus.pid))
 
     def run (self):
         # lance l'executable
