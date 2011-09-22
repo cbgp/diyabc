@@ -112,9 +112,46 @@ class Diyabc(formDiyabc,baseDiyabc):
         # gestion du menu
         file_menu = self.ui.menubar.addMenu("&File")
         self.file_menu = file_menu
-        #self.file_menu.setStyleSheet('color:black')
+        self.file_menu.setStyleSheet("QMenu {\
+                     background-color: white;\
+                          margin: 2px; /* some spacing around the menu */\
+                           }\
+        \
+         QMenu::item {\
+                      padding: 2px 25px 2px 20px;\
+                           border: 1px solid transparent; /* reserve space for selection border */\
+                            }\
+         \
+          QMenu::item:selected {\
+                       border-color: darkblue;\
+                            background: rgba(100, 100, 100, 150);\
+                             }\
+          \
+           QMenu::icon:checked { /* appearance of a 'checked' icon */\
+                        background: gray;\
+                             border: 1px inset gray;\
+                                  position: absolute;\
+                                       top: 1px;\
+                                            right: 1px;\
+                                                 bottom: 1px;\
+                                                      left: 1px;\
+                                                       }\
+           \
+            QMenu::separator {\
+                         height: 2px;\
+                              background: lightblue;\
+                                   margin-left: 10px;\
+                                        margin-right: 5px;\
+                                         }\
+            \
+             QMenu::indicator {\
+                          width: 13px;\
+                               height: 13px;\
+                                }")
         file_menu.addAction(QIcon("docs/icons/folder-new.png"),"&New project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction(QIcon("docs/icons/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
+        self.recent_menu = file_menu.addMenu(QIcon("docs/icons/document-open-recent.png"),"Open recent projects")
+        self.recent_menu.setDisabled(True)
         self.saveProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save.png"),"&Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
         self.saveAllProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save-all.png"),"&Save all projects",self.saveAllProjects,QKeySequence(Qt.CTRL + Qt.Key_A))
         self.deleteProjActionMenu = file_menu.addAction(QIcon("docs/icons/user-trash.png"),"&Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
@@ -126,13 +163,13 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.deleteProjActionMenu.setDisabled(True)
         self.cloneProjActionMenu.setDisabled(True)
         file_menu.addAction(QIcon("docs/icons/redhat-system_settings.png"),"&Settings",self.setPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
-        file_menu.addAction(QIcon("docs/icons/redhat-system_settings.png"),"&Simulate data set(s)",self.simulateDataSets,QKeySequence(Qt.CTRL + Qt.Key_D))
+        file_menu.addAction(QIcon("docs/icons/mask.jpeg"),"&Simulate data set(s)",self.simulateDataSets,QKeySequence(Qt.CTRL + Qt.Key_D))
         action = file_menu.addAction(QIcon("docs/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
-        sepAc = QAction("Open recent projects",self)
-        sepAc.setSeparator(True)
-        file_menu.addAction(sepAc)
+        #sepAc = QAction("Open recent projects",self)
+        #sepAc.setSeparator(True)
+        #file_menu.addAction(sepAc)
         #style_menu = self.ui.menubar.addMenu("Style")
         #action_group = QActionGroup(style_menu)
         #for stxt in self.styles:
@@ -207,7 +244,16 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.toolBar.addWidget(saveAllButton)
         saveAllButton.setDisabled(True)
 
-        for but in [newButton,openButton,saveButton,saveAllButton]:
+        simButton = QPushButton(QIcon("docs/icons/mask.jpeg"),"Simulate",self)
+        self.simButton = simButton
+        simButton.setToolTip("Simulate data sets")
+        simButton.setMaximumSize(QSize(72, 22))
+        #saveButton.setMinimumSize(QSize(16, 18))
+        simButton.setFlat(True)
+        QObject.connect(simButton,SIGNAL("clicked()"),self.simulateDataSets)
+        self.ui.toolBar.addWidget(simButton)
+
+        for but in [newButton,openButton,saveButton,saveAllButton,simButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
     def simulateDataSets(self):
@@ -262,7 +308,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     def redrawRecent(self):
         # cleaning
         for ac in self.recentMenuEntries:
-            self.file_menu.removeAction(ac)
+            self.recent_menu.removeAction(ac)
         self.recentMenuEntries = []
         self.entryToRecent = {}
 
@@ -273,7 +319,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         nb_added = 0
         for i,rec in enumerate(self.recentList):
             if os.path.exists(str(rec)):
-                self.recentMenuEntries.append( self.file_menu.addAction(QIcon("docs/icons/document-open-recent.png"),rec.split('/')[-1],self.openRecent) )
+                self.recentMenuEntries.append( self.recent_menu.addAction(QIcon("docs/icons/document-open-recent.png"),rec.split('/')[-1],self.openRecent) )
                 self.entryToRecent[ self.recentMenuEntries[-1] ] = rec
                 nb_added += 1
             else:
@@ -283,6 +329,10 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.recentList = future_recent_list
                 return
         self.recentList = future_recent_list
+        if len(self.recentList) > 0:
+            self.recent_menu.setDisabled(False)
+        else:
+            self.recent_menu.setDisabled(True)
 
     def getRecent(self):
         return self.recentList
