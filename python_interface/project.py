@@ -470,8 +470,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
     def refTableProblem(self):
         output.notify(self,"reftable problem","Something happened during the reftable generation :\n %s"%(self.th.problem))
-        self.stopUiGenReftable()
-        self.th = None
+        #self.stopUiGenReftable()
+        self.stopRefTableGen()
         self.nextAnalysisInQueue()
 
     def stopUiGenReftable(self):
