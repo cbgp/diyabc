@@ -115,7 +115,7 @@ def log(level,message):
 
         if len(inspect.stack()) > 3:
             func = "%s >> %s(%s)"%(inspect.stack()[3][3],inspect.stack()[2][3],params)
-        else:
+        elif len(inspect.stack()) > 2 and len(inspect.stack()[2]) > 3:
             func = "%s(%s)"%(inspect.stack()[2][3],params)
 
         print "%s[%02d/%02d/%s %02d:%02d:%02d] {%s} [[%s]] %s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,func,WHITE,message)
