@@ -113,6 +113,7 @@ def log(level,message):
 
         params = inspect.currentframe().f_back.f_locals
 
+        func = ""
         if len(inspect.stack()) > 3:
             func = "%s >> %s(%s)"%(inspect.stack()[3][3],inspect.stack()[2][3],params)
         elif len(inspect.stack()) > 2 and len(inspect.stack()[2]) > 3:
