@@ -52,7 +52,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
 
         self.ui.horizontalLayout_2.addWidget(QLabel("Define number of individuals in :"))
 
-    def defineSampleSize(self):
+    def defineSampleSize(self,silent=False):
         # nettoyage
         rmList = []
         for ssizeBox in self.sampleSizeList:
@@ -209,9 +209,27 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
 
             self.majProjectGui()
 
+            self.parent.ui.setGeneticButton.setDisabled(False)
+            self.parent.ui.setHistoricalButton.setDisabled(True)
+
             self.returnToProject()
 
     def checkSampleSize(self):
+        # on verifie qu'on a le bon nombre de sample
+        nsamp = 0
+        scTxt = str(self.scList[0].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText())
+        scChecker = Scenario(number=1,prior_proba="1")
+        try:
+            scChecker.checkread(scTxt.strip().split('\n'),None)
+            scChecker.checklogic()
+            dico_sc_infos = {}
+            dico_sc_infos["text"] = scTxt.strip().split('\n')
+            dico_sc_infos["checker"] = scChecker
+        except Exception, e:
+            pass
+        if scChecker.nsamp != len(self.sampleSizeList):
+            output.notify(self,"Sample size error","Sample number differs between the scenario and the size definition")
+            return False
         try:
             for ssBox in self.sampleSizeList:
                 size = int(ssBox.findChild(QLineEdit,"sizeEdit").text())

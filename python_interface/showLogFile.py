@@ -17,7 +17,8 @@ class ShowLogFile(formLogFile,baseLogFile):
         super(ShowLogFile,self).__init__(parent)
         self.parent = parent
         dd = datetime.now()
-        self.logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%s.log"%(dd.day,dd.month,dd.year,os.getpid()))
+        #self.logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%s.log"%(dd.day,dd.month,dd.year,os.getpid()))
+        #self.logfile = self.parent.logfile
         self.createWidgets()
         self.updateLogFile()
 
@@ -26,7 +27,7 @@ class ShowLogFile(formLogFile,baseLogFile):
         self.ui.setupUi(self)
 
         self.ui.logText.setCenterOnScroll(True)
-        self.ui.pathEdit.setText(self.logfile)
+        self.ui.pathEdit.setText(self.parent.logfile)
 
         QObject.connect(self.ui.updateButton,SIGNAL("clicked()"),self.updateLogFile)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.close)
@@ -39,7 +40,7 @@ class ShowLogFile(formLogFile,baseLogFile):
                 fname = "%s.log"%fname
             sf=open(fname,'w')
 
-            lf=open(self.logfile,'r')
+            lf=open(self.parent.logfile,'r')
             text=lf.read()
             lf.close()
 
@@ -49,8 +50,8 @@ class ShowLogFile(formLogFile,baseLogFile):
 
 
     def updateLogFile(self):
-        if os.path.exists(self.logfile):
-            f=open(self.logfile,'r')
+        if os.path.exists(self.parent.logfile):
+            f=open(self.parent.logfile,'r')
             text=f.read()
             f.close()
             self.ui.logText.setPlainText(text)

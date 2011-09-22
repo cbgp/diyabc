@@ -36,9 +36,10 @@ formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 class Diyabc(formDiyabc,baseDiyabc):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
     """
-    def __init__(self,app,parent=None,projects=None):
+    def __init__(self,app,parent=None,projects=None,logfile=None):
         super(Diyabc,self).__init__(parent)
         self.app = app
+        self.logfile = logfile
         self.project_list = []
         self.recentList = []
         self.recentMenuEntries = []
@@ -750,19 +751,20 @@ def main():
     nargv = sys.argv
     projects_to_open = nargv[1:]
     #nargv.extend(["-title","DIYABC v%s"%VERSION])
-    app = QApplication(nargv)
-    myapp = Diyabc(app,projects=projects_to_open)
-    myapp.setWindowTitle("DIYABC %s"%VERSION)
-    myapp.show()
-    # pour le dragNdrop des dossier projet
-    myapp.setAcceptDrops(True)
-    # pour les logs dans un fichier et sur le terminal
+    # determination du fichier de log
     if not os.path.exists(os.path.expanduser("~/.diyabc/")):
         os.mkdir(os.path.expanduser("~/.diyabc/"))
     if not os.path.exists(os.path.expanduser("~/.diyabc/logs/")):
         os.mkdir(os.path.expanduser("~/.diyabc/logs/"))
     dd = datetime.now()
-    logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%s.log"%(dd.day,dd.month,dd.year,os.getpid()))
+    logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%02dh_%02dm-%s.log"%(dd.day,dd.month,dd.year,dd.hour,dd.minute,os.getpid()))
+    app = QApplication(nargv)
+    myapp = Diyabc(app,projects=projects_to_open,logfile=logfile)
+    myapp.setWindowTitle("DIYABC %s"%VERSION)
+    myapp.show()
+    # pour le dragNdrop des dossier projet
+    myapp.setAcceptDrops(True)
+    # pour les logs dans un fichier et sur le terminal
     # chaque TeeLogger remplace une sortie et écrit dans 
     # le fichier qu'on lui donne
     myOut = output.TeeLogger(logfile,"a",myapp,True)

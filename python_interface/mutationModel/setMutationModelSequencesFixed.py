@@ -240,7 +240,7 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
 
 
 
-    def allValid(self):
+    def allValid(self,silent=False):
         """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur
         et retourne False
         """

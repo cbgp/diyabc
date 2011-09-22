@@ -55,7 +55,7 @@ class SimulationProject(Project):
         self.ui.setTabText(0,QString("Simulate data sets"))
 
         self.ui.setHistoricalButton.setDisabled(False)
-        self.ui.setGeneticButton.setDisabled(False)
+        self.ui.setGeneticButton.setDisabled(True)
 
         self.hist_model_win = SetHistoricalModelSimulation(self)
         self.hist_model_win.hide()
@@ -97,6 +97,9 @@ class SimulationProject(Project):
             output.notify(self,"Number of sample error","Input error : \n%s"%e)
             return
         log(3,"Numbers of locus : %s"%dico_loc_nb)
+        # on vide les gen data
+        self.gen_data_win = SetGeneticDataSimulation(self)
+        self.gen_data_win.hide()
         self.gen_data_win.fillLocusTable(dico_loc_nb)
 
         self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())

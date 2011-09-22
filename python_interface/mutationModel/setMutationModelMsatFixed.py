@@ -175,7 +175,7 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
             self.exit()
             self.parent.setMutationValid_dico[self.box_group] = True
 
-    def allValid(self):
+    def allValid(self,silent=False):
         """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur
         et retourne False
         """

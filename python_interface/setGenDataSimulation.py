@@ -5,11 +5,9 @@ import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
-from mutationModel.setMutationModelMsatRefTable import SetMutationModelMsatRefTable
-from mutationModel.setMutationModelSequencesRefTable import SetMutationModelSequencesRefTable
+from mutationModel.setMutationModelMsatFixed import SetMutationModelMsatFixed
+from mutationModel.setMutationModelSequencesFixed import SetMutationModelSequencesFixed
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
-from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
-from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from utils.visualizescenario import *
 from utils.data import *
 import output
@@ -24,6 +22,7 @@ class SetGeneticDataSimulation(SetGeneticData):
 
     def fillLocusTable(self,dico):
         self.tableWidget.clear()
+        tabindex = 0
         for loctype in dico.keys():
             if loctype[0] == 'm':
                 mainType = 'M'
@@ -31,6 +30,9 @@ class SetGeneticDataSimulation(SetGeneticData):
                 mainType = 'S'
             for i in range(dico[loctype]):
                 self.addRow("%s_%s"%(loctype,i+1),mainType)
+                self.dico_num_and_numgroup_locus["%s_%s"%(loctype,i+1)] = [tabindex+1,0]
+                self.nbLocusGui+=1
+                tabindex += 1
 
 
     def majProjectGui(self,m=None,s=None,g=None,ss=None):
@@ -59,20 +61,27 @@ class SetGeneticDataSimulation(SetGeneticData):
                 plur=''
             self.parent.ui.nbSumStatsLabel.setText("%s summary statistic%s"%(ss,plur))
 
+    def setSum(self):
+        pass
+
+    def exitMutmod(self):
+        self.switchTo(self)
 
     def addGroup(self):
         """ surcharge de addgroup de la classe mère qui crée les mutation model et 
         les setsumstats 
         """
-        groupBox = super(SetGeneticDataRefTable,self).addGroup()
+        groupBox = super(SetGeneticDataSimulation,self).addGroup()
 
-        frame = SetMutationModelMsatRefTable(self,groupBox)
-        frame.setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))
+        frame = SetMutationModelMsatFixed(self,groupBox)
+        frame.exit = self.exitMutmod
+        #frame.setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))
         self.setMutation_dico[groupBox] = frame
         frame.hide()
 
-        frameSeq = SetMutationModelSequencesRefTable(self,groupBox)
-        frameSeq.setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
+        frameSeq = SetMutationModelSequencesFixed(self,groupBox)
+        frameSeq.exit = self.exitMutmod
+        #frameSeq.setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
         self.setMutationSeq_dico[groupBox] = frameSeq
         frameSeq.hide()
 
@@ -105,6 +114,8 @@ class SetGeneticDataSimulation(SetGeneticData):
         #self.parent.setCurrentIndex(0)
         self.parent.ui.refTableStack.removeWidget(self)
         self.parent.ui.refTableStack.setCurrentIndex(0)
+        #print self.setMutationValid_dico
+        #print self.setMutationSeqValid_dico
 
     def validate(self,silent=False):
         """ clic sur le bouton validate
@@ -119,18 +130,19 @@ class SetGeneticDataSimulation(SetGeneticData):
             # verification des valeurs de motif et range
             problematicLocus = ""
             for i in range(self.ui.tableWidget.rowCount()):
-                if self.parent.data.locuslist[i].type < 5:
+                # c'est un microsat
+                if str(self.ui.tableWidget.item(i,1).text())[0] == "M":
                     motif_size = int(str(self.ui.tableWidget.item(i,2).text()))
                     motif_range = int(str(self.ui.tableWidget.item(i,3).text()).strip())
-                    #print "locus %s  size:%s range:%s"%(i,motif_size,motif_range)
-                    mini = self.parent.data.locuslist[i].mini
-                    maxi = self.parent.data.locuslist[i].maxi
-                    kmoy = (mini + maxi)//2
-                    kmin = kmoy - (((motif_range/2)-1) * motif_size)
-                    kmax = kmin + ((motif_range-1) * motif_size)
-                    if (kmin > mini) or (kmax < maxi):
-                        problematicLocus += "%s,"%(i+1)
-                        log(4,"locus %s  size:%s range:%s   mini=%s maxi=%s kmoy=%s kmin=%s kmax=%s"%(self.parent.data.locuslist[i].name,motif_size,motif_range,mini,maxi,kmoy,kmin,kmax))
+                    ##print "locus %s  size:%s range:%s"%(i,motif_size,motif_range)
+                    #mini = self.parent.data.locuslist[i].mini
+                    #maxi = self.parent.data.locuslist[i].maxi
+                    #kmoy = (mini + maxi)//2
+                    #kmin = kmoy - (((motif_range/2)-1) * motif_size)
+                    #kmax = kmin + ((motif_range-1) * motif_size)
+                    #if (kmin > mini) or (kmax < maxi):
+                    #    problematicLocus += "%s,"%(i+1)
+                    #    log(4,"locus %s  size:%s range:%s   mini=%s maxi=%s kmoy=%s kmin=%s kmax=%s"%(self.parent.data.locuslist[i].name,motif_size,motif_range,mini,maxi,kmoy,kmin,kmax))
             #print "\n"; 
             if problematicLocus != "":
                 problematicLocus = problematicLocus[:-1]
@@ -143,20 +155,16 @@ class SetGeneticDataSimulation(SetGeneticData):
                         self.setMutationValid_dico[box] = self.setMutation_dico[box].allValid(silent=True)
                     if not self.setMutationValid_dico[box]:
                         problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
-                    # recup du nb de stats
-                    (nstat,stat_txt) = self.setSum_dico[box].getSumConf()
-                    if nstat == 0:
-                        problem += u"No summary statistic defined for group %s\n"%(i+1)
+                    else:
+                        log(3,"Mut model of group %s is valid"%box.title())
                 elif "Sequences" in title:
                     if box not in self.setMutationSeqValid_dico.keys():
                         self.setMutationSeqValid_dico[box] = self.setMutationSeq_dico[box].allValid(silent=True)
                         
                     if not self.setMutationSeqValid_dico[box]:
                         problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
-                    # recup du nb de stats
-                    (nstat,stat_txt) = self.setSumSeq_dico[box].getSumConf()
-                    if nstat == 0:
-                        problem += u"No summary statistic defined for group %s\n"%(i+1)
+                    else:
+                        log(3,"Mut model of group %s is valid"%box.title())
                 else:
                     problem += u"Group %s is empty\n"%(i+1)
         else:
@@ -169,7 +177,7 @@ class SetGeneticDataSimulation(SetGeneticData):
             self.exit()
             self.parent.setGenValid(True)
         # dans tous les cas, on écrit la conf
-        self.writeGeneticConfFromGui()
+        #self.writeGeneticConfFromGui()
 
     def clear(self):
         """ On supprime tous les groupes
