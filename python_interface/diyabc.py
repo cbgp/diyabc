@@ -112,7 +112,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         # gestion du menu
         file_menu = self.ui.menubar.addMenu("&File")
         self.file_menu = file_menu
-        self.file_menu.setStyleSheet("QMenu {\
+        self.menubar.setStyleSheet("QMenu {\
                      background-color: white;\
                           margin: 2px; /* some spacing around the menu */\
                            }\
@@ -124,7 +124,8 @@ class Diyabc(formDiyabc,baseDiyabc):
          \
           QMenu::item:selected {\
                        border-color: darkblue;\
-                            background: rgba(100, 100, 100, 150);\
+                            /*background: rgba(100, 100, 100, 150);*/\
+                            background-color: #FFD800;\
                              }\
           \
            QMenu::icon:checked { /* appearance of a 'checked' icon */\
