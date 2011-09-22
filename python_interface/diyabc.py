@@ -245,6 +245,10 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.toolBar.addWidget(saveAllButton)
         saveAllButton.setDisabled(True)
 
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.ui.toolBar.addWidget(spacer)
+
         simButton = QPushButton(QIcon("docs/icons/mask.jpeg"),"Simulate",self)
         self.simButton = simButton
         simButton.setToolTip("Simulate data sets")

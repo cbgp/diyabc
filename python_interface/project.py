@@ -160,6 +160,7 @@ class Project(baseProject,formProject):
             need_to_start_analysis = (self.th != None and len(self.analysisQueue)>0)
             if self.th != None:
                 self.th.terminate()
+                self.th.killProcess()
                 self.th = None
             #self.ui.reftableProgressLabel.setText("")
             self.stopUiGenReftable()
@@ -1535,7 +1536,7 @@ class RefTableGenThread(QThread):
     def killProcess(self):
         if self.processus != None:
             if self.processus.poll() == None:
-                log(3,"Killing analysis process (pid:%s) of analysis %s"%(self.processus.pid,self.analysis.name))
+                log(3,"Killing reftable generation process (pid:%s)"%(self.processus.pid))
                 self.processus.kill()
 
     def run (self):
