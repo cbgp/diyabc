@@ -500,7 +500,7 @@ void setgroup(int p) {
                       fprintf(pFile,"%3d  ",enreg[ipart].numscen);
                       iscen=enreg[ipart].numscen-1;
                       //cout<<"scenario "<<enreg[ipart].numscen<<"\n";
-                      cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"   "<<np<<"\n";
+                      if (debuglevel==5) cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"   "<<np<<"\n";
                       pa=0;
                       for (int j=1;j<nph;j++) {
                           trouve=false;ip=-1;
@@ -522,13 +522,15 @@ void setgroup(int p) {
                           }
                           else fprintf(pFile,"              ");
                       }
-                      cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
+                      if (debuglevel==5) cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
                       for (int j=0;j<npm;j++) fprintf(pFile,"  %12.3e",enreg[ipart].param[pa+j]);
                       for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
                       fprintf(pFile,"\n");
-					  cout<<"\nstat de la particule "<<ipart<<"\n";
-					  for (int st=0;st<header.nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";
-					  cout<<"\n";
+					  if (debuglevel==5){
+						  cout<<"\nstat de la particule "<<ipart<<"\n";
+						  for (int st=0;st<header.nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";
+						  cout<<"\n";
+					  }
                   }
               }
               fclose(pFile);
@@ -561,6 +563,8 @@ void setgroup(int p) {
         for (int ipart=0;ipart<this->npart;ipart++){
             sOK[ipart] = this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
             if (sOK[ipart]==0) ss[ipart] = this->particule[ipart].dogenepop();
+            else ss[ipart] = "";
         }
+        return ss;
 	}
 };

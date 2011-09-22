@@ -51,7 +51,7 @@
 using namespace std;
 #define MICMISSING -9999
 #define SEQMISSING ""
-#define NUCMISSING "N"
+#define NUCMISSING 'N'
 #define NSTAT 27
 
 string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"};
@@ -2063,7 +2063,7 @@ struct ParticleC
 			//cout<<"   OK\n";
 		}		//LOOP ON loc
         if (simulOK[locus]==0) {
-                //cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
+                if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
                 if (this->data.nmisshap>0) {
                         for (int i=0;i<this->data.nmisshap;i++) {
                               locus=this->data.misshap[i].locus;
@@ -2084,25 +2084,28 @@ struct ParticleC
                                       sa=this->data.missnuc[i].sample;
                                       indiv=this->data.missnuc[i].indiv;
                                       nuc=this->data.missnuc[i].nuc;
-                                      //cout<<"MISSNUC  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc<<"\n";
+                                      if (debuglevel==10) cout<<"MISSNUC "<<i<<"  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc/*<<"\n"*/;
                                       int k=0;trouve=false;
-                                      while ((k<this->gt[locus].nmutot)and(not trouve)) {
-                                          trouve = (nuc==this->locuslist[locus].sitmut2[k]);
+                                      while ((k<this->locuslist[locus].sitmut.size())and(not trouve)) {
+                                          trouve = (nuc==this->locuslist[locus].sitmut[k]);
                                           if (not trouve) k++;
                                       }
                                       if (trouve) {
                                           //cout<<"MISSNUC  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc<<"  k="<<k<<"\n";
-                                          //cout<<this->locuslist[locus].haplodna[sa][indiv]<<"<  ("<<this->locuslist[locus].haplodna[sa][indiv].length()<<")\n";
-                                          this->locuslist[locus].haplodna[sa][indiv].replace(k,1,NUCMISSING);
+                                          if (debuglevel==10) cout<</*this->locuslist[locus].haplodna[sa][indiv]<<*/"   k="<<k<<"  ("<<this->locuslist[locus].haplodna[sa][indiv].length()<<")\n";
+                                          //this->locuslist[locus].haplodna[sa][indiv].replace(k,1,"N");
+										  this->locuslist[locus].haplodna[sa][indiv][k]='N';
                                           //cout<<this->locuslist[locus].haplodna[sa][indiv]<<"\n";
-                                      }
+                                      } else {
+										  if (debuglevel==10) cout<<"  (non muté)\n";
+									  }
                               }
 
                         }
 
                 }
         }
-        //cout<<"avant le sitmut2.clear()\n";
+        if (debuglevel==10) cout<<"avant le sitmut2.clear()\n";
         for (loc=0;loc<this->nloc;loc++) if ((this->locuslist[loc].type>4)and(simulOK[loc]>-1)) this->locuslist[loc].sitmut2.clear();
         if (debuglevel==10) cout<<"avant les delete\n";fflush(stdin);
         delete [] emptyPop;

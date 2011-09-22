@@ -115,7 +115,7 @@ public:
         //int p=strcspn(this->filelog,".");
         //this->filelog[p]='\0';
         //strcat(this->filelog,".log");
-
+        //cout<<"dans readheader this->filelog = '"<<this->filelog<<"\n";exit(1);
         if (!f0) {return 1;}  //fichier non ouvrable e.g. inexistant
         else {
             //cout<<"fichier OK\n";
@@ -178,6 +178,7 @@ public:
         int *nrs,nb;
         nrs = new int[this->nscen];
         for (int i=0;i<this->nscen;i++) nrs[i]=0;
+		//cout<<"avant le seekp\n";fflush(stdin);
         this->fifo.seekp(0,ios::end);
         //cout<<"apres le seekp\n";fflush(stdin);
         for (int i=0;i<nenr;i++) {

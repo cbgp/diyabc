@@ -321,9 +321,10 @@ int main(int argc, char *argv[]){
                                           simOK=true;
                                           for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}
                                           if (simOK) {
-                                              debutf=walltime(&clock_zero);
+											  cout<<"simOK=true   nenr="<<nenr<<"\n";
+                                              //debutf=walltime(&clock_zero);
                                               rt.writerecords(nenr,enreg);
-                                              dureef=walltime(&debutf);time_file += dureef;
+                                              //dureef=walltime(&debutf);time_file += dureef;
                                               rt.nrec +=nenr;
                                               cout<<rt.nrec;
                                               //if (firsttime) writecourant();
