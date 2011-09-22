@@ -248,7 +248,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         simButton = QPushButton(QIcon("docs/icons/mask.jpeg"),"Simulate",self)
         self.simButton = simButton
         simButton.setToolTip("Simulate data sets")
-        simButton.setMaximumSize(QSize(72, 22))
+        simButton.setMaximumSize(QSize(80, 22))
         #saveButton.setMinimumSize(QSize(16, 18))
         simButton.setFlat(True)
         QObject.connect(simButton,SIGNAL("clicked()"),self.simulateDataSets)

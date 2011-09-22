@@ -82,7 +82,7 @@ class TeeLogger(object):
         # on bouge le curseur au début de la dernière ligne
         self.app.showLogFile_win.logText.moveCursor(QTextCursor.End)
         self.app.showLogFile_win.logText.moveCursor(QTextCursor.StartOfLine)
-        self.app.showLogFile_win.logText.appendPlainText("%s"%data_without_color.strip())
+        self.app.showLogFile_win.logText.appendPlainText("%s"%pattern.sub('',data_without_color.strip()))
         ftmp = open(self.filename,'a')
         ftmpdata = data_without_color
         ftmp.write(ftmpdata)

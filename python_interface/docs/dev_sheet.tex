@@ -246,6 +246,39 @@ La description du bouton ou du label\end{verbatim}
         d'avancement qui appelle la méthode qui termine le thread d'analyse et
         qui range les résultats dans un dossier du nom de l'analyse.
 
+    \subsection{Les détails}
+        \paragraph{Les logs}
+        Les logs sont gérés par une classe (Teelogger) se situant dans output.py. Une instance de Teelogger
+        se substitue à stdout et stderr pour intercepter tout message et effectuer : 
+        \begin{itemize}
+            \item Une écriture dans un fichier de log (propre à l'instance de DIYABC)
+            \item Un affichage dans la fenêtre de log accesible par le menu Help
+            \item Un affichage en couleur sur la bonne sortie (out ou err) \\
+        \end{itemize}
+
+        Les logs sont produits de plusieurs façon. 
+        \begin{itemize}
+            \item Par la fonction log présente dans output.py
+            \item Par l'instruction print de Python
+            \item Par la production d'une exception arrivant au sommet sans être attrapée\\
+        \end{itemize}
+        
+        La fonction log permet de préciser le niveau de log que l'on souhaite utiliser. J'ai pensé mes niveau comme cela :
+        \begin{itemize}
+            \item 1 : signalement des actions de l'utilisateur
+            \item 2 : signalement des appels de fonctions majeures (celles de Project principalement)
+            \item 3 : affichage de valeurs
+            \item 4 : détail
+        \end{itemize}
+
+        Pour des raisons de lisibilité, les logs sont épurés sur la sortie standart et dans le programme. Les logs réels
+        se trouvent dans le fichier de log, c'est à dire dans le dossier de configuration de DIYABC.
+
+        La ligne de log contient la date, l'heure, le niveau de log, la fonction appelante de niveau 1 et 2 ainsi que les paramètres
+        donnés à la fonction appelante. 
+
+
+
 
 \section{Tests}
     Les tests sont tous dans le fichier unit\_test.py . Ils utilisent le module
