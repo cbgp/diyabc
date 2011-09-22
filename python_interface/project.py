@@ -1168,7 +1168,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         et verrouille les modèles hist et gen si une reftable existe
         """
         size = self.readRefTableSize()
-        if size != None:
+        if (size != None) and (size != 0):
             self.ui.nbSetsDoneEdit.setText("%s"%size)
             self.freezeHistModel()
             self.freezeGenData()
