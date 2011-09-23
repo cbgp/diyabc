@@ -68,11 +68,11 @@ struct resACPC
                 for (int j=0;j<nco;j++) matX[i][j] = X[i][j]-res.moy[j];
             }
         }
-		for (int i=0;i<10;i++) {
+		/*for (int i=0;i<10;i++) {
 		  for (int j=0;j<10;j++) cout<<setiosflags(ios::fixed)<<setw(10)<<setprecision(6)<< matX[i][j]<<"  ";
 		  cout<<"\n";
 		}
-		cout<<"\n";
+		cout<<"\n";*/
         matXT = transpose(nli,nco,matX);
         matXTX = prodM(nco,nli,nco,matXT,matX);
         matM = prodMs(nco,nco,matXTX,anli);
@@ -80,15 +80,15 @@ struct resACPC
         vcprop  = new double*[nco];for (int i=0;i<nco;i++) vcprop[i]=new double [nco];
         valprop = new double[nco];
         //ecrimat("matM",nco,nco,matM);
-		for (int i=0;i<10;i++) {
+		/*for (int i=0;i<10;i++) {
 		  for (int j=0;j<10;j++) cout<<setiosflags(ios::fixed)<<setw(10)<<setprecision(6)<< matM[i][j]<<"  ";
 		  cout<<"\n";
 		}
-		cout<<"\n";
+		cout<<"\n";*/
 		int nrot=jacobi(nco,matM,valprop,vcprop);
-        cout <<"nrot = "<<nrot<<"\n";
-        cout<<"valeurs propres :\n";
-        for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout<<"\n";
+        //cout <<"nrot = "<<nrot<<"\n";
+        //cout<<"valeurs propres :\n";
+        //for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout<<"\n";
         for (int i=0;i<nco-1;i++) {
             for (int j=i+1;j<nco;j++) {
                 if (valprop[i]<valprop[j]) {
@@ -101,7 +101,7 @@ struct resACPC
         }
         res.slambda=0.0;
         for (int i=0;i<nco;i++) res.slambda +=valprop[i];
-        for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout <<"\n";
+        //for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout <<"\n";
         //cout<<res.slambda<<"\n";
         res.nlambda=1;sl=valprop[0];
         while ((sl/res.slambda<prop)and(res.nlambda<nco)) {sl+=valprop[res.nlambda];res.nlambda++;}
@@ -131,10 +131,10 @@ struct resACPC
         enregC enr;
         int bidon,*numscen,k;
         resACPC rACP;
-        stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
+        stat_obs = header.read_statobs(statobsfilename);  //cout<<"apres read_statobs\n";
         int nparamax = 0;
         for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
-        cout<<nparamax<<"\n";
+        //cout<<nparamax<<"\n";
         enr.param = new float[nparamax];
         enr.stat  = new float[rt.nstat];
         if (nacp>rt.nrec) nacp=rt.nrec;
@@ -148,7 +148,7 @@ struct resACPC
                 numscen[p] = enr.numscen;
                 for (int j=0;j<rt.nstat;j++) matstat[p][j] = enr.stat[j];
         }
-        rt.closefile();   cout<<"apres la lecture des "<<nacp<<" enregistrements\n";
+        rt.closefile();   //cout<<"apres la lecture des "<<nacp<<" enregistrements\n";
         
         cout<<"avant ACP\n";
         rACP = ACP(nacp,rt.nstat,matstat,1.0,0);
