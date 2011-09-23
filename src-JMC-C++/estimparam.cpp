@@ -809,7 +809,7 @@ parstatC *parstat;
         d=1.0/(double)n;
 #pragma omp parallel for shared(dens,z,x) private(k) if(multithread)
         for (int i=0;i<n;i++) {
-            for (k=0;k<ncl;k++) if (abs(z[i]-x[k])<=demipas) break;
+            for (k=0;k<ncl;k++) if (fabs(z[i]-x[k])<=demipas) break;
             dens[k] += d;
             if((k==0)or(k==ncl-1)) dens[k] += d;
         }

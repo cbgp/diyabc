@@ -68,6 +68,11 @@ struct resACPC
                 for (int j=0;j<nco;j++) matX[i][j] = X[i][j]-res.moy[j];
             }
         }
+		for (int i=0;i<10;i++) {
+		  for (int j=0;j<10;j++) cout<<setiosflags(ios::fixed)<<setw(10)<<setprecision(6)<< matX[i][j]<<"  ";
+		  cout<<"\n";
+		}
+		cout<<"\n";
         matXT = transpose(nli,nco,matX);
         matXTX = prodM(nco,nli,nco,matXT,matX);
         matM = prodMs(nco,nco,matXTX,anli);
@@ -75,9 +80,15 @@ struct resACPC
         vcprop  = new double*[nco];for (int i=0;i<nco;i++) vcprop[i]=new double [nco];
         valprop = new double[nco];
         //ecrimat("matM",nco,nco,matM);
-        jacobi(nco,matM,valprop,vcprop);
-        //cout<<"valeurs propres :\n";
-        //for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout<<"\n";
+		for (int i=0;i<10;i++) {
+		  for (int j=0;j<10;j++) cout<<setiosflags(ios::fixed)<<setw(10)<<setprecision(6)<< matM[i][j]<<"  ";
+		  cout<<"\n";
+		}
+		cout<<"\n";
+		int nrot=jacobi(nco,matM,valprop,vcprop);
+        cout <<"nrot = "<<nrot<<"\n";
+        cout<<"valeurs propres :\n";
+        for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout<<"\n";
         for (int i=0;i<nco-1;i++) {
             for (int j=i+1;j<nco;j++) {
                 if (valprop[i]<valprop[j]) {

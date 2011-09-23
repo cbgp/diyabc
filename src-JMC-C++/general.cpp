@@ -290,7 +290,7 @@ int main(int argc, char *argv[]){
 	switch (action) {
 
       case 'r' :   k=readheaders();
-                   cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"\n";fflush(stdin);
+                   cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"   ";fflush(stdin);
                    if (k==1) {
                               rt.datapath = datafilename;
                               rt.nscen = header.nscenarios;
@@ -315,13 +315,13 @@ int main(int argc, char *argv[]){
                                   firsttime=true;stoprun=false;
                                   debutr=walltime(&clock_zero);
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
-                                          cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"\n";
+                                          //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"\n";
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
-                                          cout<<"retour de dosimultabref\n";
+                                          //cout<<"retour de dosimultabref\n";
                                           simOK=true;
                                           for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}
                                           if (simOK) {
-											  cout<<"simOK=true   nenr="<<nenr<<"\n";
+											  //cout<<"simOK=true   nenr="<<nenr<<"\n";
                                               //debutf=walltime(&clock_zero);
                                               rt.writerecords(nenr,enreg);
                                               //dureef=walltime(&debutf);time_file += dureef;

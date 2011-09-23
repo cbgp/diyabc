@@ -454,12 +454,12 @@ void setgroup(int p) {
 				enreg[ipart].numscen=1;
                 if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
 
-                cout<<"dans particleset\n";
+                //cout<<"dans particleset\n";
 				for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
                     enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
-                    cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+                    //cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
                 }
-                cout <<"\n";
+                //cout <<"\n";
                 nstat=0;
 				for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 					for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}
@@ -485,15 +485,15 @@ void setgroup(int p) {
               if (debuglevel==5) cout<<curfile<<"\n";
               pFile = fopen (curfile,"w");
               fprintf(pFile,"%s\n",this->header.entete.c_str());
-			  cout<<"FISTTIME\n";
-			  cout<<header.entete<<"\n";
+			  //cout<<"FISTTIME\n";
+			  //cout<<header.entete<<"\n";
 			  int nph,npm;
 			  ss=splitwords(header.entetehist," ",&nph);
 			  ss=splitwords(header.entetemut," ",&npm);
               ss=splitwords(header.entete," ",&ns);
               np=ns-header.nstat-1;
-              cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
-			  cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
+              //cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
+			  //cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
               for (int ipart=0;ipart<this->npart;ipart++) {
                   if (sOK[ipart]==0){
                       //cout<<enreg[ipart].numscen<<"\n";

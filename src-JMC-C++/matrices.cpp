@@ -14,15 +14,16 @@ void libereM(int n,double **A) {
 }
 /*
 /** 
-* écrit les n premières lignes et j premières colonnes d'une matrice de doubles' 
+* écrit les n premières lignes et m premières colonnes d'une matrice de doubles' 
 */
-/*void ecrimat(string nomat, int n, int m, double **A) {
+/*int ecrimat(string nomat, int n, int m, double **A) {
     cout<<"\n"<<nomat<<"\n";
     for (int i=0;i<n;i++) {
         for (int j=0;j<m;j++) cout<<setiosflags(ios::fixed)<<setw(10)<<setprecision(6)<< A[i][j]<<"  ";
         cout<<"\n";
     }
     cout<<"\n";
+	return 0;
 }*/
 
 
@@ -174,6 +175,7 @@ int inverse(int n, long double **A, long double **C)
     return err; 
 }
 
+
     int jacobi(int n, double **A, double *D, double **V) {
         char bidon;
         int nrot=0,ng=0;
@@ -182,21 +184,29 @@ int inverse(int n, long double **A, long double **C)
         z = new double[n];
         for (int ip=0;ip<n;ip++) {for (int iq=0;iq<n;iq++) V[ip][iq]=0.0; V[ip][ip]=1.0;}
         for (int ip=0;ip<n;ip++) {b[ip]=A[ip][ip];D[ip]=b[ip];z[ip]=0.0;}
+        std::cout<<"matrice A dans jacobi  n="<<n<<"\n"; 
+		for (int i=0;i<10;i++) {
+		  for (int j=0;j<10;j++) std::cout<< A[i][j]<<"  ";
+		  std::cout<<"\n";
+		}
+		std::cout<<"\n";
+        
         for (int i=0;i<51;i++) {
             sm=0.0;
-            for (int ip=0;ip<n-1;ip++) {for (int iq=ip+1;iq<n;iq++) sm += abs(A[ip][iq]);}
+            for (int ip=0;ip<n-1;ip++) {for (int iq=ip+1;iq<n;iq++) sm += fabs(A[ip][iq]);}
+            std::cout<<"jacobi sm="<<sm<<"\n";
             if (sm==0.0) {delete []b;delete []z;return nrot;}
             if (i<4) tresh=0.2*sm/(double)n/(double)n; else tresh=0.0;
             for (int ip=0;ip<n-1;ip++) {
                 for (int iq=ip+1;iq<n;iq++) {
-                    g=100.0*abs(A[ip][iq]);
-                    if (((i>4)and(abs(D[ip]+g)==abs(D[ip])))and(abs(D[iq]+g)==abs(D[iq]))) A[ip][iq]=0.0;
-                    else if (abs(A[ip][iq])>tresh) {
+                    g=100.0*fabs(A[ip][iq]);
+                    if (((i>4)and(fabs(D[ip]+g)==fabs(D[ip])))and(fabs(D[iq]+g)==fabs(D[iq]))) A[ip][iq]=0.0;
+                    else if (fabs(A[ip][iq])>tresh) {
                         h=D[iq]-D[ip];
-                        if (abs(h)+g == abs(h)) t=A[ip][iq]/h;
+                        if (fabs(h)+g == fabs(h)) t=A[ip][iq]/h;
                         else  {
                             theta=0.5*h/A[ip][iq];
-                            t=1.0/(abs(theta)+sqrt(1.0+theta*theta));
+                            t=1.0/(fabs(theta)+sqrt(1.0+theta*theta));
                             if (theta<0.0) t=-t;
                         }
                         cc=1.0/sqrt(1+t*t);

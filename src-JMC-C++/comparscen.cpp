@@ -139,7 +139,7 @@ matligneC *matA;
              nts=n/ncs;
              for (k=0;k<rt.nscenchoisi;k++) {
                  p=posts[i][k].x;
-                 if ((abs(p)<0.00001)or(abs(1.0-p)<0.00001)) d=0.0;
+                 if ((fabs(p)<0.00001)or(fabs(1.0-p)<0.00001)) d=0.0;
                  else d=1.96*sqrt(p*(1.0-p)/(double)nts);
                  posts[i][k].inf =p-d;if(posts[i][k].inf<0.0)posts[i][k].inf=0.0;
                  posts[i][k].sup =p+d;if(posts[i][k].sup>1.0)posts[i][k].sup=1.0;

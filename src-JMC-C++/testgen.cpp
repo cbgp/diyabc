@@ -164,9 +164,9 @@ int main(int argc, char *argv[]){
                  }
                  hetmoy /= (double)(nenr*niter);pidmoy /= (double)(nenr*niter);
                  cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
-                 if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 if(fabs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
-                 if(abs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 if(fabs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  
                  hetheo=1.0-1.0/sqrt(1.4);pidtheo=0.845026245742127;
                  cout<<"\ntheta=0.2"<<"\n";
@@ -181,9 +181,9 @@ int main(int argc, char *argv[]){
                  }
                  hetmoy /= (double)(nenr*niter);pidmoy /= (double)(nenr*niter);
                  cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
-                 if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 if(fabs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
-                 if(abs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 if(fabs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  
                  hetheo=1.0-1.0/sqrt(5);pidtheo=0.44707336192772973;
                  cout<<"\ntheta=2.0"<<"\n";
@@ -198,9 +198,9 @@ int main(int argc, char *argv[]){
                  }
                  hetmoy /=(double) (nenr*niter);pidmoy /= (double)(nenr*niter);
                  cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
-                 if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 if(fabs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
-                 if(abs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 if(fabs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  
                   hetheo=1.0-1.0/sqrt(41);pidtheo=0.1561449771153935;
                  cout<<"\ntheta=20.0"<<"\n";
@@ -215,9 +215,9 @@ int main(int argc, char *argv[]){
                  }
                  hetmoy /= (double)(nenr*niter);pidmoy /= (double)(nenr*niter);
                  cout<<"hétérozygotie attendue = "<<hetheo<<"    hétérozygotie moyenne = "<<hetmoy;
-                 if(abs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 if(fabs(hetmoy-hetheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
                  cout<<"prob(identite) attendue = "<<pidtheo<<"    prob(identite) moyenne = "<<pidmoy;
-                 if(abs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
+                 if(fabs(pidmoy-pidtheo)<0.001) cout <<"   test OK\n"; else cout<<"   PROBLEME !!!\n";
               
                  break;
                  
@@ -316,9 +316,9 @@ int main(int argc, char *argv[]){
                          x2 = sx2[0][scen][j]/(double)n[0][scen][j];
                          //k=0;while (paramname[0][scen][j]!=paramname[1][scen][k]) k++;
                          x1 = sx[1][scen][j]/(double)n[1][scen][j];
-                         dx = abs(x0-x1)/x0;
+                         dx = fabs(x0-x1)/x0;
                          x3 = sx2[1][scen][j]/(double)n[1][scen][j];
-                         dx2 = abs(x2-x3)/x2;
+                         dx2 = fabs(x2-x3)/x2;
                          if ((dx>=0.1)or(dx2>=0.1))  star="**";
                          else if ((dx>=0.01)or(dx2>=0.01)) star="* ";
                          else star="  ";
@@ -329,10 +329,10 @@ int main(int argc, char *argv[]){
                      for (int j=0;j<rt.nstat;j++) {
                          x0 = sx[0][scen][j+rt.nparam[scen]]/(double)n[0][scen][j+rt.nparam[scen]];
                          x1 = sx[1][scen][j+rt.nparam[scen]]/(double)n[1][scen][j+rt.nparam[scen]];
-                         dx = abs(x0-x1)/x0;
+                         dx = fabs(x0-x1)/x0;
                          x0 = sx2[0][scen][j+rt.nparam[scen]]/(double)n[0][scen][j+rt.nparam[scen]];
                          x1 = sx2[1][scen][j+rt.nparam[scen]]/(double)n[1][scen][j+rt.nparam[scen]];
-                         dx2 = abs(x0-x1)/x0;
+                         dx2 = fabs(x0-x1)/x0;
                          if ((dx>=0.1)or(dx2>=0.1))  star="**";
                          else if ((dx>=0.01)or(dx2>=0.01)) star="* ";
                          else star="  ";

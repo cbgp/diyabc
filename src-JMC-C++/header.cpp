@@ -208,7 +208,7 @@ public:
                 //cout <<"avant histparam\n";fflush(stdin);
         getline(file,s1);       //ligne vide
         getline(file,s1);
-        cout<<s1<<"\n";
+        //cout<<s1<<"\n";
         ss=splitwords(s1," ",&nss);
         s2=ss[3].substr(1,ss[3].length()-2);
         ss2=splitwords(s2,",",&nss);
@@ -325,7 +325,7 @@ public:
         //cout<<"header.ngroupes="<<this->ngroupes;
         this->groupe = new LocusGroupC[this->ngroupes+1];
         this->assignloc(0);
-        cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
+        //cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
         for (gr=1;gr<=this->ngroupes;gr++){
             getline(file,s1);
             ss=splitwords(s1," ",&nss);
@@ -654,10 +654,10 @@ public:
 		this->entetehist=this->entete.substr(0,this->entete.length()-14*(nparamut+nstat)+2);
 		this->entetemut=this->entete.substr(this->entetehist.length(),14*nparamut);
 		this->entetestat=this->entete.substr(this->entetehist.length()+this->entetemut.length(),14*nstat);
-		cout<<"les trois entetes\n";
-		cout<<">>>"<<this->entetehist<<"<<<\n";
-		cout<<">>>"<<this->entetemut<<"<<<\n";
-		cout<<">>>"<<this->entetestat<<"<<<\n";
+		//cout<<"les trois entetes\n";
+		//cout<<">>>"<<this->entetehist<<"<<<\n";
+		//cout<<">>>"<<this->entetemut<<"<<<\n";
+		//cout<<">>>"<<this->entetestat<<"<<<\n";
         //for (int i=0;i<this->nstat;i++) cout<<this->statname[i]<<"   ";cout<<"\n";
         delete []ss;
                 //cout<<"scenarios à la fin de readheader\n";

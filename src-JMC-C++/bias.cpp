@@ -190,8 +190,8 @@ using namespace std;
             rmad[j]=0.0;
             for (int p=0;p<ntest;p++) {
                 s=0.0;
-                for (int i=0;i<nsel;i++) s += abs(paretoil[p][i][j]-enreg2[p].paramvv[j]);
-                rmad[j] +=s/abs(enreg2[p].paramvv[j])/double(nsel);
+                for (int i=0;i<nsel;i++) s += fabs(paretoil[p][i][j]-enreg2[p].paramvv[j]);
+                rmad[j] +=s/fabs(enreg2[p].paramvv[j])/double(nsel);
             }
             rmad[j] = rmad[j]/(double)ntest;
         }
@@ -260,7 +260,7 @@ using namespace std;
 
         for (int j=0;j<nparamcom+nparcompo;j++) {
             for (int p=0;p<ntest;p++) {
-                for (int i=0;i<nsel;i++) cc[i] = (abs(paretoil[p][i][j]-enreg2[p].paramvv[j]))/enreg2[p].paramvv[j];b[p] = cal_med(nsel,cc);
+                for (int i=0;i<nsel;i++) cc[i] = (fabs(paretoil[p][i][j]-enreg2[p].paramvv[j]))/enreg2[p].paramvv[j];b[p] = cal_med(nsel,cc);
             }
             rmedad[j] = cal_med(ntest,b);
         }
@@ -273,9 +273,9 @@ using namespace std;
             for (int j=0;j<nparamcom+nparcompo;j++) {
                 for (int p=0;p<ntest;p++) {
                     switch (k) {
-                      case 0 : e[p]=abs(paramest[p][j].moy-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break;
-                      case 1 : e[p]=abs(paramest[p][j].med-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break;
-                      case 2 : e[p]=abs(paramest[p][j].mod-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break;
+                      case 0 : e[p]=fabs(paramest[p][j].moy-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break;
+                      case 1 : e[p]=fabs(paramest[p][j].med-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break;
+                      case 2 : e[p]=fabs(paramest[p][j].mod-enreg2[p].paramvv[j])/enreg2[p].paramvv[j];break;
                     }
                 }
                 rmae[k][j] = cal_med(ntest,e);
