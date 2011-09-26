@@ -195,6 +195,7 @@ class Preferences(formPreferences,basePreferences):
             for l in lines:
                 if len(l) > 0 and l.strip() != "":
                     recent_list.append(l.strip())
+                    print "Loading recent : %s"%l.strip()
             self.parent.setRecent(recent_list)
 
     def saveRecent(self):

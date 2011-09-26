@@ -311,6 +311,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.redrawRecent()
 
     def redrawRecent(self):
+        """ Met à jour le menu des projets récents
+        supprime les recents qui n'existent plus
+        """
         # cleaning
         for ac in self.recentMenuEntries:
             self.recent_menu.removeAction(ac)
@@ -329,10 +332,14 @@ class Diyabc(formDiyabc,baseDiyabc):
                 nb_added += 1
             else:
                 # le project n'existe plus, on supprime celui ci des recent
+                print "Recent project %s doesn't exist anymore"%str(rec)
                 future_recent_list.remove(rec)
+            # on ajoute au maximum 5 recent
             if nb_added == 5:
-                self.recentList = future_recent_list
-                return
+                break
+                #self.recentList = future_recent_list
+                #self.recent_menu.setDisabled(False)
+                #return
         self.recentList = future_recent_list
         if len(self.recentList) > 0:
             self.recent_menu.setDisabled(False)
@@ -343,6 +350,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         return self.recentList
 
     def addRecent(self,rec):
+        """ Ajoute un projet recent. Garde les 20 derniers récents. 
+        Si le projet était déjà dans la liste, le met au sommet
+        """
         # on vire les eventuelles occurences du projet que l'on veut ajouter
         while self.recentList.count(rec) > 0:
             self.recentList.remove(rec)
@@ -355,7 +365,6 @@ class Diyabc(formDiyabc,baseDiyabc):
     def openRecent(self):
         ac = self.sender()
         self.openProject(self.entryToRecent[ac])
-
 
     def showLogFile(self):
         self.showLogFile_win.show()
