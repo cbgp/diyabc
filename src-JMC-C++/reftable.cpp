@@ -149,17 +149,30 @@ public:
     }
 
     int readrecord(enregC *enr) {
-        int bidon;
+        int bidon=0;
         //cout<<"debut de readrecord\n";
-        this->fifo.read((char*)&(enr->numscen),sizeof(int));
-        //cout<<"numscen = "<<enr->numscen<<"\n";
-        for (int i=0;i<this->nparam[enr->numscen-1];i++) {this->fifo.read((char*)&(enr->param[i]),sizeof(float));/*cout<<enr->param[i]<<"  ";*/}
-        //cout <<"\n";
-        for (int i=0;i<this->nstat;i++) {this->fifo.read((char*)&(enr->stat[i]),sizeof(float));/*cout<<enr->stat[i]<<"  ";if ((i%10)==9) cout<<"\n";*/}
+		try {
+			this->fifo.read((char*)&(enr->numscen),sizeof(int));
+			throw(1);
+			//cout<<"numscen = "<<enr->numscen<<"\n";
+			for (int i=0;i<this->nparam[enr->numscen-1];i++) {this->fifo.read((char*)&(enr->param[i]),sizeof(float));/*cout<<enr->param[i]<<"  ";*/}
+			throw(2);
+			//cout <<"\n";
+			for (int i=0;i<this->nstat;i++) {this->fifo.read((char*)&(enr->stat[i]),sizeof(float));/*cout<<enr->stat[i]<<"  ";if ((i%10)==9) cout<<"\n";*/}
+			throw(3);
+		}
+		catch(int e) {
+			cout<<"reftable.bin file is corrupted\n";
+		    if (e==1) cout<<"Impossible to read the scenario number\n";
+		    if (e==2) cout<<"Impossible to read one parameter value\n";
+		    if (e==3) cout<<"Impossible to read one summary statistics value\n";
+			bidon=e;
+		}
+		
         //cout <<"\n";
         //cout<<"fin de readrecord\n";
         //cin>>bidon;
-        return 0;
+        return bidon;
     }
 
     int writerecords(int nenr, enregC *enr) {
@@ -407,7 +420,7 @@ public:
             if (firstloop) {nrecOK=0;firstloop=false;}
             else nrecOK=nn;
             while ((nrecOK<2*nn)and(this->nreclus<nrec)) {
-                bidon=this->readrecord(&(this->enrsel[nrecOK]));
+                do {bidon=this->readrecord(&(this->enrsel[nrecOK]));} while (bidon!=0);
                 scenOK=false;iscen=0;
                 while((not scenOK)and(iscen<this->nscenchoisi)) {
                     scenOK=(this->enrsel[nrecOK].numscen==this->scenchoisi[iscen]);
