@@ -155,7 +155,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.recent_menu.setDisabled(True)
         self.saveProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save.png"),"&Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
         self.saveAllProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save-all.png"),"&Save all projects",self.saveAllProjects,QKeySequence(Qt.CTRL + Qt.Key_A))
-        self.deleteProjActionMenu = file_menu.addAction(QIcon("docs/icons/user-trash.png"),"&Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_D))
+        self.deleteProjActionMenu = file_menu.addAction(QIcon("docs/icons/user-trash.png"),"&Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
         self.cloneProjActionMenu = file_menu.addAction(QIcon("docs/icons/tab-duplicate.png"),"&Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
         self.closeProjActionMenu = file_menu.addAction(QIcon("docs/icons/project-close.png"),"C&lose current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
         self.closeProjActionMenu.setDisabled(True)

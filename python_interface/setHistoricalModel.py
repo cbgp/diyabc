@@ -368,7 +368,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             #fontt.setPointSize(fontt.pointSize() - 1)
             self.ui.defPrButton.setFont(fontt)
             self.ui.defPrButton.setStyleSheet("border-color: #000000")
-            self.ui.defPrButton.setText("Define priors")
+            #self.ui.defPrButton.setText("Define priors")
             # dessin des aperçus
             self.drawPreviews()
         else:
@@ -714,6 +714,9 @@ class SetHistoricalModel(formHistModel,baseHistModel):
 
         # evennement d'ajout d'une condition sur un paramètre
         QObject.connect(setCondButton,SIGNAL("clicked()"),self.setConditionAction)
+        # désactivation de mean et st en uniform et log-uniform
+        QObject.connect(uniformParamRadio,SIGNAL("toggled(bool)"),self.toggleMeanSt)
+        QObject.connect(logUniformRadio,SIGNAL("toggled(bool)"),self.toggleMeanSt)
 
         if type_param == "unique":
             setCondButton.hide()
@@ -762,6 +765,11 @@ class SetHistoricalModel(formHistModel,baseHistModel):
 
         return groupBox_8
 
+    def toggleMeanSt(self,on):
+        box = self.sender().parent().parent()
+        box.findChild(QLineEdit,"meanValueParamEdit").setDisabled(on)
+        box.findChild(QLineEdit,"stValueParamEdit").setDisabled(on)
+
     def setConditionAction(self):
         """ methode qui receptionne l'evennement du clic sur "set condition"
         ajout d'une condition sur un paramètre ou une paire de paramètres
@@ -795,16 +803,22 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 #step =  float(param.findChild(QLineEdit,"stepValueParamEdit").text())
                 if param.findChild(QLineEdit,"minValueParamEdit") != None and param.findChild(QLineEdit,"maxValueParamEdit") != None\
                 and param.findChild(QLineEdit,"meanValueParamEdit") != None and param.findChild(QLineEdit,"stValueParamEdit") != None:
-                    if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0:
-                        problems += "Values for parameter %s are incoherent\n"%pname
+                    if min > max or min < 0 or max < 0:
+                        problems += "Values of min and max for parameter %s are incoherent\n"%pname
+                    if param.findChild(QLineEdit,"meanValueParamEdit").isEnabled() and mean < 0:
+                        problems += "Value of mean for parameter %s is incoherent\n"%pname
+                    if param.findChild(QLineEdit,"stValueParamEdit").isEnabled() and stdev < 0:
+                        problems += "Value of stdev for parameter %s is incoherent\n"%pname
                 # pour lognormal et loguniforme le mean doit être different de zero et le stdev aussi
                 if param.findChild(QRadioButton,"logNormalRadio") != None and param.findChild(QRadioButton,"logUniformRadio")\
                 and param.findChild(QLineEdit,"meanValueParamEdit") != None:
                     if param.findChild(QRadioButton,"logNormalRadio").isChecked() or param.findChild(QRadioButton,"logUniformRadio").isChecked():
-                        if mean <= 0:
-                            problems += "Mean of parameter %s should be positive\n"%pname
-                        if stdev <= 0:
-                            problems += "St-dev of parameter %s should be positive\n"%pname
+                        if param.findChild(QLineEdit,"meanValueParamEdit").isEnabled():
+                            if mean <= 0:
+                                problems += "Mean of parameter %s should be positive\n"%pname
+                        if param.findChild(QLineEdit,"stValueParamEdit").isEnabled():
+                            if stdev <= 0:
+                                problems += "St-dev of parameter %s should be positive\n"%pname
             except Exception,e:
                 problems += "%s\n"%e
         rpsum = 0.0
