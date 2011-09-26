@@ -459,6 +459,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 self.th = RefTableGenThread(self,nb_to_gen)
             self.th.connect(self.th,SIGNAL("increment"),self.incProgress)
             self.th.connect(self.th,SIGNAL("refTableProblem"),self.refTableProblem)
+            self.th.connect(self.th,SIGNAL("refTableLog"),self.refTableLog)
             #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
             self.th.start()
         else:
@@ -473,6 +474,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         #self.stopUiGenReftable()
         self.stopRefTableGen()
         self.nextAnalysisInQueue()
+
+    def refTableLog(self):
+        if self.th != None:
+            log(self.th.loglvl,self.th.logmsg)
 
     def stopUiGenReftable(self):
         self.ui.runReftableButton.setText("Run computations")
@@ -881,6 +886,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.thAnalysis = AnalysisThread(self,analysis)
             self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress"),self.analysisProgress)
             self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProblem"),self.analysisProblem)
+            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisLog"),self.analysisLog)
             self.thAnalysis.start()
             # on la vire de la queue
             self.analysisQueue.remove(analysis)
@@ -910,6 +916,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.thAnalysis = None
 
         self.nextAnalysisInQueue()
+
+    def analysisLog(self):
+        """ log pour le thread analysis
+        """
+        if self.thAnalysis != None:
+            log(self.thAnalysis.loglvl,self.thAnalysis.logmsg)
 
     def analysisProgress(self):
         """ met à jour l'indicateur de progression de l'analyse en cours
@@ -1533,12 +1545,22 @@ class RefTableGenThread(QThread):
         self.time = "unknown time\n"
         self.processus = None
 
+        self.logmsg = ""
+        self.loglvl = 3
+
+    def log(self,lvl,msg):
+        """ evite de manipuler les objets Qt dans un thread non principal
+        """
+        self.loglvl = lvl
+        self.logmsg = msg
+        self.emit(SIGNAL("refTableLog"))
+
     def killProcess(self):
-        log(3,"Attempting to kill reftable generation process")
+        self.log(3,"Attempting to kill reftable generation process")
         if self.processus != None:
             if self.processus.poll() == None:
                 self.processus.kill()
-                log(3,"Killing reftable generation process (pid:%s) DONE"%(self.processus.pid))
+                self.log(3,"Killing reftable generation process (pid:%s) DONE"%(self.processus.pid))
 
     def run (self):
         # lance l'executable
@@ -1548,14 +1570,14 @@ class RefTableGenThread(QThread):
             os.remove(outfile)
         fg = open(outfile,"w")
         try:
-            log(2,"Running the executable for the reference table generation")
+            self.log(2,"Running the executable for the reference table generation")
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
             #exPath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
             exPath = self.parent.parent.preferences_win.getExecutablePath()
             nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m", "-t", "%s"%nbMaxThread]
             #print " ".join(cmd_args_list)
-            log(3,"Command launched : %s"%" ".join(cmd_args_list))
+            self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             self.processus = p
         except Exception,e:
@@ -1582,7 +1604,7 @@ class RefTableGenThread(QThread):
             else:
                 lines = ["OK","0"]
             #print lines
-            log(3,"Line red from reftable.log : %s"%lines)
+            self.log(3,"Line red from reftable.log : %s"%lines)
             try:
                 if len(lines) > 1:
                     if lines[0].strip() == "OK":
@@ -1601,7 +1623,7 @@ class RefTableGenThread(QThread):
                         return
                     else:
                         #print "lines != OK"
-                        log(3,"The line does not contain 'OK'")
+                        self.log(3,"The line does not contain 'OK'")
                         self.problem = lines[0].strip()
                         self.emit(SIGNAL("refTableProblem"))
                         #output.notify(self,"problem",lines[0])
@@ -1609,7 +1631,7 @@ class RefTableGenThread(QThread):
                         return
             except Exception,e:
                 # certainement un problème de convertion en int
-                log(3,"There was an exception during progress file reading : %s"%e)
+                self.log(3,"There was an exception during progress file reading : %s"%e)
 
             # verification de l'arret du programme
             if p.poll() != None:
@@ -1655,10 +1677,21 @@ class AnalysisThread(QThread):
         self.progress = 0
         self.processus = None
 
+        self.logmsg = ""
+        self.loglvl = 3
+
+    def log(self,lvl,msg):
+        """ evite de manipuler les objets Qt dans un thread non principal
+        """
+        self.loglvl = lvl
+        self.logmsg = msg
+        self.emit(SIGNAL("analysisLog"))
+
+
     def killProcess(self):
         if self.processus != None:
             if self.processus.poll() == None:
-                log(3,"Killing analysis process (pid:%s) of analysis %s"%(self.processus.pid,self.analysis.name))
+                self.log(3,"Killing analysis process (pid:%s) of analysis %s"%(self.processus.pid,self.analysis.name))
                 self.processus.kill()
 
     def readProgress(self):
@@ -1670,7 +1703,7 @@ class AnalysisThread(QThread):
             if len(lines) > 0:
                 b = lines[0]
         #print "prog:%s"%b
-        log(3,"Analysis '%s' progress : %s"%(self.analysis.name,b))
+        self.log(3,"Analysis '%s' progress : %s"%(self.analysis.name,b))
         return b
 
     def readProblem(self):
@@ -1694,14 +1727,14 @@ class AnalysisThread(QThread):
                 self.tmpp = (t1*100/t2)
             if self.tmpp != self.progress:
                 #print "on a progressé"
-                log(3,"The analysis '%s' has progressed (%s%%)"%(self.analysis.name,self.tmpp))
+                self.log(3,"The analysis '%s' has progressed (%s%%)"%(self.analysis.name,self.tmpp))
                 self.progress = self.tmpp
                 self.emit(SIGNAL("analysisProgress"))
         except Exception,e:
             return
 
     def run(self):
-        log(2,"Running analysis '%s' execution"%self.analysis.name)
+        self.log(2,"Running analysis '%s' execution"%self.analysis.name)
         #executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
         executablePath = self.parent.parent.preferences_win.getExecutablePath()
         nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
@@ -1721,13 +1754,13 @@ class AnalysisThread(QThread):
             # on ne scrute pas de fichier de progression
             cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
             #print " ".join(cmd_args_list)
-            log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
+            self.log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
             outfile = "%s/pre-ev.out"%self.parent.dir
             f = open(outfile,"w")
             p = subprocess.call(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             f.close()
             #print "call ok"
-            log(3,"Call procedure success")
+            self.log(3,"Call procedure success")
 
             f = open(outfile,"r")
             #data= f.read()
@@ -1739,14 +1772,14 @@ class AnalysisThread(QThread):
         # pour toutes les autres analyses le schema est le même
         cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
         #print " ".join(cmd_args_list)
-        log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
+        self.log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
         outfile = "%s/%s.out"%(self.parent.dir,self.analysis.category)
         f = open(outfile,"w")
         p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
         self.processus = p
         #f.close()
         #print "popen ok"
-        log(3,"Popen procedure success")
+        self.log(3,"Popen procedure success")
 
 
         # la scrutation de la progression est identique pour toutes les analyses
