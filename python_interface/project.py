@@ -1673,18 +1673,32 @@ class AnalysisThread(QThread):
         log(3,"Analysis '%s' progress : %s"%(self.analysis.name,b))
         return b
 
+    def readProblem(self):
+        problem = ""
+        if os.path.exists("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name)):
+            a = open("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name),"r")
+            lines = a.readlines()
+            a.close()
+            if len(lines) > 0:
+                problem = lines[0]
+        return problem
+
     def updateProgress(self):
         b = self.readProgress()
-        # on a bougé
-        if len(b.split(' ')) > 1:
-            t1 = float(b.split(' ')[0])
-            t2 = float(b.split(' ')[1])
-            self.tmpp = (t1*100/t2)
-        if self.tmpp != self.progress:
-            #print "on a progressé"
-            log(3,"The analysis '%s' has progressed (%s%%)"%(self.analysis.name,self.tmpp))
-            self.progress = self.tmpp
-            self.emit(SIGNAL("analysisProgress"))
+        # on gere le cas ou ce ne sont pas des float avec une exception qui passe
+        try:
+            # on a bougé
+            if len(b.split(' ')) > 1:
+                t1 = float(b.split(' ')[0])
+                t2 = float(b.split(' ')[1])
+                self.tmpp = (t1*100/t2)
+            if self.tmpp != self.progress:
+                #print "on a progressé"
+                log(3,"The analysis '%s' has progressed (%s%%)"%(self.analysis.name,self.tmpp))
+                self.progress = self.tmpp
+                self.emit(SIGNAL("analysisProgress"))
+        except Exception,e:
+            return
 
     def run(self):
         log(2,"Running analysis '%s' execution"%self.analysis.name)
@@ -1753,7 +1767,8 @@ class AnalysisThread(QThread):
                 time.sleep(2)
                 self.updateProgress()
                 if self.progress < 100:
-                    self.problem = "Analysis program exited before the end of the analysis (%s%%)"%self.progress
+                    redProblem = self.readProblem()
+                    self.problem = "Analysis program exited before the end of the analysis (%s%%)\n%s"%(self.progress,redProblem)
                     self.emit(SIGNAL("analysisProblem"))
                     return
             time.sleep(2)
