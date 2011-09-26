@@ -151,23 +151,29 @@ public:
     int readrecord(enregC *enr) {
         int bidon=0;
         //cout<<"debut de readrecord\n";
-		try {
+		//try {
 			this->fifo.read((char*)&(enr->numscen),sizeof(int));
-			throw(1);
+			if (enr->numscen>this->nscen) {
+            FILE *flog;
+            flog=fopen(reftablelogfilename,"w");fprintf(flog,"%s","The reftable.bin file is corrupted. Clone the project and simulate a new file.\n");fclose(flog);
+			cout<<"\nThe reftable.bin file is corrupted.\n";
+			exit(1);
+			}
+			//throw(1);
 			//cout<<"numscen = "<<enr->numscen<<"\n";
 			for (int i=0;i<this->nparam[enr->numscen-1];i++) {this->fifo.read((char*)&(enr->param[i]),sizeof(float));/*cout<<enr->param[i]<<"  ";*/}
-			throw(2);
+			//throw(2);
 			//cout <<"\n";
 			for (int i=0;i<this->nstat;i++) {this->fifo.read((char*)&(enr->stat[i]),sizeof(float));/*cout<<enr->stat[i]<<"  ";if ((i%10)==9) cout<<"\n";*/}
-			throw(3);
-		}
+			//throw(3);
+		/*}
 		catch(int e) {
 			cout<<"reftable.bin file is corrupted\n";
 		    if (e==1) cout<<"Impossible to read the scenario number\n";
 		    if (e==2) cout<<"Impossible to read one parameter value\n";
 		    if (e==3) cout<<"Impossible to read one summary statistics value\n";
 			bidon=e;
-		}
+		}*/
 		
         //cout <<"\n";
         //cout<<"fin de readrecord\n";

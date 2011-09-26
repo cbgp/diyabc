@@ -88,7 +88,9 @@ int readheaders() {
 */
 
 int main(int argc, char *argv[]){
-    char *estpar,*compar,*biaspar,*confpar,*priorpar,*testpar,*simfpar;
+	try {
+  
+	char *estpar,*compar,*biaspar,*confpar,*priorpar,*testpar,*simfpar;
     bool firsttime;
 	int k,seed;
 	double **paramstat;
@@ -395,4 +397,11 @@ int main(int argc, char *argv[]){
      //fprintf(stdout,"durée dans call_polytom = %.2f secondes\n",time_call);
      //fprintf(stdout,"durée dans la lecture de la reftable et le tri des enregistrements = %.2f secondes\n",time_readfile);
 	return 0;
+	  
+	}
+catch (exception& e)
+  {
+    cout << e.what() << endl;
+  }
+	
 };
