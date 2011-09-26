@@ -19,9 +19,17 @@ class SetGeneticDataSimulation(SetGeneticData):
     def __init__(self,parent=None):
         super(SetGeneticDataSimulation,self).__init__(parent)
 
+        self.ui.tableWidget.setColumnWidth(0,230)
+        self.ui.tableWidget.setColumnWidth(1,40)
+        self.ui.tableWidget.setColumnWidth(2,50)
+        self.ui.tableWidget.setColumnWidth(3,50)
+        self.ui.tableWidget.insertColumn(self.ui.tableWidget.columnCount())
+        self.ui.tableWidget.setColumnWidth(4,50)
+        self.ui.tableWidget.setHorizontalHeaderItem (4, QTableWidgetItem("length"))
+
 
     def fillLocusTable(self,dico):
-        self.tableWidget.clear()
+        self.tableWidget.clearContents()
         tabindex = 0
         for loctype in dico.keys():
             if loctype[0] == 'm':
@@ -30,6 +38,11 @@ class SetGeneticDataSimulation(SetGeneticData):
                 mainType = 'S'
             for i in range(dico[loctype]):
                 self.addRow("%s_%s"%(loctype,i+1),mainType)
+                if mainType == 'S':
+                    self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,4,QTableWidgetItem('1000'))
+                else:
+                    self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,4,QTableWidgetItem(''))
+                    self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).flags() & ~Qt.ItemIsEditable)
                 self.dico_num_and_numgroup_locus["%s_%s"%(loctype,i+1)] = [tabindex+1,0]
                 self.nbLocusGui+=1
                 tabindex += 1
@@ -155,6 +168,10 @@ class SetGeneticDataSimulation(SetGeneticData):
                     #if (kmin > mini) or (kmax < maxi):
                     #    problematicLocus += "%s,"%(i+1)
                     #    log(4,"locus %s  size:%s range:%s   mini=%s maxi=%s kmoy=%s kmin=%s kmax=%s"%(self.parent.data.locuslist[i].name,motif_size,motif_range,mini,maxi,kmoy,kmin,kmax))
+                else:
+                    length = int(str(self.ui.tableWidget.item(i,4).text()).strip())
+                    if length <= 0:
+                        problem += "Length has to be positive (locus %s)\n"%(i+1)
             #print "\n"; 
             if problematicLocus != "":
                 problematicLocus = problematicLocus[:-1]

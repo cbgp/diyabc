@@ -1752,7 +1752,8 @@ class AnalysisThread(QThread):
         elif self.analysis.category == "pre-ev":
             # pour cette analyse on attend que l'executable ait fini
             # on ne scrute pas de fichier de progression
-            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
+            #data = data.replace(u'\xb5','u')
+            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params.replace(u'\xb5','u'), "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
             #print " ".join(cmd_args_list)
             self.log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
             outfile = "%s/pre-ev.out"%self.parent.dir

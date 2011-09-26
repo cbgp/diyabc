@@ -55,7 +55,7 @@ class SimulationProject(Project):
         self.ui.setTabText(0,QString("Simulate data sets"))
 
         self.ui.setHistoricalButton.setDisabled(False)
-        self.ui.setGeneticButton.setDisabled(True)
+        self.ui.setGeneticButton.setDisabled(False)
 
         self.hist_model_win = SetHistoricalModelSimulation(self)
         self.hist_model_win.hide()
