@@ -93,13 +93,7 @@ class SetGeneticDataSimulation(SetGeneticData):
         frame.hide()
 
         frameSeq = SetMutationModelSequencesSimulation(self,groupBox)
-        frameSeq.ui.mmrMinEdit.setText("1.00E-9")
-        frameSeq.ui.ilmrMinEdit.setText("2")
-        frameSeq.ui.mc1MinEdit.setText("10")
-        frameSeq.ui.ilc1MinEdit.setText("2")
-        frameSeq.ui.mc2MinEdit.setText("10")
-        frameSeq.ui.ilc2MinEdit.setText("2")
-        frameSeq.exit = self.exitMutmod
+        #frameSeq.exit = self.exitMutmod
         #frameSeq.setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
         self.setMutationSeq_dico[groupBox] = frameSeq
         frameSeq.hide()

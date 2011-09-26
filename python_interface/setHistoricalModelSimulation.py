@@ -51,7 +51,31 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         self.ui.verticalLayout_3.addWidget(defSampleSizeButton)
         QObject.connect(defSampleSizeButton,SIGNAL("clicked()"),self.defineSampleSize)
 
-        self.ui.horizontalLayout_2.addWidget(QLabel("Define number of individuals in :"))
+        #self.ui.horizontalLayout_2.addWidget(QLabel("Define number of \nfemale individuals :\nmale individuals:"))
+        groupBoxSampleSize = QtGui.QGroupBox(self.ui.scrollAreaWidgetContents_3)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(groupBoxSampleSize.sizePolicy().hasHeightForWidth())
+        groupBoxSampleSize.setSizePolicy(sizePolicy)
+        groupBoxSampleSize.setTitle("")
+        groupBoxSampleSize.setObjectName("groupBox_6")
+        groupBoxSampleSize.setMaximumSize(QtCore.QSize(120, 80))
+        verticalLayout_2 = QtGui.QVBoxLayout(groupBoxSampleSize)
+        verticalLayout_2.setObjectName("verticalLayout_2")
+        verticalLayout_2.setContentsMargins(-1, 1, -1, 1)
+        label_2 = QtGui.QLabel("Define number for")
+        label_2.setObjectName("sampleLabel")
+        label_2.setAlignment(QtCore.Qt.AlignCenter)
+        verticalLayout_2.addWidget(label_2)
+        labelm = QtGui.QLabel("of male")
+        labelm.setAlignment(QtCore.Qt.AlignRight)
+        labelf = QtGui.QLabel("of female")
+        labelf.setAlignment(QtCore.Qt.AlignRight)
+        verticalLayout_2.addWidget(labelf)
+        verticalLayout_2.addWidget(labelm)
+        # ajout dans la GUI
+        self.ui.horizontalLayout_2.addWidget(groupBoxSampleSize)
 
     def defineSampleSize(self,silent=False):
         # nettoyage
@@ -80,7 +104,6 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         for i in range(scChecker.nsamp):
             self.addSampleSizeBox(i+1)
 
-
     def addSampleSizeBox(self,num):
         groupBoxSampleSize = QtGui.QGroupBox(self.ui.scrollAreaWidgetContents_3)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
@@ -98,17 +121,22 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         label_2.setObjectName("sampleLabel")
         label_2.setAlignment(QtCore.Qt.AlignCenter)
         verticalLayout_2.addWidget(label_2)
-        sizeEdit = QtGui.QLineEdit("50")
-        sizeEdit.setObjectName("sizeEdit")
+        fsizeEdit = QtGui.QLineEdit("25",groupBoxSampleSize)
+        fsizeEdit.setObjectName("fsizeEdit")
+        fsizeEdit.setMaximumSize(30,20)
+        fsizeEdit.setMinimumSize(30,20)
+        fsizeEdit.setAlignment(QtCore.Qt.AlignRight)
+        sizeEdit = QtGui.QLineEdit("25",groupBoxSampleSize)
+        sizeEdit.setObjectName("msizeEdit")
         sizeEdit.setMaximumSize(30,20)
         sizeEdit.setMinimumSize(30,20)
         sizeEdit.setAlignment(QtCore.Qt.AlignRight)
+        verticalLayout_2.addWidget(fsizeEdit)
         verticalLayout_2.addWidget(sizeEdit)
         # ajout dans la GUI
         self.ui.horizontalLayout_2.addWidget(groupBoxSampleSize)
 
         self.sampleSizeList.append(groupBoxSampleSize)
-
 
     def hideRemoveScButtons(self):
         for e in self.findChildren(QPushButton,"rmScButton"):
