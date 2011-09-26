@@ -60,7 +60,7 @@ HeaderC header;
 ParticleSetC ps;
 struct stat stFileInfo;
 
-char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename;
+char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename, *progressfilename;
 bool multithread=false;
 int nrecneeded,nenr=100;
 int debuglevel=0;

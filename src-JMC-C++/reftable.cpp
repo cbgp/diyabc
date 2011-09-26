@@ -29,6 +29,7 @@ using namespace std;
 
 extern int nrecneeded;
 extern double remtime,debutr;
+extern char *progressfilename;
 
 struct enregC {
     int numscen;
@@ -154,8 +155,8 @@ public:
 		//try {
 			this->fifo.read((char*)&(enr->numscen),sizeof(int));
 			if (enr->numscen>this->nscen) {
-            FILE *flog;
-            flog=fopen(reftablelogfilename,"w");fprintf(flog,"%s","The reftable.bin file is corrupted. Clone the project and simulate a new file.\n");fclose(flog);
+			FILE *flog;
+            flog=fopen(progressfilename,"w");fprintf(flog,"%s","The reftable.bin file is corrupted. Clone the project and simulate a new file.\n");fclose(flog);
 			cout<<"\nThe reftable.bin file is corrupted.\n";
 			exit(1);
 			}

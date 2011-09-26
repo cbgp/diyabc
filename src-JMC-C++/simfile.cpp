@@ -33,11 +33,12 @@
 extern ParticleSetC ps;
 extern enregC* enreg;
 extern bool multithread;
+extern char *progressfilename;
 
 
 
     void dosimfile(char *options,  int seed){
-        char *datafilename, *progressfilename, *courantfilename, *nomfigp,*numero;
+        char *datafilename, *courantfilename, *nomfigp,*numero;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn,ncond;
         string opt,*ss,s,*ss1,s0,s1,sg;

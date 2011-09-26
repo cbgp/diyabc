@@ -31,6 +31,8 @@
 
 using namespace std;
 
+extern char *progressfilename;
+
 struct matligneC
 {
     double* x;
@@ -678,7 +680,7 @@ matligneC *matA;
     }
 
     void docompscen(char *compar){
-        char *datafilename, *progressfilename;
+        char *datafilename;
         int nstatOK,iprog,nprog;;
         int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,kk,nts;
         string opt,*ss,s,*ss1,s0,s1;

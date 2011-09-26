@@ -33,6 +33,7 @@
 extern ParticleSetC ps;
 extern enregC* enreg;
 extern bool multithread;
+extern char *progressfilename;
 
 struct enreC {
     int numscen;
@@ -444,7 +445,7 @@ using namespace std;
     }
 
     void dobias(char *options,  int seed){
-        char *datafilename, *progressfilename, *courantfilename;
+        char *datafilename, *courantfilename;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn,ncond;
         string opt,*ss,s,*ss1,s0,s1,sg;

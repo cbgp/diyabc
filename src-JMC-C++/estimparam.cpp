@@ -27,6 +27,8 @@
 
 using namespace std;
 
+extern char *progressfilename;
+
 #define c 1.5707963267948966192313216916398
 #define co 2.506628274631000502415765284811   //sqrt(pi)
 #define coefbw 1.8                            //coefficient multiplicateur de la bandwidth pour le calcul de la densité
@@ -997,7 +999,6 @@ parstatC *parstat;
 * effectue l'estimation ABC des paramètres (directe + régression locale)
 */
     void doestim(char *options) {
-        char  *progressfilename;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos;
         string opt,*ss,s,*ss1,s0,s1;
