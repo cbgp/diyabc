@@ -74,12 +74,24 @@ class SetGeneticDataSimulation(SetGeneticData):
         groupBox = super(SetGeneticDataSimulation,self).addGroup()
 
         frame = SetMutationModelMsatFixed(self,groupBox)
+        frame.ui.mmrMinEdit.setText("5.00E-4")
+        frame.ui.ilmrMinEdit.setText("2")
+        frame.ui.mcpMinEdit.setText("0.22")
+        frame.ui.ilcpMinEdit.setText("2")
+        frame.ui.msrMinEdit.setText("1.00E-8")
+        frame.ui.ilsrMinEdit.setText("2")
         frame.exit = self.exitMutmod
         #frame.setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))
         self.setMutation_dico[groupBox] = frame
         frame.hide()
 
         frameSeq = SetMutationModelSequencesFixed(self,groupBox)
+        frameSeq.ui.mmrMinEdit.setText("1.00E-9")
+        frameSeq.ui.ilmrMinEdit.setText("2")
+        frameSeq.ui.mc1MinEdit.setText("10")
+        frameSeq.ui.ilc1MinEdit.setText("2")
+        frameSeq.ui.mc2MinEdit.setText("10")
+        frameSeq.ui.ilc2MinEdit.setText("2")
         frameSeq.exit = self.exitMutmod
         #frameSeq.setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
         self.setMutationSeq_dico[groupBox] = frameSeq

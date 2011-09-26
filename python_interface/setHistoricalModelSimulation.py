@@ -32,6 +32,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         #self.ui.label_11.hide()
         self.ui.label_10.hide()
         self.ui.label_9.setText("Value")
+        self.ui.defPrButton.setText("Set parameter\nvalues")
         self.ui.groupBox_12.hide()
 
         self.ui.groupBox_13.setMinimumSize(QtCore.QSize(150, 20))
@@ -46,7 +47,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         self.ui.scrollArea_3.setMaximumSize(9999,90)
         self.ui.scrollArea_3.setMinimumSize(0,90)
 
-        defSampleSizeButton = QPushButton("Define sample size")
+        defSampleSizeButton = QPushButton("Set sample size")
         self.ui.verticalLayout_3.addWidget(defSampleSizeButton)
         QObject.connect(defSampleSizeButton,SIGNAL("clicked()"),self.defineSampleSize)
 
