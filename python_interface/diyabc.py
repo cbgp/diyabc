@@ -655,9 +655,11 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.ui.tabWidget.widget(index).unlock()
             # suppression du projet dans la liste locale
             self.project_list.remove(self.ui.tabWidget.widget(index))
+            projToClose = self.ui.tabWidget.widget(index)
             if save:
                 self.ui.tabWidget.widget(index).save()
         self.ui.tabWidget.removeTab(index)
+        del(projToClose)
         # si c'est le dernier projet, on désactive la fermeture par le menu
         if len(self.project_list) == 0:
             self.closeProjActionMenu.setDisabled(True)

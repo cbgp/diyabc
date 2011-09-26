@@ -5,8 +5,8 @@ import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
-from mutationModel.setMutationModelMsatFixed import SetMutationModelMsatFixed
-from mutationModel.setMutationModelSequencesFixed import SetMutationModelSequencesFixed
+from mutationModel.setMutationModelMsatSimulation import SetMutationModelMsatSimulation
+from mutationModel.setMutationModelSequencesSimulation import SetMutationModelSequencesSimulation
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 from utils.visualizescenario import *
 from utils.data import *
@@ -86,19 +86,13 @@ class SetGeneticDataSimulation(SetGeneticData):
         """
         groupBox = super(SetGeneticDataSimulation,self).addGroup()
 
-        frame = SetMutationModelMsatFixed(self,groupBox)
-        frame.ui.mmrMinEdit.setText("5.00E-4")
-        frame.ui.ilmrMinEdit.setText("2")
-        frame.ui.mcpMinEdit.setText("0.22")
-        frame.ui.ilcpMinEdit.setText("2")
-        frame.ui.msrMinEdit.setText("1.00E-8")
-        frame.ui.ilsrMinEdit.setText("2")
-        frame.exit = self.exitMutmod
+        frame = SetMutationModelMsatSimulation(self,groupBox)
+        #frame.exit = self.exitMutmod
         #frame.setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))
         self.setMutation_dico[groupBox] = frame
         frame.hide()
 
-        frameSeq = SetMutationModelSequencesFixed(self,groupBox)
+        frameSeq = SetMutationModelSequencesSimulation(self,groupBox)
         frameSeq.ui.mmrMinEdit.setText("1.00E-9")
         frameSeq.ui.ilmrMinEdit.setText("2")
         frameSeq.ui.mc1MinEdit.setText("10")
@@ -154,24 +148,27 @@ class SetGeneticDataSimulation(SetGeneticData):
         if len(self.groupList) > 0:
             # verification des valeurs de motif et range
             problematicLocus = ""
-            for i in range(self.ui.tableWidget.rowCount()):
-                # c'est un microsat
-                if str(self.ui.tableWidget.item(i,1).text())[0] == "M":
-                    motif_size = int(str(self.ui.tableWidget.item(i,2).text()))
-                    motif_range = int(str(self.ui.tableWidget.item(i,3).text()).strip())
-                    ##print "locus %s  size:%s range:%s"%(i,motif_size,motif_range)
-                    #mini = self.parent.data.locuslist[i].mini
-                    #maxi = self.parent.data.locuslist[i].maxi
-                    #kmoy = (mini + maxi)//2
-                    #kmin = kmoy - (((motif_range/2)-1) * motif_size)
-                    #kmax = kmin + ((motif_range-1) * motif_size)
-                    #if (kmin > mini) or (kmax < maxi):
-                    #    problematicLocus += "%s,"%(i+1)
-                    #    log(4,"locus %s  size:%s range:%s   mini=%s maxi=%s kmoy=%s kmin=%s kmax=%s"%(self.parent.data.locuslist[i].name,motif_size,motif_range,mini,maxi,kmoy,kmin,kmax))
-                else:
-                    length = int(str(self.ui.tableWidget.item(i,4).text()).strip())
-                    if length <= 0:
-                        problem += "Length has to be positive (locus %s)\n"%(i+1)
+            try:
+                for i in range(self.ui.tableWidget.rowCount()):
+                    # c'est un microsat
+                    if str(self.ui.tableWidget.item(i,1).text())[0] == "M":
+                        motif_size = int(str(self.ui.tableWidget.item(i,2).text()))
+                        motif_range = int(str(self.ui.tableWidget.item(i,3).text()).strip())
+                        ##print "locus %s  size:%s range:%s"%(i,motif_size,motif_range)
+                        #mini = self.parent.data.locuslist[i].mini
+                        #maxi = self.parent.data.locuslist[i].maxi
+                        #kmoy = (mini + maxi)//2
+                        #kmin = kmoy - (((motif_range/2)-1) * motif_size)
+                        #kmax = kmin + ((motif_range-1) * motif_size)
+                        #if (kmin > mini) or (kmax < maxi):
+                        #    problematicLocus += "%s,"%(i+1)
+                        #    log(4,"locus %s  size:%s range:%s   mini=%s maxi=%s kmoy=%s kmin=%s kmax=%s"%(self.parent.data.locuslist[i].name,motif_size,motif_range,mini,maxi,kmoy,kmin,kmax))
+                    else:
+                        length = int(str(self.ui.tableWidget.item(i,4).text()).strip())
+                        if length <= 0:
+                            problem += "Length has to be positive (locus %s)\n"%(i+1)
+            except Exception,e:
+                problem += "%s\n"%e
             #print "\n"; 
             if problematicLocus != "":
                 problematicLocus = problematicLocus[:-1]
