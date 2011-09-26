@@ -334,8 +334,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                 # le project n'existe plus, on supprime celui ci des recent
                 print "Recent project %s doesn't exist anymore"%str(rec)
                 future_recent_list.remove(rec)
-            # on ajoute au maximum 5 recent
-            if nb_added == 5:
+            # on ajoute au maximum 20 recent
+            if nb_added == 20:
                 break
                 #self.recentList = future_recent_list
                 #self.recent_menu.setDisabled(False)
@@ -350,7 +350,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         return self.recentList
 
     def addRecent(self,rec):
-        """ Ajoute un projet recent. Garde les 20 derniers récents. 
+        """ Ajoute un projet recent. Garde les 50 derniers récents. 
         Si le projet était déjà dans la liste, le met au sommet
         """
         # on vire les eventuelles occurences du projet que l'on veut ajouter
@@ -358,7 +358,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.recentList.remove(rec)
 
         self.recentList.insert(0,rec)
-        while len(self.recentList) > 20:
+        while len(self.recentList) > 50:
             self.recentList.pop()
         self.redrawRecent()
 
