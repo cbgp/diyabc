@@ -67,15 +67,9 @@ class SimulationProject(Project):
         self.gen_data_win = SetGeneticDataSimulation(self)
         self.gen_data_win.hide()
 
-        self.setHistValid(False)
-        self.setGenValid(False)
-        self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self.runSimulation)
-
-    def runSimulation(self):
-
-        if self.verifyRefTableValid():
-            print self.hist_model_win.getConf()
-            print self.gen_data_win.getConf()
+        #self.setHistValid(False)
+        #self.setGenValid(False)
+        #self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self.runSimulation)
 
     def save(self):
         pass
@@ -120,6 +114,12 @@ class SimulationProject(Project):
     def returnToMe(self):
         self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
         self.ui.refTableStack.setCurrentIndex(0)
+
+    @pyqtSignature("")
+    def on_btnStart_clicked(self):
+            #if self.verifyRefTableValid():
+            print self.hist_model_win.getConf()
+            print self.gen_data_win.getConf()
 
 
 

@@ -237,6 +237,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
             self.parent.setHistValid(True)
 
             self.majProjectGui()
+            self.majParamInfoDico()
 
             self.parent.ui.setGeneticButton.setDisabled(False)
             self.parent.ui.setHistoricalButton.setDisabled(True)
@@ -261,9 +262,10 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
             return False
         try:
             for ssBox in self.sampleSizeList:
-                size = int(ssBox.findChild(QLineEdit,"sizeEdit").text())
-                if size < 1:
-                    output.notify(self,"Sample size values error","Sample sizes must be positive integers")
+                msize = int(ssBox.findChild(QLineEdit,"msizeEdit").text())
+                fsize = int(ssBox.findChild(QLineEdit,"fsizeEdit").text())
+                if fsize+msize < 1:
+                    output.notify(self,"Sample size values error","Total sample size must be positive")
                     return False
         except Exception,e:
             output.notify(self,"Sample size values error","%s"%e)
@@ -291,7 +293,8 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
                 paramBox = self.paramList[i]
                 name = paramBox.findChild(QLabel,"paramNameLabel").text()                    
                 i+=1
-            result+= "\n%s %s"%(pname,info[0])
+            result+= "\n%s %s"%(pname,info[1])
+        return result
 
 
 
