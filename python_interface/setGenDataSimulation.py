@@ -382,21 +382,35 @@ class SetGeneticDataSimulation(SetGeneticData):
                                 self.setSum_dico[self.groupList[num_group-1]].setSumConf(lines_group)
                 self.majProjectGui(ss=self.getNbSumStats())
 
-    def clearMutationModel(self,box):
-        """ vide le modèle mutationnel des microsats
-        """
-        self.setMutation_dico[box].exit()
-        self.setMutation_dico[box] = SetMutationModelRefTable(self,box)
-        self.setMutation_dico[box].setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))
-        self.setMutation(box)
-
-    def clearMutationModelSeq(self,box):
-        """ vide le modèle mutationnel des sequences
-        """
-        self.setMutationSeq_dico[box].exit()
-        self.setMutationSeq_dico[box] = SetMutationModelSequences(self,box)
-        self.setMutationSeq_dico[box].setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
-        self.setMutation(box)
-
     def getConf(self):
-        return 'ma gen conf simulation'
+        result = "loci description (%s)"%self.tableWidget.rowCount()
+        for i in range(self.tableWidget.rowCount()):
+            name = str(self.tableWidget.item(i,0).text())
+            type = name[:3]
+            group = self.dico_num_and_numgroup_locus[name][1]
+            if type[0] == 's':
+                microSeq = "S"
+                typestr = type[1]
+                length = str(self.tableWidget.item(i,4).text())
+                result += "%s <%s> [%s] G%i %s\n"%(name.replace(' ','_'),typestr,microSeq,group,length)
+            else:
+                microSeq = "M"
+                typestr = type[1]
+                indice_dans_table = self.dico_num_and_numgroup_locus[name][0]
+                motif_size = str(self.ui.tableWidget.item(indice_dans_table-1,2).text())
+                motif_range = str(self.ui.tableWidget.item(indice_dans_table-1,3).text()).strip()
+                result += "%s <%s> [%s] G%i %s %s\n"%(name.replace(' ','_'),typestr,microSeq,group,motif_size,motif_range)
+
+        # partie mutation model
+        result += u"\ngroups (%i)\n"%len(self.groupList)
+        if len(self.groupList) == 0:
+            result += '\n'
+        else:
+            for i,box in enumerate(self.groupList):
+                if "Microsatellites" in str(box.title()):
+                    result += "group G%i [M]\n"%(i+1)
+                    result += u'%s'%self.setMutation_dico[box].getMutationConf()
+                elif "Sequences" in str(box.title()):
+                    result += "group G%i [S]\n"%(i+1)
+                    result += u'%s'%self.setMutationSeq_dico[box].getMutationConf()
+        return result

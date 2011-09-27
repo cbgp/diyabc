@@ -128,24 +128,24 @@ class SetMutationModelMsatSimulation(formSetMutationModelMsatFixed,baseSetMutati
     def getMutationConf(self):
         """ renvoie les valeurs actuelles
         """
-        l_result = []
-        l_result.append(str(self.ui.mmrMinEdit.text()))
-        l_result.append(str(self.ui.ilmrMinEdit.text()))
-        l_result.append(str(self.ui.ilmrMaxEdit.text()))
-        l_result.append(str(self.ui.ilmrMeanEdit.text()))
-        l_result.append(str(self.ui.ilmrShapeEdit.text()))
-        l_result.append(str(self.ui.mcpMinEdit.text()))
-        l_result.append(str(self.ui.ilcpMinEdit.text()))
-        l_result.append(str(self.ui.ilcpMaxEdit.text()))
-        l_result.append(str(self.ui.ilcpMeanEdit.text()))
-        l_result.append(str(self.ui.ilcpShapeEdit.text()))
-        l_result.append(str(self.ui.msrMinEdit.text()))
-        l_result.append(str(self.ui.ilsrMinEdit.text()))
-        l_result.append(str(self.ui.ilsrMaxEdit.text()))
-        l_result.append(str(self.ui.ilsrMeanEdit.text()))
-        l_result.append(str(self.ui.ilsrShapeEdit.text()))
+        s_result = u""
+        s_result += u"MEANMU %s\n"%self.ui.mmrMinEdit.text()
+        s_result += u"GAMMU GA[%s,"%self.ui.ilmrMinEdit.text()
+        s_result += u"%s,"%self.ui.ilmrMaxEdit.text()
+        s_result += u"%s,"%self.ui.ilmrMeanEdit.text()
+        s_result += u"%s]\n"%self.ui.ilmrShapeEdit.text()
+        s_result += u"MEANP %s\n"%self.ui.mcpMinEdit.text()
+        s_result += u"GAMP GA[%s,"%self.ui.ilcpMinEdit.text()
+        s_result += u"%s,"%self.ui.ilcpMaxEdit.text()
+        s_result += u"%s,"%self.ui.ilcpMeanEdit.text()
+        s_result += u"%s]\n"%self.ui.ilcpShapeEdit.text()
+        s_result += u"MEANSNI %s\n"%self.ui.msrMinEdit.text()
+        s_result += u"GAMSNI GA[%s,"%self.ui.ilsrMinEdit.text()
+        s_result += u"%s,"%self.ui.ilsrMaxEdit.text()
+        s_result += u"%s,"%self.ui.ilsrMeanEdit.text()
+        s_result += u"%s]\n"%self.ui.ilsrShapeEdit.text()
 
-        return l_result
+        return s_result
 
     def exit(self):
         self.parent.switchTo(self.parent)

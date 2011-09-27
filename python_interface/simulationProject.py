@@ -119,7 +119,7 @@ class SimulationProject(Project):
     def on_btnStart_clicked(self):
             #if self.verifyRefTableValid():
             print self.hist_model_win.getConf()
-            print self.gen_data_win.getConf()
+            print self.gen_data_win.getConf().replace(u'\xb5','u')
 
 
 

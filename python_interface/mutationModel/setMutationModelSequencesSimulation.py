@@ -202,17 +202,26 @@ class SetMutationModelSequencesSimulation(formSetMutationModelSequencesFixed,bas
     def getMutationConf(self):
         """ renvoie les valeurs actuelles
         """
-        l_result = []
-        l_result.append(str(self.ui.mmrMinEdit.text()))
-        l_result.append(str(self.ui.ilmrMinEdit.text()))
+        s_result = u""
+        s_result += u"MEANMU %s\n"%self.ui.mmrMinEdit.text()
+        s_result += u"GAMMU GA[%s,"%self.ui.ilmrMinEdit.text()
+        s_result += u"%s,"%self.ui.ilmrMaxEdit.text()
+        s_result += u"%s,"%self.ui.ilmrMeanEdit.text()
+        s_result += u"%s]\n"%self.ui.ilmrShapeEdit.text()
         if self.hasToBeVerified(self.ui.mc1MinEdit):
-            l_result.append(str(self.ui.mc1MinEdit.text()))
-            l_result.append(str(self.ui.ilc1MinEdit.text()))
+            s_result += u"MEANK1 %s\n"%self.ui.mc1MinEdit.text()
+            s_result += u"GAMK1 GA[%s,"%self.ui.ilc1MinEdit.text()
+            s_result += u"%s,"%self.ui.ilc1MaxEdit.text()
+            s_result += u"%s,"%self.ui.ilc1MeanEdit.text()
+            s_result += u"%s]\n"%self.ui.ilc1ShapeEdit.text()
             if self.hasToBeVerified(self.ui.mc2MinEdit):
-                l_result.append(str(self.ui.mc2MinEdit.text()))
-                l_result.append(str(self.ui.ilc2MinEdit.text()))
+                s_result += u"MEANK2 %s\n"%self.ui.mc2MinEdit.text()
+                s_result += u"GAMK2 GA[%s,"%self.ui.ilc2MinEdit.text()
+                s_result += u"%s,"%self.ui.ilc2MaxEdit.text()
+                s_result += u"%s,"%self.ui.ilC2MeanEdit.text()
+                s_result += u"%s]\n"%self.ui.ilc2ShapeEdit.text()
 
-        return l_result
+        return s_result
 
 
     def setMutationConf(self,lines):
