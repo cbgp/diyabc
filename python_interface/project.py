@@ -544,7 +544,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 fo = codecs.open(self.dir+"/%s"%name,"r","utf-8")
                 folines = fo.read()
                 fo.close()
-                fdest.write(folines)
+                if name == self.parent.hist_conf_name:
+                    fdest.write(folines.replace(' True\n','\n').replace(' False\n','\n'))
+                else:
+                    fdest.write(folines)
             fdest.close()
         else:
             output.notify(self,"Header generation problem","One conf file is missing in order to generate the reference table header")

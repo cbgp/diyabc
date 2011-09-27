@@ -799,10 +799,10 @@ class ImportProjectThread(Thread):
         super(ImportProjectThread,self).__init__()
         self.start()
     def run(self):
-        log(4,"Pre-loading of Project class STARTING")
+        #log(4,"Pre-loading of Project class STARTING")
         from project import Project
         from simulationProject import SimulationProject
-        log(4,"Pre-loading of Project class FINISHED")
+        #log(4,"Pre-loading of Project class FINISHED")
 
 def main():
     if not os.path.exists(os.path.expanduser("~/.diyabc/")):

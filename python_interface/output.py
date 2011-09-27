@@ -18,7 +18,8 @@ BLUE='\033[35m'
 GREEN='\033[32m'
 YELLOW='\033[33m'
 CYAN='\033[36m'
-tabcolors=[WHITE,RED,BLUE,GREEN,YELLOW,CYAN]
+CYAN_BLINK='\033[5;36m'
+tabcolors=[WHITE,RED,BLUE,GREEN,YELLOW,CYAN,CYAN_BLINK]
 
 def notify(parent,title,message):
     # dans tous les cas, on logue
@@ -76,7 +77,7 @@ class TeeLogger(object):
         #self.file.close()
     def write(self, data):
         #data = data.replace(u'\xb5','u')
-        data_without_color = data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,'').replace(YELLOW,'').replace(CYAN,'')
+        data_without_color = data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,'').replace(YELLOW,'').replace(CYAN,'').replace(CYAN_BLINK,'')
         pattern = re.compile(r' \[\[.*\]\]')
         data_short = pattern.sub('',data)
         # on bouge le curseur au début de la dernière ligne
