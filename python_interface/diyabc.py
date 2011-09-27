@@ -70,10 +70,10 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.documentator = Documentator("docs/documentation.xml",self)
 
         # ouverture des projets donnés en paramètre au lancement
-        if len(projects) > 0:
+        if projects != None and len(projects) > 0:
             self.switchToMainStack()
-        for projDirName in projects:
-            self.openProject(projDirName)
+            for projDirName in projects:
+                self.openProject(projDirName)
 
     def createWidgets(self):
         self.ui=self
@@ -575,7 +575,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         return True
 
 
-    def newProject(self,name=None):
+    def newProject(self,path=None):
         """ Création d'un projet
         """
         from project import Project
@@ -583,7 +583,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         ok = True
         #if name == None:
         #    name, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
-        if name == None:
+        if path == None:
             fileDial = QtGui.QFileDialog(self,"Select location of the new project")
             fileDial.setLabelText(QtGui.QFileDialog.Accept,"Create project")
             fileDial.setLabelText(QtGui.QFileDialog.FileName,"Project name")
@@ -598,6 +598,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                 if path[-1] == "/":
                     path = path[:-1]
                 name = path.split("/")[-1]
+        else:
+            name = path.split("/")[-1]
 
         if ok:
             log(1,'The name of the new project will be %s\nIt will be saved in %s'%(name,path))

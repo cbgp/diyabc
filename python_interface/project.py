@@ -157,6 +157,7 @@ class Project(baseProject,formProject):
             f = open("%s/.stop"%self.dir,"w")
             f.write(" ")
             f.close()
+            time.sleep(1)
             need_to_start_analysis = (self.th != None and len(self.analysisQueue)>0)
             if self.th != None:
                 self.th.terminate()

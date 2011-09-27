@@ -9,7 +9,7 @@ import inspect
 import re
 #import codecs
 
-debug = False
+debug = True
 LOG_LEVEL = 4
 
 RED='\033[31m'

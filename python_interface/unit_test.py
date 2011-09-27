@@ -9,6 +9,8 @@ import shutil
 from diyabc import Diyabc
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from datetime import datetime
+from output import log
 
 class testDiyabc(unittest.TestCase):
     """
@@ -27,16 +29,27 @@ class testDiyabc(unittest.TestCase):
 
     def testAllClicks(self):
         app = QApplication(sys.argv)
-        diyabc = Diyabc(app)
+
+        dd = datetime.now()
+        logfile = os.path.expanduser("~/.diyabc/logs/test_%02d_%02d_%s-%02dh_%02dm-%s.log"%(dd.day,dd.month,dd.year,dd.hour,dd.minute,os.getpid()))
+        diyabc = Diyabc(app,logfile=logfile)
         diyabc.show()
+        # pour le dragNdrop des dossier projet
+        diyabc.setAcceptDrops(True)
+        # pour les logs dans un fichier et sur le terminal
+        # chaque TeeLogger remplace une sortie et écrit dans 
+        # le fichier qu'on lui donne
+        myOut = output.TeeLogger(logfile,"a",diyabc,True)
+        myErr = output.TeeLogger(logfile,"a",diyabc,False)
+        sys.stdout = myOut
+        sys.stderr = myErr
+        log(1,"\033[5;36m DIYABC launched \033[00m")
+
 
         # copie de sauvegarde du projet dans /tmp
         if os.path.exists(self.saveTestProjectDir): 
             shutil.rmtree(self.saveTestProjectDir)
         shutil.copytree(self.testProjectDir,self.saveTestProjectDir)
-
-        QTest.mouseClick(diyabc.ui.skipButton,Qt.LeftButton)
-        self.assertEqual(diyabc.ui.skipButton.isVisible(), False)
 
         self.assertEqual(diyabc.app, app)
 
@@ -165,11 +178,22 @@ class testDiyabc(unittest.TestCase):
     def testGeneral(self):
 
         app = QApplication(sys.argv)
-        diyabc = Diyabc(app)
-        diyabc.show()
 
-        QTest.mouseClick(diyabc.ui.skipButton,Qt.LeftButton)
-        self.assertEqual(diyabc.ui.skipButton.isVisible(), False)
+        dd = datetime.now()
+        logfile = os.path.expanduser("~/.diyabc/logs/test_%02d_%02d_%s-%02dh_%02dm-%s.log"%(dd.day,dd.month,dd.year,dd.hour,dd.minute,os.getpid()))
+        diyabc = Diyabc(app,logfile=logfile)
+        diyabc.show()
+        # pour le dragNdrop des dossier projet
+        diyabc.setAcceptDrops(True)
+        # pour les logs dans un fichier et sur le terminal
+        # chaque TeeLogger remplace une sortie et écrit dans 
+        # le fichier qu'on lui donne
+        myOut = output.TeeLogger(logfile,"a",diyabc,True)
+        myErr = output.TeeLogger(logfile,"a",diyabc,False)
+        sys.stdout = myOut
+        sys.stderr = myErr
+        log(1,"\033[5;36m DIYABC launched \033[00m")
+
         # test sur l'ouverture d'un projet existant
         self.tOpenExistingProject(diyabc,"/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test/ploop_2011_1_18-3/")
         # test sur l'ouverture d'un projet inexistant
