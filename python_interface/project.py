@@ -170,6 +170,7 @@ class Project(baseProject,formProject):
             # on démarre les analyses programmées
             if need_to_start_analysis:
                 self.nextAnalysisInQueue()
+            self.putRefTableSize()
 
     def stopAnalysis(self):
         if self.thAnalysis != None:
@@ -1430,9 +1431,13 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if self.gen_state_valid and self.hist_state_valid:
             self.setTabIcon(0,QIcon("docs/icons/ok.png"))
             self.ui.runReftableButton.setDisabled(False)
+            self.ui.stopReftableButton.setDisabled(False)
+            return True
         else:
             self.setTabIcon(0,QIcon("docs/icons/redcross.png"))
             self.ui.runReftableButton.setDisabled(True)
+            self.ui.stopReftableButton.setDisabled(True)
+            return False
 
     def lock(self):
         """ crée le fichier de verrouillage pour empêcher l'ouverture 

@@ -718,6 +718,10 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         QObject.connect(uniformParamRadio,SIGNAL("toggled(bool)"),self.toggleMeanSt)
         QObject.connect(logUniformRadio,SIGNAL("toggled(bool)"),self.toggleMeanSt)
 
+        # par defaut on coche "normal" pour déclencher le signal toggle si
+        # on coche ensuite unif ou logunif
+        normalRadio.setChecked(True)
+
         if type_param == "unique":
             setCondButton.hide()
         pref = self.parent.parent.preferences_win
@@ -1068,7 +1072,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                     l+=1
             self.majProjectGui()                
         else:
-            output.notify(self,"Error","Le répertoire du projet n'existe plus")
+            output.notify(self,"Error","The project directory does not exist anymore")
 
     def getNbParam(self):
         """ retourne le nombre de paramètres du modèle historique

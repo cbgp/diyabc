@@ -60,7 +60,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         groupBoxSampleSize.setSizePolicy(sizePolicy)
         groupBoxSampleSize.setTitle("")
         groupBoxSampleSize.setObjectName("groupBox_6")
-        groupBoxSampleSize.setMaximumSize(QtCore.QSize(120, 80))
+        groupBoxSampleSize.setMaximumSize(QtCore.QSize(130, 80))
         verticalLayout_2 = QtGui.QVBoxLayout(groupBoxSampleSize)
         verticalLayout_2.setObjectName("verticalLayout_2")
         verticalLayout_2.setContentsMargins(-1, 1, -1, 1)
@@ -158,7 +158,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         groupBox_8.setSizePolicy(sizePolicy)
         groupBox_8.setMinimumSize(QtCore.QSize(0, 26))
         groupBox_8.setMaximumSize(QtCore.QSize(16777215, 26))
-        groupBox_8.setObjectName("groupBox_8")
+        groupBox_8.setObjectName("sampleSizeBox")
         horizontalLayout_13 = QtGui.QHBoxLayout(groupBox_8)
         horizontalLayout_13.setAlignment(QtCore.Qt.AlignLeft)
         horizontalLayout_13.setObjectName("horizontalLayout_13")
@@ -269,4 +269,30 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
             output.notify(self,"Sample size values error","%s"%e)
             return False
         return True
+
+    def getConf(self):
+        result = "%s samples\n"%len(self.sampleSizeList)
+        for box in self.sampleSizeList:
+            nbf = box.findChild(QLineEdit,"fsizeEdit").text()
+            nbm = box.findChild(QLineEdit,"msizeEdit").text()
+            result += "%s %s\n"%(nbf,nbm)
+
+        result += "\n"
+        scTxt = str(self.scList[0].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()).strip()
+        result += "%s\n"%scTxt
+
+        for pbox in self.paramList:
+            pname = str(pbox.findChild(QLabel,"paramNameLabel").text())
+            info = self.param_info_dico[pname]
+            # recherche de la box du param
+            name = ""
+            i = 0
+            while i<len(self.paramList) and name != pname:
+                paramBox = self.paramList[i]
+                name = paramBox.findChild(QLabel,"paramNameLabel").text()                    
+                i+=1
+            result+= "\n%s %s"%(pname,info[0])
+
+
+
 

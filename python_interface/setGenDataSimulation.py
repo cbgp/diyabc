@@ -398,3 +398,5 @@ class SetGeneticDataSimulation(SetGeneticData):
         self.setMutationSeq_dico[box].setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
         self.setMutation(box)
 
+    def getConf(self):
+        return 'ma gen conf simulation'
