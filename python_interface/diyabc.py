@@ -480,16 +480,15 @@ class Diyabc(formDiyabc,baseDiyabc):
                output.notify(self,"Load error","\"%s\" is not a project directory"%dir)
         self.clearStatus()
 
-    def cloneCurrentProject(self,cloneBaseName=None,cloneDir=None):
+    def cloneCurrentProject(self,cloneName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
         demande le nom du clone puis le répertoire dans lequel mettre le clone du projet
         """ 
         self.saveCurrentProject()
-        cloneName = cloneBaseName
         current_project = self.ui.tabWidget.currentWidget()
         log(1,"attempting to clone the project : %s"%current_project.dir)
         ok = True
-        if cloneBaseName == None:
+        if cloneName == None or cloneDir == None:
             fileDial = QtGui.QFileDialog(self,"Select location of the clone project")
             fileDial.setLabelText(QtGui.QFileDialog.Accept,"Clone project")
             fileDial.setLabelText(QtGui.QFileDialog.FileName,"Clone project name")
@@ -506,10 +505,15 @@ class Diyabc(formDiyabc,baseDiyabc):
                 if path[-1] == "/":
                     path = path[:-1]
                 cloneName = path.split("/")[-1]
+                cloneDir = os.path.dirname(path)
+            else:
+                # on a eu un probleme inconnu, on a un path qui n'a pas de '/'
+                return
+
         if ok:
             if self.checkProjectName(cloneName):
                 # on vire le nom à la fin du path pour obtenir le dossier du clone
-                cloneDir = "/".join(path.split("/")[:-1])
+                #cloneDir = "/".join(path.split("/")[:-1])
                 if cloneDir != "" and os.path.exists(cloneDir):
                     if not self.isProjDir(cloneDir):
                         # name_YYYY_MM_DD-num le plus elevé
@@ -846,6 +850,7 @@ def main():
     sys.stdout = myOut
     sys.stderr = myErr
     log(1,"\033[5;36m DIYABC launched \033[00m")
+    output.logRotate(os.path.expanduser("~/.diyabc/logs/"),10)
     yop = ImportProjectThread()
     #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)
     sys.exit(app.exec_())

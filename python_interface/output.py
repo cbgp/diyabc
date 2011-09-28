@@ -7,9 +7,11 @@ import os,sys
 from datetime import datetime 
 import inspect
 import re
+import time
 #import codecs
 
-debug = False
+# mettre à vrai pour ne pas afficher les popups
+debug = True
 LOG_LEVEL = 4
 
 RED='\033[31m'
@@ -41,6 +43,32 @@ def centerHeader(name,nbChar):
         else:
             spAft = spBef
         return spBef+name+spAft
+
+def sizedirectory(path):
+    size = 0
+    for root, dirs, files in os.walk(path):
+        for fic in files:
+            size += os.path.getsize(os.path.join(root, fic))
+    return size
+
+
+def logRotate(logFolder,nbDaysOld):
+    """ fonction qui nettoie le dossier logFolder de 
+    tous les fichiers plus vieux que nbDaysold
+    SSI le dossier de logs est plus lourd que 50Mo
+    """
+    logSize = sizedirectory(logFolder)
+    if (logSize / (1024*1024)) > 50:
+        log(2,"Logrotate process launched")
+        ddNow = datetime.now()
+        for root,dirs,files in os.walk(os.path.expanduser("~/.diyabc/logs/")):
+            for name in files:
+                dateLastModif = time.gmtime(os.stat(os.path.join(root, name)).st_mtime)
+                ddMod = datetime(dateLastModif.tm_year,dateLastModif.tm_mon,dateLastModif.tm_mday)
+                delta = ddNow - ddMod
+                if delta.days > nbDaysOld :
+                    log(4,"Deleting %s because it is %s days old"%(os.path.join(root, name),delta.days))
+                    os.remove(os.path.join(root, name))
 
 class TeeLogger(object):
     """ Classe qui remplace stdout et stderr pour logger sur 
