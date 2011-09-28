@@ -71,13 +71,16 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         # ouverture des projets donnés en paramètre au lancement
         if projects != None and len(projects) > 0:
-            self.switchToMainStack()
+            #self.switchToMainStack()
             for projDirName in projects:
                 self.openProject(projDirName)
 
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
+
+        # pour le dragNdrop des dossier projet
+        self.setAcceptDrops(True)
 
         #self.setStyleSheet("background-image: url(docs/accueil_pictures/greens.png);")
         #self.stackedWidget.setStyleSheet("background-image: url();")
@@ -816,6 +819,31 @@ class ImportProjectThread(Thread):
         from simulationProject import SimulationProject
         #log(4,"Pre-loading of Project class FINISHED")
 
+import cmd
+
+class CmdPrompt(cmd.Cmd):
+    """ prompt qui execute le code python passé par l'utilisateur
+    à l'aide de la commande do
+    """
+    def do_do(self,line):
+        exec line
+    
+    def do_EOF(self, line):
+        return True
+
+class cmdThread(Thread):
+    """ Thread de lancement du prompt
+    """
+    def __init__(self,diy):
+        super(cmdThread,self).__init__()
+        self.diy = diy
+        self.start()
+    def run(self):
+        plop = CmdPrompt()
+        plop.diy=self.diy
+        plop.cmdloop()
+
+
 def main():
     if not os.path.exists(os.path.expanduser("~/.diyabc/")):
         # c'est sans doute la première fois qu'on lance diyabc
@@ -827,21 +855,28 @@ def main():
             p = subprocess.Popen(cmd_args_list) 
 
     nargv = sys.argv
+    # getting cmd option
+    cmd=False
+    if "-cmd" in nargv:
+        nargv.remove("-cmd")
+        cmd=True
     projects_to_open = nargv[1:]
+
     #nargv.extend(["-title","DIYABC v%s"%VERSION])
-    # determination du fichier de log
+    # determine le nom du fichier de log
     if not os.path.exists(os.path.expanduser("~/.diyabc/")):
         os.mkdir(os.path.expanduser("~/.diyabc/"))
     if not os.path.exists(os.path.expanduser("~/.diyabc/logs/")):
         os.mkdir(os.path.expanduser("~/.diyabc/logs/"))
     dd = datetime.now()
     logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%02dh_%02dm-%s.log"%(dd.day,dd.month,dd.year,dd.hour,dd.minute,os.getpid()))
+
+    # instanciation des objets principaux
     app = QApplication(nargv)
     myapp = Diyabc(app,projects=projects_to_open,logfile=logfile)
     myapp.setWindowTitle("DIYABC %s"%VERSION)
     myapp.show()
-    # pour le dragNdrop des dossier projet
-    myapp.setAcceptDrops(True)
+
     # pour les logs dans un fichier et sur le terminal
     # chaque TeeLogger remplace une sortie et écrit dans 
     # le fichier qu'on lui donne
@@ -850,9 +885,17 @@ def main():
     sys.stdout = myOut
     sys.stderr = myErr
     log(1,"\033[5;36m DIYABC launched \033[00m")
-    output.logRotate(os.path.expanduser("~/.diyabc/logs/"),10)
+
+    # effacement des logs de plus de N jours si le dossier de logs dépasse X Mo
+    output.logRotate(os.path.expanduser("~/.diyabc/logs/"),10,50)
+
+    # création du prompt
+    if cmd:
+        cmdT = cmdThread(myapp)
+    # parallel import of project and simulationProject classes
     yop = ImportProjectThread()
-    #QTest.mouseClick(myapp.ui.skipWelcomeButton,Qt.LeftButton)
+
+    # lancement de la boucle Qt
     sys.exit(app.exec_())
 
 if __name__ == "__main__":

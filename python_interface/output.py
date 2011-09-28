@@ -52,13 +52,13 @@ def sizedirectory(path):
     return size
 
 
-def logRotate(logFolder,nbDaysOld):
+def logRotate(logFolder,nbDaysOld,sizeThreshold):
     """ fonction qui nettoie le dossier logFolder de 
-    tous les fichiers plus vieux que nbDaysold
-    SSI le dossier de logs est plus lourd que 50Mo
+    tous les fichiers plus vieux que nbDaysOld
+    SSI le dossier de logs est plus lourd que sizeThreshold Mo
     """
     logSize = sizedirectory(logFolder)
-    if (logSize / (1024*1024)) > 50:
+    if (logSize / (1024*1024)) > sizeThreshold:
         log(2,"Logrotate process launched")
         ddNow = datetime.now()
         for root,dirs,files in os.walk(os.path.expanduser("~/.diyabc/logs/")):
