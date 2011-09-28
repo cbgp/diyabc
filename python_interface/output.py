@@ -9,7 +9,7 @@ import inspect
 import re
 #import codecs
 
-debug = True
+debug = False
 LOG_LEVEL = 4
 
 RED='\033[31m'
@@ -55,7 +55,7 @@ class TeeLogger(object):
         et remplace stdout
         """
         self.app=app
-        self.logRotate(name)
+        #self.logRotate(name)
 
         #self.file = open(name, mode)
         self.filename = name 

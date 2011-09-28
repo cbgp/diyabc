@@ -65,7 +65,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         self.setWindowIcon(QIcon("docs/accueil_pictures/coccicon.png"))
 
-        self.illegalProjectNameCharacters = ['_','-',"'",'"','.','/']
+        self.illegalProjectNameCharacters = ['_','-',"'",'"','.']
 
         self.documentator = Documentator("docs/documentation.xml",self)
 
@@ -600,6 +600,12 @@ class Diyabc(formDiyabc,baseDiyabc):
                 name = path.split("/")[-1]
         else:
             name = path.split("/")[-1]
+
+        # verification de l'existence du dossier dans lequel le dossier du projet 
+        # va être créé
+        if not os.path.exists(os.path.dirname(path)):
+            output.notify(self,"Creation impossible","Directory %s does not exist.\nImpossible to create the project in %s"%(os.path.dirname(path),path))
+            return
 
         if ok:
             log(1,'The name of the new project will be %s\nIt will be saved in %s'%(name,path))
