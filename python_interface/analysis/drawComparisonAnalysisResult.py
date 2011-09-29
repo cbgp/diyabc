@@ -271,6 +271,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
             painter.fillRect(0, 0, largeur*(size.width()), longueur*(size.height()), Qt.white)
         else:
             self.pic_result = QSvgGenerator()
+            self.pic_result.setViewBox(QRect(0,0,(largeur*(size.width()))+50,(longueur*(size.height()))+50))
             #self.pic_result.setSize(QSize(largeur*500, longueur*450));
             #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
             self.pic_result.setFileName("%sall.svg"%pic_whole_path)

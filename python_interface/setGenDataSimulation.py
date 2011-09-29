@@ -383,7 +383,7 @@ class SetGeneticDataSimulation(SetGeneticData):
                 self.majProjectGui(ss=self.getNbSumStats())
 
     def getConf(self):
-        result = "loci description (%s)"%self.tableWidget.rowCount()
+        result = "loci description (%s)\n"%self.tableWidget.rowCount()
         for i in range(self.tableWidget.rowCount()):
             name = str(self.tableWidget.item(i,0).text())
             type = name[:3]

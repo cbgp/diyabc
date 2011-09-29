@@ -187,6 +187,7 @@ class Project(baseProject,formProject):
                     break
             the_frame.findChild(QPushButton,"analysisButton").setText("Re-launch")
             the_frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #EFB1B3")
+            the_frame.findChild(QPushButton,"analysisStopButton").hide()
 
             # on met à jour les queue numbers
             for the_frame in self.dicoFrameAnalysis.keys():
@@ -808,6 +809,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if status == "finished":
             analysisButton.setStyleSheet("background-color: #79D8FF")
         horizontalLayout_4.addWidget(analysisButton)
+        analysisStopButton = QtGui.QPushButton(QIcon("docs/icons/stop.png"),"",frame_9)
+        analysisStopButton.setObjectName("analysisStopButton")
+        analysisStopButton.setMinimumSize(QtCore.QSize(20, 20))
+        analysisStopButton.setMaximumSize(QtCore.QSize(20, 20))
+        horizontalLayout_4.addWidget(analysisStopButton)
+        analysisStopButton.hide()
         horizontalLayout_4.setContentsMargins(-1, 1, -1, 1)
         self.ui.verticalLayout_9.addWidget(frame_9)
 
@@ -817,6 +824,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         #QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
         QObject.connect(analysisButton,SIGNAL("clicked()"),self.tryLaunchViewAnalysis)
         QObject.connect(analysisParamsButton,SIGNAL("clicked()"),self.viewAnalysisParameters)
+        QObject.connect(analysisStopButton,SIGNAL("clicked()"),self.stopAnalysis)
 
     def removeAnalysis(self):
         frame = self.sender().parent()
@@ -907,6 +915,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     break
             the_frame.findChild(QPushButton,"analysisButton").setText("Running")
             the_frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #6DD963")
+            the_frame.findChild(QPushButton,"analysisStopButton").show()
             analysis.status = "running"
 
             log(1,"Launching analysis '%s'"%analysis.name)
@@ -945,6 +954,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 break
         frame.findChild(QPushButton,"analysisButton").setText("Re-launch")
         frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #EFB1B3")
+        frame.findChild(QPushButton,"analysisStopButton").hide()
         self.thAnalysis.killProcess()
         self.thAnalysis = None
 
@@ -972,6 +982,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             log(3,"Terminating analysis because progression indicated 100 %% (%s)"%prog)
             frame.findChild(QPushButton,"analysisButton").setText("View results")
             frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #79D8FF")
+            frame.findChild(QPushButton,"analysisStopButton").hide()
             self.terminateAnalysis()
 
     def terminateAnalysis(self):

@@ -273,13 +273,13 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         return True
 
     def getConf(self):
-        result = "%s samples\n"%len(self.sampleSizeList)
+        result = "data\n%s samples\n"%len(self.sampleSizeList)
         for box in self.sampleSizeList:
             nbf = box.findChild(QLineEdit,"fsizeEdit").text()
             nbm = box.findChild(QLineEdit,"msizeEdit").text()
             result += "%s %s\n"%(nbf,nbm)
 
-        result += "\n"
+        result += "\nscenario\n"
         scTxt = str(self.scList[0].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()).strip()
         result += "%s\n"%scTxt
 
