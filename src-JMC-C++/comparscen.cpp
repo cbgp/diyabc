@@ -538,7 +538,7 @@ matligneC *matA;
               }
         duree=walltime(&debut);time_matC += duree;
             err=inverse(nmodnco,cmatC,cmatB);
-			if (err>0) {cout<<"probleme lors de l'inversion de la matrice cmatC err="<<err<<"\n";break;}
+			if (err>0) {cout<<"\nprobleme lors de l'inversion de la matrice cmatC err="<<err<<"\n";break;}
             for (i=0;i<nmodnco;i++) {cdeltabeta[i]=0.0;for (j=0;j<nmodnco;j++) cdeltabeta[i]+=cmatB[i][j]*cmatYP[j];}
             for (i=0;i<nmodnco;i++) {if (cdeltabeta[i] != cdeltabeta[i]) err=10;}
 			if (err==10) {cout<<"une valeur nan dans cdeltabeta"<<"\n";exit(1);}
