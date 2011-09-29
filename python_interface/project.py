@@ -809,12 +809,25 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if status == "finished":
             analysisButton.setStyleSheet("background-color: #79D8FF")
         horizontalLayout_4.addWidget(analysisButton)
+
+        frameStop = QFrame(frame_9)
+        frameStop.setFrameShape(QtGui.QFrame.NoFrame)
+        frameStop.setObjectName("frameStop")
+        frameStop.setMinimumSize(QtCore.QSize(30, 25))
+        frameStop.setMaximumSize(QtCore.QSize(30, 25))
+        horizontalLayout_stop = QtGui.QHBoxLayout(frameStop)
+        horizontalLayout_stop.setObjectName("horizontalLayout_stop")
+        horizontalLayout_stop.setContentsMargins(-1, 1, -1, 1)
+
         analysisStopButton = QtGui.QPushButton(QIcon("docs/icons/stop.png"),"",frame_9)
         analysisStopButton.setObjectName("analysisStopButton")
         analysisStopButton.setMinimumSize(QtCore.QSize(20, 20))
         analysisStopButton.setMaximumSize(QtCore.QSize(20, 20))
-        horizontalLayout_4.addWidget(analysisStopButton)
+        horizontalLayout_stop.addWidget(analysisStopButton)
         analysisStopButton.hide()
+
+        horizontalLayout_4.addWidget(frameStop)
+
         horizontalLayout_4.setContentsMargins(-1, 1, -1, 1)
         self.ui.verticalLayout_9.addWidget(frame_9)
 
