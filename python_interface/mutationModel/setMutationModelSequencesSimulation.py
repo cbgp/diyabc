@@ -41,11 +41,11 @@ class SetMutationModelSequencesSimulation(formSetMutationModelSequencesFixed,bas
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
         self.ui.mmrMinEdit.setText("1.00E-9")
-        self.ui.ilmrMinEdit.setText("2")
+        #self.ui.ilmrMinEdit.setText("2")
         self.ui.mc1MinEdit.setText("10")
-        self.ui.ilc1MinEdit.setText("2")
+        #self.ui.ilc1MinEdit.setText("2")
         self.ui.mc2MinEdit.setText("10")
-        self.ui.ilc2MinEdit.setText("2")
+        #self.ui.ilc2MinEdit.setText("2")
 
         self.field_names_dico = {
         self.ui.mmrMinEdit:"Min of mean mutation rate",
