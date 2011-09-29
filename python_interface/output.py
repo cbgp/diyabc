@@ -11,7 +11,7 @@ import time
 #import codecs
 
 # mettre à vrai pour ne pas afficher les popups
-debug = True
+debug = False
 LOG_LEVEL = 4
 
 RED='\033[31m'

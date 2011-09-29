@@ -175,7 +175,28 @@ class Project(baseProject,formProject):
 
     def stopAnalysis(self):
         if self.thAnalysis != None:
+            analysis = self.thAnalysis.analysis
+            analysis.status = "new"
+            self.thAnalysis.terminate()
             self.thAnalysis.killProcess()
+            self.thAnalysis = None
+
+            # on met à jour l'aspect graphique
+            for the_frame in self.dicoFrameAnalysis.keys():
+                if analysis == self.dicoFrameAnalysis[the_frame]:
+                    break
+            the_frame.findChild(QPushButton,"analysisButton").setText("Re-launch")
+            the_frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #EFB1B3")
+
+            # on met à jour les queue numbers
+            for the_frame in self.dicoFrameAnalysis.keys():
+                anatmp = self.dicoFrameAnalysis[the_frame]
+                if anatmp in self.analysisQueue:
+                    index = self.analysisQueue.index(anatmp)
+                    the_frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
+                    the_frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #F4992B")
+
+            self.nextAnalysisInQueue()
 
     def viewAnalysisResult(self,analysis=None):
         """ en fonction du type d'analyse, met en forme les résultats
@@ -784,6 +805,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         analysisButton.setObjectName("analysisButton")
         analysisButton.setMinimumSize(QtCore.QSize(90, 0))
         analysisButton.setMaximumSize(QtCore.QSize(90, 16777215))
+        if status == "finished":
+            analysisButton.setStyleSheet("background-color: #79D8FF")
         horizontalLayout_4.addWidget(analysisButton)
         horizontalLayout_4.setContentsMargins(-1, 1, -1, 1)
         self.ui.verticalLayout_9.addWidget(frame_9)
@@ -821,6 +844,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if anatmp in self.analysisQueue:
                 index = self.analysisQueue.index(anatmp)
                 the_frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
+                the_frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #F4992B")
 
         del self.dicoFrameAnalysis[frame]
         self.ui.verticalLayout_9.removeWidget(frame)
@@ -852,8 +876,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if analysis.status == "finished":
             self.viewAnalysisResult(analysis)
         elif analysis.status == "running":
-            # TODO on la stoppe
-            pass        
+            # on la stoppe
+            self.stopAnalysis()
         elif analysis.status == "queued":
             output.notify(self,"Action impossible","This analysis is already queued")
         else:
@@ -868,6 +892,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 index = self.analysisQueue.index(analysis)
                 log(3,"I try to queue %s at index %s"%(analysis.name,index))
                 frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
+                frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #F4992B")
                 analysis.status = "queued"
 
     def launchAnalysis(self,analysis):            
@@ -881,6 +906,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     the_frame = frame
                     break
             the_frame.findChild(QPushButton,"analysisButton").setText("Running")
+            the_frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #6DD963")
             analysis.status = "running"
 
             log(1,"Launching analysis '%s'"%analysis.name)
@@ -901,6 +927,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 if anatmp in self.analysisQueue:
                     index = self.analysisQueue.index(anatmp)
                     frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
+                    frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #F4992B")
 
     def analysisProblem(self):
         output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,self.thAnalysis.problem))
@@ -916,7 +943,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
                 frame = fr
                 break
-        frame.findChild(QPushButton,"analysisButton").setText("re-launch")
+        frame.findChild(QPushButton,"analysisButton").setText("Re-launch")
+        frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #EFB1B3")
         self.thAnalysis.killProcess()
         self.thAnalysis = None
 
@@ -941,8 +969,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame.findChild(QProgressBar,"analysisStatusBar").setValue(int(prog))
 
         if prog >= 100.0:
-            log(3,"Terminating analysis because progression indicated 100 %%")
+            log(3,"Terminating analysis because progression indicated 100 %% (%s)"%prog)
             frame.findChild(QPushButton,"analysisButton").setText("View results")
+            frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #79D8FF")
             self.terminateAnalysis()
 
     def terminateAnalysis(self):
@@ -1693,7 +1722,7 @@ class AnalysisThread(QThread):
         """ evite de manipuler les objets Qt dans un thread non principal
         """
         self.loglvl = lvl
-        self.logmsg = msg
+        self.logmsg = msg.replace(u'\xb5',u'u')
         self.emit(SIGNAL("analysisLog"))
 
 
@@ -1768,7 +1797,7 @@ class AnalysisThread(QThread):
             outfile = "%s/pre-ev.out"%self.parent.dir
             f = open(outfile,"w")
             p = subprocess.call(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
-            f.close()
+            #f.close()
             #print "call ok"
             self.log(3,"Call procedure success")
 
@@ -1805,13 +1834,17 @@ class AnalysisThread(QThread):
                 #data= g.read()
                 #print "data:%s"%data
                 #print "poll:%s"%p.poll()
+                outlines = g.readlines()
+                probOut = ""
+                if len(outlines) > 0:
+                    probOut = outlines[-1]
                 g.close()
                 # on attend un peu pour etre sur que l'ecriture de la progression a été effectué
                 time.sleep(2)
                 self.updateProgress()
                 if self.progress < 100:
                     redProblem = self.readProblem()
-                    self.problem = "Analysis program exited before the end of the analysis (%s%%)\n%s"%(self.progress,redProblem)
+                    self.problem = "Analysis program exited before the end of the analysis (%s%%)\n%s\n%s"%(self.progress,redProblem,probOut)
                     self.emit(SIGNAL("analysisProblem"))
                     return
             time.sleep(2)
