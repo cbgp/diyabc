@@ -240,6 +240,7 @@ char *nomficonfresult;
         for (int p=0;p<ntest;p++) {
             clock_zero=0.0;debut=walltime(&clock_zero);
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
+			cout<<"jeu test "<<p+1<<"\n";
             nstatOK = rt.cal_varstat();
             rt.cal_dist(nrec,nsel,stat_obs);
             //cout<<"apres cal_dist\n";

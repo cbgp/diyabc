@@ -171,6 +171,11 @@ int inverse(int n, long double **A, long double **C)
         {for (i=0;i<n;i++)
             {for (j=0;j<n;j++) C[i][j]=T[i][j+n];}
         }
+    if (err==4) {
+		std::cout<<"k+1="<<k+1<<"      n="<<n<<"\n";
+		for  (i=k+1;i<n;i++) std::cout<<"T["<<i<<"]["<<k<<"]="<<T[i][k]<<"\n";
+		exit(1);
+	}
     for (i=0;i<n;i++) delete[] T[i];delete[] T;
     return err; 
 }

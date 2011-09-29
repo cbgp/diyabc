@@ -177,6 +177,7 @@ matligneC *matA;
 
     void save_comp_logistic(int nlogreg,int nselr,posteriorscenC** postscenlog,char *path, char *ident) {
         int nts;
+		double som;
         char *nomfiparstat;
         nomfiparstat = new char[strlen(path)+strlen(ident)+20];
         strcpy(nomfiparstat,path);
@@ -188,10 +189,13 @@ matligneC *matA;
         printf("     %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) printf("          scenario %d       ",rt.scenchoisi[i]);printf("\n");
         fprintf(f1,"   %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"          scenario %d       ",rt.scenchoisi[i]);fprintf(f1,"\n");
         for (int i=0;i<nlogreg;i++) {
-            nts = (nselr/nlogreg)*(i+1);
-            printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
-            fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");
-        }
+			som=0.0;for (int j=0;j<rt.nscenchoisi;j++) som+=postscenlog[i][j].x;
+			if (fabs(som-1.0)<0.001*rt.nscenchoisi) {
+				nts = (nselr/nlogreg)*(i+1);
+				printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
+				fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");
+			}
+		}
         fclose(f1);
         for (int i=0;i<nlogreg;i++) delete []postscenlog[i];
         delete []postscenlog;
@@ -240,6 +244,11 @@ matligneC *matA;
             }
             x=rt.enrsel[i].dist/delta;
             cvecW[i]=(1.5/delta)*(1.0-x*x);
+			if (cvecW[i] != cvecW[i]) {
+				cout<<"erreur NAN dans rempli_mat0 \n";
+				cout<<"delta="<<delta<<"    rt.enrsel["<<i<<"].dist="<<rt.enrsel[i].dist<<"   x="<<x<<"\n";
+			    exit(1);
+			}
             som = som + cvecW[i];
         }
         //cout <<"\n cmatX0:\n";
@@ -287,7 +296,14 @@ matligneC *matA;
         for (i=0;i<nmodel*(nco+1);i++) cmatYP[i]=0.0;
         for (imod=0;imod<nmodel;imod++){
             for (j=0;j<nco+1;j++){
-                for (i=0;i<nli;i++) cmatYP[imod*(nco+1)+j]+=(cmatY[i][imod]-cmatP[i][imod])*cmatX[i][j]*cvecW[i];
+                for (i=0;i<nli;i++) {
+					cmatYP[imod*(nco+1)+j]+=(cmatY[i][imod]-cmatP[i][imod])*cmatX[i][j]*cvecW[i];
+					if (cmatYP[imod*(nco+1)+j] != cmatYP[imod*(nco+1)+j]) {
+						cout <<"probleme NAN dans cmatYP pour i="<<i<<" et j="<<j<<"\n";
+						cout<<" cmatY="<<cmatY[i][imod]<<"   cmatP="<<cmatP[i][imod]<<"   cmatX="<<cmatX[i][j]<<"   cvecW="<<cvecW[i]<<"\n";
+					}
+				  
+				}
             }
         }
     }
@@ -469,7 +485,7 @@ matligneC *matA;
     int polytom_logistic_regression(int nli, int nco, long double **cmatX0, long double *vecY, long double *cvecW, double *px, double *pxi, double *pxs)
     {
         double clock_zero;
-        int nmodel=0;
+        int err,nmodel=0;
         double debut,duree,de1,du1,sx,sx2;
         int *numod;
         for (int i=1;i<nli;i++) {if (vecY[i]>1.0*nmodel) nmodel=vecY[i]+0.1;}
@@ -521,9 +537,12 @@ matligneC *matA;
                 }
               }
         duree=walltime(&debut);time_matC += duree;
-            inverse(nmodnco,cmatC,cmatB);
+            err=inverse(nmodnco,cmatC,cmatB);
+			if (err>0) {cout<<"probleme lors de l'inversion de la matrice cmatC err="<<err<<"\n";break;}
             for (i=0;i<nmodnco;i++) {cdeltabeta[i]=0.0;for (j=0;j<nmodnco;j++) cdeltabeta[i]+=cmatB[i][j]*cmatYP[j];}
-            for (i=0;i<nmodnco;i++) cbeta[i]=cbeta0[i]+cdeltabeta[i];
+            for (i=0;i<nmodnco;i++) {if (cdeltabeta[i] != cdeltabeta[i]) err=10;}
+			if (err==10) {cout<<"une valeur nan dans cdeltabeta"<<"\n";exit(1);}
+			for (i=0;i<nmodnco;i++) cbeta[i]=cbeta0[i]+cdeltabeta[i];
             remplimatriceYP(nli,nco,nmodel,cmatP,cmatYP,cbeta,cmatX,cvecW,cmatY,csmatP);
             caloglik=false;
             if (rep==1)
@@ -574,6 +593,7 @@ matligneC *matA;
             //}
 //////////////////////////
             }
+            if (err>0) return err;
         cout<<"\n";
         for (imod=0;imod<nmodel+1;imod++)
                 {pxi[imod]=px[imod]-1.96*csd[imod];
@@ -586,12 +606,13 @@ matligneC *matA;
         for (i=0;i<nmodel+1;i++) {cout<<"  ";cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<px[i];}
         cout<<"\n";
         if ((rep==2)and(sx2>0.9999)) exit(1);
+		return err;
    }
 
     posteriorscenC* call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil) {
         posteriorscenC *postlog;
         bool trouve;
-        int ntt,j,dtt,k,kk;
+        int ntt,j,dtt,k,kk,err;
         double som, *px,*pxi,*pxs,somw,duree,debut,clock_zero;
         clock_zero=0.0;debut=walltime(&clock_zero);
         postlog = new posteriorscenC[rt.nscenchoisi];
@@ -599,54 +620,71 @@ matligneC *matA;
               if (i==0) {postlog[i].x=1.0;postlog[i].inf=1.0;postlog[i].sup=1.0;}
               else      {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}
         }
-        rempli_mat0(nts,stat_obs);
-        //cout<<"call_polytom_logistic_regression 0  nts="<<nts<<"   nscenutil="<<nscenutil<<"\n";
-        //for (j=0;j<nscenutil;j++) cout<<scenchoisiutil[j]<<"\n";
-        ntt=nts;
-        for (int i=0;i<nts;i++)  {
-            //cout<<"rt.enrsel["<<i<<"].numscen="<<rt.enrsel[i].numscen<<"\n";
-            trouve=false;
-            for (j=0;j<nscenutil;j++) {trouve=(scenchoisiutil[j]==rt.enrsel[i].numscen);if (trouve) break;}
-            if (trouve) vecY[i]=j;
-            else {vecY[i]=-1;ntt--;}
-        }
-        //cout<<"call_polytom_logistic_regression 1\n";
-        if (ntt<=nts) {
-            for (int i=0;i<nts;i++) matA[i].x = new double[nstatOKsel+2];
-            kk=0;
-            for (int k=0;k<nscenutil;k++) {
-                for (int i=0;i<nts;i++) {
-                    if (vecY[i]==k) {
-                        matA[kk].x[0]=(double)vecY[i];
-                        matA[kk].x[1]= cvecW[i];
-                        for (int j=0;j<nstatOKsel;j++) matA[kk].x[2+j] = cmatX0[i][j];
-                        kk++;
-                    }
-                }
-            }
-            for (int i=0;i<ntt;i++) {
-                vecYY[i]=matA[i].x[0];
-                cvecW[i]=matA[i].x[1];
-                for (int j=0;j<nstatOKsel;j++) cmatX0[i][j]=matA[i].x[j+2];
-            }
-        }
-        //cout<<"call_polytom_logistic_regression 2\n";
-        som=0.0;for (int i=0;i<ntt;i++) som += cvecW[i];
-        for (int i=0;i<ntt;i++) cvecW[i] = cvecW[i]/som*(double)ntt;
-        px = new double[rt.nscenchoisi];pxi = new double[rt.nscenchoisi];pxs = new double[rt.nscenchoisi];
-        polytom_logistic_regression(nts, nstatOKsel, cmatX0, vecYY, cvecW, px, pxi, pxs);
-        if (nscenutil==rt.nscenchoisi) for (int i=0;i<nscenutil;i++) {postlog[i].x=px[i];postlog[i].inf=pxi[i];postlog[i].sup=pxs[i];}
-        else {
-            for (int i=0;i<rt.nscenchoisi;i++) {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}
-            for  (int i=0;i<nscenutil;i++)  {
-                kk=0;
-                while (scenchoisiutil[i]!=rt.scenchoisi[kk]) kk++;
-                postlog[kk].x=px[i];postlog[kk].inf=pxi[i];postlog[kk].sup=pxs[i];
-            }
-        }
-        delete [] px; delete []pxi; delete []pxs;
-        duree=walltime(&debut);time_call += duree;
-        //cout<<"call_polytom_logistic_regression 3\n";
+        if (rt.enrsel[nts-1].dist>0.0) {
+			rempli_mat0(nts,stat_obs);
+			//cout<<"call_polytom_logistic_regression 0  nts="<<nts<<"   nscenutil="<<nscenutil<<"\n";
+			//for (j=0;j<nscenutil;j++) cout<<scenchoisiutil[j]<<"\n";
+			ntt=nts;
+			for (int i=0;i<nts;i++)  {
+				//cout<<"rt.enrsel["<<i<<"].numscen="<<rt.enrsel[i].numscen<<"\n";
+				trouve=false;
+				for (j=0;j<nscenutil;j++) {trouve=(scenchoisiutil[j]==rt.enrsel[i].numscen);if (trouve) break;}
+				if (trouve) vecY[i]=j;
+				else {vecY[i]=-1;ntt--;}
+			}
+			//cout<<"call_polytom_logistic_regression 1\n";
+			if (ntt<=nts) {
+				for (int i=0;i<nts;i++) matA[i].x = new double[nstatOKsel+2];
+				kk=0;
+				for (int k=0;k<nscenutil;k++) {
+					for (int i=0;i<nts;i++) {
+						if (vecY[i]==k) {
+							matA[kk].x[0]=(double)vecY[i];
+							matA[kk].x[1]= cvecW[i];
+							for (int j=0;j<nstatOKsel;j++) matA[kk].x[2+j] = cmatX0[i][j];
+							kk++;
+						}
+					}
+				}
+				for (int i=0;i<ntt;i++) {
+					vecYY[i]=matA[i].x[0];
+					cvecW[i]=matA[i].x[1];
+					for (int j=0;j<nstatOKsel;j++) cmatX0[i][j]=matA[i].x[j+2];
+				}
+			}
+			//cout<<"call_polytom_logistic_regression 2\n";
+			som=0.0;for (int i=0;i<ntt;i++) som += cvecW[i];
+			for (int i=0;i<ntt;i++) cvecW[i] = cvecW[i]/som*(double)ntt;
+			px = new double[rt.nscenchoisi];pxi = new double[rt.nscenchoisi];pxs = new double[rt.nscenchoisi];
+			err = polytom_logistic_regression(nts, nstatOKsel, cmatX0, vecYY, cvecW, px, pxi, pxs);
+			if (err>0) {
+				for (int i=0;i<nscenutil;i++) {postlog[i].x=-1.0;postlog[i].inf=-1.0;postlog[i].sup=-1.0;}
+			  
+			} else {
+				if (nscenutil==rt.nscenchoisi) for (int i=0;i<nscenutil;i++) {postlog[i].x=px[i];postlog[i].inf=pxi[i];postlog[i].sup=pxs[i];}
+				else {
+					for (int i=0;i<rt.nscenchoisi;i++) {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}
+					for  (int i=0;i<nscenutil;i++)  {
+						kk=0;
+						while (scenchoisiutil[i]!=rt.scenchoisi[kk]) kk++;
+						postlog[kk].x=px[i];postlog[kk].inf=pxi[i];postlog[kk].sup=pxs[i];
+					}
+				}
+			}
+			delete [] px; delete []pxi; delete []pxs;
+			duree=walltime(&debut);time_call += duree;
+			//cout<<"call_polytom_logistic_regression 3\n";
+		} else {
+		    double d,a=1.0/(double)nts;
+			for (int i=0;i<rt.nscenchoisi;i++) {
+				postlog[i].x=0.0;
+				for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postlog[i].x +=a;
+                if ((fabs(postlog[i].x)<0.00001)or(fabs(1.0-postlog[i].x)<0.00001)) d=0.0;
+                else d=1.96*sqrt(postlog[i].x*(1.0-postlog[i].x)/(double)nts);
+                 postlog[i].inf =postlog[i].x-d;if(postlog[i].inf<0.0)postlog[i].inf=0.0;
+                 postlog[i].sup =postlog[i].x+d;if(postlog[i].sup>1.0)postlog[i].sup=1.0;
+			}
+		}
         return postlog;
     }
 

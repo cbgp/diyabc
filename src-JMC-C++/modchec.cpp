@@ -30,6 +30,7 @@ using namespace std;
 extern ParticleSetC ps;
 extern enregC* enreg;
 extern int nenr;
+extern char  *progressfilename;
 
 double **ssphistar,**ssref;
 
@@ -257,7 +258,6 @@ double **ssphistar,**ssref;
     }
 
     void domodchec(char *options,int seed){
-        char  *progressfilename;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos,newsspart,npv,nphistarOK,nss,nsr,newrefpart,*numscen,nparamax,bidon;
         string opt,*ss,s,*ss1,s0,s1,snewstat;

@@ -84,6 +84,15 @@ int readheaders() {
 }
 
 /**
+* lecture du fichier header.txt, calcul des stat_obs et lecture de l'entête de reftable.bin'
+*/
+int readheadersim() {
+    int k;
+	header.readHeader(headerfilename);
+	return k;
+}
+
+/**
 * programme principal : lecture et interprétation des options et lancement des calculs choisis
 */
 
@@ -290,7 +299,6 @@ int main(int argc, char *argv[]){
      if (not flags) seed=time(NULL);
      if (num_threads>0) omp_set_num_threads(num_threads);
 	switch (action) {
-
       case 'r' :   k=readheaders();
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"   ";fflush(stdin);
                    if (k==1) {
@@ -372,8 +380,7 @@ int main(int argc, char *argv[]){
                   doconf(confpar,seed);
                   break;
 
-       case 'k'  : k=readheaders();
-                  if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
+       case 'k'  : k=readheadersim();
                   dosimfile(simfpar,seed);
                   break;
 
