@@ -31,21 +31,23 @@ class SetGeneticDataSimulation(SetGeneticData):
     def fillLocusTable(self,dico):
         self.tableWidget.clearContents()
         tabindex = 0
-        for loctype in dico.keys():
-            if loctype[0] == 'm':
-                mainType = 'M'
-            else:
-                mainType = 'S'
-            for i in range(dico[loctype]):
-                self.addRow("%s_%s"%(loctype,i+1),mainType)
-                if mainType == 'S':
-                    self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,4,QTableWidgetItem('1000'))
-                else:
-                    self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,4,QTableWidgetItem(''))
-                    self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).flags() & ~Qt.ItemIsEditable)
-                self.dico_num_and_numgroup_locus["%s_%s"%(loctype,i+1)] = [tabindex+1,0]
-                self.nbLocusGui+=1
-                tabindex += 1
+        for beg in ["ma","mh","mx","my","mm","sa","sh","sx","sy","sm"]:
+            for loctype in dico.keys():
+                if loctype[:2] == beg:
+                    if loctype[0] == 'm':
+                        mainType = 'M'
+                    else:
+                        mainType = 'S'
+                    for i in range(dico[loctype]):
+                        self.addRow("%s_%s"%(loctype,i+1),mainType)
+                        if mainType == 'S':
+                            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,4,QTableWidgetItem('1000'))
+                        else:
+                            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,4,QTableWidgetItem(''))
+                            self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).flags() & ~Qt.ItemIsEditable)
+                        self.dico_num_and_numgroup_locus["%s_%s"%(loctype,i+1)] = [tabindex+1,0]
+                        self.nbLocusGui+=1
+                        tabindex += 1
 
 
     def majProjectGui(self,m=None,s=None,g=None,ss=None):
@@ -383,23 +385,31 @@ class SetGeneticDataSimulation(SetGeneticData):
                 self.majProjectGui(ss=self.getNbSumStats())
 
     def getConf(self):
-        result = "loci description (%s)\n"%self.tableWidget.rowCount()
+        loci_lines = []
+        nb_loci_in_groups = 0
         for i in range(self.tableWidget.rowCount()):
             name = str(self.tableWidget.item(i,0).text())
             type = name[:3]
             group = self.dico_num_and_numgroup_locus[name][1]
-            if type[0] == 's':
-                microSeq = "S"
-                typestr = type[1]
-                length = str(self.tableWidget.item(i,4).text())
-                result += "%s <%s> [%s] G%i %s\n"%(name.replace(' ','_'),typestr,microSeq,group,length)
-            else:
-                microSeq = "M"
-                typestr = type[1]
-                indice_dans_table = self.dico_num_and_numgroup_locus[name][0]
-                motif_size = str(self.ui.tableWidget.item(indice_dans_table-1,2).text())
-                motif_range = str(self.ui.tableWidget.item(indice_dans_table-1,3).text()).strip()
-                result += "%s <%s> [%s] G%i %s %s\n"%(name.replace(' ','_'),typestr,microSeq,group,motif_size,motif_range)
+            if int(group) != 0:
+                nb_loci_in_groups += 1
+                if type[0] == 's':
+                    microSeq = "S"
+                    typestr = type[1]
+                    length = str(self.tableWidget.item(i,4).text())
+                    loci_lines.append("%s <%s> [%s] G%i %s\n"%(name.replace(' ','_'),typestr.upper(),microSeq,group,length))
+                else:
+                    microSeq = "M"
+                    typestr = type[1]
+                    indice_dans_table = self.dico_num_and_numgroup_locus[name][0]
+                    motif_size = str(self.ui.tableWidget.item(indice_dans_table-1,2).text())
+                    motif_range = str(self.ui.tableWidget.item(indice_dans_table-1,3).text()).strip()
+                    loci_lines.append("%s <%s> [%s] G%i %s %s\n"%(name.replace(' ','_'),typestr.upper(),microSeq,group,motif_size,motif_range))
+        result = "loci description (%s)\n"%nb_loci_in_groups
+        for beg in ["ma","mh","mx","my","mm","sa","sh","sx","sy","sm"]:
+            for l in loci_lines:
+                if l[:2] == beg:
+                    result += "%s"%l
 
         # partie mutation model
         result += u"\ngroups (%i)\n"%len(self.groupList)
