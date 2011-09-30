@@ -32,6 +32,7 @@ VERSIONFILE="`dirname $pysrc`/version.txt"
 VERSION="`head -n 1 $VERSIONFILE`"
 
 APPNAME=`basename $pysrc | cut -d . -f 1`
+echo "Name of the app : $APPNAME"
 
 TMPBUILD=/tmp/$APPNAME-tmp_build-$VERSION
 mkdir $TMPBUILD
@@ -61,10 +62,11 @@ cp -r $output/dist/$APPNAME/* $output/Mac$APPNAME.app/Contents/MacOS/
 cp -r /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt_menu.nib $output/Mac$APPNAME.app/Contents/Resources/
 # config file modification
 sed -i "" "s/string>1</string>0</g" $output/Mac$APPNAME.app/Contents/Info.plist
+sed -i "" "s/Macdiyabc/Diyabc/g" $output/Mac$APPNAME.app/Contents/Info.plist
 mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
 # copy of needed images
 mkdir $output/docs
-cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/executables $SOURCEDIR/docs/*.png $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/docs/
+cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/docs/
 cp -r $SOURCEDIR/uis/ $output/
 # clean
 rm -rf $TMPBUILD
