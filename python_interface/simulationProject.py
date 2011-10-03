@@ -35,6 +35,8 @@ class SimulationProject(Project):
     def __init__(self,name,dir=None,parent=None):
         super(SimulationProject,self).__init__(name,dir,parent)
 
+        self.sexRatio = 0
+
         self.ui.projNameLabel.setText("Data file generic name :")
         self.ui.label.setText("Target directory :")
         self.ui.dirEdit.setText("%s"%self.dir)
@@ -85,6 +87,8 @@ class SimulationProject(Project):
     def checkSampleNSetGenetic(self):
         dico_loc_nb = {}
         editList = self.locusNumberFrame.findChildren(QLineEdit)
+        editList.remove(self.locusNumberFrame.sexRatioEdit)
+        nbXY = 0
         nbpos = 0
         try:
             for le in editList:
@@ -94,12 +98,25 @@ class SimulationProject(Project):
                     return
                 elif int(le.text()) > 0:
                     nbpos += 1
+                    if "x" in str(le.objectName())[:2] or "y" in str(le.objectName())[:2]:
+                        nbXY += 1
             if nbpos == 0:
                 output.notify(self,"Number of sample error","You must have at leat one sample")
                 return
         except Exception,e:
             output.notify(self,"Number of sample error","Input error : \n%s"%e)
             return
+        if nbXY > 0:
+            try:
+                val = float(str(self.locusNumberFrame.sexRatioEdit.text()))
+                if val < 0 or val > 100:
+                    output.notify(self,"Value error","Sex ratio value must be in [0,1]")
+                    return
+                self.sexRatio = val
+            except Exception,e:
+                output.notify(self,"Value error","Sex ratio value must be in [0,1]")
+                return
+
         log(3,"Numbers of locus : %s"%dico_loc_nb)
         # on vide les gen data
         self.gen_data_win = SetGeneticDataSimulation(self)
@@ -118,6 +135,14 @@ class SimulationProject(Project):
     @pyqtSignature("")
     def on_btnStart_clicked(self):
             #if self.verifyRefTableValid():
+            # première ligne
+            nb_rec_edit = str(self.ui.nbSetsReqEdit.text())
+            if nb_rec_edit.isdigit() and int(nb_rec_edit) > 0:
+                nb_rec = int(nb_rec_edit)
+            else:
+                output.notify(self,"Value error","Required number of simulated data sets must be a positive integer")
+                return
+            print "%s %s %s"%(self.name,nb_rec,self.sexRatio)
             print self.hist_model_win.getConf()
             print ""
             print self.gen_data_win.getConf().replace(u'\xb5','u')

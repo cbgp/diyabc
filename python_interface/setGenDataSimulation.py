@@ -19,13 +19,26 @@ class SetGeneticDataSimulation(SetGeneticData):
     def __init__(self,parent=None):
         super(SetGeneticDataSimulation,self).__init__(parent)
 
-        self.ui.tableWidget.setColumnWidth(0,230)
+        self.ui.tableWidget.setColumnWidth(0,90)
         self.ui.tableWidget.setColumnWidth(1,40)
-        self.ui.tableWidget.setColumnWidth(2,50)
-        self.ui.tableWidget.setColumnWidth(3,50)
+        self.ui.tableWidget.setColumnWidth(2,45)
+        self.ui.tableWidget.setColumnWidth(3,45)
         self.ui.tableWidget.insertColumn(self.ui.tableWidget.columnCount())
         self.ui.tableWidget.setColumnWidth(4,50)
         self.ui.tableWidget.setHorizontalHeaderItem (4, QTableWidgetItem("length"))
+
+        self.ui.tableWidget.insertColumn(self.ui.tableWidget.columnCount())
+        self.ui.tableWidget.setColumnWidth(5,35)
+        self.ui.tableWidget.setHorizontalHeaderItem (5, QTableWidgetItem("%A"))
+        self.ui.tableWidget.insertColumn(self.ui.tableWidget.columnCount())
+        self.ui.tableWidget.setColumnWidth(6,35)
+        self.ui.tableWidget.setHorizontalHeaderItem (6, QTableWidgetItem("%C"))
+        self.ui.tableWidget.insertColumn(self.ui.tableWidget.columnCount())
+        self.ui.tableWidget.setColumnWidth(7,35)
+        self.ui.tableWidget.setHorizontalHeaderItem (7, QTableWidgetItem("%G"))
+        self.ui.tableWidget.insertColumn(self.ui.tableWidget.columnCount())
+        self.ui.tableWidget.setColumnWidth(8,35)
+        self.ui.tableWidget.setHorizontalHeaderItem (8, QTableWidgetItem("%T"))
 
 
     def fillLocusTable(self,dico):
@@ -42,13 +55,24 @@ class SetGeneticDataSimulation(SetGeneticData):
                         self.addRow("%s_%s"%(loctype,i+1),mainType)
                         if mainType == 'S':
                             self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,4,QTableWidgetItem('1000'))
+                            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,5,QTableWidgetItem('25'))
+                            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,6,QTableWidgetItem('25'))
+                            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,7,QTableWidgetItem('25'))
+                            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,8,QTableWidgetItem('25'))
                         else:
                             self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,4,QTableWidgetItem(''))
                             self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).flags() & ~Qt.ItemIsEditable)
+                            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,5,QTableWidgetItem(''))
+                            self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,5).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,5).flags() & ~Qt.ItemIsEditable)
+                            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,6,QTableWidgetItem(''))
+                            self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,6).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,6).flags() & ~Qt.ItemIsEditable)
+                            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,7,QTableWidgetItem(''))
+                            self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,7).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,7).flags() & ~Qt.ItemIsEditable)
+                            self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,8,QTableWidgetItem(''))
+                            self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,8).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,8).flags() & ~Qt.ItemIsEditable)
                         self.dico_num_and_numgroup_locus["%s_%s"%(loctype,i+1)] = [tabindex+1,0]
                         self.nbLocusGui+=1
                         tabindex += 1
-
 
     def majProjectGui(self,m=None,s=None,g=None,ss=None):
         if m != None:
@@ -161,8 +185,15 @@ class SetGeneticDataSimulation(SetGeneticData):
                         #    log(4,"locus %s  size:%s range:%s   mini=%s maxi=%s kmoy=%s kmin=%s kmax=%s"%(self.parent.data.locuslist[i].name,motif_size,motif_range,mini,maxi,kmoy,kmin,kmax))
                     else:
                         length = int(str(self.ui.tableWidget.item(i,4).text()).strip())
+                        pcA = int(str(self.ui.tableWidget.item(i,5).text()))
+                        pcC = int(str(self.ui.tableWidget.item(i,6).text()))
+                        pcG = int(str(self.ui.tableWidget.item(i,7).text()))
+                        pcT = int(str(self.ui.tableWidget.item(i,8).text()))
                         if length <= 0:
                             problem += "Length has to be positive (locus %s)\n"%(i+1)
+                        for val in [pcA,pcC,pcG,pcT]:
+                            if val < 0 or val > 100:
+                                problem += "Locus %s has incoherent values of nucleotide frequencies"%(i+1)
             except Exception,e:
                 problem += "%s\n"%e
             #print "\n"; 
@@ -397,7 +428,11 @@ class SetGeneticDataSimulation(SetGeneticData):
                     microSeq = "S"
                     typestr = type[1]
                     length = str(self.tableWidget.item(i,4).text())
-                    loci_lines.append("%s <%s> [%s] G%i %s\n"%(name.replace(' ','_'),typestr.upper(),microSeq,group,length))
+                    pcA = str(self.tableWidget.item(i,5).text())
+                    pcC = str(self.tableWidget.item(i,6).text())
+                    pcG = str(self.tableWidget.item(i,7).text())
+                    pcT = str(self.tableWidget.item(i,8).text())
+                    loci_lines.append("%s <%s> [%s] G%i %s %s %s %s %s\n"%(name.replace(' ','_'),typestr.upper(),microSeq,group,length,pcA,pcC,pcG,pcT))
                 else:
                     microSeq = "M"
                     typestr = type[1]

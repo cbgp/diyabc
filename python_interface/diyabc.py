@@ -248,20 +248,20 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.toolBar.addWidget(saveAllButton)
         saveAllButton.setDisabled(True)
 
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.ui.toolBar.addWidget(spacer)
+        #spacer = QWidget()
+        #spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        #self.ui.toolBar.addWidget(spacer)
 
-        simButton = QPushButton(QIcon("docs/icons/mask.jpeg"),"Simulate",self)
-        self.simButton = simButton
-        simButton.setToolTip("Simulate data sets")
-        simButton.setMaximumSize(QSize(80, 22))
-        #saveButton.setMinimumSize(QSize(16, 18))
-        simButton.setFlat(True)
-        QObject.connect(simButton,SIGNAL("clicked()"),self.simulateDataSets)
-        self.ui.toolBar.addWidget(simButton)
+        #simButton = QPushButton(QIcon("docs/icons/mask.jpeg"),"Simulate",self)
+        #self.simButton = simButton
+        #simButton.setToolTip("Simulate data sets")
+        #simButton.setMaximumSize(QSize(80, 22))
+        ##saveButton.setMinimumSize(QSize(16, 18))
+        #simButton.setFlat(True)
+        #QObject.connect(simButton,SIGNAL("clicked()"),self.simulateDataSets)
+        #self.ui.toolBar.addWidget(simButton)
 
-        for but in [newButton,openButton,saveButton,saveAllButton,simButton]:
+        for but in [newButton,openButton,saveButton,saveAllButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
     def simulateDataSets(self):
