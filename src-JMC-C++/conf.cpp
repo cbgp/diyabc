@@ -258,9 +258,16 @@ char *nomficonfresult;
             if (nlogreg==1) {
                 postsr = comp_logistic(nselr,stat_obs);
                 iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-                for (int i=0;i<rt.nscenchoisi;i++) printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);
-                for (int i=0;i<rt.nscenchoisi;i++) f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";
-
+				for (int i=0;i<rt.nscenchoisi;i++) {
+					printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);
+					f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x;
+					f11<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf;
+					f11<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";
+				}
+				if (postsr[0].err>0) {
+					printf(" WARNING : Computation of the logistic failed (error code=%d). Results replaced by those of the direct approach",postsr[0].err);
+					f11<<" WARNING : Computation of the logistic failed (error code="<<postsr[0].err<<"). Results replaced by those of the direct approach";
+				}
                 delete []postsd;
                 delete []postsr;
             }

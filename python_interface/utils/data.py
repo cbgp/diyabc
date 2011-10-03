@@ -165,7 +165,7 @@ class Data(object):
 
     def __locus_type_and_ploidy(self,lines,iloc):
         for i,line in enumerate(lines):
-            if line.upper().find("POP")>-1 : break
+            if (i>0)and(line.upper().find("POP")>-1) : break
         line = lines[i+1]
         line2 = line.split(",")
         line3 = line2[1].split()
@@ -188,25 +188,25 @@ class Data(object):
 #data file with not enough lines
             raise NotGenepopFileError("data file with not enough lines")
         npop=0
-        for li in lines :
+        for ili,li in enumerate(lines) :
             lim= li.upper()
-            if (lim.find('POP')>-1)and(lim.find(',')<1) : npop +=1
+            if (ili>0)and(lim.find('POP')>-1)and(lim.find(',')<1) : npop +=1
             #print lim,"   npop=%s"%(npop)
         if npop<1 :
 #data file with no keyword "POP"
             raise NotGenepopFileError('data file with no keyword "POP"')
         npop=0
-        for li in lines :
+        for ili,li in enumerate(lines) :
             lim= li.upper()
-            if (lim.find('POP')>-1)and(lim.find(',')<1) : npop +=1
+            if (ili>0) and (lim.find('POP')>-1)and(lim.find(',')<1) : npop +=1
             if (npop>0) and (lim.find('POP')<0)and (li.find(',')<1) :
 #data file with missing comma between individual name and genotype
                raise NotGenepopFileError("either Genepop file with missing comma between individual name and genotype or not a Genepop file")
         nloc=0
         for ili,li in enumerate(lines) :
             lim= li.upper()
-            if (lim.find('POP')<0)and(ili>0) : nloc+=1
-            if lim.find('POP')>-1 : break
+            if (lim.find('POP')<0) and (ili>0) : nloc+=1
+            if (lim.find('POP')>-1) and (ili>0) : break
         for ili,li in enumerate(lines) :
             lim= li.upper()
             if ili>nloc :
@@ -403,3 +403,7 @@ class Data(object):
             if loc.type<5 :  self.__domicrosat(loc,iloc)
             if loc.type>4 :  self.__dosequence(loc,iloc)
         self.nloc = self.nloc_seq + self.nloc_mic
+
+
+#plop = Data("/home/cornuet/workspace/diyabc/src-JMC-C++/simdat/datasim_001")
+#plop.loadfromfile()

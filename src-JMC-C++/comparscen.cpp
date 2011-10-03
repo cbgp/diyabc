@@ -41,6 +41,7 @@ struct matligneC
 struct posteriorscenC
 {
     double x,inf,sup;
+	int err;
 };
 
 /**
@@ -176,7 +177,7 @@ matligneC *matA;
     }
 
     void save_comp_logistic(int nlogreg,int nselr,posteriorscenC** postscenlog,char *path, char *ident) {
-        int nts;
+        int nts,sum;
 		double som;
         char *nomfiparstat;
         nomfiparstat = new char[strlen(path)+strlen(ident)+20];
@@ -192,8 +193,14 @@ matligneC *matA;
 			som=0.0;for (int j=0;j<rt.nscenchoisi;j++) som+=postscenlog[i][j].x;
 			if (fabs(som-1.0)<0.001*rt.nscenchoisi) {
 				nts = (nselr/nlogreg)*(i+1);
-				printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
-				fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");
+				sum=0;for (int j=0;j<rt.nscenchoisi;j++) sum+=postscenlog[i][j].err;
+				if (sum==0){
+					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
+					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");
+				} else {
+					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
+					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");					
+				}
 			}
 		}
         fclose(f1);
@@ -244,11 +251,6 @@ matligneC *matA;
             }
             x=rt.enrsel[i].dist/delta;
             cvecW[i]=(1.5/delta)*(1.0-x*x);
-			if (cvecW[i] != cvecW[i]) {
-				cout<<"erreur NAN dans rempli_mat0 \n";
-				cout<<"delta="<<delta<<"    rt.enrsel["<<i<<"].dist="<<rt.enrsel[i].dist<<"   x="<<x<<"\n";
-			    exit(1);
-			}
             som = som + cvecW[i];
         }
         //cout <<"\n cmatX0:\n";
@@ -541,7 +543,7 @@ matligneC *matA;
 			if (err>0) {cout<<"\nprobleme lors de l'inversion de la matrice cmatC err="<<err<<"\n";break;}
             for (i=0;i<nmodnco;i++) {cdeltabeta[i]=0.0;for (j=0;j<nmodnco;j++) cdeltabeta[i]+=cmatB[i][j]*cmatYP[j];}
             for (i=0;i<nmodnco;i++) {if (cdeltabeta[i] != cdeltabeta[i]) err=10;}
-			if (err==10) {cout<<"une valeur nan dans cdeltabeta"<<"\n";exit(1);}
+			if (err==10) {cout<<"une valeur nan dans cdeltabeta"<<"\n";break;}
 			for (i=0;i<nmodnco;i++) cbeta[i]=cbeta0[i]+cdeltabeta[i];
             remplimatriceYP(nli,nco,nmodel,cmatP,cmatYP,cbeta,cmatX,cvecW,cmatY,csmatP);
             caloglik=false;
@@ -617,6 +619,7 @@ matligneC *matA;
         clock_zero=0.0;debut=walltime(&clock_zero);
         postlog = new posteriorscenC[rt.nscenchoisi];
         for (int i=0;i<rt.nscenchoisi;i++) {
+		      postlog[i].err=0;
               if (i==0) {postlog[i].x=1.0;postlog[i].inf=1.0;postlog[i].sup=1.0;}
               else      {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}
         }
@@ -658,7 +661,16 @@ matligneC *matA;
 			px = new double[rt.nscenchoisi];pxi = new double[rt.nscenchoisi];pxs = new double[rt.nscenchoisi];
 			err = polytom_logistic_regression(nts, nstatOKsel, cmatX0, vecYY, cvecW, px, pxi, pxs);
 			if (err>0) {
-				for (int i=0;i<nscenutil;i++) {postlog[i].x=-1.0;postlog[i].inf=-1.0;postlog[i].sup=-1.0;}
+				double d,a=1.0/(double)nts;
+				for (int i=0;i<rt.nscenchoisi;i++) {
+					postlog[i].x=0.0;
+					for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postlog[i].x +=a;
+					if ((fabs(postlog[i].x)<0.00001)or(fabs(1.0-postlog[i].x)<0.00001)) d=0.0;
+					else d=1.96*sqrt(postlog[i].x*(1.0-postlog[i].x)/(double)nts);
+					postlog[i].inf =postlog[i].x-d;if(postlog[i].inf<0.0)postlog[i].inf=0.0;
+					postlog[i].sup =postlog[i].x+d;if(postlog[i].sup>1.0)postlog[i].sup=1.0;
+					postlog[i].err=err;
+				}
 			  
 			} else {
 				if (nscenutil==rt.nscenchoisi) for (int i=0;i<nscenutil;i++) {postlog[i].x=px[i];postlog[i].inf=pxi[i];postlog[i].sup=pxs[i];}
@@ -681,8 +693,9 @@ matligneC *matA;
 				for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postlog[i].x +=a;
                 if ((fabs(postlog[i].x)<0.00001)or(fabs(1.0-postlog[i].x)<0.00001)) d=0.0;
                 else d=1.96*sqrt(postlog[i].x*(1.0-postlog[i].x)/(double)nts);
-                 postlog[i].inf =postlog[i].x-d;if(postlog[i].inf<0.0)postlog[i].inf=0.0;
-                 postlog[i].sup =postlog[i].x+d;if(postlog[i].sup>1.0)postlog[i].sup=1.0;
+                postlog[i].inf =postlog[i].x-d;if(postlog[i].inf<0.0)postlog[i].inf=0.0;
+                postlog[i].sup =postlog[i].x+d;if(postlog[i].sup>1.0)postlog[i].sup=1.0;
+				postlog[i].err=5; 
 			}
 		}
         return postlog;
@@ -706,8 +719,8 @@ matligneC *matA;
         if (nscenutil==1) {
             postlog = new posteriorscenC[rt.nscenchoisi];
             for (int i=0;i<rt.nscenchoisi;i++) {
-              if((postdir[i]>2)and(postdir[i]>nts/1000)) {postlog[i].x=1.0;postlog[i].inf=1.0;postlog[i].sup=1.0;}
-              else                                       {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}
+              if((postdir[i]>2)and(postdir[i]>nts/1000)) {postlog[i].x=1.0;postlog[i].inf=1.0;postlog[i].sup=1.0;postlog[i].err=0;}
+              else                                       {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;postlog[i].err=0;}
             }
         } else postlog = call_polytom_logistic_regression(nts,stat_obs,nscenutil,scenchoisiutil);
         //cout<<"\n";

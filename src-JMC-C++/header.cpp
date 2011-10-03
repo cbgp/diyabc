@@ -35,7 +35,7 @@ public:
     string message,datafilename,entete,entetehist,entetemut,entetemut0,entetestat;
     char * pathbase;
     DataC dataobs;
-    int nparamtot,nstat,nscenarios,nconditions,ngroupes,nparamut;
+    int nparamtot,nstat,nscenarios,nconditions,ngroupes,nparamut,nsimfile;
     string *paramname, *statname;
     ScenarioC *scenario,scen;
     HistParameterC *histparam;
@@ -667,6 +667,252 @@ public:
                 //this->scen.ecris();
                 //cout<<"fin de readheader\n\n\n";
         return this;
+    }
+
+    HeaderC* readHeadersim(char* headersimfilename){
+        string s1,s2,*sl,*ss,*ss1,*ss2;
+        int nlscen,nss,nss1,j,k,l,gr,grm,k1,k2,*nf;
+		double som;
+        //cout<<"debut de readheader\n";
+        //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
+        ifstream file(headersimfilename, ios::in);
+        if (file == NULL) {
+            this->message = "HeaderSim  File "+string(headersimfilename)+" not found";
+            cout<<this->message<<"\n";
+            return this;
+        } else this->message="";
+		getline(file, s1);
+		ss = splitwords(s1," ",&nss);
+		this->datafilename=ss[0];
+		this->nsimfile=atoi(ss[1].c_str());
+		this->dataobs.sexratio=atof(ss[2].c_str());
+        getline(file,s1);
+		ss = splitwords(s1," ",&nss);
+		this->dataobs.nsample=atoi(ss[0].c_str());
+		this->dataobs.nind=new int[this->dataobs.nsample];
+		this->dataobs.indivsexe=new int*[this->dataobs.nsample];
+		nf=new int[this->dataobs.nsample];
+		for (int i=0;i<this->dataobs.nsample;i++) {
+			getline(file,s1);
+			ss = splitwords(s1," ",&nss);
+			this->dataobs.nind[i]=atoi(ss[0].c_str());
+			this->dataobs.indivsexe[i]=new int[this->dataobs.nind[i]];
+			ss[1]=ss[1]+")";
+			nf[i]=getwordint(ss[1],1);
+			for (int j=0;j<nf[i];j++) this->dataobs.indivsexe[i][j]=2;
+			for (int j=nf[i];j<this->dataobs.nind[i];j++) this->dataobs.indivsexe[i][j]=1;
+		}
+		delete []ss;
+		cout<<"nom générique : "<<this->datafilename<<"\n";
+		cout<<"nombre de fichiers à simuler = "<<this->nsimfile<<"\n";
+		cout<<"nombre d'échantillons = "<<this->dataobs.nsample<<"\n";
+		for (int i=0;i<this->dataobs.nsample;i++) {
+		  cout<<"Echantillon "<<i+1<<"  :  "<<nf[i]<<" femelles et "<<this->dataobs.nind[i]-nf[i]<<" males\n";
+		}
+		this->dataobs.nmisshap=0;
+		this->dataobs.nmissnuc=0;
+                //cout<<"avant scenarios\n";fflush(stdin);
+//Partie Scenarios
+        getline(file,s1);   //cout<<s1<<"\n";     //ligne vide
+        getline(file,s1);    //cout<<s1<<"\n";    // nombre de scenarios
+        this->nscenarios=1; //cout<<this->nscenarios<<"\n";
+		ss=splitwords(s1," ",&nss);
+		nlscen=atoi(ss[1].c_str());
+        this->scenario = new ScenarioC[this->nscenarios];
+		sl = new string[nlscen];
+		this->scenario[0].number = 1;
+		this->scenario[0].prior_proba = 1.0;
+		this->scenario[0].nparam = 0;
+		this->scenario[0].nparamvar=0;
+		for (int j=0;j<nlscen;j++) {getline(file,sl[j]);/*cout<<sl[i][j]<<"\n";*/}
+		this->scenario[0].read_events(nlscen,sl);
+		//cout<<"apres read_events\n";
+        delete [] sl;
+		delete [] ss;
+        if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie scénarios\n";
+		
+//Partie historical parameters
+                //cout <<"avant histparam\n";fflush(stdin);
+        getline(file,s1);       //ligne vide
+        getline(file,s1);
+        //cout<<s1<<"\n";
+        ss=splitwords(s1," ",&nss);
+		this->nparamtot=getwordint(ss[2],1);
+		this->scenario[0].nconditions=0;
+		delete []ss;
+        this->histparam = new HistParameterC[this->nparamtot];
+		this->scenario[0].histparam = new HistParameterC[this->nparamtot];
+		this->scenario[0].nparam = this->nparamtot;
+        for (int i=0;i<this->nparamtot;i++) {
+            getline(file,s1);
+			ss=splitwords(s1," ",&nss);
+			this->histparam[i].name=ss[0];
+            if (ss[1]=="N") this->histparam[i].category = 0;
+            else if  (ss[1]=="T") this->histparam[i].category = 1;
+            else if  (ss[1]=="A") this->histparam[i].category = 2;
+			this->histparam[i].value=atof(ss[2].c_str());
+			this->scenario[0].histparam[i] = copyhistparameter(this->histparam[i]);
+			this->scenario[0].histparam[i].prior.constant=true;
+		}	
+        if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie priors des paramètres démographiques\n";
+//Partie loci description
+                //cout <<"avant partie loci\n";fflush(stdin);
+        getline(file,s1); //cout<<s1<<"    ligne vide ? \n";       //ligne vide
+        getline(file,s1);  //cout<<s1<<"     loci description ?\n";
+        ss=splitwords(s1," ",&nss);
+		this->dataobs.nloc=getwordint(s1,3);
+		cout<<"nloc="<<this->dataobs.nloc<<"\n";
+		this->dataobs.locus = new LocusC[this->dataobs.nloc];
+        grm=1;
+        for (int loc=0;loc<this->dataobs.nloc;loc++){
+            getline(file,s1);
+            ss=splitwords(s1," ",&nss);
+			this->dataobs.locus[loc].name = strdup(ss[0].c_str());
+			if (ss[1]=="<A>") this->dataobs.locus[loc].type =0;
+			else if (ss[1]=="<H>")   this->dataobs.locus[loc].type =1;
+			else if (ss[1]=="<X>")   this->dataobs.locus[loc].type =2; 
+			else if (ss[1]=="<Y>")   this->dataobs.locus[loc].type =3;
+			else if (ss[1]=="<M>")   this->dataobs.locus[loc].type =4; 
+			this->dataobs.cal_coeff(loc);
+			this->dataobs.locus[loc].ss = new int[this->dataobs.nsample];
+			this->dataobs.locus[loc].samplesize = new int[this->dataobs.nsample];
+			for (int j=0;j<this->dataobs.nsample;j++) {
+			    if (this->dataobs.locus[loc].type ==0) this->dataobs.locus[loc].ss[j]=2*this->dataobs.nind[j];
+				else if (this->dataobs.locus[loc].type ==1) this->dataobs.locus[loc].ss[j]=this->dataobs.nind[j];
+				else if (this->dataobs.locus[loc].type ==4) this->dataobs.locus[loc].ss[j]=this->dataobs.nind[j];
+				else if (this->dataobs.locus[loc].type ==2) {
+					this->dataobs.locus[loc].ss[j]=0;
+					for (int k=0;k<this->dataobs.nind[j];k++) this->dataobs.locus[loc].ss[j] +=this->dataobs.indivsexe[j][k];
+				}
+				else if (this->dataobs.locus[loc].type ==3) {
+					this->dataobs.locus[loc].ss[j]=0;
+					for (int k=0;k<this->dataobs.nind[j];k++) this->dataobs.locus[loc].ss[j] +=(2-this->dataobs.indivsexe[j][k]); 
+				}
+				this->dataobs.locus[loc].samplesize[j]=this->dataobs.locus[loc].ss[j];
+			}
+            if (ss[2]=="[M]") {
+			    s1=ss[3].substr(1);gr=atoi(s1.c_str());this->dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
+                this->dataobs.locus[loc].motif_size=atoi(ss[4].c_str());
+				this->dataobs.locus[loc].motif_range=atoi(ss[5].c_str());
+				this->dataobs.locus[loc].mini=100;this->dataobs.locus[loc].maxi=300;
+            }
+            else if (ss[2]=="[S]") {
+				this->dataobs.locus[loc].type +=5;
+                s1=ss[3].substr(1);gr=atoi(s1.c_str());this->dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
+				this->dataobs.locus[loc].dnalength=atoi(ss[4].c_str());
+                this->dataobs.locus[loc].mutsit.resize(this->dataobs.locus[loc].dnalength);
+				som=0.0;
+				this->dataobs.locus[loc].pi_A=atof(ss[5].c_str());som +=this->dataobs.locus[loc].pi_A;
+				this->dataobs.locus[loc].pi_C=atof(ss[6].c_str());som +=this->dataobs.locus[loc].pi_C;
+				this->dataobs.locus[loc].pi_G=atof(ss[7].c_str());som +=this->dataobs.locus[loc].pi_G;
+				this->dataobs.locus[loc].pi_T=atof(ss[8].c_str());som +=this->dataobs.locus[loc].pi_T;
+				this->dataobs.locus[loc].pi_A /= som;
+				this->dataobs.locus[loc].pi_C /= som;
+				this->dataobs.locus[loc].pi_G /= som;
+				this->dataobs.locus[loc].pi_T /= som;
+                //cout<<this->dataobs.locus[loc].dnalength<<"\n";
+                //this->dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());  //inutile variable déjà renseignée
+            }
+        }
+        delete [] ss;
+        if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie description des locus\n";
+//Partie group priors
+                cout <<"avant partie group priors\n";fflush(stdin);
+        getline(file,s1); //cout<<s1<<"    ligne vide ? \n";      //ligne vide
+        getline(file,s1);       //ligne "group prior"
+		this->ngroupes=getwordint(s1,2);
+        cout<<"header.ngroupes="<<this->ngroupes<<"\n";
+        this->groupe = new LocusGroupC[this->ngroupes+1];
+        this->assignloc(0);
+        //cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
+        for (gr=1;gr<=this->ngroupes;gr++){
+            getline(file,s1);
+            ss=splitwords(s1," ",&nss);
+            this->assignloc(gr);
+            if (ss[2]=="[M]") {
+                this->groupe[gr].type=0;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].mutmoy = atof(ss1[1].c_str());delete [] ss1;
+                this->groupe[gr].priormutmoy.fixed=true;this->groupe[gr].priormutmoy.constant=true;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
+
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].Pmoy   = atof(ss1[1].c_str());delete [] ss1;
+                this->groupe[gr].priorPmoy.fixed=true;this->groupe[gr].priorPmoy.constant=true;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readpriormut(ss1[1]);delete [] ss1;
+
+				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].snimoy = atof(ss1[1].c_str());delete [] ss1;
+                this->groupe[gr].priorsnimoy.fixed=true;this->groupe[gr].priorsnimoy.constant=true;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc = this->readpriormut(ss1[1]);delete [] ss1;
+                //cout<<"sniloc  ";this->groupe[gr].priorsniloc.ecris();
+
+            } else if (ss[2]=="[S]") {
+                this->groupe[gr].type=1;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].musmoy = atof(ss1[1].c_str());delete [] ss1;
+                this->groupe[gr].priormusmoy.fixed=true;this->groupe[gr].priormusmoy.constant=true;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc = this->readpriormut(ss1[1]);delete [] ss1;
+
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].k1moy  = atof(ss1[1].c_str());delete [] ss1;
+                this->groupe[gr].priork1moy.fixed=true;this->groupe[gr].priork1moy.constant=true;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readpriormut(ss1[1]);delete [] ss1;
+
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].k2moy  = atof(ss1[1].c_str());delete [] ss1;
+                this->groupe[gr].priork2moy.fixed=true;this->groupe[gr].priork2moy.constant=true;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readpriormut(ss1[1]);delete [] ss1;
+
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);
+                this->groupe[gr].p_fixe=atof(ss1[2].c_str());this->groupe[gr].gams=atof(ss1[3].c_str());
+                if (ss1[1]=="JK") this->groupe[gr].mutmod=0;
+                else if (ss1[1]=="K2P") this->groupe[gr].mutmod=1;
+                else if (ss1[1]=="HKY") this->groupe[gr].mutmod=2;
+                else if (ss1[1]=="TN") this->groupe[gr].mutmod=3;
+            }
+            this->groupe[gr].nstat=0;
+        }
+        if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie définition des groupes\n";
+//Mise à jour des locus séquences
+        MwcGen mwc;
+        mwc.randinit(999,time(NULL));
+        int nsv;
+        bool nouveau;
+        for (int loc=0;loc<this->dataobs.nloc;loc++){
+            gr=this->dataobs.locus[loc].groupe;
+            if ((this->dataobs.locus[loc].type>4)and(gr>0)){
+                nsv = floor(this->dataobs.locus[loc].dnalength*(1.0-0.01*this->groupe[gr].p_fixe)+0.5);
+                for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] = mwc.ggamma3(1.0,this->groupe[gr].gams);
+                int *sitefix;
+                sitefix=new int[this->dataobs.locus[loc].dnalength-nsv];
+                for (int i=0;i<this->dataobs.locus[loc].dnalength-nsv;i++) {
+                    if (i==0) sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
+                    else {
+                        do {
+                            sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
+                            nouveau=true;j=0;
+                            while((nouveau)and(j<i)) {nouveau=(sitefix[i]!=sitefix[j]);j++;}
+                        } while (not nouveau);
+                    }
+                    this->dataobs.locus[loc].mutsit[i] = 0.0;
+                }
+                delete [] sitefix;
+                double s=0.0;
+                for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) s += this->dataobs.locus[loc].mutsit[i];
+                for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] /=s;
+            }
+        }
+        if (debuglevel==2) cout<<"header.txt : fin de la mise à jour des locus séquences\n";
+        //cout<<"avant la mise à jour des paramvar\n";fflush(stdin);
+        //delete [] ss;
+		if (debuglevel==2) cout<<"header.txt : avant la copie du scénario\n";
+		this->scen = copyscenario(this->scenario[0]);
+		//this->scen.ecris();
+		if (debuglevel==2) cout<<"header.txt : apres la copie du scénario\n";
+                PriorC pr;pr.loi="uniforme";pr.mini=0.0;pr.maxi=1.0;pr.ndec=3;pr.constant=false;
+                HistParameterC pp;pp.name="bidon";pp.category=0;pp.value=-1;pp.prior=copyprior(pr);
+                for (int i=0;i<this->scen.nparam;i++)  this->scen.histparam[i]=copyhistparameter(pp);
+                //this->scen.ecris();
+                //cout<<"apres superscen\n";
+        if (debuglevel==2) cout<<"header.txt : fin de l'établissement du superscen\n";
+        this->nparamut=0;
+		//exit(1);
+		return this;
     }
 
     void calstatobs(char* statobsfilename) {

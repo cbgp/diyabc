@@ -1031,8 +1031,13 @@ struct MwcGen
         this->carry= rand() % MODULO;
         //std::cout << "mwcx = " << this->mwcx << "   carry = " << this->carry << "\n";
 	}
+	
+	void ecris() {
+		std::cout<<"mwcx ="<<this->mwcx<<"    mult="<<this->mult<<"   carry="<<this->carry<<"\n";
+	  
+	}
 
-        double random() {
+    double random() {
 		unsigned long int y ;
 		double r;
 		y = (this->mult)*(this->mwcx) + (this->carry);
@@ -1052,6 +1057,18 @@ struct MwcGen
 		double r;
 		r = floor(max * this->random()) + 1.0;
 		return (int) r;
+	}
+
+	int* randperm(int n) {
+		int *index,j;
+		index = new int[n];
+		index[0] = 0;
+		for (int i=1;i<n;i++) {
+			j = this->rand0(i+1);
+			index[i] = index[j];
+			index[j] = i;
+		}
+		return index;
 	}
 
 	int poisson (double lambda) {

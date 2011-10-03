@@ -174,7 +174,11 @@ int inverse(int n, long double **A, long double **C)
     if (err==4) {
 		std::cout<<"k+1="<<k+1<<"      n="<<n<<"\n";
 		for  (i=k+1;i<n;i++) std::cout<<"T["<<i<<"]["<<k<<"]="<<T[i][k]<<"\n";
-		exit(1);
+		std::cout <<"\n";
+		for (i=0;i<n;i++) {
+			for (j=0;j<n;j++) std::cout<<A[i][j]<<"  ";
+		    std::cout<<"\n";
+		}
 	}
     for (i=0;i<n;i++) delete[] T[i];delete[] T;
     return err; 

@@ -61,6 +61,7 @@ ParticleSetC ps;
 struct stat stFileInfo;
 
 char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename, *progressfilename;
+char *headersimfilename;
 bool multithread=false;
 int nrecneeded,nenr=100;
 int debuglevel=0;
@@ -69,7 +70,7 @@ string sremtime;
 double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,debutr,dureer,remtime;
 
 /**
-* lecture du fichier header.txt, calcul des stat_obs et lecture de l'entête de reftable.bin'
+* lecture du fichier header.txt, calcul des stat_obs et lecture de l'entête de reftable.bin
 */
 
 int readheaders() {
@@ -84,11 +85,12 @@ int readheaders() {
 }
 
 /**
-* lecture du fichier header.txt, calcul des stat_obs et lecture de l'entête de reftable.bin'
+* lecture du fichier headersim.txt
 */
 int readheadersim() {
     int k;
-	header.readHeader(headerfilename);
+	cout<<"avant header.readHeadersim    headersimfilename="<<headersimfilename<<"\n";
+	header.readHeadersim(headersimfilename);
 	return k;
 }
 
@@ -99,7 +101,7 @@ int readheadersim() {
 int main(int argc, char *argv[]){
 	try {
   
-	char *estpar,*compar,*biaspar,*confpar,*priorpar,*testpar,*simfpar;
+	char *estpar,*compar,*biaspar,*confpar,*priorpar,*testpar;
     bool firsttime;
 	int k,seed;
 	double **paramstat;
@@ -110,7 +112,7 @@ int main(int argc, char *argv[]){
     FILE *flog;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qk:f:g:d:hmqj:a:t:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qkf:g:d:hmqj:a:t:")) !=-1) {
 
 	  switch (optchar) {
 
@@ -178,16 +180,7 @@ int main(int argc, char *argv[]){
             cout << "           t:<number of the transformation (1,2,3 or 4)>\n";
             cout << "           v:<list of summary stat names separated by a comma (if empty keep those of reftable)>\n";
 
-            cout << "\n-k for SIMULATE GENEPOP DATA FILES (idem)\n";
-            cout << "           d:<number of requested test data sets>\n";
-            cout << "           h:<histparameter values (see below)>\n";
-            cout << "                histparameter values (separated by a space): <parameter name>=<parameter value>\n";
-            cout << "           u:<mutparameter values/priors for successive groups (see below)> groups are named G1, G2 and separated by a star : G1*G2-...\n";
-            cout << "                mutparameter values/priors of a given as a set of 6 values/priors : Gx(vx1,vx2,vx3,vx4,vx5,vx6) with :\n";
-            cout << "                vx1=<mean mutation rate/prior for group x>    vx2=<shape value/locus mutation rate prior for group x>\n";
-            cout << "                vx3=<mean P value/mean P prior for group x>   vx4=<shape value/locus P prior for group x>\n";
-            cout << "                vx5 and vx6 correspond to sni mutation rate.\n";
-            cout << "                For a DNA sequence group, replace P and sni by k1 and k2 respectively\n";
+            cout << "\n-k for SIMULATE GENEPOP DATA FILES\n";
 
            break;
 
@@ -202,6 +195,7 @@ int main(int argc, char *argv[]){
 
         case 'p' :
             headerfilename = new char[strlen(optarg)+13];
+            headersimfilename = new char[strlen(optarg)+16];
             reftablefilename = new char[strlen(optarg)+15];
             reftablelogfilename = new char[strlen(optarg)+15];
             statobsfilename = new char[strlen(optarg)+14];
@@ -209,17 +203,20 @@ int main(int argc, char *argv[]){
             path = new char[strlen(optarg)+1];
             strcpy(path,optarg);
             strcpy(headerfilename,optarg);
+            strcpy(headersimfilename,optarg);
             strcpy(reftablefilename,optarg);
             strcpy(reftablelogfilename,optarg);
             strcpy(statobsfilename,optarg);
             strcpy(stopfilename,optarg);
             strcat(headerfilename,"header.txt");
+            strcat(headersimfilename,"headersim.txt");
             strcat(reftablefilename,"reftable.bin");
             strcat(reftablelogfilename,"reftable.log");
             strcat(statobsfilename,"statobs.txt");
             strcat(stopfilename,".stop");
             flagp=true;
             if (stat(stopfilename,&stFileInfo)==0) remove(stopfilename);
+			cout<<headersimfilename<<"\n";
             break;
 
         case 's' :
@@ -266,7 +263,6 @@ int main(int argc, char *argv[]){
             break;
 
         case 'k' :
-            simfpar=strdup(optarg);
             action='k';
             break;
 
@@ -381,7 +377,7 @@ int main(int argc, char *argv[]){
                   break;
 
        case 'k'  : k=readheadersim();
-                  dosimfile(simfpar,seed);
+                  dosimfile(seed);
                   break;
 
        case 'd'  : k=readheaders();

@@ -132,7 +132,7 @@ void setgroup(int p) {
 				else this->particule[p].grouplist[gr].priorsnimoy.constant=true;
 				this->particule[p].grouplist[gr].priorsnimoy.fixed=this->header.groupe[gr].priorsnimoy.fixed;
 				if ((this->particule[p].grouplist[gr].priorsnimoy.constant)and(this->header.groupe[gr].priorsnimoy.fixed)) {
-                    this->particule[p].grouplist[gr].priorsnimoy.constant=false;
+                     this->particule[p].grouplist[gr].priorsnimoy.constant=false;
 				}
 				this->particule[p].grouplist[gr].priorsniloc = copyprior(this->header.groupe[gr].priorsniloc);
 			}
@@ -186,18 +186,14 @@ void setgroup(int p) {
 	void setloci(int p) {
 	        int kmoy;
 		this->particule[p].nloc = this->header.dataobs.nloc;
-        //cout<<"setloci nloc="<<this->particule[p].nloc<<"\n";
 		this->particule[p].locuslist = new LocusC[this->header.dataobs.nloc];
-		//cout<<"avant la boucle\n";
 		for (int kloc=0;kloc<this->header.dataobs.nloc;kloc++){
 			this->particule[p].locuslist[kloc].type = this->header.dataobs.locus[kloc].type;
 			this->particule[p].locuslist[kloc].groupe = this->header.dataobs.locus[kloc].groupe;
-			//cout<<"locus "<<kloc<<"   groupe "<<this->particule[p].locuslist[kloc].groupe<<"\n";
 			if (this->header.dataobs.locus[kloc].type < 5) {
 			      	kmoy=(this->header.dataobs.locus[kloc].maxi+this->header.dataobs.locus[kloc].mini)/2;
 				this->particule[p].locuslist[kloc].kmin=kmoy-((this->header.dataobs.locus[kloc].motif_range/2)-1)*this->header.dataobs.locus[kloc].motif_size;
 				this->particule[p].locuslist[kloc].kmax=this->particule[p].locuslist[kloc].kmin+(this->header.dataobs.locus[kloc].motif_range-1)*this->header.dataobs.locus[kloc].motif_size;
-				//cout<<"kmin="<<this->particule[p].locuslist[kloc].kmin<<"     kmax="<<this->particule[p].locuslist[kloc].kmax<<"\n";
 				this->particule[p].locuslist[kloc].motif_size = this->header.dataobs.locus[kloc].motif_size;
 				this->particule[p].locuslist[kloc].motif_range = this->header.dataobs.locus[kloc].motif_range;
 				//this->particule[p].locuslist[kloc].mut_rate = this->header.dataobs.locus[kloc].mut_rate;
@@ -217,12 +213,11 @@ void setgroup(int p) {
 				for (int i=0;i<this->particule[p].locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = this->header.dataobs.locus[kloc].mutsit[i];
 				//std::cout <<"\n";
 				}
-			this->particule[p].nsample = this->header.dataobs.nsample;
-			this->particule[p].locuslist[kloc].coeff =  this->header.dataobs.locus[kloc].coeff;
-			this->particule[p].locuslist[kloc].ss = new int[ this->header.dataobs.nsample];
+			this->particule[p].nsample = this->header.dataobs.nsample;  
+			this->particule[p].locuslist[kloc].coeff =  this->header.dataobs.locus[kloc].coeff;  
+			this->particule[p].locuslist[kloc].ss = new int[ this->header.dataobs.nsample];      
 			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].ss[sa] =  this->header.dataobs.locus[kloc].ss[sa];
 			this->particule[p].locuslist[kloc].samplesize = new int[ this->header.dataobs.nsample];
-
 			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] =  this->header.dataobs.locus[kloc].samplesize[sa];
 			//cout << "samplesize[0]="<<this->particule[p].locuslist[kloc].samplesize[0]<<"\n";
 		}
@@ -552,18 +547,23 @@ void setgroup(int p) {
         this->particule = new ParticleC[this->npart];
         ss = new string[npart];
         this->header = header;
+		cout<<"avant le remplissage des "<<this->npart<<" particules\n";
         for (int p=0;p<this->npart;p++) {
             this->particule[p].dnatrue = dnatrue;
-            this->setdata(p);
-            this->setloci(p);
-            this->setscenarios(p);
+            this->setdata(p);//cout<<"apres setdata\n";
+			this->setgroup(p);//cout<<"apres setgroup\n";
+            this->setloci(p);//cout<<"apres setloci\n";
+            this->setscenarios(p);//cout<<"apres setscenario\n";
             this->particule[p].mw.randinit(p,seed);
         }
+    cout<<"avant omp\n";    
     #pragma omp parallel for shared(sOK) if(multithread)
         for (int ipart=0;ipart<this->npart;ipart++){
             sOK[ipart] = this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
+			cout<<"sOK["<<ipart<<"]="<<sOK[ipart]<<"\n";
             if (sOK[ipart]==0) ss[ipart] = this->particule[ipart].dogenepop();
             else ss[ipart] = "";
+			//cout<<ss[ipart]<<"\n";
         }
         return ss;
 	}

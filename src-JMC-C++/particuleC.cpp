@@ -524,19 +524,19 @@ ScenarioC copyscenario(ScenarioC source) {
     //cout<<"    fin des copy simples  dest.nevent ="<<dest.nevent<<"\n";
     dest.event = new EventC[dest.nevent];
 	for (int i=0;i<dest.nevent;i++) dest.event[i] = copyevent(source.event[i]);
-        //cout<<"   apres copyevent\n";
+       // cout<<"   apres copyevent\n";
 	dest.ne0 = new Ne0C[dest.nn0];
 	for (int i=0;i<dest.nn0;i++) dest.ne0[i] = copyne0(source.ne0[i]);
-        //cout<<"   apres copyne0\n";
+      //  cout<<"   apres copyne0\n";
 	dest.time_sample = new int[dest.nsamp];
 	for (int i=0;i<dest.nsamp;i++) dest.time_sample[i] = source.time_sample[i];
-        //cout<<"   apres copytime_sample\n";
+       // cout<<"   apres copytime_sample\n";
 	dest.histparam = new HistParameterC[dest.nparam];
 	for (int i=0;i<dest.nparam;i++) {dest.histparam[i] = copyhistparameter(source.histparam[i]);/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
-        //cout<<"   apres copyhistparam\n";
+      //  cout<<"   apres copyhistparam\n";
 	dest.paramvar = new double[dest.nparamvar];
 	for (int i=0;i<dest.nparamvar;i++) {dest.paramvar[i] = source.paramvar[i];/*cout<<dest.histparam[i].name<<"\n"<<flush;*/}
-        //cout<<"   apres copyparamvar\n";
+      //  cout<<"   apres copyparamvar\n";
     if (dest.nconditions>0) {
             dest.condition = new ConditionC[dest.nconditions];
             for (int i=0;i<dest.nconditions;i++) dest.condition[i] = copycondition(source.condition[i]);
@@ -953,7 +953,7 @@ struct ParticleC
                 }
                 OK=true;
             }
-        }
+        } 
 		this->scen.ipv=0;
 		if (OK) {
 			for (int p=0;p<this->scen.nparam;p++) {
@@ -990,86 +990,76 @@ struct ParticleC
 */
 	void setMutParammoyValue(bool usepriormut){
 		int gr;
+		cout<<"this->scen.ipv="<<this->scen.ipv<<"\n";
 		for (gr=1;gr<=this->ngr;gr++) {
-		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"   usepriormut="<<usepriormut<<"\n";
+		    cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"   usepriormut="<<usepriormut<<"\n";
 		    if (this->grouplist[gr].type==0) {  //microsat
 		        if (not this->grouplist[gr].priormutmoy.constant) {
-                    if ((this->grouplist[gr].mutmoy<0)and(usepriormut)) this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
-                    this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
-                    this->scen.ipv++;
-		        }
-				//cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";fflush(stdin);
-				if ((this->grouplist[gr].Pmoy<0)and(usepriormut)) {
-					this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
-					if (not this->grouplist[gr].priorPmoy.constant) {
-					  //cout<<"prior pmoy non constant ?\n";
-								  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
+                    if ((this->grouplist[gr].mutmoy<0)and(usepriormut)){ 
+						this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
+						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
 						this->scen.ipv++;
 					}
-				}
-				if ((not usepriormut)and(not this->grouplist[gr].priorPmoy.constant)) {
+		        }
+		        //cout<<"juste avant mutmay\n";
+				cout<<"mutmoy="<<this->grouplist[gr].mutmoy;
+				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
+					
+				if (not this->grouplist[gr].priorPmoy.constant) {
+					if ((this->grouplist[gr].Pmoy<0)and(usepriormut)) {
+						this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
 						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
 						this->scen.ipv++;
+					}
 				}
-				//cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";fflush(stdin);
-				if ((this->grouplist[gr].snimoy<0)and(usepriormut)) {
-					this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
-					if (not this->grouplist[gr].priorsnimoy.constant) {
+				cout<<"Pmoy="<<this->grouplist[gr].Pmoy;
+				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
+				
+				if (not this->grouplist[gr].priorsnimoy.constant) {
+					if ((this->grouplist[gr].snimoy<0)and(usepriormut)) {
+						this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
 						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
 						this->scen.ipv++;
 					}
 				}
-				if ((not usepriormut)and(not this->grouplist[gr].priorsnimoy.constant)) {
-						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
-						this->scen.ipv++;
-				}
-				//cout<<"snimoy="<<this->grouplist[gr].snimoy<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";fflush(stdin);
+				cout<<"snimoy="<<this->grouplist[gr].snimoy;
+				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 		    }
 		    if (this->grouplist[gr].type==1) {  //sequence
-		        if ((this->grouplist[gr].musmoy<0)and(usepriormut)) {
-					this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
-					if (not this->grouplist[gr].priormusmoy.constant) {
+				if (not this->grouplist[gr].priormusmoy.constant) {
+					if ((this->grouplist[gr].musmoy<0)and(usepriormut)) {
+						this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
 						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
 						this->scen.ipv++;
 					}
 				}
-				if ((not usepriormut)and(not this->grouplist[gr].priormusmoy.constant)) {
-						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
-						this->scen.ipv++;
-				}
-				//cout<<"musmoy="<<this->grouplist[gr].musmoy<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";fflush(stdin);
+				cout<<"musmoy="<<this->grouplist[gr].musmoy;
+				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 				if (this->grouplist [gr].mutmod>0){
-					if ((this->grouplist[gr].k1moy<0)and(usepriormut)) {
-						  this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
-						  if (not this->grouplist[gr].priork1moy.constant) {
-							  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
-							  this->scen.ipv++;
+					if (not this->grouplist[gr].priork1moy.constant) {
+						if ((this->grouplist[gr].k1moy<0)and(usepriormut)) {
+							this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
+							this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
+							this->scen.ipv++;
 						  }
 					  }
-					  if ((not usepriormut)and(not this->grouplist[gr].priork1moy.constant)) {
-							  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
-							  this->scen.ipv++;
-					  }
-					//cout<<"k1moy="<<this->grouplist[gr].k1moy<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";fflush(stdin);
+					cout<<"k1moy="<<this->grouplist[gr].k1moy;
+					if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 				}
 				if (this->grouplist [gr].mutmod>2){
-					if ((this->grouplist[gr].k2moy<0)and(usepriormut)) {
-						this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
-						if (not this->grouplist[gr].priork2moy.constant) {
+					if (not this->grouplist[gr].priork2moy.constant) {
+						if ((this->grouplist[gr].k2moy<0)and(usepriormut)) {
+							this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
 							this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
 							this->scen.ipv++;
 						}
-					}
-					if ((not usepriormut)and(not this->grouplist[gr].priork2moy.constant)) {
-							this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
-							this->scen.ipv++;
 					}
 				}
 		    }
 
 		}
 		this->scen.nparamvar=this->scen.ipv;
-
+		cout<<"nparamvar = "<<this->scen.nparamvar<<"\n";
 	}
 
 /**
@@ -1395,6 +1385,7 @@ struct ParticleC
 		gt.nodes = new NodeC[2*nnod+1];
 		gt.branches = new BranchC[2*nnod];
 		for (int sa=0;sa<this->data.nsample;sa++) {
+		    //cout<<"    this->data.nind["<<sa<<"]="<<this->data.nind[sa]<<"\n";
 			for (int ind=0;ind<this->data.nind[sa];ind++) {
 				nn=calploidy(loc,sa,ind);
 				//cout << "n=" << n << "     nn=" << nn << "\n";
@@ -2138,70 +2129,63 @@ struct ParticleC
         string sgp,sind,snum;
         int iloc, ***index,offset,*k,ty;
         k = new int[this->nloc];
-        index = new int**[this->nloc];
-        for (int loc=0;loc<this->nloc;loc++) {
-            index[loc] = new int*[this->data.nsample];
-            offset = 0;
-            for (int sa=0;sa<this->data.nsample;sa++) {
-                index[loc][sa] = randperm(this->locuslist[loc].samplesize[sa],this->mw);
-                for (int i=0;i<this->locuslist[loc].samplesize[sa];i++) index[loc][sa][i] += offset;
-                offset += this->locuslist[loc].samplesize[sa];
-            }
-        }
         sgp="Simulated genepop file \n";
+		//cout<<sgp<<"\n";
+		cout<<"nloc="<<this->nloc<<"\n";
         for (iloc=0;iloc<this->nloc;iloc++) {
-            switch (this->grouplist[iloc].type)
-            if (this->grouplist[iloc].type==0) sgp +="Locus M_A_"+IntToString(iloc+1)+"  <A>\n";
-            if (this->grouplist[iloc].type==1) sgp +="Locus M_H_"+IntToString(iloc+1)+"  <H>\n";
-            if (this->grouplist[iloc].type==2) sgp +="Locus M_X_"+IntToString(iloc+1)+"  <X>\n";
-            if (this->grouplist[iloc].type==3) sgp +="Locus M_Y_"+IntToString(iloc+1)+"  <Y>\n";
-            if (this->grouplist[iloc].type==4) sgp +="Locus M_M_"+IntToString(iloc+1)+"  <M>\n";
-            if (this->grouplist[iloc].type==5) sgp +="Locus S_A_"+IntToString(iloc+1)+"  <A>\n";
-            if (this->grouplist[iloc].type==6) sgp +="Locus S_H_"+IntToString(iloc+1)+"  <H>\n";
-            if (this->grouplist[iloc].type==7) sgp +="Locus S_X_"+IntToString(iloc+1)+"  <X>\n";
-            if (this->grouplist[iloc].type==8) sgp +="Locus S_Y_"+IntToString(iloc+1)+"  <Y>\n";
-            if (this->grouplist[iloc].type==9) sgp +="Locus S_M_"+IntToString(iloc+1)+"  <M>\n";
+            if (this->locuslist[iloc].type==0) sgp +="Locus M_A_"+IntToString(iloc+1)+"  <A>\n";
+            if (this->locuslist[iloc].type==1) sgp +="Locus M_H_"+IntToString(iloc+1)+"  <H>\n";
+            if (this->locuslist[iloc].type==2) sgp +="Locus M_X_"+IntToString(iloc+1)+"  <X>\n";
+            if (this->locuslist[iloc].type==3) sgp +="Locus M_Y_"+IntToString(iloc+1)+"  <Y>\n";
+            if (this->locuslist[iloc].type==4) sgp +="Locus M_M_"+IntToString(iloc+1)+"  <M>\n";
+            if (this->locuslist[iloc].type==5) sgp +="Locus S_A_"+IntToString(iloc+1)+"  <A>\n";
+            if (this->locuslist[iloc].type==6) sgp +="Locus S_H_"+IntToString(iloc+1)+"  <H>\n";
+            if (this->locuslist[iloc].type==7) sgp +="Locus S_X_"+IntToString(iloc+1)+"  <X>\n";
+            if (this->locuslist[iloc].type==8) sgp +="Locus S_Y_"+IntToString(iloc+1)+"  <Y>\n";
+            if (this->locuslist[iloc].type==9) sgp +="Locus S_M_"+IntToString(iloc+1)+"  <M>\n";
         }
+        //cout<<sgp<<"\n";
         for (int ech=0;ech<this->data.nsample;ech++) {
-            sgp += "POP\n";
+            if (ech==0) sgp += "POP"; else {sgp +="\nPOP";/*cout<<sgp<<"\n";*/}
             for (int loc=0;loc<this->nloc;loc++) k[loc] = 0;
             for (int ind=0;ind<this->data.nind[ech];ind++) {
                 snum = IntToString(ind+1);
                 if (ind<9)  snum ="0"+snum;
                 if (ind<99) snum ="0"+snum;
-                sgp += "  "+IntToString(ech+1)+"-"+snum+"  , ";
+                sgp += "\n  "+IntToString(ech+1)+"-"+snum+"  , ";
                 for (iloc=0;iloc<this->nloc;iloc++) {
-                    ty = this->grouplist[iloc].type;
+                    ty = this->locuslist[iloc].type;
+				    //if (ech>0) cout<<"iloc="<<iloc<<"    type="<<ty<<"   k[iloc]=]"<<k[iloc]<<"   index="<<k[iloc] <<"\n";
                     if (ty==0) {
-                        sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;
-                        sgp +=IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;
+                        sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;
+                        sgp +=IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;
                     }
-                    if (ty==1) {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;}
+                    if (ty==1) {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
                     if (ty==2) {
-                        sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;
-                        if (this->data.indivsexe[ech][ind]==2) {sgp +=IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;}
+                        sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;
+                        if (this->data.indivsexe[ech][ind]==2) {sgp +=IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
                         else sgp += "   ";
                     }
                     if (ty==3) {
                         if (this->data.indivsexe[ech][ind]==2) sgp +="   000";
-                        else {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;}
+                        else {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
                     }
-                    if (ty==4) {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][index[iloc][ech][k[iloc]]]);k[iloc]++;}
+                    if (ty==4) {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
                     if (ty==5) {
-                        sgp +="   <["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"][";k[iloc]++;
-                        sgp += this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]>";k[iloc]++;
+                        sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"][";k[iloc]++;
+                        sgp += this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;
                     }
-                    if (ty==6) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]>";k[iloc]++;}
+                    if (ty==6) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
                     if (ty==7) {
-                        sgp +="   <["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]";k[iloc]++;
-                        if (this->data.indivsexe[ech][ind]==2) {sgp += "["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]>";k[iloc]++;}
+                        sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]";k[iloc]++;
+                        if (this->data.indivsexe[ech][ind]==2) {sgp += "["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
                         else sgp += ">";
                     }
                     if (ty==8) {
                         if (this->data.indivsexe[ech][ind]==2) sgp +="   [<>]";
-                        else {sgp +="   <["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]>";k[iloc]++;}
+                        else {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
                     }
-                    if (ty==9) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][index[iloc][ech][k[iloc]]]+"]>";k[iloc]++;}
+                    if (ty==9) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
                 }
             }
         }
