@@ -35,7 +35,7 @@ class SimulationProject(Project):
     def __init__(self,name,dir=None,parent=None):
         super(SimulationProject,self).__init__(name,dir,parent)
 
-        self.sexRatio = 0
+        self.sexRatio = None
 
         self.ui.projNameLabel.setText("Data file generic name :")
         self.ui.label.setText("Target directory :")
@@ -65,6 +65,10 @@ class SimulationProject(Project):
         self.locusNumberFrame = uic.loadUi("uis/setLocusNumber.ui")
         self.locusNumberFrame.parent = self
         QObject.connect(self.locusNumberFrame.okButton,SIGNAL("clicked()"),self.checkSampleNSetGenetic)
+        QObject.connect(self.locusNumberFrame.mxEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
+        QObject.connect(self.locusNumberFrame.myEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
+        QObject.connect(self.locusNumberFrame.sxEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
+        QObject.connect(self.locusNumberFrame.syEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
 
         self.gen_data_win = SetGeneticDataSimulation(self)
         self.gen_data_win.hide()
@@ -72,6 +76,20 @@ class SimulationProject(Project):
         #self.setHistValid(False)
         #self.setGenValid(False)
         #self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self.runSimulation)
+
+    def checkXYValues(self,val):
+        try:
+            mx = int(str(self.locusNumberFrame.mxEdit.text()))
+            my = int(str(self.locusNumberFrame.myEdit.text()))
+            sx = int(str(self.locusNumberFrame.sxEdit.text()))
+            sy = int(str(self.locusNumberFrame.syEdit.text()))
+            if mx <= 0 and my <= 0 and sx <= 0 and sy <= 0:
+                self.locusNumberFrame.sexRatioEdit.setDisabled(True)
+            else:
+                self.locusNumberFrame.sexRatioEdit.setDisabled(False)
+        except Exception,e:
+            self.locusNumberFrame.sexRatioEdit.setDisabled(True)
+
 
     def save(self):
         pass
@@ -82,6 +100,7 @@ class SimulationProject(Project):
         log(1,"Entering in Genetic Data Setting")
         self.ui.refTableStack.addWidget(self.locusNumberFrame)
         self.ui.refTableStack.setCurrentWidget(self.locusNumberFrame)
+        self.sexRatio = None
         self.setGenValid(False)
 
     def checkSampleNSetGenetic(self):
@@ -136,16 +155,25 @@ class SimulationProject(Project):
     def on_btnStart_clicked(self):
             #if self.verifyRefTableValid():
             # première ligne
+            sexRatioTxt = ""
+            if self.sexRatio != None:
+                sexRatioTxt = self.sexRatio
             nb_rec_edit = str(self.ui.nbSetsReqEdit.text())
             if nb_rec_edit.isdigit() and int(nb_rec_edit) > 0:
                 nb_rec = int(nb_rec_edit)
             else:
                 output.notify(self,"Value error","Required number of simulated data sets must be a positive integer")
                 return
-            print "%s %s %s"%(self.name,nb_rec,self.sexRatio)
+            print "%s %s %s"%(self.name,nb_rec,sexRatioTxt)
             print self.hist_model_win.getConf()
             print ""
             print self.gen_data_win.getConf().replace(u'\xb5','u')
+            fdest = open("%s/headersim.txt"%self.dir,"w")
+            fdest.write("%s %s %s\n"%(self.name,nb_rec,sexRatioTxt))
+            fdest.write("%s\n\n"%self.hist_model_win.getConf())
+            fdest.write("%s"%self.gen_data_win.getConf().replace(u'\xb5','u'))
+            fdest.close()
+
 
 
 

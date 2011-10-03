@@ -984,6 +984,18 @@
    </item>
    <item>
     <widget class="QFrame" name="frame_17">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>70</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>70</height>
+      </size>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -1007,7 +1019,7 @@
       <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Sex ratio
+         <string>Sex ratio (necessary with X-linked and Y-linked loci)
 Proportion of male individuals in the population</string>
         </property>
         <property name="alignment">
