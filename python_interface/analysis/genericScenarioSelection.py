@@ -51,6 +51,7 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
         if len(self.getListSelectedScenarios()) >= self.nb_min_sel:
             self.analysis.candidateScList = self.getListSelectedScenarios()
             self.next_widget.setScenarios(self.analysis.candidateScList)
+            self.next_widget.setRecordValues(self.analysis.candidateScList)
             #self.parent.parent.addTab(self.next_widget,self.next_title)
             #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
             #self.parent.parent.setCurrentWidget(self.next_widget)

@@ -40,6 +40,7 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
             self.ui.label.setText("Confidence in scenario choice")
             self.setScenarios([self.analysis.chosenSc])
             self.setCandidateScenarios(self.analysis.candidateScList)
+            self.setRecordValues(self.analysis.candidateScList)
             self.ui.redefButton.hide()
             self.ui.numRegCombo.clear()
             self.ui.numRegCombo.addItem("0")
@@ -50,8 +51,9 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
             self.ui.notdsEdit.hide()
             self.ui.notdsLabel.hide()
             self.ui.candidateLabel.hide()
+            #self.setRecordValues([self.analysis.chosenSc])
 
-        self.ui.cnosdEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
+        #self.ui.cnosdEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
         self.ui.deEdit.setText("500")
         onePc = int(self.parent.parent.ui.nbSetsDoneEdit.text()) / 100
         if onePc < 1000:
@@ -61,7 +63,7 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
                 onePc = 1000
         self.ui.lrEdit.setText(str(onePc))
 
-        self.ui.totNumSimEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
+        #self.ui.totNumSimEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
 
     def checkAll(self):
         problems = ""
@@ -156,6 +158,14 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
                 self.analysis.computationParameters = strparam
             self.parent.parent.addAnalysis(self.analysis)
             self.exit()
+
+    def setRecordValues(self,scList):
+        sumRec = 0
+        for i in scList:
+            sumRec+=self.parent.parent.readNbRecordsOfScenario(int(i))
+        self.ui.cnosdEdit.setText(str(sumRec))
+        #print "sumrec : %s"%sumRec
+        self.ui.totNumSimEdit.setText(str(sumRec))
 
     def setCandidateScenarios(self,scList):
         """ écrit la liste des scenarios candidats
