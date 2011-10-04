@@ -671,7 +671,7 @@ public:
 
     HeaderC* readHeadersim(char* headersimfilename){
         string s1,s2,*sl,*ss,*ss1,*ss2;
-        int nlscen,nss,nss1,j,k,l,gr,grm,k1,k2,*nf;
+        int nlscen,nss,nss1,j,k,l,gr,grm,k1,k2,*nf,*nm;
 		double som;
         //cout<<"debut de readheader\n";
         //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
@@ -685,20 +685,21 @@ public:
 		ss = splitwords(s1," ",&nss);
 		this->datafilename=ss[0];
 		this->nsimfile=atoi(ss[1].c_str());
-		this->dataobs.sexratio=atof(ss[2].c_str());
+		if (nss>2) this->dataobs.sexratio=atof(ss[2].c_str()); else this->dataobs.sexratio=0.5;
         getline(file,s1);
 		ss = splitwords(s1," ",&nss);
 		this->dataobs.nsample=atoi(ss[0].c_str());
 		this->dataobs.nind=new int[this->dataobs.nsample];
 		this->dataobs.indivsexe=new int*[this->dataobs.nsample];
 		nf=new int[this->dataobs.nsample];
+		nm=new int[this->dataobs.nsample];
 		for (int i=0;i<this->dataobs.nsample;i++) {
 			getline(file,s1);
 			ss = splitwords(s1," ",&nss);
-			this->dataobs.nind[i]=atoi(ss[0].c_str());
+			nf[i]=atoi(ss[0].c_str());
+			nm[i]=atoi(ss[1].c_str());
+			this->dataobs.nind[i]=nf[i]+nm[i];
 			this->dataobs.indivsexe[i]=new int[this->dataobs.nind[i]];
-			ss[1]=ss[1]+")";
-			nf[i]=getwordint(ss[1],1);
 			for (int j=0;j<nf[i];j++) this->dataobs.indivsexe[i][j]=2;
 			for (int j=nf[i];j<this->dataobs.nind[i];j++) this->dataobs.indivsexe[i][j]=1;
 		}

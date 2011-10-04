@@ -51,7 +51,7 @@ cout<<"path="<<path<<"\n";
         progressfilename = new char[strlen(path)+20];
 cout<<"apres dimension de progressfilename\n";
         strcpy(progressfilename,path);
-        strcat(progressfilename,"_progress.txt");
+        strcat(progressfilename,"progress.txt");
 
 		nomfisim=header.datafilename;
 		ntest = header.nsimfile;
@@ -74,4 +74,5 @@ cout<<"apres dimension de progressfilename\n";
                 fgp = fopen(nomfigp,"w");fprintf(fgp,"%s",str2char(sgp[i]));fclose(fgp);
             }
         }
+        flog=fopen(progressfilename,"w");fprintf(flog,"OK");fclose(flog);
    }
