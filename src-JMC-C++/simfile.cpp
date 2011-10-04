@@ -70,7 +70,7 @@ cout<<"apres dimension de progressfilename\n";
                 strcpy(nomfigp,path);
                 strcat(nomfigp,nomfisim.c_str());
                 strcat(nomfigp,sn.c_str());
-				cout<<"nomfigp="<<nomfigp<<"\n";
+				cout<<"écriture du fichier "<<nomfigp<<"\n";
                 fgp = fopen(nomfigp,"w");fprintf(fgp,"%s",str2char(sgp[i]));fclose(fgp);
             }
         }

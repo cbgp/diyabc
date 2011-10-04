@@ -89,7 +89,7 @@ int readheaders() {
 */
 int readheadersim() {
     int k;
-	cout<<"avant header.readHeadersim    headersimfilename="<<headersimfilename<<"\n";
+	if (debuglevel==1) cout<<"avant header.readHeadersim    headersimfilename="<<headersimfilename<<"\n";
 	header.readHeadersim(headersimfilename);
 	return k;
 }

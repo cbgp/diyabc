@@ -107,7 +107,8 @@ public:
 	void ecris(){
 		cout <<"    loi="<<this->loi<<"   min="<<this->mini<<"   max="<<this->maxi<<"   ndec="<<this->ndec;
 		if (this->loi=="GA") cout <<"    shape="<<this->sdshape;
-		if (this->constant) cout<<"   constant\n"; else cout<<"   variable\n";
+		if (this->constant) cout<<"   constant"; else cout<<"   non constant";
+		if (this->fixed) cout<<"   fixed\n";else cout<<"   non fixed";
 	}
 
 };
@@ -990,9 +991,9 @@ struct ParticleC
 */
 	void setMutParammoyValue(bool usepriormut){
 		int gr;
-		cout<<"this->scen.ipv="<<this->scen.ipv<<"\n";
+		//cout<<"this->scen.ipv="<<this->scen.ipv<<"\n";
 		for (gr=1;gr<=this->ngr;gr++) {
-		    cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"   usepriormut="<<usepriormut<<"\n";
+		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"   usepriormut="<<usepriormut<<"\n";
 		    if (this->grouplist[gr].type==0) {  //microsat
 		        if (not this->grouplist[gr].priormutmoy.constant) {
                     if ((this->grouplist[gr].mutmoy<0)and(usepriormut)){ 
@@ -1002,8 +1003,8 @@ struct ParticleC
 					}
 		        }
 		        //cout<<"juste avant mutmay\n";
-				cout<<"mutmoy="<<this->grouplist[gr].mutmoy;
-				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
+				//cout<<"mutmoy="<<this->grouplist[gr].mutmoy;
+				//if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 					
 				if (not this->grouplist[gr].priorPmoy.constant) {
 					if ((this->grouplist[gr].Pmoy<0)and(usepriormut)) {
@@ -1012,8 +1013,8 @@ struct ParticleC
 						this->scen.ipv++;
 					}
 				}
-				cout<<"Pmoy="<<this->grouplist[gr].Pmoy;
-				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
+				//cout<<"Pmoy="<<this->grouplist[gr].Pmoy;
+				//if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 				
 				if (not this->grouplist[gr].priorsnimoy.constant) {
 					if ((this->grouplist[gr].snimoy<0)and(usepriormut)) {
@@ -1022,8 +1023,8 @@ struct ParticleC
 						this->scen.ipv++;
 					}
 				}
-				cout<<"snimoy="<<this->grouplist[gr].snimoy;
-				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
+				//cout<<"snimoy="<<this->grouplist[gr].snimoy;
+				//if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 		    }
 		    if (this->grouplist[gr].type==1) {  //sequence
 				if (not this->grouplist[gr].priormusmoy.constant) {
@@ -1033,8 +1034,8 @@ struct ParticleC
 						this->scen.ipv++;
 					}
 				}
-				cout<<"musmoy="<<this->grouplist[gr].musmoy;
-				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
+				//cout<<"musmoy="<<this->grouplist[gr].musmoy;
+				//if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 				if (this->grouplist [gr].mutmod>0){
 					if (not this->grouplist[gr].priork1moy.constant) {
 						if ((this->grouplist[gr].k1moy<0)and(usepriormut)) {
@@ -1043,8 +1044,8 @@ struct ParticleC
 							this->scen.ipv++;
 						  }
 					  }
-					cout<<"k1moy="<<this->grouplist[gr].k1moy;
-					if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
+					//cout<<"k1moy="<<this->grouplist[gr].k1moy;
+					//if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 				}
 				if (this->grouplist [gr].mutmod>2){
 					if (not this->grouplist[gr].priork2moy.constant) {
@@ -1059,7 +1060,7 @@ struct ParticleC
 
 		}
 		this->scen.nparamvar=this->scen.ipv;
-		cout<<"nparamvar = "<<this->scen.nparamvar<<"\n";
+		//cout<<"nparamvar = "<<this->scen.nparamvar<<"\n";
 	}
 
 /**
@@ -1703,8 +1704,9 @@ struct ParticleC
 	}
 
 	string init_dnaseq(int loc) {
-      if (debuglevel==9) cout<<"debut de init_dnaseq  dnatrue = "<<this->dnatrue<<"   dnalength="<<this->locuslist[loc].dnalength<<"\n";
-		this->locuslist[loc].tabsit.resize(this->locuslist[loc].dnalength);
+      if (debuglevel==9) cout<<"debut de init_dnaseq("<<loc<<")  dnatrue = "<<this->dnatrue<<"   dnalength="<<this->locuslist[loc].dnalength<<"\n";
+	if (debuglevel==9) cout<<"nmutot="<<this->gt[loc].nmutot<<"\n";
+	  this->locuslist[loc].tabsit.resize(this->locuslist[loc].dnalength);
 		//int *sitmut2;
 		string dna="";
         if (this->gt[loc].nmutot>0) {
@@ -1763,9 +1765,17 @@ struct ParticleC
             //delete []sitmut2;
             this->locuslist[loc].tabsit.clear();
             this->locuslist[loc].mutsit.clear();
-        }
-
-        if ((debuglevel==9)and(loc==10)) cout<<dna<<"\n";
+        } else {
+            if (this->dnatrue) {			//TRUE DNA SEQUENCE
+                for (int i=0;i<this->gt[loc].nmutot;i++) this->locuslist[loc].sitmut[i]=this->locuslist[loc].sitmut2[i];
+                dna.resize(this->locuslist[loc].dnalength);
+                for (int i=0;i<this->locuslist[loc].dnalength;i++){
+                    this->locuslist[loc].tabsit[i] = i;
+                    dna[i]=draw_nuc(loc);
+                }
+			}
+		}
+        if ((debuglevel==9)and(loc==8)) cout<<dna<<"\n";
         return dna;
 	}
 
@@ -2131,7 +2141,7 @@ struct ParticleC
         k = new int[this->nloc];
         sgp="Simulated genepop file \n";
 		//cout<<sgp<<"\n";
-		cout<<"nloc="<<this->nloc<<"\n";
+		//cout<<"nloc="<<this->nloc<<"\n";
         for (iloc=0;iloc<this->nloc;iloc++) {
             if (this->locuslist[iloc].type==0) sgp +="Locus M_A_"+IntToString(iloc+1)+"  <A>\n";
             if (this->locuslist[iloc].type==1) sgp +="Locus M_H_"+IntToString(iloc+1)+"  <H>\n";

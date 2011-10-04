@@ -71,7 +71,7 @@ parstatC *parstat;
 * remplit le tableau numpar des numéros de paramètres communs par scénario
 */
     void det_numpar() {
-        //cout<<"debut de det_numpar\n";
+        cout<<"debut de det_numpar\n";
         vector <string>  parname;
         int ii,iscen;
         bool commun,trouve;
@@ -89,10 +89,10 @@ parstatC *parstat;
             }
             nparamcom = npar+rt.nparamut;//rt.nparam[rt.scenchoisi[0]-1]-header.scenario[rt.scenchoisi[0]-1].nparam;
             for (int i=rt.nhistparam[iscen];i<nparamcom;i++) numpar[0][i]=i;
-            /*cout << "noms des parametres communs : ";
+            cout << "noms des parametres communs : ";
             for (int i=0;i<rt.nhistparam[iscen];i++) cout<<rt.histparam[iscen][i].name<<"   ";
             for (int i=0;i<rt.nparamut;i++) cout<<rt.mutparam[i].name<<"   ";
-            cout <<"\n";*/
+            cout <<"\n";
         } else {
             iscen=rt.scenchoisi[0]-1;  //on prend les paramètres du premier scénario choisi et on les compare à ceux des autres scénarios
             for (int i=0;i<rt.nhistparam[iscen];i++) {

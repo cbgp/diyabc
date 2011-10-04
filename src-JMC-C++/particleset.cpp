@@ -319,7 +319,8 @@ void setgroup(int p) {
                   if (debuglevel==5) cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"\n";
                     this->particule[p].scenario[scen].histparam[i].value=phistar[k][ii];
                     ii++;
-                }
+                } else this->particule[p].scenario[scen].histparam[i].value=header.scenario[scen].histparam[i].prior.mini;
+				if (p==0) cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"\n";
             }
             //cout<<"apres la copie des paramètres historiques\n";
             for (gr=1;gr<=header.ngroupes;gr++)
@@ -347,7 +348,7 @@ void setgroup(int p) {
                 }
                 //cout<<"\n";
         }
-        //cout<<"apres le remplissage des particules\n";
+        cout<<"apres le remplissage des particules\n";
         //if (num_threads>0) omp_set_num_threads(num_threads);_
     #pragma omp parallel for shared(sOK) private(gr) if(multithread)
         for (ipart=0;ipart<this->npart;ipart++){
@@ -560,7 +561,7 @@ void setgroup(int p) {
     #pragma omp parallel for shared(sOK) if(multithread)
         for (int ipart=0;ipart<this->npart;ipart++){
             sOK[ipart] = this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
-			cout<<"sOK["<<ipart<<"]="<<sOK[ipart]<<"\n";
+			//cout<<"sOK["<<ipart<<"]="<<sOK[ipart]<<"\n";
             if (sOK[ipart]==0) ss[ipart] = this->particule[ipart].dogenepop();
             else ss[ipart] = "";
 			//cout<<ss[ipart]<<"\n";

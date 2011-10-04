@@ -718,19 +718,19 @@ public:
         getline(file,s1);    //cout<<s1<<"\n";    // nombre de scenarios
         this->nscenarios=1; //cout<<this->nscenarios<<"\n";
 		ss=splitwords(s1," ",&nss);
-		nlscen=atoi(ss[1].c_str());
+		nlscen=getwordint(ss[1],1);
         this->scenario = new ScenarioC[this->nscenarios];
 		sl = new string[nlscen];
 		this->scenario[0].number = 1;
 		this->scenario[0].prior_proba = 1.0;
 		this->scenario[0].nparam = 0;
 		this->scenario[0].nparamvar=0;
-		for (int j=0;j<nlscen;j++) {getline(file,sl[j]);/*cout<<sl[i][j]<<"\n";*/}
+		for (int j=0;j<nlscen;j++) {getline(file,sl[j]);/*cout<<sl[j]<<"\n";*/}
 		this->scenario[0].read_events(nlscen,sl);
 		//cout<<"apres read_events\n";
         delete [] sl;
 		delete [] ss;
-        if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie scénarios\n";
+        if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie scénario(s)\n";
 		
 //Partie historical parameters
                 //cout <<"avant histparam\n";fflush(stdin);
@@ -745,7 +745,7 @@ public:
 		this->scenario[0].histparam = new HistParameterC[this->nparamtot];
 		this->scenario[0].nparam = this->nparamtot;
         for (int i=0;i<this->nparamtot;i++) {
-            getline(file,s1);
+            getline(file,s1);  //cout<<s1<<"\n";
 			ss=splitwords(s1," ",&nss);
 			this->histparam[i].name=ss[0];
             if (ss[1]=="N") this->histparam[i].category = 0;
@@ -818,7 +818,7 @@ public:
         delete [] ss;
         if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie description des locus\n";
 //Partie group priors
-                cout <<"avant partie group priors\n";fflush(stdin);
+                //cout <<"avant partie group priors\n";fflush(stdin);
         getline(file,s1); //cout<<s1<<"    ligne vide ? \n";      //ligne vide
         getline(file,s1);       //ligne "group prior"
 		this->ngroupes=getwordint(s1,2);
@@ -851,20 +851,27 @@ public:
                 this->groupe[gr].priormusmoy.fixed=true;this->groupe[gr].priormusmoy.constant=true;
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc = this->readpriormut(ss1[1]);delete [] ss1;
 
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].k1moy  = atof(ss1[1].c_str());delete [] ss1;
-                this->groupe[gr].priork1moy.fixed=true;this->groupe[gr].priork1moy.constant=true;
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readpriormut(ss1[1]);delete [] ss1;
-
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].k2moy  = atof(ss1[1].c_str());delete [] ss1;
-                this->groupe[gr].priork2moy.fixed=true;this->groupe[gr].priork2moy.constant=true;
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readpriormut(ss1[1]);delete [] ss1;
-
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);
+				if (ss1[0]!="MODEL") {
+					this->groupe[gr].k1moy  = atof(ss1[1].c_str());delete [] ss1;
+					this->groupe[gr].priork1moy.fixed=true;this->groupe[gr].priork1moy.constant=true;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);
+				}
+
+				if (ss1[0]!="MODEL") {
+					this->groupe[gr].k2moy  = atof(ss1[1].c_str());delete [] ss1;
+					this->groupe[gr].priork2moy.fixed=true;this->groupe[gr].priork2moy.constant=true;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);
+				}
+
                 this->groupe[gr].p_fixe=atof(ss1[2].c_str());this->groupe[gr].gams=atof(ss1[3].c_str());
                 if (ss1[1]=="JK") this->groupe[gr].mutmod=0;
                 else if (ss1[1]=="K2P") this->groupe[gr].mutmod=1;
                 else if (ss1[1]=="HKY") this->groupe[gr].mutmod=2;
                 else if (ss1[1]=="TN") this->groupe[gr].mutmod=3;
+				delete [] ss1;
             }
             this->groupe[gr].nstat=0;
         }
