@@ -256,16 +256,16 @@ class SimulationThread(QThread):
                     f = open("%s/progress.txt"%(self.parent.dir),"r")
                     lines = f.readlines()
                     f.close()
+                    finished = True
+                    self.log(2,"Simulation terminated normaly")
                 else:
-                    lines = ["OK","0"]
-                fg.close()
-                g = open(outfile,"r")
-                #data= g.readlines()
-                #print "data:%s"%data
-                #print "poll:%s"%p.poll()
-                g.close()
-                if self.nb_done < self.nb_to_gen:
-                    self.problem = "Reftable generation program exited anormaly"
-                    self.emit(SIGNAL("refTableProblem"))
+                    fg.close()
+                    fout = open(outfile,'r')
+                    lastline = fout.readlines()[-1]
+                    fout.close()
+                    self.problem = "Simulation program exited anormaly\n%s"%lastline
+                    self.emit(SIGNAL("simulationProblem"))
                     return
+                    
+                fg.close()
         fg.close()
