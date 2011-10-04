@@ -279,8 +279,8 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
             nbm = box.findChild(QLineEdit,"msizeEdit").text()
             result += "%s %s\n"%(nbf,nbm)
 
-        result += "\nscenario\n"
         scTxt = str(self.scList[0].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()).strip()
+        result += "\nscenario (%s)\n"%(len(scTxt.split('\n')))
         result += "%s\n"%scTxt
 
         result += "\nhistorical parameters (%s)"%len(self.paramList)
@@ -295,7 +295,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
                 paramBox = self.paramList[i]
                 name = paramBox.findChild(QLabel,"paramNameLabel").text()                    
                 i+=1
-            result+= "\n%s %s"%(pname,info[1])
+            result+= "\n%s %s %s"%(pname,info[0],info[1])
         return result
 
 

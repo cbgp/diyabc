@@ -221,6 +221,16 @@ class SetMutationModelSequencesSimulation(formSetMutationModelSequencesFixed,bas
                 s_result += u"%s,"%self.ui.ilC2MeanEdit.text()
                 s_result += u"%s]\n"%self.ui.ilc2ShapeEdit.text()
 
+        if self.ui.jukesRadio.isChecked():
+            model = "JK"
+        elif self.ui.kimuraRadio.isChecked():
+            model = "K2P"
+        elif self.ui.haseRadio.isChecked():
+            model = "HKY"
+        elif self.ui.tamuraRadio.isChecked():
+            model = "TN"
+        s_result += "MODEL %s %s %s\n"%(model,str(self.ui.isEdit.text()).strip(),str(self.ui.sotgEdit.text()).strip())
+
         return s_result
 
 
