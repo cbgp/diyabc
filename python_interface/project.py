@@ -1644,7 +1644,7 @@ class RefTableGenThread(QThread):
             self.processus = p
         except Exception,e:
             #print "Cannot find the executable of the computation program %s"%e
-            self.problem = "Cannot find the executable of the computation program \n%s"%e
+            self.problem = "Problem during program launch\n%s"%e
             self.emit(SIGNAL("refTableProblem"))
             #output.notify(self.parent(),"computation problem","Cannot find the executable of the computation program")
             fg.close()

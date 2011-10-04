@@ -329,15 +329,19 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
     def setSumConf(self,lines):
         """ grace aux lignes du fichier de conf, remet les sum stats
         """
+        print "pppppppppppp"
+        print lines
+        print "pppppppppppp"
         confToStat = {"NAL" : "mnoa","HET" : "mgd", "VAR": "msv","MGW" : "mgw", "N2P" : "mnoa2", "H2P" : "mgd2", "V2P" : "msv2", "FST" : "fst2", "DAS" : "sad2", "DM2" : "dd2", "AML" : "ml3", "LIK" : "" }
 
         # construction du dico de stats (le même que dans getSumConf)
         dico_stats = {}
         for line in lines:
-            if line.strip() != "":
-                t = line.split(' ')[0]
+            sline = line.strip()
+            if sline.strip() != "":
+                t = sline.split(' ')[0]
                 dico_stats[t] = []
-                for sample in line.split(' ')[1:]:
+                for sample in sline.split(' ')[1:]:
                     dico_stats[t].append(sample)
         #print "dico stats :",dico_stats
 

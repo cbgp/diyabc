@@ -151,29 +151,121 @@ class SimulationProject(Project):
         self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
         self.ui.refTableStack.setCurrentIndex(0)
 
+    def writeHeaderSim(self):
+        #if self.verifyRefTableValid():
+        # première ligne
+        sexRatioTxt = ""
+        if self.sexRatio != None:
+            sexRatioTxt = self.sexRatio
+        nb_rec_edit = str(self.ui.nbSetsReqEdit.text())
+        if nb_rec_edit.isdigit() and int(nb_rec_edit) > 0:
+            nb_rec = int(nb_rec_edit)
+        else:
+            output.notify(self,"Value error","Required number of simulated data sets must be a positive integer")
+            return
+        print "%s %s %s"%(self.name,nb_rec,sexRatioTxt)
+        print self.hist_model_win.getConf()
+        print ""
+        print self.gen_data_win.getConf().replace(u'\xb5','u')
+        fdest = open("%s/headersim.txt"%self.dir,"w")
+        fdest.write("%s %s %s\n"%(self.name,nb_rec,sexRatioTxt))
+        fdest.write("%s\n\n"%self.hist_model_win.getConf())
+        fdest.write("%s"%self.gen_data_win.getConf().replace(u'\xb5','u'))
+        fdest.close()
+
     @pyqtSignature("")
     def on_btnStart_clicked(self):
-            #if self.verifyRefTableValid():
-            # première ligne
-            sexRatioTxt = ""
-            if self.sexRatio != None:
-                sexRatioTxt = self.sexRatio
-            nb_rec_edit = str(self.ui.nbSetsReqEdit.text())
-            if nb_rec_edit.isdigit() and int(nb_rec_edit) > 0:
-                nb_rec = int(nb_rec_edit)
-            else:
-                output.notify(self,"Value error","Required number of simulated data sets must be a positive integer")
-                return
-            print "%s %s %s"%(self.name,nb_rec,sexRatioTxt)
-            print self.hist_model_win.getConf()
-            print ""
-            print self.gen_data_win.getConf().replace(u'\xb5','u')
-            fdest = open("%s/headersim.txt"%self.dir,"w")
-            fdest.write("%s %s %s\n"%(self.name,nb_rec,sexRatioTxt))
-            fdest.write("%s\n\n"%self.hist_model_win.getConf())
-            fdest.write("%s"%self.gen_data_win.getConf().replace(u'\xb5','u'))
-            fdest.close()
+        self.writeHeaderSim()
+        try:
+            nb_to_gen = int(self.ui.nbSetsReqEdit.text())
+        except Exception,e:
+            output.notify(self,"value error","Check the value of required number of data sets\n\n%s"%e)
+            return
+        self.th = SimulationThread(self,nb_to_gen)
+        self.th.connect(self.th,SIGNAL("increment"),self.incProgress)
+        self.th.connect(self.th,SIGNAL("simulationProblem"),self.simulationProblem)
+        self.th.connect(self.th,SIGNAL("simulationLog"),self.refTableLog)
+        #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
+        self.th.start()
+
+    def simulationProblem(self):
+        output.notify(self,"Simulation problem","Something happened during the simulation :\n %s"%(self.th.problem))
+        self.stopRefTableGen()
 
 
+class SimulationThread(QThread):
+    """ thread de traitement qui met à jour la progressBar en fonction de l'avancée de
+    la génération de la reftable
+    """
+    def __init__(self,parent,nb_to_gen):
+        super(SimulationThread,self).__init__(parent)
+        self.parent = parent
+        self.nb_to_gen = nb_to_gen
+        self.processus = None
 
+        self.logmsg = ""
+        self.loglvl = 3
 
+    def log(self,lvl,msg):
+        """ evite de manipuler les objets Qt dans un thread non principal
+        """
+        self.loglvl = lvl
+        self.logmsg = msg
+        self.emit(SIGNAL("refTableLog"))
+
+    def killProcess(self):
+        self.log(3,"Attempting to kill simulation process")
+        if self.processus != None:
+            if self.processus.poll() == None:
+                self.processus.kill()
+                self.log(3,"Killing simulation process (pid:%s) DONE"%(self.processus.pid))
+
+    def run (self):
+        # lance l'executable
+        #outfile = os.path.expanduser("~/.diyabc/general.out")
+        outfile = "%s/simulation.out"%self.parent.dir
+        if os.path.exists(outfile):
+            os.remove(outfile)
+        fg = open(outfile,"w")
+        try:
+            self.log(2,"Running the executable for the simulation")
+            exPath = self.parent.parent.preferences_win.getExecutablePath()
+            nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
+            cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-k", "-m", "-t", "%s"%nbMaxThread]
+            #print " ".join(cmd_args_list)
+            self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
+            p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
+            self.processus = p
+        except Exception,e:
+            #print "Cannot find the executable of the computation program %s"%e
+            self.problem = "Problem during program launch \n%s"%e
+            self.emit(SIGNAL("simulationProblem"))
+            #output.notify(self.parent(),"computation problem","Cannot find the executable of the computation program")
+            fg.close()
+            return
+
+        # boucle toutes les secondes pour verifier les valeurs dans le fichier
+        finished = False
+        while not finished:
+            time.sleep(1)
+            # verification de l'arret du programme
+            if p.poll() != None:
+                # lecture 
+                if os.path.exists("%s/progress.txt"%(self.parent.dir)):
+                    #print 'open'
+                    f = open("%s/progress.txt"%(self.parent.dir),"r")
+                    lines = f.readlines()
+                    f.close()
+                else:
+                    lines = ["OK","0"]
+                fg.close()
+                g = open(outfile,"r")
+                #data= g.readlines()
+                #print "data:%s"%data
+                #print "poll:%s"%p.poll()
+                g.close()
+                if self.nb_done < self.nb_to_gen:
+                    self.problem = "Reftable generation program exited anormaly"
+                    self.emit(SIGNAL("refTableProblem"))
+                    return
+        fg.close()
