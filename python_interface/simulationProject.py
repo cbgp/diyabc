@@ -69,6 +69,8 @@ class SimulationProject(Project):
         QObject.connect(self.locusNumberFrame.myEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
         QObject.connect(self.locusNumberFrame.sxEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
         QObject.connect(self.locusNumberFrame.syEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
+        self.locusNumberFrame.mxEdit.setText('1')
+        self.locusNumberFrame.mxEdit.setText('0')
 
         self.gen_data_win = SetGeneticDataSimulation(self)
         self.gen_data_win.hide()
