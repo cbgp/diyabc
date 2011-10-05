@@ -366,13 +366,22 @@ parstatC *parstat;
             for (int j=0;j<nparamcom;j++)parsim[i][j]=alpsimrat[i][j];
         }
     }
-
+    
+	int ecrimat(string nomat, int n, int m, double **A) {
+		cout<<"\n"<<nomat<<"\n";
+		for (int i=0;i<n;i++) {
+			for (int j=0;j<m;j++) cout<<setiosflags(ios::fixed)<<setw(10)<<setprecision(6)<< A[i][j]<<"  ";
+			cout<<"\n";
+		}
+		cout<<"\n";
+		return 0;
+	}
 /**
 * effectue la régression locale à partir de la matrice matX0 et le vecteur des poids vecW
 */
     void local_regression(int n) {
         double **matX,**matXT,**matA,**matB,**matAA,**matC;
-
+		int err;
         matA = new double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) matA[j] = new double[n];
         matX = new double*[n];
@@ -381,19 +390,19 @@ parstatC *parstat;
             matX[i][0] = 1.0;
             for (int j=1;j<nstatOKsel+1;j++) matX[i][j] = matX0[i][j-1];
         }
-        //ecrimat("matX0",10,nstatOKsel,matX0);
-        //ecrimat("matX",10,nstatOKsel+1,matX);
+        //ecrimat("matX0",10,10,matX0);
+        //ecrimat("matX",10,10,matX);
         matXT = transpose(n,nstatOKsel+1,matX);
         for (int i=0;i<n;i++) {
             for (int j=0;j<nstatOKsel+1;j++) matA[j][i] = matXT[j][i]*vecW[i];
         }
-        //ecrimat("matA",nstatOKsel+1,nstatOKsel+1,matA);
+        //ecrimat("matA",10,10,matA);
         matAA = prodM(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
-        //ecrimat("matAA",nstatOKsel+1,nstatOKsel+1,matAA);
+        //ecrimat("matAA",10,10,matAA);
         matB = invM(nstatOKsel+1,matAA);
         matC = prodM(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
         beta = prodM(nstatOKsel+1,n,nparamcom,matC,parsim);
-        //ecrimat("beta",nstatOKsel+1,nparamcom,beta);
+        //ecrimat("beta",10,nparamcom,beta);
         libereM(nstatOKsel+1,matA);
         libereM(n,matX);
         libereM(nstatOKsel+1,matB);

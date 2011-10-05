@@ -322,7 +322,7 @@ int main(int argc, char *argv[]){
                                   debutr=walltime(&clock_zero);
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
                                           //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"\n";
-                                          ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
+                                          ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed);
                                           //cout<<"retour de dosimultabref\n";
                                           simOK=true;
                                           for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}

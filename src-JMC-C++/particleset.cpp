@@ -269,8 +269,7 @@ void setgroup(int p) {
                 }
         }
 
-    void dosimulphistar(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut
-                        ,int nsel) {
+    void dosimulphistar(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
         int scen=numscen-1;
         int ii,ip1,ip2,ipart,gr,nstat,pa,ip,iscen,k,nparam=header.scenario[scen].nparam;
         bool trouve,trace,phistarOK;
@@ -353,7 +352,7 @@ void setgroup(int p) {
     #pragma omp parallel for shared(sOK) private(gr) if(multithread)
         for (ipart=0;ipart<this->npart;ipart++){
                 //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
-            sOK[ipart]=this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
+            sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
             if (sOK[ipart]==0) {
                 for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr);}
             }
@@ -392,7 +391,7 @@ void setgroup(int p) {
 
     }
 
-	void dosimultabref(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,bool usepriorhist, bool usepriormut)
+	void dosimultabref(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed)
 	{
                int ipart,gr,nstat,pa,ip,iscen,np,ns;
                float *pp;
@@ -435,7 +434,7 @@ void setgroup(int p) {
                 for (ipart=0;ipart<this->npart;ipart++){
                         if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
                          //cout <<"   nloc="<<this->particule[ipart].nloc<<"\n";
-			        sOK[ipart]=this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
+			        sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
                         if (debuglevel==5) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 			        if (sOK[ipart]==0) {
 			 	        for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
@@ -450,12 +449,12 @@ void setgroup(int p) {
 				enreg[ipart].numscen=1;
                 if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
 
-                //cout<<"dans particleset\n";
+                cout<<"dans particleset nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
 				for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
                     enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
-                    //cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+                    cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
                 }
-                //cout <<"\n";
+                cout <<"\n";
                 nstat=0;
 				for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 					for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}
@@ -538,8 +537,8 @@ void setgroup(int p) {
         if (debuglevel==5) cout<<"apres delete sOK\n";
 	}
 
-	string* simulgenepop(HeaderC header, int npart, bool multithread, int seed, bool usepriormut) {
-        bool dnatrue=true, usepriorhist=false;
+	string* simulgenepop(HeaderC header, int npart, bool multithread, int seed) {
+        bool dnatrue=true;
         int numscen=1;
         this->npart=npart;
         int *sOK;
@@ -560,7 +559,7 @@ void setgroup(int p) {
     cout<<"avant omp\n";    
     #pragma omp parallel for shared(sOK) if(multithread)
         for (int ipart=0;ipart<this->npart;ipart++){
-            sOK[ipart] = this->particule[ipart].dosimulpart(numscen,usepriorhist,usepriormut);
+            sOK[ipart] = this->particule[ipart].dosimulpart(numscen);
 			//cout<<"sOK["<<ipart<<"]="<<sOK[ipart]<<"\n";
             if (sOK[ipart]==0) ss[ipart] = this->particule[ipart].dogenepop();
             else ss[ipart] = "";

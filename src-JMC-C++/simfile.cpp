@@ -43,7 +43,6 @@ extern char *progressfilename;
         int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn,ncond;
         string opt,*ss,s,*ss1,s0,s1,sg;
         double  *stat_obs,st,pa;
-        bool usepriorhist=false,usepriormut=false;
         string *sgp;
         string nomfisim;
         FILE *flog, *fcur, *fgp;
@@ -56,8 +55,7 @@ cout<<"apres dimension de progressfilename\n";
 		nomfisim=header.datafilename;
 		ntest = header.nsimfile;
 		cout<<"nombre de fichiers genepop à simuler = "<<ntest<<"\n";
-		
-        sgp = ps.simulgenepop(header, ntest, multithread, seed, usepriormut);
+        sgp = ps.simulgenepop(header, ntest, multithread, seed);
 		cout<<"apres les simulations\n";
         nomfigp = new char[strlen(path)+nomfisim.length()+20];
         for (int i=0;i<ntest;i++) {

@@ -55,26 +55,24 @@ using namespace std;
         return spr;
     }
 
-    bool resethistparam(string s) {
+    void resethistparam(string s) {
         string *ss,name,sprior,smini,smaxi;
-        bool useprior;
         int n,i;
         double mini,maxi;
         ss = splitwords(s,"=",&n);
         name=ss[0];
         i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
-        //cout<<"parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
+        cout<<"parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
             header.scenario[rt.scenteste-1].histparam[i].prior = header.readprior(ss[1]);
-            useprior=true;
-             //header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
+            header.scenario[rt.scenteste-1].histparam[i].prior.fixed=false;
+            header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
         }
         else {
             header.scenario[rt.scenteste-1].histparam[i].value = atof(ss[1].c_str());
-            useprior=false;
-            //header.scenario[rt.scenteste-1].histparam[i].value = atof(ss[1].c_str()) ;
+            header.scenario[rt.scenteste-1].histparam[i].prior.fixed=true;
+            cout<<header.scenario[rt.scenteste-1].histparam[i].value<<"\n";
         }
-        return useprior;
     }
 
     void resetcondition(int j,string s) {
@@ -82,35 +80,49 @@ using namespace std;
 
     }
 
-    bool resetmutparam(string s) {
+    void resetmutparam(string s) {
+	    cout<<"debut de resetmutparam\n";
         string *ss,numgr,s1,sg;
-        bool useprior=true;
+        bool *useprior;
         int n,i,gr,i0,i1;
         numgr = s.substr(1,s.find("(")-1);  gr=atoi(numgr.c_str());
         i0=s.find("(");i1=s.find(")"); cout <<"i0="<<i0<<"  i1="<<i1<<"\n";
         s1 = s.substr(i0+1,i1-i0-1); cout <<"groupe "<<gr<<"  "<<s1<<"\n";
         ss = splitwords(s1," ",&n);
         if (header.groupe[gr].type==0) {
+		    cout<<"mutmoy : \n";
+			header.groupe[gr].priormutmoy.ecris();
             if (header.groupe[gr].priormutmoy.constant) header.groupe[gr].mutmoy=header.groupe[gr].priormutmoy.mini;
 			else {
-				if (ss[0].find("[")==string::npos) {header.groupe[gr].mutmoy =atof(ss[0].c_str());useprior=false;header.groupe[gr].priormutmoy.fixed=true;}
+				if (ss[0].find("[")==string::npos) {header.groupe[gr].mutmoy =atof(ss[0].c_str());header.groupe[gr].priormutmoy.fixed=true;}
 				else {header.groupe[gr].priormutmoy = header.readpriormut(ss[0]);header.groupe[gr].priormutmoy.fixed=false;}
 			}
+		    cout<<"mutmoy : \n";
+			header.groupe[gr].priormutmoy.ecris();
             if (ss[1].find("[")==string::npos) header.groupe[gr].priormutloc.sdshape=atof(ss[1].c_str());
             else header.groupe[gr].priormutloc = header.readpriormut(ss[1]);
 
+		    cout<<"Pmoy : \n";
+			header.groupe[gr].priorPmoy.ecris();
 			if (header.groupe[gr].priorPmoy.constant) header.groupe[gr].Pmoy=header.groupe[gr].priorPmoy.mini;
 			else{
-				if (ss[2].find("[")==string::npos) {header.groupe[gr].Pmoy=atof(ss[2].c_str());useprior=false;header.groupe[gr].priorPmoy.fixed=true;}
+				if (ss[2].find("[")==string::npos) {header.groupe[gr].Pmoy=atof(ss[2].c_str());header.groupe[gr].priorPmoy.fixed=true;}
 				else {header.groupe[gr].priorPmoy = header.readpriormut(ss[2]);header.groupe[gr].priorPmoy.fixed=false;}
 			}
+		    cout<<"Pmoy : \n";
+			header.groupe[gr].priorPmoy.ecris();
             if (ss[3].find("[")==string::npos) header.groupe[gr].priorPloc.sdshape=atof(ss[3].c_str());
             else header.groupe[gr].priorPloc = header.readpriormut(ss[3]);
+			
+		    cout<<"snimoy : \n";
+			header.groupe[gr].priorsnimoy.ecris();
 			if (header.groupe[gr].priorsnimoy.constant) header.groupe[gr].snimoy=header.groupe[gr].priorsnimoy.mini;
 			else {
-				if (ss[4].find("[")==string::npos) {header.groupe[gr].snimoy=atof(ss[4].c_str());useprior=false;header.groupe[gr].priorsnimoy.fixed=true;}
+				if (ss[4].find("[")==string::npos) {header.groupe[gr].snimoy=atof(ss[4].c_str());header.groupe[gr].priorsnimoy.fixed=true;}
 				else {header.groupe[gr].priorsnimoy = header.readpriormut(ss[4]);header.groupe[gr].priorsnimoy.fixed=false;}
 			}
+		    cout<<"snimoy : \n";
+			header.groupe[gr].priorsnimoy.ecris();
             if (ss[5].find("[")==string::npos) header.groupe[gr].priorsniloc.sdshape=atof(ss[5].c_str());
             else header.groupe[gr].priorsniloc = header.readpriormut(ss[5]);
        } else {
@@ -118,7 +130,7 @@ using namespace std;
 			//cout<<"modele "<< header.groupe[gr].mutmod<<"\n";
 			if (header.groupe[gr].priormusmoy.constant) header.groupe[gr].musmoy=header.groupe[gr].priormusmoy.mini;
 			else {
-				if (ss[0].find("[")==string::npos) {header.groupe[gr].musmoy=atof(ss[0].c_str());useprior=false;header.groupe[gr].priormusmoy.fixed=true;}
+				if (ss[0].find("[")==string::npos) {header.groupe[gr].musmoy=atof(ss[0].c_str());header.groupe[gr].priormusmoy.fixed=true;}
 				else {header.groupe[gr].priormusmoy = header.readpriormut(ss[0]);header.groupe[gr].priormusmoy.fixed=false;}
 			}
             //cout<<"ss[0] : >"<<ss[0]<<"<      musmoy="<<header.groupe[gr].musmoy<<"\n";
@@ -128,7 +140,7 @@ using namespace std;
 			if (header.groupe[gr].mutmod>0) {
                 if (header.groupe[gr].priork1moy.constant) header.groupe[gr].k1moy=header.groupe[gr].priork1moy.mini;
                 else {
-					if (ss[2].find("[")==string::npos) {header.groupe[gr].k1moy=atof(ss[2].c_str());useprior=false;header.groupe[gr].priork1moy.fixed=true;}
+					if (ss[2].find("[")==string::npos) {header.groupe[gr].k1moy=atof(ss[2].c_str());header.groupe[gr].priork1moy.fixed=true;}
 					else {header.groupe[gr].priork1moy = header.readpriormut(ss[2]);header.groupe[gr].priork1moy.fixed=false;}
                 }
 				//cout<<"k1moy="<<header.groupe[gr].k1moy<<"\n";
@@ -138,7 +150,7 @@ using namespace std;
 				if (header.groupe[gr].mutmod>2) {
 					if (header.groupe[gr].priork1moy.constant) header.groupe[gr].k1moy=header.groupe[gr].priork1moy.mini;
 					else {
-						if (ss[4].find("[")==string::npos) {header.groupe[gr].k2moy=atof(ss[4].c_str());useprior=false;header.groupe[gr].priork2moy.fixed=true;}
+						if (ss[4].find("[")==string::npos) {header.groupe[gr].k2moy=atof(ss[4].c_str());header.groupe[gr].priork2moy.fixed=true;}
 						else {header.groupe[gr].priork2moy = header.readpriormut(ss[4]);header.groupe[gr].priork2moy.fixed=false;}
                     }
 					//cout<<"k2moy="<<header.groupe[gr].k2moy<<"\n";
@@ -148,7 +160,6 @@ using namespace std;
 				//cout<<"fin\n";
 			}
        }
-       return useprior;
     }
 
 /**
@@ -450,7 +461,6 @@ using namespace std;
         int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn,ncond;
         string opt,*ss,s,*ss1,s0,s1,sg;
         double  *stat_obs,st,pa;
-        bool usepriorhist,usepriormut;
         string bidon;
         bidon = new char[1000];
         FILE *flog, *fcur;
@@ -507,7 +517,7 @@ using namespace std;
                     exit(1);
                 }
                 ncond=np-header.scenario[rt.scenteste-1].nparam;
-                for (int j=0;j<header.scenario[rt.scenteste-1].nparam;j++) usepriorhist = resethistparam(ss1[j]);
+                for (int j=0;j<header.scenario[rt.scenteste-1].nparam;j++) resethistparam(ss1[j]);
                 if (ncond>0) {
                   cout<<header.scenario[rt.scenteste-1].nconditions<<"\n";
                     if (header.scenario[rt.scenteste-1].nconditions != ncond) {
@@ -524,7 +534,7 @@ using namespace std;
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);
                 }
-                for (int j=0;j<ng;j++) usepriormut = resetmutparam(ss1[j]);
+                for (int j=1;j<=ng;j++) resetmutparam(ss1[j-1]);
 				/*if (not usepriormut) {
 				    header.entetemut0=header.entetemut;
 					header.entetemut="";
@@ -558,8 +568,10 @@ using namespace std;
             enreg[p].numscen = rt.scenteste;
         }
 
+
+
         //cout<<header.entete<<"\n";
-        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,usepriorhist,usepriormut);
+        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed);
 		//header.entete=header.entetehist+header.entetemut0+header.entetestat;
         nprog=10*ntest+6;iprog=5;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
@@ -598,14 +610,14 @@ using namespace std;
         cout<<"apres rt.alloue_enrsel\n";
         for (int p=0;p<ntest;p++) {
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg2[p].stat[j];
-            rt.cal_dist(nrec,nsel,stat_obs);                  //cout<<"apres cal_dist\n";
+            rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
             iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             if (p<1) det_nomparam();
-            recalparam(nsel);                                 //cout<<"apres recalparam\n";
-            rempli_mat(nsel,stat_obs);                        //cout<<"apres rempli_mat\n";
-            local_regression(nsel);               //cout<<"apres local_regression\n";
-            phistar = calphistar(nsel);                                 //cout<<"apres calphistar\n";
-            paramest[p] = calparstat(nsel);                             //cout<<"apres calparstat\n";
+            recalparam(nsel);                                 cout<<"apres recalparam\n";
+            rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
+            local_regression(nsel);               cout<<"apres local_regression\n";
+            phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
+            paramest[p] = calparstat(nsel);                             cout<<"apres calparstat\n";
             for (int i=0;i<nsel;i++) {
                 for (int j=0;j<nparamcom+nparcompo;j++) paretoil[p][i][j] = phistar[i][j];
             }

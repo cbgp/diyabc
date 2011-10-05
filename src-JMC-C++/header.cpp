@@ -75,6 +75,7 @@ public:
         else if (ss.find("GA[")!=string::npos) {prior.loi="GA";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
         if (prior.maxi==0.0) prior.constant=true;
         else prior.constant = ((prior.maxi-prior.mini)/prior.maxi<0.000001);
+		prior.fixed=false;
         //cout<<ss<<"   ";
         //if (prior.constant) cout<<"constant\n"; else cout<<"variable\n";
         delete []sb;
@@ -93,9 +94,10 @@ public:
         if (ss.find("UN[")!=string::npos) {prior.loi="UN";}
         else if (ss.find("LU[")!=string::npos) {prior.loi="LU";}
         else if (ss.find("GA[")!=string::npos) {prior.loi="GA";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
-                if (prior.maxi==0.0) prior.constant=true;
-                else if ((prior.maxi-prior.mini)/prior.maxi<0.000001) prior.constant=true;
-                else prior.constant=false;
+		if (prior.maxi==0.0) prior.constant=true;
+		else if ((prior.maxi-prior.mini)/prior.maxi<0.000001) prior.constant=true;
+		else prior.constant=false;
+		prior.fixed=false;
         //cout<<ss<<"   ";
         //if (prior.constant) cout<<"constant\n"; else cout<<"variable\n";
         delete []sb;
@@ -754,6 +756,7 @@ public:
 			this->histparam[i].value=atof(ss[2].c_str());
 			this->scenario[0].histparam[i] = copyhistparameter(this->histparam[i]);
 			this->scenario[0].histparam[i].prior.constant=true;
+			this->scenario[0].histparam[i].prior.fixed=true;
 		}	
         if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie priors des paramètres démographiques\n";
 //Partie loci description

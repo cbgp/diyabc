@@ -42,7 +42,7 @@ double time_readfile=0.0;
 
 char *nomficonfresult;
 
-    void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,bool usepriorhist, bool usepriormut,string shist,string smut, bool AFD) {
+    void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,string shist,string smut, bool AFD) {
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
@@ -69,11 +69,9 @@ char *nomficonfresult;
             fprintf(f1,"Results obtained with plain summary statistics\n");
         }
         fprintf(f1,"Peudo-observed data sets simulated with scenario %d \n",rt.scenteste);
-        if (usepriorhist) {fprintf(f1,"Historical parameters are drawn from the following priors : ");}
-        else  {fprintf(f1,"Historical parameters are given the following values :");}
+        fprintf(f1,"Historical parameters are drawn from the following priors and/or are given the following values : ");
         fprintf(f1,"%s\n",shist.c_str());
-        if (usepriormut) {fprintf(f1,"Mutation parameters are drawn from the following priors : ");}
-        else  {fprintf(f1,"Mutation parameters are given the following values :");}
+        fprintf(f1,"Mutation parameters are drawn from the following priors and/or are given the following values : ");
         fprintf(f1,"%s\n",smut.c_str());
         fprintf(f1,"Candidate scenarios : ");
         for (int i=0;i<rt.nscenchoisi;i++) {fprintf(f1,"%d",rt.scenchoisi[i]);if (i<rt.nscenchoisi-1) fprintf(f1,", "); else fprintf(f1,"\n");}
@@ -135,7 +133,7 @@ char *nomficonfresult;
         int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond;
         string opt,*ss,s,*ss1,s0,s1;
         double  *stat_obs,st,pa,duree,debut,clock_zero;
-        bool usepriorhist,usepriormut,AFD=false;
+        bool AFD=false;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
         FILE *flog, *fcur;
@@ -189,7 +187,7 @@ char *nomficonfresult;
                     exit(1);
                 }
                 ncond=np-header.scenario[rt.scenteste-1].nparam;
-                for (int j=0;j<header.scenario[rt.scenteste-1].nparam;j++) usepriorhist = resethistparam(ss1[j]);
+                for (int j=0;j<header.scenario[rt.scenteste-1].nparam;j++) resethistparam(ss1[j]);
                 if (ncond>0) {
                   cout<<header.scenario[rt.scenteste-1].nconditions<<"\n";
                     if (header.scenario[rt.scenteste-1].nconditions != ncond) {
@@ -208,7 +206,8 @@ char *nomficonfresult;
                     //exit(1);
                 }
                 cout<<"avant resetmutparam\n";
-                for (int j=0;j<ng;j++) usepriormut = resetmutparam(ss1[j]);
+				
+                for (int j=1;j<ng+1;j++) resetmutparam(ss1[j-1]);
                 cout<<"apres resetmutparam\n";
             } else if (s0=="f:") {
                 AFD=(s1=="1");
@@ -226,14 +225,14 @@ char *nomficonfresult;
         nsel=nseld;if(nsel<nselr) nsel=nselr;
         if (nlogreg==1){nprog=10*(ntest+1)+1;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         else           {nprog=6*ntest+11;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
-        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,usepriorhist,usepriormut);
+        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed);
         cout<<"apres ps.dosimultabref\n";
         iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         cout<<"apres ecriture dans progress\n";
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         //nstatOK = rt.cal_varstat();
         stat_obs = new double[rt.nstat];
-        ecrientete(nrec,ntest,nseld,nselr,nlogreg,usepriorhist,usepriormut,shist,smut,AFD); cout<<"apres ecrientete\n";
+        ecrientete(nrec,ntest,nseld,nselr,nlogreg,shist,smut,AFD); cout<<"apres ecrientete\n";
         ofstream f11(nomficonfresult,ios::app);
         rt.alloue_enrsel(nsel);
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);

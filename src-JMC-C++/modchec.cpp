@@ -357,8 +357,9 @@ double **ssphistar,**ssref;
         ssphistar = new double*[newsspart];
         for (int i=0;i<newsspart;i++) ssphistar[i] = new double[header.nstat];
         cout<<"newstat ="<<newstat<<"   newsspart="<<newsspart<<"     nenr="<<nenr<<"\n";
+		
         while (nss<newsspart) {
-            ps.dosimulphistar(header,nenr,false,multithread,firsttime,rt.scenteste,seed,false,false,nsel);
+            ps.dosimulphistar(header,nenr,false,multithread,firsttime,rt.scenteste,seed,nsel);
             for (int i=0;i<nenr;i++) {
                 for (int j=0;j<header.nstat;j++) ssphistar[i+nss][j]=enreg[i].stat[j];
                 for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+ns][j]<<"   ";cout<<"\n";
@@ -381,7 +382,7 @@ double **ssphistar,**ssref;
                 nsr=0;
                 firsttime=true;
                 while (nsr<newrefpart) {
-                    ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,true,true);
+                    ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed);
                     for (int i=0;i<nenr;i++) {
                       numscen[i+nsr] = enreg[i].numscen;
                       for (int j=0;j<header.nstat;j++) ssref[i+nsr][j]=enreg[i].stat[j];

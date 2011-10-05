@@ -108,7 +108,7 @@ public:
 		cout <<"    loi="<<this->loi<<"   min="<<this->mini<<"   max="<<this->maxi<<"   ndec="<<this->ndec;
 		if (this->loi=="GA") cout <<"    shape="<<this->sdshape;
 		if (this->constant) cout<<"   constant"; else cout<<"   non constant";
-		if (this->fixed) cout<<"   fixed\n";else cout<<"   non fixed";
+		if (this->fixed) cout<<"   fixed\n";else cout<<"   non fixed\n";
 	}
 
 };
@@ -920,41 +920,106 @@ struct ParticleC
 /**
 * Struct ParticleC : génère les valeurs des paramètres historiques d'un scénario donné'
 */
-	bool setHistParamValue(bool usepriorhist) {
+/*	bool setHistParamValue(bool *usepriorhist) {
         //cout<<"dans sethistparamvalue nconditions="<<this->scen.nconditions<<"   drawuntil="<<drawuntil<<"\n";
 		bool OK=true;
-        if (usepriorhist) {
-            if (this->scen.nconditions>0) {
-                if (drawuntil) {
-                    //cout <<"drawuntil\n";
-                    OK=false;
-                    while (not OK) {
-                        for (int p=0;p<this->scen.nparam;p++) {
-                            this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
-                            if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-                            //cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
-                            //cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
-                        }
-                        //cout <<"avant test conditions\n";
-                        OK = conditionsOK();
-                        //if (OK) cout <<"condition OK\n";
-                    }
-                } else {
-                    for (int p=0;p<this->scen.nparam;p++) {
-                        this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
-                        if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-                    }
-                    OK = conditionsOK();
-                }
-            }else {
-                for (int p=0;p<this->scen.nparam;p++) {
-                    this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
-                    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-                    //cout << this->scen.histparam[p].name<<" = "<<this->scen.histparam[p].value<<"\n";
-                }
-                OK=true;
-            }
-        } 
+		if (this->scen.nconditions>0) {
+			if (drawuntil) {
+				//cout <<"drawuntil\n";
+				OK=false;
+				while (not OK) {
+					for (int p=0;p<this->scen.nparam;p++) {
+						if (usepriorhist[p]) this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+						if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
+						//cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
+						//cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
+					}
+					//cout <<"avant test conditions\n";
+					OK = conditionsOK();
+					//if (OK) cout <<"condition OK\n";
+				}
+			} else {
+				for (int p=0;p<this->scen.nparam;p++) {
+					if (usepriorhist[p]) this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+					if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
+				}
+				OK = conditionsOK();
+			}
+		}else {
+			for (int p=0;p<this->scen.nparam;p++) {
+				if (usepriorhist[p]) this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+				if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
+				//cout << this->scen.histparam[p].name<<" = "<<this->scen.histparam[p].value<<"\n";
+			}
+			OK=true;
+		}
+		this->scen.ipv=0;
+		if (OK) {
+			for (int p=0;p<this->scen.nparam;p++) {
+                //cout<<this->scen.histparam[p].name;
+                //if (this->scen.histparam[p].prior.constant) cout<<"   constant\n"; else cout<<"   variable\n";
+				if (not this->scen.histparam[p].prior.constant) {this->scen.paramvar[this->scen.ipv]=this->scen.histparam[p].value;this->scen.ipv++;}
+			}
+		}
+		//cout<<"fin du tirage des parametres\n";
+		if (debuglevel==10) {for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";cout <<"\n";}
+		if (OK) {
+			for (int ievent=0;ievent<this->scen.nevent;ievent++) {
+				if (this->scen.event[ievent].action=='V') { if (this->scen.event[ievent].Ne<0) this->scen.event[ievent].Ne= (int)(0.5+this->getvalue(this->scen.event[ievent].sNe));}
+				if (this->scen.event[ievent].time==-9999) {this->scen.event[ievent].time = (int)(0.5+this->getvalue(this->scen.event[ievent].stime));}
+				if (this->scen.event[ievent].action=='S') {if (this->scen.event[ievent].admixrate<0) this->scen.event[ievent].admixrate = this->getvalue(this->scen.event[ievent].sadmixrate);}
+			}
+//TRI SUR LES TEMPS DES EVENEMENTS
+            sort(&this->scen.event[0],&this->scen.event[this->scen.nevent],compevent());
+            checkorder();
+
+
+			//cout<<"fin des events\n";
+			for (int i=0;i<this->scen.nn0;i++) {
+				if (this->scen.ne0[i].val<0) this->scen.ne0[i].val = (int)this->getvalue(this->scen.ne0[i].name);
+                //cout<<this->scen.ne0[i].name<<" = "<<this->scen.ne0[i].val<<"\n";
+			}
+		}
+		//cout<<OK<<"\n";
+		return OK;
+	}*/
+
+/**
+* Struct ParticleC : génère les valeurs des paramètres historiques d'un scénario donné'
+*/
+	bool setHistParamValue() {
+        //cout<<"dans sethistparamvalue nconditions="<<this->scen.nconditions<<"   drawuntil="<<drawuntil<<"\n";
+		bool OK=true;
+		if (this->scen.nconditions>0) {
+			if (drawuntil) {
+				//cout <<"drawuntil\n";
+				OK=false;
+				while (not OK) {
+					for (int p=0;p<this->scen.nparam;p++) {
+					    if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+						if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
+						//cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
+						//cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
+					}
+					//cout <<"avant test conditions\n";
+					OK = conditionsOK();
+					//if (OK) cout <<"condition OK\n";
+				}
+			} else {
+				for (int p=0;p<this->scen.nparam;p++) {
+					if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+					if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
+				}
+				OK = conditionsOK();
+			}
+		}else {
+			for (int p=0;p<this->scen.nparam;p++) {
+				if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+				if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
+				//cout << this->scen.histparam[p].name<<" = "<<this->scen.histparam[p].value<<"\n";
+			}
+			OK=true;
+		}
 		this->scen.ipv=0;
 		if (OK) {
 			for (int p=0;p<this->scen.nparam;p++) {
@@ -989,46 +1054,109 @@ struct ParticleC
 /**
 * Struct ParticleC : génère les valeurs des paramètres mutationnels moyens des différents groupes de locus
 */
-	void setMutParammoyValue(bool usepriormut){
+	void setMutParammoyValue(){
+		int gr;
+		cout<<"this->scen.ipv="<<this->scen.ipv<<"\n";
+		for (gr=1;gr<=this->ngr;gr++) {
+		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"   usepriormut="<<usepriormut<<"\n";
+		    if (this->grouplist[gr].type==0) {  //microsat
+		        if (not this->grouplist[gr].priormutmoy.fixed) this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
+				if (not this->grouplist[gr].priormutmoy.constant) {
+					this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
+					this->scen.ipv++;
+					cout<<"mutmoy ipv++\n";
+				}
+					cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"\n";
+				if (not this->grouplist[gr].priorPmoy.fixed) this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
+				if (not this->grouplist[gr].priorPmoy.constant) {
+					this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
+					this->scen.ipv++;
+					cout<<"Pmoy ipv++\n";
+				}
+					cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"\n";
+				if (not this->grouplist[gr].priorsnimoy.fixed) this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
+				if (not this->grouplist[gr].priorsnimoy.constant) {
+					this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
+					this->scen.ipv++;
+					cout<<"snimoy ipv++\n";
+				}
+		    }
+		    if (this->grouplist[gr].type==1) {  //sequence
+				if (not this->grouplist[gr].priormusmoy.fixed) this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
+				if (not this->grouplist[gr].priormusmoy.constant) {		
+					this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
+					cout<<"musmoy ipv++\n";
+					this->scen.ipv++;
+				}
+				if (this->grouplist [gr].mutmod>0){
+					if (not this->grouplist[gr].priork1moy.fixed) this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
+					if (not this->grouplist[gr].priork1moy.constant) {
+						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
+						cout<<"k1moy ipv++\n";
+						this->scen.ipv++;
+					}
+				}
+				if (this->grouplist [gr].mutmod>2){
+					if (not this->grouplist[gr].priork2moy.fixed) this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
+					if (not this->grouplist[gr].priork2moy.constant) {
+						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
+						this->scen.ipv++;
+						cout<<"k2moy ipv++\n";
+					}
+				}
+		    }
+
+		}
+		this->scen.nparamvar=this->scen.ipv;
+		cout<<"Dans particule C  nparamvar = "<<this->scen.nparamvar<<"\n";
+	}
+
+/**
+* Struct ParticleC : génère les valeurs des paramètres mutationnels moyens des différents groupes de locus
+*/
+/*	void setMutParammoyValue(bool **usepriormut){
 		int gr;
 		//cout<<"this->scen.ipv="<<this->scen.ipv<<"\n";
 		for (gr=1;gr<=this->ngr;gr++) {
 		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"   usepriormut="<<usepriormut<<"\n";
 		    if (this->grouplist[gr].type==0) {  //microsat
 		        if (not this->grouplist[gr].priormutmoy.constant) {
-                    if ((this->grouplist[gr].mutmoy<0)and(usepriormut)){ 
+				    cout<<"usepriormut["<<gr<<"][0]="<<usepriormut[gr][0]<<"\n";
+                    if ((this->grouplist[gr].mutmoy<0)and(usepriormut[gr][0])){ 
 						this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
 						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
 						this->scen.ipv++;
 					}
 		        }
-		        //cout<<"juste avant mutmay\n";
-				//cout<<"mutmoy="<<this->grouplist[gr].mutmoy;
-				//if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
+		        cout<<"juste avant mutmoy\n";
+				cout<<"mutmoy="<<this->grouplist[gr].mutmoy;
+				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 					
 				if (not this->grouplist[gr].priorPmoy.constant) {
-					if ((this->grouplist[gr].Pmoy<0)and(usepriormut)) {
+					cout<<"usepriormut["<<gr<<"][1]="<<usepriormut[gr][1]<<"\n";
+					if ((this->grouplist[gr].Pmoy<0)and(usepriormut[gr][1])) {
 						this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
 						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
 						this->scen.ipv++;
 					}
 				}
-				//cout<<"Pmoy="<<this->grouplist[gr].Pmoy;
-				//if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
+				cout<<"Pmoy="<<this->grouplist[gr].Pmoy;
+				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 				
 				if (not this->grouplist[gr].priorsnimoy.constant) {
-					if ((this->grouplist[gr].snimoy<0)and(usepriormut)) {
+					cout<<"usepriormut["<<gr<<"][é]="<<usepriormut[gr][2]<<"\n";
+					if ((this->grouplist[gr].snimoy<0)and(usepriormut[gr][2])) {
 						this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
 						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
 						this->scen.ipv++;
 					}
 				}
-				//cout<<"snimoy="<<this->grouplist[gr].snimoy;
-				//if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
+				cout<<"snimoy="<<this->grouplist[gr].snimoy;
+				if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 		    }
 		    if (this->grouplist[gr].type==1) {  //sequence
 				if (not this->grouplist[gr].priormusmoy.constant) {
-					if ((this->grouplist[gr].musmoy<0)and(usepriormut)) {
+					if ((this->grouplist[gr].musmoy<0)and(usepriormut[gr][0])) {
 						this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
 						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
 						this->scen.ipv++;
@@ -1038,7 +1166,7 @@ struct ParticleC
 				//if (this->scen.ipv>0) cout<<"    "<<this->scen.paramvar[this->scen.ipv-1]<<"\n";else cout<<"\n";
 				if (this->grouplist [gr].mutmod>0){
 					if (not this->grouplist[gr].priork1moy.constant) {
-						if ((this->grouplist[gr].k1moy<0)and(usepriormut)) {
+						if ((this->grouplist[gr].k1moy<0)and(usepriormut[gr][1])) {
 							this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
 							this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
 							this->scen.ipv++;
@@ -1049,7 +1177,7 @@ struct ParticleC
 				}
 				if (this->grouplist [gr].mutmod>2){
 					if (not this->grouplist[gr].priork2moy.constant) {
-						if ((this->grouplist[gr].k2moy<0)and(usepriormut)) {
+						if ((this->grouplist[gr].k2moy<0)and(usepriormut[gr][2])) {
 							this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
 							this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
 							this->scen.ipv++;
@@ -1060,31 +1188,31 @@ struct ParticleC
 
 		}
 		this->scen.nparamvar=this->scen.ipv;
-		//cout<<"nparamvar = "<<this->scen.nparamvar<<"\n";
-	}
+		cout<<"Dans particule C  nparamvar = "<<this->scen.nparamvar<<"\n";
+	}*/
 
 /**
 * Struct ParticleC : génère les valeurs des paramètres mutationnels du locus loc
 */
 	void setMutParamValue(int loc){
 		int gr = this->locuslist[loc].groupe;
-		//cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
+		cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
 		if (this->locuslist[loc].type<5) {  //MICROSAT
 			this->grouplist[gr].priormutloc.mean = this->grouplist[gr].mutmoy;
 			if ((this->grouplist[gr].priormutloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mut_rate = this->drawfromprior(this->grouplist[gr].priormutloc);
 			else this->locuslist[loc].mut_rate =this->grouplist[gr].mutmoy;
-			//cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
+			cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
 
 			this->grouplist[gr].priorPloc.mean = this->grouplist[gr].Pmoy;
 			if ((this->grouplist[gr].priorPloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].Pgeom = this->drawfromprior(this->grouplist[gr].priorPloc);
 			else this->locuslist[loc].Pgeom =this->grouplist[gr].Pmoy;
-			//cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
+			cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
 
 			this->grouplist[gr].priorsniloc.mean = this->grouplist[gr].snimoy;
 			//cout <<"coucou\n";fflush(stdin);
 			if ((this->grouplist[gr].priorsniloc.sdshape>0.001 )and(this->grouplist[gr].nloc>1)) this->locuslist[loc].sni_rate = this->drawfromprior(this->grouplist[gr].priorsniloc);
 			else this->locuslist[loc].sni_rate =this->grouplist[gr].snimoy;
-			//cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
+			cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
 
 
 		 }
@@ -1934,7 +2062,7 @@ struct ParticleC
         return "";
     }
 
-	int dosimulpart(int numscen,bool usepriorhist, bool usepriormut){
+	int dosimulpart(int numscen){
         if (debuglevel==5)        {cout<<"debut de dosimulpart\n";fflush(stdin);}
 		vector <int> simulOK;
         string checktree;
@@ -1947,7 +2075,7 @@ struct ParticleC
         if (debuglevel==10) cout<<"avant draw scenario\n";fflush(stdin);
 		this->drawscenario(numscen);
 		if (debuglevel==10) cout <<"avant setHistparamValue\n";fflush(stdin);
-		this->setHistParamValue(usepriorhist);
+		this->setHistParamValue();
 		if (debuglevel==10) cout << "apres setHistParamValue\n";fflush(stdin);
 		//if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
 		//if (trace) for (int k=0;k<this->scen.nparam;k++){
@@ -1974,7 +2102,7 @@ struct ParticleC
 		//}
 		//cout << "\n";
         for (loc=0;loc<this->nloc;loc++) simulOK[loc]=-1;
-		setMutParammoyValue(usepriormut);
+		setMutParammoyValue();
         if (debuglevel==10) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
 		for (loc=0;loc<this->nloc;loc++) {
              if (debuglevel==10) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
