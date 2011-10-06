@@ -263,7 +263,11 @@ char *nomficonfresult;
 					f11<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf;
 					f11<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";
 				}
-				if (postsr[0].err>0) {
+				if (postsr[0].err==1) {
+					printf(" Tikhonov regularisation of the Hessian matrix");
+					f11<<" Tikhonov regularisation of the Hessian matrix";
+				}
+				if (postsr[0].err>1) {
 					printf(" WARNING : Computation of the logistic failed (error code=%d). Results replaced by those of the direct approach",postsr[0].err);
 					f11<<" WARNING : Computation of the logistic failed (error code="<<postsr[0].err<<"). Results replaced by those of the direct approach";
 				}

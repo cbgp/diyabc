@@ -539,11 +539,9 @@ matligneC *matA;
                 }
               }
         duree=walltime(&debut);time_matC += duree;
-            err=inverse(nmodnco,cmatC,cmatB);
-			if (err>0) {cout<<"\nprobleme lors de l'inversion de la matrice cmatC err="<<err<<"\n";break;}
+            err=inverse_Tik(nmodnco,cmatC,cmatB);
             for (i=0;i<nmodnco;i++) {cdeltabeta[i]=0.0;for (j=0;j<nmodnco;j++) cdeltabeta[i]+=cmatB[i][j]*cmatYP[j];}
             for (i=0;i<nmodnco;i++) {if (cdeltabeta[i] != cdeltabeta[i]) err=10;}
-			if (err==10) {cout<<"une valeur nan dans cdeltabeta"<<"\n";break;}
 			for (i=0;i<nmodnco;i++) cbeta[i]=cbeta0[i]+cdeltabeta[i];
             remplimatriceYP(nli,nco,nmodel,cmatP,cmatYP,cbeta,cmatX,cvecW,cmatY,csmatP);
             caloglik=false;
@@ -595,7 +593,7 @@ matligneC *matA;
             //}
 //////////////////////////
             }
-            if (err>0) return err;
+            if (err>1) return err;
         cout<<"\n";
         for (imod=0;imod<nmodel+1;imod++)
                 {pxi[imod]=px[imod]-1.96*csd[imod];
@@ -660,7 +658,7 @@ matligneC *matA;
 			for (int i=0;i<ntt;i++) cvecW[i] = cvecW[i]/som*(double)ntt;
 			px = new double[rt.nscenchoisi];pxi = new double[rt.nscenchoisi];pxs = new double[rt.nscenchoisi];
 			err = polytom_logistic_regression(nts, nstatOKsel, cmatX0, vecYY, cvecW, px, pxi, pxs);
-			if (err>0) {
+			if (err>1) {
 				double d,a=1.0/(double)nts;
 				for (int i=0;i<rt.nscenchoisi;i++) {
 					postlog[i].x=0.0;
