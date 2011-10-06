@@ -35,6 +35,7 @@ class SimulationProject(Project):
     def __init__(self,name,dir=None,parent=None):
         super(SimulationProject,self).__init__(name,dir,parent)
 
+        self.dico_loc_nb = None
         self.sexRatio = None
 
         self.ui.projNameLabel.setText("Data file generic name :")
@@ -161,11 +162,24 @@ class SimulationProject(Project):
                 output.notify(self,"Value error","Sex ratio value must be in [0,1]")
                 return
 
+        # verification : a-t-on modifié le nb de loci ?
+        if self.dico_loc_nb != None:
+            changed = False
+            for key in self.dico_loc_nb:
+                if self.dico_loc_nb[key] != dico_loc_nb[key]:
+                    changed = True
+                    break
+        else:
+            changed = True
+
+        self.dico_loc_nb = dico_loc_nb
+
         log(3,"Numbers of locus : %s"%dico_loc_nb)
-        # on vide les gen data
-        self.gen_data_win = SetGeneticDataSimulation(self)
-        self.gen_data_win.hide()
-        self.gen_data_win.fillLocusTable(dico_loc_nb)
+        if changed:
+            # on vide les gen data
+            self.gen_data_win = SetGeneticDataSimulation(self)
+            self.gen_data_win.hide()
+            self.gen_data_win.fillLocusTable(dico_loc_nb)
 
         self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
         self.ui.refTableStack.addWidget(self.gen_data_win)
