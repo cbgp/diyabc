@@ -522,6 +522,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         #self.ui.reftableProgressLabel.setText('%s remaining'%time_remaining)
         self.ui.runReftableButton.setText("Running ... %s remaining"%(time_remaining.replace('\n',' ')))
         pc = (float(done)/float(nb_to_do))*100
+        if pc > 0 and pc < 1:
+            pc = 1
         self.ui.progressBar.setValue(int(pc))
         self.ui.nbSetsDoneEdit.setText("%s"%done)
         # si on a fini, on met à jour l'affichage de la taille de la reftable
@@ -989,6 +991,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 frame = fr
                 break
         #frame.findChild(QLabel,"analysisStatusLabel").setText("%s%%"%prog)
+        if prog < 1 and prog > 0:
+            prog = 1
         frame.findChild(QProgressBar,"analysisStatusBar").setValue(int(prog))
 
         if prog >= 100.0:

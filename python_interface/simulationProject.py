@@ -69,6 +69,8 @@ class SimulationProject(Project):
         QObject.connect(self.locusNumberFrame.myEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
         QObject.connect(self.locusNumberFrame.sxEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
         QObject.connect(self.locusNumberFrame.syEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
+        QObject.connect(self.locusNumberFrame.mhEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
+        QObject.connect(self.locusNumberFrame.shEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
         self.locusNumberFrame.mxEdit.setText('1')
         self.locusNumberFrame.mxEdit.setText('0')
 
@@ -78,6 +80,21 @@ class SimulationProject(Project):
         #self.setHistValid(False)
         #self.setGenValid(False)
         #self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self.runSimulation)
+
+    def haploidChanged(self,srt):
+        try:
+            mh = int(str(self.locusNumberFrame.mhEdit.text()))
+            sh = int(str(self.locusNumberFrame.shEdit.text()))
+            if sh > 0 or mh > 0:
+                for ed in [self.locusNumberFrame.sxEdit,self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.syEdit,self.locusNumberFrame.maEdit,self.locusNumberFrame.saEdit]:
+                    ed.setDisabled(True)
+                    ed.setText("0")
+            else:
+                for ed in [self.locusNumberFrame.sxEdit,self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.syEdit,self.locusNumberFrame.maEdit,self.locusNumberFrame.saEdit]:
+                    ed.setDisabled(False)
+        except Exception,e:
+            pass
+
 
     def checkXYValues(self,val):
         try:
@@ -110,6 +127,8 @@ class SimulationProject(Project):
         editList = self.locusNumberFrame.findChildren(QLineEdit)
         editList.remove(self.locusNumberFrame.sexRatioEdit)
         nbXY = 0
+        nbHap = 0
+        nbDip = 0
         nbpos = 0
         try:
             for le in editList:
@@ -121,6 +140,10 @@ class SimulationProject(Project):
                     nbpos += 1
                     if "x" in str(le.objectName())[:2] or "y" in str(le.objectName())[:2]:
                         nbXY += 1
+                    elif "d" in str(le.objectName())[:2]:
+                        nbDip += 1
+                    elif "h" in str(le.objectName())[:2]:
+                        nbHap += 1
             if nbpos == 0:
                 output.notify(self,"Number of sample error","You must have at leat one sample")
                 return
