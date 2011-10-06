@@ -215,15 +215,16 @@ int inverse(int n, long double **A, long double **C)
 
     int jacobi(int n, double **A, double *D, double **V) {
         char bidon;
-        int nrot=0,ng=0;
-        double *b,*z,tresh,theta,tau,t,sm,s,hD,g,cc,h;
+        int nrot=0,ng=0,nm;
+        double *b,*z,tresh,theta,tau,t,sm,s,h,g,cc;
         b = new double[n];
         z = new double[n];
         for (int ip=0;ip<n;ip++) {for (int iq=0;iq<n;iq++) V[ip][iq]=0.0; V[ip][ip]=1.0;}
         for (int ip=0;ip<n;ip++) {b[ip]=A[ip][ip];D[ip]=b[ip];z[ip]=0.0;}
-        std::cout<<"matrice A dans jacobi  n="<<n<<"\n"; 
-		for (int i=0;i<10;i++) {
-		  for (int j=0;j<10;j++) std::cout<< A[i][j]<<"  ";
+        std::cout<<"matrice A dans jacobi  n="<<n<<"\n";
+		if (n<10) nm=n; else nm=10;
+		for (int i=0;i<nm;i++) {
+		  for (int j=0;j<nm;j++) std::cout<< A[i][j]<<"  ";
 		  std::cout<<"\n";
 		}
 		std::cout<<"\n";
@@ -292,5 +293,6 @@ int inverse(int n, long double **A, long double **C)
         delete []b;delete []z;
         return nrot;    
     }
+
 
   
