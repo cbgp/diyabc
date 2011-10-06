@@ -215,7 +215,16 @@ class SimulationProject(Project):
 
     def simulationProblem(self):
         output.notify(self,"Simulation problem","Something happened during the simulation :\n %s"%(self.th.problem))
-        self.stopRefTableGen()
+        self.stopSimulation()
+
+    def stopSimulation(self):
+        if self.th != None:
+            self.th.terminate()
+            self.th.killProcess()
+            self.th = None
+        if os.path.exists("%s/simulation.out"%(self.dir)):
+            os.remove("%s/simulation.out"%(self.dir))
+        log(1,"Simulation stopped")
 
 
 class SimulationThread(QThread):
@@ -236,7 +245,7 @@ class SimulationThread(QThread):
         """
         self.loglvl = lvl
         self.logmsg = msg
-        self.emit(SIGNAL("refTableLog"))
+        self.emit(SIGNAL("simulationLog"))
 
     def killProcess(self):
         self.log(3,"Attempting to kill simulation process")
@@ -251,6 +260,8 @@ class SimulationThread(QThread):
         outfile = "%s/simulation.out"%self.parent.dir
         if os.path.exists(outfile):
             os.remove(outfile)
+        if os.path.exists("%s/progress.txt"%self.parent.dir):
+            os.remove("%s/progress.txt"%self.parent.dir)
         fg = open(outfile,"w")
         try:
             self.log(2,"Running the executable for the simulation")
@@ -286,7 +297,9 @@ class SimulationThread(QThread):
                 else:
                     fg.close()
                     fout = open(outfile,'r')
-                    lastline = fout.readlines()[-1]
+                    lastline = fout.readlines()
+                    if len(lastline) > 0:
+                        lastline = lastline[-1]
                     fout.close()
                     self.problem = "Simulation program exited anormaly\n%s"%lastline
                     self.emit(SIGNAL("simulationProblem"))
