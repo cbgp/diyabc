@@ -156,16 +156,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         file_menu.addAction(QIcon("docs/icons/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
         self.recent_menu = file_menu.addMenu(QIcon("docs/icons/document-open-recent.png"),"Open recent projects")
         self.recent_menu.setDisabled(True)
-        self.saveProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save.png"),"&Save current project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
         self.saveAllProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save-all.png"),"&Save all projects",self.saveAllProjects,QKeySequence(Qt.CTRL + Qt.Key_A))
-        self.deleteProjActionMenu = file_menu.addAction(QIcon("docs/icons/user-trash.png"),"&Delete current project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
-        self.cloneProjActionMenu = file_menu.addAction(QIcon("docs/icons/tab-duplicate.png"),"&Clone current project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
-        self.closeProjActionMenu = file_menu.addAction(QIcon("docs/icons/project-close.png"),"C&lose current project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
-        self.closeProjActionMenu.setDisabled(True)
         self.saveAllProjActionMenu.setDisabled(True)
-        self.saveProjActionMenu.setDisabled(True)
-        self.deleteProjActionMenu.setDisabled(True)
-        self.cloneProjActionMenu.setDisabled(True)
+
         file_menu.addAction(QIcon("docs/icons/redhat-system_settings.png"),"&Settings",self.setPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
         file_menu.addAction(QIcon("docs/icons/mask.jpeg"),"&Simulate data set(s)",self.simulateDataSets,QKeySequence(Qt.CTRL + Qt.Key_D))
         action = file_menu.addAction(QIcon("docs/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
@@ -181,14 +174,21 @@ class Diyabc(formDiyabc,baseDiyabc):
         #    self.style_actions[stxt].setActionGroup(action_group)
         #    self.style_actions[stxt].setCheckable(True)
         navigate_menu = self.ui.menubar.addMenu("&Navigate")
+        self.navigate_menu = navigate_menu
+        self.navigateProjectActions = []
         self.prevProjectActionMenu = navigate_menu.addAction(QIcon("docs/icons/arrow-up.png"),"&Previous project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
         self.nextProjectActionMenu = navigate_menu.addAction(QIcon("docs/icons/arrow-down.png"),"&Next project",self.nextProject,QKeySequence(Qt.CTRL + Qt.Key_PageDown))
+        navigate_menu.addSeparator()
         self.nextProjectActionMenu.setDisabled(True)
         self.prevProjectActionMenu.setDisabled(True)
         help_menu = self.ui.menubar.addMenu("&Help")
+        self.help_menu = help_menu
         #help_menu.addAction("&About DIYABC",self.switchToWelcomeStack)
         help_menu.addAction(QIcon("docs/icons/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
         help_menu.addAction(QIcon("docs/icons/gnome-mime-text.png"),"&Show logfile",self.showLogFile)
+
+        self.currentProjectMenu = None
+        QObject.connect(self.ui.tabWidget,SIGNAL("currentChanged(int)"),self.updateCurrentProjectMenu)
 	
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 
@@ -264,6 +264,40 @@ class Diyabc(formDiyabc,baseDiyabc):
         for but in [newButton,openButton,saveButton,saveAllButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
+    def updateCurrentProjectMenu(self,projIndex):
+        self.updateNavigateMenu()
+        # si -1 : plus d'onglet
+        if projIndex != -1:
+            curprojname = self.tabWidget.currentWidget().name
+            if self.currentProjectMenu != None:
+                self.currentProjectMenu.setText("&Project %s"%curprojname)
+            else:
+                self.currentProjectMenu = self.ui.menubar.insertMenu(self.navigate_menu.menuAction(),QMenu("Project %s"%curprojname,self))
+                self.saveProjActionMenu =   self.currentProjectMenu.menu().addAction(QIcon("docs/icons/document-save.png"),"&Save project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
+                self.deleteProjActionMenu = self.currentProjectMenu.menu().addAction(QIcon("docs/icons/user-trash.png"),"&Delete project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
+                self.cloneProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon("docs/icons/tab-duplicate.png"),"&Clone project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
+                self.closeProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon("docs/icons/project-close.png"),"C&lose project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
+        else:
+            # on supprime le menu
+            self.menubar.removeAction(self.currentProjectMenu)
+            self.currentProjectMenu = None
+
+    def updateNavigateMenu(self):
+        for ac in self.navigateProjectActions:
+            self.navigate_menu.removeAction(ac)
+        self.navigateProjectActions = []
+
+        for i in range(self.ui.tabWidget.count()):
+            name = self.ui.tabWidget.widget(i).name
+            self.navigateProjectActions.append( self.navigate_menu.addAction(QIcon("docs/icons/fileopen.png"),"Go to %s (%s)"%(name,i+1),self.goToProject) )
+            if i == self.ui.tabWidget.currentIndex():
+                self.navigateProjectActions[-1].setDisabled(True)
+
+    def goToProject(self):
+        ac=self.sender()
+        num = int(ac.text().split('(')[1].split(')')[0])
+        self.ui.tabWidget.setCurrentIndex(num-1)
+
     def simulateDataSets(self):
         from simulationProject import SimulationProject
         fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)")
@@ -295,12 +329,11 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.ui.tabWidget.setCurrentWidget(newSimProj)
 
             if len(self.project_list) == 1:
-                self.closeProjActionMenu.setDisabled(False)
-                self.saveProjActionMenu.setDisabled(False)
-                self.deleteProjActionMenu.setDisabled(False)
-                self.cloneProjActionMenu.setDisabled(False)
+                #self.closeProjActionMenu.setDisabled(False)
+                #self.saveProjActionMenu.setDisabled(False)
+                #self.deleteProjActionMenu.setDisabled(False)
+                #self.cloneProjActionMenu.setDisabled(False)
                 self.saveAllProjActionMenu.setDisabled(False)
-                self.saveProjActionMenu.setDisabled(False)
                 self.saveButton.setDisabled(False)
             if len(self.project_list) == 2:
                 self.nextProjectActionMenu.setDisabled(False)
@@ -460,12 +493,11 @@ class Diyabc(formDiyabc,baseDiyabc):
                         proj_to_open.putRefTableSize()
                         # si c'est le premier projet, on permet la fermeture/del/save par le menu
                         if len(self.project_list) == 1:
-                            self.closeProjActionMenu.setDisabled(False)
-                            self.saveProjActionMenu.setDisabled(False)
-                            self.deleteProjActionMenu.setDisabled(False)
-                            self.cloneProjActionMenu.setDisabled(False)
+                            #self.closeProjActionMenu.setDisabled(False)
+                            #self.saveProjActionMenu.setDisabled(False)
+                            #self.deleteProjActionMenu.setDisabled(False)
+                            #self.cloneProjActionMenu.setDisabled(False)
                             self.saveAllProjActionMenu.setDisabled(False)
-                            self.saveProjActionMenu.setDisabled(False)
                             self.saveButton.setDisabled(False)
                         if len(self.project_list) == 2:
                             self.saveAllButton.setDisabled(False)
@@ -635,12 +667,11 @@ class Diyabc(formDiyabc,baseDiyabc):
                     newProj.dirCreation(path)
 
                     if len(self.project_list) == 1:
-                        self.closeProjActionMenu.setDisabled(False)
-                        self.saveProjActionMenu.setDisabled(False)
-                        self.deleteProjActionMenu.setDisabled(False)
-                        self.cloneProjActionMenu.setDisabled(False)
+                        #self.closeProjActionMenu.setDisabled(False)
+                        #self.saveProjActionMenu.setDisabled(False)
+                        #self.deleteProjActionMenu.setDisabled(False)
+                        #self.cloneProjActionMenu.setDisabled(False)
                         self.saveAllProjActionMenu.setDisabled(False)
-                        self.saveProjActionMenu.setDisabled(False)
                         self.saveButton.setDisabled(False)
                     if len(self.project_list) == 2:
                         self.nextProjectActionMenu.setDisabled(False)
@@ -677,12 +708,11 @@ class Diyabc(formDiyabc,baseDiyabc):
         del(projToClose)
         # si c'est le dernier projet, on désactive la fermeture par le menu
         if len(self.project_list) == 0:
-            self.closeProjActionMenu.setDisabled(True)
-            self.saveProjActionMenu.setDisabled(True)
-            self.deleteProjActionMenu.setDisabled(True)
-            self.cloneProjActionMenu.setDisabled(True)
+            #self.closeProjActionMenu.setDisabled(True)
+            #self.saveProjActionMenu.setDisabled(True)
+            #self.deleteProjActionMenu.setDisabled(True)
+            #self.cloneProjActionMenu.setDisabled(True)
             self.saveAllProjActionMenu.setDisabled(True)
-            self.saveProjActionMenu.setDisabled(True)
             self.saveButton.setDisabled(True)
             self.switchToWelcomeStack()
         if len(self.project_list) == 1:
