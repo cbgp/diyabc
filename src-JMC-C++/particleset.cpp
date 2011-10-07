@@ -113,27 +113,27 @@ void setgroup(int p) {
 				if (this->header.groupe[gr].mutmoy<0.0) this->particule[p].grouplist[gr].priormutmoy = copyprior(this->header.groupe[gr].priormutmoy);
 				else this->particule[p].grouplist[gr].priormutmoy.constant=true;
 				this->particule[p].grouplist[gr].priormutmoy.fixed=this->header.groupe[gr].priormutmoy.fixed;
-				if ((this->particule[p].grouplist[gr].priormutmoy.constant)and(this->header.groupe[gr].priormutmoy.fixed)) {
+				/*if ((this->particule[p].grouplist[gr].priormutmoy.constant)and(this->header.groupe[gr].priormutmoy.fixed)) {
                     this->particule[p].grouplist[gr].priormutmoy.constant=false;
-				}
+				}*/
 				this->particule[p].grouplist[gr].priormutloc = copyprior(this->header.groupe[gr].priormutloc);
 
 				this->particule[p].grouplist[gr].Pmoy = this->header.groupe[gr].Pmoy;
 				if (this->header.groupe[gr].Pmoy<0.0) this->particule[p].grouplist[gr].priorPmoy = copyprior(this->header.groupe[gr].priorPmoy);
 				else this->particule[p].grouplist[gr].priorPmoy.constant=true;
 				this->particule[p].grouplist[gr].priorPmoy.fixed=this->header.groupe[gr].priorPmoy.fixed;
-				if ((this->particule[p].grouplist[gr].priorPmoy.constant)and(this->header.groupe[gr].priorPmoy.fixed)) {
+				/*if ((this->particule[p].grouplist[gr].priorPmoy.constant)and(this->header.groupe[gr].priorPmoy.fixed)) {
                     this->particule[p].grouplist[gr].priorPmoy.constant=false;
-				}
+				}*/
 				this->particule[p].grouplist[gr].priorPloc = copyprior(this->header.groupe[gr].priorPloc);
 
 				this->particule[p].grouplist[gr].snimoy = this->header.groupe[gr].snimoy;
 				if (this->header.groupe[gr].snimoy<0.0) this->particule[p].grouplist[gr].priorsnimoy = copyprior(this->header.groupe[gr].priorsnimoy);
 				else this->particule[p].grouplist[gr].priorsnimoy.constant=true;
 				this->particule[p].grouplist[gr].priorsnimoy.fixed=this->header.groupe[gr].priorsnimoy.fixed;
-				if ((this->particule[p].grouplist[gr].priorsnimoy.constant)and(this->header.groupe[gr].priorsnimoy.fixed)) {
+				/*if ((this->particule[p].grouplist[gr].priorsnimoy.constant)and(this->header.groupe[gr].priorsnimoy.fixed)) {
                      this->particule[p].grouplist[gr].priorsnimoy.constant=false;
-				}
+				}*/
 				this->particule[p].grouplist[gr].priorsniloc = copyprior(this->header.groupe[gr].priorsniloc);
 			}
 			else {							//SEQUENCES
@@ -146,9 +146,9 @@ void setgroup(int p) {
 				if (this->header.groupe[gr].musmoy<0.0) this->particule[p].grouplist[gr].priormusmoy = copyprior(this->header.groupe[gr].priormusmoy);
 				else this->particule[p].grouplist[gr].priormusmoy.constant=true;
 				this->particule[p].grouplist[gr].priormusmoy.fixed=this->header.groupe[gr].priormusmoy.fixed;
-				if ((this->particule[p].grouplist[gr].priormusmoy.constant)and(this->header.groupe[gr].priormusmoy.fixed)) {
+				/*if ((this->particule[p].grouplist[gr].priormusmoy.constant)and(this->header.groupe[gr].priormusmoy.fixed)) {
                     this->particule[p].grouplist[gr].priormusmoy.constant=false;
-				}
+				}*/
 				this->particule[p].grouplist[gr].priormusloc = copyprior(this->header.groupe[gr].priormusloc);
 
 				if (this->header.groupe[gr].mutmod>0){
@@ -156,9 +156,9 @@ void setgroup(int p) {
 					if (header.groupe[gr].k1moy<0) this->particule[p].grouplist[gr].priork1moy = copyprior(this->header.groupe[gr].priork1moy);
 					else this->particule[p].grouplist[gr].priork1moy.constant=true;
                     this->particule[p].grouplist[gr].priork1moy.fixed=this->header.groupe[gr].priork1moy.fixed;
-                    if ((this->particule[p].grouplist[gr].priork1moy.constant)and(this->header.groupe[gr].priork1moy.fixed)) {
+                    /*if ((this->particule[p].grouplist[gr].priork1moy.constant)and(this->header.groupe[gr].priork1moy.fixed)) {
                         this->particule[p].grouplist[gr].priork1moy.constant=false;
-                    }
+                    }*/
 					this->particule[p].grouplist[gr].priork1loc = copyprior(this->header.groupe[gr].priork1loc);
 				}
 				if (this->header.groupe[gr].mutmod>2){
@@ -166,9 +166,9 @@ void setgroup(int p) {
 					if (header.groupe[gr].k2moy<0) this->particule[p].grouplist[gr].priork2moy = copyprior(this->header.groupe[gr].priork2moy);
 					else this->particule[p].grouplist[gr].priork2moy.constant=true;
                     this->particule[p].grouplist[gr].priork2moy.fixed=this->header.groupe[gr].priork2moy.fixed;
-                    if ((this->particule[p].grouplist[gr].priork2moy.constant)and(this->header.groupe[gr].priork2moy.fixed)) {
+                    /*if ((this->particule[p].grouplist[gr].priork2moy.constant)and(this->header.groupe[gr].priork2moy.fixed)) {
                         this->particule[p].grouplist[gr].priork2moy.constant=false;
-                    }
+                    }*/
 					this->particule[p].grouplist[gr].priork2loc = copyprior(this->header.groupe[gr].priork2loc);
 				}
 			}

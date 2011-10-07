@@ -8,7 +8,14 @@ extern bool multithread;
 /** 
 * libere la mémoire occupée par une matrice de doubles 
 */
-void libereM(int n,double **A) {
+void libereD(int n,double **A) {
+    for (int i=0;i<n;i++) delete[] A[i];
+    delete [] A;
+}
+/** 
+* libere la mémoire occupée par une matrice de long doubles 
+*/
+void libereL(int n,long double **A) {
     for (int i=0;i<n;i++) delete[] A[i];
     delete [] A;
 }
@@ -25,8 +32,6 @@ void libereM(int n,double **A) {
     cout<<"\n";
 	return 0;
 }*/
-
-
 /** 
 * transpose une matrice de doubles 
 */
@@ -66,6 +71,52 @@ double** prodMs(int n,int m, double **A, double b) {
     C = new double*[n];
     for (int i=0;i<n;i++) {
         C[i] = new double[m];
+        for(int j=0;j<m;j++) C[i][j]=A[i][j]*b;
+    }
+    return C;
+}
+
+
+
+/** 
+* transpose une matrice de long doubles 
+*/
+long double** transposeL(int n, int m, long double **A) {
+    long double **C;
+    C = new long double*[m];
+    for (int i=0;i<m;i++) C[i] = new long double[n];
+    for (int i=0;i<m;i++) {
+        for (int j=0;j<n;j++) C[i][j] = A[j][i];
+    }
+    return C;
+}
+
+/** 
+* effectue le produit matriciel de deux matrices de long doubles 
+*/
+long double** prodML(int n, int m, int p, long double **A,long double **B) {
+    long double **C;
+    C = new long double*[n];
+    for (int i=0;i<n;i++) {
+        C[i] = new long double[p];
+        for(int j=0;j<p;j++) C[i][j]=0.0;
+    }
+    for (int i=0;i<n;i++) {
+        for (int j=0;j<p;j++) {
+            for (int k=0;k<m;k++) C[i][j] += A[i][k]*B[k][j];
+        }  
+    }
+    return C;
+}
+
+/**
+*effectue le produit d'une matrice (**long double) par un scalaire (double)'
+*/
+long double** prodMsL(int n,int m, long double **A, long double b) {
+    long double **C;
+    C = new long double*[n];
+    for (int i=0;i<n;i++) {
+        C[i] = new long double[m];
         for(int j=0;j<m;j++) C[i][j]=A[i][j]*b;
     }
     return C;
@@ -172,6 +223,7 @@ int inverse(int n, long double **A, long double **C)
             {for (j=0;j<n;j++) C[i][j]=T[i][j+n];}
         }
     if (err==4) {
+	    std::cout<<"err="<<err<<"\n";
 		std::cout<<"k+1="<<k+1<<"      n="<<n<<"\n";
 		for  (i=k+1;i<n;i++) std::cout<<"T["<<i<<"]["<<k<<"]="<<T[i][k]<<"\n";
 		std::cout <<"\n";
@@ -196,12 +248,15 @@ int inverse(int n, long double **A, long double **C)
 		if (err==0) return 0;
 		
 		coeff=1E-12;
+		
 		AA = new long double*[n]; for (int i=0;i<n;i++) AA[i] = new long double [n];
 		for (int i=0;i<n;i++) {for (int j=0;j<n;j++) AA[i][j] = A[i][j];}
 		t=0.0;
 		for (int i=0;i<n;i++) t = t + fabs(A[i][i]);
 		t /= n;
+		
 		for (int i=0;i<n;i++)  AA[i][i] = A[i][i] + coeff*t;
+		
 		while ((err!=0)and(coeff<0.1)) {
 			err=inverse(n,AA,C);
 			if (err!=0) {
