@@ -392,7 +392,7 @@ parstatC *parstat;
 * effectue la régression locale à partir de la matrice matX0 et le vecteur des poids vecW
 */
     void local_regression(int n) {
-        long double **matX,**matXT,**matA,**matB,**matAA,**matC,**bet;
+        long double **matX,**matXT,**matA,**matB,**matAA,**matC,**bet,**matBB,maxdiff=0.0;
 		int err;
         matA = new long double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) matA[j] = new long double[n];
@@ -400,13 +400,15 @@ parstatC *parstat;
         for (int i=0;i<n;i++) {
             matX[i] = new long double[nstatOKsel+1];
             matX[i][0] = 1.0;
-            for (int j=1;j<nstatOKsel+1;j++) matX[i][j] = matX0[i][j-1];
+            for (int j=1;j<nstatOKsel+1;j++) matX[i][j] = (long double)matX0[i][j-1];
         }
         matB = new long double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) matB[j] = new long double[nstatOKsel+1];
+        matBB = new long double*[nstatOKsel+1];
+        for (int j=0;j<nstatOKsel+1;j++) matBB[j] = new long double[nstatOKsel+1];
         beta = new double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) beta[j] = new double[nparamcom];
-        //ecrimat("matX0",10,nstatOKsel,matX0);
+        ecrimatD("matX0",10,nstatOKsel,matX0);
         //ecrimat("matX",10,10,matX);
 
         matXT = transposeL(n,nstatOKsel+1,matX);
@@ -419,6 +421,10 @@ parstatC *parstat;
         err = inverse_Tik(nstatOKsel+1,matAA,matB);
 		cout<<"\n\n err="<<err<<"\n";
 		ecrimatL("matB = inv(matAA)",nstatOKsel+1,nstatOKsel+1,matB);
+		err = inverse_Tik(nstatOKsel+1,matB,matBB);
+		cout<<"\n\n err="<<err<<"\n";
+		for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nstatOKsel+1;j++) if (maxdiff<fabs(matAA[i][j]-matBB[i][j])/fabs(matAA[i][j]+matBB[i][j])) maxdiff=fabs(matAA[i][j]-matBB[i][j])/fabs(matAA[i][j]+matBB[i][j]);}
+		cout<<"maxdiff = "<<maxdiff<<"\n";
         matC = prodML(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
 		cout<<"apres matC\n";
         bet = prodML(nstatOKsel+1,n,nparamcom,matC,parsim);
@@ -428,6 +434,7 @@ parstatC *parstat;
         libereL(n,matX);
 		libereL(nstatOKsel+1,matXT);
         libereL(nstatOKsel+1,matB);
+		libereL(nstatOKsel+1,matBB);
         libereL(nstatOKsel+1,matAA);
         libereL(nstatOKsel+1,matC);
 		libereL(n,parsim);
@@ -806,6 +813,7 @@ parstatC *parstat;
 * calcule la densité à partir d'un échantillon de valeurs'
 */
     double* calculdensite(int ncl,int n, double *x, double **y,int j,bool multithread) {
+	    cout<<"calculdensite\n";
         double bw,*dens,sd,*z,denom,som;
         dens = new double[ncl];
         z = new double[n];
@@ -813,7 +821,7 @@ parstatC *parstat;
         sd =cal_sd(n,z);
         if (sd>0.0) bw=coefbw*exp(-0.2*log((double)n))*sd;
         else bw=1.0;
-        //cout<<"sd="<<sd<<"    bw="<<bw<<"\n";
+        cout<<"calculdensite  sd="<<sd<<"    bw="<<bw<<"\n";
 #pragma omp parallel for shared(dens,z,x,bw) private(denom,i) if(multithread)
         for (int j=0;j<ncl;j++) {
             dens[j]=0.0;
@@ -901,8 +909,9 @@ parstatC *parstat;
             for (int k=0;k<pardens[j].ncl;k++) pardens[j].x[k]=pardens[j].xmin+k*pardens[j].xdelta;
 			cout<<"1\n";
             if (pardens[j].ncl>31) {
-                if ((condition)or(j>=nparcompo)) pardens[j].priord = calculdensite(pardens[j].ncl,nsimpar,pardens[j].x,simpar,j,multithread);
-                else {
+                if ((condition)or(j>=nparamcom)) {
+					pardens[j].priord = calculdensite(pardens[j].ncl,nsimpar,pardens[j].x,simpar,j,multithread);
+				} else {
 					if (j<npar) pardens[j].priord =caldensexact(pardens[j].ncl,pardens[j].x,rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior);
 					else pardens[j].priord =caldensexact(pardens[j].ncl,pardens[j].x,rt.mutparam[j-npar].prior);
 				 }
@@ -911,7 +920,7 @@ parstatC *parstat;
                 /*if ((condition)or(j>=npar)) pardens[j].priord = calculhisto(pardens[j].ncl,nsimpar,pardens[j].x,simpar,j,multithread);
                 else pardens[j].priord =calhistexact(pardens[j].ncl,pardens[j].x,rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior);
                 pardens[j].postd = calculhisto(pardens[j].ncl,n,pardens[j].x,phistar,j,multithread);*/
-                if ((condition)or(j>=nparcompo)) densprior = calculhisto(pardens[j].ncl,nsimpar,pardens[j].x,simpar,j,multithread);
+                if ((condition)or(j>=nparamcom)) densprior = calculhisto(pardens[j].ncl,nsimpar,pardens[j].x,simpar,j,multithread);
                 else {
 					if (j<npar) densprior =calhistexact(pardens[j].ncl,pardens[j].x,rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior);
 				    else densprior =calhistexact(pardens[j].ncl,pardens[j].x,rt.mutparam[j-npar].prior);

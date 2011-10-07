@@ -107,7 +107,7 @@ class DataC
 {
 public:
 	string message,title,**indivname,***genotype;
-	int nsample,nloc,nmisshap,nmissnuc;
+	int nsample,nloc,nmisshap,nmissnuc,filetype;
 	int *nind;
 	int **indivsexe;
 	double sexratio;
@@ -154,7 +154,160 @@ public:
 	}
 
 /**
-* lecture d'un fichier de donnée et stockage des informations dans une structure DataC
+* détermination du type de fichier de donnée 
+* return=-1 
+* return=0 si genepop
+* return=1 si snp
+*/ 
+	int testfile(string filename){
+	    int nss;
+	    string ligne,*ss;
+		ifstream file(filename.c_str(), ios::in);
+		if (file == NULL) return -1;
+		getline(file,ligne);
+        ss=splitwords(ligne," ",&nss);
+		if ((ss[0]=="IND")and(ss[1]=="POP")and (nss>100)) {
+		  cout<<"Fichier SNP\n";
+		  return 1;
+		}
+		return 0;
+	}
+
+/**
+* lecture d'un fichier de donnée SNP et stockage des informations dans une structure DataC
+*/
+	DataC* readfilesnp(string filename){
+		int ech,ind,nech,*nindi,nss;
+		bool deja;
+		string s1,*ss;
+		vector <string> popname;
+		ifstream file(filename.c_str(), ios::in);
+		getline(file,s1);
+        ss=splitwords(s1," ",&nss);
+		this->nloc=nss-2;
+		this->locus = new LocusC[this->nloc];
+		for (int loc=0;loc<this->nloc;loc++) this->locus[loc].name  = strdup(ss[loc+2].c_str());
+//recherche du nombre d'échantillons
+		nech=1;popname.resize(nech);
+		getline(file,s1);
+		delete[]ss;
+		ss=splitwords(s1," ",&nss);
+		popname[nech-1]=ss[1];
+		while (not file.eof()) {
+			getline(file,s1);
+			delete[]ss;
+			ss=splitwords(s1," ",&nss);
+			deja=false;
+			for (int n=0;n<nech;n++) {deja=(ss[1]==popname[n]);if (deja) break;}
+			if (not deja) {
+			    nech++;
+				popname.resize(nech);
+				popname[nech-1]=ss[1];
+			}
+		}
+		this->nsample = nech;
+		this->nind = new int[nech];
+//recherche du nombre d'individus par échantillon
+		nindi = new int[nech];
+		for (ech=0;ech<nech;ech++) nindi[ech]=0;
+		file.seekg (0, ios::beg);
+		getline(file,s1);
+ 		while (not file.eof()) {
+			getline(file,s1);
+			delete[]ss;
+			ss=splitwords(s1," ",&nss);
+			ech=0;while (ss[1]!=popname[ech]) ech++;
+			nindi[ech]++;
+		}
+		for (ech=0;ech<nech;ech++) this->nind[ech] = nindi[ech];
+//remplissage des noms et des génotypes des individus
+		this->indivname = new string*[nech];
+		for (ech=0;ech<nech;ech++) this->indivname[ech] = new string[nindi[ech]];
+		this->genotype = new string**[nech];
+		for (ech=0;ech<nech;ech++) {
+			this->genotype[ech] = new string*[nindi[ech]];
+			for (ind=0;ind<nindi[ech];ind++) this->genotype[ech][ind] = new string[nloc];
+		}
+		file.seekg (0, ios::beg);
+		getline(file,s1);
+		for (ech=0;ech<nech;ech++) nindi[ech]=0;
+ 		while (not file.eof()) {
+			getline(file,s1);
+			delete[]ss;
+			ss=splitwords(s1," ",&nss);
+			ech=0;while (ss[1]!=popname[ech]) ech++;
+			this->indivname[ech][nindi[ech]]=ss[1];
+			for (int loc=0;loc<this->nloc;loc++) this->genotype[ech][nindi[ech]][loc]= ss[loc+2];
+			nindi[ech]++;
+		}
+		file.close();
+		delete []nindi;delete []ss;
+	}
+/**
+* supprime les locus monomorphes
+*/
+	void purgelocmonomorphes(){
+		bool *mono;
+		int ind,ech,kloc=0,nloc=0;
+		string ***ge;
+		string premier;
+		mono = new bool[this->nloc];
+		for (int loc=0;loc<this->nloc;loc++) {
+			premier=this->genotype[0][0][loc];
+			if (premier=="1") mono[loc]=false;
+			else {
+				mono[loc]=true;
+				for (int ech=0;ech<this->nsample;ech++) {
+					for (int ind=0;ind<this->nind[ech];ind++) {
+						mono[loc]=(this->genotype[ech][ind][loc]==premier);
+						if (not mono[loc]) break;
+					}
+					if (not mono[loc]) break;
+				}
+			}
+			if (not mono[loc]) nloc++;
+		}
+		if (nloc<this->nloc){
+			ge = new string**[this->nsample];
+			for (ech=0;ech<this->nsample;ech++) {
+				ge[ech] = new string*[this->nind[ech]];
+				for (ind=0;ind<this->nind[ech];ind++) ge[ech][ind] = new string[nloc];
+			}
+			for (int loc=0;loc<this->nloc;loc++) {
+				if (not mono[loc]) {
+					for (ech=0;ech<this->nsample;ech++) {
+						for (ind=0;ind<this->nind[ech];ind++) ge[ech][ind][kloc] = this->genotype[ech][ind][loc];
+					}
+					kloc++;
+				} 
+			}
+			for (ech=0;ech<this->nsample;ech++) {
+				for (ind=0;ind<this->nind[ech];ind++){ 
+					delete[]this->genotype[ech][ind];
+					this->genotype[ech][ind] = new string[kloc];
+					for (int loc=0;loc<kloc;loc++) this->genotype[ech][ind][loc] = ge[ech][ind][loc];
+				}
+			}
+			for (ech=0;ech<this->nsample;ech++) {
+				for (ind=0;ind<this->nind[ech];ind++) delete[]ge[ech][ind];
+			    delete[]ge[ech];
+			}
+			delete[]ge;
+		}
+	}
+	
+	
+/**
+* traitement des locus snp
+*/
+  void do_snp(int loc) {
+	
+	
+  }
+
+
+/**
+* lecture d'un fichier de donnée GENEPOP et stockage des informations dans une structure DataC
 */
 	DataC* readfile(string filename){
 		bool fin;
@@ -483,14 +636,26 @@ public:
 */
     DataC * loadfromfile(string filename) {
 		int loc,kloc;
-		this->readfile(filename);
-                cout <<this->message<<   "\n";
-                if (this->message != "") exit(1);
-		kloc=this->nloc;
-		for (loc=0;loc<kloc;loc++) {
-			if (this->locus[loc].type<5) this->do_microsat(loc);
-			else                         this->do_sequence(loc);
-			this->cal_coeff(loc);
+		this->filetype = this->testfile(filename);
+		if (this->filetype==-1) {
+			cout<<"Unreckognized file format"<<"\n";
+			exit(1);
+		}
+		if (this->filetype==0) {
+			this->readfile(filename);
+					cout <<this->message<<   "\n";
+					if (this->message != "") exit(1);
+			kloc=this->nloc;
+			for (loc=0;loc<kloc;loc++) {
+				if (this->locus[loc].type<5) this->do_microsat(loc);
+				else                         this->do_sequence(loc);
+				this->cal_coeff(loc);
+			}
+		}
+		if (this->filetype==1) {
+			this->readfilesnp(filename);
+			this->purgelocmonomorphes();
+			for (loc=0;loc<this->nloc;loc++) this->do_snp(loc);
 		}
 	}
         
