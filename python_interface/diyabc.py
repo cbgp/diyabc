@@ -115,7 +115,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         # gestion du menu
         file_menu = self.ui.menubar.addMenu("&File")
         self.file_menu = file_menu
-        self.menubar.setStyleSheet("QMenu {\
+        self.setStyleSheet("QMenu {\
                      background-color: white;\
                           margin: 2px; /* some spacing around the menu */\
                            }\
