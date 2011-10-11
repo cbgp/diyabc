@@ -45,7 +45,6 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
         utilis\'e pour la production des objets graphiques.
 
 \section{Conception}
-    
     \subsection{Documentation}
     L'intégralité du code est documenté façon javadoc. Ces docstrings sont donc
     interprêtables par beaucoup de générateurs de documentation.  Je génère une
@@ -276,7 +275,8 @@ La description du bouton ou du label\end{verbatim}
 
         La ligne de log contient la date, l'heure, le niveau de log, la fonction appelante de niveau 1 et 2 ainsi que les paramètres
         donnés à la fonction appelante. 
-
+        
+        \paragraph{logrotate}
         Une fonction logRotate est appelée au lancement de l'application. Si le dossier passé en paramètre dépasse une taille H,
         les fichiers vieux de plus de N jours sont supprimés.
 
@@ -289,8 +289,15 @@ La description du bouton ou du label\end{verbatim}
         
         Affichera le nombre de projets ouverts par l'interface.
 
+        \paragraph{gconf}
+        Par défaut, dans la configuration de gnome, les icônes dans les menus sont désactivées. Au lancement de diyabc.py,
+        si le système est un linux*, gconftool-2 est appelé pour activer cette option.
 
-
+        \paragraph{drag and drop}
+        On peut faire glisser un dossier sur la fenêtre principale de l'interface pour ouvrir un projet. Pour récupérer 
+        cet évènement, on redéfinit les méthodes dropEvent et dragEnterEvent pour la classe Diyabc. Dans dropEvent, on
+        récupère l'information donnée par l'objet déposé. Si ces informations contiennent des url, on essaie de les ouvrir 
+        comme des projets.
 
 \section{Tests}
     Les tests sont tous dans le fichier unit\_test.py . Ils utilisent le module
