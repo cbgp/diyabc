@@ -461,7 +461,8 @@ using namespace std;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn,ncond;
         string opt,*ss,s,*ss1,s0,s1,sg;
-        long double  *stat_obs,st,pa;
+        long double  st,pa; 
+		float *stat_obs;
         string bidon;
         bidon = new char[1000];
         FILE *flog, *fcur;
@@ -603,7 +604,7 @@ using namespace std;
         }
         file.close();
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
-        stat_obs = new long double[rt.nstat];
+        stat_obs = new float[rt.nstat];
         paramest = new parstatC*[ntest];
         paretoil = new long double**[ntest];
         for (int p=0;p<ntest;p++) {paretoil[p] = new long double* [nsel];for (int i=0;i<nsel;i++)paretoil[p][i] = new long double[nparamcom+nparcompo];}

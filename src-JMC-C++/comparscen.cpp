@@ -213,7 +213,7 @@ matligneC *matA;
 /**
 * effectue le remplissage de la matrice cmatX0 et du vecteur des poids cvecW
 */
-    void rempli_mat0(int n,long double* stat_obs) {
+    void rempli_mat0(int n, float* stat_obs) {
         int icc;
         long double delta,som,x,*var_statsel,nn;
         long double *sx,*sx2,*mo;
@@ -227,7 +227,7 @@ matligneC *matA;
         for (int i=0;i<rt.nstat;i++){sx[i]=0.0;sx2[i]=0.0;mo[i]=0.0;}
         for (int i=0;i<n;i++){
             for (int j=0;j<rt.nstat;j++) {
-                x = rt.enrsel[i].stat[j];
+                x =(long double)rt.enrsel[i].stat[j];
                 sx[j] +=x;
                 sx2[j] +=x*x;
             }
@@ -246,7 +246,7 @@ matligneC *matA;
             for (int j=0;j<rt.nstat;j++) {
                 if (var_statsel[j]>0.0) {
                     icc++;
-                    cmatX0[i][icc]=(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
+                    cmatX0[i][icc]=(long double)(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
                 }
             }
             x=rt.enrsel[i].dist/delta;
@@ -609,7 +609,7 @@ matligneC *matA;
 		return err;
    }
 
-    posteriorscenC* call_polytom_logistic_regression(int nts, long double *stat_obs, int nscenutil,int *scenchoisiutil) {
+    posteriorscenC* call_polytom_logistic_regression(int nts, float *stat_obs, int nscenutil,int *scenchoisiutil) {
         posteriorscenC *postlog;
         bool trouve;
         int ntt,j,dtt,k,kk,err;
@@ -700,7 +700,7 @@ matligneC *matA;
         return postlog;
     }
 
-    posteriorscenC* comp_logistic(int nts,long double *stat_obs) {
+    posteriorscenC* comp_logistic(int nts,float *stat_obs) {
         int *postdir,nscenutil,*scenchoisiutil,kk;
         posteriorscenC *postlog;
         postdir= new int[rt.nscenchoisi];
@@ -734,7 +734,7 @@ matligneC *matA;
         int nstatOK,iprog,nprog;;
         int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,kk,nts;
         string opt,*ss,s,*ss1,s0,s1;
-        long double  *stat_obs;
+        float  *stat_obs;
 		double duree,debut,clock_zero;
         FILE *flog;
         posteriorscenC **postscendir,**postscenlog;

@@ -52,12 +52,12 @@ struct LocusC
 	int type;  //0 à 9
 	int groupe;    //numero du groupe auquel appartient le locus
 	double coeff;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
-	double **freq;
+	long double **freq;
 	int *ss;          //comptabilise toutes les "gene copies" données manquantes inclues
 	int *samplesize;  //comptabilise les "gene copies" non-manquantes
 //Proprietes des locus sequences
-	double pi_A,pi_C,pi_G,pi_T;
-	vector <double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
+	long double pi_A,pi_C,pi_G,pi_T;
+	vector <long double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
 	vector <int> sitmut;   //array of nsitmut dna sites that are changed through a mutation
 	vector <int> sitmut2;  //
 	int dnalength,dnavar;

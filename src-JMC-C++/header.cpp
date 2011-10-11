@@ -44,7 +44,7 @@ public:
     bool drawuntil;
     ParticleC particuleobs;
     MutParameterC *mutparam;
-    long double *stat_obs;
+    float *stat_obs;
 
     void libere() {
         this->dataobs.libere();
@@ -1036,11 +1036,11 @@ public:
                }
                fprintf(fobs,"\n");
                fclose(fobs);
-			   this->stat_obs = new long double[jstat];
+			   this->stat_obs = new float[jstat];
 			   jstat=0;
 			   for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
 				  for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) {
-					  this->stat_obs[jstat]=this->particuleobs.grouplist[gr].sumstat[j].val;
+					  this->stat_obs[jstat]=(float)this->particuleobs.grouplist[gr].sumstat[j].val;
 					  jstat++;
 					
 				  }

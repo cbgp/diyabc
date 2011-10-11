@@ -63,7 +63,7 @@ public:
     fstream fifo;
     int nstatOK,nsel,nenr;
     enregC* enrsel;
-    long double *stat_obs;
+    float *stat_obs;
     long double *var_stat;
 
     void sethistparamname(HeaderC header) {
@@ -334,15 +334,15 @@ public:
 */
     int cal_varstat() {
         int nrecutil,iscen,nsOK,bidon,i,step;
-        double *sx,*sx2,x,an,nr;
+        long double *sx,*sx2,x,an,nr;
         bool scenOK;
         //cout <<"debut de cal_varstat\n";
         enregC enr;
         nrecutil=100000;if (nrecutil>this->nrec) nrecutil=this->nrec;
         nr=0;for (int i=0;i<nscenchoisi;i++) nr+=nrecscen[this->scenchoisi[i]-1];
         if (nrecutil>nr) nrecutil=nr;
-        sx  = new double[this->nstat];
-        sx2 = new double[this->nstat];
+        sx  = new long double[this->nstat];
+        sx2 = new long double[this->nstat];
         var_stat = new long double[this->nstat];
         for (int j=0;j<this->nstat;j++) {sx[j]=0.0;sx2[j]=0.0;}
         enr.stat = new float[this->nstat];
@@ -361,7 +361,7 @@ public:
             if (scenOK) {
                 i++;
                 for (int j=0;j<this->nstat;j++) {
-                    x = (double)enr.stat[j];
+                    x = (long double)enr.stat[j];
                     sx[j] += x;
                     sx2[j] += x*x;
                 }
@@ -373,11 +373,11 @@ public:
         //    cout<<i<<"   "<<nrecutil<<"\n";
         this->closefile();
         nsOK=0;
-        an=1.0*(double)nrecutil;
+        an=1.0*(long double)nrecutil;
         for (int j=0;j<this->nstat;j++) {
             this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
             if (this->var_stat[j]>0) nsOK++;
-            cout<<"var_stat["<<j<<"]="<<var_stat[j]<<"\n";
+			printf("var_stat[%3d] = %12.8Lf\n",j,this->var_stat[j]);
         }
         delete []sx;delete []sx2;
         //cout<<"\nnstatOK = "<<nsOK<<"\n";
@@ -412,7 +412,7 @@ public:
 * calcule la distance de chaque jeu de données simulé au jeu observé
 * et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
 */
-    void cal_dist(int nrec, int nsel, long double *stat_obs) {
+    void cal_dist(int nrec, int nsel, float *stat_obs) {
         int nn,nparamax,nrecOK=0,iscen,bidon,step;
         bool firstloop=true,scenOK;
         long double diff,dj;
@@ -437,9 +437,9 @@ public:
                    this->nreclus++;
                    this->enrsel[nrecOK].dist=0.0;
                     for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>0.0) {
-                        diff =(double)this->enrsel[nrecOK].stat[j] - stat_obs[j];
+                        diff =(long double)(this->enrsel[nrecOK].stat[j] - stat_obs[j]);
                       this->enrsel[nrecOK].dist += diff*diff/this->var_stat[j];
-					  if (nreclus==1) printf("  %12.6f   %12.6Lf   %12.6Lf   %12.8Lf\n",this->enrsel[nrecOK].stat[j],stat_obs[j],diff*diff,this->enrsel[nrecOK].dist);
+					  if (nreclus==1) printf("  %12.6f   %12.6f   %12.6Lf   %12.8Lf\n",this->enrsel[nrecOK].stat[j],stat_obs[j],diff*diff,this->enrsel[nrecOK].dist);
                     }
                     this->enrsel[nrecOK].dist =sqrt(this->enrsel[nrecOK].dist);
 					if (nreclus<11){
@@ -456,10 +456,10 @@ public:
         }
         cout<<"\rcal_dist : fini   nreclus="<<nreclus<<"\n";
         this->closefile();
-        cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK;
+        cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK<<"\n";
         cout<<"    distmin = "<<this->enrsel[0].dist<<"    distmax = "<<this->enrsel[nsel-1].dist<<"\n";
-        cout<<"    distmin = "<<this->enrsel[0].dist/(double)this->nstat<<"    distmax = "<<this->enrsel[nsel-1].dist/(double)this->nstat<<"\n";
-        //for (int i=0;i<nsel;i++)           cout<<this->enrsel[i].numscen<<"  ";
+        printf("    distmin = %12.8Lf   distmax = %12.8Lf\n",this->enrsel[0].dist/(long double)this->nstat,this->enrsel[nsel-1].dist/(long double)this->nstat);
+		//for (int i=0;i<nsel;i++)           cout<<this->enrsel[i].numscen<<"  ";
         //cout<<"\n";
         //exit(1);
     }

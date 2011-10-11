@@ -315,13 +315,13 @@ parstatC *parstat;
 * effectue le remplissage de la matrice matX0, du vecteur des poids vecW et
 * de la matrice des paramètres parsim (éventuellement transformés)
 */
-    void rempli_mat(int n,long double* stat_obs) {
+    void rempli_mat(int n, float* stat_obs) {
         int icc;
         long double delta,som,x,*var_statsel,nn;
         long double *sx,*sx2,*mo;
         nn=(long double)n;
         delta = rt.enrsel[n-1].dist;
-		printf("delta = %12.8Lf\n",delta);
+		printf("delta = %12.8Lf    (%12.8Lf,%12.8Lf)\n",delta,rt.enrsel[n-2].dist,rt.enrsel[n].dist);
         sx  = new long double[rt.nstat];
         sx2 = new long double[rt.nstat];
         mo  = new long double[rt.nstat];
@@ -340,7 +340,7 @@ parstatC *parstat;
             if (var_statsel[j]>0.0) nstatOKsel++;
             mo[j] = sx[j]/nn;
         }
-        for (int j=0;j<rt.nstat;j++) printf("stat[%3d]  moy=%12.8Lf   var=%12.8Lf\n",j,mo[j],var_statsel[j]);
+        for (int j=0;j<rt.nstat;j++) printf("stat[%3d]  moy=%12.8Lf   var=%16Le\n",j,mo[j],var_statsel[j]);
 		cout<<"nstat="<<rt.nstat<<"     nstatOK="<<nstatOKsel<<"\n";
         matX0 = new long double*[n];
         for (int i=0;i<n;i++)matX0[i]=new long double[nstatOKsel];
@@ -352,7 +352,8 @@ parstatC *parstat;
             for (int j=0;j<rt.nstat;j++) {
                 if (var_statsel[j]>0.0) {
                     icc++;
-                    matX0[i][icc]=((long double)rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
+                    matX0[i][icc]=(long double)(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
+					if ((i==0)and(j<6)) printf(" %16.10f  %16.10f  %16.10Lf\n",rt.enrsel[i].stat[j],stat_obs[j],var_statsel[j]);
                 }
             }
             x=rt.enrsel[i].dist/delta;
@@ -373,7 +374,7 @@ parstatC *parstat;
 	int ecrimatL(string nomat, int n, int m, long double **A) {
 		cout<<"\n"<<nomat<<"\n";
 		for (int i=0;i<n;i++) {
-			for (int j=0;j<m;j++) cout<<setiosflags(ios::fixed)<<setw(10)<<setprecision(6)<< A[i][j]<<"  ";
+			for (int j=0;j<m;j++) cout<<setiosflags(ios::fixed)<<setw(13)<<setprecision(9)<< A[i][j]<<"  ";
 			cout<<"\n";
 		}
 		cout<<"\n";
@@ -418,13 +419,14 @@ parstatC *parstat;
         //ecrimat("matA",10,10,matA);
         matAA = prodML(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
         ecrimatL("matAA",nstatOKsel+1,nstatOKsel+1,matAA);
+        printf("\nkappa (AA) = %16e\n",kappa(nstatOKsel+1,matAA));
         err = inverse_Tik(nstatOKsel+1,matAA,matB);
 		cout<<"\n\n err="<<err<<"\n";
 		ecrimatL("matB = inv(matAA)",nstatOKsel+1,nstatOKsel+1,matB);
-		err = inverse_Tik(nstatOKsel+1,matB,matBB);
+		/*err = inverse_Tik(nstatOKsel+1,matB,matBB);
 		cout<<"\n\n err="<<err<<"\n";
 		for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nstatOKsel+1;j++) if (maxdiff<fabs(matAA[i][j]-matBB[i][j])/fabs(matAA[i][j]+matBB[i][j])) maxdiff=fabs(matAA[i][j]-matBB[i][j])/fabs(matAA[i][j]+matBB[i][j]);}
-		cout<<"maxdiff = "<<maxdiff<<"\n";
+		cout<<"maxdiff = "<<maxdiff<<"\n";*/
         matC = prodML(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
 		cout<<"apres matC\n";
         bet = prodML(nstatOKsel+1,n,nparamcom,matC,parsim);
@@ -1051,7 +1053,7 @@ parstatC *parstat;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos;
         string opt,*ss,s,*ss1,s0,s1;
-        long double  *stat_obs;
+        float  *stat_obs;
 
         FILE *flog;
 

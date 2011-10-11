@@ -91,8 +91,9 @@ char *nomficonfresult;
         fclose(f1);
     }
 
-    long double* transfAFD(int nrec,int nsel, int p) {
+    float* transfAFD(int nrec,int nsel, int p) {
         long double delta,rdelta,*w,a,**X,*statpiv;
+		float *sp;
         int *scenar;
         resAFD afd;
         //cout<<"debut transfAFD\n";
@@ -103,6 +104,7 @@ char *nomficonfresult;
         scenar = new int[nsel];for (int i=0;i<nsel;i++) scenar[i] = rt.enrsel[i].numscen;
         X = new long double*[nsel];for (int i=0;i<nsel;i++) X[i] = new long double[rt.nstat];
         statpiv = new long double[rt.nstat];
+		sp = new float[rt.nstat];
         for (int i=0;i<nsel;i++) {for (int j=0;j<rt.nstat;j++) X[i][j]=(long double)rt.enrsel[i].stat[j];}
         //cout<<"avant AFD\n";
         afd = AFD(nsel,rt.nstat,scenar,w,X,1.0);
@@ -121,10 +123,11 @@ char *nomficonfresult;
             }
         for (int j=0;j<afd.nlambda;j++) enreg[p].stat[j] = statpiv[j];
         for (int j=afd.nlambda;j<rt.nstat;j++) {enreg[p].stat[j] = 0.0;statpiv[j] = 0.0;}
+        for (int j=0;j<rt.nstat;j++) sp[j]=float(statpiv[j]);
         delete []w;
         //delete []statpiv;
         for (int i=0;i<nsel;i++) delete []X[i];delete []X;
-        return statpiv;
+        return sp;
     }
 
     void doconf(char *options, int seed) {
@@ -132,7 +135,8 @@ char *nomficonfresult;
         int nstatOK, iprog,nprog,ncs1;
         int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond;
         string opt,*ss,s,*ss1,s0,s1;
-        long double  *stat_obs,st,pa;
+        long double  st,pa; 
+		float *stat_obs;
 		double duree,debut,clock_zero;
         bool AFD=false;
         posteriorscenC **postsd,*postsr;
@@ -232,7 +236,7 @@ char *nomficonfresult;
         cout<<"apres ecriture dans progress\n";
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         //nstatOK = rt.cal_varstat();
-        stat_obs = new long double[rt.nstat];
+        stat_obs = new float[rt.nstat];
         ecrientete(nrec,ntest,nseld,nselr,nlogreg,shist,smut,AFD); cout<<"apres ecrientete\n";
         ofstream f11(nomficonfresult,ios::app);
         rt.alloue_enrsel(nsel);

@@ -181,7 +181,6 @@ int inverse(int n, long double **A, long double **C)
 {
     int i,j,k,l,err=0;
     long double max,pivot,coef, **T;
-    double debut,duree;
     T = new long double*[n];for (i=0;i<n;i++) T[i]= new long double[2*n]; 
 
     for (i=0;i<n;i++) 
@@ -235,38 +234,6 @@ int inverse(int n, long double **A, long double **C)
     for (i=0;i<n;i++) delete[] T[i];delete[] T;
     return err; 
 }
-
-/** 
-* effectue l'inversion matricielle d'une matrice (carrée) de long doubles
-* avec régularisation de Tikhonov si nécessaire  
-*/
-	int inverse_Tik(int n, long double **A, long double **C) {
-		long double t,coeff,**AA,**B;
-		int i,j,err;
-		
-		err=inverse(n,A,C);
-		if (err==0) return 0;
-		
-		coeff=1E-12;
-		
-		AA = new long double*[n]; for (int i=0;i<n;i++) AA[i] = new long double [n];
-		for (int i=0;i<n;i++) {for (int j=0;j<n;j++) AA[i][j] = A[i][j];}
-		t=0.0;
-		for (int i=0;i<n;i++) t = t + fabs(A[i][i]);
-		t /= n;
-		
-		for (int i=0;i<n;i++)  AA[i][i] = A[i][i] + coeff*t;
-		
-		while ((err!=0)and(coeff<0.1)) {
-			err=inverse(n,AA,C);
-			if (err!=0) {
-			  coeff *=10.0;
-			  for (int i=0;i<n;i++)  AA[i][i] = A[i][i] + coeff*t;
-			}
-		}
-		return 1;  
-	}
-
 
     int jacobi(int n, double **A, double *D, double **V) {
         char bidon;
@@ -356,18 +323,18 @@ int inverse(int n, long double **A, long double **C)
         z = new long double[n];
         for (int ip=0;ip<n;ip++) {for (int iq=0;iq<n;iq++) V[ip][iq]=0.0; V[ip][ip]=1.0;}
         for (int ip=0;ip<n;ip++) {b[ip]=A[ip][ip];D[ip]=b[ip];z[ip]=0.0;}
-        std::cout<<"matrice A dans jacobi  n="<<n<<"\n";
-		if (n<10) nm=n; else nm=10;
+        //std::cout<<"matrice A dans jacobi  n="<<n<<"\n";
+		/*if (n<10) nm=n; else nm=10;
 		for (int i=0;i<nm;i++) {
 		  for (int j=0;j<nm;j++) std::cout<< A[i][j]<<"  ";
 		  std::cout<<"\n";
 		}
-		std::cout<<"\n";
+		std::cout<<"\n";*/
         
         for (int i=0;i<51;i++) {
             sm=0.0;
             for (int ip=0;ip<n-1;ip++) {for (int iq=ip+1;iq<n;iq++) sm += fabs(A[ip][iq]);}
-            std::cout<<"jacobi sm="<<sm<<"\n";
+            //std::cout<<"jacobi sm="<<sm<<"\n";
             if (sm==0.0) {delete []b;delete []z;return nrot;}
             if (i<4) tresh=0.2*sm/(long double)n/(long double)n; else tresh=0.0;
             for (int ip=0;ip<n-1;ip++) {
@@ -428,6 +395,58 @@ int inverse(int n, long double **A, long double **C)
         delete []b;delete []z;
         return nrot;    
     }
+
+	double kappa(int n,long double **A) {
+		long double **vcprop, *valprop,piv,**B;
+        vcprop  = new long double*[n];for (int i=0;i<n;i++) vcprop[i]=new long double [n];
+        valprop = new long double[n];
+        B  = new long double*[n];for (int i=0;i<n;i++) B[i]=new long double [n];
+		for (int i=0;i<n;i++) {for (int j=0;j<n;j++) B[i][j]=A[i][j];}
+		int nrot=jacobiL(n,B,valprop,vcprop);
+        for (int i=0;i<n-1;i++) {
+            for (int j=i+1;j<n;j++) {
+                if (valprop[i]<valprop[j]) {piv=valprop[i];valprop[i]=valprop[j];valprop[j]=piv;}
+            }
+        }
+	    if (valprop[n-1]>0) return valprop[0]/valprop[n-1]; else return 1E100;
+	}
+
+/** 
+* effectue l'inversion matricielle d'une matrice (carrée) de long doubles
+* avec régularisation de Tikhonov si nécessaire  
+*/
+	int inverse_Tik(int n, long double **A, long double **C) {
+		long double t,coeff,**AA,seuil_kappa=1E8;
+		double kap;
+		int i,j,err;
+		AA = new long double*[n]; for (int i=0;i<n;i++) AA[i] = new long double [n];
+		
+		coeff=0;
+		
+		kap=kappa(n,A);
+		err=inverse(n,A,C);
+		std::cout<<"coeff = "<<coeff<<"   err="<<err<<"   kappa="<<kap<<"\n";
+		if ((err==0)and(kap<seuil_kappa)) return 0;
+		
+		coeff=1E-15;
+		for (int i=0;i<n;i++) {for (int j=0;j<n;j++) AA[i][j] = A[i][j];}
+		t=0.0;
+		for (int i=0;i<n;i++) t = t + fabs(A[i][i]);
+		t /= n;
+		
+		for (int i=0;i<n;i++)  AA[i][i] = A[i][i] + coeff*t;
+		
+		while (((err!=0)or(kap>seuil_kappa))and(coeff<0.1)) {
+		    kap = kappa(n,AA);
+			err=inverse(n,AA,C);
+			std::cout<<"coeff = "<<coeff<<"   err="<<err<<"   kappa="<<kap<<"\n";
+			if ((err!=0)or(kap>seuil_kappa)) {
+			  coeff *=10.0;
+			  for (int i=0;i<n;i++)  AA[i][i] = A[i][i] + coeff*t;
+			}
+		}
+		return 1;  
+	}
 
 
   

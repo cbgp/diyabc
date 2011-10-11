@@ -150,9 +150,9 @@ long double **ssphistar,**ssref;
         return nphistarOK;
     }
 
-    void call_loc(int npart,int nstat, int nrec,int nsel,long double **ss, long double *stat_obs) {
+    void call_loc(int npart,int nstat, int nrec,int nsel,long double **ss, float *stat_obs) {
         int *avant,*apres,*egal;
-        long double *qobs,diff,quant;
+        long double *qobs,quant; float diff;
         string *star;
         qobs = new long double[header.nstat];
         star = new string[header.nstat];
@@ -161,7 +161,7 @@ long double **ssphistar,**ssref;
         egal  = new int[header.nstat];for (int i=0;i<header.nstat;i++) egal[i] = 0;
         for (int p=0;p<npart;p++) {
             for (int j=0;j<header.nstat;j++) {
-                diff=stat_obs[j]-ss[p][j];
+                diff=stat_obs[j]-(float)ss[p][j];
                 if (diff>0.001) avant[j]++;
                 else if (diff<-0.001) apres[j]++; else egal[j]++;
             }
@@ -214,7 +214,7 @@ long double **ssphistar,**ssref;
 
     }
 
-    void call_acp(int nr, int ns, int nstat, int *numscen,long double **ssref, long double **ssphistar, long double *stat_obs) {
+    void call_acp(int nr, int ns, int nstat, int *numscen,long double **ssref, long double **ssphistar, float *stat_obs) {
         resACPC rACP;
         long double *pca_statobs,**pca_ss;
         pca_statobs = new long double[nstat];
@@ -261,7 +261,7 @@ long double **ssphistar,**ssref;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos,newsspart,npv,nphistarOK,nss,nsr,newrefpart,*numscen,nparamax,bidon;
         string opt,*ss,s,*ss1,s0,s1,snewstat;
-        long double  *stat_obs;
+        float  *stat_obs;
         bool usestats,firsttime,dopca,doloc,newstat=false;
 
         FILE *flog;

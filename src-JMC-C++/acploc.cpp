@@ -127,7 +127,8 @@ struct resACPC
     }
 
     void cal_acp(){
-        long double *stat_obs,**matstat,*pca_statobs;
+        long double **matstat,*pca_statobs;
+		float *stat_obs;
         enregC enr;
         int bidon,*numscen,k;
         resACPC rACP;
@@ -177,7 +178,8 @@ struct resACPC
     }
 
     void cal_loc() {
-        long double *stat_obs,**qobs,diff,quant;
+        long double **qobs,quant;
+		float *stat_obs,diff;
         int scen,**avant,**apres,**egal,bidon,nparamax = 0;
         enregC enr;
         string **star;

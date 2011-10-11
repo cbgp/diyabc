@@ -2553,10 +2553,10 @@ struct ParticleC
             loc=this->grouplist[gr].loc[iloc];
            // cout <<"\nLocus "<< loc <<"   kmin="<<this->locuslist[loc].kmin<<"   kmax="<<this->locuslist[loc].kmax<<"\n";
             this->locuslist[loc].nal = this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;
-            this->locuslist[loc].freq = new double* [this->data.nsample];
+            this->locuslist[loc].freq = new long double* [this->data.nsample];
             //cout <<"nal ="<<this->locuslist[loc].nal<<"\n";
             for (int samp=0;samp<this->data.nsample;samp++) {
-                this->locuslist[loc].freq[samp] = new double [this->locuslist[loc].nal];
+                this->locuslist[loc].freq[samp] = new long double [this->locuslist[loc].nal];
                 for (int i=0;i<this->locuslist[loc].nal;i++) this->locuslist[loc].freq[samp][i]=0.0;
                 //cout << this->locuslist[loc].ss[samp] <<"\n";
                 //cout <<this->locuslist[loc].samplesize[samp]<< "\n";
@@ -2625,8 +2625,8 @@ struct ParticleC
         }
     }
 
-	double cal_pid1p(int gr,int st){
-        double pidm=0.0;
+	long double cal_pid1p(int gr,int st){
+        long double pidm=0.0;
         int iloc,kloc,nl=0,nt=0,ni=0;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -2645,12 +2645,12 @@ struct ParticleC
             }
         }
         //cout<<ni<<" sur "<<nt<<"\n";
-        if (nt>0) return (double)ni/(double)nt;
+        if (nt>0) return (long double)ni/(long double)nt;
     }
 
-	double cal_nal1p(int gr,int st){
+	long double cal_nal1p(int gr,int st){
 
-		double nalm=0.0;
+		long double nalm=0.0;
 		int iloc,kloc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		//cout <<"groupe "<<gr<<"  cat "<<this->grouplist[gr].sumstat[st].cat<<"   sample "<<this->grouplist[gr].sumstat[st].samp;//<<"\n";
@@ -2664,14 +2664,14 @@ struct ParticleC
 			}
 		}
 		//cout <<"    naltot="<<nalm<<"    nl="<<nl;//<<"    nmoy="<<  "\n";
-		if (nl>0) nalm=nalm/(double)nl;
+		if (nl>0) nalm=nalm/(long double)nl;
 		//cout<<"    nmoy="<<nalm<<  "\n";
 		return nalm;
 	}
 
-	double cal_nal2p(int gr,int st){
+	long double cal_nal2p(int gr,int st){
 		int k,iloc,kloc,nl=0;
-		double nalm=0.0;
+		long double nalm=0.0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -2699,12 +2699,12 @@ struct ParticleC
 				}
 			}
 		}
-		if (nl>0) nalm=nalm/(double)nl;
+		if (nl>0) nalm=nalm/(long double)nl;
 		return nalm;
 	}
 
-	double cal_het1p(int gr,int st){
-		double het,hetm=0.0;
+	long double cal_het1p(int gr,int st){
+		long double het,hetm=0.0;
 		int iloc,kloc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -2713,17 +2713,19 @@ struct ParticleC
 
 				het=1.0;
 				for (int k=0;k<this->locuslist[kloc].nal;k++) het -= sqr(this->locuslist[kloc].freq[sample][k]);
-				het *= ((double)this->locuslist[kloc].samplesize[sample]/((double)this->locuslist[kloc].samplesize[sample]-1));
+				het *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
 				hetm += het;
+				printf("kloc=%2d   het = %13.10Lf\n",kloc,het);
 				nl++;
 			}
 		}
-		if (nl>0) hetm=hetm/(double)nl;
+		if (nl>0) hetm=hetm/(long double)nl;
+		printf("\n heterozygotie = %13.10Lf\n\n",hetm);
 		return hetm;
 	}
 
-	double cal_het2p(int gr,int st){
-		double het,hetm=0.0;
+	long double cal_het2p(int gr,int st){
+		long double het,hetm=0.0;
 		int iloc,loc,n1,n2,nt,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -2732,17 +2734,17 @@ struct ParticleC
 			n1=this->locuslist[loc].samplesize[sample];n2=this->locuslist[loc].samplesize[sample1];nt=n1+n2;
 			if (nt>1){
 				het=1.0;
-				for (int k=0;k<this->locuslist[loc].nal;k++) {het -= sqr(((double)n1*this->locuslist[loc].freq[sample][k]+(double)n2*this->locuslist[loc].freq[sample1][k])/(double)nt);}
-				het *= double(nt)/(double)(nt-1);
+				for (int k=0;k<this->locuslist[loc].nal;k++) {het -= sqr(((long double)n1*this->locuslist[loc].freq[sample][k]+(long double)n2*this->locuslist[loc].freq[sample1][k])/(long double)nt);}
+				het *= (long double)nt/(long double)(nt-1);
 				hetm +=het;
 				nl++;
 			}
 		}
-		if (nl>0) return hetm/(double)nl; else return 0.0;
+		if (nl>0) return hetm/(long double)nl; else return 0.0;
 	}
 
-	double cal_var1p(int gr,int st){
-		double s,v,vm=0.0,m,ms;
+	long double cal_var1p(int gr,int st){
+		long double s,v,vm=0.0,m,ms;
 		int iloc,loc,n,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 			for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -2755,19 +2757,20 @@ struct ParticleC
 					  v+=sqr(this->locuslist[loc].haplomic[sample][i]);
 				  }
 			  }
-			  m = (double)n;
-			  ms = (double)this->locuslist[loc].motif_size;
+			  m = (long double)n;
+			  ms = (long double)this->locuslist[loc].motif_size;
 			  if (n>1){
 				  vm+=(v-sqr(s)/m)/(m-1.0)/sqr(ms);
 				  nl++;
 			  }
-			  cout<<"var["<<sample<<"][]"<<loc<<"]="<<(v-sqr(s)/m)/(m-1.0)/sqr(ms)<<"   v="<<v<<"   s="<<s<<"   m="<<m<<"\n";
+			  //cout<<"var["<<sample<<"]["<<loc<<"]="<<(v-sqr(s)/m)/(m-1.0)/sqr(ms)<<"   v="<<v<<"   s="<<s<<"   m="<<m<<"\n";
 		  }
-		  if (nl>0) return vm/(double)nl; else return 0.0;
+		  printf("\nvm=%13.10Lf\n",vm/(long double)nl);
+		  if (nl>0) return vm/(long double)nl; else return 0.0;
 	}
 
-	double cal_var2p(int gr,int st){
-		double s,v,vm=0.0,m,ms;
+	long double cal_var2p(int gr,int st){
+		long double s,v,vm=0.0,m,ms;
 		int iloc,loc,n,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -2788,18 +2791,18 @@ struct ParticleC
 					v+=sqr(this->locuslist[loc].haplomic[sample1][i]);
 				}
 			}
-			m = (double)n;
-			ms = (double)this->locuslist[loc].motif_size;
+			m = (long double)n;
+			ms = (long double)this->locuslist[loc].motif_size;
 			if (n>1){
 				vm+=(v-sqr(s)/m)/(m-1.0)/sqr(ms);
 				nl++;
 			}
 		}
-		if (nl>0) return vm/(double)nl; else return 0.0;
+		if (nl>0) return vm/(long double)nl; else return 0.0;
 	}
 
-	double cal_mgw1p(int gr,int st){
-		double num=0.0,den=0.0;
+	long double cal_mgw1p(int gr,int st){
+		long double num=0.0,den=0.0;
 		int min,max;
 		int iloc,loc;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -2811,16 +2814,16 @@ struct ParticleC
 
 				min=0;while (this->locuslist[loc].freq[sample][min]<0.00001) min++;
 				max=this->locuslist[loc].kmax-this->locuslist[loc].kmin;while (this->locuslist[loc].freq[sample][max]<0.00001) max--;
-				den += (double)(1+max-min)/double(this->locuslist[loc].motif_size);
+				den += (long double)(1+max-min)/(long double)this->locuslist[loc].motif_size;
 		    }
 		}
 		if (den>0) return num/den; else return 0.0;
 	}
 
-	double cal_Fst2p(int gr,int st){
-		double s1=0.0,s3=0.0,s1l,s2l,s3l,sni,sni2,sniA,sniAA;
+	long double cal_Fst2p(int gr,int st){
+		long double s1=0.0,s3=0.0,s1l,s2l,s3l,sni,sni2,sniA,sniAA;
 		int al,pop,kpop,i,ig1,ig2,nA,AA,ni;
-		double s2A,MSG,MSI,MSP,s2G,s2I,s2P,nc;
+		long double s2A,MSG,MSI,MSP,s2G,s2I,s2P,nc;
 		int iloc,loc,nn,ind;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -2856,12 +2859,12 @@ struct ParticleC
 					                break;
 		    			}
 		    		}
-		            sniA  +=(double)nA;
-		            sniAA +=(double)AA;
-		            sni    +=(double)ni;
+		            sniA  +=(long double)nA;
+		            sniAA +=(long double)AA;
+		            sni    +=(long double)ni;
 
-		            sni2  +=sqr((double)ni);
-		            s2A   +=sqr((double)nA)/(double)(2*ni);
+		            sni2  +=sqr((long double)ni);
+		            s2A   +=sqr((long double)nA)/(long double)(2*ni);
 		    	}
 		    	if (sni>0) nc=sni-sni2/sni; else nc=0.0;
 //		    	cout << "Allele " << al <<"   sni = " << sni << "   sni2 = "<< sni2 << "   nc = "<< nc;
@@ -2877,15 +2880,15 @@ struct ParticleC
 		    	}
 		    }
 //            cout << "s1l = "<< s1l<<"   s2l = "<<s2l<<"   s3l = "<< s3l << "\n";
-		    s1 += (double)nc*s1l;
-		    s3 += (double)nc*s3l;
+		    s1 += (long double)nc*s1l;
+		    s3 += (long double)nc*s3l;
 		}
 		if (s3>0.0) return s1/s3; else return 0.0;
 	}
 
-	double cal_lik2p(int gr,int st){
+	long double cal_lik2p(int gr,int st){
   		int pop,nal,k,i,ind,ig1,ig2;
-  		double frt,a,b,num_lik,den_lik,lik;
+  		long double frt,a,b,num_lik,den_lik,lik;
 		int iloc,loc,nn,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -2900,8 +2903,8 @@ struct ParticleC
 					for (pop=0;pop<this->data.nsample;pop++) frt += this->locuslist[loc].freq[pop][k];
 					if (frt>0.000001) nal++;
 				}
-				b = 1.0/(double)nal;
-				a = 1.0/(double)this->data.nind[sample];
+				b = 1.0/(long double)nal;
+				a = 1.0/(long double)this->data.nind[sample];
 				ind = 0;
 			    for (i=0;i<this->locuslist[loc].ss[sample];i++){
 					nn=calploidy(loc,sample,ind);
@@ -2910,7 +2913,7 @@ struct ParticleC
 	    			{ case 1 :  ig1 = this->locuslist[loc].haplomic[sample][i];
 								if (ig1!=MICMISSING) {
 									num_lik = round(this->locuslist[loc].freq[sample1][ig1-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[sample1])+b;
-									den_lik = (double) (this->locuslist[loc].samplesize[sample1]+1);
+									den_lik = (long double) (this->locuslist[loc].samplesize[sample1]+1);
 									lik -= a*log10(num_lik/den_lik);
 								}
 								break;
@@ -2925,7 +2928,7 @@ struct ParticleC
 				                		num_lik = 2.0*(b+arrondi(this->locuslist[loc].freq[sample1][ig1-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[sample1]));
 				                		num_lik *=b+arrondi(this->locuslist[loc].freq[sample1][ig2-this->locuslist[loc].kmin]*this->locuslist[loc].samplesize[sample1]);
 				                	}
-				                	den_lik = (double) ((this->locuslist[loc].samplesize[sample1]+2)*(this->locuslist[loc].samplesize[sample1]+1));
+				                	den_lik = (long double) ((this->locuslist[loc].samplesize[sample1]+2)*(this->locuslist[loc].samplesize[sample1]+1));
 									lik -= a*log10(num_lik/den_lik);
 				                }
 				                break;
@@ -2933,15 +2936,15 @@ struct ParticleC
     			}
 		    }
 		}
-		if (nl>0) return lik/(double)nl; else return 0.0;
+		if (nl>0) return lik/(long double)nl; else return 0.0;
 	}
 
-	double cal_dmu2p(int gr,int st){
-		double *moy,dmu2=0.0,s;
+	long double cal_dmu2p(int gr,int st){
+		long double *moy,dmu2=0.0,s;
 		int iloc,loc,pop,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
-		moy = new double[2];
+		moy = new long double[2];
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			loc=this->grouplist[gr].loc[iloc];
 		    if (this->locuslist[loc].samplesize[sample]*this->locuslist[loc].samplesize[sample1]>0) {
@@ -2952,17 +2955,17 @@ struct ParticleC
 					for (int i=0;i<this->locuslist[loc].ss[pop];i++) {
 						if (this->locuslist[loc].haplomic[pop][i]!=MICMISSING) s += this->locuslist[loc].haplomic[pop][i];
 					}
-					moy[kpop]=s/(double)this->locuslist[loc].samplesize[pop];
+					moy[kpop]=s/(long double)this->locuslist[loc].samplesize[pop];
 				}
 		    }
-		    dmu2 += sqr((moy[1]-moy[0])/(double)this->locuslist[loc].motif_size);
+		    dmu2 += sqr((moy[1]-moy[0])/(long double)this->locuslist[loc].motif_size);
 		}
 		delete []moy;
-		if (nl>0) return dmu2/(double)nl; else return 0.0;
+		if (nl>0) return dmu2/(long double)nl; else return 0.0;
 	}
 
-	double cal_das2p(int gr,int st){
-		double s=0.0;
+	long double cal_das2p(int gr,int st){
+		long double s=0.0;
 		int iloc,loc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -2979,20 +2982,20 @@ struct ParticleC
 				}
 			}
 		}
-		if (nl>0) return s/(double)nl; else return 0.0;
+		if (nl>0) return s/(long double)nl; else return 0.0;
 	}
 
-	complex<double> pente_lik(int gr,int st, int i0) {
-		double a,freq1,freq2,li0,delta,*li;
+	complex<long double> pente_lik(int gr,int st, int i0) {
+		long double a,freq1,freq2,li0,delta,*li;
 		int ig1,ig2,ind,loc,iloc,nn;
-		li = new double[2];
+		li = new long double[2];
 		StatC stat=this->grouplist[gr].sumstat[st];
 		int sample=stat.samp-1;
 		int sample1=stat.samp1-1;
 		int sample2=stat.samp2-1;
 		//cout<<"sample ="<<sample<<"   sample1="<<sample1<<"   sample2="<<sample2<<"\n";
 		for (int rep=0;rep<2;rep++) {
-			a=0.001*(double)(i0+rep);li[rep]=0.0;
+			a=0.001*(long double)(i0+rep);li[rep]=0.0;
 			//cout << "rep = " << rep << "   a = "<< a << "  lik = "<< li[rep] << "\n";
 			for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 				loc=this->grouplist[gr].loc[iloc];
@@ -3045,13 +3048,13 @@ struct ParticleC
 		li0=li[0];
 		delta=li[1]-li[0];
 		delete []li;
-		return complex<double>(li0,delta);
+		return complex<long double>(li0,delta);
 	}
 
-	double cal_Aml3p(int gr,int st){
+	long double cal_Aml3p(int gr,int st){
 		int i1=1,i2=998,i3;
-		double p1,p2,p3,lik1,lik2,lik3;
-		complex<double> c;
+		long double p1,p2,p3,lik1,lik2,lik3;
+		complex<long double> c;
 		c=pente_lik(gr,st,i1);lik1=real(c);p1=imag(c);
 		c=pente_lik(gr,st,i2);lik2=real(c);p2=imag(c);
 		if ((p1<0.0)and(p2<0.0)) return 0.0;
@@ -3062,7 +3065,7 @@ struct ParticleC
 			if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
 			else		   {i1=i3;p1=p3;lik1=lik3;}
 		} while (abs(i2-i1)>1);
-		if (lik1>lik2) return 0.001*(double)i1; else return 0.001*(double)i2;
+		if (lik1>lik2) return 0.001*(long double)i1; else return 0.001*(long double)i2;
 	}
 
 	bool identseq(string seq1, string seq2,string appel,int kloc,int sample,int ind) {
@@ -3084,11 +3087,11 @@ struct ParticleC
 	    return ident;
 	}
 
-	double cal_nha1p(int gr,int st){
+	long double cal_nha1p(int gr,int st){
 	    string *haplo;
 	    int iloc,kloc,k,j,nhl=0,nhm=0,nl=0;
 	    bool trouve,ident;
-		double res=0.0;
+		long double res=0.0;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             nhl=0;
@@ -3127,7 +3130,7 @@ struct ParticleC
             nhm += nhl;
             delete []haplo;
         }
-        if (nl>0) res=(double)nhm/(double)nl;
+        if (nl>0) res=(long double)nhm/(long double)nl;
         return res;
     }
 
@@ -3170,9 +3173,9 @@ struct ParticleC
         return ss;
     }
 
-	double cal_nss1p(int gr,int st){
+	long double cal_nss1p(int gr,int st){
         int iloc,kloc,k,j,j0,nssl,nssm=0,nl=0,*ss;
-		double res=0.0;
+		long double res=0.0;
         bool OK;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -3191,14 +3194,14 @@ struct ParticleC
             cout <<"nssl = "<<nssl<<"\n";
         }
         }
-        if (nl>0) res=(double)nssm/(double)nl;
+        if (nl>0) res=(long double)nssm/(long double)nl;
         if ((debuglevel==9)and(kloc==10)) {cout<<"nombre de sites segregeant = "<<res<<"\n"; if (not this->dnatrue) exit(1);}
  		return res;
 	}
 
-    double cal_mpdpl(int kloc,int sample,int *nd) {
+    long double cal_mpdpl(int kloc,int sample,int *nd) {
         int npdl=0,di,k,ndd=0;
-        double res=0.0;
+        long double res=0.0;
         for (int i=0;i<this->locuslist[kloc].ss[sample]-1;i++) {
             for (int j=i+1;j<this->locuslist[kloc].ss[sample];j++) {
                 if ((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodna[sample][j]!=SEQMISSING)) {
@@ -3211,14 +3214,14 @@ struct ParticleC
                 }
             }
         }
-        if (ndd>0) res=(double)npdl/(double)ndd;
+        if (ndd>0) res=(long double)npdl/(long double)ndd;
         *nd=ndd;
         return res;
     }
 
-	double cal_mpd1p(int gr,int st){
+	long double cal_mpd1p(int gr,int st){
         int iloc,kloc,j,npdl,nd=0,di,nl=0;
-		double npdm=0.0,res=0.0,mpdp;
+		long double npdm=0.0,res=0.0,mpdp;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             npdl=0;
@@ -3226,14 +3229,14 @@ struct ParticleC
             mpdp=this->cal_mpdpl(kloc,sample,&nd);
             if (nd>0){npdm +=mpdp;nl++;}
         }
-        if (nl>0) res=(double)npdm/(double)nl;
+        if (nl>0) res=(long double)npdm/(long double)nl;
 		return res;
 
 	}
 
-	double cal_vpd1p(int gr,int st){
+	long double cal_vpd1p(int gr,int st){
 		int iloc,kloc,k,di,nl=0,nd;
-		double res=0.0,mpd,spd,vpd=0.0;
+		long double res=0.0,mpd,spd,vpd=0.0;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             nd=0;mpd=0.0;spd=0.0;
@@ -3246,47 +3249,47 @@ struct ParticleC
                         for (k=0;k<this->locuslist[kloc].dnavar;k++) {
                             if ((this->locuslist[kloc].haplodnavar[sample][i][k]!='N')and(this->locuslist[kloc].haplodnavar[sample][j][k]!='N')and(this->locuslist[kloc].haplodnavar[sample][i][k]!=this->locuslist[kloc].haplodnavar[sample][j][k])) di++;
                         }
-                        mpd +=(double)di;
-                        spd +=(double)di*(double)di;
+                        mpd +=(long double)di;
+                        spd +=(long double)di*(long double)di;
                     }
                 }
             }
-            if (nd>1){spd =(spd -mpd*mpd/(double)nd)/(double)(nd-1);nl++;vpd +=spd;}
+            if (nd>1){spd =(spd -mpd*mpd/(long double)nd)/(long double)(nd-1);nl++;vpd +=spd;}
         }
-        if (nl>0) res=vpd/(double)nl;
+        if (nl>0) res=vpd/(long double)nl;
 		return res;
 
 	}
 
-	double cal_dta1pl(int kloc,int sample,bool *OKK){
-        double a1,a2,b1,b2,c1,c2,e1,e2,S,pi;
+	long double cal_dta1pl(int kloc,int sample,bool *OKK){
+        long double a1,a2,b1,b2,c1,c2,e1,e2,S,pi;
         int nd,n=0,*ss,kS;
         bool OK;
         *OKK=true;
        if (this->locuslist[kloc].dnavar<1) return 0.0;
-		double res=0.0;
+		long double res=0.0;
         for (int i=0;i<this->locuslist[kloc].ss[sample];i++) if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) n++;
         if (n<2) {*OKK=false;return 0.0;}
-        a1=0;for(int i=1;i<n;i++) a1 += 1.0/(double)i;
-        a2=0;for(int i=1;i<n;i++) a2 += 1.0/(double)(i*i);
-        b1=(double)(n+1)/(double)(n-1)/3.0;
-        b2=2.0*((double)(n*n+n)+3.0)/9.0/(double(n*n-n));
+        a1=0;for(int i=1;i<n;i++) a1 += 1.0/(long double)i;
+        a2=0;for(int i=1;i<n;i++) a2 += 1.0/(long double)(i*i);
+        b1=(long double)(n+1)/(long double)(n-1)/3.0;
+        b2=2.0*((long double)(n*n+n)+3.0)/9.0/(long double)(n*n-n);
         c1=b1-1.0/a1;
-        c2=b2-((double)(n+2)/a1/(double)n) + (a2/a1/a1);
+        c2=b2-((long double)(n+2)/a1/(long double)n) + (a2/a1/a1);
         e1=c1/a1;
         e2=c2/(a1*a1+a2);
         pi=cal_mpdpl(kloc,sample,&nd);
         ss =cal_nsspl(kloc,sample,&kS,&OK);
-        S = (double)kS;
+        S = (long double)kS;
         if ((nd>0)and(OK)and(e1*S+e2*S*(S-1.0)>0.0)) res=(pi-S/a1)/sqrt(e1*S+e2*S*(S-1.0));
         //cout<<"a1="<<a1<<"  a2="<<a2<<"b1="<<b1<<"  b2="<<b2<<"c1="<<c1<<"  c2="<<c2<<"e1="<<e1<<"  e2="<<e2<<"\n";
         //cout<<"nd="<<nd<<"   OK="<<OK<<"   pi="<<pi<<"   S="<<S<<"   res="<<res<<"\n";
 		return res;
 	}
 
-    double cal_dta1p(int gr,int st) {
+    long double cal_dta1p(int gr,int st) {
         int iloc,kloc,nl=0;
-        double res=0.0,tal;
+        long double res=0.0,tal;
         bool OK;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -3299,10 +3302,10 @@ struct ParticleC
         return res;
     }
 
-	double cal_pss1p(int gr,int st){
+	long double cal_pss1p(int gr,int st){
         int iloc,kloc,nl=0,*ss,nps=0,nss,**ssa,*nssa;
         bool trouve,OK;
-		double res=0.0;
+		long double res=0.0;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
@@ -3334,7 +3337,7 @@ struct ParticleC
             for (int sa=0;sa<this->data.nsample;sa++) if (nssa[sa]>0) delete [] ssa[sa];
             delete []ssa;delete []nssa;
         }
-        if (nl>0) res = (double)nps/(double)nl;
+        if (nl>0) res = (long double)nps/(long double)nl;
         //cout<<"PSS_"<<this->grouplist[gr].sumstat[st].samp<<" = "<<res<<"   (nps="<<nps<<" nl="<<nl<<")\n";
 		return res;
 	}
@@ -3375,23 +3378,23 @@ struct ParticleC
         this->afsdone[sample][iloc]=true;
     }
 
-    double cal_mns1p(int gr,int st){
+    long double cal_mns1p(int gr,int st){
         int iloc,kloc,nl=0;
-		double res=0.0;
+		long double res=0.0;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
             if (not this->afsdone[sample][iloc]) this->afs(sample,iloc,kloc);
-            for (int i=0;i<this->n_afs[sample][iloc];i++) res += (double)this->t_afs[sample][iloc][i]/(double)this->n_afs[sample][iloc];
+            for (int i=0;i<this->n_afs[sample][iloc];i++) res += (long double)this->t_afs[sample][iloc][i]/(long double)this->n_afs[sample][iloc];
             nl++;
         }
-        if (nl>0) res /=(double)nl;
+        if (nl>0) res /=(long double)nl;
 		return res;
 	}
 
-	double cal_vns1p(int gr,int st){
+	long double cal_vns1p(int gr,int st){
         int iloc,kloc,nl=0;
-		double res=0.0,sx,sx2,a,v;
+		long double res=0.0,sx,sx2,a,v;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
@@ -3401,28 +3404,28 @@ struct ParticleC
             if (n_afs[sample][iloc]>1) {
                 sx=0.0;sx2=0.0;
                 for (int i=0;i<n_afs[sample][iloc];i++) {
-                  a = (double)t_afs[sample][iloc][i];
+                  a = (long double)t_afs[sample][iloc][i];
                   sx += a;
                   sx2 +=a*a;
                 }
                 //cout<<"sample "<<sample<<"   locus "<<kloc<<"  sx="<<sx<<"  sx2="<<sx2<<"\n";
-                a = (double)n_afs[sample][iloc];
+                a = (long double)n_afs[sample][iloc];
                 v = (sx2-sx*sx/a)/a;
             } else {v=0.0;/*cout<<"vns="<<v<<"\n";*/}
             nl++;//cout<<"nl="<<nl<<"\n";
             //if (v>0.0) cout<<"sample "<<sample<<"   locus "<<kloc<<"  sx="<<sx<<"  sx2="<<sx2<<"  n="<<a<<"   vns="<<v<<"\n";
             if (v>0.0) res += v;
         }
-		if (nl>0) res /=(double)nl;
+		if (nl>0) res /=(long double)nl;
 		//exit(1);
 		return res;
 	}
 
-	double cal_nha2p(int gr,int st){
+	long double cal_nha2p(int gr,int st){
         string *haplo;
         int iloc,kloc,k,j,nhl=0,nhm=0,nl=0,sample,dmax;
         bool trouve,ident;
-        double res=0.0;
+        long double res=0.0;
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
         //cout <<"samples "<<samp0<<" & "<<samp1<<"\n";
@@ -3465,7 +3468,7 @@ struct ParticleC
             nhm += nhl;
             delete [] haplo;
         }
-        if (nl>0) res=(double)nhm/(double)nl;
+        if (nl>0) res=(long double)nhm/(long double)nl;
 		return res;
 	}
 
@@ -3508,9 +3511,9 @@ struct ParticleC
         return ss;
     }
 
-	double cal_nss2p(int gr,int st){
+	long double cal_nss2p(int gr,int st){
         int iloc,kloc,k,j,j0,nssl,nssm=0,nl=0,*ss;
-        double res=0.0;
+        long double res=0.0;
         bool OK,trouve;
         //cout<<"\n";
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
@@ -3524,12 +3527,12 @@ struct ParticleC
             //cout<<"cumul nl="<<nl<<"   cumul nssm="<<nssm<<"\n";
             if (nssl>0) delete []ss;
         }
-        if (nl>0) res=(double)nssm/(double)nl;
+        if (nl>0) res=(long double)nssm/(long double)nl;
 		return res;
 
 	}
 
-    double cal_mpw2pl(int kloc,int samp0, int samp1, bool *OK) {
+    long double cal_mpw2pl(int kloc,int samp0, int samp1, bool *OK) {
         int isamp,samp,di,mdl=0,nd=0;
         if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
             *OK=true;
@@ -3557,14 +3560,14 @@ struct ParticleC
                 }
             }
         } else *OK=false;
-        if (nd>0) return(double)mdl/(double)nd; else return (double)mdl;
+        if (nd>0) return(long double)mdl/(long double)nd; else return (long double)mdl;
 
     }
 
 
-	double cal_mpw2p(int gr,int st){
+	long double cal_mpw2p(int gr,int st){
         int iloc,kloc,nl=0;
-		double res=0.0,md=0.0,mdl;
+		long double res=0.0,md=0.0,mdl;
         bool OK;
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -3573,11 +3576,11 @@ struct ParticleC
             mdl= cal_mpw2pl(kloc,samp0,samp1,&OK);
             if (OK) {nl++;md+=mdl;}
         }
-        if (nl>0) res = md/(double)nl;
+        if (nl>0) res = md/(long double)nl;
 		return res;
 	}
 
-    double cal_mpb2pl(int kloc,int samp0, int samp1, bool *OK) {
+    long double cal_mpb2pl(int kloc,int samp0, int samp1, bool *OK) {
         int di,mdl=0,nd=0;
         if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
             *OK=true;
@@ -3601,12 +3604,12 @@ struct ParticleC
                 }
             }
         } else *OK=false;
-        if (nd>0) return (double)mdl/(double)nd; else  return (double)mdl;
+        if (nd>0) return (long double)mdl/(long double)nd; else  return (long double)mdl;
     }
 
-    double cal_mpb2p(int gr,int st){
+    long double cal_mpb2p(int gr,int st){
         int iloc,kloc,nl=0;
-        double res=0.0,md=0.0,mdl;
+        long double res=0.0,md=0.0,mdl;
         bool OK;
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -3615,14 +3618,14 @@ struct ParticleC
             mdl = cal_mpb2pl(kloc,samp0,samp1,&OK);
             if (OK) {nl++;md+=mdl;}
         }
-        if (nl>0) res = md/(double)nl;
+        if (nl>0) res = md/(long double)nl;
 		return res;
 
 	}
 
-	double cal_fst2p(int gr,int st){
+	long double cal_fst2p(int gr,int st){
 		int iloc,kloc,nl=0;
-        double res=0.0,num=0.0,den=0.0,Hw,Hb;
+        long double res=0.0,num=0.0,den=0.0,Hw,Hb;
         bool OKw,OKb;
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -3639,7 +3642,7 @@ struct ParticleC
 
     void cal_freq(int gr,int st) {
         int iloc,kloc,nhaplo,isamp,sample,dmax,j,k;
-        double d;
+        long double d;
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
         int samp2=this->grouplist[gr].sumstat[st].samp2-1;
@@ -3649,14 +3652,14 @@ struct ParticleC
             kloc=this->grouplist[gr].loc[iloc];
             dmax=this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]+this->locuslist[kloc].samplesize[samp2];
             //cout<<"Locus "<<kloc<<"   (cal_freq)\n";
-            this->locuslist[kloc].freq = new double*[this->data.nsample];
+            this->locuslist[kloc].freq = new long double*[this->data.nsample];
             this->locuslist[kloc].haplomic = new int*[this->data.nsample];
             this->locuslist[kloc].kmin=100;
             nhaplo=0;
             if (this->locuslist[kloc].dnavar==0) {
                 for (isamp=0;isamp<3;isamp++) {
                     if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
-                    this->locuslist[kloc].freq[sample] = new double[1];
+                    this->locuslist[kloc].freq[sample] = new long double[1];
                     this->locuslist[kloc].freq[sample][0]=1.0;
                     this->locuslist[kloc].haplomic[sample] = new int[this->locuslist[kloc].ss[sample]];
                     for (int j=0;j<this->locuslist[kloc].ss[sample];j++) this->locuslist[kloc].haplomic[sample][j]=this->locuslist[kloc].kmin;
@@ -3690,9 +3693,9 @@ struct ParticleC
                 }
                 for (isamp=0;isamp<3;isamp++) {
                     if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
-                    this->locuslist[kloc].freq[sample] = new double[nhaplo];
+                    this->locuslist[kloc].freq[sample] = new long double[nhaplo];
                     for (j=0;j<nhaplo;j++) this->locuslist[kloc].freq[sample][j] = 0.0;
-                    d=1.0/(double)this->locuslist[kloc].samplesize[sample];
+                    d=1.0/(long double)this->locuslist[kloc].samplesize[sample];
                     this->locuslist[kloc].haplomic[sample] = new int[this->locuslist[kloc].ss[sample]];
                     for (int i=0;i<this->locuslist[kloc].ss[sample];i++) {
                         if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
@@ -3711,13 +3714,13 @@ struct ParticleC
         }
     }
 
-    double cal_aml3p(int gr,int st){
+    long double cal_aml3p(int gr,int st){
         int iloc,kloc,nlocutil=0,*ss,nssl;
-        double p1,p2,p3,lik1,lik2,lik3;
+        long double p1,p2,p3,lik1,lik2,lik3;
         int i1=1,i2=998,i3;
         bool OK;
-        double res=0.0;
-        complex<double> c;
+        long double res=0.0;
+        complex<long double> c;
         //cout<<"debut de cal_aml3p\n";
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -3743,7 +3746,7 @@ struct ParticleC
             if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
             else           {i1=i3;p1=p3;lik1=lik3;}
         } while (abs(i2-i1)>1);
-        if (lik1>lik2) res=0.001*(double)i1; else res = 0.001*(double)i2;
+        if (lik1>lik2) res=0.001*(long double)i1; else res = 0.001*(long double)i2;
         libere_freq(gr);
         return res;
 	}
