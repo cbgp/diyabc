@@ -29,6 +29,7 @@ import output
 from output import log
 import subprocess
 from utils.diyabcUtils import cmdThread
+from utils.diyabcUtils import logRotate
 from threading import Thread
 
 
@@ -893,7 +894,7 @@ def main():
     log(1,"\033[5;36m DIYABC launched \033[00m")
 
     # effacement des logs de plus de N jours si le dossier de logs dépasse X Mo
-    output.logRotate(os.path.expanduser("~/.diyabc/logs/"),10,50)
+    logRotate(os.path.expanduser("~/.diyabc/logs/"),10,50)
 
     # création du prompt
     if cmd:

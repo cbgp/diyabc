@@ -44,31 +44,6 @@ def centerHeader(name,nbChar):
             spAft = spBef
         return spBef+name+spAft
 
-def sizedirectory(path):
-    size = 0
-    for root, dirs, files in os.walk(path):
-        for fic in files:
-            size += os.path.getsize(os.path.join(root, fic))
-    return size
-
-
-def logRotate(logFolder,nbDaysOld,sizeThreshold):
-    """ fonction qui nettoie le dossier logFolder de 
-    tous les fichiers plus vieux que nbDaysOld
-    SSI le dossier de logs est plus lourd que sizeThreshold Mo
-    """
-    logSize = sizedirectory(logFolder)
-    if (logSize / (1024*1024)) > sizeThreshold:
-        log(2,"Logrotate process launched")
-        ddNow = datetime.now()
-        for root,dirs,files in os.walk(os.path.expanduser("~/.diyabc/logs/")):
-            for name in files:
-                dateLastModif = time.gmtime(os.stat(os.path.join(root, name)).st_mtime)
-                ddMod = datetime(dateLastModif.tm_year,dateLastModif.tm_mon,dateLastModif.tm_mday)
-                delta = ddNow - ddMod
-                if delta.days > nbDaysOld :
-                    log(4,"Deleting %s because it is %s days old"%(os.path.join(root, name),delta.days))
-                    os.remove(os.path.join(root, name))
 
 class TeeLogger(object):
     """ Classe qui remplace stdout et stderr pour logger sur 
@@ -118,19 +93,6 @@ class TeeLogger(object):
         #ftmp.file.flush()
         ftmp.close()
         self.out.write(data_short)
-    def logRotate(self,name):
-        if os.path.exists(name):
-            f = open(name,'r')
-            lines = f.readlines()
-            # si on a plus de 5000 lignes, on ne garde que les 3000 dernières
-            if len(lines) > 5000:
-                keptLines = lines[-3000:]
-                f.close()
-                fw=open(name,'w')
-                fw.write(''.join(keptLines))
-                fw.close()
-                return
-            f.close()
 
 def log(level,message):
     if level <= LOG_LEVEL:

@@ -260,7 +260,7 @@ La description du bouton ou du label\end{verbatim}
         \begin{itemize}
             \item Par la fonction log présente dans output.py
             \item Par l'instruction print de Python
-            \item Par la production d'une exception arrivant au sommet sans être attrapée\\
+            \item Par le déclenchement d'une exception arrivant au sommet sans être attrapée\\
         \end{itemize}
         
         La fonction log permet de préciser le niveau de log que l'on souhaite utiliser. J'ai pensé mes niveau comme cela :
@@ -276,6 +276,9 @@ La description du bouton ou du label\end{verbatim}
 
         La ligne de log contient la date, l'heure, le niveau de log, la fonction appelante de niveau 1 et 2 ainsi que les paramètres
         donnés à la fonction appelante. 
+
+        Une fonction logRotate est appelée au lancement de l'application. Si le dossier passé en paramètre dépasse une taille H,
+        les fichiers vieux de plus de N jours sont supprimés.
 
         \paragraph{La console intégrée}
         Si on donne l'argument -cmd au lancement de diyabc.py, on active la console intégrée. Elle permet à tout moment d'exécuter du code python
