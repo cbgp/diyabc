@@ -63,7 +63,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.preferences_win = Preferences(self)
         self.preferences_win.loadPreferences()
 
-        self.setWindowIcon(QIcon("docs/accueil_pictures/coccicon.png"))
+        self.setWindowIcon(QIcon("docs/icons/coccicon.png"))
 
         self.illegalProjectNameCharacters = ['_','-',"'",'"','.']
 
@@ -102,7 +102,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.aboutWindow.parent = self
         self.aboutWindow.setWindowTitle('About DIYABC')
         ui = self.aboutWindow
-        ui.logoLabel.setPixmap(QPixmap("docs/accueil_pictures/coccicon.png"))
+        ui.logoLabel.setPixmap(QPixmap("docs/icons/coccicon.png"))
         txt = str(self.aboutWindow.infoLabel.text())
         txt = txt.replace('vvv',VERSION).replace('ddd',VERSION_DATE)
         self.aboutWindow.infoLabel.setText(txt)
@@ -200,7 +200,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #self.ui.frame.setAutoFillBackground(True)
         #self.ui.frame.setBackgroundColor(Qt.Blue)
 
-        #self.setCursor(QCursor(QPixmap("/home/julien/vcs/git/diyabc.git/python_interface/docs/accueil_pictures/coccicon.png").scaled(32,32)))
+        #self.setCursor(QCursor(QPixmap("/home/julien/vcs/git/diyabc.git/python_interface/docs/icons/coccicon.png").scaled(32,32)))
 
         #statusLabel = QLabel("No info",self)
         #statusLabel.setAlignment(Qt.AlignLeft)
