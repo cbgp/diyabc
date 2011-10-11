@@ -1,5 +1,34 @@
 # -*- coding: utf-8 -*-
 
+from threading import Thread
+import cmd
+
+class CmdPrompt(cmd.Cmd):
+    """ prompt qui execute le code python passé par l'utilisateur
+    à l'aide de la commande do
+    """
+    def do_do(self,line):
+        try:
+            exec line
+        except Exception,e:
+            print e
+    
+    def do_EOF(self, line):
+        return True
+
+class cmdThread(Thread):
+    """ Thread de lancement du prompt
+    """
+    def __init__(self,diy):
+        super(cmdThread,self).__init__()
+        self.diy = diy
+        self.start()
+    def run(self):
+        plop = CmdPrompt()
+        plop.diy=self.diy
+        plop.cmdloop()
+
+
 from xml.dom.minidom import parse
 import output
 import os.path

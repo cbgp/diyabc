@@ -24,10 +24,11 @@ from PyQt4 import uic
 #from simulationProject import SimulationProject
 from preferences import Preferences
 from showLogFile import ShowLogFile
-from documentator import Documentator
+from utils.diyabcUtils import Documentator
 import output
 from output import log
 import subprocess
+from utils.diyabcUtils import cmdThread
 from threading import Thread
 
 
@@ -848,31 +849,6 @@ class ImportProjectThread(Thread):
         from project import Project
         from simulationProject import SimulationProject
         #log(4,"Pre-loading of Project class FINISHED")
-
-import cmd
-
-class CmdPrompt(cmd.Cmd):
-    """ prompt qui execute le code python passé par l'utilisateur
-    à l'aide de la commande do
-    """
-    def do_do(self,line):
-        exec line
-    
-    def do_EOF(self, line):
-        return True
-
-class cmdThread(Thread):
-    """ Thread de lancement du prompt
-    """
-    def __init__(self,diy):
-        super(cmdThread,self).__init__()
-        self.diy = diy
-        self.start()
-    def run(self):
-        plop = CmdPrompt()
-        plop.diy=self.diy
-        plop.cmdloop()
-
 
 def main():
     if not os.path.exists(os.path.expanduser("~/.diyabc/")):

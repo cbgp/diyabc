@@ -277,6 +277,15 @@ La description du bouton ou du label\end{verbatim}
         La ligne de log contient la date, l'heure, le niveau de log, la fonction appelante de niveau 1 et 2 ainsi que les paramètres
         donnés à la fonction appelante. 
 
+        \paragraph{La console intégrée}
+        Si on donne l'argument -cmd au lancement de diyabc.py, on active la console intégrée. Elle permet à tout moment d'exécuter du code python
+        dans le contexte de l'application qui tourne. L'instance principale et unique de Diyabc est un attribut de la console. Elle s'utilise de la
+        manière suivante : \newline On commence la ligne par le mot ``do'' puis on écrit du python. Par exemple : 
+
+        \begin{verbatim}do print len(self.diy.project_list)\end{verbatim}
+        
+        Affichera le nombre de projets ouverts par l'interface.
+
 
 
 
@@ -341,6 +350,8 @@ La description du bouton ou du label\end{verbatim}
     générer un xml à partir de la notice \LaTeX . Cette opération s'effectue
     avec ``latexml'' présent dans les dépôts Debian et Ubuntu. \\
     \begin{verbatim}latexml notice.tex > documentation.xml\end{verbatim}
+
+    Il faut que le fichier documentation.xml soit placé dans le dossier python\_interface/docs/ .
 
     
     \subsection{Windows}
