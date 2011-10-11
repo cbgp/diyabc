@@ -131,7 +131,7 @@ struct ConditionC
 struct StatC
 {
 	int cat,samp,samp1,samp2,group;
-	double val;
+	long double val;
 };
 
 /**
@@ -2761,6 +2761,7 @@ struct ParticleC
 				  vm+=(v-sqr(s)/m)/(m-1.0)/sqr(ms);
 				  nl++;
 			  }
+			  cout<<"var["<<sample<<"][]"<<loc<<"]="<<(v-sqr(s)/m)/(m-1.0)/sqr(ms)<<"   v="<<v<<"   s="<<s<<"   m="<<m<<"\n";
 		  }
 		  if (nl>0) return vm/(double)nl; else return 0.0;
 	}

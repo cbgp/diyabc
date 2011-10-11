@@ -69,6 +69,7 @@ cout<<"apres dimension de progressfilename\n";
                 strcat(nomfigp,nomfisim.c_str());
                 strcat(nomfigp,sn.c_str());
 				cout<<"écriture du fichier "<<nomfigp<<"\n";
+				sgp[i] +="\n";
                 fgp = fopen(nomfigp,"w");fprintf(fgp,"%s",str2char(sgp[i]));fclose(fgp);
             }
         }

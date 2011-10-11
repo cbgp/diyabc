@@ -173,6 +173,13 @@ string DoubleToString ( double number )
   return oss.str();
 }
 
+string LongDoubleToString (long double number )
+{
+  std::ostringstream oss;
+  oss<< number;
+  return oss.str();
+}
+
 string majuscules(string s) {
     string s2;
     char *c;
@@ -230,7 +237,31 @@ double cal_moy(int n, double *x) {
     else return 0.0;
 }
 
+long double cal_moyL(int n, long double *x) {
+    double sx=0;
+    for (int i=0;i<n;i++) sx +=x[i];
+    if (n>0) return sx/(long double)n;
+    else return 0.0;
+}
+
 double cal_mode(int n, double *x) {
+    int l0=1,l1,l2=n,dl,lmin;
+    double min;
+    dl=(l2-l0)/2;
+    while (x[l0-1] != x[l2-1]) {
+        min=x[l0+dl-1] - x[l0-1];lmin=l0;
+        for (int l=l0;l<l2-dl;l++) {
+            if(x[l+dl-1]-x[l-1]<min) {
+                min=x[l+dl-1]-x[l-1];
+                lmin=l;
+            }
+        }
+        l0=lmin;l2=lmin+dl;dl=(l2-l0)/2;
+    }
+    return x[l0-1];
+}
+
+long double cal_modeL(int n, long double *x) {
     int l0=1,l1,l2=n,dl,lmin;
     double min;
     dl=(l2-l0)/2;
@@ -253,6 +284,12 @@ double cal_med(int n,double *x) {
     else return x[n/2];
 }
 
+long double cal_medL(int n,long double *x) {
+    sort(&x[0],&x[n]);
+    if ((n%2)==0) return 0.5*(x[n/2-1]+x[n/2]);
+    else return x[n/2];
+}
+
 double cal_sd(int n,double *x) {
     double sx,sx2,a=x[0];
     bool ident=true;
@@ -266,6 +303,21 @@ double cal_sd(int n,double *x) {
     }
     if (n<2) return 0.0;
     else return  sqrt((sx2-(sx/(double)n*sx))/(double)(n-1));
+}
+
+long double cal_sdL(int n,long double *x) {
+    long double sx,sx2,a=x[0];
+    bool ident=true;
+    int i=1;
+    while ((ident) and (i<n)) {ident=(x[i]==a);i++;}
+    if (ident) return 0.0;
+    sx=0.0;sx2=0.0;
+    for (int i=0;i<n;i++) {
+        sx +=x[i];
+        sx2 +=x[i]*x[i];
+    }
+    if (n<2) return 0.0;
+    else return  sqrt((sx2-(sx/(long double)n*sx))/(long double)(n-1));
 }
 
 double lnormal_dens(double x, double m, double s) {
@@ -328,17 +380,17 @@ double pnorm5(double x,double mu, double sigma){
 
 struct rescov {
     int n;
-    double *mu,**cov;
+    long double *mu,**cov;
 };
 
-rescov covarianceponderee(int nl, int nc, double **A, double *w) {
+rescov covarianceponderee(int nl, int nc, long double **A, long double *w) {
     rescov mcv;
     mcv.n=nc;
-    mcv.mu = new double[nc];
-    mcv.cov = new double*[nc];for (int i=0;i<nc;i++) mcv.cov[i] = new double[nc];
-    double *wn,sw2,sw;
+    mcv.mu = new long double[nc];
+    mcv.cov = new long double*[nc];for (int i=0;i<nc;i++) mcv.cov[i] = new long double[nc];
+    long double *wn,sw2,sw;
     //sx = new double[nc];
-    wn = new double[nl];
+    wn = new long double[nl];
     sw=0.0;for (int k=0;k<nl;k++) sw +=w[k];
     for (int k=0;k<nl;k++) wn[k] =w[k]/sw;
     sw2=0.0;for (int k=0;k<nl;k++) sw2 +=wn[k]*wn[k];
@@ -360,17 +412,17 @@ rescov covarianceponderee(int nl, int nc, double **A, double *w) {
 
 struct resAFD{
    int nlambda;
-   double proportion,*lambda,slambda,**vectprop,**princomp,*moy;
+   long double proportion,*lambda,slambda,**vectprop,**princomp,*moy;
 };
 
-resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
+resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long double prop) {
     resAFD res;
     rescov mcv;
     res.proportion = prop;
     vector <int> nk,numpop;   //npop est remplace par numpop.size() ou nk.size()
     bool trouve;
-    double **matC,**matCT,**matTI,**matM,*valprop,**mk,anl,piv,sl,co,sy,sy2,somega,*w,*wk;
-    int snk,j;
+    long double **matC,**matCT,**matTI,**matM,*valprop,**mk,anl,piv,sl,co,sy,sy2,somega,*w,*wk;
+    int snk,j,err;
     //cout<<"debut AFD  nl="<<nl<<"\n";
     if (not numpop.empty()) numpop.clear();numpop.push_back(pop[0]);
     if (not nk.empty()) nk.clear();nk.push_back(1);
@@ -386,21 +438,21 @@ resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
     snk=0;for (int i=0;i<nk.size();i++) snk += nk[i];
     //cout<<"apres calcul snk\n";
     if (nl!=snk) {cout<< "dans AFD nl!=snk\n";exit(1);}
-    matC = new double*[nc];for (int i=0;i<nc;i++) matC[i] = new double[numpop.size()];
-    matCT = new double*[numpop.size()];for (int i=0;i<numpop.size();i++) matCT[i] = new double[nc];
+    matC = new long double*[nc];for (int i=0;i<nc;i++) matC[i] = new long double[numpop.size()];
+    matCT = new long double*[numpop.size()];for (int i=0;i<numpop.size();i++) matCT[i] = new long double[nc];
     //matM = new *double[nc];for (int i=0;i<nc;i++) matM[i] = new double[nc];
-    valprop = new double[nc];
-    res.vectprop = new double*[nc];for (int i=0;i<nc;i++) res.vectprop[i] = new double[nc];
+    valprop = new long double[nc];
+    res.vectprop = new long double*[nc];for (int i=0;i<nc;i++) res.vectprop[i] = new long double[nc];
     //anl=1.0/(double)nl;
     somega=0.0;for (int i=0;i<nl;i++) somega +=omega[i];
     //cout<<"somega="<<somega<<"\n";
-    w = new double[nl];for (int i=0;i<nl;i++) w[i]=omega[i]/somega;
+    w = new long double[nl];for (int i=0;i<nl;i++) w[i]=omega[i]/somega;
     //cout<<"avant covarianceponderee\n";
     mcv=covarianceponderee(nl,nc,X,w);
     //cout<<"apres covarianceponderee\n";
-    res.moy=new double[mcv.n];for (j=0;j<mcv.n;j++) res.moy[j]=mcv.mu[j];
-    mk = new double*[numpop.size()];for (int i=0;i<numpop.size();i++) mk[i] = new double[nc];
-    wk = new double[numpop.size()];
+    res.moy=new long double[mcv.n];for (j=0;j<mcv.n;j++) res.moy[j]=mcv.mu[j];
+    mk = new long double*[numpop.size()];for (int i=0;i<numpop.size();i++) mk[i] = new long double[nc];
+    wk = new long double[numpop.size()];
     //cout<<"numpop.size="<<numpop.size()<<"\n";
     for (int k=0;k<numpop.size();k++) {
         wk[k]=0.0;for (int i=0;i<nl;i++) {if (pop[i]==numpop[k]) {wk[k] +=w[i];}}
@@ -422,11 +474,11 @@ resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
         }
     }
     //cout<<"avant invM\n";
-    matTI = invM(mcv.n,mcv.cov);
-    matM = prodM(numpop.size(),nc,numpop.size(),prodM(numpop.size(),nc,nc,matCT,matTI),matC);
+    err = inverse_Tik(mcv.n,mcv.cov,matTI);
+    matM = prodML(numpop.size(),nc,numpop.size(),prodML(numpop.size(),nc,nc,matCT,matTI),matC);
     //cout<<"avant jacobi\n";
-    jacobi(numpop.size(),matM,valprop,res.vectprop);
-    res.vectprop = prodM(nc,numpop.size(),numpop.size(),prodM(nc,nc,numpop.size(),matTI,matC),res.vectprop);
+    jacobiL(numpop.size(),matM,valprop,res.vectprop);
+    res.vectprop = prodML(nc,numpop.size(),numpop.size(),prodML(nc,nc,numpop.size(),matTI,matC),res.vectprop);
 //tri des valeurs et vecteurs propres par ordre décroissant des valeurs propres
     for (int i=0;i<numpop.size()-1;i++) {
         for (j=i+1;j<numpop.size();j++) if (valprop[i]<valprop[j]) {
@@ -441,9 +493,9 @@ resAFD AFD(int nl, int nc, int *pop,double *omega, double **X, double prop) {
     while ((res.nlambda<numpop.size())and(sl/res.slambda<prop)) {
         res.slambda +=valprop[res.nlambda];res.nlambda++;
     }
-    res.lambda = new double[res.nlambda];
+    res.lambda = new long double[res.nlambda];
     for (int i=0;i<res.nlambda;i++) res.lambda[i] = valprop[i];
-    res.princomp = new double*[nl];for (int i=0;i<nl;i++) res.princomp[i] = new double[res.nlambda];
+    res.princomp = new long double*[nl];for (int i=0;i<nl;i++) res.princomp[i] = new long double[res.nlambda];
     for (int i=0;i<nl;i++) {
         for (j=0;j<res.nlambda;j++) {
             res.princomp[i][j]=0.0;

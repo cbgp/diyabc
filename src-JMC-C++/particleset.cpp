@@ -47,7 +47,7 @@
 };*/
 
 enregC *enreg;
-extern double **phistar;
+extern long double **phistar;
 extern int debuglevel;
 extern ReftableC rt;
 

@@ -47,10 +47,10 @@ char *nomficonfresult;
         struct tm * timeinfo;
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
-        double *x,*mo;
+        long double *x,*mo;
         string s;
-        x=new double[ntest];
-        mo=new double[4];
+        x=new long double[ntest];
+        mo=new long double[4];
         string aprdir,aprlog;
         nomficonfresult = new char[strlen(path)+strlen(ident)+30];
         strcpy(nomficonfresult,path);
@@ -91,33 +91,33 @@ char *nomficonfresult;
         fclose(f1);
     }
 
-    double* transfAFD(int nrec,int nsel, int p) {
-        double delta,rdelta,*w,a,**X,*statpiv;
+    long double* transfAFD(int nrec,int nsel, int p) {
+        long double delta,rdelta,*w,a,**X,*statpiv;
         int *scenar;
         resAFD afd;
         //cout<<"debut transfAFD\n";
         delta=rt.enrsel[nsel-1].dist;
         rdelta=1.5/delta;
-        w = new double[nsel];
+        w = new long double[nsel];
         for (int i=0;i<nsel;i++) {a=rt.enrsel[i].dist/delta;w[i]=rdelta*(1.0-a*a);}
         scenar = new int[nsel];for (int i=0;i<nsel;i++) scenar[i] = rt.enrsel[i].numscen;
-        X = new double*[nsel];for (int i=0;i<nsel;i++) X[i] = new double[rt.nstat];
-        statpiv = new double[rt.nstat];
-        for (int i=0;i<nsel;i++) {for (int j=0;j<rt.nstat;j++) X[i][j]=rt.enrsel[i].stat[j];}
+        X = new long double*[nsel];for (int i=0;i<nsel;i++) X[i] = new long double[rt.nstat];
+        statpiv = new long double[rt.nstat];
+        for (int i=0;i<nsel;i++) {for (int j=0;j<rt.nstat;j++) X[i][j]=(long double)rt.enrsel[i].stat[j];}
         //cout<<"avant AFD\n";
         afd = AFD(nsel,rt.nstat,scenar,w,X,1.0);
         //cout<<"apresAFD\n";
         for (int i=0;i<nsel;i++) {
             for (int j=0;j<afd.nlambda;j++) {
                 statpiv[j]=0.0;
-                for (int k=0;k<rt.nstat;k++) statpiv[j] += (rt.enrsel[i].stat[k]-afd.moy[k])*afd.vectprop[k][j];
+                for (int k=0;k<rt.nstat;k++) statpiv[j] += ((long double)rt.enrsel[i].stat[k]-afd.moy[k])*afd.vectprop[k][j];
             }
             for (int j=0;j<afd.nlambda;j++) rt.enrsel[i].stat[j] = statpiv[j];
             for (int j=afd.nlambda;j<rt.nstat;j++) rt.enrsel[i].stat[j] = 0.0;
         }
         for (int j=0;j<afd.nlambda;j++) {
             statpiv[j]=0.0;
-            for (int k=0;k<rt.nstat;k++) statpiv[j] += (enreg[p].stat[k]-afd.moy[k])*afd.vectprop[k][j];
+            for (int k=0;k<rt.nstat;k++) statpiv[j] += ((long double)enreg[p].stat[k]-afd.moy[k])*afd.vectprop[k][j];
             }
         for (int j=0;j<afd.nlambda;j++) enreg[p].stat[j] = statpiv[j];
         for (int j=afd.nlambda;j<rt.nstat;j++) {enreg[p].stat[j] = 0.0;statpiv[j] = 0.0;}
@@ -132,7 +132,8 @@ char *nomficonfresult;
         int nstatOK, iprog,nprog,ncs1;
         int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond;
         string opt,*ss,s,*ss1,s0,s1;
-        double  *stat_obs,st,pa,duree,debut,clock_zero;
+        long double  *stat_obs,st,pa;
+		double duree,debut,clock_zero;
         bool AFD=false;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
@@ -231,7 +232,7 @@ char *nomficonfresult;
         cout<<"apres ecriture dans progress\n";
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         //nstatOK = rt.cal_varstat();
-        stat_obs = new double[rt.nstat];
+        stat_obs = new long double[rt.nstat];
         ecrientete(nrec,ntest,nseld,nselr,nlogreg,shist,smut,AFD); cout<<"apres ecrientete\n";
         ofstream f11(nomficonfresult,ios::app);
         rt.alloue_enrsel(nsel);
@@ -258,7 +259,7 @@ char *nomficonfresult;
                 postsr = comp_logistic(nselr,stat_obs);
                 iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
 				for (int i=0;i<rt.nscenchoisi;i++) {
-					printf("  %6.4f [%6.4f,%6.4f] ",postsr[i].x,postsr[i].inf,postsr[i].sup);
+					printf("  %6.4Lf [%6.4Lf,%6.4Lf] ",postsr[i].x,postsr[i].inf,postsr[i].sup);
 					f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x;
 					f11<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf;
 					f11<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";

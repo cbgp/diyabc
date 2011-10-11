@@ -39,8 +39,8 @@ extern char *progressfilename;
 * définition de la densité d'un paramètre
 */
 struct pardensC {
-    double *x,*priord,*postd;
-    double xmin,xmax,xdelta;
+    long double *x,*priord,*postd;
+    long double xmin,xmax,xdelta;
     int ncl;
 };
 
@@ -50,16 +50,16 @@ struct parstatC {
 
 extern ReftableC rt;
 extern HeaderC header;
-double **matX0, *vecW, **alpsimrat;
+long double **matX0, *vecW, **alpsimrat;
 long double **parsim;
 int nstatOKsel;
 extern char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
 extern bool multithread;
 pardensC *pardens;
-double *var_stat, *parmin, *parmax, *diff;
-double **beta, **phistar,**simpar;
+long double *var_stat, *parmin, *parmax, *diff;
+long double **beta, **phistar,**simpar;
 int nparamcom,nparcompo,**numpar,numtransf,npar,npar0;
-double borne=10.0,xborne;
+long double borne=10.0,xborne;
 bool composite,original;
 string entete;
 int nsimpar=100000;
@@ -159,10 +159,10 @@ parstatC *parstat;
 * recalcule les valeurs de paramètres en fonction de la transformation choisie
 */
     void recalparam(int n) {
-        double coefmarge=0.001,marge;
+        long double coefmarge=0.001,marge;
         int jj,k,kk;
-        alpsimrat = new double*[n];
-        for(int i=0;i<n;i++) alpsimrat[i] = new double[nparamcom];
+        alpsimrat = new long double*[n];
+        for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparamcom];
         switch (numtransf) {
 
           case 1 :  //no transform
@@ -184,7 +184,7 @@ parstatC *parstat;
                    break;
           case 3 : //logit transform
                    //cout<<"borne="<<borne<<"\n";
-                   parmin = new double[nparamcom]; parmax = new double[nparamcom]; diff = new double[nparamcom];
+                   parmin = new long double[nparamcom]; parmax = new long double[nparamcom]; diff = new long double[nparamcom];
                    if (borne<0.0000000001) {
                        xborne=1E100;
                        for (int j=0;j<nparamcom;j++) {parmin[j]=1E100;parmax[j]=-1E100;}
@@ -252,7 +252,7 @@ parstatC *parstat;
                    }
                    break;
           case 4 : //log(tg) transform
-                   parmin = new double[nparamcom]; parmax = new double[nparamcom]; diff = new double[nparamcom];
+                   parmin = new long double[nparamcom]; parmax = new long double[nparamcom]; diff = new long double[nparamcom];
                    if (borne<0.0000000001) {
                        xborne=1E100;
                        for (int j=0;j<nparamcom;j++) {parmin[j]=1E100;parmax[j]=-1E100;}
@@ -315,21 +315,21 @@ parstatC *parstat;
 * effectue le remplissage de la matrice matX0, du vecteur des poids vecW et
 * de la matrice des paramètres parsim (éventuellement transformés)
 */
-    void rempli_mat(int n,double* stat_obs) {
+    void rempli_mat(int n,long double* stat_obs) {
         int icc;
-        double delta,som,x,*var_statsel,nn;
-        double *sx,*sx2,*mo;
-        nn=(double)n;
+        long double delta,som,x,*var_statsel,nn;
+        long double *sx,*sx2,*mo;
+        nn=(long double)n;
         delta = rt.enrsel[n-1].dist;
-        cout<<"delta="<<delta<<"\n";
-        sx  = new double[rt.nstat];
-        sx2 = new double[rt.nstat];
-        mo  = new double[rt.nstat];
-        var_statsel = new double[rt.nstat];
+		printf("delta = %12.8Lf\n",delta);
+        sx  = new long double[rt.nstat];
+        sx2 = new long double[rt.nstat];
+        mo  = new long double[rt.nstat];
+        var_statsel = new long double[rt.nstat];
         for (int i=0;i<rt.nstat;i++){sx[i]=0.0;sx2[i]=0.0;mo[i]=0.0;}
         for (int i=0;i<n;i++){
             for (int j=0;j<rt.nstat;j++) {
-                x = rt.enrsel[i].stat[j];
+                x = (long double)rt.enrsel[i].stat[j];
                 sx[j] +=x;
                 sx2[j] +=x*x;
             }
@@ -340,11 +340,11 @@ parstatC *parstat;
             if (var_statsel[j]>0.0) nstatOKsel++;
             mo[j] = sx[j]/nn;
         }
-        for (int j=0;j<rt.nstat;j++) cout<<"stat["<<j<<"]  moy="<<mo[j]<<"   var="<<var_statsel[j]<<"\n";
+        for (int j=0;j<rt.nstat;j++) printf("stat[%3d]  moy=%12.8Lf   var=%12.8Lf\n",j,mo[j],var_statsel[j]);
 		cout<<"nstat="<<rt.nstat<<"     nstatOK="<<nstatOKsel<<"\n";
-        matX0 = new double*[n];
-        for (int i=0;i<n;i++)matX0[i]=new double[nstatOKsel];
-        vecW = new double[n];
+        matX0 = new long double*[n];
+        for (int i=0;i<n;i++)matX0[i]=new long double[nstatOKsel];
+        vecW = new long double[n];
         //cout <<"hello\n";
         som=0.0;
         for (int i=0;i<n;i++) {
@@ -352,7 +352,7 @@ parstatC *parstat;
             for (int j=0;j<rt.nstat;j++) {
                 if (var_statsel[j]>0.0) {
                     icc++;
-                    matX0[i][icc]=(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
+                    matX0[i][icc]=((long double)rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
                 }
             }
             x=rt.enrsel[i].dist/delta;
@@ -406,9 +406,9 @@ parstatC *parstat;
         for (int j=0;j<nstatOKsel+1;j++) matB[j] = new long double[nstatOKsel+1];
         matBB = new long double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) matBB[j] = new long double[nstatOKsel+1];
-        beta = new double*[nstatOKsel+1];
-        for (int j=0;j<nstatOKsel+1;j++) beta[j] = new double[nparamcom];
-        ecrimatD("matX0",10,nstatOKsel,matX0);
+        beta = new long double*[nstatOKsel+1];
+        for (int j=0;j<nstatOKsel+1;j++) beta[j] = new long double[nparamcom];
+        ecrimatL("matX0",10,nstatOKsel,matX0);
         //ecrimat("matX",10,10,matX);
 
         matXT = transposeL(n,nstatOKsel+1,matX);
@@ -428,8 +428,8 @@ parstatC *parstat;
         matC = prodML(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
 		cout<<"apres matC\n";
         bet = prodML(nstatOKsel+1,n,nparamcom,matC,parsim);
-		for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nparamcom;j++) beta[i][j] = (double)bet[i][j];}
-        ecrimatD("beta",nstatOKsel+1,nparamcom,beta);
+		for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nparamcom;j++) beta[i][j] = bet[i][j];}
+        ecrimatL("beta",nstatOKsel+1,nparamcom,beta);
         libereL(nstatOKsel+1,matA);
         libereL(n,matX);
 		libereL(nstatOKsel+1,matXT);
@@ -440,16 +440,16 @@ parstatC *parstat;
 		libereL(n,parsim);
     }
 
-/**
+/**D
 * calcule les phistars pour les paramètres originaux et composites
 */
-    double** calphistar(int n){
+    long double** calphistar(int n){
         //cout<<"debut de calphistar\n";
         int k,kk,qq;
-        double pmut;
-        double **phista;
-        phista = new double*[n];
-        for (int i=0;i<n;i++) phista[i] = new double[nparamcom+nparcompo];
+        long double pmut;
+        long double **phista;
+        phista = new long double*[n];
+        for (int i=0;i<n;i++) phista[i] = new long double[nparamcom+nparcompo];
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparamcom;j++) {
                 phista[i][j] = alpsimrat[i][j];
@@ -631,7 +631,7 @@ parstatC *parstat;
         fprintf(f1,"%s\n",entete.c_str());
         for (int i=0;i<n;i++) {
             fprintf(f1,"  %d    ",rt.enrsel[i].numscen);
-            for (int j=0;j<nparamcom+nparcompo;j++) fprintf(f1,"  %8.5e  ",phistar[i][j]);
+            for (int j=0;j<nparamcom+nparcompo;j++) fprintf(f1,"  %8.5Le  ",phistar[i][j]);
             //if(i<10) for (int j=0;j<nparamcom+nparcompo;j++) printf(" %8.5e",phistar[i][j]);
             fprintf(f1,"\n");
         }
@@ -651,11 +651,11 @@ parstatC *parstat;
     void lisimpar(int nsel){
       int bidon,iscen,m,k,kk,qq,nr;
         bool scenOK;
-        double pmut;
+        long double pmut;
         if (nsimpar>rt.nrec) nsimpar=rt.nrec;
         nr=0;for (int i=0;i<rt.nscenchoisi;i++) nr+=rt.nrecscen[rt.scenchoisi[i]-1];
         if (nsimpar>nr) nsimpar=nr;
-        simpar = new double*[nsimpar];
+        simpar = new long double*[nsimpar];
         enregC enr;
         enr.stat = new float[rt.nstat];
         enr.param = new float[rt.nparamax];
@@ -670,7 +670,7 @@ parstatC *parstat;
             }
             if (scenOK) {
               i++;
-              simpar[i] = new double[nparamcom+nparcompo];
+              simpar[i] = new long double[nparamcom+nparcompo];
               m=0;while(enr.numscen!=rt.scenchoisi[m]) m++;
               for (int j=0;j<nparamcom;j++) simpar[i][j] = enr.param[numpar[m][j]];
               if (nparcompo>0) {
@@ -749,9 +749,9 @@ parstatC *parstat;
 /**
 * calcule la densité à partir de la loi fournie dans le prior
 */
-    double* caldensexact(int ncl,double *x,PriorC pr) {
-        double *dens,xb,som;
-        dens = new double[ncl];
+    long double* caldensexact(int ncl,long double *x,PriorC pr) {
+        long double *dens,xb,som;
+        dens = new long double[ncl];
 		cout<<"caldensexact\n";
         if (pr.loi=="UN") for(int i=0;i<ncl;i++) dens[i]=1.0/(pr.maxi-pr.mini);
         if (pr.loi=="LU") for(int i=0;i<ncl;i++) dens[i]=1.0/(pr.maxi-pr.mini)/x[i];
@@ -769,36 +769,36 @@ parstatC *parstat;
 /**
 * calcule un histogramme à partir de la loi fournie dans le prior
 */
-    double* calhistexact(int ncl,double *x,PriorC pr) {
-        double *dens,xb,som,z,pas=x[1]-x[0];
+    long double* calhistexact(int ncl,long double *x,PriorC pr) {
+        long double *dens,xb,som,z,pas=x[1]-x[0];
         int ncl2=11;
-        dens = new double[ncl];
+        dens = new long double[ncl];
         if (pr.loi=="UN") for(int i=0;i<ncl;i++) dens[i]=1.0/(pr.maxi-pr.mini);
         if (pr.loi=="LU") for(int i=0;i<ncl;i++) {
             dens[i]=0.0;
             for (int j=0;j<ncl2-1;j++){
-                z=x[i]+(double)j*pas/(double)(ncl2-1);
+                z=x[i]+(long double)j*pas/(long double)(ncl2-1);
                 dens[i]+=1.0/(pr.maxi-pr.mini)/z/(ncl2-1);
             }
         }
         if (pr.loi=="NO") for(int i=0;i<ncl;i++){
             dens[i]=0.0;
             for (int j=0;j<ncl2-1;j++){
-                z=x[i]+(double)j*pas/(double)(ncl2-1);
+                z=x[i]+(long double)j*pas/(long double)(ncl2-1);
                 dens[i]+=exp(-(z-pr.mean)*(z-pr.mean)/2.0/(pr.sdshape*pr.sdshape))/(pr.sdshape*co);
             }
         }
         if (pr.loi=="LN") for(int i=0;i<ncl;i++) {
             dens[i]=0.0;
             for (int j=0;j<ncl2-1;j++){
-                z=x[i]+(double)j*pas/(double)(ncl2-1);
+                z=x[i]+(long double)j*pas/(long double)(ncl2-1);
                 dens[i]+=exp(-(log(z)/pr.mean)*(log(z)/pr.mean)/2.0/(pr.sdshape*pr.sdshape))/(pr.sdshape*co*x[i]);
             }
         }
         if (pr.loi=="GA") for(int i=0;i<ncl;i++) {
             dens[i]=0.0;
             for (int j=0;j<ncl2-1;j++){
-                z=x[i]+(double)j*pas/(double)(ncl2-1);
+                z=x[i]+(long double)j*pas/(long double)(ncl2-1);
                 xb=z*pr.sdshape/pr.mean;
                 dens[i]+=exp((pr.sdshape-1.0)*log(xb)-xb);
             }
@@ -812,13 +812,13 @@ parstatC *parstat;
 /**
 * calcule la densité à partir d'un échantillon de valeurs'
 */
-    double* calculdensite(int ncl,int n, double *x, double **y,int j,bool multithread) {
+    long double* calculdensite(int ncl,int n, long double *x, long double **y,int j,bool multithread) {
 	    cout<<"calculdensite\n";
-        double bw,*dens,sd,*z,denom,som;
-        dens = new double[ncl];
-        z = new double[n];
+        long double bw,*dens,sd,*z,denom,som;
+        dens = new long double[ncl];
+        z = new long double[n];
         for (int i=0;i<n;i++) z[i]=y[i][j];
-        sd =cal_sd(n,z);
+        sd =cal_sdL(n,z);
         if (sd>0.0) bw=coefbw*exp(-0.2*log((double)n))*sd;
         else bw=1.0;
         cout<<"calculdensite  sd="<<sd<<"    bw="<<bw<<"\n";
@@ -840,15 +840,15 @@ parstatC *parstat;
 /**
 * calcule un histogramme à partir d'un échantillon de valeurs'
 */
-    double* calculhisto(int ncl, int n, double *x, double **y,int j,bool multithread) {
+    long double* calculhisto(int ncl, int n, long double *x, long double **y,int j,bool multithread) {
         int k;
-        double som,*dens,*z,d,demipas=0.5*(x[1]-x[0]);
-        dens = new double[ncl];
-        z = new double[n];
+        long double som,*dens,*z,d,demipas=0.5*(x[1]-x[0]);
+        dens = new long double[ncl];
+        z = new long double[n];
         for (int i=0;i<n;i++) z[i]=y[i][j];
         //for (int i=0;i<n;i++) cout <<"  "<<z[i];cout<<"\n";
         for (int i=0;i<ncl;i++) dens[i]=0.0;
-        d=1.0/(double)n;
+        d=1.0/(long double)n;
 #pragma omp parallel for shared(dens,z,x) private(k) if(multithread)
         for (int i=0;i<n;i++) {
             for (k=0;k<ncl;k++) if (fabs(z[i]-x[k])<=demipas) break;
@@ -868,7 +868,7 @@ parstatC *parstat;
 */
     void histodens(int n, bool multithread, char* progressfilename,int* iprog,int* nprog) {
         bool condition;
-        double *densprior,*denspost,*x,delta;
+        long double *densprior,*denspost,*x,delta;
         int ncl,ii;
         FILE *flog;
         pardens = new pardensC[nparamcom+nparcompo];
@@ -903,9 +903,9 @@ parstatC *parstat;
                     if (pardens[j].xmax<phistar[i][j]) pardens[j].xmax=phistar[i][j];
                 }
             }
-            pardens[j].xdelta = (pardens[j].xmax-pardens[j].xmin)/(double)(pardens[j].ncl-1);
+            pardens[j].xdelta = (pardens[j].xmax-pardens[j].xmin)/(long double)(pardens[j].ncl-1);
             cout<<nomparam[j]<<"   xmin="<<pardens[j].xmin<<"   xmax="<<pardens[j].xmax<<"   xdelta="<<pardens[j].xdelta<<"   ncl="<<pardens[j].ncl<<"\n";
-			pardens[j].x = new double[pardens[j].ncl];
+			pardens[j].x = new long double[pardens[j].ncl];
             for (int k=0;k<pardens[j].ncl;k++) pardens[j].x[k]=pardens[j].xmin+k*pardens[j].xdelta;
 			cout<<"1\n";
             if (pardens[j].ncl>31) {
@@ -930,14 +930,14 @@ parstatC *parstat;
                 for (int k=0;k<ncl;k++) cout<<"   "<<pardens[j].x[k];cout<<"\n";
                 for (int k=0;k<ncl;k++) cout<<"   "<<densprior[k];cout<<"\n";
                 for (int k=0;k<ncl;k++) cout<<"   "<<denspost[k];cout<<"\n";
-                x=new double[ncl];
+                x=new long double[ncl];
                 for (int k=0;k<ncl;k++) x[k]=pardens[j].x[k];
                 delete []pardens[j].x;
                 pardens[j].ncl = 1001;
-                pardens[j].x = new double[pardens[j].ncl];
-                pardens[j].priord = new double[pardens[j].ncl];
-                pardens[j].postd = new double[pardens[j].ncl];
-                pardens[j].xdelta = (x[ncl-1]-x[0])/(double)(pardens[j].ncl-1);
+                pardens[j].x = new long double[pardens[j].ncl];
+                pardens[j].priord = new long double[pardens[j].ncl];
+                pardens[j].postd = new long double[pardens[j].ncl];
+                pardens[j].xdelta = (x[ncl-1]-x[0])/(long double)(pardens[j].ncl-1);
                 delta = x[1]-x[0];
                 for (int k=0;k<pardens[j].ncl;k++) {
                     pardens[j].x[k]=x[0]+k*pardens[j].xdelta;
@@ -960,9 +960,9 @@ parstatC *parstat;
 *calcule les statistiques des paramètres
 */
     parstatC* calparstat(int n) {
-        double sx,*x;
+        long double sx,*x;
         parstat = new parstatC[nparamcom+nparcompo];
-        x = new double[n];
+        x = new long double[n];
         //cout <<"avant la boucle sur les parametres nparamcom="<<nparamcom<<"  nparcompo="<<nparcompo<<"   nsel="<<n<<"\n";
         for (int j=0;j<nparamcom+nparcompo;j++) {
             for (int i=0;i<n;i++) x[i] = phistar[i][j];
@@ -978,9 +978,9 @@ parstatC *parstat;
             parstat[j].q750 = x[(int)floor(0.750*n+0.5)-1];
             parstat[j].q950 = x[(int)floor(0.950*n+0.5)-1];
             parstat[j].q975 = x[(int)floor(0.975*n+0.5)-1];
-            parstat[j].moy = cal_moy(n,x);
+            parstat[j].moy = cal_moyL(n,x);
             //cout<<"apres cal_moy\n";
-            parstat[j].mod = cal_mode(n,x);
+            parstat[j].mod = cal_modeL(n,x);
             //cout<<"apres cal_mode\n";
             //for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
             //cout<<nomparam[j];
@@ -1011,9 +1011,9 @@ parstatC *parstat;
             fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
             //cout<<"2\n";
             fprintf(f1,"%d\n",pardens[j].ncl);//cout<<"3\n";
-            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].x[i]);fprintf(f1,"\n");//cout<<"3\n";
-            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].priord[i]);fprintf(f1,"\n");//cout<<"4\n";
-            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5e",pardens[j].postd[i]);fprintf(f1,"\n");//cout<<"5\n";
+            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].x[i]);fprintf(f1,"\n");//cout<<"3\n";
+            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].priord[i]);fprintf(f1,"\n");//cout<<"4\n";
+            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].postd[i]);fprintf(f1,"\n");//cout<<"5\n";
         }
         fclose(f1);
         cout<<"apres close(f1)\n";
@@ -1051,7 +1051,7 @@ parstatC *parstat;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,ns1,nrecpos;
         string opt,*ss,s,*ss1,s0,s1;
-        double  *stat_obs;
+        long double  *stat_obs;
 
         FILE *flog;
 
@@ -1098,7 +1098,8 @@ parstatC *parstat;
         }
 
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
-        stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
+        header.calstatobs(statobsfilename);  cout<<"apres read_statobs\n";
+		stat_obs = header.stat_obs;
         nprog=100;iprog=1;
         flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         rt.alloue_enrsel(nsel);

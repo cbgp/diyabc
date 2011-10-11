@@ -348,6 +348,86 @@ int inverse(int n, long double **A, long double **C)
         delete []b;delete []z;
         return nrot;    
     }
+    int jacobiL(int n, long double **A, long double *D, long double **V) {
+        char bidon;
+        int nrot=0,ng=0,nm;
+        long double *b,*z,tresh,theta,tau,t,sm,s,h,g,cc;
+        b = new long double[n];
+        z = new long double[n];
+        for (int ip=0;ip<n;ip++) {for (int iq=0;iq<n;iq++) V[ip][iq]=0.0; V[ip][ip]=1.0;}
+        for (int ip=0;ip<n;ip++) {b[ip]=A[ip][ip];D[ip]=b[ip];z[ip]=0.0;}
+        std::cout<<"matrice A dans jacobi  n="<<n<<"\n";
+		if (n<10) nm=n; else nm=10;
+		for (int i=0;i<nm;i++) {
+		  for (int j=0;j<nm;j++) std::cout<< A[i][j]<<"  ";
+		  std::cout<<"\n";
+		}
+		std::cout<<"\n";
+        
+        for (int i=0;i<51;i++) {
+            sm=0.0;
+            for (int ip=0;ip<n-1;ip++) {for (int iq=ip+1;iq<n;iq++) sm += fabs(A[ip][iq]);}
+            std::cout<<"jacobi sm="<<sm<<"\n";
+            if (sm==0.0) {delete []b;delete []z;return nrot;}
+            if (i<4) tresh=0.2*sm/(long double)n/(long double)n; else tresh=0.0;
+            for (int ip=0;ip<n-1;ip++) {
+                for (int iq=ip+1;iq<n;iq++) {
+                    g=100.0*fabs(A[ip][iq]);
+                    if (((i>4)and(fabs(D[ip]+g)==fabs(D[ip])))and(fabs(D[iq]+g)==fabs(D[iq]))) A[ip][iq]=0.0;
+                    else if (fabs(A[ip][iq])>tresh) {
+                        h=D[iq]-D[ip];
+                        if (fabs(h)+g == fabs(h)) t=A[ip][iq]/h;
+                        else  {
+                            theta=0.5*h/A[ip][iq];
+                            t=1.0/(fabs(theta)+sqrt(1.0+theta*theta));
+                            if (theta<0.0) t=-t;
+                        }
+                        cc=1.0/sqrt(1+t*t);
+                        s=t*cc;
+                        tau=s/(1.0+cc);
+                        h=t*A[ip][iq];
+                        z[ip] -=h;
+                        z[iq] +=h;
+                        D[ip] -=h;
+                        D[iq] +=h;
+                        A[ip][iq]=0.0;
+                        for (int j=0;j<ip;j++) {
+                            g=A[j][ip];
+                            h=A[j][iq];
+                            A[j][ip] = g-s*(h+g*tau);
+                            A[j][iq] = h+s*(g-h*tau);
+                        }
+                        for (int j=ip+1;j<iq;j++) {
+                            g=A[ip][j];
+                            h=A[j][iq];
+                            A[ip][j] = g-s*(h+g*tau);
+                            A[j][iq] = h+s*(g-h*tau);
+                        }
+                       for (int j=iq+1;j<n;j++) {
+                            g=A[ip][j];  
+                            h=A[iq][j];  
+                            A[ip][j] = g-s*(h+g*tau);   
+                            A[iq][j] = h+s*(g-h*tau);   
+                        }
+                        for (int j=0;j<n;j++) {
+                            g=V[j][ip];
+                            h=V[j][iq];
+                            V[j][ip] = g-s*(h+g*tau);
+                            V[j][iq] = h+s*(g-h*tau);
+                        }
+                    }
+                }  
+            } 
+            nrot++;
+        }
+        for (int ip=0;ip<n-1;ip++) {
+            b[ip]=b[ip]+z[ip];
+            D[ip]=b[ip];
+            z[ip]=0.0;
+        }
+        delete []b;delete []z;
+        return nrot;    
+    }
 
 
   

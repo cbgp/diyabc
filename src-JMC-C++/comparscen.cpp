@@ -35,12 +35,12 @@ extern char *progressfilename;
 
 struct matligneC
 {
-    double* x;
+    long double* x;
 };
 
 struct posteriorscenC
 {
-    double x,inf,sup;
+    long double x,inf,sup;
 	int err;
 };
 
@@ -166,8 +166,8 @@ matligneC *matA;
         fprintf(f1,"   %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"          scenario %d       ",rt.scenchoisi[i]);fprintf(f1,"\n");
         for (int i=0;i<ncs;i++) {
             nts = (n/ncs)*(i+1);
-            if (nts%50==0){printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",posts[i][j].x,posts[i][j].inf,posts[i][j].sup);printf("\n");}
-            fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",posts[i][j].x,posts[i][j].inf,posts[i][j].sup);fprintf(f1,"\n");
+            if (nts%50==0){printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4Lf [%6.4Lf,%6.4Lf]  ",posts[i][j].x,posts[i][j].inf,posts[i][j].sup);printf("\n");}
+            fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4Lf [%6.4Lf,%6.4Lf]  ",posts[i][j].x,posts[i][j].inf,posts[i][j].sup);fprintf(f1,"\n");
         }
         fclose(f1);
         for (int i=0;i<rt.nscenchoisi;i++) delete []posts[i];
@@ -195,11 +195,11 @@ matligneC *matA;
 				nts = (nselr/nlogreg)*(i+1);
 				sum=0;for (int j=0;j<rt.nscenchoisi;j++) sum+=postscenlog[i][j].err;
 				if (sum==0){
-					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
-					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");
+					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4Lf [%6.4Lf,%6.4Lf]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
+					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4Lf [%6.4Lf,%6.4Lf]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");
 				} else {
-					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4f [%6.4f,%6.4f]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
-					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4f [%6.4f,%6.4f]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");					
+					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4Lf [%6.4Lf,%6.4Lf]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
+					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4Lf [%6.4Lf,%6.4Lf]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");					
 				}
 			}
 		}
@@ -213,17 +213,17 @@ matligneC *matA;
 /**
 * effectue le remplissage de la matrice cmatX0 et du vecteur des poids cvecW
 */
-    void rempli_mat0(int n,double* stat_obs) {
+    void rempli_mat0(int n,long double* stat_obs) {
         int icc;
-        double delta,som,x,*var_statsel,nn;
-        double *sx,*sx2,*mo;
-        nn=(double)n;
+        long double delta,som,x,*var_statsel,nn;
+        long double *sx,*sx2,*mo;
+        nn=(long double)n;
         delta = rt.enrsel[n-1].dist;
         //cout<<"delta="<<delta<<"\n";
-        sx  = new double[rt.nstat];
-        sx2 = new double[rt.nstat];
-        mo  = new double[rt.nstat];
-        var_statsel = new double[rt.nstat];
+        sx  = new long double[rt.nstat];
+        sx2 = new long double[rt.nstat];
+        mo  = new long double[rt.nstat];
+        var_statsel = new long double[rt.nstat];
         for (int i=0;i<rt.nstat;i++){sx[i]=0.0;sx2[i]=0.0;mo[i]=0.0;}
         for (int i=0;i<n;i++){
             for (int j=0;j<rt.nstat;j++) {
@@ -339,7 +339,7 @@ matligneC *matA;
         return OK;
     }
 
-    void calcul_psd(int nmodel, long double *b0, long double **matV, long double *sd, double *px)
+    void calcul_psd(int nmodel, long double *b0, long double **matV, long double *sd, long double *px)
     {
         int imod,i,j,l;
         long double esd=0, ebma, sum=0.0, mi=b0[0], ma=b0[0];
@@ -472,7 +472,7 @@ matligneC *matA;
 
     }
 
-    void reordonne(int nmodel,int *numod,double *px, double *pxi,double *pxs) {
+    void reordonne(int nmodel,int *numod,long double *px, long double *pxi,long double *pxs) {
         long double *qx,*qxi,*qxs;
         qx = new long double[nmodel+1];qxi = new long double[nmodel+1];qxs = new long double[nmodel+1];
         for (int i=0;i<nmodel+1;i++) {
@@ -484,7 +484,7 @@ matligneC *matA;
         delete []qx;delete []qxi;delete []qxs;
     }
 
-    int polytom_logistic_regression(int nli, int nco, long double **cmatX0, long double *vecY, long double *cvecW, double *px, double *pxi, double *pxs)
+    int polytom_logistic_regression(int nli, int nco, long double **cmatX0, long double *vecY, long double *cvecW, long double *px, long double *pxi, long double *pxs)
     {
         double clock_zero;
         int err,nmodel=0;
@@ -609,11 +609,12 @@ matligneC *matA;
 		return err;
    }
 
-    posteriorscenC* call_polytom_logistic_regression(int nts, double *stat_obs, int nscenutil,int *scenchoisiutil) {
+    posteriorscenC* call_polytom_logistic_regression(int nts, long double *stat_obs, int nscenutil,int *scenchoisiutil) {
         posteriorscenC *postlog;
         bool trouve;
         int ntt,j,dtt,k,kk,err;
-        double som, *px,*pxi,*pxs,somw,duree,debut,clock_zero;
+        long double som, *px,*pxi,*pxs,somw;
+		double duree,debut,clock_zero;
         clock_zero=0.0;debut=walltime(&clock_zero);
         postlog = new posteriorscenC[rt.nscenchoisi];
         for (int i=0;i<rt.nscenchoisi;i++) {
@@ -635,12 +636,12 @@ matligneC *matA;
 			}
 			//cout<<"call_polytom_logistic_regression 1\n";
 			if (ntt<=nts) {
-				for (int i=0;i<nts;i++) matA[i].x = new double[nstatOKsel+2];
+				for (int i=0;i<nts;i++) matA[i].x = new long double[nstatOKsel+2];
 				kk=0;
 				for (int k=0;k<nscenutil;k++) {
 					for (int i=0;i<nts;i++) {
 						if (vecY[i]==k) {
-							matA[kk].x[0]=(double)vecY[i];
+							matA[kk].x[0]=(long double)vecY[i];
 							matA[kk].x[1]= cvecW[i];
 							for (int j=0;j<nstatOKsel;j++) matA[kk].x[2+j] = cmatX0[i][j];
 							kk++;
@@ -655,16 +656,16 @@ matligneC *matA;
 			}
 			//cout<<"call_polytom_logistic_regression 2\n";
 			som=0.0;for (int i=0;i<ntt;i++) som += cvecW[i];
-			for (int i=0;i<ntt;i++) cvecW[i] = cvecW[i]/som*(double)ntt;
-			px = new double[rt.nscenchoisi];pxi = new double[rt.nscenchoisi];pxs = new double[rt.nscenchoisi];
+			for (int i=0;i<ntt;i++) cvecW[i] = cvecW[i]/som*(long double)ntt;
+			px = new long double[rt.nscenchoisi];pxi = new long double[rt.nscenchoisi];pxs = new long double[rt.nscenchoisi];
 			err = polytom_logistic_regression(nts, nstatOKsel, cmatX0, vecYY, cvecW, px, pxi, pxs);
 			if (err>1) {
-				double d,a=1.0/(double)nts;
+				long double d,a=1.0/(long double)nts;
 				for (int i=0;i<rt.nscenchoisi;i++) {
 					postlog[i].x=0.0;
 					for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postlog[i].x +=a;
 					if ((fabs(postlog[i].x)<0.00001)or(fabs(1.0-postlog[i].x)<0.00001)) d=0.0;
-					else d=1.96*sqrt(postlog[i].x*(1.0-postlog[i].x)/(double)nts);
+					else d=1.96*sqrt(postlog[i].x*(1.0-postlog[i].x)/(long double)nts);
 					postlog[i].inf =postlog[i].x-d;if(postlog[i].inf<0.0)postlog[i].inf=0.0;
 					postlog[i].sup =postlog[i].x+d;if(postlog[i].sup>1.0)postlog[i].sup=1.0;
 					postlog[i].err=err;
@@ -685,12 +686,12 @@ matligneC *matA;
 			duree=walltime(&debut);time_call += duree;
 			//cout<<"call_polytom_logistic_regression 3\n";
 		} else {
-		    double d,a=1.0/(double)nts;
+		    long double d,a=1.0/(long double)nts;
 			for (int i=0;i<rt.nscenchoisi;i++) {
 				postlog[i].x=0.0;
 				for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postlog[i].x +=a;
                 if ((fabs(postlog[i].x)<0.00001)or(fabs(1.0-postlog[i].x)<0.00001)) d=0.0;
-                else d=1.96*sqrt(postlog[i].x*(1.0-postlog[i].x)/(double)nts);
+                else d=1.96*sqrt(postlog[i].x*(1.0-postlog[i].x)/(long double)nts);
                 postlog[i].inf =postlog[i].x-d;if(postlog[i].inf<0.0)postlog[i].inf=0.0;
                 postlog[i].sup =postlog[i].x+d;if(postlog[i].sup>1.0)postlog[i].sup=1.0;
 				postlog[i].err=5; 
@@ -699,7 +700,7 @@ matligneC *matA;
         return postlog;
     }
 
-    posteriorscenC* comp_logistic(int nts,double *stat_obs) {
+    posteriorscenC* comp_logistic(int nts,long double *stat_obs) {
         int *postdir,nscenutil,*scenchoisiutil,kk;
         posteriorscenC *postlog;
         postdir= new int[rt.nscenchoisi];
@@ -733,7 +734,8 @@ matligneC *matA;
         int nstatOK,iprog,nprog;;
         int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,kk,nts;
         string opt,*ss,s,*ss1,s0,s1;
-        double  *stat_obs,duree,debut,clock_zero;
+        long double  *stat_obs;
+		double duree,debut,clock_zero;
         FILE *flog;
         posteriorscenC **postscendir,**postscenlog;
 
@@ -772,7 +774,7 @@ matligneC *matA;
         nprog=6+nlogreg;
         iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         nstatOK = rt.cal_varstat();
-        stat_obs = header.read_statobs(statobsfilename);
+        header.calstatobs(statobsfilename);stat_obs = header.stat_obs;
         rt.alloue_enrsel(nsel);
         clock_zero=0.0;debut=walltime(&clock_zero);
         rt.cal_dist(nrec,nsel,stat_obs);

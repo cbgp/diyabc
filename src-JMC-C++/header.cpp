@@ -44,7 +44,7 @@ public:
     bool drawuntil;
     ParticleC particuleobs;
     MutParameterC *mutparam;
-    double *stat_obs;
+    long double *stat_obs;
 
     void libere() {
         this->dataobs.libere();
@@ -673,7 +673,7 @@ public:
 
     HeaderC* readHeadersim(char* headersimfilename){
         string s1,s2,*sl,*ss,*ss1,*ss2;
-        int nlscen,nss,nss1,j,k,l,gr,grm,k1,k2,*nf,*nm;
+        int nlscen,nss,nss1,j,k,l,gr,grm,k1,k2,*nf,*nm,jstat;
 		double som;
         //cout<<"debut de readheader\n";
         //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
@@ -927,8 +927,9 @@ public:
     }
 
     void calstatobs(char* statobsfilename) {
+		int jstat;
 //partie DATA
-                //cout<<"debut de calstatobs\n";
+                cout<<"debut de calstatobs\n";
                 this->particuleobs.dnatrue = true;
                 this->particuleobs.nsample = this->dataobs.nsample;
                 //cout<<this->dataobs.nsample<<"\n";
@@ -1022,24 +1023,34 @@ public:
                ent=ent+"\n";
                if (debuglevel==2)cout<<"entete : "<<entete<<"\n";
                delete []sb;
+			   jstat=0;
                FILE *fobs;
                fobs=fopen(statobsfilename,"w");
                fputs(ent.c_str(),fobs);
                for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
                      if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
                      this->particuleobs.docalstat(gr);
+					 jstat +=this->particuleobs.grouplist[gr].nstat;
                     if (debuglevel==2)cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
-                     for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs," %8.4f     ",this->particuleobs.grouplist[gr].sumstat[j].val);
+                     for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs,"%12.8Lf  ",this->particuleobs.grouplist[gr].sumstat[j].val);
                }
                fprintf(fobs,"\n");
                fclose(fobs);
+			   this->stat_obs = new long double[jstat];
+			   jstat=0;
+			   for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
+				  for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) {
+					  this->stat_obs[jstat]=this->particuleobs.grouplist[gr].sumstat[j].val;
+					  jstat++;
+					
+				  }
+			  }
                this->particuleobs.libere(true);
-               //exit(1);
         }
         /**
 * lit le fichier des statistiques observées (placées dans double *stat_obs)
 */
-    double* read_statobs(char *statobsfilename) {
+/*    double* read_statobs(char *statobsfilename) {
        string entete,ligne,*ss;
        int ns;
        ifstream file(statobsfilename, ios::in);
@@ -1055,7 +1066,7 @@ public:
        return this->stat_obs;
        //for (int i=0;i<ns;i++) cout<<stat_obs[i]<<"   ";
        //cout<<"\n";
-    }
+    }*/
 
 
 };

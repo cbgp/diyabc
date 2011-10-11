@@ -37,26 +37,26 @@ int nacp=100000;
 struct resACPC
 {
    int index,nlambda;      //index=0 pour matrice de corrélation et !=0 pour matrice de covariance
-   double proportion,*lambda,slambda,**vectprop,**princomp,*moy,*sd;
+   long double proportion,*lambda,slambda,**vectprop,**princomp,*moy,*sd;
    
 };
-    resACPC ACP(int nli,int nco, double **X,double prop,int index) {
+    resACPC ACP(int nli,int nco, long double **X, long double prop,int index) {
         resACPC res;
         res.proportion = prop;
         res.index = index;
-        double **matX,**matXT,**matM,*valprop,**vcprop,**matXTX;
-        double *y,anli,piv,sl;
-        anli = 1.0/(double)nli;
-        y = new double[nli];
-        res.moy = new double[nco];
-        res.sd  = new double[nco];
+        long double **matX,**matXT,**matM,*valprop,**vcprop,**matXTX;
+        long double *y,anli,piv,sl;
+        anli = 1.0/(long double)nli;
+        y = new long double[nli];
+        res.moy = new long double[nco];
+        res.sd  = new long double[nco];
         
         for (int j=0;j<nco;j++) {
             for (int i=0;i<nli;i++) y[i] = X[i][j];
-            res.moy[j] = cal_moy(nli,y);
-            res.sd[j]  = cal_sd(nli,y)*sqrt((double)(nli-1)/(double(nli)));
+            res.moy[j] = cal_moyL(nli,y);
+            res.sd[j]  = cal_sdL(nli,y)*sqrt((long double)(nli-1)/(long double)(nli));
         }
-        matX = new double*[nli];for (int i=0;i<nli;i++)matX[i] = new double[nco];
+        matX = new long double*[nli];for (int i=0;i<nli;i++)matX[i] = new long double[nco];
         if (index==0) {
             for (int i=0;i<nli;i++) {
                 for (int j=0;j<nco;j++){ 
@@ -73,19 +73,19 @@ struct resACPC
 		  cout<<"\n";
 		}
 		cout<<"\n";*/
-        matXT = transpose(nli,nco,matX);
-        matXTX = prodM(nco,nli,nco,matXT,matX);
-        matM = prodMs(nco,nco,matXTX,anli);
+        matXT = transposeL(nli,nco,matX);
+        matXTX = prodML(nco,nli,nco,matXT,matX);
+        matM = prodMsL(nco,nco,matXTX,anli);
         for (int i=0;i<nco;i++) {for (int j=0;j<nco;j++) matM[i][j]=matXTX[i][j]*anli;}
-        vcprop  = new double*[nco];for (int i=0;i<nco;i++) vcprop[i]=new double [nco];
-        valprop = new double[nco];
+        vcprop  = new long double*[nco];for (int i=0;i<nco;i++) vcprop[i]=new long double [nco];
+        valprop = new long double[nco];
         //ecrimat("matM",nco,nco,matM);
 		/*for (int i=0;i<10;i++) {
 		  for (int j=0;j<10;j++) cout<<setiosflags(ios::fixed)<<setw(10)<<setprecision(6)<< matM[i][j]<<"  ";
 		  cout<<"\n";
 		}
 		cout<<"\n";*/
-		int nrot=jacobi(nco,matM,valprop,vcprop);
+		int nrot=jacobiL(nco,matM,valprop,vcprop);
         //cout <<"nrot = "<<nrot<<"\n";
         //cout<<"valeurs propres :\n";
         //for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout<<"\n";
@@ -106,16 +106,16 @@ struct resACPC
         res.nlambda=1;sl=valprop[0];
         while ((sl/res.slambda<prop)and(res.nlambda<nco)) {sl+=valprop[res.nlambda];res.nlambda++;}
         //cout<<"nombre de composantes : "<<res.nlambda<<"\n";
-        res.lambda = new double[res.nlambda];
+        res.lambda = new long double[res.nlambda];
         for (int i=0;i<res.nlambda;i++) res.lambda[i]=valprop[i];
-        res.vectprop = new double*[nco];
+        res.vectprop = new long double*[nco];
         for (int i=0;i<nco;i++) {
-            res.vectprop[i] = new double[res.nlambda];
+            res.vectprop[i] = new long double[res.nlambda];
             for (int j=0;j<res.nlambda;j++) res.vectprop[i][j] = vcprop[i][j];
         }
-        res.princomp = new double*[nli];
+        res.princomp = new long double*[nli];
         for (int i=0;i<nli;i++) {
-            res.princomp[i] = new double[res.nlambda];
+            res.princomp[i] = new long double[res.nlambda];
             for (int j=0;j<res.nlambda;j++) {
                 res.princomp[i][j]=0.0;
                 for (int k=0;k<nco;k++) res.princomp[i][j] +=matX[i][k]*res.vectprop[k][j];
@@ -127,24 +127,24 @@ struct resACPC
     }
 
     void cal_acp(){
-        double *stat_obs,**matstat,*pca_statobs;
+        long double *stat_obs,**matstat,*pca_statobs;
         enregC enr;
         int bidon,*numscen,k;
         resACPC rACP;
-        stat_obs = header.read_statobs(statobsfilename);  //cout<<"apres read_statobs\n";
+        header.calstatobs(statobsfilename);stat_obs = header.stat_obs;  //cout<<"apres read_statobs\n";
         int nparamax = 0;
         for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         //cout<<nparamax<<"\n";
         enr.param = new float[nparamax];
         enr.stat  = new float[rt.nstat];
         if (nacp>rt.nrec) nacp=rt.nrec;
-        matstat = new double*[nacp];
+        matstat = new long double*[nacp];
         numscen = new int [nacp];
-        pca_statobs = new double[rt.nstat];
+        pca_statobs = new long double[rt.nstat];
         rt.openfile2();
         for (int p=0;p<nacp;p++) {
                 bidon=rt.readrecord(&enr);
-                matstat[p] = new double[rt.nstat];
+                matstat[p] = new long double[rt.nstat];
                 numscen[p] = enr.numscen;
                 for (int j=0;j<rt.nstat;j++) matstat[p][j] = enr.stat[j];
         }
@@ -166,28 +166,28 @@ struct resACPC
         FILE *f1;
         f1=fopen(nomfiACP,"w");
         fprintf(f1,"%d %d",nacp,rACP.nlambda);
-        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
+        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3Lf",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
         fprintf(f1,"%d",0);
-        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3f",pca_statobs[i]);fprintf(f1,"\n");
+        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3Lf",pca_statobs[i]);fprintf(f1,"\n");
         for (int i=0;i<nacp;i++){
             fprintf(f1,"%d",numscen[i]);
-            for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3f",rACP.princomp[i][j]);fprintf(f1,"\n");
+            for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3Lf",rACP.princomp[i][j]);fprintf(f1,"\n");
         }
         fclose(f1);
     }
 
     void cal_loc() {
-        double *stat_obs,**qobs,diff,quant;
+        long double *stat_obs,**qobs,diff,quant;
         int scen,**avant,**apres,**egal,bidon,nparamax = 0;
         enregC enr;
         string **star;
-        stat_obs = header.read_statobs(statobsfilename);  cout<<"apres read_statobs\n";
+        header.calstatobs(statobsfilename);stat_obs = header.stat_obs;  //cout<<"apres read_statobs\n";
         for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         cout<<nparamax<<"\n";
         enr.param = new float[nparamax];
         enr.stat  = new float[rt.nstat];
-        qobs = new double*[rt.nscen];
-        for (int i=0;i<rt.nscen;i++) qobs[i]=new double[rt.nstat];
+        qobs = new long double*[rt.nscen];
+        for (int i=0;i<rt.nscen;i++) qobs[i]=new long double[rt.nstat];
         star = new string*[rt.nscen];
         for (int i=0;i<rt.nscen;i++) star[i]=new string[rt.nstat];
         avant = new int*[rt.nscen];for (int i=0;i<rt.nscen;i++) {avant[i] = new int[rt.nstat];for (int j=0;j<rt.nstat;j++) avant[i][j]=0;}
@@ -206,8 +206,8 @@ struct resACPC
         rt.closefile();   cout<<"apres la lecture des "<<rt.nrec<<" enregistrements\n";
         for (int j=0;j<rt.nstat;j++) {
              for (int i=0;i<rt.nscen;i++) {
-                 qobs[i][j] = (double)(avant[i][j]+apres[i][j]+egal[i][j]);
-                 if (qobs[i][j]>0.0) qobs[i][j] = (0.5*(double)egal[i][j]+(double)avant[i][j])/qobs[i][j]; else qobs[i][j]=-1;
+                 qobs[i][j] = (long double)(avant[i][j]+apres[i][j]+egal[i][j]);
+                 if (qobs[i][j]>0.0) qobs[i][j] = (0.5*(long double)egal[i][j]+(long double)avant[i][j])/qobs[i][j]; else qobs[i][j]=-1;
                  star[i][j]="      ";
                  if ((qobs[i][j]>0.95)or(qobs[i][j]<0.05)) star[i][j]=" (*)  ";
                  if ((qobs[i][j]>0.99)or(qobs[i][j]<0.01)) star[i][j]=" (**) ";
