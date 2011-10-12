@@ -446,7 +446,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 pat = re.compile(r'\s+')
                 l1compressed = pat.sub(' ',l1)
                 l1parts = l1compressed.split(' ')
-                if len(l1parts) > 2 and l1parts[0] == "IND" and l1parts[1] == "POP":
+                if len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP":
                     return True
         return False
 

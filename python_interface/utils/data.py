@@ -422,20 +422,25 @@ class DataSnp():
         f.close()
         datalines = data.split('\n')
 
+        l1 = datalines[0].strip()
+        l1compressed = pat.sub(' ',l1)
+        l1parts = l1compressed.split(' ')
+        if not (len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP"):
+            raise Exception("Wrong first line format for data file : %s"%self.filename)
         if len(datalines) < 1:
             raise Exception("Not enough lines in SNP datafile %s"%self.filename)
 
         nbInd = len(datalines) - 1
         l0 = pat.sub(' ',datalines[0].strip())
-        nbLoci = len(l0.split(' ')) - 2
+        nbLoci = len(l0.split(' ')) - 3
 
         types = set()
         for i in range(len(datalines))[1:]:
             line = pat.sub(' ',datalines[i].strip())
             # si on n'a pas le bon nb de loci
-            if len(line.split(' ')) != (nbLoci + 2):
+            if len(line.split(' ')) != (nbLoci + 3):
                 raise Exception("Wrong number of loci at line %s in %s"%(i+1,self.filename))
-            ctype = line.split(' ')[1]
+            ctype = line.split(' ')[2]
             types.add(ctype)
         nbSample = len(types)
 
