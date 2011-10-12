@@ -31,6 +31,7 @@ import subprocess
 from utils.diyabcUtils import cmdThread
 from utils.diyabcUtils import logRotate
 from threading import Thread
+import re
 
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
@@ -451,7 +452,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def isSNPProjectDir(self,dir):
         if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
-            f=open("%s/%s"%(dir,self.main_conf_name),'w')
+            f=open("%s/%s"%(dir,self.main_conf_name),'r')
             cont = f.readlines()
             f.close()
             if len(cont)>0:
@@ -462,6 +463,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ ouverture d'un projet existant
         """
         from project import Project
+        from snpProject import SnpProject
         if dir == None:
             qfd = QFileDialog()
             dir = str(qfd.getExistingDirectory())
@@ -472,6 +474,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         #self.ui.infoPlain.setPlainText("Opening project %s"%dir)
         #self.ui.infoPlain.show()
         self.showStatus("Loading project %s"%dir.split('/')[-1])
+        cur = self.cursor()
+        self.setCursor(QCursor(QPixmap("/home/julien/vcs/git/diyabc.git/python_interface/docs/icons/coccicon.png").scaled(32,32)))
 
         proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
@@ -502,9 +506,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                             os.remove("%s/.DIYABC_lock"%dir)
                     if proj_ready_to_be_opened:
                         # on selectionne le type de projet
-                        if isSNPProjectDir(dir):
-                            #proj_to_open = SnpProject(project_name,dir,self)
-                            print "SNPPPPP"
+                        if self.isSNPProjectDir(dir):
+                            proj_to_open = SnpProject(project_name,dir,self)
                         else:
                             proj_to_open = Project(project_name,dir,self)
                         try:
@@ -544,6 +547,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             else:
                output.notify(self,"Load error","\"%s\" is not a project directory"%dir)
         self.clearStatus()
+        self.setCursor(cur)
 
     def cloneCurrentProject(self,cloneName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
@@ -647,6 +651,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ Création d'un projet
         """
         from project import Project
+        from snpProject import SnpProject
         log(1,'Attempting to create a new project')
         ok = True
         #if name == None:
@@ -876,6 +881,7 @@ class ImportProjectThread(Thread):
         #log(4,"Pre-loading of Project class STARTING")
         from project import Project
         from simulationProject import SimulationProject
+        from snpProject import SnpProject
         #log(4,"Pre-loading of Project class FINISHED")
 
 def main():

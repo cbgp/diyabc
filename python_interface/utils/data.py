@@ -5,6 +5,8 @@ Created on 24 sept. 2009
 @author: cornuet
 '''
 
+import re
+
 MICMISSING=-9999
 SEQMISSING="[]"
 
@@ -403,6 +405,44 @@ class Data(object):
             if loc.type<5 :  self.__domicrosat(loc,iloc)
             if loc.type>4 :  self.__dosequence(loc,iloc)
         self.nloc = self.nloc_seq + self.nloc_mic
+
+class DataSnp():
+    def __init__(self,filename):
+        self.filename = filename
+        self.nloc = 0
+        self.nindtot = 0
+        self.nsample = 0
+        self.readData()
+
+    def readData(self):
+        name = self.filename
+        pat = re.compile(r'\s+')
+        f=open(name,'r')
+        data = f.read().strip()
+        f.close()
+        datalines = data.split('\n')
+
+        if len(datalines) < 1:
+            raise Exception("Not enough lines in SNP datafile %s"%self.filename)
+
+        nbInd = len(datalines) - 1
+        l0 = pat.sub(' ',datalines[0].strip())
+        nbLoci = len(l0.split(' ')) - 2
+
+        types = set()
+        for i in range(len(datalines))[1:]:
+            line = pat.sub(' ',datalines[i].strip())
+            # si on n'a pas le bon nb de loci
+            if len(line.split(' ')) != (nbLoci + 2):
+                raise Exception("Wrong number of loci at line %s in %s"%(i+1,self.filename))
+            ctype = line.split(' ')[1]
+            types.add(ctype)
+        nbSample = len(types)
+
+        self.nindtot = nbInd
+        self.nloc = nbLoci
+        self.nsample = nbSample
+
 
 
 #plop = Data("/home/cornuet/workspace/diyabc/src-JMC-C++/simdat/datasim_001")

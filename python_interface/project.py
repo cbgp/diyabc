@@ -27,7 +27,7 @@ from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from analysis.viewAnalysisParameters import ViewAnalysisParameters
 #from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
-from utils.data import Data
+from utils.data import Data,DataSnp
 from datetime import datetime 
 import os.path
 from PyQt4.Qwt5 import *
@@ -586,12 +586,17 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if name == None:
             name = QFileDialog.getOpenFileName(self,"Select datafile")
         if self.parent.isSNPDatafile(name):
-            shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
+            try:
+                data = DataSnp(name)
+            except Exception,e:
+                output.notify(self,"Data file error","%s"%(e))
+                return
+            shutil.copy(name,"%s/%s"%(self.dir,name.split('/')[-1]))
             f = codecs.open(self.dir+"/%s"%self.parent.main_conf_name,'w',"utf-8")
-            f.write("%s\n"%name)
+            f.write("%s\n"%name.split('/')[-1])
             f.write("0 parameters and 0 summary statistics\n\n")
             f.close()
-            self.parent.closeCurrentProject()
+            self.parent.closeCurrentProject(save=False)
             self.parent.openProject(self.dir)
         elif self.loadDataFile(name):
             # si on a reussi a charger le data file, on vire le bouton browse
@@ -1379,7 +1384,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         else:
             return None
 
-
     def loadMyConf(self):
         """ lit le fichier conf.tmp pour charger le fichier de données
         """
@@ -1395,7 +1399,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.gen_data_win.fillLocusTableFromData()
             return True
         return False
-
 
     def saveAnalysis(self):
         """ sauvegarde la liste des analyses dans le dossier du projet

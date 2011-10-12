@@ -618,6 +618,10 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         	ff = setCondButton.font()
         	ff.setPointSize(10)
         	setCondButton.setFont(ff)
+        else:
+            ff = setCondButton.font()
+            ff.setPointSize(8)
+            setCondButton.setFont(ff)
         horizontalLayout_8.addWidget(setCondButton)
         horizontalLayout_13.addWidget(groupBox_9)
         groupBox_10 = QtGui.QGroupBox(groupBox_8)

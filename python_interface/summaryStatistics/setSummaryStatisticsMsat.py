@@ -324,7 +324,25 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
             if box.findChild(QCheckBox,"ml3Check").isChecked():
                 dico_stats["AML"].append(lab)
                 nstat +=1
+        if dico_stats.has_key("LIK"):
+            dico_stats["LIK"] = self.sortLik(dico_stats["LIK"])
         return (nstat,dico_stats)
+
+    def sortLik(self,l):
+        res = []
+        for i,e in enumerate(l):
+            el = int(e.split('&')[0])
+            er = int(e.split('&')[1])
+            idest = 0
+            while idest < len(res) and el > int(res[idest].split('&')[0]):
+                #print "elem : %s, plus loin que %s l"%(e,res[idest])
+                idest += 1
+            while idest < len(res) and er > int(res[idest].split('&')[1]) and el == int(res[idest].split('&')[0]):
+                #print "elem : %s, plus loin que %s r"%(e,res[idest])
+                idest += 1
+            #print "j'insere %s a %s"%(e,idest)
+            res.insert(idest,e)
+        return res
  
     def setSumConf(self,lines):
         """ grace aux lignes du fichier de conf, remet les sum stats
@@ -433,11 +451,11 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
                 stat_name = "FST_%s_%s"%(gnumber,lab)
                 dico["FST"].append(stat_name)
             if box.findChild(QCheckBox,"ci2LeftCheck").isChecked():
-                stat_name = "LIK_%s_%s"%(gnumber,lab)
+                stat_name = "%s"%(lab)
                 dico["LIK"].append(stat_name)
             if box.findChild(QCheckBox,"ci2RightCheck").isChecked():
                 lab_inverted = "%s&%s"%(lab.split('&')[1],lab.split('&')[0])
-                stat_name = "LIK_%s_%s"%(gnumber,lab_inverted)
+                stat_name = "%s"%(lab_inverted)
                 dico["LIK"].append(stat_name)
             if box.findChild(QCheckBox,"sad2Check").isChecked():
                 stat_name = "DAS_%s_%s"%(gnumber,lab)
@@ -450,6 +468,12 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
             if box.findChild(QCheckBox,"ml3Check").isChecked():
                 stat_name = "AML_%s_%s"%(gnumber,lab)
                 dico["AML"].append(stat_name)
+
+        dico["LIK"] = self.sortLik(dico["LIK"])
+        a=[]
+        for e in dico["LIK"]:
+            a.append("LIK_%s_%s"%(gnumber,e))
+        dico["LIK"] = a
 
         for t in ["NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML"]:
             l = dico[t]
