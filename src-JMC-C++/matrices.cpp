@@ -3,6 +3,7 @@
 #define IOMANIP
 #endif
 
+#define EPSILON 9.62964972193617926528E-35
 extern bool multithread;
 
 /** 
@@ -196,14 +197,14 @@ int inverse(int n, long double **A, long double **C)
          for (i=k+1;i<n;i++)
             {if (max<fabs(T[i][k])) {max=fabs(T[i][k]);l=i;}
             }
-         if (max!=0.0)
+         if (fabs(max)>EPSILON)//(max!=0.0)
             {for (j=k;j<2*n;j++)
                 {pivot=T[k][j];
                  T[k][j]=T[l][j];
                  T[l][j]=pivot;
                 }
              pivot=T[k][k];
-             if (pivot!=0.0)
+             if (fabs(pivot)>EPSILON)   //pivot!=0.0)
                 {
                  for (j=k+1;j<2*n;j++) T[k][j]/=pivot;
 #pragma omp parallel for private(coef,j)
@@ -446,6 +447,24 @@ int inverse(int n, long double **A, long double **C)
 			}
 		}
 		return 1;  
+	}
+
+/** 
+* effectue l'inversion matricielle d'une matrice (carrée) de long doubles
+* avec régularisation de Tikhonov si nécessaire  
+*/
+	int inverse_Tik2(int n, long double **A, long double **C, long double coeff) {
+		long double t,**AA;
+		double kap;
+		int i,j,err;
+		AA = new long double*[n]; for (int i=0;i<n;i++) AA[i] = new long double [n];
+		for (int i=0;i<n;i++) {for (int j=0;j<n;j++) AA[i][j] = A[i][j];}
+		t=0.0;
+		for (int i=0;i<n;i++) t = t + fabs(A[i][i]);
+		t /= n;		
+		for (int i=0;i<n;i++)  AA[i][i] = A[i][i] + coeff*t;
+		err=inverse(n,AA,C);
+		return err;  
 	}
 
 

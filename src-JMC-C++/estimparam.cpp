@@ -72,7 +72,7 @@ parstatC *parstat;
 * remplit le tableau numpar des numéros de paramètres communs par scénario
 */
     void det_numpar() {
-        cout<<"debut de det_numpar\n";
+        //cout<<"debut de det_numpar\n";
         vector <string>  parname;
         int ii,iscen;
         bool commun,trouve;
@@ -132,12 +132,12 @@ parstatC *parstat;
                     }
                  }
                 for (int k=rt.nhistparam[rt.scenchoisi[j]-1];k<rt.nparam[rt.scenchoisi[j]-1];k++) {numpar[j][ii]=k;ii++;}
-                for (int kk=0;kk<npar+header.nparamut;kk++) {
+                /*for (int kk=0;kk<npar+header.nparamut;kk++) {
                   cout <<numpar[j][kk]<<"  ";
                   if (kk<npar) cout<<"("<<rt.histparam[rt.scenchoisi[j]-1][numpar[j][kk]].name<<")  ";
                   else cout<<"("<<rt.mutparam[kk-npar].name<<")  ";
                 }
-                cout<<"\n";
+                cout<<"\n";*/
             }
             /*cout << "noms des parametres communs : ";
             for (int i=0;i<npar;i++) cout<<parname[i]<<"   ";
@@ -208,7 +208,7 @@ parstatC *parstat;
                        //k=rt.scenchoisi[0]-1;
                        //cout<<"k="<<k<<"\n";
                        for (int j=0;j<nparamcom-rt.nparamut;j++) {
-                           cout<<"j="<<j<<"   nparamcom="<<nparamcom<<"\n";
+                           //cout<<"j="<<j<<"   nparamcom="<<nparamcom<<"\n";
                            if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].category<2) {
                                parmin[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini-0.5;
                                parmax[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi+0.5;
@@ -217,23 +217,23 @@ parstatC *parstat;
                                parmax[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi+0.0005;
                            }
                            diff[j]=parmax[j]-parmin[j];
-                           cout<<rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].name<<"   ";
-                           cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
+                           //cout<<rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].name<<"   ";
+                           //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
                        }
-                       cout<<rt.nhistparam[rt.scenchoisi[0]-1]<<"\n";
-                       cout<<nparamcom<<"\n";
+                       //cout<<rt.nhistparam[rt.scenchoisi[0]-1]<<"\n";
+                       //cout<<nparamcom<<"\n";
                        for (int j=nparamcom-rt.nparamut;j<nparamcom;j++) {
                                jj=j+rt.nparamut-nparamcom;
-                               cout<<"jj="<<jj<<"\n";
+                               //cout<<"jj="<<jj<<"\n";
                                parmin[j]=0.95*rt.mutparam[jj].prior.mini;
                                parmax[j]=1.05*rt.mutparam[jj].prior.maxi;
-                               cout<<header.mutparam[jj].category<<"   ";
-                               cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
+                               //cout<<header.mutparam[jj].category<<"   ";
+                               //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
                                diff[j]=parmax[j]-parmin[j];
                        }
                    }
-                   cout <<"fin du calcul de parmin/parmax rt.scenchoisi[0] = "<<rt.scenchoisi[0]<<"\n";
-                   for (int i=0;i<nparamcom;i++) cout <<parmin[i]<<"   "<<parmax[i]<<"\n";
+                   //cout <<"fin du calcul de parmin/parmax rt.scenchoisi[0] = "<<rt.scenchoisi[0]<<"\n";
+                   //for (int i=0;i<nparamcom;i++) cout <<parmin[i]<<"   "<<parmax[i]<<"\n";
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {
                            //cout<<"numscen = "<<rt.enrsel[i].numscen<<"  ";
@@ -340,7 +340,7 @@ parstatC *parstat;
             if (var_statsel[j]>0.0) nstatOKsel++;
             mo[j] = sx[j]/nn;
         }
-        for (int j=0;j<rt.nstat;j++) printf("stat[%3d]  moy=%12.8Lf   var=%16Le\n",j,mo[j],var_statsel[j]);
+        //for (int j=0;j<rt.nstat;j++) printf("stat[%3d]  moy=%12.8Lf   var=%16Le\n",j,mo[j],var_statsel[j]);
 		cout<<"nstat="<<rt.nstat<<"     nstatOK="<<nstatOKsel<<"\n";
         matX0 = new long double*[n];
         for (int i=0;i<n;i++)matX0[i]=new long double[nstatOKsel];
@@ -353,7 +353,7 @@ parstatC *parstat;
                 if (var_statsel[j]>0.0) {
                     icc++;
                     matX0[i][icc]=(long double)(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
-					if ((i==0)and(j<6)) printf(" %16.10f  %16.10f  %16.10Lf\n",rt.enrsel[i].stat[j],stat_obs[j],var_statsel[j]);
+					//if ((i==0)and(j<6)) printf(" %16.10f  %16.10f  %16.10Lf\n",rt.enrsel[i].stat[j],stat_obs[j],var_statsel[j]);
                 }
             }
             x=rt.enrsel[i].dist/delta;
@@ -393,7 +393,7 @@ parstatC *parstat;
 * effectue la régression locale à partir de la matrice matX0 et le vecteur des poids vecW
 */
     void local_regression(int n) {
-        long double **matX,**matXT,**matA,**matB,**matAA,**matC,**bet,**matBB,maxdiff=0.0;
+        long double **matX,**matXT,**matA,**matB,**matAA,**matC,**bet,**matBB,kap,mdiff,coeff;
 		int err;
         matA = new long double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) matA[j] = new long double[n];
@@ -409,7 +409,7 @@ parstatC *parstat;
         for (int j=0;j<nstatOKsel+1;j++) matBB[j] = new long double[nstatOKsel+1];
         beta = new long double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) beta[j] = new long double[nparamcom];
-        ecrimatL("matX0",10,nstatOKsel,matX0);
+        //ecrimatL("matX0",10,nstatOKsel,matX0);
         //ecrimat("matX",10,10,matX);
 
         matXT = transposeL(n,nstatOKsel+1,matX);
@@ -418,20 +418,37 @@ parstatC *parstat;
         }
         //ecrimat("matA",10,10,matA);
         matAA = prodML(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
-        ecrimatL("matAA",nstatOKsel+1,nstatOKsel+1,matAA);
-        printf("\nkappa (AA) = %16e\n",kappa(nstatOKsel+1,matAA));
-        err = inverse_Tik(nstatOKsel+1,matAA,matB);
-		cout<<"\n\n err="<<err<<"\n";
-		ecrimatL("matB = inv(matAA)",nstatOKsel+1,nstatOKsel+1,matB);
-		/*err = inverse_Tik(nstatOKsel+1,matB,matBB);
-		cout<<"\n\n err="<<err<<"\n";
-		for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nstatOKsel+1;j++) if (maxdiff<fabs(matAA[i][j]-matBB[i][j])/fabs(matAA[i][j]+matBB[i][j])) maxdiff=fabs(matAA[i][j]-matBB[i][j])/fabs(matAA[i][j]+matBB[i][j]);}
-		cout<<"maxdiff = "<<maxdiff<<"\n";*/
-        matC = prodML(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
-		cout<<"apres matC\n";
-        bet = prodML(nstatOKsel+1,n,nparamcom,matC,parsim);
-		for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nparamcom;j++) beta[i][j] = bet[i][j];}
-        ecrimatL("beta",nstatOKsel+1,nparamcom,beta);
+        //ecrimatL("matAA",nstatOKsel+1,nstatOKsel+1,matAA);
+		kap = kappa(nstatOKsel+1,matAA);
+        printf("\nkappa (AA) = %16Le",kap);
+		if (kap>1.0E99) cout <<"   MATRICE SINGULIERE";
+		cout<<"\n";
+		if (kap>1.0E99) coeff=1.0E-15; else coeff=1.0E-20;
+        err = inverse_Tik2(nstatOKsel+1,matAA,matB,coeff);
+		if (err==0) {
+			matC = prodML(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
+			bet = prodML(nstatOKsel+1,n,nparamcom,matC,parsim);
+		}
+		
+		
+		do {
+			for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nparamcom;j++) beta[i][j] = bet[i][j];}
+			coeff *=sqrt(10.0);
+			err = inverse_Tik2(nstatOKsel+1,matAA,matB,coeff);
+//		cout<<"\n\n err="<<err<<"\n";
+//		ecrimatL("matB = inv(matAA)",nstatOKsel+1,nstatOKsel+1,matB);
+			matC = prodML(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
+//		cout<<"apres matC\n";
+			bet = prodML(nstatOKsel+1,n,nparamcom,matC,parsim);
+			mdiff = 0.0;
+			for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nparamcom;j++) mdiff += fabs(beta[i][j] - bet[i][j])/fabs(beta[i][j] + bet[i][j]);}
+			mdiff /=(nstatOKsel+1)*(nstatOKsel+1);
+			//cout<<"coeff = 1E"<<log10(coeff)<<"    mdiff = "<<mdiff<<"\n";
+			printf("coeff = %8Le   mdiff = %8.5Lf\n",coeff,mdiff);
+		} while ((mdiff>0.02)and(coeff<0.01));
+		
+		//for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nparamcom;j++) beta[i][j] = bet[i][j];}
+        //ecrimatL("beta",nstatOKsel+1,nparamcom,beta);
         libereL(nstatOKsel+1,matA);
         libereL(n,matX);
 		libereL(nstatOKsel+1,matXT);
@@ -440,6 +457,7 @@ parstatC *parstat;
         libereL(nstatOKsel+1,matAA);
         libereL(nstatOKsel+1,matC);
 		libereL(n,parsim);
+		libereL(nstatOKsel+1,bet);
     }
 
 /**D
@@ -455,9 +473,9 @@ parstatC *parstat;
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparamcom;j++) {
                 phista[i][j] = alpsimrat[i][j];
-                if (i==0) cout<< phista[i][j]<<"   ";
+                //if (i==0) cout<< phista[i][j]<<"   ";
                 for (int k=0;k<nstatOKsel;k++) phista[i][j] -= matX0[i][k]*beta[k+1][j];
-                if(i==0) cout<< phista[i][j]<<"   ";
+                //if(i==0) cout<< phista[i][j]<<"   ";
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
@@ -465,7 +483,7 @@ parstatC *parstat;
                   case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parmin[j];
                            else if (phista[i][j]>=xborne) phista[i][j] = parmax[j];
                            else phista[i][j] = (exp(phista[i][j])*parmax[j]+parmin[j])/(1.0+exp(phista[i][j]));
-                           if(i==0) cout<< phista[i][j]<<"   ("<<parmin[j]<<","<<parmax[j]<<")\n";
+                           //if(i==0) cout<< phista[i][j]<<"   ("<<parmin[j]<<","<<parmax[j]<<")\n";
                            break;
                   case 4 : if (phista[i][j]<=-xborne) phista[i][j] = parmin[j];
                            else if (phista[i][j]>=xborne) phista[i][j] = parmax[j];
@@ -564,7 +582,7 @@ parstatC *parstat;
 
     void det_nomparam() {
         int k;
-        cout<<"debut de det_nomparam\n";
+        //cout<<"debut de det_nomparam\n";
         nomparam =new string[nparamcom+nparcompo];
         string pp;
         entete="scenario";
@@ -588,8 +606,8 @@ parstatC *parstat;
                 }
             }
         }
-        for (int j=0;j<nparamcom+nparcompo;j++) cout<<nomparam[j]<<"\n";
-        cout<<"nparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"\n";
+        //for (int j=0;j<nparamcom+nparcompo;j++) cout<<nomparam[j]<<"\n";
+        //cout<<"nparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"\n";
 
     }
 
@@ -754,7 +772,7 @@ parstatC *parstat;
     long double* caldensexact(int ncl,long double *x,PriorC pr) {
         long double *dens,xb,som;
         dens = new long double[ncl];
-		cout<<"caldensexact\n";
+		//cout<<"caldensexact\n";
         if (pr.loi=="UN") for(int i=0;i<ncl;i++) dens[i]=1.0/(pr.maxi-pr.mini);
         if (pr.loi=="LU") for(int i=0;i<ncl;i++) dens[i]=1.0/(pr.maxi-pr.mini)/x[i];
         if (pr.loi=="NO") for(int i=0;i<ncl;i++) dens[i]=exp(-(x[i]-pr.mean)*(x[i]-pr.mean)/2.0/(pr.sdshape*pr.sdshape))/(pr.sdshape*co);
@@ -815,7 +833,7 @@ parstatC *parstat;
 * calcule la densité à partir d'un échantillon de valeurs'
 */
     long double* calculdensite(int ncl,int n, long double *x, long double **y,int j,bool multithread) {
-	    cout<<"calculdensite\n";
+	    //cout<<"calculdensite\n";
         long double bw,*dens,sd,*z,denom,som;
         dens = new long double[ncl];
         z = new long double[n];
@@ -823,7 +841,7 @@ parstatC *parstat;
         sd =cal_sdL(n,z);
         if (sd>0.0) bw=coefbw*exp(-0.2*log((double)n))*sd;
         else bw=1.0;
-        cout<<"calculdensite  sd="<<sd<<"    bw="<<bw<<"\n";
+        //cout<<"calculdensite  sd="<<sd<<"    bw="<<bw<<"\n";
 #pragma omp parallel for shared(dens,z,x,bw) private(denom,i) if(multithread)
         for (int j=0;j<ncl;j++) {
             dens[j]=0.0;
@@ -874,7 +892,7 @@ parstatC *parstat;
         int ncl,ii;
         FILE *flog;
         pardens = new pardensC[nparamcom+nparcompo];
-		cout<<"dans histodens npar="<<npar<<"\n";
+		//cout<<"dans histodens npar="<<npar<<"\n";
         for (int j=0;j<nparamcom+nparcompo;j++) {
             pardens[j].ncl=1001;
             condition=false;
@@ -906,10 +924,10 @@ parstatC *parstat;
                 }
             }
             pardens[j].xdelta = (pardens[j].xmax-pardens[j].xmin)/(long double)(pardens[j].ncl-1);
-            cout<<nomparam[j]<<"   xmin="<<pardens[j].xmin<<"   xmax="<<pardens[j].xmax<<"   xdelta="<<pardens[j].xdelta<<"   ncl="<<pardens[j].ncl<<"\n";
+            //cout<<nomparam[j]<<"   xmin="<<pardens[j].xmin<<"   xmax="<<pardens[j].xmax<<"   xdelta="<<pardens[j].xdelta<<"   ncl="<<pardens[j].ncl<<"\n";
 			pardens[j].x = new long double[pardens[j].ncl];
             for (int k=0;k<pardens[j].ncl;k++) pardens[j].x[k]=pardens[j].xmin+k*pardens[j].xdelta;
-			cout<<"1\n";
+			//cout<<"1\n";
             if (pardens[j].ncl>31) {
                 if ((condition)or(j>=nparamcom)) {
 					pardens[j].priord = calculdensite(pardens[j].ncl,nsimpar,pardens[j].x,simpar,j,multithread);
@@ -929,9 +947,9 @@ parstatC *parstat;
 				}
                 denspost = calculhisto(pardens[j].ncl,n,pardens[j].x,phistar,j,multithread);
                 ncl=pardens[j].ncl;
-                for (int k=0;k<ncl;k++) cout<<"   "<<pardens[j].x[k];cout<<"\n";
-                for (int k=0;k<ncl;k++) cout<<"   "<<densprior[k];cout<<"\n";
-                for (int k=0;k<ncl;k++) cout<<"   "<<denspost[k];cout<<"\n";
+                //for (int k=0;k<ncl;k++) cout<<"   "<<pardens[j].x[k];cout<<"\n";
+                //for (int k=0;k<ncl;k++) cout<<"   "<<densprior[k];cout<<"\n";
+                //for (int k=0;k<ncl;k++) cout<<"   "<<denspost[k];cout<<"\n";
                 x=new long double[ncl];
                 for (int k=0;k<ncl;k++) x[k]=pardens[j].x[k];
                 delete []pardens[j].x;
@@ -1008,7 +1026,7 @@ parstatC *parstat;
         FILE *f1;
         f1=fopen(nomfiparstat,"w");
         for (int j=0;j<nparamcom+nparcompo;j++) {
-          cout<<nomparam[j]<<"\n";
+          //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s\n",nomparam[j].c_str());//cout<<"1\n";
             fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
             //cout<<"2\n";
@@ -1018,7 +1036,7 @@ parstatC *parstat;
             for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].postd[i]);fprintf(f1,"\n");//cout<<"5\n";
         }
         fclose(f1);
-        cout<<"apres close(f1)\n";
+        //cout<<"apres close(f1)\n";
         strcpy(nomfiparstat,path);
         strcat(nomfiparstat,ident);
         strcat(nomfiparstat,"_mmmq.txt");

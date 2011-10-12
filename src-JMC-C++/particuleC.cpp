@@ -2715,12 +2715,12 @@ struct ParticleC
 				for (int k=0;k<this->locuslist[kloc].nal;k++) het -= sqr(this->locuslist[kloc].freq[sample][k]);
 				het *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
 				hetm += het;
-				printf("kloc=%2d   het = %13.10Lf\n",kloc,het);
+				//printf("kloc=%2d   het = %13.10Lf\n",kloc,het);
 				nl++;
 			}
 		}
 		if (nl>0) hetm=hetm/(long double)nl;
-		printf("\n heterozygotie = %13.10Lf\n\n",hetm);
+		//printf("\n heterozygotie = %13.10Lf\n\n",hetm);
 		return hetm;
 	}
 
@@ -2765,7 +2765,7 @@ struct ParticleC
 			  }
 			  //cout<<"var["<<sample<<"]["<<loc<<"]="<<(v-sqr(s)/m)/(m-1.0)/sqr(ms)<<"   v="<<v<<"   s="<<s<<"   m="<<m<<"\n";
 		  }
-		  printf("\nvm=%13.10Lf\n",vm/(long double)nl);
+		  //printf("\nvm=%13.10Lf\n",vm/(long double)nl);
 		  if (nl>0) return vm/(long double)nl; else return 0.0;
 	}
 

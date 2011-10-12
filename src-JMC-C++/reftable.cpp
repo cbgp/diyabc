@@ -377,7 +377,7 @@ public:
         for (int j=0;j<this->nstat;j++) {
             this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
             if (this->var_stat[j]>0) nsOK++;
-			printf("var_stat[%3d] = %12.8Lf\n",j,this->var_stat[j]);
+			//printf("var_stat[%3d] = %12.8Lf\n",j,this->var_stat[j]);
         }
         delete []sx;delete []sx2;
         //cout<<"\nnstatOK = "<<nsOK<<"\n";
@@ -420,8 +420,8 @@ public:
         this->nreclus=0;step=nrec/100;
         nn=nsel;
         nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
-        cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
-        cout<<" apres allocation de enrsel\n";
+        //cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
+        //cout<<" apres allocation de enrsel\n";
         this->openfile2();
         while (this->nreclus<nrec) {
             if (firstloop) {nrecOK=0;firstloop=false;}
@@ -439,14 +439,9 @@ public:
                     for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>0.0) {
                         diff =(long double)(this->enrsel[nrecOK].stat[j] - stat_obs[j]);
                       this->enrsel[nrecOK].dist += diff*diff/this->var_stat[j];
-					  if (nreclus==1) printf("  %12.6f   %12.6f   %12.6Lf   %12.8Lf\n",this->enrsel[nrecOK].stat[j],stat_obs[j],diff*diff,this->enrsel[nrecOK].dist);
+					  //if (nreclus==1) printf("  %12.6f   %12.6f   %12.6Lf   %12.8Lf\n",this->enrsel[nrecOK].stat[j],stat_obs[j],diff*diff,this->enrsel[nrecOK].dist);
                     }
                     this->enrsel[nrecOK].dist =sqrt(this->enrsel[nrecOK].dist);
-					if (nreclus<11){
-					  for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>0.0) cout<<this->enrsel[nrecOK].stat[j]<<"   ";
-					  cout<<"\n";
-					  printf("dist[%2d] = %12.8Lf\n",nreclus,this->enrsel[nrecOK].dist);
-					}
                     nrecOK++;
                 if (this->nreclus==nrec) break;
                 }
