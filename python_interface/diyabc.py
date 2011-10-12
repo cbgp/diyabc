@@ -435,6 +435,29 @@ class Diyabc(formDiyabc,baseDiyabc):
     #        if self.sender() == self.style_actions[stxt]:
     #            self.app.setStyle(stxt)
 
+    def isSNPDatafile(self,name):
+        if os.path.exists(name):
+            f=open(name,'r')
+            lines=f.readlines()
+            f.close()
+            if len(lines) > 0:
+                l1 = lines[0].strip()
+                pat = re.compile(r'\s+')
+                l1compressed = pat.sub(' ',l1)
+                l1parts = l1compressed.split(' ')
+                if len(l1parts) > 2 and l1parts[0] == "IND" and l1parts[1] == "POP":
+                    return True
+        return False
+
+    def isSNPProjectDir(self,dir):
+        if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
+            f=open("%s/%s"%(dir,self.main_conf_name),'w')
+            cont = f.readlines()
+            f.close()
+            if len(cont)>0:
+                return self.isSNPDatafile("%s/%s"%(dir,cont[0].strip()))
+        return False
+
     def openProject(self,dir=None):
         """ ouverture d'un projet existant
         """
@@ -478,7 +501,12 @@ class Diyabc(formDiyabc,baseDiyabc):
                             # si on est en mode debug, on vire le verrou sans sommation
                             os.remove("%s/.DIYABC_lock"%dir)
                     if proj_ready_to_be_opened:
-                        proj_to_open = Project(project_name,dir,self)
+                        # on selectionne le type de projet
+                        if isSNPProjectDir(dir):
+                            #proj_to_open = SnpProject(project_name,dir,self)
+                            print "SNPPPPP"
+                        else:
+                            proj_to_open = Project(project_name,dir,self)
                         try:
                             proj_to_open.loadFromDir()
                         except Exception,e:
@@ -614,7 +642,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                 output.notify(self,"Name error","The following characters are not allowed in project name : . \" ' _ - /")
                 return False
         return True
-
 
     def newProject(self,path=None):
         """ Création d'un projet
