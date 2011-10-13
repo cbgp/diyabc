@@ -70,7 +70,11 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         self.illegalProjectNameCharacters = ['_','-',"'",'"','.']
 
-        self.documentator = Documentator("docs/documentation.xml",self)
+        try:
+            self.documentator = Documentator("docs/documentation.xml",self)
+        except Exception,e:
+            output.notify(self,"Documentation error","%s"%e)
+            self.documentator = None
 
         # ouverture des projets donnés en paramètre au lancement
         if projects != None and len(projects) > 0:
@@ -854,10 +858,10 @@ class Diyabc(formDiyabc,baseDiyabc):
 
                     on = str(c.objectName())
                     log(1,"Asking documentation of %s"%on)
-                    if self.documentator.getDocString(on) != None:
+                    try:
                         output.notify(self,"Documentation",self.documentator.getDocString(on))
-                    else:
-                        output.notify(self,"Documentation","No documentation found")
+                    except Exception,e:
+                        output.notify(self,"Documentation error","%s"%e)
             log(3,"Button '%s' pressed"%event.button())
         return QWidget.event(self,event)
 
@@ -936,7 +940,10 @@ def main():
     log(1,"\033[5;36m DIYABC launched \033[00m")
 
     # effacement des logs de plus de N jours si le dossier de logs dépasse X Mo
-    logRotate(os.path.expanduser("~/.diyabc/logs/"),10,50)
+    try:
+        logRotate(os.path.expanduser("~/.diyabc/logs/"),10,50)
+    except Exception,e:
+        output.notify(None,"Log rotate failure","%s"%e)
 
     # création du prompt
     if cmd:

@@ -48,7 +48,7 @@ class Documentator():
         if os.path.exists(xmlFile):
             self.loadDocFile()
         else:
-            output.notify(self.parent,"documentation not found","The xml documentation file %s was not found"%xmlFile)
+            raise Exception("The xml documentation file %s was not found"%xmlFile)
 
     def loadDocFile(self):
         """ charge le fichier xml pour remplir le dico de documentation
@@ -75,6 +75,8 @@ class Documentator():
         result = None
         if key in self.dicoDoc.keys():
             result =  self.dicoDoc[key]
+        else:
+            raise Exception("No documentation found for key %s"%key)
         return result
 
 
@@ -94,16 +96,19 @@ def logRotate(logFolder,nbDaysOld,sizeThreshold):
     tous les fichiers plus vieux que nbDaysOld
     SSI le dossier de logs est plus lourd que sizeThreshold Mo
     """
-    logSize = sizedirectory(logFolder)
-    if (logSize / (1024*1024)) > sizeThreshold:
-        log(2,"Logrotate process launched")
-        ddNow = datetime.now()
-        for root,dirs,files in os.walk(os.path.expanduser("~/.diyabc/logs/")):
-            for name in files:
-                dateLastModif = time.gmtime(os.stat(os.path.join(root, name)).st_mtime)
-                ddMod = datetime(dateLastModif.tm_year,dateLastModif.tm_mon,dateLastModif.tm_mday)
-                delta = ddNow - ddMod
-                if delta.days > nbDaysOld :
-                    log(4,"Deleting %s because it is %s days old"%(os.path.join(root, name),delta.days))
-                    os.remove(os.path.join(root, name))
+    try:
+        logSize = sizedirectory(logFolder)
+        if (logSize / (1024*1024)) > sizeThreshold:
+            log(2,"Logrotate process launched")
+            ddNow = datetime.now()
+            for root,dirs,files in os.walk(os.path.expanduser("~/.diyabc/logs/")):
+                for name in files:
+                    dateLastModif = time.gmtime(os.stat(os.path.join(root, name)).st_mtime)
+                    ddMod = datetime(dateLastModif.tm_year,dateLastModif.tm_mon,dateLastModif.tm_mday)
+                    delta = ddNow - ddMod
+                    if delta.days > nbDaysOld :
+                        log(4,"Deleting %s because it is %s days old"%(os.path.join(root, name),delta.days))
+                        os.remove(os.path.join(root, name))
+    except Exception,e:
+        raise Exception("Log rotation failed\n%s"%e)
 
