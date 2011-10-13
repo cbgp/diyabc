@@ -24,12 +24,12 @@ from PyQt4 import uic
 #from simulationProject import SimulationProject
 from preferences import Preferences
 from showLogFile import ShowLogFile
-from utils.diyabcUtils import Documentator
+from utils.cbgpUtils import Documentator
 import output
 from output import log
 import subprocess
-from utils.diyabcUtils import cmdThread
-from utils.diyabcUtils import logRotate
+from utils.cbgpUtils import cmdThread
+from utils.cbgpUtils import logRotate
 from threading import Thread
 import re
 
