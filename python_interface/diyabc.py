@@ -474,10 +474,11 @@ class Diyabc(formDiyabc,baseDiyabc):
         #self.ui.infoPlain.setPlainText("Opening project %s"%dir)
         #self.ui.infoPlain.show()
         self.showStatus("Loading project %s"%dir.split('/')[-1])
-        cur = self.cursor()
-        cur.setShape(Qt.WaitCursor)
+        #cur = self.cursor()
+        #cur.setShape(Qt.WaitCursor)
+        QApplication.setOverrideCursor( Qt.WaitCursor )
         #self.setCursor(QCursor(QPixmap("/home/julien/vcs/git/diyabc.git/python_interface/docs/icons/coccicon.png").scaled(32,32)))
-        self.setCursor(cur)
+        #self.setCursor(cur)
 
         proj_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
@@ -516,8 +517,9 @@ class Diyabc(formDiyabc,baseDiyabc):
                             proj_to_open.loadFromDir()
                         except Exception,e:
                             self.clearStatus()
-                            cur.setShape(Qt.ArrowCursor)
-                            self.setCursor(cur)
+                            #cur.setShape(Qt.ArrowCursor)
+                            #self.setCursor(cur)
+                            QApplication.restoreOverrideCursor()
                             output.notify(self,"opening error","An error occured during the opening of the project\
  %s :\n\n%s\n\nThe cause may be a dirty user handmade modification of the project files or a bug"%(dir,e))
                             return
@@ -552,8 +554,9 @@ class Diyabc(formDiyabc,baseDiyabc):
             else:
                output.notify(self,"Load error","\"%s\" is not a project directory"%dir)
         self.clearStatus()
-        cur.setShape(Qt.ArrowCursor)
-        self.setCursor(cur)
+        #cur.setShape(Qt.ArrowCursor)
+        #self.setCursor(cur)
+        QApplication.restoreOverrideCursor()
 
     def cloneCurrentProject(self,cloneName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
