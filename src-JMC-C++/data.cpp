@@ -242,8 +242,9 @@ public:
 			delete[]ss;
 			ss=splitwords(s1," ",&nss);
 			ech=0;while (ss[2]!=popname[ech]) ech++;
-			if (ss[1]=="M") this->indivsexe[ech][nindi[ech]]=1; 
-			else 			this->indivsexe[ech][nindi[ech]]=2; 
+			this->indivsexe[ech][nindi[ech]]=0;
+			if (ss[1]=="M")      this->indivsexe[ech][nindi[ech]]=1; 
+			else if (ss[1]=="F") this->indivsexe[ech][nindi[ech]]=2; 
 			this->indivname[ech][nindi[ech]]=ss[0];
 			for (int loc=0;loc<this->nloc;loc++) this->genotype[ech][nindi[ech]][loc]= ss[loc+3];
 			nindi[ech]++;
