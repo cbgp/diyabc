@@ -18,6 +18,7 @@ from PyQt4 import uic
 #from uis.project_ui import *
 from setHistoricalModelSimulation import SetHistoricalModelSimulation
 from setGenDataSimulation import SetGeneticDataSimulation
+from summaryStatistics.setSummaryStatisticsSnp import SetSummaryStatisticsSnp
 #from mutationModel.setMutationModelMsat import SetMutationModelMsat
 #from mutationModel.setMutationModelSequences import SetMutationModelSequences
 #from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
@@ -37,21 +38,76 @@ class SnpProject(Project):
         super(SnpProject,self).__init__(name,dir,parent)
 
 
-        self.gen_data_win = SetGeneticDataSimulation(self)
-        self.gen_data_win.hide()
+        self.ui.setSumSnpButton.show()
+        self.ui.setGeneticButton.hide()
+        self.ui.nbMicrosatLabel.hide()
+        self.ui.nbSequencesLabel.hide()
+        # TODO suppr cette ligne
+        self.setGenValid(False)
+        QObject.connect(self.ui.setSumSnpButton,SIGNAL("clicked()"),self.setSumStat)
+        self.ui.label_15.setText("Summary statistics")
 
-    def setGenetic(self):
+    def setSumStat(self):
         """ passe sur l'onglet correspondant
         """
-        log(1,"NYI")
-        #self.ui.refTableStack.addWidget(self.locusNumberFrame)
-        #self.ui.refTableStack.setCurrentWidget(self.locusNumberFrame)
-        #self.sexRatio = None
-        #self.setGenValid(False)
+        log(1,"Entering in Summary statistics")
+        self.ui.refTableStack.addWidget(self.sum_stat_win)
+        self.ui.refTableStack.setCurrentWidget(self.sum_stat_win)
+        self.setGenValid(False)
+
+    def setGenValid(self,valid):
+        """ met à jour l'état des genetic data
+        et change l'icone du bouton en fonction de la validité
+        """
+        self.gen_state_valid = valid
+        self.verifyRefTableValid()
+        if valid:
+            self.ui.setSumSnpButton.setIcon(QIcon("docs/icons/ok.png"))
+        else:
+            self.ui.setSumSnpButton.setIcon(QIcon("docs/icons/redcross.png"))
+
+    def checkAll(self):
+        """ vérification du modèle historique et mutationnel
+        cette fonction est appelée au chargement du projet pour restituer l'etat du projet
+        """
+        log(2,"Checking validity of Historical Model and Sum Stats")
+        # historical model : 
+        self.hist_model_win.definePriors(silent=True)
+        if self.hist_model_win.checkAll(silent=True):
+            self.setHistValid(True)
+            self.hist_model_win.majProjectGui()
+        # mutation model : plus facile d'utiliser directement la validation
+        self.sum_stat_win.validate(silent=True)
 
     def returnToMe(self):
         self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
         self.ui.refTableStack.setCurrentIndex(0)
+
+    def loadFromDir(self):
+        """ charge les infos à partir du répertoire self.dir
+        """
+        log(2,"Launching load procedures")
+        # GUI
+        self.ui.dirEdit.setText(self.dir)
+        self.ui.browseDataFileButton.setDisabled(True)
+        self.ui.browseDataFileButton.hide()
+        self.ui.browseDirButton.hide()
+        #self.ui.groupBox.show()
+        self.ui.groupBox_6.show()
+        self.ui.groupBox_7.show()
+        self.ui.groupBox_8.show()
+        self.ui.setHistoricalButton.setDisabled(False)
+        self.ui.setGeneticButton.setDisabled(False)
+
+        # lecture du meta project
+        if self.loadMyConf():
+            # lecture de conf.hist.tmp
+            self.hist_model_win.loadHistoricalConf()
+            self.sum_stat_win.loadSumStatsConf()
+            self.loadAnalysis()
+        else:
+            raise Exception("Impossible to read the project configuration")
+            output.notify(self,"Load error","Impossible to read the project configuration")
 
     def loadMyConf(self):
         """ lit le fichier conf.tmp pour charger le fichier de données
@@ -93,6 +149,13 @@ class SnpProject(Project):
                 keep = "\n\nThe file was not loaded, nothing was changed"
             output.notify(self,"Data file error","%s%s"%(e,keep))
             return False
+
+        # on declare les sumstats apres avoir chargé le datafile car c'est nécessaire
+        self.dummy = QFrame()
+        self.dummy.parent = self
+        # feinte pour que le parent.parent renvoie au projet
+        self.sum_stat_win = SetSummaryStatisticsSnp(parent=self.dummy)
+        self.sum_stat_win.hide()
         return True
 
     def save(self):

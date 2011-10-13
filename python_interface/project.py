@@ -100,6 +100,7 @@ class Project(baseProject,formProject):
         self.gen_data_win = SetGeneticDataRefTable(self)
         self.gen_data_win.ui.okButton.setText("VALIDATE AND SAVE")
         self.gen_data_win.hide()
+        self.ui.setSumSnpButton.hide()
         #self.addTab(self.gen_data_win,"Set genetic data")
         #self.setTabEnabled(3,False)
 

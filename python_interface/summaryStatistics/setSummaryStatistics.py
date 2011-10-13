@@ -168,7 +168,7 @@ class SetSummaryStatistics(QFrame):
         self.parent.parent.ui.refTableStack.setCurrentWidget(self.parent)
         self.parent.majProjectGui(ss=self.parent.getNbSumStats())
 
-    def validate(self):
+    def validate(self,silent=False):
         self.exit()
         if self.box_group != None:
             (nstat,stat_txt) = self.getSumConf()
