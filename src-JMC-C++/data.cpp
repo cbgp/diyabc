@@ -49,7 +49,7 @@ using namespace std;
 struct LocusC
 {
 	char* name;
-	int type;  //0 à 9
+	int type;  //0 à 14
 	int groupe;    //numero du groupe auquel appartient le locus
 	double coeff;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
 	long double **freq;
@@ -107,11 +107,11 @@ class DataC
 {
 public:
 	string message,title,**indivname,***genotype;
-	int nsample,nloc,nmisshap,nmissnuc,filetype;
+	int nsample,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
 	int *nind;
 	int **indivsexe;
 	double sexratio;
-	MissingHaplo *misshap;
+	MissingHaplo *misshap, *misssnp;
 	MissingNuc   *missnuc;
 	LocusC *locus;
     bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
@@ -166,7 +166,7 @@ public:
 		if (file == NULL) return -1;
 		getline(file,ligne);
         ss=splitwords(ligne," ",&nss);
-		if ((ss[0]=="IND")and(ss[1]=="POP")and (nss>100)) {
+		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")and (nss>100)) {
 		  cout<<"Fichier SNP\n";
 		  return 1;
 		}
@@ -184,15 +184,21 @@ public:
 		ifstream file(filename.c_str(), ios::in);
 		getline(file,s1);
         ss=splitwords(s1," ",&nss);
-		this->nloc=nss-2;
+		this->nloc=nss-3;
 		this->locus = new LocusC[this->nloc];
-		for (int loc=0;loc<this->nloc;loc++) this->locus[loc].name  = strdup(ss[loc+2].c_str());
+		for (int loc=0;loc<this->nloc;loc++) {
+			if (ss[loc+3]=="A") this->locus[loc].type=10;
+			else if (ss[loc+3]=="H")this->locus[loc].type=11;
+			else if (ss[loc+3]=="X")this->locus[loc].type=12;
+			else if (ss[loc+3]=="Y")this->locus[loc].type=13;
+			else if (ss[loc+3]=="M")this->locus[loc].type=14;
+		}
 //recherche du nombre d'échantillons
 		nech=1;popname.resize(nech);
 		getline(file,s1);
 		delete[]ss;
 		ss=splitwords(s1," ",&nss);
-		popname[nech-1]=ss[1];
+		popname[nech-1]=ss[2];
 		while (not file.eof()) {
 			getline(file,s1);
 			delete[]ss;
@@ -235,9 +241,11 @@ public:
 			getline(file,s1);
 			delete[]ss;
 			ss=splitwords(s1," ",&nss);
-			ech=0;while (ss[1]!=popname[ech]) ech++;
-			this->indivname[ech][nindi[ech]]=ss[1];
-			for (int loc=0;loc<this->nloc;loc++) this->genotype[ech][nindi[ech]][loc]= ss[loc+2];
+			ech=0;while (ss[2]!=popname[ech]) ech++;
+			if (ss[1]=="M") this->indivsexe[ech][nindi[ech]]=1; 
+			else 			this->indivsexe[ech][nindi[ech]]=2; 
+			this->indivname[ech][nindi[ech]]=ss[0];
+			for (int loc=0;loc<this->nloc;loc++) this->genotype[ech][nindi[ech]][loc]= ss[loc+3];
 			nindi[ech]++;
 		}
 		file.close();
@@ -248,18 +256,26 @@ public:
 */
 	void purgelocmonomorphes(){
 		bool *mono;
-		int ind,ech,kloc=0,nloc=0;
-		string ***ge;
-		string premier;
+		int ind,ech,ind0,ech0,kloc=0,nloc=0;
+		string ***ge,misval="9";
+		string premier="";
 		mono = new bool[this->nloc];
 		for (int loc=0;loc<this->nloc;loc++) {
-			premier=this->genotype[0][0][loc];
-			if (premier=="1") mono[loc]=false;
+			for (ech0=0;ech0<this->nsample;ech0++){
+				for (ind0=0;ind0<this->nind[ech0];ind0++) {
+					if (this->genotype[ech0][ind0][loc]!=misval) premier=this->genotype[ech0][ind0][loc];
+					if (premier!="") break;
+				}
+				if (premier!="") break;
+			}
+			if (premier=="") mono[loc]=true; //le locus n'a que des données manquantes
 			else {
 				mono[loc]=true;
-				for (int ech=0;ech<this->nsample;ech++) {
-					for (int ind=0;ind<this->nind[ech];ind++) {
-						mono[loc]=(this->genotype[ech][ind][loc]==premier);
+				for (ech=ech0;ech<this->nsample;ech++) {
+					for (ind=ind0+1;ind<this->nind[ech];ind++) {
+					    if ((this->indivsexe[ech][ind]==2)and(this->genotype[ech][ind][loc]=="1")) mono[loc]=false;
+						if (not mono[loc]) break;
+						mono[loc]=((this->genotype[ech][ind][loc]==premier)or(this->genotype[ech][ind][loc]==misval));
 						if (not mono[loc]) break;
 					}
 					if (not mono[loc]) break;
@@ -268,6 +284,7 @@ public:
 			if (not mono[loc]) nloc++;
 		}
 		if (nloc<this->nloc){
+			cout<<"purge de "<<this->nloc-nloc<<" locus monomorphes\n";
 			ge = new string**[this->nsample];
 			for (ech=0;ech<this->nsample;ech++) {
 				ge[ech] = new string*[this->nind[ech]];
@@ -293,7 +310,8 @@ public:
 			    delete[]ge[ech];
 			}
 			delete[]ge;
-		}
+		} else cout<<"tous les locus sont polymorphes";
+		
 	}
 	
 	
@@ -347,7 +365,7 @@ public:
 	    this->nmisshap=0;
 		this->nmissnuc=0;
 	    while (not file.eof()) {
-	    	if (s!="") {
+	    	if (trim(s) != "") {
 				s1=majuscules(s);
 //				cout << s1<<"\n";
 				if ((s1.find("POP")!=string::npos)and(s1.find(",")==string::npos)) {nech +=1;nindi[nech-1]=0;}
@@ -429,7 +447,7 @@ public:
 				j=s.find(",");
 				this->indivname[ech][ind] = s.substr(0,j);
 				s = s.substr(j+1,s.length());
-			    	istringstream iss(s);
+			    istringstream iss(s);
 				for (int i=0;i<this->nloc;i++) {
 					iss >> this->genotype[ech][ind][i];
 					if ((this->genotype[ech][ind][i].find("[")!=string::npos)and(this->locus[i].type<5)) this->locus[i].type +=5;
@@ -481,7 +499,6 @@ public:
     					haplo.push_back(gg);
     					if (gg>this->locus[loc].maxi) this->locus[loc].maxi=gg;
     					if (gg<this->locus[loc].mini) this->locus[loc].mini=gg;
-
     				} else {
     					//if (not ((this->indivsexe[ech][ind]==2)and(this->locus[loc].type==3))) { // on ne prend pas en compte les chromosomes Y des femelles
                         this->nmisshap +=1;
@@ -655,6 +672,8 @@ public:
 		if (this->filetype==1) {
 			this->readfilesnp(filename);
 			this->purgelocmonomorphes();
+			exit(1);
+			//this->missingdata();
 			for (loc=0;loc<this->nloc;loc++) this->do_snp(loc);
 		}
 	}

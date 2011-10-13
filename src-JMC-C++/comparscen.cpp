@@ -60,7 +60,7 @@ extern double time_readfile;
 
 int ncs=100;
 double time_loglik=0.0,time_matC=0.0,time_call=0.0;
-long double **cmatA,**cmatB,**cmatX,**cmatXT,**cmatC,*cdeltabeta,*cbeta0,*cbeta,**cmatP,**cmatY,*cmatYP,*cloglik,*csd,*cbet,*cpx0,*csmatY,*csmatP,**cgdb ;
+long double **cmatA,**cmatB,**cmatB0,**cmatX,**cmatXT,**cmatC,*cdeltabeta,*cbeta0,*cbeta,**cmatP,**cmatY,*cmatYP,*cloglik,*csd,*cbet,*cpx0,*csmatY,*csmatP,**cgdb ;
 long double *vecY,*vecYY,*cvecW,**cmatX0;
 matligneC *matA;
 
@@ -69,6 +69,7 @@ matligneC *matA;
 
         cmatA = new long double*[nmodel];for (int i=0;i<nmodel;i++) cmatA[i]= new long double[nmodel];
         cmatB = new long double*[nmodnco];for (int i=0;i<nmodnco;i++) cmatB[i]= new long double[nmodnco];
+        cmatB0 = new long double*[nmodnco];for (int i=0;i<nmodnco;i++) cmatB0[i]= new long double[nmodnco];
         cmatC = new long double*[nmodnco];for (int i=0;i<nmodnco;i++) cmatC[i]= new long double[nmodnco];
         cmatX = new long double*[nli];for (int i=0;i<nli;i++) cmatX[i]= new long double[nco+1];
         cmatXT = new long double*[nco+1];for (int i=0;i<nco+1;i++) cmatXT[i]= new long double[nli];
@@ -96,7 +97,8 @@ matligneC *matA;
 
         for (int i=0;i<nmodel;i++) delete []cmatA[i];delete cmatA;
         for (int i=0;i<nmodnco;i++) delete []cmatB[i];delete cmatB;
-        for (int i=0;i<nmodnco;i++) delete []cmatC[i];delete cmatC;
+         for (int i=0;i<nmodnco;i++) delete []cmatB0[i];delete cmatB0;
+       for (int i=0;i<nmodnco;i++) delete []cmatC[i];delete cmatC;
         for (int i=0;i<nli;i++) delete []cmatX[i];delete cmatX;
         for (int i=0;i<nco+1;i++) delete []cmatXT[i];delete cmatXT;
         delete []cdeltabeta;
@@ -487,7 +489,7 @@ matligneC *matA;
     int polytom_logistic_regression(int nli, int nco, long double **cmatX0, long double *vecY, long double *cvecW, long double *px, long double *pxi, long double *pxs)
     {
         double clock_zero;
-        int err,nmodel=0;
+        int err,nmodel=0,no;
         double debut,duree,de1,du1,sx,sx2;
         int *numod;
         for (int i=1;i<nli;i++) {if (vecY[i]>1.0*nmodel) nmodel=vecY[i]+0.1;}
@@ -497,8 +499,8 @@ matligneC *matA;
         ordonne(nmodel,nli,nco,vecY,numod);
         //cout <<"apres ordonne\n";
         int i,j,l,m,n,nmodnco=nmodel*(nco+1),imod,rep;
-        long double imody,betmin,betmax;
-        bool fin,caloglik;
+        long double imody,betmin,betmax,kap,coeff,mdiff;
+        bool fin,caloglik,invOK;
         for (i=0;i<nli;i++) {cmatX[i][0]=1.0; for (j=0;j<nco;j++) cmatX[i][j+1]=cmatX0[i][j];}
         //cout<<"\n";cout<<"\n";for (i=0;i<10;i++) {for (j=0;j<11;j++) cout<<cmatX[i][j]<<"  "; cout<<"\n";} cout<<"\n";
         for (imod=0;imod<nmodel;imod++)
@@ -539,8 +541,28 @@ matligneC *matA;
                 }
               }
         duree=walltime(&debut);time_matC += duree;
-            err=inverse_Tik(nmodnco,cmatC,cmatB);
-            for (i=0;i<nmodnco;i++) {cdeltabeta[i]=0.0;for (j=0;j<nmodnco;j++) cdeltabeta[i]+=cmatB[i][j]*cmatYP[j];}
+			//kap = kappa(nmodnco,cmatC);
+			//printf("\nkappa(cmatC) = %10Le",kap);
+			//if(kap>1.0E99) cout <<"   MATRICE SINGULIERE\n"; else cout<<"\n";
+			//if(kap>1.0E99) coeff=1.0E-15; else coeff=1.0E-20;
+			coeff=1.0E-15;
+			err=inverse_Tik2(nmodnco,cmatC,cmatB,coeff);
+			do {
+				coeff *=sqrt(10.0);mdiff = 1.0;no=0;
+				for (i=0;i<nmodnco;i++) {for (j=0;j<nmodnco;j++) cmatB0[i][j] = cmatB[i][j];}
+				err=inverse_Tik2(nmodnco,cmatC,cmatB,coeff);
+				if (err==0) {
+				    mdiff=0.0;
+					for (i=0;i<nmodnco;i++) {
+						for (j=0;j<nmodnco;j++) mdiff += fabs(cmatB[i][j]-cmatB0[i][j])/(fabs(cmatB[i][j])+fabs(cmatB0[i][j]));
+					}
+					mdiff /=(long double)nmodnco;
+				}
+				printf("coeff = %8Le   mdiff = %8.5Lf   err=%d\n",coeff,mdiff,err);
+				invOK = ((err==0)and(mdiff<0.02));
+			} while ((not invOK)and(coeff<0.01));
+			if (not invOK) {err=9;cout <<"Echec de l'inversion de la matrice cmatC\n";}
+			for (i=0;i<nmodnco;i++) {cdeltabeta[i]=0.0;for (j=0;j<nmodnco;j++) cdeltabeta[i]+=cmatB[i][j]*cmatYP[j];}
             for (i=0;i<nmodnco;i++) {if (cdeltabeta[i] != cdeltabeta[i]) err=10;}
 			for (i=0;i<nmodnco;i++) cbeta[i]=cbeta0[i]+cdeltabeta[i];
             remplimatriceYP(nli,nco,nmodel,cmatP,cmatYP,cbeta,cmatX,cvecW,cmatY,csmatP);

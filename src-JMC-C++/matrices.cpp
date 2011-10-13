@@ -318,7 +318,7 @@ int inverse(int n, long double **A, long double **C)
     }
     int jacobiL(int n, long double **A, long double *D, long double **V) {
         char bidon;
-        int nrot=0,ng=0,nm;
+        int nrot=0,ng=0,nm,iq;
         long double *b,*z,tresh,theta,tau,t,sm,s,h,g,cc;
         b = new long double[n];
         z = new long double[n];
@@ -338,8 +338,9 @@ int inverse(int n, long double **A, long double **C)
             //std::cout<<"jacobi sm="<<sm<<"\n";
             if (sm==0.0) {delete []b;delete []z;return nrot;}
             if (i<4) tresh=0.2*sm/(long double)n/(long double)n; else tresh=0.0;
+//#pragma omp parallel for shared (i,n,A,D,z,V,tresh) private(ip,iq,g,theta,t,cc,s,tau,h)
             for (int ip=0;ip<n-1;ip++) {
-                for (int iq=ip+1;iq<n;iq++) {
+                for (iq=ip+1;iq<n;iq++) {
                     g=100.0*fabs(A[ip][iq]);
                     if (((i>4)and(fabs(D[ip]+g)==fabs(D[ip])))and(fabs(D[iq]+g)==fabs(D[iq]))) A[ip][iq]=0.0;
                     else if (fabs(A[ip][iq])>tresh) {
@@ -455,7 +456,6 @@ int inverse(int n, long double **A, long double **C)
 */
 	int inverse_Tik2(int n, long double **A, long double **C, long double coeff) {
 		long double t,**AA;
-		double kap;
 		int i,j,err;
 		AA = new long double*[n]; for (int i=0;i<n;i++) AA[i] = new long double [n];
 		for (int i=0;i<n;i++) {for (int j=0;j<n;j++) AA[i][j] = A[i][j];}

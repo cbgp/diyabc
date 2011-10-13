@@ -207,6 +207,14 @@ char* str2char(string x)
     return(conv);
 }
 
+string trim(string s) {
+	while ((s.length()>0)and(s.substr(0,1)==" ")) s=s.substr(1,s.length()-1);
+	while ((s.length()>0)and(s.substr(s.length()-1,1)==" ")) s=s.substr(0,s.length()-1);
+	while ((s.length()>0)and(s.substr(0,1)=="	")) s=s.substr(1,s.length()-1);
+	while ((s.length()>0)and(s.substr(s.length()-1,1)=="	")) s=s.substr(0,s.length()-1);
+	return s;
+}
+
 int arrondi(double a) {return (int)(a + 0.5);}
 
 string TimeToStr(double ti) {

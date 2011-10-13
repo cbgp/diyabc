@@ -183,7 +183,7 @@ class Data(object):
         except :
             raise IOError , "Error when attempting to read data file"
         f=open(self.filename,'r')
-        read_data = f.read() 
+        read_data = f.read().strip() 
         lines = read_data.splitlines()
         f.close()
         if len(lines)<4 :
@@ -203,6 +203,7 @@ class Data(object):
             if (ili>0) and (lim.find('POP')>-1)and(lim.find(',')<1) : npop +=1
             if (npop>0) and (lim.find('POP')<0)and (li.find(',')<1) :
 #data file with missing comma between individual name and genotype
+               print ili
                raise NotGenepopFileError("either Genepop file with missing comma between individual name and genotype or not a Genepop file")
         nloc=0
         for ili,li in enumerate(lines) :
@@ -224,7 +225,7 @@ class Data(object):
     def __read_genepop(self):
         self.__test_genepop()
         f=open(self.filename,'r')
-        read_data = f.read() 
+        read_data = f.read().strip() 
         lines = read_data.splitlines()
         f.close()
         self.title = lines[0]
@@ -450,5 +451,5 @@ class DataSnp():
 
 
 
-#plop = Data("/home/cornuet/workspace/diyabc/src-JMC-C++/simdat/datasim_001")
+#plop = Data("/home/cornuet/diyabc/commun/linux/simdat1_2011_10_10-1/datasim2_001")
 #plop.loadfromfile()
