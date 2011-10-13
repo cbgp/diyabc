@@ -1250,6 +1250,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.gen_data_win.loadGeneticConf()
             self.loadAnalysis()
         else:
+            raise Exception("Impossible to read the project configuration")
             output.notify(self,"Load error","Impossible to read the project configuration")
 
     def putRefTableSize(self):

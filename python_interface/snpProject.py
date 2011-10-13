@@ -63,10 +63,10 @@ class SnpProject(Project):
             self.dataFileName = lines[0].strip()
             self.ui.dataFileEdit.setText(lines[0].strip())
             # lecture du dataFile pour les infos de Gui Projet
-            self.loadDataFile("%s/%s"%(self.dir,lines[0].strip()))
+            if self.loadDataFile("%s/%s"%(self.dir,lines[0].strip())):
+                return True
             ## comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
             #self.gen_data_win.fillLocusTableFromData()
-            return True
         return False
 
     def loadDataFile(self,name):
