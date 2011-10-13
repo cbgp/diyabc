@@ -77,7 +77,11 @@ class SnpProject(Project):
 
         try:
             self.data = DataSnp(name)
-            self.ui.dataFileInfoLabel.setText("%s loci (SNP)\n%s individuals in %s samples" % (self.data.nloc,self.data.nindtot,self.data.nsample))
+            typestr = ""
+            for ty in self.data.ntypeloc.keys():
+                typestr += " %s : %s,"%(ty,self.data.ntypeloc[ty])
+            typestr = typestr[:-1]
+            self.ui.dataFileInfoLabel.setText("%s loci (SNP)\n%s individuals in %s samples\n%s" % (self.data.nloc,self.data.nindtot,self.data.nsample,typestr))
             self.ui.dataFileEdit.setText(name)
             self.dataFileSource = name
             self.ui.browseDirButton.setDisabled(False)

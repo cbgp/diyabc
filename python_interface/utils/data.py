@@ -413,6 +413,7 @@ class DataSnp():
         self.nloc = 0
         self.nindtot = 0
         self.nsample = 0
+        self.ntypeloc = {}
         self.readData()
 
     def readData(self):
@@ -430,12 +431,26 @@ class DataSnp():
             raise Exception("Wrong first line format for data file : %s"%self.filename)
         if len(datalines) < 1:
             raise Exception("Not enough lines in SNP datafile %s"%self.filename)
+        for locty in l1parts[3:]:
+            if self.ntypeloc.has_key(locty):
+                self.ntypeloc[locty] += 1
+            else:
+                self.ntypeloc[locty] = 1
+        nbX = 0
+        nbY = 0
+        if self.ntypeloc.has_key('X'):
+            nbX = self.ntypeloc['X']
+        if self.ntypeloc.has_key('Y'):
+            nbY = self.ntypeloc['Y']
+
+        sexPresent = (nbX > 0 or nbY > 0)
 
         nbInd = len(datalines) - 1
         l0 = pat.sub(' ',datalines[0].strip())
         nbLoci = len(l0.split(' ')) - 3
 
         types = set()
+        nbU = 0
         for i in range(len(datalines))[1:]:
             line = pat.sub(' ',datalines[i].strip())
             # si on n'a pas le bon nb de loci
@@ -443,6 +458,8 @@ class DataSnp():
                 raise Exception("Wrong number of loci at line %s in %s"%(i+1,self.filename))
             ctype = line.split(' ')[2]
             types.add(ctype)
+            if sexPresent and line.split(' ')[1].lower() == 'u':
+                raise Exception("Individual %s has unknown sex while some SNPs are on sex chromosomes"%line.split(' ')[0])
         nbSample = len(types)
 
         self.nindtot = nbInd
