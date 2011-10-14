@@ -10,14 +10,15 @@
 \floatname{algorithm}{Algorithme} 
 
 %\usetheme[width=100pt]{PaloAlto}
-\usetheme{Ilmenau}
+\usetheme[compress]{Ilmenau}
+\setbeamertemplate{frametitle}[default][center]
 
 %\setbeamercovered{transparent}
 
-\title{Proactive : an Open Source Middleware for parallel computing}
+\title{Proactive : Un middleware open source pour le calcul parallèle}
 
 \author{Veyssier Julien}
-\institute{CBGP- INRA}
+\institute{CBGP - INRA}
 \date\today
 \setbeamertemplate{navigation symbols}{}
 %\logo{}
@@ -36,28 +37,53 @@
 	\tableofcontents[currentsection]
 \end{frame}
 
-\begin{frame}{DIYABC}
+\begin{frame}{Contexte}
 	\begin{columns}
 	\begin{column}[l]{0.5\linewidth}
+        \begin{columns}
+        \begin{column}[l]{0.5\linewidth}
         \begin{figure}
             %[!bh]
             \centering
-            \includegraphics[scale=0.39]{cbgp.png}
+            \includegraphics[scale=0.32]{cbgp.png}
             %\caption{Architecture autour d'un CDN}
         \end{figure}
+        \end{column}
+        \begin{column}[r]{0.5\linewidth}
         \begin{figure}
             %[!bh]
             \centering
-            \includegraphics[scale=0.39]{cocci.png}
+            \includegraphics[scale=0.32]{cocci.png}
             %\caption{Architecture autour d'un CDN}
         \end{figure}
+        \end{column}
+        \end{columns}
+        \vspace{1cm}
+	\begin{block}{Objectifs}<2->
+			\begin{itemize}
+                    %decouplage .. .
+                \item Refonte de DIYABC
+				\item Implémentation de l'interface graphique
+                \item Interfaçage avec des outils de calcul parallèle
+			\end{itemize}
+					
+		\end{block}
 
 	\end{column}
 	\begin{column}[r]{0.5\linewidth}
-	\begin{block}{}
+	\begin{exampleblock}{Activités du laboratoire}<1->
 			\begin{itemize}
-				\item Implémentation de l'interface graphique
-                \item 
+				\item Génétique des population
+                \item Systématique
+                \item Écologie
+			\end{itemize}
+					
+		\end{exampleblock}
+	\begin{block}{Moyens matériels}<3->
+			\begin{itemize}
+                \item Cluster local (SGE)
+				\item Machines personnelles des chercheurs
+                \item Postes de travail de l'administration
 			\end{itemize}
 					
 		\end{block}
@@ -65,38 +91,181 @@
 	\end{columns}
 \end{frame}
 
-\begin{frame}{CDN et P2P}
-    plap
+\begin{frame}{État de l'art}
+    Constat : architectures trop rigides et fastidieuses à maintenir
+	\begin{columns}
+	\begin{column}[l]{0.3\linewidth}
+    \begin{block}{Projets}
+        \begin{itemize}
+            \item<2-> Diane
+            \item<3-> Ganga
+            \item<4-> Wisdom
+            \item<5-> OurGrid
+            \item<6-> Proactive
+        \end{itemize}
+    \end{block}
+	\end{column}
+	\begin{column}[r]{0.6\linewidth}
+    \begin{exampleblock}{Particularité}
+        \begin{itemize}
+            \item<2-> Peu d'outils annexe
+            \item<3-> Sous-partie de DIANE
+            \item<4-> Orienté vers les grilles de calcul
+            \item<5-> Programmes non fournis
+            \item<6-> Découplé et polyvalent
+        \end{itemize}
+    \end{exampleblock}
+	\end{column}
+	\end{columns}
 \end{frame}
 
-
-
-\begin{frame}
-	%TODO schema qui illustre lincoherence entre topologies
-	\begin{columns}
-		\begin{column}[l]{0.65\linewidth}
-	\begin{block}{Concepts}<1->
-		\begin{itemize}
-			\item CDN
-			\item P2P (Peer to Peer) % passage à lechelle ->
-			            		%good for CDN
-			\item Routage logique
-			\item Routage physique
-		\end{itemize}
-	\end{block}
-	\begin{alertblock}{Objectif}<2->
-		Optimiser le routage en se concentrant sur les différences
-		entre topologie logique et physique
-	\end{alertblock}
-	\end{column}
-
-		\begin{column}[r]{0.35\linewidth}
-            blurp
-\end{column}
-\end{columns}
+\begin{frame}{Proactive}
+    Exploration des possibilités pour une éventuelle intégration au CBGP
 \end{frame}
 
 \section[Fonctionnement]{Fonctionnement de Proactive}
+\begin{frame}{Caractéristiques}
+    Langage de programmation $\Longrightarrow$ Java + Bash/Batch
+    Portable
+    Supporte un environnement hétérogène%on y reviendra plus tard
+
+\end{frame}
+\begin{frame}{Architecture}
+	\begin{columns}
+	\begin{column}[l]{0.5\linewidth}
+        \begin{figure}
+            %[!bh]
+            \centering
+            \includegraphics[scale=0.4]{arch.png}
+            %\caption{Architecture autour d'un CDN}
+        \end{figure}
+	\end{column}
+	\begin{column}[r]{0.5\linewidth}
+        \begin{alertblock}{Ressource management}
+            Gestion des noeuds de calcul
+        \end{alertblock}
+        \begin{block}{Routeur}
+             Gestion des communications entre les composants
+        \end{block}
+        \begin{exampleblock}{Scheduler}
+             Gestion de la politique d'ordonnancement
+        \end{exampleblock}
+        \begin{alertblock}{Client}
+            Interaction avec l'utilisateur
+        \end{alertblock}
+        
+	\end{column}
+	\end{columns}
+\end{frame}
+
+\subsection{Composants}
+\begin{frame}{Programmes}
+    \begin{block}
+        
+    \begin{itemize}
+            % et leurs clients respectifs
+        \item Noeud de calcul $\Longrightarrow$ accepte et traite des t\^aches
+        \item Gestionnaire de ressources $\Longrightarrow$ recense et contrôle les noeuds de calcul
+        \item Ordonnanceur $\Longrightarrow$ accepte des t\^aches et les affecte à des noeuds de calcul
+        \item Serveur de données $\Longrightarrow$ permet la transmission des données liées aux calculs
+    \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Noeud de calcul}
+    % a lancer sur chaque machine ressource
+    % reçoit les taches, les execute dans un env temporaire qui sera nettoyé
+\end{frame}
+
+\begin{frame}{Gestionnaire de ressources}
+    % attend la connexion des noeuds de calcul et les requêtes de l'ordonnanceur
+    
+\end{frame}
+
+\begin{frame}{Serveur de données}
+    % permet aux noeuds de calcul de ``monter'' un espace pour y lire et y écrire
+
+    % Peut être lancé par un administrateur pour fournir un espace permanent commun à tous les utilisateurs (faisable au CBGP, petite taille)
+    % peut être lancé par chaque client pour créer l'espace sur sa propre machine
+    
+\end{frame}
+
+\begin{frame}{Ordonnanceur}
+    % est l'intermédiaire entre le client et le gestionnaire de ressources
+    % Il gère l'authentification des clients et leurs droits d'accès aux ressources 
+    % et sait communiquer avec le rm pour affecter les taches aux noeuds de calcul
+    
+\end{frame}
+
+\subsection{Architecture}
+
+\begin{frame}{Communication réseau}
+    \vspace{-1.9cm}
+    \begin{figure}
+        %[!bh]
+        \hspace*{-1.8cm}
+        \centering
+        \includegraphics[scale=0.52]{netmap.pdf}
+        %\caption{Communication réelle entre les entités logicielles de Proactive}
+    \end{figure}
+    
+\end{frame}
+
+\begin{frame}{Communication dans le réseau virtuel de Proactive}
+    \vspace{-2.9cm}
+    \begin{figure}
+        %[!bh]
+        \hspace*{-1.2cm}
+        \centering
+        \includegraphics[scale=0.62]{netmap_abs.pdf}
+        %\caption{Principe de communication dans le réseau Proactive}
+    \end{figure}
+    
+\end{frame}
+
+\subsection{Définition d'une tache}
+\begin{frame}
+	\begin{columns}
+	\begin{column}[l]{0.5\linewidth}
+        \begin{block}{Qu'est-ce qu'une t\^ache ?}
+            \begin{itemize}
+                \item Un identifiant
+                \item Un serveur de données
+                \item Une liste d'opération à effectuer %option dependances, retry..
+            \end{itemize}
+        \end{block}
+        \begin{exampleblock}{Définition en Java}
+            \begin{itemize}
+                \item Directement dans un programme en Java qui se connecte à l'ordonnanceur
+                \item Gestion fine
+            \end{itemize}
+        \end{exampleblock}
+	\end{column}
+	\begin{column}[r]{0.5\linewidth}
+        % en java, par xml, ou par liste de commandes
+        \begin{exampleblock}{Définition par XML}
+            \begin{itemize}
+                \item Fichier XML qui spécifie chaque paramètre
+                \item Plus simple mais moins complète que Java
+            \end{itemize}
+        \end{exampleblock}
+        \begin{exampleblock}{Liste de commandes}% natives obligatoirement
+            \begin{itemize}
+                \item Liste de commandes qui seront exécutées directement sur un noeud de calcul
+                \item Gestion basique
+            \end{itemize}
+        \end{exampleblock}
+	\end{column}
+	\end{columns}
+\end{frame}
+
+\subsection{Outils graphiques}
+\begin{frame}
+    tools
+\end{frame}
+
+
+\section[Applications]{Applications possibles}
 \begin{frame}
 	\tableofcontents[currentsection]
 \end{frame}

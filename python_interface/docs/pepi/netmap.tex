@@ -1,0 +1,17 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usetikzlibrary{mindmap,trees}
+\begin{document}
+\pagestyle{empty}
+\begin{tikzpicture}
+  \path[mindmap,concept color=black,text=white]
+    node[concept] {Routeur Proactive}
+    [clockwise from=0]
+    child[concept color=blue] { node[concept] {Scheduler client} }  
+    child[concept color=blue] { node[concept] {Scheduler} }
+    child[concept color=orange] { node[concept] {Ressource manager client} }
+    child[concept color=orange] { node[concept] {Ressource manager} }
+    child[concept color=orange] { node[concept] {Ressource node} }
+    child[concept color=green!50!black] { node[concept] {Dataserver} };
+\end{tikzpicture}\end{document}
