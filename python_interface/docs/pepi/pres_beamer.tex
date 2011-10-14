@@ -1,4 +1,4 @@
-\documentclass{beamer}
+\documentclass[handout]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[francais]{babel}
 \usepackage[T1]{fontenc}
@@ -11,6 +11,7 @@
 
 %\usetheme[width=100pt]{PaloAlto}
 \usetheme[compress]{Ilmenau}
+%\usecolortheme{fly}
 \setbeamertemplate{frametitle}[default][center]
 
 %\setbeamercovered{transparent}
@@ -173,27 +174,27 @@
 \end{frame}
 
 \begin{frame}{Noeud de calcul}
-    % a lancer sur chaque machine ressource
-    % reçoit les taches, les execute dans un env temporaire qui sera nettoyé
+     a lancer sur chaque machine ressource
+     reçoit les taches, les execute dans un env temporaire qui sera nettoyé
 \end{frame}
 
 \begin{frame}{Gestionnaire de ressources}
-    % attend la connexion des noeuds de calcul et les requêtes de l'ordonnanceur
+     attend la connexion des noeuds de calcul et les requêtes de l'ordonnanceur
     
 \end{frame}
 
 \begin{frame}{Serveur de données}
-    % permet aux noeuds de calcul de ``monter'' un espace pour y lire et y écrire
+     permet aux noeuds de calcul de ``monter'' un espace pour y lire et y écrire
 
-    % Peut être lancé par un administrateur pour fournir un espace permanent commun à tous les utilisateurs (faisable au CBGP, petite taille)
-    % peut être lancé par chaque client pour créer l'espace sur sa propre machine
+     Peut être lancé par un administrateur pour fournir un espace permanent commun à tous les utilisateurs (faisable au CBGP, petite taille)
+     peut être lancé par chaque client pour créer l'espace sur sa propre machine
     
 \end{frame}
 
 \begin{frame}{Ordonnanceur}
-    % est l'intermédiaire entre le client et le gestionnaire de ressources
-    % Il gère l'authentification des clients et leurs droits d'accès aux ressources 
-    % et sait communiquer avec le rm pour affecter les taches aux noeuds de calcul
+     est l'intermédiaire entre le client et le gestionnaire de ressources
+     Il gère l'authentification des clients et leurs droits d'accès aux ressources 
+     et sait communiquer avec le rm pour affecter les taches aux noeuds de calcul
     
 \end{frame}
 
@@ -260,8 +261,23 @@
 \end{frame}
 
 \subsection{Outils graphiques}
-\begin{frame}
-    tools
+\begin{frame}{Scheduler client}
+    % interessant pour la partie job submission et job results
+    \begin{figure}
+        %[!bh]
+        \centering
+        \includegraphics[scale=0.18]{sc_sched.png}
+        %\caption{Principe de communication dans le réseau Proactive}
+    \end{figure}
+\end{frame}
+\begin{frame}{Ressource manager client}
+    % interessant pour la partie monitoring
+    \begin{figure}
+        %[!bh]
+        \centering
+        \includegraphics[scale=0.18]{sc_rmc.png}
+        %\caption{Principe de communication dans le réseau Proactive}
+    \end{figure}
 \end{frame}
 
 
@@ -269,34 +285,24 @@
 \begin{frame}
 	\tableofcontents[currentsection]
 \end{frame}
-
-\begin{frame}
-	% constat, propo, exemple
-
-		\begin{block}{Travail effectué}<1->
-		\begin{itemize}
-			\item Constat%diff entre topos
-			\item Propositions
-			\item Étude d'un exemple d'application
-		\end{itemize}
-		\end{block}
-
-		\begin{exampleblock}{Perspectives}<2->
-		\begin{itemize}
-			\item Établir une norme sur les échanges de messages
-				%pour favoriser les
-				%reflexions sur ce genre d'opti?
-			\item Cache s\'electif (images, degr\'e de volatilit\'e)
-			\item Élaboration de protocoles applicatifs pour la
-				communication entre routeurs (Gossiping)
-			\item Création d'une architecture spécialisée pour les CDN
-			\item Proposition d'extension du protocole IP proposant
-				des primitives de plus haut niveau dans les
-				routeurs
-		\end{itemize}
-		\end{exampleblock}
-	% 
+\begin{frame}{Intégration des ressources d'un cluster existant}
+    PBS (SGE, Torque \ldots)
 \end{frame}
+\begin{frame}{Utiliser les postes de travail}
+    Avec le programme des noeuds de calcul
+    Avec les ``Agent''
+\end{frame}
+\begin{frame}{Utiliser les ressources d'un cloud}
+    \begin{exampleblock}{Comment ?}
+        Machine virtuelle dupliquée sur les noeuds du cloud qui lance 
+    \end{exampleblock}
+    
+     On utilise la ressource dont on a besoin (pas plus pas moins) et seulement quand on en a besoin
+     > pas besoin d'avoir un cluster local
+
+     Déploiement par machines virtuelles
+\end{frame}
+
 
 \begin{frame}
 	\begin{center}	{\huge Merci de votre attention}\end{center}
