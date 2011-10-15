@@ -27,7 +27,7 @@ from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from analysis.viewAnalysisParameters import ViewAnalysisParameters
 #from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
-from utils.data import Data,DataSnp
+from utils.data import Data,DataSnp,isSNPDatafile
 from datetime import datetime 
 import os.path
 from PyQt4.Qwt5 import *
@@ -586,7 +586,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """
         if name == None:
             name = QFileDialog.getOpenFileName(self,"Select datafile")
-        if self.parent.isSNPDatafile(name):
+        if isSNPDatafile(name):
             try:
                 data = DataSnp(name)
             except Exception,e:

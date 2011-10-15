@@ -5,7 +5,7 @@ Created on 24 sept. 2009
 @author: cornuet
 '''
 
-import re
+import re,os.path
 
 MICMISSING=-9999
 SEQMISSING="[]"
@@ -465,6 +465,21 @@ class DataSnp():
         self.nindtot = nbInd
         self.nloc = nbLoci
         self.nsample = nbSample
+
+def isSNPDatafile(name):
+    if os.path.exists(name):
+        f=open(name,'r')
+        lines=f.readlines()
+        f.close()
+        if len(lines) > 0:
+            l1 = lines[0].strip()
+            pat = re.compile(r'\s+')
+            l1compressed = pat.sub(' ',l1)
+            l1parts = l1compressed.split(' ')
+            if len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP":
+                return True
+    return False
+
 
 
 

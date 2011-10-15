@@ -32,6 +32,7 @@ from utils.cbgpUtils import cmdThread
 from utils.cbgpUtils import logRotate
 from threading import Thread
 import re
+from utils.data import isSNPDatafile
 
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
@@ -440,27 +441,13 @@ class Diyabc(formDiyabc,baseDiyabc):
     #        if self.sender() == self.style_actions[stxt]:
     #            self.app.setStyle(stxt)
 
-    def isSNPDatafile(self,name):
-        if os.path.exists(name):
-            f=open(name,'r')
-            lines=f.readlines()
-            f.close()
-            if len(lines) > 0:
-                l1 = lines[0].strip()
-                pat = re.compile(r'\s+')
-                l1compressed = pat.sub(' ',l1)
-                l1parts = l1compressed.split(' ')
-                if len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP":
-                    return True
-        return False
-
     def isSNPProjectDir(self,dir):
         if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
             f=open("%s/%s"%(dir,self.main_conf_name),'r')
             cont = f.readlines()
             f.close()
             if len(cont)>0:
-                return self.isSNPDatafile("%s/%s"%(dir,cont[0].strip()))
+                return isSNPDatafile("%s/%s"%(dir,cont[0].strip()))
         return False
 
     def openProject(self,dir=None):
