@@ -112,3 +112,24 @@ def logRotate(logFolder,nbDaysOld,sizeThreshold):
     except Exception,e:
         raise Exception("Log rotation failed\n%s"%e)
 
+def readRefTableSize(reftablefile):
+    if os.path.exists(reftablefile):
+        binint = array.array('i')
+        f = open(reftablefile,'rb')
+        binint.read(f,1)
+        f.close()
+        rtSize = binint[0]
+        return rtSize
+    else:
+        return None
+
+def readNbRecordsOfScenario(reftablefile,numSc):
+    if os.path.exists(reftablefile):
+        binint = array.array('i')
+        f = open(reftablefile,'rb')
+        binint.read(f,numSc+2)
+        f.close()
+        nbRec = binint[-1]
+        return nbRec
+    else:
+        return None

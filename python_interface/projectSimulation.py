@@ -29,11 +29,11 @@ import output
 from output import log
 import tempfile
 
-class SimulationProject(Project):
+class ProjectSimulation(Project):
     """ classe qui représente un projet de simulation
     """
     def __init__(self,name,dir=None,parent=None):
-        super(SimulationProject,self).__init__(name,dir,parent)
+        super(ProjectSimulation,self).__init__(name,dir,parent)
 
         self.dico_loc_nb = None
         self.sexRatio = None
@@ -81,6 +81,11 @@ class SimulationProject(Project):
         #self.setHistValid(False)
         #self.setGenValid(False)
         #self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self.runSimulation)
+
+    def stopUiGenReftable(self):
+        self.ui.runReftableButton.setText("Run computations")
+        self.ui.runReftableButton.setDisabled(False)
+        self.ui.progressBar.hide()
 
     def haploidChanged(self,srt):
         try:
@@ -321,3 +326,4 @@ class SimulationThread(QThread):
                     
                 fg.close()
         fg.close()
+

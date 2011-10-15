@@ -307,7 +307,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.tabWidget.setCurrentIndex(num-1)
 
     def simulateDataSets(self):
-        from simulationProject import SimulationProject
+        from projectSimulation import ProjectSimulation
         fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)")
         fileDial.setLabelText(QtGui.QFileDialog.Accept,"Ok")
         fileDial.setLabelText(QtGui.QFileDialog.FileName,"Data file\ngeneric name")
@@ -325,7 +325,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             directory = os.path.dirname(path)
 
         if ok:
-            newSimProj = SimulationProject(name,directory,self)
+            newSimProj = ProjectSimulation(name,directory,self)
             # un nouveau projet a au moins un scenario
             newSimProj.hist_model_win.addSc()
             newSimProj.hist_model_win.hideRemoveScButtons()
@@ -453,8 +453,8 @@ class Diyabc(formDiyabc,baseDiyabc):
     def openProject(self,dir=None):
         """ ouverture d'un projet existant
         """
-        from project import Project
-        from snpProject import SnpProject
+        from projectMsatSeq import ProjectMsatSeq
+        from projectSnp import ProjectSnp
         if dir == None:
             qfd = QFileDialog()
             dir = str(qfd.getExistingDirectory())
@@ -501,9 +501,9 @@ class Diyabc(formDiyabc,baseDiyabc):
                     if proj_ready_to_be_opened:
                         # on selectionne le type de projet
                         if self.isSNPProjectDir(dir):
-                            proj_to_open = SnpProject(project_name,dir,self)
+                            proj_to_open = ProjectSnp(project_name,dir,self)
                         else:
-                            proj_to_open = Project(project_name,dir,self)
+                            proj_to_open = ProjectMsatSeq(project_name,dir,self)
                         try:
                             proj_to_open.loadFromDir()
                         except Exception,e:
@@ -650,8 +650,8 @@ class Diyabc(formDiyabc,baseDiyabc):
     def newProject(self,path=None):
         """ Création d'un projet
         """
-        from project import Project
-        from snpProject import SnpProject
+        from projectMsatSeq import ProjectMsatSeq
+        from projectSnp import ProjectSnp
         log(1,'Attempting to create a new project')
         ok = True
         #if name == None:
@@ -687,7 +687,9 @@ class Diyabc(formDiyabc,baseDiyabc):
                 for p in self.project_list:
                     proj_name_list.append(p.name)
                 if not name in proj_name_list:
-                    newProj = Project(name,None,self)
+                    # dans tous les cas, on fait un projet msatseq
+                    # le cas snp est géré dans dataFileSelectionAndCopy
+                    newProj = ProjectMsatSeq(name,None,self)
                     # un nouveau projet a au moins un scenario
                     newProj.hist_model_win.addSc()
                     self.project_list.append(newProj)
@@ -818,9 +820,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         for proj in self.project_list:
             # si le projet est bien créé (et pas en cours de création)
             if proj.dir != None:
-                proj.stopRefTableGen()
-                proj.stopAnalysis()
-                proj.unlock()
+                proj.stopActivities()
         self.preferences_win.saveRecent()
         event.accept()
     #    reply = QtGui.QMessageBox.question(self, 'Message',
@@ -879,9 +879,9 @@ class ImportProjectThread(Thread):
         self.start()
     def run(self):
         #log(4,"Pre-loading of Project class STARTING")
-        from project import Project
-        from simulationProject import SimulationProject
-        from snpProject import SnpProject
+        from projectMsatSeq import ProjectMsatSeq
+        from projectSimulation import ProjectSimulation
+        from projectSnp import ProjectSnp
         #log(4,"Pre-loading of Project class FINISHED")
 
 def main():

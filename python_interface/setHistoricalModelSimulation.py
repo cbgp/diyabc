@@ -60,7 +60,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         groupBoxSampleSize.setSizePolicy(sizePolicy)
         groupBoxSampleSize.setTitle("")
         groupBoxSampleSize.setObjectName("groupBox_6")
-        groupBoxSampleSize.setMaximumSize(QtCore.QSize(130, 80))
+        groupBoxSampleSize.setMaximumSize(QtCore.QSize(140, 80))
         verticalLayout_2 = QtGui.QVBoxLayout(groupBoxSampleSize)
         verticalLayout_2.setObjectName("verticalLayout_2")
         verticalLayout_2.setContentsMargins(-1, 1, -1, 1)
@@ -297,7 +297,3 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
                 i+=1
             result+= "\n%s %s %s"%(pname,info[0],info[1])
         return result
-
-
-
-

@@ -15,6 +15,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui,QtCore
 from PyQt4 import uic
+from projectReftable import ProjectReftable
 #from uis.project_ui import *
 from setHistoricalModelSimulation import SetHistoricalModelSimulation
 from setGenDataSimulation import SetGeneticDataSimulation
@@ -31,12 +32,11 @@ from output import log
 import tempfile
 import re
 
-class SnpProject(Project):
+class ProjectSnp(ProjectReftable):
     """ classe qui représente un projet de simulation
     """
     def __init__(self,name,dir=None,parent=None):
-        super(SnpProject,self).__init__(name,dir,parent)
-
+        super(ProjectSnp,self).__init__(name,dir,parent)
 
         self.ui.setSumSnpButton.show()
         self.ui.setGeneticButton.hide()
@@ -194,3 +194,7 @@ class SnpProject(Project):
         else:
             output.notify(self,"Saving is impossible","Project %s is not yet completly created"%self.name)
             self.parent.clearStatus()
+
+    def freezeGenData(self,yesno=True):
+        # TODO
+        pass
