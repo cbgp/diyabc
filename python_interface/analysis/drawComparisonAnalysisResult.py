@@ -13,7 +13,7 @@ from utils.visualizescenario import *
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 from datetime import datetime 
-from output import log
+from utils.cbgpUtils import log
 
 formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 

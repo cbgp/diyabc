@@ -5,7 +5,7 @@ import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
-from output import log
+from utils.cbgpUtils import log
 #from uis.genericScenarioSelection_ui import Ui_Frame
 
 formGenericScenarioSelection,baseGenericScenarioSelection = uic.loadUiType("uis/genericScenarioSelection.ui")

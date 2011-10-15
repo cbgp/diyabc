@@ -11,7 +11,7 @@ from utils.visualizescenario import *
 from utils.history import *
 from set_condition import SetCondition
 import output
-from output import log
+from utils.cbgpUtils import log
 
 formHistModel,baseHistModel = uic.loadUiType("uis/setHistFrame.ui")
 

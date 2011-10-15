@@ -5,7 +5,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.preferences_ui import Ui_MainWindow
-from output import log
+from utils.cbgpUtils import log
 from datetime import datetime 
 
 formLogFile,baseLogFile = uic.loadUiType("uis/showLogFile.ui")

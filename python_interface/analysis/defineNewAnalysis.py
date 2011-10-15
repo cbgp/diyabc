@@ -12,7 +12,7 @@ from genericScenarioSelection import GenericScenarioSelection
 from biasScenarioSelection import BiasNEvaluateScenarioSelection
 from analysis import Analysis
 import output
-from output import log
+from utils.cbgpUtils import log
 
 formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType("uis/defineAnalysis.ui")
 

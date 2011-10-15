@@ -9,7 +9,7 @@ from PyQt4 import uic
 from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 import output
-from output import log
+from utils.cbgpUtils import log
 
 formPreferences,basePreferences = uic.loadUiType("uis/preferences.ui")
 

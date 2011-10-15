@@ -34,7 +34,7 @@ import os.path
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 import output
-from output import log
+from utils.cbgpUtils import log
 import tempfile
 import re
 

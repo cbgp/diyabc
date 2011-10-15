@@ -11,7 +11,7 @@ from mutationModel.setMutationModelSequences import SetMutationModelSequences
 from utils.visualizescenario import *
 from utils.data import *
 import output
-from output import log
+from utils.cbgpUtils import log
 
 class SetGeneticDataSimulation(SetGeneticData):
     """ set genetic data pour une simulation de données

@@ -9,7 +9,7 @@ from PyQt4 import uic
 #from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
 #import output
-from output import log
+from utils.cbgpUtils import log
 
 formDrawScenario,baseDrawScenario = uic.loadUiType("uis/drawScenarioFrame.ui")
 

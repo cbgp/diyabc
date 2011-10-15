@@ -28,7 +28,7 @@ from utils.data import DataSnp
 from datetime import datetime 
 import os.path
 import output
-from output import log
+from utils.cbgpUtils import log
 import tempfile
 import re
 

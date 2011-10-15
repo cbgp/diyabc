@@ -12,7 +12,7 @@ from PyQt4 import uic
 from utils.visualizescenario import *
 from utils.data import *
 import output
-from output import log
+from utils.cbgpUtils import log
 
 formGenData,baseGenData = uic.loadUiType("uis/setGenData.ui")
 

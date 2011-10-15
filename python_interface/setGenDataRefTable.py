@@ -13,7 +13,7 @@ from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from utils.visualizescenario import *
 from utils.data import *
 import output
-from output import log
+from utils.cbgpUtils import log
 
 class SetGeneticDataRefTable(SetGeneticData):
     """ set genetic data pour les informations concernant la reftable

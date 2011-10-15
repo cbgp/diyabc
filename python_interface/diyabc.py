@@ -26,10 +26,8 @@ from preferences import Preferences
 from showLogFile import ShowLogFile
 from utils.cbgpUtils import Documentator
 import output
-from output import log
 import subprocess
-from utils.cbgpUtils import cmdThread
-from utils.cbgpUtils import logRotate
+from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log
 from threading import Thread
 import re
 from utils.data import isSNPDatafile
@@ -271,6 +269,14 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         for but in [newButton,openButton,saveButton,saveAllButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
+
+    def showLog(self,text):
+        """ fonction appelée par le logger pour afficher le log dans la fenetre de log
+        ne pas faire de print dans cette fonction
+        """
+        self.showLogFile_win.logText.moveCursor(QTextCursor.End)
+        self.showLogFile_win.logText.moveCursor(QTextCursor.StartOfLine)
+        self.showLogFile_win.logText.appendPlainText(text)
 
     def updateCurrentProjectMenu(self,projIndex):
         self.updateNavigateMenu()
@@ -920,8 +926,8 @@ def main():
     # pour les logs dans un fichier et sur le terminal
     # chaque TeeLogger remplace une sortie et écrit dans 
     # le fichier qu'on lui donne
-    myOut = output.TeeLogger(logfile,"a",myapp,True)
-    myErr = output.TeeLogger(logfile,"a",myapp,False)
+    myOut = TeeLogger(logfile,True,myapp.showLog)
+    myErr = TeeLogger(logfile,False,myapp.showLog)
     sys.stdout = myOut
     sys.stderr = myErr
     log(1,"\033[5;36m DIYABC launched \033[00m")

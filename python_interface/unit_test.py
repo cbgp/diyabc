@@ -10,7 +10,7 @@ from diyabc import Diyabc
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from datetime import datetime
-from output import log
+from utils.cbgpUtils import log
 
 class testDiyabc(unittest.TestCase):
     """

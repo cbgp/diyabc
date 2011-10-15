@@ -26,7 +26,7 @@ from utils.data import Data
 from datetime import datetime 
 import os.path
 import output
-from output import log
+from utils.cbgpUtils import log
 import tempfile
 
 class ProjectSimulation(Project):

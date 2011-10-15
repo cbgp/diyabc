@@ -1,7 +1,21 @@
 # -*- coding: utf-8 -*-
 
 from threading import Thread
+import sys
 import cmd
+import inspect
+import re
+
+LOG_LEVEL = 4
+
+RED='\033[31m'
+WHITE='\033[00m'
+BLUE='\033[35m'
+GREEN='\033[32m'
+YELLOW='\033[33m'
+CYAN='\033[36m'
+CYAN_BLINK='\033[5;36m'
+tabcolors=[WHITE,RED,BLUE,GREEN,YELLOW,CYAN,CYAN_BLINK]
 
 class CmdPrompt(cmd.Cmd):
     """ prompt qui execute le code python passé par l'utilisateur
@@ -133,3 +147,72 @@ def readNbRecordsOfScenario(reftablefile,numSc):
         return nbRec
     else:
         return None
+
+class TeeLogger(object):
+    """ Classe qui remplace stdout et stderr pour logger sur 
+    la sortie standard (ancienne stdout), dans un fichier et qui appelle
+    une fonction externe simultanément
+    ATTENTION effet de bord : stderr n'est plus différentié sauf dans le terminal
+    il est écrit dans les trois sorties
+    """
+    def __init__(self, name, out_or_err, showExternal=None):
+        """ raccourci le fichier de log s'il est trop grand 
+        et remplace stdout
+        """
+        self.showExternal = showExternal
+        #self.logRotate(name)
+
+        #self.file = open(name, mode)
+        self.filename = name 
+        self.out_or_err = out_or_err
+        # on sauvegarde le out que l'on remplace
+        if out_or_err:
+            self.out = sys.stdout
+        else:
+            self.out = sys.stderr
+    def __del__(self):
+        pass
+        ## genere une exception que je ne comprends pas
+        # Exception AttributeError: "'NoneType' object has no attribute 'stdout'" in <bound method TeeLogger.__del__ of <output.TeeLogger object at 0x92ce5ec>> ignored
+        #if self.out_or_err:
+        #    sys.stdout = self.out
+        #else:
+        #    sys.stderr = self.out
+
+        #self.file.close()
+    def write(self, data):
+        #data = data.replace(u'\xb5','u')
+        data_without_color = data.replace(RED,'').replace(WHITE,'').replace(GREEN,'').replace(BLUE,'').replace(YELLOW,'').replace(CYAN,'').replace(CYAN_BLINK,'')
+        pattern = re.compile(r' \[\[.*\]\]')
+        data_short = pattern.sub('',data)
+        # on bouge le curseur au début de la dernière ligne
+        #self.app.showLogFile_win.logText.moveCursor(QTextCursor.End)
+        #self.app.showLogFile_win.logText.moveCursor(QTextCursor.StartOfLine)
+        #self.app.showLogFile_win.logText.appendPlainText("%s"%pattern.sub('',data_without_color.strip()))
+        if self.showExternal != None:
+            self.showExternal("%s"%pattern.sub('',data_without_color.strip()))
+
+        ftmp = open(self.filename,'a')
+        ftmpdata = data_without_color
+        ftmp.write(ftmpdata)
+        #ftmp.file.flush()
+        ftmp.close()
+        self.out.write(data_short)
+
+def log(level,message):
+    if level <= LOG_LEVEL:
+        dd = datetime.now()
+        color = tabcolors[level]
+
+        lastFrame = inspect.stack()[1][0]
+        params = lastFrame.f_locals
+
+        params = inspect.currentframe().f_back.f_locals
+
+        func = ""
+        if len(inspect.stack()) > 3:
+            func = "%s >> %s(%s)"%(inspect.stack()[3][3],inspect.stack()[2][3],params)
+        elif len(inspect.stack()) > 2 and len(inspect.stack()[2]) > 3:
+            func = "%s(%s)"%(inspect.stack()[2][3],params)
+
+        print "%s[%02d/%02d/%s %02d:%02d:%02d] {%s} [[%s]] %s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,func,WHITE,message)

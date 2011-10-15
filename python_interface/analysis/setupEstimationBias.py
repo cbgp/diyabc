@@ -10,7 +10,7 @@ from genericScenarioSelection import GenericScenarioSelection
 from summaryStatistics.setSummaryStatisticsMsatAnalysis import SetSummaryStatisticsMsatAnalysis
 from summaryStatistics.setSummaryStatisticsSeqAnalysis import SetSummaryStatisticsSeqAnalysis
 import output
-from output import log
+from utils.cbgpUtils import log
 
 formSetupEstimationBias,baseSetupEstimationBias = uic.loadUiType("uis/setupEstimationBias.ui")
 

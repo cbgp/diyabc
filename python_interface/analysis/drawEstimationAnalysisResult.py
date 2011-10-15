@@ -11,7 +11,7 @@ from PyQt4 import uic
 from utils.visualizescenario import *
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
-from output import log
+from utils.cbgpUtils import log
 
 formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 

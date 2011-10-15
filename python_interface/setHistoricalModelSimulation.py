@@ -12,7 +12,7 @@ from utils.visualizescenario import *
 from utils.history import *
 from set_condition import SetCondition
 import output
-from output import log
+from utils.cbgpUtils import log
 
 class SetHistoricalModelSimulation(SetHistoricalModel):
     """ Classe pour la définition du modèle historique dans le cadre 
