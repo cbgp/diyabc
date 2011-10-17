@@ -71,6 +71,7 @@ struct LocusC
 	int mini,maxi,kmin,kmax,motif_size,motif_range,nal;
 	double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
 	int **haplomic; //array[sample][gene copy]
+	short int **haplosnp; //array[sample][gene copy] 0,1,9
 	
 	void libere(bool obs, int nsample) {
       //cout<<"debut  nsample="<<nsample<<"\n";
@@ -181,11 +182,12 @@ public:
 		bool deja;
 		string s1,*ss;
 		vector <string> popname;
+		Aindivname=false;Agenotype=false;Anind=false;Aindivsexe=false;Alocus=false;
 		ifstream file(filename.c_str(), ios::in);
 		getline(file,s1);
         ss=splitwords(s1," ",&nss);
 		this->nloc=nss-3;
-		this->locus = new LocusC[this->nloc];
+		this->locus = new LocusC[this->nloc];this->Alocus=true;
 		for (int loc=0;loc<this->nloc;loc++) {
 			if (ss[loc+3]=="A") this->locus[loc].type=10;
 			else if (ss[loc+3]=="H")this->locus[loc].type=11;
@@ -225,11 +227,12 @@ public:
 			ech=0;while (ss[1]!=popname[ech]) ech++;
 			nindi[ech]++;
 		}
-		for (ech=0;ech<nech;ech++) this->nind[ech] = nindi[ech];
+		for (ech=0;ech<nech;ech++) this->nind[ech] = nindi[ech];Anind=true;
 //remplissage des noms et des génotypes des individus
-		this->indivname = new string*[nech];
+		this->indivname = new string*[nech];Aindivname=true;
+		this->indivsexe = new int*[nech];this->Aindivsexe=true;
 		for (ech=0;ech<nech;ech++) this->indivname[ech] = new string[nindi[ech]];
-		this->genotype = new string**[nech];
+		this->genotype = new string**[nech];this->Agenotype=true;
 		for (ech=0;ech<nech;ech++) {
 			this->genotype[ech] = new string*[nindi[ech]];
 			for (ind=0;ind<nindi[ech];ind++) this->genotype[ech][ind] = new string[nloc];
@@ -257,7 +260,7 @@ public:
 */
 	void purgelocmonomorphes(){
 		bool *mono;
-		int ind,ech,ind0,ech0,kloc=0,nloc=0;
+		int ind,ech,ind0,ech0,kloc=0,nloc=0,*typ;
 		string ***ge,misval="9";
 		string premier="";
 		mono = new bool[this->nloc];
@@ -287,6 +290,7 @@ public:
 		if (nloc<this->nloc){
 			cout<<"purge de "<<this->nloc-nloc<<" locus monomorphes\n";
 			ge = new string**[this->nsample];
+			typ = new int[nloc];
 			for (ech=0;ech<this->nsample;ech++) {
 				ge[ech] = new string*[this->nind[ech]];
 				for (ind=0;ind<this->nind[ech];ind++) ge[ech][ind] = new string[nloc];
@@ -296,9 +300,14 @@ public:
 					for (ech=0;ech<this->nsample;ech++) {
 						for (ind=0;ind<this->nind[ech];ind++) ge[ech][ind][kloc] = this->genotype[ech][ind][loc];
 					}
+					typ[kloc] = this->locus[loc].type;
 					kloc++;
 				} 
 			}
+			delete[]this->locus;
+			this->locus = new LocusC[kloc];
+			for (int loc=0;loc<kloc;loc++) this->locus[loc].type = typ[loc];
+			delete[]typ;
 			for (ech=0;ech<this->nsample;ech++) {
 				for (ind=0;ind<this->nind[ech];ind++){ 
 					delete[]this->genotype[ech][ind];
@@ -311,18 +320,78 @@ public:
 			    delete[]ge[ech];
 			}
 			delete[]ge;
+			this->nloc=kloc;
 		} else cout<<"tous les locus sont polymorphes";
 		
 	}
 	
-	
+	void missingdata(){
+		int ind,ech,loc,nm;
+		string misval="9";
+		this->nmisssnp=0;
+		for (ech=0;ech<this->nsample;ech++) {
+			for (ind=0;ind<this->nind[ech];ind++){ 
+				for (int loc=0;loc<this->nloc;loc++) {
+					if (this->genotype[ech][ind][loc]==misval) this->nmisssnp++;
+				}
+			}
+		}
+		if (this->nmisssnp>0) {
+			misssnp = new MissingHaplo[this->nmisssnp];
+			nm=0;
+			for (ech=0;ech<this->nsample;ech++) {
+				for (ind=0;ind<this->nind[ech];ind++){ 
+					for (int loc=0;loc<this->nloc;loc++) {
+						if (this->genotype[ech][ind][loc]==misval) {
+							this->misssnp[nm].locus = loc;
+							this->misssnp[nm].sample = ech;
+							this->misssnp[nm].indiv = ind;
+							nm++;
+						}
+					}
+				}
+			}
+					
+		}		
+	  
+	}
 /**
 * traitement des locus snp
 */
-  void do_snp(int loc) {
-	
-	
-  }
+	void do_snp(int loc) {
+		vector <short int> haplo;
+		int ech,ind;
+		string misval="9";
+		short int g0=0,g1=1,g9=9;
+		this->locus[loc].haplosnp = new short int*[this->nsample];
+		this->locus[loc].ss = new int[this->nsample];
+		this->locus[loc].samplesize = new int[this->nsample];
+		for (ech=0;ech<this->nsample;ech++) {
+			this->locus[loc].ss[ech]=0;
+			this->locus[loc].samplesize=0;
+			for (ind=0;ind<this->nind[ech];ind++){ 
+				if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[ech][ind]==2))) {
+					this->locus[loc].ss[ech] +=2;
+					if (this->genotype[ech][ind][loc]!=misval) {
+						this->locus[loc].samplesize +=2;
+						if (this->genotype[ech][ind][loc]=="0") {haplo.push_back(g0);haplo.push_back(g0);}
+						if (this->genotype[ech][ind][loc]=="1") {haplo.push_back(g0);haplo.push_back(g1);}
+						if (this->genotype[ech][ind][loc]=="2") {haplo.push_back(g1);haplo.push_back(g1);}
+					} else {haplo.push_back(g9);haplo.push_back(g9);}
+				} else {
+					this->locus[loc].ss[ech] +=1;
+					if (this->genotype[ech][ind][loc]!=misval) {
+						this->locus[loc].samplesize +=1;
+						if (this->genotype[ech][ind][loc]=="0") {haplo.push_back(g0);}
+						if (this->genotype[ech][ind][loc]=="1") {haplo.push_back(g1);}
+					} else {haplo.push_back(g9);}
+				}
+			}
+			this->locus[loc].haplosnp[ech] = new short int[this->locus[loc].ss[ech]];
+			for (int i=0;i<this->locus[loc].ss[ech];i++) this->locus[loc].haplosnp[ech][i] = haplo[i];
+			if (not haplo.empty()) haplo.clear();
+		}
+	}
 
 
 /**
@@ -335,7 +404,7 @@ public:
 		char c;
 		size_t j,j0,j1;
 		Aindivname=false;Agenotype=false;Anind=false;Aindivsexe=false;Alocus=false;
-                stringstream out;
+        stringstream out;
 		ifstream file(filename.c_str(), ios::in);
 		if (file == NULL) {
 			this->message = "Data.cpp File "+filename+" not found";
@@ -673,9 +742,8 @@ public:
 		if (this->filetype==1) {
 			this->readfilesnp(filename);
 			this->purgelocmonomorphes();
-			exit(1);
-			//this->missingdata();
 			for (loc=0;loc<this->nloc;loc++) this->do_snp(loc);
+			exit(1);
 		}
 	}
         
