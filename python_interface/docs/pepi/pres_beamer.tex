@@ -1,4 +1,5 @@
-\documentclass[handout]{beamer}
+%\documentclass[handout]{beamer}
+\documentclass{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[francais]{babel}
 \usepackage[T1]{fontenc}
@@ -8,6 +9,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \floatname{algorithm}{Algorithme} 
+\usepackage{listings}
 
 %\usetheme[width=100pt]{PaloAlto}
 \usetheme[compress]{Ilmenau}
@@ -20,7 +22,7 @@
 
 \author{Veyssier Julien}
 \institute{CBGP - INRA}
-\date\today
+\date{25 Octobre 2011}
 \setbeamertemplate{navigation symbols}{}
 %\logo{}
 \begin{document}
@@ -131,29 +133,33 @@
     Supporte un environnement hétérogène%on y reviendra plus tard
 
 \end{frame}
+\subsection{Architecture}
 \begin{frame}{Architecture}
 	\begin{columns}
 	\begin{column}[l]{0.5\linewidth}
         \begin{figure}
             %[!bh]
             \centering
-            \includegraphics[scale=0.4]{arch.png}
-            %\caption{Architecture autour d'un CDN}
+            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
+            \caption{Communication dans Proactive}
         \end{figure}
 	\end{column}
+    \setbeamercolor{block title}{fg=black,bg=orange}   
+    \setbeamercolor{block body}{fg=black,bg=orange!30}
+    \setbeamercolor{block title alerted}{fg=black,bg=blue}   
+    \setbeamercolor{block body alerted}{fg=black,bg=blue!30}
+    \setbeamercolor{block title example}{fg=black,bg=green!50!black}   
+    \setbeamercolor{block body example}{fg=black,bg=green!20}
 	\begin{column}[r]{0.5\linewidth}
-        \begin{alertblock}{Ressource management}
+        \begin{block}{Resource management}
             Gestion des noeuds de calcul
-        \end{alertblock}
-        \begin{block}{Routeur}
-             Gestion des communications entre les composants
         \end{block}
-        \begin{exampleblock}{Scheduler}
-             Gestion de la politique d'ordonnancement
-        \end{exampleblock}
-        \begin{alertblock}{Client}
-            Interaction avec l'utilisateur
+        \begin{alertblock}{Scheduler}
+             Gestion de la politique d'ordonnancement et de la soumission des t\^aches
         \end{alertblock}
+        \begin{exampleblock}{Data management}
+            Transmission des données
+        \end{exampleblock}
         
 	\end{column}
 	\end{columns}
@@ -161,64 +167,127 @@
 
 \subsection{Composants}
 \begin{frame}{Programmes}
-    \begin{block}
+	\begin{columns}
+	\begin{column}[l]{0.5\linewidth}
+        \begin{figure}
+            %[!bh]
+            \centering
+            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
+            \caption{Communication dans Proactive}
+        \end{figure}
+	\end{column}
+    \setbeamercolor{block title}{fg=black,bg=orange}   
+    \setbeamercolor{block body}{fg=black,bg=orange!30}
+    \setbeamercolor{block title alerted}{fg=black,bg=blue}   
+    \setbeamercolor{block body alerted}{fg=black,bg=blue!30}
+    \setbeamercolor{block title example}{fg=black,bg=green!50!black}   
+    \setbeamercolor{block body example}{fg=black,bg=green!20}
+	\begin{column}[r]{0.5\linewidth}
         
-    \begin{itemize}
-            % et leurs clients respectifs
-        \item Noeud de calcul $\Longrightarrow$ accepte et traite des t\^aches
-        \item Gestionnaire de ressources $\Longrightarrow$ recense et contrôle les noeuds de calcul
-        \item Ordonnanceur $\Longrightarrow$ accepte des t\^aches et les affecte à des noeuds de calcul
-        \item Serveur de données $\Longrightarrow$ permet la transmission des données liées aux calculs
-    \end{itemize}
-    \end{block}
+        \begin{block}{Resource node}
+            Accepte et traite des t\^aches
+        \end{block}
+        \begin{block}{Resource manager}
+            Contrôle les noeuds de calcul
+        \end{block}
+        \begin{alertblock}{Scheduler}
+            Attend des t\^aches et les affecte à des noeuds de calcul
+        \end{alertblock}
+        \begin{exampleblock}{Dataserver}
+            Transmet les données liées aux calculs
+        \end{exampleblock}
+        
+	\end{column}
+	\end{columns}
 \end{frame}
 
-\begin{frame}{Noeud de calcul}
-     a lancer sur chaque machine ressource
-     reçoit les taches, les execute dans un env temporaire qui sera nettoyé
+\begin{frame}{Resource node et Resource manager}
+	\begin{columns}
+	\begin{column}[l]{0.5\linewidth}
+        \begin{figure}
+            %[!bh]
+            \centering
+            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{node_declaration.pdf}
+            \caption{Communication dans Proactive}
+        \end{figure}
+	\end{column}
+    \setbeamercolor{block title}{fg=black,bg=orange}   
+    \setbeamercolor{block body}{fg=black,bg=orange!30}
+    \setbeamercolor{block title alerted}{fg=black,bg=blue}   
+    \setbeamercolor{block body alerted}{fg=black,bg=blue!30}
+	\begin{column}[r]{0.5\linewidth}
+        
+        \begin{block}{Resource node}<1->
+             a lancer sur chaque machine ressource
+             reçoit les taches, les execute dans un env temporaire qui sera nettoyé
+        \end{block}
+        \begin{block}{Resource manager}<2->
+             attend la connexion des noeuds de calcul et les requêtes de l'ordonnanceur
+        \end{block}
+	\end{column}
+	\end{columns}
 \end{frame}
 
-\begin{frame}{Gestionnaire de ressources}
-     attend la connexion des noeuds de calcul et les requêtes de l'ordonnanceur
+\begin{frame}{Dataserver}
+	\begin{columns}
+	\begin{column}[l]{0.5\linewidth}
+        \begin{figure}
+            %[!bh]
+            \centering
+            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
+            \caption{Communication dans Proactive}
+        \end{figure}
+	\end{column}
+    \setbeamercolor{block title example}{fg=black,bg=green!50!black}   
+    \setbeamercolor{block body example}{fg=black,bg=green!20}
+	\begin{column}[r]{0.5\linewidth}
+        \begin{exampleblock}{Dataserver}
+             Crée un espace accessible en lecture et en écriture
+
+             Peut être lancé par un administrateur pour fournir un espace permanent commun à tous les utilisateurs (faisable au CBGP, petite taille)
+             peut être lancé par chaque client pour créer l'espace sur sa propre machine
+             Plusieurs client peuvent avoir accès au même espace
+            
+        \end{exampleblock}
+        
+	\end{column}
+	\end{columns}
     
 \end{frame}
 
-\begin{frame}{Serveur de données}
-     permet aux noeuds de calcul de ``monter'' un espace pour y lire et y écrire
-
-     Peut être lancé par un administrateur pour fournir un espace permanent commun à tous les utilisateurs (faisable au CBGP, petite taille)
-     peut être lancé par chaque client pour créer l'espace sur sa propre machine
-    
-\end{frame}
-
-\begin{frame}{Ordonnanceur}
-     est l'intermédiaire entre le client et le gestionnaire de ressources
-     Il gère l'authentification des clients et leurs droits d'accès aux ressources 
-     et sait communiquer avec le rm pour affecter les taches aux noeuds de calcul
+\begin{frame}{Ordonnanceur (Scheduler)}
+	\begin{columns}
+	\begin{column}[l]{0.5\linewidth}
+        \begin{figure}
+            %[!bh]
+            \centering
+            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{submit.pdf}
+            \caption{Communication dans Proactive}
+        \end{figure}
+	\end{column}
+    \setbeamercolor{block title}{fg=black,bg=orange}   
+    \setbeamercolor{block body}{fg=black,bg=orange!30}
+    \setbeamercolor{block title alerted}{fg=black,bg=blue}   
+    \setbeamercolor{block body alerted}{fg=black,bg=blue!30}
+	\begin{column}[r]{0.5\linewidth}
+        \begin{block}{Scheduler}
+             est l'intermédiaire entre le client et le gestionnaire de ressources
+             Il gère l'authentification des clients et leurs droits d'accès aux ressources 
+             et sait communiquer avec le rm pour affecter les taches aux noeuds de calcul
+        \end{block}
+        
+	\end{column}
+	\end{columns}
     
 \end{frame}
 
 \subsection{Architecture}
 
-\begin{frame}{Communication réseau}
-    \vspace{-1.9cm}
+\begin{frame}{Communication dans Proactive}
     \begin{figure}
         %[!bh]
-        \hspace*{-1.8cm}
         \centering
-        \includegraphics[scale=0.52]{netmap.pdf}
-        %\caption{Communication réelle entre les entités logicielles de Proactive}
-    \end{figure}
-    
-\end{frame}
-
-\begin{frame}{Communication dans le réseau virtuel de Proactive}
-    \vspace{-2.9cm}
-    \begin{figure}
-        %[!bh]
-        \hspace*{-1.2cm}
-        \centering
-        \includegraphics[scale=0.62]{netmap_abs.pdf}
+        \includegraphics[trim=4cm 13cm 4cm 4cm,scale=0.62]{netmap_abs.pdf}
         %\caption{Principe de communication dans le réseau Proactive}
     \end{figure}
     
@@ -226,38 +295,77 @@
 
 \subsection{Définition d'une tache}
 \begin{frame}
-	\begin{columns}
-	\begin{column}[l]{0.5\linewidth}
         \begin{block}{Qu'est-ce qu'une t\^ache ?}
+        % en java, par xml, ou par liste de commandes
             \begin{itemize}
                 \item Un identifiant
                 \item Un serveur de données
                 \item Une liste d'opération à effectuer %option dependances, retry..
             \end{itemize}
         \end{block}
-        \begin{exampleblock}{Définition en Java}
-            \begin{itemize}
-                \item Directement dans un programme en Java qui se connecte à l'ordonnanceur
-                \item Gestion fine
-            \end{itemize}
-        \end{exampleblock}
-	\end{column}
-	\begin{column}[r]{0.5\linewidth}
-        % en java, par xml, ou par liste de commandes
-        \begin{exampleblock}{Définition par XML}
-            \begin{itemize}
-                \item Fichier XML qui spécifie chaque paramètre
-                \item Plus simple mais moins complète que Java
-            \end{itemize}
-        \end{exampleblock}
-        \begin{exampleblock}{Liste de commandes}% natives obligatoirement
+\end{frame}
+
+\begin{frame}{Avec une liste de commandes natives}
+	\begin{columns}
+	\begin{column}[l]{0.4\linewidth}
+        \begin{exampleblock}{liste}
             \begin{itemize}
                 \item Liste de commandes qui seront exécutées directement sur un noeud de calcul
                 \item Gestion basique
             \end{itemize}
         \end{exampleblock}
 	\end{column}
+	\begin{column}[r]{0.6\linewidth}
+        /path/to/script\_1.sh arg1 arg2\newline
+        /path/to/script\_2.sh arg3 arg4\newline
+        /path/to/script\_3.sh arg5 arg6\newline
+	\end{column}
 	\end{columns}
+    
+\end{frame}
+\begin{frame}{En XML}
+	\begin{columns}
+	\begin{column}[l]{0.4\linewidth}
+        \begin{exampleblock}{Définition par XML}
+            \begin{itemize}
+                \item Fichier XML qui spécifie chaque paramètre
+                \item Plus simple mais moins complète que Java
+            \end{itemize}
+        \end{exampleblock}
+	\end{column}
+	\begin{column}[r]{0.6\linewidth}
+        \vspace{-1cm}
+        \begin{figure}
+            %[!bh]
+            \centering
+            \includegraphics[scale=0.27]{jobxml.png}
+            %\caption{Communication dans Proactive}
+        \end{figure}
+	\end{column}
+	\end{columns}
+    
+\end{frame}
+\begin{frame}{En Java}
+	\begin{columns}
+	\begin{column}[l]{0.4\linewidth}
+        \begin{exampleblock}{Définition dans un programme en Java}
+            \begin{itemize}
+                \item Directement dans un programme en Java qui se connecte au scheduler
+                \item Gestion fine
+            \end{itemize}
+        \end{exampleblock}
+	\end{column}
+	\begin{column}[r]{0.6\linewidth}
+        \vspace{-1cm}
+        \begin{figure}
+            %[!bh]
+            \centering
+            \includegraphics[scale=0.32]{jobjava.png}
+            %\caption{Communication dans Proactive}
+        \end{figure}
+	\end{column}
+	\end{columns}
+    
 \end{frame}
 
 \subsection{Outils graphiques}
@@ -270,7 +378,7 @@
         %\caption{Principe de communication dans le réseau Proactive}
     \end{figure}
 \end{frame}
-\begin{frame}{Ressource manager client}
+\begin{frame}{Resource manager client}
     % interessant pour la partie monitoring
     \begin{figure}
         %[!bh]
