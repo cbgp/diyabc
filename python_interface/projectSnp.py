@@ -38,33 +38,31 @@ class ProjectSnp(ProjectReftable):
     def __init__(self,name,dir=None,parent=None):
         super(ProjectSnp,self).__init__(name,dir,parent)
 
-        self.ui.setSumSnpButton.show()
-        self.ui.setGeneticButton.hide()
         self.ui.nbMicrosatLabel.hide()
         self.ui.nbSequencesLabel.hide()
         # TODO suppr cette ligne
         self.setGenValid(False)
-        QObject.connect(self.ui.setSumSnpButton,SIGNAL("clicked()"),self.setSumStat)
+        #QObject.connect(self.ui.setSumSnpButton,SIGNAL("clicked()"),self.setSumStat)
         self.ui.label_15.setText("Summary statistics")
 
-    def setSumStat(self):
-        """ passe sur l'onglet correspondant
+    def setGenetic(self):
+        """ initie la définition des summary statistics
         """
         log(1,"Entering in Summary statistics")
         self.ui.refTableStack.addWidget(self.sum_stat_win)
         self.ui.refTableStack.setCurrentWidget(self.sum_stat_win)
         self.setGenValid(False)
 
-    def setGenValid(self,valid):
-        """ met à jour l'état des genetic data
-        et change l'icone du bouton en fonction de la validité
-        """
-        self.gen_state_valid = valid
-        self.verifyRefTableValid()
-        if valid:
-            self.ui.setSumSnpButton.setIcon(QIcon("docs/icons/ok.png"))
-        else:
-            self.ui.setSumSnpButton.setIcon(QIcon("docs/icons/redcross.png"))
+    #def setGenValid(self,valid):
+    #    """ met à jour l'état des genetic data
+    #    et change l'icone du bouton en fonction de la validité
+    #    """
+    #    self.gen_state_valid = valid
+    #    self.verifyRefTableValid()
+    #    if valid:
+    #        self.ui.setSumSnpButton.setIcon(QIcon("docs/icons/ok.png"))
+    #    else:
+    #        self.ui.setSumSnpButton.setIcon(QIcon("docs/icons/redcross.png"))
 
     def checkAll(self):
         """ vérification du modèle historique et mutationnel
