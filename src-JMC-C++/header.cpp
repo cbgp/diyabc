@@ -302,7 +302,7 @@ public:
                 //cout <<"avant partie loci\n";fflush(stdin);
         getline(file,s1);       //ligne vide
         getline(file,s1);       //ligne "loci description"
-        grm=1;
+        grm=1;                  //nombre maximal de groupes
         for (int loc=0;loc<this->dataobs.nloc;loc++){
             getline(file,s1);
             ss=splitwords(s1," ",&nss);
@@ -646,7 +646,7 @@ public:
                }
             }
         }
-        if (debuglevel==2) cout<<"header.txt : fin de l'a lecture des summary statsétablissement des paramètres mutationnels'\n";
+        if (debuglevel==2) cout<<"header.txt : fin de l'établissement des paramètres mutationnels'\n";
 
   //Entete du fichier reftable
         getline(file,s1);       //ligne vide
