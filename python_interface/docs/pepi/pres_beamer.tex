@@ -126,12 +126,15 @@
 	\end{columns}
 \end{frame}
 
-\begin{frame}{Proactive}
-    Exploration des possibilités pour une éventuelle intégration au CBGP
-\end{frame}
+%\begin{frame}{Proactive}
+%    Exploration des possibilités pour une éventuelle intégration au CBGP
+%\end{frame}
 
 \section[Fonctionnement]{Fonctionnement de Proactive}
-\begin{frame}{Caractéristiques}
+\begin{frame}
+	\tableofcontents[currentsection]
+\end{frame}
+\begin{frame}{Caractéristiques principales}
     \begin{itemize}
         \item Langage de programmation $\Longrightarrow$ Java + Bash/Batch
         \item Portable
@@ -145,6 +148,9 @@
 
 \end{frame}
 \subsection{Architecture}
+\begin{frame}
+	\tableofcontents[currentsubsection]
+\end{frame}
 \begin{frame}{Architecture}
 	\begin{columns}
 	\begin{column}[l]{0.5\linewidth}
@@ -166,7 +172,7 @@
             Gestion des noeuds de calcul
         \end{block}
         \begin{alertblock}{Scheduler}
-             Gestion de la politique d'ordonnancement et de la soumission des t\^aches
+             Gestion de la politique d'ordonnancement et de la soumission des calculs
         \end{alertblock}
         \begin{exampleblock}{Data management}
             Transmission des données
@@ -177,6 +183,9 @@
 \end{frame}
 
 \subsection{Composants}
+\begin{frame}
+	\tableofcontents[currentsubsection]
+\end{frame}
 \begin{frame}{Programmes}
 	\begin{columns}
 	\begin{column}[l]{0.5\linewidth}
@@ -196,13 +205,13 @@
 	\begin{column}[r]{0.5\linewidth}
         
         \begin{block}{Resource node}
-            Accepte et traite des t\^aches
+            Accepte et traite des calculs
         \end{block}
         \begin{block}{Resource manager}
             Contrôle les noeuds de calcul
         \end{block}
         \begin{alertblock}{Scheduler}
-            Attend des t\^aches et les affecte à des noeuds de calcul
+            Attend des calculs et les affecte à des noeuds de calcul
         \end{alertblock}
         \begin{exampleblock}{Dataserver}
             Transmet les données liées aux calculs
@@ -231,7 +240,7 @@
         \begin{block}{Resource node}<1->
             \begin{itemize}
                 \item À lancer sur chaque machine
-                \item Reçoit les taches
+                \item Reçoit les calculs
                 \item Les exécute dans un environnement temporaire
             \end{itemize}
         \end{block}
@@ -266,7 +275,7 @@
              %Peut être lancé par un administrateur pour fournir un espace permanent commun à tous les utilisateurs (faisable au CBGP, petite taille)
              %peut être lancé par chaque client pour créer l'espace sur sa propre machine
              \item Permanent et commun ou temporaire et personnel
-             \item Espace partageable entre les clients et les t\^aches
+             \item Espace partageable entre différents clients et calculs
              %Plusieurs client peuvent avoir accès au même espace
             \end{itemize}
             
@@ -307,11 +316,11 @@
             \item Intermédiaire entre le client et le resource manager
             \item Authentification des clients 
             \item Droits d'accès aux ressources 
-            \item Affectation des taches aux resource nodes
+            \item Affectation des calculs aux resource nodes
             \end{itemize}
         \end{block}}
         \only<2-3>{
-        \begin{block}{Soumission d'un job}
+        \begin{block}{Soumission d'un calcul}
             \begin{itemize}
             \item<2-> Transmission au scheduler
             \item<2-> Transmission au resource manager
@@ -338,20 +347,23 @@
 %    
 %\end{frame}
 
-\subsection{Définition d'une tache}
+\subsection{Définition d'un calcul}
 \begin{frame}
-        \begin{block}{Qu'est-ce qu'une t\^ache ? (Job)}<1->
+	\tableofcontents[currentsubsection]
+\end{frame}
+\begin{frame}
+        \begin{block}{Qu'est-ce qu'un calcul ? (Job)}<1->
         % en java, par xml, ou par liste de commandes
             \begin{itemize}
                 \item Un identifiant
                 \item Un serveur de données
-                \item Une liste d'opération à effectuer %option dependances, retry..
+                \item Une liste d'opérations à effectuer (tasks)%option dependances, retry..
             \end{itemize}
         \end{block}
-        \begin{exampleblock}{Quels sont les types de t\^ache ?}<2->
+        \begin{exampleblock}{Quels sont les types de job ?}<2->
         % en java, par xml, ou par liste de commandes
             \begin{itemize}
-                \item Native : Lance un script/binaire qui doit être compatible avec le noeud
+                \item Natif : Lance un script/binaire qui doit être compatible avec le noeud
                 \item Java : transport et exécution d'un exécutable Java
             \end{itemize}
         \end{exampleblock}
@@ -368,6 +380,7 @@
 	\begin{column}[l]{0.4\linewidth}
         \begin{exampleblock}{liste}
             \begin{itemize}
+                \item Jobs natifs uniquement (possibilité de sélection des nodes)
                 \item Liste de commandes qui seront exécutées directement sur un noeud de calcul
                 \item Gestion basique
             \end{itemize}
@@ -386,10 +399,9 @@
 	\begin{column}[l]{0.4\linewidth}
         \begin{exampleblock}{Définition par XML}
             \begin{itemize}
-                \item T\^aches natives ou Java
+                \item Jobs natifs ou Java
                 \item Fichier XML qui spécifie chaque paramètre
                 \item Plus simple mais moins complète que Java
-                \item T\^aches natives ou Java
             \end{itemize}
         \end{exampleblock}
 	\end{column}
@@ -410,9 +422,9 @@
 	\begin{column}[l]{0.4\linewidth}
         \begin{exampleblock}{Définition dans un programme en Java}
             \begin{itemize}
+                \item Jobs natifs ou Java
                 \item Directement dans un programme en Java qui se connecte au scheduler
                 \item Gestion fine
-                \item T\^aches natives ou Java
             \end{itemize}
         \end{exampleblock}
 	\end{column}
@@ -430,6 +442,9 @@
 \end{frame}
 
 \subsection{Outils graphiques}
+\begin{frame}
+	\tableofcontents[currentsubsection]
+\end{frame}
 \begin{frame}{Scheduler client}
     % interessant pour la partie job submission et job results
     \begin{figure}
@@ -473,8 +488,11 @@
             %\caption{}
         \end{figure}
 \end{frame}
-\subsection{Ressources individuelles}
-\begin{frame}{Utiliser les postes de travail}
+\subsection{Utilisation de ressources individuelles}
+\begin{frame}
+	\tableofcontents[currentsubsection]
+\end{frame}
+\begin{frame}{Les postes de travail}
     \setbeamercolor{block title}{fg=black,bg=red!65!black}   
     \setbeamercolor{block body}{fg=black,bg=red!10}
     \begin{block}{Déployer manuellement des resource nodes}
@@ -494,6 +512,9 @@
         \end{figure}
 \end{frame}
 \subsection{Cloud}
+\begin{frame}
+	\tableofcontents[currentsubsection]
+\end{frame}
 \begin{frame}{Utiliser les ressources d'un cloud}
     \setbeamercolor{block title}{fg=black,bg=orange}   
     \setbeamercolor{block body}{fg=black,bg=orange!10}
@@ -530,6 +551,27 @@
             %\caption{}
         \end{figure}
     
+\end{frame}
+
+\begin{frame}{Conclusion}
+    \begin{block}{Bons points}
+        \begin{itemize}
+        \item Convient à différents types d'administrateurs % config facile si on entre pas dans les détails
+        \item Convient à différents types d'utilisateurs % celui qui veut utiliser les inputspaces en http..
+        \item S'intègre dans une architecture existante
+        \item Dispose d'outils visuels pratiques et efficaces
+    \end{itemize}
+        
+    \end{block}
+
+    \begin{alertblock}{Mauvais points}
+    \begin{itemize}
+        \item Documentation difficile d'accès et périmée
+        \item MAIS mailing-list réactive
+    \end{itemize}
+        
+    \end{alertblock}
+
 \end{frame}
 
 
