@@ -12,7 +12,7 @@
         <pathElement path="/home/julien/vcs/git/diyabc.git/python_interface/docs/proactive_files/javatest/"/> 
         <!--<pathElement path="/home/julien/vcs/git/diyabc.git/python_interface/docs/executables/javatest/MyTask.jar"/>-->
     </jobClasspath>
-    <outputSpace url="pappamr://4103/jupa?proactive_vfs_provider_path=/" /> 
+    <outputSpace url="pappamr://4101/jupa?proactive_vfs_provider_path=/" /> 
 	<taskFlow>
 		<task name="task1" preciousResult="true">
 			<description>Will display a text</description>
