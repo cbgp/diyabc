@@ -15,7 +15,7 @@ const
   ml:array[0..4]of integer = (1000,5000,10000,20000,40000);
   nbr=10;
   anbr=1.0/nbr;
-  nrep=100;
+  nrep=1000;
 
 type
   arrayS =array of string;
@@ -385,12 +385,6 @@ procedure calhet(tout:boolean);
             DD[0,0,k,rep]:=Dkl;DD[0,1,k,rep]:=Dabs;DD[0,2,k,rep]:=Deuc;DD[0,3,k,rep]:=Dqua;DD[0,4,k,rep]:=Dcra;
           end;
       end;
-    assignfile(f1,'het.txt');rewrite(f1);
-    for k:=0 to pred(npop) do
-      begin
-        for loc:=0 to pred(nlocu) do if locOK[k][index[loc]] then write(f1,het[k][index[loc]]:7:4);writeln(f1);
-      end;
-    closefile(f1);
   end;
   
 procedure NeiDist(tout:boolean);
@@ -398,7 +392,6 @@ procedure NeiDist(tout:boolean);
 	i,j,k,nl,ipop,jpop,np,loc,q,nlocu,N,M :integer;
 	neimoy,neivar,sx,sx2,a,b,ne,rangx,rangy  :vecteurF;
 	Dkl,x,Dabs,Deuc,fi,fj,gi,gj,sw,Dqua,Dcra,U,V :extended;
-	f1  :textfile;
 	locOK  :array of array of boolean;
 	nei  :array of array of extended;
 	pob,quant :array of extended;
@@ -475,12 +468,6 @@ procedure NeiDist(tout:boolean);
 			end;
 		end;
     end;
-  assignfile(f1,'nei.txt');rewrite(f1);
-  for k:=0 to pred(np) do
-    begin
-      for loc:=0 to pred(nlocu) do if locOK[k][index[loc]] then write(f1,nei[k][index[loc]]:7:4);writeln(f1);
-    end;
-  closefile(f1);
 end;
 
 procedure calFst(tout:boolean);
@@ -488,7 +475,6 @@ procedure calFst(tout:boolean);
 	i,k,nl,ipop,jpop,np,loc,all,q,nlocu,N,M :integer;
 	fstmoy,fstvar,sx,sx2,a,b,fs,rangx,rangy  :vecteurF;
 	sniA,sniAA,sni,sni2,s2A,fi,fj,sw,sw2,a1,b1,Dkl,x,Dabs,Deuc,Dqua,Dcra,U,V :extended;
-	f1  :textfile;
 	locOK  :array of array of boolean;
 	fst,w  :array of array of extended;
 	s1l,s3l,nc,MSI,MSP,s2I,s2P:extended;
@@ -612,13 +598,6 @@ procedure calFst(tout:boolean);
 			  end;
 		end;
       end;
-	assignfile(f1,'fst.txt');rewrite(f1);
-    for k:=0 to pred(np) do
-      begin
-		assignfile(f1,'fst_'+inttostr(k)+'.txt');rewrite(f1);
-        for loc:=0 to pred(nlocu) do if locOK[k][index[loc]] then write(f1,fst[k][index[loc]]:7:4);writeln(f1);
-		closefile(f1);      
-	  end;
   end;
   
 procedure compdist;

@@ -302,130 +302,156 @@ public:
                 //cout <<"avant partie loci\n";fflush(stdin);
         getline(file,s1);       //ligne vide
         getline(file,s1);       //ligne "loci description"
-        grm=1;                  //nombre maximal de groupes
-        for (int loc=0;loc<this->dataobs.nloc;loc++){
-            getline(file,s1);
-            ss=splitwords(s1," ",&nss);
-            k=0;while (ss[k].find("[")==string::npos) k++;
-            if (ss[k]=="[M]") {
-                s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());this->dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
-                this->dataobs.locus[loc].motif_size=atoi(ss[k+2].c_str());this->dataobs.locus[loc].motif_range=atoi(ss[k+3].c_str());
-            }
-            else if (ss[k]=="[S]") {
-                s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());this->dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
-                this->dataobs.locus[loc].mutsit.resize(this->dataobs.locus[loc].dnalength);
-                //cout<<this->dataobs.locus[loc].dnalength<<"\n";
-                //this->dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());  //inutile variable déjà renseignée
-            }
-        }
-        delete [] ss;
+		if (this->dataobs.filetype==0){ //fichier GENEPOP
+			grm=1;                  //nombre maximal de groupes
+			for (int loc=0;loc<this->dataobs.nloc;loc++){
+				getline(file,s1);
+				ss=splitwords(s1," ",&nss);
+				k=0;while (ss[k].find("[")==string::npos) k++;
+				if (ss[k]=="[M]") {
+					s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());this->dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
+					this->dataobs.locus[loc].motif_size=atoi(ss[k+2].c_str());this->dataobs.locus[loc].motif_range=atoi(ss[k+3].c_str());
+				}
+				else if (ss[k]=="[S]") {
+					s1=ss[k+1].substr(1,ss[k+1].length());gr=atoi(s1.c_str());this->dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
+					this->dataobs.locus[loc].mutsit.resize(this->dataobs.locus[loc].dnalength);
+					//cout<<this->dataobs.locus[loc].dnalength<<"\n";
+					//this->dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());  //inutile variable déjà renseignée
+				}
+			}
+			delete [] ss;
+		} else {			//fichier SNP
+			this->ngroupes=getwordint(s1,3);
+			this->groupe = new LocusGroupC[this->ngroupes+1];
+			for (gr=1;gr<=this->ngroupes;gr++) {
+				getline(file,s1);
+				this->groupe[gr].nloc=getwordint(s1,1);
+				this->groupe[gr].loc = new int[this->groupe[gr].nloc];
+				if (s1.find("<A>")!=string::npos) this->groupe[gr].type=10;
+				else if (s1.find("<H>")!=string::npos) this->groupe[gr].type=11;
+				else if (s1.find("<X>")!=string::npos) this->groupe[gr].type=12;
+				else if (s1.find("<Y>")!=string::npos) this->groupe[gr].type=13;
+				else if (s1.find("<M>")!=string::npos) this->groupe[gr].type=14;
+				k1=0;
+				for (int loc=0;loc<this->dataobs.nloc;loc++) {
+					if (this->dataobs.locus[loc].type==this->groupe[gr].type) {
+						  this->groupe[gr].loc[k1]=loc;
+						  k1++;
+					} 
+				  
+				}
+			}
+			
+		}
         if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie description des locus\n";
-//Partie group priors
-                //cout <<"avant partie group priors\n";fflush(stdin);
-        getline(file,s1);       //ligne vide
-        getline(file,s1);       //ligne "group prior"
-                this->ngroupes=getwordint(s1,3);
-        //cout<<"header.ngroupes="<<this->ngroupes;
-        this->groupe = new LocusGroupC[this->ngroupes+1];
-        this->assignloc(0);
-        //cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
-        for (gr=1;gr<=this->ngroupes;gr++){
-            getline(file,s1);
-            ss=splitwords(s1," ",&nss);
-            this->assignloc(gr);
-            if (ss[2]=="[M]") {
-                this->groupe[gr].type=0;
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutmoy = this->readpriormut(ss1[1]);delete [] ss1;
-                this->groupe[gr].priormutmoy.fixed=false;
-                if (this->groupe[gr].priormutmoy.constant) this->groupe[gr].mutmoy=this->groupe[gr].priormutmoy.mini;
-                else {this->groupe[gr].mutmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy   = this->readpriormut(ss1[1]);delete [] ss1;
-                this->groupe[gr].priorPmoy.fixed=false;
-                if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini;
-                else {this->groupe[gr].Pmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
+		if (this->dataobs.filetype==0){
+	//Partie group priors
+					//cout <<"avant partie group priors\n";fflush(stdin);
+			getline(file,s1);       //ligne vide
+			getline(file,s1);       //ligne "group prior"
+					this->ngroupes=getwordint(s1,3);
+			//cout<<"header.ngroupes="<<this->ngroupes;
+			this->groupe = new LocusGroupC[this->ngroupes+1];
+			this->assignloc(0);
+			//cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
+			for (gr=1;gr<=this->ngroupes;gr++){
+				getline(file,s1);
+				ss=splitwords(s1," ",&nss);
+				this->assignloc(gr);
+				if (ss[2]=="[M]") {
+					this->groupe[gr].type=0;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutmoy = this->readpriormut(ss1[1]);delete [] ss1;
+					this->groupe[gr].priormutmoy.fixed=false;
+					if (this->groupe[gr].priormutmoy.constant) this->groupe[gr].mutmoy=this->groupe[gr].priormutmoy.mini;
+					else {this->groupe[gr].mutmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy   = this->readpriormut(ss1[1]);delete [] ss1;
+					this->groupe[gr].priorPmoy.fixed=false;
+					if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini;
+					else {this->groupe[gr].Pmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
 
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readpriormut(ss1[1]);delete [] ss1;
-                //cout<<"Ploc    ";this->groupe[gr].priorPloc.ecris();
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readpriormut(ss1[1]);delete [] ss1;
+					//cout<<"Ploc    ";this->groupe[gr].priorPloc.ecris();
 
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsnimoy = this->readpriormut(ss1[1]);delete [] ss1;
-                this->groupe[gr].priorsnimoy.fixed=false;
-                if (this->groupe[gr].priorsnimoy.constant) this->groupe[gr].snimoy=this->groupe[gr].priorsnimoy.mini;
-                else {this->groupe[gr].snimoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc = this->readpriormut(ss1[1]);delete [] ss1;
-                //cout<<"sniloc  ";this->groupe[gr].priorsniloc.ecris();
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsnimoy = this->readpriormut(ss1[1]);delete [] ss1;
+					this->groupe[gr].priorsnimoy.fixed=false;
+					if (this->groupe[gr].priorsnimoy.constant) this->groupe[gr].snimoy=this->groupe[gr].priorsnimoy.mini;
+					else {this->groupe[gr].snimoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc = this->readpriormut(ss1[1]);delete [] ss1;
+					//cout<<"sniloc  ";this->groupe[gr].priorsniloc.ecris();
 
-            } else if (ss[2]=="[S]") {
-                this->groupe[gr].type=1;
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusmoy = this->readpriormut(ss1[1]);delete [] ss1;
-                this->groupe[gr].priormusmoy.fixed=false;
-                if (this->groupe[gr].priormusmoy.constant) this->groupe[gr].musmoy=this->groupe[gr].priormusmoy.mini;
-                else {this->groupe[gr].musmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
+				} else if (ss[2]=="[S]") {
+					this->groupe[gr].type=1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusmoy = this->readpriormut(ss1[1]);delete [] ss1;
+					this->groupe[gr].priormusmoy.fixed=false;
+					if (this->groupe[gr].priormusmoy.constant) this->groupe[gr].musmoy=this->groupe[gr].priormusmoy.mini;
+					else {this->groupe[gr].musmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
 
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc = this->readpriormut(ss1[1]);delete [] ss1;
 
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1moy  = this->readpriormut(ss1[1]);delete [] ss1;
-                this->groupe[gr].priork1moy.fixed=false;
-                if (this->groupe[gr].priork1moy.constant) this->groupe[gr].k1moy=this->groupe[gr].priork1moy.mini;
-                else this->groupe[gr].k1moy=-1.0;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1moy  = this->readpriormut(ss1[1]);delete [] ss1;
+					this->groupe[gr].priork1moy.fixed=false;
+					if (this->groupe[gr].priork1moy.constant) this->groupe[gr].k1moy=this->groupe[gr].priork1moy.mini;
+					else this->groupe[gr].k1moy=-1.0;
 
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readpriormut(ss1[1]);delete [] ss1;
 
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2moy  = this->readpriormut(ss1[1]);delete [] ss1;
-                this->groupe[gr].priork2moy.fixed=false;
-                if (this->groupe[gr].priork2moy.constant) this->groupe[gr].k2moy=this->groupe[gr].priork2moy.mini;
-                else this->groupe[gr].k2moy=-1.0;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2moy  = this->readpriormut(ss1[1]);delete [] ss1;
+					this->groupe[gr].priork2moy.fixed=false;
+					if (this->groupe[gr].priork2moy.constant) this->groupe[gr].k2moy=this->groupe[gr].priork2moy.mini;
+					else this->groupe[gr].k2moy=-1.0;
 
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readpriormut(ss1[1]);delete [] ss1;
 
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);
-                this->groupe[gr].p_fixe=atof(ss1[2].c_str());this->groupe[gr].gams=atof(ss1[3].c_str());
-                if (ss1[1]=="JK") this->groupe[gr].mutmod=0;
-                else if (ss1[1]=="K2P") this->groupe[gr].mutmod=1;
-                else if (ss1[1]=="HKY") this->groupe[gr].mutmod=2;
-                else if (ss1[1]=="TN") this->groupe[gr].mutmod=3;
-                //cout<<"mutmod = "<<this->groupe[gr].mutmod <<"\n";
-                if (this->groupe[gr].mutmod>0) {
-                    if (not this->groupe[gr].priork1moy.constant)for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}
-                }
-                if (this->groupe[gr].mutmod==3) {
-                    if (not this->groupe[gr].priork2moy.constant)for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}
-                }
-            }
-        }
-        if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie définition des groupes\n";
-//Mise à jour des locus séquences
-        MwcGen mwc;
-        mwc.randinit(999,time(NULL));
-        int nsv;
-        bool nouveau;
-        for (int loc=0;loc<this->dataobs.nloc;loc++){
-            gr=this->dataobs.locus[loc].groupe;
-            if ((this->dataobs.locus[loc].type>4)and(gr>0)){
-                nsv = floor(this->dataobs.locus[loc].dnalength*(1.0-0.01*this->groupe[gr].p_fixe)+0.5);
-                for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] = mwc.ggamma3(1.0,this->groupe[gr].gams);
-                int *sitefix;
-                sitefix=new int[this->dataobs.locus[loc].dnalength-nsv];
-                for (int i=0;i<this->dataobs.locus[loc].dnalength-nsv;i++) {
-                    if (i==0) sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
-                    else {
-                        do {
-                            sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
-                            nouveau=true;j=0;
-                            while((nouveau)and(j<i)) {nouveau=(sitefix[i]!=sitefix[j]);j++;}
-                        } while (not nouveau);
-                    }
-                    this->dataobs.locus[loc].mutsit[i] = 0.0;
-                }
-                delete [] sitefix;
-                double s=0.0;
-                for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) s += this->dataobs.locus[loc].mutsit[i];
-                for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] /=s;
-            }
-        }
-        if (debuglevel==2) cout<<"header.txt : fin de la mise à jour des locus séquences\n";
-        //cout<<"avant la mise à jour des paramvar\n";fflush(stdin);
-        delete [] ss;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);
+					this->groupe[gr].p_fixe=atof(ss1[2].c_str());this->groupe[gr].gams=atof(ss1[3].c_str());
+					if (ss1[1]=="JK") this->groupe[gr].mutmod=0;
+					else if (ss1[1]=="K2P") this->groupe[gr].mutmod=1;
+					else if (ss1[1]=="HKY") this->groupe[gr].mutmod=2;
+					else if (ss1[1]=="TN") this->groupe[gr].mutmod=3;
+					//cout<<"mutmod = "<<this->groupe[gr].mutmod <<"\n";
+					if (this->groupe[gr].mutmod>0) {
+						if (not this->groupe[gr].priork1moy.constant)for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}
+					}
+					if (this->groupe[gr].mutmod==3) {
+						if (not this->groupe[gr].priork2moy.constant)for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}
+					}
+				}
+			}
+			if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie définition des groupes\n";
+	//Mise à jour des locus séquences
+			MwcGen mwc;
+			mwc.randinit(999,time(NULL));
+			int nsv;
+			bool nouveau;
+			for (int loc=0;loc<this->dataobs.nloc;loc++){
+				gr=this->dataobs.locus[loc].groupe;
+				if ((this->dataobs.locus[loc].type>4)and(gr>0)){
+					nsv = floor(this->dataobs.locus[loc].dnalength*(1.0-0.01*this->groupe[gr].p_fixe)+0.5);
+					for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] = mwc.ggamma3(1.0,this->groupe[gr].gams);
+					int *sitefix;
+					sitefix=new int[this->dataobs.locus[loc].dnalength-nsv];
+					for (int i=0;i<this->dataobs.locus[loc].dnalength-nsv;i++) {
+						if (i==0) sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
+						else {
+							do {
+								sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
+								nouveau=true;j=0;
+								while((nouveau)and(j<i)) {nouveau=(sitefix[i]!=sitefix[j]);j++;}
+							} while (not nouveau);
+						}
+						this->dataobs.locus[loc].mutsit[i] = 0.0;
+					}
+					delete [] sitefix;
+					double s=0.0;
+					for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) s += this->dataobs.locus[loc].mutsit[i];
+					for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] /=s;
+				}
+			}
+			if (debuglevel==2) cout<<"header.txt : fin de la mise à jour des locus séquences\n";
+			//cout<<"avant la mise à jour des paramvar\n";fflush(stdin);
+			delete [] ss;
+		} //fin de la condition fichier=GENEPOP
 //Mise à jour des paramvar
         for (int i=0;i<this->nscenarios;i++) {
             this->scenario[i].paramvar = new double[this->scenario[i].nparamvar];
@@ -577,9 +603,38 @@ public:
                             delete [] ss1;
                         }
                     }
-                }
-                    //cout<<"fin de la stat "<<k<<"\n";
+                } else if (this-groupe[gr].type>9) {
+                    if (stat_num[j]==21) {
+                        for (int i=1;i<nss;i++) {
+                               this->groupe[gr].sumstat[k].cat=stat_num[j];
+                               this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());
+                               k++;
                         }
+                    } else if ((stat_num[j]==22)or(stat_num[j]==23)) {
+                        for (int i=1;i<nss;i++) {
+                            this->groupe[gr].sumstat[k].cat=stat_num[j];
+                            ss1=splitwords(ss[i],"&",&nss1);
+                            this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
+                            this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+                            k++;
+                            delete [] ss1;
+                        }
+                    } else if (stat_num[j]==24) {
+                        for (int i=1;i<nss;i++) {
+                            this->groupe[gr].sumstat[k].cat=stat_num[j];
+                            ss1=splitwords(ss[i],"&",&nss1);
+                            this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
+                            this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+                            this->groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
+                            k++;
+                            delete [] ss1;
+                        }
+                    }
+				  
+				  
+				}
+                //cout<<"fin de la stat "<<k<<"\n";
+            }
             delete [] ss;
         }
         if (debuglevel==2) cout<<"header.txt : fin de la lecture des summary stats\n";

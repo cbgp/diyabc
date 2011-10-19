@@ -54,15 +54,15 @@ using namespace std;
 #define NUCMISSING 'N'
 #define NSTAT 27
 
-string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML"};
-int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 };
+string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","HED","NED","FSD","AMD"};
+int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 };
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			-13 : fst
  *  2 : het			-2 : nss            -14 : aml
- *  3 : var			-3 : mpd
- *  4 : MGW			-4 : vpd
- *  5 : Fst			-5 : dta
- *  6 : lik			-6 : pss
+ *  3 : var			-3 : mpd			 21 : distance de Cramer-von Mises(het)
+ *  4 : MGW			-4 : vpd			 22 : distance de Cramer-von Mises(nei)
+ *  5 : Fst			-5 : dta			 23 : distance de Cramer-von Mises(fst)
+ *  6 : lik			-6 : pss			 24 : distance de Cramer-von Mises(aml)
  *  7 : dm2			-7 : mns
  *  8 : n2P			-8 : vns
  *  9 : h2P			-9 : nh2
