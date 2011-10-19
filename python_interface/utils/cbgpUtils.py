@@ -128,6 +128,9 @@ def logRotate(logFolder,nbDaysOld,sizeThreshold):
 import array
 
 def readRefTableSize(reftablefile):
+    """ lit le nombre de records dans l'entete de 
+    la reftable binaire
+    """
     if os.path.exists(reftablefile):
         binint = array.array('i')
         f = open(reftablefile,'rb')
@@ -139,6 +142,9 @@ def readRefTableSize(reftablefile):
         return None
 
 def readNbRecordsOfScenario(reftablefile,numSc):
+    """ lit le nombre de records concernant un scenario
+    donnée dans l'entête de la reftable binaire
+    """
     if os.path.exists(reftablefile):
         binint = array.array('i')
         f = open(reftablefile,'rb')
@@ -201,6 +207,8 @@ class TeeLogger(object):
         self.out.write(data_short)
 
 def log(level,message):
+    """ Affiche le message fancyfied
+    """
     if level <= LOG_LEVEL:
         dd = datetime.now()
         color = tabcolors[level]

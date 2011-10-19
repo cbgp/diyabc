@@ -15,11 +15,11 @@ from utils.data import *
 import output
 from utils.cbgpUtils import log
 
-class SetGeneticDataRefTable(SetGeneticData):
+class SetGeneticDataMsatSeq(SetGeneticData):
     """ set genetic data pour les informations concernant la reftable
     """
     def __init__(self,parent=None):
-        super(SetGeneticDataRefTable,self).__init__(parent)
+        super(SetGeneticDataMsatSeq,self).__init__(parent)
 
 
     def majProjectGui(self,m=None,s=None,g=None,ss=None):
@@ -53,7 +53,7 @@ class SetGeneticDataRefTable(SetGeneticData):
         """ surcharge de addgroup de la classe mère qui crée les mutation model et 
         les setsumstats 
         """
-        groupBox = super(SetGeneticDataRefTable,self).addGroup()
+        groupBox = super(SetGeneticDataMsatSeq,self).addGroup()
 
         frame = SetMutationModelMsatRefTable(self,groupBox)
         frame.setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))

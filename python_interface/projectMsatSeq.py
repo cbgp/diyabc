@@ -6,7 +6,7 @@ import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from projectReftable import ProjectReftable
-from setGenDataRefTable import SetGeneticDataRefTable
+from setGenDataMsatSeq import SetGeneticDataMsatSeq
 from utils.data import Data
 import os.path
 import output
@@ -21,7 +21,7 @@ class ProjectMsatSeq(ProjectReftable):
     def __init__(self,name,dir=None,parent=None):
         super(ProjectMsatSeq,self).__init__(name,dir,parent)
 
-        self.gen_data_win = SetGeneticDataRefTable(self)
+        self.gen_data_win = SetGeneticDataMsatSeq(self)
         self.gen_data_win.ui.okButton.setText("VALIDATE AND SAVE")
         self.gen_data_win.hide()
         self.ui.setSumSnpButton.hide()
