@@ -6,7 +6,6 @@ from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.preferences_ui import Ui_MainWindow
 from utils.cbgpUtils import log
-from datetime import datetime 
 
 formLogFile,baseLogFile = uic.loadUiType("uis/showLogFile.ui")
 
@@ -16,7 +15,7 @@ class ShowLogFile(formLogFile,baseLogFile):
     def __init__(self,parent=None):
         super(ShowLogFile,self).__init__(parent)
         self.parent = parent
-        dd = datetime.now()
+        #dd = datetime.now()
         #self.logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%s.log"%(dd.day,dd.month,dd.year,os.getpid()))
         #self.logfile = self.parent.logfile
         self.createWidgets()

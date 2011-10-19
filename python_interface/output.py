@@ -3,11 +3,6 @@
 #from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import os,sys
-from datetime import datetime 
-import inspect
-import re
-import time
 #import codecs
 
 # mettre à vrai pour ne pas afficher les popups

@@ -7,7 +7,6 @@ from PyQt4.QtGui import *
 from setGenData import SetGeneticData
 from mutationModel.setMutationModelMsatSimulation import SetMutationModelMsatSimulation
 from mutationModel.setMutationModelSequencesSimulation import SetMutationModelSequencesSimulation
-from mutationModel.setMutationModelSequences import SetMutationModelSequences
 from utils.visualizescenario import *
 from utils.data import *
 import output

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os,sys,platform,multiprocessing,subprocess
+import os,sys,platform,multiprocessing
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *

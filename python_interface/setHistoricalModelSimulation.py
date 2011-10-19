@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import os,sys
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import uic
 #from uis.setHistFrame_ui import Ui_Frame
 from setHistoricalModel import SetHistoricalModel
-from drawScenario import DrawScenario
 from utils.visualizescenario import *
 from utils.history import *
-from set_condition import SetCondition
 import output
 from utils.cbgpUtils import log
 
@@ -246,7 +242,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
 
     def checkSampleSize(self):
         # on verifie qu'on a le bon nombre de sample
-        nsamp = 0
+        #nsamp = 0
         scTxt = str(self.scList[0].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText())
         scChecker = Scenario(number=1,prior_proba="1")
         try:
