@@ -254,7 +254,7 @@ procedure combrank(x,y:vecteurF;var rangx,rangy:vecteurF);
 procedure combrank2(x,y:vecteurF;var rangx,rangy:vecteurF);
   var
     A  :matriceF;
-    i,m,n,k :integer;
+    i,m,n,k,i0,i1 :integer;
   begin
 	n:=length(x);m:=length(y);
 	setlength(rangx,n);setlength(rangy,m);
@@ -262,26 +262,21 @@ procedure combrank2(x,y:vecteurF;var rangx,rangy:vecteurF);
 	for i:=0 to pred(n) do begin A[i,0]:=x[i];A[i,1]:=0;A[i,2]:=i;end;
 	for i:=0 to pred(m) do begin A[n+i,0]:=y[i];A[n+i,1]:=1;A[n+i,2]:=i;end;
     fsortV('a',n+m,3,0,A);
-    for i:=0 to pred(n+m) do
+    i0:=0;i1:=0;
+    while i1<pred(n+m) do
       begin
-		k:=round(A[i,2]);
-        if A[i,1]<0.5 then rangx[k]:=succ(i)
-                      else rangy[k]:=succ(i);
+        while (i1<pred(n+m))and (A[succ(i1),0]=A[i0,0]) do inc(i1);
+        for i:=i0 to i1 do
+          begin
+			k:=round(A[i,2]);
+			if A[i,1]<0.5 then rangx[k]:=1.0+0.5*(i0+i1)
+						  else rangy[k]:=1.0+0.5*(i0+i1);
+		  end;
+		i0:=succ(i1);        
+		i1:=i0;
 	  end;
-	{writeln('calcul des rangx (',n,')');
-    for i:=0 to pred(n) do
-      begin
-		k:=0;while not((A[k,1]=0)and(A[k,2]=i)) do inc(k);
-		rangx[i]:=succ(k);
-      end;
-	  writeln('calcul des rangy (',m,')');
-    for i:=0 to pred(m) do
-      begin
-		k:=0;while not((A[k,1]=1)and(A[k,2]=i)) do inc(k);
-		rangy[i]:=succ(k);
-      end;}
   end;
-
+	  
 procedure calfreq;
   var
     i,j,k,n  :integer;

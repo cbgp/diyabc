@@ -604,13 +604,13 @@ public:
                         }
                     }
                 } else if (this-groupe[gr].type>9) {
-                    if (stat_num[j]==21) {
+                    if (stat_num[j]<23) {
                         for (int i=1;i<nss;i++) {
                                this->groupe[gr].sumstat[k].cat=stat_num[j];
                                this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());
                                k++;
                         }
-                    } else if ((stat_num[j]==22)or(stat_num[j]==23)) {
+                    } else if ((stat_num[j]>22)and(stat_num[j]<27)) {
                         for (int i=1;i<nss;i++) {
                             this->groupe[gr].sumstat[k].cat=stat_num[j];
                             ss1=splitwords(ss[i],"&",&nss1);
@@ -619,7 +619,7 @@ public:
                             k++;
                             delete [] ss1;
                         }
-                    } else if (stat_num[j]==24) {
+                    } else if (stat_num[j]>26) {
                         for (int i=1;i<nss;i++) {
                             this->groupe[gr].sumstat[k].cat=stat_num[j];
                             ss1=splitwords(ss[i],"&",&nss1);
