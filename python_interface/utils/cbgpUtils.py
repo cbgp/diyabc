@@ -44,7 +44,6 @@ class cmdThread(Thread):
 
 
 from xml.dom.minidom import parse
-import output
 import os.path
 
 class Documentator():
@@ -125,6 +124,8 @@ def logRotate(logFolder,nbDaysOld,sizeThreshold):
                         os.remove(os.path.join(root, name))
     except Exception,e:
         raise Exception("Log rotation failed\n%s"%e)
+
+import array
 
 def readRefTableSize(reftablefile):
     if os.path.exists(reftablefile):

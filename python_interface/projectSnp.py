@@ -5,12 +5,7 @@ import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from projectReftable import ProjectReftable
-#from uis.project_ui import *
 from summaryStatistics.setSummaryStatisticsSnp import SetSummaryStatisticsSnp
-#from mutationModel.setMutationModelMsat import SetMutationModelMsat
-#from mutationModel.setMutationModelSequences import SetMutationModelSequences
-#from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
-#from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from utils.data import DataSnp
 import os.path
 import output

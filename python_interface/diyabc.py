@@ -29,7 +29,6 @@ import output
 import subprocess
 from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log
 from threading import Thread
-import re
 from utils.data import isSNPDatafile
 
 
@@ -371,8 +370,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.entryToRecent = {}
 
         future_recent_list = []
-        for re in self.recentList:
-            future_recent_list.append(re)
+        for recent in self.recentList:
+            future_recent_list.append(recent)
         # drawing
         nb_added = 0
         for i,rec in enumerate(self.recentList):
