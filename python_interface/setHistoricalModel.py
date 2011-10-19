@@ -9,7 +9,7 @@ from PyQt4 import uic
 from drawScenario import DrawScenario
 from utils.visualizescenario import *
 from utils.history import *
-from set_condition import SetCondition
+from setCondition import SetCondition
 import output
 from utils.cbgpUtils import log
 

@@ -7,7 +7,7 @@ from PyQt4 import uic
 #from uis.setHistFrame_ui import Ui_Frame
 from utils.visualizescenario import *
 from utils.history import *
-from set_condition import SetCondition
+from setCondition import SetCondition
 from setGenDataAnalysis import SetGeneticDataAnalysis
 
 formHistModelDrawn,baseHistModelDrawn = uic.loadUiType("uis/setHistFrame.ui")
