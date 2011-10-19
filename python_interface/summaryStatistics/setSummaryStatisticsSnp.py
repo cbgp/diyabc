@@ -12,15 +12,16 @@ from PyQt4 import uic
 from setSummaryStatistics import SetSummaryStatistics
 import output
 
-formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat = uic.loadUiType("uis/setSummaryStatisticsMsat.ui")
+formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp = uic.loadUiType("uis/setSummaryStatisticsSnp.ui")
 
-class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat):
+class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp):
     """ ecran de selection des summary statistics pour les SNP
     """
     def __init__(self,parent=None,box_group=None,numGroup=0):
         super(SetSummaryStatisticsSnp,self).__init__(parent,box_group,numGroup)
         
-        self.statList = ["NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML"]
+        self.statList = ["SHM","SHD","SNM","SND","SFM","SFD","SAM","SAD"]
+        self.confToStat = {"SHM" : "mgd","SHD" : "dgd", "SNM": "mnd2","SND" : "dond2", "SFM" : "mfd2", "SFD" : "dofd2", "SAM" : "ml3", "SAD" : "mld3" }
 
     def createWidgets(self):
         self.ui=self
@@ -31,35 +32,27 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
         # all buttons
-        QObject.connect(self.ui.allMnoaButton,SIGNAL("clicked()"),self.allPressed)
         QObject.connect(self.ui.allMgdButton,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.allMsvButton,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.allMgwButton,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.allDgdButton,SIGNAL("clicked()"),self.allPressed)
         # none buttons
-        QObject.connect(self.ui.noneMnoaButton,SIGNAL("clicked()"),self.allPressed)
         QObject.connect(self.ui.noneMgdButton,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.noneMsvButton,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.noneMgwButton,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.noneDgdButton,SIGNAL("clicked()"),self.allPressed)
 
         # all buttons 2
-        QObject.connect(self.ui.allMnoa2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.allMgd2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.allMsv2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.allFst2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.allCi2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.allSad2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.allDd2Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.allMnd2Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.allDond2Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.allMfd2Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.allDofd2Button,SIGNAL("clicked()"),self.allPressed)
         #none buttons 2
-        QObject.connect(self.ui.noneMnoa2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.noneMgd2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.noneMsv2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.noneFst2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.noneCi2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.noneSad2Button,SIGNAL("clicked()"),self.allPressed)
-        QObject.connect(self.ui.noneDd2Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.noneMnd2Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.noneDond2Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.noneMfd2Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.noneDofd2Button,SIGNAL("clicked()"),self.allPressed)
         # all and none for admixtures
         QObject.connect(self.ui.allMl3Button,SIGNAL("clicked()"),self.allPressed)
         QObject.connect(self.ui.noneMl3Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.allMld3Button,SIGNAL("clicked()"),self.allPressed)
+        QObject.connect(self.ui.noneMld3Button,SIGNAL("clicked()"),self.allPressed)
 
         QObject.connect(self.ui.addAdmixButton,SIGNAL("clicked()"),self.addAdmix)
 
@@ -71,6 +64,8 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
         self.ui.frame_11.hide()
         self.ui.frame_9.hide()
         self.ui.allMl3Button.hide()
+        self.ui.allMld3Button.hide()
+        self.ui.noneMld3Button.hide()
         self.ui.noneMl3Button.hide()
 
     def exit(self):
@@ -113,19 +108,6 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
         oneSampleLabel.setAlignment(QtCore.Qt.AlignCenter)
         oneSampleLabel.setObjectName("oneSampleLabel")
         verticalLayout_4.addWidget(oneSampleLabel)
-        horizontalLayout_3 = QtGui.QHBoxLayout()
-        horizontalLayout_3.setObjectName("horizontalLayout_3")
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        horizontalLayout_3.addItem(spacerItem)
-        mnoaCheck = QtGui.QCheckBox(frame_9)
-        mnoaCheck.setMinimumSize(QtCore.QSize(20, 14))
-        mnoaCheck.setMaximumSize(QtCore.QSize(20, 14))
-        mnoaCheck.setLayoutDirection(QtCore.Qt.LeftToRight)
-        mnoaCheck.setObjectName("mnoaCheck")
-        horizontalLayout_3.addWidget(mnoaCheck)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        horizontalLayout_3.addItem(spacerItem1)
-        verticalLayout_4.addLayout(horizontalLayout_3)
         horizontalLayout_7 = QtGui.QHBoxLayout()
         horizontalLayout_7.setObjectName("horizontalLayout_7")
         spacerItem2 = QtGui.QSpacerItem(18, 13, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -145,23 +127,11 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
         msvCheck = QtGui.QCheckBox(frame_9)
         msvCheck.setMinimumSize(QtCore.QSize(20, 14))
         msvCheck.setMaximumSize(QtCore.QSize(20, 14))
-        msvCheck.setObjectName("msvCheck")
+        msvCheck.setObjectName("dgdCheck")
         horizontalLayout_8.addWidget(msvCheck)
         spacerItem5 = QtGui.QSpacerItem(18, 13, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         horizontalLayout_8.addItem(spacerItem5)
         verticalLayout_4.addLayout(horizontalLayout_8)
-        horizontalLayout_10 = QtGui.QHBoxLayout()
-        horizontalLayout_10.setObjectName("horizontalLayout_10")
-        spacerItem6 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        horizontalLayout_10.addItem(spacerItem6)
-        mgwCheck = QtGui.QCheckBox(frame_9)
-        mgwCheck.setMinimumSize(QtCore.QSize(20, 14))
-        mgwCheck.setMaximumSize(QtCore.QSize(20, 14))
-        mgwCheck.setObjectName("mgwCheck")
-        horizontalLayout_10.addWidget(mgwCheck)
-        spacerItem7 = QtGui.QSpacerItem(18, 13, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        horizontalLayout_10.addItem(spacerItem7)
-        verticalLayout_4.addLayout(horizontalLayout_10)
         self.ui.horizontalLayout_4.addWidget(frame_9)
 
         self.oneSampleList.append(frame_9)
@@ -194,7 +164,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
         mnoa2Check = QtGui.QCheckBox(frame_11)
         mnoa2Check.setMinimumSize(QtCore.QSize(20, 14))
         mnoa2Check.setMaximumSize(QtCore.QSize(20, 14))
-        mnoa2Check.setObjectName("mnoa2Check")
+        mnoa2Check.setObjectName("mnd2Check")
         horizontalLayout_16.addWidget(mnoa2Check)
         spacerItem9 = QtGui.QSpacerItem(17, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         horizontalLayout_16.addItem(spacerItem9)
@@ -206,7 +176,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
         mgd2Check = QtGui.QCheckBox(frame_11)
         mgd2Check.setMinimumSize(QtCore.QSize(20, 14))
         mgd2Check.setMaximumSize(QtCore.QSize(20, 14))
-        mgd2Check.setObjectName("mgd2Check")
+        mgd2Check.setObjectName("dond2Check")
         horizontalLayout_15.addWidget(mgd2Check)
         spacerItem11 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         horizontalLayout_15.addItem(spacerItem11)
@@ -218,7 +188,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
         msv2Check = QtGui.QCheckBox(frame_11)
         msv2Check.setMinimumSize(QtCore.QSize(20, 14))
         msv2Check.setMaximumSize(QtCore.QSize(20, 14))
-        msv2Check.setObjectName("msv2Check")
+        msv2Check.setObjectName("mfd2Check")
         horizontalLayout_14.addWidget(msv2Check)
         spacerItem13 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         horizontalLayout_14.addItem(spacerItem13)
@@ -230,51 +200,76 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
         fst2Check = QtGui.QCheckBox(frame_11)
         fst2Check.setMinimumSize(QtCore.QSize(20, 14))
         fst2Check.setMaximumSize(QtCore.QSize(20, 14))
-        fst2Check.setObjectName("fst2Check")
+        fst2Check.setObjectName("dofd2Check")
         horizontalLayout_13.addWidget(fst2Check)
         spacerItem15 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         horizontalLayout_13.addItem(spacerItem15)
         verticalLayout_5.addLayout(horizontalLayout_13)
-        horizontalLayout_6 = QtGui.QHBoxLayout()
-        horizontalLayout_6.setObjectName("horizontalLayout_6")
-        ci2LeftCheck = QtGui.QCheckBox(frame_11)
-        ci2LeftCheck.setMinimumSize(QtCore.QSize(20, 14))
-        ci2LeftCheck.setMaximumSize(QtCore.QSize(20, 14))
-        ci2LeftCheck.setObjectName("ci2LeftCheck")
-        horizontalLayout_6.addWidget(ci2LeftCheck)
-        ci2RightCheck = QtGui.QCheckBox(frame_11)
-        ci2RightCheck.setMinimumSize(QtCore.QSize(20, 14))
-        ci2RightCheck.setMaximumSize(QtCore.QSize(20, 14))
-        ci2RightCheck.setObjectName("ci2RightCheck")
-        horizontalLayout_6.addWidget(ci2RightCheck)
-        verticalLayout_5.addLayout(horizontalLayout_6)
-        horizontalLayout_12 = QtGui.QHBoxLayout()
-        horizontalLayout_12.setObjectName("horizontalLayout_12")
-        spacerItem16 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        horizontalLayout_12.addItem(spacerItem16)
-        sad2Check = QtGui.QCheckBox(frame_11)
-        sad2Check.setMinimumSize(QtCore.QSize(20, 14))
-        sad2Check.setMaximumSize(QtCore.QSize(20, 14))
-        sad2Check.setObjectName("sad2Check")
-        horizontalLayout_12.addWidget(sad2Check)
-        spacerItem17 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        horizontalLayout_12.addItem(spacerItem17)
-        verticalLayout_5.addLayout(horizontalLayout_12)
-        horizontalLayout_11 = QtGui.QHBoxLayout()
-        horizontalLayout_11.setObjectName("horizontalLayout_11")
-        spacerItem18 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        horizontalLayout_11.addItem(spacerItem18)
-        dd2Check = QtGui.QCheckBox(frame_11)
-        dd2Check.setMinimumSize(QtCore.QSize(20, 14))
-        dd2Check.setMaximumSize(QtCore.QSize(20, 14))
-        dd2Check.setObjectName("dd2Check")
-        horizontalLayout_11.addWidget(dd2Check)
-        spacerItem19 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        horizontalLayout_11.addItem(spacerItem19)
-        verticalLayout_5.addLayout(horizontalLayout_11)
         self.ui.horizontalLayout_5.addWidget(frame_11)
 
         self.twoSampleList.append(frame_11)
+
+    def addAdmixSampleGui(self,num1,num2,num3):
+        """ methode d'ajout d'un bloc dans 'three sample admix sum stats'
+        """
+        frame_12 = QtGui.QFrame(self.ui.scrollAreaWidgetContents_3)
+        frame_12.setMinimumSize(QtCore.QSize(55, 0))
+        frame_12.setMaximumSize(QtCore.QSize(55, 16777215))
+        frame_12.setFrameShape(QtGui.QFrame.StyledPanel)
+        frame_12.setFrameShadow(QtGui.QFrame.Raised)
+        frame_12.setObjectName("frame_12")
+        verticalLayout_6 = QtGui.QVBoxLayout(frame_12)
+        verticalLayout_6.setSpacing(1)
+        #verticalLayout_6.setAlignment(Qt.AlignHCenter)
+        verticalLayout_6.setContentsMargins(1, 1, 1, 1)
+        verticalLayout_6.setObjectName("verticalLayout_6")
+        threeSampleLabel = QtGui.QLabel("Samp\n%i&%i&%i"%(num1,num2,num3),frame_12)
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        threeSampleLabel.setFont(font)
+        threeSampleLabel.setObjectName("threeSampleLabel")
+        threeSampleLabel.setMinimumSize(QtCore.QSize(0, 48))
+        threeSampleLabel.setMaximumSize(QtCore.QSize(16777215, 48))
+        verticalLayout_6.addWidget(threeSampleLabel)
+        rmButton = QtGui.QPushButton("remove",frame_12)
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        rmButton.setFont(font)
+        rmButton.setObjectName("rmButton")
+        verticalLayout_6.addWidget(rmButton)
+        horizontalLayout_17 = QtGui.QHBoxLayout()
+        horizontalLayout_17.setObjectName("horizontalLayout_17")
+        spacerItem20 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        horizontalLayout_17.addItem(spacerItem20)
+        ml3Check = QtGui.QCheckBox(frame_12)
+        ml3Check.setMinimumSize(QtCore.QSize(20, 0))
+        ml3Check.setMaximumSize(QtCore.QSize(20, 16777215))
+        ml3Check.setObjectName("ml3Check")
+        ml3Check.setChecked(True)
+        ml3Check.setDisabled(True)
+        horizontalLayout_17.addWidget(ml3Check)
+        spacerItem21 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        horizontalLayout_17.addItem(spacerItem21)
+        verticalLayout_6.addLayout(horizontalLayout_17)
+        horizontalLayout_17 = QtGui.QHBoxLayout()
+        horizontalLayout_17.setObjectName("horizontalLayout_17")
+        spacerItem20 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        horizontalLayout_17.addItem(spacerItem20)
+        ml3Check = QtGui.QCheckBox(frame_12)
+        ml3Check.setMinimumSize(QtCore.QSize(20, 0))
+        ml3Check.setMaximumSize(QtCore.QSize(20, 16777215))
+        ml3Check.setObjectName("mld3Check")
+        ml3Check.setChecked(True)
+        ml3Check.setDisabled(True)
+        horizontalLayout_17.addWidget(ml3Check)
+        spacerItem21 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        horizontalLayout_17.addItem(spacerItem21)
+        verticalLayout_6.addLayout(horizontalLayout_17)
+        self.ui.horizontalLayout_2.addWidget(frame_12)
+
+        self.admixSampleList.append(frame_12)
+
+        QObject.connect(rmButton,SIGNAL("clicked()"),self.rmAdmix)
 
     def getStats(self):
         """ retourne les stats sous la forme d'un dico indexé par les noms de ligne
@@ -282,90 +277,52 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
         nstat = 0
         # dico indexé par les noms de ligne (NAL,FST...) qui donne la liste des samples concernés
         dico_stats = {}
-        dico_stats["NAL"] = []
-        dico_stats["HET"] = []
-        dico_stats["VAR"] = []
-        dico_stats["MGW"] = []
+        dico_stats["SHM"] = []
+        dico_stats["SHD"] = []
 
-        dico_stats["N2P"] = []
-        dico_stats["H2P"] = []
-        dico_stats["V2P"] = []
-        dico_stats["FST"] = []
-        dico_stats["LIK"] = []
-        dico_stats["DAS"] = []
-        dico_stats["DM2"] = []
+        dico_stats["SNM"] = []
+        dico_stats["SND"] = []
+        dico_stats["SFM"] = []
+        dico_stats["SFD"] = []
 
-        dico_stats["AML"] = []
+        dico_stats["SAM"] = []
+        dico_stats["SAD"] = []
         for box in self.oneSampleList:
             lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
-            if box.findChild(QCheckBox,"mnoaCheck").isChecked():
-                dico_stats["NAL"].append(lab)
-                nstat += 1
             if box.findChild(QCheckBox,"mgdCheck").isChecked():
-                dico_stats["HET"].append(lab)
+                dico_stats["SHM"].append(lab)
                 nstat += 1
-            if box.findChild(QCheckBox,"msvCheck").isChecked():
-                dico_stats["VAR"].append(lab)
-                nstat += 1
-            if box.findChild(QCheckBox,"mgwCheck").isChecked():
-                dico_stats["MGW"].append(lab)
+            if box.findChild(QCheckBox,"dgdCheck").isChecked():
+                dico_stats["SHD"].append(lab)
                 nstat += 1
         for box in self.twoSampleList:
             lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
-            if box.findChild(QCheckBox,"mnoa2Check").isChecked():
-                dico_stats["N2P"].append(lab)
+            if box.findChild(QCheckBox,"mnd2Check").isChecked():
+                dico_stats["SNM"].append(lab)
                 nstat += 1
-            if box.findChild(QCheckBox,"mgd2Check").isChecked():
-                dico_stats["H2P"].append(lab)
+            if box.findChild(QCheckBox,"dond2Check").isChecked():
+                dico_stats["SND"].append(lab)
                 nstat += 1
-            if box.findChild(QCheckBox,"msv2Check").isChecked():
-                dico_stats["V2P"].append(lab)
+            if box.findChild(QCheckBox,"mfd2Check").isChecked():
+                dico_stats["SFM"].append(lab)
                 nstat += 1
-            if box.findChild(QCheckBox,"fst2Check").isChecked():
-                dico_stats["FST"].append(lab)
-                nstat += 1
-            if box.findChild(QCheckBox,"ci2LeftCheck").isChecked():
-                dico_stats["LIK"].append(lab)
-                nstat += 1
-            if box.findChild(QCheckBox,"ci2RightCheck").isChecked():
-                lab_inverted = "%s&%s"%(lab.split('&')[1],lab.split('&')[0])
-                dico_stats["LIK"].append(lab_inverted)
-                nstat += 1
-            if box.findChild(QCheckBox,"sad2Check").isChecked():
-                dico_stats["DAS"].append(lab)
-                nstat += 1
-            if box.findChild(QCheckBox,"dd2Check").isChecked():
-                dico_stats["DM2"].append(lab)
+            if box.findChild(QCheckBox,"dofd2Check").isChecked():
+                dico_stats["SFD"].append(lab)
                 nstat += 1
         for box in self.admixSampleList:
             lab = str(box.findChild(QLabel,"threeSampleLabel").text()).split('\n')[1]
             if box.findChild(QCheckBox,"ml3Check").isChecked():
-                dico_stats["AML"].append(lab)
+                dico_stats["SAM"].append(lab)
                 nstat +=1
-        if dico_stats.has_key("LIK"):
-            dico_stats["LIK"] = self.sortLik(dico_stats["LIK"])
+            if box.findChild(QCheckBox,"mld3Check").isChecked():
+                dico_stats["SAD"].append(lab)
+                nstat +=1
         return (nstat,dico_stats)
 
-    def sortLik(self,l):
-        res = []
-        for i,e in enumerate(l):
-            el = int(e.split('&')[0])
-            er = int(e.split('&')[1])
-            idest = 0
-            while idest < len(res) and el > int(res[idest].split('&')[0]):
-                #print "elem : %s, plus loin que %s l"%(e,res[idest])
-                idest += 1
-            while idest < len(res) and er > int(res[idest].split('&')[1]) and el == int(res[idest].split('&')[0]):
-                #print "elem : %s, plus loin que %s r"%(e,res[idest])
-                idest += 1
-            #print "j'insere %s a %s"%(e,idest)
-            res.insert(idest,e)
-        return res
- 
     def setSumConf(self,lines):
         """ grace aux lignes du fichier de conf, remet les sum stats
         """
-        confToStat = {"NAL" : "mnoa","HET" : "mgd", "VAR": "msv","MGW" : "mgw", "N2P" : "mnoa2", "H2P" : "mgd2", "V2P" : "msv2", "FST" : "fst2", "DAS" : "sad2", "DM2" : "dd2", "AML" : "ml3", "LIK" : "" }
+        confToStat = {"SHM" : "mgd","SHD" : "dgd", "SNM": "mnd2","SND" : "dond2", "SFM" : "mfd2", "SFD" : "dofd2", "SAM" : "ml3", "SAD" : "mld3" }
 
         # construction du dico de stats (le même que dans getSumConf)
         dico_stats = {}
@@ -382,32 +339,19 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
         for k in dico_stats.keys():
             name_chk_box = confToStat[k]
             # pour chaque colonne chaque sample dans one Sample
-            if k in ["NAL","HET","VAR","MGW"]:
+            if k in ["SHM","SHD"]:
                 for box in self.oneSampleList:
                     num_sample = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1].strip()
                     if num_sample in dico_stats[k]:
                         # on coche
                         box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
-            elif k in ["H2P","V2P","FST","DAS","DM2","N2P"]:
+            elif k in ["SNM", "SND", "SFM", "SFD"]:
                 for box in self.twoSampleList:
                     num_sample = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1].strip()
                     if num_sample in dico_stats[k]:
                         # on coche
                         box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
-            elif k == "LIK":
-                for lik in dico_stats[k]:
-                    num1 = int(lik.strip().split('&')[0])
-                    num2 = int(lik.strip().split('&')[1])
-                    ind_box = 0
-                    while ind_box < len(self.twoSampleList) and str(self.twoSampleList[ind_box].findChild(QLabel,"twoSampleLabel").text()).strip().split(' ')[1] != lik.strip() and\
-                            str(self.twoSampleList[ind_box].findChild(QLabel,"twoSampleLabel").text()).strip().split(' ')[1] != "%s&%s"%(num2,num1):
-                        ind_box += 1
-                    if num1 > num2:
-                        self.twoSampleList[ind_box].findChild(QCheckBox,"ci2RightCheck").setChecked(True)
-                    else:
-                        self.twoSampleList[ind_box].findChild(QCheckBox,"ci2LeftCheck").setChecked(True)
-
-            elif k == "AML":
+            elif k in ["SAM","SAD"]:
                 for aml in dico_stats[k]:
                     num1 = aml.strip().split('&')[0]
                     num2 = aml.strip().split('&')[1]
@@ -428,75 +372,44 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsMsat,
             gnumber = self.parent.groupList.index(self.box_group)+1
         else:
             gnumber = self.numGroup
-        dico = {"NAL" : [],
-        "HET" : [],
-        "VAR" : [],
-        "MGW" : [],
-        "N2P" : [],  
-        "H2P" : [],
-        "V2P" : [],
-        "FST" : [],
-        "LIK" : [],
-        "DAS" : [],
-        "DM2" : [], 
-        "AML" : []}
+        dico = {}
+        for k in self.confToStat.keys():
+            dico[k] = []
+
         for box in self.oneSampleList:
             lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
-            if box.findChild(QCheckBox,"mnoaCheck").isChecked():
-                stat_name = "NAL_%s_%s"%(gnumber,lab)
-                dico["NAL"].append(stat_name)
-            if box.findChild(QCheckBox,"mgdCheck").isChecked():
-                stat_name = "HET_%s_%s"%(gnumber,lab)
-                dico["HET"].append(stat_name)
-            if box.findChild(QCheckBox,"msvCheck").isChecked():
-                stat_name = "VAR_%s_%s"%(gnumber,lab)
-                dico["VAR"].append(stat_name)
-            if box.findChild(QCheckBox,"mgwCheck").isChecked():
-                stat_name = "MGW_%s_%s"%(gnumber,lab)
-                dico["MGW"].append(stat_name)
+            for statstr in ["SHM","SHD"]:
+                if box.findChild(QCheckBox,"%sCheck"%self.confToStat[statstr]).isChecked():
+                    stat_name = "%s_%s_%s"%(statstr,gnumber,lab)
+                    dico[statstr].append(stat_name)
         for box in self.twoSampleList:
             lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
-            if box.findChild(QCheckBox,"mnoa2Check").isChecked():
-                stat_name = "N2P_%s_%s"%(gnumber,lab)
-                dico["N2P"].append(stat_name)
-            if box.findChild(QCheckBox,"mgd2Check").isChecked():
-                stat_name = "H2P_%s_%s"%(gnumber,lab)
-                dico["H2P"].append(stat_name)
-            if box.findChild(QCheckBox,"msv2Check").isChecked():
-                stat_name = "V2P_%s_%s"%(gnumber,lab)
-                dico["V2P"].append(stat_name)
-            if box.findChild(QCheckBox,"fst2Check").isChecked():
-                stat_name = "FST_%s_%s"%(gnumber,lab)
-                dico["FST"].append(stat_name)
-            if box.findChild(QCheckBox,"ci2LeftCheck").isChecked():
-                stat_name = "%s"%(lab)
-                dico["LIK"].append(stat_name)
-            if box.findChild(QCheckBox,"ci2RightCheck").isChecked():
-                lab_inverted = "%s&%s"%(lab.split('&')[1],lab.split('&')[0])
-                stat_name = "%s"%(lab_inverted)
-                dico["LIK"].append(stat_name)
-            if box.findChild(QCheckBox,"sad2Check").isChecked():
-                stat_name = "DAS_%s_%s"%(gnumber,lab)
-                dico["DAS"].append(stat_name)
-            if box.findChild(QCheckBox,"dd2Check").isChecked():
-                stat_name = "DM2_%s_%s"%(gnumber,lab)
-                dico["DM2"].append(stat_name)
+            for statstr in ["SNM","SND","SFM","SFD"]:
+                if box.findChild(QCheckBox,"%sCheck"%self.confToStat[statstr]).isChecked():
+                    stat_name = "%s_%s_%s"%(statstr,gnumber,lab)
+                    dico[statstr].append(stat_name)
         for box in self.admixSampleList:
             lab = str(box.findChild(QLabel,"threeSampleLabel").text()).split('\n')[1]
-            if box.findChild(QCheckBox,"ml3Check").isChecked():
-                stat_name = "AML_%s_%s"%(gnumber,lab)
-                dico["AML"].append(stat_name)
+            for statstr in ["SAM","SAD"]:
+                if box.findChild(QCheckBox,"%sCheck"%self.confToStat[statstr]).isChecked():
+                    stat_name = "%s_%s_%s"%(statstr,gnumber,lab)
+                    dico[statstr].append(stat_name)
 
-        dico["LIK"] = self.sortLik(dico["LIK"])
-        a=[]
-        for e in dico["LIK"]:
-            a.append("LIK_%s_%s"%(gnumber,e))
-        dico["LIK"] = a
-
-        for t in ["NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML"]:
+        for t in self.confToStat.keys():
             l = dico[t]
             for s in l:
                 result += output.centerHeader(s,14)
 
         return result
+
+    def writeGeneticConfFromGui(self):
+        pass
+        #stat_header_txt = "group G%i [M] (%i)\n"%((i+1),nstat_tmp)
+        #(nstat_tmp,stat_txt) = self.getSumConf()
+
+        #f.write("\ngroup summary statistics (%i)\n"%nstat_tot)
+        #for txt in stat_txt_list:
+        #    f.write(txt)
+        #    #print txt
+        #f.write('\n')
 

@@ -160,7 +160,7 @@ class ProjectSnp(ProjectReftable):
             # save hist conf
             self.hist_model_win.writeHistoricalConfFromGui()
             # save gen conf
-            #self.gen_data_win.writeGeneticConfFromGui()
+            self.sum_stat_win.writeGeneticConfFromGui()
             # save th conf et production du reftable header
             #if self.gen_state_valid and self.hist_state_valid:
             #    self.writeThConf()
