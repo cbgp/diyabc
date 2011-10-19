@@ -1,36 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import hashlib,pickle,array,sys
-import socket
-from socket import *
-import time
 import os
-import shutil
 import codecs
-import subprocess
-import tarfile,stat
-from project import Project
-#from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui,QtCore
-from PyQt4 import uic
 from projectReftable import ProjectReftable
 #from uis.project_ui import *
-from setHistoricalModelSimulation import SetHistoricalModelSimulation
-from setGenDataSimulation import SetGeneticDataSimulation
 from summaryStatistics.setSummaryStatisticsSnp import SetSummaryStatisticsSnp
 #from mutationModel.setMutationModelMsat import SetMutationModelMsat
 #from mutationModel.setMutationModelSequences import SetMutationModelSequences
 #from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 #from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from utils.data import DataSnp
-from datetime import datetime 
 import os.path
 import output
 from utils.cbgpUtils import log
-import tempfile
-import re
 
 class ProjectSnp(ProjectReftable):
     """ classe qui représente un projet de simulation

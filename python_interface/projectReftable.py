@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import hashlib,pickle,array,sys
+import hashlib,pickle,sys
 import socket
 from socket import *
 import time
@@ -14,20 +14,13 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui,QtCore
 from PyQt4 import uic
-#from uis.project_ui import *
-from setHistoricalModel import SetHistoricalModel
-from setGenDataRefTable import SetGeneticDataRefTable
-#from mutationModel.setMutationModelMsat import SetMutationModelMsat
-#from mutationModel.setMutationModelSequences import SetMutationModelSequences
-#from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
-#from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from analysis.defineNewAnalysis import DefineNewAnalysis
 from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from analysis.viewAnalysisParameters import ViewAnalysisParameters
 #from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
-from utils.data import Data,DataSnp,isSNPDatafile
+from utils.data import DataSnp,isSNPDatafile
 from datetime import datetime 
 import os.path
 from PyQt4.Qwt5 import *
@@ -35,7 +28,6 @@ from PyQt4.Qwt5.qplt import *
 import output
 from utils.cbgpUtils import log
 import tempfile
-import re
 import utils.cbgpUtils as cbgpUtils
 from project import Project
 
