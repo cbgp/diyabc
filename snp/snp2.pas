@@ -12,9 +12,10 @@ const
   bh:array[0..2]of extended =(0.4690,0.3842,0.3753);
   af:array[0..2]of extended =(0.5246,0.3389,0.4672);
   bf:array[0..2]of extended =(1.6196,1.2259,2.4070);
+  ml:array[0..4]of integer = (1000,5000,10000,20000,40000);
   nbr=10;
   anbr=1.0/nbr;
-  nrep=1000;
+  nrep=100;
 
 type
   arrayS =array of string;
@@ -28,14 +29,15 @@ var
   freq :array of array of extended;
   nloc,npop,rep  :integer;
   nind       :array of integer;
-  nindtot,freqmax,nloca,io    :integer;
+  nindtot,freqmax,nloca,io,iter    :integer;
   popname    :arrayS;
   t0         :TDateTime;
   myHour, myMin, mySec, myMilli : Word;
   pobth,pobtf,pobtn       :array[0..2,0..pred(nbr)] of extended;
   quanth,quantf,quantn    :array[0..2,0..pred(nbr)] of extended;
-  DD         :array[0..2,0..3,0..2,0..pred(nrep)] of extended;
-  f2  :textfile;
+  ht,nt,ft                :array[0..2] of vecteurF;
+  DD         :array[0..2,0..4,0..2,0..pred(nrep)] of extended;
+  f2,f3  :textfile;
   randinitOK :boolean;
   GM :TMwcGen;
   wl :vecteurF;
@@ -43,7 +45,7 @@ var
 
 procedure splitwords(s:string;sep:string;var nss:integer;var ss:arrayS;lim:integer);
   var
-    i,j,j0,j1   :integer;
+    i,j,j0   :integer;
     s0,s1     :string;
   begin
 	j:=0;
@@ -83,7 +85,7 @@ procedure readfile;
   var
 	f0  :textfile;
 	i,j,k,nss,io,nli,nl  :integer;
-	ligne,pop  :string;
+	ligne  :string;
 	ss     :arrayS;
 	trouve  :boolean;
   begin
@@ -205,6 +207,81 @@ procedure libin;
 	fi.ReadBuffer(npop,4);writeln('npop=',npop);
   end;}
 
+procedure combrank(x,y:vecteurF;var rangx,rangy:vecteurF);
+  var
+    i,j,n,m  :integer;
+  begin
+	n:=length(x);m:=length(y);
+	setlength(rangx,n);setlength(rangy,m);
+	writeln('calcul des rangx (',n,')');
+	for i:=0 to pred(n) do
+	  begin
+	    rangx[i]:=1.0;
+	    for j:=0 to pred(n) do
+		  begin
+		    if j<>i then 
+			  begin
+			    if x[i]>x[j] then rangx[i]:=rangx[i]+1.0;
+			    if x[i]=x[j] then rangx[i]:=rangx[i]+0.5;
+		      end;
+		  end;
+	    for j:=0 to pred(m) do
+		  begin
+		    if x[i]>y[j] then rangx[i]:=rangx[i]+1.0;
+		    if x[i]=y[j] then rangx[i]:=rangx[i]+0.5;
+		  end;
+	  end;
+	  writeln('calcul des rangy (',m,')');
+ 	for i:=0 to pred(m) do
+	  begin
+	    rangy[i]:=1.0;
+	    for j:=0 to pred(m) do
+		  begin
+		    if j<>i then 
+			  begin
+			    if y[i]>y[j] then rangy[i]:=rangy[i]+1.0;
+			    if y[i]=y[j] then rangy[i]:=rangy[i]+0.5;
+		      end;
+		  end;
+	    for j:=0 to pred(n) do
+		  begin
+		    if y[i]>x[j] then rangy[i]:=rangy[i]+1.0;
+		    if y[i]=x[j] then rangy[i]:=rangy[i]+0.5;
+		  end;
+	  end;
+ end;
+
+procedure combrank2(x,y:vecteurF;var rangx,rangy:vecteurF);
+  var
+    A  :matriceF;
+    i,m,n,k :integer;
+  begin
+	n:=length(x);m:=length(y);
+	setlength(rangx,n);setlength(rangy,m);
+	setlength(A,n+m,3);
+	for i:=0 to pred(n) do begin A[i,0]:=x[i];A[i,1]:=0;A[i,2]:=i;end;
+	for i:=0 to pred(m) do begin A[n+i,0]:=y[i];A[n+i,1]:=1;A[n+i,2]:=i;end;
+    fsortV('a',n+m,3,0,A);
+    for i:=0 to pred(n+m) do
+      begin
+		k:=round(A[i,2]);
+        if A[i,1]<0.5 then rangx[k]:=succ(i)
+                      else rangy[k]:=succ(i);
+	  end;
+	{writeln('calcul des rangx (',n,')');
+    for i:=0 to pred(n) do
+      begin
+		k:=0;while not((A[k,1]=0)and(A[k,2]=i)) do inc(k);
+		rangx[i]:=succ(k);
+      end;
+	  writeln('calcul des rangy (',m,')');
+    for i:=0 to pred(m) do
+      begin
+		k:=0;while not((A[k,1]=1)and(A[k,2]=i)) do inc(k);
+		rangy[i]:=succ(k);
+      end;}
+  end;
+
 procedure calfreq;
   var
     i,j,k,n  :integer;
@@ -233,13 +310,13 @@ procedure calfreq;
 
 procedure calhet(tout:boolean);
   var
-    i,k,nl,j,loc,q,nlocu  :integer;
-    hetmoy,hetvar,sx,sx2,a,b,he  :array of extended;
+    i,k,nl,j,loc,q,nlocu,N,M  :integer;
+    hetmoy,hetvar,sx,sx2,a,b,he,rangx,rangy  :vecteurF;
     f1  :textfile;
     locOK :array of array of boolean;
     het  :array of array of extended;
 	pob,quant :array of extended;
-	sw,Dkl,x,Dabs,Deuc,Dqua  :extended;
+	sw,Dkl,x,Dabs,Deuc,Dqua,Dcra,U,V  :extended;
   begin
     if tout then nlocu:=nloc else nlocu:=nloca;
     //writeln('nloc=',nloc,'   nlocu=',nlocu);
@@ -265,7 +342,8 @@ procedure calhet(tout:boolean);
 				pob[i]:=pob[i]+1.0;
 			  end else locOK[k][index[loc]]:=false;
           end;
-        for loc:=0 to pred(nlocu) do he[loc]:=het[k][index[loc]];  
+        for loc:=0 to pred(nlocu) do he[loc]:=het[k][index[loc]];
+        if tout then begin setlength(ht[k],nlocu);for loc:=0 to pred(nlocu) do ht[k][loc]:=het[k][index[loc]];end;
         fsort('a',nlocu,he);
         for i:=0 to pred(nbr) do begin q:= succ(i)*nlocu div succ(nbr);quant[i]:=he[q];end;
         {if tout then write('TOUT ');
@@ -276,7 +354,7 @@ procedure calhet(tout:boolean);
 		for i:=0 to pred(nbr) do sw:=sw+pob[i];
 		for i:=0 to pred(nbr) do pob[i]:=pob[i]/sw;
 		//for i:=0 to pred(nbr) do write(pob[i]:6:3);writeln;
-        Dkl:=0.0;Dabs:=0.0;Deuc:=0.0;Dqua:=0.0;
+        Dkl:=0.0;Dabs:=0.0;Deuc:=0.0;Dqua:=0.0;Dcra:=0.0;
         if tout then for j:=0 to pred(nbr) do begin pobth[k][j]:=pob[j];quanth[k][j]:=quant[j];end else
           begin
             for i:=0 to pred(nbr) do if pobth[k][i]*pob[i]>0.0 then 
@@ -287,6 +365,11 @@ procedure calhet(tout:boolean);
             for i:=0 to pred(nbr) do Dabs:=Dabs+abs(pob[i]-pobth[k][i]);Dabs:=anbr*Dabs;
             for i:=0 to pred(nbr) do Deuc:=Deuc+sqr(pob[i]-pobth[k][i]);Deuc:=anbr*sqrt(Deuc);
             for i:=0 to pred(nbr) do Dqua:=Dqua+sqr(quant[i]-quanth[k][i]);Dqua:=anbr*sqrt(Dqua);
+			combrank2(he,ht[k],rangx,rangy);
+			N:=length(he);M:=length(ht[k]);
+			U:=0.0;for i:=0 to high(he) do U:=U+sqr(rangx[i]-succ(i));U:=U*N;
+			V:=0.0;for i:=0 to high(ht[k]) do V:=V+sqr(rangy[i]-succ(i));V:=V*M;
+			Dcra:=(U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);Dcra:=Dcra/M;
           end;
         hetmoy[k]:=sx[k]/nl;
         hetvar[k]:=(sx2[k]-sqr(sx[k])/nl)/nl;
@@ -297,9 +380,9 @@ procedure calhet(tout:boolean);
         //writeln('     a[',k,']=',a[k]:8:4,'   b[',k,']=',b[k]:8:4,'  dist=',sqrt(sqr(a[k]-ah[k])+sqr(b[k]-bh[k])):8:4,'  Dkl=',Dkl:10:6);
         if (not tout) then 
           begin
-            write(f2,sqrt(sqr(a[k]-ah[k])+sqr(b[k]-bh[k])):10:8,'     ',Dkl:10:8,'     ',Dabs:10:8,'     ',Deuc:10:8,'     ',Dqua:10:8);
+            write(f2,sqrt(sqr(a[k]-ah[k])+sqr(b[k]-bh[k])):10:8,'     ',Dkl:10:8,'     ',Dabs:10:8,'     ',Deuc:10:8,'     ',Dqua:10:8,'     ',Dcra:10:8);
             writeln(f2,'   H',k);
-            DD[0,0,k,rep]:=Dkl;DD[0,1,k,rep]:=Dabs;DD[0,2,k,rep]:=Deuc;DD[0,3,k,rep]:=Dqua;
+            DD[0,0,k,rep]:=Dkl;DD[0,1,k,rep]:=Dabs;DD[0,2,k,rep]:=Deuc;DD[0,3,k,rep]:=Dqua;DD[0,4,k,rep]:=Dcra;
           end;
       end;
     assignfile(f1,'het.txt');rewrite(f1);
@@ -312,9 +395,9 @@ procedure calhet(tout:boolean);
   
 procedure NeiDist(tout:boolean);
   var
-	i,j,k,nl,ipop,jpop,np,loc,all,q,nlocu :integer;
-	neimoy,neivar,sx,sx2,a,b,ne  :array of extended;
-	Dkl,x,Dabs,Deuc,fi,fj,gi,gj,sw,Dqua :extended;
+	i,j,k,nl,ipop,jpop,np,loc,q,nlocu,N,M :integer;
+	neimoy,neivar,sx,sx2,a,b,ne,rangx,rangy  :vecteurF;
+	Dkl,x,Dabs,Deuc,fi,fj,gi,gj,sw,Dqua,Dcra,U,V :extended;
 	f1  :textfile;
 	locOK  :array of array of boolean;
 	nei  :array of array of extended;
@@ -352,6 +435,7 @@ procedure NeiDist(tout:boolean);
 			sw:=0.0;for i:=0 to pred(nbr) do sw:=sw+pob[i];
 			for i:=0 to pred(nbr) do pob[i]:=pob[i]/sw;
 			for loc:=0 to pred(nlocu) do ne[loc]:=nei[k][index[loc]];  
+			if tout then begin setlength(nt[k],nlocu);for loc:=0 to pred(nlocu) do nt[k][loc]:=nei[k][index[loc]];end;
 			fsort('a',nlocu,ne);
 			for i:=0 to pred(nbr) do begin q:= succ(i)*nlocu div succ(nbr);quant[i]:=ne[q];end;
 			{if tout then write('TOUT ');
@@ -369,6 +453,11 @@ procedure NeiDist(tout:boolean);
 				for i:=0 to pred(nbr) do Dabs:=Dabs+abs(pob[i]-pobtn[k][i]);Dabs:=anbr*Dabs;
 				for i:=0 to pred(nbr) do Deuc:=Deuc+sqr(pob[i]-pobtn[k][i]);Deuc:=anbr*sqrt(Deuc);
 				for i:=0 to pred(nbr) do Dqua:=Dqua+sqr(quant[i]-quantn[k][i]);Dqua:=anbr*sqrt(Dqua);
+				combrank2(ne,nt[k],rangx,rangy);
+				N:=length(ne);M:=length(nt[k]);
+				U:=0.0;for i:=0 to high(ne) do U:=U+sqr(rangx[i]-succ(i));U:=U*N;
+				V:=0.0;for i:=0 to high(nt[k]) do V:=V+sqr(rangy[i]-succ(i));V:=V*M;
+				Dcra:=(U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);Dcra:=Dcra/M;
 			  end;
 		  for loc:=0 to pred(nlocu) do if locOK[k][index[loc]] then begin sx[k]:=sx[k]+nei[k][index[loc]];sx2[k]:=sx2[k]+sqr(nei[k][index[loc]]);end;
 		  neimoy[k]:=sx[k]/nl;
@@ -380,9 +469,9 @@ procedure NeiDist(tout:boolean);
 		  //writeln('     a[',k,']=',a[k]:8:4,'   b[',k,']=',b[k]:8:4,'  dist=',sqrt(sqr(a[k]-ah[k])+sqr(b[k]-bh[k])):8:4,'  Dabs=',Dabs:10:6);
 		  if (not tout) then 
 			begin
-			  write(f2,sqrt(sqr(a[k]-ah[k])+sqr(b[k]-bh[k])):10:8,'     ',Dkl:10:8,'     ',Dabs:10:8,'     ',Deuc:10:8,'     ',Dqua:10:8);
+			  write(f2,sqrt(sqr(a[k]-ah[k])+sqr(b[k]-bh[k])):10:8,'     ',Dkl:10:8,'     ',Dabs:10:8,'     ',Deuc:10:8,'     ',Dqua:10:8,'     ',Dcra:10:8);
 			  writeln(f2,'   N',k);
-              DD[1,0,k,rep]:=Dkl;DD[1,1,k,rep]:=Dabs;DD[1,2,k,rep]:=Deuc;DD[1,3,k,rep]:=Dqua;
+              DD[1,0,k,rep]:=Dkl;DD[1,1,k,rep]:=Dabs;DD[1,2,k,rep]:=Deuc;DD[1,3,k,rep]:=Dqua;DD[1,4,k,rep]:=Dcra;
 			end;
 		end;
     end;
@@ -396,9 +485,9 @@ end;
 
 procedure calFst(tout:boolean);
   var
-	i,k,nl,ipop,jpop,np,loc,all,q,nlocu :integer;
-	fstmoy,fstvar,sx,sx2,a,b,fs  :array of extended;
-	sniA,sniAA,sni,sni2,s2A,fi,fj,sw,sw2,a1,b1,Dkl,x,Dabs,Deuc,Dqua :extended;
+	i,k,nl,ipop,jpop,np,loc,all,q,nlocu,N,M :integer;
+	fstmoy,fstvar,sx,sx2,a,b,fs,rangx,rangy  :vecteurF;
+	sniA,sniAA,sni,sni2,s2A,fi,fj,sw,sw2,a1,b1,Dkl,x,Dabs,Deuc,Dqua,Dcra,U,V :extended;
 	f1  :textfile;
 	locOK  :array of array of boolean;
 	fst,w  :array of array of extended;
@@ -451,6 +540,7 @@ procedure calFst(tout:boolean);
 			  end;
 			//  writeln('FST fin de la premiere boucle sur les locus');
 			for loc:=0 to pred(nlocu) do fs[loc]:=fst[k][index[loc]];
+			if tout then begin setlength(ft[k],nlocu);for loc:=0 to pred(nlocu) do ft[k][loc]:=fst[k][index[loc]];end;
 			//writeln('2');
 			fsort('a',nlocu,fs);
 			//writeln('3');
@@ -506,6 +596,11 @@ procedure calFst(tout:boolean);
 				for i:=0 to pred(nbr) do Dabs:=Dabs+abs(pob[i]-pobtf[k][i]);Dabs:=anbr*Dabs;
 				for i:=0 to pred(nbr) do Deuc:=Deuc+sqr(pob[i]-pobtf[k][i]);Deuc:=anbr*sqrt(Deuc);
 				for i:=0 to pred(nbr) do Dqua:=Dqua+sqr(quant[i]-quantf[k][i]);Dqua:=anbr*sqrt(Dqua);
+				combrank2(fs,ft[k],rangx,rangy);
+				N:=length(fs);M:=length(ft[k]);
+				U:=0.0;for i:=0 to high(fs) do U:=U+sqr(rangx[i]-succ(i));U:=U*N;
+				V:=0.0;for i:=0 to high(ft[k]) do V:=V+sqr(rangy[i]-succ(i));V:=V*M;
+				Dcra:=(U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);Dcra:=Dcra/M;
 			  end;
 			//write('fstmoy[',k,']=',fstmoy[k]:6:4,'     fstvar[',k,']=',fstvar[k]:12:6);
 			//writeln('     a[',k,']=',a[k]:8:4,'   b[',k,']=',b[k]:8:4,'  dist=',sqrt(sqr(a[k]-af[k])+sqr(b[k]-bf[k])):8:4,'  Dkl=',Dkl:10:6);
@@ -513,7 +608,7 @@ procedure calFst(tout:boolean);
 			  begin
 			    write(f2,sqrt(sqr(a[k]-af[k])+sqr(b[k]-bf[k])):10:8,'     ',Dkl:10:8,'     ',Dabs:10:8,'     ',Deuc:10:8,'     ',Dqua:10:8);
 			    writeln(f2,'   F',k);
-                DD[2,0,k,rep]:=Dkl;DD[2,1,k,rep]:=Dabs;DD[2,2,k,rep]:=Deuc;DD[2,3,k,rep]:=Dqua;
+                DD[2,0,k,rep]:=Dkl;DD[2,1,k,rep]:=Dabs;DD[2,2,k,rep]:=Deuc;DD[2,3,k,rep]:=Dqua;DD[2,4,k,rep]:=Dcra;
 			  end;
 		end;
       end;
@@ -531,26 +626,28 @@ procedure compdist;
     i,j,k,l :integer;
     sx,sx2,v,m :extended;
   begin
+    writeln(nloca,' locus');writeln(f3,nloca,' locus');
 	for i:=0 to 2 do //SS
 	  begin
 	    writeln;
-	    if i=0 then writeln('hétérozygotie');
-	    if i=1 then writeln('Neis distance');
-	    if i=2 then writeln('Fst distance');
-	    writeln('             Kullback                Dabs                   Deuc                 Dqua');
+	    if i=0 then begin writeln('hétérozygotie');writeln(f3,'hétérozygotie');end;
+	    if i=1 then begin  writeln('Neis distance');writeln(f3,'Neis distance');end;
+	    if i=2 then begin writeln('Fst distance'); writeln(f3,'Fst distance');end;
+	    writeln('         Kullback                Dabs                   Deuc                 Dqua                Dcra');
+	    writeln(f3,'         Kullback                Dabs                   Deuc                 Dqua                Dcra');
 	    for k:=0 to 2 do //np
 	      begin
-	        write('np=',k);
-	        for j:=0 to 3 do //dist
+	        for j:=0 to 4 do //dist
 	          begin
 				sx:=0.0;sx2:=0.0;
 				for l:=0 to pred(nrep) do begin sx:=sx+DD[i,j,k,l];sx2:=sx2+sqr(DD[i,j,k,l]);end;
 				v:=(sx2-sx*sx/nrep)/pred(nrep);m:=sx/rep;
-				write(m:12:6,sqrt(v)/m:10:7);
+				write(m:12:6,sqrt(v)/m:10:7);write(f3,m:12:6,sqrt(v)/m:10:7);
 			  end;
-			  writeln;
+			  writeln;writeln(f3);
 	      end;
 	  end;
+	writeln;writeln;writeln(f3);writeln(f3);
   end;
   
 begin
@@ -569,7 +666,6 @@ begin
   DecodeTime(now-t0, myHour, myMin, mySec, myMilli);
   writeln('durée de la lecture du bin: ',IntToStr(myMilli),' millisecondes');
   halt;}
-  writeln('tirage de ',nloca,' locus au hasard avec remise parmi ',nloc);
   calfreq;
   DecodeTime(now-t0, myHour, myMin, mySec, myMilli);
   writeln('durée du calcul des fréquences: ',IntToStr(myMilli),' millisecondes'); 
@@ -585,17 +681,24 @@ begin
   calFst(true);
   DecodeTime(now-t0, myHour, myMin, mySec, myMilli);
   writeln('durée du calcul des Fst: ',IntToStr(myMilli),' millisecondes');
-  assignfile(f2,'comp_dist2.txt');rewrite(f2);
   repeat Randinit(mwcg[1000],16777216,random(16777216),random(16777216),GM,randinitOK);until randinitOK;
-  for rep:=0 to pred(nrep) do
+  assignfile(f3,'snp2.out');rewrite(f3);
+  for iter:=0 to 4 do
     begin
-      resample(wl,nloca,index,freqmax,GM);
-	  calhet(false);
-	  NeiDist(false);
-	  calFst(false);
-	  write(chr(13),'Progression des calculs ',succ(rep)*100 div nrep,'%');
-    end;
-   closefile(f2);
-   compdist;
+	 assignfile(f2,'comp_dist2.txt');rewrite(f2);
+     nloca:=ml[iter];
+	  writeln('tirage de ',nloca,' locus au hasard avec remise parmi ',nloc);
+	  for rep:=0 to pred(nrep) do
+		begin
+		  resample(wl,nloca,index,freqmax,GM);
+		  calhet(false);
+		  NeiDist(false);
+		  calFst(false);
+		  write(chr(13),'Progression des calculs ',succ(rep)*100 div nrep,'%');
+		end;
+	  closefile(f2);
+	  compdist;
+	end;
+  closefile(f3);
 end.
   
