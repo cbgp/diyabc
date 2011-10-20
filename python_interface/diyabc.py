@@ -8,7 +8,7 @@ VERSION_DATE='01/01/1970'
 
 #import dataImages
 import shutil
-import sys
+import sys,traceback
 import os
 if sys.platform.startswith('win'):
     sys.path.append("Python26/Lib/site-packages")
@@ -512,12 +512,14 @@ class Diyabc(formDiyabc,baseDiyabc):
                         try:
                             proj_to_open.loadFromDir()
                         except Exception,e:
+                            tb = traceback.format_exc()
                             self.clearStatus()
                             #cur.setShape(Qt.ArrowCursor)
                             #self.setCursor(cur)
                             QApplication.restoreOverrideCursor()
                             output.notify(self,"opening error","An error occured during the opening of the project\
- %s :\n\n%s\n\nThe cause may be a dirty user handmade modification of the project files or a bug"%(dir,e))
+ %s :\n\nThe cause may be a dirty user handmade modification of the project files or a bug.\
+ If it persists with clean project files, please submit a bug to developpers\n\n%s"%(dir,tb))
                             return
                         self.project_list.append(proj_to_open)
                         self.ui.tabWidget.addTab(proj_to_open,proj_to_open.name)

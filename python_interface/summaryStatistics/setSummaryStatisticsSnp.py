@@ -69,7 +69,6 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         #self.ui.noneMld3Button.hide()
         #self.ui.noneMl3Button.hide()
 
-        print "lalala %s"%self.numGroup
         self.ui.sumStatLabel.setText("Set summary statistics for '%s' locus"%self.numGroup)
         self.ui.availableEdit.setText(str(self.parent.parent.data.ntypeloc[self.numGroup]))
         self.ui.takenEdit.setText(str(self.parent.parent.data.ntypeloc[self.numGroup]))
