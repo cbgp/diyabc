@@ -157,7 +157,7 @@ public:
                 char *path;
         string s1,s2,**sl,*ss,*ss1,*ss2;
         int *nlscen,nss,nss1,j,k,l,gr,grm,k1,k2;
-        //cout<<"debut de readheader\n";
+        cout<<"debut de readheader\n";
         //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
         ifstream file(headerfilename, ios::in);
         if (file == NULL) {
@@ -535,18 +535,20 @@ public:
                 //cout<<"apres superscen\n";
         if (debuglevel==2) cout<<"header.txt : fin de l'établissement du superscen\n";
 //Partie group statistics
-                //cout<<"debut des group stat\n";
+                cout<<"debut des group stat\n";
                 this->nstat=0;
         getline(file,s1);       //ligne vide
         getline(file,s1);       //ligne "group group statistics"
         //cout <<"s1="<<s1<<"\n";
         for (gr=1;gr<=this->ngroupes;gr++) {
             getline(file,s1);
+        //cout <<"s1="<<s1<<"\n";
             ss=splitwords(s1," ",&nss);
+			
                         //cout <<"s1="<<s1<<"   ss[3]="<< ss[3] <<"   atoi = "<< atoi(ss[3].c_str()) <<"\n";
-            this->groupe[gr].nstat = getwordint(ss[3],0);
-                        //cout <<"s1="<<s1<<"   ss[3]="<< ss[3] <<"   atoi = "<< this->groupe[gr].nstat <<"\n";
-                        this->nstat +=this->groupe[gr].nstat;
+            this->groupe[gr].nstat = getwordint(ss[nss-1],0);
+                        //cout << this->groupe[gr].nstat <<"\n";
+            this->nstat +=this->groupe[gr].nstat;
             this->groupe[gr].sumstat = new StatC[this->groupe[gr].nstat];
             delete [] ss;
             k=0;
@@ -740,7 +742,7 @@ public:
         string s1,s2,*sl,*ss,*ss1,*ss2;
         int nlscen,nss,nss1,j,k,l,gr,grm,k1,k2,*nf,*nm,jstat;
 		double som;
-        //cout<<"debut de readheader\n";
+        cout<<"debut de readheadersim\n";
         //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
         ifstream file(headersimfilename, ios::in);
         if (file == NULL) {
@@ -1037,7 +1039,7 @@ public:
                 int kmoy;
                 this->particuleobs.nloc = this->dataobs.nloc;
                 this->particuleobs.locuslist = new LocusC[this->dataobs.nloc];
-                //cout<<"avant la boucle\n";
+                cout<<"avant la boucle\n";
                 for (int kloc=0;kloc<this->dataobs.nloc;kloc++){
                         this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type;
                         this->particuleobs.locuslist[kloc].groupe = this->dataobs.locus[kloc].groupe;
@@ -1049,7 +1051,7 @@ public:
                         this->particuleobs.locuslist[kloc].samplesize = new int[ this->dataobs.nsample];
 
                         for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].samplesize[sa] =  this->dataobs.locus[kloc].samplesize[sa];
-                        //cout<<"locus "<<kloc<<"   groupe "<<this->particuleobs.locuslist[kloc].groupe<<"\n";
+                        cout<<"locus "<<kloc<<"   groupe "<<this->particuleobs.locuslist[kloc].groupe<<"\n";
                         if (this->dataobs.locus[kloc].type < 5) {
                                 kmoy=(this->dataobs.locus[kloc].maxi+this->dataobs.locus[kloc].mini)/2;
                                 this->particuleobs.locuslist[kloc].kmin=kmoy-((this->dataobs.locus[kloc].motif_range/2)-1)*this->dataobs.locus[kloc].motif_size;

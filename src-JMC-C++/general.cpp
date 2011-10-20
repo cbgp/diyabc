@@ -216,7 +216,6 @@ int main(int argc, char *argv[]){
             strcat(stopfilename,".stop");
             flagp=true;
             if (stat(stopfilename,&stFileInfo)==0) remove(stopfilename);
-			cout<<headersimfilename<<"\n";
             break;
 
         case 's' :
