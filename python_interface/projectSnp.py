@@ -35,11 +35,15 @@ class ProjectSnp(ProjectReftable):
         self.ui.refTableStack.setCurrentWidget(self.sum_stat_wins[ty])
         self.setGenValid(False)
 
-    def updateNbStats(self):
+    def getNbSumStats(self):
         nb = 0
         for ty in self.sum_stat_wins.keys():
             (nstat,stat_txt) = self.sum_stat_wins[ty].getSumConf()
             nb += int(nstat)
+        return nb
+
+    def updateNbStats(self):
+        nb = self.getNbSumStats()
         if nb > 1:
             plur='s'
             self.setGenValid(True)
@@ -213,7 +217,7 @@ class ProjectSnp(ProjectReftable):
             nb_param = self.hist_model_win.getNbParam()
             #nb_param += self.gen_data_win.getNbParam()
             #nb_sum_stats = self.gen_data_win.getNbSumStats()
-            f.write("%s parameters and %s summary statistics\n\n"%(nb_param,0))
+            f.write("%s parameters and %s summary statistics\n\n"%(nb_param,self.getNbSumStats()))
             f.close()
 
             # save hist conf
