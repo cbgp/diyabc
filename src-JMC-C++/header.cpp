@@ -323,9 +323,13 @@ public:
 		} else {			//fichier SNP
 			this->ngroupes=getwordint(s1,3);
 			this->groupe = new LocusGroupC[this->ngroupes+1];
+			this->groupe[0].nloc = this->dataobs.nloc;
 			for (gr=1;gr<=this->ngroupes;gr++) {
 				getline(file,s1);
 				this->groupe[gr].nloc=getwordint(s1,1);
+				this->groupe[0].nloc -= this->groupe[gr].nloc;
+				this->groupe[0].loc = new int[this->groupe[0].nloc];
+				for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].groupe=0;
 				this->groupe[gr].loc = new int[this->groupe[gr].nloc];
 				int prem = getwordint(s1,5)-1;
 				if (s1.find("<A>")!=string::npos) this->groupe[gr].type=10;
@@ -337,12 +341,17 @@ public:
 				for (int loc=prem;loc<prem+this->dataobs.nloc;loc++) {
 					if (this->dataobs.locus[loc].type==this->groupe[gr].type) {
 						  this->groupe[gr].loc[k1]=loc;
+						  this->dataobs.locus[loc].groupe=gr;
 						  k1++;
 					} 
 				  
 				}
 			}
-			
+			this->groupe[0].loc = new int[this->groupe[0].nloc];
+			k1=0;
+			for (int loc=0;loc<this->dataobs.nloc;loc++) {
+				if (this->dataobs.locus[loc].groupe==0) {this->groupe[0].loc[k1]=loc;k1++;}
+			}
 		}
         if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie description des locus\n";
 		if (this->dataobs.filetype==0){
