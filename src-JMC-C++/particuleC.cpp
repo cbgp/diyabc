@@ -2590,7 +2590,7 @@ struct ParticleC
                 for (int i=0;i<this->locuslist[loc].ss[samp];i++){
                     if (this->locuslist[loc].haplosnp[samp][i] == g0) this->locuslist[loc].freq[samp][0] +=1.0;
 				}
-				this->locuslist[loc].freq[samp][1]:=this->locuslist[loc].samplesize[samp]-this->locuslist[loc].freq[samp][0];
+				this->locuslist[loc].freq[samp][1] = this->locuslist[loc].samplesize[samp]-this->locuslist[loc].freq[samp][0];
 				this->locuslist[loc].freq[samp][0] /=this->locuslist[loc].samplesize[samp];
 				this->locuslist[loc].freq[samp][1] /=this->locuslist[loc].samplesize[samp];
 			}
@@ -3943,7 +3943,7 @@ struct ParticleC
 				case   -12 : this->grouplist[gr].sumstat[st].val = cal_mpb2p(gr,st);break;
 				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(gr,st);break;
 				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(gr,st);break;
-				case    21 : this->grouplist[gr].sumstat[st].val = cal_snhet(gr,st)
+				//case    21 : this->grouplist[gr].sumstat[st].val = cal_snhet(gr,st)
 			}
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
