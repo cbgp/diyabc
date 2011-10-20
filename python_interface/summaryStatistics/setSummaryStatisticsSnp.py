@@ -19,6 +19,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
     """
     def __init__(self,parent=None,box_group=None,numGroup=0):
         super(SetSummaryStatisticsSnp,self).__init__(parent,box_group,numGroup)
+
         
         self.statList = ["SHM","SHD","SNM","SND","SFM","SFD","SAM","SAD"]
         self.confToStat = {"SHM" : "mgd","SHD" : "dgd", "SNM": "mnd2","SND" : "dond2", "SFM" : "mfd2", "SFD" : "dofd2", "SAM" : "ml3", "SAD" : "mld3" }
@@ -68,18 +69,26 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         self.ui.noneMld3Button.hide()
         self.ui.noneMl3Button.hide()
 
+        self.ui.sumStatLabel.setText("Set summary statistics for <%s> locus"%self.numGroup)
+        self.ui.availableEdit.setText(str(self.parent.parent.data.ntypeloc[self.numGroup]))
+        self.ui.takenEdit.setText(str(self.parent.parent.data.ntypeloc[self.numGroup]))
+
     def exit(self):
         self.parent.parent.ui.refTableStack.removeWidget(self)
         self.parent.parent.ui.refTableStack.setCurrentIndex(0)
-        (nstat,stat_txt) = self.getSumConf()
-        if int(nstat) > 1:
-            plur='s'
-        else:
-            plur=''
-        self.parent.parent.ui.nbSumStatsLabel.setText("%s summary statistic%s"%(nstat,plur))
-
+        self.parent.parent.updateNbStats()
     def validate(self,silent=False):
-        self.exit()
+        try:
+            av = int(str(self.ui.availableEdit.text()))
+            ta = int(str(self.ui.takenEdit.text()))
+            if ta > av or ta <= 0:
+                if not silent:
+                    output.notify(self,"Input error","Number of taken loci must be positive and inferior to number of available loci")
+            else:
+                self.exit()
+        except Exception,e:
+            if not silent:
+                output.notify(self,"Input error",str(e))
 
     def loadSumStatsConf(self):
         # TODO
@@ -403,7 +412,14 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         return result
 
     def writeGeneticConfFromGui(self):
-        pass
+
+        res = "loci description (%s)\n"%len(self.parent.parent.data.ntypeloc.keys())
+        numgr = 1
+        for ty in self.parent.parent.data.ntypeloc.keys():
+            res += "%s <%s> G%s\n"%(self.parent.parent.data.ntypeloc[ty],ty,numgr)
+            numgr += 1
+        res += "\n"
+        print res
         #stat_header_txt = "group G%i [M] (%i)\n"%((i+1),nstat_tmp)
         #(nstat_tmp,stat_txt) = self.getSumConf()
 

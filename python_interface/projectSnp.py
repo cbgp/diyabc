@@ -28,9 +28,23 @@ class ProjectSnp(ProjectReftable):
         """ initie la définition des summary statistics
         """
         log(1,"Entering in Summary statistics")
-        self.ui.refTableStack.addWidget(self.sum_stat_win)
-        self.ui.refTableStack.setCurrentWidget(self.sum_stat_win)
+        ty = str(self.typeCombo.currentText())
+        self.ui.refTableStack.addWidget(self.sum_stat_wins[ty])
+        self.ui.refTableStack.setCurrentWidget(self.sum_stat_wins[ty])
         self.setGenValid(False)
+
+    def updateNbStats(self):
+        nb = 0
+        for ty in self.sum_stat_wins.keys():
+            (nstat,stat_txt) = self.sum_stat_wins[ty].getSumConf()
+            nb += int(nstat)
+        if nb > 1:
+            plur='s'
+            self.setGenValid(True)
+        else:
+            plur=''
+        self.ui.nbSumStatsLabel.setText("Total : %s summary statistic%s"%(nb,plur))
+
 
     #def setGenValid(self,valid):
     #    """ met à jour l'état des genetic data
@@ -54,11 +68,43 @@ class ProjectSnp(ProjectReftable):
             self.setHistValid(True)
             self.hist_model_win.majProjectGui()
         # mutation model : plus facile d'utiliser directement la validation
-        self.sum_stat_win.validate(silent=True)
+        for ty in self.sum_stat_wins.keys():
+            self.sum_stat_wins[ty].validate(silent=True)
 
     def returnToMe(self):
         self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
         self.ui.refTableStack.setCurrentIndex(0)
+
+    def loadSumStatsConf(self):
+        if os.path.exists(self.dir):
+            if os.path.exists("%s/%s"%(self.dir,self.parent.gen_conf_name)):
+                f = codecs.open("%s/%s"%(self.dir,self.parent.gen_conf_name),"r","utf-8")
+                lines = f.readlines()
+                f.close()
+                nl = 1
+                diconb = {}
+                dicoGrTy = {}
+                dicoStatLines = {}
+                while (lines[nl].strip() != ""):
+                    ty = lines[nl].split('<')[1].split('>')[0]
+                    numGr = int(lines[nl].strip().split(' ')[2][1:])
+                    diconb[ty] = lines[nl].strip().split(' ')[0]
+                    dicoGrTy[numGr] = ty
+                    self.sum_stat_wins[ty].ui.takenEdit.setText(diconb[ty])
+                    nl += 1
+                nl += 2
+                while nl < len(lines) and lines[nl].strip() != "":
+                    numGroup = int(lines[nl].strip().split(' ')[1][1:])
+                    ty = dicoGrTy[numGroup]
+                    statlines = []
+                    nl += 1
+                    while nl < len(lines) and "group" not in lines[nl]:
+                        statlines.append( lines[nl] )
+                        nl += 1
+                    dicoStatLines[ty] = statlines
+
+                for ty in dicoStatLines.keys():
+                    self.sum_stat_wins[ty].setSumConf(dicoStatLines[ty])
 
     def loadFromDir(self):
         """ charge les infos à partir du répertoire self.dir
@@ -80,7 +126,7 @@ class ProjectSnp(ProjectReftable):
         if self.loadMyConf():
             # lecture de conf.hist.tmp
             self.hist_model_win.loadHistoricalConf()
-            self.sum_stat_win.loadSumStatsConf()
+            self.loadSumStatsConf()
             self.loadAnalysis()
         else:
             raise Exception("Impossible to read the project configuration")
@@ -128,11 +174,21 @@ class ProjectSnp(ProjectReftable):
             return False
 
         # on declare les sumstats apres avoir chargé le datafile car c'est nécessaire
+        # feinte pour que le parent.parent renvoie au projet
         self.dummy = QFrame()
         self.dummy.parent = self
-        # feinte pour que le parent.parent renvoie au projet
-        self.sum_stat_win = SetSummaryStatisticsSnp(parent=self.dummy)
-        self.sum_stat_win.hide()
+        self.sum_stat_wins = {}
+        for ty in self.data.ntypeloc.keys():
+            self.sum_stat_wins[ty] = SetSummaryStatisticsSnp(parent=self.dummy,numGroup=ty)
+            self.sum_stat_wins[ty].hide()
+
+        # selection du type de snp pour sumstats
+        self.typeCombo = QComboBox(self)
+        for ty in self.data.ntypeloc.keys():
+            self.typeCombo.addItem(ty)
+        self.ui.gridLayout_5.addWidget(self.typeCombo,0,2)
+        self.ui.gridLayout_5.addWidget(QLabel("for this locus type :"),0,1)
+
         return True
 
     def save(self):
@@ -160,17 +216,66 @@ class ProjectSnp(ProjectReftable):
             # save hist conf
             self.hist_model_win.writeHistoricalConfFromGui()
             # save gen conf
-            self.sum_stat_win.writeGeneticConfFromGui()
+            self.writeGeneticConfFromGui()
             # save th conf et production du reftable header
-            #if self.gen_state_valid and self.hist_state_valid:
-            #    self.writeThConf()
-            #    self.writeRefTableHeader()
+            if self.gen_state_valid and self.hist_state_valid:
+                self.writeThConf()
+                self.writeRefTableHeader()
             self.saveAnalysis()
             self.parent.clearStatus()
             self.parent.showStatus("Project %s successfully saved"%self.name,2000)
         else:
             output.notify(self,"Saving is impossible","Project %s is not yet completly created"%self.name)
             self.parent.clearStatus()
+
+    def writeThConf(self):
+        """ ecrit le header du tableau de resultat qui sera produit par les calculs
+        il contient, les paramètres historicaux,  les summary stats
+        """
+        log(2,"Writing last part of the header (the parameter table header) in %s"%self.parent.table_header_conf_name)
+        hist_params_txt = self.hist_model_win.getParamTableHeader()
+        sum_stats_txt = self.getSumStatsTableHeader()
+        if os.path.exists(self.dir+"/%s"%self.parent.table_header_conf_name):
+            os.remove("%s/%s"%(self.dir,self.parent.table_header_conf_name))
+        f = codecs.open(self.dir+"/%s"%self.parent.table_header_conf_name,'w',"utf-8")
+        f.write("scenario%s%s"%(hist_params_txt,sum_stats_txt))
+        f.close()
+        
+    def getSumStatsTableHeader(self):
+        """ retourne la partie sumstats du table header
+        """
+        result = u""
+        for ty in self.sum_stat_wins.keys():
+            sums_txt = self.sum_stat_wins[ty].getSumStatsTableHeader()
+            result += sums_txt
+        return result
+
+    def writeGeneticConfFromGui(self):
+        locidesc = ""
+        statsdesc = ""
+        numGr = 1
+        totNbStat = 0
+        for ty in self.sum_stat_wins.keys():
+            (nstat,statstr) = self.sum_stat_wins[ty].getSumConf()
+            totNbStat += nstat
+            if nstat > 0:
+                locidesc += "%s <%s> G%s\n"%(self.sum_stat_wins[ty].ui.takenEdit.text(),ty,numGr)
+                statsdesc += "group G%s (%s)\n%s"%(numGr,nstat,statstr)
+                numGr += 1
+        res = "loci description (%s)\n"%(numGr - 1)
+        res += locidesc
+
+        res += "\ngroup summary statistics (%s)\n"%(totNbStat)
+        res += statsdesc
+        res += "\n"
+
+        print res
+        if os.path.exists(self.dir+"/%s"%self.parent.gen_conf_name):
+            os.remove("%s/%s" % (self.dir,self.parent.gen_conf_name))
+
+        f = codecs.open(self.dir+"/%s"%self.parent.gen_conf_name,'w',"utf-8")
+        f.write(res)
+        f.close()
 
     def freezeGenData(self,yesno=True):
         # TODO

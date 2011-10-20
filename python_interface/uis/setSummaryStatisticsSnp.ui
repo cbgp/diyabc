@@ -126,6 +126,55 @@
     </widget>
    </item>
    <item>
+    <widget class="QFrame" name="frame_2">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Available</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="availableEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Taken</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="takenEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QScrollArea" name="oneScroll">
      <property name="widgetResizable">
       <bool>true</bool>
@@ -136,7 +185,7 @@
         <x>0</x>
         <y>0</y>
         <width>865</width>
-        <height>205</height>
+        <height>195</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -521,7 +570,7 @@
         <x>0</x>
         <y>0</y>
         <width>865</width>
-        <height>227</height>
+        <height>194</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -1092,7 +1141,7 @@
         <x>0</x>
         <y>0</y>
         <width>865</width>
-        <height>204</height>
+        <height>195</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
