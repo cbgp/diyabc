@@ -72,7 +72,7 @@ struct LocusC
 	double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
 	int **haplomic; //array[sample][gene copy]
 	short int **haplosnp; //array[sample][gene copy] 0,1,9
-	
+
 	void libere(bool obs, int nsample) {
       //cout<<"debut  nsample="<<nsample<<"\n";
        delete []this->name;
@@ -116,7 +116,7 @@ public:
 	MissingNuc   *missnuc;
 	LocusC *locus;
     bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
-        
+
 /**
 * liberation de la mémoire occupée par la classe DataC
 */
@@ -155,11 +155,11 @@ public:
 	}
 
 /**
-* détermination du type de fichier de donnée 
-* return=-1 
+* détermination du type de fichier de donnée
+* return=-1
 * return=0 si genepop
 * return=1 si snp
-*/ 
+*/
 	int testfile(string filename){
 	    int nss;
 	    string ligne,*ss;
@@ -188,6 +188,7 @@ public:
         ss=splitwords(s1," ",&nss);
 		this->nloc=nss-3;
 		this->locus = new LocusC[this->nloc];this->Alocus=true;
+		cout<<"this->nloc = "<<this->nloc<<"\n";
 		for (int loc=0;loc<this->nloc;loc++) {
 			if (ss[loc+3]=="A") this->locus[loc].type=10;
 			else if (ss[loc+3]=="H")this->locus[loc].type=11;
@@ -195,65 +196,86 @@ public:
 			else if (ss[loc+3]=="Y")this->locus[loc].type=13;
 			else if (ss[loc+3]=="M")this->locus[loc].type=14;
 		}
+		cout<<"recherche du nombre d'échantillons\n";
 //recherche du nombre d'échantillons
 		nech=1;popname.resize(nech);
 		getline(file,s1);
 		delete[]ss;
-		ss=splitwords(s1," ",&nss);
+		ss=splitwordsR(s1," ",3,&nss);
 		popname[nech-1]=ss[2];
 		while (not file.eof()) {
 			getline(file,s1);
-			delete[]ss;
-			ss=splitwords(s1," ",&nss);
-			deja=false;
-			for (int n=0;n<nech;n++) {deja=(ss[1]==popname[n]);if (deja) break;}
-			if (not deja) {
-			    nech++;
-				popname.resize(nech);
-				popname[nech-1]=ss[1];
+			if (s1.length()>10) {
+				delete[]ss;
+				ss=splitwordsR(s1," ",3,&nss);
+				//cout<<ss[0]<<"  "<<ss[1]<<"  "<<ss[2]<<"   nech="<<nech<<"\n";
+				deja=false;
+				for (int n=0;n<nech;n++) {deja=(ss[2]==popname[n]);if (deja) break;}
+				if (not deja) {
+					nech++;
+					popname.resize(nech);
+					popname[nech-1]=ss[2];
+				}
 			}
 		}
-		this->nsample = nech;
+		this->nsample = nech;  cout<<nech<<" échantillons : ";
+		for (ech=0;ech<nech;ech++) cout<<popname[ech]<<"  ";cout<<"\n";
 		this->nind = new int[nech];
+		file.close();
 //recherche du nombre d'individus par échantillon
 		nindi = new int[nech];
 		for (ech=0;ech<nech;ech++) nindi[ech]=0;
-		file.seekg (0, ios::beg);
+		file.open(filename.c_str(), ios::in);
 		getline(file,s1);
  		while (not file.eof()) {
 			getline(file,s1);
-			delete[]ss;
-			ss=splitwords(s1," ",&nss);
-			ech=0;while (ss[1]!=popname[ech]) ech++;
-			nindi[ech]++;
+			int s1l=s1.length();
+			if (s1l>10) {
+				delete[]ss;
+				ss=splitwordsR(s1," ",3,&nss);
+				//cout<<ss[0]<<"  "<<ss[1]<<"  "<<ss[2]<<"\n";
+				ech=0;while (ss[2]!=popname[ech]) ech++;
+				nindi[ech]++;
+			}
 		}
 		for (ech=0;ech<nech;ech++) this->nind[ech] = nindi[ech];Anind=true;
+		for (ech=0;ech<nech;ech++) cout <<"échantillon "<<ech+1<<" : "<<this->nind[ech]<<" individus\n";
 //remplissage des noms et des génotypes des individus
 		this->indivname = new string*[nech];Aindivname=true;
 		this->indivsexe = new int*[nech];this->Aindivsexe=true;
 		for (ech=0;ech<nech;ech++) this->indivname[ech] = new string[nindi[ech]];
+		for (ech=0;ech<nech;ech++) this->indivsexe[ech] = new int[nindi[ech]];
 		this->genotype = new string**[nech];this->Agenotype=true;
 		for (ech=0;ech<nech;ech++) {
 			this->genotype[ech] = new string*[nindi[ech]];
 			for (ind=0;ind<nindi[ech];ind++) this->genotype[ech][ind] = new string[nloc];
 		}
-		file.seekg (0, ios::beg);
+		file.close();
+		file.open(filename.c_str(), ios::in);
 		getline(file,s1);
 		for (ech=0;ech<nech;ech++) nindi[ech]=0;
  		while (not file.eof()) {
 			getline(file,s1);
-			delete[]ss;
-			ss=splitwords(s1," ",&nss);
-			ech=0;while (ss[2]!=popname[ech]) ech++;
-			this->indivsexe[ech][nindi[ech]]=0;
-			if (ss[1]=="M")      this->indivsexe[ech][nindi[ech]]=1; 
-			else if (ss[1]=="F") this->indivsexe[ech][nindi[ech]]=2; 
-			this->indivname[ech][nindi[ech]]=ss[0];
-			for (int loc=0;loc<this->nloc;loc++) this->genotype[ech][nindi[ech]][loc]= ss[loc+3];
-			nindi[ech]++;
+			int s1l=s1.length();
+			if (s1l>10) {
+				delete[]ss;
+				ss=splitwords(s1," ",&nss);
+				ech=0;while (ss[2]!=popname[ech]) ech++;
+				this->indivsexe[ech][nindi[ech]]=0;
+				if (ss[1]=="M")      this->indivsexe[ech][nindi[ech]]=1;
+				else if (ss[1]=="F") this->indivsexe[ech][nindi[ech]]=2;
+				this->indivname[ech][nindi[ech]]=ss[0];
+				for (int loc=0;loc<this->nloc;loc++) this->genotype[ech][nindi[ech]][loc]= ss[loc+3];
+				cout<<"individu "<<nindi[ech]+1<<" de l'échantillon "<<ech+1<<"   "<<this->indivname[ech][nindi[ech]];
+				cout<<"  "<<this->indivsexe[ech][nindi[ech]]<<"  "<<popname[ech]<<"   "<<this->genotype[ech][nindi[ech]][this->nloc-1]<<"\n";
+				nindi[ech]++;
+				//for (int ec=0;ec<nech;ec++) cout<<nindi[ec]<<"   ";cout<<"\n";
+			}
 		}
 		file.close();
+		cout<<"avant les delete\n";
 		delete []nindi;delete []ss;
+		cout<<"fin de la lecture du fichier\n";
 	}
 /**
 * supprime les locus monomorphes
@@ -302,14 +324,14 @@ public:
 					}
 					typ[kloc] = this->locus[loc].type;
 					kloc++;
-				} 
+				}
 			}
 			delete[]this->locus;
 			this->locus = new LocusC[kloc];
 			for (int loc=0;loc<kloc;loc++) this->locus[loc].type = typ[loc];
 			delete[]typ;
 			for (ech=0;ech<this->nsample;ech++) {
-				for (ind=0;ind<this->nind[ech];ind++){ 
+				for (ind=0;ind<this->nind[ech];ind++){
 					delete[]this->genotype[ech][ind];
 					this->genotype[ech][ind] = new string[kloc];
 					for (int loc=0;loc<kloc;loc++) this->genotype[ech][ind][loc] = ge[ech][ind][loc];
@@ -322,15 +344,15 @@ public:
 			delete[]ge;
 			this->nloc=kloc;
 		} else cout<<"tous les locus sont polymorphes";
-		
+
 	}
-	
+
 	void missingdata(){
 		int ind,ech,loc,nm;
 		string misval="9";
 		this->nmisssnp=0;
 		for (ech=0;ech<this->nsample;ech++) {
-			for (ind=0;ind<this->nind[ech];ind++){ 
+			for (ind=0;ind<this->nind[ech];ind++){
 				for (int loc=0;loc<this->nloc;loc++) {
 					if (this->genotype[ech][ind][loc]==misval) this->nmisssnp++;
 				}
@@ -340,7 +362,7 @@ public:
 			misssnp = new MissingHaplo[this->nmisssnp];
 			nm=0;
 			for (ech=0;ech<this->nsample;ech++) {
-				for (ind=0;ind<this->nind[ech];ind++){ 
+				for (ind=0;ind<this->nind[ech];ind++){
 					for (int loc=0;loc<this->nloc;loc++) {
 						if (this->genotype[ech][ind][loc]==misval) {
 							this->misssnp[nm].locus = loc;
@@ -351,9 +373,9 @@ public:
 					}
 				}
 			}
-					
-		}		
-	  
+
+		}
+
 	}
 /**
 * traitement des locus snp
@@ -369,7 +391,7 @@ public:
 		for (ech=0;ech<this->nsample;ech++) {
 			this->locus[loc].ss[ech]=0;
 			this->locus[loc].samplesize=0;
-			for (ind=0;ind<this->nind[ech];ind++){ 
+			for (ind=0;ind<this->nind[ech];ind++){
 				if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[ech][ind]==2))) {
 					this->locus[loc].ss[ech] +=2;
 					if (this->genotype[ech][ind][loc]!=misval) {
@@ -589,7 +611,7 @@ public:
             //cout<<"\n";
     	}
     	delete [] gen;
-        
+
     }
 
 
@@ -701,7 +723,7 @@ public:
     }
 
 /**
-* calcul du coefficient dans la formule de coalescence en fonction du type de locus 
+* calcul du coefficient dans la formule de coalescence en fonction du type de locus
 * 0:autosomal diploide, 1:autosomal haploïde, 2:X-linked, 3:Y-linked, 4:mitochondrial
 */
     void cal_coeff(int loc){
@@ -719,7 +741,7 @@ public:
 
 
 /**
-* chargement des données dans une structure DataC 
+* chargement des données dans une structure DataC
 */
     DataC * loadfromfile(string filename) {
 		int loc,kloc;
@@ -740,11 +762,11 @@ public:
 			}
 		}
 		if (this->filetype==1) {
-			this->readfilesnp(filename);
-			this->purgelocmonomorphes();
+			this->readfilesnp(filename);cout<<"fin de la lecture\n";
+			this->purgelocmonomorphes();cout<<"fin de la purge des monomorphes\n";
 			for (loc=0;loc<this->nloc;loc++) this->do_snp(loc);
-			exit(1);
+			cout<<"apres le' traitement' des snp\n";
 		}
 	}
-        
+
 };

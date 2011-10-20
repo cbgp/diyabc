@@ -52,7 +52,7 @@ using namespace std;
 #define MICMISSING -9999
 #define SEQMISSING ""
 #define NUCMISSING 'N'
-#define NSTAT 27
+#define NSTAT 35
 
 string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","SHM","SHD","SNM","SND","SFM","SFD","SAM","SAD"};
 int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28};
@@ -131,7 +131,7 @@ struct ConditionC
 struct StatC
 {
 	int cat,samp,samp1,samp2,group;
-	long double val;
+	long double val,*vals;
 };
 
 /**
@@ -2578,6 +2578,25 @@ struct ParticleC
 		//cout <<"fin de calfreq \n";
 	}
 
+	void calfreqsnp(int gr) {
+        int loc,iloc;
+		short int g0=0;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            loc=this->grouplist[gr].loc[iloc];
+            this->locuslist[loc].freq = new long double* [this->data.nsample];
+            for (int samp=0;samp<this->data.nsample;samp++) {
+                this->locuslist[loc].freq[samp] = new long double [2];
+				this->locuslist[loc].freq[samp][0] = 0.0;this->locuslist[loc].freq[samp][1] = 0.0;
+                for (int i=0;i<this->locuslist[loc].ss[samp];i++){
+                    if (this->locuslist[loc].haplosnp[samp][i] == g0) this->locuslist[loc].freq[samp][0] +=1.0;
+				}
+				this->locuslist[loc].freq[samp][1]:=this->locuslist[loc].samplesize[samp]-this->locuslist[loc].freq[samp][0];
+				this->locuslist[loc].freq[samp][0] /=this->locuslist[loc].samplesize[samp];
+				this->locuslist[loc].freq[samp][1] /=this->locuslist[loc].samplesize[samp];
+			}
+		}
+	}
+
     void liberefreq(int gr) {
         int loc,iloc;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -3867,8 +3886,9 @@ struct ParticleC
 	 */
 	void docalstat(int gr) {
 //		cout << "avant calfreq\n";
-		if (this->grouplist[gr].type == 0)  calfreq(gr);
-                else this->cal_numvar(gr);
+		if (this->grouplist[gr].type == 0)  this->calfreq(gr);
+        else if (this->grouplist[gr].type == 0)  this->cal_numvar(gr);
+		else if (this->grouplist[gr].type > 20)  this->calfreqsnp(gr);
 //		cout << "apres calfreq\n";
         for (int st=0;st<this->grouplist[gr].nstat;st++) {
             if ((this->grouplist[gr].sumstat[st].cat==-7)or(this->grouplist[gr].sumstat[st].cat==-8)) {
@@ -3923,6 +3943,7 @@ struct ParticleC
 				case   -12 : this->grouplist[gr].sumstat[st].val = cal_mpb2p(gr,st);break;
 				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(gr,st);break;
 				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(gr,st);break;
+				case    21 : this->grouplist[gr].sumstat[st].val = cal_snhet(gr,st)
 			}
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}

@@ -182,13 +182,13 @@ public:
         this->dataobs.loadfromfile(path);
         if (debuglevel==1) cout<<"lecture du fichier data terminée\n";
         getline(file,s1);
-        this->nparamtot=getwordint(s1,1);
-        this->nstat=getwordint(s1,4);
+        this->nparamtot=getwordint(s1,1);		cout<<"nparamtot="<<this->nparamtot<<"\n";
+        this->nstat=getwordint(s1,4);			cout<<"nstat="<<this->nstat<<"\n";
                 //cout<<"avant scenarios\n";fflush(stdin);
 //Partie Scenarios
         getline(file,s1);   //cout<<s1<<"\n";     //ligne vide
         getline(file,s1);    //cout<<s1<<"\n";    // nombre de scenarios
-        this->nscenarios=getwordint(s1,1); //cout<<this->nscenarios<<"\n";
+        this->nscenarios=getwordint(s1,1); cout<<this->nscenarios<<"\n";
         sl = new string*[this->nscenarios];
         nlscen = new int[this->nscenarios];
         this->scenario = new ScenarioC[this->nscenarios];
@@ -603,7 +603,7 @@ public:
                             delete [] ss1;
                         }
                     }
-                } else if (this-groupe[gr].type>9) {
+                } else if (this->groupe[gr].type>9) {
                     if (stat_num[j]<23) {
                         for (int i=1;i<nss;i++) {
                                this->groupe[gr].sumstat[k].cat=stat_num[j];

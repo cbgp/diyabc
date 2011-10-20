@@ -109,6 +109,39 @@ string* splitwords(string s,string sep,int *k){
 	return sb;
 }
 
+string* splitwordsR(string s,string sep,int m,int *k){
+	int j=0,j0,j1;
+	while (s.find(sep)== 0) s=s.substr(1);
+	*k=0;
+	s.append(sep);
+	string *sb,s0,s1;
+	s1=string();
+	for (int i=0;i<s.length();i++) {
+		s0=s.substr(i,1);
+		if (s0==sep){
+			j++;
+			if (j==1) {
+				s1.append(s0);
+				if (j==1) (*k)++;
+				//cout <<" j=1  k="<<*k<<"\n";
+			}
+		} else {
+			s1.append(s0);
+			j=0;
+		}
+		if ((*k)==m) break;
+	}
+	sb = new string[*k];
+	for (int i=0;i<*k;i++) {
+		j0=s1.find(sep);
+		sb[i]=s1.substr(0,j0);
+		s1=s1.substr(j0+1,s.length());
+
+	}
+	//cout <<"k="<<*k<<"\n";
+	return sb;
+}
+
 string centre(string s,int k){
         int l=s.length();
         string sb=s;
@@ -136,6 +169,7 @@ int strpos(char* st1,char* st2) {
            for (i=0;i<n2;i++) s[i]=st1[p+i];
            if (strcmp(s,st2)==0) break;
       }
+      delete[]s;
     }
     return p;
 
