@@ -64,10 +64,10 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         self.ui.frame_12.hide()
         self.ui.frame_11.hide()
         self.ui.frame_9.hide()
-        self.ui.allMl3Button.hide()
-        self.ui.allMld3Button.hide()
-        self.ui.noneMld3Button.hide()
-        self.ui.noneMl3Button.hide()
+        #self.ui.allMl3Button.hide()
+        #self.ui.allMld3Button.hide()
+        #self.ui.noneMld3Button.hide()
+        #self.ui.noneMl3Button.hide()
 
         self.ui.sumStatLabel.setText("Set summary statistics for <%s> locus"%self.numGroup)
         self.ui.availableEdit.setText(str(self.parent.parent.data.ntypeloc[self.numGroup]))
@@ -79,11 +79,13 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         self.parent.parent.updateNbStats()
     def validate(self,silent=False):
         try:
+            # pour voir si ça déclenche une exception
+            (a,b) = self.getStats()
+
             av = int(str(self.ui.availableEdit.text()))
             ta = int(str(self.ui.takenEdit.text()))
             if ta > av or ta <= 0:
-                if not silent:
-                    output.notify(self,"Input error","Number of taken loci must be positive and inferior to number of available loci")
+                raise Exception("Number of taken loci must be positive and inferior to number of available loci")
             else:
                 self.exit()
         except Exception,e:
@@ -222,8 +224,8 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         """ methode d'ajout d'un bloc dans 'three sample admix sum stats'
         """
         frame_12 = QtGui.QFrame(self.ui.scrollAreaWidgetContents_3)
-        frame_12.setMinimumSize(QtCore.QSize(55, 0))
-        frame_12.setMaximumSize(QtCore.QSize(55, 16777215))
+        frame_12.setMinimumSize(QtCore.QSize(85, 0))
+        frame_12.setMaximumSize(QtCore.QSize(85, 16777215))
         frame_12.setFrameShape(QtGui.QFrame.StyledPanel)
         frame_12.setFrameShadow(QtGui.QFrame.Raised)
         frame_12.setObjectName("frame_12")
@@ -248,28 +250,36 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         verticalLayout_6.addWidget(rmButton)
         horizontalLayout_17 = QtGui.QHBoxLayout()
         horizontalLayout_17.setObjectName("horizontalLayout_17")
+        lab = QtGui.QLabel("Mean",frame_12)
+        horizontalLayout_17.addWidget(lab)
         spacerItem20 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         horizontalLayout_17.addItem(spacerItem20)
         ml3Check = QtGui.QCheckBox(frame_12)
-        ml3Check.setMinimumSize(QtCore.QSize(20, 0))
-        ml3Check.setMaximumSize(QtCore.QSize(20, 16777215))
+        ml3Check.setMinimumSize(QtCore.QSize(20, 30))
+        ml3Check.setMaximumSize(QtCore.QSize(20, 30))
         ml3Check.setObjectName("ml3Check")
-        ml3Check.setChecked(True)
-        ml3Check.setDisabled(True)
+        #ml3Check.setChecked(True)
+        #ml3Check.setDisabled(True)
         horizontalLayout_17.addWidget(ml3Check)
         spacerItem21 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         horizontalLayout_17.addItem(spacerItem21)
         verticalLayout_6.addLayout(horizontalLayout_17)
+
+        spacer = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        verticalLayout_6.addItem(spacer)
+
         horizontalLayout_17 = QtGui.QHBoxLayout()
         horizontalLayout_17.setObjectName("horizontalLayout_17")
+        lab = QtGui.QLabel("Distance",frame_12)
+        horizontalLayout_17.addWidget(lab)
         spacerItem20 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         horizontalLayout_17.addItem(spacerItem20)
         ml3Check = QtGui.QCheckBox(frame_12)
-        ml3Check.setMinimumSize(QtCore.QSize(20, 0))
-        ml3Check.setMaximumSize(QtCore.QSize(20, 16777215))
+        ml3Check.setMinimumSize(QtCore.QSize(20, 30))
+        ml3Check.setMaximumSize(QtCore.QSize(20, 30))
         ml3Check.setObjectName("mld3Check")
-        ml3Check.setChecked(True)
-        ml3Check.setDisabled(True)
+        #ml3Check.setChecked(True)
+        #ml3Check.setDisabled(True)
         horizontalLayout_17.addWidget(ml3Check)
         spacerItem21 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         horizontalLayout_17.addItem(spacerItem21)
@@ -326,6 +336,8 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
             if box.findChild(QCheckBox,"mld3Check").isChecked():
                 dico_stats["SAD"].append(lab)
                 nstat +=1
+            if (not box.findChild(QCheckBox,"ml3Check").isChecked()) and (not box.findChild(QCheckBox,"mld3Check").isChecked()):
+                raise Exception("All admixture statistic must not be empty")
         return (nstat,dico_stats)
 
     def setSumConf(self,lines):
@@ -370,6 +382,11 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
                         self.addAdmixSampleGui(int(num1),int(num2),int(num3))
                         self.admixSampleList[-1].findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
                         admixAlreadyDone.append((num1,num2,num3))
+                    else:
+                        for box in self.admixSampleList:
+                            if "%s&%s&%s"%(num1,num2,num3) == str(box.findChild(QLabel,"threeSampleLabel").text()).strip().split('\n')[1]:
+                                box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
+                                break
 
 
 
