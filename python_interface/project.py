@@ -62,8 +62,6 @@ class Project(baseProject,formProject):
         self.hist_model_win.ui.okButton.setText("VALIDATE AND SAVE")
         self.hist_model_win.hide()
 
-        self.ui.setSumSnpButton.hide()
-
         self.ui.projNameLabelValue.setText(self.name)
 
         QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.setHistorical)
@@ -90,6 +88,8 @@ class Project(baseProject,formProject):
         #QObject.connect(self.ui.analysisResultsButton,SIGNAL("clicked()"),self.viewAnalysisResult)
 
         self.stopUiGenReftable()
+
+        self.ui.frame_11.hide()
 
     def returnTo(self,elem):
         self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)

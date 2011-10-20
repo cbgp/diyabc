@@ -162,6 +162,20 @@
        </spacer>
       </item>
       <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>From</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="fromEdit">
+        <property name="text">
+         <string>1</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="label_8">
         <property name="text">
          <string>Taken</string>
@@ -185,7 +199,7 @@
         <x>0</x>
         <y>0</y>
         <width>865</width>
-        <height>195</height>
+        <height>191</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -570,7 +584,7 @@
         <x>0</x>
         <y>0</y>
         <width>865</width>
-        <height>194</height>
+        <height>190</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -1140,7 +1154,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>850</width>
+        <width>865</width>
         <height>203</height>
        </rect>
       </property>

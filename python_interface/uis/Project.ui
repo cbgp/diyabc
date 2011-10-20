@@ -456,7 +456,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="3" column="0">
                  <widget class="QPushButton" name="setGeneticButton">
                   <property name="minimumSize">
                    <size>
@@ -571,28 +571,25 @@
                   </layout>
                  </widget>
                 </item>
-                <item row="3" column="0">
-                 <widget class="QPushButton" name="setSumSnpButton">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>70</height>
-                   </size>
+                <item row="2" column="0">
+                 <widget class="QFrame" name="frame_11">
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
                   </property>
-                  <property name="font">
-                   <font>
-                    <pointsize>14</pointsize>
-                   </font>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
                   </property>
-                  <property name="text">
-                   <string>            Set</string>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>50</width>
-                    <height>50</height>
-                   </size>
-                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <property name="spacing">
+                    <number>1</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>1</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>1</number>
+                   </property>
+                  </layout>
                  </widget>
                 </item>
                </layout>
@@ -1146,8 +1143,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>96</width>
-               <height>26</height>
+               <width>929</width>
+               <height>635</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">

@@ -26,6 +26,8 @@ class ProjectSnp(ProjectReftable):
 
         self.typesOrdered = ["A","H","X","Y","M"]
 
+        self.ui.frame_11.show()
+
     def setGenetic(self):
         """ initie la définition des summary statistics
         """
@@ -89,14 +91,17 @@ class ProjectSnp(ProjectReftable):
                 f.close()
                 nl = 1
                 diconb = {}
+                dicoFrom = {}
                 dicoGrTy = {}
                 dicoStatLines = {}
                 while (lines[nl].strip() != ""):
                     ty = lines[nl].split('<')[1].split('>')[0]
                     numGr = int(lines[nl].strip().split(' ')[2][1:])
                     diconb[ty] = lines[nl].strip().split(' ')[0]
+                    dicoFrom[ty] = lines[nl].strip().split(' ')[4]
                     dicoGrTy[numGr] = ty
                     self.sum_stat_wins[ty].ui.takenEdit.setText(diconb[ty])
+                    self.sum_stat_wins[ty].ui.fromEdit.setText(dicoFrom[ty])
                     nl += 1
                 nl += 2
                 while nl < len(lines) and lines[nl].strip() != "":
@@ -193,8 +198,8 @@ class ProjectSnp(ProjectReftable):
         for ty in self.typesOrdered:
             if ty in self.data.ntypeloc.keys():
                 self.typeCombo.addItem(ty)
-        self.ui.gridLayout_5.addWidget(self.typeCombo,0,2)
-        self.ui.gridLayout_5.addWidget(QLabel("for this locus type :"),0,1)
+        self.ui.horizontalLayout_6.addWidget(QLabel("for locus type :"))
+        self.ui.horizontalLayout_6.addWidget(self.typeCombo)
 
         return True
 
@@ -270,7 +275,7 @@ class ProjectSnp(ProjectReftable):
                 (nstat,statstr) = self.sum_stat_wins[ty].getSumConf()
                 totNbStat += nstat
                 if nstat > 0:
-                    locidesc += "%s <%s> G%s\n"%(self.sum_stat_wins[ty].ui.takenEdit.text(),ty,numGr)
+                    locidesc += "%s <%s> G%s from %s\n"%(self.sum_stat_wins[ty].ui.takenEdit.text(),ty,numGr,self.sum_stat_wins[ty].ui.fromEdit.text())
                     statsdesc += "group G%s (%s)\n%s"%(numGr,nstat,statstr)
                     numGr += 1
         res = "loci description (%s)\n"%(numGr - 1)

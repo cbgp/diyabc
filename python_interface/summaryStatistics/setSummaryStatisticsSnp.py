@@ -69,7 +69,8 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         #self.ui.noneMld3Button.hide()
         #self.ui.noneMl3Button.hide()
 
-        self.ui.sumStatLabel.setText("Set summary statistics for <%s> locus"%self.numGroup)
+        print "lalala %s"%self.numGroup
+        self.ui.sumStatLabel.setText("Set summary statistics for '%s' locus"%self.numGroup)
         self.ui.availableEdit.setText(str(self.parent.parent.data.ntypeloc[self.numGroup]))
         self.ui.takenEdit.setText(str(self.parent.parent.data.ntypeloc[self.numGroup]))
 
@@ -84,10 +85,10 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
 
             av = int(str(self.ui.availableEdit.text()))
             ta = int(str(self.ui.takenEdit.text()))
-            if ta > av or ta <= 0:
+            fro = int(str(self.ui.fromEdit.text()))
+            if fro+ta > av or ta <= 0 or fro <= 0:
                 raise Exception("Number of taken loci must be positive and inferior to number of available loci")
-            else:
-                self.exit()
+            self.exit()
         except Exception,e:
             if not silent:
                 output.notify(self,"Input error",str(e))
@@ -428,22 +429,4 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
                     result += output.centerHeader(s,14)
 
         return result
-
-    def writeGeneticConfFromGui(self):
-
-        res = "loci description (%s)\n"%len(self.parent.parent.data.ntypeloc.keys())
-        numgr = 1
-        for ty in self.parent.parent.data.ntypeloc.keys():
-            res += "%s <%s> G%s\n"%(self.parent.parent.data.ntypeloc[ty],ty,numgr)
-            numgr += 1
-        res += "\n"
-        print res
-        #stat_header_txt = "group G%i [M] (%i)\n"%((i+1),nstat_tmp)
-        #(nstat_tmp,stat_txt) = self.getSumConf()
-
-        #f.write("\ngroup summary statistics (%i)\n"%nstat_tot)
-        #for txt in stat_txt_list:
-        #    f.write(txt)
-        #    #print txt
-        #f.write('\n')
 

@@ -24,7 +24,6 @@ class ProjectMsatSeq(ProjectReftable):
         self.gen_data_win = SetGeneticDataMsatSeq(self)
         self.gen_data_win.ui.okButton.setText("VALIDATE AND SAVE")
         self.gen_data_win.hide()
-        self.ui.setSumSnpButton.hide()
 
     def loadDataFile(self,name):
         """ Charge le fichier de données passé en paramètre. Cette fonction est appelée lors
