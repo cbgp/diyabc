@@ -327,13 +327,14 @@ public:
 				getline(file,s1);
 				this->groupe[gr].nloc=getwordint(s1,1);
 				this->groupe[gr].loc = new int[this->groupe[gr].nloc];
+				int prem = getwordint(s1,5)-1;
 				if (s1.find("<A>")!=string::npos) this->groupe[gr].type=10;
 				else if (s1.find("<H>")!=string::npos) this->groupe[gr].type=11;
 				else if (s1.find("<X>")!=string::npos) this->groupe[gr].type=12;
 				else if (s1.find("<Y>")!=string::npos) this->groupe[gr].type=13;
 				else if (s1.find("<M>")!=string::npos) this->groupe[gr].type=14;
 				k1=0;
-				for (int loc=0;loc<this->dataobs.nloc;loc++) {
+				for (int loc=prem;loc<prem+this->dataobs.nloc;loc++) {
 					if (this->dataobs.locus[loc].type==this->groupe[gr].type) {
 						  this->groupe[gr].loc[k1]=loc;
 						  k1++;
@@ -996,7 +997,7 @@ public:
                         this->particuleobs.data.indivsexe[i] = new int[this->dataobs.nind[i]];
                         for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
                 }
-                //cout<<"apres DATA\n";
+                cout<<"apres DATA\n";
 //partie GROUPES
                 int ngr = this->ngroupes;
                 //cout<<"ngr="<<ngr<<"\n";
@@ -1022,7 +1023,7 @@ public:
 
                         }
                 }
-                //cout<<"apres GROUPS\n";
+                cout<<"apres GROUPS\n";
 //partie LOCUSLIST
                 int kmoy;
                 this->particuleobs.nloc = this->dataobs.nloc;
@@ -1055,7 +1056,7 @@ public:
                                       this->particuleobs.locuslist[kloc].haplomic[sa] = new int[this->particuleobs.locuslist[kloc].ss[sa]];
                                       for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplomic[sa][i]=this->dataobs.locus[kloc].haplomic[sa][i];
                                  }
-                        }else {
+                        }else if (this->dataobs.locus[kloc].type < 10) {
                                 this->particuleobs.locuslist[kloc].dnalength =  this->dataobs.locus[kloc].dnalength;
                                 this->particuleobs.locuslist[kloc].pi_A = this->dataobs.locus[kloc].pi_A ;
                                 this->particuleobs.locuslist[kloc].pi_C =  this->dataobs.locus[kloc].pi_C;
@@ -1066,7 +1067,13 @@ public:
                                       this->particuleobs.locuslist[kloc].haplodna[sa] = new string[this->particuleobs.locuslist[kloc].ss[sa]];
                                       for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i];
                                  }
-                        }
+                        }else {
+							this->particuleobs.locuslist[kloc].haplosnp = new short int*[this->particuleobs.data.nsample];
+							for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
+								  this->particuleobs.locuslist[kloc].haplosnp[sa] = new short int[this->particuleobs.locuslist[kloc].ss[sa]];
+								  for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplosnp[sa][i] =this->dataobs.locus[kloc].haplosnp[sa][i];
+							  }
+						}
                        if (debuglevel==2) cout <<"Locus"<<kloc<< "  samplesize[0]="<<this->particuleobs.locuslist[kloc].samplesize[0]<<"\n";
                 }
                if (debuglevel==2)cout<<"avant entete\n";
@@ -1102,6 +1109,7 @@ public:
 			  }
                this->particuleobs.libere(true);
         }
+        
         /**
 * lit le fichier des statistiques observées (placées dans double *stat_obs)
 */
