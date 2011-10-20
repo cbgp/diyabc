@@ -24,6 +24,8 @@ class ProjectSnp(ProjectReftable):
         #QObject.connect(self.ui.setSumSnpButton,SIGNAL("clicked()"),self.setSumStat)
         self.ui.label_15.setText("Summary statistics")
 
+        self.typesOrdered = ["A","H","X","Y","M"]
+
     def setGenetic(self):
         """ initie la définition des summary statistics
         """
@@ -184,8 +186,9 @@ class ProjectSnp(ProjectReftable):
 
         # selection du type de snp pour sumstats
         self.typeCombo = QComboBox(self)
-        for ty in self.data.ntypeloc.keys():
-            self.typeCombo.addItem(ty)
+        for ty in self.typesOrdered:
+            if ty in self.data.ntypeloc.keys():
+                self.typeCombo.addItem(ty)
         self.ui.gridLayout_5.addWidget(self.typeCombo,0,2)
         self.ui.gridLayout_5.addWidget(QLabel("for this locus type :"),0,1)
 
@@ -245,9 +248,12 @@ class ProjectSnp(ProjectReftable):
         """ retourne la partie sumstats du table header
         """
         result = u""
-        for ty in self.sum_stat_wins.keys():
-            sums_txt = self.sum_stat_wins[ty].getSumStatsTableHeader()
-            result += sums_txt
+        numGroup = 1
+        for ty in self.typesOrdered:
+            if ty in self.sum_stat_wins.keys():
+                sums_txt = self.sum_stat_wins[ty].getSumStatsTableHeader(numGroup)
+                result += sums_txt
+                numGroup += 1
         return result
 
     def writeGeneticConfFromGui(self):
@@ -255,13 +261,14 @@ class ProjectSnp(ProjectReftable):
         statsdesc = ""
         numGr = 1
         totNbStat = 0
-        for ty in self.sum_stat_wins.keys():
-            (nstat,statstr) = self.sum_stat_wins[ty].getSumConf()
-            totNbStat += nstat
-            if nstat > 0:
-                locidesc += "%s <%s> G%s\n"%(self.sum_stat_wins[ty].ui.takenEdit.text(),ty,numGr)
-                statsdesc += "group G%s (%s)\n%s"%(numGr,nstat,statstr)
-                numGr += 1
+        for ty in self.typesOrdered:
+            if ty in self.sum_stat_wins.keys():
+                (nstat,statstr) = self.sum_stat_wins[ty].getSumConf()
+                totNbStat += nstat
+                if nstat > 0:
+                    locidesc += "%s <%s> G%s\n"%(self.sum_stat_wins[ty].ui.takenEdit.text(),ty,numGr)
+                    statsdesc += "group G%s (%s)\n%s"%(numGr,nstat,statstr)
+                    numGr += 1
         res = "loci description (%s)\n"%(numGr - 1)
         res += locidesc
 

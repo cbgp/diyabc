@@ -344,6 +344,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
                     dico_stats[t].append(sample)
         #print "dico stats :",dico_stats
 
+        admixAlreadyDone = []
         # pour chaque ligne (de case à cocher)
         for k in dico_stats.keys():
             name_chk_box = confToStat[k]
@@ -365,25 +366,25 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
                     num1 = aml.strip().split('&')[0]
                     num2 = aml.strip().split('&')[1]
                     num3 = aml.strip().split('&')[2]
-                    self.addAdmixSampleGui(int(num1),int(num2),int(num3))
-                    self.admixSampleList[-1].findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
+                    if (num1,num2,num3) not in admixAlreadyDone:
+                        self.addAdmixSampleGui(int(num1),int(num2),int(num3))
+                        self.admixSampleList[-1].findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
+                        admixAlreadyDone.append((num1,num2,num3))
 
 
 
     def clear(self):
         self.parent.clearSummaryStats(self.box_group)
 
-    def getSumStatsTableHeader(self):
+    def getSumStatsTableHeader(self,numGroup):
         """ retourne l'en-tête pour le tableau à écrire dans conf.th
         """
         result = u""
-        if self.numGroup == 0:
-            gnumber = self.parent.groupList.index(self.box_group)+1
-        else:
-            gnumber = self.numGroup
         dico = {}
         for k in self.confToStat.keys():
             dico[k] = []
+
+        gnumber = numGroup
 
         for box in self.oneSampleList:
             lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
@@ -403,11 +404,11 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
                 if box.findChild(QCheckBox,"%sCheck"%self.confToStat[statstr]).isChecked():
                     stat_name = "%s_%s_%s"%(statstr,gnumber,lab)
                     dico[statstr].append(stat_name)
-
-        for t in self.confToStat.keys():
-            l = dico[t]
-            for s in l:
-                result += output.centerHeader(s,14)
+        for st in self.statList:
+            if st in self.confToStat.keys():
+                l = dico[st]
+                for s in l:
+                    result += output.centerHeader(s,14)
 
         return result
 
