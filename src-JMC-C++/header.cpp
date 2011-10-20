@@ -321,7 +321,7 @@ public:
 			}
 			delete [] ss;
 		} else {			//fichier SNP
-			this->ngroupes=getwordint(s1,3);
+			this->ngroupes=getwordint(s1,3); cout<<s1<<"\n";cout<<"this->ngroupes="<<this->ngroupes<<"\n";
 			this->groupe = new LocusGroupC[this->ngroupes+1];
 			this->groupe[0].nloc = this->dataobs.nloc;
 			for (gr=1;gr<=this->ngroupes;gr++) {
@@ -1009,7 +1009,7 @@ public:
                 cout<<"apres DATA\n";
 //partie GROUPES
                 int ngr = this->ngroupes;
-                //cout<<"ngr="<<ngr<<"\n";
+                cout<<"ngr="<<ngr<<"\n";
                 this->particuleobs.ngr = ngr;
                 this->particuleobs.grouplist = new LocusGroupC[ngr+1];
                 this->particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
