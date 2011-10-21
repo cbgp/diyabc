@@ -321,7 +321,7 @@ public:
 * Classe ScenarioC : lecture/interprétation des lignes d'un scénario
 */
     void read_events(int nl,string *ls){
-    	string *ss;
+    	string *ss,sevent;
     	int n;
     	ss = splitwords(ls[0]," ",&n);
     	this->nn0=n;this->nparam=0;
@@ -347,23 +347,30 @@ public:
     		else if (atoi(ss[0].c_str())==0) {
 		     this->event[i].time=-9999;
                      this->event[i].ltime=ss[0].length()+1;
+					 cout<<"read_events ltime="<<this->event[i].ltime<<"\n";
                      this->event[i].stime=new char[this->event[i].ltime];
-                     strcpy(this->event[i].stime,ss[0].c_str());this->detparam(ss[0],1);
-		}
+					 cout<<"read_events avant le strcpy\n";
+                     strcpy(this->event[i].stime,ss[0].c_str());
+					 cout<<"avant this->detparam("<<ss[0]<<",1)\n";
+					 this->detparam(ss[0],1);
+					 cout<<"apres this->detparam("<<ss[0]<<",1)\n";
+			}
     		else {this->event[i].time=atoi(ss[0].c_str());}
-    		if (majuscules(ss[1])=="SAMPLE") {
+    		sevent=majuscules(ss[1]);
+			cout<<"apres majuscules(ss[1])";
+    		if (sevent=="SAMPLE") {
     			this->event[i].action='E';
     			this->event[i].pop=atoi(ss[2].c_str());
     			this->nsamp++;
 			    this->event[i].sample=this->nsamp;
     			cout <<this->event[i].time<<"  SAMPLE"<<"   "<<this->event[i].pop<<"\n";
-    		} else if (majuscules(ss[1])=="MERGE") {
+    		} else if (sevent=="MERGE") {
     			this->event[i].action='M';
     			this->event[i].pop=atoi(ss[2].c_str());
     			this->event[i].pop1=atoi(ss[3].c_str());
     			cout <<this->event[i].stime<<"  MERGE"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"\n";
 
-    		} else if (majuscules(ss[1])=="SPLIT") {
+    		} else if (sevent=="SPLIT") {
     			this->event[i].action='S';
     			this->event[i].pop=atoi(ss[2].c_str());
     			this->event[i].pop1=atoi(ss[3].c_str());
@@ -377,15 +384,23 @@ public:
                               this->detparam(ss[5],2);
                         }
     			cout <<this->event[i].stime<<"  SPLIT"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"   "<<this->event[i].pop2<<"   "<<this->event[i].sadmixrate<<"\n";
-    		} else if (majuscules(ss[1])=="VARNE") {
+    		} else if (sevent=="VARNE") {
     			this->event[i].action='V';
+    			cout<<"this->event[i].action = "<<this->event[i].action<<"\n";
     			this->event[i].pop=atoi(ss[2].c_str());
-    			if (atof(ss[3].c_str())!=0.0) this->event[i].Ne=atoi(ss[3].c_str());
-    			else {
+				cout<<"this->event[i].pop = "<<this->event[i].pop<<"\n";
+				cout<<"ss[3] = "<<ss[3]<<"\n";
+				cout<<"atoi(ss[3].c_str()) = "<<atoi(ss[3].c_str())<<"\n";
+    			if (atoi(ss[3].c_str())!=0) this->event[i].Ne=atoi(ss[3].c_str());
+    			else {   cout<<"apres le else\n";
                               this->event[i].Ne=-1;
+							  cout<<"this->event[i].Ne = "<<this->event[i].Ne<<"\n";
                               this->event[i].lNe=ss[3].length()+1;
+							  cout<<"this->event[i].lNe="<<this->event[i].lNe<<"\n";
                               this->event[i].sNe=new char[this->event[i].lNe];
+							  cout<<"avant le strcpy\n";
                               strcpy(this->event[i].sNe,ss[3].c_str());
+							  cout<<"avant this->detparam("<<ss[3]<<",0)\n";
                               this->detparam(ss[3],0);
                         }
                 cout <<this->event[i].stime<<"  VARNE"<<"   "<<this->event[i].pop<<"\n";

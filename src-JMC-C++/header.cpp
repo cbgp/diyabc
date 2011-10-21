@@ -324,9 +324,7 @@ public:
 			this->ngroupes=getwordint(s1,3); cout<<s1<<"\n";cout<<"this->ngroupes="<<this->ngroupes<<"\n";
 			this->groupe = new LocusGroupC[this->ngroupes+1];
 			this->groupe[0].nloc = this->dataobs.nloc;
-			cout<<"avant this->dataobs.locus[loc].groupe=0 \n";
 			for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].groupe=0;
-			cout<<"apres this->dataobs.locus[loc].groupe=0 \n";
 			for (gr=1;gr<=this->ngroupes;gr++) {
 				getline(file,s1);
 				this->groupe[gr].nloc=getwordint(s1,1);
@@ -338,11 +336,9 @@ public:
 				else if (s1.find("<X>")!=string::npos) this->groupe[gr].type=12;
 				else if (s1.find("<Y>")!=string::npos) this->groupe[gr].type=13;
 				else if (s1.find("<M>")!=string::npos) this->groupe[gr].type=14;
-				cout<<"this->groupe["<<gr<<"].type="<<this->groupe[gr].type<<"\n";
 				k1=0;
-				for (int loc=prem;loc<prem+this->dataobs.nloc;loc++) {
+				for (int loc=prem;loc<this->dataobs.nloc;loc++) {
 					if (this->dataobs.locus[loc].type==this->groupe[gr].type) {
-						  cout<<"k1="<<k1<<"\n";
 						  this->groupe[gr].loc[k1]=loc;
 						  this->dataobs.locus[loc].groupe=gr;
 						  k1++;
@@ -350,9 +346,7 @@ public:
 					if (k1++==this->groupe[gr].nloc) break;
 				}
 			}
-			cout<<"avant this->groupe[0].loc = new int[this->groupe[0].nloc];\n";
 			this->groupe[0].loc = new int[this->groupe[0].nloc];
-			cout<<"apres this->groupe[0].loc = new int[this->groupe[0].nloc];\n";
 			k1=0;
 			for (int loc=0;loc<this->dataobs.nloc;loc++) {
 				if (this->dataobs.locus[loc].groupe==0) {this->groupe[0].loc[k1]=loc;k1++;}
