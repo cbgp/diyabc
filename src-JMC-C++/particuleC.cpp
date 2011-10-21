@@ -2625,6 +2625,28 @@ struct ParticleC
                     for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].haplomic[samp];
                     delete []this->locuslist[loc].haplomic;
                     delete []this->locuslist[loc].samplesize;
+                } else if(this->locuslist[loc].type>9) {
+                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].freq[samp];
+                    delete []this->locuslist[loc].freq;
+                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].haplosnp[samp];
+                    delete []this->locuslist[loc].haplosnp;
+                    delete []this->locuslist[loc].samplesize;
+				}
+            }
+        }
+    }
+
+    void liberefreqsnp(int gr) {
+        int loc,iloc;
+        for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+            loc=this->grouplist[gr].loc[iloc];
+            if (this->locuslist[loc].groupe>0){
+                if (this->locuslist[loc].type<5) {
+                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].freq[samp];
+                    delete []this->locuslist[loc].freq;
+                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].haplomic[samp];
+                    delete []this->locuslist[loc].haplomic;
+                    delete []this->locuslist[loc].samplesize;
                 }
             }
         }
@@ -3965,7 +3987,8 @@ struct ParticleC
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
 		if (this->grouplist[gr].type == 0) liberefreq(gr);
-        else liberednavar(gr);
+        else if (this->grouplist[gr].type == 1) liberednavar(gr);
+		else liberefreqsnp(gr);
         if (not this->afsdone.empty()) {
             for (int sa=0;sa<this->data.nsample;sa++) {
                 this->afsdone[sa].clear();

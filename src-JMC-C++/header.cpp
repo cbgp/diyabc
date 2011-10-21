@@ -1108,7 +1108,7 @@ public:
                fputs(ent.c_str(),fobs);
                for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
                      if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
-                     this->particuleobs.docalstat(gr);
+                     this->particuleobs.docalstat(gr); exit(1);
 					 jstat +=this->particuleobs.grouplist[gr].nstat;
                     if (debuglevel==2)cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
                      for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs,"%12.8Lf  ",this->particuleobs.grouplist[gr].sumstat[j].val);
