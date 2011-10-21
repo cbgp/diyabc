@@ -188,7 +188,7 @@ public:
 //Partie Scenarios
         getline(file,s1);   //cout<<s1<<"\n";     //ligne vide
         getline(file,s1);    //cout<<s1<<"\n";    // nombre de scenarios
-        this->nscenarios=getwordint(s1,1); cout<<this->nscenarios<<"\n";
+        this->nscenarios=getwordint(s1,1); cout<<this->nscenarios<<" scenario(s)\n";
         sl = new string*[this->nscenarios];
         nlscen = new int[this->nscenarios];
         this->scenario = new ScenarioC[this->nscenarios];
@@ -324,12 +324,13 @@ public:
 			this->ngroupes=getwordint(s1,3); cout<<s1<<"\n";cout<<"this->ngroupes="<<this->ngroupes<<"\n";
 			this->groupe = new LocusGroupC[this->ngroupes+1];
 			this->groupe[0].nloc = this->dataobs.nloc;
+			cout<<"avant this->dataobs.locus[loc].groupe=0 \n";
+			for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].groupe=0;
+			cout<<"apres this->dataobs.locus[loc].groupe=0 \n";
 			for (gr=1;gr<=this->ngroupes;gr++) {
 				getline(file,s1);
 				this->groupe[gr].nloc=getwordint(s1,1);
 				this->groupe[0].nloc -= this->groupe[gr].nloc;
-				this->groupe[0].loc = new int[this->groupe[0].nloc];
-				for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].groupe=0;
 				this->groupe[gr].loc = new int[this->groupe[gr].nloc];
 				int prem = getwordint(s1,5)-1;
 				if (s1.find("<A>")!=string::npos) this->groupe[gr].type=10;
@@ -337,17 +338,21 @@ public:
 				else if (s1.find("<X>")!=string::npos) this->groupe[gr].type=12;
 				else if (s1.find("<Y>")!=string::npos) this->groupe[gr].type=13;
 				else if (s1.find("<M>")!=string::npos) this->groupe[gr].type=14;
+				cout<<"this->groupe["<<gr<<"].type="<<this->groupe[gr].type<<"\n";
 				k1=0;
 				for (int loc=prem;loc<prem+this->dataobs.nloc;loc++) {
 					if (this->dataobs.locus[loc].type==this->groupe[gr].type) {
+						  cout<<"k1="<<k1<<"\n";
 						  this->groupe[gr].loc[k1]=loc;
 						  this->dataobs.locus[loc].groupe=gr;
 						  k1++;
-					} 
-				  
+					}
+					if (k1++==this->groupe[gr].nloc) break;
 				}
 			}
+			cout<<"avant this->groupe[0].loc = new int[this->groupe[0].nloc];\n";
 			this->groupe[0].loc = new int[this->groupe[0].nloc];
+			cout<<"apres this->groupe[0].loc = new int[this->groupe[0].nloc];\n";
 			k1=0;
 			for (int loc=0;loc<this->dataobs.nloc;loc++) {
 				if (this->dataobs.locus[loc].groupe==0) {this->groupe[0].loc[k1]=loc;k1++;}
@@ -544,7 +549,7 @@ public:
             getline(file,s1);
         //cout <<"s1="<<s1<<"\n";
             ss=splitwords(s1," ",&nss);
-			
+
                         //cout <<"s1="<<s1<<"   ss[3]="<< ss[3] <<"   atoi = "<< atoi(ss[3].c_str()) <<"\n";
             this->groupe[gr].nstat = getwordint(ss[nss-1],0);
                         //cout << this->groupe[gr].nstat <<"\n";
@@ -642,8 +647,8 @@ public:
                             delete [] ss1;
                         }
                     }
-				  
-				  
+
+
 				}
                 //cout<<"fin de la stat "<<k<<"\n";
             }
@@ -800,7 +805,7 @@ public:
         delete [] sl;
 		delete [] ss;
         if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie scénario(s)\n";
-		
+
 //Partie historical parameters
                 //cout <<"avant histparam\n";fflush(stdin);
         getline(file,s1);       //ligne vide
@@ -824,7 +829,7 @@ public:
 			this->scenario[0].histparam[i] = copyhistparameter(this->histparam[i]);
 			this->scenario[0].histparam[i].prior.constant=true;
 			this->scenario[0].histparam[i].prior.fixed=true;
-		}	
+		}
         if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie priors des paramètres démographiques\n";
 //Partie loci description
                 //cout <<"avant partie loci\n";fflush(stdin);
@@ -841,9 +846,9 @@ public:
 			this->dataobs.locus[loc].name = strdup(ss[0].c_str());
 			if (ss[1]=="<A>") this->dataobs.locus[loc].type =0;
 			else if (ss[1]=="<H>")   this->dataobs.locus[loc].type =1;
-			else if (ss[1]=="<X>")   this->dataobs.locus[loc].type =2; 
+			else if (ss[1]=="<X>")   this->dataobs.locus[loc].type =2;
 			else if (ss[1]=="<Y>")   this->dataobs.locus[loc].type =3;
-			else if (ss[1]=="<M>")   this->dataobs.locus[loc].type =4; 
+			else if (ss[1]=="<M>")   this->dataobs.locus[loc].type =4;
 			this->dataobs.cal_coeff(loc);
 			this->dataobs.locus[loc].ss = new int[this->dataobs.nsample];
 			this->dataobs.locus[loc].samplesize = new int[this->dataobs.nsample];
@@ -857,7 +862,7 @@ public:
 				}
 				else if (this->dataobs.locus[loc].type ==3) {
 					this->dataobs.locus[loc].ss[j]=0;
-					for (int k=0;k<this->dataobs.nind[j];k++) this->dataobs.locus[loc].ss[j] +=(2-this->dataobs.indivsexe[j][k]); 
+					for (int k=0;k<this->dataobs.nind[j];k++) this->dataobs.locus[loc].ss[j] +=(2-this->dataobs.indivsexe[j][k]);
 				}
 				this->dataobs.locus[loc].samplesize[j]=this->dataobs.locus[loc].ss[j];
 			}
@@ -1037,8 +1042,12 @@ public:
                 cout<<"apres GROUPS\n";
 //partie LOCUSLIST
                 int kmoy;
+				cout<<"1\n";
                 this->particuleobs.nloc = this->dataobs.nloc;
-                this->particuleobs.locuslist = new LocusC[this->dataobs.nloc];
+				cout<<this->dataobs.nloc<<"\n";
+				//vector<LocusC> tmp(41751);
+                //this->particuleobs.locuslist = &tmp[0]; //new LocusC[41752];
+				this->particuleobs.locuslist =new LocusC[this->dataobs.nloc];
                 cout<<"avant la boucle\n";
                 for (int kloc=0;kloc<this->dataobs.nloc;kloc++){
                         this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type;
@@ -1115,12 +1124,12 @@ public:
 				  for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) {
 					  this->stat_obs[jstat]=(float)this->particuleobs.grouplist[gr].sumstat[j].val;
 					  jstat++;
-					
+
 				  }
 			  }
                this->particuleobs.libere(true);
         }
-        
+
         /**
 * lit le fichier des statistiques observées (placées dans double *stat_obs)
 */

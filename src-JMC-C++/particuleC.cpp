@@ -336,6 +336,7 @@ public:
     	this->nevent = nl-1;
     	this->event = new EventC[nl-1];
     	this->nsamp=0;this->npop=this->nn0;this->popmax=this->nn0;
+		delete []ss;
     	for (int i=0;i<nl-1;i++) {
     		ss = splitwords(ls[i+1]," ",&n);
             this->event[i].ltime=0;this->event[i].lNe=0;this->event[i].ladmixrate=0;
@@ -355,12 +356,12 @@ public:
     			this->event[i].pop=atoi(ss[2].c_str());
     			this->nsamp++;
 			    this->event[i].sample=this->nsamp;
-    			//cout <<this->event[i].time<<"  SAMPLE"<<"   "<<this->event[i].pop<<"\n";
+    			cout <<this->event[i].time<<"  SAMPLE"<<"   "<<this->event[i].pop<<"\n";
     		} else if (majuscules(ss[1])=="MERGE") {
     			this->event[i].action='M';
     			this->event[i].pop=atoi(ss[2].c_str());
     			this->event[i].pop1=atoi(ss[3].c_str());
-    			//cout <<this->event[i].stime<<"  MERGE"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"\n";
+    			cout <<this->event[i].stime<<"  MERGE"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"\n";
 
     		} else if (majuscules(ss[1])=="SPLIT") {
     			this->event[i].action='S';
@@ -375,7 +376,7 @@ public:
                               strcpy(this->event[i].sadmixrate,ss[5].c_str());
                               this->detparam(ss[5],2);
                         }
-    			//cout <<this->event[i].stime<<"  SPLIT"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"   "<<this->event[i].pop2<<"   "<<this->event[i].sadmixrate<<"\n";
+    			cout <<this->event[i].stime<<"  SPLIT"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"   "<<this->event[i].pop2<<"   "<<this->event[i].sadmixrate<<"\n";
     		} else if (majuscules(ss[1])=="VARNE") {
     			this->event[i].action='V';
     			this->event[i].pop=atoi(ss[2].c_str());
@@ -387,16 +388,17 @@ public:
                               strcpy(this->event[i].sNe,ss[3].c_str());
                               this->detparam(ss[3],0);
                         }
-                //cout <<this->event[i].stime<<"  VARNE"<<"   "<<this->event[i].pop<<"\n";
+                cout <<this->event[i].stime<<"  VARNE"<<"   "<<this->event[i].pop<<"\n";
     		}
+    		delete []ss;
     	}
     	this->histparam = new HistParameterC[this->nparam];
     	//this->paramvar = new HistParameterC[this->nparamvar];
         //cout << "this->nparam = "<<this->nparam<<"   size= "<<histparname.size()<<"\n";
     	for (int i=0;i<this->nparam;i++){
-                //cout<<"i = "<<i<<"\n";
+                cout<<"i = "<<i<<"\n";
     		this->histparam[i].name=histparname[i];
-                //cout << this->histparam[i].name<<"\n";
+                cout << this->histparam[i].name<<"\n";
     		this->histparam[i].category=histparcat[i];
 		if (this->histparam[i].category=='T')this->histparam[i].value=-9999; else this->histparam[i].value=-1;
     	}
