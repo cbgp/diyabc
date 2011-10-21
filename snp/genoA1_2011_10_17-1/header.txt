@@ -39,7 +39,7 @@ NbH   N  UN[50.0,500.0,0.0,0.0]
 NbS   N  UN[50.0,500.0,0.0,0.0]
 
 loci description (1)
-10000 <A> G1
+10000 <A> G1 from 1
 
 group summary statistics (9)
 group G1 (9)

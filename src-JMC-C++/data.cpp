@@ -390,12 +390,12 @@ public:
 		this->locus[loc].samplesize = new int[this->nsample];
 		for (ech=0;ech<this->nsample;ech++) {
 			this->locus[loc].ss[ech]=0;
-			this->locus[loc].samplesize=0;
+			this->locus[loc].samplesize[ech]=0;
 			for (ind=0;ind<this->nind[ech];ind++){
 				if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[ech][ind]==2))) {
 					this->locus[loc].ss[ech] +=2;
 					if (this->genotype[ech][ind][loc]!=misval) {
-						this->locus[loc].samplesize +=2;
+						this->locus[loc].samplesize[ech] +=2;
 						if (this->genotype[ech][ind][loc]=="0") {haplo.push_back(g0);haplo.push_back(g0);}
 						if (this->genotype[ech][ind][loc]=="1") {haplo.push_back(g0);haplo.push_back(g1);}
 						if (this->genotype[ech][ind][loc]=="2") {haplo.push_back(g1);haplo.push_back(g1);}
@@ -403,7 +403,7 @@ public:
 				} else {
 					this->locus[loc].ss[ech] +=1;
 					if (this->genotype[ech][ind][loc]!=misval) {
-						this->locus[loc].samplesize +=1;
+						this->locus[loc].samplesize[ech] +=1;
 						if (this->genotype[ech][ind][loc]=="0") {haplo.push_back(g0);}
 						if (this->genotype[ech][ind][loc]=="1") {haplo.push_back(g1);}
 					} else {haplo.push_back(g9);}

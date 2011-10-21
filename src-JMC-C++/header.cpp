@@ -184,6 +184,8 @@ public:
         getline(file,s1);
         this->nparamtot=getwordint(s1,1);		cout<<"nparamtot="<<this->nparamtot<<"\n";
         this->nstat=getwordint(s1,4);			cout<<"nstat="<<this->nstat<<"\n";
+		cout<<"samplesize="<<this->dataobs.locus[0].samplesize[0]<<"\n";
+		cout<<"ss="<<this->dataobs.locus[0].ss[0]<<"\n";
                 //cout<<"avant scenarios\n";fflush(stdin);
 //Partie Scenarios
         getline(file,s1);   //cout<<s1<<"\n";     //ligne vide
@@ -318,10 +320,10 @@ public:
 					//cout<<this->dataobs.locus[loc].dnalength<<"\n";
 					//this->dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());  //inutile variable déjà renseignée
 				}
+				delete [] ss;
 			}
-			delete [] ss;
 		} else {			//fichier SNP
-			this->ngroupes=getwordint(s1,3); cout<<s1<<"\n";cout<<"this->ngroupes="<<this->ngroupes<<"\n";
+			this->ngroupes=getwordint(s1,3); //cout<<s1<<"\n";cout<<"this->ngroupes="<<this->ngroupes<<"\n";
 			this->groupe = new LocusGroupC[this->ngroupes+1];
 			this->groupe[0].nloc = this->dataobs.nloc;
 			for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].groupe=0;
@@ -331,20 +333,24 @@ public:
 				this->groupe[0].nloc -= this->groupe[gr].nloc;
 				this->groupe[gr].loc = new int[this->groupe[gr].nloc];
 				int prem = getwordint(s1,5)-1;
+				//cout<<"prem="<<prem<<"\n";
 				if (s1.find("<A>")!=string::npos) this->groupe[gr].type=10;
 				else if (s1.find("<H>")!=string::npos) this->groupe[gr].type=11;
 				else if (s1.find("<X>")!=string::npos) this->groupe[gr].type=12;
 				else if (s1.find("<Y>")!=string::npos) this->groupe[gr].type=13;
 				else if (s1.find("<M>")!=string::npos) this->groupe[gr].type=14;
+				//cout<<"this->groupe[gr].type = "<<this->groupe[gr].type<<"\n";
 				k1=0;
 				for (int loc=prem;loc<this->dataobs.nloc;loc++) {
+				    //cout<<this->dataobs.locus[loc].type<<" ";
 					if (this->dataobs.locus[loc].type==this->groupe[gr].type) {
 						  this->groupe[gr].loc[k1]=loc;
 						  this->dataobs.locus[loc].groupe=gr;
 						  k1++;
 					}
-					if (k1++==this->groupe[gr].nloc) break;
+					if (k1 == this->groupe[gr].nloc) break;
 				}
+				//cout<<"\napres la boucle  k1="<<k1<<"\n";
 			}
 			this->groupe[0].loc = new int[this->groupe[0].nloc];
 			k1=0;
@@ -655,7 +661,7 @@ public:
                 if (not this->groupe[gr].priormutmoy.constant) this->nparamut++;
                 if (not this->groupe[gr].priorPmoy.constant) this->nparamut++;
                 if (not this->groupe[gr].priorsnimoy.constant) this->nparamut++;
-            } else {
+            } else if (this->groupe[gr].type==1) {
                 if (not this->groupe[gr].priormusmoy.constant) this->nparamut++;
                 //cout<<"calcul de nparamut\n";
                 if (this->groupe[gr].mutmod>0) {if (not this->groupe[gr].priork1moy.constant) this->nparamut++;}
@@ -688,7 +694,7 @@ public:
                     this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priorsnimoy);
                     this->nparamut++;
               }
-            } else {
+            } else if (this->groupe[gr].type==1) {
                 if (not this->groupe[gr].priormusmoy.constant){
                     this->mutparam[nparamut].name="useq_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
@@ -1007,10 +1013,10 @@ public:
                         this->particuleobs.data.indivsexe[i] = new int[this->dataobs.nind[i]];
                         for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
                 }
-                cout<<"apres DATA\n";
+                //cout<<"apres DATA\n";
 //partie GROUPES
                 int ngr = this->ngroupes;
-                cout<<"ngr="<<ngr<<"\n";
+                //cout<<"ngr="<<ngr<<"\n";
                 this->particuleobs.ngr = ngr;
                 this->particuleobs.grouplist = new LocusGroupC[ngr+1];
                 this->particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
@@ -1033,28 +1039,25 @@ public:
 
                         }
                 }
-                cout<<"apres GROUPS\n";
+                //cout<<"apres GROUPS\n";
 //partie LOCUSLIST
                 int kmoy;
-				cout<<"1\n";
                 this->particuleobs.nloc = this->dataobs.nloc;
 				cout<<this->dataobs.nloc<<"\n";
 				//vector<LocusC> tmp(41751);
                 //this->particuleobs.locuslist = &tmp[0]; //new LocusC[41752];
 				this->particuleobs.locuslist =new LocusC[this->dataobs.nloc];
-                cout<<"avant la boucle\n";
                 for (int kloc=0;kloc<this->dataobs.nloc;kloc++){
                         this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type;
                         this->particuleobs.locuslist[kloc].groupe = this->dataobs.locus[kloc].groupe;
                         this->particuleobs.locuslist[kloc].coeff =  this->dataobs.locus[kloc].coeff;
-                        this->particuleobs.locuslist[kloc].name =  new char[strlen(this->dataobs.locus[kloc].name)+1];
-                        strcpy(this->particuleobs.locuslist[kloc].name,this->dataobs.locus[kloc].name);
+                        //this->particuleobs.locuslist[kloc].name =  new char[strlen(this->dataobs.locus[kloc].name)+1];
+                        //strcpy(this->particuleobs.locuslist[kloc].name,this->dataobs.locus[kloc].name);
                         this->particuleobs.locuslist[kloc].ss = new int[ this->dataobs.nsample];
                         for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].ss[sa] =  this->dataobs.locus[kloc].ss[sa];
                         this->particuleobs.locuslist[kloc].samplesize = new int[ this->dataobs.nsample];
-
                         for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].samplesize[sa] =  this->dataobs.locus[kloc].samplesize[sa];
-                        cout<<"locus "<<kloc<<"   groupe "<<this->particuleobs.locuslist[kloc].groupe<<"\n";
+						//cout<<"locus "<<kloc<<"   groupe "<<this->particuleobs.locuslist[kloc].groupe<<"\n";
                         if (this->dataobs.locus[kloc].type < 5) {
                                 kmoy=(this->dataobs.locus[kloc].maxi+this->dataobs.locus[kloc].mini)/2;
                                 this->particuleobs.locuslist[kloc].kmin=kmoy-((this->dataobs.locus[kloc].motif_range/2)-1)*this->dataobs.locus[kloc].motif_size;
