@@ -68,9 +68,7 @@ public:
 
     void sethistparamname(HeaderC header) {
       //cout<<"debut de sethistparamname\n";
-        int nparamvar=0,pp,iscen,pa,ns,np,ip;
-        bool trouve;
-        string *ss;
+        int nparamvar=0,pp;
         this->nparamut = header.nparamut;
         this->nhistparam = new int[header.nscenarios];
         this->histparam = new HistParameterC*[header.nscenarios];
@@ -105,7 +103,6 @@ public:
     }
 
     int readheader(char * fname,char *flogname, char* datafilename) {
-        int nb;
         //cout <<"debut de readheader\n";
         fstream f0(fname,ios::in|ios::out|ios::binary);
         //cout<<"apres fstream\n";
@@ -256,11 +253,10 @@ public:
 
     void concat() {
         cout<<"debut de concat\n";
-        enregC *enr;
-        char *reftabname,*reftab,*reflogname,*num,nenr,*buffer;
+        char *reftabname,*reftab,*reflogname,*num,*buffer;
         char extbin[]=".bin\0";
         char extlog[]=".log\0";
-        int i,n,nu=1,nrecc,nerct,*nrecscenc,size,ns;
+        int i,n,nu=1,nrecc,*nrecscenc,size,ns;
         bool premier=true;
         this->openfile();
         reftabname = new char[ strlen(this->filename)+10];
@@ -415,8 +411,7 @@ public:
     void cal_dist(int nrec, int nsel, float *stat_obs) {
         int nn,nparamax,nrecOK=0,iscen,bidon,step;
         bool firstloop=true,scenOK;
-        long double diff,dj;
-        float dd,di;
+        long double diff;
         this->nreclus=0;step=nrec/100;
         nn=nsel;
         nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];

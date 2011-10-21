@@ -131,17 +131,16 @@ char *nomficonfresult;
     }
 
     void doconf(char *options, int seed) {
-        char *datafilename, *progressfilename, *courantfilename;
+        char *progressfilename, *courantfilename;
         int nstatOK, iprog,nprog,ncs1;
-        int nrec,nsel,nseld,nselr,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nlogreg,ncond;
-        string opt,*ss,s,*ss1,s0,s1;
-        long double  st,pa; 
+        int nrec,nsel,nseld,nselr,ns,nrecpos,ntest,np,ng,npv,nlogreg,ncond;
+        string opt,*ss,s,*ss1,s0,s1; 
 		float *stat_obs;
 		double duree,debut,clock_zero;
         bool AFD=false;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
-        FILE *flog, *fcur;
+        FILE *flog;
         //cout <<"debut de doconf\n";
         progressfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(progressfilename,path);

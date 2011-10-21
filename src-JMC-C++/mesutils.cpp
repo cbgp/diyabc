@@ -78,7 +78,7 @@ double getwordfloat(string s,int num){
 }
 
 string* splitwords(string s,string sep,int *k){
-	int j=0,j0,j1;
+	int j=0,j0;
 	while (s.find(sep)== 0) s=s.substr(1);
 	*k=0;
 	s.append(sep);
@@ -110,7 +110,7 @@ string* splitwords(string s,string sep,int *k){
 }
 
 string* splitwordsR(string s,string sep,int m,int *k){
-	int j=0,j0,j1;
+	int j=0,j0;
 	while (s.find(sep)== 0) s=s.substr(1);
 	*k=0;
 	s.append(sep);
@@ -287,7 +287,7 @@ long double cal_moyL(int n, long double *x) {
 }
 
 double cal_mode(int n, double *x) {
-    int l0=1,l1,l2=n,dl,lmin;
+    int l0=1,l2=n,dl,lmin;
     double min;
     dl=(l2-l0)/2;
     while (x[l0-1] != x[l2-1]) {
@@ -304,7 +304,7 @@ double cal_mode(int n, double *x) {
 }
 
 long double cal_modeL(int n, long double *x) {
-    int l0=1,l1,l2=n,dl,lmin;
+    int l0=1,l2=n,dl,lmin;
     double min;
     dl=(l2-l0)/2;
     while (x[l0-1] != x[l2-1]) {
@@ -382,8 +382,7 @@ double pnorm5(double x,double mu, double sigma){
     double q[5] = {1.28426009614491121,0.468238212480865118,0.0659881378689285515,0.00378239633202758244,7.29751555083966205e-5};
     double DBL_EPSILON=2.2204460492503131E-16;
     double sqrt2PI=2.506628274631000502415765284811;
-    double pp,xden,xnum,temp,eps,xsq,y,cum,ccum;
-    int i;
+    double pp,xden,xnum,temp,eps,xsq,y,cum;
 
     if (sigma<=0.0) {if (x<mu) return 0.0; else return 1.0;}
     pp = (x-mu)/sigma;
@@ -463,7 +462,7 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
     res.proportion = prop;
     vector <int> nk,numpop;   //npop est remplace par numpop.size() ou nk.size()
     bool trouve;
-    long double **matC,**matCT,**matTI,**matM,*valprop,**mk,anl,piv,sl,co,sy,sy2,somega,*w,*wk;
+    long double **matC,**matCT,**matTI,**matM,*valprop,**mk,piv,sl,co,somega,*w,*wk;
     int snk,j,err;
     //cout<<"debut AFD  nl="<<nl<<"\n";
     if (not numpop.empty()) numpop.clear();numpop.push_back(pop[0]);

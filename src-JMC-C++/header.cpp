@@ -156,7 +156,7 @@ public:
                 char reftable[]="header.txt";
                 char *path;
         string s1,s2,**sl,*ss,*ss1,*ss2;
-        int *nlscen,nss,nss1,j,k,l,gr,grm,k1,k2;
+        int *nlscen,nss,nss1,j,k,gr,grm,k1;
         cout<<"debut de readheader\n";
         //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
         ifstream file(headerfilename, ios::in);
@@ -744,8 +744,8 @@ public:
     }
 
     HeaderC* readHeadersim(char* headersimfilename){
-        string s1,s2,*sl,*ss,*ss1,*ss2;
-        int nlscen,nss,nss1,j,k,l,gr,grm,k1,k2,*nf,*nm,jstat;
+        string s1,s2,*sl,*ss,*ss1;
+        int nlscen,nss,nss1,j,gr,grm,*nf,*nm;
 		double som;
         cout<<"debut de readheadersim\n";
         //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";

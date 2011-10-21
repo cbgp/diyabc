@@ -160,7 +160,7 @@ parstatC *parstat;
 */
     void recalparam(int n) {
         long double coefmarge=0.001,marge;
-        int jj,k,kk;
+        int jj,k;
         alpsimrat = new long double*[n];
         for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparamcom];
         switch (numtransf) {
@@ -980,7 +980,7 @@ parstatC *parstat;
 *calcule les statistiques des paramètres
 */
     parstatC* calparstat(int n) {
-        long double sx,*x;
+        long double *x;
         parstat = new parstatC[nparamcom+nparcompo];
         x = new long double[n];
         //cout <<"avant la boucle sur les parametres nparamcom="<<nparamcom<<"  nparcompo="<<nparcompo<<"   nsel="<<n<<"\n";
@@ -1069,7 +1069,7 @@ parstatC *parstat;
 */
     void doestim(char *options) {
         int nstatOK, iprog,nprog;
-        int nrec,nsel,ns,ns1,nrecpos;
+        int nrec,nsel,ns,nrecpos;
         string opt,*ss,s,*ss1,s0,s1;
         float  *stat_obs;
 

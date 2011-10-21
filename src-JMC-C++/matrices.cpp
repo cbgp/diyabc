@@ -130,7 +130,6 @@ long double** prodMsL(int n,int m, long double **A, long double b) {
 {
     int i,j,k,l,err=0;
     double max,pivot,coef, **T, **C;
-    double debut,duree; 
     T = new double*[n];for (i=0;i<n;i++) T[i]= new double[2*n]; 
     C = new double*[n];for (i=0;i<n;i++) C[i]= new double[n];
     for (i=0;i<n;i++) 
@@ -237,8 +236,7 @@ int inverse(int n, long double **A, long double **C)
 }
 
     int jacobi(int n, double **A, double *D, double **V) {
-        char bidon;
-        int nrot=0,ng=0,nm;
+        int nrot=0,nm;
         double *b,*z,tresh,theta,tau,t,sm,s,h,g,cc;
         b = new double[n];
         z = new double[n];
@@ -317,8 +315,7 @@ int inverse(int n, long double **A, long double **C)
         return nrot;    
     }
     int jacobiL(int n, long double **A, long double *D, long double **V) {
-        char bidon;
-        int nrot=0,ng=0,nm,iq;
+        int nrot=0,iq;
         long double *b,*z,tresh,theta,tau,t,sm,s,h,g,cc;
         b = new long double[n];
         z = new long double[n];
@@ -420,7 +417,7 @@ int inverse(int n, long double **A, long double **C)
 	int inverse_Tik(int n, long double **A, long double **C) {
 		long double t,coeff,**AA,seuil_kappa=1E8;
 		double kap;
-		int i,j,err;
+		int err;
 		AA = new long double*[n]; for (int i=0;i<n;i++) AA[i] = new long double [n];
 		
 		coeff=0;
@@ -456,7 +453,7 @@ int inverse(int n, long double **A, long double **C)
 */
 	int inverse_Tik2(int n, long double **A, long double **C, long double coeff) {
 		long double t,**AA;
-		int i,j,err;
+		int err;
 		AA = new long double*[n]; for (int i=0;i<n;i++) AA[i] = new long double [n];
 		for (int i=0;i<n;i++) {for (int j=0;j<n;j++) AA[i][j] = A[i][j];}
 		t=0.0;

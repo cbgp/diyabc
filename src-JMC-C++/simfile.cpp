@@ -38,14 +38,12 @@ extern char *progressfilename;
 
 
     void dosimfile(int seed){
-        char *datafilename, *courantfilename, *nomfigp;
-        int nstatOK, iprog,nprog;
-        int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn,ncond;
-        string opt,*ss,s,*ss1,s0,s1,sg;
-        double  *stat_obs,st,pa;
+        char *nomfigp;
+        int  ntest;
+        string opt,s,s0,s1,sg;
         string *sgp;
         string nomfisim;
-        FILE *flog, *fcur, *fgp;
+        FILE *flog, *fgp;
 cout<<"path="<<path<<"\n";
         progressfilename = new char[strlen(path)+20];
 cout<<"apres dimension de progressfilename\n";

@@ -850,7 +850,7 @@ struct ParticleC
     void checkorder() {
         vector < vector <int> > exaequo;
         vector <int> bonordre;
-        int ng=0,kscen,numpiv=-1,g,gg,kk;
+        int ng=0,kscen,g,gg,kk;
         EventC piv;
         bool deja,trouve;
         for (int iev=0;iev<this->scen.nevent-1;iev++) {
@@ -1607,7 +1607,6 @@ struct ParticleC
 		int nLineages=0;
 		bool final=false;
         double lra;
-        bool trace = ((loc==12)/*and(iseq==5)*/);
 		for (int i=0;i<this->gt[loc].nnodes;i++){
 			if (this->gt[loc].nodes[i].pop == this->seqlist[iseq].pop) {nLineages +=1;}
 		}
@@ -1986,7 +1985,7 @@ struct ParticleC
             }
         }
         this->locuslist[loc].sitmut.clear();
-        int ind2=0,sa0=0,sa2=this->locuslist[loc].ss[sa0];
+        int sa0=0,sa2=this->locuslist[loc].ss[sa0];
         if (debuglevel==10) cout<<"sa2="<<sa2<<"\n";
 		int sa,ind;
 		if (debuglevel==10) cout<< "tirage au hasard des gènes avant attribution aux individus\n";
@@ -2495,7 +2494,7 @@ struct ParticleC
 
     string dogenepop(){
         string sgp,sind,snum;
-        int iloc, ***index,offset,*k,ty;
+        int iloc,*k,ty;
         k = new int[this->nloc];
         sgp="Simulated genepop file \n";
 		//cout<<sgp<<"\n";
@@ -2684,8 +2683,7 @@ struct ParticleC
     }
 
 	long double cal_pid1p(int gr,int st){
-        long double pidm=0.0;
-        int iloc,kloc,nl=0,nt=0,ni=0;
+        int iloc,kloc,nt=0,ni=0;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
@@ -2704,6 +2702,7 @@ struct ParticleC
         }
         //cout<<ni<<" sur "<<nt<<"\n";
         if (nt>0) return (long double)ni/(long double)nt;
+		else return 0.0;
     }
 
 	long double cal_nal1p(int gr,int st){
@@ -3147,8 +3146,8 @@ struct ParticleC
 
 	long double cal_nha1p(int gr,int st){
 	    string *haplo;
-	    int iloc,kloc,k,j,nhl=0,nhm=0,nl=0;
-	    bool trouve,ident;
+	    int iloc,kloc,j,nhl=0,nhm=0,nl=0;
+	    bool trouve;
 		long double res=0.0;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -3194,8 +3193,8 @@ struct ParticleC
 
     int* cal_nsspl(int kloc,int sample, int *nssl,bool *OK) {
         char c0;
-        bool trouve,ident;
-        int k,j,*ss,nss=0;
+        bool ident;
+        int j,*ss,nss=0;
         vector <int> nuvar;
         if(this->locuslist[kloc].samplesize[sample]>0) {
             *OK=true;
@@ -3232,7 +3231,7 @@ struct ParticleC
     }
 
 	long double cal_nss1p(int gr,int st){
-        int iloc,kloc,k,j,j0,nssl,nssm=0,nl=0,*ss;
+        int iloc,kloc,nssl,nssm=0,nl=0,*ss;
 		long double res=0.0;
         bool OK;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -3278,7 +3277,7 @@ struct ParticleC
     }
 
 	long double cal_mpd1p(int gr,int st){
-        int iloc,kloc,j,npdl,nd=0,di,nl=0;
+        int iloc,kloc,npdl,nd=0,nl=0;
 		long double npdm=0.0,res=0.0,mpdp;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -3361,7 +3360,7 @@ struct ParticleC
     }
 
 	long double cal_pss1p(int gr,int st){
-        int iloc,kloc,nl=0,*ss,nps=0,nss,**ssa,*nssa;
+        int iloc,kloc,nl=0,nps=0,**ssa,*nssa;
         bool trouve,OK;
 		long double res=0.0;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -3481,8 +3480,8 @@ struct ParticleC
 
 	long double cal_nha2p(int gr,int st){
         string *haplo;
-        int iloc,kloc,k,j,nhl=0,nhm=0,nl=0,sample,dmax;
-        bool trouve,ident;
+        int iloc,kloc,j,nhl=0,nhm=0,nl=0,sample,dmax;
+        bool trouve;
         long double res=0.0;
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -3532,8 +3531,8 @@ struct ParticleC
 
     int* cal_nss2pl(int kloc,int samp0, int samp1, int *nssl,bool *OK) {
         char c0;
-        bool trouve,ident;
-        int k,j,*ss,nss=0;
+        bool ident;
+        int j,*ss,nss=0;
         vector <int> nuvar;
         if(this->locuslist[kloc].samplesize[samp0]+this->locuslist[kloc].samplesize[samp1]>0) {
             *OK=true;
@@ -3570,9 +3569,9 @@ struct ParticleC
     }
 
 	long double cal_nss2p(int gr,int st){
-        int iloc,kloc,k,j,j0,nssl,nssm=0,nl=0,*ss;
+        int iloc,kloc,nssl,nssm=0,nl=0,*ss;
         long double res=0.0;
-        bool OK,trouve;
+        bool OK;
         //cout<<"\n";
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -3699,7 +3698,7 @@ struct ParticleC
 	}
 
     void cal_freq(int gr,int st) {
-        int iloc,kloc,nhaplo,isamp,sample,dmax,j,k;
+        int iloc,kloc,nhaplo,isamp,sample,dmax,j;
         long double d;
         int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -3780,7 +3779,6 @@ struct ParticleC
         long double res=0.0;
         complex<long double> c;
         //cout<<"debut de cal_aml3p\n";
-        int samp0=this->grouplist[gr].sumstat[st].samp-1;
         int samp1=this->grouplist[gr].sumstat[st].samp1-1;
         int samp2=this->grouplist[gr].sumstat[st].samp2-1;
 
@@ -3810,7 +3808,7 @@ struct ParticleC
 	}
 
 	void cal_numvar(int gr) {
-        int i,j,k,ns,pop,j0,lonseq;
+        int i,j,k,ns,pop,j0;
         int locus,nlocs=this->grouplist[gr].nloc;
         string ss;
         char *site;
@@ -3986,9 +3984,8 @@ struct ParticleC
 			}
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
-		if (this->grouplist[gr].type == 0) liberefreq(gr);
-        else if (this->grouplist[gr].type == 1) liberednavar(gr);
-		else liberefreqsnp(gr);
+		if ((this->grouplist[gr].type == 0)or(this->grouplist[gr].type>9)) liberefreq(gr);
+        else liberednavar(gr);
         if (not this->afsdone.empty()) {
             for (int sa=0;sa<this->data.nsample;sa++) {
                 this->afsdone[sa].clear();

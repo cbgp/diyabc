@@ -121,10 +121,9 @@ matligneC *matA;
     }
 
     posteriorscenC** comp_direct(int n) {
-        int nts,bidon,iscen,k,i;
+        int nts,k;
         posteriorscenC **posts;
         double d,p,delta;
-        bool scenOK;
         delta = rt.enrsel[n-1].dist;
         posts = new posteriorscenC*[ncs];
         for (int i=0;i<ncs;i++) {
@@ -413,7 +412,7 @@ matligneC *matA;
 
     void ordonne(int nmodel,int nli,int nco,long double *vecY,int *numod) {
         long double swm,*sw,xpiv;
-        int k,ii,ki,kj;
+        int k,ki;
         //cout<<"debut de ordonne\n";
         sw =new long double[nmodel+1];
         for (int i=0;i<nmodel+1;i++) sw[i]=0.0;
@@ -490,7 +489,7 @@ matligneC *matA;
     {
         double clock_zero;
         int err,nmodel=0,no;
-        double debut,duree,de1,du1,sx,sx2;
+        double debut,duree,sx,sx2;
         int *numod;
         for (int i=1;i<nli;i++) {if (vecY[i]>1.0*nmodel) nmodel=vecY[i]+0.1;}
         if (nmodel<1) {px[0]=1.0;pxi[0]=1.0;pxs[0]=1.0;return 0;}
@@ -499,7 +498,7 @@ matligneC *matA;
         ordonne(nmodel,nli,nco,vecY,numod);
         //cout <<"apres ordonne\n";
         int i,j,l,m,n,nmodnco=nmodel*(nco+1),imod,rep;
-        long double imody,betmin,betmax,kap,coeff,mdiff;
+        long double imody,betmin,betmax,coeff,mdiff;
         bool fin,caloglik,invOK;
         for (i=0;i<nli;i++) {cmatX[i][0]=1.0; for (j=0;j<nco;j++) cmatX[i][j+1]=cmatX0[i][j];}
         //cout<<"\n";cout<<"\n";for (i=0;i<10;i++) {for (j=0;j<11;j++) cout<<cmatX[i][j]<<"  "; cout<<"\n";} cout<<"\n";
@@ -634,8 +633,8 @@ matligneC *matA;
     posteriorscenC* call_polytom_logistic_regression(int nts, float *stat_obs, int nscenutil,int *scenchoisiutil) {
         posteriorscenC *postlog;
         bool trouve;
-        int ntt,j,dtt,k,kk,err;
-        long double som, *px,*pxi,*pxs,somw;
+        int ntt,j,kk,err;
+        long double som, *px,*pxi,*pxs;
 		double duree,debut,clock_zero;
         clock_zero=0.0;debut=walltime(&clock_zero);
         postlog = new posteriorscenC[rt.nscenchoisi];
@@ -752,9 +751,8 @@ matligneC *matA;
     }
 
     void docompscen(char *compar){
-        char *datafilename;
         int nstatOK,iprog,nprog;;
-        int nrec,nseld,nselr,nsel,ns,ns1,nlogreg,k,kk,nts;
+        int nrec,nseld,nselr,nsel,ns,nlogreg,k,nts;
         string opt,*ss,s,*ss1,s0,s1;
         float  *stat_obs;
 		double duree,debut,clock_zero;

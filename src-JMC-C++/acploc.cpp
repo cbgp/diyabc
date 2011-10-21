@@ -178,7 +178,7 @@ struct resACPC
     }
 
     void cal_loc() {
-        long double **qobs,quant;
+        long double **qobs;
 		float *stat_obs,diff;
         int scen,**avant,**apres,**egal,bidon,nparamax = 0;
         enregC enr;
@@ -249,7 +249,7 @@ struct resACPC
 
 
     void doacpl(char *options,bool multithread, int seed){
-        string opt,*ss,s,*ss1,s0,s1;
+        string opt,*ss,s,s0,s1;
         bool dopca,doloc;
         int ns;
         opt=char2string(options);

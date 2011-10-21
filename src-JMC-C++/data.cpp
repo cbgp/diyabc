@@ -177,7 +177,7 @@ public:
 /**
 * lecture d'un fichier de donnée SNP et stockage des informations dans une structure DataC
 */
-	DataC* readfilesnp(string filename){
+	DataC*  readfilesnp(string filename){
 		int ech,ind,nech,*nindi,nss;
 		bool deja;
 		string s1,*ss;
@@ -276,6 +276,7 @@ public:
 		cout<<"avant les delete\n";
 		delete []nindi;delete []ss;
 		cout<<"fin de la lecture du fichier\n";
+		return this;
 	}
 /**
 * supprime les locus monomorphes
@@ -348,7 +349,7 @@ public:
 	}
 
 	void missingdata(){
-		int ind,ech,loc,nm;
+		int ind,ech,nm;
 		string misval="9";
 		this->nmisssnp=0;
 		for (ech=0;ech<this->nsample;ech++) {
@@ -423,7 +424,6 @@ public:
 		bool fin;
 		string s,s1,s2,locusname;
 		int ech,ind,nech,*nindi;
-		char c;
 		size_t j,j0,j1;
 		Aindivname=false;Agenotype=false;Anind=false;Aindivsexe=false;Alocus=false;
         stringstream out;
@@ -550,6 +550,7 @@ public:
 		file2.close();
 		delete [] nindi;
                 //cout<<"dans data nsample = "<<this->nsample<<"\n";
+		return this;
 	}
 
 /**
@@ -621,7 +622,7 @@ public:
     void do_sequence(int loc){
         //cout<<"do_sequence locus"<<loc<<"\n";
     	string geno,*gen;
-    	int l,ll,n,gg,j0,j1,j2,ng;
+    	int n,j0,j1,j2,ng;
     	gen = new string[2];
     	string sbase,seq;
     	char base[] ="ACGT";
@@ -767,6 +768,7 @@ public:
 			for (loc=0;loc<this->nloc;loc++) this->do_snp(loc);
 			cout<<"apres le' traitement' des snp\n";
 		}
+		return this;
 	}
 
 };

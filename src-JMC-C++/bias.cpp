@@ -58,7 +58,6 @@ using namespace std;
     void resethistparam(string s) {
         string *ss,name,sprior,smini,smaxi;
         int n,i;
-        long double mini,maxi;
         ss = splitwords(s,"=",&n);
         name=ss[0];
         i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
@@ -83,8 +82,7 @@ using namespace std;
     void resetmutparam(string s) {
 	    cout<<"debut de resetmutparam\n";
         string *ss,numgr,s1,sg;
-        bool *useprior;
-        int n,i,gr,i0,i1;
+        int n,gr,i0,i1;
         numgr = s.substr(1,s.find("(")-1);  gr=atoi(numgr.c_str());
         i0=s.find("(");i1=s.find(")"); cout <<"i0="<<i0<<"  i1="<<i1<<"\n";
         s1 = s.substr(i0+1,i1-i0-1); cout <<"groupe "<<gr<<"  "<<s1<<"\n";
@@ -457,15 +455,14 @@ using namespace std;
     }
 
     void dobias(char *options,  int seed){
-        char *datafilename, *courantfilename;
+        char  *courantfilename;
         int nstatOK, iprog,nprog;
-        int nrec,nsel,ns,ns1,nrecpos,ntest,np,ng,sc,npv,nn,ncond;
-        string opt,*ss,s,*ss1,s0,s1,sg;
-        long double  st,pa; 
+        int nrec,nsel,ns,nrecpos,ntest,np,ng,npv,nn,ncond;
+        string opt,*ss,s,*ss1,s0,s1,sg; 
 		float *stat_obs;
         string bidon;
         bidon = new char[1000];
-        FILE *flog, *fcur;
+        FILE *flog;
 
         progressfilename = new char[strlen(path)+strlen(ident)+20];
         strcpy(progressfilename,path);

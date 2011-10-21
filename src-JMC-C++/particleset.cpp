@@ -271,8 +271,8 @@ void setgroup(int p) {
 
     void dosimulphistar(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
         int scen=numscen-1;
-        int ii,ip1,ip2,ipart,gr,nstat,pa,ip,iscen,k,nparam=header.scenario[scen].nparam;
-        bool trouve,trace,phistarOK;
+        int ii,ip1,ip2,ipart,gr,nstat,k,nparam=header.scenario[scen].nparam;
+        bool phistarOK;
         this->npart = npart;
         int *sOK;
         sOK = new int[npart];
@@ -394,8 +394,7 @@ void setgroup(int p) {
 	void dosimultabref(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed)
 	{
                int ipart,gr,nstat,pa,ip,iscen,np,ns;
-               float *pp;
-               bool trouve,trace;
+               bool trouve;
                this->npart = npart;
                int *sOK;
                string *ss;

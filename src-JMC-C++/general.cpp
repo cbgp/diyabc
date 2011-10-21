@@ -101,10 +101,9 @@ int readheadersim() {
 int main(int argc, char *argv[]){
 	try {
   
-	char *estpar,*compar,*biaspar,*confpar,*priorpar,*testpar;
+	char *estpar,*compar,*biaspar,*confpar,*priorpar;
     bool firsttime;
 	int k,seed;
-	double **paramstat;
 	int optchar;
     char action='a';
     bool flagp=false,flagi=false,flags=false,simOK,stoprun=false;

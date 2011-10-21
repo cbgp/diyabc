@@ -120,9 +120,8 @@ long double **ssphistar,**ssref;
     }
 
     int detphistarOK(int nsel,long double **phistar,long double **phistarOK) {
-        MwcGen MWC;
         bool OK;
-        int k,npv,ip1,ip2,nphistarOK=0,scen=rt.scenteste-1;
+        int npv,ip1,ip2,nphistarOK=0,scen=rt.scenteste-1;
         npv = rt.nparam[scen];
        for (int i=0;i<nsel;i++) {
             OK=true;
@@ -152,7 +151,8 @@ long double **ssphistar,**ssref;
 
     void call_loc(int npart,int nstat, int nrec,int nsel,long double **ss, float *stat_obs) {
         int *avant,*apres,*egal;
-        long double *qobs,quant; float diff;
+        long double *qobs;
+		float diff;
         string *star;
         qobs = new long double[header.nstat];
         star = new string[header.nstat];
@@ -259,7 +259,7 @@ long double **ssphistar,**ssref;
 
     void domodchec(char *options,int seed){
         int nstatOK, iprog,nprog;
-        int nrec,nsel,ns,ns1,nrecpos,newsspart,npv,nphistarOK,nss,nsr,newrefpart,*numscen,nparamax,bidon;
+        int nrec,nsel,ns,nrecpos,newsspart,npv,nss,nsr,newrefpart,*numscen,nparamax,bidon;
         string opt,*ss,s,*ss1,s0,s1,snewstat;
         float  *stat_obs;
         bool usestats,firsttime,dopca,doloc,newstat=false;
