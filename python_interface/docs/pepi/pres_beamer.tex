@@ -94,21 +94,19 @@
 	\end{columns}
 \end{frame}
 
-\begin{frame}{Exploration des alternatives à SGE}
-    Constat : architectures trop rigides et fastidieuses à maintenir
+\begin{frame}{Exploration des outils plus polyvalents que SGE}
+    Constat : architectures trop rigides % cluster only
 	\begin{columns}
 	\begin{column}[l]{0.3\linewidth}
     \begin{block}{Projets}
         \begin{itemize}
                 % alex a utilisé diane, bien mais manque d'outils qui facilitent la vie
             \item<2-> Diane
-                % sous partie de diane
-            \item<3-> Ganga
                 % orienté grilles
-            \item<4-> Wisdom
+            \item<3-> Wisdom
                 % example de projet qui ne fourni pas son programme
-            \item<5-> OurGrid
-            \item<6-> Proactive
+            \item<4-> OurGrid
+            \item<5-> Proactive
         \end{itemize}
     \end{block}
 	\end{column}
@@ -116,10 +114,9 @@
     \begin{exampleblock}{Particularité}
         \begin{itemize}
             \item<2-> Peu d'outils annexe
-            \item<3-> Sous-partie de DIANE
-            \item<4-> Orienté vers les grilles de calcul
-            \item<5-> Programmes non fournis
-            \item<6-> Découplé et polyvalent
+            \item<3-> Orienté vers les grilles de calcul
+            \item<4-> Programmes non fournis
+            \item<5-> Découplé et polyvalent
         \end{itemize}
     \end{exampleblock}
 	\end{column}
@@ -134,16 +131,17 @@
 \begin{frame}
 	\tableofcontents[currentsection]
 \end{frame}
-\begin{frame}{Caractéristiques principales}
+\begin{frame}{Vue d'ensemble}
     \begin{itemize}
         \item Langage de programmation $\Longrightarrow$ Java + Bash/Batch
         \item Portable
         \item Supporte un environnement hétérogène (Unix*, Windows)% scripts de selection
-        \item Différents niveaux d'utilisation % simple, avancé
+        \item Différents niveaux d'utilisation (de débutant à expert) % simple, avancé
         \item Différentes interfaces : GUI, CLI, API (intégration dans votre propre application)
         \item Extensible et découplé
             % decouplé : chaque executable est indépendant et ne nécessite pas forcément l'exécution des autres
-            % extensible : logiciel libre sous affero GPL que l'on peut améliorer
+            %    => choix des composants en fction des besoins
+            % extensible : logiciel libre sous affero GPL que l'on peut améliorer grace aux libs fournies
     \end{itemize}
 
 \end{frame}
@@ -157,21 +155,22 @@
         \begin{figure}
             %[!bh]
             \centering
-            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
-            \caption{Communication dans Proactive}
+            %\includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
+            \includegraphics[trim=5.5cm 14.3cm 2cm 6.3cm,scale=0.69]{netmap_abs.pdf}
+            %\caption{Communication dans Proactive}
         \end{figure}
 	\end{column}
-    \setbeamercolor{block title}{fg=black,bg=orange}   
+    \setbeamercolor{block title}{fg=white,bg=orange}   
     \setbeamercolor{block body}{fg=black,bg=orange!30}
-    \setbeamercolor{block title alerted}{fg=black,bg=blue}   
+    \setbeamercolor{block title alerted}{fg=white,bg=blue}   
     \setbeamercolor{block body alerted}{fg=black,bg=blue!30}
-    \setbeamercolor{block title example}{fg=black,bg=green!50!black}   
+    \setbeamercolor{block title example}{fg=white,bg=green!50!black}   
     \setbeamercolor{block body example}{fg=black,bg=green!15}
 	\begin{column}[r]{0.5\linewidth}
         \begin{block}{Resource management}
             Gestion des noeuds de calcul
         \end{block}
-        \begin{alertblock}{Scheduler}
+        \begin{alertblock}{Scheduling}
              Gestion de la politique d'ordonnancement et de la soumission des calculs
         \end{alertblock}
         \begin{exampleblock}{Data management}
@@ -186,73 +185,141 @@
 \begin{frame}
 	\tableofcontents[currentsubsection]
 \end{frame}
-\begin{frame}{Programmes}
+\begin{frame}{Composants}
 	\begin{columns}
 	\begin{column}[l]{0.5\linewidth}
         \begin{figure}
             %[!bh]
             \centering
-            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
-            \caption{Communication dans Proactive}
+            \includegraphics[trim=5.5cm 14.3cm 2cm 6.3cm,scale=0.69]{netmap_abs.pdf}
+            %\caption{Communication dans Proactive}
         \end{figure}
 	\end{column}
-    \setbeamercolor{block title}{fg=black,bg=orange}   
+    \setbeamercolor{block title}{fg=white,bg=orange}   
     \setbeamercolor{block body}{fg=black,bg=orange!30}
-    \setbeamercolor{block title alerted}{fg=black,bg=blue}   
+    \setbeamercolor{block title alerted}{fg=white,bg=blue}   
     \setbeamercolor{block body alerted}{fg=black,bg=blue!30}
-    \setbeamercolor{block title example}{fg=black,bg=green!50!black}   
+    \setbeamercolor{block title example}{fg=white,bg=green!50!black}   
     \setbeamercolor{block body example}{fg=black,bg=green!15}
 	\begin{column}[r]{0.5\linewidth}
         
-        \begin{block}{Resource node}
-            Accepte et traite des calculs
+        \begin{block}{Resource management}
+            \begin{itemize}
+                \item Resource node
+                \item Resource manager
+                \item Resource manager client
+            \end{itemize}
+            %Accepte et traite des calculs
         \end{block}
-        \begin{block}{Resource manager}
-            Contrôle les noeuds de calcul
-        \end{block}
-        \begin{alertblock}{Scheduler}
-            Attend des calculs et les affecte à des noeuds de calcul
+        \begin{alertblock}{Scheduling}
+            \begin{itemize}
+                \item Scheduler
+                \item Scheduler client
+            \end{itemize}
+            %Attend des calculs et les affecte à des noeuds de calcul
         \end{alertblock}
-        \begin{exampleblock}{Dataserver}
-            Transmet les données liées aux calculs
+        \begin{exampleblock}{Data management}
+            \begin{itemize}
+                \item Dataserver
+            \end{itemize}
+            %Transmet les données liées aux calculs
         \end{exampleblock}
         
 	\end{column}
 	\end{columns}
 \end{frame}
 
-\begin{frame}{Resource node et Resource manager}
+\begin{frame}{Resource management}
+	\begin{columns}
+	\begin{column}[l]{0.5\linewidth}
+        \only<1>{\begin{figure}
+            %[!bh]
+            \centering
+            %\includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{node_declaration.pdf}
+            \includegraphics[trim=5.5cm 14.3cm 2cm 6.3cm,scale=0.69]{rn.pdf}
+            %\caption{Communication dans Proactive}
+        \end{figure}
+        }
+        \only<2>{\begin{figure}
+            %[!bh]
+            \centering
+            %\includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{node_declaration.pdf}
+            \includegraphics[trim=5.5cm 14.3cm 2cm 6.3cm,scale=0.69]{rm.pdf}
+            %\caption{Communication dans Proactive}
+        \end{figure}
+        }
+        \only<3>{\begin{figure}
+            %[!bh]
+            \centering
+            %\includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{node_declaration.pdf}
+            \includegraphics[trim=5.5cm 14.3cm 2cm 6.3cm,scale=0.69]{rmc.pdf}
+            %\caption{Communication dans Proactive}
+        \end{figure}
+        }
+	\end{column}
+    \setbeamercolor{block title}{fg=white,bg=orange}   
+    \setbeamercolor{block body}{fg=black,bg=orange!30}
+    \setbeamercolor{block title alerted}{fg=white,bg=blue}   
+    \setbeamercolor{block body alerted}{fg=black,bg=blue!30}
+	\begin{column}[r]{0.5\linewidth}
+        
+        \only<1>{\begin{block}{Resource node}
+            \begin{itemize}
+                \item Lancement sur chaque noeud de calcul
+                \item Déclaration au resource manager
+                \item Exécution dans un environnement temporaire
+            \end{itemize}
+        \end{block}
+        }
+        \only<2>{\begin{block}{Resource manager}
+             \begin{itemize}
+                     \item Monitore les ressources
+                     \item Gère les requêtes du scheduler
+             \end{itemize}
+        \end{block}
+        }
+        \only<3>{\begin{block}{Resource manager client}
+             \begin{itemize}
+                     \item Visualiser l'activité
+                     \item Gérer les noeuds de calcul
+             \end{itemize}
+        \end{block}
+        }
+	\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Scheduler (Ordonnanceur)}
 	\begin{columns}
 	\begin{column}[l]{0.5\linewidth}
         \begin{figure}
             %[!bh]
             \centering
-            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{node_declaration.pdf}
-            \caption{Communication dans Proactive}
+            %\includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
+            \includegraphics[trim=5.5cm 14.3cm 2cm 6.3cm,scale=0.69]{netmap_abs.pdf}
+            %\caption{Communication dans Proactive}
         \end{figure}
 	\end{column}
-    \setbeamercolor{block title}{fg=black,bg=orange}   
-    \setbeamercolor{block body}{fg=black,bg=orange!30}
-    \setbeamercolor{block title alerted}{fg=black,bg=blue}   
-    \setbeamercolor{block body alerted}{fg=black,bg=blue!30}
+    \setbeamercolor{block title}{fg=white,bg=blue}   
+    \setbeamercolor{block body}{fg=black,bg=blue!30}
 	\begin{column}[r]{0.5\linewidth}
-        
-        \begin{block}{Resource node}<1->
+        \begin{block}{Scheduler}
             \begin{itemize}
-                \item À lancer sur chaque machine
-                \item Reçoit les calculs
-                \item Les exécute dans un environnement temporaire
+            \item Affectation des calculs aux resource nodes
+            \item Droits d'accès aux ressources 
+            \item Intermédiaire entre le client et le resource manager
+            \item Authentification des clients 
             \end{itemize}
         \end{block}
-        \begin{block}{Resource manager}<2->
-             Attend :
-             \begin{itemize}
-                     \item la connexion des resource nodes
-                     \item les requêtes du scheduler
-             \end{itemize}
+        \begin{block}{Scheduler client}
+            \begin{itemize}
+            \item Interface avec l'utilisateur
+            \end{itemize}
         \end{block}
+        
 	\end{column}
 	\end{columns}
+    
 \end{frame}
 
 \begin{frame}{Dataserver}
@@ -261,11 +328,12 @@
         \begin{figure}
             %[!bh]
             \centering
-            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
-            \caption{Communication dans Proactive}
+            %\includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
+            \includegraphics[trim=5.5cm 14.3cm 2cm 6.3cm,scale=0.69]{netmap_abs.pdf}
+            %\caption{Communication dans Proactive}
         \end{figure}
 	\end{column}
-    \setbeamercolor{block title example}{fg=black,bg=green!50!black}   
+    \setbeamercolor{block title example}{fg=white,bg=green!50!black}   
     \setbeamercolor{block body example}{fg=black,bg=green!15}
 	\begin{column}[r]{0.5\linewidth}
         \begin{exampleblock}{Dataserver}
@@ -274,7 +342,7 @@
 
              %Peut être lancé par un administrateur pour fournir un espace permanent commun à tous les utilisateurs (faisable au CBGP, petite taille)
              %peut être lancé par chaque client pour créer l'espace sur sa propre machine
-             \item Permanent et commun ou temporaire et personnel
+             \item Permanent ou temporaire et commun ou personnel
              \item Espace partageable entre différents clients et calculs
              %Plusieurs client peuvent avoir accès au même espace
             \end{itemize}
@@ -285,56 +353,6 @@
 	\end{columns}
     
 \end{frame}
-
-\begin{frame}{Scheduler (Ordonnanceur)}
-	\begin{columns}
-	\begin{column}[l]{0.5\linewidth}
-        \only<1>{\begin{figure}
-            %[!bh]
-            \centering
-            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
-            \caption{Communication dans Proactive}
-        \end{figure}}
-        \only<2>{\begin{figure}
-            %[!bh]
-            \centering
-            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{submit.pdf}
-            \caption{Communication dans Proactive}
-        \end{figure}}
-        \only<3>{\begin{figure}
-            %[!bh]
-            \centering
-            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{submit2.pdf}
-            \caption{Communication dans Proactive}
-        \end{figure}}
-	\end{column}
-    \setbeamercolor{block title}{fg=black,bg=blue}   
-    \setbeamercolor{block body}{fg=black,bg=blue!30}
-	\begin{column}[r]{0.5\linewidth}
-        \only<1>{\begin{block}{Scheduler}
-            \begin{itemize}
-            \item Intermédiaire entre le client et le resource manager
-            \item Authentification des clients 
-            \item Droits d'accès aux ressources 
-            \item Affectation des calculs aux resource nodes
-            \end{itemize}
-        \end{block}}
-        \only<2-3>{
-        \begin{block}{Soumission d'un calcul}
-            \begin{itemize}
-            \item<2-> Transmission au scheduler
-            \item<2-> Transmission au resource manager
-            \item<3-> Affectation aux nodes
-            \item<3-> Transmission des résultats
-            \end{itemize}
-        \end{block}
-        }
-        
-	\end{column}
-	\end{columns}
-    
-\end{frame}
-
 %\subsection{Architecture}
 %
 %\begin{frame}{Communication dans Proactive}
@@ -347,95 +365,45 @@
 %    
 %\end{frame}
 
-\subsection{Définition d'un calcul}
-\begin{frame}
-	\tableofcontents[currentsubsection]
-\end{frame}
-\begin{frame}
-        \begin{block}{Qu'est-ce qu'un calcul ? (Job)}<1->
-        % en java, par xml, ou par liste de commandes
+\begin{frame}{Use case : soumission d'un calcul}
+	\begin{columns}
+	\begin{column}[l]{0.5\linewidth}
+        \only<1>{\begin{figure}
+            %[!bh]
+            \centering
+            %\includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{netmap_abs.pdf}
+            \includegraphics[trim=5.5cm 14.3cm 2cm 6.3cm,scale=0.69]{netmap_abs.pdf}
+            %\caption{Communication dans Proactive}
+        \end{figure}}
+        \only<2>{\begin{figure}
+            %[!bh]
+            \centering
+            %\includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{submit.pdf}
+            \includegraphics[trim=5.5cm 14.3cm 2cm 6.3cm,scale=0.69]{submit.pdf}
+            %\caption{Communication dans Proactive}
+        \end{figure}}
+        \only<3>{\begin{figure}
+            %[!bh]
+            \centering
+            %\includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.48]{submit2.pdf}
+            \includegraphics[trim=5.5cm 14.3cm 2cm 6.3cm,scale=0.69]{submit2.pdf}
+            %\caption{Communication dans Proactive}
+        \end{figure}}
+	\end{column}
+    \setbeamercolor{block title}{fg=white,bg=red!50!black}   
+    \setbeamercolor{block body}{fg=black,bg=red!10}
+	\begin{column}[r]{0.5\linewidth}
+        \only<2-3>{
+        \begin{block}{Soumission d'un calcul}
             \begin{itemize}
-                \item Un identifiant
-                \item Un serveur de données
-                \item Une liste d'opérations à effectuer (tasks)%option dependances, retry..
+            \item<2-> Transmission au scheduler
+            \item<2-> Transmission au resource manager
+            \item<3-> Affectation aux nodes
+            \item<3-> Transmission des résultats
             \end{itemize}
         \end{block}
-        \begin{exampleblock}{Quels sont les types de job ?}<2->
-        % en java, par xml, ou par liste de commandes
-            \begin{itemize}
-                \item Natif : Lance un script/binaire qui doit être compatible avec le noeud
-                \item Java : transport et exécution d'un exécutable Java
-            \end{itemize}
-        \end{exampleblock}
-        \begin{exampleblock}{Exemples d'options}<3->
-            \begin{itemize}
-                \item Job : Priority, inputSpace, outputSpace, variables
-                \item Task : restartTaskOnError, inputFiles, outputFiles, depends, selectionScript
-            \end{itemize}
-        \end{exampleblock}
-\end{frame}
-
-\begin{frame}{Avec une liste de commandes natives}
-	\begin{columns}
-	\begin{column}[l]{0.4\linewidth}
-        \begin{exampleblock}{liste}
-            \begin{itemize}
-                \item Jobs natifs uniquement (possibilité de sélection des nodes)
-                \item Liste de commandes qui seront exécutées directement sur un noeud de calcul
-                \item Gestion basique
-            \end{itemize}
-        \end{exampleblock}
-	\end{column}
-	\begin{column}[r]{0.6\linewidth}
-        /path/to/script\_1.sh arg1 arg2\newline
-        /path/to/script\_2.sh arg3 arg4\newline
-        /path/to/script\_3.sh arg5 arg6\newline
-	\end{column}
-	\end{columns}
-    
-\end{frame}
-\begin{frame}{En XML}
-	\begin{columns}
-	\begin{column}[l]{0.4\linewidth}
-        \begin{exampleblock}{Définition par XML}
-            \begin{itemize}
-                \item Jobs natifs ou Java
-                \item Fichier XML qui spécifie chaque paramètre
-                \item Plus simple mais moins complète que Java
-            \end{itemize}
-        \end{exampleblock}
-	\end{column}
-	\begin{column}[r]{0.6\linewidth}
-        \vspace{-1cm}
-        \begin{figure}
-            %[!bh]
-            \centering
-            \includegraphics[scale=0.27]{jobxml.png}
-            %\caption{Communication dans Proactive}
-        \end{figure}
-	\end{column}
-	\end{columns}
-    
-\end{frame}
-\begin{frame}{En Java}
-	\begin{columns}
-	\begin{column}[l]{0.4\linewidth}
-        \begin{exampleblock}{Définition dans un programme en Java}
-            \begin{itemize}
-                \item Jobs natifs ou Java
-                \item Directement dans un programme en Java qui se connecte au scheduler
-                \item Gestion fine
-            \end{itemize}
-        \end{exampleblock}
-	\end{column}
-	\begin{column}[r]{0.6\linewidth}
-        \vspace{-1cm}
-        \begin{figure}
-            %[!bh]
-            \centering
-            \includegraphics[scale=0.32]{jobjava.png}
-            %\caption{Communication dans Proactive}
-        \end{figure}
+        }
+        
 	\end{column}
 	\end{columns}
     
@@ -465,6 +433,123 @@
 \end{frame}
 
 
+\subsection{Définition d'un calcul}
+\begin{frame}
+	\tableofcontents[currentsubsection]
+\end{frame}
+\begin{frame}
+    \setbeamercolor{block title}{fg=white,bg=red!50!black}   
+    \setbeamercolor{block body}{fg=black,bg=red!10}
+    \vspace{-0.15cm}
+        \begin{block}{Qu'est-ce qu'un calcul ? (Job)}<1->
+        % en java, par xml, ou par liste de commandes
+            \begin{itemize}
+                \item Un identifiant
+                \item Un serveur de données
+                \item Une liste d'opérations à effectuer (tasks)%option dependances, retry..
+            \end{itemize}
+        \end{block}
+        \begin{block}{Quels sont les types de task ?}<2->
+        % en java, par xml, ou par liste de commandes
+            \begin{itemize}
+                \item Natif : Lance un script/binaire qui doit être compatible avec le resource node
+                \item Java : Transport et lancement d'un exécutable Java
+            \end{itemize}
+        \end{block}
+        \begin{block}{Options}<3->
+            \begin{itemize}
+                \item Intégration d'options similaires à celles de SGE
+                \item Job : Priority, inputSpace, outputSpace, variables
+                \item Task : restartTaskOnError, inputFiles, outputFiles, \textbf{depends}, selectionScript
+            \end{itemize}
+        \end{block}
+\end{frame}
+\begin{frame}{Types de définition}
+    \setbeamercolor{block title}{fg=white,bg=red!50!black}   
+    \setbeamercolor{block body}{fg=black,bg=red!10}
+    \begin{block}{Trois manières de définir un job}
+        \begin{itemize}
+            \item Liste de commandes
+            \item XML
+            \item Java
+        \end{itemize}
+    \end{block}
+    
+\end{frame}
+
+\begin{frame}{Avec une liste de commandes natives}
+    \setbeamercolor{block title}{fg=white,bg=red!50!black}   
+    \setbeamercolor{block body}{fg=black,bg=red!10}
+	\begin{columns}
+	\begin{column}[l]{0.4\linewidth}
+        \begin{block}{liste}
+            \begin{itemize}
+                \item Jobs natifs uniquement (possibilité de sélection des nodes)
+                \item Liste de commandes qui seront exécutées directement sur un noeud de calcul
+                \item Gestion basique
+            \end{itemize}
+        \end{block}
+	\end{column}
+	\begin{column}[r]{0.6\linewidth}
+        /path/to/script\_1.sh arg1 arg2\newline
+        /path/to/script\_2.sh arg3 arg4\newline
+        /path/to/script\_3.sh arg5 arg6\newline
+	\end{column}
+	\end{columns}
+    
+\end{frame}
+\begin{frame}{En XML}
+    \setbeamercolor{block title}{fg=white,bg=red!50!black}   
+    \setbeamercolor{block body}{fg=black,bg=red!10}
+	\begin{columns}
+	\begin{column}[l]{0.4\linewidth}
+        \begin{block}{Définition par XML}
+            \begin{itemize}
+                \item Jobs natifs ou Java
+                \item Fichier XML qui spécifie chaque paramètre
+                \item Plus simple mais moins complète que Java
+            \end{itemize}
+        \end{block}
+	\end{column}
+	\begin{column}[r]{0.6\linewidth}
+        \vspace{-1cm}
+        \begin{figure}
+            %[!bh]
+            \centering
+            \includegraphics[scale=0.27]{jobxml.png}
+            %\caption{Communication dans Proactive}
+        \end{figure}
+	\end{column}
+	\end{columns}
+    
+\end{frame}
+\begin{frame}{En Java}
+    \setbeamercolor{block title}{fg=white,bg=red!50!black}   
+    \setbeamercolor{block body}{fg=black,bg=red!10}
+	\begin{columns}
+	\begin{column}[l]{0.4\linewidth}
+        \begin{block}{Définition dans un programme en Java}
+            \begin{itemize}
+                \item Jobs natifs ou Java
+                \item Directement dans un programme en Java qui se connecte au scheduler
+                \item Gestion fine
+            \end{itemize}
+        \end{block}
+	\end{column}
+	\begin{column}[r]{0.6\linewidth}
+        \vspace{-1cm}
+        \begin{figure}
+            %[!bh]
+            \centering
+            \includegraphics[scale=0.32]{jobjava.png}
+            %\caption{Communication dans Proactive}
+        \end{figure}
+	\end{column}
+	\end{columns}
+    
+\end{frame}
+
+
 \section[Applications]{Applications possibles}
 \begin{frame}
 	\tableofcontents[currentsection]
@@ -484,7 +569,7 @@
         \begin{figure}
             %[!bh]
             \centering
-            \includegraphics[trim=1cm 13cm 2cm 4cm,scale=0.47]{res1.pdf}
+            \includegraphics[trim=1cm 14cm 2cm 4.6cm,scale=0.55]{res1.pdf}
             %\caption{}
         \end{figure}
 \end{frame}
@@ -507,7 +592,7 @@
         \begin{figure}
             %[!bh]
             \centering
-            \includegraphics[trim=4cm 13cm 2cm 5cm,scale=0.47]{res2.pdf}
+            \includegraphics[trim=4cm 13cm 2cm 5.2cm,scale=0.55]{res2.pdf}
             %\caption{}
         \end{figure}
 \end{frame}
@@ -568,6 +653,8 @@
     \begin{itemize}
         \item Documentation difficile d'accès et périmée
         \item MAIS mailing-list réactive
+        \item Agents moins finis que les clients
+        \item Conception orientée cloud qui peut perturber % qui peut être confusive, ex : pas de declaration de caracs node
     \end{itemize}
         
     \end{alertblock}
