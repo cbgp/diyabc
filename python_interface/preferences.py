@@ -293,6 +293,7 @@ class Preferences(formPreferences,basePreferences):
             nlaw = "NO"
         elif self.ui.NLNRadio.isChecked():
             nlaw = "LN"
+
         if self.ui.TUNRadio.isChecked():
             tlaw = "UN"
         elif self.ui.TLURadio.isChecked():
@@ -301,6 +302,7 @@ class Preferences(formPreferences,basePreferences):
             tlaw = "NO"
         elif self.ui.TLNRadio.isChecked():
             tlaw = "LN"
+
         if self.ui.AUNRadio.isChecked():
             alaw = "UN"
         elif self.ui.ALURadio.isChecked():
@@ -310,23 +312,31 @@ class Preferences(formPreferences,basePreferences):
         elif self.ui.ALNRadio.isChecked():
             alaw = "LN"
 
-        toSave = {
-                "nmin" : float(self.ui.NminEdit.text()),
-                "nmax" : float(self.ui.NmaxEdit.text()),
-                "nmean" : float(self.ui.NmeanEdit.text()),
-                "nstdev" :float(self.ui.NstdevEdit.text()),
-                "tmin" :float(self.ui.TminEdit.text()),
-                "tmax" :float(self.ui.TmaxEdit.text()),
-                "tmean" :float(self.ui.TmeanEdit.text()),
-                "tstdev" :float(self.ui.TstdevEdit.text()),
-                "amin" :float(self.ui.AminEdit.text()),
-                "amax" :float(self.ui.AmaxEdit.text()),
-                "amean" :float(self.ui.AmeanEdit.text()),
-                "astdev" :float(self.ui.AstdevEdit.text()),
-                "nlaw" : nlaw,
-                "tlaw" : tlaw,
-                "alaw" : alaw
-                }
+        toSave = {}
+
+        for key in ["nmin","nmax","nmean","nstdev","tmin","tmax","tmean","tstdev","amin","amax","amean","astdev"]:
+            editname = key[0].upper() + key[1:]
+            exec('toSave["%s"] = float(self.ui.%sEdit.text())'%(key,editname))
+        toSave["nlaw"] = nlaw
+        toSave["tlaw"] = tlaw
+        toSave["alaw"] = alaw
+        #toSave = {
+        #        "nmin" : float(self.ui.NminEdit.text()),
+        #        "nmax" : float(self.ui.NmaxEdit.text()),
+        #        "nmean" : float(self.ui.NmeanEdit.text()),
+        #        "nstdev" :float(self.ui.NstdevEdit.text()),
+        #        "tmin" :float(self.ui.TminEdit.text()),
+        #        "tmax" :float(self.ui.TmaxEdit.text()),
+        #        "tmean" :float(self.ui.TmeanEdit.text()),
+        #        "tstdev" :float(self.ui.TstdevEdit.text()),
+        #        "amin" :float(self.ui.AminEdit.text()),
+        #        "amax" :float(self.ui.AmaxEdit.text()),
+        #        "amean" :float(self.ui.AmeanEdit.text()),
+        #        "astdev" :float(self.ui.AstdevEdit.text()),
+        #        "nlaw" : nlaw,
+        #        "tlaw" : tlaw,
+        #        "alaw" : alaw
+        #        }
         for k in toSave:
             self.config.set("hist_model_default_values",k,toSave[k])
 
