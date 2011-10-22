@@ -600,7 +600,7 @@ around mean)</string>
                 </size>
                </property>
                <property name="text">
-                <string>Mean_µ</string>
+                <string>Mean_u</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
