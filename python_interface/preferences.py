@@ -314,15 +314,15 @@ class Preferences(formPreferences,basePreferences):
                 "nmin" : float(self.ui.NminEdit.text()),
                 "nmax" : float(self.ui.NmaxEdit.text()),
                 "nmean" : float(self.ui.NmeanEdit.text()),
-                "nst" :float(self.ui.NstdevEdit.text()),
+                "nstdev" :float(self.ui.NstdevEdit.text()),
                 "tmin" :float(self.ui.TminEdit.text()),
                 "tmax" :float(self.ui.TmaxEdit.text()),
                 "tmean" :float(self.ui.TmeanEdit.text()),
-                "tst" :float(self.ui.TstdevEdit.text()),
+                "tstdev" :float(self.ui.TstdevEdit.text()),
                 "amin" :float(self.ui.AminEdit.text()),
                 "amax" :float(self.ui.AmaxEdit.text()),
                 "amean" :float(self.ui.AmeanEdit.text()),
-                "ast" :float(self.ui.AstdevEdit.text()),
+                "astdev" :float(self.ui.AstdevEdit.text()),
                 "nlaw" : nlaw,
                 "tlaw" : tlaw,
                 "alaw" : alaw
@@ -341,42 +341,49 @@ class Preferences(formPreferences,basePreferences):
                 dico_val[p[0]] = p[1]
 
             try:
-                self.ui.NminEdit.setText(dico_val["nmin"])
-                self.ui.NmaxEdit.setText(dico_val["nmax"])
-                self.ui.NmeanEdit.setText(dico_val["nmean"])
-                self.ui.NstdevEdit.setText(dico_val["nst"])
-                self.ui.TminEdit.setText(dico_val["tmin"])
-                self.ui.TmaxEdit.setText(dico_val["tmax"])
-                self.ui.TmeanEdit.setText(dico_val["tmean"])
-                self.ui.TstdevEdit.setText(dico_val["tst"])
-                self.ui.AminEdit.setText(dico_val["amin"])
-                self.ui.AmaxEdit.setText(dico_val["amax"])
-                self.ui.AmeanEdit.setText(dico_val["amean"])
-                self.ui.AstdevEdit.setText(dico_val["ast"])
-                if dico_val["nlaw"] == "UN":
-                    self.ui.NUNRadio.setChecked(True)
-                if dico_val["nlaw"] == "LN":
-                    self.ui.NLNRadio.setChecked(True)
-                if dico_val["nlaw"] == "NO":
-                    self.ui.NNORadio.setChecked(True)
-                if dico_val["nlaw"] == "LU":
-                    self.ui.NLURadio.setChecked(True)
-                if dico_val["alaw"] == "UN":
-                    self.ui.AUNRadio.setChecked(True)
-                if dico_val["alaw"] == "LU":
-                    self.ui.ALURadio.setChecked(True)
-                if dico_val["alaw"] == "NO":
-                    self.ui.ANORadio.setChecked(True)
-                if dico_val["alaw"] == "LN":
-                    self.ui.ALNRadio.setChecked(True)
-                if dico_val["tlaw"] == "UN":
-                    self.ui.TUNRadio.setChecked(True)
-                if dico_val["tlaw"] == "LN":
-                    self.ui.TLNRadio.setChecked(True)
-                if dico_val["tlaw"] == "LU":
-                    self.ui.TLURadio.setChecked(True)
-                if dico_val["tlaw"] == "NO":
-                    self.ui.TNORadio.setChecked(True)
+                for key in ["nmin","nmax","nmean","nstdev","tmin","tmax","tmean","tstdev","amin","amax","amean","astdev"]:
+                    editname = key[0].upper() + key[1:]
+                    exec('self.ui.%sEdit.setText(dico_val["%s"])'%(editname,key))
+                #self.ui.NminEdit.setText(dico_val["nmin"])
+                #self.ui.NmaxEdit.setText(dico_val["nmax"])
+                #self.ui.NmeanEdit.setText(dico_val["nmean"])
+                #self.ui.NstdevEdit.setText(dico_val["nst"])
+                #self.ui.TminEdit.setText(dico_val["tmin"])
+                #self.ui.TmaxEdit.setText(dico_val["tmax"])
+                #self.ui.TmeanEdit.setText(dico_val["tmean"])
+                #self.ui.TstdevEdit.setText(dico_val["tst"])
+                #self.ui.AminEdit.setText(dico_val["amin"])
+                #self.ui.AmaxEdit.setText(dico_val["amax"])
+                #self.ui.AmeanEdit.setText(dico_val["amean"])
+                #self.ui.AstdevEdit.setText(dico_val["ast"])
+                for pair in [("nlaw","UN"),("nlaw","LN"),("nlaw","NO"),("nlaw","LU"),
+                        ("alaw","UN"),("alaw","LN"),("alaw","NO"),("alaw","LU"),
+                        ("tlaw","UN"),("tlaw","LN"),("tlaw","NO"),("tlaw","LU")]:
+                    exec('if dico_val["%s"] == "%s": self.ui.%sRadio.setChecked(True)'%(pair[0],pair[1],pair[0][0].upper()+pair[1]))
+                #if dico_val["nlaw"] == "UN":
+                #    self.ui.NUNRadio.setChecked(True)
+                #if dico_val["nlaw"] == "LN":
+                #    self.ui.NLNRadio.setChecked(True)
+                #if dico_val["nlaw"] == "NO":
+                #    self.ui.NNORadio.setChecked(True)
+                #if dico_val["nlaw"] == "LU":
+                #    self.ui.NLURadio.setChecked(True)
+                #if dico_val["alaw"] == "UN":
+                #    self.ui.AUNRadio.setChecked(True)
+                #if dico_val["alaw"] == "LU":
+                #    self.ui.ALURadio.setChecked(True)
+                #if dico_val["alaw"] == "NO":
+                #    self.ui.ANORadio.setChecked(True)
+                #if dico_val["alaw"] == "LN":
+                #    self.ui.ALNRadio.setChecked(True)
+                #if dico_val["tlaw"] == "UN":
+                #    self.ui.TUNRadio.setChecked(True)
+                #if dico_val["tlaw"] == "LN":
+                #    self.ui.TLNRadio.setChecked(True)
+                #if dico_val["tlaw"] == "LU":
+                #    self.ui.TLURadio.setChecked(True)
+                #if dico_val["tlaw"] == "NO":
+                #    self.ui.TNORadio.setChecked(True)
             except Exception,e:
                 log(3,"Malformed hist_model_default_values section in configuration")
         else:
@@ -413,15 +420,20 @@ class Preferences(formPreferences,basePreferences):
         cfg = self.config
         if cfg.has_section("mutationM_default_values"):
             try:
-                lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANMU_law"),cfg.get("mutationM_default_values","MEANMU_zero"),cfg.get("mutationM_default_values","MEANMU_one"),cfg.get("mutationM_default_values","MEANMU_two"),cfg.get("mutationM_default_values","MEANMU_three")))
-                lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMMU_law"),cfg.get("mutationM_default_values","GAMMU_zero"),cfg.get("mutationM_default_values","GAMMU_one"),cfg.get("mutationM_default_values","GAMMU_two"),cfg.get("mutationM_default_values","GAMMU_three")))
-                lines.append("MEANP %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANP_law"),cfg.get("mutationM_default_values","MEANP_zero"),cfg.get("mutationM_default_values","MEANP_one"),cfg.get("mutationM_default_values","MEANP_two"),cfg.get("mutationM_default_values","MEANP_three")))
-                lines.append("GAMP %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMP_law"),cfg.get("mutationM_default_values","GAMP_zero"),cfg.get("mutationM_default_values","GAMP_one"),cfg.get("mutationM_default_values","GAMP_two"),cfg.get("mutationM_default_values","GAMP_three")))
-                lines.append("MEANSNI %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANSNI_law"),cfg.get("mutationM_default_values","MEANSNI_zero"),cfg.get("mutationM_default_values","MEANSNI_one"),cfg.get("mutationM_default_values","MEANSNI_two"),cfg.get("mutationM_default_values","MEANSNI_three")))
-                lines.append("GAMSNI %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMSNI_law"),cfg.get("mutationM_default_values","GAMSNI_zero"),cfg.get("mutationM_default_values","GAMSNI_one"),cfg.get("mutationM_default_values","GAMSNI_two"),cfg.get("mutationM_default_values","GAMSNI_three")))
+                for param in ['MEANMU','GAMMU','MEANP','GAMP','MEANSNI','GAMSNI']:
+                    exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","{0}_law"),cfg.get("mutationM_default_values","{0}_zero"),cfg.get("mutationM_default_values","{0}_one"),cfg.get("mutationM_default_values","{0}_two"),cfg.get("mutationM_default_values","{0}_three")))'.format(param))
                 self.mutmodM.setMutationConf(lines)
             except Exception,e:
                 log(3,"Malformed mutationM_default_values in configuration")
+                
+            #try:
+            #    lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANMU_law"),cfg.get("mutationM_default_values","MEANMU_zero"),cfg.get("mutationM_default_values","MEANMU_one"),cfg.get("mutationM_default_values","MEANMU_two"),cfg.get("mutationM_default_values","MEANMU_three")))
+            #    lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMMU_law"),cfg.get("mutationM_default_values","GAMMU_zero"),cfg.get("mutationM_default_values","GAMMU_one"),cfg.get("mutationM_default_values","GAMMU_two"),cfg.get("mutationM_default_values","GAMMU_three")))
+            #    lines.append("MEANP %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANP_law"),cfg.get("mutationM_default_values","MEANP_zero"),cfg.get("mutationM_default_values","MEANP_one"),cfg.get("mutationM_default_values","MEANP_two"),cfg.get("mutationM_default_values","MEANP_three")))
+            #    lines.append("GAMP %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMP_law"),cfg.get("mutationM_default_values","GAMP_zero"),cfg.get("mutationM_default_values","GAMP_one"),cfg.get("mutationM_default_values","GAMP_two"),cfg.get("mutationM_default_values","GAMP_three")))
+            #    lines.append("MEANSNI %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANSNI_law"),cfg.get("mutationM_default_values","MEANSNI_zero"),cfg.get("mutationM_default_values","MEANSNI_one"),cfg.get("mutationM_default_values","MEANSNI_two"),cfg.get("mutationM_default_values","MEANSNI_three")))
+            #    lines.append("GAMSNI %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMSNI_law"),cfg.get("mutationM_default_values","GAMSNI_zero"),cfg.get("mutationM_default_values","GAMSNI_one"),cfg.get("mutationM_default_values","GAMSNI_two"),cfg.get("mutationM_default_values","GAMSNI_three")))
+            #    self.mutmodM.setMutationConf(lines)
         else:
             log(3,"No MMM conf found")
 
@@ -461,16 +473,18 @@ class Preferences(formPreferences,basePreferences):
         """ chargement de la partie mutation model sequences des préférences
         """
         lines = []
-        dico = {}
         cfg = self.config
         if cfg.has_section("mutationS_default_values"):
             try:
-                lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","MEANMU_law"),cfg.get("mutationS_default_values","MEANMU_zero"),cfg.get("mutationS_default_values","MEANMU_one"),cfg.get("mutationS_default_values","MEANMU_two"),cfg.get("mutationS_default_values","MEANMU_three")))
-                lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","GAMMU_law"),cfg.get("mutationS_default_values","GAMMU_zero"),cfg.get("mutationS_default_values","GAMMU_one"),cfg.get("mutationS_default_values","GAMMU_two"),cfg.get("mutationS_default_values","GAMMU_three")))
-                lines.append("MEANK1 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","MEANK1_law"),cfg.get("mutationS_default_values","MEANK1_zero"),cfg.get("mutationS_default_values","MEANK1_one"),cfg.get("mutationS_default_values","MEANK1_two"),cfg.get("mutationS_default_values","MEANK1_three")))
-                lines.append("GAMK1 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","GAMK1_law"),cfg.get("mutationS_default_values","GAMK1_zero"),cfg.get("mutationS_default_values","GAMK1_one"),cfg.get("mutationS_default_values","GAMK1_two"),cfg.get("mutationS_default_values","GAMK1_three")))
-                lines.append("MEANK2 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","MEANK2_law"),cfg.get("mutationS_default_values","MEANK2_zero"),cfg.get("mutationS_default_values","MEANK2_one"),cfg.get("mutationS_default_values","MEANK2_two"),cfg.get("mutationS_default_values","MEANK2_three")))
-                lines.append("GAMK2 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","GAMK2_law"),cfg.get("mutationS_default_values","GAMK2_zero"),cfg.get("mutationS_default_values","GAMK2_one"),cfg.get("mutationS_default_values","GAMK2_two"),cfg.get("mutationS_default_values","GAMK2_three")))
+                for param in ['MEANMU','GAMMU','MEANK1','GAMK1','MEANK2','GAMK2']:
+                    exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","{0}_law"),cfg.get("mutationS_default_values","{0}_zero"),cfg.get("mutationS_default_values","{0}_one"),cfg.get("mutationS_default_values","{0}_two"),cfg.get("mutationS_default_values","{0}_three")))'.format(param))
+
+                #lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","MEANMU_law"),cfg.get("mutationS_default_values","MEANMU_zero"),cfg.get("mutationS_default_values","MEANMU_one"),cfg.get("mutationS_default_values","MEANMU_two"),cfg.get("mutationS_default_values","MEANMU_three")))
+                #lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","GAMMU_law"),cfg.get("mutationS_default_values","GAMMU_zero"),cfg.get("mutationS_default_values","GAMMU_one"),cfg.get("mutationS_default_values","GAMMU_two"),cfg.get("mutationS_default_values","GAMMU_three")))
+                #lines.append("MEANK1 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","MEANK1_law"),cfg.get("mutationS_default_values","MEANK1_zero"),cfg.get("mutationS_default_values","MEANK1_one"),cfg.get("mutationS_default_values","MEANK1_two"),cfg.get("mutationS_default_values","MEANK1_three")))
+                #lines.append("GAMK1 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","GAMK1_law"),cfg.get("mutationS_default_values","GAMK1_zero"),cfg.get("mutationS_default_values","GAMK1_one"),cfg.get("mutationS_default_values","GAMK1_two"),cfg.get("mutationS_default_values","GAMK1_three")))
+                #lines.append("MEANK2 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","MEANK2_law"),cfg.get("mutationS_default_values","MEANK2_zero"),cfg.get("mutationS_default_values","MEANK2_one"),cfg.get("mutationS_default_values","MEANK2_two"),cfg.get("mutationS_default_values","MEANK2_three")))
+                #lines.append("GAMK2 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","GAMK2_law"),cfg.get("mutationS_default_values","GAMK2_zero"),cfg.get("mutationS_default_values","GAMK2_one"),cfg.get("mutationS_default_values","GAMK2_two"),cfg.get("mutationS_default_values","GAMK2_three")))
                 lines.append("MODEL %s %s %s"%(cfg.get("mutationS_default_values","MODEL_model"),cfg.get("mutationS_default_values","MODEL_inv_sites_pc"),cfg.get("mutationS_default_values","MODEL_gamma_shape")))
                 self.mutmodS.setMutationConf(lines)
             except Exception,e:
