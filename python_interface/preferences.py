@@ -382,21 +382,39 @@ class Preferences(formPreferences,basePreferences):
     def saveMMM(self):
         """ sauvegarde de la partie mutation model microsats des préférences
         """
-        if os.path.exists(os.path.expanduser("~/.diyabc/mutationM_default_values")):
-            os.remove(os.path.expanduser("~/.diyabc/mutationM_default_values"))
+        if not self.config.has_section("mutationM_default_values"):
+            self.config.add_section("mutationM_default_values")
 
         lines = self.mutmodM.getMutationConf()
-        f = codecs.open(os.path.expanduser("~/.diyabc/mutationM_default_values"),"w","utf-8")
-        f.write(lines)
-        f.close()
+        for l in lines.strip().split('\n'):
+            ll = l.strip()
+            if ll != "":
+                ti = ll.split(' ')[0]
+                law = ll.split(' ')[1].split('[')[0]
+                zero = ll.split('[')[1].split(',')[0]
+                one = ll.split(',')[1]
+                two = ll.split(',')[2]
+                three = ll.split(',')[3].split(']')[0]
+                self.config.set("mutationM_default_values",ti+"_law",law)
+                self.config.set("mutationM_default_values",ti+"_zero",zero)
+                self.config.set("mutationM_default_values",ti+"_one",one)
+                self.config.set("mutationM_default_values",ti+"_two",two)
+                self.config.set("mutationM_default_values",ti+"_three",three)
+
 
     def loadMMM(self):
         """ chargement de la partie mutation model microsats des préférences
         """
-        if os.path.exists(os.path.expanduser("~/.diyabc/mutationM_default_values")):
-            f = codecs.open(os.path.expanduser("~/.diyabc/mutationM_default_values"),"r","utf-8")
-            lines = f.readlines()
-            f.close()
+        lines = []
+        dico = {}
+        cfg = self.config
+        if cfg.has_section("mutationM_default_values"):
+            lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANMU_law"),cfg.get("mutationM_default_values","MEANMU_zero"),cfg.get("mutationM_default_values","MEANMU_one"),cfg.get("mutationM_default_values","MEANMU_two"),cfg.get("mutationM_default_values","MEANMU_three")))
+            lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMMU_law"),cfg.get("mutationM_default_values","GAMMU_zero"),cfg.get("mutationM_default_values","GAMMU_one"),cfg.get("mutationM_default_values","GAMMU_two"),cfg.get("mutationM_default_values","GAMMU_three")))
+            lines.append("MEANP %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANP_law"),cfg.get("mutationM_default_values","MEANP_zero"),cfg.get("mutationM_default_values","MEANP_one"),cfg.get("mutationM_default_values","MEANP_two"),cfg.get("mutationM_default_values","MEANP_three")))
+            lines.append("GAMP %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMP_law"),cfg.get("mutationM_default_values","GAMP_zero"),cfg.get("mutationM_default_values","GAMP_one"),cfg.get("mutationM_default_values","GAMP_two"),cfg.get("mutationM_default_values","GAMP_three")))
+            lines.append("MEANSNI %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANSNI_law"),cfg.get("mutationM_default_values","MEANSNI_zero"),cfg.get("mutationM_default_values","MEANSNI_one"),cfg.get("mutationM_default_values","MEANSNI_two"),cfg.get("mutationM_default_values","MEANSNI_three")))
+            lines.append("GAMSNI %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMSNI_law"),cfg.get("mutationM_default_values","GAMSNI_zero"),cfg.get("mutationM_default_values","GAMSNI_one"),cfg.get("mutationM_default_values","GAMSNI_two"),cfg.get("mutationM_default_values","GAMSNI_three")))
             self.mutmodM.setMutationConf(lines)
         else:
             log(3,"No MMM conf found")

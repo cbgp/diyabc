@@ -548,7 +548,7 @@ mutation rate</string>
               </size>
              </property>
              <property name="text">
-              <string>Mean_µ</string>
+              <string>Mean_u</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1468,7 +1468,7 @@ locus SNI rate</string>
               </size>
              </property>
              <property name="text">
-              <string>Mean_µ_SNI</string>
+              <string>Mean_u_SNI</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
