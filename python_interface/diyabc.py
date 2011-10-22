@@ -829,6 +829,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             if proj.dir != None:
                 proj.stopActivities()
         self.preferences_win.saveRecent()
+        self.preferences_win.writeConfigFile()
         event.accept()
     #    reply = QtGui.QMessageBox.question(self, 'Message',
     #        "Are you sure to quit?", QtGui.QMessageBox.Yes | 

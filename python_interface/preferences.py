@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os,sys,platform,multiprocessing
+import ConfigParser
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -19,6 +20,16 @@ class Preferences(formPreferences,basePreferences):
     def __init__(self,parent=None):
         super(Preferences,self).__init__(parent)
         self.parent = parent
+        confdir = os.path.expanduser("~/.diyabc/")
+        if not os.path.exists(confdir):
+            os.mkdir(confdir)
+
+        #cfgConfigFiles = [ confdir+filename for filename in ["connexion.cfg","hist_model_default_values.cfg","various.cfg"] ]
+
+        self.config = ConfigParser.ConfigParser()
+        self.configFile = confdir+"config.cfg"
+        self.loadedConfigs = self.config.read(self.configFile)
+
         self.createWidgets()
 
         self.tabColor = {"green": "#c3ffa6","blue":"#7373ff","red":"#ffb2a6","yellow":"#ffffb2","pink":"#ffbff2"}
@@ -152,15 +163,18 @@ class Preferences(formPreferences,basePreferences):
         """ sauve les préférences si elles sont valides
         """
         if self.allValid():
-            if not os.path.exists(os.path.expanduser("~/.diyabc/")):
-                os.mkdir(os.path.expanduser("~/.diyabc/"))
             self.saveMMM()
             self.saveMMS()
             self.saveConnexion()
             self.saveHM()
             self.saveVarious()
             self.saveRecent()
+            self.writeConfigFile()
             self.close()
+
+    def writeConfigFile(self):
+        with open(self.configFile, 'wb') as configfile:
+            self.config.write(configfile)
 
     def allValid(self):
         """ vérifie la validité des préférences
@@ -187,114 +201,90 @@ class Preferences(formPreferences,basePreferences):
         #        p = subprocess.Popen(cmd_args_list) 
 
     def loadRecent(self):
-        if os.path.exists(os.path.expanduser("~/.diyabc/recent")):
-            f = codecs.open(os.path.expanduser("~/.diyabc/recent"),"r","utf-8")
-            lines = f.readlines()
-            f.close()
             recent_list = []
-            for l in lines:
-                if len(l) > 0 and l.strip() != "":
-                    recent_list.append(l.strip())
-                    print "Loading recent : %s"%l.strip()
-            self.parent.setRecent(recent_list)
+            if self.config.has_section("recent"):
+                for l in self.config.options("recent"):
+                    rec = self.config.get("recent",l)
+                    if len(rec) > 0 and rec.strip() != "":
+                        recent_list.append(rec.strip())
+                        print "Loading recent : %s"%rec.strip()
+                self.parent.setRecent(recent_list)
 
     def saveRecent(self):
-        if os.path.exists(os.path.expanduser("~/.diyabc/recent")):
-            os.remove(os.path.expanduser("~/.diyabc/recent"))
-        f = codecs.open(os.path.expanduser("~/.diyabc/recent"),"w","utf-8")
+        if not self.config.has_section("recent"):
+            self.config.add_section("recent")
         recList = self.parent.getRecent()
+        cfgRecentIndex = 0
         for ind,rec in enumerate(recList):
             # si on a qu'un seul exemplaire de ce recent ou bien, si on est le premier
             if (recList.count(rec) > 1 and recList.index(rec) == ind) or recList.count(rec) == 1 :
                 log(3,"Saving recent %s"%rec)
-                f.write("%s\n"%rec)
-        f.close()
+                self.config.set("recent","%s"%cfgRecentIndex,rec)
+                cfgRecentIndex += 1
 
 
 
     def saveVarious(self):
         """ sauvegarde de la partie various des préférences
         """
-        if os.path.exists(os.path.expanduser("~/.diyabc/various")):
-            os.remove(os.path.expanduser("~/.diyabc/various"))
-
         style = str(self.ui.styleCombo.currentText())
         bgColor = str(self.ui.bgColorCombo.currentText())
         pic_format = str(self.ui.formatCombo.currentText())
         ex_path = str(self.ui.execPathEdit.text())
         ex_default = str(self.ui.useDefaultExeCheck.isChecked())
         max_thread = str(self.ui.maxThreadCombo.currentText())
-        lines = "style %s\nformat %s\nexecPath %s\nbgColor %s\nuseDefaultExecutable %s\nmaxThreadNumber %s"%(style,pic_format,ex_path,bgColor,ex_default,max_thread)
-        f = codecs.open(os.path.expanduser("~/.diyabc/various"),"w","utf-8")
-        f.write(lines)
-        f.close()
+
+        if not self.config.has_section("various"):
+            self.config.add_section("various")
+        self.config.set("various","style",style)
+        self.config.set("various","format",pic_format)
+        self.config.set("various","execPath",ex_path)
+        self.config.set("various","bgColor",bgColor)
+        self.config.set("various","useDefaultExecutable",ex_default)
+        self.config.set("various","maxThreadNumber",max_thread)
 
     def loadVarious(self):
         """ chargement de la partie various des préférences
         """
-        if os.path.exists(os.path.expanduser("~/.diyabc/various")):
-            f = codecs.open(os.path.expanduser("~/.diyabc/various"),"r","utf-8")
-            lines = f.readlines()
-            f.close()
-            for l in lines:
-                if len(l.strip()) > 0 and len(l.strip().split(' '))>1:
-                    if l.split(' ')[0] == "useDefaultExecutable":
-                        state = l.strip().split(' ')[1]
-                        checked = (state == "True")
-                        self.ui.useDefaultExeCheck.setChecked(checked)
-                        self.toggleExeSelection(checked)
-                    if l.split(' ')[0] == "bgColor":
-                        ind = self.ui.bgColorCombo.findText(l.strip().split(' ')[1])
-                        if ind != -1:
-                            self.ui.bgColorCombo.setCurrentIndex(ind)
-                    if l.split(' ')[0] == "style":
-                        ind = self.ui.styleCombo.findText(l.strip().split(' ')[1])
-                        if ind != -1:
-                            self.ui.styleCombo.setCurrentIndex(ind)
-                    if l.split(' ')[0] == "format":
-                        ind = self.ui.formatCombo.findText(l.strip().split(' ')[1])
-                        if ind != -1:
-                            self.ui.formatCombo.setCurrentIndex(ind)
-                    if l.split(' ')[0] == "maxThreadNumber":
-                        ind = self.ui.maxThreadCombo.findText(l.strip().split(' ')[1])
-                        if ind != -1:
-                            self.ui.maxThreadCombo.setCurrentIndex(ind)
-                    if l.split(' ')[0] == "execPath":
-                        self.ui.execPathEdit.setText(l.strip().split(' ')[1])
+        cfg = self.config
+        if cfg.has_section("various"):
+            if cfg.has_option("various","style"):
+                style = cfg.get("various","style")
+                ind = self.ui.styleCombo.findText(style.strip())
+                if ind != -1:
+                    self.ui.styleCombo.setCurrentIndex(ind)
+            if cfg.has_option("various","format"):
+                pformat = cfg.get("various","format")
+                ind = self.ui.formatCombo.findText(pformat.strip())
+                if ind != -1:
+                    self.ui.formatCombo.setCurrentIndex(ind)
+            if cfg.has_option("various","execPath"):
+                exf = cfg.get("various","execPath")
+                self.ui.execPathEdit.setText(exf.strip())
+            if cfg.has_option("various","bgColor"):
+                bg = cfg.get("various","bgColor")
+                ind = self.ui.bgColorCombo.findText(bg.strip())
+                if ind != -1:
+                    self.ui.bgColorCombo.setCurrentIndex(ind)
+            if cfg.has_option("various","useDefaultExecutable"):
+                state = cfg.get("various","useDefaultExecutable")
+                checked = (state == "True")
+                self.ui.useDefaultExeCheck.setChecked(checked)
+                self.toggleExeSelection(checked)
+            if cfg.has_option("various","maxThreadNumber"):
+                maxt = cfg.get("various","maxThreadNumber")
+                ind = self.ui.maxThreadCombo.findText(maxt.strip())
+                if ind != -1:
+                    self.ui.maxThreadCombo.setCurrentIndex(ind)
         else:
             log(3,"No various conf found")
 
     def saveHM(self):
         """ sauvegarde de la partie historical model des préférences
         """
-        if os.path.exists(os.path.expanduser("~/.diyabc/hist_model_default_values")):
-            os.remove(os.path.expanduser("~/.diyabc/hist_model_default_values"))
+        if not self.config.has_section("hist_model_default_values"):
+            self.config.add_section("hist_model_default_values")
 
-        nmin = float(self.ui.NminEdit.text())
-        nmax = float(self.ui.NmaxEdit.text())
-        nmean = float(self.ui.NmeanEdit.text())
-        nst = float(self.ui.NstdevEdit.text())
-        tmin = float(self.ui.TminEdit.text())
-        tmax = float(self.ui.TmaxEdit.text())
-        tmean = float(self.ui.TmeanEdit.text())
-        tst = float(self.ui.TstdevEdit.text())
-        amin = float(self.ui.AminEdit.text())
-        amax = float(self.ui.AmaxEdit.text())
-        amean = float(self.ui.AmeanEdit.text())
-        ast = float(self.ui.AstdevEdit.text())
-
-        lines = "nmin %s\n"%nmin
-        lines += "nmax %s\n"%nmax
-        lines += "nmean %s\n"%nmean
-        lines += "nst %s\n"%nst
-        lines += "tmin %s\n"%tmin
-        lines += "tmax %s\n"%tmax
-        lines += "tmean %s\n"%tmean
-        lines += "tst %s\n"%tst
-        lines += "amin %s\n"%amin
-        lines += "amax %s\n"%amax
-        lines += "amean %s\n"%amean
-        lines += "ast %s\n"%ast
         if self.ui.NUNRadio.isChecked():
             nlaw = "UN"
         elif self.ui.NLURadio.isChecked():
@@ -319,26 +309,36 @@ class Preferences(formPreferences,basePreferences):
             alaw = "NO"
         elif self.ui.ALNRadio.isChecked():
             alaw = "LN"
-        lines += "alaw %s\n"%alaw
-        lines += "nlaw %s\n"%nlaw
-        lines += "tlaw %s\n"%tlaw
 
-        f = codecs.open(os.path.expanduser("~/.diyabc/hist_model_default_values"),"w","utf-8")
-        f.write(lines)
-        f.close()
+        toSave = {
+                "nmin" : float(self.ui.NminEdit.text()),
+                "nmax" : float(self.ui.NmaxEdit.text()),
+                "nmean" : float(self.ui.NmeanEdit.text()),
+                "nst" :float(self.ui.NstdevEdit.text()),
+                "tmin" :float(self.ui.TminEdit.text()),
+                "tmax" :float(self.ui.TmaxEdit.text()),
+                "tmean" :float(self.ui.TmeanEdit.text()),
+                "tst" :float(self.ui.TstdevEdit.text()),
+                "amin" :float(self.ui.AminEdit.text()),
+                "amax" :float(self.ui.AmaxEdit.text()),
+                "amean" :float(self.ui.AmeanEdit.text()),
+                "ast" :float(self.ui.AstdevEdit.text()),
+                "nlaw" : nlaw,
+                "tlaw" : tlaw,
+                "alaw" : alaw
+                }
+        for k in toSave:
+            self.config.set("hist_model_default_values",k,toSave[k])
 
     def loadHM(self):
         """ chargement de la partie historical model des préférences
         """
-        if os.path.exists(os.path.expanduser("~/.diyabc/hist_model_default_values")):
-            f = codecs.open(os.path.expanduser("~/.diyabc/hist_model_default_values"),"r","utf-8")
-            lines = f.readlines()
-            f.close()
+        cfg = self.config
+        if cfg.has_section("hist_model_default_values"):
             dico_val = {}
-            for l in lines:
-                tab = l.strip().split(' ')
-                if len(tab)>1:
-                    dico_val[tab[0]] = tab[1]
+            pairs = cfg.items("hist_model_default_values")
+            for p in pairs:
+                dico_val[p[0]] = p[1]
 
             self.ui.NminEdit.setText(dico_val["nmin"])
             self.ui.NmaxEdit.setText(dico_val["nmax"])
@@ -428,34 +428,22 @@ class Preferences(formPreferences,basePreferences):
     def saveConnexion(self):
         """ sauvegarde de la partie connexion des préférences
         """
-        if os.path.exists(os.path.expanduser("~/.diyabc/connexion")):
-            os.remove(os.path.expanduser("~/.diyabc/connexion"))
+        if not self.config.has_section("connexion"):
+            self.config.add_section("connexion")
 
-        lines = "host %s\n"%self.ui.addrEdit.text()
-        lines += "port %s\n"%self.ui.portEdit.text()
-        lines += "useServer %s\n"%self.ui.serverCheck.isChecked()
-
-        f = codecs.open(os.path.expanduser("~/.diyabc/connexion"),"w","utf-8")
-        f.write(lines)
-        f.close()
+        self.config.set("connexion","host",str(self.ui.addrEdit.text()))
+        self.config.set("connexion","port",str(self.ui.portEdit.text()))
+        self.config.set("connexion","useServer",str(self.ui.serverCheck.isChecked()))
 
     def loadConnexion(self):
         """ chargement de la partie connexion des préférences
         """
-        if os.path.exists(os.path.expanduser("~/.diyabc/connexion")):
-            f = codecs.open(os.path.expanduser("~/.diyabc/connexion"),"r","utf-8")
-            lines = f.readlines()
-            f.close()
-            for l in lines:
-                tab = l.strip().split(' ')
-                if len(tab)>1:
-                    if tab[0] == "host":
-                        self.ui.addrEdit.setText(tab[1])
-                    elif tab[0] == "port":
-                        self.ui.portEdit.setText(tab[1])
-                    elif tab[0] == "useServer":
-                        yesno = (tab[1] == 'True')
-                        self.ui.serverCheck.setChecked(yesno)
+        cfg = self.config
+        if cfg.has_section("connexion"):
+            self.ui.addrEdit.setText(cfg.get("connexion","host"))
+            self.ui.portEdit.setText(cfg.get("connexion","port"))
+            yesno = (cfg.get("connexion","useServer") == 'True')
+            self.ui.serverCheck.setChecked(yesno)
         else:
             log(3,"No connexion conf found")
 
