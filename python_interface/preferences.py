@@ -11,6 +11,7 @@ from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 import output
 from utils.cbgpUtils import log
+from utils.configobj.configobj import *
 
 formPreferences,basePreferences = uic.loadUiType("uis/preferences.ui")
 
@@ -24,11 +25,10 @@ class Preferences(formPreferences,basePreferences):
         if not os.path.exists(confdir):
             os.mkdir(confdir)
 
-        #cfgConfigFiles = [ confdir+filename for filename in ["connexion.cfg","hist_model_default_values.cfg","various.cfg"] ]
-
-        self.config = ConfigParser.ConfigParser()
         self.configFile = confdir+"config.cfg"
-        self.loadedConfigs = self.config.read(self.configFile)
+        #self.config = ConfigParser.ConfigParser()
+        #self.loadedConfigs = self.config.read(self.configFile)
+        self.config = ConfigObj(self.configFile)
 
         self.createWidgets()
 
@@ -172,9 +172,11 @@ class Preferences(formPreferences,basePreferences):
             self.writeConfigFile()
             self.close()
 
+    #def writeConfigFile(self):
+    #    with open(self.configFile, 'wb') as configfile:
+    #        self.config.write(configfile)
     def writeConfigFile(self):
-        with open(self.configFile, 'wb') as configfile:
-            self.config.write(configfile)
+        self.config.write()
 
     def allValid(self):
         """ vérifie la validité des préférences
@@ -202,27 +204,24 @@ class Preferences(formPreferences,basePreferences):
 
     def loadRecent(self):
             recent_list = []
-            if self.config.has_section("recent"):
-                for l in self.config.options("recent"):
-                    rec = self.config.get("recent",l)
+            if self.config.has_key("recent"):
+                for num,rec in self.config["recent"].items():
                     if len(rec) > 0 and rec.strip() != "":
                         recent_list.append(rec.strip())
                         print "Loading recent : %s"%rec.strip()
                 self.parent.setRecent(recent_list)
 
     def saveRecent(self):
-        if not self.config.has_section("recent"):
-            self.config.add_section("recent")
+        if not self.config.has_key("recent"):
+            self.config["recent"] = {}
         recList = self.parent.getRecent()
         cfgRecentIndex = 0
         for ind,rec in enumerate(recList):
             # si on a qu'un seul exemplaire de ce recent ou bien, si on est le premier
             if (recList.count(rec) > 1 and recList.index(rec) == ind) or recList.count(rec) == 1 :
                 log(3,"Saving recent %s"%rec)
-                self.config.set("recent","%s"%cfgRecentIndex,rec)
+                self.config["recent"]["%s"%cfgRecentIndex] = rec
                 cfgRecentIndex += 1
-
-
 
     def saveVarious(self):
         """ sauvegarde de la partie various des préférences
@@ -234,45 +233,45 @@ class Preferences(formPreferences,basePreferences):
         ex_default = str(self.ui.useDefaultExeCheck.isChecked())
         max_thread = str(self.ui.maxThreadCombo.currentText())
 
-        if not self.config.has_section("various"):
-            self.config.add_section("various")
-        self.config.set("various","style",style)
-        self.config.set("various","format",pic_format)
-        self.config.set("various","execPath",ex_path)
-        self.config.set("various","bgColor",bgColor)
-        self.config.set("various","useDefaultExecutable",ex_default)
-        self.config.set("various","maxThreadNumber",max_thread)
+        if not self.config.has_key("various"):
+            self.config["various"] = {}
+        self.config["various"]["style"] = style
+        self.config["various"]["format"] = pic_format
+        self.config["various"]["execPath"] = ex_path
+        self.config["various"]["bgColor"] = bgColor
+        self.config["various"]["useDefaultExecutable"] = ex_default
+        self.config["various"]["maxThreadNumber"] = max_thread
 
     def loadVarious(self):
         """ chargement de la partie various des préférences
         """
         cfg = self.config
-        if cfg.has_section("various"):
-            if cfg.has_option("various","style"):
-                style = cfg.get("various","style")
+        if cfg.has_key("various"):
+            if cfg["various"].has_key("style"):
+                style = cfg["various"]["style"]
                 ind = self.ui.styleCombo.findText(style.strip())
                 if ind != -1:
                     self.ui.styleCombo.setCurrentIndex(ind)
-            if cfg.has_option("various","format"):
-                pformat = cfg.get("various","format")
+            if cfg["various"].has_key("format"):
+                pformat = cfg["various"]["format"]
                 ind = self.ui.formatCombo.findText(pformat.strip())
                 if ind != -1:
                     self.ui.formatCombo.setCurrentIndex(ind)
-            if cfg.has_option("various","execPath"):
-                exf = cfg.get("various","execPath")
+            if cfg["various"].has_key("execPath"):
+                exf = cfg["various"]["execPath"]
                 self.ui.execPathEdit.setText(exf.strip())
-            if cfg.has_option("various","bgColor"):
-                bg = cfg.get("various","bgColor")
+            if cfg["various"].has_key("bgColor"):
+                bg = cfg["various"]["bgColor"]
                 ind = self.ui.bgColorCombo.findText(bg.strip())
                 if ind != -1:
                     self.ui.bgColorCombo.setCurrentIndex(ind)
-            if cfg.has_option("various","useDefaultExecutable"):
-                state = cfg.get("various","useDefaultExecutable")
+            if cfg["various"].has_key("useDefaultExecutable"):
+                state = cfg["various"]["useDefaultExecutable"]
                 checked = (state == "True")
                 self.ui.useDefaultExeCheck.setChecked(checked)
                 self.toggleExeSelection(checked)
-            if cfg.has_option("various","maxThreadNumber"):
-                maxt = cfg.get("various","maxThreadNumber")
+            if cfg["various"].has_key("maxThreadNumber"):
+                maxt = cfg["various"]["maxThreadNumber"]
                 ind = self.ui.maxThreadCombo.findText(maxt.strip())
                 if ind != -1:
                     self.ui.maxThreadCombo.setCurrentIndex(ind)
@@ -282,8 +281,8 @@ class Preferences(formPreferences,basePreferences):
     def saveHM(self):
         """ sauvegarde de la partie historical model des préférences
         """
-        if not self.config.has_section("hist_model_default_values"):
-            self.config.add_section("hist_model_default_values")
+        if not self.config.has_key("hist_model_default_values"):
+            self.config["hist_model_default_values"] = {}
 
         if self.ui.NUNRadio.isChecked():
             nlaw = "UN"
@@ -338,15 +337,15 @@ class Preferences(formPreferences,basePreferences):
         #        "alaw" : alaw
         #        }
         for k in toSave:
-            self.config.set("hist_model_default_values",k,toSave[k])
+            self.config["hist_model_default_values"][k] = toSave[k]
 
     def loadHM(self):
         """ chargement de la partie historical model des préférences
         """
         cfg = self.config
-        if cfg.has_section("hist_model_default_values"):
+        if cfg.has_key("hist_model_default_values"):
             dico_val = {}
-            pairs = cfg.items("hist_model_default_values")
+            pairs = cfg["hist_model_default_values"].items()
             for p in pairs:
                 dico_val[p[0]] = p[1]
 
@@ -402,8 +401,8 @@ class Preferences(formPreferences,basePreferences):
     def saveMMM(self):
         """ sauvegarde de la partie mutation model microsats des préférences
         """
-        if not self.config.has_section("mutationM_default_values"):
-            self.config.add_section("mutationM_default_values")
+        if not self.config.has_key("mutation_m_default_values"):
+            self.config["mutation_m_default_values"] = {}
 
         lines = self.mutmodM.getMutationConf()
         for l in lines.strip().split('\n'):
@@ -415,11 +414,11 @@ class Preferences(formPreferences,basePreferences):
                 one = ll.split(',')[1]
                 two = ll.split(',')[2]
                 three = ll.split(',')[3].split(']')[0]
-                self.config.set("mutationM_default_values",ti+"_law",law)
-                self.config.set("mutationM_default_values",ti+"_zero",zero)
-                self.config.set("mutationM_default_values",ti+"_one",one)
-                self.config.set("mutationM_default_values",ti+"_two",two)
-                self.config.set("mutationM_default_values",ti+"_three",three)
+                self.config["mutation_m_default_values"][ti+"_law"] = law
+                self.config["mutation_m_default_values"][ti+"_zero"] = zero
+                self.config["mutation_m_default_values"][ti+"_one"] = one
+                self.config["mutation_m_default_values"][ti+"_two"] = two
+                self.config["mutation_m_default_values"][ti+"_three"] = three
 
 
     def loadMMM(self):
@@ -428,21 +427,22 @@ class Preferences(formPreferences,basePreferences):
         lines = []
         dico = {}
         cfg = self.config
-        if cfg.has_section("mutationM_default_values"):
+        if cfg.has_key("mutation_m_default_values"):
             try:
                 for param in ['MEANMU','GAMMU','MEANP','GAMP','MEANSNI','GAMSNI']:
-                    exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","{0}_law"),cfg.get("mutationM_default_values","{0}_zero"),cfg.get("mutationM_default_values","{0}_one"),cfg.get("mutationM_default_values","{0}_two"),cfg.get("mutationM_default_values","{0}_three")))'.format(param))
+                    #exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","{0}_law"),cfg.get("mutation_m_default_values","{0}_zero"),cfg.get("mutation_m_default_values","{0}_one"),cfg.get("mutation_m_default_values","{0}_two"),cfg.get("mutation_m_default_values","{0}_three")))'.format(param))
+                    exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg["mutation_m_default_values"]["{0}_law"],cfg["mutation_m_default_values"]["{0}_zero"],cfg["mutation_m_default_values"]["{0}_one"],cfg["mutation_m_default_values"]["{0}_two"],cfg["mutation_m_default_values"]["{0}_three"]))'.format(param))
                 self.mutmodM.setMutationConf(lines)
             except Exception,e:
-                log(3,"Malformed mutationM_default_values in configuration")
+                log(3,"Malformed mutation_m_default_values in configuration")
                 
             #try:
-            #    lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANMU_law"),cfg.get("mutationM_default_values","MEANMU_zero"),cfg.get("mutationM_default_values","MEANMU_one"),cfg.get("mutationM_default_values","MEANMU_two"),cfg.get("mutationM_default_values","MEANMU_three")))
-            #    lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMMU_law"),cfg.get("mutationM_default_values","GAMMU_zero"),cfg.get("mutationM_default_values","GAMMU_one"),cfg.get("mutationM_default_values","GAMMU_two"),cfg.get("mutationM_default_values","GAMMU_three")))
-            #    lines.append("MEANP %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANP_law"),cfg.get("mutationM_default_values","MEANP_zero"),cfg.get("mutationM_default_values","MEANP_one"),cfg.get("mutationM_default_values","MEANP_two"),cfg.get("mutationM_default_values","MEANP_three")))
-            #    lines.append("GAMP %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMP_law"),cfg.get("mutationM_default_values","GAMP_zero"),cfg.get("mutationM_default_values","GAMP_one"),cfg.get("mutationM_default_values","GAMP_two"),cfg.get("mutationM_default_values","GAMP_three")))
-            #    lines.append("MEANSNI %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","MEANSNI_law"),cfg.get("mutationM_default_values","MEANSNI_zero"),cfg.get("mutationM_default_values","MEANSNI_one"),cfg.get("mutationM_default_values","MEANSNI_two"),cfg.get("mutationM_default_values","MEANSNI_three")))
-            #    lines.append("GAMSNI %s[%s,%s,%s,%s]"%(cfg.get("mutationM_default_values","GAMSNI_law"),cfg.get("mutationM_default_values","GAMSNI_zero"),cfg.get("mutationM_default_values","GAMSNI_one"),cfg.get("mutationM_default_values","GAMSNI_two"),cfg.get("mutationM_default_values","GAMSNI_three")))
+            #    lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","MEANMU_law"),cfg.get("mutation_m_default_values","MEANMU_zero"),cfg.get("mutation_m_default_values","MEANMU_one"),cfg.get("mutation_m_default_values","MEANMU_two"),cfg.get("mutation_m_default_values","MEANMU_three")))
+            #    lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","GAMMU_law"),cfg.get("mutation_m_default_values","GAMMU_zero"),cfg.get("mutation_m_default_values","GAMMU_one"),cfg.get("mutation_m_default_values","GAMMU_two"),cfg.get("mutation_m_default_values","GAMMU_three")))
+            #    lines.append("MEANP %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","MEANP_law"),cfg.get("mutation_m_default_values","MEANP_zero"),cfg.get("mutation_m_default_values","MEANP_one"),cfg.get("mutation_m_default_values","MEANP_two"),cfg.get("mutation_m_default_values","MEANP_three")))
+            #    lines.append("GAMP %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","GAMP_law"),cfg.get("mutation_m_default_values","GAMP_zero"),cfg.get("mutation_m_default_values","GAMP_one"),cfg.get("mutation_m_default_values","GAMP_two"),cfg.get("mutation_m_default_values","GAMP_three")))
+            #    lines.append("MEANSNI %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","MEANSNI_law"),cfg.get("mutation_m_default_values","MEANSNI_zero"),cfg.get("mutation_m_default_values","MEANSNI_one"),cfg.get("mutation_m_default_values","MEANSNI_two"),cfg.get("mutation_m_default_values","MEANSNI_three")))
+            #    lines.append("GAMSNI %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","GAMSNI_law"),cfg.get("mutation_m_default_values","GAMSNI_zero"),cfg.get("mutation_m_default_values","GAMSNI_one"),cfg.get("mutation_m_default_values","GAMSNI_two"),cfg.get("mutation_m_default_values","GAMSNI_three")))
             #    self.mutmodM.setMutationConf(lines)
         else:
             log(3,"No MMM conf found")
@@ -452,8 +452,8 @@ class Preferences(formPreferences,basePreferences):
     def saveMMS(self):
         """ sauvegarde de la partie mutation model sequences des préférences
         """
-        if not self.config.has_section("mutationS_default_values"):
-            self.config.add_section("mutationS_default_values")
+        if not self.config.has_key("mutation_s_default_values"):
+            self.config["mutation_s_default_values"] = {}
         lines = self.mutmodS.getMutationConf()
 
         for l in lines.strip().split('\n'):
@@ -464,66 +464,68 @@ class Preferences(formPreferences,basePreferences):
                     mod = ll.split(' ')[1]
                     invpc = ll.split(' ')[2]
                     gamsh = ll.split(' ')[3]
-                    self.config.set("mutationS_default_values",ti+"_model",mod)
-                    self.config.set("mutationS_default_values",ti+"_inv_sites_pc",invpc)
-                    self.config.set("mutationS_default_values",ti+"_gamma_shape",gamsh)
+                    self.config["mutation_s_default_values"][ti+"_model"] = mod
+                    self.config["mutation_s_default_values"][ti+"_inv_sites_pc"] = invpc
+                    self.config["mutation_s_default_values"][ti+"_gamma_shape"] = gamsh
                 else:
                     law = ll.split(' ')[1].split('[')[0]
                     zero = ll.split('[')[1].split(',')[0]
                     one = ll.split(',')[1]
                     two = ll.split(',')[2]
                     three = ll.split(',')[3].split(']')[0]
-                    self.config.set("mutationS_default_values",ti+"_law",law)
-                    self.config.set("mutationS_default_values",ti+"_zero",zero)
-                    self.config.set("mutationS_default_values",ti+"_one",one)
-                    self.config.set("mutationS_default_values",ti+"_two",two)
-                    self.config.set("mutationS_default_values",ti+"_three",three)
+                    self.config["mutation_s_default_values"][ti+"_law"] = law
+                    self.config["mutation_s_default_values"][ti+"_zero"] = zero
+                    self.config["mutation_s_default_values"][ti+"_one"] = one
+                    self.config["mutation_s_default_values"][ti+"_two"] = two
+                    self.config["mutation_s_default_values"][ti+"_three"] = three
 
     def loadMMS(self):
         """ chargement de la partie mutation model sequences des préférences
         """
         lines = []
         cfg = self.config
-        if cfg.has_section("mutationS_default_values"):
+        if cfg.has_key("mutation_s_default_values"):
             try:
                 for param in ['MEANMU','GAMMU','MEANK1','GAMK1','MEANK2','GAMK2']:
-                    exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","{0}_law"),cfg.get("mutationS_default_values","{0}_zero"),cfg.get("mutationS_default_values","{0}_one"),cfg.get("mutationS_default_values","{0}_two"),cfg.get("mutationS_default_values","{0}_three")))'.format(param))
+                    #exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","{0}_law"),cfg.get("mutation_s_default_values","{0}_zero"),cfg.get("mutation_s_default_values","{0}_one"),cfg.get("mutation_s_default_values","{0}_two"),cfg.get("mutation_s_default_values","{0}_three")))'.format(param))
+                    exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg["mutation_s_default_values"]["{0}_law"],cfg["mutation_s_default_values"]["{0}_zero"],cfg["mutation_s_default_values"]["{0}_one"],cfg["mutation_s_default_values"]["{0}_two"],cfg["mutation_s_default_values"]["{0}_three"]))'.format(param))
 
-                #lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","MEANMU_law"),cfg.get("mutationS_default_values","MEANMU_zero"),cfg.get("mutationS_default_values","MEANMU_one"),cfg.get("mutationS_default_values","MEANMU_two"),cfg.get("mutationS_default_values","MEANMU_three")))
-                #lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","GAMMU_law"),cfg.get("mutationS_default_values","GAMMU_zero"),cfg.get("mutationS_default_values","GAMMU_one"),cfg.get("mutationS_default_values","GAMMU_two"),cfg.get("mutationS_default_values","GAMMU_three")))
-                #lines.append("MEANK1 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","MEANK1_law"),cfg.get("mutationS_default_values","MEANK1_zero"),cfg.get("mutationS_default_values","MEANK1_one"),cfg.get("mutationS_default_values","MEANK1_two"),cfg.get("mutationS_default_values","MEANK1_three")))
-                #lines.append("GAMK1 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","GAMK1_law"),cfg.get("mutationS_default_values","GAMK1_zero"),cfg.get("mutationS_default_values","GAMK1_one"),cfg.get("mutationS_default_values","GAMK1_two"),cfg.get("mutationS_default_values","GAMK1_three")))
-                #lines.append("MEANK2 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","MEANK2_law"),cfg.get("mutationS_default_values","MEANK2_zero"),cfg.get("mutationS_default_values","MEANK2_one"),cfg.get("mutationS_default_values","MEANK2_two"),cfg.get("mutationS_default_values","MEANK2_three")))
-                #lines.append("GAMK2 %s[%s,%s,%s,%s]"%(cfg.get("mutationS_default_values","GAMK2_law"),cfg.get("mutationS_default_values","GAMK2_zero"),cfg.get("mutationS_default_values","GAMK2_one"),cfg.get("mutationS_default_values","GAMK2_two"),cfg.get("mutationS_default_values","GAMK2_three")))
-                lines.append("MODEL %s %s %s"%(cfg.get("mutationS_default_values","MODEL_model"),cfg.get("mutationS_default_values","MODEL_inv_sites_pc"),cfg.get("mutationS_default_values","MODEL_gamma_shape")))
+                #lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","MEANMU_law"),cfg.get("mutation_s_default_values","MEANMU_zero"),cfg.get("mutation_s_default_values","MEANMU_one"),cfg.get("mutation_s_default_values","MEANMU_two"),cfg.get("mutation_s_default_values","MEANMU_three")))
+                #lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","GAMMU_law"),cfg.get("mutation_s_default_values","GAMMU_zero"),cfg.get("mutation_s_default_values","GAMMU_one"),cfg.get("mutation_s_default_values","GAMMU_two"),cfg.get("mutation_s_default_values","GAMMU_three")))
+                #lines.append("MEANK1 %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","MEANK1_law"),cfg.get("mutation_s_default_values","MEANK1_zero"),cfg.get("mutation_s_default_values","MEANK1_one"),cfg.get("mutation_s_default_values","MEANK1_two"),cfg.get("mutation_s_default_values","MEANK1_three")))
+                #lines.append("GAMK1 %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","GAMK1_law"),cfg.get("mutation_s_default_values","GAMK1_zero"),cfg.get("mutation_s_default_values","GAMK1_one"),cfg.get("mutation_s_default_values","GAMK1_two"),cfg.get("mutation_s_default_values","GAMK1_three")))
+                #lines.append("MEANK2 %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","MEANK2_law"),cfg.get("mutation_s_default_values","MEANK2_zero"),cfg.get("mutation_s_default_values","MEANK2_one"),cfg.get("mutation_s_default_values","MEANK2_two"),cfg.get("mutation_s_default_values","MEANK2_three")))
+                #lines.append("GAMK2 %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","GAMK2_law"),cfg.get("mutation_s_default_values","GAMK2_zero"),cfg.get("mutation_s_default_values","GAMK2_one"),cfg.get("mutation_s_default_values","GAMK2_two"),cfg.get("mutation_s_default_values","GAMK2_three")))
+                lines.append("MODEL %s %s %s"%(cfg["mutation_s_default_values"]["MODEL_model"],cfg["mutation_s_default_values"]["MODEL_inv_sites_pc"],cfg["mutation_s_default_values"]["MODEL_gamma_shape"]))
                 self.mutmodS.setMutationConf(lines)
             except Exception,e:
-                log(3,"Malformed mutationS_default_values in configuration")
+                log(3,"Malformed mutation_s_default_values in configuration")
         else:
             log(3,"No MMS conf found")
 
     def saveConnexion(self):
         """ sauvegarde de la partie connexion des préférences
         """
-        if not self.config.has_section("connexion"):
-            self.config.add_section("connexion")
+        if not self.config.has_key("connexion"):
+            self.config["connexion"] = {}
 
-        self.config.set("connexion","host",str(self.ui.addrEdit.text()))
-        self.config.set("connexion","port",str(self.ui.portEdit.text()))
-        self.config.set("connexion","useServer",str(self.ui.serverCheck.isChecked()))
+        self.config["connexion"]["host"] = str(self.ui.addrEdit.text())
+        self.config["connexion"]["port"] = str(self.ui.portEdit.text())
+        self.config["connexion"]["use_server"] = str(self.ui.serverCheck.isChecked())
 
     def loadConnexion(self):
         """ chargement de la partie connexion des préférences
         """
         cfg = self.config
-        if cfg.has_section("connexion"):
-            try:
-                self.ui.addrEdit.setText(cfg.get("connexion","host"))
-                self.ui.portEdit.setText(cfg.get("connexion","port"))
-                yesno = (cfg.get("connexion","useServer") == 'True')
+        if cfg.has_key("connexion"):
+                print cfg["connexion"]
+            #try:
+                self.ui.addrEdit.setText(cfg["connexion"]["host"])
+                self.ui.portEdit.setText(cfg["connexion"]["port"])
+                yesno = (cfg["connexion"]["use_server"] == 'True')
                 self.ui.serverCheck.setChecked(yesno)
-            except Exception,e:
-                log(3,"Malformed connexion secrtion in configuration")
+            #except Exception,e:
+            #    log(3,"Malformed connexion section in configuration\n%s"%e)
         else:
             log(3,"No connexion conf found")
 
