@@ -2597,6 +2597,7 @@ struct ParticleC
 	void calfreqsnp(int gr) {
         int loc,iloc;
 		short int g0=0;
+		cout << "calfreqsnp début\n";
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             loc=this->grouplist[gr].loc[iloc];
             this->locuslist[loc].freq = new long double* [this->data.nsample];
@@ -2611,6 +2612,7 @@ struct ParticleC
 				this->locuslist[loc].freq[samp][1] /=this->locuslist[loc].samplesize[samp];
 			}
 		}
+		cout<<"clafreqsnp fin\n";
 	}
 
     void liberefreq(int gr) {
@@ -2781,6 +2783,44 @@ struct ParticleC
 		return hetm;
 	}
 
+	long double cal_snhet(int gr,int st) {
+		long double het,hetm=0.0;
+		int iloc,kloc,nl=0;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			kloc=this->grouplist[gr].loc[iloc];
+			if (this->locuslist[kloc].samplesize[sample]>1){
+				het=1.0;
+				for (int k=0;k<2;k++) het -= sqr(this->locuslist[kloc].freq[sample][k]);
+				het *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
+				hetm += het;
+				//printf("kloc=%2d   het = %13.10Lf\n",kloc,het);
+				nl++;
+			}
+		}
+		if (nl>0) hetm=hetm/(long double)nl;
+		//printf("\n heterozygotie = %13.10Lf\n\n",hetm);
+		return hetm;		
+	}
+	
+	long double* cal_snhes(int gr,int st) {
+		long double *het;
+		int iloc,kloc,nl=0;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		het = new long double[this->grouplist[gr].nloc];
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			kloc=this->grouplist[gr].loc[iloc];
+			het[nl]=-1.0;
+			if (this->locuslist[kloc].samplesize[sample]>1){
+				het[nl]=1.0;
+				for (int k=0;k<2;k++) het[nl] -= sqr(this->locuslist[kloc].freq[sample][k]);
+				het[nl] *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
+				nl++;
+			}
+		}
+		return het;		
+	}
+	
 	long double cal_het2p(int gr,int st){
 		long double het,hetm=0.0;
 		int iloc,loc,n1,n2,nt,nl=0;
@@ -2800,6 +2840,45 @@ struct ParticleC
 		if (nl>0) return hetm/(long double)nl; else return 0.0;
 	}
 
+	long double cal_snnei(int gr,int st) {
+		long double nei,neim=0.0,fi,fj,gi,gj;
+		int iloc,loc,nl=0,n1,n2;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			n1=this->locuslist[loc].samplesize[sample];n2=this->locuslist[loc].samplesize[sample1];
+			if ((n1>0)and(n2>0)) {
+				fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];
+				gi=this->locuslist[loc].freq[sample][1];gj=this->locuslist[loc].freq[sample1][1];
+				nei = (fi*fj + gi*gj)/sqrt(fi*fi + gi*gi)/sqrt(fj*fj + gj*gj);
+				neim +=nei;
+				nl++;
+			}
+		}
+		if (nl>0) return neim/(long double)nl; else return 0.0;		
+	}
+		
+	long double* cal_snnes(int gr,int st) {
+		long double *nei,fi,fj,gi,gj;
+		int iloc,loc,nl=0,n1,n2;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		nei = new long double[this->grouplist[gr].nloc];
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			nei[nl]=-1.0;
+			n1=this->locuslist[loc].samplesize[sample];n2=this->locuslist[loc].samplesize[sample1];
+			if ((n1>0)and(n2>0)) {
+				fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];
+				gi=this->locuslist[loc].freq[sample][1];gj=this->locuslist[loc].freq[sample1][1];
+				nei[nl] = (fi*fj + gi*gj)/sqrt(fi*fi + gi*gi)/sqrt(fj*fj + gj*gj);
+				nl++;
+			}
+		}
+		return nei;	
+	}
+	
 	long double cal_var1p(int gr,int st){
 		long double s,v,vm=0.0,m,ms;
 		int iloc,loc,n,nl=0;
@@ -3923,9 +4002,10 @@ struct ParticleC
 	 */
 	void docalstat(int gr) {
 //		cout << "avant calfreq\n";
+		cout << this->grouplist[gr].type<<"\n";
 		if (this->grouplist[gr].type == 0)  this->calfreq(gr);
-        else if (this->grouplist[gr].type == 0)  this->cal_numvar(gr);
-		else if (this->grouplist[gr].type > 20)  this->calfreqsnp(gr);
+        else if (this->grouplist[gr].type == 1)  this->cal_numvar(gr);
+		else  this->calfreqsnp(gr);
 //		cout << "apres calfreq\n";
         for (int st=0;st<this->grouplist[gr].nstat;st++) {
             if ((this->grouplist[gr].sumstat[st].cat==-7)or(this->grouplist[gr].sumstat[st].cat==-8)) {
@@ -3980,7 +4060,10 @@ struct ParticleC
 				case   -12 : this->grouplist[gr].sumstat[st].val = cal_mpb2p(gr,st);break;
 				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(gr,st);break;
 				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(gr,st);break;
-				//case    21 : this->grouplist[gr].sumstat[st].val = cal_snhet(gr,st)
+				case    21 : this->grouplist[gr].sumstat[st].val = cal_snhet(gr,st);break;
+				case    22 : this->grouplist[gr].sumstat[st].vals= cal_snhes(gr,st);break;
+				case    23 : this->grouplist[gr].sumstat[st].val = cal_snnei(gr,st);break;
+				case	24 : this->grouplist[gr].sumstat[st].vals= cal_snnes(gr,st);break;
 			}
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
