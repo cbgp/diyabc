@@ -518,14 +518,14 @@ class Preferences(formPreferences,basePreferences):
         """
         cfg = self.config
         if cfg.has_key("connexion"):
-                print cfg["connexion"]
-            #try:
+                #print cfg["connexion"]
+            try:
                 self.ui.addrEdit.setText(cfg["connexion"]["host"])
                 self.ui.portEdit.setText(cfg["connexion"]["port"])
                 yesno = (cfg["connexion"]["use_server"] == 'True')
                 self.ui.serverCheck.setChecked(yesno)
-            #except Exception,e:
-            #    log(3,"Malformed connexion section in configuration\n%s"%e)
+            except Exception,e:
+                log(3,"Malformed connexion section in configuration\n%s"%e)
         else:
             log(3,"No connexion conf found")
 

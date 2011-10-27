@@ -1,5 +1,33 @@
 # -*- coding: utf-8 -*-
 
+## @package python_interface.utils.cbgpUtils
+# @author Julien Veyssier
+#
+# @brief Tools helping all kinds of progammers
+#
+# Package regrouping generic tools created for DIYABC interface
+# but usefull for any graphical or user oriented program.
+# 
+# This package contains several classes : 
+#     - CmdPrompt and cmdThread : prompt which allows to execute python code
+#       interactively while program is running
+#     - Documentator : Extract infos from xml files produced by latexml to get
+#       documentation of paragraphs* labeled like "doc_*"
+#     - TeeLogger : Replace a standard output in order to redirect the flows to :
+#       a file, the replaced output and an external function
+# 
+# And several functions :
+#     - logRotate : recursively delete old files if the size of a directory
+#       exceeds a threshold
+#     - readRefTableSize : extract the record number of a DIYABC binary reference
+#       table 
+#     - readNbRecordsOfScenario : extract the record number which concern a
+#       specific scenario
+#     - log : print the given string decorated by the date, the log level and the
+#       context (caller of calling function, calling function, parameters of
+#       calling function).
+# 
+
 from threading import Thread
 import sys
 import cmd
@@ -47,7 +75,7 @@ from xml.dom.minidom import parse
 import os.path
 
 class Documentator():
-    """ classe qui extrait la documentation interne en lisant un fichier xml 
+    """ Classe qui extrait la documentation interne en lisant un fichier xml 
     généré à partir des sources latex de la notice de DIYABC. Cette classe permet aussi
     la consultation de cette documentation à partir de mots clés (l'objectName en l'occurence)
     """
@@ -159,12 +187,13 @@ class TeeLogger(object):
     """ Classe qui remplace stdout et stderr pour logger sur 
     la sortie standard (ancienne stdout), dans un fichier et qui appelle
     une fonction externe simultanément
-    ATTENTION effet de bord : stderr n'est plus différentié sauf dans le terminal
-    il est écrit dans les trois sorties
+    ATTENTION effet de bord : stderr n'est pas différentié de stdout dans le
+    fichier de log et dans la fonction externe
+    La fonction externe doit s'appeller comme cela :
+    showExternal("string to display")
     """
     def __init__(self, name, out_or_err, showExternal=None):
-        """ raccourci le fichier de log s'il est trop grand 
-        et remplace stdout
+        """ remplace stdout ou stderr
         """
         self.showExternal = showExternal
         #self.logRotate(name)

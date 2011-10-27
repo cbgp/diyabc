@@ -12,6 +12,8 @@ from utils.cbgpUtils import log
 
 formProject,baseProject = uic.loadUiType("uis/Project.ui")
 
+## @brief Mother of all Project classes
+#
 class Project(baseProject,formProject):
     """ classe qui représente un projet
     par defaut, un projet est considéré comme nouveau, cad que l'affichage est celui d'un projet vierge

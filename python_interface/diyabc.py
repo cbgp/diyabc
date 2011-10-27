@@ -121,42 +121,48 @@ class Diyabc(formDiyabc,baseDiyabc):
         file_menu = self.ui.menubar.addMenu("&File")
         self.file_menu = file_menu
         self.setStyleSheet("QMenu {\
-                     background-color: white;\
-                          margin: 2px; /* some spacing around the menu */\
-                           }\
-        \
-         QMenu::item {\
-                      padding: 2px 25px 2px 20px;\
-                           border: 1px solid transparent; /* reserve space for selection border */\
-                            }\
-         \
-          QMenu::item:selected {\
-                       border-color: darkblue;\
-                            /*background: rgba(100, 100, 100, 150);*/\
-                            background-color: #FFD800;\
-                             }\
-          \
-           QMenu::icon:checked { /* appearance of a 'checked' icon */\
-                        background: gray;\
-                             border: 1px inset gray;\
-                                  position: absolute;\
-                                       top: 1px;\
-                                            right: 1px;\
-                                                 bottom: 1px;\
-                                                      left: 1px;\
-                                                       }\
-           \
-            QMenu::separator {\
-                         height: 2px;\
-                              background: lightblue;\
-                                   margin-left: 10px;\
-                                        margin-right: 5px;\
-                                         }\
-            \
-             QMenu::indicator {\
-                          width: 13px;\
-                               height: 13px;\
-                                }")
+                background-color: white;\
+                margin: 2px; /* some spacing around the menu */\
+                }\
+                \
+                QMenu::item {\
+                padding: 2px 25px 2px 20px;\
+                border: 1px solid transparent; /* reserve space for selection border */\
+                }\
+                \
+                QMenu::item:selected {\
+                border-color: darkblue;\
+                /*background: rgba(100, 100, 100, 150);*/\
+                background-color: #FFD800;\
+                }\
+                \
+                QMenu::item:disabled {\
+                /*border-color: darkblue;*/\
+                /*background: rgba(100, 100, 100, 150);*/\
+                background-color: #ECECEC;\
+                }\
+                \
+                QMenu::icon:checked { /* appearance of a 'checked' icon */\
+                background: gray;\
+                border: 1px inset gray;\
+                position: absolute;\
+                top: 1px;\
+                right: 1px;\
+                bottom: 1px;\
+                left: 1px;\
+                }\
+                \
+                QMenu::separator {\
+                height: 2px;\
+                background: lightblue;\
+                margin-left: 10px;\
+                margin-right: 5px;\
+                }\
+                \
+                QMenu::indicator {\
+                width: 13px;\
+                height: 13px;\
+                }")
         file_menu.addAction(QIcon("docs/icons/folder-new.png"),"&New project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction(QIcon("docs/icons/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
         self.recent_menu = file_menu.addMenu(QIcon("docs/icons/document-open-recent.png"),"Open recent projects")
