@@ -6,12 +6,13 @@ VERSION='development version'
 from datetime import datetime
 VERSION_DATE='01/01/1970'
 
-#import dataImages
 import shutil
 import sys,traceback
 import os
-if sys.platform.startswith('win'):
-    sys.path.append("Python26/Lib/site-packages")
+# les .app démarrent python avec '/' comme cwd
+if "darwin" in sys.platform and ".app/" in sys.argv[0]:
+    mycwd = "/".join(sys.argv[0].split(".app/")[0].split('/')[:-1])
+    os.chdir(mycwd)
 # pour connaitre les modules, on manipule le pythonpath
 sys.path.append("/".join(os.getcwd().split('/')[:-1]))
 from PyQt4.QtCore import *
@@ -914,7 +915,11 @@ def main():
     if "-cmd" in nargv:
         nargv.remove("-cmd")
         cmd=True
-    projects_to_open = nargv[1:]
+
+    projects_to_open = []
+    for arg in nargv[1:]:
+        if not arg.startswith('-'):
+            projects_to_open.append(arg)
 
     #nargv.extend(["-title","DIYABC v%s"%VERSION])
     # determine le nom du fichier de log
