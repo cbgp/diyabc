@@ -1084,6 +1084,13 @@ struct MwcGen
 		return (i-1);
 	}
 
+	int binom(int n,double p) { // version light valable pour n<=30
+	  int k=0;
+	  if (n<1) return 0;
+	  for (int i=0;i<n;i++) if(this->random() < p) k++;
+	  return k;
+	}
+
 	double gunif(double min,double max) {
 		double u;
 		u = min + (max-min)*this->random();

@@ -1466,6 +1466,7 @@ struct ParticleC
 *                    du modèle mutationnel choisi
 */
     void comp_matQ(int loc) {
+	    double s;
 		int gr=this->locuslist[loc].groupe;
 		this->matQ[0][0] = this->matQ[1][1] = this->matQ[2][2] = this->matQ[3][3] = 0.0;
 		this->matQ[0][1] = this->matQ[0][2] = this->matQ[0][3] = 1.0;
@@ -1503,11 +1504,9 @@ struct ParticleC
 			this->matQ[3][1] = this->locuslist[loc].k2*this->locuslist[loc].pi_C;
 			this->matQ[3][2] = this->locuslist[loc].pi_G;
 		}
-		double s=0.0;
-		for (int i=0;i<4;i++) {
-			for (int j=0;j<4;j++) {s += this->matQ[i][j];}
-		}
-		for (int i=0;i<4;i++) {
+		
+		for (int i=0;i<4;i++) {  //normalisation par ligne  somme=1
+			s=0.0;for (int j=0;j<4;j++) {s += this->matQ[i][j];}
 			for (int j=0;j<4;j++) {this->matQ[i][j] /= s;}
 		}
 	}
@@ -1768,7 +1767,7 @@ struct ParticleC
 		if (this->locuslist[loc].type <5) mutrate=this->locuslist[loc].mut_rate+this->locuslist[loc].sni_rate;
 		else                        mutrate=this->locuslist[loc].mus_rate*(double)this->locuslist[loc].dnalength;
 		for (int b=0;b<this->gt[loc].nbranches;b++) {
-			this->gt[loc].branches[b].nmut = this->mw.poisson(this->gt[loc].branches[b].length*mutrate);
+		    this->gt[loc].branches[b].nmut = this->mw.poisson(this->gt[loc].branches[b].length*mutrate);
 			this->gt[loc].nmutot += this->gt[loc].branches[b].nmut;
 		}
         //cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
@@ -2684,6 +2683,189 @@ struct ParticleC
         }
     }
 
+	long double cal_snhet(int gr,int st) {
+		long double het,hetm=0.0;
+		int iloc,kloc,nl=0;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			kloc=this->grouplist[gr].loc[iloc];
+			if (this->locuslist[kloc].samplesize[sample]>1){
+				het=1.0;
+				for (int k=0;k<2;k++) het -= sqr(this->locuslist[kloc].freq[sample][k]);
+				het *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
+				hetm += het;
+				//printf("kloc=%2d   het = %13.10Lf\n",kloc,het);
+				nl++;
+			}
+		}
+		if (nl>0) hetm=hetm/(long double)nl;
+		//printf("\n heterozygotie = %13.10Lf\n\n",hetm);
+		return hetm;		
+	}
+	
+	long double cal_snhes(int gr,int st) {
+		long double *het,U,V,N,M,Dcra;
+		long double *rangx,*rangy;
+		int iloc,kloc,nl=0;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		het = new long double[this->grouplist[gr].nloc];
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			kloc=this->grouplist[gr].loc[iloc];
+			if (this->locuslist[kloc].samplesize[sample]>1){
+				het[nl]=1.0;
+				for (int k=0;k<2;k++) het[nl] -= sqr(this->locuslist[kloc].freq[sample][k]);
+				het[nl] *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
+				nl++;
+			}
+		}
+		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
+		if (Dcra==0.0) { //particuleobs
+			for (int i=0;i<nl;i++) this->grouplist[gr].sumstat[st].vals[i] = het[i];
+			return 0.0;  
+		}
+		N = (long double)nl;M = N;
+		combrank2(nl,nl,het,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
+		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
+		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
+		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
+		Dcra = Dcra/M;
+		delete []rangx;
+		delete []rangy;
+		return Dcra;		
+	}
+	
+	long double cal_snnei(int gr,int st) {
+		long double nei,neim=0.0,fi,fj,gi,gj;
+		int iloc,loc,nl=0,n1,n2;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			n1=this->locuslist[loc].samplesize[sample];n2=this->locuslist[loc].samplesize[sample1];
+			if ((n1>0)and(n2>0)) {
+				fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];
+				gi=this->locuslist[loc].freq[sample][1];gj=this->locuslist[loc].freq[sample1][1];
+				nei = (fi*fj + gi*gj)/sqrt(fi*fi + gi*gi)/sqrt(fj*fj + gj*gj);
+				neim +=nei;
+				nl++;
+			}
+		}
+		if (nl>0) return neim/(long double)nl; else return 0.0;		
+	}
+		
+	long double cal_snnes(int gr,int st) {
+		long double *nei,fi,fj,gi,gj,M,N,*rangx,*rangy,Dcra,U,V;
+		int iloc,loc,nl=0,n1,n2;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		nei = new long double[this->grouplist[gr].nloc];
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			n1=this->locuslist[loc].samplesize[sample];n2=this->locuslist[loc].samplesize[sample1];
+			if ((n1>0)and(n2>0)) {
+				fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];
+				gi=this->locuslist[loc].freq[sample][1];gj=this->locuslist[loc].freq[sample1][1];
+				nei[nl] = (fi*fj + gi*gj)/sqrt(fi*fi + gi*gi)/sqrt(fj*fj + gj*gj);
+				nl++;
+			}
+		}
+		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
+		if (Dcra==0.0) { //particuleobs
+			for (int i=0;i<nl;i++) this->grouplist[gr].sumstat[st].vals[i] = nei[i];
+			return 0.0;  
+		}
+		N = (long double)nl;M = N;
+		combrank2(nl,nl,nei,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
+		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
+		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
+		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
+		Dcra = Dcra/M;
+		delete []rangx;
+		delete []rangy;
+		return Dcra;		
+	}
+	
+	long double cal_snfst(int gr,int st) {
+		long double fi,fj,n1,n2;
+		long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P,s1=0.0,s3=0.0;
+		int iloc,loc;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			n1=(long double)this->locuslist[loc].samplesize[sample];n2=(long double)this->locuslist[loc].samplesize[sample1];
+			if ((n1>0)and(n2>0)) {
+			    s1l = 0.0;s3l = 0.0;
+				for (int all=0;all<2;all++) {
+					if (all==0) {fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];}
+					else		{fi=this->locuslist[loc].freq[sample][1];fj=this->locuslist[loc].freq[sample1][1];}
+					sniAA = fi*n1+fj*n2;
+					sniA  = 2.0*sniAA;
+					sni = n1+n2;
+					sni2 = n1*n1 + n2*n2;
+					s2A = 2.0*(n1*fi*fi + n2*fj*fj);
+					nc = (sni-sni2/sni);
+					MSI = (0.5*sniA+sniAA-s2A)/(sni-2.0);
+					MSP = (s2A - 0.5*sniA*sniA/sni);
+					s2I = 0.5*MSI;
+					s2P = (MSP-MSI)/2.0/nc;
+					s1l += s2P;
+					s3l += s2P + s2I;
+				}
+				if ((s3l>0.0)and(s1l>0.0)) { s1 += s1l; s3 += s3l;}
+			  
+			}
+		} 
+		if (s3>0.0) return s1/s3; else return 0.0;
+	}
+
+	long double cal_snfss(int gr,int st) {
+		long double *fst,fi,fj,n1,n2,Dcra,U,V,N,M,*rangx,*rangy;
+		long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P,s1=0.0,s3=0.0;
+		int iloc,loc,nl=0;
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		fst = new long double[this->grouplist[gr].nloc];
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			n1=(long double)this->locuslist[loc].samplesize[sample];n2=(long double)this->locuslist[loc].samplesize[sample1];
+			if ((n1>0)and(n2>0)) {
+			    s1l = 0.0;s3l = 0.0;
+				for (int all=0;all<2;all++) {
+					if (all==0) {fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];}
+					else		{fi=this->locuslist[loc].freq[sample][1];fj=this->locuslist[loc].freq[sample1][1];}
+					sniAA = fi*n1+fj*n2;
+					sniA  = 2.0*sniAA;
+					sni = n1+n2;
+					sni2 = n1*n1 + n2*n2;
+					s2A = 2.0*(n1*fi*fi + n2*fj*fj);
+					nc = (sni-sni2/sni);
+					MSI = (0.5*sniA+sniAA-s2A)/(sni-2.0);
+					MSP = (s2A - 0.5*sniA*sniA/sni);
+					s2I = 0.5*MSI;
+					s2P = (MSP-MSI)/2.0/nc;
+					s1l += s2P;
+					s3l += s2P + s2I;
+				}
+				if ((s3l>0.0)and(s1l>0.0)) {fst[nl]=s1/s3;nl++;}
+			}
+		}
+		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
+		if (Dcra==0.0) { //particuleobs
+			for (int i=0;i<nl;i++) this->grouplist[gr].sumstat[st].vals[i] = fst[i];
+			return 0.0;  
+		}
+		N = (long double)nl;M = N;
+		combrank2(nl,nl,fst,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
+		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
+		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
+		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
+		Dcra = Dcra/M;
+		delete []rangx;
+		delete []rangy;
+		return Dcra;		
+	}
+
 	long double cal_pid1p(int gr,int st){
         int iloc,kloc,nt=0,ni=0;
         int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -2783,55 +2965,6 @@ struct ParticleC
 		return hetm;
 	}
 
-	long double cal_snhet(int gr,int st) {
-		long double het,hetm=0.0;
-		int iloc,kloc,nl=0;
-		int sample=this->grouplist[gr].sumstat[st].samp-1;
-		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-			kloc=this->grouplist[gr].loc[iloc];
-			if (this->locuslist[kloc].samplesize[sample]>1){
-				het=1.0;
-				for (int k=0;k<2;k++) het -= sqr(this->locuslist[kloc].freq[sample][k]);
-				het *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
-				hetm += het;
-				//printf("kloc=%2d   het = %13.10Lf\n",kloc,het);
-				nl++;
-			}
-		}
-		if (nl>0) hetm=hetm/(long double)nl;
-		//printf("\n heterozygotie = %13.10Lf\n\n",hetm);
-		return hetm;		
-	}
-	
-	long double cal_snhes(int gr,int st) {
-		long double *het,U,V,N,M,Dcra;
-		long double *rangx,*rangy;
-		int iloc,kloc,nl=0;
-		int sample=this->grouplist[gr].sumstat[st].samp-1;
-		het = new long double[this->grouplist[gr].nloc];
-		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-			kloc=this->grouplist[gr].loc[iloc];
-			het[nl]=-1.0;
-			if (this->locuslist[kloc].samplesize[sample]>1){
-				het[nl]=1.0;
-				for (int k=0;k<2;k++) het[nl] -= sqr(this->locuslist[kloc].freq[sample][k]);
-				het[nl] *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
-				nl++;
-			}
-		}
-		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
-		if (Dcra==0.0) return 0.0;  //particuleobs
-		N = (long double)nl;M = N;
-		combrank2(nl,nl,het,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
-		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
-		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
-		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
-		Dcra = Dcra/M;
-		delete []rangx;
-		delete []rangy;
-		return Dcra;		
-	}
-	
 	long double cal_het2p(int gr,int st){
 		long double het,hetm=0.0;
 		int iloc,loc,n1,n2,nt,nl=0;
@@ -2851,55 +2984,6 @@ struct ParticleC
 		if (nl>0) return hetm/(long double)nl; else return 0.0;
 	}
 
-	long double cal_snnei(int gr,int st) {
-		long double nei,neim=0.0,fi,fj,gi,gj;
-		int iloc,loc,nl=0,n1,n2;
-		int sample=this->grouplist[gr].sumstat[st].samp-1;
-		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
-		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-			loc=this->grouplist[gr].loc[iloc];
-			n1=this->locuslist[loc].samplesize[sample];n2=this->locuslist[loc].samplesize[sample1];
-			if ((n1>0)and(n2>0)) {
-				fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];
-				gi=this->locuslist[loc].freq[sample][1];gj=this->locuslist[loc].freq[sample1][1];
-				nei = (fi*fj + gi*gj)/sqrt(fi*fi + gi*gi)/sqrt(fj*fj + gj*gj);
-				neim +=nei;
-				nl++;
-			}
-		}
-		if (nl>0) return neim/(long double)nl; else return 0.0;		
-	}
-		
-	long double cal_snnes(int gr,int st) {
-		long double *nei,fi,fj,gi,gj,M,N,*rangx,*rangy,Dcra,U,V;
-		int iloc,loc,nl=0,n1,n2;
-		int sample=this->grouplist[gr].sumstat[st].samp-1;
-		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
-		nei = new long double[this->grouplist[gr].nloc];
-		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-			loc=this->grouplist[gr].loc[iloc];
-			nei[nl]=-1.0;
-			n1=this->locuslist[loc].samplesize[sample];n2=this->locuslist[loc].samplesize[sample1];
-			if ((n1>0)and(n2>0)) {
-				fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];
-				gi=this->locuslist[loc].freq[sample][1];gj=this->locuslist[loc].freq[sample1][1];
-				nei[nl] = (fi*fj + gi*gj)/sqrt(fi*fi + gi*gi)/sqrt(fj*fj + gj*gj);
-				nl++;
-			}
-		}
-		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
-		if (Dcra==0.0) return 0.0;  //particuleobs
-		N = (long double)nl;M = N;
-		combrank2(nl,nl,nei,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
-		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
-		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
-		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
-		Dcra = Dcra/M;
-		delete []rangx;
-		delete []rangy;
-		return Dcra;		
-	}
-	
 	long double cal_var1p(int gr,int st){
 		long double s,v,vm=0.0,m,ms;
 		int iloc,loc,n,nl=0;
@@ -4085,6 +4169,7 @@ struct ParticleC
 				case    22 : this->grouplist[gr].sumstat[st].val = cal_snhes(gr,st);break;
 				case    23 : this->grouplist[gr].sumstat[st].val = cal_snnei(gr,st);break;
 				case	24 : this->grouplist[gr].sumstat[st].val = cal_snnes(gr,st);break;
+				case    25 : this->grouplist[gr].sumstat[st].val = cal_snfst(gr,st);break;
 			}
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
