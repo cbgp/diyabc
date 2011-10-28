@@ -276,6 +276,11 @@ class Diyabc(formDiyabc,baseDiyabc):
         for but in [newButton,openButton,saveButton,saveAllButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
+    def setToolBarPosition(self,pos):
+        self.removeToolBar(self.ui.toolBar)
+        self.addToolBar(pos,self.ui.toolBar)
+        self.ui.toolBar.show()
+
     def showLog(self,text):
         """ fonction appelée par le logger pour afficher le log dans la fenetre de log
         ne pas faire de print dans cette fonction
@@ -836,6 +841,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             if proj.dir != None:
                 proj.stopActivities()
         self.preferences_win.saveRecent()
+        self.preferences_win.saveToolBarPosition(self.toolBarArea(self.ui.toolBar))
         self.preferences_win.writeConfigFile()
         event.accept()
     #    reply = QtGui.QMessageBox.question(self, 'Message',

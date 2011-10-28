@@ -202,6 +202,19 @@ class Preferences(formPreferences,basePreferences):
         #        cmd_args_list = ["gconftool-2", "--type", "boolean", "--set", "/desktop/gnome/interface/menus_have_icons", "true"]
         #        p = subprocess.Popen(cmd_args_list) 
 
+    def saveToolBarPosition(self,pos):
+        if pos == Qt.LeftToolBarArea:
+            c = 1
+        elif pos == Qt.RightToolBarArea:
+            c = 2
+        elif pos == Qt.TopToolBarArea:
+            c = 3
+        elif pos == Qt.BottomToolBarArea:
+            c = 4
+        if not self.config.has_key("various"):
+            self.config["various"] = {}
+        self.config["various"]["toolBarOrientation"] = c
+
     def loadRecent(self):
             recent_list = []
             if self.config.has_key("recent"):
@@ -275,6 +288,16 @@ class Preferences(formPreferences,basePreferences):
                 ind = self.ui.maxThreadCombo.findText(maxt.strip())
                 if ind != -1:
                     self.ui.maxThreadCombo.setCurrentIndex(ind)
+            if cfg["various"].has_key("toolBarOrientation"):
+                c = cfg["various"]["toolBarOrientation"].strip()
+                if c == "1":
+                    self.parent.setToolBarPosition(Qt.LeftToolBarArea)
+                elif c == "2":
+                    self.parent.setToolBarPosition(Qt.RightToolBarArea)
+                elif c =="3":
+                    self.parent.setToolBarPosition(Qt.TopToolBarArea)
+                elif c == "4":
+                    self.parent.setToolBarPosition(Qt.BottomToolBarArea)
         else:
             log(3,"No various conf found")
 
