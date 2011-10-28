@@ -88,11 +88,13 @@ class Preferences(formPreferences,basePreferences):
 
         QObject.connect(self.ui.serverCheck,SIGNAL("toggled(bool)"),self.toggleServer)
         QObject.connect(self.ui.useDefaultExeCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
+        QObject.connect(self.ui.wtCheck,SIGNAL("toggled(bool)"),self.toggleWtSelection)
 
         self.ui.addrEdit.setDisabled(True)
         self.ui.portEdit.setDisabled(True)
 
         self.toggleExeSelection(self.ui.useDefaultExeCheck.isChecked())
+        self.toggleWtSelection(self.ui.wtCheck.isChecked())
 
 
         #QObject.connect(self.ui.saveMMMButton,SIGNAL("clicked()"),self.saveMMM)
@@ -111,6 +113,9 @@ class Preferences(formPreferences,basePreferences):
     def toggleExeSelection(self,state):
         self.ui.execBrowseButton.setDisabled(state)
         self.ui.execPathEdit.setDisabled(state)
+
+    def toggleWtSelection(self,state):
+        self.parent.toggleWt(state)
 
     def browseExec(self):
         qfd = QFileDialog()
@@ -244,6 +249,7 @@ class Preferences(formPreferences,basePreferences):
         pic_format = str(self.ui.formatCombo.currentText())
         ex_path = str(self.ui.execPathEdit.text())
         ex_default = str(self.ui.useDefaultExeCheck.isChecked())
+        wt = str(self.ui.wtCheck.isChecked())
         max_thread = str(self.ui.maxThreadCombo.currentText())
 
         if not self.config.has_key("various"):
@@ -253,6 +259,7 @@ class Preferences(formPreferences,basePreferences):
         self.config["various"]["execPath"] = ex_path
         self.config["various"]["bgColor"] = bgColor
         self.config["various"]["useDefaultExecutable"] = ex_default
+        self.config["various"]["activateWhatsThis"] = wt
         self.config["various"]["maxThreadNumber"] = max_thread
 
     def loadVarious(self):
@@ -278,6 +285,11 @@ class Preferences(formPreferences,basePreferences):
                 ind = self.ui.bgColorCombo.findText(bg.strip())
                 if ind != -1:
                     self.ui.bgColorCombo.setCurrentIndex(ind)
+            if cfg["various"].has_key("activateWhatsThis"):
+                state = cfg["various"]["activateWhatsThis"]
+                checked = (state == "True")
+                self.ui.wtCheck.setChecked(checked)
+                self.toggleWtSelection(checked)
             if cfg["various"].has_key("useDefaultExecutable"):
                 state = cfg["various"]["useDefaultExecutable"]
                 checked = (state == "True")

@@ -65,6 +65,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.project_list = []
         self.recentList = []
         self.recentMenuEntries = []
+        self.wtEnabled = True
         
         self.main_conf_name = "conf.tmp"
         self.hist_conf_name = "conf.hist.tmp"
@@ -89,17 +90,18 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         self.illegalProjectNameCharacters = ['_','-',"'",'"','.']
 
-        try:
-            self.documentator = Documentator("docs/documentation.xml",self)
-        except Exception,e:
-            output.notify(self,"Documentation error","%s"%e)
-            self.documentator = None
-
         # ouverture des projets donnés en paramètre au lancement
         if projects != None and len(projects) > 0:
             #self.switchToMainStack()
             for projDirName in projects:
                 self.openProject(projDirName)
+
+        try:
+            self.documentator = Documentator("docs/documentation.xml",self)
+            self.updateDoc()
+        except Exception,e:
+            output.notify(self,"Documentation error","%s"%e)
+            self.documentator = None
 
     def createWidgets(self):
         self.ui=self
@@ -281,18 +283,20 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.toolBar.addWidget(saveAllButton)
         saveAllButton.setDisabled(True)
 
-        wtButton = QPushButton(QIcon("docs/icons/document-save.png"),"WT",self)
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.ui.toolBar.addWidget(spacer)
+
+        wtButton = QPushButton(QIcon("docs/icons/whats.png"),"What's this",self)
+        wtButton.setDisabled(False)
+        wtButton.setToolTip("Click on this button and then on another object to get the documentation")
         self.wtButton = wtButton
-        wtButton.setMaximumSize(QSize(53, 22))
+        wtButton.setMaximumSize(QSize(103, 22))
         #wtButton.setMinimumSize(QSize(16, 18))
         wtButton.setFlat(True)
         QObject.connect(wtButton,SIGNAL("clicked()"),self.enterWhatsThisMode)
         self.ui.toolBar.addWidget(wtButton)
-        wtButton.setDisabled(False)
-
-        #spacer = QWidget()
-        #spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        #self.ui.toolBar.addWidget(spacer)
+        #wtButton.hide()
 
         #simButton = QPushButton(QIcon("docs/icons/mask.jpeg"),"Simulate",self)
         #self.simButton = simButton
@@ -303,11 +307,11 @@ class Diyabc(formDiyabc,baseDiyabc):
         #QObject.connect(simButton,SIGNAL("clicked()"),self.simulateDataSets)
         #self.ui.toolBar.addWidget(simButton)
 
-        for but in [newButton,openButton,saveButton,saveAllButton]:
+        for but in [newButton,openButton,saveButton,saveAllButton,wtButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
     def enterWhatsThisMode(self):
-        self.updateDoc()
+        #self.updateDoc()
         QWhatsThis.enterWhatsThisMode()
 
     def updateDoc(self):
@@ -317,9 +321,19 @@ class Diyabc(formDiyabc,baseDiyabc):
         for e in l:
             try:
                 e.setWhatsThis(self.documentator.getDocString("%s"%e.objectName()))
+                print "ajout de "+"%s"%e.objectName()
             except Exception,e:
                 #print "%s"%e
                 pass
+
+    def toggleWt(self,yesno):
+        """ toggle le méchanisme d'aide intégrée
+        """
+        self.wtEnabled = yesno
+        if yesno:
+            self.wtButton.setDisabled(False)
+        else:
+            self.wtButton.setDisabled(True)
 
     def setToolBarPosition(self,pos):
         self.removeToolBar(self.ui.toolBar)
@@ -916,6 +930,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                     except Exception,e:
                         output.notify(self,"Documentation error","%s"%e)
             log(3,"Button '%s' pressed"%event.button())
+        elif event.type() == QEvent.ChildAdded and self.wtEnabled:
+            self.updateDoc()
         return QWidget.event(self,event)
 
     def dropEvent(self,event):
