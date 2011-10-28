@@ -33,6 +33,26 @@ from threading import Thread
 from utils.data import isSNPDatafile
 
 
+#documentator = Documentator("docs/documentation.xml",None)
+#class QWidget2(QWidget):
+#    #def __init__(self,*params):
+#    def __init__(self,parent,flags):
+#        #strp=""
+#        #for p in params:
+#        #    strp += "p,"
+#        #strp = strp[:-1]
+#        #exec("super(QWidget2,self).__init__(%s)"%strp)
+#        super(QWidget2,self).__init__(self,parent,flags)
+#        print "pllll"
+#        #exec("oldInit(%s)"%strp)
+#        try:
+#            self.setWhatsThis(documentator.getDocString(self.objectName()))
+#        except Exception,e:
+#            pass
+#
+#QWidget = QWidget2
+#print QWidget
+
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
 class Diyabc(formDiyabc,baseDiyabc):
@@ -256,9 +276,19 @@ class Diyabc(formDiyabc,baseDiyabc):
         saveAllButton.setMaximumSize(QSize(72, 22))
         #saveButton.setMinimumSize(QSize(16, 18))
         saveAllButton.setFlat(True)
+        saveAllButton.setWhatsThis("plop")
         QObject.connect(saveAllButton,SIGNAL("clicked()"),self.saveAllProjects)
         self.ui.toolBar.addWidget(saveAllButton)
         saveAllButton.setDisabled(True)
+
+        wtButton = QPushButton(QIcon("docs/icons/document-save.png"),"WT",self)
+        self.wtButton = wtButton
+        wtButton.setMaximumSize(QSize(53, 22))
+        #wtButton.setMinimumSize(QSize(16, 18))
+        wtButton.setFlat(True)
+        QObject.connect(wtButton,SIGNAL("clicked()"),self.enterWhatsThisMode)
+        self.ui.toolBar.addWidget(wtButton)
+        wtButton.setDisabled(False)
 
         #spacer = QWidget()
         #spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -275,6 +305,21 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         for but in [newButton,openButton,saveButton,saveAllButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
+
+    def enterWhatsThisMode(self):
+        self.updateDoc()
+        QWhatsThis.enterWhatsThisMode()
+
+    def updateDoc(self):
+        l = []
+        for typ in [QLabel,QPushButton]:
+            l.extend(self.findChildren(typ))
+        for e in l:
+            try:
+                e.setWhatsThis(self.documentator.getDocString("%s"%e.objectName()))
+            except Exception,e:
+                #print "%s"%e
+                pass
 
     def setToolBarPosition(self,pos):
         self.removeToolBar(self.ui.toolBar)

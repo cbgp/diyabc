@@ -109,7 +109,6 @@ class Documentator():
                     value+=i.getAttribute('xml:id').replace('S','').replace('p','').replace('P','')
                     self.dicoDoc[key] = value
 
-
     def getDocString(self,key):
         """ retourne la doc liée à key
         """
