@@ -935,6 +935,9 @@ def main():
     myapp = Diyabc(app,projects=projects_to_open,logfile=logfile)
     myapp.setWindowTitle("DIYABC %s"%VERSION)
     myapp.show()
+    # les .app sous macos nécessitent cela pour que l'appli s'affiche en FG
+    if "darwin" in sys.platform and ".app/" in sys.argv[0]:
+        myapp.raise_()
 
     # pour les logs dans un fichier et sur le terminal
     # chaque TeeLogger remplace une sortie et écrit dans 

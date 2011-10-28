@@ -63,6 +63,8 @@ cp -r /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt_menu.nib $outp
 # config file modification
 sed -i "" "s/string>1</string>0</g" $output/Mac$APPNAME.app/Contents/Info.plist
 sed -i "" "s/Macdiyabc/Diyabc/g" $output/Mac$APPNAME.app/Contents/Info.plist
+if [ `grep diyabc $output/Mac$APPNAME.app/Contents/Info.plist | wc -l` -eq 1 ]; then
+    sed -i "" "s/diyabc/MacOS\/diyabc/g" $output/Mac$APPNAME.app/Contents/Info.plist
 mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
 # copy of needed images
 mkdir $output/docs
