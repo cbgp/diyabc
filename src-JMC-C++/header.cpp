@@ -1001,131 +1001,133 @@ public:
     void calstatobs(char* statobsfilename) {
 		int jstat;
 //partie DATA
-                cout<<"debut de calstatobs\n";
-                this->particuleobs.dnatrue = true;
-                this->particuleobs.nsample = this->dataobs.nsample;
-                //cout<<this->dataobs.nsample<<"\n";
-                this->particuleobs.data.nsample = this->dataobs.nsample;
-                this->particuleobs.data.nind = new int[this->dataobs.nsample];
-                this->particuleobs.data.indivsexe = new int*[this->dataobs.nsample];
-                for (int i=0;i<this->dataobs.nsample;i++) {
-                        this->particuleobs.data.nind[i] = this->dataobs.nind[i];
-                        this->particuleobs.data.indivsexe[i] = new int[this->dataobs.nind[i]];
-                        for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
-                }
-                //cout<<"apres DATA\n";
+		cout<<"debut de calstatobs\n";
+		this->particuleobs.dnatrue = true;
+		this->particuleobs.nsample = this->dataobs.nsample;
+		//cout<<this->dataobs.nsample<<"\n";
+		this->particuleobs.data.nsample = this->dataobs.nsample;
+		this->particuleobs.data.nind = new int[this->dataobs.nsample];
+		this->particuleobs.data.indivsexe = new int*[this->dataobs.nsample];
+		for (int i=0;i<this->dataobs.nsample;i++) {
+			this->particuleobs.data.nind[i] = this->dataobs.nind[i];
+			this->particuleobs.data.indivsexe[i] = new int[this->dataobs.nind[i]];
+			for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
+		}
+		//cout<<"apres DATA\n";
 //partie GROUPES
-                int ngr = this->ngroupes;
-                //cout<<"ngr="<<ngr<<"\n";
-                this->particuleobs.ngr = ngr;
-                this->particuleobs.grouplist = new LocusGroupC[ngr+1];
-                this->particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
-                this->particuleobs.grouplist[0].loc  = new int[this->groupe[0].nloc];
-                for (int i=0;i<this->groupe[0].nloc;i++) this->particuleobs.grouplist[0].loc[i] = this->groupe[0].loc[i];
-                for (int gr=1;gr<=ngr;gr++) {
-                        //cout <<"groupe "<<gr<<"\n";
-                        this->particuleobs.grouplist[gr].type =this->groupe[gr].type;
-                        this->particuleobs.grouplist[gr].nloc = this->groupe[gr].nloc;
-                        this->particuleobs.grouplist[gr].loc  = new int[this->groupe[gr].nloc];
-                        for (int i=0;i<this->groupe[gr].nloc;i++) this->particuleobs.grouplist[gr].loc[i] = this->groupe[gr].loc[i];
-                        this->particuleobs.grouplist[gr].nstat=this->groupe[gr].nstat;
-                        this->particuleobs.grouplist[gr].sumstat = new StatC[this->groupe[gr].nstat];
-                        //cout<<"calstatobs nstat["<<gr<<"]="<<this->groupe[gr].nstat<<"\n";
-                        for (int i=0;i<this->groupe[gr].nstat;i++){
-                                this->particuleobs.grouplist[gr].sumstat[i].cat   = this->groupe[gr].sumstat[i].cat;
-                                this->particuleobs.grouplist[gr].sumstat[i].samp  = this->groupe[gr].sumstat[i].samp;
-                                this->particuleobs.grouplist[gr].sumstat[i].samp1 = this->groupe[gr].sumstat[i].samp1;
-                                this->particuleobs.grouplist[gr].sumstat[i].samp2 = this->groupe[gr].sumstat[i].samp2;
-
-                        }
-                }
-                //cout<<"apres GROUPS\n";
+		int ngr = this->ngroupes;
+		//cout<<"ngr="<<ngr<<"\n";
+		this->particuleobs.ngr = ngr;
+		this->particuleobs.grouplist = new LocusGroupC[ngr+1];
+		this->particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
+		this->particuleobs.grouplist[0].loc  = new int[this->groupe[0].nloc];
+		for (int i=0;i<this->groupe[0].nloc;i++) this->particuleobs.grouplist[0].loc[i] = this->groupe[0].loc[i];
+		for (int gr=1;gr<=ngr;gr++) {
+			//cout <<"groupe "<<gr<<"\n";
+			this->particuleobs.grouplist[gr].type =this->groupe[gr].type;
+			this->particuleobs.grouplist[gr].nloc = this->groupe[gr].nloc;
+			this->particuleobs.grouplist[gr].loc  = new int[this->groupe[gr].nloc];
+			for (int i=0;i<this->groupe[gr].nloc;i++) this->particuleobs.grouplist[gr].loc[i] = this->groupe[gr].loc[i];
+			this->particuleobs.grouplist[gr].nstat=this->groupe[gr].nstat;
+			this->particuleobs.grouplist[gr].sumstat = new StatC[this->groupe[gr].nstat];
+			//cout<<"calstatobs nstat["<<gr<<"]="<<this->groupe[gr].nstat<<"\n";
+			for (int i=0;i<this->groupe[gr].nstat;i++){
+				this->particuleobs.grouplist[gr].sumstat[i].cat   = this->groupe[gr].sumstat[i].cat;
+				this->particuleobs.grouplist[gr].sumstat[i].samp  = this->groupe[gr].sumstat[i].samp;
+				this->particuleobs.grouplist[gr].sumstat[i].samp1 = this->groupe[gr].sumstat[i].samp1;
+				this->particuleobs.grouplist[gr].sumstat[i].samp2 = this->groupe[gr].sumstat[i].samp2;
+				if (this->groupe[gr].sumstat[i].cat>20) {
+					this->particuleobs.grouplist[gr].sumstat[i].vals= new long double [this->groupe[gr].nloc];
+					for (int loc=0;loc<this->groupe[gr].nloc;loc++) this->particuleobs.grouplist[gr].sumstat[i].vals[loc]=0.0;
+				}
+			}
+		}
+		//cout<<"apres GROUPS\n";
 //partie LOCUSLIST
-                int kmoy;
-                this->particuleobs.nloc = this->dataobs.nloc;
-				cout<<this->dataobs.nloc<<"\n";
-				//vector<LocusC> tmp(41751);
-                //this->particuleobs.locuslist = &tmp[0]; //new LocusC[41752];
-				this->particuleobs.locuslist =new LocusC[this->dataobs.nloc];
-                for (int kloc=0;kloc<this->dataobs.nloc;kloc++){
-                        this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type;
-                        this->particuleobs.locuslist[kloc].groupe = this->dataobs.locus[kloc].groupe;
-                        this->particuleobs.locuslist[kloc].coeff =  this->dataobs.locus[kloc].coeff;
-                        //this->particuleobs.locuslist[kloc].name =  new char[strlen(this->dataobs.locus[kloc].name)+1];
-                        //strcpy(this->particuleobs.locuslist[kloc].name,this->dataobs.locus[kloc].name);
-                        this->particuleobs.locuslist[kloc].ss = new int[ this->dataobs.nsample];
-                        for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].ss[sa] =  this->dataobs.locus[kloc].ss[sa];
-                        this->particuleobs.locuslist[kloc].samplesize = new int[ this->dataobs.nsample];
-                        for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].samplesize[sa] =  this->dataobs.locus[kloc].samplesize[sa];
-						//cout<<"locus "<<kloc<<"   groupe "<<this->particuleobs.locuslist[kloc].groupe<<"\n";
-                        if (this->dataobs.locus[kloc].type < 5) {
-                                kmoy=(this->dataobs.locus[kloc].maxi+this->dataobs.locus[kloc].mini)/2;
-                                this->particuleobs.locuslist[kloc].kmin=kmoy-((this->dataobs.locus[kloc].motif_range/2)-1)*this->dataobs.locus[kloc].motif_size;
-                                this->particuleobs.locuslist[kloc].kmax=this->particuleobs.locuslist[kloc].kmin+(this->dataobs.locus[kloc].motif_range-1)*this->dataobs.locus[kloc].motif_size;
-                                this->particuleobs.locuslist[kloc].motif_size = this->dataobs.locus[kloc].motif_size;
-                                this->particuleobs.locuslist[kloc].motif_range = this->dataobs.locus[kloc].motif_range;
-                                if ((this->particuleobs.locuslist[kloc].kmin>this->dataobs.locus[kloc].mini)or(this->particuleobs.locuslist[kloc].kmax<this->dataobs.locus[kloc].maxi)) {
-                                    cout <<"Job aborted : motif range at locus "<<kloc+1<<" is not large enough to include all observed alleles.\n";
-                                    exit(1);
-                                }
-                                this->particuleobs.locuslist[kloc].haplomic = new int*[this->particuleobs.data.nsample];
-                                for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
-                                      this->particuleobs.locuslist[kloc].haplomic[sa] = new int[this->particuleobs.locuslist[kloc].ss[sa]];
-                                      for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplomic[sa][i]=this->dataobs.locus[kloc].haplomic[sa][i];
-                                 }
-                        }else if (this->dataobs.locus[kloc].type < 10) {
-                                this->particuleobs.locuslist[kloc].dnalength =  this->dataobs.locus[kloc].dnalength;
-                                this->particuleobs.locuslist[kloc].pi_A = this->dataobs.locus[kloc].pi_A ;
-                                this->particuleobs.locuslist[kloc].pi_C =  this->dataobs.locus[kloc].pi_C;
-                                this->particuleobs.locuslist[kloc].pi_G =  this->dataobs.locus[kloc].pi_G;
-                                this->particuleobs.locuslist[kloc].pi_T =  this->dataobs.locus[kloc].pi_T;
-                                this->particuleobs.locuslist[kloc].haplodna = new string*[this->particuleobs.data.nsample];
-                                for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
-                                      this->particuleobs.locuslist[kloc].haplodna[sa] = new string[this->particuleobs.locuslist[kloc].ss[sa]];
-                                      for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i];
-                                 }
-                        }else {
-							this->particuleobs.locuslist[kloc].haplosnp = new short int*[this->particuleobs.data.nsample];
-							for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
-								  this->particuleobs.locuslist[kloc].haplosnp[sa] = new short int[this->particuleobs.locuslist[kloc].ss[sa]];
-								  for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplosnp[sa][i] =this->dataobs.locus[kloc].haplosnp[sa][i];
-							  }
-						}
-                       if (debuglevel==2) cout <<"Locus"<<kloc<< "  samplesize[0]="<<this->particuleobs.locuslist[kloc].samplesize[0]<<"\n";
-                }
-               if (debuglevel==2)cout<<"avant entete\n";
-               string *sb,ent;
-               int j;
-               sb = splitwords(this->entete," ",&j);
-               ent="";
-               for (int k=j-this->nstat;k<j;k++) ent=ent+centre(sb[k],14);
-               ent=ent+"\n";
-               if (debuglevel==2)cout<<"entete : "<<entete<<"\n";
-               delete []sb;
-			   jstat=0;
-               FILE *fobs;
-               fobs=fopen(statobsfilename,"w");
-               fputs(ent.c_str(),fobs);
-               for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
-                     if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
-                     this->particuleobs.docalstat(gr); exit(1);
-					 jstat +=this->particuleobs.grouplist[gr].nstat;
-                    if (debuglevel==2)cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
-                     for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs,"%12.8Lf  ",this->particuleobs.grouplist[gr].sumstat[j].val);
-               }
-               fprintf(fobs,"\n");
-               fclose(fobs);
-			   this->stat_obs = new float[jstat];
-			   jstat=0;
-			   for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
-				  for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) {
-					  this->stat_obs[jstat]=(float)this->particuleobs.grouplist[gr].sumstat[j].val;
-					  jstat++;
-
+		int kmoy;
+		this->particuleobs.nloc = this->dataobs.nloc;
+		cout<<this->dataobs.nloc<<"\n";
+		//vector<LocusC> tmp(41751);
+		//this->particuleobs.locuslist = &tmp[0]; //new LocusC[41752];
+		this->particuleobs.locuslist =new LocusC[this->dataobs.nloc];
+		for (int kloc=0;kloc<this->dataobs.nloc;kloc++){
+			this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type;
+			this->particuleobs.locuslist[kloc].groupe = this->dataobs.locus[kloc].groupe;
+			this->particuleobs.locuslist[kloc].coeff =  this->dataobs.locus[kloc].coeff;
+			//this->particuleobs.locuslist[kloc].name =  new char[strlen(this->dataobs.locus[kloc].name)+1];
+			//strcpy(this->particuleobs.locuslist[kloc].name,this->dataobs.locus[kloc].name);
+			this->particuleobs.locuslist[kloc].ss = new int[ this->dataobs.nsample];
+			for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].ss[sa] =  this->dataobs.locus[kloc].ss[sa];
+			this->particuleobs.locuslist[kloc].samplesize = new int[ this->dataobs.nsample];
+			for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].samplesize[sa] =  this->dataobs.locus[kloc].samplesize[sa];
+			//cout<<"locus "<<kloc<<"   groupe "<<this->particuleobs.locuslist[kloc].groupe<<"\n";
+			if (this->dataobs.locus[kloc].type < 5) {
+				kmoy=(this->dataobs.locus[kloc].maxi+this->dataobs.locus[kloc].mini)/2;
+				this->particuleobs.locuslist[kloc].kmin=kmoy-((this->dataobs.locus[kloc].motif_range/2)-1)*this->dataobs.locus[kloc].motif_size;
+				this->particuleobs.locuslist[kloc].kmax=this->particuleobs.locuslist[kloc].kmin+(this->dataobs.locus[kloc].motif_range-1)*this->dataobs.locus[kloc].motif_size;
+				this->particuleobs.locuslist[kloc].motif_size = this->dataobs.locus[kloc].motif_size;
+				this->particuleobs.locuslist[kloc].motif_range = this->dataobs.locus[kloc].motif_range;
+				if ((this->particuleobs.locuslist[kloc].kmin>this->dataobs.locus[kloc].mini)or(this->particuleobs.locuslist[kloc].kmax<this->dataobs.locus[kloc].maxi)) {
+					cout <<"Job aborted : motif range at locus "<<kloc+1<<" is not large enough to include all observed alleles.\n";
+					exit(1);
+				}
+				this->particuleobs.locuslist[kloc].haplomic = new int*[this->particuleobs.data.nsample];
+				for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
+					  this->particuleobs.locuslist[kloc].haplomic[sa] = new int[this->particuleobs.locuslist[kloc].ss[sa]];
+					  for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplomic[sa][i]=this->dataobs.locus[kloc].haplomic[sa][i];
 				  }
-			  }
-               this->particuleobs.libere(true);
-        }
+			}else if (this->dataobs.locus[kloc].type < 10) {
+				this->particuleobs.locuslist[kloc].dnalength =  this->dataobs.locus[kloc].dnalength;
+				this->particuleobs.locuslist[kloc].pi_A = this->dataobs.locus[kloc].pi_A ;
+				this->particuleobs.locuslist[kloc].pi_C =  this->dataobs.locus[kloc].pi_C;
+				this->particuleobs.locuslist[kloc].pi_G =  this->dataobs.locus[kloc].pi_G;
+				this->particuleobs.locuslist[kloc].pi_T =  this->dataobs.locus[kloc].pi_T;
+				this->particuleobs.locuslist[kloc].haplodna = new string*[this->particuleobs.data.nsample];
+				for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
+					  this->particuleobs.locuslist[kloc].haplodna[sa] = new string[this->particuleobs.locuslist[kloc].ss[sa]];
+					  for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i];
+				}
+			}else {
+				this->particuleobs.locuslist[kloc].haplosnp = new short int*[this->particuleobs.data.nsample];
+				for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
+					this->particuleobs.locuslist[kloc].haplosnp[sa] = new short int[this->particuleobs.locuslist[kloc].ss[sa]];
+					for (int i=0;i<this->particuleobs.locuslist[kloc].ss[sa];i++)this->particuleobs.locuslist[kloc].haplosnp[sa][i] =this->dataobs.locus[kloc].haplosnp[sa][i];
+				}
+			}
+			if (debuglevel==2) cout <<"Locus"<<kloc<< "  samplesize[0]="<<this->particuleobs.locuslist[kloc].samplesize[0]<<"\n";
+		}
+		if (debuglevel==2)cout<<"avant entete\n";
+		string *sb,ent;
+		int j;
+		sb = splitwords(this->entete," ",&j);
+		ent="";
+		for (int k=j-this->nstat;k<j;k++) ent=ent+centre(sb[k],14);
+		ent=ent+"\n";
+		if (debuglevel==2)cout<<"entete : "<<entete<<"\n";
+		delete []sb;
+		jstat=0;
+		FILE *fobs;
+		fobs=fopen(statobsfilename,"w");
+		fputs(ent.c_str(),fobs);
+		for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
+			if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
+			this->particuleobs.docalstat(gr); exit(1);
+			jstat +=this->particuleobs.grouplist[gr].nstat;
+			if (debuglevel==2)cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
+			for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs,"%12.8Lf  ",this->particuleobs.grouplist[gr].sumstat[j].val);
+		}
+		fprintf(fobs,"\n");
+		fclose(fobs);
+		this->stat_obs = new float[jstat];
+		jstat=0;
+		for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
+			for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) {
+				this->stat_obs[jstat]=(float)this->particuleobs.grouplist[gr].sumstat[j].val;
+				jstat++;
+			}
+		}
+		this->particuleobs.libere(true);
+    }
 
         /**
 * lit le fichier des statistiques observées (placées dans double *stat_obs)

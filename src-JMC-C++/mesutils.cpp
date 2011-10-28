@@ -20,10 +20,31 @@
 #include "matrices.cpp"
 #define MATRICES
 #endif
+#ifndef ALGORITHM
+#include <algorithm>
+#define ALGORITHM
+#endif
 
 using namespace std;
 
 #define PI 3.141592653589793
+
+struct matC {
+    long double v;
+	int num;
+	int ind;
+};
+/**
+* définit l'opérateur de comparaison de deux enregistrements de type matC
+* pour l'utilisation de la fonction sort du module algorithm
+*/
+struct compC
+{
+   bool operator() (const matC & lhs, const matC & rhs) const
+   {
+      return lhs.v < rhs.v;
+   }
+};
 
 double walltime( double *t0 )
 {
@@ -555,3 +576,26 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
     delete []wk;
     return res;
 }
+
+
+void combrank2(int n, int m, long double *x, long double *y,long double *rangx, long double *rangy) {
+	matC *A;
+	int k,i0,i1;
+	rangx = new long double[n];
+	rangy = new long double[m];
+	A = new matC[n+m];
+	for (int i=0;i<n;i++) {A[i].v=x[i];A[i].num=0;A[i].ind=i;}
+	for (int i=0;i<m;i++) {A[n+i].v=y[i];A[n+i].num=1;A[n+i].ind=i;}
+	sort(&A[0],&A[n+m],compC());
+	i0 = 0;i1 = 0;
+	while (i1<n+m-1) {
+		while ((i1<n+m-1)and(A[i1+1].v==A[i0].v)) i1++;
+		for (int i=i0;i<=i1;i++) {
+			k = A[i].ind;
+			if (A[i].num==0) rangx[k]=1.0+0.5*(long double)(i0+i1);
+			else             rangy[k]=1.0+0.5*(long double)(i0+i1);
+		}
+		i0 = i1+1;
+		i1 = i0;
+	}
+} 

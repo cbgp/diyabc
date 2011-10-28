@@ -59,14 +59,14 @@ int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			-13 : fst
  *  2 : het			-2 : nss            -14 : aml
- *  3 : var			-3 : mpd			 21 : distance de Cramer-von Mises(het)
- *  4 : MGW			-4 : vpd			 22 : distance de Cramer-von Mises(nei)
- *  5 : Fst			-5 : dta			 23 : distance de Cramer-von Mises(fst)
- *  6 : lik			-6 : pss			 24 : distance de Cramer-von Mises(aml)
- *  7 : dm2			-7 : mns
- *  8 : n2P			-8 : vns
- *  9 : h2P			-9 : nh2
- * 10 : v2P		   -10 : ns2
+ *  3 : var			-3 : mpd			 21 : hétérozygotie moyenne
+ *  4 : MGW			-4 : vpd			 22 : distance de Cramer-von Mises(het)
+ *  5 : Fst			-5 : dta			 23 : distance moyenne de nei
+ *  6 : lik			-6 : pss			 24 : distance de Cramer-von Mises(nei)
+ *  7 : dm2			-7 : mns			 25 : distance moyenne de fst
+ *  8 : n2P			-8 : vns			 26 : distance de Cramer-von Mises(fst)
+ *  9 : h2P			-9 : nh2			 27 : aml moyen
+ * 10 : v2P		   -10 : ns2			 28 : distance de Cramer-von Mises(aml)
  * 11 : das        -11 : mp2
  * 12 : Aml        -12 : mpb
  *
@@ -2803,8 +2803,9 @@ struct ParticleC
 		return hetm;		
 	}
 	
-	long double* cal_snhes(int gr,int st) {
-		long double *het;
+	long double cal_snhes(int gr,int st) {
+		long double *het,U,V,N,M,Dcra;
+		long double *rangx,*rangy;
 		int iloc,kloc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		het = new long double[this->grouplist[gr].nloc];
@@ -2818,7 +2819,17 @@ struct ParticleC
 				nl++;
 			}
 		}
-		return het;		
+		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
+		if (Dcra==0.0) return 0.0;  //particuleobs
+		N = (long double)nl;M = N;
+		combrank2(nl,nl,het,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
+		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
+		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
+		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
+		Dcra = Dcra/M;
+		delete []rangx;
+		delete []rangy;
+		return Dcra;		
 	}
 	
 	long double cal_het2p(int gr,int st){
@@ -2859,8 +2870,8 @@ struct ParticleC
 		if (nl>0) return neim/(long double)nl; else return 0.0;		
 	}
 		
-	long double* cal_snnes(int gr,int st) {
-		long double *nei,fi,fj,gi,gj;
+	long double cal_snnes(int gr,int st) {
+		long double *nei,fi,fj,gi,gj,M,N,*rangx,*rangy,Dcra,U,V;
 		int iloc,loc,nl=0,n1,n2;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -2876,7 +2887,17 @@ struct ParticleC
 				nl++;
 			}
 		}
-		return nei;	
+		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
+		if (Dcra==0.0) return 0.0;  //particuleobs
+		N = (long double)nl;M = N;
+		combrank2(nl,nl,nei,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
+		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
+		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
+		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
+		Dcra = Dcra/M;
+		delete []rangx;
+		delete []rangy;
+		return Dcra;		
 	}
 	
 	long double cal_var1p(int gr,int st){
@@ -4061,9 +4082,9 @@ struct ParticleC
 				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(gr,st);break;
 				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(gr,st);break;
 				case    21 : this->grouplist[gr].sumstat[st].val = cal_snhet(gr,st);break;
-				case    22 : this->grouplist[gr].sumstat[st].vals= cal_snhes(gr,st);break;
+				case    22 : this->grouplist[gr].sumstat[st].val = cal_snhes(gr,st);break;
 				case    23 : this->grouplist[gr].sumstat[st].val = cal_snnei(gr,st);break;
-				case	24 : this->grouplist[gr].sumstat[st].vals= cal_snnes(gr,st);break;
+				case	24 : this->grouplist[gr].sumstat[st].val = cal_snnes(gr,st);break;
 			}
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
