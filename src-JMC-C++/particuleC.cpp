@@ -2703,7 +2703,7 @@ struct ParticleC
 		return hetm;		
 	}
 	
-	long double cal_snhes(int gr,int st) {
+	long double cal_snhed(int gr,int st) {
 		long double *het,U,V,N,M,Dcra;
 		long double *rangx,*rangy;
 		int iloc,kloc,nl=0;
@@ -2753,7 +2753,7 @@ struct ParticleC
 		if (nl>0) return neim/(long double)nl; else return 0.0;		
 	}
 		
-	long double cal_snnes(int gr,int st) {
+	long double cal_snned(int gr,int st) {
 		long double *nei,fi,fj,gi,gj,M,N,*rangx,*rangy,Dcra,U,V;
 		int iloc,loc,nl=0,n1,n2;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -2819,7 +2819,7 @@ struct ParticleC
 		if (s3>0.0) return s1/s3; else return 0.0;
 	}
 
-	long double cal_snfss(int gr,int st) {
+	long double cal_snfsd(int gr,int st) {
 		long double *fst,fi,fj,n1,n2,Dcra,U,V,N,M,*rangx,*rangy;
 		long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P,s1=0.0,s3=0.0;
 		int iloc,loc,nl=0;
@@ -2865,6 +2865,114 @@ struct ParticleC
 		delete []rangy;
 		return Dcra;		
 	}
+
+	complex<long double> pente_liksnp(int gr, int st, int i0) {
+		long double a,freq1,freq2,li0,delta,*li;
+		int ig1,ig2,ind,loc,iloc,nn;
+		li = new long double[2];
+		StatC stat=this->grouplist[gr].sumstat[st];
+		int sample=stat.samp-1;
+		int sample1=stat.samp1-1;
+		int sample2=stat.samp2-1;
+		for (int rep=0;rep<2;rep++) {
+			a=0.001*(long double)(i0+rep);li[rep]=0.0;
+			for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+				loc=this->grouplist[gr].loc[iloc];
+			    ind=0;
+			    for (int i=0;i<this->locuslist[loc].ss[sample];) {
+			    	nn = calploidy(loc,sample,ind);
+				    ind++;
+	    			switch (nn)
+	    			{ case 1 :  ig1 = this->locuslist[loc].haplosnp[sample][i];i++;
+								if (ig1!=MICMISSING) {
+									freq1 = a*this->locuslist[loc].freq[sample1][ig1]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1];
+									if (freq1>0.0) li[rep] +=log(freq1);
+								}
+								break;
+	    			  case 2 :  ig1 = this->locuslist[loc].haplosnp[sample][i];i++;
+								ig2 = this->locuslist[loc].haplomic[sample][i];i++;
+				                if ((ig1!=MICMISSING)and(ig2!=MICMISSING)) {
+									if (ig1==ig2) {
+				                		freq1 = a*this->locuslist[loc].freq[sample1][ig1]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1];
+				                		if (freq1>0.0) li[rep] +=log(sqr(freq1));
+				                	}
+				                	else {
+				                		freq1 = a*this->locuslist[loc].freq[sample1][ig1]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1];
+										freq2 = a*this->locuslist[loc].freq[sample1][ig2]+(1.0-a)*this->locuslist[loc].freq[sample2][ig2];
+				                		if (freq1*freq2>0.0) li[rep] +=log(2.0*freq1*freq2);
+				                		else {
+				                			if (freq1>0.0) li[rep] +=log(freq1);
+				                			if (freq2>0.0) li[rep] +=log(freq2);
+				                		}
+				                	}
+				                }
+				                break;
+	    			}
+    			}
+			}
+		}
+		li0=li[0];
+		delta=li[1]-li[0];
+		delete []li;
+		return complex<long double>(li0,delta);
+	}
+
+	long double cal_snaml(int gr,int st){
+		int i1=1,i2=998,i3;
+		long double p1,p2,p3,lik1,lik2,lik3;
+		complex<long double> c;
+		c=pente_lik(gr,st,i1);lik1=real(c);p1=imag(c);
+		c=pente_lik(gr,st,i2);lik2=real(c);p2=imag(c);
+		if ((p1<0.0)and(p2<0.0)) return 0.0;
+		if ((p1>0.0)and(p2>0.0)) return 1.0;
+		do {
+			i3 = (i1+i2)/2;
+			c=pente_liksnp(gr,st,i3);lik3=real(c);p3=imag(c);
+			if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
+			else		   {i1=i3;p1=p3;lik1=lik3;}
+		} while (abs(i2-i1)>1);
+		if (lik1>lik2) return 0.001*(long double)i1; else return 0.001*(long double)i2;
+	}
+	
+	long double cal_snamd(int gr,int st) {
+		long double *aml,f1,f2,f3,n1,n2,Dcra,U,V,N,M,*rangx,*rangy;
+		int iloc,loc,nl=0;
+		
+		int sample=this->grouplist[gr].sumstat[st].samp-1;
+		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+		int sample2=this->grouplist[gr].sumstat[st].samp2-1;
+		aml = new long double[this->grouplist[gr].nloc];
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			n1=(long double)this->locuslist[loc].samplesize[sample];n2=(long double)this->locuslist[loc].samplesize[sample1];
+			if ((n1>0)and(n2>0)) {
+				f1=this->locuslist[loc].freq[sample1][0];
+				f2=this->locuslist[loc].freq[sample2][0];
+				f3=this->locuslist[loc].freq[sample][0];
+				if (((f1<f2)and(f3<f2))or((f1>f2)and(f3>f2))) {
+					aml[nl] = (f3-f2)/(f1-f2);
+					if (aml[nl]>1.0) aml[nl]=1.0;
+					nl++;
+				}
+			}
+		}
+		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
+		if (Dcra==0.0) { //particuleobs
+			for (int i=0;i<nl;i++) this->grouplist[gr].sumstat[st].vals[i] = aml[i];
+			return 0.0;  
+		}
+		N = (long double)nl;M = N;
+		combrank2(nl,nl,aml,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
+		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
+		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
+		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
+		Dcra = Dcra/M;
+		delete []rangx;
+		delete []rangy;
+		return Dcra;		
+	}
+	
+
 
 	long double cal_pid1p(int gr,int st){
         int iloc,kloc,nt=0,ni=0;
@@ -4166,10 +4274,13 @@ struct ParticleC
 				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(gr,st);break;
 				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(gr,st);break;
 				case    21 : this->grouplist[gr].sumstat[st].val = cal_snhet(gr,st);break;
-				case    22 : this->grouplist[gr].sumstat[st].val = cal_snhes(gr,st);break;
+				case    22 : this->grouplist[gr].sumstat[st].val = cal_snhed(gr,st);break;
 				case    23 : this->grouplist[gr].sumstat[st].val = cal_snnei(gr,st);break;
-				case	24 : this->grouplist[gr].sumstat[st].val = cal_snnes(gr,st);break;
+				case	24 : this->grouplist[gr].sumstat[st].val = cal_snned(gr,st);break;
 				case    25 : this->grouplist[gr].sumstat[st].val = cal_snfst(gr,st);break;
+				case    26 : this->grouplist[gr].sumstat[st].val = cal_snfsd(gr,st);break;
+				case    27 : this->grouplist[gr].sumstat[st].val = cal_snaml(gr,st);break;
+				case    28 : this->grouplist[gr].sumstat[st].val = cal_snamd(gr,st);break;
 			}
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
