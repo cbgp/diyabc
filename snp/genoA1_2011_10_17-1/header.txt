@@ -47,4 +47,4 @@ SHD 1 2 3
 SND 1&2 1&3 2&3
 SFD 1&2 1&3 2&3
 
-scenario       NG           NH2            NS            t1           NH1            t2            Nb            db           NHS            t3           NbH           NBS       SHD_1_1       SHD_1_2       SHD_1_3      SND_1_1&2     SND_1_1&3     SND_1_1&4      SFD_1_1&2     SFD_1_1&3     SFD_1_1&4   SAD_1_3&1&2
+scenario       NG           NH2            NS            t1           NH1            t2            Nb            db           NHS            t3           NbH           NbS       SHD_1_1       SHD_1_2       SHD_1_3      SND_1_1&2     SND_1_1&3     SND_1_1&4      SFD_1_1&2     SFD_1_1&3     SFD_1_1&4

@@ -1042,7 +1042,10 @@ struct ParticleC
 			for (int p=0;p<this->scen.nparam;p++) {
                 //cout<<this->scen.histparam[p].name;
                 //if (this->scen.histparam[p].prior.constant) cout<<"   constant\n"; else cout<<"   variable\n";
-				if (not this->scen.histparam[p].prior.constant) {this->scen.paramvar[this->scen.ipv]=this->scen.histparam[p].value;this->scen.ipv++;}
+				if (not this->scen.histparam[p].prior.constant) {
+					this->scen.paramvar[this->scen.ipv]=this->scen.histparam[p].value;
+					this->scen.ipv++;
+				}
 			}
 		}
 		//cout<<"fin du tirage des parametres\n";
@@ -1073,7 +1076,7 @@ struct ParticleC
 */
 	void setMutParammoyValue(){
 		int gr;
-		cout<<"this->scen.ipv="<<this->scen.ipv<<"\n";
+		//cout<<"this->scen.ipv="<<this->scen.ipv<<"\n";
 		for (gr=1;gr<=this->ngr;gr++) {
 		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"   usepriormut="<<usepriormut<<"\n";
 		    if (this->grouplist[gr].type==0) {  //microsat
@@ -1125,7 +1128,7 @@ struct ParticleC
 
 		}
 		this->scen.nparamvar=this->scen.ipv;
-		cout<<"Dans particule C  nparamvar = "<<this->scen.nparamvar<<"\n";
+		//cout<<"Dans particule C  nparamvar = "<<this->scen.nparamvar<<"\n";
 	}
 
 /**
@@ -1782,6 +1785,7 @@ struct ParticleC
 		b=0;s=this->gt[loc].branches[b].length;
 		while (s<r) {b++;s +=this->gt[loc].branches[b].length;};
 		this->gt[loc].branches[b].nmut = 1;
+		//cout<<"numero de la branche mutée : "<<b<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
 	} 
 
 
@@ -2307,7 +2311,7 @@ struct ParticleC
 		return simOK;
 	}
 
-	int dosimulpartsnp(int numscen){
+/*	int dosimulpartsnp(int numscen){
         if (debuglevel==5)        {cout<<"debut de dosimulpartsnp\n";fflush(stdin);}
 		vector <int> simulOK;
         string checktree;
@@ -2419,12 +2423,12 @@ struct ParticleC
 							//cout <<"\n";
 						}
 					}	//LOOP ON iseq
-		/* copie de l'arbre si locus sur Y ou mitochondrie */
+		// copie de l'arbre si locus sur Y ou mitochondrie 
 					if (not gtYexist) {if ((locuslist[loc].type % 5) == 3) {GeneTreeY  = copytree(this->gt[loc]);gtYexist=true;}}
 
 					if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = copytree(this->gt[loc]);gtMexist=true;}}
 				}
-	/* mutations */
+	// mutations 
 				put_mutations(loc);
 				 if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
 				simulOK[loc]=cree_haplo(loc);
@@ -2438,46 +2442,6 @@ struct ParticleC
 		}		//LOOP ON loc
         if (simulOK[locus]==0) {
                 if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
-                if (this->data.nmisshap>0) {
-                        for (int i=0;i<this->data.nmisshap;i++) {
-                              locus=this->data.misshap[i].locus;
-                              if (this->locuslist[locus].groupe>0) {
-                                      sa=this->data.misshap[i].sample;indiv=this->data.misshap[i].indiv;
-                                      //cout<<"MISSHAP   locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"\n";
-                                      if (this->locuslist[locus].type<5) this->locuslist[locus].haplomic[sa][indiv] = MICMISSING;
-                                      else                               this->locuslist[locus].haplodna[sa][indiv] = SEQMISSING;
-                                      this->locuslist[locus].samplesize[sa]--;
-                              }
-                        }
-
-                }
-                if (this->data.nmissnuc>0) {
-                        for (int i=0;i<this->data.nmissnuc;i++) {
-                              locus=this->data.missnuc[i].locus;
-                              if ((this->locuslist[locus].groupe>0)and(this->gt[locus].nmutot>0)) {
-                                      sa=this->data.missnuc[i].sample;
-                                      indiv=this->data.missnuc[i].indiv;
-                                      nuc=this->data.missnuc[i].nuc;
-                                      if (debuglevel==10) cout<<"MISSNUC "<<i<<"  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc/*<<"\n"*/;
-                                      int k=0;trouve=false;
-                                      while ((k<this->locuslist[locus].sitmut.size())and(not trouve)) {
-                                          trouve = (nuc==this->locuslist[locus].sitmut[k]);
-                                          if (not trouve) k++;
-                                      }
-                                      if (trouve) {
-                                          //cout<<"MISSNUC  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc<<"  k="<<k<<"\n";
-                                          if (debuglevel==10) cout<</*this->locuslist[locus].haplodna[sa][indiv]<<*/"   k="<<k<<"  ("<<this->locuslist[locus].haplodna[sa][indiv].length()<<")\n";
-                                          //this->locuslist[locus].haplodna[sa][indiv].replace(k,1,"N");
-										  this->locuslist[locus].haplodna[sa][indiv][k]='N';
-                                          //cout<<this->locuslist[locus].haplodna[sa][indiv]<<"\n";
-                                      } else {
-										  if (debuglevel==10) cout<<"  (non muté)\n";
-									  }
-                              }
-
-                        }
-
-                }
         }
         if (debuglevel==10) cout<<"avant le sitmut2.clear()\n";
         for (loc=0;loc<this->nloc;loc++) if ((this->locuslist[loc].type>4)and(simulOK[loc]>-1)) this->locuslist[loc].sitmut2.clear();
@@ -2505,7 +2469,7 @@ struct ParticleC
         }
         //exit(1);
 		return simOK;
-	}
+	}*/
 	
 /***********************************************************************************************************************/
 
@@ -2614,7 +2578,7 @@ struct ParticleC
 	void calfreqsnp(int gr) {
         int loc,iloc;
 		short int g0=0;
-		cout << "calfreqsnp début\n";
+		//cout << "calfreqsnp début\n";
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             loc=this->grouplist[gr].loc[iloc];
             this->locuslist[loc].freq = new long double* [this->data.nsample];
@@ -2629,7 +2593,14 @@ struct ParticleC
 				this->locuslist[loc].freq[samp][1] /=this->locuslist[loc].samplesize[samp];
 			}
 		}
-		cout<<"calfreqsnp fin\n";
+		/*for (iloc=0;iloc<1000;iloc++){
+            loc=this->grouplist[gr].loc[iloc];
+			cout<<"loc="<<loc<<"   freq[0]="<<this->locuslist[loc].freq[0][0];
+			cout<<"   freq[1]="<<this->locuslist[loc].freq[1][0];
+			cout<<"   freq[2]="<<this->locuslist[loc].freq[2][0];
+			cout<<"\n";
+		}*/
+		//cout<<"calfreqsnp fin\n";
 	}
 
     void liberefreq(int gr) {
@@ -2722,7 +2693,7 @@ struct ParticleC
 	}
 	
 	long double cal_snhed(int gr,int st) {
-		long double *het,U,V,N,M,Dcra;
+		long double *het,U,V,N,M,Dcra,d,hetm=0.0;
 		long double *rangx,*rangy;
 		int iloc,kloc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -2733,18 +2704,26 @@ struct ParticleC
 				het[nl]=1.0;
 				for (int k=0;k<2;k++) het[nl] -= sqr(this->locuslist[kloc].freq[sample][k]);
 				het[nl] *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
+				hetm += het[nl];
 				nl++;
 			}
 		}
+		printf("heterozygotie = %13.6Lf\n",hetm/(long double)nl);
 		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
 		if (Dcra==0.0) { //particuleobs
 			for (int i=0;i<nl;i++) this->grouplist[gr].sumstat[st].vals[i] = het[i];
 			return 0.0;  
 		}
 		N = (long double)nl;M = N;
+		rangx = new long double[nl];
+		rangy = new long double[nl];
 		combrank2(nl,nl,het,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
-		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
-		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
+		U=0.0; 
+		for(int i=0;i<nl;i++) {d = rangx[i]-(long double)(i+1);U +=d*d;}
+		U *=N;
+		V=0.0; 
+		for(int i=0;i<nl;i++) {d = rangy[i]-(long double)(i+1);V +=d*d;}
+		V *=M;
 		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
 		Dcra = Dcra/M;
 		delete []rangx;
@@ -2772,7 +2751,7 @@ struct ParticleC
 	}
 		
 	long double cal_snned(int gr,int st) {
-		long double *nei,fi,fj,gi,gj,M,N,*rangx,*rangy,Dcra,U,V;
+		long double *nei,fi,fj,gi,gj,M,N,*rangx,*rangy,Dcra,U,V,d;
 		int iloc,loc,nl=0,n1,n2;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -2793,9 +2772,15 @@ struct ParticleC
 			return 0.0;  
 		}
 		N = (long double)nl;M = N;
+		rangx = new long double[nl];
+		rangy = new long double[nl];
 		combrank2(nl,nl,nei,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
-		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
-		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
+		U=0.0; 
+		for(int i=0;i<nl;i++) {d = rangx[i]-(long double)(i+1);U +=d*d;}
+		U *=N;
+		V=0.0; 
+		for(int i=0;i<nl;i++) {d = rangy[i]-(long double)(i+1);V +=d*d;}
+		V *=M;
 		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
 		Dcra = Dcra/M;
 		delete []rangx;
@@ -2838,7 +2823,7 @@ struct ParticleC
 	}
 
 	long double cal_snfsd(int gr,int st) {
-		long double *fst,fi,fj,n1,n2,Dcra,U,V,N,M,*rangx,*rangy;
+		long double *fst,fi,fj,n1,n2,Dcra,U,V,N,M,*rangx,*rangy,d;
 		long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P,s1=0.0,s3=0.0;
 		int iloc,loc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -2865,6 +2850,7 @@ struct ParticleC
 					s1l += s2P;
 					s3l += s2P + s2I;
 				}
+				fst[nl]=0.0;
 				if ((s3l>0.0)and(s1l>0.0)) {fst[nl]=s1/s3;nl++;}
 			}
 		}
@@ -2874,9 +2860,15 @@ struct ParticleC
 			return 0.0;  
 		}
 		N = (long double)nl;M = N;
+		rangx = new long double[nl];
+		rangy = new long double[nl];
 		combrank2(nl,nl,fst,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
-		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
-		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
+		U=0.0; 
+		for(int i=0;i<nl;i++) {d = rangx[i]-(long double)(i+1);U +=d*d;}
+		U *=N;
+		V=0.0; 
+		for(int i=0;i<nl;i++) {d = rangy[i]-(long double)(i+1);V +=d*d;}
+		V *=M;
 		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
 		Dcra = Dcra/M;
 		delete []rangx;
@@ -4233,7 +4225,7 @@ struct ParticleC
 	 */
 	void docalstat(int gr) {
 //		cout << "avant calfreq\n";
-		cout << this->grouplist[gr].type<<"\n";
+		//cout << this->grouplist[gr].type<<"\n";
 		if (this->grouplist[gr].type == 0)  this->calfreq(gr);
         else if (this->grouplist[gr].type == 1)  this->cal_numvar(gr);
 		else  this->calfreqsnp(gr);
@@ -4300,7 +4292,8 @@ struct ParticleC
 				case    27 : this->grouplist[gr].sumstat[st].val = cal_snaml(gr,st);break;
 				case    28 : this->grouplist[gr].sumstat[st].val = cal_snamd(gr,st);break;
 			}
-			cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
+			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"   ";fflush(stdin);
+			//cout<<"\n";
 		}
 		if ((this->grouplist[gr].type == 0)or(this->grouplist[gr].type>9)) liberefreq(gr);
         else liberednavar(gr);

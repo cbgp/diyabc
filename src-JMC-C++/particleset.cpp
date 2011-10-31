@@ -453,12 +453,12 @@ void setgroup(int p) {
 				enreg[ipart].numscen=1;
                 if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
 
-                cout<<"dans particleset nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
+                //cout<<"dans particleset nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
 				for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
                     enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
-                    cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+                    //cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
                 }
-                cout <<"\n";
+                //cout <<"\n";
                 nstat=0;
 				for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 					for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}
@@ -488,11 +488,13 @@ void setgroup(int p) {
 			  //cout<<header.entete<<"\n";
 			  int nph,npm;
 			  ss=splitwords(header.entetehist," ",&nph);
-			  ss=splitwords(header.entetemut," ",&npm);
+			  if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;
               ss=splitwords(header.entete," ",&ns);
+			  cout<<"entetemut <"<<header.entetemut<<">\n";
+			  cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
               np=ns-header.nstat-1;
-              //cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
-			  //cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
+              cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
+			  cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
               for (int ipart=0;ipart<this->npart;ipart++) {
                   if (sOK[ipart]==0){
                       //cout<<enreg[ipart].numscen<<"\n";

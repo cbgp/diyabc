@@ -134,8 +134,9 @@ string* splitwordsR(string s,string sep,int m,int *k){
 	int j=0,j0;
 	while (s.find(sep)== 0) s=s.substr(1);
 	*k=0;
-	s.append(sep);
 	string *sb,s0,s1;
+	if (s.length()==0) {sb = new string[0];return sb;}
+	s.append(sep);
 	s1=string();
 	for (int i=0;i<s.length();i++) {
 		s0=s.substr(i,1);
@@ -580,15 +581,16 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
 
 void combrank2(int n, int m, long double *x, long double *y,long double *rangx, long double *rangy) {
 	matC *A;
-	int k,i0,i1;
-	rangx = new long double[n];
-	rangy = new long double[m];
+	int k,i0,i1,imin,imax;
+	long double rmin,rmax;
 	A = new matC[n+m];
 	for (int i=0;i<n;i++) {A[i].v=x[i];A[i].num=0;A[i].ind=i;}
 	for (int i=0;i<m;i++) {A[n+i].v=y[i];A[n+i].num=1;A[n+i].ind=i;}
 	sort(&A[0],&A[n+m],compC());
 	i0 = 0;i1 = 0;
-	while (i1<n+m-1) {
+	for (int i=0;i<n;i++) rangx[i]=0.0;
+	for (int i=0;i<m;i++) rangy[i]=0.0;
+	while (i1<n+m) {
 		while ((i1<n+m-1)and(A[i1+1].v==A[i0].v)) i1++;
 		for (int i=i0;i<=i1;i++) {
 			k = A[i].ind;
@@ -598,4 +600,5 @@ void combrank2(int n, int m, long double *x, long double *y,long double *rangx, 
 		i0 = i1+1;
 		i1 = i0;
 	}
+   delete []A;
 } 
