@@ -1773,7 +1773,7 @@ struct ParticleC
         //cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
 	}
 
-	void put_one_mutations(int loc) {
+	void put_one_mutation(int loc) {
 		this->gt[loc].nmutot=1;
 		double r,s=0.0,lengthtot=0.0;
 		int b;
@@ -1807,7 +1807,7 @@ struct ParticleC
 			if (g1<this->locuslist[loc].kmin) g1=this->locuslist[loc].kmin;
 			this->gt[loc].nodes[this->gt[loc].branches[b].bottom].state = g1;
 		}
-		else  {								//DNA SEQUENCE
+		else  if (this->locuslist[loc].type<10) {	//DNA SEQUENCE
 			string dna=this->gt[loc].nodes[this->gt[loc].branches[b].bottom].dna;
 			char dnb;
 			double ra=this->mw.random();
@@ -1847,6 +1847,9 @@ struct ParticleC
             dna[n] = dnb;
 			this->gt[loc].nodes[this->gt[loc].branches[b].bottom].dna = dna;
             if (debuglevel==8) cout<<dna<<"\n";
+		}
+		else {		//SNP 
+			this->gt[loc].nodes[this->gt[loc].branches[b].bottom].state=1;
 		}
 	}
 
@@ -1943,14 +1946,17 @@ struct ParticleC
 		int anc=this->gt[loc].nnodes-1;
         if (debuglevel==10) cout<<"anc="<<anc<<"\n";
 		if (debuglevel==10) cout<<"kmin = "<<this->locuslist[loc].kmin<<"   kmax = "<<this->locuslist[loc].kmax<<"\n";
-		if (this->locuslist[loc].type<5) {
+		if (this->locuslist[loc].type<5) {        //MICROSAT
 			this->gt[loc].nodes[anc].state=this->locuslist[loc].kmin + (int)(0.5*(this->locuslist[loc].kmax-this->locuslist[loc].kmin));
 		}
-		else {
+		else if (this->locuslist[loc].type<10) {  //SEQUENCE
 			this->gt[loc].nodes[anc].state=0;
 			this->gt[loc].nodes[anc].dna = init_dnaseq(loc);
 			if (debuglevel==10) cout << "locus " << loc  << "\n";
 			if (debuglevel==10) cout << "anc-dna = " << this->gt[loc].nodes[anc].dna << "\n";
+		}
+		else {                                   //SNP
+			this->gt[loc].nodes[anc].state=0;
 		}
 		int br, numut=-1;
         bool trouve;
@@ -2003,7 +2009,7 @@ struct ParticleC
 		if (debuglevel==10) cout<<"apres ordre\n";
         this->locuslist[loc].samplesize =new int[this->data.nsample];
         for (int sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].samplesize[sa] =this->locuslist[loc].ss[sa];
-		if (this->locuslist[loc].type<5) {       //MICROSAT
+		if (this->locuslist[loc].type<5) {      //MICROSAT
 			this->locuslist[loc].haplomic = new int*[this->data.nsample];
 			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplomic[sa] = new int [this->locuslist[loc].ss[sa]];
 			sa=0;ind=0;
@@ -2014,7 +2020,7 @@ struct ParticleC
 			}
 			if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
 		}
-		else {									//DNA SEQUENCES
+		else if (this->locuslist[loc].type<10) {//DNA SEQUENCES
 			this->locuslist[loc].haplodna = new string*[this->data.nsample];
 			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplodna[sa] = new string [this->locuslist[loc].ss[sa]];
 			sa=0;ind=0;
@@ -2038,6 +2044,17 @@ struct ParticleC
 				this->locuslist[loc].haplodna[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].dna;
 				ind++;if (ind==this->locuslist[loc].ss[sa]) {sa++;ind=0;}
 				}
+		}
+		else {									//SNP
+			this->locuslist[loc].haplosnp = new short int*[this->data.nsample];
+			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplosnp[sa] = new short int [this->locuslist[loc].ss[sa]];
+			sa=0;ind=0;
+			for (int i=0;i<this->gt[loc].ngenes;i++) {
+				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
+				this->locuslist[loc].haplosnp[sa][ind] = (short int)this->gt[loc].nodes[ordre[sa][ind]].state;
+				ind++;if (ind==this->locuslist[loc].ss[sa]) {sa++;ind=0;}
+			}
+			if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
 		}
 		ordre.clear();
         if (debuglevel==7)cout<<"Locus "<<loc<<"    nmutotdans cree_haplo = "<<this->gt[loc].nmutot<<"\n";
@@ -2134,8 +2151,8 @@ struct ParticleC
 		for (loc=0;loc<this->nloc;loc++) {
              if (debuglevel==10) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
 			if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
-				setMutParamValue(loc);
-				if (this->locuslist[loc].type >4) {
+				if (this->locuslist[loc].type <10) setMutParamValue(loc);
+				if ((this->locuslist[loc].type >4)and(this->locuslist[loc].type <10)) {
 					comp_matQ(loc);
                     dnaloc=true;
 					} else dnaloc=false;
@@ -2207,7 +2224,8 @@ struct ParticleC
 					if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = copytree(this->gt[loc]);gtMexist=true;}}
 				}
 	/* mutations */
-				put_mutations(loc);
+				if (this->locuslist[loc].type <10) put_mutations(loc);
+				else put_one_mutation(loc);
 				 if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
 				simulOK[loc]=cree_haplo(loc);
 				if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
@@ -2611,7 +2629,7 @@ struct ParticleC
 				this->locuslist[loc].freq[samp][1] /=this->locuslist[loc].samplesize[samp];
 			}
 		}
-		cout<<"clafreqsnp fin\n";
+		cout<<"calfreqsnp fin\n";
 	}
 
     void liberefreq(int gr) {
@@ -4282,7 +4300,7 @@ struct ParticleC
 				case    27 : this->grouplist[gr].sumstat[st].val = cal_snaml(gr,st);break;
 				case    28 : this->grouplist[gr].sumstat[st].val = cal_snamd(gr,st);break;
 			}
-			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
+			cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
 		if ((this->grouplist[gr].type == 0)or(this->grouplist[gr].type>9)) liberefreq(gr);
         else liberednavar(gr);
