@@ -766,7 +766,8 @@ public:
 		if (this->filetype==1) {
 			this->readfilesnp(filename);cout<<"fin de la lecture\n";
 			this->purgelocmonomorphes();cout<<"fin de la purge des monomorphes\n";
-			for (loc=0;loc<this->nloc;loc++) this->do_snp(loc);
+			this->sexratio=0.5;
+			for (loc=0;loc<this->nloc;loc++) {this->do_snp(loc);this->cal_coeff(loc);}
 			cout<<"apres le' traitement' des snp\n";
 		}
 		return this;

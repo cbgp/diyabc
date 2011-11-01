@@ -1526,7 +1526,7 @@ struct ParticleC
 		int nnod=0,nn,n=0;
 		//cout << "nsample = " << this->data.nsample << "   samplesize[0] = " << this->locuslist[loc].samplesize[0] << "\n";
 		for (int sa=0;sa<this->data.nsample;sa++) {nnod +=this->locuslist[loc].ss[sa];}
-		//cout << "nombre initial de noeuds = " << nnod  <<"\n";
+		//cout << "nombre initial de noeuds = " << nnod  <<"\n";exit(6);
 		gt.ngenes = nnod;
 		gt.nnodes=nnod;
 		gt.nbranches = 0;
@@ -1605,7 +1605,9 @@ struct ParticleC
 */
 	void coal_pop(int loc,int iseq) {
 		//cout <<"\n";
-		//cout << "debut COAL nbranches=" << this->gt[loc].nbranches <<"   nnodes="<<this->gt[loc].nnodes <<"\n";
+		//cout << "debut COAL nbranches=" << this->gt[loc].nbranches <<"   nnodes="<<this->gt[loc].nnodes ;
+		//cout<<"   Ne="<<this->seqlist[iseq].N<<"   t0="<<this->seqlist[iseq].t0<<"   t1="<<this->seqlist[iseq].t1;
+		//cout<<"    coeff="<<this->locuslist[loc].coeff <<"\n";
 		int nLineages=0;
 		bool final=false;
         double lra;
@@ -1785,7 +1787,7 @@ struct ParticleC
 		b=0;s=this->gt[loc].branches[b].length;
 		while (s<r) {b++;s +=this->gt[loc].branches[b].length;};
 		this->gt[loc].branches[b].nmut = 1;
-		//cout<<"numero de la branche mutée : "<<b<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
+		//cout<<"numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
 	} 
 
 
@@ -2239,6 +2241,7 @@ struct ParticleC
 				if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 			}
 			//cout<<"   OK\n";
+			//exit(6);
 		}		//LOOP ON loc
         if (simulOK[locus]==0) {
                 if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
@@ -2708,7 +2711,7 @@ struct ParticleC
 				nl++;
 			}
 		}
-		printf("heterozygotie = %13.6Lf\n",hetm/(long double)nl);
+		//printf("heterozygotie = %13.6Lf\n",hetm/(long double)nl);
 		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
 		if (Dcra==0.0) { //particuleobs
 			for (int i=0;i<nl;i++) this->grouplist[gr].sumstat[st].vals[i] = het[i];
