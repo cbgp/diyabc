@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?latexml searchpaths=".,//home/julien/vcs/git/diyabc.git/python_interface/docs/"?>
+<?latexml searchpaths=".,//home/julien/vcs/hg/diyabc/python_interface/docs/"?>
 <?latexml options="12pt,a4paper" class="article"?>
 <?latexml options="utf8" package="inputenc"?>
 <?latexml options="francais" package="babel"?>
@@ -16,7 +16,7 @@
   <creator role="author">
     <personname>Veyssier Julien</personname>
   </creator>
-  <date role="creation">May 11, 2011</date>
+  <date role="creation">November 2, 2011</date>
   <ERROR class="undefined">\fancyhf</ERROR>
   <ERROR class="undefined">\fancyhead</ERROR>
   <para xml:id="p1">
@@ -31,14 +31,44 @@
   <section refnum="1" xml:id="S1">
     <title>Introduction</title>
   </section>
-  <section refnum="2" xml:id="S2" labels="LABEL:doc_nbGroupLabel">
+  <section refnum="2" xml:id="S2">
     <title>Documentation</title>
-    <para xml:id="S2.p1">
-      <p>nb group quoi</p>
-    </para>
-    <paragraph xml:id="S2.SS0.SSS0.P1" labels="LABEL:doc_versionLabel">
+    <paragraph xml:id="S2.SS0.SSS0.P1" labels="LABEL:doc_rmScButton">
       <title>plop</title>
       <para xml:id="S2.SS0.SSS0.P1.p1">
+        <p>Supprime le scenario</p>
+      </para>
+    </paragraph>
+    <paragraph xml:id="S2.SS0.SSS0.P2" labels="LABEL:doc_rmCondButton">
+      <title>plop</title>
+      <para xml:id="S2.SS0.SSS0.P2.p1">
+        <p>remove a condition</p>
+      </para>
+    </paragraph>
+    <paragraph xml:id="S2.SS0.SSS0.P3" labels="LABEL:doc_setCondButton">
+      <title>plop</title>
+      <para xml:id="S2.SS0.SSS0.P3.p1">
+        <p>set a condition !</p>
+      </para>
+    </paragraph>
+    <paragraph xml:id="S2.SS0.SSS0.P4" labels="LABEL:doc_scplainTextEdit">
+      <title>plop</title>
+      <!-- %**** documentation.tex Line 50 **** -->
+      <para xml:id="S2.SS0.SSS0.P4.p1">
+        <p>contenu du scenario 
+exemple : 
+N N N</p>
+      </para>
+    </paragraph>
+    <paragraph xml:id="S2.SS0.SSS0.P5" labels="LABEL:doc_nbGroupLabel">
+      <title>plop</title>
+      <para xml:id="S2.SS0.SSS0.P5.p1">
+        <p>nb group quoi</p>
+      </para>
+    </paragraph>
+    <paragraph xml:id="S2.SS0.SSS0.P6" labels="LABEL:doc_versionLabel">
+      <title>plop</title>
+      <para xml:id="S2.SS0.SSS0.P6.p1">
         <p>Version of DIYABC. This number is incremented each time a new build is done.
 plop</p>
       </para>
@@ -50,7 +80,6 @@ plop</p>
       </para>
       <paragraph xml:id="S2.SS1.SSS0.P1" labels="LABEL:doc_nbSequencesLabel">
         <title>ploup</title>
-        <!-- %**** documentation.tex Line 50 **** -->
         <para xml:id="S2.SS1.SSS0.P1.p1">
           <p>nbSequencesLabel doc</p>
         </para>

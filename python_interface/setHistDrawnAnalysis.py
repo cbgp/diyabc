@@ -58,7 +58,6 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
 
     def addTheSc(self):
         
-        
         # creation de la groupbox a ajouter
         groupBox = QtGui.QGroupBox(self.ui.scScrollContent)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)

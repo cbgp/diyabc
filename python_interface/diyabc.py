@@ -314,13 +314,15 @@ class Diyabc(formDiyabc,baseDiyabc):
         #self.updateDoc()
         QWhatsThis.enterWhatsThisMode()
 
-    def updateDoc(self):
+    def updateDoc(self,obj=None):
         """ Met à jour le "what's this" pour tous les
-        objets documentés dans Documentator
+        objets fils de obj documentés dans Documentator
         """
+        if obj == None:
+            obj = self
         l = []
-        for typ in [QLabel,QPushButton]:
-            l.extend(self.findChildren(typ))
+        for typ in [QLabel,QPushButton,QPlainTextEdit]:
+            l.extend(obj.findChildren(typ))
         for e in l:
             try:
                 e.setWhatsThis(self.documentator.getDocString("%s"%e.objectName()))
@@ -428,7 +430,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.saveAllButton.setDisabled(False)
             self.switchToMainStack()
             log(1,"Simulation project '%s' successfully created"%(newSimProj.name))
-        self.updateDoc()
+            self.updateDoc(newSimProj)
 
     def setRecent(self,rlist):
         self.recentList = rlist
@@ -622,6 +624,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                         proj_to_open.lock()
                         log(1,"Project '%s' opened successfully"%dir)
                         self.addRecent(dir)
+                        self.updateDoc(proj_to_open)
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
             else:
@@ -630,7 +633,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         #cur.setShape(Qt.ArrowCursor)
         #self.setCursor(cur)
         QApplication.restoreOverrideCursor()
-        self.updateDoc()
 
     def cloneCurrentProject(self,cloneName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
@@ -715,9 +717,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                                 output.notify(self,"Error",str(e))
                     else:
                         output.notify(self,"Incorrect directory","A project can not be in a project directory")
-        self.updateDoc()
-
-
 
     def checkProjectName(self,name):
         """ vérifie si le nom de projet ne comporte pas de caractères illégaux et s'il n'est pas vide
@@ -798,10 +797,10 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.prevProjectActionMenu.setDisabled(False)
                         self.saveAllButton.setDisabled(False)
                     self.switchToMainStack()
+                    self.updateDoc(newProj)
                     log(1,'Project %s successfully created in %s'%(newProj.name,newProj.dir))
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded."%name)
-        self.updateDoc()
 
     def closeProject(self,index,save=None):
         """ ferme le projet qui est à l'index "index" du tabWidget

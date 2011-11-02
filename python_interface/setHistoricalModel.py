@@ -178,7 +178,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         sizePolicy.setHeightForWidth(lineEdit.sizePolicy().hasHeightForWidth())
         lineEdit.setSizePolicy(sizePolicy)
         lineEdit.setMinimumSize(QtCore.QSize(0, 26))
-        lineEdit.setMaximumSize(QtCore.QSize(45, 26))
+        lineEdit.setMaximumSize(QtCore.QSize(60, 26))
         lineEdit.setObjectName("rpEdit")
         verticalLayout_6.addWidget(lineEdit)
         self.ui.horizontalLayout_6.addWidget(groupBox_r)
@@ -197,6 +197,9 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         if self.ui.uniformRadio.isChecked():
             self.setUniformRp()
 
+        # maj de la doc seulement sur les box de scenario
+        self.updateDoc(groupBox)
+        self.updateDoc(groupBox_r)
         # on a modifié les scenarios
         self.modifOnScenarios()
 
@@ -290,6 +293,9 @@ class SetHistoricalModel(formHistModel,baseHistModel):
 
         self.condList.append(groupBox_cond)
 
+        # maj de la doc pour la condition
+        self.updateDoc(groupBox_cond)
+
     def rmCond(self,condBox=None):
         """ Suppression d'une condition sur les variables
         dans l'affichage et dans la liste locale
@@ -374,6 +380,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         else:
             if not silent:
                 output.notify(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
+
     def putParameters(self,chk_list):
         """ A partir de la liste des scenarios (vérifiés donc valides), on ajoute les paramètres dans la GUI
         La liste de paramètres est vidée avant cette opération
@@ -458,6 +465,12 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 cond_list_to_del.append(cond)
         for cond in cond_list_to_del:
             self.rmCond(cond)
+
+        # maj de la doc pour les paramètres historiques
+        self.updateDoc(self.ui.scrollArea)
+
+    def updateDoc(self,obj=None):
+        self.parent.parent.updateDoc(obj)
 
     def checkOneScenario(self,num,sc,silent=False):
         """ verifie un seul scenario et construit son tree pour dessiner les previews
