@@ -58,6 +58,13 @@ class SetGeneticData(formGenData,baseGenData):
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
 
+    def updateDoc(self,obj=None):
+        """ Met à jour la doc uniquement pour les fils de l'objet obj.
+        Fonctionne tant que les instances de SetGeneticData ont pour parent.parent
+        l'objet Diyabc
+        """
+        self.parent.parent.updateDoc(obj)
+
     def fillLocusTableFromData(self):
         """ rempli le tableau des locus en consultant l'instance de Data
         On ne peut pas le faire à l'instanciation de l'objet SetGeneticData car on a pas 

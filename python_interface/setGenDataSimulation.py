@@ -134,6 +134,9 @@ class SetGeneticDataSimulation(SetGeneticData):
         #fontt.setPointSize(fontt.pointSize() + 1)
         set_mut_button.setFont(fontt)
 
+        # maj de la doc pour ce groupe
+        self.updateDoc(groupBox)
+
         return groupBox
 
     def switchTo(self,widget):
