@@ -1126,6 +1126,7 @@ public:
 				jstat++;
 			}
 		}
+		if (debuglevel==2) cout<<"avant libere \n";
 		this->particuleobs.libere(true);
 		cout<<"fin de calstatobs\n";
     }

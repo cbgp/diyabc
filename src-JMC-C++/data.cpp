@@ -74,17 +74,14 @@ struct LocusC
 	short int **haplosnp; //array[sample][gene copy] 0,1,9
 
 	void libere(bool obs, int nsample) {
-      //cout<<"debut  nsample="<<nsample<<"\n";
+      cout<<"debut  nsample="<<nsample<<"\n";
        delete []this->name;
        //cout<<"apres delete name\n";
        delete []this->ss;
        //cout<<"apres delete ss\n";
        //delete []this->samplesize;
        //cout<<"apres delete samplesize\n";
-       if (this->type<5) {
-          /*for (int i=0;i<nsample;i++) delete []this->haplomic[i];
-          delete []this->haplomic;*/
-       } else {
+	   if ((this->type>4)and(this->type<10)) {
            if (not obs) {
               if (not mutsit.empty()) mutsit.clear();
               if (not tabsit.empty())tabsit.clear();
