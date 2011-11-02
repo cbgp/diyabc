@@ -604,6 +604,7 @@ struct BranchC
 {
 	int bottom,top,nmut;
 	double length;
+	bool OK;
 };
 
 /**
@@ -720,6 +721,7 @@ struct ParticleC
 			dest.branches[b].top = source.branches[b].top;
 			dest.branches[b].bottom = source.branches[b].bottom;
 			dest.branches[b].length = source.branches[b].length;
+			dest.branches[b].OK=source.branches[b].OK;
 		}
 		for (int n=0;n<dest.nnodes;n++) {
 			dest.nodes[n].pop = source.nodes[n].pop;
@@ -1609,8 +1611,9 @@ struct ParticleC
 		//cout<<"   Ne="<<this->seqlist[iseq].N<<"   t0="<<this->seqlist[iseq].t0<<"   t1="<<this->seqlist[iseq].t1;
 		//cout<<"    coeff="<<this->locuslist[loc].coeff <<"\n";
 		int nLineages=0;
-		bool final=false;
+		bool final=false,branchOK=false;
         double lra;
+		for (int i=0;i<this->data.npopref;i++) {if (this->seqlist[iseq].pop==this->data.popref[i]) branchOK=true; if (branchOK) break;}
 		for (int i=0;i<this->gt[loc].nnodes;i++){
 			if (this->gt[loc].nodes[i].pop == this->seqlist[iseq].pop) {nLineages +=1;}
 		}
@@ -1635,12 +1638,14 @@ struct ParticleC
 					this->gt[loc].nnodes++;//if (trace) cout <<"nouveau noeud = "<<this->gt[loc].nnodes-1<<"    nLineages = "<<nLineages<<"\n";
 					this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
 					this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
+					this->gt[loc].branches[this->gt[loc].nbranches].OK=branchOK;
 					//if (trace) cout << "retour premier noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
 					nLineages--;
 					this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
 					this->gt[loc].nbranches++;
 					this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
 					this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
+					this->gt[loc].branches[this->gt[loc].nbranches].OK=branchOK;
 					//if (trace) cout << "retour second noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
 					this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
                                         this->gt[loc].nbranches++;
@@ -1699,6 +1704,7 @@ struct ParticleC
 							for (int k=0;k<nn;k++){
 								this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
 								this->gt[loc].branches[this->gt[loc].nbranches].bottom=knum[k];
+								this->gt[loc].branches[this->gt[loc].nbranches].OK=branchOK;
 								this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].nnodes-1].height - this->gt[loc].nodes[knum[k]].height;
 								this->gt[loc].nbranches++;
 								this->gt[loc].nodes[knum[k]].pop=0;
@@ -1725,13 +1731,17 @@ struct ParticleC
 				this->gt[loc].nodes[i].pop = this->seqlist[iseq].pop;
 			}
 		}
+		bool branchOK;
+		for (int i=0;i<this->data.npopref;i++) {
+			if (this->data.popref[i]==this->seqlist[iseq].pop1) this->data.popref[i]=this->seqlist[iseq].pop;
+		}
 	}
 
 	void split_pop(int loc,int iseq) {
 		for (int i=0;i<this->gt[loc].nnodes;i++){
 			if (this->gt[loc].nodes[i].pop == this->seqlist[iseq].pop){
-			if (this->mw.random()<this->seqlist[iseq].admixrate) {this->gt[loc].nodes[i].pop = this->seqlist[iseq].pop1;}
-			else                                      {this->gt[loc].nodes[i].pop = this->seqlist[iseq].pop2;}
+				if (this->mw.random()<this->seqlist[iseq].admixrate) {this->gt[loc].nodes[i].pop = this->seqlist[iseq].pop1;}
+				else                                                 {this->gt[loc].nodes[i].pop = this->seqlist[iseq].pop2;}
 			}
 		}
 	}
@@ -1782,10 +1792,13 @@ struct ParticleC
 		this->gt[loc].nmutot=1;
 		double r,s=0.0,lengthtot=0.0;
 		int b;
-		for (b=0;b<this->gt[loc].nbranches;b++) {lengthtot +=this->gt[loc].branches[b].length;this->gt[loc].branches[b].nmut = 0;}
+		for (b=0;b<this->gt[loc].nbranches;b++) {
+			if (this->gt[loc].branches[b].OK) lengthtot +=this->gt[loc].branches[b].length;
+			this->gt[loc].branches[b].nmut = 0;
+		}
 		r=this->mw.random()*lengthtot;
 		b=0;s=this->gt[loc].branches[b].length;
-		while (s<r) {b++;s +=this->gt[loc].branches[b].length;};
+		while (s<r) {b++;if (this->gt[loc].branches[b].OK) s +=this->gt[loc].branches[b].length;};
 		this->gt[loc].branches[b].nmut = 1;
 		//cout<<"numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
 	} 

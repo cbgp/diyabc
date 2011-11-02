@@ -73,24 +73,27 @@ struct ParticleSetC
 			for (int j=0;j<header.dataobs.nind[i];j++) this->particule[p].data.indivsexe[i][j] = this->header.dataobs.indivsexe[i][j];
 		}
 		this->particule[p].data.nmisshap = this->header.dataobs.nmisshap;
-                if (this->particule[p].data.nmisshap>0) {
-                        this->particule[p].data.misshap = new MissingHaplo[this->particule[p].data.nmisshap];
-                        for (int i=0;i<this->header.dataobs.nmisshap;i++) {
-                                this->particule[p].data.misshap[i].locus  = this->header.dataobs.misshap[i].locus;
-                                this->particule[p].data.misshap[i].sample = this->header.dataobs.misshap[i].sample;
-                                this->particule[p].data.misshap[i].indiv  = this->header.dataobs.misshap[i].indiv;
-                        }
-                }
-                this->particule[p].data.nmissnuc = this->header.dataobs.nmissnuc;
-                if (this->particule[p].data.nmisshap>0) {
-                          this->particule[p].data.missnuc = new MissingNuc[this->particule[p].data.nmissnuc];
-                          for (int i=0;i<this->header.dataobs.nmissnuc;i++) {
-                                  this->particule[p].data.missnuc[i].locus  = this->header.dataobs.missnuc[i].locus;
-                                  this->particule[p].data.missnuc[i].sample = this->header.dataobs.missnuc[i].sample;
-                                  this->particule[p].data.missnuc[i].indiv  = this->header.dataobs.missnuc[i].indiv;
-                                  this->particule[p].data.missnuc[i].nuc    = this->header.dataobs.missnuc[i].nuc;
-                          }
-                }
+		if (this->particule[p].data.nmisshap>0) {
+				this->particule[p].data.misshap = new MissingHaplo[this->particule[p].data.nmisshap];
+				for (int i=0;i<this->header.dataobs.nmisshap;i++) {
+						this->particule[p].data.misshap[i].locus  = this->header.dataobs.misshap[i].locus;
+						this->particule[p].data.misshap[i].sample = this->header.dataobs.misshap[i].sample;
+						this->particule[p].data.misshap[i].indiv  = this->header.dataobs.misshap[i].indiv;
+				}
+		}
+		this->particule[p].data.nmissnuc = this->header.dataobs.nmissnuc;
+		if (this->particule[p].data.nmisshap>0) {
+				  this->particule[p].data.missnuc = new MissingNuc[this->particule[p].data.nmissnuc];
+				  for (int i=0;i<this->header.dataobs.nmissnuc;i++) {
+						  this->particule[p].data.missnuc[i].locus  = this->header.dataobs.missnuc[i].locus;
+						  this->particule[p].data.missnuc[i].sample = this->header.dataobs.missnuc[i].sample;
+						  this->particule[p].data.missnuc[i].indiv  = this->header.dataobs.missnuc[i].indiv;
+						  this->particule[p].data.missnuc[i].nuc    = this->header.dataobs.missnuc[i].nuc;
+				  }
+		}
+		this->particule[p].data.npopref = this->header.dataobs.npopref;
+		this->particule[p].data.popref = new int[this->particule[p].data.npopref];
+		for (int i=0;i<this->particule[p].data.npopref;i++) this->particule[p].data.popref[i] = this->header.dataobs.popref[i];
 	}
 
 void setgroup(int p) {

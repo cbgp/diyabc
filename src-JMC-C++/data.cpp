@@ -74,7 +74,7 @@ struct LocusC
 	short int **haplosnp; //array[sample][gene copy] 0,1,9
 
 	void libere(bool obs, int nsample) {
-      cout<<"debut  nsample="<<nsample<<"\n";
+      //cout<<"debut  nsample="<<nsample<<"\n";
        delete []this->name;
        //cout<<"apres delete name\n";
        delete []this->ss;
@@ -106,7 +106,7 @@ class DataC
 public:
 	string message,title,**indivname,***genotype;
 	int nsample,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
-	int *nind;
+	int *nind,*popref,npopref;
 	int **indivsexe;
 	double sexratio;
 	MissingHaplo *misshap, *misssnp;
@@ -766,6 +766,9 @@ public:
 			this->sexratio=0.5;
 			for (loc=0;loc<this->nloc;loc++) {this->do_snp(loc);this->cal_coeff(loc);}
 			cout<<"apres le' traitement' des snp\n";
+			this->npopref=1;
+			this->popref = new int[this->npopref];
+			this->popref[0]=2;
 		}
 		return this;
 	}

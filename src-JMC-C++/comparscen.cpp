@@ -498,7 +498,7 @@ matligneC *matA;
         ordonne(nmodel,nli,nco,vecY,numod);
         //cout <<"apres ordonne\n";
         int i,j,l,m,n,nmodnco=nmodel*(nco+1),imod,rep;
-        long double imody,betmin,betmax,coeff,mdiff;
+        long double imody,betmin,betmax,coeff,mdiff,mdiff0;
         bool fin,caloglik,invOK;
         for (i=0;i<nli;i++) {cmatX[i][0]=1.0; for (j=0;j<nco;j++) cmatX[i][j+1]=cmatX0[i][j];}
         //cout<<"\n";cout<<"\n";for (i=0;i<10;i++) {for (j=0;j<11;j++) cout<<cmatX[i][j]<<"  "; cout<<"\n";} cout<<"\n";
@@ -546,9 +546,11 @@ matligneC *matA;
 			//if(kap>1.0E99) coeff=1.0E-15; else coeff=1.0E-20;
 			coeff=1.0E-15;
 			err=inverse_Tik2(nmodnco,cmatC,cmatB,coeff);
+			mdiff=1.0;
 			do {
-				coeff *=sqrt(10.0);mdiff = 1.0;no=0;
+				coeff *=sqrt(10.0);/*mdiff = 1.0;*/
 				for (i=0;i<nmodnco;i++) {for (j=0;j<nmodnco;j++) cmatB0[i][j] = cmatB[i][j];}
+				mdiff0=mdiff;
 				err=inverse_Tik2(nmodnco,cmatC,cmatB,coeff);
 				if (err==0) {
 				    mdiff=0.0;
@@ -556,10 +558,12 @@ matligneC *matA;
 						for (j=0;j<nmodnco;j++) mdiff += fabs(cmatB[i][j]-cmatB0[i][j])/(fabs(cmatB[i][j])+fabs(cmatB0[i][j]));
 					}
 					mdiff /=(long double)nmodnco;
+					mdiff /=(long double)nmodnco;
 				}
-				printf("coeff = %8Le   mdiff = %8.5Lf   err=%d\n",coeff,mdiff,err);
-				invOK = ((err==0)and(mdiff<0.02));
+				printf("coeff = %8Le   mdiff = %8.5Lf   mdiff0 = %8.5Lf   err=%d   nmodnco=%d\n",coeff,mdiff,mdiff0,err,nmodnco);
+				invOK = ((err==0)and/*(mdiff<0.02)*/(mdiff>mdiff0));
 			} while ((not invOK)and(coeff<0.01));
+			for (i=0;i<nmodnco;i++) {for (j=0;j<nmodnco;j++) cmatB[i][j] = cmatB0[i][j];}			
 			if (not invOK) {err=9;cout <<"Echec de l'inversion de la matrice cmatC\n";}
 			for (i=0;i<nmodnco;i++) {cdeltabeta[i]=0.0;for (j=0;j<nmodnco;j++) cdeltabeta[i]+=cmatB[i][j]*cmatYP[j];}
             for (i=0;i<nmodnco;i++) {if (cdeltabeta[i] != cdeltabeta[i]) err=10;}
@@ -794,7 +798,8 @@ matligneC *matA;
         nprog=6+nlogreg;
         iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         nstatOK = rt.cal_varstat();
-        header.calstatobs(statobsfilename);stat_obs = header.stat_obs;
+        //header.calstatobs(statobsfilename);
+		stat_obs = header.stat_obs;
         rt.alloue_enrsel(nsel);
         clock_zero=0.0;debut=walltime(&clock_zero);
         rt.cal_dist(nrec,nsel,stat_obs);
