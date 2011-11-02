@@ -44,7 +44,7 @@ sed -i "" "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
 # nettoyage de la config de pyinstaller
 rm -f `dirname $pyinst`/config.dat
 # generation of the spec
-python $pyinst -y -o $output $pysrctmp
+python2.6 $pyinst -y -o $output $pysrctmp
 # modification of the spec to generate .app
 echo "
 import sys
@@ -53,13 +53,21 @@ if sys.platform.startswith('darwin'):
     appname='$APPNAME',
     version='$VERSION')" >> $output/$APPNAME.spec
 # .app build
-python $pyinst -y $output/$APPNAME.spec
+python2.6 $pyinst -y $output/$APPNAME.spec
 # icon copy
 cp $icon $output/Mac$APPNAME.app/Contents/Resources/App.icns
 # dist rep copy
 cp -r $output/dist/$APPNAME/* $output/Mac$APPNAME.app/Contents/MacOS/
 # qmenu copy
-cp -r /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt_menu.nib $output/Mac$APPNAME.app/Contents/Resources/
+if [ -d /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt_menu.nib ]; then
+	cp -r /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt_menu.nib $output/Mac$APPNAME.app/Contents/Resources/
+else
+	if [ -d /opt/local/lib/Resources/qt_menu.nib ]; then
+		cp -r /opt/local/lib/Resources/qt_menu.nib $output/Mac$APPNAME.app/Contents/Resources/
+	else
+		echo "qt_menu.nib copy FAILURE. App will be unusable"
+	fi
+fi
 # config file modification
 sed -i "" "s/string>1</string>0</g" $output/Mac$APPNAME.app/Contents/Info.plist
 sed -i "" "s/Macdiyabc/Diyabc/g" $output/Mac$APPNAME.app/Contents/Info.plist
