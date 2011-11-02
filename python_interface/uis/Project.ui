@@ -334,7 +334,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>(Alt+h)</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>            Set</string>
@@ -506,7 +506,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>(Alt+g)</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>            Set</string>

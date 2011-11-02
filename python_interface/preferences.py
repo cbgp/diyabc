@@ -248,6 +248,7 @@ class Preferences(formPreferences,basePreferences):
         bgColor = str(self.ui.bgColorCombo.currentText())
         pic_format = str(self.ui.formatCombo.currentText())
         ex_path = str(self.ui.execPathEdit.text())
+        pls = str(self.ui.particleLoopSizeEdit.text())
         ex_default = str(self.ui.useDefaultExeCheck.isChecked())
         wt = str(self.ui.wtCheck.isChecked())
         max_thread = str(self.ui.maxThreadCombo.currentText())
@@ -257,6 +258,7 @@ class Preferences(formPreferences,basePreferences):
         self.config["various"]["style"] = style
         self.config["various"]["format"] = pic_format
         self.config["various"]["execPath"] = ex_path
+        self.config["various"]["particleLoopSize"] = pls
         self.config["various"]["bgColor"] = bgColor
         self.config["various"]["useDefaultExecutable"] = ex_default
         self.config["various"]["activateWhatsThis"] = wt
@@ -277,6 +279,9 @@ class Preferences(formPreferences,basePreferences):
                 ind = self.ui.formatCombo.findText(pformat.strip())
                 if ind != -1:
                     self.ui.formatCombo.setCurrentIndex(ind)
+            if cfg["various"].has_key("particleLoopSize"):
+                pls = cfg["various"]["particleLoopSize"]
+                self.ui.particleLoopSizeEdit.setText(pls.strip())
             if cfg["various"].has_key("execPath"):
                 exf = cfg["various"]["execPath"]
                 self.ui.execPathEdit.setText(exf.strip())

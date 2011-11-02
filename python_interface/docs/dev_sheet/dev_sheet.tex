@@ -590,12 +590,16 @@ Description: Repository of CBGP softwares \end{verbatim}
 
         \paragraph{Solution}
 
+        Installation des macports : installer avec le dmg, puis mettre à jour
+        avec un sync en file:// sur le fichier ports.tar.gz téléchargeable ici : 
+        www.macports.org/files/ports.tar.gz .
+
         La solution est d'utiliser les macports pour installer PyQwt
         (py26-pyqwt), ce qui installera tout le n\'ecessaire. Il faut tout de
         même faire attention à numpy qui pose un problème de version de lib
         vector. La solution est de d\'esinstaller numpy et de l'installer avec
         l'option ``-atlas''. 
-        
+
         \subsubsection{pyinstaller}
 
         Les version 1.4 et 1.5 ne fonctionnent pas. Par contre, pyinstaller svn

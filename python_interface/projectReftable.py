@@ -1251,8 +1251,9 @@ class RefTableGenThread(QThread):
             #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
             #exPath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
             exPath = self.parent.parent.preferences_win.getExecutablePath()
+            particleLoopSize = str(self.parent.parent.preferences_win.particleLoopSizeEdit.text())
             nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
-            cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen, "-m", "-t", "%s"%nbMaxThread]
+            cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen , "-g", "%s"%particleLoopSize ,"m", "-t", "%s"%nbMaxThread]
             #print " ".join(cmd_args_list)
             self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
