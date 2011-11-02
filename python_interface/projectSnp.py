@@ -27,6 +27,7 @@ class ProjectSnp(ProjectReftable):
         self.typesOrdered = ["A","H","X","Y","M"]
 
         self.ui.frame_11.show()
+        self.ui.frame_12.show()
 
     def setGenetic(self):
         """ initie la définition des summary statistics

@@ -287,7 +287,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.ui.toolBar.addWidget(spacer)
 
-        wtButton = QPushButton(QIcon("docs/icons/whats.png"),"What's this",self)
+        wtButton = QPushButton(QIcon("docs/icons/whats.png"),"What's this ?",self)
         wtButton.setDisabled(False)
         wtButton.setToolTip("Click on this button and then on another object to get the documentation")
         self.wtButton = wtButton

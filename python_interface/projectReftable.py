@@ -1092,7 +1092,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         try:
             return cbgpUtils.readRefTableSize(reftablefile)
         except Exception,e:
-            return 1
+            return 0
 
     def readNbRecordsOfScenario(self,numSc):
         """ lit la table de référence binaire pour en extraire la taille et la retourner

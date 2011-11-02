@@ -85,8 +85,8 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
             av = int(str(self.ui.availableEdit.text()))
             ta = int(str(self.ui.takenEdit.text()))
             fro = int(str(self.ui.fromEdit.text()))
-            if fro+ta > av or ta <= 0 or fro <= 0:
-                raise Exception("Number of taken loci must be positive and inferior to number of available loci")
+            if fro+ta > av+1 or ta <= 0 or fro <= 0:
+                raise Exception("Number of taken loci must be positive and at most equal to available loci number")
             self.exit()
         except Exception,e:
             if not silent:

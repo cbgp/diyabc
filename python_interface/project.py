@@ -92,6 +92,7 @@ class Project(baseProject,formProject):
         self.stopUiGenReftable()
 
         self.ui.frame_11.hide()
+        self.ui.frame_12.hide()
 
     def returnTo(self,elem):
         self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)
