@@ -315,13 +315,16 @@ class Diyabc(formDiyabc,baseDiyabc):
         QWhatsThis.enterWhatsThisMode()
 
     def updateDoc(self):
+        """ Met à jour le "what's this" pour tous les
+        objets documentés dans Documentator
+        """
         l = []
         for typ in [QLabel,QPushButton]:
             l.extend(self.findChildren(typ))
         for e in l:
             try:
                 e.setWhatsThis(self.documentator.getDocString("%s"%e.objectName()))
-                print "ajout de "+"%s"%e.objectName()
+                log(4,"Adding documentation of "+"%s"%e.objectName())
             except Exception,e:
                 #print "%s"%e
                 pass
@@ -425,6 +428,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.saveAllButton.setDisabled(False)
             self.switchToMainStack()
             log(1,"Simulation project '%s' successfully created"%(newSimProj.name))
+        self.updateDoc()
 
     def setRecent(self,rlist):
         self.recentList = rlist
@@ -626,6 +630,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #cur.setShape(Qt.ArrowCursor)
         #self.setCursor(cur)
         QApplication.restoreOverrideCursor()
+        self.updateDoc()
 
     def cloneCurrentProject(self,cloneName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
@@ -710,6 +715,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                                 output.notify(self,"Error",str(e))
                     else:
                         output.notify(self,"Incorrect directory","A project can not be in a project directory")
+        self.updateDoc()
 
 
 
@@ -795,6 +801,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     log(1,'Project %s successfully created in %s'%(newProj.name,newProj.dir))
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded."%name)
+        self.updateDoc()
 
     def closeProject(self,index,save=None):
         """ ferme le projet qui est à l'index "index" du tabWidget
@@ -931,7 +938,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                         output.notify(self,"Documentation error","%s"%e)
             log(3,"Button '%s' pressed"%event.button())
         elif event.type() == QEvent.ChildAdded and self.wtEnabled:
-            self.updateDoc()
+            #self.updateDoc()
+            pass
         return QWidget.event(self,event)
 
     def dropEvent(self,event):
