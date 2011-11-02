@@ -1607,7 +1607,7 @@ struct ParticleC
 */
 	void coal_pop(int loc,int iseq) {
 		//cout <<"\n";
-		//cout << "debut COAL nbranches=" << this->gt[loc].nbranches <<"   nnodes="<<this->gt[loc].nnodes ;
+		//cout << "debut COAL pop="<<this->seqlist[iseq].pop<<"  nbranches=" << this->gt[loc].nbranches <<"   nnodes="<<this->gt[loc].nnodes ;
 		//cout<<"   Ne="<<this->seqlist[iseq].N<<"   t0="<<this->seqlist[iseq].t0<<"   t1="<<this->seqlist[iseq].t1;
 		//cout<<"    coeff="<<this->locuslist[loc].coeff <<"\n";
 		int nLineages=0;
@@ -1791,15 +1791,16 @@ struct ParticleC
 	void put_one_mutation(int loc) {
 		this->gt[loc].nmutot=1;
 		double r,s=0.0,lengthtot=0.0;
-		int b;
+		int b,nOK=0;
 		for (b=0;b<this->gt[loc].nbranches;b++) {
-			if (this->gt[loc].branches[b].OK) lengthtot +=this->gt[loc].branches[b].length;
+			if (this->gt[loc].branches[b].OK) {lengthtot +=this->gt[loc].branches[b].length;nOK++;}
 			this->gt[loc].branches[b].nmut = 0;
 		}
 		r=this->mw.random()*lengthtot;
 		b=0;s=this->gt[loc].branches[b].length;
 		while (s<r) {b++;if (this->gt[loc].branches[b].OK) s +=this->gt[loc].branches[b].length;};
 		this->gt[loc].branches[b].nmut = 1;
+		//cout<<nOK<<" branches mutables sur "<<this->gt[loc].nbranches<<"\n";
 		//cout<<"numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
 	} 
 
@@ -2197,7 +2198,7 @@ struct ParticleC
 
                            if (this->seqlist[iseq].action == 'C') cout <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
                            else  cout <<"   "<<this->seqlist[iseq].t0;
-                           cout<<"    pop="<<this->seqlist[iseq].pop;
+                           cout<<"    pop="<<this->seqlist[iseq].pop;cout<<"    Ne="<<this->seqlist[iseq].N;
                            if ((this->seqlist[iseq].action == 'M')or(this->seqlist[iseq].action == 'S')) cout <<"   pop1="<<this->seqlist[iseq].pop1;
                            if (this->seqlist[iseq].action == 'S') cout <<"   pop2="<<this->seqlist[iseq].pop2;
                            cout<<"\n";
@@ -2253,8 +2254,9 @@ struct ParticleC
                 if (simulOK[loc] != 0) {if (debuglevel==10) cout << "avant break interne\n";break;}
 				if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 			}
-			//cout<<"   OK\n";
-			//exit(6);
+			//cout<<"   OK\n\n";
+			//if (loc==50) 
+			exit(6);
 		}		//LOOP ON loc
         if (simulOK[locus]==0) {
                 if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);

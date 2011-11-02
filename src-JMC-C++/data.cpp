@@ -414,6 +414,23 @@ public:
 		}
 	}
 
+/**
+* ecriture en binaire d'un fichier snp 
+*/
+	void ecribin(string filenamebin) {
+		/*fstream f1;		
+        f1.open(filenamebin.c_str(),ios::out|ios::binary);
+		f1.write((char*)&(this->nloc),sizeof(int));
+		f1.close();*/
+	}
+
+/**
+* lecture en binaire d'un fichier snp 
+*/
+	void libin(string filenamebin) {
+		/*fstream f0;
+        f1.open(filenamebin.c_str(),ios::in|ios::binary);*/
+	}
 
 /**
 * lecture d'un fichier de donnée GENEPOP et stockage des informations dans une structure DataC
@@ -744,6 +761,10 @@ public:
 */
     DataC * loadfromfile(string filename) {
 		int loc,kloc;
+		string filenamebin;
+		fstream fs;
+		size_t k=filename.find_last_of(".bin");
+		filenamebin=filename.substr(0,k)+".bin";
 		this->filetype = this->testfile(filename);
 		if (this->filetype==-1) {
 			cout<<"Unreckognized file format"<<"\n";
@@ -761,7 +782,15 @@ public:
 			}
 		}
 		if (this->filetype==1) {
-			this->readfilesnp(filename);cout<<"fin de la lecture\n";
+		    fs.open(filenamebin.c_str(),ios::in|ios::binary); 
+		    if (fs) {fs.close();this->libin(filenamebin);}
+			else {
+				this->readfilesnp(filename);
+				filenamebin=filename.substr(0,k)+".bin";
+				cout<<filenamebin<<"\n";
+				this->ecribin(filename);
+			}
+			cout<<"fin de la lecture\n";
 			this->purgelocmonomorphes();cout<<"fin de la purge des monomorphes\n";
 			this->sexratio=0.5;
 			for (loc=0;loc<this->nloc;loc++) {this->do_snp(loc);this->cal_coeff(loc);}

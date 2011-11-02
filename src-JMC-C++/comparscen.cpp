@@ -335,7 +335,13 @@ matligneC *matA;
             llik=llik+cvecW[i]*a;
             }
         cloglik[rep-1]=llik;
-        if (rep>1) {if(cloglik[rep-1]<cloglik[rep-2]-0.000001) {std::cout << "loglik decroit\n";return false;}}
+        if (rep>1) {
+			if(cloglik[rep-1]<cloglik[rep-2]) {
+				printf("rep = %d  loglik decroit : %12.6Lf  %12.6Lf\n",rep,cloglik[rep-1],0.999999*cloglik[rep-2]);
+				//std::cout << "loglik decroit : "<<cloglik[rep-1]<<"   "<<cloglik[rep-2]<<"\n";
+				return false;
+			}
+		}
         duree=walltime(&debut);time_loglik += duree;
         return OK;
     }
@@ -597,7 +603,10 @@ matligneC *matA;
             betmin=cbet[0];betmax=cbet[0];
             for (i=0;i<nmodel+1;i++) {if (betmin>cbet[i]) betmin=cbet[i];}
             for (i=0;i<nmodel+1;i++) {if (betmax<cbet[i]) betmax=cbet[i];}
-            fin=true;i=0;while ((fin==true)&&(i<nmodel+1)) {fin= (fabs(px[i]-cpx0[i])<0.0001);i++;}
+            fin=true;i=0;while ((fin==true)&&(i<nmodel+1)) {
+				fin= (fabs(px[i]-cpx0[i])<0.0001)or(fabs(cloglik[rep-1]/cloglik[rep-2]-1.0)<0.000001);
+				printf("%12.7Lf\n",fabs(px[i]-cpx0[i]));i++;
+			}
             fin=(fin||(betmax-betmin>50));
 /////////////////////////
             if (rep<=20) {
@@ -612,7 +621,8 @@ matligneC *matA;
             for (i=0;i<nmodel+1;i++) {cout<<"  ";cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<px[i];}
             sx=0.0;sx2=0.0;for(i=0;i<nmodel+1;i++) {sx+=px[i];sx2+=px[i]*px[i];}
             //if ((sx<0.001)or(sx2>0.999)) {
-                cout<<"\nsx="<<sx<<"   sx2="<<sx2<<"   loglik="<<cloglik[rep-1]<<"\n";
+                //cout<<"\nsx="<<sx<<"   sx2="<<sx2<<"   loglik="<<cloglik[rep-1]<<"\n";
+				printf("\nsx= %6.3f   sx2= %6.3f     loglik= %15.8Lf\n",sx,sx2,cloglik[rep-1]);
                 //for (i=0;i<nmodnco;i++) cout<<cbeta[i]<<"\n";
             //    exit(1);
             //}
