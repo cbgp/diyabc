@@ -171,6 +171,9 @@ class ProjectMsatSeq(ProjectReftable):
             return True
         return False
 
+    def getNbSumStats(self):
+        return self.gen_data_win.getNbSumStats()
+
     def save(self):
         """ sauvegarde du projet -> mainconf, histconf, genconf, theadconf
         Si le gen et hist sont valides, on génère le header
@@ -189,7 +192,7 @@ class ProjectMsatSeq(ProjectReftable):
             # recup du nombre de params (depuis historical model et les mutational qui varient)
             nb_param = self.hist_model_win.getNbParam()
             nb_param += self.gen_data_win.getNbParam()
-            nb_sum_stats = self.gen_data_win.getNbSumStats()
+            nb_sum_stats = self.getNbSumStats()
             f.write("%s parameters and %s summary statistics\n\n"%(nb_param,nb_sum_stats))
             f.close()
 

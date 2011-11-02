@@ -44,7 +44,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
 
         nbsets = str(self.parent.ui.nbSetsDoneEdit.text()).strip()
         nbScenario = len(self.parent.hist_model_win.scList)
-        nbStat = self.parent.gen_data_win.getNbSumStats()
+        nbStat = self.parent.getNbSumStats()
         verb = "is"
         plur = ""
         if nbScenario > 1:
