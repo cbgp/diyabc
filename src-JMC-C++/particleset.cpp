@@ -81,6 +81,15 @@ struct ParticleSetC
 						this->particule[p].data.misshap[i].indiv  = this->header.dataobs.misshap[i].indiv;
 				}
 		}
+		this->particule[p].data.nmisssnp = this->header.dataobs.nmisssnp;
+		if (this->particule[p].data.nmisssnp>0) {
+				this->particule[p].data.misssnp = new MissingHaplo[this->particule[p].data.nmisssnp];
+				for (int i=0;i<this->header.dataobs.nmisssnp;i++) {
+						this->particule[p].data.misssnp[i].locus  = this->header.dataobs.misssnp[i].locus;
+						this->particule[p].data.misssnp[i].sample = this->header.dataobs.misssnp[i].sample;
+						this->particule[p].data.misssnp[i].indiv  = this->header.dataobs.misssnp[i].indiv;
+				}
+		}
 		this->particule[p].data.nmissnuc = this->header.dataobs.nmissnuc;
 		if (this->particule[p].data.nmisshap>0) {
 				  this->particule[p].data.missnuc = new MissingNuc[this->particule[p].data.nmissnuc];

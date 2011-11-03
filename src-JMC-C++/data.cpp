@@ -795,9 +795,9 @@ public:
 			this->sexratio=0.5;
 			for (loc=0;loc<this->nloc;loc++) {this->do_snp(loc);this->cal_coeff(loc);}
 			cout<<"apres le' traitement' des snp\n";
-			this->npopref=1;
-			this->popref = new int[this->npopref];
-			this->popref[0]=2;
+			this->npopref=0;
+			//this->popref = new int[this->npopref];
+			//this->popref[0]=2;
 		}
 		return this;
 	}

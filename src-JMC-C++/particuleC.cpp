@@ -51,6 +51,7 @@
 using namespace std;
 #define MICMISSING -9999
 #define SEQMISSING ""
+#define SNPMISSING 9
 #define NUCMISSING 'N'
 #define NSTAT 35
 
@@ -2365,6 +2366,19 @@ struct ParticleC
                         }
 
                 }
+                if (this->data.nmisssnp>0){
+					cout<<"ANORMAL\n";
+					for (int i=0;i<this->data.nmisssnp;i++) {
+						locus=this->data.misssnp[i].locus;
+                        if (this->locuslist[locus].groupe>0) {
+							sa=this->data.misssnp[i].sample;indiv=this->data.misssnp[i].indiv;
+                            //cout<<"MISSHAP   locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"\n";
+							this->locuslist[locus].haplosnp[sa][indiv] = (short int)SNPMISSING;
+							this->locuslist[locus].samplesize[sa]--;
+						}
+					}
+					
+				}
         }
         if (debuglevel==10) cout<<"avant le sitmut2.clear()\n";
         for (loc=0;loc<this->nloc;loc++) if ((this->locuslist[loc].type>4)and(simulOK[loc]>-1)) this->locuslist[loc].sitmut2.clear();
@@ -2678,19 +2692,7 @@ struct ParticleC
 				this->locuslist[loc].freq[samp][1] /=this->locuslist[loc].samplesize[samp];
 			}
 		}
-		for (iloc=0;iloc<1000;iloc++){
-            loc=this->grouplist[gr].loc[iloc];
-			/*cout<<"loc="<<loc<<"   freq[0]="<<this->locuslist[loc].freq[0][0];
-			cout<<"   freq[1]="<<this->locuslist[loc].freq[1][0];
-			cout<<"   freq[2]="<<this->locuslist[loc].freq[2][0];
-			cout<<"\n";*/
-			h0=this->locuslist[loc].freq[0][0];h0=1.0-(h0*h0+(1.0-h0)*(1-h0));m0+=0.001*h0;
-			h1=this->locuslist[loc].freq[1][0];h1=1.0-(h1*h1+(1.0-h1)*(1-h1));m1+=0.001*h1;
-			h2=this->locuslist[loc].freq[2][0];h2=1.0-(h2*h2+(1.0-h2)*(1-h2));m2+=0.001*h2;
-			//printf("loc %3d   het[0]=%6.4Lf  het[1]=%6.4Lf   het[2]=%6.4Lf\n",loc,h0,h1,h2);
-		}
 		//cout<<"calfreqsnp fin\n";
-		//printf("moyenne het[0]=%6.4Lf  het[1]=%6.4Lf   het[2]=%6.4Lf\n",m0,m1,m2);
 	}
 
     void liberefreq(int gr) {

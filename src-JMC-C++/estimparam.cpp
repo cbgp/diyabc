@@ -1118,7 +1118,7 @@ parstatC *parstat;
         }
 
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
-        header.calstatobs(statobsfilename);  cout<<"apres read_statobs\n";
+        //header.calstatobs(statobsfilename);  cout<<"apres read_statobs\n";
 		stat_obs = header.stat_obs;
         nprog=100;iprog=1;
         flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);

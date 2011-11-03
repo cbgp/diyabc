@@ -184,7 +184,8 @@ struct resACPC
         int scen,**avant,**apres,**egal,bidon,nparamax = 0;
         enregC enr;
         string **star;
-        header.calstatobs(statobsfilename);stat_obs = header.stat_obs;  //cout<<"apres read_statobs\n";
+        //header.calstatobs(statobsfilename);
+		stat_obs = header.stat_obs;  //cout<<"apres read_statobs\n";
         for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         cout<<nparamax<<"\n";
         enr.param = new float[nparamax];
