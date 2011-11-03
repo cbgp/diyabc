@@ -19,7 +19,7 @@ if [ $# -eq 0 ] ; then
     exit
 else
     if [ $# -eq 1 ]; then
-        icon="../accueil_pictures/coccicon.icns"
+        icon="../icons/coccicon.icns"
         output="./macgeneration_"+`date +%e-%m-%Y_%R`
         echo "Your application will be generated in $output . Press enter to continue..."
         read
