@@ -20,7 +20,8 @@ if [ $# -eq 0 ] ; then
 else
     if [ $# -eq 1 ]; then
         icon="../icons/coccicon.icns"
-        output="./macgeneration_"+`date +%e-%m-%Y_%R`
+        output="./macgeneration_"`date +%e-%m-%Y_%R`
+        output=`echo $output | sed "s/ //g"`
         echo "Your application will be generated in $output . Press enter to continue..."
         read
         pysrc="../../diyabc.py"
