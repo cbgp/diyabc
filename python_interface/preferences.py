@@ -10,6 +10,7 @@ from PyQt4 import uic
 from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 import output
+import utils.cbgpUtils as utilsPack
 from utils.cbgpUtils import log
 from utils.configobj.configobj import *
 
@@ -49,6 +50,8 @@ class Preferences(formPreferences,basePreferences):
 
         self.ui.connectButton.hide()
 
+        self.ui.maxLogLvlCombo.setCurrentIndex(2)
+
         self.styles = []
         for i in QStyleFactory.keys():
             self.styles.append(str(i))
@@ -84,6 +87,7 @@ class Preferences(formPreferences,basePreferences):
         QObject.connect(self.ui.cancelPreferencesButton,SIGNAL("clicked()"),self.cancel)
         QObject.connect(self.ui.execBrowseButton,SIGNAL("clicked()"),self.browseExec)
         QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
+        QObject.connect(self.ui.maxLogLvlCombo,SIGNAL("currentIndexChanged(int)"),self.changeLogLevel)
         QObject.connect(self.ui.bgColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
 
         QObject.connect(self.ui.serverCheck,SIGNAL("toggled(bool)"),self.toggleServer)
@@ -105,6 +109,9 @@ class Preferences(formPreferences,basePreferences):
         """
         self.loadPreferences()
         self.close()
+
+    def changeLogLevel(self,index):
+        utilsPack.LOG_LEVEL = index + 1
 
     def toggleServer(self,state):
         self.ui.addrEdit.setDisabled(not state)
@@ -226,7 +233,7 @@ class Preferences(formPreferences,basePreferences):
                 for num,rec in self.config["recent"].items():
                     if len(rec) > 0 and rec.strip() != "":
                         recent_list.append(rec.strip())
-                        print "Loading recent : %s"%rec.strip()
+                        log(3, "Loading recent : %s"%rec.strip())
                 self.parent.setRecent(recent_list)
 
     def saveRecent(self):
@@ -252,6 +259,7 @@ class Preferences(formPreferences,basePreferences):
         ex_default = str(self.ui.useDefaultExeCheck.isChecked())
         wt = str(self.ui.wtCheck.isChecked())
         max_thread = str(self.ui.maxThreadCombo.currentText())
+        max_log_lvl = self.ui.maxLogLvlCombo.currentIndex()
 
         if not self.config.has_key("various"):
             self.config["various"] = {}
@@ -263,6 +271,7 @@ class Preferences(formPreferences,basePreferences):
         self.config["various"]["useDefaultExecutable"] = ex_default
         self.config["various"]["activateWhatsThis"] = wt
         self.config["various"]["maxThreadNumber"] = max_thread
+        self.config["various"]["maxLogLevel"] = max_log_lvl + 1
 
     def loadVarious(self):
         """ chargement de la partie various des préférences
@@ -305,6 +314,9 @@ class Preferences(formPreferences,basePreferences):
                 ind = self.ui.maxThreadCombo.findText(maxt.strip())
                 if ind != -1:
                     self.ui.maxThreadCombo.setCurrentIndex(ind)
+            if cfg["various"].has_key("maxLogLevel"):
+                max_log_lvl = cfg["various"]["maxLogLevel"]
+                self.ui.maxLogLvlCombo.setCurrentIndex(int(max_log_lvl) - 1)
             if cfg["various"].has_key("toolBarOrientation"):
                 c = cfg["various"]["toolBarOrientation"].strip()
                 if c == "1":

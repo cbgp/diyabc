@@ -273,6 +273,49 @@
          </widget>
         </item>
         <item>
+         <widget class="QFrame" name="frame_9">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>Maximum log level</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="maxLogLvlCombo">
+             <item>
+              <property name="text">
+               <string>1 : Human actions</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>2 : High level actions (file read, checks...)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>3 : Small actions</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>4 : Details</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QFrame" name="frame">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
