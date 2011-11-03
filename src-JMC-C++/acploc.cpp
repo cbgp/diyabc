@@ -132,7 +132,8 @@ struct resACPC
         enregC enr;
         int bidon,*numscen,k;
         resACPC rACP;
-        header.calstatobs(statobsfilename);stat_obs = header.stat_obs;  //cout<<"apres read_statobs\n";
+        //header.calstatobs(statobsfilename);
+		stat_obs = header.stat_obs;  //cout<<"apres read_statobs\n";
         int nparamax = 0;
         for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         //cout<<nparamax<<"\n";
