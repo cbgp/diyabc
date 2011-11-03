@@ -592,7 +592,7 @@ struct SequenceBitC
 */
 struct NodeC
 {
-	int pop,sample,state;
+	int pop,sample,state,brhaut,brbas;
     double height;
 	string dna;
 	bool OK;
@@ -615,7 +615,7 @@ struct GeneTreeC
 {
 	NodeC *nodes;
 	BranchC *branches;
-	int nmutot,nnodes,nbranches,ngenes,nOK;
+	int nmutot,nnodes,nbranches,ngenes;
 };
 
 
@@ -728,7 +728,6 @@ struct ParticleC
 			dest.nodes[n].pop = source.nodes[n].pop;
 			dest.nodes[n].height = source.nodes[n].height;
 			dest.nodes[n].sample = source.nodes[n].sample;
-			dest.nodes[n].OK = source.nodes[n].OK;
 		}
 		return dest;
 	}
@@ -1559,7 +1558,6 @@ struct ParticleC
 		/*for (int i=0;i<gt.nnodes;i++){
 			cout << "node " << i << "   sample = " << gt.nodes[i].sample << "\n";
 		}*/
-		gt.nOK = 0;
 		return gt;
 
 	}
@@ -1609,11 +1607,11 @@ struct ParticleC
 * Struct ParticleC : coalesce les lignées ancestrales de la population requise
 */
 	void coal_pop(int loc,int iseq) {
-		cout <<"\n";
+		/*cout <<"\n";
 		cout << "debut COAL pop="<<this->seqlist[iseq].pop<<"  nbranches=" << this->gt[loc].nbranches <<"   nnodes="<<this->gt[loc].nnodes ;
 		cout<<"   Ne="<<this->seqlist[iseq].N<<"   t0="<<this->seqlist[iseq].t0<<"   t1="<<this->seqlist[iseq].t1;
-		cout<<"    coeff="<<this->locuslist[loc].coeff <<"\n";
-		int nLineages=0,*bo,mOK;
+		cout<<"    coeff="<<this->locuslist[loc].coeff <<"\n";*/
+		int nLineages=0;
 		bool final=false;
         double lra;
 		for (int i=0;i<this->gt[loc].nnodes;i++){
@@ -1640,26 +1638,16 @@ struct ParticleC
 					this->gt[loc].nnodes++;//if (trace) cout <<"nouveau noeud = "<<this->gt[loc].nnodes-1<<"    nLineages = "<<nLineages<<"\n";
 					this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
 					this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
-					bo = new int[2];
-					bo[0] = this->gt[loc].branches[this->gt[loc].nbranches].bottom;
 					//if (trace) cout << "retour premier noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
 					nLineages--;
 					this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
 					this->gt[loc].nbranches++;
 					this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
 					this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
-					bo[1] = this->gt[loc].branches[this->gt[loc].nbranches].bottom;
 					//if (trace) cout << "retour second noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
 					this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
-                                        this->gt[loc].nbranches++;
-					if (this->data.npopref>0) {
-						if (this->gt[loc].nOK>1) {
-							this->gt[loc].nodes[this->gt[loc].nnodes-1].OK = ((this->gt[loc].nodes[bo[0]].OK)or(this->gt[loc].nodes[bo[1]].OK));
-							if ((this->gt[loc].nodes[bo[0]].OK)and(this->gt[loc].nodes[bo[1]].OK)) this->gt[loc].nOK--;
-						}
-					}
+                    this->gt[loc].nbranches++;
 					//if (trace) cout << "nbranches = " << this->gt[loc].nbranches << "\n";
-					delete []bo;
 				}
 			}
 		}
@@ -1711,25 +1699,13 @@ struct ParticleC
 							this->gt[loc].nodes[this->gt[loc].nnodes].height=(double)gstart;
 							this->gt[loc].nnodes++;
 							nLineages++;
-							bo = new int[nn];
 							for (int k=0;k<nn;k++){
 								this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
 								this->gt[loc].branches[this->gt[loc].nbranches].bottom=knum[k];
-								bo[k] = this->gt[loc].branches[this->gt[loc].nbranches].bottom;
 								this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].nnodes-1].height - this->gt[loc].nodes[knum[k]].height;
 								this->gt[loc].nbranches++;
 								this->gt[loc].nodes[knum[k]].pop=0;
 								nLineages--;
-							}
-							if (this->data.npopref>0) {
-								if (this->gt[loc].nOK>1) {
-									mOK=-1;
-									for (int k=0;k<nn;k++) {
-										this->gt[loc].nodes[this->gt[loc].nnodes-1].OK = (this->gt[loc].nodes[this->gt[loc].nnodes-1].OK)or(this->gt[loc].nodes[bo[k]].OK);
-										if (this->gt[loc].nodes[bo[k]].OK) mOK++;
-									}
-									this->gt[loc].nOK -=mOK;
-								}
 							}
 						}
 						//if (nnum==1) cout <<"nombre de lineages = "<<nLineages<<"\n";
@@ -1774,23 +1750,12 @@ struct ParticleC
             //cout<<"  "<<this->gt[loc].nodes[i].sample;;fflush(stdin);
 			if (this->gt[loc].nodes[i].sample == this->seqlist[iseq].sample) {
 				this->gt[loc].nodes[i].pop = this->seqlist[iseq].pop;
-				this->gt[loc].nodes[i].OK = false;
+				//cout<<i<<"  ";
                 //nn++;
                 //cout<<"  "<<i;
 			}
 		}
-        if (this->data.npopref>0) {
-			bool nodeOK=false;
-			for (int j=0;j<this->data.npopref;j++) {
-				if (this->seqlist[iseq].pop == this->data.popref[j]) nodeOK=true;
-				if (nodeOK) break;
-			}
-			if (nodeOK) {
-				for (int i=0;i<this->gt[loc].nnodes;i++) {
-					if (this->gt[loc].nodes[i].sample == this->seqlist[iseq].sample) {this->gt[loc].nodes[i].OK = nodeOK;this->gt[loc].nOK++;} 
-				}
-			}
-		}
+		//cout<<"\n";
         //cout<<"\naddsample nn="<<nn<<"   sample = "<<this->seqlist[iseq].sample<<"\n";
 	}
 
@@ -1819,8 +1784,77 @@ struct ParticleC
         //cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
 	}
 
+	void cherche_branchesOK(int loc) {
+		if (this->data.npopref<1) return;
+		int j,nodemrca=0,f1,f2,b;
+		bool mrca;
+//mise à true de nodes[i].OK pour les gènes des populations de référence
+		//printf("npopref = %3d     popref[0]=%3d\n",this->data.npopref,this->data.popref[0]);
+		for (int i=0;i<this->gt[loc].ngenes;i++) {
+			this->gt[loc].nodes[i].OK = false;
+			j=0;
+			while ((j<this->data.npopref)and(not this->gt[loc].nodes[i].OK)) {
+				this->gt[loc].nodes[i].OK = (this->gt[loc].nodes[i].sample == this->data.popref[j]);
+				if (not this->gt[loc].nodes[i].OK) j++;
+			}
+			//printf("node %3d  sample=%3d   popref[0]=%3d   OK=%1d\n",i,this->gt[loc].nodes[i].sample,this->data.popref[0],this->gt[loc].nodes[i].OK);
+		}
+//mise à false des branches de l'arbre
+		for (b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = false;
+//remplissage des brhaut et brbas des nodes
+		for (b=0;b<this->gt[loc].nbranches;b++) {
+			this->gt[loc].nodes[this->gt[loc].branches[b].bottom].brhaut = b;
+			this->gt[loc].nodes[this->gt[loc].branches[b].top].brbas = b;
+		}
+//recherche du mrca des gènes des pop de référence et mise à true des branches.OK y conduisant
+		for (int i=0;i<this->gt[loc].ngenes-1;i++) {
+			if (this->gt[loc].nodes[i].OK) {
+				for (int j=i+1;j<this->gt[loc].ngenes;j++) {
+					if (this->gt[loc].nodes[j].OK) {
+						f1=i;f2=j,b=0;
+						do {
+							if (this->gt[loc].branches[b].bottom == f1) {
+								this->gt[loc].branches[b].OK=true;
+								f1 = this->gt[loc].branches[b].top;
+							}
+							if (this->gt[loc].branches[b].bottom == f2) {
+								this->gt[loc].branches[b].OK=true;
+								f2 = this->gt[loc].branches[b].top;
+							}
+							mrca = (f1==f2);
+							b++;
+						} while (not mrca);
+						//printf("i = %3d   j = %3d      f1 = %3d   f2 = %3d     mrca = %3d\n",i,j,f1,f2,nodemrca);
+						if (nodemrca<f1) nodemrca=f1;
+					} 
+				}
+			}
+		}
+// on complète la mise à true des branches.OK de tous les descendants du mrca
+		for (int i=0;i<this->gt[loc].ngenes;i++) {
+			f1=i;
+			do {
+				b = this->gt[loc].nodes[f1].brhaut;
+				f1 = this->gt[loc].branches[b].top;
+			} while (f1<nodemrca);
+			if (f1==nodemrca) {  // le gène i descend du mrca
+				f1=i;
+				do {
+					b = this->gt[loc].nodes[f1].brhaut;
+					f1 = this->gt[loc].branches[b].top;
+					this->gt[loc].branches[b].OK = true;
+				} while (f1<nodemrca);
+			}
+		}
+		/*for (b=0;b<this->gt[loc].nbranches;b++){
+			printf("branche %3d   bas %3d   haut %3d   (nodemrca %3d)",b,this->gt[loc].branches[b].bottom,this->gt[loc].branches[b].top,nodemrca);
+			if (this->gt[loc].branches[b].OK) printf("   OK\n"); else printf("\n");
+		}*/
+	}
+
 	void put_one_mutation(int loc) {
 		this->gt[loc].nmutot=1;
+		cherche_branchesOK(loc);
 		double r,s=0.0,lengthtot=0.0;
 		int b,nOK=0;
 		for (b=0;b<this->gt[loc].nbranches;b++) {
@@ -2287,7 +2321,7 @@ struct ParticleC
 			}
 			//cout<<"   OK\n\n";
 			//if (loc==50) 
-			exit(6);
+			//exit(6);
 		}		//LOOP ON loc
         if (simulOK[locus]==0) {
                 if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
@@ -2653,10 +2687,10 @@ struct ParticleC
 			h0=this->locuslist[loc].freq[0][0];h0=1.0-(h0*h0+(1.0-h0)*(1-h0));m0+=0.001*h0;
 			h1=this->locuslist[loc].freq[1][0];h1=1.0-(h1*h1+(1.0-h1)*(1-h1));m1+=0.001*h1;
 			h2=this->locuslist[loc].freq[2][0];h2=1.0-(h2*h2+(1.0-h2)*(1-h2));m2+=0.001*h2;
-			printf("loc %3d   het[0]=%6.4Lf  het[1]=%6.4Lf   het[2]=%6.4Lf\n",loc,h0,h1,h2);
+			//printf("loc %3d   het[0]=%6.4Lf  het[1]=%6.4Lf   het[2]=%6.4Lf\n",loc,h0,h1,h2);
 		}
-		cout<<"calfreqsnp fin\n";
-		printf("moyenne het[0]=%6.4Lf  het[1]=%6.4Lf   het[2]=%6.4Lf\n",m0,m1,m2);
+		//cout<<"calfreqsnp fin\n";
+		//printf("moyenne het[0]=%6.4Lf  het[1]=%6.4Lf   het[2]=%6.4Lf\n",m0,m1,m2);
 	}
 
     void liberefreq(int gr) {
