@@ -797,7 +797,7 @@ public:
 			cout<<"apres le' traitement' des snp\n";
 			this->npopref=0;
 			//this->popref = new int[this->npopref];
-			//this->popref[0]=2;
+			//this->popref[0]=1;
 		}
 		return this;
 	}

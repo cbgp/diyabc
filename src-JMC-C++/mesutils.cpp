@@ -578,6 +578,39 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
     return res;
 }
 
+int PGCD(int a, int b) {
+	while (1) {
+		a = a % b;
+		if (a == 0) return b;
+		b = b % a;
+		if (b == 0) return a;
+	}
+}
+
+int PPCM(int a, int b) {
+	return a*b/PGCD(a,b);
+}
+
+long double DCVM(int n, int m, long double *x, long double *y) {
+	matC *A;
+	A = new matC[n+m];
+	for (int i=0;i<n;i++) {A[i].v=x[i];A[i].num=0;A[i].ind=i;}
+	for (int i=0;i<m;i++) {A[n+i].v=y[i];A[n+i].num=1;A[n+i].ind=i;}
+	sort(&A[0],&A[n+m],compC());
+	long double L,a,b,h=0.0,sh=0.0,d;
+	L = (long double)PPCM(n,m);
+	a = L/(long double)n;
+	b = L/(long double)m;
+	for (int i=0;i<m+n;i++) {
+		if (A[i].num==0) h +=1;
+		else             h -=1;
+		sh +=sqr(h);
+	}
+	a = (long double)n;
+	b = (long double)m;
+	d = (a*b)/sqr(a+b)/sqr(L)*sh;
+	return d;
+}
 
 void combrank2(int n, int m, long double *x, long double *y,long double *rangx, long double *rangy) {
 	matC *A;
