@@ -54,6 +54,13 @@ class ProjectSnp(ProjectReftable):
             plur=''
         self.ui.nbSumStatsLabel.setText("Total : %s summary statistic%s"%(nb,plur))
 
+    def getLocusGroups(self):
+        """ renvoie une liste des groupes de locus
+        utilisé par setupEstimationBias pour remplir la liste de groupes dans le cadre
+        de la redéfinition de sumstats
+        """
+        return self.sum_stat_wins.keys()
+
     def redefineSumStatsAnalysis(self,setupEst):
         setupEst.redefineSumStatsSnp()
 

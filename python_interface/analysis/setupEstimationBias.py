@@ -9,6 +9,7 @@ from PyQt4 import uic
 from genericScenarioSelection import GenericScenarioSelection
 from summaryStatistics.setSummaryStatisticsMsatAnalysis import SetSummaryStatisticsMsatAnalysis
 from summaryStatistics.setSummaryStatisticsSeqAnalysis import SetSummaryStatisticsSeqAnalysis
+from summaryStatistics.setSummaryStatisticsSnpAnalysis import SetSummaryStatisticsSnpAnalysis
 import output
 from utils.cbgpUtils import log
 
@@ -108,6 +109,19 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
             return
 
         sumStatFrame.ui.sumStatLabel.setText("%s of group %s"%(sumStatFrame.ui.sumStatLabel.text(),num_gr))
+
+        self.parent.parent.ui.analysisStack.addWidget(sumStatFrame)
+        self.parent.parent.ui.analysisStack.setCurrentWidget(sumStatFrame)
+
+    def redefineSumStatsSnp(self):
+        """ clic sur le bouton de redéfinition des sumstats pour le groupe sélectionné
+        """
+        num_gr = str(self.ui.redefSumStatsCombo.currentText())
+
+        sumStatFrame = SetSummaryStatisticsSnpAnalysis(self.parent,self,num_gr)
+        sumStatFrame.setSumConf(self.parent.parent.sum_stat_wins[num_gr].getSumConf()[1].strip().split('\n'))
+
+        sumStatFrame.ui.sumStatLabel.setText("%s"%(sumStatFrame.ui.sumStatLabel.text()))
 
         self.parent.parent.ui.analysisStack.addWidget(sumStatFrame)
         self.parent.parent.ui.analysisStack.setCurrentWidget(sumStatFrame)
