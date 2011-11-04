@@ -18,7 +18,7 @@ class ProjectSnp(ProjectReftable):
         super(ProjectSnp,self).__init__(name,dir,parent)
 
         self.ui.nbMicrosatLabel.hide()
-        self.ui.nbSequencesLabel.hide()
+        #self.ui.nbSequencesLabel.hide()
         # TODO suppr cette ligne
         self.setGenValid(False)
         #QObject.connect(self.ui.setSumSnpButton,SIGNAL("clicked()"),self.setSumStat)
@@ -45,14 +45,22 @@ class ProjectSnp(ProjectReftable):
             nb += int(nstat)
         return nb
 
+    def getNbTotalTaken(self):
+        nb = 0
+        for ty in self.sum_stat_wins.keys():
+            nb += int(self.sum_stat_wins[ty].ui.takenEdit.text())
+        return nb
+
     def updateNbStats(self):
         nb = self.getNbSumStats()
+        nbTaken = self.getNbTotalTaken()
         if nb > 1:
             plur='s'
             self.setGenValid(True)
         else:
             plur=''
         self.ui.nbSumStatsLabel.setText("Total : %s summary statistic%s"%(nb,plur))
+        self.ui.nbSequencesLabel.setText("Total : %s taken locus"%(nbTaken))
 
     def getLocusGroups(self):
         """ renvoie une liste des groupes de locus

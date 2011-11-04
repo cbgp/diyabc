@@ -76,7 +76,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         self.scenario_pix_dir_name = "scenario_pictures"
         self.scenario_pix_basename = "scenario"
-        self.PCA_dir_name = "PCA_pictures"
+        self.PCA_dir_name = "pictures"
 
         self.showLogFile_win = ShowLogFile(self)
         self.showLogFile_win.setWindowTitle("Logfile viewer")
