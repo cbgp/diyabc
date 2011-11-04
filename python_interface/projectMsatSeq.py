@@ -174,6 +174,20 @@ class ProjectMsatSeq(ProjectReftable):
     def getNbSumStats(self):
         return self.gen_data_win.getNbSumStats()
 
+    def getLocusGroups(self):
+        """ renvoie une liste des numeros de groupes de locus
+        utilisé par setupEstimationBias pour remplir la liste de groupes dans le cadre
+        de la redéfinition de sumstats
+        """
+        l_groups = []
+        for gb in self.gen_data_win.groupList:
+            if "Micro" in gb.title() or "Sequen" in gb.title():
+                l_groups.append(str(gb.title()).split(' ')[1])
+        return l_groups
+
+    def redefineSumStatsAnalysis(self,setupEst):
+        setupEst.redefineSumStatsMsatSeq()
+
     def save(self):
         """ sauvegarde du projet -> mainconf, histconf, genconf, theadconf
         Si le gen et hist sont valides, on génère le header

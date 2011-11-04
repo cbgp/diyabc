@@ -54,6 +54,8 @@ class ProjectSnp(ProjectReftable):
             plur=''
         self.ui.nbSumStatsLabel.setText("Total : %s summary statistic%s"%(nb,plur))
 
+    def redefineSumStatsAnalysis(self,setupEst):
+        setupEst.redefineSumStatsSnp()
 
     #def setGenValid(self,valid):
     #    """ met à jour l'état des genetic data

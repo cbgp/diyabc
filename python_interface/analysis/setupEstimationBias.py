@@ -62,13 +62,10 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         QObject.connect(self.ui.redefSumStatsButton,SIGNAL("clicked()"),self.redefineSumStats)
 
         # remplissage de la liste des groupes
-        l_groups_to_add = []
-        for gb in self.parent.parent.gen_data_win.groupList:
-            if "Micro" in gb.title() or "Sequen" in gb.title():
-                l_groups_to_add.append(str(gb.title()).split(' ')[1])
+        groups = self.parent.parent.getLocusGroups()
 
-        l_groups_to_add.sort()
-        for i in l_groups_to_add:
+        groups.sort()
+        for i in groups:
             self.ui.redefSumStatsCombo.addItem(i)
 
         #nbSetsDone = str(self.parent.parent.ui.nbSetsDoneEdit.text()).strip()
@@ -83,6 +80,12 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         #self.ui.nosdEdit.setText(str(onePc))
 
     def redefineSumStats(self):
+        """ appel de la methode de projectSnp ou projectMsatSeq
+        qui appelera ensuite la bonne méthode de setupEstimationBias
+        """
+        self.parent.parent.redefineSumStatsAnalysis(self)
+
+    def redefineSumStatsMsatSeq(self):
         """ clic sur le bouton de redéfinition des sumstats pour le groupe sélectionné
         """
         num_gr = int(self.ui.redefSumStatsCombo.currentText())
