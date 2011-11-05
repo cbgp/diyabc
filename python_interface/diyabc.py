@@ -32,27 +32,6 @@ from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log
 from threading import Thread
 from utils.data import isSNPDatafile
 
-
-#documentator = Documentator("docs/documentation.xml",None)
-#class QWidget2(QWidget):
-#    #def __init__(self,*params):
-#    def __init__(self,parent,flags):
-#        #strp=""
-#        #for p in params:
-#        #    strp += "p,"
-#        #strp = strp[:-1]
-#        #exec("super(QWidget2,self).__init__(%s)"%strp)
-#        super(QWidget2,self).__init__(self,parent,flags)
-#        print "pllll"
-#        #exec("oldInit(%s)"%strp)
-#        try:
-#            self.setWhatsThis(documentator.getDocString(self.objectName()))
-#        except Exception,e:
-#            pass
-#
-#QWidget = QWidget2
-#print QWidget
-
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
 class Diyabc(formDiyabc,baseDiyabc):
@@ -322,10 +301,9 @@ class Diyabc(formDiyabc,baseDiyabc):
     def toggleTrayIcon(self,state):
         self.systray.setVisible(state)
 
-    def showTrayMessage(self,msg):
-        # TODO
+    def showTrayMessage(self,tit,msg):
         if self.systray.isVisible():
-            self.systray.showMessage("title",msg)
+            self.systray.showMessage(tit,msg)
 
     def enterWhatsThisMode(self):
         #self.updateDoc()
