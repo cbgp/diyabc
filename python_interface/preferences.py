@@ -93,6 +93,7 @@ class Preferences(formPreferences,basePreferences):
         QObject.connect(self.ui.serverCheck,SIGNAL("toggled(bool)"),self.toggleServer)
         QObject.connect(self.ui.useDefaultExeCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
         QObject.connect(self.ui.wtCheck,SIGNAL("toggled(bool)"),self.toggleWtSelection)
+        QObject.connect(self.ui.trayIconCheck,SIGNAL("toggled(bool)"),self.toggleTrayIconCheck)
 
         self.ui.addrEdit.setDisabled(True)
         self.ui.portEdit.setDisabled(True)
@@ -123,6 +124,9 @@ class Preferences(formPreferences,basePreferences):
 
     def toggleWtSelection(self,state):
         self.parent.toggleWt(state)
+
+    def toggleTrayIconCheck(self,state):
+        self.parent.toggleTrayIcon(state)
 
     def browseExec(self):
         qfd = QFileDialog()
@@ -256,6 +260,7 @@ class Preferences(formPreferences,basePreferences):
         pic_format = str(self.ui.formatCombo.currentText())
         ex_path = str(self.ui.execPathEdit.text())
         pls = str(self.ui.particleLoopSizeEdit.text())
+        show_tray = str(self.ui.trayIconCheck.isChecked())
         ex_default = str(self.ui.useDefaultExeCheck.isChecked())
         wt = str(self.ui.wtCheck.isChecked())
         max_thread = str(self.ui.maxThreadCombo.currentText())
@@ -268,6 +273,7 @@ class Preferences(formPreferences,basePreferences):
         self.config["various"]["execPath"] = ex_path
         self.config["various"]["particleLoopSize"] = pls
         self.config["various"]["bgColor"] = bgColor
+        self.config["various"]["showTrayIcon"] = show_tray
         self.config["various"]["useDefaultExecutable"] = ex_default
         self.config["various"]["activateWhatsThis"] = wt
         self.config["various"]["maxThreadNumber"] = max_thread
@@ -304,6 +310,11 @@ class Preferences(formPreferences,basePreferences):
                 checked = (state == "True")
                 self.ui.wtCheck.setChecked(checked)
                 self.toggleWtSelection(checked)
+            if cfg["various"].has_key("showTrayIcon"):
+                state = cfg["various"]["showTrayIcon"]
+                checked = (state == "True")
+                self.ui.trayIconCheck.setChecked(checked)
+                self.toggleTrayIconCheck(checked)
             if cfg["various"].has_key("useDefaultExecutable"):
                 state = cfg["various"]["useDefaultExecutable"]
                 checked = (state == "True")

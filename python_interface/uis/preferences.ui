@@ -136,6 +136,13 @@
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
+            <widget class="QCheckBox" name="trayIconCheck">
+             <property name="text">
+              <string>Show tray icon</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QCheckBox" name="wtCheck">
              <property name="text">
               <string>Activate &quot;What's this&quot; help functionnality</string>

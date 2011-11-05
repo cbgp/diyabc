@@ -310,6 +310,23 @@ class Diyabc(formDiyabc,baseDiyabc):
         for but in [newButton,openButton,saveButton,saveAllButton,wtButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
+        self.systray = QSystemTrayIcon(QIcon("docs/icons/coccicon.png"),self)
+        self.systray.setContextMenu(self.file_menu)
+        #self.systray.show()
+        QObject.connect(self.systray,SIGNAL("activated(QSystemTrayIcon::ActivationReason)"),self.systrayClicked)
+
+    def systrayClicked(self,reason):
+        if reason == QSystemTrayIcon.Trigger:
+            self.setVisible(not self.isVisible())
+
+    def toggleTrayIcon(self,state):
+        self.systray.setVisible(state)
+
+    def showTrayMessage(self,msg):
+        # TODO
+        if self.systray.isVisible():
+            self.systray.showMessage("title",msg)
+
     def enterWhatsThisMode(self):
         #self.updateDoc()
         QWhatsThis.enterWhatsThisMode()
@@ -936,9 +953,11 @@ class Diyabc(formDiyabc,baseDiyabc):
                     except Exception,e:
                         output.notify(self,"Documentation error","%s"%e)
             log(3,"Button '%s' pressed"%event.button())
-        elif event.type() == QEvent.ChildAdded and self.wtEnabled:
-            #self.updateDoc()
-            pass
+        #elif event.type() == QEvent.ChildAdded and self.wtEnabled:
+        #    #self.updateDoc()
+        #    pass
+        #elif event.type() == QEvent.WindowActivate:
+        #    print "hoho"
         return QWidget.event(self,event)
 
     def dropEvent(self,event):
