@@ -316,18 +316,28 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.enterSystrayBlink()
 
     def enterSystrayBlink(self):
+        """ Initie le clignotement de l'icone du systray
+        """
         self.m_movie.start()
 
     def leaveSystrayBlink(self):
+        """ Stoppe le clignottement de l'icone du systray
+        """
         self.m_movie.stop()
         self.systray.setIcon(QIcon("docs/icons/coccicon.png"))
 
     @pyqtSignature("")
     def updateTrayIcon(self):
+        """ anime l'icone du systray en changeant son image
+        Est déclenchée par un évennement d'un QMovie
+        """
         icon = QIcon(self.m_movie.currentPixmap())
-        self.systray.setIcon(icon);
+        self.systray.setIcon(icon)
 
     def enterWhatsThisMode(self):
+        """ Change le style du curseur de souris et attend un clic
+        sur un objet pour afficher son "whatsThis"
+        """
         #self.updateDoc()
         QWhatsThis.enterWhatsThisMode()
 
@@ -914,6 +924,10 @@ class Diyabc(formDiyabc,baseDiyabc):
 
 
     def closeEvent(self, event):
+        """ Redéfinition de l'évennement de fermeture de la
+        fenetre principale pour arrêter l'activité des projets
+        et sauvegarder certains paramètres
+        """
         for proj in self.project_list:
             # si le projet est bien créé (et pas en cours de création)
             if proj.dir != None:

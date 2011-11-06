@@ -52,6 +52,10 @@ class ProjectSnp(ProjectReftable):
         return nb
 
     def updateNbStats(self):
+        """ met à jour les informations graphiques sur les
+        summary stats : le nombre total de stats et le nombre
+        total de locus concernés par des stats
+        """
         nb = self.getNbSumStats()
         nbTaken = self.getNbTotalTaken()
         if nb > 1:
@@ -102,6 +106,8 @@ class ProjectSnp(ProjectReftable):
         self.ui.refTableStack.setCurrentIndex(0)
 
     def loadSumStatsConf(self):
+        """ charge les summary statistics depuis le fichier gen_conf_name
+        """
         if os.path.exists(self.dir):
             if os.path.exists("%s/%s"%(self.dir,self.parent.gen_conf_name)):
                 f = codecs.open("%s/%s"%(self.dir,self.parent.gen_conf_name),"r","utf-8")
@@ -284,6 +290,8 @@ class ProjectSnp(ProjectReftable):
         return result
 
     def writeGeneticConfFromGui(self):
+        """ Sauvegarde des summary statistics dans le fichier gen_conf_name
+        """
         locidesc = ""
         statsdesc = ""
         numGr = 1
