@@ -293,6 +293,11 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.systray.setContextMenu(self.file_menu)
         #self.systray.show()
         QObject.connect(self.systray,SIGNAL("activated(QSystemTrayIcon::ActivationReason)"),self.systrayClicked)
+        
+        self.m_movie = QMovie()
+        self.m_movie.setFileName("docs/icons/coccicon.gif")
+        #self.m_movie.start()
+        QObject.connect(self.m_movie, SIGNAL("updated ( const QRect & )"),self,SLOT("updateTrayIcon()"))
 
     def systrayClicked(self,reason):
         if reason == QSystemTrayIcon.Trigger:
@@ -302,8 +307,25 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.systray.setVisible(state)
 
     def showTrayMessage(self,tit,msg):
+        """ Affiche un message dans le systray ssi le systray et visible
+        Si la diyabc n'est pas visible, fait clignoter le systrayicon
+        """
         if self.systray.isVisible():
             self.systray.showMessage(tit,msg)
+            if not self.isActiveWindow():
+                self.enterSystrayBlink()
+
+    def enterSystrayBlink(self):
+        self.m_movie.start()
+
+    def leaveSystrayBlink(self):
+        self.m_movie.stop()
+        self.systray.setIcon(QIcon("docs/icons/coccicon.png"))
+
+    @pyqtSignature("")
+    def updateTrayIcon(self):
+        icon = QIcon(self.m_movie.currentPixmap())
+        self.systray.setIcon(icon);
 
     def enterWhatsThisMode(self):
         #self.updateDoc()
@@ -485,7 +507,9 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def openRecent(self):
         ac = self.sender()
-        self.openProject(self.entryToRecent[ac])
+        path = self.entryToRecent[ac]
+        self.openProject(path)
+        #self.showTrayMessage("plop","recent project opened \n%s"%path)
 
     def showLogFile(self):
         self.showLogFile_win.show()
@@ -511,12 +535,6 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def setPreferences(self):
         self.preferences_win.show()
-
-
-    #def changeStyle(self):
-    #    for stxt in self.styles:
-    #        if self.sender() == self.style_actions[stxt]:
-    #            self.app.setStyle(stxt)
 
     def isSNPProjectDir(self,dir):
         if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
@@ -934,8 +952,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         #elif event.type() == QEvent.ChildAdded and self.wtEnabled:
         #    #self.updateDoc()
         #    pass
-        #elif event.type() == QEvent.WindowActivate:
-        #    print "hoho"
+        elif event.type() == QEvent.WindowActivate:
+            self.leaveSystrayBlink()
         return QWidget.event(self,event)
 
     def dropEvent(self,event):
