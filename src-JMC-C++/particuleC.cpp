@@ -2862,6 +2862,7 @@ struct ParticleC
 			return 0.0;  
 		}
 		Dcra = DCVM(nl,nl,nei,this->grouplist[gr].sumstat[st].vals);
+		delete []nei;
 		return Dcra;		
 	}
 	
@@ -2877,8 +2878,8 @@ struct ParticleC
 			if ((n1>0)and(n2>0)) {
 			    s1l = 0.0;s3l = 0.0;
 				for (int all=0;all<2;all++) {
-					if (all==0) {fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];}
-					else		{fi=this->locuslist[loc].freq[sample][1];fj=this->locuslist[loc].freq[sample1][1];}
+					fi=this->locuslist[loc].freq[sample][all];
+					fj=this->locuslist[loc].freq[sample1][all];
 					sniAA = fi*n1+fj*n2;
 					sniA  = 2.0*sniAA;
 					sni = n1+n2;
@@ -2901,7 +2902,7 @@ struct ParticleC
 
 	long double cal_snfsd(int gr,int st) {
 		long double *fst,fi,fj,n1,n2,Dcra;
-		long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P,s1=0.0,s3=0.0;
+		long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P;
 		int iloc,loc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -2912,8 +2913,8 @@ struct ParticleC
 			if ((n1>0)and(n2>0)) {
 			    s1l = 0.0;s3l = 0.0;
 				for (int all=0;all<2;all++) {
-					if (all==0) {fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];}
-					else		{fi=this->locuslist[loc].freq[sample][1];fj=this->locuslist[loc].freq[sample1][1];}
+					fi=this->locuslist[loc].freq[sample][all];
+					fj=this->locuslist[loc].freq[sample1][all];
 					sniAA = fi*n1+fj*n2;
 					sniA  = 2.0*sniAA;
 					sni = n1+n2;
@@ -2928,7 +2929,10 @@ struct ParticleC
 					s3l += s2P + s2I;
 				}
 				fst[nl]=0.0;
-				if ((s3l>0.0)and(s1l>0.0)) {fst[nl]=s1/s3;nl++;}
+				if ((s3l>0.0)and(s1l>0.0)) fst[nl]=s1l/s3l;
+				if(fst[nl]<0.0) fst[nl]=0.0;
+				nl++;
+				//printf("s1l=%10.5Lf   s3l=%10.5Lf   fst[%3d] = %10.5Lf\n", s1l,s3l,nl,fst[nl-1]);
 			}
 		}
 		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
@@ -2937,6 +2941,7 @@ struct ParticleC
 			return 0.0;  
 		}
 		Dcra = DCVM(nl,nl,fst,this->grouplist[gr].sumstat[st].vals);
+		delete []fst;
 		return Dcra;		
 	}
 
