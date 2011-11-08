@@ -557,6 +557,11 @@ public:
             this->groupe[gr].sumstat = new StatC[this->groupe[gr].nstat];
             delete [] ss;
             k=0;
+			vector <StatsnpC> statsnp;
+			StatsnpC stsnp;
+			bool trouve;
+			statsnp.resize(0);
+			int catsnp;
                         //cout<<"nstat="<<this->groupe[gr].nstat<<"\n";
             while (k<this->groupe[gr].nstat) {
                           //cout <<"stat "<<k<<"    groupe "<<gr<<"\n";
@@ -621,11 +626,28 @@ public:
                         }
                     }
                 } else if (this->groupe[gr].type>9) {
+					catsnp = (stat_num[j]-21)/4;
+					cout<<"stat_num="<<stat_num[j]<<"   catsnp="<<catsnp<<"\n";
                     if (stat_num[j]<25) {
-                        for (int i=1;i<nss;i++) {
-                               this->groupe[gr].sumstat[k].cat=stat_num[j];
-                               this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());
-                               k++;
+					for (int i=1;i<nss;i++) {
+							this->groupe[gr].sumstat[k].cat=stat_num[j];
+							this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());
+							trouve=false;
+							if (statsnp.size()>0){
+							for (int jj=0;jj<statsnp.size();jj++) {
+									trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==this->groupe[gr].sumstat[k].samp));
+									if (trouve) {this->groupe[gr].sumstat[k].numsnp=jj;break;}
+								}
+							}
+							if (not trouve) {
+								 stsnp.cat=catsnp;
+								 stsnp.samp=this->groupe[gr].sumstat[k].samp;
+								 stsnp.defined=false;
+								 stsnp.sorted=false;
+								 this->groupe[gr].sumstat[k].numsnp=statsnp.size();
+								 statsnp.push_back(stsnp);
+							}
+							k++;
                         }
                     } else if ((stat_num[j]>24)and(stat_num[j]<33)) {
                         for (int i=1;i<nss;i++) {
@@ -633,8 +655,26 @@ public:
                             ss1=splitwords(ss[i],"&",&nss1);
                             this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
                             this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
-                            k++;
                             delete [] ss1;
+							trouve=false;
+							if (statsnp.size()>0){
+							for (int jj=0;jj<statsnp.size();jj++) {
+									trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==this->groupe[gr].sumstat[k].samp)and(statsnp[jj].samp1==this->groupe[gr].sumstat[k].samp1));
+									if (trouve) {this->groupe[gr].sumstat[k].numsnp=jj;break;}
+								}
+							}
+							//cout<<"statsnp.size = "<<statsnp.size()<<"   trouve = "<<trouve<<"\n";
+							if (not trouve) {
+								 stsnp.cat=catsnp;
+								 stsnp.samp=this->groupe[gr].sumstat[k].samp;
+								 stsnp.samp1=this->groupe[gr].sumstat[k].samp1;
+								 stsnp.defined=false;
+								 stsnp.sorted=false;
+								 this->groupe[gr].sumstat[k].numsnp=statsnp.size();
+								 statsnp.push_back(stsnp);
+							}
+							//cout<<"numsnp = "<<statsnp.size()<<"\n";
+                            k++;
                         }
                     } else if (stat_num[j]>32) {
                         for (int i=1;i<nss;i++) {
@@ -643,8 +683,25 @@ public:
                             this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
                             this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
                             this->groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
-                            k++;
                             delete [] ss1;
+							trouve=false;
+							if (statsnp.size()>0){
+							for (int jj=0;jj<statsnp.size();jj++) {
+									trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==this->groupe[gr].sumstat[k].samp)and(statsnp[jj].samp1==this->groupe[gr].sumstat[k].samp1)and(statsnp[jj].samp2==this->groupe[gr].sumstat[k].samp2));
+									if (trouve) {this->groupe[gr].sumstat[k].numsnp=jj;break;}
+								}
+							}
+							if (not trouve) {
+								 stsnp.cat=catsnp;
+								 stsnp.samp=this->groupe[gr].sumstat[k].samp;
+								 stsnp.samp1=this->groupe[gr].sumstat[k].samp1;
+								 stsnp.samp2=this->groupe[gr].sumstat[k].samp2;
+								 stsnp.defined=false;
+								 stsnp.sorted=false;
+								 this->groupe[gr].sumstat[k].numsnp=statsnp.size();
+								 statsnp.push_back(stsnp);
+							}
+                            k++;
                         }
                     }
 
@@ -653,6 +710,21 @@ public:
                 //cout<<"fin de la stat "<<k<<"\n";
             }
             delete [] ss;
+			this->groupe[gr].nstatsnp=statsnp.size();
+			//cout<<"this->groupe[gr].nstatsnp="<<this->groupe[gr].nstatsnp<<"\n";
+			if (this->groupe[gr].nstatsnp>0){
+				this->groupe[gr].sumstatsnp = new StatsnpC[this->groupe[gr].nstatsnp];
+				for (int i=0;i<this->groupe[gr].nstatsnp;i++){
+					this->groupe[gr].sumstatsnp[i].cat=statsnp[i].cat;
+					this->groupe[gr].sumstatsnp[i].samp=statsnp[i].samp;
+					this->groupe[gr].sumstatsnp[i].samp1=statsnp[i].samp1;
+					this->groupe[gr].sumstatsnp[i].samp2=statsnp[i].samp2;
+					this->groupe[gr].sumstatsnp[i].defined=statsnp[i].defined;
+					this->groupe[gr].sumstatsnp[i].sorted=statsnp[i].sorted;
+				}
+				statsnp.clear();
+			}
+			//for (int i=0;i<this->groupe[gr].nstat;i++) cout<<this->groupe[gr].sumstat[i].cat<<"   "<<this->groupe[gr].sumstat[i].numsnp<<"\n";
         }
         if (debuglevel==2) cout<<"header.txt : fin de la lecture des summary stats\n";
         this->nparamut=0;
@@ -729,11 +801,11 @@ public:
 		this->entetehist=this->entete.substr(0,this->entete.length()-14*(nparamut+nstat)+2);
 		if (nparamut>0) this->entetemut=this->entete.substr(this->entetehist.length(),14*nparamut);else this->entetemut="";
 		this->entetestat=this->entete.substr(this->entetehist.length()+this->entetemut.length(),14*nstat);
-		//cout<<"les trois entetes\n";
-		//cout<<">>>"<<this->entetehist<<"<<<\n";
-		//cout<<">>>"<<this->entetemut<<"<<<\n";
-		//cout<<">>>"<<this->entetestat<<"<<<\n";
-        //for (int i=0;i<this->nstat;i++) cout<<this->statname[i]<<"   ";cout<<"\n";
+		cout<<"les trois entetes\n";
+		cout<<">>>"<<this->entetehist<<"<<<\n";
+		cout<<">>>"<<this->entetemut<<"<<<\n";
+		cout<<">>>"<<this->entetestat<<"<<<\n";
+        for (int i=0;i<this->nstat;i++) cout<<this->statname[i]<<"   ";cout<<"\n";
         delete []ss;
                 //cout<<"scenarios à la fin de readheader\n";
                 //exit(1);
@@ -1036,6 +1108,19 @@ public:
 				this->particuleobs.grouplist[gr].sumstat[i].samp  = this->groupe[gr].sumstat[i].samp;
 				this->particuleobs.grouplist[gr].sumstat[i].samp1 = this->groupe[gr].sumstat[i].samp1;
 				this->particuleobs.grouplist[gr].sumstat[i].samp2 = this->groupe[gr].sumstat[i].samp2;
+				this->particuleobs.grouplist[gr].sumstat[i].numsnp = this->groupe[gr].sumstat[i].numsnp;
+			}
+			this->particuleobs.grouplist[gr].nstatsnp=this->groupe[gr].nstatsnp;
+			if (this->groupe[gr].nstatsnp>0){
+				this->particuleobs.grouplist[gr].sumstatsnp = new StatsnpC[this->groupe[gr].nstatsnp];
+				for (int i=0;i<this->groupe[gr].nstatsnp;i++){
+					this->particuleobs.grouplist[gr].sumstatsnp[i].cat   = this->groupe[gr].sumstatsnp[i].cat;
+					this->particuleobs.grouplist[gr].sumstatsnp[i].samp  = this->groupe[gr].sumstatsnp[i].samp;
+					this->particuleobs.grouplist[gr].sumstatsnp[i].samp1 = this->groupe[gr].sumstatsnp[i].samp1;
+					this->particuleobs.grouplist[gr].sumstatsnp[i].samp2 = this->groupe[gr].sumstatsnp[i].samp2;
+					this->particuleobs.grouplist[gr].sumstatsnp[i].defined = this->groupe[gr].sumstatsnp[i].defined;
+					this->particuleobs.grouplist[gr].sumstatsnp[i].sorted = this->groupe[gr].sumstatsnp[i].sorted;
+				}
 			}
 		}
 		//cout<<"apres GROUPS\n";

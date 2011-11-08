@@ -191,6 +191,19 @@ void setgroup(int p) {
 				this->particule[p].grouplist[gr].sumstat[i].samp  = header.groupe[gr].sumstat[i].samp;
 				this->particule[p].grouplist[gr].sumstat[i].samp1 = header.groupe[gr].sumstat[i].samp1;
 				this->particule[p].grouplist[gr].sumstat[i].samp2 = header.groupe[gr].sumstat[i].samp2;
+				this->particule[p].grouplist[gr].sumstat[i].numsnp = header.groupe[gr].sumstat[i].numsnp;
+			}
+			this->particule[p].grouplist[gr].nstatsnp=this->header.groupe[gr].nstatsnp;
+			if (this->header.groupe[gr].nstatsnp>0) {
+				this->particule[p].grouplist[gr].sumstatsnp = new StatsnpC[header.groupe[gr].nstatsnp];
+				for (int i=0;i<this->header.groupe[gr].nstatsnp;i++){
+					this->particule[p].grouplist[gr].sumstatsnp[i].cat   = header.groupe[gr].sumstatsnp[i].cat;
+					this->particule[p].grouplist[gr].sumstatsnp[i].samp  = header.groupe[gr].sumstatsnp[i].samp;
+					this->particule[p].grouplist[gr].sumstatsnp[i].samp1 = header.groupe[gr].sumstatsnp[i].samp1;
+					this->particule[p].grouplist[gr].sumstatsnp[i].samp2 = header.groupe[gr].sumstatsnp[i].samp2;
+					this->particule[p].grouplist[gr].sumstatsnp[i].defined = header.groupe[gr].sumstatsnp[i].defined;
+					this->particule[p].grouplist[gr].sumstatsnp[i].sorted = header.groupe[gr].sumstatsnp[i].sorted;
+				}
 			}
 		}
 	}
@@ -495,13 +508,14 @@ void setgroup(int p) {
 			  //cout<<header.entete<<"\n";
 			  int nph,npm;
 			  ss=splitwords(header.entetehist," ",&nph);
+			  if (debuglevel==5) cout<<header.entetehist<<"\n";
 			  if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;
               ss=splitwords(header.entete," ",&ns);
-			  cout<<"entetemut <"<<header.entetemut<<">\n";
-			  cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
+			  //cout<<"entetemut <"<<header.entetemut<<">\n";
+			  //cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
               np=ns-header.nstat-1;
-              cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
-			  cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
+              //cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
+			  //cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
               for (int ipart=0;ipart<this->npart;ipart++) {
                   if (sOK[ipart]==0){
                       //cout<<enreg[ipart].numscen<<"\n";
