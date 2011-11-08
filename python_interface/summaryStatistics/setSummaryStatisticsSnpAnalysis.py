@@ -11,7 +11,7 @@ from PyQt4 import QtGui
 from setSummaryStatisticsSnp import SetSummaryStatisticsSnp
 
 class SetSummaryStatisticsSnpAnalysis(SetSummaryStatisticsSnp):
-    """ ecran de selection des summary statistics pour les microsats dans le cadre d'une
+    """ ecran de selection des summary statistics pour les SNP dans le cadre d'une
     analyse de model checking
     """
     def __init__(self,parent=None,stackTarget=None,numGroup=None):

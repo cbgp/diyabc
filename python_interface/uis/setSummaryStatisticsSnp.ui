@@ -352,12 +352,12 @@
                  </size>
                 </property>
                 <property name="text">
-                 <string>Distance genic diversity</string>
+                 <string>Variance of genic diversities</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="allDgdButton">
+               <widget class="QPushButton" name="allVgdButton">
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
@@ -381,7 +381,149 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="noneDgdButton">
+               <widget class="QPushButton" name="noneVgdButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_33">
+              <item>
+               <widget class="QLabel" name="label_23">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>First quartile of genic diversities</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allFgdButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneFgdButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_32">
+              <item>
+               <widget class="QLabel" name="label_22">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Third quartile of genic diversities</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allTgdButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneTgdButton">
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
@@ -582,9 +724,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>865</width>
-        <height>190</height>
+        <y>-59</y>
+        <width>850</width>
+        <height>249</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -650,9 +792,9 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_22">
+             <layout class="QHBoxLayout" name="horizontalLayout_31">
               <item>
-               <widget class="QLabel" name="label_27">
+               <widget class="QLabel" name="label_34">
                 <property name="text">
                  <string>Mean Nei's distance</string>
                 </property>
@@ -709,16 +851,16 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_23">
+             <layout class="QHBoxLayout" name="horizontalLayout_27">
               <item>
-               <widget class="QLabel" name="label_28">
+               <widget class="QLabel" name="label_32">
                 <property name="text">
-                 <string>Distance of Nei's distance</string>
+                 <string>Variance of Nei's distances</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="allDond2Button">
+               <widget class="QPushButton" name="allVnd2Button">
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
@@ -742,7 +884,125 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="noneDond2Button">
+               <widget class="QPushButton" name="noneVnd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_26">
+              <item>
+               <widget class="QLabel" name="label_31">
+                <property name="text">
+                 <string>First quartile of Nei's distances</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allFnd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneFnd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_22">
+              <item>
+               <widget class="QLabel" name="label_27">
+                <property name="text">
+                 <string>Third quartile of  Nei's distances</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allTnd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneTnd2Button">
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
@@ -827,16 +1087,16 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_25">
+             <layout class="QHBoxLayout" name="horizontalLayout_23">
               <item>
-               <widget class="QLabel" name="label_30">
+               <widget class="QLabel" name="label_28">
                 <property name="text">
-                 <string>Distance of FST distances</string>
+                 <string>Variance of FST distances</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="allDofd2Button">
+               <widget class="QPushButton" name="allVfd2Button">
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
@@ -860,7 +1120,125 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="noneDofd2Button">
+               <widget class="QPushButton" name="noneVfd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_25">
+              <item>
+               <widget class="QLabel" name="label_30">
+                <property name="text">
+                 <string>First quartile of FST distances</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allFfd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneFfd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_28">
+              <item>
+               <widget class="QLabel" name="label_33">
+                <property name="text">
+                 <string>Third quartile of FST distances</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allTfd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneTfd2Button">
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
@@ -1153,9 +1531,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>865</width>
-        <height>203</height>
+        <y>-77</y>
+        <width>850</width>
+        <height>292</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1200,16 +1578,7 @@
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <property name="spacing">
-             <number>2</number>
-            </property>
-            <property name="topMargin">
-             <number>2</number>
-            </property>
-            <property name="bottomMargin">
-             <number>2</number>
-            </property>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_30">
               <item>
@@ -1316,151 +1685,302 @@ population 2</string>
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <widget class="QPushButton" name="addAdmixButton">
+              <property name="text">
+               <string>add</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout">
               <item>
-               <widget class="QPushButton" name="addAdmixButton">
-                <property name="text">
-                 <string>add</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_10">
+               <layout class="QHBoxLayout" name="horizontalLayout_29">
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_29">
-                  <item>
-                   <spacer name="horizontalSpacer_6">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="allMl3Button">
-                    <property name="minimumSize">
-                     <size>
-                      <width>25</width>
-                      <height>14</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>25</width>
-                      <height>14</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>9</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>all</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="noneMl3Button">
-                    <property name="minimumSize">
-                     <size>
-                      <width>35</width>
-                      <height>14</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>35</width>
-                      <height>14</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>9</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>none</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                 <widget class="QLabel" name="label_6">
+                  <property name="text">
+                   <string>Mean of admixture estimates</string>
+                  </property>
+                 </widget>
                 </item>
                 <item>
-                 <spacer name="verticalSpacer">
+                 <spacer name="horizontalSpacer_6">
                   <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::MinimumExpanding</enum>
+                   <enum>Qt::Horizontal</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>10</width>
-                    <height>18</height>
+                    <width>40</width>
+                    <height>20</height>
                    </size>
                   </property>
                  </spacer>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_3">
-                  <item>
-                   <spacer name="horizontalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="allMld3Button">
-                    <property name="minimumSize">
-                     <size>
-                      <width>25</width>
-                      <height>14</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>25</width>
-                      <height>14</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string>all</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="noneMld3Button">
-                    <property name="minimumSize">
-                     <size>
-                      <width>35</width>
-                      <height>14</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>35</width>
-                      <height>14</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string>none</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                 <widget class="QPushButton" name="allMae3Button">
+                  <property name="minimumSize">
+                   <size>
+                    <width>25</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>25</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>all</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="noneMae3Button">
+                  <property name="minimumSize">
+                   <size>
+                    <width>35</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>35</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>none</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_34">
+                <item>
+                 <widget class="QLabel" name="label_9">
+                  <property name="text">
+                   <string>Variance of admixture estimates</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_8">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="allVae3Button">
+                  <property name="minimumSize">
+                   <size>
+                    <width>25</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>25</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>all</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="noneVae3Button">
+                  <property name="minimumSize">
+                   <size>
+                    <width>35</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>35</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>none</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_35">
+                <item>
+                 <widget class="QLabel" name="label_10">
+                  <property name="text">
+                   <string>First quartile of admixture estimates</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_17">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="allFae3Button">
+                  <property name="minimumSize">
+                   <size>
+                    <width>25</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>25</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>all</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="noneFae3Button">
+                  <property name="minimumSize">
+                   <size>
+                    <width>35</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>35</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>none</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QLabel" name="label_11">
+                  <property name="text">
+                   <string>Third quartile of admixture estimates</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="allTae3Button">
+                  <property name="minimumSize">
+                   <size>
+                    <width>25</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>25</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>all</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="noneTae3Button">
+                  <property name="minimumSize">
+                   <size>
+                    <width>35</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>35</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>none</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
