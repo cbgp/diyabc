@@ -188,6 +188,9 @@ class ProjectMsatSeq(ProjectReftable):
     def redefineSumStatsAnalysis(self,setupEst):
         setupEst.redefineSumStatsMsatSeq()
 
+    def getNextWidget(self,hist_model):
+        return hist_model.getNextWidgetMsatSeq()
+
     def save(self):
         """ sauvegarde du projet -> mainconf, histconf, genconf, theadconf
         Si le gen et hist sont valides, on génère le header

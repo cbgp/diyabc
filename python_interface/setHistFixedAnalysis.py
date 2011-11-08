@@ -9,6 +9,8 @@ from utils.visualizescenario import *
 from utils.history import *
 from setGenDataAnalysis import SetGeneticDataAnalysis
 from output import *
+from analysis.setupEstimationBias import SetupEstimationBias
+from analysis.setupComparisonEvaluation import SetupComparisonEvaluation
 
 formHistModelFixed,baseHistModelFixed= uic.loadUiType("uis/setHistFrame.ui")
 
@@ -225,6 +227,21 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
             QMessageBox.information(self,"Value error","%s"%problems)
             return False
 
+    def getNextWidgetSnp(self):
+        """ methode appelée par ping pong
+        """
+        if self.analysis.category == "bias":
+            #next_title = "bias and precision"
+            return SetupEstimationBias(self.analysis,self.parent)
+        else:
+            #next_title = "evaluate confidence"
+            return SetupComparisonEvaluation(self.analysis,self.parent)
+
+    def getNextWidgetMsatSeq(self):
+        """ methode appelée par ping pong
+        """
+        return SetGeneticDataAnalysis(self.analysis,self.parent.parent)
+
     def validate(self):
         """ on vérifie ici que les valeurs sont bien des float et qu'elles sont bien supérieures à 0
         """
@@ -232,13 +249,12 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
         if self.checkAll():
             self.majParamInfoDico()
             self.analysis.histParams = self.param_info_dico
-            gen_data_analysis = SetGeneticDataAnalysis(self.analysis,self.parent.parent)
-            #self.parent.parent.addTab(gen_data_analysis,"Genetic data")
-            #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-            #self.parent.parent.setCurrentWidget(gen_data_analysis)
-            self.parent.parent.ui.analysisStack.addWidget(gen_data_analysis)
+            # appel ping pong
+            next_widget = self.parent.parent.getNextWidget(self)
+
+            self.parent.parent.ui.analysisStack.addWidget(next_widget)
             self.parent.parent.ui.analysisStack.removeWidget(self)
-            self.parent.parent.ui.analysisStack.setCurrentWidget(gen_data_analysis)
+            self.parent.parent.ui.analysisStack.setCurrentWidget(next_widget)
 
     def exit(self):
         ## reactivation des onglets

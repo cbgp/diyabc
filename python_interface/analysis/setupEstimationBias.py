@@ -48,6 +48,11 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
             self.ui.label_4.hide()
             self.ui.notdsEdit.hide()
             self.ui.paramChoiceBox.hide()
+            # remplissage de la liste des groupes
+            groups = self.parent.parent.getLocusGroups()
+            groups.sort()
+            for i in groups:
+                self.ui.redefSumStatsCombo.addItem(i)
         else:
             self.ui.candidateLabel.hide()
             self.ui.label_5.hide()
@@ -62,12 +67,6 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         QObject.connect(self.ui.redefButton,SIGNAL("clicked()"),self.redefineScenarios)
         QObject.connect(self.ui.redefSumStatsButton,SIGNAL("clicked()"),self.redefineSumStats)
 
-        # remplissage de la liste des groupes
-        groups = self.parent.parent.getLocusGroups()
-
-        groups.sort()
-        for i in groups:
-            self.ui.redefSumStatsCombo.addItem(i)
 
         #nbSetsDone = str(self.parent.parent.ui.nbSetsDoneEdit.text()).strip()
         #self.ui.totNumSimEdit.setText(nbSetsDone)

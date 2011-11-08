@@ -76,6 +76,9 @@ class ProjectSnp(ProjectReftable):
     def redefineSumStatsAnalysis(self,setupEst):
         setupEst.redefineSumStatsSnp()
 
+    def getNextWidget(self,hist_model):
+        return hist_model.getNextWidgetSnp()
+
     #def setGenValid(self,valid):
     #    """ met à jour l'état des genetic data
     #    et change l'icone du bouton en fonction de la validité

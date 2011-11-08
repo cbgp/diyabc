@@ -219,7 +219,7 @@ class ProjectReftable(Project):
         """ démarre la définition d'une nouvelle analyse
         """
         log(1,"Entering in new analysis definition")
-        def_analysis = DefineNewAnalysis(self)
+        def_analysis = DefineNewAnalysis(self,self.hist_model_win.getNbScenario())
         #self.addTab(def_analysis,"Define new analysis")
 
         #self.setTabEnabled(0,False)

@@ -63,7 +63,7 @@ class BiasNEvaluateScenarioSelection(formBiasScenarioSelection,baseBiasScenarioS
                 else:
                     next_widget = HistDrawn(self.analysis,self.parent)
             else:
-                QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%self.nb_min_sel)
+                QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%2)
                 return 0
         # le cas du bias, un sc à afficher, celui du radio button
         else:

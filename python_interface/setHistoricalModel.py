@@ -904,6 +904,9 @@ class SetHistoricalModel(formHistModel,baseHistModel):
 
             self.returnToProject()
 
+    def getNbScenario(self):
+        return len(self.scList)
+
     def majProjectGui(self):
         """ ecrit les infos sur le nombre de scenarios et de params
         dans l'ecran general du projet

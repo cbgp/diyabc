@@ -20,9 +20,10 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
     """ écran de définition d'une nouvelle analyse. demande
     le type d'analyse souhaitée
     """
-    def __init__(self,parent=None):
+    def __init__(self,parent=None,nbScenario=0):
         super(DefineNewAnalysis,self).__init__(parent)
         self.parent=parent
+        self.nbScenario = nbScenario
         self.createWidgets()
         self.ui.verticalLayout_2.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)
@@ -39,6 +40,10 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
         QObject.connect(self.ui.lossCheck,SIGNAL("clicked()"),self.preEvaluateCheck)
         QObject.connect(self.ui.modCheckPcaCheck,SIGNAL("clicked()"),self.modCheckCheck)
         QObject.connect(self.ui.modCheckLossCheck,SIGNAL("clicked()"),self.modCheckCheck)
+
+        if self.nbScenario < 2:
+            self.ui.comparisonRadio.setDisabled(True)
+            self.ui.evaluateRadio.setDisabled(True)
 
         self.ui.horizontalLayout_3.setAlignment(Qt.AlignHCenter)
 

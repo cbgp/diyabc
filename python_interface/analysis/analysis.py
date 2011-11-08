@@ -10,7 +10,7 @@ class Analysis():
         self.chosenSc = None
         self.candidateScList = []
         self.computationParameters = ""
-        self.mutationModel = None
+        self.mutationModel = ""
         self.sumStatsDico = {}
         self.histParams = None
         self.condTxtList = []
