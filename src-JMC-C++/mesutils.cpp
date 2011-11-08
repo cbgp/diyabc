@@ -384,6 +384,21 @@ long double cal_sdL(int n,long double *x) {
     else return  sqrt((sx2-(sx/(long double)n*sx))/(long double)(n-1));
 }
 
+long double cal_varL(int n,long double *x) {
+    long double sx,sx2,a=x[0];
+    bool ident=true;
+    int i=1;
+    while ((ident) and (i<n)) {ident=(x[i]==a);i++;}
+    if (ident) return 0.0;
+    sx=0.0;sx2=0.0;
+    for (int i=0;i<n;i++) {
+        sx +=x[i];
+        sx2 +=x[i]*x[i];
+    }
+    if (n<2) return 0.0;
+    else return  (sx2-(sx/(long double)n*sx))/(long double)(n-1);
+}
+
 double lnormal_dens(double x, double m, double s) {
    return -0.5*((x-m)/s)*((x-m)/s)-log(s)-0.5*log(2*PI);
 }

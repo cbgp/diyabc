@@ -191,11 +191,6 @@ void setgroup(int p) {
 				this->particule[p].grouplist[gr].sumstat[i].samp  = header.groupe[gr].sumstat[i].samp;
 				this->particule[p].grouplist[gr].sumstat[i].samp1 = header.groupe[gr].sumstat[i].samp1;
 				this->particule[p].grouplist[gr].sumstat[i].samp2 = header.groupe[gr].sumstat[i].samp2;
-				if (this->particule[p].grouplist[gr].sumstat[i].cat>20) {
-					this->particule[p].grouplist[gr].sumstat[i].vals = new long double[this->particule[p].grouplist[gr].nloc];
-					for (int loc=0;loc<this->particule[p].grouplist[gr].nloc;loc++) 
-						this->particule[p].grouplist[gr].sumstat[i].vals[loc] = header.particuleobs.grouplist[gr].sumstat[i].vals[loc];
-				}
 			}
 		}
 	}

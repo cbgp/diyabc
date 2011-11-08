@@ -53,25 +53,27 @@ using namespace std;
 #define SEQMISSING ""
 #define SNPMISSING 9
 #define NUCMISSING 'N'
-#define NSTAT 35
+#define NSTAT 43
 
-string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","SHM","SHD","SNM","SND","SFM","SFD","SAM","SAD"};
-int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28};
+string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","SHM","SHV","SHF","SHT","SNM","SNV","SNF","SNT","SFM","SFV","SFF","SFT","SAM","SAV","SAF","SAT"};
+int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28 ,  29 ,  30 ,  31 ,  32 ,  33 ,  34 ,  35 ,  36};
 /*  Numérotation des stat
- * 	1 : nal			-1 : nha			-13 : fst
- *  2 : het			-2 : nss            -14 : aml
- *  3 : var			-3 : mpd			 21 : hétérozygotie moyenne
- *  4 : MGW			-4 : vpd			 22 : distance de Cramer-von Mises(het)
- *  5 : Fst			-5 : dta			 23 : distance moyenne de nei
- *  6 : lik			-6 : pss			 24 : distance de Cramer-von Mises(nei)
- *  7 : dm2			-7 : mns			 25 : distance moyenne de fst
- *  8 : n2P			-8 : vns			 26 : distance de Cramer-von Mises(fst)
- *  9 : h2P			-9 : nh2			 27 : aml moyen
- * 10 : v2P		   -10 : ns2			 28 : distance de Cramer-von Mises(aml)
- * 11 : das        -11 : mp2
- * 12 : Aml        -12 : mpb
- *
- *
+ * 	1 : nal			-1 : nha			 21 : moyenne des genic diversities
+ *  2 : het			-2 : nss             22 : variance des genic diversities
+ *  3 : var			-3 : mpd			 23 : premier quartile des genic diversities
+ *  4 : MGW			-4 : vpd			 24 : troisième quartile des genic diversities
+ *  5 : Fst			-5 : dta			 25 : moyenne des distances de Nei
+ *  6 : lik			-6 : pss			 26 : variance des distances de Nei
+ *  7 : dm2			-7 : mns			 27 : premier quartile des distances de Nei
+ *  8 : n2P			-8 : vns			 28 : troisième quartile des distances de Nei
+ *  9 : h2P			-9 : nh2			 29 : moyenne des distances Fst 
+ * 10 : v2P		   -10 : ns2			 30 : variance des distances Fst
+ * 11 : das        -11 : mp2			 31 : premier quartile des distances Fst
+ * 12 : Aml        -12 : mpb			 32 : troisième quartile des distances Fst
+ * 				   -13 : fst			 33 : moyenne des estimations d'admixture
+ * 				   -14 : aml			 34 : variance des estimations d'admixture
+ * 										 35 : premier quartile des estimations d'admixture
+ * 										 36 : troisième quartile des estimations d'admixture
  */
     vector <string> histparname;
     vector <int> histparcat;
@@ -132,7 +134,7 @@ struct ConditionC
 struct StatC
 {
 	int cat,samp,samp1,samp2,group;
-	long double val,*vals;
+	long double val;
 };
 
 /**
@@ -637,6 +639,9 @@ struct ParticleC
     vector < vector <bool> > afsdone;
     vector < vector < vector <int> > > t_afs;
     vector < vector <int> > n_afs;
+	long double **statx;
+	int *mloc;
+	bool *statx_defined,*trie;
 
 	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar;
 	double matQ[4][4];
@@ -2767,8 +2772,8 @@ struct ParticleC
         }
     }
 
-	long double cal_snhet(int gr,int st) {
-		long double *het,hetm=0.0;
+	void cal_snhet(int gr,int st) {
+		long double *het;
 		int iloc,kloc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		het = new long double[this->grouplist[gr].nloc];
@@ -2778,70 +2783,18 @@ struct ParticleC
 				het[nl]=1.0;
 				for (int k=0;k<2;k++) het[nl] -= sqr(this->locuslist[kloc].freq[sample][k]);
 				het[nl] *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
-				hetm += het[nl];
-				//printf("kloc=%2d   het = %13.10Lf\n",kloc,het);
 				nl++;
 			}
 		}
-        /*FILE *f1;
-        f1=fopen("/home/cornuet/workspace/diyabc/snp/genoS2_2011_11_4-1/hetero.txt","w");
-		for (int i=0;i<nl;i++) fprintf(f1,"%3d      %10.6Lf       %10.6Lf  \n",i,het[i],this->locuslist[kloc].freq[sample][0]);
-		for (int i=0;i<nl;i++) printf("%3d      %10.6Lf        %10.6Lf  \n",i,het[i],this->grouplist[gr].sumstat[st].vals[i]);
-        fclose(f1);*/
-		if (nl>0) hetm=hetm/(long double)nl;
+		this->mloc[0] = nl;
+		this->statx[0] = new long double[nl];
+		for (int loc=0;loc<nl;loc++) this->statx[0][loc] = het[loc];
+		this->statx_defined[0]=true;
 		delete []het;
-		//printf("\n heterozygotie = %13.10Lf\n\n",hetm);
-		return hetm;		
 	}
-	
-	long double cal_snhed(int gr,int st) {
-		long double *het,Dcra,hetm=0.0;
-		int iloc,kloc,nl=0;
-		int sample=this->grouplist[gr].sumstat[st].samp-1;
-		het = new long double[this->grouplist[gr].nloc];
-		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-			kloc=this->grouplist[gr].loc[iloc];
-			if (this->locuslist[kloc].samplesize[sample]>1){
-				het[nl]=1.0;
-				for (int k=0;k<2;k++) het[nl] -= sqr(this->locuslist[kloc].freq[sample][k]);
-				het[nl] *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
-				hetm += het[nl];
-				nl++;
-			}
-		}
-		//printf("heterozygotie = %13.6Lf\n",hetm/(long double)nl);
-		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
-		if (Dcra==0.0) { //particuleobs
-			for (int i=0;i<nl;i++) this->grouplist[gr].sumstat[st].vals[i] = het[i];
-			delete []het;
-			return 0.0;  
-		}
-		Dcra = DCVM(nl,nl,het,this->grouplist[gr].sumstat[st].vals);
-		delete []het;
-		return Dcra;		
-	}
-	
-	long double cal_snnei(int gr,int st) {
-		long double nei,neim=0.0,fi,fj,gi,gj;
-		int iloc,loc,nl=0,n1,n2;
-		int sample=this->grouplist[gr].sumstat[st].samp-1;
-		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
-		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-			loc=this->grouplist[gr].loc[iloc];
-			n1=this->locuslist[loc].samplesize[sample];n2=this->locuslist[loc].samplesize[sample1];
-			if ((n1>0)and(n2>0)) {
-				fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];
-				gi=this->locuslist[loc].freq[sample][1];gj=this->locuslist[loc].freq[sample1][1];
-				nei = (fi*fj + gi*gj)/sqrt(fi*fi + gi*gi)/sqrt(fj*fj + gj*gj);
-				neim +=nei;
-				nl++;
-			}
-		}
-		if (nl>0) return neim/(long double)nl; else return 0.0;		
-	}
-		
-	long double cal_snned(int gr,int st) {
-		long double *nei,fi,fj,gi,gj,Dcra;
+
+	void cal_snnei(int gr,int st) {
+		long double *nei,fi,fj,gi,gj;
 		int iloc,loc,nl=0,n1,n2;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
 		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
@@ -2856,52 +2809,15 @@ struct ParticleC
 				nl++;
 			}
 		}
-		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
-		if (Dcra==0.0) { //particuleobs
-			for (int i=0;i<nl;i++) this->grouplist[gr].sumstat[st].vals[i] = nei[i];
-			return 0.0;  
-		}
-		Dcra = DCVM(nl,nl,nei,this->grouplist[gr].sumstat[st].vals);
+		this->mloc[1] = nl;
+		this->statx[1] = new long double[nl];
+		for (int loc=0;loc<nl;loc++) this->statx[1][loc] = nei[loc];
+		this->statx_defined[1]=true;
 		delete []nei;
-		return Dcra;		
-	}
-	
-	long double cal_snfst(int gr,int st) {
-		long double fi,fj,n1,n2;
-		long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P,s1=0.0,s3=0.0;
-		int iloc,loc;
-		int sample=this->grouplist[gr].sumstat[st].samp-1;
-		int sample1=this->grouplist[gr].sumstat[st].samp1-1;
-		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-			loc=this->grouplist[gr].loc[iloc];
-			n1=(long double)this->locuslist[loc].samplesize[sample];n2=(long double)this->locuslist[loc].samplesize[sample1];
-			if ((n1>0)and(n2>0)) {
-			    s1l = 0.0;s3l = 0.0;
-				for (int all=0;all<2;all++) {
-					fi=this->locuslist[loc].freq[sample][all];
-					fj=this->locuslist[loc].freq[sample1][all];
-					sniAA = fi*n1+fj*n2;
-					sniA  = 2.0*sniAA;
-					sni = n1+n2;
-					sni2 = n1*n1 + n2*n2;
-					s2A = 2.0*(n1*fi*fi + n2*fj*fj);
-					nc = (sni-sni2/sni);
-					MSI = (0.5*sniA+sniAA-s2A)/(sni-2.0);
-					MSP = (s2A - 0.5*sniA*sniA/sni);
-					s2I = 0.5*MSI;
-					s2P = (MSP-MSI)/2.0/nc;
-					s1l += s2P;
-					s3l += s2P + s2I;
-				}
-				if ((s3l>0.0)and(s1l>0.0)) { s1 += s1l; s3 += s3l;}
-			  
-			}
-		} 
-		if (s3>0.0) return s1/s3; else return 0.0;
 	}
 
-	long double cal_snfsd(int gr,int st) {
-		long double *fst,fi,fj,n1,n2,Dcra;
+	void cal_snfst(int gr,int st) {
+		long double *fst,fi,fj,n1,n2;
 		long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P;
 		int iloc,loc,nl=0;
 		int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -2935,14 +2851,11 @@ struct ParticleC
 				//printf("s1l=%10.5Lf   s3l=%10.5Lf   fst[%3d] = %10.5Lf\n", s1l,s3l,nl,fst[nl-1]);
 			}
 		}
-		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
-		if (Dcra==0.0) { //particuleobs
-			for (int i=0;i<nl;i++) this->grouplist[gr].sumstat[st].vals[i] = fst[i];
-			return 0.0;  
-		}
-		Dcra = DCVM(nl,nl,fst,this->grouplist[gr].sumstat[st].vals);
+		this->mloc[2] = nl;
+		this->statx[2] = new long double[nl];
+		for (int loc=0;loc<nl;loc++) this->statx[2][loc] = fst[loc];
+		this->statx_defined[2]=true;
 		delete []fst;
-		return Dcra;		
 	}
 
 	complex<long double> pente_liksnp(int gr, int st, int i0) {
@@ -2996,7 +2909,7 @@ struct ParticleC
 		return complex<long double>(li0,delta);
 	}
 
-	long double cal_snaml(int gr,int st){
+/*	long double cal_snaml(int gr,int st){
 		int i1=1,i2=998,i3;
 		long double p1,p2,p3,lik1,lik2,lik3;
 		complex<long double> c;
@@ -3011,9 +2924,9 @@ struct ParticleC
 			else		   {i1=i3;p1=p3;lik1=lik3;}
 		} while (abs(i2-i1)>1);
 		if (lik1>lik2) return 0.001*(long double)i1; else return 0.001*(long double)i2;
-	}
+	}*/
 	
-	long double cal_snamd(int gr,int st) {
+	void cal_snaml(int gr,int st) {
 		long double *aml,f1,f2,f3,n1,n2,Dcra,U,V,N,M,*rangx,*rangy;
 		int iloc,loc,nl=0;
 		
@@ -3035,20 +2948,11 @@ struct ParticleC
 				}
 			}
 		}
-		Dcra=0.0;for(int i=0;i<nl;i++) Dcra +=this->grouplist[gr].sumstat[st].vals[i];
-		if (Dcra==0.0) { //particuleobs
-			for (int i=0;i<nl;i++) this->grouplist[gr].sumstat[st].vals[i] = aml[i];
-			return 0.0;  
-		}
-		N = (long double)nl;M = N;
-		combrank2(nl,nl,aml,this->grouplist[gr].sumstat[st].vals,rangx,rangy);
-		U=0.0; for(int i=0;i<nl;i++) U +=(long double)((rangx[i]-(i+1))*(rangx[i]-(i+1)));U *=N;
-		V=0.0; for(int i=0;i<nl;i++) V +=(long double)((rangy[i]-(i+1))*(rangy[i]-(i+1)));V *=M;
-		Dcra = (U+V)/(N*M*(N+M)) - (4*M*N-1)/6/(M+N);
-		Dcra = Dcra/M;
-		delete []rangx;
-		delete []rangy;
-		return Dcra;		
+		this->mloc[3] = nl;
+		this->statx[3] = new long double[nl];
+		for (int loc=0;loc<nl;loc++) this->statx[3][loc] = aml[loc];
+		this->statx_defined[3]=true;
+		delete []aml;
 	}
 	
 
@@ -4292,6 +4196,17 @@ struct ParticleC
 	 *
 	 *
 	 */
+	long double cal_qu1L(int n, long double *x) {
+		if ((n % 4)==0) return 0.5*(x[n/4]+x[(n/4)-1]);
+		else if ((n % 2)==0) return x[n/4];
+		else return (0.25*x[(n/4)-1])+(0.75*x[n/4]);
+	}
+	long double cal_qu3L(int n, long double *x) {
+		if ((n % 4)==0) return 0.5*(x[3*n/4]+x[(3*n/4)+1]);
+		else if ((n % 2)==0) return x[3*n/4];
+		else return (0.25*x[(3*n/4)+1])+(0.75*x[3*n/4]);
+	}
+	
 	void docalstat(int gr) {
 //		cout << "avant calfreq\n";
 		//cout << this->grouplist[gr].type<<"\n";
@@ -4312,6 +4227,11 @@ struct ParticleC
                 }
             }
         }
+        this->statx_defined = new bool[4];
+		this->trie = new bool[4];
+		this->statx = new long double*[4];
+		this->mloc = new int[4];
+		for (int i=0;i<4;i++) {this->statx_defined[i] = false;this->trie[i] = false;}
 		for (int st=0;st<this->grouplist[gr].nstat;st++) {
 			/*if (this->grouplist[gr].sumstat[st].cat<5)
 			{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp  <<"\n";fflush(stdin);}
@@ -4352,14 +4272,49 @@ struct ParticleC
 				case   -12 : this->grouplist[gr].sumstat[st].val = cal_mpb2p(gr,st);break;
 				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(gr,st);break;
 				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(gr,st);break;
-				case    21 : this->grouplist[gr].sumstat[st].val = cal_snhet(gr,st);break;
-				case    22 : this->grouplist[gr].sumstat[st].val = cal_snhed(gr,st);break;
-				case    23 : this->grouplist[gr].sumstat[st].val = cal_snnei(gr,st);break;
-				case	24 : this->grouplist[gr].sumstat[st].val = cal_snned(gr,st);break;
-				case    25 : this->grouplist[gr].sumstat[st].val = cal_snfst(gr,st);break;
-				case    26 : this->grouplist[gr].sumstat[st].val = cal_snfsd(gr,st);break;
-				case    27 : this->grouplist[gr].sumstat[st].val = cal_snaml(gr,st);break;
-				case    28 : this->grouplist[gr].sumstat[st].val = cal_snamd(gr,st);break;
+				case    21 : if (not statx_defined[0]) cal_snhet(gr,st);
+							 this->grouplist[gr].sumstat[st].val = cal_moyL(this->mloc[0],this->statx[0]);break;
+				case    22 : if (not statx_defined[0]) cal_snhet(gr,st);
+							 this->grouplist[gr].sumstat[st].val = cal_varL(this->grouplist[gr].nloc,this->statx[0]);break;
+				case    23 : if (not statx_defined[0]) cal_snhet(gr,st);
+							 if (not this->trie[0]) {sort(&this->statx[0][0],&this->statx[0][this->mloc[0]]);this->trie[0]=true;}
+							 this->grouplist[gr].sumstat[st].val = cal_qu1L(this->mloc[0],this->statx[0]);break;
+				case	24 : if (not statx_defined[0]) cal_snhet(gr,st);
+							 if (not this->trie[0]) {sort(&this->statx[0][0],&this->statx[0][this->mloc[0]]);this->trie[0]=true;}
+							 this->grouplist[gr].sumstat[st].val = cal_qu3L(this->mloc[0],this->statx[0]);break;
+
+				case    25 : if (not statx_defined[1]) cal_snnei(gr,st);
+							 this->grouplist[gr].sumstat[st].val = cal_moyL(this->mloc[1],this->statx[1]);break;
+				case    26 : if (not statx_defined[1])cal_snnei(gr,st);
+							 this->grouplist[gr].sumstat[st].val = cal_varL(this->mloc[1],this->statx[1]);break;
+				case    27 : if (not statx_defined[1]) cal_snnei(gr,st);
+							 if (not this->trie[1]) {sort(&this->statx[1][0],&this->statx[1][this->mloc[1]]);this->trie[1]=true;}
+							 this->grouplist[gr].sumstat[st].val = cal_qu1L(this->mloc[1],this->statx[1]);break;
+				case	28 : if (not statx_defined[1]) cal_snnei(gr,st);
+							 if (not this->trie[1]) {sort(&this->statx[1][0],&this->statx[1][this->mloc[1]]);this->trie[1]=true;}
+							 this->grouplist[gr].sumstat[st].val = cal_qu3L(this->mloc[1],this->statx[1]);break;
+
+				case    29 : if (not statx_defined[2]) cal_snfst(gr,st);
+							 this->grouplist[gr].sumstat[st].val = cal_moyL(this->mloc[2],this->statx[2]);break;
+				case    30 : if (not statx_defined[2]) cal_snfst(gr,st);
+							 this->grouplist[gr].sumstat[st].val = cal_varL(this->mloc[2],this->statx[2]);break;
+				case    31 : if (not statx_defined[2]) cal_snfst(gr,st);
+							 if (not this->trie[2]) {sort(&this->statx[2][0],&this->statx[2][this->mloc[2]]);this->trie[2]=true;}
+							 this->grouplist[gr].sumstat[st].val = cal_qu1L(this->mloc[2],this->statx[2]);break;
+				case	32 : if (not statx_defined[2]) cal_snfst(gr,st);
+							 if (not this->trie[2]) {sort(&this->statx[2][0],&this->statx[2][this->mloc[2]]);this->trie[2]=true;}
+							 this->grouplist[gr].sumstat[st].val = cal_qu3L(this->mloc[2],this->statx[2]);break;
+
+				case    33 : if (not statx_defined[3]) cal_snaml(gr,st);
+							 this->grouplist[gr].sumstat[st].val = cal_moyL(this->mloc[3],this->statx[3]);break;
+				case    34 : if (not statx_defined[3]) cal_snaml(gr,st);
+							 this->grouplist[gr].sumstat[st].val = cal_varL(this->mloc[3],this->statx[3]);break;
+				case    35 : if (not statx_defined[3]) cal_snaml(gr,st);
+							 if (not this->trie[3]) {sort(&this->statx[3][0],&this->statx[3][this->mloc[3]]);this->trie[3]=true;}
+							 this->grouplist[gr].sumstat[st].val = cal_qu1L(this->mloc[3],this->statx[3]);break;
+				case	36 : if (not statx_defined[3]) cal_snaml(gr,st);
+							 if (not this->trie[3]) {sort(&this->statx[3][0],&this->statx[3][this->mloc[3]]);this->trie[3]=true;}
+							 this->grouplist[gr].sumstat[st].val = cal_qu3L(this->mloc[3],this->statx[3]);break;
 			}
 			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"   ";fflush(stdin);
 			//cout<<"\n";

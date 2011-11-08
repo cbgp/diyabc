@@ -621,13 +621,13 @@ public:
                         }
                     }
                 } else if (this->groupe[gr].type>9) {
-                    if (stat_num[j]<23) {
+                    if (stat_num[j]<25) {
                         for (int i=1;i<nss;i++) {
                                this->groupe[gr].sumstat[k].cat=stat_num[j];
                                this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());
                                k++;
                         }
-                    } else if ((stat_num[j]>22)and(stat_num[j]<27)) {
+                    } else if ((stat_num[j]>24)and(stat_num[j]<33)) {
                         for (int i=1;i<nss;i++) {
                             this->groupe[gr].sumstat[k].cat=stat_num[j];
                             ss1=splitwords(ss[i],"&",&nss1);
@@ -636,7 +636,7 @@ public:
                             k++;
                             delete [] ss1;
                         }
-                    } else if (stat_num[j]>26) {
+                    } else if (stat_num[j]>32) {
                         for (int i=1;i<nss;i++) {
                             this->groupe[gr].sumstat[k].cat=stat_num[j];
                             ss1=splitwords(ss[i],"&",&nss1);
@@ -1036,10 +1036,6 @@ public:
 				this->particuleobs.grouplist[gr].sumstat[i].samp  = this->groupe[gr].sumstat[i].samp;
 				this->particuleobs.grouplist[gr].sumstat[i].samp1 = this->groupe[gr].sumstat[i].samp1;
 				this->particuleobs.grouplist[gr].sumstat[i].samp2 = this->groupe[gr].sumstat[i].samp2;
-				if (this->groupe[gr].sumstat[i].cat>20) {
-					this->particuleobs.grouplist[gr].sumstat[i].vals= new long double [this->groupe[gr].nloc];
-					for (int loc=0;loc<this->groupe[gr].nloc;loc++) this->particuleobs.grouplist[gr].sumstat[i].vals[loc]=0.0;
-				}
 			}
 		}
 		//cout<<"apres GROUPS\n";
