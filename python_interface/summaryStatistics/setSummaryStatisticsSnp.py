@@ -117,11 +117,6 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
             if not silent:
                 output.notify(self,"Input error",str(e))
 
-    def loadSumStatsConf(self):
-        # TODO
-        pass
-
-
     def addOneSample(self,num):
         """ methode d'ajout d'un bloc dans 'one sample sum stats'
         """

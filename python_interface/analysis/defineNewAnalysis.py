@@ -79,12 +79,14 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
     def checkName(self):
         """ vérifie si le nom est valide et libre
         """
-        # TODO verifier que l'analyse n'existe pas deja
-        # TODO verifier les caractères interdits
         name = str(self.ui.analysisNameEdit.text())
         if name.strip() == "":
             output.notify(self,"name error","Analysis name cannot be empty")
             return False
+        for c in self.parent.parent.illegalProjectNameCharacters:
+            if c in name:
+                output.notify(self,"name error","Analysis name contains illegal characters")
+                return False
         for an in self.parent.analysisList:
             n = an.name
             if name.strip() == n.strip():
