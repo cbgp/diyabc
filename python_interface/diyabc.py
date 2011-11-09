@@ -516,15 +516,21 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.redrawRecent()
 
     def openRecent(self):
+        """ Evennement d'ouverture d'un projet récent depuis le menu
+        """
         ac = self.sender()
         path = self.entryToRecent[ac]
         self.openProject(path)
         #self.showTrayMessage("plop","recent project opened \n%s"%path)
 
     def showLogFile(self):
+        """ Ouverture de la fenetre d'affichage des logs
+        """
         self.showLogFile_win.show()
         
     def showStatus(self,msg,time=None):
+        """ Affiche 'msg' dans la statusbar pendant 'time'
+        """
         if time!=None:
             self.ui.statusBar.showMessage(msg,time)
         else:
@@ -547,6 +553,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.preferences_win.show()
 
     def isSNPProjectDir(self,dir):
+        """ Renvoie vrai si le dossier dont le chemin (relatif ou absolu)
+        est dir est un projet de type SNP
+        """
         if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
             f=open("%s/%s"%(dir,self.main_conf_name),'r')
             cont = f.readlines()
@@ -949,6 +958,10 @@ class Diyabc(formDiyabc,baseDiyabc):
     #    print self.sender()
     #    print "plop"
     def event(self,event):
+        """ méthode d'interception des event
+        les event arrivent jusque là s'ils n'ont pas été interceptés plus
+        tot par d'autres objets fils
+        """
         if event.type() == QEvent.MouseButtonRelease and event.button() == 2:
             elemList = self.findChildren(QLabel)
             elemList += self.findChildren(QPushButton)

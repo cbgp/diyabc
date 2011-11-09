@@ -74,9 +74,15 @@ class ProjectSnp(ProjectReftable):
         return self.sum_stat_wins.keys()
 
     def redefineSumStatsAnalysis(self,setupEst):
+        """ methode ping pong pour sélectionner la bonne methode
+        de redefinition d'un groupe de sumstats
+        """
         setupEst.redefineSumStatsSnp()
 
     def getNextWidget(self,hist_model):
+        """ méthode ping pong pour connaitre l'objet qui suit un
+        historical model fixed ou drawn
+        """
         return hist_model.getNextWidgetSnp()
 
     #def setGenValid(self,valid):
@@ -323,5 +329,14 @@ class ProjectSnp(ProjectReftable):
         f.close()
 
     def freezeGenData(self,yesno=True):
-        # TODO
-        pass
+        for g in self.sum_stat_wins.values():
+            for e in g.findChildren(QLineEdit):
+                e.setDisabled(yesno)
+            for e in g.findChildren(QPushButton):
+                e.setDisabled(yesno)
+            for e in g.findChildren(QCheckBox):
+                e.setDisabled(yesno)
+            g.ui.clearButton.setDisabled(yesno)
+            g.ui.exitButton.setDisabled(yesno)
+            g.ui.okButton.setDisabled(False)
+            g.ui.addAdmixButton.setDisabled(yesno)
