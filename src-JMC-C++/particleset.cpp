@@ -279,18 +279,22 @@ void setgroup(int p) {
                                 this->particule[p].grouplist[gr].Pmoy = this->header.groupe[gr].Pmoy;
                                 this->particule[p].grouplist[gr].snimoy = this->header.groupe[gr].snimoy;
                         }
-                        else {                                                  //SEQUENCES
-                                //cout<<"SEQUENCE\n";
-                                this->particule[p].grouplist[gr].musmoy = this->header.groupe[gr].musmoy;       //musmoy
-                                if (this->header.groupe[gr].mutmod>0){
-                                        this->particule[p].grouplist[gr].k1moy = this->header.groupe[gr].k1moy ;        //k1moy
-                                }
-                                if (this->header.groupe[gr].mutmod>2){
-                                        this->particule[p].grouplist[gr].k2moy = this->header.groupe[gr].k2moy ;        //k2moy
-                                }
-                        }
+                        else if (this->header.groupe[gr].type==1) {        //SEQUENCES
+							//cout<<"SEQUENCE\n";
+							this->particule[p].grouplist[gr].musmoy = this->header.groupe[gr].musmoy;       //musmoy
+							if (this->header.groupe[gr].mutmod>0){
+									this->particule[p].grouplist[gr].k1moy = this->header.groupe[gr].k1moy ;        //k1moy
+							}
+							if (this->header.groupe[gr].mutmod>2){
+									this->particule[p].grouplist[gr].k2moy = this->header.groupe[gr].k2moy ;        //k2moy
+							}
+                        } else if (this->header.groupe[gr].type>9) {		//SNP
+							for (int i=0;i<this->particule[p].grouplist[gr].nstatsnp;i++){
+								this->particule[p].grouplist[gr].sumstatsnp[i].defined=false;
+								this->particule[p].grouplist[gr].sumstatsnp[i].sorted=false;
+							}
+						}
                  //for (int loc=0;loc<this->nloc;loc++) this->particule[p].libere(false);
-
                 }
         }
 

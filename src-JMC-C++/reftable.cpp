@@ -330,7 +330,7 @@ public:
 */
     int cal_varstat() {
         int nrecutil,iscen,nsOK,bidon,i,step;
-        long double *sx,*sx2,x,an,nr;
+        long double *sx,*sx2,x,an,nr,*min,*max;
         bool scenOK;
         //cout <<"debut de cal_varstat\n";
         enregC enr;
@@ -339,8 +339,10 @@ public:
         if (nrecutil>nr) nrecutil=nr;
         sx  = new long double[this->nstat];
         sx2 = new long double[this->nstat];
+        min = new long double[this->nstat];
+        max = new long double[this->nstat];
         var_stat = new long double[this->nstat];
-        for (int j=0;j<this->nstat;j++) {sx[j]=0.0;sx2[j]=0.0;}
+        for (int j=0;j<this->nstat;j++) {sx[j]=0.0;sx2[j]=0.0;min[j]=10.0;max[j]=-10.0;}
         enr.stat = new float[this->nstat];
         this->nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>this->nparamax) this->nparamax=this->nparam[i];
         enr.param = new float[this->nparamax];
@@ -360,6 +362,8 @@ public:
                     x = (long double)enr.stat[j];
                     sx[j] += x;
                     sx2[j] += x*x;
+					if (min[j]>x) min[j]=x;
+					if (max[j]<x) max[j]=x;
                 }
             }
             //if ((i % step)==0) {cout<<"\rcal_varstat : "<<i/step<<"%";fflush(stdout);}
@@ -373,10 +377,10 @@ public:
         for (int j=0;j<this->nstat;j++) {
             this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
             if (this->var_stat[j]>0) nsOK++;
-			//printf("var_stat[%3d] = %12.8Lf\n",j,this->var_stat[j]);
+			printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
         }
         delete []sx;delete []sx2;
-        //cout<<"\nnstatOK = "<<nsOK<<"\n";
+        cout<<"\nnstatOK = "<<nsOK<<"\n";
         return nsOK;
     }
 
@@ -449,8 +453,12 @@ public:
         cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK<<"\n";
         cout<<"    distmin = "<<this->enrsel[0].dist<<"    distmax = "<<this->enrsel[nsel-1].dist<<"\n";
         printf("    distmin = %12.8Lf   distmax = %12.8Lf\n",this->enrsel[0].dist/(long double)this->nstat,this->enrsel[nsel-1].dist/(long double)this->nstat);
-		//for (int i=0;i<nsel;i++)           cout<<this->enrsel[i].numscen<<"  ";
-        //cout<<"\n";
+		/*for (int i=0;i<nsel;i++){
+			cout<<this->enrsel[i].numscen<<"  ";
+			for (int j=0;j<this->nparam[this->enrsel[i].numscen-1];j++) printf("  %6.0f",this->enrsel[i].param[j]);
+			for (int j=0;j<this->nstat;j++) printf("  %8.5f",this->enrsel[i].stat[j]);
+			cout<<"\n";
+		}*/
         //exit(1);
     }
 

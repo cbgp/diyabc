@@ -231,12 +231,14 @@ matligneC *matA;
                 x =(long double)rt.enrsel[i].stat[j];
                 sx[j] +=x;
                 sx2[j] +=x*x;
+				//cout<<"  "<<x;
             }
+            //cout<<"\n";
         }
         nstatOKsel=0;
         for (int j=0;j<rt.nstat;j++) {
             var_statsel[j]=(sx2[j]-sx[j]/nn*sx[j])/(nn-1.0);
-            //cout <<"var_statsel["<<j<<"]="<<var_statsel[j]<<"\n";
+            //cout <<"var_statsel["<<j<<"]="<<var_statsel[j]<<"   nn="<<nn<<"    sx2="<<sx2[j]<<"   sx="<<sx[j]<<"\n";
             if (var_statsel[j]>0.0) nstatOKsel++;
             mo[j] = sx[j]/nn;
         }
@@ -254,13 +256,14 @@ matligneC *matA;
             cvecW[i]=(1.5/delta)*(1.0-x*x);
             som = som + cvecW[i];
         }
-        //cout <<"\n cmatX0:\n";
-        /*for (int i=0;i<5;i++) { cout<<rt.enrsel[i].numscen<<"   ";
+        /*cout <<"\n cmatX0:\n";
+        for (int i=0;i<5;i++) { cout<<rt.enrsel[i].numscen<<"   ";
             for (int j=0;j<nstatOKsel;j++) cout<<cmatX0[i][j]<<"  ";cout<<"\n";
         }*/
         for (int i=0;i<n;i++) cvecW[i]/=som;
-        //cout <<"\ncvecW:\n";for (int i=0;i<10;i++) cout<<cvecW[i]<<"  ";
-        //cout<<"\n";
+        /*cout <<"\ncvecW:\n";for (int i=0;i<10;i++) cout<<cvecW[i]<<"  ";
+        cout<<"\n";
+		exit(1);*/
         delete []sx;delete []sx2;delete []mo;delete []var_statsel;
     }
 
