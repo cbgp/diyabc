@@ -48,7 +48,7 @@ using namespace std;
 
 struct LocusC
 {
-	char* name;
+	string name;
 	int type;  //0 à 14
 	int groupe;    //numero du groupe auquel appartient le locus
 	double coeff;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
@@ -72,10 +72,11 @@ struct LocusC
 	double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
 	int **haplomic; //array[sample][gene copy]
 	short int **haplosnp; //array[sample][gene copy] 0,1,9
+	bool mono;  //mono=true si un seul allèle dans l'échantillon global
 
 	void libere(bool obs, int nsample) {
-      //cout<<"debut  nsample="<<nsample<<"\n";
-       delete []this->name;
+       //cout<<"debut  nsample="<<nsample<<"\n";
+       //delete []this->name;
        //cout<<"apres delete name\n";
        delete []this->ss;
        //cout<<"apres delete ss\n";
@@ -192,6 +193,7 @@ public:
 			else if (ss[loc+3]=="X")this->locus[loc].type=12;
 			else if (ss[loc+3]=="Y")this->locus[loc].type=13;
 			else if (ss[loc+3]=="M")this->locus[loc].type=14;
+			this->locus[loc].name = ss[loc+3]+IntToString(loc);
 		}
 		cout<<"recherche du nombre d'échantillons\n";
 //recherche du nombre d'échantillons
@@ -280,11 +282,9 @@ public:
 * supprime les locus monomorphes
 */
 	void purgelocmonomorphes(){
-		bool *mono;
 		int ind,ech,ind0,ech0,kloc=0,nloc=0,*typ;
 		string ***ge,misval="9";
 		string premier="";
-		mono = new bool[this->nloc];
 		for (int loc=0;loc<this->nloc;loc++) {
 			for (ech0=0;ech0<this->nsample;ech0++){
 				for (ind0=0;ind0<this->nind[ech0];ind0++) {
@@ -293,20 +293,20 @@ public:
 				}
 				if (premier!="") break;
 			}
-			if (premier=="") mono[loc]=true; //le locus n'a que des données manquantes
+			if (premier=="") this->locus[loc].mono=true; //le locus n'a que des données manquantes
 			else {
-				mono[loc]=true;
+				this->locus[loc].mono=true;
 				for (ech=ech0;ech<this->nsample;ech++) {
 					for (ind=ind0+1;ind<this->nind[ech];ind++) {
-					    if ((this->indivsexe[ech][ind]==2)and(this->genotype[ech][ind][loc]=="1")) mono[loc]=false;
-						if (not mono[loc]) break;
-						mono[loc]=((this->genotype[ech][ind][loc]==premier)or(this->genotype[ech][ind][loc]==misval));
-						if (not mono[loc]) break;
+					    if ((this->indivsexe[ech][ind]==2)and(this->genotype[ech][ind][loc]=="1")) this->locus[loc].mono=false;
+						if (not this->locus[loc].mono) break;
+						this->locus[loc].mono=((this->genotype[ech][ind][loc]==premier)or(this->genotype[ech][ind][loc]==misval));
+						if (not this->locus[loc].mono) break;
 					}
-					if (not mono[loc]) break;
+					if (not this->locus[loc].mono) break;
 				}
 			}
-			if (not mono[loc]) nloc++;
+			if (not this->locus[loc].mono) nloc++;
 		}
 		if (nloc<this->nloc){
 			cout<<"purge de "<<this->nloc-nloc<<" locus monomorphes\n";
@@ -317,7 +317,7 @@ public:
 				for (ind=0;ind<this->nind[ech];ind++) ge[ech][ind] = new string[nloc];
 			}
 			for (int loc=0;loc<this->nloc;loc++) {
-				if (not mono[loc]) {
+				if (not this->locus[loc].mono) {
 					for (ech=0;ech<this->nsample;ech++) {
 						for (ind=0;ind<this->nind[ech];ind++) ge[ech][ind][kloc] = this->genotype[ech][ind][loc];
 					}
@@ -542,9 +542,10 @@ public:
 								}
 				s=s.substr(0,j-1);
 			} else this->locus[loc].type=0;
-			this->locus[loc].name = new char[s.length()+1];
-			strncpy(this->locus[loc].name, s.c_str(), s.length());
-			this->locus[loc].name[s.length()]='\0';
+			//this->locus[loc].name = new char[s.length()+1];
+			//strncpy(this->locus[loc].name, s.c_str(), s.length());
+			//this->locus[loc].name[s.length()]='\0';
+			this->locus[loc].name = s;
 		}
 		for (ech=0;ech<this->nsample;ech++) {
 			getline(file2,s);  //ligne "POP"

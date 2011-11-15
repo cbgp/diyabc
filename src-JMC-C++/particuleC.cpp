@@ -55,7 +55,7 @@ using namespace std;
 #define NUCMISSING 'N'
 #define NSTAT 43
 
-string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","SHM","SHV","SHF","SHT","SNM","SNV","SNF","SNT","SFM","SFV","SFF","SFT","SAM","SAV","SAF","SAT"};
+string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","HP0","HME","HQ1","HQ3","NP0","NME","NQ1","NQ3","FP0","FME","FQ1","FQ3","AP0","AME","AQ1","AQ3"};
 int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28 ,  29 ,  30 ,  31 ,  32 ,  33 ,  34 ,  35 ,  36};
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			 21 : moyenne des genic diversities
@@ -2693,7 +2693,7 @@ struct ParticleC
         int loc,iloc;
 		short int g0=0;
 		long double h0,h1,h2,m0=0.0,m1=0.0,m2=0.0;
-		//cout << "calfreqsnp début\n";
+		//cout << "calfreqsnp début   nloc="<<this->grouplist[gr].nloc<<"\n";
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             loc=this->grouplist[gr].loc[iloc];
             this->locuslist[loc].freq = new long double* [this->data.nsample];
@@ -2781,7 +2781,7 @@ struct ParticleC
             delete []this->locuslist[kloc].samplesize;
         }
     }
-
+/*
 	void cal_snhet(int gr,int numsnp) {
 		long double *het;
 		int iloc,kloc,nl=0;
@@ -2801,6 +2801,30 @@ struct ParticleC
 		for (int loc=0;loc<nl;loc++) this->grouplist[gr].sumstatsnp[numsnp].x[loc] = het[loc];
 		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
 		delete []het;
+	}
+*/
+	void cal_snhet(int gr,int numsnp) {
+		long double het;
+		int iloc,kloc,nl=0;
+		int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			kloc=this->grouplist[gr].loc[iloc];
+			if (this->locuslist[kloc].samplesize[sample]>1) nl++;
+		}
+		this->grouplist[gr].sumstatsnp[numsnp].n = nl;
+		this->grouplist[gr].sumstatsnp[numsnp].x =new long double[nl];
+		nl=0;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			kloc=this->grouplist[gr].loc[iloc];
+			if (this->locuslist[kloc].samplesize[sample]>1){
+				het=1.0;
+				for (int k=0;k<2;k++) het -= sqr(this->locuslist[kloc].freq[sample][k]);
+				het *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
+				this->grouplist[gr].sumstatsnp[numsnp].x[nl] = het;
+				nl++;
+			}
+		}
+		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
 	}
 
 	void cal_snnei(int gr,int numsnp) {
@@ -4250,12 +4274,12 @@ struct ParticleC
 	}
 	
 	void docalstat(int gr) {
-//		cout << "avant calfreq\n";
+		//cout << "avant calfreq\n";
 		//cout << this->grouplist[gr].type<<"\n";
 		if (this->grouplist[gr].type == 0)  this->calfreq(gr);
         else if (this->grouplist[gr].type == 1)  this->cal_numvar(gr);
 		else  this->calfreqsnp(gr);
-//		cout << "apres calfreq\n";
+		//cout << "apres calfreq\n";
         for (int st=0;st<this->grouplist[gr].nstat;st++) {
             if ((this->grouplist[gr].sumstat[st].cat==-7)or(this->grouplist[gr].sumstat[st].cat==-8)) {
                 this->afsdone.resize(this->data.nsample);
@@ -4313,6 +4337,7 @@ struct ParticleC
 				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(gr,st);break;
 				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(gr,st);break;
 				case    21 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+				             //cout<<"numsnp="<<numsnp<<"\n";
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snhet(gr,numsnp);
 							 this->grouplist[gr].sumstat[st].val = this->cal_p0L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 				case    22 : numsnp=this->grouplist[gr].sumstat[st].numsnp;

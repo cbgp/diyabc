@@ -123,12 +123,13 @@ public:
     void assignloc(int gr){
         this->groupe[gr].nloc = 0;
         for (int loc=0;loc<dataobs.nloc;loc++) {
-            if (dataobs.locus[loc].groupe==gr) this->groupe[gr].nloc++;
+            if ((dataobs.locus[loc].groupe==gr)and(not dataobs.locus[loc].mono)) this->groupe[gr].nloc++;
         }
+        cout<<"assignloc nloc="<<this->groupe[gr].nloc<<"\n";
         this->groupe[gr].loc = new int[this->groupe[gr].nloc];
         int iloc=-1;
         for (int i=0;i<dataobs.nloc;i++) {
-            if (dataobs.locus[i].groupe==gr) {iloc++;this->groupe[gr].loc[iloc] = i;}
+            if ((dataobs.locus[i].groupe==gr)and(not dataobs.locus[i].mono)) {iloc++;this->groupe[gr].loc[iloc] = i;}
         }
     }
 
@@ -262,7 +263,7 @@ public:
                 }
                 //this->scenario[i].histparam[j].ecris();
             }
-            //cout<<"scenario "<<i<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
+            cout<<"scenario "<<i<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
         }
 //retour sur les conditions spécifiques à chaque scenario
                 //cout <<"avant retour sur conditions\n";fflush(stdin);
@@ -323,7 +324,7 @@ public:
 				delete [] ss;
 			}
 		} else {			//fichier SNP
-			this->ngroupes=getwordint(s1,3); //cout<<s1<<"\n";cout<<"this->ngroupes="<<this->ngroupes<<"\n";
+			this->ngroupes=getwordint(s1,3); cout<<s1<<"\n";cout<<"this->ngroupes="<<this->ngroupes<<"\n";
 			this->groupe = new LocusGroupC[this->ngroupes+1];
 			this->groupe[0].nloc = this->dataobs.nloc;
 			for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].groupe=0;
@@ -339,7 +340,7 @@ public:
 				else if (s1.find("<X>")!=string::npos) this->groupe[gr].type=12;
 				else if (s1.find("<Y>")!=string::npos) this->groupe[gr].type=13;
 				else if (s1.find("<M>")!=string::npos) this->groupe[gr].type=14;
-				//cout<<"this->groupe[gr].type = "<<this->groupe[gr].type<<"\n";
+				cout<<"this->groupe[gr].type = "<<this->groupe[gr].type<<"\n";
 				k1=0;
 				for (int loc=prem;loc<this->dataobs.nloc;loc++) {
 				    //cout<<this->dataobs.locus[loc].type<<" ";
@@ -350,12 +351,14 @@ public:
 					}
 					if (k1 == this->groupe[gr].nloc) break;
 				}
-				//cout<<"\napres la boucle  k1="<<k1<<"\n";
+				cout<<"\napres la boucle  k1="<<k1<<"\n";
 			}
-			this->groupe[0].loc = new int[this->groupe[0].nloc];
-			k1=0;
-			for (int loc=0;loc<this->dataobs.nloc;loc++) {
-				if (this->dataobs.locus[loc].groupe==0) {this->groupe[0].loc[k1]=loc;k1++;}
+			if (this->groupe[0].nloc>0) {
+				this->groupe[0].loc = new int[this->groupe[0].nloc];
+				k1=0;
+				for (int loc=0;loc<this->dataobs.nloc;loc++) {
+					if (this->dataobs.locus[loc].groupe==0) {this->groupe[0].loc[k1]=loc;k1++;}
+				}
 			}
 		}
         if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie description des locus\n";
@@ -1085,17 +1088,19 @@ public:
 			this->particuleobs.data.indivsexe[i] = new int[this->dataobs.nind[i]];
 			for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
 		}
-		//cout<<"apres DATA\n";
+		cout<<"apres DATA\n";
 //partie GROUPES
 		int ngr = this->ngroupes;
-		//cout<<"ngr="<<ngr<<"\n";
+		cout<<"ngr="<<ngr<<"\n";
 		this->particuleobs.ngr = ngr;
 		this->particuleobs.grouplist = new LocusGroupC[ngr+1];
 		this->particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
-		this->particuleobs.grouplist[0].loc  = new int[this->groupe[0].nloc];
-		for (int i=0;i<this->groupe[0].nloc;i++) this->particuleobs.grouplist[0].loc[i] = this->groupe[0].loc[i];
+		if (this->groupe[0].nloc>0){
+			this->particuleobs.grouplist[0].loc  = new int[this->groupe[0].nloc];
+			for (int i=0;i<this->groupe[0].nloc;i++) this->particuleobs.grouplist[0].loc[i] = this->groupe[0].loc[i];
+		}
 		for (int gr=1;gr<=ngr;gr++) {
-			//cout <<"groupe "<<gr<<"\n";
+			cout <<"groupe "<<gr<<"\n";
 			this->particuleobs.grouplist[gr].type =this->groupe[gr].type;
 			this->particuleobs.grouplist[gr].nloc = this->groupe[gr].nloc;
 			this->particuleobs.grouplist[gr].loc  = new int[this->groupe[gr].nloc];
@@ -1123,7 +1128,7 @@ public:
 				}
 			}
 		}
-		//cout<<"apres GROUPS\n";
+		cout<<"apres GROUPS\n";
 //partie LOCUSLIST
 		int kmoy;
 		this->particuleobs.nloc = this->dataobs.nloc;

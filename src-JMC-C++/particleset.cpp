@@ -148,7 +148,7 @@ void setgroup(int p) {
 				}*/
 				this->particule[p].grouplist[gr].priorsniloc = copyprior(this->header.groupe[gr].priorsniloc);
 			}
-			else {							//SEQUENCES
+			else if (this->header.groupe[gr].type==1) {							//SEQUENCES
 			        //cout<<"SEQUENCE\n";
 				this->particule[p].grouplist[gr].mutmod = this->header.groupe[gr].mutmod;	//mutmod
 				this->particule[p].grouplist[gr].p_fixe = this->header.groupe[gr].p_fixe;	//p_fixe
@@ -225,7 +225,7 @@ void setgroup(int p) {
 				//this->particule[p].locuslist[kloc].Pgeom = this->header.dataobs.locus[kloc].Pgeom;
 				//this->particule[p].locuslist[kloc].sni_rate = this->header.dataobs.locus[kloc].sni_rate;
 				}
-			else {
+			else if (this->header.dataobs.locus[kloc].type < 10) {
 				this->particule[p].locuslist[kloc].dnalength =  this->header.dataobs.locus[kloc].dnalength;
 				this->particule[p].locuslist[kloc].kmin =  0;
 				this->particule[p].locuslist[kloc].kmax =  0;
@@ -292,6 +292,7 @@ void setgroup(int p) {
 							for (int i=0;i<this->particule[p].grouplist[gr].nstatsnp;i++){
 								this->particule[p].grouplist[gr].sumstatsnp[i].defined=false;
 								this->particule[p].grouplist[gr].sumstatsnp[i].sorted=false;
+								delete []this->particule[p].grouplist[gr].sumstatsnp[i].x;
 							}
 						}
                  //for (int loc=0;loc<this->nloc;loc++) this->particule[p].libere(false);
