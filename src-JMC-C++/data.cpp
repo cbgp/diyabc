@@ -266,7 +266,7 @@ public:
 				this->indivname[ech][nindi[ech]]=ss[0];
 				for (int loc=0;loc<this->nloc;loc++) this->genotype[ech][nindi[ech]][loc]= ss[loc+3];
 				cout<<"individu "<<nindi[ech]+1<<" de l'échantillon "<<ech+1<<"   "<<this->indivname[ech][nindi[ech]];
-				cout<<"  "<<this->indivsexe[ech][nindi[ech]]<<"  "<<popname[ech]<<"   "<<this->genotype[ech][nindi[ech]][this->nloc-1]<<"\r";
+				cout<<"  "<<this->indivsexe[ech][nindi[ech]]<<"  "<<popname[ech]<<"   "<<this->genotype[ech][nindi[ech]][0]<<"\n";
 				nindi[ech]++;
 				//for (int ec=0;ec<nech;ec++) cout<<nindi[ec]<<"   ";cout<<"\n";
 			}
@@ -293,8 +293,10 @@ public:
 				}
 				if (premier!="") break;
 			}
-			if (premier=="") this->locus[loc].mono=true; //le locus n'a que des données manquantes
-			else {
+			if (premier=="") {
+				this->locus[loc].mono=true; //le locus n'a que des données manquantes
+				cout<<"premier="<<premier<<" au locus"<<loc<<"\n";
+			} else {
 				this->locus[loc].mono=true;
 				for (ech=ech0;ech<this->nsample;ech++) {
 					for (ind=ind0+1;ind<this->nind[ech];ind++) {
@@ -303,10 +305,31 @@ public:
 						this->locus[loc].mono=((this->genotype[ech][ind][loc]==premier)or(this->genotype[ech][ind][loc]==misval));
 						if (not this->locus[loc].mono) break;
 					}
+					ind0=-1;
 					if (not this->locus[loc].mono) break;
 				}
 			}
-			if (not this->locus[loc].mono) nloc++;
+			if (not this->locus[loc].mono) {
+				nloc++;
+				if (loc<5) {
+					cout<<"locus "<<loc<<"   premier="<<premier<<"\n";
+					for (ech=0;ech<this->nsample;ech++){
+						for (ind=0;ind<this->nind[ech];ind++) {
+							cout<<this->genotype[ech][ind][loc]<<" ";
+						}
+						cout<<"\n";
+					}
+				}
+			} else {
+				cout<<"le locus "<<loc<<" semble monomorphe"<<"   premier="<<premier<<"\n";
+				for (ech=0;ech<this->nsample;ech++){
+					for (ind=0;ind<this->nind[ech];ind++) {
+						cout<<this->genotype[ech][ind][loc]<<" ";
+					}
+					cout<<"\n";
+				}
+			}
+			
 		}
 		if (nloc<this->nloc){
 			cout<<"purge de "<<this->nloc-nloc<<" locus monomorphes\n";
@@ -342,8 +365,8 @@ public:
 			}
 			delete[]ge;
 			this->nloc=kloc;
-		} else cout<<"tous les locus sont polymorphes";
-
+		} else cout<<"tous les locus sont polymorphes\n";
+		exit(1);
 	}
 
 	void missingdata(){
