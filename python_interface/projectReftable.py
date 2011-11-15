@@ -902,7 +902,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     and os.path.exists("%s/%s_paramstatdens.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
                 aDirName = "estimation_%s"%aid
-                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
+                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_mmmq.txt"%(self.dir,aid),"%s/analysis/%s/mmmq.txt"%(self.dir,aDirName))
@@ -914,7 +915,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
                 aDirName = "comparison_%s"%aid
-                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
+                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
@@ -958,7 +960,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 #print "les fichiers existent"
                 # deplacement des fichiers de résultat
                 aDirName = "bias_%s"%aid
-                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
+                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias.txt"%(self.dir,aDirName))
                 log(3,"Copy of '%s/%s_bias.txt' to '%s/analysis/%s/bias.txt' done"%(self.dir,aid,self.dir,aDirName))
                 #print "déplacement de %s/%s_bias.txt vers %s/analysis/%s/bias.txt"%(self.dir,aid,self.dir,aDirName)
@@ -969,14 +972,16 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if os.path.exists("%s/%s_confidence.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
                 aDirName = "evaluation_%s"%aid
-                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
+                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_confidence.txt"%(self.dir,aid),"%s/analysis/%s/confidence.txt"%(self.dir,aDirName))
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
         elif atype == "modelChecking":
             if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)) or os.path.exists("%s/%s_mclocate.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
                 aDirName = "modelChecking_%s"%aid
-                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
+                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_mclocate.txt"%(self.dir,aid)):
                     shutil.move("%s/%s_mclocate.txt"%(self.dir,aid),"%s/analysis/%s/mclocate.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)):
@@ -986,7 +991,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if os.path.exists("%s/%s_locate.txt"%(self.dir,aid)) or os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
                 aDirName = "pca_%s"%aid
-                os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
+                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
+                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_locate.txt"%(self.dir,aid)):
                     shutil.move("%s/%s_locate.txt"%(self.dir,aid),"%s/analysis/%s/locate.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
