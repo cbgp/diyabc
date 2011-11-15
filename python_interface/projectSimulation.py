@@ -72,6 +72,9 @@ class ProjectSimulation(Project):
         #self.setGenValid(False)
         #self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self.runSimulation)
 
+        self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
+        self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopSimulation)
+
     def stopUiGenReftable(self):
         self.ui.runReftableButton.setText("Run computations")
         self.ui.runReftableButton.setDisabled(False)
@@ -216,15 +219,26 @@ class ProjectSimulation(Project):
             output.notify(self,"value error","Check the value of required number of data sets\n\n%s"%e)
             return
         self.th = SimulationThread(self,nb_to_gen)
-        self.th.connect(self.th,SIGNAL("increment"),self.incProgress)
+        self.th.connect(self.th,SIGNAL("simulationTerminated"),self.simulationTerminated)
         self.th.connect(self.th,SIGNAL("simulationProblem"),self.simulationProblem)
-        self.th.connect(self.th,SIGNAL("simulationLog"),self.refTableLog)
+        self.th.connect(self.th,SIGNAL("simulationLog"),self.simulationLog)
         #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
         self.th.start()
 
     def simulationProblem(self):
         output.notify(self,"Simulation problem","Something happened during the simulation :\n %s"%(self.th.problem))
         self.stopSimulation()
+
+    def simulationLog(self):
+        if self.th != None:
+            log(self.th.loglvl,self.th.logmsg)
+
+    def simulationTerminated(self):
+        """ Reception du signal de fin de simulation
+        """
+        self.parent.showTrayMessage("DIYABC : simulation","Simulation has finished")
+        self.stopUiGenReftable()
+        self.th = None
 
     def stopSimulation(self):
         if self.th != None:
@@ -303,6 +317,7 @@ class SimulationThread(QThread):
                     f.close()
                     finished = True
                     self.log(2,"Simulation terminated normaly")
+                    self.emit(SIGNAL("simulationTerminated"))
                 else:
                     fg.close()
                     fout = open(outfile,'r')

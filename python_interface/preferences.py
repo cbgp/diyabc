@@ -146,7 +146,7 @@ class Preferences(formPreferences,basePreferences):
         if self.ui.useDefaultExeCheck.isChecked():
             # LINUX
             if "linux" in sys.platform:
-                if "86" in platform.machine():
+                if "86" in platform.machine() and "64" not in platform.machine():
                     exPath = "docs/executables/diyabc-comput-linux-i386"
                 else:
                     exPath = "docs/executables/diyabc-comput-linux-x64"
@@ -158,7 +158,7 @@ class Preferences(formPreferences,basePreferences):
                     exPath = "docs/executables/diyabc-comput-win-i386"
             # MACOS
             elif "darwin" in sys.platform:
-                if "86" in platform.machine():
+                if "86" in platform.machine() and "64" not in platform.machine():
                     exPath = "docs/executables/diyabc-comput-mac-i386"
                 else:
                     exPath = "docs/executables/diyabc-comput-mac-x64"
