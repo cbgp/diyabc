@@ -65,7 +65,12 @@ class Preferences(formPreferences,basePreferences):
             self.ui.bgColorCombo.setCurrentIndex(ind)
 
         # initialisation du combo pour le nombre max de thread
-        for i in range(multiprocessing.cpu_count()):
+        try:
+            nb_core = multiprocessing.cpu_count()
+        except Exception,e:
+            nb_core = 1
+            log(3,"Impossible to count core number on this computer")
+        for i in range(nb_core):
             self.ui.maxThreadCombo.addItem("%s"%(i+1))
         self.ui.maxThreadCombo.setCurrentIndex(self.ui.maxThreadCombo.count()-1)
 

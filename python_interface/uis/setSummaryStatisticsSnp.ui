@@ -197,9 +197,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>865</width>
-        <height>191</height>
+        <y>-53</y>
+        <width>850</width>
+        <height>161</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -228,13 +228,13 @@
           <widget class="QFrame" name="frame_8">
            <property name="minimumSize">
             <size>
-             <width>275</width>
+             <width>300</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>275</width>
+             <width>300</width>
              <height>16777215</height>
             </size>
            </property>
@@ -259,8 +259,17 @@
                 <height>14</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
-               <string/>
+               <string>Genic diversities</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -281,7 +290,7 @@
                  </size>
                 </property>
                 <property name="text">
-                 <string>Mean genic diversity</string>
+                 <string>Proportion of zero values</string>
                 </property>
                </widget>
               </item>
@@ -352,7 +361,7 @@
                  </size>
                 </property>
                 <property name="text">
-                 <string>Variance of genic diversities</string>
+                 <string>Median of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -423,7 +432,7 @@
                  </size>
                 </property>
                 <property name="text">
-                 <string>First quartile of genic diversities</string>
+                 <string>First quartile of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -494,7 +503,7 @@
                  </size>
                 </property>
                 <property name="text">
-                 <string>Third quartile of genic diversities</string>
+                 <string>Third quartile of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -724,9 +733,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-59</y>
+        <y>-72</y>
         <width>850</width>
-        <height>249</height>
+        <height>269</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -755,13 +764,13 @@
           <widget class="QFrame" name="frame_10">
            <property name="minimumSize">
             <size>
-             <width>250</width>
+             <width>300</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>250</width>
+             <width>300</width>
              <height>16777215</height>
             </size>
            </property>
@@ -786,8 +795,17 @@
                 <height>14</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
-               <string/>
+               <string>Nei's distances</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -796,7 +814,7 @@
               <item>
                <widget class="QLabel" name="label_34">
                 <property name="text">
-                 <string>Mean Nei's distance</string>
+                 <string>Proportion of zero values</string>
                 </property>
                </widget>
               </item>
@@ -855,7 +873,7 @@
               <item>
                <widget class="QLabel" name="label_32">
                 <property name="text">
-                 <string>Variance of Nei's distances</string>
+                 <string>Median of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -914,7 +932,7 @@
               <item>
                <widget class="QLabel" name="label_31">
                 <property name="text">
-                 <string>First quartile of Nei's distances</string>
+                 <string>First quartile of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -973,7 +991,7 @@
               <item>
                <widget class="QLabel" name="label_27">
                 <property name="text">
-                 <string>Third quartile of  Nei's distances</string>
+                 <string>Third quartile of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -1028,11 +1046,27 @@
              </layout>
             </item>
             <item>
+             <widget class="QLabel" name="label_12">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>FST distances</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_24">
               <item>
                <widget class="QLabel" name="label_29">
                 <property name="text">
-                 <string>Mean FST distance</string>
+                 <string>Proportion of zero values</string>
                 </property>
                </widget>
               </item>
@@ -1091,7 +1125,7 @@
               <item>
                <widget class="QLabel" name="label_28">
                 <property name="text">
-                 <string>Variance of FST distances</string>
+                 <string>Median of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -1150,7 +1184,7 @@
               <item>
                <widget class="QLabel" name="label_30">
                 <property name="text">
-                 <string>First quartile of FST distances</string>
+                 <string>First quartile of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -1209,7 +1243,7 @@
               <item>
                <widget class="QLabel" name="label_33">
                 <property name="text">
-                 <string>Third quartile of FST distances</string>
+                 <string>Third quartile of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -1531,9 +1565,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-77</y>
+        <y>0</y>
         <width>850</width>
-        <height>292</height>
+        <height>312</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1562,13 +1596,13 @@
           <widget class="QFrame" name="frame">
            <property name="minimumSize">
             <size>
-             <width>230</width>
+             <width>300</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>230</width>
+             <width>300</width>
              <height>16777215</height>
             </size>
            </property>
@@ -1705,13 +1739,29 @@ population 2</string>
              </spacer>
             </item>
             <item>
+             <widget class="QLabel" name="label_13">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Admixture estimates</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_29">
                 <item>
                  <widget class="QLabel" name="label_6">
                   <property name="text">
-                   <string>Mean of admixture estimates</string>
+                   <string>Proportion of zero values</string>
                   </property>
                  </widget>
                 </item>
@@ -1783,7 +1833,7 @@ population 2</string>
                 <item>
                  <widget class="QLabel" name="label_9">
                   <property name="text">
-                   <string>Variance of admixture estimates</string>
+                   <string>Median of non-zero values</string>
                   </property>
                  </widget>
                 </item>
@@ -1855,7 +1905,7 @@ population 2</string>
                 <item>
                  <widget class="QLabel" name="label_10">
                   <property name="text">
-                   <string>First quartile of admixture estimates</string>
+                   <string>First quartile of non-zero values</string>
                   </property>
                  </widget>
                 </item>
@@ -1927,7 +1977,7 @@ population 2</string>
                 <item>
                  <widget class="QLabel" name="label_11">
                   <property name="text">
-                   <string>Third quartile of admixture estimates</string>
+                   <string>Third quartile of non-zero values</string>
                   </property>
                  </widget>
                 </item>

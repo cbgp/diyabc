@@ -18,28 +18,28 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
     """ ecran de selection des summary statistics pour les SNP
     """
     def __init__(self,parent=None,box_group=None,numGroup=0):
-        self.statList1 = ["SHM","SHV","SHF","SHT"]
+        self.statList1 = ["HP0","MHE","HQ1","HQ3"]
         self.confToStat1 = {
-                "SHM" : "mgd",
-                "SHV" : "vgd",
-                "SHF": "fgd",
-                "SHT" : "tgd"}
-        self.statList2 = ["SNM","SNV","SNF","SNT","SFM","SFV","SFF","SFT"]
+                "HP0" : "mgd",
+                "MHE" : "vgd",
+                "HQ1": "fgd",
+                "HQ3" : "tgd"}
+        self.statList2 = ["NP0","NME","NQ1","NQ3","FP0","FME","FQ1","FQ3"]
         self.confToStat2 = {
-                "SNM" : "mnd2",
-                "SNV": "vnd2",
-                "SNF" : "fnd2",
-                "SNT" : "tnd2",
-                "SFM" : "mfd2",
-                "SFV" : "vfd2",
-                "SFF" : "ffd2",
-                "SFT" : "tfd2"}
-        self.statList3 = ["SAM","SAV","SAF","SAT"]
+                "NP0" : "mnd2",
+                "NME": "vnd2",
+                "NQ1" : "fnd2",
+                "NQ3" : "tnd2",
+                "FP0" : "mfd2",
+                "FME" : "vfd2",
+                "FQ1" : "ffd2",
+                "FQ3" : "tfd2"}
+        self.statList3 = ["AP0","AME","AQ1","AQ3"]
         self.confToStat3 = {
-                "SAM" : "mae3",
-                "SAV" : "vae3",
-                "SAF" : "fae3",
-                "SAT" : "tae3"}
+                "AP0" : "mae3",
+                "AME" : "vae3",
+                "AQ1" : "fae3",
+                "AQ3" : "tae3"}
         self.statList = self.statList1 + self.statList2 + self.statList3
 
         super(SetSummaryStatisticsSnp,self).__init__(parent,box_group,numGroup)
@@ -181,6 +181,11 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         verticalLayout_5.addWidget(twoSampleLabel)
 
         for stat in self.statList2:
+            if stat == "FP0":
+                lab = QLabel("")
+                lab.setMinimumSize(QtCore.QSize(0, 14))
+                lab.setMaximumSize(QtCore.QSize(0, 14))
+                verticalLayout_5.addWidget(lab)
             horizontalLayout_14 = QtGui.QHBoxLayout()
             horizontalLayout_14.setObjectName("horizontalLayout_14")
             spacerItem12 = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
