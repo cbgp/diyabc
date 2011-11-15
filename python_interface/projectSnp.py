@@ -29,6 +29,9 @@ class ProjectSnp(ProjectReftable):
         self.ui.frame_11.show()
         self.ui.frame_12.show()
 
+    def isSnp(self):
+        return True
+
     def setGenetic(self):
         """ initie la définition des summary statistics
         """

@@ -61,6 +61,9 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
             self.ui.redefSumStatsFrame.hide()
 
         self.ui.projectNameEdit.setText(self.parent.parent.dir)
+        
+        if self.parent.parent.isSnp():
+            self.ui.paramChoiceBox.hide()
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
@@ -162,7 +165,9 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
             chosen_scs_txt = chosen_scs_txt[:-1]
             #dico_est = self.analysis[-1]
             if self.analysis.category == "estimate" or self.analysis.category == "modelChecking":
-                self.analysis.computationParameters = "s:%s;n:%s;m:%s;t:%s;p:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['numberOfselData'],self.dico_values['transformation'],self.dico_values['choice'])
+                self.analysis.computationParameters = "s:%s;n:%s;m:%s;t:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['numberOfselData'],self.dico_values['transformation'])
+                if not self.parent.parent.isSnp():
+                    self.analysis.computationParameters += ";p:%s"%self.dico_values['choice']
                 if self.analysis.category == "modelChecking":
                     pat = re.compile(r'\s+')
                     statsStr = ""
@@ -178,7 +183,8 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                 strparam += "m:%s;"%self.dico_values['numberOfselData']
                 strparam += "d:%s;"%self.dico_values['numberOfTestData']
                 strparam += "t:%s;"%self.dico_values['transformation']
-                strparam += "p:%s;"%self.dico_values['choice']
+                if not self.parent.parent.isSnp():
+                    strparam += "p:%s;"%self.dico_values['choice']
                 #print "robert ", self.analysis
                 strparam += "h:"
                 for paramname in self.analysis.histParams.keys():
@@ -191,9 +197,9 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                 for ctxt in self.analysis.condTxtList:
                     strparam += "%s "%ctxt
                 strparam = strparam[:-1]
-                strparam += ";u:"
                 #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
                 if len(self.analysis.mutationModel)>0:
+                    strparam += ";u:"
                     if type(self.analysis.mutationModel[0]) == type(u'plop'):
                         for ind,gr in enumerate(self.analysis.mutationModel):
                             strparam += "g%s("%(ind+1)

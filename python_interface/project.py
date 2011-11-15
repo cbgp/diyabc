@@ -98,6 +98,9 @@ class Project(baseProject,formProject):
         self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)
         self.ui.analysisStack.setCurrentWidget(elem)
 
+    def isSnp(self):
+        return False
+
     def setHistorical(self):
         """ passe sur l'onglet correspondant
         """
