@@ -311,14 +311,6 @@ public:
 			}
 			if (not this->locus[loc].mono) {
 				nloc++;
-				if (loc<5) {
-					cout<<"locus "<<loc<<"   premier="<<premier<<"\n";
-					for (ech=0;ech<this->nsample;ech++){
-						for (ind=0;ind<this->nind[ech];ind++) {
-							cout<<this->genotype[ech][ind][loc]<<" ";
-						}
-						cout<<"\n";
-					}
 				}
 			} else {
 				cout<<"le locus "<<loc<<" semble monomorphe"<<"   premier="<<premier<<"\n";
