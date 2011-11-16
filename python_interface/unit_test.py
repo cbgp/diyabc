@@ -3,6 +3,7 @@
 from project import *
 
 #import time
+import os.path
 import unittest
 import sys
 import shutil
@@ -10,7 +11,7 @@ from diyabc import Diyabc
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from datetime import datetime
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,TeeLogger
 
 class testDiyabc(unittest.TestCase):
     """
@@ -39,8 +40,8 @@ class testDiyabc(unittest.TestCase):
         # pour les logs dans un fichier et sur le terminal
         # chaque TeeLogger remplace une sortie et écrit dans 
         # le fichier qu'on lui donne
-        myOut = output.TeeLogger(logfile,"a",diyabc,True)
-        myErr = output.TeeLogger(logfile,"a",diyabc,False)
+        myOut = TeeLogger(logfile,True,diyabc.showLog)
+        myErr = TeeLogger(logfile,False,diyabc.showLog)
         sys.stdout = myOut
         sys.stderr = myErr
         log(1,"\033[5;36m DIYABC launched \033[00m")
