@@ -78,7 +78,7 @@ fi
 mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
 # copy of needed images
 mkdir $output/docs
-cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/docs/
-cp -r $SOURCEDIR/uis/ $output/uis
+cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/$APPNAME-$VERSION.app/Contents/Ressources/docs/
+cp -r $SOURCEDIR/uis/ $output/$APPNAME-$VERSION.app/Contents/Ressources/uis
 # clean
 rm -rf $TMPBUILD

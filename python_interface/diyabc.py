@@ -11,7 +11,10 @@ import sys,traceback
 import os
 # les .app démarrent python avec '/' comme cwd
 if "darwin" in sys.platform and ".app/" in sys.argv[0]:
-    mycwd = "/".join(sys.argv[0].split(".app/")[0].split('/')[:-1])
+    # pour aller dans le rep où est le .app
+    #mycwd = "/".join(sys.argv[0].split(".app/")[0].split('/')[:-1])
+    # pour aller a l'interieur du .app
+    mycwd = sys.argv[0].split(".app/")[0] + ".app/Contents/Resources/"
     os.chdir(mycwd)
 # pour connaitre les modules, on manipule le pythonpath
 sys.path.append("/".join(os.getcwd().split('/')[:-1]))
