@@ -257,6 +257,7 @@ class SetGeneticDataMsatSeq(SetGeneticData):
         stat_txt_list = []
         nstat_tot = 0
         for i,box in enumerate(self.groupList):
+            stat_to_write = ""
             stat_txt = ""
             if "Microsatellites" in str(box.title()):
                 (nstat_tmp,stat_txt) = self.setSum_dico[box].getSumConf()

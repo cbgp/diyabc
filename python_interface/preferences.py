@@ -151,7 +151,7 @@ class Preferences(formPreferences,basePreferences):
                 else:
                     exPath = "docs/executables/diyabc-comput-linux-x64"
             # WINDOWS
-            elif "win" in sys.platform:
+            elif "win" in sys.platform and "darwin" not in sys.platform:
                 if os.environ.has_key("PROCESSOR_ARCHITECTURE") and "86" not in os.environ["PROCESSOR_ARCHITECTURE"]:
                     exPath = "docs/executables/diyabc-comput-win-x64"
                 else:
