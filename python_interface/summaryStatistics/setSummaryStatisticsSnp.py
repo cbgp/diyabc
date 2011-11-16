@@ -18,10 +18,10 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
     """ ecran de selection des summary statistics pour les SNP
     """
     def __init__(self,parent=None,box_group=None,numGroup=0):
-        self.statList1 = ["HP0","MHE","HQ1","HQ3"]
+        self.statList1 = ["HP0","HME","HQ1","HQ3"]
         self.confToStat1 = {
                 "HP0" : "mgd",
-                "MHE" : "vgd",
+                "HME" : "vgd",
                 "HQ1": "fgd",
                 "HQ3" : "tgd"}
         self.statList2 = ["NP0","NME","NQ1","NQ3","FP0","FME","FQ1","FQ3"]
