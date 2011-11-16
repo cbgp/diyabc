@@ -77,8 +77,8 @@ if [ `grep diyabc $output/Mac$APPNAME.app/Contents/Info.plist | wc -l` -eq 1 ]; 
 fi
 mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
 # copy of needed images
-mkdir $output/$APPNAME-$VERSION.app/Contents/Ressources/docs
-cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/$APPNAME-$VERSION.app/Contents/Ressources/docs/
-cp -r $SOURCEDIR/uis/ $output/$APPNAME-$VERSION.app/Contents/Ressources/uis
+mkdir $output/$APPNAME-$VERSION.app/Contents/Resources/docs
+cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/$APPNAME-$VERSION.app/Contents/Resources/docs/
+cp -r $SOURCEDIR/uis/ $output/$APPNAME-$VERSION.app/Contents/Resources/uis
 # clean
 rm -rf $TMPBUILD
