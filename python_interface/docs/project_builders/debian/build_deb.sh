@@ -24,7 +24,7 @@ SOURCEDIR=$1
 
 VERSIONFILE="$SOURCEDIR/version.txt"
 VERSION="`head -n 1 $VERSIONFILE`"
-BUILDDATE=`LANG=en_EN.utf8 date +%d-%b-%Y`
+BUILDDATE=`LANG=en_EN.utf8 date +%d-%m-%Y`
 
 if [ $MAIN == "MAIN" ]; then
     PACKAGEDIR=diyabc\_$VERSION\_all
@@ -59,7 +59,8 @@ chmod 755 diyabc-interface-pkg-template/DEBIAN/*
 
 cp -rp $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $PACKAGESRCDIR/
 # version modification
-sed -i "s/VERSION='development version'/VERSION='$VERSION ($BUILDDATE)'/" $PACKAGESRCDIR/diyabc.py
+sed -i "s/VERSION='development version'/VERSION='$VERSION'/" $PACKAGESRCDIR/diyabc.py
+sed -i "s/01\/01\/1970/$BUILDDATE/" $PACKAGESRCDIR/diyabc.py
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 if [ $MAIN == "MAIN" ]; then

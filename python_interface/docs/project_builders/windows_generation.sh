@@ -11,7 +11,7 @@ pyinst=$1
 icon=$2
 output=$3
 pysrc=$4
-BUILDDATE=`date +%d-%b-%Y`
+BUILDDATE=`date +%d-%m-%Y`
 
 if [ $# -eq 0 ] ; then
     printUsage
@@ -37,7 +37,9 @@ mkdir $TMPBUILD
 SOURCEDIR=`dirname $pysrc`
 cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $TMPBUILD/
 pysrctmp=$TMPBUILD/`basename $pysrc`
-sed -i "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
+#sed -i "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
+sed -i "s/development\ version/$VERSION/g" $TMPBUILD/$APPNAME.py
+sed -i "s/01\/01\/1970/$BUILDDATE/g" $TMPBUILD/$APPNAME.py
 echo "sed -i 's/development\ version/$VERSION ($BUILDDATE)/g' $TMPBUILD/$APPNAME.py"
 echo `cat $TMPBUILD/$APPNAME.py | grep VERSION`
 

@@ -1052,7 +1052,7 @@ def main():
     # instanciation des objets principaux
     app = QApplication(nargv)
     myapp = Diyabc(app,projects=projects_to_open,logfile=logfile)
-    myapp.setWindowTitle("DIYABC %s"%VERSION)
+    myapp.setWindowTitle("DIYABC %s  (%s)"%(VERSION,VERSION_DATE))
     myapp.show()
     # les .app sous macos nécessitent cela pour que l'appli s'affiche en FG
     if "darwin" in sys.platform and ".app/" in sys.argv[0]:
