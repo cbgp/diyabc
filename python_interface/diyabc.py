@@ -947,6 +947,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.preferences_win.saveRecent()
         self.preferences_win.saveToolBarPosition(self.toolBarArea(self.ui.toolBar))
         self.preferences_win.writeConfigFile()
+        # windows ne nettoie pas son tray, aidons le
+        self.systray.hide()
         event.accept()
     #    reply = QtGui.QMessageBox.question(self, 'Message',
     #        "Are you sure to quit?", QtGui.QMessageBox.Yes | 
