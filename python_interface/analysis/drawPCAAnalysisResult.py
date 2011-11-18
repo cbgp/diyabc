@@ -121,6 +121,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 pc = (float(i)/float(nb_lignes)*100)+1
                 if (int(pc) % 2) == 0:
                     self.ui.ACProgress.setValue(pc)
+                    QCoreApplication.processEvents()
                 tab = l.split(" ")
                 num_sc = int(tab[0])
                 # si le sc n'est pas encore dans le dico
@@ -145,6 +146,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 pc = (float(i)/float(nb_lignes)*100)+1
                 if (int(pc) % 2) == 0:
                     self.ui.ACProgress.setValue(pc)
+                    QCoreApplication.processEvents()
                 tab = l.split(" ")
                 num_sc = int(tab[0])
                 # si le sc n'est pas encore dans le dico
