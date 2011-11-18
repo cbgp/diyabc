@@ -3,8 +3,10 @@
 #define IOMANIP
 #endif
 
+#include <stdio.h>
 #define EPSILON 9.62964972193617926528E-35
 extern bool multithread;
+using namespace std;
 
 /** 
 * libere la mémoire occupée par une matrice de doubles 
@@ -182,14 +184,15 @@ int inverse(int n, long double **A, long double **C)
     int i,j,k,l,err=0;
     long double max,pivot,coef, **T;
     T = new long double*[n];for (i=0;i<n;i++) T[i]= new long double[2*n]; 
-
+//cout<<"début de inverse   n="<<n<<"\n";
     for (i=0;i<n;i++) 
         {for (j=0;j<n;j++) 
             {T[i][j]=A[i][j];
              if(i==j) T[i][j+n]=1.0; else T[i][j+n]=0.0;
             }
         }
-    k=0;
+//cout<<"fin de l'initialisation de T\n";
+	k=0;
     while ((err==0)&&(k<n))
         {max=fabs(T[k][k]);
          l=k;
@@ -217,10 +220,12 @@ int inverse(int n, long double **A, long double **C)
             } else err=4;
          k++;   
         }
+//cout<<"fin du while   err="<<err<<"   n="<<n<<"\n";
     if (err==0)
         {for (i=0;i<n;i++)
             {for (j=0;j<n;j++) C[i][j]=T[i][j+n];}
         }
+//cout<<"apres l'ecriture de C\n";
     if (err==4) {
 	    std::cout<<"err="<<err<<"\n";
 		std::cout<<"k+1="<<k+1<<"      n="<<n<<"\n";
@@ -232,6 +237,7 @@ int inverse(int n, long double **A, long double **C)
 		}
 	}
     for (i=0;i<n;i++) delete[] T[i];delete[] T;
+//cout<<"fin de inverse\n";
     return err; 
 }
 
@@ -419,12 +425,16 @@ int inverse(int n, long double **A, long double **C)
 		double kap;
 		int err;
 		AA = new long double*[n]; for (int i=0;i<n;i++) AA[i] = new long double [n];
-		
+//		std::cout<<"debut d'inverse_Tik  n="<<n<<"\n";
 		coeff=0;
 		
 		kap=kappa(n,A);
-		err=inverse(n,A,C);
 		std::cout<<"coeff = "<<coeff<<"   err="<<err<<"   kappa="<<kap<<"\n";
+		/*for (int i=0;i<n;i++) {
+			for (int j=0;j<n;j++) printf(" %Le8",A[i][j]);printf("\n");
+		}*/
+		err=inverse(n,A,C);
+		//std::cout<<"err="<<err<<"\n";
 		if ((err==0)and(kap<seuil_kappa)) return 0;
 		
 		coeff=1E-15;
@@ -438,7 +448,7 @@ int inverse(int n, long double **A, long double **C)
 		while (((err!=0)or(kap>seuil_kappa))and(coeff<0.1)) {
 		    kap = kappa(n,AA);
 			err=inverse(n,AA,C);
-			std::cout<<"coeff = "<<coeff<<"   err="<<err<<"   kappa="<<kap<<"\n";
+			//std::cout<<"coeff = "<<coeff<<"   err="<<err<<"   kappa="<<kap<<"\n";
 			if ((err!=0)or(kap>seuil_kappa)) {
 			  coeff *=10.0;
 			  for (int i=0;i<n;i++)  AA[i][i] = A[i][i] + coeff*t;

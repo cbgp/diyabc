@@ -122,7 +122,7 @@ void setgroup(int p) {
 			if (this->header.groupe[gr].type==0) {	//MICROSAT
 				//cout <<"MICROSAT\n";
 				this->particule[p].grouplist[gr].mutmoy = this->header.groupe[gr].mutmoy;
-				if (this->header.groupe[gr].mutmoy<0.0) this->particule[p].grouplist[gr].priormutmoy = copyprior(this->header.groupe[gr].priormutmoy);
+				if ((this->header.groupe[gr].mutmoy<0.0)or(this->header.groupe[gr].priormutmoy.constant)) this->particule[p].grouplist[gr].priormutmoy = copyprior(this->header.groupe[gr].priormutmoy);
 				else this->particule[p].grouplist[gr].priormutmoy.constant=true;
 				this->particule[p].grouplist[gr].priormutmoy.fixed=this->header.groupe[gr].priormutmoy.fixed;
 				/*if ((this->particule[p].grouplist[gr].priormutmoy.constant)and(this->header.groupe[gr].priormutmoy.fixed)) {
@@ -131,7 +131,7 @@ void setgroup(int p) {
 				this->particule[p].grouplist[gr].priormutloc = copyprior(this->header.groupe[gr].priormutloc);
 
 				this->particule[p].grouplist[gr].Pmoy = this->header.groupe[gr].Pmoy;
-				if (this->header.groupe[gr].Pmoy<0.0) this->particule[p].grouplist[gr].priorPmoy = copyprior(this->header.groupe[gr].priorPmoy);
+				if ((this->header.groupe[gr].Pmoy<0.0)or(this->header.groupe[gr].priorPmoy.constant)) this->particule[p].grouplist[gr].priorPmoy = copyprior(this->header.groupe[gr].priorPmoy);
 				else this->particule[p].grouplist[gr].priorPmoy.constant=true;
 				this->particule[p].grouplist[gr].priorPmoy.fixed=this->header.groupe[gr].priorPmoy.fixed;
 				/*if ((this->particule[p].grouplist[gr].priorPmoy.constant)and(this->header.groupe[gr].priorPmoy.fixed)) {
@@ -140,12 +140,17 @@ void setgroup(int p) {
 				this->particule[p].grouplist[gr].priorPloc = copyprior(this->header.groupe[gr].priorPloc);
 
 				this->particule[p].grouplist[gr].snimoy = this->header.groupe[gr].snimoy;
-				if (this->header.groupe[gr].snimoy<0.0) this->particule[p].grouplist[gr].priorsnimoy = copyprior(this->header.groupe[gr].priorsnimoy);
+				
+				//cout<<"dans particleSet  snimoy="<<this->header.groupe[gr].snimoy <<"\n";
+				//this->header.groupe[gr].priorsnimoy.ecris();
+				
+				if ((this->header.groupe[gr].snimoy<0.0)or(this->header.groupe[gr].priorsnimoy.constant)) this->particule[p].grouplist[gr].priorsnimoy = copyprior(this->header.groupe[gr].priorsnimoy);
 				else this->particule[p].grouplist[gr].priorsnimoy.constant=true;
 				this->particule[p].grouplist[gr].priorsnimoy.fixed=this->header.groupe[gr].priorsnimoy.fixed;
 				/*if ((this->particule[p].grouplist[gr].priorsnimoy.constant)and(this->header.groupe[gr].priorsnimoy.fixed)) {
                      this->particule[p].grouplist[gr].priorsnimoy.constant=false;
 				}*/
+				//this->particule[p].grouplist[gr].priorsnimoy.ecris();
 				this->particule[p].grouplist[gr].priorsniloc = copyprior(this->header.groupe[gr].priorsniloc);
 			}
 			else if (this->header.groupe[gr].type==1) {							//SEQUENCES

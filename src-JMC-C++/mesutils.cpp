@@ -551,11 +551,13 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
             //cout<<"k="<<k<<"   j="<<j<<"   co="<<co<<"   mk[k][j]="<<mk[k][j]<<"   res.moy[j]="<<res.moy[j]<<"\n";
         }
     }
+    matTI = new long double*[mcv.n];for(int i=0;i<mcv.n;i++) matTI[i] = new long double[mcv.n];
     //cout<<"avant invM\n";
     err = inverse_Tik(mcv.n,mcv.cov,matTI);
     matM = prodML(numpop.size(),nc,numpop.size(),prodML(numpop.size(),nc,nc,matCT,matTI),matC);
     //cout<<"avant jacobi\n";
     jacobiL(numpop.size(),matM,valprop,res.vectprop);
+	//cout<<"apres jaconi\n";
     res.vectprop = prodML(nc,numpop.size(),numpop.size(),prodML(nc,nc,numpop.size(),matTI,matC),res.vectprop);
 //tri des valeurs et vecteurs propres par ordre décroissant des valeurs propres
     for (int i=0;i<numpop.size()-1;i++) {

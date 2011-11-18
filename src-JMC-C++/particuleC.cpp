@@ -761,6 +761,7 @@ struct ParticleC
 * Struct ParticleC : tire une valeurde type double dans un prior
 */
 	double drawfromprior(PriorC prior) {
+		//prior.ecris();
 		double r;
 		if (prior.mini==prior.maxi) return prior.mini;
 		if (prior.loi=="UN") return this->mw.gunif(prior.mini,prior.maxi);
@@ -1034,7 +1035,7 @@ struct ParticleC
 					for (int p=0;p<this->scen.nparam;p++) {
 					    if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
 						if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-						//cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value;
+						//cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value<<"\n";
 						//cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
 					}
 					//cout <<"avant test conditions\n";
@@ -1097,7 +1098,7 @@ struct ParticleC
 		int gr;
 		//cout<<"this->scen.ipv="<<this->scen.ipv<<"\n";
 		for (gr=1;gr<=this->ngr;gr++) {
-		    //cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"   usepriormut="<<usepriormut<<"\n";
+		   // cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"\n";
 		    if (this->grouplist[gr].type==0) {  //microsat
 		        if (not this->grouplist[gr].priormutmoy.fixed) this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
 				if (not this->grouplist[gr].priormutmoy.constant) {
@@ -1113,12 +1114,15 @@ struct ParticleC
 					//cout<<"Pmoy ipv++\n";
 				}
 					//cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"\n";
+					//cout<<"avant ecriture de priorsnimoy\n";
+					//this->grouplist[gr].priorsnimoy.ecris();	
 				if (not this->grouplist[gr].priorsnimoy.fixed) this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
 				if (not this->grouplist[gr].priorsnimoy.constant) {
 					this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
 					this->scen.ipv++;
 					//cout<<"snimoy ipv++\n";
-				}
+				} else this->grouplist[gr].snimoy = this->grouplist[gr].priorsnimoy.mini;
+					//cout<<"snimoy="<<this->grouplist[gr].snimoy<<"\n";
 		    }
 		    if (this->grouplist[gr].type==1) {  //sequence
 				if (not this->grouplist[gr].priormusmoy.fixed) this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);

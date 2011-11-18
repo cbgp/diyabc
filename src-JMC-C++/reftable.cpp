@@ -151,10 +151,11 @@ public:
         //cout<<"debut de readrecord\n";
 		//try {
 			this->fifo.read((char*)&(enr->numscen),sizeof(int));
+			
 			if (enr->numscen>this->nscen) {
+			cout<<"\nThe reftable.bin file is corrupted. numscen="<<enr->numscen<<"\n";
 			FILE *flog;
             flog=fopen(progressfilename,"w");fprintf(flog,"%s","The reftable.bin file is corrupted. Clone the project and simulate a new file.\n");fclose(flog);
-			cout<<"\nThe reftable.bin file is corrupted.\n";
 			exit(1);
 			}
 			//throw(1);
@@ -238,7 +239,7 @@ public:
         this->fifo.seekg(0);
         this->fifo.read((char*)&(this->nrec),sizeof(int));
         this->fifo.read((char*)&(this->nscen),sizeof(int));
-        //cout <<"nrec = "<<nrec<<"\n";
+        //cout <<"dans openfile2 nrec = "<<nrec<<"\n";
         this->nrecscen = new int[this->nscen];
         for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
         this->nparam = new int[nscen];
@@ -280,7 +281,7 @@ public:
 			}
 		}
 		cout<<"\n";
-		if (not corrompu) {cout<<"fichier reftable OK\n\n";return 0;}
+		if (not corrompu) {this->fifo.close();cout<<"fichier reftable OK\n\n";return 0;}
 		enregC e;
 		npmax=0;for (int i=0;i<this->nscen;i++) if(npmax<this->nparam[i]) npmax=this->nparam[i];
 		e.param=new float[npmax];
@@ -431,6 +432,7 @@ public:
         this->openfile2();
         i=0;step=nrecutil/100;
         while (i<nrecutil) {
+			//cout<<"avant readrecord\n";
             bidon=this->readrecord(&enr);
             //cout<<"coucou\n";
             scenOK=false;iscen=0;
@@ -459,10 +461,10 @@ public:
         for (int j=0;j<this->nstat;j++) {
             this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
             if (this->var_stat[j]>0) nsOK++;
-			printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
+			//printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
         }
         delete []sx;delete []sx2;
-        cout<<"\nnstatOK = "<<nsOK<<"\n";
+        //cout<<"\nnstatOK = "<<nsOK<<"\n";
         return nsOK;
     }
 

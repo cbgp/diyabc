@@ -229,6 +229,7 @@ char *nomficonfresult;
         nsel=nseld;if(nsel<nselr) nsel=nselr;
         if (nlogreg==1){nprog=10*(ntest+1)+1;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         else           {nprog=6*ntest+11;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
+        cout<<"avant ps.dosimultabref\n";
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed);
         cout<<"apres ps.dosimultabref\n";
         iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
@@ -245,19 +246,21 @@ char *nomficonfresult;
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
 			cout<<"jeu test "<<p+1<<"\n";
             nstatOK = rt.cal_varstat();
+			//cout<<"nstatOK="<<nstatOK<<"\n";
             rt.cal_dist(nrec,nsel,stat_obs);
             //cout<<"apres cal_dist\n";
             iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+			//cout<<"avant transfAFD\n";
             if (AFD) stat_obs = transfAFD(nrec,nsel,p);
             //if (ite==1) stat_obs = transfAFD(nrec,nsel,p);
-            //cout<<"avant postsd\n";
+            cout<<"avant postsd\n";
             postsd = comp_direct(nseld);
             cout<<"test"<<setiosflags(ios::fixed)<<setw(4)<<p+1<<"  ";
             if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);
             f11<<"   ";
             ncs1=ncs-1;
             for (int i=0;i<rt.nscenchoisi;i++) f11<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;
-            for (int i=0;i<rt.nscenchoisi;i++) cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;
+            for (int i=0;i<rt.nscenchoisi;i++) cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;cout<<"\n";
             if (nlogreg==1) {
                 postsr = comp_logistic(nselr,stat_obs);
                 iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);

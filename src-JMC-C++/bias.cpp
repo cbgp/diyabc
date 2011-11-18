@@ -61,7 +61,7 @@ using namespace std;
         ss = splitwords(s,"=",&n);
         name=ss[0];
         i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
-        cout<<"parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
+        //cout<<"parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
             header.scenario[rt.scenteste-1].histparam[i].prior = header.readprior(ss[1]);
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=false;
@@ -88,39 +88,39 @@ using namespace std;
         s1 = s.substr(i0+1,i1-i0-1); cout <<"groupe "<<gr<<"  "<<s1<<"\n";
         ss = splitwords(s1," ",&n);
         if (header.groupe[gr].type==0) {
-		    cout<<"mutmoy : \n";
-			header.groupe[gr].priormutmoy.ecris();
+		    //cout<<"mutmoy : \n";
+			//header.groupe[gr].priormutmoy.ecris();
             if (header.groupe[gr].priormutmoy.constant) header.groupe[gr].mutmoy=header.groupe[gr].priormutmoy.mini;
 			else {
 				if (ss[0].find("[")==string::npos) {header.groupe[gr].mutmoy =atof(ss[0].c_str());header.groupe[gr].priormutmoy.fixed=true;}
 				else {header.groupe[gr].priormutmoy = header.readpriormut(ss[0]);header.groupe[gr].priormutmoy.fixed=false;}
 			}
-		    cout<<"mutmoy : \n";
-			header.groupe[gr].priormutmoy.ecris();
+		    //cout<<"mutmoy : \n";
+			//header.groupe[gr].priormutmoy.ecris();
             if (ss[1].find("[")==string::npos) header.groupe[gr].priormutloc.sdshape=atof(ss[1].c_str());
             else header.groupe[gr].priormutloc = header.readpriormut(ss[1]);
 
-		    cout<<"Pmoy : \n";
-			header.groupe[gr].priorPmoy.ecris();
+		    //cout<<"Pmoy : \n";
+			//header.groupe[gr].priorPmoy.ecris();
 			if (header.groupe[gr].priorPmoy.constant) header.groupe[gr].Pmoy=header.groupe[gr].priorPmoy.mini;
 			else{
 				if (ss[2].find("[")==string::npos) {header.groupe[gr].Pmoy=atof(ss[2].c_str());header.groupe[gr].priorPmoy.fixed=true;}
 				else {header.groupe[gr].priorPmoy = header.readpriormut(ss[2]);header.groupe[gr].priorPmoy.fixed=false;}
 			}
-		    cout<<"Pmoy : \n";
-			header.groupe[gr].priorPmoy.ecris();
+		    //cout<<"Pmoy : \n";
+			//header.groupe[gr].priorPmoy.ecris();
             if (ss[3].find("[")==string::npos) header.groupe[gr].priorPloc.sdshape=atof(ss[3].c_str());
             else header.groupe[gr].priorPloc = header.readpriormut(ss[3]);
 			
-		    cout<<"snimoy : \n";
-			header.groupe[gr].priorsnimoy.ecris();
+		    //cout<<"snimoy : \n";
+			//header.groupe[gr].priorsnimoy.ecris();
 			if (header.groupe[gr].priorsnimoy.constant) header.groupe[gr].snimoy=header.groupe[gr].priorsnimoy.mini;
 			else {
 				if (ss[4].find("[")==string::npos) {header.groupe[gr].snimoy=atof(ss[4].c_str());header.groupe[gr].priorsnimoy.fixed=true;}
 				else {header.groupe[gr].priorsnimoy = header.readpriormut(ss[4]);header.groupe[gr].priorsnimoy.fixed=false;}
 			}
-		    cout<<"snimoy : \n";
-			header.groupe[gr].priorsnimoy.ecris();
+		    //cout<<"snimoy : \n";
+			//header.groupe[gr].priorsnimoy.ecris();
             if (ss[5].find("[")==string::npos) header.groupe[gr].priorsniloc.sdshape=atof(ss[5].c_str());
             else header.groupe[gr].priorsniloc = header.readpriormut(ss[5]);
        } else {
