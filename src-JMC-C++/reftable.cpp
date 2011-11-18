@@ -55,7 +55,7 @@ class ReftableC
 public:
     int nrec,*nrecscen,nscen,nreclus,nrec0;
     long posnrec;
-    char *datapath, *filename, *filelog, *pch;
+    char *datapath, *filename, *filelog, *filename0;
     int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste,nparamut,*nhistparam;
     float *param,*sumstat;
     HistParameterC **histparam;
@@ -120,7 +120,7 @@ public:
             f0.seekg(0);
             f0.read((char*)&(this->nrec),sizeof(int));
             f0.read((char*)&(this->nscen),sizeof(int));
-            //cout <<"readheader.readheader    nscen = "<<this->nscen<<"\n";
+            //cout <<"readheader.readheader    nscen = "<<this->nscen<<"   nrec="<<this->nrec<<"\n";
             this->nrecscen = new int[this->nscen];
             for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
             this->nparam = new int[nscen];
@@ -246,6 +246,88 @@ public:
         this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
         return 0;
     }
+    
+    int testfile(char* reftablefilename, int npart) {
+		bool corrompu=false;
+		cout<<"\nverification de l'integrite de la table de reference \nfichier"<<reftablefilename<<"\n";
+		char str[10000];
+        this->fifo.open(reftablefilename,ios::in|ios::out|ios::binary);
+        this->fifo.seekg(0);
+        this->fifo.read((char*)&(this->nrec),sizeof(int));
+        this->fifo.read((char*)&(this->nscen),sizeof(int));
+        cout <<"nrec = "<<nrec<<"\n";
+        this->nrecscen = new int[this->nscen];
+        for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
+        this->nparam = new int[this->nscen];
+        for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
+        this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
+
+		for (int i=0;i<this->nscen;i++) this->nrecscen[i]=0;
+		int numscen,k,npmax;
+		float x;
+		cout<<this->nscen<<" scenario(s)\n";
+		for(k=0;k<this->nrec;k++) {
+			if ((k%npart)==0) cout<<k<<"\r";
+			this->fifo.read((char*)&(numscen),sizeof(int));
+			if (numscen<=this->nscen) {
+				this->nrecscen[numscen-1]++;
+				for (int i=0;i<this->nparam[numscen-1];i++) this->fifo.read((char*)&x,sizeof(float));
+				for (int i=0;i<this->nstat;i++) this->fifo.read((char*)&x,sizeof(float));
+			} 
+			else {
+				corrompu=true;
+				break;
+			}
+		}
+		cout<<"\n";
+		if (not corrompu) {cout<<"fichier reftable OK\n\n";return 0;}
+		enregC e;
+		npmax=0;for (int i=0;i<this->nscen;i++) if(npmax<this->nparam[i]) npmax=this->nparam[i];
+		e.param=new float[npmax];
+		e.stat =new float[this->nstat];
+		int nb;
+		if (k>0) this->nrec=npart*(k/npart);
+		cout<<"\n\nfichier corrompu à partir de l'enregistrement "<<k<<"\n";
+		cout<<"on va récupérer les "<<this->nrec<<" premiers enregistrements\n";
+        this->fifo.seekg(0);
+        this->fifo.read((char*)&(k),sizeof(int));
+        this->fifo.read((char*)&(this->nscen),sizeof(int));
+        for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
+        this->nparam = new int[this->nscen];
+        for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
+        this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
+		this->filename0=strdup(reftablefilename);
+		cout<<this->filename0<<"\n";
+		this->filename0[strlen(reftablefilename)-1]='s';
+		cout<<this->filename0<<"\n";
+		
+		ofstream f1(this->filename0,ios::out|ios::binary);
+        if (!f1.is_open()) {cout<<"impossible d'ouvrir le fichier\n";exit(1);}  //fichier impossible à ouvrir
+        nb=this->nrec;f1.write((char*)&nb,sizeof(int));
+        //cout <<"reftable.writeheader     nscen = "<<this->nscen<<"\n";
+        nb=this->nscen;f1.write((char*)&nb,sizeof(int));
+        for (int i=0;i<this->nscen;i++) {nb=this->nrecscen[i];f1.write((char*)&nb,sizeof(int));}
+        for (int i=0;i<this->nscen;i++) {nb=this->nparam[i];f1.write((char*)&nb,sizeof(int));}
+        nb=this->nstat;f1.write((char*)&nb,sizeof(int));
+		cout<<"fin d'ecriture de l'entete   nrec="<<this->nrec<<"\n";
+		for (int h=0;h<this->nrec;h++) {
+			this->fifo.read((char*)&(numscen),sizeof(int));
+			for (int i=0;i<this->nparam[numscen-1];i++) {this->fifo.read((char*)&(e.param[i]),sizeof(float));}
+			for (int i=0;i<this->nstat;i++) {this->fifo.read((char*)&(e.stat[i]),sizeof(float));}
+			f1.write((char*)&(numscen),sizeof(int));
+            for (int i=0;i<this->nparam[numscen-1];i++) f1.write((char*)&(e.param[i]),sizeof(float));
+            for (int i=0;i<this->nstat;i++) f1.write((char*)&(e.stat[i]),sizeof(float));
+			if ((((h+1)%npart)==0)or(h==this->nrec-1)) cout<<h+1<<"\r";
+		}
+		f1.close();
+		this->fifo.close();
+		remove(reftablefilename);
+		rename(this->filename0,reftablefilename);
+		cout<<"\nfin d'ecriture des enregistrements\n";
+		return 1;
+	}
+    
+    
     int closefile() {
         this->fifo.close();
         return 0;

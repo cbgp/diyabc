@@ -79,6 +79,7 @@ int readheaders() {
     header.readHeader(headerfilename);                                   if (debuglevel==1) cout<<"apres header.readHeader\n";
     header.calstatobs(statobsfilename);                                  if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename=strdup(header.datafilename.c_str());                    if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
+	k=rt.testfile(reftablefilename,nenr);
     k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
     if (k==0) {rt.sethistparamname(header);if (debuglevel==1) cout<<"sethistparamname"<<"\n";}
     return k;

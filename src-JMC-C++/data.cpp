@@ -266,7 +266,7 @@ public:
 				this->indivname[ech][nindi[ech]]=ss[0];
 				for (int loc=0;loc<this->nloc;loc++) this->genotype[ech][nindi[ech]][loc]= ss[loc+3];
 				cout<<"individu "<<nindi[ech]+1<<" de l'échantillon "<<ech+1<<"   "<<this->indivname[ech][nindi[ech]];
-				cout<<"  "<<this->indivsexe[ech][nindi[ech]]<<"  "<<popname[ech]<<"   "<<this->genotype[ech][nindi[ech]][0]<<"\n";
+				cout<<"  "<<this->indivsexe[ech][nindi[ech]]<<"  "<<popname[ech]<<"   "<<this->genotype[ech][nindi[ech]][0]<<"\r";
 				nindi[ech]++;
 				//for (int ec=0;ec<nech;ec++) cout<<nindi[ec]<<"   ";cout<<"\n";
 			}
@@ -311,7 +311,6 @@ public:
 			}
 			if (not this->locus[loc].mono) {
 				nloc++;
-				}
 			} else {
 				cout<<"le locus "<<loc<<" semble monomorphe"<<"   premier="<<premier<<"\n";
 				for (ech=0;ech<this->nsample;ech++){
@@ -358,7 +357,6 @@ public:
 			delete[]ge;
 			this->nloc=kloc;
 		} else cout<<"tous les locus sont polymorphes\n";
-		exit(1);
 	}
 
 	void missingdata(){

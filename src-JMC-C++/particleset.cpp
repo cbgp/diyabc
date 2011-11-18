@@ -203,6 +203,7 @@ void setgroup(int p) {
 					this->particule[p].grouplist[gr].sumstatsnp[i].samp2 = header.groupe[gr].sumstatsnp[i].samp2;
 					this->particule[p].grouplist[gr].sumstatsnp[i].defined = header.groupe[gr].sumstatsnp[i].defined;
 					this->particule[p].grouplist[gr].sumstatsnp[i].sorted = header.groupe[gr].sumstatsnp[i].sorted;
+					this->particule[p].grouplist[gr].sumstatsnp[i].x = new long double[header.groupe[gr].nloc];
 				}
 			}
 		}
@@ -292,7 +293,6 @@ void setgroup(int p) {
 							for (int i=0;i<this->particule[p].grouplist[gr].nstatsnp;i++){
 								this->particule[p].grouplist[gr].sumstatsnp[i].defined=false;
 								this->particule[p].grouplist[gr].sumstatsnp[i].sorted=false;
-								delete []this->particule[p].grouplist[gr].sumstatsnp[i].x;
 							}
 						}
                  //for (int loc=0;loc<this->nloc;loc++) this->particule[p].libere(false);

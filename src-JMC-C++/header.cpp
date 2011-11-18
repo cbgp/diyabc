@@ -123,13 +123,13 @@ public:
     void assignloc(int gr){
         this->groupe[gr].nloc = 0;
         for (int loc=0;loc<dataobs.nloc;loc++) {
-            if ((dataobs.locus[loc].groupe==gr)and(not dataobs.locus[loc].mono)) this->groupe[gr].nloc++;
+            if (dataobs.locus[loc].groupe==gr) this->groupe[gr].nloc++;
         }
-        cout<<"assignloc nloc="<<this->groupe[gr].nloc<<"\n";
+        if (debuglevel==2) cout<<"assignloc nloc="<<this->groupe[gr].nloc<<"\n";
         this->groupe[gr].loc = new int[this->groupe[gr].nloc];
         int iloc=-1;
         for (int i=0;i<dataobs.nloc;i++) {
-            if ((dataobs.locus[i].groupe==gr)and(not dataobs.locus[i].mono)) {iloc++;this->groupe[gr].loc[iloc] = i;}
+            if (dataobs.locus[i].groupe==gr) {iloc++;this->groupe[gr].loc[iloc] = i;}
         }
     }
 
@@ -263,7 +263,7 @@ public:
                 }
                 //this->scenario[i].histparam[j].ecris();
             }
-            cout<<"scenario "<<i<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
+            //cout<<"scenario "<<i<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
         }
 //retour sur les conditions spécifiques à chaque scenario
                 //cout <<"avant retour sur conditions\n";fflush(stdin);
@@ -543,7 +543,7 @@ public:
                 //cout<<"apres superscen\n";
         if (debuglevel==2) cout<<"header.txt : fin de l'établissement du superscen\n";
 //Partie group statistics
-                cout<<"debut des group stat\n";
+        if (debuglevel==2) cout<<"debut des group stat\n";
                 this->nstat=0;
         getline(file,s1);       //ligne vide
         getline(file,s1);       //ligne "group group statistics"
@@ -565,15 +565,15 @@ public:
 			bool trouve;
 			statsnp.resize(0);
 			int catsnp;
-                        //cout<<"nstat="<<this->groupe[gr].nstat<<"\n";
+                        if (debuglevel==2) cout<<"nstat="<<this->groupe[gr].nstat<<"\n";
             while (k<this->groupe[gr].nstat) {
-                          //cout <<"stat "<<k<<"    groupe "<<gr<<"\n";
+                          if (debuglevel==2) cout <<"stat "<<k<<"    groupe "<<gr<<"\n";
                 getline(file,s1);
-                                //cout <<"s1="<<s1<<"\n";
+                                if (debuglevel==2) cout <<"s1="<<s1<<"\n";
                 ss=splitwords(s1," ",&nss);
-                                //cout << ss[0]<<"\n";
+                                if (debuglevel==2) cout << ss[0]<<"\n";
                 j=0;while (ss[0]!=stat_type[j]) j++;
-                                //cout<<"j="<<j<<"\n";
+                                if (debuglevel==2) cout<<"j="<<j<<"\n";
                 if (this->groupe[gr].type==0) {   //MICROSAT
                     if (stat_num[j]<5) {
                         for (int i=1;i<nss;i++) {
@@ -630,18 +630,22 @@ public:
                     }
                 } else if (this->groupe[gr].type>9) {
 					catsnp = (stat_num[j]-21)/4;
-					cout<<"stat_num="<<stat_num[j]<<"   catsnp="<<catsnp<<"\n";
+					if (debuglevel==2) cout<<"stat_num["<<j<<"]="<<stat_num[j]<<"   catsnp="<<catsnp<<"\n";
                     if (stat_num[j]<25) {
+						if (debuglevel==2) cout<<"nss="<<nss<<"\n";
 					for (int i=1;i<nss;i++) {
+						    if (debuglevel==2) cout<<"i="<<i<<"\n";
 							this->groupe[gr].sumstat[k].cat=stat_num[j];
 							this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());
 							trouve=false;
+							if (debuglevel==2) cout<<"statsnp.size="<<statsnp.size()<<"\n";
 							if (statsnp.size()>0){
 							for (int jj=0;jj<statsnp.size();jj++) {
 									trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==this->groupe[gr].sumstat[k].samp));
 									if (trouve) {this->groupe[gr].sumstat[k].numsnp=jj;break;}
 								}
 							}
+							if (debuglevel==2) cout<<"trouve="<<trouve<<"\n";
 							if (not trouve) {
 								 stsnp.cat=catsnp;
 								 stsnp.samp=this->groupe[gr].sumstat[k].samp;
@@ -710,7 +714,7 @@ public:
 
 
 				}
-                //cout<<"fin de la stat "<<k<<"\n";
+                if (debuglevel==2) cout<<"fin de la stat "<<k<<"\n";
             }
             delete [] ss;
 			this->groupe[gr].nstatsnp=statsnp.size();
@@ -804,10 +808,10 @@ public:
 		this->entetehist=this->entete.substr(0,this->entete.length()-14*(nparamut+nstat)+2);
 		if (nparamut>0) this->entetemut=this->entete.substr(this->entetehist.length(),14*nparamut);else this->entetemut="";
 		this->entetestat=this->entete.substr(this->entetehist.length()+this->entetemut.length(),14*nstat);
-		cout<<"les trois entetes\n";
-		cout<<">>>"<<this->entetehist<<"<<<\n";
-		cout<<">>>"<<this->entetemut<<"<<<\n";
-		cout<<">>>"<<this->entetestat<<"<<<\n";
+		if (debuglevel==2) cout<<"les trois entetes\n";
+		if (debuglevel==2) cout<<">>>"<<this->entetehist<<"<<<\n";
+		if (debuglevel==2) cout<<">>>"<<this->entetemut<<"<<<\n";
+		if (debuglevel==2) cout<<">>>"<<this->entetestat<<"<<<\n";
         for (int i=0;i<this->nstat;i++) cout<<this->statname[i]<<"   ";cout<<"\n";
         delete []ss;
                 //cout<<"scenarios à la fin de readheader\n";
@@ -822,7 +826,7 @@ public:
         string s1,s2,*sl,*ss,*ss1;
         int nlscen,nss,nss1,j,gr,grm,*nf,*nm;
 		double som;
-        cout<<"debut de readheadersim\n";
+        if (debuglevel==2) cout<<"debut de readheadersim\n";
         //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
         ifstream file(headersimfilename, ios::in);
         if (file == NULL) {
@@ -1076,7 +1080,7 @@ public:
     void calstatobs(char* statobsfilename) {
 		int jstat;
 //partie DATA
-		cout<<"debut de calstatobs\n";
+		if (debuglevel==2) cout<<"debut de calstatobs\n";
 		this->particuleobs.dnatrue = true;
 		this->particuleobs.nsample = this->dataobs.nsample;
 		//cout<<this->dataobs.nsample<<"\n";
@@ -1088,10 +1092,10 @@ public:
 			this->particuleobs.data.indivsexe[i] = new int[this->dataobs.nind[i]];
 			for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
 		}
-		cout<<"apres DATA\n";
+		if (debuglevel==2) cout<<"apres DATA\n";
 //partie GROUPES
 		int ngr = this->ngroupes;
-		cout<<"ngr="<<ngr<<"\n";
+		if (debuglevel==2) cout<<"ngr="<<ngr<<"\n";
 		this->particuleobs.ngr = ngr;
 		this->particuleobs.grouplist = new LocusGroupC[ngr+1];
 		this->particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
@@ -1100,7 +1104,7 @@ public:
 			for (int i=0;i<this->groupe[0].nloc;i++) this->particuleobs.grouplist[0].loc[i] = this->groupe[0].loc[i];
 		}
 		for (int gr=1;gr<=ngr;gr++) {
-			cout <<"groupe "<<gr<<"\n";
+			if (debuglevel==2) cout <<"groupe "<<gr<<"\n";
 			this->particuleobs.grouplist[gr].type =this->groupe[gr].type;
 			this->particuleobs.grouplist[gr].nloc = this->groupe[gr].nloc;
 			this->particuleobs.grouplist[gr].loc  = new int[this->groupe[gr].nloc];
@@ -1125,10 +1129,11 @@ public:
 					this->particuleobs.grouplist[gr].sumstatsnp[i].samp2 = this->groupe[gr].sumstatsnp[i].samp2;
 					this->particuleobs.grouplist[gr].sumstatsnp[i].defined = this->groupe[gr].sumstatsnp[i].defined;
 					this->particuleobs.grouplist[gr].sumstatsnp[i].sorted = this->groupe[gr].sumstatsnp[i].sorted;
+					this->particuleobs.grouplist[gr].sumstatsnp[i].x = new long double[this->groupe[gr].nloc];
 				}
 			}
 		}
-		cout<<"apres GROUPS\n";
+		if (debuglevel==2) cout<<"apres GROUPS\n";
 //partie LOCUSLIST
 		int kmoy;
 		this->particuleobs.nloc = this->dataobs.nloc;
@@ -1214,7 +1219,7 @@ public:
 		}
 		if (debuglevel==2) cout<<"avant libere \n";
 		this->particuleobs.libere(true);
-		cout<<"fin de calstatobs\n";
+		if (debuglevel==2) cout<<"fin de calstatobs\n";
     }
 
         /**

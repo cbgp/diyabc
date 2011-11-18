@@ -2812,7 +2812,6 @@ struct ParticleC
 			if (this->locuslist[kloc].samplesize[sample]>1) nl++;
 		}
 		this->grouplist[gr].sumstatsnp[numsnp].n = nl;
-		this->grouplist[gr].sumstatsnp[numsnp].x =new long double[nl];
 		nl=0;
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			kloc=this->grouplist[gr].loc[iloc];
@@ -2866,7 +2865,6 @@ struct ParticleC
 			if ((n1>0)and(n2>0)) nl++;
 		}
 		this->grouplist[gr].sumstatsnp[numsnp].n = nl;
-		this->grouplist[gr].sumstatsnp[numsnp].x =new long double[nl];
 		nl=0;
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			loc=this->grouplist[gr].loc[iloc];
@@ -2938,7 +2936,6 @@ struct ParticleC
 			if ((this->locuslist[loc].samplesize[sample]>0)and(this->locuslist[loc].samplesize[sample1]>0)) nl++;
 		}
 		this->grouplist[gr].sumstatsnp[numsnp].n = nl;
-		this->grouplist[gr].sumstatsnp[numsnp].x =new long double[nl];
 		nl=0;
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			loc=this->grouplist[gr].loc[iloc];
