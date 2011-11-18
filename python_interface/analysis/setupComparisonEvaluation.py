@@ -55,14 +55,6 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
 
         #self.ui.cnosdEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
         self.ui.deEdit.setText("500")
-        onePc = int(self.parent.parent.ui.nbSetsDoneEdit.text()) / 100
-        if onePc < 1000:
-            if int(self.parent.parent.ui.nbSetsDoneEdit.text()) < 1000:
-                onePc = nbSetsDone
-            else:
-                onePc = 1000
-        self.ui.lrEdit.setText(str(onePc))
-
         #self.ui.totNumSimEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
 
     def checkAll(self):
@@ -165,7 +157,17 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
             sumRec+=self.parent.parent.readNbRecordsOfScenario(int(i))
         self.ui.cnosdEdit.setText(str(sumRec))
         #print "sumrec : %s"%sumRec
+        # total number of simulated data default
         self.ui.totNumSimEdit.setText(str(sumRec))
+
+        # logistic regression default
+        onePc = sumRec / 100
+        if onePc < 1000:
+            if sumRec < 1000:
+                onePc = sumRec
+            else:
+                onePc = 1000
+        self.ui.lrEdit.setText(str(onePc))
 
     def setCandidateScenarios(self,scList):
         """ écrit la liste des scenarios candidats
