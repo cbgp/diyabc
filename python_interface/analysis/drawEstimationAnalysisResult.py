@@ -69,6 +69,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             font = "FreeMono"
             if sys.platform.startswith('win'):
                 font = "Courier New"
+            elif "darwin" in sys.platform:
+                font = "Andale Mono"
             ui.dataPlain.setFont(QFont(font,10))
             #QObject.connect(ui.okButton,SIGNAL("clicked()"),self.parent.returnToAnalysisList)
             QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToMe)

@@ -158,6 +158,8 @@ class ProjectReftable(Project):
                 font = "FreeMono"
                 if sys.platform.startswith('win'):
                     font = "Courier New"
+                elif "darwin" in sys.platform:
+                    font = "Andale Mono"
                 ui.dataPlain.setFont(QFont(font,10))
                 QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
 
@@ -177,6 +179,8 @@ class ProjectReftable(Project):
             font = "FreeMono"
             if sys.platform.startswith('win'):
                 font = "Courier New"
+            elif "darwin" in sys.platform:
+                font = "Andale Mono"
             ui.dataPlain.setFont(QFont(font,10))
             QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
         elif typestr == "bias":
@@ -195,6 +199,8 @@ class ProjectReftable(Project):
             font = "FreeMono"
             if sys.platform.startswith('win'):
                 font = "Courier New"
+            elif "darwin" in sys.platform:
+                font = "Andale Mono"
             ui.dataPlain.setFont(QFont(font,10))
             QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
         #elif typestr == "evaluation":
