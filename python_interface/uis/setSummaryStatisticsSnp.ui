@@ -197,9 +197,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-53</y>
+        <y>-81</y>
         <width>850</width>
-        <height>161</height>
+        <height>183</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -557,6 +557,55 @@
               </item>
              </layout>
             </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="label_14">
+                <property name="text">
+                 <string>Mean of distribution</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allModButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneModButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
            </layout>
           </widget>
          </item>
@@ -733,9 +782,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-72</y>
+        <y>-104</y>
         <width>850</width>
-        <height>269</height>
+        <height>313</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -1046,6 +1095,55 @@
              </layout>
             </item>
             <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_15">
+                <property name="text">
+                 <string>Mean of distribution</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allModnd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneModnd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
              <widget class="QLabel" name="label_12">
               <property name="font">
                <font>
@@ -1289,6 +1387,55 @@
                  <font>
                   <pointsize>9</pointsize>
                  </font>
+                </property>
+                <property name="text">
+                 <string>none</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_12">
+              <item>
+               <widget class="QLabel" name="label_16">
+                <property name="text">
+                 <string>Mean of distribution</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="allModfd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>all</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="noneModfd2Button">
+                <property name="minimumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>35</width>
+                  <height>14</height>
+                 </size>
                 </property>
                 <property name="text">
                  <string>none</string>
@@ -1567,7 +1714,7 @@
         <x>0</x>
         <y>0</y>
         <width>850</width>
-        <height>312</height>
+        <height>321</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1620,13 +1767,13 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>48</height>
+                  <height>35</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
-                  <height>48</height>
+                  <height>35</height>
                  </size>
                 </property>
                 <property name="font">
@@ -1648,13 +1795,13 @@ population</string>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>48</height>
+                  <height>35</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
-                  <height>48</height>
+                  <height>35</height>
                  </size>
                 </property>
                 <property name="font">
@@ -1676,13 +1823,13 @@ population 1</string>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>48</height>
+                  <height>35</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
-                  <height>48</height>
+                  <height>35</height>
                  </size>
                 </property>
                 <property name="font">
@@ -2015,6 +2162,55 @@ population 2</string>
                 </item>
                 <item>
                  <widget class="QPushButton" name="noneTae3Button">
+                  <property name="minimumSize">
+                   <size>
+                    <width>35</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>35</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>none</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_18">
+                <item>
+                 <widget class="QLabel" name="label_17">
+                  <property name="text">
+                   <string>Mean of distribution</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="allMod3Button">
+                  <property name="minimumSize">
+                   <size>
+                    <width>25</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>25</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>all</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="noneMod3Button">
                   <property name="minimumSize">
                    <size>
                     <width>35</width>

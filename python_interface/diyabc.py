@@ -950,18 +950,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         # windows ne nettoie pas son tray, aidons le
         self.systray.hide()
         event.accept()
-    #    reply = QtGui.QMessageBox.question(self, 'Message',
-    #        "Are you sure to quit?", QtGui.QMessageBox.Yes | 
-    #        QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
 
-    #    if reply == QtGui.QMessageBox.Yes:
-    #        event.accept()
-    #    else:
-    #        event.ignore()
-
-    #def mousePressEvent(self,event):
-    #    print self.sender()
-    #    print "plop"
     def event(self,event):
         """ méthode d'interception des event
         les event arrivent jusque là s'ils n'ont pas été interceptés plus

@@ -18,28 +18,32 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
     """ ecran de selection des summary statistics pour les SNP
     """
     def __init__(self,parent=None,box_group=None,numGroup=0):
-        self.statList1 = ["HP0","HME","HQ1","HQ3"]
+        self.statList1 = ["HP0","HME","HQ1","HQ3","HMO"]
         self.confToStat1 = {
                 "HP0" : "mgd",
                 "HME" : "vgd",
                 "HQ1": "fgd",
-                "HQ3" : "tgd"}
-        self.statList2 = ["NP0","NME","NQ1","NQ3","FP0","FME","FQ1","FQ3"]
+                "HQ3" : "tgd",
+                "HMO" : "mod"}
+        self.statList2 = ["NP0","NME","NQ1","NQ3","NMO","FP0","FME","FQ1","FQ3","FMO"]
         self.confToStat2 = {
                 "NP0" : "mnd2",
                 "NME": "vnd2",
                 "NQ1" : "fnd2",
                 "NQ3" : "tnd2",
+                "NMO" : "modnd2",
                 "FP0" : "mfd2",
                 "FME" : "vfd2",
                 "FQ1" : "ffd2",
-                "FQ3" : "tfd2"}
-        self.statList3 = ["AP0","AME","AQ1","AQ3"]
+                "FQ3" : "tfd2",
+                "FMO" : "modfd2"}
+        self.statList3 = ["AP0","AME","AQ1","AQ3","AMO"]
         self.confToStat3 = {
                 "AP0" : "mae3",
                 "AME" : "vae3",
                 "AQ1" : "fae3",
-                "AQ3" : "tae3"}
+                "AQ3" : "tae3",
+                "AMO" : "mod3"}
         self.statList = self.statList1 + self.statList2 + self.statList3
 
         super(SetSummaryStatisticsSnp,self).__init__(parent,box_group,numGroup)
@@ -218,6 +222,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         verticalLayout_6.setContentsMargins(1, 1, 1, 1)
         verticalLayout_6.setObjectName("verticalLayout_6")
         threeSampleLabel = QtGui.QLabel("Samp\n%i&%i&%i"%(num1,num2,num3),frame_12)
+        threeSampleLabel.setAlignment(Qt.AlignHCenter)
         font = QtGui.QFont()
         font.setPointSize(8)
         threeSampleLabel.setFont(font)

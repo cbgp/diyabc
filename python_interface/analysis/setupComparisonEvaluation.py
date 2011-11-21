@@ -119,9 +119,9 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
                 for ctxt in self.analysis.condTxtList:
                     strparam += "%s "%ctxt
                 strparam = strparam[:-1]
-                strparam += ";u:"
                 #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
                 if len(self.analysis.mutationModel)>0:
+                    strparam += ";u:"
                     if type(self.analysis.mutationModel[0]) == type(u'plop'):
                         for ind,gr in enumerate(self.analysis.mutationModel):
                             strparam += "g%s("%(ind+1)
