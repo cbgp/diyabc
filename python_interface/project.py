@@ -4,7 +4,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
-from setHistoricalModel import SetHistoricalModel
+from historicalModel.setHistoricalModel import SetHistoricalModel
 #from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *

@@ -9,8 +9,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.project_ui import *
-from setHistoricalModelSimulation import SetHistoricalModelSimulation
-from setGenDataSimulation import SetGeneticDataSimulation
+from historicalModel.setHistoricalModelSimulation import SetHistoricalModelSimulation
+from geneticData.setGenDataSimulation import SetGeneticDataSimulation
 #from mutationModel.setMutationModelMsat import SetMutationModelMsat
 #from mutationModel.setMutationModelSequences import SetMutationModelSequences
 #from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat

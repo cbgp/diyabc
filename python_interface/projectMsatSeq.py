@@ -6,7 +6,7 @@ import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from projectReftable import ProjectReftable
-from setGenDataMsatSeq import SetGeneticDataMsatSeq
+from geneticData.setGenDataMsatSeq import SetGeneticDataMsatSeq
 from utils.data import Data
 import os.path
 import output

@@ -4,8 +4,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.biasScenarioSelection_ui import Ui_Frame
-from setHistDrawnAnalysis import HistDrawn
-from setHistFixedAnalysis import HistFixed
+from historicalModel.setHistDrawnAnalysis import HistDrawn
+from historicalModel.setHistFixedAnalysis import HistFixed
 
 formBiasScenarioSelection,baseBiasScenarioSelection = uic.loadUiType("uis/biasScenarioSelection.ui")
 
