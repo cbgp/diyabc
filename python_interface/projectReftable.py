@@ -897,7 +897,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         aid = self.thAnalysis.analysis.name
         self.thAnalysis.analysis.status = "finished"
         atype = self.thAnalysis.analysis.category
-        self.thAnalysis = None
 
         # nettoyage du progress.txt
         if os.path.exists("%s/%s_progress.txt"%(self.dir,aid)):
@@ -915,7 +914,15 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 shutil.move("%s/%s_mmmq.txt"%(self.dir,aid),"%s/analysis/%s/mmmq.txt"%(self.dir,aDirName))
                 #shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
-
+            else:
+                self.thAnalysis.problem = "No output files produced\n"
+                if os.path.exists("%s/estimate.out"%(self.dir)):
+                    f = open("%s/estimate.out"%(self.dir),"r")
+                    lastLine = f.readlines()[-1]
+                    f.close()
+                    self.thAnalysis.problem += "\n%s"%lastLine
+                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                return
         elif atype == "compare":
             if os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) and\
                     os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid)):
@@ -960,6 +967,15 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     dest = open("%s/analysis/%s/compdirlog.txt"%(self.dir,aDirName),'w')
                     dest.write(textToDisplay)
                     dest.close()
+            else:
+                self.thAnalysis.problem = "No output files produced\n"
+                if os.path.exists("%s/compare.out"%(self.dir)):
+                    f = open("%s/compare.out"%(self.dir),"r")
+                    lastLine = f.readlines()[-1]
+                    f.close()
+                    self.thAnalysis.problem += "\n%s"%lastLine
+                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                return
         elif atype == "bias":
             if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
                 log(3,"File %s/%s_bias.txt exists"%(self.dir,aid))
@@ -973,7 +989,15 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 #print "déplacement de %s/%s_bias.txt vers %s/analysis/%s/bias.txt"%(self.dir,aid,self.dir,aDirName)
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
             else:
+                self.thAnalysis.problem = "No output files produced\n"
+                if os.path.exists("%s/bias.out"%(self.dir)):
+                    f = open("%s/bias.out"%(self.dir),"r")
+                    lastLine = f.readlines()[-1]
+                    f.close()
+                    self.thAnalysis.problem += "\n%s"%lastLine
+                self.thAnalysis.emit(SIGNAL("analysisProblem"))
                 log(3,"File %s/%s_bias.txt doesn't exist. Results cannot be moved"%(self.dir,aid))
+                return
         elif atype == "evaluate":
             if os.path.exists("%s/%s_confidence.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
@@ -982,6 +1006,15 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_confidence.txt"%(self.dir,aid),"%s/analysis/%s/confidence.txt"%(self.dir,aDirName))
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
+            else:
+                self.thAnalysis.problem = "No output files produced\n"
+                if os.path.exists("%s/evaluate.out"%(self.dir)):
+                    f = open("%s/evaluate.out"%(self.dir),"r")
+                    lastLine = f.readlines()[-1]
+                    f.close()
+                    self.thAnalysis.problem += "\n%s"%lastLine
+                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                return
         elif atype == "modelChecking":
             if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)) or os.path.exists("%s/%s_mclocate.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
@@ -993,6 +1026,15 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)):
                     shutil.move("%s/%s_mcACP.txt"%(self.dir,aid),"%s/analysis/%s/mcACP.txt"%(self.dir,aDirName))
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
+            else:
+                self.thAnalysis.problem = "No output files produced\n"
+                if os.path.exists("%s/modelChecking.out"%(self.dir)):
+                    f = open("%s/modelChecking.out"%(self.dir),"r")
+                    lastLine = f.readlines()[-1]
+                    f.close()
+                    self.thAnalysis.problem += "\n%s"%lastLine
+                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                return
         elif atype == "pre-ev":
             if os.path.exists("%s/%s_locate.txt"%(self.dir,aid)) or os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
@@ -1003,7 +1045,17 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     shutil.move("%s/%s_locate.txt"%(self.dir,aid),"%s/analysis/%s/locate.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
                     shutil.move("%s/%s_ACP.txt"%(self.dir,aid),"%s/analysis/%s/ACP.txt"%(self.dir,aDirName))
+            else:
+                self.thAnalysis.problem = "No output files produced\n"
+                if os.path.exists("%s/pre-ev.out"%(self.dir)):
+                    f = open("%s/pre-ev.out"%(self.dir),"r")
+                    lastLine = f.readlines()[-1]
+                    f.close()
+                    self.thAnalysis.problem += "\n%s"%lastLine
+                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                return
 
+        self.thAnalysis = None
         self.save()
         # on lance la suivante
         self.nextAnalysisInQueue()
