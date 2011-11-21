@@ -123,7 +123,7 @@ using namespace std;
 			//header.groupe[gr].priorsnimoy.ecris();
             if (ss[5].find("[")==string::npos) header.groupe[gr].priorsniloc.sdshape=atof(ss[5].c_str());
             else header.groupe[gr].priorsniloc = header.readpriormut(ss[5]);
-       } else {
+       } else if (header.groupe[gr].type==1){
 		    //cout<<"resetmutparam type sequence\n";
 			//cout<<"modele "<< header.groupe[gr].mutmod<<"\n";
 			if (header.groupe[gr].priormusmoy.constant) header.groupe[gr].musmoy=header.groupe[gr].priormusmoy.mini;

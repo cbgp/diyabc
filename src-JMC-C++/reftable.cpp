@@ -464,7 +464,7 @@ public:
 			//printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
         }
         delete []sx;delete []sx2;
-        //cout<<"\nnstatOK = "<<nsOK<<"\n";
+        cout<<"\nnstatOK = "<<nsOK<<"\n";
         return nsOK;
     }
 

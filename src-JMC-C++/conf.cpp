@@ -201,7 +201,7 @@ char *nomficonfresult;
                     for (int j=0;j<ncond;j++)
                          header.scenario[rt.scenteste-1].condition[j] = header.readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]);
                 }
-            } else if (s0=="u:") {
+            } else if ((s0=="u:")and(s1!="")) {
                 smut = s1;
                 cout<<s1<<"\n";
                 ss1 = splitwords(s1,"*",&ng);
@@ -253,7 +253,7 @@ char *nomficonfresult;
 			//cout<<"avant transfAFD\n";
             if (AFD) stat_obs = transfAFD(nrec,nsel,p);
             //if (ite==1) stat_obs = transfAFD(nrec,nsel,p);
-            cout<<"avant postsd\n";
+            //cout<<"avant postsd\n";
             postsd = comp_direct(nseld);
             cout<<"test"<<setiosflags(ios::fixed)<<setw(4)<<p+1<<"  ";
             if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);

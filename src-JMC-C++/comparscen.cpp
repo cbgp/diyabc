@@ -569,7 +569,7 @@ matligneC *matA;
 					mdiff /=(long double)nmodnco;
 					mdiff /=(long double)nmodnco;
 				}
-				printf("coeff = %8Le   mdiff = %8.5Lf   mdiff0 = %8.5Lf   err=%d   nmodnco=%d\n",coeff,mdiff,mdiff0,err,nmodnco);
+				//printf("coeff = %8Le   mdiff = %8.5Lf   mdiff0 = %8.5Lf   err=%d   nmodnco=%d\n",coeff,mdiff,mdiff0,err,nmodnco);
 				invOK = ((err==0)and/*(mdiff<0.02)*/((mdiff>mdiff0)or(mdiff<0.001)));
 			} while ((not invOK)and(coeff<0.01));
 			for (i=0;i<nmodnco;i++) {for (j=0;j<nmodnco;j++) cmatB[i][j] = cmatB0[i][j];}			
@@ -598,22 +598,22 @@ matligneC *matA;
                         }
                     }
                 }
-            cout<<"apres if rep=1\n";
+            //cout<<"apres if rep=1\n";
             for (i=0;i<nmodnco;i++)cbeta0[i]=cbeta[i];
             for (i=0;i<nmodel;i++) {for (j=0;j<nmodel;j++) cmatA[i][j]=cmatB[i*(nco+1)][j*(nco+1)];}
             cbet[0]=0.0;for(i=0;i<nmodel;i++) cbet[i+1]=cbeta0[i*(nco+1)];
             if (rep==1) {for (i=0;i<nmodel+1;i++) cpx0[i]=2.0;} else {for (i=0;i<nmodel+1;i++) cpx0[i]=px[i];}
-            cout<<"avant calcul_psd\n";
+            //cout<<"avant calcul_psd\n";
             calcul_psd(nmodel,cbet,cmatA,csd,px);
-			cout<<"apres calcul_psd\n";
+			//cout<<"apres calcul_psd\n";
             betmin=cbet[0];betmax=cbet[0];
             for (i=0;i<nmodel+1;i++) {if (betmin>cbet[i]) betmin=cbet[i];}
             for (i=0;i<nmodel+1;i++) {if (betmax<cbet[i]) betmax=cbet[i];}
-            cout<<"apres calcul des betmin, betmax     rep="<<rep<<"\n";
+            //cout<<"apres calcul des betmin, betmax     rep="<<rep<<"\n";
 			if (rep>1){
 				fin=true;i=0;while ((fin==true)&&(i<nmodel+1)) {
 					fin= (fabs(px[i]-cpx0[i])<0.0001)or(fabs(cloglik[rep-1]/cloglik[rep-2]-1.0)<0.000001);
-					printf("abs(px-px0) = %12.7Lf\n",fabs(px[i]-cpx0[i]));i++;
+					//printf("abs(px-px0) = %12.7Lf\n",fabs(px[i]-cpx0[i]));i++;
 				}
 				fin=(fin||(betmax-betmin>50));
 			} else fin=false;
@@ -631,7 +631,7 @@ matligneC *matA;
             sx=0.0;sx2=0.0;for(i=0;i<nmodel+1;i++) {sx+=px[i];sx2+=px[i]*px[i];}
             //if ((sx<0.001)or(sx2>0.999)) {
                 //cout<<"\nsx="<<sx<<"   sx2="<<sx2<<"   loglik="<<cloglik[rep-1]<<"\n";
-				printf("\nsx= %6.3f   sx2= %6.3f     loglik= %15.8Lf\n",sx,sx2,cloglik[rep-1]);
+				//printf("\nsx= %6.3f   sx2= %6.3f     loglik= %15.8Lf\n",sx,sx2,cloglik[rep-1]);
                 //for (i=0;i<nmodnco;i++) cout<<cbeta[i]<<"\n";
             //    exit(1);
             //}
