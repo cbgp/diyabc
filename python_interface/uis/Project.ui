@@ -434,6 +434,13 @@
                    <property name="bottomMargin">
                     <number>1</number>
                    </property>
+                   <item>
+                    <widget class="QPushButton" name="ascertButton">
+                     <property name="text">
+                      <string>Control ascertainment bias</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
                 </item>
@@ -1191,8 +1198,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>929</width>
-               <height>635</height>
+               <width>43</width>
+               <height>16</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">

@@ -10,6 +10,8 @@ from utils.data import DataSnp
 import os.path
 import output
 from utils.cbgpUtils import log
+from controlAscertBias import ControlAscertBias
+
 
 class ProjectSnp(ProjectReftable):
     """ classe qui représente un projet de simulation
@@ -28,6 +30,41 @@ class ProjectSnp(ProjectReftable):
 
         self.ui.frame_11.show()
         self.ui.frame_12.show()
+
+        self.ascert_frame = ControlAscertBias(self)
+        self.ascert_frame.hide()
+        self.ascert_state_valid = False
+        self.setAscertValid(False)
+
+        QObject.connect(self.ui.ascertButton,SIGNAL("clicked()"),self.setAscertBias)
+
+    def verifyRefTableValid(self):
+        """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table
+        """
+        if self.gen_state_valid and self.hist_state_valid and self.ascert_state_valid:
+            self.setTabIcon(0,QIcon("docs/icons/ok.png"))
+            self.ui.runReftableButton.setDisabled(False)
+            self.ui.stopReftableButton.setDisabled(False)
+            return True
+        else:
+            self.setTabIcon(0,QIcon("docs/icons/redcross.png"))
+            self.ui.runReftableButton.setDisabled(True)
+            self.ui.stopReftableButton.setDisabled(True)
+            return False
+
+    def setAscertBias(self):
+        log(1,"Entering in ControlAscertBias")
+        self.setAscertValid(False)
+        self.ui.refTableStack.addWidget(self.ascert_frame)
+        self.ui.refTableStack.setCurrentWidget(self.ascert_frame)
+
+    def setAscertValid(self,yn):
+        self.ascert_state_valid = yn
+        self.verifyRefTableValid()
+        if yn:
+            self.ui.ascertButton.setIcon(QIcon("docs/icons/ok.png"))
+        else:
+            self.ui.ascertButton.setIcon(QIcon("docs/icons/redcross.png"))
 
     def isSnp(self):
         return True
@@ -112,6 +149,7 @@ class ProjectSnp(ProjectReftable):
         # mutation model : plus facile d'utiliser directement la validation
         for ty in self.sum_stat_wins.keys():
             self.sum_stat_wins[ty].validate(silent=True)
+        self.ascert_frame.validate(silent=True)
 
     def returnToMe(self):
         self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
@@ -173,6 +211,7 @@ class ProjectSnp(ProjectReftable):
         if self.loadMyConf():
             # lecture de conf.hist.tmp
             self.hist_model_win.loadHistoricalConf()
+            self.ascert_frame.loadAscertConf()
             self.loadSumStatsConf()
             self.loadAnalysis()
         else:
@@ -190,9 +229,9 @@ class ProjectSnp(ProjectReftable):
             self.ui.dataFileEdit.setText(lines[0].strip())
             # lecture du dataFile pour les infos de Gui Projet
             if self.loadDataFile("%s/%s"%(self.dir,lines[0].strip())):
+                ## comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
+                self.ascert_frame.fillSampleFromData(self.data.nind)
                 return True
-            ## comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
-            #self.gen_data_win.fillLocusTableFromData()
         return False
 
     def loadDataFile(self,name):
@@ -268,6 +307,7 @@ class ProjectSnp(ProjectReftable):
             # save th conf et production du reftable header
             if self.gen_state_valid and self.hist_state_valid:
                 self.writeThConf()
+                self.writeAscertConf()
                 self.writeRefTableHeader()
             self.saveAnalysis()
             self.parent.clearStatus()
@@ -275,6 +315,48 @@ class ProjectSnp(ProjectReftable):
         else:
             output.notify(self,"Saving is impossible","Project %s is not yet completly created"%self.name)
             self.parent.clearStatus()
+
+    def writeAscertConf(self):
+        log(2,"Writing ascertainment in %s"%self.parent.ascertainment_conf_name)
+
+        ascert_string = u""
+        for i in range(self.ascert_frame.ui.tableWidget.rowCount()):
+            ascert_string += "%s "%int(self.ascert_frame.ui.tableWidget.item(i,1).text())
+        ascert_string = ascert_string[:-1]+"\n"
+        ascert_string += "%s\n"%str(self.ascert_frame.freqMinEdit.text()).strip()
+        if self.ascert_frame.ui.incRadio.isChecked():
+            ascert_string += "I"
+        else:
+            ascert_string += "N"
+
+        if os.path.exists(self.dir+"/%s"%self.parent.ascertainment_conf_name):
+            os.remove("%s/%s"%(self.dir,self.parent.ascertainment_conf_name))
+        f = codecs.open(self.dir+"/%s"%self.parent.ascertainment_conf_name,'w',"utf-8")
+        f.write("%s"%(ascert_string))
+        f.close()
+
+    def writeRefTableHeader(self):
+        """ écriture du header.txt à partir des conf
+        """
+        super(ProjectSnp,self).writeRefTableHeader()
+
+        if os.path.exists(self.dir+"/%s"%self.parent.ascertainment_conf_name):
+            f = codecs.open(self.dir+"/%s"%self.parent.ascertainment_conf_name,"r","utf-8")
+            ascert_string = f.read()
+            f.close()
+        else:
+            output.notify(self,"Header generation problem","Impossible to add ascertainment part to header : ascertainment file doesn't exist")
+            return
+
+        if os.path.exists(self.dir+"/%s"%self.parent.reftableheader_name):
+            log(2,"Adding ascertainment part to header")
+
+            fdest = codecs.open(self.dir+"/%s"%self.parent.reftableheader_name,"a","utf-8")
+            fdest.write("\n\n%s"%ascert_string)
+            fdest.close()
+        else:
+            output.notify(self,"Header generation problem","Impossible to add ascertainment part to header : header doesn't exist")
+
 
     def writeThConf(self):
         """ ecrit le header du tableau de resultat qui sera produit par les calculs
@@ -330,6 +412,14 @@ class ProjectSnp(ProjectReftable):
         f = codecs.open(self.dir+"/%s"%self.parent.gen_conf_name,'w',"utf-8")
         f.write(res)
         f.close()
+
+    def freezeHistModel(self,yesno=True):
+        super(ProjectSnp,self).freezeHistModel(yesno)
+
+        self.ascert_frame.ui.tableWidget.setDisabled(yesno)
+        self.ascert_frame.ui.freqMinEdit.setDisabled(yesno)
+        self.ascert_frame.ui.incRadio.setDisabled(yesno)
+        self.ascert_frame.ui.nincRadio.setDisabled(yesno)
 
     def freezeGenData(self,yesno=True):
         for g in self.sum_stat_wins.values():

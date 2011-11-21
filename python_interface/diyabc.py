@@ -55,6 +55,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.analysis_conf_name = "conf.analysis"
         self.table_header_conf_name = "conf.th.tmp"
         self.reftableheader_name = "header.txt"
+        self.ascertainment_conf_name = "conf.ascert.tmp"
 
         self.scenario_pix_dir_name = "scenario_pictures"
         self.scenario_pix_basename = "scenario"
