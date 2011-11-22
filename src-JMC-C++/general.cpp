@@ -318,6 +318,7 @@ int main(int argc, char *argv[]){
                                   }
                                   cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
                                   firsttime=true;stoprun=false;
+								  clock_zero=0.0;
                                   debutr=walltime(&clock_zero);
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
                                           //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"\n";

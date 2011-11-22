@@ -157,7 +157,7 @@ struct resACPC
         cout<<"apres ACP  path ="<<path<<"\n";
         for (int j=0;j<rACP.nlambda;j++){
             pca_statobs[j]=0.0;
-            for(k=0;k<rt.nstat;k++) pca_statobs[j] +=(stat_obs[k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
+            for(k=0;k<rt.nstat;k++) if (rACP.sd[k]>0.0) pca_statobs[j] +=(stat_obs[k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
         }
         char *nomfiACP;
         nomfiACP = new char[strlen(path)+strlen(ident)+20];

@@ -613,10 +613,12 @@ matligneC *matA;
 			if (rep>1){
 				fin=true;i=0;while ((fin==true)&&(i<nmodel+1)) {
 					fin= (fabs(px[i]-cpx0[i])<0.0001)or(fabs(cloglik[rep-1]/cloglik[rep-2]-1.0)<0.000001);
-					//printf("abs(px-px0) = %12.7Lf\n",fabs(px[i]-cpx0[i]));i++;
+					printf("abs(px-px0) = %12.7Lf\n",fabs(px[i]-cpx0[i]));i++;
 				}
 				fin=(fin||(betmax-betmin>50));
-			} else fin=false;
+			} else {
+				fin=true;i=0;while ((fin==true)&&(i<nmodel+1)) fin= (fabs(px[i]-cpx0[i])<0.0001);
+			}
 /////////////////////////
             /*if (rep<=20) {
                 cout<<"\ncbet       : ";
