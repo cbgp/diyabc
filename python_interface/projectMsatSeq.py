@@ -152,8 +152,10 @@ class ProjectMsatSeq(ProjectReftable):
 
         if yesno:
             self.gen_data_win.findChild(QPushButton,"okButton").setText("OK")
+            self.ui.setGeneticButton.setText("            View")
         else:
             self.gen_data_win.findChild(QPushButton,"okButton").setText("VALIDATE AND SAVE")
+            self.ui.setGeneticButton.setText("            Set")
 
     def loadMyConf(self):
         """ lit le fichier conf.tmp pour charger le fichier de données

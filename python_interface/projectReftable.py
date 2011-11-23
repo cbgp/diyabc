@@ -1147,8 +1147,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         if yesno:
             self.hist_model_win.findChild(QPushButton,"okButton").setText("OK")
+            self.ui.setHistoricalButton.setText('            View')
         else:
             self.hist_model_win.findChild(QPushButton,"okButton").setText("VALIDATE AND SAVE")
+            self.ui.setHistoricalButton.setText('            Set')
 
     def readRefTableSize(self):
         """ lit la table de référence binaire pour en extraire la taille et la retourner

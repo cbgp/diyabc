@@ -420,6 +420,17 @@ class ProjectSnp(ProjectReftable):
         self.ascert_frame.ui.freqMinEdit.setDisabled(yesno)
         self.ascert_frame.ui.incRadio.setDisabled(yesno)
         self.ascert_frame.ui.nincRadio.setDisabled(yesno)
+        if yesno:
+            if "Set " in str(self.ui.ascertButton.text()):
+                self.ui.ascertButton.setText(str(self.ui.ascertButton.text()).replace("Set ","View "))
+            else:
+                self.ui.ascertButton.setText("View "+str(self.ui.ascertButton.text()))
+        else:
+            self.ui.ascertButton.setText("Set "+str(self.ui.ascertButton.text()))
+            if "View " in str(self.ui.ascertButton.text()):
+                self.ui.ascertButton.setText(str(self.ui.ascertButton.text()).replace("View ","Set "))
+            else:
+                self.ui.ascertButton.setText("Set "+str(self.ui.ascertButton.text()))
 
     def freezeGenData(self,yesno=True):
         for g in self.sum_stat_wins.values():
@@ -433,3 +444,8 @@ class ProjectSnp(ProjectReftable):
             g.ui.exitButton.setDisabled(yesno)
             g.ui.okButton.setDisabled(False)
             g.ui.addAdmixButton.setDisabled(yesno)
+        if yesno:
+            self.ui.setGeneticButton.setText("            View")
+        else:
+            self.ui.setGeneticButton.setText("            Set")
+

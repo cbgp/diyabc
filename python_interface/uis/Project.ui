@@ -425,11 +425,14 @@
                    <property name="spacing">
                     <number>1</number>
                    </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
                    <property name="topMargin">
                     <number>1</number>
                    </property>
                    <property name="rightMargin">
-                    <number>9</number>
+                    <number>0</number>
                    </property>
                    <property name="bottomMargin">
                     <number>1</number>
@@ -437,7 +440,7 @@
                    <item>
                     <widget class="QPushButton" name="ascertButton">
                      <property name="text">
-                      <string>Control ascertainment bias</string>
+                      <string>Set control ascertainment bias</string>
                      </property>
                     </widget>
                    </item>
@@ -1198,8 +1201,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>43</width>
-               <height>16</height>
+               <width>929</width>
+               <height>635</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">
