@@ -393,6 +393,27 @@ La description du bouton ou du label\end{verbatim}
             \item PyQwt5.2.0-Python2.6-PyQt4.5.4-NumPy1.3.0-1.exe
         \end{itemize}
 
+        \subsubsection{Compilation du programme de calcul}
+        La compilation de programmes écrits en C++ pose quelques problèmes sous
+        windows. J'ai essayé les compilateurs suivant : 
+        digital mars, Borland C++ et GCC (MinGW). Le seul avec lequel j'obtiens
+        des résultats satisfaisants est GCC. 
+
+        Voici la marche à suivre pour compiler le programme en C++ sous windows
+        dans la machine virtuelle nommée ``pywin''.\\
+
+
+        \begin{itemize}
+            \item Se rendre dans le dossier diyabc sur le bureau avec ``git
+                bash''
+            \item Effectuer un ``git checkout .'' si nécessaire
+            \item Effectuer ``git pull --rebase origin master''
+            \item Se rendre dans src-JMC-C++
+            \item Exécuter ``g++ -fopenmp -O3 general.cpp -o general''
+            \item Récupérer libstdc++-6.dll et libgcc\_s\_dw2-1.dll qui sont
+                dans c:/MinGW/bin . Ces deux dll doivent se trouver à côté de
+                l'exécutable pour qu'il fonctionne sur un autre système.
+        \end{itemize}
         \subsubsection{pyinstaller}
 
         \paragraph{Anciennes versions}

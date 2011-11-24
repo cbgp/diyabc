@@ -1224,6 +1224,18 @@ class RefTableGenThreadCluster(QThread):
         self.nb_done = 0
         self.nb_to_gen = nb_to_gen
 
+        self.logmsg = ""
+        self.loglvl = 3
+
+    def log(self,lvl,msg):
+        """ evite de manipuler les objets Qt dans un thread non principal
+        """
+        self.loglvl = lvl
+        self.logmsg = msg
+        self.emit(SIGNAL("refTableLog"))
+
+    def killProcess(self):
+        pass
 
     def run (self):
         filename = self.tarname
@@ -1236,7 +1248,7 @@ class RefTableGenThreadCluster(QThread):
         try:
             s.connect((host, port))
         except error,msg:
-            log(3,"could not contact any server on diyabc://%s:%s\n%s"%(host, port,msg))
+            self.log(3,"could not contact any server on diyabc://%s:%s\n%s"%(host, port,msg))
             return
 
         #size = os.path.getsize(filename)
@@ -1261,10 +1273,10 @@ class RefTableGenThreadCluster(QThread):
         #    else:
         #        s.sendall(data)
 
-        log(3,"%s Sent!"%filename)
+        self.log(3,"%s Sent!"%filename)
         while True:
             line = s.recv(8000)
-            log(3,"Line received : %s"%line)
+            self.log(3,"Line received : %s"%line)
             if len(line.split('somme '))>1:
                 self.nb_done = int(line.split('somme ')[1].strip())
                 self.emit(SIGNAL("increment"))

@@ -18,31 +18,27 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
     """ ecran de selection des summary statistics pour les SNP
     """
     def __init__(self,parent=None,box_group=None,numGroup=0):
-        self.statList1 = ["HP0","HME","HQ1","HQ3","HMO"]
+        self.statList1 = ["HP0","HM1","HV1","HMO"]
         self.confToStat1 = {
                 "HP0" : "mgd",
-                "HME" : "vgd",
-                "HQ1": "fgd",
-                "HQ3" : "tgd",
+                "HM1" : "vgd",
+                "HV1": "fgd",
                 "HMO" : "mod"}
-        self.statList2 = ["NP0","NME","NQ1","NQ3","NMO","FP0","FME","FQ1","FQ3","FMO"]
+        self.statList2 = ["NP0","NM1","NV1","NMO","FP0","FM1","FV1","FMO"]
         self.confToStat2 = {
                 "NP0" : "mnd2",
-                "NME": "vnd2",
-                "NQ1" : "fnd2",
-                "NQ3" : "tnd2",
+                "NM1": "vnd2",
+                "NV1" : "fnd2",
                 "NMO" : "modnd2",
                 "FP0" : "mfd2",
-                "FME" : "vfd2",
-                "FQ1" : "ffd2",
-                "FQ3" : "tfd2",
+                "FM1" : "vfd2",
+                "FV1" : "ffd2",
                 "FMO" : "modfd2"}
-        self.statList3 = ["AP0","AME","AQ1","AQ3","AMO"]
+        self.statList3 = ["AP0","AM1","AV1","AMO"]
         self.confToStat3 = {
                 "AP0" : "mae3",
-                "AME" : "vae3",
-                "AQ1" : "fae3",
-                "AQ3" : "tae3",
+                "AM1" : "vae3",
+                "AV1" : "fae3",
                 "AMO" : "mod3"}
         self.statList = self.statList1 + self.statList2 + self.statList3
 

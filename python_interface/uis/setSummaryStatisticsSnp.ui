@@ -197,9 +197,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-81</y>
+        <y>-55</y>
         <width>850</width>
-        <height>183</height>
+        <height>161</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -361,7 +361,7 @@
                  </size>
                 </property>
                 <property name="text">
-                 <string>Median of non-zero values</string>
+                 <string>Mean of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -432,7 +432,7 @@
                  </size>
                 </property>
                 <property name="text">
-                 <string>First quartile of non-zero values</string>
+                 <string>Variance of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -487,82 +487,11 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_32">
-              <item>
-               <widget class="QLabel" name="label_22">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>Third quartile of non-zero values</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="allTgdButton">
-                <property name="minimumSize">
-                 <size>
-                  <width>25</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>25</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>9</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>all</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="noneTgdButton">
-                <property name="minimumSize">
-                 <size>
-                  <width>35</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>35</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>9</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>none</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_10">
               <item>
                <widget class="QLabel" name="label_14">
                 <property name="text">
-                 <string>Mean of distribution</string>
+                 <string>Mean of complete distribution</string>
                 </property>
                </widget>
               </item>
@@ -782,9 +711,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-104</y>
+        <y>-38</y>
         <width>850</width>
-        <height>313</height>
+        <height>269</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -922,7 +851,7 @@
               <item>
                <widget class="QLabel" name="label_32">
                 <property name="text">
-                 <string>Median of non-zero values</string>
+                 <string>Mean of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -981,7 +910,7 @@
               <item>
                <widget class="QLabel" name="label_31">
                 <property name="text">
-                 <string>First quartile of non-zero values</string>
+                 <string>Variance of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -1036,70 +965,11 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_22">
-              <item>
-               <widget class="QLabel" name="label_27">
-                <property name="text">
-                 <string>Third quartile of non-zero values</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="allTnd2Button">
-                <property name="minimumSize">
-                 <size>
-                  <width>25</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>25</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>9</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>all</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="noneTnd2Button">
-                <property name="minimumSize">
-                 <size>
-                  <width>35</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>35</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>9</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>none</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_11">
               <item>
                <widget class="QLabel" name="label_15">
                 <property name="text">
-                 <string>Mean of distribution</string>
+                 <string>Mean of complete distribution</string>
                 </property>
                </widget>
               </item>
@@ -1223,7 +1093,7 @@
               <item>
                <widget class="QLabel" name="label_28">
                 <property name="text">
-                 <string>Median of non-zero values</string>
+                 <string>Mean of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -1282,7 +1152,7 @@
               <item>
                <widget class="QLabel" name="label_30">
                 <property name="text">
-                 <string>First quartile of non-zero values</string>
+                 <string>Variance of non-zero values</string>
                 </property>
                </widget>
               </item>
@@ -1337,70 +1207,11 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_28">
-              <item>
-               <widget class="QLabel" name="label_33">
-                <property name="text">
-                 <string>Third quartile of non-zero values</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="allTfd2Button">
-                <property name="minimumSize">
-                 <size>
-                  <width>25</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>25</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>9</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>all</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="noneTfd2Button">
-                <property name="minimumSize">
-                 <size>
-                  <width>35</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>35</width>
-                  <height>14</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>9</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>none</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_12">
               <item>
                <widget class="QLabel" name="label_16">
                 <property name="text">
-                 <string>Mean of distribution</string>
+                 <string>Mean of complete distribution</string>
                 </property>
                </widget>
               </item>
@@ -1712,9 +1523,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-42</y>
         <width>850</width>
-        <height>321</height>
+        <height>293</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1980,7 +1791,7 @@ population 2</string>
                 <item>
                  <widget class="QLabel" name="label_9">
                   <property name="text">
-                   <string>Median of non-zero values</string>
+                   <string>Mean of non-zero values</string>
                   </property>
                  </widget>
                 </item>
@@ -2052,7 +1863,7 @@ population 2</string>
                 <item>
                  <widget class="QLabel" name="label_10">
                   <property name="text">
-                   <string>First quartile of non-zero values</string>
+                   <string>Variance of non-zero values</string>
                   </property>
                  </widget>
                 </item>
@@ -2120,73 +1931,11 @@ population 2</string>
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <item>
-                 <widget class="QLabel" name="label_11">
-                  <property name="text">
-                   <string>Third quartile of non-zero values</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="allTae3Button">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>14</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>25</width>
-                    <height>14</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>all</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="noneTae3Button">
-                  <property name="minimumSize">
-                   <size>
-                    <width>35</width>
-                    <height>14</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>35</width>
-                    <height>14</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>none</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
                <layout class="QHBoxLayout" name="horizontalLayout_18">
                 <item>
                  <widget class="QLabel" name="label_17">
                   <property name="text">
-                   <string>Mean of distribution</string>
+                   <string>Mean of complete distribution</string>
                   </property>
                  </widget>
                 </item>
