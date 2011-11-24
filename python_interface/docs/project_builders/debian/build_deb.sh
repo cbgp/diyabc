@@ -57,7 +57,7 @@ mkdir -p $PACKAGEDIR/usr/local/bin
 chmod 755 diyabc-interface-pkg-template/DEBIAN/*
 
 
-cp -rp $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $PACKAGESRCDIR/
+cp -rp $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $PACKAGESRCDIR/
 # version modification
 sed -i "s/VERSION='development version'/VERSION='$VERSION'/" $PACKAGESRCDIR/diyabc.py
 sed -i "s/01\/01\/1970/$BUILDDATE/" $PACKAGESRCDIR/diyabc.py

@@ -38,7 +38,7 @@ echo "Name of the app : $APPNAME"
 TMPBUILD=/tmp/$APPNAME-tmp_build-$VERSION
 mkdir $TMPBUILD
 SOURCEDIR=`dirname $pysrc`
-cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $TMPBUILD/
+cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $TMPBUILD/
 pysrctmp=$TMPBUILD/`basename $pysrc`
 #sed -i "" "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
 sed -i "" "s/development\ version/$VERSION/g" $TMPBUILD/$APPNAME.py
