@@ -47,9 +47,9 @@ rm -f `dirname $pyinst`/config.dat
 python $pyinst $pysrctmp -o "$output"
 
 # copy of needed images
-mkdir $output/dist/docs
-cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/executables $SOURCEDIR/docs/icons $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/dist/docs/
-cp -r $SOURCEDIR/uis $output/dist/
+mkdir $output/dist/$APPNAME/docs
+cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/executables $SOURCEDIR/docs/icons $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/dist/$APPNAME/docs/
+cp -r $SOURCEDIR/uis $output/dist/$APPNAME/
 rm -rf $TMPBUILD
 sleep 3
 mv $output/dist/$APPNAME $output/dist/$APPNAME-$VERSION
