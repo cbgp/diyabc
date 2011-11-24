@@ -66,7 +66,7 @@ bool multithread=false;
 int nrecneeded,nenr=100;
 int debuglevel=0;
 int num_threads=0;
-string sremtime;
+string sremtime,scurfile;
 double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,debutr,dureer,remtime;
 
 /**

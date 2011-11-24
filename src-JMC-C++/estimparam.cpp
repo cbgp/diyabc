@@ -353,14 +353,14 @@ parstatC *parstat;
                 if (var_statsel[j]>0.0) {
                     icc++;
                     matX0[i][icc]=(long double)(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
-					//if ((i==0)and(j<6)) printf(" %16.10f  %16.10f  %16.10Lf\n",rt.enrsel[i].stat[j],stat_obs[j],var_statsel[j]);
+					//if ((i<10)) printf("enrsel[%d] stat[%d] %16.10f  %16.10f  %16.10Lf    %16.10Lf\n",i,j,rt.enrsel[i].stat[j],stat_obs[j],var_statsel[j],matX0[i][icc]);
                 }
             }
+            //cout<<"\n";
             x=rt.enrsel[i].dist/delta;
             vecW[i]=(1.5/delta)*(1.0-x*x);
             som = som + vecW[i];
         }
-
         for (int i=0;i<n;i++) vecW[i]/=som;
         //for (int i=0;i<10;i++) cout<<vecW[i]<<"  ";
         //cout<<"\n";
@@ -420,10 +420,10 @@ parstatC *parstat;
         matAA = prodML(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
         //ecrimatL("matAA",nstatOKsel+1,nstatOKsel+1,matAA);
 		kap = kappa(nstatOKsel+1,matAA);
-        printf("\nkappa (AA) = %16Le",kap);
+        printf("                                    kappa (AA) = %16Le",kap);
 		if (kap>1.0E99) cout <<"   MATRICE SINGULIERE";
 		cout<<"\n";
-		if (kap>1.0E99) coeff=1.0E-15; else coeff=1.0E-20;
+		if (kap>1.0E99) coeff=1.0E-15; else coeff=1.0E-21;
         err = inverse_Tik2(nstatOKsel+1,matAA,matB,coeff);
 		if (err==0) {
 			matC = prodML(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
@@ -445,7 +445,7 @@ parstatC *parstat;
 			mdiff /=(nstatOKsel+1)*(nstatOKsel+1);
 			//cout<<"coeff = 1E"<<log10(coeff)<<"    mdiff = "<<mdiff<<"\n";
 			printf("coeff = %8Le   mdiff = %8.5Lf\n",coeff,mdiff);
-		} while ((mdiff>0.02)and(coeff<0.01));
+		} while ((mdiff>0.0002)and(coeff<0.01));
 		
 		//for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nparamcom;j++) beta[i][j] = bet[i][j];}
         //ecrimatL("beta",nstatOKsel+1,nparamcom,beta);
@@ -473,9 +473,9 @@ parstatC *parstat;
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparamcom;j++) {
                 phista[i][j] = alpsimrat[i][j];
-                //if (i==0) cout<< phista[i][j]<<"   ";
+                //if (i<100) cout<< phista[i][j]<<"   ";
                 for (int k=0;k<nstatOKsel;k++) phista[i][j] -= matX0[i][k]*beta[k+1][j];
-                //if(i==0) cout<< phista[i][j]<<"   ";
+                //if(i<100) cout<< phista[i][j]<<"   ";
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
@@ -483,7 +483,7 @@ parstatC *parstat;
                   case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parmin[j];
                            else if (phista[i][j]>=xborne) phista[i][j] = parmax[j];
                            else phista[i][j] = (exp(phista[i][j])*parmax[j]+parmin[j])/(1.0+exp(phista[i][j]));
-                           //if(i==0) cout<< phista[i][j]<<"   ("<<parmin[j]<<","<<parmax[j]<<")\n";
+                           //if(i<100) cout<< phista[i][j]<<"   ("<<parmin[j]<<","<<parmax[j]<<")\n";
                            break;
                   case 4 : if (phista[i][j]<=-xborne) phista[i][j] = parmin[j];
                            else if (phista[i][j]>=xborne) phista[i][j] = parmax[j];

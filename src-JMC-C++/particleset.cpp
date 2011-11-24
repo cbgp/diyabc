@@ -50,6 +50,7 @@ enregC *enreg;
 extern long double **phistar;
 extern int debuglevel;
 extern ReftableC rt;
+extern string scurfile;
 
 struct ParticleSetC
 {
@@ -197,6 +198,7 @@ void setgroup(int p) {
 				this->particule[p].grouplist[gr].sumstat[i].samp1 = header.groupe[gr].sumstat[i].samp1;
 				this->particule[p].grouplist[gr].sumstat[i].samp2 = header.groupe[gr].sumstat[i].samp2;
 				this->particule[p].grouplist[gr].sumstat[i].numsnp = header.groupe[gr].sumstat[i].numsnp;
+				//cout<<"this->particule["<<p<<"].grouplist["<<gr<<"].sumstat["<<i<<"].cat="<<this->particule[p].grouplist[gr].sumstat[i].cat<<"\n";
 			}
 			this->particule[p].grouplist[gr].nstatsnp=this->header.groupe[gr].nstatsnp;
 			if (this->header.groupe[gr].nstatsnp>0) {
@@ -347,6 +349,7 @@ void setgroup(int p) {
                     }
                 }
             } while(not phistarOK);
+			cout<<"p="<<p<<"    k="<<k<<"\n";
             ii=0;
             for (int i=0;i<nparam;i++) {
                 if (not header.scenario[scen].histparam[i].prior.constant) {
@@ -370,7 +373,7 @@ void setgroup(int p) {
                         if (not header.groupe[gr].priorsnimoy.constant) {this->particule[p].grouplist[gr].snimoy = phistar[k][ii];ii++;}
                         //cout<<this->particule[p].grouplist[gr].snimoy<<"\n";
                 }
-                else {                                                  //SEQUENCES
+                else if (header.groupe[gr].type==1) {                                                  //SEQUENCES
                         //cout<<"SEQUENCE\n";
                         if (not header.groupe[gr].priormutmoy.constant) {this->particule[p].grouplist[gr].musmoy = phistar[k][ii];ii++;}   //musmoy
                         if (header.groupe[gr].mutmod>0){
@@ -386,12 +389,12 @@ void setgroup(int p) {
         //if (num_threads>0) omp_set_num_threads(num_threads);_
     #pragma omp parallel for shared(sOK) private(gr) if(multithread)
         for (ipart=0;ipart<this->npart;ipart++){
-                //if (trace) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
+            cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
             sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
             if (sOK[ipart]==0) {
                 for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr);}
             }
-    //if (trace) cout<<"apres docalstat de la particule "<<ipart<<"\n";
+			cout<<"apres docalstat de la particule "<<ipart<<"\n";
         }
 //fin du pragma
         for (int ipart=0;ipart<this->npart;ipart++) {
@@ -422,7 +425,7 @@ void setgroup(int p) {
                                 enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
                         }
         }
-
+		cout<<"fin de dosimulphistar\n";
 
     }
 
@@ -503,16 +506,17 @@ void setgroup(int p) {
 		}
 		if (debuglevel==5) cout<<"apres remplissage des enreg\n";fflush(stdin);
         if (firsttime){
-              if (debuglevel==5) cout<<"FIRSTTIME\n";
-              FILE * pFile;
-              char  *curfile;
-              int categ,iq;
-              bool trouve2;
-              curfile = new char[strlen(this->header.pathbase)+13];
-              strcpy(curfile,this->header.pathbase);
-              strcat(curfile,"courant.log");
-              if (debuglevel==5) cout<<curfile<<"\n";
-              pFile = fopen (curfile,"w");
+			if (debuglevel==5) cout<<"FIRSTTIME\n";
+			FILE * pFile;
+			int categ,iq,icur=0;
+			bool trouve2;
+			scurfile=char2string(this->header.pathbase)+"courant_"+IntToString(icur)+".log";
+			while (ifstream(scurfile.c_str())) {
+				icur++;
+				scurfile=char2string(this->header.pathbase)+"courant_"+IntToString(icur)+".log";
+			}
+              cout<<"ecriture du fichier courant = "<<scurfile<<"\n";
+			  pFile = fopen (scurfile.c_str(),"w");
               fprintf(pFile,"%s\n",this->header.entete.c_str());
 			  //cout<<"FISTTIME\n";
 			  //cout<<header.entete<<"\n";

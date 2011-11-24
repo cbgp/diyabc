@@ -39,6 +39,7 @@
 extern ParticleSetC ps;
 extern enregC* enreg;
 double time_readfile=0.0;
+extern string scurfile;
 
 char *nomficonfresult;
 

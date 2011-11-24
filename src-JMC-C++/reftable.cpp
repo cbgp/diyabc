@@ -535,7 +535,7 @@ public:
         cout<<"\rcal_dist : fini   nreclus="<<nreclus<<"\n";
         this->closefile();
         cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK<<"\n";
-        cout<<"    distmin = "<<this->enrsel[0].dist<<"    distmax = "<<this->enrsel[nsel-1].dist<<"\n";
+        //cout<<"    distmin = "<<this->enrsel[0].dist<<"    distmax = "<<this->enrsel[nsel-1].dist<<"\n";
         printf("    distmin = %12.8Lf   distmax = %12.8Lf\n",this->enrsel[0].dist/(long double)this->nstat,this->enrsel[nsel-1].dist/(long double)this->nstat);
 		/*for (int i=0;i<nsel;i++){
 			cout<<this->enrsel[i].numscen<<"  ";

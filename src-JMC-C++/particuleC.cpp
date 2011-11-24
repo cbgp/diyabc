@@ -53,10 +53,10 @@ using namespace std;
 #define SEQMISSING ""
 #define SNPMISSING 9
 #define NUCMISSING 'N'
-#define NSTAT 47
+#define NSTAT 43
 
-string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","HP0","HME","HQ1","HQ3","HMO","NP0","NME","NQ1","NQ3","NMO","FP0","FME","FQ1","FQ3","FMO","AP0","AME","AQ1","AQ3","AMO"};
-int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28 ,  29 ,  30 ,  31 ,  32 ,  33 ,  34 ,  35 ,  36 ,  37 ,  38 ,  39 ,  40};
+string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","HP0","HM1","HV1","HMO","NP0","NM1","NV1","NMO","FP0","FM1","FV1","FMO","AP0","AM1","AV1","AMO"};
+int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28 ,  29 ,  30 ,  31 ,  32 ,  33 ,  34 ,  35 ,  36 };
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			 21 : moyenne des genic diversities
  *  2 : het			-2 : nss             22 : variance des genic diversities
@@ -2825,9 +2825,11 @@ struct ParticleC
 				het *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
 				this->grouplist[gr].sumstatsnp[numsnp].x[nl] = het;
 				nl++;
+				//printf("%6.3Lf",het);
 			}
 		}
 		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
+		//cout<<"\n";
 	}
 /*
 	void cal_snnei(int gr,int numsnp) {
@@ -3056,11 +3058,16 @@ struct ParticleC
 				f1=this->locuslist[loc].freq[sample1][0];
 				f2=this->locuslist[loc].freq[sample2][0];
 				f3=this->locuslist[loc].freq[sample][0];
-				if (((f1<f2)and(f3<f2))or((f1>f2)and(f3>f2))) {
+				if (f1!=f2) {
 					aml[nl] = (f3-f2)/(f1-f2);
-					if (aml[nl]>1.0) aml[nl]=1.0;
-					nl++;
+					if ((aml[nl]>=0.0)and(aml[nl]<=1.0)) nl++;
 				}
+				
+				/*
+				if (((f1<f2)and(f3<=f2))or((f1>f2)and(f3>=f2))) {
+					aml[nl] = (f3-f2)/(f1-f2);
+					if (aml[nl]<=1.0) nl++;
+				}*/
 			}
 		}
 		this->grouplist[gr].sumstatsnp[numsnp].n = nl;
@@ -4317,47 +4324,82 @@ struct ParticleC
 		return p0/nn;
 	}
 	
+	long double mQ(int n, int n0, int n1,long double *x) {
+		long double sx=0;
+		for (int i=n0;i<n1;i++) sx +=x[i];
+		//cout <<"x["<<n0<<"]="<<x[n0]<<"    x["<<n1-1<<"]="<<x[n1-1]<<"       ";
+		if (n1>n0) return sx/(long double)(n1-n0); 
+		else return 0.0;
+	}
+	
 	long double cal_medL(int n, long double *x){
-		int m=0,nn;
+		long double sx=0.0,nn=0.0;
+		for (int i=0;i<n;i++) if ((x[i]!=0.0)and(x[i]!=1.0)) {sx +=x[i];nn +=1.0;}
+		if (nn>0.0) return sx/nn;
+		else return 0.0;
+		/*int m=0,nn;
 		while(x[m]==0.0) m++;
 		nn=n-m;
-		if (nn==0) return 0.0;
+		//cout<<"ME    n="<<n<<"   n="<<m<<"   nn="<<nn<<"      ";
+		return mQ(n,m+nn/3,m+2*nn/3,x);*/
+		/*if (nn==0) return 0.0;
 		if (nn==1) return x[n-1];
 		if (nn==2) return 0.5*(x[n-2]+x[n-1]);
 		if ((nn%2)==0) return 0.5*(x[m+nn/2-1]+x[m+nn/2]);
-		else return x[m+nn/2];
+		else return x[m+nn/2];*/
 	}
 	
 	long double cal_qu1L(int n, long double *x) {
-		int m=0,nn;
+		long double p0=0.0, nn=(long double)n;
+		for(int i=0;i<n;i++) if (x[i]==1.0) p0 +=1.0;
+		return p0/nn;
+		/*int m=0,nn;
 		while(x[m]==0.0) m++;
 		nn=n-m;
-		if (nn<4) return 0.0;
+		//cout<<"Q1    n="<<n<<"   n="<<m<<"   nn="<<nn<<"      ";
+		return mQ(n,m,m+nn/3,x);*/
+		/*if (nn<4) return 0.0;
 		if ((nn % 4)==0) return 0.5*(x[m+(nn/4)]+x[m+(nn/4)-1]);
 		else if ((nn % 2)==0) return x[m+(nn/4)];
-		else return (0.25*x[m+(nn/4)-1])+(0.75*x[m+(nn/4)]);
+		else return (0.25*x[m+(nn/4)-1])+(0.75*x[m+(nn/4)]);*/
 	}
 	long double cal_qu3L(int n, long double *x) {
 		int m=0,nn;
 		long double a;
 		while(x[m]==0.0) m++;
 		nn=n-m;
-		if (nn<4) a=0.0;
+		//cout<<"Q3    n="<<n<<"   n="<<m<<"   nn="<<nn<<"      ";
+		return mQ(n,m+2*nn/3,n,x);
+		/*if (nn<4) a=0.0;
 		else if ((nn % 4)==0) a=0.5*(x[m+(3*nn/4)]+x[m+(3*nn/4)-1]);
 		else if ((nn % 2)==0) a=x[m+(3*nn/4)];
 		else a= (0.25*x[m+(3*nn/4)+1])+(0.75*x[m+(3*nn/4)]);
 		if(a!=a) {cout<<"nn="<<nn<<"   m="<<m<<"\n";exit(3);}
-		return a;
+		return a;*/
 	}
 	
+	long double cal_moyL0(int n, long double *x) {
+		long double sx=0.0,nn=0.0;
+		for (int i=0;i<n;i++) if (x[i]>0.0) {sx +=x[i];nn+=1.0;}
+		if (nn>0) return sx/nn;
+		else return 0.0;
+	}
+
 	long double cal_moyL(int n, long double *x) {
-		double sx=0;
-		for (int i=0;i<n;i++) sx +=x[i];
+		long double sx=0.0;
+		for (int i=0;i<n;i++) {sx +=x[i];}
 		if (n>0) return sx/(long double)n;
 		else return 0.0;
 	}
 
-	void docalstat(int gr) {
+	long double cal_varL0(int n, long double *x) {
+		long double sx=0.0,sx2=0.0,nn=0.0;
+		for (int i=0;i<n;i++) if (x[i]>0.0) {sx +=x[i];sx2 +=x[i]*x[i];nn+=1.0;}
+		if (nn>1) return (sx2-(sx/nn)*sx)/(nn-1);
+		else return 0.0;
+	}
+
+void docalstat(int gr) {
 		//cout << "avant calfreq\n";
 		//cout << this->grouplist[gr].type<<"\n";
 		if (this->grouplist[gr].type == 0)  this->calfreq(gr);
@@ -4421,121 +4463,96 @@ struct ParticleC
 				case   -13 : this->grouplist[gr].sumstat[st].val = cal_fst2p(gr,st);break;
 				case   -14 : this->grouplist[gr].sumstat[st].val = cal_aml3p(gr,st);break;
 				case    21 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
-				             //cout<<"numsnp="<<numsnp<<"\n";
+				             //cout<<"21 numsnp="<<numsnp<<"   defined="<<this->grouplist[gr].sumstatsnp[numsnp].defined<<"\n";
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snhet(gr,numsnp);
 							 this->grouplist[gr].sumstat[st].val = this->cal_p0L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 				case    22 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+				             //cout<<"22 numsnp="<<numsnp<<"   defined="<<this->grouplist[gr].sumstatsnp[numsnp].defined<<"\n";
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snhet(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
+							 /*if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
 								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
 								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_medL(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
+							 }*/
+							 this->grouplist[gr].sumstat[st].val = this->cal_moyL0(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 				case    23 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+				             //cout<<"23 numsnp="<<numsnp<<"   defined="<<this->grouplist[gr].sumstatsnp[numsnp].defined<<"\n";
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snhet(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
+							 /*if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
 								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
 								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_qu1L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case	24 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snhet(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
-								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
-								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_qu3L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case    25 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+							 }*/
+							 this->grouplist[gr].sumstat[st].val = this->cal_varL0(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
+				case    24 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+				             //cout<<"25 numsnp="<<numsnp<<"   defined="<<this->grouplist[gr].sumstatsnp[numsnp].defined<<"\n";
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snhet(gr,numsnp);
 							 this->grouplist[gr].sumstat[st].val = this->cal_moyL(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				
+//************				
+				case    25 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snnei(gr,numsnp);
+							 this->grouplist[gr].sumstat[st].val = this->cal_p0L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 				case    26 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snnei(gr,numsnp);
-							 this->grouplist[gr].sumstat[st].val = this->cal_p0L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
+							 /*if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
+								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
+								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
+							 }*/
+							 this->grouplist[gr].sumstat[st].val = this->cal_moyL0(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 				case    27 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snnei(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
+							 /*if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
 								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
 								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_medL(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
+							 }*/
+							 this->grouplist[gr].sumstat[st].val = this->cal_varL0(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 				case    28 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snnei(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
-								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
-								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_qu1L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case	29 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snnei(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
-								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
-								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_qu3L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case    30 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snnei(gr,numsnp);
 							 this->grouplist[gr].sumstat[st].val = this->cal_moyL(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 
+				case    29 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snfst(gr,numsnp);
+							 this->grouplist[gr].sumstat[st].val = this->cal_p0L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
+				case    30 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snfst(gr,numsnp);
+							 /*if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
+								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
+								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
+							 }*/
+							 this->grouplist[gr].sumstat[st].val = this->cal_moyL0(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 				case    31 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snfst(gr,numsnp);
-							 this->grouplist[gr].sumstat[st].val = this->cal_p0L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
+							 /*if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
+								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
+								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
+							 }*/
+							 this->grouplist[gr].sumstat[st].val = this->cal_varL0(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 				case    32 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snfst(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
-								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
-								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_medL(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case    33 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snfst(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
-								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
-								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_qu1L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case	34 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snfst(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
-								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
-								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_qu3L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case    35 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snfst(gr,numsnp);
 							 this->grouplist[gr].sumstat[st].val = this->cal_moyL(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 
-				case    36 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+				case    33 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snaml(gr,numsnp);
 							 this->grouplist[gr].sumstat[st].val = this->cal_p0L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case    37 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+				case    34 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snaml(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
+							 /*if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
 								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
 								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_medL(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case    38 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+							 }*/
+							 this->grouplist[gr].sumstat[st].val = this->cal_moyL0(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
+				case    35 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snaml(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
+							 /*if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
 								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
 								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_qu1L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case	39 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snaml(gr,numsnp);
-							 if (not this->grouplist[gr].sumstatsnp[numsnp].sorted) {
-								 sort(&this->grouplist[gr].sumstatsnp[numsnp].x[0],&this->grouplist[gr].sumstatsnp[numsnp].x[this->grouplist[gr].sumstatsnp[numsnp].n]);
-								 this->grouplist[gr].sumstatsnp[numsnp].sorted=true;
-							 }
-							 this->grouplist[gr].sumstat[st].val = this->cal_qu3L(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
-				case    40 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
+							 }*/
+							 this->grouplist[gr].sumstat[st].val = this->cal_varL0(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
+				case    36 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snaml(gr,numsnp);
 							 this->grouplist[gr].sumstat[st].val = this->cal_moyL(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 			}
-			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"   ";fflush(stdin);
-			//cout<<"\n";
+			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
+			//cout<<"\n";
 		if ((this->grouplist[gr].type == 0)or(this->grouplist[gr].type>9)) liberefreq(gr);
         else liberednavar(gr);
         if (not this->afsdone.empty()) {

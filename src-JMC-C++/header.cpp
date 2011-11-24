@@ -631,9 +631,9 @@ public:
                 } else if (this->groupe[gr].type>9) {
 					catsnp = (stat_num[j]-21)/4;
 					if (debuglevel==2) cout<<"stat_num["<<j<<"]="<<stat_num[j]<<"   catsnp="<<catsnp<<"\n";
-                    if (stat_num[j]<26) {
+                    if (stat_num[j]<25) {
 						if (debuglevel==2) cout<<"nss="<<nss<<"\n";
-					for (int i=1;i<nss;i++) {
+						for (int i=1;i<nss;i++) {
 						    if (debuglevel==2) cout<<"i="<<i<<"\n";
 							this->groupe[gr].sumstat[k].cat=stat_num[j];
 							this->groupe[gr].sumstat[k].samp=atoi(ss[i].c_str());
@@ -656,7 +656,7 @@ public:
 							}
 							k++;
                         }
-                    } else if ((stat_num[j]>25)and(stat_num[j]<36)) {
+                    } else if ((stat_num[j]>24)and(stat_num[j]<33)) {
                         for (int i=1;i<nss;i++) {
                             this->groupe[gr].sumstat[k].cat=stat_num[j];
                             ss1=splitwords(ss[i],"&",&nss1);
@@ -683,7 +683,7 @@ public:
 							//cout<<"numsnp = "<<statsnp.size()<<"\n";
                             k++;
                         }
-                    } else if (stat_num[j]>35) {
+                    } else if (stat_num[j]>32) {
                         for (int i=1;i<nss;i++) {
                             this->groupe[gr].sumstat[k].cat=stat_num[j];
                             ss1=splitwords(ss[i],"&",&nss1);

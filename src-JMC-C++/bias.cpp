@@ -34,6 +34,7 @@ extern ParticleSetC ps;
 extern enregC* enreg;
 extern bool multithread;
 extern char *progressfilename;
+extern string scurfile;
 
 struct enreC {
     int numscen;
@@ -584,17 +585,17 @@ using namespace std;
             enreg2[p].paramvv = new double[nparamcom+nparcompo];
             enreg2[p].numscen = rt.scenchoisi[0];
         }
-        cout<<"courantfilename="<<courantfilename<<"\n";
-        ifstream file(courantfilename, ios::in);
+        cout<<"courantfilename="<<scurfile<<"\n";
+        ifstream file(scurfile.c_str(), ios::in);
         getline(file,bidon);
         for (int p=0;p<ntest;p++) {
           getline(file,bidon);
-          cout<<"bidon="<<bidon<<"\n";
-          cout<<bidon<<"\n";
+          //cout<<"bidon="<<bidon<<"\n";
+          //cout<<bidon<<"\n";
           ss = splitwords(bidon," ",&ns);
-          cout<<"ns="<<ns<<"\n";
+          //cout<<"ns="<<ns<<"\n";
           enreg2[p].numscen=atoi(ss[0].c_str());
-		  cout<<"bias.cpp   npv="<<npv<<"\n";
+		  //cout<<"bias.cpp   npv="<<npv<<"\n";
           for (int i=0;i<npv;i++) enreg2[p].paramvv[i]=atof(ss[i+1].c_str());
           if(nparcompo>0) setcompo(p);
           for (int i=0;i<rt.nstat;i++) enreg2[p].stat[i]=atof(ss[i+1+npv].c_str());
@@ -621,7 +622,7 @@ using namespace std;
                 for (int j=0;j<nparamcom+nparcompo;j++) paretoil[p][i][j] = phistar[i][j];
             }
             for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
-            printf("analysing data test %3d \n",p+1);
+            printf("\nanalysing data test %3d \n",p+1);
             //for (int j=0;j<npar;j++) printf(" %6.0e (%8.2e %8.2e %8.2e) ",enreg2[p].paramvv[j],paramest[p][j].moy,paramest[p][j].med,paramest[p][j].mod);cout<<"\n";
             iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         }

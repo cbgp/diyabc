@@ -35,25 +35,31 @@ extern char  *progressfilename;
 long double **ssphistar,**ssref;
 
     bool resetstats(string s) {
-      cout<<s<<"\n";
+		cout<<"debut de resetstats\n";
+		cout<<s<<"\n";
         int j,ns,nq,nss1,gr,k=0;
         string *ss,*qq,*ss1;
+		vector <StatsnpC> statsnp;
+		StatsnpC stsnp;
+		bool trouve;
+		statsnp.resize(0);
+		int nss,catsnp;
 //comptage des stat
         for (gr=1;gr<=header.ngroupes;gr++) {header.groupe[gr].nstat=0;} header.nstat=0;
-        //cout<<header.ngroupes<<" groupe\n";
+        cout<<header.ngroupes<<" groupe\n";
         ss =splitwords(s," ",&ns);
-        cout<<"ns="<<ns<<"\n";
+        if (debuglevel==2) cout<<"ns="<<ns<<"\n";
         for (int i=0;i<ns;i++) {
-            qq=splitwords(ss[j],"_",&nq);
+            qq=splitwords(ss[i],"_",&nq);
             if (nq!=3) return false;
-            //cout<<"nq="<<nq<<"   qq[1]="<<qq[1]<<"\n";
+            if (debuglevel==2) cout<<"nq="<<nq<<"   qq[1]="<<qq[1]<<"\n";
             gr=atoi(qq[1].c_str());
-            //cout<<"gr="<<gr<<"\n";
+            if (debuglevel==2) cout<<"gr="<<gr<<"\n";
             header.groupe[gr].nstat++;
             header.nstat++;
             delete []qq;
        }
-        //cout <<"dans resetstat nstat = "<<header.nstat++<<"\n";
+        if (debuglevel==2) cout <<"dans resetstat nstat = "<<header.nstat++<<"\n";
 
         for (gr=1;gr<=header.ngroupes;gr++) {delete []header.groupe[gr].sumstat;header.groupe[gr].sumstat = new StatC[header.groupe[gr].nstat];}
         ss =splitwords(s," ",&ns);
@@ -63,7 +69,7 @@ long double **ssphistar,**ssref;
             qq=splitwords(ss[i],"_",&nq);
             gr=atoi(qq[1].c_str());
             j=0;while (qq[0]!=stat_type[j]) j++;
-            //cout<<"qq[0] = "<<qq[0]<<"   j="<<j<<"\n";
+            if (debuglevel==2) cout<<"\nss[i] = "<<ss[i]<<"   j="<<j<<"\n";
             if (header.groupe[gr].type==0) {   //MICROSAT
                 if (stat_num[j]<5) {
                       header.groupe[gr].sumstat[k].cat=stat_num[j];
@@ -106,9 +112,108 @@ long double **ssphistar,**ssref;
                         k++;
                         delete [] ss1;
                 }
-            }
+            } else if (header.groupe[gr].type>9) {   //SNP
+					catsnp = (stat_num[j]-21)/4;
+					if (debuglevel==2) cout<<"snp catsnp="<<catsnp<<"   stat_num["<<j<<"]="<<stat_num[j]<<"\n";
+                    if (stat_num[j]<25) {
+						header.groupe[gr].sumstat[k].cat=stat_num[j];
+						header.groupe[gr].sumstat[k].samp=atoi(qq[2].c_str());
+						trouve=false;
+						if (debuglevel==2) cout<<"statsnp.size="<<statsnp.size()<<"\n";
+						if (statsnp.size()>0){
+						for (int jj=0;jj<statsnp.size();jj++) {
+								trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==header.groupe[gr].sumstat[k].samp));
+								if (trouve) {header.groupe[gr].sumstat[k].numsnp=jj;break;}
+							}
+						}
+						if (debuglevel==2) cout<<"trouve="<<trouve<<"\n";
+						if (not trouve) {
+								stsnp.cat=catsnp;
+								stsnp.samp=header.groupe[gr].sumstat[k].samp;
+								stsnp.defined=false;
+								stsnp.sorted=false;
+								header.groupe[gr].sumstat[k].numsnp=statsnp.size();
+								cout<<"statsnp["<<statsnp.size()<<"]   cat="<<stsnp.cat<<"   samp="<<stsnp.samp<<"\n";
+								statsnp.push_back(stsnp);
+						}
+						k++;
+                        
+                    } else if ((stat_num[j]>24)and(stat_num[j]<33)) {
+						header.groupe[gr].sumstat[k].cat=stat_num[j];
+                        ss1=splitwords(qq[2],"&",&nss1);
+                        header.groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
+                        header.groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+						trouve=false;
+						if (debuglevel==2) cout<<"statsnp.size="<<statsnp.size()<<"\n";
+						if (statsnp.size()>0){
+						for (int jj=0;jj<statsnp.size();jj++) {
+								trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==header.groupe[gr].sumstat[k].samp)and(statsnp[jj].samp1==header.groupe[gr].sumstat[k].samp1));
+								if (trouve) {header.groupe[gr].sumstat[k].numsnp=jj;break;}
+							}
+						}
+						//cout<<"statsnp.size = "<<statsnp.size()<<"   trouve = "<<trouve<<"\n";
+						if (debuglevel==2) cout<<"trouve="<<trouve<<"\n";
+						if (not trouve) {
+								stsnp.cat=catsnp;
+								stsnp.samp=header.groupe[gr].sumstat[k].samp;
+								stsnp.samp1=header.groupe[gr].sumstat[k].samp1;
+								stsnp.defined=false;
+								stsnp.sorted=false;
+								header.groupe[gr].sumstat[k].numsnp=statsnp.size();
+								cout<<"statsnp["<<statsnp.size()<<"]   cat="<<stsnp.cat<<"   samp="<<stsnp.samp<<"   samp1="<<stsnp.samp1<<"\n";
+								statsnp.push_back(stsnp);
+						}
+						//cout<<"numsnp = "<<statsnp.size()<<"\n";
+						delete [] ss1;
+						k++;
+                        
+                    } else if (stat_num[j]>32) {
+						header.groupe[gr].sumstat[k].cat=stat_num[j];
+                        ss1=splitwords(qq[2],"&",&nss1);
+                        header.groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
+                        header.groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+                        header.groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
+						trouve=false;
+						if (debuglevel==2) cout<<"statsnp.size="<<statsnp.size()<<"\n";
+						if (statsnp.size()>0){
+						for (int jj=0;jj<statsnp.size();jj++) {
+								trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==header.groupe[gr].sumstat[k].samp)and(statsnp[jj].samp1==header.groupe[gr].sumstat[k].samp1)and(statsnp[jj].samp2==header.groupe[gr].sumstat[k].samp2));
+								if (trouve) {header.groupe[gr].sumstat[k].numsnp=jj;break;}
+							}
+						}
+						if (debuglevel==2) cout<<"trouve="<<trouve<<"\n";
+						if (not trouve) {
+								stsnp.cat=catsnp;
+								stsnp.samp=header.groupe[gr].sumstat[k].samp;
+								stsnp.samp1=header.groupe[gr].sumstat[k].samp1;
+								stsnp.samp2=header.groupe[gr].sumstat[k].samp2;
+								stsnp.defined=false;
+								stsnp.sorted=false;
+								header.groupe[gr].sumstat[k].numsnp=statsnp.size();
+								cout<<"statsnp["<<statsnp.size()<<"]   cat="<<stsnp.cat<<"   samp="<<stsnp.samp<<"   samp1="<<stsnp.samp1<<"   samp2="<<stsnp.samp2<<"\n";
+								statsnp.push_back(stsnp);
+						}
+						delete [] ss1;
+						k++;
+                    }
+			}
             delete []qq;
         }
+		header.groupe[gr].nstatsnp=statsnp.size();
+		cout<<"header.groupe[gr].nstatsnp="<<header.groupe[gr].nstatsnp<<"\n";
+		if (header.groupe[gr].nstatsnp>0){
+			header.groupe[gr].sumstatsnp = new StatsnpC[header.groupe[gr].nstatsnp];
+			for (int i=0;i<header.groupe[gr].nstatsnp;i++){
+				header.groupe[gr].sumstatsnp[i].cat=statsnp[i].cat;
+				header.groupe[gr].sumstatsnp[i].samp=statsnp[i].samp;
+				header.groupe[gr].sumstatsnp[i].samp1=statsnp[i].samp1;
+				header.groupe[gr].sumstatsnp[i].samp2=statsnp[i].samp2;
+				header.groupe[gr].sumstatsnp[i].defined=statsnp[i].defined;
+				header.groupe[gr].sumstatsnp[i].sorted=statsnp[i].sorted;
+			}
+			statsnp.clear();
+		}
+		cout<<"fin de resetstats\n";
         return true;
     }
 
@@ -123,7 +228,7 @@ long double **ssphistar,**ssref;
         bool OK;
         int npv,ip1,ip2,nphistarOK=0,scen=rt.scenteste-1;
         npv = rt.nparam[scen];
-       for (int i=0;i<nsel;i++) {
+        for (int i=0;i<nsel;i++) {
             OK=true;
             if (header.scenario[scen].nconditions>0) {
                 for (int j=0;j<header.scenario[scen].nconditions;j++) {
@@ -364,6 +469,7 @@ long double **ssphistar,**ssref;
             for (int i=0;i<nenr;i++) {
                 for (int j=0;j<header.nstat;j++) ssphistar[i+nss][j]=enreg[i].stat[j];
                 for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+ns][j]<<"   ";cout<<"\n";
+				exit(1);
             }
             firsttime=false;
             nss+=nenr;
