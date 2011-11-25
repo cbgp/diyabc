@@ -42,6 +42,10 @@
 #include <vector>
 #define VECTOR
 #endif
+#ifndef RANDOMGENERATOR
+#include "randomgenerator.cpp"
+#define RANDOMGENERATOR
+#endif
 
 
 using namespace std;
@@ -431,18 +435,89 @@ public:
 * ecriture en binaire d'un fichier snp 
 */
 	void ecribin(string filenamebin) {
-		/*fstream f1;		
+        MwcGen mwc;        mwc.randinit(990,time(NULL));
+		int *index,lon,kloc;
+		index=mwc.randperm(this->nloc);
+		fstream f1;		
         f1.open(filenamebin.c_str(),ios::out|ios::binary);
-		f1.write((char*)&(this->nloc),sizeof(int));
-		f1.close();*/
+		f1.write((char*)&(this->nloc),sizeof(int));													//nombre de locus
+		f1.write((char*)&(this->nsample),sizeof(int));												//nombre d'échantillons
+		for(int i=0;i<this->nsample;i++) f1.write((char*)&(this->nind[i]),sizeof(int));				//nombre d'individus par échantillons
+		for(int i=0;i<this->nsample;i++){															//noms des individus
+			for (int j=0;j<this->nind[i];j++) {
+				lon=this->indivname[i][j].length()+1;
+				f1.write((char*)&(lon),sizeof(int));
+				f1.write(this->indivname[i][j].c_str(),lon);
+			}
+		}
+		for(int i=0;i<this->nsample;i++){															//sexes des individus
+			for (int j=0;j<this->nind[i];j++) f1.write((char*)&(this->indivsexe[i][j]),sizeof(int));
+		}
+		for (int loc=0;loc<this->nloc;loc++) {kloc = index[loc];f1.write((char*)&(this->locus[kloc].type),sizeof(int));} //types des locus																		
+		for (int loc=0;loc<this->nloc;loc++) {
+			kloc = index[loc];																		//nombre total de gènes par locus x echantillon
+			for(int ech=0;ech<this->nsample;ech++) f1.write((char*)&(this->locus[kloc].ss[ech]),sizeof(int));
+		}
+		for (int loc=0;loc<this->nloc;loc++) {
+			kloc = index[loc];																		//nombre de gènes non manquants par locus x echantillon
+			for(int ech=0;ech<this->nsample;ech++) f1.write((char*)&(this->locus[kloc].samplesize[ech]),sizeof(int));
+		}
+		for (int loc=0;loc<this->nloc;loc++) {
+			kloc = index[loc]; 
+			for (int ech=0;ech<this->nsample;ech++) {
+				for (int i=0;i<this->locus[kloc].ss[ech];i++) f1.write((char*)&(this->locus[kloc].haplosnp[ech][i]),sizeof(short int));
+			}
+		}
+		f1.close();
+cout<<"fin de ecribin\n";
 	}
 
 /**
 * lecture en binaire d'un fichier snp 
 */
 	void libin(string filenamebin) {
-		/*fstream f0;
-        f1.open(filenamebin.c_str(),ios::in|ios::binary);*/
+		fstream f0;
+		char* buffer;
+		buffer = new char[1000];
+		int lon;
+        f0.open(filenamebin.c_str(),ios::in|ios::binary);
+		f0.read((char*)&(this->nloc),sizeof(int));													//nombre de locus
+		f0.read((char*)&(this->nsample),sizeof(int));												//nombre d'échantillons
+		this->nind = new int[this->nsample];
+		for(int i=0;i<this->nsample;i++) f0.read((char*)&(this->nind[i]),sizeof(int));				//nombre d'individus par échantillons
+		this->indivname = new string*[this->nsample];
+		for(int i=0;i<this->nsample;i++) this->indivname[i] = new string[this->nind[i]];
+		for(int i=0;i<this->nsample;i++){															//noms des individus
+			for (int j=0;j<this->nind[i];j++) {
+				f0.read((char*)&(lon),sizeof(int)); 
+				f0.read(buffer,lon);
+				this->indivname[i][j] = char2string(buffer);
+			}
+		}
+		this->indivsexe = new int*[this->nsample];
+		for(int i=0;i<this->nsample;i++) this->indivsexe[i] = new int[this->nind[i]];
+		for(int i=0;i<this->nsample;i++){															//sexes des individus
+			for (int j=0;j<this->nind[i];j++) f0.read((char*)&(this->indivsexe[i][j]),sizeof(int));
+		}
+		this->locus = new LocusC[this->nloc];
+		for (int loc=0;loc<this->nloc;loc++) f0.read((char*)&(this->locus[loc].type),sizeof(int)); //types des locus																		
+		for (int loc=0;loc<this->nloc;loc++) {
+			this->locus[loc].ss = new int[this->nsample];
+			for(int ech=0;ech<this->nsample;ech++) f0.read((char*)&(this->locus[loc].ss[ech]),sizeof(int));
+		}				
+		for (int loc=0;loc<this->nloc;loc++) {
+			this->locus[loc].samplesize = new int[this->nsample];
+			for(int ech=0;ech<this->nsample;ech++) f0.read((char*)&(this->locus[loc].samplesize[ech]),sizeof(int));
+		}				
+		for (int loc=0;loc<this->nloc;loc++) {
+			this->locus[loc].haplosnp = new short int*[this->nsample];
+			for (int ech=0;ech<this->nsample;ech++) {
+				this->locus[loc].haplosnp[ech] = new short int[this->locus[loc].ss[ech]];
+				for (int i=0;i<this->locus[loc].ss[ech];i++) f0.read((char*)&(this->locus[loc].haplosnp[ech][i]),sizeof(short int));
+			}
+		}
+		f0.close();
+		delete []buffer;
 	}
 
 /**
@@ -777,8 +852,9 @@ public:
 		int loc,kloc;
 		string filenamebin;
 		fstream fs;
-		size_t k=filename.find_last_of(".bin");
-		filenamebin=filename.substr(0,k)+".bin";
+		//size_t k=filename.find_last_of(".");
+		filenamebin=filename+".bin";
+		cout<<filenamebin<<"\n";
 		this->filetype = this->testfile(filename);
 		if (this->filetype==-1) {
 			cout<<"Unreckognized file format"<<"\n";
@@ -797,18 +873,20 @@ public:
 		}
 		if (this->filetype==1) {
 		    fs.open(filenamebin.c_str(),ios::in|ios::binary); 
-		    if (fs) {fs.close();this->libin(filenamebin);}
+		    if (fs) {fs.close();this->libin(filenamebin);cout<<"fin de la lecture du fichier binaire\n";}
 			else {
 				this->readfilesnp(filename);
-				filenamebin=filename.substr(0,k)+".bin";
-				cout<<filenamebin<<"\n";
-				this->ecribin(filename);
+				cout<<"fin de la lecture\n";
+				this->purgelocmonomorphes();cout<<"fin de la purge des monomorphes\n";
+				this->sexratio=0.5;
+				for (loc=0;loc<this->nloc;loc++) {this->do_snp(loc);this->cal_coeff(loc);}
+				cout<<"apres le' traitement' des snp\n";
+				cout<<"reecriture dans le fichier binaire "<<filenamebin<<"\n";
+				this->ecribin(filenamebin);
+				cout<<"relecture du fichier binaire\n";
+				this->libin(filenamebin);
+				cout<<"fin de la lecture du fichier binaire\n";
 			}
-			cout<<"fin de la lecture\n";
-			this->purgelocmonomorphes();cout<<"fin de la purge des monomorphes\n";
-			this->sexratio=0.5;
-			for (loc=0;loc<this->nloc;loc++) {this->do_snp(loc);this->cal_coeff(loc);}
-			cout<<"apres le' traitement' des snp\n";
 			this->npopref=0;
 			//this->popref = new int[this->npopref];
 			//this->popref[0]=1;

@@ -1875,16 +1875,16 @@ struct ParticleC
 
 	void put_one_mutation(int loc) {
 		this->gt[loc].nmutot=1;
-			cherche_branchesOK(loc);
+		//	cherche_branchesOK(loc);
 		double r,s=0.0,lengthtot=0.0;
-		int b,nOK=0;
+		int b;
 		for (b=0;b<this->gt[loc].nbranches;b++) {
-			if (this->gt[loc].branches[b].OK) {lengthtot +=this->gt[loc].branches[b].length;nOK++;}
+			lengthtot +=this->gt[loc].branches[b].length;
 			this->gt[loc].branches[b].nmut = 0;
 		}
 		r=this->mw.random()*lengthtot;
 		b=0;s=this->gt[loc].branches[b].length;
-		while (s<r) {b++;if (this->gt[loc].branches[b].OK) s +=this->gt[loc].branches[b].length;};
+		while (s<r) {b++; s +=this->gt[loc].branches[b].length;};
 		this->gt[loc].branches[b].nmut = 1;
 		//cout<<nOK<<" branches mutables sur "<<this->gt[loc].nbranches<<"\n";
 		//cout<<"numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
@@ -2212,12 +2212,16 @@ struct ParticleC
         return "";
     }
     
+    bool polymref(int loc) {
+		return true;
+	}
+	
 	int dosimulpart(int numscen){
         if (debuglevel==5)        {cout<<"debut de dosimulpart\n";fflush(stdin);}
 		vector <int> simulOK;
         string checktree;
 		int *emptyPop,loc;
-		bool treedone,dnaloc=false,trouve;
+		bool treedone,dnaloc=false,trouve,snpOK;
         int locus,sa,indiv,nuc;
         //cout<<"this->nloc="<<this->nloc<<"\n";
 		simulOK.resize(this->nloc);
@@ -2330,12 +2334,21 @@ struct ParticleC
 					if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = copytree(this->gt[loc]);gtMexist=true;}}
 				}
 	/* mutations */
-				if (this->locuslist[loc].type <10) put_mutations(loc);
-				else put_one_mutation(loc);
-				 if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
-				simulOK[loc]=cree_haplo(loc);
-				if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
-
+				if (this->locuslist[loc].type <10){  
+					put_mutations(loc);
+					if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
+					simulOK[loc]=cree_haplo(loc);
+					if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
+				} else {
+					if (this->data.npopref<1) {put_one_mutation(loc);simulOK[loc]=cree_haplo(loc);}
+					else {
+						do {
+							put_one_mutation(loc);
+							simulOK[loc]=cree_haplo(loc);
+							snpOK = polymref(loc);
+						} while (not snpOK);
+					}
+				}
 				locus=loc;
                 if (simulOK[loc] != 0) {if (debuglevel==10) cout << "avant break interne\n";break;}
 				if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";

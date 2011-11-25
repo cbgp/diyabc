@@ -45,6 +45,9 @@ public:
     ParticleC particuleobs;
     MutParameterC *mutparam;
     float *stat_obs;
+	int *refnind;
+	float reffreqmin;
+	bool refincluded;
 
     void libere() {
         this->dataobs.libere();
@@ -353,10 +356,12 @@ public:
 				}
 				cout<<"\napres la boucle  k1="<<k1<<"\n";
 			}
+			//cout<<"this->groupe[0].nloc = "<<this->groupe[0].nloc<<"\n";
 			if (this->groupe[0].nloc>0) {
 				this->groupe[0].loc = new int[this->groupe[0].nloc];
 				k1=0;
 				for (int loc=0;loc<this->dataobs.nloc;loc++) {
+					//cout<<"loc="<<loc<<"\n";
 					if (this->dataobs.locus[loc].groupe==0) {this->groupe[0].loc[k1]=loc;k1++;}
 				}
 			}
@@ -734,6 +739,10 @@ public:
 			//for (int i=0;i<this->groupe[gr].nstat;i++) cout<<this->groupe[gr].sumstat[i].cat<<"   "<<this->groupe[gr].sumstat[i].numsnp<<"\n";
         }
         if (debuglevel==2) cout<<"header.txt : fin de la lecture des summary stats\n";
+        //getline(file,s1);       //ligne "refnind"
+        //ss=splitwords(s1," ",&nss);
+		//if (nss!=this->)
+		
         this->nparamut=0;
         for (gr=1;gr<=this->ngroupes;gr++) {
             if (this->groupe[gr].type==0) {
