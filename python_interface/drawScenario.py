@@ -311,6 +311,17 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                     self.DrawSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
 
     def saveDrawsToOne(self):
+        ind = 0
+        nbpix = len(self.pixList)
+        while ind < nbpix:
+            if ind + 5 < nbpix:
+                self.saveDrawsInterval(ind,ind+5)
+            else:
+                self.saveDrawsInterval(ind,nbpix-1)
+            ind += 6
+
+
+    def saveDrawsInterval(self,ifrom,ito):
         """ Sauve tous les scenarios dans une seule image et un seul svg
         """
         proj_dir = self.parent.parent.dir
@@ -320,12 +331,17 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
 
         pic_format = str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText())
 
-        nbpix = len(self.pixList)
+        #nbpix = len(self.pixList)
+        nbpix = ito - ifrom
+
         largeur = 2
         # resultat de la div entière plus le reste (modulo)
-        longueur = (len(self.pixList)/largeur)+(len(self.pixList)%largeur)
-        ind = 0
+        longueur = (nbpix/largeur)+(nbpix%largeur)
+        ind = ifrom
         li=0
+        print "%s , %s"%(ifrom,ito)
+
+        ind_list_str = "%s_to_%s"%(ifrom+1,ito+1)
 
         if pic_format == "jpg" or pic_format == "png":
             self.im_result = QImage(largeur*500,longueur*450,QImage.Format_RGB32)
@@ -336,18 +352,18 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
             self.pic_result = QSvgGenerator()
             #self.pic_result.setSize(QSize(largeur*500, longueur*450));
             #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
-            self.pic_result.setFileName("%s_all.svg"%pic_whole_path)
+            self.pic_result.setFileName("%s_%s.svg"%(pic_whole_path,ind_list_str))
             painter_pic = QPainter()
             painter_pic.begin(self.pic_result)
 
         # on fait des lignes tant qu'on a des pix
-        while (ind < nbpix):
+        while (ind <= ito):
             col = 0
             if pic_format == "svg":
-                if ind > 0:
+                if ind > ifrom:
                     painter_pic.translate(-2*500,450)
             # une ligne
-            while (ind < nbpix) and (col < largeur):
+            while (ind <= ito) and (col < largeur):
                 # ajout
                 #self.im_result.fill(self.pixList[ind],QPoint(col*500,li*450))
                 #painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
@@ -367,6 +383,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
             li+=1
 
         if pic_format == "jpg" or pic_format == "png":
-            self.im_result.save("%s_all.%s"%(pic_whole_path,pic_format))
+            self.im_result.save("%s_%s.%s"%(pic_whole_path,ind_list_str,pic_format))
         else:
             painter_pic.end()
