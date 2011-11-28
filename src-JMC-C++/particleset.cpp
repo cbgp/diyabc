@@ -101,9 +101,12 @@ struct ParticleSetC
 						  this->particule[p].data.missnuc[i].nuc    = this->header.dataobs.missnuc[i].nuc;
 				  }
 		}
-		this->particule[p].data.npopref = this->header.dataobs.npopref;
-		this->particule[p].data.popref = new int[this->particule[p].data.npopref];
-		for (int i=0;i<this->particule[p].data.npopref;i++) this->particule[p].data.popref[i] = this->header.dataobs.popref[i];
+		this->particule[p].npopref = this->header.npopref;
+		this->particule[p].refnindtot = this->header.refnindtot;
+		this->particule[p].refnind = new int[this->particule[p].npopref];
+		for (int i=0;i<this->particule[p].npopref;i++) this->particule[p].refnind[i] = this->header.refnind[i];
+		this->particule[p].reffreqmin = this->header.reffreqmin;
+		this->particule[p].refincluded = this->header.refincluded;
 	}
 
 void setgroup(int p) {
@@ -247,7 +250,7 @@ void setgroup(int p) {
 				//std::cout <<"\n";
 				}
 			this->particule[p].nsample = this->header.dataobs.nsample;  
-			this->particule[p].locuslist[kloc].coeff =  this->header.dataobs.locus[kloc].coeff;  
+			this->particule[p].locuslist[kloc].coeffcoal =  this->header.dataobs.locus[kloc].coeffcoal;  
 			this->particule[p].locuslist[kloc].ss = new int[ this->header.dataobs.nsample];      
 			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].ss[sa] =  this->header.dataobs.locus[kloc].ss[sa];
 			this->particule[p].locuslist[kloc].samplesize = new int[ this->header.dataobs.nsample];

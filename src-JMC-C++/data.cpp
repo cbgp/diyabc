@@ -55,7 +55,7 @@ struct LocusC
 	string name;
 	int type;  //0 à 14
 	int groupe;    //numero du groupe auquel appartient le locus
-	double coeff;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
+	double coeffcoal;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
 	long double **freq;
 	int *ss;          //comptabilise toutes les "gene copies" données manquantes inclues
 	int *samplesize;  //comptabilise les "gene copies" non-manquantes
@@ -111,7 +111,7 @@ class DataC
 public:
 	string message,title,**indivname,***genotype;
 	int nsample,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
-	int *nind,*popref,npopref;
+	int *nind;
 	int **indivsexe;
 	double sexratio;
 	MissingHaplo *misshap, *misssnp;
@@ -831,7 +831,7 @@ cout<<"fin de ecribin\n";
 * calcul du coefficient dans la formule de coalescence en fonction du type de locus
 * 0:autosomal diploide, 1:autosomal haploïde, 2:X-linked, 3:Y-linked, 4:mitochondrial
 */
-    void cal_coeff(int loc){
+    void cal_coeffcoal(int loc){
 		double coeff=0.0;
 		switch (this->locus[loc].type % 5)
 		{	case 0 :  coeff = 16.0*this->sexratio*(1.0-this->sexratio);break;
@@ -840,7 +840,7 @@ cout<<"fin de ecribin\n";
 			case 3 :  coeff = 2.0*this->sexratio;break;
 			case 4 :  coeff = 2.0*(1.0-this->sexratio);break;
 		}
-		this->locus[loc].coeff=coeff;
+		this->locus[loc].coeffcoal=coeff;
                 //if (loc==0) cout<<"sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeff<<"\n";
     }
 
@@ -868,18 +868,23 @@ cout<<"fin de ecribin\n";
 			for (loc=0;loc<kloc;loc++) {
 				if (this->locus[loc].type<5) this->do_microsat(loc);
 				else                         this->do_sequence(loc);
-				this->cal_coeff(loc);
+				this->cal_coeffcoal(loc);
 			}
 		}
 		if (this->filetype==1) {
 		    fs.open(filenamebin.c_str(),ios::in|ios::binary); 
-		    if (fs) {fs.close();this->libin(filenamebin);cout<<"fin de la lecture du fichier binaire\n";}
-			else {
+		    if (fs) {
+				fs.close();
+				this->libin(filenamebin);
+				this->sexratio=0.5;
+				for (loc=0;loc<this->nloc;loc++) this->cal_coeffcoal(loc);
+				cout<<"fin de la lecture du fichier binaire\n";
+			} else {
 				this->readfilesnp(filename);
 				cout<<"fin de la lecture\n";
 				this->purgelocmonomorphes();cout<<"fin de la purge des monomorphes\n";
 				this->sexratio=0.5;
-				for (loc=0;loc<this->nloc;loc++) {this->do_snp(loc);this->cal_coeff(loc);}
+				for (loc=0;loc<this->nloc;loc++) {this->do_snp(loc);this->cal_coeffcoal(loc);}
 				cout<<"apres le' traitement' des snp\n";
 				cout<<"reecriture dans le fichier binaire "<<filenamebin<<"\n";
 				this->ecribin(filenamebin);
@@ -887,9 +892,6 @@ cout<<"fin de ecribin\n";
 				this->libin(filenamebin);
 				cout<<"fin de la lecture du fichier binaire\n";
 			}
-			this->npopref=0;
-			//this->popref = new int[this->npopref];
-			//this->popref[0]=1;
 		}
 		return this;
 	}

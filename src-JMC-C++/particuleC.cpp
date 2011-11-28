@@ -653,7 +653,9 @@ struct ParticleC
     vector < vector < vector <int> > > t_afs;
     vector < vector <int> > n_afs;
 
-	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar;
+	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar,npopref,*refnind,refnindtot;
+	float reffreqmin;
+	bool refincluded;
 	double matQ[4][4];
 
     void libere(bool obs) {
@@ -1627,10 +1629,11 @@ struct ParticleC
 * Struct ParticleC : coalesce les lignées ancestrales de la population requise
 */
 	void coal_pop(int loc,int iseq) {
-		/*cout <<"\n";
+		/*if (loc<1){
+		cout <<"\n";
 		cout << "debut COAL pop="<<this->seqlist[iseq].pop<<"  nbranches=" << this->gt[loc].nbranches <<"   nnodes="<<this->gt[loc].nnodes ;
 		cout<<"   Ne="<<this->seqlist[iseq].N<<"   t0="<<this->seqlist[iseq].t0<<"   t1="<<this->seqlist[iseq].t1;
-		cout<<"    coeff="<<this->locuslist[loc].coeff <<"\n";*/
+		cout<<"    coeffcoal="<<this->locuslist[loc].coeffcoal <<"\n";}*/
 		int nLineages=0;
 		bool final=false;
         double lra;
@@ -1649,8 +1652,8 @@ struct ParticleC
 				double ra = this->mw.random();
 				while (ra == 0.0) {ra = this->mw.random();}
 				lra = log(ra);
-				start -= (this->locuslist[loc].coeff*this->seqlist[iseq].N/nLineages/(nLineages-1.0))*lra;
-				//if (trace)  cout << "coeff = " << this->locuslist[loc].coeff << "   N = " << this->seqlist[iseq].N << "nl*(nl-1) = " << nLineages/(nLineages-1.0) << "\n";
+				start -= (this->locuslist[loc].coeffcoal*this->seqlist[iseq].N/nLineages/(nLineages-1.0))*lra;
+				//if (trace)  cout << "coeffcoal = " << this->locuslist[loc].coeffcoal << "   N = " << this->seqlist[iseq].N << "nl*(nl-1) = " << nLineages/(nLineages-1.0) << "\n";
 				//if (trace) cout << "start courant= " << start << "  log(ra)=" << lra << "\n";
 				if ((final)or((not final)and(start<this->seqlist[iseq].t1))) {
 					this->gt[loc].nodes[this->gt[loc].nnodes].pop=this->seqlist[iseq].pop;
@@ -1675,7 +1678,7 @@ struct ParticleC
 			//cout << "Génération par génération pour le locus "<<loc<<"\n";
 			//int *numtire,*num,*knum;
 			int gstart= (int)(this->seqlist[iseq].t0+0.5);
-			int Ne= (int) (0.5*this->locuslist[loc].coeff*this->seqlist[iseq].N+0.5);
+			int Ne= (int) (0.5*this->locuslist[loc].coeffcoal*this->seqlist[iseq].N+0.5);
 			int nnum;
 			//numtire = new int[this->gt[loc].nnodes];
 			//num     = new int[this->gt[loc].nnodes];
@@ -1804,7 +1807,7 @@ struct ParticleC
         //cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
 	}
 
-	void cherche_branchesOK(int loc) {
+/*	void cherche_branchesOK(int loc) {
 		for (int b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = true;
 		if (this->data.npopref<1) return;
 		int j,nodemrca=0,f1,f2,b;
@@ -1867,11 +1870,11 @@ struct ParticleC
 				} while (f1<nodemrca);
 			}
 		}
-		/*for (b=0;b<this->gt[loc].nbranches;b++){
+		for (b=0;b<this->gt[loc].nbranches;b++){
 			printf("branche %3d   bas %3d   haut %3d   (nodemrca %3d)",b,this->gt[loc].branches[b].bottom,this->gt[loc].branches[b].top,nodemrca);
 			if (this->gt[loc].branches[b].OK) printf("   OK\n"); else printf("\n");
-		}*/
-	}
+		}
+	}*/
 
 	void put_one_mutation(int loc) {
 		this->gt[loc].nmutot=1;
@@ -1881,11 +1884,14 @@ struct ParticleC
 		for (b=0;b<this->gt[loc].nbranches;b++) {
 			lengthtot +=this->gt[loc].branches[b].length;
 			this->gt[loc].branches[b].nmut = 0;
+			//if (loc<1) cout<<"longueur de la branche "<<b<<" = "<<this->gt[loc].branches[b].length<<"\n";
 		}
 		r=this->mw.random()*lengthtot;
+		//if (loc<1) cout<<"lengthtot="<<lengthtot<<"     r="<<r<<"\n";
 		b=0;s=this->gt[loc].branches[b].length;
 		while (s<r) {b++; s +=this->gt[loc].branches[b].length;};
 		this->gt[loc].branches[b].nmut = 1;
+		//if (loc<1) cout<<"mutation dans la branche "<<b<<" sur "<<this->gt[loc].nbranches<<"\n";
 		//cout<<nOK<<" branches mutables sur "<<this->gt[loc].nbranches<<"\n";
 		//cout<<"numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
 	} 
@@ -1956,6 +1962,7 @@ struct ParticleC
 		}
 		else {		//SNP 
 			this->gt[loc].nodes[this->gt[loc].branches[b].bottom].state=1;
+			//cout<<"la branche "<<b<<" a muté ------------------------------\n";
 		}
 	}
 
@@ -2158,7 +2165,9 @@ struct ParticleC
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
 				this->locuslist[loc].haplosnp[sa][ind] = (short int)this->gt[loc].nodes[ordre[sa][ind]].state;
+				//if (loc<1) cout<<this->locuslist[loc].haplosnp[sa][ind]<<"   ";
 				ind++;if (ind==this->locuslist[loc].ss[sa]) {sa++;ind=0;}
+				//if ((loc<1)and(ind==0))cout<<"\n";
 			}
 			if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
 		}
@@ -2340,7 +2349,8 @@ struct ParticleC
 					simulOK[loc]=cree_haplo(loc);
 					if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
 				} else {
-					if (this->data.npopref<1) {put_one_mutation(loc);simulOK[loc]=cree_haplo(loc);}
+					//cout<<"this->refnindtot="<<this->refnindtot<<"\n";
+					if (this->refnindtot<1) {put_one_mutation(loc);simulOK[loc]=cree_haplo(loc);}
 					else {
 						do {
 							put_one_mutation(loc);

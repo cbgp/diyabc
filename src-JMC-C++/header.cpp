@@ -45,7 +45,7 @@ public:
     ParticleC particuleobs;
     MutParameterC *mutparam;
     float *stat_obs;
-	int *refnind;
+	int npopref,*refnind,refnindtot;
 	float reffreqmin;
 	bool refincluded;
 
@@ -739,10 +739,6 @@ public:
 			//for (int i=0;i<this->groupe[gr].nstat;i++) cout<<this->groupe[gr].sumstat[i].cat<<"   "<<this->groupe[gr].sumstat[i].numsnp<<"\n";
         }
         if (debuglevel==2) cout<<"header.txt : fin de la lecture des summary stats\n";
-        //getline(file,s1);       //ligne "refnind"
-        //ss=splitwords(s1," ",&nss);
-		//if (nss!=this->)
-		
         this->nparamut=0;
         for (gr=1;gr<=this->ngroupes;gr++) {
             if (this->groupe[gr].type==0) {
@@ -828,6 +824,23 @@ public:
                 //for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();
                 //this->scen.ecris();
                 //cout<<"fin de readheader\n\n\n";
+		this->refnindtot=0;
+		this->npopref=0;
+		if (not file.eof()){
+			getline(file,s1);
+			getline(file,s1);       //ligne "refnind"
+			ss=splitwords(s1," ",&nss);
+			this->npopref=nss;
+			if (this->npopref>0) {
+				this->refnind = new int[this->npopref];
+				for (int i=0;i<nss;i++) {this->refnind[i] = atoi(ss[i].c_str());this->refnindtot +=this->refnind[i];}
+				getline(file,s1);
+				this->reffreqmin = getwordfloat(s1,0);
+				getline(file,s1);
+				this->refincluded = (s1=="I");
+				cout<<"    refnindtot="<<refnindtot<<"\n";
+			}
+		}
         return this;
     }
 
@@ -937,7 +950,7 @@ public:
 			else if (ss[1]=="<X>")   this->dataobs.locus[loc].type =2;
 			else if (ss[1]=="<Y>")   this->dataobs.locus[loc].type =3;
 			else if (ss[1]=="<M>")   this->dataobs.locus[loc].type =4;
-			this->dataobs.cal_coeff(loc);
+			this->dataobs.cal_coeffcoal(loc);
 			this->dataobs.locus[loc].ss = new int[this->dataobs.nsample];
 			this->dataobs.locus[loc].samplesize = new int[this->dataobs.nsample];
 			for (int j=0;j<this->dataobs.nsample;j++) {
@@ -1153,7 +1166,7 @@ public:
 		for (int kloc=0;kloc<this->dataobs.nloc;kloc++){
 			this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type;
 			this->particuleobs.locuslist[kloc].groupe = this->dataobs.locus[kloc].groupe;
-			this->particuleobs.locuslist[kloc].coeff =  this->dataobs.locus[kloc].coeff;
+			this->particuleobs.locuslist[kloc].coeffcoal =  this->dataobs.locus[kloc].coeffcoal;
 			//this->particuleobs.locuslist[kloc].name =  new char[strlen(this->dataobs.locus[kloc].name)+1];
 			//strcpy(this->particuleobs.locuslist[kloc].name,this->dataobs.locus[kloc].name);
 			this->particuleobs.locuslist[kloc].ss = new int[ this->dataobs.nsample];
