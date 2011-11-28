@@ -121,6 +121,25 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         
         painter.end()
 
+    def DrawPdf(self,segments,scc,t,savename):
+        """ dessine un scenario dans un fichier svg
+        """
+        
+        xmax = 500
+        ymax = 450
+
+
+        im_result = QPrinter()
+        im_result.setOutputFormat(QPrinter.PdfFormat)
+        im_result.setOutputFileName(savename)
+        painter = QPainter()
+        im_result.setResolution(65)
+        painter.begin(im_result)
+
+        self.paintScenario(painter,segments,scc,t,xmax,ymax)
+        
+        painter.end()
+
     def paintScenario(self,painter,segments,scc,t,xmax,ymax,font_inc=0):
         """ dessine le scenario sur le painter
         """
@@ -304,25 +323,85 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
             for ind,pix in enumerate(self.pixList):
                 im = pix.toImage()
                 im.save("%s_%i.%s"%(pic_whole_path,ind+1,pic_format))
-        else:
+        elif pic_format == "svg" or pic_format == "pdf":
             for ind,sc_info in enumerate(self.sc_info_list):
                 if sc_info["tree"] != None:
-                    savename = "%s_%i.svg"%(pic_whole_path,ind+1)
-                    self.DrawSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
+                    savename = "%s_%i.%s"%(pic_whole_path,ind+1,pic_format)
+                    if pic_format == "svg":
+                        self.DrawSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
+                    else:
+                        self.DrawPdf(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
+
 
     def saveDrawsToOne(self):
+        pic_format = str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText())
+        #pic_format = "pdf"
         ind = 0
         nbpix = len(self.pixList)
-        while ind < nbpix:
-            if ind + 5 < nbpix:
-                self.saveDrawsInterval(ind,ind+5)
-            else:
-                self.saveDrawsInterval(ind,nbpix-1)
-            ind += 6
+        if pic_format != "pdf":
+            while ind < nbpix:
+                if ind + 5 < nbpix:
+                    self.saveDrawsInterval(ind,ind+5)
+                else:
+                    self.saveDrawsInterval(ind,nbpix-1)
+                ind += 6
+        else:
+            self.saveDrawsToOnePdf()
 
+    def saveDrawsToOnePdf(self):
+        """ Sauve tous les scenarios dans un seul pdf en découpant à 6 scenarios par page
+        """
+        proj_dir = self.parent.parent.dir
+        pic_dir = self.parent.parent.parent.scenario_pix_dir_name
+        pic_basename = self.parent.parent.parent.scenario_pix_basename
+        pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
+
+        nbpix = len(self.pixList)
+        largeur = 2
+        # resultat de la div entière plus le reste (modulo)
+        longueur = (len(self.pixList)/largeur)+(len(self.pixList)%largeur)
+        ind = 0
+        li=0
+
+        self.im_result = QPrinter()
+        self.im_result.setOutputFormat(QPrinter.PdfFormat)
+        self.im_result.setOutputFileName('%s_all.pdf'%pic_whole_path)
+        painter = QPainter()
+        self.im_result.setResolution(130)
+        painter.begin(self.im_result)
+
+        # on fait des lignes tant qu'on a des pix
+        while (ind < nbpix):
+            col = 0
+            if ind > 0:
+                painter.translate(-2*500,450)
+            # une ligne
+            while (ind < nbpix) and (col < largeur):
+                # ajout
+                #self.im_result.fill(self.pixList[ind],QPoint(col*500,li*450))
+                #painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
+                sc_info = self.sc_info_list[ind]
+                if sc_info["tree"] != None:
+                    self.paintScenario(painter,sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],500,450)
+                # on va a droite
+                painter.translate(500,0)
+                #print "li:",li," col:",col
+                #print "xof:",col*500," yof:",li*450
+                #print "zzz"
+                if (ind+1)%6 == 0:
+                    self.im_result.newPage()
+                    painter.translate(0,-3*450)
+                col+=1
+                ind+=1
+            if (ind+1)%6 == 0:
+                li = 0
+            else:
+                li+=1
+
+        painter.end()
 
     def saveDrawsInterval(self,ifrom,ito):
-        """ Sauve tous les scenarios dans une seule image et un seul svg
+        """ Sauve les scenarios de ifrom à ito dans une seule image ou un seul svg
         """
         proj_dir = self.parent.parent.dir
         pic_dir = self.parent.parent.parent.scenario_pix_dir_name
@@ -348,7 +427,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
             self.im_result.fill(Qt.black)
             painter = QPainter(self.im_result)
             painter.fillRect(0, 0, largeur*500, longueur*450, Qt.white)
-        else:
+        elif pic_format == "svg":
             self.pic_result = QSvgGenerator()
             #self.pic_result.setSize(QSize(largeur*500, longueur*450));
             #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
