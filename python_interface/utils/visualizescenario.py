@@ -4,8 +4,8 @@ Created on 10 juin 2010
 
 @author: cornuet
 '''
-
 from __future__ import division
+DEBUG = False
 import history
 import random
 
@@ -104,11 +104,11 @@ class PopTree(object):
             if ev.action == "VARNE" :
                 if ev.Ne == None :self.NN.append(ev.sNe)
                 if ev.sNe == None : self.NN.append(str(ev.Ne))
-        print "avant"
-        print self.NN
+        if DEBUG: print "avant"
+        if DEBUG: print self.NN
         self.NN = list(set(self.NN))
-        print "apres"
-        print self.NN
+        if DEBUG: print "apres"
+        if DEBUG: print self.NN
         self.scenario.history.NN = self.NN
                 
     def reset_tree(self):
@@ -277,7 +277,8 @@ class PopTree(object):
         while (not trouve)and(b>0) :
             b -=1
             trouve = (self.br[b].father == fa)
-        if trouve  : print "b=%s  ch1=%s"%(b,self.br[b].child)
+        if trouve  : 
+            if DEBUG: print "b=%s  ch1=%s"%(b,self.br[b].child)
         if trouve : ch1 = self.br[b].child
         else      : return -1, -1
         trouve = False
@@ -285,7 +286,8 @@ class PopTree(object):
             while (not trouve)and(b>0) :
                 b -=1
                 trouve = (self.br[b].father == fa)
-            if trouve  : print "b=%s  ch2=%s"%(b,self.br[b].child)
+            if trouve  : 
+                if DEBUG: print "b=%s  ch2=%s"%(b,self.br[b].child)
             if trouve : ch2 = self.br[b].child
             else      : ch2 = -1
         else   : ch2 = -1
@@ -311,7 +313,7 @@ class PopTree(object):
             
     def findchildren2(self,fa):
         c1,c2 = self.findchildren(fa)
-        print "fa=%s  c1=%s  c2=%s"%(fa,c1,c2)
+        if DEBUG: print "fa=%s  c1=%s  c2=%s"%(fa,c1,c2)
         if c1<0  : ch1 = c1
         else     : 
             while (self.node[c1].category == "vn")or(self.node[c1].category == "se") :
@@ -404,8 +406,8 @@ class PopTree(object):
             for i in range(self.nanc,len(self.node)) : self.node[i].x = self.XMAX//2
         """print "\n draw_tree etape 1\n"
         for i,no in enumerate(self.node) :
-            print no 
-        print "\n"""
+            if DEBUG: print no 
+        if DEBUG: print "\n"""
         if self.nanc == 0 : return
         n = 0
         while self.node[n].x == 0 :
@@ -534,7 +536,7 @@ class PopTree(object):
             nrest0 = nrest
         """print "\nDraw_tree etape 2"
         for i,no in enumerate(self.node) :
-            print no """       
+            if DEBUG: print no """       
         n = -1
         while n < (len(self.node)-1) :
             found = False
@@ -547,7 +549,7 @@ class PopTree(object):
         for i in range(0,len(self.node)) : self.node[i].x = self.XMAX - 30 - self.node[i].x        
         """print "\nDraw_tree etape 3"
         for i,no in enumerate(self.node) :
-            print no"""        
+            if DEBUG: print no"""        
                 
     def improve_draw(self):
         for i,no in enumerate(self.node) :
@@ -583,7 +585,7 @@ class PopTree(object):
                             nr +=1
         """print "\nImprove_tree etape 1"
         for i,no in enumerate(self.node) :
-            print no"""        
+            if DEBUG: print no"""        
         for i,no in enumerate(self.node) :
             if no.category == "me" :
                 i1 = self.findfather2(i)
@@ -625,13 +627,13 @@ class PopTree(object):
                                     else: break
         """print "\nImprove_tree etape 2"
         for i,no in enumerate(self.node) :
-            print no """       
+            if DEBUG: print no """       
     def setbranchstyle(self):
         fin = False;
         while (not fin) :
             fin = True
             for b in self.br :
-                print self.node[b.father].style,self.node[b.child].style
+                if DEBUG: print self.node[b.father].style,self.node[b.child].style
                 if (self.node[b.father].style == "dot")and(self.node[b.child].style != "dot") :
                     self.node[b.child].style = "dot"
                     fin = False
@@ -704,17 +706,17 @@ class PopTree(object):
         npb   = 2
         while (ntrial<100) and (npb>0) :
             self.build_tree()
-            print "apres build"
+            if DEBUG: print "apres build"
             self.draw_tree()
-            print "apres draw"
+            if DEBUG: print "apres draw"
             self.improve_draw()
-            print "apres improve"
+            if DEBUG: print "apres improve"
             self.setbranchstyle()
-            print "apres setbranchstyle"
+            if DEBUG: print "apres setbranchstyle"
             self.segments = self.creesegment()
             npb= self.countpb(self.segments)
             ntrial +=1
-            print "%s : %s problemes\n"%(ntrial,npb)
+            if DEBUG: print "%s : %s problemes\n"%(ntrial,npb)
         if npb<1 :
             if len(self.br) == 1 : self.segments[0].ydeb = self.YHAUT
         else :
@@ -723,22 +725,26 @@ class PopTree(object):
 def testCheckScenario():
 #    ts = ['N1 N2 N3', '0 sample 1', '0 sample 2', '0 sample 3', '50 split 3 1 2 lambda', "100 merge 1 2"]
     ts = ['N1 N2 N3 N4 N5','0 sample 1', '0 sample 2', '0 sample 3','0 sample 4','t1 split 2 5 3 r1','t2 merge 1 5','t3 split 3 1 4 r2','t4 merge 1 4']
-    print ts
+    if DEBUG: print ts
     s = history.Scenario()
     s.checkread(ts)
-    print "apres checkread"
+    if DEBUG: print "apres checkread"
     s.checklogic()
-    print "apres checklogic"
+    if DEBUG: print "apres checklogic"
     t = PopTree(s)
     t.do_tree()
-    print "time0=",s.history.time0
-    print "time1=",s.history.time1
-    for ev in s.history.events : print ev
-    for  no in t.node : print no
-    print "  "
-    for  b in t.br : print b
-    print "  "
-    for s in t.segments : print s
+    if DEBUG: print "time0=",s.history.time0
+    if DEBUG: print "time1=",s.history.time1
+    for ev in s.history.events : 
+        if DEBUG: print ev
+    for  no in t.node : 
+        if DEBUG: print no
+    if DEBUG: print "  "
+    for  b in t.br : 
+        if DEBUG: print b
+    if DEBUG: print "  "
+    for s in t.segments : 
+        if DEBUG: print s
         
 if __name__ == "__main__" :
     testCheckScenario()

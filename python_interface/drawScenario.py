@@ -275,8 +275,8 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         # puis on le recrée, vide évidemment
         os.mkdir("%s/%s"%(proj_dir,pic_dir))
 
-        answer = QMessageBox.question(self,"Saving option","Would you like to save all images in one file or in separated files ?",\
-                "All in one","Separated")
+        answer = QMessageBox.question(self,"Saving option","Would you like to save 1 or 6 scenario images per file ?",\
+                "Six per file","One per file")
         if answer == 0:
             self.saveDrawsToOne()
         elif answer == 1:

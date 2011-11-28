@@ -1332,7 +1332,7 @@ class RefTableGenThread(QThread):
             exPath = self.parent.parent.preferences_win.getExecutablePath()
             particleLoopSize = str(self.parent.parent.preferences_win.particleLoopSizeEdit.text())
             nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
-            cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen , "-g", "%s"%particleLoopSize ,"m", "-t", "%s"%nbMaxThread]
+            cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen , "-g", "%s"%particleLoopSize ,"-m", "-t", "%s"%nbMaxThread]
             #print " ".join(cmd_args_list)
             self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
@@ -1495,6 +1495,7 @@ class AnalysisThread(QThread):
         #executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
         executablePath = self.parent.parent.preferences_win.getExecutablePath()
         nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
+        particleLoopSize = str(self.parent.parent.preferences_win.particleLoopSizeEdit.text())
         params = self.analysis.computationParameters
         if self.analysis.category == "estimate":
             option = "-e"
@@ -1528,7 +1529,7 @@ class AnalysisThread(QThread):
             return
 
         # pour toutes les autres analyses le schema est le même
-        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
+        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name,"-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
         #print " ".join(cmd_args_list)
         self.log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
         outfile = "%s/%s.out"%(self.parent.dir,self.analysis.category)
