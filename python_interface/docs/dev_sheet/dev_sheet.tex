@@ -111,6 +111,7 @@ La description du bouton ou du label\end{verbatim}
     \end{itemize}
 
     \subsection{Partie graphique}
+    \subsubsection{Pyuic}
         La partie graphique statique est partiellement découplée du
         fonctionnement. Des
         fichiers .ui sont produits à partir d'un IDE. Toute entité graphique
@@ -136,6 +137,20 @@ La description du bouton ou du label\end{verbatim}
         ui.setupUi(maScrollArea)
 \end{verbatim}
         \end{itemize}
+    \subsubsection{Loaduic}
+    Une autre technique consiste à charger le fichier .ui pour obtenir deux
+    classes (form et base) desquelles on va faire hériter la classe que l'on
+    crée. Pour Diyabc qui est une QMainWindow, cela se présente comme cela :
+    \begin{verbatim}
+    from PyQt4 import uic
+    formDiyabc,baseDiyabc = uic.loadUiType('uis/diyabc.ui')
+    class Diyabc(formDiyabc,baseDiyabc):
+        def __init__(self,app,parent=None,projects=None,logfile=None):
+            self.ui=self
+            self.ui.setupUi(self)
+\end{verbatim}
+    L'appel de setupUi a le même effet que dans l'autre solution. L'avantage de
+    cette solution est d'économiser l'étape où l'on utilise pyuic à la main.
     \subsection{Coeur de l'application}
         La classe principale de l'application dérive de QMainWindow. Elle est
         instanci\'ee dans le main du fichier qui la contient. La QMainWindow
@@ -509,10 +524,16 @@ La description du bouton ou du label\end{verbatim}
         problème de ce côté.
         \subsubsection{pyinstaller}
 
-        Pyinstaller semble ne pas fonctionner parfaitement sous linux.
-        L'exécutable produit ne marche que sur la machine qui l'a créé. Je suis
-        d'avis qu'il faut plutôt faire un paquet debian et/ou rpm et distribuer
-        le programme de cette façon. C'est donc la solution que j'ai choisi.
+        Pyinstaller ne fonctionnait pas parfaitement sous linux lorsque le projet
+        était à la version 1355. 6 mois plus tard, la version 1743 fonctionne.
+        J'ai donc aussi fait un script pour générer un bundle sous linux. Il se
+        trouve ici :\\
+        python\_interface/docs/project\_builders/linux\_generation.sh . \\
+
+        La syntaxe est la suivante :\\ 
+        linux\_generation.sh  path\_to\_pyinstaller.py  [output\_path
+        path\_to\_main.py]
+
         \subsubsection{Script de génération du paquet Debian}
 
         Ce script se situe dans python\_interface/docs/project\_builders/debian/ .
@@ -605,18 +626,14 @@ Description: Repository of CBGP softwares \end{verbatim}
         instructions données à cette adresse : \newline
         http://deanezra.com/2010/05/setting-up-pythonqt-pyqt4-on-mac-os-x-snow-leopard/\newline
         , on arrive à bout de cette installation qui est tout de même un gros
-        morceau pour pas grand chose.\\
+        morceau pour pas grand chose. Il est tout de même plus simple d'utiliser
+        les macports.\\
     
-        Pour la version 4.8.3 de PyQt, je n'ai trouvé d'autre solution que de
-        commenter les 3 lignes qui concernent ``designer'' pour que la
-        compilation fonctionne. En cas d'erreurs incompréhensibles, bien penser
-        à faire un ``make clean'' pour effacer les .o déjà compilés qui peuvent
-        provenir d'une compilation précédente mal paramétrée.
-
         \paragraph{Solution}
 
         Installation des macports : installer avec le dmg, puis mettre à jour
-        avec un sync en file:// sur le fichier ports.tar.gz téléchargeable ici : 
+        avec un sync en file:// sur le fichier ports.tar.gz téléchargeable ici :
+        \\
         www.macports.org/files/ports.tar.gz .
 
         La solution est d'utiliser les macports pour installer PyQwt
@@ -628,11 +645,10 @@ Description: Repository of CBGP softwares \end{verbatim}
         \subsubsection{pyinstaller}
 
         Les version 1.4 et 1.5 ne fonctionnent pas. Par contre, pyinstaller svn
-        est tout à fait op\'erationnel avec python2.6. Il faut tout de même
+        1355 est tout à fait op\'erationnel avec python2.6. Il faut tout de même
         effectuer une s\'erie d'op\'erations avant et après le build pour que le
         .app soit op\'erationnel.Se r\'er\'erer à \newline http
-        ://diotavelli.net/PyQtWiki/PyInstallerOnMacOSX \newline
-        Protocole : \\
+        ://diotavelli.net/PyQtWiki/PyInstallerOnMacOSX \newline Protocole : \\
 
         \label{mac_pyinstaller}
         \begin{itemize}

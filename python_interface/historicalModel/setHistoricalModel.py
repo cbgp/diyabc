@@ -850,7 +850,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 rpsum+=rpfloat
             except Exception,e:
                 problems += "On %s posterior probability, %s\n"%(rpscname,e)
-        if rpsum < 0.99999 or rpsum > 1.00001 and self.ui.otherRadio.isChecked():
+        if rpsum < 0.999 or rpsum > 1.001 and self.ui.otherRadio.isChecked():
             problems += "The sum of all posterior probabilities is equal to %s. It should be equal to 1"%rpsum
 
         if problems == "":
