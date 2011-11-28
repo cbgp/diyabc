@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/!svn/ver/1714/trunk/PyInstaller/lib
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/!svn/ver/1714/trunk/PyInstaller/lib/__init__.py
+END
+six.py
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/!svn/ver/1433/trunk/PyInstaller/lib/six.py
+END
+pefile.py
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/!svn/ver/1635/trunk/PyInstaller/lib/pefile.py
+END

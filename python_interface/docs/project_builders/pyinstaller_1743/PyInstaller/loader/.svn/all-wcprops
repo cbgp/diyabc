@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/!svn/ver/1743/trunk/PyInstaller/loader
+END
+iu.py
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/!svn/ver/1684/trunk/PyInstaller/loader/iu.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/!svn/ver/1714/trunk/PyInstaller/loader/__init__.py
+END
+archive.py
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/!svn/ver/1743/trunk/PyInstaller/loader/archive.py
+END
+carchive.py
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/!svn/ver/1656/trunk/PyInstaller/loader/carchive.py
+END

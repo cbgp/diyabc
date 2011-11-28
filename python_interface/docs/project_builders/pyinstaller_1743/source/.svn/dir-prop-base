@@ -1,0 +1,10 @@
+K 10
+svn:ignore
+V 43
+.sconsign
+.lock-wscript
+build
+waf-*
+.waf-*
+
+END

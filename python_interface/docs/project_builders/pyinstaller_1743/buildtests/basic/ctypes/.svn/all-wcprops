@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/!svn/ver/1428/trunk/buildtests/basic/ctypes
+END
+testctypes-win.c
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/1428/trunk/buildtests/basic/ctypes/testctypes-win.c
+END
+testctypes.c
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/1428/trunk/buildtests/basic/ctypes/testctypes.c
+END

@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/!svn/ver/1461/trunk/PyInstaller/lib/altgraph
+END
+ObjectGraph.py
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/1461/trunk/PyInstaller/lib/altgraph/ObjectGraph.py
+END
+GraphStat.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/1461/trunk/PyInstaller/lib/altgraph/GraphStat.py
+END
+GraphUtil.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/1461/trunk/PyInstaller/lib/altgraph/GraphUtil.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/1461/trunk/PyInstaller/lib/altgraph/__init__.py
+END
+Graph.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/!svn/ver/1461/trunk/PyInstaller/lib/altgraph/Graph.py
+END
+compat.py
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/!svn/ver/1461/trunk/PyInstaller/lib/altgraph/compat.py
+END
+GraphAlgo.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/1461/trunk/PyInstaller/lib/altgraph/GraphAlgo.py
+END
+Dot.py
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/!svn/ver/1461/trunk/PyInstaller/lib/altgraph/Dot.py
+END

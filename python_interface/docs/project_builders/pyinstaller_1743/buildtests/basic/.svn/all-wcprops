@@ -1,0 +1,341 @@
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/!svn/ver/1690/trunk/buildtests/basic
+END
+test_absolute_ld_library_path.py
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/1612/trunk/buildtests/basic/test_absolute_ld_library_path.py
+END
+test_nestedlaunch0.py
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/1439/trunk/buildtests/basic/test_nestedlaunch0.py
+END
+ctypeslib.py
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/!svn/ver/1612/trunk/buildtests/basic/ctypeslib.py
+END
+test_nestedlaunch0.spec
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/1439/trunk/buildtests/basic/test_nestedlaunch0.spec
+END
+test_2.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/!svn/ver/1503/trunk/buildtests/basic/test_2.py
+END
+data7.py
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/!svn/ver/1428/trunk/buildtests/basic/data7.py
+END
+test_2.spec
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/!svn/ver/1503/trunk/buildtests/basic/test_2.spec
+END
+test_6.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/!svn/ver/1503/trunk/buildtests/basic/test_6.py
+END
+test_8.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/!svn/ver/1503/trunk/buildtests/basic/test_8.py
+END
+test_6.spec
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/!svn/ver/1503/trunk/buildtests/basic/test_6.spec
+END
+test_8.spec
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/!svn/ver/1503/trunk/buildtests/basic/test_8.spec
+END
+test_chdir_meipass.py
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/1690/trunk/buildtests/basic/test_chdir_meipass.py
+END
+test_2-version.txt
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/!svn/ver/1503/trunk/buildtests/basic/test_2-version.txt
+END
+test_chdir_meipass.spec
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/1690/trunk/buildtests/basic/test_chdir_meipass.spec
+END
+test_f_option.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/!svn/ver/1439/trunk/buildtests/basic/test_f_option.py
+END
+test_get_meipass2_value.py
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/1685/trunk/buildtests/basic/test_get_meipass2_value.py
+END
+test_f_option.spec
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/!svn/ver/1439/trunk/buildtests/basic/test_f_option.spec
+END
+test_10.py
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/!svn/ver/1503/trunk/buildtests/basic/test_10.py
+END
+test_get_meipass2_value.spec
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/1685/trunk/buildtests/basic/test_get_meipass2_value.spec
+END
+test_10.spec
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/!svn/ver/1503/trunk/buildtests/basic/test_10.spec
+END
+test_12.py
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/!svn/ver/1503/trunk/buildtests/basic/test_12.py
+END
+test_2.ico
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/!svn/ver/1503/trunk/buildtests/basic/test_2.ico
+END
+test_14.py
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/!svn/ver/1503/trunk/buildtests/basic/test_14.py
+END
+test_12.spec
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/!svn/ver/1503/trunk/buildtests/basic/test_12.spec
+END
+test_14.spec
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/!svn/ver/1503/trunk/buildtests/basic/test_14.spec
+END
+test_email.py
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/!svn/ver/1439/trunk/buildtests/basic/test_email.py
+END
+test_email.spec
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/!svn/ver/1612/trunk/buildtests/basic/test_email.spec
+END
+test_multiprocess_onefile.py
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/1682/trunk/buildtests/basic/test_multiprocess_onefile.py
+END
+test_getfilesystemencoding.py
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/1436/trunk/buildtests/basic/test_getfilesystemencoding.py
+END
+test_multiprocess_onefile.spec
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/1682/trunk/buildtests/basic/test_multiprocess_onefile.spec
+END
+test_getfilesystemencoding.spec
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/1436/trunk/buildtests/basic/test_getfilesystemencoding.spec
+END
+test_nestedlaunch1.py
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/1439/trunk/buildtests/basic/test_nestedlaunch1.py
+END
+data6.py
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/!svn/ver/1428/trunk/buildtests/basic/data6.py
+END
+test_1.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/!svn/ver/1503/trunk/buildtests/basic/test_1.py
+END
+test_nestedlaunch1.spec
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/1439/trunk/buildtests/basic/test_nestedlaunch1.spec
+END
+test_1.spec
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/!svn/ver/1503/trunk/buildtests/basic/test_1.spec
+END
+test_encoders.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/!svn/ver/1439/trunk/buildtests/basic/test_encoders.py
+END
+test_5.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/!svn/ver/1503/trunk/buildtests/basic/test_5.py
+END
+test_encoders.spec
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/!svn/ver/1439/trunk/buildtests/basic/test_encoders.spec
+END
+test_7.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/!svn/ver/1503/trunk/buildtests/basic/test_7.py
+END
+test_5.spec
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/!svn/ver/1503/trunk/buildtests/basic/test_5.spec
+END
+test_ctypes.py
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/!svn/ver/1500/trunk/buildtests/basic/test_ctypes.py
+END
+test_9.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/!svn/ver/1503/trunk/buildtests/basic/test_9.py
+END
+test_7.spec
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/!svn/ver/1503/trunk/buildtests/basic/test_7.spec
+END
+test_ctypes.spec
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/!svn/ver/1612/trunk/buildtests/basic/test_ctypes.spec
+END
+test_email2.py
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/!svn/ver/1607/trunk/buildtests/basic/test_email2.py
+END
+test_9.spec
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/!svn/ver/1503/trunk/buildtests/basic/test_9.spec
+END
+test_email2.spec
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/!svn/ver/1612/trunk/buildtests/basic/test_email2.spec
+END
+test_celementtree.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/1439/trunk/buildtests/basic/test_celementtree.py
+END
+test_celementtree.spec
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/1676/trunk/buildtests/basic/test_celementtree.spec
+END
+test_filename.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/!svn/ver/1439/trunk/buildtests/basic/test_filename.py
+END
+test_11.py
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/!svn/ver/1503/trunk/buildtests/basic/test_11.py
+END
+test_filename.spec
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/!svn/ver/1439/trunk/buildtests/basic/test_filename.spec
+END
+test_11.spec
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/!svn/ver/1503/trunk/buildtests/basic/test_11.spec
+END
+test_13.py
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/!svn/ver/1503/trunk/buildtests/basic/test_13.py
+END
+test_13.spec
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/!svn/ver/1503/trunk/buildtests/basic/test_13.spec
+END

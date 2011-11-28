@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 26
+/!svn/ver/1657/trunk/utils
+END
+BinDepend.py
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/!svn/ver/1641/trunk/utils/BinDepend.py
+END
+Makespec.py
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/!svn/ver/1641/trunk/utils/Makespec.py
+END
+Build.py
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/!svn/ver/1641/trunk/utils/Build.py
+END
+Configure.py
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/!svn/ver/1641/trunk/utils/Configure.py
+END
+Crypt.py
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/!svn/ver/1641/trunk/utils/Crypt.py
+END
+GrabVersion.py
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/!svn/ver/1657/trunk/utils/GrabVersion.py
+END
+ArchiveViewer.py
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/!svn/ver/1656/trunk/utils/ArchiveViewer.py
+END
+MakeComServer.py
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/!svn/ver/1641/trunk/utils/MakeComServer.py
+END

@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/!svn/ver/1743/trunk/PyInstaller
+END
+bindepend.py
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/!svn/ver/1708/trunk/PyInstaller/bindepend.py
+END
+makespec.py
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/!svn/ver/1696/trunk/PyInstaller/makespec.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/!svn/ver/1722/trunk/PyInstaller/__init__.py
+END
+build.py
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/!svn/ver/1741/trunk/PyInstaller/build.py
+END
+configure.py
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/!svn/ver/1743/trunk/PyInstaller/configure.py
+END
+log.py
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/!svn/ver/1694/trunk/PyInstaller/log.py
+END
+mf.py
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/!svn/ver/1716/trunk/PyInstaller/mf.py
+END
+compat.py
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/!svn/ver/1704/trunk/PyInstaller/compat.py
+END

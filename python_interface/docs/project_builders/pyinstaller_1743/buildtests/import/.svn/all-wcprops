@@ -1,0 +1,107 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/!svn/ver/1714/trunk/buildtests/import
+END
+test_relative_import2.spec
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/1437/trunk/buildtests/import/test_relative_import2.spec
+END
+test_ctypes_cdll_c2.py
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/1437/trunk/buildtests/import/test_ctypes_cdll_c2.py
+END
+test_relative_import3.spec
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/1437/trunk/buildtests/import/test_relative_import3.spec
+END
+test_error_during_import.py
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/1435/trunk/buildtests/import/test_error_during_import.py
+END
+test_ctypes_cdll_c2.spec
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/1437/trunk/buildtests/import/test_ctypes_cdll_c2.spec
+END
+test_error_during_import.spec
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/1437/trunk/buildtests/import/test_error_during_import.spec
+END
+test_zipimport.py
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/!svn/ver/1690/trunk/buildtests/import/test_zipimport.py
+END
+test_zipimport.spec
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/1437/trunk/buildtests/import/test_zipimport.spec
+END
+test_relative_import.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/1437/trunk/buildtests/import/test_relative_import.py
+END
+test_relative_import.spec
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/1437/trunk/buildtests/import/test_relative_import.spec
+END
+test_ctypes_cdll_c.py
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/1437/trunk/buildtests/import/test_ctypes_cdll_c.py
+END
+test_ctypes_cdll_c.spec
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/1437/trunk/buildtests/import/test_ctypes_cdll_c.spec
+END
+error_during_import2.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/1435/trunk/buildtests/import/error_during_import2.py
+END
+test_zipimport2.py
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/1690/trunk/buildtests/import/test_zipimport2.py
+END
+test_zipimport2.spec
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/1437/trunk/buildtests/import/test_zipimport2.spec
+END
+test_relative_import2.py
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/1437/trunk/buildtests/import/test_relative_import2.py
+END
+test_relative_import3.py
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/1437/trunk/buildtests/import/test_relative_import3.py
+END

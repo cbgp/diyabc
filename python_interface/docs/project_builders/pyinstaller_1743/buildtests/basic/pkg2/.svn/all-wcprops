@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/!svn/ver/1428/trunk/buildtests/basic/pkg2
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/!svn/ver/1428/trunk/buildtests/basic/pkg2/__init__.py
+END
+a.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/!svn/ver/1428/trunk/buildtests/basic/pkg2/a.py
+END
