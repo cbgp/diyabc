@@ -106,8 +106,10 @@ class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParamete
 
         executablePath = self.parent.parent.preferences_win.getExecutablePath()
         nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
+        particleLoopSize = str(self.parent.parent.preferences_win.particleLoopSizeEdit.text())
         params = self.analysis.computationParameters
-        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, option, '"%s"'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
+        #cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, option, '"%s"'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
+        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name,"-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
         command_line = " ".join(cmd_args_list)
         self.addRow("executed command line",command_line)
         self.ui.tableWidget.setRowHeight(self.ui.tableWidget.rowCount()-1,execRowSize)
