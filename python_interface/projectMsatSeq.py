@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+## @package python_interface.projectMsatSeq
+# @author Julien Veyssier
+#
+# @brief Projets pour créer une table de référence Msat et Sequences
+
 import os
 import codecs
 #from subprocess import Popen, PIPE, STDOUT 
@@ -13,6 +18,8 @@ import output
 from utils.cbgpUtils import log
 
 
+## @class ProjectMsatSeq
+# @brief Projets pour créer une table de référence Msat et Sequences
 class ProjectMsatSeq(ProjectReftable):
     """ classe qui représente un projet
     par defaut, un projet est considéré comme nouveau, cad que l'affichage est celui d'un projet vierge

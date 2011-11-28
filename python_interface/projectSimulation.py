@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+## @package python_interface.projectSimulation
+# @author Julien Veyssier
+#
+# @brief Projets pour simuler des données
+
 import time
 import os
 import subprocess
@@ -19,6 +24,8 @@ import os.path
 import output
 from utils.cbgpUtils import log
 
+## @class ProjectSimulation
+# @brief Projets pour simuler des données
 class ProjectSimulation(Project):
     """ classe qui représente un projet de simulation
     """

@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+## @package python_interface.projectSnp
+# @author Julien Veyssier
+#
+# @brief Projets pour créer une table de référence SNP
+
 import os
 import codecs
 from PyQt4.QtCore import *
@@ -12,7 +17,8 @@ import output
 from utils.cbgpUtils import log
 from controlAscertBias import ControlAscertBias
 
-
+## @class ProjectSnp
+# @brief Projets pour créer une table de référence SNP
 class ProjectSnp(ProjectReftable):
     """ classe qui représente un projet de simulation
     """

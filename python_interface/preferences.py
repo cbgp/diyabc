@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+## @package python_interface.preferences
+# @author Julien Veyssier
+#
+# @brief Fenêtre pour gérer les préférences personnelles
+
 import os,sys,platform,multiprocessing
 import ConfigParser
 import codecs
@@ -16,6 +21,8 @@ from utils.configobj.configobj import *
 
 formPreferences,basePreferences = uic.loadUiType("uis/preferences.ui")
 
+## @class Preferences
+# @brief Fenêtre pour gérer les préférences personnelles
 class Preferences(formPreferences,basePreferences):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
     """

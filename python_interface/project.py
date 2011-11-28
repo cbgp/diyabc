@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+## @package python_interface.project
+# @author Julien Veyssier
+#
+# @brief Classe mère abstraite de tous les projets
+
 #from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -12,8 +17,8 @@ from utils.cbgpUtils import log
 
 formProject,baseProject = uic.loadUiType("uis/Project.ui")
 
-## @brief Mother of all Project classes
-#
+## @class Project
+# @brief Classe mère abstraite de tous les projets
 class Project(baseProject,formProject):
     """ classe qui représente un projet
     par defaut, un projet est considéré comme nouveau, cad que l'affichage est celui d'un projet vierge

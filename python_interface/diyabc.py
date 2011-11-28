@@ -1,6 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+## @package python_interface.diyabc
+# @author Julien Veyssier
+#
+# @brief Contient la classe principale et la fonction main
+
 # variable qui sera changée par le générateur d'exécutable
 VERSION='development version'
 from datetime import datetime
@@ -37,6 +42,8 @@ from utils.data import isSNPDatafile
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
+## @class Diyabc
+# @brief Classe principale, fenêtre principale
 class Diyabc(formDiyabc,baseDiyabc):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
     """

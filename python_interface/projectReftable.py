@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+## @package python_interface.projectReftable
+# @author Julien Veyssier
+#
+# @brief Projets pour créer une table de référence
+
 import hashlib,pickle,sys
 import socket
 from socket import *
@@ -31,6 +36,8 @@ import tempfile
 import utils.cbgpUtils as cbgpUtils
 from project import Project
 
+## @class ProjectReftable
+# @brief Projets pour créer une table de référence
 class ProjectReftable(Project):
     """ classe qui représente un projet
     par defaut, un projet est considéré comme nouveau, cad que l'affichage est celui d'un projet vierge

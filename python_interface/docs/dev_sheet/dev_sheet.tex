@@ -46,11 +46,14 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 
 \section{Conception}
     \subsection{Documentation}
-    L'intégralité du code est documenté façon javadoc. Ces docstrings sont donc
-    interprêtables par beaucoup de générateurs de documentation.  Je génère une
-    documentation html du code avec Doxygen. Un fichier de configuration de
-    doxygen nommé doxyconfig est versionné. Il se trouve à la racine des sources
-    python, c'est à dire le dossier python\_interface.\\
+    L'intégralité du code est documenté façon python docString. Ces docstrings
+    sont donc interprêtables par beaucoup de générateurs de documentation
+    spécifiques à python et par doxygen.  Je génère une documentation html du
+    code avec Doxygen. Un fichier de configuration de doxygen nommé doxyconfig
+    est versionné. Il se trouve à la racine des sources python, c'est à dire le
+    dossier python\_interface. En tête des fichiers, des commentaires type
+    javadoc sont présent pour que les options comme @author soient pris en
+    compte.\\
 
     Une aide à l'utilisateur est intégrée à l'interface. Elle est construite à
     partir d'un fichier xml lui même généré à partir des sources \LaTeX de la
