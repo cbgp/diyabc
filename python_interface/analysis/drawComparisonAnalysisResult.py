@@ -205,8 +205,8 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         # puis on le recrée, vide évidemment
         os.mkdir(pic_dir)
 
-        answer = QMessageBox.question(self,"Saving option","Would you like to save all images in one file or in separated files ?",\
-                "All in one","Separated")
+        answer = QMessageBox.question(self,"Saving option","Would you like to save all images in one file or 1 image per file ? (PDF or SVG or JPG or PNG)",\
+                "All in one file","One per file")
         if answer == 0:
             self.saveDrawsToOne()
         elif answer == 1:
@@ -247,55 +247,74 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
                 painter.end()
 
     def saveDrawsToOne(self):
+        pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
+        #pic_format = "pdf"
+        ind = 0
+        nbpix = len(self.dicoPlot.keys())
+        while ind < nbpix:
+            if ind + 5 < nbpix:
+                self.saveDrawsInterval(ind,ind+5)
+            else:
+                self.saveDrawsInterval(ind,nbpix-1)
+            ind += 6
+
+    def saveDrawsInterval(self,ifrom,ito):
         """ Sauve tous les graphes dans une seule image ou un seul svg
         """
         proj_dir = self.parent.dir
         pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)
         pic_basename = "posterior"
-        pic_whole_path = "%s/%s_"%(pic_dir,pic_basename)
+        ind_list_str = "%s_to_%s"%(ifrom+1,ito+1)
+        pic_whole_path = "%s/%s_%s"%(pic_dir,pic_basename,ind_list_str)
 
         pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
 
-        nbPlot = len(self.dicoPlot.keys())
+        #nbPlot = len(self.dicoPlot.keys())
+        nbPlot = (ito - ifrom)+1
         largeur = 2
         # resultat de la div entière plus le reste (modulo)
         longueur = (nbPlot/largeur)+(nbPlot%largeur)
-        ind = 0
+        ind = ifrom
         li=0
 
         # on prend un des graphes pour savoir ses dimensions
         size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
+
 
         if pic_format == "jpg" or pic_format == "png":
             self.im_result = QImage(largeur*(size.width()),longueur*(size.height()),QImage.Format_RGB32)
             self.im_result.fill(Qt.black)
             painter = QPainter(self.im_result)
             painter.fillRect(0, 0, largeur*(size.width()), longueur*(size.height()), Qt.white)
-        else:
+        elif pic_format == "svg":
             self.pic_result = QSvgGenerator()
             self.pic_result.setViewBox(QRect(0,0,(largeur*(size.width()))+50,(longueur*(size.height()))+50))
             #self.pic_result.setSize(QSize(largeur*500, longueur*450));
             #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
-            self.pic_result.setFileName("%sall.svg"%pic_whole_path)
-            painter_svg = QPainter()
-            painter_svg.begin(self.pic_result)
+            self.pic_result.setFileName("%s.svg"%pic_whole_path)
+            painter = QPainter()
+            painter.begin(self.pic_result)
+        elif pic_format == "pdf":
+            self.im_result = QPrinter()
+            self.im_result.setOutputFormat(QPrinter.PdfFormat)
+            self.im_result.setOutputFileName('%s.pdf'%pic_whole_path)
+            painter = QPainter()
+            self.im_result.setResolution(100)
+            painter.begin(self.im_result)
 
         keys = self.dicoPlot.keys()
         # on fait des lignes tant qu'on a des pix
-        while (ind < nbPlot):
+        while (ind <= ito):
             col = 0
             # une ligne
-            while (ind < nbPlot) and (col < largeur):
+            while (ind <= ito) and (col < largeur):
                 plot = self.dicoPlot[keys[ind]]
-                if pic_format == "jpg" or pic_format == "png":
-                    plot.print_(painter, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
-                else:
-                    plot.print_(painter_svg, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
+                plot.print_(painter, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
                 col+=1
                 ind+=1
             li+=1
 
         if pic_format == "jpg" or pic_format == "png":
-            self.im_result.save("%sall.%s"%(pic_whole_path,pic_format))
+            self.im_result.save("%s.%s"%(pic_whole_path,pic_format))
         else:
-            painter_svg.end()
+            painter.end()

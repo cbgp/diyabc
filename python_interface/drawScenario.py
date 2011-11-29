@@ -294,7 +294,11 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         # puis on le recrée, vide évidemment
         os.mkdir("%s/%s"%(proj_dir,pic_dir))
 
-        answer = QMessageBox.question(self,"Saving option","Would you like to save 1 or 6 scenario images per file ?",\
+        if str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText()) == "pdf":
+            answer = QMessageBox.question(self,"Saving option","Would you like to save all scenarios images in one file or 1 scenario per file ? (PDF)",\
+                "All in one file\n(6 per page)","One per file")
+        else:
+            answer = QMessageBox.question(self,"Saving option","Would you like to save 1 or 6 scenario images per file ? (SVG or JPG or PNG)",\
                 "Six per file","One per file")
         if answer == 0:
             self.saveDrawsToOne()
@@ -361,7 +365,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         # resultat de la div entière plus le reste (modulo)
         longueur = (len(self.pixList)/largeur)+(len(self.pixList)%largeur)
         ind = 0
-        li=0
 
         self.im_result = QPrinter()
         self.im_result.setOutputFormat(QPrinter.PdfFormat)
@@ -393,10 +396,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                     painter.translate(0,-3*450)
                 col+=1
                 ind+=1
-            if (ind+1)%6 == 0:
-                li = 0
-            else:
-                li+=1
 
         painter.end()
 
@@ -411,7 +410,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         pic_format = str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText())
 
         #nbpix = len(self.pixList)
-        nbpix = ito - ifrom
+        nbpix = (ito - ifrom)+1
 
         largeur = 2
         # resultat de la div entière plus le reste (modulo)

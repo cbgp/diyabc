@@ -373,6 +373,19 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 painter.end()
                 im = pix.toImage()
                 im.save("%s.%s"%(graph_file_path,pic_format))
+            elif pic_format == "pdf":
+                im_result = QPrinter()
+                im_result.setOrientation(QPrinter.Landscape)
+                im_result.setOutputFormat(QPrinter.PdfFormat)
+                im_result.setOutputFileName('%s.pdf'%graph_file_path)
+                painter = QPainter()
+                im_result.setResolution(80)
+                painter.begin(im_result)
+                pen = QPen(Qt.black,2)
+                painter.setPen(pen)
+                p.print_(painter, p.rect())
+                painter.end()
+
     def exit(self):
         del self.dico_points
         self.parent.ui.analysisStack.removeWidget(self)
