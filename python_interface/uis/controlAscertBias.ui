@@ -48,24 +48,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="clearButton">
-        <property name="font">
-         <font>
-          <pointsize>14</pointsize>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>Clear all data related to this historical model</string>
-        </property>
-        <property name="text">
-         <string>CLEAR</string>
-        </property>
-        <property name="shortcut">
-         <string>Alt+C</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="okButton">
         <property name="font">
          <font>
@@ -89,52 +71,6 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Ascertainment set</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTableWidget" name="tableWidget">
-         <property name="minimumSize">
-          <size>
-           <width>460</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>460</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="sortingEnabled">
-          <bool>false</bool>
-         </property>
-         <column>
-          <property name="text">
-           <string>Population</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Number of individuals</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-          </property>
-         </column>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2"/>
@@ -149,13 +85,25 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>429</width>
+            <width>897</width>
             <height>639</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
             <widget class="QFrame" name="frame_2">
+             <property name="minimumSize">
+              <size>
+               <width>600</width>
+               <height>100</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>600</width>
+               <height>100</height>
+              </size>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -166,72 +114,29 @@
               <item>
                <widget class="QLabel" name="label_2">
                 <property name="text">
-                 <string>Take SNP if minimum frequency is larger than</string>
+                 <string>Take SNP if the frequencyof the least frequent allele is larger than</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QLineEdit" name="freqMinEdit">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
                 <property name="text">
                  <string>0</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QFrame" name="frame">
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout">
-              <item>
-               <widget class="QLabel" name="label_3">
-                <property name="text">
-                 <string>Ascertainment set individuals are</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_3">
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_4">
-                 <item>
-                  <widget class="QRadioButton" name="incRadio">
-                   <property name="text">
-                    <string>Included</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="nincRadio">
-                   <property name="text">
-                    <string>Not included</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>In the observed samples</string>
                 </property>
                </widget>
               </item>

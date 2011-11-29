@@ -236,7 +236,7 @@ class ProjectSnp(ProjectReftable):
             # lecture du dataFile pour les infos de Gui Projet
             if self.loadDataFile("%s/%s"%(self.dir,lines[0].strip())):
                 ## comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
-                self.ascert_frame.fillSampleFromData(self.data.nind)
+                #self.ascert_frame.fillSampleFromData(self.data.nind)
                 return True
         return False
 
@@ -326,14 +326,7 @@ class ProjectSnp(ProjectReftable):
         log(2,"Writing ascertainment in %s"%self.parent.ascertainment_conf_name)
 
         ascert_string = u""
-        for i in range(self.ascert_frame.ui.tableWidget.rowCount()):
-            ascert_string += "%s "%int(self.ascert_frame.ui.tableWidget.item(i,1).text())
-        ascert_string = ascert_string[:-1]+"\n"
         ascert_string += "%s\n"%str(self.ascert_frame.freqMinEdit.text()).strip()
-        if self.ascert_frame.ui.incRadio.isChecked():
-            ascert_string += "I"
-        else:
-            ascert_string += "N"
 
         if os.path.exists(self.dir+"/%s"%self.parent.ascertainment_conf_name):
             os.remove("%s/%s"%(self.dir,self.parent.ascertainment_conf_name))
