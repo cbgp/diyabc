@@ -224,6 +224,12 @@ void setgroup(int p) {
 		this->particule[p].nloc = this->header.dataobs.nloc;
 		this->particule[p].locuslist = new LocusC[this->header.dataobs.nloc];
 		for (int kloc=0;kloc<this->header.dataobs.nloc;kloc++){
+			this->particule[p].nsample = this->header.dataobs.nsample;  
+			this->particule[p].locuslist[kloc].coeffcoal =  this->header.dataobs.locus[kloc].coeffcoal;  
+			this->particule[p].locuslist[kloc].ss = new int[ this->header.dataobs.nsample];      
+			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].ss[sa] =  this->header.dataobs.locus[kloc].ss[sa];
+			this->particule[p].locuslist[kloc].samplesize = new int[ this->header.dataobs.nsample];
+			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] =  this->header.dataobs.locus[kloc].samplesize[sa];
 			this->particule[p].locuslist[kloc].type = this->header.dataobs.locus[kloc].type;
 			this->particule[p].locuslist[kloc].groupe = this->header.dataobs.locus[kloc].groupe;
 			if (this->header.dataobs.locus[kloc].type < 5) {
@@ -235,8 +241,7 @@ void setgroup(int p) {
 				//this->particule[p].locuslist[kloc].mut_rate = this->header.dataobs.locus[kloc].mut_rate;
 				//this->particule[p].locuslist[kloc].Pgeom = this->header.dataobs.locus[kloc].Pgeom;
 				//this->particule[p].locuslist[kloc].sni_rate = this->header.dataobs.locus[kloc].sni_rate;
-				}
-			else if (this->header.dataobs.locus[kloc].type < 10) {
+			} else if (this->header.dataobs.locus[kloc].type < 10) {
 				this->particule[p].locuslist[kloc].dnalength =  this->header.dataobs.locus[kloc].dnalength;
 				this->particule[p].locuslist[kloc].kmin =  0;
 				this->particule[p].locuslist[kloc].kmax =  0;
@@ -248,13 +253,18 @@ void setgroup(int p) {
 				this->particule[p].locuslist[kloc].mutsit.resize(this->header.dataobs.locus[kloc].dnalength);
 				for (int i=0;i<this->particule[p].locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = this->header.dataobs.locus[kloc].mutsit[i];
 				//std::cout <<"\n";
+			} else  if (this->header.dataobs.locus[kloc].type >= 10) {
+				this->particule[p].locuslist[kloc].ref = new bool*[this->header.dataobs.nsample];
+				for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].ref[sa] = new bool[this->header.dataobs.locus[kloc].ss[sa]];
+				for (int sa=0;sa<this->particule[p].nsample;sa++) {
+					for (int i=0;i<this->particule[p].locuslist[kloc].ss[sa];i++) this->particule[p].locuslist[kloc].ref[sa][i] = this->header.dataobs.locus[kloc].ref[sa][i]; 
 				}
-			this->particule[p].nsample = this->header.dataobs.nsample;  
-			this->particule[p].locuslist[kloc].coeffcoal =  this->header.dataobs.locus[kloc].coeffcoal;  
-			this->particule[p].locuslist[kloc].ss = new int[ this->header.dataobs.nsample];      
-			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].ss[sa] =  this->header.dataobs.locus[kloc].ss[sa];
-			this->particule[p].locuslist[kloc].samplesize = new int[ this->header.dataobs.nsample];
-			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] =  this->header.dataobs.locus[kloc].samplesize[sa];
+				this->particule[p].locuslist[kloc].dat = new bool*[ this->header.dataobs.nsample];
+				for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].dat[sa] = new bool[this->header.dataobs.locus[kloc].ss[sa]];
+				for (int sa=0;sa<this->particule[p].nsample;sa++) {
+					for (int i=0;i<this->particule[p].locuslist[kloc].ss[sa];i++) this->particule[p].locuslist[kloc].dat[sa][i] = this->header.dataobs.locus[kloc].dat[sa][i]; 
+				}
+			}
 			//cout << "samplesize[0]="<<this->particule[p].locuslist[kloc].samplesize[0]<<"\n";
 		}
 	}

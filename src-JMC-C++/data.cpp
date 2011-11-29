@@ -75,7 +75,10 @@ struct LocusC
 	int mini,maxi,kmin,kmax,motif_size,motif_range,nal;
 	double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
 	int **haplomic; //array[sample][gene copy]
+//Propriétés des locus SNP
 	short int **haplosnp; //array[sample][gene copy] 0,1,9
+	bool **ref;  //array[sample][gene copy] = true si le gène appartient à la référence
+	bool **dat;//array[sample][gene copy] = true si le gène appartient aux données observées
 	bool mono;  //mono=true si un seul allèle dans l'échantillon global
 
 	void libere(bool obs, int nsample) {

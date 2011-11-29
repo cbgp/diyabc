@@ -2222,7 +2222,21 @@ struct ParticleC
     }
     
     bool polymref(int loc) {
-		return true;
+		int n=0,n1=0;
+		double p;
+		bool poly=false;
+		for (int sa=0;sa<this->data.nsample;sa++) {
+			for (int i=0;i<this->locuslist[loc].ss[sa];i++) {
+				if (this->locuslist[loc].ref[sa][i]) {
+					n +=1;
+					n1 +=(int)this->locuslist[loc].haplosnp[sa][i];
+				}
+			}
+		} 
+		p=(double)n1/(double)n;
+		if (p > 0.5) poly=(p <= 1.0-this->reffreqmin);
+		else         poly=(p >= this->reffreqmin);
+		return poly;
 	}
 	
 	int dosimulpart(int numscen){
@@ -2728,7 +2742,7 @@ struct ParticleC
                 this->locuslist[loc].freq[samp] = new long double [2];
 				this->locuslist[loc].freq[samp][0] = 0.0;this->locuslist[loc].freq[samp][1] = 0.0;
                 for (int i=0;i<this->locuslist[loc].ss[samp];i++){
-                    if (this->locuslist[loc].haplosnp[samp][i] == g0) this->locuslist[loc].freq[samp][0] +=1.0;
+                    if ((this->locuslist[loc].haplosnp[samp][i] == g0)and(this->locuslist[loc].dat[samp][i])) this->locuslist[loc].freq[samp][0] +=1.0;
 				}
 				this->locuslist[loc].freq[samp][1] = this->locuslist[loc].samplesize[samp]-this->locuslist[loc].freq[samp][0];
 				this->locuslist[loc].freq[samp][0] /=this->locuslist[loc].samplesize[samp];
@@ -2840,6 +2854,7 @@ struct ParticleC
 		}
 		this->grouplist[gr].sumstatsnp[numsnp].n = nl;
 		nl=0;
+		ofstream f10("/home/cornuet/workspace/diyabc/src-JMC-C++/hetero.txt",ios::out);
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			kloc=this->grouplist[gr].loc[iloc];
 			if (this->locuslist[kloc].samplesize[sample]>1){
@@ -2848,9 +2863,12 @@ struct ParticleC
 				het *= ((long double)this->locuslist[kloc].samplesize[sample]/((long double)this->locuslist[kloc].samplesize[sample]-1));
 				this->grouplist[gr].sumstatsnp[numsnp].x[nl] = het;
 				nl++;
-				//printf("%6.3Lf",het);
+				//fprintf(f1,"%6.4Lf\n",het);
+				f10<<het<<"\n";
 			}
 		}
+        //fclose(f1);
+        f10.close();
 		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
 		//cout<<"\n";
 	}
@@ -2893,7 +2911,8 @@ struct ParticleC
 			n1=this->locuslist[loc].samplesize[sample];n2=this->locuslist[loc].samplesize[sample1];
 			if ((n1>0)and(n2>0)) nl++;
 		}
-		this->grouplist[gr].sumstatsnp[numsnp].n = nl;
+		this->grouplist[gr].sumstatsnp[numsnp].n = nl;        
+
 		nl=0;
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			loc=this->grouplist[gr].loc[iloc];
@@ -2966,6 +2985,11 @@ struct ParticleC
 		}
 		this->grouplist[gr].sumstatsnp[numsnp].n = nl;
 		nl=0;
+        //FILE *f10;
+		//cout<<"définition de f10\n";
+        //f10=fopen("~/workspace/diyabc/src-JMC-C++/Fst.txt","w");
+		cout<<"ouverture de f10\n";
+		ofstream f10("/home/cornuet/workspace/diyabc/src-JMC-C++/Fst.txt",ios::out);
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			loc=this->grouplist[gr].loc[iloc];
 			n1=(long double)this->locuslist[loc].samplesize[sample];n2=(long double)this->locuslist[loc].samplesize[sample1];
@@ -2991,10 +3015,15 @@ struct ParticleC
 				if ((s3l>0.0)and(s1l>0.0)) fst=s1l/s3l;
 				if(fst<0.0) fst=0.0;
 				this->grouplist[gr].sumstatsnp[numsnp].x[nl] = fst;
+				cout<<" avant ecriture du fst au locus "<<loc<<"   fst="<<fst<<"\n";
+				f10<<fst<<"\n";
+				cout<<"ecriture du fst au locus "<<loc<<"\n";
 				nl++;
 				//printf("s1l=%10.5Lf   s3l=%10.5Lf   fst[%3d] = %10.5Lf\n", s1l,s3l,nl,fst);
 			}
 		}
+        f10.close();
+		cout<<"fermeture de f10\n";
 		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
 	}
 
@@ -3016,14 +3045,14 @@ struct ParticleC
 				    ind++;
 	    			switch (nn)
 	    			{ case 1 :  ig1 = this->locuslist[loc].haplosnp[sample][i];i++;
-								if (ig1!=MICMISSING) {
+								if ((ig1!=MICMISSING)and(this->locuslist[loc].dat[sample][i])) {
 									freq1 = a*this->locuslist[loc].freq[sample1][ig1]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1];
 									if (freq1>0.0) li[rep] +=log(freq1);
 								}
 								break;
 	    			  case 2 :  ig1 = this->locuslist[loc].haplosnp[sample][i];i++;
-								ig2 = this->locuslist[loc].haplomic[sample][i];i++;
-				                if ((ig1!=MICMISSING)and(ig2!=MICMISSING)) {
+								ig2 = this->locuslist[loc].haplosnp[sample][i];i++;
+				                if ((ig1!=MICMISSING)and(ig2!=MICMISSING)and(this->locuslist[loc].dat[sample][i-1])and(this->locuslist[loc].dat[sample][i])) {
 									if (ig1==ig2) {
 				                		freq1 = a*this->locuslist[loc].freq[sample1][ig1]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1];
 				                		if (freq1>0.0) li[rep] +=log(sqr(freq1));
@@ -3092,6 +3121,7 @@ struct ParticleC
 					if (aml[nl]<=1.0) nl++;
 				}*/
 			}
+
 		}
 		this->grouplist[gr].sumstatsnp[numsnp].n = nl;
 		this->grouplist[gr].sumstatsnp[numsnp].x =new long double[nl];
