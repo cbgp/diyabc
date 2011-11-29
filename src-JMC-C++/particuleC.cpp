@@ -158,7 +158,7 @@ public:
 	char action;   //"V"=VarNe "M"=Merge  "S"=Split  "E" = sample/echantillon
 	int pop,pop1,pop2,sample,Ne,time;
     	double admixrate;
-    	int numevent0;
+    	int numevent0,nindref;
     	char *stime,*sNe,*sadmixrate;
         int ltime,lNe,ladmixrate;
 
@@ -177,7 +177,7 @@ public:
         else if (this->action=='M') cout<<"    "<<sstime<<"   merge  pop="<<this->pop<<"   pop1="<<this->pop1<<"\n";
         else if (this->action=='S') cout<<"    "<<sstime<<"   split  pop="<<this->pop<<"   pop1="<<this->pop1<<"   pop2="<<this->pop2<<"   "<<this->sadmixrate<<"\n";
         else if (this->action=='E') cout<<"    "<<sstime<<"   samp   pop="<<this->pop<<"\n";
-
+		else if (this->action=='R') cout<<"    "<<sstime<<"  refsamp pop="<<this->pop<<"\n";
 	}
 };
 
@@ -379,7 +379,16 @@ public:
     			this->event[i].pop=atoi(ss[2].c_str());
     			this->nsamp++;
 			    this->event[i].sample=this->nsamp;
+				this->event[i].nindref=0;
+				if (n==4) this->event[i].nindref=atoi(ss[3].c_str());
     			//cout <<this->event[i].time<<"  SAMPLE"<<"   "<<this->event[i].pop<<"\n";
+				
+			} else if (sevent=="REFSAMPLE") {
+    			this->event[i].action='R';
+    			this->event[i].pop=atoi(ss[2].c_str());
+    			this->nsamp++;
+			    this->event[i].sample=this->nsamp;
+				this->event[i].nindref=atoi(ss[3].c_str());
     		} else if (sevent=="MERGE") {
     			this->event[i].action='M';
     			this->event[i].pop=atoi(ss[2].c_str());
@@ -436,7 +445,7 @@ public:
     	histparname.clear();histparcat.clear();
     	this->time_sample = new int[this->nsamp];
     	n=-1;
-    	for (int i=0;i<this->nevent;i++) {if (this->event[i].action=='E') {n++;this->time_sample[n]=this->event[i].time;}}
+    	for (int i=0;i<this->nevent;i++) {if ((this->event[i].action=='E')or(this->event[i].action=='R')) {n++;this->time_sample[n]=this->event[i].time;}}
     }
 
     void ecris() {
@@ -724,6 +733,34 @@ struct ParticleC
         }
 		//cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
 		//this->scen.ecris();
+		int iloc;
+		for (int gr=1;gr<=this->ngr;gr++) {
+			if (this->grouplist[gr].type>=10){
+				for (int kloc=0;kloc<this->grouplist[gr].nloc;kloc++){
+					iloc=this->grouplist[gr].loc[kloc];
+					this->locuslist[iloc].ref = new bool*[this->nsample];
+					for (int sa=0;sa<this->nsample;sa++) this->locuslist[iloc].ref[sa] = new bool[this->locuslist[iloc].ss[sa]];
+					this->locuslist[iloc].dat = new bool*[this->nsample];
+					for (int sa=0;sa<this->nsample;sa++) this->locuslist[iloc].dat[sa] = new bool[this->locuslist[iloc].ss[sa]];
+					for (int sa=0;sa<this->nsample;sa++) {
+						for (int ievent=0;ievent<this->scenario[0].nevent;ievent++) {
+							if ((this->scenario[0].event[ievent].action=='E')and(this->scenario[0].event[ievent].sample==sa+1)) {
+								for (int i=0;i<this->locuslist[iloc].ss[sa];i++) {
+									this->locuslist[iloc].dat[sa][i] = true;
+									this->locuslist[iloc].ref[sa][i] = (i<this->scenario[0].event[ievent].nindref);
+								}
+							}
+							if ((this->scenario[0].event[ievent].action=='R')and(this->scenario[0].event[ievent].sample==sa+1)) {
+								for (int i=0;i<this->locuslist[iloc].ss[sa];i++) {
+									this->locuslist[iloc].dat[sa][i] = false;
+									this->locuslist[iloc].ref[sa][i] = true;
+								}
+							}
+						}
+					}
+				}
+			}
+			}
 	}
 
 /**
@@ -1398,7 +1435,7 @@ struct ParticleC
 	int compteseq() {
     	int n = 0;
     	for (int k=0;k<this->scen.nevent;k++){
-    		if (this->scen.event[k].action == 'E') {n +=2;}  //SAMPLE
+    		if ((this->scen.event[k].action == 'E')or(this->scen.event[k].action == 'R')) {n +=2;}  //SAMPLE
     		else if (this->scen.event[k].action == 'V') {n +=1;} //VARNE
     		else if (this->scen.event[k].action == 'M') {n +=3;} //MERGE
     		else if (this->scen.event[k].action == 'S') {n +=4;} //SPLIT
@@ -1420,13 +1457,13 @@ struct ParticleC
 				if (this->scen.event[ievent].action == 'V') {   // if action = VARNE
 					seqCoal(iseq,ievent,this->scen.event[ievent].pop);iseq++;
 				}
-				else if (this->scen.event[ievent].action == 'E') {   // if action = SAMPLE
+				else if ((this->scen.event[ievent].action == 'E')or(this->scen.event[ievent].action == 'R')) {   // if action = SAMPLE
 					seqCoal(iseq,ievent,this->scen.event[ievent].pop);iseq++;
 					seqSamp(iseq,ievent);iseq++;
 					//cout<<this->seqlist[iseq-1].action<<"\n";
 				}
 			}
-			else if (this->scen.event[ievent].action == 'E') {   // if action = SAMPLE
+			else if ((this->scen.event[ievent].action == 'E')or(this->scen.event[ievent].action == 'R')) {   // if action = SAMPLE
 				seqSamp(iseq,ievent);iseq++;
 				//cout<<this->seqlist[iseq-1].action<<"\n";
 			}
@@ -1456,7 +1493,7 @@ struct ParticleC
 				}
 			}
 		}
-		if ((this->scen.event[this->scen.nevent-1].action == 'M')or(this->scen.event[this->scen.nevent-1].action == 'E')) {
+		if ((this->scen.event[this->scen.nevent-1].action == 'M')or(this->scen.event[this->scen.nevent-1].action == 'E')or(this->scen.event[this->scen.nevent-1].action == 'R')) {
 			this->seqlist[iseq].N = findNe(this->scen.nevent-1,this->scen.event[this->scen.nevent-1].pop);
             //cout<<"coucou\n  this->seqlist[iseq].N ="<<this->seqlist[iseq].N<<"  event="<<this->scen.nevent-1<<"   pop="<<this->scen.event[this->scen.nevent-1].pop <<"\n";
 		}
