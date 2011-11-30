@@ -197,7 +197,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-55</y>
+        <y>-59</y>
         <width>850</width>
         <height>161</height>
        </rect>
@@ -509,6 +509,13 @@
                   <height>14</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
+                </property>
                 <property name="text">
                  <string>all</string>
                 </property>
@@ -527,6 +534,13 @@
                   <width>35</width>
                   <height>14</height>
                  </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
                 </property>
                 <property name="text">
                  <string>none</string>
@@ -711,7 +725,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-38</y>
+        <y>-60</y>
         <width>850</width>
         <height>269</height>
        </rect>
@@ -987,6 +1001,13 @@
                   <height>14</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
+                </property>
                 <property name="text">
                  <string>all</string>
                 </property>
@@ -1005,6 +1026,13 @@
                   <width>35</width>
                   <height>14</height>
                  </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
                 </property>
                 <property name="text">
                  <string>none</string>
@@ -1173,6 +1201,8 @@
                 <property name="font">
                  <font>
                   <pointsize>9</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="text">
@@ -1229,6 +1259,13 @@
                   <height>14</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
+                </property>
                 <property name="text">
                  <string>all</string>
                 </property>
@@ -1247,6 +1284,13 @@
                   <width>35</width>
                   <height>14</height>
                  </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
                 </property>
                 <property name="text">
                  <string>none</string>
@@ -1523,7 +1567,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-42</y>
+        <y>-20</y>
         <width>850</width>
         <height>293</height>
        </rect>
@@ -1953,6 +1997,13 @@ population 2</string>
                     <height>14</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                    <weight>50</weight>
+                    <bold>false</bold>
+                   </font>
+                  </property>
                   <property name="text">
                    <string>all</string>
                   </property>
@@ -1971,6 +2022,13 @@ population 2</string>
                     <width>35</width>
                     <height>14</height>
                    </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                    <weight>50</weight>
+                    <bold>false</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>none</string>
