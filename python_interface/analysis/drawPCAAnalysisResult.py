@@ -343,6 +343,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         if dial.exec_():
             painter = QPainter()
             im_result.setOrientation(QPrinter.Landscape)
+            im_result.setPageMargins(20,20,20,20,QPrinter.Millimeter)
             im_result.setResolution(80)
             painter.begin(im_result)
             pen = QPen(Qt.black,2)

@@ -375,6 +375,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             im_result.setOrientation(QPrinter.Portrait)
             im_result.setPageMargins(10,10,10,10,QPrinter.Millimeter)
             im_result.setResolution(100)
+
             painter.begin(im_result)
 
             keys = self.dicoPlot.keys()

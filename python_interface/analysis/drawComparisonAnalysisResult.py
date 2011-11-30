@@ -280,8 +280,8 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         if dial.exec_():
             im_result.setOrientation(QPrinter.Portrait)
             im_result.setPageMargins(20,20,20,20,QPrinter.Millimeter)
-
             im_result.setResolution(60)
+
             painter.begin(im_result)
 
             keys = self.dicoPlot.keys()
