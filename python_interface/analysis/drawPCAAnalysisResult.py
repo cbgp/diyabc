@@ -37,6 +37,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         self.ui=self
         self.ui.setupUi(self)
 
+        QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printGraph)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.saveGraph)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewLocate)
@@ -57,6 +58,9 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             self.ui.viewLocateButton.hide()
 
         self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
+
+        self.ui.PCAGraphFrame.setMinimumSize(QSize(860, 430))
+        self.ui.PCAGraphFrame.setMaximumSize(QSize(860, 430))
 
     def viewLocate(self):
         """ clic sur le bouton view locate
@@ -331,6 +335,20 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         p.setAxisScaleDiv(0,sd)
         grid = QwtPlotGrid()
         grid.attach(p)
+
+    def printGraph(self):
+        p = self.plot
+        im_result = QPrinter()
+        dial = QPrintDialog(im_result,self)
+        if dial.exec_():
+            painter = QPainter()
+            im_result.setOrientation(QPrinter.Landscape)
+            im_result.setResolution(80)
+            painter.begin(im_result)
+            pen = QPen(Qt.black,2)
+            painter.setPen(pen)
+            p.print_(painter, p.rect())
+            painter.end()
 
     def saveGraph(self):
         """ sauvegarde le graphe dans le dossier PCA_pictures du projet

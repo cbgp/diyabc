@@ -36,6 +36,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.ui=self
         self.ui.setupUi(self)
 
+        QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printDraws)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewMmmq)
@@ -46,6 +47,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.ui.viewLocateButton.setText("view numerical results")
         self.ui.PCAGraphFrame.hide()
         self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
+        self.ui.PCAScroll.hide()
 
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)
@@ -356,6 +358,45 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
                 painter.begin(im_result)
                 p.print_(painter, p.rect())
                 painter.end()
+
+    def printDraws(self):
+        nbpix = len(self.dicoPlot.keys())
+        largeur = 2
+        # resultat de la div entière plus le reste (modulo)
+        longueur = (nbpix/largeur)+(nbpix%largeur)
+        ind = 0
+        li=0
+
+        im_result = QPrinter()
+        painter = QPainter()
+
+        dial = QPrintDialog(im_result,self)
+        if dial.exec_():
+            im_result.setOrientation(QPrinter.Portrait)
+            im_result.setPageMargins(10,10,10,10,QPrinter.Millimeter)
+            im_result.setResolution(100)
+            painter.begin(im_result)
+
+            keys = self.dicoPlot.keys()
+            # on prend un des graphes pour savoir ses dimensions
+            size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
+            # on fait des lignes tant qu'on a des pix
+            while (ind < nbpix):
+                col = 0
+                # une ligne
+                while (ind < nbpix) and (col < largeur):
+                    plot = self.dicoPlot[keys[ind]]
+                    plot.print_(painter, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
+                    if (ind+1)%6 == 0:
+                        im_result.newPage()
+                    col+=1
+                    ind+=1
+                if (ind)%6 == 0:
+                    li = 0
+                else:
+                    li+=1
+
+            painter.end()
 
     def saveDrawsToOnePdf(self):
         """ Sauve tous les scenarios dans un seul pdf en découpant à 6 scenarios par page

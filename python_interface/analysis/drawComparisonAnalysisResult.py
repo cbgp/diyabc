@@ -36,6 +36,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         self.ui=self
         self.ui.setupUi(self)
 
+        QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printGraphs)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewCompDirectLogReg)
@@ -257,6 +258,46 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
             else:
                 self.saveDrawsInterval(ind,nbpix-1)
             ind += 6
+
+    def printGraphs(self):
+        ifrom = 0
+        ito = 1
+        nbPlot = (ito - ifrom)+1
+        largeur = 2
+        # resultat de la div entière plus le reste (modulo)
+        longueur = (nbPlot/largeur)+(nbPlot%largeur)
+        ind = ifrom
+        li=0
+
+        # on prend un des graphes pour savoir ses dimensions
+        size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
+
+
+        im_result = QPrinter()
+        painter = QPainter()
+
+        dial = QPrintDialog(im_result,self)
+        if dial.exec_():
+            im_result.setOrientation(QPrinter.Portrait)
+            im_result.setPageMargins(20,20,20,20,QPrinter.Millimeter)
+
+            im_result.setResolution(60)
+            painter.begin(im_result)
+
+            keys = self.dicoPlot.keys()
+            # on fait des lignes tant qu'on a des pix
+            while (ind <= ito):
+                col = 0
+                # une ligne
+                while (ind <= ito) and (col < largeur):
+                    plot = self.dicoPlot[keys[ind]]
+                    plot.print_(painter, QRect(QPoint(0*size.width(),(li*size.height())+li*30),QSize(size)))
+                    col+=1
+                    ind+=1
+                    li+=1
+                li+=1
+
+            painter.end()
 
     def saveDrawsInterval(self,ifrom,ito):
         """ Sauve tous les graphes dans une seule image ou un seul svg

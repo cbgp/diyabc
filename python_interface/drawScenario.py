@@ -31,6 +31,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         self.ui=self
         self.ui.setupUi(self)
 
+        QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printScenarios)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
 
@@ -38,6 +39,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         self.ui.viewLocateButton.hide()
         self.ui.PCAFrame.hide()
         self.ui.PCAGraphFrame.hide()
+        self.ui.PCAScroll.hide()
 
     def exit(self):
         ## reactivation des onglets
@@ -352,6 +354,42 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         else:
             self.saveDrawsToOnePdf()
 
+    def printScenarios(self):
+        im_result = QPrinter()
+        dial = QPrintDialog(im_result,self)
+        if dial.exec_():
+            painter = QPainter()
+            im_result.setOrientation(QPrinter.Portrait)
+            im_result.setPageMargins(10,10,10,10,QPrinter.Millimeter)
+            im_result.setResolution(135)
+            painter.begin(im_result)
+
+            nbpix = len(self.pixList)
+            largeur = 2
+            # resultat de la div entière plus le reste (modulo)
+            longueur = (len(self.pixList)/largeur)+(len(self.pixList)%largeur)
+            ind = 0
+            # on fait des lignes tant qu'on a des pix
+            while (ind < nbpix):
+                col = 0
+                if ind > 0:
+                    painter.translate(-2*500,450)
+                # une ligne
+                while (ind < nbpix) and (col < largeur):
+                    # ajout
+                    sc_info = self.sc_info_list[ind]
+                    if sc_info["tree"] != None:
+                        self.paintScenario(painter,sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],500,450)
+                    # on va a droite
+                    painter.translate(500,0)
+                    if (ind+1)%6 == 0:
+                        im_result.newPage()
+                        painter.translate(0,-3*450)
+                    col+=1
+                    ind+=1
+
+            painter.end()
+
     def saveDrawsToOnePdf(self):
         """ Sauve tous les scenarios dans un seul pdf en découpant à 6 scenarios par page
         """
@@ -370,7 +408,8 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         self.im_result.setOutputFormat(QPrinter.PdfFormat)
         self.im_result.setOutputFileName('%s_all.pdf'%pic_whole_path)
         painter = QPainter()
-        self.im_result.setResolution(130)
+        self.im_result.setPageMargins(10,10,10,10,QPrinter.Millimeter)
+        self.im_result.setResolution(135)
         painter.begin(self.im_result)
 
         # on fait des lignes tant qu'on a des pix

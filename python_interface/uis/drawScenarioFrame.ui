@@ -99,6 +99,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="printButton">
+        <property name="text">
+         <string>PRINT</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="savePicturesButton">
         <property name="text">
          <string>SAVE</string>
@@ -216,7 +223,7 @@
         <x>0</x>
         <y>0</y>
         <width>930</width>
-        <height>454</height>
+        <height>236</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -231,14 +238,33 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="PCAGraphFrame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+    <widget class="QScrollArea" name="PCAScroll">
+     <property name="widgetResizable">
+      <bool>true</bool>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3"/>
+     <widget class="QWidget" name="scrollAreaWidgetContents_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>930</width>
+        <height>236</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QFrame" name="PCAGraphFrame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3"/>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
