@@ -662,7 +662,7 @@ struct ParticleC
     vector < vector < vector <int> > > t_afs;
     vector < vector <int> > n_afs;
 
-	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar;
+	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar,refnindtot;
 	float reffreqmin;
 	bool ***dat,***ref;  //appartenance d'un gène aux data (dat) ou aux individus de référence (ref) par [locustype][sample][gene]
 	bool *catexist;
@@ -734,6 +734,7 @@ struct ParticleC
         }
 		//cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
 		//this->scen.ecris();
+		this->refnindtot=0;
 		this->ref = new bool**[5];
 		this->dat = new bool**[5];
 		for (int cat=0;cat<5;cat++) {
@@ -747,9 +748,11 @@ struct ParticleC
 							for (int i=0;i<this->data.ss[cat][sa];i++) {
 								this->dat[cat][sa][i] = true;
 								this->ref[cat][sa][i] = (i<this->scenario[0].event[ievent].nindref);
+								if (this->ref[cat][sa][i]) this->refnindtot++;
 							}
 						}
 						if ((this->scenario[0].event[ievent].action=='R')and(this->scenario[0].event[ievent].sample==sa+1)) {
+							this->refnindtot +=this->data.ss[cat][sa];
 							for (int i=0;i<this->data.ss[cat][sa];i++) {
 								this->dat[cat][sa][i] = false;
 								this->ref[cat][sa][i] = true;
