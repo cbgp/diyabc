@@ -415,10 +415,7 @@ class ProjectSnp(ProjectReftable):
     def freezeHistModel(self,yesno=True):
         super(ProjectSnp,self).freezeHistModel(yesno)
 
-        self.ascert_frame.ui.tableWidget.setDisabled(yesno)
         self.ascert_frame.ui.freqMinEdit.setDisabled(yesno)
-        self.ascert_frame.ui.incRadio.setDisabled(yesno)
-        self.ascert_frame.ui.nincRadio.setDisabled(yesno)
         if yesno:
             if "Set " in str(self.ui.ascertButton.text()):
                 self.ui.ascertButton.setText(str(self.ui.ascertButton.text()).replace("Set ","View "))

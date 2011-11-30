@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -182,6 +183,14 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
             setCondButton.hide()
         else:
             QObject.connect(setCondButton,SIGNAL("clicked()"),self.setConditionAction)
+        if "darwin" in sys.platform:
+        	ff = setCondButton.font()
+        	ff.setPointSize(10)
+        	setCondButton.setFont(ff)
+        else:
+            ff = setCondButton.font()
+            ff.setPointSize(8)
+            setCondButton.setFont(ff)
         horizontalLayout_8.addWidget(setCondButton)
         horizontalLayout_13.addWidget(groupBox_9)
         groupBox_14 = QtGui.QGroupBox(groupBox_8)
