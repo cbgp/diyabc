@@ -62,12 +62,21 @@ struct ParticleSetC
 	int nsample,*nind,**indivsexe,nscenarios;
 	ScenarioC *scenario;
 	double sexratio;
-        MwcGen *mw;
+    MwcGen *mw;
 
 	void setdata(int p) {
 		this->particule[p].data.nsample = this->header.dataobs.nsample;
 		this->particule[p].data.nind = new int[this->header.dataobs.nsample];
 		this->particule[p].data.indivsexe = new int*[this->header.dataobs.nsample];
+		this->particule[p].data.catexist = new bool[5];
+		for (int cat=0;cat<5;cat++) this->particule[p].data.catexist[cat] =  this->header.dataobs.catexist[cat];
+		this->particule[p].data.ss = new int*[5];
+		for (int cat=0;cat<5;cat++) { 
+			if (this->particule[p].data.catexist[cat]) {
+				this->particule[p].data.ss[cat] = new int[this->header.dataobs.nsample];
+				for (int sa=0;sa<this->header.dataobs.nsample;sa++) this->particule[p].data.ss[cat][sa] = this->header.dataobs.ss[cat][sa];
+			}
+		}
 		for (int i=0;i<this->header.dataobs.nsample;i++) {
 			this->particule[p].data.nind[i] = this->header.dataobs.nind[i];
 			this->particule[p].data.indivsexe[i] = new int[this->header.dataobs.nind[i]];
@@ -101,12 +110,7 @@ struct ParticleSetC
 						  this->particule[p].data.missnuc[i].nuc    = this->header.dataobs.missnuc[i].nuc;
 				  }
 		}
-		this->particule[p].npopref = this->header.npopref;
-		this->particule[p].refnindtot = this->header.refnindtot;
-		this->particule[p].refnind = new int[this->particule[p].npopref];
-		for (int i=0;i<this->particule[p].npopref;i++) this->particule[p].refnind[i] = this->header.refnind[i];
 		this->particule[p].reffreqmin = this->header.reffreqmin;
-		this->particule[p].refincluded = this->header.refincluded;
 	}
 
 void setgroup(int p) {
@@ -220,14 +224,12 @@ void setgroup(int p) {
 	}
 
 	void setloci(int p) {
-	        int kmoy;
+	    int kmoy,cat;
 		this->particule[p].nloc = this->header.dataobs.nloc;
 		this->particule[p].locuslist = new LocusC[this->header.dataobs.nloc];
 		for (int kloc=0;kloc<this->header.dataobs.nloc;kloc++){
 			this->particule[p].nsample = this->header.dataobs.nsample;  
 			this->particule[p].locuslist[kloc].coeffcoal =  this->header.dataobs.locus[kloc].coeffcoal;  
-			this->particule[p].locuslist[kloc].ss = new int[ this->header.dataobs.nsample];      
-			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].ss[sa] =  this->header.dataobs.locus[kloc].ss[sa];
 			this->particule[p].locuslist[kloc].samplesize = new int[ this->header.dataobs.nsample];
 			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] =  this->header.dataobs.locus[kloc].samplesize[sa];
 			this->particule[p].locuslist[kloc].type = this->header.dataobs.locus[kloc].type;
@@ -254,16 +256,6 @@ void setgroup(int p) {
 				for (int i=0;i<this->particule[p].locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = this->header.dataobs.locus[kloc].mutsit[i];
 				//std::cout <<"\n";
 			} else  if (this->header.dataobs.locus[kloc].type >= 10) {
-				this->particule[p].locuslist[kloc].ref = new bool*[this->header.dataobs.nsample];
-				for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].ref[sa] = new bool[this->header.dataobs.locus[kloc].ss[sa]];
-				for (int sa=0;sa<this->particule[p].nsample;sa++) {
-					for (int i=0;i<this->particule[p].locuslist[kloc].ss[sa];i++) this->particule[p].locuslist[kloc].ref[sa][i] = this->header.dataobs.locus[kloc].ref[sa][i]; 
-				}
-				this->particule[p].locuslist[kloc].dat = new bool*[ this->header.dataobs.nsample];
-				for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].dat[sa] = new bool[this->header.dataobs.locus[kloc].ss[sa]];
-				for (int sa=0;sa<this->particule[p].nsample;sa++) {
-					for (int i=0;i<this->particule[p].locuslist[kloc].ss[sa];i++) this->particule[p].locuslist[kloc].dat[sa][i] = this->header.dataobs.locus[kloc].dat[sa][i]; 
-				}
 			}
 			//cout << "samplesize[0]="<<this->particule[p].locuslist[kloc].samplesize[0]<<"\n";
 		}
