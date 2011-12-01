@@ -671,7 +671,19 @@ struct ParticleC
     void libere(bool obs) {
          for (int i=0;i<this->nloc;i++) locuslist[i].libere(obs,this->nsample);
          delete []locuslist;
-
+		 for (int cat=0;cat<5;cat++) {
+			 if (this->catexist[cat]) {
+				for (int sa=0;sa<this->nsample;sa++){
+					delete []this->dat[cat][sa];
+					delete []this->ref[cat][sa];
+				}
+				delete []this->dat[cat];
+				delete []this->ref[cat];
+			}
+		}
+		delete []this->dat;
+		delete []this->ref;
+		delete []this->catexist;
     }
 
     void ecris(){
@@ -2267,7 +2279,7 @@ struct ParticleC
 		int cat = (this->locuslist[loc].type % 5);
 		for (int sa=0;sa<this->data.nsample;sa++) {
 			for (int i=0;i<this->data.ss[cat][sa];i++) {
-				if (this->ref[sa][i]) {
+				if (this->ref[cat][sa][i]) {
 					n +=1;
 					n1 +=(int)this->locuslist[loc].haplosnp[sa][i];
 				}
@@ -3028,11 +3040,6 @@ struct ParticleC
 		}
 		this->grouplist[gr].sumstatsnp[numsnp].n = nl;
 		nl=0;
-        //FILE *f10;
-		//cout<<"définition de f10\n";
-        //f10=fopen("~/workspace/diyabc/src-JMC-C++/Fst.txt","w");
-		cout<<"ouverture de f10\n";
-		ofstream f10("/home/cornuet/workspace/diyabc/src-JMC-C++/Fst.txt",ios::out);
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			loc=this->grouplist[gr].loc[iloc];
 			n1=(long double)this->locuslist[loc].samplesize[sample];n2=(long double)this->locuslist[loc].samplesize[sample1];
@@ -3058,15 +3065,10 @@ struct ParticleC
 				if ((s3l>0.0)and(s1l>0.0)) fst=s1l/s3l;
 				if(fst<0.0) fst=0.0;
 				this->grouplist[gr].sumstatsnp[numsnp].x[nl] = fst;
-				cout<<" avant ecriture du fst au locus "<<loc<<"   fst="<<fst<<"\n";
-				f10<<fst<<"\n";
-				cout<<"ecriture du fst au locus "<<loc<<"\n";
 				nl++;
 				//printf("s1l=%10.5Lf   s3l=%10.5Lf   fst[%3d] = %10.5Lf\n", s1l,s3l,nl,fst);
 			}
 		}
-        f10.close();
-		cout<<"fermeture de f10\n";
 		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
 	}
 

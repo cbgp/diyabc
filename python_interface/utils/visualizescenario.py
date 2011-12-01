@@ -30,7 +30,7 @@ class PopTreeBranch(object):
         return "PopTreeBranch(father=%s, child=%s, nvisit=%s, sadm=%s, style=%s)"%(self.father, self.child, self.nvisit, self.sadm, self.style) 
     
 class PopTreeNode(object):
-    def __init__(self,x=0,y=None,nvisit=None,pop=None,ev=None,NP=None,category=None,style=""):
+    def __init__(self,x=0,y=None,nvisit=None,pop=None,ev=None,NP=None,category=None,ref=False, style=""):
         self.x         = x
         self.y         = y
         self.nvisit    = nvisit
@@ -38,6 +38,7 @@ class PopTreeNode(object):
         self.ev        = ev
         self.NP        = NP
         self.category  = category
+        self.ref       = ref
         self.style  = style
         
     def __repr__(self):
@@ -129,7 +130,9 @@ class PopTree(object):
         elif numpop == 1 :cnode.pop = ev.pop1
         elif numpop == 2 :cnode.pop = ev.pop2
         if   ev.action == "SAMPLE"    :cnode.category = "sa"
-        elif ev.action == "REFSAMPLE" :cnode.category = "sa"
+        elif ev.action == "REFSAMPLE" :
+            cnode.category = "sa"
+            cnode.ref = True
         elif ev.action == "VARNE"     :cnode.category = "vn"
         elif ev.action == "MERGE"     :cnode.category = "me"
         elif ev.action == "SEXUAL"    :cnode.category = "se"
@@ -155,6 +158,7 @@ class PopTree(object):
         return done
     
     def build_tree(self):
+        if DEBUG : print "\nSCENARIO %s" % (self.scenario.number)
         t0, t1 = self.scenario.history.time0, self.scenario.history.time1
         if t1 != t0 : self.deltaY = (PopTree.YBAS-PopTree.YHAUT-75)//(t1-t0)
         else        : self.deltaY = 100
@@ -383,7 +387,7 @@ class PopTree(object):
     def draw_tree(self):
         necht = 0
         for no in self.node : 
-            if (no.category == "sa")or(no.category == "rs") : necht +=1
+            if (no.category == "sa") : necht +=1
         pasx = self.XMAX//(necht+1)
         xx = pasx
         n = len(self.node)-1
@@ -395,7 +399,7 @@ class PopTree(object):
                 nv +=1
                 n = self.br[i].child
             else    :
-                if (self.node[n].category == "sa")or(no.category == "rs") : 
+                if (self.node[n].category == "sa") : 
                     self.node[n].x = xx
                     xx +=pasx
                 i = self.findbranchchild(n,True)

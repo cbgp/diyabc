@@ -171,7 +171,7 @@ public:
 		getline(file,ligne);
         ss=splitwords(ligne," ",&nss);
 		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")and (nss>100)) {
-		  cout<<"Fichier SNP\n";
+		  cout<<"Fichier "<<filename<<" : SNP\n";
 		  return 1;
 		}
 		return 0;
@@ -480,7 +480,7 @@ public:
 		for (int locustype=0;locustype<5;locustype++) f1.write((char*)&(this->catexist[locustype]),sizeof(bool));
 		for (int locustype=0;locustype<5;locustype++) {					//nombre total de gènes par catégorie de locus
 			if (this->catexist[locustype]){
-				for (int sa=0;sa<this->nsample;sa++) f1.write((char*)&(this->ss[sa]),sizeof(int));
+				for (int sa=0;sa<this->nsample;sa++) f1.write((char*)&(this->ss[locustype][sa]),sizeof(int));
 			}
 			
 		} 
@@ -527,11 +527,17 @@ cout<<"fin de ecribin\n";
 			for (int j=0;j<this->nind[i];j++) f0.read((char*)&(this->indivsexe[i][j]),sizeof(int));
 		}
 		this->locus = new LocusC[this->nloc];
-		for (int loc=0;loc<this->nloc;loc++) f0.read((char*)&(this->locus[loc].type),sizeof(int)); //types des locus																		
+		for (int loc=0;loc<this->nloc;loc++) f0.read((char*)&(this->locus[loc].type),sizeof(int)); //types des locus
+		this->catexist = new bool[5];																		
+		this->ss = new int*[5];																		
 		for (int locustype=0;locustype<5;locustype++) f0.read((char*)&(this->catexist[locustype]),sizeof(bool));
+		for (int locustype=0;locustype<5;locustype++) cout<<" type "<<locustype<<"   catexist ="<<this->catexist[locustype]<<"\n";
 		for (int locustype=0;locustype<5;locustype++) {											//nombre total de gènes par catégorie de locus
 			if (this->catexist[locustype]) {
-				for (int sa=0;sa<this->nsample;sa++) f0.read((char*)&(this->ss[sa]),sizeof(int)); 
+				this->ss[locustype] = new int[this->nsample];
+				for (int sa=0;sa<this->nsample;sa++) f0.read((char*)&(this->ss[locustype][sa]),sizeof(int));
+				cout<<"type "<<locustype<<"\n";
+				for (int sa=0;sa<this->nsample;sa++) cout <<this->ss[locustype][sa]<<"   "; cout<<"\n"; 
 			}
 		}
 		for (int loc=0;loc<this->nloc;loc++) {

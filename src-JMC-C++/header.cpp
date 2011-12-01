@@ -1115,8 +1115,8 @@ public:
 			this->particuleobs.data.indivsexe[i] = new int[this->dataobs.nind[i]];
 			for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
 		}
-		this->particuleobs.data.catexist = new bool[5];
-		for (int i=0;i<5;i++) this->particuleobs.data.catexist[i] = this->dataobs.catexist[i];
+		this->particuleobs.catexist = new bool[5];
+		for (int i=0;i<5;i++) this->particuleobs.catexist[i] = this->dataobs.catexist[i];
 		this->particuleobs.data.ss = new int*[5];
 		for (int locustype=0;locustype<5;locustype++){
 			if (this->dataobs.catexist[locustype]) {
@@ -1124,6 +1124,22 @@ public:
 				for (int sa=0;sa<this->dataobs.nsample;sa++) this->particuleobs.data.ss[locustype][sa] = this->dataobs.ss[locustype][sa];
 			} 
 		} 
+		this->particuleobs.dat = new bool**[5];
+		this->particuleobs.ref = new bool**[5];
+		for (int locustype=0;locustype<5;locustype++){
+			if (this->dataobs.catexist[locustype]) {
+				this->particuleobs.dat[locustype] = new bool*[this->dataobs.nsample];
+				this->particuleobs.ref[locustype] = new bool*[this->dataobs.nsample];
+				for (int sa=0;sa<this->dataobs.nsample;sa++) {
+					this->particuleobs.dat[locustype][sa] = new bool[this->dataobs.ss[locustype][sa]];
+					this->particuleobs.ref[locustype][sa] = new bool[this->dataobs.ss[locustype][sa]];
+					for (int i=0;i<this->dataobs.ss[locustype][sa];i++) {
+						this->particuleobs.dat[locustype][sa][i] = true;
+						this->particuleobs.ref[locustype][sa][i] = false;
+					}
+				}
+			}
+		}
 		if (debuglevel==2) cout<<"apres DATA\n";
 //partie GROUPES
 		int ngr = this->ngroupes;
