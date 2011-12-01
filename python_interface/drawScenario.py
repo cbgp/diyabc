@@ -203,7 +203,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         painter.setPen(pen)
         n=0
         for i in range(0,len(t.node)):
-            if (t.node[i].category == "sa") or (t.node[i].category == "sa2"):
+            if (t.node[i].category == "sa") or (t.node[i].category == "sa2") or (t.node[i].category == "rs"):
                 for j in range(0,len(t.node)):
                     if ((t.node[i].category == "sa") or (t.node[i].category == "sa2")) and (t.node[i].category != t.node[j].category):
                         if t.node[i].y > t.node[j].y:
@@ -230,6 +230,24 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                             font.setPixelSize(12+font_inc)
                             painter.setFont(font)
                             if t.node[i].category == "sa":
+                                painter.drawText(x-19,y+50,"Pop %i"%t.node[i].pop)
+                        if (t.node[i].category == "rs"):
+                            x = t.node[i].x
+                            y = t.node[i].y
+                            n+=1
+                            pen = QPen(Qt.blue,1)
+                            painter.setPen(pen)
+                            painter.drawRoundRect(x-15,y+10,35,20)
+                            font = QFont()
+                            font.setItalic(True)
+                            font.setPixelSize(10+font_inc)
+                            painter.setFont(font)
+                            painter.drawText(x-10,y+25,'(Sa %i)'%t.node[i].pop)
+                            font = QFont()
+                            font.setItalic(False)
+                            font.setPixelSize(12+font_inc)
+                            painter.setFont(font)
+                            if t.node[i].category == "rs":
                                 painter.drawText(x-19,y+50,"Pop %i"%t.node[i].pop)
 
 

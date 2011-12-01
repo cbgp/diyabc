@@ -18,7 +18,7 @@ class IOScreenError(Error):
 
 class Event(object):
 
-    EVENT_TYPE    = ('SAMPLE','VARNE', 'MERGE', 'SPLIT', 'SEXUAL')
+    EVENT_TYPE    = ('SAMPLE','REFSAMPLE','VARNE', 'MERGE', 'SPLIT', 'SEXUAL')
 
     
     def __init__(self, action=None, pop=None, pop1=None, pop2=None, sample=None, Ne=None, N=None, time=None, graphtime =None, admixrate=None, numevent0=None,
@@ -125,7 +125,7 @@ class Sequence(list) :
     
     
 class Scenario(object):
-    def __init__(self,parameters=None,history=None,refhistory=None, number=None, time_sample=None, prior_proba=None, nparamtot=None, popmax=None, npop=None, nsamp=None):
+    def __init__(self,parameters=None,history=None,refhistory=None, number=None, time_sample=None, prior_proba=None, nparamtot=None, popmax=None, npop=None, nsamp=None, nrefsamp=None):
         if parameters == None :  self.parameters = []
         else                  :  self.parameters = parameters
         self.history     = history
@@ -136,6 +136,7 @@ class Scenario(object):
         self.popmax      = popmax
         self.npop        = npop
         self.nsamp       = nsamp
+        self.nrefsamp    = nrefsamp
         self.parametersbackup = []
         if time_sample == None : self.time_sample =[]
         else                   : self.time_sample= time_sample
@@ -218,8 +219,8 @@ class Scenario(object):
         else : self.parametersbackup = []
         ligne0 = textarray[0]   #take the first line of the scenario 
         ligne  =ligne0.upper()  #put it in uppercase
-        if ligne.find('SAMPLE')+ligne.find('MERGE')+ligne.find('VARNE')+ligne.find('SPLIT')+ligne.find('SEXUAL')>-4: 
-            raise IOScreenError, "The first line must provide population effective sizes"
+        if ligne.find('SAMPLE')+ligne.find('REFSAMPLE')+ligne.find('MERGE')+ligne.find('VARNE')+ligne.find('SPLIT')+ligne.find('SEXUAL')>-4: 
+            raise IOScreenError, "The first line must provide effective population sizes"
         ls = ligne0.split()
         self.npop = len(ls)
         self.history = History()
@@ -233,11 +234,14 @@ class Scenario(object):
             Ncur.append(NNc)
             if NN.val == None : self.detparam(NN.name,"N")   
         self.nsamp = 0
+        self.nrefsamp = 0
         nevent = 0
         for i,li in enumerate(textarray[1:]): 
-            if li.upper().find('SAMPLE') > -1 : 
+            if li.upper().find('SAMPLE')+li.upper().find('REFSAMPLE') > -1 : 
                 self.nsamp+=1
-                if len(li.strip().split(' ')) != 3:
+                if li.upper().find('REFSAMPLE') > -1 :
+					self.nrefsamp+=1
+                if len(li.strip().split(' ')) < 3:
                     raise IOScreenError, "At line %i, the number of words is incorrect"%(i+2)
                 # verif que le nombre apres "sample" est bien inférieur ou egal au nombre de pop (len(Ncur))
                 elif int(li.strip().split(' ')[-1]) > len(Ncur):
@@ -246,7 +250,7 @@ class Scenario(object):
             raise IOScreenError, "You must indicate when samples are taken"
         if data!=None:
             #print self.nsamp,"========", data.nsample
-            if self.nsamp != data.nsample:
+            if self.nsamp != data.nsample+self.nrefsamp :
                 raise IOScreenError, "The number of samples in scenario %s does not match the data file"%(self.number)
         if len(textarray)>1 :
             for ili0 in range(0,len(textarray)-1) :
@@ -270,13 +274,16 @@ class Scenario(object):
                     Li = li.upper()
                     litem = li.split()
                     nitems = len(litem)
-                    if Li.find("SAMPLE")>-1:
+                    if Li.find("SAMPLE")+ Li.find("REFSAMPLE")>-1:
                         if nitems<3:
                             raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
                         self.cevent = Event()
                         self.cevent.numevent0 = nevent
                         nevent +=1
-                        self.cevent.action = "SAMPLE"
+                        if Li.find("SAMPLE")>-1 : 
+							self.cevent.action = "SAMPLE"
+                        if Li.find("REFSAMPLE")>-1 : 
+							self.cevent.action = "REFSAMPLE"
                         self.cevent.stime = litem[0]
                         if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
@@ -441,7 +448,6 @@ class Scenario(object):
         if np>1 :
             raise IOScreenError, "In scenario %s, more than one population (%s) are ancestral"%(self.number,s)
         self.refhistory = copy.deepcopy(self.history)        
-            
                                            
 class Scenarios(list):
     def append(self,value):

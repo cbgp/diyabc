@@ -811,7 +811,7 @@ public:
         this->statname =new string[this->nstat];
         ss=splitwords(entete," ",&nss);
         for (int i=nstat-1;i>=0;i--) this->statname[i]=ss[--nss];
-		this->entetehist=this->entete.substr(0,this->entete.length()-14*(nparamut+nstat)+2);
+		this->entetehist=this->entete.substr(0,this->entete.length()-14*(nparamut+nstat));
 		if (nparamut>0) this->entetemut=this->entete.substr(this->entetehist.length(),14*nparamut);else this->entetemut="";
 		this->entetestat=this->entete.substr(this->entetehist.length()+this->entetemut.length(),14*nstat);
 		if (debuglevel==2) cout<<"les trois entetes\n";

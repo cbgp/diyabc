@@ -1,7 +1,7 @@
 /*
  * particuleC.cpp
  *
-//  *  Created on: 23 sept. 2010
+ *  Created on: 23 sept. 2010
  *      Author: cornuet
  */
 #ifndef MATHH
@@ -738,7 +738,7 @@ struct ParticleC
 		this->ref = new bool**[5];
 		this->dat = new bool**[5];
 		for (int cat=0;cat<5;cat++) {
-			if (this->catexist[cat]) {
+			if (this->data.catexist[cat]) {
 				this->ref[cat] = new bool*[this->nsample];
 				this->dat[cat] = new bool*[this->nsample];
 				for (int sa=0;sa<this->nsample;sa++) {this->ref[cat][sa] = new bool[this->data.ss[cat][sa]];this->dat[cat][sa] = new bool[this->data.ss[cat][sa]];}

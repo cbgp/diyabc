@@ -128,11 +128,12 @@ class PopTree(object):
         if   numpop == 0 :cnode.pop = ev.pop
         elif numpop == 1 :cnode.pop = ev.pop1
         elif numpop == 2 :cnode.pop = ev.pop2
-        if   ev.action == "SAMPLE" :cnode.category = "sa"
-        elif ev.action == "VARNE"  :cnode.category = "vn"
-        elif ev.action == "MERGE"  :cnode.category = "me"
-        elif ev.action == "SEXUAL" :cnode.category = "se"
-        elif ev.action == "SPLIT"  :
+        if   ev.action == "SAMPLE"    :cnode.category = "sa"
+        elif ev.action == "REFSAMPLE" :cnode.category = "sa"
+        elif ev.action == "VARNE"     :cnode.category = "vn"
+        elif ev.action == "MERGE"     :cnode.category = "me"
+        elif ev.action == "SEXUAL"    :cnode.category = "se"
+        elif ev.action == "SPLIT"     :
             if numpop == 0 :cnode.category = "sp0"
             else           :cnode.category = "sp1"
         cnode.y = (PopTree.YBAS-25) - (ev.graphtime-t0)*self.deltaY
@@ -159,7 +160,7 @@ class PopTree(object):
         else        : self.deltaY = 100
         self.reset_tree()
         for iev,ev in enumerate(self.scenario.history.events):
-            if ev.action == "SAMPLE" :
+            if (ev.action == "SAMPLE") or (ev.action == "REFSAMPLE") :
                 cnode = self.cree_node(ev,iev,0,t0)
                 deja = False
                 if iev>0 :
@@ -382,7 +383,7 @@ class PopTree(object):
     def draw_tree(self):
         necht = 0
         for no in self.node : 
-            if no.category == "sa" : necht +=1
+            if (no.category == "sa")or(no.category == "rs") : necht +=1
         pasx = self.XMAX//(necht+1)
         xx = pasx
         n = len(self.node)-1
@@ -394,7 +395,7 @@ class PopTree(object):
                 nv +=1
                 n = self.br[i].child
             else    :
-                if self.node[n].category == "sa" : 
+                if (self.node[n].category == "sa")or(no.category == "rs") : 
                     self.node[n].x = xx
                     xx +=pasx
                 i = self.findbranchchild(n,True)
@@ -404,10 +405,10 @@ class PopTree(object):
                     n = self.br[i].father
         if self.nanc<len(self.node)-1 :
             for i in range(self.nanc,len(self.node)) : self.node[i].x = self.XMAX//2
-        """print "\n draw_tree etape 1\n"
+        if DEBUG: print "\n draw_tree etape 1\n"
         for i,no in enumerate(self.node) :
             if DEBUG: print no 
-        if DEBUG: print "\n"""
+        if DEBUG: print "\n"
         if self.nanc == 0 : return
         n = 0
         while self.node[n].x == 0 :
@@ -437,13 +438,14 @@ class PopTree(object):
                 found2 = self.node[n].category == "sp0" 
             found = found2    
         nrest0 = 0
-        #print "\n draw_tree etape 2\n"
+        if DEBUG :  print "\n draw_tree etape 2\n"
         for i in range(0,len(self.node)) : 
             if self.node[i].x == 0 : nrest0 +=1
-            #print self.node[i]
+            if DEBUG :  print self.node[i]
         nforce = 0
-        while nrest0>0 :
+        while (nrest0>0)and(nforce<2) :
             nrest = nrest0
+            if DEBUG :  print "\n nrest = %s   nforce = %s" % (nrest,nforce)
             n = 0
             while n<len(self.node)-1 :
                 found = False
@@ -534,9 +536,12 @@ class PopTree(object):
             if nrest == nrest0 : nforce +=1
             else               : nforce = 0
             nrest0 = nrest
-        """print "\nDraw_tree etape 2"
-        for i,no in enumerate(self.node) :
-            if DEBUG: print no """       
+        if DEBUG : print "\ncoucou\n"
+        if DEBUG :  print "\n n= %s  len(self.node)= %s" % (n,len(self.node))
+        if DEBUG :  
+			print "\nDraw_tree etape 3"
+			for i,no in enumerate(self.node) : print no
+        if DEBUG : print "\ncoucou\n"
         n = -1
         while n < (len(self.node)-1) :
             found = False
@@ -545,11 +550,12 @@ class PopTree(object):
                 found = self.node[n].category == "sp0"       
                 if found :
                     j1,j2 = self.findfathers(n)                    
-                    self.node[n].x = (self.node[j1].x+self.node[j2].x)//2    
+                    self.node[n].x = (self.node[j1].x+self.node[j2].x)//2 
+        if DEBUG :  print "\navant le calcul des x\n"
         for i in range(0,len(self.node)) : self.node[i].x = self.XMAX - 30 - self.node[i].x        
-        """print "\nDraw_tree etape 3"
+        if DEBUG :   print "\nDraw_tree etape 4"
         for i,no in enumerate(self.node) :
-            if DEBUG: print no"""        
+            if DEBUG: print no        
                 
     def improve_draw(self):
         for i,no in enumerate(self.node) :

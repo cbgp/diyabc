@@ -1,15 +1,13 @@
-
-
-//using namespace boost::python;
-//using namespace std;
-//#include <vector>
-
-//#ifdef _OPENMP
+/*
+ * particleset.cpp
+ *
+ *  Created on: 23 sept. 2010
+ *      Author: cornuet
+ */
 #ifndef OMPH
 #include <omp.h>
 #define OMPH
 #endif
-//#endif
 
 #ifndef HEADER
 #include "header.cpp"
@@ -21,30 +19,6 @@
 #define REFTABLE
 #endif
 
-/*  Numérotation des stat
- * 	1 : nal			-1 : nha			-13 : fst
- *  2 : het			-2 : nss            -14 : aml
- *  3 : MGW			-3 : mpd
- *  4 : var			-4 : vpd
- *  5 : Fst			-5 : dta
- *  6 : lik			-6 : pss
- *  7 : dm2			-7 : mns
- *  8 : n2P			-8 : vns
- *  9 : h2P			-9 : nh2
- * 10 : v2P		   -10 : ns2
- * 11 : das        -11 : mp2
- * 12 : Aml        -12 : mpb
- *
- */
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/*struct enregC {
-    int numscen;
-    float *param,*stat;
-    double dist;
-    string message;
-};*/
 
 enregC *enreg;
 extern long double **phistar;
@@ -524,13 +498,14 @@ void setgroup(int p) {
 			  pFile = fopen (scurfile.c_str(),"w");
               fprintf(pFile,"%s\n",this->header.entete.c_str());
 			  //cout<<"FISTTIME\n";
-			  //cout<<header.entete<<"\n";
+			  //cout<<header.entete<<"\n\n";
+			  //cout<<header.entetehist<<"\n\n";
+			  //cout<<header.entetemut<<"\n\n";
 			  int nph,npm;
 			  ss=splitwords(header.entetehist," ",&nph);
 			  if (debuglevel==5) cout<<header.entetehist<<"\n";
 			  if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;
               ss=splitwords(header.entete," ",&ns);
-			  //cout<<"entetemut <"<<header.entetemut<<">\n";
 			  //cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
               np=ns-header.nstat-1;
               //cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
