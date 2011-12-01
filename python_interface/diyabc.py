@@ -362,10 +362,18 @@ class Diyabc(formDiyabc,baseDiyabc):
         for typ in [QLabel,QPushButton,QPlainTextEdit]:
             l.extend(obj.findChildren(typ))
         for e in l:
+            objnamestr = "%s\n\n"%e.objectName()
+            objname_debug = self.preferences_win.whatsThisDebugCheck.isChecked()
             try:
-                e.setWhatsThis(self.documentator.getDocString("%s"%e.objectName()))
+                docstr = self.documentator.getDocString("%s"%e.objectName())
+                if objname_debug:
+                    e.setWhatsThis(objnamestr + docstr)
+                else:
+                    e.setWhatsThis(docstr)
                 log(4,"Adding documentation of "+"%s"%e.objectName())
-            except Exception,e:
+            except Exception,ex:
+                if objname_debug:
+                    e.setWhatsThis(objnamestr)
                 #print "%s"%e
                 pass
 

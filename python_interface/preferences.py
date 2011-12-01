@@ -136,6 +136,8 @@ class Preferences(formPreferences,basePreferences):
 
     def toggleWtSelection(self,state):
         self.parent.toggleWt(state)
+        self.whatsThisDebugCheck.setDisabled(not state)
+        self.whatsThisDebugCheck.setChecked(False)
 
     def toggleTrayIconCheck(self,state):
         self.parent.toggleTrayIcon(state)
@@ -276,6 +278,7 @@ class Preferences(formPreferences,basePreferences):
         show_tray = str(self.ui.trayIconCheck.isChecked())
         ex_default = str(self.ui.useDefaultExeCheck.isChecked())
         wt = str(self.ui.wtCheck.isChecked())
+        wtdebug = str(self.ui.whatsThisDebugCheck.isChecked())
         max_thread = str(self.ui.maxThreadCombo.currentText())
         max_log_lvl = self.ui.maxLogLvlCombo.currentIndex()
 
@@ -289,6 +292,7 @@ class Preferences(formPreferences,basePreferences):
         self.config["various"]["showTrayIcon"] = show_tray
         self.config["various"]["useDefaultExecutable"] = ex_default
         self.config["various"]["activateWhatsThis"] = wt
+        self.config["various"]["debugWhatsThis"] = wtdebug
         self.config["various"]["maxThreadNumber"] = max_thread
         self.config["various"]["maxLogLevel"] = max_log_lvl + 1
 
@@ -323,6 +327,11 @@ class Preferences(formPreferences,basePreferences):
                 checked = (state == "True")
                 self.ui.wtCheck.setChecked(checked)
                 self.toggleWtSelection(checked)
+            if cfg["various"].has_key("debugWhatsThis"):
+                state = cfg["various"]["debugWhatsThis"]
+                checked = (state == "True")
+                self.ui.whatsThisDebugCheck.setChecked(checked)
+                #self.toggleWtSelection(checked)
             if cfg["various"].has_key("showTrayIcon"):
                 state = cfg["various"]["showTrayIcon"]
                 checked = (state == "True")
