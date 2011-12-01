@@ -253,6 +253,7 @@ class Preferences(formPreferences,basePreferences):
                 self.parent.setRecent(recent_list)
 
     def saveRecent(self):
+        log(3,"Saving recent list")
         if not self.config.has_key("recent"):
             self.config["recent"] = {}
         recList = self.parent.getRecent()
@@ -260,7 +261,7 @@ class Preferences(formPreferences,basePreferences):
         for ind,rec in enumerate(recList):
             # si on a qu'un seul exemplaire de ce recent ou bien, si on est le premier
             if (recList.count(rec) > 1 and recList.index(rec) == ind) or recList.count(rec) == 1 :
-                log(3,"Saving recent %s"%rec)
+                log(4,"Saving into recent list : %s"%rec)
                 self.config["recent"]["%s"%cfgRecentIndex] = rec
                 cfgRecentIndex += 1
 
