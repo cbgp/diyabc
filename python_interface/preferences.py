@@ -248,10 +248,11 @@ class Preferences(formPreferences,basePreferences):
     def loadRecent(self):
             recent_list = []
             if self.config.has_key("recent"):
+                log(3, "Loading recent list")
                 for num,rec in self.config["recent"].items():
                     if len(rec) > 0 and rec.strip() != "":
                         recent_list.append(rec.strip())
-                        log(3, "Loading recent : %s"%rec.strip())
+                        log(4, "Loading recent : %s"%rec.strip())
                 self.parent.setRecent(recent_list)
 
     def saveRecent(self):
@@ -312,10 +313,10 @@ class Preferences(formPreferences,basePreferences):
                 if ind != -1:
                     self.ui.formatCombo.setCurrentIndex(ind)
             if cfg["various"].has_key("particleLoopSize"):
-                pls = cfg["various"]["particleLoopSize"]
+                pls = str(cfg["various"]["particleLoopSize"])
                 self.ui.particleLoopSizeEdit.setText(pls.strip())
             if cfg["various"].has_key("execPath"):
-                exf = cfg["various"]["execPath"]
+                exf = str(cfg["various"]["execPath"])
                 self.ui.execPathEdit.setText(exf.strip())
             if cfg["various"].has_key("bgColor"):
                 bg = cfg["various"]["bgColor"]
@@ -437,7 +438,7 @@ class Preferences(formPreferences,basePreferences):
             try:
                 for key in ["nmin","nmax","nmean","nstdev","tmin","tmax","tmean","tstdev","amin","amax","amean","astdev"]:
                     editname = key[0].upper() + key[1:]
-                    exec('self.ui.%sEdit.setText(dico_val["%s"])'%(editname,key))
+                    exec('self.ui.%sEdit.setText(str(dico_val["%s"]))'%(editname,key))
                 #self.ui.NminEdit.setText(dico_val["nmin"])
                 #self.ui.NmaxEdit.setText(dico_val["nmax"])
                 #self.ui.NmeanEdit.setText(dico_val["nmean"])
@@ -479,7 +480,7 @@ class Preferences(formPreferences,basePreferences):
                 #if dico_val["tlaw"] == "NO":
                 #    self.ui.TNORadio.setChecked(True)
             except Exception,e:
-                log(3,"Malformed hist_model_default_values section in configuration")
+                log(3,"Malformed hist_model_default_values section in configuration\n\n%s"%e)
         else:
             log(3,"No hist conf found")
         
@@ -605,8 +606,8 @@ class Preferences(formPreferences,basePreferences):
         if cfg.has_key("connexion"):
                 #print cfg["connexion"]
             try:
-                self.ui.addrEdit.setText(cfg["connexion"]["host"])
-                self.ui.portEdit.setText(cfg["connexion"]["port"])
+                self.ui.addrEdit.setText(str(cfg["connexion"]["host"]))
+                self.ui.portEdit.setText(str(cfg["connexion"]["port"]))
                 yesno = (cfg["connexion"]["use_server"] == 'True')
                 self.ui.serverCheck.setChecked(yesno)
             except Exception,e:
