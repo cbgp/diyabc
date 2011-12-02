@@ -46,8 +46,8 @@ CYAN_BLINK='\033[5;36m'
 tabcolors=[WHITE,RED,BLUE,GREEN,YELLOW,CYAN,CYAN_BLINK]
 
 class CmdPrompt(cmd.Cmd):
-    """ prompt qui execute le code python passé par l'utilisateur
-    à l'aide de la commande do
+    """ prompt which execute python code given by the user
+    with the "do" command
     """
     def do_do(self,line):
         try:
@@ -59,7 +59,7 @@ class CmdPrompt(cmd.Cmd):
         return True
 
 class cmdThread(Thread):
-    """ Thread de lancement du prompt
+    """ Command prompt launch thread
     """
     def __init__(self,diy):
         super(cmdThread,self).__init__()
@@ -75,9 +75,9 @@ from xml.dom.minidom import parse
 import os.path
 
 class Documentator():
-    """ Classe qui extrait la documentation interne en lisant un fichier xml 
-    généré à partir des sources latex de la notice de DIYABC. Cette classe permet aussi
-    la consultation de cette documentation à partir de mots clés (l'objectName en l'occurence)
+    """ Class which extracts internal doc by parsing an xml file
+    generated from latex sources of DIYABC instructions paper. This class also provide
+    access primitives to this doc from keywords (qt objectnames in our case)
     """
     def __init__(self,xmlFile,parent=None):
         self.parent=parent
@@ -92,7 +92,7 @@ class Documentator():
             raise Exception("The xml documentation file %s was not found"%xmlFile)
 
     def loadDocFile(self):
-        """ charge le fichier xml pour remplir le dico de documentation
+        """ Loads the xml file to fill the doc hashtable
         """
         doc = parse(self.xmlFile)
 
@@ -110,7 +110,7 @@ class Documentator():
                     self.dicoDoc[key] = value
 
     def getDocString(self,key):
-        """ retourne la doc liée à key
+        """ Return the doc related to the key
         """
         result = None
         if key in self.dicoDoc.keys():
@@ -132,9 +132,8 @@ def sizedirectory(path):
 
 
 def logRotate(logFolder,nbDaysOld,sizeThreshold):
-    """ fonction qui nettoie le dossier logFolder de 
-    tous les fichiers plus vieux que nbDaysOld
-    SSI le dossier de logs est plus lourd que sizeThreshold Mo
+    """ Clean logFolder directory of all files older than nbDaysOld 
+    only if logFolder is bigger than sizeThreshold Mo
     """
     try:
         logSize = sizedirectory(logFolder)
@@ -149,14 +148,19 @@ def logRotate(logFolder,nbDaysOld,sizeThreshold):
                     if delta.days > nbDaysOld :
                         log(4,"Deleting %s because it is %s days old"%(os.path.join(root, name),delta.days))
                         os.remove(os.path.join(root, name))
+
+        logSize = sizedirectory(logFolder)
+        # if the size of the folder is still bigger than the threshold
+        # another logrotate is done on older files
+        if (logSize / (1024*1024)) > sizeThreshold:
+            logRotate(logFolder,nbDaysOld + 2, sizeThreshold)
     except Exception,e:
         raise Exception("Log rotation failed\n%s"%e)
 
 import array
 
 def readRefTableSize(reftablefile):
-    """ lit le nombre de records dans l'entete de 
-    la reftable binaire
+    """ Read the record number in binary reftable header
     """
     if os.path.exists(reftablefile):
         binint = array.array('i')
@@ -169,8 +173,8 @@ def readRefTableSize(reftablefile):
         return None
 
 def readNbRecordsOfScenario(reftablefile,numSc):
-    """ lit le nombre de records concernant un scenario
-    donnée dans l'entête de la reftable binaire
+    """ Read record number of a given scenario
+    in binary reftable header
     """
     if os.path.exists(reftablefile):
         binint = array.array('i')
@@ -183,16 +187,15 @@ def readNbRecordsOfScenario(reftablefile,numSc):
         return None
 
 class TeeLogger(object):
-    """ Classe qui remplace stdout et stderr pour logger sur 
-    la sortie standard (ancienne stdout), dans un fichier et qui appelle
-    une fonction externe simultanément
-    ATTENTION effet de bord : stderr n'est pas différentié de stdout dans le
-    fichier de log et dans la fonction externe
-    La fonction externe doit s'appeller comme cela :
+    """ Replacement object to stdout or stderr to log output on stdout, a log file
+    and by calling an external log function.
+    WARNING : A side effect is that stdout and stderr are not identifiable in
+    the log file and in the external log function.
+    The external log function must have this prototype :
     showExternal("string to display")
     """
     def __init__(self, name, out_or_err, showExternal=None):
-        """ remplace stdout ou stderr
+        """ replace stdout or stderr
         """
         self.showExternal = showExternal
         #self.logRotate(name)
@@ -235,7 +238,7 @@ class TeeLogger(object):
         self.out.write(data_short)
 
 def log(level,message):
-    """ Affiche le message fancyfied
+    """ Print the message after fancyfying it
     """
     if level <= LOG_LEVEL:
         dd = datetime.now()
