@@ -40,20 +40,24 @@ struct ParticleSetC
 
 	void setdata(int p) {
 		this->particule[p].data.nsample = this->header.dataobs.nsample;
-		this->particule[p].data.nind = new int[this->header.dataobs.nsample];
-		this->particule[p].data.indivsexe = new int*[this->header.dataobs.nsample];
+		this->particule[p].data.nind.resize(this->header.dataobs.nsample);
+		this->particule[p].data.indivsexe.resize(this->header.dataobs.nsample);
 		this->particule[p].data.catexist = new bool[5];
 		for (int cat=0;cat<5;cat++) this->particule[p].data.catexist[cat] =  this->header.dataobs.catexist[cat];
-		this->particule[p].data.ss = new int*[5];
+		this->particule[p].data.ss.resize(5);
 		for (int cat=0;cat<5;cat++) { 
 			if (this->particule[p].data.catexist[cat]) {
-				this->particule[p].data.ss[cat] = new int[this->header.dataobs.nsample];
+				this->particule[p].data.ss[cat].resize(this->header.dataobs.nsample);
 				for (int sa=0;sa<this->header.dataobs.nsample;sa++) this->particule[p].data.ss[cat][sa] = this->header.dataobs.ss[cat][sa];
+				if (p==0) {
+					cout<<"dans particule[0]\n";
+					for (int sa=0;sa<this->header.dataobs.nsample;sa++) cout <<this->particule[p].data.ss[cat][sa]<<"   ";cout<<"\n";
+				}
 			}
 		}
 		for (int i=0;i<this->header.dataobs.nsample;i++) {
 			this->particule[p].data.nind[i] = this->header.dataobs.nind[i];
-			this->particule[p].data.indivsexe[i] = new int[this->header.dataobs.nind[i]];
+			this->particule[p].data.indivsexe[i].resize(this->header.dataobs.nind[i]);
 			for (int j=0;j<header.dataobs.nind[i];j++) this->particule[p].data.indivsexe[i][j] = this->header.dataobs.indivsexe[i][j];
 		}
 		this->particule[p].data.nmisshap = this->header.dataobs.nmisshap;
@@ -204,8 +208,6 @@ void setgroup(int p) {
 		for (int kloc=0;kloc<this->header.dataobs.nloc;kloc++){
 			this->particule[p].nsample = this->header.dataobs.nsample;  
 			this->particule[p].locuslist[kloc].coeffcoal =  this->header.dataobs.locus[kloc].coeffcoal;  
-			this->particule[p].locuslist[kloc].samplesize = new int[ this->header.dataobs.nsample];
-			for (int sa=0;sa<this->particule[p].nsample;sa++) this->particule[p].locuslist[kloc].samplesize[sa] =  this->header.dataobs.locus[kloc].samplesize[sa];
 			this->particule[p].locuslist[kloc].type = this->header.dataobs.locus[kloc].type;
 			this->particule[p].locuslist[kloc].groupe = this->header.dataobs.locus[kloc].groupe;
 			if (this->header.dataobs.locus[kloc].type < 5) {
@@ -245,7 +247,7 @@ void setgroup(int p) {
             //if (p==0) cout<<"header nconditions="<<this->header.scenario[i].nconditions<<"\n";
 		    this->particule[p].scenario[i] = copyscenario(this->header.scenario[i]);
             //cout<<"apres la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
-		    //if (p==0) this->particule[p].scenario[i].ecris();
+		    //if (p==0) this->header.scenario[i].ecris();
             //if (p==0) cout<<"dans particule[0] scenario["<<i<<"] nconditions="<<this->particule[p].scenario[i].nconditions<<"\n";
 		}
         //cout<<"\navant la copie du superscenario\n";

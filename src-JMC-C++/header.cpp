@@ -186,7 +186,6 @@ public:
         getline(file,s1);
         this->nparamtot=getwordint(s1,1);		cout<<"nparamtot="<<this->nparamtot<<"\n";
         this->nstat=getwordint(s1,4);			cout<<"nstat="<<this->nstat<<"\n";
-		cout<<"samplesize="<<this->dataobs.locus[0].samplesize[0]<<"\n";
 		cat = this->dataobs.locus[0].type % 5;
 		cout<<"ss="<<this->dataobs.ss[cat][0]<<"\n";
                 //cout<<"avant scenarios\n";fflush(stdin);
@@ -208,8 +207,34 @@ public:
             for (int j=0;j<nlscen[i];j++) {getline(file,sl[i][j]);/*cout<<sl[i][j]<<"\n";*/}
             this->scenario[i].read_events(nlscen[i],sl[i]);
 			//this->scenario[i].ecris();
-            //cout<<"apres read_events\n";
+            cout<<"apres read_events\n";
         }
+        for (int ievent=0;ievent<this->scenario[0].nevent;ievent++){ 
+			if (this->scenario[0].event[ievent].action == 'R') {
+				this->dataobs.nsample++;
+				this->dataobs.nind.resize(this->dataobs.nsample);
+				this->dataobs.nind[this->dataobs.nsample-1]=this->scenario[0].event[ievent].nindref;
+				this->dataobs.indivsexe.resize(this->dataobs.nsample);
+				this->dataobs.indivsexe[this->dataobs.nsample-1].resize(this->dataobs.nind[this->dataobs.nsample-1]);
+				for (int i=0;i<this->dataobs.nind[this->dataobs.nsample-1];i++) this->dataobs.indivsexe[this->dataobs.nsample-1][i] = 2;
+				for (int cat=0;cat<5;cat++) {
+					if (this->dataobs.catexist[cat]) {
+						this->dataobs.ss[cat].resize(this->dataobs.nsample);
+						for (int sa=0;sa<this->dataobs.nsample;sa++) {
+							if (this->scenario[0].event[ievent].pop == sa+1) {
+								this->dataobs.ss[cat][sa]=0;
+								for (int ind=0;ind<this->scenario[0].event[ievent].nindref;ind++) {
+									if ((cat==0)or((cat==2)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ss[cat][sa] +=2;
+									else if (not((cat=13)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ss[cat][sa] +=1;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		for (int sa=0;sa<this->dataobs.nsample;sa++) cout<<this->dataobs.ss[0][sa]<<"   ";cout<<"\n";
+		
         for (int i=0;i<this->nscenarios;i++) delete []sl[i];
         delete [] sl;
         if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie scénarios\n";
@@ -223,14 +248,14 @@ public:
         ss2=splitwords(s2,",",&nss);
         this->nparamtot = atoi(ss2[0].c_str());
         this->nconditions = atoi(ss2[1].c_str());
-        //cout<<"dans header nconditions="<<this->nconditions<<"\n";
+        cout<<"dans header nconditions="<<this->nconditions<<"\n";
         delete [] ss2;
         this->histparam = new HistParameterC[this->nparamtot];
         if (this->nconditions>0) this->condition = new ConditionC[this->nconditions];
         delete [] ss;
         for (int i=0;i<this->nparamtot;i++) {
             getline(file,s1);
-            //cout<<s1<<"\n";
+            cout<<s1<<"\n";
             ss=splitwords(s1," ",&nss);
             this->histparam[i].name=ss[0];
             //cout<<this->histparam[i].name<<"\n";
@@ -246,6 +271,7 @@ public:
             this->condition = new ConditionC[this->nconditions];
             for (int i=0;i<this->nconditions;i++) {
                 getline(file,s1);
+				cout<<s1<<"\n";
                 this->condition[i] = this->readcondition(s1);
             }
             getline(file,s1);
@@ -853,8 +879,8 @@ public:
         getline(file,s1);
 		ss = splitwords(s1," ",&nss);
 		this->dataobs.nsample=atoi(ss[0].c_str());
-		this->dataobs.nind=new int[this->dataobs.nsample];
-		this->dataobs.indivsexe=new int*[this->dataobs.nsample];
+		this->dataobs.nind.resize(this->dataobs.nsample);
+		this->dataobs.indivsexe.resize(this->dataobs.nsample);
 		nf=new int[this->dataobs.nsample];
 		nm=new int[this->dataobs.nsample];
 		for (int i=0;i<this->dataobs.nsample;i++) {
@@ -863,7 +889,7 @@ public:
 			nf[i]=atoi(ss[0].c_str());
 			nm[i]=atoi(ss[1].c_str());
 			this->dataobs.nind[i]=nf[i]+nm[i];
-			this->dataobs.indivsexe[i]=new int[this->dataobs.nind[i]];
+			this->dataobs.indivsexe[i].resize(this->dataobs.nind[i]);
 			for (int j=0;j<nf[i];j++) this->dataobs.indivsexe[i][j]=2;
 			for (int j=nf[i];j<this->dataobs.nind[i];j++) this->dataobs.indivsexe[i][j]=1;
 		}
@@ -940,7 +966,6 @@ public:
 			else if (ss[1]=="<Y>")   this->dataobs.locus[loc].type =3;
 			else if (ss[1]=="<M>")   this->dataobs.locus[loc].type =4;
 			this->dataobs.cal_coeffcoal(loc);
-			this->dataobs.locus[loc].samplesize = new int[this->dataobs.nsample];
             if (ss[2]=="[M]") {
 			    s1=ss[3].substr(1);gr=atoi(s1.c_str());this->dataobs.locus[loc].groupe=gr;if (gr>grm) grm=gr;
                 this->dataobs.locus[loc].motif_size=atoi(ss[4].c_str());
@@ -967,13 +992,13 @@ public:
         }
         delete [] ss;
  		this->dataobs.catexist = new bool[5];
-		this->dataobs.ss = new int*[5];
+		this->dataobs.ss.resize(5);
 		for (int i=0;i<5;i++) this->dataobs.catexist[i]=false;
 		for (int locustype=0;locustype<5;locustype++) {
 			if (not this->dataobs.catexist[locustype]) {
 				for (int loc=0;loc<this->dataobs.nloc;loc++) {
 					if ((this->dataobs.locus[loc].type % 5) == locustype) {
-						this->dataobs.ss[locustype] = new int[this->dataobs.nsample];
+						this->dataobs.ss[locustype].resize(this->dataobs.nsample);
 						for (int sa=0;sa<this->dataobs.nsample;sa++) {
 							this->dataobs.ss[locustype][sa]=0;
 							for (int ind=0;ind<this->dataobs.nind[sa];ind++) {
@@ -984,13 +1009,6 @@ public:
 						this->dataobs.catexist[locustype] = true;
 					}
 				}
-			}
-		}
-//On suppose qu'il n'y a pas de données manquantes		
-        for (int loc=0;loc<this->dataobs.nloc;loc++){
-			cat = this->dataobs.locus[loc].type % 5;
-			for (int sa=0;sa<this->dataobs.nsample;sa++) {
-				this->dataobs.locus[loc].samplesize[sa] = this->dataobs.ss[cat][sa];
 			}
 		}
        if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie description des locus\n";
@@ -1106,24 +1124,27 @@ public:
 		if (debuglevel==2) cout<<"debut de calstatobs\n";
 		this->particuleobs.dnatrue = true;
 		this->particuleobs.nsample = this->dataobs.nsample;
-		//cout<<this->dataobs.nsample<<"\n";
+		if (debuglevel==2) cout<<"this->dataobs.nsample="<<this->dataobs.nsample<<"\n";
 		this->particuleobs.data.nsample = this->dataobs.nsample;
-		this->particuleobs.data.nind = new int[this->dataobs.nsample];
-		this->particuleobs.data.indivsexe = new int*[this->dataobs.nsample];
+		this->particuleobs.data.nind.resize(this->dataobs.nsample);
+		this->particuleobs.data.indivsexe.resize(this->dataobs.nsample);
 		for (int i=0;i<this->dataobs.nsample;i++) {
 			this->particuleobs.data.nind[i] = this->dataobs.nind[i];
-			this->particuleobs.data.indivsexe[i] = new int[this->dataobs.nind[i]];
+			this->particuleobs.data.indivsexe[i].resize(this->dataobs.nind[i]);
 			for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
 		}
+		
+		if (debuglevel==2) cout<<"avant l'affectation des catexist et des ss'\n";
 		this->particuleobs.catexist = new bool[5];
 		for (int i=0;i<5;i++) this->particuleobs.catexist[i] = this->dataobs.catexist[i];
-		this->particuleobs.data.ss = new int*[5];
+		this->particuleobs.data.ss.resize(5);
 		for (int locustype=0;locustype<5;locustype++){
 			if (this->dataobs.catexist[locustype]) {
-				this->particuleobs.data.ss[locustype] = new int[this->dataobs.nsample];
+				this->particuleobs.data.ss[locustype].resize(this->dataobs.nsample);
 				for (int sa=0;sa<this->dataobs.nsample;sa++) this->particuleobs.data.ss[locustype][sa] = this->dataobs.ss[locustype][sa];
 			} 
 		} 
+		if (debuglevel==2) cout<<"avant l'affectation des dat et ref'\n";
 		this->particuleobs.dat = new bool**[5];
 		this->particuleobs.ref = new bool**[5];
 		for (int locustype=0;locustype<5;locustype++){
@@ -1188,18 +1209,17 @@ public:
 		cout<<this->dataobs.nloc<<"\n";
 		//vector<LocusC> tmp(41751);
 		//this->particuleobs.locuslist = &tmp[0]; //new LocusC[41752];
-		if (debuglevel==2)cout<<"avant entete\n";
+		if (debuglevel==2)cout<<"avant la partie locus\n";
 		this->particuleobs.locuslist =new LocusC[this->dataobs.nloc];
 		for (int kloc=0;kloc<this->dataobs.nloc;kloc++){
 			this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type;
 			this->particuleobs.locuslist[kloc].groupe = this->dataobs.locus[kloc].groupe;
 			this->particuleobs.locuslist[kloc].coeffcoal =  this->dataobs.locus[kloc].coeffcoal;
 			cat = this->particuleobs.locuslist[kloc].type % 5;
+			if (debuglevel==2) cout<<"kloc="<<kloc<<"   cat="<<cat<<"\n";
 			//this->particuleobs.locuslist[kloc].name =  new char[strlen(this->dataobs.locus[kloc].name)+1];
 			//strcpy(this->particuleobs.locuslist[kloc].name,this->dataobs.locus[kloc].name);
-			this->particuleobs.locuslist[kloc].samplesize = new int[ this->dataobs.nsample];
-			for (int sa=0;sa<this->particuleobs.nsample;sa++) this->particuleobs.locuslist[kloc].samplesize[sa] =  this->dataobs.locus[kloc].samplesize[sa];
-			//cout<<"locus "<<kloc<<"   groupe "<<this->particuleobs.locuslist[kloc].groupe<<"\n";
+			if (debuglevel==2) cout<<"locus "<<kloc<<"   groupe "<<this->particuleobs.locuslist[kloc].groupe<<"\n";
 			if (this->dataobs.locus[kloc].type < 5) {
 				kmoy=(this->dataobs.locus[kloc].maxi+this->dataobs.locus[kloc].mini)/2;
 				this->particuleobs.locuslist[kloc].kmin=kmoy-((this->dataobs.locus[kloc].motif_range/2)-1)*this->dataobs.locus[kloc].motif_size;
@@ -1233,7 +1253,6 @@ public:
 					for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++)this->particuleobs.locuslist[kloc].haplosnp[sa][i] =this->dataobs.locus[kloc].haplosnp[sa][i];
 				}
 			}
-			if (debuglevel==2) cout <<"Locus"<<kloc<< "  samplesize[0]="<<this->particuleobs.locuslist[kloc].samplesize[0]<<"\n";
 		}
 		string *sb,ent;
 		int j;

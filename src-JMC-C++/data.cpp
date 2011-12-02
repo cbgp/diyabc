@@ -57,7 +57,6 @@ struct LocusC
 	int groupe;    //numero du groupe auquel appartient le locus
 	double coeffcoal;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
 	long double **freq;
-	int *samplesize;  //comptabilise les "gene copies" non-manquantes
 //Proprietes des locus sequences
 	long double pi_A,pi_C,pi_G,pi_T;
 	vector <long double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
@@ -110,16 +109,18 @@ class DataC
 public:
 	string message,title,**indivname,***genotype;
 	int nsample,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
-	int *nind;
-	int **indivsexe;
+	//int *nind;
+	//int **indivsexe;
 	double sexratio;
 	MissingHaplo *misshap, *misssnp;
 	MissingNuc   *missnuc;
 	LocusC *locus;
     bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
-	int **ss;  //nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
+	//int **ss;  //nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
 	bool *catexist;
-
+	vector < vector <int> > ss;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
+	vector <int> nind;
+	vector < vector <int> > indivsexe;
 /**
 * liberation de la mémoire occupée par la classe DataC
 */
@@ -130,8 +131,8 @@ public:
                     //cout<<"delete indivname\n";
                 }
                 if (Aindivsexe) {
-		    for (int  ech=0;ech<this->nsample;ech++) delete [] this->indivsexe[ech];
-		    delete [] this->indivsexe;
+		    for (int  ech=0;ech<this->nsample;ech++) this->indivsexe[ech].clear();
+		    this->indivsexe.clear();
                     //cout<<"delete indivsexe\n";
                 }
                 if (Agenotype) {
@@ -154,7 +155,7 @@ public:
                     for (int loc=0;loc<this->nloc;loc++) this->locus[loc].libere(true,this->nsample);
                     delete [] this->locus;
                 }
-		if (Anind) delete [] this->nind;
+		if (Anind) this->nind.clear();
 	}
 
 /**
@@ -224,7 +225,7 @@ public:
 		}
 		this->nsample = nech;  cout<<nech<<" échantillons : ";
 		for (ech=0;ech<nech;ech++) cout<<popname[ech]<<"  ";cout<<"\n";
-		this->nind = new int[nech];
+		this->nind.resize(nech);
 		file.close();
 //recherche du nombre d'individus par échantillon
 		nindi = new int[nech];
@@ -246,9 +247,9 @@ public:
 		for (ech=0;ech<nech;ech++) cout <<"échantillon "<<ech+1<<" : "<<this->nind[ech]<<" individus\n";
 //remplissage des noms et des génotypes des individus
 		this->indivname = new string*[nech];Aindivname=true;
-		this->indivsexe = new int*[nech];this->Aindivsexe=true;
+		this->indivsexe.resize(nech);this->Aindivsexe=true;
 		for (ech=0;ech<nech;ech++) this->indivname[ech] = new string[nindi[ech]];
-		for (ech=0;ech<nech;ech++) this->indivsexe[ech] = new int[nindi[ech]];
+		for (ech=0;ech<nech;ech++) this->indivsexe[ech].resize(nindi[ech]);
 		this->genotype = new string**[nech];this->Agenotype=true;
 		for (ech=0;ech<nech;ech++) {
 			this->genotype[ech] = new string*[nindi[ech]];
@@ -403,15 +404,12 @@ public:
 		string misval="9";
 		short int g0=0,g1=1,g9=9;
 		this->locus[loc].haplosnp = new short int*[this->nsample];
-		this->locus[loc].samplesize = new int[this->nsample];
 		for (ech=0;ech<this->nsample;ech++) {
 			ss=0;
-			this->locus[loc].samplesize[ech]=0;
 			for (ind=0;ind<this->nind[ech];ind++){
 				if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[ech][ind]==2))) {
 					ss +=2;
 					if (this->genotype[ech][ind][loc]!=misval) {
-						this->locus[loc].samplesize[ech] +=2;
 						if (this->genotype[ech][ind][loc]=="0") {haplo.push_back(g0);haplo.push_back(g0);}
 						if (this->genotype[ech][ind][loc]=="1") {haplo.push_back(g0);haplo.push_back(g1);}
 						if (this->genotype[ech][ind][loc]=="2") {haplo.push_back(g1);haplo.push_back(g1);}
@@ -419,7 +417,6 @@ public:
 				} else {
 					ss +=1;
 					if (this->genotype[ech][ind][loc]!=misval) {
-						this->locus[loc].samplesize[ech] +=1;
 						if (this->genotype[ech][ind][loc]=="0") {haplo.push_back(g0);}
 						if (this->genotype[ech][ind][loc]=="1") {haplo.push_back(g1);}
 					} else {haplo.push_back(g9);}
@@ -433,19 +430,20 @@ public:
 
 	void calcule_ss() {
 		this->catexist = new bool[5];
-		this->ss = new int*[5];
+		this->ss.resize(5);
 		for (int i=0;i<5;i++) this->catexist[i]=false;
 		for (int locustype=0;locustype<5;locustype++) {
 			if (not this->catexist[locustype]) {
 				for (int loc=0;loc<this->nloc;loc++) {
 					if ((this->locus[loc].type % 5) == locustype) {
-						this->ss[locustype] = new int[this->nsample];
+						this->ss[locustype].resize(this->nsample);
 						for (int sa=0;sa<this->nsample;sa++) {
 							this->ss[locustype][sa]=0;
 							for (int ind=0;ind<this->nind[sa];ind++) {
 								if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[sa][ind]==2))) this->ss[locustype][sa] +=2;
-								else this->ss[locustype][sa] +=1;
+								else if (not((this->locus[loc].type==13)and(this->indivsexe[sa][ind]==2))) this->ss[locustype][sa] +=1;
 							}
+							cout<<"data.ss["<<locustype<<"]["<<sa<<"]="<<this->ss[locustype][sa]<<"\n";
 						}
 						this->catexist[locustype] = true;
 					}
@@ -480,14 +478,13 @@ public:
 		for (int locustype=0;locustype<5;locustype++) f1.write((char*)&(this->catexist[locustype]),sizeof(bool));
 		for (int locustype=0;locustype<5;locustype++) {					//nombre total de gènes par catégorie de locus
 			if (this->catexist[locustype]){
-				for (int sa=0;sa<this->nsample;sa++) f1.write((char*)&(this->ss[locustype][sa]),sizeof(int));
+				for (int sa=0;sa<this->nsample;sa++) {
+					f1.write((char*)&(this->ss[locustype][sa]),sizeof(int));
+					cout<<"ecribin   this->ss["<<locustype<<"]["<<sa<<"]="<<this->ss[locustype][sa]<<"\n";
+				}
 			}
 			
 		} 
-		for (int loc=0;loc<this->nloc;loc++) {
-			kloc = index[loc];																		//nombre de gènes non manquants par locus x echantillon
-			for(int ech=0;ech<this->nsample;ech++) f1.write((char*)&(this->locus[kloc].samplesize[ech]),sizeof(int));
-		}
 		for (int loc=0;loc<this->nloc;loc++) {
 			kloc = index[loc];
 			categ = this->locus[kloc].type % 5;
@@ -510,7 +507,7 @@ cout<<"fin de ecribin\n";
         f0.open(filenamebin.c_str(),ios::in|ios::binary);
 		f0.read((char*)&(this->nloc),sizeof(int));													//nombre de locus
 		f0.read((char*)&(this->nsample),sizeof(int));												//nombre d'échantillons
-		this->nind = new int[this->nsample];
+		this->nind.resize(this->nsample);
 		for(int i=0;i<this->nsample;i++) f0.read((char*)&(this->nind[i]),sizeof(int));				//nombre d'individus par échantillons
 		this->indivname = new string*[this->nsample];
 		for(int i=0;i<this->nsample;i++) this->indivname[i] = new string[this->nind[i]];
@@ -521,29 +518,25 @@ cout<<"fin de ecribin\n";
 				this->indivname[i][j] = char2string(buffer);
 			}
 		}
-		this->indivsexe = new int*[this->nsample];
-		for(int i=0;i<this->nsample;i++) this->indivsexe[i] = new int[this->nind[i]];
+		this->indivsexe.resize(this->nsample);
+		for(int i=0;i<this->nsample;i++) this->indivsexe[i].resize(this->nind[i]);
 		for(int i=0;i<this->nsample;i++){															//sexes des individus
 			for (int j=0;j<this->nind[i];j++) f0.read((char*)&(this->indivsexe[i][j]),sizeof(int));
 		}
 		this->locus = new LocusC[this->nloc];
 		for (int loc=0;loc<this->nloc;loc++) f0.read((char*)&(this->locus[loc].type),sizeof(int)); //types des locus
 		this->catexist = new bool[5];																		
-		this->ss = new int*[5];																		
+		this->ss.resize(5);																		
 		for (int locustype=0;locustype<5;locustype++) f0.read((char*)&(this->catexist[locustype]),sizeof(bool));
 		for (int locustype=0;locustype<5;locustype++) cout<<" type "<<locustype<<"   catexist ="<<this->catexist[locustype]<<"\n";
 		for (int locustype=0;locustype<5;locustype++) {											//nombre total de gènes par catégorie de locus
 			if (this->catexist[locustype]) {
-				this->ss[locustype] = new int[this->nsample];
+				this->ss[locustype].resize(this->nsample);
 				for (int sa=0;sa<this->nsample;sa++) f0.read((char*)&(this->ss[locustype][sa]),sizeof(int));
 				cout<<"type "<<locustype<<"\n";
 				for (int sa=0;sa<this->nsample;sa++) cout <<this->ss[locustype][sa]<<"   "; cout<<"\n"; 
 			}
 		}
-		for (int loc=0;loc<this->nloc;loc++) {
-			this->locus[loc].samplesize = new int[this->nsample];
-			for(int ech=0;ech<this->nsample;ech++) f0.read((char*)&(this->locus[loc].samplesize[ech]),sizeof(int));
-		}				
 		for (int loc=0;loc<this->nloc;loc++) {
 			this->locus[loc].haplosnp = new short int*[this->nsample];
 			categ = this->locus[loc].type % 5;
@@ -630,18 +623,18 @@ cout<<"fin de ecribin\n";
 		}
 		file.close();
 		this->nsample=nech;
-		this->nind = new int[nech];this->Anind=true;
+		this->nind.resize(nech);this->Anind=true;
 		for (int i=0;i<nech;i++) {this->nind[i]=nindi[i];}
 		if (this->nmisshap>0) this->misshap = new MissingHaplo[this->nmisshap];
 		if (this->nmissnuc>0) this->missnuc = new MissingNuc[this->nmissnuc];
 	        this->nmisshap=0;
 		this->nmissnuc=0;
 		this->indivname = new string*[nech];this->Aindivname=true;
-		this->indivsexe = new int*[nech];this->Aindivsexe=true;
+		this->indivsexe.resize(nech);this->Aindivsexe=true;
 		this->genotype = new string**[nech];this->Agenotype=true;
 		for (int i=0;i<nech;i++) {
 			this->indivname[i]= new string[nind[i]];
-			this->indivsexe[i] = new int[nind[i]];
+			this->indivsexe[i].resize(nind[i]);
 			for(j=0;j<this->nind[i];j++) this->indivsexe[i][j] = 2;
 			this->genotype[i] = new string*[nind[i]];
 			for(j=0;j<this->nind[i];j++) this->genotype[i][j] = new string[this->nloc];
@@ -703,10 +696,8 @@ cout<<"fin de ecribin\n";
         vector <int> haplo;
     	this->locus[loc].mini=1000;this->locus[loc].maxi=0;
     	this->locus[loc].haplomic = new int*[this->nsample];
-    	this->locus[loc].samplesize = new int[this->nsample];
         //cout<<"data Locus="<<loc<<"\n";
     	for (int ech=0;ech<this->nsample;ech++){
-    		this->locus[loc].samplesize[ech] = 0;
             ng=0;
     		for (int ind=0;ind<this->nind[ech];ind++){
     			geno=string(this->genotype[ech][ind][loc]);
@@ -725,7 +716,6 @@ cout<<"fin de ecribin\n";
     			for (int i=0;i<n;i++) {
     				ng++;
                     if (gen[i]!="000") {
-    					this->locus[loc].samplesize[ech] +=1;
     					gg = atoi(gen[i].c_str());
     					haplo.push_back(gg);
     					if (gg>this->locus[loc].maxi) this->locus[loc].maxi=gg;
@@ -766,10 +756,8 @@ cout<<"fin de ecribin\n";
         vector <string> haplo;
     	this->locus[loc].haplodna = new string*[this->nsample];
 		ss = new int[this->nsample];
-    	this->locus[loc].samplesize = new int[this->nsample];
     	this->locus[loc].dnalength = -1;
     	for (int ech=0;ech<this->nsample;ech++){
-    		this->locus[loc].samplesize[ech] = 0;
             ng=0;
     		for (int ind=0;ind<this->nind[ech];ind++){
     			geno=this->genotype[ech][ind][loc];
@@ -807,7 +795,6 @@ cout<<"fin de ecribin\n";
                     ng++;
                     haplo.push_back(gen[i]);
     				if (gen[i]!="") {
-    					this->locus[loc].samplesize[ech] +=1;
     					j0=min(gen[i].find("-"),gen[i].find("N"));
     					while (j0!=string::npos) {
     						this->nmissnuc +=1;
