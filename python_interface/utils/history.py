@@ -2,6 +2,8 @@
 '''
 Created on 8 oct. 2009
 
+Set of classes usefull in historical model definition of DIYABC
+
 @author: cornuet
 '''
 import copy

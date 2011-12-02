@@ -487,7 +487,6 @@ def isSNPDatafile(name):
     return False
 
 
-
-
-#plop = Data("/home/cornuet/diyabc/commun/linux/simdat1_2011_10_10-1/datasim2_001")
-#plop.loadfromfile()
+if __name__ == "__main__":
+    plop = Data("/home/cornuet/diyabc/commun/linux/simdat1_2011_10_10-1/datasim2_001")
+    plop.loadfromfile()
