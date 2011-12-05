@@ -153,7 +153,7 @@ def logRotate(logFolder,nbDaysOld,sizeThreshold):
         # if the size of the folder is still bigger than the threshold
         # another logrotate is done on older files
         if (logSize / (1024*1024)) > sizeThreshold:
-            logRotate(logFolder,nbDaysOld + 2, sizeThreshold)
+            logRotate(logFolder,nbDaysOld - 2, sizeThreshold)
     except Exception,e:
         raise Exception("Log rotation failed\n%s"%e)
 

@@ -409,9 +409,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
                 self.th = RefTableGenThread(self,nb_to_gen)
-            self.th.connect(self.th,SIGNAL("increment"),self.incProgress)
-            self.th.connect(self.th,SIGNAL("refTableProblem"),self.refTableProblem)
-            self.th.connect(self.th,SIGNAL("refTableLog"),self.refTableLog)
+            self.th.connect(self.th,SIGNAL("increment(int,QString)"),self.incProgress)
+            self.th.connect(self.th,SIGNAL("refTableProblem(QString)"),self.refTableProblem)
+            self.th.connect(self.th,SIGNAL("refTableLog(int,QString)"),self.refTableLog)
             #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
             self.th.start()
         else:
@@ -421,15 +421,15 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             output.notify(self,"Impossible to launch","An analysis is processing,\
                     \nimpossible to launch reftable generation")
 
-    def refTableProblem(self):
-        output.notify(self,"reftable problem","Something happened during the reftable generation :\n %s"%(self.th.problem))
+    def refTableProblem(self,msg):
+        output.notify(self,"reftable problem","Something happened during the reftable generation :\n %s"%(msg))
         #self.stopUiGenReftable()
         self.stopRefTableGen()
         self.nextAnalysisInQueue()
 
-    def refTableLog(self):
+    def refTableLog(self,lvl,msg):
         if self.th != None:
-            log(self.th.loglvl,self.th.logmsg)
+            log(lvl,msg)
 
     def stopUiGenReftable(self):
         self.ui.runReftableButton.setText("Run computations")
@@ -441,12 +441,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.ui.runReftableButton.setDisabled(True)
         self.ui.progressBar.show()
  
-    def incProgress(self):
+    def incProgress(self,done,time_remaining):
         """Incremente la barre de progression de la génération de la reftable
         """
-        done = self.th.nb_done
+        #done = self.th.nb_done
         nb_to_do = self.th.nb_to_gen
-        time_remaining = self.th.time
+        #time_remaining = self.th.time
         #self.ui.reftableProgressLabel.setText('%s remaining'%time_remaining)
         self.ui.runReftableButton.setText("Running ... %s remaining"%(time_remaining.replace('\n',' ')))
         pc = (float(done)/float(nb_to_do))*100
@@ -831,9 +831,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if os.path.exists("%s/%s_progress.txt"%(self.dir,analysis.name)):
                 os.remove("%s/%s_progress.txt"%(self.dir,analysis.name))
             self.thAnalysis = AnalysisThread(self,analysis)
-            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress"),self.analysisProgress)
-            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProblem"),self.analysisProblem)
-            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisLog"),self.analysisLog)
+            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress(int)"),self.analysisProgress)
+            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProblem(QString)"),self.analysisProblem)
+            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisLog(int,QString)"),self.analysisLog)
             self.thAnalysis.start()
             # on la vire de la queue
             self.analysisQueue.remove(analysis)
@@ -845,8 +845,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
                     frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #F4992B")
 
-    def analysisProblem(self):
-        output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,self.thAnalysis.problem))
+    def analysisProblem(self,msg):
+        output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,msg))
 
         # nettoyage du progress.txt
         aid = self.thAnalysis.analysis.name
@@ -867,16 +867,16 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         self.nextAnalysisInQueue()
 
-    def analysisLog(self):
+    def analysisLog(self,lvl,msg):
         """ log pour le thread analysis
         """
         if self.thAnalysis != None:
-            log(self.thAnalysis.loglvl,self.thAnalysis.logmsg)
+            log(lvl,msg)
 
-    def analysisProgress(self):
+    def analysisProgress(self,prog):
         """ met à jour l'indicateur de progression de l'analyse en cours
         """
-        prog = self.thAnalysis.progress
+        #prog = self.thAnalysis.progress
         frame = None
         for fr in self.dicoFrameAnalysis.keys():
             if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
@@ -928,7 +928,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
-                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "compare":
             if os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) and\
@@ -981,7 +981,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
-                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "bias":
             if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
@@ -1002,7 +1002,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
-                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 log(3,"File %s/%s_bias.txt doesn't exist. Results cannot be moved"%(self.dir,aid))
                 return
         elif atype == "evaluate":
@@ -1020,7 +1020,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
-                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "modelChecking":
             if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)) or os.path.exists("%s/%s_mclocate.txt"%(self.dir,aid)):
@@ -1040,7 +1040,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
-                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "pre-ev":
             if os.path.exists("%s/%s_locate.txt"%(self.dir,aid)) or os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
@@ -1059,7 +1059,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
-                self.thAnalysis.emit(SIGNAL("analysisProblem"))
+                self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
 
         self.thAnalysis = None
@@ -1231,15 +1231,10 @@ class RefTableGenThreadCluster(QThread):
         self.nb_done = 0
         self.nb_to_gen = nb_to_gen
 
-        self.logmsg = ""
-        self.loglvl = 3
-
     def log(self,lvl,msg):
         """ evite de manipuler les objets Qt dans un thread non principal
         """
-        self.loglvl = lvl
-        self.logmsg = msg
-        self.emit(SIGNAL("refTableLog"))
+        self.emit(SIGNAL("refTableLog(int,QString)"),lvl,msg)
 
     def killProcess(self):
         pass
@@ -1286,10 +1281,10 @@ class RefTableGenThreadCluster(QThread):
             self.log(3,"Line received : %s"%line)
             if len(line.split('somme '))>1:
                 self.nb_done = int(line.split('somme ')[1].strip())
-                self.emit(SIGNAL("increment"))
+                self.emit(SIGNAL("increment(int,QString)"),self.nb_done,"unknown")
             if "durée" in line:
                 self.nb_done = int(str(self.parent.ui.nbSetsReqEdit.text()))
-                self.emit(SIGNAL("increment"))
+                self.emit(SIGNAL("increment(int,QString)"),self.nb_done,"unknown")
             # TODO fix on ne va pas jusqu'à 100 parce qu'on lit la ligne du temps de merge au lieu de la derniere (modifs dans launch)
             if self.nb_done == int(str(self.parent.ui.nbSetsReqEdit.text())):
                 break
@@ -1308,15 +1303,10 @@ class RefTableGenThread(QThread):
         self.time = "unknown time\n"
         self.processus = None
 
-        self.logmsg = ""
-        self.loglvl = 3
-
     def log(self,lvl,msg):
         """ evite de manipuler les objets Qt dans un thread non principal
         """
-        self.loglvl = lvl
-        self.logmsg = msg
-        self.emit(SIGNAL("refTableLog"))
+        self.emit(SIGNAL("refTableLog(int,QString)"),lvl,msg)
 
     def killProcess(self):
         self.log(3,"Attempting to kill reftable generation process")
@@ -1324,6 +1314,10 @@ class RefTableGenThread(QThread):
             if self.processus.poll() == None:
                 self.processus.kill()
                 self.log(3,"Killing reftable generation process (pid:%s) DONE"%(self.processus.pid))
+            else:
+                self.log(3,"Processus %s has already terminated"%self.processus.pid)
+        else:
+            self.log(3,"No process to kill")
 
     def run (self):
         # lance l'executable
@@ -1341,13 +1335,14 @@ class RefTableGenThread(QThread):
             nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen , "-g", "%s"%particleLoopSize ,"-m", "-t", "%s"%nbMaxThread]
             #print " ".join(cmd_args_list)
+            time.sleep(1)
             self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             self.processus = p
         except Exception,e:
             #print "Cannot find the executable of the computation program %s"%e
             self.problem = "Problem during program launch\n%s"%e
-            self.emit(SIGNAL("refTableProblem"))
+            self.emit(SIGNAL("refTableProblem(QString)"),self.problem)
             #output.notify(self.parent(),"computation problem","Cannot find the executable of the computation program")
             fg.close()
             return
@@ -1377,11 +1372,11 @@ class RefTableGenThread(QThread):
                             self.time = lines[2]
                         if red > self.nb_done:
                             self.nb_done = red
-                            self.emit(SIGNAL("increment"))
+                            self.emit(SIGNAL("increment(int,QString)"),self.nb_done,self.time)
                     elif lines[0].strip() == "END":
                         red = int(lines[1])
                         self.nb_done = red
-                        self.emit(SIGNAL("increment"))
+                        self.emit(SIGNAL("increment(int,QString)"),self.nb_done,self.time)
                         fg.close()
                         os.remove("%s/reftable.log"%(self.parent.dir))
                         return
@@ -1389,7 +1384,7 @@ class RefTableGenThread(QThread):
                         #print "lines != OK"
                         self.log(3,"The line does not contain 'OK'")
                         self.problem = lines[0].strip()
-                        self.emit(SIGNAL("refTableProblem"))
+                        self.emit(SIGNAL("refTableProblem(QString)"),self.problem)
                         #output.notify(self,"problem",lines[0])
                         fg.close()
                         return
@@ -1407,7 +1402,7 @@ class RefTableGenThread(QThread):
                 g.close()
                 if self.nb_done < self.nb_to_gen:
                     self.problem = "Reftable generation program exited anormaly"
-                    self.emit(SIGNAL("refTableProblem"))
+                    self.emit(SIGNAL("refTableProblem(QString)"),self.problem)
                     return
             # TODO à revoir ac JM
             #else:
@@ -1441,16 +1436,11 @@ class AnalysisThread(QThread):
         self.progress = 0
         self.processus = None
 
-        self.logmsg = ""
-        self.loglvl = 3
-
     def log(self,lvl,msg):
         """ evite de manipuler les objets Qt dans un thread non principal
         """
-        self.loglvl = lvl
-        self.logmsg = msg.replace(u'\xb5',u'u')
-        self.emit(SIGNAL("analysisLog"))
-
+        clean_msg = msg.replace(u'\xb5',u'u')
+        self.emit(SIGNAL("analysisLog(int,QString)"),lvl,clean_msg)
 
     def killProcess(self):
         if self.processus != None:
@@ -1493,7 +1483,7 @@ class AnalysisThread(QThread):
                 #print "on a progressé"
                 self.log(3,"The analysis '%s' has progressed (%s%%)"%(self.analysis.name,self.tmpp))
                 self.progress = self.tmpp
-                self.emit(SIGNAL("analysisProgress"))
+                self.emit(SIGNAL("analysisProgress(int)"),self.progress)
         except Exception,e:
             return
 
@@ -1532,7 +1522,7 @@ class AnalysisThread(QThread):
             #data= f.read()
             f.close()
             self.progress = 100
-            self.emit(SIGNAL("analysisProgress"))
+            self.emit(SIGNAL("analysisProgress(int)"),self.progress)
             return
 
         # pour toutes les autres analyses le schema est le même
@@ -1551,7 +1541,7 @@ class AnalysisThread(QThread):
         # la scrutation de la progression est identique pour toutes les analyses
         self.progress = 1
         self.tmpp = 1
-        self.emit(SIGNAL("analysisProgress"))
+        self.emit(SIGNAL("analysisProgress(int)"),self.progress)
         while True:
             self.updateProgress()
             # verification de l'arret du programme
@@ -1572,7 +1562,7 @@ class AnalysisThread(QThread):
                 if self.progress < 100:
                     redProblem = self.readProblem()
                     self.problem = "Analysis program exited before the end of the analysis (%s%%)\n%s\n%s"%(self.progress,redProblem,probOut)
-                    self.emit(SIGNAL("analysisProblem"))
+                    self.emit(SIGNAL("analysisProblem(QString)"),self.problem)
                     return
             time.sleep(2)
 
