@@ -658,3 +658,60 @@ class Preferences(formPreferences,basePreferences):
             QMessageBox.information(self,"Value error","%s"%problems)
             return False
 
+    def getRamInfo(self):
+        """ Retourne la quantite de ram en mega octet
+        """
+        totalRam = 0
+        availRam = 0
+        # LINUX
+        if "linux" in sys.platform:
+            import re
+            pat = re.compile(r'\s+')
+            f = open("/proc/meminfo",'r')
+            s = f.read().strip()
+            f.close()
+            s = s.split('\n')
+            for line in s:
+                cline = pat.sub(' ',line)
+                if "MemTotal" in line:
+                    totalRam = int(cline.split(' ')[1])/1000
+                elif "MemFree" in line:
+                    availRam = int(cline.split(' ')[1])/1000
+
+        # WINDOWS
+        elif "win" in sys.platform and "darwin" not in sys.platform:
+            import ctypes
+
+            kernel32 = ctypes.windll.kernel32
+            c_ulong = ctypes.c_ulong
+            class MEMORYSTATUS(ctypes.Structure):
+                _fields_ = [
+                    ('dwLength', c_ulong),
+                    ('dwMemoryLoad', c_ulong),
+                    ('dwTotalPhys', c_ulong),
+                    ('dwAvailPhys', c_ulong),
+                    ('dwTotalPageFile', c_ulong),
+                    ('dwAvailPageFile', c_ulong),
+                    ('dwTotalVirtual', c_ulong),
+                    ('dwAvailVirtual', c_ulong)
+                ]
+
+            memoryStatus = MEMORYSTATUS()
+            memoryStatus.dwLength = ctypes.sizeof(MEMORYSTATUS)
+            kernel32.GlobalMemoryStatus(ctypes.byref(memoryStatus))
+            mem = memoryStatus.dwTotalPhys / (1024*1024)
+            availRam = memoryStatus.dwAvailPhys / (1024*1024)
+            totalRam = int(mem)
+        # MACOS
+        elif "darwin" in sys.platform:
+            import os
+            cmd =  "echo $(( $(vm_stat | grep free | awk '{ print $3 }' | sed 's/\\.//')*4096/1048576 ))"
+            p = os.popen(cmd)
+            s = p.read()
+            p.close()
+            availRam = int(s)
+            # TODO : ce n'est pas vrai mais je n'ai pas encore trouvé
+            totalRam = availRam
+
+        return (totalRam, availRam)
+
