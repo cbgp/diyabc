@@ -834,8 +834,13 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                         problems += "Value of mean for parameter %s is incoherent\n"%pname
                     if param.findChild(QLineEdit,"stValueParamEdit").isEnabled() and stdev < 0:
                         problems += "Value of stdev for parameter %s is incoherent\n"%pname
+                    # verif min < mean < max si normal ou lognormal
+                    if param.findChild(QRadioButton,"normalRadio") != None and param.findChild(QRadioButton,"logNormalRadio") != None\
+                    and ( param.findChild(QRadioButton,"normalRadio").isChecked() or param.findChild(QRadioButton,"logNormalRadio").isChecked() ):
+                        if mean < min or mean > max:
+                            problems += "Mean of parameter %s should be included in [%s , %s]\n"%(pname,min,max)
                 # pour lognormal et loguniforme le mean doit être different de zero et le stdev aussi
-                if param.findChild(QRadioButton,"logNormalRadio") != None and param.findChild(QRadioButton,"logUniformRadio")\
+                if param.findChild(QRadioButton,"logNormalRadio") != None and param.findChild(QRadioButton,"logUniformRadio") != None\
                 and param.findChild(QLineEdit,"meanValueParamEdit") != None:
                     if param.findChild(QRadioButton,"logNormalRadio").isChecked() or param.findChild(QRadioButton,"logUniformRadio").isChecked():
                         if param.findChild(QLineEdit,"meanValueParamEdit").isEnabled():
