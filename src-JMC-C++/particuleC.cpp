@@ -665,6 +665,7 @@ struct ParticleC
     vector < vector <bool> > afsdone;
     vector < vector < vector <int> > > t_afs;
     vector < vector <int> > n_afs;
+	bool firstime;
 
 	int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar,refnindtot;
 	float reffreqmin;
@@ -750,8 +751,8 @@ struct ParticleC
         }
 		//cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
 		//this->scen.ecris();
-		cout<<"dans drawscenario   nsample="<<this->scen.nsamp<<"\n";
-		for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ss[0][sa]<<"   ";cout<<"\n";
+		//cout<<"dans drawscenario   nsample="<<this->scen.nsamp<<"\n";
+		//for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ss[0][sa]<<"   ";cout<<"\n";
 		this->refnindtot=0;
 		this->ref = new bool**[5];
 		this->dat = new bool**[5];
@@ -768,7 +769,7 @@ struct ParticleC
 								this->ref[cat][sa][i] = (i<this->scen.event[ievent].nindref);
 								if (this->ref[cat][sa][i]) this->refnindtot++;
 							}
-							cout<<"this->scen.event[ievent].action=='E'"<<"    refnindtot="<<this->refnindtot<<"\n";
+							//cout<<"this->scen.event[ievent].action=='E'"<<"    refnindtot="<<this->refnindtot<<"\n";
 						}
 						if ((this->scen.event[ievent].action=='R')and(this->scen.event[ievent].sample==sa+1)) {
 							this->refnindtot +=this->data.ss[cat][sa];
@@ -776,15 +777,14 @@ struct ParticleC
 								this->dat[cat][sa][i] = false;
 								this->ref[cat][sa][i] = true;
 							}
-							cout<<"this->scen.event[ievent].action=='R'"<<"    refnindtot="<<this->refnindtot<<"   ss="<<this->data.ss[cat][sa]<<"\n";
+							//cout<<"this->scen.event[ievent].action=='R'"<<"    refnindtot="<<this->refnindtot<<"   ss="<<this->data.ss[cat][sa]<<"\n";
 						}
 						
 					}
 				}
 			}
 		}
-		cout<<"refnindtot="<<this->refnindtot<<"\n";
-		exit(1);
+		//cout<<"refnindtot="<<this->refnindtot<<"\n";
 	}
 
 /**
@@ -1610,7 +1610,7 @@ struct ParticleC
 		//cout << "début de init_tree pour le locus " << loc  <<"\n";
 		GeneTreeC gt;
 		int nnod=0,nn,n=0,cat=(this->locuslist[loc].type % 5);
-		//cout << "nsample = " << this->data.nsample << "   samplesize[0] = " << this->locuslist[loc].samplesize[0] << "\n";
+		//cout << "nsample = " << this->nsample << "   samplesize[0] = " << this->locuslist[loc].samplesize[0] << "\n";
 		for (int sa=0;sa<this->data.nsample;sa++) {nnod +=this->data.ss[cat][sa];}
 		//cout << "nombre initial de noeuds = " << nnod  <<"\n";exit(6);
 		gt.ngenes = nnod;
@@ -1868,22 +1868,20 @@ struct ParticleC
         //cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
 	}
 
-/*	void cherche_branchesOK(int loc) {
+	void cherche_branchesOK(int loc) {
 		for (int b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = true;
-		if (this->data.npopref<1) return;
+		if (this->refnindtot<1) return;
 		int j,nodemrca=0,f1,f2,b;
 		bool mrca;
 //mise à true de nodes[i].OK pour les gènes des populations de référence
 		//printf("npopref = %3d     popref[0]=%3d\n",this->data.npopref,this->data.popref[0]);
+		int cat = this->locuslist[loc].type % 5;
+		int sa=0,ind=0;
 		for (int i=0;i<this->gt[loc].ngenes;i++) {
-			this->gt[loc].nodes[i].OK = false;
-			j=0;
-			while ((j<this->data.npopref)and(not this->gt[loc].nodes[i].OK)) {
-				this->gt[loc].nodes[i].OK = (this->gt[loc].nodes[i].sample == this->data.popref[j]);
-				if (not this->gt[loc].nodes[i].OK) j++;
-			}
-			//printf("node %3d  sample=%3d   popref[0]=%3d   OK=%1d\n",i,this->gt[loc].nodes[i].sample,this->data.popref[0],this->gt[loc].nodes[i].OK);
-		}
+			this->gt[loc].nodes[i].OK = this->ref[cat][sa][ind];
+			ind++;
+			if (ind==this->data.ss[cat][sa]) {ind=0;sa++;}
+		}	
 //mise à false des branches de l'arbre
 		for (b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = false;
 //remplissage des brhaut et brbas des nodes
@@ -1931,26 +1929,26 @@ struct ParticleC
 				} while (f1<nodemrca);
 			}
 		}
-		for (b=0;b<this->gt[loc].nbranches;b++){
+		/*for (b=0;b<this->gt[loc].nbranches;b++){
 			printf("branche %3d   bas %3d   haut %3d   (nodemrca %3d)",b,this->gt[loc].branches[b].bottom,this->gt[loc].branches[b].top,nodemrca);
 			if (this->gt[loc].branches[b].OK) printf("   OK\n"); else printf("\n");
-		}
-	}*/
+		}*/
+	}
 
 	void put_one_mutation(int loc) {
 		this->gt[loc].nmutot=1;
-		//	cherche_branchesOK(loc);
+		cherche_branchesOK(loc);
 		double r,s=0.0,lengthtot=0.0;
 		int b;
 		for (b=0;b<this->gt[loc].nbranches;b++) {
-			lengthtot +=this->gt[loc].branches[b].length;
+			if (this->gt[loc].branches[b].OK) lengthtot +=this->gt[loc].branches[b].length;
 			this->gt[loc].branches[b].nmut = 0;
 			//if (loc<1) cout<<"longueur de la branche "<<b<<" = "<<this->gt[loc].branches[b].length<<"\n";
 		}
 		r=this->mw.random()*lengthtot;
 		//if (loc<1) cout<<"lengthtot="<<lengthtot<<"     r="<<r<<"\n";
 		b=0;s=this->gt[loc].branches[b].length;
-		while (s<r) {b++; s +=this->gt[loc].branches[b].length;};
+		while (s<r) {b++; if (this->gt[loc].branches[b].OK) s +=this->gt[loc].branches[b].length;};
 		this->gt[loc].branches[b].nmut = 1;
 		//if (loc<1) cout<<"mutation dans la branche "<<b<<" sur "<<this->gt[loc].nbranches<<"\n";
 		//cout<<nOK<<" branches mutables sur "<<this->gt[loc].nbranches<<"\n";
@@ -2218,12 +2216,15 @@ struct ParticleC
 				}
 		}
 		else {									//SNP
-			this->locuslist[loc].haplosnp = new short int*[this->data.nsample];
-			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplosnp[sa] = new short int [this->data.ss[cat][sa]];
+			if (this->locuslist[loc].firstime){
+				this->locuslist[loc].haplosnp = new short int*[this->data.nsample];
+				for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplosnp[sa] = new short int [this->data.ss[cat][sa]];
+					this->locuslist[loc].firstime=false;
+			}
 			sa=0;ind=0;
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
-				this->locuslist[loc].haplosnp[sa][ind] = (short int)this->gt[loc].nodes[ordre[sa][ind]].state;
+					this->locuslist[loc].haplosnp[sa][ind] = (short int)this->gt[loc].nodes[ordre[sa][ind]].state;
 				//if (loc<1) cout<<this->locuslist[loc].haplosnp[sa][ind]<<"   ";
 				ind++;if (ind==this->data.ss[cat][sa]) {sa++;ind=0;}
 				//if ((loc<1)and(ind==0))cout<<"\n";
@@ -2284,8 +2285,9 @@ struct ParticleC
 		int n=0,n1=0;
 		double p;
 		bool poly=false;
+		//cout<<"dans polymref debut\n";
 		int cat = (this->locuslist[loc].type % 5);
-		for (int sa=0;sa<this->data.nsample;sa++) {
+		for (int sa=0;sa<this->nsample;sa++) {
 			for (int i=0;i<this->data.ss[cat][sa];i++) {
 				if (this->ref[cat][sa][i]) {
 					n +=1;
@@ -2293,10 +2295,12 @@ struct ParticleC
 				}
 			}
 		} 
+		//cout<<"dans polymref fin   n1="<<n1<<"   n="<<n<<"\n";
+		if (n==0) exit(1);
 		p=(double)n1/(double)n;
 		if (p > 0.5) poly=(p <= 1.0-this->reffreqmin);
 		else         poly=(p >= this->reffreqmin);
-		cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
+		//if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
 		return poly;
 	}
 	
@@ -2424,13 +2428,18 @@ struct ParticleC
 					simulOK[loc]=cree_haplo(loc);
 					if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
 				} else {
-					//cout<<"this->refnindtot="<<this->refnindtot<<"\n";
+					//if (loc==0) cout<<"this->refnindtot="<<this->refnindtot<<"\n";
 					if (this->refnindtot<1) {put_one_mutation(loc);simulOK[loc]=cree_haplo(loc);}
 					else {
+						this->locuslist[loc].firstime = true;
+						//if (loc==0) cout<<"apres firstime=true au locus "<<loc<<"\n";
 						do {
 							put_one_mutation(loc);
+							//if (loc==0) cout<<"apres put_one_mutation\n";
 							simulOK[loc]=cree_haplo(loc);
+							//if (loc==0) cout<<"apres cree_haplo\n";
 							snpOK = polymref(loc);
+							//if (loc==0) cout<<"apres polymref\n";
 						} while (not snpOK);
 					}
 				}
@@ -2784,9 +2793,9 @@ struct ParticleC
 			cat=this->locuslist[loc].type%5;
            // cout <<"\nLocus "<< loc <<"   kmin="<<this->locuslist[loc].kmin<<"   kmax="<<this->locuslist[loc].kmax<<"\n";
             this->locuslist[loc].nal = this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;
-            this->locuslist[loc].freq = new long double* [this->data.nsample];
+            this->locuslist[loc].freq = new long double* [this->nsample];
             //cout <<"nal ="<<this->locuslist[loc].nal<<"\n";
-            for (int samp=0;samp<this->data.nsample;samp++) {
+            for (int samp=0;samp<this->nsample;samp++) {
                 this->locuslist[loc].freq[samp] = new long double [this->locuslist[loc].nal];
                 for (int i=0;i<this->locuslist[loc].nal;i++) this->locuslist[loc].freq[samp][i]=0.0;
                 //cout << this->locuslist[loc].ss[samp] <<"\n";
@@ -2819,8 +2828,8 @@ struct ParticleC
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             loc=this->grouplist[gr].loc[iloc];
 			cat=this->locuslist[loc].type%5;
-            this->locuslist[loc].freq = new long double* [this->data.nsample];
-            for (int samp=0;samp<this->data.nsample;samp++) {
+            this->locuslist[loc].freq = new long double* [this->nsample];
+            for (int samp=0;samp<this->nsample;samp++) {
                 this->locuslist[loc].freq[samp] = new long double [2];
 				this->locuslist[loc].freq[samp][0] = 0.0;this->locuslist[loc].freq[samp][1] = 0.0;
                 for (int i=0;i<this->data.ss[cat][samp];i++){
@@ -2843,14 +2852,14 @@ struct ParticleC
             loc=this->grouplist[gr].loc[iloc];
             if (this->locuslist[loc].groupe>0){
                 if (this->locuslist[loc].type<5) {
-                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].freq[samp];
+                    for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].freq[samp];
                     delete []this->locuslist[loc].freq;
-                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].haplomic[samp];
+                    for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].haplomic[samp];
                     delete []this->locuslist[loc].haplomic;
                 } else if(this->locuslist[loc].type>9) {
-                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].freq[samp];
+                    for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].freq[samp];
                     delete []this->locuslist[loc].freq;
-                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].haplosnp[samp];
+                    for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].haplosnp[samp];
                     delete []this->locuslist[loc].haplosnp;
 				}
             }
@@ -2863,9 +2872,9 @@ struct ParticleC
             loc=this->grouplist[gr].loc[iloc];
             if (this->locuslist[loc].groupe>0){
                 if (this->locuslist[loc].type<5) {
-                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].freq[samp];
+                    for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].freq[samp];
                     delete []this->locuslist[loc].freq;
-                    for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[loc].haplomic[samp];
+                    for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].haplomic[samp];
                     delete []this->locuslist[loc].haplomic;
                 }
             }
@@ -2876,9 +2885,9 @@ struct ParticleC
         int kloc,iloc;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
-            for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[kloc].freq[samp];
+            for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[kloc].freq[samp];
             delete []this->locuslist[kloc].freq;
-            for (int samp=0;samp<this->data.nsample;samp++) delete []this->locuslist[kloc].haplomic[samp];
+            for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[kloc].haplomic[samp];
             delete []this->locuslist[kloc].haplomic;
         }
     }
@@ -2888,7 +2897,7 @@ struct ParticleC
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
 			cat= this->locuslist[kloc].type % 5;
-            for (int samp=0;samp<this->data.nsample;samp++) {
+            for (int samp=0;samp<this->nsample;samp++) {
                 for (int ind=0;ind<this->data.ss[cat][samp];ind++) {
                   //cout<<"avant delete this->locuslist["<<kloc<<"].haplodnavar["<<samp<<"]["<<ind<<"]\n";
                   //delete []this->locuslist[kloc].haplodnavar[samp][ind];
@@ -3479,7 +3488,7 @@ struct ParticleC
 				nal = 0;
 				for (k=0;k<this->locuslist[loc].nal;k++) {
 					frt=0.0;
-					for (pop=0;pop<this->data.nsample;pop++) frt += this->locuslist[loc].freq[pop][k];
+					for (pop=0;pop<this->nsample;pop++) frt += this->locuslist[loc].freq[pop][k];
 					if (frt>0.000001) nal++;
 				}
 				b = 1.0/(long double)nal;
@@ -3895,12 +3904,12 @@ struct ParticleC
         int sample=this->grouplist[gr].sumstat[st].samp-1;
         for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
             kloc=this->grouplist[gr].loc[iloc];
-            ssa = new int*[this->data.nsample];
-            nssa = new int[this->data.nsample];
+            ssa = new int*[this->nsample];
+            nssa = new int[this->nsample];
       //on cherche les sites variables des différents échantillons
-            for (int sa=0;sa<this->data.nsample;sa++) ssa[sa]=this->cal_nsspl(kloc,sa,&nssa[sa],&OK);
+            for (int sa=0;sa<this->nsample;sa++) ssa[sa]=this->cal_nsspl(kloc,sa,&nssa[sa],&OK);
             //cout<<"\nlocus "<<kloc<<"\n";
-            for (int sa=0;sa<this->data.nsample;sa++) {
+            for (int sa=0;sa<this->nsample;sa++) {
                 //cout<<"sample "<<sa+1<<"   nssa="<<nssa[sa]<<"\n";
                 //for (int k=0;k<nssa[sa];k++) cout<<"   "<<ssa[sa][k];
                 //cout<<"\n";
@@ -3909,7 +3918,7 @@ struct ParticleC
             nl++;
             for (int j=0;j<nssa[sample];j++) {
                 trouve=false;
-                for (int sa=0;sa<this->data.nsample;sa++) {
+                for (int sa=0;sa<this->nsample;sa++) {
                     if ((sa!=sample)and(nssa[sa]>0)) {
                         for (int k=0;k<nssa[sa];k++) {
                             trouve = (ssa[sample][j]==ssa[sa][k]);
@@ -3920,7 +3929,7 @@ struct ParticleC
               }
               if (not trouve) nps++;
             }
-            for (int sa=0;sa<this->data.nsample;sa++) if (nssa[sa]>0) delete [] ssa[sa];
+            for (int sa=0;sa<this->nsample;sa++) if (nssa[sa]>0) delete [] ssa[sa];
             delete []ssa;delete []nssa;
         }
         if (nl>0) res = (long double)nps/(long double)nl;
@@ -4241,8 +4250,8 @@ struct ParticleC
 			cat = this->locuslist[kloc].type % 5;
             dmax=samplesize(kloc,samp0)+samplesize(kloc,samp1)+samplesize(kloc,samp2);
             //cout<<"Locus "<<kloc<<"   (cal_freq)\n";
-            this->locuslist[kloc].freq = new long double*[this->data.nsample];
-            this->locuslist[kloc].haplomic = new int*[this->data.nsample];
+            this->locuslist[kloc].freq = new long double*[this->nsample];
+            this->locuslist[kloc].haplomic = new int*[this->nsample];
             this->locuslist[kloc].kmin=100;
             nhaplo=0;
             if (this->locuslist[kloc].dnavar==0) {
@@ -4354,7 +4363,7 @@ struct ParticleC
                 locus= this->grouplist[gr].loc[iloc];
 				cat = this->locuslist[locus].type % 5;
                 this->locuslist[locus].dnavar = 0;
-                for (pop=0;pop<this->data.nsample;pop++) {
+                for (pop=0;pop<this->nsample;pop++) {
                     for (i=0;i<this->data.ss[cat][pop];i++) {
                         if (this->locuslist[locus].haplodna[pop][i].length()>this->locuslist[locus].dnavar) {
                             this->locuslist[locus].dnavar=this->locuslist[locus].haplodna[pop][i].length();
@@ -4368,8 +4377,8 @@ struct ParticleC
                     }
                 }
                 //cout<<"coucou\n";
-                this->locuslist[locus].haplodnavar = new string*[this->data.nsample];
-            	for (pop=0;pop<this->data.nsample;pop++) {
+                this->locuslist[locus].haplodnavar = new string*[this->nsample];
+            	for (pop=0;pop<this->nsample;pop++) {
                	    this->locuslist[locus].haplodnavar[pop] = new string[this->data.ss[cat][pop]];
                 	for (i=0;i<this->data.ss[cat][pop];i++) {
                    	    if (this->locuslist[locus].haplodna[pop][i].length()==this->locuslist[locus].dnavar) {
@@ -4384,15 +4393,15 @@ struct ParticleC
         } else {
             for (int iloc=0;iloc<nlocs;iloc++) {
                 locus= this->grouplist[gr].loc[iloc];
-                this->locuslist[locus].haplodnavar = new string*[this->data.nsample];
-                ns=0; for (pop=0;pop<this->data.nsample;pop++) ns += this->data.ss[cat][pop];
+                this->locuslist[locus].haplodnavar = new string*[this->nsample];
+                ns=0; for (pop=0;pop<this->nsample;pop++) ns += this->data.ss[cat][pop];
                 site = new char[ns];
                 this->locuslist[locus].dnavar=0;
                 if (this->locuslist[locus].dnalength>0) {
                     //cout <<"longseq = "<<this->locuslist[locus].dnalength<<"\n";;
                     for (k=0;k<this->locuslist[locus].dnalength;k++) {
                         j=-1;
-                        for (pop=0;pop<this->data.nsample;pop++) {
+                        for (pop=0;pop<this->nsample;pop++) {
                             for (i=0;i<this->data.ss[cat][pop];i++) {
                                 j++;
                                 if (this->locuslist[locus].haplodna[pop][i] == SEQMISSING) site[j]='N';
@@ -4416,7 +4425,7 @@ struct ParticleC
                     }
                 }
                 //cout<<"locus "<<locus<<"   dnavar = "<<this->locuslist[locus].dnavar<<"\n";
-                for (pop=0;pop<this->data.nsample;pop++) {
+                for (pop=0;pop<this->nsample;pop++) {
                     this->locuslist[locus].haplodnavar[pop] = new string[this->data.ss[cat][pop]];
                     for (i=0;i<this->data.ss[cat][pop];i++) {
                         ss="";
@@ -4544,10 +4553,10 @@ void docalstat(int gr) {
 		//cout << "apres calfreq\n";
         for (int st=0;st<this->grouplist[gr].nstat;st++) {
             if ((this->grouplist[gr].sumstat[st].cat==-7)or(this->grouplist[gr].sumstat[st].cat==-8)) {
-                this->afsdone.resize(this->data.nsample);
-                this->t_afs.resize(this->data.nsample);
-                this->n_afs.resize(this->data.nsample);
-                for (int sa=0;sa<this->data.nsample;sa++) {
+                this->afsdone.resize(this->nsample);
+                this->t_afs.resize(this->nsample);
+                this->n_afs.resize(this->nsample);
+                for (int sa=0;sa<this->nsample;sa++) {
                     this->afsdone[sa].resize(this->grouplist[gr].nloc);
                     this->t_afs[sa].resize(this->grouplist[gr].nloc);
                     this->n_afs[sa].resize(this->grouplist[gr].nloc);
@@ -4692,7 +4701,7 @@ void docalstat(int gr) {
 		if ((this->grouplist[gr].type == 0)or(this->grouplist[gr].type>9)) liberefreq(gr);
         else liberednavar(gr);
         if (not this->afsdone.empty()) {
-            for (int sa=0;sa<this->data.nsample;sa++) {
+            for (int sa=0;sa<this->nsample;sa++) {
                 this->afsdone[sa].clear();
                 for (int loc=0;loc<this->grouplist[gr].nloc;loc++) if (not this->t_afs[sa][loc].empty()) this->t_afs[sa][loc].clear();
                 this->t_afs[sa].clear();

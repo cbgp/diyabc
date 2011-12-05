@@ -26,6 +26,9 @@ extern int debuglevel;
 extern ReftableC rt;
 extern string scurfile;
 
+/**
+* Structure ParticleSet : définition d'un ensemble de particules
+*/
 struct ParticleSetC
 {
 	HeaderC header;
@@ -38,8 +41,12 @@ struct ParticleSetC
 	double sexratio;
     MwcGen *mw;
 
+/**
+* Structure ParticleSet : remplissage de la partie data de la particule p
+*/
 	void setdata(int p) {
-		this->particule[p].data.nsample = this->header.dataobs.nsample;
+		this->particule[p].data.nsample = this->header.dataobs.nsample; 
+		this->particule[p].nsample = this->header.dataobs.nsample;
 		this->particule[p].data.nind.resize(this->header.dataobs.nsample);
 		this->particule[p].data.indivsexe.resize(this->header.dataobs.nsample);
 		this->particule[p].data.catexist = new bool[5];
@@ -49,10 +56,10 @@ struct ParticleSetC
 			if (this->particule[p].data.catexist[cat]) {
 				this->particule[p].data.ss[cat].resize(this->header.dataobs.nsample);
 				for (int sa=0;sa<this->header.dataobs.nsample;sa++) this->particule[p].data.ss[cat][sa] = this->header.dataobs.ss[cat][sa];
-				if (p==0) {
+				/*if (p==0) {
 					cout<<"dans particule[0]\n";
 					for (int sa=0;sa<this->header.dataobs.nsample;sa++) cout <<this->particule[p].data.ss[cat][sa]<<"   ";cout<<"\n";
-				}
+				}*/
 			}
 		}
 		for (int i=0;i<this->header.dataobs.nsample;i++) {
@@ -91,7 +98,10 @@ struct ParticleSetC
 		this->particule[p].reffreqmin = this->header.reffreqmin;
 	}
 
-void setgroup(int p) {
+/**
+* Structure ParticleSet : remplissage de la partie groupe de la particule p
+*/
+	void setgroup(int p) {
 		int ngr = this->header.ngroupes;
 		//cout<<"ngr="<<ngr<<"\n";
 		this->particule[p].ngr = ngr;
@@ -153,7 +163,6 @@ void setgroup(int p) {
                     this->particule[p].grouplist[gr].priormusmoy.constant=false;
 				}*/
 				this->particule[p].grouplist[gr].priormusloc = copyprior(this->header.groupe[gr].priormusloc);
-
 				if (this->header.groupe[gr].mutmod>0){
 					this->particule[p].grouplist[gr].k1moy = this->header.groupe[gr].k1moy ;	//k1moy
 					if (header.groupe[gr].k1moy<0) this->particule[p].grouplist[gr].priork1moy = copyprior(this->header.groupe[gr].priork1moy);
@@ -201,6 +210,9 @@ void setgroup(int p) {
 		}
 	}
 
+/**
+* Structure ParticleSet : remplissage de la partie locus de la particule p
+*/
 	void setloci(int p) {
 	    int kmoy,cat;
 		this->particule[p].nloc = this->header.dataobs.nloc;
@@ -237,6 +249,9 @@ void setgroup(int p) {
 		}
 	}
 
+/**
+* Structure ParticleSet : remplissage de la partie scenarios de la particule p
+*/
 	void setscenarios (int p) {
 		this->particule[p].nscenarios=this->header.nscenarios;
 		this->particule[p].drawuntil = this->header.drawuntil;
@@ -260,6 +275,9 @@ void setgroup(int p) {
 
 	}
 
+/**
+* Structure ParticleSet : réinitialisation de la particule p
+*/
 	void resetparticle (int p) {
                 for (int gr=1;gr<=this->particule[p].ngr;gr++) {
                         if (this->header.groupe[gr].type==0) {  //MICROSAT
@@ -287,6 +305,9 @@ void setgroup(int p) {
                 }
         }
 
+/**
+* Structure ParticleSet : simulation des particules utilisées pour le model checking
+*/
     void dosimulphistar(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
         int scen=numscen-1;
         int ii,ip1,ip2,ipart,gr,nstat,k,nparam=header.scenario[scen].nparam;
@@ -410,6 +431,9 @@ void setgroup(int p) {
 
     }
 
+/**
+* Structure ParticleSet : simulation des particules utilisées pour la table de référence, le biais et la confiance
+*/
 	void dosimultabref(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed)
 	{
                int ipart,gr,nstat,pa,ip,iscen,np,ns;
@@ -560,6 +584,9 @@ void setgroup(int p) {
         if (debuglevel==5) cout<<"apres delete sOK\n";
 	}
 
+/**
+* Structure ParticleSet : simulation des particules utilisées pour la création de fichiers genepop
+*/
 	string* simulgenepop(HeaderC header, int npart, bool multithread, int seed) {
         bool dnatrue=true;
         int numscen=1;

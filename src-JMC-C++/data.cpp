@@ -50,6 +50,9 @@
 
 using namespace std;
 
+/**
+*  Structure LocusC : définition de la structure LocusC
+*/ 
 struct LocusC
 {
 	string name;
@@ -74,9 +77,13 @@ struct LocusC
 	double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
 	int **haplomic; //array[sample][gene copy]
 //Propriétés des locus SNP
+	bool firstime;
 	short int **haplosnp; //array[sample][gene copy] 0,1,9
 	bool mono;  //mono=true si un seul allèle dans l'échantillon global
 
+/**
+*  Structure LocusC : libération de la mémoire occupée par la structure LocusC
+*/ 
 	void libere(bool obs, int nsample) {
        //cout<<"debut  nsample="<<nsample<<"\n";
        //delete []this->name;
@@ -108,7 +115,7 @@ class DataC
 {
 public:
 	string message,title,**indivname,***genotype;
-	int nsample,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
+	int nsample,nsample0,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
 	//int *nind;
 	//int **indivsexe;
 	double sexratio;
@@ -171,9 +178,28 @@ public:
 		if (file == NULL) return -1;
 		getline(file,ligne);
         ss=splitwords(ligne," ",&nss);
-		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")and (nss>100)) {
+		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
 		  cout<<"Fichier "<<filename<<" : SNP\n";
 		  return 1;
+		}
+		int nloc=0;
+		bool trouvepop=false;
+		while (not trouvepop) {
+			getline(file, ligne);
+			ligne=majuscules(ligne);
+			trouvepop=(ligne.find("POP")!=string::npos);
+			if (not trouvepop) nloc++;
+		}
+		if (not trouvepop) return -2;
+		while (not file.eof()){
+			getline(file, ligne);
+			ligne=majuscules(ligne);
+			if ((ligne.find(",")==string::npos)and(ligne.find("POP")==string::npos)) return -2;
+			if(ligne.find(",")!=string::npos) {
+				ligne = ligne.substr(ligne.find(","));
+				ss=splitwords(ligne," ",&nss);
+				if (nss!=nloc) return -2;
+			}
 		}
 		return 0;
 	}
@@ -875,8 +901,11 @@ cout<<"fin de ecribin\n";
 		filenamebin=filename+".bin";
 		cout<<filenamebin<<"\n";
 		this->filetype = this->testfile(filename);
-		if (this->filetype==-1) {
+		if (this->filetype==-2) {
 			cout<<"Unreckognized file format"<<"\n";
+			exit(1);
+		} else if (this->filetype==-1) {
+			cout<<"data file not found\n";
 			exit(1);
 		}
 		if (this->filetype==0) {
@@ -911,9 +940,10 @@ cout<<"fin de ecribin\n";
 				this->ecribin(filenamebin);
 				cout<<"relecture du fichier binaire\n";
 				this->libin(filenamebin);
-				cout<<"fin de la lecture du fichier binaire\n";
+				cout<<"fin de la lecture du fichier binaire\n\n";
 			}
 		}
+		this->nsample0 = this->nsample;
 		return this;
 	}
 

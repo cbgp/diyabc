@@ -1123,7 +1123,7 @@ public:
 //partie DATA
 		if (debuglevel==2) cout<<"debut de calstatobs\n";
 		this->particuleobs.dnatrue = true;
-		this->particuleobs.nsample = this->dataobs.nsample;
+		this->particuleobs.nsample = this->dataobs.nsample0;
 		if (debuglevel==2) cout<<"this->dataobs.nsample="<<this->dataobs.nsample<<"\n";
 		this->particuleobs.data.nsample = this->dataobs.nsample;
 		this->particuleobs.data.nind.resize(this->dataobs.nsample);
@@ -1133,7 +1133,6 @@ public:
 			this->particuleobs.data.indivsexe[i].resize(this->dataobs.nind[i]);
 			for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
 		}
-		
 		if (debuglevel==2) cout<<"avant l'affectation des catexist et des ss'\n";
 		this->particuleobs.catexist = new bool[5];
 		for (int i=0;i<5;i++) this->particuleobs.catexist[i] = this->dataobs.catexist[i];
@@ -1247,10 +1246,14 @@ public:
 					  for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++)this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i];
 				}
 			}else {
-				this->particuleobs.locuslist[kloc].haplosnp = new short int*[this->particuleobs.data.nsample];
-				for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
-					this->particuleobs.locuslist[kloc].haplosnp[sa] = new short int[this->particuleobs.data.ss[cat][sa]];
-					for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++)this->particuleobs.locuslist[kloc].haplosnp[sa][i] =this->dataobs.locus[kloc].haplosnp[sa][i];
+				this->particuleobs.locuslist[kloc].haplosnp = new short int*[this->particuleobs.nsample];
+				for (int cat=0;cat<5;cat++){
+					if (this->particuleobs.catexist[cat]){
+						for (int sa=0;sa<this->particuleobs.nsample;sa++){
+							this->particuleobs.locuslist[kloc].haplosnp[sa] = new short int[this->particuleobs.data.ss[cat][sa]];
+							for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++)this->particuleobs.locuslist[kloc].haplosnp[sa][i] =this->dataobs.locus[kloc].haplosnp[sa][i];
+						}
+					}
 				}
 			}
 		}
