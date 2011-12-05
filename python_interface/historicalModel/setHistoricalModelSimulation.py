@@ -260,7 +260,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
             dico_sc_infos = {}
             dico_sc_infos["text"] = scTxt.strip().split('\n')
             dico_sc_infos["checker"] = scChecker
-        except Exception, e:
+        except Exception as  e:
             pass
         if scChecker.nsamp != len(self.sampleSizeList):
             output.notify(self,"Sample size error","Sample number differs between the scenario and the size definition")
@@ -272,7 +272,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
                 if fsize+msize < 1:
                     output.notify(self,"Sample size values error","Total sample size must be positive")
                     return False
-        except Exception,e:
+        except Exception as e:
             output.notify(self,"Sample size values error","%s"%e)
             return False
         return True

@@ -201,7 +201,7 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
                 raise Exception("Individuals locus mutation rate should be positive")
             if float(self.ui.mmrMinEdit.text()) < 0:
                 raise Exception("Mean mutation rate should not be negative")
-        except Exception,e:
+        except Exception as e:
             QMessageBox.information(self,"Value error","%s"%e)
             return False
 

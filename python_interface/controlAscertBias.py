@@ -44,7 +44,7 @@ class ControlAscertBias(formControl,baseControl):
             freq = float(self.ui.freqMinEdit.text())
             if freq < 0 or freq > 0.5 :
                 raise Exception("Frequency must be positive and lower than 0.5")
-        except Exception,e:
+        except Exception as e:
             problem += "Frequency : %s\n"%(e)
         if problem != "":
             if not silent:

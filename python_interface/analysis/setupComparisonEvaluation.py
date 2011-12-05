@@ -68,7 +68,7 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
             de = int(self.ui.deEdit.text())
             cnosd = int(self.ui.cnosdEdit.text())
 
-        except Exception,e:
+        except Exception as e:
             problems += "Only non-empty integer values are accepted\n"
 
         if problems == "":

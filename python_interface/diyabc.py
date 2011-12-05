@@ -89,7 +89,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         try:
             self.documentator = Documentator("docs/documentation.xml",self)
             self.updateDoc()
-        except Exception,e:
+        except Exception as e:
             output.notify(self,"Documentation error","%s"%e)
             self.documentator = None
 
@@ -371,7 +371,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 else:
                     e.setWhatsThis(docstr)
                 log(4,"Adding documentation of "+"%s"%e.objectName())
-            except Exception,ex:
+            except Exception as ex:
                 if objname_debug:
                     e.setWhatsThis(objnamestr)
                 #print "%s"%e
@@ -504,7 +504,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 nb_added += 1
             else:
                 # le project n'existe plus, on supprime celui ci des recent
-                print "Recent project %s doesn't exist anymore"%str(rec)
+                log(3,"Recent project %s doesn't exist anymore"%str(rec))
                 future_recent_list.remove(rec)
             # on ajoute au maximum 20 recent
             if nb_added == 20:
@@ -639,7 +639,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                             proj_to_open = ProjectMsatSeq(project_name,dir,self)
                         try:
                             proj_to_open.loadFromDir()
-                        except Exception,e:
+                        except Exception as e:
                             tb = traceback.format_exc()
                             self.clearStatus()
                             #cur.setShape(Qt.ArrowCursor)
@@ -764,7 +764,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                                     output.notify(self,"Load error","The clone project was successfully created but can not be opened because\
                                                 it has the same name than the origin project\nClose the origin project if you want to open the clone")
                                 log(1,"Project %s was successfully cloned in %s"%(current_project.dir,clonedir))
-                            except OSError,e:
+                            except OSError as e:
                                 output.notify(self,"Error",str(e))
                     else:
                         output.notify(self,"Incorrect directory","A project can not be in a project directory")
@@ -983,7 +983,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     log(1,"Asking documentation of %s"%on)
                     try:
                         output.notify(self,"Documentation",self.documentator.getDocString(on))
-                    except Exception,e:
+                    except Exception as e:
                         output.notify(self,"Documentation error","%s"%e)
             log(3,"Button '%s' pressed"%event.button())
         #elif event.type() == QEvent.ChildAdded and self.wtEnabled:
@@ -1077,7 +1077,7 @@ def main():
     # effacement des logs de plus de N jours si le dossier de logs dépasse X Mo
     try:
         logRotate(os.path.expanduser("~/.diyabc/logs/"),10,50)
-    except Exception,e:
+    except Exception as e:
         output.notify(None,"Log rotate failure","%s"%e)
 
     # création du prompt

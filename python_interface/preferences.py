@@ -74,7 +74,7 @@ class Preferences(formPreferences,basePreferences):
         # initialisation du combo pour le nombre max de thread
         try:
             nb_core = multiprocessing.cpu_count()
-        except Exception,e:
+        except Exception as e:
             nb_core = 1
             log(3,"Impossible to count core number on this computer")
         for i in range(nb_core):
@@ -479,7 +479,7 @@ class Preferences(formPreferences,basePreferences):
                 #    self.ui.TLURadio.setChecked(True)
                 #if dico_val["tlaw"] == "NO":
                 #    self.ui.TNORadio.setChecked(True)
-            except Exception,e:
+            except Exception as e:
                 log(3,"Malformed hist_model_default_values section in configuration\n\n%s"%e)
         else:
             log(3,"No hist conf found")
@@ -519,7 +519,7 @@ class Preferences(formPreferences,basePreferences):
                     #exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","{0}_law"),cfg.get("mutation_m_default_values","{0}_zero"),cfg.get("mutation_m_default_values","{0}_one"),cfg.get("mutation_m_default_values","{0}_two"),cfg.get("mutation_m_default_values","{0}_three")))'.format(param))
                     exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg["mutation_m_default_values"]["{0}_law"],cfg["mutation_m_default_values"]["{0}_zero"],cfg["mutation_m_default_values"]["{0}_one"],cfg["mutation_m_default_values"]["{0}_two"],cfg["mutation_m_default_values"]["{0}_three"]))'.format(param))
                 self.mutmodM.setMutationConf(lines)
-            except Exception,e:
+            except Exception as e:
                 log(3,"Malformed mutation_m_default_values in configuration")
                 
             #try:
@@ -584,7 +584,7 @@ class Preferences(formPreferences,basePreferences):
                 #lines.append("GAMK2 %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","GAMK2_law"),cfg.get("mutation_s_default_values","GAMK2_zero"),cfg.get("mutation_s_default_values","GAMK2_one"),cfg.get("mutation_s_default_values","GAMK2_two"),cfg.get("mutation_s_default_values","GAMK2_three")))
                 lines.append("MODEL %s %s %s"%(cfg["mutation_s_default_values"]["MODEL_model"],cfg["mutation_s_default_values"]["MODEL_inv_sites_pc"],cfg["mutation_s_default_values"]["MODEL_gamma_shape"]))
                 self.mutmodS.setMutationConf(lines)
-            except Exception,e:
+            except Exception as e:
                 log(3,"Malformed mutation_s_default_values in configuration")
         else:
             log(3,"No MMS conf found")
@@ -610,7 +610,7 @@ class Preferences(formPreferences,basePreferences):
                 self.ui.portEdit.setText(str(cfg["connexion"]["port"]))
                 yesno = (cfg["connexion"]["use_server"] == 'True')
                 self.ui.serverCheck.setChecked(yesno)
-            except Exception,e:
+            except Exception as e:
                 log(3,"Malformed connexion section in configuration\n%s"%e)
         else:
             log(3,"No connexion conf found")
@@ -621,7 +621,7 @@ class Preferences(formPreferences,basePreferences):
         problems = ""
         try:
             port = int(self.ui.portEdit.text())
-        except Exception,e:
+        except Exception as e:
             problems += "%s for port connexion value"%e
 
         if problems == "":
@@ -649,7 +649,7 @@ class Preferences(formPreferences,basePreferences):
             ast = float(self.ui.AstdevEdit.text())
             if nmin > nmax or tmin > tmax or amin > amax:
                 problems += "A min is superior than a max\n"
-        except Exception,e:
+        except Exception as e:
             problems += "%s in historical model values\n"%e
 
         if problems == "":

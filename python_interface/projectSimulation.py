@@ -98,7 +98,7 @@ class ProjectSimulation(Project):
             else:
                 for ed in [self.locusNumberFrame.sxEdit,self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.syEdit,self.locusNumberFrame.maEdit,self.locusNumberFrame.saEdit]:
                     ed.setDisabled(False)
-        except Exception,e:
+        except Exception as e:
             pass
 
 
@@ -112,7 +112,7 @@ class ProjectSimulation(Project):
                 self.locusNumberFrame.sexRatioEdit.setDisabled(True)
             else:
                 self.locusNumberFrame.sexRatioEdit.setDisabled(False)
-        except Exception,e:
+        except Exception as e:
             self.locusNumberFrame.sexRatioEdit.setDisabled(True)
 
 
@@ -153,7 +153,7 @@ class ProjectSimulation(Project):
             if nbpos == 0:
                 output.notify(self,"Number of sample error","You must have at leat one sample")
                 return
-        except Exception,e:
+        except Exception as e:
             output.notify(self,"Number of sample error","Input error : \n%s"%e)
             return
         if nbXY > 0:
@@ -163,7 +163,7 @@ class ProjectSimulation(Project):
                     output.notify(self,"Value error","Sex ratio value must be in [0,1]")
                     return
                 self.sexRatio = val
-            except Exception,e:
+            except Exception as e:
                 output.notify(self,"Value error","Sex ratio value must be in [0,1]")
                 return
 
@@ -222,7 +222,7 @@ class ProjectSimulation(Project):
         self.writeHeaderSim()
         try:
             nb_to_gen = int(self.ui.nbSetsReqEdit.text())
-        except Exception,e:
+        except Exception as e:
             output.notify(self,"value error","Check the value of required number of data sets\n\n%s"%e)
             return
         self.th = SimulationThread(self,nb_to_gen)
@@ -302,7 +302,7 @@ class SimulationThread(QThread):
             self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             self.processus = p
-        except Exception,e:
+        except Exception as e:
             #print "Cannot find the executable of the computation program %s"%e
             self.problem = "Problem during program launch \n%s"%e
             self.emit(SIGNAL("simulationProblem"))

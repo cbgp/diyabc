@@ -106,7 +106,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
             dico_sc_infos["text"] = sc.strip().split('\n')
             dico_sc_infos["checker"] = scChecker
             #print "nb param du sc ",num," ",scChecker.nparamtot
-        except Exception,e:
+        except Exception as e:
             output.notify(str(e))
             self.exit()
             return
@@ -402,7 +402,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
                 #step =  float(param.findChild(QLineEdit,"stepValueParamEdit").text())
                 if min > max or min < 0 or max < 0 or mean < 0 or stdev < 0:
                     problems += "Values for parameter %s are incoherent\n"%pname
-            except Exception,e:
+            except Exception as e:
                 problems += "%s\n"%e
 
         if problems == "":

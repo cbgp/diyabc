@@ -196,7 +196,7 @@ class SetGeneticDataSimulation(SetGeneticData):
                         for val in [pcA,pcC,pcG,pcT]:
                             if val < 0 or val > 100:
                                 problem += "Locus %s has incoherent values of nucleotide frequencies"%(i+1)
-            except Exception,e:
+            except Exception as e:
                 problem += "%s\n"%e
             #print "\n"; 
             if problematicLocus != "":

@@ -310,7 +310,7 @@ class SetMutationModelSequencesSimulation(formSetMutationModelSequencesFixed,bas
                         else:
                             if val < 0:
                                 raise Exception("%s should not be negative"%self.field_names_dico[field])
-        except Exception,e:
+        except Exception as e:
             QMessageBox.information(self,"Value error","%s"%e)
             return False
 

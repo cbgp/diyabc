@@ -52,7 +52,7 @@ class CmdPrompt(cmd.Cmd):
     def do_do(self,line):
         try:
             exec line
-        except Exception,e:
+        except Exception as e:
             print e
     
     def do_EOF(self, line):
@@ -154,7 +154,7 @@ def logRotate(logFolder,nbDaysOld,sizeThreshold):
         # another logrotate is done on older files
         if (logSize / (1024*1024)) > sizeThreshold:
             logRotate(logFolder,nbDaysOld - 2, sizeThreshold)
-    except Exception,e:
+    except Exception as e:
         raise Exception("Log rotation failed\n%s"%e)
 
 import array
@@ -255,4 +255,4 @@ def log(level,message):
         elif len(inspect.stack()) > 2 and len(inspect.stack()[2]) > 3:
             func = "%s(%s)"%(inspect.stack()[2][3],params)
 
-        print "%s[%02d/%02d/%s %02d:%02d:%02d] {%s} [[%s]] %s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,func,WHITE,message)
+        print("%s[%02d/%02d/%s %02d:%02d:%02d] {%s} [[%s]] %s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,func,WHITE,message))

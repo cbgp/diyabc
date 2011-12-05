@@ -849,7 +849,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                         if param.findChild(QLineEdit,"stValueParamEdit").isEnabled():
                             if stdev <= 0:
                                 problems += "St-dev of parameter %s should be positive\n"%pname
-            except Exception,e:
+            except Exception as e:
                 problems += "%s\n"%e
         rpsum = 0.0
         for rp in self.rpList:
@@ -857,7 +857,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             try:
                 rpfloat = float(str(rp.findChild(QLineEdit,"rpEdit").text()))
                 rpsum+=rpfloat
-            except Exception,e:
+            except Exception as e:
                 problems += "On %s posterior probability, %s\n"%(rpscname,e)
         if rpsum < 0.999 or rpsum > 1.001 and self.ui.otherRadio.isChecked():
             problems += "The sum of all posterior probabilities is equal to %s. It should be equal to 1"%rpsum

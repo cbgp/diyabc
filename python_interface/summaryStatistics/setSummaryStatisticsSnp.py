@@ -113,7 +113,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
             if fro+ta > av+1 or ta <= 0 or fro <= 0:
                 raise Exception("Number of taken loci must be positive and at most equal to available loci number")
             self.exit()
-        except Exception,e:
+        except Exception as e:
             if not silent:
                 output.notify(self,"Input error",str(e))
 

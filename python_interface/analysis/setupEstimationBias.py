@@ -141,7 +141,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
             nosd = int(self.ui.nosdEdit.text())
             cnosd = int(self.ui.cnosdEdit.text())
 
-        except Exception,e:
+        except Exception as e:
             problems += "Only non-empty integer values are accepted\n"
 
         if problems == "":

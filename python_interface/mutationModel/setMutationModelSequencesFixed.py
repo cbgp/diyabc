@@ -266,7 +266,7 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
                             raise Exception("%s should not be empty"%self.field_names_dico[field])
                     if self.constraints_dico[field][1] == 1:
                         val = float(valtxt)
-        except Exception,e:
+        except Exception as e:
             QMessageBox.information(self,"Value error","%s"%e)
             return False
 

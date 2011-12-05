@@ -115,7 +115,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
             dico_sc_infos["text"] = sc.strip().split('\n')
             dico_sc_infos["checker"] = scChecker
             #print "nb param du sc ",num," ",scChecker.nparamtot
-        except Exception,e:
+        except Exception as e:
             output.notify(str(e))
             self.exit()
             return
@@ -227,7 +227,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
                 value =  float(param.findChild(QLineEdit,"meanValueParamEdit").text())
                 if value < 0:
                     problems += "Values for parameter %s are incoherent\n"%pname
-            except Exception,e:
+            except Exception as e:
                 problems += "%s\n"%e
 
         if problems == "":

@@ -55,7 +55,7 @@ class ProjectMsatSeq(ProjectReftable):
             self.ui.dataFileEdit.setText(name)
             self.dataFileSource = name
             self.ui.browseDirButton.setDisabled(False)
-        except Exception,e:
+        except Exception as e:
             keep = ""
             if self.ui.dataFileEdit.text() != "":
                 #keep = "\n\nKeeping previous selected file"

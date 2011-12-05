@@ -355,7 +355,7 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
                 raise Exception("Individuals locus mutation rate has incoherent min and max values")
             if float(self.ui.mmrMinEdit.text()) > float(self.ui.mmrMaxEdit.text()):
                 raise Exception("Mean mutation rate has incoherent min and max values")
-        except Exception,e:
+        except Exception as e:
             if not silent:
                 QMessageBox.information(self,"Value error","%s"%e)
             return False

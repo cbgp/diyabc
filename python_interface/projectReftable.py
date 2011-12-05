@@ -397,7 +397,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 os.remove("%s/reftable.log"%self.dir)
             try:
                 nb_to_gen = int(self.ui.nbSetsReqEdit.text())
-            except Exception,e:
+            except Exception as e:
                 output.notify(self,"value error","Check the value of required number of data sets\n\n%s"%e)
                 return
             self.startUiGenReftable()
@@ -498,7 +498,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if isSNPDatafile(name):
             try:
                 data = DataSnp(name)
-            except Exception,e:
+            except Exception as e:
                 output.notify(self,"Data file error","%s"%(e))
                 return
             shutil.copy(name,"%s/%s"%(self.dir,name.split('/')[-1]))
@@ -1165,7 +1165,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         reftablefile = "%s/reftable.bin"%self.dir
         try:
             return cbgpUtils.readRefTableSize(reftablefile)
-        except Exception,e:
+        except Exception as e:
             return 0
 
     def readNbRecordsOfScenario(self,numSc):
@@ -1339,7 +1339,7 @@ class RefTableGenThread(QThread):
             self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             self.processus = p
-        except Exception,e:
+        except Exception as e:
             #print "Cannot find the executable of the computation program %s"%e
             self.problem = "Problem during program launch\n%s"%e
             self.emit(SIGNAL("refTableProblem(QString)"),self.problem)
@@ -1388,7 +1388,7 @@ class RefTableGenThread(QThread):
                         #output.notify(self,"problem",lines[0])
                         fg.close()
                         return
-            except Exception,e:
+            except Exception as e:
                 # certainement un problème de convertion en int
                 self.log(3,"There was an exception during progress file reading : %s"%e)
 
@@ -1484,7 +1484,7 @@ class AnalysisThread(QThread):
                 self.log(3,"The analysis '%s' has progressed (%s%%)"%(self.analysis.name,self.tmpp))
                 self.progress = self.tmpp
                 self.emit(SIGNAL("analysisProgress(int)"),self.progress)
-        except Exception,e:
+        except Exception as e:
             return
 
     def run(self):
