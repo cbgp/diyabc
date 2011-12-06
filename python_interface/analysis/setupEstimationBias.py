@@ -132,8 +132,8 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
     def checkAll(self):
         problems = ""
         try:
-            if (self.ui.totNumSimEdit.text() != "" or self.ui.totNumSimEdit.text() != "0") and int(self.ui.totNumSimEdit.text()) < int(self.ui.cnosdEdit.text()):
-                problems += "Impossible to select more data than it exists in the reference table\n"
+            #if (self.ui.totNumSimEdit.text() != "" or self.ui.totNumSimEdit.text() != "0") and int(self.ui.totNumSimEdit.text()) < int(self.ui.cnosdEdit.text()):
+            #    problems += "Impossible to select more data than it exists in the reference table\n"
             if self.analysis.category == "bias":
                 notds = int(self.ui.notdsEdit.text())
             elif self.analysis.category == "modelChecking":

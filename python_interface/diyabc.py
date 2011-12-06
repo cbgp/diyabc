@@ -747,6 +747,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                                         self.gen_conf_name,
                                         self.table_header_conf_name,
                                         self.reftableheader_name,
+                                        self.ascertainment_conf_name,
                                         current_project.dataFileName]:
                                     if os.path.exists("%s/%s"%(current_project.dir,filepath)):
                                          shutil.copy("%s/%s"%(current_project.dir,filepath),"%s/%s"%(clonedir,filepath))

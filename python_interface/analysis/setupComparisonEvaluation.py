@@ -60,8 +60,8 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
     def checkAll(self):
         problems = ""
         try:
-            if (self.ui.totNumSimEdit.text() != "" or self.ui.totNumSimEdit.text() != "0") and int(self.ui.totNumSimEdit.text()) < int(self.ui.cnosdEdit.text()):
-                problems += "Impossible to select more data than it exists in the reference table\n"
+            #if (self.ui.totNumSimEdit.text() != "" or self.ui.totNumSimEdit.text() != "0") and int(self.ui.totNumSimEdit.text()) < int(self.ui.cnosdEdit.text()):
+            #    problems += "Impossible to select more data than it exists in the reference table\n"
             if self.analysis.category == "evaluate":
                 notds = int(self.ui.notdsEdit.text())
             lr = int(self.ui.lrEdit.text())
