@@ -32,12 +32,22 @@
 using namespace std;
 
 extern char *progressfilename;
+extern double time_readfile;
+
+int ncs=100;
+double time_loglik=0.0,time_matC=0.0,time_call=0.0;
+long double **cmatA,**cmatB,**cmatB0,**cmatX,**cmatXT,**cmatC,*cdeltabeta,*cbeta0,*cbeta,**cmatP,**cmatY,*cmatYP,*cloglik,*csd,*cbet,*cpx0,*csmatY,*csmatP,**cgdb ;
+long double *vecY,*vecYY,*cvecW,**cmatX0;
+matligneC *matA;
 
 struct matligneC
 {
     long double* x;
 };
 
+/**
+ *  Structure contenant les résultats de l'estimation de la probabilité a posteriori d'un scénario
+ */ 
 struct posteriorscenC
 {
     long double x,inf,sup;
@@ -56,14 +66,9 @@ struct complignes
    }
 };
 
-extern double time_readfile;
-
-int ncs=100;
-double time_loglik=0.0,time_matC=0.0,time_call=0.0;
-long double **cmatA,**cmatB,**cmatB0,**cmatX,**cmatXT,**cmatC,*cdeltabeta,*cbeta0,*cbeta,**cmatP,**cmatY,*cmatYP,*cloglik,*csd,*cbet,*cpx0,*csmatY,*csmatP,**cgdb ;
-long double *vecY,*vecYY,*cvecW,**cmatX0;
-matligneC *matA;
-
+/**
+ * Alloue la mémoire pour les nombreuses matrices (et vecteurs) utiles à la régression logistique
+ */ 
     void allouecmat(int nmodel, int nli, int nco) {
         int nmodnco = nmodel*(nco+1);
 
@@ -92,6 +97,9 @@ matligneC *matA;
         vecYY = new long double[nli];
     }
 
+/**
+ * Libère la mémoire pour les nombreuses matrices (et vecteurs) utiles à la régression logistique
+ */ 
     void liberecmat(int nmodel, int nli, int nco) {
         int nmodnco = nmodel*(nco+1);
 
@@ -120,6 +128,9 @@ matligneC *matA;
         delete [] vecYY;
     }
 
+/**
+ * Effectue les calculs de l'approche directe et renvoie les résultats dans une structure posteriorscenC** [scenario][nombre de jeux]
+ */ 
     posteriorscenC** comp_direct(int n) {
         int nts,k;
         posteriorscenC **posts;
@@ -152,6 +163,9 @@ matligneC *matA;
         return posts;
     }
 
+/**
+ * Sauvegarde des résultats de l'approche directe
+ */ 
     void  save_comp_direct(int n, posteriorscenC** posts, char *path, char *ident){
         //cout<<"apres calcul des postinf/postsup\n";
         int nts;
@@ -177,6 +191,9 @@ matligneC *matA;
 
     }
 
+/**
+ * Sauvegarde des résultats de l'approche régression logistique
+ */ 
     void save_comp_logistic(int nlogreg,int nselr,posteriorscenC** postscenlog,char *path, char *ident) {
         int nts,sum;
 		double som;
@@ -267,6 +284,10 @@ matligneC *matA;
         delete []sx;delete []sx2;delete []mo;delete []var_statsel;
     }
 
+/**
+* Calcule l'exponentielle des coefficients béta tels que leur somme soit égale à 1 et qu'il n'y ait pas de dépassement 
+* de la taille maximale du type long double dans l'exponentielle
+*/
     void expbeta(int bsize, long double *b, long double *eb)
     {
         long double mi=b[0],ma=b[0],s=0;
@@ -280,6 +301,9 @@ matligneC *matA;
         for (i=0;i<bsize;i++) if (eb[i]==0.0) eb[i]=0.00000001;
     }
 
+/**
+* Remplit la matrice YP = Y - PXW
+*/
     void remplimatriceYP(int nli, int nco, int nmodel, long double **cmatP, long double *cmatYP, long double *cbeta, long double **cmatX, long double *cvecW, long double **cmatY, long double *csmatP)
     {
         long double betax[nmodel+1],ebetax[nmodel+1];
@@ -314,6 +338,9 @@ matligneC *matA;
         }
     }
 
+/**
+* Calcule la vraisemblance du modèle logistique et renvoit false si la vraisemblance a diminué
+*/
     bool cal_loglik(int nli, int nmodel, int rep, long double *cloglik, long double **cmatY, long double **cmatP, long double *vecW, long double *csmatY, long double *csmatP)
     {
         int i,imod;
@@ -349,6 +376,10 @@ matligneC *matA;
         return OK;
     }
 
+/**
+* Calcule la valeur de la probabilité a posteriori de chaque modèle ainsi que les bornes inf et sup de leur intervalle 
+* de crédibilité, avec le souci de ne pas dépasser les limites du type long double dans les exponentiations
+*/
     void calcul_psd(int nmodel, long double *b0, long double **matV, long double *sd, long double *px)
     {
         int imod,i,j,l;
@@ -419,6 +450,9 @@ matligneC *matA;
         //cout<<"fin calcul_psd\n";
     }
 
+/**
+* Réordonne les
+*/
     void ordonne(int nmodel,int nli,int nco,long double *vecY,int *numod) {
         long double swm,*sw,xpiv;
         int k,ki;

@@ -48,6 +48,7 @@ long double ***paretoil;
 
 using namespace std;
 
+/*
     string pseudoprior(string s) {
         string spr;
         long double x=atof(s.c_str());
@@ -55,7 +56,11 @@ using namespace std;
         spr="UN["+DoubleToString(mini)+","+DoubleToString(maxi)+",0.0,0.0";
         return spr;
     }
+*/
 
+/**
+ *  modifie les paramètres historiques en accord avec les priors/valeurs des pseudo-observés
+ */ 
     void resethistparam(string s) {
         string *ss,name,sprior,smini,smaxi;
         int n,i;
@@ -75,11 +80,17 @@ using namespace std;
         }
     }
 
+/**
+ *  modifie les conditions sur les paramètres historiques en accord avec les priors des pseudo-observés
+ */ 
     void resetcondition(int j,string s) {
        header.scenario[rt.scenteste-1].condition[j] = header.readcondition(s);
 
     }
 
+/**
+ *  modifie les paramètres mutationnels en accord avec les priors des pseudo-observés
+ */ 
     void resetmutparam(string s) {
 	    cout<<"debut de resetmutparam\n";
         string *ss,numgr,s1,sg;
@@ -296,7 +307,10 @@ using namespace std;
         //cout<<br[1][0]<<"   "<<br[1][1]<<"   "<<br[1][2]<<"\n";
     }
 
-    void ecrires(int ntest,int npv,int nsel) {
+/**
+ *   Mise en forme des résultats
+ */ 
+	void ecrires(int ntest,int npv,int nsel) {
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
@@ -385,6 +399,9 @@ using namespace std;
 
     }
 
+/**
+ * Traitement des paramètres composites (microsat et séquences uniquement)
+ */ 
     void setcompo(int p) {
 		long double pmut;
         int kk,qq,k=0;
@@ -455,7 +472,10 @@ using namespace std;
         }
     }
 
-    void dobias(char *options,  int seed){
+/**
+ * Interprête la ligne de paramètres de l'option biais et lance les calculs correspondants
+ */
+	void dobias(char *options,  int seed){
         char  *courantfilename;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,nrecpos,ntest,np,ng,npv,nn,ncond;

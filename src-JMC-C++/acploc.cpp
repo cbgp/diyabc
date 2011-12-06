@@ -34,12 +34,20 @@ using namespace std;
 extern enregC* enreg;
 int nacp=100000;
 
+/**
+* Structure resACP : contient les résultats d'une ACP 
+*/ 
 struct resACPC
 {
    int index,nlambda;      //index=0 pour matrice de corrélation et !=0 pour matrice de covariance
    long double proportion,*lambda,slambda,**vectprop,**princomp,*moy,*sd;
    
 };
+/**
+* Effectue une ACP et renvoie les résultats dans une structure resACP 
+ */ 
+
+
     resACPC ACP(int nli,int nco, long double **X, long double prop,int index) {
         resACPC res;
         res.proportion = prop;
@@ -126,7 +134,10 @@ struct resACPC
         return res;
     }
 
-    void cal_acp(){
+/**
+*   Prépare et appelle une ACP sur les summary stats
+*/
+	void cal_acp(){
         long double **matstat,*pca_statobs;
 		float *stat_obs;
         enregC enr;
@@ -178,6 +189,9 @@ struct resACPC
         fclose(f1);
     }
 
+/**
+*  Effectue les calculs qui localisent summary stat par summary stat le jeu de données observées par rapport à la table de référence
+*/ 
     void cal_loc() {
         long double **qobs;
 		float *stat_obs,diff;
@@ -249,7 +263,9 @@ struct resACPC
         f12.close();
     }
 
-
+/**
+ * interprète la commande de l'option pre-evaluate prior-scenario combination et lance les calculs correspondants
+ */
     void doacpl(char *options,bool multithread, int seed){
         string opt,*ss,s,s0,s1;
         bool dopca,doloc;
