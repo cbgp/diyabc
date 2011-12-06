@@ -34,16 +34,17 @@ using namespace std;
 extern char *progressfilename;
 extern double time_readfile;
 
+struct matligneC
+{
+    long double* x;
+};
+
 int ncs=100;
 double time_loglik=0.0,time_matC=0.0,time_call=0.0;
 long double **cmatA,**cmatB,**cmatB0,**cmatX,**cmatXT,**cmatC,*cdeltabeta,*cbeta0,*cbeta,**cmatP,**cmatY,*cmatYP,*cloglik,*csd,*cbet,*cpx0,*csmatY,*csmatP,**cgdb ;
 long double *vecY,*vecYY,*cvecW,**cmatX0;
 matligneC *matA;
 
-struct matligneC
-{
-    long double* x;
-};
 
 /**
  *  Structure contenant les résultats de l'estimation de la probabilité a posteriori d'un scénario
