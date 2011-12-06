@@ -43,7 +43,10 @@ extern string scurfile;
 
 char *nomficonfresult;
 
-    void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,string shist,string smut, bool AFD) {
+/**
+ * Ecriture de l'entete du fichier confidence.txt contenant les résultats
+ */
+	void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,string shist,string smut, bool AFD) {
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
@@ -92,6 +95,10 @@ char *nomficonfresult;
         fclose(f1);
     }
 
+/**
+ * Appelle l'analyse factorielle discriminante et remplace les summary stats par les composantes des jeux simulés
+ * sur les axes discriminants
+ */
     float* transfAFD(int nrec,int nsel, int p) {
         long double delta,rdelta,*w,a,**X,*statpiv;
 		float *sp;
@@ -131,6 +138,9 @@ char *nomficonfresult;
         return sp;
     }
 
+/**
+ * Interprête la ligne de paramètres de l'option "confiance dans le choix du scénario" et lance les calculs correspondants
+ */
     void doconf(char *options, int seed) {
         char *progressfilename, *courantfilename;
         int nstatOK, iprog,nprog,ncs1;

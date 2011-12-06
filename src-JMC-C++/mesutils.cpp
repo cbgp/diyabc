@@ -46,6 +46,9 @@ struct compC
    }
 };
 
+/**
+ * calcule le temps écoulé depuis t0 (récupéré sur internet)
+ */
 double walltime( double *t0 )
 {
   double mic, time;
@@ -67,7 +70,10 @@ double walltime( double *t0 )
   time = (time + mic * mega) - *t0;
   return(time);
 }
-
+/**
+ * renvoit la valeur entière contenue dans la num-ième sous-chaîne de s
+ * fonctionne également si la valeur entière est encadrée par des parenthèses ou des crochets  
+ */
 int getwordint(string s,int num){
 	s.append(" ");
 	while (s.find(" ")== 0) s=s.substr(1);
@@ -83,6 +89,10 @@ int getwordint(string s,int num){
 	return atoi(s.c_str());
 }
 
+/**
+ * renvoit la valeur flottante contenue dans la num-ième sous-chaîne de s
+ * fonctionne également si la valeur flottante est encadrée par des parenthèses ou des crochets  
+ */
 double getwordfloat(string s,int num){
 	s.append(" ");
 	while (s.find(" ")== 0) s=s.substr(1);
@@ -98,6 +108,10 @@ double getwordfloat(string s,int num){
 	return atof(s.c_str());
 }
 
+/**
+ * découpe la chaîne s en sous-chaînes séparées par le séparateur sep
+ * le nombre de sous chaînes est donné par *k
+ */
 string* splitwords(string s,string sep,int *k){
 	int j=0,j0;
 	while (s.find(sep)== 0) s=s.substr(1);
@@ -130,6 +144,10 @@ string* splitwords(string s,string sep,int *k){
 	return sb;
 }
 
+/**
+ * découpe la chaîne s en sous-chaînes séparées par le séparateur sep
+ * le découpage s'arrête quand le nombre de sous-chaînes atteint m
+ */
 string* splitwordsR(string s,string sep,int m,int *k){
 	int j=0,j0;
 	while (s.find(sep)== 0) s=s.substr(1);
@@ -164,6 +182,9 @@ string* splitwordsR(string s,string sep,int m,int *k){
 	return sb;
 }
 
+/**
+ * Centre la chaîne s dans une chaîne de longeur totale k
+ */
 string centre(string s,int k){
         int l=s.length();
         string sb=s;
@@ -179,6 +200,9 @@ string centre(string s,int k){
         return sb;
 }
 
+/**
+ * Renvoie la position de la chaîne st2 dans la chaîne st1
+ */
 int strpos(char* st1,char* st2) {
     int i,p=0,n1,n2;
     char *s;
@@ -197,7 +221,9 @@ int strpos(char* st1,char* st2) {
 
 }
 
-
+/**
+ * Calcule le nombre de décimales pour l'affichage d'un nombre compris entre mini et maxi
+ */
 int ndecimales(double mini,double maxi){
   double p;
   int k;
@@ -208,12 +234,19 @@ int ndecimales(double mini,double maxi){
   return k;
 }
 
+/**
+ * transforme un nombre entier en string
+ */
 string IntToString ( int number )
 {
   std::ostringstream oss;
   oss<< number;
   return oss.str();
 }
+
+/**
+ * transforme un nombre flottant en string
+ */
 string FloatToString ( float number )
 {
   std::ostringstream oss;
@@ -222,6 +255,9 @@ string FloatToString ( float number )
 }
 
 
+/**
+ * transforme un nombre <double> en string
+ */
 string DoubleToString ( double number )
 {
   std::ostringstream oss;
@@ -229,6 +265,9 @@ string DoubleToString ( double number )
   return oss.str();
 }
 
+/**
+ * transforme un nombre <long double> en string
+ */
 string LongDoubleToString (long double number )
 {
   std::ostringstream oss;
@@ -236,6 +275,9 @@ string LongDoubleToString (long double number )
   return oss.str();
 }
 
+/**
+ * transforme un string en mettant en majuscules les lettres minuscules
+ */
 string majuscules(string s) {
     string s2;
     char *c;
@@ -249,12 +291,18 @@ string majuscules(string s) {
     return s2;
 }
 
+/**
+ * transforme un char* en string
+ */
 string char2string(char *c) {
     stringstream s;
     s<<c;
     return s.str();
 }
 
+/**
+ * transforme un string en char*
+ */
 char* str2char(string x)
 {
     size_t size = x.size() + 1;
@@ -263,6 +311,9 @@ char* str2char(string x)
     return(conv);
 }
 
+/**
+ * élimine les espaces et les tabulations bordant aux extrémités d'un string
+ */
 string trim(string s) {
 	while ((s.length()>0)and(s.substr(0,1)==" ")) s=s.substr(1,s.length()-1);
 	while ((s.length()>0)and(s.substr(s.length()-1,1)==" ")) s=s.substr(0,s.length()-1);
@@ -271,8 +322,14 @@ string trim(string s) {
 	return s;
 }
 
+/**
+ * arrondit un double à l'entier le plus proche
+ */
 int arrondi(double a) {return (int)(a + 0.5);}
 
+/**
+ * Formate en string une durée exprimée en double
+ */
 string TimeToStr(double ti) {
     string stime="";
     int m_s,sec,min,hou,day;
@@ -294,6 +351,9 @@ string TimeToStr(double ti) {
     return stime;
 }
 
+/**
+ * Calcule la moyenne d'un vecteur de doubles
+ */
 double cal_moy(int n, double *x) {
     double sx=0;
     for (int i=0;i<n;i++) sx +=x[i];
@@ -301,6 +361,9 @@ double cal_moy(int n, double *x) {
     else return 0.0;
 }
 
+/**
+ * Calcule la moyenne d'un vecteur de long doubles
+ */
 long double cal_moyL(int n, long double *x) {
     double sx=0;
     for (int i=0;i<n;i++) sx +=x[i];
@@ -308,6 +371,9 @@ long double cal_moyL(int n, long double *x) {
     else return 0.0;
 }
 
+/**
+ * Calcule le mode d'un vecteur de doubles
+ */
 double cal_mode(int n, double *x) {
     int l0=1,l2=n,dl,lmin;
     double min;
@@ -325,6 +391,9 @@ double cal_mode(int n, double *x) {
     return x[l0-1];
 }
 
+/**
+ * Calcule le mode d'un vecteur de long doubles
+ */
 long double cal_modeL(int n, long double *x) {
     int l0=1,l2=n,dl,lmin;
     double min;
@@ -342,18 +411,27 @@ long double cal_modeL(int n, long double *x) {
     return x[l0-1];
 }
 
+/**
+ * Calcule la médiane d'un vecteur de doubles
+ */
 double cal_med(int n,double *x) {
     sort(&x[0],&x[n]);
     if ((n%2)==0) return 0.5*(x[n/2-1]+x[n/2]);
     else return x[n/2];
 }
 
+/**
+ * Calcule la médiane d'un vecteur de long doubles
+ */
 long double cal_medL(int n,long double *x) {
     sort(&x[0],&x[n]);
     if ((n%2)==0) return 0.5*(x[n/2-1]+x[n/2]);
     else return x[n/2];
 }
 
+/**
+ * Calcule l'écart-type d'un vecteur de doubles
+ */
 double cal_sd(int n,double *x) {
     double sx,sx2,a=x[0];
     bool ident=true;
@@ -369,6 +447,9 @@ double cal_sd(int n,double *x) {
     else return  sqrt((sx2-(sx/(double)n*sx))/(double)(n-1));
 }
 
+/**
+ * Calcule l'écart-type d'un vecteur de long doubles
+ */
 long double cal_sdL(int n,long double *x) {
     long double sx,sx2,a=x[0];
     bool ident=true;
@@ -384,6 +465,9 @@ long double cal_sdL(int n,long double *x) {
     else return  sqrt((sx2-(sx/(long double)n*sx))/(long double)(n-1));
 }
 
+/**
+ * Calcule la variance d'un vecteur de long doubles
+ */
 long double cal_varL(int n,long double *x) {
     long double sx,sx2,a=x[0];
     bool ident=true;
@@ -399,10 +483,16 @@ long double cal_varL(int n,long double *x) {
     else return  (sx2-(sx/(long double)n*sx))/(long double)(n-1);
 }
 
+/**
+ * retourne le logarithme de la densité d'une loi normale de moyenne m et d'écart-type s
+ */
 double lnormal_dens(double x, double m, double s) {
    return -0.5*((x-m)/s)*((x-m)/s)-log(s)-0.5*log(2*PI);
 }
 
+/**
+ * fonction utilisée par la fonction pnorm5
+ */
 double do_del(double temp, double x) {  //calcule cum avec ccum=1.0-cum
     double xsq,del;
     xsq= floor(x*16.0)/16.0;
@@ -410,6 +500,9 @@ double do_del(double temp, double x) {  //calcule cum avec ccum=1.0-cum
     return exp(-0.5*xsq*xsq)*exp(-0.5*del)*temp;
 }
 
+/**
+ * 
+ */
 double pnorm5(double x,double mu, double sigma){
     double a[5] = {2.2352520354606839287,161.02823106855587881,1067.6894854603709582,18154.981253343561249,0.065682337918207449113};
     double b[4] = {47.20258190468824187,976.09855173777669322,10260.932208618978205,45507.789335026729956};

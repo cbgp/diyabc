@@ -241,6 +241,10 @@ int inverse(int n, long double **A, long double **C)
     return err; 
 }
 
+/**
+ * Méthode de Jacobi pour déterminer les vecteurs et valeurs propres d'une matrice carré de type <double>
+ */
+
     int jacobi(int n, double **A, double *D, double **V) {
         int nrot=0,nm;
         double *b,*z,tresh,theta,tau,t,sm,s,h,g,cc;
@@ -320,7 +324,11 @@ int inverse(int n, long double **A, long double **C)
         delete []b;delete []z;
         return nrot;    
     }
-    int jacobiL(int n, long double **A, long double *D, long double **V) {
+
+/**
+ * Méthode de Jacobi pour déterminer les vecteurs et valeurs propres d'une matrice carré de type <long double>
+ */
+	int jacobiL(int n, long double **A, long double *D, long double **V) {
         int nrot=0,iq;
         long double *b,*z,tresh,theta,tau,t,sm,s,h,g,cc;
         b = new long double[n];
@@ -401,6 +409,10 @@ int inverse(int n, long double **A, long double **C)
         return nrot;    
     }
 
+/**
+ * Calcul du kappa (plus grande/plus petite valeur propre) d'une matrice carrée
+ * retourne 1E100 si la matrice est singulière (il existe une valeur propre nulle) 
+ */
 	double kappa(int n,long double **A) {
 		long double **vcprop, *valprop,piv,**B;
         vcprop  = new long double*[n];for (int i=0;i<n;i++) vcprop[i]=new long double [n];

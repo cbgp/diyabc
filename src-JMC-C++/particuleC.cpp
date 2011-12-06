@@ -2934,7 +2934,7 @@ struct ParticleC
 	}
 */
 	void cal_snhet(int gr,int numsnp) {
-		long double het;
+		long double het,hetm=0.0;
 		int iloc,kloc,nl=0,sasize;
 		int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -2953,12 +2953,14 @@ struct ParticleC
 				het *= ((long double)sasize/(long double)(sasize-1));
 				this->grouplist[gr].sumstatsnp[numsnp].x[nl] = het;
 				nl++;
+				hetm+=het;
 				//fprintf(f1,"%6.4Lf\n",het);
 				//f10<<het<<"\n";
 			}
 		}
         //fclose(f1);
         //f10.close();
+        //cout<<"               sample "<<sample+1<<"    hetmoy="<<hetm/(long double)nl<<"\n";
 		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
 		//cout<<"\n";
 	}
@@ -4695,7 +4697,7 @@ void docalstat(int gr) {
 							 if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snaml(gr,numsnp);
 							 this->grouplist[gr].sumstat[st].val = this->cal_moyL(this->grouplist[gr].sumstatsnp[numsnp].n,this->grouplist[gr].sumstatsnp[numsnp].x);break;
 			}
-			//cout << "stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
+			//cout << "      stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
 		}
 			//cout<<"\n";
 		if ((this->grouplist[gr].type == 0)or(this->grouplist[gr].type>9)) liberefreq(gr);

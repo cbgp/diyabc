@@ -452,7 +452,7 @@ struct complignes
     }
 
 /**
-* Réordonne les
+* Numérote les scénarios (vecteur numod) dans l'attribution des probabilités a posteriori
 */
     void ordonne(int nmodel,int nli,int nco,long double *vecY,int *numod) {
         long double swm,*sw,xpiv;
@@ -517,6 +517,9 @@ struct complignes
 
     }
 
+/**
+* attribution des probabilités a posteriori des scénarios en tenant compte de leur renumérotation (vecteur numod)
+*/
     void reordonne(int nmodel,int *numod,long double *px, long double *pxi,long double *pxs) {
         long double *qx,*qxi,*qxs;
         qx = new long double[nmodel+1];qxi = new long double[nmodel+1];qxs = new long double[nmodel+1];
@@ -529,6 +532,9 @@ struct complignes
         delete []qx;delete []qxi;delete []qxs;
     }
 
+/**
+* Effectue les calculs de la régression logistique 
+*/
     int polytom_logistic_regression(int nli, int nco, long double **cmatX0, long double *vecY, long double *cvecW, long double *px, long double *pxi, long double *pxs)
     {
         double clock_zero;
@@ -690,6 +696,9 @@ struct complignes
 		return err;
    }
 
+/**
+* Prépare et lance les calculs de la régression logistique 
+*/
     posteriorscenC* call_polytom_logistic_regression(int nts, float *stat_obs, int nscenutil,int *scenchoisiutil) {
         posteriorscenC *postlog;
         bool trouve;
@@ -780,7 +789,10 @@ struct complignes
 		}
         return postlog;
     }
-
+/**
+ *  Sélectionne les scénarios participant à la régression logistique et
+ * appelle cette dernière s'il y en a au moins deux
+ */ 
     posteriorscenC* comp_logistic(int nts,float *stat_obs) {
         int *postdir,nscenutil,*scenchoisiutil,kk;
         posteriorscenC *postlog;
@@ -810,6 +822,9 @@ struct complignes
         return postlog;
     }
 
+/**
+ * Interprête la ligne de paramètres de l'option "comparaison de scenarios" et lance les calculs correspondants
+ */ 
     void docompscen(char *compar){
         int nstatOK,iprog,nprog;;
         int nrec,nseld,nselr,nsel,ns,nlogreg,k,nts;

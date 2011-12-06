@@ -1065,6 +1065,7 @@ parstatC *parstat;
     }
 
 /**
+* Interprète les paramètres de la ligne de commande et 
 * effectue l'estimation ABC des paramètres (directe + régression locale)
 */
     void doestim(char *options) {

@@ -167,7 +167,7 @@ public:
             cout<<this->message<<"\n";
             return this;
         } else this->message="";
-		if (strpos(headerfilename,reftable)==string::npos) {}
+		//if (strpos(headerfilename,reftable)==string::npos) {}
         getline(file,this->datafilename);
 		//cout<<this->datafilename<<"\n";fflush(stdin);
 		path = new char[strlen(headerfilename)+this->datafilename.length()];
@@ -1291,7 +1291,7 @@ public:
 		if (debuglevel==2) cout<<"fin de calstatobs\n";
     }
 
-        /**
+/**
 * lit le fichier des statistiques observées (placées dans double *stat_obs)
 */
 /*    double* read_statobs(char *statobsfilename) {
