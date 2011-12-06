@@ -31,7 +31,7 @@ import os.path
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 import output
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log, addLine
 import tempfile
 import utils.cbgpUtils as cbgpUtils
 from project import Project
@@ -1337,6 +1337,7 @@ class RefTableGenThread(QThread):
             #print " ".join(cmd_args_list)
             time.sleep(1)
             self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
+            addLine("%s/command.txt"%self.parent.dir,"Command launched : %s\n\n"%" ".join(cmd_args_list))
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             self.processus = p
         except Exception as e:
@@ -1511,6 +1512,7 @@ class AnalysisThread(QThread):
             cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params.replace(u'\xb5','u'), "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
             #print " ".join(cmd_args_list)
             self.log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
+            addLine("%s/command.txt"%self.parent.dir,"Command launched for analysis '%s' : %s\n\n"%(self.analysis.name," ".join(cmd_args_list)))
             outfile = "%s/pre-ev.out"%self.parent.dir
             f = open(outfile,"w")
             p = subprocess.call(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
@@ -1529,6 +1531,7 @@ class AnalysisThread(QThread):
         cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name,"-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
         #print " ".join(cmd_args_list)
         self.log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
+        addLine("%s/command.txt"%self.parent.dir,"Command launched for analysis '%s' : %s\n\n"%(self.analysis.name," ".join(cmd_args_list)))
         outfile = "%s/%s.out"%(self.parent.dir,self.analysis.category)
         f = open(outfile,"w")
         p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 

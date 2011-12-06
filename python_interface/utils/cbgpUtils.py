@@ -256,3 +256,8 @@ def log(level,message):
             func = "%s(%s)"%(inspect.stack()[2][3],params)
 
         print("%s[%02d/%02d/%s %02d:%02d:%02d] {%s} [[%s]] %s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,func,WHITE,message))
+
+def addLine(filepath,line):
+    f = open(filepath,'a')
+    f.write(line)
+    f.close()
