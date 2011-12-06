@@ -125,19 +125,19 @@ class SetGeneticData(formGenData,baseGenData):
         verticalLayout = QtGui.QVBoxLayout()
         verticalLayout.setObjectName("verticalLayout")
         addToButton = QtGui.QPushButton(">>",groupBox)
-        addToButton.setObjectName("addToButton")
+        addToButton.setObjectName("addToGroupButton")
         verticalLayout.addWidget(addToButton)
         rmFromButton = QtGui.QPushButton("<<",groupBox)
-        rmFromButton.setObjectName("rmFromButton")
+        rmFromButton.setObjectName("rmFromGroupButton")
         verticalLayout.addWidget(rmFromButton)
         horizontalLayout.addLayout(verticalLayout)
         verticalLayout_3 = QtGui.QVBoxLayout()
         verticalLayout_3.setObjectName("verticalLayout_3")
         rmButton = QtGui.QPushButton("Remove group",groupBox)
-        rmButton.setObjectName("rmButton")
+        rmButton.setObjectName("rmLocusGroupButton")
         verticalLayout_3.addWidget(rmButton)
         listWidget = QtGui.QListWidget(groupBox)
-        listWidget.setObjectName("listWidget")
+        listWidget.setObjectName("locusGroupList")
         verticalLayout_3.addWidget(listWidget)
         horizontalLayout.addLayout(verticalLayout_3)
         listWidget.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
@@ -204,7 +204,7 @@ class SetGeneticData(formGenData,baseGenData):
         """ Enlève les loci présents dans le groupe et supprime le groupe
         """
         box = self.sender().parent()
-        lw = box.findChild(QListWidget,"listWidget")
+        lw = box.findChild(QListWidget,"locusGroupList")
         lw.selectAll()
         self.rmFromGroup(box)
         # suppression de la box
@@ -216,7 +216,7 @@ class SetGeneticData(formGenData,baseGenData):
             old_title = str(box.title())
             box.setTitle("Group %i %s"%(i+1,' '.join(old_title.split(' ')[2:])))
             # pour chaque groupe, on maj le numero de groupe de tous les locus du groupe
-            lw = box.findChild(QListWidget,"listWidget")
+            lw = box.findChild(QListWidget,"locusGroupList")
             for j in range(lw.count()):
                 itemtxt = str(lw.item(j).text())
                 self.dico_num_and_numgroup_locus[itemtxt][1] = i+1
@@ -230,7 +230,7 @@ class SetGeneticData(formGenData,baseGenData):
         first_type_found = ""
         if box == None:
             box = self.sender().parent()
-        listwidget = box.findChild(QListWidget,"listWidget")
+        listwidget = box.findChild(QListWidget,"locusGroupList")
         row_list = []
         selection = self.ui.tableWidget.selectedIndexes()
         selection.sort()
@@ -283,9 +283,9 @@ class SetGeneticData(formGenData,baseGenData):
                 num_to_insert = row+1
                 while i < listwidget.count() and self.dico_num_and_numgroup_locus[str(listwidget.item(i).text())][0] < num_to_insert :
                     i+=1
-                #box.findChild(QListWidget,"listWidget").addItem(name)
-                box.findChild(QListWidget,"listWidget").insertItem(i,name)
-                box.findChild(QListWidget,"listWidget").item(i).setSelected(True)
+                #box.findChild(QListWidget,"locusGroupList").addItem(name)
+                box.findChild(QListWidget,"locusGroupList").insertItem(i,name)
+                box.findChild(QListWidget,"locusGroupList").item(i).setSelected(True)
                 # on cache la ligne
                 self.ui.tableWidget.setRowHidden(row,True)
                 # on met à jour le dico des groupes
@@ -300,7 +300,7 @@ class SetGeneticData(formGenData,baseGenData):
         """
         if box == None:
             box = self.sender().parent()
-        listw_of_group = box.findChild(QListWidget,"listWidget")
+        listw_of_group = box.findChild(QListWidget,"locusGroupList")
         row_list = []
         selection = listw_of_group.selectedIndexes()
         for it in selection:

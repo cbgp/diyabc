@@ -230,7 +230,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         font = QtGui.QFont()
         font.setPointSize(8)
         rmButton.setFont(font)
-        rmButton.setObjectName("rmButton")
+        rmButton.setObjectName("rmAdmixButton")
         verticalLayout_6.addWidget(rmButton)
         verticalLayout_6.addWidget(QLabel(" "))
         spacer = QtGui.QSpacerItem(18, 18, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)

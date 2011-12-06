@@ -134,6 +134,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         file_menu = self.ui.menubar.addMenu("&File")
         self.file_menu = file_menu
         self.setStyleSheet("QMenu {\
+                color: black;\
                 background-color: white;\
                 margin: 2px; /* some spacing around the menu */\
                 }\
@@ -153,6 +154,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 /*border-color: darkblue;*/\
                 /*background: rgba(100, 100, 100, 150);*/\
                 background-color: #ECECEC;\
+                color: gray;\
                 }\
                 \
                 QMenu::icon:checked { /* appearance of a 'checked' icon */\
@@ -359,7 +361,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         if obj == None:
             obj = self
         l = []
-        for typ in [QLabel,QPushButton,QPlainTextEdit]:
+        for typ in [QLabel,QPushButton,QPlainTextEdit,QListWidget,QLineEdit]:
             l.extend(obj.findChildren(typ))
         for e in l:
             objnamestr = "%s\n\n"%e.objectName()

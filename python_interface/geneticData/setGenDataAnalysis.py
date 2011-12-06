@@ -42,7 +42,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
             locus_list = gen_data_ref.group_info_dico[box][1]
             self.addGroup()
             self.groupList[-1].setTitle("Group %s : %s"%(len(self.groupList),title))
-            self.groupList[-1].findChild(QPushButton,"rmButton").hide()
+            self.groupList[-1].findChild(QPushButton,"rmLocusGroupButton").hide()
 
             # selection pour ajouter dans le groupe
             for locus in locus_list:
@@ -117,8 +117,8 @@ class SetGeneticDataAnalysis(SetGeneticData):
 
 
         for box in self.groupList:
-            box.findChild(QPushButton,"addToButton").hide()
-            box.findChild(QPushButton,"rmFromButton").hide()
+            box.findChild(QPushButton,"addToGroupButton").hide()
+            box.findChild(QPushButton,"rmFromGroupButton").hide()
             box.findChild(QPushButton,"setSumButton").hide()
 
 

@@ -114,11 +114,11 @@ class ProjectMsatSeq(ProjectReftable):
         self.gen_data_win.ui.tableWidget.setDisabled(yesno)
         self.gen_data_win.ui.addGroupButton.setDisabled(yesno)
         for g in self.gen_data_win.groupList:
-            for b in g.findChildren(QPushButton,"rmFromButton"):
+            for b in g.findChildren(QPushButton,"rmFromGroupButton"):
                 b.setDisabled(yesno)
-            for b in g.findChildren(QPushButton,"addToButton"):
+            for b in g.findChildren(QPushButton,"addToGroupButton"):
                 b.setDisabled(yesno)
-            for b in g.findChildren(QPushButton,"rmButton"):
+            for b in g.findChildren(QPushButton,"rmLocusGroupButton"):
                 b.setDisabled(yesno)
 
             for e in self.gen_data_win.setMutation_dico[g].findChildren(QLineEdit):

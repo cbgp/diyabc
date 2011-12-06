@@ -92,7 +92,7 @@ class SetSummaryStatistics(QFrame):
         font = QtGui.QFont()
         font.setPointSize(8)
         rmButton.setFont(font)
-        rmButton.setObjectName("rmButton")
+        rmButton.setObjectName("rmAdmixButton")
         verticalLayout_6.addWidget(rmButton)
         horizontalLayout_17 = QtGui.QHBoxLayout()
         horizontalLayout_17.setObjectName("horizontalLayout_17")
