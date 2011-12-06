@@ -229,7 +229,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
         #    self.groupList[i].hide()
         for box in self.groupList:
             box.hide()
-            lw = box.findChild(QListWidget,"listWidget")
+            lw = box.findChild(QListWidget,"locusGroupList")
             for row in range(lw.count()):
                 name = str(lw.item(row).text())
                 #num = int(name.split(' ')[1])
