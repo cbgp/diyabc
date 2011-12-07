@@ -287,7 +287,8 @@ public:
             for (int j=0;j<this->scenario[i].nparam;j++) {
                 int k=0;
                 while (this->scenario[i].histparam[j].name!=this->histparam[k].name) {k++;}
-                this->scenario[i].histparam[j].prior = copyprior(this->histparam[k].prior);
+                //this->scenario[i].histparam[j].prior = copyprior(this->histparam[k].prior); 
+		this->scenario[i].histparam[j].prior = this->histparam[k].prior; 
                 if (not this->histparam[k].prior.constant) {
                     //this->scenario[i].paramvar[this->scenario[i].nparamvar].prior = copyprior(this->histparam[k].prior);
                     this->scenario[i].nparamvar++;
@@ -322,7 +323,7 @@ public:
                                     if (this->condition[j].param2 == this->scenario[i].histparam[k].name) np++;
                                 }
                                 if (np==2) {
-                                    this->scenario[i].condition[nc]=copycondition(this->condition[j]);
+                                    this->scenario[i].condition[nc] = this->condition[j];
                                     //this->scenario[i].condition[nc].ecris();
                                     nc++;
                                 }
@@ -524,11 +525,11 @@ public:
                 this->scen.nconditions=0;
                 for (int i=0;i<this->nscenarios;i++) {if (this->scen.nconditions<this->scenario[i].nconditions) this->scen.nconditions=this->scenario[i].nconditions;}
                 this->scen.event = new EventC[this->scen.nevent];
-                int lonmax=0;
-                for (int i=0;i<this->nscenarios;i++) {
-                    for (int j=0;j<this->scenario[i].nevent;j++) {if (lonmax<this->scenario[i].event[j].ltime) lonmax=this->scenario[i].event[j].ltime;}
-                }
-                for (int i=0;i<this->scen.nevent;i++) {
+                // int lonmax=0;
+                // for (int i=0;i<this->nscenarios;i++) {
+                //    for (int j=0;j<this->scenario[i].nevent;j++) {if (lonmax<this->scenario[i].event[j].ltime) lonmax=this->scenario[i].event[j].ltime;}
+                // }
+                /* for (int i=0;i<this->scen.nevent;i++) {
                     this->scen.event[i].stime = new char[lonmax];
                     this->scen.event[i].ltime=2;this->scen.event[i].time=-9999;this->scen.event[i].stime[0]='0';this->scen.event[i].stime[1]='\0';
                     for (int j=0;j<lonmax;j++) this->scen.event[i].stime[j]='\0';
@@ -553,9 +554,9 @@ public:
                   this->scen.event[i].ladmixrate=0;
                   for (int j=0;j<lonmax;j++) this->scen.event[i].sadmixrate[j]='\0';
                }
-
+		*/
                 this->scen.ne0   = new Ne0C[this->scen.nn0];
-                lonmax=0;
+                /*lonmax=0;
                 for (int i=0;i<this->nscenarios;i++) {
                     for (int j=0;j<this->scenario[i].nn0;j++) {if (lonmax<this->scenario[i].ne0[j].lon) lonmax=this->scenario[i].ne0[j].lon;};
                 }
@@ -563,6 +564,7 @@ public:
                     this->scen.ne0[i].lon=lonmax;
                     this->scen.ne0[i].name = new char[lonmax];
                 }
+		*/
                 this->scen.time_sample = new int[this->scen.nsamp];
                 this->scen.histparam = new HistParameterC[this->scen.nparam];
                 this->scen.paramvar = new double[this->scen.nparamvar+3];
@@ -570,8 +572,8 @@ public:
                 for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i]=0;
                 for (int i=0;i<this->scen.nparamvar+3;i++) this->scen.paramvar[i]=-1;
                 PriorC pr;pr.loi="uniforme";pr.mini=0.0;pr.maxi=1.0;pr.ndec=3;pr.constant=false;
-                HistParameterC pp;pp.name="bidon";pp.category=0;pp.value=-1;pp.prior=copyprior(pr);
-                for (int i=0;i<this->scen.nparam;i++)  this->scen.histparam[i]=copyhistparameter(pp);
+                HistParameterC pp;pp.name="bidon";pp.category=0;pp.value=-1; pp.prior = pr; //pp.prior=copyprior(pr);
+                for (int i=0;i<this->scen.nparam;i++)  this->scen.histparam[i] = pp;
                 //this->scen.ecris();
                 //cout<<"apres superscen\n";
         if (debuglevel==2) cout<<"header.txt : fin de l'établissement du superscen\n";
@@ -790,21 +792,24 @@ public:
                     this->mutparam[nparamut].name="umic_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=0;
-                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priormutmoy);
+                    //this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priormutmoy);
+		    this->mutparam[nparamut].prior = this->groupe[gr].priormutmoy;
                     this->nparamut++;
                 }
                 if (not this->groupe[gr].priorPmoy.constant) {
                     this->mutparam[nparamut].name="Pmic_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=1;
-                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priorPmoy);
+                    //this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priorPmoy);
+		    this->mutparam[nparamut].prior = this->groupe[gr].priorPmoy;
                     this->nparamut++;
                 }
                 if (not this->groupe[gr].priorsnimoy.constant) {
                     this->mutparam[nparamut].name="snimic_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=2;
-                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priorsnimoy);
+                    // this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priorsnimoy);
+		    this->mutparam[nparamut].prior = this->groupe[gr].priorsnimoy;
                     this->nparamut++;
               }
             } else if (this->groupe[gr].type==1) {
@@ -812,21 +817,24 @@ public:
                     this->mutparam[nparamut].name="useq_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=3;
-                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priormusmoy);
+                    // this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priormusmoy);
+		    this->mutparam[nparamut].prior = this->groupe[gr].priormusmoy;
                     this->nparamut++;
                }
                 if ((this->groupe[gr].mutmod>0)and(not this->groupe[gr].priork1moy.constant)) {
                     this->mutparam[nparamut].name="k1seq_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=4;
-                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priork1moy);
+                    // this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priork1moy);
+		    this->mutparam[nparamut].prior = this->groupe[gr].priork1moy;
                     this->nparamut++;
                 }
                 if ((this->groupe[gr].mutmod==3)and(not this->groupe[gr].priork2moy.constant)) {
                     this->mutparam[nparamut].name="k2seq_"+IntToString(gr);
                     this->mutparam[nparamut].groupe=gr;
                     this->mutparam[nparamut].category=5;
-                    this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priork2moy);
+                    // this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priork2moy);
+		    this->mutparam[nparamut].prior = this->groupe[gr].priork2moy;
                     this->nparamut++;
                }
             }
@@ -944,7 +952,7 @@ public:
             else if  (ss[1]=="T") this->histparam[i].category = 1;
             else if  (ss[1]=="A") this->histparam[i].category = 2;
 			this->histparam[i].value=atof(ss[2].c_str());
-			this->scenario[0].histparam[i] = copyhistparameter(this->histparam[i]);
+			this->scenario[0].histparam[i] = this->histparam[i];
 			this->scenario[0].histparam[i].prior.constant=true;
 			this->scenario[0].histparam[i].prior.fixed=true;
 		}
@@ -1110,8 +1118,8 @@ public:
 		//this->scen.ecris();
 		if (debuglevel==2) cout<<"header.txt : apres la copie du scénario\n";
                 PriorC pr;pr.loi="uniforme";pr.mini=0.0;pr.maxi=1.0;pr.ndec=3;pr.constant=false;
-                HistParameterC pp;pp.name="bidon";pp.category=0;pp.value=-1;pp.prior=copyprior(pr);
-                for (int i=0;i<this->scen.nparam;i++)  this->scen.histparam[i]=copyhistparameter(pp);
+                HistParameterC pp;pp.name="bidon";pp.category=0;pp.value=-1; pp.prior = pr; //pp.prior=copyprior(pr);
+                for (int i=0;i<this->scen.nparam;i++)  this->scen.histparam[i] = pp;
                 //this->scen.ecris();
                 //cout<<"apres superscen\n";
         if (debuglevel==2) cout<<"header.txt : fin de l'établissement du superscen\n";

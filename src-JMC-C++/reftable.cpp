@@ -84,7 +84,8 @@ public:
             for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) {
                 pp++;//cout<<"pp="<<pp;
                 this->histparam[i][pp].name = header.scenario[i].histparam[p].name;
-                this->histparam[i][pp].prior = copyprior( header.scenario[i].histparam[p].prior);
+                // this->histparam[i][pp].prior = copyprior( header.scenario[i].histparam[p].prior);
+		this->histparam[i][pp].prior =  header.scenario[i].histparam[p].prior;
                 this->histparam[i][pp].category = header.scenario[i].histparam[p].category;
                 //cout<<"  OK\n";
             }
@@ -96,7 +97,8 @@ public:
             //cout<<"couicou2\n";
             for (int p=0;p<this->nparamut;p++) {
                 this->mutparam[p].name = header.mutparam[p].name;
-                this->mutparam[p].prior = copyprior(header.mutparam[p].prior);
+                // this->mutparam[p].prior = copyprior(header.mutparam[p].prior);
+		this->mutparam[p].prior = header.mutparam[p].prior;
             }
         }
         //cout<<"fin de sethisparamname\n";
