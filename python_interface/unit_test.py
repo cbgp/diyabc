@@ -12,6 +12,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from datetime import datetime
 from utils.cbgpUtils import log,TeeLogger
+import output
+# pour eviter les popups de notification
+output.debug = True
 
 class testDiyabc(unittest.TestCase):
     """

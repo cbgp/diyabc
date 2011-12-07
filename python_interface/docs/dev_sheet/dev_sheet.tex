@@ -46,6 +46,7 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
 
 \section{Conception}
     \subsection{Documentation}
+    \subsubsection{Doxygen}
     L'intégralité du code est documenté façon python docString. Ces docstrings
     sont donc interprêtables par beaucoup de générateurs de documentation
     spécifiques à python et par doxygen.  Je génère une documentation html du
@@ -55,63 +56,28 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
     javadoc sont présent pour que les options comme @author soient pris en
     compte.\\
 
+    \subsubsection{Dans l'interface}
     Une aide à l'utilisateur est intégrée à l'interface. Elle est construite à
     partir d'un fichier xml lui même généré à partir des sources \LaTeX de la
     notice de DIYABC. La génération de cette documentation est décrite en 
     \ref{howtoLatexml}
     Pendant l'utilisation de l'interface, cette aide est
-    consultable en effectuant un clic droit sur un label ou un bouton.
-    L'identifiant d'un label ou d'un bouton est son ``objectName'' dans les
-    sources python. Pour écrire le contenu qui sera affiché lors d'un clic droit
-    sur ce label/bouton, il suffit d'insérer dans le source \LaTeX de la notice
+    consultable en effectuant un clic sur le bouton ``What's this'', situé en
+    haut à droite de la fenêtre principale, puis sur l'objet pour lequel on veut
+    obtenir de l'aide.
+
+    Pour documenter un objet graphique, il faut connaitre son objectname et
+    insérer dans le source \LaTeX de la notice 
     un bloc de la forme : 
     \begin{verbatim}\label{doc_objectName}
-La description du bouton ou du label\end{verbatim}
+La description de l'objet (bouton, label...)\end{verbatim}
     La description s'arrête au prochain délimiteur de section comme un
     paragraphe, une section, une sous section \ldots \\
 
-    Voici la liste des labels pour lesquels il me semble utile de fournir une
-    aide :\\
+    Tout objet pour lequel aucune documentation n'a été spécifiée aura totu de
+    même son objectname dans l'aide ``what's this'' si l'option ``Show objectname in what's
+    this'' a été activé.
 
-    \begin{itemize} 
-        \item versionLabel : numero de version dans la page d'accueil de
-            l'interface.
-        \item projNameLabelValue : nom du project dans l'écran principal d'un projet
-        \item dataFileInfoLabel : informations sur le datafile dans l'écran
-            principal d'un projet
-        \item nbScLabel : nombre de scenarios
-        \item nbHistParamLabel : nombre de paramètres historiques
-        \item nbMicrosatLabel : nombre de microsatellites dans le datafile
-        \item nbSequencesLabel : nombre de sequences dans le datafile
-        \item nbGroupLabel : nombre de groupes de locus dans les données
-            génétiques
-        \item nbSumStatsLabel : nombre de summary stats demandées
-        \item reftableProgressLabel : estmation du temps restant pour la
-            generation de la table de reference
-        \item mmrLabel : mean mutation rate
-        \item ilmrLabel : individual locus mutation rate
-        \item mcpLabel : mean coefficient P
-        \item ilcpLabel : individual locus coefficient P
-        \item msrLabel : mean SNI rate
-        \item ilsrLabel : individual locus SNI rate
-        \item mc1Label : mean coefficient k\_c/t
-        \item ilc1Label : individual locus k\_c/t
-        \item mc2Label : mean coefficient k\_a/g
-        \item ilc2Label : individual locus k\_a/g \\
-    \end{itemize}
-
-    Et la liste des boutons :\\
-
-    \begin{itemize} 
-        \item setHistoricalButton : aller vers l'écran de définition du modèle
-            historique
-        \item setGeneticButton : aller vers l'écran de définition des données
-            génétiques
-        \item runReftableButton : lancer la génération de la reftable en
-            appelant l'exécutable de calcul
-        \item stopReftableButton : arrêter l'exécutable de calcul
-        \item newAnButton : définir une nouvelle analyse
-    \end{itemize}
 
     \subsection{Partie graphique}
     \subsubsection{Pyuic}
@@ -153,7 +119,8 @@ La description du bouton ou du label\end{verbatim}
             self.ui.setupUi(self)
 \end{verbatim}
     L'appel de setupUi a le même effet que dans l'autre solution. L'avantage de
-    cette solution est d'économiser l'étape où l'on utilise pyuic à la main.
+    cette solution est d'économiser l'étape où l'on utilise le programme pyuic4
+    à la main.
     \subsection{Coeur de l'application}
         La classe principale de l'application dérive de QMainWindow. Elle est
         instanci\'ee dans le main du fichier qui la contient. La QMainWindow
@@ -190,8 +157,8 @@ La description du bouton ou du label\end{verbatim}
         que l'on fait.
 
     \subsection{Le modèle historique}
-        La conception du modèle historique n'est pas très complexe. La gestion
-        des scénarios, de conditions et des paramètres est similaire, du moins
+        La conception du modèle historique n'est pas très complexe. Les gestions
+        des scénarios, de conditions et des paramètres sont similaires, du moins
         en ce qui concerne la GUI. Les méthodes addSc, addCondition et
         addParamGui ajoutent graphiquement ces entités et les mémorisent dans
         des attributs de la classe SetHistoricalModel .
@@ -206,13 +173,15 @@ La description du bouton ou du label\end{verbatim}
 
     \subsection{Les préférences}
         Les préférences sont stockées dans le dossier personnel de
-        l'utilisateur. Elles sont divisées en plusieures catégories chacune
-        représentée par un fichier. Les valeurs sont stockées sous la forme clé
-        $\rightarrow$ valeur sauf dans le cas des valeurs par défaut qui sont
-        représentées comme dans le reftable header. Les préférences sont
+        l'utilisateur dans le fichier ~/.diyabc/config.cfg .
+        Les valeurs sont stockées sous la forme clé
+        : valeur selon un format de fichier de configuration assez répandu.
+        Elles sont divisées en plusieurs catégories qui correspondent au onglets
+        de la fenêtre de préférences.
+        Les préférences sont
         appliquées dès leur modification dans la fenêtre. Un clic sur annuler
-        recharge les préférences à partir des fichiers, c'est à dire avant les
-        modifications effectuées.
+        recharge les préférences à partir du fichier de config, c'est à dire
+        avant les modifications effectuées.
         
 
     \subsection{La génération de la table de référence}
@@ -269,7 +238,7 @@ La description du bouton ou du label\end{verbatim}
         se substitue à stdout et stderr pour intercepter tout message et effectuer : 
         \begin{itemize}
             \item Une écriture dans un fichier de log (propre à l'instance de DIYABC)
-            \item Un affichage dans la fenêtre de log accesible par le menu Help
+            \item Un affichage dans la fenêtre de log accessible par le menu Help
             \item Un affichage en couleur sur la bonne sortie (out ou err) \\
         \end{itemize}
 
@@ -369,7 +338,7 @@ La description du bouton ou du label\end{verbatim}
     \item Disposer de pyinstaller\\
     \end{itemize}
 
-    Pas de dépendance particulière pour générer un paquet sous Debian ou
+    Pas de dépendance manuelle particulière pour générer un paquet sous Debian ou
     Ubuntu.\\
 
     \paragraph{La génération de l'aide interne} est très simple.
