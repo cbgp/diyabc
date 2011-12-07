@@ -55,12 +55,12 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
 
         #self.ui.cnosdEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
         self.ui.deEdit.setText("500")
-        #self.ui.totNumSimEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
+        #self.ui.totNumSimLabel.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
 
     def checkAll(self):
         problems = ""
         try:
-            #if (self.ui.totNumSimEdit.text() != "" or self.ui.totNumSimEdit.text() != "0") and int(self.ui.totNumSimEdit.text()) < int(self.ui.cnosdEdit.text()):
+            #if (self.ui.totNumSimLabel.text() != "" or self.ui.totNumSimLabel.text() != "0") and int(self.ui.totNumSimLabel.text()) < int(self.ui.cnosdEdit.text()):
             #    problems += "Impossible to select more data than it exists in the reference table\n"
             if self.analysis.category == "evaluate":
                 notds = int(self.ui.notdsEdit.text())
@@ -158,7 +158,7 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
         self.ui.cnosdEdit.setText(str(sumRec))
         #print "sumrec : %s"%sumRec
         # total number of simulated data default
-        self.ui.totNumSimEdit.setText(str(sumRec))
+        self.ui.totNumSimLabel.setText(str(sumRec))
 
         # logistic regression default
         onePc = sumRec / 100

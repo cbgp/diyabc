@@ -661,8 +661,7 @@ class Preferences(formPreferences,basePreferences):
     def getRamInfo(self):
         """ Retourne la quantite de ram en mega octet
         """
-        totalRam = 0
-        availRam = 0
+        result = None
         # LINUX
         if "linux" in sys.platform:
             import re
@@ -677,6 +676,7 @@ class Preferences(formPreferences,basePreferences):
                     totalRam = int(cline.split(' ')[1])/1000
                 elif "MemFree" in line:
                     availRam = int(cline.split(' ')[1])/1000
+            result = (totalRam , availRam)
 
         # WINDOWS
         elif "win" in sys.platform and "darwin" not in sys.platform:
@@ -702,6 +702,7 @@ class Preferences(formPreferences,basePreferences):
             mem = memoryStatus.dwTotalPhys / (1024*1024)
             availRam = memoryStatus.dwAvailPhys / (1024*1024)
             totalRam = int(mem)
+            result = (totalRam , availRam)
         # MACOS
         elif "darwin" in sys.platform:
             import os
@@ -712,6 +713,16 @@ class Preferences(formPreferences,basePreferences):
             availRam = int(s)
             # TODO : ce n'est pas vrai mais je n'ai pas encore trouvé
             totalRam = availRam
+            result = (totalRam , availRam)
 
-        return (totalRam, availRam)
+        return result
+
+    def checkRam(self):
+        try:
+            raminfo = self.getRamInfo()
+        except Exception as e:
+            raminfo = None
+        min_requested_ram = 2000
+        if raminfo[1] < min_requested_ram:
+            output.notify(self,"System warning","Warning, your have less than %s MB of RAM available.\n Your computer may swap and become very slow"%min_requested_ram)
 

@@ -72,7 +72,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
 
 
         #nbSetsDone = str(self.parent.parent.ui.nbSetsDoneEdit.text()).strip()
-        #self.ui.totNumSimEdit.setText(nbSetsDone)
+        #self.ui.totNumSimLabel.setText(nbSetsDone)
         #self.ui.cnosdEdit.setText(nbSetsDone)
         #onePc = int(nbSetsDone) / 100
         #if onePc < 1000:
@@ -132,7 +132,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
     def checkAll(self):
         problems = ""
         try:
-            #if (self.ui.totNumSimEdit.text() != "" or self.ui.totNumSimEdit.text() != "0") and int(self.ui.totNumSimEdit.text()) < int(self.ui.cnosdEdit.text()):
+            #if (self.ui.totNumSimLabel.text() != "" or self.ui.totNumSimLabel.text() != "0") and int(self.ui.totNumSimLabel.text()) < int(self.ui.cnosdEdit.text()):
             #    problems += "Impossible to select more data than it exists in the reference table\n"
             if self.analysis.category == "bias":
                 notds = int(self.ui.notdsEdit.text())
@@ -250,7 +250,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         txt = "Chosen scenario%s : %s"%(plur,lstxt)
         self.ui.scenariosLabel.setText(txt)
         self.ui.cnosdEdit.setText(str(sumRec))
-        self.ui.totNumSimEdit.setText(str(sumRec))
+        self.ui.totNumSimLabel.setText(str(sumRec))
         nosdDefault = sumRec/100
         if nosdDefault < 1000:
             nosdDefault = 1000
