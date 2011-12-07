@@ -66,7 +66,7 @@ public:
     float *stat_obs;
     long double *var_stat;
 
-    void sethistparamname(HeaderC header) {
+    void sethistparamname(HeaderC const & header) {
       //cout<<"debut de sethistparamname\n";
         int nparamvar=0,pp;
         this->nparamut = header.nparamut;
@@ -79,7 +79,7 @@ public:
             for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) nparamvar++;
             //cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
             this->histparam[i] = new HistParameterC[nparamvar];
-            this->nhistparam[i] =nparamvar;
+            this->nhistparam[i] = nparamvar;
             pp=-1;
             for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) {
                 pp++;//cout<<"pp="<<pp;

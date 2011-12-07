@@ -52,10 +52,10 @@ public:
         this->dataobs.libere();
 		//cout<<"apres dataobs.libere\n";
         if(this->nconditions>0) delete []this->condition;
-        for(int i=0;i<this->nscenarios;i++) this->scenario[i].libere();
+        // for(int i=0;i<this->nscenarios;i++) this->scenario[i].libere();
 		//cout<<"apres scenario[i].libere\n";
         delete []this->scenario;
-        this->scen.libere();
+        // this->scen.libere();
         //for(int i=1;i<ngroupes+1;i++) this->groupe[i].libere();
         delete []this->groupe;
 		//cout<<"apres delete group\n";
@@ -1114,7 +1114,7 @@ public:
         //cout<<"avant la mise à jour des paramvar\n";fflush(stdin);
         //delete [] ss;
 		if (debuglevel==2) cout<<"header.txt : avant la copie du scénario\n";
-		this->scen = copyscenario(this->scenario[0]);
+		this->scen = this->scenario[0];
 		//this->scen.ecris();
 		if (debuglevel==2) cout<<"header.txt : apres la copie du scénario\n";
                 PriorC pr;pr.loi="uniforme";pr.mini=0.0;pr.maxi=1.0;pr.ndec=3;pr.constant=false;

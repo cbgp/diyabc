@@ -55,50 +55,47 @@ using namespace std;
 */ 
 struct LocusC
 {
-	string name;
-	int type;  //0 à 14
-	int groupe;    //numero du groupe auquel appartient le locus
-	double coeffcoal;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
-	long double **freq;
-//Proprietes des locus sequences
-	long double pi_A,pi_C,pi_G,pi_T;
-	vector <long double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
-	vector <int> sitmut;   //array of nsitmut dna sites that are changed through a mutation
-	vector <int> sitmut2;  //
-	int dnalength,dnavar;
-	vector <int> tabsit;   //array of dnalength elements giving the number of a dna site;
-	//char ***haplodna;  //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
-	//char ***haplodnavar; //seulement les sites variables
-    string **haplodna;
-    string **haplodnavar;
-//	int *haplostate; //array[gene copy] tous les "gene copies" sont mises à la suite les unes des autres (groupées par sample)
-//Proprietes des locus microsatellites
-	int mini,maxi,kmin,kmax,motif_size,motif_range,nal;
-	double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
-	int **haplomic; //array[sample][gene copy]
-//Propriétés des locus SNP
-	bool firstime;
-	short int **haplosnp; //array[sample][gene copy] 0,1,9
-	bool mono;  //mono=true si un seul allèle dans l'échantillon global
+  string name;
+  int type;  //0 à 14
+  int groupe;    //numero du groupe auquel appartient le locus
+  double coeffcoal;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
+  long double **freq;
+  //Proprietes des locus sequences
+  long double pi_A,pi_C,pi_G,pi_T;
+  vector <long double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
+  vector <int> sitmut;   //array of nsitmut dna sites that are changed through a mutation
+  vector <int> sitmut2;  //
+  int dnalength,dnavar;
+  vector <int> tabsit;   //array of dnalength elements giving the number of a dna site;
+  string **haplodna; //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
+  string **haplodnavar; //seulement les sites variab
+  //Proprietes des locus microsatellites
+  int mini,maxi,kmin,kmax,motif_size,motif_range,nal;
+  double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
+  int **haplomic; //array[sample][gene copy]
+  //Propriétés des locus SNP
+  bool firstime;
+  short int **haplosnp; //array[sample][gene copy] 0,1,9
+  bool mono;  //mono=true si un seul allèle dans l'échantillon global
 
-/**
-*  Structure LocusC : libération de la mémoire occupée par la structure LocusC
-*/ 
-	void libere(bool obs, int nsample) {
-       //cout<<"debut  nsample="<<nsample<<"\n";
-       //delete []this->name;
-       //cout<<"apres delete name\n";
-       //cout<<"apres delete ss\n";
-       //delete []this->samplesize;
-       //cout<<"apres delete samplesize\n";
-	   if ((this->type>4)and(this->type<10)) {
-           if (not obs) {
-              if (not mutsit.empty()) mutsit.clear();
-              if (not tabsit.empty())tabsit.clear();
-           }
-       }
-       //cout<<"fin\n";
+  /**
+   *  Structure LocusC : libération de la mémoire occupée par la structure LocusC
+   */ 
+  void libere(bool obs, int nsample) {
+    //cout<<"debut  nsample="<<nsample<<"\n";
+    //delete []this->name;
+    //cout<<"apres delete name\n";
+    //cout<<"apres delete ss\n";
+    //delete []this->samplesize;
+    //cout<<"apres delete samplesize\n";
+    if ((this->type>4)and(this->type<10)) {
+      if (not obs) {
+	if (not mutsit.empty()) mutsit.clear();
+	if (not tabsit.empty())tabsit.clear();
+      }
     }
+    //cout<<"fin\n";
+  }
 };
 
 struct MissingHaplo

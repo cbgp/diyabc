@@ -185,7 +185,7 @@ string* splitwordsR(string s,string sep,int m,int *k){
 /**
  * Centre la chaîne s dans une chaîne de longeur totale k
  */
-string centre(string s,int k){
+string centre(string const & s,int k){
         int l=s.length();
         string sb=s;
         int av,ap;
@@ -278,7 +278,7 @@ string LongDoubleToString (long double number )
 /**
  * transforme un string en mettant en majuscules les lettres minuscules
  */
-string majuscules(string s) {
+string majuscules(string  s) {
     string s2;
     char *c;
     c = new char[s.length()+1];
@@ -294,22 +294,18 @@ string majuscules(string s) {
 /**
  * transforme un char* en string
  */
-string char2string(char *c) {
-    stringstream s;
-    s<<c;
-    return s.str();
+inline string char2string(char *c) {
+  return string(c); 
 }
 
 /**
  * transforme un string en char*
  */
-char* str2char(string x)
+/*char* str2char(string x)
 {
-    size_t size = x.size() + 1;
-    char* conv = new char[ size ];
-    strncpy( conv, x.c_str(), size );
-    return(conv);
+  return x.c_str();
 }
+*/
 
 /**
  * élimine les espaces et les tabulations bordant aux extrémités d'un string

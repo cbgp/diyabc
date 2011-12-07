@@ -278,14 +278,14 @@ struct ParticleSetC
             //cout<<"avant la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
             //cout << "\nscenario source\n";
             //if (p==0) cout<<"header nconditions="<<this->header.scenario[i].nconditions<<"\n";
-		    this->particule[p].scenario[i] = copyscenario(this->header.scenario[i]);
+		    this->particule[p].scenario[i] = this->header.scenario[i];
             //cout<<"apres la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
 		    //if (p==0) this->header.scenario[i].ecris();
             //if (p==0) cout<<"dans particule[0] scenario["<<i<<"] nconditions="<<this->particule[p].scenario[i].nconditions<<"\n";
 		}
         //cout<<"\navant la copie du superscenario\n";
         //this->header.scen.ecris();
-		this->particule[p].scen=copyscenario(this->header.scen);
+		this->particule[p].scen = this->header.scen;
         //cout<<"\napres la copie du superscenario\n";
         //this->particule[p].scen.ecris();
         //cout<<"setscenarios nloc="<<this->particule[p].nloc<<"\n";
@@ -326,7 +326,7 @@ struct ParticleSetC
 /**
 * Structure ParticleSet : simulation des particules utilisées pour le model checking
 */
-    void dosimulphistar(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
+    void dosimulphistar(HeaderC const & header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
         int scen=numscen-1;
         int ii,ip1,ip2,ipart,gr,nstat,k,nparam=header.scenario[scen].nparam;
         bool phistarOK;
@@ -452,7 +452,7 @@ struct ParticleSetC
 /**
 * Structure ParticleSet : simulation des particules utilisées pour la table de référence, le biais et la confiance
 */
-	void dosimultabref(HeaderC header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed)
+	void dosimultabref(HeaderC const & header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed)
 	{
                int ipart,gr,nstat,pa,ip,iscen,np,ns;
                bool trouve;
@@ -605,7 +605,7 @@ struct ParticleSetC
 /**
 * Structure ParticleSet : simulation des particules utilisées pour la création de fichiers genepop
 */
-	string* simulgenepop(HeaderC header, int npart, bool multithread, int seed) {
+	string* simulgenepop(HeaderC const & header, int npart, bool multithread, int seed) {
         bool dnatrue=true;
         int numscen=1;
         this->npart=npart;
