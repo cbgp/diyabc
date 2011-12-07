@@ -48,15 +48,17 @@ public:
 	float reffreqmin;
 
     void libere() {
+		
         this->dataobs.libere();
-        //delete []this->pathbase;
-        //delete []this->paramname;
+		//cout<<"apres dataobs.libere\n";
         if(this->nconditions>0) delete []this->condition;
         for(int i=0;i<this->nscenarios;i++) this->scenario[i].libere();
+		//cout<<"apres scenario[i].libere\n";
         delete []this->scenario;
         this->scen.libere();
         //for(int i=1;i<ngroupes+1;i++) this->groupe[i].libere();
         delete []this->groupe;
+		//cout<<"apres delete group\n";
     }
 
     PriorC readprior(string ss) {

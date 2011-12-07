@@ -344,14 +344,18 @@ int main(int argc, char *argv[]){
                                           }
                                           if (firsttime) firsttime=false;
                                   }
+                                  //cout<<"fin du while\n";
                                   for (int i=0;i<nenr;i++) {
                                         delete [] enreg[i].param;
                                         delete [] enreg[i].stat;
                                   }
                                   delete [] enreg;
                                   rt.closefile();
+								  //cout<<"apres rt.closefile\n";
                                   if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename,ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}
+                                  //cout<<"avant header.libere\n";
                                   header.libere();
+								  //cout<<"apres header.libere\n";
                                   //exit(1);
                           } else {ofstream f1(reftablelogfilename,ios::out);f1<<"END\n\n";f1.close();}
                       break;

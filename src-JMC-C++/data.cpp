@@ -132,36 +132,37 @@ public:
 * liberation de la mémoire occupée par la classe DataC
 */
 	void libere(){
-                if (Aindivname) {
-		    for (int  ech=0;ech<this->nsample;ech++) delete [] this->indivname[ech];
-		    delete [] this->indivname;
-                    //cout<<"delete indivname\n";
-                }
-                if (Aindivsexe) {
-		    for (int  ech=0;ech<this->nsample;ech++) this->indivsexe[ech].clear();
-		    this->indivsexe.clear();
+		//cout<<"Aindivname="<<Aindivname<<"   Aindivsexe="<<Aindivsexe<<"   Agenotype="<<Agenotype<<"   Anind="<<Anind<<"\n";
+		if (Aindivname) {
+			for (int  ech=0;ech<this->nsample0;ech++) delete [] this->indivname[ech];
+			delete [] this->indivname;
+			//cout<<"delete indivname\n";
+		}
+		if (Aindivsexe) {
+			for (int  ech=0;ech<this->nsample0;ech++) this->indivsexe[ech].clear();
+			this->indivsexe.clear();
                     //cout<<"delete indivsexe\n";
-                }
-                if (Agenotype) {
-                    for (int  ech=0;ech<this->nsample;ech++) {
-                            for (int ind=0;ind<this->nind[ech];ind++) {
-                                    delete [] this->genotype[ech][ind];
-                                    //cout <<"delete genotype[ech][ind]\n";
-                            }
-                            delete [] this->genotype[ech];
-                            //cout <<"delete genotype[ech]\n";
-                    }
-                    delete [] this->genotype;
-                    //cout<<"delete genotype\n";
-                }
-                //cout<<"apres delete genotype\n";
+		}
+		if (Agenotype) {
+			for (int  ech=0;ech<this->nsample0;ech++) {
+					for (int ind=0;ind<this->nind[ech];ind++) {
+							delete [] this->genotype[ech][ind];
+							//cout <<"delete genotype[ech][ind]\n";
+					}
+					delete [] this->genotype[ech];
+					//cout <<"delete genotype[ech]\n";
+			}
+			delete [] this->genotype;
+			//cout<<"delete genotype\n";
+		}
+		//cout<<"apres delete genotype\n";
 		if (this->nmisshap>0) delete [] this->misshap;
 		if (this->nmissnuc>0) delete [] this->missnuc;
-                //cout<<"apres delete misshap et missnuc\n";
-                if (Alocus) {
-                    for (int loc=0;loc<this->nloc;loc++) this->locus[loc].libere(true,this->nsample);
-                    delete [] this->locus;
-                }
+			//cout<<"apres delete misshap et missnuc\n";
+		if (Alocus) {
+			for (int loc=0;loc<this->nloc;loc++) this->locus[loc].libere(true,this->nsample);
+			delete [] this->locus;
+		}
 		if (Anind) this->nind.clear();
 	}
 
@@ -344,13 +345,13 @@ public:
 			if (not this->locus[loc].mono) {
 				nloc++;
 			} else {
-				cout<<"le locus "<<loc<<" semble monomorphe"<<"   premier="<<premier<<"\n";
-				for (ech=0;ech<this->nsample;ech++){
+				cout<<"le locus "<<loc<<" est monomorphe"<<"   tous les génotypes sont égaux à "<<premier<<"\n";
+				/*for (ech=0;ech<this->nsample;ech++){
 					for (ind=0;ind<this->nind[ech];ind++) {
 						cout<<this->genotype[ech][ind][loc]<<" ";
 					}
 					cout<<"\n";
-				}
+				}*/
 			}
 			
 		}
@@ -469,7 +470,7 @@ public:
 								if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[sa][ind]==2))) this->ss[locustype][sa] +=2;
 								else if (not((this->locus[loc].type==13)and(this->indivsexe[sa][ind]==2))) this->ss[locustype][sa] +=1;
 							}
-							cout<<"data.ss["<<locustype<<"]["<<sa<<"]="<<this->ss[locustype][sa]<<"\n";
+							//cout<<"data.ss["<<locustype<<"]["<<sa<<"]="<<this->ss[locustype][sa]<<"\n";
 						}
 						this->catexist[locustype] = true;
 					}
