@@ -1398,6 +1398,7 @@ class RefTableGenThread(QThread):
             if p.poll() != None:
                 fg.close()
                 g = open(outfile,"r")
+                # TODO lire la fin de la sortie de l'ex
                 #data= g.readlines()
                 #print "data:%s"%data
                 #print "poll:%s"%p.poll()
