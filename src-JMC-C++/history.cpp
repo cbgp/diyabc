@@ -53,8 +53,34 @@ public:
     if (this->constant) cout<<"   constant"; else cout<<"   non constant";
     if (this->fixed) cout<<"   fixed\n";else cout<<"   non fixed\n";
   }
-
+  double drawfromprior(MwcGen & mw);
 };
+
+double PriorC::drawfromprior(MwcGen & mw){
+	    double r;
+    if (this->mini==this->maxi) return this->mini;
+    if (this->loi=="UN") return mw.gunif(this->mini,this->maxi);
+    if (this->loi=="LU") return mw.glogunif(this->mini,this->maxi);
+    if (this->loi=="NO") {
+      do {r = mw.gnorm(this->mean,this->sdshape);}
+      while ((r<this->mini)or(r>this->maxi));
+      return r;
+    }
+    if (this->loi=="LN") {
+      do {r = mw.glognorm(this->mean,this->sdshape);}
+      while ((r<this->mini)or(r>this->maxi));
+      return r;
+    }
+    if (this->loi=="GA") {
+      if (this->mean<1E-12) return 0;
+      if (this->sdshape<1E-12) return this->mean;
+      if (this->maxi<1E-12) return this->maxi;
+      do {r = mw.ggamma3(this->mean,this->sdshape);}
+      while ((r<this->mini)or(r>this->maxi));
+      return r;
+    }
+    return -1.0;
+}
 
 /**
  * Classe ConditionC :éléments de définition d'une condition sur un couple de paramètres historiques

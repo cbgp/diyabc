@@ -49,8 +49,7 @@ class ParticleC
    // Si numscen<1, tirage au sort préalable du scenario dans le prior
    void drawscenario(int numscen);
 
-   //  tire une valeur de type double dans un prior
-   double drawfromprior(PriorC prior); // FIXME: cela n'a rien à faire là !!!!
+
 
    // retourne la valeur d'un paramètre à partir de son nom (propriété name)
    double param2val(string paramname);
@@ -59,7 +58,7 @@ class ParticleC
    double getvalue(string line); // FIXME: cela n'a rien à faire là ???
 
    // indique si toutes les conditions sur les paramètres sont vérifiées
-   bool conditionsOK(); // FIXME: cela n'a rien à faire là ???
+   bool conditionsOK();
 
    // vérifie l'ordre des événements quand il a y en a plusieurs à la même génération et effectue les corrections
    void checkorder();
@@ -114,32 +113,47 @@ class ParticleC
    void init_tree(GeneTreeC & gt,int loc);
 
    // évalue la pertinence de l'approximation continue pour le traitement de la coalescence
-   // FIXME : expliquer le sens de la valeur renvoyée
+   // (1= approximation continue, 0 = generation par generation)
    int evalcriterium(int iseq,int nLineages);
 
-   // tire au hasard (uniformément) une lignée ancestrale parmi celles de la population requise
+   // tire au hasard (uniformement) une lignée ancestrale parmi celles de la population requise
    int draw_node(int loc,int iseq,int nLineages);
 
    // coalesce les lignées ancestrales de la population requise
    void coal_pop(int loc,int iseq);
 
    // FIXME: sens ???
+   // debut modifications de l'arbre
    void pool_pop(int loc,int iseq);
    void split_pop(int loc,int iseq);
    void add_sample(int loc,int iseq);
-   int gpoisson(double lambda); // FIXME: n'a rien à faire là !!!
+   // fin modification de l'arbre
+
+   // SNP: cherche sous-arbre depuis echantillon de ref jusqu'a MRCA
    void cherche_branchesOK(int loc);
+   // ADN et microsat: mettre les mutations dans l'arbre
    void put_mutations(int loc);
+   // SNP: mettre la mutation dans l'arbre
    void put_one_mutation(int loc);
+   // effectue une mutation sur le noeud inferieur de la branche b (en position site[numut] si ADN)
    void mute(int loc, int numut, int b);
-   char draw_nuc(int loc); // FIXME: n'a rien à faire là !!!
+   char draw_nuc(int loc);
+   // initialise la séquence ancestrale (ADN)
    string init_dnaseq(int loc);
+   // part de MRCA et crée tous les haplotypes en bas de l'arbre
    int cree_haplo(int loc);
+   // vérification de la topologie de l'arbre de coalescence
    string verifytree();
+   // SNP: test si le locus est polymorphe chez les individus de reference
    bool polymref(int loc);
+
+   // tire le scenario, simule les paramatres et les haplotypes
+   // (renvoie 0 si tout s'est bien passé, d'autres nombres si erreur (voir code))
    int dosimulpart(int numscen);
+   // idem, mais pour la simulation de fichier
    string dogenepop();
 
+   /* Partie calcul des summary stat */
    int samplesize(int loc, int sample);
    void calfreq(int gr);
    void calfreqsnp(int gr);
@@ -147,11 +161,13 @@ class ParticleC
    void liberefreqsnp(int gr);
    void libere_freq(int gr);
    void liberednavar(int gr);
+   // SNP
    void cal_snhet(int gr,int numsnp);
    void cal_snnei(int gr,int numsnp);
    void cal_snfst(int gr,int numsnp);
-   complex<long double> pente_liksnp(int gr, int st, int i0);
+   pair<long double, long double> pente_liksnp(int gr, int st, int i0);
    void cal_snaml(int gr,int numsnp);
+   // MICROSAT
    long double cal_pid1p(int gr,int st);
    long double cal_nal1p(int gr,int st);
    long double cal_nal2p(int gr,int st);
@@ -164,8 +180,9 @@ class ParticleC
    long double cal_lik2p(int gr,int st);
    long double cal_dmu2p(int gr,int st);
    long double cal_das2p(int gr,int st);
-   complex<long double> pente_lik(int gr,int st, int i0);
+   pair<long double, long double> pente_lik(int gr,int st, int i0);
    long double cal_Aml3p(int gr,int st);
+   // DNA
    bool identseq(string seq1, string seq2,string appel,int kloc,int sample,int ind);
    long double cal_nha1p(int gr,int st);
    int* cal_nsspl(int kloc,int sample, int *nssl,bool *OK);

@@ -28,6 +28,10 @@
 #include <complex>
 #define COMPLEX
 #endif
+#ifndef UTILITY
+#include <utility>
+#define UTILITY
+#endif
 #ifndef STRING
 #include <string>
 #define STRING
@@ -230,35 +234,6 @@ vector <int> melange(MwcGen mw, int n) {
   }
 
 
-  /**
-   * Struct ParticleC : tire une valeurde type double dans un prior
-   */
-  double ParticleC::drawfromprior(PriorC prior) {
-    //prior.ecris();
-    double r;
-    if (prior.mini==prior.maxi) return prior.mini;
-    if (prior.loi=="UN") return this->mw.gunif(prior.mini,prior.maxi);
-    if (prior.loi=="LU") return this->mw.glogunif(prior.mini,prior.maxi);
-    if (prior.loi=="NO") {
-      do {r = this->mw.gnorm(prior.mean,prior.sdshape);}
-      while ((r<prior.mini)or(r>prior.maxi));
-      return r;
-    }
-    if (prior.loi=="LN") {
-      do {r = this->mw.glognorm(prior.mean,prior.sdshape);}
-      while ((r<prior.mini)or(r>prior.maxi));
-      return r;
-    }
-    if (prior.loi=="GA") {
-      if (prior.mean<1E-12) return 0;
-      if (prior.sdshape<1E-12) return prior.mean;
-      if (prior.maxi<1E-12) return prior.maxi;
-      do {r = this->mw.ggamma3(prior.mean,prior.sdshape);}
-      while ((r<prior.mini)or(r>prior.maxi));
-      return r;
-    }
-    return -1.0;
-  }
 
   /**
    * Struct ParticleC : retourne la valeur d'un paramètre à partir de son nom (propriété name)
@@ -506,7 +481,7 @@ vector <int> melange(MwcGen mw, int n) {
 	OK=false;
 	while (not OK) {
 	  for (int p=0;p<this->scen.nparam;p++) {
-	    if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+	    if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = this->scen.histparam[p].prior.drawfromprior(this->mw);
 	    if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
 	    //cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value<<"\n";
 	    //cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
@@ -517,14 +492,14 @@ vector <int> melange(MwcGen mw, int n) {
 	}
       } else {
 	for (int p=0;p<this->scen.nparam;p++) {
-	  if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+	  if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = this->scen.histparam[p].prior.drawfromprior(this->mw);
 	  if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
 	}
 	OK = conditionsOK();
       }
     }else {
       for (int p=0;p<this->scen.nparam;p++) {
-	if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = drawfromprior(this->scen.histparam[p].prior);
+	if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = this->scen.histparam[p].prior.drawfromprior(this->mw);
 	if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
 	//cout << this->scen.histparam[p].name<<" = "<<this->scen.histparam[p].value<<"\n";
       }
@@ -574,14 +549,14 @@ vector <int> melange(MwcGen mw, int n) {
     for (gr=1;gr<=this->ngr;gr++) {
       // cout<<"groupe "<<gr<<"   type="<<this->grouplist[gr].type<<"\n";
       if (this->grouplist[gr].type==0) {  //microsat
-	if (not this->grouplist[gr].priormutmoy.fixed) this->grouplist[gr].mutmoy = this->drawfromprior(this->grouplist[gr].priormutmoy);
+	if (not this->grouplist[gr].priormutmoy.fixed) this->grouplist[gr].mutmoy = this->grouplist[gr].priormutmoy.drawfromprior(this->mw);
 	if (not this->grouplist[gr].priormutmoy.constant) {
 	  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
 	  this->scen.ipv++;
 	  //cout<<"mutmoy ipv++\n";
 	}
 	//cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"\n";
-	if (not this->grouplist[gr].priorPmoy.fixed) this->grouplist[gr].Pmoy = this->drawfromprior(this->grouplist[gr].priorPmoy);
+	if (not this->grouplist[gr].priorPmoy.fixed) this->grouplist[gr].Pmoy = this->grouplist[gr].priorPmoy.drawfromprior(this->mw);
 	if (not this->grouplist[gr].priorPmoy.constant) {
 	  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
 	  this->scen.ipv++;
@@ -590,7 +565,7 @@ vector <int> melange(MwcGen mw, int n) {
 	//cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"\n";
 	//cout<<"avant ecriture de priorsnimoy\n";
 	//this->grouplist[gr].priorsnimoy.ecris();	
-	if (not this->grouplist[gr].priorsnimoy.fixed) this->grouplist[gr].snimoy = this->drawfromprior(this->grouplist[gr].priorsnimoy);
+	if (not this->grouplist[gr].priorsnimoy.fixed) this->grouplist[gr].snimoy = this->grouplist[gr].priorsnimoy.drawfromprior(this->mw);
 	if (not this->grouplist[gr].priorsnimoy.constant) {
 	  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
 	  this->scen.ipv++;
@@ -599,14 +574,14 @@ vector <int> melange(MwcGen mw, int n) {
 	//cout<<"snimoy="<<this->grouplist[gr].snimoy<<"\n";
       }
       if (this->grouplist[gr].type==1) {  //sequence
-	if (not this->grouplist[gr].priormusmoy.fixed) this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
+	if (not this->grouplist[gr].priormusmoy.fixed) this->grouplist[gr].musmoy = this->grouplist[gr].priormusmoy.drawfromprior(this->mw);
 	if (not this->grouplist[gr].priormusmoy.constant) {		
 	  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
 	  //cout<<"musmoy ipv++\n";
 	  this->scen.ipv++;
 	}
 	if (this->grouplist [gr].mutmod>0){
-	  if (not this->grouplist[gr].priork1moy.fixed) this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
+	  if (not this->grouplist[gr].priork1moy.fixed) this->grouplist[gr].k1moy = this->grouplist[gr].priork1moy.drawfromprior(this->mw);
 	  if (not this->grouplist[gr].priork1moy.constant) {
 	    this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
 	    //cout<<"k1moy ipv++\n";
@@ -614,7 +589,7 @@ vector <int> melange(MwcGen mw, int n) {
 	  }
 	}
 	if (this->grouplist [gr].mutmod>2){
-	  if (not this->grouplist[gr].priork2moy.fixed) this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
+	  if (not this->grouplist[gr].priork2moy.fixed) this->grouplist[gr].k2moy = this->grouplist[gr].priork2moy.drawfromprior(this->mw);
 	  if (not this->grouplist[gr].priork2moy.constant) {
 	    this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
 	    this->scen.ipv++;
@@ -716,18 +691,18 @@ vector <int> melange(MwcGen mw, int n) {
     //cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
     if (this->locuslist[loc].type<5) {  //MICROSAT
       this->grouplist[gr].priormutloc.mean = this->grouplist[gr].mutmoy;
-      if ((this->grouplist[gr].priormutloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mut_rate = this->drawfromprior(this->grouplist[gr].priormutloc);
+      if ((this->grouplist[gr].priormutloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mut_rate = this->grouplist[gr].priormutloc.drawfromprior(this->mw);
       else this->locuslist[loc].mut_rate =this->grouplist[gr].mutmoy;
       //cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
 
       this->grouplist[gr].priorPloc.mean = this->grouplist[gr].Pmoy;
-      if ((this->grouplist[gr].priorPloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].Pgeom = this->drawfromprior(this->grouplist[gr].priorPloc);
+      if ((this->grouplist[gr].priorPloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].Pgeom = this->grouplist[gr].priorPloc.drawfromprior(this->mw);
       else this->locuslist[loc].Pgeom =this->grouplist[gr].Pmoy;
       //cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
 
       this->grouplist[gr].priorsniloc.mean = this->grouplist[gr].snimoy;
       //cout <<"coucou\n";fflush(stdin);
-      if ((this->grouplist[gr].priorsniloc.sdshape>0.001 )and(this->grouplist[gr].nloc>1)) this->locuslist[loc].sni_rate = this->drawfromprior(this->grouplist[gr].priorsniloc);
+      if ((this->grouplist[gr].priorsniloc.sdshape>0.001 )and(this->grouplist[gr].nloc>1)) this->locuslist[loc].sni_rate = this->grouplist[gr].priorsniloc.drawfromprior(this->mw);
       else this->locuslist[loc].sni_rate =this->grouplist[gr].snimoy;
       //cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
 
@@ -736,30 +711,30 @@ vector <int> melange(MwcGen mw, int n) {
     else		                    //DNA SEQUENCE
       {
 	//cout << "musmoy = "<<this->grouplist[gr].musmoy <<" (avant)";
-	if (this->grouplist[gr].musmoy<0) this->grouplist[gr].musmoy = this->drawfromprior(this->grouplist[gr].priormusmoy);
+	if (this->grouplist[gr].musmoy<0) this->grouplist[gr].musmoy = this->grouplist[gr].priormusmoy.drawfromprior(this->mw);
 	this->grouplist[gr].priormusloc.mean = this->grouplist[gr].musmoy;
 	//cout << "   et "<<this->grouplist[gr].musmoy <<" (apres)\n";
 
-	if ((this->grouplist[gr].priormusloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mus_rate = this->drawfromprior(this->grouplist[gr].priormusloc);
+	if ((this->grouplist[gr].priormusloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mus_rate = this->grouplist[gr].priormusloc.drawfromprior(this->mw);
 	else this->locuslist[loc].mus_rate =this->grouplist[gr].musmoy;
 	//cout << "   et "<<this->locuslist[loc].mut_rate <<" (apres)\n";
 
 	if (this->grouplist [gr].mutmod>0) {
 	  //cout << "Pmoy = "<<this->grouplist[gr].Pmoy <<" (avant)";
-	  if (this->grouplist[gr].k1moy<0) this->grouplist[gr].k1moy = this->drawfromprior(this->grouplist[gr].priork1moy);
+	  if (this->grouplist[gr].k1moy<0) this->grouplist[gr].k1moy = this->grouplist[gr].priork1moy.drawfromprior(this->mw);
 	  this->grouplist[gr].priork1loc.mean = this->grouplist[gr].k1moy;
 	  //cout << "   et "<<this->grouplist[gr].Pmoy <<" (apres)\n";
 
-	  if ((this->grouplist[gr].priork1loc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].k1 = this->drawfromprior(this->grouplist[gr].priork1loc);
+	  if ((this->grouplist[gr].priork1loc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].k1 = this->grouplist[gr].priork1loc.drawfromprior(this->mw);
 	  else this->locuslist[loc].k1 =this->grouplist[gr].k1moy;
 	  //cout << "   et "<<this->locuslist[loc].Pgeom <<" (apres)\n";
 	}
 
 	if (this->grouplist [gr].mutmod>2) {
-	  if (this->grouplist[gr].k2moy<0) this->grouplist[gr].k2moy = this->drawfromprior(this->grouplist[gr].priork2moy);
+	  if (this->grouplist[gr].k2moy<0) this->grouplist[gr].k2moy = this->grouplist[gr].priork2moy.drawfromprior(this->mw);
 	  this->grouplist[gr].priork2loc.mean = this->grouplist[gr].k2moy;
 
-	  if (this->grouplist[gr].priork2loc.sdshape>0.001 ) this->locuslist[loc].k2 = this->drawfromprior(this->grouplist[gr].priork2loc);
+	  if (this->grouplist[gr].priork2loc.sdshape>0.001 ) this->locuslist[loc].k2 = this->grouplist[gr].priork2loc.drawfromprior(this->mw);
 	  else this->locuslist[loc].k2 =this->grouplist[gr].k2moy;
 	  //cout <<"mutmoy = "<< this->grouplist[gr].mutmoy << "  Pmoy = "<<this->grouplist[gr].Pmoy <<"  snimoy="<<this->grouplist[gr].snimoy<<"\n";
 	  //cout <<"locus "<<loc<<"  groupe "<<gr<< "  mut_rate="<<this->locuslist[loc].mut_rate<<"  Pgeom="<<this->locuslist[loc].Pgeom<<"  sni_rate="<<this->locuslist[loc].sni_rate << "\n";
@@ -1256,18 +1231,7 @@ vector <int> melange(MwcGen mw, int n) {
     //cout<<"\naddsample nn="<<nn<<"   sample = "<<this->seqlist[iseq].sample<<"\n";
   }
 
-  int ParticleC::gpoisson(double lambda) {
-    if (lambda<=0) {return 0;}
-    int i=0;
-    double p=0.0;
-    double ra;
-    while (p<lambda) {
-      i++;
-      do {ra = this->mw.random();} while (ra==0.0);
-      p -= log(ra);
-    }
-    return (i-1);
-  }
+
 
   void ParticleC::put_mutations(int loc) {
     this->gt[loc].nmutot=0;
@@ -1370,72 +1334,72 @@ vector <int> melange(MwcGen mw, int n) {
 
 
   void ParticleC::mute(int loc, int numut, int b) {
-    if (this->locuslist[loc].type<5) {   //MICROSAT
-      int d;
-      int g1= this->gt[loc].nodes[this->gt[loc].branches[b].bottom].state;
-      if (this->mw.random() < this->locuslist[loc].sni_rate/(this->locuslist[loc].sni_rate+this->locuslist[loc].mut_rate)) {
-	if (this->mw.random()<0.5) g1++;
-	else            g1--;
-      }
-      else {
-	if (this->locuslist[loc].Pgeom>0.001) {
-	  double ra;
-	  do {ra = this->mw.random();} while (ra==0.0);
-	  d = (1.0 + log(ra)/log(this->locuslist[loc].Pgeom));
-	}
-	else d=1;
-	if (this->mw.random()<0.5)  g1 += d*this->locuslist[loc].motif_size;
-	else             g1 -= d*this->locuslist[loc].motif_size;
-      }
-      if (g1>this->locuslist[loc].kmax) g1=this->locuslist[loc].kmax;
-      if (g1<this->locuslist[loc].kmin) g1=this->locuslist[loc].kmin;
-      this->gt[loc].nodes[this->gt[loc].branches[b].bottom].state = g1;
-    }
-    else  if (this->locuslist[loc].type<10) {	//DNA SEQUENCE
-      string dna=this->gt[loc].nodes[this->gt[loc].branches[b].bottom].dna;
-      char dnb;
-      double ra=this->mw.random();
-      int n =this->locuslist[loc].sitmut[numut];
-      //cout<<"numut="<<numut<<"   n="<<n<<"\n";
-      dnb = dna[n];
-      if (n<0) {cout<<"probleme n="<<n<<"\n";exit(1);}
-      if ((dna[n]!='A')and(dna[n]!='C')and(dna[n]!='G')and(dna[n]!='T')) {
-	cout<<"probleme dna[n]="<<dna[n]<<"\n";
-	exit(1);
-      }
-      switch (dna[n])
-	{  	case 'A' :
-	    if (ra<this->matQ[0][1])                        dnb = 'C';
-	    else if (ra<this->matQ[0][1]+this->matQ[0][2])  dnb = 'G';
-	    else                                            dnb = 'T';
-	    break;
-	case 'C' :
-	  if (ra<this->matQ[1][0])                        dnb = 'A';
-	  else if (ra<this->matQ[1][0]+this->matQ[1][2])  dnb = 'G';
-	  else                                            dnb = 'T';
-	  break;
-	case 'G' :
-	  if (ra<this->matQ[2][0])                        dnb = 'A';
-	  else if (ra<this->matQ[2][0]+this->matQ[2][1])  dnb = 'C';
-	  else                                            dnb = 'T';
-	  break;
-	case 'T' :
-	  if (ra<this->matQ[3][0])                        dnb = 'A';
-	  else if (ra<this->matQ[3][0]+this->matQ[3][1])  dnb = 'C';
-	  else                                            dnb = 'G';
-	  break;
-	}
-      if((debuglevel==9)and(loc==10)) cout<<"mutation "<<numut<<"    site mute = "<<n<<"  de "<<dna[n]<<"  vers "<<dnb<<"\n";
-      if (debuglevel==8) cout<<"mutation "<<numut<<"   dna["<<n<<"]="<<dna[n]<<"   dnb="<<dnb<<"\n";
-      if (debuglevel==8) cout<<dna<<"\n";
-      dna[n] = dnb;
-      this->gt[loc].nodes[this->gt[loc].branches[b].bottom].dna = dna;
-      if (debuglevel==8) cout<<dna<<"\n";
-    }
-    else {		//SNP 
-      this->gt[loc].nodes[this->gt[loc].branches[b].bottom].state=1;
-      //cout<<"la branche "<<b<<" a muté ------------------------------\n";
-    }
+	  if (this->locuslist[loc].type<5) {   //MICROSAT
+		  int d;
+		  int g1= this->gt[loc].nodes[this->gt[loc].branches[b].bottom].state;
+		  if (this->mw.random() < this->locuslist[loc].sni_rate/(this->locuslist[loc].sni_rate+this->locuslist[loc].mut_rate)) {
+			  if (this->mw.random()<0.5) g1++;
+			  else            g1--;
+		  }
+		  else {
+			  if (this->locuslist[loc].Pgeom>0.001) {
+				  double ra;
+				  do {ra = this->mw.random();} while (ra==0.0);
+				  d = (1.0 + log(ra)/log(this->locuslist[loc].Pgeom));
+			  }
+			  else d=1;
+			  if (this->mw.random()<0.5)  g1 += d*this->locuslist[loc].motif_size;
+			  else             g1 -= d*this->locuslist[loc].motif_size;
+		  }
+		  if (g1>this->locuslist[loc].kmax) g1=this->locuslist[loc].kmax;
+		  if (g1<this->locuslist[loc].kmin) g1=this->locuslist[loc].kmin;
+		  this->gt[loc].nodes[this->gt[loc].branches[b].bottom].state = g1;
+	  }
+	  else  if (this->locuslist[loc].type<10) {	//DNA SEQUENCE
+		  string dna=this->gt[loc].nodes[this->gt[loc].branches[b].bottom].dna;
+		  char dnb;
+		  double ra=this->mw.random();
+		  int n =this->locuslist[loc].sitmut[numut];
+		  //cout<<"numut="<<numut<<"   n="<<n<<"\n";
+		  dnb = dna[n];
+		  if (n<0) {cout<<"probleme n="<<n<<"\n";exit(1);}
+		  if ((dna[n]!='A')and(dna[n]!='C')and(dna[n]!='G')and(dna[n]!='T')) {
+			  cout<<"probleme dna[n]="<<dna[n]<<"\n";
+			  exit(1);
+		  }
+		  switch (dna[n])
+		  {  	case 'A' :
+			  if (ra<this->matQ[0][1])                        dnb = 'C';
+			  else if (ra<this->matQ[0][1]+this->matQ[0][2])  dnb = 'G';
+			  else                                            dnb = 'T';
+			  break;
+		  case 'C' :
+			  if (ra<this->matQ[1][0])                        dnb = 'A';
+			  else if (ra<this->matQ[1][0]+this->matQ[1][2])  dnb = 'G';
+			  else                                            dnb = 'T';
+			  break;
+		  case 'G' :
+			  if (ra<this->matQ[2][0])                        dnb = 'A';
+			  else if (ra<this->matQ[2][0]+this->matQ[2][1])  dnb = 'C';
+			  else                                            dnb = 'T';
+			  break;
+		  case 'T' :
+			  if (ra<this->matQ[3][0])                        dnb = 'A';
+			  else if (ra<this->matQ[3][0]+this->matQ[3][1])  dnb = 'C';
+			  else                                            dnb = 'G';
+			  break;
+		  }
+		  if((debuglevel==9)and(loc==10)) cout<<"mutation "<<numut<<"    site mute = "<<n<<"  de "<<dna[n]<<"  vers "<<dnb<<"\n";
+		  if (debuglevel==8) cout<<"mutation "<<numut<<"   dna["<<n<<"]="<<dna[n]<<"   dnb="<<dnb<<"\n";
+		  if (debuglevel==8) cout<<dna<<"\n";
+		  dna[n] = dnb;
+		  this->gt[loc].nodes[this->gt[loc].branches[b].bottom].dna = dna;
+		  if (debuglevel==8) cout<<dna<<"\n";
+	  }
+	  else {		//SNP
+		  this->gt[loc].nodes[this->gt[loc].branches[b].bottom].state=1;
+		  //cout<<"la branche "<<b<<" a muté ------------------------------\n";
+	  }
   }
 
   char ParticleC::draw_nuc(int loc) {

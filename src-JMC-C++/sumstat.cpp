@@ -355,7 +355,7 @@ extern int debuglevel;
     this->grouplist[gr].sumstatsnp[numsnp].defined=true;
   }
 
-  complex<long double> ParticleC::pente_liksnp(int gr, int st, int i0) {
+  pair<long double, long double> ParticleC::pente_liksnp(int gr, int st, int i0) {
     long double a,freq1,freq2,li0,delta,*li;
     int ig1,ig2,ind,loc,iloc,nn,cat;
     li = new long double[2];
@@ -404,7 +404,7 @@ extern int debuglevel;
     li0=li[0];
     delta=li[1]-li[0];
     delete []li;
-    return complex<long double>(li0,delta);
+    return make_pair<long double, long double>(li0,delta);
   }
 
   /*	long double ParticleC::cal_snaml(int gr,int st){
@@ -824,7 +824,7 @@ extern int debuglevel;
     if (nl>0) return s/(long double)nl; else return 0.0;
   }
 
-  complex<long double> ParticleC::pente_lik(int gr,int st, int i0) {
+  pair<long double, long double> ParticleC::pente_lik(int gr,int st, int i0) {
     long double a,freq1,freq2,li0,delta,*li;
     int ig1,ig2,ind,loc,iloc,nn,cat;
     li = new long double[2];
@@ -888,20 +888,20 @@ extern int debuglevel;
     li0=li[0];
     delta=li[1]-li[0];
     delete []li;
-    return complex<long double>(li0,delta);
+    return make_pair<long double, long double>(li0,delta);
   }
 
   long double ParticleC::cal_Aml3p(int gr,int st){
     int i1=1,i2=998,i3;
     long double p1,p2,p3,lik1,lik2,lik3;
-    complex<long double> c;
-    c=pente_lik(gr,st,i1);lik1=real(c);p1=imag(c);
-    c=pente_lik(gr,st,i2);lik2=real(c);p2=imag(c);
+    pair<long double, long double> c;
+    c=pente_lik(gr,st,i1);lik1=c.first; p1=c.second;
+    c=pente_lik(gr,st,i2);lik2=c.first; p2=c.second;
     if ((p1<0.0)and(p2<0.0)) return 0.0;
     if ((p1>0.0)and(p2>0.0)) return 1.0;
     do {
       i3 = (i1+i2)/2;
-      c=pente_lik(gr,st,i3);lik3=real(c);p3=imag(c);
+      c=pente_lik(gr,st,i3);lik3=c.first; p3=c.second;
       if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
       else		   {i1=i3;p1=p3;lik1=lik3;}
     } while (abs(i2-i1)>1);
@@ -1486,78 +1486,78 @@ extern int debuglevel;
   }
 
   void ParticleC::cal_freq(int gr,int st) {
-    int iloc,kloc,nhaplo,isamp,sample,dmax,j,cat;
-    long double d;
-    int samp0=this->grouplist[gr].sumstat[st].samp-1;
-    int samp1=this->grouplist[gr].sumstat[st].samp1-1;
-    int samp2=this->grouplist[gr].sumstat[st].samp2-1;
-    string *haplo;
-    bool trouve;
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      kloc=this->grouplist[gr].loc[iloc];
-      cat = this->locuslist[kloc].type % 5;
-      dmax=samplesize(kloc,samp0)+samplesize(kloc,samp1)+samplesize(kloc,samp2);
-      //cout<<"Locus "<<kloc<<"   (cal_freq)\n";
-      this->locuslist[kloc].freq = new long double*[this->nsample];
-      this->locuslist[kloc].haplomic = new int*[this->nsample];
-      this->locuslist[kloc].kmin=100;
-      nhaplo=0;
-      if (this->locuslist[kloc].dnavar==0) {
-	for (isamp=0;isamp<3;isamp++) {
-	  if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
-	  this->locuslist[kloc].freq[sample] = new long double[1];
-	  this->locuslist[kloc].freq[sample][0]=1.0;
-	  this->locuslist[kloc].haplomic[sample] = new int[this->data.ss[cat][sample]];
-	  for (int j=0;j<this->data.ss[cat][sample];j++) this->locuslist[kloc].haplomic[sample][j]=this->locuslist[kloc].kmin;
-	}
-	//haplo[nhaplo] = "";
-	nhaplo++;
-      } else {
-	haplo = new string[dmax];
-	for (isamp=0;isamp<3;isamp++) {
-	  if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
-	  for (int i=0;i<this->data.ss[cat][sample];i++) {
-	    if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
-	      if (nhaplo==0) {
-		haplo[nhaplo] = this->locuslist[kloc].haplodnavar[sample][i];
-		nhaplo++;
-	      } else {
-		trouve=false;j=0;
-		while ((not trouve)and(j<nhaplo)) {
-		  trouve=identseq(haplo[j],this->locuslist[kloc].haplodnavar[sample][i],"cal_freq1",kloc,sample,i);
-		  if (not trouve) j++;
-		}
-		if (trouve) {
-		  for (int k=0;k<this->locuslist[kloc].dnavar;k++) if (haplo[j][k]=='N') haplo[nhaplo][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
-		} else {
-		  haplo[nhaplo] = this->locuslist[kloc].haplodnavar[sample][i];
-		  nhaplo++;
-		}
-	      }
-	    }
+	  int iloc,kloc,nhaplo,isamp,sample,dmax,j,cat;
+	  long double d;
+	  int samp0=this->grouplist[gr].sumstat[st].samp-1;
+	  int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+	  int samp2=this->grouplist[gr].sumstat[st].samp2-1;
+	  string *haplo;
+	  bool trouve;
+	  for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+		  kloc=this->grouplist[gr].loc[iloc];
+		  cat = this->locuslist[kloc].type % 5;
+		  dmax=samplesize(kloc,samp0)+samplesize(kloc,samp1)+samplesize(kloc,samp2);
+		  //cout<<"Locus "<<kloc<<"   (cal_freq)\n";
+		  this->locuslist[kloc].freq = new long double*[this->nsample];
+		  this->locuslist[kloc].haplomic = new int*[this->nsample];
+		  this->locuslist[kloc].kmin=100;
+		  nhaplo=0;
+		  if (this->locuslist[kloc].dnavar==0) { // construction pour ne pas deleter du vide (haplomic)
+			  for (isamp=0;isamp<3;isamp++) {
+				  if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
+				  this->locuslist[kloc].freq[sample] = new long double[1];
+				  this->locuslist[kloc].freq[sample][0]=1.0;
+				  this->locuslist[kloc].haplomic[sample] = new int[this->data.ss[cat][sample]];
+				  for (int j=0;j<this->data.ss[cat][sample];j++) this->locuslist[kloc].haplomic[sample][j]=this->locuslist[kloc].kmin;
+			  }
+			  //haplo[nhaplo] = "";
+			  nhaplo++;
+		  } else {
+			  haplo = new string[dmax];
+			  for (isamp=0;isamp<3;isamp++) {
+				  if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
+				  for (int i=0;i<this->data.ss[cat][sample];i++) {
+					  if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
+						  if (nhaplo==0) {
+							  haplo[nhaplo] = this->locuslist[kloc].haplodnavar[sample][i];
+							  nhaplo++;
+						  } else {
+							  trouve=false;j=0;
+							  while ((not trouve)and(j<nhaplo)) {
+								  trouve=identseq(haplo[j],this->locuslist[kloc].haplodnavar[sample][i],"cal_freq1",kloc,sample,i);
+								  if (not trouve) j++;
+							  }
+							  if (trouve) {
+								  for (int k=0;k<this->locuslist[kloc].dnavar;k++) if (haplo[j][k]=='N') haplo[nhaplo][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
+							  } else {
+								  haplo[nhaplo] = this->locuslist[kloc].haplodnavar[sample][i];
+								  nhaplo++;
+							  }
+						  }
+					  }
+				  }
+			  }
+			  for (isamp=0;isamp<3;isamp++) {
+				  if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
+				  this->locuslist[kloc].freq[sample] = new long double[nhaplo];
+				  for (j=0;j<nhaplo;j++) this->locuslist[kloc].freq[sample][j] = 0.0;
+				  d=1.0/(long double)samplesize(kloc,sample);
+				  this->locuslist[kloc].haplomic[sample] = new int[this->data.ss[cat][sample]];
+				  for (int i=0;i<this->data.ss[cat][sample];i++) {
+					  if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
+						  trouve=false;j=0;
+						  while ((not trouve)and(j<nhaplo)) {
+							  trouve=identseq(haplo[j],this->locuslist[kloc].haplodnavar[sample][i],"cal_freq2",kloc,sample,i);
+							  if (not trouve) j++;
+						  }
+						  this->locuslist[kloc].freq[sample][j] +=d;
+						  this->locuslist[kloc].haplomic[sample][i]=this->locuslist[kloc].kmin+j;
+					  } else this->locuslist[kloc].haplomic[sample][i]=MICMISSING;
+				  }
+			  }
+			  delete []haplo;
+		  }
 	  }
-	}
-	for (isamp=0;isamp<3;isamp++) {
-	  if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
-	  this->locuslist[kloc].freq[sample] = new long double[nhaplo];
-	  for (j=0;j<nhaplo;j++) this->locuslist[kloc].freq[sample][j] = 0.0;
-	  d=1.0/(long double)samplesize(kloc,sample);
-	  this->locuslist[kloc].haplomic[sample] = new int[this->data.ss[cat][sample]];
-	  for (int i=0;i<this->data.ss[cat][sample];i++) {
-	    if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
-	      trouve=false;j=0;
-	      while ((not trouve)and(j<nhaplo)) {
-		trouve=identseq(haplo[j],this->locuslist[kloc].haplodnavar[sample][i],"cal_freq2",kloc,sample,i);
-		if (not trouve) j++;
-	      }
-	      this->locuslist[kloc].freq[sample][j] +=d;
-	      this->locuslist[kloc].haplomic[sample][i]=this->locuslist[kloc].kmin+j;
-	    } else this->locuslist[kloc].haplomic[sample][i]=MICMISSING;
-	  }
-	}
-	delete []haplo;
-      }
-    }
   }
 
   long double ParticleC::cal_aml3p(int gr,int st){
@@ -1566,7 +1566,7 @@ extern int debuglevel;
     int i1=1,i2=998,i3;
     bool OK;
     long double res=0.0;
-    complex<long double> c;
+    pair<long double, long double> c;
     //cout<<"debut de cal_aml3p\n";
     int samp1=this->grouplist[gr].sumstat[st].samp1-1;
     int samp2=this->grouplist[gr].sumstat[st].samp2-1;
@@ -1581,13 +1581,13 @@ extern int debuglevel;
     if (nlocutil<1) return 0.5;
     //cout<<"avant cal_freq\n";
     cal_freq(gr,st);
-    c=pente_lik(gr,st,i1);lik1=real(c);p1=imag(c);
-    c=pente_lik(gr,st,i2);lik2=real(c);p2=imag(c);
+    c=pente_lik(gr,st,i1);lik1=c.first; p1=c.second;
+    c=pente_lik(gr,st,i2);lik2=c.first; p2=c.second;
     if ((p1<0.0)and(p2<0.0)) return 0.0;
     if ((p1>0.0)and(p2>0.0)) return 1.0;
     do {
       i3 = (i1+i2)/2;
-      c=pente_lik(gr,st,i3);lik3=real(c);p3=imag(c);
+      c=pente_lik(gr,st,i3);lik3=c.first; p3=c.second;
       if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
       else           {i1=i3;p1=p3;lik1=lik3;}
     } while (abs(i2-i1)>1);
