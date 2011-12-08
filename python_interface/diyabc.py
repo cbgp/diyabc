@@ -31,7 +31,7 @@ from PyQt4 import uic
 #from project import *
 #from project import Project
 #from simulationProject import SimulationProject
-from preferences import Preferences
+from prefTest import Preferences
 from showLogFile import ShowLogFile
 from utils.cbgpUtils import Documentator
 import output
@@ -74,6 +74,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.createWidgets()
 
         self.preferences_win = Preferences(self)
+        self.preferences_win.hide()
         self.preferences_win.loadPreferences()
 
         self.setWindowIcon(QIcon("docs/icons/coccicon.png"))

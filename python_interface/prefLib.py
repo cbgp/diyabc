@@ -10,6 +10,8 @@ import ConfigParser
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4 import QtGui
+from PyQt4 import QtCore
 import output
 import utils.cbgpUtils as utilsPack
 from utils.cbgpUtils import log
@@ -34,7 +36,7 @@ class GenericPreferences(QFrame):
 
         self.ui = self
         self.ui.verticalLayout = QtGui.QVBoxLayout(self)
-        self.ui.verticalLayout.setObjectName(_fromUtf8("centralVerticalLayout"))
+        self.ui.verticalLayout.setObjectName("centralVerticalLayout")
         self.ui.tabWidget = QtGui.QTabWidget(self)
         self.ui.tabWidget.setObjectName("tabWidget")
         self.ui.verticalLayout.addWidget(self.ui.tabWidget)
@@ -49,7 +51,7 @@ class GenericPreferences(QFrame):
             exec("self.tab_%s = QtGui.QWidget() "%catname)
             exec("self.tab_%s.setObjectName('tab_%s')"%(catname,catname))
             exec('self.verticalLayout_%s = QtGui.QVBoxLayout(self.tab_%s) '%(catname,catname))
-            exec('self.verticalLayout_%s.setObjectName(_fromUtf8("verticalLayout_%s")) '%(catname,catname))
+            exec('self.verticalLayout_%s.setObjectName("verticalLayout_%s") '%(catname,catname))
             exec('self.scrollArea_%s = QtGui.QScrollArea(self.tab_%s) '%(catname,catname))
             exec('self.scrollArea_%s.setWidgetResizable(True) '%(catname))
             exec('self.scrollArea_%s.setObjectName("scrollArea_%s") '%(catname,catname))
@@ -76,16 +78,16 @@ class GenericPreferences(QFrame):
         exec('self.horizontalLayout_%s_%s.addWidget(self.%sCheck) '%(propname,catname,propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s) '%(catname,catname,propname))
 
-    def addPropCombo(self,catname,propname,dicoValTxt):
+    def addPropCombo(self,catname,propname,dicoValTxt,l_ordered_val,default_value=None):
 
-        self.dicoCategory[catname].append( [propname,"combo",dicoValTxt] )
+        self.dicoCategory[catname].append( [propname,"combo",dicoValTxt,l_ordered_val,default_value] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel)'%(catname,propname))
         exec('self.frame_%s_%s.setFrameShadow(QtGui.QFrame.Raised)'%(catname,propname))
         exec('self.frame_%s_%s.setObjectName("frame_%s_%s")'%(catname,propname,catname,propname))
         exec('self.horizontalLayout_%s_%s = QtGui.QHBoxLayout(self.frame_%s_%s)'%(catname,propname,catname,propname))
-        exec('self.horizontalLayout_%s_%s.setObjectName("horizontalLayout_%s_%s")'%(catname,propname))
+        exec('self.horizontalLayout_%s_%s.setObjectName("horizontalLayout_%s_%s")'%(catname,propname,catname,propname))
         exec('self.label_%s = QtGui.QLabel(self.frame_%s_%s)'%(propname,catname,propname))
         exec('self.label_%s.setText("Style")'%(propname))
         exec('self.label_%s.setObjectName("label_%s")'%(propname,propname))
@@ -95,8 +97,12 @@ class GenericPreferences(QFrame):
         exec('self.horizontalLayout_%s_%s.addWidget(self.%sCombo)'%(catname,propname,propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s)'%(catname,catname,propname))
 
-        for k in dicoValTxt.keys():
-            exec('self.%sCombo.addItem(%s)'%(propname,dicoValTxt[k]))
+        for k in l_ordered_val:
+            exec('self.%sCombo.addItem("%s")'%(propname,dicoValTxt[k]))
+        if default_value != None:
+            exec('ind = self.ui.%sCombo.findText(default_value)'%propname)
+            if ind != -1:
+                exec('self.%sCombo.setCurrentIndex(%s)'%(propname,ind))
 
     def addPropLineEdit(self,catname,propname,labelText,default_value=""):
         self.dicoCategory[catname].append( [propname, "lineEdit", labelText, default_value] )
@@ -175,6 +181,32 @@ class GenericPreferences(QFrame):
                     val_to_save = a
 
                 self.config[cat][propname] = val_to_save
+
+        
+        self.writeConfigFile()
+
+    def loadPreferences(self):
+        cfg = self.config
+
+        for cat in self.dicoCategory.keys():
+            if cfg.has_key(cat):
+                for propl in dicoCategory[cat].keys():
+                    propname = propl[0]
+                    if cfg[cat].has_key(propname):
+                        val = cfg[cat][propname]
+                        proptype = propl[1]
+                        if proptype == "check":
+                            checked = (val == "True")
+                            exec('self.ui.%sCheck.setChecked(not checked)'%propname)
+                            exec('self.ui.%sCheck.setChecked(checked)'%propname)
+                        elif proptype == "lineEdit":
+                            exec('self.ui.%sEdit.setText(str(val).strip())'%propname)
+                        elif proptype == "path":
+                            exec('self.ui.%sPathEdit.setText(str(val).strip())'%propname)
+                        elif proptype == "combo":
+                            exec('ind = self.ui.%sCombo.findText(propl[2][str(val)])'%propname)
+                            if ind != -1:
+                                exec('self.ui.%sCombo.setCurrentIndex(ind)'%propname)
 
 
 
