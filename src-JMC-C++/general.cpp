@@ -10,6 +10,10 @@
 #include <unistd.h>
 #define UNISTDH
 #endif
+extern "C"
+{
+#include "../dcmt0.6.1/include/dc.h"
+}
 #ifndef PARTICLESET
 #include "particleset.cpp"
 #define PARTICLESET
@@ -54,6 +58,41 @@
 #include <sys/stat.h>
 #define SYSSTATH
 #endif
+
+/* Début: pour le nouveau générateur de nombre aléatoires */
+
+mt_struct* r;
+#pragma omp threadprivate(r)
+mt_struct **mtss;
+int countRNG;
+
+void initRNG (int seed)
+{
+	cout << "Debut initialisation RNG." << endl;
+	int NB_THREADS;
+#pragma omp parallel
+	{
+		NB_THREADS = omp_get_num_threads();
+	}
+	// mt_struct **mtss; global variable
+	mtss = get_mt_parameters_st(32, 521, 0, NB_THREADS-1, 4172, &countRNG);
+	for (int idxThread = 0; idxThread < countRNG; idxThread++)
+		sgenrand_mt(idxThread+seed, mtss[idxThread]);
+
+#pragma omp parallel
+	{
+		r = mtss[omp_get_thread_num()];
+	}
+	cout << "Fin initialisation RNG." << endl;
+}
+void freeRNG (void)
+{
+	free_mt_struct_array(mtss, countRNG);
+}
+
+/* Fin: pour le nouveau générateur de nombre aléatoires */
+
+
 
 ReftableC rt;
 HeaderC header;
@@ -298,6 +337,11 @@ int main(int argc, char *argv[]){
      }
      if (not flags) seed=time(NULL);
      if (num_threads>0) omp_set_num_threads(num_threads);
+
+     /* Debut: pour le nouveau RNG      */
+     initRNG(seed);
+     /* Fin: pour le nouveau RNG      */
+
 	switch (action) {
       case 'r' :   k=readheaders();
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"   ";fflush(stdin);
@@ -400,6 +444,9 @@ int main(int argc, char *argv[]){
                    break;
 
   }
+	/* Debut: pour le nouveau RNG      */
+	freeRNG();
+	/* Fin: pour le nouveau RNG      */
 	duree=walltime(&debut);
     cout<<"durée ="<<TimeToStr(duree)<<"\n";
     //int aaa;
