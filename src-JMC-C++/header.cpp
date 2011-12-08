@@ -161,9 +161,8 @@ public:
 
     HeaderC* readHeader(string headerfilename){
                 char reftable[]="header.txt";
-                //string path;
         string s1,s2,**sl,*ss,*ss1,*ss2;
-        int *nlscen,nss,nss1,j,k,gr,grm,k1,cat;
+        int *nlscen,nss,nss1,j,k,gr,grm,k1,cat,nl=0;
         cout<<"debut de readheader\n";
         //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
         ifstream file(headerfilename.c_str(), ios::in);
@@ -172,19 +171,17 @@ public:
             cout<<this->message<<"\n";
             return this;
         } else this->message="";
-        getline(file,this->datafilename);
+        getline(file,this->datafilename);nl++;
 		this->pathbase=path;
         this->dataobs.loadfromfile(path+this->datafilename);
         if (debuglevel==1) cout<<"lecture du fichier data terminée\n";
-        getline(file,s1);
+        getline(file,s1);nl++;
         this->nparamtot=getwordint(s1,1);		cout<<"nparamtot="<<this->nparamtot<<"\n";
         this->nstat=getwordint(s1,4);			cout<<"nstat="<<this->nstat<<"\n";
-		cat = this->dataobs.locus[0].type % 5;
-		cout<<"ss="<<this->dataobs.ss[cat][0]<<"\n";
                 //cout<<"avant scenarios\n";fflush(stdin);
 //Partie Scenarios
-        getline(file,s1);   //cout<<s1<<"\n";     //ligne vide
-        getline(file,s1);    //cout<<s1<<"\n";    // nombre de scenarios
+        getline(file,s1);nl++;   //cout<<s1<<"\n";     //ligne vide
+        getline(file,s1);nl++;    //cout<<s1<<"\n";    // nombre de scenarios
         this->nscenarios=getwordint(s1,1); cout<<this->nscenarios<<" scenario(s)\n";
         sl = new string*[this->nscenarios];
         nlscen = new int[this->nscenarios];
@@ -192,13 +189,21 @@ public:
         for (int i=0;i<this->nscenarios;i++) {nlscen[i]=getwordint(s1,3+i);}
         for (int i=0;i<this->nscenarios;i++) {
             sl[i] = new string[nlscen[i]];
-            getline(file,s1); //cout<<s1<<"\n";
+            getline(file,s1); nl++;   cout<<s1<<"\n";
+			if (s1.find("scenario")!=0) {
+				this->message = "Error when reading header.txt file :keyword <scenario> expected at line "+IntToString(nl)+". Check the number of lines of each scenario at line 4.";
+				return this;
+			}
             this->scenario[i].number = getwordint(s1,2);
             this->scenario[i].prior_proba = getwordfloat(s1,3);
             this->scenario[i].nparam = 0;
             this->scenario[i].nparamvar=0;
-            for (int j=0;j<nlscen[i];j++) {getline(file,sl[i][j]);/*cout<<sl[i][j]<<"\n";*/}
-            this->scenario[i].read_events(nlscen[i],sl[i]);
+            for (int j=0;j<nlscen[i];j++) {getline(file,sl[i][j]);nl++;/*cout<<sl[i][j]<<"\n";*/}
+            this->message = this->scenario[i].read_events(nlscen[i],sl[i]);
+			if (this->message!="") {
+				this->message = "Error when reading  header.txt file : "+this->message+" in scenario "+IntToString(i+1);
+				return this;
+			}
 			//this->scenario[i].ecris();
             cout<<"apres read_events\n";
         }
