@@ -423,7 +423,82 @@ void ScenarioC::ecris() {
   }
   
 string ScenarioC::checklogic() {
-	
+	string message;
+	int maxpop=0;
+	for (int ievent=0;ievent<this->nevent;ievent++) {
+		//cout<<"\n";
+		//this->event[ievent].ecris();
+		//cout<<"\n";
+		//cout<<ievent<<"   maxpop="<<maxpop<<"\n";
+		//cout<<this->event[ievent].pop;
+		if (this->event[ievent].pop>maxpop) maxpop = this->event[ievent].pop;
+		if ((this->event[ievent].action=='M')or(this->event[ievent].action=='S')) {
+			if (this->event[ievent].pop1>maxpop) maxpop = this->event[ievent].pop1;
+			//cout<<"   "<<this->event[ievent].pop1;
+		}
+		if (this->event[ievent].action=='S') {
+			if (this->event[ievent].pop2>maxpop) maxpop = this->event[ievent].pop2;
+			//cout<<"   "<<this->event[ievent].pop2;
+		}
+	}
+	cout<<"nsamp="<<this->nsamp<<"    maxpop="<<maxpop<<"\n";
+	if (maxpop != this->nsamp) 
+		return "the number of population sizes in line 1 is different from the number of populations found in subsequent lines";
+	bool *popexist;
+	popexist = new bool[maxpop+1];
+	for (int i=0;i<maxpop+1;i++) popexist[i] = false;
+	for (int ievent=0;ievent<this->nevent;ievent++) {
+		if ((this->event[ievent].action='E')or(this->event[ievent].action='R')) popexist[this->event[ievent].pop];
+		if (this->event[ievent].action='M') {
+			if (this->event[ievent].pop == this->event[ievent].pop1){
+				delete []popexist;
+				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop)+" merges with itself";
+			}
+			if (not popexist[this->event[ievent].pop1]){
+				delete []popexist;
+				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop1)+" does not exist anymore";
+			}
+			if (not popexist[this->event[ievent].pop]){
+				delete []popexist;
+				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop)+" does not exist anymore";
+			}
+			popexist[this->event[ievent].pop1] = false;
+		}
+		if (this->event[ievent].action='S') {
+			if ((this->event[ievent].pop == this->event[ievent].pop1)or(this->event[ievent].pop == this->event[ievent].pop2)or(this->event[ievent].pop1 == this->event[ievent].pop2)){
+				delete []popexist;
+				return "in line "+IntToString(ievent+1)+" admixture must occur between three different populations";
+			}
+			if (not popexist[this->event[ievent].pop1]){
+				delete []popexist;
+				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop1)+" does not exist anymore";
+			}
+			if (not popexist[this->event[ievent].pop2]){
+				delete []popexist;
+				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop2)+" does not exist anymore";
+			}
+			if (not popexist[this->event[ievent].pop]){
+				delete []popexist;
+				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop)+" does not exist anymore";
+			}
+			popexist[this->event[ievent].pop] = false;
+		}
+	}
+	int np=0;
+	vector <int> numpop;
+	for (int i=1;i<maxpop+1;i++) if (popexist[i]) {np++;numpop.push_back(i);}
+	delete []popexist;
+	if (np>1){
+		message = "more than one population (";
+		for (int i=0;i<numpop.size();i++) {
+			message = message + IntToString(numpop[i]);
+			if (i+1<numpop.size()) message = message+",";
+		}
+		message = message + ") are ancestral";
+		numpop.clear();
+		return message;
+	}
+	numpop.clear();
 	return "";
 }
 
