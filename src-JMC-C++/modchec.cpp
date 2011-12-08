@@ -30,7 +30,7 @@ using namespace std;
 extern ParticleSetC ps;
 extern enregC* enreg;
 extern int nenr;
-extern char  *progressfilename;
+extern string progressfilename;
 
 long double **ssphistar,**ssref;
 
@@ -282,17 +282,17 @@ long double **ssphistar,**ssref;
               cout<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<qobs[j]<<star[j]<<"  ";
               cout<<"\n";
         }
-        char *nomfiloc;
-        nomfiloc = new char[strlen(path)+strlen(ident)+20];
-        strcpy(nomfiloc,path);
-        strcat(nomfiloc,ident);
-        strcat(nomfiloc,"_mclocate.txt");
+        string nomfiloc;
+        nomfiloc = path + ident + "_mclocate.txt";
+        //strcpy(nomfiloc,path);
+        //strcat(nomfiloc,ident);
+        //strcat(nomfiloc,"_mclocate.txt");
         cout <<nomfiloc<<"\n";
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
-        ofstream f12(nomfiloc,ios::out);
+        ofstream f12(nomfiloc.c_str(),ios::out);
         f12<<"DIYABC :                   POSTERIOR CHECKING                         "<<asctime(timeinfo)<<"\n";
         f12<<"Data file       : "<<header.datafilename<<"\n";
         f12<<"Reference table : "<<rt.filename<<"\n";
@@ -339,14 +339,14 @@ long double **ssphistar,**ssref;
                 for(int k=0;k<nstat;k++) if (rACP.sd[k]>0) pca_ss[i][j] +=(ssphistar[i][k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
             }
         }
-        char *nomfiACP;
-        nomfiACP = new char[strlen(path)+strlen(ident)+20];
-        strcpy(nomfiACP,path);
-        strcat(nomfiACP,ident);
-        strcat(nomfiACP,"_mcACP.txt");
+        string nomfiACP;
+        nomfiACP = path + ident + "_mcACP.txt";
+        //strcpy(nomfiACP,path);
+        //strcat(nomfiACP,ident);
+        //strcat(nomfiACP,"_mcACP.txt");
         cout <<nomfiACP<<"\n";
         FILE *f1;
-        f1=fopen(nomfiACP,"w");
+        f1=fopen(nomfiACP.c_str(),"w");
         fprintf(f1,"%d %d",nr,rACP.nlambda);
         for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3Lf",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
         fprintf(f1,"%d",0);
@@ -362,21 +362,20 @@ long double **ssphistar,**ssref;
         fclose(f1);
     }
 
-    void domodchec(char *options,int seed){
+    void domodchec(string opt,int seed){
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,nrecpos,newsspart,npv,nss,nsr,newrefpart,*numscen,nparamax,bidon;
-        string opt,*ss,s,*ss1,s0,s1,snewstat;
+        string *ss,s,*ss1,s0,s1,snewstat;
         float  *stat_obs;
         bool usestats,firsttime,dopca,doloc,newstat=false;
 
         FILE *flog;
 
-        progressfilename = new char[strlen(path)+strlen(ident)+20];
-        strcpy(progressfilename,path);
-        strcat(progressfilename,ident);
-        strcat(progressfilename,"_progress.txt");
-        cout<<"debut domodchec  options : "<<options<<"\n";
-        opt=char2string(options);
+        progressfilename = path + ident + "_progress.txt";
+        //strcpy(progressfilename,path);
+        //strcat(progressfilename,ident);
+        //strcat(progressfilename,"_progress.txt");
+        cout<<"debut domodchec  options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
         numtransf=3;
         for (int i=0;i<ns;i++) { cout<<ss[i]<<"\n";
@@ -424,7 +423,7 @@ long double **ssphistar,**ssref;
         }
         nprog=newsspart+100;
         if ((newstat)and(dopca)) nprog += header.nscenarios*10000;
-        iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         original=true;composite=false;
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         //header.calstatobs(statobsfilename);
@@ -432,16 +431,16 @@ long double **ssphistar,**ssref;
         cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
         rt.alloue_enrsel(nsel);
         rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
-        iprog+=40;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=40;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         det_numpar();                                     cout<<"apres det_numpar\n";
         recalparam(nsel);                                 cout<<"apres recalparam\n";
         rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
         local_regression(nsel);                           cout<<"apres local_regression\n";
-        iprog+=20;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=20;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         phistar = calphistar(nsel);                       cout<<"apres calphistar\n";
         det_nomparam();
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
-        iprog+=20;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=20;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         //phistarOK = new double*[nsel];
         //for (int i=0;i<nsel;i++) phistarOK[i] = new double[header.scenario[rt.scenteste-1].nparam];
         //nphistarOK=detphistarOK(nsel,phistar,phistarOK);
@@ -473,7 +472,7 @@ long double **ssphistar,**ssref;
             }
             firsttime=false;
             nss+=nenr;
-            iprog+=nenr;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+            iprog+=nenr;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             cout<<nss<<"\n";
         }
         if (newstat) {header.calstatobs(statobsfilename);stat_obs = header.stat_obs;}
@@ -497,7 +496,7 @@ long double **ssphistar,**ssref;
                     }
                     firsttime=false;
                     nsr+=nenr;
-                    iprog+=nenr;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+                    iprog+=nenr;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
                     cout<<nsr<<"\n";
                 }
             } else {
@@ -520,5 +519,5 @@ long double **ssphistar,**ssref;
             }
             call_acp(newrefpart,newsspart,header.nstat,numscen,ssref,ssphistar,stat_obs);
         }
-        iprog+=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }

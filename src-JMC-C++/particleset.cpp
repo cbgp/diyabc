@@ -533,10 +533,10 @@ struct ParticleSetC
 			FILE * pFile;
 			int categ,iq,icur=0;
 			bool trouve2;
-			scurfile=char2string(this->header.pathbase)+"courant_"+IntToString(icur)+".log";
+			scurfile=this->header.pathbase+"courant_"+IntToString(icur)+".log";
 			while (ifstream(scurfile.c_str())) {
 				icur++;
-				scurfile=char2string(this->header.pathbase)+"courant_"+IntToString(icur)+".log";
+				scurfile=this->header.pathbase+"courant_"+IntToString(icur)+".log";
 			}
               cout<<"ecriture du fichier courant = "<<scurfile<<"\n";
 			  pFile = fopen (scurfile.c_str(),"w");

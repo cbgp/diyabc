@@ -31,7 +31,7 @@
 
 using namespace std;
 
-extern char *progressfilename;
+extern string progressfilename;
 extern double time_readfile;
 
 struct matligneC
@@ -167,17 +167,17 @@ struct complignes
 /**
  * Sauvegarde des résultats de l'approche directe
  */ 
-    void  save_comp_direct(int n, posteriorscenC** posts, char *path, char *ident){
+    void  save_comp_direct(int n, posteriorscenC** posts, string path, string ident){
         //cout<<"apres calcul des postinf/postsup\n";
         int nts;
-        char *nomfiparstat;
-        nomfiparstat = new char[strlen(path)+strlen(ident)+20];
-        strcpy(nomfiparstat,path);
-        strcat(nomfiparstat,ident);
-        strcat(nomfiparstat,"_compdirect.txt");
+        string nomfiparstat;
+        nomfiparstat = path + ident + "_compdirect.txt";
+        //strcpy(nomfiparstat,path);
+        //strcat(nomfiparstat,ident);
+        //strcat(nomfiparstat,"_compdirect.txt");
         cout <<nomfiparstat<<"\n";
         FILE *f1;
-        f1=fopen(nomfiparstat,"w");
+        f1=fopen(nomfiparstat.c_str(),"w");
         printf("     %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) printf("          scenario %d       ",rt.scenchoisi[i]);printf("\n");
         fprintf(f1,"   %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"          scenario %d       ",rt.scenchoisi[i]);fprintf(f1,"\n");
         for (int i=0;i<ncs;i++) {
@@ -188,24 +188,23 @@ struct complignes
         fclose(f1);
         for (int i=0;i<rt.nscenchoisi;i++) delete []posts[i];
         delete []posts;
-        delete []nomfiparstat;
 
     }
 
 /**
  * Sauvegarde des résultats de l'approche régression logistique
  */ 
-    void save_comp_logistic(int nlogreg,int nselr,posteriorscenC** postscenlog,char *path, char *ident) {
+    void save_comp_logistic(int nlogreg,int nselr,posteriorscenC** postscenlog,string path, string ident) {
         int nts,sum;
 		double som;
-        char *nomfiparstat;
-        nomfiparstat = new char[strlen(path)+strlen(ident)+20];
-        strcpy(nomfiparstat,path);
-        strcat(nomfiparstat,ident);
-        strcat(nomfiparstat,"_complogreg.txt");
+        string nomfiparstat;
+        nomfiparstat = path + ident + "_complogreg.txt";
+        //strcpy(nomfiparstat,path);
+        //strcat(nomfiparstat,ident);
+        //strcat(nomfiparstat,"_complogreg.txt");
         cout <<nomfiparstat<<"\n";
         FILE *f1;
-        f1=fopen(nomfiparstat,"w");
+        f1=fopen(nomfiparstat.c_str(),"w");
         printf("     %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) printf("          scenario %d       ",rt.scenchoisi[i]);printf("\n");
         fprintf(f1,"   %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"          scenario %d       ",rt.scenchoisi[i]);fprintf(f1,"\n");
         for (int i=0;i<nlogreg;i++) {
@@ -225,7 +224,6 @@ struct complignes
         fclose(f1);
         for (int i=0;i<nlogreg;i++) delete []postscenlog[i];
         delete []postscenlog;
-        delete []nomfiparstat;
     }
 
 
@@ -825,21 +823,20 @@ struct complignes
 /**
  * Interprête la ligne de paramètres de l'option "comparaison de scenarios" et lance les calculs correspondants
  */ 
-    void docompscen(char *compar){
+    void docompscen(string opt){
         int nstatOK,iprog,nprog;;
         int nrec,nseld,nselr,nsel,ns,nlogreg,k,nts;
-        string opt,*ss,s,*ss1,s0,s1;
+        string *ss,s,*ss1,s0,s1;
         float  *stat_obs;
 		double duree,debut,clock_zero;
         FILE *flog;
         posteriorscenC **postscendir,**postscenlog;
 
-        progressfilename = new char[strlen(path)+strlen(ident)+20];
-        strcpy(progressfilename,path);
-        strcat(progressfilename,ident);
-        strcat(progressfilename,"_progress.txt");
+        progressfilename = path + ident + "_progress.txt";
+        //strcpy(progressfilename,path);
+        //strcat(progressfilename,ident);
+        //strcat(progressfilename,"_progress.txt");
 
-        opt=char2string(compar);
         ss = splitwords(opt,";",&ns);
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
@@ -867,7 +864,7 @@ struct complignes
         }
         nsel=nseld;if(nsel<nselr)nsel=nselr;
         nprog=6+nlogreg;
-        iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         nstatOK = rt.cal_varstat();
         //header.calstatobs(statobsfilename);
 		stat_obs = header.stat_obs;
@@ -875,7 +872,7 @@ struct complignes
         clock_zero=0.0;debut=walltime(&clock_zero);
         rt.cal_dist(nrec,nsel,stat_obs);
         duree=walltime(&debut);time_readfile += duree;
-        iprog+=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=4;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         postscendir = comp_direct(nseld);
         save_comp_direct(nseld,postscendir,path,ident);
 
@@ -887,12 +884,12 @@ struct complignes
                 nts=(nselr/nlogreg)*(k+1);
                 postscenlog[k] = comp_logistic(nts,stat_obs);
                 k++;
-                iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+                iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             }
             save_comp_logistic(nlogreg,nselr,postscenlog,path,ident);
             liberecmat(rt.nscenchoisi, nselr, rt.nstat);
         }
         delete []ss;
         delete []ss1;
-        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }

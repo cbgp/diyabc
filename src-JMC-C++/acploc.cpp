@@ -170,14 +170,14 @@ struct resACPC
             pca_statobs[j]=0.0;
             for(k=0;k<rt.nstat;k++) if (rACP.sd[k]>0.0) pca_statobs[j] +=(stat_obs[k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
         }
-        char *nomfiACP;
-        nomfiACP = new char[strlen(path)+strlen(ident)+20];
-        strcpy(nomfiACP,path);
-        strcat(nomfiACP,ident);
-        strcat(nomfiACP,"_ACP.txt");
+        string nomfiACP;
+        nomfiACP = path + ident + "_ACP.txt";
+        //strcpy(nomfiACP,path);
+        //strcat(nomfiACP,ident);
+        //strcat(nomfiACP,"_ACP.txt");
         cout <<nomfiACP<<"\n";
         FILE *f1;
-        f1=fopen(nomfiACP,"w");
+        f1=fopen(nomfiACP.c_str(),"w");
         fprintf(f1,"%d %d",nacp,rACP.nlambda);
         for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3Lf",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
         fprintf(f1,"%d",0);
@@ -235,17 +235,17 @@ struct resACPC
             for (int i=0;i<rt.nscen;i++) cout<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<qobs[i][j]<<star[i][j]<<"  ";
             cout<<"\n";
         }
-        char *nomfiloc;
-        nomfiloc = new char[strlen(path)+strlen(ident)+20];
-        strcpy(nomfiloc,path);
-        strcat(nomfiloc,ident);
-        strcat(nomfiloc,"_locate.txt");
+        string nomfiloc;
+        nomfiloc = path + ident + "_locate.txt";
+        //strcpy(nomfiloc,path);
+        //strcat(nomfiloc,ident);
+        //strcat(nomfiloc,"_locate.txt");
         cout <<nomfiloc<<"\n";
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
-        ofstream f12(nomfiloc,ios::out);
+        ofstream f12(nomfiloc.c_str(),ios::out);
         f12<<"DIYABC :                   PRIOR CHECKING                         "<<asctime(timeinfo)<<"\n";
         f12<<"Data file                     : "<<header.datafilename<<"\n";
         f12<<"Reference table               : "<<rt.filename<<"\n";
@@ -266,11 +266,10 @@ struct resACPC
 /**
  * interprète la commande de l'option pre-evaluate prior-scenario combination et lance les calculs correspondants
  */
-    void doacpl(char *options,bool multithread, int seed){
-        string opt,*ss,s,s0,s1;
+    void doacpl(string opt,bool multithread, int seed){
+        string *ss,s,s0,s1;
         bool dopca,doloc;
         int ns;
-        opt=char2string(options);
         ss = splitwords(opt,";",&ns);
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);

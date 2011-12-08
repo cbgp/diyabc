@@ -13,6 +13,9 @@
 #define DATA
 #endif
 
+
+extern string path;
+
 class MutParameterC
 {
 public:
@@ -33,7 +36,7 @@ class HeaderC
 {
 public:
     string message,datafilename,entete,entetehist,entetemut,entetemut0,entetestat;
-    char * pathbase;
+    string pathbase;
     DataC dataobs;
     int nparamtot,nstat,nscenarios,nconditions,ngroupes,nparamut,nsimfile;
     string *paramname, *statname;
@@ -156,34 +159,22 @@ public:
 
         }*/
 
-    HeaderC* readHeader(char* headerfilename){
+    HeaderC* readHeader(string headerfilename){
                 char reftable[]="header.txt";
-                char *path;
+                //string path;
         string s1,s2,**sl,*ss,*ss1,*ss2;
         int *nlscen,nss,nss1,j,k,gr,grm,k1,cat;
         cout<<"debut de readheader\n";
         //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
-        ifstream file(headerfilename, ios::in);
+        ifstream file(headerfilename.c_str(), ios::in);
         if (file == NULL) {
-            this->message = "Header  File "+string(headerfilename)+" not found";
+            this->message = "Header  File "+headerfilename+" not found";
             cout<<this->message<<"\n";
             return this;
         } else this->message="";
-		//if (strpos(headerfilename,reftable)==string::npos) {}
         getline(file,this->datafilename);
-		//cout<<this->datafilename<<"\n";fflush(stdin);
-		path = new char[strlen(headerfilename)+this->datafilename.length()];
-		strcpy(path,headerfilename);
-		//cout<<path<<"\n";fflush(stdin);
-		k = strpos(headerfilename,reftable);
-		//cout<<"k="<<k<<"\n";fflush(stdin);
-		path[k]='\0';
-		this->pathbase=strdup(path);
-		strcat(path,this->datafilename.c_str());
-		//cout<<"Path = "<<path<<"\n";fflush(stdin);
-		this->datafilename=string(path);
-		//cout<<"Data = "<<this->datafilename<<"\n";fflush(stdin);
-        this->dataobs.loadfromfile(path);
+		this->pathbase=path;
+        this->dataobs.loadfromfile(path+this->datafilename);
         if (debuglevel==1) cout<<"lecture du fichier data terminée\n";
         getline(file,s1);
         this->nparamtot=getwordint(s1,1);		cout<<"nparamtot="<<this->nparamtot<<"\n";
@@ -869,13 +860,13 @@ public:
         return this;
     }
 
-    HeaderC* readHeadersim(char* headersimfilename){
+    HeaderC* readHeadersim(string headersimfilename){
         string s1,s2,*sl,*ss,*ss1;
         int nlscen,nss,nss1,j,gr,grm,*nf,*nm,cat;
 		double som;
         if (debuglevel==2) cout<<"debut de readheadersim\n";
         //cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
-        ifstream file(headersimfilename, ios::in);
+        ifstream file(headersimfilename.c_str(), ios::in);
         if (file == NULL) {
             this->message = "HeaderSim  File "+string(headersimfilename)+" not found";
             cout<<this->message<<"\n";
@@ -1128,7 +1119,7 @@ public:
 		return this;
     }
 
-    void calstatobs(char* statobsfilename) {
+    void calstatobs(string statobsfilename) {
 		int jstat,cat;
 //partie DATA
 		if (debuglevel==2) cout<<"debut de calstatobs\n";
@@ -1277,7 +1268,7 @@ public:
 		delete []sb;
 		jstat=0;
 		FILE *fobs;
-		fobs=fopen(statobsfilename,"w");
+		fobs=fopen(statobsfilename.c_str(),"w");
 		fputs(ent.c_str(),fobs);
 		for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
 			if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";

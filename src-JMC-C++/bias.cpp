@@ -33,7 +33,7 @@
 extern ParticleSetC ps;
 extern enregC* enreg;
 extern bool multithread;
-extern char *progressfilename;
+extern string progressfilename;
 extern string scurfile;
 
 struct enreC {
@@ -315,20 +315,20 @@ using namespace std;
         struct tm * timeinfo;
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
-        char *nomfiresult;
+        string nomfiresult;
         long double *x,*mo;
         x=new long double[ntest];
         mo=new long double[4];
-        nomfiresult = new char[strlen(path)+strlen(ident)+20];
-        strcpy(nomfiresult,path);
-        strcat(nomfiresult,ident);
-        strcat(nomfiresult,"_bias.txt");
+        nomfiresult = path + ident + "_bias.txt";
+        //strcpy(nomfiresult,path);
+        //strcat(nomfiresult,ident);
+        //strcat(nomfiresult,"_bias.txt");
         cout <<"Les résultats sont dans "<<nomfiresult<<"\n";
         FILE *f1;
-        f1=fopen(nomfiresult,"w");
+        f1=fopen(nomfiresult.c_str(),"w");
         fprintf(f1,"DIYABC :                 Bias and Mean Square Error Analysis                         %s\n",asctime(timeinfo));
         fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
-        fprintf(f1,"Reference table : %s\n",rt.filename);
+        fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
         switch (numtransf) {
               case 1 : fprintf(f1,"No transformation of parameters\n");break;
               case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
@@ -475,27 +475,26 @@ using namespace std;
 /**
  * Interprête la ligne de paramètres de l'option biais et lance les calculs correspondants
  */
-	void dobias(char *options,  int seed){
-        char  *courantfilename;
+	void dobias(string opt,  int seed){
+        string courantfilename;
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,nrecpos,ntest,np,ng,npv,nn,ncond;
-        string opt,*ss,s,*ss1,s0,s1,sg; 
+        string *ss,s,*ss1,s0,s1,sg; 
 		float *stat_obs;
         string bidon;
         bidon = new char[1000];
         FILE *flog;
 
-        progressfilename = new char[strlen(path)+strlen(ident)+20];
-        strcpy(progressfilename,path);
-        strcat(progressfilename,ident);
-        strcat(progressfilename,"_progress.txt");
+        progressfilename = path + ident + "_progress.txt";
+        //strcpy(progressfilename,path);
+        //strcat(progressfilename,ident);
+        //strcat(progressfilename,"_progress.txt");
 
-        courantfilename = new char[strlen(path)+strlen(ident)+20];
-        strcpy(courantfilename,path);
-        strcat(courantfilename,"courant.log");
+        courantfilename = path + "biascourant.log";
+        //strcpy(courantfilename,path);
+        //strcat(courantfilename,"courant.log");
         cout<<courantfilename<<"\n";
-        cout<<"options : "<<options<<"\n";
-        opt=char2string(options);
+        cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
@@ -593,7 +592,7 @@ using namespace std;
         //cout<<header.entete<<"\n";
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed);
 		//header.entete=header.entetehist+header.entetemut0+header.entetestat;
-        nprog=10*ntest+6;iprog=5;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        nprog=10*ntest+6;iprog=5;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         for (int p=0;p<ntest;p++) {delete []enreg[p].param;delete []enreg[p].stat;}delete []enreg;
         rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
@@ -631,7 +630,7 @@ using namespace std;
         for (int p=0;p<ntest;p++) {
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg2[p].stat[j];
             rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
-            iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+            iprog +=6;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             if (p<1) det_nomparam();
             recalparam(nsel);                                 cout<<"apres recalparam\n";
             rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
@@ -644,10 +643,10 @@ using namespace std;
             for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
             printf("\nanalysing data test %3d \n",p+1);
             //for (int j=0;j<npar;j++) printf(" %6.0e (%8.2e %8.2e %8.2e) ",enreg2[p].paramvv[j],paramest[p][j].moy,paramest[p][j].med,paramest[p][j].mod);cout<<"\n";
-            iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+            iprog +=4;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         }
         rt.desalloue_enrsel(nsel);
         biaisrel(ntest,nsel,npv);
         ecrires(ntest,npv,nsel);
-        iprog +=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog +=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }

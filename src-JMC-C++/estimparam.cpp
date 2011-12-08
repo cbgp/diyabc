@@ -27,7 +27,7 @@
 
 using namespace std;
 
-extern char *progressfilename;
+extern string progressfilename;
 
 #define c 1.5707963267948966192313216916398
 #define co 2.506628274631000502415765284811   //sqrt(pi)
@@ -53,7 +53,8 @@ extern HeaderC header;
 long double **matX0, *vecW, **alpsimrat;
 long double **parsim;
 int nstatOKsel;
-extern char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
+//extern char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
+extern string headerfilename,reftablefilename,datafilename,statobsfilename,reftablelogfilename,path,ident;
 extern bool multithread;
 pardensC *pardens;
 long double *var_stat, *parmin, *parmax, *diff;
@@ -615,8 +616,8 @@ parstatC *parstat;
 /**
 * effectue la sauvegarde des phistars dans le fichier path/ident/phistar.txt
 */
-    void savephistar(int n, char* path,char* ident) {
-        char *nomphistar ;
+    void savephistar(int n, string path,string ident) {
+        string nomphistar ;
         /*int k;
         nomparam =new string[nparamcom+nparcompo];
         string pp;
@@ -641,13 +642,13 @@ parstatC *parstat;
                 }
             }
         }*/
-        nomphistar = new char[strlen(path)+strlen(ident)+20];
-        strcpy(nomphistar,path);
-        strcat(nomphistar,ident);
-        strcat(nomphistar,"_phistar.txt");
+        nomphistar =path+ident+"_phistar.txt";
+        //strcpy(nomphistar,path);
+        //strcat(nomphistar,ident);
+        //strcat(nomphistar,"_phistar.txt");
         //cout <<nomphistar<<"\n";
         FILE *f1;
-        f1=fopen(nomphistar,"w");
+        f1=fopen(nomphistar.c_str(),"w");
         fprintf(f1,"%s\n",entete.c_str());
         for (int i=0;i<n;i++) {
             fprintf(f1,"  %d    ",rt.enrsel[i].numscen);
@@ -886,7 +887,7 @@ parstatC *parstat;
 * si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
 * sinon la densité est évaluée pour 1000 points du min au max
 */
-    void histodens(int n, bool multithread, char* progressfilename,int* iprog,int* nprog) {
+    void histodens(int n, bool multithread, string progressfilename,int* iprog,int* nprog) {
         bool condition;
         long double *densprior,*denspost,*x,delta;
         int ncl,ii;
@@ -972,7 +973,7 @@ parstatC *parstat;
                 delete [] denspost;
             }
            cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom+nparcompo<<"\n";
-        *iprog+=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
+        *iprog+=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
         }
      }
 
@@ -1012,19 +1013,19 @@ parstatC *parstat;
 /**
 *sauvegarde les statistiques et les densités des paramètres
 */
-    void saveparstat(int nsel,char *path, char *ident) {
+    void saveparstat(int nsel, string path, string ident) {
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
-        char *nomfiparstat;
-        nomfiparstat = new char[strlen(path)+strlen(ident)+20];
-        strcpy(nomfiparstat,path);
-        strcat(nomfiparstat,ident);
-        strcat(nomfiparstat,"_paramstatdens.txt");
+        string nomfiparstat;
+        nomfiparstat = path+ident+"_paramstatdens.txt";
+        //strcpy(nomfiparstat,path);
+        //strcat(nomfiparstat,ident);
+        //strcat(nomfiparstat,"_paramstatdens.txt");
         cout <<nomfiparstat<<"\n";
         FILE *f1;
-        f1=fopen(nomfiparstat,"w");
+        f1=fopen(nomfiparstat.c_str(),"w");
         for (int j=0;j<nparamcom+nparcompo;j++) {
           //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s\n",nomparam[j].c_str());//cout<<"1\n";
@@ -1037,14 +1038,15 @@ parstatC *parstat;
         }
         fclose(f1);
         //cout<<"apres close(f1)\n";
-        strcpy(nomfiparstat,path);
-        strcat(nomfiparstat,ident);
-        strcat(nomfiparstat,"_mmmq.txt");
+        nomfiparstat = path+ident+"_mmq.txt";
+        //strcpy(nomfiparstat,path);
+        //strcat(nomfiparstat,ident);
+        //strcat(nomfiparstat,"_mmmq.txt");
         cout <<nomfiparstat<<"\n";
-        f1=fopen(nomfiparstat,"w");
+        f1=fopen(nomfiparstat.c_str(),"w");
         fprintf(f1,"DIYABC :                      ABC parameter estimation                         %s\n",asctime(timeinfo));
         fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
-        fprintf(f1,"Reference table : %s\n",rt.filename);
+        fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
         switch (numtransf) {
               case 1 : fprintf(f1,"No transformation of parameters\n");break;
               case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
@@ -1068,20 +1070,20 @@ parstatC *parstat;
 * Interprète les paramètres de la ligne de commande et 
 * effectue l'estimation ABC des paramètres (directe + régression locale)
 */
-    void doestim(char *options) {
+    void doestim(string opt) {
         int nstatOK, iprog,nprog;
         int nrec,nsel,ns,nrecpos;
-        string opt,*ss,s,*ss1,s0,s1;
+        string *ss,s,*ss1,s0,s1;
         float  *stat_obs;
 
         FILE *flog;
 
-        progressfilename = new char[strlen(path)+strlen(ident)+20];
-        strcpy(progressfilename,path);
-        strcat(progressfilename,ident);
-        strcat(progressfilename,"_progress.txt");
-        cout<<"debut doestim  options : "<<options<<"\n";
-        opt=char2string(options);
+        progressfilename=path+ident+"_progress.txt";
+		//progressfilename = new char[strlen(path)+strlen(ident)+20];
+        //strcpy(progressfilename,path);
+        //strcat(progressfilename,ident);
+        //strcat(progressfilename,"_progress.txt");
+        cout<<"debut doestim  options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
@@ -1122,25 +1124,25 @@ parstatC *parstat;
         //header.calstatobs(statobsfilename);  cout<<"apres read_statobs\n";
 		stat_obs = header.stat_obs;
         nprog=100;iprog=1;
-        flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         rt.alloue_enrsel(nsel);
         rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
-        iprog+=8;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=8;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         det_numpar();                                     cout<<"apres det_numpar\n";
         nprog=(nparamcom+nparcompo)*10+14;
         recalparam(nsel);                                 cout<<"apres recalparam\n";
         rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
         local_regression(nsel);               cout<<"apres local_regression\n";
-        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
         det_nomparam();
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
-        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         lisimpar(nsel);                                   cout<<"apres lisimpar\n";
-        iprog+=2;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         histodens(nsel,multithread,progressfilename,&iprog,&nprog);                      cout<<"apres histodens\n";
         parstat = calparstat(nsel);                                 cout<<"apres calparstat\n";
         saveparstat(nsel,path,ident);
         rt.desalloue_enrsel(nsel);
-        iprog+=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }

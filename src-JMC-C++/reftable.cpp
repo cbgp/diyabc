@@ -29,7 +29,7 @@ using namespace std;
 
 extern int nrecneeded;
 extern double remtime,debutr;
-extern char *progressfilename;
+extern string  progressfilename;
 
 struct enregC {
     int numscen;
@@ -55,7 +55,7 @@ class ReftableC
 public:
     int nrec,*nrecscen,nscen,nreclus,nrec0;
     long posnrec;
-    char *datapath, *filename, *filelog, *filename0;
+    string datapath, filename, filelog, filename0;
     int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste,nparamut,*nhistparam;
     float *param,*sumstat;
     HistParameterC **histparam;
@@ -104,18 +104,20 @@ public:
         //cout<<"fin de sethisparamname\n";
     }
 
-    int readheader(char * fname,char *flogname, char* datafilename) {
+    int readheader(string fname,string flogname, string datafilename) {
         //cout <<"debut de readheader\n";
-        fstream f0(fname,ios::in|ios::out|ios::binary);
+        fstream f0(fname.c_str(),ios::in|ios::out|ios::binary);
         //cout<<"apres fstream\n";
-        this->filename = new char[ strlen(fname)+1];
-        this->filelog  = new char[ strlen(flogname)+1];
-        strcpy(this->filename,fname);
-        strcpy(this->filelog,flogname);
+        //this->filename = new char[ strlen(fname)+1];
+        //this->filelog  = new char[ strlen(flogname)+1];
+        //strcpy(this->filename,fname);
+        //strcpy(this->filelog,flogname);
         //int p=strcspn(this->filelog,".");
         //this->filelog[p]='\0';
         //strcat(this->filelog,".log");
         //cout<<"dans readheader this->filelog = '"<<this->filelog<<"\n";exit(1);
+		this->filename = fname;
+		this->filelog = flogname;
         if (!f0) {return 1;}  //fichier non ouvrable e.g. inexistant
         else {
             //cout<<"fichier OK\n";
@@ -136,7 +138,7 @@ public:
 
     int writeheader() {
         int nb;
-        ofstream f1(this->filename,ios::out|ios::binary);
+        ofstream f1(this->filename.c_str(),ios::out|ios::binary);
         if (!f1.is_open()) {return 1;}  //fichier impossible à ouvrir
         nb=this->nrec;f1.write((char*)&nb,sizeof(int));
         //cout <<"reftable.writeheader     nscen = "<<this->nscen<<"\n";
@@ -157,7 +159,7 @@ public:
 			if (enr->numscen>this->nscen) {
 			cout<<"\nThe reftable.bin file is corrupted. numscen="<<enr->numscen<<"\n";
 			FILE *flog;
-            flog=fopen(progressfilename,"w");fprintf(flog,"%s","The reftable.bin file is corrupted. Clone the project and simulate a new file.\n");fclose(flog);
+            flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%s","The reftable.bin file is corrupted. Clone the project and simulate a new file.\n");fclose(flog);
 			exit(1);
 			}
 			//throw(1);
@@ -186,14 +188,14 @@ public:
         int bidon;
         for (int i=0;i<nenr;i++){
              if (enr[i].message != "OK") {
-                 ofstream f1(this->filelog,ios::out);
+                 ofstream f1(this->filelog.c_str(),ios::out);
                  f1<<enr[i].message<<"\n";
                  f1.close();
                  return 1;
              }
         }
         //cout<<"avant ouverture de reftable.log nscen="<< this->nscen <<"\n";fflush(stdin);
-        ofstream f1(this->filelog,ios::out);
+        ofstream f1(this->filelog.c_str(),ios::out);
         f1<<"OK\n";
         int *nrs,nb;
         nrs = new int[this->nscen];
@@ -232,12 +234,12 @@ public:
     }
 
     int openfile() {
-        this->fifo.open(this->filename,ios::in|ios::out|ios::binary);
+        this->fifo.open(this->filename.c_str(),ios::in|ios::out|ios::binary);
         return 0;
     }
 
     int openfile2() {
-        this->fifo.open(this->filename,ios::in|ios::binary);
+        this->fifo.open(this->filename.c_str(),ios::in|ios::binary);
         this->fifo.seekg(0);
         this->fifo.read((char*)&(this->nrec),sizeof(int));
         this->fifo.read((char*)&(this->nscen),sizeof(int));
@@ -250,11 +252,11 @@ public:
         return 0;
     }
     
-    int testfile(char* reftablefilename, int npart) {
+    int testfile(string reftablefilename, int npart) {
 		bool corrompu=false;
 		cout<<"\nverification de l'integrite de la table de reference \nfichier"<<reftablefilename<<"\n";
 		char str[10000];
-        this->fifo.open(reftablefilename,ios::in|ios::out|ios::binary);
+        this->fifo.open(reftablefilename.c_str(),ios::in|ios::out|ios::binary);
         this->fifo.seekg(0);
         this->fifo.read((char*)&(this->nrec),sizeof(int));
         this->fifo.read((char*)&(this->nscen),sizeof(int));
@@ -299,12 +301,13 @@ public:
         this->nparam = new int[this->nscen];
         for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
         this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
-		this->filename0=strdup(reftablefilename);
+		this->filename0 = reftablefilename;
+		
 		cout<<this->filename0<<"\n";
-		this->filename0[strlen(reftablefilename)-1]='s';
+		this->filename0.replace(reftablefilename.length()-1,1,"s");
 		cout<<this->filename0<<"\n";
 		
-		ofstream f1(this->filename0,ios::out|ios::binary);
+		ofstream f1(this->filename0.c_str(),ios::out|ios::binary);
         if (!f1.is_open()) {cout<<"impossible d'ouvrir le fichier\n";exit(1);}  //fichier impossible à ouvrir
         nb=this->nrec;f1.write((char*)&nb,sizeof(int));
         //cout <<"reftable.writeheader     nscen = "<<this->nscen<<"\n";
@@ -324,8 +327,8 @@ public:
 		}
 		f1.close();
 		this->fifo.close();
-		remove(reftablefilename);
-		rename(this->filename0,reftablefilename);
+		remove(reftablefilename.c_str());
+		rename(this->filename0.c_str(),reftablefilename.c_str());
 		cout<<"\nfin d'ecriture des enregistrements\n";
 		return 1;
 	}
@@ -344,12 +347,12 @@ public:
         int i,n,nu=1,nrecc,*nrecscenc,size,ns;
         bool premier=true;
         this->openfile();
-        reftabname = new char[ strlen(this->filename)+10];
-        reflogname = new char[ strlen(this->filename)+10];
-        reftab = new char[ strlen(this->filename)+1];
-        strcpy(reftab,this->filename);
-        i=strlen(this->filename);
-        while (this->filename[i]!='.') i--;
+        reftabname = new char[ this->filename.length()+10];
+        reflogname = new char[this->filename.length()+10];
+        reftab = new char[ this->filename.length()+1];
+        strcpy(reftab,this->filename.c_str());
+        i=strlen(this->filename.c_str());
+        while (this->filename.c_str()[i]!='.') i--;
         reftab[i]='\0';
         num = new char[9];
         n=sprintf (num, "_%d",nu++);
@@ -362,9 +365,9 @@ public:
         cout<<reftabname<<"\n";
         //cout<<reflogname<<"\n";
         fstream f0(reftabname,ios::in|ios::binary);
-        if(f0) {f0.close();i=rename(reftabname,this->filename);}
+        if(f0) {f0.close();i=rename(reftabname,this->filename.c_str());}
         else {cout <<" no file to concatenate\n";exit(1);}
-        i=rename(reflogname,this->filelog);
+        i=rename(reflogname,this->filelog.c_str());
         cout <<reftabname<<"\n";
         cout<<reflogname<<"\n";
         cout<<this->filename<<"\n";
@@ -400,7 +403,7 @@ public:
                 this->fifo.write((char*)&(this->nrec),sizeof(int));
                 this->fifo.seekp(8,ios::beg);
                 for (int i=0;i<this->nscen;i++) this->fifo.write((char*)&(this->nrecscen[i]),sizeof(int));
-                ofstream f1(this->filelog,ios::out);
+                ofstream f1(this->filelog.c_str(),ios::out);
                 f1<<"OK\n";
                 f1<<this->nrec<<"\n";
                 f1.close();

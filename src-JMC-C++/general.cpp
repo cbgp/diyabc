@@ -60,8 +60,9 @@ HeaderC header;
 ParticleSetC ps;
 struct stat stFileInfo;
 
-char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename, *progressfilename;
-char *headersimfilename;
+//char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename, *progressfilename;
+//char *;
+string headerfilename,headersimfilename,reftablefilename,datafilename,statobsfilename,reftablelogfilename,path,ident,stopfilename,progressfilename;
 bool multithread=false;
 int nrecneeded,nenr=100;
 int debuglevel=0;
@@ -102,18 +103,17 @@ int readheadersim() {
 int main(int argc, char *argv[]){
 	try {
   
-	char *estpar,*compar,*biaspar,*confpar,*priorpar;
     bool firsttime;
 	int k,seed;
 	int optchar;
     char action='a';
     bool flagp=false,flagi=false,flags=false,simOK,stoprun=false;
-    string message;
+    string message,soptarg;
     FILE *flog;
 
     debut=walltime(&clock_zero);
 	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qkf:g:d:hmqj:a:t:")) !=-1) {
-
+	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
 
         case 'h' : cout << "USAGE :\n";
@@ -189,12 +189,20 @@ int main(int argc, char *argv[]){
             break;
 
         case 'i' :
-            ident=strdup(optarg);
+            ident=soptarg;
             flagi=true;
             break;
 
         case 'p' :
-            headerfilename = new char[strlen(optarg)+13];
+			headerfilename = soptarg + "header.txt";
+			headersimfilename = soptarg + "headersim.txt";
+			reftablefilename =  soptarg + "reftable.bin";
+			reftablelogfilename =  soptarg + "reftable.log";
+			statobsfilename = soptarg + "statobs.txt";
+			stopfilename = soptarg + ".stop"; 
+			path = soptarg;
+            /*
+			headerfilename = new char[strlen(optarg)+13];
             headersimfilename = new char[strlen(optarg)+16];
             reftablefilename = new char[strlen(optarg)+15];
             reftablelogfilename = new char[strlen(optarg)+15];
@@ -210,12 +218,14 @@ int main(int argc, char *argv[]){
             strcpy(stopfilename,optarg);
             strcat(headerfilename,"header.txt");
             strcat(headersimfilename,"headersim.txt");
+			headersimfilename2 = headersimfilename2 + "headersim.txt";
             strcat(reftablefilename,"reftable.bin");
             strcat(reftablelogfilename,"reftable.log");
             strcat(statobsfilename,"statobs.txt");
             strcat(stopfilename,".stop");
+			*/
             flagp=true;
-            if (stat(stopfilename,&stFileInfo)==0) remove(stopfilename);
+            if (stat(stopfilename.c_str(),&stFileInfo)==0) remove(stopfilename.c_str());
             break;
 
         case 's' :
@@ -237,27 +247,22 @@ int main(int argc, char *argv[]){
             break;
 
         case 'c' :
-            compar=strdup(optarg);
             action='c';
             break;
 
         case 'e' :
-            estpar=strdup(optarg);
             action='e';
             break;
 
         case 'b' :
-            biaspar=strdup(optarg);
             action='b';
             break;
 
         case 'f' :
-            confpar=strdup(optarg);
             action='f';
             break;
 
         case 'd' :
-            priorpar=strdup(optarg);
             action='d';
             break;
 
@@ -272,7 +277,6 @@ int main(int argc, char *argv[]){
             break;
 
         case 'j' :
-            estpar=strdup(optarg);
             action='j';
             break;
 
@@ -336,10 +340,10 @@ int main(int argc, char *argv[]){
                                               //if (firsttime) writecourant();
                                               //cout<<"à la place de writecourant\n";
                                               if (((rt.nrec%1000)==0)and(rt.nrec<nrecneeded))cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
-                                              stoprun = (stat(stopfilename,&stFileInfo)==0);
-                                              if (stoprun) remove(stopfilename);
+                                              stoprun = (stat(stopfilename.c_str(),&stFileInfo)==0);
+                                              if (stoprun) remove(stopfilename.c_str());
                                           } else {
-                                              flog=fopen(reftablelogfilename,"w");fprintf(flog,"%s",message.c_str());fclose(flog);
+                                              flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",message.c_str());fclose(flog);
                                               stoprun=true;
                                           }
                                           if (firsttime) firsttime=false;
@@ -352,32 +356,32 @@ int main(int argc, char *argv[]){
                                   delete [] enreg;
                                   rt.closefile();
 								  //cout<<"apres rt.closefile\n";
-                                  if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename,ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}
+                                  if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}
                                   //cout<<"avant header.libere\n";
                                   header.libere();
 								  //cout<<"apres header.libere\n";
                                   //exit(1);
-                          } else {ofstream f1(reftablelogfilename,ios::out);f1<<"END\n\n";f1.close();}
+                          } else {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n\n";f1.close();}
                       break;
 
       case 'e'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                  doestim(estpar);
+                  doestim(soptarg);
                   break;
 
       case 'c'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                  docompscen(compar);
+                  docompscen(soptarg);
                   break;
 
        case 'b'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                  dobias(biaspar,seed);
+                  dobias(soptarg,seed);
                   break;
 
        case 'f'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                  doconf(confpar,seed);
+                  doconf(soptarg,seed);
                   break;
 
        case 'k'  : k=readheadersim();
@@ -386,12 +390,12 @@ int main(int argc, char *argv[]){
 
        case 'd'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                  doacpl(priorpar,multithread,seed);
+                  doacpl(soptarg,multithread,seed);
                   break;
 
        case 'j'  : k=readheaders();
                    if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                   domodchec(estpar,seed);
+                   domodchec(soptarg,seed);
                    break;
 
   }

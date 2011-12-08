@@ -41,7 +41,7 @@ extern enregC* enreg;
 double time_readfile=0.0;
 extern string scurfile;
 
-char *nomficonfresult;
+string nomficonfresult;
 
 /**
  * Ecriture de l'entete du fichier confidence.txt contenant les résultats
@@ -56,16 +56,16 @@ char *nomficonfresult;
         x=new long double[ntest];
         mo=new long double[4];
         string aprdir,aprlog;
-        nomficonfresult = new char[strlen(path)+strlen(ident)+30];
-        strcpy(nomficonfresult,path);
-        strcat(nomficonfresult,ident);
-        strcat(nomficonfresult,"_confidence.txt");
+        nomficonfresult = path + ident + "_confidence.txt";
+        //strcpy(nomficonfresult,path);
+        //strcat(nomficonfresult,ident);
+        //strcat(nomficonfresult,"_confidence.txt");
         cout <<nomficonfresult<<"\n";
         FILE *f1;
-        f1=fopen(nomficonfresult,"w");
+        f1=fopen(nomficonfresult.c_str(),"w");
         fprintf(f1,"DIYABC :                 Confidence in scenario choice                         %s\n",asctime(timeinfo));
         fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
-        fprintf(f1,"Reference table : %s\n",rt.filename);
+        fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
         fprintf(f1,"Number of simulated data sets : %d\n",nrec);
         fprintf(f1,"Direct approach : number of selected data sets : %d\n",nseld);
         if (nlogreg==1) {
@@ -141,11 +141,11 @@ char *nomficonfresult;
 /**
  * Interprête la ligne de paramètres de l'option "confiance dans le choix du scénario" et lance les calculs correspondants
  */
-    void doconf(char *options, int seed) {
-        char *progressfilename, *courantfilename;
+    void doconf(string opt, int seed) {
+        string progressfilename, courantfilename;
         int nstatOK, iprog,nprog,ncs1;
         int nrec,nsel,nseld,nselr,ns,nrecpos,ntest,np,ng,npv,nlogreg,ncond;
-        string opt,*ss,s,*ss1,s0,s1; 
+        string *ss,s,*ss1,s0,s1; 
 		float *stat_obs;
 		double duree,debut,clock_zero;
         bool AFD=false;
@@ -153,17 +153,16 @@ char *nomficonfresult;
         string shist,smut;
         FILE *flog;
         //cout <<"debut de doconf\n";
-        progressfilename = new char[strlen(path)+strlen(ident)+20];
-        strcpy(progressfilename,path);
-        strcat(progressfilename,ident);
-        strcat(progressfilename,"_progress.txt");
+        progressfilename = path + ident + "_progress.txt";
+        //strcpy(progressfilename,path);
+        //strcat(progressfilename,ident);
+        //strcat(progressfilename,"_progress.txt");
 
-        courantfilename = new char[strlen(path)+strlen(ident)+20];
-        strcpy(courantfilename,path);
-        strcat(courantfilename,"courant.log");
-        cout<<courantfilename<<"\n";
-        cout<<"options : "<<options<<"\n";
-        opt=char2string(options);
+        courantfilename = path + ident + "courant.log";
+        //strcpy(courantfilename,path);
+        //strcat(courantfilename,"courant.log");
+        //cout<<courantfilename<<"\n";
+        cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
         for (int i=0;i<ns;i++) {
             s0=ss[i].substr(0,2);
@@ -238,18 +237,18 @@ char *nomficonfresult;
             enreg[p].numscen = rt.scenteste;
         }
         nsel=nseld;if(nsel<nselr) nsel=nselr;
-        if (nlogreg==1){nprog=10*(ntest+1)+1;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
-        else           {nprog=6*ntest+11;iprog=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
+        if (nlogreg==1){nprog=10*(ntest+1)+1;iprog=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
+        else           {nprog=6*ntest+11;iprog=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         cout<<"avant ps.dosimultabref\n";
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed);
         cout<<"apres ps.dosimultabref\n";
-        iprog=10;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         cout<<"apres ecriture dans progress\n";
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         //nstatOK = rt.cal_varstat();
         stat_obs = new float[rt.nstat];
         ecrientete(nrec,ntest,nseld,nselr,nlogreg,shist,smut,AFD); cout<<"apres ecrientete\n";
-        ofstream f11(nomficonfresult,ios::app);
+        ofstream f11(nomficonfresult.c_str(),ios::app);
         rt.alloue_enrsel(nsel);
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
         for (int p=0;p<ntest;p++) {
@@ -260,7 +259,7 @@ char *nomficonfresult;
 			//cout<<"nstatOK="<<nstatOK<<"\n";
             rt.cal_dist(nrec,nsel,stat_obs);
             //cout<<"apres cal_dist\n";
-            iprog +=6;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+            iprog +=6;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
 			//cout<<"avant transfAFD\n";
             if (AFD) stat_obs = transfAFD(nrec,nsel,p);
             //if (ite==1) stat_obs = transfAFD(nrec,nsel,p);
@@ -274,7 +273,7 @@ char *nomficonfresult;
             for (int i=0;i<rt.nscenchoisi;i++) cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;cout<<"\n";
             if (nlogreg==1) {
                 postsr = comp_logistic(nselr,stat_obs);
-                iprog +=4;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+                iprog +=4;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
 				for (int i=0;i<rt.nscenchoisi;i++) {
 					printf("  %6.4Lf [%6.4Lf,%6.4Lf] ",postsr[i].x,postsr[i].inf,postsr[i].sup);
 					f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x;
@@ -299,5 +298,5 @@ char *nomficonfresult;
         }
         rt.desalloue_enrsel(nsel);
         f11.close();
-        iprog +=1;flog=fopen(progressfilename,"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog +=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
 }
