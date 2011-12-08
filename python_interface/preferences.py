@@ -722,6 +722,7 @@ class Preferences(formPreferences,basePreferences):
             raminfo = self.getRamInfo()
         except Exception as e:
             raminfo = None
+            return
         min_requested_ram = 2000
         if raminfo[1] < min_requested_ram:
             output.notify(self,"System warning","Warning, your have less than %s MB of RAM available.\n Your computer may swap and become very slow"%min_requested_ram)
