@@ -1,4 +1,4 @@
-CFLAGS = -fopenmp -msse4 -funroll-loops -DNDEBUG=1 -O3  -I/usr/include  -Wall
+CFLAGS = -fopenmp -msse4 -funroll-loops -DNDEBUG=1   -I/usr/include  
 LIBS =  -L/usr/local/lib64 -L/usr/lib64
 
 all: general

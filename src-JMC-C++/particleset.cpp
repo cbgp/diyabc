@@ -19,6 +19,7 @@
 #define REFTABLE
 #endif
 
+#include "particuleC.h"
 
 enregC *enreg;
 extern long double **phistar;

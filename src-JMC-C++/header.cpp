@@ -206,11 +206,11 @@ public:
 			}
 			//this->scenario[i].ecris();
             cout<<"apres read_events\n";
-            this->message = this->scenario[i].checklogic();
+            /*this->message = this->scenario[i].checklogic();
 			if (this->message!="") {
 				this->message = "Error when reading  header.txt file : "+this->message+" in scenario "+IntToString(i+1);
 				return this;
-			}
+			}*/
         }
         for (int ievent=0;ievent<this->scenario[0].nevent;ievent++){ 
 			if (this->scenario[0].event[ievent].action == 'R') {
