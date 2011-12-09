@@ -6,42 +6,24 @@
  *
  */
 
-#ifndef FSTREAM
+
 #include <fstream>
-#define FSTREAM
-#endif
-#ifndef IOSTREAM
 #include <iostream>
-#define IOSTREAM
-#endif
-#ifndef STRING
 #include <string>
-#define STRING
-#endif
-#ifndef CSTRING
 #include <cstring>
-#define CSTRING
-#endif
-#ifndef SSTREAM
 #include <sstream>
-#define SSTREAM
-#endif
-#ifndef STDLIBH
 #include <stdlib.h>
-#define STDLIBH
-#endif
-#ifndef CTYPEH
 #include <ctype.h>
-#define CTYPEH
-#endif
+#include <vector>
+
+#include "mesutils.h"
+#include "randomgenerator.h"
+
 #ifndef MESUTILS
 #include "mesutils.cpp"
 #define MESUTILS
 #endif
-#ifndef VECTOR
-#include <vector>
-#define VECTOR
-#endif
+
 #ifndef RANDOMGENERATOR
 #include "randomgenerator.cpp"
 #define RANDOMGENERATOR

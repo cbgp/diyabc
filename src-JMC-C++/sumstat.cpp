@@ -4,7 +4,19 @@
  *  Created on: 8 déc. 2011
  *      Author: ppudlo
  */
+#include <math.h>
+#include <cmath>
+#include <vector>
+#include <iostream>
+//#include <complex>
+#include <utility>
+#include <string>
+#include <cstdlib>
 
+#include "randomgenerator.h"
+#include "mesutils.h"
+#include "data.h"
+#include "history.h"
 #include "particuleC.h"
 
 extern int debuglevel;

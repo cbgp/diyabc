@@ -8,38 +8,22 @@
 #include <math.h>
 #include <algorithm>
 
+
+
 #ifndef MATRICES
 #include "matrices.cpp"
 #define MATRICES
 #endif
 
 
-
-
+#include "matrices.h"
 #include "randomgenerator.h"
+#include "mesutils.h"
 
 using namespace std;
 
 #define PI 3.141592653589793
 
-
-
-struct matC {
-    long double v;
-	int num;
-	int ind;
-};
-/**
-* définit l'opérateur de comparaison de deux enregistrements de type matC
-* pour l'utilisation de la fonction sort du module algorithm
-*/
-struct compC
-{
-   bool operator() (const matC & lhs, const matC & rhs) const
-   {
-      return lhs.v < rhs.v;
-   }
-};
 
 /**
  * calcule le temps écoulé depuis t0 (récupéré sur internet)
@@ -67,7 +51,7 @@ double walltime( double *t0 )
 }
 /**
  * renvoit la valeur entière contenue dans la num-ième sous-chaîne de s
- * fonctionne également si la valeur entière est encadrée par des parenthèses ou des crochets  
+ * fonctionne également si la valeur entière est encadrée par des parenthèses ou des crochets
  */
 int getwordint(string s,int num){
 	s.append(" ");
@@ -86,7 +70,7 @@ int getwordint(string s,int num){
 
 /**
  * renvoit la valeur flottante contenue dans la num-ième sous-chaîne de s
- * fonctionne également si la valeur flottante est encadrée par des parenthèses ou des crochets  
+ * fonctionne également si la valeur flottante est encadrée par des parenthèses ou des crochets
  */
 double getwordfloat(string s,int num){
 	s.append(" ");
@@ -286,12 +270,6 @@ string majuscules(string  s) {
     return s2;
 }
 
-/**
- * transforme un char* en string
- */
-inline string char2string(char *c) {
-  return string(c); 
-}
 
 /**
  * transforme un string en char*
@@ -492,7 +470,7 @@ double do_del(double temp, double x) {  //calcule cum avec ccum=1.0-cum
 }
 
 /**
- * 
+ *
  */
 double pnorm5(double x,double mu, double sigma){
     double a[5] = {2.2352520354606839287,161.02823106855587881,1067.6894854603709582,18154.981253343561249,0.065682337918207449113};
@@ -540,10 +518,7 @@ double pnorm5(double x,double mu, double sigma){
     return cum;
 }
 
-struct rescov {
-    int n;
-    long double *mu,**cov;
-};
+
 
 rescov covarianceponderee(int nl, int nc, long double **A, long double *w) {
     rescov mcv;
@@ -572,10 +547,7 @@ rescov covarianceponderee(int nl, int nc, long double **A, long double *w) {
     return mcv;
 }
 
-struct resAFD{
-   int nlambda;
-   long double proportion,*lambda,slambda,**vectprop,**princomp,*moy;
-};
+
 
 resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long double prop) {
     resAFD res;
@@ -692,6 +664,11 @@ int PPCM(int a, int b) {
 	return a*b/PGCD(a,b);
 }
 
+bool compC::operator() (const matC & lhs, const matC & rhs) const
+{
+   return lhs.v < rhs.v;
+}
+
 long double DCVM(int n, int m, long double *x, long double *y) {
 	matC *A;
 	A = new matC[n+m];
@@ -735,4 +712,4 @@ void combrank2(int n, int m, long double *x, long double *y,long double *rangx, 
 		i1 = i0;
 	}
    delete []A;
-} 
+}

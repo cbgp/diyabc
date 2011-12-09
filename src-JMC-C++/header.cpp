@@ -3,6 +3,28 @@
 
 
 */
+#include <cstdio>
+#include <cmath>
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+//#include <complex>
+#include <utility>
+#include <string>
+#include <cstring>
+#include <algorithm>
+#include <cstdlib>
+
+#include "randomgenerator.h"
+#include "mesutils.h"
+#include "data.h"
+#include "history.h"
+#include "particuleC.h"
+
+
+extern int debuglevel;
+
 #ifndef PARTICULEC
 #include "particuleC.cpp"
 #define PARTICULEC

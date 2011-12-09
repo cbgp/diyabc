@@ -4,8 +4,16 @@
  *  Created on: 8 déc. 2011
  *      Author: ppudlo
  */
+#include <string>
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+using namespace std;
 
+#include "randomgenerator.h"
+#include "mesutils.h"
 #include "history.h"
+
 
 vector <string> histparname;
 vector <int> histparcat;

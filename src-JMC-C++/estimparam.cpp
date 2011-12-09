@@ -4,15 +4,17 @@
  *  Created on: 9 march 2011
  *      Author: cornuet
  */
+#include <vector>
+
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
 #endif
 
-#ifndef VECTOR
-#include <vector>
-#define VECTOR
-#endif
+
+
+
+
 
 #ifndef MATRICES
 #include "matrices.cpp"

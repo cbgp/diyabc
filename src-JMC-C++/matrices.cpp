@@ -1,43 +1,24 @@
+// matrices.cpp
+//
 #include <iomanip>
 #include <iostream>
 #include <cmath>
 #include <stdio.h>
+#include "matrices.h"
 
-#define EPSILON 9.62964972193617926528E-35
-extern bool multithread;
 using namespace std;
-
-/** 
-* libere la mémoire occupée par une matrice de doubles 
-*/
-void libereD(int n,double **A) {
+void libereD (int n, double * * A)
+                               {
     for (int i=0;i<n;i++) delete[] A[i];
     delete [] A;
 }
-/** 
-* libere la mémoire occupée par une matrice de long doubles 
-*/
-void libereL(int n,long double **A) {
+void libereL (int n, long double * * A)
+                                    {
     for (int i=0;i<n;i++) delete[] A[i];
     delete [] A;
 }
-/*
-/** 
-* écrit les n premières lignes et m premières colonnes d'une matrice de doubles' 
-*/
-/*int ecrimat(string nomat, int n, int m, double **A) {
-    cout<<"\n"<<nomat<<"\n";
-    for (int i=0;i<n;i++) {
-        for (int j=0;j<m;j++) cout<<setiosflags(ios::fixed)<<setw(10)<<setprecision(6)<< A[i][j]<<"  ";
-        cout<<"\n";
-    }
-    cout<<"\n";
-	return 0;
-}*/
-/** 
-* transpose une matrice de doubles 
-*/
-double** transpose(int n, int m, double **A) {
+double * * transpose (int n, int m, double * * A)
+                                             {
     double **C;
     C = new double*[m];
     for (int i=0;i<m;i++) C[i] = new double[n];
@@ -46,11 +27,8 @@ double** transpose(int n, int m, double **A) {
     }
     return C;
 }
-
-/** 
-* effectue le produit matriciel de deux matrices de doubles 
-*/
-double** prodM(int n, int m, int p, double **A,double **B) {
+double * * prodM (int n, int m, int p, double * * A, double * * B)
+                                                           {
     double **C;
     C = new double*[n];
     for (int i=0;i<n;i++) {
@@ -64,11 +42,8 @@ double** prodM(int n, int m, int p, double **A,double **B) {
     }
     return C;
 }
-
-/**
-*effectue le produit d'une matrice (**double) par un scalaire (double)'
-*/
-double** prodMs(int n,int m, double **A, double b) {
+double * * prodMs (int n, int m, double * * A, double b)
+                                                   {
     double **C;
     C = new double*[n];
     for (int i=0;i<n;i++) {
@@ -77,13 +52,8 @@ double** prodMs(int n,int m, double **A, double b) {
     }
     return C;
 }
-
-
-
-/** 
-* transpose une matrice de long doubles 
-*/
-long double** transposeL(int n, int m, long double **A) {
+long double * * transposeL (int n, int m, long double * * A)
+                                                        {
     long double **C;
     C = new long double*[m];
     for (int i=0;i<m;i++) C[i] = new long double[n];
@@ -92,11 +62,8 @@ long double** transposeL(int n, int m, long double **A) {
     }
     return C;
 }
-
-/** 
-* effectue le produit matriciel de deux matrices de long doubles 
-*/
-long double** prodML(int n, int m, int p, long double **A,long double **B) {
+long double * * prodML (int n, int m, int p, long double * * A, long double * * B)
+                                                                           {
     long double **C;
     C = new long double*[n];
     for (int i=0;i<n;i++) {
@@ -110,11 +77,8 @@ long double** prodML(int n, int m, int p, long double **A,long double **B) {
     }
     return C;
 }
-
-/**
-*effectue le produit d'une matrice (**long double) par un scalaire (double)'
-*/
-long double** prodMsL(int n,int m, long double **A, long double b) {
+long double * * prodMsL (int n, int m, long double * * A, long double b)
+                                                                   {
     long double **C;
     C = new long double*[n];
     for (int i=0;i<n;i++) {
@@ -123,11 +87,7 @@ long double** prodMsL(int n,int m, long double **A, long double b) {
     }
     return C;
 }
-
-/** 
-* effectue l'inversion matricielle d'une matrice (carrée) de doubles 
-*/
-  double** invM(int n, double **A)
+double * * invM (int n, double * * A)
 {
     int i,j,k,l,err=0;
     double max,pivot,coef, **T, **C;
@@ -174,11 +134,7 @@ long double** prodMsL(int n,int m, long double **A, long double b) {
     for (i=0;i<n;i++) delete[] T[i];delete[] T;
     return C; 
 }
-
-/** 
-* effectue l'inversion matricielle d'une matrice (carrée) de long doubles 
-*/
-int inverse(int n, long double **A, long double **C)
+int inverse (int n, long double * * A, long double * * C)
 {
     int i,j,k,l,err=0;
     long double max,pivot,coef, **T;
@@ -239,12 +195,8 @@ int inverse(int n, long double **A, long double **C)
 //cout<<"fin de inverse\n";
     return err; 
 }
-
-/**
- * Méthode de Jacobi pour déterminer les vecteurs et valeurs propres d'une matrice carré de type <double>
- */
-
-    int jacobi(int n, double **A, double *D, double **V) {
+int jacobi (int n, double * * A, double * D, double * * V)
+                                                         {
         int nrot=0,nm;
         double *b,*z,tresh,theta,tau,t,sm,s,h,g,cc;
         b = new double[n];
@@ -323,11 +275,8 @@ int inverse(int n, long double **A, long double **C)
         delete []b;delete []z;
         return nrot;    
     }
-
-/**
- * Méthode de Jacobi pour déterminer les vecteurs et valeurs propres d'une matrice carré de type <long double>
- */
-	int jacobiL(int n, long double **A, long double *D, long double **V) {
+int jacobiL (int n, long double * * A, long double * D, long double * * V)
+                                                                             {
         int nrot=0,iq;
         long double *b,*z,tresh,theta,tau,t,sm,s,h,g,cc;
         b = new long double[n];
@@ -407,12 +356,8 @@ int inverse(int n, long double **A, long double **C)
         delete []b;delete []z;
         return nrot;    
     }
-
-/**
- * Calcul du kappa (plus grande/plus petite valeur propre) d'une matrice carrée
- * retourne 1E100 si la matrice est singulière (il existe une valeur propre nulle) 
- */
-	double kappa(int n,long double **A) {
+double kappa (int n, long double * * A)
+                                            {
 		long double **vcprop, *valprop,piv,**B;
         vcprop  = new long double*[n];for (int i=0;i<n;i++) vcprop[i]=new long double [n];
         valprop = new long double[n];
@@ -426,12 +371,8 @@ int inverse(int n, long double **A, long double **C)
         }
 	    if (valprop[n-1]>0) return valprop[0]/valprop[n-1]; else return 1E100;
 	}
-
-/** 
-* effectue l'inversion matricielle d'une matrice (carrée) de long doubles
-* avec régularisation de Tikhonov si nécessaire  
-*/
-	int inverse_Tik(int n, long double **A, long double **C) {
+int inverse_Tik (int n, long double * * A, long double * * C)
+                                                                 {
 		long double t,coeff,**AA,seuil_kappa=1E8;
 		double kap;
 		int err;
@@ -467,12 +408,8 @@ int inverse(int n, long double **A, long double **C)
 		}
 		return 1;  
 	}
-
-/** 
-* effectue l'inversion matricielle d'une matrice (carrée) de long doubles
-* avec régularisation de Tikhonov si nécessaire  
-*/
-	int inverse_Tik2(int n, long double **A, long double **C, long double coeff) {
+int inverse_Tik2 (int n, long double * * A, long double * * C, long double coeff)
+                                                                                     {
 		long double t,**AA;
 		int err;
 		AA = new long double*[n]; for (int i=0;i<n;i++) AA[i] = new long double [n];
@@ -484,6 +421,3 @@ int inverse(int n, long double **A, long double **C)
 		err=inverse(n,AA,C);
 		return err;  
 	}
-
-
-  

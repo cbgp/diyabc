@@ -1,32 +1,26 @@
 
-#ifndef FSTREAM
 #include <fstream>
-#define FSTREAM
-#endif
-#ifndef IOSTREAM
 #include <iostream>
-#define IOSTREAM
-#endif
-#ifndef STRING
 #include <string>
-#define STRING
-#endif
-#ifndef CSTRING
 #include <cstring>
-#define CSTRING
-#endif
-#ifndef ALGORITHM
+#include <vector>
 #include <algorithm>
-#define ALGORITHM
-#endif
-#ifndef MESUTILS
-#include "mesutils.cpp"
-#define MESUTILS
-#endif
+#include <cmath>
 
-#include "header.h"
+#include "randomgenerator.h"
+#include "mesutils.h"
 #include "history.h"
+#include "data.h"
+#include "particuleC.h"
+#include "header.h"
 #include "reftable.h"
+
+//#ifndef MESUTILS
+//#include "mesutils.cpp"
+//#define MESUTILS
+//#endif
+
+
 
 using namespace std;
 
