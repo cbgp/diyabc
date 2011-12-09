@@ -81,7 +81,11 @@ int HeaderC::readHeaderDebut(ifstream & file){
 	int nl;
 	getline(file,this->datafilename);nl++;
 	this->pathbase=path;
-	this->dataobs.loadfromfile(path+this->datafilename);
+	int error = this->dataobs.loadfromfile(path+this->datafilename);
+	if (error !=0) {
+		this->message = this->dataobs.message;
+		return error;
+	}
 	if (debuglevel==1) cout<<"lecture du fichier data terminée\n";
 	getline(file,s1);nl++;
 	this->nparamtot=getwordint(s1,1);		cout<<"nparamtot="<<this->nparamtot<<"\n";

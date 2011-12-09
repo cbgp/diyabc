@@ -101,7 +101,7 @@ struct stat stFileInfo;
 
 //char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename, *progressfilename;
 //char *;
-string headerfilename,headersimfilename,reftablefilename,datafilename,statobsfilename,reftablelogfilename,path,ident,stopfilename,progressfilename;
+string headerfilename,headersimfilename,reftablefilename, datafilename, statobsfilename,reftablelogfilename,path,ident,stopfilename,progressfilename;
 bool multithread=false;
 int nrecneeded,nenr=100;
 int debuglevel=0;
@@ -116,12 +116,12 @@ double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,
 int readheaders() {
     int k;
     if (debuglevel==1) cout<<"lecture des entêtes\n";
-    header.readHeader(headerfilename);                                   if (debuglevel==1) cout<<"apres header.readHeader\n";
-	if (header.message!="") {cout<<header.message;exit(1);}
+    k = header.readHeader(headerfilename);                               if (debuglevel==1) cout<<"apres header.readHeader\n";
+	if (k != 0) {cout<<header.message;exit(1);}
     header.calstatobs(statobsfilename);                                  if (debuglevel==1) cout <<"apres header.calstatobs\n";
-    datafilename=strdup(header.datafilename.c_str());                    if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
+    datafilename= header.datafilename;                                   if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
 	k=rt.testfile(reftablefilename,nenr);
-    k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
+    k=rt.readheader(reftablefilename,reftablelogfilename, datafilename);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
     if (k==0) {rt.sethistparamname(header);if (debuglevel==1) cout<<"sethistparamname"<<"\n";}
     return k;
 }

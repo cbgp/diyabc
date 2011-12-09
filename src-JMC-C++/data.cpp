@@ -47,88 +47,37 @@
 #define RANDOMGENERATOR
 #endif
 
+#include "data.h"
 
 using namespace std;
 
+
 /**
-*  Structure LocusC : définition de la structure LocusC
-*/ 
-struct LocusC
-{
-  string name;
-  int type;  //0 à 14
-  int groupe;    //numero du groupe auquel appartient le locus
-  double coeffcoal;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
-  long double **freq;
-  //Proprietes des locus sequences
-  long double pi_A,pi_C,pi_G,pi_T;
-  vector <long double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
-  vector <int> sitmut;   //array of nsitmut dna sites that are changed through a mutation
-  vector <int> sitmut2;  //
-  int dnalength,dnavar;
-  vector <int> tabsit;   //array of dnalength elements giving the number of a dna site;
-  string **haplodna; //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
-  string **haplodnavar; //seulement les sites variab
-  //Proprietes des locus microsatellites
-  int mini,maxi,kmin,kmax,motif_size,motif_range,nal;
-  double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
-  int **haplomic; //array[sample][gene copy]
-  //Propriétés des locus SNP
-  bool firstime;
-  short int **haplosnp; //array[sample][gene copy] 0,1,9
-  bool mono;  //mono=true si un seul allèle dans l'échantillon global
+ *  Structure LocusC : libération de la mémoire occupée par la structure LocusC
+ */
+void LocusC::libere(bool obs, int nsample) {
+	//cout<<"debut  nsample="<<nsample<<"\n";
+	//delete []this->name;
+	//cout<<"apres delete name\n";
+	//cout<<"apres delete ss\n";
+	//delete []this->samplesize;
+	//cout<<"apres delete samplesize\n";
+	if ((this->type>4)and(this->type<10)) {
+		if (not obs) {
+			if (not mutsit.empty()) mutsit.clear();
+			if (not tabsit.empty())tabsit.clear();
+		}
+	}
+	//cout<<"fin\n";
+}
 
-  /**
-   *  Structure LocusC : libération de la mémoire occupée par la structure LocusC
-   */ 
-  void libere(bool obs, int nsample) {
-    //cout<<"debut  nsample="<<nsample<<"\n";
-    //delete []this->name;
-    //cout<<"apres delete name\n";
-    //cout<<"apres delete ss\n";
-    //delete []this->samplesize;
-    //cout<<"apres delete samplesize\n";
-    if ((this->type>4)and(this->type<10)) {
-      if (not obs) {
-	if (not mutsit.empty()) mutsit.clear();
-	if (not tabsit.empty())tabsit.clear();
-      }
-    }
-    //cout<<"fin\n";
-  }
-};
 
-struct MissingHaplo
-{
-	int locus,sample,indiv;
-};
 
-struct MissingNuc
-{
-	int locus,sample,indiv,nuc;
-};
 
-class DataC
-{
-public:
-	string message,title,**indivname,***genotype;
-	int nsample,nsample0,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
-	//int *nind;
-	//int **indivsexe;
-	double sexratio;
-	MissingHaplo *misshap, *misssnp;
-	MissingNuc   *missnuc;
-	LocusC *locus;
-    bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
-	//int **ss;  //nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
-	bool *catexist;
-	vector < vector <int> > ss;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
-	vector <int> nind;
-	vector < vector <int> > indivsexe;
 /**
 * liberation de la mémoire occupée par la classe DataC
 */
-	void libere(){
+	void DataC::libere(){
 		//cout<<"Aindivname="<<Aindivname<<"   Aindivsexe="<<Aindivsexe<<"   Agenotype="<<Agenotype<<"   Anind="<<Anind<<"\n";
 		if (Aindivname) {
 			for (int  ech=0;ech<this->nsample0;ech++) delete [] this->indivname[ech];
@@ -169,7 +118,7 @@ public:
 * return=0 si genepop
 * return=1 si snp
 */
-	int testfile(string filename){
+	int DataC::testfile(string filename){
 	    int nss;
 	    string ligne,*ss;
 		ifstream file(filename.c_str(), ios::in);
@@ -207,13 +156,17 @@ public:
 /**
 * lecture d'un fichier de donnée SNP et stockage des informations dans une structure DataC
 */
-	DataC*  readfilesnp(string filename){
+	int  DataC::readfilesnp(string filename){
 		int ech,ind,nech,*nindi,nss;
 		bool deja;
 		string s1,*ss;
 		vector <string> popname;
 		Aindivname=false;Agenotype=false;Anind=false;Aindivsexe=false;Alocus=false;
 		ifstream file(filename.c_str(), ios::in);
+		if (file == NULL) {
+			this->message = "Data.cpp File "+filename+" not found";
+			return 1;
+		} else this->message="";
 		getline(file,s1);
         ss=splitwords(s1," ",&nss);
 		this->nloc=nss-3;
@@ -308,12 +261,12 @@ public:
 		cout<<"avant les delete\n";
 		delete []nindi;delete []ss;
 		cout<<"fin de la lecture du fichier\n";
-		return this;
+		return 0;
 	}
 /**
 * supprime les locus monomorphes
 */
-	void purgelocmonomorphes(){
+	void DataC::purgelocmonomorphes(){
 		int ind,ech,ind0,ech0,kloc=0,nloc=0,*typ;
 		string ***ge,misval="9";
 		string premier="";
@@ -391,7 +344,7 @@ public:
 		} else cout<<"tous les locus sont polymorphes\n";
 	}
 
-	void missingdata(){
+	void DataC::missingdata(){
 		int ind,ech,nm;
 		string misval="9";
 		this->nmisssnp=0;
@@ -424,7 +377,7 @@ public:
 /**
 * traitement des locus snp
 */
-	void do_snp(int loc) {
+	void DataC::do_snp(int loc) {
 		vector <short int> haplo;
 		int ech,ind,ss;
 		string misval="9";
@@ -454,7 +407,7 @@ public:
 		}
 	}
 
-	void calcule_ss() {
+	void DataC::calcule_ss() {
 		this->catexist = new bool[5];
 		this->ss.resize(5);
 		for (int i=0;i<5;i++) this->catexist[i]=false;
@@ -481,7 +434,7 @@ public:
 /**
 * ecriture en binaire d'un fichier snp 
 */
-	void ecribin(string filenamebin) {
+	void DataC::ecribin(string filenamebin) {
         MwcGen mwc;        mwc.randinit(990,time(NULL));
 		int *index,lon,kloc,categ;
 		index=mwc.randperm(this->nloc);
@@ -525,7 +478,7 @@ cout<<"fin de ecribin\n";
 /**
 * lecture en binaire d'un fichier snp 
 */
-	void libin(string filenamebin) {
+	void DataC::libin(string filenamebin) {
 		fstream f0;
 		char* buffer;
 		buffer = new char[1000];
@@ -578,7 +531,7 @@ cout<<"fin de ecribin\n";
 /**
 * lecture d'un fichier de donnée GENEPOP et stockage des informations dans une structure DataC
 */
-	DataC* readfile(string filename){
+	int DataC::readfile(string filename){
 		bool fin;
 		string s,s1,s2,locusname;
 		int ech,ind,nech,*nindi;
@@ -588,7 +541,7 @@ cout<<"fin de ecribin\n";
 		ifstream file(filename.c_str(), ios::in);
 		if (file == NULL) {
 			this->message = "Data.cpp File "+filename+" not found";
-			return this;
+			return 1;
 		} else this->message="";
 		getline(file,this->title);
 		j0=title.find("<NM=");
@@ -681,7 +634,7 @@ cout<<"fin de ecribin\n";
 							if (s2=="M") this->locus[loc].type=4; else
 								{out <<loc+1;
 								 this->message="unrecognized type at locus "+out.str();
-								 return this;
+								 return 1;
 								}
 				s=s.substr(0,j-1);
 			} else this->locus[loc].type=0;
@@ -709,13 +662,13 @@ cout<<"fin de ecribin\n";
 		file2.close();
 		delete [] nindi;
                 //cout<<"dans data nsample = "<<this->nsample<<"\n";
-		return this;
+		return 0;
 	}
 
 /**
 * traitement des génotypes microsat au locus loc
 */
-    void do_microsat(int loc){
+    void DataC::do_microsat(int loc){
     	string geno,*gen;
     	int l,ll,n,gg,ng;
     	gen = new string[2];
@@ -772,7 +725,7 @@ cout<<"fin de ecribin\n";
 /**
 * traitement des génotypes DNA sequence au locus loc
 */
-    void do_sequence(int loc){
+    void DataC::do_sequence(int loc){
         //cout<<"do_sequence locus"<<loc<<"\n";
     	string geno,*gen;
     	int n,j0,j1,j2,ng,*ss;
@@ -876,7 +829,7 @@ cout<<"fin de ecribin\n";
 * calcul du coefficient dans la formule de coalescence en fonction du type de locus
 * 0:autosomal diploide, 1:autosomal haploïde, 2:X-linked, 3:Y-linked, 4:mitochondrial
 */
-    void cal_coeffcoal(int loc){
+    void DataC::cal_coeffcoal(int loc){
 		double coeff=0.0;
 		switch (this->locus[loc].type % 5)
 		{	case 0 :  coeff = 16.0*this->sexratio*(1.0-this->sexratio);break;
@@ -893,58 +846,59 @@ cout<<"fin de ecribin\n";
 /**
 * chargement des données dans une structure DataC
 */
-    DataC * loadfromfile(string filename) {
-		int loc,kloc;
-		string filenamebin;
-		fstream fs;
-		//size_t k=filename.find_last_of(".");
-		filenamebin=filename+".bin";
-		cout<<filenamebin<<"\n";
-		this->filetype = this->testfile(filename);
-		if (this->filetype==-2) {
-			cout<<"Unreckognized file format"<<"\n";
-			exit(1);
-		} else if (this->filetype==-1) {
-			cout<<"data file not found\n";
-			exit(1);
-		}
-		if (this->filetype==0) {
-			this->readfile(filename);
-					cout <<this->message<<   "\n";
-					if (this->message != "") exit(1);
-			kloc=this->nloc;
-			for (loc=0;loc<kloc;loc++) {
-				if (this->locus[loc].type<5) this->do_microsat(loc);
-				else                         this->do_sequence(loc);
-				this->cal_coeffcoal(loc);
-			}
-		this->calcule_ss();
-		}
-		if (this->filetype==1) {
-		    fs.open(filenamebin.c_str(),ios::in|ios::binary); 
-		    if (fs) {
-				fs.close();
-				this->libin(filenamebin);
-				this->sexratio=0.5;
-				for (loc=0;loc<this->nloc;loc++) this->cal_coeffcoal(loc);
-				cout<<"fin de la lecture du fichier binaire\n";
-			} else {
-				this->readfilesnp(filename);
-				cout<<"fin de la lecture\n";
-				this->purgelocmonomorphes();cout<<"fin de la purge des monomorphes\n";
-				this->sexratio=0.5;
-				for (loc=0;loc<this->nloc;loc++) {this->do_snp(loc);this->cal_coeffcoal(loc);}
-				cout<<"apres le' traitement' des snp\n";
-				this->calcule_ss();
-				cout<<"reecriture dans le fichier binaire "<<filenamebin<<"\n";
-				this->ecribin(filenamebin);
-				cout<<"relecture du fichier binaire\n";
-				this->libin(filenamebin);
-				cout<<"fin de la lecture du fichier binaire\n\n";
-			}
-		}
-		this->nsample0 = this->nsample;
-		return this;
-	}
+    int DataC::loadfromfile(string filename) {
+    	int loc,kloc;
+    	string filenamebin;
+    	fstream fs;
+    	int error =0;
+    	//size_t k=filename.find_last_of(".");
+    	filenamebin=filename+".bin";
+    	cout<<filenamebin<<"\n";
+    	this->filetype = this->testfile(filename);
+    	if (this->filetype==-2) {
+    		this->message = "Unreckognized file format";
+    		error =1; return 1;
+    	} else if (this->filetype==-1) {
+    		this->message = "data file not found";
+    			error =1; return error;
+    	}
+    	if (this->filetype==0) {
+    		error = this->readfile(filename);
+    		if (error != 0) return error;
+    		kloc=this->nloc;
+    		for (loc=0;loc<kloc;loc++) {
+    			if (this->locus[loc].type<5) this->do_microsat(loc);
+    			else                         this->do_sequence(loc);
+    			this->cal_coeffcoal(loc);
+    		}
+    		this->calcule_ss();
+    	}
+    	if (this->filetype==1) {
+    		fs.open(filenamebin.c_str(),ios::in|ios::binary);
+    		if (fs) {
+    			fs.close();
+    			this->libin(filenamebin);
+    			this->sexratio=0.5;
+    			for (loc=0;loc<this->nloc;loc++) this->cal_coeffcoal(loc);
+    			cout<<"fin de la lecture du fichier binaire\n";
+    		} else {
+    			error = this->readfilesnp(filename);
+    			if (error != 0) return error;
+    			cout<<"fin de la lecture\n";
+    			this->purgelocmonomorphes();cout<<"fin de la purge des monomorphes\n";
+    			this->sexratio=0.5;
+    			for (loc=0;loc<this->nloc;loc++) {this->do_snp(loc);this->cal_coeffcoal(loc);}
+    			cout<<"apres le' traitement' des snp\n";
+    			this->calcule_ss();
+    			cout<<"reecriture dans le fichier binaire "<<filenamebin<<"\n";
+    			this->ecribin(filenamebin);
+    			cout<<"relecture du fichier binaire\n";
+    			this->libin(filenamebin);
+    			cout<<"fin de la lecture du fichier binaire\n\n";
+    		}
+    	}
+    	this->nsample0 = this->nsample;
+    	return 0;
+    }
 
-};
+
