@@ -148,7 +148,7 @@ int main(int argc, char *argv[]){
 	int optchar;
     char action='a';
     bool flagp=false,flagi=false,flags=false,simOK,stoprun=false;
-    string message,soptarg;
+    string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar;
     FILE *flog;
 
     debut=walltime(&clock_zero);
@@ -287,23 +287,28 @@ int main(int argc, char *argv[]){
             break;
 
         case 'c' :
+			comppar = soptarg;
             action='c';
             break;
 
         case 'e' :
+			estpar = soptarg;
             action='e';
             break;
 
         case 'b' :
+			biaspar = soptarg;
             action='b';
             break;
 
         case 'f' :
+			confpar = soptarg;
             action='f';
             break;
 
         case 'd' :
-            action='d';
+			acplpar = soptarg;
+            action='d';cout<<"option -d "<<optarg<<"      "<<soptarg<<"\n";
             break;
 
         case 'k' :
@@ -317,6 +322,7 @@ int main(int argc, char *argv[]){
             break;
 
         case 'j' :
+			modpar = soptarg;
             action='j';
             break;
 
@@ -411,22 +417,22 @@ int main(int argc, char *argv[]){
 
       case 'e'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                  doestim(soptarg);
+                  doestim(estpar);
                   break;
 
       case 'c'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                  docompscen(soptarg);
+                  docompscen(comppar);
                   break;
 
        case 'b'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                  dobias(soptarg,seed);
+                  dobias(biaspar,seed);
                   break;
 
        case 'f'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                  doconf(soptarg,seed);
+                  doconf(confpar,seed);
                   break;
 
        case 'k'  : k=readheadersim();
@@ -435,12 +441,13 @@ int main(int argc, char *argv[]){
 
        case 'd'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                  doacpl(soptarg,multithread,seed);
+                  cout<<"avant doacpl soptarg="<<soptarg<<"\n";
+                  doacpl(acplpar,multithread,seed);
                   break;
 
        case 'j'  : k=readheaders();
                    if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
-                   domodchec(soptarg,seed);
+                   domodchec(modpar,seed);
                    break;
 
   }

@@ -270,8 +270,9 @@ struct resACPC
         string *ss,s,s0,s1;
         bool dopca,doloc;
         int ns;
-        ss = splitwords(opt,";",&ns);
-        for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
+ 		cout<<"doacpl "<<opt<<"\n";
+       ss = splitwords(opt,";",&ns);
+        for (int i=0;i<ns;i++) { cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
             if (s0=="a:") {
