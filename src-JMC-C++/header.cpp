@@ -43,21 +43,6 @@ void HeaderC::libere() {
 
 
 
-ConditionC HeaderC::readcondition(string ss){
-	ConditionC cond;
-	//cout<<"condition : "<<ss<<"\n";
-	if (ss.find(">=")!=string::npos){
-		cond.operateur=">=";cond.param1=ss.substr(0,ss.find(">="));cond.param2=ss.substr(ss.find(">=")+2,ss.length()-(ss.find(">=")+2));}
-	else if (ss.find("<=")!=string::npos){
-		cond.operateur="<=";cond.param1=ss.substr(0,ss.find("<="));cond.param2=ss.substr(ss.find("<=")+2,ss.length()-(ss.find("<=")+2));}
-	if ((ss.find(">")!=string::npos)and(ss.find(">=")==string::npos)){
-		cond.operateur=">";cond.param1=ss.substr(0,ss.find(">"));cond.param2=ss.substr(ss.find(">")+1,ss.length()-(ss.find(">")+1));}
-	else if ((ss.find("<")!=string::npos)and(ss.find("<=")==string::npos)){
-		cond.operateur="<";cond.param1=ss.substr(0,ss.find("<"));cond.param2=ss.substr(ss.find("<")+1,ss.length()-(ss.find("<")+1));}
-	//cond.ecris();
-	return cond;
-}
-
 void HeaderC::assignloc(int gr){
 	this->groupe[gr].nloc = 0;
 	for (int loc=0;loc<dataobs.nloc;loc++) {
@@ -91,18 +76,9 @@ void HeaderC::assignloc(int gr){
 
         }*/
 
-int HeaderC::readHeader(string headerfilename){
-	char reftable[]="header.txt";
-	string s1,s2,**sl,*ss,*ss1,*ss2;
-	int *nlscen,nss,nss1,j,k,gr,grm,k1,cat,nl=0;
-	cout<<"debut de readheader\n";
-	//cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
-	ifstream file(headerfilename.c_str(), ios::in);
-	if (file == NULL) {
-		this->message = "Header  File "+headerfilename+" not found";
-		cout<<this->message<<"\n";
-		return 1;
-	} else this->message="";
+int HeaderC::readHeaderDebut(ifstream & file){
+	string s1;
+	int nl;
 	getline(file,this->datafilename);nl++;
 	this->pathbase=path;
 	this->dataobs.loadfromfile(path+this->datafilename);
@@ -111,12 +87,19 @@ int HeaderC::readHeader(string headerfilename){
 	this->nparamtot=getwordint(s1,1);		cout<<"nparamtot="<<this->nparamtot<<"\n";
 	this->nstat=getwordint(s1,4);			cout<<"nstat="<<this->nstat<<"\n";
 	//cout<<"avant scenarios\n";fflush(stdin);
-	//Partie Scenarios
+	return 0;
+}
+
+int HeaderC::readHeaderScenarios(ifstream & file){
+		//Partie Scenarios
+	string s1;
+	int nl;
 	getline(file,s1);nl++;   //cout<<s1<<"\n";     //ligne vide
 	getline(file,s1);nl++;    //cout<<s1<<"\n";    // nombre de scenarios
 	this->nscenarios=getwordint(s1,1); cout<<this->nscenarios<<" scenario(s)\n";
-	sl = new string*[this->nscenarios];
-	nlscen = new int[this->nscenarios];
+	string** sl; sl = new string*[this->nscenarios];
+	int * nlscen; nlscen = new int[this->nscenarios];
+
 	this->scenario = new ScenarioC[this->nscenarios];
 	for (int i=0;i<this->nscenarios;i++) {nlscen[i]=getwordint(s1,3+i);}
 	for (int i=0;i<this->nscenarios;i++) {
@@ -172,8 +155,15 @@ int HeaderC::readHeader(string headerfilename){
 
 	for (int i=0;i<this->nscenarios;i++) delete []sl[i];
 	delete [] sl;
+	delete [] nlscen;
 	if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie scénarios\n";
-	//Partie historical parameters
+	return 0;
+}
+
+int HeaderC::readHeaderHistParam(ifstream & file){
+	string s1, s2, *ss, *ss2;
+	int nss, j, k;
+
 	//cout <<"avant histparam\n";fflush(stdin);
 	getline(file,s1);       //ligne vide
 	getline(file,s1);
@@ -207,7 +197,7 @@ int HeaderC::readHeader(string headerfilename){
 		for (int i=0;i<this->nconditions;i++) {
 			getline(file,s1);
 			cout<<s1<<"\n";
-			this->condition[i] = this->readcondition(s1);
+			this->condition[i].readcondition(s1);
 		}
 		getline(file,s1);
 		if (s1 != "DRAW UNTIL") this->drawuntil=false; else  this->drawuntil=true;
@@ -266,7 +256,14 @@ int HeaderC::readHeader(string headerfilename){
 
 		}
 	} else for (int i=0;i<this->nscenarios;i++) this->scenario[i].nconditions=0;
-	//Partie loci description
+
+	return 0;
+}
+
+int HeaderC::readHeaderLoci(ifstream & file){
+	string s1, *ss;
+	int k, k1, nss, gr, grm;
+		//Partie loci description
 	//cout <<"avant partie loci\n";fflush(stdin);
 	getline(file,s1);       //ligne vide
 	getline(file,s1);       //ligne "loci description"
@@ -329,8 +326,17 @@ int HeaderC::readHeader(string headerfilename){
 		}
 	}
 	if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie description des locus\n";
+
+	return 0;
+}
+
+
+
+int HeaderC::readHeaderGroupPrior(ifstream & file){
+	string s1, *ss, *ss1;
+	int gr, nss, nss1, j;
 	if (this->dataobs.filetype==0){
-		//Partie group priors
+
 		//cout <<"avant partie group priors\n";fflush(stdin);
 		getline(file,s1);       //ligne vide
 		getline(file,s1);       //ligne "group prior"
@@ -444,73 +450,12 @@ int HeaderC::readHeader(string headerfilename){
 		//this->scenario[i].ecris();
 	}
 
-	//cout<<"avant superscen\n";
-	this->scen.nevent=0;
-	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nevent<this->scenario[i].nevent) this->scen.nevent=this->scenario[i].nevent;}
-	this->scen.nn0=0;
-	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nn0<this->scenario[i].nn0)       this->scen.nn0 =this->scenario[i].nn0;}
-	this->scen.nsamp=0;
-	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nsamp<this->scenario[i].nsamp)   this->scen.nsamp=this->scenario[i].nsamp;}
-	this->scen.nparam=0;
-	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nparam<this->scenario[i].nparam)  this->scen.nparam=this->scenario[i].nparam;}
-	this->scen.nparamvar=0;
-	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nparamvar<this->scenario[i].nparamvar) this->scen.nparamvar=this->scenario[i].nparamvar;}
-	this->scen.nconditions=0;
-	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nconditions<this->scenario[i].nconditions) this->scen.nconditions=this->scenario[i].nconditions;}
-	this->scen.event = new EventC[this->scen.nevent];
-	// int lonmax=0;
-	// for (int i=0;i<this->nscenarios;i++) {
-		//    for (int j=0;j<this->scenario[i].nevent;j++) {if (lonmax<this->scenario[i].event[j].ltime) lonmax=this->scenario[i].event[j].ltime;}
-	// }
-	/* for (int i=0;i<this->scen.nevent;i++) {
-                    this->scen.event[i].stime = new char[lonmax];
-                    this->scen.event[i].ltime=2;this->scen.event[i].time=-9999;this->scen.event[i].stime[0]='0';this->scen.event[i].stime[1]='\0';
-                    for (int j=0;j<lonmax;j++) this->scen.event[i].stime[j]='\0';
-                    this->scen.event[i].action='E';
-                    this->scen.event[i].pop=1;
-                }
-                lonmax=0;
-                for (int i=0;i<this->nscenarios;i++) {
-                    for (int j=0;j<this->scenario[i].nevent;j++) {if (lonmax<this->scenario[i].event[j].lNe) lonmax=this->scenario[i].event[j].lNe;}
-                }
-                for (int i=0;i<this->scen.nevent;i++) {
-                    this->scen.event[i].sNe = new char[lonmax];
-                    this->scen.event[i].lNe=0;
-                    for (int j=0;j<lonmax;j++) this->scen.event[i].sNe[j]='\0';
-                }
-                 lonmax=0;
-                for (int i=0;i<this->nscenarios;i++) {
-                    for (int j=0;j<this->scenario[i].nevent;j++) {if (lonmax<this->scenario[i].event[j].ladmixrate) lonmax=this->scenario[i].event[j].ladmixrate;}
-                }
-                for (int i=0;i<this->scen.nevent;i++) {
-                  this->scen.event[i].sadmixrate = new char[lonmax];
-                  this->scen.event[i].ladmixrate=0;
-                  for (int j=0;j<lonmax;j++) this->scen.event[i].sadmixrate[j]='\0';
-               }
-	 */
-	this->scen.ne0   = new Ne0C[this->scen.nn0];
-	/*lonmax=0;
-                for (int i=0;i<this->nscenarios;i++) {
-                    for (int j=0;j<this->scenario[i].nn0;j++) {if (lonmax<this->scenario[i].ne0[j].lon) lonmax=this->scenario[i].ne0[j].lon;};
-                }
-                for (int i=0;i<this->scen.nn0;i++) {
-                    this->scen.ne0[i].lon=lonmax;
-                    this->scen.ne0[i].name = new char[lonmax];
-                }
-	 */
-	this->scen.time_sample = new int[this->scen.nsamp];
-	this->scen.histparam = new HistParameterC[this->scen.nparam];
-	this->scen.paramvar = new double[this->scen.nparamvar+3];
-	if (this->scen.nconditions>0) this->scen.condition = new ConditionC[this->scen.nconditions];
-	for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i]=0;
-	for (int i=0;i<this->scen.nparamvar+3;i++) this->scen.paramvar[i]=-1;
-	PriorC pr;pr.loi="uniforme";pr.mini=0.0;pr.maxi=1.0;pr.ndec=3;pr.constant=false;
-	HistParameterC pp;pp.name="bidon";pp.category=0;pp.value=-1; pp.prior = pr; //pp.prior=copyprior(pr);
-	for (int i=0;i<this->scen.nparam;i++)  this->scen.histparam[i] = pp;
-	//this->scen.ecris();
-	//cout<<"apres superscen\n";
-	if (debuglevel==2) cout<<"header.txt : fin de l'établissement du superscen\n";
-	//for(int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();
+	return 0;
+}
+
+int HeaderC::readHeaderGroupStat(ifstream & file) {
+	string s1, *ss, *ss1;
+	int j, k, nss, nss1, gr;
 	//Partie group statistics
 	if (debuglevel==2) cout<<"debut des group stat\n";
 	this->nstat=0;
@@ -703,6 +648,46 @@ int HeaderC::readHeader(string headerfilename){
 		//for (int i=0;i<this->groupe[gr].nstat;i++) cout<<this->groupe[gr].sumstat[i].cat<<"   "<<this->groupe[gr].sumstat[i].numsnp<<"\n";
 	}
 	if (debuglevel==2) cout<<"header.txt : fin de la lecture des summary stats\n";
+	return 0;
+}
+
+
+
+int HeaderC::buildSuperScen(){
+	//cout<<"avant superscen\n";
+	this->scen.nevent=0;
+	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nevent<this->scenario[i].nevent) this->scen.nevent=this->scenario[i].nevent;}
+	this->scen.nn0=0;
+	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nn0<this->scenario[i].nn0)       this->scen.nn0 =this->scenario[i].nn0;}
+	this->scen.nsamp=0;
+	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nsamp<this->scenario[i].nsamp)   this->scen.nsamp=this->scenario[i].nsamp;}
+	this->scen.nparam=0;
+	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nparam<this->scenario[i].nparam)  this->scen.nparam=this->scenario[i].nparam;}
+	this->scen.nparamvar=0;
+	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nparamvar<this->scenario[i].nparamvar) this->scen.nparamvar=this->scenario[i].nparamvar;}
+	this->scen.nconditions=0;
+	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nconditions<this->scenario[i].nconditions) this->scen.nconditions=this->scenario[i].nconditions;}
+	this->scen.event = new EventC[this->scen.nevent];
+	this->scen.ne0   = new Ne0C[this->scen.nn0];
+
+	this->scen.time_sample = new int[this->scen.nsamp];
+	this->scen.histparam = new HistParameterC[this->scen.nparam];
+	this->scen.paramvar = new double[this->scen.nparamvar+3];
+	if (this->scen.nconditions>0) this->scen.condition = new ConditionC[this->scen.nconditions];
+	for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i]=0;
+	for (int i=0;i<this->scen.nparamvar+3;i++) this->scen.paramvar[i]=-1;
+	PriorC pr;pr.loi="uniforme";pr.mini=0.0;pr.maxi=1.0;pr.ndec=3;pr.constant=false;
+	HistParameterC pp;pp.name="bidon";pp.category=0;pp.value=-1; pp.prior = pr; //pp.prior=copyprior(pr);
+	for (int i=0;i<this->scen.nparam;i++)  this->scen.histparam[i] = pp;
+	//this->scen.ecris();
+	//cout<<"apres superscen\n";
+	if (debuglevel==2) cout<<"header.txt : fin de l'établissement du superscen\n";
+	//for(int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();
+	return 0;
+}
+
+int HeaderC::buildMutParam(){
+	int gr;
 	this->nparamut=0;
 	for (gr=1;gr<=this->ngroupes;gr++) {
 		if (this->groupe[gr].type==0) {
@@ -773,7 +758,12 @@ int HeaderC::readHeader(string headerfilename){
 		}
 	}
 	if (debuglevel==2) cout<<"header.txt : fin de l'établissement des paramètres mutationnels'\n";
+	return 0;
+}
 
+int HeaderC::readHeaderEntete(ifstream & file){
+	string s1, *ss;
+	int nss;
 	//Entete du fichier reftable
 	getline(file,s1);       //ligne vide
 	getline(file,this->entete);     //ligne entete
@@ -790,10 +780,48 @@ int HeaderC::readHeader(string headerfilename){
 	for (int i=0;i<this->nstat;i++) cout<<this->statname[i]<<"   ";cout<<"\n";
 	delete []ss;
 	//cout<<"scenarios à la fin de readheader\n";
-	//exit(1);
-	//for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();
-	//this->scen.ecris();
-	//cout<<"fin de readheader\n\n\n";
+	return 0;
+}
+
+int HeaderC::readHeader(string headerfilename){
+	string s1,s2,**sl,*ss,*ss1,*ss2;
+	int *nlscen,nss,nss1,j,k,gr,grm,k1,cat,nl=0, error;
+	cout<<"debut de readheader\n";
+	//cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
+	ifstream file(headerfilename.c_str(), ios::in);
+	if (file == NULL) {
+		this->message = "Header  File "+headerfilename+" not found";
+		cout<<this->message<<"\n";
+		return 1;
+	} else this->message="";
+
+	error = readHeaderDebut(file);
+	if(error != 0) return error;
+
+	error = readHeaderScenarios(file);
+	if(error != 0) return error;
+
+	error = readHeaderHistParam(file);
+	if(error != 0) return error;
+
+	error = readHeaderLoci(file);
+	if(error != 0) return error;
+
+	error = readHeaderGroupPrior(file);
+	if(error != 0) return error;
+
+	error = buildSuperScen();
+	if(error != 0) return error;
+
+	error = readHeaderGroupStat(file);
+	if(error != 0) return error;
+
+	error = readHeaderEntete(file);
+	if(error != 0) return error;
+
+	error = buildMutParam();
+	if(error != 0) return error;
+
 	if (not file.eof()){
 		getline(file,s1);
 		getline(file,s1);

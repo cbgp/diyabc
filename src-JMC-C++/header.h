@@ -40,8 +40,19 @@ public:
 	float reffreqmin;
 
 	void libere();
-	ConditionC readcondition(string ss);
 	void assignloc(int gr);
+
+	int readHeaderDebut(ifstream & file);
+	int readHeaderScenarios(ifstream & file);
+	int readHeaderHistParam(ifstream & file);
+	int readHeaderLoci(ifstream & file);
+	int readHeaderGroupPrior(ifstream & file);
+	int readHeaderGroupStat(ifstream & file);
+	int readHeaderEntete(ifstream & file);
+
+	int buildSuperScen();
+	int buildMutParam();
+
 	int readHeader(string headerfilename);
 	int readHeadersim(string headersimfilename);
 	void calstatobs(string statobsfilename);

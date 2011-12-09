@@ -84,7 +84,7 @@ using namespace std;
  *  modifie les conditions sur les paramètres historiques en accord avec les priors des pseudo-observés
  */ 
     void resetcondition(int j,string s) {
-       header.scenario[rt.scenteste-1].condition[j] = header.readcondition(s);
+       header.scenario[rt.scenteste-1].condition[j].readcondition(s);
 
     }
 
@@ -544,7 +544,7 @@ using namespace std;
                         header.scenario[rt.scenteste-1].condition = new ConditionC[ncond];
                     }
                     for (int j=0;j<ncond;j++)
-                         header.scenario[rt.scenteste-1].condition[j] = header.readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]);
+                         header.scenario[rt.scenteste-1].condition[j].readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]);
                 }
             } else if (s0=="u:") {
                 cout<<s1<<"\n";

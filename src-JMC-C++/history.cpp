@@ -131,15 +131,29 @@ void PriorC::readprior(string ss){
  * Classe ConditionC :éléments de définition d'une condition sur un couple de paramètres historiques
  */
 
-struct ConditionC
+class ConditionC
 {
+public:
   string param1,param2,operateur;
 
-  void ecris(){cout<<this->param1<<"  "<<this->operateur<<"  "<<this->param2<<"\n";}
+  void ecris();
+  void readcondition(string ss);
 
 };
 
-
+void ConditionC::ecris(){cout<<this->param1<<"  "<<this->operateur<<"  "<<this->param2<<"\n";}
+void ConditionC::readcondition(string ss){
+		//cout<<"condition : "<<ss<<"\n";
+	if (ss.find(">=")!=string::npos){
+		this->operateur=">=";this->param1=ss.substr(0,ss.find(">="));this->param2=ss.substr(ss.find(">=")+2,ss.length()-(ss.find(">=")+2));}
+	else if (ss.find("<=")!=string::npos){
+		this->operateur="<=";this->param1=ss.substr(0,ss.find("<="));this->param2=ss.substr(ss.find("<=")+2,ss.length()-(ss.find("<=")+2));}
+	if ((ss.find(">")!=string::npos)and(ss.find(">=")==string::npos)){
+		this->operateur=">";this->param1=ss.substr(0,ss.find(">"));this->param2=ss.substr(ss.find(">")+1,ss.length()-(ss.find(">")+1));}
+	else if ((ss.find("<")!=string::npos)and(ss.find("<=")==string::npos)){
+		this->operateur="<";this->param1=ss.substr(0,ss.find("<"));this->param2=ss.substr(ss.find("<")+1,ss.length()-(ss.find("<")+1));}
+	//this->ecris();
+}
 
 /**
  * Classe EventC :éléments de définition d'un événement populationnel
