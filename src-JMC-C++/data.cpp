@@ -191,12 +191,14 @@ public:
 		if (not trouvepop) return -2;
 		while (not file.eof()){
 			getline(file, ligne);
-			ligne=majuscules(ligne);
-			if ((ligne.find(",")==string::npos)and(ligne.find("POP")==string::npos)) return -2;
-			if(ligne.find(",")!=string::npos) {
-				ligne = ligne.substr(ligne.find(","));
-				ss=splitwords(ligne," ",&nss);
-				if (nss!=nloc) return -2;
+			if(ligne.length()>= 2 + 3*nloc){
+				ligne=majuscules(ligne);
+				if ((ligne.find(",")==string::npos)and(ligne.find("POP")==string::npos)) return -2;
+				if(ligne.find(",")!=string::npos) {
+					ligne = ligne.substr(ligne.find(",") + 1);
+					ss=splitwords(ligne," ",&nss);
+					if (nss!=nloc) return -2;
+				}
 			}
 		}
 		return 0;

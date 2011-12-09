@@ -54,6 +54,7 @@ public:
     if (this->fixed) cout<<"   fixed\n";else cout<<"   non fixed\n";
   }
   double drawfromprior(MwcGen & mw);
+  void readprior(string ss);
 };
 
 double PriorC::drawfromprior(MwcGen & mw){
@@ -81,6 +82,50 @@ double PriorC::drawfromprior(MwcGen & mw){
     }
     return -1.0;
 }
+//    PriorC HeaderC::readpriormut(string ss) {
+//        PriorC prior;
+//        string s1,*sb;
+//        int j;
+//        s1 = ss.substr(3,ss.length()-4);
+//        sb = splitwords(s1,",",&j);
+//        prior.mini=atof(sb[0].c_str());
+//        prior.maxi=atof(sb[1].c_str());
+//        prior.ndec=ndecimales(prior.mini,prior.maxi);
+//        if (ss.find("UN[")!=string::npos) {prior.loi="UN";}
+//        else if (ss.find("LU[")!=string::npos) {prior.loi="LU";}
+//        else if (ss.find("GA[")!=string::npos) {prior.loi="GA";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
+//		if (prior.maxi==0.0) prior.constant=true;
+//		else if ((prior.maxi-prior.mini)/prior.maxi<0.000001) prior.constant=true;
+//		else prior.constant=false;
+//		prior.fixed=false;
+//        //cout<<ss<<"   ";
+//        //if (prior.constant) cout<<"constant\n"; else cout<<"variable\n";
+//        delete []sb;
+//        return prior;
+//    }
+
+void PriorC::readprior(string ss){
+    string s1,*sb;
+    int j;
+    s1 = ss.substr(3,ss.length()-4);
+    sb = splitwords(s1,",",&j);
+    this->mini=atof(sb[0].c_str());
+    this->maxi=atof(sb[1].c_str());
+            this->ndec=ndecimales(this->mini,this->maxi);
+            //cout << "ndec="<<this->ndec<<"   (mini="<<this->mini<<"   maxi="<<this->maxi<<"\n";
+    if (ss.find("UN[")!=string::npos) {this->loi="UN";}
+    else if (ss.find("LU[")!=string::npos) {this->loi="LU";}
+    else if (ss.find("NO[")!=string::npos) {this->loi="NO";this->mean=atof(sb[2].c_str());this->sdshape=atof(sb[3].c_str());}
+    else if (ss.find("LN[")!=string::npos) {this->loi="LN";this->mean=atof(sb[2].c_str());this->sdshape=atof(sb[3].c_str());}
+    else if (ss.find("GA[")!=string::npos) {this->loi="GA";this->mean=atof(sb[2].c_str());this->sdshape=atof(sb[3].c_str());}
+    if (this->maxi==0.0) this->constant=true;
+    else this->constant = ((this->maxi-this->mini)/this->maxi<0.000001);
+	this->fixed=false;
+    //cout<<ss<<"   ";
+    //if (this->constant) cout<<"constant\n"; else cout<<"variable\n";
+    delete []sb;
+}
+
 
 /**
  * Classe ConditionC :éléments de définition d'une condition sur un couple de paramètres historiques
