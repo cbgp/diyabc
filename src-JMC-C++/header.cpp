@@ -265,7 +265,7 @@ public:
             if (ss[1]=="N") this->histparam[i].category = 0;
             else if  (ss[1]=="T") this->histparam[i].category = 1;
             else if  (ss[1]=="A") this->histparam[i].category = 2;
-            this->histparam[i].prior = this->readprior(ss[2]);
+            this->histparam[i].prior.readprior(ss[2]);
             //    cout<<"readHeader "<<this->histparam[i].name;
             //    if (this->histparam[i].prior.constant) cout<<"   constant\n"; else cout<<"   variable\n";
         }
@@ -413,48 +413,48 @@ public:
 				this->assignloc(gr);
 				if (ss[2]=="[M]") {
 					this->groupe[gr].type=0;
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutmoy = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutmoy.readprior(ss1[1]);delete [] ss1;
 					this->groupe[gr].priormutmoy.fixed=false;
 					if (this->groupe[gr].priormutmoy.constant) this->groupe[gr].mutmoy=this->groupe[gr].priormutmoy.mini;
 					else {this->groupe[gr].mutmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy   = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc.readprior(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPmoy.readprior(ss1[1]);delete [] ss1;
 					this->groupe[gr].priorPmoy.fixed=false;
 					if (this->groupe[gr].priorPmoy.constant) this->groupe[gr].Pmoy=this->groupe[gr].priorPmoy.mini;
 					else {this->groupe[gr].Pmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
 
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc.readprior(ss1[1]);delete [] ss1;
 					//cout<<"Ploc    ";this->groupe[gr].priorPloc.ecris();
 
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsnimoy = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsnimoy.readprior(ss1[1]);delete [] ss1;
 					this->groupe[gr].priorsnimoy.fixed=false;
 					if (this->groupe[gr].priorsnimoy.constant) this->groupe[gr].snimoy=this->groupe[gr].priorsnimoy.mini;
 					else {this->groupe[gr].snimoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc.readprior(ss1[1]);delete [] ss1;
 					//cout<<"sniloc  ";this->groupe[gr].priorsniloc.ecris();
 
 				} else if (ss[2]=="[S]") {
 					this->groupe[gr].type=1;
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusmoy = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusmoy.readprior(ss1[1]);delete [] ss1;
 					this->groupe[gr].priormusmoy.fixed=false;
 					if (this->groupe[gr].priormusmoy.constant) this->groupe[gr].musmoy=this->groupe[gr].priormusmoy.mini;
 					else {this->groupe[gr].musmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}
 
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc.readprior(ss1[1]);delete [] ss1;
 
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1moy  = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1moy.readprior(ss1[1]);delete [] ss1;
 					this->groupe[gr].priork1moy.fixed=false;
 					if (this->groupe[gr].priork1moy.constant) this->groupe[gr].k1moy=this->groupe[gr].priork1moy.mini;
 					else this->groupe[gr].k1moy=-1.0;
 
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc.readprior(ss1[1]);delete [] ss1;
 
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2moy  = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2moy.readprior(ss1[1]);delete [] ss1;
 					this->groupe[gr].priork2moy.fixed=false;
 					if (this->groupe[gr].priork2moy.constant) this->groupe[gr].k2moy=this->groupe[gr].priork2moy.mini;
 					else this->groupe[gr].k2moy=-1.0;
 
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc.readprior(ss1[1]);delete [] ss1;
 
 					getline(file,s1);ss1=splitwords(s1," ",&nss1);
 					this->groupe[gr].p_fixe=atof(ss1[2].c_str());this->groupe[gr].gams=atof(ss1[3].c_str());
@@ -1040,35 +1040,35 @@ public:
                 this->groupe[gr].type=0;
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].mutmoy = atof(ss1[1].c_str());delete [] ss1;
                 this->groupe[gr].priormutmoy.fixed=true;this->groupe[gr].priormutmoy.constant=true;
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc = this->readpriormut(ss1[1]);delete [] ss1;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutloc.readprior(ss1[1]);delete [] ss1;
 
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].Pmoy   = atof(ss1[1].c_str());delete [] ss1;
                 this->groupe[gr].priorPmoy.fixed=true;this->groupe[gr].priorPmoy.constant=true;
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc   = this->readpriormut(ss1[1]);delete [] ss1;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorPloc.readprior(ss1[1]);delete [] ss1;
 
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].snimoy = atof(ss1[1].c_str());delete [] ss1;
                 this->groupe[gr].priorsnimoy.fixed=true;this->groupe[gr].priorsnimoy.constant=true;
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc = this->readpriormut(ss1[1]);delete [] ss1;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priorsniloc.readprior(ss1[1]);delete [] ss1;
                 //cout<<"sniloc  ";this->groupe[gr].priorsniloc.ecris();
 
             } else if (ss[2]=="[S]") {
                 this->groupe[gr].type=1;
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].musmoy = atof(ss1[1].c_str());delete [] ss1;
                 this->groupe[gr].priormusmoy.fixed=true;this->groupe[gr].priormusmoy.constant=true;
-                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc = this->readpriormut(ss1[1]);delete [] ss1;
+                getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormusloc.readprior(ss1[1]);delete [] ss1;
 
                 getline(file,s1);ss1=splitwords(s1," ",&nss1);
 				if (ss1[0]!="MODEL") {
 					this->groupe[gr].k1moy  = atof(ss1[1].c_str());delete [] ss1;
 					this->groupe[gr].priork1moy.fixed=true;this->groupe[gr].priork1moy.constant=true;
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc  = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork1loc.readprior(ss1[1]);delete [] ss1;
 					getline(file,s1);ss1=splitwords(s1," ",&nss1);
 				}
 
 				if (ss1[0]!="MODEL") {
 					this->groupe[gr].k2moy  = atof(ss1[1].c_str());delete [] ss1;
 					this->groupe[gr].priork2moy.fixed=true;this->groupe[gr].priork2moy.constant=true;
-					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc  = this->readpriormut(ss1[1]);delete [] ss1;
+					getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priork2loc.readprior(ss1[1]);delete [] ss1;
 					getline(file,s1);ss1=splitwords(s1," ",&nss1);
 				}
 

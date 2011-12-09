@@ -69,7 +69,7 @@ using namespace std;
         i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
         //cout<<"parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
-            header.scenario[rt.scenteste-1].histparam[i].prior = header.readprior(ss[1]);
+            header.scenario[rt.scenteste-1].histparam[i].prior.readprior(ss[1]);
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=false;
             header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
         }
@@ -105,67 +105,67 @@ using namespace std;
             if (header.groupe[gr].priormutmoy.constant) header.groupe[gr].mutmoy=header.groupe[gr].priormutmoy.mini;
 			else {
 				if (ss[0].find("[")==string::npos) {header.groupe[gr].mutmoy =atof(ss[0].c_str());header.groupe[gr].priormutmoy.fixed=true;}
-				else {header.groupe[gr].priormutmoy = header.readpriormut(ss[0]);header.groupe[gr].priormutmoy.fixed=false;}
+				else {header.groupe[gr].priormutmoy.readprior(ss[0]);header.groupe[gr].priormutmoy.fixed=false;}
 			}
 		    //cout<<"mutmoy : \n";
 			//header.groupe[gr].priormutmoy.ecris();
             if (ss[1].find("[")==string::npos) header.groupe[gr].priormutloc.sdshape=atof(ss[1].c_str());
-            else header.groupe[gr].priormutloc = header.readpriormut(ss[1]);
+            else header.groupe[gr].priormutloc.readprior(ss[1]);
 
 		    //cout<<"Pmoy : \n";
 			//header.groupe[gr].priorPmoy.ecris();
 			if (header.groupe[gr].priorPmoy.constant) header.groupe[gr].Pmoy=header.groupe[gr].priorPmoy.mini;
 			else{
 				if (ss[2].find("[")==string::npos) {header.groupe[gr].Pmoy=atof(ss[2].c_str());header.groupe[gr].priorPmoy.fixed=true;}
-				else {header.groupe[gr].priorPmoy = header.readpriormut(ss[2]);header.groupe[gr].priorPmoy.fixed=false;}
+				else {header.groupe[gr].priorPmoy.readprior(ss[2]);header.groupe[gr].priorPmoy.fixed=false;}
 			}
 		    //cout<<"Pmoy : \n";
 			//header.groupe[gr].priorPmoy.ecris();
             if (ss[3].find("[")==string::npos) header.groupe[gr].priorPloc.sdshape=atof(ss[3].c_str());
-            else header.groupe[gr].priorPloc = header.readpriormut(ss[3]);
+            else header.groupe[gr].priorPloc.readprior(ss[3]);
 			
 		    //cout<<"snimoy : \n";
 			//header.groupe[gr].priorsnimoy.ecris();
 			if (header.groupe[gr].priorsnimoy.constant) header.groupe[gr].snimoy=header.groupe[gr].priorsnimoy.mini;
 			else {
 				if (ss[4].find("[")==string::npos) {header.groupe[gr].snimoy=atof(ss[4].c_str());header.groupe[gr].priorsnimoy.fixed=true;}
-				else {header.groupe[gr].priorsnimoy = header.readpriormut(ss[4]);header.groupe[gr].priorsnimoy.fixed=false;}
+				else {header.groupe[gr].priorsnimoy.readprior(ss[4]);header.groupe[gr].priorsnimoy.fixed=false;}
 			}
 		    //cout<<"snimoy : \n";
 			//header.groupe[gr].priorsnimoy.ecris();
             if (ss[5].find("[")==string::npos) header.groupe[gr].priorsniloc.sdshape=atof(ss[5].c_str());
-            else header.groupe[gr].priorsniloc = header.readpriormut(ss[5]);
+            else header.groupe[gr].priorsniloc.readprior(ss[5]);
        } else if (header.groupe[gr].type==1){
 		    //cout<<"resetmutparam type sequence\n";
 			//cout<<"modele "<< header.groupe[gr].mutmod<<"\n";
 			if (header.groupe[gr].priormusmoy.constant) header.groupe[gr].musmoy=header.groupe[gr].priormusmoy.mini;
 			else {
 				if (ss[0].find("[")==string::npos) {header.groupe[gr].musmoy=atof(ss[0].c_str());header.groupe[gr].priormusmoy.fixed=true;}
-				else {header.groupe[gr].priormusmoy = header.readpriormut(ss[0]);header.groupe[gr].priormusmoy.fixed=false;}
+				else {header.groupe[gr].priormusmoy.readprior(ss[0]);header.groupe[gr].priormusmoy.fixed=false;}
 			}
             //cout<<"ss[0] : >"<<ss[0]<<"<      musmoy="<<header.groupe[gr].musmoy<<"\n";
 			if (ss[1].find("[")==string::npos) header.groupe[gr].priormusloc.sdshape=atof(ss[1].c_str());
-            else header.groupe[gr].priormusloc = header.readpriormut(ss[1]);
+            else header.groupe[gr].priormusloc.readprior(ss[1]);
             //cout<<"musloc"<<"\n";
 			if (header.groupe[gr].mutmod>0) {
                 if (header.groupe[gr].priork1moy.constant) header.groupe[gr].k1moy=header.groupe[gr].priork1moy.mini;
                 else {
 					if (ss[2].find("[")==string::npos) {header.groupe[gr].k1moy=atof(ss[2].c_str());header.groupe[gr].priork1moy.fixed=true;}
-					else {header.groupe[gr].priork1moy = header.readpriormut(ss[2]);header.groupe[gr].priork1moy.fixed=false;}
+					else {header.groupe[gr].priork1moy.readprior(ss[2]);header.groupe[gr].priork1moy.fixed=false;}
                 }
 				//cout<<"k1moy="<<header.groupe[gr].k1moy<<"\n";
 				if (ss[3].find("[")==string::npos) header.groupe[gr].priork1loc.sdshape=atof(ss[3].c_str());
-				else header.groupe[gr].priork1loc = header.readpriormut(ss[3]);
+				else header.groupe[gr].priork1loc.readprior(ss[3]);
 				//cout<<"k1loc\n";
 				if (header.groupe[gr].mutmod>2) {
 					if (header.groupe[gr].priork1moy.constant) header.groupe[gr].k1moy=header.groupe[gr].priork1moy.mini;
 					else {
 						if (ss[4].find("[")==string::npos) {header.groupe[gr].k2moy=atof(ss[4].c_str());header.groupe[gr].priork2moy.fixed=true;}
-						else {header.groupe[gr].priork2moy = header.readpriormut(ss[4]);header.groupe[gr].priork2moy.fixed=false;}
+						else {header.groupe[gr].priork2moy.readprior(ss[4]);header.groupe[gr].priork2moy.fixed=false;}
                     }
 					//cout<<"k2moy="<<header.groupe[gr].k2moy<<"\n";
 					if (ss[5].find("[")==string::npos) header.groupe[gr].priork2loc.sdshape=atof(ss[5].c_str());
-					else header.groupe[gr].priork2loc = header.readpriormut(ss[5]);
+					else header.groupe[gr].priork2loc.readprior(ss[5]);
 				}
 				//cout<<"fin\n";
 			}
