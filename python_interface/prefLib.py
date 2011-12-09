@@ -21,6 +21,7 @@ from utils.configobj.configobj import *
 class GenericPreferences(QFrame):
     def __init__(self,parent=None,confFilePath=None):
         super(GenericPreferences,self).__init__(parent)
+        self.parent = parent
 
         # dico indexé par le nom de la catégorie qui contient la liste des propriétés
         self.dicoCategory = {}
@@ -41,6 +42,26 @@ class GenericPreferences(QFrame):
         self.ui.tabWidget.setObjectName("tabWidget")
         self.ui.verticalLayout.addWidget(self.ui.tabWidget)
 
+        self.ui.frame_button = QtGui.QFrame(self)
+        self.ui.frame_button.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.ui.frame_button.setFrameShadow(QtGui.QFrame.Raised)
+        self.ui.frame_button.setObjectName("frame_button")
+        self.ui.horizontalLayout_26 = QtGui.QHBoxLayout(self.frame_button)
+        self.ui.horizontalLayout_26.setObjectName("horizontalLayout_26")
+        self.ui.cancelPreferencesButton = QtGui.QPushButton(self.frame_button)
+        self.ui.cancelPreferencesButton.setText("Cancel")
+        self.ui.cancelPreferencesButton.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
+        self.ui.cancelPreferencesButton.setObjectName("cancelPreferencesButton")
+        self.ui.horizontalLayout_26.addWidget(self.cancelPreferencesButton)
+        self.ui.savePreferencesButton = QtGui.QPushButton(self.frame_button)
+        self.ui.savePreferencesButton.setText("Save")
+        self.ui.savePreferencesButton.setObjectName("savePreferencesButton")
+        self.ui.horizontalLayout_26.addWidget(self.savePreferencesButton)
+        self.ui.verticalLayout.addWidget(self.frame_button)
+
+        QObject.connect(self.ui.savePreferencesButton,SIGNAL("clicked()"),self.savePreferences)
+        QObject.connect(self.ui.cancelPreferencesButton,SIGNAL("clicked()"),self.cancel)
+
     def addCategory(self,catname):
         if catname in self.categoryList:
             raise Exception("Category already exists")
@@ -58,8 +79,12 @@ class GenericPreferences(QFrame):
             exec('self.scrollAreaWidgetContents_%s = QtGui.QWidget() '%(catname))
             exec('self.scrollAreaWidgetContents_%s.setGeometry(QtCore.QRect(0, 0, 956, 589)) '%(catname))
             exec('self.scrollAreaWidgetContents_%s.setObjectName("scrollAreaWidgetContents_%s") '%(catname,catname))
+            exec('self.scrollArea_%s.setWidget(self.scrollAreaWidgetContents_%s)'%(catname,catname))
             exec('self.verticalLayoutScroll_%s = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_%s) '%(catname,catname))
             exec('self.verticalLayoutScroll_%s.setObjectName("verticalLayoutScroll_%s") '%(catname,catname))
+            exec('self.ui.verticalLayoutScroll_%s.setAlignment(Qt.AlignTop)'%catname)
+            exec('self.verticalLayout_%s.addWidget(self.scrollArea_%s) '%(catname,catname))
+            exec('self.ui.tabWidget.addTab(self.tab_%s,"%s")'%(catname,catname))
 
     def addPropCheck(self,catname,propname,proptext):
 
@@ -74,13 +99,13 @@ class GenericPreferences(QFrame):
         exec('self.%sCheck = QtGui.QCheckBox(self.frame_%s_%s) '%(propname,catname,propname))
         exec('self.%sCheck.setText("%s") '%(propname,proptext))
         exec('self.%sCheck.setChecked(True) '%(propname))
-        exec('self.%sCheck.setObjectName("%sCheck") '%(propname))
-        exec('self.horizontalLayout_%s_%s.addWidget(self.%sCheck) '%(propname,catname,propname))
+        exec('self.%sCheck.setObjectName("%sCheck") '%(propname,propname))
+        exec('self.horizontalLayout_%s_%s.addWidget(self.%sCheck) '%(catname,propname,propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s) '%(catname,catname,propname))
 
-    def addPropCombo(self,catname,propname,dicoValTxt,l_ordered_val,default_value=None):
+    def addPropCombo(self,catname,propname,dicoValTxt,l_ordered_val,default_value=None,labeltxt=""):
 
-        self.dicoCategory[catname].append( [propname,"combo",dicoValTxt,l_ordered_val,default_value] )
+        self.dicoCategory[catname].append( [propname,"combo",dicoValTxt,l_ordered_val,default_value,labeltxt] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel)'%(catname,propname))
@@ -89,7 +114,7 @@ class GenericPreferences(QFrame):
         exec('self.horizontalLayout_%s_%s = QtGui.QHBoxLayout(self.frame_%s_%s)'%(catname,propname,catname,propname))
         exec('self.horizontalLayout_%s_%s.setObjectName("horizontalLayout_%s_%s")'%(catname,propname,catname,propname))
         exec('self.label_%s = QtGui.QLabel(self.frame_%s_%s)'%(propname,catname,propname))
-        exec('self.label_%s.setText("Style")'%(propname))
+        exec('self.label_%s.setText("%s")'%(propname,labeltxt))
         exec('self.label_%s.setObjectName("label_%s")'%(propname,propname))
         exec('self.horizontalLayout_%s_%s.addWidget(self.label_%s)'%(catname,propname,propname))
         exec('self.%sCombo = QtGui.QComboBox(self.frame_%s_%s)'%(propname,catname,propname))
@@ -118,14 +143,14 @@ class GenericPreferences(QFrame):
         exec('self.label_%s.setObjectName("label_%s")'%(propname,propname))
         exec('self.horizontalLayout_%s.addWidget(self.label_%s)'%(propname,propname))
         exec('self.%sEdit = QtGui.QLineEdit(self.frame_%s_%s)'%(propname,catname,propname))
-        exec('self.%sEdit.setMinimumSize(QtCore.QSize(60, 0))'%(propname))
-        exec('self.%sEdit.setMaximumSize(QtCore.QSize(60, 16777215))'%(propname))
+        #exec('self.%sEdit.setMinimumSize(QtCore.QSize(60, 0))'%(propname))
+        #exec('self.%sEdit.setMaximumSize(QtCore.QSize(60, 16777215))'%(propname))
         exec('self.%sEdit.setText("%s")'%(propname,default_value))
         exec('self.%sEdit.setObjectName("%sEdit")'%(propname,propname))
         exec('self.horizontalLayout_%s.addWidget(self.%sEdit)'%(propname,propname))
         #spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)'%())
         #self.horizontalLayout_%s.addItem(spacerItem)'%())
-        exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s)'%(propname,catname,propname))
+        exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s)'%(catname,catname,propname))
 
     def addPropPathEdit(self,catname,propname,labelText,default_value=""):
         self.dicoCategory[catname].append( [propname, "path", labelText, default_value] )
@@ -153,7 +178,7 @@ class GenericPreferences(QFrame):
 
     def browse(self):
         but = self.sender()
-        ed = but.parent.findChild(QLineEdit)
+        ed = but.parent().findChild(QLineEdit)
         qfd = QFileDialog()
         path = str(qfd.getOpenFileName(self,"Where is %s ?"%(str(ed.objectName()).replace("PathEdit",""))))
         ed.setText(path)
@@ -208,6 +233,14 @@ class GenericPreferences(QFrame):
                             if ind != -1:
                                 exec('self.ui.%sCombo.setCurrentIndex(ind)'%propname)
 
+    def cancel(self):
+        """ pour annuler, on recharge depuis la derniere configuration sauvée
+        """
+        self.loadPreferences()
+        self.close()
 
+    def writeConfigFile(self):
+        self.config.write()
 
-
+    def allValid(self):
+        return True

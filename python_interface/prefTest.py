@@ -29,6 +29,62 @@ class Preferences(GenericPreferences):
 
         self.tabColor = {"green": "#c3ffa6","blue":"#7373ff","red":"#ffb2a6","yellow":"#ffffb2","pink":"#ffbff2"}
 
+        self.addCategory("connexion")
+        self.addPropCheck("connexion","useServer","Use a server (don't check if you don't know what it is)")
+        self.addPropLineEdit("connexion","serverAddress","Address of the server","localhost")
+        self.addPropLineEdit("connexion","serverPort","Port of the server","666")
+
+        self.addCategory("various")
+
+        self.addPropCheck("various","showTrayIcon","Show tray icon")
+        self.addPropCheck("various","activateWhatsThis","Activate ""what's this"" help functionnality")
+        self.addPropCheck("various","debugWhatsThis","Show object name in what's this (needs restart)")
+        self.addPropCheck("various","useDefaultExecutable","Use default executable check")
+        self.addPropPathEdit("various","execPath","Path to the executable file","")
+        # initialisation du combo pour le nombre max de thread
+        try:
+            nb_core = multiprocessing.cpu_count()
+        except Exception as e:
+            nb_core = 1
+            log(3,"Impossible to count core number on this computer")
+        self.addPropCombo("various","maxThread",{i:i for i in range(1,nb_core+1)},range(1,nb_core+1),str(nb_core),"Maximum thread number")
+        self.addPropCombo("various","maxLogLvl",
+                {"1":"1 : Human actions",
+                 "2":"2 : High level actions (file read, checks)",
+                 "3":"3 : Small actions",
+                 "4":"4 : Details"},
+                ["1","2","3","4"],"3","Maximum log level")
+        formats = ["pdf","svg","jpg","png"]
+        self.addPropCombo("various","picturesFormat",{i:i for i in formats},formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)")
+        self.styles = []
+        for i in QStyleFactory.keys():
+            self.styles.append(str(i))
+            #self.ui.styleCombo.addItem(str(i))
+        default = None
+        if "Cleanlooks" in self.styles:
+            default = "Cleanlooks"
+        
+        self.addPropCombo("various","style",{i:i for i in self.styles},self.styles,default,"Style")
+        colors = ["default","white"]
+        colors.extend(self.tabColor.keys())
+        self.addPropCombo("various","backgroundColor",{i:i for i in colors},colors,"default","Window background color")
+
+        QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
+        self.changeStyle(self.ui.styleCombo.currentText())
+        QObject.connect(self.ui.maxLogLvlCombo,SIGNAL("currentIndexChanged(int)"),self.changeLogLevel)
+        QObject.connect(self.ui.backgroundColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
+
+        QObject.connect(self.ui.useServerCheck,SIGNAL("toggled(bool)"),self.toggleServer)
+        QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
+        QObject.connect(self.ui.activateWhatsThisCheck,SIGNAL("toggled(bool)"),self.toggleWtSelection)
+        QObject.connect(self.ui.showTrayIconCheck,SIGNAL("toggled(bool)"),self.toggleTrayIconCheck)
+
+        self.ui.serverAddressEdit.setDisabled(True)
+        self.ui.serverPortEdit.setDisabled(True)
+
+        self.toggleExeSelection(self.ui.useDefaultExecutableCheck.isChecked())
+        self.toggleWtSelection(self.ui.activateWhatsThisCheck.isChecked())
+
         self.mutmodM = SetMutationModelMsat(self)
         self.mutmodS = SetMutationModelSequences(self)
         self.ui.tabWidget.addTab(self.mutmodM,"MM Microsats")
@@ -39,24 +95,224 @@ class Preferences(GenericPreferences):
         self.mutmodS.ui.frame_6.hide()
         self.mutmodS.ui.setMutSeqLabel.setText("Default values for mutation model of Sequences")
 
-        self.addCategory("connexion")
-        self.addCategory("various")
 
-        self.styles = []
-        for i in QStyleFactory.keys():
-            self.styles.append(str(i))
-            #self.ui.styleCombo.addItem(str(i))
-        default = None
-        if "Cleanlooks" in self.styles:
-            default = "Cleanlooks"
-        
-        self.addPropCombo("various","style",{i:i for i in self.styles},self.styles,default)
+    def close(self):
+        self.parent.switchToMainStack()
 
-        # initialisation du combo pour le nombre max de thread
-        try:
-            nb_core = multiprocessing.cpu_count()
-        except Exception as e:
-            nb_core = 1
-            log(3,"Impossible to count core number on this computer")
-        self.addPropCombo("various","maxThread",{i:i for i in range(1,nb_core)},range(1,nb_core),str(nb_core))
+    def savePreferences(self):
+        """ sauve les préférences si elles sont valides
+        """
+        if self.allValid():
+            self.saveMMM()
+            self.saveMMS()
+            #self.saveHM()
+            self.saveRecent()
+            super(Preferences,self).savePreferences()
+            self.close()
 
+    def loadPreferences(self):
+        """ charge les préférences de l'utilisateur si elles existent
+        """
+        self.loadMMM()
+        self.loadMMS()
+        #self.loadHM()
+        self.loadRecent()
+        self.loadToolBarPosition()
+        super(Preferences,self).loadPreferences()
+
+    def changeLogLevel(self,index):
+        utilsPack.LOG_LEVEL = index + 1
+
+    def toggleServer(self,state):
+        self.ui.serverAddressEdit.setDisabled(not state)
+        self.ui.serverPortEdit.setDisabled(not state)
+
+    def toggleExeSelection(self,state):
+        self.ui.execPathBrowseButton.setDisabled(state)
+        self.ui.execPathPathEdit.setDisabled(state)
+
+    def toggleWtSelection(self,state):
+        self.parent.toggleWt(state)
+        self.debugWhatsThisCheck.setDisabled(not state)
+        self.debugWhatsThisCheck.setChecked(False)
+
+    def toggleTrayIconCheck(self,state):
+        self.parent.toggleTrayIcon(state)
+
+    def getMaxThreadNumber(self):
+        return int(self.ui.maxThreadCombo.currentText())
+
+    def getExecutablePath(self):
+        exPath = ""
+        if self.ui.useDefaultExecutableCheck.isChecked():
+            # LINUX
+            if "linux" in sys.platform:
+                if "86" in platform.machine() and "64" not in platform.machine():
+                    exPath = "docs/executables/diyabc-comput-linux-i386"
+                else:
+                    exPath = "docs/executables/diyabc-comput-linux-x64"
+            # WINDOWS
+            elif "win" in sys.platform and "darwin" not in sys.platform:
+                if os.environ.has_key("PROCESSOR_ARCHITECTURE") and "86" not in os.environ["PROCESSOR_ARCHITECTURE"]:
+                    exPath = "docs/executables/diyabc-comput-win-x64"
+                else:
+                    exPath = "docs/executables/diyabc-comput-win-i386"
+            # MACOS
+            elif "darwin" in sys.platform:
+                if "86" in platform.machine() and "64" not in platform.machine():
+                    exPath = "docs/executables/diyabc-comput-mac-i386"
+                else:
+                    exPath = "docs/executables/diyabc-comput-mac-x64"
+        else:
+            return str(self.ui.execPathEdit.text())
+        return exPath
+
+    def changeBackgroundColor(self,colorstr):
+        if str(colorstr) in self.tabColor.keys():
+            self.parent.setStyleSheet("background-color: %s;"%self.tabColor[str(colorstr)])
+        elif colorstr == "default":
+            output.notify(self,"advice","Restart DIYABC in order to load the default color scheme")
+        else:
+            self.parent.setStyleSheet("background-color: %s;"%colorstr)
+
+    def changeStyle(self,stylestr):
+        """ change le style de l'application (toutes les fenêtres)
+        """
+        self.parent.app.setStyle(str(stylestr))
+
+    def saveToolBarPosition(self,pos):
+        if pos == Qt.LeftToolBarArea:
+            c = 1
+        elif pos == Qt.RightToolBarArea:
+            c = 2
+        elif pos == Qt.TopToolBarArea:
+            c = 3
+        elif pos == Qt.BottomToolBarArea:
+            c = 4
+        if not self.config.has_key("various"):
+            self.config["various"] = {}
+        self.config["various"]["toolBarOrientation"] = c
+
+    def loadToolBarPosition(self):
+        cfg = self.config
+        if cfg.has_key("various") and cfg["various"].has_key("toolBarOrientation"):
+            c = cfg["various"]["toolBarOrientation"].strip()
+            if c == "1":
+                self.parent.setToolBarPosition(Qt.LeftToolBarArea)
+            elif c == "2":
+                self.parent.setToolBarPosition(Qt.RightToolBarArea)
+            elif c =="3":
+                self.parent.setToolBarPosition(Qt.TopToolBarArea)
+            elif c == "4":
+                self.parent.setToolBarPosition(Qt.BottomToolBarArea)
+
+    def loadRecent(self):
+            recent_list = []
+            if self.config.has_key("recent"):
+                log(3, "Loading recent list")
+                for num,rec in self.config["recent"].items():
+                    if len(rec) > 0 and rec.strip() != "":
+                        recent_list.append(rec.strip())
+                        log(4, "Loading recent : %s"%rec.strip())
+                self.parent.setRecent(recent_list)
+
+    def saveRecent(self):
+        log(3,"Saving recent list")
+        if not self.config.has_key("recent"):
+            self.config["recent"] = {}
+        recList = self.parent.getRecent()
+        cfgRecentIndex = 0
+        for ind,rec in enumerate(recList):
+            # si on a qu'un seul exemplaire de ce recent ou bien, si on est le premier
+            if (recList.count(rec) > 1 and recList.index(rec) == ind) or recList.count(rec) == 1 :
+                log(4,"Saving into recent list : %s"%rec)
+                self.config["recent"]["%s"%cfgRecentIndex] = rec
+                cfgRecentIndex += 1
+
+
+    def saveMMM(self):
+        """ sauvegarde de la partie mutation model microsats des préférences
+        """
+        if not self.config.has_key("mutation_m_default_values"):
+            self.config["mutation_m_default_values"] = {}
+
+        lines = self.mutmodM.getMutationConf()
+        for l in lines.strip().split('\n'):
+            ll = l.strip()
+            if ll != "":
+                ti = ll.split(' ')[0]
+                law = ll.split(' ')[1].split('[')[0]
+                zero = ll.split('[')[1].split(',')[0]
+                one = ll.split(',')[1]
+                two = ll.split(',')[2]
+                three = ll.split(',')[3].split(']')[0]
+                self.config["mutation_m_default_values"][ti+"_law"] = law
+                self.config["mutation_m_default_values"][ti+"_zero"] = zero
+                self.config["mutation_m_default_values"][ti+"_one"] = one
+                self.config["mutation_m_default_values"][ti+"_two"] = two
+                self.config["mutation_m_default_values"][ti+"_three"] = three
+
+
+    def loadMMM(self):
+        """ chargement de la partie mutation model microsats des préférences
+        """
+        lines = []
+        dico = {}
+        cfg = self.config
+        if cfg.has_key("mutation_m_default_values"):
+            try:
+                for param in ['MEANMU','GAMMU','MEANP','GAMP','MEANSNI','GAMSNI']:
+                    exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg["mutation_m_default_values"]["{0}_law"],cfg["mutation_m_default_values"]["{0}_zero"],cfg["mutation_m_default_values"]["{0}_one"],cfg["mutation_m_default_values"]["{0}_two"],cfg["mutation_m_default_values"]["{0}_three"]))'.format(param))
+                self.mutmodM.setMutationConf(lines)
+            except Exception as e:
+                log(3,"Malformed mutation_m_default_values in configuration")
+                
+        else:
+            log(3,"No MMM conf found")
+
+    def saveMMS(self):
+        """ sauvegarde de la partie mutation model sequences des préférences
+        """
+        if not self.config.has_key("mutation_s_default_values"):
+            self.config["mutation_s_default_values"] = {}
+        lines = self.mutmodS.getMutationConf()
+
+        for l in lines.strip().split('\n'):
+            ll = l.strip()
+            if ll != "":
+                ti = ll.split(' ')[0]
+                if ti == "MODEL":
+                    mod = ll.split(' ')[1]
+                    invpc = ll.split(' ')[2]
+                    gamsh = ll.split(' ')[3]
+                    self.config["mutation_s_default_values"][ti+"_model"] = mod
+                    self.config["mutation_s_default_values"][ti+"_inv_sites_pc"] = invpc
+                    self.config["mutation_s_default_values"][ti+"_gamma_shape"] = gamsh
+                else:
+                    law = ll.split(' ')[1].split('[')[0]
+                    zero = ll.split('[')[1].split(',')[0]
+                    one = ll.split(',')[1]
+                    two = ll.split(',')[2]
+                    three = ll.split(',')[3].split(']')[0]
+                    self.config["mutation_s_default_values"][ti+"_law"] = law
+                    self.config["mutation_s_default_values"][ti+"_zero"] = zero
+                    self.config["mutation_s_default_values"][ti+"_one"] = one
+                    self.config["mutation_s_default_values"][ti+"_two"] = two
+                    self.config["mutation_s_default_values"][ti+"_three"] = three
+
+    def loadMMS(self):
+        """ chargement de la partie mutation model sequences des préférences
+        """
+        lines = []
+        cfg = self.config
+        if cfg.has_key("mutation_s_default_values"):
+            try:
+                for param in ['MEANMU','GAMMU','MEANK1','GAMK1','MEANK2','GAMK2']:
+                    exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg["mutation_s_default_values"]["{0}_law"],cfg["mutation_s_default_values"]["{0}_zero"],cfg["mutation_s_default_values"]["{0}_one"],cfg["mutation_s_default_values"]["{0}_two"],cfg["mutation_s_default_values"]["{0}_three"]))'.format(param))
+
+                lines.append("MODEL %s %s %s"%(cfg["mutation_s_default_values"]["MODEL_model"],cfg["mutation_s_default_values"]["MODEL_inv_sites_pc"],cfg["mutation_s_default_values"]["MODEL_gamma_shape"]))
+                self.mutmodS.setMutationConf(lines)
+            except Exception as e:
+                log(3,"Malformed mutation_s_default_values in configuration")
+        else:
+            log(3,"No MMS conf found")

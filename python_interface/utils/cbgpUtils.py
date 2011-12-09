@@ -261,3 +261,72 @@ def addLine(filepath,line):
     f = open(filepath,'a')
     f.write(line)
     f.close()
+
+def getRamInfo():
+    """ Retourne la quantite de ram en mega octet
+    """
+    result = None
+    # LINUX
+    if "linux" in sys.platform:
+        import re
+        pat = re.compile(r'\s+')
+        f = open("/proc/meminfo",'r')
+        s = f.read().strip()
+        f.close()
+        s = s.split('\n')
+        for line in s:
+            cline = pat.sub(' ',line)
+            if "MemTotal" in line:
+                totalRam = int(cline.split(' ')[1])/1000
+            elif "MemFree" in line:
+                availRam = int(cline.split(' ')[1])/1000
+        result = (totalRam , availRam)
+
+    # WINDOWS
+    elif "win" in sys.platform and "darwin" not in sys.platform:
+        import ctypes
+
+        kernel32 = ctypes.windll.kernel32
+        c_ulong = ctypes.c_ulong
+        class MEMORYSTATUS(ctypes.Structure):
+            _fields_ = [
+                ('dwLength', c_ulong),
+                ('dwMemoryLoad', c_ulong),
+                ('dwTotalPhys', c_ulong),
+                ('dwAvailPhys', c_ulong),
+                ('dwTotalPageFile', c_ulong),
+                ('dwAvailPageFile', c_ulong),
+                ('dwTotalVirtual', c_ulong),
+                ('dwAvailVirtual', c_ulong)
+            ]
+
+        memoryStatus = MEMORYSTATUS()
+        memoryStatus.dwLength = ctypes.sizeof(MEMORYSTATUS)
+        kernel32.GlobalMemoryStatus(ctypes.byref(memoryStatus))
+        mem = memoryStatus.dwTotalPhys / (1024*1024)
+        availRam = memoryStatus.dwAvailPhys / (1024*1024)
+        totalRam = int(mem)
+        result = (totalRam , availRam)
+    # MACOS
+    elif "darwin" in sys.platform:
+        import os
+        cmd =  "echo $(( $(vm_stat | grep free | awk '{ print $3 }' | sed 's/\\.//')*4096/1048576 ))"
+        p = os.popen(cmd)
+        s = p.read()
+        p.close()
+        availRam = int(s)
+        # TODO : ce n'est pas vrai mais je n'ai pas encore trouvé
+        totalRam = availRam
+        result = (totalRam , availRam)
+
+    return result
+
+def checkRam():
+    try:
+        raminfo = getRamInfo()
+    except Exception as e:
+        raminfo = None
+        return
+    min_requested_ram = 2000
+    if raminfo[1] < min_requested_ram:
+        output.notify(None,"System warning","Warning, your have less than %s MB of RAM available.\n Your computer may swap and become very slow"%min_requested_ram)

@@ -76,6 +76,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.preferences_win = Preferences(self)
         self.preferences_win.hide()
         self.preferences_win.loadPreferences()
+        self.ui.stackedWidget.addWidget(self.preferences_win)
 
         self.setWindowIcon(QIcon("docs/icons/coccicon.png"))
 
@@ -186,7 +187,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.saveAllProjActionMenu = file_menu.addAction(QIcon("docs/icons/document-save-all.png"),"&Save all projects",self.saveAllProjects,QKeySequence(Qt.CTRL + Qt.Key_A))
         self.saveAllProjActionMenu.setDisabled(True)
 
-        file_menu.addAction(QIcon("docs/icons/redhat-system_settings.png"),"&Settings",self.setPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
+        file_menu.addAction(QIcon("docs/icons/redhat-system_settings.png"),"&Settings",self.switchToPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
         file_menu.addAction(QIcon("docs/icons/mask.jpeg"),"&Simulate data set(s)",self.simulateDataSets,QKeySequence(Qt.CTRL + Qt.Key_D))
         action = file_menu.addAction(QIcon("docs/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
@@ -366,7 +367,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             l.extend(obj.findChildren(typ))
         for e in l:
             objnamestr = "%s\n\n"%e.objectName()
-            objname_debug = self.preferences_win.whatsThisDebugCheck.isChecked()
+            objname_debug = self.preferences_win.debugWhatsThisCheck.isChecked()
             try:
                 docstr = self.documentator.getDocString("%s"%e.objectName())
                 if objname_debug:
@@ -571,8 +572,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         #self.ui.menubar.hide()
         self.ui.stackedWidget.setCurrentIndex(1)
 
-    def setPreferences(self):
-        self.preferences_win.show()
+    def switchToPreferences(self):
+        #self.preferences_win.show()
+        self.ui.stackedWidget.setCurrentIndex(2)
 
     def isSNPProjectDir(self,dir):
         """ Renvoie vrai si le dossier dont le chemin (relatif ou absolu)
