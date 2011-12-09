@@ -7,6 +7,9 @@
 
 #ifndef RANDOMGENERATOR_H_
 #define RANDOMGENERATOR_H_
+
+double sqr(double);
+
 class MwcGen  // FIXME: attention, n'est plus un mwc.
 {
 public:

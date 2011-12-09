@@ -4,20 +4,18 @@
  *  Created on: 23 sept. 2010
  *      Author: cornuet
  */
-#ifndef MATHH
+
 #include <math.h>
-#define MATHH
-#endif
-#ifndef STDLIBH
 #include <stdlib.h>
-#define STDLIBH
-#endif
+extern"C"{
+#include "../dcmt0.6.1/include/dc.h"
+}
 #include "randomgenerator.h"
 //#include <time.h>
 
 //#define MODULO 16777216
 
-inline double sqr(double x) {return x*x;}
+double sqr(double x) {return x*x;}
 
 extern mt_struct* r;
 #pragma omp threadprivate(r)

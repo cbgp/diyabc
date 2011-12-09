@@ -5,57 +5,14 @@
  *      Author: ppudlo
  */
 
-
+#include "history.h"
 
 vector <string> histparname;
 vector <int> histparcat;
 
 
 
-
-/**
- * struct StatC :éléments de définition d'une summary statistic
- */
-struct StatC
-{
-  int cat,samp,samp1,samp2,group,numsnp;
-  long double val;
-};
-
-/**
- * struct StatsnpC :éléments de définition d'une summary statistic pour les snp
- */
-struct StatsnpC
-{
-  int cat,samp,samp1,samp2,group,n;
-  long double *x;
-  bool defined,sorted;
-};
-
-
-
-
-
-/**
- * Classe PriorC :éléments de définition d'un prior de paramètre historique
- */
-class PriorC
-{
-public:
-  string loi;
-  double mini,maxi,mean,sdshape;
-  int ndec;
-  bool constant,fixed;
-
-  void ecris(){
-    cout <<"    loi="<<this->loi<<"   min="<<this->mini<<"   max="<<this->maxi<<"   ndec="<<this->ndec;
-    if (this->loi=="GA") cout <<"    shape="<<this->sdshape;
-    if (this->constant) cout<<"   constant"; else cout<<"   non constant";
-    if (this->fixed) cout<<"   fixed\n";else cout<<"   non fixed\n";
-  }
-  double drawfromprior(MwcGen & mw);
-  void readprior(string ss);
-};
+/* Méthodes de PriorC */
 
 double PriorC::drawfromprior(MwcGen & mw){
 	    double r;
@@ -82,27 +39,6 @@ double PriorC::drawfromprior(MwcGen & mw){
     }
     return -1.0;
 }
-//    PriorC HeaderC::readpriormut(string ss) {
-//        PriorC prior;
-//        string s1,*sb;
-//        int j;
-//        s1 = ss.substr(3,ss.length()-4);
-//        sb = splitwords(s1,",",&j);
-//        prior.mini=atof(sb[0].c_str());
-//        prior.maxi=atof(sb[1].c_str());
-//        prior.ndec=ndecimales(prior.mini,prior.maxi);
-//        if (ss.find("UN[")!=string::npos) {prior.loi="UN";}
-//        else if (ss.find("LU[")!=string::npos) {prior.loi="LU";}
-//        else if (ss.find("GA[")!=string::npos) {prior.loi="GA";prior.mean=atof(sb[2].c_str());prior.sdshape=atof(sb[3].c_str());}
-//		if (prior.maxi==0.0) prior.constant=true;
-//		else if ((prior.maxi-prior.mini)/prior.maxi<0.000001) prior.constant=true;
-//		else prior.constant=false;
-//		prior.fixed=false;
-//        //cout<<ss<<"   ";
-//        //if (prior.constant) cout<<"constant\n"; else cout<<"variable\n";
-//        delete []sb;
-//        return prior;
-//    }
 
 void PriorC::readprior(string ss){
     string s1,*sb;
@@ -126,22 +62,11 @@ void PriorC::readprior(string ss){
     delete []sb;
 }
 
+/* Méthodes de ConditionC */
 
-/**
- * Classe ConditionC :éléments de définition d'une condition sur un couple de paramètres historiques
- */
-
-class ConditionC
-{
-public:
-  string param1,param2,operateur;
-
-  void ecris();
-  void readcondition(string ss);
-
-};
-
-void ConditionC::ecris(){cout<<this->param1<<"  "<<this->operateur<<"  "<<this->param2<<"\n";}
+void ConditionC::ecris(){
+	cout<<this->param1<<"  "<<this->operateur<<"  "<<this->param2<<"\n";
+}
 void ConditionC::readcondition(string ss){
 		//cout<<"condition : "<<ss<<"\n";
 	if (ss.find(">=")!=string::npos){
@@ -155,37 +80,10 @@ void ConditionC::readcondition(string ss){
 	//this->ecris();
 }
 
-/**
- * Classe EventC :éléments de définition d'un événement populationnel
- */
-class EventC
-{
-public:
-  char action;   //"V"=VarNe "M"=Merge  "S"=Split  "E" = sample/echantillon
-  int pop,pop1,pop2,sample,Ne,time;
-  double admixrate;
-  int numevent0,nindref;
-  string stime, sNe, sadmixrate;
-  // char *stime,*sNe,*sadmixrate;
-  // int ltime,lNe,ladmixrate;
-
-
-  /**
-   * Déclarations des méthodes (PP)
-   */
-
-  // Définition de l'opérateur < pour le tri des événements populationnels (PP)
-  friend bool operator< (const EventC & lhs, const EventC & rhs);
-
-  // Pour écrire l'événement dans la sortie standard
-  void ecris();
-};
 
 
 
-/**
- * Implémentation des méthodes pour EventC
- */
+/* méthodes de EventC  */
 
 bool operator< (const EventC & lhs, const EventC & rhs)
 {
@@ -210,121 +108,22 @@ void EventC::ecris(){
 }
 
 
+/* Méthodes de HistParameterC */
 
-
-
-
-/**
- * Définition de l'opérateur pour le tri des événements populationnels
- *
- struct compevent
- {
- bool operator() (const EventC & lhs, const EventC & rhs) const
- {
- return lhs.time < rhs.time;
- }
- };
-*/
-
-/**
- * struct Ne0C : éléments de définition d'un effectif efficace à la ligne 1 d'un scénario
- */
-class Ne0C
-{
-public:
-  int val;
-  string name;
-};
-
-/**
- * Classe HistparameterC :éléments de définition d'un paramètre historique
- */
-class HistParameterC
-{
-public:
-  string name;
-  int category;   //0 pour N, 1 pour T et 2 pour A
-  double value;
-  PriorC prior;
-
-  void ecris() {
+void HistParameterC::ecris(){
     cout<<"    name="<<this->name<<"   val="<<this->value<<"   category="<<this->category<<"\n";
     prior.ecris();
   }
-};
 
-/**
- * struct LocusGroupC : éléments de définition d'un groupe de locus
- */
-struct LocusGroupC
-{
-  int *loc,nloc,nstat,nstatsnp;           // *loc=numeros des locus du groupe
-  int type;                      //O= microsat, 1=sequence
-  double p_fixe,gams;
-  double musmoy,mutmoy,Pmoy,snimoy;
-  double k1moy,k2moy;
-  int  mutmod;
-  PriorC priormusmoy,priork1moy,priork2moy,priormusloc,priork1loc,priork2loc;
-  PriorC priormutmoy,priorPmoy,priorsnimoy,priormutloc,priorPloc,priorsniloc;
-  StatC *sumstat;
-  StatsnpC *sumstatsnp;
+/* Méthodes de LocusGroupC */
 
-  void libere() {
+void LocusGroupC::libere(){
     delete []loc;
     for (int i=0;i<this->nstat;i++) free(&(this->sumstat[i]));
     delete []this->sumstat;
 
   }
 
-};
-
-/**
- * Classe ScenarioC :éléments de définition d'un scénario
- */
-class ScenarioC
-{
-public:
-  double *paramvar, prior_proba;
-  int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0,nparamvar,nconditions,ipv;
-  EventC *event;
-  Ne0C *ne0;
-  HistParameterC *histparam;
-  ConditionC *condition;
-
-
-  /* action = 0 (varne), 1 (merge), 2 (split), 3 (adsamp)
-   * category=0 (Ne)   , 1 (time),  3 (admixrate)
-   */
-
-  /* Déclaration des méthodes */
-  ScenarioC(){
-    paramvar = NULL;
-    time_sample = NULL;
-    event = NULL;
-    ne0 = NULL;
-    histparam = NULL;
-    condition = NULL;
-  };
-  ScenarioC(ScenarioC const & source);
-  ScenarioC & operator= (ScenarioC  const & source);
-
-  ~ScenarioC(){
-    if( paramvar != NULL) delete [] paramvar;
-    if( time_sample != NULL) delete [] time_sample;
-    if( event != NULL) delete [] event;
-    if( ne0 != NULL) delete [] ne0;
-    if( histparam != NULL) delete [] histparam;
-    if( condition != NULL) delete [] condition;
-  };
-
-  /* détermination du ou des paramètres contenus dans la string s */
-  void detparam(string s,int cat);
-  /* lecture/interprétation des lignes d'un scénario */
-  string read_events(int nl,string *ls);
-  /* verification d'un scénario*/
-  string checklogic();
-  void ecris();
-}; /* fin classe ScenarioC */
 
 
 /**
@@ -703,24 +502,9 @@ string ScenarioC::read_events(int nl,string *ls) {
 }
 
 
+/* Méthodes de SequenceBitC */
 
-
-
-
-/**
- * Struct SequenceBitC : éléments de définition d'un segment (vertical) de l'arbre de coalescence'
- */
-struct SequenceBitC
-{
-  /* action = "C" (coal), "M" (merge), "S" (split), "A" (adsamp)
-   */
-  char action;
-  int pop,pop1,pop2,sample;
-  int N,t0,t1;
-  double admixrate;
-  bool *popfull;
-
-  void ecris() {
+void SequenceBitC::ecris(){
     switch (action){
     case 'C' : cout <<"coalescence dans pop "<<this->pop<<"   N="<<this->N<<"   t0="<<this->t0<<"   t1="<<this->t1<<"\n";break;
     case 'M' : cout << "merge pop="<<this->pop<<"  pop1="<<this->pop1<<"  à t0="<<this->t0<<"\n";break;
@@ -729,57 +513,9 @@ struct SequenceBitC
     }
   }
 
-};
 
-/**
- * Struct NodeC : éléments de définition d'un noeud de l'arbre de coalescence
- */
-struct NodeC
-{
-  int pop,sample,state,brhaut;
-  double height;
-  string dna;
-  bool OK;
-};
+/* Méthodes de GeneTreeC */
 
-/**
- * Struct BranchC : éléments de définition d'une branche de l'arbre de coalescence
- */
-struct BranchC
-{
-  int bottom,top,nmut;
-  double length;
-  bool OK;
-};
-
-/**
- * Class GeneTreeC : éléments de définition d'un arbre de coalescence
- */
-class GeneTreeC
-{
-public:
-  NodeC *nodes;
-  BranchC *branches;
-  int nmutot,nnodes,nbranches,ngenes;
-
-  /* Déclaration des méthodes */
-  GeneTreeC(){
-    nodes = NULL;
-    branches = NULL;
-  };
-  ~GeneTreeC(){
-    if( nodes != NULL) delete [] nodes;
-    if( branches != NULL) delete [] branches;
-  };
-
-  GeneTreeC(GeneTreeC const & source);
-  GeneTreeC & operator=(GeneTreeC const & source);
-
-};
-
-/**
- * Struct ParticleC : copie le contenu d'une structure GeneTreeC
- */
 GeneTreeC::GeneTreeC(GeneTreeC const & source) {
   this->nnodes = source.nnodes;
   this->ngenes = source.ngenes;

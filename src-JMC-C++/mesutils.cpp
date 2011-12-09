@@ -1,33 +1,28 @@
-#ifndef STRING
 #include <string>
-#define STRING
-#endif
-
-#ifndef ALGORITHM
+#include <iostream>
+#include <sstream>
+#include <cstring>
+#include <vector>
 #include <algorithm>
-#define ALGORITHM
-#endif
-#ifndef SYS_TIMEH
 #include <sys/time.h>
-#define SYS_TIMEH
-#endif
-#ifndef MATHH
 #include <math.h>
-#define MATHH
-#endif
+#include <algorithm>
 
 #ifndef MATRICES
 #include "matrices.cpp"
 #define MATRICES
 #endif
-#ifndef ALGORITHM
-#include <algorithm>
-#define ALGORITHM
-#endif
+
+
+
+
+#include "randomgenerator.h"
 
 using namespace std;
 
 #define PI 3.141592653589793
+
+
 
 struct matC {
     long double v;

@@ -1,9 +1,8 @@
-#ifndef IOMANIP
 #include <iomanip>
-#define IOMANIP
-#endif
-
+#include <iostream>
+#include <cmath>
 #include <stdio.h>
+
 #define EPSILON 9.62964972193617926528E-35
 extern bool multithread;
 using namespace std;

@@ -1,0 +1,61 @@
+/*
+ * reftable.h
+ *
+ *  Created on: 9 déc. 2011
+ *      Author: ppudlo
+ */
+
+#ifndef REFTABLE_H_
+#define REFTABLE_H_
+
+class enregC {
+public:
+    int numscen;
+    float *param,*stat;
+    long double dist;
+    string message;
+    friend bool operator<(const enregC & lhs, const enregC & rhs);
+};
+
+
+
+class ReftableC
+{
+public:
+    int nrec,*nrecscen,nscen,nreclus,nrec0;
+    long posnrec;
+    string datapath, filename, filelog, filename0;
+    int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste,nparamut,*nhistparam;
+    float *param,*sumstat;
+    HistParameterC **histparam;
+    MutParameterC  *mutparam;
+    fstream fifo;
+    int nstatOK,nsel,nenr;
+    enregC* enrsel;
+    float *stat_obs;
+    long double *var_stat;
+
+    void sethistparamname(HeaderC const & header);
+    int readheader(string fname, string flogname, string datafilename);
+    int writeheader();
+    int readrecord(enregC *enr);
+    int writerecords(int nenr, enregC *enr);
+    int openfile();
+    int openfile2();
+    int testfile(string reftablefilename, int npart);
+    int closefile();
+    void concat();
+    // calcule les variances des statistiques résumées
+    // sur les 100000 premiers enregistrements de la table de référence
+    int cal_varstat();
+    // alloue / desalloue la mémoire pour enrsel
+    void alloue_enrsel(int nsel);
+    void desalloue_enrsel(int nsel);
+    // calcule la distance de chaque jeu de données simulé au jeu observé
+    // et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
+    void cal_dist(int nrec, int nsel, float *stat_obs);
+
+};
+
+
+#endif /* REFTABLE_H_ */
