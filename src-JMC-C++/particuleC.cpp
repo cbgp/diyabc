@@ -1245,74 +1245,73 @@ vector <int> melange(MwcGen mw, int n) {
     //cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
   }
 
-  void ParticleC::cherche_branchesOK(int loc) {
-    for (int b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = true;
-    if (this->refnindtot<1) return;
-    int j,nodemrca=0,f1,f2,b;
-    bool mrca;
-    //mise à true de nodes[i].OK pour les gènes des populations de référence
-    //printf("npopref = %3d     popref[0]=%3d\n",this->data.npopref,this->data.popref[0]);
-    int cat = this->locuslist[loc].type % 5;
-    int sa=0,ind=0;
-    for (int i=0;i<this->gt[loc].ngenes;i++) {
-      this->gt[loc].nodes[i].OK = this->ref[cat][sa][ind];
-      ind++;
-      if (ind==this->data.ss[cat][sa]) {ind=0;sa++;}
-    }	
-    //mise à false des branches de l'arbre
-    for (b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = false;
-    //remplissage des brhaut et brbas des nodes
-    for (b=0;b<this->gt[loc].nbranches;b++) {
-      this->gt[loc].nodes[this->gt[loc].branches[b].bottom].brhaut = b;
-      this->gt[loc].nodes[this->gt[loc].branches[b].top].brbas = b;
-    }
-    //recherche du mrca des gènes des pop de référence et mise à true des branches.OK y conduisant
-    for (int i=0;i<this->gt[loc].ngenes-1;i++) {
-      if (this->gt[loc].nodes[i].OK) {
-	for (int j=i+1;j<this->gt[loc].ngenes;j++) {
-	  if (this->gt[loc].nodes[j].OK) {
-	    f1=i;f2=j,b=0;
-	    do {
-	      if (this->gt[loc].branches[b].bottom == f1) {
-		this->gt[loc].branches[b].OK=true;
-		f1 = this->gt[loc].branches[b].top;
-	      }
-	      if (this->gt[loc].branches[b].bottom == f2) {
-		this->gt[loc].branches[b].OK=true;
-		f2 = this->gt[loc].branches[b].top;
-	      }
-	      mrca = (f1==f2);
-	      b++;
-	    } while (not mrca);
-	    //printf("i = %3d   j = %3d      f1 = %3d   f2 = %3d     mrca = %3d\n",i,j,f1,f2,nodemrca);
-	    if (nodemrca<f1) nodemrca=f1;
-	  } 
+void ParticleC::cherche_branchesOK(int loc) {
+	for (int b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = true;
+	if (this->refnindtot<1) return;
+	int j,nodemrca=0,f1,f2,b;
+	bool mrca;
+	//mise à true de nodes[i].OK pour les gènes des populations de référence
+	//printf("npopref = %3d     popref[0]=%3d\n",this->data.npopref,this->data.popref[0]);
+	int cat = this->locuslist[loc].type % 5;
+	int sa=0,ind=0;
+	for (int i=0;i<this->gt[loc].ngenes;i++) {
+		this->gt[loc].nodes[i].OK = this->ref[cat][sa][ind];
+		ind++;
+		if (ind==this->data.ss[cat][sa]) {ind=0;sa++;}
+	}	
+	//mise à false des branches de l'arbre
+	for (b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = false;
+	//remplissage des brhaut des nodes
+	for (b=0;b<this->gt[loc].nbranches;b++) {
+		this->gt[loc].nodes[this->gt[loc].branches[b].bottom].brhaut = b;
 	}
-      }
-    }
-    // on complète la mise à true des branches.OK de tous les descendants du mrca
-    for (int i=0;i<this->gt[loc].ngenes;i++) {
-      f1=i;
-      do {
-	b = this->gt[loc].nodes[f1].brhaut;
-	f1 = this->gt[loc].branches[b].top;
-      } while (f1<nodemrca);
-      if (f1==nodemrca) {  // le gène i descend du mrca
-	f1=i;
-	do {
-	  b = this->gt[loc].nodes[f1].brhaut;
-	  f1 = this->gt[loc].branches[b].top;
-	  this->gt[loc].branches[b].OK = true;
-	} while (f1<nodemrca);
-      }
-    }
-    /*for (b=0;b<this->gt[loc].nbranches;b++){
-      printf("branche %3d   bas %3d   haut %3d   (nodemrca %3d)",b,this->gt[loc].branches[b].bottom,this->gt[loc].branches[b].top,nodemrca);
-      if (this->gt[loc].branches[b].OK) printf("   OK\n"); else printf("\n");
-      }*/
-  }
+	//recherche du mrca des gènes des pop de référence et mise à true des branches.OK y conduisant
+	for (int i=0;i<this->gt[loc].ngenes-1;i++) {
+		if (this->gt[loc].nodes[i].OK) {
+			for (int j=i+1;j<this->gt[loc].ngenes;j++) {
+				if (this->gt[loc].nodes[j].OK) {
+					f1=i;f2=j;b=0;
+					do {
+						if (this->gt[loc].branches[b].bottom == f1) {
+							this->gt[loc].branches[b].OK=true;
+							f1 = this->gt[loc].branches[b].top;
+						}
+						if (this->gt[loc].branches[b].bottom == f2) {
+							this->gt[loc].branches[b].OK=true;
+							f2 = this->gt[loc].branches[b].top;
+						}
+						mrca = (f1==f2);
+						b++;
+					} while (not mrca);
+					//printf("i = %3d   j = %3d      f1 = %3d   f2 = %3d     mrca = %3d\n",i,j,f1,f2,nodemrca);
+					if (nodemrca<f1) nodemrca=f1;
+				} 
+			}
+		}
+	}
+	// on complète la mise à true des branches.OK de tous les descendants du mrca
+	/*for (int i=0;i<this->gt[loc].ngenes;i++) {
+		f1=i;
+		do {
+			b = this->gt[loc].nodes[f1].brhaut;
+			f1 = this->gt[loc].branches[b].top;
+		} while (f1<nodemrca);
+		if (f1==nodemrca) {  // le gène i descend du mrca
+			f1=i;
+			do {
+				b = this->gt[loc].nodes[f1].brhaut;
+				f1 = this->gt[loc].branches[b].top;
+				this->gt[loc].branches[b].OK = true;
+			} while (f1<nodemrca);
+		}
+	}*/
+	/*for (b=0;b<this->gt[loc].nbranches;b++){
+	 *      printf("branche %3d   bas %3d   haut %3d   (nodemrca %3d)",b,this->gt[loc].branches[b].bottom,this->gt[loc].branches[b].top,nodemrca);
+	 *      if (this->gt[loc].branches[b].OK) printf("   OK\n"); else printf("\n");
+}*/
+}
 
-  void ParticleC::put_one_mutation(int loc) {
+void ParticleC::put_one_mutation(int loc) {
     this->gt[loc].nmutot=1;
     cherche_branchesOK(loc);
     double r,s=0.0,lengthtot=0.0;

@@ -395,41 +395,46 @@ string ScenarioC::checklogic() {
 	popexist = new bool[maxpop+1];
 	for (int i=0;i<maxpop+1;i++) popexist[i] = false;
 	for (int ievent=0;ievent<this->nevent;ievent++) {
-		if ((this->event[ievent].action=='E')or(this->event[ievent].action=='R')) popexist[this->event[ievent].pop];
+		//this->event[ievent].ecris();
+		//for (int i=1;i<=maxpop;i++) cout<<popexist[i]<<"   ";cout<<"\n";
+		if ((this->event[ievent].action=='E')or(this->event[ievent].action=='R')) popexist[this->event[ievent].pop] = true;
 		if (this->event[ievent].action=='M') {
 			if (this->event[ievent].pop == this->event[ievent].pop1){
 				delete []popexist;
-				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop)+" merges with itself";
+				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop)+" merges with itself";
 			}
 			if (not popexist[this->event[ievent].pop1]){
 				delete []popexist;
-				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop1)+" does not exist anymore";
+				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop1)+" does not exist anymore";
 			}
 			if (not popexist[this->event[ievent].pop]){
 				delete []popexist;
-				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop)+" does not exist anymore";
+				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop)+" does not exist anymore";
 			}
 			popexist[this->event[ievent].pop1] = false;
 		}
 		if (this->event[ievent].action=='S') {
 			if ((this->event[ievent].pop == this->event[ievent].pop1)or(this->event[ievent].pop == this->event[ievent].pop2)or(this->event[ievent].pop1 == this->event[ievent].pop2)){
 				delete []popexist;
-				return "in line "+IntToString(ievent+1)+" admixture must occur between three different populations";
+				return "in line "+IntToString(ievent+2)+" admixture must occur between three different populations";
 			}
 			if (not popexist[this->event[ievent].pop1]){
 				delete []popexist;
-				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop1)+" does not exist anymore";
+				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop1)+" does not exist anymore";
 			}
 			if (not popexist[this->event[ievent].pop2]){
 				delete []popexist;
-				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop2)+" does not exist anymore";
+				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop2)+" does not exist anymore";
 			}
 			if (not popexist[this->event[ievent].pop]){
 				delete []popexist;
-				return "in line "+IntToString(ievent+1)+" population " +IntToString(this->event[ievent].pop)+" does not exist anymore";
+				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop)+" does not exist anymore";
 			}
 			popexist[this->event[ievent].pop] = false;
+			popexist[this->event[ievent].pop1] = true;
+			popexist[this->event[ievent].pop2] = true;
 		}
+		//for (int i=1;i<=maxpop;i++) cout<<popexist[i]<<"   ";cout<<"\n\n";
 	}
 	int np=0;
 	vector <int> numpop;
@@ -672,7 +677,7 @@ struct SequenceBitC
  */
 struct NodeC
 {
-  int pop,sample,state,brhaut,brbas;
+  int pop,sample,state,brhaut;
   double height;
   string dna;
   bool OK;
