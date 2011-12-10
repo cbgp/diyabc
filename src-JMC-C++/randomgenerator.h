@@ -4,9 +4,16 @@
  *  Created on: 8 déc. 2011
  *      Author: ppudlo
  */
-
+extern"C"{
+#include "../dcmt0.6.1/include/dc.h"
+}
+#include <fstream>
+#include <iostream>
+#include <string>
 #ifndef RANDOMGENERATOR_H_
 #define RANDOMGENERATOR_H_
+
+using namespace std;
 
 double sqr(double);
 
@@ -40,5 +47,10 @@ public:
 	double ggamma2(double mean, double sd);
 	double ggamma3(double mean, double shape);
 };
+
+void write_mt_struct(ofstream & fout, mt_struct* mt);
+void read_mt_struct(ifstream & fichier, mt_struct* mt);
+int saveRNG(mt_struct** mts, int sizeofmts, string filename);
+mt_struct** loadRNG(int & sizeofmts, string filename);
 
 #endif /* RANDOMGENERATOR_H_ */

@@ -345,6 +345,7 @@ int main(int argc, char *argv[]){
      if (num_threads>0) omp_set_num_threads(num_threads);
 
      /* Debut: pour le nouveau RNG      */
+     mtss = NULL;
      initRNG(seed);
      /* Fin: pour le nouveau RNG      */
 
