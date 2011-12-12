@@ -41,6 +41,14 @@ testRNG: testRNG.o randomgenerator.o
 general:  $(CPPFILES) $(HFILES)
 	g++ $(CFLAGS) -o general general.cpp $(LIBS)
 
+initRNGproject.o: initRNGproject.cpp
+	g++ $(CFLAGS) -o initRNGproject.o -c initRNGproject.cpp
+
+initRNGproject: initRNGproject.o  randomgenerator.o
+	g++ $(CFLAGS) -o initRNGproject initRNGproject.o randomgenerator.o $(LIBS)
+
+
+
 clean: 
 	rm *.o
 	rm general 
