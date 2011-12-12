@@ -221,7 +221,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         pic_basename = "comparison"
         pic_whole_path = "%s/%s_"%(pic_dir,pic_basename)
 
-        pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
+        pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
         if pic_format == "jpg" or pic_format == "png":
             for name in self.dicoPlot.keys():
                 p = self.dicoPlot[name]
@@ -248,7 +248,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
                 painter.end()
 
     def saveDrawsToOne(self):
-        pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
+        pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
         #pic_format = "pdf"
         ind = 0
         nbpix = len(self.dicoPlot.keys())
@@ -308,7 +308,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         ind_list_str = "%s_to_%s"%(ifrom+1,ito+1)
         pic_whole_path = "%s/%s_%s"%(pic_dir,pic_basename,ind_list_str)
 
-        pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
+        pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
 
         #nbPlot = len(self.dicoPlot.keys())
         nbPlot = (ito - ifrom)+1

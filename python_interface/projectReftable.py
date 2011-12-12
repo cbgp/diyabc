@@ -403,7 +403,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 return
             self.startUiGenReftable()
             # on demarre le thread local ou cluster
-            if self.parent.preferences_win.ui.serverCheck.isChecked():
+            if self.parent.preferences_win.ui.useServerCheck.isChecked():
                 #tname = self.generateComputationTar("/tmp/aaaa.tar")
                 tname = self.generateComputationTar("%s/aaaa.tar"%tempfile.mkdtemp())
                 log(3,"Tar file created in %s"%tname)
@@ -1242,8 +1242,8 @@ class RefTableGenThreadCluster(QThread):
 
     def run (self):
         filename = self.tarname
-        host = str(self.parent.parent.preferences_win.ui.addrEdit.text())
-        port = int(str(self.parent.parent.preferences_win.ui.portEdit.text()))
+        host = str(self.parent.parent.preferences_win.ui.serverAddressEdit.text())
+        port = int(str(self.parent.parent.preferences_win.ui.serverPortEdit.text()))
 
 
         f=open(filename, 'rb')

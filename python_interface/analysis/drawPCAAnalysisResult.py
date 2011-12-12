@@ -371,7 +371,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             #p = self.ui.horizontalLayout_3.itemAt(0).widget()
             p = self.plot
 
-            pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
+            pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
 
             if pic_format == "svg":
                 svg = QSvgGenerator()

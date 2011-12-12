@@ -297,7 +297,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             self.saveEachDraws()
 
     def saveDrawsToOne(self):
-        pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
+        pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
         ind = 0
         nbPlot = len(self.dicoPlot.keys())
         if pic_format != "pdf":
@@ -318,7 +318,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         pic_basename = "posterior"
         pic_whole_path = "%s/%s_"%(pic_dir,pic_basename)
 
-        pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
+        pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
         if pic_format == "jpg" or pic_format == "png":
             for name in self.dicoPlot.keys():
                 p = self.dicoPlot[name]
@@ -452,7 +452,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         print ind_list_str
         pic_whole_path = "%s/%s_%s"%(pic_dir,pic_basename,ind_list_str)
 
-        pic_format = str(self.parent.parent.preferences_win.ui.formatCombo.currentText())
+        pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
 
         #nbPlot = len(self.dicoPlot.keys())
         nbPlot = (ito - ifrom)+1

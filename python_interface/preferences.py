@@ -17,34 +17,79 @@ from mutationModel.setMutationModelSequences import SetMutationModelSequences
 import output
 import utils.cbgpUtils as utilsPack
 from utils.cbgpUtils import log
-from utils.configobj.configobj import *
-
-formPreferences,basePreferences = uic.loadUiType("uis/preferences.ui")
+from utils.autoPreferences import AutoPreferences
 
 ## @class Preferences
 # @brief Fenêtre pour gérer les préférences personnelles
-class Preferences(formPreferences,basePreferences):
+class Preferences(AutoPreferences):
     """ Classe principale qui est aussi la fenêtre principale de la GUI
     """
-    def __init__(self,parent=None):
-        super(Preferences,self).__init__(parent)
-        self.parent = parent
-        confdir = os.path.expanduser("~/.diyabc/")
-        if not os.path.exists(confdir):
-            os.mkdir(confdir)
-
-        self.configFile = confdir+"config.cfg"
-        #self.config = ConfigParser.ConfigParser()
-        #self.loadedConfigs = self.config.read(self.configFile)
-        self.config = ConfigObj(self.configFile)
-
-        self.createWidgets()
+    def __init__(self,parent=None,configfile=None):
+        super(Preferences,self).__init__(parent,configfile)
 
         self.tabColor = {"green": "#c3ffa6","blue":"#7373ff","red":"#ffb2a6","yellow":"#ffffb2","pink":"#ffbff2"}
 
-        #self.ui.tabWidget.setTabText(0,"Connexion")
-        #self.ui.tabWidget.setTabText(1,"Historical")
-        #self.ui.tabWidget.setTabText(2,"Various")
+        self.addCategory("connexion")
+        self.addPropCheck("connexion","useServer","Use a server (don't check if you don't know what it is)",False)
+        self.addPropLineEdit("connexion","serverAddress","Address of the server","localhost")
+        self.addPropLineEdit("connexion","serverPort","Port of the server","666")
+
+        self.addCategory("various")
+
+        self.addPropCheck("various","showTrayIcon","Show tray icon",False)
+        self.addPropCheck("various","activateWhatsThis","Activate ""what's this"" help functionnality",True)
+        self.addPropCheck("various","debugWhatsThis","Show object name in what's this (needs restart)",False)
+        self.addPropCheck("various","useDefaultExecutable","Use default executable check",True)
+        self.addPropPathEdit("various","execPath","Path to the executable file","")
+        # initialisation du combo pour le nombre max de thread
+        try:
+            nb_core = multiprocessing.cpu_count()
+        except Exception as e:
+            nb_core = 1
+            log(3,"Impossible to count core number on this computer")
+        self.addPropCombo("various","maxThread",{str(i):str(i) for i in range(1,nb_core+1)},[str(i) for i in range(1,nb_core+1)],str(nb_core),"Maximum thread number")
+        self.addPropCombo("various","maxLogLvl",
+                {"1":"1 : Human actions",
+                 "2":"2 : High level actions (file read, checks)",
+                 "3":"3 : Small actions",
+                 "4":"4 : Details"},
+                ["1","2","3","4"],"3","Maximum log level")
+        formats = ["pdf","svg","jpg","png"]
+        self.addPropCombo("various","picturesFormat",{i:i for i in formats},formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)")
+        self.styles = []
+        for i in QStyleFactory.keys():
+            self.styles.append(str(i))
+            #self.ui.styleCombo.addItem(str(i))
+        default = None
+        if "Cleanlooks" in self.styles:
+            default = "Cleanlooks"
+        
+        self.addPropCombo("various","style",{i:i for i in self.styles},self.styles,default,"Style")
+        colors = ["default","white"]
+        colors.extend(self.tabColor.keys())
+        self.addPropCombo("various","backgroundColor",{i:i for i in colors},colors,"default","Window background color")
+
+        QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
+        self.changeStyle(self.ui.styleCombo.currentText())
+        QObject.connect(self.ui.maxLogLvlCombo,SIGNAL("currentIndexChanged(int)"),self.changeLogLevel)
+        QObject.connect(self.ui.backgroundColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
+
+        QObject.connect(self.ui.useServerCheck,SIGNAL("toggled(bool)"),self.toggleServer)
+        QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
+        QObject.connect(self.ui.activateWhatsThisCheck,SIGNAL("toggled(bool)"),self.toggleWtSelection)
+        QObject.connect(self.ui.showTrayIconCheck,SIGNAL("toggled(bool)"),self.toggleTrayIconCheck)
+
+        self.ui.serverAddressEdit.setDisabled(True)
+        self.ui.serverPortEdit.setDisabled(True)
+
+        self.toggleServer(self.ui.useServerCheck.isChecked())
+        self.toggleExeSelection(self.ui.useDefaultExecutableCheck.isChecked())
+        self.toggleWtSelection(self.ui.activateWhatsThisCheck.isChecked())
+
+        self.hist_model = uic.loadUi("uis/historical_preferences_frame.ui")
+        self.ui.tabWidget.addTab(self.hist_model,"Historical")
+        self.hist_model.verticalLayout.setAlignment(Qt.AlignTop)
+
         self.mutmodM = SetMutationModelMsat(self)
         self.mutmodS = SetMutationModelSequences(self)
         self.ui.tabWidget.addTab(self.mutmodM,"MM Microsats")
@@ -55,104 +100,59 @@ class Preferences(formPreferences,basePreferences):
         self.mutmodS.ui.frame_6.hide()
         self.mutmodS.ui.setMutSeqLabel.setText("Default values for mutation model of Sequences")
 
-        self.ui.connectButton.hide()
 
-        self.ui.maxLogLvlCombo.setCurrentIndex(2)
+    def close(self):
+        if len(self.parent.project_list) == 0:
+            self.parent.switchToWelcomeStack()
+        else:
+            self.parent.switchToMainStack()
 
-        self.styles = []
-        for i in QStyleFactory.keys():
-            self.styles.append(str(i))
-            self.ui.styleCombo.addItem(str(i))
-
-        ind = self.ui.styleCombo.findText("Cleanlooks")
-        if ind != -1:
-            self.ui.styleCombo.setCurrentIndex(ind)
-        ind = self.ui.styleCombo.findText("white")
-        if ind != -1:
-            self.ui.bgColorCombo.setCurrentIndex(ind)
-
-        # initialisation du combo pour le nombre max de thread
-        try:
-            nb_core = multiprocessing.cpu_count()
-        except Exception as e:
-            nb_core = 1
-            log(3,"Impossible to count core number on this computer")
-        for i in range(nb_core):
-            self.ui.maxThreadCombo.addItem("%s"%(i+1))
-        self.ui.maxThreadCombo.setCurrentIndex(self.ui.maxThreadCombo.count()-1)
-
-
-    def createWidgets(self):
-        self.ui=self
-        self.ui.setupUi(self)
-
-        self.setWindowTitle("Settings")
-
-        self.ui.gridLayout.setAlignment(Qt.AlignTop)
-        self.ui.verticalLayout_57.setAlignment(Qt.AlignTop)
-        self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)
-        #self.ui.verticalLayout_54.setAlignment(Qt.AlignTop)
-        #self.ui.verticalLayout_29.setAlignment(Qt.AlignTop)
-        #self.ui.verticalLayout_26.setAlignment(Qt.AlignTop)
-
-        QObject.connect(self.ui.savePreferencesButton,SIGNAL("clicked()"),self.savePreferences)
-        QObject.connect(self.ui.cancelPreferencesButton,SIGNAL("clicked()"),self.cancel)
-        QObject.connect(self.ui.execBrowseButton,SIGNAL("clicked()"),self.browseExec)
-        QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
-        QObject.connect(self.ui.maxLogLvlCombo,SIGNAL("currentIndexChanged(int)"),self.changeLogLevel)
-        QObject.connect(self.ui.bgColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
-
-        QObject.connect(self.ui.serverCheck,SIGNAL("toggled(bool)"),self.toggleServer)
-        QObject.connect(self.ui.useDefaultExeCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
-        QObject.connect(self.ui.wtCheck,SIGNAL("toggled(bool)"),self.toggleWtSelection)
-        QObject.connect(self.ui.trayIconCheck,SIGNAL("toggled(bool)"),self.toggleTrayIconCheck)
-
-        self.ui.addrEdit.setDisabled(True)
-        self.ui.portEdit.setDisabled(True)
-
-        self.toggleExeSelection(self.ui.useDefaultExeCheck.isChecked())
-        self.toggleWtSelection(self.ui.wtCheck.isChecked())
-
-
-        #QObject.connect(self.ui.saveMMMButton,SIGNAL("clicked()"),self.saveMMM)
-        #QObject.connect(self.ui.saveMMSButton,SIGNAL("clicked()"),self.saveMMS)
-
-    def cancel(self):
-        """ pour annuler, on recharge depuis la derniere configuration sauvée
+    def savePreferences(self):
+        """ sauve les préférences si elles sont valides
         """
-        self.loadPreferences()
-        self.close()
+        if self.allValid():
+            self.saveMMM()
+            self.saveMMS()
+            self.saveHM()
+            self.saveRecent()
+            super(Preferences,self).savePreferences()
+            self.close()
+
+    def loadPreferences(self):
+        """ charge les préférences de l'utilisateur si elles existent
+        """
+        self.loadMMM()
+        self.loadMMS()
+        self.loadHM()
+        self.loadRecent()
+        self.loadToolBarPosition()
+        super(Preferences,self).loadPreferences()
 
     def changeLogLevel(self,index):
         utilsPack.LOG_LEVEL = index + 1
 
     def toggleServer(self,state):
-        self.ui.addrEdit.setDisabled(not state)
-        self.ui.portEdit.setDisabled(not state)
+        self.ui.serverAddressEdit.setDisabled(not state)
+        self.ui.serverPortEdit.setDisabled(not state)
 
     def toggleExeSelection(self,state):
-        self.ui.execBrowseButton.setDisabled(state)
-        self.ui.execPathEdit.setDisabled(state)
+        self.ui.execPathBrowseButton.setDisabled(state)
+        self.ui.execPathPathEdit.setDisabled(state)
 
     def toggleWtSelection(self,state):
         self.parent.toggleWt(state)
-        self.whatsThisDebugCheck.setDisabled(not state)
-        self.whatsThisDebugCheck.setChecked(False)
+        self.debugWhatsThisCheck.setDisabled(not state)
+        self.debugWhatsThisCheck.setChecked(False)
 
     def toggleTrayIconCheck(self,state):
         self.parent.toggleTrayIcon(state)
-
-    def browseExec(self):
-        qfd = QFileDialog()
-        path = str(qfd.getOpenFileName(self,"Where is your executable file ?"))
-        self.ui.execPathEdit.setText(path)
 
     def getMaxThreadNumber(self):
         return int(self.ui.maxThreadCombo.currentText())
 
     def getExecutablePath(self):
         exPath = ""
-        if self.ui.useDefaultExeCheck.isChecked():
+        if self.ui.useDefaultExecutableCheck.isChecked():
             # LINUX
             if "linux" in sys.platform:
                 if "86" in platform.machine() and "64" not in platform.machine():
@@ -188,50 +188,6 @@ class Preferences(formPreferences,basePreferences):
         """
         self.parent.app.setStyle(str(stylestr))
 
-
-    def savePreferences(self):
-        """ sauve les préférences si elles sont valides
-        """
-        if self.allValid():
-            self.saveMMM()
-            self.saveMMS()
-            self.saveConnexion()
-            self.saveHM()
-            self.saveVarious()
-            self.saveRecent()
-            self.writeConfigFile()
-            self.close()
-
-    #def writeConfigFile(self):
-    #    with open(self.configFile, 'wb') as configfile:
-    #        self.config.write(configfile)
-    def writeConfigFile(self):
-        self.config.write()
-
-    def allValid(self):
-        """ vérifie la validité des préférences
-        """
-        return (self.mutmodM.allValid() and self.mutmodS.allValid() and self.histModelValid() and self.connexionValid())
-
-    def loadPreferences(self):
-        """ charge les préférences de l'utilisateur si elles existent
-        """
-        if os.path.exists(os.path.expanduser("~/.diyabc/")):
-            self.loadMMM()
-            self.loadMMS()
-            self.loadConnexion()
-            self.loadHM()
-            self.loadVarious()
-            self.loadRecent()
-        #else:
-        #    # c'est sans doute la première fois qu'on lance diyabc
-        #    # sous linux, on appelle gconf pour voir les icones dans les menus et boutons
-        #    if "linux" in sys.platform:
-        #        cmd_args_list = ["gconftool-2", "--type", "boolean", "--set", "/desktop/gnome/interface/buttons_have_icons", "true"]
-        #        p = subprocess.Popen(cmd_args_list) 
-        #        cmd_args_list = ["gconftool-2", "--type", "boolean", "--set", "/desktop/gnome/interface/menus_have_icons", "true"]
-        #        p = subprocess.Popen(cmd_args_list) 
-
     def saveToolBarPosition(self,pos):
         if pos == Qt.LeftToolBarArea:
             c = 1
@@ -244,6 +200,19 @@ class Preferences(formPreferences,basePreferences):
         if not self.config.has_key("various"):
             self.config["various"] = {}
         self.config["various"]["toolBarOrientation"] = c
+
+    def loadToolBarPosition(self):
+        cfg = self.config
+        if cfg.has_key("various") and cfg["various"].has_key("toolBarOrientation"):
+            c = cfg["various"]["toolBarOrientation"].strip()
+            if c == "1":
+                self.parent.setToolBarPosition(Qt.LeftToolBarArea)
+            elif c == "2":
+                self.parent.setToolBarPosition(Qt.RightToolBarArea)
+            elif c =="3":
+                self.parent.setToolBarPosition(Qt.TopToolBarArea)
+            elif c == "4":
+                self.parent.setToolBarPosition(Qt.BottomToolBarArea)
 
     def loadRecent(self):
             recent_list = []
@@ -268,222 +237,7 @@ class Preferences(formPreferences,basePreferences):
                 self.config["recent"]["%s"%cfgRecentIndex] = rec
                 cfgRecentIndex += 1
 
-    def saveVarious(self):
-        """ sauvegarde de la partie various des préférences
-        """
-        style = str(self.ui.styleCombo.currentText())
-        bgColor = str(self.ui.bgColorCombo.currentText())
-        pic_format = str(self.ui.formatCombo.currentText())
-        ex_path = str(self.ui.execPathEdit.text())
-        pls = str(self.ui.particleLoopSizeEdit.text())
-        show_tray = str(self.ui.trayIconCheck.isChecked())
-        ex_default = str(self.ui.useDefaultExeCheck.isChecked())
-        wt = str(self.ui.wtCheck.isChecked())
-        wtdebug = str(self.ui.whatsThisDebugCheck.isChecked())
-        max_thread = str(self.ui.maxThreadCombo.currentText())
-        max_log_lvl = self.ui.maxLogLvlCombo.currentIndex()
 
-        if not self.config.has_key("various"):
-            self.config["various"] = {}
-        self.config["various"]["style"] = style
-        self.config["various"]["format"] = pic_format
-        self.config["various"]["execPath"] = ex_path
-        self.config["various"]["particleLoopSize"] = pls
-        self.config["various"]["bgColor"] = bgColor
-        self.config["various"]["showTrayIcon"] = show_tray
-        self.config["various"]["useDefaultExecutable"] = ex_default
-        self.config["various"]["activateWhatsThis"] = wt
-        self.config["various"]["debugWhatsThis"] = wtdebug
-        self.config["various"]["maxThreadNumber"] = max_thread
-        self.config["various"]["maxLogLevel"] = max_log_lvl + 1
-
-    def loadVarious(self):
-        """ chargement de la partie various des préférences
-        """
-        cfg = self.config
-        if cfg.has_key("various"):
-            if cfg["various"].has_key("style"):
-                style = cfg["various"]["style"]
-                ind = self.ui.styleCombo.findText(style.strip())
-                if ind != -1:
-                    self.ui.styleCombo.setCurrentIndex(ind)
-            if cfg["various"].has_key("format"):
-                pformat = cfg["various"]["format"]
-                ind = self.ui.formatCombo.findText(pformat.strip())
-                if ind != -1:
-                    self.ui.formatCombo.setCurrentIndex(ind)
-            if cfg["various"].has_key("particleLoopSize"):
-                pls = str(cfg["various"]["particleLoopSize"])
-                self.ui.particleLoopSizeEdit.setText(pls.strip())
-            if cfg["various"].has_key("execPath"):
-                exf = str(cfg["various"]["execPath"])
-                self.ui.execPathEdit.setText(exf.strip())
-            if cfg["various"].has_key("bgColor"):
-                bg = cfg["various"]["bgColor"]
-                ind = self.ui.bgColorCombo.findText(bg.strip())
-                if ind != -1:
-                    self.ui.bgColorCombo.setCurrentIndex(ind)
-            if cfg["various"].has_key("activateWhatsThis"):
-                state = cfg["various"]["activateWhatsThis"]
-                checked = (state == "True")
-                self.ui.wtCheck.setChecked(checked)
-                self.toggleWtSelection(checked)
-            if cfg["various"].has_key("debugWhatsThis"):
-                state = cfg["various"]["debugWhatsThis"]
-                checked = (state == "True")
-                self.ui.whatsThisDebugCheck.setChecked(checked)
-                #self.toggleWtSelection(checked)
-            if cfg["various"].has_key("showTrayIcon"):
-                state = cfg["various"]["showTrayIcon"]
-                checked = (state == "True")
-                self.ui.trayIconCheck.setChecked(checked)
-                self.toggleTrayIconCheck(checked)
-            if cfg["various"].has_key("useDefaultExecutable"):
-                state = cfg["various"]["useDefaultExecutable"]
-                checked = (state == "True")
-                self.ui.useDefaultExeCheck.setChecked(checked)
-                self.toggleExeSelection(checked)
-            if cfg["various"].has_key("maxThreadNumber"):
-                maxt = cfg["various"]["maxThreadNumber"]
-                ind = self.ui.maxThreadCombo.findText(maxt.strip())
-                if ind != -1:
-                    self.ui.maxThreadCombo.setCurrentIndex(ind)
-            if cfg["various"].has_key("maxLogLevel"):
-                max_log_lvl = cfg["various"]["maxLogLevel"]
-                self.ui.maxLogLvlCombo.setCurrentIndex(int(max_log_lvl) - 1)
-            if cfg["various"].has_key("toolBarOrientation"):
-                c = cfg["various"]["toolBarOrientation"].strip()
-                if c == "1":
-                    self.parent.setToolBarPosition(Qt.LeftToolBarArea)
-                elif c == "2":
-                    self.parent.setToolBarPosition(Qt.RightToolBarArea)
-                elif c =="3":
-                    self.parent.setToolBarPosition(Qt.TopToolBarArea)
-                elif c == "4":
-                    self.parent.setToolBarPosition(Qt.BottomToolBarArea)
-        else:
-            log(3,"No various conf found")
-
-    def saveHM(self):
-        """ sauvegarde de la partie historical model des préférences
-        """
-        if not self.config.has_key("hist_model_default_values"):
-            self.config["hist_model_default_values"] = {}
-
-        if self.ui.NUNRadio.isChecked():
-            nlaw = "UN"
-        elif self.ui.NLURadio.isChecked():
-            nlaw = "LU"
-        elif self.ui.NNORadio.isChecked():
-            nlaw = "NO"
-        elif self.ui.NLNRadio.isChecked():
-            nlaw = "LN"
-
-        if self.ui.TUNRadio.isChecked():
-            tlaw = "UN"
-        elif self.ui.TLURadio.isChecked():
-            tlaw = "LU"
-        elif self.ui.TNORadio.isChecked():
-            tlaw = "NO"
-        elif self.ui.TLNRadio.isChecked():
-            tlaw = "LN"
-
-        if self.ui.AUNRadio.isChecked():
-            alaw = "UN"
-        elif self.ui.ALURadio.isChecked():
-            alaw = "LU"
-        elif self.ui.ANORadio.isChecked():
-            alaw = "NO"
-        elif self.ui.ALNRadio.isChecked():
-            alaw = "LN"
-
-        toSave = {}
-
-        for key in ["nmin","nmax","nmean","nstdev","tmin","tmax","tmean","tstdev","amin","amax","amean","astdev"]:
-            editname = key[0].upper() + key[1:]
-            exec('toSave["%s"] = float(self.ui.%sEdit.text())'%(key,editname))
-        toSave["nlaw"] = nlaw
-        toSave["tlaw"] = tlaw
-        toSave["alaw"] = alaw
-        #toSave = {
-        #        "nmin" : float(self.ui.NminEdit.text()),
-        #        "nmax" : float(self.ui.NmaxEdit.text()),
-        #        "nmean" : float(self.ui.NmeanEdit.text()),
-        #        "nstdev" :float(self.ui.NstdevEdit.text()),
-        #        "tmin" :float(self.ui.TminEdit.text()),
-        #        "tmax" :float(self.ui.TmaxEdit.text()),
-        #        "tmean" :float(self.ui.TmeanEdit.text()),
-        #        "tstdev" :float(self.ui.TstdevEdit.text()),
-        #        "amin" :float(self.ui.AminEdit.text()),
-        #        "amax" :float(self.ui.AmaxEdit.text()),
-        #        "amean" :float(self.ui.AmeanEdit.text()),
-        #        "astdev" :float(self.ui.AstdevEdit.text()),
-        #        "nlaw" : nlaw,
-        #        "tlaw" : tlaw,
-        #        "alaw" : alaw
-        #        }
-        for k in toSave:
-            self.config["hist_model_default_values"][k] = toSave[k]
-
-    def loadHM(self):
-        """ chargement de la partie historical model des préférences
-        """
-        cfg = self.config
-        if cfg.has_key("hist_model_default_values"):
-            dico_val = {}
-            pairs = cfg["hist_model_default_values"].items()
-            for p in pairs:
-                dico_val[p[0]] = p[1]
-
-            try:
-                for key in ["nmin","nmax","nmean","nstdev","tmin","tmax","tmean","tstdev","amin","amax","amean","astdev"]:
-                    editname = key[0].upper() + key[1:]
-                    exec('self.ui.%sEdit.setText(str(dico_val["%s"]))'%(editname,key))
-                #self.ui.NminEdit.setText(dico_val["nmin"])
-                #self.ui.NmaxEdit.setText(dico_val["nmax"])
-                #self.ui.NmeanEdit.setText(dico_val["nmean"])
-                #self.ui.NstdevEdit.setText(dico_val["nst"])
-                #self.ui.TminEdit.setText(dico_val["tmin"])
-                #self.ui.TmaxEdit.setText(dico_val["tmax"])
-                #self.ui.TmeanEdit.setText(dico_val["tmean"])
-                #self.ui.TstdevEdit.setText(dico_val["tst"])
-                #self.ui.AminEdit.setText(dico_val["amin"])
-                #self.ui.AmaxEdit.setText(dico_val["amax"])
-                #self.ui.AmeanEdit.setText(dico_val["amean"])
-                #self.ui.AstdevEdit.setText(dico_val["ast"])
-                for pair in [("nlaw","UN"),("nlaw","LN"),("nlaw","NO"),("nlaw","LU"),
-                        ("alaw","UN"),("alaw","LN"),("alaw","NO"),("alaw","LU"),
-                        ("tlaw","UN"),("tlaw","LN"),("tlaw","NO"),("tlaw","LU")]:
-                    exec('if dico_val["%s"] == "%s": self.ui.%sRadio.setChecked(True)'%(pair[0],pair[1],pair[0][0].upper()+pair[1]))
-                #if dico_val["nlaw"] == "UN":
-                #    self.ui.NUNRadio.setChecked(True)
-                #if dico_val["nlaw"] == "LN":
-                #    self.ui.NLNRadio.setChecked(True)
-                #if dico_val["nlaw"] == "NO":
-                #    self.ui.NNORadio.setChecked(True)
-                #if dico_val["nlaw"] == "LU":
-                #    self.ui.NLURadio.setChecked(True)
-                #if dico_val["alaw"] == "UN":
-                #    self.ui.AUNRadio.setChecked(True)
-                #if dico_val["alaw"] == "LU":
-                #    self.ui.ALURadio.setChecked(True)
-                #if dico_val["alaw"] == "NO":
-                #    self.ui.ANORadio.setChecked(True)
-                #if dico_val["alaw"] == "LN":
-                #    self.ui.ALNRadio.setChecked(True)
-                #if dico_val["tlaw"] == "UN":
-                #    self.ui.TUNRadio.setChecked(True)
-                #if dico_val["tlaw"] == "LN":
-                #    self.ui.TLNRadio.setChecked(True)
-                #if dico_val["tlaw"] == "LU":
-                #    self.ui.TLURadio.setChecked(True)
-                #if dico_val["tlaw"] == "NO":
-                #    self.ui.TNORadio.setChecked(True)
-            except Exception as e:
-                log(3,"Malformed hist_model_default_values section in configuration\n\n%s"%e)
-        else:
-            log(3,"No hist conf found")
-        
     def saveMMM(self):
         """ sauvegarde de la partie mutation model microsats des préférences
         """
@@ -516,24 +270,13 @@ class Preferences(formPreferences,basePreferences):
         if cfg.has_key("mutation_m_default_values"):
             try:
                 for param in ['MEANMU','GAMMU','MEANP','GAMP','MEANSNI','GAMSNI']:
-                    #exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","{0}_law"),cfg.get("mutation_m_default_values","{0}_zero"),cfg.get("mutation_m_default_values","{0}_one"),cfg.get("mutation_m_default_values","{0}_two"),cfg.get("mutation_m_default_values","{0}_three")))'.format(param))
                     exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg["mutation_m_default_values"]["{0}_law"],cfg["mutation_m_default_values"]["{0}_zero"],cfg["mutation_m_default_values"]["{0}_one"],cfg["mutation_m_default_values"]["{0}_two"],cfg["mutation_m_default_values"]["{0}_three"]))'.format(param))
                 self.mutmodM.setMutationConf(lines)
             except Exception as e:
                 log(3,"Malformed mutation_m_default_values in configuration")
                 
-            #try:
-            #    lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","MEANMU_law"),cfg.get("mutation_m_default_values","MEANMU_zero"),cfg.get("mutation_m_default_values","MEANMU_one"),cfg.get("mutation_m_default_values","MEANMU_two"),cfg.get("mutation_m_default_values","MEANMU_three")))
-            #    lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","GAMMU_law"),cfg.get("mutation_m_default_values","GAMMU_zero"),cfg.get("mutation_m_default_values","GAMMU_one"),cfg.get("mutation_m_default_values","GAMMU_two"),cfg.get("mutation_m_default_values","GAMMU_three")))
-            #    lines.append("MEANP %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","MEANP_law"),cfg.get("mutation_m_default_values","MEANP_zero"),cfg.get("mutation_m_default_values","MEANP_one"),cfg.get("mutation_m_default_values","MEANP_two"),cfg.get("mutation_m_default_values","MEANP_three")))
-            #    lines.append("GAMP %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","GAMP_law"),cfg.get("mutation_m_default_values","GAMP_zero"),cfg.get("mutation_m_default_values","GAMP_one"),cfg.get("mutation_m_default_values","GAMP_two"),cfg.get("mutation_m_default_values","GAMP_three")))
-            #    lines.append("MEANSNI %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","MEANSNI_law"),cfg.get("mutation_m_default_values","MEANSNI_zero"),cfg.get("mutation_m_default_values","MEANSNI_one"),cfg.get("mutation_m_default_values","MEANSNI_two"),cfg.get("mutation_m_default_values","MEANSNI_three")))
-            #    lines.append("GAMSNI %s[%s,%s,%s,%s]"%(cfg.get("mutation_m_default_values","GAMSNI_law"),cfg.get("mutation_m_default_values","GAMSNI_zero"),cfg.get("mutation_m_default_values","GAMSNI_one"),cfg.get("mutation_m_default_values","GAMSNI_two"),cfg.get("mutation_m_default_values","GAMSNI_three")))
-            #    self.mutmodM.setMutationConf(lines)
         else:
             log(3,"No MMM conf found")
-
-
 
     def saveMMS(self):
         """ sauvegarde de la partie mutation model sequences des préférences
@@ -573,15 +316,8 @@ class Preferences(formPreferences,basePreferences):
         if cfg.has_key("mutation_s_default_values"):
             try:
                 for param in ['MEANMU','GAMMU','MEANK1','GAMK1','MEANK2','GAMK2']:
-                    #exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","{0}_law"),cfg.get("mutation_s_default_values","{0}_zero"),cfg.get("mutation_s_default_values","{0}_one"),cfg.get("mutation_s_default_values","{0}_two"),cfg.get("mutation_s_default_values","{0}_three")))'.format(param))
                     exec('lines.append("{0} %s[%s,%s,%s,%s]"%(cfg["mutation_s_default_values"]["{0}_law"],cfg["mutation_s_default_values"]["{0}_zero"],cfg["mutation_s_default_values"]["{0}_one"],cfg["mutation_s_default_values"]["{0}_two"],cfg["mutation_s_default_values"]["{0}_three"]))'.format(param))
 
-                #lines.append("MEANMU %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","MEANMU_law"),cfg.get("mutation_s_default_values","MEANMU_zero"),cfg.get("mutation_s_default_values","MEANMU_one"),cfg.get("mutation_s_default_values","MEANMU_two"),cfg.get("mutation_s_default_values","MEANMU_three")))
-                #lines.append("GAMMU %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","GAMMU_law"),cfg.get("mutation_s_default_values","GAMMU_zero"),cfg.get("mutation_s_default_values","GAMMU_one"),cfg.get("mutation_s_default_values","GAMMU_two"),cfg.get("mutation_s_default_values","GAMMU_three")))
-                #lines.append("MEANK1 %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","MEANK1_law"),cfg.get("mutation_s_default_values","MEANK1_zero"),cfg.get("mutation_s_default_values","MEANK1_one"),cfg.get("mutation_s_default_values","MEANK1_two"),cfg.get("mutation_s_default_values","MEANK1_three")))
-                #lines.append("GAMK1 %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","GAMK1_law"),cfg.get("mutation_s_default_values","GAMK1_zero"),cfg.get("mutation_s_default_values","GAMK1_one"),cfg.get("mutation_s_default_values","GAMK1_two"),cfg.get("mutation_s_default_values","GAMK1_three")))
-                #lines.append("MEANK2 %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","MEANK2_law"),cfg.get("mutation_s_default_values","MEANK2_zero"),cfg.get("mutation_s_default_values","MEANK2_one"),cfg.get("mutation_s_default_values","MEANK2_two"),cfg.get("mutation_s_default_values","MEANK2_three")))
-                #lines.append("GAMK2 %s[%s,%s,%s,%s]"%(cfg.get("mutation_s_default_values","GAMK2_law"),cfg.get("mutation_s_default_values","GAMK2_zero"),cfg.get("mutation_s_default_values","GAMK2_one"),cfg.get("mutation_s_default_values","GAMK2_two"),cfg.get("mutation_s_default_values","GAMK2_three")))
                 lines.append("MODEL %s %s %s"%(cfg["mutation_s_default_values"]["MODEL_model"],cfg["mutation_s_default_values"]["MODEL_inv_sites_pc"],cfg["mutation_s_default_values"]["MODEL_gamma_shape"]))
                 self.mutmodS.setMutationConf(lines)
             except Exception as e:
@@ -589,73 +325,69 @@ class Preferences(formPreferences,basePreferences):
         else:
             log(3,"No MMS conf found")
 
-    def saveConnexion(self):
-        """ sauvegarde de la partie connexion des préférences
+    def saveHM(self):
+        """ sauvegarde de la partie historical model des préférences
         """
-        if not self.config.has_key("connexion"):
-            self.config["connexion"] = {}
+        if not self.config.has_key("hist_model_default_values"):
+            self.config["hist_model_default_values"] = {}
 
-        self.config["connexion"]["host"] = str(self.ui.addrEdit.text())
-        self.config["connexion"]["port"] = str(self.ui.portEdit.text())
-        self.config["connexion"]["use_server"] = str(self.ui.serverCheck.isChecked())
+        if self.hist_model.NUNRadio.isChecked():
+            nlaw = "UN"
+        elif self.hist_model.NLURadio.isChecked():
+            nlaw = "LU"
+        elif self.hist_model.NNORadio.isChecked():
+            nlaw = "NO"
+        elif self.hist_model.NLNRadio.isChecked():
+            nlaw = "LN"
 
-    def loadConnexion(self):
-        """ chargement de la partie connexion des préférences
+        if self.hist_model.TUNRadio.isChecked():
+            tlaw = "UN"
+        elif self.hist_model.TLURadio.isChecked():
+            tlaw = "LU"
+        elif self.hist_model.TNORadio.isChecked():
+            tlaw = "NO"
+        elif self.hist_model.TLNRadio.isChecked():
+            tlaw = "LN"
+
+        if self.hist_model.AUNRadio.isChecked():
+            alaw = "UN"
+        elif self.hist_model.ALURadio.isChecked():
+            alaw = "LU"
+        elif self.hist_model.ANORadio.isChecked():
+            alaw = "NO"
+        elif self.hist_model.ALNRadio.isChecked():
+            alaw = "LN"
+
+        toSave = {}
+
+        for key in ["nmin","nmax","nmean","nstdev","tmin","tmax","tmean","tstdev","amin","amax","amean","astdev"]:
+            editname = key[0].upper() + key[1:]
+            exec('toSave["%s"] = float(self.hist_model.%sEdit.text())'%(key,editname))
+        toSave["nlaw"] = nlaw
+        toSave["tlaw"] = tlaw
+        toSave["alaw"] = alaw
+        for k in toSave:
+            self.config["hist_model_default_values"][k] = toSave[k]
+
+    def loadHM(self):
+        """ chargement de la partie historical model des préférences
         """
         cfg = self.config
-        if cfg.has_key("connexion"):
-                #print cfg["connexion"]
+        if cfg.has_key("hist_model_default_values"):
+            dico_val = {}
+            pairs = cfg["hist_model_default_values"].items()
+            for p in pairs:
+                dico_val[p[0]] = p[1]
+
             try:
-                self.ui.addrEdit.setText(str(cfg["connexion"]["host"]))
-                self.ui.portEdit.setText(str(cfg["connexion"]["port"]))
-                yesno = (cfg["connexion"]["use_server"] == 'True')
-                self.ui.serverCheck.setChecked(yesno)
+                for key in ["nmin","nmax","nmean","nstdev","tmin","tmax","tmean","tstdev","amin","amax","amean","astdev"]:
+                    editname = key[0].upper() + key[1:]
+                    exec('self.hist_model.%sEdit.setText(str(dico_val["%s"]))'%(editname,key))
+                for pair in [("nlaw","UN"),("nlaw","LN"),("nlaw","NO"),("nlaw","LU"),
+                        ("alaw","UN"),("alaw","LN"),("alaw","NO"),("alaw","LU"),
+                        ("tlaw","UN"),("tlaw","LN"),("tlaw","NO"),("tlaw","LU")]:
+                    exec('if dico_val["%s"] == "%s": self.hist_model.%sRadio.setChecked(True)'%(pair[0],pair[1],pair[0][0].upper()+pair[1]))
             except Exception as e:
-                log(3,"Malformed connexion section in configuration\n%s"%e)
+                log(3,"Malformed hist_model_default_values section in configuration\n\n%s"%e)
         else:
-            log(3,"No connexion conf found")
-
-    def connexionValid(self):
-        """ vérifie la validité de la partie connexion
-        """
-        problems = ""
-        try:
-            port = int(self.ui.portEdit.text())
-        except Exception as e:
-            problems += "%s for port connexion value"%e
-
-        if problems == "":
-            return True
-        else:
-            QMessageBox.information(self,"Value error","%s"%problems)
-            return False
-
-    def histModelValid(self):
-        """ vérifie la validité de la partie hist model
-        """
-        problems = ""
-        try:
-            nmin = float(self.ui.NminEdit.text())
-            nmax = float(self.ui.NmaxEdit.text())
-            nmean = float(self.ui.NmeanEdit.text())
-            nst = float(self.ui.NstdevEdit.text())
-            tmin = float(self.ui.TminEdit.text())
-            tmax = float(self.ui.TmaxEdit.text())
-            tmean = float(self.ui.TmeanEdit.text())
-            tst = float(self.ui.TstdevEdit.text())
-            amin = float(self.ui.AminEdit.text())
-            amax = float(self.ui.AmaxEdit.text())
-            amean = float(self.ui.AmeanEdit.text())
-            ast = float(self.ui.AstdevEdit.text())
-            if nmin > nmax or tmin > tmax or amin > amax:
-                problems += "A min is superior than a max\n"
-        except Exception as e:
-            problems += "%s in historical model values\n"%e
-
-        if problems == "":
-            return True
-        else:
-            QMessageBox.information(self,"Value error","%s"%problems)
-            return False
-
-
+            log(3,"No hist conf found")

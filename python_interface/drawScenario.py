@@ -308,7 +308,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         # puis on le recrée, vide évidemment
         os.mkdir("%s/%s"%(proj_dir,pic_dir))
 
-        if str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText()) == "pdf":
+        if str(self.parent.parent.parent.preferences_win.ui.picturesFormatCombo.currentText()) == "pdf":
             answer = QMessageBox.question(self,"Saving option","Would you like to save all scenarios images in one file or 1 scenario per file ? (PDF)",\
                 "All in one file\n(6 per page)","One per file")
         else:
@@ -336,7 +336,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         #        if os.path.exists("%s_%i.jpg"%(pic_whole_path,i)):
         #            os.remove("%s_%i.jpg"%(pic_whole_path,i))
 
-        pic_format = str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText())
+        pic_format = str(self.parent.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
         if pic_format == "jpg" or pic_format == "png":
             for ind,pix in enumerate(self.pixList):
                 im = pix.toImage()
@@ -352,7 +352,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
 
 
     def saveDrawsToOne(self):
-        pic_format = str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText())
+        pic_format = str(self.parent.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
         #pic_format = "pdf"
         ind = 0
         nbpix = len(self.pixList)
@@ -458,7 +458,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         pic_basename = self.parent.parent.parent.scenario_pix_basename
         pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
 
-        pic_format = str(self.parent.parent.parent.preferences_win.ui.formatCombo.currentText())
+        pic_format = str(self.parent.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
 
         #nbpix = len(self.pixList)
         nbpix = (ito - ifrom)+1

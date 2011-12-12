@@ -18,10 +18,11 @@ from utils.cbgpUtils import log
 from utils.configobj.configobj import *
 
 
-class GenericPreferences(QFrame):
-    def __init__(self,parent=None,confFilePath=None):
-        super(GenericPreferences,self).__init__(parent)
+class AutoPreferences(QFrame):
+    def __init__(self,parent=None,confFilePath=None,title="Settings"):
+        super(AutoPreferences,self).__init__(parent)
         self.parent = parent
+        self.title = title
 
         # dico indexé par le nom de la catégorie qui contient la liste des propriétés
         self.dicoCategory = {}
@@ -36,8 +37,28 @@ class GenericPreferences(QFrame):
     def createWidgets(self):
 
         self.ui = self
+
         self.ui.verticalLayout = QtGui.QVBoxLayout(self)
         self.ui.verticalLayout.setObjectName("centralVerticalLayout")
+
+        self.ui.frame_title = QtGui.QFrame(self)
+        self.ui.frame_title.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.ui.frame_title.setFrameShadow(QtGui.QFrame.Raised)
+        self.ui.frame_title.setObjectName("frame_title")
+        self.ui.frame_title.setFrameShape(QtGui.QFrame.NoFrame)
+        self.ui.horizontalLayout_title = QtGui.QHBoxLayout(self.frame_title)
+        self.ui.horizontalLayout_title.setObjectName("horizontalLayout_title")
+        self.ui.titleLabel = QtGui.QLabel(self.frame_title,)
+        self.ui.titleLabel.setText(self.title)
+        self.ui.titleLabel.setAlignment(Qt.AlignHCenter)
+        self.ui.titleLabel.setObjectName("titleLabel")
+        font = QFont()
+        font.setPixelSize(15)
+        font.setBold(True)
+        self.ui.titleLabel.setFont(font)
+        self.ui.horizontalLayout_title.addWidget(self.titleLabel)
+        self.ui.verticalLayout.addWidget(self.frame_title)
+
         self.ui.tabWidget = QtGui.QTabWidget(self)
         self.ui.tabWidget.setObjectName("tabWidget")
         self.ui.verticalLayout.addWidget(self.ui.tabWidget)
@@ -86,9 +107,9 @@ class GenericPreferences(QFrame):
             exec('self.verticalLayout_%s.addWidget(self.scrollArea_%s) '%(catname,catname))
             exec('self.ui.tabWidget.addTab(self.tab_%s,"%s")'%(catname,catname))
 
-    def addPropCheck(self,catname,propname,proptext):
+    def addPropCheck(self,catname,propname,proptext,defaultState):
 
-        self.dicoCategory[catname].append([propname,"check",proptext])
+        self.dicoCategory[catname].append([propname,"check",proptext,defaultState])
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s) '%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel) '%(catname,propname))
@@ -98,7 +119,7 @@ class GenericPreferences(QFrame):
         exec('self.horizontalLayout_%s_%s.setObjectName("horizontalLayout_%s_%s") '%(catname,propname,catname,propname))
         exec('self.%sCheck = QtGui.QCheckBox(self.frame_%s_%s) '%(propname,catname,propname))
         exec('self.%sCheck.setText("%s") '%(propname,proptext))
-        exec('self.%sCheck.setChecked(True) '%(propname))
+        exec('self.%sCheck.setChecked(defaultState) '%(propname))
         exec('self.%sCheck.setObjectName("%sCheck") '%(propname,propname))
         exec('self.horizontalLayout_%s_%s.addWidget(self.%sCheck) '%(catname,propname,propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s) '%(catname,catname,propname))
@@ -125,7 +146,7 @@ class GenericPreferences(QFrame):
         for k in l_ordered_val:
             exec('self.%sCombo.addItem("%s")'%(propname,dicoValTxt[k]))
         if default_value != None:
-            exec('ind = self.ui.%sCombo.findText(default_value)'%propname)
+            exec('ind = self.ui.%sCombo.findText(dicoValTxt[default_value])'%propname)
             if ind != -1:
                 exec('self.%sCombo.setCurrentIndex(%s)'%(propname,ind))
 
@@ -203,7 +224,7 @@ class GenericPreferences(QFrame):
                         a = propl[2][k]
                         if a == txt:
                             break
-                    val_to_save = a
+                    val_to_save = k
 
                 self.config[cat][propname] = val_to_save
 
@@ -215,7 +236,7 @@ class GenericPreferences(QFrame):
 
         for cat in self.dicoCategory.keys():
             if cfg.has_key(cat):
-                for propl in dicoCategory[cat].keys():
+                for propl in self.dicoCategory[cat]:
                     propname = propl[0]
                     if cfg[cat].has_key(propname):
                         val = cfg[cat][propname]
@@ -229,6 +250,8 @@ class GenericPreferences(QFrame):
                         elif proptype == "path":
                             exec('self.ui.%sPathEdit.setText(str(val).strip())'%propname)
                         elif proptype == "combo":
+                            print propl[2]
+                            print('ind = self.ui.%sCombo.findText(propl[2][str(val)])'%propname)
                             exec('ind = self.ui.%sCombo.findText(propl[2][str(val)])'%propname)
                             if ind != -1:
                                 exec('self.ui.%sCombo.setCurrentIndex(ind)'%propname)

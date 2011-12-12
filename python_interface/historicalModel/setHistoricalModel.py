@@ -747,46 +747,44 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             setCondButton.hide()
         pref = self.parent.parent.preferences_win
         if code_type_param == "N":
-            minValueParamEdit.setText(pref.ui.NminEdit.text())
-            maxValueParamEdit.setText(pref.ui.NmaxEdit.text())
-            meanValueParamEdit.setText(pref.ui.NmeanEdit.text())
-            stValueParamEdit.setText(pref.ui.NstdevEdit.text())
-            if pref.ui.NUNRadio.isChecked():
+            minValueParamEdit.setText(pref.hist_model.NminEdit.text())
+            maxValueParamEdit.setText(pref.hist_model.NmaxEdit.text())
+            meanValueParamEdit.setText(pref.hist_model.NmeanEdit.text())
+            stValueParamEdit.setText(pref.hist_model.NstdevEdit.text())
+            if pref.hist_model.NUNRadio.isChecked():
                 uniformParamRadio.setChecked(True)
-            elif pref.ui.NLNRadio.isChecked():
+            elif pref.hist_model.NLNRadio.isChecked():
                 logUniformRadio.setChecked(True)
-            elif pref.ui.NLURadio.isChecked():
+            elif pref.hist_model.NLURadio.isChecked():
                 logUniformRadio.setChecked(True)
             else:
                 normalRadio.setChecked(True)
         if code_type_param == "T":
-            minValueParamEdit.setText(pref.ui.TminEdit.text())
-            maxValueParamEdit.setText(pref.ui.TmaxEdit.text())
-            meanValueParamEdit.setText(pref.ui.TmeanEdit.text())
-            stValueParamEdit.setText(pref.ui.TstdevEdit.text())
-            if pref.ui.TUNRadio.isChecked():
+            minValueParamEdit.setText(pref.hist_model.TminEdit.text())
+            maxValueParamEdit.setText(pref.hist_model.TmaxEdit.text())
+            meanValueParamEdit.setText(pref.hist_model.TmeanEdit.text())
+            stValueParamEdit.setText(pref.hist_model.TstdevEdit.text())
+            if pref.hist_model.TUNRadio.isChecked():
                 uniformParamRadio.setChecked(True)
-            elif pref.ui.TLNRadio.isChecked():
+            elif pref.hist_model.TLNRadio.isChecked():
                 logUniformRadio.setChecked(True)
-            elif pref.ui.TLURadio.isChecked():
+            elif pref.hist_model.TLURadio.isChecked():
                 logUniformRadio.setChecked(True)
             else:
                 normalRadio.setChecked(True)
         elif code_type_param == "A":
-            minValueParamEdit.setText(pref.ui.AminEdit.text())
-            maxValueParamEdit.setText(pref.ui.AmaxEdit.text())
-            meanValueParamEdit.setText(pref.ui.AmeanEdit.text())
-            stValueParamEdit.setText(pref.ui.AstdevEdit.text())
-            if pref.ui.AUNRadio.isChecked():
+            minValueParamEdit.setText(pref.hist_model.AminEdit.text())
+            maxValueParamEdit.setText(pref.hist_model.AmaxEdit.text())
+            meanValueParamEdit.setText(pref.hist_model.AmeanEdit.text())
+            stValueParamEdit.setText(pref.hist_model.AstdevEdit.text())
+            if pref.hist_model.AUNRadio.isChecked():
                 uniformParamRadio.setChecked(True)
-            elif pref.ui.ALNRadio.isChecked():
+            elif pref.hist_model.ALNRadio.isChecked():
                 logUniformRadio.setChecked(True)
-            elif pref.ui.ALURadio.isChecked():
+            elif pref.hist_model.ALURadio.isChecked():
                 logUniformRadio.setChecked(True)
             else:
                 normalRadio.setChecked(True)
-
-
 
         return groupBox_8
 
