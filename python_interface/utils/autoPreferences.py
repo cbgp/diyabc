@@ -83,6 +83,19 @@ class AutoPreferences(QFrame):
         QObject.connect(self.ui.savePreferencesButton,SIGNAL("clicked()"),self.savePreferences)
         QObject.connect(self.ui.cancelPreferencesButton,SIGNAL("clicked()"),self.cancel)
 
+    def digest(self,dico_fields):
+        for cat in dico_fields.keys():
+            self.addCategory(cat)
+            for f in dico_fields[cat]:
+                if f[0] == "combo":
+                    self.addPropCombo(cat,f[1],f[2],f[3],f[4],f[5])
+                elif f[0] == "check":
+                    self.addPropCheck(cat,f[1],f[2],f[3])
+                elif f[0] == "lineEdit":
+                    self.addPropLineEdit(cat,f[1],f[2],f[3])
+                elif f[0] == "pathEdit":
+                    self.addPropPathEdit(cat,f[1],f[2],f[3])
+
     def addCategory(self,catname):
         if catname in self.categoryList:
             raise Exception("Category already exists")

@@ -29,18 +29,6 @@ class Preferences(AutoPreferences):
 
         self.tabColor = {"green": "#c3ffa6","blue":"#7373ff","red":"#ffb2a6","yellow":"#ffffb2","pink":"#ffbff2"}
 
-        self.addCategory("connexion")
-        self.addPropCheck("connexion","useServer","Use a server (don't check if you don't know what it is)",False)
-        self.addPropLineEdit("connexion","serverAddress","Address of the server","localhost")
-        self.addPropLineEdit("connexion","serverPort","Port of the server","666")
-
-        self.addCategory("various")
-
-        self.addPropCheck("various","showTrayIcon","Show tray icon",False)
-        self.addPropCheck("various","activateWhatsThis","Activate ""what's this"" help functionnality",True)
-        self.addPropCheck("various","debugWhatsThis","Show object name in what's this (needs restart)",False)
-        self.addPropCheck("various","useDefaultExecutable","Use default executable check",True)
-        self.addPropPathEdit("various","execPath","Path to the executable file","")
         # initialisation du combo pour le nombre max de thread
         try:
             nb_core = multiprocessing.cpu_count()
@@ -50,18 +38,17 @@ class Preferences(AutoPreferences):
         dicoValTxtMaxThread = {}
         for i in range(1,nb_core+1):
             dicoValTxtMaxThread[str(i)] = str(i)
-        self.addPropCombo("various","maxThread",dicoValTxtMaxThread,[str(i) for i in range(1,nb_core+1)],str(nb_core),"Maximum thread number")
-        self.addPropCombo("various","maxLogLvl",
-                {"1":"1 : Human actions",
+
+        dicoValTxtLogLvl = {"1":"1 : Human actions",
                  "2":"2 : High level actions (file read, checks)",
                  "3":"3 : Small actions",
-                 "4":"4 : Details"},
-                ["1","2","3","4"],"3","Maximum log level")
+                 "4":"4 : Details"}
+
         formats = ["pdf","svg","jpg","png"]
         dicoValTxtFormat = {}
         for i in formats:
             dicoValTxtFormat[i] = i
-        self.addPropCombo("various","picturesFormat",dicoValTxtFormat,formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)")
+
         self.styles = []
         for i in QStyleFactory.keys():
             self.styles.append(str(i))
@@ -73,13 +60,35 @@ class Preferences(AutoPreferences):
         dicoValTxtStyle = {}
         for i in self.styles:
             dicoValTxtStyle[i] = i
-        self.addPropCombo("various","style",dicoValTxtStyle,self.styles,default,"Style")
+
         colors = ["default","white"]
         colors.extend(self.tabColor.keys())
         dicoValTxtColor = {}
         for i in colors:
             dicoValTxtColor[i] = i
-        self.addPropCombo("various","backgroundColor",dicoValTxtColor,colors,"default","Window background color")
+
+
+        # hashtable contenant les informations des champs
+        dico_fields = {
+                "connexion" : [
+                    ["check","useServer","Use a server (don't check if you don't know what it is)",False],
+                    ["lineEdit","serverAddress","Address of the server","localhost"],
+                    ["lineEdit","serverPort","Port of the server","666"]
+                ],
+                "various" : [
+                    ["check","showTrayIcon","Show tray icon",False],
+                    ["check","activateWhatsThis","Activate ""what's this"" help functionnality",True],
+                    ["check","debugWhatsThis","Show object name in what's this (needs restart)",False],
+                    ["check","useDefaultExecutable","Use default executable check",True],
+                    ["pathEdit","execPath","Path to the executable file",""],
+                    ["combo","maxThread",dicoValTxtMaxThread,[str(i) for i in range(1,nb_core+1)],str(nb_core),"Maximum thread number"],
+                    ["combo","maxLogLvl",dicoValTxtLogLvl,["1","2","3","4"],"3","Maximum log level"],
+                    ["combo","picturesFormat",dicoValTxtFormat,formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)"],
+                    ["combo","style",dicoValTxtStyle,self.styles,default,"Style"],
+                    ["combo","backgroundColor",dicoValTxtColor,colors,"default","Window background color"]
+                ]
+        }
+        self.digest(dico_fields)
 
         QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
         self.changeStyle(self.ui.styleCombo.currentText())
@@ -112,6 +121,7 @@ class Preferences(AutoPreferences):
         self.mutmodS.ui.frame_6.hide()
         self.mutmodS.ui.setMutSeqLabel.setText("Default values for mutation model of Sequences")
 
+        #self.ui.tabWidget.setCurrentIndex(1)
 
     def close(self):
         if len(self.parent.project_list) == 0:
