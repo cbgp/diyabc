@@ -117,7 +117,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #im = QImage(dataImages.dada,200,200)
         #pic = QPixmap()
         #pic.convertFromImage(im)
-        pic = QPixmap("docs/accueil_pictures/black_red.png")
+        pic = QPixmap("docs/accueil_pictures/blue_orange.png")
         self.ui.imgLabel.setPixmap(pic)
         pic.scaled(100,100)
         self.switchToWelcomeStack()
