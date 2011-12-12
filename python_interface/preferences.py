@@ -77,7 +77,7 @@ class Preferences(AutoPreferences):
         colors = ["default","white"]
         colors.extend(self.tabColor.keys())
         dicoValTxtColor = {}
-        for i in self.colors:
+        for i in colors:
             dicoValTxtColor[i] = i
         self.addPropCombo("various","backgroundColor",dicoValTxtColor,colors,"default","Window background color")
 
