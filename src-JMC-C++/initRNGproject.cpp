@@ -49,11 +49,11 @@ int main(int argc, char *argv[]){
 	int num_threads = 1;
 
 	// récupération des paramètres de la ligne de commande
-	while((optchar = getopt(argc,argv,"p:r:e:s:b:c:qkf:g:d:hmqj:a:t:")) !=-1) {
+	while((optchar = getopt(argc,argv,"p:c:s:t:f")) !=-1) {
 		  if (optarg!=NULL) soptarg = string(optarg);
 		  switch (optchar) {
 	        case 'h' :
-	        	cout << "Build independant parallel RNGs" << endl << endl;
+	        	cout << "Build independent parallel RNGs" << endl << endl;
 	        	cout << "USAGE :\n";
 	            cout << "-p <directory of header.txt>\n";
 	            cout << "-c <number of nodes in the cluster>\n";
@@ -75,6 +75,9 @@ int main(int argc, char *argv[]){
 	            seed = atoi(optarg);
 	            flags = true;
 	            break;
+	        case 'f' :
+	        	force = true;
+	        	break;
 		  }
 	}
 
