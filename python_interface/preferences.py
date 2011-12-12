@@ -76,7 +76,10 @@ class Preferences(AutoPreferences):
         self.addPropCombo("various","style",dicoValTxtStyle,self.styles,default,"Style")
         colors = ["default","white"]
         colors.extend(self.tabColor.keys())
-        self.addPropCombo("various","backgroundColor",{i:i for i in colors},colors,"default","Window background color")
+        dicoValTxtColor = {}
+        for i in self.colors:
+            dicoValTxtColor[i] = i
+        self.addPropCombo("various","backgroundColor",dicoValTxtColor,colors,"default","Window background color")
 
         QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
         self.changeStyle(self.ui.styleCombo.currentText())
