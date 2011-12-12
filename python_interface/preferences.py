@@ -47,7 +47,10 @@ class Preferences(AutoPreferences):
         except Exception as e:
             nb_core = 1
             log(3,"Impossible to count core number on this computer")
-        self.addPropCombo("various","maxThread",{str(i):str(i) for i in range(1,nb_core+1)},[str(i) for i in range(1,nb_core+1)],str(nb_core),"Maximum thread number")
+        dicoValTxtMaxThread = {}
+        for i in range(1,nb_core+1):
+            dicoValTxtMaxThread[str(i)] = str(i)
+        self.addPropCombo("various","maxThread",dicoValTxtMaxThread,[str(i) for i in range(1,nb_core+1)],str(nb_core),"Maximum thread number")
         self.addPropCombo("various","maxLogLvl",
                 {"1":"1 : Human actions",
                  "2":"2 : High level actions (file read, checks)",
@@ -55,7 +58,10 @@ class Preferences(AutoPreferences):
                  "4":"4 : Details"},
                 ["1","2","3","4"],"3","Maximum log level")
         formats = ["pdf","svg","jpg","png"]
-        self.addPropCombo("various","picturesFormat",{i:i for i in formats},formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)")
+        dicoValTxtFormat = {}
+        for i in formats:
+            dicoValTxtFormat[i] = i
+        self.addPropCombo("various","picturesFormat",dicoValTxtFormat,formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)")
         self.styles = []
         for i in QStyleFactory.keys():
             self.styles.append(str(i))
@@ -64,7 +70,10 @@ class Preferences(AutoPreferences):
         if "Cleanlooks" in self.styles:
             default = "Cleanlooks"
         
-        self.addPropCombo("various","style",{i:i for i in self.styles},self.styles,default,"Style")
+        dicoValTxtStyle = {}
+        for i in self.styles:
+            dicoValTxtStyle[i] = i
+        self.addPropCombo("various","style",dicoValTxtStyle,self.styles,default,"Style")
         colors = ["default","white"]
         colors.extend(self.tabColor.keys())
         self.addPropCombo("various","backgroundColor",{i:i for i in colors},colors,"default","Window background color")
