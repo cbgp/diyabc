@@ -9,6 +9,7 @@ Set of classes usefull in historical model definition of DIYABC
 import copy
 import param
 from param import isaninteger, isafloat
+import re
 
 class Error(Exception):
     """Base class for exceptions in this module"""
@@ -238,15 +239,20 @@ class Scenario(object):
         self.nsamp = 0
         self.nrefsamp = 0
         nevent = 0
-        for i,li in enumerate(textarray[1:]): 
+        pat = re.compile(r'\s+')
+        for i,li_n_c in enumerate(textarray[1:]):
+            li = pat.sub(' ',li_n_c)
             if li.upper().find('SAMPLE')+li.upper().find('REFSAMPLE') > -1 : 
                 self.nsamp+=1
                 if li.upper().find('REFSAMPLE') > -1 :
-					self.nrefsamp+=1
+                    self.nrefsamp+=1
                 if len(li.strip().split(' ')) < 3:
                     raise IOScreenError, "At line %i, the number of words is incorrect"%(i+2)
                 # verif que le nombre apres "sample" est bien inférieur ou egal au nombre de pop (len(Ncur))
-                elif int(li.strip().split(' ')[-1]) > len(Ncur):
+                if (li.upper().find(' SAMPLE')>-1) and (int(li.strip().split(' ')[-1]) > len(Ncur)): 
+                    raise IOScreenError, "At line %i, the population number (%s) is higher than the number of population (%s) defined at line 1"%((i+2),li.split(' ')[-1],len(Ncur))
+                
+                if (li.upper().find('REFSAMPLE')>-1) and (int(li.strip().split(' ')[-2]) > len(Ncur)):
                     raise IOScreenError, "At line %i, the population number (%s) is higher than the number of population (%s) defined at line 1"%((i+2),li.split(' ')[-1],len(Ncur))
         if self.nsamp<1 :
             raise IOScreenError, "You must indicate when samples are taken"
