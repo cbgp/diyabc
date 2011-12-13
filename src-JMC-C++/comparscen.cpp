@@ -690,7 +690,7 @@ struct complignes
         cout<<"\niteration "<<rep;
         for (i=0;i<nmodel+1;i++) {cout<<"  ";cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<px[i];}
         cout<<"\n";
-        if ((rep==2)and(sx2>0.9999)) exit(1);
+        //if ((rep==2)and(sx2>0.9999)) exit(1);
 		return err;
    }
 
