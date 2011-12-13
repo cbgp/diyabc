@@ -67,6 +67,17 @@ class Preferences(AutoPreferences):
         for i in colors:
             dicoValTxtColor[i] = i
 
+        fontSizeList = [str(i) for i in range(6,18)]
+        dicoValTxtFontSize = {}
+        for i in fontSizeList:
+            dicoValTxtFontSize[i] = i
+        if "linux" in sys.platform:
+            default_Psize = "10"
+        elif "win" in sys.platform and "darwin" not in sys.platform:
+            default_Psize = "8"
+        elif "darwin" in sys.platform:
+            default_Psize = "12"
+
 
         # hashtable contenant les informations des champs
         dico_fields = {
@@ -78,7 +89,7 @@ class Preferences(AutoPreferences):
                 "various" : [
                     ["check","showTrayIcon","Show tray icon",False],
                     ["check","activateWhatsThis","Activate ""what's this"" help functionnality",True],
-                    ["check","debugWhatsThis","Show object name in what's this (needs restart)",False],
+                    ["check","debugWhatsThis","Show object name in what's this\\n(needs restart)",False],
                     ["check","useDefaultExecutable","Use default executable check",True],
                     ["pathEdit","execPath","Path to the executable file",""],
                     ["lineEdit","particleLoopSize","Particle loop size","100"],
@@ -86,6 +97,7 @@ class Preferences(AutoPreferences):
                     ["combo","maxLogLvl",dicoValTxtLogLvl,["1","2","3","4"],"3","Maximum log level"],
                     ["combo","picturesFormat",dicoValTxtFormat,formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)"],
                     ["combo","style",dicoValTxtStyle,self.styles,default,"Style"],
+                    ["combo","fontSize",dicoValTxtFontSize,fontSizeList,default_Psize,"Application font size\\n(needs restart)"],
                     ["combo","backgroundColor",dicoValTxtColor,colors,"default","Window background color"]
                 ]
         }
@@ -95,6 +107,7 @@ class Preferences(AutoPreferences):
         self.changeStyle(self.ui.styleCombo.currentText())
         QObject.connect(self.ui.maxLogLvlCombo,SIGNAL("currentIndexChanged(int)"),self.changeLogLevel)
         QObject.connect(self.ui.backgroundColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
+        QObject.connect(self.ui.fontSizeCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontSize)
 
         QObject.connect(self.ui.useServerCheck,SIGNAL("toggled(bool)"),self.toggleServer)
         QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
@@ -153,6 +166,11 @@ class Preferences(AutoPreferences):
 
     def changeLogLevel(self,index):
         utilsPack.LOG_LEVEL = index + 1
+
+    def changeFontSize(self,size):
+        font = self.parent.app.font()
+        font.setPixelSize(int(size))
+        self.parent.app.setFont(font)
 
     def toggleServer(self,state):
         self.ui.serverAddressEdit.setDisabled(not state)
