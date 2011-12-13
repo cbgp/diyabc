@@ -97,7 +97,7 @@ class Preferences(AutoPreferences):
                     ["combo","maxLogLvl",dicoValTxtLogLvl,["1","2","3","4"],"3","Maximum log level"],
                     ["combo","picturesFormat",dicoValTxtFormat,formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)"],
                     ["combo","style",dicoValTxtStyle,self.styles,default,"Style"],
-                    ["combo","fontSize",dicoValTxtFontSize,fontSizeList,default_Psize,"Application font size\\n(needs restart)"],
+                    ["combo","fontSize",dicoValTxtFontSize,fontSizeList,default_Psize,"Application point font size\\n(needs restart)"],
                     ["combo","backgroundColor",dicoValTxtColor,colors,"default","Window background color"]
                 ]
         }
@@ -108,6 +108,7 @@ class Preferences(AutoPreferences):
         QObject.connect(self.ui.maxLogLvlCombo,SIGNAL("currentIndexChanged(int)"),self.changeLogLevel)
         QObject.connect(self.ui.backgroundColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
         QObject.connect(self.ui.fontSizeCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontSize)
+        self.changeFontSize(default_Psize)
 
         QObject.connect(self.ui.useServerCheck,SIGNAL("toggled(bool)"),self.toggleServer)
         QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
@@ -168,8 +169,10 @@ class Preferences(AutoPreferences):
         utilsPack.LOG_LEVEL = index + 1
 
     def changeFontSize(self,size):
-        font = self.parent.app.font()
-        font.setPixelSize(int(size))
+        #font = self.parent.app.font()
+        font = QFont("DejaVu Sans")
+        #font.setPixelSize(int(size))
+        font.setPointSize(int(size))
         self.parent.app.setFont(font)
 
     def toggleServer(self,state):

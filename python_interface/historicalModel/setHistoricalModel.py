@@ -127,14 +127,14 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         plainTextEdit = QtGui.QPlainTextEdit(groupBox)
         plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         plainTextEdit.setObjectName("scplainTextEdit")
-        if "darwin" not in sys.platform:
-		ff = plainTextEdit.font()
-		ff.setPointSize(8)
-		plainTextEdit.setFont(ff)
-        else:
-		ff = plainTextEdit.font()
-		ff.setPointSize(9)
-		plainTextEdit.setFont(ff)
+        #if "darwin" not in sys.platform:
+        #    ff = plainTextEdit.font()
+        #    ff.setPointSize(8)
+        #    plainTextEdit.setFont(ff)
+        #else:
+        ff = plainTextEdit.font()
+        ff.setPointSize(9)
+        plainTextEdit.setFont(ff)
         verticalLayout_6.addWidget(plainTextEdit)
         # ajout de la groupbox
         self.ui.horizontalLayout_3.addWidget(groupBox)
