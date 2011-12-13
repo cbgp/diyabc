@@ -71,12 +71,19 @@ class Preferences(AutoPreferences):
         dicoValTxtFontSize = {}
         for i in fontSizeList:
             dicoValTxtFontSize[i] = i
+        default_font_family = str(self.parent.app.font().family())
         if "linux" in sys.platform:
             default_Psize = "10"
+            default_font_family = "DejaVu Sans"
         elif "win" in sys.platform and "darwin" not in sys.platform:
             default_Psize = "8"
         elif "darwin" in sys.platform:
             default_Psize = "12"
+        db = QFontDatabase()
+        fontList = [str(i) for i in db.families()]
+        dicoValTxtFontFamilies = {}
+        for i in fontList:
+            dicoValTxtFontFamilies[i] = i
 
 
         # hashtable contenant les informations des champs
@@ -97,6 +104,7 @@ class Preferences(AutoPreferences):
                     ["combo","maxLogLvl",dicoValTxtLogLvl,["1","2","3","4"],"3","Maximum log level"],
                     ["combo","picturesFormat",dicoValTxtFormat,formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)"],
                     ["combo","style",dicoValTxtStyle,self.styles,default,"Style"],
+                    ["combo","fontFamily",dicoValTxtFontFamilies,fontList,default_font_family,"Application font family"],
                     ["combo","fontSize",dicoValTxtFontSize,fontSizeList,default_Psize,"Application point font size\\n(needs restart)"],
                     ["combo","backgroundColor",dicoValTxtColor,colors,"default","Window background color"]
                 ]
@@ -109,6 +117,8 @@ class Preferences(AutoPreferences):
         QObject.connect(self.ui.backgroundColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
         QObject.connect(self.ui.fontSizeCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontSize)
         self.changeFontSize(default_Psize)
+        QObject.connect(self.ui.fontFamilyCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontFamily)
+        self.changeFontFamily(default_font_family)
 
         QObject.connect(self.ui.useServerCheck,SIGNAL("toggled(bool)"),self.toggleServer)
         QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
@@ -169,10 +179,15 @@ class Preferences(AutoPreferences):
         utilsPack.LOG_LEVEL = index + 1
 
     def changeFontSize(self,size):
-        #font = self.parent.app.font()
-        font = QFont("DejaVu Sans")
+        font = self.parent.app.font()
+        #font = QFont("DejaVu Sans")
         #font.setPixelSize(int(size))
         font.setPointSize(int(size))
+        self.parent.app.setFont(font)
+
+    def changeFontFamily(self,family):
+        font = self.parent.app.font()
+        font.setFamily(family)
         self.parent.app.setFont(font)
 
     def toggleServer(self,state):

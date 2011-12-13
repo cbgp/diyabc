@@ -158,7 +158,7 @@ class AutoPreferences(QFrame):
 
         for k in l_ordered_val:
             exec('self.%sCombo.addItem("%s")'%(propname,dicoValTxt[k]))
-        if default_value != None:
+        if default_value != None and dicoValTxt.has_key(default_value):
             exec('ind = self.ui.%sCombo.findText(dicoValTxt[default_value])'%propname)
             if ind != -1:
                 exec('self.%sCombo.setCurrentIndex(%s)'%(propname,ind))
@@ -177,13 +177,14 @@ class AutoPreferences(QFrame):
         exec('self.label_%s.setObjectName("label_%s")'%(propname,propname))
         exec('self.horizontalLayout_%s.addWidget(self.label_%s)'%(propname,propname))
         exec('self.%sEdit = QtGui.QLineEdit(self.frame_%s_%s)'%(propname,catname,propname))
-        #exec('self.%sEdit.setMinimumSize(QtCore.QSize(60, 0))'%(propname))
-        #exec('self.%sEdit.setMaximumSize(QtCore.QSize(60, 16777215))'%(propname))
+        exec('self.%sEdit.setMinimumSize(QtCore.QSize(150, 0))'%(propname))
+        exec('self.%sEdit.setMaximumSize(QtCore.QSize(150, 16777215))'%(propname))
         exec('self.%sEdit.setText("%s")'%(propname,default_value))
         exec('self.%sEdit.setObjectName("%sEdit")'%(propname,propname))
+        exec('self.%sEdit.setAlignment(Qt.AlignRight)'%(propname))
         exec('self.horizontalLayout_%s.addWidget(self.%sEdit)'%(propname,propname))
-        #spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)'%())
-        #self.horizontalLayout_%s.addItem(spacerItem)'%())
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        exec('self.horizontalLayout_%s.addItem(spacerItem)'%(propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s)'%(catname,catname,propname))
 
     def addPropPathEdit(self,catname,propname,labelText,default_value=""):
