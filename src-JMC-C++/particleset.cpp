@@ -4,11 +4,10 @@
  *  Created on: 23 sept. 2010
  *      Author: cornuet
  */
-#ifndef OMPH
+#include <string>
 #include <omp.h>
-#define OMPH
-#endif
 
+/*
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
@@ -18,11 +17,15 @@
 #include "reftable.cpp"
 #define REFTABLE
 #endif
-
+*/
+#include "header.h"
+#include "reftable.h"
 #include "particuleC.h"
 #include "particleset.h"
 
-enregC *enreg;
+using namespace std;
+
+extern enregC *enreg;
 extern long double **phistar;
 extern int debuglevel;
 extern ReftableC rt;

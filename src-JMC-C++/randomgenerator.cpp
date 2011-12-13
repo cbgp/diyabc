@@ -16,6 +16,7 @@ extern"C"{
 //#include <time.h>
 
 //#define MODULO 16777216
+using namespace std;
 
 double sqr(double x) {return x*x;}
 

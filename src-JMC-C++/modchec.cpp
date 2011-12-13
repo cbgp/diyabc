@@ -6,12 +6,19 @@
  */
 
 #include <vector>
+#include <cstdlib>
+#include <iostream>
+#include <iomanip>
 
 
 #include "header.h"
+#include "reftable.h"
 #include "matrices.h"
 #include "mesutils.h"
-
+#include "particleset.h"
+#include "acploc.h"
+#include "estimparam.h"
+/*
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
@@ -27,14 +34,21 @@
 #include "mesutils.cpp"
 #define MESUTILS
 #endif
-
+*/
 
 using namespace std;
 
+extern int debuglevel;
 extern ParticleSetC ps;
+extern HeaderC header;
+extern ReftableC rt;
 extern enregC* enreg;
-extern int nenr;
-extern string progressfilename;
+extern int nenr, numtransf;
+extern string progressfilename, statobsfilename, headerfilename, path, ident;
+extern bool original, composite;
+extern long double ** phistar;
+extern string* stat_type;
+extern int* stat_num;
 
 long double **ssphistar,**ssref;
 

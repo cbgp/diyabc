@@ -5,6 +5,7 @@
 #define MESUTILS_H_
 
 using namespace std;
+#include <string>
 
 struct matC
 {
@@ -22,22 +23,22 @@ struct compC
 };
 
 double walltime (double * t0);
-int getwordint (string s, int num);
-double getwordfloat (string s, int num);
-string * splitwords (string s, string sep, int * k);
-string * splitwordsR (string s, string sep, int m, int * k);
-string centre (string const & s, int k);
+int getwordint (std::string s, int num);
+double getwordfloat (std::string s, int num);
+std::string * splitwords (std::string s, std::string sep, int * k);
+std::string * splitwordsR (std::string s, std::string sep, int m, int * k);
+std::string centre (std::string const & s, int k);
 int strpos (char * st1, char * st2);
 int ndecimales (double mini, double maxi);
-string IntToString (int number);
-string FloatToString (float number);
-string DoubleToString (double number);
-string LongDoubleToString (long double number);
-string majuscules (string s);
-string char2string (char * c);
-string trim (string s);
+std::string IntToString (int number);
+std::string FloatToString (float number);
+std::string DoubleToString (double number);
+std::string LongDoubleToString (long double number);
+std::string majuscules (std::string s);
+std::string char2string (char * c);
+std::string trim (std::string s);
 int arrondi (double a);
-string TimeToStr (double ti);
+std::string TimeToStr (double ti);
 double cal_moy (int n, double * x);
 long double cal_moyL (int n, long double * x);
 double cal_mode (int n, double * x);
@@ -72,9 +73,9 @@ int PGCD (int a, int b);
 int PPCM (int a, int b);
 long double DCVM (int n, int m, long double * x, long double * y);
 void combrank2 (int n, int m, long double * x, long double * y, long double * rangx, long double * rangy);
-inline string char2string (char * c)
+inline std::string char2string (char * c)
 {
-	return string(c);
+	return std::string(c);
 }
 
 #endif

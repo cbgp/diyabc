@@ -4,46 +4,51 @@
  *  Created on: 23 march 2011
  *      Author: cornuet
  */
+
+#include <vector>
+#include <cstdlib>
+#include <cmath>
+
+
 #include "bias.h"
 #include "estimparam.h"
-
+#include "reftable.h"
+#include "header.h"
+#include "matrices.h"
+#include "mesutils.h"
+#include "particleset.h"
+/*
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
 #endif
-
-
-#include <vector>
-
-
 #ifndef MATRICES
 #include "matrices.cpp"
 #define MATRICES
 #endif
-
 #ifndef MESUTILS
 #include "mesutils.cpp"
 #define MESUTILS
 #endif
-
-
 #ifndef PARTICLESET
 #include "particleset.cpp"
 #define PARTICLESET
 #endif
+*/
 using namespace std;
 
-
+extern ReftableC rt;
 extern ParticleSetC ps;
 extern enregC* enreg;
 extern bool multithread;
-extern string progressfilename;
+extern string progressfilename, path;
 extern string scurfile;
 extern HeaderC header;
 extern int nparamcom, nparcompo, **numpar, numtransf, npar;
 extern string ident, headerfilename;
 extern bool original, composite;
 extern string* nomparam;
+extern long double ** phistar;
 
 
 

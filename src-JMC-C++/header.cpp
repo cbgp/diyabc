@@ -24,7 +24,7 @@
 
 
 extern int debuglevel;
-
+/*
 #ifndef PARTICULEC
 #include "particuleC.cpp"
 #define PARTICULEC
@@ -34,9 +34,11 @@ extern int debuglevel;
 #include "data.cpp"
 #define DATA
 #endif
+*/
 
 #include "header.h"
-
+extern string * stat_type;
+extern int* stat_num;
 extern string path;
 
 void MutParameterC::ecris() {

@@ -7,10 +7,13 @@
 
 #include <algorithm>
 #include <vector>
+#include <cmath>
+#include <iomanip>
+
 #include "comparscen.h"
 #include "reftable.h"
 #include "header.h"
-
+/*
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
@@ -26,10 +29,10 @@
 #include "mesutils.cpp"
 #define MESUTILS
 #endif
-
+*/
 using namespace std;
 
-extern string progressfilename;
+extern string progressfilename, path;
 extern ReftableC rt;
 extern double time_readfile;
 extern string ident;

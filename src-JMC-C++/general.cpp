@@ -1,19 +1,28 @@
-#ifndef IOSTREAM
+
 #include <iostream>
-#define IOSTREAM
-#endif
-#ifndef STRINGH
 #include <string.h>
-#define STRINGH
-#endif
-#ifndef UNISTDH
 #include <unistd.h>
-#define UNISTDH
-#endif
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <omp.h>
+#include <cstdlib>
 extern "C"
 {
 #include "../dcmt0.6.1/include/dc.h"
 }
+#include "acploc.h"
+#include "header.h"
+#include "particleset.h"
+#include "reftable.h"
+#include "estimparam.h"
+#include "comparscen.h"
+#include "bias.h"
+#include "conf.h"
+#include "simfile.h"
+#include "modchec.h"
+#include "randomgenerator.h"
+
+/*
 #ifndef PARTICLESET
 #include "particleset.cpp"
 #define PARTICLESET
@@ -42,10 +51,7 @@ extern "C"
 #include "simfile.cpp"
 #define SIMF
 #endif
-#ifndef SYS_TIMEH
-#include <sys/time.h>
-#define SYS_TIMEH
-#endif
+
 #ifndef ACPLOC
 #include "acploc.cpp"
 #define ACPLOC
@@ -54,10 +60,7 @@ extern "C"
 #include "modchec.cpp"
 #define MODCHEC
 #endif
-#ifndef SYSSTATH
-#include <sys/stat.h>
-#define SYSSTATH
-#endif
+*/
 
 /* Début: pour le nouveau générateur de nombre aléatoires */
 
@@ -98,6 +101,7 @@ ReftableC rt;
 HeaderC header;
 ParticleSetC ps;
 struct stat stFileInfo;
+enregC *enreg;
 
 //char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename, *progressfilename;
 //char *;

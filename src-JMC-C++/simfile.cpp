@@ -4,6 +4,15 @@
  *  Created on: 20 september 2011
  *      Author: cornuet
  */
+#include <vector>
+#include <string>
+
+#include "header.h"
+#include "reftable.h"
+#include "matrices.h"
+#include "mesutils.h"
+#include "particleset.h"
+/*
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
@@ -29,13 +38,14 @@
 #include "particleset.cpp"
 #define PARTICLESET
 #endif
-
+*/
 #include "simfile.h"
 
 extern ParticleSetC ps;
 extern enregC* enreg;
 extern bool multithread;
-extern string progressfilename;
+extern string progressfilename, path;
+extern HeaderC header;
 
 
 

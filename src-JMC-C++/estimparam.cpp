@@ -5,11 +5,16 @@
  *      Author: cornuet
  */
 #include <vector>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include "header.h"
+#include "reftable.h"
 #include "matrices.h"
 #include "mesutils.h"
 #include "estimparam.h"
 
+/*
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
@@ -25,11 +30,12 @@
 #include "mesutils.cpp"
 #define MESUTILS
 #endif
-
+*/
 
 using namespace std;
 
 extern string progressfilename;
+extern ReftableC rt;
 
 #define c 1.5707963267948966192313216916398
 #define co 2.506628274631000502415765284811   //sqrt(pi)

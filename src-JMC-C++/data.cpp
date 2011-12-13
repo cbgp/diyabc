@@ -18,7 +18,7 @@
 
 #include "mesutils.h"
 #include "randomgenerator.h"
-
+/*
 #ifndef MESUTILS
 #include "mesutils.cpp"
 #define MESUTILS
@@ -28,7 +28,7 @@
 #include "randomgenerator.cpp"
 #define RANDOMGENERATOR
 #endif
-
+*/
 #include "data.h"
 
 using namespace std;

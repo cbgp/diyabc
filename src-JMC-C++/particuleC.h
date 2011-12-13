@@ -7,7 +7,7 @@
 
 #ifndef PARTICULEC_H_
 #define PARTICULEC_H_
-
+#include <string>
 #include "history.h"
 #include "data.h"
 #include "randomgenerator.h"
@@ -20,28 +20,6 @@
 
 
 #define NSTAT 43
-
-string stat_type[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","HP0","HM1","HV1","HMO","NP0","NM1","NV1","NMO","FP0","FM1","FV1","FMO","AP0","AM1","AV1","AMO"};
-int stat_num[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28 ,  29 ,  30 ,  31 ,  32 ,  33 ,  34 ,  35 ,  36 };
-/*  Numérotation des stat
- * 	1 : nal			-1 : nha			 21 : moyenne des genic diversities
- *  2 : het			-2 : nss             22 : variance des genic diversities
- *  3 : var			-3 : mpd			 23 : premier quartile des genic diversities
- *  4 : MGW			-4 : vpd			 24 : troisième quartile des genic diversities
- *  5 : Fst			-5 : dta			 25 : moyenne des distances de Nei
- *  6 : lik			-6 : pss			 26 : variance des distances de Nei
- *  7 : dm2			-7 : mns			 27 : premier quartile des distances de Nei
- *  8 : n2P			-8 : vns			 28 : troisième quartile des distances de Nei
- *  9 : h2P			-9 : nh2			 29 : moyenne des distances Fst
- * 10 : v2P		   -10 : ns2			 30 : variance des distances Fst
- * 11 : das        -11 : mp2			 31 : premier quartile des distances Fst
- * 12 : Aml        -12 : mpb			 32 : troisième quartile des distances Fst
- * 				   -13 : fst			 33 : moyenne des estimations d'admixture
- * 				   -14 : aml			 34 : variance des estimations d'admixture
- * 										 35 : premier quartile des estimations d'admixture
- * 										 36 : troisième quartile des estimations d'admixture
- */
-
 
 
 /**
@@ -84,10 +62,10 @@ class ParticleC
 
 
    // retourne la valeur d'un paramètre à partir de son nom (propriété name)
-   double param2val(string paramname);
+   double param2val(std::string paramname);
 
    // retourne la valeur d'une expression du genre param1 + param2 - param3
-   double getvalue(string line); // FIXME: cela n'a rien à faire là ???
+   double getvalue(std::string line); // FIXME: cela n'a rien à faire là ???
 
    // indique si toutes les conditions sur les paramètres sont vérifiées
    bool conditionsOK();
@@ -171,11 +149,11 @@ class ParticleC
    void mute(int loc, int numut, int b);
    char draw_nuc(int loc);
    // initialise la séquence ancestrale (ADN)
-   string init_dnaseq(int loc);
+   std::string init_dnaseq(int loc);
    // part de MRCA et crée tous les haplotypes en bas de l'arbre
    int cree_haplo(int loc);
    // vérification de la topologie de l'arbre de coalescence
-   string verifytree();
+   std::string verifytree();
    // SNP: test si le locus est polymorphe chez les individus de reference
    bool polymref(int loc);
 
@@ -183,7 +161,7 @@ class ParticleC
    // (renvoie 0 si tout s'est bien passé, d'autres nombres si erreur (voir code))
    int dosimulpart(int numscen);
    // idem, mais pour la simulation de fichier
-   string dogenepop();
+   std::string dogenepop();
 
    /* Partie calcul des summary stat */
    int samplesize(int loc, int sample);
@@ -215,7 +193,7 @@ class ParticleC
    pair<long double, long double> pente_lik(int gr,int st, int i0);
    long double cal_Aml3p(int gr,int st);
    // DNA
-   bool identseq(string seq1, string seq2,string appel,int kloc,int sample,int ind);
+   bool identseq(std::string seq1, std::string seq2,std::string appel,int kloc,int sample,int ind);
    long double cal_nha1p(int gr,int st);
    int* cal_nsspl(int kloc,int sample, int *nssl,bool *OK);
    long double cal_nss1p(int gr,int st);

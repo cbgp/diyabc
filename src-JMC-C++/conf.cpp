@@ -4,6 +4,20 @@
  *  Created on: 23 march 2011
  *      Author: cornuet
  */
+
+
+#include <iomanip>
+#include <cstdlib>
+#include <vector>
+#include "bias.h"
+#include "reftable.h"
+#include "header.h"
+#include "matrices.h"
+#include "mesutils.h"
+#include "particleset.h"
+#include "comparscen.h"
+
+/*
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
@@ -29,16 +43,17 @@
 #include "particleset.cpp"
 #define PARTICLESET
 #endif
-
-
-#include <iomanip>
-
+*/
 
 
 extern ParticleSetC ps;
 extern enregC* enreg;
 double time_readfile=0.0;
-extern string scurfile;
+extern string scurfile, path, ident, headerfilename;
+extern HeaderC header;
+extern ReftableC rt;
+extern int ncs;
+
 
 string nomficonfresult;
 

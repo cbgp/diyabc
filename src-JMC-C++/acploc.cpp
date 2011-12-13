@@ -6,18 +6,18 @@
  */
 
 #include <vector>
-
+#include <cmath>
+#include "matrices.h"
+#include "mesutils.h"
 #include "reftable.h"
 #include "acploc.h"
 #include "header.h"
 
-
+/*
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
 #endif
-
-
 
 #ifndef MATRICES
 #include "matrices.cpp"
@@ -28,11 +28,13 @@
 #include "mesutils.cpp"
 #define MESUTILS
 #endif
+*/
+
 using namespace std;
 extern enregC* enreg;
 extern HeaderC header;
 extern ReftableC rt;
-extern string ident;
+extern string ident, path;
 
 int nacp=100000;
 

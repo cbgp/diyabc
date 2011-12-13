@@ -13,7 +13,7 @@ extern"C"{
 #ifndef RANDOMGENERATOR_H_
 #define RANDOMGENERATOR_H_
 
-using namespace std;
+//using namespace std;
 
 double sqr(double);
 
@@ -48,9 +48,9 @@ public:
 	double ggamma3(double mean, double shape);
 };
 
-void write_mt_struct(ofstream & fout, mt_struct* mt);
-void read_mt_struct(ifstream & fichier, mt_struct* mt);
-int saveRNG(mt_struct** mts, int sizeofmts, string filename);
-mt_struct** loadRNG(int & sizeofmts, string filename);
+void write_mt_struct(std::ofstream & fout, mt_struct* mt);
+void read_mt_struct(std::ifstream & fichier, mt_struct* mt);
+int saveRNG(mt_struct** mts, int sizeofmts, std::string filename);
+mt_struct** loadRNG(int & sizeofmts, std::string filename);
 
 #endif /* RANDOMGENERATOR_H_ */
