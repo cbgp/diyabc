@@ -17,6 +17,8 @@ import utils.cbgpUtils as utilsPack
 from utils.cbgpUtils import log
 from utils.configobj.configobj import *
 
+visible = "1"
+invisible = "0"
 
 class AutoPreferences(QFrame):
     def __init__(self,parent=None,confFilePath=None,title="Settings"):
@@ -92,7 +94,7 @@ class AutoPreferences(QFrame):
                 elif f[0] == "check":
                     self.addPropCheck(cat,f[1],f[2],f[3])
                 elif f[0] == "lineEdit":
-                    self.addPropLineEdit(cat,f[1],f[2],f[3])
+                    self.addPropLineEdit(cat,f[1],f[2],f[3],f[4])
                 elif f[0] == "pathEdit":
                     self.addPropPathEdit(cat,f[1],f[2],f[3])
 
@@ -163,7 +165,7 @@ class AutoPreferences(QFrame):
             if ind != -1:
                 exec('self.%sCombo.setCurrentIndex(%s)'%(propname,ind))
 
-    def addPropLineEdit(self,catname,propname,labelText,default_value=""):
+    def addPropLineEdit(self,catname,propname,labelText,default_value="",visible_val=visible):
         self.dicoCategory[catname].append( [propname, "lineEdit", labelText, default_value] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
@@ -186,6 +188,9 @@ class AutoPreferences(QFrame):
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         exec('self.horizontalLayout_%s.addItem(spacerItem)'%(propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s)'%(catname,catname,propname))
+        if visible_val == invisible:
+            print catname,propname," invisible"
+            exec('self.frame_%s_%s.setVisible(False)'%(catname,propname))
 
     def addPropPathEdit(self,catname,propname,labelText,default_value=""):
         self.dicoCategory[catname].append( [propname, "path", labelText, default_value] )

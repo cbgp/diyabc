@@ -17,7 +17,7 @@ from mutationModel.setMutationModelSequences import SetMutationModelSequences
 import output
 import utils.cbgpUtils as utilsPack
 from utils.cbgpUtils import log
-from utils.autoPreferences import AutoPreferences
+from utils.autoPreferences import AutoPreferences,visible,invisible
 
 ## @class Preferences
 # @brief Fenêtre pour gérer les préférences personnelles
@@ -67,10 +67,6 @@ class Preferences(AutoPreferences):
         for i in colors:
             dicoValTxtColor[i] = i
 
-        fontSizeList = [str(i) for i in range(6,18)]
-        dicoValTxtFontSize = {}
-        for i in fontSizeList:
-            dicoValTxtFontSize[i] = i
         default_font_family = str(self.parent.app.font().family())
         if "linux" in sys.platform:
             default_Psize = "10"
@@ -79,34 +75,35 @@ class Preferences(AutoPreferences):
             default_Psize = "8"
         elif "darwin" in sys.platform:
             default_Psize = "12"
-        db = QFontDatabase()
-        fontList = [str(i) for i in db.families()]
-        dicoValTxtFontFamilies = {}
-        for i in fontList:
-            dicoValTxtFontFamilies[i] = i
 
 
         # hashtable contenant les informations des champs
         dico_fields = {
                 "connexion" : [
                     ["check","useServer","Use a server (don't check if you don't know what it is)",False],
-                    ["lineEdit","serverAddress","Address of the server","localhost"],
-                    ["lineEdit","serverPort","Port of the server","666"]
+                    ["lineEdit","serverAddress","Address of the server","localhost",visible],
+                    ["lineEdit","serverPort","Port of the server","666",visible]
+                ],
+                "appearance" : [
+                    ["check","showTrayIcon","Show tray icon",False],
+                    ["combo","style",dicoValTxtStyle,self.styles,default,"Style"],
+                    ["lineEdit","fontFamily","Application font family\\n(needs restart)",default_font_family,invisible],
+                    ["lineEdit","fontSize","Application point font size\\n(needs restart)",default_Psize,invisible],
+                    ["lineEdit","fontStrikeOut","rien","False",invisible],
+                    ["lineEdit","fontUnderline","rien","False",invisible],
+                    ["lineEdit","fontBold","rien","False",invisible],
+                    ["lineEdit","fontItalic","rien","False",invisible],
+                    ["combo","backgroundColor",dicoValTxtColor,colors,"default","Window background color"]
                 ],
                 "various" : [
-                    ["check","showTrayIcon","Show tray icon",False],
                     ["check","activateWhatsThis","Activate ""what's this"" help functionnality",True],
                     ["check","debugWhatsThis","Show object name in what's this\\n(needs restart)",False],
                     ["check","useDefaultExecutable","Use default executable check",True],
                     ["pathEdit","execPath","Path to the executable file",""],
-                    ["lineEdit","particleLoopSize","Particle loop size","100"],
+                    ["lineEdit","particleLoopSize","Particle loop size","100",visible],
                     ["combo","maxThread",dicoValTxtMaxThread,[str(i) for i in range(1,nb_core+1)],str(nb_core),"Maximum thread number"],
                     ["combo","maxLogLvl",dicoValTxtLogLvl,["1","2","3","4"],"3","Maximum log level"],
-                    ["combo","picturesFormat",dicoValTxtFormat,formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)"],
-                    ["combo","style",dicoValTxtStyle,self.styles,default,"Style"],
-                    ["combo","fontFamily",dicoValTxtFontFamilies,fontList,default_font_family,"Application font family"],
-                    ["combo","fontSize",dicoValTxtFontSize,fontSizeList,default_Psize,"Application point font size\\n(needs restart)"],
-                    ["combo","backgroundColor",dicoValTxtColor,colors,"default","Window background color"]
+                    ["combo","picturesFormat",dicoValTxtFormat,formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)"]
                 ]
         }
         self.digest(dico_fields)
@@ -115,10 +112,10 @@ class Preferences(AutoPreferences):
         self.changeStyle(self.ui.styleCombo.currentText())
         QObject.connect(self.ui.maxLogLvlCombo,SIGNAL("currentIndexChanged(int)"),self.changeLogLevel)
         QObject.connect(self.ui.backgroundColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
-        QObject.connect(self.ui.fontSizeCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontSize)
-        self.changeFontSize(default_Psize)
-        QObject.connect(self.ui.fontFamilyCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontFamily)
-        self.changeFontFamily(default_font_family)
+        #QObject.connect(self.ui.fontSizeCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontSize)
+        #self.changeFontSize(default_Psize)
+        #QObject.connect(self.ui.fontFamilyCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontFamily)
+        #self.changeFontFamily(default_font_family)
 
         QObject.connect(self.ui.useServerCheck,SIGNAL("toggled(bool)"),self.toggleServer)
         QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
@@ -127,6 +124,13 @@ class Preferences(AutoPreferences):
 
         self.ui.serverAddressEdit.setDisabled(True)
         self.ui.serverPortEdit.setDisabled(True)
+
+        self.qfd = QFontDialog(self.parent.app.font())
+        fontButton = QPushButton("Change font options")
+        self.verticalLayoutScroll_appearance.addWidget(fontButton)
+        QObject.connect(fontButton,SIGNAL("clicked()"),self.changeFontOptions)
+        self.updateFont()
+
 
         self.toggleServer(self.ui.useServerCheck.isChecked())
         self.toggleExeSelection(self.ui.useDefaultExecutableCheck.isChecked())
@@ -174,6 +178,7 @@ class Preferences(AutoPreferences):
         self.loadRecent()
         self.loadToolBarPosition()
         super(Preferences,self).loadPreferences()
+        self.updateFont()
 
     def changeLogLevel(self,index):
         utilsPack.LOG_LEVEL = index + 1
@@ -189,6 +194,35 @@ class Preferences(AutoPreferences):
         font = self.parent.app.font()
         font.setFamily(family)
         self.parent.app.setFont(font)
+
+    def changeFontOptions(self):
+        self.qfd.setCurrentFont(self.parent.app.font())
+        i =self.qfd.exec_()
+        if i != 0:
+            font = self.qfd.currentFont()
+
+            self.fontFamilyEdit.setText(str(font.family()))
+            self.fontSizeEdit.setText(str(font.pointSize()))
+            self.fontStrikeOutEdit.setText(str(font.strikeOut()))
+            self.fontUnderlineEdit.setText(str(font.underline()))
+            self.fontBoldEdit.setText(str(font.bold()))
+            self.fontItalicEdit.setText(str(font.italic()))
+
+            self.updateFont(font)
+
+    def updateFont(self,font=None):
+        if font != None:
+            self.parent.app.setFont(font)
+        else:
+            fofo = QFont()
+            fofo.setFamily(self.fontFamilyEdit.text())
+            fofo.setPointSize(int(str(self.fontSizeEdit.text())))
+            fofo.setStrikeOut(str(self.fontStrikeOutEdit.text()) == "True")
+            fofo.setUnderline(str(self.fontUnderlineEdit.text()) == "True")
+            fofo.setBold(str(self.fontBoldEdit.text()) == "True")
+            fofo.setItalic(str(self.fontItalicEdit.text()) == "True")
+            self.parent.app.setFont(fofo)
+
 
     def toggleServer(self,state):
         self.ui.serverAddressEdit.setDisabled(not state)
