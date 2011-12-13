@@ -3,7 +3,7 @@ LIBS =   -L. -ldcmt
 CPPFILES = general.cpp acploc.cpp bias.cpp comparscen.cpp conf.cpp data.cpp estimparam.cpp header.cpp matrices.cpp mesutils.cpp modchec.cpp particleset.cpp particuleC.cpp randomgenerator.cpp reftable.cpp simfile.cpp testgen.cpp  
 HFILES = global.h particuleC.h history.h header.h 
 
-all: general
+all: general initRNGproject
 
 matrices.o: matrices.cpp matrices.h
 	g++ $(CFLAGS) -o matrices.o -c matrices.cpp
