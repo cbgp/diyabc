@@ -195,7 +195,7 @@ class Preferences(AutoPreferences):
                 else:
                     exPath = "docs/executables/diyabc-comput-mac-x64"
         else:
-            return str(self.ui.execPathEdit.text())
+            return str(self.ui.execPathPathEdit.text())
         return exPath
 
     def changeBackgroundColor(self,colorstr):
