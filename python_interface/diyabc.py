@@ -242,6 +242,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         # TOOLBAR
         newButton = QPushButton(QIcon("docs/icons/folder-new.png"),"New",self)
+        newButton.setObjectName("newButton")
         newButton.setToolTip("New project")
         newButton.setMaximumSize(QSize(50, 22))
         #newButton.setObjectName("newButton")
@@ -252,6 +253,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #self.ui.toolBar.addSeparator()
 
         openButton = QPushButton(QIcon("docs/icons/fileopen.png"),"Open",self)
+        openButton.setObjectName("openButton")
         openButton.setToolTip("Open project")
         openButton.setMaximumSize(QSize(57, 22))
         #openButton.setMinimumSize(QSize(16, 18))
@@ -262,6 +264,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         saveButton = QPushButton(QIcon("docs/icons/document-save.png"),"Save",self)
         self.saveButton = saveButton
+        saveButton.setObjectName("saveButton")
         saveButton.setToolTip("Save current project")
         saveButton.setMaximumSize(QSize(53, 22))
         #saveButton.setMinimumSize(QSize(16, 18))
@@ -273,11 +276,11 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         saveAllButton = QPushButton(QIcon("docs/icons/document-save-all.png"),"Save all",self)
         self.saveAllButton = saveAllButton
+        saveAllButton.setObjectName("saveAllButton")
         saveAllButton.setToolTip("Save all projects")
         saveAllButton.setMaximumSize(QSize(72, 22))
         #saveButton.setMinimumSize(QSize(16, 18))
         saveAllButton.setFlat(True)
-        saveAllButton.setWhatsThis("plop")
         QObject.connect(saveAllButton,SIGNAL("clicked()"),self.saveAllProjects)
         self.ui.toolBar.addWidget(saveAllButton)
         saveAllButton.setDisabled(True)
@@ -376,13 +379,13 @@ class Diyabc(formDiyabc,baseDiyabc):
             try:
                 docstr = self.documentator.getDocString("%s"%e.objectName())
                 if objname_debug:
-                    e.setWhatsThis(objnamestr + docstr)
+                    e.setWhatsThis(output.whatsthis_header + objnamestr + "<br/><br/>" + docstr + output.whatsthis_footer)
                 else:
-                    e.setWhatsThis(docstr)
+                    e.setWhatsThis(output.whatsthis_header + docstr + output.whatsthis_footer)
                 log(4,"Adding documentation of "+"%s"%e.objectName())
             except Exception as ex:
                 if objname_debug:
-                    e.setWhatsThis(objnamestr)
+                    e.setWhatsThis(output.whatsthis_header + objnamestr + output.whatsthis_footer)
                 #print "%s"%e
                 pass
 

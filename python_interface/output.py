@@ -9,6 +9,18 @@ from utils.cbgpUtils import log
 # mettre à vrai pour ne pas afficher les popups
 debug = False
 
+whatsthis_header = '\
+<head>\
+<style type="text/css">\
+.different-text-color { color: blue; }\
+</style>\
+</head>\
+<body>\
+<p>\
+<span class="different-text-color">'
+
+whatsthis_footer = '</span></p>'
+
 def notify(parent,title,message):
     # dans tous les cas, on logue
     log(2,message)
