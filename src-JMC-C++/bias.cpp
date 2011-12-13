@@ -492,13 +492,7 @@ long double ***paretoil;
         FILE *flog;
 
         progressfilename = path + ident + "_progress.txt";
-        //strcpy(progressfilename,path);
-        //strcat(progressfilename,ident);
-        //strcat(progressfilename,"_progress.txt");
-
         courantfilename = path + "biascourant.log";
-        //strcpy(courantfilename,path);
-        //strcat(courantfilename,"courant.log");
         cout<<courantfilename<<"\n";
         cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);

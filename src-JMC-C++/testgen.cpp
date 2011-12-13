@@ -1,3 +1,5 @@
+//// ***** Programme de test ****** //////
+
 #ifndef IOSTREAM
 #include <iostream>
 #define IOSTREAM
