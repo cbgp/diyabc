@@ -5,6 +5,21 @@ HFILES = global.h particuleC.h history.h header.h
 
 all: general initRNGproject
 
+libdcmt.a:
+	cd ../dcmt0.6.1/lib/ && $(MAKE) $(MFLAGS)  
+
+### OK :
+acploc.o: acploc.cpp acploc.h
+	g++ $(CFLAGS) -o acploc.o -c acploc.cpp
+
+bias.o: bias.cpp bias.h
+	g++ $(CFLAGS) -o bias.o -c bias.cpp
+
+comparscen.o: comparscen.cpp comparscen.h
+	g++ $(CFLAGS) -o comparscen.o -c comparscen.cpp	
+
+### Not OK
+
 matrices.o: matrices.cpp matrices.h
 	g++ $(CFLAGS) -o matrices.o -c matrices.cpp
 
@@ -38,7 +53,7 @@ testRNG.o: testRNG.cpp
 testRNG: testRNG.o randomgenerator.o
 	g++ $(CFLAGS) -o testRNG testRNG.o randomgenerator.o $(LIBS)
 
-general:  $(CPPFILES) $(HFILES)
+general:  $(CPPFILES) $(HFILES) libdcmt.a
 	g++ $(CFLAGS) -o general general.cpp $(LIBS)
 
 initRNGproject.o: initRNGproject.cpp

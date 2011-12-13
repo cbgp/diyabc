@@ -4,15 +4,20 @@
  *  Created on: 29 march 2011
  *      Author: cornuet
  */
+
+#include <vector>
+
+#include "reftable.h"
+#include "acploc.h"
+#include "header.h"
+
+
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
 #endif
 
-#ifndef VECTOR
-#include <vector>
-#define VECTOR
-#endif
+
 
 #ifndef MATRICES
 #include "matrices.cpp"
@@ -23,11 +28,12 @@
 #include "mesutils.cpp"
 #define MESUTILS
 #endif
-
-#include "acploc.h"
-
 using namespace std;
 extern enregC* enreg;
+extern HeaderC header;
+extern ReftableC rt;
+extern string ident;
+
 int nacp=100000;
 
 /**

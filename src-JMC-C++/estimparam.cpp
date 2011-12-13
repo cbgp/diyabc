@@ -5,15 +5,15 @@
  *      Author: cornuet
  */
 #include <vector>
+#include "header.h"
+#include "matrices.h"
+#include "mesutils.h"
+#include "estimparam.h"
 
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
 #endif
-
-
-
-
 
 
 #ifndef MATRICES
@@ -36,19 +36,6 @@ extern string progressfilename;
 #define coefbw 1.8                            //coefficient multiplicateur de la bandwidth pour le calcul de la densité
 
 
-
-/**
-* définition de la densité d'un paramètre
-*/
-struct pardensC {
-    long double *x,*priord,*postd;
-    long double xmin,xmax,xdelta;
-    int ncl;
-};
-
-struct parstatC {
-    double moy,med,mod,q025,q050,q250,q750,q950,q975;
-};
 
 extern ReftableC rt;
 extern HeaderC header;

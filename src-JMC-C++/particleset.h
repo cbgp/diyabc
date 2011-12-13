@@ -8,6 +8,8 @@
 #ifndef PARTICLESET_H_
 #define PARTICLESET_H_
 
+#include "particuleC.h"
+
 
 /**
 * Structure ParticleSet : définition d'un ensemble de particules

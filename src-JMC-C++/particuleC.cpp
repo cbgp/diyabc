@@ -13,9 +13,8 @@
 #include <string>
 #include <algorithm>
 #include <cstdlib>
-#ifdef _OPENMP
 #include <omp.h>
-#endif
+
 
 
 #include "randomgenerator.h"
@@ -1776,7 +1775,7 @@ void ParticleC::put_one_mutation(int loc) {
 	    do {
 	      put_one_mutation(loc);
 	      //if (loc==0) cout<<"apres put_one_mutation\n";
-	      // if (loc==0) cout<< " XXx firstime = " << firstime <<"\n";
+	      // if (loc==0) cout<< " firstime = " << firstime <<"\n";
 	      simulOK[loc]=cree_haplo(loc);
 	      //if (loc==0) cout<<"apres cree_haplo\n";
 	      snpOK = polymref(loc);

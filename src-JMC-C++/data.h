@@ -8,25 +8,28 @@
 #ifndef DATA_H_
 #define DATA_H_
 
+#include <string>
+#include <vector>
+
 /**
 *  Structure LocusC : définition de la structure LocusC
 */
 struct LocusC
 {
-  string name;
+  std::string name;
   int type;  //0 à 14
   int groupe;    //numero du groupe auquel appartient le locus
   double coeffcoal;  // coefficient pour la coalescence (dépend du type de locus et du sexratio)
   long double **freq;
   //Proprietes des locus sequences
   long double pi_A,pi_C,pi_G,pi_T;
-  vector <long double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
-  vector <int> sitmut;   //array of nsitmut dna sites that are changed through a mutation
-  vector <int> sitmut2;  //
+  std::vector <long double> mutsit;   //array of dnalength elements giving the relative probability of a mutation to a given site of the sequence
+  std::vector <int> sitmut;   //array of nsitmut dna sites that are changed through a mutation
+  std::vector <int> sitmut2;  //
   int dnalength,dnavar;
-  vector <int> tabsit;   //array of dnalength elements giving the number of a dna site;
-  string **haplodna; //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
-  string **haplodnavar; //seulement les sites variab
+  std::vector <int> tabsit;   //array of dnalength elements giving the number of a dna site;
+  std::string **haplodna; //array[sample][gene copy][nucleotide] tous les nucleotides de chaque individu sont mis à la suite les uns des autres
+  std::string **haplodnavar; //seulement les sites variab
   //Proprietes des locus microsatellites
   int mini,maxi,kmin,kmax,motif_size,motif_range,nal;
   double mut_rate,Pgeom,sni_rate,mus_rate,k1,k2;
@@ -53,7 +56,7 @@ struct MissingNuc
 class DataC
 {
 public:
-	string message,title,**indivname,***genotype;
+	std::string message,title,**indivname,***genotype;
 	int nsample,nsample0,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
 	//int *nind;
 	//int **indivsexe;
@@ -64,9 +67,9 @@ public:
     bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
 	//int **ss;  //nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
 	bool *catexist;
-	vector < vector <int> > ss;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
-	vector <int> nind;
-	vector < vector <int> > indivsexe;
+	std::vector < std::vector <int> > ss;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
+	std::vector <int> nind;
+	std::vector < std::vector <int> > indivsexe;
 
 	/* Méthodes */
 	void libere();
@@ -76,11 +79,11 @@ public:
 	 * return=0 si genepop
 	 * return=1 si snp
 	 */
-	int testfile(string filename);
+	int testfile(std::string filename);
 	/**
 	 * lecture d'un fichier de donnée SNP et stockage des informations dans une structure DataC
 	 */
-	int  readfilesnp(string filename);
+	int  readfilesnp(std::string filename);
 	/**
 	 * supprime les locus monomorphes
 	 */
@@ -95,15 +98,15 @@ public:
 	/**
 	 * ecriture en binaire d'un fichier snp
 	 */
-	void ecribin(string filenamebin);
+	void ecribin(std::string filenamebin);
 	/**
 	 * lecture en binaire d'un fichier snp
 	 */
-	void libin(string filenamebin);
+	void libin(std::string filenamebin);
 	/**
 	 * lecture d'un fichier de donnée GENEPOP et stockage des informations dans une structure DataC
 	 */
-	int readfile(string filename);
+	int readfile(std::string filename);
 	/**
 	 * traitement des génotypes microsat au locus loc
 	 */
@@ -122,7 +125,7 @@ public:
 	/**
 	 * chargement des données dans une structure DataC
 	 */
-	int loadfromfile(string filename);
+	int loadfromfile(std::string filename);
 };
 
 

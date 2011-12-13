@@ -4,15 +4,19 @@
  *  Created on: 4 april 2011
  *      Author: cornuet
  */
+
+#include <vector>
+
+
+#include "header.h"
+#include "matrices.h"
+#include "mesutils.h"
+
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
 #endif
 
-#ifndef VECTOR
-#include <vector>
-#define VECTOR
-#endif
 
 #ifndef MATRICES
 #include "matrices.cpp"

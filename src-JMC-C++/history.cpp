@@ -22,6 +22,13 @@ vector <int> histparcat;
 
 /* Méthodes de PriorC */
 
+void PriorC::ecris(){
+	cout <<"    loi="<<this->loi<<"   min="<<this->mini<<"   max="<<this->maxi<<"   ndec="<<this->ndec;
+	if (this->loi=="GA") cout <<"    shape="<<this->sdshape;
+	if (this->constant) cout<<"   constant"; else cout<<"   non constant";
+	if (this->fixed) cout<<"   fixed\n";else cout<<"   non fixed\n";
+}
+
 double PriorC::drawfromprior(MwcGen & mw){
 	    double r;
     if (this->mini==this->maxi) return this->mini;

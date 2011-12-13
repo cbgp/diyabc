@@ -7,13 +7,17 @@
 
 #ifndef REFTABLE_H_
 #define REFTABLE_H_
+#include <string>
+#include <fstream>
+#include "history.h"
+#include "header.h"
 
 class enregC {
 public:
     int numscen;
     float *param,*stat;
     long double dist;
-    string message;
+    std::string message;
     friend bool operator<(const enregC & lhs, const enregC & rhs);
 };
 
@@ -24,25 +28,25 @@ class ReftableC
 public:
     int nrec,*nrecscen,nscen,nreclus,nrec0;
     long posnrec;
-    string datapath, filename, filelog, filename0;
+    std::string datapath, filename, filelog, filename0;
     int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste,nparamut,*nhistparam;
     float *param,*sumstat;
     HistParameterC **histparam;
     MutParameterC  *mutparam;
-    fstream fifo;
+    std::fstream fifo;
     int nstatOK,nsel,nenr;
     enregC* enrsel;
     float *stat_obs;
     long double *var_stat;
 
     void sethistparamname(HeaderC const & header);
-    int readheader(string fname, string flogname, string datafilename);
+    int readheader(std::string fname, std::string flogname, std::string datafilename);
     int writeheader();
     int readrecord(enregC *enr);
     int writerecords(int nenr, enregC *enr);
     int openfile();
     int openfile2();
-    int testfile(string reftablefilename, int npart);
+    int testfile(std::string reftablefilename, int npart);
     int closefile();
     void concat();
     // calcule les variances des statistiques résumées

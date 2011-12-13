@@ -30,10 +30,9 @@
 #define PARTICLESET
 #endif
 
-#ifndef IOMANIP
+
 #include <iomanip>
-#define IOMANIP
-#endif
+
 
 
 extern ParticleSetC ps;

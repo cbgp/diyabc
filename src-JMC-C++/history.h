@@ -8,6 +8,9 @@
 #ifndef HISTORY_H_
 #define HISTORY_H_
 
+#include <string>
+#include "randomgenerator.h"
+
 
 /**
  * struct StatC :éléments de définition d'une summary statistic
@@ -38,19 +41,14 @@ struct StatsnpC
 class PriorC
 {
 public:
-  string loi;
+  std::string loi;
   double mini,maxi,mean,sdshape;
   int ndec;
   bool constant,fixed;
 
-  void ecris(){
-    cout <<"    loi="<<this->loi<<"   min="<<this->mini<<"   max="<<this->maxi<<"   ndec="<<this->ndec;
-    if (this->loi=="GA") cout <<"    shape="<<this->sdshape;
-    if (this->constant) cout<<"   constant"; else cout<<"   non constant";
-    if (this->fixed) cout<<"   fixed\n";else cout<<"   non fixed\n";
-  }
+  void ecris();
   double drawfromprior(MwcGen & mw);
-  void readprior(string ss);
+  void readprior(std::string ss);
 };
 
 /**
@@ -60,10 +58,10 @@ public:
 class ConditionC
 {
 public:
-  string param1,param2,operateur;
+  std::string param1,param2,operateur;
 
   void ecris();
-  void readcondition(string ss);
+  void readcondition(std::string ss);
 
 };
 
@@ -77,7 +75,7 @@ public:
   int pop,pop1,pop2,sample,Ne,time;
   double admixrate;
   int numevent0,nindref;
-  string stime, sNe, sadmixrate;
+  std::string stime, sNe, sadmixrate;
   // char *stime,*sNe,*sadmixrate;
   // int ltime,lNe,ladmixrate;
 
@@ -100,7 +98,7 @@ class Ne0C
 {
 public:
   int val;
-  string name;
+  std::string name;
 };
 
 /**
@@ -109,7 +107,7 @@ public:
 class HistParameterC
 {
 public:
-  string name;
+  std::string name;
   int category;   //0 pour N, 1 pour T et 2 pour A
   double value;
   PriorC prior;
@@ -177,12 +175,12 @@ public:
     if( condition != NULL) delete [] condition;
   };
 
-  /* détermination du ou des paramètres contenus dans la string s */
-  void detparam(string s,int cat);
+  /* détermination du ou des paramètres contenus dans la std::string s */
+  void detparam(std::string s,int cat);
   /* lecture/interprétation des lignes d'un scénario */
-  string read_events(int nl,string *ls);
+  std::string read_events(int nl,std::string *ls);
   /* verification d'un scénario*/
-  string checklogic();
+  std::string checklogic();
   void ecris();
 }; /* fin classe ScenarioC */
 
@@ -213,7 +211,7 @@ struct NodeC
 {
   int pop,sample,state,brhaut;
   double height;
-  string dna;
+  std::string dna;
   bool OK;
 };
 

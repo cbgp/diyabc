@@ -4,15 +4,17 @@
  *  Created on: 23 march 2011
  *      Author: cornuet
  */
+#include "bias.h"
+#include "estimparam.h"
+
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
 #endif
 
-#ifndef VECTOR
+
 #include <vector>
-#define VECTOR
-#endif
+
 
 #ifndef MATRICES
 #include "matrices.cpp"
@@ -29,24 +31,28 @@
 #include "particleset.cpp"
 #define PARTICLESET
 #endif
+using namespace std;
+
 
 extern ParticleSetC ps;
 extern enregC* enreg;
 extern bool multithread;
 extern string progressfilename;
 extern string scurfile;
+extern HeaderC header;
+extern int nparamcom, nparcompo, **numpar, numtransf, npar;
+extern string ident, headerfilename;
+extern bool original, composite;
+extern string* nomparam;
 
-struct enreC {
-    int numscen;
-    double *paramvv,*stat;
-};
+
 
 parstatC **paramest;
 enreC *enreg2;
 long double **br,*rrmise,*rmad,**rmse,*cov50,*cov95,**fac2,**medbr,*rmedad,**rmae;
 long double ***paretoil;
 
-using namespace std;
+
 
 /*
     string pseudoprior(string s) {

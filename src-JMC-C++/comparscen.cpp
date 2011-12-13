@@ -4,20 +4,18 @@
  *  Created on: 18 march 2011
  *      Author: cornuet
  */
+
+#include <algorithm>
+#include <vector>
+#include "comparscen.h"
+#include "reftable.h"
+#include "header.h"
+
 #ifndef HEADER
 #include "header.cpp"
 #define HEADER
 #endif
 
-#ifndef ALGORITHM
-#include <algorithm>
-#define ALGORITHM
-#endif
-
-#ifndef VECTOR
-#include <vector>
-#define VECTOR
-#endif
 
 #ifndef MATRICES
 #include "matrices.cpp"
@@ -32,12 +30,11 @@
 using namespace std;
 
 extern string progressfilename;
+extern ReftableC rt;
 extern double time_readfile;
-
-struct matligneC
-{
-    long double* x;
-};
+extern string ident;
+extern HeaderC header;
+extern int nstatOKsel;
 
 int ncs=100;
 //double time_loglik=0.0, time_matC=0.0,time_call=0.0;
@@ -46,26 +43,7 @@ long double *vecY,*vecYY,*cvecW,**cmatX0;
 matligneC *matA;
 
 
-/**
- *  Structure contenant les résultats de l'estimation de la probabilité a posteriori d'un scénario
- */ 
-struct posteriorscenC
-{
-    long double x,inf,sup;
-	int err;
-};
 
-/**
-* définit l'opérateur de comparaison de deux lignes de la matrice cmatA
-* pour l'utilisation de la fonction sort du module algorithm
-*/
-struct complignes
-{
-   bool operator() (const matligneC & lhs, const matligneC & rhs) const
-   {
-      return lhs.x[0] < rhs.x[0];
-   }
-};
 
 /**
  * Alloue la mémoire pour les nombreuses matrices (et vecteurs) utiles à la régression logistique

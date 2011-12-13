@@ -8,6 +8,11 @@
 #ifndef PARTICULEC_H_
 #define PARTICULEC_H_
 
+#include "history.h"
+#include "data.h"
+#include "randomgenerator.h"
+#include "mesutils.h"
+
 #define MICMISSING -9999
 #define SEQMISSING ""
 #define SNPMISSING 9
