@@ -81,6 +81,7 @@ class Preferences(AutoPreferences):
                     ["check","debugWhatsThis","Show object name in what's this (needs restart)",False],
                     ["check","useDefaultExecutable","Use default executable check",True],
                     ["pathEdit","execPath","Path to the executable file",""],
+                    ["lineEdit","particleLoopSize","Particle loop size","100"],
                     ["combo","maxThread",dicoValTxtMaxThread,[str(i) for i in range(1,nb_core+1)],str(nb_core),"Maximum thread number"],
                     ["combo","maxLogLvl",dicoValTxtLogLvl,["1","2","3","4"],"3","Maximum log level"],
                     ["combo","picturesFormat",dicoValTxtFormat,formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)"],

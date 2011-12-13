@@ -393,7 +393,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.save()
         self.writeRefTableHeader()
         if self.th == None and self.thAnalysis == None:
-            self.parent.preferences_win.checkRam()
+            cbgpUtils.checkRam()
             if not os.path.exists("%s/reftable.bin"%self.dir) and os.path.exists("%s/reftable.log"%self.dir):
                 os.remove("%s/reftable.log"%self.dir)
             try:
