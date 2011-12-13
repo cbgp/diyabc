@@ -24,11 +24,7 @@
 #define MESUTILS
 #endif
 
-#ifndef IOMANIP
-#include <iomanip>
-#define IOMANIP
-#endif
-
+#include "acploc.h"
 
 using namespace std;
 extern enregC* enreg;
@@ -37,12 +33,7 @@ int nacp=100000;
 /**
 * Structure resACP : contient les résultats d'une ACP 
 */ 
-struct resACPC
-{
-   int index,nlambda;      //index=0 pour matrice de corrélation et !=0 pour matrice de covariance
-   long double proportion,*lambda,slambda,**vectprop,**princomp,*moy,*sd;
-   
-};
+
 /**
 * Effectue une ACP et renvoie les résultats dans une structure resACP 
  */ 

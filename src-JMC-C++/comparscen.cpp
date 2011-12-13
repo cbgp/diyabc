@@ -40,7 +40,7 @@ struct matligneC
 };
 
 int ncs=100;
-double time_loglik=0.0,time_matC=0.0,time_call=0.0;
+//double time_loglik=0.0, time_matC=0.0,time_call=0.0;
 long double **cmatA,**cmatB,**cmatB0,**cmatX,**cmatXT,**cmatC,*cdeltabeta,*cbeta0,*cbeta,**cmatP,**cmatY,*cmatYP,*cloglik,*csd,*cbet,*cpx0,*csmatY,*csmatP,**cgdb ;
 long double *vecY,*vecYY,*cvecW,**cmatX0;
 matligneC *matA;
@@ -344,8 +344,8 @@ struct complignes
     {
         int i,imod;
         long double a,llik=0.0;
-        double debut,duree,clock_zero=0.0;
-        debut=walltime(&clock_zero);
+//        double debut,duree,clock_zero=0.0;
+//        debut=walltime(&clock_zero);
         bool OK=true;
 //    #pragma omp parallel for private(a,imod) if(multithread)\
 //      reduction( + : llik )
@@ -371,7 +371,7 @@ struct complignes
 				return false;
 			}
 		}
-        duree=walltime(&debut);time_loglik += duree;
+//        duree=walltime(&debut);//time_loglik += duree;
         return OK;
     }
 
@@ -535,11 +535,12 @@ struct complignes
 */
     int polytom_logistic_regression(int nli, int nco, long double **cmatX0, long double *vecY, long double *cvecW, long double *px, long double *pxi, long double *pxs)
     {
-        double clock_zero;
+//        double clock_zero;
         int err,nmodel=0,no;
-        double debut,duree,sx,sx2;
+//        double debut, duree;
+        double sx,sx2;
         int *numod;
-        for (int i=1;i<nli;i++) {if (vecY[i]>1.0*nmodel) nmodel=vecY[i]+0.1;}
+        for (int i=1;i<nli;i++) {if (vecY[i]>1.0*nmodel) nmodel=vecY[i]+0.1;} // transforme les .99999 en (int)1
         if (nmodel<1) {px[0]=1.0;pxi[0]=1.0;pxs[0]=1.0;return 0;}
         //cout << "   nmodel="<<nmodel<<"   nco="<<nco<<"   nmodnco="<<nmodel*(nco+1)<<endl;
         numod=new int[nmodel+1];
@@ -561,7 +562,7 @@ struct complignes
 
         while (fin==false)
             {
-              clock_zero=0.0;debut=walltime(&clock_zero);
+//              clock_zero=0.0;debut=walltime(&clock_zero);
               rep++;
               remplimatriceYP(nli,nco,nmodel,cmatP,cmatYP,cbeta,cmatX,cvecW,cmatY,csmatP);
             for (i=0;i<nmodnco;i++) {for (j=0;j<nmodnco;j++) cmatC[i][j]=0.0;}
@@ -587,7 +588,7 @@ struct complignes
                     }
                 }
               }
-        duree=walltime(&debut);time_matC += duree;
+        //duree=walltime(&debut);time_matC += duree;
 			//kap = kappa(nmodnco,cmatC);
 			//printf("\nkappa(cmatC) = %10Le",kap);
 			//if(kap>1.0E99) cout <<"   MATRICE SINGULIERE\n"; else cout<<"\n";
@@ -690,7 +691,7 @@ struct complignes
         cout<<"\niteration "<<rep;
         for (i=0;i<nmodel+1;i++) {cout<<"  ";cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<px[i];}
         cout<<"\n";
-        //if ((rep==2)and(sx2>0.9999)) exit(1);
+        if ((rep==2)and(sx2<0.9999)) exit(1); // FIXME
 		return err;
    }
 
@@ -702,8 +703,8 @@ struct complignes
         bool trouve;
         int ntt,j,kk,err;
         long double som, *px,*pxi,*pxs;
-		double duree,debut,clock_zero;
-        clock_zero=0.0;debut=walltime(&clock_zero);
+//		double duree,debut,clock_zero;
+//        clock_zero=0.0;debut=walltime(&clock_zero);
         postlog = new posteriorscenC[rt.nscenchoisi];
         for (int i=0;i<rt.nscenchoisi;i++) {
 		      postlog[i].err=0;
@@ -771,7 +772,7 @@ struct complignes
 				}
 			}
 			delete [] px; delete []pxi; delete []pxs;
-			duree=walltime(&debut);time_call += duree;
+//			duree=walltime(&debut);time_call += duree;
 			//cout<<"call_polytom_logistic_regression 3\n";
 		} else {
 		    long double d,a=1.0/(long double)nts;
@@ -869,9 +870,9 @@ struct complignes
         //header.calstatobs(statobsfilename);
 		stat_obs = header.stat_obs;
         rt.alloue_enrsel(nsel);
-        clock_zero=0.0;debut=walltime(&clock_zero);
+//        clock_zero=0.0;debut=walltime(&clock_zero);
         rt.cal_dist(nrec,nsel,stat_obs);
-        duree=walltime(&debut);time_readfile += duree;
+//        duree=walltime(&debut);time_readfile += duree;
         iprog+=4;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         postscendir = comp_direct(nseld);
         save_comp_direct(nseld,postscendir,path,ident);
