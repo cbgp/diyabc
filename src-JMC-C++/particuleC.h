@@ -18,10 +18,6 @@
 #define SNPMISSING 9
 #define NUCMISSING 'N'
 
-
-#define NSTAT 43
-
-
 /**
  * Struct ParticleC : éléments de définition d'une particule
  */

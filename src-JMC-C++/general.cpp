@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <string.h>
+#include <string>
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/stat.h>
@@ -61,6 +62,48 @@ extern "C"
 #define MODCHEC
 #endif
 */
+
+#include "particuleC.h"
+
+
+#define NSTAT 43
+
+
+string* stat_type;
+int* stat_num;
+
+void initstat_typenum(){
+	string stat_type0[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","HP0","HM1","HV1","HMO","NP0","NM1","NV1","NMO","FP0","FM1","FV1","FMO","AP0","AM1","AV1","AMO"};
+	int stat_num0[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28 ,  29 ,  30 ,  31 ,  32 ,  33 ,  34 ,  35 ,  36 };
+/*  Numérotation des stat
+ * 	1 : nal			-1 : nha			 21 : moyenne des genic diversities
+ *  2 : het			-2 : nss             22 : variance des genic diversities
+ *  3 : var			-3 : mpd			 23 : premier quartile des genic diversities
+ *  4 : MGW			-4 : vpd			 24 : troisième quartile des genic diversities
+ *  5 : Fst			-5 : dta			 25 : moyenne des distances de Nei
+ *  6 : lik			-6 : pss			 26 : variance des distances de Nei
+ *  7 : dm2			-7 : mns			 27 : premier quartile des distances de Nei
+ *  8 : n2P			-8 : vns			 28 : troisième quartile des distances de Nei
+ *  9 : h2P			-9 : nh2			 29 : moyenne des distances Fst
+ * 10 : v2P		   -10 : ns2			 30 : variance des distances Fst
+ * 11 : das        -11 : mp2			 31 : premier quartile des distances Fst
+ * 12 : Aml        -12 : mpb			 32 : troisième quartile des distances Fst
+ * 				   -13 : fst			 33 : moyenne des estimations d'admixture
+ * 				   -14 : aml			 34 : variance des estimations d'admixture
+ * 										 35 : premier quartile des estimations d'admixture
+ * 										 36 : troisième quartile des estimations d'admixture
+ */
+	stat_type = new string[NSTAT];
+	for(int i=0; i<NSTAT; ++i)
+		stat_type[i] = stat_type0[i];
+	//stat_type = stat_type0;
+	stat_num = new int[NSTAT];
+	for(int i=0; i<NSTAT; ++i)
+		stat_num[i] = stat_num0[i];
+
+}
+
+
 
 /* Début: pour le nouveau générateur de nombre aléatoires */
 
@@ -146,7 +189,7 @@ int readheadersim() {
 
 int main(int argc, char *argv[]){
 	try {
-  
+		initstat_typenum();
     bool firsttime;
 	int k,seed;
 	int optchar;
@@ -354,7 +397,9 @@ int main(int argc, char *argv[]){
      /* Fin: pour le nouveau RNG      */
 
 	switch (action) {
-      case 'r' :   k=readheaders();
+      case 'r' :
+    	           k=readheaders();
+
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"   ";fflush(stdin);
                    if (k==1) {
                               rt.datapath = datafilename;

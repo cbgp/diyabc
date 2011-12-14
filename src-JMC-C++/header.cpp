@@ -514,7 +514,10 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 			if (debuglevel==2) cout <<"s1="<<s1<<"\n";
 			ss=splitwords(s1," ",&nss);
 			if (debuglevel==2) cout << ss[0]<<"\n";
-			j=0;while (ss[0]!=stat_type[j]) j++;
+			j=0;while (ss[0]!=stat_type[j]) {
+				//if (debuglevel==2)	cout << ss[0] << " " << j << " "<< stat_type[j] << endl;
+				j++;
+			}
 			if (debuglevel==2) cout<<"j="<<j<<"\n";
 			if (this->groupe[gr].type==0) {   //MICROSAT
 				if (stat_num[j]<5) {
