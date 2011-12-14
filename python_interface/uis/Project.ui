@@ -719,18 +719,18 @@
                      </property>
                      <property name="minimumSize">
                       <size>
-                       <width>370</width>
+                       <width>410</width>
                        <height>40</height>
                       </size>
                      </property>
                      <property name="maximumSize">
                       <size>
-                       <width>370</width>
+                       <width>410</width>
                        <height>40</height>
                       </size>
                      </property>
                      <property name="text">
-                      <string>Number of simulated data sets in the reference table</string>
+                      <string>Number of already simulated data sets in the reference table</string>
                      </property>
                      <property name="textFormat">
                       <enum>Qt::AutoText</enum>
@@ -753,13 +753,13 @@
                      </property>
                      <property name="minimumSize">
                       <size>
-                       <width>370</width>
+                       <width>410</width>
                        <height>40</height>
                       </size>
                      </property>
                      <property name="maximumSize">
                       <size>
-                       <width>370</width>
+                       <width>410</width>
                        <height>40</height>
                       </size>
                      </property>
@@ -1201,8 +1201,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>96</width>
-               <height>26</height>
+               <width>929</width>
+               <height>635</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">

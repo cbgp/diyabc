@@ -85,14 +85,14 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         self.setWindowIcon(QIcon("docs/icons/coccicon.png"))
 
-        self.illegalProjectNameCharacters = ['_','-',"'",'"','.']
+        self.illegalProjectNameCharacters = ['_','-',"'",'"','.',"/"]
+        self.illegalAnalysisNameCharacters = ["'",'"','.',"/"]
 
         # ouverture des projets donnés en paramètre au lancement
         if projects != None and len(projects) > 0:
             #self.switchToMainStack()
             for projDirName in projects:
                 self.openProject(projDirName)
-
         try:
             self.documentator = Documentator("docs/documentation.xml",self)
             self.updateDoc()

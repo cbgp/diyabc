@@ -57,13 +57,13 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
         self.ui.titleInfoLabel.setText(text)
 
         self.analysisNameEdit.setStyleSheet("background-color: #EFB1B3")
-        self.analysisNameEdit.setText("Fill me")
-        self.analysisNameEdit.focusInEvent = self.analysisNameEdition
-        #QObject.connect(self.analysisNameEdit,SIGNAL("focusChanged()"),self.analysisNameEdition)
+        #self.analysisNameEdit.setText("Fill me")
+        #self.analysisNameEdit.grabKeyboard()
+        #self.analysisNameEdit.setFocus()
+        #self.analysisNameEdit.focusInEvent = self.analysisNameEdition
+        QObject.connect(self.analysisNameEdit,SIGNAL("textChanged(QString)"),self.analysisNameEdition)
 
-    def analysisNameEdition(self,p):
-        if str(self.analysisNameEdit.text()) == "Fill me":
-            self.analysisNameEdit.setText("")
+    def analysisNameEdition(self,string):
         self.analysisNameEdit.setStyleSheet("background-color: ")
 
     def preEvaluateCheck(self):
@@ -91,7 +91,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
         if name.strip() == "":
             output.notify(self,"name error","Analysis name cannot be empty")
             return False
-        for c in self.parent.parent.illegalProjectNameCharacters:
+        for c in self.parent.parent.illegalAnalysisNameCharacters:
             if c in name:
                 output.notify(self,"name error","Analysis name contains illegal characters")
                 return False
@@ -107,6 +107,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
         """
         if self.checkName():
             name = str(self.ui.analysisNameEdit.text())
+            name = name.replace(' ','_')
             # pour les cas de comparison et estimate, la selection n'influe pas sur l'écran suivant
             # on instancie donc Comparison et Estimation maintenant
             if self.ui.comparisonRadio.isChecked():
