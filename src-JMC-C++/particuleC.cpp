@@ -1641,7 +1641,7 @@ void ParticleC::put_one_mutation(int loc) {
     p=(double)n1/(double)n;
     if (p > 0.5) poly=(p <= 1.0-this->reffreqmin);
     else         poly=(p >= this->reffreqmin);
-    //if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
+    // if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
     return poly;
   }
 	

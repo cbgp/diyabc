@@ -96,11 +96,10 @@ void initstat_typenum(){
 	stat_type = new string[NSTAT];
 	for(int i=0; i<NSTAT; ++i)
 		stat_type[i] = stat_type0[i];
-	//stat_type = stat_type0;
+
 	stat_num = new int[NSTAT];
 	for(int i=0; i<NSTAT; ++i)
 		stat_num[i] = stat_num0[i];
-
 }
 
 

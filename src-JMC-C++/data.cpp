@@ -877,6 +877,7 @@ cout<<"fin de ecribin\n";
     			cout<<"relecture du fichier binaire\n";
     			this->libin(filenamebin);
     			cout<<"fin de la lecture du fichier binaire\n\n";
+    			for (loc=0;loc<this->nloc;loc++) this->cal_coeffcoal(loc);
     		}
     	}
     	this->nsample0 = this->nsample;
