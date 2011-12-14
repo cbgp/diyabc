@@ -871,12 +871,20 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ ferme le projet qui est à l'index "index" du tabWidget
         le sauvegarde si save == True et le déverrouille
         """
+        cdir = self.ui.tabWidget.currentWidget().dir
         if save == None:
             if not output.debug:
-                reply = QtGui.QMessageBox.question(self, 'Message',
-                    "Do you want to save the Project ?", QtGui.QMessageBox.Yes | 
-                    QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
-                save = (reply == QtGui.QMessageBox.Yes)
+                qmb = QMessageBox()
+                qmb.setText("Do you want to save the Project ?")
+                qmb.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+                qmb.setDefaultButton(QMessageBox.Save)
+                reply = qmb.exec_()
+                print QMessageBox.Save , QMessageBox.Discard , QMessageBox.Cancel , reply
+                if (reply == QMessageBox.Cancel):
+                    print "plooooo"
+                    return
+                else:
+                    save = (reply == QtGui.QMessageBox.Save)
             else:
                 save = True
         
@@ -904,13 +912,12 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.nextProjectActionMenu.setDisabled(True)
             self.prevProjectActionMenu.setDisabled(True)
             self.saveAllButton.setDisabled(True)
+        log(1,"Project '%s' closed"%(cdir))
 
     def closeCurrentProject(self,save=None):
         """ ferme le projet courant, celui de l'onglet séléctionné
         """
-        cdir = self.ui.tabWidget.currentWidget().dir
         self.closeProject(self.ui.tabWidget.currentIndex(),save)
-        log(1,"Project '%s' closed"%(cdir))
 
     def saveCurrentProject(self):
         """ sauve le projet courant, cad ecrit les fichiers temporaires de conf

@@ -206,9 +206,17 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         # puis on le recrée, vide évidemment
         os.mkdir(pic_dir)
 
-        answer = QMessageBox.question(self,"Saving option","Would you like to save all images in one file or 1 image per file ? (PDF or SVG or JPG or PNG)",\
-                "All in one file","One per file")
-        if answer == 0:
+        qmb = QMessageBox()
+        qmb.setText("Would you like to save all images in one file or 1 image per file ? (PDF or SVG or JPG or PNG)")
+        #qmb.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+        qmb.addButton("All in one file",0)
+        qmb.addButton("One per file",0)
+        qmb.addButton(QMessageBox.Cancel)
+        answer = qmb.exec_()
+        print answer
+        if (answer == QMessageBox.Cancel):
+            return
+        elif answer == 0:
             self.saveDrawsToOne()
         elif answer == 1:
             self.saveEachDraws()

@@ -289,8 +289,14 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         # puis on le recrée, vide évidemment
         os.mkdir(pic_dir)
 
-        answer = QMessageBox.question(self,"Saving option","Would you like to save all images in one file or in separated files ?",\
-                "All in one","Separated")
+        qmb = QMessageBox()
+        qmb.setText("Would you like to save all images in one file or in separated files ?")
+        qmb.addButton("All in one file",0)
+        qmb.addButton("Separated",0)
+        qmb.addButton(QMessageBox.Cancel)
+        answer = qmb.exec_()
+        if answer == QMessageBox.Cancel:
+            return
         if answer == 0:
             self.saveDrawsToOne()
         elif answer == 1:
