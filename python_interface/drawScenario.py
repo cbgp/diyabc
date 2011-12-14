@@ -228,7 +228,8 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 font.setPixelSize(10+font_inc)
                 painter.setFont(font)
                 if t.node[i].ref :  
-                    painter.drawText(x-10,y+25,'[Sa %i]'%t.node[i].pop)
+                    #painter.drawText(x-10,y+25,'[Sa %i]'%t.node[i].pop)
+                    painter.drawText(x-10,y+25,'%i ind'%scc.dicoPopRefNindRef[t.node[i].pop])
                 else:
                     painter.drawText(x-10,y+25,'Sa %i'%t.node[i].pop)
                 font = QFont()

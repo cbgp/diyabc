@@ -141,6 +141,7 @@ class Scenario(object):
         self.nsamp       = nsamp
         self.nrefsamp    = nrefsamp
         self.parametersbackup = []
+        self.dicoPopRefNindRef = {}
         if time_sample == None : self.time_sample =[]
         else                   : self.time_sample= time_sample
         
@@ -245,6 +246,7 @@ class Scenario(object):
             if li.upper().find('SAMPLE')+li.upper().find('REFSAMPLE') > -1 : 
                 self.nsamp+=1
                 if li.upper().find('REFSAMPLE') > -1 :
+                    self.dicoPopRefNindRef[int(li.strip().split(' ')[-2])] = int(li.strip().split(' ')[-1])
                     self.nrefsamp+=1
                 if len(li.strip().split(' ')) < 3:
                     raise IOScreenError, "At line %i, the number of words is incorrect"%(i+2)
