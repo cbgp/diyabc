@@ -964,7 +964,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         else:
             return False
 
-
     def closeEvent(self, event):
         """ Redéfinition de l'évennement de fermeture de la
         fenetre principale pour arrêter l'activité des projets

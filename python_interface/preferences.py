@@ -39,10 +39,12 @@ class Preferences(AutoPreferences):
         for i in range(1,nb_core+1):
             dicoValTxtMaxThread[str(i)] = str(i)
 
-        dicoValTxtLogLvl = {"1":"1 : Human actions",
+        dicoValTxtLogLvl = {
+                 "1":"1 : Human actions",
                  "2":"2 : High level actions (file read, checks)",
                  "3":"3 : Small actions",
-                 "4":"4 : Details"}
+                 "4":"4 : Details"
+        }
 
         formats = ["pdf","svg","jpg","png"]
         dicoValTxtFormat = {}
@@ -53,9 +55,9 @@ class Preferences(AutoPreferences):
         for i in QStyleFactory.keys():
             self.styles.append(str(i))
             #self.ui.styleCombo.addItem(str(i))
-        default = None
+        default_style = None
         if "Cleanlooks" in self.styles:
-            default = "Cleanlooks"
+            default_style = "Cleanlooks"
         
         dicoValTxtStyle = {}
         for i in self.styles:
@@ -81,29 +83,29 @@ class Preferences(AutoPreferences):
         dico_fields = {
                 "connexion" : [
                     ["check","useServer","Use a server (don't check if you don't know what it is)",False],
-                    ["lineEdit","serverAddress","Address of the server","localhost",visible],
-                    ["lineEdit","serverPort","Port of the server","666",visible]
+                    ["lineEdit","serverAddress","Address of the server","localhost"],
+                    ["lineEdit","serverPort","Port of the server","666"]
                 ],
                 "appearance" : [
                     ["check","showTrayIcon","Show tray icon",False],
-                    ["combo","style",dicoValTxtStyle,self.styles,default,"Style"],
+                    ["combo","style","Style",dicoValTxtStyle,self.styles,default_style],
                     ["lineEdit","fontFamily","Application font family\\n(needs restart)",default_font_family,invisible],
                     ["lineEdit","fontSize","Application point font size\\n(needs restart)",default_Psize,invisible],
                     ["lineEdit","fontStrikeOut","rien","False",invisible],
                     ["lineEdit","fontUnderline","rien","False",invisible],
                     ["lineEdit","fontBold","rien","False",invisible],
                     ["lineEdit","fontItalic","rien","False",invisible],
-                    ["combo","backgroundColor",dicoValTxtColor,colors,"default","Window background color"]
+                    ["combo","backgroundColor","Window background color",dicoValTxtColor,colors,"default"]
                 ],
                 "various" : [
                     ["check","activateWhatsThis","Activate ""what's this"" help functionnality",True],
                     ["check","debugWhatsThis","Show object name in what's this\\n(needs restart)",False],
                     ["check","useDefaultExecutable","Use default executable check",True],
                     ["pathEdit","execPath","Path to the executable file",""],
-                    ["lineEdit","particleLoopSize","Particle loop size","100",visible],
-                    ["combo","maxThread",dicoValTxtMaxThread,[str(i) for i in range(1,nb_core+1)],str(nb_core),"Maximum thread number"],
-                    ["combo","maxLogLvl",dicoValTxtLogLvl,["1","2","3","4"],"3","Maximum log level"],
-                    ["combo","picturesFormat",dicoValTxtFormat,formats,"pdf","Graphics and pictures save format \\n(scenario trees, PCA graphics)"]
+                    ["lineEdit","particleLoopSize","Particle loop size","100"],
+                    ["combo","maxThread","Maximum thread number",dicoValTxtMaxThread,[str(i) for i in range(1,nb_core+1)],str(nb_core)],
+                    ["combo","maxLogLvl","Maximum log level",dicoValTxtLogLvl,["1","2","3","4"],"3"],
+                    ["combo","picturesFormat","Graphics and pictures save format \\n(scenario trees, PCA graphics)",dicoValTxtFormat,formats,"pdf"]
                 ]
         }
         self.digest(dico_fields)
@@ -130,7 +132,6 @@ class Preferences(AutoPreferences):
         self.verticalLayoutScroll_appearance.addWidget(fontButton)
         QObject.connect(fontButton,SIGNAL("clicked()"),self.changeFontOptions)
         self.updateFont()
-
 
         self.toggleServer(self.ui.useServerCheck.isChecked())
         self.toggleExeSelection(self.ui.useDefaultExecutableCheck.isChecked())

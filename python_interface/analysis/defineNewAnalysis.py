@@ -28,8 +28,6 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
         self.ui.verticalLayout_2.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)
 
-
-
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -57,6 +55,16 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
             plur = 's'
         text = "The reference table contains %s records.\nEach record includes %s parameters and %s summary statistics.\nThere %s %s scenario%s."%(nbsets,self.parent.hist_model_win.getNbVariableParam(),nbStat,verb,nbScenario,plur)
         self.ui.titleInfoLabel.setText(text)
+
+        self.analysisNameEdit.setStyleSheet("background-color: #EFB1B3")
+        self.analysisNameEdit.setText("Fill me")
+        self.analysisNameEdit.focusInEvent = self.analysisNameEdition
+        #QObject.connect(self.analysisNameEdit,SIGNAL("focusChanged()"),self.analysisNameEdition)
+
+    def analysisNameEdition(self,p):
+        if str(self.analysisNameEdit.text()) == "Fill me":
+            self.analysisNameEdit.setText("")
+        self.analysisNameEdit.setStyleSheet("background-color: ")
 
     def preEvaluateCheck(self):
         """ empêche qu'aucune des deux cases ne soit cochée

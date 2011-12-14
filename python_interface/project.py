@@ -99,6 +99,10 @@ class Project(baseProject,formProject):
         self.ui.frame_11.hide()
         self.ui.frame_12.hide()
 
+        self.ui.nbSetsDoneEdit.setStyleSheet("background-color: #DEF8FF")
+        self.ui.dirEdit.setStyleSheet("background-color: #DEF8FF")
+        self.ui.dataFileEdit.setStyleSheet("background-color: #DEF8FF")
+
     def returnTo(self,elem):
         self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)
         self.ui.analysisStack.setCurrentWidget(elem)

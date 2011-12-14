@@ -89,14 +89,15 @@ class AutoPreferences(QFrame):
         for cat in dico_fields.keys():
             self.addCategory(cat)
             for f in dico_fields[cat]:
-                if f[0] == "combo":
-                    self.addPropCombo(cat,f[1],f[2],f[3],f[4],f[5])
-                elif f[0] == "check":
-                    self.addPropCheck(cat,f[1],f[2],f[3])
-                elif f[0] == "lineEdit":
-                    self.addPropLineEdit(cat,f[1],f[2],f[3],f[4])
-                elif f[0] == "pathEdit":
-                    self.addPropPathEdit(cat,f[1],f[2],f[3])
+                exec('self.addProp%s(cat,*f[1:])'%(f[0][0].upper() + f[0][1:]))
+                #if f[0] == "combo":
+                #    self.addPropCombo(cat,f[1],f[2],f[3],f[4],f[5])
+                #elif f[0] == "check":
+                #    self.addPropCheck(cat,f[1],f[2],f[3])
+                #elif f[0] == "lineEdit":
+                #    self.addPropLineEdit(cat,f[1],f[2],f[3],f[4])
+                #elif f[0] == "pathEdit":
+                #    self.addPropPathEdit(cat,f[1],f[2],f[3])
 
     def addCategory(self,catname):
         if catname in self.categoryList:
@@ -139,7 +140,7 @@ class AutoPreferences(QFrame):
         exec('self.horizontalLayout_%s_%s.addWidget(self.%sCheck) '%(catname,propname,propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s) '%(catname,catname,propname))
 
-    def addPropCombo(self,catname,propname,dicoValTxt,l_ordered_val,default_value=None,labeltxt=""):
+    def addPropCombo(self,catname,propname,labeltxt,dicoValTxt,l_ordered_val,default_value=None):
 
         self.dicoCategory[catname].append( [propname,"combo",dicoValTxt,l_ordered_val,default_value,labeltxt] )
 
@@ -165,7 +166,7 @@ class AutoPreferences(QFrame):
             if ind != -1:
                 exec('self.%sCombo.setCurrentIndex(%s)'%(propname,ind))
 
-    def addPropLineEdit(self,catname,propname,labelText,default_value="",visible_val=visible):
+    def addPropLineEdit(self,catname,propname,labelText,default_value="",visibility=visible):
         self.dicoCategory[catname].append( [propname, "lineEdit", labelText, default_value] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
@@ -188,7 +189,7 @@ class AutoPreferences(QFrame):
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         exec('self.horizontalLayout_%s.addItem(spacerItem)'%(propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s)'%(catname,catname,propname))
-        if visible_val == invisible:
+        if visibility == invisible:
             print catname,propname," invisible"
             exec('self.frame_%s_%s.setVisible(False)'%(catname,propname))
 
