@@ -76,13 +76,14 @@ class ProjectReftable(Project):
         arrêter la génération de la reftable
         """
         if os.path.exists("%s"%self.dir):
+            if self.th != None:
+                self.th.terminate()
             f = open("%s/.stop"%self.dir,"w")
             f.write(" ")
             f.close()
             time.sleep(1)
             need_to_start_analysis = (self.th != None and len(self.analysisQueue)>0)
             if self.th != None:
-                self.th.terminate()
                 self.th.killProcess()
                 self.th = None
             #self.ui.reftableProgressLabel.setText("")
