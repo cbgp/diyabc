@@ -764,7 +764,7 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>Required number of simulated data sets</string>
+                      <string>Total required number of simulated data sets</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
