@@ -1034,7 +1034,7 @@ parstatC *parstat;
         }
         fclose(f1);
         //cout<<"apres close(f1)\n";
-        nomfiparstat = path+ident+"_mmq.txt";
+        nomfiparstat = path+ident+"_mmmq.txt";
         //strcpy(nomfiparstat,path);
         //strcat(nomfiparstat,ident);
         //strcat(nomfiparstat,"_mmmq.txt");
