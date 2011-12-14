@@ -54,7 +54,7 @@
       <item>
        <widget class="QPushButton" name="viewLocateButton">
         <property name="text">
-         <string>View locate results</string>
+         <string>View numerical results</string>
         </property>
        </widget>
       </item>

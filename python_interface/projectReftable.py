@@ -135,9 +135,9 @@ class ProjectReftable(Project):
                 "pre-ev" : "pca",
                 "bias" : "bias"
                 }
-        anDir = dicoCategoryDirName[analysis.category]
+        anDir = analysis.name
         anDir += "_"
-        anDir += analysis.name
+        anDir += dicoCategoryDirName[analysis.category]
 
         typestr = dicoCategoryDirName[analysis.category]
         if typestr == 'estimation':
@@ -915,7 +915,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if os.path.exists("%s/%s_phistar.txt"%(self.dir,aid))\
                     and os.path.exists("%s/%s_paramstatdens.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
-                aDirName = "estimation_%s"%aid
+                aDirName = "%s_estimation"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
@@ -936,7 +936,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) and\
                     os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
-                aDirName = "comparison_%s"%aid
+                aDirName = "%s_comparison"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
@@ -990,7 +990,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 log(3,"File %s/%s_bias.txt exists"%(self.dir,aid))
                 #print "les fichiers existent"
                 # deplacement des fichiers de résultat
-                aDirName = "bias_%s"%aid
+                aDirName = "%s_bias"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias.txt"%(self.dir,aDirName))
@@ -1010,7 +1010,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         elif atype == "evaluate":
             if os.path.exists("%s/%s_confidence.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
-                aDirName = "evaluation_%s"%aid
+                aDirName = "%s_evaluation"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_confidence.txt"%(self.dir,aid),"%s/analysis/%s/confidence.txt"%(self.dir,aDirName))
@@ -1027,7 +1027,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         elif atype == "modelChecking":
             if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)) or os.path.exists("%s/%s_mclocate.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
-                aDirName = "modelChecking_%s"%aid
+                aDirName = "%s_modelChecking"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_mclocate.txt"%(self.dir,aid)):
@@ -1047,7 +1047,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         elif atype == "pre-ev":
             if os.path.exists("%s/%s_locate.txt"%(self.dir,aid)) or os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
-                aDirName = "pca_%s"%aid
+                aDirName = "%s_pca"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_locate.txt"%(self.dir,aid)):

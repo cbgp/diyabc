@@ -25,7 +25,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         self.parent=parent
         self.directory=directory
         self.analysis = analysis
-        if self.directory.split('_')[0] == "modelChecking":
+        if self.directory.split('_')[-1] == "modelChecking":
             self.acpFile = "%s/analysis/%s/mcACP.txt"%(self.parent.dir,self.directory)
         else:
             self.acpFile = "%s/analysis/%s/ACP.txt"%(self.parent.dir,self.directory)
