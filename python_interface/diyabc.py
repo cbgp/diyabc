@@ -1040,6 +1040,7 @@ class ImportProjectThread(Thread):
         #log(4,"Pre-loading of Project class FINISHED")
 
 def main():
+    output.debug = False
     if not os.path.exists(os.path.expanduser("~/.diyabc/")):
         # c'est sans doute la première fois qu'on lance diyabc
         # sous linux, on appelle gconf pour voir les icones dans les menus et boutons

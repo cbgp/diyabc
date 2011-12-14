@@ -126,7 +126,7 @@ class Preferences(AutoPreferences):
         self.ui.serverPortEdit.setDisabled(True)
 
         self.qfd = QFontDialog(self.parent.app.font())
-        fontButton = QPushButton("Change font options")
+        fontButton = QPushButton("Change font options (needs restart)")
         self.verticalLayoutScroll_appearance.addWidget(fontButton)
         QObject.connect(fontButton,SIGNAL("clicked()"),self.changeFontOptions)
         self.updateFont()
