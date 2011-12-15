@@ -9,11 +9,11 @@ from historicalModel.setHistFixedAnalysis import HistFixed
 
 formBiasScenarioSelection,baseBiasScenarioSelection = uic.loadUiType("uis/biasScenarioSelection.ui")
 
-class BiasNEvaluateScenarioSelection(formBiasScenarioSelection,baseBiasScenarioSelection):
-    """ Sélection du scenario dans la cadre d'une analyse de type bias ou evaluate
+class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenarioSelection):
+    """ Sélection du scenario dans la cadre d'une analyse de type bias ou confidence
     """
     def __init__(self,nb_sc,analysis,parent=None):
-        super(BiasNEvaluateScenarioSelection,self).__init__(parent)
+        super(BiasNConfidenceScenarioSelection,self).__init__(parent)
         self.parent=parent
         self.analysis = analysis
         self.nb_sc = nb_sc
@@ -51,12 +51,12 @@ class BiasNEvaluateScenarioSelection(formBiasScenarioSelection,baseBiasScenarioS
             self.analysis.drawn = False
         else:
             self.analysis.drawn = True
-        # pour evaluate et bias, on a selectionné un scenario
+        # pour confidence et bias, on a selectionné un scenario
         self.analysis.chosenSc = self.getSelectedScenario()
-        # le cas du evaluate, les sc à afficher dans le hist model sont ceux selectionnés
-        if self.analysis.category == "evaluate":
+        # le cas du confidence, les sc à afficher dans le hist model sont ceux selectionnés
+        if self.analysis.category == "confidence":
             if len(self.getListSelectedScenarios()) >= 2:
-                # pour evaluate on a du selectionner au moins deux scenarios 
+                # pour confidence on a du selectionner au moins deux scenarios 
                 self.analysis.candidateScList = self.getListSelectedScenarios()
                 if self.ui.fixedRadio.isChecked():
                     next_widget = HistFixed(self.analysis,self.parent)
@@ -107,7 +107,7 @@ class BiasNEvaluateScenarioSelection(formBiasScenarioSelection,baseBiasScenarioS
             self.ui.verticalLayout_4.addWidget(radio)
         self.radiolist[0].setChecked(True)
 
-        if self.analysis.category == "evaluate":
+        if self.analysis.category == "confidence":
             for i in range(self.nb_sc):
                 num = i+1
                 check = QCheckBox("Scenario %s"%num,self)

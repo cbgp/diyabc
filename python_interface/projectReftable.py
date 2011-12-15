@@ -130,7 +130,7 @@ class ProjectReftable(Project):
         dicoCategoryDirName = {
                 "estimate" : "estimation",
                 "compare" : "comparison",
-                "evaluate" : "evaluation",
+                "confidence" : "confidence",
                 "modelChecking" : "modelChecking",
                 "pre-ev" : "pca",
                 "bias" : "bias"
@@ -171,7 +171,7 @@ class ProjectReftable(Project):
                 ui.dataPlain.setFont(QFont(font,10))
                 QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
 
-        elif typestr == "evaluation":
+        elif typestr == "confidence":
             f = open("%s/analysis/%s/confidence.txt"%(self.dir,anDir),'r')
             data = f.read()
             f.close()
@@ -211,7 +211,7 @@ class ProjectReftable(Project):
                 font = "Andale Mono"
             ui.dataPlain.setFont(QFont(font,10))
             QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
-        #elif typestr == "evaluation":
+        #elif typestr == "confidence":
         #    self.drawAnalysisFrame = DrawEvaluationAnalysisResult(anDir,self)
         self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
         self.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
@@ -613,8 +613,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             #print "\n",analysis[-1],"\n"
             #self.addRow("scenario choice",analysis[2]["de"],"4","new")
             self.addAnalysisGui(analysis,analysis.name,"compare scenarios","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
-        elif type_analysis == "evaluate":
-            #self.addRow("evaluate confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
+        elif type_analysis == "confidence":
+            #self.addRow("confidence confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
             self.addAnalysisGui(analysis,analysis.name,"confidence in scenario choice","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
         elif type_analysis == "modelChecking":
             self.addAnalysisGui(analysis,analysis.name,"model checking","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
@@ -1007,18 +1007,18 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 log(3,"File %s/%s_bias.txt doesn't exist. Results cannot be moved"%(self.dir,aid))
                 return
-        elif atype == "evaluate":
+        elif atype == "confidence":
             if os.path.exists("%s/%s_confidence.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
-                aDirName = "%s_evaluation"%aid
+                aDirName = "%s_confidence"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_confidence.txt"%(self.dir,aid),"%s/analysis/%s/confidence.txt"%(self.dir,aDirName))
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
-                if os.path.exists("%s/evaluate.out"%(self.dir)):
-                    f = open("%s/evaluate.out"%(self.dir),"r")
+                if os.path.exists("%s/confidence.out"%(self.dir)):
+                    f = open("%s/confidence.out"%(self.dir),"r")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
@@ -1504,7 +1504,7 @@ class AnalysisThread(QThread):
             option = "-c"
         elif self.analysis.category == "bias":
             option = "-b"
-        elif self.analysis.category == "evaluate":
+        elif self.analysis.category == "confidence":
             option = "-f"
         elif self.analysis.category == "modelChecking":
             option = "-j"

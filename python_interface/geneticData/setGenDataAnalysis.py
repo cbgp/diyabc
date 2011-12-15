@@ -12,13 +12,13 @@ from mutationModel.setMutationModelSequencesAnalysis import SetMutationModelSequ
 #from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 #from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from analysis.setupEstimationBias import SetupEstimationBias
-from analysis.setupComparisonEvaluation import SetupComparisonEvaluation
+from analysis.setupComparisonConfidence import SetupComparisonConfidence
 from utils.visualizescenario import *
 from utils.data import *
 from utils.cbgpUtils import log
 
 class SetGeneticDataAnalysis(SetGeneticData):
-    """ set genetic data pour les informations concernant une analyse bias ou evaluate
+    """ set genetic data pour les informations concernant une analyse bias ou confidence
     """
     def __init__(self,analysis,parent=None):
         super(SetGeneticDataAnalysis,self).__init__(parent)
@@ -212,7 +212,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
                 last_parametrisation = SetupEstimationBias(self.analysis,self)
             else:
                 #next_title = "evaluate confidence"
-                last_parametrisation = SetupComparisonEvaluation(self.analysis,self)
+                last_parametrisation = SetupComparisonConfidence(self.analysis,self)
             #self.parent.addTab(last_parametrisation,next_title)
             #self.parent.removeTab(self.parent.indexOf(self))
             #self.parent.setCurrentWidget(last_parametrisation)

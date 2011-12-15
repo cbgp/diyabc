@@ -5,17 +5,17 @@ import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
-#from uis.setupComparisonEvaluation_ui import Ui_Frame
+#from uis.setupComparisonConfidence_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 import output
 
-formSetupComparisonEvaluation,baseSetupComparisonEvaluation = uic.loadUiType("uis/setupComparisonEvaluation.ui")
+formSetupComparisonConfidence,baseSetupComparisonConfidence = uic.loadUiType("uis/setupComparisonConfidence.ui")
 
-class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupComparisonEvaluation):
-    """ dernière étape de définition d'une analyse de type comparison ou evaluate
+class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupComparisonConfidence):
+    """ dernière étape de définition d'une analyse de type comparison ou confidence
     """
     def __init__(self,analysis,parent=None):
-        super(SetupComparisonEvaluation,self).__init__(parent)
+        super(SetupComparisonConfidence,self).__init__(parent)
         self.parent=parent
         self.analysis = analysis
         self.scNumList = []
@@ -36,7 +36,7 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.redefButton,SIGNAL("clicked()"),self.redefineScenarios)
 
-        if self.analysis.category == "evaluate":
+        if self.analysis.category == "confidence":
             self.ui.label.setText("Confidence in scenario choice")
             self.setScenarios([self.analysis.chosenSc])
             self.setCandidateScenarios(self.analysis.candidateScList)
@@ -62,7 +62,7 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
         try:
             #if (self.ui.totNumSimLabel.text() != "" or self.ui.totNumSimLabel.text() != "0") and int(self.ui.totNumSimLabel.text()) < int(self.ui.cnosdEdit.text()):
             #    problems += "Impossible to select more data than it exists in the reference table\n"
-            if self.analysis.category == "evaluate":
+            if self.analysis.category == "confidence":
                 notds = int(self.ui.notdsEdit.text())
             lr = int(self.ui.lrEdit.text())
             de = int(self.ui.deEdit.text())
@@ -93,7 +93,7 @@ class SetupComparisonEvaluation(formSetupComparisonEvaluation,baseSetupCompariso
         if self.checkAll():
             if self.analysis.category == "compare":
                 self.analysis.computationParameters = "s:%s;n:%s;d:%s;l:%s;m:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg'])
-            elif self.analysis.category == "evaluate":
+            elif self.analysis.category == "confidence":
                 candListTxt = ""
                 for cs in self.analysis.candidateScList:
                     candListTxt+="%s,"%str(cs)

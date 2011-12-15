@@ -11,7 +11,7 @@ from utils.history import *
 from setCondition import SetCondition
 from geneticData.setGenDataAnalysis import SetGeneticDataAnalysis
 from analysis.setupEstimationBias import SetupEstimationBias
-from analysis.setupComparisonEvaluation import SetupComparisonEvaluation
+from analysis.setupComparisonConfidence import SetupComparisonConfidence
 
 formHistModelDrawn,baseHistModelDrawn = uic.loadUiType("uis/setHistFrame.ui")
 
@@ -419,7 +419,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
             return SetupEstimationBias(self.analysis,self.parent)
         else:
             #next_title = "evaluate confidence"
-            return SetupComparisonEvaluation(self.analysis,self.parent)
+            return SetupComparisonConfidence(self.analysis,self.parent)
 
     def getNextWidgetMsatSeq(self):
         """ methode appelée par ping pong

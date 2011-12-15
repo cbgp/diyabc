@@ -6,10 +6,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.defineNewAnalysis_ui import Ui_Frame
-from setupComparisonEvaluation import SetupComparisonEvaluation
+from setupComparisonConfidence import SetupComparisonConfidence
 from setupEstimationBias import SetupEstimationBias
 from genericScenarioSelection import GenericScenarioSelection
-from biasScenarioSelection import BiasNEvaluateScenarioSelection
+from biasScenarioSelection import BiasNConfidenceScenarioSelection
 from analysis import Analysis
 import output
 from utils.cbgpUtils import log
@@ -41,7 +41,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
 
         if self.nbScenario < 2:
             self.ui.comparisonRadio.setDisabled(True)
-            self.ui.evaluateRadio.setDisabled(True)
+            self.ui.confidenceRadio.setDisabled(True)
 
         self.ui.horizontalLayout_3.setAlignment(Qt.AlignHCenter)
 
@@ -113,7 +113,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
             if self.ui.comparisonRadio.isChecked():
                 if len(self.parent.hist_model_win.scList) >= 2:
                     analysis = Analysis(name,"compare")
-                    compFrame = SetupComparisonEvaluation(analysis,self)
+                    compFrame = SetupComparisonConfidence(analysis,self)
                     genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,analysis,self)
                     #self.parent.addTab(genSel,"Scenario selection")
                     #self.parent.removeTab(self.parent.indexOf(self))
@@ -170,7 +170,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 self.exit()
             elif self.ui.biasRadio.isChecked():
                 analysis = Analysis(name,"bias")
-                genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
+                genSel = BiasNConfidenceScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
                 #self.parent.addTab(genSel,"Scenario selection")
                 #self.parent.removeTab(self.parent.indexOf(self))
                 #self.parent.setCurrentWidget(genSel)
@@ -178,14 +178,14 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 self.parent.ui.analysisStack.removeWidget(self)
                 self.parent.ui.analysisStack.setCurrentWidget(genSel)
 
-            elif self.ui.evaluateRadio.isChecked():
+            elif self.ui.confidenceRadio.isChecked():
                 if self.ui.confFdaCheck.isChecked():
                     paramtxt="1"
                 else:
                     paramtxt="0"
-                analysis = Analysis(name,"evaluate")
+                analysis = Analysis(name,"confidence")
                 analysis.fda = paramtxt
-                genSel = BiasNEvaluateScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
+                genSel = BiasNConfidenceScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
                 #self.parent.addTab(genSel,"Scenario selection")
                 #self.parent.removeTab(self.parent.indexOf(self))
                 #self.parent.setCurrentWidget(genSel)

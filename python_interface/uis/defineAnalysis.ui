@@ -341,7 +341,7 @@ The reference table has been built</string>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
-           <widget class="QRadioButton" name="evaluateRadio">
+           <widget class="QRadioButton" name="confidenceRadio">
             <property name="minimumSize">
              <size>
               <width>0</width>

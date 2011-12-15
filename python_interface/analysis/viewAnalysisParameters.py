@@ -33,7 +33,7 @@ class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParamete
                 "estimate":"Estimate posterior distributions of parameters",
                 "bias":"Compute bias and precision on parameter estimations",
                 "compare":"Compute posterior probabilities of scenarios",
-                "evaluate":"Evaluate confidence in scenario choice",
+                "confidence":"Evaluate confidence in scenario choice",
                 "modelChecking":"Perform model checking"}
         self.addRow("type",tab[self.analysis.category])
         #if self.analysis.chosenSc != None:
@@ -70,7 +70,7 @@ class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParamete
                     self.addRow("Logistic regression",e.split(':')[1])
                 elif e.split(':')[0] == 'm':
                     self.addRow("Regression number",e.split(':')[1])
-        elif self.analysis.category == "evaluate":
+        elif self.analysis.category == "confidence":
             execRowSize = 200
             for e in tabCompParams:
                 if e.split(':')[0] == 's':
@@ -98,7 +98,7 @@ class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParamete
             option = "-b"
         elif c == "compare":
             option = "-c"
-        elif c == "evaluate":
+        elif c == "confidence":
             option = "-f"
         elif c == "pre-ev":
             option = "-d"
