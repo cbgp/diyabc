@@ -220,11 +220,23 @@ vector <int> melange(MwcGen mw, int n) {
     //cout<<"line="<<line<<"\n";
     string operateur,plus="+",minus="-";
     size_t posign,posplus,posminus;
-    posplus=line.find('+');posminus=line.find('-');
-    if ((posplus==string::npos)and(posminus==string::npos)) {return  this->param2val(line);}
-    else {if ((posplus>=0)and(posminus>line.size())){posign=posplus;} // FIXME: posplus>0 always true
-      else {if ((posminus>=0)and(posplus>line.size())){posign=posminus;} // FIXME: posplus>0 always true
-	else {if (posplus<posminus) {posign=posplus;} else {posign=posminus;}}}
+    posplus=line.find('+'); posminus=line.find('-');
+    if ((posplus==string::npos)and(posminus==string::npos)) {
+    	return  this->param2val(line);
+    } else {
+    	if ((posplus>=0)and(posminus>line.size())){
+    		posign=posplus; // FIXME: posplus>0 always true
+    	} else {
+    		if ((posminus>=0)and(posplus>line.size())){
+    			posign=posminus; // FIXME: posplus>0 always true
+    		} else {
+    			if (posplus<posminus) {
+    				posign=posplus;
+    			} else {
+    				posign=posminus;
+    			}
+    		}
+    	}
     }
     result=this->param2val(line.substr(0,posign));
     //cout << result;
@@ -300,13 +312,15 @@ vector <int> melange(MwcGen mw, int n) {
 	  } else {
 	    deja=false;
 	    for (g=0;g<ng;g++) {
-	      for (int k=0;k<exaequo[g].size();k++) if (exaequo[g][k]==iev) {deja=true;gg=g;kk=k;break;}
+	      for (int k=0;k<(int)exaequo[g].size();k++)
+	    	  if (exaequo[g][k]==iev) {deja=true;gg=g;kk=k;break;}
 	    }
 	    //cout<<"deja="<<deja<<"   g="<<gg<<"   k="<<kk<<"\n";
 	    if (deja) {
 	      trouve=false;
 	      //cout<<"exaequo[g].size()="<<exaequo[gg].size()<<"\n";
-	      for (int k=0;k<exaequo[gg].size();k++)if (exaequo[gg][k]==jev){trouve=true;break;}
+	      for (int k=0;k<(int)exaequo[gg].size();k++)
+	    	  if (exaequo[gg][k]==jev){trouve=true;break;}
 	      //cout<<"trouve="<<trouve<<"\n";
 	      if (not trouve) exaequo[gg].push_back(jev);
 	      //cout<<"deja ng="<<ng;
@@ -337,7 +351,7 @@ vector <int> melange(MwcGen mw, int n) {
     for (g=0;g<ng;g++) {
       //cout<<"dans le groupe "<<g<<"\n";
       bonordre.clear();
-      for (int iev=0;iev<exaequo[g].size();iev++) {
+      for (int iev=0;iev<(int)exaequo[g].size();iev++) {
 	for (int jev=0;jev<this->scen.nevent;jev++) {
 	  if (this->scen.event[exaequo[g][iev]].action==this->scenario[kscen].event[jev].action) {
 	    if (this->scen.event[exaequo[g][iev]].pop==this->scenario[kscen].event[jev].pop) {
@@ -348,8 +362,8 @@ vector <int> melange(MwcGen mw, int n) {
 	}
       }
       //for (int iev=0;iev<exaequo[g].size();iev++) cout<<"iev="<<iev<<"   exaequo="<<exaequo[g][iev]<<"   bonordre="<<bonordre[iev]<<"\n";
-      for (int iev=0;iev<exaequo[g].size()-1;iev++) {
-	for (int jev=iev+1;jev<exaequo[g].size();jev++) {
+      for (int iev=0;iev<(int)exaequo[g].size()-1;iev++) {
+	for (int jev=iev+1;jev<(int)exaequo[g].size();jev++) {
 	  if (bonordre[iev]>bonordre[jev]) {
 	    //cout<<"echange entre "<<iev<<" et "<<jev<<"\n";
 	    piv = this->scen.event[exaequo[g][iev]];  // copyevent supprimé (PP)
@@ -714,17 +728,17 @@ vector <int> melange(MwcGen mw, int n) {
    * Struct ParticleC : retourne vrai si et seulement si l'événement ievent est basal (??)
    */
   bool ParticleC::firstEvent(int ievent) {
-    if (ievent == 0) {return 1;} //1 pour TRUE
-    bool found;
-    int jevent=ievent;
-    while (jevent>0) {
-      jevent --;
-      if (this->scen.event[jevent].action == 'S') {
-	found = (this->scen.event[jevent].pop1 == (this->scen.event[ievent].pop)or(this->scen.event[jevent].pop2 ==this->scen.event[ievent].pop));}
-      else {found = this->scen.event[jevent].pop == this->scen.event[ievent].pop;}
-      if (found) {break;}
-    }
-    return (not found);
+	  if (ievent == 0) {return 1;} //1 pour TRUE
+	  bool found = false;
+	  int jevent=ievent;
+	  while (jevent>0) {
+		  jevent --;
+		  if (this->scen.event[jevent].action == 'S') {
+			  found = (this->scen.event[jevent].pop1 == (this->scen.event[ievent].pop)or(this->scen.event[jevent].pop2 ==this->scen.event[ievent].pop));}
+		  else {found = this->scen.event[jevent].pop == this->scen.event[ievent].pop;}
+		  if (found) {break;}
+	  }
+	  return (not found);
   }
 
   /**
@@ -732,7 +746,7 @@ vector <int> melange(MwcGen mw, int n) {
    */
   int ParticleC::findNe(int ievent, int refpop) {
     if (ievent == 0) {return this->scen.ne0[refpop-1].val;}
-    bool found;
+    bool found = false;
     while (ievent>0) {
       ievent --;
       found = (this->scen.event[ievent].action == 'V')and(this->scen.event[ievent].pop == refpop);
@@ -1472,7 +1486,7 @@ void ParticleC::put_one_mutation(int loc) {
     }
     int br, numut=-1;
     bool trouve;
-    int len,cat=(this->locuslist[loc].type % 5);
+    int len = 0, cat = (this->locuslist[loc].type % 5);
     if (debuglevel==10) cout <<"avant la boucle while ngenes="<<this->gt[loc].ngenes<<"\n";
     while (anc>=this->gt[loc].ngenes) {
       if (debuglevel>10) cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
@@ -1651,7 +1665,7 @@ void ParticleC::put_one_mutation(int loc) {
     string checktree;
     int *emptyPop,loc;
     bool treedone,dnaloc=false,trouve,snpOK;
-    int locus,sa,indiv,nuc;
+    int locus = 0, sa, indiv, nuc;
     //cout<<"this->nloc="<<this->nloc<<"\n";
     simulOK.resize(this->nloc);
     GeneTreeC GeneTreeY, GeneTreeM;
@@ -1816,7 +1830,7 @@ void ParticleC::put_one_mutation(int loc) {
 	    nuc=this->data.missnuc[i].nuc;
 	    if (debuglevel==10) cout<<"MISSNUC "<<i<<"  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc/*<<"\n"*/;
 	    int k=0;trouve=false;
-	    while ((k<this->locuslist[locus].sitmut.size())and(not trouve)) {
+	    while (   (k < (int)this->locuslist[locus].sitmut.size()) and (not trouve)   ) {
 	      trouve = (nuc==this->locuslist[locus].sitmut[k]);
 	      if (not trouve) k++;
 	    }

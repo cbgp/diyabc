@@ -121,7 +121,7 @@ int HeaderC::readHeaderDebut(ifstream & file){
 int HeaderC::readHeaderScenarios(ifstream & file){
 		//Partie Scenarios
 	string s1;
-	int nl;
+	int nl = 0;
 	getline(file,s1);nl++;   //cout<<s1<<"\n";     //ligne vide
 	getline(file,s1);nl++;    //cout<<s1<<"\n";    // nombre de scenarios
 	this->nscenarios=getwordint(s1,1); cout<<this->nscenarios<<" scenario(s)\n";
@@ -361,7 +361,7 @@ int HeaderC::readHeaderLoci(ifstream & file){
 
 
 int HeaderC::readHeaderGroupPrior(ifstream & file){
-	string s1, *ss, *ss1;
+	string s1, *ss = NULL, *ss1 = NULL;
 	int gr, nss, nss1, j;
 	if (this->dataobs.filetype==0){
 
@@ -435,7 +435,9 @@ int HeaderC::readHeaderGroupPrior(ifstream & file){
 				if (this->groupe[gr].mutmod==3) {
 					if (not this->groupe[gr].priork2moy.constant)for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}
 				}
-			}
+				if(ss1 != NULL) delete [] ss1; ss1 = NULL;
+			} // fin du if portant sur ss[2]
+			if(ss != NULL) delete [] ss; ss = NULL;
 		}
 		if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie définition des groupes\n";
 		//Mise à jour des locus séquences
@@ -469,7 +471,7 @@ int HeaderC::readHeaderGroupPrior(ifstream & file){
 		}
 		if (debuglevel==2) cout<<"header.txt : fin de la mise à jour des locus séquences\n";
 		//cout<<"avant la mise à jour des paramvar\n";fflush(stdin);
-		delete [] ss;
+		if(ss != NULL) delete [] ss; ss = NULL;
 	} //fin de la condition fichier=GENEPOP
 	//Mise à jour des paramvar
 	for (int i=0;i<this->nscenarios;i++) {
@@ -585,7 +587,7 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 						trouve=false;
 						if (debuglevel==2) cout<<"statsnp.size="<<statsnp.size()<<"\n";
 						if (statsnp.size()>0){
-							for (int jj=0;jj<statsnp.size();jj++) {
+							for (int jj=0; jj < (int)statsnp.size();jj++) {
 								trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==this->groupe[gr].sumstat[k].samp));
 								if (trouve) {this->groupe[gr].sumstat[k].numsnp=jj;break;}
 							}
@@ -610,7 +612,7 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 						delete [] ss1;
 						trouve=false;
 						if (statsnp.size()>0){
-							for (int jj=0;jj<statsnp.size();jj++) {
+							for (int jj=0; jj < (int)statsnp.size(); jj++) {
 								trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==this->groupe[gr].sumstat[k].samp)and(statsnp[jj].samp1==this->groupe[gr].sumstat[k].samp1));
 								if (trouve) {this->groupe[gr].sumstat[k].numsnp=jj;break;}
 							}
@@ -638,7 +640,7 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 						delete [] ss1;
 						trouve=false;
 						if (statsnp.size()>0){
-							for (int jj=0;jj<statsnp.size();jj++) {
+							for (int jj = 0; jj < (int)statsnp.size(); jj++) {
 								trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==this->groupe[gr].sumstat[k].samp)and(statsnp[jj].samp1==this->groupe[gr].sumstat[k].samp1)and(statsnp[jj].samp2==this->groupe[gr].sumstat[k].samp2));
 								if (trouve) {this->groupe[gr].sumstat[k].numsnp=jj;break;}
 							}
@@ -815,8 +817,8 @@ int HeaderC::readHeaderEntete(ifstream & file){
 }
 
 int HeaderC::readHeader(string headerfilename){
-	string s1,s2,**sl,*ss,*ss1,*ss2;
-	int *nlscen,nss,nss1,j,k,gr,grm,k1,cat,nl=0, error;
+	string s1; // string s2,**sl,*ss,*ss1,*ss2;
+	int error = 0; // int *nlscen,nss,nss1,j,k,gr,grm,k1,cat,nl=0;
 	cout<<"debut de readheader\n";
 	//cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
 	ifstream file(headerfilename.c_str(), ios::in);

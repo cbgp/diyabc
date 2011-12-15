@@ -375,7 +375,7 @@ int inverse_Tik (int n, long double * * A, long double * * C)
                                                                  {
 		long double t,coeff,**AA,seuil_kappa=1E8;
 		double kap;
-		int err;
+		int err = 0;
 		AA = new long double*[n]; for (int i=0;i<n;i++) AA[i] = new long double [n];
 //		std::cout<<"debut d'inverse_Tik  n="<<n<<"\n";
 		coeff=0;

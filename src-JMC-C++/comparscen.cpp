@@ -328,8 +328,7 @@ matligneC *matA;
 //        double debut,duree,clock_zero=0.0;
 //        debut=walltime(&clock_zero);
         bool OK=true;
-//    #pragma omp parallel for private(a,imod) if(multithread)\
-//      reduction( + : llik )
+//    #pragma omp parallel for private(a,imod) if(multithread) reduction( + : llik )
         for (i=0;i<nli;i++)
             {a=0.0;
             for (imod=0;imod<nmodel;imod++) {
@@ -517,7 +516,7 @@ matligneC *matA;
     int polytom_logistic_regression(int nli, int nco, long double **cmatX0, long double *vecY, long double *cvecW, long double *px, long double *pxi, long double *pxs)
     {
 //        double clock_zero;
-        int err,nmodel=0,no;
+        int err,nmodel=0; // int no;
 //        double debut, duree;
         double sx,sx2;
         int *numod;
@@ -807,10 +806,10 @@ matligneC *matA;
  */ 
     void docompscen(string opt){
         int nstatOK,iprog,nprog;;
-        int nrec,nseld,nselr,nsel,ns,nlogreg,k,nts;
-        string *ss,s,*ss1,s0,s1;
+        int nrec = 0,nseld = 0,nselr = 0,nsel = 0,ns,nlogreg = 0,k,nts;
+        string *ss = NULL,s,*ss1 = NULL,s0,s1;
         float  *stat_obs;
-		double duree,debut,clock_zero;
+		/*double duree,debut,clock_zero;*/
         FILE *flog;
         posteriorscenC **postscendir,**postscenlog;
 
@@ -827,6 +826,7 @@ matligneC *matA;
                 ss1 = splitwords(s1,",",&rt.nscenchoisi);
                 rt.scenchoisi = new int[rt.nscenchoisi];
                 for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());
+                delete [] ss1; ss1 = NULL;
                 cout <<"scenario(s) choisi(s) : ";
                 for (int j=0;j<rt.nscenchoisi;j++) {cout<<rt.scenchoisi[j]; if (j<rt.nscenchoisi-1) cout <<",";}cout<<"\n";
             } else if (s0=="n:") {
@@ -871,7 +871,7 @@ matligneC *matA;
             save_comp_logistic(nlogreg,nselr,postscenlog,path,ident);
             liberecmat(rt.nscenchoisi, nselr, rt.nstat);
         }
-        delete []ss;
-        delete []ss1;
+        if(ss != NULL) delete []ss;
+        if(ss1 != NULL) delete []ss1;
         iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }

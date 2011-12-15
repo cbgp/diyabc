@@ -140,7 +140,7 @@ long double **ssphistar,**ssref;
 						trouve=false;
 						if (debuglevel==2) cout<<"statsnp.size="<<statsnp.size()<<"\n";
 						if (statsnp.size()>0){
-						for (int jj=0;jj<statsnp.size();jj++) {
+						for (size_t jj=0;jj<statsnp.size();jj++) {
 								trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==header.groupe[gr].sumstat[k].samp));
 								if (trouve) {header.groupe[gr].sumstat[k].numsnp=jj;break;}
 							}
@@ -165,7 +165,7 @@ long double **ssphistar,**ssref;
 						trouve=false;
 						if (debuglevel==2) cout<<"statsnp.size="<<statsnp.size()<<"\n";
 						if (statsnp.size()>0){
-						for (int jj=0;jj<statsnp.size();jj++) {
+						for (size_t jj=0;jj<statsnp.size();jj++) {
 								trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==header.groupe[gr].sumstat[k].samp)and(statsnp[jj].samp1==header.groupe[gr].sumstat[k].samp1));
 								if (trouve) {header.groupe[gr].sumstat[k].numsnp=jj;break;}
 							}
@@ -195,7 +195,7 @@ long double **ssphistar,**ssref;
 						trouve=false;
 						if (debuglevel==2) cout<<"statsnp.size="<<statsnp.size()<<"\n";
 						if (statsnp.size()>0){
-						for (int jj=0;jj<statsnp.size();jj++) {
+						for (size_t jj=0;jj<statsnp.size();jj++) {
 								trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==header.groupe[gr].sumstat[k].samp)and(statsnp[jj].samp1==header.groupe[gr].sumstat[k].samp1)and(statsnp[jj].samp2==header.groupe[gr].sumstat[k].samp2));
 								if (trouve) {header.groupe[gr].sumstat[k].numsnp=jj;break;}
 							}
@@ -397,10 +397,10 @@ long double **ssphistar,**ssref;
 
     void domodchec(string opt,int seed){
         int nstatOK, nphistarOK, iprog,nprog;
-        int nrec,nsel,ns,nrecpos,newsspart,npv,nss,nsr,newrefpart,*numscen,nparamax,bidon;
+        int nrec = 0,nsel = 0, ns,nrecpos = 0,newsspart = 0,npv,nss,nsr,newrefpart,*numscen,nparamax,bidon;
         string *ss,s,*ss1,s0,s1,snewstat;
         float  *stat_obs;
-        bool usestats,firsttime,dopca,doloc,newstat=false;
+        bool usestats,firsttime,dopca = false,doloc = false, newstat=false;
         //long double** phistarOK;
         FILE *flog;
 

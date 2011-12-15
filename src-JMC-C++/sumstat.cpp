@@ -931,7 +931,7 @@ extern int debuglevel;
     }
     if (seq1.length()==0) return ident;
     //cout<<seq1<<"    "<<seq2<<"\n";
-    while ((ident)and(k<seq1.length())) {
+    while (   (ident) and (k < (int)seq1.length())   ) {
       ident = ((seq1[k]=='N')or(seq2[k]=='N')or(seq1[k]==seq2[k]));
       if (ident) k++;
     }
@@ -1027,7 +1027,7 @@ extern int debuglevel;
   }
 
   long double ParticleC::cal_nss1p(int gr,int st){
-    int iloc,kloc,nssl,nssm=0,nl=0,*ss,cat;
+    int iloc,kloc = 0,nssl,nssm=0,nl=0,*ss,cat;
     long double res=0.0;
     bool OK;
     int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -1573,7 +1573,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
   }
 
   long double ParticleC::cal_aml3p(int gr,int st){
-    int iloc,kloc,nlocutil=0,*ss,nssl;
+    int iloc,kloc,nlocutil=0,*ss = NULL,nssl;
     long double p1,p2,p3,lik1,lik2,lik3;
     int i1=1,i2=998,i3;
     bool OK;
@@ -1589,7 +1589,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
       ss = this->cal_nss2pl(kloc,samp1,samp2,&nssl,&OK);
       if ((OK)and(nssl>0)) nlocutil++;
     }
-    delete []ss;
+    if(ss != NULL) delete []ss;
     if (nlocutil<1) return 0.5;
     //cout<<"avant cal_freq\n";
     cal_freq(gr,st);
@@ -1609,7 +1609,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
   }
 
   void ParticleC::cal_numvar(int gr) {
-    int i,j,k,ns,pop,j0,cat;
+    int i,j,k,ns,pop,j0,cat = 0;
     int locus,nlocs=this->grouplist[gr].nloc;
     string ss;
     char *site;
@@ -1625,7 +1625,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 	this->locuslist[locus].dnavar = 0;
 	for (pop=0;pop<this->nsample;pop++) {
 	  for (i=0;i<this->data.ss[cat][pop];i++) {
-	    if (this->locuslist[locus].haplodna[pop][i].length()>this->locuslist[locus].dnavar) {
+	    if ((int)this->locuslist[locus].haplodna[pop][i].length() > this->locuslist[locus].dnavar) {
 	      this->locuslist[locus].dnavar=this->locuslist[locus].haplodna[pop][i].length();
 	      //cout<<"  >"<<this->locuslist[locus].haplodna[pop][i]<<"<  ("<<this->locuslist[locus].haplodna[pop][i].length()<<")\n";
 	    }
@@ -1641,7 +1641,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 	for (pop=0;pop<this->nsample;pop++) {
 	  this->locuslist[locus].haplodnavar[pop] = new string[this->data.ss[cat][pop]];
 	  for (i=0;i<this->data.ss[cat][pop];i++) {
-	    if (this->locuslist[locus].haplodna[pop][i].length()==this->locuslist[locus].dnavar) {
+	    if (    (int)this->locuslist[locus].haplodna[pop][i].length() == this->locuslist[locus].dnavar   ) {
 	      this->locuslist[locus].haplodnavar[pop][i] = this->locuslist[locus].haplodna[pop][i];
 	    } else {
 	      this->locuslist[locus].haplodnavar[pop][i] = "";

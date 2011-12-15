@@ -122,7 +122,7 @@ void LocusC::libere(bool obs, int nsample) {
 		if (not trouvepop) return -2;
 		while (not file.eof()){
 			getline(file, ligne);
-			if(ligne.length()>= 2 + 3*nloc){
+			if( (int)ligne.length() >= 2 + 3*nloc){
 				ligne=majuscules(ligne);
 				if ((ligne.find(",")==string::npos)and(ligne.find("POP")==string::npos)) return -2;
 				if(ligne.find(",")!=string::npos) {
@@ -249,7 +249,7 @@ void LocusC::libere(bool obs, int nsample) {
 * supprime les locus monomorphes
 */
 	void DataC::purgelocmonomorphes(){
-		int ind,ech,ind0,ech0,kloc=0,nloc=0,*typ;
+		int ind,ech,ind0 = 0,ech0,kloc=0,nloc=0,*typ;
 		string ***ge,misval="9";
 		string premier="";
 		for (int loc=0;loc<this->nloc;loc++) {
@@ -596,9 +596,9 @@ cout<<"fin de ecribin\n";
 		for (int i=0;i<nech;i++) {
 			this->indivname[i]= new string[nind[i]];
 			this->indivsexe[i].resize(nind[i]);
-			for(j=0;j<this->nind[i];j++) this->indivsexe[i][j] = 2;
+			for(j=0; (int)j < this->nind[i];j++) this->indivsexe[i][j] = 2;
 			this->genotype[i] = new string*[nind[i]];
-			for(j=0;j<this->nind[i];j++) this->genotype[i][j] = new string[this->nloc];
+			for(j=0; (int)j < this->nind[i];j++) this->genotype[i][j] = new string[this->nloc];
 		}
 ///////////
 		ifstream file2(filename.c_str(), ios::in);

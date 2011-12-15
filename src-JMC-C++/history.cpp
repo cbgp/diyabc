@@ -315,9 +315,9 @@ string ScenarioC::checklogic() {
 	delete []popexist;
 	if (np>1){
 		message = "more than one population (";
-		for (int i=0;i<numpop.size();i++) {
+		for (int i = 0; i < (int)numpop.size(); i++) {
 			message = message + IntToString(numpop[i]);
-			if (i+1<numpop.size()) message = message+",";
+			if (i+1 < (int)numpop.size()) message = message+",";
 		}
 		message = message + ") are ancestral";
 		numpop.clear();
@@ -348,7 +348,7 @@ void ScenarioC::detparam(string s,int cat) {
       //cout<<"s1="<<s1<<"\n";;
     }
   }
-  for (i=0;i<ss.size();i++) {
+  for (i = 0; i < (int)ss.size(); i++) {
     //cout<<"ss["<<i<<"]="<<ss[i]<<"\n";
     //cout<<"   this->nparam = "<<this->nparam<<"\n";
     if (this->nparam>0) {

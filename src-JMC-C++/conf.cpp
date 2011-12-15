@@ -65,7 +65,7 @@ string nomficonfresult;
         struct tm * timeinfo;
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
-        long double *x,*mo;
+        long double *x = NULL, *mo = NULL;
         string s;
         x=new long double[ntest];
         mo=new long double[4];
@@ -107,6 +107,8 @@ string nomficonfresult;
         if (nlogreg>0) for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"        scenario %2d       ",rt.scenchoisi[i]);
         fprintf(f1,"\n");
         fclose(f1);
+        if(x != NULL) delete [] x;
+        if(mo != NULL) delete [] mo;
     }
 
 /**
@@ -158,7 +160,7 @@ string nomficonfresult;
     void doconf(string opt, int seed) {
         string progressfilename, courantfilename;
         int nstatOK, iprog,nprog,ncs1;
-        int nrec,nsel,nseld,nselr,ns,nrecpos,ntest,np,ng,npv,nlogreg,ncond;
+        int nrec = 0, nsel,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond;
         string *ss,s,*ss1,s0,s1; 
 		float *stat_obs;
 		double duree,debut,clock_zero;

@@ -178,7 +178,7 @@ int readheaders() {
 int readheadersim() {
     int k;
 	if (debuglevel==1) cout<<"avant header.readHeadersim    headersimfilename="<<headersimfilename<<"\n";
-	header.readHeadersim(headersimfilename);
+	k = header.readHeadersim(headersimfilename);
 	return k;
 }
 
@@ -190,7 +190,7 @@ int main(int argc, char *argv[]){
 	try {
 		initstat_typenum();
     bool firsttime;
-	int k,seed;
+	int k, seed = 0;
 	int optchar;
     char action='a';
     bool flagp=false,flagi=false,flags=false,simOK,stoprun=false;

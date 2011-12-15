@@ -98,7 +98,7 @@ string* splitwords(string s,string sep,int *k){
 	s.append(sep);
 	string *sb,s0,s1;
 	s1=string();
-	for (int i=0;i<s.length();i++) {
+	for (int i = 0; i < (int)s.length(); i++) {
 		s0=s.substr(i,1);
 		if (s0==sep){
 			j++;
@@ -135,7 +135,7 @@ string* splitwordsR(string s,string sep,int m,int *k){
 	if (s.length()==0) {sb = new string[0];return sb;}
 	s.append(sep);
 	s1=string();
-	for (int i=0;i<s.length();i++) {
+	for (int i=0; i < (int)s.length(); i++) {
 		s0=s.substr(i,1);
 		if (s0==sep){
 			j++;
@@ -261,11 +261,11 @@ string majuscules(string  s) {
     string s2;
     char *c;
     c = new char[s.length()+1];
-    for (int i=0;i<s.length();i++) {
+    for (int i = 0; i < (int)s.length();i++) {
         c[i]=s[i];
         c[i]=toupper(c[i]);
     }
-    s2 = string(c,s.length());
+    s2 = string(c, s.length());
     delete [] c;
     return s2;
 }
@@ -562,18 +562,18 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
     if (not nk.empty()) nk.clear();nk.push_back(1);
     for (int i=1;i<nl;i++) {
         trouve=false;
-        for (j=0;j<numpop.size();j++) {
+        for (j=0; j<(int)numpop.size();j++) {
             trouve=(numpop[j]==pop[i]);
             if (trouve) break;
         }
         if (trouve) {nk[j]++;}
         else {numpop.push_back(pop[i]);nk.push_back(1);}
     }
-    snk=0;for (int i=0;i<nk.size();i++) snk += nk[i];
+    snk=0;for (size_t i=0;i<nk.size();i++) snk += nk[i];
     //cout<<"apres calcul snk\n";
     if (nl!=snk) {cout<< "dans AFD nl!=snk\n";exit(1);}
     matC = new long double*[nc];for (int i=0;i<nc;i++) matC[i] = new long double[numpop.size()];
-    matCT = new long double*[numpop.size()];for (int i=0;i<numpop.size();i++) matCT[i] = new long double[nc];
+    matCT = new long double*[numpop.size()];for (size_t i=0;i<numpop.size();i++) matCT[i] = new long double[nc];
     //matM = new *double[nc];for (int i=0;i<nc;i++) matM[i] = new double[nc];
     valprop = new long double[nc];
     res.vectprop = new long double*[nc];for (int i=0;i<nc;i++) res.vectprop[i] = new long double[nc];
@@ -585,10 +585,10 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
     mcv=covarianceponderee(nl,nc,X,w);
     //cout<<"apres covarianceponderee\n";
     res.moy=new long double[mcv.n];for (j=0;j<mcv.n;j++) res.moy[j]=mcv.mu[j];
-    mk = new long double*[numpop.size()];for (int i=0;i<numpop.size();i++) mk[i] = new long double[nc];
+    mk = new long double*[numpop.size()];for (size_t i=0;i<numpop.size();i++) mk[i] = new long double[nc];
     wk = new long double[numpop.size()];
     //cout<<"numpop.size="<<numpop.size()<<"\n";
-    for (int k=0;k<numpop.size();k++) {
+    for (size_t k=0;k<numpop.size();k++) {
         wk[k]=0.0;for (int i=0;i<nl;i++) {if (pop[i]==numpop[k]) {wk[k] +=w[i];}}
         //cout<<"wk["<<k<<"]="<<wk[k]<<"\n";
         for (j=0;j<nc;j++) {
@@ -597,7 +597,7 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
         }
     }
     //cout<<"apres la premiere boucle\n";
-    for (int k=0;k<numpop.size();k++) {
+    for (size_t k=0;k<numpop.size();k++) {
         //cout<<"k="<<k<<"\n";
         //cout<<"   w[k]="<<wk[k]<<"\n";
         co=sqrt(wk[k]);
@@ -616,17 +616,17 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
 	//cout<<"apres jaconi\n";
     res.vectprop = prodML(nc,numpop.size(),numpop.size(),prodML(nc,nc,numpop.size(),matTI,matC),res.vectprop);
 //tri des valeurs et vecteurs propres par ordre décroissant des valeurs propres
-    for (int i=0;i<numpop.size()-1;i++) {
-        for (j=i+1;j<numpop.size();j++) if (valprop[i]<valprop[j]) {
+    for (int i=0;i<(int)numpop.size()-1;i++) {
+        for (j=i+1; j<(int)numpop.size(); j++) if (valprop[i]<valprop[j]) {
             piv=valprop[i];valprop[i]=valprop[j];valprop[j]=piv;
             for (int k=0;k<nc;k++) {
                 piv=res.vectprop[k][i];res.vectprop[k][i]=res.vectprop[k][j];res.vectprop[k][j]=piv;
             }
         }
     }
-    res.slambda=0.0;for (int i=0;i<numpop.size();i++) res.slambda +=valprop[i];
+    res.slambda=0.0;for (size_t i=0;i<numpop.size();i++) res.slambda +=valprop[i];
     res.nlambda=1;sl=valprop[0];
-    while ((res.nlambda<numpop.size())and(sl/res.slambda<prop)) {
+    while ((res.nlambda<(int)numpop.size())and(sl/res.slambda<prop)) {
         res.slambda +=valprop[res.nlambda];res.nlambda++;
     }
     res.lambda = new long double[res.nlambda];
@@ -641,10 +641,10 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
     for (j=0;j<mcv.n;j++) delete []mcv.cov[j];delete []mcv.cov;
     delete []mcv.mu;
     for (int i=0;i<nc;i++) delete []matC[i];delete []matC;
-    for (int i=0;i<numpop.size();i++) delete []matCT[i];delete []matCT;
+    for (size_t i=0;i<numpop.size();i++) delete []matCT[i];delete []matCT;
     for (int i=0;i<nc;i++) delete []matTI[i];delete []matTI;
-    for (int i=0;i<numpop.size();i++) delete []matM[i];delete []matM;
-    for (int i=0;i<numpop.size();i++) delete []mk[i];delete []mk;
+    for (size_t i=0;i<numpop.size();i++) delete []matM[i];delete []matM;
+    for (size_t i=0;i<numpop.size();i++) delete []mk[i];delete []mk;
     delete []valprop;
     delete []w;
     delete []wk;

@@ -267,7 +267,7 @@ int nacp=100000;
  */
     void doacpl(string opt,bool multithread, int seed){
         string *ss,s,s0,s1;
-        bool dopca,doloc;
+        bool dopca = false,doloc = false;
         int ns;
  		cout<<"doacpl "<<opt<<"\n";
        ss = splitwords(opt,";",&ns);

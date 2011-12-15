@@ -128,7 +128,7 @@ double MwcGen::glognorm(double mean,double sd) {
 
 double MwcGen::ggamma (double shape, double rate) {
 	const double log4=1.3862943611198906188344642429164,sg_magic=2.5040773967762740733732583523869,e=2.7182818284590452353602874713527;
-	double alpha,beta,ainv,bbb,ccc,u1,u2,v,x,z,r,res;
+	double alpha,beta,ainv,bbb,ccc,u1,u2,v,x,z,r, res = 0.0;
 	bool fin=false;;
 	alpha=shape;
 	beta=1.0/rate;

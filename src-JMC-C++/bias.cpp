@@ -355,7 +355,7 @@ long double ***paretoil;
         for (int j=0;j<nparamcom+nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
-            for (int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
+            for (int i=0;i<24-(int)nomparam[j].length();i++)fprintf(f1," ");
             for (int i=0;i<ntest;i++) x[i]=enreg2[i].paramvv[j];mo[0]=cal_moyL(ntest,x);
             for (int i=0;i<ntest;i++) x[i]=paramest[i][j].moy;mo[1]=cal_moyL(ntest,x);
             for (int i=0;i<ntest;i++) x[i]=paramest[i][j].med;mo[2]=cal_moyL(ntest,x);
@@ -367,7 +367,7 @@ long double ***paretoil;
         for (int j=0;j<nparamcom+nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
-            for(int i=0;i<33-nomparam[j].length();i++)fprintf(f1," ");
+            for(int i=0;i<33-(int)nomparam[j].length();i++)fprintf(f1," ");
             if (br[0][j]<0) fprintf(f1,"  %6.3Lf",br[0][j]); else fprintf(f1,"  %6.3Lf",br[0][j]);
             if (br[1][j]<0) fprintf(f1,"         %6.3Lf",br[1][j]); else fprintf(f1,"         %6.3Lf",br[1][j]);
             if (br[2][j]<0) fprintf(f1,"         %6.3Lf\n",br[2][j]); else fprintf(f1,"         %6.3Lf\n",br[2][j]);
@@ -377,7 +377,7 @@ long double ***paretoil;
         for (int j=0;j<nparamcom+nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
-            for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
+            for(int i=0;i<24-(int)nomparam[j].length();i++)fprintf(f1," ");
             fprintf(f1,"    %6.3Lf            %6.3Lf            %6.3Lf             %6.3Lf           %6.3Lf\n",rrmise[j],rmad[j],rmse[0][j],rmse[1][j],rmse[2][j]);
         }
         fprintf(f1,"\n                                                                 Factor 2        Factor 2        Factor 2\n");
@@ -385,7 +385,7 @@ long double ***paretoil;
         for (int j=0;j<nparamcom+nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
-            for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
+            for(int i=0;i<24-(int)nomparam[j].length();i++)fprintf(f1," ");
             fprintf(f1,"    %6.3Lf            %6.3Lf            %6.3Lf             %6.3Lf           %6.3Lf\n",cov50[j],cov95[j],fac2[0][j],fac2[1][j],fac2[2][j]);
         }
         fprintf(f1,"\n                                          Median Relative Bias\n");
@@ -393,7 +393,7 @@ long double ***paretoil;
         for (int j=0;j<nparamcom+nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
-            for(int i=0;i<43-nomparam[j].length();i++)fprintf(f1," ");
+            for(int i=0;i<43-(int)nomparam[j].length();i++)fprintf(f1," ");
             if (medbr[0][j]<0) fprintf(f1,"  %6.3Lf",medbr[0][j]); else fprintf(f1,"  %6.3Lf",medbr[0][j]);
             if (medbr[1][j]<0) fprintf(f1,"         %6.3Lf",medbr[1][j]); else fprintf(f1,"         %6.3Lf",medbr[1][j]);
             if (medbr[2][j]<0) fprintf(f1,"         %6.3Lf\n",medbr[2][j]); else fprintf(f1,"         %6.3Lf\n",medbr[2][j]);
@@ -403,7 +403,7 @@ long double ***paretoil;
         for (int j=0;j<nparamcom+nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             fprintf(f1,"%s",nomparam[j].c_str());
-            for(int i=0;i<24-nomparam[j].length();i++)fprintf(f1," ");
+            for(int i=0;i<24-(int)nomparam[j].length();i++)fprintf(f1," ");
             fprintf(f1,"     %6.3Lf          %6.3Lf         %6.3Lf         %6.3Lf\n",rmedad[j],rmae[0][j],rmae[1][j],rmae[2][j]);
         }
          fclose(f1);
@@ -489,7 +489,7 @@ long double ***paretoil;
 	void dobias(string opt,  int seed){
         string courantfilename;
         int nstatOK, iprog,nprog;
-        int nrec,nsel,ns,nrecpos,ntest,np,ng,npv,nn,ncond;
+        int nrec = 0, nsel = 0,ns,nrecpos = 0,ntest = 0,np,ng,npv,nn,ncond;
         string *ss,s,*ss1,s0,s1,sg; 
 		float *stat_obs;
         string bidon;

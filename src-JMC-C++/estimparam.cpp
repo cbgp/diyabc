@@ -390,7 +390,7 @@ parstatC *parstat;
 * effectue la régression locale à partir de la matrice matX0 et le vecteur des poids vecW
 */
     void local_regression(int n) {
-        long double **matX,**matXT,**matA,**matB,**matAA,**matC,**bet,**matBB,kap,mdiff,coeff;
+        long double **matX,**matXT,**matA,**matB,**matAA,**matC,**bet = NULL,**matBB,kap,mdiff,coeff;
 		int err;
         matA = new long double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) matA[j] = new long double[n];
@@ -1057,7 +1057,7 @@ parstatC *parstat;
         fprintf(f1,"------------------------------------------------------------------------------------------------------\n");
         for (int j=0;j<nparamcom+nparcompo;j++) {
             fprintf(f1,"%s",nomparam[j].c_str());
-            for(int i=0;i<16-nomparam[j].length();i++)fprintf(f1," ");
+            for(int i=0;i<16-(int)(nomparam[j].length());i++)fprintf(f1," ");
             fprintf(f1,"%8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
         }
         fclose(f1);
@@ -1069,7 +1069,7 @@ parstatC *parstat;
 */
     void doestim(string opt) {
         int nstatOK, iprog,nprog;
-        int nrec,nsel,ns,nrecpos;
+        int nrec,nsel = 0,ns,nrecpos = 0;
         string *ss,s,*ss1,s0,s1;
         float  *stat_obs;
 
