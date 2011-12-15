@@ -36,6 +36,7 @@ using namespace std;
 
 extern string progressfilename;
 extern ReftableC rt;
+extern int debuglevel;
 
 #define c 1.5707963267948966192313216916398
 #define co 2.506628274631000502415765284811   //sqrt(pi)

@@ -1277,57 +1277,57 @@ extern int debuglevel;
     return res;
   }
 
-  long double ParticleC::cal_nha2p(int gr,int st){
-    string *haplo;
-    int iloc,kloc,j,nhl=0,nhm=0,nl=0,sample,dmax,cat;
-    bool trouve;
-    long double res=0.0;
-    int samp0=this->grouplist[gr].sumstat[st].samp-1;
-    int samp1=this->grouplist[gr].sumstat[st].samp1-1;
-    //cout <<"samples "<<samp0<<" & "<<samp1<<"\n";
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      nhl=0;
-      kloc=this->grouplist[gr].loc[iloc];
-      cat = this->locuslist[kloc].type % 5;
-      dmax=this->data.ss[cat][samp0]+this->data.ss[cat][samp1];
-      haplo = new string[dmax];
-      if(samplesize(kloc,samp0)+samplesize(kloc,samp1)>0) {
-	nl++;
-	if (this->locuslist[kloc].dnavar==0) {
-	  haplo[nhl]="";
-	  nhl++;
-	}else {
-	  for (int samp=0;samp<2;samp++) {
-	    if (samp==0) sample=samp0; else sample=samp1;
-	    for (int i=0;i<this->data.ss[cat][sample];i++) {
-	      if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) ; { // FIXME: if statement has empty body ?
-		if (nhl==0) {
-		  haplo[nhl] = this->locuslist[kloc].haplodnavar[sample][i];
-		  nhl++;
-		} else {
-		  trouve=false;j=0;
-		  while ((not trouve)and(j<nhl)) {
-		    trouve=identseq(haplo[j],this->locuslist[kloc].haplodnavar[sample][i],"nah2p",kloc,sample,i);
-		    if (not trouve) j++;
-		  }
-		  if (trouve) {
-		    for (int k=0;k<this->locuslist[kloc].dnavar;k++) if (haplo[j][k]=='N') haplo[j][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
-		  } else {
-		    haplo[nhl] = this->locuslist[kloc].haplodnavar[sample][i];
-		    nhl++;
-		  }
+long double ParticleC::cal_nha2p(int gr,int st){
+	string *haplo;
+	int iloc,kloc,j,nhl=0,nhm=0,nl=0,sample,dmax,cat;
+	bool trouve;
+	long double res=0.0;
+	int samp0=this->grouplist[gr].sumstat[st].samp-1;
+	int samp1=this->grouplist[gr].sumstat[st].samp1-1;
+	//cout <<"samples "<<samp0<<" & "<<samp1<<"\n";
+	for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+		nhl=0;
+		kloc=this->grouplist[gr].loc[iloc];
+		cat = this->locuslist[kloc].type % 5;
+		dmax=this->data.ss[cat][samp0]+this->data.ss[cat][samp1];
+		haplo = new string[dmax];
+		if(samplesize(kloc,samp0)+samplesize(kloc,samp1)>0) {
+			nl++;
+			if (this->locuslist[kloc].dnavar==0) {
+				haplo[nhl]="";
+				nhl++;
+			}else {
+				for (int samp=0;samp<2;samp++) {
+					if (samp==0) sample=samp0; else sample=samp1;
+					for (int i=0;i<this->data.ss[cat][sample];i++) {
+						if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)  {
+							if (nhl==0) {
+								haplo[nhl] = this->locuslist[kloc].haplodnavar[sample][i];
+								nhl++;
+							} else {
+								trouve=false;j=0;
+								while ((not trouve)and(j<nhl)) {
+									trouve=identseq(haplo[j],this->locuslist[kloc].haplodnavar[sample][i],"nah2p",kloc,sample,i);
+									if (not trouve) j++;
+								}
+								if (trouve) {
+									for (int k=0;k<this->locuslist[kloc].dnavar;k++) if (haplo[j][k]=='N') haplo[j][k] = this->locuslist[kloc].haplodnavar[sample][i][k];
+								} else {
+									haplo[nhl] = this->locuslist[kloc].haplodnavar[sample][i];
+									nhl++;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
-	      }
-	    }
-	  }
+		nhm += nhl;
+		delete [] haplo;
 	}
-      }
-      nhm += nhl;
-      delete [] haplo;
-    }
-    if (nl>0) res=(long double)nhm/(long double)nl;
-    return res;
-  }
+	if (nl>0) res=(long double)nhm/(long double)nl;
+	return res;
+}
 
   int* ParticleC::cal_nss2pl(int kloc,int samp0, int samp1, int *nssl,bool *OK) {
     char c0;

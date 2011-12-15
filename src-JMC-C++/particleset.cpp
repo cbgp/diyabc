@@ -353,10 +353,12 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 				for (int j=0;j<header.scenario[scen].nconditions;j++) {
 					ip1=0;while (header.scenario[scen].condition [j].param1!=header.scenario[scen].histparam[ip1].name) ip1++;
 					ip2=0;while (header.scenario[scen].condition [j].param2!=header.scenario[scen].histparam[ip2].name) ip2++;
+					if (debuglevel==6) cout<<"phistar["<<k<<"]["<<ip1<<"]="<<phistar[k][ip1]<<"   phistar["<<k<<"]["<<ip2<<"]="<<phistar[k][ip2];
 					if (header.scenario[scen].condition[j].operateur==">")       phistarOK=(phistar[k][ip1] >  phistar[k][ip2]);
 					else if (header.scenario[scen].condition[j].operateur=="<")  phistarOK=(phistar[k][ip1] <  phistar[k][ip2]);
 					else if (header.scenario[scen].condition[j].operateur==">=") phistarOK=(phistar[k][ip1] >= phistar[k][ip2]);
 					else if (header.scenario[scen].condition[j].operateur=="<=") phistarOK=(phistar[k][ip1] <= phistar[k][ip2]);
+					if (debuglevel==6) {if (phistarOK) cout<<"  OK\n"; else cout<<"   NOT OK\n";}
 					if (not phistarOK) break;
 				}
 			}
