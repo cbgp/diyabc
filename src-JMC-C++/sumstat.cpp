@@ -1300,7 +1300,7 @@ extern int debuglevel;
 	  for (int samp=0;samp<2;samp++) {
 	    if (samp==0) sample=samp0; else sample=samp1;
 	    for (int i=0;i<this->data.ss[cat][sample];i++) {
-	      if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) ; {
+	      if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) ; { // FIXME: if statement has empty body ?
 		if (nhl==0) {
 		  haplo[nhl] = this->locuslist[kloc].haplodnavar[sample][i];
 		  nhl++;

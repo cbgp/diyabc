@@ -222,8 +222,8 @@ vector <int> melange(MwcGen mw, int n) {
     size_t posign,posplus,posminus;
     posplus=line.find('+');posminus=line.find('-');
     if ((posplus==string::npos)and(posminus==string::npos)) {return  this->param2val(line);}
-    else {if ((posplus>=0)and(posminus>line.size())){posign=posplus;}
-      else {if ((posminus>=0)and(posplus>line.size())){posign=posminus;}
+    else {if ((posplus>=0)and(posminus>line.size())){posign=posplus;} // FIXME: posplus>0 always true
+      else {if ((posminus>=0)and(posplus>line.size())){posign=posminus;} // FIXME: posplus>0 always true
 	else {if (posplus<posminus) {posign=posplus;} else {posign=posminus;}}}
     }
     result=this->param2val(line.substr(0,posign));
@@ -240,8 +240,8 @@ vector <int> melange(MwcGen mw, int n) {
 	//cout << "result = " << result <<"\n";
 	fin=true;break;
       }
-      else {if ((posplus>=0)and(posminus>line.size())){posign=posplus;}
-	else {if ((posminus>=0)and(posplus>line.size())){posign=posminus;}
+      else {if ((posplus>=0)and(posminus>line.size())){posign=posplus;} // FIXME: posplus>0 always true
+	else {if ((posminus>=0)and(posplus>line.size())){posign=posminus;} // FIXME: posplus>0 always true
 	  else {if (posplus<posminus) {posign=posplus;} else {posign=posminus;}}}
       }
       if (operateur==plus) {result +=this->param2val(line.substr(0,posign));}

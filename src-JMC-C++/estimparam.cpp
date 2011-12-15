@@ -652,6 +652,7 @@ parstatC *parstat;
             fprintf(f1,"\n");
         }
         fclose(f1);
+
     }
 
 /**

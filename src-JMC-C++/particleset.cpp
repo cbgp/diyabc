@@ -27,6 +27,7 @@ using namespace std;
 
 extern enregC *enreg;
 extern long double **phistar;
+extern long double **phistarOK;
 extern int debuglevel;
 extern ReftableC rt;
 extern string scurfile;
@@ -320,7 +321,7 @@ void ParticleSetC::resetparticle (int p) {
 void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
 	int scen=numscen-1;
 	int ii,ip1,ip2,ipart,gr,nstat,k,nparam=header.scenario[scen].nparam;
-	bool phistarOK;
+	//bool phistarOK;
 	this->npart = npart;
 	int *sOK;
 	sOK = new int[npart];
@@ -345,7 +346,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	}
 	if (debuglevel==5) cout<<"apres firsttime\n";
 	for (int p=0;p<this->npart;p++) {
-		do {
+/*		do {
 			phistarOK=true;
 			k=this->particule[0].mw.rand0(nsel);
 			if (header.scenario[scen].nconditions>0) {
@@ -359,13 +360,14 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 					if (not phistarOK) break;
 				}
 			}
-		} while(not phistarOK);
+		} while(not phistarOK);*/
+		k=this->particule[0].mw.rand0(nsel);
 		cout<<"p="<<p<<"    k="<<k<<"\n";
 		ii=0;
 		for (int i=0;i<nparam;i++) {
 			if (not header.scenario[scen].histparam[i].prior.constant) {
-				if (debuglevel==5) cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"\n";
-				this->particule[p].scenario[scen].histparam[i].value=phistar[k][ii];
+				if (debuglevel==5) cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"\n";
+				this->particule[p].scenario[scen].histparam[i].value=phistarOK[k][ii];
 				ii++;
 			} else this->particule[p].scenario[scen].histparam[i].value=header.scenario[scen].histparam[i].prior.mini;
 			if (p==0) cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"\n";
@@ -375,23 +377,23 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 			if (header.groupe[gr].type==0) {  //MICROSAT
 				//cout <<"MICROSAT "<<p<<"\n";
 				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    \n";
-				if (not header.groupe[gr].priormutmoy.constant) {this->particule[p].grouplist[gr].mutmoy = phistar[k][ii];ii++;}
+				if (not header.groupe[gr].priormutmoy.constant) {this->particule[p].grouplist[gr].mutmoy = phistarOK[k][ii];ii++;}
 				//cout<<this->particule[p].grouplist[gr].mutmoy<<"\n";
 				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    ";
-				if (not header.groupe[gr].priorPmoy.constant)   {this->particule[p].grouplist[gr].Pmoy  =  phistar[k][ii];ii++;}
+				if (not header.groupe[gr].priorPmoy.constant)   {this->particule[p].grouplist[gr].Pmoy  =  phistarOK[k][ii];ii++;}
 				//cout<<this->particule[p].grouplist[gr].Pmoy<<"\n";
 				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
-				if (not header.groupe[gr].priorsnimoy.constant) {this->particule[p].grouplist[gr].snimoy = phistar[k][ii];ii++;}
+				if (not header.groupe[gr].priorsnimoy.constant) {this->particule[p].grouplist[gr].snimoy = phistarOK[k][ii];ii++;}
 				//cout<<this->particule[p].grouplist[gr].snimoy<<"\n";
 			}
-			else if (header.groupe[gr].type==1) {                                                  //SEQUENCES
+			else if (header.groupe[gr].type==1) {       //SEQUENCES
 				//cout<<"SEQUENCE\n";
-				if (not header.groupe[gr].priormutmoy.constant) {this->particule[p].grouplist[gr].musmoy = phistar[k][ii];ii++;}   //musmoy
+				if (not header.groupe[gr].priormutmoy.constant) {this->particule[p].grouplist[gr].musmoy = phistarOK[k][ii];ii++;}   //musmoy
 				if (header.groupe[gr].mutmod>0){
-					if (not header.groupe[gr].priormutmoy.constant){this->particule[p].grouplist[gr].k1moy =phistar[k][ii];ii++;}        //k1moy
+					if (not header.groupe[gr].priormutmoy.constant){this->particule[p].grouplist[gr].k1moy =phistarOK[k][ii];ii++;}        //k1moy
 				}
 				if (header.groupe[gr].mutmod>2){
-					if (not header.groupe[gr].priormutmoy.constant){this->particule[p].grouplist[gr].k2moy =phistar[k][ii];ii++;}        //k2moy
+					if (not header.groupe[gr].priormutmoy.constant){this->particule[p].grouplist[gr].k2moy =phistarOK[k][ii];ii++;}        //k2moy
 				}
 			}
 		//cout<<"\n";

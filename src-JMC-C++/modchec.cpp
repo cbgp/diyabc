@@ -47,6 +47,7 @@ extern int nenr, numtransf;
 extern string progressfilename, statobsfilename, headerfilename, path, ident;
 extern bool original, composite;
 extern long double ** phistar;
+long double ** phistarOK;
 extern string* stat_type;
 extern int* stat_num;
 
@@ -242,7 +243,7 @@ long double **ssphistar,**ssref;
         return spr;
     }
 
-    int detphistarOK(int nsel,long double **phistar,long double **phistarOK) {
+    int detphistarOK(int nsel) {
         bool OK;
         int npv,ip1,ip2,nphistarOK=0,scen=rt.scenteste-1;
         npv = rt.nparam[scen];
@@ -250,8 +251,23 @@ long double **ssphistar,**ssref;
             OK=true;
             if (header.scenario[scen].nconditions>0) {
                 for (int j=0;j<header.scenario[scen].nconditions;j++) {
-                    ip1=0;while (header.scenario[scen].condition [j].param1!=header.scenario[scen].histparam[ip1].name) ip1++;
-                    ip2=0;while (header.scenario[scen].condition [j].param2!=header.scenario[scen].histparam[ip2].name) ip2++;
+                    ip1=0;
+                    for(int k =0; k < rt.nparam[scen]; ++k){
+                    	if(header.scenario[scen].condition[j].param1 == header.scenario[scen].histparam[k].name){
+                    		break;
+                    	} else {
+                    		if(not header.scenario[scen].histparam[k].prior.constant) ip1++;
+                    	}
+                    }
+
+                    ip2=0;
+                    for(int k =0; k < rt.nparam[scen]; ++k){
+                    	if(header.scenario[scen].condition[j].param2 == header.scenario[scen].histparam[k].name){
+                    		break;
+                    	} else {
+                    		if(not header.scenario[scen].histparam[k].prior.constant) ip2++;
+                    	}
+                    }
                     if (header.scenario[scen].condition[j].operateur==">")       OK=(phistar[i][ip1] >  phistar[i][ip2]);
                     else if (header.scenario[scen].condition[j].operateur=="<")  OK=(phistar[i][ip1] <  phistar[i][ip2]);
                     else if (header.scenario[scen].condition[j].operateur==">=") OK=(phistar[i][ip1] >= phistar[i][ip2]);
@@ -268,7 +284,6 @@ long double **ssphistar,**ssref;
                 nphistarOK++;
             }
         }
-        cout<<"nphistarOK="<<nphistarOK<<"\n";
         return nphistarOK;
     }
 
@@ -381,12 +396,12 @@ long double **ssphistar,**ssref;
     }
 
     void domodchec(string opt,int seed){
-        int nstatOK, iprog,nprog;
+        int nstatOK, nphistarOK, iprog,nprog;
         int nrec,nsel,ns,nrecpos,newsspart,npv,nss,nsr,newrefpart,*numscen,nparamax,bidon;
         string *ss,s,*ss1,s0,s1,snewstat;
         float  *stat_obs;
         bool usestats,firsttime,dopca,doloc,newstat=false;
-
+        //long double** phistarOK;
         FILE *flog;
 
         progressfilename = path + ident + "_progress.txt";
@@ -459,10 +474,16 @@ long double **ssphistar,**ssref;
         det_nomparam();
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
         iprog+=20;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-        //phistarOK = new double*[nsel];
-        //for (int i=0;i<nsel;i++) phistarOK[i] = new double[header.scenario[rt.scenteste-1].nparam];
-        //nphistarOK=detphistarOK(nsel,phistar,phistarOK);
-        //cout<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr<<"\n";
+        phistarOK = new long double*[nsel];
+        for (int i=0;i<nsel;i++) phistarOK[i] = new long double[header.scenario[rt.scenteste-1].nparam];
+        nphistarOK=detphistarOK(nsel);               cout << "apres detphistarOK\n";
+        cout//<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr
+            << "   nphistarOK="<< nphistarOK<<"\n";
+        //cout <<"DEBUG: j'arrête là." << endl; exit(1);
+        if(nphistarOK < newsspart){
+        	cout << "Pas assez de nphistarOK. J'arrête là." << endl;
+        	exit(1);
+        }
         npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[nenr];
         for (int p=0;p<nenr;p++) {
@@ -485,9 +506,9 @@ long double **ssphistar,**ssref;
             ps.dosimulphistar(header,nenr,false,multithread,firsttime,rt.scenteste,seed,nsel);
             for (int i=0;i<nenr;i++) {
                 for (int j=0;j<header.nstat;j++) ssphistar[i+nss][j]=enreg[i].stat[j];
-                for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+ns][j]<<"   ";cout<<"\n";
-				exit(1);
+                //for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+nss][j]<<"   ";cout<<"\n";
             }
+            //cout <<"DEBUG: j'arrête là." << endl;				exit(1);
             firsttime=false;
             nss+=nenr;
             iprog+=nenr;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
