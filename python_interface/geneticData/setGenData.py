@@ -58,6 +58,8 @@ class SetGeneticData(formGenData,baseGenData):
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
 
+        self.ui.analysisFrame.hide()
+
     def updateDoc(self,obj=None):
         """ Met à jour la doc uniquement pour les fils de l'objet obj.
         Fonctionne tant que les instances de SetGeneticData ont pour parent.parent

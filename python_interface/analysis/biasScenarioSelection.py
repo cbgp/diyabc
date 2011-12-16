@@ -44,6 +44,8 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             self.ui.analysisTypeLabel.setText("Confidence in scenario choice")
         self.ui.projectDirEdit.setText(self.parent.parent.dir)
 
+        self.ui.analysisNameLabel.setText(self.analysis.name)
+
     def validate(self):
         """ passe à l'étape suivante de la définition de l'analyse
         """

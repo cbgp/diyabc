@@ -67,6 +67,8 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
         self.ui.horizontalLayout_2.setAlignment(QtCore.Qt.AlignLeft)
         self.ui.horizontalLayout_3.setAlignment(QtCore.Qt.AlignLeft)
 
+        self.ui.analysisNameLabel.setText(self.analysis.name)
+
     def addTheSc(self):
         
         

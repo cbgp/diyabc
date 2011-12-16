@@ -59,6 +59,8 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
         self.ui.horizontalLayout_2.setAlignment(QtCore.Qt.AlignLeft)
         self.ui.horizontalLayout_3.setAlignment(QtCore.Qt.AlignLeft)
 
+        self.ui.analysisNameLabel.setText(self.analysis.name)
+
     def addTheSc(self):
         
         # creation de la groupbox a ajouter

@@ -87,6 +87,58 @@
     </widget>
    </item>
    <item>
+    <widget class="QFrame" name="analysisFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Analysis</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="analysisNameLabel">
+        <property name="text">
+         <string>cc</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -181,7 +233,7 @@
             <x>0</x>
             <y>0</y>
             <width>429</width>
-            <height>614</height>
+            <height>566</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3"/>

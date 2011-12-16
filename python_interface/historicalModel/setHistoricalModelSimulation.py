@@ -74,6 +74,8 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         # ajout dans la GUI
         self.ui.horizontalLayout_2.addWidget(groupBoxSampleSize)
 
+        self.ui.fixedDrawnFrame.hide()
+
     def defineSampleSize(self,silent=False):
         # nettoyage
         rmList = []

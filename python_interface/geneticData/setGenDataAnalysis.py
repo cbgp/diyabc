@@ -24,6 +24,8 @@ class SetGeneticDataAnalysis(SetGeneticData):
         super(SetGeneticDataAnalysis,self).__init__(parent)
 
         self.analysis = analysis
+        self.analysisFrame.show()
+        self.analysisNameLabel.setText(self.analysis.name)
 
         self.ui.addGroupButton.hide()
         self.ui.clearButton.hide()

@@ -87,6 +87,58 @@
     </widget>
    </item>
    <item>
+    <widget class="QFrame" name="fixedDrawnFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_10">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>Analysis</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="analysisNameLabel">
+        <property name="text">
+         <string>cc</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QFrame" name="frame_4">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -766,7 +818,7 @@ previews</string>
         <x>0</x>
         <y>0</y>
         <width>905</width>
-        <height>243</height>
+        <height>195</height>
        </rect>
       </property>
       <property name="font">

@@ -419,13 +419,13 @@ class ProjectSnp(ProjectReftable):
         if yesno:
             if "Set " in str(self.ui.ascertButton.text()):
                 self.ui.ascertButton.setText(str(self.ui.ascertButton.text()).replace("Set ","View "))
-            else:
+            elif "View " not in str(self.ui.ascertButton.text()):
                 self.ui.ascertButton.setText("View "+str(self.ui.ascertButton.text()))
         else:
             self.ui.ascertButton.setText("Set "+str(self.ui.ascertButton.text()))
             if "View " in str(self.ui.ascertButton.text()):
                 self.ui.ascertButton.setText(str(self.ui.ascertButton.text()).replace("View ","Set "))
-            else:
+            elif "Set " not in str(self.ui.ascertButton.text()):
                 self.ui.ascertButton.setText("Set "+str(self.ui.ascertButton.text()))
 
     def freezeGenData(self,yesno=True):

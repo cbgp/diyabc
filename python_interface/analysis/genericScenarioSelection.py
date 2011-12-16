@@ -45,6 +45,8 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
+        self.ui.analysisNameLabel.setText(self.analysis.name)
+
     def validate(self):
         """ passe à l'étape suivante de définition de l'analyse
         """
