@@ -65,14 +65,14 @@ sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 if [ $MAIN == "MAIN" ]; then
     sed -i "s/ NAMEVERSION//" $PACKAGEDIR/usr/share/menu/diyabc
-    sed -i "s/ICON/\/usr\/local\/src\/diyabc\/docs\/accueil_pictures\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
+    sed -i "s/ICON/\/usr\/local\/src\/diyabc\/docs\/icons\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
     sed -i "s/ NAMEVERSION//" $PACKAGEDIR/usr/share/applications/diyabc.desktop
     sed -i "s/DIYABCEXEC/\/usr\/local\/bin\/diyabc/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
     sed -i "s/COMMANDVERSION//" $PACKAGEDIR/usr/share/menu/diyabc
 else
     sed -i "s/ NAMEVERSION/ $VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
     sed -i "s/ NAMEVERSION/ $VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
-    sed -i "s/ICON/\/usr\/local\/src\/diyabc-$VERSION\/docs\/accueil_pictures\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
+    sed -i "s/ICON/\/usr\/local\/src\/diyabc-$VERSION\/docs\/icons\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
     sed -i "s/DIYABCEXEC/\/usr\/local\/bin\/diyabc-$VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
     sed -i "s/COMMANDVERSION/-$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
     mv $PACKAGEDIR/usr/share/menu/diyabc $PACKAGEDIR/usr/share/menu/diyabc-$VERSION
