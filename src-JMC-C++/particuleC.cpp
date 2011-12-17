@@ -119,83 +119,83 @@ vector <int> melange(MwcGen mw, int n) {
    * Si numscen<1, tirage au sort préalable du scenario dans le prior
    */
   void ParticleC::drawscenario(int numscen) {
-    double ra,sp=0.0;
-    int iscen;
-    if (numscen<1) {
-      ra = this->mw.random();
-      iscen=-1;
-      while ((ra>sp)and(iscen<this->nscenarios-1)) {
-	iscen++;sp +=this->scenario[iscen].prior_proba;
-      }
-    } else iscen=numscen-1;
-		
-    // copie scenario[iscen] dans scen 
-    this->scen.prior_proba = this->scenario[iscen].prior_proba;
-    this->scen.number = this->scenario[iscen].number;
-    this->scen.popmax = this->scenario[iscen].popmax;
-    this->scen.npop = this->scenario[iscen].npop;
-    this->scen.nsamp = this->scenario[iscen].nsamp;
-    this->scen.nparam = this->scenario[iscen].nparam;
-    this->scen.nparamvar = this->scenario[iscen].nparamvar;
-    this->scen.nevent = this->scenario[iscen].nevent;
-    this->scen.nn0 = this->scenario[iscen].nn0;
-    this->scen.nconditions = this->scenario[iscen].nconditions;
-    for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i] = this->scenario[iscen].time_sample[i];
-    for (int i=0;i<this->scen.nn0;i++) {
-      //if ((i>5)or(iscen>2)) cout <<"i="<<i<<"   iscen="<<iscen<<"\n";
-      this->scen.ne0[i].val = this->scenario[iscen].ne0[i].val;
-      this->scen.ne0[i].name = this->scenario[iscen].ne0[i].name;
-    }
-    //for (int i=0;i<this->scen.nn0;i++) this->scen.ne0[i] = copyne0(this->scenario[iscen].ne0[i]);
-    for (int i=0;i<this->scen.nevent;i++) {
-      // this->scen.event[i].libere();
-      this->scen.event[i] = this->scenario[iscen].event[i]; // copyevent supprimé (PP)
-    }
-    for (int i=0;i<this->scen.nparam;i++) {this->scen.histparam[i] = this->scenario[iscen].histparam[i];/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
-    for (int i=0;i<this->scen.nparamvar;i++) {this->scen.paramvar[i] = this->scenario[iscen].paramvar[i];/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
-    if (this->scen.nconditions>0) {
-      for (int i=0;i<this->scen.nconditions;i++) this->scen.condition[i] = this->scenario[iscen].condition[i];
-    }
-        
-    // fin copie
-        
-    //cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
-    //this->scen.ecris();
-    //cout<<"dans drawscenario   nsample="<<this->scen.nsamp<<"\n";
-    //for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ss[0][sa]<<"   ";cout<<"\n";
-    this->refnindtot=0;
-    this->ref = new bool**[5];
-    this->dat = new bool**[5];
-    for (int cat=0;cat<5;cat++) {
-      if (this->data.catexist[cat]) {
-	this->ref[cat] = new bool*[this->scen.nsamp];
-	this->dat[cat] = new bool*[this->scen.nsamp];
-	for (int sa=0;sa<this->scen.nsamp;sa++) {this->ref[cat][sa] = new bool[this->data.ss[cat][sa]];this->dat[cat][sa] = new bool[this->data.ss[cat][sa]];}
-	for (int sa=0;sa<this->scen.nsamp;sa++) {
-	  for (int ievent=0;ievent<this->scen.nevent;ievent++) {
-	    if ((this->scen.event[ievent].action=='E')and(this->scen.event[ievent].sample==sa+1)) {
-	      for (int i=0;i<this->data.ss[cat][sa];i++) {
-		this->dat[cat][sa][i] = true;
-		this->ref[cat][sa][i] = (i<this->scen.event[ievent].nindref);
-		if (this->ref[cat][sa][i]) this->refnindtot++;
-	      }
-	      //cout<<"this->scen.event[ievent].action=='E'"<<"    refnindtot="<<this->refnindtot<<"\n";
-	    }
-	    if ((this->scen.event[ievent].action=='R')and(this->scen.event[ievent].sample==sa+1)) {
-	      this->refnindtot +=this->data.ss[cat][sa];
-	      for (int i=0;i<this->data.ss[cat][sa];i++) {
-		this->dat[cat][sa][i] = false;
-		this->ref[cat][sa][i] = true;
-	      }
-	      //cout<<"this->scen.event[ievent].action=='R'"<<"    refnindtot="<<this->refnindtot<<"   ss="<<this->data.ss[cat][sa]<<"\n";
-	    }
-						
+	  double ra,sp=0.0;
+	  int iscen;
+	  if (numscen<1) {
+		  ra = this->mw.random();
+		  iscen=-1;
+		  while ((ra>sp)and(iscen<this->nscenarios-1)) {
+			  iscen++;sp +=this->scenario[iscen].prior_proba;
+		  }
+	  } else iscen=numscen-1;
+	  
+	  // copie scenario[iscen] dans scen 
+	  this->scen.prior_proba = this->scenario[iscen].prior_proba;
+	  this->scen.number = this->scenario[iscen].number;
+	  this->scen.popmax = this->scenario[iscen].popmax;
+	  this->scen.npop = this->scenario[iscen].npop;
+	  this->scen.nsamp = this->scenario[iscen].nsamp;
+	  this->scen.nparam = this->scenario[iscen].nparam;
+	  this->scen.nparamvar = this->scenario[iscen].nparamvar;
+	  this->scen.nevent = this->scenario[iscen].nevent;
+	  this->scen.nn0 = this->scenario[iscen].nn0;
+	  this->scen.nconditions = this->scenario[iscen].nconditions;
+	  for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i] = this->scenario[iscen].time_sample[i];
+	  for (int i=0;i<this->scen.nn0;i++) {
+		  //if ((i>5)or(iscen>2)) cout <<"i="<<i<<"   iscen="<<iscen<<"\n";
+		  this->scen.ne0[i].val = this->scenario[iscen].ne0[i].val;
+		  this->scen.ne0[i].name = this->scenario[iscen].ne0[i].name;
 	  }
-	}
-      }
-    }
-    //cout<<"refnindtot="<<this->refnindtot<<"\n";
-  }
+	  //for (int i=0;i<this->scen.nn0;i++) this->scen.ne0[i] = copyne0(this->scenario[iscen].ne0[i]);
+	  for (int i=0;i<this->scen.nevent;i++) {
+		  // this->scen.event[i].libere();
+		  this->scen.event[i] = this->scenario[iscen].event[i]; // copyevent supprimé (PP)
+	  }
+	  for (int i=0;i<this->scen.nparam;i++) {this->scen.histparam[i] = this->scenario[iscen].histparam[i];/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
+	  for (int i=0;i<this->scen.nparamvar;i++) {this->scen.paramvar[i] = this->scenario[iscen].paramvar[i];/*cout<<this->scen.histparam[i].name<<"\n"<<flush;*/}
+	  if (this->scen.nconditions>0) {
+		  for (int i=0;i<this->scen.nconditions;i++) this->scen.condition[i] = this->scenario[iscen].condition[i];
+	  }
+	  
+	  // fin copie
+	  
+	  //cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
+	  //this->scen.ecris();
+	  //cout<<"dans drawscenario   nsample="<<this->scen.nsamp<<"\n";
+	  //for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ss[0][sa]<<"   ";cout<<"\n";
+	  this->refnindtot=0;
+	  this->ref = new bool**[5];
+	  this->dat = new bool**[5];
+	  for (int cat=0;cat<5;cat++) {
+		  if (this->data.catexist[cat]) {
+			  this->ref[cat] = new bool*[this->scen.nsamp];
+			  this->dat[cat] = new bool*[this->scen.nsamp];
+			  for (int sa=0;sa<this->scen.nsamp;sa++) {this->ref[cat][sa] = new bool[this->data.ss[cat][sa]];this->dat[cat][sa] = new bool[this->data.ss[cat][sa]];}
+			  for (int sa=0;sa<this->scen.nsamp;sa++) {
+				  for (int ievent=0;ievent<this->scen.nevent;ievent++) {
+					  if ((this->scen.event[ievent].action=='E')and(this->scen.event[ievent].sample==sa+1)) {
+						  for (int i=0;i<this->data.ss[cat][sa];i++) {
+							  this->dat[cat][sa][i] = true;
+							  this->ref[cat][sa][i] = (i<this->scen.event[ievent].nindref);
+							  if (this->ref[cat][sa][i]) this->refnindtot++;
+						  }
+						  //cout<<"drawscenario : this->scen.event[ievent].action=='E'"<<"    refnindtot="<<this->refnindtot<<"\n";
+					  }
+					  if ((this->scen.event[ievent].action=='R')and(this->scen.event[ievent].sample==sa+1)) {
+						  this->refnindtot +=this->data.ss[cat][sa];
+						  for (int i=0;i<this->data.ss[cat][sa];i++) {
+							  this->dat[cat][sa][i] = false;
+							  this->ref[cat][sa][i] = true;
+						  }
+						  //cout<<"drawscenario : this->scen.event[ievent].action=='R'"<<"    refnindtot="<<this->refnindtot<<"   ss="<<this->data.ss[cat][sa]<<"\n";
+					  }
+					  
+				  }
+			  }
+		  }
+	  }
+	  //cout<<"drawscenario : refnindtot="<<this->refnindtot<<"\n";
+	  }
 
 
 
@@ -1656,7 +1656,7 @@ void ParticleC::put_one_mutation(int loc) {
     p=(double)n1/(double)n;
     if (p > 0.5) poly=(p <= 1.0-this->reffreqmin);
     else         poly=(p >= this->reffreqmin);
-    // if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
+    //if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
     return poly;
   }
 	

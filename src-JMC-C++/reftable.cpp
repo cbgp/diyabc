@@ -487,12 +487,13 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 	bool firstloop=true,scenOK;
 	long double diff;
 	this->nreclus=0;step=nrec/100;
+	cout<<"nrec="<<nrec<<"\n";
 	nn=nsel;
 	nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
 	//cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
 	//cout<<" apres allocation de enrsel\n";
 	this->openfile2();
-	while (this->nreclus<nrec) {
+	while ((this->nreclus<nrec)and(not fifo.eof())) {
 		if (firstloop) {nrecOK=0;firstloop=false;}
 		else nrecOK=nn;
 		while ((nrecOK<2*nn)and(this->nreclus<nrec)) {
@@ -503,7 +504,7 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 				iscen++;
 			}
 			if (scenOK) {
-				this->nreclus++;
+				//this->nreclus++;
 				this->enrsel[nrecOK].dist=0.0;
 				for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>0.0) {
 					diff =(long double)(this->enrsel[nrecOK].stat[j] - stat_obs[j]);
@@ -514,6 +515,7 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 				nrecOK++;
 				if (this->nreclus==nrec) break;
 			}
+			this->nreclus++;
 			if ((this->nreclus % step)==0) {cout<<"\rcal_dist : "<<this->nreclus/step<<"%";fflush(stdout);}
 		}
 		sort(&this->enrsel[0],&this->enrsel[2*nn]);
@@ -529,7 +531,7 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 			for (int j=0;j<this->nstat;j++) printf("  %8.5f",this->enrsel[i].stat[j]);
 			cout<<"\n";
 		}*/
-	//exit(1);
+	exit(1);
 }
 
 

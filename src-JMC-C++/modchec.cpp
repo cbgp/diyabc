@@ -503,13 +503,13 @@ long double **ssphistar,**ssref;
         for (int i=0;i<newsspart;i++) ssphistar[i] = new long double[header.nstat];
         cout<<"newstat ="<<newstat<<"   newsspart="<<newsspart<<"     nenr="<<nenr<<"\n";
 		
+		if (nenr>newsspart) nenr=newsspart;
         while (nss<newsspart) {
             ps.dosimulphistar(header,nenr,false,multithread,firsttime,rt.scenteste,seed,nsel);
             for (int i=0;i<nenr;i++) {
                 for (int j=0;j<header.nstat;j++) ssphistar[i+nss][j]=enreg[i].stat[j];
-                //for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+nss][j]<<"   ";cout<<"\n";
+                for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+nss][j]<<"   ";cout<<"\n";
             }
-            //cout <<"DEBUG: j'arrête là." << endl;				exit(1);
             firsttime=false;
             nss+=nenr;
             iprog+=nenr;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);

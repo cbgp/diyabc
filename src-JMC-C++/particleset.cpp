@@ -346,23 +346,6 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	}
 	if (debuglevel==5) cout<<"apres firsttime\n";
 	for (int p=0;p<this->npart;p++) {
-/*		do {
-			phistarOK=true;
-			k=this->particule[0].mw.rand0(nsel);
-			if (header.scenario[scen].nconditions>0) {
-				for (int j=0;j<header.scenario[scen].nconditions;j++) {
-					ip1=0;while (header.scenario[scen].condition [j].param1!=header.scenario[scen].histparam[ip1].name) ip1++;
-					ip2=0;while (header.scenario[scen].condition [j].param2!=header.scenario[scen].histparam[ip2].name) ip2++;
-					if (debuglevel==6) cout<<"phistar["<<k<<"]["<<ip1<<"]="<<phistar[k][ip1]<<"   phistar["<<k<<"]["<<ip2<<"]="<<phistar[k][ip2];
-					if (header.scenario[scen].condition[j].operateur==">")       phistarOK=(phistar[k][ip1] >  phistar[k][ip2]);
-					else if (header.scenario[scen].condition[j].operateur=="<")  phistarOK=(phistar[k][ip1] <  phistar[k][ip2]);
-					else if (header.scenario[scen].condition[j].operateur==">=") phistarOK=(phistar[k][ip1] >= phistar[k][ip2]);
-					else if (header.scenario[scen].condition[j].operateur=="<=") phistarOK=(phistar[k][ip1] <= phistar[k][ip2]);
-					if (debuglevel==6) {if (phistarOK) cout<<"  OK\n"; else cout<<"   NOT OK\n";}
-					if (not phistarOK) break;
-				}
-			}
-		} while(not phistarOK);*/
 		k=this->particule[0].mw.rand0(nsel);
 		cout<<"p="<<p<<"    k="<<k<<"\n";
 		ii=0;
