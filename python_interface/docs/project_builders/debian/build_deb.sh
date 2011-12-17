@@ -80,7 +80,7 @@ else
 fi
 mkdir $PACKAGESRCDIR/docs
 cp -rp $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $PACKAGESRCDIR/docs/
-cp $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $PACKAGESRCDIR/docs/
+cp -r $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $PACKAGESRCDIR/docs/
 if [ $MAIN == "MAIN" ]; then
     # generation of the launch script placed in /usr/local/bin
     echo "#!/bin/bash
