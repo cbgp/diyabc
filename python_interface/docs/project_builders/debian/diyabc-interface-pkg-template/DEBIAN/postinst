@@ -1,5 +1,9 @@
 #!/bin/bash
-if [ -f /usr/bin/update-menus ]; then
+#if [ -f /usr/bin/update-menus ]; then
+#    update-menus
+#fi
+set -e
+if [ "$1" = "configure" ] && [ -x "`which update-menus 2>/dev/null`" ]; then
     update-menus
 fi
 echo DIYABC installed
