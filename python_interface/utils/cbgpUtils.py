@@ -321,6 +321,8 @@ def getRamInfo():
 
     return result
 
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 def checkRam():
     try:
         raminfo = getRamInfo()
@@ -329,4 +331,5 @@ def checkRam():
         return
     min_requested_ram = 2000
     if raminfo[1] < min_requested_ram:
-        output.notify(None,"System warning","Warning, your have less than %s MB of RAM available.\n Your computer may swap and become very slow"%min_requested_ram)
+        #output.notify(None,"System warning","Warning, your have less than %s MB of RAM available.\n Your computer may swap and become very slow"%min_requested_ram)
+        QMessageBox.information(None,"System warning","Warning, your have less than %s MB of RAM available.\n Your computer may swap and become very slow"%min_requested_ram)

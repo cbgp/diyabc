@@ -190,7 +190,7 @@ class AutoPreferences(QFrame):
         exec('self.horizontalLayout_%s.addItem(spacerItem)'%(propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s)'%(catname,catname,propname))
         if visibility == invisible:
-            print catname,propname," invisible"
+            #print catname,propname," invisible"
             exec('self.frame_%s_%s.setVisible(False)'%(catname,propname))
 
     def addPropPathEdit(self,catname,propname,labelText,default_value=""):

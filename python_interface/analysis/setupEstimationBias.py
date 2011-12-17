@@ -82,6 +82,8 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         #        onePc = 1000
         #self.ui.nosdEdit.setText(str(onePc))
 
+        self.ui.analysisNameLabel.setText(self.analysis.name)
+
     def redefineSumStats(self):
         """ appel de la methode de projectSnp ou projectMsatSeq
         qui appelera ensuite la bonne méthode de setupEstimationBias

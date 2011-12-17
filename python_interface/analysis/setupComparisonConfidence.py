@@ -57,6 +57,8 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         self.ui.deEdit.setText("500")
         #self.ui.totNumSimLabel.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
 
+        self.ui.analysisNameLabel.setText(self.analysis.name)
+
     def checkAll(self):
         problems = ""
         try:
