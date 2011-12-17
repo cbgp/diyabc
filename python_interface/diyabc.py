@@ -37,6 +37,7 @@ from utils.cbgpUtils import Documentator
 import output
 import subprocess
 from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log
+from utils.trayIconHandler import TrayIconHandler
 from threading import Thread
 from utils.data import isSNPDatafile
 
@@ -312,50 +313,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         for but in [newButton,openButton,saveButton,saveAllButton,wtButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
-        self.systray = QSystemTrayIcon(QIcon("docs/icons/coccicon.png"),self)
-        self.systray.setContextMenu(self.file_menu)
-        #self.systray.show()
-        QObject.connect(self.systray,SIGNAL("activated(QSystemTrayIcon::ActivationReason)"),self.systrayClicked)
-        
-        self.m_movie = QMovie()
-        self.m_movie.setFileName("docs/icons/coccicon.gif")
-        #self.m_movie.start()
-        QObject.connect(self.m_movie, SIGNAL("updated ( const QRect & )"),self,SLOT("updateTrayIcon()"))
-
-    def systrayClicked(self,reason):
-        if reason == QSystemTrayIcon.Trigger:
-            self.setVisible(not self.isVisible())
-
-    def toggleTrayIcon(self,state):
-        self.systray.setVisible(state)
-
-    def showTrayMessage(self,tit,msg):
-        """ Affiche un message dans le systray ssi le systray et visible
-        Si la diyabc n'est pas visible, fait clignoter le systrayicon
-        """
-        if self.systray.isVisible():
-            self.systray.showMessage(tit,msg)
-            if not self.isActiveWindow():
-                self.enterSystrayBlink()
-
-    def enterSystrayBlink(self):
-        """ Initie le clignotement de l'icone du systray
-        """
-        self.m_movie.start()
-
-    def leaveSystrayBlink(self):
-        """ Stoppe le clignottement de l'icone du systray
-        """
-        self.m_movie.stop()
-        self.systray.setIcon(QIcon("docs/icons/coccicon.png"))
-
-    @pyqtSignature("")
-    def updateTrayIcon(self):
-        """ anime l'icone du systray en changeant son image
-        Est déclenchée par un évennement d'un QMovie
-        """
-        icon = QIcon(self.m_movie.currentPixmap())
-        self.systray.setIcon(icon)
+        self.systrayHandler = TrayIconHandler("docs/icons/coccicon.png","docs/icons/coccicon.gif",self.file_menu,self)
 
     def enterWhatsThisMode(self):
         """ Change le style du curseur de souris et attend un clic
@@ -976,6 +934,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         fenetre principale pour arrêter l'activité des projets
         et sauvegarder certains paramètres
         """
+        QApplication.setOverrideCursor( Qt.WaitCursor )
         for proj in self.project_list:
             # si le projet est bien créé (et pas en cours de création)
             if proj.dir != None:
@@ -984,7 +943,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.preferences_win.saveToolBarPosition(self.toolBarArea(self.ui.toolBar))
         self.preferences_win.writeConfigFile()
         # windows ne nettoie pas son tray, aidons le
-        self.systray.hide()
+        self.systrayHandler.hide()
+        QApplication.restoreOverrideCursor()
         event.accept()
 
     def event(self,event):
@@ -1010,7 +970,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #    #self.updateDoc()
         #    pass
         elif event.type() == QEvent.WindowActivate:
-            self.leaveSystrayBlink()
+            self.systrayHandler.leaveSystrayBlink()
         return QWidget.event(self,event)
 
     def dropEvent(self,event):

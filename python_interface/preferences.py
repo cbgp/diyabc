@@ -239,7 +239,7 @@ class Preferences(AutoPreferences):
         self.debugWhatsThisCheck.setChecked(False)
 
     def toggleTrayIconCheck(self,state):
-        self.parent.toggleTrayIcon(state)
+        self.parent.systrayHandler.toggleTrayIcon(state)
 
     def getMaxThreadNumber(self):
         return int(self.ui.maxThreadCombo.currentText())

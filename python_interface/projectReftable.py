@@ -459,7 +459,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         # si on a fini, on met à jour l'affichage de la taille de la reftable
         # et on verrouille eventuellement histmodel et gendata
         if int(pc) == 100:
-            self.parent.showTrayMessage("DIYABC : reftable","Reference table generation has finished")
+            self.parent.systrayHandler.showTrayMessage("DIYABC : reftable","Reference table generation has finished")
             self.putRefTableSize()
             self.stopUiGenReftable()
             self.th = None
