@@ -27,11 +27,12 @@ class testDiyabc(unittest.TestCase):
         setUp is called before each test function execution.
         """
 
-        self.testDir = "/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test"
-        self.testProjectDir = "/home/julien/vcs/git/diyabc.git/python_interface/datafiles/test/ploop_2011_1_18-3"
+        self.testDir = "datafiles/test"
+        self.testProjectDir = "datafiles/test/ploop_2011_1_18-3"
+        self.testProjectDirHist = "datafiles/test/testSansReftable_2011_12_18-1"
         self.saveTestProjectDir = "/tmp/ploopsave"
 
-    def testAllClicks(self):
+    def initialize(self):
         app = QApplication(sys.argv)
 
         dd = datetime.now()
@@ -48,7 +49,82 @@ class testDiyabc(unittest.TestCase):
         sys.stdout = myOut
         sys.stderr = myErr
         log(1,"\033[5;36m DIYABC launched \033[00m")
+        return diyabc
 
+    def testHistoricalModel(self):
+        diyabc = self.initialize()
+
+        if os.path.exists(self.saveTestProjectDir): 
+            shutil.rmtree(self.saveTestProjectDir)
+        shutil.copytree(self.testProjectDirHist,self.saveTestProjectDir)
+
+        project = self.tOpenExistingProject(diyabc,self.testProjectDirHist)
+
+        QTest.mouseClick(project.setHistoricalButton,Qt.LeftButton)
+
+        # pr tous les params, pour ttes les lois,pr les 4 champs, pr tous les types de valeur (fausse,min, max, random)
+        # loop sur validate puis verif validité du histmodel
+        valuesList = ["aa","0.0","0.01","5","15","150","500","9999","9999.9"]
+        radioNameList = ["uniformParamRadio","logUniformRadio","normalRadio","logNormalRadio"]
+        valNameList = ["minValueParamEdit","maxValueParamEdit","meanValueParamEdit","stValueParamEdit"]
+        for parambox in project.hist_model_win.paramList:
+            for radioName in radioNameList:
+                radioToClick = parambox.findChild(QRadioButton,radioName)
+                QTest.mouseClick(radioToClick,Qt.LeftButton)
+                for valName in valNameList:
+                    editToEdit = parambox.findChild(QLineEdit,valName)
+                    old_val = str(editToEdit.text())
+                    for valToSet in valuesList:
+                        editToEdit.setText(valToSet)
+                        QTest.mouseClick(project.hist_model_win.okButton,Qt.LeftButton)
+                        print "param %s, radio %s, champs %s, valeur %s"%(parambox.findChild(QLabel,"paramNameLabel").text(),radioName,valName,valToSet)
+                        print project.hist_state_valid
+                        # on vérifie que si le param est mal rempli, le model hist est dit invalide
+                        self.assertEqual(self.checkParam(parambox),project.hist_state_valid)
+                        QTest.mouseClick(project.setHistoricalButton,Qt.LeftButton)
+                        editToEdit.setText(old_val)
+            parambox.findChild(QLineEdit,"minValueParamEdit").setText("0.1")
+            parambox.findChild(QLineEdit,"maxValueParamEdit").setText("10.0")
+            parambox.findChild(QLineEdit,"meanValueParamEdit").setText("5.1")
+            parambox.findChild(QLineEdit,"stValueParamEdit").setText("0.1")
+            parambox.findChild(QRadioButton,"uniformParamRadio").setChecked(True)
+                        
+
+
+        # restitution de la sauvegarde du projet
+        shutil.rmtree(self.testProjectDirHist)
+        shutil.copytree(self.saveTestProjectDir,self.testProjectDirHist)
+
+        diyabc.close()
+
+    def checkParam(self,pb):
+        valNameList = ["minValueParamEdit","maxValueParamEdit","meanValueParamEdit","stValueParamEdit"]
+        try:
+            for i in valNameList:
+                exec("%s = float(str(pb.findChild(QLineEdit,'%s').text()))"%(i,i))
+            print "normal %s < %s < %s, unif: %s, logunif: %s"%(minValueParamEdit,meanValueParamEdit,maxValueParamEdit,pb.findChild(QRadioButton,"uniformParamRadio").isChecked(),pb.findChild(QRadioButton,"logUniformRadio").isChecked())
+            
+            if not (stValueParamEdit > 0) and (pb.findChild(QRadioButton,"logNormalRadio").isChecked()):
+                print "prob st"
+                return False
+            elif not (minValueParamEdit <= maxValueParamEdit):
+                print "prob min <= max"
+                return False
+            if (pb.findChild(QRadioButton,"logNormalRadio").isChecked() or pb.findChild(QRadioButton,"normalRadio").isChecked()):
+                if not (minValueParamEdit <= meanValueParamEdit <= maxValueParamEdit):
+                    print "prob < <"
+                    return False
+            if pb.findChild(QRadioButton,"logNormalRadio").isChecked():
+                if not meanValueParamEdit > 0:
+                    print "prob mean"
+                    return False
+            return True
+        except Exception as e:
+            print("pas normal %s"%e)
+            return False
+
+    def atestAllClicks(self):
+        diyabc = self.initialize()
 
         # copie de sauvegarde du projet dans /tmp
         if os.path.exists(self.saveTestProjectDir): 
