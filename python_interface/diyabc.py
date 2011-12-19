@@ -335,7 +335,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             objnamestr = "%s\n\n"%e.objectName()
             objname_debug = self.preferences_win.debugWhatsThisCheck.isChecked()
             try:
-                docstr = self.documentator.getDocString("%s"%e.objectName())
+                docstr = self.documentator.getDocString("%s"%e.objectName()).replace('\n','<br/>')
                 if objname_debug:
                     e.setWhatsThis(output.whatsthis_header + objnamestr + "<br/><br/>" + docstr + output.whatsthis_footer)
                 else:
