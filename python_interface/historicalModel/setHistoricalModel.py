@@ -839,16 +839,16 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                     and ( param.findChild(QRadioButton,"normalRadio").isChecked() or param.findChild(QRadioButton,"logNormalRadio").isChecked() ):
                         if mean < min or mean > max:
                             problems += "Mean of parameter %s should be included in [%s , %s]\n"%(pname,min,max)
-                # pour lognormal et loguniforme le mean doit être different de zero et le stdev aussi
-                if param.findChild(QRadioButton,"logNormalRadio") != None and param.findChild(QRadioButton,"logUniformRadio") != None\
-                and param.findChild(QLineEdit,"meanValueParamEdit") != None:
-                    if param.findChild(QRadioButton,"logNormalRadio").isChecked() or param.findChild(QRadioButton,"logUniformRadio").isChecked():
                         if param.findChild(QLineEdit,"meanValueParamEdit").isEnabled():
                             if mean <= 0:
                                 problems += "Mean of parameter %s should be positive\n"%pname
                         if param.findChild(QLineEdit,"stValueParamEdit").isEnabled():
                             if stdev <= 0:
                                 problems += "St-dev of parameter %s should be positive\n"%pname
+                # pour lognormal et loguniforme le mean doit être different de zero et le stdev aussi
+                #if param.findChild(QRadioButton,"logNormalRadio") != None and param.findChild(QRadioButton,"logUniformRadio") != None\
+                #and param.findChild(QLineEdit,"meanValueParamEdit") != None:
+                #    if param.findChild(QRadioButton,"logNormalRadio").isChecked() or param.findChild(QRadioButton,"normalRadio").isChecked():
             except Exception as e:
                 problems += "%s\n"%e
         rpsum = 0.0

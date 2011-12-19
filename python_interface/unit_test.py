@@ -64,7 +64,7 @@ class testDiyabc(unittest.TestCase):
 
         # pr tous les params, pour ttes les lois,pr les 4 champs, pr tous les types de valeur (fausse,min, max, random)
         # loop sur validate puis verif validité du histmodel
-        valuesList = ["aa","0.0","0.01","5","15","150","500","9999","9999.9"]
+        valuesList = ["aa","0.0","0.01","5","-15","150","500","9999","9999.9"]
         radioNameList = ["uniformParamRadio","logUniformRadio","normalRadio","logNormalRadio"]
         valNameList = ["minValueParamEdit","maxValueParamEdit","meanValueParamEdit","stValueParamEdit"]
         for parambox in project.hist_model_win.paramList:
@@ -104,19 +104,21 @@ class testDiyabc(unittest.TestCase):
                 exec("%s = float(str(pb.findChild(QLineEdit,'%s').text()))"%(i,i))
             print "normal %s < %s < %s, unif: %s, logunif: %s"%(minValueParamEdit,meanValueParamEdit,maxValueParamEdit,pb.findChild(QRadioButton,"uniformParamRadio").isChecked(),pb.findChild(QRadioButton,"logUniformRadio").isChecked())
             
-            if not (stValueParamEdit > 0) and (pb.findChild(QRadioButton,"logNormalRadio").isChecked()):
-                print "prob st"
-                return False
-            elif not (minValueParamEdit <= maxValueParamEdit):
+            if not (minValueParamEdit <= maxValueParamEdit):
                 print "prob min <= max"
+                return False
+            if minValueParamEdit < 0 or maxValueParamEdit < 0:
+                print "min or max < 0"
                 return False
             if (pb.findChild(QRadioButton,"logNormalRadio").isChecked() or pb.findChild(QRadioButton,"normalRadio").isChecked()):
                 if not (minValueParamEdit <= meanValueParamEdit <= maxValueParamEdit):
                     print "prob < <"
                     return False
-            if pb.findChild(QRadioButton,"logNormalRadio").isChecked():
                 if not meanValueParamEdit > 0:
                     print "prob mean"
+                    return False
+                if not (stValueParamEdit > 0):
+                    print "prob st"
                     return False
             return True
         except Exception as e:
