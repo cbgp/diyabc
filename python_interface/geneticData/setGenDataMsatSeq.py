@@ -211,6 +211,12 @@ class SetGeneticDataMsatSeq(SetGeneticData):
                 num = self.dico_num_and_numgroup_locus[name][0]
                 # on decouvre la ligne
                 self.ui.tableWidget.setRowHidden(num-1,False)
+        # on remet les valeurs de range à 40
+        for li in range(self.ui.tableWidget.rowCount()):
+            if str(self.ui.tableWidget.item(li,1).text()) == "M":
+                tres = QTableWidgetItem("40")
+                tres.setTextAlignment(Qt.AlignRight)
+                self.ui.tableWidget.setItem(li,3,tres)
         self.groupList = []
 
     def writeGeneticConfFromGui(self):
