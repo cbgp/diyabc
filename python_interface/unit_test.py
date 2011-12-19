@@ -68,6 +68,11 @@ class testDiyabc(unittest.TestCase):
         radioNameList = ["uniformParamRadio","logUniformRadio","normalRadio","logNormalRadio"]
         valNameList = ["minValueParamEdit","maxValueParamEdit","meanValueParamEdit","stValueParamEdit"]
         for parambox in project.hist_model_win.paramList:
+            parambox.findChild(QLineEdit,"minValueParamEdit").setText("0.1")
+            parambox.findChild(QLineEdit,"maxValueParamEdit").setText("10.0")
+            parambox.findChild(QLineEdit,"meanValueParamEdit").setText("5.1")
+            parambox.findChild(QLineEdit,"stValueParamEdit").setText("0.1")
+            parambox.findChild(QRadioButton,"uniformParamRadio").setChecked(True)
             for radioName in radioNameList:
                 radioToClick = parambox.findChild(QRadioButton,radioName)
                 QTest.mouseClick(radioToClick,Qt.LeftButton)
@@ -77,8 +82,8 @@ class testDiyabc(unittest.TestCase):
                     for valToSet in valuesList:
                         editToEdit.setText(valToSet)
                         QTest.mouseClick(project.hist_model_win.okButton,Qt.LeftButton)
-                        print "param %s, radio %s, champs %s, valeur %s"%(parambox.findChild(QLabel,"paramNameLabel").text(),radioName,valName,valToSet)
-                        print project.hist_state_valid
+                        print "parameter %s, radiochecked %s, field %s, value %s"%(parambox.findChild(QLabel,"paramNameLabel").text(),radioName,valName,valToSet)
+                        print "The project considers the historical model valid : %s"%project.hist_state_valid
                         # on vérifie que si le param est mal rempli, le model hist est dit invalide
                         self.assertEqual(self.checkParam(parambox),project.hist_state_valid)
                         QTest.mouseClick(project.setHistoricalButton,Qt.LeftButton)

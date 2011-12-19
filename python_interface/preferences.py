@@ -114,6 +114,7 @@ class Preferences(AutoPreferences):
         self.changeStyle(self.ui.styleCombo.currentText())
         QObject.connect(self.ui.maxLogLvlCombo,SIGNAL("currentIndexChanged(int)"),self.changeLogLevel)
         QObject.connect(self.ui.backgroundColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
+        self.changeLogLevel(self.ui.maxLogLvlCombo.currentIndex())
         #QObject.connect(self.ui.fontSizeCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontSize)
         #self.changeFontSize(default_Psize)
         #QObject.connect(self.ui.fontFamilyCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontFamily)
@@ -183,6 +184,7 @@ class Preferences(AutoPreferences):
 
     def changeLogLevel(self,index):
         utilsPack.LOG_LEVEL = index + 1
+        print "changeeeeeeeeeeed %s"%(index+1)
 
     def changeFontSize(self,size):
         font = self.parent.app.font()
