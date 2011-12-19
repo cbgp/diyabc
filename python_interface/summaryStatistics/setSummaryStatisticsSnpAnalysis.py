@@ -19,6 +19,11 @@ class SetSummaryStatisticsSnpAnalysis(SetSummaryStatisticsSnp):
         self.stackTarget = stackTarget
 
         self.ui.clearButton.hide()
+        self.ui.frame_2.setDisabled(True)
+
+        self.ui.availableEdit.setText(str(self.parent.parent.sum_stat_wins[numGroup].ui.availableEdit.text()))
+        self.ui.takenEdit.setText(str(self.parent.parent.sum_stat_wins[numGroup].ui.takenEdit.text()))
+        self.ui.fromEdit.setText(str(self.parent.parent.sum_stat_wins[numGroup].ui.fromEdit.text()))
 
     def exit(self):
         self.parent.parent.ui.analysisStack.removeWidget(self)

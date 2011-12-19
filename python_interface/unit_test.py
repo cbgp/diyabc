@@ -125,15 +125,13 @@ class testDiyabc(unittest.TestCase):
             print("pas normal %s"%e)
             return False
 
-    def atestAllClicks(self):
+    def testAllClicks(self):
         diyabc = self.initialize()
 
         # copie de sauvegarde du projet dans /tmp
         if os.path.exists(self.saveTestProjectDir): 
             shutil.rmtree(self.saveTestProjectDir)
         shutil.copytree(self.testProjectDir,self.saveTestProjectDir)
-
-        self.assertEqual(diyabc.app, app)
 
         project = self.tOpenExistingProject(diyabc,self.testProjectDir)
 
