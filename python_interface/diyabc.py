@@ -40,6 +40,7 @@ from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log
 from utils.trayIconHandler import TrayIconHandler
 from threading import Thread
 from utils.data import isSNPDatafile
+import dataPath
 
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
