@@ -56,3 +56,4 @@ rm -rf $TMPBUILD
 sleep 3
 mv $output/dist/$APPNAME.exe $output/dist/$APPNAME-$VERSION.exe
 mv $output/dist $output/$APPNAME-$VERSION
+rm -rf $output/build $output/$APPNAME.spec

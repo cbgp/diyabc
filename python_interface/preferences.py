@@ -184,7 +184,6 @@ class Preferences(AutoPreferences):
 
     def changeLogLevel(self,index):
         utilsPack.LOG_LEVEL = index + 1
-        print "changeeeeeeeeeeed %s"%(index+1)
 
     def changeFontSize(self,size):
         font = self.parent.app.font()
