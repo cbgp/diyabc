@@ -11,9 +11,6 @@
 #include <sstream>
 #include "randomgenerator.h"
 #include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <ctype.h>
 
 using namespace std;
 
