@@ -35,6 +35,7 @@ from utils.cbgpUtils import log, addLine
 import tempfile
 import utils.cbgpUtils as cbgpUtils
 from project import Project
+import dataPath
 
 ## @class ProjectReftable
 # @brief Projets pour créer une table de référence
@@ -715,7 +716,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         horizontalLayout_stop.setObjectName("horizontalLayout_stop")
         horizontalLayout_stop.setContentsMargins(-1, 1, -1, 1)
 
-        analysisStopButton = QtGui.QPushButton(QIcon("docs/icons/stop.png"),"Stop",frame_9)
+        analysisStopButton = QtGui.QPushButton(QIcon(dataPath.DATAPATH+"/icons/stop.png"),"Stop",frame_9)
         analysisStopButton.setObjectName("analysisStopButton")
         analysisStopButton.setMinimumSize(QtCore.QSize(60, 20))
         analysisStopButton.setMaximumSize(QtCore.QSize(60, 20))

@@ -58,7 +58,7 @@ class TrayIconHandler(QObject):
         """
         if self.icongifpath != None:
             self.m_movie.stop()
-            self.systray.setIcon(QIcon("docs/icons/coccicon.png"))
+            self.systray.setIcon(QIcon(self.iconpath))
 
     @pyqtSignature("")
     def updateTrayIcon(self):

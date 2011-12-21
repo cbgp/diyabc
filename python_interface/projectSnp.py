@@ -16,6 +16,7 @@ import os.path
 import output
 from utils.cbgpUtils import log
 from controlAscertBias import ControlAscertBias
+import dataPath
 
 ## @class ProjectSnp
 # @brief Projets pour créer une table de référence SNP
@@ -48,12 +49,12 @@ class ProjectSnp(ProjectReftable):
         """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table
         """
         if self.gen_state_valid and self.hist_state_valid and self.ascert_state_valid:
-            self.setTabIcon(0,QIcon("docs/icons/ok.png"))
+            self.setTabIcon(0,QIcon(dataPath.DATAPATH+"/icons/ok.png"))
             self.ui.runReftableButton.setDisabled(False)
             self.ui.stopReftableButton.setDisabled(False)
             return True
         else:
-            self.setTabIcon(0,QIcon("docs/icons/redcross.png"))
+            self.setTabIcon(0,QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
             self.ui.runReftableButton.setDisabled(True)
             self.ui.stopReftableButton.setDisabled(True)
             return False
@@ -68,9 +69,9 @@ class ProjectSnp(ProjectReftable):
         self.ascert_state_valid = yn
         self.verifyRefTableValid()
         if yn:
-            self.ui.ascertButton.setIcon(QIcon("docs/icons/ok.png"))
+            self.ui.ascertButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/ok.png"))
         else:
-            self.ui.ascertButton.setIcon(QIcon("docs/icons/redcross.png"))
+            self.ui.ascertButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
 
     def isSnp(self):
         return True
@@ -138,9 +139,9 @@ class ProjectSnp(ProjectReftable):
     #    self.gen_state_valid = valid
     #    self.verifyRefTableValid()
     #    if valid:
-    #        self.ui.setSumSnpButton.setIcon(QIcon("docs/icons/ok.png"))
+    #        self.ui.setSumSnpButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/ok.png"))
     #    else:
-    #        self.ui.setSumSnpButton.setIcon(QIcon("docs/icons/redcross.png"))
+    #        self.ui.setSumSnpButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
 
     def checkAll(self):
         """ vérification du modèle historique et mutationnel
