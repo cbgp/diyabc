@@ -4,7 +4,6 @@
 #ifndef MATRICES_H_
 #define MATRICES_H_
 
-extern bool multithread;
 #define EPSILON 9.62964972193617926528E-35
 
 void libereD (int n, double * * A);

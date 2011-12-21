@@ -52,5 +52,8 @@ void write_mt_struct(std::ofstream & fout, mt_struct* mt);
 void read_mt_struct(std::ifstream & fichier, mt_struct* mt);
 int saveRNG(mt_struct** mts, int sizeofmts, std::string filename);
 mt_struct** loadRNG(int & sizeofmts, std::string filename);
+// converti l'entier number en une string de 4 caractères.
+std::string convertInt4(int number);
+void doinitRNG(std::string rngpar);
 
 #endif /* RANDOMGENERATOR_H_ */

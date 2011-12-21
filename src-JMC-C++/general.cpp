@@ -155,6 +155,8 @@ int num_threads=0;
 string sremtime,scurfile;
 double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,debutr,dureer,remtime;
 
+bool RNG_must_be_saved;
+
 /**
 * lecture du fichier header.txt, calcul des stat_obs et lecture de l'entête de reftable.bin
 */
@@ -189,16 +191,18 @@ int readheadersim() {
 int main(int argc, char *argv[]){
 	try {
 		initstat_typenum();
+		RNG_must_be_saved = false;
     bool firsttime;
 	int k, seed = 0;
 	int optchar;
+	int computer_identity = 0; // should be 0 if diyabc runs on a single computer
     char action='a';
     bool flagp=false,flagi=false,flags=false,simOK,stoprun=false;
-    string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar;
+    string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar, rngpar;
     FILE *flog;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qkf:g:d:hmqj:a:t:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:")) !=-1) {
 	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
 
@@ -209,8 +213,16 @@ int main(int argc, char *argv[]){
             cout << "-g <minimum number of particles simulated in a single bunch (default=100)>\n";
             cout << "-m <multithreaded version of the program\n";
             cout << "-q to merge all reftable_$j.bin \n";
-            cout << "-s <seed for the random generator>\n";
+            cout << "-s <seed for the random generator (deprecated!!!)>\n"; // TODO: à changer en identité dans le cluster
             cout << "-t <required number of threads>\n";
+            cout << "-w <computer's number if in a cluster (0 by default) >\n";
+            cout << "          (each computer in the cluster is numbered between 0 and the maximal number of computers in the cluster.)\n";
+
+            cout << "\n-n for INITIALIZATION OF THE PARALLEL RNG'S (with parameters as a string including the following options separated par a semi-colon)\n";
+            cout << "           t:<maximal number of the threads (per computers if cluster, 16 by default)>\n";
+            cout << "           c:<maximal number of computers in the cluster (1 by default)>\n";
+            cout << "           s:<seed of the first RNG (1 by default)>\n";
+            cout << "           f:<forcing creation of new RNG's and overriding the old ones>\n";
 
             cout << "\n-e for ABC PARAMETER ESTIMATION (with parameters as a string including the following options separated par a semi-colon)\n";
             cout << "           s:<chosen scenario[s separated by a comma]>\n";
@@ -267,12 +279,16 @@ int main(int argc, char *argv[]){
             cout << "           v:<list of summary stat names separated by a comma (if empty keep those of reftable)>\n";
 
             cout << "\n-k for SIMULATE GENEPOP DATA FILES\n";
-
+            action = 'h';
            break;
 
         case 'a' :
             debuglevel=atoi(optarg);
             break;
+
+        case 'w' :
+        	computer_identity = atoi(optarg);
+        	break;
 
         case 'i' :
             ident=soptarg;
@@ -376,6 +392,10 @@ int main(int argc, char *argv[]){
             num_threads = atoi(optarg);
             multithread=true;
             break;
+        case 'n':
+        	rngpar = soptarg;
+        	action = 'n';
+        	break;
 
 	    }
 	}
@@ -387,12 +407,44 @@ int main(int argc, char *argv[]){
                      if (action=='d') ident=strdup("pcaloc1");
                      if (action=='j') ident=strdup("modchec1");
      }
-     if (not flags) seed=time(NULL);
+     if (not flags) seed=time(NULL); // TODO: remove this
      if (num_threads>0) omp_set_num_threads(num_threads);
 
      /* Debut: pour le nouveau RNG      */
-     mtss = NULL;
-     initRNG(seed);
+     string RNG_filename;
+     if ((action != 'n') and (action != 'h') ){  // Je dois lire l'état courant des RNG
+    	 mtss = NULL;
+
+    	 RNG_filename = path + string("RNG_state_") + convertInt4(computer_identity) + string(".bin");
+    	 ifstream test_file(RNG_filename.c_str(), ios::in);
+    	 if(test_file == NULL){
+    		 cout << "File " << RNG_filename << "do not exist.\n"
+    			  << "Use option -n to create it before doing anything else.\n";
+    		 exit(1);
+    	 }
+
+    	 // lit le fichier RNG_state
+    	 mtss = loadRNG(countRNG, RNG_filename);
+    	 #pragma omp parallel
+    	 {
+    		 num_threads = omp_get_num_threads();
+    	 }
+    	 if(countRNG < num_threads){
+    		 cout << "I do not have enough states into " << RNG_filename;
+    		 cout << " to run "<< num_threads << " threads, but only " << countRNG << endl;
+    		 cout << "Reduce the number of threads, or create new RNGs' states." << endl;
+    		 exit(1);
+    	 }
+    	 #pragma omp parallel
+    	 {
+    		 r = mtss[omp_get_thread_num()];
+    	 }
+    	 cout << "I have read RNGs' states from file " << RNG_filename << endl;
+    	 RNG_must_be_saved = true;
+    	 //initRNG(seed);
+     } else { // Je n'ai pas besoin de RNGs
+    	 mtss = NULL;
+     }
      /* Fin: pour le nouveau RNG      */
 
 	switch (action) {
@@ -463,6 +515,9 @@ int main(int argc, char *argv[]){
                                   //exit(1);
                           } else {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n\n";f1.close();}
                       break;
+      case 'n'  :
+                  doinitRNG(rngpar);
+                  break;
 
       case 'e'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
@@ -501,6 +556,11 @@ int main(int argc, char *argv[]){
 
   }
 	/* Debut: pour le nouveau RNG      */
+	// sauvegarde des RNGs' states
+	if( RNG_must_be_saved ){
+		saveRNG(mtss, countRNG, RNG_filename);
+		cout << "I have saved current RNGs' states into " << RNG_filename << endl;
+	}
 	freeRNG();
 	/* Fin: pour le nouveau RNG      */
 	duree=walltime(&debut);
@@ -511,12 +571,10 @@ int main(int argc, char *argv[]){
      //fprintf(stdout,"durée dans le remplissage de matC = %.2f secondes\n",time_matC);
      //fprintf(stdout,"durée dans call_polytom = %.2f secondes\n",time_call);
      //fprintf(stdout,"durée dans la lecture de la reftable et le tri des enregistrements = %.2f secondes\n",time_readfile);
-	return 0;
-	  
+	} catch (exception& e) {
+		cout << "I have caught an exception which is: \n";
+		cout << e.what() << endl;
 	}
-catch (exception& e)
-  {
-    cout << e.what() << endl;
-  }
 	
+	return 0;
 };

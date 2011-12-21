@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include "randomgenerator.h"
 #include <unistd.h>
 
@@ -23,27 +24,13 @@ mt_struct **mtss;
 int countRNG;
 int num_threads;
 int num_nodes;
-
-
-// converti l'entier number en une string de 4 caractères.
-string convertInt4(int number)
-{
-   stringstream ss;//create a stringstream
-   ss << number;//add number to the stream
-   string ans = ss.str();
-   while(ans.size() < 4)
-   {
-	   ans = "0" + ans;
-   }
-   return ans;//return a string with the contents of the stream
-}
-
-
+string path;
+bool multithread;
 
 int main(int argc, char *argv[]){
 
 	bool flagp = false, flags = false, force = false;
-	string path, soptarg;
+	string soptarg;
 	int num_nodes = 1;
 	int seed = 0;
 	int optchar;
@@ -111,10 +98,21 @@ int main(int argc, char *argv[]){
 	for (int i = 0; i < countRNG; ++i)
 		sgenrand_mt(i + seed, mtss[i]);
 
+	// Test des exceptions
+	try{
+		string test = convertInt4(-2);
+	} catch(std::exception &e) {
+		cout << e.what() << endl;
+	}
 
 	// Sauvegarde par blocs de num_threads (un fichier par noeud du cluster)
 	for(int k = 0; k < num_nodes; ++k){
-		string RNG_file = path + string("RNG_state_") + convertInt4(k) + string(".bin");
+		string RNG_file;
+		try{
+			RNG_file = path + string("RNG_state_") + convertInt4(k) + string(".bin");
+		} catch(std::exception &e) {
+			cout << e.what() << endl;
+		};
 		saveRNG(mtss + k * (num_threads), num_threads, RNG_file);
 	}
 

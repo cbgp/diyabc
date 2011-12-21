@@ -8,10 +8,13 @@
 #include <math.h>
 #include <stdlib.h>
 #include <fstream>
+#include <sstream>
 #include <string>
+#include <stdexcept>
 extern"C"{
 #include "../dcmt0.6.1/include/dc.h"
 }
+#include "mesutils.h"
 #include "randomgenerator.h"
 //#include <time.h>
 
@@ -22,6 +25,8 @@ double sqr(double x) {return x*x;}
 
 extern mt_struct* r;
 #pragma omp threadprivate(r)
+
+extern string path;
 
 void MwcGen::randinit(unsigned int indice, unsigned int indice2) {
 	//		this->mult = multipli[indice % 10000];
@@ -268,4 +273,92 @@ mt_struct** loadRNG(int & sizeofmts, string filename){
 	}
 	fichier.close();
 	return mts;
+}
+
+
+// converti l'entier number en une string de 4 caractères.
+string convertInt4(int number)
+{
+	stringstream ss;//create a stringstream
+	ss << number;//add number to the stream
+	if((number < 0) or (number>9999)){
+		throw std::range_error("You are trying to convert " + ss.str() +
+				" into a string of length 4. Not possible.");
+	}
+	string ans = ss.str();
+	while(ans.size() < 4)
+	{
+		ans = "0" + ans;
+	}
+	return ans;//return a string with the contents of the stream
+}
+
+
+void doinitRNG(string rngpar){
+	string progressfilename=path+"RNG_progress.txt";
+	string* ss = new string[10];
+	int ns, number_of_threads = 16, number_of_computers = 1;
+	int seed = time(NULL);
+	bool force = false;
+	int countRNGs;
+
+	cout<<"Beginning of doinitRNG  options : "<<rngpar<<"\n";
+	ss = splitwords(rngpar,";",&ns);
+	for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
+		string s0=ss[i].substr(0,2);
+		string s1=ss[i].substr(2);
+		if (s0=="t:") {
+			number_of_threads = atoi(s1.c_str());
+			cout << "Maximal number of threads per computer is set to " << number_of_threads << endl;
+		} else if (s0=="c:") {
+			number_of_computers = atoi(s1.c_str());
+			cout << "Maximal number of computers in the cluster is set to " << number_of_computers << endl;
+		} else if (s0=="s:") {
+			seed = atoi(s1.c_str());
+			cout << "First seed is set to " << seed << endl;
+		} else if (s0 == "f:") {
+			force = true;
+			cout << "Force creation of new RNG's and overwrite existing RNG's states.\n";
+		} // fin if
+	} // fin for
+	delete [] ss;
+	cout << "End of doinitRNG options\n";
+
+	// Quitter si RNG_state_0000.bin existe deja
+	string firstRNGfile = path + "RNG_state_0000.bin";
+	ifstream test_file(firstRNGfile.c_str(), ios::in);
+	if((test_file != NULL) && (force == false)){
+		cout << "Some files saving the RNG states already exist." << endl
+		     << "Use f flag if you want to overwrite it." << endl;
+		test_file.close();
+		exit(1);
+	}
+	test_file.close();
+
+	// Création des états des RNGs indépendants
+	// Il y a autant de RNG que num_nodes * num_threads
+	cout << "Beginning of RNGs initializations\n";
+	mt_struct** mtss0 = get_mt_parameters_st(32, 607, 0,
+			                   (number_of_computers *number_of_threads)-1, 4172, &countRNGs);
+	// Fixons les graines
+	for (int i = 0; i < countRNGs; ++i)
+		sgenrand_mt(i + seed, mtss0[i]);
+	cout << "End of RNGs initializations\n";
+
+
+	// Sauvegarde par blocs de num_threads (un fichier par noeud du cluster)
+	for(int k = 0; k < number_of_computers; ++k){
+		string RNG_file;
+		try{
+			RNG_file = path + string("RNG_state_") + convertInt4(k) + string(".bin");
+		} catch(std::exception &e) {
+			cout << e.what() << endl;
+			throw;
+		};
+		saveRNG(mtss0 + k * (number_of_threads), number_of_threads, RNG_file);
+		cout << k << "-th batch of RNGs' states are saved into " << RNG_file << endl;
+	}
+
+	// Terminer
+	free_mt_struct_array(mtss0, countRNGs);
 }

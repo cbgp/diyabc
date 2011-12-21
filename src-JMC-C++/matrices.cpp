@@ -7,6 +7,9 @@
 #include "matrices.h"
 
 using namespace std;
+
+extern bool multithread;
+
 void libereD (int n, double * * A)
                                {
     for (int i=0;i<n;i++) delete[] A[i];
