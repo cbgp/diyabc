@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <stdexcept>
 #include <cstring>
 #include <vector>
 #include <algorithm>
@@ -111,7 +113,9 @@ int ReftableC::readheader(string fname,string flogname, string datafilename) {
 int ReftableC::writeheader() {
 	int nb;
 	ofstream f1(this->filename.c_str(),ios::out|ios::binary);
-	if (!f1.is_open()) {return 1;}  //fichier impossible à ouvrir
+	if (!f1.is_open()) {
+		throw std::runtime_error("Unable to open " + filename +"\n"); //return 1;
+	}  //fichier impossible à ouvrir
 	nb=this->nrec;f1.write((char*)&nb,sizeof(int));
 	//cout <<"reftable.writeheader     nscen = "<<this->nscen<<"\n";
 	nb=this->nscen;f1.write((char*)&nb,sizeof(int));
@@ -131,8 +135,13 @@ int ReftableC::readrecord(enregC *enr) {
 	if (enr->numscen>this->nscen) {
 		cout<<"\nThe reftable.bin file is corrupted. numscen="<<enr->numscen<<"\n";
 		FILE *flog;
-		flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%s","The reftable.bin file is corrupted. Clone the project and simulate a new file.\n");fclose(flog);
-		exit(1);
+		flog=fopen(progressfilename.c_str(),"w");
+		fprintf(flog,"%s","The reftable.bin file is corrupted. Clone the project and simulate a new file.\n");
+		fclose(flog);
+		stringstream erreur;
+		erreur << "The reftable.bin file is corrupted. Clone the project and simulate a new file.\n";
+		throw std::runtime_error(erreur.str());
+		//exit(1);
 	}
 	//throw(1);
 	//cout<<"numscen = "<<enr->numscen<<"\n";

@@ -50,6 +50,7 @@ extern long double ** phistar;
 long double ** phistarOK;
 extern string* stat_type;
 extern int* stat_num;
+extern bool multithread;
 
 long double **ssphistar,**ssref;
 

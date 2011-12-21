@@ -2,11 +2,13 @@
 #include <iostream>
 #include <string.h>
 #include <string>
+#include <sstream>
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <omp.h>
 #include <cstdlib>
+#include <stdexcept>
 extern "C"
 {
 #include "../dcmt0.6.1/include/dc.h"
@@ -165,7 +167,11 @@ int readheaders() {
     int k;
     if (debuglevel==1) cout<<"lecture des entêtes\n";
     k = header.readHeader(headerfilename);                               if (debuglevel==1) cout<<"apres header.readHeader\n";
-	if (k != 0) {cout<<header.message;exit(1);}
+	if (k != 0) {
+		stringstream erreur;
+		erreur << "Erreur dans readheaders().\n" << header.message;
+		throw std::runtime_error(erreur.str()); // exit(1)
+	}
     header.calstatobs(statobsfilename);                                  if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename= header.datafilename;                                   if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
 	k=rt.testfile(reftablefilename,nenr);
@@ -189,9 +195,11 @@ int readheadersim() {
 */
 
 int main(int argc, char *argv[]){
-	try {
-		initstat_typenum();
-		RNG_must_be_saved = false;
+string RNG_filename;
+
+try {
+	initstat_typenum();
+	RNG_must_be_saved = false;
     bool firsttime;
 	int k, seed = 0;
 	int optchar;
@@ -411,16 +419,17 @@ int main(int argc, char *argv[]){
      if (num_threads>0) omp_set_num_threads(num_threads);
 
      /* Debut: pour le nouveau RNG      */
-     string RNG_filename;
-     if ((action != 'n') and (action != 'h') ){  // Je dois lire l'état courant des RNG
+     if ((action != 'n') and (action != 'h') and (action != 'a')){
+    	 // Je dois lire l'état courant des RNG
     	 mtss = NULL;
 
     	 RNG_filename = path + string("RNG_state_") + convertInt4(computer_identity) + string(".bin");
     	 ifstream test_file(RNG_filename.c_str(), ios::in);
     	 if(test_file == NULL){
-    		 cout << "File " << RNG_filename << "do not exist.\n"
+    		 stringstream erreur;
+    		 erreur << "File " << RNG_filename << " do not exist.\n"
     			  << "Use option -n to create it before doing anything else.\n";
-    		 exit(1);
+    		 throw runtime_error(erreur.str());
     	 }
 
     	 // lit le fichier RNG_state
@@ -430,10 +439,11 @@ int main(int argc, char *argv[]){
     		 num_threads = omp_get_num_threads();
     	 }
     	 if(countRNG < num_threads){
-    		 cout << "I do not have enough states into " << RNG_filename;
-    		 cout << " to run "<< num_threads << " threads, but only " << countRNG << endl;
-    		 cout << "Reduce the number of threads, or create new RNGs' states." << endl;
-    		 exit(1);
+    		 stringstream erreur;
+    		 erreur << "I do not have enough states into " << RNG_filename;
+    		 erreur << " to run "<< num_threads << " threads, but only " << countRNG << endl;
+    		 erreur << "Reduce the number of threads, or create new RNGs' states." << endl;
+    		 throw std::runtime_error(erreur.str());
     	 }
     	 #pragma omp parallel
     	 {
@@ -463,7 +473,10 @@ int main(int argc, char *argv[]){
                               rt.nstat=header.nstat;
                               rt.writeheader();
                               rt.sethistparamname(header);
-                          } else if (k==2) {cout<<"cannot create reftable file\n"; exit(1);}
+                          } else if (k==2) {
+                        	  throw std::runtime_error("cannot create reftable file\n");
+                        	  //cout<<"cannot create reftable file\n"; exit(1);
+                          }
                           if (nrecneeded>rt.nrec) {
                                   rt.openfile();
                                   enreg = new enregC[nenr];
@@ -560,8 +573,8 @@ int main(int argc, char *argv[]){
 	if( RNG_must_be_saved ){
 		saveRNG(mtss, countRNG, RNG_filename);
 		cout << "I have saved current RNGs' states into " << RNG_filename << endl;
+		RNG_must_be_saved = false;
 	}
-	freeRNG();
 	/* Fin: pour le nouveau RNG      */
 	duree=walltime(&debut);
     cout<<"durée ="<<TimeToStr(duree)<<"\n";
@@ -572,9 +585,19 @@ int main(int argc, char *argv[]){
      //fprintf(stdout,"durée dans call_polytom = %.2f secondes\n",time_call);
      //fprintf(stdout,"durée dans la lecture de la reftable et le tri des enregistrements = %.2f secondes\n",time_readfile);
 	} catch (exception& e) {
-		cout << "I have caught an exception which is: \n";
-		cout << e.what() << endl;
+		cout << "\n\n!!! I have caught an exception which is: \n";
+		cout << e.what() << endl << endl;
+
+	} catch (...) {
+		cout << "\n\n!!! I have caught an unknown exception. \n\n";
 	}
-	
+
+	if( RNG_must_be_saved ) {
+		cout << "I will try to save current RNGs' states.\n";
+		saveRNG(mtss, countRNG, RNG_filename);
+		cout << "I have saved current RNGs' states into " << RNG_filename << endl;
+		RNG_must_be_saved = false;
+	}
+	freeRNG();
 	return 0;
 };

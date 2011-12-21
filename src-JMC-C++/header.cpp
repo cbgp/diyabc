@@ -15,6 +15,7 @@
 #include <cstring>
 #include <algorithm>
 #include <cstdlib>
+#include <stdexcept>
 
 #include "randomgenerator.h"
 #include "mesutils.h"
@@ -106,8 +107,9 @@ int HeaderC::readHeaderDebut(ifstream & file){
 	getline(file,this->datafilename);nl++;
 	this->pathbase=path;
 	int error = this->dataobs.loadfromfile(path+this->datafilename);
-	if (error !=0) {
+	if (error != 0) {
 		this->message = this->dataobs.message;
+		throw std::runtime_error(message);
 		return error;
 	}
 	if (debuglevel==1) cout<<"lecture du fichier data terminée\n";
@@ -135,6 +137,7 @@ int HeaderC::readHeaderScenarios(ifstream & file){
 		getline(file,s1); nl++;   cout<<s1<<"\n";
 		if (s1.find("scenario")!=0) {
 			this->message = "Error when reading header.txt file :keyword <scenario> expected at line "+IntToString(nl)+". Check the number of lines of each scenario at line 4.";
+			throw std::runtime_error(message);
 			return 1;
 		}
 		this->scenario[i].number = getwordint(s1,2);
@@ -823,8 +826,9 @@ int HeaderC::readHeader(string headerfilename){
 	//cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
 	ifstream file(headerfilename.c_str(), ios::in);
 	if (file == NULL) {
-		this->message = "Header  File "+headerfilename+" not found";
+		this->message = "Header file "+headerfilename+" not found";
 		cout<<this->message<<"\n";
+		throw std::runtime_error(this->message);
 		return 1;
 	} else this->message="";
 
@@ -1123,6 +1127,7 @@ int HeaderC::readHeadersim(string headersimfilename){
 }
 
 void HeaderC::calstatobs(string statobsfilename) {
+	stringstream erreur;
 	int jstat,cat;
 	//partie DATA
 	if (debuglevel==2) cout<<"debut de calstatobs\n";
@@ -1230,8 +1235,8 @@ void HeaderC::calstatobs(string statobsfilename) {
 			this->particuleobs.locuslist[kloc].motif_size = this->dataobs.locus[kloc].motif_size;
 			this->particuleobs.locuslist[kloc].motif_range = this->dataobs.locus[kloc].motif_range;
 			if ((this->particuleobs.locuslist[kloc].kmin>this->dataobs.locus[kloc].mini)or(this->particuleobs.locuslist[kloc].kmax<this->dataobs.locus[kloc].maxi)) {
-				cout <<"Job aborted : motif range at locus "<<kloc+1<<" is not large enough to include all observed alleles.\n";
-				exit(1);
+				erreur <<"Job aborted : motif range at locus "<<kloc+1<<" is not large enough to include all observed alleles.\n";
+				throw std::range_error( erreur.str() ); //exit(1);
 			}
 			this->particuleobs.locuslist[kloc].haplomic = new int*[this->particuleobs.data.nsample];
 			for (int sa=0;sa<this->particuleobs.data.nsample;sa++){

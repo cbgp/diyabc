@@ -53,6 +53,7 @@ extern string scurfile, path, ident, headerfilename;
 extern HeaderC header;
 extern ReftableC rt;
 extern int ncs;
+extern bool multithread;
 
 
 string nomficonfresult;
