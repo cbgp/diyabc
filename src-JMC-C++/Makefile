@@ -3,7 +3,8 @@ LIBS =   -L. -ldcmt  #-lstdc++ -lgomp -lm -lc
 CPPFILES = general.cpp acploc.cpp bias.cpp comparscen.cpp conf.cpp data.cpp estimparam.cpp header.cpp matrices.cpp mesutils.cpp modchec.cpp particleset.cpp particuleC.cpp randomgenerator.cpp reftable.cpp simfile.cpp testgen.cpp  
 HFILES = global.h particuleC.h history.h header.h 
 OBJS = acploc.o bias.o comparscen.o conf.o data.o estimparam.o general.o header.o history.o matrices.o mesutils.o particleset.o particuleC.o randomgenerator.o reftable.o simfile.o sumstat.o modchec.o  
-CC = /usr/local/bin/g++
+CC = g++
+#CC = /usr/local/bin/g++
 
 all: general initRNGproject
 
