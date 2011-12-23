@@ -406,6 +406,7 @@ int ReftableC::cal_varstat() {
 	nrecutil=100000;if (nrecutil>this->nrec) nrecutil=this->nrec;
 	nr=0;for (int i=0;i<nscenchoisi;i++) nr+=nrecscen[this->scenchoisi[i]-1];
 	if (nrecutil>nr) nrecutil=nr;
+	cout <<"debut de cal_varstat   nrecutil="<<nrecutil<<"\n";
 	sx  = new long double[this->nstat];
 	sx2 = new long double[this->nstat];
 	min = new long double[this->nstat];
@@ -426,6 +427,7 @@ int ReftableC::cal_varstat() {
 			scenOK=(enr.numscen==this->scenchoisi[iscen]);
 			iscen++;
 		}
+		if ((scenOK)and(i==0))for (int j=0;j<this->nstat;j++) cout<<enr.stat[j]<<"   ";cout<<"\n";
 		if (scenOK) {
 			i++;
 			for (int j=0;j<this->nstat;j++) {
@@ -438,19 +440,20 @@ int ReftableC::cal_varstat() {
 		}
 		//if ((i % step)==0) {cout<<"\rcal_varstat : "<<i/step<<"%";fflush(stdout);}
 	}
-	//    cout<<i<<"   "<<nrecutil<<"\n";
+	    cout<<i<<"   "<<nrecutil<<"\n";
 	if (i<nrecutil) nrecutil=i;
-	//    cout<<i<<"   "<<nrecutil<<"\n";
+	    cout<<i<<"   "<<nrecutil<<"\n";
 	this->closefile();
 	nsOK=0;
 	an=1.0*(long double)nrecutil;
 	for (int j=0;j<this->nstat;j++) {
 		this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
 		if (this->var_stat[j]>0) nsOK++;
-		//printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
+		printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
 	}
 	delete []sx;delete []sx2;
 	cout<<"\nnstatOK = "<<nsOK<<"\n";
+	exit(1);
 	return nsOK;
 }
 
@@ -485,26 +488,34 @@ void ReftableC::desalloue_enrsel(int nsel) {
 void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 	int nn,nparamax,nrecOK=0,iscen,bidon,step;
 	bool firstloop=true,scenOK;
-	long double diff;
+	long double diff,distmin=1E100;
 	this->nreclus=0;step=nrec/100;
-	cout<<"nrec="<<nrec<<"\n";
 	nn=nsel;
+	cout<<"nrec="<<nrec<<"   nscenchoisi="<< this->nscenchoisi<<"   nn="<<nn<<"\n";
 	nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
 	//cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
 	//cout<<" apres allocation de enrsel\n";
+	for (int j=0;j<this->nstat;j++) cout<<"var_stat["<<j<<"]="<<this->var_stat[j]<<"\n";
+	cout<<"\n";
+	for (int j=0;j<this->nstat;j++) cout<<"stat_obs["<<j<<"]="<<stat_obs[j]<<"\n";
+	cout<<"\n";
 	this->openfile2();
 	while ((this->nreclus<nrec)and(not fifo.eof())) {
 		if (firstloop) {nrecOK=0;firstloop=false;}
 		else nrecOK=nn;
 		while ((nrecOK<2*nn)and(this->nreclus<nrec)) {
-			do {bidon=this->readrecord(&(this->enrsel[nrecOK]));} while (bidon!=0);
+			do {
+				bidon=this->readrecord(&(this->enrsel[nrecOK]));
+				if (bidon!=0) cout<<"bidon="<<bidon<<"\n";
+			} while (bidon!=0);
 			scenOK=false;iscen=0;
 			while((not scenOK)and(iscen<this->nscenchoisi)) {
 				scenOK=(this->enrsel[nrecOK].numscen==this->scenchoisi[iscen]);
+				//if (scenOK) cout<<" SCENOK pour this->enrsel["<<nrecOK<<"].numscen = "<<this->enrsel[nrecOK].numscen<<"\n";
 				iscen++;
 			}
 			if (scenOK) {
-				//this->nreclus++;
+				this->nreclus++;
 				this->enrsel[nrecOK].dist=0.0;
 				for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>0.0) {
 					diff =(long double)(this->enrsel[nrecOK].stat[j] - stat_obs[j]);
@@ -512,10 +523,11 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 					//if (nreclus==1) printf("  %12.6f   %12.6f   %12.6Lf   %12.8Lf\n",this->enrsel[nrecOK].stat[j],stat_obs[j],diff*diff,this->enrsel[nrecOK].dist);
 				}
 				this->enrsel[nrecOK].dist =sqrt(this->enrsel[nrecOK].dist);
+				if (distmin>this->enrsel[nrecOK].dist) {distmin=this->enrsel[nrecOK].dist;cout <<"distmin="<<distmin<<"\n";}
 				nrecOK++;
 				if (this->nreclus==nrec) break;
 			}
-			this->nreclus++;
+			//this->nreclus++;
 			if ((this->nreclus % step)==0) {cout<<"\rcal_dist : "<<this->nreclus/step<<"%";fflush(stdout);}
 		}
 		sort(&this->enrsel[0],&this->enrsel[2*nn]);
