@@ -1010,8 +1010,12 @@ int HeaderC::readHeadersim(string headersimfilename){
 					for (int sa=0;sa<this->dataobs.nsample;sa++) {
 						this->dataobs.ss[locustype][sa]=0;
 						for (int ind=0;ind<this->dataobs.nind[sa];ind++) {
-							if ((this->dataobs.locus[loc].type==10)or((this->dataobs.locus[loc].type==12)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ss[locustype][sa] +=2;
-							else this->dataobs.ss[locustype][sa] +=1;
+							//if ((this->dataobs.locus[loc].type==10)or((this->dataobs.locus[loc].type==12)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ss[locustype][sa] +=2;
+							if( (locustype == 0) or ( (locustype == 2)and(this->dataobs.indivsexe[sa][ind]==2) ) ) {
+								this->dataobs.ss[locustype][sa] +=2;
+							} else {
+								this->dataobs.ss[locustype][sa] +=1;
+							}
 						}
 					}
 					this->dataobs.catexist[locustype] = true;

@@ -31,6 +31,7 @@ std::string centre (std::string const & s, int k);
 int strpos (char * st1, char * st2);
 int ndecimales (double mini, double maxi);
 std::string IntToString (int number);
+std::string IntToString3(int number);
 std::string FloatToString (float number);
 std::string DoubleToString (double number);
 std::string LongDoubleToString (long double number);
@@ -77,5 +78,5 @@ inline std::string char2string (char * c)
 {
 	return std::string(c);
 }
-
+void ecritTable(int** table, int m, int n);
 #endif

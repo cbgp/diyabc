@@ -4,6 +4,7 @@
 #include <cstring>
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 #include <sys/time.h>
 #include <math.h>
 #include <algorithm>
@@ -221,6 +222,25 @@ string IntToString ( int number )
   std::ostringstream oss;
   oss<< number;
   return oss.str();
+}
+
+/**
+ *  converti l'entier number en une string de 3 caractères.
+ */
+string IntToString3(int number)
+{
+	stringstream ss;//create a stringstream
+	ss << number;//add number to the stream
+	if((number < 0) or (number>999)){
+		throw std::range_error("You are trying to convert " + ss.str() +
+				" into a string of length 3. Not possible.");
+	}
+	string ans = ss.str();
+	while(ans.size() < 3)
+	{
+		ans = "0" + ans;
+	}
+	return ans;//return a string with the contents of the stream
 }
 
 /**
@@ -712,4 +732,16 @@ void combrank2(int n, int m, long double *x, long double *y,long double *rangx, 
 		i1 = i0;
 	}
    delete []A;
+}
+
+
+
+void ecritTable(int** table, int m, int n){
+	cout << endl << endl;
+	for(int i=0; i < m; ++i){
+		for(int j=0; j< n; ++j){
+			cout << table[i][j] << " ";
+		}
+		cout << endl;
+	}
 }

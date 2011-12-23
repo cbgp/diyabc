@@ -1538,9 +1538,10 @@ void ParticleC::put_one_mutation(int loc) {
       for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplomic[sa] = new int [this->data.ss[cat][sa]];
       sa=0;ind=0;
       for (int i=0;i<this->gt[loc].ngenes;i++) {
-	if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
-	this->locuslist[loc].haplomic[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].state;
-	ind++;if (ind==this->data.ss[cat][sa]) {sa++;ind=0;}
+    	  if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
+    	  this->locuslist[loc].haplomic[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].state;
+    	  ind++;
+    	  if (ind==this->data.ss[cat][sa]) {sa++;ind=0;}  // TODO: bug ici ?
       }
       if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
     }
@@ -1660,234 +1661,235 @@ void ParticleC::put_one_mutation(int loc) {
   }
 	
   int ParticleC::dosimulpart(int numscen){
-    if (debuglevel==5)        {cout<<"debut de dosimulpart\n";fflush(stdin);}
-    vector <int> simulOK;
-    string checktree;
-    int *emptyPop,loc;
-    bool treedone,dnaloc=false,trouve,snpOK;
-    int locus = 0, sa, indiv, nuc;
-    //cout<<"this->nloc="<<this->nloc<<"\n";
-    simulOK.resize(this->nloc);
-    GeneTreeC GeneTreeY, GeneTreeM;
-    if (debuglevel==10) cout<<"avant draw scenario\n";fflush(stdin);
-    this->drawscenario(numscen);
-    if (debuglevel==10) cout <<"avant setHistparamValue\n";fflush(stdin);
-    this->setHistParamValue();
-    if (debuglevel==10) cout << "apres setHistParamValue\n";fflush(stdin);
-    //if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
-    //if (trace) for (int k=0;k<this->scen.nparam;k++){
-    //         	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
-    this->setSequence();
-    if (debuglevel==10) cout <<"apres setSequence\n";
-    if (debuglevel==5) cout <<"avant checktree\n";
-    checktree=this->verifytree();
-    if (checktree!="") {
-      FILE *flog;
-      cout<<checktree<<"\n";
-      this->scen.ecris();
-      checktree="A gene genealogy failed in scenario "+IntToString(numscen+1)+". Check scenario and prior consistency.\n  ";
-      flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",checktree.c_str());fclose(flog);
-      exit(1);
-    }
-    if (debuglevel==5) cout <<"apres checktree\n";
-    bool gtYexist=false, gtMexist=false;
-    this->gt = new GeneTreeC[this->nloc];
-    emptyPop = new int[this->scen.popmax+1];
-    //cout << "particule " << ipart <<"   nparam="<<this->scen.nparam<<"\n";
-    //for (int k=0;k<this->scen.nparam;k++){
-    //	cout << this->scen.histparam[k].value << "   ";
-    //}
-    //cout << "\n";
-    for (loc=0;loc<this->nloc;loc++) simulOK[loc]=-1;
-    setMutParammoyValue();
-    if (debuglevel==10) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
-    for (loc=0;loc<this->nloc;loc++) {
-      if (debuglevel==10) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
-      if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
-	if (this->locuslist[loc].type <10) setMutParamValue(loc);
-	if ((this->locuslist[loc].type >4)and(this->locuslist[loc].type <10)) {
-	  comp_matQ(loc);
-	  dnaloc=true;
-	} else dnaloc=false;
-	treedone=false;
-	if ((this->locuslist[loc].type % 5) == 3) {
-	  if (gtYexist) {this->gt[loc] = GeneTreeY; treedone=true;}
-	}
-	else if ((locuslist[loc].type % 5) == 4) {
-	  if (debuglevel==10) cout << "coucou   gtMexist=" << gtMexist <<"\n";
-	  if (gtMexist) {this->gt[loc] = GeneTreeM; treedone=true;}
-	}
-	if (not treedone) {
-	  if (debuglevel==10) cout << "avant init_tree \n";
-	  init_tree(this->gt[loc], loc);
-	  if (debuglevel==10){
-	    cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
-	    cout<< "scenario "<<this->scen.number<<"\n";
+	  if (debuglevel==5)        {cout<<"debut de dosimulpart\n";fflush(stdin);}
+	  vector <int> simulOK;
+	  string checktree;
+	  int *emptyPop,loc;
+	  bool treedone,dnaloc=false,trouve,snpOK;
+	  int locus = 0, sa, indiv, nuc;
+	  //cout<<"this->nloc="<<this->nloc<<"\n";
+	  simulOK.resize(this->nloc);
+	  GeneTreeC GeneTreeY, GeneTreeM;
+	  if (debuglevel==10) cout<<"avant draw scenario\n";fflush(stdin);
+	  this->drawscenario(numscen);
+	  if (debuglevel==10) cout <<"avant setHistparamValue\n";fflush(stdin);
+	  this->setHistParamValue();
+	  if (debuglevel==10) cout << "apres setHistParamValue\n";fflush(stdin);
+	  //if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
+	  //if (trace) for (int k=0;k<this->scen.nparam;k++){
+	  //         	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
+	  this->setSequence();
+	  if (debuglevel==10) cout <<"apres setSequence\n";
+	  if (debuglevel==5) cout <<"avant checktree\n";
+	  checktree=this->verifytree();
+	  if (checktree!="") {
+		  FILE *flog;
+		  cout<<checktree<<"\n";
+		  this->scen.ecris();
+		  checktree="A gene genealogy failed in scenario "+IntToString(numscen+1)+". Check scenario and prior consistency.\n  ";
+		  flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",checktree.c_str());fclose(flog);
+		  exit(1);
 	  }
-	  for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
-	  for (int iseq=0;iseq<this->nseq;iseq++) {
-	    if (debuglevel==10) {
-	      cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
+	  if (debuglevel==5) cout <<"apres checktree\n";
+	  bool gtYexist=false, gtMexist=false;
+	  this->gt = new GeneTreeC[this->nloc];
+	  emptyPop = new int[this->scen.popmax+1];
+	  //cout << "particule " << ipart <<"   nparam="<<this->scen.nparam<<"\n";
+	  //for (int k=0;k<this->scen.nparam;k++){
+	  //	cout << this->scen.histparam[k].value << "   ";
+	  //}
+	  //cout << "\n";
+	  for (loc=0;loc<this->nloc;loc++) simulOK[loc]=-1;
+	  setMutParammoyValue();
+	  if (debuglevel==10) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
+	  for (loc=0;loc<this->nloc;loc++) {
+		  if (debuglevel==10) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
+		  if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
+			  if (this->locuslist[loc].type <10) setMutParamValue(loc);
+			  if ((this->locuslist[loc].type >4)and(this->locuslist[loc].type <10)) {
+				  comp_matQ(loc);
+				  dnaloc=true;
+			  } else dnaloc=false;
+			  treedone=false;
+			  if ((this->locuslist[loc].type % 5) == 3) {
+				  if (gtYexist) {this->gt[loc] = GeneTreeY; treedone=true;}
+			  }
+			  else if ((locuslist[loc].type % 5) == 4) {
+				  if (debuglevel==10) cout << "coucou   gtMexist=" << gtMexist <<"\n";
+				  if (gtMexist) {this->gt[loc] = GeneTreeM; treedone=true;}
+			  }
+			  if (not treedone) {
+				  if (debuglevel==10) cout << "avant init_tree \n";
+				  init_tree(this->gt[loc], loc);
+				  if (debuglevel==10){
+					  cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
+					  cout<< "scenario "<<this->scen.number<<"\n";
+				  }
+				  for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
+				  for (int iseq=0;iseq<this->nseq;iseq++) {
+					  if (debuglevel==10) {
+						  cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
 
-	      if (this->seqlist[iseq].action == 'C') cout <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
-	      else  cout <<"   "<<this->seqlist[iseq].t0;
-	      cout<<"    pop="<<this->seqlist[iseq].pop;cout<<"    Ne="<<this->seqlist[iseq].N;
-	      if ((this->seqlist[iseq].action == 'M')or(this->seqlist[iseq].action == 'S')) cout <<"   pop1="<<this->seqlist[iseq].pop1;
-	      if (this->seqlist[iseq].action == 'S') cout <<"   pop2="<<this->seqlist[iseq].pop2;
-	      cout<<"\n";
-	      fflush(stdin);
-	    }
-	    if (this->seqlist[iseq].action == 'C') {	//COAL
-							//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
-							//cout <<"\n";
-	      if (((this->seqlist[iseq].t1>this->seqlist[iseq].t0)or(this->seqlist[iseq].t1<0))and(emptyPop[seqlist[iseq].pop]==0)) {
-		//cout << "dosimul appel de coal_pop \n";
-		coal_pop(loc,iseq);
-		//cout << "apres coal_pop\n";
-	      }
-	    }
-	    else if (this->seqlist[iseq].action == 'M') {	//MERGE
-	      if ((emptyPop[seqlist[iseq].pop]==0)or(emptyPop[seqlist[iseq].pop1]==0)) {
-		//cout << "dosimul appel de pool_pop \n";
-		pool_pop(loc,iseq);
-		emptyPop[seqlist[iseq].pop]  =0;
-		emptyPop[seqlist[iseq].pop1] =1;
-	      }
-	    }
-	    else if (this->seqlist[iseq].action == 'S') {  //SPLIT
-	      if (emptyPop[seqlist[iseq].pop]==0) {
-		//cout << "dosimul appel de split_pop \n";
-		split_pop(loc,iseq);
-		emptyPop[seqlist[iseq].pop]  =1;
-		emptyPop[seqlist[iseq].pop1] =0;
-		emptyPop[seqlist[iseq].pop2] =0;
-	      }
-	    }
-	    else if (this->seqlist[iseq].action == 'A') {  //ADSAMP
-	      //cout << "dosimul appel de add_sample \n";
-	      add_sample(loc,iseq);
-	      emptyPop[seqlist[iseq].pop]  =0;
-	      //for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
-	      //cout <<"\n";
-	    }
-	  }	//LOOP ON iseq
-		/* copie de l'arbre si locus sur Y ou mitochondrie */
-	  if (not gtYexist) {if ((locuslist[loc].type % 5) == 3) {GeneTreeY  = this->gt[loc]; gtYexist=true;}}
+						  if (this->seqlist[iseq].action == 'C') cout <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
+						  else  cout <<"   "<<this->seqlist[iseq].t0;
+						  cout<<"    pop="<<this->seqlist[iseq].pop;cout<<"    Ne="<<this->seqlist[iseq].N;
+						  if ((this->seqlist[iseq].action == 'M')or(this->seqlist[iseq].action == 'S')) cout <<"   pop1="<<this->seqlist[iseq].pop1;
+						  if (this->seqlist[iseq].action == 'S') cout <<"   pop2="<<this->seqlist[iseq].pop2;
+						  cout<<"\n";
+						  fflush(stdin);
+					  }
+					  if (this->seqlist[iseq].action == 'C') {	//COAL
+						  //for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
+						  //cout <<"\n";
+						  if (((this->seqlist[iseq].t1>this->seqlist[iseq].t0)or(this->seqlist[iseq].t1<0))and(emptyPop[seqlist[iseq].pop]==0)) {
+							  //cout << "dosimul appel de coal_pop \n";
+							  coal_pop(loc,iseq);
+							  //cout << "apres coal_pop\n";
+						  }
+					  }
+					  else if (this->seqlist[iseq].action == 'M') {	//MERGE
+						  if ((emptyPop[seqlist[iseq].pop]==0)or(emptyPop[seqlist[iseq].pop1]==0)) {
+							  //cout << "dosimul appel de pool_pop \n";
+							  pool_pop(loc,iseq);
+							  emptyPop[seqlist[iseq].pop]  =0;
+							  emptyPop[seqlist[iseq].pop1] =1;
+						  }
+					  }
+					  else if (this->seqlist[iseq].action == 'S') {  //SPLIT
+						  if (emptyPop[seqlist[iseq].pop]==0) {
+							  //cout << "dosimul appel de split_pop \n";
+							  split_pop(loc,iseq);
+							  emptyPop[seqlist[iseq].pop]  =1;
+							  emptyPop[seqlist[iseq].pop1] =0;
+							  emptyPop[seqlist[iseq].pop2] =0;
+						  }
+					  }
+					  else if (this->seqlist[iseq].action == 'A') {  //ADSAMP
+						  //cout << "dosimul appel de add_sample \n";
+						  add_sample(loc,iseq);
+						  emptyPop[seqlist[iseq].pop]  =0;
+						  //for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
+						  //cout <<"\n";
+					  }
+				  }	//LOOP ON iseq
+				  /* copie de l'arbre si locus sur Y ou mitochondrie */
+				  if (not gtYexist) {if ((locuslist[loc].type % 5) == 3) {GeneTreeY  = this->gt[loc]; gtYexist=true;}}
 
-	  if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = this->gt[loc]; gtMexist=true;}}
-	}
-	/* mutations */
-	if (this->locuslist[loc].type <10){  
-	  put_mutations(loc);
-	  if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
-	  simulOK[loc]=cree_haplo(loc);
-	  if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
-	} else {
-	  //if (loc==0) cout<<"this->refnindtot="<<this->refnindtot<<"\n";
-	  this->locuslist[loc].firstime = true;
-	  if (this->refnindtot<1) {put_one_mutation(loc);simulOK[loc]=cree_haplo(loc);}
-	  else {
-	    // if (loc==0) cout<<"apres firstime=true au locus "<<loc<<"\n";
-	    do {
-	      put_one_mutation(loc);
-	      //if (loc==0) cout<<"apres put_one_mutation\n";
-	      // if (loc==0) cout<< " firstime = " << firstime <<"\n";
-	      simulOK[loc]=cree_haplo(loc);
-	      //if (loc==0) cout<<"apres cree_haplo\n";
-	      snpOK = polymref(loc);
-	      //if (loc==0) cout<<"apres polymref\n";
-	    } while (not snpOK);
+				  if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = this->gt[loc]; gtMexist=true;}}
+			  }
+			  /* mutations */
+			  if (this->locuslist[loc].type <10){
+				  put_mutations(loc);
+				  if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
+				  simulOK[loc]=cree_haplo(loc);
+				  if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
+			  } else {
+				  //if (loc==0) cout<<"this->refnindtot="<<this->refnindtot<<"\n";
+				  this->locuslist[loc].firstime = true;
+				  if (this->refnindtot<1) {
+					  put_one_mutation(loc);simulOK[loc]=cree_haplo(loc);
+				  } else {
+					  // if (loc==0) cout<<"apres firstime=true au locus "<<loc<<"\n";
+					  do {
+						  put_one_mutation(loc);
+						  //if (loc==0) cout<<"apres put_one_mutation\n";
+						  // if (loc==0) cout<< " firstime = " << firstime <<"\n";
+						  simulOK[loc]=cree_haplo(loc);
+						  //if (loc==0) cout<<"apres cree_haplo\n";
+						  snpOK = polymref(loc);
+						  //if (loc==0) cout<<"apres polymref\n";
+					  } while (not snpOK);
+				  }
+			  }
+			  locus=loc;
+			  if (simulOK[loc] != 0) {if (debuglevel==10) cout << "avant break interne\n";break;}
+			  if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
+		  }
+		  //cout<<"   OK\n\n";
+		  //if (loc==50)
+		  //exit(6);
+	  }		//LOOP ON loc
+	  if (simulOK[locus]==0) {
+		  if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
+		  if (this->data.nmisshap>0) {
+			  for (int i=0;i<this->data.nmisshap;i++) {
+				  locus=this->data.misshap[i].locus;
+				  if (this->locuslist[locus].groupe>0) {
+					  sa=this->data.misshap[i].sample;indiv=this->data.misshap[i].indiv;
+					  //cout<<"MISSHAP   locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"\n";
+					  if (this->locuslist[locus].type<5) this->locuslist[locus].haplomic[sa][indiv] = MICMISSING;
+					  else                               this->locuslist[locus].haplodna[sa][indiv] = SEQMISSING;
+				  }
+			  }
+
+		  }
+		  if (this->data.nmissnuc>0) {
+			  for (int i=0;i<this->data.nmissnuc;i++) {
+				  locus=this->data.missnuc[i].locus;
+				  if ((this->locuslist[locus].groupe>0)and(this->gt[locus].nmutot>0)) {
+					  sa=this->data.missnuc[i].sample;
+					  indiv=this->data.missnuc[i].indiv;
+					  nuc=this->data.missnuc[i].nuc;
+					  if (debuglevel==10) cout<<"MISSNUC "<<i<<"  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc/*<<"\n"*/;
+					  int k=0;trouve=false;
+					  while (   (k < (int)this->locuslist[locus].sitmut.size()) and (not trouve)   ) {
+						  trouve = (nuc==this->locuslist[locus].sitmut[k]);
+						  if (not trouve) k++;
+					  }
+					  if (trouve) {
+						  //cout<<"MISSNUC  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc<<"  k="<<k<<"\n";
+						  if (debuglevel==10) cout<</*this->locuslist[locus].haplodna[sa][indiv]<<*/"   k="<<k<<"  ("<<this->locuslist[locus].haplodna[sa][indiv].length()<<")\n";
+						  //this->locuslist[locus].haplodna[sa][indiv].replace(k,1,"N");
+						  this->locuslist[locus].haplodna[sa][indiv][k]='N';
+						  //cout<<this->locuslist[locus].haplodna[sa][indiv]<<"\n";
+					  } else {
+						  if (debuglevel==10) cout<<"  (non muté)\n";
+					  }
+				  }
+
+			  }
+
+		  }
+		  if (this->data.nmisssnp>0){
+			  cout<<"ANORMAL\n";
+			  for (int i=0;i<this->data.nmisssnp;i++) {
+				  locus=this->data.misssnp[i].locus;
+				  if (this->locuslist[locus].groupe>0) {
+					  sa=this->data.misssnp[i].sample;indiv=this->data.misssnp[i].indiv;
+					  //cout<<"MISSHAP   locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"\n";
+					  this->locuslist[locus].haplosnp[sa][indiv] = (short int)SNPMISSING;
+				  }
+			  }
+
+		  }
 	  }
-	}
-	locus=loc;
-	if (simulOK[loc] != 0) {if (debuglevel==10) cout << "avant break interne\n";break;}
-	if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
-      }
-      //cout<<"   OK\n\n";
-      //if (loc==50) 
-      //exit(6);
-    }		//LOOP ON loc
-    if (simulOK[locus]==0) {
-      if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
-      if (this->data.nmisshap>0) {
-	for (int i=0;i<this->data.nmisshap;i++) {
-	  locus=this->data.misshap[i].locus;
-	  if (this->locuslist[locus].groupe>0) {
-	    sa=this->data.misshap[i].sample;indiv=this->data.misshap[i].indiv;
-	    //cout<<"MISSHAP   locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"\n";
-	    if (this->locuslist[locus].type<5) this->locuslist[locus].haplomic[sa][indiv] = MICMISSING;
-	    else                               this->locuslist[locus].haplodna[sa][indiv] = SEQMISSING;
+	  if (debuglevel==10) cout<<"avant le sitmut2.clear()\n";
+	  for (loc=0;loc<this->nloc;loc++) if ((this->locuslist[loc].type>4)and(simulOK[loc]>-1)) this->locuslist[loc].sitmut2.clear();
+	  if (debuglevel==10) cout<<"avant les delete\n";fflush(stdin);
+	  delete [] emptyPop;
+	  delete [] this->seqlist;
+	  for (int loc=0;loc<this->nloc;loc++) {
+		  if ((this->locuslist[loc].groupe>0)and(simulOK[loc]>-1)) {
+			  if (debuglevel==10) cout<<"deletetree du locus "<<loc<<"\n";
+			  // if(this->locuslist[loc].type>4) deletetree(this->gt[loc],true);
+			  // else deletetree(this->gt[loc],false);
+		  }
 	  }
-	}
+	  delete [] this->gt;
+	  // if (gtYexist) deletetree(GeneTreeY,dnaloc);
+	  // if (gtMexist) deletetree(GeneTreeM,dnaloc);
+	  //if (trace) cout << "Fin de dosimulpart \n";
 
-      }
-      if (this->data.nmissnuc>0) {
-	for (int i=0;i<this->data.nmissnuc;i++) {
-	  locus=this->data.missnuc[i].locus;
-	  if ((this->locuslist[locus].groupe>0)and(this->gt[locus].nmutot>0)) {
-	    sa=this->data.missnuc[i].sample;
-	    indiv=this->data.missnuc[i].indiv;
-	    nuc=this->data.missnuc[i].nuc;
-	    if (debuglevel==10) cout<<"MISSNUC "<<i<<"  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc/*<<"\n"*/;
-	    int k=0;trouve=false;
-	    while (   (k < (int)this->locuslist[locus].sitmut.size()) and (not trouve)   ) {
-	      trouve = (nuc==this->locuslist[locus].sitmut[k]);
-	      if (not trouve) k++;
-	    }
-	    if (trouve) {
-	      //cout<<"MISSNUC  locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"  nuc "<<nuc<<"  k="<<k<<"\n";
-	      if (debuglevel==10) cout<</*this->locuslist[locus].haplodna[sa][indiv]<<*/"   k="<<k<<"  ("<<this->locuslist[locus].haplodna[sa][indiv].length()<<")\n";
-	      //this->locuslist[locus].haplodna[sa][indiv].replace(k,1,"N");
-	      this->locuslist[locus].haplodna[sa][indiv][k]='N';
-	      //cout<<this->locuslist[locus].haplodna[sa][indiv]<<"\n";
-	    } else {
-	      if (debuglevel==10) cout<<"  (non muté)\n";
-	    }
+	  int simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
+	  if (debuglevel==10) cout<<"fin de dosimulpart   simOK="<<simOK<<"\n";fflush(stdin);
+	  if (debuglevel==7) {
+		  for (int loc=0;loc<this->nloc;loc++) if(this->locuslist[loc].type>4) {
+			  cout<<"Locus "<<loc<<"\n";
+			  for(int sa=0;sa<this->nsample;sa++) {cout<<this->locuslist[loc].haplodna[sa][0]<<"\n";cout<<this->locuslist[loc].haplodna[sa][1]<<"\n\n";}
+		  }
 	  }
-
-	}
-
-      }
-      if (this->data.nmisssnp>0){
-	cout<<"ANORMAL\n";
-	for (int i=0;i<this->data.nmisssnp;i++) {
-	  locus=this->data.misssnp[i].locus;
-	  if (this->locuslist[locus].groupe>0) {
-	    sa=this->data.misssnp[i].sample;indiv=this->data.misssnp[i].indiv;
-	    //cout<<"MISSHAP   locus "<<locus<<"  sample "<<sa<<"  indiv "<<indiv<<"\n";
-	    this->locuslist[locus].haplosnp[sa][indiv] = (short int)SNPMISSING;
-	  }
-	}
-					
-      }
-    }
-    if (debuglevel==10) cout<<"avant le sitmut2.clear()\n";
-    for (loc=0;loc<this->nloc;loc++) if ((this->locuslist[loc].type>4)and(simulOK[loc]>-1)) this->locuslist[loc].sitmut2.clear();
-    if (debuglevel==10) cout<<"avant les delete\n";fflush(stdin);
-    delete [] emptyPop;
-    delete [] this->seqlist;
-    for (int loc=0;loc<this->nloc;loc++) {
-      if ((this->locuslist[loc].groupe>0)and(simulOK[loc]>-1)) {
-	if (debuglevel==10) cout<<"deletetree du locus "<<loc<<"\n";
-	// if(this->locuslist[loc].type>4) deletetree(this->gt[loc],true);
-	// else deletetree(this->gt[loc],false);
-      }
-    }
-    delete [] this->gt;
-    // if (gtYexist) deletetree(GeneTreeY,dnaloc);
-    // if (gtMexist) deletetree(GeneTreeM,dnaloc);
-    //if (trace) cout << "Fin de dosimulpart \n";
-
-    int simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
-    if (debuglevel==10) cout<<"fin de dosimulpart   simOK="<<simOK<<"\n";fflush(stdin);
-    if (debuglevel==7) {
-      for (int loc=0;loc<this->nloc;loc++) if(this->locuslist[loc].type>4) {
-	  cout<<"Locus "<<loc<<"\n";
-	  for(int sa=0;sa<this->nsample;sa++) {cout<<this->locuslist[loc].haplodna[sa][0]<<"\n";cout<<this->locuslist[loc].haplodna[sa][1]<<"\n\n";}
-	}
-    }
-    //exit(1);
-    return simOK;
+	  //exit(1);
+	  return simOK;
   }
 
   /*	int dosimulpartsnp(int numscen){
@@ -2053,70 +2055,80 @@ void ParticleC::put_one_mutation(int loc) {
   /***********************************************************************************************************************/
 
   string ParticleC::dogenepop(){
-    string sgp,sind,snum;
-    int iloc,*k,ty;
-    k = new int[this->nloc];
-    sgp="Simulated genepop file \n";
-    //cout<<sgp<<"\n";
-    //cout<<"nloc="<<this->nloc<<"\n";
-    for (iloc=0;iloc<this->nloc;iloc++) {
-      if (this->locuslist[iloc].type==0) sgp +="Locus M_A_"+IntToString(iloc+1)+"  <A>\n";
-      if (this->locuslist[iloc].type==1) sgp +="Locus M_H_"+IntToString(iloc+1)+"  <H>\n";
-      if (this->locuslist[iloc].type==2) sgp +="Locus M_X_"+IntToString(iloc+1)+"  <X>\n";
-      if (this->locuslist[iloc].type==3) sgp +="Locus M_Y_"+IntToString(iloc+1)+"  <Y>\n";
-      if (this->locuslist[iloc].type==4) sgp +="Locus M_M_"+IntToString(iloc+1)+"  <M>\n";
-      if (this->locuslist[iloc].type==5) sgp +="Locus S_A_"+IntToString(iloc+1)+"  <A>\n";
-      if (this->locuslist[iloc].type==6) sgp +="Locus S_H_"+IntToString(iloc+1)+"  <H>\n";
-      if (this->locuslist[iloc].type==7) sgp +="Locus S_X_"+IntToString(iloc+1)+"  <X>\n";
-      if (this->locuslist[iloc].type==8) sgp +="Locus S_Y_"+IntToString(iloc+1)+"  <Y>\n";
-      if (this->locuslist[iloc].type==9) sgp +="Locus S_M_"+IntToString(iloc+1)+"  <M>\n";
-    }
-    //cout<<sgp<<"\n";
-    for (int ech=0;ech<this->data.nsample;ech++) {
-      if (ech==0) sgp += "POP"; else {sgp +="\nPOP";/*cout<<sgp<<"\n";*/}
-      for (int loc=0;loc<this->nloc;loc++) k[loc] = 0;
-      for (int ind=0;ind<this->data.nind[ech];ind++) {
-	snum = IntToString(ind+1);
-	if (ind<9)  snum ="0"+snum;
-	if (ind<99) snum ="0"+snum;
-	sgp += "\n  "+IntToString(ech+1)+"-"+snum+"  , ";
-	for (iloc=0;iloc<this->nloc;iloc++) {
-	  ty = this->locuslist[iloc].type;
-	  //if (ech>0) cout<<"iloc="<<iloc<<"    type="<<ty<<"   k[iloc]=]"<<k[iloc]<<"   index="<<k[iloc] <<"\n";
-	  if (ty==0) {
-	    sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;
-	    sgp +=IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;
+	  string sgp,sind,snum;
+	  int iloc,*k,ty;
+	  k = new int[this->nloc];
+//	  cout << "*** ss=" << endl;
+//	  for(int sa = 0; sa < data.nsample; sa++)
+//		  cout << "ss[0][" << sa << "] = " <<this->data.ss[0][sa] << endl;
+	  sgp="Simulated genepop file \n";
+	  //cout<<sgp<<"\n";
+	  //cout<<"nloc="<<this->nloc<<"\n";
+	  for (iloc=0;iloc<this->nloc;iloc++) {
+		  if (this->locuslist[iloc].type==0) sgp +="Locus M_A_"+IntToString(iloc+1)+"  <A>\n";
+		  if (this->locuslist[iloc].type==1) sgp +="Locus M_H_"+IntToString(iloc+1)+"  <H>\n";
+		  if (this->locuslist[iloc].type==2) sgp +="Locus M_X_"+IntToString(iloc+1)+"  <X>\n";
+		  if (this->locuslist[iloc].type==3) sgp +="Locus M_Y_"+IntToString(iloc+1)+"  <Y>\n";
+		  if (this->locuslist[iloc].type==4) sgp +="Locus M_M_"+IntToString(iloc+1)+"  <M>\n";
+		  if (this->locuslist[iloc].type==5) sgp +="Locus S_A_"+IntToString(iloc+1)+"  <A>\n";
+		  if (this->locuslist[iloc].type==6) sgp +="Locus S_H_"+IntToString(iloc+1)+"  <H>\n";
+		  if (this->locuslist[iloc].type==7) sgp +="Locus S_X_"+IntToString(iloc+1)+"  <X>\n";
+		  if (this->locuslist[iloc].type==8) sgp +="Locus S_Y_"+IntToString(iloc+1)+"  <Y>\n";
+		  if (this->locuslist[iloc].type==9) sgp +="Locus S_M_"+IntToString(iloc+1)+"  <M>\n";
 	  }
-	  if (ty==1) {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
-	  if (ty==2) {
-	    sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;
-	    if (this->data.indivsexe[ech][ind]==2) {sgp +=IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
-	    else sgp += "   ";
-	  }
-	  if (ty==3) {
-	    if (this->data.indivsexe[ech][ind]==2) sgp +="   000";
-	    else {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
-	  }
-	  if (ty==4) {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
-	  if (ty==5) {
-	    sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"][";k[iloc]++;
-	    sgp += this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;
-	  }
-	  if (ty==6) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
-	  if (ty==7) {
+	  //cout<<sgp<<"\n";
+	  for (int ech=0;ech<this->data.nsample;ech++) {
+		  if (ech==0) sgp += "POP"; else {sgp +="\nPOP";/*cout<<sgp<<"\n";*/}
+		  for (int loc=0;loc<this->nloc;loc++) k[loc] = 0;
+		  for (int ind=0;ind<this->data.nind[ech];ind++) {
+			  snum = IntToString(ind+1);
+			  if (ind<9)  snum ="0"+snum;
+			  if (ind<99) snum ="0"+snum;
+			  sgp += "\n  "+IntToString(ech+1)+"-"+snum+"  , ";
+			  for (iloc=0;iloc<this->nloc;iloc++) {
+				  ty = this->locuslist[iloc].type;
+				  //if (ech>0) cout<<"iloc="<<iloc<<"    type="<<ty<<"   k[iloc]=]"<<k[iloc]<<"   index="<<k[iloc] <<"\n";
+				  if (ty==0) {
+					  try{
+					  sgp +="   "+IntToString3(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;
+					  sgp +=IntToString3(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;
+					  } catch (std::exception &e) {
+						  cout << e.what() << endl;
+						  cout << " ech, iloc, k[iloc] =" << ech << ", " << iloc << ", " << k[iloc] << endl;
+						  cout << "locuslist[iloc].haplomic[ech][k[iloc]] = " << locuslist[iloc].haplomic[ech][k[iloc]] << endl;
+						  //throw e;
+					  }
+				  }
+				  if (ty==1) {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
+				  if (ty==2) {
+					  sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;
+					  if (this->data.indivsexe[ech][ind]==2) {sgp +=IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
+					  else sgp += "   ";
+				  }
+				  if (ty==3) {
+					  if (this->data.indivsexe[ech][ind]==2) sgp +="   000";
+					  else {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
+				  }
+				  if (ty==4) {sgp +="   "+IntToString(this->locuslist[iloc].haplomic[ech][k[iloc]]);k[iloc]++;}
+				  if (ty==5) {
+					  sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"][";k[iloc]++;
+					  sgp += this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;
+				  }
+				  if (ty==6) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
+				  if (ty==7) {
 
-	    sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]";k[iloc]++;
-	    if (this->data.indivsexe[ech][ind]==2) {sgp += "["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
-	    else sgp += ">";
+					  sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]";k[iloc]++;
+					  if (this->data.indivsexe[ech][ind]==2) {sgp += "["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
+					  else sgp += ">";
+				  }
+				  if (ty==8) {
+					  if (this->data.indivsexe[ech][ind]==2) sgp +="   [<>]";
+					  else {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
+				  }
+				  if (ty==9) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
+			  }
+		  }
 	  }
-	  if (ty==8) {
-	    if (this->data.indivsexe[ech][ind]==2) sgp +="   [<>]";
-	    else {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
-	  }
-	  if (ty==9) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
-	}
-      }
-    }
-    return sgp;
+	  return sgp;
   }
 
