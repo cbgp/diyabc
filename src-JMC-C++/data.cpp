@@ -401,8 +401,13 @@ void LocusC::libere(bool obs, int nsample) {
 						for (int sa=0;sa<this->nsample;sa++) {
 							this->ss[locustype][sa]=0;
 							for (int ind=0;ind<this->nind[sa];ind++) {
-								if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[sa][ind]==2))) this->ss[locustype][sa] +=2;
-								else if (not((this->locus[loc].type==13)and(this->indivsexe[sa][ind]==2))) this->ss[locustype][sa] +=1;
+								//if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[sa][ind]==2))) this->ss[locustype][sa] +=2;
+								//else if (not((this->locus[loc].type==13)and(this->indivsexe[sa][ind]==2))) this->ss[locustype][sa] +=1;
+								if( (locustype == 0) or ( (locustype == 2)and(this->indivsexe[sa][ind]==2) ) ) {
+									this->ss[locustype][sa] +=2;
+								} else {
+									this->ss[locustype][sa] +=1;
+								}
 							}
 							//cout<<"data.ss["<<locustype<<"]["<<sa<<"]="<<this->ss[locustype][sa]<<"\n";
 						}

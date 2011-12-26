@@ -4,7 +4,7 @@ CPPFILES = general.cpp acploc.cpp bias.cpp comparscen.cpp conf.cpp data.cpp esti
 HFILES = global.h particuleC.h history.h header.h 
 OBJS = acploc.o bias.o comparscen.o conf.o data.o estimparam.o general.o header.o history.o matrices.o mesutils.o particleset.o particuleC.o randomgenerator.o reftable.o simfile.o sumstat.o modchec.o  
 CC = g++
-#CC = /usr/local/bin/g++
+#CC = /opt/local/bin/g++-mp-4.6
 
 all: general initRNGproject
 
