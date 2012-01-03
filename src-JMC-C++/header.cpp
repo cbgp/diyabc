@@ -867,24 +867,17 @@ int HeaderC::readHeader(string headerfilename){
 	return 0;
 }
 
-int HeaderC::readHeadersim(string headersimfilename){
-	string s1,s2,*sl,*ss,*ss1;
-	int nlscen,nss,nss1,j,gr,grm,*nf,*nm,cat;
-	double som;
+int HeaderC::readHeadersimDebut(ifstream & file){
+	string s1,*ss;
+	int nss,*nf,*nm;
 	if (debuglevel==2) cout<<"debut de readheadersim\n";
-	//cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
-	ifstream file(headersimfilename.c_str(), ios::in);
-	if (file == NULL) {
-		this->message = "HeaderSim  File "+string(headersimfilename)+" not found";
-		cout<<this->message<<"\n";
-		return 1;
-	} else this->message="";
 	getline(file, s1);
 	ss = splitwords(s1," ",&nss);
 	this->datafilename=ss[0];
 	this->nsimfile=atoi(ss[1].c_str());
 	if (nss>2) this->dataobs.sexratio=atof(ss[2].c_str()); else this->dataobs.sexratio=0.5;
 	getline(file,s1);
+	delete []ss;
 	ss = splitwords(s1," ",&nss);
 	this->dataobs.nsample=atoi(ss[0].c_str());
 	this->dataobs.nind.resize(this->dataobs.nsample);
@@ -893,6 +886,7 @@ int HeaderC::readHeadersim(string headersimfilename){
 	nm=new int[this->dataobs.nsample];
 	for (int i=0;i<this->dataobs.nsample;i++) {
 		getline(file,s1);
+		delete []ss;
 		ss = splitwords(s1," ",&nss);
 		nf[i]=atoi(ss[0].c_str());
 		nm[i]=atoi(ss[1].c_str());
@@ -910,8 +904,12 @@ int HeaderC::readHeadersim(string headersimfilename){
 	}
 	this->dataobs.nmisshap=0;
 	this->dataobs.nmissnuc=0;
-	//cout<<"avant scenarios\n";fflush(stdin);
-	//Partie Scenarios
+	return 0;
+}
+
+int HeaderC::readHeadersimScenario(ifstream & file){
+	string s1,*ss,*sl;
+	int nss,nlscen;
 	getline(file,s1);   //cout<<s1<<"\n";     //ligne vide
 	getline(file,s1);    //cout<<s1<<"\n";    // nombre de scenarios
 	this->nscenarios=1; //cout<<this->nscenarios<<"\n";
@@ -929,9 +927,12 @@ int HeaderC::readHeadersim(string headersimfilename){
 	delete [] sl;
 	delete [] ss;
 	if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie scénario(s)\n";
+	return 0;
+}
 
-	//Partie historical parameters
-	//cout <<"avant histparam\n";fflush(stdin);
+int HeaderC::readHeadersimHistParam(std::ifstream & file){
+	string s1,*ss;
+	int nss;
 	getline(file,s1);       //ligne vide
 	getline(file,s1);
 	//cout<<s1<<"\n";
@@ -954,9 +955,15 @@ int HeaderC::readHeadersim(string headersimfilename){
 		this->scenario[0].histparam[i].prior.constant=true;
 		this->scenario[0].histparam[i].prior.fixed=true;
 	}
+	delete [] ss;
 	if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie priors des paramètres démographiques\n";
-	//Partie loci description
-	//cout <<"avant partie loci\n";fflush(stdin);
+	return 0;	
+}
+
+int HeaderC::readHeadersimLoci(std::ifstream & file){
+	string s1,*ss;
+	int nss,grm,gr,kloc,loctyp;
+	double som;
 	getline(file,s1); //cout<<s1<<"    ligne vide ? \n";       //ligne vide
 	getline(file,s1);  //cout<<s1<<"     loci description ?\n";
 	ss=splitwords(s1," ",&nss);
@@ -964,8 +971,10 @@ int HeaderC::readHeadersim(string headersimfilename){
 	cout<<"nloc="<<this->dataobs.nloc<<"\n";
 	this->dataobs.locus = new LocusC[this->dataobs.nloc];
 	grm=1;
+	this->dataobs.filetype=0;
 	for (int loc=0;loc<this->dataobs.nloc;loc++){
 		getline(file,s1);
+		delete [] ss;
 		ss=splitwords(s1," ",&nss);
 		this->dataobs.locus[loc].name = strdup(ss[0].c_str());
 		if (ss[1]=="<A>") this->dataobs.locus[loc].type =0;
@@ -997,8 +1006,18 @@ int HeaderC::readHeadersim(string headersimfilename){
 			//cout<<this->dataobs.locus[loc].dnalength<<"\n";
 			//this->dataobs.locus[loc].dnalength=atoi(ss[k+2].c_str());  //inutile variable déjà renseignée
 		}
+		else if (ss[2]=="[P]") {
+			this->dataobs.filetype=1;
+			kloc=getwordint(s1,1);
+			loctyp=this->dataobs.locus[loc].type+10;
+			s1=ss[3].substr(1);gr=atoi(s1.c_str());if (gr>grm) grm=gr;
+			for (int k=0;k<kloc;k++){
+				this->dataobs.locus[loc+k].type =loctyp;
+				this->dataobs.locus[loc+k].groupe=gr;
+			}
+			loc +=kloc;
+		}
 	}
-	delete [] ss;
 	this->dataobs.catexist = new bool[5];
 	this->dataobs.ss.resize(5);
 	for (int i=0;i<5;i++) this->dataobs.catexist[i]=false;
@@ -1024,8 +1043,12 @@ int HeaderC::readHeadersim(string headersimfilename){
 		}
 	}
 	if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie description des locus\n";
-	//Partie group priors
-	//cout <<"avant partie group priors\n";fflush(stdin);
+	return 0;
+}
+
+int HeaderC::readHeadersimGroupPrior(std::ifstream & file){
+	string s1,*ss,*ss1;
+	int nss,nss1;
 	getline(file,s1); //cout<<s1<<"    ligne vide ? \n";      //ligne vide
 	getline(file,s1);       //ligne "group prior"
 	this->ngroupes=getwordint(s1,2);
@@ -1033,7 +1056,7 @@ int HeaderC::readHeadersim(string headersimfilename){
 	this->groupe = new LocusGroupC[this->ngroupes+1];
 	this->assignloc(0);
 	//cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
-	for (gr=1;gr<=this->ngroupes;gr++){
+	for (int gr=1;gr<=this->ngroupes;gr++){
 		getline(file,s1);
 		ss=splitwords(s1," ",&nss);
 		this->assignloc(gr);
@@ -1081,53 +1104,89 @@ int HeaderC::readHeadersim(string headersimfilename){
 			delete [] ss1;
 		}
 		this->groupe[gr].nstat=0;
+		delete [] ss;
 	}
 	if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie définition des groupes\n";
+	return 0;
+}
+
+int HeaderC::readHeadersimFin(){
 	//Mise à jour des locus séquences
 	MwcGen mwc;
 	mwc.randinit(999,time(NULL));
-	int nsv;
+	int nsv,gr,j;
 	bool nouveau;
-	for (int loc=0;loc<this->dataobs.nloc;loc++){
-		gr=this->dataobs.locus[loc].groupe;
-		if ((this->dataobs.locus[loc].type>4)and(gr>0)){
-			nsv = floor(this->dataobs.locus[loc].dnalength*(1.0-0.01*this->groupe[gr].p_fixe)+0.5);
-			for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] = mwc.ggamma3(1.0,this->groupe[gr].gams);
-			int *sitefix;
-			sitefix=new int[this->dataobs.locus[loc].dnalength-nsv];
-			for (int i=0;i<this->dataobs.locus[loc].dnalength-nsv;i++) {
-				if (i==0) sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
-				else {
-					do {
-						sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
-						nouveau=true;j=0;
-						while((nouveau)and(j<i)) {nouveau=(sitefix[i]!=sitefix[j]);j++;}
-					} while (not nouveau);
+	if (this->dataobs.filetype==0) {
+		for (int loc=0;loc<this->dataobs.nloc;loc++){
+			gr=this->dataobs.locus[loc].groupe;
+			if ((gr>0)and(this->dataobs.locus[loc].type>4)){
+				nsv = floor(this->dataobs.locus[loc].dnalength*(1.0-0.01*this->groupe[gr].p_fixe)+0.5);
+				for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] = mwc.ggamma3(1.0,this->groupe[gr].gams);
+				int *sitefix;
+				sitefix=new int[this->dataobs.locus[loc].dnalength-nsv];
+				for (int i=0;i<this->dataobs.locus[loc].dnalength-nsv;i++) {
+					if (i==0) sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
+					else {
+						do {
+							sitefix[i]=mwc.rand0(this->dataobs.locus[loc].dnalength);
+							nouveau=true;j=0;
+							while((nouveau)and(j<i)) {nouveau=(sitefix[i]!=sitefix[j]);j++;}
+						} while (not nouveau);
+					}
+					this->dataobs.locus[loc].mutsit[i] = 0.0;
 				}
-				this->dataobs.locus[loc].mutsit[i] = 0.0;
+				delete [] sitefix;
+				double s=0.0;
+				for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) s += this->dataobs.locus[loc].mutsit[i];
+				for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] /=s;
 			}
-			delete [] sitefix;
-			double s=0.0;
-			for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) s += this->dataobs.locus[loc].mutsit[i];
-			for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] /=s;
 		}
 	}
+	else {
+		this->nparamut=0;
+	}
 	if (debuglevel==2) cout<<"header.txt : fin de la mise à jour des locus séquences\n";
-	//cout<<"avant la mise à jour des paramvar\n";fflush(stdin);
-	//delete [] ss;
-	if (debuglevel==2) cout<<"header.txt : avant la copie du scénario\n";
 	this->scen = this->scenario[0];
 	//this->scen.ecris();
 	if (debuglevel==2) cout<<"header.txt : apres la copie du scénario\n";
-	PriorC pr;pr.loi="uniforme";pr.mini=0.0;pr.maxi=1.0;pr.ndec=3;pr.constant=false;
-	HistParameterC pp;pp.name="bidon";pp.category=0;pp.value=-1; pp.prior = pr; //pp.prior=copyprior(pr);
-	for (int i=0;i<this->scen.nparam;i++)  this->scen.histparam[i] = pp;
-	//this->scen.ecris();
-	//cout<<"apres superscen\n";
-	if (debuglevel==2) cout<<"header.txt : fin de l'établissement du superscen\n";
-	this->nparamut=0;
-	//exit(1);
 	return 0;
+}
+
+int HeaderC::readHeadersim(string headersimfilename){
+	int error;
+//	if (debuglevel==2) cout<<"debut de readheadersim\n";
+	//cout<<"readHeader headerfilename = "<<headerfilename<<"\n";
+	ifstream file(headersimfilename.c_str(), ios::in);
+	if (file == NULL) {
+		this->message = "HeaderSim  File "+string(headersimfilename)+" not found";
+		cout<<this->message<<"\n";
+		return 1;
+	} else this->message="";
+	
+
+	error = readHeadersimDebut(file);
+	if(error != 0) return error;
+
+	//Partie Scenarios
+	error = readHeadersimScenario(file);
+	if(error != 0) return error;
+
+	//Partie historical parameters
+	error = readHeadersimHistParam(file);
+	if(error != 0) return error;
+	
+	//Partie loci description
+	error = readHeadersimLoci(file);
+	if(error != 0) return error;
+
+	//Partie group priors
+	if (this->dataobs.filetype==0){
+		error = readHeadersimGroupPrior(file);
+		if(error != 0) return error;
+	}
+	
+	error = readHeadersimFin();
+	return error;
 }
 
 void HeaderC::calstatobs(string statobsfilename) {

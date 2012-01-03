@@ -56,12 +56,18 @@ public:
 	int readHeaderGroupPrior(std::ifstream & file);
 	int readHeaderGroupStat(std::ifstream & file);
 	int readHeaderEntete(std::ifstream & file);
-
 	int buildSuperScen();
 	int buildMutParam();
-
 	int readHeader(std::string headerfilename);
+	
+	int readHeadersimDebut(std::ifstream & file);
+	int readHeadersimScenario(std::ifstream & file);
+	int readHeadersimHistParam(std::ifstream & file);
+	int readHeadersimLoci(std::ifstream & file);
+	int readHeadersimGroupPrior(std::ifstream & file);
+	int readHeadersimFin();
 	int readHeadersim(std::string headersimfilename);
+
 	void calstatobs(std::string statobsfilename);
 };
 
