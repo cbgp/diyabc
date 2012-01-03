@@ -1028,7 +1028,11 @@ Proportion of male individuals in the population</string>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="sexRatioEdit"/>
+       <widget class="QLineEdit" name="sexRatioEdit">
+        <property name="text">
+         <string>0.5</string>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer_16">

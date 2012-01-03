@@ -63,10 +63,6 @@ class ProjectSimulation(Project):
         self.locusNumberFrame = uic.loadUi("uis/setLocusNumber.ui")
         self.locusNumberFrame.parent = self
         QObject.connect(self.locusNumberFrame.okButton,SIGNAL("clicked()"),self.checkSampleNSetGenetic)
-        QObject.connect(self.locusNumberFrame.mxEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
-        QObject.connect(self.locusNumberFrame.myEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
-        QObject.connect(self.locusNumberFrame.sxEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
-        QObject.connect(self.locusNumberFrame.syEdit,SIGNAL("textChanged(QString)"),self.checkXYValues)
         QObject.connect(self.locusNumberFrame.mhEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
         QObject.connect(self.locusNumberFrame.shEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
         self.locusNumberFrame.mxEdit.setText('1')
@@ -95,26 +91,13 @@ class ProjectSimulation(Project):
                 for ed in [self.locusNumberFrame.sxEdit,self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.syEdit,self.locusNumberFrame.maEdit,self.locusNumberFrame.saEdit]:
                     ed.setDisabled(True)
                     ed.setText("0")
+                self.locusNumberFrame.sexRatioEdit.setDisabled(True)
             else:
                 for ed in [self.locusNumberFrame.sxEdit,self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.syEdit,self.locusNumberFrame.maEdit,self.locusNumberFrame.saEdit]:
                     ed.setDisabled(False)
-        except Exception as e:
-            pass
-
-
-    def checkXYValues(self,val):
-        try:
-            mx = int(str(self.locusNumberFrame.mxEdit.text()))
-            my = int(str(self.locusNumberFrame.myEdit.text()))
-            sx = int(str(self.locusNumberFrame.sxEdit.text()))
-            sy = int(str(self.locusNumberFrame.syEdit.text()))
-            if mx <= 0 and my <= 0 and sx <= 0 and sy <= 0:
-                self.locusNumberFrame.sexRatioEdit.setDisabled(True)
-            else:
                 self.locusNumberFrame.sexRatioEdit.setDisabled(False)
         except Exception as e:
-            self.locusNumberFrame.sexRatioEdit.setDisabled(True)
-
+            pass
 
     def save(self):
         pass
