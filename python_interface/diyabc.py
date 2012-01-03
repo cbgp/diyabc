@@ -195,7 +195,10 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.saveAllProjActionMenu.setDisabled(True)
 
         file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/redhat-system_settings.png"),"&Settings",self.switchToPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
-        file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&Simulate data set(s)",self.simulateDataSets,QKeySequence(Qt.CTRL + Qt.Key_D))
+        self.simulate_menu = file_menu.addMenu(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&Simulate data set(s)")
+        self.simulate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&Genepop",self.simulateDataSets)
+        self.simulate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&SNP",self.simulateDataSets)
+
         action = file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
@@ -404,7 +407,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.tabWidget.setCurrentIndex(num-1)
 
     def simulateDataSets(self):
-        from projectSimulation import ProjectSimulation
+        from projectSimulation import ProjectSimulationSnp,ProjectSimulationGenepop
         fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)")
         fileDial.setLabelText(QtGui.QFileDialog.Accept,"Ok")
         fileDial.setLabelText(QtGui.QFileDialog.FileName,"Data file\ngeneric name")
@@ -422,7 +425,10 @@ class Diyabc(formDiyabc,baseDiyabc):
             directory = os.path.dirname(path)
 
         if ok:
-            newSimProj = ProjectSimulation(name,directory,self)
+            if "Genepop" in self.sender().text():
+                newSimProj = ProjectSimulationGenepop(name,directory,self)
+            else:
+                newSimProj = ProjectSimulationSnp(name,directory,self)
             # un nouveau projet a au moins un scenario
             newSimProj.hist_model_win.addSc()
             newSimProj.hist_model_win.hideRemoveScButtons()
@@ -993,7 +999,7 @@ class ImportProjectThread(Thread):
     def run(self):
         #log(4,"Pre-loading of Project class STARTING")
         from projectMsatSeq import ProjectMsatSeq
-        from projectSimulation import ProjectSimulation
+        from projectSimulation import ProjectSimulationSnp,ProjectSimulationGenepop
         from projectSnp import ProjectSnp
         #log(4,"Pre-loading of Project class FINISHED")
 

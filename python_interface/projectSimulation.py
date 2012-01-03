@@ -63,120 +63,12 @@ class ProjectSimulation(Project):
         self.locusNumberFrame = uic.loadUi("uis/setLocusNumber.ui")
         self.locusNumberFrame.parent = self
         QObject.connect(self.locusNumberFrame.okButton,SIGNAL("clicked()"),self.checkSampleNSetGenetic)
-        QObject.connect(self.locusNumberFrame.mhEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
-        QObject.connect(self.locusNumberFrame.shEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
-        self.locusNumberFrame.mxEdit.setText('1')
-        self.locusNumberFrame.mxEdit.setText('0')
-
-        self.gen_data_win = SetGeneticDataSimulation(self)
-        self.gen_data_win.hide()
-
         #self.setHistValid(False)
         #self.setGenValid(False)
         #self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self.runSimulation)
 
         self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopSimulation)
-
-    def stopUiGenReftable(self):
-        self.ui.runReftableButton.setText("Run computations")
-        self.ui.runReftableButton.setDisabled(False)
-        self.ui.progressBar.hide()
-
-    def haploidChanged(self,srt):
-        try:
-            mh = int(str(self.locusNumberFrame.mhEdit.text()))
-            sh = int(str(self.locusNumberFrame.shEdit.text()))
-            if sh > 0 or mh > 0:
-                for ed in [self.locusNumberFrame.sxEdit,self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.syEdit,self.locusNumberFrame.maEdit,self.locusNumberFrame.saEdit]:
-                    ed.setDisabled(True)
-                    ed.setText("0")
-                self.locusNumberFrame.sexRatioEdit.setDisabled(True)
-            else:
-                for ed in [self.locusNumberFrame.sxEdit,self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.syEdit,self.locusNumberFrame.maEdit,self.locusNumberFrame.saEdit]:
-                    ed.setDisabled(False)
-                self.locusNumberFrame.sexRatioEdit.setDisabled(False)
-        except Exception as e:
-            pass
-
-    def save(self):
-        pass
-
-    def setGenetic(self):
-        """ passe sur l'onglet correspondant
-        """
-        log(1,"Entering in Genetic Data Setting")
-        self.ui.refTableStack.addWidget(self.locusNumberFrame)
-        self.ui.refTableStack.setCurrentWidget(self.locusNumberFrame)
-        self.sexRatio = None
-        self.setGenValid(False)
-
-    def checkSampleNSetGenetic(self):
-        dico_loc_nb = {}
-        editList = self.locusNumberFrame.findChildren(QLineEdit)
-        editList.remove(self.locusNumberFrame.sexRatioEdit)
-        nbXY = 0
-        nbHap = 0
-        nbDip = 0
-        nbpos = 0
-        try:
-            for le in editList:
-                dico_loc_nb[str(le.objectName())[:2]] = int(le.text())
-                if int(le.text()) < 0:
-                    output.notify(self,"Number of sample error","Number of sample must be positive integers")
-                    return
-                elif int(le.text()) > 0:
-                    nbpos += 1
-                    if "x" in str(le.objectName())[:2] or "y" in str(le.objectName())[:2]:
-                        nbXY += 1
-                    elif "d" in str(le.objectName())[:2]:
-                        nbDip += 1
-                    elif "h" in str(le.objectName())[:2]:
-                        nbHap += 1
-            if nbpos == 0:
-                output.notify(self,"Number of sample error","You must have at leat one sample")
-                return
-        except Exception as e:
-            output.notify(self,"Number of sample error","Input error : \n%s"%e)
-            return
-        if nbXY > 0:
-            try:
-                val = float(str(self.locusNumberFrame.sexRatioEdit.text()))
-                if val < 0 or val > 100:
-                    output.notify(self,"Value error","Sex ratio value must be in [0,1]")
-                    return
-                self.sexRatio = val
-            except Exception as e:
-                output.notify(self,"Value error","Sex ratio value must be in [0,1]")
-                return
-
-        # verification : a-t-on modifié le nb de loci ?
-        if self.dico_loc_nb != None:
-            changed = False
-            for key in self.dico_loc_nb:
-                if self.dico_loc_nb[key] != dico_loc_nb[key]:
-                    changed = True
-                    break
-        else:
-            changed = True
-
-        self.dico_loc_nb = dico_loc_nb
-
-        log(3,"Numbers of locus : %s"%dico_loc_nb)
-        if changed:
-            # on vide les gen data
-            self.gen_data_win = SetGeneticDataSimulation(self)
-            self.gen_data_win.hide()
-            self.gen_data_win.fillLocusTable(dico_loc_nb)
-
-        self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
-        self.ui.refTableStack.addWidget(self.gen_data_win)
-        self.ui.refTableStack.setCurrentWidget(self.gen_data_win)
-
-
-    def returnToMe(self):
-        self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
-        self.ui.refTableStack.setCurrentIndex(0)
 
     def writeHeaderSim(self):
         #if self.verifyRefTableValid():
@@ -193,12 +85,32 @@ class ProjectSimulation(Project):
         print "%s %s %s"%(self.name,nb_rec,sexRatioTxt)
         print self.hist_model_win.getConf()
         print ""
-        print self.gen_data_win.getConf().replace(u'\xb5','u')
         fdest = open("%s/headersim.txt"%self.dir,"w")
         fdest.write("%s %s %s\n"%(self.name,nb_rec,sexRatioTxt))
         fdest.write("%s\n\n"%self.hist_model_win.getConf())
-        fdest.write("%s"%self.gen_data_win.getConf().replace(u'\xb5','u'))
+        fdest.write(self.getLocusDescription())
         fdest.close()
+
+    def stopUiGenReftable(self):
+        self.ui.runReftableButton.setText("Run computations")
+        self.ui.runReftableButton.setDisabled(False)
+        self.ui.progressBar.hide()
+
+    def save(self):
+        pass
+
+    def setGenetic(self):
+        """ passe sur l'onglet correspondant
+        """
+        log(1,"Entering in Genetic Data Setting")
+        self.ui.refTableStack.addWidget(self.locusNumberFrame)
+        self.ui.refTableStack.setCurrentWidget(self.locusNumberFrame)
+        self.sexRatio = None
+        self.setGenValid(False)
+
+    def returnToMe(self):
+        self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
+        self.ui.refTableStack.setCurrentIndex(0)
 
     @pyqtSignature("")
     def on_btnStart_clicked(self):
@@ -267,7 +179,7 @@ class SimulationThread(QThread):
                 self.processus.kill()
                 self.log(3,"Killing simulation process (pid:%s) DONE"%(self.processus.pid))
 
-    def run (self):
+    def run(self):
         # lance l'executable
         #outfile = os.path.expanduser("~/.diyabc/general.out")
         outfile = "%s/simulation.out"%self.parent.dir
@@ -321,4 +233,193 @@ class SimulationThread(QThread):
                     
                 fg.close()
         fg.close()
+
+class ProjectSimulationGenepop(ProjectSimulation):
+    """ classe qui représente un projet de simulation SNP
+    """
+    def __init__(self,name,dir=None,parent=None):
+        super(ProjectSimulationGenepop,self).__init__(name,dir,parent)
+
+        QObject.connect(self.locusNumberFrame.mhEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
+        QObject.connect(self.locusNumberFrame.shEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
+        self.locusNumberFrame.mxEdit.setText('1')
+        self.locusNumberFrame.mxEdit.setText('0')
+
+        self.gen_data_win = SetGeneticDataSimulation(self)
+        self.gen_data_win.hide()
+
+    def haploidChanged(self,srt):
+        try:
+            mh = int(str(self.locusNumberFrame.mhEdit.text()))
+            sh = int(str(self.locusNumberFrame.shEdit.text()))
+            if sh > 0 or mh > 0:
+                for ed in [self.locusNumberFrame.sxEdit,self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.syEdit,self.locusNumberFrame.maEdit,self.locusNumberFrame.saEdit]:
+                    ed.setDisabled(True)
+                    ed.setText("0")
+                self.locusNumberFrame.sexRatioEdit.setDisabled(True)
+            else:
+                for ed in [self.locusNumberFrame.sxEdit,self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.syEdit,self.locusNumberFrame.maEdit,self.locusNumberFrame.saEdit]:
+                    ed.setDisabled(False)
+                self.locusNumberFrame.sexRatioEdit.setDisabled(False)
+        except Exception as e:
+            pass
+
+    def checkSampleNSetGenetic(self):
+        dico_loc_nb = {}
+        editList = self.locusNumberFrame.findChildren(QLineEdit)
+        editList.remove(self.locusNumberFrame.sexRatioEdit)
+        nbXY = 0
+        nbHap = 0
+        nbDip = 0
+        nbpos = 0
+        try:
+            for le in editList:
+                dico_loc_nb[str(le.objectName())[:2]] = int(le.text())
+                if int(le.text()) < 0:
+                    output.notify(self,"Number of sample error","Number of sample must be positive integers")
+                    return
+                elif int(le.text()) > 0:
+                    nbpos += 1
+                    if "x" in str(le.objectName())[:2] or "y" in str(le.objectName())[:2]:
+                        nbXY += 1
+                    elif "d" in str(le.objectName())[:2]:
+                        nbDip += 1
+                    elif "h" in str(le.objectName())[:2]:
+                        nbHap += 1
+            if nbpos == 0:
+                output.notify(self,"Number of sample error","You must have at leat one sample")
+                return
+        except Exception as e:
+            output.notify(self,"Number of sample error","Input error : \n%s"%e)
+            return
+        mh = int(str(self.locusNumberFrame.mhEdit.text()))
+        sh = int(str(self.locusNumberFrame.shEdit.text()))
+        # on ne prend en compte le sexratio que si l'on a pas d'haploid
+        if sh == 0 and mh == 0:
+            try:
+                val = float(str(self.locusNumberFrame.sexRatioEdit.text()))
+                if val < 0 or val > 1:
+                    output.notify(self,"Value error","Sex ratio value must be in [0,1]")
+                    return
+                self.sexRatio = val
+            except Exception as e:
+                output.notify(self,"Value error","Sex ratio value must be in [0,1]")
+                return
+
+        # verification : a-t-on modifié le nb de loci ?
+        if self.dico_loc_nb != None:
+            changed = False
+            for key in self.dico_loc_nb:
+                if self.dico_loc_nb[key] != dico_loc_nb[key]:
+                    changed = True
+                    break
+        else:
+            changed = True
+
+        self.dico_loc_nb = dico_loc_nb
+
+        log(3,"Numbers of locus : %s"%dico_loc_nb)
+        if changed:
+            # on vide les gen data
+            self.gen_data_win = SetGeneticDataSimulation(self)
+            self.gen_data_win.hide()
+            self.gen_data_win.fillLocusTable(dico_loc_nb)
+
+        self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
+        self.ui.refTableStack.addWidget(self.gen_data_win)
+        self.ui.refTableStack.setCurrentWidget(self.gen_data_win)
+
+    def getLocusDescription(self):
+        return "%s"%self.gen_data_win.getConf().replace(u'\xb5','u')
+
+class ProjectSimulationSnp(ProjectSimulation):
+    """ classe qui représente un projet de simulation SNP
+    """
+    def __init__(self,name,dir=None,parent=None):
+        super(ProjectSimulationSnp,self).__init__(name,dir,parent)
+
+        self.locusNumberFrame.frame_8.hide()
+        self.locusNumberFrame.leftBlocLabel.setText("SNP locus")
+        self.locusNumberFrame.frame.setMaximumSize(QSize(300,1000))
+        self.locusNumberFrame.frame.setMinimumSize(QSize(300,0))
+
+        QObject.connect(self.locusNumberFrame.mhEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
+
+    def haploidChanged(self,srt):
+        try:
+            mh = int(str(self.locusNumberFrame.mhEdit.text()))
+            if mh > 0:
+                for ed in [self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.maEdit]:
+                    ed.setDisabled(True)
+                    ed.setText("0")
+                self.locusNumberFrame.sexRatioEdit.setDisabled(True)
+            else:
+                for ed in [self.locusNumberFrame.mxEdit,self.locusNumberFrame.myEdit,self.locusNumberFrame.maEdit]:
+                    ed.setDisabled(False)
+                self.locusNumberFrame.sexRatioEdit.setDisabled(False)
+        except Exception as e:
+            pass
+
+    def checkSampleNSetGenetic(self):
+        dico_loc_nb = {}
+        editList = [self.locusNumberFrame.maEdit,
+                    self.locusNumberFrame.mhEdit,
+                    self.locusNumberFrame.mxEdit,
+                    self.locusNumberFrame.myEdit,
+                    self.locusNumberFrame.mmEdit ]
+        nbXY = 0
+        nbHap = 0
+        nbDip = 0
+        nbpos = 0
+        try:
+            for le in editList:
+                dico_loc_nb[str(le.objectName())[:2]] = int(le.text())
+                if int(le.text()) < 0:
+                    output.notify(self,"Number of sample error","Number of sample must be positive integers")
+                    return
+                elif int(le.text()) > 0:
+                    nbpos += 1
+                    if "x" in str(le.objectName())[:2] or "y" in str(le.objectName())[:2]:
+                        nbXY += 1
+                    elif "d" in str(le.objectName())[:2]:
+                        nbDip += 1
+                    elif "h" in str(le.objectName())[:2]:
+                        nbHap += 1
+            if nbpos == 0:
+                output.notify(self,"Number of sample error","You must have at leat one sample")
+                return
+        except Exception as e:
+            output.notify(self,"Number of sample error","Input error : \n%s"%e)
+            return
+        mh = int(str(self.locusNumberFrame.mhEdit.text()))
+        sh = int(str(self.locusNumberFrame.shEdit.text()))
+        # on ne prend en compte le sexratio que si l'on a pas d'haploid
+        if mh == 0:
+            try:
+                val = float(str(self.locusNumberFrame.sexRatioEdit.text()))
+                if val < 0 or val > 1:
+                    output.notify(self,"Value error","Sex ratio value must be in [0,1]")
+                    return
+                self.sexRatio = val
+            except Exception as e:
+                output.notify(self,"Value error","Sex ratio value must be in [0,1]")
+                return
+
+        self.dico_loc_nb = dico_loc_nb
+
+        log(3,"Numbers of locus : %s"%dico_loc_nb)
+        self.returnToMe()
+        self.setGenValid(True)
+
+    def getLocusDescription(self):
+        nbLocis = 0
+        for l in self.dico_loc_nb.keys():
+            nbLocis+=self.dico_loc_nb[l]
+        str_locis = "loci description ({0})\n".format(nbLocis)
+        numGroup = 0
+        for cat in ["A","H","X","Y","M"]:
+            if self.dico_loc_nb.has_key("m"+cat.lower()) and self.dico_loc_nb["m"+cat.lower()] != 0:
+                numGroup+=1
+                str_locis += "{0} <{1}> [P] G{2}\n".format(self.dico_loc_nb["m"+cat.lower()],cat,numGroup)
+        return str_locis
 
