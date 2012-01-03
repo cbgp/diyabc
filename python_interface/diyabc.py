@@ -196,8 +196,8 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/redhat-system_settings.png"),"&Settings",self.switchToPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
         self.simulate_menu = file_menu.addMenu(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&Simulate data set(s)")
-        self.simulate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&Microsatellites and/or sequences (Genepop format)",self.simulateDataSets)
-        self.simulate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&SNP (ad-hoc format)",self.simulateDataSets)
+        self.simulate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/gene.png"),"&Microsatellites and/or sequences (Genepop format)",self.simulateDataSets)
+        self.simulate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/dna.png"),"&SNP (ad-hoc format)",self.simulateDataSets)
 
         action = file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
@@ -661,6 +661,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.saveCurrentProject()
         current_project = self.ui.tabWidget.currentWidget()
         log(1,"attempting to clone the project : %s"%current_project.dir)
+        if not current_project.canBeCloned():
+            output.notify(self,"Impossible to clone","Impossible to clone that kind of project")
+            return
         ok = True
         if cloneName == None or cloneDir == None:
             fileDial = QtGui.QFileDialog(self,"Select location of the clone project")
@@ -890,17 +893,20 @@ class Diyabc(formDiyabc,baseDiyabc):
     def deleteCurrentProject(self):
         """ efface le projet courant
         """
-        if not output.debug:
-            reply = QtGui.QMessageBox.question(self, 'Deletion confirmation',
-                "Are you sure you want to delete Project %s ?"%(self.ui.tabWidget.currentWidget().name), QtGui.QMessageBox.Yes | 
-                QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
-            ok = (reply == QtGui.QMessageBox.Yes)
+        if self.ui.tabWidget.currentWidget().canBeDeleted():
+            if not output.debug:
+                reply = QtGui.QMessageBox.question(self, 'Deletion confirmation',
+                    "Are you sure you want to delete Project %s ?"%(self.ui.tabWidget.currentWidget().name), QtGui.QMessageBox.Yes | 
+                    QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
+                ok = (reply == QtGui.QMessageBox.Yes)
+            else:
+                ok = True
+            if ok:
+                ddir = self.ui.tabWidget.currentWidget().dir
+                self.deleteProject(self.ui.tabWidget.currentIndex())
+                log(1,"Project '%s' deleted"%(ddir))
         else:
-            ok = True
-        if ok:
-            ddir = self.ui.tabWidget.currentWidget().dir
-            self.deleteProject(self.ui.tabWidget.currentIndex())
-            log(1,"Project '%s' deleted"%(ddir))
+            output.notify(self,"Impossible to delete","Impossible to delete that kind of project")
 
     def deleteProject(self,index):
         """ efface le projet dont l'index est donné en paramètre

@@ -67,6 +67,12 @@ class ProjectReftable(Project):
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopRefTableGen)
         #self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
 
+    def canBeDeleted(self):
+        return True
+
+    def canBeCloned(self):
+        return True
+
     def stopActivities(self):
         self.stopRefTableGen()
         self.stopAnalysis()

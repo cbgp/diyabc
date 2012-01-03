@@ -70,6 +70,12 @@ class ProjectSimulation(Project):
         self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopSimulation)
 
+    def canBeCloned(self):
+        return False
+
+    def canBeDeleted(self):
+        return False
+
     def writeHeaderSim(self):
         #if self.verifyRefTableValid():
         # première ligne
