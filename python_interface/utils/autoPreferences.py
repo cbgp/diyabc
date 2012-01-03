@@ -212,6 +212,9 @@ class AutoPreferences(QFrame):
         exec('self.horizontalLayout_%s.addWidget(self.%sBrowseButton)'%(propname,propname))
         exec('self.%sPathEdit = QtGui.QLineEdit(self.frame_%s_%s)'%(propname,catname,propname))
         exec('self.%sPathEdit.setObjectName("%sPathEdit")'%(propname,propname))
+        qc = QCompleter()
+        qc.setModel(QDirModel(qc))
+        exec('self.%sPathEdit.setCompleter(qc)'%(propname))
         exec('self.horizontalLayout_%s.addWidget(self.%sPathEdit)'%(propname,propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s)'%(catname,catname,propname))
 

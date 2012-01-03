@@ -196,8 +196,8 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/redhat-system_settings.png"),"&Settings",self.switchToPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
         self.simulate_menu = file_menu.addMenu(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&Simulate data set(s)")
-        self.simulate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&Genepop",self.simulateDataSets)
-        self.simulate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&SNP",self.simulateDataSets)
+        self.simulate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&Microsatellites and/or sequences (Genepop format)",self.simulateDataSets)
+        self.simulate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"&SNP (ad-hoc format)",self.simulateDataSets)
 
         action = file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
