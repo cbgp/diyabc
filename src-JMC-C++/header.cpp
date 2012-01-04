@@ -1011,6 +1011,7 @@ int HeaderC::readHeadersimLoci(std::ifstream & file){
 			kloc=getwordint(s1,1);
 			loctyp=this->dataobs.locus[loc].type+10;
 			s1=ss[3].substr(1);gr=atoi(s1.c_str());if (gr>grm) grm=gr;
+			this->ngroupes=grm;
 			for (int k=0;k<kloc;k++){
 				this->dataobs.locus[loc+k].type =loctyp;
 				this->dataobs.locus[loc+k].groupe=gr;
@@ -1018,6 +1019,7 @@ int HeaderC::readHeadersimLoci(std::ifstream & file){
 			loc +=kloc;
 		}
 	}
+	
 	this->dataobs.catexist = new bool[5];
 	this->dataobs.ss.resize(5);
 	for (int i=0;i<5;i++) this->dataobs.catexist[i]=false;
@@ -1110,6 +1112,16 @@ int HeaderC::readHeadersimGroupPrior(std::ifstream & file){
 	return 0;
 }
 
+int HeaderC::readHeadersimGroupSNP(){
+	this->groupe = new LocusGroupC[this->ngroupes+1];
+	this->assignloc(0);
+	for (int gr=1;gr<=this->ngroupes;gr++) {
+		this->assignloc(gr);
+		this->groupe[gr].type = 2;
+	}
+	return 0;
+}
+
 int HeaderC::readHeadersimFin(){
 	//Mise à jour des locus séquences
 	MwcGen mwc;
@@ -1182,6 +1194,10 @@ int HeaderC::readHeadersim(string headersimfilename){
 	//Partie group priors
 	if (this->dataobs.filetype==0){
 		error = readHeadersimGroupPrior(file);
+		if(error != 0) return error;
+	}
+	if (this->dataobs.filetype==1){
+		error = readHeadersimGroupSNP();
 		if(error != 0) return error;
 	}
 	

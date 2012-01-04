@@ -158,7 +158,8 @@ class ParticleC
    int dosimulpart(int numscen);
    // idem, mais pour la simulation de fichier
    std::string dogenepop();
-
+   std::string dodataSNP();
+   
    /* Partie calcul des summary stat */
    int samplesize(int loc, int sample);
    void calfreq(int gr);

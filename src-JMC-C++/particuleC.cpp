@@ -2132,3 +2132,66 @@ void ParticleC::put_one_mutation(int loc) {
 	  return sgp;
   }
 
+	string ParticleC::dodataSNP(){
+		string sgp,sind,spop,sex,ligne;
+		short int g;		
+		int *ig;
+		ig = new int[this->nloc];
+		sgp="IND   SEX   POP   ";
+		for (int loc=0;loc<this->nloc;loc++) {
+			switch(this->locuslist[loc].type) {
+				case 10 : sgp +=" A";break;
+				case 11 : sgp +=" H";break;
+				case 12 : sgp +=" X";break;
+				case 13 : sgp +=" Y";break;
+				case 14 : sgp +=" M";break;
+			}
+		}
+		sgp +="\n";
+		for (int ech=0;ech<this->data.nsample;ech++) {
+			spop="P"+IntToString(ech+1);while (spop.length()<6) spop +=" ";
+			for (int loc=0;loc<this->nloc;loc++) ig[loc] = 0;
+			for (int ind=0;ind<this->data.nind[ech];ind++) {
+				sind="P"+IntToString(ech+1)+"_"+IntToString(ind+1);while (sind.length()<6) sind +=" ";
+				if (this->data.indivsexe[ech][ind] == 1) sex = " M    ";
+				else sex = " F    ";
+				ligne = sind+sex+spop;
+				for (int loc=0;loc<this->nloc;loc++){
+					switch(this->locuslist[loc].type) {
+						case 10 : 
+							ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]+this->locuslist[loc].haplosnp[ech][ig[loc]+1]);
+							ig[loc] +=2;
+							break;
+						case 11 : 
+							ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]);
+							ig[loc] +=1;
+							break;
+						case 12 : 
+							if (this->data.indivsexe[ech][ind] == 1){
+								ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]);
+								ig[loc] +=1;
+							} else {
+								ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]+this->locuslist[loc].haplosnp[ech][ig[loc]+1]);
+								ig[loc] +=2;
+							}
+							break;
+						case 13 : 
+							if (this->data.indivsexe[ech][ind] == 1){
+								ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]);
+								ig[loc] +=1;
+							} else {
+								ligne +=" 9";
+							}
+							break;
+						case 14 : 
+							ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]);
+							ig[loc] +=1;
+							break;
+					}
+				}
+				cout<<ligne<<"\n";
+				sgp +=ligne+"\n";
+			}
+		}
+		return sgp;
+	}

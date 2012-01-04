@@ -225,6 +225,16 @@ string IntToString ( int number )
 }
 
 /**
+ * transforme un short int en string
+ */
+string ShortIntToString (short int number )
+{
+  std::ostringstream oss;
+  oss<< number;
+  return oss.str();
+}
+
+/**
  *  converti l'entier number en une string de 3 caractères.
  */
 string IntToString3(int number)

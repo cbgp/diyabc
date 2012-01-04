@@ -44,6 +44,8 @@ struct ParticleSetC
     		           bool firsttime, int numscen,int seed);
     // simulation des particules utilisées pour la création de fichiers genepop
     string* simulgenepop(HeaderC const & header, int npart, bool multithread, int seed);
+    // simulation des particules utilisées pour la création de fichiers SNP
+    string* simuldataSNP(HeaderC const & header, int npart, bool multithread, int seed);
 };
 
 

@@ -65,6 +65,7 @@ public:
 	int readHeadersimHistParam(std::ifstream & file);
 	int readHeadersimLoci(std::ifstream & file);
 	int readHeadersimGroupPrior(std::ifstream & file);
+	int readHeadersimGroupSNP();
 	int readHeadersimFin();
 	int readHeadersim(std::string headersimfilename);
 

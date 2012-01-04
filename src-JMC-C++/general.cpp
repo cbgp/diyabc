@@ -427,7 +427,7 @@ try {
     	 ifstream test_file(RNG_filename.c_str(), ios::in);
     	 if(test_file == NULL){
     		 stringstream erreur;
-    		 erreur << "File " << RNG_filename << " do not exist.\n"
+    		 erreur << "File " << RNG_filename << " does not exist.\n"
     			  << "Use option -n to create it before doing anything else.\n";
     		 throw runtime_error(erreur.str());
     	 }
