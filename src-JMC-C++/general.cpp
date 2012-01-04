@@ -290,6 +290,7 @@ try {
             action = 'h';
            break;
 
+
         case 'a' :
             debuglevel=atoi(optarg);
             break;

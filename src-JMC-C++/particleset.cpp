@@ -95,20 +95,20 @@ void ParticleSetC::setdata(int p) {
  */
 void ParticleSetC::setgroup(int p) {
 	int ngr = this->header.ngroupes;
-	cout<<"ngr="<<ngr<<"\n";
+	//cout<<"ngr="<<ngr<<"\n";
 	this->particule[p].ngr = ngr;
 	this->particule[p].grouplist = new LocusGroupC[ngr+1];
 	this->particule[p].grouplist[0].nloc = this->header.groupe[0].nloc;
 	this->particule[p].grouplist[0].loc  = new int[this->header.groupe[0].nloc];
 	for (int i=0;i<this->header.groupe[0].nloc;i++) this->particule[p].grouplist[0].loc[i] = this->header.groupe[0].loc[i];
 	for (int gr=1;gr<=ngr;gr++) {
-		cout <<"groupe "<<gr<<"\n";
+		//cout <<"groupe "<<gr<<"\n";
 		this->particule[p].grouplist[gr].type =this->header.groupe[gr].type;
 		this->particule[p].grouplist[gr].nloc = this->header.groupe[gr].nloc;
 		this->particule[p].grouplist[gr].loc  = new int[this->header.groupe[gr].nloc];
 		for (int i=0;i<this->header.groupe[gr].nloc;i++) this->particule[p].grouplist[gr].loc[i] = this->header.groupe[gr].loc[i];
 		if (this->header.groupe[gr].type==0) {	//MICROSAT
-			cout <<"MICROSAT\n";
+			//cout <<"MICROSAT\n";
 			this->particule[p].grouplist[gr].mutmoy = this->header.groupe[gr].mutmoy;
 			if ((this->header.groupe[gr].mutmoy<0.0)or(this->header.groupe[gr].priormutmoy.constant))
 				//this->particule[p].grouplist[gr].priormutmoy = copyprior(this->header.groupe[gr].priormutmoy);
@@ -151,7 +151,7 @@ void ParticleSetC::setgroup(int p) {
 			this->particule[p].grouplist[gr].priorsniloc = this->header.groupe[gr].priorsniloc;
 		}
 		else if (this->header.groupe[gr].type==1) {							//SEQUENCES
-			cout<<"SEQUENCE\n";
+			//cout<<"SEQUENCE\n";
 			this->particule[p].grouplist[gr].mutmod = this->header.groupe[gr].mutmod;	//mutmod
 			this->particule[p].grouplist[gr].p_fixe = this->header.groupe[gr].p_fixe;	//p_fixe
 			this->particule[p].grouplist[gr].gams   = this->header.groupe[gr].gams;	//gams
@@ -194,7 +194,7 @@ void ParticleSetC::setgroup(int p) {
 				this->particule[p].grouplist[gr].priork2loc = this->header.groupe[gr].priork2loc;
 			}
 		}
-		cout<<"nstat = "<<this->header.groupe[gr].nstat<<"\n";
+		//cout<<"nstat = "<<this->header.groupe[gr].nstat<<"\n";
 		this->particule[p].grouplist[gr].nstat=this->header.groupe[gr].nstat;
 		this->particule[p].grouplist[gr].sumstat = new StatC[header.groupe[gr].nstat];
 		for (int i=0;i<this->header.groupe[gr].nstat;i++){
@@ -205,7 +205,7 @@ void ParticleSetC::setgroup(int p) {
 			this->particule[p].grouplist[gr].sumstat[i].numsnp = header.groupe[gr].sumstat[i].numsnp;
 			//cout<<"this->particule["<<p<<"].grouplist["<<gr<<"].sumstat["<<i<<"].cat="<<this->particule[p].grouplist[gr].sumstat[i].cat<<"\n";
 		}
-		cout<<"nstatsnp = "<<this->header.groupe[gr].nstatsnp<<"\n";
+		//cout<<"nstatsnp = "<<this->header.groupe[gr].nstatsnp<<"\n";
 		this->particule[p].grouplist[gr].nstatsnp=this->header.groupe[gr].nstatsnp;
 		if (this->header.groupe[gr].nstatsnp>0) {
 			this->particule[p].grouplist[gr].sumstatsnp = new StatsnpC[header.groupe[gr].nstatsnp];
