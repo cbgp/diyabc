@@ -51,6 +51,9 @@ class ProjectSimulation(Project):
         self.ui.groupBox_7.show()
         self.ui.groupBox_8.show()
 
+        self.ui.nbMicrosatLabel.setText("")
+        self.ui.nbSequencesLabel.setText("")
+
         self.ui.removeTab(1)
         self.ui.setTabText(0,QString("Simulate data sets"))
 
@@ -278,14 +281,21 @@ class ProjectSimulationGenepop(ProjectSimulation):
         nbHap = 0
         nbDip = 0
         nbpos = 0
+        nbmic = 0
+        nbseq = 0
         try:
             for le in editList:
-                dico_loc_nb[str(le.objectName())[:2]] = int(le.text())
-                if int(le.text()) < 0:
+                val = int(le.text())
+                dico_loc_nb[str(le.objectName())[:2]] = val
+                if val < 0:
                     output.notify(self,"Number of sample error","Number of sample must be positive integers")
                     return
-                elif int(le.text()) > 0:
+                elif val > 0:
                     nbpos += 1
+                    if str(le.objectName())[0] == "s":
+                        nbseq += val
+                    if str(le.objectName())[0] == "m":
+                        nbmic += val
                     if "x" in str(le.objectName())[:2] or "y" in str(le.objectName())[:2]:
                         nbXY += 1
                     elif "d" in str(le.objectName())[:2]:
@@ -335,6 +345,9 @@ class ProjectSimulationGenepop(ProjectSimulation):
         self.ui.refTableStack.addWidget(self.gen_data_win)
         self.ui.refTableStack.setCurrentWidget(self.gen_data_win)
 
+        self.ui.nbMicrosatLabel.setText("{0} microsatellites loci".format(nbmic))
+        self.ui.nbSequencesLabel.setText("{0} DNA sequences loci".format(nbseq))
+
     def getLocusDescription(self):
         return "%s"%self.gen_data_win.getConf().replace(u'\xb5','u')
 
@@ -350,6 +363,8 @@ class ProjectSimulationSnp(ProjectSimulation):
         self.locusNumberFrame.frame.setMinimumSize(QSize(300,0))
 
         QObject.connect(self.locusNumberFrame.mhEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
+        self.ui.nbSequencesLabel.hide()
+        self.ui.nbSumStatsLabel.hide()
 
     def haploidChanged(self,srt):
         try:
@@ -377,9 +392,12 @@ class ProjectSimulationSnp(ProjectSimulation):
         nbHap = 0
         nbDip = 0
         nbpos = 0
+        nbtot = 0
         try:
             for le in editList:
-                dico_loc_nb[str(le.objectName())[:2]] = int(le.text())
+                val = int(le.text())
+                dico_loc_nb[str(le.objectName())[:2]] = val
+                nbtot += val
                 if int(le.text()) < 0:
                     output.notify(self,"Number of sample error","Number of sample must be positive integers")
                     return
@@ -416,6 +434,7 @@ class ProjectSimulationSnp(ProjectSimulation):
         log(3,"Numbers of locus : %s"%dico_loc_nb)
         self.returnToMe()
         self.setGenValid(True)
+        self.ui.nbMicrosatLabel.setText("{0} SNP loci".format(nbtot))
 
     def getLocusDescription(self):
         nbLocis = 0
