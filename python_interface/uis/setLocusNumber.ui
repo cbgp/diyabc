@@ -1019,7 +1019,7 @@
       <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Sex ratio (necessary with X-linked and Y-linked loci)
+         <string>Sex ratio
 Proportion of male individuals in the population</string>
         </property>
         <property name="alignment">
