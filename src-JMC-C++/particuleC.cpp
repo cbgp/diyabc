@@ -194,7 +194,7 @@ vector <int> melange(MwcGen mw, int n) {
 			  }
 		  }
 	  }
-	  //cout<<"drawscenario : refnindtot="<<this->refnindtot<<"\n";
+	  cout<<"drawscenario : refnindtot="<<this->refnindtot<<"\n";
 	  }
 
 
@@ -1297,16 +1297,16 @@ void ParticleC::put_one_mutation(int loc) {
     for (b=0;b<this->gt[loc].nbranches;b++) {
       if (this->gt[loc].branches[b].OK) lengthtot +=this->gt[loc].branches[b].length;
       this->gt[loc].branches[b].nmut = 0;
-      //if (loc<1) cout<<"longueur de la branche "<<b<<" = "<<this->gt[loc].branches[b].length<<"\n";
+      //if (loc==1) cout<<"longueur de la branche "<<b<<" = "<<this->gt[loc].branches[b].length<<"\n";
     }
     r=this->mw.random()*lengthtot;
     //if (loc<1) cout<<"lengthtot="<<lengthtot<<"     r="<<r<<"\n";
     b=0;s=this->gt[loc].branches[b].length;
     while (s<r) {b++; if (this->gt[loc].branches[b].OK) s +=this->gt[loc].branches[b].length;};
     this->gt[loc].branches[b].nmut = 1;
-    //if (loc<1) cout<<"mutation dans la branche "<<b<<" sur "<<this->gt[loc].nbranches<<"\n";
-    //cout<<nOK<<" branches mutables sur "<<this->gt[loc].nbranches<<"\n";
-    //cout<<"numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
+    //if (loc<10) cout<<"mutation dans la branche "<<b<<" sur "<<this->gt[loc].nbranches<<"\n";
+    //if (loc<10) cout<<nOK<<" branches mutables sur "<<this->gt[loc].nbranches<<"\n";
+    //if (loc<10) cout<<"locus "<<loc<<"   numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
   } 
 
 
@@ -1787,7 +1787,8 @@ void ParticleC::put_one_mutation(int loc) {
 				  //if (loc==0) cout<<"this->refnindtot="<<this->refnindtot<<"\n";
 				  this->locuslist[loc].firstime = true;
 				  if (this->refnindtot<1) {
-					  put_one_mutation(loc);simulOK[loc]=cree_haplo(loc);
+					  put_one_mutation(loc);
+					  simulOK[loc]=cree_haplo(loc);
 				  } else {
 					  // if (loc==0) cout<<"apres firstime=true au locus "<<loc<<"\n";
 					  do {
@@ -2189,7 +2190,7 @@ void ParticleC::put_one_mutation(int loc) {
 							break;
 					}
 				}
-				cout<<ligne<<"\n";
+				//cout<<ligne<<"\n";
 				sgp +=ligne+"\n";
 			}
 		}

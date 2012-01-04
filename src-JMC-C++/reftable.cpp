@@ -453,7 +453,7 @@ int ReftableC::cal_varstat() {
 	}
 	delete []sx;delete []sx2;
 	cout<<"\nnstatOK = "<<nsOK<<"\n";
-	exit(1);
+//	exit(1);
 	return nsOK;
 }
 
@@ -543,7 +543,6 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 			for (int j=0;j<this->nstat;j++) printf("  %8.5f",this->enrsel[i].stat[j]);
 			cout<<"\n";
 		}*/
-	exit(1);
 }
 
 

@@ -1013,6 +1013,7 @@ int HeaderC::readHeadersimLoci(std::ifstream & file){
 			s1=ss[3].substr(1);gr=atoi(s1.c_str());if (gr>grm) grm=gr;
 			this->ngroupes=grm;
 			for (int k=0;k<kloc;k++){
+				this->dataobs.cal_coeffcoal(loc+k);
 				this->dataobs.locus[loc+k].type =loctyp;
 				this->dataobs.locus[loc+k].groupe=gr;
 			}
