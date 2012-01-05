@@ -74,7 +74,7 @@ public:
   char action;   //"V"=VarNe "M"=Merge  "S"=Split  "E" = sample/echantillon
   int pop,pop1,pop2,sample,Ne,time;
   double admixrate;
-  int numevent0,nindref;
+  int numevent0,nindMref,nindFref;
   std::string stime, sNe, sadmixrate;
   // char *stime,*sNe,*sadmixrate;
   // int ltime,lNe,ladmixrate;

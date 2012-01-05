@@ -120,7 +120,7 @@ vector <int> melange(MwcGen mw, int n) {
    */
   void ParticleC::drawscenario(int numscen) {
 	  double ra,sp=0.0;
-	  int iscen;
+	  int iscen,ngref;
 	  if (numscen<1) {
 		  ra = this->mw.random();
 		  iscen=-1;
@@ -161,8 +161,8 @@ vector <int> melange(MwcGen mw, int n) {
 	  
 	  //cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
 	  //this->scen.ecris();
-	  //cout<<"dans drawscenario   nsample="<<this->scen.nsamp<<"\n";
-	  //for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ss[0][sa]<<"   ";cout<<"\n";
+	  cout<<"dans drawscenario    nsample="<<this->scen.nsamp<<"\n";
+	  for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ss[0][sa]<<"   ";cout<<"\n";
 	  this->refnindtot=0;
 	  this->ref = new bool**[5];
 	  this->dat = new bool**[5];
@@ -174,9 +174,16 @@ vector <int> melange(MwcGen mw, int n) {
 			  for (int sa=0;sa<this->scen.nsamp;sa++) {
 				  for (int ievent=0;ievent<this->scen.nevent;ievent++) {
 					  if ((this->scen.event[ievent].action=='E')and(this->scen.event[ievent].sample==sa+1)) {
+						switch (cat) {
+							case 0 : ngref=2*(this->scen.event[ievent].nindMref + this->scen.event[ievent].nindFref);break;
+							case 1 : ngref=this->scen.event[ievent].nindMref + this->scen.event[ievent].nindFref;break;
+							case 2 : ngref=this->scen.event[ievent].nindMref + 2*this->scen.event[ievent].nindFref;break;
+							case 3 : ngref=this->scen.event[ievent].nindMref;break;
+							case 4 : ngref=this->scen.event[ievent].nindMref + this->scen.event[ievent].nindFref;break;
+						}
 						  for (int i=0;i<this->data.ss[cat][sa];i++) {
 							  this->dat[cat][sa][i] = true;
-							  this->ref[cat][sa][i] = (i<this->scen.event[ievent].nindref);
+							  this->ref[cat][sa][i] = (i<ngref);
 							  if (this->ref[cat][sa][i]) this->refnindtot++;
 						  }
 						  //cout<<"drawscenario : this->scen.event[ievent].action=='E'"<<"    refnindtot="<<this->refnindtot<<"\n";

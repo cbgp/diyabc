@@ -123,7 +123,7 @@ int HeaderC::readHeaderDebut(ifstream & file){
 int HeaderC::readHeaderScenarios(ifstream & file){
 		//Partie Scenarios
 	string s1;
-	int nl = 0;
+	int nl = 0,nm,nf;
 	getline(file,s1);nl++;   //cout<<s1<<"\n";     //ligne vide
 	getline(file,s1);nl++;    //cout<<s1<<"\n";    // nombre de scenarios
 	this->nscenarios=getwordint(s1,1); cout<<this->nscenarios<<" scenario(s)\n";
@@ -162,19 +162,22 @@ int HeaderC::readHeaderScenarios(ifstream & file){
 		if (this->scenario[0].event[ievent].action == 'R') {
 			this->dataobs.nsample++;
 			this->dataobs.nind.resize(this->dataobs.nsample);
-			this->dataobs.nind[this->dataobs.nsample-1]=this->scenario[0].event[ievent].nindref;
+			nm = this->scenario[0].event[ievent].nindMref;
+			nf = this->scenario[0].event[ievent].nindFref;
+			this->dataobs.nind[this->dataobs.nsample-1] = nm+nf;
 			this->dataobs.indivsexe.resize(this->dataobs.nsample);
 			this->dataobs.indivsexe[this->dataobs.nsample-1].resize(this->dataobs.nind[this->dataobs.nsample-1]);
-			for (int i=0;i<this->dataobs.nind[this->dataobs.nsample-1];i++) this->dataobs.indivsexe[this->dataobs.nsample-1][i] = 2;
+			for (int i=0;i<nm;i++) this->dataobs.indivsexe[this->dataobs.nsample-1][i] = 1;
+			for (int i=nm;i<nm+nf;i++) this->dataobs.indivsexe[this->dataobs.nsample-1][i] = 2;
 			for (int cat=0;cat<5;cat++) {
 				if (this->dataobs.catexist[cat]) {
 					this->dataobs.ss[cat].resize(this->dataobs.nsample);
 					for (int sa=0;sa<this->dataobs.nsample;sa++) {
 						if (this->scenario[0].event[ievent].pop == sa+1) {
 							this->dataobs.ss[cat][sa]=0;
-							for (int ind=0;ind<this->scenario[0].event[ievent].nindref;ind++) {
+							for (int ind=0;ind<nm+nf;ind++) {
 								if ((cat==0)or((cat==2)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ss[cat][sa] +=2;
-								else if (not((cat=13)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ss[cat][sa] +=1;
+								else if (not((cat==3)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ss[cat][sa] +=1;
 							}
 						}
 					}

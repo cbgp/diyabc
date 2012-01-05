@@ -25,7 +25,7 @@ class Event(object):
 
     
     def __init__(self, action=None, pop=None, pop1=None, pop2=None, sample=None, Ne=None, N=None, time=None, graphtime =None, admixrate=None, numevent0=None,
-                 sNe=None, stime=None, sadmixrate=None,xg=None,xc=None,xd=None,y=None):
+                 sNe=None, stime=None, sadmixrate=None,xg=None,xc=None,xd=None,y=None, nindMref=None, nindFref=None):
         self.action     = action
         self.pop        = pop
         self.pop1       = pop1
@@ -43,6 +43,8 @@ class Event(object):
         self.xc         = xc
         self.xd         = xd
         self.y          = y      
+        self.nindMref   = nindMref
+        self.nindFref   = nindFref
         
     def __repr__(self):
         return "Event (time=%s, graphtime=%s, stime=%s, action=%s, pop=%s, pop1=%s, pop2=%s, sample=%s, Ne=%s, sNe=%s, admixrate=%s, sadmixrate=%s, numevent0=%s, xg=%s, xc=%s, xd=%s, y=%s" % (self.time,self.graphtime,self.stime,self.action,self.pop,self.pop1,self.pop2,self.sample,self.Ne,self.sNe,self.admixrate,self.sadmixrate,self.numevent0,self.xg,self.xc,self.xd,self.y)
@@ -128,7 +130,8 @@ class Sequence(list) :
     
     
 class Scenario(object):
-    def __init__(self,parameters=None,history=None,refhistory=None, number=None, time_sample=None, prior_proba=None, nparamtot=None, popmax=None, npop=None, nsamp=None, nrefsamp=None):
+    def __init__(self,parameters=None,history=None,refhistory=None, number=None, time_sample=None, 
+					prior_proba=None, nparamtot=None, popmax=None, npop=None, nsamp=None, nrefsamp=None):
         if parameters == None :  self.parameters = []
         else                  :  self.parameters = parameters
         self.history     = history
@@ -248,13 +251,13 @@ class Scenario(object):
                 if li.upper().find('REFSAMPLE') > -1 :
                     self.dicoPopRefNindRef[int(li.strip().split(' ')[-2])] = int(li.strip().split(' ')[-1])
                     self.nrefsamp+=1
-                if len(li.strip().split(' ')) < 3:
+                if (len(li.strip().split(' ')) < 3)or(len(li.strip().split(' ')) == 4):
                     raise IOScreenError, "At line %i, the number of words is incorrect"%(i+2)
                 # verif que le nombre apres "sample" est bien inférieur ou egal au nombre de pop (len(Ncur))
-                if (li.upper().find(' SAMPLE')>-1) and (int(li.strip().split(' ')[-1]) > len(Ncur)): 
+                if (li.upper().find(' SAMPLE')>-1) and (int(li.strip().split(' ')[2]) > len(Ncur)): 
                     raise IOScreenError, "At line %i, the population number (%s) is higher than the number of population (%s) defined at line 1"%((i+2),li.split(' ')[-1],len(Ncur))
                 
-                if (li.upper().find('REFSAMPLE')>-1) and (int(li.strip().split(' ')[-2]) > len(Ncur)):
+                if (li.upper().find('REFSAMPLE')>-1) and (int(li.strip().split(' ')[2]) > len(Ncur)):
                     raise IOScreenError, "At line %i, the population number (%s) is higher than the number of population (%s) defined at line 1"%((i+2),li.split(' ')[-1],len(Ncur))
         if self.nsamp<1 :
             raise IOScreenError, "You must indicate when samples are taken"
@@ -284,8 +287,9 @@ class Scenario(object):
                     Li = li.upper()
                     litem = li.split()
                     nitems = len(litem)
+                    
                     if Li.find("SAMPLE")+ Li.find("REFSAMPLE")>-1:
-                        if nitems<3:
+                        if (nitems<3)or(nitem==4):
                             raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
                         self.cevent = Event()
                         self.cevent.numevent0 = nevent
@@ -306,6 +310,16 @@ class Scenario(object):
                         ns +=1
                         self.cevent.sample = ns
                         self.time_sample.append(self.cevent.time)
+                        if (nitems==5):
+							if isaninteger(litem[3]):
+								self.cevent.nindMref = int(litem[3])
+							else :
+								raise IOScreenError, "Unable to read number of males on line %s of scenario %s"%(jli0+1,self.number)
+							if isaninteger(litem[4]):
+								self.cevent.nindFref = int(litem[3])
+							else :
+								raise IOScreenError, "Unable to read number of females on line %s of scenario %s"%(jli0+1,self.number)
+								
                     elif Li.find("VARNE")>-1:
                         if nitems<4:
                             raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)

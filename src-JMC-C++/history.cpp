@@ -119,7 +119,7 @@ void EventC::ecris(){
   else if (this->action=='M') cout<<"    "<<sstime<<"   merge  pop="<<this->pop<<"   pop1="<<this->pop1<<"\n";
   else if (this->action=='S') cout<<"    "<<sstime<<"   split  pop="<<this->pop<<"   pop1="<<this->pop1<<"   pop2="<<this->pop2<<"   "<<this->sadmixrate<<"\n";
   else if (this->action=='E') cout<<"    "<<sstime<<"   samp   pop="<<this->pop<<"\n";
-  else if (this->action=='R') cout<<"    "<<sstime<<"  refsamp pop="<<this->pop<<"    nindref="<<this->nindref<<"\n";
+  else if (this->action=='R') cout<<"    "<<sstime<<"  refsamp pop="<<this->pop<<"    nindref="<<this->nindMref+this->nindFref<<"\n";
 }
 
 
@@ -411,30 +411,31 @@ string ScenarioC::read_events(int nl,string *ls) {
 	}
       //cout<<"apres majuscules(ss[1])";
       if (sevent=="SAMPLE") {
-	if (n>4) return "too many words at line "+IntToString(i+2);
-	if (n<3)return "not enough words at line "+IntToString(i+2);
+	if (n>5) return "too many words at line "+IntToString(i+2);
+	if ((n<3)or(n==4))return "not enough words at line "+IntToString(i+2);
 	this->event[i].action='E';
 	this->event[i].pop=atoi(ss[2].c_str());
 	if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
 		return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
 	this->nsamp++;
 	this->event[i].sample=this->nsamp;
-	this->event[i].nindref=0;
-	if (n==4) this->event[i].nindref=atoi(ss[3].c_str());
+	this->event[i].nindMref=0;this->event[i].nindFref=0;
+	if (n==5) {this->event[i].nindMref=atoi(ss[3].c_str());this->event[i].nindFref=atoi(ss[4].c_str());}
 	//cout <<this->event[i].time<<"  SAMPLE"<<"   "<<this->event[i].pop<<"\n";
-	cout<<"SAMPLE   nindref="<<this->event[i].nindref<<"\n";
+	cout<<"SAMPLE   nindref="<<this->event[i].nindMref+this->event[i].nindFref<<"\n";
 
       } else if (sevent=="REFSAMPLE") {
-	if (n>4) return "too many words at line "+IntToString(i+2);
-	if (n<4)return "not enough words at line "+IntToString(i+2);
+	if (n>5) return "too many words at line "+IntToString(i+2);
+	if (n<5)return "not enough words at line "+IntToString(i+2);
 	this->event[i].action='R';
 	this->event[i].pop=atoi(ss[2].c_str());
 	if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
 		return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
 	this->nsamp++;
 	this->event[i].sample=this->nsamp;
-	this->event[i].nindref=atoi(ss[3].c_str());
-	cout<<"REFSAMPLE   nindref="<<this->event[i].nindref<<"\n";
+	this->event[i].nindMref=atoi(ss[3].c_str());
+	this->event[i].nindFref=atoi(ss[4].c_str());
+	cout<<"REFSAMPLE   nindref="<<this->event[i].nindMref+this->event[i].nindFref<<"\n";
 
       } else if (sevent=="MERGE") {
 	if (n>4) return "too many words at line "+IntToString(i+2);
