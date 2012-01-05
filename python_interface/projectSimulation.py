@@ -147,7 +147,7 @@ class ProjectSimulation(Project):
     def simulationTerminated(self):
         """ Reception du signal de fin de simulation
         """
-        self.parent.showTrayMessage("DIYABC : simulation","Simulation has finished")
+        self.parent.systrayHandler.showTrayMessage("DIYABC : simulation","Simulation has finished")
         self.stopUiGenReftable()
         self.th = None
 
