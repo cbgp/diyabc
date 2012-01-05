@@ -23,6 +23,7 @@ from geneticData.setGenDataSimulation import SetGeneticDataSimulation
 import os.path
 import output
 from utils.cbgpUtils import log
+from datetime import datetime
 
 ## @class ProjectSimulation
 # @brief Projets pour simuler des données
@@ -72,6 +73,34 @@ class ProjectSimulation(Project):
 
         self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopSimulation)
+
+        self.dirCreation()
+
+    def dirCreation(self):
+        """ on crée un dossier
+        """
+        path = "{0}/{1}".format(self.dir,self.name)
+        # name_YYYY_MM_DD-num le plus elevé
+        dd = datetime.now()
+        #num = 36
+        cd = 100
+        while cd > 0 and not os.path.exists(path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,cd)):
+            cd -= 1
+        if cd == 100:
+            output.notify(self,"Error","With this version, you cannot have more than 100 \
+                        project directories\nfor the same project name and in the same directory")
+        else:
+            newdir = path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,(cd+1))
+            self.ui.dirEdit.setText(newdir)
+            try:
+                os.mkdir(newdir)
+                #self.ui.groupBox.show()
+                self.ui.setHistoricalButton.setDisabled(False)
+                self.ui.setGeneticButton.setDisabled(False)
+                self.dir = newdir
+            except OSError,e:
+                output.notify(self,"Error",str(e))
+        self.initializeRNG()
 
     def canBeCloned(self):
         return False

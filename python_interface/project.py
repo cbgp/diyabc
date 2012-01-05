@@ -13,7 +13,8 @@ from historicalModel.setHistoricalModel import SetHistoricalModel
 #from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,addLine
+import subprocess
 import dataPath
 
 formProject,baseProject = uic.loadUiType("uis/Project.ui")
@@ -103,6 +104,20 @@ class Project(baseProject,formProject):
         self.ui.nbSetsDoneEdit.setStyleSheet("background-color: #DEF8FF")
         self.ui.dirEdit.setStyleSheet("background-color: #DEF8FF")
         self.ui.dataFileEdit.setStyleSheet("background-color: #DEF8FF")
+
+    def initializeRNG(self):
+        """ à lancer une fois que le dossier du projet a été créé
+        """
+        executablePath = self.parent.preferences_win.getExecutablePath()
+        nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
+        cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "-n", "t:%s"%nbMaxThread]
+        log(3,"Command launched for initialization of RNGs of project '%s' : %s"%(self.name," ".join(cmd_args_list)))
+        addLine("%s/command.txt"%self.dir,"Command launched for initialization of RNGs of project '%s' : %s\n\n"%(self.name," ".join(cmd_args_list)))
+        outfile = "%s/init_rng.out"%(self.dir)
+        f = open(outfile,"w")
+        p = subprocess.call(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+        f.close()
+        log(3,"Initialization of RNGs of project '%s' terminated with returncode : %s"%(self.name,p))
 
     def returnTo(self,elem):
         self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)
