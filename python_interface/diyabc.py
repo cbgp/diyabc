@@ -808,6 +808,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
                     # creation du dir en attendant la selection du datafile
                     newProj.dirCreation(path)
+                    newProj.initializeRNG()
 
                     if len(self.project_list) == 1:
                         #self.closeProjActionMenu.setDisabled(False)
