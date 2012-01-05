@@ -273,11 +273,11 @@ class AutoPreferences(QFrame):
                         elif proptype == "path":
                             exec('self.ui.%sPathEdit.setText(str(val).strip())'%propname)
                         elif proptype == "combo":
-                            print propl[2]
                             #print('ind = self.ui.%sCombo.findText(propl[2][str(val)])'%propname)
-                            exec('ind = self.ui.%sCombo.findText(propl[2][str(val)])'%propname)
-                            if ind != -1:
-                                exec('self.ui.%sCombo.setCurrentIndex(ind)'%propname)
+                            if propl[2].has_key(str(val)):
+                                exec('ind = self.ui.%sCombo.findText(propl[2][str(val)])'%propname)
+                                if ind != -1:
+                                    exec('self.ui.%sCombo.setCurrentIndex(ind)'%propname)
 
     def cancel(self):
         """ pour annuler, on recharge depuis la derniere configuration sauvée
