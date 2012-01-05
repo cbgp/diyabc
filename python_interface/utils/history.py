@@ -289,7 +289,7 @@ class Scenario(object):
                     nitems = len(litem)
                     
                     if Li.find("SAMPLE")+ Li.find("REFSAMPLE")>-1:
-                        if (nitems<3)or(nitem==4):
+                        if (nitems<3)or(nitems==4):
                             raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
                         self.cevent = Event()
                         self.cevent.numevent0 = nevent
