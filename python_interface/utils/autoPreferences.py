@@ -273,7 +273,7 @@ class AutoPreferences(QFrame):
                         elif proptype == "path":
                             exec('self.ui.%sPathEdit.setText(str(val).strip())'%propname)
                         elif proptype == "combo":
-                            #print propl[2]
+                            print propl[2]
                             #print('ind = self.ui.%sCombo.findText(propl[2][str(val)])'%propname)
                             exec('ind = self.ui.%sCombo.findText(propl[2][str(val)])'%propname)
                             if ind != -1:

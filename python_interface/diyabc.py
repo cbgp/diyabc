@@ -409,8 +409,13 @@ class Diyabc(formDiyabc,baseDiyabc):
     def simulateDataSets(self):
         from projectSimulation import ProjectSimulationSnp,ProjectSimulationGenepop
         fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)")
+        fileDial.setAcceptMode(QFileDialog.AcceptSave)
         fileDial.setLabelText(QtGui.QFileDialog.Accept,"Ok")
-        fileDial.setLabelText(QtGui.QFileDialog.FileName,"Data file\ngeneric name")
+        if "darwin" in sys.platform:
+            title = "Genericname"
+        else:
+            title = "Data file\ngeneric name"
+        fileDial.setLabelText(QtGui.QFileDialog.FileName,title)
         ok = (fileDial.exec_() == 1)
         result = fileDial.selectedFiles()
         if len(result) > 0:
@@ -440,10 +445,6 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.ui.tabWidget.setCurrentWidget(newSimProj)
 
             if len(self.project_list) == 1:
-                #self.closeProjActionMenu.setDisabled(False)
-                #self.saveProjActionMenu.setDisabled(False)
-                #self.deleteProjActionMenu.setDisabled(False)
-                #self.cloneProjActionMenu.setDisabled(False)
                 self.saveAllProjActionMenu.setDisabled(False)
                 self.saveButton.setDisabled(False)
             if len(self.project_list) == 2:
@@ -667,8 +668,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         ok = True
         if cloneName == None or cloneDir == None:
             fileDial = QtGui.QFileDialog(self,"Select location of the clone project")
+            fileDial.setAcceptMode(QFileDialog.AcceptSave)
             fileDial.setLabelText(QtGui.QFileDialog.Accept,"Clone project")
-            fileDial.setLabelText(QtGui.QFileDialog.FileName,"Clone project name")
+            fileDial.setLabelText(QtGui.QFileDialog.FileName,"Clone name")
             ok = (fileDial.exec_() == 1)
             if not ok:
                 return
@@ -765,6 +767,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #    name, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if path == None:
             fileDial = QtGui.QFileDialog(self,"Select location of the new project")
+            fileDial.setAcceptMode(QFileDialog.AcceptSave)
             fileDial.setLabelText(QtGui.QFileDialog.Accept,"Create project")
             fileDial.setLabelText(QtGui.QFileDialog.FileName,"Project name")
             ok = (fileDial.exec_() == 1)
@@ -796,6 +799,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 if not name in proj_name_list:
                     # dans tous les cas, on fait un projet msatseq
                     # le cas snp est géré dans dataFileSelectionAndCopy
+                    # la creation du dossier est faite plus tard
                     newProj = ProjectMsatSeq(name,None,self)
                     # un nouveau projet a au moins un scenario
                     newProj.hist_model_win.addSc()
@@ -811,10 +815,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                     newProj.initializeRNG()
 
                     if len(self.project_list) == 1:
-                        #self.closeProjActionMenu.setDisabled(False)
-                        #self.saveProjActionMenu.setDisabled(False)
-                        #self.deleteProjActionMenu.setDisabled(False)
-                        #self.cloneProjActionMenu.setDisabled(False)
                         self.saveAllProjActionMenu.setDisabled(False)
                         self.saveButton.setDisabled(False)
                     if len(self.project_list) == 2:
@@ -839,9 +839,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                 qmb.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
                 qmb.setDefaultButton(QMessageBox.Save)
                 reply = qmb.exec_()
-                print QMessageBox.Save , QMessageBox.Discard , QMessageBox.Cancel , reply
+                #print QMessageBox.Save , QMessageBox.Discard , QMessageBox.Cancel , reply
                 if (reply == QMessageBox.Cancel):
-                    print "plooooo"
                     return
                 else:
                     save = (reply == QtGui.QMessageBox.Save)
@@ -861,10 +860,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         del(projToClose)
         # si c'est le dernier projet, on désactive la fermeture par le menu
         if len(self.project_list) == 0:
-            #self.closeProjActionMenu.setDisabled(True)
-            #self.saveProjActionMenu.setDisabled(True)
-            #self.deleteProjActionMenu.setDisabled(True)
-            #self.cloneProjActionMenu.setDisabled(True)
             self.saveAllProjActionMenu.setDisabled(True)
             self.saveButton.setDisabled(True)
             self.switchToWelcomeStack()
