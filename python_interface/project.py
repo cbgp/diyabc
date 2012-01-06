@@ -6,6 +6,8 @@
 # @brief Classe mère abstraite de tous les projets
 
 #from subprocess import Popen, PIPE, STDOUT 
+import subprocess
+import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -14,7 +16,6 @@ from historicalModel.setHistoricalModel import SetHistoricalModel
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 from utils.cbgpUtils import log,addLine
-import subprocess
 import dataPath
 
 formProject,baseProject = uic.loadUiType("uis/Project.ui")
@@ -109,6 +110,8 @@ class Project(baseProject,formProject):
     def initializeRNG(self):
         """ à lancer une fois que le dossier du projet a été créé
         """
+        if os.path.exists("%s/RNG_state_0000.bin"%self.dir):
+            os.remove("%s/RNG_state_0000.bin"%self.dir)
         executablePath = self.parent.preferences_win.getExecutablePath()
         nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
         cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "-n", "t:%s"%nbMaxThread]
