@@ -503,32 +503,20 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         S'il est valide, on le copie dans le dossier du projet
         """
         if name == None:
-            name = QFileDialog.getOpenFileName(self,"Select datafile")
-        if isSNPDatafile(name):
-            try:
-                data = DataSnp(name)
-            except Exception as e:
-                output.notify(self,"Data file error","%s"%(e))
-                return
-            shutil.copy(name,"%s/%s"%(self.dir,name.split('/')[-1]))
-            f = codecs.open(self.dir+"/%s"%self.parent.main_conf_name,'w',"utf-8")
-            f.write("%s\n"%name.split('/')[-1])
-            f.write("0 parameters and 0 summary statistics\n\n")
-            f.close()
-            self.parent.closeCurrentProject(save=False)
-            self.parent.openProject(self.dir)
-        elif self.loadDataFile(name):
+            name = QFileDialog.getOpenFileName(self,"Select datafile","",self.getDataFileFilter())
+        if self.loadDataFile(name):
             # si on a reussi a charger le data file, on vire le bouton browse
             self.ui.browseDataFileButton.hide()
             # et on copie ce datafile dans le dossier projet
             shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
             self.dataFileName = self.dataFileSource.split('/')[-1]
+            self.ui.dataFileEdit.setText("%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
             #self.ui.groupBox.show()
             self.ui.groupBox_6.show()
             self.ui.groupBox_7.show()
             self.ui.groupBox_8.show()
-            # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
-            self.gen_data_win.fillLocusTableFromData()
+            return True
+        return False
 
     def dirCreation(self,path):
         """ selection du repertoire pour un nouveau projet et copie du fichier de données

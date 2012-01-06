@@ -5,7 +5,7 @@
 #
 # @brief Projets pour créer une table de référence SNP
 
-import os
+import os,shutil
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -44,6 +44,9 @@ class ProjectSnp(ProjectReftable):
         self.setAscertValid(False)
 
         QObject.connect(self.ui.ascertButton,SIGNAL("clicked()"),self.setAscertBias)
+
+    def getDataFileFilter(self):
+        return "SNP datafile (*.snp);;all files (*)"
 
     def verifyRefTableValid(self):
         """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table

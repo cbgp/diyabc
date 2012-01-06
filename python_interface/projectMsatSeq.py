@@ -5,7 +5,7 @@
 #
 # @brief Projets pour créer une table de référence Msat et Sequences
 
-import os
+import os,shutil
 import codecs
 #from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
@@ -31,6 +31,16 @@ class ProjectMsatSeq(ProjectReftable):
         self.gen_data_win = SetGeneticDataMsatSeq(self)
         self.gen_data_win.ui.okButton.setText("VALIDATE AND SAVE")
         self.gen_data_win.hide()
+
+    def getDataFileFilter(self):
+        return "Microsat Sequence datafile (*.mss);;all files (*)"
+
+    def dataFileSelectionAndCopy(self,name=None):
+        """ si tout s'est bien passé, on rempli le tableau des locus des genetic data
+        """
+        if super(ProjectMsatSeq,self).dataFileSelectionAndCopy(name):
+            # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
+            self.gen_data_win.fillLocusTableFromData()
 
     def loadDataFile(self,name):
         """ Charge le fichier de données passé en paramètre. Cette fonction est appelée lors

@@ -187,7 +187,9 @@ class Diyabc(formDiyabc,baseDiyabc):
                 width: 13px;\
                 height: 13px;\
                 }")
-        file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/folder-new.png"),"&New project",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
+        self.newMenu = file_menu.addMenu(QIcon(dataPath.DATAPATH+"/icons/folder-new.png"),"&New project")
+        self.newMenu.addAction(QIcon(dataPath.DATAPATH+"/icons/gene.png"),"&Microsatellites and/or sequences",self.newProject)
+        self.newMenu.addAction(QIcon(dataPath.DATAPATH+"/icons/dna.png"),"&SNP",self.newProject)
         file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
         self.recent_menu = file_menu.addMenu(QIcon(dataPath.DATAPATH+"/icons/document-open-recent.png"),"Open recent projects")
         self.recent_menu.setDisabled(True)
@@ -800,7 +802,10 @@ class Diyabc(formDiyabc,baseDiyabc):
                     # dans tous les cas, on fait un projet msatseq
                     # le cas snp est géré dans dataFileSelectionAndCopy
                     # la creation du dossier est faite plus tard
-                    newProj = ProjectMsatSeq(name,None,self)
+                    if "SNP" in self.sender().text():
+                        newProj = ProjectSnp(name,None,self)
+                    else:
+                        newProj = ProjectMsatSeq(name,None,self)
                     # un nouveau projet a au moins un scenario
                     newProj.hist_model_win.addSc()
                     self.project_list.append(newProj)
