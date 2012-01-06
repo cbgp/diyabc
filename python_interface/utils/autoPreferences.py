@@ -37,7 +37,6 @@ class AutoPreferences(QFrame):
         self.createWidgets()
 
     def createWidgets(self):
-
         self.ui = self
 
         self.ui.verticalLayout = QtGui.QVBoxLayout(self)
@@ -86,9 +85,12 @@ class AutoPreferences(QFrame):
         QObject.connect(self.ui.cancelPreferencesButton,SIGNAL("clicked()"),self.cancel)
 
     def digest(self,dico_fields):
+        """ Takes a hashtable as a parameter to build the graphical preference structure
+        """
         for cat in dico_fields.keys():
             self.addCategory(cat)
             for f in dico_fields[cat]:
+                # *f[1:] is equivalent to f[1],f[2],f[3]... in a function call context
                 exec('self.addProp%s(cat,*f[1:])'%(f[0][0].upper() + f[0][1:]))
                 #if f[0] == "combo":
                 #    self.addPropCombo(cat,f[1],f[2],f[3],f[4],f[5])
@@ -100,6 +102,8 @@ class AutoPreferences(QFrame):
                 #    self.addPropPathEdit(cat,f[1],f[2],f[3])
 
     def addCategory(self,catname):
+        """ Add a category i.e a tab which will contain fields
+        """
         if catname in self.categoryList:
             raise Exception("Category already exists")
         else:
@@ -124,7 +128,8 @@ class AutoPreferences(QFrame):
             exec('self.ui.tabWidget.addTab(self.tab_%s,"%s")'%(catname,catname))
 
     def addPropCheck(self,catname,propname,proptext,defaultState):
-
+        """ Add a field which is composed by a label and a checkBox
+        """
         self.dicoCategory[catname].append([propname,"check",proptext,defaultState])
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s) '%(catname,propname,catname))
@@ -141,7 +146,8 @@ class AutoPreferences(QFrame):
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s) '%(catname,catname,propname))
 
     def addPropCombo(self,catname,propname,labeltxt,dicoValTxt,l_ordered_val,default_value=None):
-
+        """ Add a field which is composed by a label and a comboBox
+        """
         self.dicoCategory[catname].append( [propname,"combo",dicoValTxt,l_ordered_val,default_value,labeltxt] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
@@ -167,6 +173,9 @@ class AutoPreferences(QFrame):
                 exec('self.%sCombo.setCurrentIndex(%s)'%(propname,ind))
 
     def addPropLineEdit(self,catname,propname,labelText,default_value="",visibility=visible):
+        """ Add a field which is composed by a label and a lineEdit
+        The visibility can be set with a boolean parameter for example to save a 'non-user-set' value
+        """
         self.dicoCategory[catname].append( [propname, "lineEdit", labelText, default_value] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
@@ -194,6 +203,8 @@ class AutoPreferences(QFrame):
             exec('self.frame_%s_%s.setVisible(False)'%(catname,propname))
 
     def addPropPathEdit(self,catname,propname,labelText,default_value=""):
+        """ Add a field which is composed by a label, a 'browse' button and a lineEdit
+        """
         self.dicoCategory[catname].append( [propname, "path", labelText, default_value] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
@@ -221,6 +232,8 @@ class AutoPreferences(QFrame):
         exec('QObject.connect(self.ui.%sBrowseButton,SIGNAL("clicked()"),self.browse)'%(propname))
 
     def browse(self):
+        """ Open a qt browsing window to fill interactively the pathEdit fields
+        """
         but = self.sender()
         ed = but.parent().findChild(QLineEdit)
         qfd = QFileDialog()
@@ -228,6 +241,8 @@ class AutoPreferences(QFrame):
         ed.setText(path)
 
     def savePreferences(self):
+        """ Automatically save values of fields in a ConfigObj config file
+        """
         for cat in self.categoryList:
             if not self.config.has_key(cat):
                 self.config[cat] = {}
@@ -250,11 +265,12 @@ class AutoPreferences(QFrame):
                     val_to_save = k
 
                 self.config[cat][propname] = val_to_save
-
         
         self.writeConfigFile()
 
     def loadPreferences(self):
+        """ Automatically match config file and preferences fields and fill values
+        """
         cfg = self.config
 
         for cat in self.dicoCategory.keys():
@@ -265,7 +281,7 @@ class AutoPreferences(QFrame):
                         val = cfg[cat][propname]
                         proptype = propl[1]
                         if proptype == "check":
-                            checked = (val == "True")
+                            checked = (val.lower() == "true")
                             exec('self.ui.%sCheck.setChecked(not checked)'%propname)
                             exec('self.ui.%sCheck.setChecked(checked)'%propname)
                         elif proptype == "lineEdit":

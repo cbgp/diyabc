@@ -272,11 +272,11 @@ class SimulationThread(QThread):
                 fg.close()
         fg.close()
 
-class ProjectSimulationGenepop(ProjectSimulation):
+class ProjectSimulationMsatSeq(ProjectSimulation):
     """ classe qui représente un projet de simulation SNP
     """
     def __init__(self,name,dir=None,parent=None):
-        super(ProjectSimulationGenepop,self).__init__(name,dir,parent)
+        super(ProjectSimulationMsatSeq,self).__init__(name,dir,parent)
 
         QObject.connect(self.locusNumberFrame.mhEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
         QObject.connect(self.locusNumberFrame.shEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)

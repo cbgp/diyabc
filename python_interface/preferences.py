@@ -22,7 +22,12 @@ from utils.autoPreferences import AutoPreferences,visible,invisible
 ## @class Preferences
 # @brief Fenêtre pour gérer les préférences personnelles
 class Preferences(AutoPreferences):
-    """ Classe principale qui est aussi la fenêtre principale de la GUI
+    """ Classe dérivée d'AutoPreferences qui va :
+    - déclarer la structure des préférences en appelant la méthode 'digest' de la classe mère
+    - redéfinir savePreferences et loadPreferences pour effectuer les sauvegardes/chargement 
+      non prévus dans la classe mère (projets récents, modèle historique)
+    - définir les actions à effectuer lors de changement de valeurs des préférences (style, showTrayIcon ...)
+    - implémenter les fonctions d'accès aux valeurs des préférences (getMaxThreadNumber, getExecutablePath ...) 
     """
     def __init__(self,parent=None,configfile=None):
         super(Preferences,self).__init__(parent,configfile)

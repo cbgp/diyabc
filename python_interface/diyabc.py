@@ -188,8 +188,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                 height: 13px;\
                 }")
         self.newMenu = file_menu.addMenu(QIcon(dataPath.DATAPATH+"/icons/folder-new.png"),"&New project")
-        self.newMenu.addAction(QIcon(dataPath.DATAPATH+"/icons/gene.png"),"&Microsatellites and/or sequences",self.newProject)
-        self.newMenu.addAction(QIcon(dataPath.DATAPATH+"/icons/dna.png"),"&SNP",self.newProject)
+        self.newMenu.addAction(QIcon(dataPath.DATAPATH+"/icons/gene.png"),"&Microsatellites and/or sequences",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_M))
+        self.newMenu.addAction(QIcon(dataPath.DATAPATH+"/icons/dna.png"),"&SNP",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
         file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
         self.recent_menu = file_menu.addMenu(QIcon(dataPath.DATAPATH+"/icons/document-open-recent.png"),"Open recent projects")
         self.recent_menu.setDisabled(True)
@@ -203,7 +203,8 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         action = file_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
-        action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
+        #action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
+        action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q)])
         #sepAc = QAction("Open recent projects",self)
         #sepAc.setSeparator(True)
         #file_menu.addAction(sepAc)
@@ -225,7 +226,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.help_menu = help_menu
         #help_menu.addAction("&About DIYABC",self.switchToWelcomeStack)
         help_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
-        help_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/gnome-mime-text.png"),"&Show logfile",self.showLogFile)
+        help_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/gnome-mime-text.png"),"&Show logfile",self.showLogFile,QKeySequence(Qt.CTRL + Qt.Key_L))
 
         self.currentProjectMenu = None
         QObject.connect(self.ui.tabWidget,SIGNAL("currentChanged(int)"),self.updateCurrentProjectMenu)
@@ -409,7 +410,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.tabWidget.setCurrentIndex(num-1)
 
     def simulateDataSets(self):
-        from projectSimulation import ProjectSimulationSnp,ProjectSimulationGenepop
+        from projectSimulation import ProjectSimulationSnp,ProjectSimulationMsatSeq
         fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)")
         fileDial.setAcceptMode(QFileDialog.AcceptSave)
         fileDial.setLabelText(QtGui.QFileDialog.Accept,"Ok")
@@ -433,7 +434,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         if ok:
             if "Genepop" in self.sender().text():
-                newSimProj = ProjectSimulationGenepop(name,directory,self)
+                newSimProj = ProjectSimulationMsatSeq(name,directory,self)
             else:
                 newSimProj = ProjectSimulationSnp(name,directory,self)
             # un nouveau projet a au moins un scenario
@@ -1006,7 +1007,7 @@ class ImportProjectThread(Thread):
     def run(self):
         #log(4,"Pre-loading of Project class STARTING")
         from projectMsatSeq import ProjectMsatSeq
-        from projectSimulation import ProjectSimulationSnp,ProjectSimulationGenepop
+        from projectSimulation import ProjectSimulationSnp,ProjectSimulationMsatSeq
         from projectSnp import ProjectSnp
         #log(4,"Pre-loading of Project class FINISHED")
 
