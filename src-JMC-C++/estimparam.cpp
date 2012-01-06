@@ -334,7 +334,7 @@ parstatC *parstat;
         nstatOKsel=0;
         for (int j=0;j<rt.nstat;j++) {
             var_statsel[j]=(sx2[j]-sx[j]/nn*sx[j])/(nn-1.0);
-            if (var_statsel[j]>0.0) nstatOKsel++;
+            if (var_statsel[j]>1E-20) nstatOKsel++;
             mo[j] = sx[j]/nn;
         }
         //for (int j=0;j<rt.nstat;j++) printf("stat[%3d]  moy=%12.8Lf   var=%16Le\n",j,mo[j],var_statsel[j]);
@@ -347,7 +347,7 @@ parstatC *parstat;
         for (int i=0;i<n;i++) {
             icc=-1;
             for (int j=0;j<rt.nstat;j++) {
-                if (var_statsel[j]>0.0) {
+                if (var_statsel[j]>1E-20) {
                     icc++;
                     matX0[i][icc]=(long double)(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
 					//if ((i<10)) printf("enrsel[%d] stat[%d] %16.10f  %16.10f  %16.10Lf    %16.10Lf\n",i,j,rt.enrsel[i].stat[j],stat_obs[j],var_statsel[j],matX0[i][icc]);

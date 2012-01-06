@@ -236,7 +236,7 @@ matligneC *matA;
         for (int j=0;j<rt.nstat;j++) {
             var_statsel[j]=(sx2[j]-sx[j]/nn*sx[j])/(nn-1.0);
             //cout <<"var_statsel["<<j<<"]="<<var_statsel[j]<<"   nn="<<nn<<"    sx2="<<sx2[j]<<"   sx="<<sx[j]<<"\n";
-            if (var_statsel[j]>0.0) nstatOKsel++;
+            if (var_statsel[j]>1E-20) nstatOKsel++;
             mo[j] = sx[j]/nn;
         }
         //cout <<"hello\n";
@@ -244,7 +244,7 @@ matligneC *matA;
         for (int i=0;i<n;i++) {
             icc=-1;
             for (int j=0;j<rt.nstat;j++) {
-                if (var_statsel[j]>0.0) {
+                if (var_statsel[j]>1E-20) {
                     icc++;
                     cmatX0[i][icc]=(long double)(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
                 }
