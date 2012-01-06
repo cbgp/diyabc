@@ -398,7 +398,7 @@ void ReftableC::concat() {
  * sur les 100000 premiers enregistrements de la table de référence
  */
 int ReftableC::cal_varstat() {
-	int nrecutil,iscen,nsOK,bidon,i,step;
+	int nrecutil,iscen,nsOK,bidon,i;
 	long double *sx,*sx2,x,an,nr,*min,*max;
 	bool scenOK;
 	//cout <<"debut de cal_varstat\n";
@@ -417,7 +417,7 @@ int ReftableC::cal_varstat() {
 	this->nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>this->nparamax) this->nparamax=this->nparam[i];
 	enr.param = new float[this->nparamax];
 	this->openfile2();
-	i=0;step=nrecutil/100;
+	i=0;
 	while (i<nrecutil) {
 		//cout<<"avant readrecord\n";
 		bidon=this->readrecord(&enr);
@@ -427,7 +427,7 @@ int ReftableC::cal_varstat() {
 			scenOK=(enr.numscen==this->scenchoisi[iscen]);
 			iscen++;
 		}
-		if ((scenOK)and(i==0))for (int j=0;j<this->nstat;j++) cout<<enr.stat[j]<<"   ";cout<<"\n";
+		//if ((scenOK)and(i==0))for (int j=0;j<this->nstat;j++) cout<<enr.stat[j]<<"   ";cout<<"\n";
 		if (scenOK) {
 			i++;
 			for (int j=0;j<this->nstat;j++) {
@@ -438,17 +438,16 @@ int ReftableC::cal_varstat() {
 				if (max[j]<x) max[j]=x;
 			}
 		}
-		//if ((i % step)==0) {cout<<"\rcal_varstat : "<<i/step<<"%";fflush(stdout);}
 	}
 	    cout<<i<<"   "<<nrecutil<<"\n";
 	if (i<nrecutil) nrecutil=i;
 	    cout<<i<<"   "<<nrecutil<<"\n";
 	this->closefile();
 	nsOK=0;
-	an=1.0*(long double)nrecutil;
+	an=(long double)nrecutil;
 	for (int j=0;j<this->nstat;j++) {
 		this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
-		if (this->var_stat[j]>0) nsOK++;
+		if (this->var_stat[j]>1E-20) nsOK++;
 		printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
 	}
 	delete []sx;delete []sx2;
@@ -517,7 +516,7 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 			if (scenOK) {
 				this->nreclus++;
 				this->enrsel[nrecOK].dist=0.0;
-				for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>0.0) {
+				for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>1E-20) {
 					diff =(long double)(this->enrsel[nrecOK].stat[j] - stat_obs[j]);
 					this->enrsel[nrecOK].dist += diff*diff/this->var_stat[j];
 					//if (nreclus==1) printf("  %12.6f   %12.6f   %12.6Lf   %12.8Lf\n",this->enrsel[nrecOK].stat[j],stat_obs[j],diff*diff,this->enrsel[nrecOK].dist);
