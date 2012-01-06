@@ -72,6 +72,8 @@ void dosimfile(int seed){
 		if (sgp[i]=="") cout<<"une erreur s'est produite lors de la simulation du fichier numero "<<i+1<<"\n";
 		else {
 			nomfigp = path + nomfisim + sn;
+			if (header.dataobs.filetype==0) nomfigp +=".mss";
+			if (header.dataobs.filetype==1) nomfigp +=".snp";
 			cout<<"écriture du fichier "<<nomfigp<<"\n";
 			sgp[i] +="\n";
 			fgp = fopen(nomfigp.c_str(),"w");fprintf(fgp,"%s", sgp[i].c_str());fclose(fgp);
