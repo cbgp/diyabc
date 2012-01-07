@@ -366,23 +366,41 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 			if (header.groupe[gr].type==0) {  //MICROSAT
 				//cout <<"MICROSAT "<<p<<"\n";
 				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    \n";
-				if (not header.groupe[gr].priormutmoy.constant) {this->particule[p].grouplist[gr].mutmoy = phistarOK[k][ii];ii++;}
+				if (not header.groupe[gr].priormutmoy.constant) {
+					this->particule[p].grouplist[gr].mutmoy = phistarOK[k][ii];ii++;
+					this->particule[p].grouplist[gr].priormutmoy.fixed=true;
+				}
 				//cout<<this->particule[p].grouplist[gr].mutmoy<<"\n";
 				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    ";
-				if (not header.groupe[gr].priorPmoy.constant)   {this->particule[p].grouplist[gr].Pmoy  =  phistarOK[k][ii];ii++;}
+				if (not header.groupe[gr].priorPmoy.constant)   {
+					this->particule[p].grouplist[gr].Pmoy  =  phistarOK[k][ii];ii++;
+					this->particule[p].grouplist[gr].priorPmoy.fixed=true;
+				}
 				//cout<<this->particule[p].grouplist[gr].Pmoy<<"\n";
 				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
-				if (not header.groupe[gr].priorsnimoy.constant) {this->particule[p].grouplist[gr].snimoy = phistarOK[k][ii];ii++;}
+				if (not header.groupe[gr].priorsnimoy.constant) {
+					this->particule[p].grouplist[gr].snimoy = phistarOK[k][ii];ii++;
+					this->particule[p].grouplist[gr].priorsnimoy.fixed=true;
+				}
 				//cout<<this->particule[p].grouplist[gr].snimoy<<"\n";
 			}
 			else if (header.groupe[gr].type==1) {       //SEQUENCES
 				//cout<<"SEQUENCE\n";
-				if (not header.groupe[gr].priormutmoy.constant) {this->particule[p].grouplist[gr].musmoy = phistarOK[k][ii];ii++;}   //musmoy
+				if (not header.groupe[gr].priormusmoy.constant) {         //musmoy
+					this->particule[p].grouplist[gr].musmoy = phistarOK[k][ii];ii++;
+					this->particule[p].grouplist[gr].priormusmoy.fixed=true;
+				}   
 				if (header.groupe[gr].mutmod>0){
-					if (not header.groupe[gr].priormutmoy.constant){this->particule[p].grouplist[gr].k1moy =phistarOK[k][ii];ii++;}        //k1moy
+					if (not header.groupe[gr].priork1moy.constant){        //k1moy
+						this->particule[p].grouplist[gr].k1moy =phistarOK[k][ii];ii++;
+						this->particule[p].grouplist[gr].priork1moy.fixed=true;
+					}
 				}
 				if (header.groupe[gr].mutmod>2){
-					if (not header.groupe[gr].priormutmoy.constant){this->particule[p].grouplist[gr].k2moy =phistarOK[k][ii];ii++;}        //k2moy
+					if (not header.groupe[gr].priork2moy.constant){        //k2moy
+						this->particule[p].grouplist[gr].k2moy =phistarOK[k][ii];ii++;
+						this->particule[p].grouplist[gr].priork2moy.fixed=true;
+					}
 				}
 			}
 		//cout<<"\n";
