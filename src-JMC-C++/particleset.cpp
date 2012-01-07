@@ -355,10 +355,12 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 			if (not header.scenario[scen].histparam[i].prior.constant) {
 				if (debuglevel==5) cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"\n";
 				this->particule[p].scenario[scen].histparam[i].value=phistarOK[k][ii];
+				this->particule[p].scenario[scen].histparam[i].prior.fixed=true;
 				ii++;
 			} else this->particule[p].scenario[scen].histparam[i].value=header.scenario[scen].histparam[i].prior.mini;
-			if (p==0) cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"\n";
+			cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
 		}
+		cout<<"\n";
 		//cout<<"apres la copie des paramètres historiques\n";
 		for (gr=1;gr<=header.ngroupes;gr++)
 			if (header.groupe[gr].type==0) {  //MICROSAT
@@ -385,18 +387,19 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 			}
 		//cout<<"\n";
 	}
-	cout<<"apres le remplissage des particules\n";
+	cout<<"apres le remplissage de "<<npart<<"particules\n";
 	//if (num_threads>0) omp_set_num_threads(num_threads);_
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
 	for (ipart=0;ipart<this->npart;ipart++){
-		cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
+		//cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
 		if (sOK[ipart]==0) {
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr);}
 		}
-		cout<<"apres docalstat de la particule "<<ipart<<"\n";
+		//cout<<"apres docalstat de la particule "<<ipart<<"\n";
 	}
-	//fin du pragma
+	cout<<"apres la simulation de "<<npart<<"particules\n";
+///////////////fin du pragma
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		if (sOK[ipart]==0){
 			enreg[ipart].numscen=1;

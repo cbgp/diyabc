@@ -161,8 +161,8 @@ vector <int> melange(MwcGen mw, int n) {
 	  
 	  //cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
 	  //this->scen.ecris();
-	  cout<<"dans drawscenario    nsample="<<this->scen.nsamp<<"\n";
-	  for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ss[0][sa]<<"   ";cout<<"\n";
+	  //cout<<"dans drawscenario    nsample="<<this->scen.nsamp<<"\n";
+	  //for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ss[0][sa]<<"   ";cout<<"\n";
 	  this->refnindtot=0;
 	  this->ref = new bool**[5];
 	  this->dat = new bool**[5];
@@ -202,6 +202,7 @@ vector <int> melange(MwcGen mw, int n) {
 		  }
 	  }
 	  cout<<"drawscenario : refnindtot="<<this->refnindtot<<"\n";
+	  //home/cornuet/workspace/diyabchg/src-JMC-C++/general -p /home/cornuet/diyabc/AVEC_BIAIS/S1F_2012_1_6-1/ -j s:1;n:99409;m:1000;t:3;v:;q:1000;a:pl -i mc1 -g 500 -m -t 8
 	  }
 
 
@@ -1682,9 +1683,9 @@ void ParticleC::put_one_mutation(int loc) {
 	  if (debuglevel==10) cout <<"avant setHistparamValue\n";fflush(stdin);
 	  this->setHistParamValue();
 	  if (debuglevel==10) cout << "apres setHistParamValue\n";fflush(stdin);
-	  //if (trace) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
-	  //if (trace) for (int k=0;k<this->scen.nparam;k++){
-	  //         	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
+	   if (debuglevel==-1) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
+	  if (debuglevel==-1) for (int k=0;k<this->scen.nparam;k++){
+	           	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
 	  this->setSequence();
 	  if (debuglevel==10) cout <<"apres setSequence\n";
 	  if (debuglevel==5) cout <<"avant checktree\n";
