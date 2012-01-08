@@ -9,7 +9,23 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 class TrayIconHandler(QObject):
+    """ Class to manipulate system tray icon
 
+    As far as i could test, all functionnalities work on 
+    - GNU/Linux (Gnome 2.* , KDE , *box , Xfce4)
+    - Windows (XP)
+    - MacOS (10.6)
+
+    automatic behaviour :
+    - display selected icon in the systray
+    - right click (on the icon) access to a QMenu
+    - show/hide the parent QWidget when the trayicon is clicked
+
+    functionnalities accessible by method calling :
+    - show/hide the systray icon
+    - display notifications
+    - play a gif instead of the icon image (to draw user's attention to an event for example)
+    """
     def __init__(self,iconpath,icongifpath=None,menu=None,parent=None):
         super(TrayIconHandler,self).__init__(parent)
         self.parent=parent

@@ -120,10 +120,6 @@ class Preferences(AutoPreferences):
         QObject.connect(self.ui.maxLogLvlCombo,SIGNAL("currentIndexChanged(int)"),self.changeLogLevel)
         QObject.connect(self.ui.backgroundColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
         self.changeLogLevel(self.ui.maxLogLvlCombo.currentIndex())
-        #QObject.connect(self.ui.fontSizeCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontSize)
-        #self.changeFontSize(default_Psize)
-        #QObject.connect(self.ui.fontFamilyCombo,SIGNAL("currentIndexChanged(QString)"),self.changeFontFamily)
-        #self.changeFontFamily(default_font_family)
 
         QObject.connect(self.ui.useServerCheck,SIGNAL("toggled(bool)"),self.toggleServer)
         QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
@@ -156,8 +152,6 @@ class Preferences(AutoPreferences):
         self.mutmodM.ui.setMutMsLabel.setText("Default values for mutation model of Microsatellites")
         self.mutmodS.ui.frame_6.hide()
         self.mutmodS.ui.setMutSeqLabel.setText("Default values for mutation model of Sequences")
-
-        #self.ui.tabWidget.setCurrentIndex(1)
 
     def close(self):
         if len(self.parent.project_list) == 0:
@@ -354,12 +348,8 @@ class Preferences(AutoPreferences):
                 one = ll.split(',')[1]
                 two = ll.split(',')[2]
                 three = ll.split(',')[3].split(']')[0]
-                self.config["mutation_m_default_values"][ti+"_law"] = law
-                self.config["mutation_m_default_values"][ti+"_zero"] = zero
-                self.config["mutation_m_default_values"][ti+"_one"] = one
-                self.config["mutation_m_default_values"][ti+"_two"] = two
-                self.config["mutation_m_default_values"][ti+"_three"] = three
-
+                for f in ["law","zero","one","two","three"]:
+                    exec("self.config['mutation_m_default_values'][ti+'_{0}'] = {0}".format(f))
 
     def loadMMM(self):
         """ chargement de la partie mutation model microsats des préférences
@@ -390,23 +380,19 @@ class Preferences(AutoPreferences):
             if ll != "":
                 ti = ll.split(' ')[0]
                 if ti == "MODEL":
-                    mod = ll.split(' ')[1]
-                    invpc = ll.split(' ')[2]
-                    gamsh = ll.split(' ')[3]
-                    self.config["mutation_s_default_values"][ti+"_model"] = mod
-                    self.config["mutation_s_default_values"][ti+"_inv_sites_pc"] = invpc
-                    self.config["mutation_s_default_values"][ti+"_gamma_shape"] = gamsh
+                    model = ll.split(' ')[1]
+                    inv_sites_pc = ll.split(' ')[2]
+                    gamma_shape = ll.split(' ')[3]
+                    for f in ["model","inv_sites_pc","gamma_shape"]:
+                        exec("self.config['mutation_s_default_values'][ti+'_{0}'] = {0}".format(f))
                 else:
                     law = ll.split(' ')[1].split('[')[0]
                     zero = ll.split('[')[1].split(',')[0]
                     one = ll.split(',')[1]
                     two = ll.split(',')[2]
                     three = ll.split(',')[3].split(']')[0]
-                    self.config["mutation_s_default_values"][ti+"_law"] = law
-                    self.config["mutation_s_default_values"][ti+"_zero"] = zero
-                    self.config["mutation_s_default_values"][ti+"_one"] = one
-                    self.config["mutation_s_default_values"][ti+"_two"] = two
-                    self.config["mutation_s_default_values"][ti+"_three"] = three
+                    for f in ["law","zero","one","two","three"]:
+                        exec("self.config['mutation_s_default_values'][ti+'_{0}'] = {0}".format(f))
 
     def loadMMS(self):
         """ chargement de la partie mutation model sequences des préférences
@@ -431,32 +417,10 @@ class Preferences(AutoPreferences):
         if not self.config.has_key("hist_model_default_values"):
             self.config["hist_model_default_values"] = {}
 
-        if self.hist_model.NUNRadio.isChecked():
-            nlaw = "UN"
-        elif self.hist_model.NLURadio.isChecked():
-            nlaw = "LU"
-        elif self.hist_model.NNORadio.isChecked():
-            nlaw = "NO"
-        elif self.hist_model.NLNRadio.isChecked():
-            nlaw = "LN"
-
-        if self.hist_model.TUNRadio.isChecked():
-            tlaw = "UN"
-        elif self.hist_model.TLURadio.isChecked():
-            tlaw = "LU"
-        elif self.hist_model.TNORadio.isChecked():
-            tlaw = "NO"
-        elif self.hist_model.TLNRadio.isChecked():
-            tlaw = "LN"
-
-        if self.hist_model.AUNRadio.isChecked():
-            alaw = "UN"
-        elif self.hist_model.ALURadio.isChecked():
-            alaw = "LU"
-        elif self.hist_model.ANORadio.isChecked():
-            alaw = "NO"
-        elif self.hist_model.ALNRadio.isChecked():
-            alaw = "LN"
+        for type_letter in ['n','t','a']:
+            for law_name in ["UN","LU","NO","LN"]:
+                exec("if self.hist_model.{0}{1}Radio.isChecked(): {2}law = '{1}'".format(\
+                    type_letter.upper(),law_name,type_letter))
 
         toSave = {}
 

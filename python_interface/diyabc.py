@@ -307,15 +307,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.toolBar.addWidget(wtButton)
         #wtButton.hide()
 
-        #simButton = QPushButton(QIcon(dataPath.DATAPATH+"/icons/mask.jpeg"),"Simulate",self)
-        #self.simButton = simButton
-        #simButton.setToolTip("Simulate data sets")
-        #simButton.setMaximumSize(QSize(80, 22))
-        ##saveButton.setMinimumSize(QSize(16, 18))
-        #simButton.setFlat(True)
-        #QObject.connect(simButton,SIGNAL("clicked()"),self.simulateDataSets)
-        #self.ui.toolBar.addWidget(simButton)
-
         for but in [newButton,openButton,saveButton,saveAllButton,wtButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 

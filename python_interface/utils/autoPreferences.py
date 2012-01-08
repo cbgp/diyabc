@@ -21,6 +21,44 @@ visible = "1"
 invisible = "0"
 
 class AutoPreferences(QFrame):
+    """ Class to manage big amount of user settings into a Qt application
+
+    This class inherits from QFrame and does the following jobs :
+    - display the user settings in a tabWidget (each category of field is a tab)
+    - save/load automaticaly the settings in a given config file using ConfigObj
+      where the structure is the same as the tabWidget (categories, fields)
+    - ability to manage invisible fields for 'non-user set' value (like toolbar
+      position for example)
+
+    To use an instance of this class, create a hashtable describing the structure
+    of your settings and call the 'digest' method to initialize the data and the
+    QFrame shape. For example : 
+    myconfStructure = {
+        category_1 : [
+            ["check","showTrayIcon","Show tray icon",False],
+            ["check","showTrayIcon","Show tray icon",False]
+        ]
+        category_2 : [
+            ["check","showTrayIcon","Show tray icon",False],
+            ["check","showTrayIcon","Show tray icon",False]
+        ]
+    }
+    myconfManager = AutoPreferences(None,"/home/user/.myapp/config.cfg","Settings")
+    myconfManager.digest(myconfStructure)
+
+    See the add* methods to know what to put in the list representing fields
+
+    You can add different kind of fields to the settings :
+    - "check" : labeled check box
+    - "lineEdit" : labeled lineEdit
+    - "combo" : labeled combo box
+    - "pathEdit : labeled line edit with a 'browse' button to select a path with 
+      a Qt file dialog
+
+    It is of course possible to inherit from this class to add more complicated 
+    functionnalities like handling field change events or adding complex settings
+    which call external views...
+    """
     def __init__(self,parent=None,confFilePath=None,title="Settings"):
         super(AutoPreferences,self).__init__(parent)
         self.parent = parent
