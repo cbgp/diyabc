@@ -71,6 +71,22 @@ vector <int> melange(MwcGen mw, int n) {
   return ord;
 }
 
+/**
+ * retourne un ordre aléatoire pour les éléments d'un vecteur
+ * à partir du k-ième
+ */
+vector <int> melange2(MwcGen mw, int k, int n) {
+  vector <double> ra;
+  vector <int> ord;
+  ord.resize(n);ra.resize(n);
+  for (int i=0;i<k;i++) ord[i]=i;
+  for (int i=k;i<n;i++) ra[i] = mw.random();
+  for (int i=k;i<n;i++) {
+    ord[i] = k;
+    for (int j=k;j<n;j++) {if (ra[i]>ra[j]) ord[i]++;}
+  }
+  return ord;
+}
 
 
 
@@ -201,7 +217,8 @@ vector <int> melange(MwcGen mw, int n) {
 			  }
 		  }
 	  }
-	  cout<<"drawscenario : refnindtot="<<this->refnindtot<<"\n";
+	  //cout<<"drawscenario : refnindtot="<<this->refnindtot<<"\n";
+	  
 	  //home/cornuet/workspace/diyabchg/src-JMC-C++/general -p /home/cornuet/diyabc/AVEC_BIAIS/S1F_2012_1_6-1/ -j s:1;n:99409;m:1000;t:3;v:;q:1000;a:pl -i mc1 -g 500 -m -t 8
 	  }
 
@@ -1529,12 +1546,18 @@ void ParticleC::put_one_mutation(int loc) {
     this->locuslist[loc].sitmut.clear();
     int sa0=0,sa2=this->data.ss[cat][sa0];
     if (debuglevel==10) cout<<"sa2="<<sa2<<"\n";
-    int sa,ind;
+    int sa,ind,ngref;
     if (debuglevel==10) cout<< "tirage au hasard des gènes avant attribution aux individus\n";
-    ordre.resize(this->data.nsample);ind=0;
+    ordre.resize(this->data.nsample);
     if (debuglevel==10) cout<<"apres resize de ordre\n";
+	ind=0;
     for (sa=0;sa<this->data.nsample;sa++) {
-      ordre[sa] = melange(this->mw,this->data.ss[cat][sa]);
+		if (this->locuslist[loc].type>=10){
+			ngref=0;for (int i=0;i<this->data.ss[cat][sa];i++) if (this->ref[cat][sa][i]) ngref++;
+			ordre[sa] = melange2(this->mw,ngref,this->data.ss[cat][sa]);
+		} else {
+			ordre[sa] = melange(this->mw,this->data.ss[cat][sa]);
+		}
       if (sa>0) {for (int i=0;i<this->data.ss[cat][sa];i++) ordre[sa][i]+=ind;}
       ind +=this->data.ss[cat][sa];
     }
@@ -1665,6 +1688,7 @@ void ParticleC::put_one_mutation(int loc) {
     //cout<<"dans polymref fin   n1="<<n1<<"   n="<<n<<"\n";
     if (n==0) exit(1);
     p=(double)n1/(double)n;
+	if ((n1==0)or(n1==n)) cout<<"locus "<<loc<<"   n1="<<n1<<"   n="<<n<<" \n";
     if (p > 0.5) poly=(p <= 1.0-this->reffreqmin);
     else         poly=(p >= this->reffreqmin);
     //if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
