@@ -418,6 +418,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
                 self.th = RefTableGenThread(self,nb_to_gen)
+            self.nbReqBeforeComput = int(str(self.ui.nbSetsDoneEdit.text()))
             self.th.connect(self.th,SIGNAL("increment(int,QString)"),self.incProgress)
             self.th.connect(self.th,SIGNAL("refTableProblem(QString)"),self.refTableProblem)
             self.th.connect(self.th,SIGNAL("refTableLog(int,QString)"),self.refTableLog)
@@ -443,6 +444,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def stopUiGenReftable(self):
         self.ui.runReftableButton.setText("Run computations")
         self.ui.runReftableButton.setDisabled(False)
+        self.ui.progressBar.setValue(0)
         self.ui.progressBar.hide()
 
     def startUiGenReftable(self):
@@ -458,7 +460,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         #time_remaining = self.th.time
         #self.ui.reftableProgressLabel.setText('%s remaining'%time_remaining)
         self.ui.runReftableButton.setText("Running ... %s remaining"%(time_remaining.replace('\n',' ')))
-        pc = (float(done)/float(nb_to_do))*100
+        pc = (float(done - self.nbReqBeforeComput)/float(nb_to_do - self.nbReqBeforeComput))*100
         if pc > 0 and pc < 1:
             pc = 1
         self.ui.progressBar.setValue(int(pc))
@@ -466,7 +468,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         # si on a fini, on met à jour l'affichage de la taille de la reftable
         # et on verrouille eventuellement histmodel et gendata
         if int(pc) == 100:
-            self.parent.systrayHandler.showTrayMessage("DIYABC : reftable","Reference table generation has finished")
+            self.parent.systrayHandler.showTrayMessage("DIYABC : reftable","Reference table generation of project\n{0} has finished".format(self.name))
             self.putRefTableSize()
             self.stopUiGenReftable()
             self.th = None

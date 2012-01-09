@@ -971,6 +971,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         #elif event.type() == QEvent.ChildAdded and self.wtEnabled:
         #    #self.updateDoc()
         #    pass
+        # Quand on reprend le focus sur la fenêtre, on stoppe le
+        # clignottement éventuel de l'icone du systray
         elif event.type() == QEvent.WindowActivate:
             self.systrayHandler.leaveSystrayBlink()
         return QWidget.event(self,event)
