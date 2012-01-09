@@ -225,6 +225,7 @@ vector <int> melange(MwcGen mw, int n) {
   double ParticleC::getvalue(string line) {
     double result;
     bool fin=false;
+	int ls;
     //cout<<"line="<<line<<"\n";
     string operateur,plus="+",minus="-";
     size_t posign,posplus,posminus;
@@ -232,17 +233,13 @@ vector <int> melange(MwcGen mw, int n) {
     if ((posplus==string::npos)and(posminus==string::npos)) {
     	return  this->param2val(line);
     } else {
-    	if ((posplus>=0)and(posminus>line.size())){
-    		posign=posplus; // FIXME: posplus>0 always true
-    	} else {
-    		if ((posminus>=0)and(posplus>line.size())){
-    			posign=posminus; // FIXME: posplus>0 always true
-    		} else {
-    			if (posplus<posminus) {
-    				posign=posplus;
-    			} else {
-    				posign=posminus;
-    			}
+		ls = line.size();
+    	if ((posplus<ls)and(posminus>ls)){posign=posplus;}
+    	else {
+    		if ((posminus<ls)and(posplus>ls)){posign=posminus;} 
+    		else {
+    			if (posplus<posminus) {posign=posplus;}
+    			else {posign=posminus;}
     		}
     	}
     }
@@ -253,16 +250,22 @@ vector <int> melange(MwcGen mw, int n) {
     line=line.substr(posign+1);
     //cout << line << "\n";
     while (not fin) {
-      posplus=line.find('+');posminus=line.find('-');
-      if ((posplus>line.size())and(posminus>line.size())) {
-	if (operateur==plus) {result +=this->param2val(line);}
-	if (operateur==minus) {result -=this->param2val(line);}
-	//cout << "result = " << result <<"\n";
-	fin=true;break;
-      }
-      else {if ((posplus>=0)and(posminus>line.size())){posign=posplus;} // FIXME: posplus>0 always true
-	else {if ((posminus>=0)and(posplus>line.size())){posign=posminus;} // FIXME: posplus>0 always true
-	  else {if (posplus<posminus) {posign=posplus;} else {posign=posminus;}}}
+		ls = line.size();
+		posplus=line.find('+');posminus=line.find('-');
+		if ((posplus>ls)and(posminus>ls)) {
+			if (operateur==plus) {result +=this->param2val(line);}
+			if (operateur==minus) {result -=this->param2val(line);}
+			//cout << "result = " << result <<"\n";
+			fin=true;break;
+		} else {
+			if ((posplus<ls)and(posminus>ls)){posign=posplus;} 
+			else {
+				if ((posminus<ls)and(posplus>ls)){posign=posminus;} 
+				else {
+					if (posplus<posminus) {posign=posplus;} 
+					else {posign=posminus;}
+				}
+			}
       }
       if (operateur==plus) {result +=this->param2val(line.substr(0,posign));}
       if (operateur==minus) {result -=this->param2val(line.substr(0,posign));}

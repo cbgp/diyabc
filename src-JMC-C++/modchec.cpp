@@ -482,7 +482,7 @@ long double **ssphistar,**ssref;
             << "   nphistarOK="<< nphistarOK<<"\n";
         //cout <<"DEBUG: j'arrête là." << endl; exit(1);
         if(nphistarOK < newsspart){
-        	cout << "Pas assez de nphistarOK. J'arrête là." << endl;
+        	cout << "Not enough suitable particles to perform model checking. Stopping computations." << endl;
         	exit(1);
         }
         npv = rt.nparam[rt.scenteste-1];
