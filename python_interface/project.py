@@ -27,7 +27,6 @@ class Project(baseProject,formProject):
     par defaut, un projet est considéré comme nouveau, cad que l'affichage est celui d'un projet vierge
     pour un projet chargé, on modifie l'affichage en conséquence dans loadFromDir
     """
-    plop = 2
     def __init__(self,name,dir=None,parent=None):
         self.parent=parent
         self.name=name
