@@ -25,7 +25,7 @@ class Event(object):
 
     
     def __init__(self, action=None, pop=None, pop1=None, pop2=None, sample=None, Ne=None, N=None, time=None, graphtime =None, admixrate=None, numevent0=None,
-                 sNe=None, stime=None, sadmixrate=None,xg=None,xc=None,xd=None,y=None, nindMref=None, nindFref=None):
+                 sNe=None, stime=None, sadmixrate=None,xg=None,xc=None,xd=None,y=None, nindMref=0, nindFref=0):
         self.action     = action
         self.pop        = pop
         self.pop1       = pop1
@@ -262,7 +262,7 @@ class Scenario(object):
         if self.nsamp<1 :
             raise IOScreenError, "You must indicate when samples are taken"
         if data!=None:
-            #print self.nsamp,"========", data.nsample
+            print self.nsamp,"========", data.nsample
             if self.nsamp != data.nsample+self.nrefsamp :
                 raise IOScreenError, "The number of samples in scenario %s does not match the data file"%(self.number)
         if len(textarray)>1 :
@@ -288,13 +288,13 @@ class Scenario(object):
                     litem = li.split()
                     nitems = len(litem)
                     
-                    if Li.find("SAMPLE")+ Li.find("REFSAMPLE")>-1:
+                    if Li.find(" SAMPLE")+ Li.find("REFSAMPLE")>-1:
                         if (nitems<3)or(nitems==4):
                             raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
                         self.cevent = Event()
                         self.cevent.numevent0 = nevent
                         nevent +=1
-                        if Li.find("SAMPLE")>-1 : 
+                        if Li.find(" SAMPLE")>-1 : 
 							self.cevent.action = "SAMPLE"
                         if Li.find("REFSAMPLE")>-1 : 
 							self.cevent.action = "REFSAMPLE"
@@ -316,9 +316,15 @@ class Scenario(object):
 							else :
 								raise IOScreenError, "Unable to read number of males on line %s of scenario %s"%(jli0+1,self.number)
 							if isaninteger(litem[4]):
-								self.cevent.nindFref = int(litem[3])
+								self.cevent.nindFref = int(litem[4])
 							else :
 								raise IOScreenError, "Unable to read number of females on line %s of scenario %s"%(jli0+1,self.number)
+							#print self.cevent.nindMref,"   ",self.cevent.nindFref
+							#print "                 ",data.nind[0]
+							if Li.find(" SAMPLE")and(data!=None):
+								if self.cevent.nindMref+self.cevent.nindFref > data.nind[self.cevent.pop-1] :
+									raise IOScreenError, "The total number of reference individuals (%s) is larger than that of the data set (%s) on line %s of scenario %s"%(self.cevent.nindMref+self.cevent.nindFref,data.nind[self.cevent.pop-1],jli0+1,self.number)
+									
 								
                     elif Li.find("VARNE")>-1:
                         if nitems<4:
