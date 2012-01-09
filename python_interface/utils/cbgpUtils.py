@@ -124,6 +124,12 @@ from datetime import datetime
 import time
 
 def sizedirectory(path):
+    """ @rtype: int
+    @return: the size of a directory in bytes
+
+    >>> sizedirectory("/tmp")
+    123456
+    """
     size = 0
     for root, dirs, files in os.walk(path):
         for fic in files:
@@ -160,7 +166,8 @@ def logRotate(logFolder,nbDaysOld,sizeThreshold):
 import array
 
 def readRefTableSize(reftablefile):
-    """ Read the record number in binary reftable header
+    """ @rtype: int
+    @return: the record number in binary reftable header
     """
     if os.path.exists(reftablefile):
         binint = array.array('i')
@@ -173,7 +180,8 @@ def readRefTableSize(reftablefile):
         return None
 
 def readNbRecordsOfScenario(reftablefile,numSc):
-    """ Read record number of a given scenario
+    """ @rtype: int
+    @return: record number of a given scenario
     in binary reftable header
     """
     if os.path.exists(reftablefile):
@@ -265,7 +273,8 @@ def addLine(filepath,content):
     f.close()
 
 def getRamInfo():
-    """ Returns RAM size in mega bytes
+    """ @rtype: (int,int)
+    @return: total and available RAM sizes in mega bytes
     """
     result = None
     # LINUX

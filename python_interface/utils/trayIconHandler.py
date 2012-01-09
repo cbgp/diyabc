@@ -11,22 +11,26 @@ from PyQt4.QtGui import *
 class TrayIconHandler(QObject):
     """ Class to manipulate system tray icon
 
-    As far as i could test, all functionnalities work on 
-    - GNU/Linux (Gnome 2.* , KDE , *box , Xfce4)
-    - Windows (XP)
-    - MacOS (10.6)
+    As far as i could test, all functionnalities work on :
+        - GNU/Linux (Gnome 2.* , KDE , *box , Xfce4)
+        - Windows (XP)
+        - MacOS (10.6)
 
     automatic behaviour :
-    - display selected icon in the systray
-    - right click (on the icon) access to a QMenu
-    - show/hide the parent QWidget when the trayicon is clicked
+        - display selected icon in the systray
+        - right click (on the icon) access to a QMenu
+        - show/hide the parent QWidget when the trayicon is clicked
 
     functionnalities accessible by method calling :
-    - show/hide the systray icon
-    - display notifications
-    - play a gif instead of the icon image (to draw user's attention to an event for example)
+        - show/hide the systray icon
+        - display notifications
+        - play a gif instead of the icon image (to draw user's attention to an event for example)
     """
     def __init__(self,iconpath,icongifpath=None,menu=None,parent=None):
+        """
+        @param menu: QMenu to show on right click on the systray icon
+        @param parent: QWidget which will be shown/hidden on left click on the systray icon
+        """
         super(TrayIconHandler,self).__init__(parent)
         self.parent=parent
         self.iconpath = iconpath
@@ -54,23 +58,23 @@ class TrayIconHandler(QObject):
     def toggleTrayIcon(self,state):
         self.systray.setVisible(state)
 
-    def showTrayMessage(self,tit,msg):
-        """ Affiche un message dans le systray ssi le systray et visible
-        Si la diyabc n'est pas visible, fait clignoter le systrayicon
+    def showTrayMessage(self,title,msg):
+        """ Print a systray notification if the icon is visible. If the parent
+        window is not visible, enters in blink mode
         """
         if self.systray.isVisible():
-            self.systray.showMessage(tit,msg)
+            self.systray.showMessage(title,msg)
             if not self.parent.isActiveWindow():
                 self.enterSystrayBlink()
 
     def enterSystrayBlink(self):
-        """ Initie le clignotement de l'icone du systray
+        """ Initiates animation of the systray icon
         """
         if self.icongifpath != None:
             self.m_movie.start()
 
     def leaveSystrayBlink(self):
-        """ Stoppe le clignottement de l'icone du systray
+        """ Stops animation of systray icon
         """
         if self.icongifpath != None:
             self.m_movie.stop()
@@ -78,8 +82,8 @@ class TrayIconHandler(QObject):
 
     @pyqtSignature("")
     def updateTrayIcon(self):
-        """ anime l'icone du systray en changeant son image
-        Est déclenchée par un évennement d'un QMovie
+        """ Change the systray icon by the current image of the playing QMovie
+        Triggered by the image change of the QMovie
         """
         icon = QIcon(self.m_movie.currentPixmap())
         self.systray.setIcon(icon)

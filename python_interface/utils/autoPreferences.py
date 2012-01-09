@@ -24,36 +24,37 @@ class AutoPreferences(QFrame):
     """ Class to manage big amount of user settings into a Qt application
 
     This class inherits from QFrame and does the following jobs :
-    - display the user settings in a tabWidget (each category of field is a tab)
-    - save/load automaticaly the settings in a given config file using ConfigObj
-      where the structure is the same as the tabWidget (categories, fields)
-    - ability to manage invisible fields for 'non-user set' value (like toolbar
-      position for example)
+        - display the user settings in a tabWidget (each category of field is a tab)
+        - save/load automaticaly the settings in a given config file using ConfigObj
+          where the structure is the same as the tabWidget (categories, fields)
+        - ability to manage invisible fields for 'non-user set' value (like toolbar
+          position for example)
 
     To use an instance of this class, create a hashtable describing the structure
     of your settings and call the 'digest' method to initialize the data and the
     QFrame shape. For example : 
-    myconfStructure = {
-        category_1 : [
-            ["check","showTrayIcon","Show tray icon",False],
-            ["check","showTrayIcon","Show tray icon",False]
-        ]
-        category_2 : [
-            ["check","showTrayIcon","Show tray icon",False],
-            ["check","showTrayIcon","Show tray icon",False]
-        ]
-    }
-    myconfManager = AutoPreferences(None,"/home/user/.myapp/config.cfg","Settings")
-    myconfManager.digest(myconfStructure)
+
+    >>> myconfStructure = {
+    ...     category_1 : [
+    ...         ["check","showTrayIcon","Show tray icon",False],
+    ...         ["check","showTrayIcon","Show tray icon",False]
+    ...     ]
+    ...     category_2 : [
+    ...         ["check","showTrayIcon","Show tray icon",False],
+    ...         ["check","showTrayIcon","Show tray icon",False]
+    ...     ]
+    ... }
+    >>> myconfManager = AutoPreferences(None,"/home/user/.myapp/config.cfg","Settings")
+    >>> myconfManager.digest(myconfStructure)
 
     See the add* methods to know what to put in the list representing fields
 
     You can add different kind of fields to the settings :
-    - "check" : labeled check box
-    - "lineEdit" : labeled lineEdit
-    - "combo" : labeled combo box
-    - "pathEdit : labeled line edit with a 'browse' button to select a path with 
-      a Qt file dialog
+        - "check" : labeled check box
+        - "lineEdit" : labeled lineEdit
+        - "combo" : labeled combo box
+        - "pathEdit : labeled line edit with a 'browse' button to select a path with 
+          a Qt file dialog
 
     It is of course possible to inherit from this class to add more complicated 
     functionnalities like handling field change events or adding complex settings
@@ -124,6 +125,7 @@ class AutoPreferences(QFrame):
 
     def digest(self,dico_fields):
         """ Takes a hashtable as a parameter to build the graphical preference structure
+        @param dico_fields: hashtable which describes the settings structure
         """
         for cat in dico_fields.keys():
             self.addCategory(cat)
@@ -141,6 +143,7 @@ class AutoPreferences(QFrame):
 
     def addCategory(self,catname):
         """ Add a category i.e a tab which will contain fields
+        @param catname: name of the new category
         """
         if catname in self.categoryList:
             raise Exception("Category already exists")
@@ -165,10 +168,13 @@ class AutoPreferences(QFrame):
             exec('self.verticalLayout_%s.addWidget(self.scrollArea_%s) '%(catname,catname))
             exec('self.ui.tabWidget.addTab(self.tab_%s,"%s")'%(catname,catname))
 
-    def addPropCheck(self,catname,propname,proptext,defaultState):
+    def addPropCheck(self,catname,propname,labelText,defaultState):
         """ Add a field which is composed by a label and a checkBox
+        @param propname: name of the field
+        @param labelText: text associated to the field (label)
+        @param defaultState: checked or unchecked (True,False)
         """
-        self.dicoCategory[catname].append([propname,"check",proptext,defaultState])
+        self.dicoCategory[catname].append([propname,"check",labelText,defaultState])
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s) '%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel) '%(catname,propname))
@@ -177,16 +183,18 @@ class AutoPreferences(QFrame):
         exec('self.horizontalLayout_%s_%s = QtGui.QHBoxLayout(self.frame_%s_%s) '%(catname,propname,catname,propname))
         exec('self.horizontalLayout_%s_%s.setObjectName("horizontalLayout_%s_%s") '%(catname,propname,catname,propname))
         exec('self.%sCheck = QtGui.QCheckBox(self.frame_%s_%s) '%(propname,catname,propname))
-        exec('self.%sCheck.setText("%s") '%(propname,proptext))
+        exec('self.%sCheck.setText("%s") '%(propname,labelText))
         exec('self.%sCheck.setChecked(defaultState) '%(propname))
         exec('self.%sCheck.setObjectName("%sCheck") '%(propname,propname))
         exec('self.horizontalLayout_%s_%s.addWidget(self.%sCheck) '%(catname,propname,propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s) '%(catname,catname,propname))
 
-    def addPropCombo(self,catname,propname,labeltxt,dicoValTxt,l_ordered_val,default_value=None):
+    def addPropCombo(self,catname,propname,labelText,dicoValTxt,l_ordered_val,default_value=None):
         """ Add a field which is composed by a label and a comboBox
+        @param propname: name of the field
+        @param labelText: text associated to the field (label)
         """
-        self.dicoCategory[catname].append( [propname,"combo",dicoValTxt,l_ordered_val,default_value,labeltxt] )
+        self.dicoCategory[catname].append( [propname,"combo",dicoValTxt,l_ordered_val,default_value,labelText] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel)'%(catname,propname))
@@ -195,7 +203,7 @@ class AutoPreferences(QFrame):
         exec('self.horizontalLayout_%s_%s = QtGui.QHBoxLayout(self.frame_%s_%s)'%(catname,propname,catname,propname))
         exec('self.horizontalLayout_%s_%s.setObjectName("horizontalLayout_%s_%s")'%(catname,propname,catname,propname))
         exec('self.label_%s = QtGui.QLabel(self.frame_%s_%s)'%(propname,catname,propname))
-        exec('self.label_%s.setText("%s")'%(propname,labeltxt))
+        exec('self.label_%s.setText("%s")'%(propname,labelText))
         exec('self.label_%s.setObjectName("label_%s")'%(propname,propname))
         exec('self.horizontalLayout_%s_%s.addWidget(self.label_%s)'%(catname,propname,propname))
         exec('self.%sCombo = QtGui.QComboBox(self.frame_%s_%s)'%(propname,catname,propname))
@@ -213,6 +221,8 @@ class AutoPreferences(QFrame):
     def addPropLineEdit(self,catname,propname,labelText,default_value="",visibility=visible):
         """ Add a field which is composed by a label and a lineEdit
         The visibility can be set with a boolean parameter for example to save a 'non-user-set' value
+        @param propname: name of the field
+        @param labelText: text associated to the field (label)
         """
         self.dicoCategory[catname].append( [propname, "lineEdit", labelText, default_value] )
 
@@ -242,6 +252,8 @@ class AutoPreferences(QFrame):
 
     def addPropPathEdit(self,catname,propname,labelText,default_value=""):
         """ Add a field which is composed by a label, a 'browse' button and a lineEdit
+        @param propname: name of the field
+        @param labelText: text associated to the field (label)
         """
         self.dicoCategory[catname].append( [propname, "path", labelText, default_value] )
 
@@ -334,7 +346,7 @@ class AutoPreferences(QFrame):
                                     exec('self.ui.%sCombo.setCurrentIndex(ind)'%propname)
 
     def cancel(self):
-        """ pour annuler, on recharge depuis la derniere configuration sauvée
+        """ To cancel, the config is re-loaded from the last saved state (the file)
         """
         self.loadPreferences()
         self.close()
