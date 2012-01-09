@@ -257,13 +257,15 @@ def log(level,message):
 
         print("%s[%02d/%02d/%s %02d:%02d:%02d] {%s} [[%s]] %s : %s"%(color,dd.day,dd.month,dd.year,dd.hour,dd.minute,dd.second,level,func,WHITE,message))
 
-def addLine(filepath,line):
+def addLine(filepath,content):
+    """ Add a content at the end of a file
+    """
     f = open(filepath,'a')
-    f.write(line)
+    f.write(content)
     f.close()
 
 def getRamInfo():
-    """ Retourne la quantite de ram en mega octet
+    """ Returns RAM size in mega bytes
     """
     result = None
     # LINUX
@@ -324,6 +326,9 @@ def getRamInfo():
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 def checkRam():
+    """ Check if available RAM amount is at least equal to 2 GB
+    A notification is showed if not.
+    """
     try:
         raminfo = getRamInfo()
     except Exception as e:

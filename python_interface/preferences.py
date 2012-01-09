@@ -322,6 +322,15 @@ class Preferences(AutoPreferences):
         log(3,"Saving recent list")
         if not self.config.has_key("recent"):
             self.config["recent"] = {}
+        else:
+            # on nettoie les recents avant de les sauver
+            # pour éviter d'avoir des zombies qui restent
+            # quand on diminue le nombre de recent
+            for i in range(20):
+                if self.config["recent"].has_key(str(i)):
+                    del self.config["recent"][str(i)]
+                else:
+                    break
         recList = self.parent.getRecent()
         cfgRecentIndex = 0
         for ind,rec in enumerate(recList):

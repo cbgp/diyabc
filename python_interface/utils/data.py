@@ -415,7 +415,8 @@ class DataSnp():
         self.nsample = 0
         self.ntypeloc = {}
         # taille des populations
-        self.nind = {}
+        self.nind = []
+        self.nind_hash = {}
         self.readData()
 
     def readData(self):
@@ -452,6 +453,7 @@ class DataSnp():
         nbLoci = len(l0.split(' ')) - 3
 
         types = set()
+        types_list = []
         nbU = 0
         for i in range(len(datalines))[1:]:
             line = pat.sub(' ',datalines[i].strip())
@@ -460,10 +462,20 @@ class DataSnp():
                 raise Exception("Wrong number of loci at line %s in %s"%(i+1,self.filename))
             ctype = line.split(' ')[2]
             types.add(ctype)
-            if not self.nind.has_key(ctype):
-                self.nind[ctype] = 1
+
+            # gestion du nind version list
+            if ctype not in types_list:
+                types_list.append(ctype)
+                self.nind.append(1)
             else:
-                self.nind[ctype] += 1
+                index = types_list.index(ctype)
+                self.nind[index] += 1
+
+            # gestion du nind version hashtable
+            if not self.nind_hash.has_key(ctype):
+                self.nind_hash[ctype] = 1
+            else:
+                self.nind_hash[ctype] += 1
             if sexPresent and line.split(' ')[1].lower() == 'u':
                 raise Exception("Individual %s has unknown sex while some SNPs are on sex chromosomes"%line.split(' ')[0])
         nbSample = len(types)

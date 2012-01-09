@@ -1320,49 +1320,38 @@ class RefTableGenThread(QThread):
 
     def run (self):
         # lance l'executable
-        #outfile = os.path.expanduser("~/.diyabc/general.out")
         outfile = "%s/general.out"%self.parent.dir
         if os.path.exists(outfile):
             os.remove(outfile)
         fg = open(outfile,"w")
         try:
             self.log(2,"Running the executable for the reference table generation")
-            #print "/home/julien/vcs/git/diyabc/src-JMC-C++/gen -r %s -p %s"%(self.nb_to_gen,self.parent.dir)
-            #exPath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
             exPath = self.parent.parent.preferences_win.getExecutablePath()
             particleLoopSize = str(self.parent.parent.preferences_win.particleLoopSizeEdit.text())
             nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen , "-g", "%s"%particleLoopSize ,"-m", "-t", "%s"%nbMaxThread]
-            #print " ".join(cmd_args_list)
             time.sleep(1)
             self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
             addLine("%s/command.txt"%self.parent.dir,"Command launched : %s\n\n"%" ".join(cmd_args_list))
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             self.processus = p
         except Exception as e:
-            #print "Cannot find the executable of the computation program %s"%e
             self.problem = "Problem during program launch\n%s"%e
             self.emit(SIGNAL("refTableProblem(QString)"),self.problem)
-            #output.notify(self.parent(),"computation problem","Cannot find the executable of the computation program")
             fg.close()
             return
 
         # boucle toutes les secondes pour verifier les valeurs dans le fichier
         self.nb_done = 0
         while self.nb_done < self.nb_to_gen:
-            time.sleep(1)
-            #self.nb_done += 1
-            #print "plop"
-            #self.emit(SIGNAL("increment"))
+            time.sleep(2)
             # lecture 
             if os.path.exists("%s/reftable.log"%(self.parent.dir)):
-                #print 'open'
                 f = open("%s/reftable.log"%(self.parent.dir),"r")
                 lines = f.readlines()
                 f.close()
             else:
                 lines = ["OK","0"]
-            #print lines
             self.log(3,"Line red from reftable.log : %s"%lines)
             try:
                 if len(lines) > 1:
@@ -1396,13 +1385,10 @@ class RefTableGenThread(QThread):
             if p.poll() != None:
                 fg.close()
                 g = open(outfile,"r")
-                # TODO lire la fin de la sortie de l'ex
-                #data= g.readlines()
-                #print "data:%s"%data
-                #print "poll:%s"%p.poll()
+                last_out_line = g.readlines()[-1]
                 g.close()
                 if self.nb_done < self.nb_to_gen:
-                    self.problem = "Reftable generation program exited anormaly"
+                    self.problem = "Reftable generation program exited anormaly before the end of the generation\n\n%s"%last_out_line
                     self.emit(SIGNAL("refTableProblem(QString)"),self.problem)
                     return
             # TODO à revoir ac JM
@@ -1415,12 +1401,6 @@ class RefTableGenThread(QThread):
             #    return
 
         fg.close()
-
-        #for i in range(1000):
-        #    if self.cancel: break
-        #    time.sleep(0.01)
-        #    self.emit(SIGNAL("increment"))
-        #    #print "%d "%(i),
 
     @pyqtSignature("")
     def cancel(self):
