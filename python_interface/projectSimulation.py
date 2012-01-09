@@ -22,7 +22,7 @@ from geneticData.setGenDataSimulation import SetGeneticDataSimulation
 #from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 import os.path
 import output
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,addLine
 from datetime import datetime
 
 ## @class ProjectSimulation
@@ -152,7 +152,11 @@ class ProjectSimulation(Project):
 
     @pyqtSignature("")
     def on_btnStart_clicked(self):
-        self.writeHeaderSim()
+        try:
+            self.writeHeaderSim()
+        except Exception as e:
+            output.notify(self,"header writing error","%s"%e)
+            return
         try:
             nb_to_gen = int(self.ui.nbSetsReqEdit.text())
         except Exception as e:
@@ -391,6 +395,9 @@ class ProjectSimulationSnp(ProjectSimulation):
         self.locusNumberFrame.frame.setMaximumSize(QSize(300,1000))
         self.locusNumberFrame.frame.setMinimumSize(QSize(300,0))
 
+        self.ui.ascertSimFrame.show()
+        self.ui.frame_11.show()
+
         QObject.connect(self.locusNumberFrame.mhEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
         self.ui.nbSequencesLabel.hide()
         self.ui.nbSumStatsLabel.hide()
@@ -476,4 +483,17 @@ class ProjectSimulationSnp(ProjectSimulation):
                 numGroup+=1
                 str_locis += "{0} <{1}> [P] G{2}\n".format(self.dico_loc_nb["m"+cat.lower()],cat,numGroup)
         return str_locis
+
+    def writeHeaderSim(self):
+        super(ProjectSimulationSnp,self).writeHeaderSim()
+        headerFile = "%s/headersim.txt"%self.dir
+        try:
+            line_to_add = str(self.ui.ascBiasEdit.text())
+            val = float(line_to_add)
+        except Exception as e:
+            raise Exception("Ascertainment bias must be a float")
+        if not 0 < val < 1:
+            raise Exception("Ascertainment bias must be in [0,1]")
+
+        addLine(headerFile,"\n"+line_to_add)
 

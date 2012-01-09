@@ -67,6 +67,8 @@ class Project(baseProject,formProject):
         self.ui.browseDirButton.hide()
         #self.ui.groupBox.setVisible(False)
 
+        self.ui.ascertSimFrame.hide()
+
         # creation des onglets "set ..."
         self.hist_model_win = SetHistoricalModel(self)
         self.hist_model_win.ui.okButton.setText("VALIDATE AND SAVE")
