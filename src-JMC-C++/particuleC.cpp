@@ -1046,7 +1046,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     double ra;
     int OK=0;
     nGen=this->seqlist[iseq].t1-this->seqlist[iseq].t0;
-    ra= (float) nLineages/ (float)this->seqlist[iseq].N;
+    ra= (double) nLineages/ (double)this->seqlist[iseq].N;
     if (nGen<=30) {
       if (ra < (0.0031*nGen*nGen - 0.053*nGen + 0.7197)) {OK=1;}
     }
@@ -1054,6 +1054,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
       if (ra < (0.033*nGen + 1.7)) {OK=1;}
     }
     else if (ra<0.5) {OK=1;}
+	//cout <<"nGen="<<nGen<<"   nl="<<nLineages<<"   Ne="<<this->seqlist[iseq].N<<"    nl/Ne="<<ra<<"    ";
     return OK;
   }
 
@@ -1099,35 +1100,35 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     if (this->seqlist[iseq].N<1) {std::cout << "coal_pop : population size <1 ("<<this->seqlist[iseq].N<<") \n" ;exit(100);}
     if (trace) cout<<"pop size>=1\n";
     if (evalcriterium(iseq,nLineages) == 1) {		//CONTINUOUS APPROXIMATION
-      if (trace) cout << "Approximation continue final="<< final << "   nLineages=" << nLineages << "  pop=" <<this->seqlist[iseq].pop << "\n";
-      double start = this->seqlist[iseq].t0;
-      if (trace) cout << "start initial= " << start << "\n";
-      while ((nLineages>1)and((final)or((not final)and(start<this->seqlist[iseq].t1)))) {
-	double ra = this->mw.random();
-	while (ra == 0.0) {ra = this->mw.random();}
-	lra = log(ra);
-	start -= (this->locuslist[loc].coeffcoal*this->seqlist[iseq].N/nLineages/(nLineages-1.0))*lra;
-	if (trace)  cout << "coeffcoal = " << this->locuslist[loc].coeffcoal << "   N = " << this->seqlist[iseq].N << "   nl/(nl-1) = " << nLineages/(nLineages-1.0) << "\n";
-	if (trace) cout << "start courant= " << start << "  log(ra)=" << lra << "\n";
-	if ((final)or((not final)and(start<this->seqlist[iseq].t1))) {
-	  this->gt[loc].nodes[this->gt[loc].nnodes].pop = this->seqlist[iseq].pop;
-	  this->gt[loc].nodes[this->gt[loc].nnodes].height=start;
-	  this->gt[loc].nnodes++;
-	  if (trace) cout <<"nouveau noeud = "<<this->gt[loc].nnodes-1<<"    nLineages = "<<nLineages<<"\n";
-	  this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
-	  this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
-	  if (trace) cout << "retour premier noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
-	  nLineages--;
-	  this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
-	  this->gt[loc].nbranches++;
-	  this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
-	  this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
-	  if (trace) cout << "retour second noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
-	  this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
-	  this->gt[loc].nbranches++;
-	  if (trace) cout << "nbranches = " << this->gt[loc].nbranches << "\n";
-	}
-      }
+		if (trace) cout << "Approximation continue final="<< final << "   nLineages=" << nLineages << "  pop=" <<this->seqlist[iseq].pop << "\n";
+		double start = this->seqlist[iseq].t0;
+		if (trace) cout << "start initial= " << start << "\n";
+		while ((nLineages>1)and((final)or((not final)and(start<this->seqlist[iseq].t1)))) {
+			double ra = this->mw.random();
+			while (ra == 0.0) {ra = this->mw.random();}
+			lra = log(ra);
+			start -= (this->locuslist[loc].coeffcoal*this->seqlist[iseq].N/nLineages/(nLineages-1.0))*lra;
+			if (trace)  cout << "coeffcoal = " << this->locuslist[loc].coeffcoal << "   N = " << this->seqlist[iseq].N << "   nl/(nl-1) = " << nLineages/(nLineages-1.0) << "\n";
+			if (trace) cout << "start courant= " << start << "  log(ra)=" << lra << "\n";
+			if ((final)or((not final)and(start<this->seqlist[iseq].t1))) {
+				this->gt[loc].nodes[this->gt[loc].nnodes].pop = this->seqlist[iseq].pop;
+				this->gt[loc].nodes[this->gt[loc].nnodes].height=start;
+				this->gt[loc].nnodes++;
+				if (trace) cout <<"nouveau noeud = "<<this->gt[loc].nnodes-1<<"    nLineages = "<<nLineages<<"\n";
+				this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
+				this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
+				if (trace) cout << "retour premier noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
+				nLineages--;
+				this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
+				this->gt[loc].nbranches++;
+				this->gt[loc].branches[this->gt[loc].nbranches].top=this->gt[loc].nnodes-1;
+				this->gt[loc].branches[this->gt[loc].nbranches].bottom=draw_node(loc,iseq,nLineages);
+				if (trace) cout << "retour second noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
+				this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
+				this->gt[loc].nbranches++;
+				if (trace) cout << "nbranches = " << this->gt[loc].nbranches << "\n";
+			}
+		}
     }
     else {											//GENERATION PER GENERATION
       //cout << "Génération par génération pour le locus "<<loc<<"\n";
@@ -1320,18 +1321,24 @@ void ParticleC::cherche_branchesOK(int loc) {
 void ParticleC::put_one_mutation(int loc) {
     this->gt[loc].nmutot=1;
     cherche_branchesOK(loc);
-    double r,s=0.0,lengthtot=0.0;
+    double ra,r,s=0.0,lengthtot=0.0;
     int b;
     for (b=0;b<this->gt[loc].nbranches;b++) {
       if (this->gt[loc].branches[b].OK) lengthtot +=this->gt[loc].branches[b].length;
       this->gt[loc].branches[b].nmut = 0;
       //if (loc==1) cout<<"longueur de la branche "<<b<<" = "<<this->gt[loc].branches[b].length<<"\n";
     }
-    r=this->mw.random()*lengthtot;
+    ra=this->mw.random();
+    r=ra*lengthtot;
     //if (loc<1) cout<<"lengthtot="<<lengthtot<<"     r="<<r<<"\n";
-    b=0;s=this->gt[loc].branches[b].length;
+	b=0;while (not this->gt[loc].branches[b].OK) b++;
+    s=this->gt[loc].branches[b].length;
     while (s<r) {b++; if (this->gt[loc].branches[b].OK) s +=this->gt[loc].branches[b].length;};
     this->gt[loc].branches[b].nmut = 1;
+	if ((b==0)and(not this->gt[loc].branches[b].OK)) {
+		cout<<"lengthtot="<<lengthtot<<"     r="<<r<<"    s="<<s<<"\n";
+		exit(2);
+	}
     //if (loc<10) cout<<"mutation dans la branche "<<b<<" sur "<<this->gt[loc].nbranches<<"\n";
     //if (loc<10) cout<<nOK<<" branches mutables sur "<<this->gt[loc].nbranches<<"\n";
     //if (loc<10) cout<<"locus "<<loc<<"   numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
@@ -1555,6 +1562,7 @@ void ParticleC::put_one_mutation(int loc) {
 		if (this->locuslist[loc].type>=10){
 			ngref=0;for (int i=0;i<this->data.ss[cat][sa];i++) if (this->ref[cat][sa][i]) ngref++;
 			ordre[sa] = melange2(this->mw,ngref,this->data.ss[cat][sa]);
+			//for (int i=0;i<this->data.ss[cat][sa];i++) ordre[sa][i] = i;
 		} else {
 			ordre[sa] = melange(this->mw,this->data.ss[cat][sa]);
 		}
@@ -1688,7 +1696,17 @@ void ParticleC::put_one_mutation(int loc) {
     //cout<<"dans polymref fin   n1="<<n1<<"   n="<<n<<"\n";
     if (n==0) exit(1);
     p=(double)n1/(double)n;
-	if ((n1==0)or(n1==n)) cout<<"locus "<<loc<<"   n1="<<n1<<"   n="<<n<<" \n";
+	if ((n1==0)or(n1==n)) {
+		cout<<"locus "<<loc<<"   n1="<<n1<<"   n="<<n<<" \n";
+		for (int b=0;b<this->gt[loc].nbranches;b++)	if (this->gt[loc].branches[b].OK) {
+			cout<<"branches["<<b<<"].bottom ="<<this->gt[loc].branches[b].bottom<<"    branches["<<b<<"].top ="<<this->gt[loc].branches[b].top;
+			cout <<"    "<<this->gt[loc].branches[b].length<<"     "<<this->gt[loc].branches[b].nmut<<"\n";
+		}
+		for (int b=0;b<this->gt[loc].nbranches;b++) if (this->gt[loc].branches[b].nmut>0) {
+			cout<<"BRANCHE MUTEE = "<<b<<"   BOTTOM="<<this->gt[loc].branches[b].bottom<<"   TOP="<<this->gt[loc].branches[b].top;
+			cout<<"    LONGUEUR="<<this->gt[loc].branches[b].length<<"   NMUT="<<this->gt[loc].branches[b].nmut<<"\n";
+		}
+	}
     if (p > 0.5) poly=(p <= 1.0-this->reffreqmin);
     else         poly=(p >= this->reffreqmin);
     //if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
