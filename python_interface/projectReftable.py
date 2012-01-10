@@ -446,11 +446,15 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.ui.runReftableButton.setDisabled(False)
         self.ui.progressBar.setValue(0)
         self.ui.progressBar.hide()
+        self.ui.fromToFrame.hide()
 
     def startUiGenReftable(self):
         self.ui.runReftableButton.setText("Running ...")
         self.ui.runReftableButton.setDisabled(True)
         self.ui.progressBar.show()
+        self.ui.fromToFrame.show()
+        self.ui.nbReqFromLabel.setText("from %s"%self.ui.nbSetsDoneEdit.text())
+        self.ui.nbReqToLabel.setText("to %s"%self.ui.nbSetsReqEdit.text())
  
     def incProgress(self,done,time_remaining):
         """Incremente la barre de progression de la génération de la reftable

@@ -108,6 +108,8 @@ class Project(baseProject,formProject):
         self.ui.dirEdit.setStyleSheet("background-color: #DEF8FF")
         self.ui.dataFileEdit.setStyleSheet("background-color: #DEF8FF")
 
+        self.ui.fromToFrame.hide()
+
     def initializeRNG(self):
         """ à lancer une fois que le dossier du projet a été créé
         """
