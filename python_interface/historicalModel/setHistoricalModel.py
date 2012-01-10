@@ -1108,16 +1108,33 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         """
         return len(self.paramList)
 
+    def isVariableParam(self,parambox):
+        """ @rtype: boolean
+        @return: si le paramètre est variable
+        """
+        mini = float(parambox.findChild(QLineEdit,"minValueParamEdit").text())
+        maxi = float(parambox.findChild(QLineEdit,"maxValueParamEdit").text())
+        return ((maxi > 0) and (maxi-mini > 0.000001))
+
     def getNbVariableParam(self):
         """ retourne le nombre de paramètres du modèle historique
         """
         nbParam = 0
         for box in self.paramList:
-            mini = float(box.findChild(QLineEdit,"minValueParamEdit").text())
-            maxi = float(box.findChild(QLineEdit,"maxValueParamEdit").text())
-            if (maxi > 0) and (maxi-mini > 0.000001):
+            if self.isVariableParam(box):
                 nbParam+=1
         return nbParam
+
+    def getFixedParamList(self):
+        """ @rtype: str list
+        @return: la liste des noms des paramètres fixes
+        """
+        fixed_list = []
+        for box in self.paramList:
+            name = str(box.findChild(QLabel,"paramNameLabel").text())
+            if not self.isVariableParam(box):
+                fixed_list.append(name)
+        return fixed_list
 
     def getParamTableHeader(self):
         """ retourne la chaine des noms des paramètres pour le conf.th.tmp

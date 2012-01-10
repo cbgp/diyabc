@@ -12,6 +12,7 @@ from setCondition import SetCondition
 from geneticData.setGenDataAnalysis import SetGeneticDataAnalysis
 from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonConfidence import SetupComparisonConfidence
+from utils.cbgpUtils import log
 
 formHistModelDrawn,baseHistModelDrawn = uic.loadUiType("uis/setHistFrame.ui")
 
@@ -38,6 +39,8 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
 
         self.addTheConditions()
 
+        self.hideFixedParams()
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -60,6 +63,14 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
         self.ui.horizontalLayout_3.setAlignment(QtCore.Qt.AlignLeft)
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
+
+    def hideFixedParams(self):
+        fixed_params_list = self.parent.parent.hist_model_win.getFixedParamList()
+        for box in self.paramList:
+            name = str(box.findChild(QLabel,"paramNameLabel").text())
+            if name in fixed_params_list:
+                box.hide()
+                log(3,"Hiding parameter %s because its value is fixed"%name)
 
     def addTheSc(self):
         
