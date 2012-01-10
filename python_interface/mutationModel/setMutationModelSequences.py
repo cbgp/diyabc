@@ -127,26 +127,18 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         }
 
     def showJukes(self):
-        self.ui.firstFrame.show()
-        self.ui.secondFrame.show()
-        self.ui.thirdFrame.hide()
-        self.ui.fourthFrame.hide()
-        self.ui.fifthFrame.hide()
-        self.ui.sixthFrame.hide()
+        for prefix in ["mmr","ilmr"]:
+            exec("self.ui.%sFrame.show()"%prefix)
+        for prefix in ["mc1","ilc1","mc2","ilc2"]:
+            exec("self.ui.%sFrame.hide()"%prefix)
     def showKimuraHase(self):
-        self.ui.firstFrame.show()
-        self.ui.secondFrame.show()
-        self.ui.thirdFrame.show()
-        self.ui.fourthFrame.show()
-        self.ui.fifthFrame.hide()
-        self.ui.sixthFrame.hide()
+        for prefix in ["mmr","ilmr","mc1","ilc1"]:
+            exec("self.ui.%sFrame.show()"%prefix)
+        for prefix in ["mc2","ilc2"]:
+            exec("self.ui.%sFrame.hide()"%prefix)
     def showTamura(self):
-        self.ui.firstFrame.show()
-        self.ui.secondFrame.show()
-        self.ui.thirdFrame.show()
-        self.ui.fourthFrame.show()
-        self.ui.fifthFrame.show()
-        self.ui.sixthFrame.show()
+        for prefix in ["mmr","ilmr","mc1","ilc1","mc2","ilc2"]:
+            exec("self.ui.%sFrame.show()"%prefix)
 
     def mmrGamma(self,act):
         if act:

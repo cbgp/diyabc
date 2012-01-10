@@ -119,12 +119,12 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
         for field in self.field_names_dico.keys():
             field.setMaximumSize(QtCore.QSize(100, 25))
 
-        self.ui.firstFrame.setMaximumSize(QtCore.QSize(250,100))
-        self.ui.secondFrame.setMaximumSize(QtCore.QSize(250,100))
-        self.ui.thirdFrame.setMaximumSize(QtCore.QSize(250,100))
-        self.ui.fourthFrame.setMaximumSize(QtCore.QSize(250,100))
-        self.ui.fifthFrame.setMaximumSize(QtCore.QSize(250,100))
-        self.ui.sixthFrame.setMaximumSize(QtCore.QSize(250,100))
+        self.ui.mmrFrame.setMaximumSize(QtCore.QSize(250,100))
+        self.ui.ilmrFrame.setMaximumSize(QtCore.QSize(250,100))
+        self.ui.mc1Frame.setMaximumSize(QtCore.QSize(250,100))
+        self.ui.ilc1Frame.setMaximumSize(QtCore.QSize(250,100))
+        self.ui.mc2Frame.setMaximumSize(QtCore.QSize(250,100))
+        self.ui.ilc2Frame.setMaximumSize(QtCore.QSize(250,100))
 
 
     def exit(self):
@@ -148,30 +148,22 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
     def showJukes(self):
         """ clic sur le modèle jukes kantor, montre les deux premières lignes
         """
-        self.ui.firstFrame.show()
-        self.ui.secondFrame.show()
-        self.ui.thirdFrame.hide()
-        self.ui.fourthFrame.hide()
-        self.ui.fifthFrame.hide()
-        self.ui.sixthFrame.hide()
+        for prefix in ["mmr","ilmr"]:
+            exec("self.ui.%sFrame.show()"%prefix)
+        for prefix in ["mc1","ilc1","mc2","ilc2"]:
+            exec("self.ui.%sFrame.hide()"%prefix)
     def showKimuraHase(self):
         """ clic sur le modèle kimura ou hase, montre les quatres premières lignes
         """
-        self.ui.firstFrame.show()
-        self.ui.secondFrame.show()
-        self.ui.thirdFrame.show()
-        self.ui.fourthFrame.show()
-        self.ui.fifthFrame.hide()
-        self.ui.sixthFrame.hide()
+        for prefix in ["mmr","ilmr","mc1","ilc1"]:
+            exec("self.ui.%sFrame.show()"%prefix)
+        for prefix in ["mc2","ilc2"]:
+            exec("self.ui.%sFrame.hide()"%prefix)
     def showTamura(self):
         """ clic sur le modèle tamura, montre toutes les lignes
         """
-        self.ui.firstFrame.show()
-        self.ui.secondFrame.show()
-        self.ui.thirdFrame.show()
-        self.ui.fourthFrame.show()
-        self.ui.fifthFrame.show()
-        self.ui.sixthFrame.show()
+        for prefix in ["mmr","ilmr","mc1","ilc1","mc2","ilc2"]:
+            exec("self.ui.%sFrame.show()"%prefix)
 
     def getMutationConf(self):
         """ renvoie les valeurs actuelles

@@ -135,7 +135,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_26">
       <item>
-       <widget class="QFrame" name="frame_5">
+       <widget class="QFrame" name="mmrFrame">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -375,7 +375,7 @@ rate</string>
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="frame_4">
+       <widget class="QFrame" name="ilmrFrame">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -600,7 +600,7 @@ mutation rate</string>
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="frame_2">
+       <widget class="QFrame" name="mcpFrame">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -836,7 +836,7 @@ coefficient P</string>
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="frame_3">
+       <widget class="QFrame" name="ilcpFrame">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -1058,7 +1058,7 @@ coefficient P</string>
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="frame_7">
+       <widget class="QFrame" name="msrFrame">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -1295,7 +1295,7 @@ rate</string>
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="frame_8">
+       <widget class="QFrame" name="ilsrFrame">
         <property name="maximumSize">
          <size>
           <width>16777215</width>

@@ -105,12 +105,12 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
         for field in self.field_names_dico.keys():
             field.setMaximumSize(QtCore.QSize(100, 25))
 
-        self.ui.frame_5.setMaximumSize(QtCore.QSize(250, 80))
-        self.ui.frame_2.setMaximumSize(QtCore.QSize(250, 80))
-        self.ui.frame_3.setMaximumSize(QtCore.QSize(250, 80))
-        self.ui.frame_4.setMaximumSize(QtCore.QSize(250, 80))
-        self.ui.frame_7.setMaximumSize(QtCore.QSize(250, 80))
-        self.ui.frame_8.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.mmrFrame.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.ilmrFrame.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.mcpFrame.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.ilcpFrame.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.msrFrame.setMaximumSize(QtCore.QSize(250, 80))
+        self.ui.ilsrFrame.setMaximumSize(QtCore.QSize(250, 80))
 
     def getMutationConf(self):
         """ renvoie les valeurs actuelles

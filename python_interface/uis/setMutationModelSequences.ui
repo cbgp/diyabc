@@ -137,7 +137,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_26">
         <item>
-         <widget class="QFrame" name="firstFrame">
+         <widget class="QFrame" name="mmrFrame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -406,7 +406,7 @@ per generation)</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="secondFrame">
+         <widget class="QFrame" name="ilmrFrame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -652,7 +652,7 @@ around mean)</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="thirdFrame">
+         <widget class="QFrame" name="mc1Frame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -918,7 +918,7 @@ k_C/T</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="fourthFrame">
+         <widget class="QFrame" name="ilc1Frame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -1161,7 +1161,7 @@ around mean)</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="fifthFrame">
+         <widget class="QFrame" name="mc2Frame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -1429,7 +1429,7 @@ k_A/G</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="sixthFrame">
+         <widget class="QFrame" name="ilc2Frame">
           <property name="maximumSize">
            <size>
             <width>16777215</width>

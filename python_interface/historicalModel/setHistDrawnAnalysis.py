@@ -425,7 +425,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
             return False
 
     def getNextWidgetSnp(self):
-        """ methode appelée par ping pong
+        """ méthode appelée par ping pong
         """
         if self.analysis.category == "bias":
             #next_title = "bias and precision"
@@ -435,7 +435,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
             return SetupComparisonConfidence(self.analysis,self.parent)
 
     def getNextWidgetMsatSeq(self):
-        """ methode appelée par ping pong
+        """ méthode appelée par ping pong
         """
         return SetGeneticDataAnalysis(self.analysis,self.parent.parent)
 

@@ -32,6 +32,13 @@ class SetMutationModelMsatAnalysis(SetMutationModelMsat):
         if self.allValid():
             self.exit()
             self.parent.setMutationValid_dico[self.box_group] = True
+    
+    def hideFixedParameters(self):
+        for prefix in ["mmr","mcp","msr"]:
+            exec("mini =    float(str(self.ui.%sMinEdit.text()))"%prefix)
+            exec("maxi =    float(str(self.ui.%sMaxEdit.text()))"%prefix)
+            if (maxi - mini) < 0.00000001:
+                exec("self.ui.%sFrame.setDisabled(True)"%prefix)
 
 
 
