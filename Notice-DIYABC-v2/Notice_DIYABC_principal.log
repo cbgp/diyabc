@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.12.17)  10 JAN 2012 17:53
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.12.17)  12 JAN 2012 11:36
 entering extended mode
  %&-line parsing enabled.
 **Notice_DIYABC_principal.tex
@@ -459,14 +459,402 @@ Underfull \hbox (badness 10000) in paragraph at lines 534--535
 
  []
 
-[16]) (./biblio.tex
+[16]) (./gui_description.tex
+Underfull \hbox (badness 10000) in paragraph at lines 3--4
+
+ []
+
+<gui_pictures/Capture-DIYABC-1.png, id=203, 1005.7575pt x 782.925pt>
+File: gui_pictures/Capture-DIYABC-1.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-1.png>
+Underfull \hbox (badness 10000) in paragraph at lines 12--13
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 14--17
+
+ []
+
+<gui_pictures/Capture-DIYABC-2.png, id=205, 443.6575pt x 336.25626pt>
+File: gui_pictures/Capture-DIYABC-2.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-2.png>
+<gui_pictures/Capture-DIYABC-3.png, id=206, 442.65375pt x 335.2525pt>
+File: gui_pictures/Capture-DIYABC-3.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-3.png>
+<gui_pictures/Capture-DIYABC-4.png, id=207, 440.64626pt x 328.22626pt>
+File: gui_pictures/Capture-DIYABC-4.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-4.png> [17
+
+ <./gui_pictures/Capture-DIYABC-1.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 30--33
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 34--35
+
+ []
+
+<gui_pictures/Capture-DIYABC-5.png, id=213, 1011.78pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-5.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-5.png> [18 <./gui_pictures/Capture-DIYABC-2.pn
+g (PNG copy)> <./gui_pictures/Capture-DIYABC-3.png (PNG copy)> <./gui_pictures/
+Capture-DIYABC-4.png (PNG copy)> <./gui_pictures/Capture-DIYABC-5.png (PNG copy
+)>]
+Underfull \hbox (badness 10000) in paragraph at lines 40--41
+
+ []
+
+<gui_pictures/Capture-DIYABC-6.png, id=219, 1011.78pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-6.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-6.png>
+Underfull \hbox (badness 10000) in paragraph at lines 47--48
+
+ []
+
+<gui_pictures/Capture-DIYABC-7.png, id=220, 1011.78pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-7.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-7.png>
+Underfull \hbox (badness 10000) in paragraph at lines 52--53
+
+ []
+
+File: gui_pictures/Capture-DIYABC-6.png Graphic file (type png)
+<use gui_pictures/Capture-DIYABC-6.png> [19 <./gui_pictures/Capture-DIYABC-6.pn
+g (PNG copy)> <./gui_pictures/Capture-DIYABC-7.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 62--63
+
+ []
+
+File: gui_pictures/Capture-DIYABC-7.png Graphic file (type png)
+<use gui_pictures/Capture-DIYABC-7.png>
+Underfull \hbox (badness 10000) in paragraph at lines 66--67
+
+ []
+
+[20] <gui_pictures/Capture-DIYABC-8.png, id=227, 1009.7725pt x 779.91376pt>
+File: gui_pictures/Capture-DIYABC-8.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-8.png>
+<gui_pictures/Capture-DIYABC-9.png, id=228, 657.45625pt x 463.7325pt>
+File: gui_pictures/Capture-DIYABC-9.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-9.png>
+Overfull \hbox (69.11024pt too wide) in paragraph at lines 75--76
+[]\OT1/cmr/m/n/10 Clicking on the [] but-ton will cre-ate the new project di-re
+c-tory in the \OT1/cmtt/m/n/10 /home/cornuet/workspace/diyabc/tests
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 75--76
+
+ []
+
+<gui_pictures/Capture-DIYABC-10.png, id=229, 1010.77625pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-10.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-10.png> [21 <./gui_pictures/Capture-DIYABC-8.p
+ng (PNG copy)> <./gui_pictures/Capture-DIYABC-9.png (PNG copy)>] [22 <./gui_pic
+tures/Capture-DIYABC-10.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 83--84
+
+ []
+
+<gui_pictures/Capture-DIYABC-11.png, id=236, 1010.77625pt x 779.91376pt>
+File: gui_pictures/Capture-DIYABC-11.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-11.png>
+Underfull \hbox (badness 10000) in paragraph at lines 87--88
+
+ []
+
+<gui_pictures/Capture-DIYABC-12.png, id=237, 1000.73875pt x 808.01875pt>
+File: gui_pictures/Capture-DIYABC-12.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-12.png>
+Underfull \hbox (badness 10000) in paragraph at lines 91--92
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 93--94
+
+ []
+
+[23 <./gui_pictures/Capture-DIYABC-11.png (PNG copy)> <./gui_pictures/Capture-D
+IYABC-12.png (PNG copy)>]
+<gui_pictures/Capture-DIYABC-13.png, id=241, 1008.76875pt x 777.90625pt>
+File: gui_pictures/Capture-DIYABC-13.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-13.png>
+Underfull \hbox (badness 10000) in paragraph at lines 97--98
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 99--100
+
+ []
+
+<gui_pictures/Capture-DIYABC-14.png, id=242, 1012.78375pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-14.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-14.png> [24 <./gui_pictures/Capture-DIYABC-13.
+png (PNG copy)> <./gui_pictures/Capture-DIYABC-14.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 106--107
+
+ []
+
+<gui_pictures/Capture-DIYABC-15.png, id=247, 1012.78375pt x 779.91376pt>
+File: gui_pictures/Capture-DIYABC-15.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-15.png>
+Underfull \hbox (badness 10000) in paragraph at lines 110--112
+
+ []
+
+<gui_pictures/Capture-DIYABC-16.png, id=248, 1010.77625pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-16.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-16.png>
+Underfull \hbox (badness 10000) in paragraph at lines 115--116
+
+ []
+
+[25 <./gui_pictures/Capture-DIYABC-15.png (PNG copy)> <./gui_pictures/Capture-D
+IYABC-16.png (PNG copy)>]
+<gui_pictures/Capture-DIYABC-17.png, id=252, 1011.78pt x 779.91376pt>
+File: gui_pictures/Capture-DIYABC-17.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-17.png>
+Underfull \hbox (badness 10000) in paragraph at lines 119--120
+
+ []
+
+<gui_pictures/Capture-DIYABC-18.png, id=253, 1008.76875pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-18.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-18.png>
+Underfull \hbox (badness 10000) in paragraph at lines 123--124
+
+ []
+
+<gui_pictures/Capture-DIYABC-19.png, id=254, 1011.78pt x 779.91376pt>
+File: gui_pictures/Capture-DIYABC-19.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-19.png> [26 <./gui_pictures/Capture-DIYABC-17.
+png (PNG copy)> <./gui_pictures/Capture-DIYABC-18.png (PNG copy)>]
+<gui_pictures/Capture-DIYABC-20.png, id=258, 1011.78pt x 781.92125pt>
+File: gui_pictures/Capture-DIYABC-20.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-20.png>
+Underfull \hbox (badness 10000) in paragraph at lines 131--132
+
+ []
+
+<gui_pictures/Capture-DIYABC-21.png, id=259, 1010.77625pt x 781.92125pt>
+File: gui_pictures/Capture-DIYABC-21.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-21.png> [27 <./gui_pictures/Capture-DIYABC-19.
+png (PNG copy)> <./gui_pictures/Capture-DIYABC-20.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 135--136
+
+ []
+
+<gui_pictures/Capture-DIYABC-22.png, id=263, 1010.77625pt x 781.92125pt>
+File: gui_pictures/Capture-DIYABC-22.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-22.png>
+<gui_pictures/Capture-DIYABC-23.png, id=264, 506.89375pt x 305.14pt>
+File: gui_pictures/Capture-DIYABC-23.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-23.png> [28 <./gui_pictures/Capture-DIYABC-21.
+png (PNG copy)> <./gui_pictures/Capture-DIYABC-22.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 146--147
+
+ []
+
+<gui_pictures/Capture-DIYABC-24.png, id=268, 377.41pt x 165.61874pt>
+File: gui_pictures/Capture-DIYABC-24.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-24.png>
+Underfull \hbox (badness 10000) in paragraph at lines 151--152
+
+ []
+
+<gui_pictures/Capture-DIYABC-25.png, id=269, 911.405pt x 276.03125pt>
+File: gui_pictures/Capture-DIYABC-25.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-25.png>
+Underfull \hbox (badness 10000) in paragraph at lines 155--156
+
+ []
+
+<gui_pictures/Capture-DIYABC-26.png, id=270, 1008.76875pt x 782.925pt>
+File: gui_pictures/Capture-DIYABC-26.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-26.png> [29 <./gui_pictures/Capture-DIYABC-23.
+png> <./gui_pictures/Capture-DIYABC-24.png (PNG copy)> <./gui_pictures/Capture-
+DIYABC-25.png (PNG copy)> <./gui_pictures/Capture-DIYABC-26.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 161--162
+
+ []
+
+<gui_pictures/Capture-DIYABC-30.png, id=275, 1011.78pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-30.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-30.png>
+<gui_pictures/Capture-DIYABC-31.png, id=276, 1011.78pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-31.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-31.png>
+<gui_pictures/Capture-DIYABC-32.png, id=277, 1011.78pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-32.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-32.png>
+<gui_pictures/Capture-DIYABC-33.png, id=278, 1011.78pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-33.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-33.png>
+<gui_pictures/Capture-DIYABC-34.png, id=279, 1011.78pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-34.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-34.png>
+
+LaTeX Warning: File `gui_pictures/Capture-DIYABC-35.png' not found on input lin
+e 185.
+
+
+! Package pdftex.def Error: File `gui_pictures/Capture-DIYABC-35.png' not found
+.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.185 ...=0.3]{gui_pictures/Capture-DIYABC-35.png}
+                                                  
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+<gui_pictures/Capture-DIYABC-36.png, id=280, 1011.78pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-36.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-36.png>
+<gui_pictures/Capture-DIYABC-37.png, id=281, 1011.78pt x 780.9175pt>
+File: gui_pictures/Capture-DIYABC-37.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-37.png>) (./biblio.tex
+Overfull \hbox (3.88544pt too wide) in paragraph at lines 163--1
+[] \OT1/cmr/m/n/10 The pro-gram re-quires
+ []
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.1 \begin{thebibliography}{a}
+                              
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.1 \begin{thebibliography}{a}
+                              
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+[30 <./gui_pictures/Capture-DIYABC-30.png (PNG copy)> <./gui_pictures/Capture-D
+IYABC-31.png (PNG copy)>]
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.1 \begin{thebibliography}{a}
+                              
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.1 \begin{thebibliography}{a}
+                              
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+[31 <./gui_pictures/Capture-DIYABC-32.png (PNG copy)> <./gui_pictures/Capture-D
+IYABC-33.png (PNG copy)>]
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.1 \begin{thebibliography}{a}
+                              
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.1 \begin{thebibliography}{a}
+                              
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \vskip 
+l.1 \begin{thebibliography}{a}
+                              
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+[32 <./gui_pictures/Capture-DIYABC-34.png (PNG copy)> <./gui_pictures/Capture-D
+IYABC-36.png (PNG copy)>] [33 <./gui_pictures/Capture-DIYABC-37.png (PNG copy)>
+]
 Missing character: There is no Ž in font cmr10!
 Missing character: There is no Ž in font cmr10!
 Missing character: There is no Ž in font cmr10!
 Missing character: There is no Ž in font cmr10!
 Missing character: There is no Ð in font cmr10!
- [17
-
+ [34
 
 ]
 Underfull \hbox (badness 2409) in paragraph at lines 45--46
@@ -474,45 +862,42 @@ Underfull \hbox (badness 2409) in paragraph at lines 45--46
 -con and A. Es-toup, 2010.
  []
 
-[18]
-
-Package lineno Warning: Linenumber reference failed, 
-(lineno)                rerun to get it right.
-
-) [19] (./Notice_DIYABC_principal.aux) ) 
+[35]) [36] (./Notice_DIYABC_principal.aux) ) 
 Here is how much of TeX's memory you used:
- 3135 strings out of 493848
- 40443 string characters out of 1152822
- 109560 words of memory out of 3000000
- 6350 multiletter control sequences out of 15000+50000
- 17907 words of font info for 62 fonts, out of 3000000 for 9000
+ 3342 strings out of 493848
+ 46585 string characters out of 1152822
+ 109138 words of memory out of 3000000
+ 6518 multiletter control sequences out of 15000+50000
+ 18212 words of font info for 63 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 27i,11n,28p,1346b,307s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/p
-ublic/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfo
-nts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx
-ti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><
-/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/
-texmf-texlive/fonts/type1/public/amsfonts/cmextra/cmex7.pfb></usr/share/texmf-t
-exlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/font
-s/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texmf-texlive/fonts/type1/publ
-ic/amsfonts/cm/cmmi7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
-cm/cmmib10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.p
-fb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/sha
-re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-tex
-live/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texmf-texlive/fonts/ty
-pe1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-texlive/fonts/type1/public/am
-sfonts/cm/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr
-8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr
-/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texmf
--texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fo
-nts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/type1/pu
-blic/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
-ts/cm/cmti8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10
-.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on Notice_DIYABC_principal.pdf (20 pages, 555562 bytes).
+ 27i,11n,28p,1336b,311s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/typ
+e1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/a
+msfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
+cmbxti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmcsc10.p
+fb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/sh
+are/texmf-texlive/fonts/type1/public/amsfonts/cmextra/cmex7.pfb></usr/share/tex
+mf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/
+fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-texlive/fonts/type1
+/public/amsfonts/cm/cmmi5.pfb></usr/share/texmf-texlive/fonts/type1/public/amsf
+onts/cm/cmmi7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi
+b10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></us
+r/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texm
+f-texlive/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fo
+nts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texmf-texlive/fonts/type1/pub
+lic/amsfonts/cm/cmr6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
+cm/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr/share/
+texmf-texlive/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texmf-texli
+ve/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texmf-texlive/fonts/typ
+e1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/a
+msfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/c
+mti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti8.pfb></
+usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/t
+exmf-texlive/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on Notice_DIYABC_principal.pdf (37 pages, 2853168 bytes).
 PDF statistics:
- 291 PDF objects out of 1000 (max. 8388607)
+ 391 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 71 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 236 words of extra memory for PDF output out of 10000 (max. 10000000)
 

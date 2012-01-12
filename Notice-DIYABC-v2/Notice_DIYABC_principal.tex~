@@ -98,7 +98,7 @@ We thank Mark Beaumont who has been at the origin of our interest for ABC. He of
 \begin{itemize}
 \item \textbf{version 0 :} Cornuet J.M., F. Santos, M.A. Beaumont, C.P. Robert, J.M. Marin, D.J. Balding, T. Guillemaud and A. Estoup. Inferring population history with DIYABC: a user-friendly approach to Approximate Bayesian Computations (2008) \emph{Bioinformatics}, \textbf{24} (23), 2713-2719.
 \item  \textbf{version 1 :}  Cornuet J.M., V. Ravign\'e and A. Estoup, 2010. Inference on population history and model checking using DNA sequence and microsatellite data with the sofware DIYABC (v1.0) (2010) \emph{BMC Bioinformatics}, \textbf{11}, 401.
-\item  \textbf{version 2 :}  Cornuet J.M., Pudlo P., Veyssier J., Dehne-Garcia A., V. Ravign\'e and A. Estoup. Improved inference on population history using SNP's and DIYABC (v2.0). \emph{submitted}
+\item  \textbf{version 2 :}  Cornuet J.M., Pudlo P., Veyssier J., Dehne-Garcia A., V. Ravign\'e and A. Estoup. Improved inference on population history using SNP's and DIYABC (v2). \emph{submitted}
 \end{itemize}
 \subsection{Web site}
 http://www.montpellier.inra.fr/CBGP/diyabc\\
