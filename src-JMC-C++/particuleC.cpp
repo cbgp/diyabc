@@ -1696,7 +1696,7 @@ void ParticleC::put_one_mutation(int loc) {
     //cout<<"dans polymref fin   n1="<<n1<<"   n="<<n<<"\n";
     if (n==0) exit(1);
     p=(double)n1/(double)n;
-	if ((n1==0)or(n1==n)) {
+	/*if ((n1==0)or(n1==n)) {
 		cout<<"locus "<<loc<<"   n1="<<n1<<"   n="<<n<<" \n";
 		for (int b=0;b<this->gt[loc].nbranches;b++)	if (this->gt[loc].branches[b].OK) {
 			cout<<"branches["<<b<<"].bottom ="<<this->gt[loc].branches[b].bottom<<"    branches["<<b<<"].top ="<<this->gt[loc].branches[b].top;
@@ -1706,7 +1706,7 @@ void ParticleC::put_one_mutation(int loc) {
 			cout<<"BRANCHE MUTEE = "<<b<<"   BOTTOM="<<this->gt[loc].branches[b].bottom<<"   TOP="<<this->gt[loc].branches[b].top;
 			cout<<"    LONGUEUR="<<this->gt[loc].branches[b].length<<"   NMUT="<<this->gt[loc].branches[b].nmut<<"\n";
 		}
-	}
+	}*/
     if (p > 0.5) poly=(p <= 1.0-this->reffreqmin);
     else         poly=(p >= this->reffreqmin);
     //if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
