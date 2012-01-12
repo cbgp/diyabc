@@ -492,7 +492,7 @@ extern int debuglevel;
 
   long double ParticleC::cal_nal1p(int gr,int st){
 
-    long double nalm=0.0;
+    long double nal,nalm=0.0;
     int iloc,kloc,nl=0;
     int sample=this->grouplist[gr].sumstat[st].samp-1;
     //cout <<"groupe "<<gr<<"  cat "<<this->grouplist[gr].sumstat[st].cat<<"   sample "<<this->grouplist[gr].sumstat[st].samp;//<<"\n";
@@ -500,11 +500,17 @@ extern int debuglevel;
 	for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 		kloc=this->grouplist[gr].loc[iloc];
 			//cout << this->locuslist[loc].samplesize[stat.samp] <<"\n";
-		if (samplesize(sample,kloc)>0) {
-			for (int k=0;k<this->locuslist[kloc].nal;k++) {if (this->locuslist[kloc].freq[sample][k]>0.00001) nalm +=1.0;}
+		nal=0.0;
+		if (samplesize(kloc,sample)>0) {
+			for (int k=0;k<this->locuslist[kloc].nal;k++) {
+				if (this->locuslist[kloc].freq[sample][k]>0.00001) {
+					nalm +=1.0;
+					nal +=1.0;
+				}
+			}
 			nl++;
 		}
-		cout <<"    naltot="<<nalm<<"    nl="<<nl;//<<"    nmoy="<<  "\n";
+		//cout <<"locus "<<kloc<<"    nal="<<nal<<"   nl="<<nl<<"\n";//<<"    nmoy="<<  "\n";
 	}
     if (nl>0) nalm=nalm/(long double)nl;
     //cout<<"    nmoy="<<nalm<<  "\n";
