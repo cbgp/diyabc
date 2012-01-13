@@ -186,7 +186,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
-      <widget class="QLabel" name="label_6">
+      <widget class="QLabel" name="projectDirLabel">
        <property name="minimumSize">
         <size>
          <width>130</width>
@@ -320,7 +320,7 @@
             <number>1</number>
            </property>
            <item>
-            <widget class="QLabel" name="label_4">
+            <widget class="QLabel" name="notdsTitleLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -409,7 +409,7 @@
           <number>1</number>
          </property>
          <item row="0" column="0">
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="nosdTitleLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -588,7 +588,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="totNumSimTitleLabel">
             <property name="minimumSize">
              <size>
               <width>220</width>
@@ -646,7 +646,7 @@ in the reference table :</string>
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="cnosdTitleLabel">
             <property name="minimumSize">
              <size>
               <width>230</width>
@@ -725,7 +725,7 @@ in the reference table :</string>
            <widget class="QComboBox" name="redefSumStatsCombo"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_9">
+           <widget class="QLabel" name="nodssftpTitleLabel">
             <property name="text">
              <string>Number of data sets simulated 
 from the posterior</string>

@@ -193,7 +193,7 @@
                </spacer>
               </item>
               <item row="0" column="4">
-               <widget class="QLabel" name="label_4">
+               <widget class="QLabel" name="dataFileLabel">
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
@@ -239,7 +239,7 @@
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QLabel" name="label">
+               <widget class="QLabel" name="dirLabel">
                 <property name="text">
                  <string>Directory :</string>
                 </property>
@@ -282,7 +282,7 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_10">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_19">
+                 <widget class="QLabel" name="histModelLabel">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -475,7 +475,7 @@
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QLabel" name="label_3">
+                    <widget class="QLabel" name="ascertSimLabel">
                      <property name="text">
                       <string>Ascertainment bias</string>
                      </property>
@@ -522,7 +522,7 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_8">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_15">
+                 <widget class="QLabel" name="genDataLabel">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -727,7 +727,7 @@
                <enum>QLayout::SetDefaultConstraint</enum>
               </property>
               <item row="0" column="0">
-               <widget class="QLabel" name="label_20">
+               <widget class="QLabel" name="dataSetsLabel">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
                   <horstretch>0</horstretch>
@@ -1164,7 +1164,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_13">
+                 <widget class="QLabel" name="analysisListNameLabel">
                   <property name="minimumSize">
                    <size>
                     <width>140</width>
@@ -1186,7 +1186,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_12">
+                 <widget class="QLabel" name="analysisListTypeLabel">
                   <property name="minimumSize">
                    <size>
                     <width>200</width>
@@ -1208,7 +1208,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_11">
+                 <widget class="QLabel" name="analysisListParametersLabel">
                   <property name="minimumSize">
                    <size>
                     <width>100</width>
@@ -1230,7 +1230,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_14">
+                 <widget class="QLabel" name="analysisListProgressLabel">
                   <property name="minimumSize">
                    <size>
                     <width>110</width>
@@ -1308,8 +1308,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>96</width>
-               <height>26</height>
+               <width>929</width>
+               <height>635</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">

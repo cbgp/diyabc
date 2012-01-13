@@ -105,7 +105,7 @@
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_64">
+          <widget class="QLabel" name="parametersLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -171,7 +171,7 @@
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_67">
+          <widget class="QLabel" name="uniformLabel">
            <property name="font">
             <font>
              <pointsize>8</pointsize>
@@ -193,7 +193,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_68">
+          <widget class="QLabel" name="logUniformLabel">
            <property name="font">
             <font>
              <pointsize>8</pointsize>
@@ -215,7 +215,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_69">
+          <widget class="QLabel" name="normalLabel">
            <property name="font">
             <font>
              <pointsize>8</pointsize>
@@ -237,7 +237,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_70">
+          <widget class="QLabel" name="logNormalLabel">
            <property name="font">
             <font>
              <pointsize>8</pointsize>
@@ -285,7 +285,7 @@
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_71">
+          <widget class="QLabel" name="minLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -318,7 +318,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_72">
+          <widget class="QLabel" name="maxLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -351,7 +351,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_73">
+          <widget class="QLabel" name="meanLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -384,7 +384,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_74">
+          <widget class="QLabel" name="stdevLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -480,7 +480,7 @@
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_75">
+          <widget class="QLabel" name="effPopSizeLabel">
            <property name="text">
             <string>Effective
 population size</string>
@@ -780,7 +780,7 @@ population size</string>
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_77">
+          <widget class="QLabel" name="timeInGenLabel">
            <property name="text">
             <string>Time in generation</string>
            </property>
@@ -1079,7 +1079,7 @@ population size</string>
           <number>1</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_76">
+          <widget class="QLabel" name="admixCoefLabel">
            <property name="text">
             <string>Admixture
 coefficient</string>

@@ -326,7 +326,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         if obj == None:
             obj = self
         l = []
-        for typ in [QLabel,QPushButton,QPlainTextEdit,QListWidget,QLineEdit]:
+        for typ in [QLabel,QPushButton,QPlainTextEdit,QListWidget,QLineEdit,QRadioButton,QComboBox,QProgressBar,QCheckBox]:
             l.extend(obj.findChildren(typ))
         for e in l:
             objnamestr = "%s\n\n"%e.objectName()

@@ -31,7 +31,7 @@ class ProjectSnp(ProjectReftable):
         # TODO suppr cette ligne
         self.setGenValid(False)
         #QObject.connect(self.ui.setSumSnpButton,SIGNAL("clicked()"),self.setSumStat)
-        self.ui.label_15.setText("Summary statistics")
+        self.ui.genDataLabel.setText("Summary statistics")
 
         self.typesOrdered = ["A","H","X","Y","M"]
 

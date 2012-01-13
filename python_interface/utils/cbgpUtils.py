@@ -83,7 +83,7 @@ class Documentator():
         self.parent=parent
         self.xmlFile = xmlFile
         self.dicoDoc = {
-                "nbScLabel":"Number of scenario set in the historical model",
+                "nbScLabel":"Number of scenario set in the <font color='red'>historical</font> model",
                 "nbParamLabel":"Number of parameters set in the historical model",
                 }
         if os.path.exists(xmlFile):

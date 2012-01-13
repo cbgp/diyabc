@@ -55,7 +55,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="chooseLocusNumberLabel">
         <property name="font">
          <font>
           <pointsize>14</pointsize>
@@ -184,7 +184,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QLabel" name="label_7">
+             <widget class="QLabel" name="maLabel">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -258,7 +258,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QLabel" name="label_9">
+             <widget class="QLabel" name="mhLabel">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -332,7 +332,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="QLabel" name="label_11">
+             <widget class="QLabel" name="mxLabel">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -406,7 +406,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLabel" name="label_13">
+             <widget class="QLabel" name="myLabel">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -480,7 +480,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="QLabel" name="label_15">
+             <widget class="QLabel" name="mmLabel">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -616,7 +616,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
-             <widget class="QLabel" name="label_10">
+             <widget class="QLabel" name="saLabel">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -690,7 +690,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
-             <widget class="QLabel" name="label_12">
+             <widget class="QLabel" name="shLabel">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -764,7 +764,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
-             <widget class="QLabel" name="label_14">
+             <widget class="QLabel" name="sxLabel">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -838,7 +838,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_11">
             <item>
-             <widget class="QLabel" name="label_16">
+             <widget class="QLabel" name="svLabel">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -912,7 +912,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_12">
             <item>
-             <widget class="QLabel" name="label_17">
+             <widget class="QLabel" name="smLabel">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -1017,7 +1017,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="sexRatioLabel">
         <property name="text">
          <string>Sex ratio
 Proportion of male individuals in the population</string>

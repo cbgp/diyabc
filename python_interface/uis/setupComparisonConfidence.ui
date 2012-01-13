@@ -186,7 +186,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QLabel" name="label_6">
+      <widget class="QLabel" name="projectDirLabel">
        <property name="minimumSize">
         <size>
          <width>130</width>
@@ -281,7 +281,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="nosdTitleLabel">
          <property name="text">
           <string>Numer of selected data</string>
          </property>
@@ -308,7 +308,7 @@
        <item>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="deTitleLabel">
            <property name="minimumSize">
             <size>
              <width>140</width>
@@ -343,7 +343,7 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_5">
+          <widget class="QLabel" name="lrTitleLabel">
            <property name="minimumSize">
             <size>
              <width>140</width>
@@ -492,7 +492,7 @@
         <number>10</number>
        </property>
        <item row="3" column="0" colspan="3">
-        <widget class="QLabel" name="label_7">
+        <widget class="QLabel" name="totNumSimTitleLabel">
          <property name="minimumSize">
           <size>
            <width>220</width>
@@ -511,7 +511,7 @@
         </widget>
        </item>
        <item row="4" column="0" colspan="3">
-        <widget class="QLabel" name="label_8">
+        <widget class="QLabel" name="cnosdTitleLabel">
          <property name="minimumSize">
           <size>
            <width>220</width>

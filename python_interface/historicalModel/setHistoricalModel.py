@@ -47,8 +47,8 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         self.ui = self
 
         QObject.connect(self.ui.addScButton,SIGNAL("clicked()"),self.addSc)
-        QObject.connect(self.ui.uniformRadio,SIGNAL("clicked()"),self.setUniformRp)
-        QObject.connect(self.ui.otherRadio,SIGNAL("clicked()"),self.setOtherRp)
+        QObject.connect(self.ui.uniformRpRadio,SIGNAL("clicked()"),self.setUniformRp)
+        QObject.connect(self.ui.otherRpRadio,SIGNAL("clicked()"),self.setOtherRp)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.close)
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.close)
@@ -197,7 +197,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         # ajout des rp dans la liste locale (plus facile à manipuler)
         self.rpList.append(groupBox_r)
 
-        if self.ui.uniformRadio.isChecked():
+        if self.ui.uniformRpRadio.isChecked():
             self.setUniformRp()
 
         # maj de la doc seulement sur les box de scenario
@@ -234,7 +234,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         for i in range(len(self.rpList)):
             self.rpList[i].findChild(QLabel,"rpLabel").setText("scenario %i"% (i+1))
 
-        if self.ui.uniformRadio.isChecked():
+        if self.ui.uniformRpRadio.isChecked():
             self.setUniformRp()
 
         # on a modifié les scenarios
@@ -859,7 +859,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 rpsum+=rpfloat
             except Exception as e:
                 problems += "On %s posterior probability, %s\n"%(rpscname,e)
-        if rpsum < 0.999 or rpsum > 1.001 and self.ui.otherRadio.isChecked():
+        if rpsum < 0.999 or rpsum > 1.001 and self.ui.otherRpRadio.isChecked():
             problems += "The sum of all posterior probabilities is equal to %s. It should be equal to 1"%rpsum
 
         if problems == "":
@@ -1026,7 +1026,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 f = open("%s/%s"%(self.parent.dir,self.parent.parent.hist_conf_name),"r")
                 lines = f.readlines()
 
-                self.ui.otherRadio.setChecked(True)
+                self.ui.otherRpRadio.setChecked(True)
 
                 nb_scenarios = int(lines[0].split(' ')[0])
                 nb_line_sc = []

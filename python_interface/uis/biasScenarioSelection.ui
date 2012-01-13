@@ -223,7 +223,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="projectDirLabel">
         <property name="minimumSize">
          <size>
           <width>130</width>
@@ -352,7 +352,7 @@ you want to perform computations</string>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="candidateScenariosLabel">
           <property name="minimumSize">
            <size>
             <width>0</width>
