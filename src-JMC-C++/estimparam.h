@@ -39,17 +39,19 @@ void recalparamS(int n);
 * effectue le remplissage de la matrice matX0, du vecteur des poids vecW et
 * de la matrice des paramètres parsim (éventuellement transformés)
 */
-void rempli_mat(int n, float* stat_obs);
+void rempli_mat(int n, float* stat_obs, int npa);
 int ecrimatL(std::string nomat, int n, int m, long double **A);
 int ecrimatD(std::string nomat, int n, int m, double **A);
 /**
 * effectue la régression locale à partir de la matrice matX0 et le vecteur des poids vecW
 */
-void local_regression(int n);
+void local_regression(int n, int npa);
 /**D
 * calcule les phistars pour les paramètres originaux et composites
 */
-long double** calphistar(int n);
+long double** calphistarO(int n);
+long double** calphistarC(int n);
+long double** calphistarS(int n);
 void det_nomparam();
 /**
 * effectue la sauvegarde des phistars dans le fichier path/ident/phistar.txt

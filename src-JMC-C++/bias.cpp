@@ -44,7 +44,7 @@ extern bool multithread;
 extern string progressfilename, path;
 extern string scurfile;
 extern HeaderC header;
-extern int nparamcom, nparcompo, **numpar, numtransf, npar;
+extern int nparamcom, nparcompo, nparscaled,**numpar, numtransf, npar;
 extern string ident, headerfilename;
 extern bool original, composite;
 extern string* nomparam;
@@ -639,9 +639,9 @@ long double ***paretoil;
             if (p<1) det_nomparam();
 			if (original) {
 				recalparamO(nsel);                                 cout<<"apres recalparam\n";
-				rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
-				local_regression(nsel);               cout<<"apres local_regression\n";
-				phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
+				rempli_mat(nsel,stat_obs,nparamcom);                        cout<<"apres rempli_mat\n";
+				local_regression(nsel,nparamcom);               cout<<"apres local_regression\n";
+				phistar = calphistarO(nsel);                                 cout<<"apres calphistar\n";
 			}
             paramest[p] = calparstat(nsel);                             cout<<"apres calparstat\n";
             for (int i=0;i<nsel;i++) {
