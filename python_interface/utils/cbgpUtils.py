@@ -82,8 +82,18 @@ class Documentator():
     def __init__(self,xmlFile,parent=None):
         self.parent=parent
         self.xmlFile = xmlFile
+        self.sep = "+++"
         self.dicoDoc = {
-                "nbScLabel":"Number of scenario set in the <font color='red'>historical</font> model",
+                "nbScLabel":"Number of scenario <a href='http://free.fr'>ploppppp</a>set in the <font color='red'>historical</font> model",
+        #'nbScLabel' : '<ul id="master">\
+        #                <li><input type="checkbox" id="users" checked><label for="users">Users</label>\
+        #                   <ul>\
+        #                    <li><input type="text" id="Bra"><label for="Bra"><a href="voila.fr">Brad</a></label>\
+        #                   </ul>\
+        #                </ul>\
+        #',
+
+
                 "nbParamLabel":"Number of parameters set in the historical model",
                 }
         if os.path.exists(xmlFile):
@@ -104,17 +114,35 @@ class Documentator():
             if i.hasAttribute('labels'):
                 if "doc_" in i.getAttribute('labels'):
                     key = i.getAttribute('labels').replace('LABEL:doc_','')
+                    tags = key.split(self.sep)[1:]
+                    key = key.split(self.sep)[0]
                     value = i.getElementsByTagName('para')[0].getElementsByTagName("p")[0].childNodes[0].nodeValue
                     value+="\n\nMore details in the documentation pdf at section : "
                     value+=i.getAttribute('xml:id').replace('S','').replace('p','').replace('P','')
-                    self.dicoDoc[key] = value
+                    
+                    if not self.dicoDoc.has_key(key):
+                        self.dicoDoc[key] = {}
+                    if tags == []:
+                        tags.append("default_tag")
+                    for tag in tags:
+                        if self.dicoDoc[key].has_key(tag):
+                            self.dicoDoc[key][tag] += "\n\n"+value
+                        else:
+                            self.dicoDoc[key][tag] = value
+        print self.dicoDoc
 
     def getDocString(self,key):
         """ Return the doc related to the key
         """
         result = None
         if key in self.dicoDoc.keys():
-            result =  self.dicoDoc[key]
+            result = ""
+            if self.dicoDoc[key].has_key("default_tag"):
+                result += self.dicoDoc[key]["default_tag"]+"\n\n"
+            for tag in self.dicoDoc[key]:
+                if tag != "default_tag":
+                    result += "<font color='red'>%s</font>\n"%tag
+                    result += self.dicoDoc[key][tag]+"\n\n"
         else:
             raise Exception("No documentation found for key %s"%key)
         return result

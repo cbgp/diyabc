@@ -16,7 +16,7 @@
   <creator role="author">
     <personname>Veyssier Julien</personname>
   </creator>
-  <date role="creation">November 2, 2011</date>
+  <date role="creation">January 13, 2012</date>
   <ERROR class="undefined">\fancyhf</ERROR>
   <ERROR class="undefined">\fancyhead</ERROR>
   <para xml:id="p1">
@@ -72,9 +72,15 @@ N N N</p>
         <p>nb group quoi</p>
       </para>
     </paragraph>
-    <paragraph xml:id="S2.SS0.SSS0.P7" labels="LABEL:doc_versionLabel">
+    <paragraph xml:id="S2.SS0.SSS0.P7" labels="LABEL:doc_versionLabel+++plop">
       <title>plop</title>
       <para xml:id="S2.SS0.SSS0.P7.p1">
+        <p>This is my default description without tag!!!</p>
+      </para>
+    </paragraph>
+    <paragraph xml:id="S2.SS0.SSS0.P8" labels="LABEL:doc_versionLabel+++plop+++plap">
+      <title>plop</title>
+      <para xml:id="S2.SS0.SSS0.P8.p1">
         <p>Version of DIYABC. This number is incremented each time a new build is done.
 plop</p>
       </para>
@@ -86,15 +92,15 @@ plop</p>
       </para>
       <paragraph xml:id="S2.SS1.SSS0.P1" labels="LABEL:doc_nbSequencesLabel">
         <title>ploup</title>
+        <!-- %**** documentation.tex Line 75 **** -->
         <para xml:id="S2.SS1.SSS0.P1.p1">
           <p>nbSequencesLabel doc</p>
         </para>
       </paragraph>
-      <subsubsection refnum="2.1.1" xml:id="S2.SS1.SSS1" labels="LABEL:doc_nbSumStatsLabel">
+      <subsubsection refnum="2.1.1" xml:id="S2.SS1.SSS1" labels="LABEL:doc_versionLabel+++plip">
         <title>subsub</title>
-        <!-- %**** documentation.tex Line 75 **** -->
         <para xml:id="S2.SS1.SSS1.p1">
-          <p>nbSumStatsLabel doc</p>
+          <p>deuxieme pour version doc</p>
         </para>
       </subsubsection>
     </subsection>
