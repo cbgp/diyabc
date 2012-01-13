@@ -32,7 +32,9 @@ void det_numpar();
 /**
 * recalcule les valeurs de paramètres en fonction de la transformation choisie
 */
-void recalparam(int n);
+void recalparamO(int n);
+void recalparamC(int n);
+void recalparamS(int n);
 /**
 * effectue le remplissage de la matrice matX0, du vecteur des poids vecW et
 * de la matrice des paramètres parsim (éventuellement transformés)

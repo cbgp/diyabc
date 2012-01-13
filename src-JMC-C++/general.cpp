@@ -237,7 +237,7 @@ try {
             cout << "           n:<number of simulated datasets taken from reftable>\n";
             cout << "           m:<number of simulated datasets used for the local regression>\n";
             cout << "           t:<number of the transformation (1,2,3 or 4)>\n";
-            cout << "           p:<o for original, c for composite, oc for both>\n";
+            cout << "           p:<o for original, c for composite, s for scaled, oc,os for both, ocs for all>\n";
 
             cout << "\n-c for ABC COMPUTATION OF POSTERIOR PROBALITY OF SCENARIOS (idem)\n";
             cout << "           s:<chosen scenarios separated by a comma>\n";
@@ -251,7 +251,7 @@ try {
             cout << "           n:<number of simulated datasets taken from reftable>\n";
             cout << "           m:<number of simulated datasets used for the local regression>\n";
             cout << "           t:<number of the transformation (1,2,3 or 4)>\n";
-            cout << "           p:<o for original, c for composite, oc for both>\n";
+            cout << "           p:<o for original, c for composite, s for scaled, oc,os for both, ocs for all>\n";
             cout << "           d:<number of requested test data sets>\n";
             cout << "           h:<histparameter values/priors (see below)>\n";
             cout << "                histparameter values (separated by a space): <parameter name>=<parameter value>\n";

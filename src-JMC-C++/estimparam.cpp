@@ -53,11 +53,11 @@ int nstatOKsel;
 extern string headerfilename,reftablefilename,datafilename,statobsfilename,reftablelogfilename,path,ident;
 extern bool multithread;
 pardensC *pardens;
-long double *var_stat, *parmin, *parmax, *diff;
-long double **beta, **phistar,**simpar;
-int nparamcom,nparcompo,**numpar,numtransf = 3, npar,npar0;
+long double *var_stat, *parmin, *parmax, *parmincompo,*parmaxcompo,*parminscaled,*parmaxscaled,*diff,*diffcompo,*diffscaled;
+long double **beta, **phistar,**phistarcompo,**phistarscaled,**simpar;
+int nparamcom,nparcompo,nparscaled,**numpar,numtransf = 3, npar,npar0;
 long double borne=10.0,xborne;
-bool composite = false, original = true;
+bool composite = false, scaled = false, original = true;
 string entete;
 int nsimpar=100000;
 string *nomparam;
@@ -150,12 +150,14 @@ parstatC *parstat;
             cout <<"\n";
         }*/
         if (composite) nparcompo=npar0*header.ngroupes; else nparcompo=0;
+		if (scaled) nparscaled=npar0; else nparscaled=0;
     }
 
 /**
 * recalcule les valeurs de paramètres en fonction de la transformation choisie
+* pour les paramètres originaux
 */
-    void recalparam(int n) {
+    void recalparamO(int n) {   
         long double coefmarge=0.001,marge;
         int jj,k;
         alpsimrat = new long double*[n];
@@ -163,12 +165,12 @@ parstatC *parstat;
         switch (numtransf) {
 
           case 1 :  //no transform
-                   for (int i=0;i<n;i++) {
-                       for (int j=0;j<nparamcom;j++) {
-                           k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
-                           alpsimrat[i][j] = rt.enrsel[i].param[numpar[k][j]];
-                       }
-                   }
+					for (int i=0;i<n;i++) {
+						for (int j=0;j<nparamcom;j++) {
+							k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
+							alpsimrat[i][j] = rt.enrsel[i].param[numpar[k][j]];
+						}
+					}
                    break;
           case 2 : // log transform
                    for (int i=0;i<n;i++) {
@@ -306,6 +308,259 @@ parstatC *parstat;
                    }
                    break;
         }
+    }
+
+/**
+* recalcule les valeurs de paramètres en fonction de la transformation choisie
+* pour les paramètres composites
+*/
+    void recalparamC(int n) {   
+        long double coefmarge=0.001,marge,**xx,pmut;
+        int jj,kk,qq,kscen;
+        alpsimrat = new long double*[n];
+        for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparcompo];
+        xx = new long double*[n];
+        for(int i=0;i<n;i++) xx[i] = new long double[nparcompo];
+		parmincompo = new long double[nparcompo]; 
+		parmaxcompo = new long double[nparcompo]; 
+		diffcompo        = new long double[nparcompo];
+		int kp=0,kp0;
+		for (int gr=1;gr<header.ngroupes+1;gr++) {
+			kp0 = kp;
+			if (header.groupe[gr].type==0) {
+				if (header.groupe[gr].priormutmoy.constant) {
+					if (header.groupe[gr].priorsnimoy.constant) {
+						pmut = header.groupe[gr].mutmoy+header.groupe[gr].snimoy;
+						for (int j=0;j<npar;j++) {
+							if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+								for (int i=0;i<n;i++) {
+									kscen=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[kscen])kscen++;
+									xx[i][kp] = pmut*rt.enrsel[i].param[numpar[kscen][j]];
+								}
+								kp++;
+							}
+						}
+					} else {
+						kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==2))) kk++;
+						for (int j=0;j<npar;j++) {
+							if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+								for (int i=0;i<n;i++) {
+									kscen=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[kscen])kscen++;
+									pmut = header.groupe[gr].mutmoy+rt.enrsel[i].param[numpar[kscen][npar+kk]];
+									xx[i][kp] = pmut*rt.enrsel[i].param[numpar[kscen][j]];
+								}
+								kp++;
+							}
+						}
+					}
+				} else {
+					if (header.groupe[gr].priorsnimoy.constant) {
+						kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
+						for (int j=0;j<npar;j++) {
+							if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+								for (int i=0;i<n;i++) {
+									kscen=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[kscen])kscen++;
+									pmut =rt.enrsel[i].param[numpar[kscen][npar+kk]] + header.groupe[gr].snimoy;
+									xx[i][kp] = pmut*rt.enrsel[i].param[numpar[kscen][j]];
+								}
+								kp++;
+							}
+						}
+					} else {
+						kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
+						qq=0;while (not ((header.mutparam[qq].groupe == gr)and(header.mutparam[qq].category ==2))) qq++;
+						for (int j=0;j<npar;j++) {
+							if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+								for (int i=0;i<n;i++) {
+									kscen=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[kscen])kscen++;
+									pmut =rt.enrsel[i].param[numpar[kscen][npar+kk]]+rt.enrsel[i].param[numpar[kscen][npar+qq]];
+									xx[i][kp] = pmut*rt.enrsel[i].param[numpar[kscen][j]];
+								}
+								kp++;
+							}
+						}
+					}
+				}
+			}
+			if (header.groupe[gr].type==1) {
+				if (header.groupe[gr].priormusmoy.constant) {
+					pmut = header.groupe[gr].musmoy;
+					for (int j=0;j<npar;j++) {
+						if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+							for (int i=0;i<n;i++) {
+								kscen=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[kscen])kscen++;
+								xx[i][kp] = pmut*rt.enrsel[i].param[numpar[kscen][j]];
+							}
+							kp++;
+						}
+					}
+				} else {
+					kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==3))) kk++;
+					for (int j=0;j<npar;j++) {
+						if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
+							for (int i=0;i<n;i++) {
+								kscen=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[kscen])kscen++;
+								pmut = rt.enrsel[i].param[numpar[kscen][npar+kk]];
+								xx[i][kp] = pmut*rt.enrsel[i].param[numpar[kscen][j]];
+							}
+							kp++;
+						}
+					}
+				}
+			}
+			switch (numtransf) {
+				case 1 :  //no transform
+						for (int i=0;i<n;i++) {
+							for (int j=kp0;j<kp;j++) {
+								alpsimrat[i][j] = xx[i][j];
+							}
+						}
+						break;
+				case 2 : // log transform
+						for (int i=0;i<n;i++) {
+							for (int j=kp0;j<kp;j++) {
+								if (xx[i][j]<=0.00000000001) xx[i][j]=1E-11;
+								alpsimrat[i][j] = log(xx[i][j]);
+							}
+						}
+						break;
+				case 3 : //logit transform
+						for (int j=kp0;j<kp;j++) {parmincompo[j]=1E100;parmaxcompo[j]=-1E100;}
+						for (int i=0;i<n;i++) {
+								for (int j=kp0;j<kp;j++) {
+									if (xx[i][j]<parmincompo[j]) parmincompo[j]=xx[i][j];
+									if (xx[i][j]>parmaxcompo[j]) parmaxcompo[j]=xx[i][j];
+							}
+						}
+						for (int j=kp0;j<kp;j++) {
+							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
+							marge=coefmarge*diffcompo[j];
+							parmincompo[j] -=marge;
+							parmaxcompo[j] +=marge;
+							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
+						}
+						for (int i=0;i<n;i++) {
+							for (int j=kp0;j<kp;j++) alpsimrat[i][j] = log((xx[i][j]-parmincompo[j])/(parmaxcompo[j]-xx[i][j]));
+						}
+						break;
+				case 4 : //log(tg) transform
+						for (int j=kp0;j<kp;j++) {parmincompo[j]=1E100;parmaxcompo[j]=-1E100;}
+						for (int i=0;i<n;i++) {
+								for (int j=kp0;j<kp;j++) {
+									if (xx[i][j]<parmincompo[j]) parmincompo[j]=xx[i][j];
+									if (xx[i][j]>parmaxcompo[j]) parmaxcompo[j]=xx[i][j];
+							}
+						}
+						for (int j=kp0;j<kp;j++) {
+							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
+							marge=coefmarge*diffcompo[j];
+							parmincompo[j] -=marge;
+							parmaxcompo[j] +=marge;
+							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
+						}
+						for (int i=0;i<n;i++) {
+							for (int j=kp0;j<kp;j++) alpsimrat[i][j] = log(tan((xx[i][j]-parmincompo[j])*c/diffcompo[j]));
+						}
+						break;
+			}
+		}
+		for(int i=0;i<n;i++) delete [] xx[i];
+		delete [] xx;
+		if (numtransf<3) {
+			delete []parmincompo;delete []parmaxcompo;delete []diffcompo;
+		}
+    }
+
+/**
+* recalcule les valeurs de paramètres en fonction de la transformation choisie
+* pour les paramètres scaled
+*/
+    void recalparamS(int n) {   
+        long double coefmarge=0.001,marge,**xx,pmut,Ne;
+        int jj,kk,qq,kp,kscen;
+        alpsimrat = new long double*[n];
+        for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparscaled];
+        xx = new long double*[n];
+        for(int i=0;i<n;i++) xx[i] = new long double[nparscaled];
+		parminscaled = new long double[nparscaled]; 
+		parmaxscaled = new long double[nparscaled]; 
+		diffscaled   = new long double[nparscaled];
+		for (int i=0;i<n;i++) {
+			kscen=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[kscen])kscen++;
+			Ne=0.0;
+			for (int j=0;j<header.dataobs.nsample;j++) {
+				if (header.scenario[rt.scenchoisi[kscen]-1].histparam[j].prior.constant) 
+					Ne += (long double)header.scenario[rt.scenchoisi[kscen]-1].histparam[j].prior.mini;
+				else Ne +=(long double)rt.enrsel[i].param[numpar[kscen][j]];
+			}
+			kp=0;
+			for (int j=0;j<npar;j++) {
+				if (header.scenario[rt.scenchoisi[kscen]-1].histparam[numpar[kscen][j]].category<2){
+					xx[i][kp] = rt.enrsel[i].param[numpar[kscen][j]]/Ne;
+					kp++;
+				}
+			}
+		}
+		switch (numtransf) {
+			case 1 :  //no transform
+					for (int i=0;i<n;i++) {
+						for (int j=0;j<nparscaled;j++) {
+							alpsimrat[i][j] = xx[i][j];
+						}
+					}
+					break;
+			case 2 : // log transform
+					for (int i=0;i<n;i++) {
+						for (int j=0;j<nparscaled;j++) {
+							if (xx[i][j]<=0.00000000001) xx[i][j]=1E-11;
+							alpsimrat[i][j] = log(xx[i][j]);
+						}
+					}
+					break;
+			case 3 : //logit transform
+					for (int j=0;j<nparscaled;j++) {parminscaled[j]=1E100;parmaxscaled[j]=-1E100;}
+					for (int i=0;i<n;i++) {
+							for (int j=0;j<nparscaled;j++) {
+								if (xx[i][j]<parminscaled[j]) parminscaled[j]=xx[i][j];
+								if (xx[i][j]>parmaxscaled[j]) parmaxscaled[j]=xx[i][j];
+						}
+					}
+					for (int j=0;j<nparscaled;j++) {
+						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
+						marge=coefmarge*diffscaled[j];
+						parminscaled[j] -=marge;
+						parmaxscaled[j] +=marge;
+						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
+					}
+					for (int i=0;i<n;i++) {
+						for (int j=0;j<nparscaled;j++) alpsimrat[i][j] = log((xx[i][j]-parminscaled[j])/(parmaxscaled[j]-xx[i][j]));
+					}
+					break;
+			case 4 : //log(tg) transform
+					for (int j=0;j<nparscaled;j++) {parminscaled[j]=1E100;parmaxscaled[j]=-1E100;}
+					for (int i=0;i<n;i++) {
+							for (int j=0;j<nparscaled;j++) {
+								if (xx[i][j]<parminscaled[j]) parminscaled[j]=xx[i][j];
+								if (xx[i][j]>parmaxscaled[j]) parmaxscaled[j]=xx[i][j];
+						}
+					}
+					for (int j=0;j<nparscaled;j++) {
+						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
+						marge=coefmarge*diff[j];
+						parminscaled[j] -=marge;
+						parmaxscaled[j] +=marge;
+						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
+					}
+					for (int i=0;i<n;i++) {
+						for (int j=0;j<nparscaled;j++) alpsimrat[i][j] = log(tan((xx[i][j]-parminscaled[j])*c/diffscaled[j]));
+					}
+					break;
+		}
+		for(int i=0;i<n;i++) delete [] xx[i];
+		delete [] xx;
+		if (numtransf<3) {
+			delete []parminscaled;delete []parmaxscaled;delete []diffscaled;
+		}
     }
 
 /**
@@ -1106,9 +1361,14 @@ parstatC *parstat;
             } else if (s0=="p:") {
                 original=(s1.find("o")!=string::npos);
                 composite=(s1.find("c")!=string::npos);
-                if (original) cout <<"paramètres  originaux  ";
-                if ((s1=="oc")or(s1=="co")) cout <<"et ";
-                if (composite) cout<<"paramètres  composite  ";
+				scaled=(s1.find("s")!=string::npos);
+                if ((original)and(not composite)and(not scaled)) cout <<"paramètres  originaux  ";
+                if ((not original)and(composite)and(not scaled)) cout <<"paramètres  composites  ";
+                if ((not original)and(not composite)and(scaled)) cout <<"paramètres  scaled  ";
+				if ((original)and(composite)and(not scaled)) cout <<"paramètres  originaux et composites ";
+				if ((original)and(not composite)and(scaled)) cout <<"paramètres  originaux et scaled ";
+				if ((not original)and(composite)and(scaled)) cout <<"paramètres  composites et scaled ";
+				if ((original)and(composite)and(scaled)) cout <<"paramètres  originaux, composites et scaled ";
                 cout<< "\n";
             }
         }
@@ -1122,12 +1382,31 @@ parstatC *parstat;
         rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
         iprog+=8;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         det_numpar();                                     cout<<"apres det_numpar\n";
-        nprog=(nparamcom+nparcompo)*10+14;
-        recalparam(nsel);                                 cout<<"apres recalparam\n";
-        rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
-        local_regression(nsel);               cout<<"apres local_regression\n";
-        iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-        phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
+        nprog=(nparamcom+nparcompo+nparscaled)*10+14;
+		if (original){
+			recalparamO(nsel);                                 cout<<"apres recalparam\n";
+			rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
+			local_regression(nsel);               cout<<"apres local_regression\n";
+			iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+			phistar = calphistar(nsel);
+			cout<<"apres calphistar\n";
+		}
+		if (composite){
+			recalparamC(nsel);                                 cout<<"apres recalparam\n";
+			rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
+			local_regression(nsel);               cout<<"apres local_regression\n";
+			iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+			phistar = calphistar(nsel);
+			cout<<"apres calphistar\n";
+		}
+		if (scaled){
+			recalparamS(nsel);                                 cout<<"apres recalparam\n";
+			rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
+			local_regression(nsel);               cout<<"apres local_regression\n";
+			iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+			phistar = calphistar(nsel);
+			cout<<"apres calphistar\n";
+		}
         det_nomparam();
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
         iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);

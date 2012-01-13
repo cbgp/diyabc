@@ -637,10 +637,12 @@ long double ***paretoil;
             rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
             iprog +=6;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             if (p<1) det_nomparam();
-            recalparam(nsel);                                 cout<<"apres recalparam\n";
-            rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
-            local_regression(nsel);               cout<<"apres local_regression\n";
-            phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
+			if (original) {
+				recalparamO(nsel);                                 cout<<"apres recalparam\n";
+				rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
+				local_regression(nsel);               cout<<"apres local_regression\n";
+				phistar = calphistar(nsel);                                 cout<<"apres calphistar\n";
+			}
             paramest[p] = calparstat(nsel);                             cout<<"apres calparstat\n";
             for (int i=0;i<nsel;i++) {
                 for (int j=0;j<nparamcom+nparcompo;j++) paretoil[p][i][j] = phistar[i][j];
