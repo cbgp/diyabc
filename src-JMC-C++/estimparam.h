@@ -60,7 +60,9 @@ void savephistar(int n, std::string path, std::string ident) ;
 /**
 * lit les paramètres des enregistrements simulés pour l'établissement des distributions a priori'
 */
-void lisimpar(int nsel);
+void lisimparO(int nsel);
+void lisimparC(int nsel);
+void lisimparS(int nsel);
 /**
 * calcule la densité à partir de la loi fournie dans le prior
 */
