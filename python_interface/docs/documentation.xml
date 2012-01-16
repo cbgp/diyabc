@@ -78,9 +78,24 @@ N N N</p>
         <p>This is my default description without tag!!!</p>
       </para>
     </paragraph>
-    <paragraph xml:id="S2.SS0.SSS0.P8" labels="LABEL:doc_versionLabel+++plop+++plap">
+    <paragraph xml:id="S2.SS0.SSS0.P8" labels="LABEL:doc_openProjectButton">
       <title>plop</title>
       <para xml:id="S2.SS0.SSS0.P8.p1">
+        <p>A project is a unit of work materialized by a specific and unique directory. A project is defined by at least one observed data set and one reference table header file. These files are located in the <emph>Project directory</emph> which name includes an identifier, the date of creation and a number (between 1 and 100).<break/></p>
+      </para>
+      <para xml:id="S2.SS0.SSS0.P8.p2">
+        <p>The header file, always named <text font="typewriter">header.txt</text>, contains all information necessary to compute a reference table associated with the data : i.e. the scenarios, the scenario parameter priors, the characteristics of loci, the loci parameter priors and the summary statistics to compute.
+As soon as the first records of the reference table have been saved in the reference table file,  always named <text font="typewriter">reftable.bin</text> and also included in the project directory, the project is “locked”. This means that the header file can not be changed anymore. If one needs to change a scenario or a parameter prior, or a summary statistics, a new project needs to be defined. This is to guarantee that all subsequent actions performed on the project are in coherence with the current data and header files. It is of course strongly advised NOT to move files among projects.
+Incidentally, the <text font="typewriter">header.txt</text> file is only built when the project has been saved, the information progressively input by the user being saved in a series of temporary files.<break/></p>
+      </para>
+      <para xml:id="S2.SS0.SSS0.P8.p3">
+        <p>Once a sufficiently large reference table has been simulated, analyses can be performed. Their different output files are copied to the <emph>analysis</emph> directory included in the project directory, and containing as many directories as analyses performed. Hence, it is now much easier to know with certainty the conditions of each analysis.</p>
+      </para>
+      <!-- %**** documentation.tex Line 75 **** -->
+    </paragraph>
+    <paragraph xml:id="S2.SS0.SSS0.P9" labels="LABEL:doc_versionLabel+++plop+++plap">
+      <title>plop</title>
+      <para xml:id="S2.SS0.SSS0.P9.p1">
         <p>Version of DIYABC. This number is incremented each time a new build is done.
 plop</p>
       </para>
@@ -92,7 +107,6 @@ plop</p>
       </para>
       <paragraph xml:id="S2.SS1.SSS0.P1" labels="LABEL:doc_nbSequencesLabel">
         <title>ploup</title>
-        <!-- %**** documentation.tex Line 75 **** -->
         <para xml:id="S2.SS1.SSS0.P1.p1">
           <p>nbSequencesLabel doc</p>
         </para>

@@ -45,7 +45,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
             self.ui.label.setText("Model Checking")
             self.ui.candidateLabel.hide()
             self.ui.label_5.hide()
-            self.ui.label_4.hide()
+            self.ui.notdsTitleLabel.hide()
             self.ui.notdsEdit.hide()
             self.ui.paramChoiceBox.hide()
             # remplissage de la liste des groupes
@@ -56,14 +56,16 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         else:
             self.ui.candidateLabel.hide()
             self.ui.label_5.hide()
-            self.ui.label_4.hide()
+            self.ui.notdsTitleLabel.hide()
             self.ui.notdsEdit.hide()
             self.ui.redefSumStatsFrame.hide()
 
         self.ui.projectNameEdit.setText(self.parent.parent.dir)
         
         if self.parent.parent.isSnp():
-            self.ui.paramChoiceBox.hide()
+            #self.ui.paramChoiceBox.hide()
+            self.ui.cCheck.setChecked(False)
+            self.ui.cCheck.hide()
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
@@ -168,8 +170,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
             #dico_est = self.analysis[-1]
             if self.analysis.category == "estimate" or self.analysis.category == "modelChecking":
                 self.analysis.computationParameters = "s:%s;n:%s;m:%s;t:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['numberOfselData'],self.dico_values['transformation'])
-                if not self.parent.parent.isSnp():
-                    self.analysis.computationParameters += ";p:%s"%self.dico_values['choice']
+                self.analysis.computationParameters += ";p:%s"%self.dico_values['choice']
                 if self.analysis.category == "modelChecking":
                     pat = re.compile(r'\s+')
                     statsStr = ""
@@ -185,8 +186,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                 strparam += "m:%s;"%self.dico_values['numberOfselData']
                 strparam += "d:%s;"%self.dico_values['numberOfTestData']
                 strparam += "t:%s;"%self.dico_values['transformation']
-                if not self.parent.parent.isSnp():
-                    strparam += "p:%s;"%self.dico_values['choice']
+                strparam += "p:%s;"%self.dico_values['choice']
                 #print "robert ", self.analysis
                 strparam += "h:"
                 for paramname in self.analysis.histParams.keys():
@@ -295,6 +295,8 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
             choice += "o"
         if self.ui.cCheck.isChecked():
             choice += "c"
+        if self.ui.sCheck.isChecked():
+            choice += "s"
         self.dico_values["choice"] = choice
 
     def exit(self):

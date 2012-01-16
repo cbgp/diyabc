@@ -24,6 +24,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.parent=parent
         self.directory=directory
         self.analysis = analysis
+        self.paramChoice = "o"
+        self.file_subname = ""
         self.createWidgets()
         self.dicoPlot = {}  
         self.dicoFrame = {}
@@ -41,6 +43,10 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewMmmq)
         #QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printMe)
+        
+        QObject.connect(self.ui.oRadio,SIGNAL("clicked()"),self.changeParamChoice)
+        QObject.connect(self.ui.cRadio,SIGNAL("clicked()"),self.changeParamChoice)
+        QObject.connect(self.ui.sRadio,SIGNAL("clicked()"),self.changeParamChoice)
 
         self.ui.PCAFrame.hide()
         self.ui.ACProgress.hide()
@@ -49,6 +55,29 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
         self.ui.PCAScroll.hide()
 
+        if not os.path.exists("%s/analysis/%s/mmmqcompo.txt"%(self.parent.dir,self.directory))\
+        and not os.path.exists("%s/analysis/%s/paramcompostatdens.txt"%(self.parent.dir,self.directory)):
+            self.ui.cRadio.hide()
+
+
+    def changeParamChoice(self):
+        sd = self.sender()
+        if sd == self.ui.oRadio:
+            parenthText = "(Original)"
+            self.paramChoice = "o"
+            self.file_subname = ""
+        elif sd == self.ui.cRadio:
+            parenthText = "(Composite)"
+            self.paramChoice = "c"
+            self.file_subname = "compo"
+        elif sd == self.ui.sRadio:
+            parenthText = "(Scaled)"
+            self.paramChoice = "s"
+            self.file_subname = "scaled"
+
+        self.ui.viewLocateButton.setText("View numerical results " + parenthText)
+        self.drawAll()
+
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)
@@ -56,8 +85,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
     def viewMmmq(self):
         """ clic sur le bouton view numerical
         """
-        if os.path.exists("%s/analysis/%s/mmmq.txt"%(self.parent.dir,self.directory)):
-            f = open("%s/analysis/%s/mmmq.txt"%(self.parent.dir,self.directory),'r')
+        if os.path.exists("%s/analysis/%s/mmmq%s.txt"%(self.parent.dir,self.directory,self.file_subname)):
+            f = open("%s/analysis/%s/mmmq%s.txt"%(self.parent.dir,self.directory,self.file_subname),'r')
             data = f.read()
             f.close()
             #self.parent.drawAnalysisFrame = QFrame(self)
@@ -78,6 +107,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToMe)
             self.parent.ui.analysisStack.addWidget(self.parent.drawAnalysisFrame)
             self.parent.ui.analysisStack.setCurrentWidget(self.parent.drawAnalysisFrame)
+        else:
+            log(3, "mmmq%s.txt not found for analysis %s"%(self.file_subname,self.analysis.name))
 
     def returnToMe(self):
         self.parent.returnTo(self)
@@ -116,8 +147,18 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
     def drawAll(self):
         """ dessine les graphes de tous les paramètres
         """
-        if os.path.exists("%s/analysis/%s/paramstatdens.txt"%(self.parent.dir,self.directory)):
-            f = codecs.open("%s/analysis/%s/paramstatdens.txt"%(self.parent.dir,self.directory),"r","utf-8")
+        # nettoyage
+        for fr in self.findChildren(QFrame,"frameDraw"):
+            self.ui.horizontalLayout_2.removeWidget(fr)
+            fr.hide()
+            del fr
+        for fr in self.findChildren(QFrame,"frameValues"):
+            self.ui.horizontalLayout_3.removeWidget(fr)
+            fr.hide()
+            del fr
+
+        if os.path.exists("%s/analysis/%s/param%sstatdens.txt"%(self.parent.dir,self.directory,self.file_subname)):
+            f = codecs.open("%s/analysis/%s/param%sstatdens.txt"%(self.parent.dir,self.directory,self.file_subname),"r","utf-8")
             lines = f.readlines()
             f.close()
             l = 0
@@ -129,9 +170,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
                 ordpo = lines[l+5]
                 self.addDraw(name,values,absv,ordpr,ordpo)
                 l += 6
-
         else:
-            log(3, "paramstatdens.txt not found for analysis %s"%self.analysis.name)
+            log(3, "param%sstatdens.txt not found for analysis %s"%(self.file_subname,self.analysis.name))
 
 
     def addDraw(self,name,values,absv,ordpr,ordpo):
@@ -210,7 +250,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         fr = QFrame(self)
         fr.setFrameShape(QFrame.StyledPanel)
         fr.setFrameShadow(QFrame.Raised)
-        fr.setObjectName("frame")
+        fr.setObjectName("frameDraw")
         fr.setMinimumSize(QSize(400, 0))
         fr.setMaximumSize(QSize(400, 300))
         vert = QVBoxLayout(fr)
@@ -226,7 +266,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
 
         frame.setFrameShape(QFrame.StyledPanel)
         frame.setFrameShadow(QFrame.Raised)
-        frame.setObjectName("frame")
+        frame.setObjectName("frameValues")
         verticalLayout_3 = QVBoxLayout(frame)
         verticalLayout_3.setObjectName("verticalLayout_3")
         avLabel = QLabel("Average   :  %6.2e"%av,frame)

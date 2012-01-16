@@ -117,7 +117,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 self.checklist.append(check)
                 self.ui.verticalLayout_6.addWidget(check)
         else:
-            self.ui.label.hide()
+            self.ui.candidateScenariosLabel.hide()
             self.ui.frame_3.hide()
 
     def exit(self):

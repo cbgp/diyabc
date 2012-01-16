@@ -771,6 +771,16 @@ from the posterior</string>
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="sCheck">
+            <property name="text">
+             <string>Scaled</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
