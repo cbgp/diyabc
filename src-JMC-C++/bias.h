@@ -18,7 +18,7 @@
 
 struct enreC {
     int numscen;
-    double *paramvv,*stat;
+    double *paramvv,*paramvvC,*paramvvS,*stat;
 };
 
 // modifie les paramètres historiques en accord avec les priors/valeurs des pseudo-observés

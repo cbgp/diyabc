@@ -90,7 +90,9 @@ void histodens(int n, bool multithread, std::string progressfilename,int* iprog,
 /**
 *calcule les statistiques des paramètres
 */
-parstatC* calparstat(int n);
+parstatC* calparstatO(int n);
+parstatC* calparstatC(int n);
+parstatC* calparstatS(int n);
 /**
 *sauvegarde les statistiques et les densités des paramètres
 */

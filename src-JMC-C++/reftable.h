@@ -15,7 +15,7 @@
 class enregC {
 public:
     int numscen;
-    float *param,*stat;
+    float *param,*paramvv,*stat;
     long double dist;
     std::string message;
     friend bool operator<(const enregC & lhs, const enregC & rhs);
