@@ -84,7 +84,7 @@ class Documentator():
         self.xmlFile = xmlFile
         self.sep = "+++"
         self.dicoDoc = {
-                "nbScLabel":"Number of scenario <a href='http://free.fr'>ploppppp</a>set in the <font color='red'>historical</font> model",
+                "nbScLabel":{"plop":"Number of scenario <a href='http://free.fr'>ploppppp</a>set in the <font color='red'>historical</font> model<table border='1'><tr><td>ploppppp</td></tr></table>"},
         #'nbScLabel' : '<ul id="master">\
         #                <li><input type="checkbox" id="users" checked><label for="users">Users</label>\
         #                   <ul>\
@@ -120,32 +120,48 @@ class Documentator():
                     value+="\n\nMore details in the documentation pdf at section : "
                     value+=i.getAttribute('xml:id').replace('S','').replace('p','').replace('P','')
                     
+                    # cleaning empty tags
+                    while tags.count("") > 0:
+                        tags.remove("")
+                    # creating entry for this object if it doesn't exist
                     if not self.dicoDoc.has_key(key):
                         self.dicoDoc[key] = {}
+                    # if no tag specified, inserting in tag : default_tag
                     if tags == []:
                         tags.append("default_tag")
+                    # puts descriptions in tags strings
                     for tag in tags:
                         if self.dicoDoc[key].has_key(tag):
                             self.dicoDoc[key][tag] += "\n\n"+value
                         else:
                             self.dicoDoc[key][tag] = value
-        print self.dicoDoc
+        #print self.dicoDoc
 
     def getDocString(self,key):
-        """ Return the doc related to the key
+        """ @rtype: string
+        @return: the doc string related to the key
         """
         result = None
         if key in self.dicoDoc.keys():
             result = ""
             if self.dicoDoc[key].has_key("default_tag"):
-                result += self.dicoDoc[key]["default_tag"]+"\n\n"
+                result += self.dicoDoc[key]["default_tag"]+"\n"
             for tag in self.dicoDoc[key]:
                 if tag != "default_tag":
-                    result += "<font color='red'>%s</font>\n"%tag
-                    result += self.dicoDoc[key][tag]+"\n\n"
+                    result += "%s\n"%tag
+                    result += self.dicoDoc[key][tag]+"\n"
         else:
             raise Exception("No documentation found for key %s"%key)
         return result
+
+    def getDocHashByTags(self,key):
+        """ @rtype: hashtable
+        @return: the hashtable indexed by tags of key's descriptions
+        """
+        if key in self.dicoDoc.keys():
+            return self.dicoDoc[key]
+        else:
+            raise Exception("No documentation found for key %s"%key)
 
 
 from datetime import datetime 

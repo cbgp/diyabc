@@ -332,7 +332,17 @@ class Diyabc(formDiyabc,baseDiyabc):
             objnamestr = "%s\n\n"%e.objectName()
             objname_debug = self.preferences_win.debugWhatsThisCheck.isChecked()
             try:
-                docstr = self.documentator.getDocString("%s"%e.objectName()).replace('\n','<br/>')
+                #docstr = self.documentator.getDocString("%s"%e.objectName()).replace('\n','<br/>')
+                doc_dico = self.documentator.getDocHashByTags("%s"%e.objectName())
+                docstr = ""
+                if doc_dico.has_key("default_tag"):
+                    docstr += "<table border='1'><tr><td>" +doc_dico["default_tag"]+"</td></tr></table>\n"
+                for tag in doc_dico.keys():
+                    if tag != "default_tag":
+                        docstr += "<table border='1'><tr><td><font color='red'>%s</font>\n"%tag
+                        docstr += doc_dico[tag]+"</td></tr></table>\n"
+                docstr = docstr.replace('\n','<br/>')
+
                 if objname_debug:
                     e.setWhatsThis(output.whatsthis_header + objnamestr + "<br/><br/>" + docstr + output.whatsthis_footer)
                 else:

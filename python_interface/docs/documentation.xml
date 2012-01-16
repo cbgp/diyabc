@@ -16,7 +16,7 @@
   <creator role="author">
     <personname>Veyssier Julien</personname>
   </creator>
-  <date role="creation">January 13, 2012</date>
+  <date role="creation">January 16, 2012</date>
   <ERROR class="undefined">\fancyhf</ERROR>
   <ERROR class="undefined">\fancyhead</ERROR>
   <para xml:id="p1">
@@ -72,7 +72,7 @@ N N N</p>
         <p>nb group quoi</p>
       </para>
     </paragraph>
-    <paragraph xml:id="S2.SS0.SSS0.P7" labels="LABEL:doc_versionLabel+++plop">
+    <paragraph xml:id="S2.SS0.SSS0.P7" labels="LABEL:doc_versionLabel">
       <title>plop</title>
       <para xml:id="S2.SS0.SSS0.P7.p1">
         <p>This is my default description without tag!!!</p>
