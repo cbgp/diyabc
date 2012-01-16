@@ -96,7 +96,8 @@ class Diyabc(formDiyabc,baseDiyabc):
             for projDirName in projects:
                 self.openProject(projDirName)
         try:
-            self.documentator = Documentator(dataPath.DATAPATH+"/documentation.xml",self)
+            #self.documentator = Documentator(dataPath.DATAPATH+"/documentation/documentation.html",self)
+            self.documentator = Documentator(dataPath.DATAPATH+"/../../Notice-DIYABC-v2/Notice_DIYABC_principal/index.html",self)
             self.updateDoc()
         except Exception as e:
             output.notify(self,"Documentation error","%s"%e)
@@ -341,7 +342,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     if tag != "default_tag":
                         docstr += "<table border='1'><tr><th><font color='orange'>%s</font>"%tag
                         docstr += "</th></tr><tr><td>" + doc_dico[tag]+"</td></tr></table>\n"
-                docstr = docstr.replace('\n','<br/>')
+                #docstr = docstr.replace('\n','<br/>')
 
                 if objname_debug:
                     e.setWhatsThis(output.whatsthis_header + objnamestr + "<br/><br/>" + docstr + output.whatsthis_footer)

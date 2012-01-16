@@ -79,9 +79,9 @@ class Documentator():
     generated from latex sources of DIYABC instructions paper. This class also provide
     access primitives to this doc from keywords (qt objectnames in our case)
     """
-    def __init__(self,xmlFile,parent=None):
+    def __init__(self,myfile,parent=None):
         self.parent=parent
-        self.xmlFile = xmlFile
+        self.myfile = myfile
         self.sep = "+++"
         self.dicoDoc = {
                 "nbScLabel":{"plop":"Number of scenario <a href='http://free.fr'>ploppppp</a>set in the <font color='red'>historical</font> model<table border='1'><tr><td>ploppppp</td></tr></table>"},
@@ -96,15 +96,80 @@ class Documentator():
 
                 "nbParamLabel":"Number of parameters set in the historical model",
                 }
-        if os.path.exists(xmlFile):
+        if os.path.exists(myfile):
             self.loadDocFile()
         else:
-            raise Exception("The xml documentation file %s was not found"%xmlFile)
+            raise Exception("The documentation file %s was not found"%myfile)
 
     def loadDocFile(self):
+        if self.myfile.endswith(".xml"):
+            self.loadXmlFile()
+        else:
+            self.loadHtmlFile()
+
+    def loadHtmlFile(self):
+        """ Loads the html file to fill the doc hashtable
+        """
+        f = open(self.myfile,'r')
+        lines = f.readlines()
+        f.close()
+
+        l = 0
+        while l<len(lines):
+            section = ""
+            # deux cas : le doc_ est juste après le <A NAME="SECTION000  ----> on trouve le num de section après
+            # sinon on le trouve avant
+            if '<A NAME="doc_' in lines[l]:
+                key = lines[l].split('<A NAME="doc_')[1].split('"')[0]
+                tags = key.split(self.sep)[1:]
+                key = key.split(self.sep)[0]
+                # on cherche le num de section après
+                if '<A NAME="SECTION00' in lines[l-1]:
+                    j=l+1
+                    while '<SPAN CLASS="arabic">' not in lines[j]:
+                        j+=1
+                # on cherche avant
+                else:
+                    j=l-1
+                    while '<SPAN CLASS="arabic">' not in lines[j]:
+                        j-=1
+                # j est sur la ligne ou se trouve le num de section
+                for d in lines[j].split('<SPAN CLASS="arabic">')[1:]:
+                    section += "%s."%(d.split('</SPAN>')[0])
+                section = section[:-1]
+
+                # doc_ trouvé, recup de la description
+                desc = ""
+                while '<A NAME="SECTION00' not in lines[l] and len(desc) < 2500:
+                    if '<SPAN CLASS="arabic">' not in lines[l]:
+                        desc += lines[l].replace('SRC="','SRC="../Notice-DIYABC-v2/Notice_DIYABC_principal/')
+                    l+=1
+
+                desc+="<br/><br/>More details in the documentation pdf at section : %s"%section
+                self.addDescription(key,desc,tags)
+            l+=1
+
+    def addDescription(self,key,desc,tags=[]):
+        # cleaning empty tags
+        while tags.count("") > 0:
+            tags.remove("")
+        # creating entry for this object if it doesn't exist
+        if not self.dicoDoc.has_key(key):
+            self.dicoDoc[key] = {}
+        # if no tag specified, inserting in tag : default_tag
+        if tags == []:
+            tags.append("default_tag")
+        # puts descriptions in tags strings
+        for tag in tags:
+            if self.dicoDoc[key].has_key(tag):
+                self.dicoDoc[key][tag] += "\n"+desc
+            else:
+                self.dicoDoc[key][tag] = desc
+
+    def loadXmlFile(self):
         """ Loads the xml file to fill the doc hashtable
         """
-        doc = parse(self.xmlFile)
+        doc = parse(self.myfile)
 
         elemList = []
         for elemType in ['paragraph','section','subsection','subsubsection']:
@@ -120,21 +185,7 @@ class Documentator():
                     value+="\n\nMore details in the documentation pdf at section : "
                     value+=i.getAttribute('xml:id').replace('S','').replace('p','').replace('P','')
                     
-                    # cleaning empty tags
-                    while tags.count("") > 0:
-                        tags.remove("")
-                    # creating entry for this object if it doesn't exist
-                    if not self.dicoDoc.has_key(key):
-                        self.dicoDoc[key] = {}
-                    # if no tag specified, inserting in tag : default_tag
-                    if tags == []:
-                        tags.append("default_tag")
-                    # puts descriptions in tags strings
-                    for tag in tags:
-                        if self.dicoDoc[key].has_key(tag):
-                            self.dicoDoc[key][tag] += "\n\n"+value
-                        else:
-                            self.dicoDoc[key][tag] = value
+                    self.addDescription(key,value,tags)
         #print self.dicoDoc
 
     def getDocString(self,key):
