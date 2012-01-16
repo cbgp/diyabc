@@ -52,7 +52,7 @@ int nstatOKsel;
 //extern char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
 extern string headerfilename,reftablefilename,datafilename,statobsfilename,reftablelogfilename,path,ident;
 extern bool multithread;
-pardensC *pardens;
+pardensC *pardens, *pardenscompo, *pardensscaled;
 long double *var_stat, *parmin, *parmax, *parmincompo,*parmaxcompo,*parminscaled,*parmaxscaled,*diff,*diffcompo,*diffscaled;
 long double **beta, **phistar,**phistarcompo,**phistarscaled,**simpar,**simparcompo,**simparscaled;
 int nparamcom,nparcompo,nparscaled,**numpar,numtransf = 3, npar,npar0;
@@ -61,7 +61,7 @@ bool composite = false, scaled = false, original = true;
 string enteteO,enteteC,enteteS;
 int nsimpar=100000;
 string *nomparamO,*nomparamC,*nomparamS;
-parstatC *parstat;
+parstatC *parstat,*parstatcompo,*parstatscaled;
 
 
 /**
@@ -1198,18 +1198,18 @@ parstatC *parstat;
     }
 
 /**
-* traitement global du calcul de la densité des paramètres variables
+* traitement global du calcul de la densité des paramètres variables originaux
 * si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
 * sinon la densité est évaluée pour 1000 points du min au max
 */
-    void histodens(int n, bool multithread, string progressfilename,int* iprog,int* nprog) {
+    void histodensO(int n, bool multithread, string progressfilename,int* iprog,int* nprog) {
         bool condition;
         long double *densprior,*denspost,*x,delta;
         int ncl,ii;
         FILE *flog;
-        pardens = new pardensC[nparamcom+nparcompo];
+        pardens = new pardensC[nparamcom];
 		//cout<<"dans histodens npar="<<npar<<"\n";
-        for (int j=0;j<nparamcom+nparcompo;j++) {
+        for (int j=0;j<nparamcom;j++) {
             pardens[j].ncl=1001;
             condition=false;
             if (j<npar) {  //histparam
@@ -1228,16 +1228,6 @@ parstatC *parstat;
             } else if (j<nparamcom){  //mutparam
                 pardens[j].xmin=rt.mutparam[j-npar].prior.mini;
                 pardens[j].xmax=rt.mutparam[j-npar].prior.maxi;
-            } else {  //parametres composites
-                pardens[j].xmin=1E100;pardens[j].xmax=0;
-                for (int i=0;i<nsimpar;i++) {
-                    if (pardens[j].xmin>simpar[i][j]) pardens[j].xmin=simpar[i][j];
-                    if (pardens[j].xmax<simpar[i][j]) pardens[j].xmax=simpar[i][j];
-                }
-                for (int i=0;i<n;i++) {
-                    if (pardens[j].xmin>phistar[i][j]) pardens[j].xmin=phistar[i][j];
-                    if (pardens[j].xmax<phistar[i][j]) pardens[j].xmax=phistar[i][j];
-                }
             }
             pardens[j].xdelta = (pardens[j].xmax-pardens[j].xmin)/(long double)(pardens[j].ncl-1);
             //cout<<nomparam[j]<<"   xmin="<<pardens[j].xmin<<"   xmax="<<pardens[j].xmax<<"   xdelta="<<pardens[j].xdelta<<"   ncl="<<pardens[j].ncl<<"\n";
@@ -1287,42 +1277,235 @@ parstatC *parstat;
                 delete [] densprior;
                 delete [] denspost;
             }
-           cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom+nparcompo<<"\n";
+           cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom<<"\n";
         *iprog+=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
         }
      }
 
 /**
-*calcule les statistiques des paramètres
+* traitement global du calcul de la densité des paramètres composites
+* si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
+* sinon la densité est évaluée pour 1000 points du min au max
 */
-    parstatC* calparstat(int n) {
+    void histodensC(int n, bool multithread, string progressfilename,int* iprog,int* nprog) {
+        bool condition;
+        long double *densprior,*denspost,*x,delta;
+        int ncl,ii;
+        FILE *flog;
+        pardenscompo = new pardensC[nparcompo];
+		//cout<<"dans histodens npar="<<npar<<"\n";
+        for (int j=0;j<nparcompo;j++) {
+            pardenscompo[j].ncl=1001;
+            condition=false;
+                pardenscompo[j].xmin=1E100;pardenscompo[j].xmax=0;
+                for (int i=0;i<nsimpar;i++) {
+                    if (pardenscompo[j].xmin>simparcompo[i][j]) pardenscompo[j].xmin=simparcompo[i][j];
+                    if (pardenscompo[j].xmax<simparcompo[i][j]) pardenscompo[j].xmax=simparcompo[i][j];
+                }
+                for (int i=0;i<n;i++) {
+                    if (pardenscompo[j].xmin>phistarcompo[i][j]) pardenscompo[j].xmin=phistarcompo[i][j];
+                    if (pardenscompo[j].xmax<phistarcompo[i][j]) pardenscompo[j].xmax=phistarcompo[i][j];
+                }
+            pardenscompo[j].xdelta = (pardenscompo[j].xmax-pardenscompo[j].xmin)/(long double)(pardenscompo[j].ncl-1);
+            //cout<<nomparam[j]<<"   xmin="<<pardenscompo[j].xmin<<"   xmax="<<pardenscompo[j].xmax<<"   xdelta="<<pardenscompo[j].xdelta<<"   ncl="<<pardenscompo[j].ncl<<"\n";
+			pardenscompo[j].x = new long double[pardenscompo[j].ncl];
+            for (int k=0;k<pardenscompo[j].ncl;k++) pardenscompo[j].x[k]=pardenscompo[j].xmin+k*pardenscompo[j].xdelta;
+			//cout<<"1\n";
+            if (pardenscompo[j].ncl>31) {
+				pardenscompo[j].priord = calculdensite(pardenscompo[j].ncl,nsimpar,pardenscompo[j].x,simparcompo,j,multithread);
+                pardenscompo[j].postd = calculdensite(pardenscompo[j].ncl,n,pardenscompo[j].x,phistarcompo,j,multithread);
+            } else {
+                densprior = calculhisto(pardenscompo[j].ncl,nsimpar,pardenscompo[j].x,simparcompo,j,multithread);
+                denspost = calculhisto(pardenscompo[j].ncl,n,pardenscompo[j].x,phistarcompo,j,multithread);
+                ncl=pardenscompo[j].ncl;
+                x=new long double[ncl];
+                for (int k=0;k<ncl;k++) x[k]=pardenscompo[j].x[k];
+                delete []pardenscompo[j].x;
+                pardenscompo[j].ncl = 1001;
+                pardenscompo[j].x = new long double[pardenscompo[j].ncl];
+                pardenscompo[j].priord = new long double[pardenscompo[j].ncl];
+                pardenscompo[j].postd = new long double[pardenscompo[j].ncl];
+                pardenscompo[j].xdelta = (x[ncl-1]-x[0])/(long double)(pardenscompo[j].ncl-1);
+                delta = x[1]-x[0];
+                for (int k=0;k<pardenscompo[j].ncl;k++) {
+                    pardenscompo[j].x[k]=x[0]+k*pardenscompo[j].xdelta;
+                    for (ii=0;ii<ncl-1;ii++) {
+                        if ((pardenscompo[j].x[k]>=x[ii])and(pardenscompo[j].x[k]<=x[ii+1])) break;
+                    }
+                    pardenscompo[j].priord[k]=0.5*(densprior[ii]+densprior[ii+1]);
+                    pardenscompo[j].postd[k]=0.5*(denspost[ii]+denspost[ii+1]);
+                    //cout<<"x="<<pardenscompo[j].x[k]<<"   priord="<<pardenscompo[j].priord[k]<<"   postd="<<pardenscompo[j].postd[k]<<"   ii="<<ii<<"\n";
+                }
+                delete [] densprior;
+                delete [] denspost;
+            }
+           cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparcompo<<"\n";
+        *iprog+=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
+        }
+     }
+
+/**
+* traitement global du calcul de la densité des paramètres scaled
+* si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
+* sinon la densité est évaluée pour 1000 points du min au max
+*/
+    void histodensS(int n, bool multithread, string progressfilename,int* iprog,int* nprog) {
+        bool condition;
+        long double *densprior,*denspost,*x,delta;
+        int ncl,ii;
+        FILE *flog;
+        pardensscaled = new pardensC[nparscaled];
+		//cout<<"dans histodens npar="<<npar<<"\n";
+        for (int j=0;j<nparscaled;j++) {
+            pardensscaled[j].ncl=1001;
+            condition=false;
+                pardensscaled[j].xmin=1E100;pardensscaled[j].xmax=0;
+                for (int i=0;i<nsimpar;i++) {
+                    if (pardensscaled[j].xmin>simparscaled[i][j]) pardensscaled[j].xmin=simparscaled[i][j];
+                    if (pardensscaled[j].xmax<simparscaled[i][j]) pardensscaled[j].xmax=simparscaled[i][j];
+                }
+                for (int i=0;i<n;i++) {
+                    if (pardensscaled[j].xmin>phistarscaled[i][j]) pardensscaled[j].xmin=phistarscaled[i][j];
+                    if (pardensscaled[j].xmax<phistarscaled[i][j]) pardensscaled[j].xmax=phistarscaled[i][j];
+                }
+            pardensscaled[j].xdelta = (pardensscaled[j].xmax-pardensscaled[j].xmin)/(long double)(pardensscaled[j].ncl-1);
+            //cout<<nomparam[j]<<"   xmin="<<pardensscaled[j].xmin<<"   xmax="<<pardensscaled[j].xmax<<"   xdelta="<<pardensscaled[j].xdelta<<"   ncl="<<pardensscaled[j].ncl<<"\n";
+			pardensscaled[j].x = new long double[pardensscaled[j].ncl];
+            for (int k=0;k<pardensscaled[j].ncl;k++) pardensscaled[j].x[k]=pardensscaled[j].xmin+k*pardensscaled[j].xdelta;
+			//cout<<"1\n";
+            if (pardensscaled[j].ncl>31) {
+				pardensscaled[j].priord = calculdensite(pardensscaled[j].ncl,nsimpar,pardensscaled[j].x,simparscaled,j,multithread);
+                pardensscaled[j].postd = calculdensite(pardensscaled[j].ncl,n,pardensscaled[j].x,phistarscaled,j,multithread);
+            } else {
+                densprior = calculhisto(pardensscaled[j].ncl,nsimpar,pardensscaled[j].x,simparscaled,j,multithread);
+                denspost = calculhisto(pardensscaled[j].ncl,n,pardensscaled[j].x,phistarscaled,j,multithread);
+                ncl=pardensscaled[j].ncl;
+                x=new long double[ncl];
+                for (int k=0;k<ncl;k++) x[k]=pardensscaled[j].x[k];
+                delete []pardensscaled[j].x;
+                pardensscaled[j].ncl = 1001;
+                pardensscaled[j].x = new long double[pardensscaled[j].ncl];
+                pardensscaled[j].priord = new long double[pardensscaled[j].ncl];
+                pardensscaled[j].postd = new long double[pardensscaled[j].ncl];
+                pardensscaled[j].xdelta = (x[ncl-1]-x[0])/(long double)(pardensscaled[j].ncl-1);
+                delta = x[1]-x[0];
+                for (int k=0;k<pardensscaled[j].ncl;k++) {
+                    pardensscaled[j].x[k]=x[0]+k*pardensscaled[j].xdelta;
+                    for (ii=0;ii<ncl-1;ii++) {
+                        if ((pardensscaled[j].x[k]>=x[ii])and(pardensscaled[j].x[k]<=x[ii+1])) break;
+                    }
+                    pardensscaled[j].priord[k]=0.5*(densprior[ii]+densprior[ii+1]);
+                    pardensscaled[j].postd[k]=0.5*(denspost[ii]+denspost[ii+1]);
+                    //cout<<"x="<<pardensscaled[j].x[k]<<"   priord="<<pardensscaled[j].priord[k]<<"   postd="<<pardensscaled[j].postd[k]<<"   ii="<<ii<<"\n";
+                }
+                delete [] densprior;
+                delete [] denspost;
+            }
+           cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparscaled<<"\n";
+        *iprog+=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
+        }
+     }
+
+/**
+*calcule les statistiques des paramètres originaux
+*/
+    parstatC* calparstatO(int n) {
         long double *x;
-        parstat = new parstatC[nparamcom+nparcompo];
+		parstatC *parst;
+        parst = new parstatC[nparamcom];
         x = new long double[n];
         //cout <<"avant la boucle sur les parametres nparamcom="<<nparamcom<<"  nparcompo="<<nparcompo<<"   nsel="<<n<<"\n";
-        for (int j=0;j<nparamcom+nparcompo;j++) {
+        for (int j=0;j<nparamcom;j++) {
             for (int i=0;i<n;i++) x[i] = phistar[i][j];
             //if (j==0) for (int i=0;i<20;i++) cout <<phistar[i][j]<<"  "; cout<<"\n";
             //cout<<"allocation des x du parametre "<<j<<"\n";
             sort(&x[0],&x[n]);
             //cout<<"apres le sort\n";
-            parstat[j].med = x[(int)floor(0.5*n+0.5)-1];
-            parstat[j].q025 = x[(int)floor(0.025*n+0.5)-1];
-            parstat[j].q050 = x[(int)floor(0.050*n+0.5)-1];
-            parstat[j].q250 = x[(int)floor(0.250*n+0.5)-1];
-            parstat[j].med  = x[(int)floor(0.500*n+0.5)-1];
-            parstat[j].q750 = x[(int)floor(0.750*n+0.5)-1];
-            parstat[j].q950 = x[(int)floor(0.950*n+0.5)-1];
-            parstat[j].q975 = x[(int)floor(0.975*n+0.5)-1];
-            parstat[j].moy = cal_moyL(n,x);
+            parst[j].med = x[(int)floor(0.5*n+0.5)-1];
+            parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
+            parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
+            parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
+            parst[j].med  = x[(int)floor(0.500*n+0.5)-1];
+            parst[j].q750 = x[(int)floor(0.750*n+0.5)-1];
+            parst[j].q950 = x[(int)floor(0.950*n+0.5)-1];
+            parst[j].q975 = x[(int)floor(0.975*n+0.5)-1];
+            parst[j].moy = cal_moyL(n,x);
             //cout<<"apres cal_moy\n";
-            parstat[j].mod = cal_modeL(n,x);
+            parst[j].mod = cal_modeL(n,x);
             //cout<<"apres cal_mode\n";
             //for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
             //cout<<nomparam[j];
-            //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q950,parstat[j].q975);
+            //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
         }
-        return parstat;
+        return parst;
+    }
+
+/**
+*calcule les statistiques des paramètres composites
+*/
+    parstatC* calparstatC(int n) {
+        long double *x;
+		parstatC *parst;
+        parst = new parstatC[nparcompo];
+        x = new long double[n];
+        //cout <<"avant la boucle sur les parametres nparamcom="<<nparamcom<<"  nparcompo="<<nparcompo<<"   nsel="<<n<<"\n";
+        for (int j=0;j<nparcompo;j++) {
+            for (int i=0;i<n;i++) x[i] = phistarcompo[i][j];
+            //if (j==0) for (int i=0;i<20;i++) cout <<phistar[i][j]<<"  "; cout<<"\n";
+            //cout<<"allocation des x du parametre "<<j<<"\n";
+            sort(&x[0],&x[n]);
+            //cout<<"apres le sort\n";
+            parst[j].med = x[(int)floor(0.5*n+0.5)-1];
+            parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
+            parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
+            parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
+            parst[j].med  = x[(int)floor(0.500*n+0.5)-1];
+            parst[j].q750 = x[(int)floor(0.750*n+0.5)-1];
+            parst[j].q950 = x[(int)floor(0.950*n+0.5)-1];
+            parst[j].q975 = x[(int)floor(0.975*n+0.5)-1];
+            parst[j].moy = cal_moyL(n,x);
+            //cout<<"apres cal_moy\n";
+            parst[j].mod = cal_modeL(n,x);
+            //cout<<"apres cal_mode\n";
+            //for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
+            //cout<<nomparam[j];
+            //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
+        }
+        return parst;
+    }
+
+/**
+*calcule les statistiques des paramètres composites
+*/
+    parstatC* calparstatS(int n) {
+        long double *x;
+		parstatC *parst;
+        parst = new parstatC[nparscaled];
+        x = new long double[n];
+        //cout <<"avant la boucle sur les parametres nparamcom="<<nparamcom<<"  nparcompo="<<nparcompo<<"   nsel="<<n<<"\n";
+        for (int j=0;j<nparscaled;j++) {
+            for (int i=0;i<n;i++) x[i] = phistarscaled[i][j];
+            //if (j==0) for (int i=0;i<20;i++) cout <<phistar[i][j]<<"  "; cout<<"\n";
+            //cout<<"allocation des x du parametre "<<j<<"\n";
+            sort(&x[0],&x[n]);
+            //cout<<"apres le sort\n";
+            parst[j].med = x[(int)floor(0.5*n+0.5)-1];
+            parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
+            parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
+            parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
+            parst[j].med  = x[(int)floor(0.500*n+0.5)-1];
+            parst[j].q750 = x[(int)floor(0.750*n+0.5)-1];
+            parst[j].q950 = x[(int)floor(0.950*n+0.5)-1];
+            parst[j].q975 = x[(int)floor(0.975*n+0.5)-1];
+            parst[j].moy = cal_moyL(n,x);
+            //cout<<"apres cal_moy\n";
+            parst[j].mod = cal_modeL(n,x);
+            //cout<<"apres cal_mode\n";
+            //for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
+            //cout<<nomparam[j];
+            //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
+        }
+        return parst;
     }
 
 /**
@@ -1334,51 +1517,120 @@ parstatC *parstat;
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
         string nomfiparstat;
-        nomfiparstat = path+ident+"_paramstatdens.txt";
-        //strcpy(nomfiparstat,path);
-        //strcat(nomfiparstat,ident);
-        //strcat(nomfiparstat,"_paramstatdens.txt");
-        cout <<nomfiparstat<<"\n";
-        FILE *f1;
-        f1=fopen(nomfiparstat.c_str(),"w");
-        for (int j=0;j<nparamcom+nparcompo;j++) {
-          //cout<<nomparam[j]<<"\n";
-            fprintf(f1,"%s\n",nomparam[j].c_str());//cout<<"1\n";
-            fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
-            //cout<<"2\n";
-            fprintf(f1,"%d\n",pardens[j].ncl);//cout<<"3\n";
-            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].x[i]);fprintf(f1,"\n");//cout<<"3\n";
-            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].priord[i]);fprintf(f1,"\n");//cout<<"4\n";
-            for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].postd[i]);fprintf(f1,"\n");//cout<<"5\n";
-        }
-        fclose(f1);
-        //cout<<"apres close(f1)\n";
-        nomfiparstat = path+ident+"_mmmq.txt";
-        //strcpy(nomfiparstat,path);
-        //strcat(nomfiparstat,ident);
-        //strcat(nomfiparstat,"_mmmq.txt");
-        cout <<nomfiparstat<<"\n";
-        f1=fopen(nomfiparstat.c_str(),"w");
-        fprintf(f1,"DIYABC :                      ABC parameter estimation                         %s\n",asctime(timeinfo));
-        fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
-        fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
-        switch (numtransf) {
-              case 1 : fprintf(f1,"No transformation of parameters\n");break;
-              case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
-              case 3 : fprintf(f1,"Transformation LOGIT of parameters\n");break;
-              case 4 : fprintf(f1,"Transformation LOG(TG) of parameters\n");break;
-        }
-        fprintf(f1,"Chosen scenario(s) : ");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"%d ",rt.scenchoisi[i]);fprintf(f1,"\n");
-        fprintf(f1,"Number of simulated data sets : %d\n",rt.nreclus);
-        fprintf(f1,"Number of selected data sets  : %d\n\n",nsel);
-        fprintf(f1,"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n");
-        fprintf(f1,"------------------------------------------------------------------------------------------------------\n");
-        for (int j=0;j<nparamcom+nparcompo;j++) {
-            fprintf(f1,"%s",nomparam[j].c_str());
-            for(int i=0;i<16-(int)(nomparam[j].length());i++)fprintf(f1," ");
-            fprintf(f1,"%8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
-        }
-        fclose(f1);
+		if (original) {
+			nomfiparstat = path+ident+"_paramstatdens.txt";
+			cout <<nomfiparstat<<"\n";
+			FILE *f1;
+			f1=fopen(nomfiparstat.c_str(),"w");
+			for (int j=0;j<nparamcom;j++) {
+				fprintf(f1,"%s\n",nomparamO[j].c_str());//cout<<"1\n";
+				fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
+				fprintf(f1,"%d\n",pardens[j].ncl);//cout<<"3\n";
+				for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].x[i]);fprintf(f1,"\n");//cout<<"3\n";
+				for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].priord[i]);fprintf(f1,"\n");//cout<<"4\n";
+				for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].postd[i]);fprintf(f1,"\n");//cout<<"5\n";
+			}
+			fclose(f1);
+			nomfiparstat = path+ident+"_mmmq.txt";
+			cout <<nomfiparstat<<"\n";
+			f1=fopen(nomfiparstat.c_str(),"w");
+			fprintf(f1,"DIYABC :                      ABC parameter estimation                         %s\n",asctime(timeinfo));
+			fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
+			fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
+			switch (numtransf) {
+				case 1 : fprintf(f1,"No transformation of parameters\n");break;
+				case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
+				case 3 : fprintf(f1,"Transformation LOGIT of parameters\n");break;
+				case 4 : fprintf(f1,"Transformation LOG(TG) of parameters\n");break;
+			}
+			fprintf(f1,"Chosen scenario(s) : ");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"%d ",rt.scenchoisi[i]);fprintf(f1,"\n");
+			fprintf(f1,"Number of simulated data sets : %d\n",rt.nreclus);
+			fprintf(f1,"Number of selected data sets  : %d\n\n",nsel);
+			fprintf(f1,"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n");
+			fprintf(f1,"------------------------------------------------------------------------------------------------------\n");
+			for (int j=0;j<nparamcom;j++) {
+				fprintf(f1,"%s",nomparamO[j].c_str());
+				for(int i=0;i<16-(int)(nomparamO[j].length());i++)fprintf(f1," ");
+				fprintf(f1,"%8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
+			}
+			fclose(f1);
+ 		}
+		if (composite) {
+			nomfiparstat = path+ident+"_paramcompostatdens.txt";
+			cout <<nomfiparstat<<"\n";
+			FILE *f1;
+			f1=fopen(nomfiparstat.c_str(),"w");
+			for (int j=0;j<nparcompo;j++) {
+				fprintf(f1,"%s\n",nomparamC[j].c_str());
+				fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstatcompo[j].moy,parstatcompo[j].med,parstatcompo[j].mod,parstatcompo[j].q025,parstatcompo[j].q050,parstatcompo[j].q250,parstatcompo[j].q750,parstatcompo[j].q950,parstatcompo[j].q975);
+				fprintf(f1,"%d\n",pardenscompo[j].ncl);//cout<<"3\n";
+				for (int i=0;i<pardenscompo[j].ncl;i++) fprintf(f1,"  %8.5Le",pardenscompo[j].x[i]);fprintf(f1,"\n");//cout<<"3\n";
+				for (int i=0;i<pardenscompo[j].ncl;i++) fprintf(f1,"  %8.5Le",pardenscompo[j].priord[i]);fprintf(f1,"\n");//cout<<"4\n";
+				for (int i=0;i<pardenscompo[j].ncl;i++) fprintf(f1,"  %8.5Le",pardenscompo[j].postd[i]);fprintf(f1,"\n");//cout<<"5\n";
+			}
+			fclose(f1);
+			nomfiparstat = path+ident+"_mmmqcompo.txt";
+			cout <<nomfiparstat<<"\n";
+			f1=fopen(nomfiparstat.c_str(),"w");
+			fprintf(f1,"DIYABC :                      ABC parameter estimation                         %s\n",asctime(timeinfo));
+			fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
+			fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
+			switch (numtransf) {
+				case 1 : fprintf(f1,"No transformation of parameters\n");break;
+				case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
+				case 3 : fprintf(f1,"Transformation LOGIT of parameters\n");break;
+				case 4 : fprintf(f1,"Transformation LOG(TG) of parameters\n");break;
+			}
+			fprintf(f1,"Chosen scenario(s) : ");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"%d ",rt.scenchoisi[i]);fprintf(f1,"\n");
+			fprintf(f1,"Number of simulated data sets : %d\n",rt.nreclus);
+			fprintf(f1,"Number of selected data sets  : %d\n\n",nsel);
+			fprintf(f1,"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n");
+			fprintf(f1,"------------------------------------------------------------------------------------------------------\n");
+			for (int j=0;j<nparcompo;j++) {
+				fprintf(f1,"%s",nomparamC[j].c_str());
+				for(int i=0;i<16-(int)(nomparamC[j].length());i++)fprintf(f1," ");
+				fprintf(f1,"%8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e\n",parstatcompo[j].moy,parstatcompo[j].med,parstatcompo[j].mod,parstatcompo[j].q025,parstatcompo[j].q050,parstatcompo[j].q250,parstatcompo[j].q750,parstatcompo[j].q950,parstatcompo[j].q975);
+			}
+			fclose(f1);
+		}
+		if (scaled) {
+			nomfiparstat = path+ident+"_paramscaledstatdens.txt";
+			cout <<nomfiparstat<<"\n";
+			FILE *f1;
+			f1=fopen(nomfiparstat.c_str(),"w");
+			for (int j=0;j<nparscaled;j++) {
+				fprintf(f1,"%s\n",nomparamS[j].c_str());
+				fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstatscaled[j].moy,parstatscaled[j].med,parstatscaled[j].mod,parstatscaled[j].q025,parstatscaled[j].q050,parstatscaled[j].q250,parstatscaled[j].q750,parstatscaled[j].q950,parstatscaled[j].q975);
+				fprintf(f1,"%d\n",pardensscaled[j].ncl);//cout<<"3\n";
+				for (int i=0;i<pardensscaled[j].ncl;i++) fprintf(f1,"  %8.5Le",pardensscaled[j].x[i]);fprintf(f1,"\n");//cout<<"3\n";
+				for (int i=0;i<pardensscaled[j].ncl;i++) fprintf(f1,"  %8.5Le",pardensscaled[j].priord[i]);fprintf(f1,"\n");//cout<<"4\n";
+				for (int i=0;i<pardensscaled[j].ncl;i++) fprintf(f1,"  %8.5Le",pardensscaled[j].postd[i]);fprintf(f1,"\n");//cout<<"5\n";
+			}
+			fclose(f1);
+			nomfiparstat = path+ident+"_mmmqscaled.txt";
+			cout <<nomfiparstat<<"\n";
+			f1=fopen(nomfiparstat.c_str(),"w");
+			fprintf(f1,"DIYABC :                      ABC parameter estimation                         %s\n",asctime(timeinfo));
+			fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
+			fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
+			switch (numtransf) {
+				case 1 : fprintf(f1,"No transformation of parameters\n");break;
+				case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
+				case 3 : fprintf(f1,"Transformation LOGIT of parameters\n");break;
+				case 4 : fprintf(f1,"Transformation LOG(TG) of parameters\n");break;
+			}
+			fprintf(f1,"Chosen scenario(s) : ");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"%d ",rt.scenchoisi[i]);fprintf(f1,"\n");
+			fprintf(f1,"Number of simulated data sets : %d\n",rt.nreclus);
+			fprintf(f1,"Number of selected data sets  : %d\n\n",nsel);
+			fprintf(f1,"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n");
+			fprintf(f1,"------------------------------------------------------------------------------------------------------\n");
+			for (int j=0;j<nparscaled;j++) {
+				fprintf(f1,"%s",nomparamS[j].c_str());
+				for(int i=0;i<16-(int)(nomparamS[j].length());i++)fprintf(f1," ");
+				fprintf(f1,"%8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e\n",parstatscaled[j].moy,parstatscaled[j].med,parstatscaled[j].mod,parstatscaled[j].q025,parstatscaled[j].q050,parstatscaled[j].q250,parstatscaled[j].q750,parstatscaled[j].q950,parstatscaled[j].q975);
+			}
+			fclose(f1);
+		}
     }
 
 /**
@@ -1473,12 +1725,16 @@ parstatC *parstat;
         det_nomparam();
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
         iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-        if (original) lisimparO(nsel);                                   cout<<"apres lisimpar\n";
-        if (composite) lisimparC(nsel);                                   cout<<"apres lisimpar\n";
-        if (scaled) lisimparS(nsel);                                   cout<<"apres lisimpar\n";
+        if (original) lisimparO(nsel);                             cout<<"apres lisimparO\n";
+        if (composite) lisimparC(nsel);                            cout<<"apres lisimparC\n";
+        if (scaled) lisimparS(nsel);                               cout<<"apres lisimparS\n";
         iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-        histodens(nsel,multithread,progressfilename,&iprog,&nprog);                      cout<<"apres histodens\n";
-        parstat = calparstat(nsel);                                 cout<<"apres calparstat\n";
+		if (original) histodensO(nsel,multithread,progressfilename,&iprog,&nprog);   cout<<"apres histodensO\n";
+		if (composite) histodensC(nsel,multithread,progressfilename,&iprog,&nprog);  cout<<"apres histodensC\n";
+		if (scaled) histodensS(nsel,multithread,progressfilename,&iprog,&nprog);     cout<<"apres histodensS\n";
+        if (original) parstat = calparstatO(nsel);                                 cout<<"apres calparstatO\n";
+        if (composite) parstatcompo = calparstatC(nsel);                                 cout<<"apres calparstatO\n";
+        if (scaled) parstatscaled = calparstatS(nsel);                                 cout<<"apres calparstatO\n";
         saveparstat(nsel,path,ident);
         rt.desalloue_enrsel(nsel);
         iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
