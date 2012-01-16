@@ -945,12 +945,13 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 		long double Ne;
 		int k=0;
 		Ne=0.0;
-		for (int j=0;j<header.dataobs.nsample;j++) {
-			if (header.scenario[rt.scenteste-1].histparam[j].prior.constant) 
-				Ne += (long double)header.scenario[rt.scenteste-1].histparam[j].prior.mini;
-			else {
-				Ne +=(long double)enreg2[p].paramvv[k];
-				k++;
+		for (int j=0;j<header.scenario[rt.scenchoisi[0]-1].npop;j++) {
+			for (int ievent=0;ievent<header.scenario[rt.scenchoisi[0]-1].nevent;ievent++) {
+				if ((header.scenario[rt.scenchoisi[0]-1].event[ievent].action=='E')and(header.scenario[rt.scenchoisi[0]-1].event[ievent].pop==j+1)){
+					if (header.scenario[rt.scenchoisi[0]-1].histparam[j].prior.constant) 
+						Ne += (long double)header.scenario[rt.scenchoisi[0]-1].histparam[j].prior.mini;
+					else Ne +=(long double)enreg2[p].paramvv[k];
+				}
 			}
 		}
 		k=0;
