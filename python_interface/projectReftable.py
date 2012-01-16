@@ -849,7 +849,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #F4992B")
 
     def analysisProblem(self,msg):
-        output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,msg))
+        msg_to_show = msg
+        if len(msg) > 300:
+            msg_to_show = msg[-300:]
+
+        output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,msg_to_show))
 
         # nettoyage du progress.txt
         aid = self.thAnalysis.analysis.name

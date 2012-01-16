@@ -62,6 +62,8 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         self.ui.PCAGraphFrame.setMinimumSize(QSize(860, 430))
         self.ui.PCAGraphFrame.setMaximumSize(QSize(860, 430))
 
+        self.ui.parameterChoiceFrame.hide()
+
     def viewLocate(self):
         """ clic sur le bouton view locate
         """

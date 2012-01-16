@@ -47,6 +47,8 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         self.ui.PCAGraphFrame.hide()
         self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
 
+        self.ui.parameterChoiceFrame.hide()
+
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)

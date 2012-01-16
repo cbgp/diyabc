@@ -25,8 +25,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         self.pixList = []    
         self.svgList = []
 
-
-
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -40,6 +38,8 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         self.ui.PCAFrame.hide()
         self.ui.PCAGraphFrame.hide()
         self.ui.PCAScroll.hide()
+
+        self.ui.parameterChoiceFrame.hide()
 
     def exit(self):
         ## reactivation des onglets
