@@ -12,7 +12,7 @@ debug = False
 whatsthis_header = '\
 <head>\
 <style type="text/css">\
-.different-text-color { color: blue; }\
+.different-text-color { color: black; }\
 </style>\
 </head>\
 <body>\

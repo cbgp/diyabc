@@ -339,8 +339,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                     docstr += "<table border='1'><tr><td>" +doc_dico["default_tag"]+"</td></tr></table>\n"
                 for tag in doc_dico.keys():
                     if tag != "default_tag":
-                        docstr += "<table border='1'><tr><td><font color='red'>%s</font>\n"%tag
-                        docstr += doc_dico[tag]+"</td></tr></table>\n"
+                        docstr += "<table border='1'><tr><th><font color='orange'>%s</font>"%tag
+                        docstr += "</th></tr><tr><td>" + doc_dico[tag]+"</td></tr></table>\n"
                 docstr = docstr.replace('\n','<br/>')
 
                 if objname_debug:
