@@ -425,6 +425,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						}
 						break;
 				case 3 : //logit transform
+						xborne=1E100;
 						for (int j=kp0;j<kp;j++) {parmincompo[j]=1E100;parmaxcompo[j]=-1E100;}
 						for (int i=0;i<n;i++) {
 								for (int j=kp0;j<kp;j++) {
@@ -444,6 +445,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						}
 						break;
 				case 4 : //log(tg) transform
+						xborne=1E100;
 						for (int j=kp0;j<kp;j++) {parmincompo[j]=1E100;parmaxcompo[j]=-1E100;}
 						for (int i=0;i<n;i++) {
 								for (int j=kp0;j<kp;j++) {
@@ -522,6 +524,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 					break;
 			case 3 : //logit transform
+					xborne=1E100;
 					for (int j=0;j<nparscaled;j++) {parminscaled[j]=1E100;parmaxscaled[j]=-1E100;}
 					for (int i=0;i<n;i++) {
 							for (int j=0;j<nparscaled;j++) {
@@ -541,6 +544,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 					break;
 			case 4 : //log(tg) transform
+					xborne=1E100;
 					for (int j=0;j<nparscaled;j++) {parminscaled[j]=1E100;parmaxscaled[j]=-1E100;}
 					for (int i=0;i<n;i++) {
 							for (int j=0;j<nparscaled;j++) {
@@ -624,6 +628,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         for (int i=0;i<n;i++) parsim[i] = new long double[npa];
         for (int i=0;i<n;i++) {
             for (int j=0;j<npa;j++)parsim[i][j]=(long double)alpsimrat[i][j];
+			if (i==0) "\nparsim\n";
+			if (i<20){
+				for (int j=0;j<npa;j++) cout<<"   "<<parsim[i][j];
+				cout<<"\n";
+			}
         }
     }
     
@@ -776,13 +785,13 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                   case 1 : break;
                   case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
                            break;
-                  case 3 : if (phista[i][j]<=parmincompo[j]) phista[i][j] = parmincompo[j];
-                           else if (phista[i][j]>=parmaxcompo[j]) phista[i][j] = parmaxcompo[j];
+                  case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parmincompo[j];
+                           else if (phista[i][j]>=xborne) phista[i][j] = parmaxcompo[j];
                            else phista[i][j] = (exp(phista[i][j])*parmaxcompo[j]+parmincompo[j])/(1.0+exp(phista[i][j]));
                            //if(i<100) cout<< phista[i][j]<<"   ("<<parmincompo[j]<<","<<parmaxcompo[j]<<")\n";
                            break;
-                  case 4 : if (phista[i][j]<=parmincompo[j]) phista[i][j] = parmincompo[j];
-                           else if (phista[i][j]>=parmaxcompo[j]) phista[i][j] = parmaxcompo[j];
+                  case 4 : if (phista[i][j]<=-xborne) phista[i][j] = parmincompo[j];
+                           else if (phista[i][j]>=xborne) phista[i][j] = parmaxcompo[j];
                            else phista[i][j] =parmincompo[j] +(diffcompo[j]/c*atan(exp(phista[i][j])));
                            break;
                 }
@@ -809,24 +818,25 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparscaled;j++) {
                 phista[i][j] = alpsimrat[i][j];
-                //if (i<100) cout<< phista[i][j]<<"   ";
+                if (i<100) cout<<"   "<< phista[i][j];
                 for (int k=0;k<nstatOKsel;k++) phista[i][j] -= matX0[i][k]*beta[k+1][j];
-                //if(i<100) cout<< phista[i][j]<<"   ";
+                if(i<100) cout<<"   "<< phista[i][j];
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
                            break;
-                  case 3 : if (phista[i][j]<=parminscaled[j]) phista[i][j] = parminscaled[j];
+                  case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parminscaled[j];
                            else if (phista[i][j]>=parmaxscaled[j]) phista[i][j] = parmaxscaled[j];
-                           else phista[i][j] = (exp(phista[i][j])*parmax[j]+parmin[j])/(1.0+exp(phista[i][j]));
-                           //if(i<100) cout<< phista[i][j]<<"   ("<<parmin[j]<<","<<parmax[j]<<")\n";
+                           else phista[i][j] = (exp(phista[i][j])*parmaxscaled[j]+parminscaled[j])/(1.0+exp(phista[i][j]));
+                           if(i<100) cout<<"      "<< phista[i][j]<<"   ("<<parminscaled[j]<<","<<parmaxscaled[j]<<")\n";
                            break;
-                  case 4 : if (phista[i][j]<=parminscaled[j]) phista[i][j] = parminscaled[j];
+                  case 4 : if (phista[i][j]<=xborne) phista[i][j] = parminscaled[j];
                            else if (phista[i][j]>=parmaxscaled[j]) phista[i][j] = parmaxscaled[j];
                            else phista[i][j] =parminscaled[j] +(diff[j]/c*atan(exp(phista[i][j])));
                            break;
                 }
             }
+            if(i<100) cout<<"\n";
         }
         delete []parminscaled; delete []parmaxscaled;delete []diffscaled;
         //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
@@ -912,7 +922,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			}
 			fclose(f1);
 		} 
-		if (composite) {
+		if (scaled) {
 			nomphistar =path+ident+"_phistarscaled.txt";
 			FILE *f1;
 			f1=fopen(nomphistar.c_str(),"w");
@@ -1397,7 +1407,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                     if (pardensscaled[j].xmax<phistarscaled[i][j]) pardensscaled[j].xmax=phistarscaled[i][j];
                 }
             pardensscaled[j].xdelta = (pardensscaled[j].xmax-pardensscaled[j].xmin)/(long double)(pardensscaled[j].ncl-1);
-            //cout<<nomparam[j]<<"   xmin="<<pardensscaled[j].xmin<<"   xmax="<<pardensscaled[j].xmax<<"   xdelta="<<pardensscaled[j].xdelta<<"   ncl="<<pardensscaled[j].ncl<<"\n";
+            cout<<nomparamS[j]<<"   xmin="<<pardensscaled[j].xmin<<"   xmax="<<pardensscaled[j].xmax<<"   xdelta="<<pardensscaled[j].xdelta<<"   ncl="<<pardensscaled[j].ncl<<"\n";
 			pardensscaled[j].x = new long double[pardensscaled[j].ncl];
             for (int k=0;k<pardensscaled[j].ncl;k++) pardensscaled[j].x[k]=pardensscaled[j].xmin+k*pardensscaled[j].xdelta;
 			//cout<<"1\n";
@@ -1449,7 +1459,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             //cout<<"allocation des x du parametre "<<j<<"\n";
             sort(&x[0],&x[n]);
             //cout<<"apres le sort\n";
-            parst[j].med = x[(int)floor(0.5*n+0.5)-1];
             parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
             parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
             parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
@@ -1465,6 +1474,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             //cout<<nomparam[j];
             //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
         }
+        delete []x;
         return parst;
     }
 
@@ -1483,7 +1493,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             //cout<<"allocation des x du parametre "<<j<<"\n";
             sort(&x[0],&x[n]);
             //cout<<"apres le sort\n";
-            parst[j].med = x[(int)floor(0.5*n+0.5)-1];
             parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
             parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
             parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
@@ -1499,6 +1508,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             //cout<<nomparam[j];
             //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
         }
+        delete []x;
         return parst;
     }
 
@@ -1517,7 +1527,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             //cout<<"allocation des x du parametre "<<j<<"\n";
             sort(&x[0],&x[n]);
             //cout<<"apres le sort\n";
-            parst[j].med = x[(int)floor(0.5*n+0.5)-1];
             parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
             parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
             parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
@@ -1531,8 +1540,9 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             //cout<<"apres cal_mode\n";
             //for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
             //cout<<nomparam[j];
-            //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
+            printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
         }
+        delete []x;
         return parst;
     }
 
