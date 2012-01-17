@@ -142,7 +142,7 @@ class Documentator():
                 desc = ""
                 while '<A NAME="SECTION00' not in lines[l] and len(desc) < 2500:
                     if '<SPAN CLASS="arabic">' not in lines[l]:
-                        desc += lines[l].replace('SRC="','SRC="../Notice-DIYABC-v2/Notice_DIYABC_principal2/')
+                        desc += lines[l]
                     l+=1
 
                 desc+="<br/><br/>More details in the documentation pdf at section : %s"%section

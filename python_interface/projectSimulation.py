@@ -164,18 +164,18 @@ class ProjectSimulation(Project):
             return
         self.th = SimulationThread(self,nb_to_gen)
         self.th.connect(self.th,SIGNAL("simulationTerminated"),self.simulationTerminated)
-        self.th.connect(self.th,SIGNAL("simulationProblem"),self.simulationProblem)
-        self.th.connect(self.th,SIGNAL("simulationLog"),self.simulationLog)
+        self.th.connect(self.th,SIGNAL("simulationProblem(QString)"),self.simulationProblem)
+        self.th.connect(self.th,SIGNAL("simulationLog(int,QString)"),self.simulationLog)
         #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
         self.th.start()
 
-    def simulationProblem(self):
-        output.notify(self,"Simulation problem","Something happened during the simulation :\n %s"%(self.th.problem))
+    def simulationProblem(self,msg):
+        output.notify(self,"Simulation problem","Something happened during the simulation :\n %s"%(msg))
         self.stopSimulation()
 
-    def simulationLog(self):
+    def simulationLog(self,lvl,msg):
         if self.th != None:
-            log(self.th.loglvl,self.th.logmsg)
+            log(lvl,str(msg))
 
     def simulationTerminated(self):
         """ Reception du signal de fin de simulation
@@ -212,7 +212,9 @@ class SimulationThread(QThread):
         """
         self.loglvl = lvl
         self.logmsg = msg
-        self.emit(SIGNAL("simulationLog"))
+        #self.emit(SIGNAL("simulationLog"))
+        clean_msg = msg.replace(u'\xb5',u'u')
+        self.emit(SIGNAL("simulationLog(int,QString)"),lvl,clean_msg)
 
     def killProcess(self):
         self.log(3,"Attempting to kill simulation process")
@@ -242,7 +244,8 @@ class SimulationThread(QThread):
         except Exception as e:
             #print "Cannot find the executable of the computation program %s"%e
             self.problem = "Problem during program launch \n%s"%e
-            self.emit(SIGNAL("simulationProblem"))
+            #self.emit(SIGNAL("simulationProblem"))
+            self.emit(SIGNAL("simulationProblem(QString)"),self.problem)
             #output.notify(self.parent(),"computation problem","Cannot find the executable of the computation program")
             fg.close()
             return
@@ -270,7 +273,8 @@ class SimulationThread(QThread):
                         lastline = lastline[-1]
                     fout.close()
                     self.problem = "Simulation program exited anormaly\n%s"%lastline
-                    self.emit(SIGNAL("simulationProblem"))
+                    #self.emit(SIGNAL("simulationProblem"))
+                    self.emit(SIGNAL("simulationProblem(QString)"),self.problem)
                     return
                     
                 fg.close()

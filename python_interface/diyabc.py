@@ -100,7 +100,8 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.documentator = Documentator(dataPath.DATAPATH+"/../../Notice-DIYABC-v2/Notice_DIYABC_principal2/Notice_DIYABC_principal2.html",self)
             self.updateDoc()
         except Exception as e:
-            output.notify(self,"Documentation error","%s"%e)
+            #output.notify(self,"Documentation error","%s"%e)
+            log(1,"Documentation error : %s"%e)
             self.documentator = None
 
     def createWidgets(self):
@@ -335,9 +336,14 @@ class Diyabc(formDiyabc,baseDiyabc):
             try:
                 #docstr = self.documentator.getDocString("%s"%e.objectName()).replace('\n','<br/>')
                 doc_dico = self.documentator.getDocHashByTags("%s"%e.objectName())
+                # on remplace les SRC pour que les images soient bien chargées
+                for tag in doc_dico.keys():
+                    doc_dico[tag] = doc_dico[tag].replace('SRC="','SRC="../Notice-DIYABC-v2/Notice_DIYABC_principal2/')
                 docstr = ""
+                # on n'encadre pas le default tag
                 if doc_dico.has_key("default_tag"):
                     docstr += "<table border='1'><tr><td>" +doc_dico["default_tag"]+"</td></tr></table>\n"
+                # on encadre les textes pour chaque tag
                 for tag in doc_dico.keys():
                     if tag != "default_tag":
                         docstr += "<table border='1'><tr><th><font color='orange'>%s</font>"%tag
