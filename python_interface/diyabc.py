@@ -97,7 +97,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.openProject(projDirName)
         try:
             #self.documentator = Documentator(dataPath.DATAPATH+"/documentation/documentation.html",self)
-            self.documentator = Documentator(dataPath.DATAPATH+"/../../Notice-DIYABC-v2/Notice_DIYABC_principal2/Notice_DIYABC_principal2.html",self)
+            self.documentator = Documentator(dataPath.DOCPATH+"/index.html",self)
             self.updateDoc()
         except Exception as e:
             #output.notify(self,"Documentation error","%s"%e)
@@ -338,7 +338,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 doc_dico = self.documentator.getDocHashByTags("%s"%e.objectName())
                 # on remplace les SRC pour que les images soient bien chargées
                 for tag in doc_dico.keys():
-                    doc_dico[tag] = doc_dico[tag].replace('SRC="','SRC="../Notice-DIYABC-v2/Notice_DIYABC_principal2/')
+                    doc_dico[tag] = doc_dico[tag].replace('SRC="','SRC="%s/'%dataPath.DOCPATH)
                 docstr = ""
                 # on n'encadre pas le default tag
                 if doc_dico.has_key("default_tag"):
