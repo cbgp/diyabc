@@ -628,11 +628,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         for (int i=0;i<n;i++) parsim[i] = new long double[npa];
         for (int i=0;i<n;i++) {
             for (int j=0;j<npa;j++)parsim[i][j]=(long double)alpsimrat[i][j];
-			if (i==0) "\nparsim\n";
-			if (i<20){
-				for (int j=0;j<npa;j++) cout<<"   "<<parsim[i][j];
-				cout<<"\n";
-			}
         }
     }
     
@@ -818,9 +813,9 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparscaled;j++) {
                 phista[i][j] = alpsimrat[i][j];
-                if (i<100) cout<<"   "<< phista[i][j];
+                //if (i<100) cout<<"   "<< phista[i][j];
                 for (int k=0;k<nstatOKsel;k++) phista[i][j] -= matX0[i][k]*beta[k+1][j];
-                if(i<100) cout<<"   "<< phista[i][j];
+                //if(i<100) cout<<"   "<< phista[i][j];
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
@@ -828,7 +823,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                   case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parminscaled[j];
                            else if (phista[i][j]>=parmaxscaled[j]) phista[i][j] = parmaxscaled[j];
                            else phista[i][j] = (exp(phista[i][j])*parmaxscaled[j]+parminscaled[j])/(1.0+exp(phista[i][j]));
-                           if(i<100) cout<<"      "<< phista[i][j]<<"   ("<<parminscaled[j]<<","<<parmaxscaled[j]<<")\n";
+                           //if(i<100) cout<<"      "<< phista[i][j]<<"   ("<<parminscaled[j]<<","<<parmaxscaled[j]<<")\n";
                            break;
                   case 4 : if (phista[i][j]<=xborne) phista[i][j] = parminscaled[j];
                            else if (phista[i][j]>=parmaxscaled[j]) phista[i][j] = parmaxscaled[j];
@@ -836,7 +831,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                            break;
                 }
             }
-            if(i<100) cout<<"\n";
+            //if(i<100) cout<<"\n";
         }
         delete []parminscaled; delete []parmaxscaled;delete []diffscaled;
         //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
@@ -1729,18 +1724,20 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         //header.calstatobs(statobsfilename);  cout<<"apres read_statobs\n";
 		stat_obs = header.stat_obs;
-        nprog=100;iprog=1;
-        flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        nprog=200; 
+		iprog=2;
+        flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
         rt.alloue_enrsel(nsel);
         rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
-        iprog+=8;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=8;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
         det_numpar();                                     cout<<"apres det_numpar\n";
-        nprog=(nparamcom+nparcompo+nparscaled)*10+14;
+        nprog=12+10*(nparamcom+nparcompo+nparscaled); 
+		if (original)nprog +=6;if (composite)nprog +=6;if (scaled)nprog +=6;
 		if (original){											cout<<"\ntraitement des parametres originaux\n";
 			recalparamO(nsel);                             		cout<<"apres recalparamO\n";
 			rempli_mat(nsel,stat_obs,nparamcom);            	cout<<"apres rempli_mat\n";
 			local_regression(nsel,nparamcom);               	cout<<"apres local_regression\n";
-			iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistar = calphistarO(nsel);
 			cout<<"apres calphistarO\n";
 		}
@@ -1748,7 +1745,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			recalparamC(nsel);                                 	cout<<"apres recalparamC\n";
 			rempli_mat(nsel,stat_obs,nparcompo);                cout<<"apres rempli_mat\n";
 			local_regression(nsel,nparcompo);               	cout<<"apres local_regression\n";
-			iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistarcompo = calphistarC(nsel);
 			cout<<"apres calphistarcompo\n";
 		}
@@ -1756,22 +1753,50 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			recalparamS(nsel);                                 	cout<<"apres recalparamS\n";
 			rempli_mat(nsel,stat_obs,nparscaled);               cout<<"apres rempli_mat\n";
 			local_regression(nsel,nparscaled);               	cout<<"apres local_regression\n";
-			iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistarscaled = calphistarS(nsel);
 			cout<<"apres calphistarscaled\n";
 		}
         det_nomparam();
         savephistar(nsel,path,ident);                     		cout<<"apres savephistar\n";
-        if (original) lisimparO(nsel);                          cout<<"apres lisimparO\n";
-        if (composite) lisimparC(nsel);                         cout<<"apres lisimparC\n";
-        if (scaled) lisimparS(nsel);                            cout<<"apres lisimparS\n";
-		if (original) histodensO(nsel,multithread,progressfilename,&iprog,&nprog);   cout<<"apres histodensO\n";
-		if (composite) histodensC(nsel,multithread,progressfilename,&iprog,&nprog);  cout<<"apres histodensC\n";
-		if (scaled) histodensS(nsel,multithread,progressfilename,&iprog,&nprog);     cout<<"apres histodensS\n";
-        if (original) parstat = calparstatO(nsel);                                 cout<<"apres calparstatO\n";
-        if (composite) parstatcompo = calparstatC(nsel);                                 cout<<"apres calparstatO\n";
-        if (scaled) parstatscaled = calparstatS(nsel);                                 cout<<"apres calparstatO\n";
+        if (original) {
+			lisimparO(nsel);                          cout<<"apres lisimparO\n";
+			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+		}
+        if (composite) {
+			lisimparC(nsel);                         cout<<"apres lisimparC\n";
+			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+		}
+        if (scaled) {
+			lisimparS(nsel);                            cout<<"apres lisimparS\n";
+			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+		}
+		if (original) {
+			histodensO(nsel,multithread,progressfilename,&iprog,&nprog);   cout<<"apres histodensO\n";
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+		}
+		if (composite) {
+			histodensC(nsel,multithread,progressfilename,&iprog,&nprog);  cout<<"apres histodensC\n";
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			
+		}
+		if (scaled) {
+			histodensS(nsel,multithread,progressfilename,&iprog,&nprog);     cout<<"apres histodensS\n";
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+		}
+        if (original){ 
+			parstat = calparstatO(nsel);                                 cout<<"apres calparstatO\n";
+			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+		}
+        if (composite) {
+			parstatcompo = calparstatC(nsel);                            cout<<"apres calparstatO\n";
+			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+		}
+        if (scaled) {
+			parstatscaled = calparstatS(nsel);                   cout<<"apres calparstatO\n";
+			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+		}
         saveparstat(nsel,path,ident);
         rt.desalloue_enrsel(nsel);
-        iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
     }
