@@ -581,7 +581,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         long double *sx,*sx2,*mo;
         nn=(long double)n;
         delta = rt.enrsel[n-1].dist;
-		printf("delta = %12.8Lf    (%12.8Lf,%12.8Lf)\n",delta,rt.enrsel[n-2].dist,rt.enrsel[n].dist);
+		//printf("delta = %12.8Lf    (%12.8Lf,%12.8Lf)\n",delta,rt.enrsel[n-2].dist,rt.enrsel[n].dist);
         sx  = new long double[rt.nstat];
         sx2 = new long double[rt.nstat];
         mo  = new long double[rt.nstat];
@@ -601,7 +601,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             mo[j] = sx[j]/nn;
         }
         //for (int j=0;j<rt.nstat;j++) printf("stat[%3d]  moy=%12.8Lf   var=%16Le\n",j,mo[j],var_statsel[j]);
-		cout<<"nstat="<<rt.nstat<<"     nstatOK="<<nstatOKsel<<"\n";
+		//cout<<"nstat="<<rt.nstat<<"     nstatOK="<<nstatOKsel<<"\n";
         matX0 = new long double*[n];
         for (int i=0;i<n;i++)matX0[i]=new long double[nstatOKsel];
         vecW = new long double[n];
@@ -680,9 +680,9 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         matAA = prodML(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
         //ecrimatL("matAA",nstatOKsel+1,nstatOKsel+1,matAA);
 		kap = kappa(nstatOKsel+1,matAA);
-        printf("                                    kappa (AA) = %16Le",kap);
-		if (kap>1.0E99) cout <<"   MATRICE SINGULIERE";
-		cout<<"\n";
+        //printf("kappa (AA) = %16Le",kap);
+		if (kap>1.0E99) cout <<"   MATRICE SINGULIERE\n";
+		//cout<<"\n";
 		if (kap>1.0E99) coeff=1.0E-15; else coeff=1.0E-21;
         err = inverse_Tik2(nstatOKsel+1,matAA,matB,coeff);
 		if (err==0) {
@@ -704,7 +704,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<npa;j++) mdiff += fabs(beta[i][j] - bet[i][j])/fabs(beta[i][j] + bet[i][j]);}
 			mdiff /=(nstatOKsel+1)*(nstatOKsel+1);
 			//cout<<"coeff = 1E"<<log10(coeff)<<"    mdiff = "<<mdiff<<"\n";
-			printf("coeff = %8Le   mdiff = %8.5Lf\n",coeff,mdiff);
+			//printf("coeff = %8Le   mdiff = %8.5Lf\n",coeff,mdiff);
 		} while ((mdiff>0.0002)and(coeff<0.01));
 		
 		//for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<npa;j++) beta[i][j] = bet[i][j];}
@@ -752,7 +752,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                 }
             }
         }
-        delete []parmin; delete []parmax;delete []diff;
+        if (numtransf>2) {delete []parmin; delete []parmax;delete []diff;}
         //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
         for (int i=0;i<n;i++) delete []alpsimrat[i];delete []alpsimrat;
         for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
@@ -792,7 +792,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                 }
             }
         }
-        delete []parmincompo; delete []parmaxcompo;delete []diffcompo;
+        if (numtransf>2) {delete []parmincompo; delete []parmaxcompo;delete []diffcompo;}
         //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
         for (int i=0;i<n;i++) delete []alpsimrat[i];delete []alpsimrat;
         for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
@@ -833,7 +833,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             }
             //if(i<100) cout<<"\n";
         }
-        delete []parminscaled; delete []parmaxscaled;delete []diffscaled;
+        if (numtransf>2) {delete []parminscaled; delete []parmaxscaled;delete []diffscaled;}
         //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
         for (int i=0;i<n;i++) delete []alpsimrat[i];delete []alpsimrat;
         for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
@@ -1515,7 +1515,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 		parstatC *parst;
         parst = new parstatC[nparscaled];
         x = new long double[n];
-        //cout <<"avant la boucle sur les parametres nparamcom="<<nparamcom<<"  nparcompo="<<nparcompo<<"   nsel="<<n<<"\n";
+        //cout <<"avant la boucle sur les parametres nparscaled="<<nparscaled<<"   nsel="<<n<<"\n";
         for (int j=0;j<nparscaled;j++) {
             for (int i=0;i<n;i++) x[i] = phistarscaled[i][j];
             //if (j==0) for (int i=0;i<20;i++) cout <<phistar[i][j]<<"  "; cout<<"\n";
@@ -1535,9 +1535,10 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             //cout<<"apres cal_mode\n";
             //for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
             //cout<<nomparam[j];
-            printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
+            //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
         }
         delete []x;
+		//cout<<"fin de calparstatS\n";
         return parst;
     }
 
@@ -1728,7 +1729,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 		iprog=2;
         flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
         rt.alloue_enrsel(nsel);
-        rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
+        rt.cal_dist(nrec,nsel,stat_obs);                  //cout<<"apres cal_dist\n";
         iprog+=8;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
         det_numpar();                                     cout<<"apres det_numpar\n";
         nprog=12+10*(nparamcom+nparcompo+nparscaled); 

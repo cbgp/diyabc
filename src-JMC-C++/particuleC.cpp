@@ -1524,7 +1524,7 @@ void ParticleC::put_one_mutation(int loc) {
     int len = 0, cat = (this->locuslist[loc].type % 5);
     if (debuglevel==10) cout <<"avant la boucle while ngenes="<<this->gt[loc].ngenes<<"\n";
     while (anc>=this->gt[loc].ngenes) {
-      if (debuglevel>10) cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
+      if (debuglevel==10) cout << "locus " << loc << "   ngenes = " << this->gt[loc].ngenes << "   anc = " << anc << "\n";
       br=0;
       while (br<this->gt[loc].nbranches) {
 	trouve = (this->gt[loc].branches[br].top == anc);

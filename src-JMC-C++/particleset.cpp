@@ -510,12 +510,12 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 			enreg[ipart].numscen=1;
 			if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
 
-			//cout<<"dans particleset nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
+			if (debuglevel==5) cout<<"dans particleset nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
 			for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
 				enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
-				//cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+				cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
 			}
-			//cout <<"\n";
+			if (debuglevel==5) cout <<"\n";
 			nstat=0;
 			for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}

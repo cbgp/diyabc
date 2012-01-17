@@ -490,14 +490,14 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 	long double diff,distmin=1E100;
 	this->nreclus=0;step=nrec/100;
 	nn=nsel;
-	cout<<"nrec="<<nrec<<"   nscenchoisi="<< this->nscenchoisi<<"   nn="<<nn<<"\n";
+	//cout<<"nrec="<<nrec<<"   nscenchoisi="<< this->nscenchoisi<<"   nn="<<nn<<"\n";
 	nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
 	//cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
 	//cout<<" apres allocation de enrsel\n";
-	for (int j=0;j<this->nstat;j++) cout<<"var_stat["<<j<<"]="<<this->var_stat[j]<<"\n";
-	cout<<"\n";
-	for (int j=0;j<this->nstat;j++) cout<<"stat_obs["<<j<<"]="<<stat_obs[j]<<"\n";
-	cout<<"\n";
+	//for (int j=0;j<this->nstat;j++) cout<<"var_stat["<<j<<"]="<<this->var_stat[j]<<"\n";
+	//cout<<"\n";
+	//for (int j=0;j<this->nstat;j++) cout<<"stat_obs["<<j<<"]="<<stat_obs[j]<<"\n";
+	//cout<<"\n";
 	this->openfile2();
 	while ((this->nreclus<nrec)and(not fifo.eof())) {
 		if (firstloop) {nrecOK=0;firstloop=false;}
@@ -522,7 +522,7 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 					//if (nreclus==1) printf("  %12.6f   %12.6f   %12.6Lf   %12.8Lf\n",this->enrsel[nrecOK].stat[j],stat_obs[j],diff*diff,this->enrsel[nrecOK].dist);
 				}
 				this->enrsel[nrecOK].dist =sqrt(this->enrsel[nrecOK].dist);
-				if (distmin>this->enrsel[nrecOK].dist) {distmin=this->enrsel[nrecOK].dist;cout <<"distmin="<<distmin<<"\n";}
+				if (distmin>this->enrsel[nrecOK].dist) {distmin=this->enrsel[nrecOK].dist;/*cout <<"distmin="<<distmin<<"\n";*/}
 				nrecOK++;
 				if (this->nreclus==nrec) break;
 			}
@@ -533,9 +533,9 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 	}
 	cout<<"\rcal_dist : fini   nreclus="<<nreclus<<"\n";
 	this->closefile();
-	cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK<<"\n";
+	//cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK<<"\n";
 	//cout<<"    distmin = "<<this->enrsel[0].dist<<"    distmax = "<<this->enrsel[nsel-1].dist<<"\n";
-	printf("    distmin = %12.8Lf   distmax = %12.8Lf\n",this->enrsel[0].dist/(long double)this->nstat,this->enrsel[nsel-1].dist/(long double)this->nstat);
+	//printf("    distmin = %12.8Lf   distmax = %12.8Lf\n",this->enrsel[0].dist/(long double)this->nstat,this->enrsel[nsel-1].dist/(long double)this->nstat);
 	/*for (int i=0;i<nsel;i++){
 			cout<<this->enrsel[i].numscen<<"  ";
 			for (int j=0;j<this->nparam[this->enrsel[i].numscen-1];j++) printf("  %6.0f",this->enrsel[i].param[j]);
