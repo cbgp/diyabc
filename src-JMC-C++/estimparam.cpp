@@ -824,15 +824,16 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                 phista[i][j] = alpsimrat[i][j];
                 //if (i<100) cout<<"   "<< phista[i][j];
                 for (int k=0;k<nstatOKsel;k++) phista[i][j] -= matX0[i][k]*beta[k+1][j];
-                //if(i<100) cout<<"   "<< phista[i][j];
+                if(i<100) cout<<"   "<< phista[i][j];
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
                            break;
                   case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parminscaled[j];
                            else if (phista[i][j]>=parmaxscaled[j]) phista[i][j] = parmaxscaled[j];
-                           else phista[i][j] = (exp(phista[i][j])*parmaxscaled[j]+parminscaled[j])/(1.0+exp(phista[i][j]));
-                           //if(i<100) cout<<"      "<< phista[i][j]<<"   ("<<parminscaled[j]<<","<<parmaxscaled[j]<<")\n";
+                           else if (parminscaled[j]==parmaxscaled[j]) phista[i][j] = parmaxscaled[j]; 
+						   else phista[i][j] = (exp(phista[i][j])*parmaxscaled[j]+parminscaled[j])/(1.0+exp(phista[i][j]));
+                           if(i<100) cout<<"      "<< phista[i][j]<<"   ("<<parminscaled[j]<<","<<parmaxscaled[j]<<")\n";
                            break;
                   case 4 : if (phista[i][j]<=xborne) phista[i][j] = parminscaled[j];
                            else if (phista[i][j]>=parmaxscaled[j]) phista[i][j] = parmaxscaled[j];
@@ -1080,7 +1081,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * calcule les paramètres scaled des enregistrements simulés pour l'établissement des distributions a priori'
 */
     void lisimparS(int nsel){
-      int bidon,iscen,m,k,nr;
+      int bidon,iscen,m,k,nr,kk;
         bool scenOK;
         long double pmut,Ne;
         if (nsimpar>rt.nrec) nsimpar=rt.nrec;
@@ -1100,20 +1101,30 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 				if (not scenOK) m++;
 			}
 			if (scenOK){
+				//cout<<"scenOK   m="<<m<<"\n";
 				simparscaled[i] = new long double[nparscaled];
 				Ne=0.0;
 				for (int j=0;j<header.scenario[rt.scenchoisi[m]-1].npop;j++) {
 					for (int ievent=0;ievent<header.scenario[rt.scenchoisi[m]-1].nevent;ievent++) {
 						if ((header.scenario[rt.scenchoisi[m]-1].event[ievent].action=='E')and(header.scenario[rt.scenchoisi[m]-1].event[ievent].pop==j+1)){
-							if (header.scenario[rt.scenchoisi[m]-1].histparam[j].prior.constant) 
-								Ne += (long double)header.scenario[rt.scenchoisi[m]-1].histparam[j].prior.mini;
-							else Ne +=(long double)enr.param[numpar[m][j]];
+							//cout<<"nn0="<<header.scenario[rt.scenchoisi[m]-1].nn0<<"\n";
+							kk=0;while ((kk<header.scenario[rt.scenchoisi[m]-1].nn0)and(header.scenario[rt.scenchoisi[m]-1].histparam[kk].name!=header.scenario[rt.scenchoisi[m]-1].ne0[j].name)) {
+								//cout<<"header.scenario[rt.scenchoisi[m]-1].ne0[j].name : ---"<<header.scenario[rt.scenchoisi[m]-1].ne0[j].name<<"---\n";
+								//cout<<"header.scenario[rt.scenchoisi[m]-1].histparam["<<kk<<"].name : ---"<<header.scenario[rt.scenchoisi[m]-1].histparam[kk].name<<"---\n";
+								kk++;
+							}
+							//cout<<"kk="<<kk<<"\n";
+							if (header.scenario[rt.scenchoisi[m]-1].histparam[kk].prior.constant) 
+								Ne += (long double)header.scenario[rt.scenchoisi[m]-1].histparam[kk].prior.mini;
+							else Ne +=(long double)enr.param[numpar[m][kk]];
+							//cout<<"Ne = "<<Ne<<"  "<<((int)Ne % 3)<<"\n";
 						}
 					}
 				}
-				k=0;
+				k=0; //cout<<"Ne = "<<Ne<<"  "<<((int)Ne % 3)<<"\n";
 				for (int j=0;j<npar;j++) {
 					if (header.scenario[rt.scenchoisi[m]-1].histparam[numpar[m][j]].category<2){
+						//cout<<"i="<<i<<"   nsimpar="<<nsimpar<<"   k="<<k<<"\n";
 						simparscaled[i][k] = (long double)enr.param[numpar[m][j]]/Ne;
 						k++;
 					}
@@ -1527,8 +1538,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         //cout <<"avant la boucle sur les parametres nparscaled="<<nparscaled<<"   nsel="<<n<<"\n";
         for (int j=0;j<nparscaled;j++) {
             for (int i=0;i<n;i++) x[i] = phistarscaled[i][j];
-            //if (j==0) for (int i=0;i<20;i++) cout <<phistar[i][j]<<"  "; cout<<"\n";
-            //cout<<"allocation des x du parametre "<<j<<"\n";
+            if (j==0) for (int i=0;i<20;i++) cout <<phistarscaled[i][j]<<"  "; cout<<"\n";
+            cout<<"allocation des x du parametre "<<j<<"\n";
             sort(&x[0],&x[n]);
             //cout<<"apres le sort\n";
             parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
@@ -1799,11 +1810,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (composite) {
-			parstatcompo = calparstatC(nsel);                            cout<<"apres calparstatO\n";
+			parstatcompo = calparstatC(nsel);                            cout<<"apres calparstatC\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (scaled) {
-			parstatscaled = calparstatS(nsel);                   cout<<"apres calparstatO\n";
+			parstatscaled = calparstatS(nsel);                   cout<<"apres calparstatS\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         saveparstat(nsel,path,ident);
