@@ -8,7 +8,7 @@ locus_M6 <A> [M] G1 2 40
 locus_M7 <A> [M] G1 4 40
 locus_M8 <A> [M] G1 5 40
 locus_M9 <A> [M] G1 6 40
-locus_M10 <A> [M] G0 7 40
+locus_M10 <A> [M] G1 7 40
 locus_S1 <A> [S] G2 500
 locus_S2 <A> [S] G2 500
 locus_S3 <A> [S] G2 500

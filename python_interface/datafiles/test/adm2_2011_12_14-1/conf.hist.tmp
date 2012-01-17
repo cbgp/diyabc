@@ -4,7 +4,7 @@ N1 N2 N3 N1
 0 sample 1
 0 sample 2
 0 sample 3
-0 refsample 2 5 5
+0 refsample 4 5 5
 1 merge 1 4
 ta split 3 1 2 r
 ts merge 1 2

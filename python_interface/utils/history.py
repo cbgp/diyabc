@@ -321,9 +321,7 @@ class Scenario(object):
 								raise IOScreenError, "Unable to read number of females on line %s of scenario %s"%(jli0+1,self.number)
 							#print self.cevent.nindMref,"   ",self.cevent.nindFref
 							#print "                 ",data.nind[0]
-							if Li.find(" SAMPLE")and(data!=None):
-								if self.cevent.pop > len(data.nind) :
-									raise IOScreenError, "The population number is higher than the number of populations at line %s of scenario %s"%(jli0+1,self.number)
+							if Li.find(" SAMPLE") != -1 and (data!=None):
 								if self.cevent.nindMref+self.cevent.nindFref > data.nind[self.cevent.pop-1] :
 									raise IOScreenError, "The total number of reference individuals (%s) is larger than that of the data set (%s) on line %s of scenario %s"%(self.cevent.nindMref+self.cevent.nindFref,data.nind[self.cevent.pop-1],jli0+1,self.number)
 									
