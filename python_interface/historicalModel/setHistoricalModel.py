@@ -65,7 +65,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         self.ui.horizontalLayout_2.setAlignment(QtCore.Qt.AlignLeft)
         self.ui.horizontalLayout_3.setAlignment(QtCore.Qt.AlignLeft)
         if "darwin" in sys.platform:
-        	for lab in [self.ui.label_2,self.ui.label_3,self.ui.label_4,self.ui.label_5,self.ui.label_6,self.ui.label_7,self.ui.label_8,self.ui.label_9,self.ui.label_10]:
+        	for lab in [self.ui.parametersLabel,self.ui.uniformLabel,self.ui.logUniformLabel,self.ui.normalLabel,self.ui.logNormalLabel,self.ui.minLabel,self.ui.maxLabel,self.ui.meanLabel,self.ui.stdevLabel]:
 			ff = lab.font()
 			ff.setPointSize(10)
 			lab.setFont(ff)

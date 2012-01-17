@@ -24,11 +24,11 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         self.ui.frame_3.hide()
         self.ui.frame_2.hide()
 
-        self.ui.label_7.hide()
-        self.ui.label_8.hide()
+        self.ui.maxLabel.hide()
+        self.ui.meanLabel.hide()
         #self.ui.label_11.hide()
-        self.ui.label_10.hide()
-        self.ui.label_9.setText("Value")
+        self.ui.stdevLabel.hide()
+        self.ui.minLabel.setText("Value")
         self.ui.defPrButton.setText("Set parameter\nvalues")
         self.ui.groupBox_12.hide()
 

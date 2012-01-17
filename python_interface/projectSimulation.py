@@ -37,15 +37,15 @@ class ProjectSimulation(Project):
         self.sexRatio = None
 
         self.ui.projNameLabel.setText("Data file generic name :")
-        self.ui.label.setText("Target directory :")
+        self.ui.dirLabel.setText("Target directory :")
         self.ui.dirEdit.setText("%s"%self.dir)
-        self.ui.label_4.hide()
+        self.ui.dataFileLabel.hide()
         self.ui.browseDataFileButton.hide()
         self.ui.dataFileEdit.hide()
-        self.ui.label_10.hide()
+        self.ui.dataFileInfoTitleLabel.hide()
         self.ui.dataFileInfoLabel.hide()
 
-        self.ui.label_8.hide()
+        self.ui.nbSetsDoneLabel.hide()
         self.ui.nbSetsDoneEdit.hide()
 
         self.ui.groupBox_6.show()
