@@ -44,7 +44,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         elif self.analysis.category == "modelChecking":
             self.ui.label.setText("Model Checking")
             self.ui.candidateLabel.hide()
-            self.ui.label_5.hide()
+            self.ui.notdsSubTitleLabel.hide()
             self.ui.notdsTitleLabel.hide()
             self.ui.notdsEdit.hide()
             self.ui.paramChoiceBox.hide()
@@ -55,7 +55,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                 self.ui.redefSumStatsCombo.addItem(i)
         else:
             self.ui.candidateLabel.hide()
-            self.ui.label_5.hide()
+            self.ui.notdsSubTitleLabel.hide()
             self.ui.notdsTitleLabel.hide()
             self.ui.notdsEdit.hide()
             self.ui.redefSumStatsFrame.hide()
