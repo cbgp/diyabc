@@ -853,6 +853,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if len(msg) > 300:
             msg_to_show = msg[-300:]
 
+        msg_to_show = msg_to_show.replace(u'\xb5',u'u')
         output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,msg_to_show))
 
         # nettoyage du progress.txt
@@ -926,6 +927,14 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_mmmq.txt"%(self.dir,aid),"%s/analysis/%s/mmmq.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_paramcompostatdens.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_mmmqcompo.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_paramcompostatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramcompostatdens.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_mmmqcompo.txt"%(self.dir,aid),"%s/analysis/%s/mmmqcompo.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_paramscaledstatdens.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_mmmqscaled.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_paramscaledstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramscaledstatdens.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_mmmqscaled.txt"%(self.dir,aid),"%s/analysis/%s/mmmqscaled.txt"%(self.dir,aDirName))
                 #shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
             else:
