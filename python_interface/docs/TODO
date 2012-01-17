@@ -10,10 +10,14 @@ DONE get nb param de genData
 DONE gerer la verif des valeurs des deux setmutationmodel S et M
 DONE gerer la validation du gentData : le passer à valide ssi tous les setmutmod des groupes sont valides et il exsite au moins une sum stat pr chaque groupe
 DONE Verif save de shape ds setmutationModel Microstats
+DONE système de documentation utilisateur
+DONE installeur mac et windows
 
 protocole de communication
-système de documentation utilisateur
-installeur mac et windows
 
 importer analyses
+
+mieux gerer lancements sur cluster : 
+- proposer creation d'un tar (deja prevu)
+- proposer creation job proactive (prefs)
 
