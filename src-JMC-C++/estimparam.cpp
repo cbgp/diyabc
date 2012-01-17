@@ -493,9 +493,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			for (int j=0;j<header.scenario[rt.scenchoisi[kscen]-1].npop;j++) {
 				for (int ievent=0;ievent<header.scenario[rt.scenchoisi[kscen]-1].nevent;ievent++) {
 					if ((header.scenario[rt.scenchoisi[kscen]-1].event[ievent].action=='E')and(header.scenario[rt.scenchoisi[kscen]-1].event[ievent].pop==j+1)){
-						if (header.scenario[rt.scenchoisi[kscen]-1].histparam[j].prior.constant) 
-							Ne += (long double)header.scenario[rt.scenchoisi[kscen]-1].histparam[j].prior.mini;
-						else Ne +=(long double)rt.enrsel[i].param[numpar[kscen][j]];
+						kk=0;while ((kk<header.scenario[rt.scenchoisi[kscen]-1].nn0)and(header.scenario[rt.scenchoisi[kscen]-1].histparam[kk].name!=header.scenario[rt.scenchoisi[kscen]-1].ne0[j].name)) kk++;
+						if (header.scenario[rt.scenchoisi[kscen]-1].histparam[kk].prior.constant) 
+							Ne += (long double)header.scenario[rt.scenchoisi[kscen]-1].histparam[kk].prior.mini;
+						else Ne +=(long double)rt.enrsel[i].param[numpar[kscen][kk]];
+						//if (i<10) cout<<"Ne = "<<Ne<<"\n";
 					}
 				}
 			}
@@ -506,6 +508,13 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					kp++;
 				}
 			}
+			/*if (i<10) {
+				cout<<"--->Ne="<<Ne;
+				for (int j=0;j<npar;j++) cout<<"  "<<rt.enrsel[i].param[numpar[kscen][j]];
+				cout<<"     ";
+				for (int j=0;j<nparscaled;j++) cout<<"  "<<xx[i][j];
+				cout<<"\n";
+			}*/
 		}
 		switch (numtransf) {
 			case 1 :  //no transform

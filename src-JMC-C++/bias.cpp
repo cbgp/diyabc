@@ -1130,8 +1130,8 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 				paramest[p] = calparstatO(nsel);      if (debuglevel==11)   cout<<"apres calparstatO\n";
 				for (int i=0;i<nsel;i++) {
 					for (int j=0;j<nparamcom;j++) paretoil[p][i][j] = phistar[i][j];
-					for (int j=0;j<nparamcom;j++) cout<<"  "<<phistar[i][j]<<" ("<<enreg2[p].paramvv[j] <<")";
-					cout<<"\n";
+					//for (int j=0;j<nparamcom;j++) cout<<"  "<<phistar[i][j]<<" ("<<enreg2[p].paramvv[j] <<")";
+					//cout<<"\n";
 				}
 				for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
 			}
