@@ -203,8 +203,10 @@ class ProjectReftable(Project):
             data = f.read()
             f.close()
             #self.drawAnalysisFrame = QFrame(self)
-            self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
+            self.drawAnalysisFrame = uic.loadUi("uis/viewBiasFiles.ui")
             self.drawAnalysisFrame.parent = self
+            self.drawAnalysisFrame.analysis = analysis
+            self.drawAnalysisFrame.anDir = anDir
             ui = self.drawAnalysisFrame
             log(3,"Viewing analysis results, bias")
             #ui = ui_viewTextFile()
@@ -217,7 +219,14 @@ class ProjectReftable(Project):
             elif "darwin" in sys.platform:
                 font = "Andale Mono"
             ui.dataPlain.setFont(QFont(font,10))
+            if not os.path.exists("%s/analysis/%s/biascompo.txt"%(self.dir,self.drawAnalysisFrame.anDir)):
+                ui.cRadio.hide()
+            if not os.path.exists("%s/analysis/%s/biasscaled.txt"%(self.dir,self.drawAnalysisFrame.anDir)):
+                ui.sRadio.hide()
             QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
+            QObject.connect(ui.oRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
+            QObject.connect(ui.cRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
+            QObject.connect(ui.sRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
         #elif typestr == "confidence":
         #    self.drawAnalysisFrame = DrawEvaluationAnalysisResult(anDir,self)
         self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
@@ -227,6 +236,20 @@ class ProjectReftable(Project):
         and (os.path.exists("%s/analysis/%s/ACP.txt"%(self.dir,anDir))\
         or os.path.exists("%s/analysis/%s/mcACP.txt"%(self.dir,anDir))):
             self.drawAnalysisFrame.loadACP()
+
+    def biasResultFileChanged(self):
+        but = self.sender()
+        if but == self.drawAnalysisFrame.oRadio:
+            filename = ""
+        elif but == self.drawAnalysisFrame.cRadio:
+            filename = "compo"
+        elif but == self.drawAnalysisFrame.sRadio:
+            filename = "scaled"
+        f = open("%s/analysis/%s/bias%s.txt"%(self.dir,self.drawAnalysisFrame.anDir,filename),'r')
+        data = f.read()
+        f.close()
+        self.drawAnalysisFrame.dataPlain.clear()
+        self.drawAnalysisFrame.dataPlain.setPlainText(data)
 
     def returnToAnalysisList(self):
         self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)
@@ -853,7 +876,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if len(msg) > 300:
             msg_to_show = msg[-300:]
 
-        msg_to_show = msg_to_show.replace(u'\xb5',u'u')
+        msg_to_show = unicode(msg_to_show)
+        msg_to_show = msg_to_show.encode('iso-8859-1')
         output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,msg_to_show))
 
         # nettoyage du progress.txt
@@ -918,23 +942,31 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
         if atype == "estimate":
-            if os.path.exists("%s/%s_phistar.txt"%(self.dir,aid))\
-                    and os.path.exists("%s/%s_paramstatdens.txt"%(self.dir,aid)):
+            if os.path.exists("%s/%s_mmmqcompo.txt"%(self.dir,aid))\
+            or os.path.exists("%s/%s_mmmqscaled.txt"%(self.dir,aid))\
+            or os.path.exists("%s/%s_mmmq.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
                 aDirName = "%s_estimation"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
-                shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
-                shutil.move("%s/%s_mmmq.txt"%(self.dir,aid),"%s/analysis/%s/mmmq.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_paramstatdens.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_phistar.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_mmmq.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_mmmq.txt"%(self.dir,aid),"%s/analysis/%s/mmmq.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_paramcompostatdens.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_phistarcompo.txt"%(self.dir,aid))\
                 and os.path.exists("%s/%s_mmmqcompo.txt"%(self.dir,aid)):
                     shutil.move("%s/%s_paramcompostatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramcompostatdens.txt"%(self.dir,aDirName))
                     shutil.move("%s/%s_mmmqcompo.txt"%(self.dir,aid),"%s/analysis/%s/mmmqcompo.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_phistarcompo.txt"%(self.dir,aid),"%s/analysis/%s/phistarcompo.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_paramscaledstatdens.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_phistarscaled.txt"%(self.dir,aid))\
                 and os.path.exists("%s/%s_mmmqscaled.txt"%(self.dir,aid)):
                     shutil.move("%s/%s_paramscaledstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramscaledstatdens.txt"%(self.dir,aDirName))
                     shutil.move("%s/%s_mmmqscaled.txt"%(self.dir,aid),"%s/analysis/%s/mmmqscaled.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_phistarscaled.txt"%(self.dir,aid),"%s/analysis/%s/phistarscaled.txt"%(self.dir,aDirName))
                 #shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))
             else:
@@ -1000,14 +1032,21 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "bias":
-            if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
+            if os.path.exists("%s/%s_bias.txt"%(self.dir,aid))\
+            or os.path.exists("%s/%s_biasscaled.txt"%(self.dir,aid))\
+            or os.path.exists("%s/%s_biascompo.txt"%(self.dir,aid)):
                 log(3,"File %s/%s_bias.txt exists"%(self.dir,aid))
                 #print "les fichiers existent"
                 # deplacement des fichiers de résultat
                 aDirName = "%s_bias"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_biascompo.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_biascompo.txt"%(self.dir,aid),"%s/analysis/%s/biascompo.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_biasscaled.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_biasscaled.txt"%(self.dir,aid),"%s/analysis/%s/biasscaled.txt"%(self.dir,aDirName))
                 log(3,"Copy of '%s/%s_bias.txt' to '%s/analysis/%s/bias.txt' done"%(self.dir,aid,self.dir,aDirName))
                 #print "déplacement de %s/%s_bias.txt vers %s/analysis/%s/bias.txt"%(self.dir,aid,self.dir,aDirName)
                 #os.remove("%s/%s_progress.txt"%(self.dir,aid))

@@ -552,6 +552,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         retourne la liste des infos sur les scenarios si ceux ci sont tous bons
         sinon retourne None
         """
+        errors = ""
         # construction de la liste de scenarios
         sc_txt_list = []
         for sc in self.scList:
@@ -574,13 +575,14 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 self.scenarios_info_list.append(dico_sc_infos)
             except IOScreenError, e:
                 #print "Un scenario a une erreur : ", e
+                errors += "Scenario %s : %s\n"%(num+1,e)
                 nb_scenarios_invalides += 1
-                if not silent:
-                    output.notify(self,"Scenario error","%s"%e)
         # si tous les scenarios sont bons, on renvoie les données utiles, sinon on renvoie None
         if nb_scenarios_invalides == 0:
             return self.scenarios_info_list
         else:
+            if not silent:
+                output.notify(self,"Scenario error","%s"%errors)
             return None
 
     def drawScenarios(self,scenarios_info_list):

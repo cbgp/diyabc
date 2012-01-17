@@ -1,25 +1,23 @@
 2 scenarios: 6 6 
-scenario 1 [0.5] (4)
+scenario 1 [0.5] (5)
 N X F
 0 sample 1
 0 sample 2
 0 sample 3
-t merge 1 2
-t merge 1 3
+t3 merge 1 3
+t2 merge 1 2
 scenario 2 [0.5] (5)
-N D F
+N X F
 0 sample 1
 0 sample 2
 0 sample 3
 t3 merge 1 2
 t2 merge 1 3
 
-historical parameters priors (7,0)
+historical parameters priors (5,0)
 N N LU[10,10,1,01] False
 X N LU[10,10000,01,01] False
 F N LU[10,10,01,01] False
-t T LU[10,10000,01,01] False
-D N LU[10,10000,01,01] False
 t3 T LU[10.0,10000.0,0.0,0.0] False
 t2 T LU[10,10000,01,01] False
 
