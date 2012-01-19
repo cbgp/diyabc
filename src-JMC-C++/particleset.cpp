@@ -453,7 +453,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 /**
  * Structure ParticleSet : simulation des particules utilisées pour la table de référence, le biais et la confiance
  */
-void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed)
+void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int depuis)
 {
 	int ipart,gr,nstat,pa,ip,iscen,np,ns;
 	bool trouve;
@@ -510,16 +510,20 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 			enreg[ipart].numscen=1;
 			if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
 
-			if (debuglevel==5) cout<<"dans particleset nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
+			if (debuglevel==5) cout<<"dans particleset ipart="<<ipart<<"     nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
 			for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
 				enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
-				cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+				//cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
 			}
 			if (debuglevel==5) cout <<"\n";
 			nstat=0;
 			for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
-				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;}
+				/*cout<<"\ngroupe "<<gr<<"\n";
+				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++) cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<"   \n";
+				cout<<"\n";*/
+				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;/*cout<<nstat<<"\n";*/}
 			}
+			//for (int st=0;st<nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";cout<<"\n\n";
 			enreg[ipart].message="OK";
 		}
 		else {
@@ -534,18 +538,20 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		FILE * pFile;
 		int categ,iq,icur=0;
 		bool trouve2;
-		scurfile=this->header.pathbase+"courant_"+IntToString(icur)+".log";
-		while (ifstream(scurfile.c_str())) {
-			icur++;
+		if (depuis==0){
 			scurfile=this->header.pathbase+"courant_"+IntToString(icur)+".log";
+			while (ifstream(scurfile.c_str())) {
+				icur++;
+				scurfile=this->header.pathbase+"courant_"+IntToString(icur)+".log";
+				}
 		}
 		cout<<"ecriture du fichier courant = "<<scurfile<<"\n";
 		pFile = fopen (scurfile.c_str(),"w");
 		fprintf(pFile,"%s\n",this->header.entete.c_str());
-		//cout<<"FISTTIME\n";
-		//cout<<header.entete<<"\n\n";
-		//cout<<header.entetehist<<"\n\n";
-		//cout<<header.entetemut<<"\n\n";
+		cout<<"FISTTIME\n";
+		cout<<header.entete<<"\n\n";
+		cout<<header.entetehist<<"\n\n";
+		cout<<header.entetemut<<"\n\n";
 		int nph,npm;
 		ss=splitwords(header.entetehist," ",&nph);
 		if (debuglevel==5) cout<<header.entetehist<<"\n";
@@ -554,7 +560,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		//cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
 		np=ns-header.nstat-1;
 		//cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
-		//cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
+		cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
 		for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				//cout<<enreg[ipart].numscen<<"\n";

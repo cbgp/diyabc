@@ -39,13 +39,15 @@ void recalparamS(int n);
 * effectue le remplissage de la matrice matX0, du vecteur des poids vecW et
 * de la matrice des paramètres parsim (éventuellement transformés)
 */
-void rempli_mat(int n, float* stat_obs, int npa);
+void rempli_mat(int n, float* stat_obs);
+void rempli_parsim(int n, int npa);
 int ecrimatL(std::string nomat, int n, int m, long double **A);
 int ecrimatD(std::string nomat, int n, int m, double **A);
 /**
 * effectue la régression locale à partir de la matrice matX0 et le vecteur des poids vecW
 */
-void local_regression(int n, int npa);
+long double** cal_matC(int n);
+void local_regression(int n, int npa, long double **matC);
 /**D
 * calcule les phistars pour les paramètres originaux et composites
 */

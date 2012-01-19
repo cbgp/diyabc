@@ -738,7 +738,7 @@ int HeaderC::buildMutParam(){
 			//cout<<"calcul de nparamut\n";
 			if (this->groupe[gr].mutmod>0) {if (not this->groupe[gr].priork1moy.constant) this->nparamut++;}
 			if (this->groupe[gr].mutmod==3){if (not this->groupe[gr].priork2moy.constant) this->nparamut++;}
-			//cout<<"fin du calcul de nparamut = "<<this->nparamut<<"\n";
+			cout<<"fin du calcul de nparamut = "<<this->nparamut<<"\n";
 		}
 	}
 	this->mutparam = new MutParameterC[nparamut];
@@ -796,7 +796,7 @@ int HeaderC::buildMutParam(){
 			}
 		}
 	}
-	if (debuglevel==2) cout<<"header.txt : fin de l'établissement des paramètres mutationnels'\n";
+	if (debuglevel==2) cout<<"header.txt : fin de l'établissement des paramètres mutationnels   nparamut="<<this->nparamut<<"\n";
 	return 0;
 }
 
@@ -808,6 +808,8 @@ int HeaderC::readHeaderEntete(ifstream & file){
 	getline(file,this->entete);     //ligne entete
 	this->statname =new string[this->nstat];
 	ss=splitwords(entete," ",&nss);
+	
+	if (debuglevel==2) cout<<"nss="<<nss<<"   nparamtot="<<nparamtot<<"   nparamut="<<nparamut<<"   nstat="<<nstat<<"\n";
 	for (int i=nstat-1;i>=0;i--) this->statname[i]=ss[--nss];
 	this->entetehist=this->entete.substr(0,this->entete.length()-14*(nparamut+nstat));
 	if (nparamut>0) this->entetemut=this->entete.substr(this->entetehist.length(),14*nparamut);else this->entetemut="";
@@ -835,31 +837,31 @@ int HeaderC::readHeader(string headerfilename){
 		return 1;
 	} else this->message="";
 
-	error = readHeaderDebut(file);
+	error = readHeaderDebut(file); cout<<"----------------------------------------apres readHeaderDebut\n";
 	if(error != 0) return error;
 
-	error = readHeaderScenarios(file);
+	error = readHeaderScenarios(file);cout<<"----------------------------------------apres readHeaderScenarios\n";
 	if(error != 0) return error;
 
-	error = readHeaderHistParam(file);
+	error = readHeaderHistParam(file);cout<<"----------------------------------------apres readHeaderHistParam\n";
 	if(error != 0) return error;
 
-	error = readHeaderLoci(file);
+	error = readHeaderLoci(file);cout<<"----------------------------------------apres readHeaderLoci\n";
 	if(error != 0) return error;
 
-	error = readHeaderGroupPrior(file);
+	error = readHeaderGroupPrior(file);cout<<"----------------------------------------apres readHeaderGroupPrior\n";
 	if(error != 0) return error;
 
-	error = buildSuperScen();
+	error = buildSuperScen();cout<<"----------------------------------------apres buildSuperScen\n";
 	if(error != 0) return error;
 
-	error = readHeaderGroupStat(file);
+	error = readHeaderGroupStat(file);cout<<"----------------------------------------apres readHeaderGroupStat\n";
 	if(error != 0) return error;
 
-	error = readHeaderEntete(file);
+	error = buildMutParam();cout<<"----------------------------------------apres buildMutParam\n";
 	if(error != 0) return error;
 
-	error = buildMutParam();
+	error = readHeaderEntete(file);cout<<"----------------------------------------apres readHeaderEntete\n";
 	if(error != 0) return error;
 
 	if (not file.eof()){

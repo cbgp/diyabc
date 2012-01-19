@@ -143,7 +143,7 @@ int nacp=100000;
         int bidon,*numscen,k;
         resACPC rACP;
         //header.calstatobs(statobsfilename);
-		stat_obs = header.stat_obs;  //cout<<"apres read_statobs\n";
+		stat_obs = header.stat_obs;  cout<<"apres read_statobs\n";
         int nparamax = 0;
         for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         //cout<<nparamax<<"\n";
@@ -160,7 +160,7 @@ int nacp=100000;
                 numscen[p] = enr.numscen;
                 for (int j=0;j<rt.nstat;j++) matstat[p][j] = enr.stat[j];
         }
-        rt.closefile();   //cout<<"apres la lecture des "<<nacp<<" enregistrements\n";
+        rt.closefile();   cout<<"apres la lecture des "<<nacp<<" enregistrements\n";
         
         cout<<"avant ACP\n";
         rACP = ACP(nacp,rt.nstat,matstat,1.0,0);

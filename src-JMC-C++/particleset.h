@@ -41,7 +41,7 @@ struct ParticleSetC
     		            bool multithread,bool firsttime, int numscen,int seed,int nsel);
     // simulation des particules utilisées pour la table de référence, le biais et la confiance
     void dosimultabref(HeaderC const & header, int npart, bool dnatrue,bool multithread,
-    		           bool firsttime, int numscen,int seed);
+    		           bool firsttime, int numscen,int seed, int depuis);
     // simulation des particules utilisées pour la création de fichiers genepop
     string* simulgenepop(HeaderC const & header, int npart, bool multithread, int seed);
     // simulation des particules utilisées pour la création de fichiers SNP

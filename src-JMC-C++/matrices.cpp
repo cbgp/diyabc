@@ -20,6 +20,18 @@ void libereL (int n, long double * * A)
     for (int i=0;i<n;i++) delete[] A[i];
     delete [] A;
 }
+
+long double** copymatL(int n, int m, long double **A) {
+	long double **AA;
+	AA = new long double*[n];
+	for (int i=0;i<n;i++){ AA[i] = new long double[m];}
+	for (int i=0;i<n;i++){
+		for (int j=0;j<m;j++) {
+			AA[i][j] = A[i][j];
+		}
+	}
+	return AA;
+}
 double * * transpose (int n, int m, double * * A)
                                              {
     double **C;

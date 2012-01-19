@@ -403,7 +403,7 @@ long double **ssphistar,**ssref;
         string *ss,s,*ss1,s0,s1,snewstat;
         float  *stat_obs;
         bool usestats,firsttime,dopca = false,doloc = false, newstat=false;
-        //long double** phistarOK;
+        long double** matC;
         FILE *flog;
 
         progressfilename = path + ident + "_progress.txt";
@@ -466,9 +466,11 @@ long double **ssphistar,**ssref;
         iprog+=40;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         det_numpar();
 		cout<<"apres det_numpar\n";
+        rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
+		matC = cal_matC(nsel); 
         recalparamO(nsel);                                 cout<<"apres recalparam\n";
-        rempli_mat(nsel,stat_obs,nparamcom);                        cout<<"apres rempli_mat\n";
-        local_regression(nsel,nparamcom);                           cout<<"apres local_regression\n";
+		rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
+		local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
         iprog+=20;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         phistar = calphistarO(nsel);                       cout<<"apres calphistar\n";
         det_nomparam();
@@ -527,7 +529,7 @@ long double **ssphistar,**ssref;
                 nsr=0;
                 firsttime=true;
                 while (nsr<newrefpart) {
-                    ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed);
+                    ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,3);
                     for (int i=0;i<nenr;i++) {
                       numscen[i+nsr] = enreg[i].numscen;
                       for (int j=0;j<header.nstat;j++) ssref[i+nsr][j]=enreg[i].stat[j];

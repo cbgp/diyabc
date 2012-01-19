@@ -257,7 +257,7 @@ string nomficonfresult;
         if (nlogreg==1){nprog=10*(ntest+1)+1;iprog=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         else           {nprog=6*ntest+11;iprog=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
         cout<<"avant ps.dosimultabref\n";
-        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed);
+        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,2);
         cout<<"apres ps.dosimultabref\n";
         iprog=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         cout<<"apres ecriture dans progress\n";

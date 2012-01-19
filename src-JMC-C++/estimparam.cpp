@@ -584,7 +584,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * effectue le remplissage de la matrice matX0, du vecteur des poids vecW et
 * de la matrice des paramètres parsim (éventuellement transformés)
 */
-    void rempli_mat(int n, float* stat_obs, int npa) {
+    void rempli_mat(int n, float* stat_obs) {
         int icc,np;
         long double delta,som,x,*var_statsel,nn;
         long double *sx,*sx2,*mo;
@@ -633,12 +633,15 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         for (int i=0;i<n;i++) vecW[i]/=som;
         //for (int i=0;i<10;i++) cout<<vecW[i]<<"  ";
         //cout<<"\n";
+    }
+    
+    void rempli_parsim(int n, int npa) {
         parsim = new long double*[n];
         for (int i=0;i<n;i++) parsim[i] = new long double[npa];
         for (int i=0;i<n;i++) {
             for (int j=0;j<npa;j++)parsim[i][j]=(long double)alpsimrat[i][j];
         }
-    }
+	}
     
 	int ecrimatL(string nomat, int n, int m, long double **A) {
 		cout<<"\n"<<nomat<<"\n";
@@ -658,10 +661,61 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 		cout<<"\n";
 		return 0;
 	}
+	
+	long double ** cal_matC(int n) {
+        long double **matX,**matXT,**matA,**matB,**matAA,**matC,**matBB,kap,mdiff,coeff;
+		int err;
+        matA = new long double*[nstatOKsel+1];
+        for (int j=0;j<nstatOKsel+1;j++) matA[j] = new long double[n];
+        matX = new long double*[n];
+        for (int i=0;i<n;i++) {
+            matX[i] = new long double[nstatOKsel+1];
+            matX[i][0] = 1.0;
+            for (int j=1;j<nstatOKsel+1;j++) matX[i][j] = (long double)matX0[i][j-1];
+        }
+        matB = new long double*[nstatOKsel+1];
+        for (int j=0;j<nstatOKsel+1;j++) matB[j] = new long double[nstatOKsel+1];
+        matBB = new long double*[nstatOKsel+1];
+        for (int j=0;j<nstatOKsel+1;j++) matBB[j] = new long double[nstatOKsel+1];
+        matXT = transposeL(n,nstatOKsel+1,matX);
+        for (int i=0;i<n;i++) {
+            for (int j=0;j<nstatOKsel+1;j++) matA[j][i] = matXT[j][i]*vecW[i];
+        }
+        matAA = prodML(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
+		kap = kappa(nstatOKsel+1,matAA);
+        //printf("kappa (AA) = %16Le",kap);
+		if (kap>1.0E99) cout <<"   MATRICE SINGULIERE\n";
+		//cout<<"\n";
+		if (kap>1.0E99) cout <<"   MATRICE SINGULIERE\n";
+		//cout<<"\n";
+		if (kap>1.0E99) coeff=1.0E-15; else coeff=1.0E-21;
+        err = inverse_Tik2(nstatOKsel+1,matAA,matB,coeff);
+		do {
+			err = inverse_Tik2(nstatOKsel+1,matAA,matB,coeff);
+			if (err!=0) coeff *=sqrt(10.0);
+		} while ((err!=0)and(coeff<0.01));
+		cout<<"cal_matC   err="<<err<<"    coeff="<<coeff<<"\n";
+		matC = prodML(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
+        libereL(nstatOKsel+1,matA); 
+        libereL(n,matX);
+		libereL(nstatOKsel+1,matXT);
+        libereL(nstatOKsel+1,matB);
+		libereL(nstatOKsel+1,matBB);
+        libereL(nstatOKsel+1,matAA);
+		return matC;
+	}
+	
+	void local_regression(int n, int npa, long double **matC) {
+        beta = new long double*[nstatOKsel+1];
+        for (int j=0;j<nstatOKsel+1;j++) beta[j] = new long double[npa];
+		beta = prodML(nstatOKsel+1,n,npa,matC,parsim);
+		libereL(n,parsim);
+	}
+	
 /**
 * effectue la régression locale à partir de la matrice matX0 et le vecteur des poids vecW
 */
-    void local_regression(int n, int npa) {
+/*    void local_regression(int n, int npa) {
         long double **matX,**matXT,**matA,**matB,**matAA,**matC,**bet = NULL,**matBB,kap,mdiff,coeff;
 		int err;
         matA = new long double*[nstatOKsel+1];
@@ -727,7 +781,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         libereL(nstatOKsel+1,matC);
 		libereL(n,parsim);
 		libereL(nstatOKsel+1,bet);
-    }
+    }*/
 
 /**
 * calcule les phistars pour les paramètres originaux
@@ -764,7 +818,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         if (numtransf>2) {delete []parmin; delete []parmax;delete []diff;}
         //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
         for (int i=0;i<n;i++) delete []alpsimrat[i];delete []alpsimrat;
-        for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
+        //for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
         for (int i=0;i<nstatOKsel+1;i++) delete []beta[i]; delete []beta;
         return phista;
     }
@@ -804,7 +858,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         if (numtransf>2) {delete []parmincompo; delete []parmaxcompo;delete []diffcompo;}
         //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
         for (int i=0;i<n;i++) delete []alpsimrat[i];delete []alpsimrat;
-        for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
+        //for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
         for (int i=0;i<nstatOKsel+1;i++) delete []beta[i]; delete []beta;
         return phista;
     }
@@ -846,7 +900,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         if (numtransf>2) {delete []parminscaled; delete []parmaxscaled;delete []diffscaled;}
         //cout<<"nparcompo = "<<nparcompo<<"   k="<<k<<"\n";
         for (int i=0;i<n;i++) delete []alpsimrat[i];delete []alpsimrat;
-        for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
+        //for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
         for (int i=0;i<nstatOKsel+1;i++) delete []beta[i]; delete []beta;
         return phista;
     }
@@ -1696,7 +1750,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         int nrec,nsel = 0,ns,nrecpos = 0;
         string *ss,s,*ss1,s0,s1;
         float  *stat_obs;
-
+		long double **matC;
         FILE *flog;
 
         progressfilename=path+ident+"_progress.txt";
@@ -1754,30 +1808,34 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         det_numpar();                                     cout<<"apres det_numpar\n";
         nprog=12+10*(nparamcom+nparcompo+nparscaled); 
 		if (original)nprog +=6;if (composite)nprog +=6;if (scaled)nprog +=6;
+		rempli_mat(nsel,stat_obs);            	cout<<"apres rempli_mat\n";
+		matC = cal_matC(nsel);               	cout<<"cal_matC\n";
+		cout<<"original\n";
 		if (original){											cout<<"\ntraitement des parametres originaux\n";
 			recalparamO(nsel);                             		cout<<"apres recalparamO\n";
-			rempli_mat(nsel,stat_obs,nparamcom);            	cout<<"apres rempli_mat\n";
-			local_regression(nsel,nparamcom);               	cout<<"apres local_regression\n";
+			rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
+			local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistar = calphistarO(nsel);
 			cout<<"apres calphistarO\n";
 		}
 		if (composite){											cout<<"\ntraitement des parametres composites\n";
 			recalparamC(nsel);                                 	cout<<"apres recalparamC\n";
-			rempli_mat(nsel,stat_obs,nparcompo);                cout<<"apres rempli_mat\n";
-			local_regression(nsel,nparcompo);               	cout<<"apres local_regression\n";
+			rempli_parsim(nsel,nparcompo);                		cout<<"apres rempli_parsim(C)\n";
+			local_regression(nsel,nparcompo,matC);              cout<<"apres local_regression\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistarcompo = calphistarC(nsel);
 			cout<<"apres calphistarcompo\n";
 		}
 		if (scaled){											cout<<"\ntraitement des parametres scaled\n";
 			recalparamS(nsel);                                 	cout<<"apres recalparamS\n";
-			rempli_mat(nsel,stat_obs,nparscaled);               cout<<"apres rempli_mat\n";
-			local_regression(nsel,nparscaled);               	cout<<"apres local_regression\n";
+			rempli_parsim(nsel,nparscaled);               		cout<<"apres rempli_parsim(S)\n";
+			local_regression(nsel,nparscaled,matC);             cout<<"apres local_regression\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistarscaled = calphistarS(nsel);
 			cout<<"apres calphistarscaled\n";
 		}
+		for (int i=0;i<nsel;i++) delete []matX0[i]; delete []matX0;
         det_nomparam();
         savephistar(nsel,path,ident);                     		cout<<"apres savephistar\n";
         if (original) {

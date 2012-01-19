@@ -967,18 +967,18 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
  * Interprête la ligne de paramètres de l'option biais et lance les calculs correspondants
  */
 	void dobias(string opt,  int seed){
-        string courantfilename;
         int nstatOK, iprog,nprog;
         int nrec = 0, nsel = 0,ns,nrecpos = 0,ntest = 0,np,ng,npv,nn,ncond;
         string *ss,s,*ss1,s0,s1,sg; 
 		float *stat_obs;
+		long double **matC;
         string bidon;
         bidon = new char[1000];
         FILE *flog;
 
         progressfilename = path + ident + "_progress.txt";
-        courantfilename = path + "biascourant.log";
-        cout<<courantfilename<<"\n";
+		scurfile = path + "courant_"+ ident +".log";
+        cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
@@ -1054,7 +1054,7 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
             enreg[p].numscen = rt.scenteste;
         }
 		cout<<"avant dosimultabref\n";
-        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed);
+        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,1);
 		cout<<"apres dosimultabref\n";
 		//header.entete=header.entetehist+header.entetemut0+header.entetestat;
         nprog=10*ntest+6;iprog=5;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
@@ -1062,7 +1062,8 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
         for (int p=0;p<ntest;p++) {delete []enreg[p].param;delete []enreg[p].stat;}delete []enreg;
         rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
         det_numpar();
-        cout<<"naparmcom = "<<nparamcom<<"   nparcomp = "<<nparcompo<<"\n";
+        cout<<"naparmcom = "<<nparamcom<<"   nparcomp = "<<nparcompo<<"   nparscaled = "<<nparscaled<<"\n";
+		cout<<"header.nstat="<<header.nstat<<"    rt.nstat="<<rt.nstat<<"\n";
         enreg2 = new enreC[ntest];
         for (int p=0;p<ntest;p++) {
             enreg2[p].stat = new double[header.nstat];
@@ -1076,16 +1077,20 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
         getline(file,bidon);
         for (int p=0;p<ntest;p++) {
           getline(file,bidon);
-          //cout<<"bidon="<<bidon<<"\n";
+          cout<<"bidon="<<bidon<<"\n";
           //cout<<bidon<<"\n";
           ss = splitwords(bidon," ",&ns);
-          //cout<<"ns="<<ns<<"\n";
+          cout<<"ns="<<ns<<"    npv="<<npv<<"\n";
           enreg2[p].numscen=atoi(ss[0].c_str());
-		  //cout<<"bias.cpp   npv="<<npv<<"\n";
+		  cout<<"bias.cpp   npv="<<npv<<"\n";
           for (int i=0;i<npv;i++) enreg2[p].paramvv[i]=atof(ss[i+1].c_str());
+		  cout<<"avant setcompo\n";
           if(composite) setcompo(p);
+		  cout<<"avant setscaled\n";
 		  if(scaled) setscaled(p);
+		  cout<<"apres setscaled\n";
           for (int i=0;i<rt.nstat;i++) enreg2[p].stat[i]=atof(ss[i+1+npv].c_str());
+		  cout<<"apres copie des stat\n";
         }
         file.close();
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
@@ -1122,12 +1127,15 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
             rt.cal_dist(nrec,nsel,stat_obs);          if (debuglevel==11)   cout<<"apres cal_dist\n";
             iprog +=6;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             if (p<1) det_nomparam();
+			rempli_mat(nsel,stat_obs);            	cout<<"apres rempli_mat\n";
+			matC = cal_matC(nsel);               	cout<<"cal_matC\n";
+			
 			if (original) {
-				recalparamO(nsel);                    if (debuglevel==11)	cout<<"apres recalparamO\n";
-				rempli_mat(nsel,stat_obs,nparamcom);  if (debuglevel==11)   cout<<"apres rempli_mat\n";
-				local_regression(nsel,nparamcom);     if (debuglevel==11)	cout<<"apres local_regression\n";
-				phistar = calphistarO(nsel);          if (debuglevel==11)   cout<<"apres calphistarO\n";
-				paramest[p] = calparstatO(nsel);      if (debuglevel==11)   cout<<"apres calparstatO\n";
+				recalparamO(nsel);                    	if (debuglevel==11)	cout<<"apres recalparamO\n";
+				rempli_parsim(nsel,nparamcom);  		if (debuglevel==11)   cout<<"apres rempli_mat\n";
+				local_regression(nsel,nparamcom,matC);     	if (debuglevel==11)	cout<<"apres local_regression\n";
+				phistar = calphistarO(nsel);          	if (debuglevel==11)   cout<<"apres calphistarO\n";
+				paramest[p] = calparstatO(nsel);      	if (debuglevel==11)   cout<<"apres calparstatO\n";
 				for (int i=0;i<nsel;i++) {
 					for (int j=0;j<nparamcom;j++) paretoil[p][i][j] = phistar[i][j];
 					//for (int j=0;j<nparamcom;j++) cout<<"  "<<phistar[i][j]<<" ("<<enreg2[p].paramvv[j] <<")";
@@ -1136,11 +1144,11 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 				for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
 			}
 			if (composite) {
-				recalparamC(nsel);                   if (debuglevel==11)	cout<<"apres recalparamC\n";
-				rempli_mat(nsel,stat_obs,nparcompo); if (debuglevel==11)    cout<<"apres rempli_mat\n";
-				local_regression(nsel,nparcompo);    if (debuglevel==11)	cout<<"apres local_regression\n";
-				phistarcompo = calphistarC(nsel);	 if (debuglevel==11)	cout<<"apres calphistarC\n";
-				paramestcompo[p] = calparstatC(nsel);if (debuglevel==11)    cout<<"apres calparstatC\n";
+				recalparamC(nsel);                  	if (debuglevel==11)	cout<<"apres recalparamC\n";
+				rempli_parsim(nsel,nparcompo); 			if (debuglevel==11)    cout<<"apres rempli_mat\n";
+				local_regression(nsel,nparcompo,matC); 	if (debuglevel==11)	cout<<"apres local_regression\n";
+				phistarcompo = calphistarC(nsel);	 	if (debuglevel==11)	cout<<"apres calphistarC\n";
+				paramestcompo[p] = calparstatC(nsel);	if (debuglevel==11)    cout<<"apres calparstatC\n";
 				for (int i=0;i<nsel;i++) {
 					for (int j=0;j<nparcompo;j++) paretoilcompo[p][i][j] = phistarcompo[i][j];
 				}
@@ -1148,11 +1156,11 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 				
 			}
 			if (scaled) {
-				recalparamS(nsel);                    if (debuglevel==11)	cout<<"apres recalparamS\n";
-				rempli_mat(nsel,stat_obs,nparscaled); if (debuglevel==11)   cout<<"apres rempli_mat\n";
-				local_regression(nsel,nparscaled);    if (debuglevel==11)	cout<<"apres local_regression\n";
-				phistarscaled = calphistarS(nsel);	  if (debuglevel==11)	cout<<"apres calphistarS\n";
-				paramestscaled[p] = calparstatS(nsel);if (debuglevel==11)	cout<<"apres calparstatS\n";
+				recalparamS(nsel);                    	if (debuglevel==11)	cout<<"apres recalparamS\n";
+				rempli_parsim(nsel,nparscaled); 		if (debuglevel==11)   cout<<"apres rempli_mat\n";
+				local_regression(nsel,nparscaled,matC); if (debuglevel==11)	cout<<"apres local_regression\n";
+				phistarscaled = calphistarS(nsel);	  	if (debuglevel==11)	cout<<"apres calphistarS\n";
+				paramestscaled[p] = calparstatS(nsel);	if (debuglevel==11)	cout<<"apres calparstatS\n";
 				for (int i=0;i<nsel;i++) {
 					for (int j=0;j<nparscaled;j++) paretoilscaled[p][i][j] = phistarscaled[i][j];
 					//for (int j=0;j<nparscaled;j++) cout<<"  "<<phistarscaled[i][j]<<" ("<<enreg2[p].paramvvS[j] <<")";

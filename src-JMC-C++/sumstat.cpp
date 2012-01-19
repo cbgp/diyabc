@@ -1625,71 +1625,72 @@ long double ParticleC::cal_nha2p(int gr,int st){
     vector <int> nuvar;
     //cout <<"debut de cal_numvar dnatrue ="<<this->dnatrue<<"\n";
     if (not this->dnatrue) {
-      for (int iloc=0;iloc<nlocs;iloc++) {
-	locus= this->grouplist[gr].loc[iloc];
-	cat = this->locuslist[locus].type % 5;
-	this->locuslist[locus].dnavar = 0;
-	for (pop=0;pop<this->nsample;pop++) {
-	  for (i=0;i<this->data.ss[cat][pop];i++) {
-	    if ((int)this->locuslist[locus].haplodna[pop][i].length() > this->locuslist[locus].dnavar) {
-	      this->locuslist[locus].dnavar=this->locuslist[locus].haplodna[pop][i].length();
-	      //cout<<"  >"<<this->locuslist[locus].haplodna[pop][i]<<"<  ("<<this->locuslist[locus].haplodna[pop][i].length()<<")\n";
-	    }
-	  }
-	  if (this->locuslist[locus].dnavar<0) {
-	    cout<<"Locus "<<locus<<"   sample "<<pop <<"   dnavar="<<this->locuslist[locus].dnavar<<"\n";
-	    //this->locuslist[locus].dnavar = 0;
-	    exit(1);
-	  }
-	}
-	//cout<<"coucou\n";
-	this->locuslist[locus].haplodnavar = new string*[this->nsample];
-	for (pop=0;pop<this->nsample;pop++) {
-	  this->locuslist[locus].haplodnavar[pop] = new string[this->data.ss[cat][pop]];
-	  for (i=0;i<this->data.ss[cat][pop];i++) {
-	    if (    (int)this->locuslist[locus].haplodna[pop][i].length() == this->locuslist[locus].dnavar   ) {
-	      this->locuslist[locus].haplodnavar[pop][i] = this->locuslist[locus].haplodna[pop][i];
-	    } else {
-	      this->locuslist[locus].haplodnavar[pop][i] = "";
-	      for (int j=0;j<this->locuslist[locus].dnavar;j++)this->locuslist[locus].haplodnavar[pop][i] += "N";
-	    }
-	  }
-	}
-      }
+		for (int iloc=0;iloc<nlocs;iloc++) {
+			locus= this->grouplist[gr].loc[iloc];
+			cat = this->locuslist[locus].type % 5;
+			this->locuslist[locus].dnavar = 0;
+			for (pop=0;pop<this->nsample;pop++) {
+				for (i=0;i<this->data.ss[cat][pop];i++) {
+					if ((int)this->locuslist[locus].haplodna[pop][i].length() > this->locuslist[locus].dnavar) {
+					this->locuslist[locus].dnavar=this->locuslist[locus].haplodna[pop][i].length();
+					//cout<<"  >"<<this->locuslist[locus].haplodna[pop][i]<<"<  ("<<this->locuslist[locus].haplodna[pop][i].length()<<")\n";
+					}
+				}
+				if (this->locuslist[locus].dnavar<0) {
+					//cout<<"Locus "<<locus<<"   sample "<<pop <<"   dnavar="<<this->locuslist[locus].dnavar<<"\n";
+					//this->locuslist[locus].dnavar = 0;
+					exit(1);
+				}
+			}
+			//cout<<"coucou\n";
+			this->locuslist[locus].haplodnavar = new string*[this->nsample];
+			for (pop=0;pop<this->nsample;pop++) {
+			this->locuslist[locus].haplodnavar[pop] = new string[this->data.ss[cat][pop]];
+				for (i=0;i<this->data.ss[cat][pop];i++) {
+					if (    (int)this->locuslist[locus].haplodna[pop][i].length() == this->locuslist[locus].dnavar   ) {
+						this->locuslist[locus].haplodnavar[pop][i] = this->locuslist[locus].haplodna[pop][i];
+					} else {
+						this->locuslist[locus].haplodnavar[pop][i] = "";
+						for (int j=0;j<this->locuslist[locus].dnavar;j++)this->locuslist[locus].haplodnavar[pop][i] += "N";
+					}
+				}
+			}
+		}
     } else {
-      for (int iloc=0;iloc<nlocs;iloc++) {
-	locus= this->grouplist[gr].loc[iloc];
-	this->locuslist[locus].haplodnavar = new string*[this->nsample];
-	ns=0; for (pop=0;pop<this->nsample;pop++) ns += this->data.ss[cat][pop];
-	site = new char[ns];
-	this->locuslist[locus].dnavar=0;
-	if (this->locuslist[locus].dnalength>0) {
-	  //cout <<"longseq = "<<this->locuslist[locus].dnalength<<"\n";;
-	  for (k=0;k<this->locuslist[locus].dnalength;k++) {
-	    j=-1;
-	    for (pop=0;pop<this->nsample;pop++) {
-	      for (i=0;i<this->data.ss[cat][pop];i++) {
-		j++;
-		if (this->locuslist[locus].haplodna[pop][i] == SEQMISSING) site[j]='N';
-		else site[j] = this->locuslist[locus].haplodna[pop][i][k];
-		//if ((locus==13)and(j<1000)) cout<<"locus"<<locus<<"   site["<<j<<"] = "<<site[j]<<"\n";
-	      }
-	    }
-
-	    j0=0;
-	    while ((site[j0]=='N')and(j0<ns-1)) j0++; //recherche du premier nucléotide non N
-	    j=j0+1;
-	    ident=true;
-	    while ((ident)and(j<ns)) {
-	      ident=((site[j]=='N')or(site[j]==site[j0]));
-	      j++;
-	    }
-	    if (not ident) {
-	      this->locuslist[locus].dnavar++;
-	      nuvar.push_back(k);
-	    }
-	  }
-	}
+		for (int iloc=0;iloc<nlocs;iloc++) {
+			locus= this->grouplist[gr].loc[iloc];
+			cat = this->locuslist[locus].type % 5;
+			this->locuslist[locus].haplodnavar = new string*[this->nsample];
+			ns=0; for (pop=0;pop<this->nsample;pop++) ns += this->data.ss[cat][pop];
+			site = new char[ns];
+			this->locuslist[locus].dnavar=0;
+			if (this->locuslist[locus].dnalength>0) {
+				//cout <<"longseq = "<<this->locuslist[locus].dnalength<<"\n";;
+				for (k=0;k<this->locuslist[locus].dnalength;k++) {
+					j=-1;
+					for (pop=0;pop<this->nsample;pop++) {
+						for (i=0;i<this->data.ss[cat][pop];i++) {
+							j++;
+							if (this->locuslist[locus].haplodna[pop][i] == SEQMISSING) site[j]='N';
+							else site[j] = this->locuslist[locus].haplodna[pop][i][k];
+							//if ((locus==13)and(j<1000)) cout<<"locus"<<locus<<"   site["<<j<<"] = "<<site[j]<<"\n";
+						}
+					}
+					//cout<<"fin de la boucle pop\n";
+					j0=0;
+					while ((site[j0]=='N')and(j0<ns-1)) j0++; //recherche du premier nucléotide non N
+					j=j0+1;
+					ident=true;
+					while ((ident)and(j<ns)) {
+						ident=((site[j]=='N')or(site[j]==site[j0]));
+						j++;
+					}
+					if (not ident) {
+						this->locuslist[locus].dnavar++;
+						nuvar.push_back(k);
+					}
+				}
+			}
 	//cout<<"locus "<<locus<<"   dnavar = "<<this->locuslist[locus].dnavar<<"\n";
 	for (pop=0;pop<this->nsample;pop++) {
 	  this->locuslist[locus].haplodnavar[pop] = new string[this->data.ss[cat][pop]];
@@ -1705,11 +1706,11 @@ long double ParticleC::cal_nha2p(int gr,int st){
 	    this->locuslist[locus].haplodnavar[pop][i] = ss;
 	    //for(int k=0;k<this->locuslist[locus].dnavar;k++) cout<<"   " <<nuvar[k]; cout<<"\n";
 	  }
-	}
-	if (not nuvar.empty()) nuvar.clear();
-	delete []site;
-	ss.clear();
-      }
+			}
+			if (not nuvar.empty()) nuvar.clear();
+			delete []site;
+			ss.clear();
+		}
     }
   }
 
