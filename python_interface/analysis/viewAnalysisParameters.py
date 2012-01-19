@@ -88,6 +88,11 @@ class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParamete
                 elif e.split(':')[0] == 't':
                     self.addRow("Number of requested test data sets",e.split(':')[1])
 
+        executablePath = self.parent.parent.preferences_win.getExecutablePath()
+        nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
+        particleLoopSize = str(self.parent.parent.preferences_win.particleLoopSizeEdit.text())
+        params = self.analysis.computationParameters
+
         #self.addRow("computation parameters",self.analysis.computationParameters)
         c = self.analysis.category
         if c == "estimate":
@@ -96,17 +101,15 @@ class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParamete
             option = "-j"
         elif c == "bias":
             option = "-b"
+            particleLoopSize = int(params.split('d:')[1].split(';')[0])
         elif c == "compare":
             option = "-c"
         elif c == "confidence":
             option = "-f"
+            particleLoopSize = int(params.split('t:')[1].split(';')[0])
         elif c == "pre-ev":
             option = "-d"
 
-        executablePath = self.parent.parent.preferences_win.getExecutablePath()
-        nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
-        particleLoopSize = str(self.parent.parent.preferences_win.particleLoopSizeEdit.text())
-        params = self.analysis.computationParameters
         #cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, option, '"%s"'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
         cmd_args_list = ['"'+executablePath+'"',"-p", "%s/"%self.parent.dir, "%s"%option, '"%s"'%params, "-i", '%s'%self.analysis.name,"-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
         command_line = " ".join(cmd_args_list)

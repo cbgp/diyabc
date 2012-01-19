@@ -1537,8 +1537,10 @@ class AnalysisThread(QThread):
             option = "-c"
         elif self.analysis.category == "bias":
             option = "-b"
+            particleLoopSize = int(params.split('d:')[1].split(';')[0])
         elif self.analysis.category == "confidence":
             option = "-f"
+            particleLoopSize = int(params.split('t:')[1].split(';')[0])
         elif self.analysis.category == "modelChecking":
             option = "-j"
         elif self.analysis.category == "pre-ev":
