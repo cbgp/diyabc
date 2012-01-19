@@ -523,6 +523,9 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.recentList.pop()
         self.redrawRecent()
 
+        self.preferences_win.saveRecent()
+        self.preferences_win.writeConfigFile()
+
     def openRecent(self):
         """ Evennement d'ouverture d'un projet récent depuis le menu
         """
