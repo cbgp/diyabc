@@ -856,15 +856,15 @@ matligneC *matA;
 //        duree=walltime(&debut);time_readfile += duree;
         iprog+=4;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         postscendir = comp_direct(nseld);
-        save_comp_direct(nseld,postscendir,path,ident);
+        save_comp_direct(nseld,postscendir,path,ident);  cout<<"apres save_comp_direct\n";
 
         postscenlog = new posteriorscenC*[nlogreg];
         if (nlogreg>0) {
-            allouecmat(rt.nscenchoisi, nselr, rt.nstat);
+            allouecmat(rt.nscenchoisi, nselr, rt.nstat);cout<<"apres allouecmat\n";
             k=0;
             while(k<nlogreg){
                 nts=(nselr/nlogreg)*(k+1);
-                postscenlog[k] = comp_logistic(nts,stat_obs);
+                postscenlog[k] = comp_logistic(nts,stat_obs);cout <<"apres la regression logistique n° "<<k<<"\n";
                 k++;
                 iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             }

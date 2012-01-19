@@ -159,7 +159,7 @@ string nomficonfresult;
  * Interprête la ligne de paramètres de l'option "confiance dans le choix du scénario" et lance les calculs correspondants
  */
     void doconf(string opt, int seed) {
-        string progressfilename, courantfilename;
+        string progressfilename;
         int nstatOK, iprog,nprog,ncs1;
         int nrec = 0, nsel,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond;
         string *ss,s,*ss1,s0,s1; 
@@ -175,10 +175,8 @@ string nomficonfresult;
         //strcat(progressfilename,ident);
         //strcat(progressfilename,"_progress.txt");
 
-        courantfilename = path + ident + "courant.log";
-        //strcpy(courantfilename,path);
-        //strcat(courantfilename,"courant.log");
-        //cout<<courantfilename<<"\n";
+		scurfile = path + "courant_"+ ident +".log";
+        cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
         for (int i=0;i<ns;i++) {
