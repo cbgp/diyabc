@@ -160,7 +160,7 @@ string nomficonfresult;
  */
     void doconf(string opt, int seed) {
         string progressfilename;
-        int nstatOK, iprog,nprog,ncs1;
+        int nstatOK, iprog,nprog,ncs1,*nbestdir,*nbestlog;
         int nrec = 0, nsel,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond;
         string *ss,s,*ss1,s0,s1; 
 		float *stat_obs;
@@ -266,6 +266,8 @@ string nomficonfresult;
         ofstream f11(nomficonfresult.c_str(),ios::app);
         rt.alloue_enrsel(nsel);
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
+		nbestdir = new int[rt.nscenchoisi];nbestlog = new int[rt.nscenchoisi];
+		for(int s=0;s<rt.nscenchoisi;s++){nbestdir[s]=0;nbestlog[s]=0;}
         for (int p=0;p<ntest;p++) {
             clock_zero=0.0;debut=walltime(&clock_zero);
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
@@ -284,10 +286,12 @@ string nomficonfresult;
             if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);
             f11<<"   ";
             ncs1=ncs-1;
+			int s=0;for (int i=1;i<rt.nscenchoisi;i++) {if (postsd[ncs1][i].x>postsd[ncs1][s].x) s=i;}nbestdir[s]++;
             for (int i=0;i<rt.nscenchoisi;i++) f11<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;
             for (int i=0;i<rt.nscenchoisi;i++) cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;cout<<"\n";
             if (nlogreg==1) {
                 postsr = comp_logistic(nselr,stat_obs);
+				int s=0;for (int i=1;i<rt.nscenchoisi;i++) {if (postsr[i].x>postsr[s].x) s=i;}nbestlog[s]++;
                 iprog +=4;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
 				for (int i=0;i<rt.nscenchoisi;i++) {
 					printf("  %6.4Lf [%6.4Lf,%6.4Lf] ",postsr[i].x,postsr[i].inf,postsr[i].sup);
@@ -312,6 +316,9 @@ string nomficonfresult;
             cout<<"durée ="<<TimeToStr(duree)<<"\n\n\n";
         }
         rt.desalloue_enrsel(nsel);
+		f11<<"\nNumber of times the scenario has the highest posterior probability\nTotal  ";
+		for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(9)<<nbestdir[i];
+		for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(17)<<nbestlog[i]<<"         ";
         f11.close();
         iprog +=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
 }
