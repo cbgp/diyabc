@@ -1,3 +1,4 @@
+cd ../../Notice-DIYABC-v2/
 # cleaning destination directory
 rm -rf Notice_DIYABC_principal2
 
