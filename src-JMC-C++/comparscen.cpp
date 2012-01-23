@@ -722,6 +722,7 @@ matligneC *matA;
 					cvecW[i]=matA[i].x[1];
 					for (int j=0;j<nstatOKsel;j++) cmatX0[i][j]=matA[i].x[j+2];
 				}
+				for (int i=0;i<nts;i++) delete [] matA[i].x; 
 			}
 			//cout<<"call_polytom_logistic_regression 2\n";
 			som=0.0;for (int i=0;i<ntt;i++) som += cvecW[i];
