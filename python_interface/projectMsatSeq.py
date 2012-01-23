@@ -102,15 +102,16 @@ class ProjectMsatSeq(ProjectReftable):
         self.ui.setHistoricalButton.setDisabled(False)
         self.ui.setGeneticButton.setDisabled(False)
 
-        # lecture du meta project
-        if self.loadMyConf():
+        try:
+            # lecture du meta project
+            self.loadMyConf()
             # lecture de conf.hist.tmp
             self.hist_model_win.loadHistoricalConf()
             self.gen_data_win.loadGeneticConf()
             self.loadAnalysis()
-        else:
-            raise Exception("Impossible to read the project configuration")
-            output.notify(self,"Load error","Impossible to read the project configuration")
+        except Exception as e:
+            raise Exception("Impossible to load the project configuration\n\n%s"%e)
+            output.notify(self,"Load error","Impossible to load the project configuration\n\n%s"%e)
 
     def freezeGenData(self,yesno=True):
         """ empêche la modification des genetic data tout en laissant
@@ -182,13 +183,18 @@ class ProjectMsatSeq(ProjectReftable):
             f = open("%s/%s"%(self.dir,self.parent.main_conf_name),"r")
             lines = f.readlines()
             self.dataFileName = lines[0].strip()
-            self.ui.dataFileEdit.setText(lines[0].strip())
+            self.ui.dataFileEdit.setText(self.dataFileName)
             # lecture du dataFile pour les infos de Gui Projet
-            self.loadDataFile("%s/%s"%(self.dir,lines[0].strip()))
-            # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
-            self.gen_data_win.fillLocusTableFromData()
-            return True
-        return False
+            if os.path.exists("%s/%s"%(self.dir,self.dataFileName)):
+                if self.loadDataFile("%s/%s"%(self.dir,self.dataFileName)):
+                    # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
+                    self.gen_data_win.fillLocusTableFromData()
+                else:
+                    raise Exception("Impossible to load the datafile (%s) which is possibly malformed"%self.dataFileName)
+            else:
+                raise Exception("Datafile dosn't exist (%s)"%self.dataFileName)
+        else:
+            raise Exception("Main conf file not found (%s)"%self.parent.main_conf_name)
 
     def getNbSumStats(self):
         return self.gen_data_win.getNbSumStats()
