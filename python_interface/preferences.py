@@ -83,7 +83,6 @@ class Preferences(AutoPreferences):
         elif "darwin" in sys.platform:
             default_Psize = "12"
 
-
         # hashtable contenant les informations des champs
         dico_fields = {
                 "connexion" : [
@@ -110,6 +109,7 @@ class Preferences(AutoPreferences):
                     ["lineEdit","particleLoopSize","Particle loop size","100"],
                     ["combo","maxThread","Maximum thread number",dicoValTxtMaxThread,[str(i) for i in range(1,nb_core+1)],str(nb_core)],
                     ["combo","maxLogLvl","Maximum log level",dicoValTxtLogLvl,["1","2","3","4"],"3"],
+                    ["lineEdit","nbMaxRecent","Maximum number of memorized recent projects","20"],
                     ["combo","picturesFormat","Graphics and pictures save format \\n(scenario trees, PCA graphics)",dicoValTxtFormat,formats,"pdf"]
                 ]
         }
@@ -309,37 +309,31 @@ class Preferences(AutoPreferences):
                 self.parent.setToolBarPosition(Qt.BottomToolBarArea)
 
     def loadRecent(self):
-            recent_list = []
-            if self.config.has_key("recent"):
-                log(3, "Loading recent list")
-                for num,rec in self.config["recent"].items():
-                    if len(rec) > 0 and rec.strip() != "":
-                        recent_list.append(rec.strip())
-                        log(4, "Loading recent : %s"%rec.strip())
-                self.parent.setRecent(recent_list)
+        recent_list = []
+        if self.config.has_key("recent") and self.config["recent"].has_key("projectPathList"):
+            log(3, "Loading recent list")
+            for rec in self.config["recent"]["projectPathList"].split('\n'):
+                if len(rec) > 0 and rec.strip() != "":
+                    recent_list.append(rec.strip())
+                    log(4, "Loading recent : %s"%rec.strip())
+            self.parent.setRecent(recent_list)
+
+    def getMaxRecentNumber(self):
+        return int(str(self.ui.nbMaxRecentEdit.text()))
 
     def saveRecent(self):
         log(3,"Saving recent list")
         if not self.config.has_key("recent"):
             self.config["recent"] = {}
-        else:
-            # on nettoie les recents avant de les sauver
-            # pour éviter d'avoir des zombies qui restent
-            # quand on diminue le nombre de recent
-            for i in range(20):
-                if self.config["recent"].has_key(str(i)):
-                    del self.config["recent"][str(i)]
-                else:
-                    break
         recList = self.parent.getRecent()
         cfgRecentIndex = 0
-        for ind,rec in enumerate(recList):
-            # si on a qu'un seul exemplaire de ce recent ou bien, si on est le premier
-            if (recList.count(rec) > 1 and recList.index(rec) == ind) or recList.count(rec) == 1 :
-                log(4,"Saving into recent list : %s"%rec)
-                self.config["recent"]["%s"%cfgRecentIndex] = rec
-                cfgRecentIndex += 1
-
+        rec_cfg = ""
+        for rec in recList:
+            log(4,"Saving into recent list : %s"%rec)
+            rec_cfg += "{0}\n".format(rec)
+        # delete last '\n'
+        rec_cfg = rec_cfg[:-1]
+        self.config["recent"]["projectPathList"] = rec_cfg
 
     def saveMMM(self):
         """ sauvegarde de la partie mutation model microsats des préférences

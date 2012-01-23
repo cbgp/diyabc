@@ -481,10 +481,12 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.recentMenuEntries = []
         self.entryToRecent = {}
 
+        # copy
         future_recent_list = []
         for recent in self.recentList:
             future_recent_list.append(recent)
         # drawing
+        nbMaxRecent = self.preferences_win.getMaxRecentNumber()
         nb_added = 0
         for i,rec in enumerate(self.recentList):
             if os.path.exists(str(rec)):
@@ -495,8 +497,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                 # le project n'existe plus, on supprime celui ci des recent
                 log(3,"Recent project %s doesn't exist anymore"%str(rec))
                 future_recent_list.remove(rec)
-            # on ajoute au maximum 20 recent
-            if nb_added == 20:
+            # on ajoute au maximum N recent
+            if nb_added == nbMaxRecent:
                 break
                 #self.recentList = future_recent_list
                 #self.recent_menu.setDisabled(False)
@@ -511,15 +513,16 @@ class Diyabc(formDiyabc,baseDiyabc):
         return self.recentList
 
     def addRecent(self,rec):
-        """ Ajoute un projet recent. Garde les 50 derniers récents. 
+        """ Ajoute un projet recent. Garde les N derniers récents. 
         Si le projet était déjà dans la liste, le met au sommet
         """
         # on vire les eventuelles occurences du projet que l'on veut ajouter
         while self.recentList.count(rec) > 0:
             self.recentList.remove(rec)
 
+        nbMaxRecent = self.preferences_win.getMaxRecentNumber()
         self.recentList.insert(0,rec)
-        while len(self.recentList) > 50:
+        while len(self.recentList) > nbMaxRecent:
             self.recentList.pop()
         self.redrawRecent()
 
