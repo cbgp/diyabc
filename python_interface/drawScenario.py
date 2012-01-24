@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os,traceback
 import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -58,7 +58,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 try:
                     self.addDraw(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"])
                 except Exception as e:
-                    self.addDrawError(sc_info["checker"],"There was an error during the drawing process : %s"%e)
+                    self.addDrawError(sc_info["checker"],"There was an error during the drawing process")
             else:
                 self.addDrawError(sc_info["checker"])
 
@@ -107,6 +107,8 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
             self.paintScenario(painter,segments,scc,t,xmax,ymax)
         except Exception as e:
             painter.end()
+            tb = traceback.format_exc()
+            log(3,"Draw error :\n%s"%tb)
             raise Exception("%s"%e)
 
         label = QLabel()
