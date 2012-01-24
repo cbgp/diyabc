@@ -249,7 +249,7 @@ class Scenario(object):
             if li.upper().find('SAMPLE')+li.upper().find('REFSAMPLE') > -1 : 
                 self.nsamp+=1
                 if li.upper().find('REFSAMPLE') > -1 :
-                    self.dicoPopRefNindRef[int(li.strip().split(' ')[-2])] = int(li.strip().split(' ')[-1])
+                    self.dicoPopRefNindRef[int(li.strip().split(' ')[-3])] = int(li.strip().split(' ')[-1]) + int(li.strip().split(' ')[-2])
                     self.nrefsamp+=1
                 if (len(li.strip().split(' ')) < 3)or(len(li.strip().split(' ')) == 4):
                     raise IOScreenError, "At line %i, the number of words is incorrect"%(i+2)

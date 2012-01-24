@@ -240,8 +240,10 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 if t.node[i].ref :  
                     #painter.drawText(x-10,y+25,'[Sa %i]'%t.node[i].pop)
                     painter.drawText(x-10,y+25,'%i ind'%scc.dicoPopRefNindRef[t.node[i].pop])
+                    print "ref, i:%s, ref:%s, pop:%s"%(i,t.node[i].ref,t.node[i].pop)
                 else:
                     painter.drawText(x-10,y+25,'Sa %i'%t.node[i].pop)
+                    print "noref, i:%s, ref:%s, pop:%s"%(i,t.node[i].ref,t.node[i].pop)
                 font = QFont()
                 font.setItalic(False)
                 font.setPixelSize(16+font_inc)
