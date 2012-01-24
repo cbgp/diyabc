@@ -80,29 +80,25 @@ class Documentator():
     access primitives to this doc from keywords (qt objectnames in our case)
     """
     def __init__(self,myfile,maxDescriptionLength=2500,separator="+++",parent=None):
+        """ 
+        @param myfile: Path of the html/xml documentation file
+        @param maxDescriptionLength: Maximum number of characters to take for one description
+        @param separator: string which separates tag names in label strings : doc_myObject+++tag_1+++tag_2
+        """
         self.parent = parent
         self.myfile = myfile
         self.maxDescriptionLength = maxDescriptionLength
         self.separator = separator
-        self.dicoDoc = {
-                "nbScLabel":{"plop":"Number of scenario <a href='http://free.fr'>ploppppp</a>set in the <font color='red'>historical</font> model<table border='1'><tr><td>ploppppp</td></tr></table>"},
-        #'nbScLabel' : '<ul id="master">\
-        #                <li><input type="checkbox" id="users" checked><label for="users">Users</label>\
-        #                   <ul>\
-        #                    <li><input type="text" id="Bra"><label for="Bra"><a href="voila.fr">Brad</a></label>\
-        #                   </ul>\
-        #                </ul>\
-        #',
-
-
-                "nbParamLabel":"Number of parameters set in the historical model",
-                }
+        self.dicoDoc = {}
         if os.path.exists(myfile):
             self.loadDocFile()
         else:
             raise Exception("The documentation file %s was not found"%myfile)
 
     def loadDocFile(self):
+        """ Determine if the file is an xml or an html documentation
+        in order to load it
+        """
         if self.myfile.endswith(".xml"):
             self.loadXmlFile()
         else:
@@ -120,7 +116,6 @@ class Documentator():
         for line in lines:
             if '<A NAME="setTagSeparator_' in line:
                 self.separator = line.split("setTagSeparator_")[1].split('"')[0]
-                print "sep found %s"%self.separator
                 break
 
         l = 0
@@ -161,6 +156,11 @@ class Documentator():
             l+=1
 
     def addDescription(self,key,desc,tags=[]):
+        """ Add a description for a given key
+        @param key: name of the "description related" object
+        @param desc: description string
+        @param tags: list of tags for this description
+        """
         # cleaning empty tags
         while tags.count("") > 0:
             tags.remove("")
