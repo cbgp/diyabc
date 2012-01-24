@@ -33,7 +33,7 @@ from PyQt4 import uic
 #from simulationProject import SimulationProject
 from preferences import Preferences
 from showLogFile import ShowLogFile
-from utils.cbgpUtils import Documentator
+from utils.cbgpUtils import Documentator,getLastRevisionDate
 import output
 import subprocess
 from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log
@@ -42,6 +42,8 @@ from threading import Thread
 from utils.data import isSNPDatafile
 import dataPath
 
+if VERSION=='development version':
+    VERSION_DATE=getLastRevisionDate("../")
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
 ## @class Diyabc

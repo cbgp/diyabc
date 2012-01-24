@@ -461,3 +461,43 @@ def checkRam():
     if raminfo[1] < min_requested_ram:
         #output.notify(None,"System warning","Warning, your have less than %s MB of RAM available.\n Your computer may swap and become very slow"%min_requested_ram)
         QMessageBox.information(None,"System warning","Warning, your have less than %s MB of RAM available.\n Your computer may swap and become very slow"%min_requested_ram)
+
+import subprocess
+m2m={
+        "jan":"01",
+        "feb":"02",
+        "mar":"03",
+        "apr":"04",
+        "may":"05",
+        "jun":"06",
+        "jul":"07",
+        "aug":"08",
+        "sep":"09",
+        "oct":"10",
+        "nov":"11",
+        "dec":"12"
+}
+def getLastRevisionDate(repoPath):
+    """ @rtype: dateString
+    @return: The date of the last revision of the given repository
+    """
+    # determine if this is a git or hg repo
+    if os.path.exists(repoPath+".git/"):
+        cmd_args = ["git","log","-n","1"]
+    elif os.path.exists(repoPath+".hg/"):
+        cmd_args = ["hg","tip"]
+    else:
+        raise Exception("%s is not a git nor a hg repo")
+    out = subprocess.check_output(cmd_args)
+    for l in out.split('\n'):
+        if l.lower().startswith("date"):
+            lspl = l.split()
+            datestr = lspl[3]
+            datestr += "/"
+            datestr += m2m[lspl[2].lower()]
+            datestr += "/"
+            datestr += lspl[5]
+            return datestr
+    return "01/01/1970"
+
+
