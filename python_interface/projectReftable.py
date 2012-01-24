@@ -56,7 +56,7 @@ class ProjectReftable(Project):
         super(ProjectReftable,self).__init__(name,dir,parent)
 
         # creation du fichier .diyabcproject au cas où il n'existe pas
-        if not os.path.exists("%s/%s.diyabcproject"%(self.dir,self.name)):
+        if self.dir != None and not os.path.exists("%s/%s.diyabcproject"%(self.dir,self.name)):
             f = open("%s/%s.diyabcproject"%(self.dir,self.name),'w')
             f.write("created in %s"%self.dir)
             f.close()
@@ -579,6 +579,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                         self.dir = newdir
                         # verrouillage du projet
                         self.lock()
+                        # creation du fichier .diyabcproject 
+                        if not os.path.exists("%s/%s.diyabcproject"%(self.dir,self.name)):
+                            f = open("%s/%s.diyabcproject"%(self.dir,self.name),'w')
+                            f.write("created in %s"%self.dir)
+                            f.close()
                     except OSError,e:
                         output.notify(self,"Error",str(e))
             else:
