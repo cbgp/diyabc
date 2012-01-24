@@ -55,6 +55,12 @@ class ProjectReftable(Project):
 
         super(ProjectReftable,self).__init__(name,dir,parent)
 
+        # creation du fichier .diyabcproject au cas où il n'existe pas
+        if not os.path.exists("%s/%s.diyabcproject"%(self.dir,self.name)):
+            f = open("%s/%s.diyabcproject"%(self.dir,self.name),'w')
+            f.write("created in %s"%self.dir)
+            f.close()
+
         # manual alignment set
         self.ui.verticalLayout_2.setAlignment(self.ui.newAnButton,Qt.AlignCenter)
         self.ui.verticalLayout_3.setAlignment(self.ui.progressBar,Qt.AlignCenter)

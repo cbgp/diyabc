@@ -574,8 +574,17 @@ class Diyabc(formDiyabc,baseDiyabc):
         from projectMsatSeq import ProjectMsatSeq
         from projectSnp import ProjectSnp
         if dir == None:
-            qfd = QFileDialog()
-            dir = str(qfd.getExistingDirectory())
+            #qfd = QFileDialog()
+            #dir = str(qfd.getExistingDirectory())
+            name = QFileDialog.getOpenFileName(self,"Select project","","DIYABC project files (*.diyabcproject);;all files (*)",)
+            if name != "" and name != None:
+                dir = '/'.join(str(name).split('/')[:-1])
+                if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
+                    # le fichier est bien dans un projet
+                    log(3,"%s is in a project directory, opening this project"%name)
+                else:
+                    log(3,"%s is not in a project directory, nothing to open"%name)
+
         # on enlève le dernier '/' s'il y en a un
         if dir != "" and dir[-1] == "/":
             dir = dir[:-1]

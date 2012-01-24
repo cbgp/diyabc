@@ -352,13 +352,21 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                     painter.setPen(pen)
 
                     dr = DrawScenario()
-                    dr.paintScenario(painter,segments,scc,t,xmax,ymax,12)
+                    try:
+                        dr.paintScenario(painter,segments,scc,t,xmax,ymax,12)
 
-                    label = QLabel()
-                    pix2 = pix.scaled(200,170)
-                    label.setPixmap(pix2)
-                    self.previewLabelList.append(label)
-                    self.ui.horizontalLayout_3.insertWidget((scc.number*2)-1,label)
+                        label = QLabel()
+                        pix2 = pix.scaled(200,170)
+                        label.setPixmap(pix2)
+                        self.previewLabelList.append(label)
+                        self.ui.horizontalLayout_3.insertWidget((scc.number*2)-1,label)
+                    except Exception as e:
+                        lab = QLabel("No preview \navailable. \nDraw \nprocess\ncrashed")
+                        font = QFont()
+                        font.setPixelSize(9)
+                        lab.setFont(font)
+                        self.previewLabelList.append(lab)
+                        self.ui.horizontalLayout_3.insertWidget(((num+1)*2)-1,lab)
                 else:
                     lab = QLabel("No preview \navailable. You\n may have\n it by\n'Check scenario'")
                     font = QFont()

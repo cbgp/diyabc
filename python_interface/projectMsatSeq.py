@@ -192,7 +192,7 @@ class ProjectMsatSeq(ProjectReftable):
                 else:
                     raise Exception("Impossible to load the datafile (%s) which is possibly malformed"%self.dataFileName)
             else:
-                raise Exception("Datafile dosn't exist (%s)"%self.dataFileName)
+                raise Exception("Datafile doesn't exist (%s)"%self.dataFileName)
         else:
             raise Exception("Main conf file not found (%s)"%self.parent.main_conf_name)
 

@@ -55,11 +55,14 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         """
         for sc_info in self.sc_info_list:
             if sc_info["tree"] != None:
-                self.addDraw(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"])
+                try:
+                    self.addDraw(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"])
+                except Exception as e:
+                    self.addDrawError(sc_info["checker"],"There was an error during the drawing process : %s"%e)
             else:
                 self.addDrawError(sc_info["checker"])
 
-    def addDrawError(self,scc):
+    def addDrawError(self,scc,additional_message=""):
 
         xmax = 500
         ymax = 450
@@ -83,6 +86,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         painter.setFont(font)
         painter.drawText( 10,20, "Scenario %i seems OK. But the current version of DIYABC"%(scc.number))
         painter.drawText( 10,40, "is unable to provide a valide graphic representation")
+        painter.drawText( 10,70, additional_message)
 
         label = QLabel()
         label.setPixmap(pix)
@@ -99,7 +103,11 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
 
         painter = QPainter(pix)
         
-        self.paintScenario(painter,segments,scc,t,xmax,ymax)
+        try:
+            self.paintScenario(painter,segments,scc,t,xmax,ymax)
+        except Exception as e:
+            painter.end()
+            raise Exception("%s"%e)
 
         label = QLabel()
         label.setPixmap(pix)

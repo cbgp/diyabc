@@ -239,7 +239,7 @@ class ProjectSnp(ProjectReftable):
             self.dataFileName = lines[0].strip()
             self.ui.dataFileEdit.setText(self.dataFileName)
             # lecture du dataFile pour les infos de Gui Projet
-            if os.path.exists(self.dataFileName):
+            if os.path.exists("%s/%s"%(self.dir,self.dataFileName)):
                 if self.loadDataFile("%s/%s"%(self.dir,self.dataFileName)):
                     ## comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
                     #self.ascert_frame.fillSampleFromData(self.data.nind)
@@ -247,7 +247,7 @@ class ProjectSnp(ProjectReftable):
                 else:
                     raise Exception("Impossible to load the datafile (%s) because it is possibly malformed"%self.dataFileName)
             else:
-                raise Exception("Datafile dosn't exist (%s)"%self.dataFileName)
+                raise Exception("Datafile doesn't exist (%s)"%self.dataFileName)
         else:
             raise Exception("Main conf file not found (%s)"%self.parent.main_conf_name)
 
