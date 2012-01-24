@@ -11,8 +11,8 @@
 # This package contains several classes : 
 #     - CmdPrompt and cmdThread : prompt which allows to execute python code
 #       interactively while program is running
-#     - Documentator : Extract infos from xml files produced by latexml to get
-#       documentation of paragraphs* labeled like "doc_*"
+#     - Documentator : Extract infos from xml files produced by latexml or latex2html
+#       to get documentation of paragraphs* labeled like "doc_*"
 #     - TeeLogger : Replace a standard output in order to redirect the flows to :
 #       a file, the replaced output and an external function
 # 
@@ -75,14 +75,15 @@ from xml.dom.minidom import parse
 import os.path
 
 class Documentator():
-    """ Class which extracts internal doc by parsing an xml file
-    generated from latex sources of DIYABC instructions paper. This class also provide
+    """ Class which extracts internal doc by parsing an xml or html file
+    generated from latex sources of a notice-like paper. This class also provide
     access primitives to this doc from keywords (qt objectnames in our case)
     """
-    def __init__(self,myfile,parent=None):
-        self.parent=parent
+    def __init__(self,myfile,maxDescriptionLength=2500,separator="+++",parent=None):
+        self.parent = parent
         self.myfile = myfile
-        self.sep = "+++"
+        self.maxDescriptionLength = maxDescriptionLength
+        self.separator = separator
         self.dicoDoc = {
                 "nbScLabel":{"plop":"Number of scenario <a href='http://free.fr'>ploppppp</a>set in the <font color='red'>historical</font> model<table border='1'><tr><td>ploppppp</td></tr></table>"},
         #'nbScLabel' : '<ul id="master">\
@@ -108,39 +109,49 @@ class Documentator():
             self.loadHtmlFile()
 
     def loadHtmlFile(self):
-        """ Loads the html file to fill the doc hashtable
+        """ Loads the html file to fill the doc hashtable.
+        The file is parsed line by line without any use of specific parser
         """
         f = open(self.myfile,'r')
         lines = f.readlines()
         f.close()
 
+        # searching for a redefinition of the tag separator
+        for line in lines:
+            if '<A NAME="setTagSeparator_' in line:
+                self.separator = line.split("setTagSeparator_")[1].split('"')[0]
+                print "sep found %s"%self.separator
+                break
+
         l = 0
         while l<len(lines):
             section = ""
-            # deux cas : le doc_ est juste après le <A NAME="SECTION000  ----> on trouve le num de section après
-            # sinon on le trouve avant
+            # two cases : 
+            # - the label (doc_) is just after the section delimiter (<A NAME="SECTION000  ---->) : 
+            #   we find the section number after the label
+            # - otherwise we find the section number before the label
             if '<A NAME="doc_' in lines[l]:
                 key = lines[l].split('<A NAME="doc_')[1].split('"')[0]
-                tags = key.split(self.sep)[1:]
-                key = key.split(self.sep)[0]
-                # on cherche le num de section après
+                tags = key.split(self.separator)[1:]
+                key = key.split(self.separator)[0]
+                # looking for section number after the label
                 if '<A NAME="SECTION00' in lines[l-1]:
                     j=l+1
                     while '<SPAN CLASS="arabic">' not in lines[j]:
                         j+=1
-                # on cherche avant
+                # looking for section number before the label
                 else:
                     j=l-1
                     while '<SPAN CLASS="arabic">' not in lines[j]:
                         j-=1
-                # j est sur la ligne ou se trouve le num de section
+                # lines[j] is now the section number line
                 for d in lines[j].split('<SPAN CLASS="arabic">')[1:]:
                     section += "%s."%(d.split('</SPAN>')[0])
                 section = section[:-1]
 
-                # doc_ trouvé, recup de la description
+                # getting the description after the label line
                 desc = ""
-                while '<A NAME="SECTION00' not in lines[l] and len(desc) < 2500:
+                while '<A NAME="SECTION00' not in lines[l] and len(desc) < self.maxDescriptionLength:
                     if '<SPAN CLASS="arabic">' not in lines[l]:
                         desc += lines[l]
                     l+=1
@@ -175,13 +186,21 @@ class Documentator():
         for elemType in ['paragraph','section','subsection','subsubsection']:
             elemList.extend(doc.getElementsByTagName(elemType))
 
+        # searching for a redefinition of the tag separator
+        for i in elemList:
+            if i.hasAttribute('labels'):
+                if "setSeparator_" in i.getAttribute('labels'):
+                    self.separator = i.getAttribute('labels').split("setSeparator_")[1]
+                    break
+
         for i in elemList:
             if i.hasAttribute('labels'):
                 if "doc_" in i.getAttribute('labels'):
                     key = i.getAttribute('labels').replace('LABEL:doc_','')
-                    tags = key.split(self.sep)[1:]
-                    key = key.split(self.sep)[0]
+                    tags = key.split(self.separator)[1:]
+                    key = key.split(self.separator)[0]
                     value = i.getElementsByTagName('para')[0].getElementsByTagName("p")[0].childNodes[0].nodeValue
+                    value = value[:self.maxDescriptionLength]
                     value+="\n\nMore details in the documentation pdf at section : "
                     value+=i.getAttribute('xml:id').replace('S','').replace('p','').replace('P','')
                     

@@ -97,7 +97,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.openProject(projDirName)
         try:
             #self.documentator = Documentator(dataPath.DATAPATH+"/documentation/documentation.html",self)
-            self.documentator = Documentator(dataPath.DOCPATH+"/index.html",self)
+            self.documentator = Documentator(dataPath.DOCPATH+"/index.html")
             self.updateDoc()
         except Exception as e:
             #output.notify(self,"Documentation error","%s"%e)
@@ -111,16 +111,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         # pour le dragNdrop des dossier projet
         self.setAcceptDrops(True)
 
-        #self.setStyleSheet("background-image: url(docs/accueil_pictures/greens.png);")
-        #self.stackedWidget.setStyleSheet("background-image: url();")
-
-        #pal = QPalette()
-        #pal.setBrush(self.backgroundRole(), QBrush(QImage(dataPath.DATAPATH+"/accueil_pictures/correct.png")))
-        #self.setPalette(pal)
-
-        #im = QImage(dataImages.dada,200,200)
-        #pic = QPixmap()
-        #pic.convertFromImage(im)
         pic = QPixmap(dataPath.DATAPATH+"/accueil_pictures/blue_orange.png")
         self.ui.imgLabel.setPixmap(pic)
         pic.scaled(100,100)
@@ -137,7 +127,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.aboutWindow.infoLabel.setText(txt)
         QObject.connect(ui.okButton,SIGNAL("clicked()"),self.aboutWindow.close)
 
-        #proj1 = Project(self.ui,"ploproj")
         self.ui.tab_6.hide()
         self.ui.tabWidget.removeTab(0)
 
