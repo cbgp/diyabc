@@ -1978,11 +1978,11 @@ long double ParticleC::cal_nha2p(int gr,int st){
       this->t_afs.clear();
       this->n_afs.clear();
     }
-    if (this->grouplist[gr].nstatsnp>0){
+    /*if (this->grouplist[gr].nstatsnp>0){
 		for (int i=0;i<this->grouplist[gr].nstatsnp;i++) {
 			delete []this->grouplist[gr].sumstatsnp[i].x;
 		}
-	}
+	}*/
   }
 
 
