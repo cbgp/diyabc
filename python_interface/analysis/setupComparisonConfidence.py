@@ -24,7 +24,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         self.ui.verticalLayout_2.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)
 
-
+        self.restoreAnalysisValues()
 
     def createWidgets(self):
         self.ui=self
@@ -58,6 +58,29 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         #self.ui.totNumSimLabel.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
+
+    def restoreAnalysisValues(self):
+        if self.analysis.computationParameters != "":
+            if self.analysis.category == "confidence":
+                #self.ui.redefButton.hide()
+                #self.ui.numRegCombo.clear()
+                #self.ui.numRegCombo.addItem("0")
+                #self.ui.numRegCombo.addItem("1")
+                #self.ui.numRegCombo.setCurrentIndex(1)
+                #self.ui.notdsEdit.setText("500")
+                pass
+            else:
+                cp = self.analysis.computationParameters
+
+                self.ui.cnosdEdit.setText(cp.split('n:')[1].split(';')[0])
+                self.ui.deEdit.setText(cp.split('d:')[1].split(';')[0])
+                print "plop"
+                self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
+                print "plop"
+
+                numreg = cp.split('m:')[1].split(';')[0]
+                self.ui.numRegCombo.setCurrentIndex(self.ui.numRegCombo.findText(numreg))
+                print "plop"
 
     def checkAll(self):
         problems = ""
