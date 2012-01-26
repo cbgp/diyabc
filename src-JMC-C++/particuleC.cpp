@@ -1312,10 +1312,13 @@ void ParticleC::cherche_branchesOK(int loc) {
 			} while (f1<nodemrca);
 		}
 	}*/
-	/*for (b=0;b<this->gt[loc].nbranches;b++){
-	 *      printf("branche %3d   bas %3d   haut %3d   (nodemrca %3d)",b,this->gt[loc].branches[b].bottom,this->gt[loc].branches[b].top,nodemrca);
-	 *      if (this->gt[loc].branches[b].OK) printf("   OK\n"); else printf("\n");
-}*/
+	if (debuglevel==20){
+		cout<<"\nLOCUS "<<loc<<"\n";
+		for (b=0;b<this->gt[loc].nbranches;b++){
+			printf("branche %3d   bas %3d   haut %3d   longueur %8.3e  (nodemrca %3d)",b,this->gt[loc].branches[b].bottom,this->gt[loc].branches[b].top,this->gt[loc].branches[b].length,nodemrca);
+			if (this->gt[loc].branches[b].OK) printf("   OK\n"); else printf("\n");
+		}
+	}
 }
 
 void ParticleC::put_one_mutation(int loc) {
@@ -1341,7 +1344,7 @@ void ParticleC::put_one_mutation(int loc) {
 	}
     //if (loc<10) cout<<"mutation dans la branche "<<b<<" sur "<<this->gt[loc].nbranches<<"\n";
     //if (loc<10) cout<<nOK<<" branches mutables sur "<<this->gt[loc].nbranches<<"\n";
-    //if (loc<10) cout<<"locus "<<loc<<"   numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
+    if (debuglevel==20) cout<<"locus "<<loc<<"   numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
   } 
 
 
@@ -1680,22 +1683,26 @@ void ParticleC::put_one_mutation(int loc) {
   }
     
   bool ParticleC::polymref(int loc) {
-    int n=0,n1=0;
+    int nr=0,n1r=0,nd=0,n1d=0;
     double p;
-    bool poly=false;
+    bool polyref=false, polydat=false;;
     //cout<<"dans polymref debut\n";
     int cat = (this->locuslist[loc].type % 5);
     for (int sa=0;sa<this->nsample;sa++) {
-      for (int i=0;i<this->data.ss[cat][sa];i++) {
-	if (this->ref[cat][sa][i]) {
-	  n +=1;
-	  n1 +=(int)this->locuslist[loc].haplosnp[sa][i];
-	}
-      }
+		for (int i=0;i<this->data.ss[cat][sa];i++) {
+			if (this->ref[cat][sa][i]) {
+				nr +=1;
+				n1r +=(int)this->locuslist[loc].haplosnp[sa][i];
+			}
+			if (this->dat[cat][sa][i]) {
+				nd +=1;
+				n1d +=(int)this->locuslist[loc].haplosnp[sa][i];
+			}
+		}
     } 
     //cout<<"dans polymref fin   n1="<<n1<<"   n="<<n<<"\n";
-    if (n==0) exit(1);
-    p=(double)n1/(double)n;
+    if (nr==0) exit(1);
+    p=(double)n1r/(double)nr;
 	/*if ((n1==0)or(n1==n)) {
 		cout<<"locus "<<loc<<"   n1="<<n1<<"   n="<<n<<" \n";
 		for (int b=0;b<this->gt[loc].nbranches;b++)	if (this->gt[loc].branches[b].OK) {
@@ -1707,10 +1714,11 @@ void ParticleC::put_one_mutation(int loc) {
 			cout<<"    LONGUEUR="<<this->gt[loc].branches[b].length<<"   NMUT="<<this->gt[loc].branches[b].nmut<<"\n";
 		}
 	}*/
-    if (p > 0.5) poly=(p <= 1.0-this->reffreqmin);
-    else         poly=(p >= this->reffreqmin);
+    if (p > 0.5) polyref=(p <= 1.0-this->reffreqmin);
+    else         polyref=(p >= this->reffreqmin);
+	polydat = (n1d>0)and(n1d<nd);
     //if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
-    return poly;
+    return ((polyref) and (polydat));
   }
 	
   int ParticleC::dosimulpart(int numscen){
