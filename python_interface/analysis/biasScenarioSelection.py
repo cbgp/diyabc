@@ -30,6 +30,8 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         self.ui.verticalLayout.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout.setAlignment(Qt.AlignTop)
 
+        self.restoreAnalysisValues()
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -45,6 +47,9 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         self.ui.projectDirEdit.setText(self.parent.parent.dir)
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
+
+    def restoreAnalysisValues(self):
+        pass
 
     def validate(self):
         """ passe à l'étape suivante de la définition de l'analyse

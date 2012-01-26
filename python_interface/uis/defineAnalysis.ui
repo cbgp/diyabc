@@ -226,7 +226,7 @@ The reference table has been built</string>
              <string>Pre-evaluate scenario-prior combinations</string>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>

@@ -37,6 +37,8 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
         self.ui.verticalLayout.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout.setAlignment(Qt.AlignTop)
 
+        self.restoreAnalysisValues()
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -46,6 +48,14 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
+
+    def restoreAnalysisValues(self):
+        """ Si on est en edition d'analyse, elle possède déjà des valeurs que 
+        l'on doit afficher
+        """
+        for i,ch in enumerate(self.checklist):
+            ch.setChecked((i+1) in self.analysis.candidateScList)
+
 
     def validate(self):
         """ passe à l'étape suivante de définition de l'analyse

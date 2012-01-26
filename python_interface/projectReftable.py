@@ -668,6 +668,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame_9.setMaximumSize(QtCore.QSize(9999, 32))
         horizontalLayout_4 = QtGui.QHBoxLayout(frame_9)
         horizontalLayout_4.setObjectName("horizontalLayout_4")
+        analysisEdButton = QtGui.QPushButton("Edit",frame_9)
+        analysisEdButton.setMinimumSize(QtCore.QSize(35, 0))
+        analysisEdButton.setMaximumSize(QtCore.QSize(35, 16777215))
+        analysisEdButton.setObjectName("analysisEdButton")
+        analysisEdButton.setFont(QFont("",pointSize=8))
+        horizontalLayout_4.addWidget(analysisEdButton)
         analysisCpButton = QtGui.QPushButton("Copy",frame_9)
         analysisCpButton.setMinimumSize(QtCore.QSize(35, 0))
         analysisCpButton.setMaximumSize(QtCore.QSize(35, 16777215))
@@ -772,11 +778,25 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.dicoFrameAnalysis[frame_9] = analysis
         QObject.connect(analysisRmButton,SIGNAL("clicked()"),self.removeAnalysis)
         QObject.connect(analysisCpButton,SIGNAL("clicked()"),self.copyAnalysis)
+        QObject.connect(analysisEdButton,SIGNAL("clicked()"),self.editAnalysis)
         #QObject.connect(analysisDownButton,SIGNAL("clicked()"),self.moveAnalysisDown)
         #QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
         QObject.connect(analysisButton,SIGNAL("clicked()"),self.tryLaunchViewAnalysis)
         QObject.connect(analysisParamsButton,SIGNAL("clicked()"),self.viewAnalysisParameters)
         QObject.connect(analysisStopButton,SIGNAL("clicked()"),self.stopAnalysis)
+
+    def editAnalysis(self):
+        """ démarre l'édition d'une analyse en passant par un define auquel
+        on donne une analyse deja existante, il se débrouille
+        """
+        frame = self.sender().parent()
+        analysis = self.dicoFrameAnalysis[frame]
+        log(1,"Entering in analysis %s edition"%analysis.name)
+        def_analysis = DefineNewAnalysis(self,self.hist_model_win.getNbScenario(),analysis)
+
+        self.ui.analysisStack.addWidget(def_analysis)
+        self.ui.analysisStack.setCurrentWidget(def_analysis)
+        def_analysis.validate()
 
     def copyAnalysis(self):
         frame = self.sender().parent()

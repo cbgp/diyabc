@@ -19,11 +19,13 @@ formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType("uis/defineAnalysis
 class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
     """ écran de définition d'une nouvelle analyse. demande
     le type d'analyse souhaitée
+    Si une analyse est fournie au constructeur, il passe directement à l'étape suivante : edition d'analyse
     """
-    def __init__(self,parent=None,nbScenario=0):
+    def __init__(self,parent=None,nbScenario=0,analysis_to_edit=None):
         super(DefineNewAnalysis,self).__init__(parent)
         self.parent=parent
         self.nbScenario = nbScenario
+        self.analysis_to_edit = analysis_to_edit
         self.createWidgets()
         self.ui.verticalLayout_2.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)
@@ -105,14 +107,20 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
     def validate(self):
         """ on poursuit la définition de l'analyse
         """
-        if self.checkName():
+        # on passe à la suite seulement si le nom est valide ou 
+        # que l'on a une analyse à éditer. Ne marche que si les 'OU' sont
+        # des 'OU SINON' et les 'ET' des 'ET ALORS'
+        if self.analysis_to_edit != None or self.checkName():
             name = str(self.ui.analysisNameEdit.text())
             name = name.replace(' ','_')
             # pour les cas de comparison et estimate, la selection n'influe pas sur l'écran suivant
             # on instancie donc Comparison et Estimation maintenant
-            if self.ui.comparisonRadio.isChecked():
+            if (self.analysis_to_edit != None and self.analysis_to_edit.category == "compare") or self.ui.comparisonRadio.isChecked():
                 if len(self.parent.hist_model_win.scList) >= 2:
-                    analysis = Analysis(name,"compare")
+                    if self.analysis_to_edit != None:
+                        analysis = self.analysis_to_edit
+                    else:
+                        analysis = Analysis(name,"compare")
                     compFrame = SetupComparisonConfidence(analysis,self)
                     genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,analysis,self)
                     #self.parent.addTab(genSel,"Scenario selection")
@@ -123,9 +131,12 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                     self.parent.ui.analysisStack.setCurrentWidget(genSel)
                 else:
                     QMessageBox.information(self,"Scenario error","At least 2 scenarios are needed for this analysis")
-            elif self.ui.estimateRadio.isChecked():
+            elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "estimate") or self.ui.estimateRadio.isChecked():
                 if len(self.parent.hist_model_win.scList) >= 1:
-                    analysis = Analysis(name,"estimate")
+                    if self.analysis_to_edit != None:
+                        analysis = self.analysis_to_edit
+                    else:
+                        analysis = Analysis(name,"estimate")
                     estimateFrame = SetupEstimationBias(analysis,self)
                     genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",estimateFrame,"ABC parameter estimation",1,analysis,self)
                     #self.parent.addTab(genSel,"Scenario selection")
@@ -136,15 +147,18 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                     self.parent.ui.analysisStack.setCurrentWidget(genSel)
                 else:
                     QMessageBox.information(self,"Scenario error","At least 1 scenario is needed for this analysis")
-            elif self.ui.modCheckRadio.isChecked():
+            elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "modelChecking") or self.ui.modCheckRadio.isChecked():
                 if len(self.parent.hist_model_win.scList) >= 1:
-                    compParamtxt = "a:"
-                    if self.ui.modCheckPcaCheck.isChecked():
-                        compParamtxt += "p"
-                    if self.ui.modCheckLossCheck.isChecked():
-                        compParamtxt += "l"
-                    analysis = Analysis(name,"modelChecking")
-                    analysis.aParams = compParamtxt
+                    if self.analysis_to_edit != None:
+                        analysis = self.analysis_to_edit
+                    else:
+                        compParamtxt = "a:"
+                        if self.ui.modCheckPcaCheck.isChecked():
+                            compParamtxt += "p"
+                        if self.ui.modCheckLossCheck.isChecked():
+                            compParamtxt += "l"
+                        analysis = Analysis(name,"modelChecking")
+                        analysis.aParams = compParamtxt
                     modCheckFrame = SetupEstimationBias(analysis,self)
                     genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",modCheckFrame,"Model Checking",1,analysis,self)
                     self.parent.ui.analysisStack.addWidget(genSel)
@@ -152,7 +166,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                     self.parent.ui.analysisStack.setCurrentWidget(genSel)
                 else:
                     QMessageBox.information(self,"Scenario error","At least 1 scenario is needed for this analysis")
-            elif self.ui.preEvRadio.isChecked():
+            elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "pre-ev") or self.ui.preEvRadio.isChecked():
                 paramtxt = ""
                 compParamtxt = "a:"
                 if self.ui.confPcaCheck.isChecked():
@@ -168,8 +182,11 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 analysis.computationParameters = compParamtxt
                 self.parent.addAnalysis(analysis)
                 self.exit()
-            elif self.ui.biasRadio.isChecked():
-                analysis = Analysis(name,"bias")
+            elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "bias") or self.ui.biasRadio.isChecked():
+                if self.analysis_to_edit != None:
+                    analysis = self.analysis_to_edit
+                else:
+                    analysis = Analysis(name,"bias")
                 genSel = BiasNConfidenceScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
                 #self.parent.addTab(genSel,"Scenario selection")
                 #self.parent.removeTab(self.parent.indexOf(self))
@@ -178,13 +195,16 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 self.parent.ui.analysisStack.removeWidget(self)
                 self.parent.ui.analysisStack.setCurrentWidget(genSel)
 
-            elif self.ui.confidenceRadio.isChecked():
-                if self.ui.confFdaCheck.isChecked():
-                    paramtxt="1"
+            elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "confidence") or self.ui.confidenceRadio.isChecked():
+                if self.analysis_to_edit != None:
+                    analysis = self.analysis_to_edit
                 else:
-                    paramtxt="0"
-                analysis = Analysis(name,"confidence")
-                analysis.fda = paramtxt
+                    if self.ui.confFdaCheck.isChecked():
+                        paramtxt="1"
+                    else:
+                        paramtxt="0"
+                    analysis = Analysis(name,"confidence")
+                    analysis.fda = paramtxt
                 genSel = BiasNConfidenceScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
                 #self.parent.addTab(genSel,"Scenario selection")
                 #self.parent.removeTab(self.parent.indexOf(self))
@@ -194,7 +214,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 self.parent.ui.analysisStack.setCurrentWidget(genSel)
 
             else:
-                log(3, "This analysis type is NYI")
+                output.notify(self,"category error","Choose an analysis type")
 
     def exit(self):
         ## reactivation des onglets
