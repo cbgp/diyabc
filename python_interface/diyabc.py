@@ -675,6 +675,9 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.switchToMainStack()
                         # creation du lock
                         proj_to_open.lock()
+                        # si les RNG n'existent pas, on les crée
+                        if not os.path.exists("%s/RNG_state_0000.bin"%dir):
+                            proj_to_open.initializeRNG()
                         log(1,"Project '%s' opened successfully"%dir)
                         self.addRecent(dir)
                         self.updateDoc(proj_to_open)
