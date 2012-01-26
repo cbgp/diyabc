@@ -65,7 +65,8 @@ class ProjectSimulation(Project):
         self.hist_model_win.hide()
 
         self.locusNumberFrame = uic.loadUi("uis/setLocusNumber.ui")
-        self.locusNumberFrame.parent = self
+        self.locusNumberFrame.setParent(self)
+        self.locusNumberFrame.hide()
         QObject.connect(self.locusNumberFrame.okButton,SIGNAL("clicked()"),self.checkSampleNSetGenetic)
         #self.setHistValid(False)
         #self.setGenValid(False)
@@ -377,6 +378,7 @@ class ProjectSimulationMsatSeq(ProjectSimulation):
             self.gen_data_win = SetGeneticDataSimulation(self)
             self.gen_data_win.hide()
             self.gen_data_win.fillLocusTable(dico_loc_nb)
+            self.parent.updateDoc(self.gen_data_win)
 
         self.ui.refTableStack.removeWidget(self.ui.refTableStack.currentWidget())
         self.ui.refTableStack.addWidget(self.gen_data_win)

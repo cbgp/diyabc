@@ -457,6 +457,8 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
             self.parent.parent.ui.analysisStack.removeWidget(self)
             self.parent.parent.ui.analysisStack.setCurrentWidget(next_widget)
 
+            self.parent.parent.parent.updateDoc(next_widget)
+
     def exit(self):
         ## reactivation des onglets
         #self.parent.parent.setTabEnabled(1,True)

@@ -318,6 +318,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         """
         if obj == None:
             obj = self
+        log(3,"Updating documentation of "+"%s"%obj.objectName())
         l = []
         for typ in [QLabel,QPushButton,QPlainTextEdit,QListWidget,QLineEdit,QRadioButton,QComboBox,QProgressBar,QCheckBox]:
             l.extend(obj.findChildren(typ))

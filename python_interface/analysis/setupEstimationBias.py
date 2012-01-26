@@ -30,6 +30,8 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
 
         self.restoreAnalysisValues()
 
+        self.parent.parent.parent.updateDoc(self)
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -147,6 +149,8 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
 
         sumStatFrame.ui.sumStatLabel.setText("%s of group %s"%(sumStatFrame.ui.sumStatLabel.text(),num_gr))
 
+        self.parent.parent.parent.updateDoc(sumStatFrame)
+
         self.parent.parent.ui.analysisStack.addWidget(sumStatFrame)
         self.parent.parent.ui.analysisStack.setCurrentWidget(sumStatFrame)
 
@@ -166,6 +170,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         self.parent.parent.ui.analysisStack.addWidget(sumStatFrame)
         self.parent.parent.ui.analysisStack.setCurrentWidget(sumStatFrame)
 
+        self.parent.parent.parent.updateDoc(sumStatFrame)
 
     def checkAll(self):
         problems = ""

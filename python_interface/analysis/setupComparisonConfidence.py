@@ -26,6 +26,8 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
 
         self.restoreAnalysisValues()
 
+        self.parent.parent.parent.updateDoc(self)
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)

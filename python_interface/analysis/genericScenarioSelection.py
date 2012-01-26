@@ -72,6 +72,7 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
             self.parent.parent.ui.analysisStack.addWidget(self.next_widget)
             self.parent.parent.ui.analysisStack.removeWidget(self)
             self.parent.parent.ui.analysisStack.setCurrentWidget(self.next_widget)
+            self.parent.parent.parent.updateDoc(self.next_widget)
         else:
             QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%self.nb_min_sel)
 

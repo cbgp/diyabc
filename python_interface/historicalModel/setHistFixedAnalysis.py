@@ -256,7 +256,6 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
     def validate(self):
         """ on vérifie ici que les valeurs sont bien des float et qu'elles sont bien supérieures à 0
         """
-
         if self.checkAll():
             self.majParamInfoDico()
             self.analysis.histParams = self.param_info_dico
@@ -266,6 +265,8 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
             self.parent.parent.ui.analysisStack.addWidget(next_widget)
             self.parent.parent.ui.analysisStack.removeWidget(self)
             self.parent.parent.ui.analysisStack.setCurrentWidget(next_widget)
+
+            self.parent.parent.parent.updateDoc(next_widget)
 
     def exit(self):
         ## reactivation des onglets

@@ -116,12 +116,14 @@ class SetGeneticDataSimulation(SetGeneticData):
         #frame.setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))
         self.setMutation_dico[groupBox] = frame
         frame.hide()
+        self.parent.parent.updateDoc(frame)
 
         frameSeq = SetMutationModelSequencesSimulation(self,groupBox)
         #frameSeq.exit = self.exitMutmod
         #frameSeq.setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
         self.setMutationSeq_dico[groupBox] = frameSeq
         frameSeq.hide()
+        self.parent.parent.updateDoc(frameSeq)
 
         groupBox.findChild(QPushButton,"setSumButton").hide()
 

@@ -663,7 +663,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame_9 = QtGui.QFrame(self.ui.scrollAreaWidgetContents)
         frame_9.setFrameShape(QtGui.QFrame.StyledPanel)
         frame_9.setFrameShadow(QtGui.QFrame.Raised)
-        frame_9.setObjectName("frame_9")
+        frame_9.setObjectName("frame_analysis_%s"%name)
         frame_9.setMinimumSize(QtCore.QSize(0, 32))
         frame_9.setMaximumSize(QtCore.QSize(9999, 32))
         horizontalLayout_4 = QtGui.QHBoxLayout(frame_9)
@@ -784,6 +784,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         QObject.connect(analysisButton,SIGNAL("clicked()"),self.tryLaunchViewAnalysis)
         QObject.connect(analysisParamsButton,SIGNAL("clicked()"),self.viewAnalysisParameters)
         QObject.connect(analysisStopButton,SIGNAL("clicked()"),self.stopAnalysis)
+
+        self.parent.updateDoc(frame_9)
 
     def editAnalysis(self):
         """ démarre l'édition d'une analyse en passant par un define auquel

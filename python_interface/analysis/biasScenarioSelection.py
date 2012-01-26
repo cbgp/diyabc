@@ -97,7 +97,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         self.parent.parent.ui.analysisStack.removeWidget(self)
         self.parent.parent.ui.analysisStack.setCurrentWidget(next_widget)
         
-
+        self.parent.parent.parent.updateDoc(next_widget)
 
     def getSelectedScenario(self):
         """ retourne le numero du scenario choisi
