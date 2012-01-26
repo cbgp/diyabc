@@ -501,7 +501,7 @@ def getLastRevisionDate(repoPath):
     return "01/01/1970"
 
 class DirNFileDialog(QFileDialog):
-    """ File dialog which can open a directory or a file
+    """ File dialog which can open a directory *OR* a file
     """
     def accept(self):
         files = self.selectedFiles()

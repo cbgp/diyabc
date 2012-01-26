@@ -9,7 +9,7 @@ import hashlib,pickle,sys
 import socket
 from socket import *
 import time
-import os
+import os,copy
 import shutil
 import codecs
 import subprocess
@@ -668,10 +668,17 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame_9.setMaximumSize(QtCore.QSize(9999, 32))
         horizontalLayout_4 = QtGui.QHBoxLayout(frame_9)
         horizontalLayout_4.setObjectName("horizontalLayout_4")
-        analysisRmButton = QtGui.QPushButton("Remove",frame_9)
-        analysisRmButton.setMinimumSize(QtCore.QSize(70, 0))
-        analysisRmButton.setMaximumSize(QtCore.QSize(70, 16777215))
+        analysisCpButton = QtGui.QPushButton("Copy",frame_9)
+        analysisCpButton.setMinimumSize(QtCore.QSize(35, 0))
+        analysisCpButton.setMaximumSize(QtCore.QSize(35, 16777215))
+        analysisCpButton.setObjectName("analysisCpButton")
+        analysisCpButton.setFont(QFont("",pointSize=8))
+        horizontalLayout_4.addWidget(analysisCpButton)
+        analysisRmButton = QtGui.QPushButton("Del",frame_9)
+        analysisRmButton.setMinimumSize(QtCore.QSize(35, 0))
+        analysisRmButton.setMaximumSize(QtCore.QSize(35, 16777215))
         analysisRmButton.setObjectName("analysisRmButton")
+        analysisRmButton.setFont(QFont("",pointSize=8))
         horizontalLayout_4.addWidget(analysisRmButton)
         #analysisUpButton = QtGui.QPushButton("up",frame_9)
         #analysisUpButton.setMinimumSize(QtCore.QSize(50, 0))
@@ -764,11 +771,27 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         self.dicoFrameAnalysis[frame_9] = analysis
         QObject.connect(analysisRmButton,SIGNAL("clicked()"),self.removeAnalysis)
+        QObject.connect(analysisCpButton,SIGNAL("clicked()"),self.copyAnalysis)
         #QObject.connect(analysisDownButton,SIGNAL("clicked()"),self.moveAnalysisDown)
         #QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
         QObject.connect(analysisButton,SIGNAL("clicked()"),self.tryLaunchViewAnalysis)
         QObject.connect(analysisParamsButton,SIGNAL("clicked()"),self.viewAnalysisParameters)
         QObject.connect(analysisStopButton,SIGNAL("clicked()"),self.stopAnalysis)
+
+    def copyAnalysis(self):
+        frame = self.sender().parent()
+        analysis = self.dicoFrameAnalysis[frame]
+        dup = copy.deepcopy(analysis)
+        maxnum = 0
+        for an in self.analysisList:
+            if an.name.startswith(analysis.name.split('-')[0]):
+                numstr = str(an.name.split('-')[-1])
+                if numstr.isdigit():
+                    if int(numstr) > maxnum:
+                        maxnum=int(numstr)
+        dup.name = dup.name.split('-')[0]+'-'+str(maxnum+1)
+        log(1,"Copying analysis '%s' to '%s'"%(analysis.name,dup.name))
+        self.addAnalysis(dup)
 
     def removeAnalysis(self):
         frame = self.sender().parent()
