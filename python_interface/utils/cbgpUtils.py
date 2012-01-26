@@ -500,4 +500,13 @@ def getLastRevisionDate(repoPath):
             return datestr
     return "01/01/1970"
 
+class DirNFileDialog(QFileDialog):
+    """ File dialog which can open a directory or a file
+    """
+    def accept(self):
+        files = self.selectedFiles()
+        if (files.isEmpty()):
+            return
+        self.emit(SIGNAL("filesSelected(QStringList)"),files)
+        super(QFileDialog,self).accept()
 

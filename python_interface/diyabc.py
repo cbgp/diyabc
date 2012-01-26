@@ -36,7 +36,7 @@ from showLogFile import ShowLogFile
 from utils.cbgpUtils import Documentator,getLastRevisionDate
 import output
 import subprocess
-from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log
+from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log,DirNFileDialog
 from utils.trayIconHandler import TrayIconHandler
 from threading import Thread
 from utils.data import isSNPDatafile
@@ -576,14 +576,26 @@ class Diyabc(formDiyabc,baseDiyabc):
         from projectMsatSeq import ProjectMsatSeq
         from projectSnp import ProjectSnp
         if dir == None:
-            name = QFileDialog.getOpenFileName(self,"Select project","","DIYABC project files (*.diyabcproject);;all files (*)",)
+            qq = DirNFileDialog(None,"Select project file or directory")
+            qq.setFilter("DIYABC project files (*.diyabcproject);;all files (*)")
+            ret = qq.exec_()
+            if ret:
+                print qq.selectedFiles()[0]
+                name = qq.selectedFiles()[0]
+            else:
+                name = ""
             if name != "" and name != None:
-                dir = '/'.join(str(name).split('/')[:-1])
-                if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
-                    # le fichier est bien dans un projet
-                    log(3,"%s is in a project directory, opening this project"%name)
+                # c'est un dossier
+                if os.path.isdir(name):
+                    dir = name
+                # c'est un fichier
                 else:
-                    log(3,"%s is not in a project directory, nothing to open"%name)
+                    dir = '/'.join(str(name).split('/')[:-1])
+                    if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
+                        # le fichier est bien dans un projet
+                        log(3,"%s is in a project directory, opening this project"%name)
+                    else:
+                        log(3,"%s is not in a project directory, nothing to open"%name)
             else:
                 return
 
