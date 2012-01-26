@@ -30,7 +30,7 @@ class SetSummaryStatisticsSnpAnalysis(SetSummaryStatisticsSnp):
         self.parent.parent.ui.analysisStack.setCurrentWidget(self.stackTarget)
         # maj le dico de sum stats de l'analyse
         self.stackTarget.analysis.sumStatsTHDico[self.numGroup] = self.getSumStatsTableHeader(self.getGroupNumero())
-        self.stackTarget.analysis.sumStatsConfDico[self.numGroup] = self.getStats()
+        self.stackTarget.analysis.sumStatsConfDico[self.numGroup] = self.getSumConf()
         #print self.stackTarget.analysis.sumStatsDico
 
     def getGroupNumero(self):
