@@ -61,26 +61,14 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
 
     def restoreAnalysisValues(self):
         if self.analysis.computationParameters != "":
+            cp = self.analysis.computationParameters
+            self.ui.cnosdEdit.setText(cp.split('n:')[1].split(';')[0])
+            self.ui.deEdit.setText(cp.split('d:')[1].split(';')[0])
+            self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
+            numreg = cp.split('m:')[1].split(';')[0]
+            self.ui.numRegCombo.setCurrentIndex(self.ui.numRegCombo.findText(numreg))
             if self.analysis.category == "confidence":
-                #self.ui.redefButton.hide()
-                #self.ui.numRegCombo.clear()
-                #self.ui.numRegCombo.addItem("0")
-                #self.ui.numRegCombo.addItem("1")
-                #self.ui.numRegCombo.setCurrentIndex(1)
-                #self.ui.notdsEdit.setText("500")
-                pass
-            else:
-                cp = self.analysis.computationParameters
-
-                self.ui.cnosdEdit.setText(cp.split('n:')[1].split(';')[0])
-                self.ui.deEdit.setText(cp.split('d:')[1].split(';')[0])
-                print "plop"
-                self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
-                print "plop"
-
-                numreg = cp.split('m:')[1].split(';')[0]
-                self.ui.numRegCombo.setCurrentIndex(self.ui.numRegCombo.findText(numreg))
-                print "plop"
+                self.ui.notdsEdit.setText(cp.split('t:')[1].split(';')[0])
 
     def checkAll(self):
         problems = ""
@@ -106,6 +94,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
     def validate(self):
         """ défini les computation parameters de l'analyse et ajoute celle-ci au projet
         """
+        analysis_in_edition = (self.analysis.computationParameters != "")
         #self.parent.parent.addRow("scenario choice","params","4","new")
         self.analysis.candidateScList = self.scNumList
         self.majDicoValues()
@@ -173,7 +162,8 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                 #print "ursulla : %s"%strparam
 
                 self.analysis.computationParameters = strparam
-            self.parent.parent.addAnalysis(self.analysis)
+            if not analysis_in_edition:
+                self.parent.parent.addAnalysis(self.analysis)
             self.exit()
 
     def setRecordValues(self,scList):

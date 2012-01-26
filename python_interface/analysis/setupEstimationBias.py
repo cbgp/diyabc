@@ -28,7 +28,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         self.ui.verticalLayout_3.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout_3.setAlignment(Qt.AlignTop)
 
-
+        self.restoreAnalysisValues()
 
     def createWidgets(self):
         self.ui=self
@@ -86,6 +86,31 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
 
+    def restoreAnalysisValues(self):
+        if self.analysis.computationParameters != "":
+            cp = self.analysis.computationParameters
+            self.ui.nosdEdit.setText(cp.split('m:')[1].split(';')[0])
+            self.ui.cnosdEdit.setText(cp.split('n:')[1].split(';')[0])
+
+            trans = cp.split('t:')[1].split(';')[0]
+            if trans == "1":
+                self.ui.noRadio.setChecked(True)
+            elif trans == "2":
+                self.ui.logRadio.setChecked(True)
+            elif trans == "3":
+                self.ui.logitRadio.setChecked(True)
+            elif trans == "4":
+                self.ui.logtgRadio.setChecked(True)
+
+            choice = cp.split('p:')[1].split(';')[0]
+            self.ui.oCheck.setChecked('o' in choice)
+            self.ui.sCheck.setChecked('s' in choice)
+            self.ui.cCheck.setChecked('c' in choice)
+            if self.analysis.category == "bias":
+                self.ui.notdsEdit.setText(cp.split('d:')[1].split(';')[0])
+            elif self.analysis.category == "modelChecking":
+                self.ui.nodssftpEdit.setText(cp.split('q:')[1].split(';')[0])
+
     def redefineSumStats(self):
         """ appel de la methode de projectSnp ou projectMsatSeq
         qui appelera ensuite la bonne méthode de setupEstimationBias
@@ -107,10 +132,16 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         if "Microsat" in greft.title():
             sumStatFrame = SetSummaryStatisticsMsatAnalysis(self.parent,self,num_gr)
             #print self.parent.parent.gen_data_win.setSum_dico[g].getSumConf()[1]
-            sumStatFrame.setSumConf(self.parent.parent.gen_data_win.setSum_dico[g].getSumConf()[1].strip().split('\n'))
+            if self.analysis.sumStatsConfDico.has_key(num_gr):
+                sumStatFrame.setSumConf(self.analysis.sumStatsConfDico[num_gr][1].strip().split('\n'))
+            else:
+                sumStatFrame.setSumConf(self.parent.parent.gen_data_win.setSum_dico[g].getSumConf()[1].strip().split('\n'))
         elif "Sequence" in greft.title():
             sumStatFrame = SetSummaryStatisticsSeqAnalysis(self.parent,self,num_gr)
-            sumStatFrame.setSumConf(self.parent.parent.gen_data_win.setSumSeq_dico[g].getSumConf()[1].strip().split('\n'))
+            if self.analysis.sumStatsConfDico.has_key(num_gr):
+                sumStatFrame.setSumConf(self.analysis.sumStatsConfDico[num_gr][1].strip().split('\n'))
+            else:
+                sumStatFrame.setSumConf(self.parent.parent.gen_data_win.setSumSeq_dico[g].getSumConf()[1].strip().split('\n'))
         else:
             return
 
@@ -125,7 +156,10 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         num_gr = str(self.ui.redefSumStatsCombo.currentText())
 
         sumStatFrame = SetSummaryStatisticsSnpAnalysis(self.parent,self,num_gr)
-        sumStatFrame.setSumConf(self.parent.parent.sum_stat_wins[num_gr].getSumConf()[1].strip().split('\n'))
+        if self.analysis.sumStatsConfDico.has_key(num_gr):
+            sumStatFrame.setSumConf(self.analysis.sumStatsConfDico[num_gr][1].strip().split('\n'))
+        else:
+            sumStatFrame.setSumConf(self.parent.parent.sum_stat_wins[num_gr].getSumConf()[1].strip().split('\n'))
 
         sumStatFrame.ui.sumStatLabel.setText("%s"%(sumStatFrame.ui.sumStatLabel.text()))
 
@@ -158,6 +192,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         """ termine la définition de l'analyse en lui ajoutant la chaine
         de paramètres
         """
+        analysis_in_edition = (self.analysis.computationParameters != "")
         #self.analysis.append(self.scNumList)
         self.majDicoValues()
         if self.checkAll():
@@ -174,8 +209,8 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                 if self.analysis.category == "modelChecking":
                     pat = re.compile(r'\s+')
                     statsStr = ""
-                    for k in self.analysis.sumStatsDico.keys():
-                        statsStr += pat.sub(' ',self.analysis.sumStatsDico[k])
+                    for k in self.analysis.sumStatsTHDico.keys():
+                        statsStr += pat.sub(' ',self.analysis.sumStatsTHDico[k])
                         statsStr += " "
 
                     self.analysis.computationParameters += ";v:%s;q:%s;"%(statsStr.strip(),self.dico_values["numberOfDataFromPost"])
@@ -228,7 +263,8 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                 #print "ursulla : %s"%strparam
 
                 self.analysis.computationParameters = strparam
-            self.parent.parent.addAnalysis(self.analysis)
+            if not analysis_in_edition:
+                self.parent.parent.addAnalysis(self.analysis)
             self.exit()
 
     def setScenarios(self,scList):
@@ -251,12 +287,14 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
 
         txt = "Chosen scenario%s : %s"%(plur,lstxt)
         self.ui.scenariosLabel.setText(txt)
-        self.ui.cnosdEdit.setText(str(sumRec))
         self.ui.totNumSimLabel.setText(str(sumRec))
-        nosdDefault = sumRec/100
-        if nosdDefault < 1000:
-            nosdDefault = 1000
-        self.ui.nosdEdit.setText(str(nosdDefault))
+        # on le fait seulement si on n'est pas en édition
+        if self.analysis.computationParameters == "":
+            self.ui.cnosdEdit.setText(str(sumRec))
+            nosdDefault = sumRec/100
+            if nosdDefault < 1000:
+                nosdDefault = 1000
+            self.ui.nosdEdit.setText(str(nosdDefault))
 
     def redefineScenarios(self):
         """ repasse sur le choix des scenarios en lui redonnant moi même comme next_widget

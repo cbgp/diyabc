@@ -11,7 +11,8 @@ class Analysis():
         self.candidateScList = []
         self.computationParameters = ""
         self.mutationModel = ""
-        self.sumStatsDico = {}
+        self.sumStatsTHDico = {}
+        self.sumStatsConfDico = {}
         self.histParams = None
         self.condTxtList = []
         self.drawn = None
