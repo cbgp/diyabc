@@ -49,7 +49,18 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         self.ui.analysisNameLabel.setText(self.analysis.name)
 
     def restoreAnalysisValues(self):
-        pass
+        if self.analysis.chosenSc != None:
+            self.radiolist[self.analysis.chosenSc - 1].setChecked(True)
+
+        if self.analysis.category == "confidence":
+            for i in range(self.nb_sc):
+                num = i+1
+                check = self.checklist[i]
+                check.setChecked(num in self.analysis.candidateScList)
+
+        if self.analysis.drawn != None:
+            self.ui.drawnRadio.setChecked(self.analysis.drawn)
+            self.ui.fixedRadio.setChecked(not self.analysis.drawn)
 
     def validate(self):
         """ passe à l'étape suivante de la définition de l'analyse
