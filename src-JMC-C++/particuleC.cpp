@@ -1685,7 +1685,7 @@ void ParticleC::put_one_mutation(int loc) {
   bool ParticleC::polymref(int loc) {
     int nr=0,n1r=0,nd=0,n1d=0;
     double p;
-    bool polyref=false, polydat=false;;
+    bool polyref=false, polydat=false,poly;
     //cout<<"dans polymref debut\n";
     int cat = (this->locuslist[loc].type % 5);
     for (int sa=0;sa<this->nsample;sa++) {
@@ -1717,8 +1717,12 @@ void ParticleC::put_one_mutation(int loc) {
     if (p > 0.5) polyref=(p <= 1.0-this->reffreqmin);
     else         polyref=(p >= this->reffreqmin);
 	polydat = (n1d>0)and(n1d<nd);
+	poly = ((polyref) and (polydat));
     //if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
-    return ((polyref) and (polydat));
+	if (debuglevel==20) {
+		if (poly) cout<<"LOCUS ACCEPTE\n"; else cout<<"LOCUS REFUSE\n";
+	}  
+	return poly;
   }
 	
   int ParticleC::dosimulpart(int numscen){
@@ -1839,6 +1843,7 @@ void ParticleC::put_one_mutation(int loc) {
 				  if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = this->gt[loc]; gtMexist=true;}}
 			  }
 			  /* mutations */
+			  snpOK = true;
 			  if (this->locuslist[loc].type <10){
 				  put_mutations(loc);
 				  if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
@@ -1846,27 +1851,18 @@ void ParticleC::put_one_mutation(int loc) {
 				  if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
 			  } else {
 				  //if (loc==0) cout<<"this->refnindtot="<<this->refnindtot<<"\n";
-				  this->locuslist[loc].firstime = true;
-				  if (this->refnindtot<1) {
-					  put_one_mutation(loc);
-					  simulOK[loc]=cree_haplo(loc);
-				  } else {
-					  // if (loc==0) cout<<"apres firstime=true au locus "<<loc<<"\n";
-					  do {
-						  put_one_mutation(loc);
-						  //if (loc==0) cout<<"apres put_one_mutation\n";
-						  // if (loc==0) cout<< " firstime = " << firstime <<"\n";
-						  simulOK[loc]=cree_haplo(loc);
-						  //if (loc==0) cout<<"apres cree_haplo\n";
-						  snpOK = polymref(loc);
-						  //if (loc==0) cout<<"apres polymref\n";
-					  } while (not snpOK);
-				  }
+				this->locuslist[loc].firstime = true;
+				put_one_mutation(loc);
+				simulOK[loc]=cree_haplo(loc);
+				if (this->refnindtot>0) snpOK = polymref(loc); 
 			  }
-			  locus=loc;
-			  if (simulOK[loc] != 0) {if (debuglevel==10) cout << "avant break interne\n";break;}
-			  if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
+				if (snpOK){
+					locus=loc;
+					if (simulOK[loc] != 0) {if (debuglevel==10) cout << "avant break interne\n";break;}
+					if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
+				}
 		  }
+		  if (not snpOK) loc--;
 		  //cout<<"   OK\n\n";
 		  //if (loc==50)
 		  //exit(6);

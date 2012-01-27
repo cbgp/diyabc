@@ -60,7 +60,8 @@ void dosimfile(int seed){
 	progressfilename =path + "progress.txt";
 	nomfisim=header.datafilename;
 	ntest = header.nsimfile;
-	cout<<"nombre de fichiers genepop à simuler = "<<ntest<<"\n";
+	if (header.dataobs.filetype==0) cout<<"nombre de fichiers genepop à simuler = "<<ntest<<"\n";
+	if (header.dataobs.filetype==1) cout<<"nombre de fichiers snp à simuler = "<<ntest<<"\n";
 	if (header.dataobs.filetype==0) sgp = ps.simulgenepop(header, ntest, multithread, seed);
 	if (header.dataobs.filetype==1) sgp = ps.simuldataSNP(header, ntest, multithread, seed);
 	cout<<"apres les simulations\n";
