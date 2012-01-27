@@ -488,7 +488,8 @@ def getLastRevisionDate(repoPath):
         cmd_args = ["hg","tip"]
     else:
         raise Exception("%s is not a git nor a hg repo")
-    out = subprocess.check_output(cmd_args)
+    pipe = subprocess.Popen(cmd_args,stdout=subprocess.PIPE)
+    out,err = pipe.communicate()
     for l in out.split('\n'):
         if l.lower().startswith("date"):
             lspl = l.split()
