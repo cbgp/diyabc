@@ -41,6 +41,8 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
 
         self.hideFixedParams()
 
+        self.restoreAnalysisValues()
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -63,6 +65,26 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
         self.ui.horizontalLayout_3.setAlignment(QtCore.Qt.AlignLeft)
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
+
+    def restoreAnalysisValues(self):
+        if self.analysis.histParams != None:
+            for p in self.analysis.histParams.keys():
+                for param in self.paramList:
+                    pname = str(param.findChild(QLabel,"paramNameLabel").text())
+                    if pname == p:
+                        param.findChild(QLineEdit,"minValueParamEdit").setText(self.analysis.histParams[p][2])
+                        param.findChild(QLineEdit,"maxValueParamEdit").setText(self.analysis.histParams[p][3])
+                        param.findChild(QLineEdit,"meanValueParamEdit").setText(self.analysis.histParams[p][4])
+                        param.findChild(QLineEdit,"stValueParamEdit").setText(self.analysis.histParams[p][5])
+                        law = self.analysis.histParams[p][1]
+                        if law == "LN":
+                            param.findChild(QRadioButton,'logNormalRadio').setChecked(True)
+                        elif law == "NO":
+                            param.findChild(QRadioButton,'normalRadio').setChecked(True)
+                        elif law == "UN":
+                            param.findChild(QRadioButton,'uniformParamRadio').setChecked(True)
+                        elif law == "LU":
+                            param.findChild(QRadioButton,'logUniformRadio').setChecked(True)
 
     def hideFixedParams(self):
         fixed_params_list = self.parent.parent.hist_model_win.getFixedParamList()

@@ -36,6 +36,8 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
 
         self.addTheParams()
 
+        self.restoreAnalysisValues()
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -69,9 +71,15 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
 
+    def restoreAnalysisValues(self):
+        if self.analysis.histParams != None:
+            for p in self.analysis.histParams.keys():
+                for param in self.paramList:
+                    pname = str(param.findChild(QLabel,"paramNameLabel").text())
+                    if pname == p:
+                        param.findChild(QLineEdit,"meanValueParamEdit").setText(self.analysis.histParams[p][1])
+
     def addTheSc(self):
-        
-        
         # creation de la groupbox a ajouter
         groupBox = QtGui.QGroupBox(self.ui.scScrollContent)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
