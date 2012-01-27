@@ -67,16 +67,16 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
         self.ui.analysisNameLabel.setText(self.analysis.name)
 
     def restoreAnalysisValues(self):
-        if self.analysis.histParams != None:
-            for p in self.analysis.histParams.keys():
+        if self.analysis.histParamsDrawn != None:
+            for p in self.analysis.histParamsDrawn.keys():
                 for param in self.paramList:
                     pname = str(param.findChild(QLabel,"paramNameLabel").text())
                     if pname == p:
-                        param.findChild(QLineEdit,"minValueParamEdit").setText(self.analysis.histParams[p][2])
-                        param.findChild(QLineEdit,"maxValueParamEdit").setText(self.analysis.histParams[p][3])
-                        param.findChild(QLineEdit,"meanValueParamEdit").setText(self.analysis.histParams[p][4])
-                        param.findChild(QLineEdit,"stValueParamEdit").setText(self.analysis.histParams[p][5])
-                        law = self.analysis.histParams[p][1]
+                        param.findChild(QLineEdit,"minValueParamEdit").setText(self.analysis.histParamsDrawn[p][2])
+                        param.findChild(QLineEdit,"maxValueParamEdit").setText(self.analysis.histParamsDrawn[p][3])
+                        param.findChild(QLineEdit,"meanValueParamEdit").setText(self.analysis.histParamsDrawn[p][4])
+                        param.findChild(QLineEdit,"stValueParamEdit").setText(self.analysis.histParamsDrawn[p][5])
+                        law = self.analysis.histParamsDrawn[p][1]
                         if law == "LN":
                             param.findChild(QRadioButton,'logNormalRadio').setChecked(True)
                         elif law == "NO":
@@ -467,7 +467,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
 
         if self.checkAll():
             self.majParamInfoDico()
-            self.analysis.histParams = self.param_info_dico
+            self.analysis.histParamsDrawn = self.param_info_dico
             lCond = []
             for cb in self.condList:
                 lCond.append(str(cb.findChild(QLabel,"condLabel").text()))

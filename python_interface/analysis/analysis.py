@@ -10,10 +10,12 @@ class Analysis():
         self.chosenSc = None
         self.candidateScList = []
         self.computationParameters = ""
-        self.mutationModel = ""
+        self.mutationModelFixed = ""
+        self.mutationModelDrawn = ""
         self.sumStatsTHDico = {}
         self.sumStatsConfDico = {}
-        self.histParams = None
+        self.histParamsFixed = None
+        self.histParamsDrawn = None
         self.condTxtList = []
         self.drawn = None
         self.params = ""

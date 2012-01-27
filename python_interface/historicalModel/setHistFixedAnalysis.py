@@ -72,12 +72,12 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
         self.ui.analysisNameLabel.setText(self.analysis.name)
 
     def restoreAnalysisValues(self):
-        if self.analysis.histParams != None:
-            for p in self.analysis.histParams.keys():
+        if self.analysis.histParamsFixed != None:
+            for p in self.analysis.histParamsFixed.keys():
                 for param in self.paramList:
                     pname = str(param.findChild(QLabel,"paramNameLabel").text())
                     if pname == p:
-                        param.findChild(QLineEdit,"meanValueParamEdit").setText(self.analysis.histParams[p][1])
+                        param.findChild(QLineEdit,"meanValueParamEdit").setText(self.analysis.histParamsFixed[p][1])
 
     def addTheSc(self):
         # creation de la groupbox a ajouter
@@ -266,7 +266,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
         """
         if self.checkAll():
             self.majParamInfoDico()
-            self.analysis.histParams = self.param_info_dico
+            self.analysis.histParamsFixed = self.param_info_dico
             # appel ping pong
             next_widget = self.parent.parent.getNextWidget(self)
 

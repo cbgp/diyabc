@@ -179,7 +179,16 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
                 l_result.append(str(self.ui.ilc2MinEdit.text()))
 
         return l_result
-
+    
+    def setMutationConfFromAnalysisValues(self,v):
+        self.ui.mmrMinEdit.setText("%s"%v[0])
+        self.ui.ilmrMinEdit.setText("%s"%v[1])
+        if len(v) > 2:
+            self.ui.mc1MinEdit.setText("%s"%v[2])
+            self.ui.ilc1MinEdit.setText("%s"%v[3])
+            if len(v) > 4:
+                self.ui.mc2MinEdit.setText("%s"%v[4])
+                self.ui.ilc2MinEdit.setText("%s"%v[5])
 
     def setMutationConf(self,lines):
         """ set les valeurs depuis la conf

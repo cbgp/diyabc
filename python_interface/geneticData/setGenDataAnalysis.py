@@ -60,7 +60,10 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     self.setMutation_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
                     #print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
-                    self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
+                    if self.analysis.mutationModelDrawn != "":
+                        self.setMutation_dico[self.groupList[-1]].setMutationConf(self.analysis.mutationModelDrawn[numgr].split('\n'))
+                    else:
+                        self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
                     # on grise ce qui ne varie pas
                     self.setMutation_dico[self.groupList[-1]].hideFixedParameters()
                     self.setMutationValid_dico[self.groupList[-1]] = True
@@ -70,7 +73,10 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     self.setMutationSeq_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
                     #print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
-                    self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
+                    if self.analysis.mutationModelDrawn != "":
+                        self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(self.analysis.mutationModelDrawn[numgr].split('\n'))
+                    else:
+                        self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
                     # on grise ce qui ne varie pas
                     self.setMutationSeq_dico[self.groupList[-1]].hideFixedParameters()
                     self.setMutationSeqValid_dico[self.groupList[-1]] = True
@@ -82,7 +88,10 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     self.setMutation_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
                     #print "mut conf : %s"%gen_data_ref.setMutation_dico[box].getMutationConf()
-                    self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
+                    if self.analysis.mutationModelFixed != "":
+                        self.setMutation_dico[self.groupList[-1]].setMutationConfFromAnalysisValues(self.analysis.mutationModelFixed[numgr])
+                    else:
+                        self.setMutation_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutation_dico[box].getMutationConf().split('\n'))
                     self.setMutationValid_dico[self.groupList[-1]] = True
                     # on grise ce qui ne varie pas
                     if float(str(gen_data_ref.setMutation_dico[box].mmrMinEdit.text())) == float(str(gen_data_ref.setMutation_dico[box].mmrMaxEdit.text())):
@@ -96,7 +105,11 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     self.setMutationSeq_dico[self.groupList[-1]].hide()
                     # on transfere la conf depuis le mutmod reftable
                     #print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
-                    self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
+                    if self.analysis.mutationModelFixed != "":
+                        print "oooo:",self.analysis.mutationModelFixed[numgr]
+                        self.setMutationSeq_dico[self.groupList[-1]].setMutationConfFromAnalysisValues(self.analysis.mutationModelFixed[numgr])
+                    else:
+                        self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
                     self.setMutationSeqValid_dico[self.groupList[-1]] = True
                     # on grise ce qui ne varie pas
                     if float(str(gen_data_ref.setMutationSeq_dico[box].mmrMinEdit.text())) == float(str(gen_data_ref.setMutationSeq_dico[box].mmrMaxEdit.text())):
@@ -110,8 +123,6 @@ class SetGeneticDataAnalysis(SetGeneticData):
             box.findChild(QPushButton,"addToGroupButton").hide()
             box.findChild(QPushButton,"rmFromGroupButton").hide()
             box.findChild(QPushButton,"setSumButton").hide()
-
-
 
     def majProjectGui(self,m=None,s=None,g=None,ss=None):
         pass
@@ -150,8 +161,6 @@ class SetGeneticDataAnalysis(SetGeneticData):
             lab.setText("Set summary statistics of %s (sequences)"%(" ".join(str(box.title()).split()[:2])))
         else:
             QMessageBox.information(self,"Set Summary statistics error","Add locus to a group before setting the summary statistics")
-
-
 
     def switchTo(self,widget):
         """ on switche dans la stack analysis
@@ -196,7 +205,10 @@ class SetGeneticDataAnalysis(SetGeneticData):
             self.parent.setGenValid(False)
         else:
             # c'est valide, on passe à la dernière phase de paramètrage
-            self.analysis.mutationModel = mutconf_list
+            if self.analysis.drawn:
+                self.analysis.mutationModelDrawn = mutconf_list
+            else:
+                self.analysis.mutationModelFixed = mutconf_list
             if self.analysis.category == "bias":
                 #next_title = "bias and precision"
                 last_parametrisation = SetupEstimationBias(self.analysis,self)

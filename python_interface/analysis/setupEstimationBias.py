@@ -229,8 +229,12 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                 strparam += "p:%s;"%self.dico_values['choice']
                 #print "robert ", self.analysis
                 strparam += "h:"
-                for paramname in self.analysis.histParams.keys():
-                    l = self.analysis.histParams[paramname]
+                if self.analysis.drawn:
+                    histParams = self.analysis.histParamsDrawn
+                else:
+                    histParams = self.analysis.histParamsFixed
+                for paramname in histParams.keys():
+                    l = histParams[paramname]
                     strparam += "%s="%paramname
                     if len(l) == 2:
                         strparam += "%s "%l[1]
@@ -240,10 +244,14 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                     strparam += "%s "%ctxt
                 strparam = strparam[:-1]
                 #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
-                if len(self.analysis.mutationModel)>0:
+                if self.analysis.drawn:
+                    mutmod = self.analysis.mutationModelDrawn
+                else:
+                    mutmod = self.analysis.mutationModelFixed
+                if len(mutmod)>0:
                     strparam += ";u:"
-                    if type(self.analysis.mutationModel[0]) == type(u'plop'):
-                        for ind,gr in enumerate(self.analysis.mutationModel):
+                    if type(mutmod[0]) == type(u'plop'):
+                        for ind,gr in enumerate(mutmod):
                             strparam += "g%s("%(ind+1)
                             strgr = gr.strip()
                             strgr = strgr.split('\n')
@@ -256,7 +264,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                             strparam = strparam[:-1]
                             strparam += ")*"
                     else:
-                        for ind,gr in enumerate(self.analysis.mutationModel):
+                        for ind,gr in enumerate(mutmod):
                             strparam += "g%s("%(ind+1)
                             for num in gr:
                                 strparam += "%s "%num

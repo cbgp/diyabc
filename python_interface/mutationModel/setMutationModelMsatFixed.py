@@ -125,6 +125,14 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
 
         return l_result
 
+    def setMutationConfFromAnalysisValues(self,v):
+        self.ui.mmrMinEdit.setText("%s"%v[0])
+        self.ui.ilmrMinEdit.setText("%s"%v[1])
+        self.ui.ilcpMinEdit.setText("%s"%v[2])
+        self.ui.mcpMinEdit.setText("%s"%v[3])
+        self.ui.msrMinEdit.setText("%s"%v[4])
+        self.ui.ilsrMinEdit.setText("%s"%v[5])
+
     def setMutationConf(self,lines):
         """ set les valeurs depuis la conf
         """
@@ -155,8 +163,6 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
         #valilsr = (float(ilsrValues[0]) + float(ilsrValues[1]) )/2
         #self.ui.ilsrMinEdit.setText("%s"%valilsr)
         self.ui.ilsrMinEdit.setText("2")
-
-
 
     def exit(self):
         ## reactivation des onglets
