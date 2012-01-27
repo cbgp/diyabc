@@ -123,7 +123,12 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                     if self.analysis_to_edit != None:
                         analysis = self.analysis_to_edit
                     else:
+                        if self.ui.confFdaCompareCheck.isChecked():
+                            paramtxt="1"
+                        else:
+                            paramtxt="0"
                         analysis = Analysis(name,"compare")
+                        analysis.fda = paramtxt
                     compFrame = SetupComparisonConfidence(analysis,self)
                     genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,analysis,self)
                 else:

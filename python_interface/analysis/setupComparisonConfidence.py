@@ -108,7 +108,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         #dico_comp = self.analysis[-1]
         if self.checkAll():
             if self.analysis.category == "compare":
-                self.analysis.computationParameters = "s:%s;n:%s;d:%s;l:%s;m:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg'])
+                self.analysis.computationParameters = "s:%s;n:%s;d:%s;l:%s;m:%s;f:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg'],self.analysis.fda)
             elif self.analysis.category == "confidence":
                 candListTxt = ""
                 for cs in self.analysis.candidateScList:
