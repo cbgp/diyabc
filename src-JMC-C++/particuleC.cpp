@@ -998,7 +998,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    *                    initialise les propriétés "sample" et "height" des noeuds terminaux
    *                    initialise à 0 la propriété "pop" de tous les noeuds et à 0 la propriété "sample" des noeuds non-terminaux
    */
-  void ParticleC::init_tree(GeneTreeC & gt, int loc) {
+  void ParticleC::init_tree(GeneTreeC & gt, int loc, bool gtexist) {
     //cout << "début de init_tree pour le locus " << loc  <<"\n";
 
 
@@ -1009,8 +1009,10 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     gt.ngenes = nnod;
     gt.nnodes=nnod;
     gt.nbranches = 0;
-    gt.nodes = new NodeC[2*nnod+1];
-    gt.branches = new BranchC[2*nnod];
+	if (not gtexist){
+		gt.nodes = new NodeC[2*nnod+1];
+		gt.branches = new BranchC[2*nnod];
+	}
     for (int sa=0;sa<this->data.nsample;sa++) {
       //cout<<"    this->data.nind["<<sa<<"]="<<this->data.nind[sa]<<"\n";
       for (int ind=0;ind<this->data.nind[sa];ind++) {
@@ -1756,7 +1758,7 @@ void ParticleC::put_one_mutation(int loc) {
 		  exit(1);
 	  }
 	  if (debuglevel==5) cout <<"apres checktree\n";
-	  bool gtYexist=false, gtMexist=false;
+	  bool gtYexist=false, gtMexist=false,*gtexist;
 	  this->gt = new GeneTreeC[this->nloc];
 	  emptyPop = new int[this->scen.popmax+1];
 	  //cout << "particule " << ipart <<"   nparam="<<this->scen.nparam<<"\n";
@@ -1767,6 +1769,8 @@ void ParticleC::put_one_mutation(int loc) {
 	  for (loc=0;loc<this->nloc;loc++) simulOK[loc]=-1;
 	  setMutParammoyValue();
 	  if (debuglevel==10) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
+	  gtexist = new bool[this->nloc];
+	  for (loc=0;loc<this->nloc;loc++) gtexist[loc] = false;
 	  for (loc=0;loc<this->nloc;loc++) {
 		  if (debuglevel==10) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
 		  if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
@@ -1785,12 +1789,12 @@ void ParticleC::put_one_mutation(int loc) {
 			  }
 			  if (not treedone) {
 				  if (debuglevel==10) cout << "avant init_tree \n";
-				  init_tree(this->gt[loc], loc);
+				  init_tree(this->gt[loc], loc,gtexist[loc]);
 				  if (debuglevel==10){
 					  cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
 					  cout<< "scenario "<<this->scen.number<<"\n";
 				  }
-				  for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
+				  if (not gtexist[loc]) for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 				  for (int iseq=0;iseq<this->nseq;iseq++) {
 					  if (debuglevel==10) {
 						  cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
@@ -1862,7 +1866,7 @@ void ParticleC::put_one_mutation(int loc) {
 					if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 				}
 		  }
-		  if (not snpOK) loc--;
+		  if (not snpOK) {gtexist[loc]=true; loc--;}
 		  //cout<<"   OK\n\n";
 		  //if (loc==50)
 		  //exit(6);

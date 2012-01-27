@@ -116,7 +116,7 @@ class ParticleC
    // initialise l'arbre de coalescence, i.e. alloue la mémoire pour les noeuds et les branches,
    // initialise les propriétés "sample" et "height" des noeuds terminaux
    // initialise à 0 la propriété "pop" de tous les noeuds et à 0 la propriété "sample" des noeuds non-terminaux
-   void init_tree(GeneTreeC & gt,int loc);
+   void init_tree(GeneTreeC & gt,int loc, bool gtexist);
 
    // évalue la pertinence de l'approximation continue pour le traitement de la coalescence
    // (1= approximation continue, 0 = generation par generation)
