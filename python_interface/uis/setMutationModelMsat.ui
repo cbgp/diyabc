@@ -1536,7 +1536,7 @@ locus SNI rate</string>
          </font>
         </property>
         <property name="text">
-         <string>(2) Set the maximum to 0 if you want a Stepwise Mutation Model (SMM)</string>
+         <string>(2) Set the minimum and the maximum to 0 if you want a Stepwise Mutation Model (SMM)</string>
         </property>
        </widget>
       </item>
@@ -1548,7 +1548,7 @@ locus SNI rate</string>
          </font>
         </property>
         <property name="text">
-         <string>(3) Set the maximum to 0 if you want to exclude Single Nucleotide Insertion/deletions</string>
+         <string>(3) Set the minimum and the maximum to 0 if you want to exclude Single Nucleotide Insertion/deletions</string>
         </property>
        </widget>
       </item>

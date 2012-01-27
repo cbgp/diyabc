@@ -113,37 +113,6 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
     def returnToMe(self):
         self.parent.returnTo(self)
 
-    def printMe(self):
-
-        #printer = QPrinter(QPrinter.HighResolution)
-        #painter = QPainter()
-        #painter.begin(printer)
-        #painter.drawPixmap (0, 0, pix)
-        #painter.end()
-
-        #qpd = QPrintDialog(printer)
-        #qpd.exec_()
-        #print printer.printerName()
-
-        Printer = QPrinter(QPrinter.ScreenResolution)
-        Printer.setPageSize(QPrinter.A4)
-        #Printer.setOrientation(QPrinter.Landscape)
-        dialog = QPrintDialog(Printer, self)
-        if (dialog.exec_() == QDialog.Accepted):
-            Painter = QPainter()
-            Painter.begin(Printer)
-            Painter.setPen(Qt.blue)
-            Painter.setFont(QFont("Arial", 30))
-            #Painter.drawText(rect(), Qt.AlignCenter, "Qt");
-            for name in self.dicoPlot.keys():
-                pix = QPixmap.grabWidget(self.dicoPlot[name])
-                Painter.drawPixmap (0, 0, pix)
-                pix2 = QPixmap.grabWidget(self.dicoFrame[name])
-                Painter.drawPixmap (0, pix.height(), pix2)
-                Printer.newPage()
-            Painter.end()
-
-
     def drawAll(self):
         """ dessine les graphes de tous les paramètres
         """
@@ -156,6 +125,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             self.ui.horizontalLayout_3.removeWidget(fr)
             fr.hide()
             del fr
+        self.dicoPlot = {}
 
         if os.path.exists("%s/analysis/%s/param%sstatdens.txt"%(self.parent.dir,self.directory,self.file_subname)):
             f = codecs.open("%s/analysis/%s/param%sstatdens.txt"%(self.parent.dir,self.directory,self.file_subname),"r","utf-8")
@@ -357,7 +327,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             self.saveDrawsToOnePdf()
 
     def saveEachDraws(self):
-        """ Sauve chaque scenario dans un fichier
+        """ Sauve chaque dessin dans un fichier
         """
         proj_dir = self.parent.dir
         pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)
