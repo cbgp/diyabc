@@ -1307,6 +1307,19 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             for a in l:
                 if a.status == "running" or a.status == "queued":
                     a.status = "new"
+                attr = dir(a)
+                if "histParamsFixed" not in attr:
+                    a.histParamsFixed = None
+                if "histParamsDrawn" not in attr:
+                    a.histParamsDrawn = None
+                if "mutationModelFixed" not in attr:
+                    a.mutationModelFixed = ""
+                if "mutationModelDrawn" not in attr:
+                    a.mutationModelDrawn = ""
+                if "sumStatsTHDico" not in attr:
+                    a.sumStatsTHDico = {}
+                if "sumStatsConfDico" not in attr:
+                    a.sumStatsConfDico = {}
                 self.addAnalysis(a)
 
     def lock(self):
