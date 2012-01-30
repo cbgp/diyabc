@@ -84,6 +84,26 @@ class ProjectReftable(Project):
         self.stopAnalysis()
         self.unlock()
 
+    def deleteReftable(self):
+        # si aucune manipulation sur la reftable :
+        if self.th == None:
+            # si il existe une reftable
+            if os.path.exists("%s/reftable.bin"%self.dir):
+                reply = QMessageBox.question(self,"Warning","If you delete the reference table, all analysis will also be deleted.\n\n Are you sure you want to delete the reference table of project %s"%self.name,QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.Yes:
+                    # effacer le fichier
+                    os.remove("%s/reftable.bin"%self.dir)
+                    # effacer les analyses
+                    for aframe in self.dicoFrameAnalysis.keys():
+                        self.removeAnalysis(aframe)
+                    # afficher la taille (0) de la reftable
+                    self.putRefTableSize()
+                    self.save()
+            else:
+                output.notify(self,"Deletion error","Reference table file does not exist")
+        else:
+            output.notify(self,"Deletion error","Impossible to delete the reference table during its generation")
+
     def stopRefTableGen(self):
         """ tue le thread de génération et crée le fichier .stop pour 
         arrêter la génération de la reftable
@@ -497,7 +517,13 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if pc > 0 and pc < 1:
             pc = 1
         self.ui.progressBar.setValue(int(pc))
+        oldDone = int(self.ui.nbSetsDoneEdit.text())
         self.ui.nbSetsDoneEdit.setText("%s"%done)
+        # si c'est le premier inc : on freeze et on permet la création d'analyse
+        if oldDone == 0 and int(done) > 0:
+            self.freezeHistModel()
+            self.freezeGenData()
+            self.ui.newAnButton.setDisabled(False)
         # si on a fini, on met à jour l'affichage de la taille de la reftable
         # et on verrouille eventuellement histmodel et gendata
         if int(pc) == 100:
@@ -817,8 +843,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         log(1,"Copying analysis '%s' to '%s'"%(analysis.name,dup.name))
         self.addAnalysis(dup)
 
-    def removeAnalysis(self):
-        frame = self.sender().parent()
+    def removeAnalysis(self,aframe=None):
+        if aframe == None:
+            frame = self.sender().parent()
+        else:
+            frame = aframe
         analysis = self.dicoFrameAnalysis[frame]
         log(1,"Removing analysis '%s'"%analysis.name)
         frame.hide()
@@ -1238,6 +1267,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.ui.newAnButton.setDisabled(False)
         else:
             # si on n'a pas de reftable, on empêche la définition d'analyse
+            self.ui.nbSetsDoneEdit.setText("0")
+            self.freezeHistModel(False)
+            self.freezeGenData(False)
             self.ui.newAnButton.setDisabled(True)
 
     def freezeHistModel(self,yesno=True):
@@ -1245,7 +1277,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         la possibilité de le consulter
         """
         un=""
-        if yesno: un="un"
+        if not yesno: un="un"
         log(2,"%sfreezing Historical Model"%un)
         self.hist_model_win.ui.clearButton.setDisabled(yesno)
         self.hist_model_win.ui.exitButton.setDisabled(yesno)

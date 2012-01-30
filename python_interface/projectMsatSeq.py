@@ -118,7 +118,7 @@ class ProjectMsatSeq(ProjectReftable):
         la possibilité de les consulter
         """
         un=""
-        if yesno: un="un"
+        if not yesno: un="un"
         log(2,"%sfreezing Genetic Data"%un)
         self.gen_data_win.ui.clearButton.setDisabled(yesno)
         self.gen_data_win.ui.exitButton.setDisabled(yesno)

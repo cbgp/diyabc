@@ -388,6 +388,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.deleteProjActionMenu = self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/user-trash.png"),"&Delete project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
                 self.cloneProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/tab-duplicate.png"),"&Clone project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
                 self.closeProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/project-close.png"),"C&lose project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
+                self.deleteReftableActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/user-trash.png"),"D&elete reftable",self.deleteReftableCurrentProject)
                 self.RngProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/random.png"),"Re&generate RNG",self.rngCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_R))
         else:
             # on supprime le menu
@@ -914,6 +915,9 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ ferme le projet courant, celui de l'onglet séléctionné
         """
         self.closeProject(self.ui.tabWidget.currentIndex(),save)
+
+    def deleteReftableCurrentProject(self):
+        self.ui.tabWidget.currentWidget().deleteReftable()
 
     def saveCurrentProject(self):
         """ sauve le projet courant, cad ecrit les fichiers temporaires de conf
