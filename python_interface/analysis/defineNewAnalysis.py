@@ -160,20 +160,21 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 else:
                     QMessageBox.information(self,"Scenario error","At least 1 scenario is needed for this analysis")
             elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "pre-ev") or self.ui.preEvRadio.isChecked():
-                paramtxt = ""
-                compParamtxt = "a:"
-                if self.ui.confPcaCheck.isChecked():
-                    paramtxt+= " PCA "
-                    compParamtxt += "p"
-                if self.ui.confPcaCheck.isChecked() and self.ui.lossCheck.isChecked():
-                    paramtxt+="and"
-                if self.ui.lossCheck.isChecked():
-                    paramtxt+= " Locate S.S."
-                    compParamtxt += "l"
-                analysis = Analysis(name,"pre-ev")
-                analysis.params = paramtxt
-                analysis.computationParameters = compParamtxt
-                self.parent.addAnalysis(analysis)
+                if self.analysis_to_edit == None:
+                    paramtxt = ""
+                    compParamtxt = "a:"
+                    if self.ui.confPcaCheck.isChecked():
+                        paramtxt+= " PCA "
+                        compParamtxt += "p"
+                    if self.ui.confPcaCheck.isChecked() and self.ui.lossCheck.isChecked():
+                        paramtxt+="and"
+                    if self.ui.lossCheck.isChecked():
+                        paramtxt+= " Locate S.S."
+                        compParamtxt += "l"
+                    analysis = Analysis(name,"pre-ev")
+                    analysis.params = paramtxt
+                    analysis.computationParameters = compParamtxt
+                    self.parent.addAnalysis(analysis)
                 self.exit()
             elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "bias") or self.ui.biasRadio.isChecked():
                 if self.analysis_to_edit != None:

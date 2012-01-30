@@ -242,7 +242,7 @@ The reference table has been built</string>
             <item>
              <widget class="QCheckBox" name="lossCheck">
               <property name="text">
-               <string>Locate observed S.S among simulated S.S.</string>
+               <string>Locate observed SS among simulated SS</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -336,7 +336,8 @@ The reference table has been built</string>
           <item>
            <widget class="QCheckBox" name="confFdaCompareCheck">
             <property name="text">
-             <string>Factorial Discriminant Analysis</string>
+             <string>Linear discriminant
+analysis on SS</string>
             </property>
            </widget>
           </item>
@@ -373,7 +374,8 @@ The reference table has been built</string>
           <item>
            <widget class="QCheckBox" name="confFdaCheck">
             <property name="text">
-             <string>Factorial Discriminant Analysis</string>
+             <string>Linear discriminant
+analysis on SS</string>
             </property>
            </widget>
           </item>
