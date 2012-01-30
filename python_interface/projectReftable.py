@@ -812,6 +812,8 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     if int(numstr) > maxnum:
                         maxnum=int(numstr)
         dup.name = dup.name.split('-')[0]+'-'+str(maxnum+1)
+        # changement de l'état de l'analyse
+        dup.status = "new"
         log(1,"Copying analysis '%s' to '%s'"%(analysis.name,dup.name))
         self.addAnalysis(dup)
 
