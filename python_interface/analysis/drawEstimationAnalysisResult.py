@@ -58,7 +58,9 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         if not os.path.exists("%s/analysis/%s/mmmqcompo.txt"%(self.parent.dir,self.directory))\
         and not os.path.exists("%s/analysis/%s/paramcompostatdens.txt"%(self.parent.dir,self.directory)):
             self.ui.cRadio.hide()
-
+        if not os.path.exists("%s/analysis/%s/mmmqscaled.txt"%(self.parent.dir,self.directory))\
+        and not os.path.exists("%s/analysis/%s/paramscaledstatdens.txt"%(self.parent.dir,self.directory)):
+            self.ui.sRadio.hide()
 
     def changeParamChoice(self):
         sd = self.sender()
@@ -201,9 +203,6 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             f = it.font()
             f.setPointSize(11)
             it.setFont(f)
-        #litem = legend.find(obs)
-        #litem.symbol().setSize(QSize(17,17))
-        #litem.setIdentifierWidth(17)
         legend.setFrameShape(QFrame.Box)
         legend.setFrameShadow(QFrame.Raised)
 
@@ -213,7 +212,6 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         grid.attach(p)
         p.insertLegend(legend,QwtPlot.BottomLegend)
 
-        #plop = p.axisScaleDraw(QwtPlot.yLeft)
         p.setAxisScaleEngine(QwtPlot.yLeft,None)
 
 
@@ -470,7 +468,6 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
 
         pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
 
-        #nbPlot = len(self.dicoPlot.keys())
         nbPlot = (ito - ifrom)+1
         largeur = 2
         # resultat de la div entière plus le reste (modulo)
@@ -483,14 +480,11 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
 
         if pic_format == "jpg" or pic_format == "png":
             self.im_result = QImage(largeur*(size.width()),longueur*(size.height()),QImage.Format_RGB32)
-            print largeur*(size.width()), " " , longueur*(size.height())
             self.im_result.fill(Qt.black)
             painter = QPainter(self.im_result)
             painter.fillRect(0, 0, largeur*(size.width()), longueur*(size.height()), Qt.white)
         else:
             self.pic_result = QSvgGenerator()
-            #self.pic_result.setSize(QSize(largeur*500, longueur*450));
-            #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
             self.pic_result.setFileName("%s.svg"%pic_whole_path)
             painter = QPainter()
             painter.begin(self.pic_result)

@@ -60,12 +60,9 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
             f = open("%s/analysis/%s/compdirlog.txt"%(self.parent.dir,self.directory))
             textToDisplay = f.read()
             f.close()
-            #self.parent.drawAnalysisFrame = QFrame(self)
-            #ui = ui_viewTextFile()
             self.parent.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
             self.parent.drawAnalysisFrame.parent = self.parent
             ui = self.parent.drawAnalysisFrame
-            #ui.setupUi(self.parent.drawAnalysisFrame)
             ui.dataPlain.setPlainText(textToDisplay)
             ui.dataPlain.setLineWrapMode(0)
             font = "FreeMono"
@@ -74,7 +71,6 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
             elif "darwin" in sys.platform:
                 font = "Andale Mono"
             ui.dataPlain.setFont(QFont(font,10))
-            #QObject.connect(ui.okButton,SIGNAL("clicked()"),self.parent.returnToAnalysisList)
             QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToMe)
             self.parent.ui.analysisStack.addWidget(self.parent.drawAnalysisFrame)
             self.parent.ui.analysisStack.setCurrentWidget(self.parent.drawAnalysisFrame)
@@ -170,9 +166,6 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
             f = it.font()
             f.setPointSize(11)
             it.setFont(f)
-        #litem = legend.find(obs)
-        #litem.symbol().setSize(QSize(17,17))
-        #litem.setIdentifierWidth(17)
         legend.setFrameShape(QFrame.Box)
         legend.setFrameShadow(QFrame.Raised)
 
@@ -210,12 +203,10 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
 
         qmb = QMessageBox()
         qmb.setText("Would you like to save all images in one file or 1 image per file ? (PDF or SVG or JPG or PNG)")
-        #qmb.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
         qmb.addButton("All in one file",0)
         qmb.addButton("One per file",0)
         qmb.addButton(QMessageBox.Cancel)
         answer = qmb.exec_()
-        print answer
         if (answer == QMessageBox.Cancel):
             return
         elif answer == 0:
@@ -259,7 +250,6 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
 
     def saveDrawsToOne(self):
         pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
-        #pic_format = "pdf"
         ind = 0
         nbpix = len(self.dicoPlot.keys())
         while ind < nbpix:
@@ -281,7 +271,6 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
 
         # on prend un des graphes pour savoir ses dimensions
         size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
-
 
         im_result = QPrinter()
         painter = QPainter()
@@ -320,7 +309,6 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
 
         pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
 
-        #nbPlot = len(self.dicoPlot.keys())
         nbPlot = (ito - ifrom)+1
         largeur = 2
         # resultat de la div entière plus le reste (modulo)
@@ -331,7 +319,6 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         # on prend un des graphes pour savoir ses dimensions
         size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
 
-
         if pic_format == "jpg" or pic_format == "png":
             self.im_result = QImage(largeur*(size.width()),longueur*(size.height()),QImage.Format_RGB32)
             self.im_result.fill(Qt.black)
@@ -340,8 +327,6 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         elif pic_format == "svg":
             self.pic_result = QSvgGenerator()
             self.pic_result.setViewBox(QRect(0,0,(largeur*(size.width()))+50,(longueur*(size.height()))+50))
-            #self.pic_result.setSize(QSize(largeur*500, longueur*450));
-            #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
             self.pic_result.setFileName("%s.svg"%pic_whole_path)
             painter = QPainter()
             painter.begin(self.pic_result)

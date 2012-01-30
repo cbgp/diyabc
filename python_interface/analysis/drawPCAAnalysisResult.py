@@ -49,9 +49,6 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         self.ui.ACProgress.setValue(0)
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
 
-        #QObject.connect(self.ui.loadButton,SIGNAL("clicked()"),self.loadACP)
-        # replaced by :
-        #self.loadACP()
         self.ui.scrollArea.hide()
         if not os.path.exists("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory))\
                 and not os.path.exists("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory)):
@@ -73,12 +70,9 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             f = open("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory),'r')
         data = f.read()
         f.close()
-        #self.parent.drawAnalysisFrame = QFrame(self)
         self.parent.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
         self.parent.drawAnalysisFrame.parent = self.parent
         ui = self.parent.drawAnalysisFrame
-        #ui = ui_viewTextFile()
-        #ui.setupUi(self.parent.drawAnalysisFrame)
         ui.dataPlain.setPlainText(data)
         ui.dataPlain.setLineWrapMode(0)
         font = "FreeMono"
@@ -87,7 +81,6 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         elif "darwin" in sys.platform:
             font = "Andale Mono"
         ui.dataPlain.setFont(QFont(font,10))
-        #QObject.connect(ui.okButton,SIGNAL("clicked()"),self.parent.returnToAnalysisList)
         QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToMe)
         self.parent.ui.analysisStack.addWidget(self.parent.drawAnalysisFrame)
         self.parent.ui.analysisStack.setCurrentWidget(self.parent.drawAnalysisFrame)
@@ -120,9 +113,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
 
             # pour chaque ligne
             i=2
-            #while i < len(lines):
             while i < nb_prior+2 and i < nb_lignes:
-            #for i,l in enumerate(lines):
                 l=lines[i]
                 pc = (float(i)/float(nb_lignes)*100)+1
                 if (int(pc) % 2) == 0:
@@ -140,9 +131,6 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 # on ajoute chaque coordonnée dans la composante correspondante
                 c = 1
                 while c < len(tab):
-                    #print "compo %s"%c
-                    #print "x: %s"%float(tab[c])
-                    #print "y: %s"%float(tab[c+1])
                     self.dico_points[num_sc][c-1].append( float(tab[c]) )
                     c+=1
                 i+=1
@@ -165,7 +153,6 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 # on ajoute chaque coordonnée dans la composante correspondante
                 c = 1
                 while c < len(tab):
-                    #print num_sc," ",c-1," ",tab[c]," ",self.dico_points_posterior.keys()
                     self.dico_points_posterior[num_sc][c-1].append( float(tab[c]) )
                     c+=1
                 i+=1
@@ -248,8 +235,6 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             p.setCanvasBackground(Qt.white)
             p.setTitle("Components %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
             legend = QwtLegend()
-            #legend.setItemMode(QwtLegend.CheckableItem)
-
 
             posteriorList = []
             if self.ui.scCombo.currentText() == "all":
@@ -284,17 +269,12 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             vert = QVBoxLayout(fr)
             vert.addWidget(p)
 
-            #if self.ui.horizontalLayout_3.itemAt(0) != None:
-            #    self.ui.horizontalLayout_3.itemAt(0).widget().hide()
-            #self.ui.horizontalLayout_3.removeItem(self.ui.horizontalLayout_3.itemAt(0))
-            #self.ui.horizontalLayout_3.addWidget(fr)
             if self.ui.verticalLayout_3.itemAt(0) != None:
                 self.ui.verticalLayout_3.itemAt(0).widget().hide()
             self.ui.verticalLayout_3.removeItem(self.ui.verticalLayout_3.itemAt(0))
             self.ui.verticalLayout_3.addWidget(fr)
 
             self.plot = p
-
 
     def fancyfyGraph(self,legend,p,obs,posteriorList):
         """ met en forme la légende et calcule l'intervale des divisions des axes
@@ -332,7 +312,6 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         while vv < maxv:
             ticks.append(round(vv,1))
             vv += inc
-        #print sd.ticks(QwtScaleDiv.MajorTick)
         sd.setTicks(QwtScaleDiv.MajorTick,ticks)
         p.setAxisScaleDiv(0,sd)
         grid = QwtPlotGrid()
@@ -370,7 +349,6 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             if os.path.exists(graph_file_path):
                 os.remove(graph_file_path)
 
-            #p = self.ui.horizontalLayout_3.itemAt(0).widget()
             p = self.plot
 
             pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())

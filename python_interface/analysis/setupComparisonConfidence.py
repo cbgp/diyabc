@@ -53,11 +53,8 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.notdsEdit.hide()
             self.ui.notdsLabel.hide()
             self.ui.candidateLabel.hide()
-            #self.setRecordValues([self.analysis.chosenSc])
 
-        #self.ui.cnosdEdit.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
         self.ui.deEdit.setText("500")
-        #self.ui.totNumSimLabel.setText(self.parent.parent.ui.nbSetsDoneEdit.text())
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
 
@@ -75,8 +72,6 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
     def checkAll(self):
         problems = ""
         try:
-            #if (self.ui.totNumSimLabel.text() != "" or self.ui.totNumSimLabel.text() != "0") and int(self.ui.totNumSimLabel.text()) < int(self.ui.cnosdEdit.text()):
-            #    problems += "Impossible to select more data than it exists in the reference table\n"
             if self.analysis.category == "confidence":
                 notds = int(self.ui.notdsEdit.text())
             lr = int(self.ui.lrEdit.text())
@@ -92,20 +87,16 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             output.notify(self,"value problem",problems)
             return False
 
-
     def validate(self):
         """ défini les computation parameters de l'analyse et ajoute celle-ci au projet
         """
         analysis_in_edition = (self.analysis.computationParameters != "")
-        #self.parent.parent.addRow("scenario choice","params","4","new")
         self.analysis.candidateScList = self.scNumList
         self.majDicoValues()
-        #self.analysis.append(self.dico_values)
         chosen_scs_txt = ""
         for cs in self.scNumList:
             chosen_scs_txt+="%s,"%str(cs)
         chosen_scs_txt = chosen_scs_txt[:-1]
-        #dico_comp = self.analysis[-1]
         if self.checkAll():
             if self.analysis.category == "compare":
                 self.analysis.computationParameters = "s:%s;n:%s;d:%s;l:%s;m:%s;f:%s"%(chosen_scs_txt,self.dico_values['choNumberOfsimData'],self.dico_values['de'],self.dico_values['lr'],self.dico_values['numReg'],self.analysis.fda)
@@ -122,8 +113,6 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                 strparam += "l:%s;"%self.dico_values['lr']
                 strparam += "t:%s;"%self.dico_values['notds']
                 strparam += "f:%s;"%self.analysis.fda
-                #strparam += "p:%s;"%self.dico_values['choice']
-                #print "robert ", self.analysis
                 strparam += "h:"
                 for paramname in self.analysis.histParams.keys():
                     l = self.analysis.histParams[paramname]
@@ -135,7 +124,6 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                 for ctxt in self.analysis.condTxtList:
                     strparam += "%s "%ctxt
                 strparam = strparam[:-1]
-                #print "jaco:%s "%len(self.analysis[5]), self.analysis[5]
                 if len(self.analysis.mutationModel)>0:
                     strparam += ";u:"
                     if type(self.analysis.mutationModel[0]) == type(u'plop'):
@@ -143,7 +131,6 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                             strparam += "g%s("%(ind+1)
                             strgr = gr.strip()
                             strgr = strgr.split('\n')
-                            #print "\nstrgr %s\n"%strgr
                             for j,elem in enumerate(strgr):
                                 if elem.split(' ')[0] != "MODEL":
                                     to_add = strgr[j].split(' ')[1]
@@ -161,7 +148,6 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                             strparam += ")*"
                     # virer le dernier '-'
                     strparam = strparam[:-1]
-                #print "ursulla : %s"%strparam
 
                 self.analysis.computationParameters = strparam
             if not analysis_in_edition:
@@ -173,7 +159,6 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         for i in scList:
             sumRec+=self.parent.parent.readNbRecordsOfScenario(int(i))
         self.ui.cnosdEdit.setText(str(sumRec))
-        #print "sumrec : %s"%sumRec
         # total number of simulated data default
         self.ui.totNumSimLabel.setText(str(sumRec))
 
@@ -225,9 +210,6 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         """
         compFrame = self
         genSel = GenericScenarioSelection(len(self.parent.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,self.analysis,self.parent)
-        #self.parent.parent.addTab(genSel,"Scenario selection")
-        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        #self.parent.parent.setCurrentWidget(genSel)
         self.parent.parent.ui.analysisStack.addWidget(genSel)
         self.parent.parent.ui.analysisStack.removeWidget(self)
         self.parent.parent.ui.analysisStack.setCurrentWidget(genSel)
@@ -241,10 +223,6 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
 
     def exit(self):
         ## reactivation des onglets
-        #self.parent.parent.setTabEnabled(1,True)
-        #self.parent.parent.setTabEnabled(0,True)
-        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        #self.parent.parent.setCurrentIndex(1)
         self.parent.parent.ui.analysisStack.removeWidget(self)
         self.parent.parent.ui.analysisStack.setCurrentIndex(0)
 
