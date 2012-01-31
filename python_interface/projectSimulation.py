@@ -9,17 +9,11 @@ import time
 import os
 import subprocess
 from project import Project
-#from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
-#from uis.project_ui import *
 from historicalModel.setHistoricalModelSimulation import SetHistoricalModelSimulation
 from geneticData.setGenDataSimulation import SetGeneticDataSimulation
-#from mutationModel.setMutationModelMsat import SetMutationModelMsat
-#from mutationModel.setMutationModelSequences import SetMutationModelSequences
-#from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
-#from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 import os.path
 import output
 from utils.cbgpUtils import log,addLine
@@ -68,9 +62,6 @@ class ProjectSimulation(Project):
         self.locusNumberFrame.setParent(self)
         self.locusNumberFrame.hide()
         QObject.connect(self.locusNumberFrame.okButton,SIGNAL("clicked()"),self.checkSampleNSetGenetic)
-        #self.setHistValid(False)
-        #self.setGenValid(False)
-        #self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self.runSimulation)
 
         self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopSimulation)
@@ -83,7 +74,6 @@ class ProjectSimulation(Project):
         path = "{0}/{1}".format(self.dir,self.name)
         # name_YYYY_MM_DD-num le plus elevé
         dd = datetime.now()
-        #num = 36
         cd = 100
         while cd > 0 and not os.path.exists(path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,cd)):
             cd -= 1
@@ -95,7 +85,6 @@ class ProjectSimulation(Project):
             self.ui.dirEdit.setText(newdir)
             try:
                 os.mkdir(newdir)
-                #self.ui.groupBox.show()
                 self.ui.setHistoricalButton.setDisabled(False)
                 self.ui.setGeneticButton.setDisabled(False)
                 self.dir = newdir
@@ -110,7 +99,6 @@ class ProjectSimulation(Project):
         return False
 
     def writeHeaderSim(self):
-        #if self.verifyRefTableValid():
         # première ligne
         sexRatioTxt = ""
         if self.sexRatio != None:
@@ -121,9 +109,6 @@ class ProjectSimulation(Project):
         else:
             output.notify(self,"Value error","Required number of simulated data sets must be a positive integer")
             return
-        print "%s %s %s"%(self.name,nb_rec,sexRatioTxt)
-        print self.hist_model_win.getConf()
-        print ""
         fdest = open("%s/headersim.txt"%self.dir,"w")
         fdest.write("%s %s %s\n"%(self.name,nb_rec,sexRatioTxt))
         fdest.write("%s\n\n"%self.hist_model_win.getConf())
@@ -167,7 +152,6 @@ class ProjectSimulation(Project):
         self.th.connect(self.th,SIGNAL("simulationTerminated"),self.simulationTerminated)
         self.th.connect(self.th,SIGNAL("simulationProblem(QString)"),self.simulationProblem)
         self.th.connect(self.th,SIGNAL("simulationLog(int,QString)"),self.simulationLog)
-        #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
         self.th.start()
 
     def simulationProblem(self,msg):
@@ -194,7 +178,6 @@ class ProjectSimulation(Project):
             os.remove("%s/simulation.out"%(self.dir))
         log(1,"Simulation stopped")
 
-
 class SimulationThread(QThread):
     """ thread de traitement qui met à jour la progressBar en fonction de l'avancée de
     la génération de la reftable
@@ -213,7 +196,6 @@ class SimulationThread(QThread):
         """
         self.loglvl = lvl
         self.logmsg = msg
-        #self.emit(SIGNAL("simulationLog"))
         clean_msg = msg.replace(u'\xb5',u'u')
         self.emit(SIGNAL("simulationLog(int,QString)"),lvl,clean_msg)
 
@@ -226,7 +208,6 @@ class SimulationThread(QThread):
 
     def run(self):
         # lance l'executable
-        #outfile = os.path.expanduser("~/.diyabc/general.out")
         outfile = "%s/simulation.out"%self.parent.dir
         if os.path.exists(outfile):
             os.remove(outfile)
@@ -238,16 +219,12 @@ class SimulationThread(QThread):
             exPath = self.parent.parent.preferences_win.getExecutablePath()
             nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-k", "-m", "-t", "%s"%nbMaxThread]
-            #print " ".join(cmd_args_list)
             self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
             self.processus = p
         except Exception as e:
-            #print "Cannot find the executable of the computation program %s"%e
             self.problem = "Problem during program launch \n%s"%e
-            #self.emit(SIGNAL("simulationProblem"))
             self.emit(SIGNAL("simulationProblem(QString)"),self.problem)
-            #output.notify(self.parent(),"computation problem","Cannot find the executable of the computation program")
             fg.close()
             return
 
@@ -274,7 +251,6 @@ class SimulationThread(QThread):
                         lastline = lastline[-1]
                     fout.close()
                     self.problem = "Simulation program exited anormaly\n%s"%lastline
-                    #self.emit(SIGNAL("simulationProblem"))
                     self.emit(SIGNAL("simulationProblem(QString)"),self.problem)
                     return
                     

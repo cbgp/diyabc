@@ -7,7 +7,6 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
-#from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
@@ -42,7 +41,6 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewMmmq)
-        #QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printMe)
         
         QObject.connect(self.ui.oRadio,SIGNAL("clicked()"),self.changeParamChoice)
         QObject.connect(self.ui.cRadio,SIGNAL("clicked()"),self.changeParamChoice)
@@ -91,12 +89,9 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             f = open("%s/analysis/%s/mmmq%s.txt"%(self.parent.dir,self.directory,self.file_subname),'r')
             data = f.read()
             f.close()
-            #self.parent.drawAnalysisFrame = QFrame(self)
             self.parent.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
             self.parent.drawAnalysisFrame.parent = self.parent
             ui = self.parent.drawAnalysisFrame
-            #ui = ui_viewTextFile()
-            #ui.setupUi(self.parent.drawAnalysisFrame)
             ui.dataPlain.setPlainText(data)
             ui.dataPlain.setLineWrapMode(0)
             font = "FreeMono"
@@ -105,7 +100,6 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             elif "darwin" in sys.platform:
                 font = "Andale Mono"
             ui.dataPlain.setFont(QFont(font,10))
-            #QObject.connect(ui.okButton,SIGNAL("clicked()"),self.parent.returnToAnalysisList)
             QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToMe)
             self.parent.ui.analysisStack.addWidget(self.parent.drawAnalysisFrame)
             self.parent.ui.analysisStack.setCurrentWidget(self.parent.drawAnalysisFrame)
@@ -463,7 +457,6 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)
         pic_basename = "posterior"
         ind_list_str = "%s_to_%s"%(ifrom+1,ito+1)
-        print ind_list_str
         pic_whole_path = "%s/%s_%s"%(pic_dir,pic_basename,ind_list_str)
 
         pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())

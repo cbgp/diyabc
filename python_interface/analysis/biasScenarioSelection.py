@@ -3,7 +3,6 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
-#from uis.biasScenarioSelection_ui import Ui_Frame
 from historicalModel.setHistDrawnAnalysis import HistDrawn
 from historicalModel.setHistFixedAnalysis import HistFixed
 
@@ -90,9 +89,6 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 next_widget = HistFixed(self.analysis,self.parent)
             else:
                 next_widget = HistDrawn(self.analysis,self.parent)
-        #self.parent.parent.addTab(next_widget,"Historical model")
-        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        #self.parent.parent.setCurrentWidget(next_widget)
         self.parent.parent.ui.analysisStack.addWidget(next_widget)
         self.parent.parent.ui.analysisStack.removeWidget(self)
         self.parent.parent.ui.analysisStack.setCurrentWidget(next_widget)
@@ -138,10 +134,6 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
 
     def exit(self):
         ## reactivation des onglets
-        #self.parent.parent.setTabEnabled(1,True)
-        #self.parent.parent.setTabEnabled(0,True)
-        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        #self.parent.parent.setCurrentIndex(1)
         self.parent.parent.ui.analysisStack.removeWidget(self)
         self.parent.parent.ui.analysisStack.setCurrentIndex(0)
 

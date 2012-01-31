@@ -11,7 +11,6 @@ import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
-#from uis.preferences_ui import Ui_MainWindow
 from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 import output
@@ -59,7 +58,6 @@ class Preferences(AutoPreferences):
         self.styles = []
         for i in QStyleFactory.keys():
             self.styles.append(str(i))
-            #self.ui.styleCombo.addItem(str(i))
         default_style = None
         if "Cleanlooks" in self.styles:
             default_style = "Cleanlooks"
@@ -186,8 +184,6 @@ class Preferences(AutoPreferences):
 
     def changeFontSize(self,size):
         font = self.parent.app.font()
-        #font = QFont("DejaVu Sans")
-        #font.setPixelSize(int(size))
         font.setPointSize(int(size))
         self.parent.app.setFont(font)
 

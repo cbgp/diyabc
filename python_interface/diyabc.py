@@ -27,10 +27,6 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
 from PyQt4 import uic
-#from uis.diyabc_ui import Ui_MainWindow
-#from project import *
-#from project import Project
-#from simulationProject import SimulationProject
 from preferences import Preferences
 from showLogFile import ShowLogFile
 from utils.cbgpUtils import Documentator,getLastRevisionDate
@@ -94,15 +90,12 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         # ouverture des projets donnés en paramètre au lancement
         if projects != None and len(projects) > 0:
-            #self.switchToMainStack()
             for projDirName in projects:
                 self.openProject(projDirName)
         try:
-            #self.documentator = Documentator(dataPath.DATAPATH+"/documentation/documentation.html",self)
             self.documentator = Documentator(dataPath.DOCPATH+"/index.html")
             self.updateDoc()
         except Exception as e:
-            #output.notify(self,"Documentation error","%s"%e)
             log(1,"Documentation error : %s"%e)
             self.documentator = None
 
@@ -217,7 +210,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.prevProjectActionMenu.setDisabled(True)
         help_menu = self.ui.menubar.addMenu("&Help")
         self.help_menu = help_menu
-        #help_menu.addAction("&About DIYABC",self.switchToWelcomeStack)
         help_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
         help_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/gnome-mime-text.png"),"&Show logfile",self.showLogFile,QKeySequence(Qt.CTRL + Qt.Key_L))
 
@@ -228,24 +220,13 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         QObject.connect(self.ui.openProjectButton,SIGNAL("clicked()"),self.openProject)
         QObject.connect(self.ui.newProjectButton,SIGNAL("clicked()"),self.newProject)
-        #QObject.connect(self.ui.skipWelcomeButton,SIGNAL("clicked()"),self.switchToMainStack)
         self.ui.versionLabel.setText('%s'%VERSION)
-        #self.ui.frame.setDisabled(True)
-        #self.ui.frame.setAutoFillBackground(True)
-        #self.ui.frame.setBackgroundColor(Qt.Blue)
-
-
-        #statusLabel = QLabel("No info",self)
-        #statusLabel.setAlignment(Qt.AlignLeft)
-        #self.statusBar.setAlignment(Qt.AlignLeft)
-        #self.ui.statusBar.hide()
 
         # TOOLBAR
         newButton = QPushButton(QIcon(dataPath.DATAPATH+"/icons/folder-new.png"),"New",self)
         newButton.setObjectName("newButton")
         newButton.setToolTip("New project")
         newButton.setMaximumSize(QSize(63, 22))
-        #newButton.setObjectName("newButton")
         #newButton.setMinimumSize(QSize(16, 18))
         newButton.setFlat(True)
         QObject.connect(newButton,SIGNAL("clicked()"),self.newProject)
@@ -309,7 +290,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ Change le style du curseur de souris et attend un clic
         sur un objet pour afficher son "whatsThis"
         """
-        #self.updateDoc()
         QWhatsThis.enterWhatsThisMode()
 
     def updateDoc(self,obj=None):
@@ -326,7 +306,6 @@ class Diyabc(formDiyabc,baseDiyabc):
             objnamestr = "%s\n\n"%e.objectName()
             objname_debug = self.preferences_win.debugWhatsThisCheck.isChecked()
             try:
-                #docstr = self.documentator.getDocString("%s"%e.objectName()).replace('\n','<br/>')
                 doc_dico = self.documentator.getDocHashByTags("%s"%e.objectName())
                 # on remplace les SRC pour que les images soient bien chargées
                 for tag in doc_dico.keys():
@@ -340,7 +319,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                     if tag != "default_tag":
                         docstr += "<table border='1'><tr><th><font color='orange'>%s</font>"%tag
                         docstr += "</th></tr><tr><td>" + doc_dico[tag]+"</td></tr></table>\n"
-                #docstr = docstr.replace('\n','<br/>')
 
                 if objname_debug:
                     e.setWhatsThis(output.whatsthis_header + objnamestr + "<br/><br/>" + docstr + output.whatsthis_footer)
@@ -350,7 +328,6 @@ class Diyabc(formDiyabc,baseDiyabc):
             except Exception as ex:
                 if objname_debug:
                     e.setWhatsThis(output.whatsthis_header + objnamestr + output.whatsthis_footer)
-                #print "%s"%e
                 pass
 
     def toggleWt(self,yesno):
@@ -425,7 +402,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         result = fileDial.selectedFiles()
         if len(result) > 0:
             path = result[0]
-        #path = fileDial.getSaveFileName(self,"Project location")
         path = "%s"%path
         # on enleve l'eventuel '/' de fin et on extrait le nom
         if path != None and len(path) > 0 and len(path.split('/')) > 0 :
@@ -473,7 +449,6 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.recent_menu.removeAction(ac)
         self.recentMenuEntries = []
         self.entryToRecent = {}
-
         # copy
         future_recent_list = []
         for recent in self.recentList:
@@ -493,9 +468,6 @@ class Diyabc(formDiyabc,baseDiyabc):
             # on ajoute au maximum N recent
             if nb_added == nbMaxRecent:
                 break
-                #self.recentList = future_recent_list
-                #self.recent_menu.setDisabled(False)
-                #return
         self.recentList = future_recent_list
         if len(self.recentList) > 0:
             self.recent_menu.setDisabled(False)
@@ -547,17 +519,13 @@ class Diyabc(formDiyabc,baseDiyabc):
     def clearStatus(self):
         self.ui.statusBar.clearMessage()
 
-
     def switchToMainStack(self):
-        #self.ui.menubar.show()
         self.ui.stackedWidget.setCurrentIndex(0)
 
     def switchToWelcomeStack(self):
-        #self.ui.menubar.hide()
         self.ui.stackedWidget.setCurrentIndex(1)
 
     def switchToPreferences(self):
-        #self.preferences_win.show()
         self.ui.stackedWidget.setCurrentIndex(2)
 
     def isSNPProjectDir(self,dir):
@@ -605,8 +573,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         if dir != "" and dir[-1] == "/":
             dir = dir[:-1]
         log(1,"attempting to open the project : %s"%dir)
-        #self.ui.infoPlain.setPlainText("Opening project %s"%dir)
-        #self.ui.infoPlain.show()
         self.showStatus("Loading project %s"%dir.split('/')[-1])
         QApplication.setOverrideCursor( Qt.WaitCursor )
 
@@ -665,10 +631,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                         proj_to_open.putRefTableSize()
                         # si c'est le premier projet, on permet la fermeture/del/save par le menu
                         if len(self.project_list) == 1:
-                            #self.closeProjActionMenu.setDisabled(False)
-                            #self.saveProjActionMenu.setDisabled(False)
-                            #self.deleteProjActionMenu.setDisabled(False)
-                            #self.cloneProjActionMenu.setDisabled(False)
                             self.saveAllProjActionMenu.setDisabled(False)
                             self.saveButton.setDisabled(False)
                         if len(self.project_list) == 2:
@@ -718,7 +680,6 @@ class Diyabc(formDiyabc,baseDiyabc):
             result = fileDial.selectedFiles()
             if len(result) > 0:
                 path = result[0]
-            #path = fileDial.getSaveFileName(self,"Project location")
             path = "%s"%path
             # on enleve l'eventuel '/' de fin et on extrait le nom du projet
             if path != None and len(path) > 0 and len(path.split('/')) > 0 :
@@ -733,12 +694,10 @@ class Diyabc(formDiyabc,baseDiyabc):
         if ok:
             if self.checkProjectName(cloneName):
                 # on vire le nom à la fin du path pour obtenir le dossier du clone
-                #cloneDir = "/".join(path.split("/")[:-1])
                 if cloneDir != "" and os.path.exists(cloneDir):
                     if not self.isProjDir(cloneDir):
                         # name_YYYY_MM_DD-num le plus elevé
                         dd = datetime.now()
-                        #num = 36
                         cd = 100
                         while cd > 0 and not os.path.exists(cloneDir+"/%s_%i_%i_%i-%i"%(cloneName,dd.year,dd.month,dd.day,cd)):
                             cd -= 1
@@ -747,12 +706,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                                         project directories\nfor the same project name and in the same directory")
                         else:
                             clonedir = cloneDir+"/%s_%i_%i_%i-%i"%(cloneName,dd.year,dd.month,dd.day,(cd+1))
-                            #self.ui.dirEdit.setText(newdir)
                             try:
-                                #print current_project.dir, " to ", clonedir
-                                #shutil.copytree(current_project.dir,clonedir)
-                                #os.remove("%s/reftable.bin"%clonedir)
-
                                 # on crée le dossier de destination et on y copie les fichiers utiles
                                 os.mkdir(clonedir)
                                 for filepath in [self.main_conf_name,
@@ -764,14 +718,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                                         current_project.dataFileName]:
                                     if os.path.exists("%s/%s"%(current_project.dir,filepath)):
                                          shutil.copy("%s/%s"%(current_project.dir,filepath),"%s/%s"%(clonedir,filepath))
-
-                                #shutil.copy("%s/%s"%(current_project.dir,self.main_conf_name),"%s/%s"%(clonedir,self.main_conf_name))
-                                #shutil.copy("%s/%s"%(current_project.dir,self.hist_conf_name),"%s/%s"%(clonedir,self.hist_conf_name))
-                                #shutil.copy("%s/%s"%(current_project.dir,self.gen_conf_name),"%s/%s"%(clonedir,self.gen_conf_name))
-                                #shutil.copy("%s/%s"%(current_project.dir,self.table_header_conf_name),"%s/%s"%(clonedir,self.table_header_conf_name))
-                                #shutil.copy("%s/%s"%(current_project.dir,self.reftableheader_name),"%s/%s"%(clonedir,self.reftableheader_name))
-                                #shutil.copy("%s/%s"%(current_project.dir,current_project.dataFileName),"%s/%s"%(clonedir,current_project.dataFileName))
-                                #shutil.copy("%s/%s"%(current_project.dir,self.analysis_conf_name),"%s/%s"%(clonedir,self.analysis_conf_name))
 
                                 # si les noms sont différents, on le charge
                                 if cloneName != current_project.name:
@@ -804,8 +750,6 @@ class Diyabc(formDiyabc,baseDiyabc):
         from projectSnp import ProjectSnp
         log(1,'Attempting to create a new project')
         ok = True
-        #if name == None:
-        #    name, ok = QtGui.QInputDialog.getText(self, 'New project', 'Enter the name of the new project:')
         if path == None:
             fileDial = QtGui.QFileDialog(self,"Select location of the new project")
             fileDial.setAcceptMode(QFileDialog.AcceptSave)
@@ -815,7 +759,6 @@ class Diyabc(formDiyabc,baseDiyabc):
             result = fileDial.selectedFiles()
             if len(result) > 0:
                 path = result[0]
-            #path = fileDial.getSaveFileName(self,"Project location")
             path = "%s"%path
             # on enleve l'eventuel '/' de fin et on extrait le nom du projet
             if path != None and len(path) > 0 and len(path.split('/')) > 0 :
@@ -883,7 +826,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                 qmb.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
                 qmb.setDefaultButton(QMessageBox.Save)
                 reply = qmb.exec_()
-                #print QMessageBox.Save , QMessageBox.Discard , QMessageBox.Cancel , reply
                 if (reply == QMessageBox.Cancel):
                     return
                 else:
@@ -958,6 +900,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         shutil.rmtree(projdir)
         # on ferme le projet sans sauver
         self.closeProject(index,False)
+
     def nextProject(self):
         if self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.setCurrentIndex((self.ui.tabWidget.currentIndex() + 1) % self.ui.tabWidget.count())
@@ -1013,9 +956,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                     except Exception as e:
                         output.notify(self,"Documentation error","%s"%e)
             log(3,"Button '%s' pressed"%event.button())
-        #elif event.type() == QEvent.ChildAdded and self.wtEnabled:
-        #    #self.updateDoc()
-        #    pass
         # Quand on reprend le focus sur la fenêtre, on stoppe le
         # clignottement éventuel de l'icone du systray
         elif event.type() == QEvent.WindowActivate:
@@ -1037,7 +977,6 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def dragEnterEvent(self,event):
         event.acceptProposedAction()
-
 
 class ImportProjectThread(Thread):
     """ Classe qui effectue l'import de la classe project en parallèle au chargement
@@ -1077,7 +1016,6 @@ def main():
         if not arg.startswith('-'):
             projects_to_open.append(arg)
 
-    #nargv.extend(["-title","DIYABC v%s"%VERSION])
     # determine le nom du fichier de log
     if not os.path.exists(os.path.expanduser("~/.diyabc/")):
         os.mkdir(os.path.expanduser("~/.diyabc/"))

@@ -27,10 +27,7 @@ class ProjectSnp(ProjectReftable):
         super(ProjectSnp,self).__init__(name,dir,parent)
 
         self.ui.nbMicrosatLabel.hide()
-        #self.ui.nbSequencesLabel.hide()
-        # TODO suppr cette ligne
         self.setGenValid(False)
-        #QObject.connect(self.ui.setSumSnpButton,SIGNAL("clicked()"),self.setSumStat)
         self.ui.genDataLabel.setText("Summary statistics")
 
         self.typesOrdered = ["A","H","X","Y","M"]
@@ -135,17 +132,6 @@ class ProjectSnp(ProjectReftable):
         """
         return hist_model.getNextWidgetSnp()
 
-    #def setGenValid(self,valid):
-    #    """ met à jour l'état des genetic data
-    #    et change l'icone du bouton en fonction de la validité
-    #    """
-    #    self.gen_state_valid = valid
-    #    self.verifyRefTableValid()
-    #    if valid:
-    #        self.ui.setSumSnpButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/ok.png"))
-    #    else:
-    #        self.ui.setSumSnpButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
-
     def checkAll(self):
         """ vérification du modèle historique et mutationnel
         cette fonction est appelée au chargement du projet pour restituer l'etat du projet
@@ -210,7 +196,6 @@ class ProjectSnp(ProjectReftable):
         self.ui.browseDataFileButton.setDisabled(True)
         self.ui.browseDataFileButton.hide()
         self.ui.browseDirButton.hide()
-        #self.ui.groupBox.show()
         self.ui.groupBox_6.show()
         self.ui.groupBox_7.show()
         self.ui.groupBox_8.show()
@@ -242,7 +227,6 @@ class ProjectSnp(ProjectReftable):
             if os.path.exists("%s/%s"%(self.dir,self.dataFileName)):
                 if self.loadDataFile("%s/%s"%(self.dir,self.dataFileName)):
                     ## comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
-                    #self.ascert_frame.fillSampleFromData(self.data.nind)
                     pass
                 else:
                     raise Exception("Impossible to load the datafile (%s) because it is possibly malformed"%self.dataFileName)
@@ -271,7 +255,6 @@ class ProjectSnp(ProjectReftable):
         except Exception as e:
             keep = ""
             if self.ui.dataFileEdit.text() != "":
-                #keep = "\n\nKeeping previous selected file"
                 keep = "\n\nThe file was not loaded, nothing was changed"
             output.notify(self,"Data file error","%s%s"%(e,keep))
             return False
@@ -299,7 +282,6 @@ class ProjectSnp(ProjectReftable):
         """ sauvegarde du projet -> mainconf, histconf, genconf, theadconf
         Si le gen et hist sont valides, on génère le header
         """
-        #print "je me save"
         log(2,"Saving project '%s'"%self.dir)
         self.parent.showStatus("Saving project %s"%self.name)
 
@@ -312,8 +294,6 @@ class ProjectSnp(ProjectReftable):
             f.write("%s\n"%self.dataFileName)
             # recup du nombre de params (depuis historical model et les mutational qui varient)
             nb_param = self.hist_model_win.getNbParam()
-            #nb_param += self.gen_data_win.getNbParam()
-            #nb_sum_stats = self.gen_data_win.getNbSumStats()
             f.write("%s parameters and %s summary statistics\n\n"%(nb_param,self.getNbSumStats()))
             f.close()
 
@@ -367,7 +347,6 @@ class ProjectSnp(ProjectReftable):
         else:
             output.notify(self,"Header generation problem","Impossible to add ascertainment part to header : header doesn't exist")
 
-
     def writeThConf(self):
         """ ecrit le header du tableau de resultat qui sera produit par les calculs
         il contient, les paramètres historicaux,  les summary stats
@@ -415,7 +394,6 @@ class ProjectSnp(ProjectReftable):
         res += statsdesc
         res += "\n"
 
-        print res
         if os.path.exists(self.dir+"/%s"%self.parent.gen_conf_name):
             os.remove("%s/%s" % (self.dir,self.parent.gen_conf_name))
 

@@ -7,9 +7,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
-#from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
-#from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 from datetime import datetime 

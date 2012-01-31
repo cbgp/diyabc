@@ -14,7 +14,6 @@ import shutil
 import codecs
 import subprocess
 import tarfile,stat
-#from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui,QtCore
@@ -24,7 +23,6 @@ from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from analysis.viewAnalysisParameters import ViewAnalysisParameters
-#from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from utils.data import DataSnp,isSNPDatafile
 from datetime import datetime 
 import os.path
@@ -71,7 +69,6 @@ class ProjectReftable(Project):
 
         self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopRefTableGen)
-        #self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
 
     def canBeDeleted(self):
         return True
@@ -119,7 +116,6 @@ class ProjectReftable(Project):
             if self.th != None:
                 self.th.killProcess()
                 self.th = None
-            #self.ui.reftableProgressLabel.setText("")
             self.stopUiGenReftable()
             if os.path.exists("%s/reftable.log"%(self.dir)):
                 os.remove("%s/reftable.log"%(self.dir))
@@ -160,7 +156,6 @@ class ProjectReftable(Project):
         """ en fonction du type d'analyse, met en forme les résultats
         """
         log(1,"Asking results of analysis %s, project %s"%(analysis.name,self.dir))
-        #anCat = analysis.category
         dicoCategoryDirName = {
                 "estimate" : "estimation",
                 "compare" : "comparison",
@@ -188,13 +183,10 @@ class ProjectReftable(Project):
                     f = open("%s/analysis/%s/mclocate.txt"%(self.dir,anDir),'r')
                 data = f.read()
                 f.close()
-                #self.drawAnalysisFrame = QFrame(self)
                 self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
                 self.drawAnalysisFrame.parent = self
                 ui = self.drawAnalysisFrame
                 log(3,"Viewing analysis results, PCA or modelChecking")
-                #ui = ui_viewTextFile()
-                #ui.setupUi(self.drawAnalysisFrame)
                 ui.dataPlain.setPlainText(data)
                 ui.dataPlain.setLineWrapMode(0)
                 font = "FreeMono"
@@ -209,13 +201,10 @@ class ProjectReftable(Project):
             f = open("%s/analysis/%s/confidence.txt"%(self.dir,anDir),'r')
             data = f.read()
             f.close()
-            #self.drawAnalysisFrame = QFrame(self)
             self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
             self.drawAnalysisFrame.parent = self
             ui = self.drawAnalysisFrame
             log(3,"Viewing analysis results, confidence in scenario choice")
-            #ui = ui_viewTextFile()
-            #ui.setupUi(self.drawAnalysisFrame)
             ui.dataPlain.setPlainText(data)
             ui.dataPlain.setLineWrapMode(0)
             font = "FreeMono"
@@ -229,15 +218,12 @@ class ProjectReftable(Project):
             f = open("%s/analysis/%s/bias.txt"%(self.dir,anDir),'r')
             data = f.read()
             f.close()
-            #self.drawAnalysisFrame = QFrame(self)
             self.drawAnalysisFrame = uic.loadUi("uis/viewBiasFiles.ui")
             self.drawAnalysisFrame.parent = self
             self.drawAnalysisFrame.analysis = analysis
             self.drawAnalysisFrame.anDir = anDir
             ui = self.drawAnalysisFrame
             log(3,"Viewing analysis results, bias")
-            #ui = ui_viewTextFile()
-            #ui.setupUi(self.drawAnalysisFrame)
             ui.dataPlain.setPlainText(data)
             ui.dataPlain.setLineWrapMode(0)
             font = "FreeMono"
@@ -254,8 +240,6 @@ class ProjectReftable(Project):
             QObject.connect(ui.oRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
             QObject.connect(ui.cRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
             QObject.connect(ui.sRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
-        #elif typestr == "confidence":
-        #    self.drawAnalysisFrame = DrawEvaluationAnalysisResult(anDir,self)
         self.ui.analysisStack.addWidget(self.drawAnalysisFrame)
         self.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
 
@@ -291,11 +275,6 @@ class ProjectReftable(Project):
         """
         log(1,"Entering in new analysis definition")
         def_analysis = DefineNewAnalysis(self,self.hist_model_win.getNbScenario())
-        #self.addTab(def_analysis,"Define new analysis")
-
-        #self.setTabEnabled(0,False)
-        #self.setTabEnabled(1,False)
-        #self.setCurrentWidget(def_analysis)
         self.ui.analysisStack.addWidget(def_analysis)
         self.ui.analysisStack.setCurrentWidget(def_analysis)
 
@@ -400,7 +379,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if tarname == None:
             tarname = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","TAR archive (*.tar)"))
         if tarname != "":
-            #executablePath = str(self.parent.preferences_win.ui.execPathEdit.text())
             executablePath = self.parent.preferences_win.getExecutablePath()
             # generation du master script
             script = self.genMasterScript()
@@ -462,7 +440,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.startUiGenReftable()
             # on demarre le thread local ou cluster
             if self.parent.preferences_win.ui.useServerCheck.isChecked():
-                #tname = self.generateComputationTar("/tmp/aaaa.tar")
                 tname = self.generateComputationTar("%s/aaaa.tar"%tempfile.mkdtemp())
                 log(3,"Tar file created in %s"%tname)
                 self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
@@ -472,18 +449,13 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.th.connect(self.th,SIGNAL("increment(int,QString)"),self.incProgress)
             self.th.connect(self.th,SIGNAL("refTableProblem(QString)"),self.refTableProblem)
             self.th.connect(self.th,SIGNAL("refTableLog(int,QString)"),self.refTableLog)
-            #self.ui.progressBar.connect (self, SIGNAL("canceled()"),self.th,SLOT("cancel()"))
             self.th.start()
         else:
-            #if not self.th.isRunning():
-            #    self.th = None
-            #    self.on_btnStart_clicked()
             output.notify(self,"Impossible to launch","An analysis is processing,\
                     \nimpossible to launch reftable generation")
 
     def refTableProblem(self,msg):
         output.notify(self,"reftable problem","Something happened during the reftable generation :\n %s"%(msg))
-        #self.stopUiGenReftable()
         self.stopRefTableGen()
         self.nextAnalysisInQueue()
 
@@ -509,10 +481,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def incProgress(self,done,time_remaining):
         """Incremente la barre de progression de la génération de la reftable
         """
-        #done = self.th.nb_done
         nb_to_do = self.th.nb_to_gen
-        #time_remaining = self.th.time
-        #self.ui.reftableProgressLabel.setText('%s remaining'%time_remaining)
         self.ui.runReftableButton.setText("Running ... %s remaining"%(time_remaining.replace('\n',' ')))
         pc = (float(done - self.nbReqBeforeComput)/float(nb_to_do - self.nbReqBeforeComput))*100
         if pc > 0 and pc < 1:
@@ -535,7 +504,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             self.nextAnalysisInQueue()
 
     def cancelTh(self):
-        #print 'plop'
         self.emit(SIGNAL("canceled()"))
 
     def writeRefTableHeader(self):
@@ -573,7 +541,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
             self.dataFileName = self.dataFileSource.split('/')[-1]
             self.ui.dataFileEdit.setText("%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
-            #self.ui.groupBox.show()
             self.ui.groupBox_6.show()
             self.ui.groupBox_7.show()
             self.ui.groupBox_8.show()
@@ -588,7 +555,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if not self.parent.isProjDir(path):
                 # name_YYYY_MM_DD-num le plus elevé
                 dd = datetime.now()
-                #num = 36
                 cd = 100
                 while cd > 0 and not os.path.exists(path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,cd)):
                     cd -= 1
@@ -600,7 +566,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     self.ui.dirEdit.setText(newdir)
                     try:
                         os.mkdir(newdir)
-                        #self.ui.groupBox.show()
                         self.ui.setHistoricalButton.setDisabled(False)
                         self.ui.setGeneticButton.setDisabled(False)
                         self.dir = newdir
@@ -621,13 +586,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         """
         if name == None:
             qfd = QFileDialog()
-            #qfd.setDirectory("~/")
             name = str(qfd.getExistingDirectory())
         if name != "":
             if not self.parent.isProjDir(name):
                 # name_YYYY_MM_DD-num le plus elevé
                 dd = datetime.now()
-                #num = 36
                 cd = 100
                 while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,cd)):
                     cd -= 1
@@ -663,25 +626,17 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         log(3,u"Computation parameters : %s"%analysis.computationParameters.replace(u'\xb5','u'))
         if type_analysis == "pre-ev":
-            #self.addRow("scenario prior combination",analysis[1],"4","new")
             self.addAnalysisGui(analysis,analysis.name,"evaluate scenarios and priors",analysis.computationParameters,analysis.status)
         elif type_analysis == "estimate":
-            #self.addRow("parameter estimation","params","5","new")
             self.addAnalysisGui(analysis,analysis.name,"estimate parameters","params",analysis.status)
         elif type_analysis == "bias":
-            #self.addRow("bias and precision",str(analysis[2]),"3","new")
             self.addAnalysisGui(analysis,analysis.name,"bias and precision",str(analysis.chosenSc),analysis.status)
         elif type_analysis == "compare":
-            #print "\n",analysis[-1],"\n"
-            #self.addRow("scenario choice",analysis[2]["de"],"4","new")
             self.addAnalysisGui(analysis,analysis.name,"compare scenarios","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
         elif type_analysis == "confidence":
-            #self.addRow("confidence confidence","%s | %s"%(analysis[2],analysis[3]),"3","new")
             self.addAnalysisGui(analysis,analysis.name,"confidence in scenario choice","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
         elif type_analysis == "modelChecking":
             self.addAnalysisGui(analysis,analysis.name,"model checking","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
-
-        #self.save()
 
     def addAnalysisGui(self,analysis,name,atype,params,status):
         """ crée les objets graphiques pour une analyse et les ajoute
@@ -713,23 +668,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         analysisRmButton.setObjectName("analysisRmButton")
         analysisRmButton.setFont(QFont("",pointSize=8))
         horizontalLayout_4.addWidget(analysisRmButton)
-        #analysisUpButton = QtGui.QPushButton("up",frame_9)
-        #analysisUpButton.setMinimumSize(QtCore.QSize(50, 0))
-        #analysisUpButton.setMaximumSize(QtCore.QSize(50, 16777215))
-        #analysisUpButton.setObjectName("analysisUpButton")
-        #horizontalLayout_4.addWidget(analysisUpButton)
-        #analysisDownButton = QtGui.QPushButton("down",frame_9)
-        #analysisDownButton.setMinimumSize(QtCore.QSize(50, 0))
-        #analysisDownButton.setMaximumSize(QtCore.QSize(50, 16777215))
-        #analysisDownButton.setObjectName("analysisDownButton")
-        #horizontalLayout_4.addWidget(analysisDownButton)
         analysisNameLabel = QtGui.QLabel(name,frame_9)
         analysisNameLabel.setAlignment(Qt.AlignCenter)
         analysisNameLabel.setMinimumSize(QtCore.QSize(140, 0))
         analysisNameLabel.setMaximumSize(QtCore.QSize(140, 16777215))
         analysisNameLabel.setObjectName("analysisNameLabel")
         analysisNameLabel.setFrameShape(QtGui.QFrame.StyledPanel)
-        #analysisNameLabel.setMaximumSize(QtCore.QSize(70, 16777215))
         horizontalLayout_4.addWidget(analysisNameLabel)
         analysisTypeLabel = QtGui.QLabel(atype,frame_9)
         analysisTypeLabel.setAlignment(Qt.AlignCenter)
@@ -738,33 +682,16 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         analysisTypeLabel.setMaximumSize(QtCore.QSize(200, 16777215))
         analysisTypeLabel.setMinimumSize(QtCore.QSize(200, 0))
         horizontalLayout_4.addWidget(analysisTypeLabel)
-        #analysisParamsLabel = QtGui.QLabel(str(params),frame_9)
-        #analysisParamsLabel.setAlignment(Qt.AlignCenter)
-        #analysisParamsLabel.setObjectName("analysisParamsLabel")
-        #analysisParamsLabel.setFrameShape(QtGui.QFrame.StyledPanel)
-        #analysisParamsLabel.setMaximumSize(QtCore.QSize(200, 16777215))
-        #analysisParamsLabel.setMinimumSize(QtCore.QSize(200, 0))
-        #analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
-        #horizontalLayout_4.addWidget(analysisParamsLabel)
         analysisParamsButton = QtGui.QPushButton("View values",frame_9)
         analysisParamsButton.setObjectName("analysisParamsLabel")
         analysisParamsButton.setMaximumSize(QtCore.QSize(100, 16777215))
         analysisParamsButton.setMinimumSize(QtCore.QSize(100, 0))
         analysisParamsButton.setMaximumSize(QtCore.QSize(70, 16777215))
         horizontalLayout_4.addWidget(analysisParamsButton)
-        #analysisStatusLabel = QtGui.QLabel(status,frame_9)
-        #analysisStatusLabel.setMinimumSize(QtCore.QSize(40, 0))
-        #analysisStatusLabel.setMaximumSize(QtCore.QSize(40, 16777215))
-        #analysisStatusLabel.setAlignment(Qt.AlignCenter)
-        #analysisStatusLabel.setFrameShape(QtGui.QFrame.StyledPanel)
-        #analysisStatusLabel.setObjectName("analysisStatusLabel")
-        #analysisParamsLabel.setMaximumSize(QtCore.QSize(70, 16777215))
-        #horizontalLayout_4.addWidget(analysisStatusLabel)
         analysisStatusBar = QtGui.QProgressBar(frame_9)
         analysisStatusBar.setMinimumSize(QtCore.QSize(110, 0))
         analysisStatusBar.setMaximumSize(QtCore.QSize(110, 16777215))
         analysisStatusBar.setAlignment(Qt.AlignCenter)
-        #analysisStatusBar.setFrameShape(QtGui.QFrame.StyledPanel)
         analysisStatusBar.setObjectName("analysisStatusBar")
         horizontalLayout_4.addWidget(analysisStatusBar)
         if status == "finished":
@@ -807,8 +734,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         QObject.connect(analysisRmButton,SIGNAL("clicked()"),self.removeAnalysis)
         QObject.connect(analysisCpButton,SIGNAL("clicked()"),self.copyAnalysis)
         QObject.connect(analysisEdButton,SIGNAL("clicked()"),self.editAnalysis)
-        #QObject.connect(analysisDownButton,SIGNAL("clicked()"),self.moveAnalysisDown)
-        #QObject.connect(analysisUpButton,SIGNAL("clicked()"),self.moveAnalysisUp)
         QObject.connect(analysisButton,SIGNAL("clicked()"),self.tryLaunchViewAnalysis)
         QObject.connect(analysisParamsButton,SIGNAL("clicked()"),self.viewAnalysisParameters)
         QObject.connect(analysisStopButton,SIGNAL("clicked()"),self.stopAnalysis)
@@ -834,7 +759,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.ui.analysisStack.setCurrentWidget(def_analysis)
         def_analysis.groupBox.setDisabled(True)
         def_analysis.analysisNameEdit.setText(analysis.name)
-        #def_analysis.validate()
 
     def copyAnalysis(self):
         frame = self.sender().parent()
@@ -886,7 +810,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         del self.dicoFrameAnalysis[frame]
         self.ui.verticalLayout_9.removeWidget(frame)
-        #self.save()
 
     def viewAnalysisParameters(self):
         """ bascule sur une frame qui affiche les valeurs des paramètres
@@ -899,7 +822,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         viewFrame = ViewAnalysisParameters(self,analysis)
         self.ui.analysisStack.addWidget(viewFrame)
         self.ui.analysisStack.setCurrentWidget(viewFrame)
-
 
     def tryLaunchViewAnalysis(self):
         """ clic sur le bouton launch/view d'une analyse
@@ -1007,13 +929,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
     def analysisProgress(self,prog):
         """ met à jour l'indicateur de progression de l'analyse en cours
         """
-        #prog = self.thAnalysis.progress
         frame = None
         for fr in self.dicoFrameAnalysis.keys():
             if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
                 frame = fr
                 break
-        #frame.findChild(QLabel,"analysisStatusLabel").setText("%s%%"%prog)
         if prog < 1 and prog > 0:
             prog = 1
         frame.findChild(QProgressBar,"analysisStatusBar").setValue(int(prog))
@@ -1035,13 +955,11 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         aid = self.thAnalysis.analysis.name
         self.thAnalysis.analysis.status = "finished"
         atype = self.thAnalysis.analysis.category
-
         # griser le bouton d'édition
         for fr in self.dicoFrameAnalysis.keys():
             if self.dicoFrameAnalysis[fr] == the_analysis:
                 fr.findChild(QPushButton,"analysisEdButton").setDisabled(True)
                 break
-
         # nettoyage du progress.txt
         if os.path.exists("%s/%s_progress.txt"%(self.dir,aid)):
             os.remove("%s/%s_progress.txt"%(self.dir,aid))
@@ -1072,8 +990,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     shutil.move("%s/%s_paramscaledstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramscaledstatdens.txt"%(self.dir,aDirName))
                     shutil.move("%s/%s_mmmqscaled.txt"%(self.dir,aid),"%s/analysis/%s/mmmqscaled.txt"%(self.dir,aDirName))
                     shutil.move("%s/%s_phistarscaled.txt"%(self.dir,aid),"%s/analysis/%s/phistarscaled.txt"%(self.dir,aDirName))
-                #shutil.move("%s/%s_psd.txt"%(self.dir,aid),"%s/analysis/%s/psd.txt"%(self.dir,aDirName))
-                #os.remove("%s/%s_progress.txt"%(self.dir,aid))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/estimate.out"%(self.dir)):
@@ -1092,7 +1008,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
                 shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))
-                #os.remove("%s/%s_progress.txt"%(self.dir,aid))
                 if os.path.exists("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName)) and os.path.exists("%s/analysis/%s/complogreg.txt"%(self.dir,aDirName)):
                     f = open("%s/analysis/%s/complogreg.txt"%(self.dir,aDirName),'r')
                     g = open("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName),'r')
@@ -1110,17 +1025,10 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         Number of simulated data sets : %s\n\n\
         Direct approach\n\n"%(date,self.dir,the_analysis.candidateScList,self.ui.nbSetsDoneEdit.text())
                     textDirect = datadir[0].replace("   n   ","closest")
-                    #i=-1
-                    #while datadir[i].strip() == "":
-                    #    i = i - 1
-                    #pat = re.compile(r'\s+')
-                    #num = int(pat.sub(' ',datadir[i].strip()).split(' ')[0])
-                    #interval = num/10
                     i = 10
                     while i < len(datadir):
                         textDirect += datadir[i]
                         i+=10
-
                     textToDisplay += textDirect
                     textToDisplay += "\n\n Logistic approach\n\n"
                     textToDisplay += datareg
@@ -1141,7 +1049,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             or os.path.exists("%s/%s_biasscaled.txt"%(self.dir,aid))\
             or os.path.exists("%s/%s_biascompo.txt"%(self.dir,aid)):
                 log(3,"File %s/%s_bias.txt exists"%(self.dir,aid))
-                #print "les fichiers existent"
                 # deplacement des fichiers de résultat
                 aDirName = "%s_bias"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
@@ -1153,8 +1060,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 if os.path.exists("%s/%s_biasscaled.txt"%(self.dir,aid)):
                     shutil.move("%s/%s_biasscaled.txt"%(self.dir,aid),"%s/analysis/%s/biasscaled.txt"%(self.dir,aDirName))
                 log(3,"Copy of '%s/%s_bias.txt' to '%s/analysis/%s/bias.txt' done"%(self.dir,aid,self.dir,aDirName))
-                #print "déplacement de %s/%s_bias.txt vers %s/analysis/%s/bias.txt"%(self.dir,aid,self.dir,aDirName)
-                #os.remove("%s/%s_progress.txt"%(self.dir,aid))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/bias.out"%(self.dir)):
@@ -1172,7 +1077,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_confidence.txt"%(self.dir,aid),"%s/analysis/%s/confidence.txt"%(self.dir,aDirName))
-                #os.remove("%s/%s_progress.txt"%(self.dir,aid))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/confidence.out"%(self.dir)):
@@ -1192,7 +1096,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     shutil.move("%s/%s_mclocate.txt"%(self.dir,aid),"%s/analysis/%s/mclocate.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)):
                     shutil.move("%s/%s_mcACP.txt"%(self.dir,aid),"%s/analysis/%s/mcACP.txt"%(self.dir,aDirName))
-                #os.remove("%s/%s_progress.txt"%(self.dir,aid))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/modelChecking.out"%(self.dir)):
@@ -1270,8 +1173,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,4).flags() & ~Qt.ItemIsEditable)
 
         self.ui.tableWidget.setCellWidget(self.ui.tableWidget.rowCount()-1,5,QPushButton("View"))
-            #self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,i).setText("new")
-        #self.ui.tableWidget.insertRow(2)
 
     def putRefTableSize(self):
         """ met à jour l'affichage de la taille de la reftable
@@ -1429,9 +1330,6 @@ class RefTableGenThreadCluster(QThread):
             self.log(3,"could not contact any server on diyabc://%s:%s\n%s"%(host, port,msg))
             return
 
-        #size = os.path.getsize(filename)
-        #s.send(str(size))
-
         data = f.read()
         f.close()
         s.send("%s"%str(hashlib.md5(data).hexdigest()))
@@ -1442,14 +1340,6 @@ class RefTableGenThreadCluster(QThread):
         time.sleep(1)
 
         s.sendall(data)
-        #s.shutdown(SHUT_WR)
-
-
-        #while True:
-        #    if not data:
-        #        break
-        #    else:
-        #        s.sendall(data)
 
         self.log(3,"%s Sent!"%filename)
         while True:
@@ -1547,11 +1437,9 @@ class RefTableGenThread(QThread):
                         os.remove("%s/reftable.log"%(self.parent.dir))
                         return
                     else:
-                        #print "lines != OK"
                         self.log(3,"The line does not contain 'OK'")
                         self.problem = lines[0].strip()
                         self.emit(SIGNAL("refTableProblem(QString)"),self.problem)
-                        #output.notify(self,"problem",lines[0])
                         fg.close()
                         return
             except Exception as e:
@@ -1647,7 +1535,6 @@ class AnalysisThread(QThread):
 
     def run(self):
         self.log(2,"Running analysis '%s' execution"%self.analysis.name)
-        #executablePath = str(self.parent.parent.preferences_win.ui.execPathEdit.text())
         executablePath = self.parent.parent.preferences_win.getExecutablePath()
         nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
         particleLoopSize = str(self.parent.parent.preferences_win.particleLoopSizeEdit.text())
@@ -1667,20 +1554,15 @@ class AnalysisThread(QThread):
         elif self.analysis.category == "pre-ev":
             # pour cette analyse on attend que l'executable ait fini
             # on ne scrute pas de fichier de progression
-            #data = data.replace(u'\xb5','u')
             cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params.replace(u'\xb5','u'), "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
-            #print " ".join(cmd_args_list)
             self.log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
             addLine("%s/command.txt"%self.parent.dir,"Command launched for analysis '%s' : %s\n\n"%(self.analysis.name," ".join(cmd_args_list)))
             outfile = "%s/pre-ev.out"%self.parent.dir
             f = open(outfile,"w")
             p = subprocess.call(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
-            #f.close()
-            #print "call ok"
             self.log(3,"Call procedure success")
 
             f = open(outfile,"r")
-            #data= f.read()
             f.close()
             self.progress = 100
             self.emit(SIGNAL("analysisProgress(int)"),self.progress)
@@ -1688,15 +1570,12 @@ class AnalysisThread(QThread):
 
         # pour toutes les autres analyses le schema est le même
         cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name,"-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
-        #print " ".join(cmd_args_list)
         self.log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
         addLine("%s/command.txt"%self.parent.dir,"Command launched for analysis '%s' : %s\n\n"%(self.analysis.name," ".join(cmd_args_list)))
         outfile = "%s/%s.out"%(self.parent.dir,self.analysis.category)
         f = open(outfile,"w")
         p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
         self.processus = p
-        #f.close()
-        #print "popen ok"
         self.log(3,"Popen procedure success")
 
 
@@ -1710,9 +1589,6 @@ class AnalysisThread(QThread):
             if p.poll() != None:
                 f.close()
                 g = open(outfile,"r")
-                #data= g.read()
-                #print "data:%s"%data
-                #print "poll:%s"%p.poll()
                 outlines = g.readlines()
                 probOut = ""
                 if len(outlines) > 0:

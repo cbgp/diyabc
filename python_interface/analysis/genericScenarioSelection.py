@@ -6,7 +6,6 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 from utils.cbgpUtils import log
-#from uis.genericScenarioSelection_ui import Ui_Frame
 
 formGenericScenarioSelection,baseGenericScenarioSelection = uic.loadUiType("uis/genericScenarioSelection.ui")
 
@@ -55,7 +54,6 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
         """
         if self.analysis.candidateScList != []:
             for i,ch in enumerate(self.checklist):
-                print i
                 ch.setChecked((i+1) in self.analysis.candidateScList)
 
     def validate(self):
@@ -66,16 +64,12 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
             self.next_widget.setScenarios(self.analysis.candidateScList)
             if self.analysis.category == "compare" and self.analysis.computationParameters == "":
                 self.next_widget.setRecordValues(self.analysis.candidateScList)
-            #self.parent.parent.addTab(self.next_widget,self.next_title)
-            #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-            #self.parent.parent.setCurrentWidget(self.next_widget)
             self.parent.parent.ui.analysisStack.addWidget(self.next_widget)
             self.parent.parent.ui.analysisStack.removeWidget(self)
             self.parent.parent.ui.analysisStack.setCurrentWidget(self.next_widget)
             self.parent.parent.parent.updateDoc(self.next_widget)
         else:
             QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%self.nb_min_sel)
-
 
     def getListSelectedScenarios(self):
         """ retourne la liste des scenarios choisis
@@ -120,11 +114,7 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
             self.next_widget.ui.redefButton.hide()
 
     def exit(self):
-        ## reactivation des onglets
-        #self.parent.parent.setTabEnabled(1,True)
-        #self.parent.parent.setTabEnabled(0,True)
-        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        #self.parent.parent.setCurrentIndex(1)
+        # reactivation des onglets
         self.parent.parent.ui.analysisStack.removeWidget(self)
         self.parent.parent.ui.analysisStack.setCurrentIndex(0)
 

@@ -6,9 +6,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
-#from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
-#import output
 from utils.cbgpUtils import log
 
 formDrawScenario,baseDrawScenario = uic.loadUiType("uis/drawScenarioFrame.ui")
@@ -43,9 +41,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
 
     def exit(self):
         ## reactivation des onglets
-        #self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
-        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
         self.parent.parent.ui.refTableStack.removeWidget(self)
         self.parent.parent.ui.refTableStack.setCurrentWidget(self.parent)
 
@@ -158,7 +153,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
         NN = scc.history.NN
         log(4,"Painting Scenario")
-        # print NN
         pen = QPen(Qt.black,2)
         painter.setPen(pen)
 
@@ -240,10 +234,10 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 if t.node[i].ref :  
                     #painter.drawText(x-10,y+25,'[Sa %i]'%t.node[i].pop)
                     painter.drawText(x-10,y+25,'%i ind'%scc.dicoPopRefNindRef[t.node[i].pop])
-                    print "ref, i:%s, ref:%s, pop:%s"%(i,t.node[i].ref,t.node[i].pop)
+                    #print "ref, i:%s, ref:%s, pop:%s"%(i,t.node[i].ref,t.node[i].pop)
                 else:
                     painter.drawText(x-10,y+25,'Sa %i'%t.node[i].pop)
-                    print "noref, i:%s, ref:%s, pop:%s"%(i,t.node[i].ref,t.node[i].pop)
+                    #print "noref, i:%s, ref:%s, pop:%s"%(i,t.node[i].ref,t.node[i].pop)
                 font = QFont()
                 font.setItalic(False)
                 font.setPixelSize(16+font_inc)
@@ -340,15 +334,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         pic_basename = self.parent.parent.parent.scenario_pix_basename
         pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
 
-        ## si le rep contenant les images n'existe pas, on le crée
-        #if not os.path.exists("%s/%s"%(proj_dir,pic_dir)):
-        #    os.mkdir("%s/%s"%(proj_dir,pic_dir))
-        #else:
-        #    # effacer les anciennes images
-        #    for i in range(100):
-        #        if os.path.exists("%s_%i.jpg"%(pic_whole_path,i)):
-        #            os.remove("%s_%i.jpg"%(pic_whole_path,i))
-
         pic_format = str(self.parent.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
         if pic_format == "jpg" or pic_format == "png":
             for ind,pix in enumerate(self.pixList):
@@ -366,7 +351,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
 
     def saveDrawsToOne(self):
         pic_format = str(self.parent.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
-        #pic_format = "pdf"
         ind = 0
         nbpix = len(self.pixList)
         if pic_format != "pdf":
@@ -445,16 +429,11 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
             # une ligne
             while (ind < nbpix) and (col < largeur):
                 # ajout
-                #self.im_result.fill(self.pixList[ind],QPoint(col*500,li*450))
-                #painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
                 sc_info = self.sc_info_list[ind]
                 if sc_info["tree"] != None:
                     self.paintScenario(painter,sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],500,450)
                 # on va a droite
                 painter.translate(500,0)
-                #print "li:",li," col:",col
-                #print "xof:",col*500," yof:",li*450
-                #print "zzz"
                 if (ind+1)%6 == 0:
                     self.im_result.newPage()
                     painter.translate(0,-3*450)
@@ -473,7 +452,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
 
         pic_format = str(self.parent.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
 
-        #nbpix = len(self.pixList)
         nbpix = (ito - ifrom)+1
 
         largeur = 2
@@ -481,7 +459,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         longueur = (nbpix/largeur)+(nbpix%largeur)
         ind = ifrom
         li=0
-        print "%s , %s"%(ifrom,ito)
 
         ind_list_str = "%s_to_%s"%(ifrom+1,ito+1)
 
@@ -507,8 +484,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
             # une ligne
             while (ind <= ito) and (col < largeur):
                 # ajout
-                #self.im_result.fill(self.pixList[ind],QPoint(col*500,li*450))
-                #painter_pic.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
                 if pic_format == "jpg" or pic_format == "png":
                     painter.drawImage(QPoint(col*500,li*450),self.pixList[ind].toImage())
                 else:
@@ -517,9 +492,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                         self.paintScenario(painter_pic,sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],500,450)
                     # on va a droite
                     painter_pic.translate(500,0)
-                #print "li:",li," col:",col
-                #print "xof:",col*500," yof:",li*450
-                #print "zzz"
                 col+=1
                 ind+=1
             li+=1

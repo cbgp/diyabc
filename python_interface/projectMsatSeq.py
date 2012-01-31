@@ -7,7 +7,6 @@
 
 import os,shutil
 import codecs
-#from subprocess import Popen, PIPE, STDOUT 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from projectReftable import ProjectReftable
@@ -68,7 +67,6 @@ class ProjectMsatSeq(ProjectReftable):
         except Exception as e:
             keep = ""
             if self.ui.dataFileEdit.text() != "":
-                #keep = "\n\nKeeping previous selected file"
                 keep = "\n\nThe file was not loaded, nothing was changed"
             output.notify(self,"Data file error","%s%s"%(e,keep))
             return False
@@ -78,10 +76,6 @@ class ProjectMsatSeq(ProjectReftable):
         """ passe sur l'onglet correspondant
         """
         log(1,"Entering in Genetic Data Setting")
-        #self.setTabEnabled(0,False)
-        #self.setTabEnabled(1,False)
-        #self.addTab(self.gen_data_win,"Set genetic data")
-        #self.setCurrentWidget(self.gen_data_win)
         self.ui.refTableStack.addWidget(self.gen_data_win)
         self.ui.refTableStack.setCurrentWidget(self.gen_data_win)
         self.setGenValid(False)
@@ -95,7 +89,6 @@ class ProjectMsatSeq(ProjectReftable):
         self.ui.browseDataFileButton.setDisabled(True)
         self.ui.browseDataFileButton.hide()
         self.ui.browseDirButton.hide()
-        #self.ui.groupBox.show()
         self.ui.groupBox_6.show()
         self.ui.groupBox_7.show()
         self.ui.groupBox_8.show()
@@ -220,7 +213,6 @@ class ProjectMsatSeq(ProjectReftable):
         """ sauvegarde du projet -> mainconf, histconf, genconf, theadconf
         Si le gen et hist sont valides, on génère le header
         """
-        #print "je me save"
         log(2,"Saving project '%s'"%self.dir)
         self.parent.showStatus("Saving project %s"%self.name)
 

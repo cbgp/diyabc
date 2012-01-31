@@ -5,7 +5,6 @@ import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
-#from uis.defineNewAnalysis_ui import Ui_Frame
 from setupComparisonConfidence import SetupComparisonConfidence
 from setupEstimationBias import SetupEstimationBias
 from genericScenarioSelection import GenericScenarioSelection
@@ -209,11 +208,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
 
 
     def exit(self):
-        ## reactivation des onglets
-        #self.parent.setTabEnabled(1,True)
-        #self.parent.setTabEnabled(0,True)
-        #self.parent.removeTab(self.parent.indexOf(self))
-        #self.parent.setCurrentIndex(1)
+        # reactivation des onglets
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)
 

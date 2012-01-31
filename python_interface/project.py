@@ -5,14 +5,12 @@
 #
 # @brief Classe mère abstraite de tous les projets
 
-#from subprocess import Popen, PIPE, STDOUT 
 import subprocess
 import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 from historicalModel.setHistoricalModel import SetHistoricalModel
-#from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 from utils.cbgpUtils import log,addLine
@@ -45,9 +43,6 @@ class Project(baseProject,formProject):
 
     def createWidgets(self):
 
-        # instanciation du widget project_ui
-        #self.ui = Ui_TabWidget()
-        #self.ui.setupUi(self)
         self.setupUi(self)
         self.ui = self
 
@@ -59,13 +54,11 @@ class Project(baseProject,formProject):
         self.ui.newAnButton.setDisabled(True)
         self.ui.dataFileEdit.setReadOnly(True)
         self.ui.dirEdit.setReadOnly(True)
-        #self.ui.groupBox.hide()
         self.ui.groupBox_6.hide()
         self.ui.groupBox_7.hide()
         self.ui.groupBox_8.hide()
 
         self.ui.browseDirButton.hide()
-        #self.ui.groupBox.setVisible(False)
 
         self.ui.ascertSimFrame.hide()
 
@@ -78,8 +71,6 @@ class Project(baseProject,formProject):
 
         QObject.connect(self.ui.setHistoricalButton,SIGNAL("clicked()"),self.setHistorical)
         QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.setGenetic)
-        #QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelection)
-        #QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirSelection)
 
         # inserer image
         self.ui.setHistoricalButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
@@ -88,16 +79,9 @@ class Project(baseProject,formProject):
         self.setTabIcon(0,QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
         self.setTabIcon(1,QIcon(dataPath.DATAPATH+"/icons/gnome-color-browser.png"))
 
-
-        #self.connect(self.ui.cancelButton, SIGNAL("clicked()"),self.cancelTh)
-
         self.th = None
 
         self.ui.verticalLayout_9.setAlignment(Qt.AlignTop)
-
-        ## remplissage du combo liste des analyses deja effectuées
-        #self.fillAnalysisCombo()
-        #QObject.connect(self.ui.analysisResultsButton,SIGNAL("clicked()"),self.viewAnalysisResult)
 
         self.stopUiGenReftable()
 
@@ -139,8 +123,6 @@ class Project(baseProject,formProject):
         log(1,"Entering in Historical Model Setting")
         ## nécéssaire seulement sous windows
         ## on dirait que sous linux, le simple setCurrentWidget rend l'onglet enabled
-        #self.setTabEnabled(self.count()-1,True)
-        #self.setCurrentWidget(self.hist_model_win)
         self.ui.refTableStack.addWidget(self.hist_model_win)
         self.ui.refTableStack.setCurrentWidget(self.hist_model_win)
         self.setHistValid(False)
@@ -159,12 +141,9 @@ class Project(baseProject,formProject):
         """ détruit le modèle historique et en instancie un nouveau
         """
         log(1,"Clearing historical model")
-        #self.removeTab(self.indexOf(self.hist_model_win))
         self.ui.refTableStack.removeWidget(self.hist_model_win)
         self.hist_model_win = SetHistoricalModel(self)
-        #self.insertTab(2,self.hist_model_win,"Set historical model")
         self.ui.refTableStack.insertWidget(0,self.hist_model_win)
-        #self.setCurrentWidget(self.hist_model_win)
         self.ui.refTableStack.setCurrentWidget(self.hist_model_win)
 
     def setHistValid(self,valid):

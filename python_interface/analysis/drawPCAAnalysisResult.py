@@ -7,12 +7,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
-#from uis.drawScenario_ui import Ui_Frame
 from utils.visualizescenario import *
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 import output
-#from uis.viewTextFile_ui import Ui_Frame as ui_viewTextFile
 
 formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 
