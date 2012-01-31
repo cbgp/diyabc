@@ -398,7 +398,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         le datafile et le reftableheader.
         """
         if tarname == None:
-            tarname = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","(TAR archive) *.tar"))
+            tarname = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","TAR archive (*.tar)"))
         if tarname != "":
             #executablePath = str(self.parent.preferences_win.ui.execPathEdit.text())
             executablePath = self.parent.preferences_win.getExecutablePath()

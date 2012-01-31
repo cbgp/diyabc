@@ -71,9 +71,6 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
                             self.ui.ilsrMeanEdit :"Mean of individual locus SNI rate",
                             self.ui.ilsrShapeEdit:"Shape of individual locus SNI rate"}
 
-
-
-
         # [doit_etre_non_vide , doit_être_float, doit être positif]
         self.constraints_dico = { self.ui.mmrMinEdit : [1,1,1],
                            self.ui.mmrMaxEdit : [1,1,1],

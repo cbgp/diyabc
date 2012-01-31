@@ -89,7 +89,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         self.setWindowIcon(QIcon(dataPath.DATAPATH+"/icons/coccicon.png"))
 
-        self.illegalProjectNameCharacters = ['_','-',"'",'"','.',"/"]
+        self.illegalProjectNameCharacters = ['-',"'",'"','.',"/"]
         self.illegalAnalysisNameCharacters = ["'",'"','.',"/"]
 
         # ouverture des projets donnés en paramètre au lancement
@@ -610,11 +610,13 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.showStatus("Loading project %s"%dir.split('/')[-1])
         QApplication.setOverrideCursor( Qt.WaitCursor )
 
-        proj_name = str(dir).split('/')[-1].split('_')[0]
+        if len(str(dir).split('/')[-1].split('_')) > 4:
+            project_name = "_".join(str(dir).split('/')[-1].split('_')[:-3])
+        else:
+            project_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
         if dir != "":
             if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
-                project_name = dir.split('/')[-1].split('_')[0]
                 proj_name_list = []
                 for p in self.project_list:
                     proj_name_list.append(p.name)
@@ -628,7 +630,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     \n- The project is currently opened in another instance of DIYABC\
     \n- The last time you opened this project, DIYABC was closed unregularly\n\
     \nWould you like to open the project anyway and get the lock with this DIYABC ?\
-    \nIf you say YES, think about closing potential other DIYABCs which manipulate this project"%proj_name,
+    \nIf you say YES, think about closing potential other DIYABCs which manipulate this project"%project_name,
                                     QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,QtGui.QMessageBox.No)
                             if reply == QtGui.QMessageBox.Yes:
                                 os.remove("%s/.DIYABC_lock"%dir)
@@ -684,7 +686,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.addRecent(dir)
                         self.updateDoc(proj_to_open)
                 else:
-                    output.notify(self,"Name error","A project named \"%s\" is already loaded"%proj_name)
+                    output.notify(self,"Name error","A project named \"%s\" is already loaded"%project_name)
             else:
                output.notify(self,"Load error","\"%s\" is not a project directory"%dir)
         self.clearStatus()
