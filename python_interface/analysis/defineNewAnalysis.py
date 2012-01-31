@@ -122,6 +122,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 if len(self.parent.hist_model_win.scList) >= 2:
                     if self.analysis_to_edit != None:
                         analysis = self.analysis_to_edit
+                        self.parent.changeAnalysisName(analysis,name)
                     else:
                         if self.ui.confFdaCompareCheck.isChecked():
                             paramtxt="1"
@@ -137,6 +138,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 if len(self.parent.hist_model_win.scList) >= 1:
                     if self.analysis_to_edit != None:
                         analysis = self.analysis_to_edit
+                        self.parent.changeAnalysisName(analysis,name)
                     else:
                         analysis = Analysis(name,"estimate")
                     estimateFrame = SetupEstimationBias(analysis,self)
@@ -147,6 +149,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 if len(self.parent.hist_model_win.scList) >= 1:
                     if self.analysis_to_edit != None:
                         analysis = self.analysis_to_edit
+                        self.parent.changeAnalysisName(analysis,name)
                     else:
                         compParamtxt = "a:"
                         if self.ui.modCheckPcaCheck.isChecked():
@@ -179,6 +182,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
             elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "bias") or self.ui.biasRadio.isChecked():
                 if self.analysis_to_edit != None:
                     analysis = self.analysis_to_edit
+                    self.parent.changeAnalysisName(analysis,name)
                 else:
                     analysis = Analysis(name,"bias")
                 genSel = BiasNConfidenceScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
@@ -186,6 +190,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
             elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "confidence") or self.ui.confidenceRadio.isChecked():
                 if self.analysis_to_edit != None:
                     analysis = self.analysis_to_edit
+                    self.parent.changeAnalysisName(analysis,name)
                 else:
                     if self.ui.confFdaCheck.isChecked():
                         paramtxt="1"

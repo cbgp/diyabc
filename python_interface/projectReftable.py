@@ -141,6 +141,7 @@ class ProjectReftable(Project):
             for the_frame in self.dicoFrameAnalysis.keys():
                 if analysis == self.dicoFrameAnalysis[the_frame]:
                     break
+            the_frame.findChild(QPushButton,"analysisEdButton").setDisabled(False)
             the_frame.findChild(QPushButton,"analysisButton").setText("Re-launch")
             the_frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #EFB1B3")
             the_frame.findChild(QPushButton,"analysisStopButton").hide()
@@ -769,6 +770,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if status == "finished":
             buttonLabel = "View results"
             analysisStatusBar.setValue(100)
+            analysisEdButton.setDisabled(True)
         else:
             buttonLabel = "Launch"
             analysisStatusBar.setValue(0)
@@ -813,6 +815,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         self.parent.updateDoc(frame_9)
 
+    def changeAnalysisName(self,analysis,new_name):
+        analysis.name = new_name
+        for fr in self.dicoFrameAnalysis.keys():
+            if self.dicoFrameAnalysis[fr] == analysis:
+                fr.findChild(QLabel,"analysisNameLabel").setText(new_name)
+
     def editAnalysis(self):
         """ démarre l'édition d'une analyse en passant par un define auquel
         on donne une analyse deja existante, il se débrouille
@@ -824,7 +832,9 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         self.ui.analysisStack.addWidget(def_analysis)
         self.ui.analysisStack.setCurrentWidget(def_analysis)
-        def_analysis.validate()
+        def_analysis.groupBox.setDisabled(True)
+        def_analysis.analysisNameEdit.setText(analysis.name)
+        #def_analysis.validate()
 
     def copyAnalysis(self):
         frame = self.sender().parent()
@@ -933,6 +943,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                 if self.dicoFrameAnalysis[frame] == analysis:
                     the_frame = frame
                     break
+            the_frame.findChild(QPushButton,"analysisEdButton").setDisabled(True)
             the_frame.findChild(QPushButton,"analysisButton").setText("Running")
             the_frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #6DD963")
             the_frame.findChild(QPushButton,"analysisStopButton").show()
@@ -978,6 +989,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
                 frame = fr
                 break
+        frame.findChild(QPushButton,"analysisEdButton").setDisabled(False)
         frame.findChild(QPushButton,"analysisButton").setText("Re-launch")
         frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #EFB1B3")
         frame.findChild(QPushButton,"analysisStopButton").hide()
@@ -1023,6 +1035,12 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         aid = self.thAnalysis.analysis.name
         self.thAnalysis.analysis.status = "finished"
         atype = self.thAnalysis.analysis.category
+
+        # griser le bouton d'édition
+        for fr in self.dicoFrameAnalysis.keys():
+            if self.dicoFrameAnalysis[fr] == the_analysis:
+                fr.findChild(QPushButton,"analysisEdButton").setDisabled(True)
+                break
 
         # nettoyage du progress.txt
         if os.path.exists("%s/%s_progress.txt"%(self.dir,aid)):

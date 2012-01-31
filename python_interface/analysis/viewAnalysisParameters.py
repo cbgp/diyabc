@@ -28,7 +28,7 @@ class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParamete
 
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.exit)
 
-        self.addRow("name",self.analysis.name)
+        self.addRow("name",self.analysis.name,editable=True)
         tab={"pre-ev":"Pre-evaluate scenario-prior combinations",
                 "estimate":"Estimate posterior distributions of parameters",
                 "bias":"Compute bias and precision on parameter estimations",
@@ -111,16 +111,25 @@ class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParamete
             option = "-d"
 
         #cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, option, '"%s"'%params, "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
-        cmd_args_list = ['"'+executablePath+'"',"-p", "%s/"%self.parent.dir, "%s"%option, '"%s"'%params, "-i", '%s'%self.analysis.name,"-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
+        cmd_args_list = ['"'+executablePath+'"',"-p", '"%s/"'%self.parent.dir, "%s"%option, '"%s"'%params, "-i", '%s'%self.analysis.name,"-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
         command_line = " ".join(cmd_args_list)
-        self.addRow("executed command line",command_line)
+        self.addRow("executed command line",command_line,editable=True)
         self.ui.tableWidget.setRowHeight(self.ui.tableWidget.rowCount()-1,execRowSize)
 
+        QObject.connect(self.ui.tableWidget,SIGNAL("cellChanged(int,int)"),self.cellChanged)
+
+    def cellChanged(self,row,col):
+        if row == 0 and col == 1:
+            val = str(self.ui.tableWidget.item(0,1).text())
+            self.parent.changeAnalysisName(self.analysis,val)
         
-    def addRow(self,name,value):
+    def addRow(self,name,value,editable=False):
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,0,QTableWidgetItem("%s"%name))
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,1,QTableWidgetItem("%s"%value))
+        self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,0).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,0).flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
+        if not editable:
+            self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,1).setFlags(self.ui.tableWidget.item(self.ui.tableWidget.rowCount()-1,1).flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
 
     def exit(self):
         self.parent.ui.analysisStack.removeWidget(self)
