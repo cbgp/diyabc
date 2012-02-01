@@ -197,25 +197,16 @@ class ProjectReftable(Project):
             f = open("%s/analysis/%s/bias.txt"%(self.dir,anDir),'r')
             data = f.read()
             f.close()
-            self.drawAnalysisFrame = uic.loadUi("uis/viewBiasFiles.ui")
-            self.drawAnalysisFrame.parent = self
+            self.drawAnalysisFrame = ViewTextFile(data,self.returnToAnalysisList,self)
             self.drawAnalysisFrame.analysis = analysis
             self.drawAnalysisFrame.anDir = anDir
             ui = self.drawAnalysisFrame
             log(3,"Viewing analysis results, bias")
-            ui.dataPlain.setPlainText(data)
-            ui.dataPlain.setLineWrapMode(0)
-            font = "FreeMono"
-            if sys.platform.startswith('win'):
-                font = "Courier New"
-            elif "darwin" in sys.platform:
-                font = "Andale Mono"
-            ui.dataPlain.setFont(QFont(font,10))
             if not os.path.exists("%s/analysis/%s/biascompo.txt"%(self.dir,self.drawAnalysisFrame.anDir)):
                 ui.cRadio.hide()
             if not os.path.exists("%s/analysis/%s/biasscaled.txt"%(self.dir,self.drawAnalysisFrame.anDir)):
                 ui.sRadio.hide()
-            QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
+
             QObject.connect(ui.oRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
             QObject.connect(ui.cRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
             QObject.connect(ui.sRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
