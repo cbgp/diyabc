@@ -6,6 +6,7 @@
  */
 #include <string>
 #include <omp.h>
+#include <cstdlib>
 
 /*
 #ifndef HEADER
@@ -31,6 +32,8 @@ extern long double **phistarOK;
 extern int debuglevel;
 extern ReftableC rt;
 extern string scurfile;
+
+long int ntentes,naccept;
 
 
 /**
@@ -327,10 +330,12 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	this->npart = npart;
 	int *sOK;
 	sOK = new int[npart];
-	if (debuglevel==5) cout<<"avant firsttime\n";
+	if (debuglevel==5) cout<<"avant firsttime="<<firsttime<<"\n";
 	if (firsttime) {
 		this->particule = new ParticleC[this->npart];
+		if (debuglevel==5) cout<<"avant this->header=header   this->npart="<<this->npart<<"\n";
 		this->header = header;
+		if (debuglevel==5) cout<<"apres this->header=header   this->npart="<<this->npart<<"\n";
 		for (int p=0;p<this->npart;p++) {
 			if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
 			this->particule[p].dnatrue = dnatrue;
@@ -409,7 +414,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	//if (num_threads>0) omp_set_num_threads(num_threads);_
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
 	for (ipart=0;ipart<this->npart;ipart++){
-		//cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
+		cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
 		if (sOK[ipart]==0) {
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr);}
@@ -491,11 +496,18 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	}
 	if (debuglevel==5) cout << "avant pragma npart = "<<this->npart<<"\n";
 	//if (num_threads>0) omp_set_num_threads(num_threads);_
+	ntentes=0;naccept=0;
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
 	for (ipart=0;ipart<this->npart;ipart++){
 		if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 		//cout <<"   nloc="<<this->particule[ipart].nloc<<"\n";
-		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
+		do {
+			sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
+			if (sOK[ipart]==-99) this->resetparticle(ipart);
+		} while (sOK[ipart]==-99);
+		
+		ntentes += this->particule[ipart].ntentes;
+		naccept += this->particule[ipart].naccept;
 		if (debuglevel==5) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 		if (sOK[ipart]==0) {
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
@@ -504,6 +516,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	}
 	//fin du pragma
 	if (debuglevel==5) cout << "apres pragma\n";
+	cout<<"acceptation ="<<(double)(100*naccept)/(double)ntentes<<"   ("<<naccept<<" sur "<<ntentes<<")\n";
 	//exit(1);
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		if (sOK[ipart]==0){
@@ -560,7 +573,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		//cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
 		np=ns-header.nstat-1;
 		//cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
-		cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
+		//cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
 		for (int ipart=0;ipart<this->npart;ipart++) {
 			if (sOK[ipart]==0){
 				//cout<<enreg[ipart].numscen<<"\n";

@@ -70,6 +70,9 @@ public:
 	std::vector < std::vector <int> > ss;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
 	std::vector <int> nind;
 	std::vector < std::vector <int> > indivsexe;
+	/*vector < vector <int> > ss;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
+	vector <int> nind;
+	vector < vector <int> > indivsexe;*/
 
 	/* Méthodes */
 	void libere();

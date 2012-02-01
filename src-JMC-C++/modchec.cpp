@@ -246,6 +246,7 @@ long double **ssphistar,**ssref;
     }
 
     int detphistarOK(int nsel) {
+		char c;
         bool OK;
         int npv,ip1,ip2,nphistarOK=0,scen=rt.scenteste-1;
         npv = rt.nparam[scen];
@@ -277,13 +278,14 @@ long double **ssphistar,**ssref;
                     if (not OK) break;
                 }
             }
-            if (OK) { cout<<nphistarOK<<"    ";
+            if (OK) { //cout<<nphistarOK<<"    ";
                 for (int j=0;j<npv;j++) {
                     phistarOK[nphistarOK][j] = phistar[i][j];
-                    cout <<phistarOK[nphistarOK][j]<<"  ";
+                    //cout <<phistarOK[nphistarOK][j]<<"  ";
                 }
-                cout<<"\n";
+                //cout<<"\n";
                 nphistarOK++;
+				//if ((nphistarOK % 10)==0) cin >>c;
             }
         }
         return nphistarOK;
@@ -477,22 +479,27 @@ long double **ssphistar,**ssref;
         savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
         iprog+=20;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         phistarOK = new long double*[nsel];
-        for (int i=0;i<nsel;i++) phistarOK[i] = new long double[header.scenario[rt.scenteste-1].nparam];
-        nphistarOK=detphistarOK(nsel);               cout << "apres detphistarOK\n";
+        for (int i=0;i<nsel;i++) phistarOK[i] = new long double[rt.nparam[rt.scenteste-1]];
+		cout<<"header.scenario[rt.scenteste-1].nparam = "<<header.scenario[rt.scenteste-1].nparam<<"\n";
+		nphistarOK=detphistarOK(nsel);               cout << "apres detphistarOK\n";
         cout//<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr
-            << "   nphistarOK="<< nphistarOK<<"\n";
+            << "   nphistarOK="<< nphistarOK<<"   nstat="<<header.nstat<<"\n";
         //cout <<"DEBUG: j'arrête là." << endl; exit(1);
         if(nphistarOK < newsspart){
         	cout << "Not enough suitable particles to perform model checking. Stopping computations." << endl;
         	exit(1);
         }
         npv = rt.nparam[rt.scenteste-1];
+		cout<<"npv="<<npv<<"    nenr="<<nenr<<"\n";
+		//delete []enreg;
         enreg = new enregC[nenr];
+		cout<<"apres new enregC[nenr]\n";
         for (int p=0;p<nenr;p++) {
             enreg[p].stat = new float[header.nstat];
             enreg[p].param = new float[npv];
             enreg[p].numscen = rt.scenteste;
         }
+        cout<<"apres dimensionnement des enreg\n";
         nss=0;
         firsttime=true;
         cout<<"ns="<<ns<<"\n";
@@ -503,10 +510,9 @@ long double **ssphistar,**ssref;
         ssphistar = new long double*[newsspart];
         for (int i=0;i<newsspart;i++) ssphistar[i] = new long double[header.nstat];
         cout<<"newstat ="<<newstat<<"   newsspart="<<newsspart<<"     nenr="<<nenr<<"\n";
-		
 		if (nenr>newsspart) nenr=newsspart;
         while (nss<newsspart) {
-            ps.dosimulphistar(header,nenr,false,multithread,firsttime,rt.scenteste,seed,nsel);
+            ps.dosimulphistar(header,nenr,false,multithread,firsttime,rt.scenteste,seed,nphistarOK);
             for (int i=0;i<nenr;i++) {
                 for (int j=0;j<header.nstat;j++) ssphistar[i+nss][j]=enreg[i].stat[j];
                 for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+nss][j]<<"   ";cout<<"\n";

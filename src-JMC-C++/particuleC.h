@@ -43,6 +43,7 @@ class ParticleC
 	  bool ***dat,***ref;  //appartenance d'un gène aux data (dat) ou aux individus de référence (ref) par [locustype][sample][gene]
 	  bool *catexist;
 	  double matQ[4][4];
+	  long int naccept,ntentes;
 
    /* Déclaration des méthodes */
 	  void libere(bool obs);

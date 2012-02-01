@@ -209,7 +209,7 @@ struct SequenceBitC
  */
 struct NodeC
 {
-  int pop,sample,state,brhaut;
+  int pop,sample,state,brhaut,ndat;
   double height;
   std::string dna;
   bool OK;
@@ -233,7 +233,7 @@ class GeneTreeC
 public:
   NodeC *nodes;
   BranchC *branches;
-  int nmutot,nnodes,nbranches,ngenes;
+  int nmutot,nnodes,nbranches,ngenes,nbOK;
 
   /* Déclaration des méthodes */
   GeneTreeC(){
