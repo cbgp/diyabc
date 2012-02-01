@@ -36,19 +36,16 @@ class ViewTextFile(formTF,baseTF):
         dial = QPrintDialog(im_result,self)
         if dial.exec_():
             painter = QPainter()
-            #im_result.setOrientation(QPrinter.Landscape)
             im_result.setPageMargins(20,20,20,20,QPrinter.Millimeter)
-            # TODO changer taille
             im_result.setResolution(80)
             self.ui.dataPlain.setLineWrapMode(1)
             self.ui.dataPlain.print_(im_result)
             self.ui.dataPlain.setLineWrapMode(0)
-            #painter.begin(im_result)
-            #pen = QPen(Qt.black,2)
-            #painter.setPen(pen)
-            #painter.drawText(20,20,self.text)
-            #painter.end()
 
     def save(self):
-        pass
+        path = QFileDialog.getSaveFileName(self,filter="Text files (*.txt);;All files (*)")
+        if path!="":
+            f=open(path,'w')
+            f.write(self.text)
+            f.close()
 
