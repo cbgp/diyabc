@@ -1589,3 +1589,14 @@ class AnalysisThread(QThread):
                     return
             time.sleep(2)
 
+#attributs :
+#    cmdline
+#    options
+#    signalnames (problem,progress,log)
+#
+#option:
+#    lastline check (donner nom fichier)
+#    scruter progress (donner freq et nom fichier)
+
+# il faudra sans doute créer le signal processTerminated pour detecter le probleme d'arret avant la fin
+# en dehors du thread qui est sensé du coup être indépendant, générique
