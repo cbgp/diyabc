@@ -60,6 +60,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
             textToDisplay = f.read()
             f.close()
             self.parent.drawAnalysisFrame = ViewTextFile(textToDisplay,self.returnToMe,self.parent)
+            self.parent.drawAnalysisFrame.choiceFrame.hide()
             self.parent.ui.analysisStack.addWidget(self.parent.drawAnalysisFrame)
             self.parent.ui.analysisStack.setCurrentWidget(self.parent.drawAnalysisFrame)
 

@@ -186,6 +186,7 @@ class ProjectReftable(Project):
                 f.close()
                 log(3,"Viewing analysis results, PCA or modelChecking")
                 self.drawAnalysisFrame = ViewTextFile(data,self.returnToAnalysisList,self)
+                self.drawAnalysisFrame.choiceFrame.hide()
 
         elif typestr == "confidence":
             f = open("%s/analysis/%s/confidence.txt"%(self.dir,anDir),'r')
@@ -193,6 +194,7 @@ class ProjectReftable(Project):
             f.close()
             log(3,"Viewing analysis results, confidence in scenario choice")
             self.drawAnalysisFrame = ViewTextFile(data,self.returnToAnalysisList,self)
+            self.drawAnalysisFrame.choiceFrame.hide()
         elif typestr == "bias":
             f = open("%s/analysis/%s/bias.txt"%(self.dir,anDir),'r')
             data = f.read()
