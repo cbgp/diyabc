@@ -23,6 +23,7 @@ from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from analysis.viewAnalysisParameters import ViewAnalysisParameters
+from viewTextFile import ViewTextFile
 from utils.data import DataSnp,isSNPDatafile
 from datetime import datetime 
 import os.path
@@ -183,37 +184,15 @@ class ProjectReftable(Project):
                     f = open("%s/analysis/%s/mclocate.txt"%(self.dir,anDir),'r')
                 data = f.read()
                 f.close()
-                self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
-                self.drawAnalysisFrame.parent = self
-                ui = self.drawAnalysisFrame
                 log(3,"Viewing analysis results, PCA or modelChecking")
-                ui.dataPlain.setPlainText(data)
-                ui.dataPlain.setLineWrapMode(0)
-                font = "FreeMono"
-                if sys.platform.startswith('win'):
-                    font = "Courier New"
-                elif "darwin" in sys.platform:
-                    font = "Andale Mono"
-                ui.dataPlain.setFont(QFont(font,10))
-                QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
+                self.drawAnalysisFrame = ViewTextFile(data,self.returnToAnalysisList,self)
 
         elif typestr == "confidence":
             f = open("%s/analysis/%s/confidence.txt"%(self.dir,anDir),'r')
             data = f.read()
             f.close()
-            self.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
-            self.drawAnalysisFrame.parent = self
-            ui = self.drawAnalysisFrame
             log(3,"Viewing analysis results, confidence in scenario choice")
-            ui.dataPlain.setPlainText(data)
-            ui.dataPlain.setLineWrapMode(0)
-            font = "FreeMono"
-            if sys.platform.startswith('win'):
-                font = "Courier New"
-            elif "darwin" in sys.platform:
-                font = "Andale Mono"
-            ui.dataPlain.setFont(QFont(font,10))
-            QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToAnalysisList)
+            self.drawAnalysisFrame = ViewTextFile(data,self.returnToAnalysisList,self)
         elif typestr == "bias":
             f = open("%s/analysis/%s/bias.txt"%(self.dir,anDir),'r')
             data = f.read()

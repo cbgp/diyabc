@@ -8,6 +8,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
 from utils.visualizescenario import *
+from viewTextFile import ViewTextFile
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 from utils.cbgpUtils import log
@@ -89,18 +90,9 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             f = open("%s/analysis/%s/mmmq%s.txt"%(self.parent.dir,self.directory,self.file_subname),'r')
             data = f.read()
             f.close()
-            self.parent.drawAnalysisFrame = uic.loadUi("uis/viewTextFile.ui")
-            self.parent.drawAnalysisFrame.parent = self.parent
-            ui = self.parent.drawAnalysisFrame
-            ui.dataPlain.setPlainText(data)
-            ui.dataPlain.setLineWrapMode(0)
-            font = "FreeMono"
-            if sys.platform.startswith('win'):
-                font = "Courier New"
-            elif "darwin" in sys.platform:
-                font = "Andale Mono"
-            ui.dataPlain.setFont(QFont(font,10))
-            QObject.connect(ui.okButton,SIGNAL("clicked()"),self.returnToMe)
+
+            self.parent.drawAnalysisFrame = ViewTextFile(data,self.returnToMe,self.parent)
+
             self.parent.ui.analysisStack.addWidget(self.parent.drawAnalysisFrame)
             self.parent.ui.analysisStack.setCurrentWidget(self.parent.drawAnalysisFrame)
         else:
