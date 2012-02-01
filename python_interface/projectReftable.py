@@ -1531,14 +1531,26 @@ class AnalysisThread(QThread):
             addLine("%s/command.txt"%self.parent.dir,"Command launched for analysis '%s' : %s\n\n"%(self.analysis.name," ".join(cmd_args_list)))
             outfile = "%s/pre-ev.out"%self.parent.dir
             f = open(outfile,"w")
-            p = subprocess.call(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
-            self.log(3,"Call procedure success")
-
-            f = open(outfile,"r")
-            f.close()
-            self.progress = 100
-            self.emit(SIGNAL("analysisProgress(int)"),self.progress)
-            return
+            p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
+            self.processus = p
+            self.log(3,"Popen procedure success")
+            outlastline = ""
+            while True:
+                time.sleep(2)
+                poll_check = p.poll()
+                if poll_check != None:
+                    f.close()
+                    f = open(outfile,"r")
+                    if len(f.readlines()) > 0:
+                        outlastline = f.readlines()[-1]
+                    f.close()
+                    if poll_check == 0:
+                        self.progress = 100
+                        self.emit(SIGNAL("analysisProgress(int)"),self.progress)
+                    else:
+                        self.problem = "Analysis program exited (with return code %s) before the end of the analysis\n%s"%(poll_check,outlastline)
+                        self.emit(SIGNAL("analysisProblem(QString)"),self.problem)
+                    return
 
         # pour toutes les autres analyses le schema est le même
         cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name,"-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
@@ -1558,7 +1570,8 @@ class AnalysisThread(QThread):
         while True:
             self.updateProgress()
             # verification de l'arret du programme
-            if p.poll() != None:
+            poll_check = p.poll()
+            if poll_check != None:
                 f.close()
                 g = open(outfile,"r")
                 outlines = g.readlines()
@@ -1571,7 +1584,7 @@ class AnalysisThread(QThread):
                 self.updateProgress()
                 if self.progress < 100:
                     redProblem = self.readProblem()
-                    self.problem = "Analysis program exited before the end of the analysis (%s%%)\n%s\n%s"%(self.progress,redProblem,probOut)
+                    self.problem = "Analysis program exited (with return code %s) before the end of the analysis (%s%%)\n%s\n%s"%(poll_check,self.progress,redProblem,probOut)
                     self.emit(SIGNAL("analysisProblem(QString)"),self.problem)
                     return
             time.sleep(2)
