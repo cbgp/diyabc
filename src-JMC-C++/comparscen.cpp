@@ -209,6 +209,53 @@ matligneC *matA;
 
 
 /**
+ * Appelle l'analyse factorielle discriminante et remplace les summary stats par les composantes des jeux simulés
+ * sur les axes discriminants
+ */
+    void transAFD(int nrec,int nsel, float* stat_obs) {
+        long double delta,rdelta,*w,a,**X,*statpiv;
+		float *sp;
+        int *scenar;
+        resAFD afd;
+        //cout<<"debut transfAFD\n";
+        delta=rt.enrsel[nsel-1].dist;
+        rdelta=1.5/delta;
+        w = new long double[nsel];
+        for (int i=0;i<nsel;i++) {a=rt.enrsel[i].dist/delta;w[i]=rdelta*(1.0-a*a);}
+        scenar = new int[nsel];for (int i=0;i<nsel;i++) scenar[i] = rt.enrsel[i].numscen;
+        X = new long double*[nsel];for (int i=0;i<nsel;i++) X[i] = new long double[rt.nstat];
+        statpiv = new long double[rt.nstat];
+		sp = new float[rt.nstat];
+        for (int i=0;i<nsel;i++) {for (int j=0;j<rt.nstat;j++) X[i][j]=(long double)rt.enrsel[i].stat[j];}
+        //cout<<"avant AFD\n";
+        afd = AFD(nsel,rt.nstat,scenar,w,X,1.0);
+        //cout<<"apresAFD\n";
+// remplacement des stat des jeux simulés par leurs composantes sur les axes discriminants
+		for (int i=0;i<nsel;i++) {
+//calcul des composantes pour le i-ème jeu
+            for (int j=0;j<afd.nlambda;j++) {
+                statpiv[j]=0.0;
+                for (int k=0;k<rt.nstat;k++) statpiv[j] += ((long double)rt.enrsel[i].stat[k]-afd.moy[k])*afd.vectprop[k][j];
+            }
+//remplacement des composantes
+            for (int j=0;j<afd.nlambda;j++) rt.enrsel[i].stat[j] = statpiv[j];
+//mise à zéro des stats au delà des composantes
+            for (int j=afd.nlambda;j<rt.nstat;j++) rt.enrsel[i].stat[j] = 0.0;
+        }
+// remplacement des stat observées par ses composantes sur les axes discriminants
+        for (int j=0;j<afd.nlambda;j++) {
+            statpiv[j]=0.0;
+            for (int k=0;k<rt.nstat;k++) statpiv[j] += ((long double)stat_obs[k]-afd.moy[k])*afd.vectprop[k][j];
+            }
+//calcul des composantes pour le jeu observé
+        for (int j=0;j<afd.nlambda;j++) stat_obs[j] = statpiv[j];
+//mise à zéro des stats au delà des composantes
+        for (int j=afd.nlambda;j<rt.nstat;j++) stat_obs[j] = 0.0;
+       delete []w;
+        delete []statpiv;
+        for (int i=0;i<nsel;i++) delete []X[i];delete []X;
+    }
+/**
 * effectue le remplissage de la matrice cmatX0 et du vecteur des poids cvecW
 */
     void rempli_mat0(int n, float* stat_obs) {
@@ -810,6 +857,7 @@ matligneC *matA;
         int nrec = 0,nseld = 0,nselr = 0,nsel = 0,ns,nlogreg = 0,k,nts;
         string *ss = NULL,s,*ss1 = NULL,s0,s1;
         float  *stat_obs;
+        bool AFD=false;
 		/*double duree,debut,clock_zero;*/
         FILE *flog;
         posteriorscenC **postscendir,**postscenlog;
@@ -843,6 +891,9 @@ matligneC *matA;
                 nlogreg=atoi(s1.c_str());
                 if (nlogreg==0) nselr=0;
                 cout<< "nombre de régressions logistiques à effectuer = "<<nlogreg<<"\n";
+            } else if (s0=="f:") {
+                AFD=(s1=="1");
+                if (AFD) cout<<"Factorial Discriminant Analysis\n";
             }
         }
         nsel=nseld;if(nsel<nselr)nsel=nselr;
@@ -855,6 +906,7 @@ matligneC *matA;
 //        clock_zero=0.0;debut=walltime(&clock_zero);
         rt.cal_dist(nrec,nsel,stat_obs);
 //        duree=walltime(&debut);time_readfile += duree;
+		if (AFD) transAFD(nrec,nsel,stat_obs);
         iprog+=4;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         postscendir = comp_direct(nseld);
         save_comp_direct(nseld,postscendir,path,ident);  cout<<"apres save_comp_direct\n";

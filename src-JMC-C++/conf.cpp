@@ -134,20 +134,28 @@ string nomficonfresult;
         //cout<<"avant AFD\n";
         afd = AFD(nsel,rt.nstat,scenar,w,X,1.0);
         //cout<<"apresAFD\n";
-        for (int i=0;i<nsel;i++) {
+// remplacement des stat des jeux simulés par leurs composantes sur les axes discriminants
+		for (int i=0;i<nsel;i++) {
+//calcul des composantes pour le i-ème jeu
             for (int j=0;j<afd.nlambda;j++) {
                 statpiv[j]=0.0;
                 for (int k=0;k<rt.nstat;k++) statpiv[j] += ((long double)rt.enrsel[i].stat[k]-afd.moy[k])*afd.vectprop[k][j];
             }
+//remplacement des composantes
             for (int j=0;j<afd.nlambda;j++) rt.enrsel[i].stat[j] = statpiv[j];
+//mise à zéro des stats au delà des composantes
             for (int j=afd.nlambda;j<rt.nstat;j++) rt.enrsel[i].stat[j] = 0.0;
         }
+// remplacement des stat du p_ième pods par ses composantes sur les axes discriminants
         for (int j=0;j<afd.nlambda;j++) {
             statpiv[j]=0.0;
             for (int k=0;k<rt.nstat;k++) statpiv[j] += ((long double)enreg[p].stat[k]-afd.moy[k])*afd.vectprop[k][j];
             }
+//calcul des composantes pour le p-ème pods
         for (int j=0;j<afd.nlambda;j++) enreg[p].stat[j] = statpiv[j];
+//mise à zéro des stats au delà des composantes
         for (int j=afd.nlambda;j<rt.nstat;j++) {enreg[p].stat[j] = 0.0;statpiv[j] = 0.0;}
+// transfert dans la structure de retour        
         for (int j=0;j<rt.nstat;j++) sp[j]=float(statpiv[j]);
         delete []w;
         //delete []statpiv;
