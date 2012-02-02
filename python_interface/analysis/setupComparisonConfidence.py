@@ -114,20 +114,27 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                 strparam += "t:%s;"%self.dico_values['notds']
                 strparam += "f:%s;"%self.analysis.fda
                 strparam += "h:"
-                for paramname in self.analysis.histParams.keys():
-                    l = self.analysis.histParams[paramname]
-                    strparam += "%s="%paramname
-                    if len(l) == 2:
-                        strparam += "%s "%l[1]
-                    else:
+                if self.analysis.drawn:
+                    for paramname in self.analysis.histParamsDrawn.keys():
+                        l = self.analysis.histParamsDrawn[paramname]
+                        strparam += "%s="%paramname
                         strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
-                for ctxt in self.analysis.condTxtList:
-                    strparam += "%s "%ctxt
+                    for ctxt in self.analysis.condTxtList:
+                        strparam += "%s "%ctxt
+                else:
+                    for paramname in self.analysis.histParamsFixed.keys():
+                        l = self.analysis.histParamsFixed[paramname]
+                        strparam += "%s="%paramname
+                        strparam += "%s "%l[1]
                 strparam = strparam[:-1]
-                if len(self.analysis.mutationModel)>0:
+                if self.analysis.drawn:
+                    mutmod = self.analysis.mutationModelDrawn
+                else:
+                    mutmod = self.analysis.mutationModelFixed
+                if len(mutmod)>0:
                     strparam += ";u:"
-                    if type(self.analysis.mutationModel[0]) == type(u'plop'):
-                        for ind,gr in enumerate(self.analysis.mutationModel):
+                    if type(mutmod[0]) == type(u'plop'):
+                        for ind,gr in enumerate(mutmod):
                             strparam += "g%s("%(ind+1)
                             strgr = gr.strip()
                             strgr = strgr.split('\n')
@@ -139,7 +146,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                             strparam = strparam[:-1]
                             strparam += ")*"
                     else:
-                        for ind,gr in enumerate(self.analysis.mutationModel):
+                        for ind,gr in enumerate(mutmod):
                             strparam += "g%s("%(ind+1)
                             for num in gr:
                                 strparam += "%s "%num
