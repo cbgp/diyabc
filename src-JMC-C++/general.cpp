@@ -312,29 +312,6 @@ try {
 			statobsfilename = soptarg + "statobs.txt";
 			stopfilename = soptarg + ".stop"; 
 			path = soptarg;
-            /*
-			headerfilename = new char[strlen(optarg)+13];
-            headersimfilename = new char[strlen(optarg)+16];
-            reftablefilename = new char[strlen(optarg)+15];
-            reftablelogfilename = new char[strlen(optarg)+15];
-            statobsfilename = new char[strlen(optarg)+14];
-            stopfilename = new char[strlen(optarg)+13];
-            path = new char[strlen(optarg)+1];
-            strcpy(path,optarg);
-            strcpy(headerfilename,optarg);
-            strcpy(headersimfilename,optarg);
-            strcpy(reftablefilename,optarg);
-            strcpy(reftablelogfilename,optarg);
-            strcpy(statobsfilename,optarg);
-            strcpy(stopfilename,optarg);
-            strcat(headerfilename,"header.txt");
-            strcat(headersimfilename,"headersim.txt");
-			headersimfilename2 = headersimfilename2 + "headersim.txt";
-            strcat(reftablefilename,"reftable.bin");
-            strcat(reftablelogfilename,"reftable.log");
-            strcat(statobsfilename,"statobs.txt");
-            strcat(stopfilename,".stop");
-			*/
             flagp=true;
             if (stat(stopfilename.c_str(),&stFileInfo)==0) remove(stopfilename.c_str());
             break;
@@ -505,7 +482,8 @@ try {
                                               cout<<rt.nrec;
                                               //if (firsttime) writecourant();
                                               //cout<<"à la place de writecourant\n";
-                                              if (((rt.nrec%1000)==0)and(rt.nrec<nrecneeded))cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
+                                              ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"OK\n"<<rt.nrec<<"\n"<<TimeToStr(remtime)<<"\n";f1.close();
+											  if (((rt.nrec%1000)==0)and(rt.nrec<nrecneeded))cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
                                               stoprun = (stat(stopfilename.c_str(),&stFileInfo)==0);
                                               if (stoprun) remove(stopfilename.c_str());
                                           } else {
