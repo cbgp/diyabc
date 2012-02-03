@@ -38,6 +38,7 @@ struct LocusC
   bool firstime;
   short int **haplosnp; //array[sample][gene copy] 0,1,9
   bool mono;  //mono=true si un seul allèle dans l'échantillon global
+  double weight; //poids du locus=1, sauf quand biais de recrutement
 
   void libere(bool obs, int nsample);
 };

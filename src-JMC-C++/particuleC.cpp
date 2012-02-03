@@ -1001,7 +1001,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    *                    initialise les propriétés "sample" et "height" des noeuds terminaux
    *                    initialise à 0 la propriété "pop" de tous les noeuds et à 0 la propriété "sample" des noeuds non-terminaux
    */
-  void ParticleC::init_tree(GeneTreeC & gt, int loc, bool gtexist) {
+  void ParticleC::init_tree(GeneTreeC & gt, int loc) {
     //cout << "début de init_tree pour le locus " << loc  <<"\n";
 
 
@@ -1012,10 +1012,8 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     gt.ngenes = nnod;
     gt.nnodes=nnod;
     gt.nbranches = 0;
-	if (not gtexist){
-		gt.nodes = new NodeC[2*nnod+1];
-		gt.branches = new BranchC[2*nnod];
-	}
+	gt.nodes = new NodeC[2*nnod+1];
+	gt.branches = new BranchC[2*nnod];
     for (int sa=0;sa<this->data.nsample;sa++) {
       //cout<<"    this->data.nind["<<sa<<"]="<<this->data.nind[sa]<<"\n";
       for (int ind=0;ind<this->data.nind[sa];ind++) {
@@ -1259,7 +1257,8 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 
 void ParticleC::cherche_branchesOK(int loc) {
 	for (int b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = true;
-	this->gt[loc].nbOK=this->gt[loc].nbranches;
+	for (int b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OKOK = true;
+	this->gt[loc].nbOKOK=this->gt[loc].nbranches;
 	if (this->refnindtot<1) return;
 	int j,nodemrca=0,f1,f2,b;
 	bool mrca;
@@ -1291,13 +1290,14 @@ void ParticleC::cherche_branchesOK(int loc) {
 	}
 	//mise à false des branches de l'arbre
 	for (b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = false;
+	for (b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OKOK = false;
 	//remplissage des brhaut des nodes
 	for (b=0;b<this->gt[loc].nbranches;b++) {
 		this->gt[loc].nodes[this->gt[loc].branches[b].bottom].brhaut = b;
 	}
 	//recherche du mrca des gènes des pop de référence et mise à true des branches.OK y conduisant
 	//et dont les noeuds bas ont au moins un descendant échantillonné
-	this->gt[loc].nbOK=0;
+	this->gt[loc].nbOK=0;this->gt[loc].nbOKOK=0;
 	for (int i=0;i<this->gt[loc].ngenes-1;i++) {
 		if (this->gt[loc].nodes[i].OK) {
 			for (int j=i+1;j<this->gt[loc].ngenes;j++) {
@@ -1305,11 +1305,13 @@ void ParticleC::cherche_branchesOK(int loc) {
 					f1=i;f2=j;b=0;
 					do {
 						if (this->gt[loc].branches[b].bottom == f1) {
-							if ((f1!=i)and(this->gt[loc].nodes[f1].ndat>0)) {this->gt[loc].branches[b].OK=true;this->gt[loc].nbOK++;}
+							this->gt[loc].branches[b].OK=true;this->gt[loc].nbOK++;
+							if ((f1!=i)and(this->gt[loc].nodes[f1].ndat>0)) {this->gt[loc].branches[b].OKOK=true;this->gt[loc].nbOKOK++;}
 							f1 = this->gt[loc].branches[b].top;
 						}
 						if (this->gt[loc].branches[b].bottom == f2) {
-							if ((f2!=j)and(this->gt[loc].nodes[f2].ndat>0)) { this->gt[loc].branches[b].OK=true;this->gt[loc].nbOK++;}
+							this->gt[loc].branches[b].OK=true;this->gt[loc].nbOK++;
+							if ((f2!=j)and(this->gt[loc].nodes[f2].ndat>0)) { this->gt[loc].branches[b].OKOK=true;this->gt[loc].nbOKOK++;}
 							f2 = this->gt[loc].branches[b].top;
 						}
 						mrca = (f1==f2);
@@ -1328,7 +1330,7 @@ void ParticleC::cherche_branchesOK(int loc) {
 			b = this->gt[loc].nodes[f1].brhaut;
 			f1 = this->gt[loc].branches[b].top;
 		} while (f1<nodemrca);
-		if (f1==nodemrca) {  // le gène i descend du mrca
+		if (f1==nodemrca) {  // le gène i descend du mrcalengthtotOK
 			f1=i;
 			do {
 				b = this->gt[loc].nodes[f1].brhaut;
@@ -1348,27 +1350,34 @@ void ParticleC::cherche_branchesOK(int loc) {
 
 void ParticleC::put_one_mutation(int loc) {
     this->gt[loc].nmutot=1;
-    double ra,r,s=0.0,lengthtot=0.0;
+    double ra,r,s=0.0,lengthtotOK=0.0,lengthtotOKOK=0.0;
     int b;
     for (b=0;b<this->gt[loc].nbranches;b++) {
-      if (this->gt[loc].branches[b].OK) lengthtot +=this->gt[loc].branches[b].length;
+      if (this->gt[loc].branches[b].OK) lengthtotOK +=this->gt[loc].branches[b].length;
+      if (this->gt[loc].branches[b].OKOK) lengthtotOKOK +=this->gt[loc].branches[b].length;
       this->gt[loc].branches[b].nmut = 0;
       //if (loc==1) cout<<"longueur de la branche "<<b<<" = "<<this->gt[loc].branches[b].length<<"\n";
     }
-    ra=this->mw.random();
-    r=ra*lengthtot;
+    //cout<<"   lOKOK="<<lengthtotOKOK<<"   lOK="<<lengthtotOK<<"\n";
+	//cout<<lengthtotOKOK/lengthtotOK<<"\n";
+    this->locuslist[loc].weight=lengthtotOKOK/lengthtotOK;
+	if (debuglevel==11) cout<<"weight="<<this->locuslist[loc].weight<<"   lOKOK="<<lengthtotOKOK<<"   lOK="<<lengthtotOK<<"    ";
+    if (this->locuslist[loc].weight==0.0) return;
+	ra=this->mw.random();
+    r=ra*lengthtotOKOK;
     //if (loc<1) cout<<"lengthtot="<<lengthtot<<"     r="<<r<<"\n";
-	b=0;while (not this->gt[loc].branches[b].OK) b++;
+	
+	b=0;while (not this->gt[loc].branches[b].OKOK) b++;
     s=this->gt[loc].branches[b].length;
-    while (s<r) {b++; if (this->gt[loc].branches[b].OK) s +=this->gt[loc].branches[b].length;};
+    while (s<r) {b++; if (this->gt[loc].branches[b].OKOK) s +=this->gt[loc].branches[b].length;};
     this->gt[loc].branches[b].nmut = 1;
-	if ((b==0)and(not this->gt[loc].branches[b].OK)) {
-		cout<<"lengthtot="<<lengthtot<<"     r="<<r<<"    s="<<s<<"\n";
+	if ((b==0)and(not this->gt[loc].branches[b].OKOK)) {
+		cout<<"lengthtot="<<lengthtotOKOK<<"     r="<<r<<"    s="<<s<<"\n";
 		exit(2);
 	}
     //if (loc<10) cout<<"mutation dans la branche "<<b<<" sur "<<this->gt[loc].nbranches<<"\n";
     //if (loc<10) cout<<nOK<<" branches mutables sur "<<this->gt[loc].nbranches<<"\n";
-    if (debuglevel==20) cout<<"locus "<<loc<<"   numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
+    //if (debuglevel==20) cout<<"locus "<<loc<<"   numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
   } 
 
 
@@ -1770,7 +1779,7 @@ void ParticleC::put_one_mutation(int loc) {
 		  exit(1);
 	  }
 	  if (debuglevel==5) cout <<"apres checktree\n";
-	  bool gtYexist=false, gtMexist=false,*gtexist;
+	  bool gtYexist=false, gtMexist=false;
 	  this->gt = new GeneTreeC[this->nloc];
 	  emptyPop = new int[this->scen.popmax+1];
 	  //cout << "particule " << ipart <<"   nparam="<<this->scen.nparam<<"\n";
@@ -1783,9 +1792,8 @@ void ParticleC::put_one_mutation(int loc) {
 	  if (debuglevel==5) cout <<"avant setMutParammoyValue \n";
 	  setMutParammoyValue();
 	  if (debuglevel==10) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
-	  gtexist = new bool[this->nloc];
-	  for (loc=0;loc<this->nloc;loc++) gtexist[loc] = false;
 	  for (int gr=1;gr<this->ngr+1;gr++) nlocutil +=this->grouplist[gr].nloc;
+	  this->sumweight = 0.0;
 	for (loc=0;loc<this->nloc;loc++) {
 		if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
 		  if (debuglevel==5) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
@@ -1805,12 +1813,12 @@ void ParticleC::put_one_mutation(int loc) {
 			  }
 			  if (not treedone) {
 				  if (debuglevel==10) cout << "avant init_tree \n";
-				  init_tree(this->gt[loc], loc,gtexist[loc]);
+				  init_tree(this->gt[loc], loc);
 				  if (debuglevel==10){
 					  cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
 					  cout<< "scenario "<<this->scen.number<<"\n";
 				  }
-				  if (not gtexist[loc]) for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
+				  for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 				  for (int iseq=0;iseq<this->nseq;iseq++) {
 					  if (debuglevel==10) {
 						  cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
@@ -1870,35 +1878,34 @@ void ParticleC::put_one_mutation(int loc) {
 				  if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
 				  simulOK[loc]=cree_haplo(loc);
 				  if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
+					this->naccept++;
 			  } else {
 				  //if (loc==0) cout<<"this->refnindtot="<<this->refnindtot<<"\n";
 				this->locuslist[loc].firstime = true;
 				cherche_branchesOK(loc);
-				if (debuglevel==11) cout<<"locus "<<loc<<"   nbOK = "<<this->gt[loc].nbOK<<"\n";
-				if (this->gt[loc].nbOK>0){
-					put_one_mutation(loc);
+				if (debuglevel==11) cout<<"locus "<<loc<<"   nbOK = "<<this->gt[loc].nbOK<<"   nbOKOK = "<<this->gt[loc].nbOKOK<<"\n";
+				put_one_mutation(loc);
+				if (this->locuslist[loc].weight>0.0) {
 					simulOK[loc]=cree_haplo(loc);
-					if (this->refnindtot>0) {snpOK = polymref(loc);if (debuglevel==11) cout<<"snpOK="<<snpOK<<"\n";} 
-				} else snpOK=false;
-			  }
-				if (snpOK){
-					if (simulOK[loc] != 0) {if (debuglevel==10) cout << "avant break interne\n";break;}
-					if (debuglevel==10) cout << "fin du locus " << loc << "   "<< simulOK[loc] << "\n";
 					this->naccept++;
-					//cout<<this->ntentes<<" tentes et "<<this->naccept<<" acceptés\n";
-				}
-			if (not snpOK) {
-				if ((this->ntentes>nlocutil)and(this->naccept<nlocutil/10)) {simulOK[loc]=-1;loca=loc;}
-				gtexist[loc]=true; loc--;
-			}
-			if (loca!=-1) break;
+				/*} else {
+					if ((this->ntentes>nlocutil)and(this->naccept<nlocutil/10)) {simulOK[loc]=-1;loca=loc;}*/
+				} else simulOK[loc]=0;
+				this->sumweight +=this->locuslist[loc].weight;
+				//cout<<"weight = "<<this->weight<<"\n";
+			  }
+			//if (loca!=-1) break;
 		}
-		if (loca!=-1) break;
+		//if (loca!=-1) break;
 		//cout<<"   OK\n\n";
 		//if (loc==50)
 		//exit(6);
 	}	//LOOP ON loc
-	if (loca==-1){  
+	this->weight =this->sumweight/(double)nlocutil;
+	this->locpol = (double)this->naccept/(double)this->ntentes;
+	if (this->locpol<0.2) this->weight=0.0;
+	cout<<"poids de la particule = "<<this->weight<<"   taux de polymorphisme = "<<this->locpol<<"\n";
+	if (this->weight>0.0){  
 		if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
 		if (this->data.nmisshap>0) {
 			for (int i=0;i<this->data.nmisshap;i++) {
@@ -1968,17 +1975,16 @@ void ParticleC::put_one_mutation(int loc) {
 	  // if (gtYexist) deletetree(GeneTreeY,dnaloc);
 	  // if (gtMexist) deletetree(GeneTreeM,dnaloc);
 	  //if (trace) cout << "Fin de dosimulpart \n";
-	if (loca==-1){
+	  if (this->weight>0.0){
 		simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
-	} else simOK=-99;
+	}
 	  if (debuglevel==11) cout<<"fin de dosimulpart   simOK="<<simOK<<"\n";fflush(stdin);
 	  if (debuglevel==7) {
-		  for (int loc=0;loc<this->nloc;loc++) if(this->locuslist[loc].type>4) {
+		  for (int loc=0;loc<this->nloc;loc++) if((this->locuslist[loc].type>4)and(this->locuslist[loc].type<10)) {
 			  cout<<"Locus "<<loc<<"\n";
 			  for(int sa=0;sa<this->nsample;sa++) {cout<<this->locuslist[loc].haplodna[sa][0]<<"\n";cout<<this->locuslist[loc].haplodna[sa][1]<<"\n\n";}
 		  }
 	  }
-	  //exit(1);
 	  return simOK;
   }
 

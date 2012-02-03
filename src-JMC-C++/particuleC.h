@@ -44,6 +44,7 @@ class ParticleC
 	  bool *catexist;
 	  double matQ[4][4];
 	  long int naccept,ntentes;
+	  double weight,locpol,sumweight;
 
    /* Déclaration des méthodes */
 	  void libere(bool obs);
@@ -117,7 +118,7 @@ class ParticleC
    // initialise l'arbre de coalescence, i.e. alloue la mémoire pour les noeuds et les branches,
    // initialise les propriétés "sample" et "height" des noeuds terminaux
    // initialise à 0 la propriété "pop" de tous les noeuds et à 0 la propriété "sample" des noeuds non-terminaux
-   void init_tree(GeneTreeC & gt,int loc, bool gtexist);
+   void init_tree(GeneTreeC & gt,int loc);
 
    // évalue la pertinence de l'approximation continue pour le traitement de la coalescence
    // (1= approximation continue, 0 = generation par generation)
@@ -215,14 +216,14 @@ class ParticleC
    void cal_freq(int gr,int st); // FIXME: différence avec calfreq ????
    long double cal_aml3p(int gr,int st);
    void cal_numvar(int gr);
-   long double cal_p0L(int n, long double *x);
+   long double cal_p0L(StatsnpC stsnp);
    long double mQ(int n, int n0, int n1,long double *x);
    long double cal_medL(int n, long double *x);
    long double cal_qu1L(int n, long double *x);
    long double cal_qu3L(int n, long double *x);
-   long double cal_moyL0(int n, long double *x);
-   long double cal_moyL(int n, long double *x);
-   long double cal_varL0(int n, long double *x);
+   long double cal_moyL0(StatsnpC stsnp);
+   long double cal_moyL(StatsnpC stsnp);
+   long double cal_varL0(StatsnpC stsnp);
    void docalstat(int gr);
 
  };

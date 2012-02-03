@@ -537,6 +537,7 @@ GeneTreeC::GeneTreeC(GeneTreeC const & source) {
   this->ngenes = source.ngenes;
   this->nbranches = source.nbranches;
   this->nbOK = source.nbOK;
+  this->nbOKOK = source.nbOKOK;
   this->branches = new BranchC[this->nbranches];
   this->nodes = new NodeC[this->nnodes];
   for (int b=0;b<this->nbranches;b++) {
@@ -559,6 +560,7 @@ GeneTreeC & GeneTreeC::operator=(GeneTreeC const & source) {
   this->ngenes = source.ngenes;
   this->nbranches = source.nbranches;
   this->nbOK = source.nbOK;
+  this->nbOKOK = source.nbOKOK;
   this->branches = new BranchC[this->nbranches];
   this->nodes = new NodeC[this->nnodes];
   for (int b=0;b<this->nbranches;b++) {

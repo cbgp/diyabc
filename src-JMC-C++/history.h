@@ -27,7 +27,7 @@ struct StatC
 struct StatsnpC
 {
   int cat,samp,samp1,samp2,group,n;
-  long double *x;
+  long double *x,sw,*w;
   bool defined,sorted;
 };
 
@@ -222,7 +222,7 @@ struct BranchC
 {
   int bottom,top,nmut;
   double length;
-  bool OK;
+  bool OK,OKOK;
 };
 
 /**
@@ -233,7 +233,7 @@ class GeneTreeC
 public:
   NodeC *nodes;
   BranchC *branches;
-  int nmutot,nnodes,nbranches,ngenes,nbOK;
+  int nmutot,nnodes,nbranches,ngenes,nbOK,nbOKOK;
 
   /* Déclaration des méthodes */
   GeneTreeC(){

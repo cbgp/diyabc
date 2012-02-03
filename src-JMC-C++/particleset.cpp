@@ -220,6 +220,7 @@ void ParticleSetC::setgroup(int p) {
 				this->particule[p].grouplist[gr].sumstatsnp[i].defined = header.groupe[gr].sumstatsnp[i].defined;
 				this->particule[p].grouplist[gr].sumstatsnp[i].sorted = header.groupe[gr].sumstatsnp[i].sorted;
 				this->particule[p].grouplist[gr].sumstatsnp[i].x = new long double[header.groupe[gr].nloc];
+				this->particule[p].grouplist[gr].sumstatsnp[i].w = new long double[header.groupe[gr].nloc];
 			}
 		}
 	}
@@ -496,27 +497,26 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	}
 	if (debuglevel==5) cout << "avant pragma npart = "<<this->npart<<"\n";
 	//if (num_threads>0) omp_set_num_threads(num_threads);_
-	ntentes=0;naccept=0;
+	//ntentes=0;naccept=0;
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
 	for (ipart=0;ipart<this->npart;ipart++){
 		if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 		//cout <<"   nloc="<<this->particule[ipart].nloc<<"\n";
-		do {
-			sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
-			if (sOK[ipart]==-99) this->resetparticle(ipart);
-		} while (sOK[ipart]==-99);
+		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
 		
-		ntentes += this->particule[ipart].ntentes;
-		naccept += this->particule[ipart].naccept;
+		//ntentes += this->particule[ipart].ntentes;
+		//naccept += this->particule[ipart].naccept;
 		if (debuglevel==5) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
-		if (sOK[ipart]==0) {
+		
+		if ((sOK[ipart]==0)and(this->particule[ipart].weight>0.0)) {
+			if (debuglevel==5) cout<<"avant docalstat de la particule "<<ipart<<"\n";
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
 		}
 		if (debuglevel==5) cout<<"apres docalstat de la particule "<<ipart<<"\n";
 	}
 	//fin du pragma
 	if (debuglevel==5) cout << "apres pragma\n";
-	cout<<"acceptation ="<<(double)(100*naccept)/(double)ntentes<<"   ("<<naccept<<" sur "<<ntentes<<")\n";
+	//cout<<"acceptation ="<<(double)(100*naccept)/(double)ntentes<<"   ("<<naccept<<" sur "<<ntentes<<")\n";
 	//exit(1);
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		if (sOK[ipart]==0){
@@ -570,16 +570,18 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		if (debuglevel==5) cout<<header.entetehist<<"\n";
 		if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;
 		ss=splitwords(header.entete," ",&ns);
-		//cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
+		cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
 		np=ns-header.nstat-1;
-		//cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
-		//cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
+		cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
+		cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
+		cout<<"npart="<<this->npart<<"\n";
 		for (int ipart=0;ipart<this->npart;ipart++) {
+			cout<<"ipart="<<ipart<<"    sOK[ipart]="<<sOK[ipart]<<"\n";
 			if (sOK[ipart]==0){
-				//cout<<enreg[ipart].numscen<<"\n";
+				cout<<enreg[ipart].numscen<<"\n";
 				fprintf(pFile,"%3d  ",enreg[ipart].numscen);
 				iscen=enreg[ipart].numscen-1;
-				//cout<<"scenario "<<enreg[ipart].numscen<<"\n";
+				cout<<"scenario "<<enreg[ipart].numscen<<"\n";
 				if (debuglevel==5) cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"   "<<np<<"\n";
 				pa=0;
 				for (int j=1;j<nph;j++) {
@@ -587,7 +589,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 					while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
 						ip++;
 						trouve=(ss[j] == rt.histparam[iscen][ip].name);
-						//cout<<"->"<<ss[j]<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
+						cout<<"->"<<ss[j]<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
 					}
 					if (trouve) {
 						trouve2=false;iq=-1;
