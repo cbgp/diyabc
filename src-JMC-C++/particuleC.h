@@ -174,7 +174,6 @@ class ParticleC
    void cal_snhet(int gr,int numsnp);
    void cal_snnei(int gr,int numsnp);
    void cal_snfst(int gr,int numsnp);
-   pair<long double, long double> pente_liksnp(int gr, int st, int i0);
    void cal_snaml(int gr,int numsnp);
    // MICROSAT
    long double cal_pid1p(int gr,int st);
@@ -224,7 +223,7 @@ class ParticleC
    long double cal_moyL0(StatsnpC stsnp);
    long double cal_moyL(StatsnpC stsnp);
    long double cal_varL0(StatsnpC stsnp);
-   void docalstat(int gr);
+   void docalstat(int gr,double weight);
 
  };
 #endif /* PARTICULEC_H_ */

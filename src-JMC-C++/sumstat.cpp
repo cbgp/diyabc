@@ -102,7 +102,6 @@ extern int debuglevel;
 				}
 			}
 		}
-		cout<<"calfreqsnp fin\n";
 	}
 
 	void ParticleC::liberefreq(int gr) {
@@ -193,7 +192,8 @@ extern int debuglevel;
     }
   */
 	void ParticleC::cal_snhet(int gr,int numsnp) {
-		long double het,hetm=0.0;
+		//cout<<"debut de cal_snhet\n";
+		long double het;
 		int iloc,kloc,sasize;
 		int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
 		//ofstream f10("/home/cornuet/workspace/diyabc/src-JMC-C++/hetero.txt",ios::out);
@@ -209,235 +209,117 @@ extern int debuglevel;
 					for (int k=0;k<2;k++) het -= sqr(this->locuslist[kloc].freq[sample][k]);
 					het *= ((long double)sasize/(long double)(sasize-1));
 					this->grouplist[gr].sumstatsnp[numsnp].x[iloc] = het;
-					hetm+=het;
-					//fprintf(f1,"%6.4Lf\n",het);
 					//f10<<het<<"\n";
 				} else this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
-				this->grouplist[gr].sumstatsnp[numsnp].sw += this->grouplist[gr].sumstatsnp[numsnp].w[iloc];
 			}
+			this->grouplist[gr].sumstatsnp[numsnp].sw += this->grouplist[gr].sumstatsnp[numsnp].w[iloc];
 		}
-		//fclose(f1);
 		//f10.close();
-		//cout<<"               sample "<<sample+1<<"    hetmoy="<<hetm/(long double)nl<<"\n";
 		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
-		//cout<<"\n";
 	}
 
 	
 	void ParticleC::cal_snnei(int gr,int numsnp) {
-    //cout<<"debu de cal_snnei\n";
-    long double nei,fi,fj,gi,gj;
-    int iloc,loc,nl=0,n1,n2;
-    int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
-    int sample1=this->grouplist[gr].sumstatsnp[numsnp].samp1-1;
-    //cout<<"numsnp="<<numsnp<<"sample = "<<sample<<"    sample1 = "<<sample1<<"\n";
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      loc=this->grouplist[gr].loc[iloc];
-      n1=samplesize(loc,sample);n2=samplesize(loc,sample1);
-      if ((n1>0)and(n2>0)) nl++;
-    }
-    this->grouplist[gr].sumstatsnp[numsnp].n = nl;
-
-    nl=0;
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      loc=this->grouplist[gr].loc[iloc];
-      n1=samplesize(loc,sample);n2=samplesize(loc,sample1);
-      if ((n1>0)and(n2>0)) {
-	fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];
-	gi=this->locuslist[loc].freq[sample][1];gj=this->locuslist[loc].freq[sample1][1];
-	nei = 1.0- (fi*fj + gi*gj)/sqrt(fi*fi + gi*gi)/sqrt(fj*fj + gj*gj);
-	//cout<<"nei["<<nl<<"] = "<<nei[nl]<<"\n";
-	this->grouplist[gr].sumstatsnp[numsnp].x[nl] = nei;
-	nl++;
-      }
-    }
-    this->grouplist[gr].sumstatsnp[numsnp].defined=true;
-  }
-  /*
-    void ParticleC::cal_snfst(int gr,int numsnp) {
-    //cout<<"debut de cal_snfst\n";
-    long double *fst,fi,fj,n1,n2;
-    long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P;
-    int iloc,loc,nl=0;
-    int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
-    int sample1=this->grouplist[gr].sumstatsnp[numsnp].samp1-1;
-    fst = new long double[this->grouplist[gr].nloc];
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-    loc=this->grouplist[gr].loc[iloc];
-    n1=(long double)this->locuslist[loc].samplesize[sample];n2=(long double)this->locuslist[loc].samplesize[sample1];
-    if ((n1>0)and(n2>0)) {
-    s1l = 0.0;s3l = 0.0;
-    for (int all=0;all<2;all++) {
-    fi=this->locuslist[loc].freq[sample][all];
-    fj=this->locuslist[loc].freq[sample1][all];
-    sniAA = fi*n1+fj*n2;
-    sniA  = 2.0*sniAA;
-    sni = n1+n2;
-    sni2 = n1*n1 + n2*n2;
-    s2A = 2.0*(n1*fi*fi + n2*fj*fj);
-    nc = (sni-sni2/sni);
-    MSI = (0.5*sniA+sniAA-s2A)/(sni-2.0);
-    MSP = (s2A - 0.5*sniA*sniA/sni);
-    s2I = 0.5*MSI;
-    s2P = (MSP-MSI)/2.0/nc;
-    s1l += s2P;
-    s3l += s2P + s2I;
-    }
-    fst[nl]=0.0;
-    if ((s3l>0.0)and(s1l>0.0)) fst[nl]=s1l/s3l;
-    if(fst[nl]<0.0) fst[nl]=0.0;
-    nl++;
-    //printf("s1l=%10.5Lf   s3l=%10.5Lf   fst[%3d] = %10.5Lf\n", s1l,s3l,nl,fst[nl-1]);
-    }
-    }
-    this->grouplist[gr].sumstatsnp[numsnp].n = nl;
-    this->grouplist[gr].sumstatsnp[numsnp].x =new long double[nl];
-    for (int loc=0;loc<nl;loc++) this->grouplist[gr].sumstatsnp[numsnp].x[loc] = fst[loc];
-    this->grouplist[gr].sumstatsnp[numsnp].defined=true;
-    delete []fst;
-    }
-  */
-  void ParticleC::cal_snfst(int gr,int numsnp) {
-    //cout<<"debut de cal_snfst\n";
-    long double fst,fi,fj,n1,n2;
-    long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P;
-    int iloc,loc,nl=0;
-    int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
-    int sample1=this->grouplist[gr].sumstatsnp[numsnp].samp1-1;
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      loc=this->grouplist[gr].loc[iloc];
-      if ((samplesize(loc,sample)>0)and(samplesize(loc,sample1)>0)) nl++;
-    }
-    this->grouplist[gr].sumstatsnp[numsnp].n = nl;
-    nl=0;
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      loc=this->grouplist[gr].loc[iloc];
-      n1=(long double)samplesize(loc,sample);n2=(long double)samplesize(loc,sample1);
-      if ((n1>0)and(n2>0)) {
-	s1l = 0.0;s3l = 0.0;
-	for (int all=0;all<2;all++) {
-	  fi=this->locuslist[loc].freq[sample][all];
-	  fj=this->locuslist[loc].freq[sample1][all];
-	  sniAA = fi*n1+fj*n2;
-	  sniA  = 2.0*sniAA;
-	  sni = n1+n2;
-	  sni2 = n1*n1 + n2*n2;
-	  s2A = 2.0*(n1*fi*fi + n2*fj*fj);
-	  nc = (sni-sni2/sni);
-	  MSI = (0.5*sniA+sniAA-s2A)/(sni-2.0);
-	  MSP = (s2A - 0.5*sniA*sniA/sni);
-	  s2I = 0.5*MSI;
-	  s2P = (MSP-MSI)/2.0/nc;
-	  s1l += s2P;
-	  s3l += s2P + s2I;
-	}
-	fst=0.0;
-	if ((s3l>0.0)and(s1l>0.0)) fst=s1l/s3l;
-	if(fst<0.0) fst=0.0;
-	this->grouplist[gr].sumstatsnp[numsnp].x[nl] = fst;
-	nl++;
-	//printf("s1l=%10.5Lf   s3l=%10.5Lf   fst[%3d] = %10.5Lf\n", s1l,s3l,nl,fst);
-      }
-    }
-    this->grouplist[gr].sumstatsnp[numsnp].defined=true;
-  }
-
-  pair<long double, long double> ParticleC::pente_liksnp(int gr, int st, int i0) {
-    long double a,freq1,freq2,li0,delta,*li;
-    int ig1,ig2,ind,loc,iloc,nn,cat;
-    li = new long double[2];
-    StatC stat=this->grouplist[gr].sumstat[st];
-    int sample=stat.samp-1;
-    int sample1=stat.samp1-1;
-    int sample2=stat.samp2-1;
-    for (int rep=0;rep<2;rep++) {
-      a=0.001*(long double)(i0+rep);li[rep]=0.0;
-      for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-	loc=this->grouplist[gr].loc[iloc];
-	cat = this->locuslist[loc].type % 5;
-	ind=0;
-	for (int i=0;i<this->data.ss[cat][sample];) {
-	  nn = calploidy(loc,sample,ind);
-	  ind++;
-	  switch (nn)
-	    { case 1 :  ig1 = this->locuslist[loc].haplosnp[sample][i];i++;
-		if ((ig1!=MICMISSING)and(this->dat[cat][sample][i])) {
-		  freq1 = a*this->locuslist[loc].freq[sample1][ig1]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1];
-		  if (freq1>0.0) li[rep] +=log(freq1);
+		//cout<<"debu de cal_snnei\n";
+		long double nei,fi,fj,gi,gj;
+		int iloc,loc,n1,n2;
+		int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
+		int sample1=this->grouplist[gr].sumstatsnp[numsnp].samp1-1;
+		//cout<<"numsnp="<<numsnp<<"sample = "<<sample<<"    sample1 = "<<sample1<<"\n";
+		this->grouplist[gr].sumstatsnp[numsnp].sw = 0.0;
+		this->grouplist[gr].sumstatsnp[numsnp].n = this->grouplist[gr].nloc;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = this->locuslist[loc].weight;
+			if (this->locuslist[loc].weight>0.0) {
+				n1=samplesize(loc,sample);n2=samplesize(loc,sample1);
+				if ((n1>0)and(n2>0)) {
+					fi=this->locuslist[loc].freq[sample][0];fj=this->locuslist[loc].freq[sample1][0];
+					gi=this->locuslist[loc].freq[sample][1];gj=this->locuslist[loc].freq[sample1][1];
+					nei = 1.0- (fi*fj + gi*gj)/sqrt(fi*fi + gi*gi)/sqrt(fj*fj + gj*gj);
+					this->grouplist[gr].sumstatsnp[numsnp].x[iloc] = nei;
+				} else this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
+			}
+			this->grouplist[gr].sumstatsnp[numsnp].sw += this->grouplist[gr].sumstatsnp[numsnp].w[iloc];
 		}
-		break;
-	    case 2 :  ig1 = this->locuslist[loc].haplosnp[sample][i];i++;
-	      ig2 = this->locuslist[loc].haplosnp[sample][i];i++;
-	      if ((ig1!=MICMISSING)and(ig2!=MICMISSING)and(this->dat[cat][sample][i-1])and(this->dat[cat][sample][i])) {
-		if (ig1==ig2) {
-		  freq1 = a*this->locuslist[loc].freq[sample1][ig1]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1];
-		  if (freq1>0.0) li[rep] +=log(sqr(freq1));
-		}
-		else {
-		  freq1 = a*this->locuslist[loc].freq[sample1][ig1]+(1.0-a)*this->locuslist[loc].freq[sample2][ig1];
-		  freq2 = a*this->locuslist[loc].freq[sample1][ig2]+(1.0-a)*this->locuslist[loc].freq[sample2][ig2];
-		  if (freq1*freq2>0.0) li[rep] +=log(2.0*freq1*freq2);
-		  else {
-		    if (freq1>0.0) li[rep] +=log(freq1);
-		    if (freq2>0.0) li[rep] +=log(freq2);
-		  }
-		}
-	      }
-	      break;
-	    }
+		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
 	}
-      }
-    }
-    li0=li[0];
-    delta=li[1]-li[0];
-    delete []li;
-    return make_pair<long double, long double>(li0,delta);
-  }
 
-  /*	long double ParticleC::cal_snaml(int gr,int st){
-	int i1=1,i2=998,i3;
-	long double p1,p2,p3,lik1,lik2,lik3;
-	complex<long double> c;
-	c=pente_lik(gr,st,i1);lik1=real(c);p1=imag(c);
-	c=pente_lik(gr,st,i2);lik2=real(c);p2=imag(c);
-	if ((p1<0.0)and(p2<0.0)) return 0.0;
-	if ((p1>0.0)and(p2>0.0)) return 1.0;
-	do {
-	i3 = (i1+i2)/2;
-	c=pente_liksnp(gr,st,i3);lik3=real(c);p3=imag(c);
-	if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
-	else		   {i1=i3;p1=p3;lik1=lik3;}
-	} while (abs(i2-i1)>1);
-	if (lik1>lik2) return 0.001*(long double)i1; else return 0.001*(long double)i2;
-	}*/
-
-  void ParticleC::cal_snaml(int gr,int numsnp) {
-    long double *aml,f1,f2,f3,n1,n2,Dcra,U,V,N,M,*rangx,*rangy;
-    int iloc,loc,nl=0;
-
-    int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
-    int sample1=this->grouplist[gr].sumstatsnp[numsnp].samp1-1;
-    int sample2=this->grouplist[gr].sumstatsnp[numsnp].samp2-1;
-    aml = new long double[this->grouplist[gr].nloc];
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      loc=this->grouplist[gr].loc[iloc];
-      if ((samplesize(loc,sample1)>0)and(samplesize(loc,sample2)>0)) {
-	f1=this->locuslist[loc].freq[sample1][0];
-	f2=this->locuslist[loc].freq[sample2][0];
-	f3=this->locuslist[loc].freq[sample][0];
-	if (f1!=f2) {
-	  aml[nl] = (f3-f2)/(f1-f2);
-	  if ((aml[nl]>=0.0)and(aml[nl]<=1.0)) nl++;
+	void ParticleC::cal_snfst(int gr,int numsnp) {
+		//cout<<"debut de cal_snfst\n";
+		long double fst,fi,fj,n1,n2;
+		long double sniA,sniAA,sni,sni2,s2A,s1l,s3l,nc,MSI,MSP,s2I,s2P;
+		int iloc,loc;
+		int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
+		int sample1=this->grouplist[gr].sumstatsnp[numsnp].samp1-1;
+		this->grouplist[gr].sumstatsnp[numsnp].sw = 0.0;
+		this->grouplist[gr].sumstatsnp[numsnp].n = this->grouplist[gr].nloc;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = this->locuslist[loc].weight;
+			if (this->locuslist[loc].weight>0.0) {
+				n1=(long double)samplesize(loc,sample);n2=(long double)samplesize(loc,sample1);
+				if ((n1>0)and(n2>0)) {
+					s1l = 0.0;s3l = 0.0;
+					for (int all=0;all<2;all++) {
+						fi=this->locuslist[loc].freq[sample][all];
+						fj=this->locuslist[loc].freq[sample1][all];
+						sniAA = fi*n1+fj*n2;
+						sniA  = 2.0*sniAA;
+						sni = n1+n2;
+						sni2 = n1*n1 + n2*n2;
+						s2A = 2.0*(n1*fi*fi + n2*fj*fj);
+						nc = (sni-sni2/sni);
+						MSI = (0.5*sniA+sniAA-s2A)/(sni-2.0);
+						MSP = (s2A - 0.5*sniA*sniA/sni);
+						s2I = 0.5*MSI;
+						s2P = (MSP-MSI)/2.0/nc;
+						s1l += s2P;
+						s3l += s2P + s2I;
+					}
+					fst=0.0;
+					if ((s3l>0.0)and(s1l>0.0)) fst=s1l/s3l;
+					if(fst<0.0) fst=0.0;
+					this->grouplist[gr].sumstatsnp[numsnp].x[iloc] = fst;
+					//printf("s1l=%10.5Lf   s3l=%10.5Lf   fst[%3d] = %10.5Lf\n", s1l,s3l,nl,fst);
+				} else this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
+			}
+			this->grouplist[gr].sumstatsnp[numsnp].sw += this->grouplist[gr].sumstatsnp[numsnp].w[iloc];
+		}
+		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
 	}
-      }
 
-    }
-    this->grouplist[gr].sumstatsnp[numsnp].n = nl;
-    this->grouplist[gr].sumstatsnp[numsnp].x =new long double[nl];
-    for (int loc=0;loc<nl;loc++) this->grouplist[gr].sumstatsnp[numsnp].x[loc] = aml[loc];
-    this->grouplist[gr].sumstatsnp[numsnp].defined=true;
-    delete []aml;
-  }
+
+	void ParticleC::cal_snaml(int gr,int numsnp) {
+		//cout<<"debut de cal_snaml\n";
+		long double aml,f1,f2,f3,n1,n2,Dcra,U,V,N,M,*rangx,*rangy;
+		int iloc,loc;
+		int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
+		int sample1=this->grouplist[gr].sumstatsnp[numsnp].samp1-1;
+		int sample2=this->grouplist[gr].sumstatsnp[numsnp].samp2-1;
+		this->grouplist[gr].sumstatsnp[numsnp].sw = 0.0;
+		this->grouplist[gr].sumstatsnp[numsnp].n = this->grouplist[gr].nloc;
+		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			loc=this->grouplist[gr].loc[iloc];
+			this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = this->locuslist[loc].weight;
+			if (this->locuslist[loc].weight>0.0) {
+				if ((samplesize(loc,sample1)>0)and(samplesize(loc,sample2)>0)) {
+					f1=this->locuslist[loc].freq[sample1][0];
+					f2=this->locuslist[loc].freq[sample2][0];
+					f3=this->locuslist[loc].freq[sample][0];
+					if (f1!=f2) {
+						aml = (f3-f2)/(f1-f2);
+						if ((aml<0.0)or(aml>1.0)) this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
+						else this->grouplist[gr].sumstatsnp[numsnp].x[iloc] = aml;
+					}
+				} else this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
+			}
+			//if (this->grouplist[gr].sumstatsnp[numsnp].w[iloc]>0.0) cout<<this->grouplist[gr].sumstatsnp[numsnp].x[iloc]<<"\n";
+			this->grouplist[gr].sumstatsnp[numsnp].sw += this->grouplist[gr].sumstatsnp[numsnp].w[iloc];
+		}
+		//cout<<"cal_snaml  sw="<<this->grouplist[gr].sumstatsnp[numsnp].sw<<"\n";
+		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
+	}
 
 
 
@@ -1715,10 +1597,12 @@ long double ParticleC::cal_nha2p(int gr,int st){
   
   long double ParticleC::cal_moyL0(StatsnpC stsnp) {
     long double sx=0.0,sw=0.0;
-    for (int i=0;i<stsnp.n;i++){ 
-		if (stsnp.x[i]>0.0) {
-			sx += stsnp.w[i]*stsnp.x[i];
-			sw += stsnp.w[i];
+    for (int i=0;i<stsnp.n;i++){
+		if (stsnp.w[i]>0){
+			if (stsnp.x[i]>0.0) {
+				sx += stsnp.w[i]*stsnp.x[i];
+				sw += stsnp.w[i];
+			}
 		}
 	}
     if (sw>0.0) return sx/sw;
@@ -1730,12 +1614,15 @@ long double ParticleC::cal_nha2p(int gr,int st){
 	for (int i=0;i<stsnp.n;i++) if (stsnp.x[i]>0.0) sw += stsnp.w[i];
 	if (sw==0.0) return 0.0;
     for (int i=0;i<stsnp.n;i++) {
-		if (stsnp.x[i]>0.0) {
-			wi = stsnp.w[i]/sw;
-			sx += wi*stsnp.x[i];
-			sx2 += wi*(stsnp.x[i]*stsnp.x[i]);
-			sw2 += wi*wi;
-		}}
+		if (stsnp.w[i]>0){
+			if (stsnp.x[i]>0.0) {
+				wi = stsnp.w[i]/sw;
+				sx += wi*stsnp.x[i];
+				sx2 += wi*(stsnp.x[i]*stsnp.x[i]);
+				sw2 += wi*wi;
+			}
+		}
+	}
     if (sw2<1.0) return (sx2-sx*sx)/(1.0-sw2);
     else return 0.0;
   }
@@ -1743,8 +1630,10 @@ long double ParticleC::cal_nha2p(int gr,int st){
   long double ParticleC::cal_moyL(StatsnpC stsnp) {
     long double sx=0.0,sw=0.0;
     for (int i=0;i<stsnp.n;i++) {
-		sx +=stsnp.w[i]*stsnp.x[i];
-		sw += stsnp.w[i];
+		if (stsnp.w[i]>0){
+			sx +=stsnp.w[i]*stsnp.x[i];
+			sw += stsnp.w[i];
+		}
 	}
     if (sw>0) return sx/sw;
     else return 0.0;
@@ -1804,13 +1693,17 @@ long double ParticleC::cal_nha2p(int gr,int st){
       return a;*/
   }
 
-  void ParticleC::docalstat(int gr) {
-    cout << "avant calfreq\n";
-    cout << this->grouplist[gr].type<<"\n";
+  void ParticleC::docalstat(int gr, double partweight) {
+	if (partweight==0) {
+		for (int st=0;st<this->grouplist[gr].nstat;st++) this->grouplist[gr].sumstat[st].val = 10.0;
+		return;
+	}  
+    //cout << "avant calfreq\n";
+    //cout << this->grouplist[gr].type<<"\n";
     if (this->grouplist[gr].type == 0)  this->calfreq(gr);
     else if (this->grouplist[gr].type == 1)  this->cal_numvar(gr);
     else  this->calfreqsnp(gr);
-    cout << "apres calfreq\n";
+    //cout << "apres calfreq\n";
     for (int st=0;st<this->grouplist[gr].nstat;st++) {
       if ((this->grouplist[gr].sumstat[st].cat==-7)or(this->grouplist[gr].sumstat[st].cat==-8)) {
 	this->afsdone.resize(this->nsample);
@@ -1835,7 +1728,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
       */
       int categ;
       categ=this->grouplist[gr].sumstat[st].cat;
-      cout<<"avant calcul stat categ="<<categ<<"\n";
+      //cout<<"avant calcul stat categ="<<categ<<"\n";
 
 
 
@@ -1870,6 +1763,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 	case    21 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 	  //cout<<"21 numsnp="<<numsnp<<"   defined="<<this->grouplist[gr].sumstatsnp[numsnp].defined<<"\n";
 	  if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snhet(gr,numsnp);
+	  //cout<<"apres cal_snhet\n";
 	  this->grouplist[gr].sumstat[st].val = this->cal_p0L(this->grouplist[gr].sumstatsnp[numsnp]);break;
 	case    22 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 	  //cout<<"22 numsnp="<<numsnp<<"   defined="<<this->grouplist[gr].sumstatsnp[numsnp].defined<<"\n";

@@ -491,7 +491,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 				for (int p=0;p<this->scen.nparam;p++) {
 					if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = this->scen.histparam[p].prior.drawfromprior(this->mw);
 					if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-					cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value<<"\n";
+					//cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value<<"\n";
 					//cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
 				}
 				//cout <<"avant test conditions\n";
@@ -524,7 +524,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 			}
 		}
 	}
-    cout<<"fin du tirage des parametres\n";
+    //cout<<"fin du tirage des parametres\n";
     if (debuglevel==10) {for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";cout <<"\n";}
     if (OK) {
       for (int ievent=0;ievent<this->scen.nevent;ievent++) {

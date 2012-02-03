@@ -1292,6 +1292,7 @@ void HeaderC::calstatobs(string statobsfilename) {
 				this->particuleobs.grouplist[gr].sumstatsnp[i].defined = this->groupe[gr].sumstatsnp[i].defined;
 				this->particuleobs.grouplist[gr].sumstatsnp[i].sorted = this->groupe[gr].sumstatsnp[i].sorted;
 				this->particuleobs.grouplist[gr].sumstatsnp[i].x = new long double[this->groupe[gr].nloc];
+				this->particuleobs.grouplist[gr].sumstatsnp[i].w = new long double[this->groupe[gr].nloc];
 			}
 		}
 	}
@@ -1365,7 +1366,7 @@ void HeaderC::calstatobs(string statobsfilename) {
 	fputs(ent.c_str(),fobs);
 	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
 		if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
-		this->particuleobs.docalstat(gr);
+		this->particuleobs.docalstat(gr,1.0);
 		jstat +=this->particuleobs.grouplist[gr].nstat;
 		if (debuglevel==2)cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
 		for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs,"%12.8Lf  ",this->particuleobs.grouplist[gr].sumstat[j].val);
