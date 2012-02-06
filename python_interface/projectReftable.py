@@ -25,6 +25,7 @@ from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from analysis.viewAnalysisParameters import ViewAnalysisParameters
 from viewTextFile import ViewTextFile
 from utils.data import DataSnp,isSNPDatafile
+from utils.launcher import LauncherThread
 from datetime import datetime 
 import os.path
 from PyQt4.Qwt5 import *
@@ -848,11 +849,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             log(3,"Cleaning '%s_progress.txt' file"%analysis.name)
             if os.path.exists("%s/%s_progress.txt"%(self.dir,analysis.name)):
                 os.remove("%s/%s_progress.txt"%(self.dir,analysis.name))
-            self.thAnalysis = AnalysisThread(self,analysis)
-            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress(int)"),self.analysisProgress)
-            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProblem(QString)"),self.analysisProblem)
-            self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisLog(int,QString)"),self.analysisLog)
-            self.thAnalysis.start()
+            self.launchAnalysisThread(analysis)
             # on la vire de la queue
             self.analysisQueue.remove(analysis)
             # on met à jour les queue numbers
@@ -863,11 +860,49 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
                     frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
                     frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #F4992B")
 
+    def launchAnalysisThread(self,analysis):
+        outfile = "%s/%s.out"%(self.dir,analysis.category)
+        progressfile = "%s/%s_progress.txt"%(self.dir,analysis.name)
+        signames = {
+                "progress" : "analysisProgress",
+                "log" : "analysisLog",
+                "termSuccess" : "analysisTermSuccess",
+                "termProblem" : "analysisProblem"
+                }
+        executablePath = self.parent.preferences_win.getExecutablePath()
+        nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
+        particleLoopSize = str(self.parent.preferences_win.particleLoopSizeEdit.text())
+        params = analysis.computationParameters
+        if analysis.category == "estimate":
+            option = "-e"
+        elif analysis.category == "compare":
+            option = "-c"
+        elif analysis.category == "bias":
+            option = "-b"
+            particleLoopSize = int(params.split('d:')[1].split(';')[0])
+        elif analysis.category == "confidence":
+            option = "-f"
+            particleLoopSize = int(params.split('t:')[1].split(';')[0])
+        elif analysis.category == "modelChecking":
+            option = "-j"
+        elif analysis.category == "pre-ev":
+            option = "-d"
+            progressfile = None
+        cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "%s"%option,
+                '%s'%params.replace(u'\xb5','u'), "-i", '%s'%analysis.name,
+                "-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
+        addLine("%s/command.txt"%self.dir,"Command launched for analysis '%s' : %s\n\n"%(analysis.name," ".join(cmd_args_list)))
+
+        self.thAnalysis = LauncherThread(analysis.name,cmd_args_list,outfile,progressfile,signames)
+        self.thAnalysis.analysis = analysis
+        self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress(QString)"),self.analysisProgress)
+        self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisTermSuccess()"),self.analysisTermSuccess)
+        self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProblem(QString)"),self.analysisProblem)
+        self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisLog(int,QString)"),self.analysisLog)
+        self.thAnalysis.start()
+
     def analysisProblem(self,msg):
         msg_to_show = msg
-        if len(msg) > 300:
-            msg_to_show = msg[-300:]
-
         msg_to_show = unicode(msg_to_show)
         msg_to_show = msg_to_show.encode('iso-8859-1')
         output.notify(self,"analysis problem","Something happened during the analysis %s : %s"%(self.thAnalysis.analysis.name,msg_to_show))
@@ -898,24 +933,46 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         if self.thAnalysis != None:
             log(lvl,msg)
 
-    def analysisProgress(self,prog):
-        """ met à jour l'indicateur de progression de l'analyse en cours
-        """
+    def analysisTermSuccess(self):
         frame = None
         for fr in self.dicoFrameAnalysis.keys():
             if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
                 frame = fr
                 break
-        if prog < 1 and prog > 0:
-            prog = 1
-        frame.findChild(QProgressBar,"analysisStatusBar").setValue(int(prog))
+        frame.findChild(QProgressBar,"analysisStatusBar").setValue(100)
 
-        if prog >= 100.0:
-            log(3,"Terminating analysis because progression indicated 100 %% (%s)"%prog)
-            frame.findChild(QPushButton,"analysisButton").setText("View results")
-            frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #79D8FF")
-            frame.findChild(QPushButton,"analysisStopButton").hide()
-            self.terminateAnalysis()
+        log(3,"Terminating analysis '%s' because the program ended successfully"%self.thAnalysis.analysis.name)
+        frame.findChild(QPushButton,"analysisButton").setText("View results")
+        frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #79D8FF")
+        frame.findChild(QPushButton,"analysisStopButton").hide()
+        self.terminateAnalysis()
+
+    def analysisProgress(self,progstr):
+        """ met à jour l'indicateur de progression de l'analyse en cours
+        """
+        proglines = progstr.split('\n')
+        if len(proglines) > 0:
+            fl = proglines[0]
+            t1 = float(fl.split(' ')[0])
+            t2 = float(fl.split(' ')[1])
+            prog = (t1*100/t2)
+            frame = None
+            for fr in self.dicoFrameAnalysis.keys():
+                if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
+                    frame = fr
+                    break
+            if prog < 1 and prog > 0:
+                prog = 1
+            frame.findChild(QProgressBar,"analysisStatusBar").setValue(int(prog))
+            log(3,"Line red for progress : '%s', new state of progress : %s"%(fl,prog))
+
+            # TODO peut etre à enlever car on a le signal termsuccess
+            #if prog >= 100.0:
+            #    log(3,"Terminating analysis because progression indicated 100 %% (%s)"%prog)
+            #    frame.findChild(QPushButton,"analysisButton").setText("View results")
+            #    frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #79D8FF")
+            #    frame.findChild(QPushButton,"analysisStopButton").hide()
+            #    self.terminateAnalysis()
 
     def terminateAnalysis(self):
         """ arrête le thread de l'analyse et range les résultats
