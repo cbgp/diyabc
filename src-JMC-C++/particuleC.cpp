@@ -1881,6 +1881,7 @@ void ParticleC::put_one_mutation(int loc) {
 					simulOK[loc]=cree_haplo(loc);
 					if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
 					this->naccept++;
+					this->sumweight +=1.0;
 				} else {
 				  //if (loc==0) cout<<"this->refnindtot="<<this->refnindtot<<"\n";
 				this->locuslist[loc].firstime = true;
