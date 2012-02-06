@@ -280,25 +280,26 @@ string ScenarioC::checklogic() {
 				delete []popexist;
 				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop1)+" does not exist anymore";
 			}
-			if (not popexist[this->event[ievent].pop]){
+			/*if (not popexist[this->event[ievent].pop]){
 				delete []popexist;
 				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop)+" does not exist anymore";
-			}
+			}*/
 			popexist[this->event[ievent].pop1] = false;
+			popexist[this->event[ievent].pop] = true;
 		}
 		if (this->event[ievent].action=='S') {
 			if ((this->event[ievent].pop == this->event[ievent].pop1)or(this->event[ievent].pop == this->event[ievent].pop2)or(this->event[ievent].pop1 == this->event[ievent].pop2)){
 				delete []popexist;
 				return "in line "+IntToString(ievent+2)+" admixture must occur between three different populations";
 			}
-			if (not popexist[this->event[ievent].pop1]){
+			/*if (not popexist[this->event[ievent].pop1]){
 				delete []popexist;
 				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop1)+" does not exist anymore";
 			}
 			if (not popexist[this->event[ievent].pop2]){
 				delete []popexist;
 				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop2)+" does not exist anymore";
-			}
+			}*/
 			if (not popexist[this->event[ievent].pop]){
 				delete []popexist;
 				return "in line "+IntToString(ievent+2)+" population " +IntToString(this->event[ievent].pop)+" does not exist anymore";
