@@ -581,9 +581,12 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 						delete [] ss1;
 					}
 				}
-			} else if (this->groupe[gr].type>9) {
-				catsnp = (stat_num[j]-21)/4;
-				if (debuglevel==2) cout<<"stat_num["<<j<<"]="<<stat_num[j]<<"   catsnp="<<catsnp<<"\n";
+			} else if (this->groupe[gr].type>9) {   //SNP
+				cout<<"statnum="<<stat_num[j]<<"\n";
+				if (stat_num[j]<50) {
+					catsnp = (stat_num[j]-21)/4;
+					if (debuglevel==2) cout<<"stat_num["<<j<<"]="<<stat_num[j]<<"   catsnp="<<catsnp<<"\n";
+				}
 				if (stat_num[j]<25) {
 					if (debuglevel==2) cout<<"nss="<<nss<<"\n";
 					for (int i=1;i<nss;i++) {
@@ -636,7 +639,7 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 						//cout<<"numsnp = "<<statsnp.size()<<"\n";
 						k++;
 					}
-				} else if (stat_num[j]>32) {
+				} else if ((stat_num[j]>32)and (stat_num[j]<50)) {
 					for (int i=1;i<nss;i++) {
 						this->groupe[gr].sumstat[k].cat=stat_num[j];
 						ss1=splitwords(ss[i],"&",&nss1);
@@ -662,10 +665,12 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 							statsnp.push_back(stsnp);
 						}
 						k++;
-					}
+					} 
+				} else if (stat_num[j]==50) {
+					this->groupe[gr].sumstat[k].cat=stat_num[j];
+					k++;
+					cout<<"k="<<k<<"\n";
 				}
-
-
 			}
 			if (debuglevel==2) cout<<"fin de la stat "<<k<<"\n";
 		}

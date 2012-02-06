@@ -1848,6 +1848,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 	case    36 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 	  if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snaml(gr,numsnp);
 	  this->grouplist[gr].sumstat[st].val = this->cal_moyL(this->grouplist[gr].sumstatsnp[numsnp]);break;
+	case    50 : this->grouplist[gr].sumstat[st].val = this->locpol;
 	}
       //cout << "      stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
     }

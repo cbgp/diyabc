@@ -1001,7 +1001,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    *                    initialise les propriétés "sample" et "height" des noeuds terminaux
    *                    initialise à 0 la propriété "pop" de tous les noeuds et à 0 la propriété "sample" des noeuds non-terminaux
    */
-  void ParticleC::init_tree(GeneTreeC & gt, int loc) {
+  void ParticleC::init_tree(GeneTreeC & gt, int loc, bool gtexist) {
     //cout << "début de init_tree pour le locus " << loc  <<"\n";
 
 
@@ -1012,8 +1012,10 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     gt.ngenes = nnod;
     gt.nnodes=nnod;
     gt.nbranches = 0;
-	gt.nodes = new NodeC[2*nnod+1];
-	gt.branches = new BranchC[2*nnod];
+	if (not gtexist){
+		gt.nodes = new NodeC[2*nnod+1];
+		gt.branches = new BranchC[2*nnod];
+	}
     for (int sa=0;sa<this->data.nsample;sa++) {
       //cout<<"    this->data.nind["<<sa<<"]="<<this->data.nind[sa]<<"\n";
       for (int ind=0;ind<this->data.nind[sa];ind++) {
@@ -1779,7 +1781,7 @@ void ParticleC::put_one_mutation(int loc) {
 		  exit(1);
 	  }
 	  if (debuglevel==5) cout <<"apres checktree\n";
-	  bool gtYexist=false, gtMexist=false;
+	  bool gtYexist=false, gtMexist=false,*gtexist;
 	  this->gt = new GeneTreeC[this->nloc];
 	  emptyPop = new int[this->scen.popmax+1];
 	  //cout << "particule " << ipart <<"   nparam="<<this->scen.nparam<<"\n";
@@ -1792,94 +1794,94 @@ void ParticleC::put_one_mutation(int loc) {
 	  if (debuglevel==5) cout <<"avant setMutParammoyValue \n";
 	  setMutParammoyValue();
 	  if (debuglevel==10) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
+	  gtexist = new bool[this->nloc];
+	  for (loc=0;loc<this->nloc;loc++) {gtexist[loc] = false;simulOK[loc]= 0;}
 	  for (int gr=1;gr<this->ngr+1;gr++) nlocutil +=this->grouplist[gr].nloc;
 	  this->sumweight = 0.0;
 	for (loc=0;loc<this->nloc;loc++) {
 		if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
-		  if (debuglevel==5) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
-			  this->ntentes++;
-			  if (this->locuslist[loc].type <10) setMutParamValue(loc);
-			  if ((this->locuslist[loc].type >4)and(this->locuslist[loc].type <10)) {
-				  comp_matQ(loc);
-				  dnaloc=true;
-			  } else dnaloc=false;
-			  treedone=false;
-			  if ((this->locuslist[loc].type % 5) == 3) {
-				  if (gtYexist) {this->gt[loc] = GeneTreeY; treedone=true;}
-			  }
-			  else if ((locuslist[loc].type % 5) == 4) {
-				  if (debuglevel==10) cout << "coucou   gtMexist=" << gtMexist <<"\n";
-				  if (gtMexist) {this->gt[loc] = GeneTreeM; treedone=true;}
-			  }
-			  if (not treedone) {
-				  if (debuglevel==10) cout << "avant init_tree \n";
-				  init_tree(this->gt[loc], loc);
-				  if (debuglevel==10){
-					  cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
-					  cout<< "scenario "<<this->scen.number<<"\n";
-				  }
-				  for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
-				  for (int iseq=0;iseq<this->nseq;iseq++) {
-					  if (debuglevel==10) {
-						  cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
-
-						  if (this->seqlist[iseq].action == 'C') cout <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
-						  else  cout <<"   "<<this->seqlist[iseq].t0;
-						  cout<<"    pop="<<this->seqlist[iseq].pop;cout<<"    Ne="<<this->seqlist[iseq].N;
-						  if ((this->seqlist[iseq].action == 'M')or(this->seqlist[iseq].action == 'S')) cout <<"   pop1="<<this->seqlist[iseq].pop1;
-						  if (this->seqlist[iseq].action == 'S') cout <<"   pop2="<<this->seqlist[iseq].pop2;
-						  cout<<"\n";
-						  fflush(stdin);
-					  }
-					  if (this->seqlist[iseq].action == 'C') {	//COAL
-						  //for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
-						  //cout <<"\n";
-						  if (((this->seqlist[iseq].t1>this->seqlist[iseq].t0)or(this->seqlist[iseq].t1<0))and(emptyPop[seqlist[iseq].pop]==0)) {
-							  //cout << "dosimul appel de coal_pop \n";
-							  coal_pop(loc,iseq);
-							  //cout << "apres coal_pop\n";
-
-						  }
-					  }
-					  else if (this->seqlist[iseq].action == 'M') {	//MERGE
-						  if ((emptyPop[seqlist[iseq].pop]==0)or(emptyPop[seqlist[iseq].pop1]==0)) {
-							  //cout << "dosimul appel de pool_pop \n";
-							  pool_pop(loc,iseq);
-							  emptyPop[seqlist[iseq].pop]  =0;
-							  emptyPop[seqlist[iseq].pop1] =1;
-						  }
-					  }
-					  else if (this->seqlist[iseq].action == 'S') {  //SPLIT
-						  if (emptyPop[seqlist[iseq].pop]==0) {
-							  //cout << "dosimul appel de split_pop \n";
-							  split_pop(loc,iseq);
-							  emptyPop[seqlist[iseq].pop]  =1;
-							  emptyPop[seqlist[iseq].pop1] =0;
-							  emptyPop[seqlist[iseq].pop2] =0;
-						  }
-					  }
-					  else if (this->seqlist[iseq].action == 'A') {  //ADSAMP
-						  //cout << "dosimul appel de add_sample \n";
-						  add_sample(loc,iseq);
-						  emptyPop[seqlist[iseq].pop]  =0;
-						  //for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
-						  //cout <<"\n";
-					  }
-				  }	//LOOP ON iseq
-				  /* copie de l'arbre si locus sur Y ou mitochondrie */
-				  if (not gtYexist) {if ((locuslist[loc].type % 5) == 3) {GeneTreeY  = this->gt[loc]; gtYexist=true;}}
-
-				  if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = this->gt[loc]; gtMexist=true;}}
-			  }
-			  /* mutations */
-			  snpOK = true;
-			  if (this->locuslist[loc].type <10){
-				  put_mutations(loc);
-				  if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
-				  simulOK[loc]=cree_haplo(loc);
-				  if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
+			if (debuglevel==5) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
+				this->ntentes++;
+				if (this->locuslist[loc].type <10) setMutParamValue(loc);
+				if ((this->locuslist[loc].type >4)and(this->locuslist[loc].type <10)) {
+					comp_matQ(loc);
+					dnaloc=true;
+				} else dnaloc=false;
+				treedone=false;
+				if ((this->locuslist[loc].type % 5) == 3) {
+					if (gtYexist) {this->gt[loc] = GeneTreeY; treedone=true;}
+				}
+				else if ((locuslist[loc].type % 5) == 4) {
+					if (debuglevel==10) cout << "coucou   gtMexist=" << gtMexist <<"\n";
+					if (gtMexist) {this->gt[loc] = GeneTreeM; treedone=true;}
+				}
+				if (not treedone) {
+					if (debuglevel==10) cout << "avant init_tree \n";
+					init_tree(this->gt[loc], loc, gtexist[loc]);
+					if (debuglevel==10){
+						cout << "initialisation de l'arbre du locus " << loc  << "    ngenes="<< this->gt[loc].ngenes<< "   nseq="<< this->nseq <<"\n";
+						cout<< "scenario "<<this->scen.number<<"\n";
+					}
+					for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
+					//if (not gtexist[loc]) for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
+					for (int iseq=0;iseq<this->nseq;iseq++) {
+						if (debuglevel==10) {
+							cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
+							if (this->seqlist[iseq].action == 'C') cout <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
+							else  cout <<"   "<<this->seqlist[iseq].t0;
+							cout<<"    pop="<<this->seqlist[iseq].pop;cout<<"    Ne="<<this->seqlist[iseq].N;
+							if ((this->seqlist[iseq].action == 'M')or(this->seqlist[iseq].action == 'S')) cout <<"   pop1="<<this->seqlist[iseq].pop1;
+							if (this->seqlist[iseq].action == 'S') cout <<"   pop2="<<this->seqlist[iseq].pop2;
+							cout<<"\n";
+							fflush(stdin);
+						}
+						if (this->seqlist[iseq].action == 'C') {	//COAL
+							//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
+							//cout <<"\n";
+							if (((this->seqlist[iseq].t1>this->seqlist[iseq].t0)or(this->seqlist[iseq].t1<0))and(emptyPop[seqlist[iseq].pop]==0)) {
+								//cout << "dosimul appel de coal_pop \n";
+								coal_pop(loc,iseq);
+								//cout << "apres coal_pop\n";
+							}
+						}
+						else if (this->seqlist[iseq].action == 'M') {	//MERGE
+							if ((emptyPop[seqlist[iseq].pop]==0)or(emptyPop[seqlist[iseq].pop1]==0)) {
+								//cout << "dosimul appel de pool_pop \n";
+								pool_pop(loc,iseq);
+								emptyPop[seqlist[iseq].pop]  =0;
+								emptyPop[seqlist[iseq].pop1] =1;
+							}
+						}
+						else if (this->seqlist[iseq].action == 'S') {  //SPLIT
+							if (emptyPop[seqlist[iseq].pop]==0) {
+								//cout << "dosimul appel de split_pop \n";
+								split_pop(loc,iseq);
+								emptyPop[seqlist[iseq].pop]  =1;
+								emptyPop[seqlist[iseq].pop1] =0;
+								emptyPop[seqlist[iseq].pop2] =0;
+							}
+						}
+						else if (this->seqlist[iseq].action == 'A') {  //ADSAMP
+							//cout << "dosimul appel de add_sample \n";
+							add_sample(loc,iseq);
+							emptyPop[seqlist[iseq].pop]  =0;
+							//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
+							//cout <<"\n";
+						}
+					}	//LOOP ON iseq
+					/* copie de l'arbre si locus sur Y ou mitochondrie */
+					if (not gtYexist) {if ((locuslist[loc].type % 5) == 3) {GeneTreeY  = this->gt[loc]; gtYexist=true;}}
+					if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = this->gt[loc]; gtMexist=true;}}
+				}
+				/* mutations */
+				snpOK = true;
+				if (this->locuslist[loc].type <10){
+					put_mutations(loc);
+					if (debuglevel==10) cout << "Locus " <<loc << "  apres put_mutations\n";
+					simulOK[loc]=cree_haplo(loc);
+					if (debuglevel==10) cout << "Locus " <<loc << "  apres cree_haplo   : simOK[loc] ="<<simulOK[loc]<<"\n";fflush(stdin);
 					this->naccept++;
-			  } else {
+				} else {
 				  //if (loc==0) cout<<"this->refnindtot="<<this->refnindtot<<"\n";
 				this->locuslist[loc].firstime = true;
 				cherche_branchesOK(loc);
@@ -1890,21 +1892,24 @@ void ParticleC::put_one_mutation(int loc) {
 					this->naccept++;
 				/*} else {
 					if ((this->ntentes>nlocutil)and(this->naccept<nlocutil/10)) {simulOK[loc]=-1;loca=loc;}*/
-				} else simulOK[loc]=0;
+				} else {
+					simulOK[loc]=0;
+					gtexist[loc]=true; 
+					loc--;
+				}
 				this->sumweight +=this->locuslist[loc].weight;
 				//cout<<"weight = "<<this->weight<<"\n";
-			  }
-			//if (loca!=-1) break;
+				this->locpol = (double)this->naccept/(double)this->ntentes;
+				if ((this->ntentes>=nlocutil)and(this->locpol<0.2)) this->sumweight=-1.0;
+			}
+			if (this->sumweight<0.0) break;
 		}
-		//if (loca!=-1) break;
-		//cout<<"   OK\n\n";
-		//if (loc==50)
-		//exit(6);
+		if (this->sumweight<0.0) break;
 	}	//LOOP ON loc
-	this->weight =this->sumweight/(double)nlocutil;
-	this->locpol = (double)this->naccept/(double)this->ntentes;
-	if (this->locpol<0.2) this->weight=0.0;
-	cout<<"poids de la particule = "<<this->weight<<"   taux de polymorphisme = "<<this->locpol<<"\n";
+	if (this->sumweight>=0.0) this->weight = this->sumweight/(double)nlocutil;
+	else this->weight = 0.0;
+	//cout<<"poids de la particule = "<<this->weight<<"   taux de polymorphisme = "<<this->locpol;
+	//cout<<"    "<<this->naccept<<" sur = "<<this->ntentes<<"\n";
 	if (this->weight>0.0){  
 		if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
 		if (this->data.nmisshap>0) {

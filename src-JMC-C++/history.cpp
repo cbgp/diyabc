@@ -262,8 +262,8 @@ string ScenarioC::checklogic() {
 		}
 	}
 	cout<<"nsamp="<<this->nsamp<<"    maxpop="<<maxpop<<"\n";
-	if (maxpop != this->nsamp)
-		return "the number of population sizes in line 1 is different from the number of populations found in subsequent lines";
+	//if (maxpop != this->nsamp)
+	//	return "the number of population sizes in line 1 is different from the number of populations found in subsequent lines";
 	bool *popexist;
 	popexist = new bool[maxpop+1];
 	for (int i=0;i<maxpop+1;i++) popexist[i] = false;
