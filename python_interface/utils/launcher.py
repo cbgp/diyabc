@@ -7,7 +7,16 @@ from PyQt4.QtGui import *
 import os.path,subprocess,time
 
 class LauncherThread(QThread):
-    """ classe qui gère l'execution du programme externe
+    """ Manage the execution of an external executable and
+    communicate informations by QT Signals
+
+    Can handle : 
+    - progress file scrutation
+    - output reading
+    - logging
+    - process killing
+    - errors transmission
+
     Signals description :
     log(int,QString) : log signal
     progress(QString) : progress file content changed, the string is the new content
@@ -16,6 +25,9 @@ class LauncherThread(QThread):
     """
     def __init__(self,name,cmd_args_list,outfile_path,progressfile_path=None,
             signalnames={"progress":"progress","log":"log","termSuccess":"termSuccess","termProblem":"termProblem"}):
+        """ If progressfile_path is None or not given, no progress scrutation will be performed
+        If signalnames is not given, signals will have basic names
+        """
         super(LauncherThread,self).__init__()
         self.name = name
         self.cmd_args_list = cmd_args_list
@@ -33,12 +45,15 @@ class LauncherThread(QThread):
             raise Exception("Signal name hashtable malformed")
 
     def log(self,lvl,msg):
-        """ evite de manipuler les objets Qt dans un thread non principal
+        """ Send a log signal with level and content
+        Avoid manipulation of Qt objects in a thread which is not the Qt main loop
         """
         clean_msg = msg.replace(u'\xb5',u'u')
         self.emit(SIGNAL(self.SIGLOG+"(int,QString)"),lvl,clean_msg)
 
     def killProcess(self):
+        """ Terminate the processus of the external executable if it is running
+        """
         if self.processus != None:
             if self.processus.poll() == None:
                 self.log(3,"Killing process (pid:%s) of thread %s"%(self.processus.pid,self.name))
@@ -73,6 +88,12 @@ class LauncherThread(QThread):
         return problem
 
     def run(self):
+        """ Threaded execution, launch the executable, then loop on :
+        check the progression
+        read the output
+        check if the external program is still running
+        send success or problem signal
+        """
         self.log(2,"Running '%s' thread execution"%self.name)
         f = open(self.outfile_path,"w")
         p = subprocess.Popen(self.cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
