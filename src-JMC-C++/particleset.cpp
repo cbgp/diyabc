@@ -415,8 +415,9 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	//if (num_threads>0) omp_set_num_threads(num_threads);_
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
 	for (ipart=0;ipart<this->npart;ipart++){
-		cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
+		//cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
+		//cout<<sOK[ipart]<<"\n";
 		if (sOK[ipart]==0) {
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr,this->particule[ipart].weight);}
 		}

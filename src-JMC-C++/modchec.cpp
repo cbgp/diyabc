@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 
 
 #include "header.h"
@@ -248,7 +249,7 @@ long double **ssphistar,**ssref;
     int detphistarOK(int nsel) {
 		char c;
         bool OK;
-        int npv,ip1,ip2,nphistarOK=0,scen=rt.scenteste-1;
+        int npv,ip1,ip2,nphistarOK=0,scen=rt.scenteste-1,k1;
         npv = rt.nparam[scen];
         for (int i=0;i<nsel;i++) {
             OK=true;
@@ -257,6 +258,7 @@ long double **ssphistar,**ssref;
                     ip1=0;
                     for(int k =0; k < rt.nparam[scen]; ++k){
                     	if(header.scenario[scen].condition[j].param1 == header.scenario[scen].histparam[k].name){
+							k1=k;
                     		break;
                     	} else {
                     		if(not header.scenario[scen].histparam[k].prior.constant) ip1++;
@@ -271,10 +273,17 @@ long double **ssphistar,**ssref;
                     		if(not header.scenario[scen].histparam[k].prior.constant) ip2++;
                     	}
                     }
-                    if (header.scenario[scen].condition[j].operateur==">")       OK=(phistar[i][ip1] >  phistar[i][ip2]);
-                    else if (header.scenario[scen].condition[j].operateur=="<")  OK=(phistar[i][ip1] <  phistar[i][ip2]);
-                    else if (header.scenario[scen].condition[j].operateur==">=") OK=(phistar[i][ip1] >= phistar[i][ip2]);
-                    else if (header.scenario[scen].condition[j].operateur=="<=") OK=(phistar[i][ip1] <= phistar[i][ip2]);
+                    if (header.scenario[scen].histparam[k1].category<2){
+						if (header.scenario[scen].condition[j].operateur==">")       OK=(floor(0.5+phistar[i][ip1]) >  floor(0.5+phistar[i][ip2]));
+						else if (header.scenario[scen].condition[j].operateur=="<")  OK=(floor(0.5+phistar[i][ip1]) <  floor(0.5+phistar[i][ip2]));
+						else if (header.scenario[scen].condition[j].operateur==">=") OK=(floor(0.5+phistar[i][ip1]) >= floor(0.5+phistar[i][ip2]));
+						else if (header.scenario[scen].condition[j].operateur=="<=") OK=(floor(0.5+phistar[i][ip1]) <= floor(0.5+phistar[i][ip2]));
+					} else {
+						if (header.scenario[scen].condition[j].operateur==">")       OK=(phistar[i][ip1] >  phistar[i][ip2]);
+						else if (header.scenario[scen].condition[j].operateur=="<")  OK=(phistar[i][ip1] <  phistar[i][ip2]);
+						else if (header.scenario[scen].condition[j].operateur==">=") OK=(phistar[i][ip1] >= phistar[i][ip2]);
+						else if (header.scenario[scen].condition[j].operateur=="<=") OK=(phistar[i][ip1] <= phistar[i][ip2]);
+					}
                     if (not OK) break;
                 }
             }
@@ -283,7 +292,7 @@ long double **ssphistar,**ssref;
                     phistarOK[nphistarOK][j] = phistar[i][j];
                     //cout <<phistarOK[nphistarOK][j]<<"  ";
                 }
-                //cout<<"\n";
+                cout<<"\n";
                 nphistarOK++;
 				//if ((nphistarOK % 10)==0) cin >>c;
             }

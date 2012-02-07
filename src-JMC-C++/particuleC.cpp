@@ -1874,6 +1874,7 @@ void ParticleC::put_one_mutation(int loc) {
 					if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = this->gt[loc]; gtMexist=true;}}
 				}
 				/* mutations */
+				//cout<<"avant le traitement des mutations locus "<<loc<<"\n";
 				snpOK = true;
 				if (this->locuslist[loc].type <10){
 					put_mutations(loc);
