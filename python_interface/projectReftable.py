@@ -25,7 +25,7 @@ from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from analysis.viewAnalysisParameters import ViewAnalysisParameters
 from viewTextFile import ViewTextFile
 from utils.data import DataSnp,isSNPDatafile
-from utils.launcher import LauncherThread
+from utils.executableLauncherThread import LauncherThread
 from datetime import datetime 
 import os.path
 from PyQt4.Qwt5 import *

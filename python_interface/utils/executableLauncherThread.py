@@ -10,7 +10,7 @@ class LauncherThread(QThread):
     """ Manage the execution of an external executable and
     communicate informations by QT Signals
 
-    Can handle : 
+    Can handle :
     - progress file scrutation
     - output reading
     - logging
@@ -36,7 +36,7 @@ class LauncherThread(QThread):
         self.progress_file_content = ""
         self.processus = None
         try:
-            self.SIGPROGRESS = signalnames["progress"] 
+            self.SIGPROGRESS = signalnames["progress"]
             self.SIGLOG = signalnames["log"]
             self.SIGTERMSUCCESS = signalnames["termSuccess"]
             self.SIGTERMPROBLEM = signalnames["termProblem"]
@@ -47,6 +47,8 @@ class LauncherThread(QThread):
     def log(self,lvl,msg):
         """ Send a log signal with level and content
         Avoid manipulation of Qt objects in a thread which is not the Qt main loop
+        @param lvl: Importance level of the log
+        @param msg: Content of the log
         """
         clean_msg = msg.replace(u'\xb5',u'u')
         self.emit(SIGNAL(self.SIGLOG+"(int,QString)"),lvl,clean_msg)
@@ -96,7 +98,7 @@ class LauncherThread(QThread):
         """
         self.log(2,"Running '%s' thread execution"%self.name)
         f = open(self.outfile_path,"w")
-        p = subprocess.Popen(self.cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
+        p = subprocess.Popen(self.cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         self.log(3,"Command launched in thread '%s' : %s"%(self.name," ".join(self.cmd_args_list)))
         self.processus = p
         self.log(3,"Popen procedure success")
