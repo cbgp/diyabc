@@ -440,7 +440,7 @@
                    <item>
                     <widget class="QPushButton" name="ascertButton">
                      <property name="text">
-                      <string>  Set minimum frequency for ascertainment bias</string>
+                      <string>  Set information for ascertainment bias</string>
                      </property>
                     </widget>
                    </item>
@@ -1308,8 +1308,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>929</width>
-               <height>635</height>
+               <width>96</width>
+               <height>26</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">

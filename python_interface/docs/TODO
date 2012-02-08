@@ -22,4 +22,6 @@ mieux gerer lancements sur cluster :
 - proposer creation job proactive (prefs)
 
 attention, si redef des scenario dans analysis edit : doit on eviter de faire setscenario et setRecordsValue ?
+
 Q : doit-on conserver JK,K2P... pour mutmod analysis edit ?
+WARNING : l'information de la loi JK... n'est pas présente dans les infos que l'on donne à l'exécutable

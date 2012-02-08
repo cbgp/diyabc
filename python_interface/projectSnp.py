@@ -317,7 +317,13 @@ class ProjectSnp(ProjectReftable):
         log(2,"Writing ascertainment in %s"%self.parent.ascertainment_conf_name)
 
         ascert_string = u""
-        ascert_string += "%s\n"%str(self.ascert_frame.freqMinEdit.text()).strip()
+        if self.ascert_frame.ascCheck.isChecked():
+            ascert_string += "%s\n"%str(self.ascert_frame.asc1ValEdit.text()).strip()
+            ascert_string += "%s\n"%str(self.ascert_frame.asc2ValEdit.text()).strip()
+            ascert_string += "%s\n"%str(self.ascert_frame.asc3ValEdit.text()).strip()
+        else:
+            ascert_string = u"\n"
+
 
         if os.path.exists(self.dir+"/%s"%self.parent.ascertainment_conf_name):
             os.remove("%s/%s"%(self.dir,self.parent.ascertainment_conf_name))
@@ -404,17 +410,20 @@ class ProjectSnp(ProjectReftable):
     def freezeHistModel(self,yesno=True):
         super(ProjectSnp,self).freezeHistModel(yesno)
 
-        self.ascert_frame.ui.freqMinEdit.setDisabled(yesno)
+        self.ascert_frame.ui.scrollArea.setDisabled(yesno)
         if yesno:
             if "Set " in str(self.ui.ascertButton.text()):
+                print "1"
                 self.ui.ascertButton.setText(str(self.ui.ascertButton.text()).replace("Set ","View "))
             elif "View " not in str(self.ui.ascertButton.text()):
+                print "2"
                 self.ui.ascertButton.setText("View "+str(self.ui.ascertButton.text()))
         else:
-            self.ui.ascertButton.setText("Set "+str(self.ui.ascertButton.text()))
             if "View " in str(self.ui.ascertButton.text()):
+                print "3"
                 self.ui.ascertButton.setText(str(self.ui.ascertButton.text()).replace("View ","Set "))
             elif "Set " not in str(self.ui.ascertButton.text()):
+                print "4"
                 self.ui.ascertButton.setText("Set "+str(self.ui.ascertButton.text()))
 
     def freezeGenData(self,yesno=True):
