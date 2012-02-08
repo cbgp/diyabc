@@ -330,15 +330,15 @@ class SetGeneticData(formGenData,baseGenData):
             box.setTitle("%s %s"%(old_title.split(' ')[0],old_title.split(' ')[1]))
             # on met à jour le dico des groupes
             self.group_info_dico[box][0] = ""
-            # on remet en gras les boutons de mutation model et sum stats
-            set_mut_button = box.findChild(QPushButton,"setMutationButton")
-            set_sum_button = box.findChild(QPushButton,"setSumButton")
-            set_mut_button.setStyleSheet("background-color: #EFB1B3")
-            set_sum_button.setStyleSheet("background-color: #EFB1B3")
-            fontt = set_mut_button.font()
-            fontt.setBold(True)
-            set_mut_button.setFont(fontt)
-            set_sum_button.setFont(fontt)
+            ## on remet en gras les boutons de mutation model et sum stats
+            #set_mut_button = box.findChild(QPushButton,"setMutationButton")
+            #set_sum_button = box.findChild(QPushButton,"setSumButton")
+            #set_mut_button.setStyleSheet("background-color: #EFB1B3")
+            #set_sum_button.setStyleSheet("background-color: #EFB1B3")
+            #fontt = set_mut_button.font()
+            #fontt.setBold(True)
+            #set_mut_button.setFont(fontt)
+            #set_sum_button.setFont(fontt)
 
     def getNbSumStats(self):
         """ retourne le nombre total de summary statistics (nb de cases cochées)

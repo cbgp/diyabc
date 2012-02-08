@@ -17,7 +17,6 @@ class SetSummaryStatisticsSeqAnalysis(SetSummaryStatisticsSeq):
     def __init__(self,parent=None,stackTarget=None,numGroup=0):
         super(SetSummaryStatisticsSeqAnalysis,self).__init__(parent,numGroup=numGroup)
         self.stackTarget = stackTarget
-
         self.ui.clearButton.hide()
 
     def exit(self):
@@ -26,6 +25,4 @@ class SetSummaryStatisticsSeqAnalysis(SetSummaryStatisticsSeq):
         # maj le dico de sum stats de l'analyse
         self.stackTarget.analysis.sumStatsTHDico[self.numGroup] = self.getSumStatsTableHeader()
         self.stackTarget.analysis.sumStatsConfDico[self.numGroup] = self.getSumConf()
-        #print self.stackTarget.analysis.sumStatsDico
-
 

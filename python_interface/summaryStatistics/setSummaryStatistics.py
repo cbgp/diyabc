@@ -172,15 +172,15 @@ class SetSummaryStatistics(QFrame):
         self.exit()
         if self.box_group != None:
             (nstat,stat_txt) = self.getSumConf()
-            # on met le bouton en police normale pour signaler qu'il est valide
-            set_sum_button = self.box_group.findChild(QPushButton,"setSumButton")
-            fontt = set_sum_button.font()
-            if nstat > 0:
-                fontt.setBold(False)
-                set_sum_button.setStyleSheet("border-color: #000000")
-            else:
-                fontt.setBold(True)
-                set_sum_button.setStyleSheet("background-color: #EFB1B3")
-            set_sum_button.setFont(fontt)
+            ## on met le bouton en police normale pour signaler qu'il est valide
+            #set_sum_button = self.box_group.findChild(QPushButton,"setSumButton")
+            #fontt = set_sum_button.font()
+            #if nstat > 0:
+            #    fontt.setBold(False)
+            #    set_sum_button.setStyleSheet("border-color: #000000")
+            #else:
+            #    fontt.setBold(True)
+            #    set_sum_button.setStyleSheet("background-color: #EFB1B3")
+            #set_sum_button.setFont(fontt)
 
 

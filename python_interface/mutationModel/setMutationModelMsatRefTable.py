@@ -14,10 +14,6 @@ class SetMutationModelMsatRefTable(SetMutationModelMsat):
         super(SetMutationModelMsatRefTable,self).__init__(parent,box_group)
 
     def exit(self):
-        ## reactivation des onglets
-        #self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
-        #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
-        #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
         self.parent.parent.ui.refTableStack.removeWidget(self)
         self.parent.parent.ui.refTableStack.setCurrentWidget(self.parent)
 
@@ -34,13 +30,12 @@ class SetMutationModelMsatRefTable(SetMutationModelMsat):
             self.exit()
             self.parent.setMutationValid_dico[self.box_group] = True
             self.parent.writeGeneticConfFromGui()
-            # on met le bouton en police normale pour signaler qu'il est valide
-            set_mut_button = self.box_group.findChild(QPushButton,"setMutationButton")
-            fontt = set_mut_button.font()
-            fontt.setBold(False)
-            set_mut_button.setStyleSheet("border-color: #000000")
-            set_mut_button.setFont(fontt)
-
+            ## on met le bouton en police normale pour signaler qu'il est valide
+            #set_mut_button = self.box_group.findChild(QPushButton,"setMutationButton")
+            #fontt = set_mut_button.font()
+            #fontt.setBold(False)
+            #set_mut_button.setStyleSheet("border-color: #000000")
+            #set_mut_button.setFont(fontt)
 
     def getParamTableHeader(self):
         """ retourne une chaine contenant les paramètres (valeurs qui varient)

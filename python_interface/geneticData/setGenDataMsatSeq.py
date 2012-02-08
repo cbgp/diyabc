@@ -73,16 +73,16 @@ class SetGeneticDataMsatSeq(SetGeneticData):
         self.setSumSeq_dico[groupBox] = frameSumSeq
         frameSumSeq.hide()
 
-        # on met les boutons en gras pour signaler qu'il faut les valider/définir
-        set_mut_button = groupBox.findChild(QPushButton,"setMutationButton")
-        set_sum_button = groupBox.findChild(QPushButton,"setSumButton")
-        fontt = set_mut_button.font()
-        set_mut_button.setStyleSheet("background-color: #EFB1B3")
-        set_sum_button.setStyleSheet("background-color: #EFB1B3")
-        fontt.setBold(True)
-        #fontt.setPointSize(fontt.pointSize() + 1)
-        set_mut_button.setFont(fontt)
-        set_sum_button.setFont(fontt)
+        ## on met les boutons en gras pour signaler qu'il faut les valider/définir
+        #set_mut_button = groupBox.findChild(QPushButton,"setMutationButton")
+        #set_sum_button = groupBox.findChild(QPushButton,"setSumButton")
+        #fontt = set_mut_button.font()
+        #set_mut_button.setStyleSheet("background-color: #EFB1B3")
+        #set_sum_button.setStyleSheet("background-color: #EFB1B3")
+        #fontt.setBold(True)
+        ##fontt.setPointSize(fontt.pointSize() + 1)
+        #set_mut_button.setFont(fontt)
+        #set_sum_button.setFont(fontt)
 
         # maj de la doc pour ce groupe
         self.updateDoc(groupBox)
