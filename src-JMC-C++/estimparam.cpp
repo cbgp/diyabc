@@ -878,7 +878,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                 phista[i][j] = alpsimrat[i][j];
                 //if (i<100) cout<<"   "<< phista[i][j];
                 for (int k=0;k<nstatOKsel;k++) phista[i][j] -= matX0[i][k]*beta[k+1][j];
-                if(i<100) cout<<"   "<< phista[i][j];
+                //if(i<100) cout<<"   "<< phista[i][j];
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
@@ -887,7 +887,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                            else if (phista[i][j]>=parmaxscaled[j]) phista[i][j] = parmaxscaled[j];
                            else if (parminscaled[j]==parmaxscaled[j]) phista[i][j] = parmaxscaled[j]; 
 						   else phista[i][j] = (exp(phista[i][j])*parmaxscaled[j]+parminscaled[j])/(1.0+exp(phista[i][j]));
-                           if(i<100) cout<<"      "<< phista[i][j]<<"   ("<<parminscaled[j]<<","<<parmaxscaled[j]<<")\n";
+                           //if(i<100) cout<<"      "<< phista[i][j]<<"   ("<<parminscaled[j]<<","<<parmaxscaled[j]<<")\n";
                            break;
                   case 4 : if (phista[i][j]<=xborne) phista[i][j] = parminscaled[j];
                            else if (phista[i][j]>=parmaxscaled[j]) phista[i][j] = parmaxscaled[j];
@@ -1592,8 +1592,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         //cout <<"avant la boucle sur les parametres nparscaled="<<nparscaled<<"   nsel="<<n<<"\n";
         for (int j=0;j<nparscaled;j++) {
             for (int i=0;i<n;i++) x[i] = phistarscaled[i][j];
-            if (j==0) for (int i=0;i<20;i++) cout <<phistarscaled[i][j]<<"  "; cout<<"\n";
-            cout<<"allocation des x du parametre "<<j<<"\n";
+            //if (j==0) for (int i=0;i<20;i++) cout <<phistarscaled[i][j]<<"  "; cout<<"\n";
+            //cout<<"allocation des x du parametre "<<j<<"\n";
             sort(&x[0],&x[n]);
             //cout<<"apres le sort\n";
             parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];

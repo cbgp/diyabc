@@ -116,11 +116,17 @@ void ParticleSetC::setgroup(int p) {
 			if ((this->header.groupe[gr].mutmoy<0.0)or(this->header.groupe[gr].priormutmoy.constant))
 				//this->particule[p].grouplist[gr].priormutmoy = copyprior(this->header.groupe[gr].priormutmoy);
 				this->particule[p].grouplist[gr].priormutmoy = this->header.groupe[gr].priormutmoy;
-			else this->particule[p].grouplist[gr].priormutmoy.constant=true;
+			else {
+				this->particule[p].grouplist[gr].priormutmoy.fixed=true;
+				this->particule[p].grouplist[gr].priormutmoy.constant=this->header.groupe[gr].priormutmoy.constant;
+			}
 			this->particule[p].grouplist[gr].priormutmoy.fixed=this->header.groupe[gr].priormutmoy.fixed;
 			/*if ((this->particule[p].grouplist[gr].priormutmoy.constant)and(this->header.groupe[gr].priormutmoy.fixed)) {
 	  this->particule[p].grouplist[gr].priormutmoy.constant=false;
 	  }*/
+			//cout<<"this->particule[p].grouplist[gr].mutmoy ="<<this->particule[p].grouplist[gr].mutmoy<<"\n";
+			//cout<<"this->header.groupe[gr].priormutmoy.constant="<<this->header.groupe[gr].priormutmoy.constant<<"\n";
+			//cout<<"setgroup grouplist[gr].priormutmoy.constant="<<this->particule[p].grouplist[gr].priormutmoy.constant<<"\n";
 			// this->particule[p].grouplist[gr].priormutloc = copyprior(this->header.groupe[gr].priormutloc);
 			this->particule[p].grouplist[gr].priormutloc = this->header.groupe[gr].priormutloc;
 
@@ -128,7 +134,10 @@ void ParticleSetC::setgroup(int p) {
 			if ((this->header.groupe[gr].Pmoy<0.0)or(this->header.groupe[gr].priorPmoy.constant))
 				// this->particule[p].grouplist[gr].priorPmoy = copyprior(this->header.groupe[gr].priorPmoy);
 				this->particule[p].grouplist[gr].priorPmoy = this->header.groupe[gr].priorPmoy;
-			else this->particule[p].grouplist[gr].priorPmoy.constant=true;
+			else {
+				this->particule[p].grouplist[gr].priorPmoy.fixed=true;
+				this->particule[p].grouplist[gr].priorPmoy.constant=this->header.groupe[gr].priorPmoy.constant;
+			}
 			this->particule[p].grouplist[gr].priorPmoy.fixed=this->header.groupe[gr].priorPmoy.fixed;
 			/*if ((this->particule[p].grouplist[gr].priorPmoy.constant)and(this->header.groupe[gr].priorPmoy.fixed)) {
 	  this->particule[p].grouplist[gr].priorPmoy.constant=false;
@@ -144,7 +153,10 @@ void ParticleSetC::setgroup(int p) {
 			if ((this->header.groupe[gr].snimoy<0.0)or(this->header.groupe[gr].priorsnimoy.constant))
 				//this->particule[p].grouplist[gr].priorsnimoy = copyprior(this->header.groupe[gr].priorsnimoy);
 				this->particule[p].grouplist[gr].priorsnimoy = this->header.groupe[gr].priorsnimoy;
-			else this->particule[p].grouplist[gr].priorsnimoy.constant=true;
+			else {
+				this->particule[p].grouplist[gr].priorsnimoy.fixed=true;
+				this->particule[p].grouplist[gr].priorsnimoy.constant=this->header.groupe[gr].priorsnimoy.constant;
+			}
 			this->particule[p].grouplist[gr].priorsnimoy.fixed=this->header.groupe[gr].priorsnimoy.fixed;
 			/*if ((this->particule[p].grouplist[gr].priorsnimoy.constant)and(this->header.groupe[gr].priorsnimoy.fixed)) {
 	  this->particule[p].grouplist[gr].priorsnimoy.constant=false;
@@ -160,10 +172,13 @@ void ParticleSetC::setgroup(int p) {
 			this->particule[p].grouplist[gr].gams   = this->header.groupe[gr].gams;	//gams
 
 			this->particule[p].grouplist[gr].musmoy = this->header.groupe[gr].musmoy;	//musmoy
-			if (this->header.groupe[gr].musmoy<0.0)
+			if ((this->header.groupe[gr].musmoy<0.0)or(this->header.groupe[gr].priormusmoy.constant))
 				// this->particule[p].grouplist[gr].priormusmoy = copyprior(this->header.groupe[gr].priormusmoy);
 				this->particule[p].grouplist[gr].priormusmoy = this->header.groupe[gr].priormusmoy;
-			else this->particule[p].grouplist[gr].priormusmoy.constant=true;
+			else {
+				this->particule[p].grouplist[gr].priormusmoy.fixed=true;
+				this->particule[p].grouplist[gr].priormusmoy.constant=this->header.groupe[gr].priormusmoy.constant;				
+			}
 			this->particule[p].grouplist[gr].priormusmoy.fixed=this->header.groupe[gr].priormusmoy.fixed;
 			/*if ((this->particule[p].grouplist[gr].priormusmoy.constant)and(this->header.groupe[gr].priormusmoy.fixed)) {
 	  this->particule[p].grouplist[gr].priormusmoy.constant=false;
@@ -501,6 +516,8 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	//ntentes=0;naccept=0;
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
 	for (ipart=0;ipart<this->npart;ipart++){
+		//cout<<"this->particule["<<ipart<<"].grouplist[1].mutmoy = "<<this->particule[ipart].grouplist[1].mutmoy<<"\n";
+		//cout<<"this->particule["<<ipart<<"].grouplist[1].priormutmoy.constant = "<<this->particule[ipart].grouplist[1].priormutmoy.constant<<"\n";
 		if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 		//cout <<"   nloc="<<this->particule[ipart].nloc<<"\n";
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
@@ -519,15 +536,21 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	if (debuglevel==5) cout << "apres pragma\n";
 	//cout<<"acceptation ="<<(double)(100*naccept)/(double)ntentes<<"   ("<<naccept<<" sur "<<ntentes<<")\n";
 	//exit(1);
+	int nph,npm;
+	ss=splitwords(header.entetehist," ",&nph);
+	//nph--;
+	if (debuglevel==5) cout<<header.entetehist<<"\n";
+	if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		if (sOK[ipart]==0){
 			enreg[ipart].numscen=1;
 			if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
 
 			if (debuglevel==5) cout<<"dans particleset ipart="<<ipart<<"     nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
-			for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
+			//for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
+			for (int j=0;j<nph+npm;j++) {	
 				enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
-				//cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+				cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
 			}
 			if (debuglevel==5) cout <<"\n";
 			nstat=0;
@@ -566,12 +589,12 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		cout<<header.entete<<"\n\n";
 		cout<<header.entetehist<<"\n\n";
 		cout<<header.entetemut<<"\n\n";
-		int nph,npm;
+		/*int nph,npm;
 		ss=splitwords(header.entetehist," ",&nph);
 		if (debuglevel==5) cout<<header.entetehist<<"\n";
-		if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;
+		if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;*/
 		ss=splitwords(header.entete," ",&ns);
-		//cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
+		cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
 		np=ns-header.nstat-1;
 		//cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
 		//cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
@@ -610,6 +633,9 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 				for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
 				fprintf(pFile,"\n");
 				if (debuglevel==5){
+					cout<<"parametres de la particule"<<ipart<<"\n";
+					for (int j=0;j<npm+pa;j++) cout<<enreg[ipart].param[j]<<"   ";
+					cout<<"\n";
 					cout<<"\nstat de la particule "<<ipart<<"\n";
 					for (int st=0;st<header.nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";
 					cout<<"\n";
@@ -623,6 +649,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	if (debuglevel==5) cout<<"avant delete sOK\n";
 	delete [] sOK;
 	if (debuglevel==5) cout<<"apres delete sOK\n";
+	//exit(1);
 }
 
 /**

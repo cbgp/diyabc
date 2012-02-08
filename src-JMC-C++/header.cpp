@@ -386,6 +386,7 @@ int HeaderC::readHeaderGroupPrior(ifstream & file){
 			if (ss[2]=="[M]") {
 				this->groupe[gr].type=0;
 				getline(file,s1);ss1=splitwords(s1," ",&nss1);this->groupe[gr].priormutmoy.readprior(ss1[1]);delete [] ss1;
+				cout<<"readHeaderGroupPrior priormutmoy.constant="<<this->groupe[gr].priormutmoy.constant<<"\n";
 				this->groupe[gr].priormutmoy.fixed=false;
 				if (this->groupe[gr].priormutmoy.constant) this->groupe[gr].mutmoy=this->groupe[gr].priormutmoy.mini;
 				else {this->groupe[gr].mutmoy=-1.0;for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}}

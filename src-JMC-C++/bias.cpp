@@ -79,7 +79,7 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
         ss = splitwords(s,"=",&n);
         name=ss[0];
         i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
-        cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
+        //cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
             header.scenario[rt.scenteste-1].histparam[i].prior.readprior(ss[1]);
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=false;
@@ -116,8 +116,14 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 			//header.groupe[gr].priormutmoy.ecris();
             if (header.groupe[gr].priormutmoy.constant) header.groupe[gr].mutmoy=header.groupe[gr].priormutmoy.mini;
 			else {
-				if (ss[0].find("[")==string::npos) {header.groupe[gr].mutmoy =atof(ss[0].c_str());header.groupe[gr].priormutmoy.fixed=true;}
-				else {header.groupe[gr].priormutmoy.readprior(ss[0]);header.groupe[gr].priormutmoy.fixed=false;}
+				if (ss[0].find("[")==string::npos) {
+					header.groupe[gr].mutmoy =atof(ss[0].c_str());
+					header.groupe[gr].priormutmoy.fixed=true;
+					cout<<"mutmoy="<<header.groupe[gr].mutmoy<<"\n";
+				} else {
+					header.groupe[gr].priormutmoy.readprior(ss[0]);header.groupe[gr].priormutmoy.fixed=false;
+					
+				}
 			}
 		    //cout<<"mutmoy : \n";
 			//header.groupe[gr].priormutmoy.ecris();

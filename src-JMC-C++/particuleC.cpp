@@ -558,6 +558,8 @@ vector <int> melange2(MwcGen mw, int k, int n) {
       //cout<<"groupe "<<gr<<"\n";
 	  //cout<<"   type="<<this->grouplist[gr].type<<"\n";
       if (this->grouplist[gr].type==0) {  //microsat
+//cout<<"microsat  groupe[gr].priormutmoy.constant="<<this->grouplist[gr].priormutmoy.constant <<"\n";
+
 	if (not this->grouplist[gr].priormutmoy.fixed) this->grouplist[gr].mutmoy = this->grouplist[gr].priormutmoy.drawfromprior(this->mw);
 	if (not this->grouplist[gr].priormutmoy.constant) {
 	  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
@@ -1800,7 +1802,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  this->sumweight = 0.0;
 	for (loc=0;loc<this->nloc;loc++) {
 		if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
-			if (debuglevel==5) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
+			if (debuglevel==10) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
 				this->ntentes++;
 				if (this->locuslist[loc].type <10) setMutParamValue(loc);
 				if ((this->locuslist[loc].type >4)and(this->locuslist[loc].type <10)) {
