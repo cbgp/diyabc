@@ -113,56 +113,15 @@ void ParticleSetC::setgroup(int p) {
 		if (this->header.groupe[gr].type==0) {	//MICROSAT
 			//cout <<"MICROSAT\n";
 			this->particule[p].grouplist[gr].mutmoy = this->header.groupe[gr].mutmoy;
-			if ((this->header.groupe[gr].mutmoy<0.0)or(this->header.groupe[gr].priormutmoy.constant))
-				//this->particule[p].grouplist[gr].priormutmoy = copyprior(this->header.groupe[gr].priormutmoy);
-				this->particule[p].grouplist[gr].priormutmoy = this->header.groupe[gr].priormutmoy;
-			else {
-				this->particule[p].grouplist[gr].priormutmoy.fixed=true;
-				this->particule[p].grouplist[gr].priormutmoy.constant=this->header.groupe[gr].priormutmoy.constant;
-			}
-			this->particule[p].grouplist[gr].priormutmoy.fixed=this->header.groupe[gr].priormutmoy.fixed;
-			/*if ((this->particule[p].grouplist[gr].priormutmoy.constant)and(this->header.groupe[gr].priormutmoy.fixed)) {
-	  this->particule[p].grouplist[gr].priormutmoy.constant=false;
-	  }*/
-			//cout<<"this->particule[p].grouplist[gr].mutmoy ="<<this->particule[p].grouplist[gr].mutmoy<<"\n";
-			//cout<<"this->header.groupe[gr].priormutmoy.constant="<<this->header.groupe[gr].priormutmoy.constant<<"\n";
-			//cout<<"setgroup grouplist[gr].priormutmoy.constant="<<this->particule[p].grouplist[gr].priormutmoy.constant<<"\n";
-			// this->particule[p].grouplist[gr].priormutloc = copyprior(this->header.groupe[gr].priormutloc);
+			this->particule[p].grouplist[gr].priormutmoy = this->header.groupe[gr].priormutmoy;
 			this->particule[p].grouplist[gr].priormutloc = this->header.groupe[gr].priormutloc;
 
 			this->particule[p].grouplist[gr].Pmoy = this->header.groupe[gr].Pmoy;
-			if ((this->header.groupe[gr].Pmoy<0.0)or(this->header.groupe[gr].priorPmoy.constant))
-				// this->particule[p].grouplist[gr].priorPmoy = copyprior(this->header.groupe[gr].priorPmoy);
-				this->particule[p].grouplist[gr].priorPmoy = this->header.groupe[gr].priorPmoy;
-			else {
-				this->particule[p].grouplist[gr].priorPmoy.fixed=true;
-				this->particule[p].grouplist[gr].priorPmoy.constant=this->header.groupe[gr].priorPmoy.constant;
-			}
-			this->particule[p].grouplist[gr].priorPmoy.fixed=this->header.groupe[gr].priorPmoy.fixed;
-			/*if ((this->particule[p].grouplist[gr].priorPmoy.constant)and(this->header.groupe[gr].priorPmoy.fixed)) {
-	  this->particule[p].grouplist[gr].priorPmoy.constant=false;
-	  }*/
-			// this->particule[p].grouplist[gr].priorPloc = copyprior(this->header.groupe[gr].priorPloc);
+			this->particule[p].grouplist[gr].priorPmoy = this->header.groupe[gr].priorPmoy;
 			this->particule[p].grouplist[gr].priorPloc = this->header.groupe[gr].priorPloc;
 
 			this->particule[p].grouplist[gr].snimoy = this->header.groupe[gr].snimoy;
-
-			//cout<<"dans particleSet  snimoy="<<this->header.groupe[gr].snimoy <<"\n";
-			//this->header.groupe[gr].priorsnimoy.ecris();
-
-			if ((this->header.groupe[gr].snimoy<0.0)or(this->header.groupe[gr].priorsnimoy.constant))
-				//this->particule[p].grouplist[gr].priorsnimoy = copyprior(this->header.groupe[gr].priorsnimoy);
-				this->particule[p].grouplist[gr].priorsnimoy = this->header.groupe[gr].priorsnimoy;
-			else {
-				this->particule[p].grouplist[gr].priorsnimoy.fixed=true;
-				this->particule[p].grouplist[gr].priorsnimoy.constant=this->header.groupe[gr].priorsnimoy.constant;
-			}
-			this->particule[p].grouplist[gr].priorsnimoy.fixed=this->header.groupe[gr].priorsnimoy.fixed;
-			/*if ((this->particule[p].grouplist[gr].priorsnimoy.constant)and(this->header.groupe[gr].priorsnimoy.fixed)) {
-	  this->particule[p].grouplist[gr].priorsnimoy.constant=false;
-	  }*/
-			//this->particule[p].grouplist[gr].priorsnimoy.ecris();
-			// this->particule[p].grouplist[gr].priorsniloc = copyprior(this->header.groupe[gr].priorsniloc);
+			this->particule[p].grouplist[gr].priorsnimoy = this->header.groupe[gr].priorsnimoy;
 			this->particule[p].grouplist[gr].priorsniloc = this->header.groupe[gr].priorsniloc;
 		}
 		else if (this->header.groupe[gr].type==1) {							//SEQUENCES
@@ -172,43 +131,18 @@ void ParticleSetC::setgroup(int p) {
 			this->particule[p].grouplist[gr].gams   = this->header.groupe[gr].gams;	//gams
 
 			this->particule[p].grouplist[gr].musmoy = this->header.groupe[gr].musmoy;	//musmoy
-			if ((this->header.groupe[gr].musmoy<0.0)or(this->header.groupe[gr].priormusmoy.constant))
-				// this->particule[p].grouplist[gr].priormusmoy = copyprior(this->header.groupe[gr].priormusmoy);
-				this->particule[p].grouplist[gr].priormusmoy = this->header.groupe[gr].priormusmoy;
-			else {
-				this->particule[p].grouplist[gr].priormusmoy.fixed=true;
-				this->particule[p].grouplist[gr].priormusmoy.constant=this->header.groupe[gr].priormusmoy.constant;				
-			}
-			this->particule[p].grouplist[gr].priormusmoy.fixed=this->header.groupe[gr].priormusmoy.fixed;
-			/*if ((this->particule[p].grouplist[gr].priormusmoy.constant)and(this->header.groupe[gr].priormusmoy.fixed)) {
-	  this->particule[p].grouplist[gr].priormusmoy.constant=false;
-	  }*/
-			// this->particule[p].grouplist[gr].priormusloc = copyprior(this->header.groupe[gr].priormusloc);
+			this->particule[p].grouplist[gr].priormusmoy = this->header.groupe[gr].priormusmoy;
 			this->particule[p].grouplist[gr].priormusloc = this->header.groupe[gr].priormusloc;
+
 			if (this->header.groupe[gr].mutmod>0){
 				this->particule[p].grouplist[gr].k1moy = this->header.groupe[gr].k1moy ;	//k1moy
-				if (header.groupe[gr].k1moy<0)
-					// this->particule[p].grouplist[gr].priork1moy = copyprior(this->header.groupe[gr].priork1moy);
-					this->particule[p].grouplist[gr].priork1moy = this->header.groupe[gr].priork1moy;
-				else this->particule[p].grouplist[gr].priork1moy.constant=true;
-				this->particule[p].grouplist[gr].priork1moy.fixed=this->header.groupe[gr].priork1moy.fixed;
-				/*if ((this->particule[p].grouplist[gr].priork1moy.constant)and(this->header.groupe[gr].priork1moy.fixed)) {
-	    this->particule[p].grouplist[gr].priork1moy.constant=false;
-	    }*/
-				// this->particule[p].grouplist[gr].priork1loc = copyprior(this->header.groupe[gr].priork1loc);
+				this->particule[p].grouplist[gr].priork1moy = this->header.groupe[gr].priork1moy;
 				this->particule[p].grouplist[gr].priork1loc = this->header.groupe[gr].priork1loc;
 			}
+			
 			if (this->header.groupe[gr].mutmod>2){
 				this->particule[p].grouplist[gr].k2moy = this->header.groupe[gr].k2moy ;	//k2moy
-				if (header.groupe[gr].k2moy<0)
-					// this->particule[p].grouplist[gr].priork2moy = copyprior(this->header.groupe[gr].priork2moy);
-					this->particule[p].grouplist[gr].priork2moy = this->header.groupe[gr].priork2moy;
-				else this->particule[p].grouplist[gr].priork2moy.constant=true;
-				this->particule[p].grouplist[gr].priork2moy.fixed=this->header.groupe[gr].priork2moy.fixed;
-				/*if ((this->particule[p].grouplist[gr].priork2moy.constant)and(this->header.groupe[gr].priork2moy.fixed)) {
-	    this->particule[p].grouplist[gr].priork2moy.constant=false;
-	    }*/
-				// this->particule[p].grouplist[gr].priork2loc = copyprior(this->header.groupe[gr].priork2loc);
+				this->particule[p].grouplist[gr].priork2moy = this->header.groupe[gr].priork2moy;
 				this->particule[p].grouplist[gr].priork2loc = this->header.groupe[gr].priork2loc;
 			}
 		}
