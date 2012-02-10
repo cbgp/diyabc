@@ -1893,9 +1893,13 @@ void ParticleC::put_one_mutation(int loc) {
 				put_one_mutation(loc);
 				if (this->locuslist[loc].weight>0.0) {
 					simulOK[loc]=cree_haplo(loc);
-					this->naccept++;
-				/*} else {
-					if ((this->ntentes>nlocutil)and(this->naccept<nlocutil/10)) {simulOK[loc]=-1;loca=loc;}*/
+					if (polymref(loc)) this->naccept++;
+					else {
+						this->locuslist[loc].weight=0.0;
+						simulOK[loc]=0;
+						gtexist[loc]=true; 
+						loc--;
+					} 
 				} else {
 					simulOK[loc]=0;
 					gtexist[loc]=true; 
