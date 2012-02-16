@@ -59,6 +59,7 @@ class SetGeneticData(formGenData,baseGenData):
         QObject.connect(self.ui.clearButton,SIGNAL("clicked()"),self.clear)
 
         self.ui.analysisFrame.hide()
+        self.ui.autoGroupButton.hide()
 
     def updateDoc(self,obj=None):
         """ Met à jour la doc uniquement pour les fils de l'objet obj.
@@ -202,10 +203,11 @@ class SetGeneticData(formGenData,baseGenData):
         else:
             output.notify(self,"Set Mutation Model error","Add locus to a group before setting the mutation model")
 
-    def rmGroup(self):
+    def rmGroup(self,box=None):
         """ Enlève les loci présents dans le groupe et supprime le groupe
         """
-        box = self.sender().parent()
+        if (box == None):
+            box = self.sender().parent()
         lw = box.findChild(QListWidget,"locusGroupList")
         lw.selectAll()
         self.rmFromGroup(box)

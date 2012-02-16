@@ -20,7 +20,8 @@ class SetGeneticDataMsatSeq(SetGeneticData):
     """
     def __init__(self,parent=None):
         super(SetGeneticDataMsatSeq,self).__init__(parent)
-
+        self.ui.autoGroupButton.show()
+        QObject.connect(self.ui.autoGroupButton,SIGNAL("clicked()"),self.autoGroup)
 
     def majProjectGui(self,m=None,s=None,g=None,ss=None):
         if m != None:
@@ -196,6 +197,34 @@ class SetGeneticDataMsatSeq(SetGeneticData):
             self.parent.setGenValid(True)
         # dans tous les cas, on écrit la conf
         self.writeGeneticConfFromGui()
+
+    def autoGroup(self):
+        # enlever tous les groupes
+        self.clear()
+
+        self.tableWidget.setRangeSelected(QTableWidgetSelectionRange(0,0,self.tableWidget.rowCount()-1,0),False)
+        # ajouter le groupe msat
+        self.addGroup()
+        msat = False
+        for i in range(self.tableWidget.rowCount()):
+            if str(self.tableWidget.item(i,1).text()) == "M":
+                self.tableWidget.setItemSelected(self.tableWidget.item(i,1),True)
+                msat = True
+        if msat:
+            self.addToGroup(self.groupList[-1])
+            self.addGroup()
+
+        self.tableWidget.setRangeSelected(QTableWidgetSelectionRange(0,0,self.tableWidget.rowCount()-1,0),False)
+        seq = False
+        for i in range(self.tableWidget.rowCount()):
+            if str(self.tableWidget.item(i,1).text()) == "S":
+                self.tableWidget.setItemSelected(self.tableWidget.item(i,1),True)
+                seq = True
+        if seq:
+            self.addToGroup(self.groupList[-1])
+        else:
+            self.rmGroup(self.groupList[-1])
+
 
     def clear(self):
         """ On supprime tous les groupes

@@ -117,6 +117,7 @@ class ProjectMsatSeq(ProjectReftable):
         self.gen_data_win.ui.exitButton.setDisabled(yesno)
         self.gen_data_win.ui.tableWidget.setDisabled(yesno)
         self.gen_data_win.ui.addGroupButton.setDisabled(yesno)
+        self.gen_data_win.ui.autoGroupButton.setDisabled(yesno)
         for g in self.gen_data_win.groupList:
             for b in g.findChildren(QPushButton,"rmFromGroupButton"):
                 b.setDisabled(yesno)

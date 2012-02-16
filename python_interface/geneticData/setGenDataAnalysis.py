@@ -28,6 +28,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
         self.analysisNameLabel.setText(self.analysis.name)
 
         self.ui.addGroupButton.hide()
+        self.ui.autoGroupButton.hide()
         self.ui.clearButton.hide()
 
         self.fillLocusTableFromData()
