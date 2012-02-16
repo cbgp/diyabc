@@ -203,7 +203,7 @@ class Data(object):
             if (ili>0) and (lim.find('POP')>-1)and(lim.find(',')<1) : npop +=1
             if (npop>0) and (lim.find('POP')<0)and (li.find(',')<1) :
 #data file with missing comma between individual name and genotype
-               print ili
+               #print ili
                raise NotGenepopFileError("either Genepop file with missing comma between individual name and genotype or not a Genepop file")
         nloc=0
         for ili,li in enumerate(lines) :
