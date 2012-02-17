@@ -449,7 +449,7 @@ def getRamInfo():
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 def checkRam():
-    """ Check if available RAM amount is at least equal to 2 GB
+    """ Check if total RAM amount is at least equal to 2 GB
     A notification is showed if not.
     """
     try:
@@ -458,9 +458,9 @@ def checkRam():
         raminfo = None
         return
     min_requested_ram = 2000
-    if raminfo[1] < min_requested_ram:
+    if raminfo[0] < min_requested_ram:
         #output.notify(None,"System warning","Warning, your have less than %s MB of RAM available.\n Your computer may swap and become very slow"%min_requested_ram)
-        QMessageBox.information(None,"System warning","Warning, your have less than %s MB of RAM available.\n Your computer may swap and become very slow"%min_requested_ram)
+        QMessageBox.information(None,"System warning","Warning, your system has less than %s MB of RAM.\n Your computer may swap and become very slow"%min_requested_ram)
 
 import subprocess
 m2m={
