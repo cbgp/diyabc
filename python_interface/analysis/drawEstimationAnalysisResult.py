@@ -120,6 +120,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             f = codecs.open("%s/analysis/%s/param%sstatdens.txt"%(self.parent.dir,self.directory,self.file_subname),"r","utf-8")
             lines = f.readlines()
             f.close()
+            dico_info_draw = {}
             l = 0
             while l < (len(lines) - 1):
                 name = lines[l].strip()
@@ -127,8 +128,12 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
                 absv = lines[l+3]
                 ordpr = lines[l+4]
                 ordpo = lines[l+5]
-                self.addDraw(name,values,absv,ordpr,ordpo)
+                dico_info_draw[name] = [values,absv,ordpr,ordpo]
                 l += 6
+            keys = dico_info_draw.keys()
+            keys.sort()
+            for name in keys:
+                self.addDraw(name,dico_info_draw[name][0],dico_info_draw[name][1],dico_info_draw[name][2],dico_info_draw[name][3])
         else:
             log(3, "param%sstatdens.txt not found for analysis %s"%(self.file_subname,self.analysis.name))
 
@@ -476,6 +481,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             painter.begin(self.pic_result)
 
         keys = self.dicoPlot.keys()
+        keys.sort()
         # on fait des lignes tant qu'on a des pix
         while (ind <= ito):
             col = 0
