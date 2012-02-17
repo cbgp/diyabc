@@ -185,10 +185,10 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         # nettoyage radical : suppression du dossier
         proj_dir = self.parent.dir
         pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)
-        if os.path.exists(pic_dir):
-            shutil.rmtree(pic_dir)
-        # puis on le recrée, vide évidemment
-        os.mkdir(pic_dir)
+        #if os.path.exists(pic_dir):
+        #    shutil.rmtree(pic_dir)
+        if not os.path.exists(pic_dir):
+            os.mkdir(pic_dir)
 
         qmb = QMessageBox()
         qmb.setText("Would you like to save all images in one file or 1 image per file ? (PDF or SVG or JPG or PNG)")

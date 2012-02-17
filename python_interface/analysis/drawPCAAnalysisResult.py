@@ -373,6 +373,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 painter.setPen(pen)
                 p.print_(painter, p.rect())
                 painter.end()
+            QMessageBox.information(self,"Graph saved","The graph has been saved")
 
     def exit(self):
         del self.dico_points
