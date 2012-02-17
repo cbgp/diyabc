@@ -922,6 +922,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         frame.findChild(QPushButton,"analysisButton").setText("Re-launch")
         frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #EFB1B3")
         frame.findChild(QPushButton,"analysisStopButton").hide()
+        frame.findChild(QProgressBar,"analysisStatusBar").setValue(0)
         self.thAnalysis.killProcess()
         self.thAnalysis = None
 
