@@ -310,10 +310,11 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         # nettoyage radical : suppression du dossier
         proj_dir = self.parent.parent.dir
         pic_dir = self.parent.parent.parent.scenario_pix_dir_name
-        if os.path.exists("%s/%s"%(proj_dir,pic_dir)):
-            shutil.rmtree("%s/%s"%(proj_dir,pic_dir))
+        #if os.path.exists("%s/%s"%(proj_dir,pic_dir)):
+        #    shutil.rmtree("%s/%s"%(proj_dir,pic_dir))
         # puis on le recrée, vide évidemment
-        os.mkdir("%s/%s"%(proj_dir,pic_dir))
+        if not os.path.exists("%s/%s"%(proj_dir,pic_dir)):
+            os.mkdir("%s/%s"%(proj_dir,pic_dir))
 
         if str(self.parent.parent.parent.preferences_win.ui.picturesFormatCombo.currentText()) == "pdf":
             answer = QMessageBox.question(self,"Saving option","Would you like to save all scenarios images in one file or 1 scenario per file ? (PDF)",\
