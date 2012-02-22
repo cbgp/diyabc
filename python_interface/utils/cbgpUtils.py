@@ -60,15 +60,17 @@ class CmdPrompt(cmd.Cmd):
 
 class cmdThread(Thread):
     """ Command prompt launch thread
+    A reference to an external object can be given, it will be given to the prompt
+    and accessible by "self.obj" in the commands
     """
-    def __init__(self,diy):
+    def __init__(self,obj):
         super(cmdThread,self).__init__()
-        self.diy = diy
+        self.obj = obj
         self.start()
     def run(self):
-        plop = CmdPrompt()
-        plop.diy=self.diy
-        plop.cmdloop()
+        theCmd = CmdPrompt()
+        theCmd.obj = self.obj
+        theCmd.cmdloop()
 
 
 from xml.dom.minidom import parse
