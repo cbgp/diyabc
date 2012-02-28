@@ -1347,6 +1347,7 @@ void HeaderC::calstatobs(string statobsfilename) {
 				for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++)this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i];
 			}
 		}else {
+			this->particuleobs.locuslist[kloc].weight = 1.0;
 			this->particuleobs.locuslist[kloc].haplosnp = new short int*[this->particuleobs.nsample];
 			for (int cat=0;cat<5;cat++){
 				if (this->particuleobs.catexist[cat]){

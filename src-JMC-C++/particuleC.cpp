@@ -1262,6 +1262,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 void ParticleC::cherche_branchesOK(int loc) {
 	for (int b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OK = true;
 	for (int b=0;b<this->gt[loc].nbranches;b++) this->gt[loc].branches[b].OKOK = true;
+	this->gt[loc].nbOK  =this->gt[loc].nbranches;
 	this->gt[loc].nbOKOK=this->gt[loc].nbranches;
 	if (this->refnindtot<1) return;
 	int j,nodemrca=0,f1,f2,b;
@@ -1616,6 +1617,7 @@ void ParticleC::put_one_mutation(int loc) {
     }
     if (debuglevel==10) cout<<"apres ordre\n";
     if (this->locuslist[loc].type<5) {      //MICROSAT
+      
       this->locuslist[loc].haplomic = new int*[this->data.nsample];
       for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplomic[sa] = new int [this->data.ss[cat][sa]];
       sa=0;ind=0;
@@ -1653,21 +1655,21 @@ void ParticleC::put_one_mutation(int loc) {
       }
     }
     else {									//SNP
-      if (debuglevel==10) cout << " firstime = " << firstime << endl;
-      if (this->locuslist[loc].firstime){
-	this->locuslist[loc].haplosnp = new short int*[this->data.nsample];
-	for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplosnp[sa] = new short int [this->data.ss[cat][sa]];
-	this->locuslist[loc].firstime=false;
-      }
-      sa=0;ind=0;
-      for (int i=0;i<this->gt[loc].ngenes;i++) {
-	if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
-	this->locuslist[loc].haplosnp[sa][ind] = (short int)this->gt[loc].nodes[ordre[sa][ind]].state;
-	// if (loc<1) cout<<this->locuslist[loc].haplosnp[sa][ind]<<"   ";
-	ind++;if (ind==this->data.ss[cat][sa]) {sa++;ind=0;}
-	// if ((loc<1)and(ind==0))cout<<"\n";
-      }
-      if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
+		if (debuglevel==10) cout << " firstime = " << firstime << endl;
+		if (this->locuslist[loc].firstime){
+			this->locuslist[loc].haplosnp = new short int*[this->data.nsample];
+			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplosnp[sa] = new short int [this->data.ss[cat][sa]];
+			this->locuslist[loc].firstime=false;
+		}
+		sa=0;ind=0;
+		for (int i=0;i<this->gt[loc].ngenes;i++) {
+			if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
+			this->locuslist[loc].haplosnp[sa][ind] = (short int)this->gt[loc].nodes[ordre[sa][ind]].state;
+			// if (loc<1) cout<<this->locuslist[loc].haplosnp[sa][ind]<<"   ";
+			ind++;if (ind==this->data.ss[cat][sa]) {sa++;ind=0;}
+			// if ((loc<1)and(ind==0))cout<<"\n";
+		}
+		if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
     }
     ordre.clear();
     if (debuglevel==7)cout<<"Locus "<<loc<<"    nmutotdans cree_haplo = "<<this->gt[loc].nmutot<<"\n";
@@ -1724,6 +1726,7 @@ void ParticleC::put_one_mutation(int loc) {
     double p;
     bool polyref=false, polydat=false,poly;
     //cout<<"dans polymref debut\n";
+	if (this->refnindtot<1) return true;
     int cat = (this->locuslist[loc].type % 5);
     for (int sa=0;sa<this->nsample;sa++) {
 		for (int i=0;i<this->data.ss[cat][sa];i++) {
@@ -1744,7 +1747,7 @@ void ParticleC::put_one_mutation(int loc) {
     else         polyref=(p >= this->reffreqmin);
 	polydat = (n1d>0)and(n1d<nd);
 	poly = ((polyref) and (polydat));
-    //if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
+    if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
 	if (debuglevel==20) {
 		if (poly) cout<<"LOCUS ACCEPTE\n"; else cout<<"LOCUS REFUSE\n";
 	}  
@@ -1795,6 +1798,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  for (loc=0;loc<this->nloc;loc++) simulOK[loc]=-1;
 	  if (debuglevel==5) cout <<"avant setMutParammoyValue \n";
 	  setMutParammoyValue();
+	  if (debuglevel==5) cout <<"apres setMutParammoyValue \n";
 	  if (debuglevel==10) cout<<"nloc="<<this->nloc<<"\n";fflush(stdin);
 	  gtexist = new bool[this->nloc];
 	  for (loc=0;loc<this->nloc;loc++) {gtexist[loc] = false;simulOK[loc]= 0;}
@@ -1893,8 +1897,11 @@ void ParticleC::put_one_mutation(int loc) {
 				put_one_mutation(loc);
 				if (this->locuslist[loc].weight>0.0) {
 					simulOK[loc]=cree_haplo(loc);
-					if (polymref(loc)) this->naccept++;
-					else {
+					if (debuglevel==11) cout<<"apres cree_haplo  weight="<<this->locuslist[loc].weight<<"\n";
+					if (polymref(loc)) {
+						this->naccept++;
+						if (debuglevel==11) cout<<"apres polymref  weight="<<this->locuslist[loc].weight<<"\n";
+					}else {
 						this->locuslist[loc].weight=0.0;
 						simulOK[loc]=0;
 						gtexist[loc]=true; 
@@ -1906,8 +1913,8 @@ void ParticleC::put_one_mutation(int loc) {
 					loc--;
 				}
 				this->sumweight +=this->locuslist[loc].weight;
-				//cout<<"weight = "<<this->weight<<"\n";
-				this->locpol = (double)this->naccept/(double)this->ntentes;
+				//if (debuglevel==11) cout<<"weight = "<<this->sumweight<<"\n";
+				this->locpol = this->sumweight/(double)this->ntentes;
 				if ((this->ntentes>=nlocutil)and(this->locpol<0.2)) this->sumweight=-1.0;
 			}
 			if (this->sumweight<0.0) break;
@@ -1916,8 +1923,8 @@ void ParticleC::put_one_mutation(int loc) {
 	}	//LOOP ON loc
 	if (this->sumweight>=0.0) this->weight = this->sumweight/(double)nlocutil;
 	else this->weight = 0.0;
-	//cout<<"poids de la particule = "<<this->weight<<"   taux de polymorphisme = "<<this->locpol;
-	//cout<<"    "<<this->naccept<<" sur = "<<this->ntentes<<"\n";
+	if (debuglevel==11) cout<<"poids de la particule = "<<this->weight<<"   taux de polymorphisme = "<<this->locpol;
+	if (debuglevel==11) cout<<"    "<<this->naccept<<" sur = "<<this->ntentes<<"\n";
 	if (this->weight>0.0){  
 		if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
 		if (this->data.nmisshap>0) {

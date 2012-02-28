@@ -370,7 +370,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 		if (sOK[ipart]==0) {
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr,this->particule[ipart].weight);}
 		}
-		//cout<<"apres docalstat de la particule "<<ipart<<"\n";
+		// cout<<"apres docalstat de la particule "<<ipart<<"\n";
 	}
 	cout<<"apres la simulation de "<<npart<<"particules\n";
 ///////////////fin du pragma
@@ -475,14 +475,15 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	//nph--;
 	if (debuglevel==5) cout<<header.entetehist<<"\n";
 	if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;
+	cout<<"nph="<<nph<<"   npm="<<npm<<"\n";
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		if (sOK[ipart]==0){
 			enreg[ipart].numscen=1;
 			if (this->particule[ipart].nscenarios>1) {enreg[ipart].numscen=this->particule[ipart].scen.number;}
 
 			if (debuglevel==5) cout<<"dans particleset ipart="<<ipart<<"     nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
-			//for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
-			for (int j=0;j<nph+npm;j++) {	
+			for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
+			//for (int j=0;j<nph+npm;j++) {	
 				enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
 				cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
 			}

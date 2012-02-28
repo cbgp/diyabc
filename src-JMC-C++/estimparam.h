@@ -51,14 +51,14 @@ void local_regression(int n, int npa, long double **matC);
 /**D
 * calcule les phistars pour les paramètres originaux et composites
 */
-long double** calphistarO(int n);
-long double** calphistarC(int n);
-long double** calphistarS(int n);
+void calphistarO(int n, long double **phistar);
+void calphistarC(int n, long double **phistarcompo);
+void calphistarS(int n, long double **phistarscaled);
 void det_nomparam();
 /**
 * effectue la sauvegarde des phistars dans le fichier path/ident/phistar.txt
 */
-void savephistar(int n, std::string path, std::string ident) ;
+void savephistar(int n, std::string path, std::string ident, long double **phistar, long double **phistarcompo, long double **phistarscaled) ;
 /**
 * lit les paramètres des enregistrements simulés pour l'établissement des distributions a priori'
 */
@@ -92,9 +92,9 @@ void histodens(int n, bool multithread, std::string progressfilename,int* iprog,
 /**
 *calcule les statistiques des paramètres
 */
-parstatC* calparstatO(int n);
-parstatC* calparstatC(int n);
-parstatC* calparstatS(int n);
+parstatC* calparstatO(int n, long double **phistar);
+parstatC* calparstatC(int n, long double **phistarcompo);
+parstatC* calparstatS(int n, long double **phistarscaled);
 /**
 *sauvegarde les statistiques et les densités des paramètres
 */

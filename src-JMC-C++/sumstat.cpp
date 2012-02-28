@@ -204,11 +204,13 @@ extern int debuglevel;
 			this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = this->locuslist[kloc].weight;
 			if (this->locuslist[kloc].weight>0.0) {
 				sasize = samplesize(kloc,sample);
+				//cout<<"sasize="<<sasize<<"\n";
 				if (sasize>1){
 					het=1.0;
 					for (int k=0;k<2;k++) het -= sqr(this->locuslist[kloc].freq[sample][k]);
 					het *= ((long double)sasize/(long double)(sasize-1));
 					this->grouplist[gr].sumstatsnp[numsnp].x[iloc] = het;
+					//cout<<het<<"\n";
 					//f10<<het<<"\n";
 				} else this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
 			}
@@ -216,6 +218,7 @@ extern int debuglevel;
 		}
 		//f10.close();
 		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
+		//exit(3);
 	}
 
 	
@@ -309,10 +312,20 @@ extern int debuglevel;
 					f3=this->locuslist[loc].freq[sample][0];
 					if (f1!=f2) {
 						aml = (f3-f2)/(f1-f2);
-						if ((aml<0.0)or(aml>1.0)) this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
+						if ((aml<0.0)or(aml>1.0)) {
+							this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
+							if (aml<0) this->grouplist[gr].sumstatsnp[numsnp].x[iloc] = 0.0;
+							else this->grouplist[gr].sumstatsnp[numsnp].x[iloc] = 1.0;
+						}
 						else this->grouplist[gr].sumstatsnp[numsnp].x[iloc] = aml;
+					} else {
+						this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
+						this->grouplist[gr].sumstatsnp[numsnp].x[iloc] = 0.5;
 					}
-				} else this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
+				} else {
+					this->grouplist[gr].sumstatsnp[numsnp].w[iloc] = 0.0;
+					this->grouplist[gr].sumstatsnp[numsnp].x[iloc] = 0.5;
+				}
 			}
 			//if (this->grouplist[gr].sumstatsnp[numsnp].w[iloc]>0.0) cout<<this->grouplist[gr].sumstatsnp[numsnp].x[iloc]<<"\n";
 			this->grouplist[gr].sumstatsnp[numsnp].sw += this->grouplist[gr].sumstatsnp[numsnp].w[iloc];
@@ -1590,15 +1603,18 @@ long double ParticleC::cal_nha2p(int gr,int st){
   long double ParticleC::cal_p0L(StatsnpC stsnp){
     long double p0=0.0;
     for(int i=0;i<stsnp.n;i++) {
-		if (stsnp.x[i]==0.0) p0 += stsnp.w[i];
+		//if ((i==0)or(i==stsnp.n-1)) cout<<"dans cal_p0L  stsnp.x["<<i<<"]="<<stsnp.x[i]<<"      stsnp.w["<<i<<"]="<<stsnp.w[i]<<"\n";
+		//cout<<"dans cal_p0L  					stsnp.w["<<i<<"]="<<stsnp.w[i]<<"\n";
+		if (stsnp.x[i]<0.000000001) p0 += stsnp.w[i];
 	}
+	//exit(3);
     return p0/stsnp.sw;
   }
   
   long double ParticleC::cal_moyL0(StatsnpC stsnp) {
     long double sx=0.0,sw=0.0;
     for (int i=0;i<stsnp.n;i++){
-		if (stsnp.w[i]>0){
+		if (stsnp.w[i]>0.0){
 			if (stsnp.x[i]>0.0) {
 				sx += stsnp.w[i]*stsnp.x[i];
 				sw += stsnp.w[i];
@@ -1728,7 +1744,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
       */
       int categ;
       categ=this->grouplist[gr].sumstat[st].cat;
-      //cout<<"avant calcul stat categ="<<categ<<"\n";
+      //cout<<"----------------------------------------> avant calcul stat categ="<<categ<<"\n";
 
 
 

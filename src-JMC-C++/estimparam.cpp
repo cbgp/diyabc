@@ -54,7 +54,7 @@ extern string headerfilename,reftablefilename,datafilename,statobsfilename,refta
 extern bool multithread;
 pardensC *pardens, *pardenscompo, *pardensscaled;
 long double *var_stat, *parmin, *parmax, *parmincompo,*parmaxcompo,*parminscaled,*parmaxscaled,*diff,*diffcompo,*diffscaled;
-long double **beta, **phistar,**phistarcompo,**phistarscaled,**simpar,**simparcompo,**simparscaled;
+long double **beta,**simpar,**simparcompo,**simparscaled;
 int nparamcom,nparcompo,nparscaled,**numpar,numtransf = 3, npar,npar0;
 long double borne=10.0,xborne;
 bool composite = false, scaled = false, original = true;
@@ -315,7 +315,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * pour les paramètres composites
 */
     void recalparamC(int n) {   
-        long double coefmarge=0.001,marge,**xx,pmut;
+        long double coefmarge=0.000000001,marge,**xx,pmut;
         int jj,kk,qq,kscen;
         alpsimrat = new long double*[n];
         for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparcompo];
@@ -425,7 +425,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						}
 						break;
 				case 3 : //logit transform
-						xborne=1E100;
 						for (int j=kp0;j<kp;j++) {parmincompo[j]=1E100;parmaxcompo[j]=-1E100;}
 						for (int i=0;i<n;i++) {
 								for (int j=kp0;j<kp;j++) {
@@ -441,11 +440,13 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
 						}
 						for (int i=0;i<n;i++) {
-							for (int j=kp0;j<kp;j++) alpsimrat[i][j] = log((xx[i][j]-parmincompo[j])/(parmaxcompo[j]-xx[i][j]));
+							for (int j=kp0;j<kp;j++) {
+								if (diffcompo[j]>0.0) alpsimrat[i][j] = log((xx[i][j]-parmincompo[j])/(parmaxcompo[j]-xx[i][j]));
+								else alpsimrat[i][j] = 0.0;
+							}
 						}
 						break;
 				case 4 : //log(tg) transform
-						xborne=1E100;
 						for (int j=kp0;j<kp;j++) {parmincompo[j]=1E100;parmaxcompo[j]=-1E100;}
 						for (int i=0;i<n;i++) {
 								for (int j=kp0;j<kp;j++) {
@@ -461,7 +462,10 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
 						}
 						for (int i=0;i<n;i++) {
-							for (int j=kp0;j<kp;j++) alpsimrat[i][j] = log(tan((xx[i][j]-parmincompo[j])*c/diffcompo[j]));
+							for (int j=kp0;j<kp;j++) {
+								if (diffcompo[j]>0.0) alpsimrat[i][j] = log(tan((xx[i][j]-parmincompo[j])*c/diffcompo[j]));
+								else alpsimrat[i][j] = 0.0;
+							}
 						}
 						break;
 			}
@@ -478,7 +482,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * pour les paramètres scaled
 */
     void recalparamS(int n) {   
-        long double coefmarge=0.001,marge,**xx,pmut,Ne;
+        long double coefmarge=0.000000001,marge,**xx,pmut,Ne;
         int jj,kk,qq,kp,kscen;
         alpsimrat = new long double*[n];
         for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparscaled];
@@ -533,7 +537,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 					break;
 			case 3 : //logit transform
-					xborne=1E100;
 					for (int j=0;j<nparscaled;j++) {parminscaled[j]=1E100;parmaxscaled[j]=-1E100;}
 					for (int i=0;i<n;i++) {
 							for (int j=0;j<nparscaled;j++) {
@@ -542,18 +545,22 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						}
 					}
 					for (int j=0;j<nparscaled;j++) {
+						//cout<<"parminscaled["<<j<<"] = "<<parminscaled[j]<<"          ";
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
 						marge=coefmarge*diffscaled[j];
 						parminscaled[j] -=marge;
 						parmaxscaled[j] +=marge;
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
+						//cout<<"parminscaled["<<j<<"] = "<<parminscaled[j]<<"\n";
 					}
 					for (int i=0;i<n;i++) {
-						for (int j=0;j<nparscaled;j++) alpsimrat[i][j] = log((xx[i][j]-parminscaled[j])/(parmaxscaled[j]-xx[i][j]));
+						for (int j=0;j<nparscaled;j++) {
+							if (diffscaled[j]>0) alpsimrat[i][j] = log((xx[i][j]-parminscaled[j])/(parmaxscaled[j]-xx[i][j]));
+							else alpsimrat[i][j]=0.0;
+						}
 					}
 					break;
 			case 4 : //log(tg) transform
-					xborne=1E100;
 					for (int j=0;j<nparscaled;j++) {parminscaled[j]=1E100;parmaxscaled[j]=-1E100;}
 					for (int i=0;i<n;i++) {
 							for (int j=0;j<nparscaled;j++) {
@@ -569,7 +576,10 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
 					}
 					for (int i=0;i<n;i++) {
-						for (int j=0;j<nparscaled;j++) alpsimrat[i][j] = log(tan((xx[i][j]-parminscaled[j])*c/diffscaled[j]));
+						for (int j=0;j<nparscaled;j++) {
+							if (diffscaled[j]>0) alpsimrat[i][j] = log(tan((xx[i][j]-parminscaled[j])*c/diffscaled[j]));
+							else alpsimrat[i][j]=0.0;
+						}
 					}
 					break;
 		}
@@ -694,7 +704,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			err = inverse_Tik2(nstatOKsel+1,matAA,matB,coeff);
 			if (err!=0) coeff *=sqrt(10.0);
 		} while ((err!=0)and(coeff<0.01));
-		cout<<"cal_matC   err="<<err<<"    coeff="<<coeff<<"\n";
+		if (debuglevel==11)	cout<<"cal_matC   err="<<err<<"    coeff="<<coeff<<"\n";
 		matC = prodML(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
         libereL(nstatOKsel+1,matA); 
         libereL(n,matX);
@@ -709,6 +719,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         beta = new long double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) beta[j] = new long double[npa];
 		beta = prodML(nstatOKsel+1,n,npa,matC,parsim);
+		/*cout<<"regression locale\n";
+		for (int j=0;j<nstatOKsel+1;j++) {
+			for (int k=0;k<npa;k++) cout<<beta[j][k]<<"  ";
+			cout<<"\n";
+		}
+		cout<<"\n";*/
 		libereL(n,parsim);
 	}
 	
@@ -786,31 +802,28 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 /**
 * calcule les phistars pour les paramètres originaux
 */
-    long double** calphistarO(int n){
+    void calphistarO(int n, long double **phistar){
         //cout<<"debut de calphistar\n";
         int k,kk,qq;
         long double pmut;
-        long double **phista;
-        phista = new long double*[n];
-        for (int i=0;i<n;i++) phista[i] = new long double[nparamcom];
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparamcom;j++) {
-                phista[i][j] = alpsimrat[i][j];
-                //if (i<100) cout<< phista[i][j]<<"   ";
-                for (int k=0;k<nstatOKsel;k++) phista[i][j] -= matX0[i][k]*beta[k+1][j];
-                //if(i<100) cout<< phista[i][j]<<"   ";
+                phistar[i][j] = alpsimrat[i][j];
+                //if (i<100) cout<< phistar[i][j]<<"   ";
+                for (int k=0;k<nstatOKsel;k++) phistar[i][j] -= matX0[i][k]*beta[k+1][j];
+                //if(i<100) cout<< phistar[i][j]<<"   ";
                 switch(numtransf) {
                   case 1 : break;
-                  case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
+                  case 2 : if (phistar[i][j]<100.0) phistar[i][j] = exp(phistar[i][j]); else phistar[i][j]=exp(100.0);
                            break;
-                  case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parmin[j];
-                           else if (phista[i][j]>=xborne) phista[i][j] = parmax[j];
-                           else phista[i][j] = (exp(phista[i][j])*parmax[j]+parmin[j])/(1.0+exp(phista[i][j]));
-                           //if(i<100) cout<< phista[i][j]<<"   ("<<parmin[j]<<","<<parmax[j]<<")\n";
+                  case 3 : if (phistar[i][j]<=-xborne) phistar[i][j] = parmin[j];
+                           else if (phistar[i][j]>=xborne) phistar[i][j] = parmax[j];
+                           else phistar[i][j] = (exp(phistar[i][j])*parmax[j]+parmin[j])/(1.0+exp(phistar[i][j]));
+                           //if(i<100) cout<< phistar[i][j]<<"   ("<<parmin[j]<<","<<parmax[j]<<")\n";
                            break;
-                  case 4 : if (phista[i][j]<=-xborne) phista[i][j] = parmin[j];
-                           else if (phista[i][j]>=xborne) phista[i][j] = parmax[j];
-                           else phista[i][j] =parmin[j] +(diff[j]/c*atan(exp(phista[i][j])));
+                  case 4 : if (phistar[i][j]<=-xborne) phistar[i][j] = parmin[j];
+                           else if (phistar[i][j]>=xborne) phistar[i][j] = parmax[j];
+                           else phistar[i][j] =parmin[j] +(diff[j]/c*atan(exp(phistar[i][j])));
                            break;
                 }
             }
@@ -820,37 +833,33 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         for (int i=0;i<n;i++) delete []alpsimrat[i];delete []alpsimrat;
         //for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
         for (int i=0;i<nstatOKsel+1;i++) delete []beta[i]; delete []beta;
-        return phista;
     }
 
  /**
 * calcule les phistars pour les paramètres composites
 */
-    long double** calphistarC(int n){
+    void calphistarC(int n, long double **phistarcompo){
         //cout<<"debut de calphistar\n";
         int k,kk,qq;
         long double pmut;
-        long double **phista;
-        phista = new long double*[n];
-        for (int i=0;i<n;i++) phista[i] = new long double[nparcompo];
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparcompo;j++) {
-                phista[i][j] = alpsimrat[i][j];
-                //if (i<100) cout<< phista[i][j]<<"   ";
-                for (int k=0;k<nstatOKsel;k++) phista[i][j] -= matX0[i][k]*beta[k+1][j];
-                //if(i<100) cout<< phista[i][j]<<"   ";
+                phistarcompo[i][j] = alpsimrat[i][j];
+                //if (i<100) cout<< phistarcompo[i][j]<<"   ";
+                for (int k=0;k<nstatOKsel;k++) phistarcompo[i][j] -= matX0[i][k]*beta[k+1][j];
+                //if(i<100) cout<< phistarcompo[i][j]<<"   ";
                 switch(numtransf) {
                   case 1 : break;
-                  case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
+                  case 2 : if (phistarcompo[i][j]<100.0) phistarcompo[i][j] = exp(phistarcompo[i][j]); else phistarcompo[i][j]=exp(100.0);
                            break;
-                  case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parmincompo[j];
-                           else if (phista[i][j]>=xborne) phista[i][j] = parmaxcompo[j];
-                           else phista[i][j] = (exp(phista[i][j])*parmaxcompo[j]+parmincompo[j])/(1.0+exp(phista[i][j]));
-                           //if(i<100) cout<< phista[i][j]<<"   ("<<parmincompo[j]<<","<<parmaxcompo[j]<<")\n";
+                  case 3 : if (phistarcompo[i][j]<=-xborne) phistarcompo[i][j] = parmincompo[j];
+                           else if (phistarcompo[i][j]>=xborne) phistarcompo[i][j] = parmaxcompo[j];
+                           else phistarcompo[i][j] = (exp(phistarcompo[i][j])*parmaxcompo[j]+parmincompo[j])/(1.0+exp(phistarcompo[i][j]));
+                           //if(i<100) cout<< phistarcompo[i][j]<<"   ("<<parmincompo[j]<<","<<parmaxcompo[j]<<")\n";
                            break;
-                  case 4 : if (phista[i][j]<=-xborne) phista[i][j] = parmincompo[j];
-                           else if (phista[i][j]>=xborne) phista[i][j] = parmaxcompo[j];
-                           else phista[i][j] =parmincompo[j] +(diffcompo[j]/c*atan(exp(phista[i][j])));
+                  case 4 : if (phistarcompo[i][j]<=-xborne) phistarcompo[i][j] = parmincompo[j];
+                           else if (phistarcompo[i][j]>=xborne) phistarcompo[i][j] = parmaxcompo[j];
+                           else phistarcompo[i][j] =parmincompo[j] +(diffcompo[j]/c*atan(exp(phistarcompo[i][j])));
                            break;
                 }
             }
@@ -860,38 +869,34 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         for (int i=0;i<n;i++) delete []alpsimrat[i];delete []alpsimrat;
         //for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
         for (int i=0;i<nstatOKsel+1;i++) delete []beta[i]; delete []beta;
-        return phista;
     }
 
 /**
 * calcule les phistars pour les paramètres scaled
 */
-    long double** calphistarS(int n){
+    void calphistarS(int n, long double **phistarscaled){
         //cout<<"debut de calphistar\n";
         int k,kk,qq;
         long double pmut;
         long double **phista;
-        phista = new long double*[n];
-        for (int i=0;i<n;i++) phista[i] = new long double[nparscaled];
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparscaled;j++) {
-                phista[i][j] = alpsimrat[i][j];
-                //if (i<100) cout<<"   "<< phista[i][j];
-                for (int k=0;k<nstatOKsel;k++) phista[i][j] -= matX0[i][k]*beta[k+1][j];
-                //if(i<100) cout<<"   "<< phista[i][j];
+                phistarscaled[i][j] = alpsimrat[i][j];
+                //if (i<10) cout<<"   "<< phistarscaled[i][j];
+                for (int k=0;k<nstatOKsel;k++) phistarscaled[i][j] -= matX0[i][k]*beta[k+1][j];
+                //if(i<10) cout<<"   "<< phistarscaled[i][j];
                 switch(numtransf) {
                   case 1 : break;
-                  case 2 : if (phista[i][j]<100.0) phista[i][j] = exp(phista[i][j]); else phista[i][j]=exp(100.0);
+                  case 2 : if (phistarscaled[i][j]<100.0) phistarscaled[i][j] = exp(phistarscaled[i][j]); else phistarscaled[i][j]=exp(100.0);
                            break;
-                  case 3 : if (phista[i][j]<=-xborne) phista[i][j] = parminscaled[j];
-                           else if (phista[i][j]>=parmaxscaled[j]) phista[i][j] = parmaxscaled[j];
-                           else if (parminscaled[j]==parmaxscaled[j]) phista[i][j] = parmaxscaled[j]; 
-						   else phista[i][j] = (exp(phista[i][j])*parmaxscaled[j]+parminscaled[j])/(1.0+exp(phista[i][j]));
-                           //if(i<100) cout<<"      "<< phista[i][j]<<"   ("<<parminscaled[j]<<","<<parmaxscaled[j]<<")\n";
+                  case 3 : if (phistarscaled[i][j]<-1000.0) phistarscaled[i][j] = parminscaled[j];
+                           else if (phistarscaled[i][j]>1000.0) phistarscaled[i][j] = parmaxscaled[j];
+						   else phistarscaled[i][j] = (exp(phistarscaled[i][j])*parmaxscaled[j]+parminscaled[j])/(1.0+exp(phistarscaled[i][j]));
+                           //if(i<10) cout<<"      "<< phistarscaled[i][j]<<"   ("<<parminscaled[j]<<","<<parmaxscaled[j]<<")\n";
                            break;
-                  case 4 : if (phista[i][j]<=xborne) phista[i][j] = parminscaled[j];
-                           else if (phista[i][j]>=parmaxscaled[j]) phista[i][j] = parmaxscaled[j];
-                           else phista[i][j] =parminscaled[j] +(diff[j]/c*atan(exp(phista[i][j])));
+                  case 4 : if (phistarscaled[i][j]<-1000.0) phistarscaled[i][j] = parminscaled[j];
+                           else if (phistarscaled[i][j]>1000.0) phistarscaled[i][j] = parmaxscaled[j];
+                           else phistarscaled[i][j] =parminscaled[j] +(diffscaled[j]/c*atan(exp(phistarscaled[i][j])));
                            break;
                 }
             }
@@ -902,7 +907,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         for (int i=0;i<n;i++) delete []alpsimrat[i];delete []alpsimrat;
         //for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
         for (int i=0;i<nstatOKsel+1;i++) delete []beta[i]; delete []beta;
-        return phista;
     }
 
    void det_nomparam() {
@@ -955,7 +959,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 /**
 * effectue la sauvegarde des phistars dans le fichier path/ident/phistar.txt
 */
-    void savephistar(int n, string path,string ident) {
+    void savephistar(int n, string path,string ident, long double **phistar,long double **phistarcompo, long double **phistarscaled) {
         string nomphistar ;
 		if (original){
 			nomphistar =path+ident+"_phistar.txt";
@@ -1309,7 +1313,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
 * sinon la densité est évaluée pour 1000 points du min au max
 */
-    void histodensO(int n, bool multithread, string progressfilename,int* iprog,int* nprog) {
+    void histodensO(int n, bool multithread, string progressfilename,int* iprog,int* nprog, long double **phistar) {
         bool condition;
         long double *densprior,*denspost,*x,delta;
         int ncl,ii;
@@ -1394,7 +1398,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
 * sinon la densité est évaluée pour 1000 points du min au max
 */
-    void histodensC(int n, bool multithread, string progressfilename,int* iprog,int* nprog) {
+    void histodensC(int n, bool multithread, string progressfilename,int* iprog,int* nprog,long double **phistarcompo) {
         bool condition;
         long double *densprior,*denspost,*x,delta;
         int ncl,ii;
@@ -1456,7 +1460,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * si le parametre est à valeurs entières avec moins de 30 classes, la densité est remplacée par un histogramme
 * sinon la densité est évaluée pour 1000 points du min au max
 */
-    void histodensS(int n, bool multithread, string progressfilename,int* iprog,int* nprog) {
+    void histodensS(int n, bool multithread, string progressfilename,int* iprog,int* nprog,long double **phistarscaled) {
         bool condition;
         long double *densprior,*denspost,*x,delta;
         int ncl,ii;
@@ -1516,7 +1520,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 /**
 *calcule les statistiques des paramètres originaux
 */
-    parstatC* calparstatO(int n) {
+    parstatC* calparstatO(int n, long double **phistar) {
         long double *x;
 		parstatC *parst;
         parst = new parstatC[nparamcom];
@@ -1550,7 +1554,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 /**
 *calcule les statistiques des paramètres composites
 */
-    parstatC* calparstatC(int n) {
+    parstatC* calparstatC(int n,long double **phistarcompo) {
         long double *x;
 		parstatC *parst;
         parst = new parstatC[nparcompo];
@@ -1584,7 +1588,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 /**
 *calcule les statistiques des paramètres composites
 */
-    parstatC* calparstatS(int n) {
+    parstatC* calparstatS(int n,long double **phistarscaled) {
         long double *x;
 		parstatC *parst;
         parst = new parstatC[nparscaled];
@@ -1752,7 +1756,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         float  *stat_obs;
 		long double **matC;
         FILE *flog;
-
+		long double **phistar, **phistarcompo,**phistarscaled;
         progressfilename=path+ident+"_progress.txt";
         cout<<"debut doestim  options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
@@ -1816,7 +1820,9 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
 			local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
-			phistar = calphistarO(nsel);
+			phistar = new long double*[nsel];
+			for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
+			calphistarO(nsel, phistar);
 			cout<<"apres calphistarO\n";
 		}
 		if (composite){											cout<<"\ntraitement des parametres composites\n";
@@ -1824,7 +1830,9 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			rempli_parsim(nsel,nparcompo);                		cout<<"apres rempli_parsim(C)\n";
 			local_regression(nsel,nparcompo,matC);              cout<<"apres local_regression\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
-			phistarcompo = calphistarC(nsel);
+			phistarcompo = new long double*[nsel];
+			for (int i=0;i<nsel;i++) phistarcompo[i] = new long double[nparcompo];
+			calphistarC(nsel,phistarcompo);
 			cout<<"apres calphistarcompo\n";
 		}
 		if (scaled){											cout<<"\ntraitement des parametres scaled\n";
@@ -1832,12 +1840,14 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			rempli_parsim(nsel,nparscaled);               		cout<<"apres rempli_parsim(S)\n";
 			local_regression(nsel,nparscaled,matC);             cout<<"apres local_regression\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
-			phistarscaled = calphistarS(nsel);
+			phistarscaled = new long double*[nsel];
+			for (int i=0;i<nsel;i++) phistarscaled[i] = new long double[nparscaled];
+			calphistarS(nsel,phistarscaled);
 			cout<<"apres calphistarscaled\n";
 		}
 		for (int i=0;i<nsel;i++) delete []matX0[i]; delete []matX0;
         det_nomparam();
-        savephistar(nsel,path,ident);                     		cout<<"apres savephistar\n";
+        savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     		cout<<"apres savephistar\n";
         if (original) {
 			lisimparO(nsel);                          cout<<"apres lisimparO\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
@@ -1851,28 +1861,28 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
 		if (original) {
-			histodensO(nsel,multithread,progressfilename,&iprog,&nprog);   cout<<"apres histodensO\n";
+			histodensO(nsel,multithread,progressfilename,&iprog,&nprog,phistar);   cout<<"apres histodensO\n";
 			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
 		if (composite) {
-			histodensC(nsel,multithread,progressfilename,&iprog,&nprog);  cout<<"apres histodensC\n";
+			histodensC(nsel,multithread,progressfilename,&iprog,&nprog,phistarcompo);  cout<<"apres histodensC\n";
 			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 			
 		}
 		if (scaled) {
-			histodensS(nsel,multithread,progressfilename,&iprog,&nprog);     cout<<"apres histodensS\n";
+			histodensS(nsel,multithread,progressfilename,&iprog,&nprog,phistarscaled);     cout<<"apres histodensS\n";
 			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (original){ 
-			parstat = calparstatO(nsel);                                 cout<<"apres calparstatO\n";
+			parstat = calparstatO(nsel,phistar);                                 cout<<"apres calparstatO\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (composite) {
-			parstatcompo = calparstatC(nsel);                            cout<<"apres calparstatC\n";
+			parstatcompo = calparstatC(nsel,phistarcompo);                            cout<<"apres calparstatC\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (scaled) {
-			parstatscaled = calparstatS(nsel);                   cout<<"apres calparstatS\n";
+			parstatscaled = calparstatS(nsel,phistarscaled);                   cout<<"apres calparstatS\n";
 			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         saveparstat(nsel,path,ident);

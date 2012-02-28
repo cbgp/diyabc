@@ -48,7 +48,6 @@ extern int nenr, numtransf;
 extern int nparamcom, nparcompo, nparscaled;
 extern string progressfilename, statobsfilename, headerfilename, path, ident;
 extern bool original, composite,scaled;
-extern long double ** phistar;
 long double ** phistarOK;
 extern string* stat_type;
 extern int* stat_num;
@@ -246,7 +245,7 @@ long double **ssphistar,**ssref;
         return spr;
     }
 
-    int detphistarOK(int nsel) {
+    int detphistarOK(int nsel, long double **phistar) {
 		char c;
         bool OK;
         int npv,ip1,ip2,nphistarOK=0,scen=rt.scenteste-1,k1;
@@ -414,7 +413,7 @@ long double **ssphistar,**ssref;
         string *ss,s,*ss1,s0,s1,snewstat;
         float  *stat_obs;
         bool usestats,firsttime,dopca = false,doloc = false, newstat=false;
-        long double** matC;
+        long double** matC, **phistar, **phistarcompo, **phistarscaled;
         FILE *flog;
 
         progressfilename = path + ident + "_progress.txt";
@@ -483,14 +482,18 @@ long double **ssphistar,**ssref;
 		rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
 		local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
         iprog+=20;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-        phistar = calphistarO(nsel);                       cout<<"apres calphistar\n";
+		phistar = new long double* [nsel];
+		for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
+        calphistarO(nsel,phistar);                       cout<<"apres calphistar\n";
         det_nomparam();
-        savephistar(nsel,path,ident);                     cout<<"apres savephistar\n";
+		savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     cout<<"apres savephistar\n";
         iprog+=20;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         phistarOK = new long double*[nsel];
         for (int i=0;i<nsel;i++) phistarOK[i] = new long double[rt.nparam[rt.scenteste-1]];
 		cout<<"header.scenario[rt.scenteste-1].nparam = "<<header.scenario[rt.scenteste-1].nparam<<"\n";
-		nphistarOK=detphistarOK(nsel);               cout << "apres detphistarOK\n";
+		nphistarOK=detphistarOK(nsel,phistar);               cout << "apres detphistarOK\n";
+		for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
+		
         cout//<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr
             << "   nphistarOK="<< nphistarOK<<"   nstat="<<header.nstat<<"\n";
         //cout <<"DEBUG: j'arrête là." << endl; exit(1);
