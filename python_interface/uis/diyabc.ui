@@ -152,7 +152,7 @@
                <widget class="QPushButton" name="openProjectButton">
                 <property name="font">
                  <font>
-                  <pointsize>14</pointsize>
+                  <pointsize>12</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -161,14 +161,26 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="newProjectButton">
+               <widget class="QPushButton" name="newMSSProjectButton">
                 <property name="font">
                  <font>
-                  <pointsize>14</pointsize>
+                  <pointsize>12</pointsize>
                  </font>
                 </property>
                 <property name="text">
-                 <string>&amp;New project</string>
+                 <string>&amp;New Microsats/Sequences project</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="newSNPProjectButton">
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>New SNP project</string>
                 </property>
                </widget>
               </item>
@@ -190,7 +202,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
@@ -264,7 +276,7 @@
  </widget>
  <tabstops>
   <tabstop>openProjectButton</tabstop>
-  <tabstop>newProjectButton</tabstop>
+  <tabstop>newMSSProjectButton</tabstop>
   <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>

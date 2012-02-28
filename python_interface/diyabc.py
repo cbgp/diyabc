@@ -219,18 +219,29 @@ class Diyabc(formDiyabc,baseDiyabc):
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 
         QObject.connect(self.ui.openProjectButton,SIGNAL("clicked()"),self.openProject)
-        QObject.connect(self.ui.newProjectButton,SIGNAL("clicked()"),self.newProject)
+        QObject.connect(self.ui.newMSSProjectButton,SIGNAL("clicked()"),self.newProject)
+        QObject.connect(self.ui.newSNPProjectButton,SIGNAL("clicked()"),self.newProject)
         self.ui.versionLabel.setText('%s'%VERSION)
 
         # TOOLBAR
-        newButton = QPushButton(QIcon(dataPath.DATAPATH+"/icons/folder-new.png"),"New",self)
+        newButton = QPushButton(QIcon(dataPath.DATAPATH+"/icons/folder-new.png"),"New MSS",self)
         newButton.setObjectName("newButton")
-        newButton.setToolTip("New project")
-        newButton.setMaximumSize(QSize(63, 22))
+        newButton.setToolTip("New Microsatellites/Sequences project")
+        newButton.setMaximumSize(QSize(85, 22))
         #newButton.setMinimumSize(QSize(16, 18))
         newButton.setFlat(True)
         QObject.connect(newButton,SIGNAL("clicked()"),self.newProject)
         self.ui.toolBar.addWidget(newButton)
+        #self.ui.toolBar.addSeparator()
+
+        newSNPButton = QPushButton(QIcon(dataPath.DATAPATH+"/icons/folder-new.png"),"New SNP",self)
+        newSNPButton.setObjectName("newSNPButton")
+        newSNPButton.setToolTip("New SNP project")
+        newSNPButton.setMaximumSize(QSize(85, 22))
+        #newSNPButton.setMinimumSize(QSize(16, 18))
+        newSNPButton.setFlat(True)
+        QObject.connect(newSNPButton,SIGNAL("clicked()"),self.newProject)
+        self.ui.toolBar.addWidget(newSNPButton)
         #self.ui.toolBar.addSeparator()
 
         openButton = QPushButton(QIcon(dataPath.DATAPATH+"/icons/fileopen.png"),"Open",self)
@@ -281,7 +292,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.toolBar.addWidget(wtButton)
         #wtButton.hide()
 
-        for but in [newButton,openButton,saveButton,saveAllButton,wtButton]:
+        for but in [newButton,newSNPButton,openButton,saveButton,saveAllButton,wtButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
         self.systrayHandler = TrayIconHandler(dataPath.DATAPATH+"/icons/coccicon.png",dataPath.DATAPATH+"/icons/coccicon.gif",self.file_menu,self)

@@ -427,19 +427,22 @@ class ProjectSnp(ProjectReftable):
                 self.ui.ascertButton.setText("Set "+str(self.ui.ascertButton.text()))
 
     def freezeGenData(self,yesno=True):
-        for g in self.sum_stat_wins.values():
-            for e in g.findChildren(QLineEdit):
-                e.setDisabled(yesno)
-            for e in g.findChildren(QPushButton):
-                e.setDisabled(yesno)
-            for e in g.findChildren(QCheckBox):
-                e.setDisabled(yesno)
-            g.ui.clearButton.setDisabled(yesno)
-            g.ui.exitButton.setDisabled(yesno)
-            g.ui.okButton.setDisabled(False)
-            g.ui.addAdmixButton.setDisabled(yesno)
-        if yesno:
-            self.ui.setGeneticButton.setText("            View")
-        else:
-            self.ui.setGeneticButton.setText("            Set")
+        try:
+            for g in self.sum_stat_wins.values():
+                for e in g.findChildren(QLineEdit):
+                    e.setDisabled(yesno)
+                for e in g.findChildren(QPushButton):
+                    e.setDisabled(yesno)
+                for e in g.findChildren(QCheckBox):
+                    e.setDisabled(yesno)
+                g.ui.clearButton.setDisabled(yesno)
+                g.ui.exitButton.setDisabled(yesno)
+                g.ui.okButton.setDisabled(False)
+                g.ui.addAdmixButton.setDisabled(yesno)
+            if yesno:
+                self.ui.setGeneticButton.setText("            View")
+            else:
+                self.ui.setGeneticButton.setText("            Set")
+        except AttributeError as e:
+            log(4,"Fail to freeze gen data")
 
