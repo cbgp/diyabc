@@ -373,11 +373,11 @@ class Diyabc(formDiyabc,baseDiyabc):
             else:
                 self.currentProjectMenu = self.ui.menubar.insertMenu(self.navigate_menu.menuAction(),QMenu("Project %s"%curprojname,self))
                 self.saveProjActionMenu =   self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/document-save.png"),"&Save project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
-                self.deleteProjActionMenu = self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/user-trash.png"),"&Delete project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
                 self.cloneProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/tab-duplicate.png"),"&Clone project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
-                self.closeProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/project-close.png"),"C&lose project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
-                self.deleteReftableActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/user-trash.png"),"D&elete reftable",self.deleteReftableCurrentProject)
                 self.RngProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/random.png"),"Re&generate RNG",self.rngCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_R))
+                self.deleteReftableActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/user-trash.png"),"D&elete reftable",self.deleteReftableCurrentProject)
+                self.closeProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/project-close.png"),"C&lose project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
+                self.deleteProjActionMenu = self.currentProjectMenu.menu().addAction(QIcon(dataPath.DATAPATH+"/icons/user-trash.png"),"&Delete project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
         else:
             # on supprime le menu
             self.menubar.removeAction(self.currentProjectMenu)
