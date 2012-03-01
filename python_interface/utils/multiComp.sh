@@ -1,4 +1,9 @@
-# usage : multiComp.sh execPath directory motifavant motifaprès
+usage="multiComp.sh execPath projectDirectory motifBefore motifAfter \n so that the shape of the data file names is motifBefore.*motifAfter"
+
+if [ "$#" -ne "5" ] ; then
+    echo $usage
+    exit
+fi
 
 BINPATH=$1
 DIRPATH=$2
