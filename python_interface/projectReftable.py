@@ -730,7 +730,6 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
 
         self.ui.analysisStack.addWidget(def_analysis)
         self.ui.analysisStack.setCurrentWidget(def_analysis)
-        def_analysis.groupBox.setDisabled(True)
         def_analysis.analysisNameEdit.setText(analysis.name)
 
     def copyAnalysis(self):
