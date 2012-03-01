@@ -89,7 +89,9 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
             elif self.analysis_to_edit.category == "estimate":
                 self.ui.estimateRadio.setDisabled(False)
             elif self.analysis_to_edit.category == "compare":
+                self.ui.confFdaCompareCheck.setChecked(self.analysis_to_edit.fda == "1")
                 self.ui.comparisonRadio.setDisabled(False)
+                self.ui.comparisonRadio.setChecked(True)
             elif self.analysis_to_edit.category == "modelChecking":
                 self.ui.modCheckRadio.setDisabled(False)
             elif self.analysis_to_edit.category == "bias":
@@ -154,12 +156,12 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                         analysis = self.analysis_to_edit
                         self.parent.changeAnalysisName(analysis,name)
                     else:
-                        if self.ui.confFdaCompareCheck.isChecked():
-                            paramtxt="1"
-                        else:
-                            paramtxt="0"
                         analysis = Analysis(name,"compare")
-                        analysis.fda = paramtxt
+                    if self.ui.confFdaCompareCheck.isChecked():
+                        paramtxt="1"
+                    else:
+                        paramtxt="0"
+                    analysis.fda = paramtxt
                     compFrame = SetupComparisonConfidence(analysis,self)
                     genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Select the scenarios that you wish to compare",compFrame,"Comparison of scenarios",2,analysis,self)
                 else:
