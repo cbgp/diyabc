@@ -95,6 +95,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 self.ui.confPcaCheck.setChecked("p" in self.analysis_to_edit.computationParameters)
             elif self.analysis_to_edit.category == "estimate":
                 self.ui.estimateRadio.setDisabled(False)
+                self.ui.estimateRadio.setChecked(True)
             elif self.analysis_to_edit.category == "compare":
                 self.ui.confFdaCompareCheck.setDisabled(False)
                 self.ui.confFdaCompareCheck.setChecked(self.analysis_to_edit.fda == "1")
@@ -111,6 +112,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 self.ui.modCheckPcaCheck.setChecked("p" in self.analysis_to_edit.aParams)
             elif self.analysis_to_edit.category == "bias":
                 self.ui.biasRadio.setDisabled(False)
+                self.ui.biasRadio.setChecked(True)
             elif self.analysis_to_edit.category == "confidence":
                 self.ui.confFdaCheck.setDisabled(False)
                 self.ui.confFdaCheck.setChecked(self.analysis_to_edit.fda == "1")
