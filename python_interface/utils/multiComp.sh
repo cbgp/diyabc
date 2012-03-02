@@ -1,4 +1,4 @@
-usage="multiComp.sh execPath projectDirectory motifBefore motifAfter \n so that the shape of the data file names is motifBefore.*motifAfter"
+usage="multiComp.sh execPath projectDirectory motifBefore motifAfter  \n so that the shape of the data file names is motifBefore.*motifAfter"
 
 if [ "$#" -ne "5" ] ; then
     echo $usage
@@ -11,7 +11,9 @@ BEF=$3
 AFT=$4
 DATAFILENAME=$5
 
-cp $DIRPATH/$DATAFILENAME $DIRPATH/datafileSAVE
+if [ -f $DIRPATH/$DATAFILENAME ] ; then
+	cp $DIRPATH/$DATAFILENAME $DIRPATH/datafileSAVE
+fi
 if [ -e $DIRPATH/$DATAFILENAME.bin ] ; then
     echo rm $DIRPATH/$DATAFILENAME.bin
     rm $DIRPATH/$DATAFILENAME.bin
@@ -21,8 +23,8 @@ for i in `ls "$DIRPATH" | grep -e "$BEF.*$AFT" | grep -vi result` ; do
     echo mv $DIRPATH/$i $DIRPATH/$DATAFILENAME
     mv $DIRPATH/$i $DIRPATH/$DATAFILENAME
 
-    echo "$BINPATH" -p "$DIRPATH" -c "s:1,2;n:200000;d:500;l:5000;m:10;f:0" -i "$i" -g 100 -m -t 7
-    "$BINPATH" -p "$DIRPATH" -c "s:1,2;n:200000;d:500;l:5000;m:10;f:0" -i "$i" -g 100 -m -t 7 > /tmp/plop
+    echo "$BINPATH" -p "$DIRPATH"/ -c '"s:1,2;n:5000;d:1000;l:1000;m:10;f:0"' -i "'$i'" -g 100 -m
+    "$BINPATH" -p "$DIRPATH"/ -c "s:1,2;n:5000;d:1000;l:1000;m:10;f:0" -i "$i" -g 100 -m > /tmp/plop
 
     echo mv $DIRPATH/$DATAFILENAME $DIRPATH/$i
     mv $DIRPATH/$DATAFILENAME $DIRPATH/$i
