@@ -89,12 +89,10 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 self.ui.preEvRadio.setChecked(True)
                 self.ui.lossCheck.setDisabled(False)
                 self.ui.confPcaCheck.setDisabled(False)
-                self.ui.lossCheck.setChecked(False)
-                self.ui.confPcaCheck.setChecked(False)
-                if "l" in self.analysis_to_edit.computationParameters:
-                    self.ui.lossCheck.setChecked(True)
-                if "p" in self.analysis_to_edit.computationParameters:
-                    self.ui.confPcaCheck.setChecked(True)
+                self.ui.lossCheck.setChecked(True)
+                self.ui.confPcaCheck.setChecked(True)
+                self.ui.lossCheck.setChecked("l" in self.analysis_to_edit.computationParameters)
+                self.ui.confPcaCheck.setChecked("p" in self.analysis_to_edit.computationParameters)
             elif self.analysis_to_edit.category == "estimate":
                 self.ui.estimateRadio.setDisabled(False)
             elif self.analysis_to_edit.category == "compare":
@@ -106,6 +104,11 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 self.ui.modCheckPcaCheck.setDisabled(False)
                 self.ui.modCheckLossCheck.setDisabled(False)
                 self.ui.modCheckRadio.setDisabled(False)
+                self.ui.modCheckRadio.setChecked(True)
+                self.ui.modCheckLossCheck.setChecked(True)
+                self.ui.modCheckPcaCheck.setChecked(True)
+                self.ui.modCheckLossCheck.setChecked("l" in self.analysis_to_edit.aParams)
+                self.ui.modCheckPcaCheck.setChecked("p" in self.analysis_to_edit.aParams)
             elif self.analysis_to_edit.category == "bias":
                 self.ui.biasRadio.setDisabled(False)
             elif self.analysis_to_edit.category == "confidence":
@@ -194,17 +197,18 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                     QMessageBox.information(self,"Scenario error","At least 1 scenario is needed for this analysis")
             elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "modelChecking") or self.ui.modCheckRadio.isChecked():
                 if len(self.parent.hist_model_win.scList) >= 1:
+                    compParamtxt = "a:"
+                    if self.ui.modCheckPcaCheck.isChecked():
+                        compParamtxt += "p"
+                    if self.ui.modCheckLossCheck.isChecked():
+                        compParamtxt += "l"
+
                     if self.analysis_to_edit != None:
                         analysis = self.analysis_to_edit
                         self.parent.changeAnalysisName(analysis,name)
                     else:
-                        compParamtxt = "a:"
-                        if self.ui.modCheckPcaCheck.isChecked():
-                            compParamtxt += "p"
-                        if self.ui.modCheckLossCheck.isChecked():
-                            compParamtxt += "l"
                         analysis = Analysis(name,"modelChecking")
-                        analysis.aParams = compParamtxt
+                    analysis.aParams = compParamtxt
                     modCheckFrame = SetupEstimationBias(analysis,self)
                     genSel = GenericScenarioSelection(len(self.parent.hist_model_win.scList),"Parameters will be estimated considering data sets simulated with",modCheckFrame,"Model Checking",1,analysis,self)
                 else:
