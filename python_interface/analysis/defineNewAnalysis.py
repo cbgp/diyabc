@@ -75,11 +75,20 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                     self.ui.comparisonRadio,
                     self.ui.confidenceRadio,
                     self.ui.modCheckRadio,
+
+                    self.ui.confPcaCheck,
+                    self.ui.lossCheck,
+                    self.ui.confFdaCompareCheck,
+                    self.ui.confFdaCheck,
+                    self.ui.modCheckPcaCheck,
+                    self.ui.modCheckLossCheck
                     ]:
                 e.setDisabled(True)
             if self.analysis_to_edit.category == "pre-ev":
                 self.ui.preEvRadio.setDisabled(False)
                 self.ui.preEvRadio.setChecked(True)
+                self.ui.lossCheck.setDisabled(False)
+                self.ui.confPcaCheck.setDisabled(False)
                 self.ui.lossCheck.setChecked(False)
                 self.ui.confPcaCheck.setChecked(False)
                 if "l" in self.analysis_to_edit.computationParameters:
@@ -89,14 +98,20 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
             elif self.analysis_to_edit.category == "estimate":
                 self.ui.estimateRadio.setDisabled(False)
             elif self.analysis_to_edit.category == "compare":
+                self.ui.confFdaCompareCheck.setDisabled(False)
                 self.ui.confFdaCompareCheck.setChecked(self.analysis_to_edit.fda == "1")
                 self.ui.comparisonRadio.setDisabled(False)
                 self.ui.comparisonRadio.setChecked(True)
             elif self.analysis_to_edit.category == "modelChecking":
+                self.ui.modCheckPcaCheck.setDisabled(False)
+                self.ui.modCheckLossCheck.setDisabled(False)
                 self.ui.modCheckRadio.setDisabled(False)
             elif self.analysis_to_edit.category == "bias":
                 self.ui.biasRadio.setDisabled(False)
             elif self.analysis_to_edit.category == "confidence":
+                self.ui.confFdaCheck.setDisabled(False)
+                self.ui.confFdaCheck.setChecked(self.analysis_to_edit.fda == "1")
+                self.ui.confidenceRadio.setChecked(True)
                 self.ui.confidenceRadio.setDisabled(False)
 
     def analysisNameEdition(self,string):
@@ -228,12 +243,12 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                     analysis = self.analysis_to_edit
                     self.parent.changeAnalysisName(analysis,name)
                 else:
-                    if self.ui.confFdaCheck.isChecked():
-                        paramtxt="1"
-                    else:
-                        paramtxt="0"
                     analysis = Analysis(name,"confidence")
-                    analysis.fda = paramtxt
+                if self.ui.confFdaCheck.isChecked():
+                    paramtxt="1"
+                else:
+                    paramtxt="0"
+                analysis.fda = paramtxt
                 genSel = BiasNConfidenceScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
             else:
                 output.notify(self,"category error","Choose an analysis type")
