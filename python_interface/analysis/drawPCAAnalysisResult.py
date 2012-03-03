@@ -160,6 +160,11 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             for sc in self.dico_points.keys():
                 if sc != 0 and sc != -1:
                     self.ui.scCombo.addItem("%s"%sc)
+            if self.analysis.category == "modelChecking":
+                ind = self.ui.scCombo.findText(self.analysis.chosenSc)
+                if ind != -1:
+                    self.ui.scCombo.setCurrentIndex(ind)
+                    self.ui.scCombo.setDisabled(True)
 
     def drawGraphToPlot(self,legend,plot,num_sc,compo_h,compo_v,nbp):
         """ dessine les points pour un scenario, deux components, sur plot et met à jour legend

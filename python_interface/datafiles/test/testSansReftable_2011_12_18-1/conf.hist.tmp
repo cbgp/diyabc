@@ -22,7 +22,7 @@ t merge 1 2
 t2 merge 1 3
 
 historical parameters priors (6,0)
-N N NO[0.0,1,1,9999.9] False
+N N NO[0.0,1,1,1] False
 D N UN[0.0,10000,01,01] False
 F N LU[10,10000,01,01] False
 t T UN[10.0,10000.0,0.0,0.0] False
