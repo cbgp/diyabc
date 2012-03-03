@@ -161,7 +161,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 if sc != 0 and sc != -1:
                     self.ui.scCombo.addItem("%s"%sc)
             if self.analysis.category == "modelChecking":
-                ind = self.ui.scCombo.findText(self.analysis.chosenSc)
+                ind = self.ui.scCombo.findText(str(self.analysis.candidateScList[0]))
                 if ind != -1:
                     self.ui.scCombo.setCurrentIndex(ind)
                     self.ui.scCombo.setDisabled(True)
