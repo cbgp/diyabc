@@ -52,6 +52,7 @@ long double ** phistarOK;
 extern string* stat_type;
 extern int* stat_num;
 extern bool multithread;
+extern string scurfile;
 
 long double **ssphistar,**ssref;
 
@@ -291,7 +292,7 @@ long double **ssphistar,**ssref;
                     phistarOK[nphistarOK][j] = phistar[i][j];
                     //cout <<phistarOK[nphistarOK][j]<<"  ";
                 }
-                cout<<"\n";
+                //cout<<"\n";
                 nphistarOK++;
 				//if ((nphistarOK % 10)==0) cin >>c;
             }
@@ -417,6 +418,7 @@ long double **ssphistar,**ssref;
         FILE *flog;
 
         progressfilename = path + ident + "_progress.txt";
+		scurfile = path + "courant_"+ ident +".log";
         cout<<"debut domodchec  options : "<<opt<<"\n";
 		original=true;composite=false;scaled=false;
         ss = splitwords(opt,";",&ns);
@@ -491,7 +493,7 @@ long double **ssphistar,**ssref;
         phistarOK = new long double*[nsel];
         for (int i=0;i<nsel;i++) phistarOK[i] = new long double[rt.nparam[rt.scenteste-1]];
 		cout<<"header.scenario[rt.scenteste-1].nparam = "<<header.scenario[rt.scenteste-1].nparam<<"\n";
-		nphistarOK=detphistarOK(nsel,phistar);               cout << "apres detphistarOK\n";
+		nphistarOK=detphistarOK(nsel,phistar);               cout << "apres detphistarOK  nphistarOK="<<nphistarOK<<"\n";
 		for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
 		
         cout//<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr
@@ -546,12 +548,13 @@ long double **ssphistar,**ssref;
                 for (int i=0;i<newrefpart;i++) ssref[i] = new long double[header.nstat];
                 nsr=0;
                 firsttime=true;
+				cout<<"avant le while (nsr<newrefpart)\n";
                 while (nsr<newrefpart) {
                     ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,3);
                     for (int i=0;i<nenr;i++) {
                       numscen[i+nsr] = enreg[i].numscen;
                       for (int j=0;j<header.nstat;j++) ssref[i+nsr][j]=enreg[i].stat[j];
-                        //for (int j=0;j<header.nstat;j++) cout<<ssref[i+nsr][j]<<"   ";cout<<"\n";
+                        for (int j=0;j<header.nstat;j++) cout<<ssref[i+nsr][j]<<"   ";cout<<"\n";
                     }
                     firsttime=false;
                     nsr+=nenr;
