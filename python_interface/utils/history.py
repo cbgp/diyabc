@@ -202,20 +202,21 @@ class Scenario(object):
                 ss.append(s1[:posigne])
                 s1 = s1[posigne+1:]
         for j in range(len(ss)) :
-            pr = param.HistParameter()
-            pr.category,pr.prior = category, None
-            pr.name, pr.value = ss[j], None
-            if len(self.parameters) >0 :
-                trouve = False
-                i = -1
-                while (not trouve) and (i<len(self.parameters)-1) :
-                    i +=1
-                    trouve = pr.name == self.parameters[i].name
-                    if trouve and (self.parameters[i].category != category):
-                        raise IOScreenError, "%s is used as a %s parameter and %s parameter"%(pr.name,param.HistParameter.categorydict[category],param.HistParameter.categorydict[self.parameters[i].category] )
-                if not trouve : self.parameters.append(pr)
-            else :
-                self.parameters.append(pr)
+			if not isaninteger(ss[j]):
+				pr = param.HistParameter()
+				pr.category,pr.prior = category, None
+				pr.name, pr.value = ss[j], None
+				if len(self.parameters) >0 :
+					trouve = False
+					i = -1
+					while (not trouve) and (i<len(self.parameters)-1) :
+						i +=1
+						trouve = pr.name == self.parameters[i].name
+						if trouve and (self.parameters[i].category != category):
+							raise IOScreenError, "%s is used as a %s parameter and %s parameter"%(pr.name,param.HistParameter.categorydict[category],param.HistParameter.categorydict[self.parameters[i].category] )
+					if not trouve : self.parameters.append(pr)
+				else :
+					self.parameters.append(pr)
                      
 
     

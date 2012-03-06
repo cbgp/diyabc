@@ -227,10 +227,12 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 
 
   /**
-   * Struct ParticleC : retourne la valeur d'un paramètre à partir de son nom (propriété name)
+   * Struct ParticleC : retourne la valeur d'un paramètre à partir de son nom (propriété name) ou de sa valeur
    */
   double ParticleC::param2val(string paramname){
     int ip;
+	ip = atoi(paramname.c_str());
+	if (ip!=0) return (double)ip;
     //cout<<"paramname = "<<paramname<<"\n";
     for (ip=0;ip<this->scen.nparam;ip++) {if (paramname==this->scen.histparam[ip].name) break;}
     //cout<<"param "<<ip<<"    value="<<this->scen.histparam[ip].value<<"\n";fflush(stdin);
@@ -245,7 +247,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     double result;
     bool fin=false;
 	int ls;
-    //cout<<"line="<<line<<"\n";
+    cout<<"line="<<line<<"\n";
     string operateur,plus="+",minus="-";
     size_t posign,posplus,posminus;
     posplus=line.find('+'); posminus=line.find('-');
@@ -263,18 +265,18 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     	}
     }
     result=this->param2val(line.substr(0,posign));
-    //cout << result;
+    cout << result;
     operateur=line.substr(posign,1);
-    //cout <<"   "<<operateur<<"   ";
+    cout <<"   "<<operateur<<"   ";
     line=line.substr(posign+1);
-    //cout << line << "\n";
+    cout << line << "\n";
     while (not fin) {
 		ls = line.size();
 		posplus=line.find('+');posminus=line.find('-');
 		if ((posplus>ls)and(posminus>ls)) {
 			if (operateur==plus) {result +=this->param2val(line);}
 			if (operateur==minus) {result -=this->param2val(line);}
-			//cout << "result = " << result <<"\n";
+			cout << "result = " << result <<"\n";
 			fin=true;break;
 		} else {
 			if ((posplus<ls)and(posminus>ls)){posign=posplus;} 
@@ -291,6 +293,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
       operateur=line.substr(posign,1);
       line=line.substr(posign+1);
     }
+    cout<<"result final="<<result<<"\n";
     return result;
   }
 

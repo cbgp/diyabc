@@ -328,7 +328,7 @@ string ScenarioC::checklogic() {
 	return "";
 }
 
-void ScenarioC::detparam(string s,int cat) {
+/*void ScenarioC::detparam(string s,int cat) {
   string s1;
   int i,j;
   size_t plus,minus,posigne;
@@ -365,156 +365,200 @@ void ScenarioC::detparam(string s,int cat) {
       //else cout<<"deja\n";
     } else {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;}
   }
-  /*cout<<"dans detparam  size = "<<histparname.size()<<"   nparam="<<this->nparam<<"\n";
-    for (int i=0;i<histparname.size();i++) cout<<"histparname = "<<histparname[i]<<"\n";
-    cout<<"\n";*/
+  //cout<<"dans detparam  size = "<<histparname.size()<<"   nparam="<<this->nparam<<"\n";
+  //for (int i=0;i<histparname.size();i++) cout<<"histparname = "<<histparname[i]<<"\n";
+  //cout<<"\n";
+}*/
+
+void ScenarioC::detparam(string s,int cat) {
+	string s1;
+	int i,j;
+	size_t plus,minus,posigne;
+	vector <string> ss;
+	bool trouve;
+	s1=s;
+	cout<<"detparam s1="<<s1<<"\n";
+	while (s1.length()>0) {
+		plus=s1.find("+");
+		minus=s1.find("-"); //cout<<"minus="<<minus<<"\n";
+		if ((plus == string::npos)and(minus == string::npos)) {ss.push_back(s1);s1="";}
+		else {
+			if (plus!= string::npos) posigne=plus;
+			else		 posigne=minus;
+			//cout<<"posigne = "<<posigne<<"\n";
+			ss.push_back(s1.substr(0,posigne));
+			s1=s1.substr(posigne+1);
+			cout<<"s1="<<s1<<"\n";;
+		}
+	}
+	for (i = 0; i < (int)ss.size(); i++) {
+		if (atoi(ss[i].c_str())==0) {
+			cout<<"ss["<<i<<"]="<<ss[i]<<"\n";
+			cout<<"   this->nparam = "<<this->nparam<<"\n";
+			if (this->nparam>0) {
+				trouve=false;
+				j=0;
+				while ((not trouve)and(j<this->nparam)) {
+					trouve= (ss[i].compare(histparname[j])==0);
+					//(pr.name == this->histpar[j]->name);
+					//cout<<"histparname["<<j <<"] = "<<histparname[j]<<"   trouve="<<trouve<<"\n";
+					j++;
+				}
+				if (not trouve) {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;}
+				//else cout<<"deja\n";
+			} else {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;}
+		}
+	}
+	cout<<"dans detparam  size = "<<histparname.size()<<"   nparam="<<this->nparam<<"\n";
+	for (int i=0;i<histparname.size();i++) cout<<"histparname = "<<histparname[i]<<"\n";
+	cout<<"\n";
 }
 
 
 string ScenarioC::read_events(int nl,string *ls) {
-    string *ss,sevent,ligne;
-    int n;
+	string *ss,sevent,ligne;
+	int n;
 	size_t absent=string::npos;
 	ligne=majuscules(ls[0]);
 	if ((ligne.find("SAMPLE")!=absent)or(ligne.find("REFSAMPLE")!=absent)or(ligne.find("MERGE")!=absent)or(ligne.find("VARNE")!=absent)or(ligne.find("SPLIT")!=absent)or(ligne.find("SEXUAL")!=absent)) {
 		return "the first line must provide effective population size(s)";
 	}
-    ss = splitwords(ls[0]," ",&n);
-    this->nn0=n;this->nparam=0;
-    this->ne0 = new Ne0C[this->nn0];
-    for (int i=0;i<this->nn0;i++) {
-      if (atoi(ss[i].c_str())==0) {
-	this->ne0[i].name = ss[i];
-	this->ne0[i].val=-1;this->detparam(ss[i],0);
-      } else  {
-	this->ne0[i].name = string("");
-	this->ne0[i].val = atoi(ss[i].c_str());
-      }
-    }
-    this->nevent = nl-1;
-    this->event = new EventC[nl-1];
-    this->nsamp=0;this->npop=this->nn0;this->popmax=this->nn0;
-    delete []ss;
-    for (int i=0;i<nl-1;i++) {
-      ss = splitwords(ls[i+1]," ",&n);
-      if (ss[0]=="0") {this->event[i].time=0;}
-      else if (atoi(ss[0].c_str())==0) {
-	this->event[i].time=-9999;
-	this->event[i].stime = ss[0];
-	//cout<<"avant this->detparam("<<ss[0]<<",1)\n";
-	this->detparam(ss[0],1);
-	//cout<<"apres this->detparam("<<ss[0]<<",1)\n";
-      }
-      else {this->event[i].time=atoi(ss[0].c_str());}
-      sevent=majuscules(ss[1]);
-	  if ((sevent!="SAMPLE")and(sevent!="REFSAMPLE")and(sevent!="MERGE")and(sevent!="VARNE")and(sevent!="SPLIT")and(sevent!="SEXUAL")) {
-		  return "unrecognized keyword at line "+IntToString(i+2);
+	ss = splitwords(ls[0]," ",&n);
+	this->nn0=n;this->nparam=0;
+	this->ne0 = new Ne0C[this->nn0];
+	for (int i=0;i<this->nn0;i++) {
+		if (atoi(ss[i].c_str())==0) {
+			this->ne0[i].name = ss[i];
+			this->ne0[i].val=-1;this->detparam(ss[i],0);
+		} else  {
+			this->ne0[i].name = string("");
+			this->ne0[i].val = atoi(ss[i].c_str());
+		}
 	}
-      //cout<<"apres majuscules(ss[1])";
-      if (sevent=="SAMPLE") {
-	if (n>5) return "too many words at line "+IntToString(i+2);
-	if ((n<3)or(n==4))return "not enough words at line "+IntToString(i+2);
-	this->event[i].action='E';
-	this->event[i].pop=atoi(ss[2].c_str());
-	if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
-		return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
-	this->nsamp++;
-	this->event[i].sample=this->nsamp;
-	this->event[i].nindMref=0;this->event[i].nindFref=0;
-	if (n==5) {this->event[i].nindMref=atoi(ss[3].c_str());this->event[i].nindFref=atoi(ss[4].c_str());}
-	//cout <<this->event[i].time<<"  SAMPLE"<<"   "<<this->event[i].pop<<"\n";
-	cout<<"SAMPLE   nindref="<<this->event[i].nindMref+this->event[i].nindFref<<"\n";
-
-      } else if (sevent=="REFSAMPLE") {
-	if (n>5) return "too many words at line "+IntToString(i+2);
-	if (n<5)return "not enough words at line "+IntToString(i+2);
-	this->event[i].action='R';
-	this->event[i].pop=atoi(ss[2].c_str());
-	if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
-		return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
-	this->nsamp++;
-	this->event[i].sample=this->nsamp;
-	this->event[i].nindMref=atoi(ss[3].c_str());
-	this->event[i].nindFref=atoi(ss[4].c_str());
-	cout<<"REFSAMPLE   nindref="<<this->event[i].nindMref+this->event[i].nindFref<<"\n";
-
-      } else if (sevent=="MERGE") {
-	if (n>4) return "too many words at line "+IntToString(i+2);
-	if (n<4) return "not enough words at line "+IntToString(i+2);
-	this->event[i].action='M';
-	this->event[i].pop=atoi(ss[2].c_str());
-	if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
-		return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
-	this->event[i].pop1=atoi(ss[3].c_str());
-	if ((this->event[i].pop1<1)or(this->event[i].pop1>this->nn0))
-		return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
-	//cout <<this->event[i].stime<<"  MERGE"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"\n";
-
-      } else if (sevent=="SPLIT") {
-	if (n>6) return "too many words at line "+IntToString(i+2);
-	if (n<6) return "not enough words at line "+IntToString(i+2);
-	this->event[i].action='S';
-	this->event[i].pop=atoi(ss[2].c_str());
-	if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
-		return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
-	this->event[i].pop1=atoi(ss[3].c_str());
-	if ((this->event[i].pop1<1)or(this->event[i].pop1>this->nn0))
-		return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
-	this->event[i].pop2=atoi(ss[4].c_str());
-	if ((this->event[i].pop2<1)or(this->event[i].pop2>this->nn0))
-		return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
-	if (atof(ss[5].c_str())!=0.0) this->event[i].admixrate=atof(ss[5].c_str());
-	else {
-	  this->event[i].admixrate=-1.0;
-	  // this->event[i].ladmixrate=ss[5].length()+1;
-	  // this->event[i].sadmixrate=new char[this->event[i].ladmixrate];
-	  this->event[i].sadmixrate = ss[5];
-	  this->detparam(ss[5],2);
+	this->nevent = nl-1;
+	this->event = new EventC[nl-1];
+	this->nsamp=0;this->npop=this->nn0;this->popmax=this->nn0;
+	delete []ss;
+	for (int i=0;i<nl-1;i++) {
+		ss = splitwords(ls[i+1]," ",&n);
+		if (ss[0]=="0") {this->event[i].time=0;}
+		else if (atoi(ss[0].c_str())==0) {
+			this->event[i].time=-9999;
+			this->event[i].stime = ss[0];
+			//cout<<"avant this->detparam("<<ss[0]<<",1)\n";
+			this->detparam(ss[0],1);
+			//cout<<"apres this->detparam("<<ss[0]<<",1)\n";
+		}
+		else {this->event[i].time=atoi(ss[0].c_str());}
+		sevent=majuscules(ss[1]);
+		if ((sevent!="SAMPLE")and(sevent!="REFSAMPLE")and(sevent!="MERGE")and(sevent!="VARNE")and(sevent!="SPLIT")and(sevent!="SEXUAL")) {
+			return "unrecognized keyword at line "+IntToString(i+2);
+		}
+		//cout<<"apres majuscules(ss[1])";
+		if (sevent=="SAMPLE") {
+			if (n>5) return "too many words at line "+IntToString(i+2);
+			if ((n<3)or(n==4))return "not enough words at line "+IntToString(i+2);
+			this->event[i].action='E';
+			this->event[i].pop=atoi(ss[2].c_str());
+			if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
+				return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
+			this->nsamp++;
+			this->event[i].sample=this->nsamp;
+			this->event[i].nindMref=0;this->event[i].nindFref=0;
+			if (n==5) {this->event[i].nindMref=atoi(ss[3].c_str());this->event[i].nindFref=atoi(ss[4].c_str());}
+			//cout <<this->event[i].time<<"  SAMPLE"<<"   "<<this->event[i].pop<<"\n";
+			cout<<"SAMPLE   nindref="<<this->event[i].nindMref+this->event[i].nindFref<<"\n";
+			
+		} else if (sevent=="REFSAMPLE") {
+			if (n>5) return "too many words at line "+IntToString(i+2);
+			if (n<5)return "not enough words at line "+IntToString(i+2);
+			this->event[i].action='R';
+			this->event[i].pop=atoi(ss[2].c_str());
+			if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
+				return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
+			this->nsamp++;
+			this->event[i].sample=this->nsamp;
+			this->event[i].nindMref=atoi(ss[3].c_str());
+			this->event[i].nindFref=atoi(ss[4].c_str());
+			cout<<"REFSAMPLE   nindref="<<this->event[i].nindMref+this->event[i].nindFref<<"\n";
+			
+		} else if (sevent=="MERGE") {
+			if (n>4) return "too many words at line "+IntToString(i+2);
+			if (n<4) return "not enough words at line "+IntToString(i+2);
+			this->event[i].action='M';
+			this->event[i].pop=atoi(ss[2].c_str());
+			if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
+				return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
+			this->event[i].pop1=atoi(ss[3].c_str());
+			if ((this->event[i].pop1<1)or(this->event[i].pop1>this->nn0))
+				return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
+			//cout <<this->event[i].stime<<"  MERGE"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"\n";
+				
+		} else if (sevent=="SPLIT") {
+			if (n>6) return "too many words at line "+IntToString(i+2);
+			if (n<6) return "not enough words at line "+IntToString(i+2);
+			this->event[i].action='S';
+			this->event[i].pop=atoi(ss[2].c_str());
+			if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
+				return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
+			this->event[i].pop1=atoi(ss[3].c_str());
+			if ((this->event[i].pop1<1)or(this->event[i].pop1>this->nn0))
+				return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
+			this->event[i].pop2=atoi(ss[4].c_str());
+			if ((this->event[i].pop2<1)or(this->event[i].pop2>this->nn0))
+				return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
+			if (atof(ss[5].c_str())!=0.0) this->event[i].admixrate=atof(ss[5].c_str());
+			else {
+				this->event[i].admixrate=-1.0;
+				// this->event[i].ladmixrate=ss[5].length()+1;
+				// this->event[i].sadmixrate=new char[this->event[i].ladmixrate];
+				this->event[i].sadmixrate = ss[5];
+				this->detparam(ss[5],2);
+			}
+			//cout <<this->event[i].stime<<"  SPLIT"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"   "<<this->event[i].pop2<<"   "<<this->event[i].sadmixrate<<"\n";
+		} else if (sevent=="VARNE") {
+			if (n>4) return "too many words at line "+IntToString(i+2);
+			if (n<4)return "not enough words at line "+IntToString(i+2);
+			this->event[i].action='V';
+			//cout<<"this->event[i].action = "<<this->event[i].action<<"\n";
+			this->event[i].pop=atoi(ss[2].c_str());
+			if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
+				return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
+			//cout<<"this->event[i].pop = "<<this->event[i].pop<<"\n";
+			//cout<<"ss[3] = "<<ss[3]<<"\n";
+			//cout<<"atoi(ss[3].c_str()) = "<<atoi(ss[3].c_str())<<"\n";
+			if (atoi(ss[3].c_str())!=0) this->event[i].Ne=atoi(ss[3].c_str());
+			else {
+				this->event[i].Ne=-1;
+				//cout<<"this->event[i].Ne = "<<this->event[i].Ne<<"\n";
+				// this->event[i].lNe=ss[3].length()+1;
+				//cout<<"this->event[i].lNe="<<this->event[i].lNe<<"\n";
+				// this->event[i].sNe=new char[this->event[i].lNe];
+				//cout<<"avant le strcpy\n";
+				this->event[i].sNe = ss[3];
+				//cout<<"avant this->detparam("<<ss[3]<<",0)\n";
+				this->detparam(ss[3],0);
+			}
+			//cout <<this->event[i].stime<<"  VARNE"<<"   "<<this->event[i].pop<<"\n";
+		}
+		delete []ss;
 	}
-	//cout <<this->event[i].stime<<"  SPLIT"<<"   "<<this->event[i].pop<<"   "<<this->event[i].pop1<<"   "<<this->event[i].pop2<<"   "<<this->event[i].sadmixrate<<"\n";
-      } else if (sevent=="VARNE") {
-	if (n>4) return "too many words at line "+IntToString(i+2);
-	if (n<4)return "not enough words at line "+IntToString(i+2);
-	this->event[i].action='V';
-	//cout<<"this->event[i].action = "<<this->event[i].action<<"\n";
-	this->event[i].pop=atoi(ss[2].c_str());
-	if ((this->event[i].pop<1)or(this->event[i].pop>this->nn0))
-		return "population number must be a positive integer at most equal to "+IntToString(this->nn0)+ " at line "+IntToString(i+2);
-	//cout<<"this->event[i].pop = "<<this->event[i].pop<<"\n";
-	//cout<<"ss[3] = "<<ss[3]<<"\n";
-	//cout<<"atoi(ss[3].c_str()) = "<<atoi(ss[3].c_str())<<"\n";
-	if (atoi(ss[3].c_str())!=0) this->event[i].Ne=atoi(ss[3].c_str());
-	else {
-	  this->event[i].Ne=-1;
-	  //cout<<"this->event[i].Ne = "<<this->event[i].Ne<<"\n";
-	  // this->event[i].lNe=ss[3].length()+1;
-	  //cout<<"this->event[i].lNe="<<this->event[i].lNe<<"\n";
-	  // this->event[i].sNe=new char[this->event[i].lNe];
-	  //cout<<"avant le strcpy\n";
-	  this->event[i].sNe = ss[3];
-	  //cout<<"avant this->detparam("<<ss[3]<<",0)\n";
-	  this->detparam(ss[3],0);
-	}
-	//cout <<this->event[i].stime<<"  VARNE"<<"   "<<this->event[i].pop<<"\n";
-      }
-      delete []ss;
-    }
 	if (this->nsamp<1)
 		return "you forgot to indicate when samples are taken";
 	this->histparam = new HistParameterC[this->nparam];
-    //this->paramvar = new HistParameterC[this->nparamvar];
-    //cout << "this->nparam = "<<this->nparam<<"   size= "<<histparname.size()<<"\n";
-    for (int i=0;i<this->nparam;i++){
-      //cout<<"i = "<<i<<"\n";
-      this->histparam[i].name=histparname[i];
-      //cout << this->histparam[i].name<<"\n";
-      this->histparam[i].category=histparcat[i];
-      if (this->histparam[i].category=='T')this->histparam[i].value=-9999; else this->histparam[i].value=-1;
-    }
-    histparname.clear();histparcat.clear();
-    this->time_sample = new int[this->nsamp];
-    n=-1;
-    for (int i=0;i<this->nevent;i++) {if ((this->event[i].action=='E')or(this->event[i].action=='R')) {n++;this->time_sample[n]=this->event[i].time;}}
+	//this->paramvar = new HistParameterC[this->nparamvar];
+	//cout << "this->nparam = "<<this->nparam<<"   size= "<<histparname.size()<<"\n";
+	for (int i=0;i<this->nparam;i++){
+		//cout<<"i = "<<i<<"\n";
+		this->histparam[i].name=histparname[i];
+		//cout << this->histparam[i].name<<"\n";
+		this->histparam[i].category=histparcat[i];
+		if (this->histparam[i].category=='T')this->histparam[i].value=-9999; else this->histparam[i].value=-1;
+	}
+	histparname.clear();histparcat.clear();
+	this->time_sample = new int[this->nsamp];
+	n=-1;
+	for (int i=0;i<this->nevent;i++) {if ((this->event[i].action=='E')or(this->event[i].action=='R')) {n++;this->time_sample[n]=this->event[i].time;}}
 	return "";
 }
 

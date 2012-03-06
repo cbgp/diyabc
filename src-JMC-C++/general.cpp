@@ -200,6 +200,7 @@ int main(int argc, char *argv[]){
 string RNG_filename;
 
 try {
+	cout<<"debut\n";
 	initstat_typenum();
 	RNG_must_be_saved = false;
     bool firsttime;
@@ -439,7 +440,8 @@ try {
 
 	switch (action) {
       case 'r' :
-    	           k=readheaders();
+    	           cout<<"debut de l'action r\n";
+					k=readheaders();
 
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"   ";fflush(stdin);
                    if (k==1) {
