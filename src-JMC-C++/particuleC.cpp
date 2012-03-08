@@ -1918,7 +1918,7 @@ void ParticleC::put_one_mutation(int loc) {
 				this->sumweight +=this->locuslist[loc].weight;
 				//if (debuglevel==11) cout<<"weight = "<<this->sumweight<<"\n";
 				this->locpol = this->sumweight/(double)this->ntentes;
-				if ((this->ntentes>=nlocutil)and(this->locpol<0.2)) this->sumweight=-1.0;
+				if ((this->ntentes>=nlocutil)and(this->locpol < this->threshold)) this->sumweight=-1.0;
 			}
 			if (this->sumweight<0.0) break;
 		}

@@ -44,7 +44,7 @@ class ParticleC
 	  bool *catexist;
 	  double matQ[4][4];
 	  long int naccept,ntentes;
-	  double weight,locpol,sumweight;
+	  double weight,locpol,sumweight,threshold;
 
    /* Déclaration des méthodes */
 	  void libere(bool obs);

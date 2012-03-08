@@ -869,11 +869,15 @@ int HeaderC::readHeader(string headerfilename){
 
 	error = readHeaderEntete(file);cout<<"----------------------------------------apres readHeaderEntete\n";
 	if(error != 0) return error;
-
+    this->threshold = 0.;
 	if (not file.eof()){
 		getline(file,s1);
 		getline(file,s1);
 		this->reffreqmin = getwordfloat(s1,0);
+		getline(file, s1);
+		this->particuleobs.locpol = getwordfloat(s1,0);
+		getline(file, s1);
+		this->threshold = getwordfloat(s1, 0);
 	}
 	return 0;
 }
@@ -1222,6 +1226,7 @@ void HeaderC::calstatobs(string statobsfilename) {
 	int jstat,cat;
 	//partie DATA
 	if (debuglevel==2) cout<<"debut de calstatobs\n";
+	this->particuleobs.threshold = this->threshold;
 	this->particuleobs.dnatrue = true;
 	this->particuleobs.nsample = this->dataobs.nsample0;
 	if (debuglevel==2) cout<<"this->dataobs.nsample="<<this->dataobs.nsample<<"\n";

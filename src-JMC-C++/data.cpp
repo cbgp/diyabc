@@ -424,7 +424,12 @@ void LocusC::libere(bool obs, int nsample) {
 	void DataC::ecribin(string filenamebin) {
         MwcGen mwc;        mwc.randinit(990,time(NULL));
 		int *index,lon,kloc,categ;
-		index=mwc.randperm(this->nloc);
+		//index=mwc.randperm(this->nloc);
+		// a virer ?
+		index = new int[this->nloc];
+		for(int i=0; i< this->nloc; i++)
+			index[i] = i;
+		// fin a virer ?
 		fstream f1;		
         f1.open(filenamebin.c_str(),ios::out|ios::binary);
 		f1.write((char*)&(this->nloc),sizeof(int));													//nombre de locus

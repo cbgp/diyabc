@@ -45,6 +45,7 @@ public:
     MutParameterC *mutparam;
     float *stat_obs;
 	float reffreqmin;
+	float threshold;
 
 	void libere();
 	void assignloc(int gr);

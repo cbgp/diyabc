@@ -40,6 +40,7 @@ long int ntentes,naccept;
  * Structure ParticleSet : remplissage de la partie data de la particule p
  */
 void ParticleSetC::setdata(int p) {
+	this->particule[p].threshold = this->header.threshold;
 	this->particule[p].data.nsample = this->header.dataobs.nsample;
 	this->particule[p].nsample = this->header.dataobs.nsample;
 	this->particule[p].data.nind.resize(this->header.dataobs.nsample);
