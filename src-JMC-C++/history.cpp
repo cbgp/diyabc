@@ -377,7 +377,7 @@ void ScenarioC::detparam(string s,int cat) {
 	vector <string> ss;
 	bool trouve;
 	s1=s;
-	cout<<"detparam s1="<<s1<<"\n";
+	//cout<<"detparam s1="<<s1<<"\n";
 	while (s1.length()>0) {
 		plus=s1.find("+");
 		minus=s1.find("-"); //cout<<"minus="<<minus<<"\n";
@@ -393,8 +393,8 @@ void ScenarioC::detparam(string s,int cat) {
 	}
 	for (i = 0; i < (int)ss.size(); i++) {
 		if (atoi(ss[i].c_str())==0) {
-			cout<<"ss["<<i<<"]="<<ss[i]<<"\n";
-			cout<<"   this->nparam = "<<this->nparam<<"\n";
+			//cout<<"ss["<<i<<"]="<<ss[i]<<"\n";
+			//cout<<"   this->nparam = "<<this->nparam<<"\n";
 			if (this->nparam>0) {
 				trouve=false;
 				j=0;
@@ -409,9 +409,9 @@ void ScenarioC::detparam(string s,int cat) {
 			} else {histparname.push_back(ss[i]);histparcat.push_back(cat);this->nparam++;}
 		}
 	}
-	cout<<"dans detparam  size = "<<histparname.size()<<"   nparam="<<this->nparam<<"\n";
-	for (int i=0;i<histparname.size();i++) cout<<"histparname = "<<histparname[i]<<"\n";
-	cout<<"\n";
+	//cout<<"dans detparam  size = "<<histparname.size()<<"   nparam="<<this->nparam<<"\n";
+	//for (int i=0;i<histparname.size();i++) cout<<"histparname = "<<histparname[i]<<"\n";
+	//cout<<"\n";
 }
 
 

@@ -1359,14 +1359,18 @@ void HeaderC::calstatobs(string statobsfilename) {
 			}
 		}
 	}
-	string *sb,ent;
+	if (debuglevel==2) cout<<"apres la partie locus\n";
+	//string *sb,
+	string ent;
 	int j;
-	sb = splitwords(this->entete," ",&j);
-	ent="";
-	for (int k=j-this->nstat;k<j;k++) ent=ent+centre(sb[k],14);
-	ent=ent+"\n";
-	if (debuglevel==2)cout<<"entete : "<<entete<<"\n";
-	delete []sb;
+	if (debuglevel==2) cout<<"this->entetestat = "<<this->entetestat<<"\n";
+	//sb = splitwords(this->entete," ",&j);
+	//cout<<"this->entete = "<<this->entete<<"\nn="<<j<<"   this->nstat="<<this->nstat<<"\n";
+	ent=entetestat+"\n";
+	//for (int k=j-this->nstat;k<j;k++) ent=ent+centre(sb[k],14);
+	//ent=ent+"\n";
+	//if (debuglevel==2)cout<<"entete : "<<entete<<"\n";
+	//delete []sb;
 	jstat=0;
 	FILE *fobs;
 	fobs=fopen(statobsfilename.c_str(),"w");

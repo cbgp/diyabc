@@ -360,19 +360,19 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 			}
 		//cout<<"\n";
 	}
-	cout<<"apres le remplissage de "<<npart<<"particules\n";
+	cout<<"apres le remplissage de "<<npart<<" particules\n";
 	//if (num_threads>0) omp_set_num_threads(num_threads);_
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
 	for (ipart=0;ipart<this->npart;ipart++){
 		//cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
-		//cout<<sOK[ipart]<<"\n";
+		//cout<<sOK[ipart]<<"apres dosimulpart de la particule "<<ipart<<"\n";
 		if (sOK[ipart]==0) {
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr,this->particule[ipart].weight);}
 		}
-		// cout<<"apres docalstat de la particule "<<ipart<<"\n";
+		 //cout<<"apres docalstat de la particule "<<ipart<<"\n";
 	}
-	cout<<"apres la simulation de "<<npart<<"particules\n";
+	cout<<"apres la simulation de "<<npart<<" particules\n";
 ///////////////fin du pragma
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		if (sOK[ipart]==0){
@@ -389,7 +389,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 			for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){
 					enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;
-					//cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<"  ";
+					//cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<" ("<<enreg[ipart].stat[nstat]<<")  ";
 					nstat++;
 				}
 				//cout<<"\n";
@@ -403,7 +403,6 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 		}
 	}
 	cout<<"fin de dosimulphistar\n";
-
 }
 
 /**

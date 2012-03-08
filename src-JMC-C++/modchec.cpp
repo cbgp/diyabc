@@ -81,17 +81,20 @@ long double **ssphistar,**ssref;
             header.nstat++;
             delete []qq;
        }
-        if (debuglevel==2) cout <<"dans resetstat nstat = "<<header.nstat++<<"\n";
+        if (debuglevel==2) cout <<"dans resetstat nstat = "<<header.nstat<<"\n";
 
         for (gr=1;gr<=header.ngroupes;gr++) {delete []header.groupe[gr].sumstat;header.groupe[gr].sumstat = new StatC[header.groupe[gr].nstat];}
         ss =splitwords(s," ",&ns);
-        delete []header.statname;header.statname = new string[ns];
+        delete []header.statname;
+		header.statname = new string[ns];
         for (int i=0;i<ns;i++) header.statname[i]=ss[i];
+		header.entetestat="";
+		for (int i=0;i<ns;i++) header.entetestat +=centre(ss[i],14);
         for (int i=0;i<ns;i++) {
             qq=splitwords(ss[i],"_",&nq);
             gr=atoi(qq[1].c_str());
             j=0;while (qq[0]!=stat_type[j]) j++;
-            if (debuglevel==2) cout<<"\nss[i] = "<<ss[i]<<"   j="<<j<<"\n";
+            if (debuglevel==2) cout<<"\nss["<<i<<"] = "<<ss[i]<<"   j="<<j<<"\n";
             if (header.groupe[gr].type==0) {   //MICROSAT
                 if (stat_num[j]<5) {
                       header.groupe[gr].sumstat[k].cat=stat_num[j];
@@ -504,8 +507,14 @@ long double **ssphistar,**ssref;
         	exit(1);
         }
         npv = rt.nparam[rt.scenteste-1];
-		cout<<"npv="<<npv<<"    nenr="<<nenr<<"\n";
+		cout<<"npv="<<npv<<"    nenr="<<nenr<<"   nstat="<<header.nstat<<"\n";
 		//delete []enreg;
+        nss=0;
+        firsttime=true;
+        cout<<"ns="<<ns<<"\n";
+        //cout<<phistarOK[0][0]<<"\n";
+        if (newstat) usestats = resetstats(snewstat);
+        cout<<"header.nstat = "<<header.nstat<<"\n";
         enreg = new enregC[nenr];
 		cout<<"apres new enregC[nenr]\n";
         for (int p=0;p<nenr;p++) {
@@ -514,13 +523,7 @@ long double **ssphistar,**ssref;
             enreg[p].numscen = rt.scenteste;
         }
         cout<<"apres dimensionnement des enreg\n";
-        nss=0;
-        firsttime=true;
-        cout<<"ns="<<ns<<"\n";
-        //cout<<phistarOK[0][0]<<"\n";
-        if (newstat) usestats = resetstats(snewstat);
-
-        cout<<"header.nstat = "<<header.nstat<<"\n";
+		
         ssphistar = new long double*[newsspart];
         for (int i=0;i<newsspart;i++) ssphistar[i] = new long double[header.nstat];
         cout<<"newstat ="<<newstat<<"   newsspart="<<newsspart<<"     nenr="<<nenr<<"\n";
@@ -529,12 +532,12 @@ long double **ssphistar,**ssref;
             ps.dosimulphistar(header,nenr,false,multithread,firsttime,rt.scenteste,seed,nphistarOK);
             for (int i=0;i<nenr;i++) {
                 for (int j=0;j<header.nstat;j++) ssphistar[i+nss][j]=enreg[i].stat[j];
-                for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+nss][j]<<"   ";cout<<"\n";
+                //for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+nss][j]<<"   ";cout<<"\n";
             }
             firsttime=false;
             nss+=nenr;
             iprog+=nenr;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
-            cout<<nss<<"\n";
+            //cout<<nss<<"\n";
         }
         if (newstat) {header.calstatobs(statobsfilename);stat_obs = header.stat_obs;}
         if (doloc) call_loc(newsspart,header.nstat,nrec,nsel,ssphistar,stat_obs);
