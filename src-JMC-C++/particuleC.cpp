@@ -1750,7 +1750,7 @@ void ParticleC::put_one_mutation(int loc) {
     else         polyref=(p >= this->reffreqmin);
 	polydat = (n1d>0)and(n1d<nd);
 	poly = ((polyref) and (polydat));
-    if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
+    //if (loc==0) cout<<"polymref   refnindtot="<<this->refnindtot<<"   reffreqmin="<<this->reffreqmin<<"   p="<<p<<"   poly="<<poly<<"\n";
 	if (debuglevel==20) {
 		if (poly) cout<<"LOCUS ACCEPTE\n"; else cout<<"LOCUS REFUSE\n";
 	}  

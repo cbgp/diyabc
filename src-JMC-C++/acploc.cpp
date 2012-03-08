@@ -138,12 +138,14 @@ int nacp=100000;
 */
 	void cal_acp(){
         long double **matstat,*pca_statobs;
-		float *stat_obs;
+		//float *stat_obs;
         enregC enr;
         int bidon,*numscen,k;
         resACPC rACP;
         //header.calstatobs(statobsfilename);
-		stat_obs = header.stat_obs;  cout<<"apres read_statobs\n";
+		//stat_obs = header.stat_obs;  
+		for (int i=0;i<header.nstat;i++) cout<<header.stat_obs[i]<<"\n";
+		cout<<"apres read_statobs\n";
         int nparamax = 0;
         for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         //cout<<nparamax<<"\n";
@@ -167,7 +169,7 @@ int nacp=100000;
         cout<<"apres ACP  path ="<<path<<"\n";
         for (int j=0;j<rACP.nlambda;j++){
             pca_statobs[j]=0.0;
-            for(k=0;k<rt.nstat;k++) if (rACP.sd[k]>0.0) pca_statobs[j] +=(stat_obs[k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
+            for(k=0;k<rt.nstat;k++) if (rACP.sd[k]>0.0) pca_statobs[j] +=(header.stat_obs[k]-rACP.moy[k])/rACP.sd[k]*rACP.vectprop[k][j];
         }
         string nomfiACP;
         nomfiACP = path + ident + "_ACP.txt";
@@ -193,12 +195,13 @@ int nacp=100000;
 */ 
     void cal_loc() {
         long double **qobs;
-		float *stat_obs,diff;
+		//float *stat_obs,
+		float diff;
         int scen,**avant,**apres,**egal,bidon,nparamax = 0;
         enregC enr;
         string **star;
         //header.calstatobs(statobsfilename);
-		stat_obs = header.stat_obs;  //cout<<"apres read_statobs\n";
+		//stat_obs = header.stat_obs;  //cout<<"apres read_statobs\n";
         for (int i=0;i<rt.nscen;i++) if (rt.nparam[i]>nparamax) nparamax=rt.nparam[i];
         cout<<nparamax<<"\n";
         enr.param = new float[nparamax];
@@ -215,7 +218,7 @@ int nacp=100000;
             bidon=rt.readrecord(&enr);
             scen=enr.numscen-1;
             for (int j=0;j<rt.nstat;j++) {
-                diff=stat_obs[j]-enr.stat[j];
+                diff=header.stat_obs[j]-enr.stat[j];
                 if (diff>0.001) avant[scen][j]++;
                 else if (diff<-0.001) apres[scen][j]++; else egal[scen][j]++;
             }
@@ -230,7 +233,7 @@ int nacp=100000;
                  if ((qobs[i][j]>0.99)or(qobs[i][j]<0.01)) star[i][j]=" (**) ";
                  if ((qobs[i][j]>0.999)or(qobs[i][j]<0.001)) star[i][j]=" (***)";
             }
-            cout<<setiosflags(ios::left)<<setw(15)<<header.statname[j]<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<stat_obs[j]<<")   ";
+            cout<<setiosflags(ios::left)<<setw(15)<<header.statname[j]<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<header.stat_obs[j]<<")   ";
             for (int i=0;i<rt.nscen;i++) cout<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<qobs[i][j]<<star[i][j]<<"  ";
             cout<<"\n";
         }
@@ -253,7 +256,7 @@ int nacp=100000;
         f12<<" Summary           observed";for (int i=0;i<rt.nscen;i++) f12<< "    scenario   ";f12<<"\n";
         f12<<"statistics           value ";for (int i=0;i<rt.nscen;i++) f12<< "      "<<setw(3)<<i+1<< "      ";f12<<"\n";
         for (int j=0;j<rt.nstat;j++) {
-             f12<<setiosflags(ios::left)<<setw(15)<<header.statname[j]<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<stat_obs[j]<<")   ";
+             f12<<setiosflags(ios::left)<<setw(15)<<header.statname[j]<<"    ("<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<header.stat_obs[j]<<")   ";
              for (int i=0;i<rt.nscen;i++) {
                  f12<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<qobs[i][j]<<star[i][j]<<"   ";
              }

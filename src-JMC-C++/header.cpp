@@ -878,6 +878,7 @@ int HeaderC::readHeader(string headerfilename){
 		this->particuleobs.locpol = getwordfloat(s1,0);
 		getline(file, s1);
 		this->threshold = getwordfloat(s1, 0);
+		cout <<"refreqmin="<<this->reffreqmin<<"   locpol="<<this->particuleobs.locpol<<"   threshold="<<this->threshold<<"\n";
 	}
 	return 0;
 }
