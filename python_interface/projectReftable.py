@@ -307,13 +307,16 @@ for i in $(seq 1 $1); do\n\
 done\n\
 echo $nb\n\
 }\n\
+seed=$RANDOM\n\
 for i in $(seq 1 %s); do \n\
-qsub -q short_queue.q -cwd node.sh 10000 `pwd` $i\n\
+let seed=$seed+1\n\
+qsub -q short_queue.q -cwd node.sh 10000 `pwd` $i $seed\n\
 done;\n'%nbFullQsub
         
         if nbLastQsub != 0:
             res+='let last=$i+1\n\
-qsub -q short_queue.q -cwd node.sh %s `pwd` $last\n'%nbLastQsub
+let seed=$seed+1\n\
+qsub -q short_queue.q -cwd node.sh %s `pwd` $last $seed\n'%nbLastQsub
         
         res+='while ! [ "`nbOk %s`" = "%s" ]; do\n\
 echo `progress %s`\n\
@@ -332,10 +335,14 @@ echo `progress %s`\n\
         return 'NBTOGEN=$1\n\
 USERDIR=$2\n\
 MYNUMBER=$3\n\
+SEED=$4\n\
 if ! [ -d $TMPDIR ]; then mkdir -p $TMPDIR ; fi \n\
 cp general $TMPDIR\n\
 cp %s $TMPDIR\n\
 cp %s $TMPDIR\n\
+# Generation of random numbers\n\
+$TMPDIR/general -p $TMPDIR/ -n "s:$SEED"\n\
+# Computations\n\
 $TMPDIR/general -p $TMPDIR/ -r $NBTOGEN & \n\
 while ! [ "`head -n 2 $TMPDIR/reftable.log | tail -n 1`" -eq $NBTOGEN ]; do\n\
     cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
@@ -355,17 +362,17 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             if not tarname.endswith(".tar"):
                 tarname += ".tar"
         if tarname != "":
-            try:
-                nbnodes = int(self.parent.preferences_win.nbClusterNodesEdit.text())
-            except Exception as e:
-                nbnodes = 10
+            #try:
+            #    nbnodes = int(self.parent.preferences_win.nbClusterNodesEdit.text())
+            #except Exception as e:
+            #    nbnodes = 10
             executablePath = self.parent.preferences_win.getExecutablePath()
             dest = "%s/cluster_generation_tmp/"%self.dir
             if os.path.exists(dest):
                 shutil.rmtree(dest)
             os.mkdir(dest)
-            # generation des RNGs
-            self.initializeRNG(nbnodes,dest)
+            ## generation des RNGs
+            #self.initializeRNG(nbnodes,dest)
             # generation du master script
             script = self.genMasterScript()
             scmffile = "%s/scmf"%dest
@@ -396,8 +403,8 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
             tar.add(self.dataFileSource,"%s/%s"%(str(tarRepName),str(self.dataFileName)))
             tar.add(executablePath,"%s/general"%tarRepName)
-            for i in range(nbnodes):
-                tar.add("%s/RNG_state_%04d.bin"%(dest,i),"%s/RNG_state_%04d.bin"%(tarRepName,i))
+            #for i in range(nbnodes):
+            #    tar.add("%s/RNG_state_%04d.bin"%(dest,i),"%s/RNG_state_%04d.bin"%(tarRepName,i))
             tar.close()
 
             # nettoyage des fichiers temporaires de script
