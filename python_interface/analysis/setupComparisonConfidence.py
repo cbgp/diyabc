@@ -32,11 +32,18 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         self.ui=self
         self.ui.setupUi(self)
 
+        self.deInterValuesW = []
+        self.lrInterValuesW = []
+
         self.ui.projectNameEdit.setText(self.parent.parent.dir)
+        self.ui.gridLayout.setAlignment(Qt.AlignTop)
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.redefButton,SIGNAL("clicked()"),self.redefineScenarios)
+        QObject.connect(self.ui.numRegCombo,SIGNAL("currentIndexChanged(QString)"),self.updateInterValues)
+        QObject.connect(self.ui.deEdit,SIGNAL("textChanged(QString)"),self.updateInterValues)
+        QObject.connect(self.ui.lrEdit,SIGNAL("textChanged(QString)"),self.updateInterValues)
 
         if self.analysis.category == "confidence":
             self.ui.label.setText("Confidence in scenario choice")
@@ -47,16 +54,46 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.numRegCombo.clear()
             self.ui.numRegCombo.addItem("0")
             self.ui.numRegCombo.addItem("1")
-            self.ui.numRegCombo.setCurrentIndex(1)
             self.ui.notdsEdit.setText("500")
         else:
             self.ui.notdsEdit.hide()
             self.ui.notdsLabel.hide()
             self.ui.candidateLabel.hide()
+        self.ui.numRegCombo.setCurrentIndex(1)
 
         self.ui.deEdit.setText("500")
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
+
+
+    def updateInterValues(self,numstr):
+        for w in self.lrInterValuesW:
+            w.hide()
+            self.ui.lrValLayout.removeWidget(w)
+        for w in self.deInterValuesW:
+            w.hide()
+            self.ui.deValLayout.removeWidget(w)
+        self.lrInterValuesW = []
+        self.deInterValuesW = []
+
+        try:
+            de = int(self.ui.deEdit.text())
+            lr = int(self.ui.lrEdit.text())
+            numreg = int(self.ui.numRegCombo.currentText())
+            dedec = de/numreg
+            lrdec = lr/numreg
+            for i in range(numreg):
+                lrlab = QLabel(str(lr))
+                delab = QLabel(str(de))
+                self.lrInterValuesW.append(lrlab)
+                self.deInterValuesW.append(delab)
+                self.ui.lrValLayout.addWidget(lrlab)
+                self.ui.deValLayout.addWidget(delab)
+                de -= dedec
+                lr -= lrdec
+        except Exception as e:
+            print e
+
 
     def restoreAnalysisValues(self):
         if self.analysis.computationParameters != "":
