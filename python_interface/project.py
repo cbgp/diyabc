@@ -5,7 +5,7 @@
 #
 # @brief Classe mère abstraite de tous les projets
 
-import subprocess
+import subprocess,shutil
 import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -94,21 +94,35 @@ class Project(baseProject,formProject):
 
         self.ui.fromToFrame.hide()
 
-    def initializeRNG(self):
+    def initializeRNG(self,nbNodes=1,dest=None):
         """ à lancer une fois que le dossier du projet a été créé
         """
+        QApplication.setOverrideCursor( Qt.WaitCursor )
         if os.path.exists("%s/RNG_state_0000.bin"%self.dir):
-            os.remove("%s/RNG_state_0000.bin"%self.dir)
+            # si on est en mode "cluster"
+            if dest != None:
+                shutil.copy("%s/RNG_state_0000.bin"%self.dir,"%s/RNG_save"%self.dir)
+
+            else:
+                os.remove("%s/RNG_state_0000.bin"%self.dir)
         executablePath = self.parent.preferences_win.getExecutablePath()
         nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
-        cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "-n", "t:%s"%nbMaxThread]
+        # en mode cluster les options sont différentes
+        if nbNodes > 1 and dest != None:
+            cmd_args_list = [executablePath,"-p", dest, "-n", "c:%s"%nbNodes]
+        else:
+            cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "-n", "t:%s"%nbMaxThread]
         log(3,"Command launched for initialization of RNGs of project '%s' : %s"%(self.name," ".join(cmd_args_list)))
         addLine("%s/command.txt"%self.dir,"Command launched for initialization of RNGs of project '%s' : %s\n\n"%(self.name," ".join(cmd_args_list)))
         outfile = "%s/init_rng.out"%(self.dir)
         f = open(outfile,"w")
         p = subprocess.call(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         f.close()
-        log(3,"Initialization of RNGs of project '%s' terminated with returncode : %s"%(self.name,p))
+        if dest != None:
+            log(3,"Generation of RNGs of project '%s' for cluster terminated with returncode : %s"%(self.name,p))
+        else:
+            log(3,"Initialization of RNGs of project '%s' terminated with returncode : %s"%(self.name,p))
+        QApplication.restoreOverrideCursor()
 
     def returnTo(self,elem):
         self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)

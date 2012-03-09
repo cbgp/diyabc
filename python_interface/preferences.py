@@ -85,6 +85,7 @@ class Preferences(AutoPreferences):
         dico_fields = {
                 "connexion" : [
                     ["check","useServer","Use a server (don't check if you don't know what it is)",False],
+                    ["lineEdit","nbClusterNodes","Number of nodes in the cluster","10"],
                     ["lineEdit","serverAddress","Address of the server","localhost"],
                     ["lineEdit","serverPort","Port of the server","666"]
                 ],
@@ -222,6 +223,7 @@ class Preferences(AutoPreferences):
 
 
     def toggleServer(self,state):
+        self.ui.nbClusterNodesEdit.setDisabled(not state)
         self.ui.serverAddressEdit.setDisabled(not state)
         self.ui.serverPortEdit.setDisabled(not state)
 

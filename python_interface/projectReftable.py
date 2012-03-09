@@ -307,16 +307,13 @@ for i in $(seq 1 $1); do\n\
 done\n\
 echo $nb\n\
 }\n\
-seed=$RANDOM\n\
 for i in $(seq 1 %s); do \n\
-let seed=$seed+1\n\
-qsub -q short_queue.q -cwd node.sh 10000 `pwd` $i $seed\n\
+qsub -q short_queue.q -cwd node.sh 10000 `pwd` $i\n\
 done;\n'%nbFullQsub
         
         if nbLastQsub != 0:
             res+='let last=$i+1\n\
-let seed=$seed+1\n\
-qsub -q short_queue.q -cwd node.sh %s `pwd` $last $seed\n'%nbLastQsub
+qsub -q short_queue.q -cwd node.sh %s `pwd` $last\n'%nbLastQsub
         
         res+='while ! [ "`nbOk %s`" = "%s" ]; do\n\
 echo `progress %s`\n\
@@ -332,17 +329,20 @@ echo `progress %s`\n\
         """ génération du script a exécuter sur chaque noeud
         """
 
-        return 'if ! [ -d $TMPDIR ]; then mkdir -p $TMPDIR ; fi \n\
+        return 'NBTOGEN=$1\n\
+USERDIR=$2\n\
+MYNUMBER=$3\n\
+if ! [ -d $TMPDIR ]; then mkdir -p $TMPDIR ; fi \n\
 cp general $TMPDIR\n\
 cp %s $TMPDIR\n\
 cp %s $TMPDIR\n\
-$TMPDIR/general -s "$4" -p $TMPDIR/ -r $1 & \n\
-while ! [ "`head -n 2 $TMPDIR/reftable.log | tail -n 1`" -eq $1 ]; do\n\
-    cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
+$TMPDIR/general -p $TMPDIR/ -r $NBTOGEN & \n\
+while ! [ "`head -n 2 $TMPDIR/reftable.log | tail -n 1`" -eq $NBTOGEN ]; do\n\
+    cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
     sleep 5\n\
 done\n\
-cp $TMPDIR/reftable.bin $2/reftable_$3.bin\n\
-cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
+cp $TMPDIR/reftable.bin $USERDIR/reftable_$MYNUMBER.bin\n\
+cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
 '%(self.parent.reftableheader_name, self.dataFileName)
 
     def generateComputationTar(self,tarname=None):
@@ -350,12 +350,25 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
         le datafile et le reftableheader.
         """
         if tarname == None:
-            tarname = str(QFileDialog.getSaveFileName(self,"Saving","Reftable generation archive","TAR archive (*.tar)"))
+            output.notify(self,"Warning","You are about to generate an archive in order to compute on a cluster,\nrandom numbers are going to be generated, this operation can take a minute or more")
+            tarname = str(QFileDialog.getSaveFileName(self,"Saving cluster archive","Reftable CLUSTER generation archive name","TAR archive (*.tar)"))
+            if not tarname.endswith(".tar"):
+                tarname += ".tar"
         if tarname != "":
+            try:
+                nbnodes = int(self.parent.preferences_win.nbClusterNodesEdit.text())
+            except Exception as e:
+                nbnodes = 10
             executablePath = self.parent.preferences_win.getExecutablePath()
+            dest = "%s/cluster_generation_tmp/"%self.dir
+            if os.path.exists(dest):
+                shutil.rmtree(dest)
+            os.mkdir(dest)
+            # generation des RNGs
+            self.initializeRNG(nbnodes,dest)
             # generation du master script
             script = self.genMasterScript()
-            scmffile = "%s/scmf"%self.dir
+            scmffile = "%s/scmf"%dest
             if os.path.exists(scmffile):
                 os.remove(scmffile)
             scmf = open(scmffile,'w')
@@ -365,7 +378,7 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             tar = tarfile.open(tarname,"w")
             # generation du node script
             script = self.genNodeScript()
-            scnffile = "%s/scnf"%self.dir
+            scnffile = "%s/scnf"%dest
             if os.path.exists(scnffile):
                 os.remove(scnffile)
             scnf = open(scnffile,'w')
@@ -383,13 +396,13 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
             tar.add(self.dataFileSource,"%s/%s"%(str(tarRepName),str(self.dataFileName)))
             tar.add(executablePath,"%s/general"%tarRepName)
+            for i in range(nbnodes):
+                tar.add("%s/RNG_state_%04d.bin"%(dest,i),"%s/RNG_state_%04d.bin"%(tarRepName,i))
             tar.close()
 
             # nettoyage des fichiers temporaires de script
-            if os.path.exists(scmffile):
-                os.remove(scmffile)
-            if os.path.exists(scnffile):
-                os.remove(scnffile)
+            if os.path.exists(dest):
+                shutil.rmtree(dest)
 
         return tarname
 
@@ -410,19 +423,20 @@ cp $TMPDIR/reftable.log $2/reftable_$3.log\n\
             except Exception as e:
                 output.notify(self,"value error","Check the value of required number of data sets\n\n%s"%e)
                 return
-            self.startUiGenReftable()
             # on demarre le thread local ou cluster
             if self.parent.preferences_win.ui.useServerCheck.isChecked():
-                tname = self.generateComputationTar("%s/aaaa.tar"%tempfile.mkdtemp())
+                #tname = self.generateComputationTar("%s/aaaa.tar"%tempfile.mkdtemp())
+                tname = self.generateComputationTar()
                 log(3,"Tar file created in %s"%tname)
-                self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
+                #self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
+                self.startUiGenReftable()
                 self.th = RefTableGenThread(self,nb_to_gen)
-            self.nbReqBeforeComput = int(str(self.ui.nbSetsDoneEdit.text()))
-            self.th.connect(self.th,SIGNAL("increment(int,QString)"),self.incProgress)
-            self.th.connect(self.th,SIGNAL("refTableProblem(QString)"),self.refTableProblem)
-            self.th.connect(self.th,SIGNAL("refTableLog(int,QString)"),self.refTableLog)
-            self.th.start()
+                self.nbReqBeforeComput = int(str(self.ui.nbSetsDoneEdit.text()))
+                self.th.connect(self.th,SIGNAL("increment(int,QString)"),self.incProgress)
+                self.th.connect(self.th,SIGNAL("refTableProblem(QString)"),self.refTableProblem)
+                self.th.connect(self.th,SIGNAL("refTableLog(int,QString)"),self.refTableLog)
+                self.th.start()
         else:
             output.notify(self,"Impossible to launch","An analysis is processing,\
                     \nimpossible to launch reftable generation")
