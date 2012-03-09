@@ -34,7 +34,10 @@ class ControlAscertBias(formControl,baseControl):
         self.ui.ascCheck.setChecked(False)
 
     def activateAsc(self,state):
-        self.ui.valuesFrame.setDisabled(not state)
+        if state:
+            self.ui.valuesFrame.show()
+        else:
+            self.ui.valuesFrame.hide()
 
     def loadAscertConf(self):
         if os.path.exists(self.parent.dir+"/%s"%self.parent.parent.ascertainment_conf_name):
@@ -48,27 +51,30 @@ class ControlAscertBias(formControl,baseControl):
             self.ui.ascCheck.setChecked(len(lines)>=3)
 
     def validate(self,silent=False):
-        # verif
-        problem = ""
-        try:
-            freq = float(self.ui.asc1ValEdit.text())
-            if freq < 0 or freq > 0.5 :
-                raise Exception("Frequency must be positive and lower than 0.5")
-            poly = float(self.ui.asc2ValEdit.text())
-            if poly < 0 or poly > 1 :
-                raise Exception("Proportion of polymorphic SNPs must be in [0,1]")
-            elim = float(self.ui.asc3ValEdit.text())
-            if elim < 0 or elim > 1 :
-                raise Exception("Threshold to eliminate parameter values must be in [0,1]")
-        except Exception as e:
-            problem += "%s\n"%(e)
-        if problem != "":
-            if not silent:
-                output.notify(self,"Value error",problem)
-            self.parent.setAscertValid(False)
+        if self.ui.ascCheck.isChecked():
+            problem = ""
+            try:
+                freq = float(self.ui.asc1ValEdit.text())
+                if freq < 0 or freq > 0.5 :
+                    raise Exception("Frequency must be positive and lower than 0.5")
+                poly = float(self.ui.asc2ValEdit.text())
+                if poly < 0 or poly > 1 :
+                    raise Exception("Proportion of polymorphic SNPs must be in [0,1]")
+                elim = float(self.ui.asc3ValEdit.text())
+                if elim < 0 or elim > 1 :
+                    raise Exception("Threshold to eliminate parameter values must be in [0,1]")
+            except Exception as e:
+                problem += "%s\n"%(e)
+            if problem != "":
+                if not silent:
+                    output.notify(self,"Value error",problem)
+                self.parent.setAscertValid(False)
+            else:
+                self.parent.setAscertValid(True)
+                #sortie
+                self.exit()
         else:
             self.parent.setAscertValid(True)
-            #sortie
             self.exit()
 
     def exit(self):
