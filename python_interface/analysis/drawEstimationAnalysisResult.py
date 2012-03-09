@@ -388,6 +388,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             painter.begin(im_result)
 
             keys = self.dicoPlot.keys()
+            keys.sort()
             # on prend un des graphes pour savoir ses dimensions
             size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
             # on fait des lignes tant qu'on a des pix
