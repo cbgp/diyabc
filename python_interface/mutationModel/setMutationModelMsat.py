@@ -326,35 +326,43 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
         """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur
         et retourne False
         """
-        try:
-            for field in self.constraints_dico.keys():
-                #print self.field_names_dico[field]
-                if self.hasToBeVerified(field):
-                    valtxt = (u"%s"%(field.text())).strip()
-                    if self.constraints_dico[field][0] == 1:
-                        if valtxt == "":
-                            raise Exception("%s should not be empty"%self.field_names_dico[field])
-                    if self.constraints_dico[field][1] == 1:
-                        val = float(valtxt)
-                    if self.constraints_dico[field][2] == 1:
-                        if float(val) < 0:
-                            raise Exception("%s should not be negative"%self.field_names_dico[field])
-            # verifs des min et max
-            if float(self.ui.ilsrMinEdit.text()) > float(self.ui.ilsrMaxEdit.text()):
-                raise Exception("Individuals locus SNI rate has incoherent min and max values")
-            if float(self.ui.msrMinEdit.text()) > float(self.ui.msrMaxEdit.text()):
-                raise Exception("Mean SNI rate has incoherent min and max values")
-            if float(self.ui.ilcpMinEdit.text()) > float(self.ui.ilcpMaxEdit.text()):
-                raise Exception("Individuals locus coefficient P has incoherent min and max values")
-            if float(self.ui.mcpMinEdit.text()) > float(self.ui.mcpMaxEdit.text()):
-                raise Exception("Mean coefficient P has incoherent min and max values")
-            if float(self.ui.ilmrMinEdit.text()) > float(self.ui.ilmrMaxEdit.text()):
-                raise Exception("Individuals locus mutation rate has incoherent min and max values")
-            if float(self.ui.mmrMinEdit.text()) > float(self.ui.mmrMaxEdit.text()):
-                raise Exception("Mean mutation rate has incoherent min and max values")
-        except Exception as e:
+        problems=""
+        for field in self.constraints_dico.keys():
+            #print self.field_names_dico[field]
+            if self.hasToBeVerified(field):
+                valtxt = (u"%s"%(field.text())).strip()
+                if self.constraints_dico[field][0] == 1:
+                    if valtxt == "":
+                        problems+="- %s should not be empty\n\n"%self.field_names_dico[field]
+                if self.constraints_dico[field][1] == 1:
+                    val = float(valtxt)
+                if self.constraints_dico[field][2] == 1:
+                    if float(val) < 0:
+                        problems+="- %s should not be negative\n\n"%self.field_names_dico[field]
+        # verifs des min et max
+        if float(self.ui.ilsrMinEdit.text()) > float(self.ui.ilsrMaxEdit.text()):
+            problems+="- Individuals locus SNI rate has incoherent min and max values\n\n"
+        if float(self.ui.msrMinEdit.text()) > float(self.ui.msrMaxEdit.text()):
+            problems+="- Mean SNI rate has incoherent min and max values\n\n"
+        if float(self.ui.ilcpMinEdit.text()) > float(self.ui.ilcpMaxEdit.text()):
+            problems+="- Individuals locus coefficient P has incoherent min and max values\n\n"
+        if float(self.ui.mcpMinEdit.text()) > float(self.ui.mcpMaxEdit.text()):
+            problems+="- Mean coefficient P has incoherent min and max values\n\n"
+        if float(self.ui.ilmrMinEdit.text()) > float(self.ui.ilmrMaxEdit.text()):
+            problems+="- Individuals locus mutation rate has incoherent min and max values\n\n"
+        if float(self.ui.mmrMinEdit.text()) > float(self.ui.mmrMaxEdit.text()):
+            problems+="- Mean mutation rate has incoherent min and max values\n\n"
+
+        if ( float(self.ui.mmrMinEdit.text()) < float(self.ui.ilmrMinEdit.text()) ) or ( float(self.ui.mmrMaxEdit.text()) > float(self.ui.ilmrMaxEdit.text()) ) :
+            problems+="- Mean mutation rate min/max values must be included in min/max of Individual locus mutation rate\n\n"
+        if ( float(self.ui.mcpMinEdit.text()) < float(self.ui.ilcpMinEdit.text()) ) or ( float(self.ui.mcpMaxEdit.text()) > float(self.ui.ilcpMaxEdit.text()) ) :
+            problems+="- Mean coefficient P min/max values must be included in min/max of Individual locus coefficient P\n\n"
+        if ( float(self.ui.msrMinEdit.text()) < float(self.ui.ilsrMinEdit.text()) ) or ( float(self.ui.msrMaxEdit.text()) > float(self.ui.ilsrMaxEdit.text()) ) :
+            problems+="- Mean SNI rate min/max values must be included in min/max of Individual locus SNI rate\n\n"
+
+        if problems!="":
             if not silent:
-                QMessageBox.information(self,"Value error","%s"%e)
+                QMessageBox.information(self,"Value error","%s"%problems)
             return False
 
         return True

@@ -420,7 +420,7 @@ class SetGeneticDataMsatSeq(SetGeneticData):
         """ vide le modèle mutationnel des microsats
         """
         self.setMutation_dico[box].exit()
-        self.setMutation_dico[box] = SetMutationModelRefTable(self,box)
+        self.setMutation_dico[box] = SetMutationModelMsatRefTable(self,box)
         self.setMutation_dico[box].setMutationConf(self.parent.parent.preferences_win.mutmodM.getMutationConf().split("\n"))
         self.setMutation(box)
 
@@ -428,7 +428,7 @@ class SetGeneticDataMsatSeq(SetGeneticData):
         """ vide le modèle mutationnel des sequences
         """
         self.setMutationSeq_dico[box].exit()
-        self.setMutationSeq_dico[box] = SetMutationModelSequences(self,box)
+        self.setMutationSeq_dico[box] = SetMutationModelSequencesRefTable(self,box)
         self.setMutationSeq_dico[box].setMutationConf(self.parent.parent.preferences_win.mutmodS.getMutationConf().split('\n'))
         self.setMutation(box)
 
