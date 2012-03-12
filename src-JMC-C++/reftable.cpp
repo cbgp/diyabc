@@ -448,6 +448,7 @@ int ReftableC::cal_varstat() {
 	for (int j=0;j<this->nstat;j++) {
 		this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
 		if (this->var_stat[j]>1E-20) nsOK++;
+		printf("sx2[%3d] = %12.8Le   sx[%3d] = %12.8Le\n",j,sx2[j],j,sx[j]);
 		printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
 	}
 	delete []sx;delete []sx2;

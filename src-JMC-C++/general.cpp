@@ -367,9 +367,7 @@ try {
             break;
 
         case 'q' :
-            header.readHeader(headerfilename);
-            k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
-            rt.concat();
+			action='q';
             break;
 
         case 'j' :
@@ -549,6 +547,12 @@ try {
                    if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                    domodchec(modpar,seed);
                    break;
+				   
+	   case 'q'   : //header.readHeader(headerfilename);
+				  k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
+				  rt.concat();
+				  break;
+
 
   }
 	/* Debut: pour le nouveau RNG      */

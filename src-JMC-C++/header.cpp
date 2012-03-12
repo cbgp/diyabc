@@ -378,9 +378,10 @@ int HeaderC::readHeaderGroupPrior(ifstream & file){
 		//cout<<"header.ngroupes="<<this->ngroupes;
 		this->groupe = new LocusGroupC[this->ngroupes+1];
 		this->assignloc(0);
-		//cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
+		cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
 		for (gr=1;gr<=this->ngroupes;gr++){
 			getline(file,s1);
+			cout<<s1<<"\n";
 			ss=splitwords(s1," ",&nss);
 			this->assignloc(gr);
 			if (ss[2]=="[M]") {
@@ -442,21 +443,29 @@ int HeaderC::readHeaderGroupPrior(ifstream & file){
 				if (this->groupe[gr].mutmod==3) {
 					if (not this->groupe[gr].priork2moy.constant)for (int i=0;i<this->nscenarios;i++) {this->scenario[i].nparamvar++;}
 				}
-				if(ss1 != NULL) delete [] ss1; ss1 = NULL;
+				if(ss1 != NULL) delete [] ss1; 
+				ss1 = NULL;
 			} // fin du if portant sur ss[2]
 			if(ss != NULL) delete [] ss; ss = NULL;
 		}
+		cout<<"debuglevel = "<<debuglevel<<"\n";
 		if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie définition des groupes\n";
 		//Mise à jour des locus séquences
 		MwcGen mwc;
 		mwc.randinit(999,time(NULL));
 		int nsv;
 		bool nouveau;
+		if (debuglevel==2) cout<<"avant la boucle sur les locus\n";
 		for (int loc=0;loc<this->dataobs.nloc;loc++){
 			gr=this->dataobs.locus[loc].groupe;
-			if ((this->dataobs.locus[loc].type>4)and(gr>0)){
+			if ((this->dataobs.locus[loc].type>4)and(this->dataobs.locus[loc].type<10)and(gr>0)){
 				nsv = floor(this->dataobs.locus[loc].dnalength*(1.0-0.01*this->groupe[gr].p_fixe)+0.5);
-				for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) this->dataobs.locus[loc].mutsit[i] = mwc.ggamma3(1.0,this->groupe[gr].gams);
+				if (debuglevel==2) cout<<"nsv = "<<nsv<<"\n";
+				if (debuglevel==2) cout<<"mutsit.size = "<<this->dataobs.locus[loc].mutsit.size()<<"\n";
+				if (debuglevel==2) cout<<"this->groupe[gr].gams = "<<this->groupe[gr].gams<<"\n";
+				if (debuglevel==2) cout<<"this->dataobs.locus[loc].dnalength = "<<this->dataobs.locus[loc].dnalength<<"\n";
+				for (int i=0;i<this->dataobs.locus[loc].dnalength;i++) {this->dataobs.locus[loc].mutsit[i] = mwc.ggamma3(1.0,this->groupe[gr].gams);}
+				if (debuglevel==2) cout<<"apres tirage dans gamma3\n";
 				int *sitefix;
 				sitefix=new int[this->dataobs.locus[loc].dnalength-nsv];
 				for (int i=0;i<this->dataobs.locus[loc].dnalength-nsv;i++) {

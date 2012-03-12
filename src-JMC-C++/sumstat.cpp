@@ -1602,6 +1602,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
    */
   long double ParticleC::cal_p0L(StatsnpC stsnp){
     long double p0=0.0;
+	if (stsnp.sw<0.000000001) return 0.0;
     for(int i=0;i<stsnp.n;i++) {
 		//if ((i==0)or(i==stsnp.n-1)) cout<<"dans cal_p0L  stsnp.x["<<i<<"]="<<stsnp.x[i]<<"      stsnp.w["<<i<<"]="<<stsnp.w[i]<<"\n";
 		//cout<<"dans cal_p0L  					stsnp.w["<<i<<"]="<<stsnp.w[i]<<"\n";
