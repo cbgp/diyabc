@@ -455,7 +455,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 		//cout <<"   nloc="<<this->particule[ipart].nloc<<"\n";
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
-		
+		if (debuglevel==14) cout<<"particule "<<ipart<<"   taux de polymorphisme = "<<this->particule[ipart].locpol<<"   poids = "<<this->particule[ipart].weight<<"\n";
 		//ntentes += this->particule[ipart].ntentes;
 		//naccept += this->particule[ipart].naccept;
 		if (debuglevel==5) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
@@ -485,7 +485,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 			for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
 			//for (int j=0;j<nph+npm;j++) {	
 				enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
-				cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+				//cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
 			}
 			if (debuglevel==5) cout <<"\n";
 			nstat=0;

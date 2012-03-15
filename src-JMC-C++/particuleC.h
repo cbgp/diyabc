@@ -118,7 +118,7 @@ class ParticleC
    // initialise l'arbre de coalescence, i.e. alloue la mémoire pour les noeuds et les branches,
    // initialise les propriétés "sample" et "height" des noeuds terminaux
    // initialise à 0 la propriété "pop" de tous les noeuds et à 0 la propriété "sample" des noeuds non-terminaux
-   void init_tree(GeneTreeC & gt,int loc, bool gtexist);
+   void init_tree(GeneTreeC & gt,int loc, bool gtexist, bool reference);
 
    // évalue la pertinence de l'approximation continue pour le traitement de la coalescence
    // (1= approximation continue, 0 = generation par generation)
@@ -128,7 +128,7 @@ class ParticleC
    int draw_node(int loc,int iseq,int nLineages);
 
    // coalesce les lignées ancestrales de la population requise
-   void coal_pop(int loc,int iseq);
+   void coal_pop(int loc,int iseq, bool reference, int *refmrca);
 
    // FIXME: sens ???
    // debut modifications de l'arbre

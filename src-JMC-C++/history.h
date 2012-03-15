@@ -209,7 +209,7 @@ struct SequenceBitC
  */
 struct NodeC
 {
-  int pop,sample,state,brhaut,ndat;
+  int pop,sample,state,brhaut,ndat,nref;
   double height;
   std::string dna;
   bool OK;

@@ -1711,8 +1711,9 @@ long double ParticleC::cal_nha2p(int gr,int st){
   }
 
   void ParticleC::docalstat(int gr, double partweight) {
-	if (partweight==0) {
-		for (int st=0;st<this->grouplist[gr].nstat;st++) this->grouplist[gr].sumstat[st].val = 10.0;
+	if (partweight<0.5) {
+		cout<<"PARTICULE A POIDS NUL\n";
+		for (int st=0;st<this->grouplist[gr].nstat;st++) this->grouplist[gr].sumstat[st].val = 2.0+this->mw.random();
 		return;
 	}  
     //cout << "avant calfreq\n";
