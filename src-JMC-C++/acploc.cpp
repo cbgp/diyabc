@@ -163,7 +163,25 @@ int nacp=100000;
                 for (int j=0;j<rt.nstat;j++) matstat[p][j] = enr.stat[j];
         }
         rt.closefile();   cout<<"apres la lecture des "<<nacp<<" enregistrements\n";
-        
+        if (header.reference) {
+			long double **matstat0;
+			int nacp0=0,*numscen0;
+			matstat0 = new long double*[nacp];
+			numscen0 = new int [nacp];
+			for (int p=0;p<nacp;p++) {
+				if (matstat[p][0]<=1.0) {
+					matstat0[nacp0] = new long double[rt.nstat];
+					numscen0[nacp0] = numscen[p];
+					for (int j=0;j<rt.nstat;j++) matstat0[nacp0][j] = matstat[p][j];
+					nacp0++;
+				}
+			}
+			nacp = nacp0;
+			for (int p=0;p<nacp;p++) {
+				numscen[p] = numscen0[p];
+				for (int j=0;j<rt.nstat;j++) matstat[p][j] = matstat0[p][j];
+			}
+		}
         cout<<"avant ACP\n";
         rACP = ACP(nacp,rt.nstat,matstat,1.0,0);
         cout<<"apres ACP  path ="<<path<<"\n";
@@ -215,7 +233,11 @@ int nacp=100000;
         egal = new int*[rt.nscen]; for (int i=0;i<rt.nscen;i++) {egal[i]  = new int[rt.nstat];for (int j=0;j<rt.nstat;j++)  egal[i][j]=0;}
         rt.openfile2();
         for (int p=0;p<rt.nrec;p++) {
-            bidon=rt.readrecord(&enr);
+			if (not header.reference) bidon=rt.readrecord(&enr);
+			else {
+				do {bidon=rt.readrecord(&enr);}
+				while (enr.stat[0]>1.0);
+			}
             scen=enr.numscen-1;
             for (int j=0;j<rt.nstat;j++) {
                 diff=header.stat_obs[j]-enr.stat[j];

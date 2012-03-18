@@ -40,7 +40,7 @@ public:
     HistParameterC *histparam;
     ConditionC *condition;
     LocusGroupC *groupe;
-    bool drawuntil;
+    bool drawuntil,reference;
     ParticleC particuleobs;
     MutParameterC *mutparam;
     float *stat_obs;

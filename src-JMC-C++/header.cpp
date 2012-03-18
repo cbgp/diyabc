@@ -158,6 +158,7 @@ int HeaderC::readHeaderScenarios(ifstream & file){
 			return 1;
 		}
 	}
+	this->reference=false;
 	for (int ievent=0;ievent<this->scenario[0].nevent;ievent++){
 		if (this->scenario[0].event[ievent].action == 'R') {
 			this->dataobs.nsample++;
@@ -184,6 +185,7 @@ int HeaderC::readHeaderScenarios(ifstream & file){
 				}
 			}
 		}
+		if (this->scenario[0].event[ievent].nindMref+this->scenario[0].event[ievent].nindFref>0) this->reference=true;
 	}
 	for (int sa=0;sa<this->dataobs.nsample;sa++) cout<<this->dataobs.ss[0][sa]<<"   ";cout<<"\n";
 

@@ -1440,12 +1440,12 @@ void ParticleC::put_one_mutation(int loc) {
     if (this->locuslist[loc].weight==0.0) return;
 	this->locuslist[loc].weight=1.0;
 	ra=this->mw.random();
-    r=ra*lengthtotOKOK;
+    r=ra*lengthtotOK;
     //if (loc<1) cout<<"lengthtot="<<lengthtot<<"     r="<<r<<"\n";
 	
-	b=0;while (not this->gt[loc].branches[b].OKOK) b++;
+	b=0;while (not this->gt[loc].branches[b].OK) b++;
     s=this->gt[loc].branches[b].length;
-    while (s<r) {b++; if (this->gt[loc].branches[b].OKOK) s +=this->gt[loc].branches[b].length;};
+    while (s<r) {b++; if (this->gt[loc].branches[b].OK) s +=this->gt[loc].branches[b].length;};
     this->gt[loc].branches[b].nmut = 1;
 	if ((b==0)and(not this->gt[loc].branches[b].OKOK)) {
 		cout<<"lengthtot="<<lengthtotOKOK<<"     r="<<r<<"    s="<<s<<"\n";
