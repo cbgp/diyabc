@@ -474,7 +474,7 @@ class ProjectSimulationSnp(ProjectSimulation):
             val = float(line_to_add)
         except Exception as e:
             raise Exception("Ascertainment bias must be a float")
-        if not 0 < val < 1:
+        if not 0 <= val <= 1:
             raise Exception("Ascertainment bias must be in [0,1]")
 
         addLine(headerFile,"\n"+line_to_add)

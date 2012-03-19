@@ -80,7 +80,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         font.setPixelSize(16)
         painter.setFont(font)
         painter.drawText( 10,20, "Scenario %i seems OK. But the current version of DIYABC"%(scc.number))
-        painter.drawText( 10,40, "is unable to provide a valide graphic representation")
+        painter.drawText( 10,40, "is unable to provide a valid graphic representation")
         painter.drawText( 10,70, additional_message)
 
         label = QLabel()
