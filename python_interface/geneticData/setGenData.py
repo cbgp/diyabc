@@ -7,8 +7,8 @@ from PyQt4 import uic
 #from uis.setGenData_ui import Ui_Frame
 #from mutationModel.setMutationModelMsatRefTable import SetMutationModelMsatRefTable
 #from mutationModel.setMutationModelSequences import SetMutationModelSequences
-#from setSummaryStatistics import SetSummaryStatistics
-#from setSummaryStatisticsSeq import SetSummaryStatisticsSeq
+from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
+from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from utils.visualizescenario import *
 from utils.data import *
 import output
