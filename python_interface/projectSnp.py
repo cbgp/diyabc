@@ -90,7 +90,7 @@ class ProjectSnp(ProjectReftable):
         for ty in self.sum_stat_wins.keys():
             (nstat,stat_txt) = self.sum_stat_wins[ty].getSumConf()
             nb += int(nstat)
-        if self.ascert_frame.ascCheck.isChecked():
+        if self.ascert_frame.ascYesRadio.isChecked():
             nb += 1
         return nb
 
@@ -319,7 +319,7 @@ class ProjectSnp(ProjectReftable):
         log(2,"Writing ascertainment in %s"%self.parent.ascertainment_conf_name)
 
         ascert_string = u""
-        if self.ascert_frame.ascCheck.isChecked():
+        if self.ascert_frame.ascYesRadio.isChecked():
             ascert_string += "%s\n"%str(self.ascert_frame.asc1ValEdit.text()).strip()
             ascert_string += "%s\n"%str(self.ascert_frame.asc2ValEdit.text()).strip()
             ascert_string += "%s\n"%str(self.ascert_frame.asc3ValEdit.text()).strip()
@@ -378,7 +378,7 @@ class ProjectSnp(ProjectReftable):
                 sums_txt = self.sum_stat_wins[ty].getSumStatsTableHeader(numGroup)
                 result += sums_txt
                 numGroup += 1
-        if self.ascert_frame.ascCheck.isChecked():
+        if self.ascert_frame.ascYesRadio.isChecked():
             result += output.centerHeader("PPL",14)
         return result
 
@@ -389,7 +389,7 @@ class ProjectSnp(ProjectReftable):
         statsdesc = ""
         numGr = 1
         totNbStat = 0
-        if self.ascert_frame.ascCheck.isChecked():
+        if self.ascert_frame.ascYesRadio.isChecked():
             totNbStat += 1
         for ty in self.typesOrdered:
             if ty in self.sum_stat_wins.keys():
@@ -403,7 +403,7 @@ class ProjectSnp(ProjectReftable):
         res += locidesc
 
         res += "\ngroup summary statistics (%s)\n"%(totNbStat)
-        if self.ascert_frame.ascCheck.isChecked():
+        if self.ascert_frame.ascYesRadio.isChecked():
             nb = int(statsdesc.split('group G')[-1].split(')')[0].split('(')[1])
             num = int(statsdesc.split('group G')[-1].split(' ')[0])
             statsdesc = statsdesc.replace('group G%s (%s)'%(num,nb),'group G%s (%s)'%(num,nb+1))

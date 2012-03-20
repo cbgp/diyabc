@@ -28,16 +28,18 @@ class ControlAscertBias(formControl,baseControl):
 
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
-        QObject.connect(self.ui.ascCheck,SIGNAL("stateChanged(int)"),self.activateAsc)
+        QObject.connect(self.ui.ascYesRadio,SIGNAL("toggled(bool)"),self.activateAsc)
+        QObject.connect(self.ui.ascNoRadio,SIGNAL("toggled(bool)"),self.activateAsc)
 
-        self.ui.ascCheck.setChecked(True)
-        self.ui.ascCheck.setChecked(False)
+        self.ui.ascYesRadio.setChecked(True)
+        self.ui.ascNoRadio.setChecked(True)
 
     def activateAsc(self,state):
         if state:
-            self.ui.valuesFrame.show()
-        else:
-            self.ui.valuesFrame.hide()
+            if self.sender() == self.ui.ascYesRadio:
+                self.ui.valuesFrame.show()
+            else:
+                self.ui.valuesFrame.hide()
 
     def loadAscertConf(self):
         if os.path.exists(self.parent.dir+"/%s"%self.parent.parent.ascertainment_conf_name):
@@ -48,10 +50,13 @@ class ControlAscertBias(formControl,baseControl):
                 self.ui.asc1ValEdit.setText(lines[0].strip())
                 self.ui.asc2ValEdit.setText(lines[1].strip())
                 self.ui.asc3ValEdit.setText(lines[2].strip())
-            self.ui.ascCheck.setChecked(len(lines)>=3)
+                self.ui.ascYesRadio.setChecked(True)
+            else:
+                self.ui.ascNoRadio.setChecked(True)
+
 
     def validate(self,silent=False):
-        if self.ui.ascCheck.isChecked():
+        if self.ui.ascYesRadio.isChecked():
             problem = ""
             try:
                 freq = float(self.ui.asc1ValEdit.text())
