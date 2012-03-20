@@ -215,7 +215,7 @@ int nacp=100000;
         long double **qobs;
 		//float *stat_obs,
 		float diff;
-        int scen,**avant,**apres,**egal,bidon,nparamax = 0;
+        int scen,**avant,**apres,**egal,bidon,nparamax = 0,npartpos=0;
         enregC enr;
         string **star;
         //header.calstatobs(statobsfilename);
@@ -238,6 +238,7 @@ int nacp=100000;
 				do {bidon=rt.readrecord(&enr);}
 				while (enr.stat[0]>1.0);
 			}
+			npartpos++;
             scen=enr.numscen-1;
             for (int j=0;j<rt.nstat;j++) {
                 diff=header.stat_obs[j]-enr.stat[j];
@@ -273,7 +274,9 @@ int nacp=100000;
         f12<<"DIYABC :                   PRIOR CHECKING                         "<<asctime(timeinfo)<<"\n";
         f12<<"Data file                     : "<<header.datafilename<<"\n";
         f12<<"Reference table               : "<<rt.filename<<"\n";
-        f12<<"Number of simulated data sets : "<<rt.nrec<<"\n\n";
+        f12<<"Number of simulated data sets : "<<rt.nrec<<"\n";
+		if (header.reference) f12<<"Number of simulated data sets with positive weight : "<<npartpos<<"\n";
+		f12<<"\n";
         f12<<"Values indicate for each summary statistics the proportion \nof simulated data sets which have a value below the observed one\n";
         f12<<" Summary           observed";for (int i=0;i<rt.nscen;i++) f12<< "    scenario   ";f12<<"\n";
         f12<<"statistics           value ";for (int i=0;i<rt.nscen;i++) f12<< "      "<<setw(3)<<i+1<< "      ";f12<<"\n";

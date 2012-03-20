@@ -289,7 +289,7 @@ void LocusC::libere(bool obs, int nsample) {
 			}
 			
 		}
-		if (nloc<this->nloc){
+	if (nloc<this->nloc){
 			cout<<"purge de "<<this->nloc-nloc<<" locus monomorphes\n";
 			ge = new string**[this->nsample];
 			typ = new int[nloc];

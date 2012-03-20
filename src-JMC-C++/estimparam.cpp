@@ -803,15 +803,15 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * calcule les phistars pour les paramètres originaux
 */
     void calphistarO(int n, long double **phistar){
-        //cout<<"debut de calphistar\n";
+        cout<<"debut de calphistarO\n";
         int k,kk,qq;
         long double pmut;
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparamcom;j++) {
                 phistar[i][j] = alpsimrat[i][j];
-                //if (i<100) cout<< phistar[i][j]<<"   ";
+                if ((i<100)and(j==0)) cout<< phistar[i][j]<<"   ";
                 for (int k=0;k<nstatOKsel;k++) phistar[i][j] -= matX0[i][k]*beta[k+1][j];
-                //if(i<100) cout<< phistar[i][j]<<"   ";
+                if((i<100)and(j==0)) cout<< phistar[i][j]<<"\n";
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phistar[i][j]<100.0) phistar[i][j] = exp(phistar[i][j]); else phistar[i][j]=exp(100.0);
@@ -875,16 +875,16 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * calcule les phistars pour les paramètres scaled
 */
     void calphistarS(int n, long double **phistarscaled){
-        //cout<<"debut de calphistar\n";
+        cout<<"debut de calphistarS\n";
         int k,kk,qq;
         long double pmut;
         long double **phista;
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparscaled;j++) {
                 phistarscaled[i][j] = alpsimrat[i][j];
-                //if (i<10) cout<<"   "<< phistarscaled[i][j];
+                if ((i<10)and(j==0)) cout<< phistarscaled[i][j]<<"   ";
                 for (int k=0;k<nstatOKsel;k++) phistarscaled[i][j] -= matX0[i][k]*beta[k+1][j];
-                //if(i<10) cout<<"   "<< phistarscaled[i][j];
+                if ((i<10)and(j==0)) cout<< phistarscaled[i][j]<<"\n";
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phistarscaled[i][j]<100.0) phistarscaled[i][j] = exp(phistarscaled[i][j]); else phistarscaled[i][j]=exp(100.0);

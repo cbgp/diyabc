@@ -475,7 +475,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	//nph--;
 	if (debuglevel==5) cout<<header.entetehist<<"\n";
 	if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;
-	cout<<"nph="<<nph<<"   npm="<<npm<<"\n";
+	//cout<<"nph="<<nph<<"   npm="<<npm<<"\n";
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		if (sOK[ipart]==0){
 			enreg[ipart].numscen=1;
@@ -529,7 +529,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		if (debuglevel==5) cout<<header.entetehist<<"\n";
 		if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;*/
 		ss=splitwords(header.entete," ",&ns);
-		cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
+		//cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
 		np=ns-header.nstat-1;
 		//cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
 		//cout<<"nph="<<nph<<"    npm="<<npm<<"\n";

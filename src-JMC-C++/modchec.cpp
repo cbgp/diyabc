@@ -415,7 +415,7 @@ long double **ssphistar,**ssref;
         int nstatOK, nphistarOK, iprog,nprog;
         int nrec = 0,nsel = 0, ns,nrecpos = 0,newsspart = 0,npv,nss,nsr,newrefpart,*numscen,nparamax,bidon;
         string *ss,s,*ss1,s0,s1,snewstat;
-        float  *stat_obs;
+        //float  *stat_obs;
         bool usestats,firsttime,dopca = false,doloc = false, newstat=false;
         long double** matC, **phistar, **phistarcompo, **phistarscaled;
         FILE *flog;
@@ -474,14 +474,14 @@ long double **ssphistar,**ssref;
         iprog=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         //header.calstatobs(statobsfilename);
-		stat_obs = header.stat_obs;  cout<<"apres read_statobs\n";
+		//stat_obs = header.stat_obs;  cout<<"apres read_statobs\n";
         cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
         rt.alloue_enrsel(nsel);
-        rt.cal_dist(nrec,nsel,stat_obs);                  cout<<"apres cal_dist\n";
+        rt.cal_dist(nrec,nsel,header.stat_obs);                  cout<<"apres cal_dist\n";
         iprog+=40;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         det_numpar();
 		cout<<"apres det_numpar\n";
-        rempli_mat(nsel,stat_obs);                        cout<<"apres rempli_mat\n";
+        rempli_mat(nsel,header.stat_obs);                        cout<<"apres rempli_mat\n";
 		matC = cal_matC(nsel); 
         recalparamO(nsel);                                 cout<<"apres recalparam\n";
 		rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
@@ -539,8 +539,8 @@ long double **ssphistar,**ssref;
             iprog+=nenr;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             //cout<<nss<<"\n";
         }
-        if (newstat) {header.calstatobs(statobsfilename);stat_obs = header.stat_obs;}
-        if (doloc) call_loc(newsspart,header.nstat,nrec,nsel,ssphistar,stat_obs);
+        if (newstat) {header.calstatobs(statobsfilename);/*stat_obs = header.stat_obs;*/}
+        if (doloc) call_loc(newsspart,header.nstat,nrec,nsel,ssphistar,header.stat_obs);
         if (dopca) {
             if (newstat) {
                 header.readHeader(headerfilename);cout<<"apres readHeader nscenarios= "<<header.nscenarios<<"\n";
@@ -582,7 +582,7 @@ long double **ssphistar,**ssref;
                     nsr++;
                 }
             }
-            call_acp(newrefpart,newsspart,header.nstat,numscen,ssref,ssphistar,stat_obs);
+            call_acp(newrefpart,newsspart,header.nstat,numscen,ssref,ssphistar,header.stat_obs);
         }
         iprog+=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
     }

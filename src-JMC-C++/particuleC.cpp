@@ -1381,12 +1381,12 @@ void ParticleC::cherche_branchesOK(int loc) {
 					do {
 						if (this->gt[loc].branches[b].bottom == f1) {
 							this->gt[loc].branches[b].OK=true;this->gt[loc].nbOK++;
-							if ((f1!=i)and(this->gt[loc].nodes[f1].ndat>0)) {this->gt[loc].branches[b].OKOK=true;this->gt[loc].nbOKOK++;}
+							if (/*(f1!=i)and*/(this->gt[loc].nodes[f1].ndat>0)) {this->gt[loc].branches[b].OKOK=true;this->gt[loc].nbOKOK++;}
 							f1 = this->gt[loc].branches[b].top;
 						}
 						if (this->gt[loc].branches[b].bottom == f2) {
 							this->gt[loc].branches[b].OK=true;this->gt[loc].nbOK++;
-							if ((f2!=j)and(this->gt[loc].nodes[f2].ndat>0)) { this->gt[loc].branches[b].OKOK=true;this->gt[loc].nbOKOK++;}
+							if (/*(f2!=j)and*/(this->gt[loc].nodes[f2].ndat>0)) { this->gt[loc].branches[b].OKOK=true;this->gt[loc].nbOKOK++;}
 							f2 = this->gt[loc].branches[b].top;
 						}
 						mrca = (f1==f2);
@@ -1447,7 +1447,7 @@ void ParticleC::put_one_mutation(int loc) {
     s=this->gt[loc].branches[b].length;
     while (s<r) {b++; if (this->gt[loc].branches[b].OK) s +=this->gt[loc].branches[b].length;};
     this->gt[loc].branches[b].nmut = 1;
-	if ((b==0)and(not this->gt[loc].branches[b].OKOK)) {
+	if ((b==0)and(not this->gt[loc].branches[b].OK)) {
 		cout<<"lengthtot="<<lengthtotOKOK<<"     r="<<r<<"    s="<<s<<"\n";
 		exit(2);
 	}
@@ -1877,6 +1877,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  if (debuglevel==12) cout<<"sumweight = "<<this->sumweight<<"\n";
 	for (loc=0;loc<this->nloc;loc++) {
 		if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
+			if ((debuglevel==16)and(loc%1000==0)) cout<<loc<<"\n";
 			if (debuglevel==10) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
 				this->ntentes++;
 				if (this->locuslist[loc].type <10) setMutParamValue(loc);
@@ -1987,8 +1988,8 @@ void ParticleC::put_one_mutation(int loc) {
 					loc--;
 				}
 				if (debuglevel==11) cout<<"weight = "<<this->sumweight<<"\n";
-				this->locpol = this->sumweight/(double)this->ntentes;
-				if ((this->ntentes>=nlocutil)and(this->locpol < this->threshold)) this->sumweight=-1.0;
+				if (this->ntentes==nlocutil) this->locpol = this->sumweight/(double)this->ntentes;
+				if ((this->ntentes==nlocutil)and(this->locpol < this->threshold)) this->sumweight=-1.0;
 				if ((debuglevel==12)and(this->locpol<1)) cout<<"locus "<<loc<<"    this->locpol = "<<this->locpol<<"    (sumweight="<<this->sumweight<<"  ntentes="<<this->ntentes<<")\n";
 			}
 			if (this->sumweight<0.0) break;
