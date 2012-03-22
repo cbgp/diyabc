@@ -1735,9 +1735,9 @@ void ParticleC::put_one_mutation(int loc) {
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
 				this->locuslist[loc].haplosnp[sa][ind] = (short int)this->gt[loc].nodes[ordre[sa][ind]].state;
-				// if (loc<1) cout<<this->locuslist[loc].haplosnp[sa][ind]<<"   ";
+				 //if (loc<1) cout<<this->locuslist[loc].haplosnp[sa][ind]<<"   ";
 				ind++;if (ind==this->data.ss[cat][sa]) {sa++;ind=0;}
-				// if ((loc<1)and(ind==0))cout<<"\n";
+				 //if ((loc<1)and(ind==0))cout<<"\n";
 			}
 			if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
 		}
@@ -1829,7 +1829,8 @@ void ParticleC::put_one_mutation(int loc) {
 	  vector <int> simulOK;
 	  string checktree;
 	  int *emptyPop,loc,nlocutil=0,loca=-1,simOK,refmrca;
-	  bool treedone,dnaloc=false,trouve,snpOK,reference=(this->refnindtot>0);
+	  bool treedone,dnaloc=false,trouve,snpOK,reference;
+	  
 	  int locus = 0, sa, indiv, nuc;
 	  //cout<<"this->nloc="<<this->nloc<<"\n";
 	  this->ntentes = 0;this->naccept = 0;
@@ -1837,6 +1838,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  GeneTreeC GeneTreeY, GeneTreeM;
 	  if (debuglevel==10) cout<<"avant draw scenario\n";fflush(stdin);
 	  this->drawscenario(numscen);
+	  reference=(this->refnindtot>0);
 	  if (debuglevel==10) cout <<"avant setHistparamValue\n";fflush(stdin);
 	  this->setHistParamValue();
 	  if (debuglevel==10) cout << "apres setHistParamValue\n";fflush(stdin);
@@ -1918,9 +1920,9 @@ void ParticleC::put_one_mutation(int loc) {
 							//for (int k=1;k<4;k++) cout << emptyPop[k] << "   ";
 							//cout <<"\n";
 							if (((this->seqlist[iseq].t1>this->seqlist[iseq].t0)or(this->seqlist[iseq].t1<0))and(emptyPop[seqlist[iseq].pop]==0)) {
-								//cout << "dosimul appel de coal_pop \n";
+								//if (debuglevel=14) cout << "dosimul appel de coal_pop   refmrca="<<refmrca<<"\n";
 								coal_pop(loc,iseq,reference,&refmrca);
-								//cout << "apres coal_pop\n";
+								//if (debuglevel=14) cout << "apres coal_pop              refmrca="<<refmrca<<"\n";
 							}
 						}
 						else if (this->seqlist[iseq].action == 'M') {	//MERGE
@@ -1964,7 +1966,6 @@ void ParticleC::put_one_mutation(int loc) {
 					this->naccept++;
 					this->sumweight +=1.0;
 				} else {
-				  //if (loc==0) cout<<"this->refnindtot="<<this->refnindtot<<"\n";
 				this->locuslist[loc].firstime = true;
 				cherche_branchesOK(loc);
 				if (debuglevel==11) cout<<"locus "<<loc<<"   nbOK = "<<this->gt[loc].nbOK<<"   nbOKOK = "<<this->gt[loc].nbOKOK<<"\n";
