@@ -24,7 +24,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
                 "HM1" : "vgd",
                 "HV1": "fgd",
                 "HMO" : "mod"}
-        self.statList2 = ["NP0","NM1","NV1","NMO","FP0","FM1","FV1","FMO"]
+        self.statList2 = ["FP0","FM1","FV1","FMO","NP0","NM1","NV1","NMO"]
         self.confToStat2 = {
                 "NP0" : "mnd2",
                 "NM1": "vnd2",
@@ -181,7 +181,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         verticalLayout_5.addWidget(twoSampleLabel)
 
         for stat in self.statList2:
-            if stat == "FP0":
+            if stat == "NP0":
                 lab = QLabel("")
                 lab.setMinimumSize(QtCore.QSize(0, 14))
                 lab.setMaximumSize(QtCore.QSize(0, 14))
