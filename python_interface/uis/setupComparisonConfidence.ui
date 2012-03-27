@@ -302,7 +302,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Numer of selected data</string>
+          <string>Number of selected data</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -588,7 +588,7 @@ intermediate values</string>
                  <x>0</x>
                  <y>0</y>
                  <width>177</width>
-                 <height>162</height>
+                 <height>155</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="deValLayout"/>
@@ -654,7 +654,7 @@ intermediate values</string>
                  <x>0</x>
                  <y>0</y>
                  <width>177</width>
-                 <height>162</height>
+                 <height>155</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="lrValLayout"/>
