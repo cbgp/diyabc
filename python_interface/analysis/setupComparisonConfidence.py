@@ -199,6 +199,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.exit()
 
     def setRecordValues(self,scList):
+        print "lalala"
         sumRec = 0
         for i in scList:
             sumRec+=self.parent.parent.readNbRecordsOfScenario(int(i))

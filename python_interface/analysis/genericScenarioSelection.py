@@ -62,7 +62,7 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
         if len(self.getListSelectedScenarios()) >= self.nb_min_sel:
             self.analysis.candidateScList = self.getListSelectedScenarios()
             self.next_widget.setScenarios(self.analysis.candidateScList)
-            if self.analysis.category == "compare" and self.analysis.computationParameters == "":
+            if self.analysis.category == "compare":
                 self.next_widget.setRecordValues(self.analysis.candidateScList)
             self.parent.parent.ui.analysisStack.addWidget(self.next_widget)
             self.parent.parent.ui.analysisStack.removeWidget(self)
