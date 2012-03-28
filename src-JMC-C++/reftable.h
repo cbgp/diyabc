@@ -40,7 +40,7 @@ public:
     long double *var_stat;
 
     void sethistparamname(HeaderC const & header);
-    int readheader(std::string fname, std::string flogname, std::string datafilename);
+    int readheader(std::string fname, std::string flogname);
     int writeheader();
     int readrecord(enregC *enr);
     int writerecords(int nenr, enregC *enr);
@@ -48,6 +48,7 @@ public:
     int openfile2();
     int testfile(std::string reftablefilename, int npart);
     int closefile();
+	void bintotxt();
     void concat();
     // calcule les variances des statistiques résumées
     // sur les 100000 premiers enregistrements de la table de référence

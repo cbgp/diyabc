@@ -136,17 +136,17 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    * Struct ParticleC : recopie le scénario numscen dans this->scen.
    * Si numscen<1, tirage au sort préalable du scenario dans le prior
    */
-  void ParticleC::drawscenario(int numscen) {
+  void ParticleC::drawscenario(int *numscen) {
 	  double ra,sp=0.0;
 	  int iscen,ngref;
-	  if (numscen<1) {
+	  if (*numscen<1) {
 		  ra = this->mw.random();
 		  iscen=-1;
 		  while ((ra>sp)and(iscen<this->nscenarios-1)) {
 			  iscen++;sp +=this->scenario[iscen].prior_proba;
 		  }
-	  } else iscen=numscen-1;
-	  
+	  } else iscen=*numscen-1;
+	  *numscen=iscen+1;
 	  // copie scenario[iscen] dans scen 
 	  this->scen.prior_proba = this->scenario[iscen].prior_proba;
 	  this->scen.number = this->scenario[iscen].number;
@@ -1453,7 +1453,7 @@ void ParticleC::put_one_mutation(int loc) {
 	}
     //if (loc<10) cout<<"mutation dans la branche "<<b<<" sur "<<this->gt[loc].nbranches<<"\n";
     //if (loc<10) cout<<nOK<<" branches mutables sur "<<this->gt[loc].nbranches<<"\n";
-    //if (debuglevel==20) cout<<"locus "<<loc<<"   numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtot<<"\n";
+    if (debuglevel==20) cout<<"locus "<<loc<<"   numero de la branche mutée : "<<b<<" ("<<this->gt[loc].nbranches<<")"<<"   longueur = "<<this->gt[loc].branches[b].length<<" sur "<<lengthtotOK<<"\n";
   } 
 
 
@@ -1837,7 +1837,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  simulOK.resize(this->nloc);
 	  GeneTreeC GeneTreeY, GeneTreeM;
 	  if (debuglevel==10) cout<<"avant draw scenario\n";fflush(stdin);
-	  this->drawscenario(numscen);
+	  this->drawscenario(&numscen);
 	  reference=(this->refnindtot>0);
 	  if (debuglevel==10) cout <<"avant setHistparamValue\n";fflush(stdin);
 	  this->setHistParamValue();
@@ -1853,7 +1853,7 @@ void ParticleC::put_one_mutation(int loc) {
 		  FILE *flog;
 		  cout<<checktree<<"\n";
 		  this->scen.ecris();
-		  checktree="A gene genealogy failed in scenario "+IntToString(numscen+1)+". Check scenario and prior consistency.\n  ";
+		  checktree="A gene genealogy failed in scenario "+IntToString(numscen)+". Check scenario and prior consistency.\n  ";
 		  flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",checktree.c_str());fclose(flog);
 		  exit(1);
 	  }
@@ -1905,7 +1905,7 @@ void ParticleC::put_one_mutation(int loc) {
 					for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 					//if (not gtexist[loc]) for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 					for (int iseq=0;iseq<this->nseq;iseq++) {
-						if (debuglevel==10) {
+						if ((debuglevel==10)or(debuglevel==20)) {
 							cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
 							if (this->seqlist[iseq].action == 'C') cout <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
 							else  cout <<"   "<<this->seqlist[iseq].t0;
@@ -1978,28 +1978,36 @@ void ParticleC::put_one_mutation(int loc) {
 						if (debuglevel==11) cout<<"apres polymref  weight="<<this->locuslist[loc].weight<<"\n";
 						this->sumweight +=this->locuslist[loc].weight;
 					}else {
-						this->locuslist[loc].weight=0.0;
-						simulOK[loc]=0;
+						//this->locuslist[loc].weight=0.0;
+						//simulOK[loc]=0;
 						gtexist[loc]=true; 
 						loc--;
 					} 
 				} else {
+					cout<<"LOCUS A POIDS NUL\n";
 					simulOK[loc]=0;
 					gtexist[loc]=true; 
 					loc--;
 				}
 				if (debuglevel==11) cout<<"weight = "<<this->sumweight<<"\n";
 				if (this->ntentes==nlocutil) this->locpol = this->sumweight/(double)this->ntentes;
+				if (debuglevel==20) {
+					cout<<"nlocutil="<<nlocutil<<"   ntentes="<<this->ntentes<<"   sumweight="<<this->sumweight<<"\n";
+					if (this->ntentes>=nlocutil) cout<<"locpol="<<this->locpol<<"\n";
+				}
 				if ((this->ntentes==nlocutil)and(this->locpol < this->threshold)) this->sumweight=-1.0;
 				if ((debuglevel==12)and(this->locpol<1)) cout<<"locus "<<loc<<"    this->locpol = "<<this->locpol<<"    (sumweight="<<this->sumweight<<"  ntentes="<<this->ntentes<<")\n";
 			}
 			if (this->sumweight<0.0) break;
 		}
 		if (this->sumweight<0.0) break;
+		//if (loc==99) break;
 	}	//LOOP ON loc
+	if (debuglevel==20) cout<<"scenario choisi : "<<numscen<<"\n";
+	if (debuglevel==20) exit(1);
 	if (this->sumweight>=0.0) this->weight = this->sumweight/(double)nlocutil;
 	else this->weight = 0.0;
-	if (debuglevel==13) cout<<"poids de la particule = "<<this->weight<<"   taux de polymorphisme = "<<this->locpol;
+	if ((debuglevel==13)or(debuglevel==20)) cout<<"poids de la particule = "<<this->weight<<"   taux de polymorphisme = "<<this->locpol;
 	if (debuglevel==13) cout<<"    "<<this->naccept<<" sur = "<<this->ntentes<<"\n";
 	if (this->weight>0.0){  
 		if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);

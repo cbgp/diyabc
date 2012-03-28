@@ -177,7 +177,7 @@ int readheaders() {
     header.calstatobs(statobsfilename);                                  if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename= header.datafilename;                                   if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
 	k=rt.testfile(reftablefilename,nenr);
-    k=rt.readheader(reftablefilename,reftablelogfilename, datafilename);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
+    k=rt.readheader(reftablefilename,reftablelogfilename);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
     if (k==0) {rt.sethistparamname(header);if (debuglevel==1) cout<<"sethistparamname"<<"\n";}
     return k;
 }
@@ -213,7 +213,7 @@ try {
     FILE *flog;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:x")) !=-1) {
 	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
 
@@ -228,8 +228,10 @@ try {
             cout << "-t <required number of threads>\n";
             cout << "-w <computer's number if in a cluster (0 by default) >\n";
             cout << "          (each computer in the cluster is numbered between 0 and the maximal number of computers in the cluster.)\n";
-
-            cout << "\n-n for INITIALIZATION OF THE PARALLEL RNG'S (with parameters as a string including the following options separated par a semi-colon)\n";
+			
+			cout << "-x for translating a reftable.bin in reftable.txt";
+            
+			cout << "\n-n for INITIALIZATION OF THE PARALLEL RNG'S (with parameters as a string including the following options separated par a semi-colon)\n";
             cout << "           t:<maximal number of the threads (per computers if cluster, 16 by default)>\n";
             cout << "           c:<maximal number of computers in the cluster (1 by default)>\n";
             cout << "           s:<seed of the first RNG (1 by default)>\n";
@@ -379,11 +381,15 @@ try {
             num_threads = atoi(optarg);
             multithread=true;
             break;
+			
         case 'n':
         	rngpar = soptarg;
         	action = 'n';
         	break;
-
+			
+		case 'x':
+			action = 'x';
+			break;
 	    }
 	}
 	 if (not flagp) {cout << "option -p is compulsory\n";exit(1);}
@@ -549,10 +555,13 @@ try {
                    break;
 				   
 	   case 'q'   : //header.readHeader(headerfilename);
-				  k=rt.readheader(reftablefilename,reftablelogfilename,datafilename);
+				  k=rt.readheader(reftablefilename,reftablelogfilename);
 				  rt.concat();
 				  break;
-
+	   case 'x'  :
+				  k=rt.readheader(reftablefilename,reftablelogfilename);
+				  rt.bintotxt();
+				  break;
 
   }
 	/* Debut: pour le nouveau RNG      */

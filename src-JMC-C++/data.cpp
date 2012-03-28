@@ -279,7 +279,7 @@ void LocusC::libere(bool obs, int nsample) {
 			if (not this->locus[loc].mono) {
 				nloc++;
 			} else {
-				cout<<"le locus "<<loc<<" est monomorphe"<<"   tous les génotypes sont égaux à "<<premier<<"\n";
+				//cout<<"le locus "<<loc<<" est monomorphe"<<"   tous les génotypes sont égaux à "<<premier<<"\n";
 				/*for (ech=0;ech<this->nsample;ech++){
 					for (ind=0;ind<this->nind[ech];ind++) {
 						cout<<this->genotype[ech][ind][loc]<<" ";
@@ -322,8 +322,10 @@ void LocusC::libere(bool obs, int nsample) {
 			    delete[]ge[ech];
 			}
 			delete[]ge;
+			cout<<"PPL observé = "<<100.0*(double)kloc/(double)this->nloc<<" % \n";
 			this->nloc=kloc;
 		} else cout<<"tous les locus sont polymorphes\n";
+		//exit(1);
 	}
 
 	void DataC::missingdata(){

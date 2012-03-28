@@ -29,7 +29,7 @@ using namespace std;
 
 extern int nrecneeded;
 extern double remtime,debutr;
-extern string  progressfilename;
+extern string  progressfilename,path;
 
 
 
@@ -78,7 +78,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	//cout<<"fin de sethisparamname\n";
 }
 
-int ReftableC::readheader(string fname,string flogname, string datafilename) {
+int ReftableC::readheader(string fname,string flogname) {
 	//cout <<"debut de readheader\n";
 	fstream f0(fname.c_str(),ios::in|ios::out|ios::binary);
 	//cout<<"apres fstream\n";
@@ -309,6 +309,7 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 	f1.close();
 	this->fifo.close();
 	remove(reftablefilename.c_str());
+
 	rename(this->filename0.c_str(),reftablefilename.c_str());
 	cout<<"\nfin d'ecriture des enregistrements\n";
 	return 1;
@@ -318,6 +319,47 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 int ReftableC::closefile() {
 	this->fifo.close();
 	return 0;
+}
+
+void ReftableC::bintotxt() {
+	cout<<"debut de bintotxt\n";
+	enregC enr;
+	int bidon,npm;
+	fstream f0(this->filename.c_str(),ios::in|ios::binary);
+	if (not f0) {cout<<"no file to translate\n";exit(1);}
+	f0.close();
+	string nomfi=path+"reftable.txt";
+	FILE *f1;
+	f1=fopen(nomfi.c_str(),"w");
+	this->openfile2();
+	//bidon=this->readheader(this->filename,this->filelog);
+	fprintf(f1,"%d simulated data sets\n",this->nrec);printf("%d simulated data sets\n",this->nrec);
+	fprintf(f1,"%d scenario(s)\n",this->nscen);printf("%d scenario(s)\n",this->nscen);
+	for (int i=0;i<this->nscen;i++) {
+		fprintf(f1,"scenario %d : %d simulated data sets\n",i+1,this->nrecscen[i]);
+		printf("scenario %d : %d simulated data sets\n",i+1,this->nrecscen[i]);
+	}
+	for (int i=0;i<this->nscen;i++) {
+		fprintf(f1,"scenario %d : %d parameters\n",i+1,this->nparam[i]);
+		printf("scenario %d : %d parameters\n",i+1,this->nparam[i]);
+	}
+	fprintf(f1,"%d summary statistics\n",this->nstat);printf("%d summary statistics\n",this->nstat);
+	npm=0;for (int i=0;i<this->nscen;i++) if (npm<this->nparam[i]) npm=this->nparam[i];
+	enr.param = new float[npm];
+	enr.stat = new float[this->nstat];
+	while (not fifo.eof()) {
+		bidon=this->readrecord(&enr);
+		fprintf(f1,"%3d    ",enr.numscen);printf("%3d    ",enr.numscen);
+		for (int i=0;i<this->nparam[enr.numscen-1];i++) {
+			printf(" %12.4f",enr.param[i]);
+			if (enr.param[i]<1) fprintf(f1,"  %6.4f  ",enr.param[i]);
+			else fprintf(f1," %8.0f ",enr.param[i]);
+		}
+		fprintf(f1,"    ");
+		for (int i=0;i<this->nstat;i++) fprintf(f1," %10.4f",enr.stat[i]);
+		fprintf(f1,"\n");
+	}
+	this->closefile();
 }
 
 void ReftableC::concat() {

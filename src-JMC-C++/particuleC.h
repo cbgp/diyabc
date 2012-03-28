@@ -55,7 +55,7 @@ class ParticleC
 
    // recopie le scénario numscen dans this->scen
    // Si numscen<1, tirage au sort préalable du scenario dans le prior
-   void drawscenario(int numscen);
+   void drawscenario(int *numscen);
 
 
 
