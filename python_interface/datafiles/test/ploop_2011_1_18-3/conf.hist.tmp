@@ -16,8 +16,8 @@ t2 merge 1 3
 
 historical parameters priors (5,0)
 N N LU[10,1000,1,01] False
-X N LU[10,10000,01,01] True
-F N LU[10,1000,01,01] True
+X N LU[10,10000,01,01] False
+F N LU[10,1000,01,01] False
 t3 T LU[10.0,10000.0,0.0,0.0] False
-t2 T LU[10,10000,01,01] True
+t2 T LU[10,10000,01,01] False
 

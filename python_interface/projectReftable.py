@@ -255,8 +255,11 @@ class ProjectReftable(Project):
         """ génération du script à exécuter sur le noeud maitre
         """
         nbToGen = int(self.ui.nbSetsReqEdit.text())
-        nbFullQsub = nbToGen / 10000
-        nbLastQsub = nbToGen % 10000
+        nbRecByNode = int(self.parent.preferences_win.ui.nbRecByNodeEdit.text())
+        queueName = str(self.parent.preferences_win.ui.queueNameEdit.text())
+ 
+        nbFullQsub = nbToGen / nbRecByNode
+        nbLastQsub = nbToGen % nbRecByNode
 
         if nbLastQsub == 0:
             nbQsub = nbFullQsub
@@ -288,20 +291,20 @@ for i in $(seq 1 $1); do\n\
         numdone=`head -n 2 reftable_$i.log | tail -n 1`\n'%nbToGen
 
         if nbLastQsub != 0:
-            res+='        # case of last computation, less thant 10000\n\
+            res+='        # case of last computation, less thant %s\n\
         if [ $i -eq %s ]; then\n\
             if [ $numdone -eq %s ]; then\n\
                 let nb=$nb+1\n\
             fi\n\
         else\n\
-            if [ $numdone -eq 10000 ]; then\n\
+            if [ $numdone -eq %s ]; then\n\
                 let nb=$nb+1\n\
             fi\n\
-        fi\n'%(nbFullQsub+1,nbLastQsub)
+        fi\n'%(nbRecByNode,nbFullQsub+1,nbLastQsub,nbRecByNode)
         else:
-            res+='        if [ $numdone -eq 10000 ]; then\n\
+            res+='        if [ $numdone -eq %s ]; then\n\
             let nb=$nb+1\n\
-        fi\n'
+        fi\n'%(nbRecByNode)
 
         res+='    fi\n\
 done\n\
@@ -310,19 +313,20 @@ echo $nb\n\
 seed=$RANDOM\n\
 for i in $(seq 1 %s); do \n\
 let seed=$seed+1\n\
-qsub -q short_queue.q -cwd node.sh 10000 `pwd` $i $seed\n\
-done;\n'%nbFullQsub
+qsub -q %s -cwd node.sh %s `pwd` $i $seed\n\
+done;\n'%(nbFullQsub,queueName,nbRecByNode)
         
         if nbLastQsub != 0:
             res+='let last=$i+1\n\
 let seed=$seed+1\n\
-qsub -q short_queue.q -cwd node.sh %s `pwd` $last $seed\n'%nbLastQsub
+qsub -q %s -cwd node.sh %s `pwd` $last $seed\n'%(queueName,nbLastQsub)
         
         res+='while ! [ "`nbOk %s`" = "%s" ]; do\n\
 echo `progress %s`\n\
 sleep 3\n\
 done\n\
 echo `progress %s`\n\
+./general -p "`pwd`"/ -n "s:1"\n\
 ./general -p "`pwd`"/ -q\n\
 '%(nbQsub,nbQsub,nbQsub,nbQsub)
         
@@ -357,22 +361,16 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         le datafile et le reftableheader.
         """
         if tarname == None:
-            output.notify(self,"Warning","You are about to generate an archive in order to compute on a cluster,\nrandom numbers are going to be generated, this operation can take a minute or more")
+            output.notify(self,"Warning","You are about to generate an archive in order to compute on a cluster,\n This archive will contain the datafile, the header file and the scripts to launch computations on an SGE cluster main node")
             tarname = str(QFileDialog.getSaveFileName(self,"Saving cluster archive","Reftable CLUSTER generation archive name","TAR archive (*.tar)"))
             if not tarname.endswith(".tar"):
                 tarname += ".tar"
         if tarname != "":
-            #try:
-            #    nbnodes = int(self.parent.preferences_win.nbClusterNodesEdit.text())
-            #except Exception as e:
-            #    nbnodes = 10
             executablePath = self.parent.preferences_win.getExecutablePath()
             dest = "%s/cluster_generation_tmp/"%self.dir
             if os.path.exists(dest):
                 shutil.rmtree(dest)
             os.mkdir(dest)
-            ## generation des RNGs
-            #self.initializeRNG(nbnodes,dest)
             # generation du master script
             script = self.genMasterScript()
             scmffile = "%s/scmf"%dest
@@ -403,8 +401,6 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
             tar.add(self.dataFileSource,"%s/%s"%(str(tarRepName),str(self.dataFileName)))
             tar.add(executablePath,"%s/general"%tarRepName)
-            #for i in range(nbnodes):
-            #    tar.add("%s/RNG_state_%04d.bin"%(dest,i),"%s/RNG_state_%04d.bin"%(tarRepName,i))
             tar.close()
 
             # nettoyage des fichiers temporaires de script
@@ -431,7 +427,7 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                 output.notify(self,"value error","Check the value of required number of data sets\n\n%s"%e)
                 return
             # on demarre le thread local ou cluster
-            if self.parent.preferences_win.ui.useServerCheck.isChecked():
+            if self.parent.preferences_win.ui.useClusterCheck.isChecked():
                 #tname = self.generateComputationTar("%s/aaaa.tar"%tempfile.mkdtemp())
                 tname = self.generateComputationTar()
                 log(3,"Tar file created in %s"%tname)
@@ -1346,66 +1342,6 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             # on ne deverrouille que si c'est nous qui avons verrouillé
             if pid == str(os.getpid()):
                 os.remove("%s/.DIYABC_lock"%self.dir)
-
-class RefTableGenThreadCluster(QThread):
-    """ thread de traitement qui met à jour la progressBar en fonction de l'avancée de
-    la génération de la reftable sur le cluster
-    """
-    def __init__(self,parent,tarname,nb_to_gen):
-        super(RefTableGenThreadCluster,self).__init__(parent)
-        self.parent = parent
-        self.tarname = tarname
-        self.nb_done = 0
-        self.nb_to_gen = nb_to_gen
-
-    def log(self,lvl,msg):
-        """ evite de manipuler les objets Qt dans un thread non principal
-        """
-        self.emit(SIGNAL("refTableLog(int,QString)"),lvl,msg)
-
-    def killProcess(self):
-        pass
-
-    def run (self):
-        filename = self.tarname
-        host = str(self.parent.parent.preferences_win.ui.serverAddressEdit.text())
-        port = int(str(self.parent.parent.preferences_win.ui.serverPortEdit.text()))
-
-
-        f=open(filename, 'rb')
-        s = socket(AF_INET, SOCK_STREAM)
-        try:
-            s.connect((host, port))
-        except error,msg:
-            self.log(3,"could not contact any server on diyabc://%s:%s\n%s"%(host, port,msg))
-            return
-
-        data = f.read()
-        f.close()
-        s.send("%s"%str(hashlib.md5(data).hexdigest()))
-        size = str(len(data))
-        while len(size)<20:
-            size+=" "
-        s.send("%s"%size)
-        time.sleep(1)
-
-        s.sendall(data)
-
-        self.log(3,"%s Sent!"%filename)
-        while True:
-            line = s.recv(8000)
-            self.log(3,"Line received : %s"%line)
-            if len(line.split('somme '))>1:
-                self.nb_done = int(line.split('somme ')[1].strip())
-                self.emit(SIGNAL("increment(int,QString)"),self.nb_done,"unknown")
-            if "durée" in line:
-                self.nb_done = int(str(self.parent.ui.nbSetsReqEdit.text()))
-                self.emit(SIGNAL("increment(int,QString)"),self.nb_done,"unknown")
-            # TODO fix on ne va pas jusqu'à 100 parce qu'on lit la ligne du temps de merge au lieu de la derniere (modifs dans launch)
-            if self.nb_done == int(str(self.parent.ui.nbSetsReqEdit.text())):
-                break
-
-        s.close()
 
 class RefTableGenThread(QThread):
     """ thread de traitement qui met à jour la progressBar en fonction de l'avancée de

@@ -83,11 +83,10 @@ class Preferences(AutoPreferences):
 
         # hashtable contenant les informations des champs
         dico_fields = {
-                "connexion" : [
-                    ["check","useServer","Use a server (don't check if you don't know what it is)",False],
-                    ["lineEdit","nbClusterNodes","Number of nodes in the cluster","10"],
-                    ["lineEdit","serverAddress","Address of the server","localhost"],
-                    ["lineEdit","serverPort","Port of the server","666"]
+                "cluster" : [
+                    ["check","useCluster","Use a cluster (don't check if you don't know what it is)",False],
+                    ["lineEdit","nbRecByNode","Number of records to generate on each node (granularity)","10000"],
+                    ["lineEdit","queueName","Name of the SGE queue","long_queue.q"],
                 ],
                 "appearance" : [
                     ["check","showTrayIcon","Show tray icon",False],
@@ -120,13 +119,10 @@ class Preferences(AutoPreferences):
         QObject.connect(self.ui.backgroundColorCombo,SIGNAL("currentIndexChanged(QString)"),self.changeBackgroundColor)
         self.changeLogLevel(self.ui.maxLogLvlCombo.currentIndex())
 
-        QObject.connect(self.ui.useServerCheck,SIGNAL("toggled(bool)"),self.toggleServer)
+        QObject.connect(self.ui.useClusterCheck,SIGNAL("toggled(bool)"),self.toggleCluster)
         QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
         QObject.connect(self.ui.activateWhatsThisCheck,SIGNAL("toggled(bool)"),self.toggleWtSelection)
         QObject.connect(self.ui.showTrayIconCheck,SIGNAL("toggled(bool)"),self.toggleTrayIconCheck)
-
-        self.ui.serverAddressEdit.setDisabled(True)
-        self.ui.serverPortEdit.setDisabled(True)
 
         self.qfd = QFontDialog(self.parent.app.font())
         fontButton = QPushButton("Change font options (needs restart)")
@@ -134,7 +130,7 @@ class Preferences(AutoPreferences):
         QObject.connect(fontButton,SIGNAL("clicked()"),self.changeFontOptions)
         self.updateFont()
 
-        self.toggleServer(self.ui.useServerCheck.isChecked())
+        self.toggleCluster(self.ui.useClusterCheck.isChecked())
         self.toggleExeSelection(self.ui.useDefaultExecutableCheck.isChecked())
         self.toggleWtSelection(self.ui.activateWhatsThisCheck.isChecked())
 
@@ -222,10 +218,9 @@ class Preferences(AutoPreferences):
             self.parent.app.setFont(fofo)
 
 
-    def toggleServer(self,state):
-        self.ui.nbClusterNodesEdit.setDisabled(not state)
-        self.ui.serverAddressEdit.setDisabled(not state)
-        self.ui.serverPortEdit.setDisabled(not state)
+    def toggleCluster(self,state):
+        self.ui.nbRecByNodeEdit.setDisabled(not state)
+        self.ui.queueNameEdit.setDisabled(not state)
 
     def toggleExeSelection(self,state):
         self.ui.execPathBrowseButton.setDisabled(state)
