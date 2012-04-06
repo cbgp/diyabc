@@ -427,6 +427,10 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             except Exception as e:
                 output.notify(self,"value error","Check the value of required number of data sets\n\n%s"%e)
                 return
+            if nb_to_gen < int(self.ui.nbSetsDoneEdit.text()):
+                output.notify(self,"value error","Please ask for more records than it already exists")
+                return
+
             # on demarre le thread local ou cluster
             if self.parent.preferences_win.ui.useClusterCheck.isChecked():
                 #tname = self.generateComputationTar("%s/aaaa.tar"%tempfile.mkdtemp())

@@ -325,7 +325,10 @@ class TeeLogger(object):
 
         ftmp = open(self.filename,'a')
         ftmpdata = data_without_color
-        ftmp.write(ftmpdata)
+        try:
+            ftmp.write(ftmpdata)
+        except UnicodeEncodeError as e:
+            log(3,"Impossible to write bad encoded string in log file")
         #ftmp.file.flush()
         ftmp.close()
         self.out.write(data_short)
