@@ -34,6 +34,7 @@ import output
 from utils.cbgpUtils import log, addLine
 import tempfile
 import utils.cbgpUtils as cbgpUtils
+import utils.diyabcUtils as diyabcUtils
 from project import Project
 import dataPath
 
@@ -1274,7 +1275,7 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         """
         reftablefile = "%s/reftable.bin"%self.dir
         try:
-            return cbgpUtils.readRefTableSize(reftablefile)
+            return diyabcUtils.readRefTableSize(reftablefile)
         except Exception as e:
             return 0
 
@@ -1282,7 +1283,7 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         """ lit la table de référence binaire pour en extraire la taille et la retourner
         """
         reftablefile = "%s/reftable.bin"%self.dir
-        return cbgpUtils.readNbRecordsOfScenario(reftablefile,numSc)
+        return diyabcUtils.readNbRecordsOfScenario(reftablefile,numSc)
 
     def saveAnalysis(self):
         """ sauvegarde la liste des analyses dans le dossier du projet
