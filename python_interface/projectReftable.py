@@ -441,20 +441,38 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                 self.startUiGenReftable()
                 self.th = RefTableGenThread(self,nb_to_gen)
                 self.nbReqBeforeComput = int(str(self.ui.nbSetsDoneEdit.text()))
-                self.th.connect(self.th,SIGNAL("increment(int,QString)"),self.incProgress)
-                self.th.connect(self.th,SIGNAL("refTableProblem(QString)"),self.refTableProblem)
-                self.th.connect(self.th,SIGNAL("refTableLog(int,QString)"),self.refTableLog)
+                progressfile = "%s/reftable.log"%self.dir
+                outfile = "%s/general.out"%self.dir
+                signames = {
+                    "progress" : "reftableProgress",
+                    "log" : "reftableLog",
+                    "termSuccess" : "reftableTermSuccess",
+                    "termProblem" : "reftableProblem"
+                }
+                exPath = self.parent.preferences_win.getExecutablePath()
+                particleLoopSize = str(self.parent.preferences_win.particleLoopSizeEdit.text())
+                nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
+                cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-r", "%s"%nb_to_gen , "-g", "%s"%particleLoopSize ,"-m", "-t", "%s"%nbMaxThread]
+
+                self.th = LauncherThread("%s reference table generation"%self.name,cmd_args_list,outfile,progressfile,signames)
+                self.th.nb_to_gen = nb_to_gen
+                self.th.connect(self.th,SIGNAL("reftableProgress(QString)"),self.reftableProgress)
+                self.th.connect(self.th,SIGNAL("reftableTermSuccess()"),self.reftableTermSuccess)
+                self.th.connect(self.th,SIGNAL("reftableProblem(QString)"),self.reftableProblem)
+                self.th.connect(self.th,SIGNAL("reftableLog(int,QString)"),self.reftableLog)
                 self.th.start()
+                addLine("%s/command.txt"%self.dir,"Command launched : %s\n\n"%" ".join(cmd_args_list))
         else:
             output.notify(self,"Impossible to launch","An analysis is processing,\
                     \nimpossible to launch reftable generation")
 
-    def refTableProblem(self,msg):
+    def reftableProblem(self,msg):
         output.notify(self,"reftable problem","Something happened during the reftable generation :\n %s"%(msg))
+        self.parent.systrayHandler.showTrayMessage("DIYABC : reftable","Reference table generation of project\n{0} has failed".format(self.name))
         self.stopRefTableGen()
         self.nextAnalysisInQueue()
 
-    def refTableLog(self,lvl,msg):
+    def reftableLog(self,lvl,msg):
         if self.th != None:
             log(lvl,msg)
 
@@ -473,9 +491,21 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         self.ui.nbReqFromLabel.setText("from %s"%self.ui.nbSetsDoneEdit.text())
         self.ui.nbReqToLabel.setText("to %s"%self.ui.nbSetsReqEdit.text())
  
-    def incProgress(self,done,time_remaining):
+    def reftableProgress(self,progressFileContent):
         """Incremente la barre de progression de la génération de la reftable
         """
+        log(3,"[project %s] Reference table generation progress file content has changed : %s"%(self.name,str(progressFileContent).replace('\n',' ')))
+        lines = str(progressFileContent).split('\n')
+        if len(lines) > 2:
+            if lines[0].strip() != "OK" and lines[0].strip() != "END":
+                self.reftableProblem("Executable says there is a problem in the progress file (%s)"%lines[0].strip())
+                return
+            done = int(lines[1])
+            time_remaining = lines[2]
+        else:
+            self.reftableProblem("Progress file parsing error")
+            return
+
         nb_to_do = self.th.nb_to_gen
         self.ui.runReftableButton.setText("Running ... %s remaining"%(time_remaining.replace('\n',' ')))
         pc = (float(done - self.nbReqBeforeComput)/float(nb_to_do - self.nbReqBeforeComput))*100
@@ -489,17 +519,15 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             self.freezeHistModel()
             self.freezeGenData()
             self.ui.newAnButton.setDisabled(False)
+
+    def reftableTermSuccess(self):
         # si on a fini, on met à jour l'affichage de la taille de la reftable
         # et on verrouille eventuellement histmodel et gendata
-        if int(pc) == 100:
-            self.parent.systrayHandler.showTrayMessage("DIYABC : reftable","Reference table generation of project\n{0} has finished".format(self.name))
-            self.putRefTableSize()
-            self.stopUiGenReftable()
-            self.th = None
-            self.nextAnalysisInQueue()
-
-    def cancelTh(self):
-        self.emit(SIGNAL("canceled()"))
+        self.parent.systrayHandler.showTrayMessage("DIYABC : reftable","Reference table generation of project\n{0} has finished".format(self.name))
+        self.putRefTableSize()
+        self.stopUiGenReftable()
+        self.th = None
+        self.nextAnalysisInQueue()
 
     def writeRefTableHeader(self):
         """ écriture du header.txt à partir des conf
@@ -1348,274 +1376,4 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             if pid == str(os.getpid()):
                 os.remove("%s/.DIYABC_lock"%self.dir)
 
-class RefTableGenThread(QThread):
-    """ thread de traitement qui met à jour la progressBar en fonction de l'avancée de
-    la génération de la reftable
-    """
-    def __init__(self,parent,nb_to_gen):
-        super(RefTableGenThread,self).__init__(parent)
-        self.parent = parent
-        self.nb_to_gen = nb_to_gen
-        self.cancel = False
-        self.time = "unknown time\n"
-        self.processus = None
 
-    def log(self,lvl,msg):
-        """ evite de manipuler les objets Qt dans un thread non principal
-        """
-        self.emit(SIGNAL("refTableLog(int,QString)"),lvl,msg)
-
-    def killProcess(self):
-        self.log(3,"Attempting to kill reftable generation process")
-        if self.processus != None:
-            if self.processus.poll() == None:
-                self.processus.kill()
-                self.log(3,"Killing reftable generation process (pid:%s) DONE"%(self.processus.pid))
-            else:
-                self.log(3,"Processus %s has already terminated"%self.processus.pid)
-        else:
-            self.log(3,"No process to kill")
-
-    def run (self):
-        # lance l'executable
-        outfile = "%s/general.out"%self.parent.dir
-        if os.path.exists(outfile):
-            os.remove(outfile)
-        fg = open(outfile,"w")
-        try:
-            self.log(2,"Running the executable for the reference table generation")
-            exPath = self.parent.parent.preferences_win.getExecutablePath()
-            particleLoopSize = str(self.parent.parent.preferences_win.particleLoopSizeEdit.text())
-            nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
-            cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-r", "%s"%self.nb_to_gen , "-g", "%s"%particleLoopSize ,"-m", "-t", "%s"%nbMaxThread]
-            time.sleep(1)
-            self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
-            addLine("%s/command.txt"%self.parent.dir,"Command launched : %s\n\n"%" ".join(cmd_args_list))
-            p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
-            self.processus = p
-        except Exception as e:
-            self.problem = "Problem during program launch\n%s"%e
-            self.emit(SIGNAL("refTableProblem(QString)"),self.problem)
-            fg.close()
-            return
-
-        # boucle toutes les secondes pour verifier les valeurs dans le fichier
-        self.nb_done = 0
-        while self.nb_done < self.nb_to_gen:
-            time.sleep(2)
-            # lecture 
-            if os.path.exists("%s/reftable.log"%(self.parent.dir)):
-                f = open("%s/reftable.log"%(self.parent.dir),"r")
-                lines = f.readlines()
-                f.close()
-            else:
-                lines = ["OK","0"]
-            self.log(3,"Line red from reftable.log : %s"%lines)
-            try:
-                if len(lines) > 1:
-                    if lines[0].strip() == "OK":
-                        red = int(lines[1])
-                        if len(lines)>2:
-                            self.time = lines[2]
-                        if red > self.nb_done:
-                            self.nb_done = red
-                            self.emit(SIGNAL("increment(int,QString)"),self.nb_done,self.time)
-                    elif lines[0].strip() == "END":
-                        red = int(lines[1])
-                        self.nb_done = red
-                        self.emit(SIGNAL("increment(int,QString)"),self.nb_done,self.time)
-                        fg.close()
-                        os.remove("%s/reftable.log"%(self.parent.dir))
-                        return
-                    else:
-                        self.log(3,"The line does not contain 'OK'")
-                        self.problem = lines[0].strip()
-                        self.emit(SIGNAL("refTableProblem(QString)"),self.problem)
-                        fg.close()
-                        return
-            except Exception as e:
-                # certainement un problème de convertion en int
-                self.log(3,"There was an exception during progress file reading : %s"%e)
-
-            # verification de l'arret du programme
-            if p.poll() != None:
-                fg.close()
-                g = open(outfile,"r")
-                last_out_line = g.readlines()[-1]
-                g.close()
-                if self.nb_done < self.nb_to_gen:
-                    self.problem = "Reftable generation program exited anormaly before the end of the generation\n\n%s"%last_out_line
-                    self.emit(SIGNAL("refTableProblem(QString)"),self.problem)
-                    return
-            # TODO à revoir ac JM
-            #else:
-            #    self.problem = "unknown problem"
-            #    self.emit(SIGNAL("refTableProblem"))
-            #    print "unknown problem"
-            #    #output.notify(self,"problem","Unknown problem")
-            #    fg.close()
-            #    return
-
-        fg.close()
-
-    @pyqtSignature("")
-    def cancel(self):
-        """SLOT to cancel treatment"""
-        self.cancel = True
-
-class AnalysisThread(QThread):
-    """ classe qui gère l'execution du programme qui effectue une analyse
-    """
-    def __init__(self,parent,analysis):
-        super(AnalysisThread,self).__init__(parent)
-        self.parent = parent
-        self.analysis = analysis
-        self.progress = 0
-        self.processus = None
-
-    def log(self,lvl,msg):
-        """ evite de manipuler les objets Qt dans un thread non principal
-        """
-        clean_msg = msg.replace(u'\xb5',u'u')
-        self.emit(SIGNAL("analysisLog(int,QString)"),lvl,clean_msg)
-
-    def killProcess(self):
-        if self.processus != None:
-            if self.processus.poll() == None:
-                self.log(3,"Killing analysis process (pid:%s) of analysis %s"%(self.processus.pid,self.analysis.name))
-                self.processus.kill()
-
-    def readProgress(self):
-        b = ""
-        if os.path.exists("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name)):
-            a = open("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name),"r")
-            lines = a.readlines()
-            a.close()
-            if len(lines) > 0:
-                b = lines[0]
-        #print "prog:%s"%b
-        self.log(3,"Analysis '%s' progress : %s"%(self.analysis.name,b))
-        return b
-
-    def readProblem(self):
-        problem = ""
-        if os.path.exists("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name)):
-            a = open("%s/%s_progress.txt"%(self.parent.dir,self.analysis.name),"r")
-            lines = a.readlines()
-            a.close()
-            if len(lines) > 0:
-                problem = lines[0]
-        return problem
-
-    def updateProgress(self):
-        b = self.readProgress()
-        # on gere le cas ou ce ne sont pas des float avec une exception qui passe
-        try:
-            # on a bougé
-            if len(b.split(' ')) > 1:
-                t1 = float(b.split(' ')[0])
-                t2 = float(b.split(' ')[1])
-                self.tmpp = (t1*100/t2)
-            if self.tmpp != self.progress:
-                #print "on a progressé"
-                self.log(3,"The analysis '%s' has progressed (%s%%)"%(self.analysis.name,self.tmpp))
-                self.progress = self.tmpp
-                self.emit(SIGNAL("analysisProgress(int)"),self.progress)
-        except Exception as e:
-            return
-
-    def run(self):
-        self.log(2,"Running analysis '%s' execution"%self.analysis.name)
-        executablePath = self.parent.parent.preferences_win.getExecutablePath()
-        nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
-        particleLoopSize = str(self.parent.parent.preferences_win.particleLoopSizeEdit.text())
-        params = self.analysis.computationParameters
-        if self.analysis.category == "estimate":
-            option = "-e"
-        elif self.analysis.category == "compare":
-            option = "-c"
-        elif self.analysis.category == "bias":
-            option = "-b"
-            particleLoopSize = int(params.split('d:')[1].split(';')[0])
-        elif self.analysis.category == "confidence":
-            option = "-f"
-            particleLoopSize = int(params.split('t:')[1].split(';')[0])
-        elif self.analysis.category == "modelChecking":
-            option = "-j"
-        elif self.analysis.category == "pre-ev":
-            # pour cette analyse on attend que l'executable ait fini
-            # on ne scrute pas de fichier de progression
-            cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "-d", '%s'%params.replace(u'\xb5','u'), "-i", '%s'%self.analysis.name, "-m", "-t", "%s"%nbMaxThread]
-            self.log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
-            addLine("%s/command.txt"%self.parent.dir,"Command launched for analysis '%s' : %s\n\n"%(self.analysis.name," ".join(cmd_args_list)))
-            outfile = "%s/pre-ev.out"%self.parent.dir
-            f = open(outfile,"w")
-            p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
-            self.processus = p
-            self.log(3,"Popen procedure success")
-            outlastline = ""
-            while True:
-                time.sleep(2)
-                poll_check = p.poll()
-                if poll_check != None:
-                    f.close()
-                    f = open(outfile,"r")
-                    if len(f.readlines()) > 0:
-                        outlastline = f.readlines()[-1]
-                    f.close()
-                    if poll_check == 0:
-                        self.progress = 100
-                        self.emit(SIGNAL("analysisProgress(int)"),self.progress)
-                    else:
-                        self.problem = "Analysis program exited (with return code %s) before the end of the analysis\n%s"%(poll_check,outlastline)
-                        self.emit(SIGNAL("analysisProblem(QString)"),self.problem)
-                    return
-
-        # pour toutes les autres analyses le schema est le même
-        cmd_args_list = [executablePath,"-p", "%s/"%self.parent.dir, "%s"%option, '%s'%params, "-i", '%s'%self.analysis.name,"-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
-        self.log(3,"Command launched for analysis '%s' : %s"%(self.analysis.name," ".join(cmd_args_list)))
-        addLine("%s/command.txt"%self.parent.dir,"Command launched for analysis '%s' : %s\n\n"%(self.analysis.name," ".join(cmd_args_list)))
-        outfile = "%s/%s.out"%(self.parent.dir,self.analysis.category)
-        f = open(outfile,"w")
-        p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
-        self.processus = p
-        self.log(3,"Popen procedure success")
-
-
-        # la scrutation de la progression est identique pour toutes les analyses
-        self.progress = 1
-        self.tmpp = 1
-        self.emit(SIGNAL("analysisProgress(int)"),self.progress)
-        while True:
-            self.updateProgress()
-            # verification de l'arret du programme
-            poll_check = p.poll()
-            if poll_check != None:
-                f.close()
-                g = open(outfile,"r")
-                outlines = g.readlines()
-                probOut = ""
-                if len(outlines) > 0:
-                    probOut = outlines[-1]
-                g.close()
-                # on attend un peu pour etre sur que l'ecriture de la progression a été effectué
-                time.sleep(2)
-                self.updateProgress()
-                if self.progress < 100:
-                    redProblem = self.readProblem()
-                    self.problem = "Analysis program exited (with return code %s) before the end of the analysis (%s%%)\n%s\n%s"%(poll_check,self.progress,redProblem,probOut)
-                    self.emit(SIGNAL("analysisProblem(QString)"),self.problem)
-                    return
-            time.sleep(2)
-
-#attributs :
-#    cmdline
-#    options
-#    signalnames (problem,progress,log)
-#
-#option:
-#    lastline check (donner nom fichier)
-#    scruter progress (donner freq et nom fichier)
-
-# il faudra sans doute créer le signal processTerminated pour detecter le probleme d'arret avant la fin
-# en dehors du thread qui est sensé du coup être indépendant, générique
