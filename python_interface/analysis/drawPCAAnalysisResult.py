@@ -273,6 +273,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
     def fancyfyGraph(self,legend,p,obs,posteriorList):
         """ met en forme la légende et calcule l'intervale des divisions des axes
         """
+        #print "ppppppppppp"
         for it in legend.legendItems():
             f = it.font()
             f.setPointSize(14)
@@ -289,27 +290,28 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 litem.symbol().setSize(QSize(12,12))
                 litem.setIdentifierWidth(12)
 
-        p.replot()
-        sd = p.axisScaleDiv(0)
-        interval = sd.interval()
-        minv = interval.minValue()
-        maxv = interval.maxValue()
-        inc = 1.0
-        if maxv-minv < 9:
-            inc = 0.5
-        if maxv-minv < 5:
-            inc = 0.2
-        if maxv-minv < 3:
-            inc = 0.1
-        ticks = []
-        vv = minv
-        while vv < maxv:
-            ticks.append(round(vv,1))
-            vv += inc
-        sd.setTicks(QwtScaleDiv.MajorTick,ticks)
-        p.setAxisScaleDiv(0,sd)
+        #p.replot()
+        #sd = p.axisScaleDiv(0)
+        #interval = sd.interval()
+        #minv = interval.minValue()
+        #maxv = interval.maxValue()
+        #inc = 1.0
+        #if maxv-minv < 9:
+        #    inc = 0.5
+        #if maxv-minv < 5:
+        #    inc = 0.2
+        #if maxv-minv < 3:
+        #    inc = 0.1
+        #ticks = []
+        #vv = minv
+        #while vv < maxv:
+        #    ticks.append(round(vv,1))
+        #    vv += inc
+        #sd.setTicks(QwtScaleDiv.MajorTick,ticks)
+        #p.setAxisScaleDiv(0,sd)
         grid = QwtPlotGrid()
         grid.attach(p)
+        p.replot()
 
     def printGraph(self):
         p = self.plot
