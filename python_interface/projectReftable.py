@@ -1282,7 +1282,9 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             e.setReadOnly(yesno)
         for e in self.hist_model_win.findChildren(QRadioButton):
             e.setDisabled(yesno)
-        for e in self.hist_model_win.findChildren(QPushButton,"remove"):
+        for e in self.hist_model_win.findChildren(QPushButton,"rmScButton"):
+            e.setDisabled(yesno)
+        for e in self.hist_model_win.findChildren(QPushButton,"rmCondButton"):
             e.setDisabled(yesno)
         self.hist_model_win.findChild(QPushButton,"addScButton").setDisabled(yesno) 
         self.hist_model_win.findChild(QPushButton,"defPrButton").setDisabled(yesno)
