@@ -32,6 +32,8 @@ class ProjectMsatSeq(ProjectReftable):
         self.gen_data_win.hide()
 
     def getDataFileFilter(self):
+        """ retourne le bon filtre de selection de fichier pour le chargement du datafile
+        """
         return "Microsat Sequence datafile (*.mss);;all files (*)"
 
     def dataFileSelectionAndCopy(self,name=None):
