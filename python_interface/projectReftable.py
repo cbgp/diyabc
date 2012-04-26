@@ -439,7 +439,6 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                 #self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
                 self.startUiGenReftable()
-                self.th = RefTableGenThread(self,nb_to_gen)
                 self.nbReqBeforeComput = int(str(self.ui.nbSetsDoneEdit.text()))
                 progressfile = "%s/reftable.log"%self.dir
                 outfile = "%s/general.out"%self.dir
