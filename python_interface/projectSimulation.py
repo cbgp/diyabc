@@ -110,7 +110,7 @@ class ProjectSimulation(Project):
             output.notify(self,"Value error","Required number of simulated data sets must be a positive integer")
             return
         fdest = open("%s/headersim.txt"%self.dir,"w")
-        fdest.write("%s %s %s\n"%(self.name,nb_rec,sexRatioTxt))
+        fdest.write("%s %s %s\n"%(self.name.replace(' ','_'),nb_rec,sexRatioTxt))
         fdest.write("%s\n\n"%self.hist_model_win.getConf())
         fdest.write(self.getLocusDescription())
         fdest.close()
