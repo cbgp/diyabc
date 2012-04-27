@@ -638,7 +638,7 @@ string* ParticleSetC::simuldataSNP(HeaderC const & header, int npart, bool multi
 	for (int p=0;p<this->npart;p++) {
 		//this->particule[p].dnatrue = dnatrue;
 		this->setdata(p);cout<<"apres setdata\n";
-		this->setgroup(p);cout<<"apres setgroup\n";
+		// this->setgroup(p);cout<<"apres setgroup\n"; // Je supprime cette ligne car pas de groupe de locus dans les parties simul de jeux de donnees. Pierre
 		this->setloci(p);cout<<"apres setloci\n";
 		this->setscenarios(p);cout<<"apres setscenario\n";
 		this->particule[p].mw.randinit(p,seed);
