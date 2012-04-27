@@ -38,7 +38,8 @@ from threading import Thread
 from utils.data import isSNPDatafile
 import dataPath
 
-if VERSION=='development version':
+
+if ('development vers' in VERSION):
     VERSION_DATE=getLastRevisionDate("../")
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 

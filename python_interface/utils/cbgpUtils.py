@@ -461,7 +461,7 @@ def getLastRevisionDate(repoPath):
     elif os.path.exists(repoPath+".hg/"):
         cmd_args = ["hg","tip"]
     else:
-        raise Exception("%s is not a git nor a hg repo")
+        raise Exception("%s is not a git nor a hg repo"%repoPath)
     pipe = subprocess.Popen(cmd_args,stdout=subprocess.PIPE)
     out,err = pipe.communicate()
     for l in out.split('\n'):
