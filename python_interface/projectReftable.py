@@ -502,7 +502,8 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             done = int(lines[1])
             time_remaining = lines[2]
         else:
-            self.reftableProblem("Progress file parsing error")
+            #self.reftableProblem("Progress file parsing error")
+            log(3,"Progress file parsing error, number of lines < 3")
             return
 
         nb_to_do = self.th.nb_to_gen
