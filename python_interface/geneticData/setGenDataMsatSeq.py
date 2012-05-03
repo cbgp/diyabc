@@ -200,9 +200,11 @@ class SetGeneticDataMsatSeq(SetGeneticData):
 
     def autoGroup(self):
         # enlever tous les groupes
-        self.clear()
+        #self.clear()
+        for g in self.groupList:
+            self.rmGroup(g)
 
-        self.tableWidget.setRangeSelected(QTableWidgetSelectionRange(0,0,self.tableWidget.rowCount()-1,0),False)
+        self.tableWidget.setRangeSelected(QTableWidgetSelectionRange(0,0,self.tableWidget.rowCount()-1,self.tableWidget.columnCount()-1),False)
         # ajouter le groupe msat
         self.addGroup()
         msat = False
@@ -224,7 +226,6 @@ class SetGeneticDataMsatSeq(SetGeneticData):
             self.addToGroup(self.groupList[-1])
         else:
             self.rmGroup(self.groupList[-1])
-
 
     def clear(self):
         """ On supprime tous les groupes
