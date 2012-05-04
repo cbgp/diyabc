@@ -545,7 +545,7 @@ long double **ssphistar,**ssref;
             if (newstat) {
                 header.readHeader(headerfilename);cout<<"apres readHeader nscenarios= "<<header.nscenarios<<"\n";
                 usestats = resetstats(snewstat);
-                newrefpart= header.nscenarios*10000; cout<<"newrefparts="<<newrefpart<<"\n";
+                newrefpart= 10000; cout<<"newrefparts="<<newrefpart<<"\n";
                 numscen = new int[newrefpart];
                 ssref = new long double*[newrefpart];
                 for (int i=0;i<newrefpart;i++) ssref[i] = new long double[header.nstat];
