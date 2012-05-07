@@ -22,15 +22,23 @@ class LauncherThread(QThread):
     progress(QString) : progress file content changed, the string is the new content
     termSuccess() : program ended successfully
     termProblem(QString) : program ended without susccess, the string is the problem description
+
+    Here are the two classic scenarios to use this class :
+    - periodical scrutation : 
+        every 2 seconds, check if the executable is still running and if the progress file has
+        changed. 
+    - real time scrutation : 
+        every line produced by the executable on its stdout is sent by a signal in real time
     """
-    def __init__(self,name,cmd_args_list,outfile_path,progressfile_path=None,
-            signalnames={"progress":"progress","log":"log","termSuccess":"termSuccess","termProblem":"termProblem"}):
+    def __init__(self,name,cmd_args_list,realtime_output=False,outfile_path=None,progressfile_path=None,
+            signalnames={"progress":"progress","log":"log","termSuccess":"termSuccess","termProblem":"termProblem","newOutput":"newOutput"}):
         """ If progressfile_path is None or not given, no progress scrutation will be performed
         If signalnames is not given, signals will have basic names
         """
         super(LauncherThread,self).__init__()
         self.name = name
         self.cmd_args_list = cmd_args_list
+        self.realtime_output = realtime_output
         self.outfile_path = outfile_path
         self.progressfile_path = progressfile_path
         self.progress_file_content = ""
@@ -40,6 +48,7 @@ class LauncherThread(QThread):
             self.SIGLOG = signalnames["log"]
             self.SIGTERMSUCCESS = signalnames["termSuccess"]
             self.SIGTERMPROBLEM = signalnames["termProblem"]
+            self.SIGNEWOUTPUT = signalnames["newOutput"]
         except Exception as e:
             print e
             raise Exception("Signal name hashtable malformed")
@@ -97,6 +106,28 @@ class LauncherThread(QThread):
         send success or problem signal
         """
         self.log(2,"Running '%s' thread execution"%self.name)
+        # realtime output watch mode
+        if self.realtime_output:
+            self.realtimeOutputWatch()
+        else:
+            self.intervalWatch()
+
+    def realtimeOutputWatch(self):
+        self.log(2,"Beginning realtime watch")
+        p = subprocess.Popen(self.cmd_args_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
+        self.processus = p
+        for line in iter(p.stdout.readline, ""):
+            self.emit(SIGNAL(self.SIGNEWOUTPUT+"(QString)"),line)
+
+        poll_check = p.poll()
+        if poll_check == 0:
+            self.emit(SIGNAL(self.SIGTERMSUCCESS+"()"))
+        else:
+            problem = "Program of thread '%s' exited (with return code %s) unsuccessfully."%(self.name,poll_check)
+            self.emit(SIGNAL(self.SIGTERMPROBLEM+"(QString)"),problem)
+
+    def intervalWatch(self):
+        self.log(2,"Beginning interval watch")
         f = open(self.outfile_path,"w")
         p = subprocess.Popen(self.cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         self.log(3,"Command launched in thread '%s' : %s"%(self.name," ".join(self.cmd_args_list)))

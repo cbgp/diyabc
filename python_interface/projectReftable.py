@@ -446,14 +446,15 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                     "progress" : "reftableProgress",
                     "log" : "reftableLog",
                     "termSuccess" : "reftableTermSuccess",
-                    "termProblem" : "reftableProblem"
+                    "termProblem" : "reftableProblem",
+                    "newOutput" : "reftableNewOutput"
                 }
                 exPath = self.parent.preferences_win.getExecutablePath()
                 particleLoopSize = str(self.parent.preferences_win.particleLoopSizeEdit.text())
                 nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
                 cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-r", "%s"%nb_to_gen , "-g", "%s"%particleLoopSize ,"-m", "-t", "%s"%nbMaxThread]
 
-                self.th = LauncherThread("%s reference table generation"%self.name,cmd_args_list,outfile,progressfile,signames)
+                self.th = LauncherThread("%s reference table generation"%self.name,cmd_args_list,outfile_path=outfile,progressfile_path=progressfile,signalnames=signames)
                 self.th.nb_to_gen = nb_to_gen
                 self.th.connect(self.th,SIGNAL("reftableProgress(QString)"),self.reftableProgress)
                 self.th.connect(self.th,SIGNAL("reftableTermSuccess()"),self.reftableTermSuccess)
