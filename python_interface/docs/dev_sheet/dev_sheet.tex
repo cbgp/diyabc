@@ -10,7 +10,7 @@
 %\institute{Université de Montpellier 2}
 
 \title{Documentation sur le développement de \\
-DIYABC version 2 en python}
+DIYABC version 2 en PyQt4}
 \date\today
 %\pagestyle{headings}
 \pagestyle{fancy}
@@ -235,7 +235,7 @@ La description de l'objet (bouton, label...)\end{verbatim}
     \subsection{Les détails}
         \paragraph{Les logs}
         Les logs sont gérés par une classe (Teelogger) se situant dans output.py. Une instance de Teelogger
-        se substitue à stdout et stderr pour intercepter tout message et effectuer : 
+        se substitue à stdout et une autre à stderr pour intercepter tout message et effectuer : 
         \begin{itemize}
             \item Une écriture dans un fichier de log (propre à l'instance de DIYABC)
             \item Un affichage dans la fenêtre de log accessible par le menu Help
@@ -309,6 +309,12 @@ La description de l'objet (bouton, label...)\end{verbatim}
 
     Ce test n'utilise pas d'assertion, il a pour but d'identifier une suite
     d'opérations provoquant l'arrêt prématuré de l'interface.
+
+    \paragraph{Test du modèle historique}
+    Le fonctionnement général et la validation du modèle historique sont testés 
+    dans la méthode testHistoricalModel. Cette méthode teste des exemples de valeurs
+    représentatifs des cas possibles, pour chaque paramètre, avec chaque loi, pour
+    chaque valeur.
 
     \subsection{Lancement}
     Pour effectuer les tests, il suffit de lancer le script python unit\_test.py
@@ -397,6 +403,7 @@ La description de l'objet (bouton, label...)\end{verbatim}
             \item Effectuer ``git pull --rebase origin master''
             \item Se rendre dans src-JMC-C++
             \item Exécuter ``g++ -fopenmp -O3 general.cpp -o general''
+            \item Ou faire un make au sommet du dépôt
             \item Récupérer libstdc++-6.dll et libgcc\_s\_dw2-1.dll qui sont
                 dans c:/MinGW/bin . Ces deux dll doivent se trouver à côté de
                 l'exécutable pour qu'il fonctionne sur un autre système.
@@ -489,7 +496,13 @@ La description de l'objet (bouton, label...)\end{verbatim}
         \subsubsection{Compilation du programme de calcul}
         Installer g++ suffit.\\
 
-        g++ -fopenmp -O3 general.cpp -o general
+        Attention, depuis le changement de façon de gérer les nombres aléatoires, 
+        il faut passer par un makefile pour compiler.
+
+        Il est nécessaire de générer l'exécutable de calcul en 32 et 64 bits.
+        Chacun se fait sur le système correspondant ou avec l'option -m32 
+        pour produire du 32bits sur un système 64bits.
+
         \subsubsection{Installer PyQt4}
 
         PyQt4 et PyQwt5 sont packagés pour toutes les distributions. Aucun
@@ -587,6 +600,14 @@ Description: Repository of CBGP softwares \end{verbatim}
         Sur la machine qui va g\'en\'erer le .app, il faut avoir un
         environnement de d\'eveloppement complet, à savoir python2.6, PyQt4 et
         PyQwt5.
+
+        \subsubsection{Compilation du programme de calcul}
+        Sous macOS 10.6, le gcc/g++ fourni avec xcode est trop vieux pour supporter
+        openMP. Il faut avoir au minimum la 4.7. Pour cela je conseille 
+        l'installation de fink, un autre gestionnaire de paquets pour MacOS. Dans 
+        l'archive de fink se trouve un script d'installation automatisée qui
+        fonctionne à merveille. Ensuite une synchronisation et une installation de
+        gcc47 et il devient possible de faire un make au sommet du dépôt.
 
         \subsubsection{Installer PyQt4}
 
