@@ -1,4 +1,4 @@
-CC = gcc
+CC = gcc$(CCVERSION)
 CFLAGS = -Wall -Wmissing-prototypes -O3  -I../include
 OBJS = check32.o prescr.o mt19937.o eqdeg.o seive.o genmtrand.o init.o
 

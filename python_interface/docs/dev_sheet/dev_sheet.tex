@@ -604,8 +604,23 @@ Description: Repository of CBGP softwares \end{verbatim}
         \subsubsection{Compilation du programme de calcul}
         Sous macOS 10.6, le gcc/g++ fourni avec xcode est trop vieux pour supporter
         openMP. Il faut avoir au minimum la 4.7. Pour cela je conseille 
-        l'installation de fink, un autre gestionnaire de paquets pour MacOS. Dans 
-        l'archive de fink se trouve un script d'installation automatisée qui
+        l'installation de macports ou de fink, un autre gestionnaire de paquets pour MacOS,
+        afin d'installer gcc47 qui supporte openmp.
+
+        \paragraph{Installation des macports}
+        Installation des macports : installer avec le dmg, puis mettre à jour
+        avec un sync en file:// ou en http:// sur le fichier ports.tar.gz qui se trouve ici :
+        \\
+        www.macports.org/files/ports.tar.gz 
+        \\
+        Pour cela il faut ajouter une ligne à la fin
+        du fichier \\
+        /opt/local/etc/macports/sources.conf :\\
+
+        http://www.macports.org/files/ports.tar.gz [default]\\
+
+        \paragraph{Installation de fink}
+        Dans l'archive de fink se trouve un script d'installation automatisée qui
         fonctionne à merveille. Ensuite une synchronisation et une installation de
         gcc47 et il devient possible de faire un make au sommet du dépôt.
 
@@ -620,14 +635,9 @@ Description: Repository of CBGP softwares \end{verbatim}
         http://deanezra.com/2010/05/setting-up-pythonqt-pyqt4-on-mac-os-x-snow-leopard/\newline
         , on arrive à bout de cette installation qui est tout de même un gros
         morceau pour pas grand chose. Il est tout de même plus simple d'utiliser
-        les macports.\\
+        les macports ou fink.\\
     
         \paragraph{Solution}
-
-        Installation des macports : installer avec le dmg, puis mettre à jour
-        avec un sync en file:// sur le fichier ports.tar.gz téléchargeable ici :
-        \\
-        www.macports.org/files/ports.tar.gz .
 
         La solution est d'utiliser les macports pour installer PyQwt
         (py26-pyqwt), ce qui installera tout le n\'ecessaire. Il faut tout de
