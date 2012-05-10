@@ -917,7 +917,8 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                 "progress" : "analysisProgress",
                 "log" : "analysisLog",
                 "termSuccess" : "analysisTermSuccess",
-                "termProblem" : "analysisProblem"
+                "termProblem" : "analysisProblem",
+                "newOutput" : "newOutput"
                 }
         executablePath = self.parent.preferences_win.getExecutablePath()
         nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
@@ -943,7 +944,7 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                 "-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
         addLine("%s/command.txt"%self.dir,"Command launched for analysis '%s' : %s\n\n"%(analysis.name," ".join(cmd_args_list)))
 
-        self.thAnalysis = LauncherThread(analysis.name,cmd_args_list,outfile,progressfile,signames)
+        self.thAnalysis = LauncherThread(analysis.name,cmd_args_list,outfile_path=outfile,progressfile_path=progressfile,signalnames=signames)
         self.thAnalysis.analysis = analysis
         self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisProgress(QString)"),self.analysisProgress)
         self.thAnalysis.connect(self.thAnalysis,SIGNAL("analysisTermSuccess()"),self.analysisTermSuccess)
