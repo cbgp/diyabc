@@ -609,9 +609,6 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
         x=new long double[ntest];
         mo=new long double[4];
         nomfiresult = path + ident + "_bias.txt";
-        //strcpy(nomfiresult,path);
-        //strcat(nomfiresult,ident);
-        //strcat(nomfiresult,"_bias.txt");
         cout <<"Les résultats sont dans "<<nomfiresult<<"\n";
         FILE *f1;
         f1=fopen(nomfiresult.c_str(),"w");
@@ -950,17 +947,28 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
  */ 
     void setscaled(int p) {
 		long double Ne;
-		int k=0;
+		int k=0,n;
 		Ne=0.0;
 		for (int j=0;j<header.scenario[rt.scenchoisi[0]-1].npop;j++) {
 			for (int ievent=0;ievent<header.scenario[rt.scenchoisi[0]-1].nevent;ievent++) {
 				if ((header.scenario[rt.scenchoisi[0]-1].event[ievent].action=='E')and(header.scenario[rt.scenchoisi[0]-1].event[ievent].pop==j+1)){
-					if (header.scenario[rt.scenchoisi[0]-1].histparam[j].prior.constant) 
-						Ne += (long double)header.scenario[rt.scenchoisi[0]-1].histparam[j].prior.mini;
-					else Ne +=(long double)enreg2[p].paramvv[k];
+					if (header.scenario[rt.scenchoisi[0]-1].histparam[j].prior.constant) {
+						n=0;
+						while (header.scenario[rt.scenchoisi[0]-1].histparam[n].name!=header.scenario[rt.scenchoisi[0]-1].ne0[j].name) n++;
+						Ne += (long double)header.scenario[rt.scenchoisi[0]-1].histparam[n].prior.mini;
+						//cout<<"j="<<j<< "   Ne="<<header.scenario[rt.scenchoisi[0]-1].histparam[n].prior.mini<<"\n";
+					}
+					else {
+						//cout<<"  prior.variable"<< header.scenario[rt.scenchoisi[0]-1].ne0[j].name  <<"\n";
+						n=0;
+						while(enreg2[p].name[n].compare(header.scenario[rt.scenchoisi[0]-1].ne0[j].name)!=0) n++;
+						Ne +=(long double)enreg2[p].paramvv[n];
+						//cout<<"j="<<j<<"  "<< "   Ne="<< enreg2[p].paramvv[n] <<"\n";
+					}
 				}
 			}
 		}
+		//cout<<"Ne="<<Ne<<"\n";
 		k=0;
 		for (int j=0;j<npar;j++) {
 			if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
@@ -1074,7 +1082,7 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
         for (int p=0;p<ntest;p++) {
             enreg2[p].stat = new double[header.nstat];
             enreg2[p].paramvv = new double[nparamcom];
-			//enreg2[p].name = new string[nparamcom];
+			enreg2[p].name = new string[nparamcom];
 			if (composite) enreg2[p].paramvvC = new double[nparcompo];
 			if (scaled) enreg2[p].paramvvS = new double[nparscaled];
             enreg2[p].numscen = rt.scenchoisi[0];
@@ -1104,6 +1112,7 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 		}
         for (int p=0;p<ntest;p++) {
 			getline(file,bidon);
+			cout<<"ligne "<<p+1<<" du fichier\n";
 			cout<<bidon<<"\n";
 			//cout<<bidon<<"\n";
 			ss = splitwords(bidon," ",&ns);
@@ -1112,6 +1121,8 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 			cout<<"bias.cpp   npv="<<npv<<"\n";
 			for (int i=0;i<npv;i++)  {
 				enreg2[p].paramvv[i]=atof(ss[paordre[i]+1].c_str());
+				enreg2[p].name[i]=rt.histparam[rt.scenteste-1][i].name;
+				if(p==0)cout<<"enreg2[p].name["<<i<<"]="<<enreg2[p].name[i]<<" = "<<enreg2[p].paramvv[i]<<"\n";
 			}
 			cout<<"avant setcompo\n";
 			if(composite) setcompo(p);
