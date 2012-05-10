@@ -335,26 +335,39 @@ La description de l'objet (bouton, label...)\end{verbatim}
     Pour construire le projet en vue de le distribuer, on dispose de trois
     scripts, un pour chaque système, qui vont générer un exécutable, une
     application ou un paquet. Cet objet généré est transportable et distribuable
-    tel quel avec, pour Windows et MacOS, un dossier contenant les données.\\
+    tel quel avec un dossier contenant des données.\\
 
-    Pour générer un exécutable sous MacOS et Windows, il faut : 
+    Pour générer un exécutable sous GNU/Linux, MacOS ou Windows, il faut : 
     \begin{itemize}
     \item Se trouver sur le système en question
     \item Posséder python et toutes les librairies nécessaires au programme
     \item Disposer de pyinstaller\\
     \end{itemize}
 
+    J'ai aussi implémenté un script qui génère un paquet .deb.
     Pas de dépendance manuelle particulière pour générer un paquet sous Debian ou
     Ubuntu.\\
 
     \paragraph{La génération de l'aide interne} est très simple.
     \label{howtoLatexml}
-    Pour n'importe lequel de ces systèmes (Mac, Windows, GNU/Linux), il faut
-    générer un xml à partir de la notice \LaTeX . Cette opération s'effectue
-    avec ``latexml'' présent dans les dépôts Debian et Ubuntu. \\
+    On part de la notice écrite en Latex qui doit être taguée. On peut ensuite générer 
+    un fichier xml ou un fichier html qui sera utilisé par l'interface pour 
+    sa documentation interne.
+    Pour n'importe lequel de ces systèmes (Mac, Windows, GNU/Linux), générer 
+    un xml à partir de la notice \LaTeX se fait
+    avec ``latexml'' qui est présent dans les dépôts Debian et Ubuntu. \\
     \begin{verbatim}latexml notice.tex > documentation.xml\end{verbatim}
 
     Il faut que le fichier documentation.xml soit placé dans le dossier python\_interface/docs/ .
+
+    Pour générer la documentation en html, il faut disposer de latex2html. Un 
+    script ( python\_interface/docs/gen\_html\_doc.sh ) permet de manipuler 
+    correctement les options de latex2html. Il se lance sans paramètre 
+    et copie le nécessaire au bon endroit.
+
+    \paragraph{La compilation} de l'exécutable de calcul s'effectue avec un makefile situé
+    à la racine du dépôt. Ce makefile prend un paramètre nommé CCVERSION qui est
+    le suffixe à ajouter à gcc et g++ pour compiler.
 
     
     \subsection{Windows}
