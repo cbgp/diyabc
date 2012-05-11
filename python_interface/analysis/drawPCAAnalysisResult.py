@@ -170,12 +170,19 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         """ dessine les points pour un scenario, deux components, sur plot et met à jour legend
         le tout limité à nbp points. retourne le curve du posterior ou None s'il n'y en a pas
         """
-        legend_txt = "Scenario %s"%num_sc
+        col = QColor(self.tab_colors[(num_sc%20)])
+        if "mod" in self.analysis.category.lower():
+            col.setAlpha(0)
+            pen = QPen(QColor(self.tab_colors[(num_sc%20)]))
+        else:
+            pen = QPen(Qt.black)
+
+        legend_txt = "Scenario %s prior"%num_sc
         c = QwtPlotCurve(legend_txt)
         c.setStyle(QwtPlotCurve.Dots)
         c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
-              QBrush(QColor(self.tab_colors[(num_sc%20)])),
-                QPen(Qt.black),
+              QBrush(col),
+                pen,
                   QSize(7, 7)))
         c.setData(self.dico_points[num_sc][compo_h][:nbp], self.dico_points[num_sc][compo_v][:nbp])
         c.attach(plot)
