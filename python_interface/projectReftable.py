@@ -327,8 +327,11 @@ echo `progress %s`\n\
 sleep 3\n\
 done\n\
 echo `progress %s`\n\
-./general -p "`pwd`"/ -n "s:1"\n\
-./general -p "`pwd`"/ -q\n\
+./general -p "`pwd`"/ -n "s:1" 2>&1 rng_gen.out\n\
+./general -p "`pwd`"/ -q 2>&1 concat.out\n\
+echo "*************************************************************"\n\
+echo "All the result files have been concatenated into reftable.bin"\n\
+echo "*************************************************************"\n\
 '%(nbQsub,nbQsub,nbQsub,nbQsub)
         
         return res

@@ -1,3 +1,4 @@
+rm -rf /tmp/outtmp
 cd ~/diyabc/python_interface/docs/project_builders/
 ./linux_generation.sh ./pyinstaller_1743/pyinstaller.py /tmp/outtmp ../../diyabc.py
 rm -rf  ~/diyabc_linux.zip
