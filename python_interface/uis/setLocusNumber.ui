@@ -1019,8 +1019,9 @@
       <item>
        <widget class="QLabel" name="sexRatioLabel">
         <property name="text">
-         <string>Sex ratio
-Proportion of male individuals in the population</string>
+         <string>Sex ratio (SR)
+Proportion of male individuals in the population
+0 &lt; SR &lt; 1</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>

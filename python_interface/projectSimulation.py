@@ -329,11 +329,11 @@ class ProjectSimulationMsatSeq(ProjectSimulation):
             try:
                 val = float(str(self.locusNumberFrame.sexRatioEdit.text()))
                 if val < 0 or val > 1:
-                    output.notify(self,"Value error","Sex ratio value must be in [0,1]")
+                    output.notify(self,"Value error","Sex ratio value must be in ]0,1[")
                     return
                 self.sexRatio = val
             except Exception as e:
-                output.notify(self,"Value error","Sex ratio value must be in [0,1]")
+                output.notify(self,"Value error","Sex ratio value must be in ]0,1[")
                 return
 
         # verification : a-t-on modifié le nb de loci ?
