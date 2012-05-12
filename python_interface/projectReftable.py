@@ -439,6 +439,7 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                 #tname = self.generateComputationTar("%s/aaaa.tar"%tempfile.mkdtemp())
                 tname = self.generateComputationTar()
                 log(3,"Tar file created in %s"%tname)
+                output.notify(self,"Notify","The archive has been generated in %s"%tname)
                 #self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
                 self.startUiGenReftable()
