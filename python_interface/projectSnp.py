@@ -32,8 +32,8 @@ class ProjectSnp(ProjectReftable):
 
         self.typesOrdered = ["A","H","X","Y","M"]
 
-        self.ui.frame_11.show()
-        self.ui.frame_12.show()
+        #self.ui.frame_11.show()
+        #self.ui.frame_12.show()
 
         self.ascert_frame = ControlAscertBias(self)
         self.ascert_frame.hide()
