@@ -125,6 +125,20 @@ string* splitwords(string s,string sep,int *k){
 }
 
 /**
+ * change les tabulations en espaces
+ */
+
+string purgetab(string s) {
+	string ss="",s0;
+	for (int i=0; i < (int)s.length(); i++) {
+		s0=s.substr(i,1);
+		if (s0=="\t") s0=" ";
+		ss +=s0;
+	}
+	return ss;
+}
+
+/**
  * découpe la chaîne s en sous-chaînes séparées par le séparateur sep
  * le découpage s'arrête quand le nombre de sous-chaînes atteint m
  */

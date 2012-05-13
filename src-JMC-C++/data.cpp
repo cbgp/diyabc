@@ -116,18 +116,24 @@ void LocusC::libere(bool obs, int nsample) {
 		while (not trouvepop) {
 			getline(file, ligne);
 			ligne=majuscules(ligne);
+			//cout<<ligne<<"\n";
 			trouvepop=(ligne.find("POP")!=string::npos);
+			//cout<<trouvepop<<"\n";
 			if (not trouvepop) nloc++;
 		}
+		cout<<"nloc="<<nloc<<"\n";
 		if (not trouvepop) return -2;
 		while (not file.eof()){
-			getline(file, ligne);
+			getline(file, ligne);//cout<<ligne<<"\n";
+			ligne=purgetab(ligne);
 			if( (int)ligne.length() >= 2 + 3*nloc){
 				ligne=majuscules(ligne);
 				if ((ligne.find(",")==string::npos)and(ligne.find("POP")==string::npos)) return -2;
 				if(ligne.find(",")!=string::npos) {
 					ligne = ligne.substr(ligne.find(",") + 1);
+					//cout<<ligne<<"\n";
 					ss=splitwords(ligne," ",&nss);
+					//cout<<"nss="<<nss<<"\n";
 					if (nss!=nloc) return -2;
 				}
 			}
@@ -564,6 +570,7 @@ cout<<"fin de ecribin\n";
 	    while (not file.eof()) {
 	    	if (trim(s) != "") {
 				s1=majuscules(s);
+				s1=purgetab(s1);
 //				cout << s1<<"\n";
 				if ((s1.find("POP")!=string::npos)and(s1.find(",")==string::npos)) {nech +=1;nindi[nech-1]=0;}
                 else {

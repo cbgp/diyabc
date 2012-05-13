@@ -39,6 +39,7 @@ std::string LongDoubleToString (long double number);
 std::string majuscules (std::string s);
 std::string char2string (char * c);
 std::string trim (std::string s);
+std::string purgetab(std::string s);
 int arrondi (double a);
 std::string TimeToStr (double ti);
 double cal_moy (int n, double * x);

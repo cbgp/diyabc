@@ -252,7 +252,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 				//this->scenario[i].paramvar[this->scenario[i].nparamvar].prior = copyprior(this->histparam[k].prior);
 				this->scenario[i].nparamvar++;
 			}
-			//this->scenario[i].histparam[j].ecris();
+			this->scenario[i].histparam[j].ecris();
 		}
 		//cout<<"scenario "<<i<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
 	}
@@ -271,7 +271,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 				if (np==2) nc++;
 			}
 			this->scenario[i].nconditions=nc;
-			//cout <<"header.scenario["<<i<<"].nconditons="<<this->scenario[i].nconditions<<"\n";
+			//cout <<"header.scenario["<<i<<"].nconditions="<<this->scenario[i].nconditions<<"\n";
 			this->scenario[i].condition = new ConditionC[nc];
 			nc=0;
 			while (nc<this->scenario[i].nconditions) {
@@ -283,7 +283,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 					}
 					if (np==2) {
 						this->scenario[i].condition[nc] = this->condition[j];
-						//this->scenario[i].condition[nc].ecris();
+						this->scenario[i].condition[nc].ecris();
 						nc++;
 					}
 				}
@@ -292,7 +292,6 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 
 		}
 	} else for (int i=0;i<this->nscenarios;i++) this->scenario[i].nconditions=0;
-
 	return 0;
 }
 

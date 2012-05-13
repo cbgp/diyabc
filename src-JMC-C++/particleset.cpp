@@ -227,6 +227,7 @@ void ParticleSetC::setscenarios (int p) {
 		//cout << "\nscenario source\n";
 		//if (p==0) cout<<"header nconditions="<<this->header.scenario[i].nconditions<<"\n";
 		this->particule[p].scenario[i] = this->header.scenario[i];
+		cout<<"this->particule[p].scenario["<<i<<"].nconditions = "<<this->particule[p].scenario[i].nconditions<<"\n";
 		//cout<<"apres la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
 		//if (p==0) this->header.scenario[i].ecris();
 		//if (p==0) cout<<"dans particule[0] scenario["<<i<<"] nconditions="<<this->particule[p].scenario[i].nconditions<<"\n";
