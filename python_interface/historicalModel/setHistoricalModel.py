@@ -71,6 +71,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
 			lab.setFont(ff)
 
         self.ui.fixedDrawnFrame.hide()
+        self.ui.drawPreviewsCheck.hide()
 
     def displayPreviews(self,state=None):
         """ Met à jour ou fait apparaitre ou disparaitre les previews
