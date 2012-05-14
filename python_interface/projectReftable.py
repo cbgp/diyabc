@@ -945,7 +945,7 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             option = "-j"
         elif analysis.category == "pre-ev":
             option = "-d"
-            progressfile = None
+            #progressfile = None
         cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "%s"%option,
                 '%s'%params.replace(u'\xb5','u'), "-i", '%s'%analysis.name,
                 "-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
