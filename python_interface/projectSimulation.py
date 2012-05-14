@@ -67,6 +67,7 @@ class ProjectSimulation(Project):
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopSimulation)
 
         self.ui.genDataLabel.setText('Genetic data')
+        self.ui.progressBar.hide()
 
         self.dirCreation()
 
@@ -120,7 +121,10 @@ class ProjectSimulation(Project):
     def stopUiGenReftable(self):
         self.ui.runReftableButton.setText("Run computations")
         self.ui.runReftableButton.setDisabled(False)
-        self.ui.progressBar.hide()
+
+    def startUiGenReftable(self):
+        self.ui.runReftableButton.setText("Running ...")
+        self.ui.runReftableButton.setDisabled(True)
 
     def save(self):
         pass
@@ -155,6 +159,7 @@ class ProjectSimulation(Project):
         self.th.connect(self.th,SIGNAL("simulationProblem(QString)"),self.simulationProblem)
         self.th.connect(self.th,SIGNAL("simulationLog(int,QString)"),self.simulationLog)
         self.th.start()
+        self.startUiGenReftable()
 
     def simulationProblem(self,msg):
         output.notify(self,"Simulation problem","Something happened during the simulation :\n %s"%(msg))
@@ -169,6 +174,7 @@ class ProjectSimulation(Project):
         """
         self.parent.systrayHandler.showTrayMessage("DIYABC : simulation","Simulation has finished")
         self.stopUiGenReftable()
+        self.ui.runReftableButton.setText("Simulation terminated.\nFiles created in target directory")
         self.th = None
 
     def stopSimulation(self):
