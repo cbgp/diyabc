@@ -80,15 +80,17 @@ long double * * transposeL (int n, int m, long double * * A)
 long double * * prodML (int n, int m, int p, long double * * A, long double * * B)
                                                                            {
     long double **C;
+	int j,k;
     C = new long double*[n];
     for (int i=0;i<n;i++) {
         C[i] = new long double[p];
-        for(int j=0;j<p;j++) C[i][j]=0.0;
+        for(j=0;j<p;j++) C[i][j]=0.0;
     }
+#pragma omp parallel for private(k,j) if(multithread)
     for (int i=0;i<n;i++) {
-        for (int j=0;j<p;j++) {
-            for (int k=0;k<m;k++) C[i][j] += A[i][k]*B[k][j];
-        }  
+        for (j=0;j<p;j++) {
+            for (k=0;k<m;k++) C[i][j] += A[i][k]*B[k][j];
+        }
     }
     return C;
 }

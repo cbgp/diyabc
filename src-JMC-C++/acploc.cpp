@@ -34,9 +34,10 @@ using namespace std;
 extern enregC* enreg;
 extern HeaderC header;
 extern ReftableC rt;
-extern string ident, path;
+extern string ident, path, progressfilename;
 
-int nacp=100000;
+int nacp=100000,nprog,iprog;
+FILE *flog;
 
 /**
 * Structure resACP : contient les résultats d'une ACP 
@@ -57,7 +58,7 @@ int nacp=100000;
         y = new long double[nli];
         res.moy = new long double[nco];
         res.sd  = new long double[nco];
-        
+        cout<<"debut de ACP\n";
         for (int j=0;j<nco;j++) {
             for (int i=0;i<nli;i++) y[i] = X[i][j];
             res.moy[j] = cal_moyL(nli,y);
@@ -80,8 +81,14 @@ int nacp=100000;
 		  cout<<"\n";
 		}
 		cout<<"\n";*/
+		cout<<"avant transposeL\n";
+		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
         matXT = transposeL(nli,nco,matX);
+		cout<<"avant prodML nco="<<nco<<"  nli="<<nli<<"\n";
+		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
         matXTX = prodML(nco,nli,nco,matXT,matX);
+		cout<<"avant prodMsL\n";
+		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
         matM = prodMsL(nco,nco,matXTX,anli);
         for (int i=0;i<nco;i++) {for (int j=0;j<nco;j++) matM[i][j]=matXTX[i][j]*anli;}
         vcprop  = new long double*[nco];for (int i=0;i<nco;i++) vcprop[i]=new long double [nco];
@@ -92,8 +99,10 @@ int nacp=100000;
 		  cout<<"\n";
 		}
 		cout<<"\n";*/
+		cout <<"avant jacobiL\n";
+		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
 		int nrot=jacobiL(nco,matM,valprop,vcprop);
-        //cout <<"nrot = "<<nrot<<"\n";
+        cout <<"nrot = "<<nrot<<"\n";
         //cout<<"valeurs propres :\n";
         //for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout<<"\n";
         for (int i=0;i<nco-1;i++) {
@@ -106,6 +115,7 @@ int nacp=100000;
                 }
             }
         }
+		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
         res.slambda=0.0;
         for (int i=0;i<nco;i++) res.slambda +=valprop[i];
         //for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout <<"\n";
@@ -120,6 +130,7 @@ int nacp=100000;
             res.vectprop[i] = new long double[res.nlambda];
             for (int j=0;j<res.nlambda;j++) res.vectprop[i][j] = vcprop[i][j];
         }
+		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
         res.princomp = new long double*[nli];
         for (int i=0;i<nli;i++) {
             res.princomp[i] = new long double[res.nlambda];
@@ -182,6 +193,7 @@ int nacp=100000;
 				for (int j=0;j<rt.nstat;j++) matstat[p][j] = matstat0[p][j];
 			}
 		}
+		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
         cout<<"avant ACP\n";
         rACP = ACP(nacp,rt.nstat,matstat,1.0,0);
         cout<<"apres ACP  path ="<<path<<"\n";
@@ -206,6 +218,7 @@ int nacp=100000;
             for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3Lf",rACP.princomp[i][j]);fprintf(f1,"\n");
         }
         fclose(f1);
+		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
     }
 
 /**
@@ -288,6 +301,7 @@ int nacp=100000;
              f12<<"\n";
         }
         f12.close();
+		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
     }
 
 /**
@@ -299,6 +313,7 @@ int nacp=100000;
         int ns;
  		cout<<"doacpl "<<opt<<"\n";
        ss = splitwords(opt,";",&ns);
+        progressfilename = path + ident + "_progress.txt";
         for (int i=0;i<ns;i++) { cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
@@ -311,6 +326,10 @@ int nacp=100000;
                 cout<< "\n";
             }            
         }
+        nprog=1;
+        if (dopca) nprog+=8;
+		if (doloc) nprog+=1;
+		iprog=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
         if (dopca) cal_acp();
         if (doloc) cal_loc();
    }
