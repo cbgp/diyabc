@@ -108,8 +108,11 @@
           <pointsize>13</pointsize>
          </font>
         </property>
+        <property name="toolTip">
+         <string>Files are already saved in the project analysis directory</string>
+        </property>
         <property name="text">
-         <string>SAVE</string>
+         <string>SAVE AS</string>
         </property>
        </widget>
       </item>
