@@ -367,6 +367,8 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         if tarname == None:
             output.notify(self,"Warning","You are about to generate an archive in order to compute on a cluster,\n This archive will contain the datafile, the header file and the scripts to launch computations on an SGE cluster main node")
             tarname = str(QFileDialog.getSaveFileName(self,"Saving cluster archive","Reftable CLUSTER generation archive name","TAR archive (*.tar)"))
+            if tarname == "":
+                return ""
             if not tarname.endswith(".tar"):
                 tarname += ".tar"
         if tarname != "":
@@ -438,8 +440,9 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             if self.parent.preferences_win.ui.useClusterCheck.isChecked():
                 #tname = self.generateComputationTar("%s/aaaa.tar"%tempfile.mkdtemp())
                 tname = self.generateComputationTar()
-                log(3,"Tar file created in %s"%tname)
-                output.notify(self,"Notify","The archive has been generated in %s"%tname)
+                if tname != "":
+                    log(3,"Tar file created in %s"%tname)
+                    output.notify(self,"Notify","The archive has been generated in %s"%tname)
                 #self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
                 self.startUiGenReftable()
