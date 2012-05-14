@@ -66,6 +66,8 @@ class ProjectSimulation(Project):
         self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopSimulation)
 
+        self.ui.genDataLabel.setText('Genetic data')
+
         self.dirCreation()
 
     def dirCreation(self):
@@ -377,8 +379,8 @@ class ProjectSimulationSnp(ProjectSimulation):
         self.locusNumberFrame.frame.setMaximumSize(QSize(300,1000))
         self.locusNumberFrame.frame.setMinimumSize(QSize(300,0))
 
-        self.ui.ascertSimFrame.show()
-        self.ui.frame_11.show()
+        #self.ui.ascertSimFrame.show()
+        #self.ui.frame_11.show()
 
         QObject.connect(self.locusNumberFrame.mhEdit,SIGNAL("textChanged(QString)"),self.haploidChanged)
         self.ui.nbSequencesLabel.hide()
@@ -465,17 +467,4 @@ class ProjectSimulationSnp(ProjectSimulation):
                 numGroup+=1
                 str_locis += "{0} <{1}> [P] G{2}\n".format(self.dico_loc_nb["m"+cat.lower()],cat,numGroup)
         return str_locis
-
-    def writeHeaderSim(self):
-        super(ProjectSimulationSnp,self).writeHeaderSim()
-        headerFile = "%s/headersim.txt"%self.dir
-        try:
-            line_to_add = str(self.ui.ascBiasEdit.text())
-            val = float(line_to_add)
-        except Exception as e:
-            raise Exception("Ascertainment bias must be a float")
-        if not 0 <= val <= 1:
-            raise Exception("Ascertainment bias must be in [0,1]")
-
-        addLine(headerFile,"\n"+line_to_add)
 
