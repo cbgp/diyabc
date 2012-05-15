@@ -8,6 +8,7 @@
 #include <vector>
 #include <cstdlib>
 #include <cmath>
+#include <time.h>
 
 
 #include "bias.h"

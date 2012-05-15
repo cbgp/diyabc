@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
+#include <time.h>
 #include "header.h"
 #include "reftable.h"
 #include "matrices.h"

@@ -11,6 +11,7 @@
 #include <sstream>
 #include <string>
 #include <stdexcept>
+#include <time.h>
 extern"C"{
 #include "../dcmt0.6.1/include/dc.h"
 }

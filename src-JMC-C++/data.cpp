@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <vector>
+#include <time.h>
 
 #include "mesutils.h"
 #include "randomgenerator.h"

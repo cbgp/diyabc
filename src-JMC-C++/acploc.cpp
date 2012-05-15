@@ -7,6 +7,8 @@
 
 #include <vector>
 #include <cmath>
+#include <time.h>
+
 #include "matrices.h"
 #include "mesutils.h"
 #include "reftable.h"

@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include <vector>
+#include <time.h>
 #include "bias.h"
 #include "reftable.h"
 #include "header.h"

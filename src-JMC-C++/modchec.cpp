@@ -10,6 +10,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <time.h>
 
 
 #include "header.h"

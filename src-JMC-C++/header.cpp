@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <stdexcept>
+#include <time.h>
 
 #include "randomgenerator.h"
 #include "mesutils.h"
