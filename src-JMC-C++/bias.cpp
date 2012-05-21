@@ -972,6 +972,7 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 		}
 		//cout<<"Ne="<<Ne<<"\n";
 		Ne = Ne/(long double)nNe;
+		cout<<"Ne="<<Ne<<"\n";
 		k=0;
 		for (int j=0;j<npar;j++) {
 			if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
