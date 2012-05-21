@@ -992,7 +992,7 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
         FILE *flog;
 		long double** phistar, **phistarcompo, **phistarscaled;
         progressfilename = path + ident + "_progress.txt";
-		scurfile = path + "courant_"+ ident +".log";
+		scurfile = path + "pseudo-observed_datasets_"+ ident +".txt";
         cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);

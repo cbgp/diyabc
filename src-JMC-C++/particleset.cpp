@@ -512,10 +512,11 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		int categ,iq,icur=0;
 		bool trouve2;
 		if (depuis==0){
-			scurfile=this->header.pathbase+"courant_"+IntToString(icur)+".log";
+			scurfile = this->header.pathbase + "first_records_of_the_reference_table_"+ IntToString(icur) +".txt";
 			while (ifstream(scurfile.c_str())) {
 				icur++;
-				scurfile=this->header.pathbase+"courant_"+IntToString(icur)+".log";
+				//scurfile=this->header.pathbase+"courant_"+IntToString(icur)+".log";
+				scurfile = this->header.pathbase + "first_records_of_the_reference_table_"+ IntToString(icur) +".txt";
 				}
 		}
 		cout<<"ecriture du fichier courant = "<<scurfile<<"\n";

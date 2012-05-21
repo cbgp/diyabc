@@ -184,7 +184,7 @@ string nomficonfresult;
         //strcat(progressfilename,ident);
         //strcat(progressfilename,"_progress.txt");
 
-		scurfile = path + "courant_"+ ident +".log";
+		scurfile = path + "pseudo-observed_datasets_"+ ident +".txt";
         cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);

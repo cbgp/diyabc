@@ -422,7 +422,7 @@ long double **ssphistar,**ssref;
         FILE *flog;
 
         progressfilename = path + ident + "_progress.txt";
-		scurfile = path + "courant_"+ ident +".log";
+		scurfile = path + "first_records_of_the_reference_table_"+ ident +".txt";
         cout<<"debut domodchec  options : "<<opt<<"\n";
 		original=true;composite=false;scaled=false;
         ss = splitwords(opt,";",&ns);
