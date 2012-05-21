@@ -950,7 +950,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			for (int j=0;j<npar;j++) {
 				if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].category<2){
 					pp=rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].name;
-					pp = pp+"/Sum(N)";
+					pp = pp+"/Mean(N)";
 					nomparamS[k]=pp;k++;
 					enteteS += centre(pp,16);
 				}
