@@ -197,8 +197,13 @@ matligneC *matA;
 					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4Lf [%6.4Lf,%6.4Lf]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
 					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4Lf [%6.4Lf,%6.4Lf]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");
 				} else {
-					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4Lf [%6.4Lf,%6.4Lf]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
-					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4Lf [%6.4Lf,%6.4Lf]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");					
+					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4Lf [%6.4Lf,%6.4Lf]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);
+					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4Lf [%6.4Lf,%6.4Lf]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);					
+					if (postscenlog[i][0].err==8) {
+						printf(" LOGISTIC REGRESSION DID NOT CONVERGE AFTER 50 ITERATIONS\n");
+						fprintf(f1," LOGISTIC REGRESSION DID NOT CONVERGE AFTER 50 ITERATIONS\n");
+						
+					} else {printf("\n");fprintf(f1,"\n");}
 				}
 			}
 		}
@@ -682,7 +687,8 @@ matligneC *matA;
 					fin= (fabs(px[i]-cpx0[i])<0.0001)or(fabs(cloglik[rep-1]/cloglik[rep-2]-1.0)<0.000001);
 					printf("abs(px-px0) = %12.7Lf\n",fabs(px[i]-cpx0[i]));i++;
 				}
-				fin=(fin||(betmax-betmin>50));
+				fin=(fin or (betmax-betmin>50));
+				if ((not fin) and (rep>50)) {err=8;fin=true;}
 			} else {
 				fin=true;i=0;while ((fin==true)&&(i<nmodel+1)) fin= (fabs(px[i]-cpx0[i])<0.0001);
 			}
