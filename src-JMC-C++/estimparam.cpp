@@ -484,7 +484,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 */
     void recalparamS(int n) {   
         long double coefmarge=0.000000001,marge,**xx,pmut,Ne;
-        int jj,kk,qq,kp,kscen;
+        int jj,kk,qq,kp,kscen,nNe=0;
         alpsimrat = new long double*[n];
         for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparscaled];
         xx = new long double*[n];
@@ -502,10 +502,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						if (header.scenario[rt.scenchoisi[kscen]-1].histparam[kk].prior.constant) 
 							Ne += (long double)header.scenario[rt.scenchoisi[kscen]-1].histparam[kk].prior.mini;
 						else Ne +=(long double)rt.enrsel[i].param[numpar[kscen][kk]];
+						nNe++;
 						//if (i<10) cout<<"Ne = "<<Ne<<"\n";
 					}
 				}
 			}
+			Ne = Ne/(long double)nNe;
 			kp=0;
 			for (int j=0;j<npar;j++) {
 				if (header.scenario[rt.scenchoisi[kscen]-1].histparam[numpar[kscen][j]].category<2){
@@ -1140,7 +1142,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * calcule les paramètres scaled des enregistrements simulés pour l'établissement des distributions a priori'
 */
     void lisimparS(int nsel){
-      int bidon,iscen,m,k,nr,kk;
+      int bidon,iscen,m,k,nr,kk,nNe=0;
         bool scenOK;
         long double pmut,Ne;
         if (nsimpar>rt.nrec) nsimpar=rt.nrec;
@@ -1176,10 +1178,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 							if (header.scenario[rt.scenchoisi[m]-1].histparam[kk].prior.constant) 
 								Ne += (long double)header.scenario[rt.scenchoisi[m]-1].histparam[kk].prior.mini;
 							else Ne +=(long double)enr.param[numpar[m][kk]];
+							nNe++;
 							//cout<<"Ne = "<<Ne<<"  "<<((int)Ne % 3)<<"\n";
 						}
 					}
 				}
+				Ne = Ne/(long double)nNe;
 				k=0; //cout<<"Ne = "<<Ne<<"  "<<((int)Ne % 3)<<"\n";
 				for (int j=0;j<npar;j++) {
 					if (header.scenario[rt.scenchoisi[m]-1].histparam[numpar[m][j]].category<2){

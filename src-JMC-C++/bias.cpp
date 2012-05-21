@@ -948,7 +948,7 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
  */ 
     void setscaled(int p) {
 		long double Ne;
-		int k=0,n;
+		int k=0,n,nNe=0;
 		Ne=0.0;
 		for (int j=0;j<header.scenario[rt.scenchoisi[0]-1].npop;j++) {
 			for (int ievent=0;ievent<header.scenario[rt.scenchoisi[0]-1].nevent;ievent++) {
@@ -964,12 +964,14 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 						n=0;
 						while(enreg2[p].name[n].compare(header.scenario[rt.scenchoisi[0]-1].ne0[j].name)!=0) n++;
 						Ne +=(long double)enreg2[p].paramvv[n];
+						nNe++;
 						//cout<<"j="<<j<<"  "<< "   Ne="<< enreg2[p].paramvv[n] <<"\n";
 					}
 				}
 			}
 		}
 		//cout<<"Ne="<<Ne<<"\n";
+		Ne = Ne/(long double)nNe;
 		k=0;
 		for (int j=0;j<npar;j++) {
 			if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
