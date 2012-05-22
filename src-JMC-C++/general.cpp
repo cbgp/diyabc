@@ -147,17 +147,18 @@ ReftableC rt;
 HeaderC header;
 ParticleSetC ps;
 struct stat stFileInfo;
-enregC *enreg;
+enregC *enreg,*enregOK;
 
 //char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename, *progressfilename;
 //char *;
-string headerfilename,headersimfilename,reftablefilename, datafilename, statobsfilename,reftablelogfilename,path,ident,stopfilename,progressfilename;
+string headerfilename,headersimfilename,reftablefilename, datafilename, statobsfilename,reftablelogfilename,path,ident,stopfilename,progressfilename,scsufilename;
 bool multithread=false;
-int nrecneeded,nenr=100;
+int nrecneeded,nenr=100,nenrOK,*neOK,*netot;
 int debuglevel=0;
 int num_threads=0;
 string sremtime,scurfile;
 double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,debutr,dureer,remtime;
+FILE *fd;
 
 bool RNG_must_be_saved;
 
@@ -464,41 +465,89 @@ try {
                         	  //cout<<"cannot create reftable file\n"; exit(1);
                           }
                           if (nrecneeded>rt.nrec) {
-                                  rt.openfile();
-                                  enreg = new enregC[nenr];
-                                  for (int p=0;p<nenr;p++) {
-                                      enreg[p].stat = new float[header.nstat];
-                                      enreg[p].param = new float[header.nparamtot+3*header.ngroupes];
-                                      enreg[p].numscen = 1;
-                                  }
-                                  cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
-                                  firsttime=true;stoprun=false;
-								  clock_zero=0.0;
-                                  debutr=walltime(&clock_zero);
+                                rt.openfile();
+                                enreg = new enregC[nenr];
+                                for (int p=0;p<nenr;p++) {
+                                    enreg[p].stat = new float[header.nstat];
+                                    enreg[p].param = new float[header.nparamtot+3*header.ngroupes];
+                                    enreg[p].numscen = 1;
+                                }
+                                cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
+                                firsttime=true;stoprun=false;
+								clock_zero=0.0;
+                                debutr=walltime(&clock_zero);
+								if (not header.drawuntil) {
+									neOK = new int[header.nscenarios];
+									netot= new int[header.nscenarios];
+									for (int p=0;p<header.nscenarios;p++) {neOK[p]=0;netot[p]=0;}
+									scsufilename=path+"scenariosuccess.txt";
+								}
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
                                           //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"    nenr="<<nenr<<"\n";
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,0);
                                           //cout<<"retour de dosimultabref\n";
-                                          simOK=true;
-                                          for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}
-                                          if (simOK) {
-											  //cout<<"simOK=true   nenr="<<nenr<<"\n";
-                                              //debutf=walltime(&clock_zero);
-                                              rt.writerecords(nenr,enreg);
-                                              //dureef=walltime(&debutf);time_file += dureef;
-                                              rt.nrec +=nenr;
-                                              cout<<rt.nrec;
-                                              //if (firsttime) writecourant();
-                                              //cout<<"à la place de writecourant\n";
-                                              ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"OK\n"<<rt.nrec<<"\n"<<TimeToStr(remtime)<<"\n";f1.close();
-											  if (((rt.nrec%1000)==0)and(rt.nrec<nrecneeded))cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
-                                              stoprun = (stat(stopfilename.c_str(),&stFileInfo)==0);
-                                              if (stoprun) remove(stopfilename.c_str());
-                                          } else {
-                                              flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",message.c_str());fclose(flog);
-                                              stoprun=true;
-                                          }
-                                          if (firsttime) firsttime=false;
+                                          if (header.drawuntil){
+											simOK=true;
+											for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}
+											if (simOK) {
+												//cout<<"simOK=true   nenr="<<nenr<<"\n";
+												//debutf=walltime(&clock_zero);
+												rt.writerecords(nenr,enreg);
+												//dureef=walltime(&debutf);time_file += dureef;
+												rt.nrec +=nenr;
+												cout<<rt.nrec;
+												//if (firsttime) writecourant();
+												//cout<<"à la place de writecourant\n";
+												ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"OK\n"<<rt.nrec<<"\n"<<TimeToStr(remtime)<<"\n";f1.close();
+												if (((rt.nrec%1000)==0)and(rt.nrec<nrecneeded))cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
+												stoprun = (stat(stopfilename.c_str(),&stFileInfo)==0);
+												if (stoprun) remove(stopfilename.c_str());
+											} else {
+												flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",message.c_str());fclose(flog);
+												stoprun=true;
+												}
+										} else {
+											nenrOK=0;
+											for (int i=0;i<nenr;i++) {
+												if (enreg[i].message!="OK") {nenrOK++;neOK[enreg[i].numscen-1]++;}
+												netot[enreg[i].numscen-1]++;
+											}
+											fd = fopen (scsufilename.c_str(),"w");
+											fprintf(fd,"%s\n","Numbers of parameter combinations complying with all conditions");
+											fprintf(fd,"%s\n","scenario      tested      successful");
+											for (int p=0;p<header.nscenarios;p++) fprintf(fd,"%5d     %10d     %10d\n",p+1,netot[p],neOK[p]);
+											fclose(fd);
+											if (nenrOK>0){
+												enregOK = new enregC[nenrOK];
+												for (int p=0;p<nenrOK;p++) {
+													enregOK[p].stat = new float[header.nstat];
+													enregOK[p].param = new float[header.nparamtot+3*header.ngroupes];
+													enregOK[p].numscen = 1;
+												}
+												nenrOK=0;
+												for (int i=0;i<nenr;i++){ 	
+													if (enreg[i].message!="OK"){
+														for (int p=0;p<header.nstat;p++) enregOK[nenrOK].stat[p] = enreg[i].stat[p];
+														for (int p=0;p<header.nparamtot+3*header.ngroupes;p++) enregOK[nenrOK].param[p] = enreg[i].param[p];
+														enregOK[nenrOK].numscen = enreg[i].numscen;
+														enregOK[nenrOK].message="OK";
+														nenrOK++;
+													}
+												}
+												rt.writerecords(nenrOK,enregOK);
+												rt.nrec +=nenrOK;
+												ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"OK\n"<<rt.nrec<<"\n"<<TimeToStr(remtime)<<"\n";f1.close();
+												if (((rt.nrec%1000)==0)and(rt.nrec<nrecneeded))cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
+												stoprun = (stat(stopfilename.c_str(),&stFileInfo)==0);
+												if (stoprun) remove(stopfilename.c_str());
+												for (int i=0;i<nenrOK;i++) {
+														delete [] enregOK[i].param;
+														delete [] enregOK[i].stat;
+												}
+												delete [] enregOK;
+											}
+										}
+                                        if (firsttime) firsttime=false;
                                   }
                                   //cout<<"fin du while\n";
                                   for (int i=0;i<nenr;i++) {
@@ -506,6 +555,7 @@ try {
                                         delete [] enreg[i].stat;
                                   }
                                   delete [] enreg;
+								  
                                   rt.closefile();
 								  //cout<<"apres rt.closefile\n";
                                   if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}

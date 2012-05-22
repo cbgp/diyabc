@@ -516,6 +516,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 		}
 		OK=true;
 	}
+	//if (OK) cout<<"tirage des paramètres OK \n"; else cout<<"tirage des paramètres rejeté \n";
 	this->scen.ipv=0;
 	if (OK) {
 		for (int p=0;p<this->scen.nparam;p++) {
@@ -539,7 +540,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
       sort(&this->scen.event[0],&this->scen.event[this->scen.nevent]); 
       // compevent inutile: operator< est surchargé correctement (PP)
       checkorder();
-
+    
 
       //cout<<"fin des events\n";
       for (int i=0;i<this->scen.nn0;i++) {
@@ -1828,8 +1829,8 @@ void ParticleC::put_one_mutation(int loc) {
 	  if (debuglevel==5)        {cout<<"debut de dosimulpart  nloc="<<this->nloc<<"\n";fflush(stdin);}
 	  vector <int> simulOK;
 	  string checktree;
-	  int *emptyPop,loc,nlocutil=0,loca=-1,simOK,refmrca;
-	  bool treedone,dnaloc=false,trouve,snpOK,reference;
+	  int *emptyPop,loc,nlocutil=0,loca=-1,simOK,refmrca,notOK=-100001;
+	  bool treedone,dnaloc=false,trouve,snpOK,reference,simuOK;
 	  
 	  int locus = 0, sa, indiv, nuc;
 	  //cout<<"this->nloc="<<this->nloc<<"\n";
@@ -1840,7 +1841,8 @@ void ParticleC::put_one_mutation(int loc) {
 	  this->drawscenario(&numscen);
 	  reference=(this->refnindtot>0);
 	  if (debuglevel==10) cout <<"avant setHistparamValue\n";fflush(stdin);
-	  this->setHistParamValue();
+	  simuOK = this->setHistParamValue();
+	  if (not simuOK) return notOK;
 	  if (debuglevel==10) cout << "apres setHistParamValue\n";fflush(stdin);
 	   if (debuglevel==-1) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
 	  if (debuglevel==-1) for (int k=0;k<this->scen.nparam;k++){
