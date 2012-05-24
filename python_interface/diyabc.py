@@ -21,6 +21,13 @@ if "darwin" in sys.platform and ".app/" in sys.argv[0]:
     # pour aller a l'interieur du .app
     mycwd = sys.argv[0].split(".app/")[0] + ".app/Contents/Resources/"
     os.chdir(mycwd)
+# trick to get things working on windows
+elif "win" in sys.platform and "darwin" not in sys.platform:
+    def inputHint(a,b):
+        pass
+    QLineEdit.setInputMethodHints = inputHint
+    Qt.ImhDigitsOnly = 0
+    Qt.ImhFormattedNumbersOnly = 0
 # pour connaitre les modules, on manipule le pythonpath
 sys.path.append("/".join(os.getcwd().split('/')[:-1]))
 from PyQt4.QtCore import *

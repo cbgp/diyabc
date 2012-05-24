@@ -117,11 +117,15 @@ class Project(baseProject,formProject):
         outfile = "%s/init_rng.out"%(self.dir)
         f = open(outfile,"w")
         p = subprocess.call(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+        #p = subprocess.Popen(cmd_args_list, stdout=f, stderr=subprocess.STDOUT)
+        time.sleep(1)
+        while (p.poll() == None):
+            time.sleep(1)
         f.close()
         if dest != None:
-            log(3,"Generation of RNGs of project '%s' for cluster terminated with returncode : %s"%(self.name,p))
+            log(3,"Generation of RNGs of project '%s' for cluster terminated with returncode : %s"%(self.name,p.poll()))
         else:
-            log(3,"Initialization of RNGs of project '%s' terminated with returncode : %s"%(self.name,p))
+            log(3,"Initialization of RNGs of project '%s' terminated with returncode : %s"%(self.name,p.poll()))
         QApplication.restoreOverrideCursor()
 
     def returnTo(self,elem):

@@ -249,9 +249,9 @@ class Preferences(AutoPreferences):
             # WINDOWS
             elif "win" in sys.platform and "darwin" not in sys.platform:
                 if os.environ.has_key("PROCESSOR_ARCHITECTURE") and "86" not in os.environ["PROCESSOR_ARCHITECTURE"]:
-                    exPath = "docs/executables/diyabc-comput-win-x64"
+                    exPath = ".\docs\executables\diyabc-comput-win-x64"
                 else:
-                    exPath = "docs/executables/diyabc-comput-win-i386"
+                    exPath = ".\docs\executables\diyabc-comput-win-i386"
             # MACOS
             elif "darwin" in sys.platform:
                 if "86" in platform.machine() and "64" not in platform.machine():
