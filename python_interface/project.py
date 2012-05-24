@@ -116,7 +116,7 @@ class Project(baseProject,formProject):
         addLine("%s/command.txt"%self.dir,"Command launched for initialization of RNGs of project '%s' : %s\n\n"%(self.name," ".join(cmd_args_list)))
         outfile = "%s/init_rng.out"%(self.dir)
         f = open(outfile,"w")
-        p = subprocess.call(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         #p = subprocess.Popen(cmd_args_list, stdout=f, stderr=subprocess.STDOUT)
         time.sleep(1)
         while (p.poll() == None):
