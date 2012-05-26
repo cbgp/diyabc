@@ -201,7 +201,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q)])
 
-        self.navigate_menu = QMenu("&Go to")
+        self.navigate_menu = QMenu("&Go to opened project")
         self.navigateProjectActions = []
 
         help_menu = self.ui.menubar.addMenu("&Help")
