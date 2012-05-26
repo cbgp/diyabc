@@ -197,7 +197,6 @@ class ProjectSnp(ProjectReftable):
         self.ui.dirEdit.setText(self.dir)
         self.ui.browseDataFileButton.setDisabled(True)
         self.ui.browseDataFileButton.hide()
-        self.ui.browseDirButton.hide()
         self.ui.groupBox_6.show()
         self.ui.groupBox_7.show()
         self.ui.groupBox_8.show()
@@ -252,7 +251,6 @@ class ProjectSnp(ProjectReftable):
             self.ui.dataFileInfoLabel.setText("%s loci (SNP)\n%s individuals in %s samples\n%s" % (self.data.nloc,self.data.nindtot,self.data.nsample,typestr))
             self.ui.dataFileEdit.setText(name)
             self.dataFileSource = name
-            self.ui.browseDirButton.setDisabled(False)
 
         except Exception as e:
             keep = ""

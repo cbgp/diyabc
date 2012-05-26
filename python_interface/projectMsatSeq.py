@@ -65,7 +65,6 @@ class ProjectMsatSeq(ProjectReftable):
             self.ui.dataFileInfoLabel.setText("%s loci (%s%s%s)\n%s individuals in %s samples" % (self.data.nloc,microsat,et,sequences,self.data.nindtot,self.data.nsample))
             self.ui.dataFileEdit.setText(name)
             self.dataFileSource = name
-            self.ui.browseDirButton.setDisabled(False)
         except Exception as e:
             keep = ""
             if self.ui.dataFileEdit.text() != "":
@@ -90,7 +89,6 @@ class ProjectMsatSeq(ProjectReftable):
         self.ui.dirEdit.setText(self.dir)
         self.ui.browseDataFileButton.setDisabled(True)
         self.ui.browseDataFileButton.hide()
-        self.ui.browseDirButton.hide()
         self.ui.groupBox_6.show()
         self.ui.groupBox_7.show()
         self.ui.groupBox_8.show()

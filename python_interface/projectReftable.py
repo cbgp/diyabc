@@ -68,7 +68,6 @@ class ProjectReftable(Project):
 
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.defineNewAnalysis)
         QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelectionAndCopy)
-        QObject.connect(self.ui.browseDirButton,SIGNAL("clicked()"),self.dirCreation)
 
         self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopRefTableGen)
@@ -569,7 +568,8 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             # si on a reussi a charger le data file, on vire le bouton browse
             self.ui.browseDataFileButton.hide()
             # et on copie ce datafile dans le dossier projet
-            shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
+            if not os.path.exists("%s/%s"%(self.dir,self.dataFileSource.split('/')[-1])):
+                shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
             self.dataFileName = self.dataFileSource.split('/')[-1]
             self.ui.dataFileEdit.setText("%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
             self.ui.groupBox_6.show()
@@ -607,42 +607,6 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                             f = open("%s/%s.diyabcproject"%(self.dir,self.name),'w')
                             f.write("created in %s"%self.dir)
                             f.close()
-                    except OSError,e:
-                        output.notify(self,"Error",str(e))
-            else:
-                output.notify(self,"Incorrect directory","A project can not be in a project directory")
-
-    def dirSelection(self,name=None):
-        """ selection du repertoire pour un nouveau projet et copie du fichier de données
-        """
-        if name == None:
-            qfd = QFileDialog()
-            name = str(qfd.getExistingDirectory())
-        if name != "":
-            if not self.parent.isProjDir(name):
-                # name_YYYY_MM_DD-num le plus elevé
-                dd = datetime.now()
-                cd = 100
-                while cd > 0 and not os.path.exists(name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,cd)):
-                    cd -= 1
-                if cd == 100:
-                    output.notify(self,"Error","With this version, you cannot have more than 100 \
-                                project directories\nfor the same project name and in the same directory")
-                else:
-                    newdir = name+"/%s_%i_%i_%i-%i"%(self.name,dd.year,dd.month,dd.day,(cd+1))
-                    self.ui.dirEdit.setText(newdir)
-                    try:
-                        os.mkdir(newdir)
-                        self.ui.groupBox.show()
-                        self.ui.setHistoricalButton.setDisabled(False)
-                        self.ui.setGeneticButton.setDisabled(False)
-                        self.dir = newdir
-                        shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
-                        self.dataFileName = self.dataFileSource.split('/')[-1]
-                        # verrouillage du projet
-                        self.lock()
-                        # on a reussi a creer le dossier, on vire le bouton browse
-                        self.ui.browseDirButton.hide()
                     except OSError,e:
                         output.notify(self,"Error",str(e))
             else:

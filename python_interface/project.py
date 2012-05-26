@@ -50,7 +50,6 @@ class Project(baseProject,formProject):
         self.ui.setHistoricalButton.setDisabled(True)
         self.ui.setGeneticButton.setDisabled(True)
         self.ui.runReftableButton.setDisabled(True)
-        self.ui.browseDirButton.setDisabled(True)
         self.ui.newAnButton.setDisabled(True)
         self.ui.dataFileEdit.setReadOnly(True)
         self.ui.dirEdit.setReadOnly(True)
@@ -58,7 +57,6 @@ class Project(baseProject,formProject):
         self.ui.groupBox_7.hide()
         self.ui.groupBox_8.hide()
 
-        self.ui.browseDirButton.hide()
 
         self.ui.ascertSimFrame.hide()
 
@@ -99,7 +97,7 @@ class Project(baseProject,formProject):
         """
         QApplication.setOverrideCursor( Qt.WaitCursor )
         if os.path.exists("%s/RNG_state_0000.bin"%self.dir):
-            # si on est en mode "cluster"
+            # si on est en mode "cluster" (DEPRECATED)
             if dest != None:
                 shutil.copy("%s/RNG_state_0000.bin"%self.dir,"%s/RNG_save"%self.dir)
 
