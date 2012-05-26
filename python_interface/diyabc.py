@@ -200,23 +200,10 @@ class Diyabc(formDiyabc,baseDiyabc):
         #mettre plusieurs raccourcis claviers pour le meme menu
         #action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q)])
-        #sepAc = QAction("Open recent projects",self)
-        #sepAc.setSeparator(True)
-        #file_menu.addAction(sepAc)
-        #style_menu = self.ui.menubar.addMenu("Style")
-        #action_group = QActionGroup(style_menu)
-        #for stxt in self.styles:
-        #    self.style_actions[stxt] = style_menu.addAction(stxt,self.changeStyle)
-        #    self.style_actions[stxt].setActionGroup(action_group)
-        #    self.style_actions[stxt].setCheckable(True)
-        navigate_menu = self.ui.menubar.addMenu("&Navigate")
-        self.navigate_menu = navigate_menu
+
+        self.navigate_menu = QMenu("&Go to")
         self.navigateProjectActions = []
-        self.prevProjectActionMenu = navigate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/arrow-up.png"),"&Previous project",self.prevProject,QKeySequence(Qt.CTRL + Qt.Key_PageUp))
-        self.nextProjectActionMenu = navigate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/arrow-down.png"),"&Next project",self.nextProject,QKeySequence(Qt.CTRL + Qt.Key_PageDown))
-        navigate_menu.addSeparator()
-        self.nextProjectActionMenu.setDisabled(True)
-        self.prevProjectActionMenu.setDisabled(True)
+
         help_menu = self.ui.menubar.addMenu("&Help")
         self.help_menu = help_menu
         help_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
@@ -393,15 +380,20 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.currentProjectMenu = None
 
     def updateNavigateMenu(self):
-        for ac in self.navigateProjectActions:
-            self.navigate_menu.removeAction(ac)
-        self.navigateProjectActions = []
+        if len(self.project_list) == 0:
+            self.menubar.removeAction(self.navigate_menu.menuAction())
+        else:
+            self.ui.menubar.insertMenu(self.help_menu.menuAction(),self.navigate_menu)
 
-        for i in range(self.ui.tabWidget.count()):
-            name = self.ui.tabWidget.widget(i).name
-            self.navigateProjectActions.append( self.navigate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/fileopen.png"),"Go to %s (%s)"%(name,i+1),self.goToProject) )
-            if i == self.ui.tabWidget.currentIndex():
-                self.navigateProjectActions[-1].setDisabled(True)
+            for ac in self.navigateProjectActions:
+                self.navigate_menu.removeAction(ac)
+            self.navigateProjectActions = []
+
+            for i in range(self.ui.tabWidget.count()):
+                name = self.ui.tabWidget.widget(i).name
+                self.navigateProjectActions.append( self.navigate_menu.addAction(QIcon(dataPath.DATAPATH+"/icons/fileopen.png"),"Go to %s (%s)"%(name,i+1),self.goToProject) )
+                if i == self.ui.tabWidget.currentIndex():
+                    self.navigateProjectActions[-1].setDisabled(True)
 
     def goToProject(self):
         ac=self.sender()
@@ -449,8 +441,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.saveAllProjActionMenu.setDisabled(False)
                 self.saveButton.setDisabled(False)
             if len(self.project_list) == 2:
-                self.nextProjectActionMenu.setDisabled(False)
-                self.prevProjectActionMenu.setDisabled(False)
                 self.saveAllButton.setDisabled(False)
             self.switchToMainStack()
             log(1,"Simulation project '%s' successfully created"%(newSimProj.name))
@@ -655,8 +645,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                             self.saveButton.setDisabled(False)
                         if len(self.project_list) == 2:
                             self.saveAllButton.setDisabled(False)
-                            self.nextProjectActionMenu.setDisabled(False)
-                            self.prevProjectActionMenu.setDisabled(False)
                         # on quitte la page d'accueil si on y était
                         self.switchToMainStack()
                         # creation du lock
@@ -825,8 +813,6 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.saveAllProjActionMenu.setDisabled(False)
                         self.saveButton.setDisabled(False)
                     if len(self.project_list) == 2:
-                        self.nextProjectActionMenu.setDisabled(False)
-                        self.prevProjectActionMenu.setDisabled(False)
                         self.saveAllButton.setDisabled(False)
                     self.switchToMainStack()
                     self.updateDoc(newProj)
@@ -870,8 +856,6 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.saveButton.setDisabled(True)
             self.switchToWelcomeStack()
         if len(self.project_list) == 1:
-            self.nextProjectActionMenu.setDisabled(True)
-            self.prevProjectActionMenu.setDisabled(True)
             self.saveAllButton.setDisabled(True)
         log(1,"Project '%s' closed"%(cdir))
 
