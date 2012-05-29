@@ -149,18 +149,6 @@
                <number>1</number>
               </property>
               <item>
-               <widget class="QPushButton" name="openProjectButton">
-                <property name="font">
-                 <font>
-                  <pointsize>12</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>&amp;Open project</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QPushButton" name="newMSSProjectButton">
                 <property name="font">
                  <font>
@@ -181,6 +169,18 @@
                 </property>
                 <property name="text">
                  <string>New SNP project</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="openProjectButton">
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>&amp;Open project</string>
                 </property>
                </widget>
               </item>
@@ -275,7 +275,6 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>openProjectButton</tabstop>
   <tabstop>newMSSProjectButton</tabstop>
   <tabstop>tabWidget</tabstop>
  </tabstops>

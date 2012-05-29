@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>457</width>
-    <height>205</height>
+    <height>228</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,8 +33,8 @@
       <property name="text">
        <string>DIYABC : vvv (ddd) 
 
- Jean-Marie CORNUET ,  Julien VEYSSIER ,  Virginie RAVIGNIE,
-Alexandre DEHNE-GARCIA ,  Arnaud ESTOUP
+ Jean-Marie CORNUET ,  Julien VEYSSIER, Pierre PUDLO,
+Virginie RAVIGNIE, Alexandre DEHNE-GARCIA ,  Arnaud ESTOUP
 
 Centre de Biologie pour la Gestion des Populations
 Campus International de Baillarguet CS 30016
@@ -116,7 +116,7 @@ Campus International de Baillarguet CS 30016
      <x>0</x>
      <y>0</y>
      <width>457</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
