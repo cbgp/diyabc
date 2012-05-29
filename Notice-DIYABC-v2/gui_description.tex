@@ -158,36 +158,3 @@ When the computation is finished, the screen looks like this :\\
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-26.png} 
 
 
-\subsection{Defining analyses}
-Once the project includes a reference table, analyses can be defined and performed. For that purpose, click on the \texttt{Analyses} tab of the current screen. This shows the following screen:\\
- 
-\includegraphics[scale=0.36]{gui_pictures/Capture-DIYABC-30.png} 
- \vspace{20}
-We first need to define which kind of analysis we want to perform. So, we click on the \fbox{\textsf{Define new analysis}} button and get this screen:\\ 
-\includegraphics[scale=0.36]{gui_pictures/Capture-DIYABC-31.png} 
- \vspace{20}
-The program requires that you give a different name to each analysis that you want to perform.\\
- For instance, we can call the analysis \emph{compar} and choose to compute posterior probabilities of scenarios. We fill the screen accordingly (see screen copy below) and click on the \fbox{\textsf{VALIDATE}} button.\\
-\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-32.png} 
- \vspace{20}
-Each type of analysis need specific additional information. This will be developed later. Once this information has been given to the program, it goes back to the first Analyses screen:\\
-\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-33.png} 
- \vspace{20}
-This is a kind of dashboard for the set of analyses that you want to perform. You can define all the analyses you need. For instance, in the screen below, five analyses have been programmed :\\
-- a comparison of scenarios (\emph{compar})\\
-- a pre-evaluation of the combination of scenarios and parameter priors (\emph{preval})\\
-- an estimation of parameters under the first scenario (\emph{estim1})\\
-- an estimation of parameters under the second scenario (\emph{estim2})\\
-- an estimation of parameters under the third scenario (\emph{estim3})\\
-\includegraphics[scale=0.3]{gui_pictures/Capture-DIYABC-34.png} 
- \vspace{20}
-Each line of the table corresponds to a single analysis, the name and type of which are given in the corresponding columns. The  
-\fbox{\textsf{remove}} button cancels the analysis. The \fbox{\textsf{View values}} show all the information needed for the analysis (see example below). Clicking on the \fbox{\textsf{launch}} button starts the computation only if the computation program is not yet running on this project. If it is yet running, the analysis is put in a queue and will start later. This allows to program a set of analyses and leave the project or the computer while these are running. This can be useful when computation last a long time.
-\includegraphics[scale=0.3]{gui_pictures/Capture-DIYABC-35.png} 
- \vspace{20}
-The screen below shows a state in which two of the five analysis have been achieved. Notice that for these two analyses, the former \fbox{\textsf{launch}} button shows now a \fbox{\textsf{view}} caption. 
-\includegraphics[scale=0.3]{gui_pictures/Capture-DIYABC-36.png} 
- \vspace{20}
-Clicking on the \fbox{\textsf{view}} button, e.g. for the \emph{estim1} analysis, gives access to the results of this analysis :\\
-\includegraphics[scale=0.3]{gui_pictures/Capture-DIYABC-37.png}
-%\clearpage
