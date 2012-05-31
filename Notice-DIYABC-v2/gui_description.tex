@@ -43,56 +43,62 @@ Eventually, below the logo, there are three buttons which are duplicate shortcut
 \includegraphics[scale=0.4]{gui_pictures/Capture-DIYABC-6.png}\\ 
 
 
-The \texttt{Help} buttons has two options, the usual ``about'' giving information on the current version and the authors and a \texttt{Show logfile} which opens up a window showing the list of actions performed by the program.\\
   
-Clicking on the \fbox{\textsf{Open project}} button opens up the following frame:\\
+%Clicking on the \fbox{\textsf{Open project}} button opens up the following frame:\\
 
-\includegraphics[scale=0.4]{gui_pictures/Capture-DIYABC-5.png} 
+%\includegraphics[scale=0.4]{gui_pictures/Capture-DIYABC-5.png} 
 
-To select a project, you just double click on the corresponding directory.
-\newpage
- The following screen then appears :\\
+%To select a project, you just double click on the corresponding directory.
+%\newpage
+% The following screen then appears :\\
 
-\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-6.png} 
+%\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-6.png} 
 
-We will go back later to the description of this screen.
-\begin{itemize}
- \item 
-  Cliking on the \fbox{\textsf{New project}} opens up the screen below requiring a name for the new project :\\
-\begin{center}
-\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-7.png} 
-\end{center}
-\item
-After giving a name to new project and cliking on \fbox{\textsf{OK}}, the following screen appears :\\ 
+%We will go back later to the description of this screen.
+%\begin{itemize}
+% \item 
+%  Cliking on the \fbox{\textsf{New project}} opens up the screen below requiring a name for the new project :\\
+%\begin{center}
+%\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-7.png} 
+%\end{center}
+%\item
+%After giving a name to new project and cliking on \fbox{\textsf{OK}}, the following screen appears :\\ 
 
-\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-6.png} 
+%\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-6.png} 
 
-\end{itemize}
+%\end{itemize}
 
 \subsection{Defining a new project}
-Defining a new project requires to follow a number of steps that we are going to detail now.
-
-\subsubsection{Step 1 : choosing the data file}
-This is performed by clicking on the corresponding \fbox{\textsf{Browse}} button (previous screen).  The usual file browsing screen appears (below) and one has to select a Genepop format data file, here \texttt{gg\_001.txt}. \\
+Defining a new project requires different steps which are not the same whether the data are SNPs or microsatellites/DNA sequences (MSS). 
+Let start with an MSS project : click on one of the following :
+\begin{itemize}
+ \item \texttt{File} menu $>$ \texttt{New project} $>$ \texttt{Microsatellites and/or sequences}
+ \item the menu shortcut \texttt{New MSS}
+ \item the bottom left button \fbox{\textsf{New Microsat/Sequence project}}
+\end{itemize}
+or press simultaneously the \texttt{Control} and \texttt{M} keys.\\
+A new window appears in which the user can choose a location and a name for the new project as shown below :\\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-7.png} 
 
-Clicking on the \fbox{\textsf{Open}} button leads back to the previous screen with the edit field filled with the name of the data file and some characteristics of this data file appearing on the screen (number of loci, individuals and samples).\\
+Let's enter \textbf{demo1} as the project name and click on the \fbox{\textsf{Create project}} button.\\
+The following screen appears :\\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-8.png} 
 
-\subsubsection{Step 2 : choosing the location of the project directory}
- Click on the corresponding \fbox{\textsf{Browse}} button (previous screen). The usual directory browsing screen appears (below). 
- 
-\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-9.png} 
- 
-Clicking on the  \fbox{\textsf{Choose}} button will create the new project directory in the \texttt{/home/cornuet/workspace/diyabc/tests} directory as shown in the screen below.\\  
+The \textbf{demo1} project and all its future files will be located in the directory \texttt{demo1\_2012\_5\_31-1}.
 
+\subsubsection{Step 1 : choosing the data file}
+We next need to choose the data file of the project. This is performed by clicking on the corresponding \fbox{\textsf{Browse}} button (previous screen).  The usual file browsing screen appears (below) and one has to select a Genepop format data file, here \texttt{data1.mss}. \\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-9.png} 
+\\
+Clicking on the \fbox{\textsf{Open}} button leads  to the following screen with the edit field filled with the name of the data file and some characteristics of this data file appearing on the screen (number of loci, individuals and samples).\\
+Below these fields are two panels indicating that we need to provide information about the Historical model (left panel) and about the Genetic data and associated Summary statistics (right panel). The red crosses on both panels will change to green checks once the corresponding information will be completed.\\ 
+\\
+\\
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-10.png} 
- \vfill
- Three new frames have appeared on the screen : Historical model, Genetic data/Summary statistics and Simulated data sets. The first two screens show a red cross meaning that they require information from the user. Once this information will be input and validated, the red cross will change to a green check sign as already shown on page 18.
- 
- \newpage
+\newpage
 \subsubsection{Inform the Historical model}
 Click on the corresponding \fbox{\textsf{Set}} button. The following screen, familiar to users of previous versions, appears:\\
 
@@ -102,7 +108,7 @@ Let's enter a simple scenario in scenario 1 edit window and click on the \fbox{\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-12.png} 
 
-The parameter prior frame allows to choose the prior density of each parameter. A parameter is anything in the scenario that is not a keyword (here \texttt{sample,split} and \texttt{merge}), nor a numeric value. In our little scenario, parameters are hence : \texttt{N1, N2, N3, t1, r1} and \texttt{t2}.\\
+The parameter prior frame allows to choose the prior density of each parameter. A parameter is anything in the scenario that is not a keyword (here \texttt{sample} and \texttt{merge}), nor a numeric value. In our little scenario, parameters are hence : \texttt{N1, N2, N3, t1} and \texttt{t2}. In our example, we need to set the priors on \texttt{t1} and \texttt{t2} such that \texttt{t2}$>$  \texttt{t1}. We can do it either by using the \texttt{set condition} button or by playing with the minimum and maximum values of the two parameters.\\
 
 If we click on the \fbox{\textsf{Check scenario}} button, the logic of the scenario is checked and if it is found OK, and if the scenario is drawable, the drawing appears on a new frame : \\
 
@@ -110,7 +116,7 @@ If we click on the \fbox{\textsf{Check scenario}} button, the logic of the scena
 
 The scenario can be saved by clicking on the \fbox{\textsf{SAVE}} button. The frame can be close by clicking on the \fbox{\textsf{CLOSE}} button.\\
 
-Since the scenario has been checked, we can validate and save the historical model by clicking on the  \fbox{\textsf{VALIDATE AND SAVE}} button (bottom screen of p 21). We go then go back to the project screen in which the historical model has now received the green check sign.\\
+Since the scenario has been checked, we can validate and save the historical model by clicking on the  \fbox{\textsf{VALIDATE AND SAVE}} button (bottom screen of p 21). We then go back to the project screen in which the historical model has now received the green check sign.\\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-14.png} 
 
@@ -121,7 +127,7 @@ Click on the corresponding \fbox{\textsf{Set}} button. We get the following scre
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-15.png} 
 
-On the left part of the screen, there is the list of loci, with their type (M for microsatellites or S for DNA sequences) and the motif size and range for microsatellite loci only. Actually, the values for motif size and range are just default values and do not necessarily correspond to the actual data. The user who knows the real values for its data is required to set the correct values at this stage. If the range is to short to include all observed values, a message appears in a box asking to enlarge the corresponding range. Note that the range is measured in number of motifs, so that a range of 40 for a motif length of 2 bp means that the difference between the smallest and the longest alleles should not exceed 80 bp.\\
+On the left part of the screen, there is the list of loci, with their type (M for microsatellites or S for DNA sequences) and the motif size and range for microsatellite loci only. Actually, the values for motif size and range are just default values and do not necessarily correspond to the actual data. The user who knows the real values for its data is required to set the correct values at this stage. If the range is too short to include all observed values, a message appears in a box asking to enlarge the corresponding range. Note that the range is measured in number of motifs, so that a range of 40 for a motif length of 2 bp means that the difference between the smallest and the longest alleles should not exceed 80 bp.\\
 We then need to define at least one group of loci by clicking on the \fbox{\textsf{Add group}} button. We get this :\\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-16.png} 
@@ -132,13 +138,15 @@ Suppose we want the three loci in the same group. We select them like in any tab
 
 and then pressing the \fbox{\textsf{$ >> $}} button : \\
 
-\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-18.png} 
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-18.png}
+
+Note that the \fbox{\textsf{Auto group}} button would have produced the same result of putting all the microsatellite loci in the same group.\\  
 
 We then need to define the mutation model and the summary statistics of the locus group. Clicking on the \fbox{\textsf{Set mutation model}} button, the following screen appears :\\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-19.png} 
 
-Once the mutation model of Group 1 is defined, we click on the \fbox{\textsf{VALIDATE}} button to go back to the previous screen.
+Once the mutation model of Group 1 is defined, we click on the \fbox{\textsf{VALIDATE}} button to go back to the previous screen. Clicking on the \fbox{\textsf{Set Summary statistics}} button, we get the following screen :\\ 
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-20.png} 
 

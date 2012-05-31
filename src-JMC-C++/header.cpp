@@ -229,6 +229,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 		//    if (this->histparam[i].prior.constant) cout<<"   constant\n"; else cout<<"   variable\n";
 	}
 	delete [] ss;
+	this->drawuntil=true;
 	if (this->nconditions>0) {
 		this->condition = new ConditionC[this->nconditions];
 		for (int i=0;i<this->nconditions;i++) {

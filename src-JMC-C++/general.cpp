@@ -485,10 +485,12 @@ try {
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
                                           //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"    nenr="<<nenr<<"\n";
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,0);
-                                          //cout<<"retour de dosimultabref\n";
+                                          cout<<"retour de dosimultabref header.drawuntil="<<header.drawuntil<<"\n";
+										  
                                           if (header.drawuntil){
 											simOK=true;
 											for (int i=0;i<nenr;i++) if (enreg[i].message!="OK") {simOK=false;message=enreg[i].message;}
+											cout <<"simOK="<<simOK<<"\n";
 											if (simOK) {
 												//cout<<"simOK=true   nenr="<<nenr<<"\n";
 												//debutf=walltime(&clock_zero);
