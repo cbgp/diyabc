@@ -222,7 +222,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         # TOOLBAR
         newButton = QPushButton(QIcon(dataPath.DATAPATH+"/icons/folder-new.png"),"New MSS",self)
         newButton.setObjectName("newButton")
-        newButton.setToolTip("New Microsatellites/Sequences project")
+        newButton.setToolTip("New Microsatellite/Sequence project")
         newButton.setMaximumSize(QSize(85, 22))
         #newButton.setMinimumSize(QSize(16, 18))
         newButton.setFlat(True)
@@ -759,7 +759,11 @@ class Diyabc(formDiyabc,baseDiyabc):
         log(1,'Attempting to create a new project')
         ok = True
         if path == None:
-            fileDial = QtGui.QFileDialog(self,"Select location of the new project")
+            if "SNP" in self.sender().text():
+                msg = "Select location of the new SNP project"
+            else:
+                msg = "Select location of the new MSS project"
+            fileDial = QtGui.QFileDialog(self,msg)
             fileDial.setAcceptMode(QFileDialog.AcceptSave)
             fileDial.setLabelText(QtGui.QFileDialog.Accept,"Create project")
             fileDial.setLabelText(QtGui.QFileDialog.FileName,"Project name")

@@ -156,7 +156,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>&amp;New Microsats/Sequences project</string>
+                 <string>New Microsat/Sequence project</string>
                 </property>
                </widget>
               </item>
@@ -180,7 +180,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>&amp;Open project</string>
+                 <string>Open project</string>
                 </property>
                </widget>
               </item>
