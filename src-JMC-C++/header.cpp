@@ -160,7 +160,7 @@ int HeaderC::readHeaderScenarios(ifstream & file){
 		}
 	}
 	this->reference=false;
-	for (int ievent=0;ievent<this->scenario[0].nevent;ievent++){
+	/*for (int ievent=0;ievent<this->scenario[0].nevent;ievent++){
 		if (this->scenario[0].event[ievent].action == 'R') {
 			this->dataobs.nsample++;
 			this->dataobs.nind.resize(this->dataobs.nsample);
@@ -187,7 +187,7 @@ int HeaderC::readHeaderScenarios(ifstream & file){
 			}
 		}
 		if (this->scenario[0].event[ievent].nindMref+this->scenario[0].event[ievent].nindFref>0) this->reference=true;
-	}
+	}*/
 	for (int sa=0;sa<this->dataobs.nsample;sa++) cout<<this->dataobs.ss[0][sa]<<"   ";cout<<"\n";
 
 	for (int i=0;i<this->nscenarios;i++) delete []sl[i];
@@ -1390,6 +1390,7 @@ void HeaderC::calstatobs(string statobsfilename) {
 	//if (debuglevel==2)cout<<"entete : "<<entete<<"\n";
 	//delete []sb;
 	jstat=0;
+	if (debuglevel==2) cout<<"avant FILE *fobs\n";
 	FILE *fobs;
 	fobs=fopen(statobsfilename.c_str(),"w");
 	fputs(ent.c_str(),fobs);

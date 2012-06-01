@@ -228,6 +228,7 @@ FILE *flog;
 */ 
     void cal_loc() {
         long double **qobs;
+		cout<<"debut de cal_loc\n";
 		//float *stat_obs,
 		float diff;
         int scen,**avant,**apres,**egal,bidon,nparamax = 0,npartpos=0;
@@ -247,6 +248,7 @@ FILE *flog;
         apres = new int*[rt.nscen];for (int i=0;i<rt.nscen;i++) {apres[i] = new int[rt.nstat];for (int j=0;j<rt.nstat;j++) apres[i][j]=0;}
         egal = new int*[rt.nscen]; for (int i=0;i<rt.nscen;i++) {egal[i]  = new int[rt.nstat];for (int j=0;j<rt.nstat;j++)  egal[i][j]=0;}
         rt.openfile2();
+		cout<<"avant la lecture des enregistrements  header.reference = "<<header.reference<<"\n";
         for (int p=0;p<rt.nrec;p++) {
 			if (not header.reference) bidon=rt.readrecord(&enr);
 			else {
@@ -303,7 +305,8 @@ FILE *flog;
              f12<<"\n";
         }
         f12.close();
-		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
+		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+		cout<<iprog<<"  "<<nprog<<"\n";
     }
 
 /**
@@ -316,6 +319,7 @@ FILE *flog;
  		cout<<"doacpl "<<opt<<"\n";
        ss = splitwords(opt,";",&ns);
         progressfilename = path + ident + "_progress.txt";
+		flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",0,100);fclose(flog);
         for (int i=0;i<ns;i++) { cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
