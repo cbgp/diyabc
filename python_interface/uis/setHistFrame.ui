@@ -277,6 +277,12 @@ scenario</string>
    </item>
    <item>
     <widget class="QFrame" name="frame_3">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>80</height>
+      </size>
+     </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
@@ -284,10 +290,10 @@ scenario</string>
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="topMargin">
-       <number>0</number>
+      <property name="spacing">
+       <number>3</number>
       </property>
-      <property name="bottomMargin">
+      <property name="topMargin">
        <number>0</number>
       </property>
       <item>
@@ -363,7 +369,7 @@ scenario</string>
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>70</height>
+          <height>75</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -383,8 +389,8 @@ scenario</string>
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>711</width>
-           <height>66</height>
+           <width>717</width>
+           <height>71</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -819,7 +825,7 @@ scenario</string>
         <x>0</x>
         <y>0</y>
         <width>905</width>
-        <height>185</height>
+        <height>171</height>
        </rect>
       </property>
       <property name="font">
