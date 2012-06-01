@@ -102,7 +102,8 @@ class Diyabc(formDiyabc,baseDiyabc):
             for projDirName in projects:
                 self.openProject(projDirName)
         try:
-            self.documentator = Documentator(dataPath.DOCPATH+"/index.html")
+            #self.documentator = Documentator(dataPath.DOCPATH+"/index.html")
+            self.documentator = Documentator("docs/dodo/index.html")
             self.updateDoc()
         except Exception as e:
             log(1,"Documentation error : %s"%e)
