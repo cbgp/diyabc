@@ -195,6 +195,70 @@ We need to choose among the six possible types of analyses (actually, only four 
 After clicking on the \fbox{\textsf{VALIDATE}} button, we go back to the previous screen. However, the new analysis now appears on top of the analysis panel. For each analysis, this panel provides its name and type, the list of parameters that will transmitted (in a coded way) to the computation program, a progress bar that approximates the progress of the analysis run, and four buttons. The right button has to be clicked to launch the analysis. The three left buttons provide a way to copy an analysis (\fbox{\textsf{Copy}} button), to make some modifications (\fbox{\textsf{Edit}} button) before launching it or to delete the analysis (\fbox{\textsf{Del}} button).\\
  
 
-\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-30.png} 
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-30.png} \\
 
+Let's click on the \fbox{\textsf{Launch}} button. This analysis is very fast (ca 1 second) so that the progress bar shows almost immediately a 100\% value : \\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-31.png} \\
+
+To view results, just click on the \fbox{\textsf{View results}} button. After some seconds (while the program reads the PCA result file), we can see this : \\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-32.png} \\
+
+The results are shown PCA plane by PCA plane. Each (small) dot represents a simulated dataset from the reference table and the large yellow dot represents the observed data set. The initial components of datasets are the values of the summary statistics from which are computed the principal components. The four drop-lists (\texttt{Scenario to draw}, \texttt{Horizontal axis component}, \texttt{Vertical axis component}, \texttt{Number of prior plots per scenario}) can be used to explore further the results of the PCA.\\
+The graphic can be printed or saved (\fbox{\textsf{PRINT}} and \fbox{\textsf{SAVE}} buttons, respectively). Clicking on the \fbox{\textsf{CLOSE}} button closes the result window. Eventually, clicking on the \fbox{\textsf{View numerical results}} opens up another screen as shown below :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-33.png} \\
+
+This screen is obtained by computing for each summary statistics the proportion of simulated data (considering the total reference table) that have a value below the value of the observed dataset. A star indicates proportions lower than 5\% or greater than 95\% (two stars, $<$1\% or $>$1\%; three stars, $<$0.1\% or $>$0.1\%).\\ 
+
+ As usual, results can be printed (\fbox{\textsf{PRINT}}) and/or saved (\fbox{\textsf{SAVE}}). Click on \fbox{\textsf{OK}} to leave this screen.\\
+
+Although we get one star for a few summary statistics, we conclude that our model is suitable enough to proceed to other ABC analyses.
+
+\subsubsection{ABC parameter estimation}
+
+Back on the screen of page 30, we click on the \fbox{\textsf{Define new analysis}} button. We choose the \texttt{Estimate posterior distribution of parameters} option and we call \texttt{estim1} this second analysis :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-34.png} \\
  
+We click on the \fbox{\textsf{VALIDATE}} button and get the following screen in which we can choose the scenario to use for this estimation. Since a single scenario has been defined, there is nothing else to do than to click on the \fbox{\textsf{VALIDATE}} button : \\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-35.png} \\
+ 
+We get then the following screen in which we can make several choices :
+\begin{itemize}
+ \item on the left hand side, we can choose the number of simulated datasets that will be used for the local linear regression (cf section 2.1).
+ \item below, we can select the transformation of parameter values that can generally improve the results (default = logit transform).
+ \item on the right hand, we can truncate the reference table to a specified number of datasets.
+ \item eventually, estimations can be performed either on raw parameters, and/or combinations of parameters that are generally more estimable. \emph{Composite} parameters are products of effective population sizes or times by mean mutation rate whereas \emph{Scaled} parameters are ratios of effective population sizes or times by mean effective population size. 
+\end{itemize}
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-36.png} \\
+ 
+Apart from the number of closest datasets that we set at 10,000, we keep all other default values and click on the \fbox{\textsf{VALIDATE}} button. We get back to the Analysis control panel which now looks like this:\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-38.png} \\
+
+\newpage
+We click on the \fbox{\textsf{Launch}} button. The analysis progress is now visible :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-38a.png} \\
+
+As long as the analysis is not terminated, we could stop it by clicking on the  \fbox{\textsf{Stop}} button. Once this second analysis is finished, we can view its results by clicking on the  \fbox{\textsf{View results}} button :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-39.png} \\
+
+Let's have a look :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-40.png} \\
+
+In the scrolling window, we get graphics showing the prior (red curve) and posterior (green curve) distributions of all parameters. Below each graphics are statistics (mean, median, mode and quantiles) of the posterior distribution. The latter are grouped in a table that appears when clicking on the upper left \fbox{\textsf{view numerical results}} button, showing this :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-41.png} \\
+
+We go back to the previous screen by cliking the \fbox{\textsf{OK}} button.
+\newpage
+ We can also have results for \emph{Composite} or \emph{Scaled} parameters. Below is an example of \emph{Scaled} time parameters obtained by clicking on the \emph{Scaled} radio button and scrolling the graphs window on the right:\\
+ 
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-42.png} \\
