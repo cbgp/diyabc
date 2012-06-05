@@ -842,7 +842,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * calcule les phistars pour les paramètres composites
 */
     void calphistarC(int n, long double **phistarcompo){
-        //cout<<"debut de calphistar\n";
+        //cout<<"debut de calphistarC\n";
         int k,kk,qq;
         long double pmut;
         for (int i=0;i<n;i++) {

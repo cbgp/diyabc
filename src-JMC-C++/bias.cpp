@@ -1105,7 +1105,11 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 				paordreabs[i]=k;
 				cout <<"i="<<i<<"    k="<<k<<"      ";
 				cout <<rt.histparam[rt.scenteste-1][i].name<<"   "<<paname[k]<<"\n";
+			} else {
+				cout <<"i="<<i<<"   "<<paname[i]<<"\n";
+				paordreabs[i]=i;
 			}
+			cout <<"paordreabs["<<i<<"]="<<paordreabs[i]<<"\n";
 		}		
 		for (int i=0;i<npv;i++) {
 			paordre[i] = i;
@@ -1113,6 +1117,7 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 				paordre[i]=0;
 				for (int j=0;j<npv;j++) if (paordreabs[i]>paordreabs[j]) paordre[i]++;
 			}
+			cout<<"paordre["<<i<<"]="<<paordre[i]<<"\n";
 		}
         for (int p=0;p<ntest;p++) {
 			getline(file,bidon);
@@ -1125,7 +1130,8 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 			cout<<"bias.cpp   npv="<<npv<<"\n";
 			for (int i=0;i<npv;i++)  {
 				enreg2[p].paramvv[i]=atof(ss[paordre[i]+1].c_str());
-				enreg2[p].name[i]=rt.histparam[rt.scenteste-1][i].name;
+				if (i<rt.nhistparam[rt.scenteste-1]) enreg2[p].name[i]=rt.histparam[rt.scenteste-1][i].name;
+				else enreg2[p].name[i]=paname[i];
 				if(p==0)cout<<"enreg2[p].name["<<i<<"]="<<enreg2[p].name[i]<<" = "<<enreg2[p].paramvv[i]<<"\n";
 			}
 			cout<<"avant setcompo\n";
@@ -1196,12 +1202,16 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 				recalparamC(nsel);                  	if (debuglevel==11)	cout<<"apres recalparamC\n";
 				rempli_parsim(nsel,nparcompo); 			if (debuglevel==11)    cout<<"apres rempli_mat\n";
 				local_regression(nsel,nparcompo,matC); 	if (debuglevel==11)	cout<<"apres local_regression\n";
-				calphistarC(nsel,phistarcompo);	 	if (debuglevel==11)	cout<<"apres calphistarC\n";
+				//phistarcompo = new long double*[nsel];
+				//for (int i=0;i<nsel;i++) phistarcompo[i] = new long double[nparcompo];
+				calphistarC(nsel,phistarcompo);	 		if (debuglevel==11)	cout<<"apres calphistarC\n";
 				paramestcompo[p] = calparstatC(nsel,phistarcompo);	if (debuglevel==11)    cout<<"apres calparstatC\n";
 				for (int i=0;i<nsel;i++) {
 					for (int j=0;j<nparcompo;j++) paretoilcompo[p][i][j] = phistarcompo[i][j];
 				}
-				for (int i=0;i<nsel;i++) delete []phistarcompo[i];delete phistarcompo;
+				//cout<<"avant delete phistarcompo\n";
+				//for (int i=0;i<nsel;i++) delete []phistarcompo[i];delete phistarcompo;
+				//cout<<"apres delete phistarcompo\n";
 				
 			}
 			if (scaled) {
