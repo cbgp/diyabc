@@ -474,3 +474,4 @@ class ProjectSimulationSnp(ProjectSimulation):
                 str_locis += "{0} <{1}> [P] G{2}\n".format(self.dico_loc_nb["m"+cat.lower()],cat,numGroup)
         return str_locis
 
+
