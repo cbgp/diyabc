@@ -530,6 +530,7 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
     def reftableTermSuccess(self):
         # si on a fini, on met à jour l'affichage de la taille de la reftable
         # et on verrouille eventuellement histmodel et gendata
+        log(2,"reference table generation of project %s finished with success"%self.name)
         self.parent.systrayHandler.showTrayMessage("DIYABC : reftable","Reference table generation of project\n{0} has finished".format(self.name))
         self.putRefTableSize()
         self.stopUiGenReftable()

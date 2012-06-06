@@ -157,9 +157,9 @@ class LauncherThread(QThread):
                     if self.progressfile_path != None:
                         time.sleep(2)
                         redProblem = self.readProblem()
-                        problem = "Program of thread '%s' exited (with return code %s) unsuccessfully.\n\nLast output line : \n\n%s\n\nContent of progress file :\n\n%s"%(self.name,poll_check,outlastline,redProblem)
+                        problem = "Program of thread '%s' exited (with return code %s) unsuccessfully.\n\n%s\n\nContent of progress file :\n\n%s"%(self.name,poll_check,outlastline,redProblem)
                     else:
-                        problem = "Program of thread '%s' exited (with return code %s) unsuccessfully.\n\nLast output line : \n\n%s"%(self.name,poll_check,outlastline)
+                        problem = "Program of thread '%s' exited (with return code %s) unsuccessfully.\n\n%s"%(self.name,poll_check,outlastline)
                     self.emit(SIGNAL(self.SIGTERMPROBLEM+"(QString)"),problem)
                 return
 
