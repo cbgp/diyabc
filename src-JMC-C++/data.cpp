@@ -603,12 +603,13 @@ cout<<"fin de ecribin\n";
 	    	getline(file,s);
 		}
 		file.close();
+		cout<<"  nmisshap="<<nmisshap<<"\n";
 		this->nsample=nech;
 		this->nind.resize(nech);this->Anind=true;
 		for (int i=0;i<nech;i++) {this->nind[i]=nindi[i];}
 		if (this->nmisshap>0) this->misshap = new MissingHaplo[this->nmisshap];
 		if (this->nmissnuc>0) this->missnuc = new MissingNuc[this->nmissnuc];
-	        this->nmisshap=0;
+	    this->nmisshap=0;
 		this->nmissnuc=0;
 		this->indivname = new string*[nech];this->Aindivname=true;
 		this->indivsexe.resize(nech);this->Aindivsexe=true;
@@ -720,7 +721,7 @@ cout<<"fin de ecribin\n";
             //cout<<"\n";
     	}
     	delete [] gen;
-
+		
     }
 
 

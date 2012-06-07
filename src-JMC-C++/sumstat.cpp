@@ -24,24 +24,24 @@ extern int debuglevel;
   /***********************************************************************************************************************/
 
   int ParticleC::samplesize(int loc, int sample) {
-    int cat = this->locuslist[loc].type % 5 ;
-    int n=this->data.ss[cat][sample];
-    if (this->locuslist[loc].type<10) {
-      if (this->data.nmisshap>0) {
-	for (int i=0;i<this->data.nmisshap;i++){
-	  if ((this->data.misshap[i].locus == loc)and(this->data.misshap[i].sample == sample)) n--;
-	}
-      }
-    } else {
-      if (this->data.nmisssnp>0) {
-	for (int i=0;i<this->data.nmisssnp;i++){
-	  if ((this->data.misssnp[i].locus == loc)and(this->data.misssnp[i].sample == sample)) n--;
-	}
-      }
-    }
-    return n;
+	  int cat = this->locuslist[loc].type % 5 ;
+	  int n=this->data.ss[cat][sample];
+	  if (this->locuslist[loc].type<10) {
+		  if (this->data.nmisshap>0) {
+			  for (int i=0;i<this->data.nmisshap;i++){
+				  if ((this->data.misshap[i].locus == loc)and(this->data.misshap[i].sample == sample)) n--;
+			  }
+		  }
+	  } else {
+		  if (this->data.nmisssnp>0) {
+			  for (int i=0;i<this->data.nmisssnp;i++){
+				  if ((this->data.misssnp[i].locus == loc)and(this->data.misssnp[i].sample == sample)) n--;
+			  }
+		  }
+	  }
+	  return n;
   }
-
+  
   void ParticleC::calfreq(int gr) {
     //int n=0;
     //cout <<"debut de calfreq nloc = "<<this->nloc<<"  groupe = "<<gr <<"\n";
@@ -664,32 +664,38 @@ extern int debuglevel;
   }
 
   long double ParticleC::cal_dmu2p(int gr,int st){
-    long double *moy,dmu2=0.0,s;
-    int iloc,loc,pop,nl=0,cat,sasize,sasize1;
-    int sample=this->grouplist[gr].sumstat[st].samp-1;
-    int sample1=this->grouplist[gr].sumstat[st].samp1-1;
-    moy = new long double[2];
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      loc=this->grouplist[gr].loc[iloc];
-      cat=this->locuslist[loc].type % 5;
-      sasize=samplesize(loc,sample);sasize1=samplesize(loc,sample1);
-      if (sasize*sasize1>0) {
-	nl++;
-	for (int kpop=0;kpop<2;kpop++) {
-	  if (kpop==0) pop=sample; else pop=sample1;
-	  s = 0.0;moy[kpop]=0.0;
-	  for (int i=0;i<this->data.ss[cat][pop];i++) {
-	    if (this->locuslist[loc].haplomic[pop][i]!=MICMISSING) s += this->locuslist[loc].haplomic[pop][i];
+	  long double *moy,dmu2=0.0,s;
+	  int iloc,loc,pop,nl=0,cat,sasize,sasize1;
+	  int sample=this->grouplist[gr].sumstat[st].samp-1;
+	  int sample1=this->grouplist[gr].sumstat[st].samp1-1;
+	  moy = new long double[2];
+	  for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+		  loc=this->grouplist[gr].loc[iloc];
+		  cat=this->locuslist[loc].type % 5;
+		  sasize=samplesize(loc,sample);sasize1=samplesize(loc,sample1);
+		  //cout<<"          samplesize["<<loc<<","<<sample<<"] = "<<sasize<<"\n";
+		  //cout<<"          samplesize["<<loc<<","<<sample1<<"] = "<<sasize1<<"\n";
+		  
+		  if (sasize*sasize1>0) {
+			  nl++;
+			  for (int kpop=0;kpop<2;kpop++) {
+				  if (kpop==0) pop=sample; else pop=sample1;
+				  s = 0.0;moy[kpop]=0.0;
+				  for (int i=0;i<this->data.ss[cat][pop];i++) {
+					  if (this->locuslist[loc].haplomic[pop][i]!=MICMISSING) s += this->locuslist[loc].haplomic[pop][i];
+					  //cout<<"         locuslist["<<loc<<"].haplomic["<<pop<<"]["<<i<<"]= "<<this->locuslist[loc].haplomic[pop][i]<<"\n";
+				  }
+				  moy[kpop]=s/(long double)samplesize(loc,pop);
+			  }
+		  }
+		  dmu2 += sqr((moy[1]-moy[0])/(long double)this->locuslist[loc].motif_size);
+		  //cout<<"loc="<<loc<<"   moy["<<sample<<"]="<<moy[0]<<"   moy["<<sample1<<"]="<<moy[1]<< "       delta2="<<sqr((moy[1]-moy[0])/(long double)this->locuslist[loc].motif_size) <<"\n";
 	  }
-	  moy[kpop]=s/(long double)samplesize(loc,pop);
-	}
-      }
-      dmu2 += sqr((moy[1]-moy[0])/(long double)this->locuslist[loc].motif_size);
-    }
-    delete []moy;
-    if (nl>0) return dmu2/(long double)nl; else return 0.0;
+	  //cout<<"\n";
+	  delete []moy;
+	  if (nl>0) return dmu2/(long double)nl; else return 0.0;
   }
-
+  
   long double ParticleC::cal_das2p(int gr,int st){
     long double s=0.0;
     int iloc,loc,nl=0,cat;

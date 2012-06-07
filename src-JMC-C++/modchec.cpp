@@ -503,10 +503,10 @@ long double **ssphistar,**ssref;
         cout//<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr
             << "   nphistarOK="<< nphistarOK<<"   nstat="<<header.nstat<<"\n";
         //cout <<"DEBUG: j'arrête là." << endl; exit(1);
-        if(nphistarOK < newsspart){
+        /*if(nphistarOK < newsspart){
         	cout << "Not enough suitable particles to perform model checking. Stopping computations." << endl;
         	exit(1);
-        }
+        }*/
         npv = rt.nparam[rt.scenteste-1];
 		cout<<"npv="<<npv<<"    nenr="<<nenr<<"   nstat="<<header.nstat<<"\n";
 		//delete []enreg;
@@ -540,7 +540,11 @@ long double **ssphistar,**ssref;
             iprog+=nenr;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
             //cout<<nss<<"\n";
         }
-        if (newstat) {header.calstatobs(statobsfilename);/*stat_obs = header.stat_obs;*/}
+        if (newstat) {
+			//cout<<"\n\n\nAVANT CALSTATOBS\n";
+			header.calstatobs(statobsfilename);/*stat_obs = header.stat_obs;*/
+			//cout<<"\nAPRES CALSTATOBS\n\n\n";
+		}
         if (doloc) call_loc(newsspart,header.nstat,nrec,nsel,ssphistar,header.stat_obs);
         if (dopca) {
             if (newstat) {

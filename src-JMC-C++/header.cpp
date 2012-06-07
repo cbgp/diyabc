@@ -1261,6 +1261,38 @@ void HeaderC::calstatobs(string statobsfilename) {
 			for (int sa=0;sa<this->dataobs.nsample;sa++) this->particuleobs.data.ss[locustype][sa] = this->dataobs.ss[locustype][sa];
 		} 
 	}
+	if (this->dataobs.filetype==0){ 
+		this->particuleobs.data.nmisshap = this->dataobs.nmisshap;
+		this->particuleobs.data.nmissnuc = this->dataobs.nmissnuc;
+		if (this->dataobs.nmisshap>0) {
+			this->particuleobs.data.misshap = new MissingHaplo[this->particuleobs.data.nmisshap];
+			for (int i=0;i<this->dataobs.nmisshap;i++) {
+				this->particuleobs.data.misshap[i].locus  = this->dataobs.misshap[i].locus;
+				this->particuleobs.data.misshap[i].sample = this->dataobs.misshap[i].sample;
+				this->particuleobs.data.misshap[i].indiv  = this->dataobs.misshap[i].indiv;
+			}
+		}
+		if (this->dataobs.nmissnuc>0) {
+			this->particuleobs.data.missnuc = new MissingNuc[this->particuleobs.data.nmissnuc];
+			for (int i=0;i<this->dataobs.nmissnuc;i++) {
+				this->particuleobs.data.missnuc[i].locus  = this->dataobs.missnuc[i].locus;
+				this->particuleobs.data.missnuc[i].sample = this->dataobs.missnuc[i].sample;
+				this->particuleobs.data.missnuc[i].indiv  = this->dataobs.missnuc[i].indiv;
+				this->particuleobs.data.missnuc[i].nuc    = this->dataobs.missnuc[i].nuc;
+			}
+		}
+	} else {
+		this->particuleobs.data.nmisssnp = this->dataobs.nmisssnp;
+		this->particuleobs.data.nmisssnp = this->dataobs.nmisssnp;
+		if (this->particuleobs.data.nmisssnp>0) {
+			this->particuleobs.data.misssnp = new MissingHaplo[this->particuleobs.data.nmisssnp];
+			for (int i=0;i<this->dataobs.nmisssnp;i++) {
+				this->particuleobs.data.misssnp[i].locus  = this->dataobs.misssnp[i].locus;
+				this->particuleobs.data.misssnp[i].sample = this->dataobs.misssnp[i].sample;
+				this->particuleobs.data.misssnp[i].indiv  = this->dataobs.misssnp[i].indiv;
+			}
+		}
+	}
 	if (debuglevel==2) cout<<"avant l'affectation des dat et ref'\n";
 	this->particuleobs.dat = new bool**[5];
 	this->particuleobs.ref = new bool**[5];
