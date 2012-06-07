@@ -503,10 +503,10 @@ long double **ssphistar,**ssref;
         cout//<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr
             << "   nphistarOK="<< nphistarOK<<"   nstat="<<header.nstat<<"\n";
         //cout <<"DEBUG: j'arrête là." << endl; exit(1);
-        /*if(nphistarOK < newsspart){
-        	cout << "Not enough suitable particles to perform model checking. Stopping computations." << endl;
+        if(10*nphistarOK < newsspart){
+        	cout << "Not enough suitable particles ("<<nphistarOK<<")to perform model checking. Stopping computations." << endl;
         	exit(1);
-        }*/
+        }
         npv = rt.nparam[rt.scenteste-1];
 		cout<<"npv="<<npv<<"    nenr="<<nenr<<"   nstat="<<header.nstat<<"\n";
 		//delete []enreg;

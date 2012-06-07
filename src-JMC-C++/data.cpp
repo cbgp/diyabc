@@ -696,7 +696,6 @@ cout<<"fin de ecribin\n";
     			    if ((this->locus[loc].type==3)and(geno!="000")) this->indivsexe[ech][ind]=1;
     			}
     			for (int i=0;i<n;i++) {
-    				ng++;
                     if (gen[i]!="000") {
     					gg = atoi(gen[i].c_str());
     					haplo.push_back(gg);
@@ -707,10 +706,11 @@ cout<<"fin de ecribin\n";
                         this->nmisshap +=1;
                         this->misshap[this->nmisshap-1].sample=ech;
                         this->misshap[this->nmisshap-1].locus=loc;
-                        this->misshap[this->nmisshap-1].indiv=ind;
+                        this->misshap[this->nmisshap-1].indiv=ng;
                         haplo.push_back(-9999);
-    					//}
+    					cout <<"misshap["<<this->nmisshap-1 <<"]  sample="<<ech<<"  loc="<<loc<<"  indiv="<<ng<<"\n";
     				}
+    				ng++;
     			}
     		}
     		this->locus[loc].haplomic[ech] = new int[ng];
@@ -774,7 +774,6 @@ cout<<"fin de ecribin\n";
 
     			}
     			for (int i=0;i<n;i++) {
-                    ng++;
                     haplo.push_back(gen[i]);
     				if (gen[i]!="") {
     					j0=min(gen[i].find("-"),gen[i].find("N"));
@@ -782,7 +781,7 @@ cout<<"fin de ecribin\n";
     						this->nmissnuc +=1;
     						this->missnuc[this->nmissnuc-1].sample=ech;
     						this->missnuc[this->nmissnuc-1].locus=loc;
-   						    this->missnuc[this->nmissnuc-1].indiv=ind;
+   						    this->missnuc[this->nmissnuc-1].indiv=ng;
     						this->missnuc[this->nmissnuc-1].nuc=j0;
     						j0=min(gen[i].find("-",j0+1),gen[i].find("N",j0+1));
     					}
@@ -791,8 +790,9 @@ cout<<"fin de ecribin\n";
                         this->nmisshap +=1;
                         this->misshap[this->nmisshap-1].sample=ech;
                         this->misshap[this->nmisshap-1].locus=loc;
-                        this->misshap[this->nmisshap-1].indiv=ind;
+                        this->misshap[this->nmisshap-1].indiv=ng;
     				}
+                    ng++;
     			}
     		}
     		ss[ech] = ng;

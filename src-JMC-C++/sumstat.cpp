@@ -27,6 +27,7 @@ extern int debuglevel;
 	  int cat = this->locuslist[loc].type % 5 ;
 	  int n=this->data.ss[cat][sample];
 	  if (this->locuslist[loc].type<10) {
+		  //cout<<"samplesize["<<loc<<"]["<<sample<<"]   nmisshap="<<this->data.nmisshap<<"\n";
 		  if (this->data.nmisshap>0) {
 			  for (int i=0;i<this->data.nmisshap;i++){
 				  if ((this->data.misshap[i].locus == loc)and(this->data.misshap[i].sample == sample)) n--;
@@ -683,15 +684,15 @@ extern int debuglevel;
 				  s = 0.0;moy[kpop]=0.0;
 				  for (int i=0;i<this->data.ss[cat][pop];i++) {
 					  if (this->locuslist[loc].haplomic[pop][i]!=MICMISSING) s += this->locuslist[loc].haplomic[pop][i];
-					  //cout<<"         locuslist["<<loc<<"].haplomic["<<pop<<"]["<<i<<"]= "<<this->locuslist[loc].haplomic[pop][i]<<"\n";
 				  }
 				  moy[kpop]=s/(long double)samplesize(loc,pop);
 			  }
 		  }
 		  dmu2 += sqr((moy[1]-moy[0])/(long double)this->locuslist[loc].motif_size);
-		  //cout<<"loc="<<loc<<"   moy["<<sample<<"]="<<moy[0]<<"   moy["<<sample1<<"]="<<moy[1]<< "       delta2="<<sqr((moy[1]-moy[0])/(long double)this->locuslist[loc].motif_size) <<"\n";
+		  //cout<<"loc="<<loc<<"   moy["<<sample<<"]="<<moy[0]<<"   moy["<<sample1<<"]="<<moy[1]<< "       delta2="<<sqr((moy[1]-moy[0])/(long double)this->locuslist[loc].motif_size) ;
+		  //cout<<"   motifsize="<<this->locuslist[loc].motif_size<<"\n";
 	  }
-	  //cout<<"\n";
+	  //if (loc==17) cout<<"   nl="<<nl<<"  dmu2="<<dmu2/(long double)nl<<"\n\n";
 	  delete []moy;
 	  if (nl>0) return dmu2/(long double)nl; else return 0.0;
   }
