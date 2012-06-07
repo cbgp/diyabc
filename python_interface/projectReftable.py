@@ -487,12 +487,14 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         self.ui.runReftableButton.setDisabled(False)
         self.ui.progressBar.setValue(0)
         self.ui.progressBar.hide()
+        self.ui.stopReftableButton.hide()
         self.ui.fromToFrame.hide()
 
     def startUiGenReftable(self):
         self.ui.runReftableButton.setText("Running ...")
         self.ui.runReftableButton.setDisabled(True)
         self.ui.progressBar.show()
+        self.ui.stopReftableButton.show()
         self.ui.fromToFrame.show()
         self.ui.nbReqFromLabel.setText("from %s"%self.ui.nbSetsDoneEdit.text())
         self.ui.nbReqToLabel.setText("to %s"%self.ui.nbSetsReqEdit.text())
@@ -979,7 +981,10 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             fl = proglines[0]
             t1 = float(fl.split(' ')[0])
             t2 = float(fl.split(' ')[1])
-            prog = (t1*100/t2)
+            if t2 != 0:
+                prog = (t1*100/t2)
+            else:
+                return
             frame = None
             for fr in self.dicoFrameAnalysis.keys():
                 if self.dicoFrameAnalysis[fr] == self.thAnalysis.analysis:
