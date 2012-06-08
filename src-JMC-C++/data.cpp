@@ -336,34 +336,39 @@ void LocusC::libere(bool obs, int nsample) {
 	}
 
 	void DataC::missingdata(){
-		int ind,ech,nm;
+		int ind,ech,ng,typ,plo;
 		string misval="9";
 		this->nmisssnp=0;
 		for (ech=0;ech<this->nsample;ech++) {
-			for (ind=0;ind<this->nind[ech];ind++){
-				for (int loc=0;loc<this->nloc;loc++) {
-					if (this->genotype[ech][ind][loc]==misval) this->nmisssnp++;
-				}
-			}
-		}
-		if (this->nmisssnp>0) {
-			misssnp = new MissingHaplo[this->nmisssnp];
-			nm=0;
-			for (ech=0;ech<this->nsample;ech++) {
+			for (int loc=0;loc<this->nloc;loc++) {
+				typ=this->locus[loc].type % 5;
+				ng=0;
 				for (ind=0;ind<this->nind[ech];ind++){
-					for (int loc=0;loc<this->nloc;loc++) {
-						if (this->genotype[ech][ind][loc]==misval) {
-							this->misssnp[nm].locus = loc;
-							this->misssnp[nm].sample = ech;
-							this->misssnp[nm].indiv = ind;
-							nm++;
+					plo=0;
+					if ((typ == 0)or((typ == 2)and(this->indivsexe[ech][ind] == 2))) plo=2;
+					else if (not((typ == 3)and(this->indivsexe[ech][ind] == 2))) plo=1;
+					if (this->genotype[ech][ind][loc]==misval) {
+						if (plo==2){
+							this->misssnp[this->nmisssnp].locus = loc;
+							this->misssnp[this->nmisssnp].sample = ech;
+							this->misssnp[this->nmisssnp].indiv = ng;
+							this->nmisssnp++;
+							this->misssnp[this->nmisssnp].locus = loc;
+							this->misssnp[this->nmisssnp].sample = ech;
+							this->misssnp[this->nmisssnp].indiv = ng+1;
+							this->nmisssnp++;
+						}
+						if (plo==1){
+							this->misssnp[this->nmisssnp].locus = loc;
+							this->misssnp[this->nmisssnp].sample = ech;
+							this->misssnp[this->nmisssnp].indiv = ng;
+							this->nmisssnp++;
 						}
 					}
+					ng +=plo;
 				}
 			}
-
 		}
-
 	}
 /**
 * traitement des locus snp
@@ -900,6 +905,7 @@ cout<<"fin de ecribin\n";
     			cout<<"fin de la lecture du fichier binaire\n\n";
     			for (loc=0;loc<this->nloc;loc++) this->cal_coeffcoal(loc);
     		}
+    		this->missingdata();
     	}
     	this->nsample0 = this->nsample;
     	return 0;
