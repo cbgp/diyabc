@@ -344,9 +344,8 @@ void LocusC::libere(bool obs, int nsample) {
 				typ=this->locus[loc].type % 5;
 				ng=0;
 				for (ind=0;ind<this->nind[ech];ind++){
-					plo=0;
+					plo=1;
 					if ((typ == 0)or((typ == 2)and(this->indivsexe[ech][ind] == 2))) plo=2;
-					else if (not((typ == 3)and(this->indivsexe[ech][ind] == 2))) plo=1;
 					if (this->genotype[ech][ind][loc]==misval) {
 						if (plo==2){
 							this->misssnp[this->nmisssnp].locus = loc;

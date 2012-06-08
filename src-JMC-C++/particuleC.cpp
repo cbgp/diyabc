@@ -123,12 +123,9 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    */
   int ParticleC::calploidy(int loc, int sa,int i) {
     int typ = this->locuslist[loc].type%5;
-    if ((typ == 0)  //AUTOSOMAL DIPLOID
-	or((typ == 2)and(this->data.indivsexe[sa][i] == 2))) //X-LINKED + FEMALE
-      {return 2;}
-    else if ((typ == 3)and(this->data.indivsexe[sa][i] == 2))  //Y-LINKED + FEMALE
-      {return 1;}
-    else 		{return 1;}   //AUTOSOMAL HAPLOID or X-LINKED MALE or MITOCHONDRIAL
+		//AUTOSOMAL DIPLOID	   ou( X-LINKED + FEMALE)      
+    if ((typ == 0)or((typ == 2)and(this->data.indivsexe[sa][i] == 2))) {return 2;}
+    else 															   {return 1;}
 
   }
 
