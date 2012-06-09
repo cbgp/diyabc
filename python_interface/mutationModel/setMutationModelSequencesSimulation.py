@@ -76,21 +76,21 @@ class SetMutationModelSequencesSimulation(formSetMutationModelSequencesFixed,bas
         self.ui.ilmrMinEdit:[1,1,1],
         self.ui.ilmrMaxEdit:[1,1,1],
         self.ui.ilmrMeanEdit:[1,0,0],
-        self.ui.ilmrShapeEdit:[1,1,1],
+        self.ui.ilmrShapeEdit:[1,1,0],
 
         self.ui.mc1MinEdit:[1,1,1],
 
         self.ui.ilc1MinEdit:[1,1,1],
         self.ui.ilc1MaxEdit:[1,1,1],
         self.ui.ilc1MeanEdit:[1,0,0],
-        self.ui.ilc1ShapeEdit:[1,1,1],
+        self.ui.ilc1ShapeEdit:[1,1,0],
 
         self.ui.mc2MinEdit:[1,1,1],
 
         self.ui.ilc2MinEdit:[1,1,1],
         self.ui.ilc2MaxEdit:[1,1,1],
         self.ui.ilc2MeanEdit:[1,0,0],
-        self.ui.ilc2ShapeEdit:[1,1,1]
+        self.ui.ilc2ShapeEdit:[1,1,0]
         }
 
         self.ui.mmrMaxEdit.hide()
