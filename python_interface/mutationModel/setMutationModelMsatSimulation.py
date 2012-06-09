@@ -157,11 +157,11 @@ class SetMutationModelMsatSimulation(formSetMutationModelMsatFixed,baseSetMutati
         if self.allValid():
             self.exit()
             self.parent.setMutationValid_dico[self.box_group] = True
-            #set_mut_button = self.box_group.findChild(QPushButton,"setMutationButton")
-            #fontt = set_mut_button.font()
-            #fontt.setBold(False)
-            #set_mut_button.setStyleSheet("border-color: #000000")
-            #set_mut_button.setFont(fontt)
+            set_mut_button = self.box_group.findChild(QPushButton,"setMutationButton")
+            fontt = set_mut_button.font()
+            fontt.setBold(False)
+            set_mut_button.setStyleSheet("border-color: #000000")
+            set_mut_button.setFont(fontt)
 
 
     def allValid(self,silent=False):
