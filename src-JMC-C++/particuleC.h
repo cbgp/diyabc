@@ -37,7 +37,7 @@ class ParticleC
 	  vector < vector < vector <int> > > t_afs;
 	  vector < vector <int> > n_afs;
 	  bool firstime;
-
+	  double sexratio;
 	  int npart,nloc,ngr,nparam,nseq,nstat,nsample,*nind,**indivsexe,nscenarios,nconditions,**numvar,*nvar,refnindtot;
 	  float reffreqmin;
 	  bool ***dat,***ref;  //appartenance d'un gène aux data (dat) ou aux individus de référence (ref) par [locustype][sample][gene]

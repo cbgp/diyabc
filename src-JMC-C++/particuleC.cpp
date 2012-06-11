@@ -2254,13 +2254,14 @@ void ParticleC::put_one_mutation(int loc) {
   /***********************************************************************************************************************/
 
   string ParticleC::dogenepop(){
-	  string sgp,sind,snum;
+	  string sgp,sind,snum,ssr;
 	  int iloc,*k,ty;
 	  k = new int[this->nloc];
 //	  cout << "*** ss=" << endl;
 //	  for(int sa = 0; sa < data.nsample; sa++)
 //		  cout << "ss[0][" << sa << "] = " <<this->data.ss[0][sa] << endl;
-	  sgp="Simulated genepop file \n";
+	  ssr="<NM="+DoubleToString(this->sexratio/(1.0-this->sexratio))+"NF>";
+	  sgp="Simulated genepop file   "+ssr+"\n";
 	  //cout<<sgp<<"\n";
 	  //cout<<"nloc="<<this->nloc<<"\n";
 	  for (iloc=0;iloc<this->nloc;iloc++) {
