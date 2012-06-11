@@ -2321,7 +2321,7 @@ void ParticleC::put_one_mutation(int loc) {
 					  else sgp += ">";
 				  }
 				  if (ty==8) {
-					  if (this->data.indivsexe[ech][ind]==2) sgp +="   [<>]";
+					  if (this->data.indivsexe[ech][ind]==2) sgp +="   <[]>";
 					  else {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}
 				  }
 				  if (ty==9) {sgp +="   <["+this->locuslist[iloc].haplodna[ech][k[iloc]]+"]>";k[iloc]++;}

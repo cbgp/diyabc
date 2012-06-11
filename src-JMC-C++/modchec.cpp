@@ -60,7 +60,7 @@ long double **ssphistar,**ssref;
     bool resetstats(string s) {
 		cout<<"debut de resetstats\n";
 		cout<<s<<"\n";
-        int j,ns,nq,nss1,gr,k=0;
+        int j,ns,nq,nss1,gr,k=0,lonentstat;
         string *ss,*qq,*ss1;
 		vector <StatsnpC> statsnp;
 		StatsnpC stsnp;
@@ -89,8 +89,11 @@ long double **ssphistar,**ssref;
         delete []header.statname;
 		header.statname = new string[ns];
         for (int i=0;i<ns;i++) header.statname[i]=ss[i];
+		lonentstat=header.entetestat.length();
 		header.entetestat="";
 		for (int i=0;i<ns;i++) header.entetestat +=centre(ss[i],14);
+		header.entete.erase(header.entete.length()-lonentstat,lonentstat);
+		header.entete +=header.entetestat;
         for (int i=0;i<ns;i++) {
             qq=splitwords(ss[i],"_",&nq);
             gr=atoi(qq[1].c_str());
