@@ -112,6 +112,12 @@ void LocusC::libere(bool obs, int nsample) {
 		  cout<<"Fichier "<<filename<<" : SNP\n";
 		  return 1;
 		}
+		getline(file,ligne);
+        ss=splitwords(ligne," ",&nss);
+		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
+		  cout<<"Fichier "<<filename<<" : SNP\n";
+		  return 1;
+		}
 		int nloc=0;
 		bool trouvepop=false;
 		while (not trouvepop) {
@@ -146,9 +152,9 @@ void LocusC::libere(bool obs, int nsample) {
 * lecture d'un fichier de donnée SNP et stockage des informations dans une structure DataC
 */
 	int  DataC::readfilesnp(string filename){
-		int ech,ind,nech,*nindi,nss;
+		int ech,ind,nech,*nindi,nss,j0,j1;
 		bool deja;
-		string s1,*ss;
+		string s1,*ss,s;
 		vector <string> popname;
 		Aindivname=false;Agenotype=false;Anind=false;Aindivsexe=false;Alocus=false;
 		ifstream file(filename.c_str(), ios::in);
@@ -157,6 +163,14 @@ void LocusC::libere(bool obs, int nsample) {
 			return 1;
 		} else this->message="";
 		getline(file,s1);
+		j0=s1.find("<NM=");
+		if (j0!=string::npos) {
+                        //cout<<"j0="<<j0<<"\n";
+			j1=s1.find("NF>",j0+3);
+			s=s1.substr(j0+4,j1-(j0+4));
+			this->sexratio=atof(s.c_str())/(1.0+atof(s.c_str()));
+			getline(file,s1);
+		} else this->sexratio=0.5;
         ss=splitwords(s1," ",&nss);
 		this->nloc=nss-3;
 		this->locus = new LocusC[this->nloc];this->Alocus=true;
@@ -445,6 +459,7 @@ void LocusC::libere(bool obs, int nsample) {
 		// fin a virer ?
 		fstream f1;		
         f1.open(filenamebin.c_str(),ios::out|ios::binary);
+		f1.write((char*)&(this->sexratio),sizeof(double));											//sex-ratio
 		f1.write((char*)&(this->nloc),sizeof(int));													//nombre de locus
 		f1.write((char*)&(this->nsample),sizeof(int));												//nombre d'échantillons
 		for(int i=0;i<this->nsample;i++) f1.write((char*)&(this->nind[i]),sizeof(int));				//nombre d'individus par échantillons
@@ -489,6 +504,7 @@ cout<<"fin de ecribin\n";
 		buffer = new char[1000];
 		int lon,categ;
         f0.open(filenamebin.c_str(),ios::in|ios::binary);
+		f0.read((char*)&(this->sexratio),sizeof(double));											//sex-ratio
 		f0.read((char*)&(this->nloc),sizeof(int));													//nombre de locus
 		f0.read((char*)&(this->nsample),sizeof(int));												//nombre d'échantillons
 		this->nind.resize(this->nsample);

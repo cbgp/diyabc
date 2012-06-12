@@ -2333,11 +2333,12 @@ void ParticleC::put_one_mutation(int loc) {
   }
 
 	string ParticleC::dodataSNP(){
-		string sgp,sind,spop,sex,ligne;
+		string sgp,sind,spop,sex,ligne,ssr;
 		short int g;		
 		int *ig;
 		ig = new int[this->nloc];
-		sgp="IND   SEX   POP   ";
+		ssr="<NM="+DoubleToString(this->sexratio/(1.0-this->sexratio))+"NF>\n";
+		sgp +="IND   SEX   POP   ";
 		for (int loc=0;loc<this->nloc;loc++) {
 			switch(this->locuslist[loc].type) {
 				case 10 : sgp +=" A";break;
