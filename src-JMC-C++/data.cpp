@@ -104,20 +104,23 @@ void LocusC::libere(bool obs, int nsample) {
 	int DataC::testfile(string filename){
 	    int nss;
 	    string ligne,*ss;
+		ifstream file0(filename.c_str(), ios::in);
+		if (file0 == NULL) return -1;
+		getline(file0,ligne);
+        ss=splitwords(ligne," ",&nss);
+		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
+		  cout<<"Fichier "<<filename<<" : SNP\n";
+		  return 1;
+		}
+		getline(file0,ligne);
+        ss=splitwords(ligne," ",&nss);
+		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
+		  cout<<"Fichier "<<filename<<" : SNP\n";
+		  return 1;
+		}
+		file0.close();
 		ifstream file(filename.c_str(), ios::in);
-		if (file == NULL) return -1;
 		getline(file,ligne);
-        ss=splitwords(ligne," ",&nss);
-		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
-		  cout<<"Fichier "<<filename<<" : SNP\n";
-		  return 1;
-		}
-		getline(file,ligne);
-        ss=splitwords(ligne," ",&nss);
-		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
-		  cout<<"Fichier "<<filename<<" : SNP\n";
-		  return 1;
-		}
 		int nloc=0;
 		bool trouvepop=false;
 		while (not trouvepop) {
