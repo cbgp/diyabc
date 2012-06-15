@@ -264,4 +264,49 @@ We go back to the previous screen by cliking the \fbox{\textsf{OK}} button.
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-42.png} \\
 
 
-\subsubsection{ABC parameter estimation}
+\subsubsection{Bias and precision}
+Let's define a new analysis (click on the \fbox{\textsf{Define new analysis}} button) and choose the option \texttt{Compute bias and precision on parameter estimations}. We give it the name \texttt{bias1} :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-43.png} \\
+
+In this kind of analysis, peudo-observed data are simulated with known values of parameters copying the exact configuration of the observed dataset in terms of sample sizes (taking into account missing data) and are submitted to the same ABC estimation process. If we assume that the evolutionary scenario is correct, the comparison of real and estimated values of parameters provide some information of the precision of the estimation process.\\  
+We validate and get this screen :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-44.png} \\
+
+We choose to draw parameter values from distributions :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-45.png} \\
+
+Clicking on the \fbox{\textsf{VALIDATE}} button, we get this screen which allows us to choose distributions. \\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-46.png} \\
+
+By default, the screen suggests the prior distributions that have been used to build the reference table. However, these distributions can be edited if necessary. We decide not to change them and click on \fbox{\textsf{VALIDATE}} which brings us to the following screen :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-47.png} \\
+
+If we want to keep the same distributions for mutation parameters as when builduing the reference table, we just click on \fbox{\textsf{VALIDATE}}. If we need to change them, we click on \fbox{\textsf{Set mutation model}} which would bring the following screen :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-48.png} \\
+
+After validating twice, we get the last screen necessary to define this king of analysis :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-49.png} \\
+ 
+This screen is similar to that for parameter estimation (see section 3.5.1). After validating, we get back to the analysis panel with a third analysis defined :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-50.png} \\
+
+The analysis takes some time to run compared to the previous one, because it simulates hundreds datasets and on each one, a full ABC estimation is performed. Then after some time, the analysis is finished: \\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-51.png} \\
+
+To view results, we click on the  \fbox{\textsf{View results}} button. 
+
+\newpage
+
+The results are visible in a scrolling window :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-52.png} \\
+

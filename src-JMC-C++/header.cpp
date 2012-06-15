@@ -1242,7 +1242,7 @@ void HeaderC::calstatobs(string statobsfilename) {
 	this->particuleobs.threshold = this->threshold;
 	this->particuleobs.dnatrue = true;
 	this->particuleobs.nsample = this->dataobs.nsample0;
-	if (debuglevel==2) cout<<"this->dataobs.nsample="<<this->dataobs.nsample<<"\n";
+	if (debuglevel==2) cout<<"this->dataobs.nsample="<<this->dataobs.nsample<<"   this->dataobs.nsample0="<<this->dataobs.nsample0<<"\n";
 	this->particuleobs.data.nsample = this->dataobs.nsample;
 	this->particuleobs.data.nind.resize(this->dataobs.nsample);
 	this->particuleobs.data.indivsexe.resize(this->dataobs.nsample);

@@ -41,7 +41,7 @@ bool operator<(const enregC & lhs, const enregC & rhs) {
 
 
 void ReftableC::sethistparamname(HeaderC const & header) {
-	//cout<<"debut de sethistparamname\n";
+	cout<<"debut de sethistparamname\n";
 	int nparamvar=0,pp;
 	this->nparamut = header.nparamut;
 	this->nhistparam = new int[header.nscenarios];
@@ -75,7 +75,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 			this->mutparam[p].prior = header.mutparam[p].prior;
 		}
 	}
-	//cout<<"fin de sethisparamname\n";
+	cout<<"fin de sethisparamname\n";
 }
 
 int ReftableC::readheader(string fname,string flogname) {

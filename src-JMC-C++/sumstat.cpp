@@ -45,38 +45,38 @@ extern int debuglevel;
   
   void ParticleC::calfreq(int gr) {
     //int n=0;
-    //cout <<"debut de calfreq nloc = "<<this->nloc<<"  groupe = "<<gr <<"\n";
-    int loc,iloc,cat,sasize;
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      loc=this->grouplist[gr].loc[iloc];
-      cat=this->locuslist[loc].type%5;
-      // cout <<"\nLocus "<< loc <<"   kmin="<<this->locuslist[loc].kmin<<"   kmax="<<this->locuslist[loc].kmax<<"\n";
-      this->locuslist[loc].nal = this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;
-      this->locuslist[loc].freq = new long double* [this->nsample];
-      //cout <<"nal ="<<this->locuslist[loc].nal<<"\n";
-      for (int samp=0;samp<this->nsample;samp++) {
-	this->locuslist[loc].freq[samp] = new long double [this->locuslist[loc].nal];
-	for (int i=0;i<this->locuslist[loc].nal;i++) this->locuslist[loc].freq[samp][i]=0.0;
-	//cout << this->locuslist[loc].ss[samp] <<"\n";
-	for (int i=0;i<this->data.ss[cat][samp];i++){
-	  if (this->locuslist[loc].haplomic[samp][i] != MICMISSING) {
-	    //cout <<"  "<<this->locuslist[loc].haplomic[samp][i];
-	    this->locuslist[loc].freq[samp][this->locuslist[loc].haplomic[samp][i]-this->locuslist[loc].kmin] +=1.0;
-	    //n++;
-	  }
+    //cout <<"debut de calfreq nloc = "<<this->nloc<<"  groupe = "<<gr <<"   this->nsample="<<this->nsample<<"\n";
+	int loc,iloc,cat,sasize;
+	for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+		loc=this->grouplist[gr].loc[iloc];
+		cat=this->locuslist[loc].type%5;
+		//cout <<"\nLocus "<< loc <<"   kmin="<<this->locuslist[loc].kmin<<"   kmax="<<this->locuslist[loc].kmax<<"\n";
+		this->locuslist[loc].nal = this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;
+		this->locuslist[loc].freq = new long double* [this->nsample];
+		//cout <<"nal ="<<this->locuslist[loc].nal<<"\n";
+		for (int samp=0;samp<this->nsample;samp++) {
+			this->locuslist[loc].freq[samp] = new long double [this->locuslist[loc].nal];
+			for (int i=0;i<this->locuslist[loc].nal;i++) this->locuslist[loc].freq[samp][i]=0.0;
+			//cout << this->data.ss[cat][samp] <<"\n";
+			for (int i=0;i<this->data.ss[cat][samp];i++){
+				if (this->locuslist[loc].haplomic[samp][i] != MICMISSING) {
+					//cout <<"  "<<this->locuslist[loc].haplomic[samp][i];
+					this->locuslist[loc].freq[samp][this->locuslist[loc].haplomic[samp][i]-this->locuslist[loc].kmin] +=1.0;
+					//n++;
+				}
+			}
+			//cout <<" fini\n";
+			for (int k=0;k<this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;k++){
+				sasize=samplesize(loc,samp);
+				if (sasize>0) this->locuslist[loc].freq[samp][k]/=sasize;
+				
+			}
+			/*cout << "loc "<<loc <<"  sa "<<samp;
+			for (int k=0;k<this->locuslist[loc].nal;k++) {if (this->locuslist[loc].freq[samp][k]>0.0) cout << "   "<<this->locuslist[loc].freq[samp][k]<<"("<<k+this->locuslist[loc].kmin<<")";}
+			cout << "\n";*/
+		}
 	}
-	//cout <<" fini\n";
-	for (int k=0;k<this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;k++){
-	  sasize=samplesize(loc,samp);
-	  if (sasize>0) this->locuslist[loc].freq[samp][k]/=sasize;
-
-	}
-	/*cout << "loc "<<loc <<"  sa "<<samp;
-	  for (int k=0;k<this->locuslist[loc].nal;k++) {if (this->locuslist[loc].freq[samp][k]>0.0) cout << "   "<<this->locuslist[loc].freq[samp][k]<<"("<<k+this->locuslist[loc].kmin<<")";}
-	  cout << "\n";*/
-      }
-    }
-    //cout <<"fin de calfreq \n";
+	//cout <<"fin de calfreq \n";
   }
 
 	void ParticleC::calfreqsnp(int gr) {
@@ -1744,13 +1744,14 @@ long double ParticleC::cal_nha2p(int gr,int st){
     }
     int numsnp;
     for (int st=0;st<this->grouplist[gr].nstat;st++) {
-      /*if (this->grouplist[gr].sumstat[st].cat<5)
+		/*
+      if (this->grouplist[gr].sumstat[st].cat<5)
 	{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp  <<"\n";fflush(stdin);}
 	else if (this->grouplist[gr].sumstat[st].cat<12)
 	{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp <<"   samp1 = "<<this->grouplist[gr].sumstat[st].samp1 <<"\n";fflush(stdin);}
 	else
 	{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp <<"   samp1 = "<<this->grouplist[gr].sumstat[st].samp1 <<"   samp2 = "<<this->grouplist[gr].sumstat[st].samp2<<"\n";fflush(stdin);}
-      */
+        */
       int categ;
       categ=this->grouplist[gr].sumstat[st].cat;
       //cout<<"----------------------------------------> avant calcul stat categ="<<categ<<"\n";

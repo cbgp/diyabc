@@ -1106,8 +1106,8 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 				cout <<"i="<<i<<"    k="<<k<<"      ";
 				cout <<rt.histparam[rt.scenteste-1][i].name<<"   "<<paname[k]<<"\n";
 			} else {
-				cout <<"i="<<i<<"   "<<paname[i]<<"\n";
-				paordreabs[i]=i;
+				cout <<"i="<<i<<"   "<<paname[i+1]<<"\n";
+				paordreabs[i]=i+1;
 			}
 			cout <<"paordreabs["<<i<<"]="<<paordreabs[i]<<"\n";
 		}		
@@ -1131,7 +1131,7 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 			for (int i=0;i<npv;i++)  {
 				enreg2[p].paramvv[i]=atof(ss[paordre[i]+1].c_str());
 				if (i<rt.nhistparam[rt.scenteste-1]) enreg2[p].name[i]=rt.histparam[rt.scenteste-1][i].name;
-				else enreg2[p].name[i]=paname[i];
+				else enreg2[p].name[i]=paname[i+1];
 				if(p==0)cout<<"enreg2[p].name["<<i<<"]="<<enreg2[p].name[i]<<" = "<<enreg2[p].paramvv[i]<<"\n";
 			}
 			cout<<"avant setcompo\n";
@@ -1197,6 +1197,7 @@ long double ***paretoil,***paretoilcompo,***paretoilscaled;
 					//for (int j=0;j<nparamcom;j++) cout<<"  "<<phistar[i][j]<<" ("<<enreg2[p].paramvv[j] <<")";
 					//cout<<"\n";
 				}
+				cout<<"après paretoil=phistar\n";
 			}
 			if (composite) {
 				recalparamC(nsel);                  	if (debuglevel==11)	cout<<"apres recalparamC\n";
