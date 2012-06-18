@@ -68,30 +68,30 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         self.ui.mmrMeanEdit:"Mean of mean mutation rate",
         self.ui.mmrShapeEdit:"Shape of mean mutation rate",
 
-        self.ui.ilmrMinEdit:"Min of individuals locus mutation rate",
-        self.ui.ilmrMaxEdit:"Max of individuals locus mutation rate",
-        self.ui.ilmrMeanEdit:"Mean of individuals locus mutation rate",
-        self.ui.ilmrShapeEdit:"Shape of individuals locus mutation rate",
+        self.ui.ilmrMinEdit:"Min of individual locus mutation rate",
+        self.ui.ilmrMaxEdit:"Max of individual locus mutation rate",
+        self.ui.ilmrMeanEdit:"Mean of individual locus mutation rate",
+        self.ui.ilmrShapeEdit:"Shape of individual locus mutation rate",
 
         self.ui.mc1MinEdit:" Min of mean coefficient k_C/T",
         self.ui.mc1MaxEdit:"Max of mean coefficient k_C/T",
         self.ui.mc1MeanEdit:"Mean of mean coefficient k_C/T",
         self.ui.mc1ShapeEdit:"Shape of mean coefficient k_C/T",
 
-        self.ui.ilc1MinEdit:"Min of individuals locus coefficient k_C/T",
-        self.ui.ilc1MaxEdit:"Max of individuals locus coefficient k_C/T",
-        self.ui.ilc1MeanEdit:"Mean of individuals locus coefficient k_C/T",
-        self.ui.ilc1ShapeEdit:"Shape of individuals locus coefficient k_C/T",
+        self.ui.ilc1MinEdit:"Min of individual locus coefficient k_C/T",
+        self.ui.ilc1MaxEdit:"Max of individual locus coefficient k_C/T",
+        self.ui.ilc1MeanEdit:"Mean of individual locus coefficient k_C/T",
+        self.ui.ilc1ShapeEdit:"Shape of individual locus coefficient k_C/T",
 
         self.ui.mc2MinEdit:"Min of mean coefficient k_A/G",
         self.ui.mc2MaxEdit:"Max of mean coefficient k_A/G",
         self.ui.mc2MeanEdit:"Mean of mean coefficient k_A/G",
         self.ui.mc2ShapeEdit:"Shape of mean coefficient k_A/G",
 
-        self.ui.ilc2MinEdit:"Min of individuals locus coefficient k_A/G",
-        self.ui.ilc2MaxEdit:"Max of individuals locus coefficient k_A/G",
-        self.ui.ilc2MeanEdit:"Mean of individuals locus coefficient k_A/G",
-        self.ui.ilc2ShapeEdit:"Shape of individuals locus coefficient k_A/G"
+        self.ui.ilc2MinEdit:"Min of individual locus coefficient k_A/G",
+        self.ui.ilc2MaxEdit:"Max of individual locus coefficient k_A/G",
+        self.ui.ilc2MeanEdit:"Mean of individual locus coefficient k_A/G",
+        self.ui.ilc2ShapeEdit:"Shape of individual locus coefficient k_A/G"
         }
 
         self.constraints_dico = {
@@ -386,28 +386,28 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         if self.hasToBeVerified(self.ui.mmrMinEdit) and float(self.ui.mmrMinEdit.text()) > float(self.ui.mmrMaxEdit.text()):
             problems+="- Mean mutation rate has incoherent min and max values\n\n"
         elif self.hasToBeVerified(self.ui.ilmrMinEdit) and float(self.ui.ilmrMinEdit.text()) > float(self.ui.ilmrMaxEdit.text()):
-            problems+="- Individuals locus mutation rate has incoherent min and max values\n\n"
+            problems+="- Individual locus mutation rate has incoherent min and max values\n\n"
         elif self.hasToBeVerified(self.ui.mc1MinEdit) and float(self.ui.mc1MinEdit.text()) > float(self.ui.mc1MaxEdit.text()):
             problems+="- Mean coefficient k_C/T has incoherent min and max values\n\n"
         elif self.hasToBeVerified(self.ui.ilc1MinEdit) and float(self.ui.ilc1MinEdit.text()) > float(self.ui.ilc1MaxEdit.text()):
-            problems+="- Individuals locus coefficient k_C/T has incoherent min and max values\n\n"
+            problems+="- Individual locus coefficient k_C/T has incoherent min and max values\n\n"
         elif self.hasToBeVerified(self.ui.mc2MinEdit) and float(self.ui.mc2MinEdit.text()) > float(self.ui.mc2MaxEdit.text()):
             problems+="- Mean coefficient k_A/G has incoherent min and max values\n\n"
         elif self.hasToBeVerified(self.ui.ilc2MinEdit) and float(self.ui.ilc2MinEdit.text()) > float(self.ui.ilc2MaxEdit.text()):
-            problems+="- Individuals locus coefficient k_A/G has incoherent min and max values\n\n"
+            problems+="- Individual locus coefficient k_A/G has incoherent min and max values\n\n"
 
         if self.hasToBeVerified(self.ui.mmrMinEdit) and\
         ( ( float(self.ui.mmrMinEdit.text()) < float(self.ui.ilmrMinEdit.text()) ) 
         or (float(self.ui.mmrMaxEdit.text()) > float(self.ui.ilmrMaxEdit.text())) ):
-            problems+="- Mean mutation rate min/max values must be included in min/max values of Individuals locus mutation rate\n\n"
+            problems+="- Mean mutation rate min/max values must be included in min/max values of Individual locus mutation rate\n\n"
         if self.hasToBeVerified(self.ui.mc1MinEdit) and\
         ( ( float(self.ui.mc1MinEdit.text()) < float(self.ui.ilc1MinEdit.text()) ) 
         or (float(self.ui.mc1MaxEdit.text()) > float(self.ui.ilc1MaxEdit.text())) ):
-            problems+="- Mean coefficient k_C/T min/max values must be included in min/max values of Individuals locus coefficient k_C/T\n\n"
+            problems+="- Mean coefficient k_C/T min/max values must be included in min/max values of Individual locus coefficient k_C/T\n\n"
         if self.hasToBeVerified(self.ui.mc2MinEdit) and\
         ( ( float(self.ui.mc2MinEdit.text()) < float(self.ui.ilc2MinEdit.text()) )
         or (float(self.ui.mc2MaxEdit.text()) > float(self.ui.ilc2MaxEdit.text())) ):
-            problems+="- Mean coefficient k_A/G min/max values must be included in min/max values of Individuals locus coefficient k_A/G\n\n" 
+            problems+="- Mean coefficient k_A/G min/max values must be included in min/max values of Individual locus coefficient k_A/G\n\n" 
 
         for field in self.constraints_dico.keys():
             #print self.field_names_dico[field]

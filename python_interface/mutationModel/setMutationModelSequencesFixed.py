@@ -42,11 +42,11 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
 
         self.field_names_dico = {
         self.ui.mmrMinEdit:"mean mutation rate",
-        self.ui.ilmrMinEdit:"individuals locus mutation rate",
+        self.ui.ilmrMinEdit:"individual locus mutation rate",
         self.ui.mc1MinEdit:" mean coefficient k_C/T",
-        self.ui.ilc1MinEdit:"individuals locus coefficient k_C/T",
+        self.ui.ilc1MinEdit:"individual locus coefficient k_C/T",
         self.ui.mc2MinEdit:"mean coefficient k_A/G",
-        self.ui.ilc2MinEdit:"individuals locus coefficient k_A/G"
+        self.ui.ilc2MinEdit:"individual locus coefficient k_A/G"
         }
 
         self.constraints_dico = {
@@ -249,15 +249,15 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
             if self.hasToBeVerified(self.ui.mmrMinEdit) and float(self.ui.mmrMinEdit.text()) <= 0:
                 raise Exception("Mean mutation rate should be positive")
             elif self.hasToBeVerified(self.ui.ilmrMinEdit) and float(self.ui.ilmrMinEdit.text()) < 0:
-                raise Exception("Individuals locus mutation rate should not be negative")
+                raise Exception("Individual locus mutation rate should not be negative")
             elif self.hasToBeVerified(self.ui.mc1MinEdit) and float(self.ui.mc1MinEdit.text()) <= 0:
                 raise Exception("Mean coefficient k_C/T should be positive")
             elif self.hasToBeVerified(self.ui.ilc1MinEdit) and float(self.ui.ilc1MinEdit.text()) < 0:
-                raise Exception("Individuals locus coefficient k_C/T should not be negative")
+                raise Exception("Individual locus coefficient k_C/T should not be negative")
             elif self.hasToBeVerified(self.ui.mc2MinEdit) and float(self.ui.mc2MinEdit.text()) <= 0:
                 raise Exception("Mean coefficient k_A/G should be positive")
             elif self.hasToBeVerified(self.ui.ilc2MinEdit) and float(self.ui.ilc2MinEdit.text()) < 0:
-                raise Exception("Individuals locus coefficient k_A/G should not be negative")
+                raise Exception("Individual locus coefficient k_A/G should not be negative")
             for field in self.constraints_dico.keys():
                 #print self.field_names_dico[field]
                 if self.hasToBeVerified(field):

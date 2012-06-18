@@ -446,7 +446,7 @@ per generation)</string>
               </font>
              </property>
              <property name="text">
-              <string>Individuals locus
+              <string>Individual locus
 mutation rate
 (Gamma distribution
 around mean)</string>
@@ -958,7 +958,7 @@ k_C/T</string>
               </font>
              </property>
              <property name="text">
-              <string>Individuals locus
+              <string>Individual locus
 coefficient k_C/T
 (Gamma distribution
 around mean)</string>
@@ -1469,7 +1469,7 @@ k_A/G</string>
               </font>
              </property>
              <property name="text">
-              <string>Individuals locus
+              <string>Individual locus
 coefficient k_A/G
 (Gamma distribution
 around mean)</string>
@@ -1679,7 +1679,7 @@ around mean)</string>
            </font>
           </property>
           <property name="text">
-           <string>(1) Set the shape to 0 if you want all individuals loci to take the same value (=mean)</string>
+           <string>(1) Set the shape to 0 if you want all individual loci to take the same value (=mean)</string>
           </property>
          </widget>
         </item>

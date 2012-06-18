@@ -50,24 +50,24 @@ class SetMutationModelSequencesSimulation(formSetMutationModelSequencesFixed,bas
         self.field_names_dico = {
         self.ui.mmrMinEdit:"Min of mean mutation rate",
 
-        self.ui.ilmrMinEdit:"Min of individuals locus mutation rate",
-        self.ui.ilmrMaxEdit:"Max of individuals locus mutation rate",
-        self.ui.ilmrMeanEdit:"Mean of individuals locus mutation rate",
-        self.ui.ilmrShapeEdit:"Shape of individuals locus mutation rate",
+        self.ui.ilmrMinEdit:"Min of individual locus mutation rate",
+        self.ui.ilmrMaxEdit:"Max of individual locus mutation rate",
+        self.ui.ilmrMeanEdit:"Mean of individual locus mutation rate",
+        self.ui.ilmrShapeEdit:"Shape of individual locus mutation rate",
 
         self.ui.mc1MinEdit:" Min of mean coefficient k_C/T",
 
-        self.ui.ilc1MinEdit:"Min of individuals locus coefficient k_C/T",
-        self.ui.ilc1MaxEdit:"Max of individuals locus coefficient k_C/T",
-        self.ui.ilc1MeanEdit:"Mean of individuals locus coefficient k_C/T",
-        self.ui.ilc1ShapeEdit:"Shape of individuals locus coefficient k_C/T",
+        self.ui.ilc1MinEdit:"Min of individual locus coefficient k_C/T",
+        self.ui.ilc1MaxEdit:"Max of individual locus coefficient k_C/T",
+        self.ui.ilc1MeanEdit:"Mean of individual locus coefficient k_C/T",
+        self.ui.ilc1ShapeEdit:"Shape of individual locus coefficient k_C/T",
 
         self.ui.mc2MinEdit:"Min of mean coefficient k_A/G",
 
-        self.ui.ilc2MinEdit:"Min of individuals locus coefficient k_A/G",
-        self.ui.ilc2MaxEdit:"Max of individuals locus coefficient k_A/G",
-        self.ui.ilc2MeanEdit:"Mean of individuals locus coefficient k_A/G",
-        self.ui.ilc2ShapeEdit:"Shape of individuals locus coefficient k_A/G"
+        self.ui.ilc2MinEdit:"Min of individual locus coefficient k_A/G",
+        self.ui.ilc2MaxEdit:"Max of individual locus coefficient k_A/G",
+        self.ui.ilc2MeanEdit:"Mean of individual locus coefficient k_A/G",
+        self.ui.ilc2ShapeEdit:"Shape of individual locus coefficient k_A/G"
         }
 
         self.constraints_dico = {

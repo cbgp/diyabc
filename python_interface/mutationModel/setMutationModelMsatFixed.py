@@ -196,15 +196,15 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
                     val = float(valtxt)
             # verifs des min et max
             if float(self.ui.ilsrMinEdit.text()) < 0:
-                raise Exception("Individuals locus SNI rate should not be negative")
+                raise Exception("Individual locus SNI rate should not be negative")
             if float(self.ui.msrMinEdit.text()) < 0:
                 raise Exception("Mean SNI rate should be negative")
             if float(self.ui.ilcpMinEdit.text()) < 0:
-                raise Exception("Individuals locus coefficient P should not be negative")
+                raise Exception("Individual locus coefficient P should not be negative")
             if float(self.ui.mcpMinEdit.text()) < 0:
                 raise Exception("Mean coefficient P not should be negative")
             if float(self.ui.ilmrMinEdit.text()) <= 0:
-                raise Exception("Individuals locus mutation rate should be positive")
+                raise Exception("Individual locus mutation rate should be positive")
             if float(self.ui.mmrMinEdit.text()) < 0:
                 raise Exception("Mean mutation rate should not be negative")
         except Exception as e:

@@ -341,15 +341,15 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
                         problems+="- %s should not be negative\n\n"%self.field_names_dico[field]
         # verifs des min et max
         if float(self.ui.ilsrMinEdit.text()) > float(self.ui.ilsrMaxEdit.text()):
-            problems+="- Individuals locus SNI rate has incoherent min and max values\n\n"
+            problems+="- Individual locus SNI rate has incoherent min and max values\n\n"
         if float(self.ui.msrMinEdit.text()) > float(self.ui.msrMaxEdit.text()):
             problems+="- Mean SNI rate has incoherent min and max values\n\n"
         if float(self.ui.ilcpMinEdit.text()) > float(self.ui.ilcpMaxEdit.text()):
-            problems+="- Individuals locus coefficient P has incoherent min and max values\n\n"
+            problems+="- Individual locus coefficient P has incoherent min and max values\n\n"
         if float(self.ui.mcpMinEdit.text()) > float(self.ui.mcpMaxEdit.text()):
             problems+="- Mean coefficient P has incoherent min and max values\n\n"
         if float(self.ui.ilmrMinEdit.text()) > float(self.ui.ilmrMaxEdit.text()):
-            problems+="- Individuals locus mutation rate has incoherent min and max values\n\n"
+            problems+="- Individual locus mutation rate has incoherent min and max values\n\n"
         if float(self.ui.mmrMinEdit.text()) > float(self.ui.mmrMaxEdit.text()):
             problems+="- Mean mutation rate has incoherent min and max values\n\n"
 
