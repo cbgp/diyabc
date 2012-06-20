@@ -310,3 +310,52 @@ The results are visible in a scrolling window :\\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-52.png} \\
 
+\subsubsection{Model Checking}
+We now define another type of analysis called \texttt{Model Checking} which is used to evaluate how well the scenario and priors of parameters fit the data summarized by summary statistics. This is the last option on the following screen :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-53.png} \\
+
+We call this analysis \texttt{mc1} and check the box to get a PCA performed. This PCA is computed in the same way compared to that of the first option (\texttt{Pre-evaluate scenario prior combinations}). However, new datasets simulated with parameters drawn from the posterior distributions of parameters are also represented on the different planes of the PCA (but not taken in the PCA  computation). 
+
+We validate the above screen and get the usual next screen :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-54.png} \\
+
+that we just validate to get the last screen :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-55.png} \\
+
+In this screen which we have already seen, there is a new panel (bottom right) in which we can choose the number of datasets that we want to simulate from the posterior distributions of parameters. There is also a button  \fbox{\textsf{Redefine summary statistics of group:}} shown by the pointer. This button allows to change the set of summary statistics (for a given group of loci chosen through the drop list on the right). Clicking on this button opens up the usual following screen in which, by default, are checked the summary statistics in the reference table.\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-56.png} \\
+
+We decide to use all one-sample and two-sample summary stats :\\
+
+\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-57.png} \\
+ 
+
+Note that when the set of summary statistics is changed (as here), it is necessary to also simulate a large number of datasets using priors to get a new reference table.\\
+ We validate twice and launch the analysis. When it is finished, we click on the  \fbox{\textsf{View results}} button and get this screen:\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-58.png} \\
+
+Clicking on the \fbox{\textsf{View numerical results}} leads to the following screen which provides, for each individual summary statistics, the value in the observed dataset as well as the proportion of data sets (simulated from the posterior) that have a value lower than the observed data set.\\
+ 
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-60.png} \\
+
+Notice that in this computation, values that are in the interval $[s_{obs}-0.001,s_{obs}+0.001]$ are counted for one half those that are outside the interval. This explains why the fourth digit of the proportion can be 0 or 5 while having simulated 1000 data sets.
+
+\subsection{Simulating data sets}
+
+
+
+
+
+
+
+
+
+
+
+
+ 
