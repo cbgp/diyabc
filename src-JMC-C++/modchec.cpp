@@ -527,7 +527,6 @@ long double **ssphistar,**ssref;
             enreg[p].numscen = rt.scenteste;
         }
         cout<<"apres dimensionnement des enreg\n";
-		
         ssphistar = new long double*[newsspart];
         for (int i=0;i<newsspart;i++) ssphistar[i] = new long double[header.nstat];
         cout<<"newstat ="<<newstat<<"   newsspart="<<newsspart<<"     nenr="<<nenr<<"\n";

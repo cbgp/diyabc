@@ -370,7 +370,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					} else {
 						kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
 						qq=0;while (not ((header.mutparam[qq].groupe == gr)and(header.mutparam[qq].category ==2))) qq++;
-						cout<<"dans recalparamC  kk="<<kk<<"  qq="<<qq<<"\n";
+						//cout<<"dans recalparamC  kk="<<kk<<"  qq="<<qq<<"\n";
 						for (int j=0;j<npar;j++) {
 							if (header.scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
 								for (int i=0;i<n;i++) {
@@ -649,6 +649,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         //cout<<"\n";
     }
     
+    void delete_mat(int n) {
+		for (int i=0;i<n;i++) delete [] matX0[i];delete [] matX0;
+		delete [] vecW;
+	}
+	
     void rempli_parsim(int n, int npa) {
         parsim = new long double*[n];
         for (int i=0;i<n;i++) parsim[i] = new long double[npa];

@@ -40,6 +40,7 @@ void recalparamS(int n);
 * de la matrice des paramètres parsim (éventuellement transformés)
 */
 void rempli_mat(int n, float* stat_obs);
+void delete_mat(int n);
 void rempli_parsim(int n, int npa);
 int ecrimatL(std::string nomat, int n, int m, long double **A);
 int ecrimatD(std::string nomat, int n, int m, double **A);
