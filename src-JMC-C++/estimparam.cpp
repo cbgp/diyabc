@@ -645,6 +645,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             som = som + vecW[i];
         }
         for (int i=0;i<n;i++) vecW[i]/=som;
+		delete [] sx;
+		delete [] sx2;
+		delete [] mo;
+		delete [] var_statsel;
+		
         //for (int i=0;i<10;i++) cout<<vecW[i]<<"  ";
         //cout<<"\n";
     }
@@ -661,7 +666,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             for (int j=0;j<npa;j++)parsim[i][j]=(long double)alpsimrat[i][j];
         }
 	}
-    
+	
 	int ecrimatL(string nomat, int n, int m, long double **A) {
 		cout<<"\n"<<nomat<<"\n";
 		for (int i=0;i<n;i++) {
