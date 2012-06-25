@@ -393,21 +393,21 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 				br_O[k][j] +=d/enreg2[p].paramvv[j]; // il restera à diviser par ntest
 			}
 		}
-		cout<<("1\n");
+		//cout<<("1\n");
 ////////////  RRMISE
 		for (int j=0;j<nparamcom;j++) {
 			s=0.0;
 			for (int i=0;i<nsel;i++) {d=paretoil[i][j]-enreg2[p].paramvv[j];s += d*d;}
 			rrmise_O[j] +=s/enreg2[p].paramvv[j]/enreg2[p].paramvv[j]/double(nsel);// il restera à diviser par ntest
 		}
-		cout<<("2\n");
+		//cout<<("2\n");
 ////////////  RMAD
 		for (int j=0;j<nparamcom;j++) {
 			s=0.0;
                 for (int i=0;i<nsel;i++) s += fabs(paretoil[i][j]-enreg2[p].paramvv[j]);
                 rmad_O[j] +=s/fabs(enreg2[p].paramvv[j])/(long double)nsel;// il restera à diviser par ntest
 		}
-		cout<<("3\n");
+		//cout<<("3\n");
 ////////////  RMSE
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparamcom;j++) {
@@ -420,7 +420,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 				// il restera à prendre la racine carrée et à diviser par ntest
             }
         }
-		cout<<("4\n");
+		//cout<<("4\n");
 /////////////// coverages
         long double atest=1.0/(long double)ntest;
         for (int j=0;j<nparamcom;j++) {
@@ -438,7 +438,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 				}
             }
         }
-		cout<<("6\n");
+		//cout<<("6\n");
 /////////////////// medianes du biais relatif
         for (int k=0;k<3;k++) {
             for (int j=0;j<nparamcom;j++) {
@@ -450,7 +450,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
             }
             //Il restera à calculer la médiane des bmed[k][j]
         }
-		cout<<("7\n");
+		//cout<<("7\n");
 ///////////////// Relative Median Absolute Deviation
         long double *cc;
         cc = new long double[nsel];
@@ -461,7 +461,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
             //Il restera à calculer la médiane des bmedr_O[j]
         }            
         delete []cc;
-		cout<<("8\n");
+		//cout<<("8\n");
 ////////////  RMAE
 		for (int k=0;k<3;k++) {
 			for (int j=0;j<nparamcom;j++) {
