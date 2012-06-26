@@ -978,9 +978,10 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         """
         proglines = progstr.split('\n')
         if len(proglines) > 0:
-            fl = proglines[0]
+            fl = str(proglines[0])
+            fl = fl.strip()
             t1 = float(fl.split(' ')[0])
-            t2 = float(fl.split(' ')[1])
+            t2 = float(fl.split(' ')[-1].strip())
             if t2 != 0:
                 prog = (t1*100/t2)
             else:
@@ -1001,7 +1002,9 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             #    frame.findChild(QPushButton,"analysisButton").setText("View results")
             #    frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #79D8FF")
             #    frame.findChild(QPushButton,"analysisStopButton").hide()
-            #    self.terminateAnalysis()
+            #    self.terminateAnalysis()     def analysisProgress(self,progstr):
+        """ met à jour l'indicateur de progression de l'analyse en cours
+        """
 
     def terminateAnalysis(self):
         """ arrête le thread de l'analyse et range les résultats

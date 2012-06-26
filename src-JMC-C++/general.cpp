@@ -74,6 +74,8 @@ extern "C"
 string* stat_type;
 int* stat_num;
 
+ofstream fprog;
+
 void initstat_typenum(){
 	string stat_type0[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","HP0","HM1","HV1","HMO","NP0","NM1","NV1","NMO","FP0","FM1","FV1","FMO","AP0","AM1","AV1","AMO","PPL"};
 	int stat_num0[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28 ,  29 ,  30 ,  31 ,  32 ,  33 ,  34 ,  35 ,  36 ,50};
@@ -211,7 +213,6 @@ try {
     char action='a';
     bool flagp=false,flagi=false,flags=false,simOK,stoprun=false;
     string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar, rngpar;
-    FILE *flog;
 
     debut=walltime(&clock_zero);
 	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:x")) !=-1) {
@@ -505,7 +506,7 @@ try {
 												stoprun = (stat(stopfilename.c_str(),&stFileInfo)==0);
 												if (stoprun) remove(stopfilename.c_str());
 											} else {
-												flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",message.c_str());fclose(flog);
+												fprog.open(progressfilename.c_str());fprog<<message<<"\n";fprog.close();
 												stoprun=true;
 												}
 										} else {

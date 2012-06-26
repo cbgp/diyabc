@@ -38,8 +38,9 @@ extern HeaderC header;
 extern ReftableC rt;
 extern string ident, path, progressfilename;
 
+extern ofstream fprog;
+
 int nacp=100000,nprog,iprog;
-FILE *flog;
 
 /**
 * Structure resACP : contient les résultats d'une ACP 
@@ -84,13 +85,13 @@ FILE *flog;
 		}
 		cout<<"\n";*/
 		cout<<"avant transposeL\n";
-		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
+		iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         matXT = transposeL(nli,nco,matX);
 		cout<<"avant prodML nco="<<nco<<"  nli="<<nli<<"\n";
-		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
+		iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();		
         matXTX = prodML(nco,nli,nco,matXT,matX);
 		cout<<"avant prodMsL\n";
-		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
+		iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();		
         matM = prodMsL(nco,nco,matXTX,anli);
         for (int i=0;i<nco;i++) {for (int j=0;j<nco;j++) matM[i][j]=matXTX[i][j]*anli;}
         vcprop  = new long double*[nco];for (int i=0;i<nco;i++) vcprop[i]=new long double [nco];
@@ -102,7 +103,7 @@ FILE *flog;
 		}
 		cout<<"\n";*/
 		cout <<"avant jacobiL\n";
-		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
+		iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();		
 		int nrot=jacobiL(nco,matM,valprop,vcprop);
         cout <<"nrot = "<<nrot<<"\n";
         //cout<<"valeurs propres :\n";
@@ -117,7 +118,7 @@ FILE *flog;
                 }
             }
         }
-		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
+		iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();		
         res.slambda=0.0;
         for (int i=0;i<nco;i++) res.slambda +=valprop[i];
         //for (int i=0;i<nco;i++) cout<<valprop[i]<<"   ";cout <<"\n";
@@ -132,7 +133,7 @@ FILE *flog;
             res.vectprop[i] = new long double[res.nlambda];
             for (int j=0;j<res.nlambda;j++) res.vectprop[i][j] = vcprop[i][j];
         }
-		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
+		iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();		
         res.princomp = new long double*[nli];
         for (int i=0;i<nli;i++) {
             res.princomp[i] = new long double[res.nlambda];
@@ -195,7 +196,7 @@ FILE *flog;
 				for (int j=0;j<rt.nstat;j++) matstat[p][j] = matstat0[p][j];
 			}
 		}
-		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
+		iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();		
         cout<<"avant ACP\n";
         rACP = ACP(nacp,rt.nstat,matstat,1.0,0);
         cout<<"apres ACP  path ="<<path<<"\n";
@@ -209,18 +210,18 @@ FILE *flog;
         //strcat(nomfiACP,ident);
         //strcat(nomfiACP,"_ACP.txt");
         cout <<nomfiACP<<"\n";
-        FILE *f1;
-        f1=fopen(nomfiACP.c_str(),"w");
-        fprintf(f1,"%d %d",nacp,rACP.nlambda);
-        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3Lf",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
-        fprintf(f1,"%d",0);
-        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3Lf",pca_statobs[i]);fprintf(f1,"\n");
+        ofstream f1;
+        f1.open(nomfiACP.c_str());
+		f1<<nacp<<" "<<rACP.nlambda;
+		for (int i=0;i<rACP.nlambda;i++) f1<<" "<<setw(5)<<setprecision(3)<<(rACP.lambda[i]/rACP.slambda);f1<<"\n";
+		f1<<"0";
+		for (int i=0;i<rACP.nlambda;i++) f1<<" "<<setw(5)<<setprecision(3)<<pca_statobs[i];f1<<"\n";
         for (int i=0;i<nacp;i++){
-            fprintf(f1,"%d",numscen[i]);
-            for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3Lf",rACP.princomp[i][j]);fprintf(f1,"\n");
+            f1<<numscen[i];
+            for (int j=0;j<rACP.nlambda;j++) f1<<" "<<setw(5)<<setprecision(3)<<rACP.princomp[i][j];f1<<"\n";
         }
-        fclose(f1);
-		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);		
+		f1.close();
+		iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();		
     }
 
 /**
@@ -305,7 +306,7 @@ FILE *flog;
              f12<<"\n";
         }
         f12.close();
-		iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+		iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 		cout<<iprog<<"  "<<nprog<<"\n";
     }
 
@@ -319,7 +320,6 @@ FILE *flog;
  		cout<<"doacpl "<<opt<<"\n";
        ss = splitwords(opt,";",&ns);
         progressfilename = path + ident + "_progress.txt";
-		flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",0,100);fclose(flog);
         for (int i=0;i<ns;i++) { cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
@@ -335,7 +335,7 @@ FILE *flog;
         nprog=1;
         if (dopca) nprog+=8;
 		if (doloc) nprog+=1;
-		iprog=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+		iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         if (dopca) cal_acp();
         if (doloc) cal_loc();
    }

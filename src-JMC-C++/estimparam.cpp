@@ -39,6 +39,8 @@ extern string progressfilename;
 extern ReftableC rt;
 extern int debuglevel;
 
+extern ofstream fprog;
+
 #define c 1.5707963267948966192313216916398
 #define co 2.506628274631000502415765284811   //sqrt(pi)
 #define coefbw 1.8                            //coefficient multiplicateur de la bandwidth pour le calcul de la densité
@@ -1334,7 +1336,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         bool condition;
         long double *densprior,*denspost,*x,delta;
         int ncl,ii;
-        FILE *flog;
         pardens = new pardensC[nparamcom];
 		//cout<<"dans histodens npar="<<npar<<"\n";
         for (int j=0;j<nparamcom;j++) {
@@ -1406,7 +1407,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                 delete [] denspost;
             }
            cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom<<"\n";
-        *iprog+=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
+        *iprog+=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         }
      }
 
@@ -1419,7 +1420,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         bool condition;
         long double *densprior,*denspost,*x,delta;
         int ncl,ii;
-        FILE *flog;
         pardenscompo = new pardensC[nparcompo];
 		//cout<<"dans histodens npar="<<npar<<"\n";
         for (int j=0;j<nparcompo;j++) {
@@ -1468,7 +1468,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                 delete [] denspost;
             }
            cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparcompo<<"\n";
-        *iprog+=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
+        *iprog+=10;ofstream fprog(progressfilename.c_str(),ios::out);fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         }
      }
 
@@ -1481,7 +1481,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         bool condition;
         long double *densprior,*denspost,*x,delta;
         int ncl,ii;
-        FILE *flog;
         pardensscaled = new pardensC[nparscaled];
 		//cout<<"dans histodens npar="<<npar<<"\n";
         for (int j=0;j<nparscaled;j++) {
@@ -1530,7 +1529,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                 delete [] denspost;
             }
            cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparscaled<<"\n";
-        *iprog+=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",*iprog,*nprog);fclose(flog);
+        *iprog+=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         }
      }
 
@@ -1772,7 +1771,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         string *ss,s,*ss1,s0,s1;
         float  *stat_obs;
 		long double **matC;
-        FILE *flog;
 		long double **phistar, **phistarcompo,**phistarscaled;
         progressfilename=path+ident+"_progress.txt";
         cout<<"debut doestim  options : "<<opt<<"\n";
@@ -1821,11 +1819,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         //header.calstatobs(statobsfilename);  cout<<"apres read_statobs\n";
 		stat_obs = header.stat_obs;
         nprog=200; 
-		iprog=2;
-        flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+		iprog=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+		cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
         rt.alloue_enrsel(nsel);
         rt.cal_dist(nrec,nsel,stat_obs);                  //cout<<"apres cal_dist\n";
-        iprog+=8;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+        iprog+=8;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+		cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
         det_numpar();                                     cout<<"apres det_numpar\n";
         nprog=12+10*(nparamcom+nparcompo+nparscaled); 
 		if (original)nprog +=6;if (composite)nprog +=6;if (scaled)nprog +=6;
@@ -1836,7 +1835,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			recalparamO(nsel);                             		cout<<"apres recalparamO\n";
 			rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
 			local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
-			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistar = new long double*[nsel];
 			for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
 			calphistarO(nsel, phistar);
@@ -1846,7 +1846,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			recalparamC(nsel);                                 	cout<<"apres recalparamC\n";
 			rempli_parsim(nsel,nparcompo);                		cout<<"apres rempli_parsim(C)\n";
 			local_regression(nsel,nparcompo,matC);              cout<<"apres local_regression\n";
-			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistarcompo = new long double*[nsel];
 			for (int i=0;i<nsel;i++) phistarcompo[i] = new long double[nparcompo];
 			calphistarC(nsel,phistarcompo);
@@ -1856,7 +1857,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			recalparamS(nsel);                                 	cout<<"apres recalparamS\n";
 			rempli_parsim(nsel,nparscaled);               		cout<<"apres rempli_parsim(S)\n";
 			local_regression(nsel,nparscaled,matC);             cout<<"apres local_regression\n";
-			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistarscaled = new long double*[nsel];
 			for (int i=0;i<nsel;i++) phistarscaled[i] = new long double[nparscaled];
 			calphistarS(nsel,phistarscaled);
@@ -1867,15 +1869,18 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     		cout<<"apres savephistar\n";
         if (original) {
 			lisimparO(nsel);                          cout<<"apres lisimparO\n";
-			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (composite) {
 			lisimparC(nsel);                         cout<<"apres lisimparC\n";
-			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (scaled) {
 			lisimparS(nsel);                            cout<<"apres lisimparS\n";
-			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
 		if (original) {
 			histodensO(nsel,multithread,progressfilename,&iprog,&nprog,phistar);   cout<<"apres histodensO\n";
@@ -1892,17 +1897,21 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 		}
         if (original){ 
 			parstat = calparstatO(nsel,phistar);                                 cout<<"apres calparstatO\n";
-			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			iprog+=2;fprog.open(progressfilename.c_str());;fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (composite) {
 			parstatcompo = calparstatC(nsel,phistarcompo);                            cout<<"apres calparstatC\n";
-			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (scaled) {
 			parstatscaled = calparstatS(nsel,phistarscaled);                   cout<<"apres calparstatS\n";
-			iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         saveparstat(nsel,path,ident);
         rt.desalloue_enrsel(nsel);
-        iprog+=2;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+        iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+		cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
     }

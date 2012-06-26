@@ -56,7 +56,7 @@ extern ReftableC rt;
 extern int ncs;
 extern bool multithread;
 
-
+extern ofstream fprog;
 string nomficonfresult;
 
 /**
@@ -177,7 +177,6 @@ string nomficonfresult;
         bool AFD=false;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
-        FILE *flog;
         //cout <<"debut de doconf\n";
         progressfilename = path + ident + "_progress.txt";
         //strcpy(progressfilename,path);
@@ -261,12 +260,12 @@ string nomficonfresult;
             enreg[p].numscen = rt.scenteste;
         }
         nsel=nseld;if(nsel<nselr) nsel=nselr;
-        if (nlogreg==1){nprog=10*(ntest+1)+1;iprog=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
-        else           {nprog=6*ntest+11;iprog=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);}
+        if (nlogreg==1){nprog=10*(ntest+1)+1;iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();}
+        else           {nprog=6*ntest+11;iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();}
         cout<<"avant ps.dosimultabref\n";
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,2);
         cout<<"apres ps.dosimultabref\n";
-        iprog=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         cout<<"apres ecriture dans progress\n";
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         //nstatOK = rt.cal_varstat();
@@ -285,7 +284,7 @@ string nomficonfresult;
 			//cout<<"nstatOK="<<nstatOK<<"\n";
             rt.cal_dist(nrec,nsel,stat_obs);
             //cout<<"apres cal_dist\n";
-            iprog +=6;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+            iprog +=6;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			//cout<<"avant transfAFD\n";
             if (AFD) stat_obs = transfAFD(nrec,nsel,p);
             //if (ite==1) stat_obs = transfAFD(nrec,nsel,p);
@@ -301,7 +300,7 @@ string nomficonfresult;
             if (nlogreg==1) {
                 postsr = comp_logistic(nselr,stat_obs);
 				int s=0;for (int i=1;i<rt.nscenchoisi;i++) {if (postsr[i].x>postsr[s].x) s=i;}nbestlog[s]++;
-                iprog +=4;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+                iprog +=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 				for (int i=0;i<rt.nscenchoisi;i++) {
 					printf("  %6.4Lf [%6.4Lf,%6.4Lf] ",postsr[i].x,postsr[i].inf,postsr[i].sup);
 					f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x;
@@ -329,5 +328,5 @@ string nomficonfresult;
 		for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(9)<<nbestdir[i];
 		for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(17)<<nbestlog[i]<<"         ";
         f11.close();
-        iprog +=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog +=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 }

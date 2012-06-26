@@ -38,6 +38,7 @@ extern double time_readfile;
 extern string ident;
 extern HeaderC header;
 extern int nstatOKsel;
+extern ofstream fprog;
 
 int ncs=100;
 //double time_loglik=0.0, time_matC=0.0,time_call=0.0;
@@ -865,9 +866,7 @@ matligneC *matA;
         float  *stat_obs;
         bool AFD=false;
 		/*double duree,debut,clock_zero;*/
-        FILE *flog;
         posteriorscenC **postscendir,**postscenlog;
-
         progressfilename = path + ident + "_progress.txt";
         //strcpy(progressfilename,path);
         //strcat(progressfilename,ident);
@@ -904,7 +903,7 @@ matligneC *matA;
         }
         nsel=nseld;if(nsel<nselr)nsel=nselr;
         nprog=6+nlogreg;
-        iprog=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         nstatOK = rt.cal_varstat();
         //header.calstatobs(statobsfilename);
 		stat_obs = header.stat_obs;
@@ -913,7 +912,7 @@ matligneC *matA;
         rt.cal_dist(nrec,nsel,stat_obs);
 //        duree=walltime(&debut);time_readfile += duree;
 		if (AFD) transAFD(nrec,nsel,stat_obs);
-        iprog+=4;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         postscendir = comp_direct(nseld);
         save_comp_direct(nseld,postscendir,path,ident);  cout<<"apres save_comp_direct\n";
 
@@ -925,12 +924,12 @@ matligneC *matA;
                 nts=(nselr/nlogreg)*(k+1);
                 postscenlog[k] = comp_logistic(nts,stat_obs);cout <<"apres la regression logistique n° "<<k<<"\n";
                 k++;
-                iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+                iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
             }
             save_comp_logistic(nlogreg,nselr,postscenlog,path,ident);
             liberecmat(rt.nscenchoisi, nselr, rt.nstat);
         }
         if(ss != NULL) delete []ss;
         if(ss1 != NULL) delete []ss1;
-        iprog+=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
     }

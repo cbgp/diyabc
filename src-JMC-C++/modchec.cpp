@@ -55,6 +55,8 @@ extern int* stat_num;
 extern bool multithread;
 extern string scurfile;
 
+extern ofstream fprog;
+
 long double **ssphistar,**ssref;
 
     bool resetstats(string s) {
@@ -422,7 +424,6 @@ long double **ssphistar,**ssref;
         //float  *stat_obs;
         bool usestats,firsttime,dopca = false,doloc = false, newstat=false;
         long double** matC, **phistar, **phistarcompo, **phistarscaled;
-        FILE *flog;
 
         progressfilename = path + ident + "_progress.txt";
 		scurfile = path + "first_records_of_the_reference_table_"+ ident +".txt";
@@ -475,14 +476,14 @@ long double **ssphistar,**ssref;
         }
         nprog=newsspart+100;
         if ((newstat)and(dopca)) nprog += header.nscenarios*10000;
-        iprog=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         //header.calstatobs(statobsfilename);
 		//stat_obs = header.stat_obs;  cout<<"apres read_statobs\n";
         cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
         rt.alloue_enrsel(nsel);
         rt.cal_dist(nrec,nsel,header.stat_obs);                  cout<<"apres cal_dist\n";
-        iprog+=40;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=40;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         det_numpar();
 		cout<<"apres det_numpar\n";
         rempli_mat(nsel,header.stat_obs);                        cout<<"apres rempli_mat\n";
@@ -490,13 +491,13 @@ long double **ssphistar,**ssref;
         recalparamO(nsel);                                 cout<<"apres recalparam\n";
 		rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
 		local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
-        iprog+=20;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=20;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 		phistar = new long double* [nsel];
 		for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
         calphistarO(nsel,phistar);                       cout<<"apres calphistar\n";
         det_nomparam();
 		savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     cout<<"apres savephistar\n";
-        iprog+=20;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=20;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         phistarOK = new long double*[nsel];
         for (int i=0;i<nsel;i++) phistarOK[i] = new long double[rt.nparam[rt.scenteste-1]];
 		cout<<"header.scenario[rt.scenteste-1].nparam = "<<header.scenario[rt.scenteste-1].nparam<<"\n";
@@ -539,7 +540,7 @@ long double **ssphistar,**ssref;
             }
             firsttime=false;
             nss+=nenr;
-            iprog+=nenr;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+            iprog+=nenr;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
             //cout<<nss<<"\n";
         }
         if (newstat) {
@@ -568,7 +569,7 @@ long double **ssphistar,**ssref;
                     }
                     firsttime=false;
                     nsr+=nenr;
-                    iprog+=nenr;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+                    iprog+=nenr;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
                     cout<<nsr<<"\n";
                 }
             } else {
@@ -591,5 +592,5 @@ long double **ssphistar,**ssref;
             }
             call_acp(newrefpart,newsspart,header.nstat,numscen,ssref,ssphistar,header.stat_obs);
         }
-        iprog+=10;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        iprog+=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
     }

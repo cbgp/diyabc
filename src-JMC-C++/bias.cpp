@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <time.h>
+#include <iomanip>
 
 
 #include "bias.h"
@@ -51,7 +52,7 @@ extern bool original, composite,scaled;
 extern string* nomparamO,*nomparamC,*nomparamS;
 //extern long double **phistar,**phistarcompo,**phistarscaled;
 extern int debuglevel;
-
+extern ofstream fprog;
 
 
 parstatC **paramest, **paramestcompo, **paramestscaled;
@@ -60,8 +61,6 @@ long double **br_O,*rrmise_O,*rmad_O,**rmse_O,*cov50_O,*cov95_O,**fac2_O,**rmb_O
 long double **br_C,*rrmise_C,*rmad_C,**rmse_C,*cov50_C,*cov95_C,**fac2_C,**rmb_C,*rmedad_C,**rmae_C,***bmed_C,**bmedr_C,***bmeda_C;
 long double **br_S,*rrmise_S,*rmad_S,**rmse_S,*cov50_S,*cov95_S,**fac2_S,**rmb_S,*rmedad_S,**rmae_S,***bmed_S,**bmedr_S,***bmeda_S;
 long double **paretoil,**paretoilcompo,**paretoilscaled;
-
-
 
 /*
     string pseudoprior(string s) {
@@ -736,78 +735,92 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
         mo=new long double[4];
         nomfiresult = path + ident + "_bias.txt";
         cout <<"Les résultats sont dans "<<nomfiresult<<"\n";
-        FILE *f1;
-        f1=fopen(nomfiresult.c_str(),"w");
-        fprintf(f1,"DIYABC :                 Bias and Mean Square Error Analysis                         %s\n",asctime(timeinfo));
-        fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
-        fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
+        ofstream f1;
+        f1.open(nomfiresult.c_str());
+        f1<<"DIYABC :                 Bias and Mean Square Error Analysis                         "<<asctime(timeinfo)<<"\n";
+        f1<<"Data file       : "<<header.datafilename<<"\n";
+        f1<<"Reference table : "<<rt.filename<<"\n";
         switch (numtransf) {
-              case 1 : fprintf(f1,"No transformation of parameters\n");break;
-              case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
-              case 3 : fprintf(f1,"Transformation LOGIT of parameters\n");break;
-              case 4 : fprintf(f1,"Transformation LOG(TG) of parameters\n");break;
+              case 1 : f1<<"No transformation of parameters\n";break;
+              case 2 : f1<<"Transformation LOG of parameters\n";break;
+              case 3 : f1<<"Transformation LOGIT of parameters\n";break;
+              case 4 : f1<<"Transformation LOG(TG) of parameters\n";break;
         }
-        fprintf(f1,"Chosen scenario : %d\n",rt.scenteste);
-        fprintf(f1,"Number of simulated data sets : %d\n",rt.nreclus);
-        fprintf(f1,"Number of selected data sets  : %d\n",nsel);
-        fprintf(f1,"Results based on %d test data sets\n\n",ntest);
-        fprintf(f1,"                                               Averages\n");
-        fprintf(f1,"Parameter                True values           Means             Medians             Modes\n");
+        f1<<"Chosen scenario : "<<rt.scenteste<<"\n";
+        f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
+        f1<<"Number of selected data sets  : "<<nsel<<"\n";
+        f1<<"Results based on "<<ntest<<" test data sets\n\n";
+        f1<<"                                               Averages\n";
+        f1<<"Parameter                True values           Means             Medians             Modes\n";
         for (int j=0;j<nparamcom;j++) {
             //cout<<nomparam[j]<<"\n";
-            fprintf(f1,"%s",nomparamO[j].c_str());
-            for (int i=0;i<24-(int)nomparamO[j].length();i++)fprintf(f1," ");
+            f1<<nomparamO[j];
+            for (int i=0;i<24-(int)nomparamO[j].length();i++) f1<<" ";
             for (int i=0;i<ntest;i++) x[i]=enreg2[i].paramvv[j];mo[0]=cal_moyL(ntest,x);
             for (int i=0;i<ntest;i++) x[i]=paramest[i][j].moy;mo[1]=cal_moyL(ntest,x);
             for (int i=0;i<ntest;i++) x[i]=paramest[i][j].med;mo[2]=cal_moyL(ntest,x);
             for (int i=0;i<ntest;i++) x[i]=paramest[i][j].mod;mo[3]=cal_moyL(ntest,x);
-            fprintf(f1,"  %8.3Le          %8.3Le          %8.3Le          %8.3Le\n",mo[0],mo[1],mo[2],mo[3]);
+            f1<<setw(10)<<setprecision(3)<<mo[0];
+			f1<<setw(18)<<setprecision(3)<<mo[1];
+			f1<<setw(18)<<setprecision(3)<<mo[2];
+			f1<<setw(18)<<setprecision(3)<<mo[3]<<"\n";
         }
-        fprintf(f1,"\n                                           Mean Relative Bias\n");
-        fprintf(f1,"Parameter                           Means          Medians        Modes\n");
+        f1<<"\n                                           Mean Relative Bias\n";
+        f1<<"Parameter                           Means          Medians        Modes\n";
         for (int j=0;j<nparamcom;j++) {
             //cout<<nomparam[j]<<"\n";
-            fprintf(f1,"%s",nomparamO[j].c_str());
-            for(int i=0;i<33-(int)nomparamO[j].length();i++)fprintf(f1," ");
-            if (br_O[0][j]<0) fprintf(f1,"  %6.3Lf",br_O[0][j]); else fprintf(f1,"  %6.3Lf",br_O[0][j]);
-            if (br_O[1][j]<0) fprintf(f1,"         %6.3Lf",br_O[1][j]); else fprintf(f1,"         %6.3Lf",br_O[1][j]);
-            if (br_O[2][j]<0) fprintf(f1,"         %6.3Lf\n",br_O[2][j]); else fprintf(f1,"         %6.3Lf\n",br_O[2][j]);
+            f1<<nomparamO[j];
+            for(int i=0;i<33-(int)nomparamO[j].length();i++) f1<<" ";
+			f1<<setiosflags(ios::fixed)<<setw(8)<<setprecision(3)<<br_O[0][j];
+			f1<<setw(15)<<setprecision(3)<<br_O[1][j];
+			f1<<setw(15)<<setprecision(3)<<br_O[2][j]<<"\n";
         }
-        fprintf(f1,"\n                            RRMISE            RMeanAD            Square root of mean square error/true value\n");
-        fprintf(f1,"Parameter                                                         Mean             Median             Mode\n");
+        f1<<"\n                            RRMISE            RMeanAD            Square root of mean square error/true value\n";
+        f1<<"Parameter                                                         Mean             Median             Mode\n";
         for (int j=0;j<nparamcom;j++) {
             //cout<<nomparam[j]<<"\n";
-            fprintf(f1,"%s",nomparamO[j].c_str());
-            for(int i=0;i<24-(int)nomparamO[j].length();i++)fprintf(f1," ");
-            fprintf(f1,"    %6.3Lf            %6.3Lf            %6.3Lf             %6.3Lf           %6.3Lf\n",rrmise_O[j],rmad_O[j],rmse_O[0][j],rmse_O[1][j],rmse_O[2][j]);
+            f1<<nomparamO[j];
+            for(int i=0;i<24-(int)nomparamO[j].length();i++) f1<<" ";
+			f1<<setw(10)<<setprecision(3)<<rrmise_O[j];
+			f1<<setw(18)<<setprecision(3)<<rmad_O[j];
+			f1<<setw(18)<<setprecision(3)<<rmse_O[0][j];
+			f1<<setw(19)<<setprecision(3)<<rmse_O[1][j];
+			f1<<setw(17)<<setprecision(3)<<rmse_O[2][j]<<"\n";
         }
-        fprintf(f1,"\n                                                                 Factor 2        Factor 2        Factor 2\n");
-        fprintf(f1,"Parameter               50%% Coverage        95%% Coverage         (Mean)          (Median)        (Mode)  \n");
+        f1<<"\n                                                                 Factor 2        Factor 2        Factor 2\n";
+        f1<<"Parameter               50%% Coverage        95%% Coverage         (Mean)          (Median)        (Mode)  \n";
         for (int j=0;j<nparamcom;j++) {
             //cout<<nomparam[j]<<"\n";
-            fprintf(f1,"%s",nomparamO[j].c_str());
-            for(int i=0;i<24-(int)nomparamO[j].length();i++)fprintf(f1," ");
-            fprintf(f1,"    %6.3Lf            %6.3Lf            %6.3Lf             %6.3Lf           %6.3Lf\n",cov50_O[j],cov95_O[j],fac2_O[0][j],fac2_O[1][j],fac2_O[2][j]);
+            f1<<nomparamO[j];
+            for(int i=0;i<24-(int)nomparamO[j].length();i++) f1<<" ";
+			f1<<setw(10)<<setprecision(3)<<cov50_O[j];
+			f1<<setw(18)<<setprecision(3)<<cov95_O[j];
+			f1<<setw(18)<<setprecision(3)<<fac2_O[0][j];
+			f1<<setw(19)<<setprecision(3)<<fac2_O[1][j];
+			f1<<setw(17)<<setprecision(3)<<fac2_O[2][j]<<"\n";
         }
-        fprintf(f1,"\n                                          Median Relative Bias\n");
-        fprintf(f1,"Parameter                                     Means          Medians        Modes\n");
+        f1<<"\n                                          Median Relative Bias\n";
+        f1<<"Parameter                                     Means          Medians        Modes\n";
         for (int j=0;j<nparamcom;j++) {
             //cout<<nomparam[j]<<"\n";
-            fprintf(f1,"%s",nomparamO[j].c_str());
-            for(int i=0;i<43-(int)nomparamO[j].length();i++)fprintf(f1," ");
-            if (rmb_O[0][j]<0) fprintf(f1,"  %6.3Lf",rmb_O[0][j]); else fprintf(f1,"  %6.3Lf",rmb_O[0][j]);
-            if (rmb_O[1][j]<0) fprintf(f1,"         %6.3Lf",rmb_O[1][j]); else fprintf(f1,"         %6.3Lf",rmb_O[1][j]);
-            if (rmb_O[2][j]<0) fprintf(f1,"         %6.3Lf\n",rmb_O[2][j]); else fprintf(f1,"         %6.3Lf\n",rmb_O[2][j]);
+			f1<<nomparamO[j];
+            for(int i=0;i<43-(int)nomparamO[j].length();i++) f1<<" ";
+				f1<<setw(8)<<setprecision(3)<<rmb_O[0][j];
+				f1<<setw(15)<<setprecision(3)<<rmb_O[1][j];
+				f1<<setw(15)<<setprecision(3)<<rmb_O[2][j]<<"\n";
         }
-        fprintf(f1,"\n                             RMedAD        Median of the absolute error/true value\n");
-        fprintf(f1,"Parameter                                     Means          Medians        Modes\n");
+        f1<<"\n                             RMedAD        Median of the absolute error/true value\n";
+        f1<<"Parameter                                     Means          Medians        Modes\n";
         for (int j=0;j<nparamcom;j++) {
             //cout<<nomparam[j]<<"\n";
-            fprintf(f1,"%s",nomparamO[j].c_str());
-            for(int i=0;i<24-(int)nomparamO[j].length();i++)fprintf(f1," ");
-            fprintf(f1,"     %6.3Lf          %6.3Lf         %6.3Lf         %6.3Lf\n",rmedad_O[j],rmae_O[0][j],rmae_O[1][j],rmae_O[2][j]);
+            f1<<nomparamO[j];
+            for(int i=0;i<24-(int)nomparamO[j].length();i++)f1<<" ";
+			f1<<setw(11)<<setprecision(3)<<rmedad_O[j];
+			f1<<setw(16)<<setprecision(3)<<rmae_O[0][j];
+			f1<<setw(16)<<setprecision(3)<<rmae_O[1][j];
+			f1<<setw(16)<<setprecision(3)<<rmae_O[2][j]<<"\n";
         }
-         fclose(f1);
+         f1.close();
 
     }
 
@@ -1117,7 +1130,6 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 		float *stat_obs;
 		long double **matC;
         string bidon;
-        FILE *flog;
 		long double **phistar, **phistarcompo, **phistarscaled;
         progressfilename = path + ident + "_progress.txt";
 		scurfile = path + "pseudo-observed_datasets_"+ ident +".txt";
@@ -1200,7 +1212,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,1);
 		cout<<"apres dosimultabref\n";
 		//header.entete=header.entetehist+header.entetemut0+header.entetestat;
-        nprog=10*ntest+6;iprog=5;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+        nprog=10*ntest+6;iprog=5;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         for (int p=0;p<ntest;p++) {delete []enreg[p].param;delete []enreg[p].stat;}delete []enreg;
         rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
@@ -1291,7 +1303,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
             printf("\nanalysing data test %3d \n",p+1);
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg2[p].stat[j];
             rt.cal_dist(nrec,nsel,stat_obs);          if (debuglevel==11)   cout<<"apres cal_dist\n";
-            iprog +=6;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+            iprog +=6;fprog.open(progressfilename.c_str(),ios::out);fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
             if (p<1) det_nomparam();
 			rempli_mat(nsel,stat_obs);            	if (debuglevel==11)	cout<<"apres rempli_mat\n";
 			matC = cal_matC(nsel);               	if (debuglevel==11)	cout<<"cal_matC\n";
@@ -1344,7 +1356,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 			delete_mat(nsel);
             //printf("\nanalysing data test %3d \n",p+1);
             //for (int j=0;j<npar;j++) printf(" %6.0e (%8.2e %8.2e %8.2e) ",enreg2[p].paramvv[j],paramest[p][j].moy,paramest[p][j].med,paramest[p][j].mod);cout<<"\n";
-            iprog +=4;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+            iprog +=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         }
         rt.desalloue_enrsel(nsel);
 //		for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
@@ -1360,5 +1372,5 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 			finbiaisrelS(ntest);			if (debuglevel==11)	cout<<"apres biaisrelS\n";
 			ecriresS(ntest,npv,nsel);		if (debuglevel==11)	cout<<"apres ecriresS\n";
 		}
-       iprog +=1;flog=fopen(progressfilename.c_str(),"w");fprintf(flog,"%d %d",iprog,nprog);fclose(flog);
+       iprog +=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
     }
