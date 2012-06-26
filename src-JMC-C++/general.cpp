@@ -537,7 +537,7 @@ try {
 														enregOK[nenrOK].message="OK";
 														nenrOK++;
 													}
-												}
+												} 
 												rt.writerecords(nenrOK,enregOK);
 												rt.nrec +=nenrOK;
 												ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"OK\n"<<rt.nrec<<"\n"<<TimeToStr(remtime)<<"\n";f1.close();
