@@ -158,16 +158,20 @@ matligneC *matA;
         //strcat(nomfiparstat,ident);
         //strcat(nomfiparstat,"_compdirect.txt");
         cout <<nomfiparstat<<"\n";
-        FILE *f1;
-        f1=fopen(nomfiparstat.c_str(),"w");
-        printf("     %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) printf("          scenario %d       ",rt.scenchoisi[i]);printf("\n");
-        fprintf(f1,"   %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"          scenario %d       ",rt.scenchoisi[i]);fprintf(f1,"\n");
+		ofstream f1;
+		f1.open(nomfiparstat.c_str());
+		f1<<"     n   ";for (int i=0;i<rt.nscenchoisi;i++) f1<<"          scenario "<<rt.scenchoisi[i]<<"       ";f1<<"\n";
+		cout<<"     n   ";for (int i=0;i<rt.nscenchoisi;i++) cout<<"          scenario "<<rt.scenchoisi[i]<<"       ";cout<<"\n";
         for (int i=0;i<ncs;i++) {
             nts = (n/ncs)*(i+1);
-            if (nts%50==0){printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4Lf [%6.4Lf,%6.4Lf]  ",posts[i][j].x,posts[i][j].inf,posts[i][j].sup);printf("\n");}
-            fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4Lf [%6.4Lf,%6.4Lf]  ",posts[i][j].x,posts[i][j].inf,posts[i][j].sup);fprintf(f1,"\n");
+            if (nts%50==0){
+				cout<<setiosflags(ios::fixed)<<setw(7)<<setprecision(0)<<nts<<"   ";
+				for (int j=0;j<rt.nscenchoisi;j++) cout<<"   "<<setw(6)<<setprecision(4)<<posts[i][j].x<<" ["<<posts[i][j].inf<<","<<posts[i][j].sup<<"]  ";cout<<"\n";
+			}
+			f1<<setiosflags(ios::fixed)<<setw(7)<<setprecision(0)<<nts<<"   ";
+			for (int j=0;j<rt.nscenchoisi;j++) f1<<"   "<<setw(6)<<setprecision(4)<<posts[i][j].x<<" ["<<posts[i][j].inf<<","<<posts[i][j].sup<<"]  ";f1<<"\n";
         }
-        fclose(f1);
+        f1.close();
         for (int i=0;i<rt.nscenchoisi;i++) delete []posts[i];
         delete []posts;
 
@@ -185,30 +189,34 @@ matligneC *matA;
         //strcat(nomfiparstat,ident);
         //strcat(nomfiparstat,"_complogreg.txt");
         cout <<nomfiparstat<<"\n";
-        FILE *f1;
-        f1=fopen(nomfiparstat.c_str(),"w");
-        printf("     %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) printf("          scenario %d       ",rt.scenchoisi[i]);printf("\n");
-        fprintf(f1,"   %s   ","n");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"          scenario %d       ",rt.scenchoisi[i]);fprintf(f1,"\n");
+		ofstream f1;
+		f1.open(nomfiparstat.c_str());
+		f1<<"     n   ";for (int i=0;i<rt.nscenchoisi;i++) f1<<"          scenario "<<rt.scenchoisi[i]<<"       ";f1<<"\n";
+		cout<<"     n   ";for (int i=0;i<rt.nscenchoisi;i++) cout<<"          scenario "<<rt.scenchoisi[i]<<"       ";cout<<"\n";
         for (int i=0;i<nlogreg;i++) {
 			som=0.0;for (int j=0;j<rt.nscenchoisi;j++) som+=postscenlog[i][j].x;
 			if (fabs(som-1.0)<0.001*rt.nscenchoisi) {
 				nts = (nselr/nlogreg)*(i+1);
 				sum=0;for (int j=0;j<rt.nscenchoisi;j++) sum+=postscenlog[i][j].err;
 				if (sum==0){
-					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4Lf [%6.4Lf,%6.4Lf]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);printf("\n");
-					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4Lf [%6.4Lf,%6.4Lf]  ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);fprintf(f1,"\n");
+					cout<<setiosflags(ios::fixed)<<setw(7)<<setprecision(0)<<nts<<"   ";
+					for (int j=0;j<rt.nscenchoisi;j++) cout<<"   "<<setw(6)<<setprecision(4)<<postscenlog[i][j].x<<" ["<<postscenlog[i][j].inf<<","<<postscenlog[i][j].sup<<"]  ";cout<<"\n";
+					f1<<setiosflags(ios::fixed)<<setw(7)<<setprecision(0)<<nts<<"   ";
+					for (int j=0;j<rt.nscenchoisi;j++) f1<<"   "<<setw(6)<<setprecision(4)<<postscenlog[i][j].x<<" ["<<postscenlog[i][j].inf<<","<<postscenlog[i][j].sup<<"]  ";f1<<"\n";
 				} else {
-					printf(" %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) printf("   %6.4Lf [%6.4Lf,%6.4Lf]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);
-					fprintf(f1," %6d   ",nts);for (int j=0;j<rt.nscenchoisi;j++) fprintf(f1,"   %6.4Lf [%6.4Lf,%6.4Lf]* ",postscenlog[i][j].x,postscenlog[i][j].inf,postscenlog[i][j].sup);					
+					cout<<setiosflags(ios::fixed)<<setw(7)<<setprecision(0)<<nts<<"   ";
+					for (int j=0;j<rt.nscenchoisi;j++) cout<<"   "<<setw(6)<<setprecision(4)<<postscenlog[i][j].x<<" ["<<postscenlog[i][j].inf<<","<<postscenlog[i][j].sup<<"]  ";cout<<"\n";
+					f1<<setiosflags(ios::fixed)<<setw(7)<<setprecision(0)<<nts<<"   ";
+					for (int j=0;j<rt.nscenchoisi;j++) f1<<"   "<<setw(6)<<setprecision(4)<<postscenlog[i][j].x<<" ["<<postscenlog[i][j].inf<<","<<postscenlog[i][j].sup<<"]  ";f1<<"\n";
 					if (postscenlog[i][0].err==8) {
-						printf(" LOGISTIC REGRESSION DID NOT CONVERGE AFTER 50 ITERATIONS\n");
-						fprintf(f1," LOGISTIC REGRESSION DID NOT CONVERGE AFTER 50 ITERATIONS\n");
+						cout<<" LOGISTIC REGRESSION DID NOT CONVERGE AFTER 50 ITERATIONS\n";
+						f1<<" LOGISTIC REGRESSION DID NOT CONVERGE AFTER 50 ITERATIONS\n";
 						
-					} else {printf("\n");fprintf(f1,"\n");}
+					} else {cout<<"\n";f1<<"\n";}
 				}
 			}
 		}
-        fclose(f1);
+        f1.close();
         for (int i=0;i<nlogreg;i++) delete []postscenlog[i];
         delete []postscenlog;
     }
@@ -399,8 +407,7 @@ matligneC *matA;
         cloglik[rep-1]=llik;
         if (rep>1) {
 			if(cloglik[rep-1]<cloglik[rep-2]) {
-				printf("rep = %d  loglik decroit : %12.6Lf  %12.6Lf\n",rep,cloglik[rep-1],0.999999*cloglik[rep-2]);
-				//std::cout << "loglik decroit : "<<cloglik[rep-1]<<"   "<<cloglik[rep-2]<<"\n";
+				cout<<"rep = "<<rep<<"  loglik decroit : "<<setiosflags(ios::fixed)<<setw(12)<<setprecision(6)<<cloglik[rep-1]<<"  "<<0.999999*cloglik[rep-2]<<"\n";
 				return false;
 			}
 		}
@@ -621,12 +628,7 @@ matligneC *matA;
                     }
                 }
               }
-        //duree=walltime(&debut);time_matC += duree;
-			//kap = kappa(nmodnco,cmatC);
-			//printf("\nkappa(cmatC) = %10Le",kap);
-			//if(kap>1.0E99) cout <<"   MATRICE SINGULIERE\n"; else cout<<"\n";
-			//if(kap>1.0E99) coeff=1.0E-15; else coeff=1.0E-20;
-			coeff=1.0E-15;
+ 			coeff=1.0E-15;
 			err=inverse_Tik2(nmodnco,cmatC,cmatB,coeff);
 			mdiff=1.0;
 			do {
@@ -642,7 +644,6 @@ matligneC *matA;
 					mdiff /=(long double)nmodnco;
 					mdiff /=(long double)nmodnco;
 				}
-				//printf("coeff = %8Le   mdiff = %8.5Lf   mdiff0 = %8.5Lf   err=%d   nmodnco=%d\n",coeff,mdiff,mdiff0,err,nmodnco);
 				invOK = ((err==0)and/*(mdiff<0.02)*/((mdiff>mdiff0)or(mdiff<0.001)));
 			} while ((not invOK)and(coeff<0.01));
 			for (i=0;i<nmodnco;i++) {for (j=0;j<nmodnco;j++) cmatB[i][j] = cmatB0[i][j];}			
@@ -686,7 +687,8 @@ matligneC *matA;
 			if (rep>1){
 				fin=true;i=0;while ((fin==true)&&(i<nmodel+1)) {
 					fin= (fabs(px[i]-cpx0[i])<0.0001)or(fabs(cloglik[rep-1]/cloglik[rep-2]-1.0)<0.000001);
-					printf("abs(px-px0) = %12.7Lf\n",fabs(px[i]-cpx0[i]));i++;
+					cout<<"abs(px-px0) = "<<setiosflags(ios::fixed)<<setw(12)<<setprecision<<fabs(px[i]-cpx0[i])<<"\n";
+					i++;
 				}
 				fin=(fin or (betmax-betmin>50));
 				if ((not fin) and (rep>50)) {err=8;fin=true;}
@@ -707,7 +709,6 @@ matligneC *matA;
             sx=0.0;sx2=0.0;for(i=0;i<nmodel+1;i++) {sx+=px[i];sx2+=px[i]*px[i];}
             //if ((sx<0.001)or(sx2>0.999)) {
                 //cout<<"\nsx="<<sx<<"   sx2="<<sx2<<"   loglik="<<cloglik[rep-1]<<"\n";
-				//printf("\nsx= %6.3f   sx2= %6.3f     loglik= %15.8Lf\n",sx,sx2,cloglik[rep-1]);
                 //for (i=0;i<nmodnco;i++) cout<<cbeta[i]<<"\n";
             //    exit(1);
             //}

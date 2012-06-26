@@ -77,38 +77,36 @@ string nomficonfresult;
         //strcat(nomficonfresult,ident);
         //strcat(nomficonfresult,"_confidence.txt");
         cout <<nomficonfresult<<"\n";
-        FILE *f1;
-        f1=fopen(nomficonfresult.c_str(),"w");
-        fprintf(f1,"DIYABC :                 Confidence in scenario choice                         %s\n",asctime(timeinfo));
-        fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
-        fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
-        fprintf(f1,"Number of simulated data sets : %d\n",nrec);
-        fprintf(f1,"Direct approach : number of selected data sets : %d\n",nseld);
+		ofstream f1;
+        f1.open(nomficonfresult.c_str());
+        f1<<"DIYABC :                 Confidence in scenario choice                         "<<asctime(timeinfo)<<"\n";
+        f1<<"Data file       : "<<header.datafilename<<"\n";
+        f1<<"Reference table : "<<rt.filename<<"\n";
+        f1<<"Number of simulated data sets : "<<nrec<<"\n";
+        f1<<"Direct approach : number of selected data sets : "<<nseld<<"\n";
         if (nlogreg==1) {
-            fprintf(f1,"Logistic regression  : number of selected data sets : %d\n",nselr);
-            fprintf(f1,"Results obtained with plain summary statistics\n");
+            f1<<"Logistic regression  : number of selected data sets : "<<nselr<<"\n";
+            f1<<"Results obtained with plain summary statistics\n";
         }
-        fprintf(f1,"Peudo-observed data sets simulated with scenario %d \n",rt.scenteste);
-        fprintf(f1,"Historical parameters are drawn from the following priors and/or are given the following values : ");
-        fprintf(f1,"%s\n",shist.c_str());
-        fprintf(f1,"Mutation parameters are drawn from the following priors and/or are given the following values : ");
-        fprintf(f1,"%s\n",smut.c_str());
-        fprintf(f1,"Candidate scenarios : ");
-        for (int i=0;i<rt.nscenchoisi;i++) {fprintf(f1,"%d",rt.scenchoisi[i]);if (i<rt.nscenchoisi-1) fprintf(f1,", "); else fprintf(f1,"\n");}
-        if (AFD) fprintf(f1,"Summary statistics have been replaced by components of a Factorial Discriminant Analysis\n\n"); else fprintf(f1,"\n");
-        //fprintf(f1,"         ");
+        f1<<"Peudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
+        f1<<"Historical parameters are drawn from the following priors and/or are given the following values : "<<shist<<"\n";
+        f1<<"Mutation parameters are drawn from the following priors and/or are given the following values : "<<smut<<"\n";
+        f1<<"Candidate scenarios : ";
+        for (int i=0;i<rt.nscenchoisi;i++) {f1<<rt.scenchoisi[i];if (i<rt.nscenchoisi-1) f1<<", "; else f1<<"\n";}
+        if (AFD) f1<<"Summary statistics have been replaced by components of a Factorial Discriminant Analysis\n\n"; else f1<<"\n";
+        //f1<<"         ");
         aprdir="direct approach";aprlog="logistic approach";
         s=centre(aprdir,9*rt.nscenchoisi);
-        fprintf(f1,"data set ");fprintf(f1,"%s",s.c_str());
+        f1<<"data set "<<s;
         if (nlogreg>0) {
             s=centre(aprlog,26*rt.nscenchoisi);
-            fprintf(f1,"%s",s.c_str());
+            f1<<s;
         }
-        fprintf(f1,"\n         ");
-        for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"  scen %2d",rt.scenchoisi[i]);
-        if (nlogreg>0) for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"        scenario %2d       ",rt.scenchoisi[i]);
-        fprintf(f1,"\n");
-        fclose(f1);
+        f1<<"\n         ";
+        for (int i=0;i<rt.nscenchoisi;i++) f1<<"  scen "<<setiosflags(ios::fixed)<<setw(3)<<rt.scenchoisi[i];
+        if (nlogreg>0) for (int i=0;i<rt.nscenchoisi;i++) f1<<"        scenario "<<rt.scenchoisi[i]<<"       ";
+        f1<<"\n";
+        f1.close();
         if(x != NULL) delete [] x;
         if(mo != NULL) delete [] mo;
     }
@@ -302,17 +300,19 @@ string nomficonfresult;
 				int s=0;for (int i=1;i<rt.nscenchoisi;i++) {if (postsr[i].x>postsr[s].x) s=i;}nbestlog[s]++;
                 iprog +=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 				for (int i=0;i<rt.nscenchoisi;i++) {
-					printf("  %6.4Lf [%6.4Lf,%6.4Lf] ",postsr[i].x,postsr[i].inf,postsr[i].sup);
+					cout<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x;
+					cout<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf;
+					cout<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"] ";
 					f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x;
 					f11<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf;
-					f11<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"]";
+					f11<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"] ";
 				}
 				if (postsr[0].err==1) {
-					printf(" Tikhonov regularisation of the Hessian matrix");
+					cout<<" Tikhonov regularisation of the Hessian matrix";
 					f11<<" Tikhonov regularisation of the Hessian matrix";
 				}
 				if (postsr[0].err>1) {
-					printf(" WARNING : Computation of the logistic failed (error code=%d). Results replaced by those of the direct approach",postsr[0].err);
+					cout<<" WARNING : Computation of the logistic failed (error code="<<postsr[0].err<<". Results replaced by those of the direct approach";
 					f11<<" WARNING : Computation of the logistic failed (error code="<<postsr[0].err<<"). Results replaced by those of the direct approach";
 				}
                 delete []postsd;

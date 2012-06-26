@@ -979,39 +979,39 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         string nomphistar ;
 		if (original){
 			nomphistar =path+ident+"_phistar.txt";
-			FILE *f1;
-			f1=fopen(nomphistar.c_str(),"w");
-			fprintf(f1,"%s\n",enteteO.c_str());
+			ofstream f1;
+			f1.open(nomphistar.c_str());
+			f1<<enteteO<<"\n";
 			for (int i=0;i<n;i++) {
-				fprintf(f1,"  %d    ",rt.enrsel[i].numscen);
-				for (int j=0;j<nparamcom;j++) fprintf(f1,"  %8.5Le  ",phistar[i][j]);
-				fprintf(f1,"\n");
+				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen<<"    ";
+				for (int j=0;j<nparamcom;j++) f1<<setw(10)<<setprecision(5)<<phistar[i][j]<<"  ";
+				f1<<"\n";
 			}
-			fclose(f1);
+			f1.close();
 		}
 		if (composite) {
 			nomphistar =path+ident+"_phistarcompo.txt";
-			FILE *f1;
-			f1=fopen(nomphistar.c_str(),"w");
-			fprintf(f1,"%s\n",enteteC.c_str());
+			ofstream f1;
+			f1.open(nomphistar.c_str());
+			f1<<enteteC<<"\n";
 			for (int i=0;i<n;i++) {
-				fprintf(f1,"  %d    ",rt.enrsel[i].numscen);
-				for (int j=0;j<nparcompo;j++) fprintf(f1,"  %8.5Le  ",phistarcompo[i][j]);
-				fprintf(f1,"\n");
+				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen<<"    ";
+				for (int j=0;j<nparcompo;j++) f1<<setw(10)<<setprecision(5)<<phistarcompo[i][j]<<"  ";
+				f1<<"\n";
 			}
-			fclose(f1);
+			f1.close();
 		} 
 		if (scaled) {
 			nomphistar =path+ident+"_phistarscaled.txt";
-			FILE *f1;
-			f1=fopen(nomphistar.c_str(),"w");
-			fprintf(f1,"%s\n",enteteS.c_str());
+			ofstream f1;
+			f1.open(nomphistar.c_str());
+			f1<<enteteS<<"\n";
 			for (int i=0;i<n;i++) {
-				fprintf(f1,"  %d    ",rt.enrsel[i].numscen);
-				for (int j=0;j<nparscaled;j++) fprintf(f1,"  %8.5Le  ",phistarscaled[i][j]);
-				fprintf(f1,"\n");
+				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen<<"    ";
+				for (int j=0;j<nparscaled;j++) f1<<setw(10)<<setprecision(5)<<phistarscaled[i][j]<<"  ";
+				f1<<"\n";
 			}
-			fclose(f1);
+			f1.close();
 		} 
     }
 

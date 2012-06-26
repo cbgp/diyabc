@@ -160,7 +160,7 @@ int debuglevel=0;
 int num_threads=0;
 string sremtime,scurfile;
 double clock_zero=0.0,debut,duree,debutf,dureef,time_file=0.0,time_reftable=0.0,debutr,dureer,remtime;
-FILE *fd;
+ofstream fd;
 
 bool RNG_must_be_saved;
 
@@ -515,11 +515,12 @@ try {
 												if (enreg[i].message!="OK") {nenrOK++;neOK[enreg[i].numscen-1]++;}
 												netot[enreg[i].numscen-1]++;
 											}
-											fd = fopen (scsufilename.c_str(),"w");
-											fprintf(fd,"%s\n","Numbers of parameter combinations complying with all conditions");
-											fprintf(fd,"%s\n","scenario      tested      successful");
-											for (int p=0;p<header.nscenarios;p++) fprintf(fd,"%5d     %10d     %10d\n",p+1,netot[p],neOK[p]);
-											fclose(fd);
+											fd.open (scsufilename.c_str());
+											fd<<"Numbers of parameter combinations complying with all conditions\n";
+											fd<<"scenario      tested      successful\n";
+											for (int p=0;p<header.nscenarios;p++) 
+												fd<<setiosflags(ios::fixed)<<setw(5)<<p+1<<setw(15)<<netot[p]<<setw(15)<<neOK[p]<<"\n";
+											fd.close();
 											if (nenrOK>0){
 												enregOK = new enregC[nenrOK];
 												for (int p=0;p<nenrOK;p++) {
