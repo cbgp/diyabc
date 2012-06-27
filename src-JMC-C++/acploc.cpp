@@ -212,13 +212,14 @@ int nacp=100000,nprog,iprog;
         cout <<nomfiACP<<"\n";
         ofstream f1;
         f1.open(nomfiACP.c_str());
-		f1<<nacp<<" "<<rACP.nlambda;
-		for (int i=0;i<rACP.nlambda;i++) f1<<" "<<setw(5)<<setprecision(3)<<(rACP.lambda[i]/rACP.slambda);f1<<"\n";
+		f1<<setiosflags(ios::fixed)<<nacp<<" "<<rACP.nlambda;
+		f1<<setprecision(3);
+		for (int i=0;i<rACP.nlambda;i++) f1<<" "<<(rACP.lambda[i]/rACP.slambda);f1<<"\n";
 		f1<<"0";
-		for (int i=0;i<rACP.nlambda;i++) f1<<" "<<setw(5)<<setprecision(3)<<pca_statobs[i];f1<<"\n";
+		for (int i=0;i<rACP.nlambda;i++) f1<<" "<<pca_statobs[i];f1<<"\n";
         for (int i=0;i<nacp;i++){
             f1<<numscen[i];
-            for (int j=0;j<rACP.nlambda;j++) f1<<" "<<setw(5)<<setprecision(3)<<rACP.princomp[i][j];f1<<"\n";
+            for (int j=0;j<rACP.nlambda;j++) f1<<" "<<rACP.princomp[i][j];f1<<"\n";
         }
 		f1.close();
 		iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();		

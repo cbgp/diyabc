@@ -402,18 +402,19 @@ long double **ssphistar,**ssref;
         cout <<nomfiACP<<"\n";
 		ofstream f1;
         f1.open(nomfiACP.c_str());
-		f1<<nr<<" "<<rACP.nlambda;
-		f1<<setiosflags(ios::scientific)<<setw(6)<<setprecision(3);
+		f1<<setiosflags(ios::fixed)<<nr<<" "<<rACP.nlambda;
+		f1<<setprecision(3);
 		for (int i=0;i<rACP.nlambda;i++) f1<<" "<<(rACP.lambda[i]/rACP.slambda);f1<<"\n";
 		f1<<"0";
 		for (int i=0;i<rACP.nlambda;i++) f1<<" "<<pca_statobs[i];f1<<"\n";
         for (int i=0;i<nr;i++){
-			f1<<setiosflags(ios::fixed)<<numscen[i];
-		    f1<<setiosflags(ios::scientific)<<setw(6)<<setprecision(3);
+			f1<<setiosflags(ios::fixed)<<setprecision(0)<<numscen[i];
+		    f1<<setprecision(3);
 			for (int j=0;j<rACP.nlambda;j++) f1<<" "<<rACP.princomp[i][j];f1<<"\n";
 		}
         for (int i=0;i<ns;i++){
-			f1<<setiosflags(ios::fixed)<<rt.scenteste;
+			f1<<setiosflags(ios::fixed)<<setprecision(0)<<rt.scenteste;
+			f1<<setprecision(3);
 			for (int j=0;j<rACP.nlambda;j++) f1<<" "<<pca_ss[i][j];f1<<"\n";
 		}
         f1.close();

@@ -257,6 +257,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             pp = QwtPlotPanner(p.canvas())
             #pz = QwtPlotZoomer(p.canvas())
             #ppi = QwtPlotPicker(p.canvas())
+            print self.dico_points[-1][compo_v]
             p.setAxisTitle(0,"P.C.%s (%8.2f%%)"%(compo_v+1,float(self.dico_points[-1][compo_v])*100))
             p.setAxisTitle(2,"P.C.%s (%8.2f%%)"%(compo_h+1,float(self.dico_points[-1][compo_h])*100))
             p.replot()
