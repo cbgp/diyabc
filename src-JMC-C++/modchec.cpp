@@ -400,21 +400,23 @@ long double **ssphistar,**ssref;
         //strcat(nomfiACP,ident);
         //strcat(nomfiACP,"_mcACP.txt");
         cout <<nomfiACP<<"\n";
-        FILE *f1;
-        f1=fopen(nomfiACP.c_str(),"w");
-        fprintf(f1,"%d %d",nr,rACP.nlambda);
-        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3Lf",rACP.lambda[i]/rACP.slambda);fprintf(f1,"\n");
-        fprintf(f1,"%d",0);
-        for (int i=0;i<rACP.nlambda;i++) fprintf(f1," %5.3Lf",pca_statobs[i]);fprintf(f1,"\n");
+		ofstream f1;
+        f1.open(nomfiACP.c_str());
+		f1<<nr<<" "<<rACP.nlambda;
+		f1<<setiosflags(ios::scientific)<<setw(6)<<setprecision(3);
+		for (int i=0;i<rACP.nlambda;i++) f1<<" "<<(rACP.lambda[i]/rACP.slambda);f1<<"\n";
+		f1<<"0";
+		for (int i=0;i<rACP.nlambda;i++) f1<<" "<<pca_statobs[i];f1<<"\n";
         for (int i=0;i<nr;i++){
-            fprintf(f1,"%d",numscen[i]);
-            for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3Lf",rACP.princomp[i][j]);fprintf(f1,"\n");
-        }
+			f1<<setiosflags(ios::fixed)<<numscen[i];
+		    f1<<setiosflags(ios::scientific)<<setw(6)<<setprecision(3);
+			for (int j=0;j<rACP.nlambda;j++) f1<<" "<<rACP.princomp[i][j];f1<<"\n";
+		}
         for (int i=0;i<ns;i++){
-            fprintf(f1,"%d",rt.scenteste);
-            for (int j=0;j<rACP.nlambda;j++) fprintf(f1," %5.3Lf",pca_ss[i][j]);fprintf(f1,"\n");
-        }
-        fclose(f1);
+			f1<<setiosflags(ios::fixed)<<rt.scenteste;
+			for (int j=0;j<rACP.nlambda;j++) f1<<" "<<pca_ss[i][j];f1<<"\n";
+		}
+        f1.close();
     }
 
     void domodchec(string opt,int seed){

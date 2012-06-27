@@ -1645,119 +1645,129 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
         string nomfiparstat;
+		ofstream f1;
 		if (original) {
 			nomfiparstat = path+ident+"_paramstatdens.txt";
 			cout <<nomfiparstat<<"\n";
-			FILE *f1;
-			f1=fopen(nomfiparstat.c_str(),"w");
+			f1.open(nomfiparstat.c_str());
 			for (int j=0;j<nparamcom;j++) {
-				fprintf(f1,"%s\n",nomparamO[j].c_str());//cout<<"1\n";
-				fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
-				fprintf(f1,"%d\n",pardens[j].ncl);//cout<<"3\n";
-				for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].x[i]);fprintf(f1,"\n");//cout<<"3\n";
-				for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].priord[i]);fprintf(f1,"\n");//cout<<"4\n";
-				for (int i=0;i<pardens[j].ncl;i++) fprintf(f1,"  %8.5Le",pardens[j].postd[i]);fprintf(f1,"\n");//cout<<"5\n";
+				f1<<nomparamO[j]<<"\n";//cout<<"1\n";
+				f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<parstat[j].moy<<" "<<parstat[j].med<<" ";
+				f1<<parstat[j].mod<<" "<<parstat[j].q025<<" "<<parstat[j].q050<<" "<<parstat[j].q250<<" ";
+				f1<<parstat[j].q750<<" "<<parstat[j].q950<<" "<<parstat[j].q975<<"\n";
+				f1<<setiosflags(ios::fixed)<<pardens[j].ncl<<"\n";
+				for (int i=0;i<pardens[j].ncl;i++) f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<"  "<<pardens[j].x[i];f1<<"\n"; 
+				for (int i=0;i<pardens[j].ncl;i++) f1<<"  "<<pardens[j].priord[i];f1<<"\n"; 
+				for (int i=0;i<pardens[j].ncl;i++) f1<<"  "<<pardens[j].postd[i];f1<<"\n"; 
 			}
-			fclose(f1);
+			f1.close();
 			nomfiparstat = path+ident+"_mmmq.txt";
 			cout <<nomfiparstat<<"\n";
-			f1=fopen(nomfiparstat.c_str(),"w");
-			fprintf(f1,"DIYABC :                      ABC parameter estimation                         %s\n",asctime(timeinfo));
-			fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
-			fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
+			f1.open(nomfiparstat.c_str());
+			f1<<"DIYABC :                      ABC parameter estimation                         "<<asctime(timeinfo)<<"\n";
+			f1<<"Data file       : "<<header.datafilename<<"\n";
+			f1<<"Reference table : "<<rt.filename<<"\n";
 			switch (numtransf) {
-				case 1 : fprintf(f1,"No transformation of parameters\n");break;
-				case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
-				case 3 : fprintf(f1,"Transformation LOGIT of parameters\n");break;
-				case 4 : fprintf(f1,"Transformation LOG(TG) of parameters\n");break;
+				case 1 : f1<<"No transformation of parameters\n";break;
+				case 2 : f1<<"Transformation LOG of parameters\n";break;
+				case 3 : f1<<"Transformation LOGIT of parameters\n";break;
+				case 4 : f1<<"Transformation LOG(TG) of parameters\n";break;
 			}
-			fprintf(f1,"Chosen scenario(s) : ");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"%d ",rt.scenchoisi[i]);fprintf(f1,"\n");
-			fprintf(f1,"Number of simulated data sets : %d\n",rt.nreclus);
-			fprintf(f1,"Number of selected data sets  : %d\n\n",nsel);
-			fprintf(f1,"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n");
-			fprintf(f1,"------------------------------------------------------------------------------------------------------\n");
+			f1<<"Chosen scenario(s) : ";for (int i=0;i<rt.nscenchoisi;i++) f1<<rt.scenchoisi[i];f1<<"\n";
+			f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
+			f1<<"Number of selected data sets  : "<<nsel<<"\n\n";
+			f1<<"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n";
+			f1<<"------------------------------------------------------------------------------------------------------\n";
 			for (int j=0;j<nparamcom;j++) {
-				fprintf(f1,"%s",nomparamO[j].c_str());
-				for(int i=0;i<16-(int)(nomparamO[j].length());i++)fprintf(f1," ");
-				fprintf(f1,"%8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e\n",parstat[j].moy,parstat[j].med,parstat[j].mod,parstat[j].q025,parstat[j].q050,parstat[j].q250,parstat[j].q750,parstat[j].q950,parstat[j].q975);
+				f1<<nomparamO[j];
+				for(int i=0;i<14-(int)(nomparamO[j].length());i++) f1<<" ";
+				f1<<setiosflags(ios::scientific)<<setw(10)<<setprecision(2)<<parstat[j].moy;
+				f1<<parstat[j].med<<parstat[j].mod<<parstat[j].q025<<parstat[j].q050<<parstat[j].q250;
+				f1<<parstat[j].q750<<parstat[j].q950<<parstat[j].q975<<"\n";
 			}
-			fclose(f1);
+			f1.close();
  		}
 		if (composite) {
 			nomfiparstat = path+ident+"_paramcompostatdens.txt";
 			cout <<nomfiparstat<<"\n";
-			FILE *f1;
-			f1=fopen(nomfiparstat.c_str(),"w");
+			f1.open(nomfiparstat.c_str());
 			for (int j=0;j<nparcompo;j++) {
-				fprintf(f1,"%s\n",nomparamC[j].c_str());
-				fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstatcompo[j].moy,parstatcompo[j].med,parstatcompo[j].mod,parstatcompo[j].q025,parstatcompo[j].q050,parstatcompo[j].q250,parstatcompo[j].q750,parstatcompo[j].q950,parstatcompo[j].q975);
-				fprintf(f1,"%d\n",pardenscompo[j].ncl);//cout<<"3\n";
-				for (int i=0;i<pardenscompo[j].ncl;i++) fprintf(f1,"  %8.5Le",pardenscompo[j].x[i]);fprintf(f1,"\n");//cout<<"3\n";
-				for (int i=0;i<pardenscompo[j].ncl;i++) fprintf(f1,"  %8.5Le",pardenscompo[j].priord[i]);fprintf(f1,"\n");//cout<<"4\n";
-				for (int i=0;i<pardenscompo[j].ncl;i++) fprintf(f1,"  %8.5Le",pardenscompo[j].postd[i]);fprintf(f1,"\n");//cout<<"5\n";
+				f1<<nomparamC[j]<<"\n";//cout<<"1\n";
+				f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<parstatcompo[j].moy<<" "<<parstatcompo[j].med<<" ";
+				f1<<parstatcompo[j].mod<<" "<<parstatcompo[j].q025<<" "<<parstatcompo[j].q050<<" "<<parstatcompo[j].q250<<" ";
+				f1<<parstatcompo[j].q750<<" "<<parstatcompo[j].q950<<" "<<parstatcompo[j].q975<<"\n";
+				f1<<setiosflags(ios::fixed)<<pardenscompo[j].ncl<<"\n";
+				for (int i=0;i<pardenscompo[j].ncl;i++) f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<"  "<<pardenscompo[j].x[i];f1<<"\n"; 
+				for (int i=0;i<pardenscompo[j].ncl;i++) f1<<"  "<<pardenscompo[j].priord[i];f1<<"\n"; 
+				for (int i=0;i<pardenscompo[j].ncl;i++) f1<<"  "<<pardenscompo[j].postd[i];f1<<"\n"; 
 			}
-			fclose(f1);
+			f1.close();
 			nomfiparstat = path+ident+"_mmmqcompo.txt";
 			cout <<nomfiparstat<<"\n";
-			f1=fopen(nomfiparstat.c_str(),"w");
-			fprintf(f1,"DIYABC :                      ABC parameter estimation                         %s\n",asctime(timeinfo));
-			fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
-			fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
+			f1.open(nomfiparstat.c_str());
+			f1<<"DIYABC :                      ABC parameter estimation                         "<<asctime(timeinfo)<<"\n";
+			f1<<"Data file       : "<<header.datafilename<<"\n";
+			f1<<"Reference table : "<<rt.filename<<"\n";
 			switch (numtransf) {
-				case 1 : fprintf(f1,"No transformation of parameters\n");break;
-				case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
-				case 3 : fprintf(f1,"Transformation LOGIT of parameters\n");break;
-				case 4 : fprintf(f1,"Transformation LOG(TG) of parameters\n");break;
+				case 1 : f1<<"No transformation of parameters\n";break;
+				case 2 : f1<<"Transformation LOG of parameters\n";break;
+				case 3 : f1<<"Transformation LOGIT of parameters\n";break;
+				case 4 : f1<<"Transformation LOG(TG) of parameters\n";break;
 			}
-			fprintf(f1,"Chosen scenario(s) : ");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"%d ",rt.scenchoisi[i]);fprintf(f1,"\n");
-			fprintf(f1,"Number of simulated data sets : %d\n",rt.nreclus);
-			fprintf(f1,"Number of selected data sets  : %d\n\n",nsel);
-			fprintf(f1,"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n");
-			fprintf(f1,"------------------------------------------------------------------------------------------------------\n");
+			f1<<"Chosen scenario(s) : ";for (int i=0;i<rt.nscenchoisi;i++) f1<<rt.scenchoisi[i];f1<<"\n";
+			f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
+			f1<<"Number of selected data sets  : "<<nsel<<"\n\n";
+			f1<<"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n";
+			f1<<"------------------------------------------------------------------------------------------------------\n";
 			for (int j=0;j<nparcompo;j++) {
-				fprintf(f1,"%s",nomparamC[j].c_str());
-				for(int i=0;i<16-(int)(nomparamC[j].length());i++)fprintf(f1," ");
-				fprintf(f1,"%8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e\n",parstatcompo[j].moy,parstatcompo[j].med,parstatcompo[j].mod,parstatcompo[j].q025,parstatcompo[j].q050,parstatcompo[j].q250,parstatcompo[j].q750,parstatcompo[j].q950,parstatcompo[j].q975);
+				f1<<nomparamC[j];
+				for(int i=0;i<14-(int)(nomparamC[j].length());i++) f1<<" ";
+				f1<<setiosflags(ios::scientific)<<setw(10)<<setprecision(2)<<parstatcompo[j].moy;
+				f1<<parstatcompo[j].med<<parstatcompo[j].mod<<parstatcompo[j].q025<<parstatcompo[j].q050<<parstatcompo[j].q250;
+				f1<<parstatcompo[j].q750<<parstatcompo[j].q950<<parstatcompo[j].q975<<"\n";
 			}
-			fclose(f1);
+			f1.close();
 		}
 		if (scaled) {
 			nomfiparstat = path+ident+"_paramscaledstatdens.txt";
 			cout <<nomfiparstat<<"\n";
-			FILE *f1;
-			f1=fopen(nomfiparstat.c_str(),"w");
+			f1.open(nomfiparstat.c_str());
 			for (int j=0;j<nparscaled;j++) {
-				fprintf(f1,"%s\n",nomparamS[j].c_str());
-				fprintf(f1,"%8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e  %8.5e\n",parstatscaled[j].moy,parstatscaled[j].med,parstatscaled[j].mod,parstatscaled[j].q025,parstatscaled[j].q050,parstatscaled[j].q250,parstatscaled[j].q750,parstatscaled[j].q950,parstatscaled[j].q975);
-				fprintf(f1,"%d\n",pardensscaled[j].ncl);//cout<<"3\n";
-				for (int i=0;i<pardensscaled[j].ncl;i++) fprintf(f1,"  %8.5Le",pardensscaled[j].x[i]);fprintf(f1,"\n");//cout<<"3\n";
-				for (int i=0;i<pardensscaled[j].ncl;i++) fprintf(f1,"  %8.5Le",pardensscaled[j].priord[i]);fprintf(f1,"\n");//cout<<"4\n";
-				for (int i=0;i<pardensscaled[j].ncl;i++) fprintf(f1,"  %8.5Le",pardensscaled[j].postd[i]);fprintf(f1,"\n");//cout<<"5\n";
+				f1<<nomparamS[j]<<"\n";//cout<<"1\n";
+				f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<parstatscaled[j].moy<<" "<<parstatscaled[j].med<<" ";
+				f1<<parstatscaled[j].mod<<" "<<parstatscaled[j].q025<<" "<<parstatscaled[j].q050<<" "<<parstatscaled[j].q250<<" ";
+				f1<<parstatscaled[j].q750<<" "<<parstatscaled[j].q950<<" "<<parstatscaled[j].q975<<"\n";
+				f1<<setiosflags(ios::fixed)<<pardensscaled[j].ncl<<"\n";
+				for (int i=0;i<pardensscaled[j].ncl;i++) f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<"  "<<pardensscaled[j].x[i];f1<<"\n"; 
+				for (int i=0;i<pardensscaled[j].ncl;i++) f1<<"  "<<pardensscaled[j].priord[i];f1<<"\n"; 
+				for (int i=0;i<pardensscaled[j].ncl;i++) f1<<"  "<<pardensscaled[j].postd[i];f1<<"\n"; 
 			}
-			fclose(f1);
+			f1.close();
 			nomfiparstat = path+ident+"_mmmqscaled.txt";
 			cout <<nomfiparstat<<"\n";
-			f1=fopen(nomfiparstat.c_str(),"w");
-			fprintf(f1,"DIYABC :                      ABC parameter estimation                         %s\n",asctime(timeinfo));
-			fprintf(f1,"Data file       : %s\n",header.datafilename.c_str());
-			fprintf(f1,"Reference table : %s\n",rt.filename.c_str());
+			f1.open(nomfiparstat.c_str());
+			f1<<"DIYABC :                      ABC parameter estimation                         "<<asctime(timeinfo)<<"\n";
+			f1<<"Data file       : "<<header.datafilename<<"\n";
+			f1<<"Reference table : "<<rt.filename<<"\n";
 			switch (numtransf) {
-				case 1 : fprintf(f1,"No transformation of parameters\n");break;
-				case 2 : fprintf(f1,"Transformation LOG of parameters\n");break;
-				case 3 : fprintf(f1,"Transformation LOGIT of parameters\n");break;
-				case 4 : fprintf(f1,"Transformation LOG(TG) of parameters\n");break;
+				case 1 : f1<<"No transformation of parameters\n";break;
+				case 2 : f1<<"Transformation LOG of parameters\n";break;
+				case 3 : f1<<"Transformation LOGIT of parameters\n";break;
+				case 4 : f1<<"Transformation LOG(TG) of parameters\n";break;
 			}
-			fprintf(f1,"Chosen scenario(s) : ");for (int i=0;i<rt.nscenchoisi;i++) fprintf(f1,"%d ",rt.scenchoisi[i]);fprintf(f1,"\n");
-			fprintf(f1,"Number of simulated data sets : %d\n",rt.nreclus);
-			fprintf(f1,"Number of selected data sets  : %d\n\n",nsel);
-			fprintf(f1,"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n");
-			fprintf(f1,"------------------------------------------------------------------------------------------------------\n");
+			f1<<"Chosen scenario(s) : ";for (int i=0;i<rt.nscenchoisi;i++) f1<<rt.scenchoisi[i];f1<<"\n";
+			f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
+			f1<<"Number of selected data sets  : "<<nsel<<"\n\n";
+			f1<<"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n";
+			f1<<"------------------------------------------------------------------------------------------------------\n";
 			for (int j=0;j<nparscaled;j++) {
-				fprintf(f1,"%s",nomparamS[j].c_str());
-				for(int i=0;i<16-(int)(nomparamS[j].length());i++)fprintf(f1," ");
-				fprintf(f1,"%8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e  %8.2e\n",parstatscaled[j].moy,parstatscaled[j].med,parstatscaled[j].mod,parstatscaled[j].q025,parstatscaled[j].q050,parstatscaled[j].q250,parstatscaled[j].q750,parstatscaled[j].q950,parstatscaled[j].q975);
+				f1<<nomparamS[j];
+				for(int i=0;i<14-(int)(nomparamS[j].length());i++) f1<<" ";
+				f1<<setiosflags(ios::scientific)<<setw(10)<<setprecision(2)<<parstatscaled[j].moy;
+				f1<<parstatscaled[j].med<<parstatscaled[j].mod<<parstatscaled[j].q025<<parstatscaled[j].q050<<parstatscaled[j].q250;
+				f1<<parstatscaled[j].q750<<parstatscaled[j].q950<<parstatscaled[j].q975<<"\n";
 			}
-			fclose(f1);
+			f1.close();
 		}
     }
 
