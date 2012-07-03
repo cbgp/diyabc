@@ -905,7 +905,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 			f1<<fmLD(rmse_C[2][j],17,3)<<"\n";
         }
         f1<<"\n                                                                 Factor 2        Factor 2        Factor 2\n";
-        f1<<"Parameter               50%% Coverage        95%% Coverage         (Mean)          (Median)        (Mode)  \n";
+        f1<<"Parameter               50% Coverage        95% Coverage         (Mean)          (Median)        (Mode)  \n";
         for (int j=0;j<nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamC[j];
@@ -1012,7 +1012,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 			f1<<fmLD(rmse_S[2][j],17,3)<<"\n";
         }
         f1<<"\n                                                                 Factor 2        Factor 2        Factor 2\n";
-        f1<<"Parameter               50%% Coverage        95%% Coverage         (Mean)          (Median)        (Mode)  \n";
+        f1<<"Parameter               50% Coverage        95% Coverage         (Mean)          (Median)        (Mode)  \n";
         for (int j=0;j<nparscaled;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamS[j];
