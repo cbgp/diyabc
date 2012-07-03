@@ -1197,7 +1197,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 				}
 				Ne = Ne/(long double)nNe;
-				cout<<"Ne = "<<Ne<<"  nNe="<<nNe<<"\n";
+				//cout<<"Ne = "<<Ne<<"  nNe="<<nNe<<"\n";
 				k=0; //cout<<"Ne = "<<Ne<<"  "<<((int)Ne % 3)<<"\n";
 				for (int j=0;j<npar;j++) {
 					if (header.scenario[rt.scenchoisi[m]-1].histparam[numpar[m][j]].category<2){
@@ -1407,7 +1407,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                 delete [] denspost;
             }
            cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparamcom<<"\n";
-        *iprog+=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+        *iprog+=10;fprog.open(progressfilename.c_str());fprog<<*iprog<<"   "<<*nprog<<"\n";fprog.close();
         }
      }
 
@@ -1468,7 +1468,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                 delete [] denspost;
             }
            cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparcompo<<"\n";
-        *iprog+=10;ofstream fprog(progressfilename.c_str(),ios::out);fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+        *iprog+=10;ofstream fprog(progressfilename.c_str(),ios::out);fprog<<*iprog<<"   "<<*nprog<<"\n";fprog.close();
         }
      }
 
@@ -1529,7 +1529,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                 delete [] denspost;
             }
            cout <<"fin du calcul du parametre "<<j+1<<"  sur "<<nparscaled<<"\n";
-        *iprog+=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+        *iprog+=10;fprog.open(progressfilename.c_str());fprog<<*iprog<<"   "<<*nprog<<"\n";fprog.close();
         }
      }
 
@@ -1652,11 +1652,13 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.open(nomfiparstat.c_str());
 			for (int j=0;j<nparamcom;j++) {
 				f1<<nomparamO[j]<<"\n";//cout<<"1\n";
-				f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<parstat[j].moy<<" "<<parstat[j].med<<" ";
-				f1<<parstat[j].mod<<" "<<parstat[j].q025<<" "<<parstat[j].q050<<" "<<parstat[j].q250<<" ";
-				f1<<parstat[j].q750<<" "<<parstat[j].q950<<" "<<parstat[j].q975<<"\n";
-				f1<<setiosflags(ios::fixed)<<pardens[j].ncl<<"\n";
-				for (int i=0;i<pardens[j].ncl;i++) f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<"  "<<pardens[j].x[i];f1<<"\n"; 
+				f1<<setiosflags(ios::scientific)<<setw(11)<<setprecision(5)<<parstat[j].moy<<"  "<<parstat[j].med<<"  ";
+				f1<<parstat[j].mod<<"  "<<parstat[j].q025<<"  "<<parstat[j].q050<<"  "<<parstat[j].q250<<"  ";
+				f1<<parstat[j].q750<<"  "<<parstat[j].q950<<"  "<<parstat[j].q975<<"\n";
+				//f1<<setiosflags(ios::fixed)<<pardens[j].ncl<<"\n  ";
+				//f1<<setiosflags(ios::scientific)<<setw(11)<<setprecision(5);
+				f1<<pardens[j].ncl<<"\n";
+				for (int i=0;i<pardens[j].ncl;i++) f1<<"  "<<pardens[j].x[i];f1<<"\n"; 
 				for (int i=0;i<pardens[j].ncl;i++) f1<<"  "<<pardens[j].priord[i];f1<<"\n"; 
 				for (int i=0;i<pardens[j].ncl;i++) f1<<"  "<<pardens[j].postd[i];f1<<"\n"; 
 			}
@@ -1678,12 +1680,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1<<"Number of selected data sets  : "<<nsel<<"\n\n";
 			f1<<"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n";
 			f1<<"------------------------------------------------------------------------------------------------------\n";
+			f1<<setiosflags(ios::scientific)<<setprecision(2);
 			for (int j=0;j<nparamcom;j++) {
 				f1<<nomparamO[j];
-				for(int i=0;i<14-(int)(nomparamO[j].length());i++) f1<<" ";
-				f1<<setiosflags(ios::scientific)<<setw(10)<<setprecision(2)<<parstat[j].moy;
-				f1<<parstat[j].med<<parstat[j].mod<<parstat[j].q025<<parstat[j].q050<<parstat[j].q250;
-				f1<<parstat[j].q750<<parstat[j].q950<<parstat[j].q975<<"\n";
+				for(int i=0;i<17-(int)(nomparamO[j].length());i++) f1<<" ";
+				f1<<parstat[j].moy<<"  "<<parstat[j].med<<"  "<<parstat[j].mod<<"  "<<parstat[j].q025<<"  "<<parstat[j].q050;
+				f1<<"  "<<parstat[j].q250<<parstat[j].q750<<"  "<<parstat[j].q950<<"  "<<parstat[j].q975<<"\n";
 			}
 			f1.close();
  		}
@@ -1693,11 +1695,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.open(nomfiparstat.c_str());
 			for (int j=0;j<nparcompo;j++) {
 				f1<<nomparamC[j]<<"\n";//cout<<"1\n";
-				f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<parstatcompo[j].moy<<" "<<parstatcompo[j].med<<" ";
-				f1<<parstatcompo[j].mod<<" "<<parstatcompo[j].q025<<" "<<parstatcompo[j].q050<<" "<<parstatcompo[j].q250<<" ";
-				f1<<parstatcompo[j].q750<<" "<<parstatcompo[j].q950<<" "<<parstatcompo[j].q975<<"\n";
-				f1<<setiosflags(ios::fixed)<<pardenscompo[j].ncl<<"\n";
-				for (int i=0;i<pardenscompo[j].ncl;i++) f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<"  "<<pardenscompo[j].x[i];f1<<"\n"; 
+				f1<<setiosflags(ios::scientific)<<setw(11)<<setprecision(5)<<parstatcompo[j].moy<<"  "<<parstatcompo[j].med<<"  ";
+				f1<<parstatcompo[j].mod<<"  "<<parstatcompo[j].q025<<"  "<<parstatcompo[j].q050<<"  "<<parstatcompo[j].q250<<"  ";
+				f1<<parstatcompo[j].q750<<"  "<<parstatcompo[j].q950<<"  "<<parstatcompo[j].q975<<"\n";
+				f1<<pardenscompo[j].ncl<<"\n";
+				for (int i=0;i<pardenscompo[j].ncl;i++) f1<<"  "<<pardenscompo[j].x[i];f1<<"\n"; 
 				for (int i=0;i<pardenscompo[j].ncl;i++) f1<<"  "<<pardenscompo[j].priord[i];f1<<"\n"; 
 				for (int i=0;i<pardenscompo[j].ncl;i++) f1<<"  "<<pardenscompo[j].postd[i];f1<<"\n"; 
 			}
@@ -1719,12 +1721,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1<<"Number of selected data sets  : "<<nsel<<"\n\n";
 			f1<<"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n";
 			f1<<"------------------------------------------------------------------------------------------------------\n";
+			f1<<setiosflags(ios::scientific)<<setprecision(2);
 			for (int j=0;j<nparcompo;j++) {
 				f1<<nomparamC[j];
-				for(int i=0;i<14-(int)(nomparamC[j].length());i++) f1<<" ";
-				f1<<setiosflags(ios::scientific)<<setw(10)<<setprecision(2)<<parstatcompo[j].moy;
-				f1<<parstatcompo[j].med<<parstatcompo[j].mod<<parstatcompo[j].q025<<parstatcompo[j].q050<<parstatcompo[j].q250;
-				f1<<parstatcompo[j].q750<<parstatcompo[j].q950<<parstatcompo[j].q975<<"\n";
+				for(int i=0;i<17-(int)(nomparamC[j].length());i++) f1<<" ";
+				f1<<parstatcompo[j].moy<<"  "<<parstatcompo[j].med<<"  "<<parstatcompo[j].mod<<"  "<<parstatcompo[j].q025<<"  "<<parstatcompo[j].q050;
+				f1<<"  "<<parstatcompo[j].q250<<"  "<<parstatcompo[j].q750<<"  "<<parstatcompo[j].q950<<"  "<<parstatcompo[j].q975<<"\n";
 			}
 			f1.close();
 		}
@@ -1734,11 +1736,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.open(nomfiparstat.c_str());
 			for (int j=0;j<nparscaled;j++) {
 				f1<<nomparamS[j]<<"\n";//cout<<"1\n";
-				f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<parstatscaled[j].moy<<" "<<parstatscaled[j].med<<" ";
-				f1<<parstatscaled[j].mod<<" "<<parstatscaled[j].q025<<" "<<parstatscaled[j].q050<<" "<<parstatscaled[j].q250<<" ";
-				f1<<parstatscaled[j].q750<<" "<<parstatscaled[j].q950<<" "<<parstatscaled[j].q975<<"\n";
-				f1<<setiosflags(ios::fixed)<<pardensscaled[j].ncl<<"\n";
-				for (int i=0;i<pardensscaled[j].ncl;i++) f1<<setiosflags(ios::scientific)<<setw(8)<<setprecision(5)<<"  "<<pardensscaled[j].x[i];f1<<"\n"; 
+				f1<<setiosflags(ios::scientific)<<setw(11)<<setprecision(5)<<parstatscaled[j].moy<<"  "<<parstatscaled[j].med<<"  ";
+				f1<<parstatscaled[j].mod<<"  "<<parstatscaled[j].q025<<"  "<<parstatscaled[j].q050<<"  "<<parstatscaled[j].q250<<"  ";
+				f1<<parstatscaled[j].q750<<"  "<<parstatscaled[j].q950<<"  "<<parstatscaled[j].q975<<"\n";
+				f1<<pardensscaled[j].ncl<<"\n";
+				for (int i=0;i<pardensscaled[j].ncl;i++) f1<<"  "<<pardensscaled[j].x[i];f1<<"\n"; 
 				for (int i=0;i<pardensscaled[j].ncl;i++) f1<<"  "<<pardensscaled[j].priord[i];f1<<"\n"; 
 				for (int i=0;i<pardensscaled[j].ncl;i++) f1<<"  "<<pardensscaled[j].postd[i];f1<<"\n"; 
 			}
@@ -1760,12 +1762,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1<<"Number of selected data sets  : "<<nsel<<"\n\n";
 			f1<<"Parameter          mean     median    mode      q025      q050      q250      q750      q950      q975\n";
 			f1<<"------------------------------------------------------------------------------------------------------\n";
+			f1<<setiosflags(ios::scientific)<<setprecision(2);
 			for (int j=0;j<nparscaled;j++) {
 				f1<<nomparamS[j];
-				for(int i=0;i<14-(int)(nomparamS[j].length());i++) f1<<" ";
-				f1<<setiosflags(ios::scientific)<<setw(10)<<setprecision(2)<<parstatscaled[j].moy;
-				f1<<parstatscaled[j].med<<parstatscaled[j].mod<<parstatscaled[j].q025<<parstatscaled[j].q050<<parstatscaled[j].q250;
-				f1<<parstatscaled[j].q750<<parstatscaled[j].q950<<parstatscaled[j].q975<<"\n";
+				for(int i=0;i<17-(int)(nomparamS[j].length());i++) f1<<" ";
+				f1<<parstatscaled[j].moy<<"  "<<parstatscaled[j].med<<"  "<<parstatscaled[j].mod<<"  "<<parstatscaled[j].q025<<"  "<<parstatscaled[j].q050;
+				f1<<parstatscaled[j].q250<<"  "<<parstatscaled[j].q750<<"  "<<parstatscaled[j].q950<<"  "<<parstatscaled[j].q975<<"\n";
 			}
 			f1.close();
 		}
@@ -1837,7 +1839,9 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 		cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
         det_numpar();                                     cout<<"apres det_numpar\n";
         nprog=12+10*(nparamcom+nparcompo+nparscaled); 
-		if (original)nprog +=6;if (composite)nprog +=6;if (scaled)nprog +=6;
+		if (original)  nprog +=6;
+		if (composite) nprog +=6;
+		if (scaled)    nprog +=6;
 		rempli_mat(nsel,stat_obs);            	cout<<"apres rempli_mat\n";
 		matC = cal_matC(nsel);               	cout<<"cal_matC\n";
 		cout<<"original\n";
@@ -1846,7 +1850,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
 			local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
-			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			cout<<"original--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistar = new long double*[nsel];
 			for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
 			calphistarO(nsel, phistar);
@@ -1857,7 +1861,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			rempli_parsim(nsel,nparcompo);                		cout<<"apres rempli_parsim(C)\n";
 			local_regression(nsel,nparcompo,matC);              cout<<"apres local_regression\n";
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
-			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			cout<<"composite--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistarcompo = new long double*[nsel];
 			for (int i=0;i<nsel;i++) phistarcompo[i] = new long double[nparcompo];
 			calphistarC(nsel,phistarcompo);
@@ -1868,7 +1872,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			rempli_parsim(nsel,nparscaled);               		cout<<"apres rempli_parsim(S)\n";
 			local_regression(nsel,nparscaled,matC);             cout<<"apres local_regression\n";
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
-			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
+			cout<<"scaled--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistarscaled = new long double*[nsel];
 			for (int i=0;i<nsel;i++) phistarscaled[i] = new long double[nparscaled];
 			calphistarS(nsel,phistarscaled);
