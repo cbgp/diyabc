@@ -1,0 +1,21 @@
+#!/bin/bash
+# CBGP
+
+if [ ! -e ~/.diyabc-git/diyabc-git.conf ] then
+    notify-send " ~/.diyabc-git/diyabc-git.conf not found. You must run first diyabc-git-init in a terminal ! "
+
+source ~/.diyabc-git/diyabc-git.conf
+
+
+if [ ! -d ${DIYABC_GIT_DIR}/${DIYABC_GIT_REPO} ] then
+    cd ${DIYABC_GIT_DIR}
+    git clone ${DIYABC_GIT_USER}@${DIYABC_GIT_SERVER}:${DIYABC_GIT_REPO}
+fi
+    
+cd ${DIYABC_GIT_DIR}/${DIYABC_GIT_REPO}
+git checkout .
+git pull --rebase
+cd src-JMC-C++
+make clean
+make
+notify-send "Diyabc is up to date from git repository ${DIYABC_GIT_USER}@${DIYABC_GIT_SERVER}:${DIYABC_GIT_REPO}"

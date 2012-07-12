@@ -1,0 +1,6 @@
+#!/bin/bash
+# CBGP
+
+cd ~/.diyabc/diyabc/python_interface/
+./diyabc.py
+
