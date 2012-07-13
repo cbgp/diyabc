@@ -2,11 +2,13 @@
 # CBGP
 
 set -e
-if [ ! -d ~/.diyabc-git] then
+if [ -d ~/.diyabc-git ] 
+    then
     mkdir ~/.diyabc-git
 fi
 
-if [ ! -f ~/.diyabc-git/diyabc-git.conf] then
+if [ -f ~/.diyabc-git/diyabc-git.conf ] 
+    then
     echo "
 # DIYABC-git configuration file 
 
@@ -34,12 +36,14 @@ DIYABC_GIT_DIR=~/.diyabc-git
 fi
 
 
-if [ ! -d ~/.shh] then
+if [ -d ~/.shh ] 
+    then
     mkdir ~/.shh
     chmod 600 .ssh  
 fi
 
-if [ ! -f ~/.shh/config] then
+if [ -f ~/.shh/config ] 
+    then
     touch ~/.shh/config
     chmod 644 ~/.shh/config
 fi
