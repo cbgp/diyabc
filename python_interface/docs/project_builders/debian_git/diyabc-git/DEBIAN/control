@@ -3,7 +3,7 @@ Version: X
 Section: biology
 Priority: optional
 Architecture: all
-Depends: bash (>=3.0), python (>=2.5), python-qt4 (>=4.5), python-qwt5-qt4 (>=5.0), git, openssh-client
+Depends: bash (>=3.0), python (>=2.5), python-qt4 (>=4.5), python-qwt5-qt4 (>=5.0), git, openssh-client, g++
 Maintainer: Alex Dehne G. <dehneg@@supagro.inra.fr> 
 Description: User-friendly approach to Approximate Bayesian Computation
  DIYABC is a computer program with a graphical user interface and a fully

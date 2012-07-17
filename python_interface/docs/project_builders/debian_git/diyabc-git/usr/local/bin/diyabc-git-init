@@ -2,12 +2,12 @@
 # CBGP
 
 set -e
-if [ -d ~/.diyabc-git ] 
+if [ ! -d ~/.diyabc-git ] 
     then
     mkdir ~/.diyabc-git
 fi
 
-if [ -f ~/.diyabc-git/diyabc-git.conf ] 
+if [ ! -f ~/.diyabc-git/diyabc-git.conf ] 
     then
     echo "
 # DIYABC-git configuration file 
@@ -36,16 +36,16 @@ DIYABC_GIT_DIR=~/.diyabc-git
 fi
 
 
-if [ -d ~/.shh ] 
+if [ ! -d ~/.ssh ] 
     then
-    mkdir ~/.shh
-    chmod 600 .ssh  
+    mkdir ~/.ssh
+    chmod 700 .ssh  
 fi
 
-if [ -f ~/.shh/config ] 
+if [ ! -f ~/.ssh/config ] 
     then
-    touch ~/.shh/config
-    chmod 644 ~/.shh/config
+    touch ~/.ssh/config
+    chmod 644 ~/.ssh/config
 fi
 
 echo "
@@ -53,7 +53,7 @@ Host cbgpcluster.supagro.inra.fr
      HostName cbgpcluster.supagro.inra.fr
      User git
      IdentityFile ~/.ssh/id_rsa_diyabc
-" >> ~/.shh/config
+" >> ~/.ssh/config
 
 
 echo "-----BEGIN RSA PRIVATE KEY-----
@@ -95,9 +95,19 @@ cd ${DIYABC_GIT_DIR}
 rm -rf ${DIYABC_GIT_REPO}
 git clone ${DIYABC_GIT_USER}@${DIYABC_GIT_SERVER}:${DIYABC_GIT_REPO}
 
+msg="I will run diyabc-git-update for you in order to pull the sources and compile the binaries. Later, it will be your responsability to run diyabc-git-update to pull the last sources and to re-compile the binaries"
+notify-send "$msg"
+echo "
+**************************************
+"
+echo $msg
+echo "
+**************************************
+"
+sleep 5
+echo "
 diyabc-git-update
 
-
-
-
-    
+"
+diyabc-git-update
+exit $?

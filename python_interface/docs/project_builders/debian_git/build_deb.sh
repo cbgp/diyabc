@@ -24,7 +24,7 @@ VERSIONFILE=$1
 
 VERSION="`head -n 1 $VERSIONFILE`"
 BUILDDATE=`LANG=en_EN.utf8 date +%d-%m-%Y`
-PACKAGEDIR=diyabc-git-$VERSION
+PACKAGEDIR=/tmp/diyabc-git-$VERSION
 
 # template copy 
 echo $PACKAGEDIR
@@ -71,13 +71,13 @@ sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/local/share/applications/diyabc-gi
     chmod +x $PACKAGEDIR/usr/local/bin/diyabc-git-init          
 
 
-cp -r $PACKAGEDIR /tmp
-chown -R root:root /tmp/$PACKAGEDIR
+#cp -r $PACKAGEDIR /tmp
+chown -R root:root $PACKAGEDIR
 
-dpkg-deb -b /tmp/$PACKAGEDIR
-mv /tmp/$PACKAGEDIR.deb ./
+dpkg-deb -b $PACKAGEDIR
+#mv /tmp/$PACKAGEDIR.deb ./
 if $clean; then
-    rm -rf /tmp/$PACKAGEDIR $PACKAGEDIR
+    rm -rf $PACKAGEDIR
 else
     echo "The package directory was not removed"
 fi
