@@ -553,68 +553,68 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    * Struct ParticleC : génère les valeurs des paramètres mutationnels moyens des différents groupes de locus
    */
   void ParticleC::setMutParammoyValue(){
-    int gr;
-    //cout<<"\nthis->scen.ipv="<<this->scen.ipv<<"\n";
-    for (gr=1;gr<=this->ngr;gr++) {
-      //cout<<"groupe "<<gr<<"\n";
-	  //cout<<"   type="<<this->grouplist[gr].type<<"\n";
-      if (this->grouplist[gr].type==0) {  //microsat
-//cout<<"microsat  groupe[gr].priormutmoy.constant="<<this->grouplist[gr].priormutmoy.constant <<"\n";
-
-	if (not this->grouplist[gr].priormutmoy.fixed) this->grouplist[gr].mutmoy = this->grouplist[gr].priormutmoy.drawfromprior(this->mw);
-	if (not this->grouplist[gr].priormutmoy.constant) {
-	  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
-	  this->scen.ipv++;
-	  //cout<<"mutmoy ipv++\n";
-	}
-	//cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"\n";
-	if (not this->grouplist[gr].priorPmoy.fixed) this->grouplist[gr].Pmoy = this->grouplist[gr].priorPmoy.drawfromprior(this->mw);
-	if (not this->grouplist[gr].priorPmoy.constant) {
-	  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
-	  this->scen.ipv++;
-	  //cout<<"Pmoy ipv++\n";
-	}
-	//cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"\n";
-	//cout<<"avant ecriture de priorsnimoy\n";
-	//this->grouplist[gr].priorsnimoy.ecris();	
-	if (not this->grouplist[gr].priorsnimoy.fixed) this->grouplist[gr].snimoy = this->grouplist[gr].priorsnimoy.drawfromprior(this->mw);
-	if (not this->grouplist[gr].priorsnimoy.constant) {
-	  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
-	  this->scen.ipv++;
-	  //cout<<"snimoy ipv++\n";
-	} else this->grouplist[gr].snimoy = this->grouplist[gr].priorsnimoy.mini;
-	//cout<<"snimoy="<<this->grouplist[gr].snimoy<<"\n";
-      }
-      if (this->grouplist[gr].type==1) {  //sequence
-	if (not this->grouplist[gr].priormusmoy.fixed) this->grouplist[gr].musmoy = this->grouplist[gr].priormusmoy.drawfromprior(this->mw);
-	if (not this->grouplist[gr].priormusmoy.constant) {		
-	  this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
-	  //cout<<"musmoy ipv++\n";
-	  this->scen.ipv++;
-	}
-	if (this->grouplist [gr].mutmod>0){
-	  if (not this->grouplist[gr].priork1moy.fixed) this->grouplist[gr].k1moy = this->grouplist[gr].priork1moy.drawfromprior(this->mw);
-	  if (not this->grouplist[gr].priork1moy.constant) {
-	    this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
-	    //cout<<"k1moy ipv++\n";
-	    this->scen.ipv++;
+	  int gr;
+	  if (debuglevel==5)cout<<"\nthis->scen.ipv="<<this->scen.ipv<<"\n";
+	  for (gr=1;gr<=this->ngr;gr++) {
+		  if (debuglevel==5)cout<<"groupe "<<gr<<"\n";
+		  //cout<<"   type="<<this->grouplist[gr].type<<"\n";
+		  if (this->grouplist[gr].type==0) {  //microsat
+			//cout<<"microsat  groupe[gr].priormutmoy.constant="<<this->grouplist[gr].priormutmoy.constant <<"\n";
+			
+			if (not this->grouplist[gr].priormutmoy.fixed) this->grouplist[gr].mutmoy = this->grouplist[gr].priormutmoy.drawfromprior(this->mw);
+			if (not this->grouplist[gr].priormutmoy.constant) {
+				this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].mutmoy;
+				this->scen.ipv++;	
+				//cout<<"mutmoy ipv++\n";
+			}
+			//cout<<"mutmoy="<<this->grouplist[gr].mutmoy<<"\n";
+			if (not this->grouplist[gr].priorPmoy.fixed) this->grouplist[gr].Pmoy = this->grouplist[gr].priorPmoy.drawfromprior(this->mw);
+			if (not this->grouplist[gr].priorPmoy.constant) {
+				this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].Pmoy;
+				this->scen.ipv++;
+				//cout<<"Pmoy ipv++\n";
+			}
+			//cout<<"Pmoy="<<this->grouplist[gr].Pmoy<<"\n";
+			//cout<<"avant ecriture de priorsnimoy\n";
+			//this->grouplist[gr].priorsnimoy.ecris();	
+			if (not this->grouplist[gr].priorsnimoy.fixed) this->grouplist[gr].snimoy = this->grouplist[gr].priorsnimoy.drawfromprior(this->mw);
+			if (not this->grouplist[gr].priorsnimoy.constant) {
+				this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].snimoy;
+				this->scen.ipv++;
+				//cout<<"snimoy ipv++\n";
+			} else this->grouplist[gr].snimoy = this->grouplist[gr].priorsnimoy.mini;
+			//cout<<"snimoy="<<this->grouplist[gr].snimoy<<"\n";
+		  }
+		  if (this->grouplist[gr].type==1) {  //sequence
+				if (not this->grouplist[gr].priormusmoy.fixed) this->grouplist[gr].musmoy = this->grouplist[gr].priormusmoy.drawfromprior(this->mw);
+				if (not this->grouplist[gr].priormusmoy.constant) {		
+					this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
+					//cout<<"musmoy ipv++\n";
+					this->scen.ipv++;
+				}
+				if (this->grouplist [gr].mutmod>0){
+					if (not this->grouplist[gr].priork1moy.fixed) this->grouplist[gr].k1moy = this->grouplist[gr].priork1moy.drawfromprior(this->mw);
+					if (not this->grouplist[gr].priork1moy.constant) {
+						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k1moy;
+						//cout<<"k1moy ipv++\n";
+						this->scen.ipv++;
+					}
+				}
+				if (this->grouplist [gr].mutmod>2){
+					if (not this->grouplist[gr].priork2moy.fixed) this->grouplist[gr].k2moy = this->grouplist[gr].priork2moy.drawfromprior(this->mw);
+					if (not this->grouplist[gr].priork2moy.constant) {
+						this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
+						this->scen.ipv++;
+						//cout<<"k2moy ipv++\n";
+					}
+				}
+		  }
+		  if (debuglevel==5)cout<<"fin de setMutParammoyValue pour le groupe "<<gr<<"\n";
 	  }
-	}
-	if (this->grouplist [gr].mutmod>2){
-	  if (not this->grouplist[gr].priork2moy.fixed) this->grouplist[gr].k2moy = this->grouplist[gr].priork2moy.drawfromprior(this->mw);
-	  if (not this->grouplist[gr].priork2moy.constant) {
-	    this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].k2moy;
-	    this->scen.ipv++;
-	    //cout<<"k2moy ipv++\n";
-	  }
-	}
-      }
-
-    }
-    this->scen.nparamvar=this->scen.ipv;
-    //cout<<"Dans particule C  nparamvar = "<<this->scen.nparamvar<<"\n";
+	  this->scen.nparamvar=this->scen.ipv;
+	  if (debuglevel==5)cout<<"Dans particule C  nparamvar = "<<this->scen.nparamvar<<"\n";
   }
-
+  
   /**
    * Struct ParticleC : génère les valeurs des paramètres mutationnels moyens des différents groupes de locus
    */
@@ -1744,51 +1744,51 @@ void ParticleC::put_one_mutation(int loc) {
 		return 0;
 	}
 
-  string ParticleC::verifytree() {
-    bool *popleine;
-    popleine = new bool[this->scen.popmax+1];
-    for (int p=1;p<this->scen.popmax+1;p++) {popleine[p]=false;}
-    for (int iseq=0;iseq<this->nseq;iseq++) {
-      this->seqlist[iseq].popfull = new bool[this->scen.popmax+1];
-      if (iseq==0) for (int p=1;p<this->scen.popmax+1;p++) this->seqlist[iseq].popfull[p]=false;
-      else for (int p=1;p<this->scen.popmax+1;p++) this->seqlist[iseq].popfull[p]=this->seqlist[iseq-1].popfull[p];
-      if (this->seqlist[iseq].action == 'C') {
-	if ((this->seqlist[iseq].t1>-1)and(this->seqlist[iseq].t1<this->seqlist[iseq].t0)) {
-	  this->seqlist[iseq].ecris();
-	  return "probleme coal avec t1<t0";
+	string ParticleC::verifytree() {
+		bool *popleine;
+		popleine = new bool[this->scen.popmax+1];
+		for (int p=1;p<this->scen.popmax+1;p++) {popleine[p]=false;}
+		for (int iseq=0;iseq<this->nseq;iseq++) {
+			this->seqlist[iseq].popfull = new bool[this->scen.popmax+1];
+			if (iseq==0) for (int p=1;p<this->scen.popmax+1;p++) this->seqlist[iseq].popfull[p]=false;
+			else for (int p=1;p<this->scen.popmax+1;p++) this->seqlist[iseq].popfull[p]=this->seqlist[iseq-1].popfull[p];
+			if (this->seqlist[iseq].action == 'C') {
+				if ((this->seqlist[iseq].t1>-1)and(this->seqlist[iseq].t1<this->seqlist[iseq].t0)) {
+					this->seqlist[iseq].ecris();
+					return "probleme coal avec t1<t0";
+				}
+				/*if ((not popleine[this->seqlist[iseq].pop])and(this->seqlist[iseq].t1>this->seqlist[iseq].t0)) {
+					for (int jseq=0;jseq<=iseq;jseq++) {
+						this->seqlist[jseq].ecris();
+						for (int p=1;p<this->scen.popmax+1;p++) if (this->seqlist[jseq].popfull[p]) cout<<p<<"  ";
+				cout<<"\n";
+					}
+					cout<<"\n";
+					this->seqlist[iseq].ecris();return "probleme coal avec pop vide";
+				}*/
+		}
+		else if (this->seqlist[iseq].action == 'M') {
+			if ((not popleine[this->seqlist[iseq].pop])and (not popleine[this->seqlist[iseq].pop1])) {
+				this->seqlist[iseq].ecris();return "probleme merge de deux pop vides";
+			}
+			popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
+			popleine[this->seqlist[iseq].pop1]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=false;
 	}
-	if ((not popleine[this->seqlist[iseq].pop])and(this->seqlist[iseq].t1>this->seqlist[iseq].t0)) {
-	  for (int jseq=0;jseq<=iseq;jseq++) {
-	    this->seqlist[jseq].ecris();
-	    for (int p=1;p<this->scen.popmax+1;p++) if (this->seqlist[jseq].popfull[p]) cout<<p<<"  ";
-	    cout<<"\n";
-	  }
-	  cout<<"\n";
-	  this->seqlist[iseq].ecris();return "probleme coal avec pop vide";
-	}
-      }
-      else if (this->seqlist[iseq].action == 'M') {
-	if ((not popleine[this->seqlist[iseq].pop])and (not popleine[this->seqlist[iseq].pop1])) {
-	  this->seqlist[iseq].ecris();return "probleme merge de deux pop vides";
-	}
-	popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
-	popleine[this->seqlist[iseq].pop1]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=false;
-      }
-      else if (this->seqlist[iseq].action == 'S') {
-	if (not popleine[this->seqlist[iseq].pop]) {this->seqlist[iseq].ecris();return "probleme split avec pop vide";}
-	popleine[this->seqlist[iseq].pop]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=false;
-	popleine[this->seqlist[iseq].pop1]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=true;
-	popleine[this->seqlist[iseq].pop2]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop2]=true;
-      }
-      else if (this->seqlist[iseq].action == 'A') {
-	popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
-      }
-    }
-    for (int iseq=0;iseq<this->nseq;iseq++) delete []this->seqlist[iseq].popfull;
-    delete []popleine;
-    return "";
-  }
-    
+	else if (this->seqlist[iseq].action == 'S') {
+		if (not popleine[this->seqlist[iseq].pop]) {this->seqlist[iseq].ecris();return "probleme split avec pop vide";}
+		popleine[this->seqlist[iseq].pop]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=false;
+		popleine[this->seqlist[iseq].pop1]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=true;
+		popleine[this->seqlist[iseq].pop2]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop2]=true;
+		}
+		else if (this->seqlist[iseq].action == 'A') {
+			popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
+			}
+			}
+			for (int iseq=0;iseq<this->nseq;iseq++) delete []this->seqlist[iseq].popfull;
+				delete []popleine;
+			return "";
+			}
+			
   bool ParticleC::polymref(int loc) {
     int nr=0,n1r=0,nd=0,n1d=0;
     double p;
@@ -1847,7 +1847,9 @@ void ParticleC::put_one_mutation(int loc) {
 	  this->setSequence();
 	  if (debuglevel==10) cout <<"apres setSequence\n";
 	  if (debuglevel==5) cout <<"avant checktree\n";
+	  if (debuglevel==10) cout <<"avant verifytree\n";
 	  checktree=this->verifytree();
+	  if (debuglevel==10) cout <<"apres verifytree\n";
 	  if (checktree!="") {
 		  FILE *flog;
 		  cout<<checktree<<"\n";
@@ -2337,7 +2339,7 @@ void ParticleC::put_one_mutation(int loc) {
 		short int g;		
 		int *ig;
 		ig = new int[this->nloc];
-		ssr="<NM="+DoubleToString(this->sexratio/(1.0-this->sexratio))+"NF>\n";
+		sgp="<NM="+DoubleToString(this->sexratio/(1.0-this->sexratio))+"NF>\n";
 		sgp +="IND   SEX   POP   ";
 		for (int loc=0;loc<this->nloc;loc++) {
 			switch(this->locuslist[loc].type) {

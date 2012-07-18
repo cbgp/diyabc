@@ -430,8 +430,14 @@ class DataSnp():
         l1 = datalines[0].strip()
         l1compressed = pat.sub(' ',l1)
         l1parts = l1compressed.split(' ')
+        prem = 0
         if not (len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP"):
-            raise Exception("Wrong first line format for data file : %s"%self.filename)
+			l1 = datalines[1].strip()
+			l1compressed = pat.sub(' ',l1)
+			l1parts = l1compressed.split(' ')
+			prem = 1
+			if not (len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP"):
+				raise Exception("Wrong first line format for data file : %s"%self.filename)
         if len(datalines) < 1:
             raise Exception("Not enough lines in SNP datafile %s"%self.filename)
         for locty in l1parts[3:]:
@@ -448,18 +454,18 @@ class DataSnp():
 
         sexPresent = (nbX > 0 or nbY > 0)
 
-        nbInd = len(datalines) - 1
-        l0 = pat.sub(' ',datalines[0].strip())
+        nbInd = len(datalines) - (prem+1)
+        l0 = pat.sub(' ',datalines[prem].strip())
         nbLoci = len(l0.split(' ')) - 3
 
         types = set()
         types_list = []
         nbU = 0
-        for i in range(len(datalines))[1:]:
+        for i in range(len(datalines))[prem+1:]:
             line = pat.sub(' ',datalines[i].strip())
             # si on n'a pas le bon nb de loci
             if len(line.split(' ')) != (nbLoci + 3):
-                raise Exception("Wrong number of loci at line %s in %s"%(i+1,self.filename))
+                raise Exception("Wrong number of loci at line %s in %s : %s"%(i+1,self.filename,nbLoci))
             ctype = line.split(' ')[2]
             types.add(ctype)
 
@@ -491,6 +497,12 @@ def isSNPDatafile(name):
         f.close()
         if len(lines) > 0:
             l1 = lines[0].strip()
+            pat = re.compile(r'\s+')
+            l1compressed = pat.sub(' ',l1)
+            l1parts = l1compressed.split(' ')
+            if len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP":
+                return True
+            l1 = lines[1].strip()
             pat = re.compile(r'\s+')
             l1compressed = pat.sub(' ',l1)
             l1parts = l1compressed.split(' ')

@@ -155,7 +155,7 @@ void LocusC::libere(bool obs, int nsample) {
 * lecture d'un fichier de donnée SNP et stockage des informations dans une structure DataC
 */
 	int  DataC::readfilesnp(string filename){
-		int ech,ind,nech,*nindi,nss,j0,j1;
+		int ech,ind,nech,*nindi,nss,j0,j1,prem;
 		bool deja;
 		string s1,*ss,s;
 		vector <string> popname;
@@ -173,7 +173,8 @@ void LocusC::libere(bool obs, int nsample) {
 			s=s1.substr(j0+4,j1-(j0+4));
 			this->sexratio=atof(s.c_str())/(1.0+atof(s.c_str()));
 			getline(file,s1);
-		} else this->sexratio=0.5;
+			prem=1;
+		} else {this->sexratio=0.5;prem=0;}
         ss=splitwords(s1," ",&nss);
 		this->nloc=nss-3;
 		this->locus = new LocusC[this->nloc];this->Alocus=true;
@@ -216,7 +217,7 @@ void LocusC::libere(bool obs, int nsample) {
 		nindi = new int[nech];
 		for (ech=0;ech<nech;ech++) nindi[ech]=0;
 		file.open(filename.c_str(), ios::in);
-		getline(file,s1);
+		getline(file,s1);if (prem==1) getline(file,s1);
  		while (not file.eof()) {
 			getline(file,s1);
 			int s1l=s1.length();
@@ -242,7 +243,7 @@ void LocusC::libere(bool obs, int nsample) {
 		}
 		file.close();
 		file.open(filename.c_str(), ios::in);
-		getline(file,s1);
+		getline(file,s1);if (prem==1) getline(file,s1);
 		for (ech=0;ech<nech;ech++) nindi[ech]=0;
  		while (not file.eof()) {
 			getline(file,s1);
@@ -354,15 +355,16 @@ void LocusC::libere(bool obs, int nsample) {
 
 	void DataC::missingdata(){
 		int ind,ech,ng,typ,plo;
-		string misval="9";
+		short int misval=9;
 		this->nmisssnp=0;
-		for (ech=0;ech<this->nsample;ech++) {
+		/*for (ech=0;ech<this->nsample;ech++) {
 			for (int loc=0;loc<this->nloc;loc++) {
 				typ=this->locus[loc].type % 5;
 				ng=0;
 				for (ind=0;ind<this->nind[ech];ind++){
 					plo=1;
 					if ((typ == 0)or((typ == 2)and(this->indivsexe[ech][ind] == 2))) plo=2;
+					cout<<"ech="<<ech<<"  ind="<<ind<<"  loc="<<loc<<"  plo="<<plo<<"   "<<this->genotype[ech][ind][loc]<<"\n";
 					if (this->genotype[ech][ind][loc]==misval) {
 						if (plo==2){
 							this->misssnp[this->nmisssnp].locus = loc;
@@ -382,6 +384,20 @@ void LocusC::libere(bool obs, int nsample) {
 						}
 					}
 					ng +=plo;
+					cout<<"ng="<<ng<<"\n";
+				}
+			}
+		}*/
+		for (ech=0;ech<this->nsample;ech++) {
+			for (int loc=0;loc<this->nloc;loc++) {
+				typ=this->locus[loc].type % 5;
+				for (int i=0;i<this->ss[typ][ech];i++) {
+					if (this->locus[loc].haplosnp[ech][i]==misval) {
+							this->misssnp[this->nmisssnp].locus = loc;
+							this->misssnp[this->nmisssnp].sample = ech;
+							this->misssnp[this->nmisssnp].indiv = i;
+							this->nmisssnp++;
+					}
 				}
 			}
 		}
@@ -865,7 +881,7 @@ cout<<"fin de ecribin\n";
 			case 4 :  coeff = 2.0*(1.0-this->sexratio);break;
 		}
 		this->locus[loc].coeffcoal=coeff;
-                //if (loc==0) cout<<"sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeff<<"\n";
+        cout<<"locus "<<loc<<"    sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeffcoal<<"\n";
     }
 
 
@@ -920,10 +936,13 @@ cout<<"fin de ecribin\n";
     			this->ecribin(filenamebin);
     			cout<<"relecture du fichier binaire\n";
     			this->libin(filenamebin);
-    			cout<<"fin de la lecture du fichier binaire\n\n";
+    			cout<<"fin de la lecture du fichier binaire\n";
     			for (loc=0;loc<this->nloc;loc++) this->cal_coeffcoal(loc);
+				cout<<"apres le calcul des coefficients de coalescence\n\n";
     		}
+    		cout<<"avant missingdata\n";
     		this->missingdata();
+			cout<<"apres missingdata\n";
     	}
     	this->nsample0 = this->nsample;
     	return 0;
