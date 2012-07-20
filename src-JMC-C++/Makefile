@@ -89,5 +89,5 @@ testRNG: testRNG.o randomgenerator.o
 
 
 clean: 
-	rm *.o
-	rm general 
+	\rm -f *.o
+	\rm -f general

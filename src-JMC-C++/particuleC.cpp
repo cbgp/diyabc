@@ -149,7 +149,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 	  this->scen.number = this->scenario[iscen].number;
 	  this->scen.popmax = this->scenario[iscen].popmax;
 	  this->scen.npop = this->scenario[iscen].npop;
-	  this->scen.nsamp = this->scenario[iscen].nsamp;
+	  this->scen.nsamp = this->nsample;
 	  this->scen.nparam = this->scenario[iscen].nparam;
 	  this->scen.nparamvar = this->scenario[iscen].nparamvar;
 	  this->scen.nevent = this->scenario[iscen].nevent;
@@ -181,11 +181,16 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 	  this->refnindtot=0;
 	  this->ref = new bool**[5];
 	  this->dat = new bool**[5];
+	  //cout<<"this->scen.nsamp = "<<this->scen.nsamp<<"\n";
 	  for (int cat=0;cat<5;cat++) {
 		  if (this->data.catexist[cat]) {
 			  this->ref[cat] = new bool*[this->scen.nsamp];
 			  this->dat[cat] = new bool*[this->scen.nsamp];
-			  for (int sa=0;sa<this->scen.nsamp;sa++) {this->ref[cat][sa] = new bool[this->data.ss[cat][sa]];this->dat[cat][sa] = new bool[this->data.ss[cat][sa]];}
+			  for (int sa=0;sa<this->scen.nsamp;sa++) {
+				  //cout<<"this->data.ss["<<cat<<"]["<<sa<<"] = "<<this->data.ss[cat][sa]<<"\n";
+				  this->ref[cat][sa] = new bool[this->data.ss[cat][sa]];
+				  this->dat[cat][sa] = new bool[this->data.ss[cat][sa]];
+			}
 			  for (int sa=0;sa<this->scen.nsamp;sa++) {
 				  for (int ievent=0;ievent<this->scen.nevent;ievent++) {
 					  if ((this->scen.event[ievent].action=='E')and(this->scen.event[ievent].sample==sa+1)) {

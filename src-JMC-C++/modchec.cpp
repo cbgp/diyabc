@@ -505,7 +505,7 @@ long double **ssphistar,**ssref;
         for (int i=0;i<nsel;i++) phistarOK[i] = new long double[rt.nparam[rt.scenteste-1]];
 		cout<<"header.scenario[rt.scenteste-1].nparam = "<<header.scenario[rt.scenteste-1].nparam<<"\n";
 		nphistarOK=detphistarOK(nsel,phistar);               cout << "apres detphistarOK  nphistarOK="<<nphistarOK<<"\n";
-		for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
+		//for (int i=0;i<nsel;i++) delete [] phistar[i];delete phistar;
 		
         cout//<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr
             << "   nphistarOK="<< nphistarOK<<"   nstat="<<header.nstat<<"\n";

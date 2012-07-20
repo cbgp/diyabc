@@ -102,7 +102,7 @@ void LocusC::libere(bool obs, int nsample) {
 * return=1 si snp
 */
 	int DataC::testfile(string filename){
-	    int nss;
+	    int nss,prem;
 	    string ligne,*ss;
 		ifstream file0(filename.c_str(), ios::in);
 		if (file0 == NULL) return -1;
@@ -110,12 +110,14 @@ void LocusC::libere(bool obs, int nsample) {
         ss=splitwords(ligne," ",&nss);
 		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
 		  cout<<"Fichier "<<filename<<" : SNP\n";
+		  prem=0;
 		  return 1;
 		}
 		getline(file0,ligne);
         ss=splitwords(ligne," ",&nss);
 		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
 		  cout<<"Fichier "<<filename<<" : SNP\n";
+		  prem=1;
 		  return 1;
 		}
 		file0.close();
@@ -523,9 +525,9 @@ cout<<"fin de ecribin\n";
 		buffer = new char[1000];
 		int lon,categ;
         f0.open(filenamebin.c_str(),ios::in|ios::binary);
-		f0.read((char*)&(this->sexratio),sizeof(double));											//sex-ratio
-		f0.read((char*)&(this->nloc),sizeof(int));													//nombre de locus
-		f0.read((char*)&(this->nsample),sizeof(int));												//nombre d'échantillons
+		f0.read((char*)&(this->sexratio),sizeof(double)); cout<<"sexratio="<<this->sexratio<<"\n";											//sex-ratio
+		f0.read((char*)&(this->nloc),sizeof(int));	cout<<"nloc="<<this->nloc<<"\n";				//nombre de locus
+		f0.read((char*)&(this->nsample),sizeof(int));	cout<<"nsample="<<this->nsample<<"\n";		//nombre d'échantillons
 		this->nind.resize(this->nsample);
 		for(int i=0;i<this->nsample;i++) f0.read((char*)&(this->nind[i]),sizeof(int));				//nombre d'individus par échantillons
 		this->indivname = new string*[this->nsample];
@@ -537,6 +539,7 @@ cout<<"fin de ecribin\n";
 				this->indivname[i][j] = char2string(buffer);
 			}
 		}
+		//cout<<"libin 1\n";
 		this->indivsexe.resize(this->nsample);
 		for(int i=0;i<this->nsample;i++) this->indivsexe[i].resize(this->nind[i]);
 		for(int i=0;i<this->nsample;i++){															//sexes des individus
@@ -556,6 +559,7 @@ cout<<"fin de ecribin\n";
 				for (int sa=0;sa<this->nsample;sa++) cout <<this->ss[locustype][sa]<<"   "; cout<<"\n"; 
 			}
 		}
+		//cout<<"libin 2\n";
 		for (int loc=0;loc<this->nloc;loc++) {
 			this->locus[loc].haplosnp = new short int*[this->nsample];
 			categ = this->locus[loc].type % 5;
@@ -881,7 +885,7 @@ cout<<"fin de ecribin\n";
 			case 4 :  coeff = 2.0*(1.0-this->sexratio);break;
 		}
 		this->locus[loc].coeffcoal=coeff;
-        cout<<"locus "<<loc<<"    sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeffcoal<<"\n";
+        //cout<<"locus "<<loc<<"    sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeffcoal<<"\n";
     }
 
 
@@ -897,6 +901,7 @@ cout<<"fin de ecribin\n";
     	filenamebin=filename+".bin";
     	cout<<filenamebin<<"\n";
     	this->filetype = this->testfile(filename);
+		cout<<"this->filetype = "<<this->filetype<<"\n";
     	if (this->filetype==-2) {
     		this->message = "Unreckognized file format";
     		error =1; return 1;
@@ -918,8 +923,10 @@ cout<<"fin de ecribin\n";
     	if (this->filetype==1) {
     		fs.open(filenamebin.c_str(),ios::in|ios::binary);
     		if (fs) {
+				cout<<"lecture du fichier binaire\n";
     			fs.close();
     			this->libin(filenamebin);
+				cout<<"sexratio="<<this->sexratio<<"\n";
     			this->sexratio=0.5;
     			for (loc=0;loc<this->nloc;loc++) this->cal_coeffcoal(loc);
     			cout<<"fin de la lecture du fichier binaire\n";
