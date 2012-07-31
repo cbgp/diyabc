@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 //#include <complex>
+#include <iomanip>
 #include <utility>
 #include <string>
 #include <cstring>
@@ -1423,7 +1424,20 @@ void HeaderC::calstatobs(string statobsfilename) {
 	//delete []sb;
 	jstat=0;
 	if (debuglevel==2) cout<<"avant FILE *fobs\n";
-	FILE *fobs;
+	ofstream fobs;
+	fobs.open(statobsfilename.c_str());
+	fobs<<ent<<"\n";
+	fobs<<setiosflags(ios::fixed)<<setprecision(8);
+	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
+		if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
+		this->particuleobs.docalstat(gr,1.0);
+		jstat +=this->particuleobs.grouplist[gr].nstat;
+		if (debuglevel==2)cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
+		for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fobs<<setw(12)<<this->particuleobs.grouplist[gr].sumstat[j].val<<"  ";
+	}
+	fobs<<"\n";
+	fobs.close();
+	/*FILE *fobs;
 	fobs=fopen(statobsfilename.c_str(),"w");
 	fputs(ent.c_str(),fobs);
 	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
@@ -1434,7 +1448,7 @@ void HeaderC::calstatobs(string statobsfilename) {
 		for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs,"%12.8Lf  ",this->particuleobs.grouplist[gr].sumstat[j].val);
 	}
 	fprintf(fobs,"\n");
-	fclose(fobs);
+	fclose(fobs);*/
 	this->stat_obs = new float[jstat];
 	jstat=0;
 	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {

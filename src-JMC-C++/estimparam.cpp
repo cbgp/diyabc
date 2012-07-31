@@ -984,7 +984,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1<<enteteO<<"\n";
 			for (int i=0;i<n;i++) {
 				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen<<"    ";
-				for (int j=0;j<nparamcom;j++) f1<<setw(10)<<setprecision(5)<<phistar[i][j]<<"  ";
+				f1<<setiosflags(ios::scientific);
+				for (int j=0;j<nparamcom;j++) f1<<setw(12)<<setprecision(3)<<phistar[i][j]<<"  ";
 				f1<<"\n";
 			}
 			f1.close();
@@ -996,7 +997,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1<<enteteC<<"\n";
 			for (int i=0;i<n;i++) {
 				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen<<"    ";
-				for (int j=0;j<nparcompo;j++) f1<<setw(10)<<setprecision(5)<<phistarcompo[i][j]<<"  ";
+				f1<<setiosflags(ios::scientific);
+				for (int j=0;j<nparcompo;j++) f1<<setw(12)<<setprecision(3)<<phistarcompo[i][j]<<"  ";
 				f1<<"\n";
 			}
 			f1.close();
@@ -1008,7 +1010,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1<<enteteS<<"\n";
 			for (int i=0;i<n;i++) {
 				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen<<"    ";
-				for (int j=0;j<nparscaled;j++) f1<<setw(10)<<setprecision(5)<<phistarscaled[i][j]<<"  ";
+				f1<<setiosflags(ios::scientific);
+				for (int j=0;j<nparscaled;j++) f1<<setw(12)<<setprecision(3)<<phistarscaled[i][j]<<"  ";
 				f1<<"\n";
 			}
 			f1.close();

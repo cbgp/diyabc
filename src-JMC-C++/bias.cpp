@@ -720,11 +720,16 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 		string s;
 		size_t pos;
 		int lon;
-		s = LongDoubleToString(x)+"000000000000000";
+		s = LongDoubleToString(x);
+		if (s.find(".")==string::npos) s=s+".0";
+		s = s+"000000000000000";
+		cout<<"x="<<x<<"   s="<<s;
 		pos = s.find(".");
 		s = s.substr(0,pos+precision+1);
+		cout<<"   s'="<<s;
 		lon = s.length();
 		while (lon<largeur) {s=" "+s;lon++;}
+		cout<<"   s final="<<s<<"\n";
 		return s;
 	}
     

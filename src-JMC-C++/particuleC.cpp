@@ -2343,6 +2343,7 @@ void ParticleC::put_one_mutation(int loc) {
 		string sgp,sind,spop,sex,ligne,ssr;
 		short int g;		
 		int *ig;
+		cout<<"debut de dodatasnp  nloc="<<this->nloc<<"\n";
 		ig = new int[this->nloc];
 		sgp="<NM="+DoubleToString(this->sexratio/(1.0-this->sexratio))+"NF>\n";
 		sgp +="IND   SEX   POP   ";
@@ -2365,6 +2366,7 @@ void ParticleC::put_one_mutation(int loc) {
 				else sex = " F    ";
 				ligne = sind+sex+spop;
 				for (int loc=0;loc<this->nloc;loc++){
+					cout<<"locus "<<loc<<"  type "<<this->locuslist[loc].type<<"\n";
 					switch(this->locuslist[loc].type) {
 						case 10 : 
 							ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]+this->locuslist[loc].haplosnp[ech][ig[loc]+1]);
@@ -2401,5 +2403,7 @@ void ParticleC::put_one_mutation(int loc) {
 				sgp +=ligne+"\n";
 			}
 		}
+		cout<<sgp;
+		cout<<"fin de dodatasnp\n";
 		return sgp;
 	}
