@@ -128,8 +128,8 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
     def setMutationConfFromAnalysisValues(self,v):
         self.ui.mmrMinEdit.setText("%s"%v[0])
         self.ui.ilmrMinEdit.setText("%s"%v[1])
-        self.ui.ilcpMinEdit.setText("%s"%v[2])
-        self.ui.mcpMinEdit.setText("%s"%v[3])
+        self.ui.mcpMinEdit.setText("%s"%v[2])
+        self.ui.ilcpMinEdit.setText("%s"%v[3])
         self.ui.msrMinEdit.setText("%s"%v[4])
         self.ui.ilsrMinEdit.setText("%s"%v[5])
 
@@ -202,9 +202,9 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
             if float(self.ui.ilcpMinEdit.text()) < 0:
                 raise Exception("Individual locus coefficient P should not be negative")
             if float(self.ui.mcpMinEdit.text()) < 0:
-                raise Exception("Mean coefficient P not should be negative")
-            if float(self.ui.ilmrMinEdit.text()) <= 0:
-                raise Exception("Individual locus mutation rate should be positive")
+                raise Exception("Mean coefficient P should not be negative")
+            if float(self.ui.ilmrMinEdit.text()) < 0:
+                raise Exception("Individual locus mutation rate should not be negative")
             if float(self.ui.mmrMinEdit.text()) < 0:
                 raise Exception("Mean mutation rate should not be negative")
         except Exception as e:

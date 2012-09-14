@@ -75,6 +75,7 @@ string* stat_type;
 int* stat_num;
 
 ofstream fprog;
+ofstream fpar;
 
 void initstat_typenum(){
 	string stat_type0[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","HP0","HM1","HV1","HMO","NP0","NM1","NV1","NMO","FP0","FM1","FV1","FMO","AP0","AM1","AV1","AMO","PPL"};

@@ -55,6 +55,7 @@ extern int* stat_num;
 
 extern int debuglevel;
 extern string reftablelogfilename;
+extern ofstream fpar;
 
 //long int naccept,ntentes; à faire par particule et à sommer à la fin dans particleset
 
@@ -518,6 +519,10 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 		}
 		OK=true;
 	}
+/*	for (int p=0;p<this->scen.nparam;p++) {
+		fpar.precision(5);
+		fpar<<this->scen.histparam[p].value<<"\t";
+	}*/
 	//if (OK) cout<<"tirage des paramètres OK \n"; else cout<<"tirage des paramètres rejeté \n";
 	this->scen.ipv=0;
 	if (OK) {
@@ -589,6 +594,8 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 				//cout<<"snimoy ipv++\n";
 			} else this->grouplist[gr].snimoy = this->grouplist[gr].priorsnimoy.mini;
 			//cout<<"snimoy="<<this->grouplist[gr].snimoy<<"\n";
+			//fpar.precision(5);
+			//fpar<<this->grouplist[gr].mutmoy<<'\t'<<this->grouplist[gr].Pmoy<<'\n';
 		  }
 		  if (this->grouplist[gr].type==1) {  //sequence
 				if (not this->grouplist[gr].priormusmoy.fixed) this->grouplist[gr].musmoy = this->grouplist[gr].priormusmoy.drawfromprior(this->mw);
@@ -1910,6 +1917,19 @@ void ParticleC::put_one_mutation(int loc) {
 					}
 					for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 					//if (not gtexist[loc]) for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
+///////////////////////////////////					
+/*					fpar.precision(5);
+					fpar<<this->locuslist[loc].mut_rate<<'\t'<<this->locuslist[loc].Pgeom<<'\t'<<this->locuslist[loc].sni_rate<<'\n';
+					for (int iseq=0;iseq<this->nseq;iseq++) {
+							fpar<<"action= "<<this->seqlist[iseq].action;
+							if (this->seqlist[iseq].action == 'C') fpar <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
+							else  fpar <<"   "<<this->seqlist[iseq].t0;
+							fpar<<"    pop="<<this->seqlist[iseq].pop;fpar<<"    Ne="<<this->seqlist[iseq].N;
+							if ((this->seqlist[iseq].action == 'M')or(this->seqlist[iseq].action == 'S')) fpar <<"   pop1="<<this->seqlist[iseq].pop1;
+							if (this->seqlist[iseq].action == 'S') fpar <<"   pop2="<<this->seqlist[iseq].pop2;
+							fpar<<"\n";
+					}*/
+///////////////////////////////////////					
 					for (int iseq=0;iseq<this->nseq;iseq++) {
 						if ((debuglevel==10)or(debuglevel==20)) {
 							cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;

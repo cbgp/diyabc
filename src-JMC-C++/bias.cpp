@@ -52,7 +52,7 @@ extern bool original, composite,scaled;
 extern string* nomparamO,*nomparamC,*nomparamS;
 //extern long double **phistar,**phistarcompo,**phistarscaled;
 extern int debuglevel;
-extern ofstream fprog;
+extern ofstream fprog,fpar;
 
 
 parstatC **paramest, **paramestcompo, **paramestscaled;
@@ -61,6 +61,7 @@ long double **br_O,*rrmise_O,*rmad_O,**rmse_O,*cov50_O,*cov95_O,**fac2_O,**rmb_O
 long double **br_C,*rrmise_C,*rmad_C,**rmse_C,*cov50_C,*cov95_C,**fac2_C,**rmb_C,*rmedad_C,**rmae_C,***bmed_C,**bmedr_C,***bmeda_C;
 long double **br_S,*rrmise_S,*rmad_S,**rmse_S,*cov50_S,*cov95_S,**fac2_S,**rmb_S,*rmedad_S,**rmae_S,***bmed_S,**bmedr_S,***bmeda_S;
 long double **paretoil,**paretoilcompo,**paretoilscaled;
+ofstream ftrace;
 
 /*
     string pseudoprior(string s) {
@@ -375,6 +376,18 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 			for (int j=0;j<nparscaled;j++) bmeda_S[k][j] = new long double[ntest];
 		}
 	}
+
+/**
+* ecrit les paramvv,les paramest et les sumstatdans un fichier
+*/
+		void tracebiais(int ntest,int nsel,int npv,int p) {
+			ftrace.precision(5);
+			for (int j=0;j<nparamcom;j++) ftrace<<enreg2[p].paramvv[j]<<'\t';
+			for (int j=0;j<nparamcom;j++) ftrace<<paramest[p][j].moy<<'\t'<<paramest[p][j].med<<'\t'<<paramest[p][j].mod<<'\t';
+			for (int j=0;j<header.nstat;j++) ftrace<<enreg2[p].stat[j]<<'\t';
+			ftrace<<'\n';
+		}
+	
 	
 /**
 * calcule les différentes statistiques de biais, rmse...
@@ -1171,13 +1184,15 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 		cout<<"debut de dobias\n";
         int nstatOK, iprog,nprog,bidule;
         int nrec = 0, nsel = 0,ns,nrecpos = 0,ntest = 0,np,ng,npv,nn,ncond,nt,*paordre,*paordreabs;
-        string *ss,s,*ss1,s0,s1,sg, entetelog, *paname;
+        string *ss,s,*ss1,s0,s1,sg, entetelog, *paname, nomfitrace, nomfipar;
 		float *stat_obs;
 		long double **matC;
         string bidon;
 		long double **phistar, **phistarcompo, **phistarscaled;
         progressfilename = path + ident + "_progress.txt";
 		scurfile = path + "pseudo-observed_datasets_"+ ident +".txt";
+		nomfitrace = path + ident+"_trace.txt";
+		nomfipar = path + ident + "_param.txt";
         cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
@@ -1253,9 +1268,11 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
             enreg[p].param = new float[npv];
             enreg[p].numscen = rt.scenteste;
         }
+		//fpar.open(nomfipar.c_str());
 		cout<<"avant dosimultabref\n";
         ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,1);
 		cout<<"apres dosimultabref\n";
+		//fpar.close();
 		//header.entete=header.entetehist+header.entetemut0+header.entetestat;
         nprog=10*ntest+6;iprog=5;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
@@ -1344,6 +1361,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 			phistarscaled = new long double* [nsel];
 			for (int i=0;i<nsel;i++) phistarscaled[i] = new long double[nparscaled];
 		}
+		ftrace.open(nomfitrace.c_str());
         for (int p=0;p<ntest;p++) {
             cout<<"\nanalysing data test "<<p+1<<" \n";
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg2[p].stat[j];
@@ -1365,6 +1383,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 					//cout<<"\n";
 				}
 				biaisrelO(ntest,nsel,npv,p);			if (debuglevel==11)   cout<<"apres biaisrelO\n";
+				tracebiais(ntest,nsel,npv,p);
 			}
 			if (composite) {
 				recalparamC(nsel);                  	if (debuglevel==11)	cout<<"apres recalparamC\n";
@@ -1401,6 +1420,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 			delete_mat(nsel);
             iprog +=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         }
+        ftrace.close();
         rt.desalloue_enrsel(nsel);
 //		for (int i=0;i<nsel;i++) delete []phistar[i];delete phistar;
         if (original) {
