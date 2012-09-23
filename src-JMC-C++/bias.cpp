@@ -682,7 +682,7 @@ ofstream ftrace;
 		for (int j=0;j<nparamcom;j++) rrmise_O[j] = sqrt(rrmise_O[j]/(long double)ntest);
 		for (int j=0;j<nparamcom;j++) rmad_O[j] /=(long double)ntest;
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparamcom;j++) rmse_O[k][j] = sqrt(rmse_O[k][j])/(long double)ntest;
+            for (int j=0;j<nparamcom;j++) rmse_O[k][j] = sqrt(rmse_O[k][j]/(long double)ntest);
 		}
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparamcom;j++) rmb_O[k][j] =cal_medL(ntest,bmed_O[k][j]);
@@ -700,7 +700,7 @@ ofstream ftrace;
 		for (int j=0;j<nparcompo;j++) rrmise_C[j] = sqrt(rrmise_C[j]/(long double)ntest);
 		for (int j=0;j<nparcompo;j++) rmad_C[j] /=(long double)ntest;
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparcompo;j++) rmse_C[k][j] = sqrt(rmse_C[k][j])/(long double)ntest;
+            for (int j=0;j<nparcompo;j++) rmse_C[k][j] = sqrt(rmse_C[k][j]/(long double)ntest);
 		}
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) rmb_C[k][j] =cal_medL(ntest,bmed_C[k][j]);
@@ -718,7 +718,7 @@ ofstream ftrace;
 		for (int j=0;j<nparscaled;j++) rrmise_S[j] = sqrt(rrmise_S[j]/(long double)ntest);
 		for (int j=0;j<nparscaled;j++) rmad_S[j] /=(long double)ntest;
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparscaled;j++) rmse_S[k][j] = sqrt(rmse_S[k][j])/(long double)ntest;
+            for (int j=0;j<nparscaled;j++) rmse_S[k][j] = sqrt(rmse_S[k][j]/(long double)ntest);
 		}
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparscaled;j++) rmb_S[k][j] =cal_medL(ntest,bmed_S[k][j]);
