@@ -347,7 +347,115 @@ Notice that in this computation, values that are in the interval $[s_{obs}-0.001
 
 \subsection{Simulating data sets}
 
+The $DIYABC$ program can also be used to simulate data sets, either microsatellite and/or DNA sequence data sets using our Genepop format, or SNP data sets using our specific format. This option is reachable through the main \textsf{File} menu as shown below :\\
 
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-62.png} \\
+
+Clicking on e.g. the \textsf{Microsatellites and/or sequences (Genepop format)} opens up a dialog window in which one can choose the directory into which will be located the project and the future data files :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-64.png} \\
+
+Above, we decided to call \textsf{demo2} this new directory and to locate it in the \textsf{home/diyabc/demo} directory.
+
+Clicking on \fbox{\textsf{OK}} leads to usual screen:\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-65.png} \\
+
+We first inform the historical model clicking on the  \fbox{\textsf{Set}} button under \textsf{Historical model}. We edit the scenario box as below:\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-66.png} \\
+
+We click on the  \fbox{\textsf{Set parameter values}} button. Arbitrary default values appear :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-67.png} \\
+
+We change these values according to our needs and we click the \fbox{\textsf{Set sample size}} button, getting this screen:\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-68.png} \\
+
+We input the needed sample sizes as below :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-69.png} \\
+
+Clicking on the \fbox{\textsf{VALIDATE}} button, we get back to the previous screen showing that the Historical model is now completed:\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-70.png} \\
+
+
+We have now to complete the Genetic data (click on the \fbox{\textsf{Set}} button under \textsf{Genetic data}). The following screen appears:\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-71.png} \\
+
+We want a data set including three autosomal, two X-linked and one Y-linked diploid microsatellite loci and one mitochondrial sequence. We also need a sex ratio of one male for four females :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-72.png} \\
+
+We click on the \fbox{\textsf{OK}} button and get the following screen :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-73.png} \\
+
+Our mitochondrial DNA sequence is only 500 nucleotides long and there is a slight excess of A+T (60\%). We edit the corresponding cells : \\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-74.png} \\
+
+Since mutation models are different for microsatellites and DNA sequences, we define two groups by clicking twice on the \fbox{\textsf{Add group}} button :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-75.png} \\
+
+We select the 6 microsatellite loci by clicking on the first locus name cell and shift-clicking on the sixth locus name cell :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-76.png} \\
+
+The six locus names are transferred into group 1 by clicking on the \fbox{\textsf{  >>  }} button :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-77.png} \\
+
+Then the DNA sequence locus is selected :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-78.png} \\
+
+and transferred into group 2 in the same way :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-79.png} \\
+
+We need now to define the mutation model of each group. Let's click on the \fbox{\textsf{Set Mutation Model}} button of group 1:\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-80.png} \\
+
+The usual default values appear. We want to exclude single nucleotide insertions/deletions (SNI mutations). So we set to 0 the Mean SNI rate and Minimum, Maximum and Shape of individual loci SNI rates :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-81.png} \\
+
+Once this done, we go back to the previous screen by clicking on the \fbox{\textsf{VALIDATE}} button. Then we set the mutation model of the mitochondrial DNA sequence. The default values are as follows :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-82.png} \\
+
+The default mean mutation rate is not suited to mitochondrial DNA which generally evolves at a faster rate than nuclear DNA. So we set its value to $10^{-8}$. For all other parameters, we just keep the default values:\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-83.png} \\
+
+After validating twice, we get back to the main screen :\\ 
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-84.png} \\
+
+We require 10 simulated data sets :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-85.png} \\
+
+\newpage
+We then click on the \fbox{\textsf{Run computation}} button. In a matter of seconds, the computation ends up:\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-86.png} \\
+
+Using the file manager, we can check that ten new files (\textsf{demo2\_001.mss} to \textsf{demo2\_010.mss}) have been added to new directory :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-87.png} \\
+
+Opening e.g. the second one with a text editor, we can have a partial view of the simulated genotypes of the first population sample : \\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-88.png} \\
+
+We can check that the sex ratio is correct : the number of males is one fourth the number of females. The type of each locus given after the name is also correct. All microsatellite allelic values are odd, in agreement with the motif length (2) and the absence of single nucleotide insertion/deletion. More interestingly, it gives an example of how X- and Y-linked microsatellite loci must be written for each sex (here 15 females and 18 males) in our Genepop format. 
 
 
 

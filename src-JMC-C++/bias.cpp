@@ -62,6 +62,7 @@ long double **br_C,*rrmise_C,*rmad_C,**rmse_C,*cov50_C,*cov95_C,**fac2_C,**rmb_C
 long double **br_S,*rrmise_S,*rmad_S,**rmse_S,*cov50_S,*cov95_S,**fac2_S,**rmb_S,*rmedad_S,**rmae_S,***bmed_S,**bmedr_S,***bmeda_S;
 long double **paretoil,**paretoilcompo,**paretoilscaled;
 ofstream ftrace;
+bool sans_info;
 
 /*
     string pseudoprior(string s) {
@@ -1194,6 +1195,7 @@ ofstream ftrace;
 		nomfitrace = path + ident+"_trace.txt";
 		nomfipar = path + ident + "_param.txt";
         cout<<scurfile<<"\n";
+		sans_info=false;
         cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
@@ -1259,7 +1261,7 @@ ofstream ftrace;
                     //exit(1);
                 }
                 for (int j=1;j<=ng;j++) resetmutparam(ss1[j-1]);
-            }
+            } else if (s0=="x") sans_info = true;
         }
         npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[ntest];
