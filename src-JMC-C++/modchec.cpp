@@ -62,7 +62,7 @@ long double **ssphistar,**ssref;
     bool resetstats(string s) {
 		cout<<"debut de resetstats\n";
 		cout<<s<<"\n";
-        int j,ns,nq,nss1,gr,k=0,lonentstat,*groupmodif,ngroupmodif;
+        int j,ns,nq,nss1,gr,lonentstat,*groupmodif,ngroupmodif,*nustat;
         string *ss,*qq,*ss1;
 		vector < vector <StatsnpC > > statsnp;
 		vector < vector <string > > statname;
@@ -84,6 +84,8 @@ long double **ssphistar,**ssref;
 				
 			}
 		}
+		nustat = new int[header.ngroupes+1];
+		for (gr=1;gr<=header.ngroupes;gr++) nustat[gr]=0;
 //repérage des groupes modifiés
 		groupmodif = new int[header.ngroupes];
 		for(gr=0;gr<header.ngroupes;gr++) groupmodif[gr]=0;
@@ -113,8 +115,8 @@ long double **ssphistar,**ssref;
 		for (gg=0;gg<ngroupmodif;gg++) header.groupe[groupmodif[gg]].nstat=0;
         //for (gr=1;gr<=header.ngroupes;gr++) {header.groupe[gr].nstat=0;} 
         cout<<header.ngroupes<<" groupe(s)\n";
-		delete [] ss;
-        ss =splitwords(s," ",&ns);
+		//delete [] ss;
+        //ss =splitwords(s," ",&ns);
         if (debuglevel==2) cout<<"ns="<<ns<<"\n";
         for (int i=0;i<ns;i++) {
             qq=splitwords(ss[i],"_",&nq);
@@ -133,8 +135,13 @@ long double **ssphistar,**ssref;
 		for (gg=0;gg<ngroupmodif;gg++) delete [] header.groupe[groupmodif[gg]].sumstat;
 		for (gg=0;gg<ngroupmodif;gg++) header.groupe[groupmodif[gg]].sumstat = new StatC[header.groupe[groupmodif[gg]].nstat];
 		
-        delete [] ss;
-		ss =splitwords(s," ",&ns);
+        if (debuglevel==2) {
+			cout <<"dans resetstat nstat = "<<header.nstat<<"\n";
+			for (gr=1;gr<=header.ngroupes;gr++) cout<<"      groupe "<<gr<<"   nstat="<< header.groupe[gr].nstat<<"\n";
+		}
+		
+        //delete [] ss;
+		//ss =splitwords(s," ",&ns);
         delete []header.statname;
 		lonentstat=header.entetestat.length();
 		header.entetestat="";
@@ -168,45 +175,46 @@ long double **ssphistar,**ssref;
             if (debuglevel==2) cout<<"ss["<<i<<"] = "<<ss[i]<<"   j="<<j<<"\n";
             if (header.groupe[gr].type==0) {   //MICROSAT
                 if (stat_num[j]<5) {
-                      header.groupe[gr].sumstat[k].cat=stat_num[j];
-                      header.groupe[gr].sumstat[k].samp=atoi(qq[2].c_str());
-                      k++;
+                      header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
+                      header.groupe[gr].sumstat[nustat[gr]].samp=atoi(qq[2].c_str());
+                      nustat[gr]++;
                 } else if (stat_num[j]<12) {
-                      header.groupe[gr].sumstat[k].cat=stat_num[j];
+                      header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
                       ss1=splitwords(qq[2],"&",&nss1);
-                      header.groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
-                      header.groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
-                      k++;
+                      header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
+                      header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
+                      nustat[gr]++;
                       delete [] ss1;
                 } else if (stat_num[j]==12) {
-                      header.groupe[gr].sumstat[k].cat=stat_num[j];
+                      header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
                       ss1=splitwords(qq[2],"&",&nss1);
-                      header.groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
-                      header.groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
-                      header.groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
-                      k++;
+                      header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
+                      header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
+                      header.groupe[gr].sumstat[nustat[gr]].samp2=atoi(ss1[2].c_str());
+                      nustat[gr]++;
                       delete [] ss1;
                 }
             } else if (header.groupe[gr].type==1) {   //DNA SEQUENCE
 				if (debuglevel==2) cout<<"DNA SEQUENCE stat_num["<<j<<"] = "<<stat_num[j]<<"   qq[2]="<<qq[2]<<"\n";
-                if (stat_num[j]>-9) {
-                      header.groupe[gr].sumstat[k].cat=stat_num[j];
-                      header.groupe[gr].sumstat[k].samp=atoi(qq[2].c_str());
-                      k++;
+ 				if (debuglevel==2) cout<<"gr="<<gr<<"   nustat[gr]="<<nustat[gr]<<"\n";
+               if (stat_num[j]>-9) {
+                      header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
+                      header.groupe[gr].sumstat[nustat[gr]].samp=atoi(qq[2].c_str());
+                      nustat[gr]++;
                 } else if (stat_num[j]>-14) {
-                        header.groupe[gr].sumstat[k].cat=stat_num[j];
+                        header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
                         ss1=splitwords(qq[2],"&",&nss1);
-                        header.groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
-                        header.groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
-                        k++;
+                        header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
+                        header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
+                        nustat[gr]++;
                         delete [] ss1;
                 } else if (stat_num[j]==-14) {
-                        header.groupe[gr].sumstat[k].cat=stat_num[j];
+                        header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
                         ss1=splitwords(qq[2],"&",&nss1);
-                        header.groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
-                        header.groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
-                        header.groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
-                        k++;
+                        header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
+                        header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
+                        header.groupe[gr].sumstat[nustat[gr]].samp2=atoi(ss1[2].c_str());
+                        nustat[gr]++;
                         delete [] ss1;
                 }
                 cout<<"fin\n";
@@ -214,85 +222,85 @@ long double **ssphistar,**ssref;
 					catsnp = (stat_num[j]-21)/4;
 					if (debuglevel==2) cout<<"snp catsnp="<<catsnp<<"   stat_num["<<j<<"]="<<stat_num[j]<<"\n";
                     if (stat_num[j]<25) {
-						header.groupe[gr].sumstat[k].cat=stat_num[j];
-						header.groupe[gr].sumstat[k].samp=atoi(qq[2].c_str());
+						header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
+						header.groupe[gr].sumstat[nustat[gr]].samp=atoi(qq[2].c_str());
 						trouve=false;
 						if (debuglevel==2) cout<<"statsnp["<<gr<<"].size="<<statsnp[gr].size()<<"\n";
 						if (statsnp[gr].size()>0){
 						for (size_t jj=0;jj<statsnp[gr].size();jj++) {
-								trouve=((statsnp[gr][jj].cat==catsnp)and(statsnp[gr][jj].samp==header.groupe[gr].sumstat[k].samp));
-								if (trouve) {header.groupe[gr].sumstat[k].numsnp=jj;break;}
+								trouve=((statsnp[gr][jj].cat==catsnp)and(statsnp[gr][jj].samp==header.groupe[gr].sumstat[nustat[gr]].samp));
+								if (trouve) {header.groupe[gr].sumstat[nustat[gr]].numsnp=jj;break;}
 							}
 						}
 						if (debuglevel==2) cout<<"trouve="<<trouve<<"\n";
 						if (not trouve) {
 								stsnp.cat=catsnp;
-								stsnp.samp=header.groupe[gr].sumstat[k].samp;
+								stsnp.samp=header.groupe[gr].sumstat[nustat[gr]].samp;
 								stsnp.defined=false;
 								stsnp.sorted=false;
-								header.groupe[gr].sumstat[k].numsnp=statsnp[gr].size();
+								header.groupe[gr].sumstat[nustat[gr]].numsnp=statsnp[gr].size();
 								cout<<"statsnp["<<statsnp[gr].size()<<"]   cat="<<stsnp.cat<<"   samp="<<stsnp.samp<<"\n";
 								statsnp[gr].push_back(stsnp);
 						}
-						k++;
+						nustat[gr]++;
                         
                     } else if ((stat_num[j]>24)and(stat_num[j]<33)) {
-						header.groupe[gr].sumstat[k].cat=stat_num[j];
+						header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
                         ss1=splitwords(qq[2],"&",&nss1);
-                        header.groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
-                        header.groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+                        header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
+                        header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
 						trouve=false;
 						if (debuglevel==2) cout<<"statsnp["<<gr<<"].size="<<statsnp[gr].size()<<"\n";
 						if (statsnp[gr].size()>0){
 						for (size_t jj=0;jj<statsnp[gr].size();jj++) {
-								trouve=((statsnp[gr][jj].cat==catsnp)and(statsnp[gr][jj].samp==header.groupe[gr].sumstat[k].samp)and(statsnp[gr][jj].samp1==header.groupe[gr].sumstat[k].samp1));
-								if (trouve) {header.groupe[gr].sumstat[k].numsnp=jj;break;}
+								trouve=((statsnp[gr][jj].cat==catsnp)and(statsnp[gr][jj].samp==header.groupe[gr].sumstat[nustat[gr]].samp)and(statsnp[gr][jj].samp1==header.groupe[gr].sumstat[nustat[gr]].samp1));
+								if (trouve) {header.groupe[gr].sumstat[nustat[gr]].numsnp=jj;break;}
 							}
 						}
 						//cout<<"statsnp.size = "<<statsnp.size()<<"   trouve = "<<trouve<<"\n";
 						if (debuglevel==2) cout<<"trouve="<<trouve<<"\n";
 						if (not trouve) {
 								stsnp.cat=catsnp;
-								stsnp.samp=header.groupe[gr].sumstat[k].samp;
-								stsnp.samp1=header.groupe[gr].sumstat[k].samp1;
+								stsnp.samp=header.groupe[gr].sumstat[nustat[gr]].samp;
+								stsnp.samp1=header.groupe[gr].sumstat[nustat[gr]].samp1;
 								stsnp.defined=false;
 								stsnp.sorted=false;
-								header.groupe[gr].sumstat[k].numsnp=statsnp[gr].size();
+								header.groupe[gr].sumstat[nustat[gr]].numsnp=statsnp[gr].size();
 								cout<<"statsnp["<<statsnp[gr].size()<<"]   cat="<<stsnp.cat<<"   samp="<<stsnp.samp<<"   samp1="<<stsnp.samp1<<"\n";
 								statsnp[gr].push_back(stsnp);
 						}
 						//cout<<"numsnp = "<<statsnp.size()<<"\n";
 						delete [] ss1;
-						k++;
+						nustat[gr]++;
                         
                     } else if (stat_num[j]>32) {
-						header.groupe[gr].sumstat[k].cat=stat_num[j];
+						header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
                         ss1=splitwords(qq[2],"&",&nss1);
-                        header.groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
-                        header.groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
-                        header.groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
+                        header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
+                        header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
+                        header.groupe[gr].sumstat[nustat[gr]].samp2=atoi(ss1[2].c_str());
 						trouve=false;
 						if (debuglevel==2) cout<<"statsnp.size="<<statsnp.size()<<"\n";
 						if (statsnp[gr].size()>0){
 						for (size_t jj=0;jj<statsnp[gr].size();jj++) {
-								trouve=((statsnp[gr][jj].cat==catsnp)and(statsnp[gr][jj].samp==header.groupe[gr].sumstat[k].samp)and(statsnp[gr][jj].samp1==header.groupe[gr].sumstat[k].samp1)and(statsnp[gr][jj].samp2==header.groupe[gr].sumstat[k].samp2));
-								if (trouve) {header.groupe[gr].sumstat[k].numsnp=jj;break;}
+								trouve=((statsnp[gr][jj].cat==catsnp)and(statsnp[gr][jj].samp==header.groupe[gr].sumstat[nustat[gr]].samp)and(statsnp[gr][jj].samp1==header.groupe[gr].sumstat[nustat[gr]].samp1)and(statsnp[gr][jj].samp2==header.groupe[gr].sumstat[nustat[gr]].samp2));
+								if (trouve) {header.groupe[gr].sumstat[nustat[gr]].numsnp=jj;break;}
 							}
 						}
 						if (debuglevel==2) cout<<"trouve="<<trouve<<"\n";
 						if (not trouve) {
 								stsnp.cat=catsnp;
-								stsnp.samp=header.groupe[gr].sumstat[k].samp;
-								stsnp.samp1=header.groupe[gr].sumstat[k].samp1;
-								stsnp.samp2=header.groupe[gr].sumstat[k].samp2;
+								stsnp.samp=header.groupe[gr].sumstat[nustat[gr]].samp;
+								stsnp.samp1=header.groupe[gr].sumstat[nustat[gr]].samp1;
+								stsnp.samp2=header.groupe[gr].sumstat[nustat[gr]].samp2;
 								stsnp.defined=false;
 								stsnp.sorted=false;
-								header.groupe[gr].sumstat[k].numsnp=statsnp[gr].size();
+								header.groupe[gr].sumstat[nustat[gr]].numsnp=statsnp[gr].size();
 								cout<<"statsnp["<<gr<<"]["<<statsnp[gr].size()<<"]   cat="<<stsnp.cat<<"   samp="<<stsnp.samp<<"   samp1="<<stsnp.samp1<<"   samp2="<<stsnp.samp2<<"\n";
 								statsnp[gr].push_back(stsnp);
 						}
 						delete [] ss1;
-						k++;
+						nustat[gr]++;
                     }
 			}
             delete []qq;
@@ -609,7 +617,9 @@ long double **ssphistar,**ssref;
         cout<<"newstat ="<<newstat<<"   newsspart="<<newsspart<<"     nenr="<<nenr<<"\n";
 		if (nenr>newsspart) nenr=newsspart;
         while (nss<newsspart) {
+			if (debuglevel==2) cout<<"avant dosimulphistar\n";
             ps.dosimulphistar(header,nenr,false,multithread,firsttime,rt.scenteste,seed,nphistarOK);
+			if (debuglevel==2) cout<<"apres dosimulphistar\n";
             for (int i=0;i<nenr;i++) {
                 for (int j=0;j<header.nstat;j++) ssphistar[i+nss][j]=enreg[i].stat[j];
                 //for (int j=0;j<header.nstat;j++) cout<<ssphistar[i+nss][j]<<"   ";cout<<"\n";
@@ -641,7 +651,7 @@ long double **ssphistar,**ssref;
                     for (int i=0;i<nenr;i++) {
                       numscen[i+nsr] = enreg[i].numscen;
                       for (int j=0;j<header.nstat;j++) ssref[i+nsr][j]=enreg[i].stat[j];
-                        for (int j=0;j<header.nstat;j++) cout<<ssref[i+nsr][j]<<"   ";cout<<"\n";
+                        if (debuglevel==2) for (int j=0;j<header.nstat;j++) cout<<ssref[i+nsr][j]<<"   ";cout<<"\n";
                     }
                     firsttime=false;
                     nsr+=nenr;

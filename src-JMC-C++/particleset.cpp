@@ -307,7 +307,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	if (debuglevel==5) cout<<"apres firsttime\n";
 	for (int p=0;p<this->npart;p++) {
 		k=this->particule[0].mw.rand0(nsel);
-		cout<<"p="<<p<<"    k="<<k<<"\n";
+		if (debuglevel==5) cout<<"p="<<p<<"    k="<<k<<"\n";
 		ii=0;
 		for (int i=0;i<nparam;i++) {
 			if (not header.scenario[scen].histparam[i].prior.constant) {
@@ -316,9 +316,9 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 				this->particule[p].scenario[scen].histparam[i].prior.fixed=true;
 				ii++;
 			} else this->particule[p].scenario[scen].histparam[i].value=header.scenario[scen].histparam[i].prior.mini;
-			cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
+			if (debuglevel==5) cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
 		}
-		cout<<"\n";
+		if (debuglevel==5) cout<<"\n";
 		//cout<<"apres la copie des paramètres historiques\n";
 		for (gr=1;gr<=header.ngroupes;gr++)
 			if (header.groupe[gr].type==0) {  //MICROSAT
