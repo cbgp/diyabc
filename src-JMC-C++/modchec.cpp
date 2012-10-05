@@ -342,7 +342,20 @@ long double **ssphistar,**ssref;
         npv = rt.nparam[scen];
         for (int i=0;i<nsel;i++) {
             OK=true;
-            if (header.scenario[scen].nconditions>0) {
+			if (numtransf<3) {
+				for (int k=0;k<rt.nhistparam[scen];k++) {
+					OK=((header.scenario[scen].histparam[k].prior.mini<phistar[i][k])and(header.scenario[scen].histparam[k].prior.maxi>phistar[i][k]));
+					if (not OK) break;
+				}
+				if (OK){
+					k1=rt.nhistparam[scen];
+					for (int k=0;k<rt.nparamut;k++) {
+						OK=((rt.mutparam[k].prior.mini<phistar[i][k1+k])and(rt.mutparam[k].prior.maxi>phistar[i][k1+k]));
+						if (not OK )break;
+					}
+				}
+			}
+            if ((header.scenario[scen].nconditions>0)and(OK)) {
                 for (int j=0;j<header.scenario[scen].nconditions;j++) {
                     ip1=0;
                     for(int k =0; k < rt.nparam[scen]; ++k){
