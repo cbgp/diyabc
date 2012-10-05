@@ -17,6 +17,7 @@ using namespace std;
 
 vector <string> histparname;
 vector <int> histparcat;
+extern int debuglevel;
 
 
 
@@ -45,11 +46,13 @@ double PriorC::drawfromprior(MwcGen & mw){
       return r;
     }
     if (this->loi=="GA") {
+		if (debuglevel==15) cout<<"drawfromprior loi=GA mean="<<this->mean<<"   sdshape="<<this->sdshape<<"\n";
       if (this->mean<1E-12) return 0;
       if (this->sdshape<1E-12) return this->mean;
       if (this->maxi<1E-12) return this->maxi;
       do {r = mw.ggamma3(this->mean,this->sdshape);}
       while ((r<this->mini)or(r>this->maxi));
+	    if (debuglevel==15) cout<<"                    result="<<r<<"\n";
       return r;
     }
     return -1.0;

@@ -296,7 +296,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                                parmax[j]=1.05*rt.mutparam[jj].prior.maxi;
                                //cout<<rt.mutparam[jj].category<<"   ";
                                //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
-                               //diff[j]=parmax[j]-parmin[j];
+                               diff[j]=parmax[j]-parmin[j];
                        }
                    }
                    //cout <<"fin du calcul de parmin/parmax\n";
@@ -576,7 +576,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 					for (int j=0;j<nparscaled;j++) {
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
-						marge=coefmarge*diff[j];
+						marge=coefmarge*diffscaled[j];
 						parminscaled[j] -=marge;
 						parmaxscaled[j] +=marge;
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
