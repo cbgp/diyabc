@@ -485,8 +485,10 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 			if (debuglevel==5) cout<<"dans particleset ipart="<<ipart<<"     nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
 			for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
 			//for (int j=0;j<nph+npm;j++) {	
+				//cout<<"this->particule["<<ipart<<"].scen.paramvar["<<j<<"] = "<<this->particule[ipart].scen.paramvar[j]<<"\n";
 				enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
-				//cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
+				//cout<<"enreg["<<ipart<<"].param["<<j<<"] = "<<enreg[ipart].param[j]<<"\n";
+				if (debuglevel==5) cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
 			}
 			if (debuglevel==5) cout <<"\n";
 			nstat=0;

@@ -78,8 +78,8 @@ long double **ssphistar,**ssref;
 		gs=0;
 		for (gr=1;gr<=header.ngroupes;gr++) {
 			for (int i=0;i<header.groupe[gr].nstat;i++) {
-				cout<<"header.statname["<<gs<<"] = \n";
-				cout<<"                         "<< header.statname[gs]<<"\n";
+				//cout<<"header.statname["<<gs<<"] = \n";
+				//cout<<"                         "<< header.statname[gs]<<"\n";
 				statname[gr][i] = header.statname[gs];gs++;
 				
 			}
@@ -217,7 +217,7 @@ long double **ssphistar,**ssref;
                         nustat[gr]++;
                         delete [] ss1;
                 }
-                cout<<"fin\n";
+                //cout<<"fin\n";
             } else if (header.groupe[gr].type>9) {   //SNP
 					catsnp = (stat_num[j]-21)/4;
 					if (debuglevel==2) cout<<"snp catsnp="<<catsnp<<"   stat_num["<<j<<"]="<<stat_num[j]<<"\n";
@@ -503,7 +503,7 @@ long double **ssphistar,**ssref;
 
     void domodchec(string opt,int seed){
         int nstatOK, nphistarOK, iprog,nprog;
-        int nrec = 0,nsel = 0, ns,nrecpos = 0,newsspart = 0,npv,nss,nsr,newrefpart,*numscen,nparamax,bidon;
+        int nrec = 0,nsel = 0, ns,nrecpos = 0,newsspart = 0,npv,npvmax,nss,nsr,newrefpart,*numscen,nparamax,bidon;
         string *ss,s,*ss1,s0,s1,snewstat;
         //float  *stat_obs;
         bool usestats,firsttime,dopca = false,doloc = false, newstat=false;
@@ -596,7 +596,9 @@ long double **ssphistar,**ssref;
         	exit(1);
         }
         npv = rt.nparam[rt.scenteste-1];
+		npvmax = npv; for (int i=0;i<header.nscenarios;i++) if (npvmax<rt.nparam[i]) npvmax=rt.nparam[i];
 		cout<<"npv="<<npv<<"    nenr="<<nenr<<"   nstat="<<header.nstat<<"\n";
+		cout<<"npvmax = "<<npvmax<<"\n";
 		//delete []enreg;
         nss=0;
         firsttime=true;
@@ -608,10 +610,10 @@ long double **ssphistar,**ssref;
 		cout<<"apres new enregC[nenr]\n";
         for (int p=0;p<nenr;p++) {
             enreg[p].stat = new float[header.nstat];
-            enreg[p].param = new float[npv];
+            enreg[p].param = new float[npvmax];
             enreg[p].numscen = rt.scenteste;
         }
-        cout<<"apres dimensionnement des enreg\n";
+        cout<<"apres dimensionnement des enreg nstat="<<header.nstat<<"   nparam="<<npv<<"   nenr="<<nenr<<"\n";
         ssphistar = new long double*[newsspart];
         for (int i=0;i<newsspart;i++) ssphistar[i] = new long double[header.nstat];
         cout<<"newstat ="<<newstat<<"   newsspart="<<newsspart<<"     nenr="<<nenr<<"\n";
@@ -651,7 +653,7 @@ long double **ssphistar,**ssref;
                     for (int i=0;i<nenr;i++) {
                       numscen[i+nsr] = enreg[i].numscen;
                       for (int j=0;j<header.nstat;j++) ssref[i+nsr][j]=enreg[i].stat[j];
-                        if (debuglevel==2) for (int j=0;j<header.nstat;j++) cout<<ssref[i+nsr][j]<<"   ";cout<<"\n";
+                      if (debuglevel==2) {for (int j=0;j<header.nstat;j++) cout<<ssref[i+nsr][j]<<"   ";cout<<"\n";}
                     }
                     firsttime=false;
                     nsr+=nenr;

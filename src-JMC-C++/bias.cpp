@@ -56,13 +56,17 @@ extern ofstream fprog,fpar;
 
 
 parstatC **paramest, **paramestcompo, **paramestscaled;
+parstatC **paramestS, **paramestcompoS, **paramestscaledS;
 enreC *enreg2;
 long double **br_O,*rrmise_O,*rmad_O,**rmse_O,*cov50_O,*cov95_O,**fac2_O,**rmb_O,*rmedad_O,**rmae_O,***bmed_O,**bmedr_O,***bmeda_O;
 long double **br_C,*rrmise_C,*rmad_C,**rmse_C,*cov50_C,*cov95_C,**fac2_C,**rmb_C,*rmedad_C,**rmae_C,***bmed_C,**bmedr_C,***bmeda_C;
 long double **br_S,*rrmise_S,*rmad_S,**rmse_S,*cov50_S,*cov95_S,**fac2_S,**rmb_S,*rmedad_S,**rmae_S,***bmed_S,**bmedr_S,***bmeda_S;
+long double **br_OS,*rrmise_OS,*rmad_OS,**rmse_OS,*cov50_OS,*cov95_OS,**fac2_OS,**rmb_OS,*rmedad_OS,**rmae_OS,***bmed_OS,**bmedr_OS,***bmeda_OS;
+long double **br_CS,*rrmise_CS,*rmad_CS,**rmse_CS,*cov50_CS,*cov95_CS,**fac2_CS,**rmb_CS,*rmedad_CS,**rmae_CS,***bmed_CS,**bmedr_CS,***bmeda_CS;
+long double **br_SS,*rrmise_SS,*rmad_SS,**rmse_SS,*cov50_SS,*cov95_SS,**fac2_SS,**rmb_SS,*rmedad_SS,**rmae_SS,***bmed_SS,**bmedr_SS,***bmeda_SS;
 long double **paretoil,**paretoilcompo,**paretoilscaled;
+long double **paretoilS,**paretoilcompoS,**paretoilscaledS;
 ofstream ftrace;
-bool sans_info;
 
 /*
     string pseudoprior(string s) {
@@ -257,6 +261,64 @@ bool sans_info;
 		}
 	}
 	
+    void initbiasOS(int ntest, int nsel,int nparamcom) {
+		paramestS = new parstatC*[ntest];
+		paretoilS = new long double*[nsel];
+		for (int i=0;i<nsel;i++)paretoilS[i] = new long double[nparamcom];
+//////////////// mean relative bias
+        br_OS = new long double* [3];
+        for (int k=0;k<3;k++) {
+            br_OS[k] = new long double[nparamcom];
+            for (int j=0;j<nparamcom;j++) br_OS[k][j]=0.0;
+		}
+////////////  RRMISE
+        rrmise_OS = new long double [nparamcom];
+        for (int j=0;j<nparamcom;j++) rrmise_OS[j]=0.0;
+////////////  RMAD
+        rmad_OS = new long double [nparamcom];
+        for (int j=0;j<nparamcom;j++) rmad_OS[j]=0.0;
+////////////  RMSE
+        rmse_OS = new long double*[3];
+        for (int k=0;k<3;k++) {
+            rmse_OS[k] = new long double[nparamcom];
+            for (int j=0;j<nparamcom;j++) rmse_OS[k][j]=0.0;
+		}
+/////////////// coverages
+        cov50_OS = new long double[nparamcom];
+        cov95_OS = new long double[nparamcom];
+        for (int j=0;j<nparamcom;j++) {
+             cov50_OS[j]=0.0;
+             cov95_OS[j]=0.0;
+		}
+///////////////// factors 2
+        fac2_OS = new long double*[3];
+        for (int k=0;k<3;k++) {
+            fac2_OS[k] = new long double[nparamcom];
+            for (int j=0;j<nparamcom;j++) fac2_OS[k][j]=0.0;
+		}
+/////////////////// medianes du biais relatif
+		bmed_OS = new long double**[3];
+        for (int k=0;k<3;k++) {
+			bmed_OS[k] = new long double*[nparamcom];
+			for (int j=0;j<nparamcom;j++) {
+				bmed_OS[k][j] = new long double[ntest];
+			}
+		}
+		rmb_OS = new long double*[3];
+		for (int k=0;k<3;k++) rmb_OS[k] = new long double[nparamcom];
+ ///////////////// Relative Median Absolute Deviation
+		bmedr_OS = new long double*[nparamcom];
+		for (int j=0;j<nparamcom;j++) bmedr_OS[j] = new long double[ntest];
+        rmedad_OS = new long double [nparamcom];
+////////////  RMAE
+        rmae_OS = new long double*[3];
+		for (int k=0;k<3;k++) rmae_OS[k] = new long double[nparamcom];
+		bmeda_OS = new long double**[3];
+		for (int k=0;k<3;k++){
+			bmeda_OS[k] = new long double*[nparamcom];
+			for (int j=0;j<nparamcom;j++) bmeda_OS[k][j] = new long double[ntest];
+		}
+	}
 /**
 * initialise les tableaux et les différentes statistiques de biais, rmse... pour les paramètres composites
 */
@@ -319,7 +381,67 @@ bool sans_info;
 		}
 	}
 	
-    void initbiasS(int ntest, int nsel,int nparamcom) {
+    void initbiasCS(int ntest, int nsel,int nparamcom) {
+		paramestcompoS = new parstatC*[ntest];
+		paretoilcompoS = new long double*[nsel];
+		for (int i=0;i<nsel;i++)paretoilcompoS[i] = new long double[nparcompo];
+//////////////// mean relative bias
+        br_CS = new long double* [3];
+        for (int k=0;k<3;k++) {
+            br_CS[k] = new long double[nparcompo];
+            for (int j=0;j<nparcompo;j++) br_CS[k][j]=0.0;
+		}
+////////////  RRMISE
+        rrmise_CS = new long double [nparcompo];
+        for (int j=0;j<nparcompo;j++) rrmise_CS[j]=0.0;
+////////////  RMAD
+        rmad_CS = new long double [nparcompo];
+        for (int j=0;j<nparcompo;j++) rmad_CS[j]=0.0;
+////////////  RMSE
+        rmse_CS = new long double*[3];
+        for (int k=0;k<3;k++) {
+            rmse_CS[k] = new long double[nparcompo];
+            for (int j=0;j<nparcompo;j++) rmse_CS[k][j]=0.0;
+		}
+/////////////// coverages
+        cov50_CS = new long double[nparcompo];
+        cov95_CS = new long double[nparcompo];
+        for (int j=0;j<nparcompo;j++) {
+             cov50_CS[j]=0.0;
+             cov95_CS[j]=0.0;
+		}
+///////////////// factors 2
+        fac2_CS = new long double*[3];
+        for (int k=0;k<3;k++) {
+            fac2_CS[k] = new long double[nparcompo];
+            for (int j=0;j<nparcompo;j++) fac2_CS[k][j]=0.0;
+		}
+/////////////////// medianes du biais relatif
+		bmed_CS = new long double**[3];
+        for (int k=0;k<3;k++) {
+			bmed_CS[k] = new long double*[nparcompo];
+			for (int j=0;j<nparcompo;j++) {
+				bmed_CS[k][j] = new long double[ntest];
+			}
+		}
+		rmb_CS = new long double*[3];
+		for (int k=0;k<3;k++) rmb_CS[k] = new long double[nparcompo];
+ ///////////////// Relative Median Absolute Deviation
+		bmedr_CS = new long double*[nparcompo];
+		for (int j=0;j<nparcompo;j++) bmedr_CS[j] = new long double[ntest];
+        rmedad_CS = new long double [nparcompo];
+////////////  RMAE
+        rmae_CS = new long double*[3];
+		for (int k=0;k<3;k++) rmae_CS[k] = new long double[nparcompo];
+		bmeda_CS = new long double**[3];
+		for (int k=0;k<3;k++){
+			bmeda_CS[k] = new long double*[nparcompo];
+			for (int j=0;j<nparcompo;j++) bmeda_CS[k][j] = new long double[ntest];
+		}
+	}
+
+	
+	void initbiasS(int ntest, int nsel,int nparamcom) {
 		paramestscaled = new parstatC*[ntest];
 		paretoilscaled = new long double*[nsel];
 		for (int i=0;i<nsel;i++)paretoilscaled[i] = new long double[nparscaled];
@@ -375,6 +497,65 @@ bool sans_info;
 		for (int k=0;k<3;k++){
 			bmeda_S[k] = new long double*[nparscaled];
 			for (int j=0;j<nparscaled;j++) bmeda_S[k][j] = new long double[ntest];
+		}
+	}
+
+	void initbiasSS(int ntest, int nsel,int nparamcom) {
+		paramestscaledS = new parstatC*[ntest];
+		paretoilscaledS = new long double*[nsel];
+		for (int i=0;i<nsel;i++)paretoilscaledS[i] = new long double[nparscaled];
+//////////////// mean relative bias
+        br_SS = new long double* [3];
+        for (int k=0;k<3;k++) {
+            br_SS[k] = new long double[nparscaled];
+            for (int j=0;j<nparscaled;j++) br_SS[k][j]=0.0;
+		}
+////////////  RRMISE
+        rrmise_SS = new long double [nparscaled];
+        for (int j=0;j<nparscaled;j++) rrmise_SS[j]=0.0;
+////////////  RMAD
+        rmad_SS = new long double [nparscaled];
+        for (int j=0;j<nparscaled;j++) rmad_SS[j]=0.0;
+////////////  RMSE
+        rmse_SS = new long double*[3];
+        for (int k=0;k<3;k++) {
+            rmse_SS[k] = new long double[nparscaled];
+            for (int j=0;j<nparscaled;j++) rmse_SS[k][j]=0.0;
+		}
+/////////////// coverages
+        cov50_SS = new long double[nparscaled];
+        cov95_SS = new long double[nparscaled];
+        for (int j=0;j<nparscaled;j++) {
+             cov50_SS[j]=0.0;
+             cov95_SS[j]=0.0;
+		}
+///////////////// factors 2
+        fac2_SS = new long double*[3];
+        for (int k=0;k<3;k++) {
+            fac2_SS[k] = new long double[nparscaled];
+            for (int j=0;j<nparscaled;j++) fac2_SS[k][j]=0.0;
+		}
+/////////////////// medianes du biais relatif
+		bmed_SS = new long double**[3];
+        for (int k=0;k<3;k++) {
+			bmed_SS[k] = new long double*[nparscaled];
+			for (int j=0;j<nparscaled;j++) {
+				bmed_SS[k][j] = new long double[ntest];
+			}
+		}
+		rmb_SS = new long double*[3];
+		for (int k=0;k<3;k++) rmb_SS[k] = new long double[nparscaled];
+ ///////////////// Relative Median Absolute Deviation
+		bmedr_SS = new long double*[nparscaled];
+		for (int j=0;j<nparscaled;j++) bmedr_SS[j] = new long double[ntest];
+        rmedad_SS = new long double [nparscaled];
+////////////  RMAE
+        rmae_SS = new long double*[3];
+		for (int k=0;k<3;k++) rmae_SS[k] = new long double[nparscaled];
+		bmeda_SS = new long double**[3];
+		for (int k=0;k<3;k++){
+			bmeda_SS[k] = new long double*[nparscaled];
+			for (int j=0;j<nparscaled;j++) bmeda_SS[k][j] = new long double[ntest];
 		}
 	}
 
@@ -777,7 +958,6 @@ bool sans_info;
         f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n\n";
-		if (sans_info) f1<<"Computations have been performed WITHOUT GENETIC INFORMATION\n";
         f1<<"                                               Averages\n";
         f1<<"Parameter                True values           Means             Medians             Modes\n";
 		f1<<setiosflags(ios::scientific)<<setiosflags(ios::right);
@@ -886,7 +1066,6 @@ bool sans_info;
         f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n\n";
-		if (sans_info) f1<<"Computations have been performed WITHOUT GENETIC INFORMATION\n";
         f1<<"                                               Averages\n";
         f1<<"Parameter                True values           Means             Medians             Modes\n";
 		f1<<setiosflags(ios::scientific)<<setiosflags(ios::right);
@@ -994,7 +1173,6 @@ bool sans_info;
         f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n\n";
-		if (sans_info) f1<<"Computations have been performed WITHOUT GENETIC INFORMATION\n";
         f1<<"                                               Averages\n";
         f1<<"Parameter                True values           Means             Medians             Modes\n";
 		f1<<setiosflags(ios::scientific)<<setiosflags(ios::right);
@@ -1198,7 +1376,6 @@ bool sans_info;
 		nomfitrace = path + ident+"_trace.txt";
 		nomfipar = path + ident + "_param.txt";
         cout<<scurfile<<"\n";
-		sans_info=false;
         cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
@@ -1264,7 +1441,7 @@ bool sans_info;
                     //exit(1);
                 }
                 for (int j=1;j<=ng;j++) resetmutparam(ss1[j-1]);
-            } else if (s0=="x") sans_info = true;
+            }
         }
         npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[ntest];
