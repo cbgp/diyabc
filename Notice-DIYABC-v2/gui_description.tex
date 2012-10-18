@@ -458,11 +458,76 @@ Opening e.g. the second one with a text editor, we can have a partial view of th
 We can check that the sex ratio is correct : the number of males is one fourth the number of females. The type of each locus given after the name is also correct. All microsatellite allelic values are odd, in agreement with the motif length (2) and the absence of single nucleotide insertion/deletion. More interestingly, it gives an example of how X- and Y-linked microsatellite loci must be written for each sex (here 15 females and 18 males) in our Genepop format. 
 
 
+\subsection{The \textsf{Settings} option of the \textsf{File} menu}
+
+Let us now detail what is under the \textsf{Settings} option of the \textsf{File} menu shown below :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-91.png} \\
+
+\newpage
+
+Clicking on the \textsf{Settings} option opens up the following multitab window :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-92.png} \\
+
+\subsubsection{Tab \textsf{``cluster''}}
+The first tab (on the left) is related to the use of a computer cluster to perform computations of the reference table. If your computer is connected with a computer cluster on which the necessary files (detailed in section 5) have been correctly installed, and if the computer cluster is run under SGE queuing system, then you can use it for generating the reference table. You then need to :
+\begin{enumerate}
+ \item check the box \textsf{Use a cluster (...)}
+ \item indicate the number of data sets produced by each single job of the queue
+ \item give the name of the SGE queue 
+\end{enumerate}
+
+Clicking on the \fbox{\textsf{Run computation}} button will send the right script to the computer cluster, monitor the progression of computations and retrieve the reference table once all computations are done.
 
 
+\subsubsection{Tab \textsf{``various''}}
+The second tab \textsf{``various''} contains the following settings :
+
+\begin{enumerate}
+ \item \textsf{What's this} is a help functionnality that allows the user to obtain a help message when pointing towards a specific feature of the graphic interface such as a button or an edit field. This help functionnality can be activated by checking the corresponding box.
+ \item Checking this box is mainly for debugging purpose or signalling a bug. 
+ \item DIYABC is made of two programs : the graphic interface and a computation program. When the user clicks on buttons such as  \fbox{\textsf{Run computation}} or \fbox{\textsf{Launch}}, the graphic interface programs sends a command that launches the computation program. To issue this command, the graphic interface needs to know where the computation program executable is located. There is a default location which depends on the operating system. Clicking on the box \textsf{Use default executable check} will direct the graphic interface to use the executable located in this default directory.
+ \item You can also choose another location (e.g. if you want to use a distinct version of the executable) by clicking on the \fbox{\textsf{browse}} button.\\
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-94.png} \\
+ \item The next setting \textsf{Particle loop size} defines the number of data sets ($n$) that are simulated in a single block when building the reference table. The computation program proceeds as follows : it first simulate and compute summary statistics of $n$ data sets. When this is done, it writes the results to the reference table file. The reason of doing like this is that computation can be multithreaded but not the file writing.
+ \item The graphic interface can detect the number of cores of the computer processor. By default, it sets the number of threads of the computation program to this core number. However, if the user wants to keep some cores for other purposes, the number of threads can be reduced by on the corresponding button (drop down menu shown below).\\
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-95.png} \\
+ \item The next setting is for debugging pupose and/or signalling a bug.
+ \item The graphic interface memorizes recently opened projects. The edit field is used to set the maximum of memorized recent projects.
+ \item The last setting concerns the format of graphic files output by different analyses. Choice is shown below:\\
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-97.png} \\
+   
+\end{enumerate}
+
+Eventually, if changes have been made, they can be either saved or cancelled (two bottom buttons).
+
+\subsubsection{Tab \textsf{``appearance''}}
+
+Clicking on this tab results in the following screen :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-98.png} \\
+
+The window style can be chosen among the following (click on the upper drop down menu) :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-99.png} \\
+
+Likewise, the background color can be chosen among the following colours :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-100.png} \\
+
+Eventually, one can change the font of texts appearing in the different windows by clicking on the corresponding button. A usual font menu then appears allowing the desired change :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-101.png} \\
 
 
+\subsubsection{Tabs \textsf{``MM Microsats''} and \textsf{``MM Sequences''}}
 
+These two tabs are used to modify the default values of mutation parameters (MM means Mutation Model), for microsatellites and DNA sequences respectively. As an example, here is the screen corresponding to the tab  \textsf{``MM Sequences''} : \\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-102.png} \\
+
+The initial default values have been obtained through literature compilation and are valid for a large number of species. However, some species may have values that differ substantially from most species. For instance, the mutation rate of some \emph{Drosophila} species are much lower than the values encountered in many other species \citep{SMA1997,VPAD2000} and is outside the range indicated in the initial default values. 
 
 
 
