@@ -1028,7 +1028,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 /**
 * lit les paramètres originaux des enregistrements simulés pour l'établissement des distributions a priori'
 */
-    void lisimparO(int nsel){
+    void lisimparO() {
       int bidon,iscen,m,k,kk,qq,nr;
         bool scenOK;
         long double pmut;
@@ -1060,7 +1060,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 /**
 * calcule les paramètres composites des enregistrements simulés pour l'établissement des distributions a priori'
 */
-    void lisimparC(int nsel){
+    void lisimparC() {
       int bidon,iscen,m,k,kk,qq,nr;
         bool scenOK;
         long double pmut;
@@ -1157,7 +1157,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 /**
 * calcule les paramètres scaled des enregistrements simulés pour l'établissement des distributions a priori'
 */
-    void lisimparS(int nsel){
+    void lisimparS() {
       int bidon,iscen,m,k,nr,kk,nNe=0;
         bool scenOK;
         long double pmut,Ne;
@@ -1537,20 +1537,16 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
      }
 
 /**
-*calcule les statistiques des paramètres originaux
+*calcule les statistiques de paramètres quelconques
 */
-    parstatC* calparstatO(int n, long double **phistar) {
+    parstatC* calparstat(int n, int nparam, long double **par) {
         long double *x;
 		parstatC *parst;
-        parst = new parstatC[nparamcom];
+        parst = new parstatC[nparam];
         x = new long double[n];
-        //cout <<"avant la boucle sur les parametres nparamcom="<<nparamcom<<"  nparcompo="<<nparcompo<<"   nsel="<<n<<"\n";
-        for (int j=0;j<nparamcom;j++) {
-            for (int i=0;i<n;i++) x[i] = phistar[i][j];
-            //if (j==0) for (int i=0;i<20;i++) cout <<phistar[i][j]<<"  "; cout<<"\n";
-            //cout<<"allocation des x du parametre "<<j<<"\n";
+        for (int j=0;j<nparam;j++) {
+            for (int i=0;i<n;i++) x[i] = par[i][j];
             sort(&x[0],&x[n]);
-            //cout<<"apres le sort\n";
             parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
             parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
             parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
@@ -1559,85 +1555,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             parst[j].q950 = x[(int)floor(0.950*n+0.5)-1];
             parst[j].q975 = x[(int)floor(0.975*n+0.5)-1];
             parst[j].moy = cal_moyL(n,x);
-            //cout<<"apres cal_moy\n";
             parst[j].mod = cal_modeL(n,x);
-            //cout<<"apres cal_mode\n";
-            //for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
-            //cout<<nomparam[j];
-            //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
         }
         delete []x;
         return parst;
     }
-
-/**
-*calcule les statistiques des paramètres composites
-*/
-    parstatC* calparstatC(int n,long double **phistarcompo) {
-        long double *x;
-		parstatC *parst;
-        parst = new parstatC[nparcompo];
-        x = new long double[n];
-        //cout <<"avant la boucle sur les parametres nparamcom="<<nparamcom<<"  nparcompo="<<nparcompo<<"   nsel="<<n<<"\n";
-        for (int j=0;j<nparcompo;j++) {
-            for (int i=0;i<n;i++) x[i] = phistarcompo[i][j];
-            //if (j==0) for (int i=0;i<20;i++) cout <<phistar[i][j]<<"  "; cout<<"\n";
-            //cout<<"allocation des x du parametre "<<j<<"\n";
-            sort(&x[0],&x[n]);
-            //cout<<"apres le sort\n";
-            parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
-            parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
-            parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
-            parst[j].med  = x[(int)floor(0.500*n+0.5)-1];
-            parst[j].q750 = x[(int)floor(0.750*n+0.5)-1];
-            parst[j].q950 = x[(int)floor(0.950*n+0.5)-1];
-            parst[j].q975 = x[(int)floor(0.975*n+0.5)-1];
-            parst[j].moy = cal_moyL(n,x);
-            //cout<<"apres cal_moy\n";
-            parst[j].mod = cal_modeL(n,x);
-            //cout<<"apres cal_mode\n";
-            //for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
-            //cout<<nomparam[j];
-            //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
-        }
-        delete []x;
-        return parst;
-    }
-
-/**
-*calcule les statistiques des paramètres composites
-*/
-    parstatC* calparstatS(int n,long double **phistarscaled) {
-        long double *x;
-		parstatC *parst;
-        parst = new parstatC[nparscaled];
-        x = new long double[n];
-        //cout <<"avant la boucle sur les parametres nparscaled="<<nparscaled<<"   nsel="<<n<<"\n";
-        for (int j=0;j<nparscaled;j++) {
-            for (int i=0;i<n;i++) x[i] = phistarscaled[i][j];
-            //if (j==0) for (int i=0;i<20;i++) cout <<phistarscaled[i][j]<<"  "; cout<<"\n";
-            //cout<<"allocation des x du parametre "<<j<<"\n";
-            sort(&x[0],&x[n]);
-            //cout<<"apres le sort\n";
-            parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
-            parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
-            parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
-            parst[j].med  = x[(int)floor(0.500*n+0.5)-1];
-            parst[j].q750 = x[(int)floor(0.750*n+0.5)-1];
-            parst[j].q950 = x[(int)floor(0.950*n+0.5)-1];
-            parst[j].q975 = x[(int)floor(0.975*n+0.5)-1];
-            parst[j].moy = cal_moyL(n,x);
-            //cout<<"apres cal_moy\n";
-            parst[j].mod = cal_modeL(n,x);
-            //cout<<"apres cal_mode\n";
-            //for (int i=0;i<16-nomparam[j].length();i++) cout<<" ";
-            //cout<<nomparam[j];
-            //printf(" %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e  %7.2e\n",parst[j].moy,parst[j].med,parst[j].mod,parst[j].q025,parst[j].q050,parst[j].q950,parst[j].q975);
-        }
-        delete []x;
-		//cout<<"fin de calparstatS\n";
-        return parst;
-    }
+     
 
 /**
 *sauvegarde les statistiques et les densités des paramètres
@@ -1885,17 +1808,17 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         det_nomparam();
         savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     		cout<<"apres savephistar\n";
         if (original) {
-			lisimparO(nsel);                          cout<<"apres lisimparO\n";
+			lisimparO();                          cout<<"apres lisimparO\n";
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (composite) {
-			lisimparC(nsel);                         cout<<"apres lisimparC\n";
+			lisimparC();                         cout<<"apres lisimparC\n";
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (scaled) {
-			lisimparS(nsel);                            cout<<"apres lisimparS\n";
+			lisimparS();                            cout<<"apres lisimparS\n";
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
@@ -1913,17 +1836,17 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (original){ 
-			parstat = calparstatO(nsel,phistar);                                 cout<<"apres calparstatO\n";
+			parstat = calparstat(nsel,nparamcom,phistar);                                 cout<<"apres calparstatO\n";
 			iprog+=2;fprog.open(progressfilename.c_str());;fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (composite) {
-			parstatcompo = calparstatC(nsel,phistarcompo);                            cout<<"apres calparstatC\n";
+			parstatcompo = calparstat(nsel,nparcompo,phistarcompo);                            cout<<"apres calparstatC\n";
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}
         if (scaled) {
-			parstatscaled = calparstatS(nsel,phistarscaled);                   cout<<"apres calparstatS\n";
+			parstatscaled = calparstat(nsel,nparscaled,phistarscaled);                   cout<<"apres calparstatS\n";
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
 		}

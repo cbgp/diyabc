@@ -63,9 +63,9 @@ void savephistar(int n, std::string path, std::string ident, long double **phist
 /**
 * lit les paramètres des enregistrements simulés pour l'établissement des distributions a priori'
 */
-void lisimparO(int nsel);
-void lisimparC(int nsel);
-void lisimparS(int nsel);
+void lisimparO();
+void lisimparC();
+void lisimparS();
 /**
 * calcule la densité à partir de la loi fournie dans le prior
 */
@@ -93,9 +93,10 @@ void histodens(int n, bool multithread, std::string progressfilename,int* iprog,
 /**
 *calcule les statistiques des paramètres
 */
-parstatC* calparstatO(int n, long double **phistar);
-parstatC* calparstatC(int n, long double **phistarcompo);
-parstatC* calparstatS(int n, long double **phistarscaled);
+parstatC* calparstat(int n, int nparam, long double **par);
+//parstatC* calparstatO(int n, long double **phistar);
+//parstatC* calparstatC(int n, long double **phistarcompo);
+//parstatC* calparstatS(int n, long double **phistarscaled);
 /**
 *sauvegarde les statistiques et les densités des paramètres
 */
