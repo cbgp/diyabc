@@ -731,20 +731,17 @@ MwcGen mw;
 * calcule les différentes statistiques de biais, rmse... des paramètres compo
 */
     void biaisrelC(int ntest,int nsel,int npv,int p) {
-        long double s,d;		
+        long double s,d,ds;		
 //////////////// mean relative bias
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {
 				switch (k) {
-					case 0 : d=paramestcompo[p][j].moy-enreg2[p].paramvvC[j];break;
-					case 1 : d=paramestcompo[p][j].med-enreg2[p].paramvvC[j];break;
-					case 2 : d=paramestcompo[p][j].mod-enreg2[p].paramvvC[j];break;
+					case 0 : d=paramestcompo[p][j].moy-enreg2[p].paramvvC[j];ds=paramestcompoS[j].moy-enreg2[p].paramvvC[j];break;
+					case 1 : d=paramestcompo[p][j].med-enreg2[p].paramvvC[j];ds=paramestcompoS[j].med-enreg2[p].paramvvC[j];break;
+					case 2 : d=paramestcompo[p][j].mod-enreg2[p].paramvvC[j];ds=paramestcompoS[j].mod-enreg2[p].paramvvC[j];break;
 				}
 				br_C[k][j] +=d/enreg2[p].paramvvC[j]; // il restera à diviser par ntest
-				//if ((j<3)and(k==0)) cout <<"paramestcompo["<<p<<"]["<<j<<"].moy="<<paramestcompo[p][j].moy;
-				//if ((j<3)and(k==1)) cout <<"paramestcompo["<<p<<"]["<<j<<"].med="<<paramestcompo[p][j].med;
-				//if ((j<3)and(k==2)) cout <<"paramestcompo["<<p<<"]["<<j<<"].mod="<<paramestcompo[p][j].mod;
-				//cout<<"   ("<<enreg2[p].paramvvC[j]<<")\n";
+				br_CS[k][j] +=ds/enreg2[p].paramvvC[j]; // il restera à diviser par ntest
 			}
 		}
 ////////////  RRMISE
@@ -752,23 +749,30 @@ MwcGen mw;
 			s=0.0;
 			for (int i=0;i<nsel;i++) {d=paretoilcompo[i][j]-enreg2[p].paramvvC[j];s += d*d;}
 			rrmise_C[j] +=s/enreg2[p].paramvvC[j]/enreg2[p].paramvvC[j]/double(nsel);// il restera à diviser par ntest
+			s=0.0;
+			for (int i=0;i<nsel;i++) {d=simparcomposel[i][j]-enreg2[p].paramvvC[j];s += d*d;}
+			rrmise_CS[j] +=s/enreg2[p].paramvvC[j]/enreg2[p].paramvvC[j]/double(nsel);// il restera à diviser par ntest
 		}
 ////////////  RMAD
 		for (int j=0;j<nparcompo;j++) {
 			s=0.0;
-                for (int i=0;i<nsel;i++) s += fabs(paretoilcompo[i][j]-enreg2[p].paramvvC[j]);
-                rmad_C[j] +=s/fabs(enreg2[p].paramvvC[j])/(long double)nsel;// il restera à diviser par ntest
+            for (int i=0;i<nsel;i++) s += fabs(paretoilcompo[i][j]-enreg2[p].paramvvC[j]);
+            rmad_C[j] +=s/fabs(enreg2[p].paramvvC[j])/(long double)nsel;// il restera à diviser par ntest
+			s=0.0;
+			for (int i=0;i<nsel;i++) s += fabs(simparcomposel[i][j]-enreg2[p].paramvvC[j]);
+			rmad_CS[j] +=s/fabs(enreg2[p].paramvvC[j])/(long double)nsel;// il restera à diviser par ntest
 		}
 ////////////  RMSE
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {
 				switch (k) {
-					case 0 : d=paramestcompo[p][j].moy-enreg2[p].paramvvC[j];break;
-					case 1 : d=paramestcompo[p][j].med-enreg2[p].paramvvC[j];break;
-					case 2 : d=paramestcompo[p][j].mod-enreg2[p].paramvvC[j];break;
+					case 0 : d=paramestcompo[p][j].moy-enreg2[p].paramvvC[j];ds=paramestcompoS[j].moy-enreg2[p].paramvvC[j];break;
+					case 1 : d=paramestcompo[p][j].med-enreg2[p].paramvvC[j];ds=paramestcompoS[j].med-enreg2[p].paramvvC[j];break;
+					case 2 : d=paramestcompo[p][j].mod-enreg2[p].paramvvC[j];ds=paramestcompoS[j].mod-enreg2[p].paramvvC[j];break;
 				}
 				rmse_C[k][j] += d*d/enreg2[p].paramvvC[j]/enreg2[p].paramvvC[j];
 				// il restera à prendre la racine carrée et à diviser par ntest
+				rmse_CS[k][j] += ds*ds/enreg2[p].paramvvC[j]/enreg2[p].paramvvC[j];
             }
         }
 /////////////// coverages
@@ -776,14 +780,22 @@ MwcGen mw;
         for (int j=0;j<nparcompo;j++) {
 			if((paramestcompo[p][j].q025<=enreg2[p].paramvvC[j])and(paramestcompo[p][j].q975>=enreg2[p].paramvvC[j])) cov95_C[j] += atest;
 			if((paramestcompo[p][j].q250<=enreg2[p].paramvvC[j])and(paramestcompo[p][j].q750>=enreg2[p].paramvvC[j])) cov50_C[j] += atest;
+			if((paramestcompoS[j].q025<=enreg2[p].paramvvC[j])and(paramestcompoS[j].q975>=enreg2[p].paramvvC[j])) cov95_CS[j] += atest;
+			if((paramestcompoS[j].q250<=enreg2[p].paramvvC[j])and(paramestcompoS[j].q750>=enreg2[p].paramvvC[j])) cov50_CS[j] += atest;
 		}
 ///////////////// factors 2
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {
 				switch (k) {
-					case 0 : if((paramestcompo[p][j].moy>=0.5*enreg2[p].paramvvC[j])and(paramestcompo[p][j].moy<=2.0*enreg2[p].paramvvC[j])) fac2_C[k][j] += atest;break;
-					case 1 : if((paramestcompo[p][j].med>=0.5*enreg2[p].paramvvC[j])and(paramestcompo[p][j].med<=2.0*enreg2[p].paramvvC[j])) fac2_C[k][j] += atest;break;
-					case 2 : if((paramestcompo[p][j].mod>=0.5*enreg2[p].paramvvC[j])and(paramestcompo[p][j].mod<=2.0*enreg2[p].paramvvC[j])) fac2_C[k][j] += atest;break;
+					case 0 : if((paramestcompo[p][j].moy>=0.5*enreg2[p].paramvvC[j])and(paramestcompo[p][j].moy<=2.0*enreg2[p].paramvvC[j])) fac2_C[k][j] += atest;
+							 if((paramestcompoS[j].moy>=0.5*enreg2[p].paramvvC[j])and(paramestcompoS[j].moy<=2.0*enreg2[p].paramvvC[j])) fac2_CS[k][j] += atest;
+							 break;
+					case 1 : if((paramestcompo[p][j].med>=0.5*enreg2[p].paramvvC[j])and(paramestcompo[p][j].med<=2.0*enreg2[p].paramvvC[j])) fac2_C[k][j] += atest;
+							 if((paramestcompoS[j].med>=0.5*enreg2[p].paramvvC[j])and(paramestcompoS[j].med<=2.0*enreg2[p].paramvvC[j])) fac2_CS[k][j] += atest;
+							 break;
+					case 2 : if((paramestcompo[p][j].mod>=0.5*enreg2[p].paramvvC[j])and(paramestcompo[p][j].mod<=2.0*enreg2[p].paramvvC[j])) fac2_C[k][j] += atest;
+							 if((paramestcompoS[j].mod>=0.5*enreg2[p].paramvvC[j])and(paramestcompoS[j].mod<=2.0*enreg2[p].paramvvC[j])) fac2_CS[k][j] += atest;
+							 break;
 				}
             }
         }
@@ -791,9 +803,15 @@ MwcGen mw;
         for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {
                 switch (k) {
-                  case 0 : bmed_C[k][j][p]=(paramestcompo[p][j].moy-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];break;
-                  case 1 : bmed_C[k][j][p]=(paramestcompo[p][j].med-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];break;
-                  case 2 : bmed_C[k][j][p]=(paramestcompo[p][j].mod-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];break;
+                  case 0 : 	bmed_C[k][j][p]=(paramestcompo[p][j].moy-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+							bmed_CS[k][j][p]=(paramestcompoS[j].moy-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+							 break;
+                  case 1 : 	bmed_C[k][j][p]=(paramestcompo[p][j].med-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+							bmed_CS[k][j][p]=(paramestcompoS[j].med-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+							 break;
+                  case 2 : 	bmed_C[k][j][p]=(paramestcompo[p][j].mod-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+							bmed_CS[k][j][p]=(paramestcompoS[j].mod-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+							 break;
                 }
             }
             //Il restera à calculer la médiane des bmed[k][j]
@@ -806,15 +824,23 @@ MwcGen mw;
             for (int i=0;i<nsel;i++) cc[i] = (fabs(paretoilcompo[i][j]-enreg2[p].paramvvC[j]))/enreg2[p].paramvvC[j];
 			bmedr_C[j][p] = cal_medL(nsel,cc);
             //Il restera à calculer la médiane des bmedr_C[j]
+            for (int i=0;i<nsel;i++) cc[i] = (fabs(simparcomposel[i][j]-enreg2[p].paramvvC[j]))/enreg2[p].paramvvC[j];
+			bmedr_CS[j][p] = cal_medL(nsel,cc);
         }            
         delete []cc;
 ////////////  RMAE
 		for (int k=0;k<3;k++) {
 			for (int j=0;j<nparcompo;j++) {
 				switch (k) {
-					case 0 : bmeda_C[k][j][p]=fabs(paramestcompo[p][j].moy-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];break;
-					case 1 : bmeda_C[k][j][p]=fabs(paramestcompo[p][j].med-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];break;
-					case 2 : bmeda_C[k][j][p]=fabs(paramestcompo[p][j].mod-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];break;
+					case 0 : 	bmeda_C[k][j][p]=fabs(paramestcompo[p][j].moy-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+								bmeda_CS[k][j][p]=fabs(paramestcompoS[j].moy-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+								break;
+					case 1 : 	bmeda_C[k][j][p]=fabs(paramestcompo[p][j].med-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+								bmeda_CS[k][j][p]=fabs(paramestcompoS[j].med-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+								break;
+					case 2 : 	bmeda_C[k][j][p]=fabs(paramestcompo[p][j].mod-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+								bmeda_CS[k][j][p]=fabs(paramestcompoS[j].mod-enreg2[p].paramvvC[j])/enreg2[p].paramvvC[j];
+								break;
 				}
 			}
 		}
@@ -827,16 +853,17 @@ MwcGen mw;
 */
     void biaisrelS(int ntest,int nsel,int npv,int p) {
 		cout<<"debut de biaisrelS\n";
-        long double s,d;
+        long double s,d,ds;
 //////////////// mean relative bias
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparscaled;j++) {
 				switch (k) {
-					case 0 : d=paramestscaled[p][j].moy-enreg2[p].paramvvS[j];break;
-					case 1 : d=paramestscaled[p][j].med-enreg2[p].paramvvS[j];break;
-					case 2 : d=paramestscaled[p][j].mod-enreg2[p].paramvvS[j];break;
+					case 0 : d=paramestscaled[p][j].moy-enreg2[p].paramvvS[j];ds=paramestscaledS[j].moy-enreg2[p].paramvvS[j];break;
+					case 1 : d=paramestscaled[p][j].med-enreg2[p].paramvvS[j];ds=paramestscaledS[j].med-enreg2[p].paramvvS[j];break;
+					case 2 : d=paramestscaled[p][j].mod-enreg2[p].paramvvS[j];ds=paramestscaledS[j].mod-enreg2[p].paramvvS[j];break;
 				}
 				br_S[k][j] +=d/enreg2[p].paramvvS[j]; // il restera à diviser par ntest
+				br_SS[k][j] +=ds/enreg2[p].paramvvS[j]; // il restera à diviser par ntest
 			}
 		}
 		
@@ -845,6 +872,9 @@ MwcGen mw;
 			s=0.0;
 			for (int i=0;i<nsel;i++) {d=paretoilscaled[i][j]-enreg2[p].paramvvS[j];s += d*d;}
 			rrmise_S[j] +=s/enreg2[p].paramvvS[j]/enreg2[p].paramvvS[j]/double(nsel);// il restera à diviser par ntest
+			s=0.0;
+			for (int i=0;i<nsel;i++) {d=simparscaledsel[i][j]-enreg2[p].paramvvS[j];s += d*d;}
+			rrmise_SS[j] +=s/enreg2[p].paramvvS[j]/enreg2[p].paramvvS[j]/double(nsel);// il restera à diviser par ntest
 		}
 
 ////////////  RMAD
@@ -852,17 +882,21 @@ MwcGen mw;
 			s=0.0;
                 for (int i=0;i<nsel;i++) s += fabs(paretoilscaled[i][j]-enreg2[p].paramvvS[j]);
                 rmad_S[j] +=s/fabs(enreg2[p].paramvvS[j])/(long double)nsel;// il restera à diviser par ntest
+			s=0.0;
+			for (int i=0;i<nsel;i++) s += fabs(simparscaledsel[i][j]-enreg2[p].paramvvS[j]);
+			rmad_SS[j] +=s/fabs(enreg2[p].paramvvS[j])/(long double)nsel;// il restera à diviser par ntest
 		}
 ////////////  RMSE
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparscaled;j++) {
 				switch (k) {
-					case 0 : d=paramestscaled[p][j].moy-enreg2[p].paramvvS[j];break;
-					case 1 : d=paramestscaled[p][j].med-enreg2[p].paramvvS[j];break;
-					case 2 : d=paramestscaled[p][j].mod-enreg2[p].paramvvS[j];break;
+					case 0 : d=paramestscaled[p][j].moy-enreg2[p].paramvvS[j];ds=paramestscaledS[j].moy-enreg2[p].paramvvS[j];break;
+					case 1 : d=paramestscaled[p][j].med-enreg2[p].paramvvS[j];ds=paramestscaledS[j].med-enreg2[p].paramvvS[j];break;
+					case 2 : d=paramestscaled[p][j].mod-enreg2[p].paramvvS[j];ds=paramestscaledS[j].mod-enreg2[p].paramvvS[j];break;
 				}
 				rmse_S[k][j] += d*d/enreg2[p].paramvvS[j]/enreg2[p].paramvvS[j];
 				// il restera à prendre la racine carrée et à diviser par ntest
+				rmse_SS[k][j] += ds*ds/enreg2[p].paramvvS[j]/enreg2[p].paramvvS[j];
             }
         }
 /////////////// coverages
@@ -870,14 +904,22 @@ MwcGen mw;
         for (int j=0;j<nparscaled;j++) {
 			if((paramestscaled[p][j].q025<=enreg2[p].paramvvS[j])and(paramestscaled[p][j].q975>=enreg2[p].paramvvS[j])) cov95_S[j] += atest;
 			if((paramestscaled[p][j].q250<=enreg2[p].paramvvS[j])and(paramestscaled[p][j].q750>=enreg2[p].paramvvS[j])) cov50_S[j] += atest;
+			if((paramestscaledS[j].q025<=enreg2[p].paramvvS[j])and(paramestscaledS[j].q975>=enreg2[p].paramvvS[j])) cov95_SS[j] += atest;
+			if((paramestscaledS[j].q250<=enreg2[p].paramvvS[j])and(paramestscaledS[j].q750>=enreg2[p].paramvvS[j])) cov50_SS[j] += atest;
 		}
 ///////////////// factors 2
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparscaled;j++) {
 				switch (k) {
-					case 0 : if((paramestscaled[p][j].moy>=0.5*enreg2[p].paramvvS[j])and(paramestscaled[p][j].moy<=2.0*enreg2[p].paramvvS[j])) fac2_S[k][j] += atest;break;
-					case 1 : if((paramestscaled[p][j].med>=0.5*enreg2[p].paramvvS[j])and(paramestscaled[p][j].med<=2.0*enreg2[p].paramvvS[j])) fac2_S[k][j] += atest;break;
-					case 2 : if((paramestscaled[p][j].mod>=0.5*enreg2[p].paramvvS[j])and(paramestscaled[p][j].mod<=2.0*enreg2[p].paramvvS[j])) fac2_S[k][j] += atest;break;
+					case 0 : if((paramestscaled[p][j].moy>=0.5*enreg2[p].paramvvS[j])and(paramestscaled[p][j].moy<=2.0*enreg2[p].paramvvS[j])) fac2_S[k][j] += atest;
+							 if((paramestscaledS[j].moy>=0.5*enreg2[p].paramvvS[j])and(paramestscaledS[j].moy<=2.0*enreg2[p].paramvvS[j])) fac2_SS[k][j] += atest;
+							 break;
+					case 1 : if((paramestscaled[p][j].med>=0.5*enreg2[p].paramvvS[j])and(paramestscaled[p][j].med<=2.0*enreg2[p].paramvvS[j])) fac2_S[k][j] += atest;
+							 if((paramestscaledS[j].med>=0.5*enreg2[p].paramvvS[j])and(paramestscaledS[j].med<=2.0*enreg2[p].paramvvS[j])) fac2_SS[k][j] += atest;
+							 break;
+					case 2 : if((paramestscaled[p][j].mod>=0.5*enreg2[p].paramvvS[j])and(paramestscaled[p][j].mod<=2.0*enreg2[p].paramvvS[j])) fac2_S[k][j] += atest;
+							 if((paramestscaledS[j].mod>=0.5*enreg2[p].paramvvS[j])and(paramestscaledS[j].mod<=2.0*enreg2[p].paramvvS[j])) fac2_SS[k][j] += atest;
+							 break;
 				}
             }
         }
@@ -885,9 +927,15 @@ MwcGen mw;
         for (int k=0;k<3;k++) {
             for (int j=0;j<nparscaled;j++) {
                 switch (k) {
-                  case 0 : bmed_S[k][j][p]=(paramestscaled[p][j].moy-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];break;
-                  case 1 : bmed_S[k][j][p]=(paramestscaled[p][j].med-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];break;
-                  case 2 : bmed_S[k][j][p]=(paramestscaled[p][j].mod-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];break;
+                  case 0 : bmed_S[k][j][p]=(paramestscaled[p][j].moy-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+							bmed_SS[k][j][p]=(paramestscaledS[j].moy-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+							 break;
+                  case 1 : bmed_S[k][j][p]=(paramestscaled[p][j].med-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+							bmed_SS[k][j][p]=(paramestscaledS[j].med-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+							 break;
+                  case 2 : bmed_S[k][j][p]=(paramestscaled[p][j].mod-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+							bmed_SS[k][j][p]=(paramestscaledS[j].mod-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+							 break;
                 }
             }
             //Il restera à calculer la médiane des bmed[k][j]
@@ -900,15 +948,23 @@ MwcGen mw;
             for (int i=0;i<nsel;i++) cc[i] = (fabs(paretoilscaled[i][j]-enreg2[p].paramvvS[j]))/enreg2[p].paramvvS[j];
 			bmedr_S[j][p] = cal_medL(nsel,cc);
             //Il restera à calculer la médiane des bmedr_S[j]
+            for (int i=0;i<nsel;i++) cc[i] = (fabs(simparscaledsel[i][j]-enreg2[p].paramvvS[j]))/enreg2[p].paramvvS[j];
+			bmedr_SS[j][p] = cal_medL(nsel,cc);
         }            
         delete []cc;
 ////////////  RMAE
 		for (int k=0;k<3;k++) {
 			for (int j=0;j<nparscaled;j++) {
 				switch (k) {
-					case 0 : bmeda_S[k][j][p]=fabs(paramestscaled[p][j].moy-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];break;
-					case 1 : bmeda_S[k][j][p]=fabs(paramestscaled[p][j].med-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];break;
-					case 2 : bmeda_S[k][j][p]=fabs(paramestscaled[p][j].mod-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];break;
+					case 0 : 	bmeda_S[k][j][p]=fabs(paramestscaled[p][j].moy-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+								bmeda_SS[k][j][p]=fabs(paramestscaledS[j].moy-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+								break;
+					case 1 : 	bmeda_S[k][j][p]=fabs(paramestscaled[p][j].med-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+								bmeda_SS[k][j][p]=fabs(paramestscaledS[j].med-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+								break;
+					case 2 : 	bmeda_S[k][j][p]=fabs(paramestscaled[p][j].mod-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];;
+								bmeda_SS[k][j][p]=fabs(paramestscaledS[j].mod-enreg2[p].paramvvS[j])/enreg2[p].paramvvS[j];
+								break;
 				}
 			}
 		}
@@ -936,37 +992,37 @@ MwcGen mw;
 	
 	void finbiaisrelC(int ntest) {
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparcompo;j++) br_C[k][j] /=(long double)ntest;
+            for (int j=0;j<nparcompo;j++) {br_C[k][j] /=(long double)ntest;br_CS[k][j] /=(long double)ntest;}
 		}
-		for (int j=0;j<nparcompo;j++) rrmise_C[j] = sqrt(rrmise_C[j]/(long double)ntest);
-		for (int j=0;j<nparcompo;j++) rmad_C[j] /=(long double)ntest;
+		for (int j=0;j<nparcompo;j++) {rrmise_C[j] = sqrt(rrmise_C[j]/(long double)ntest);rrmise_CS[j] = sqrt(rrmise_CS[j]/(long double)ntest);}
+		for (int j=0;j<nparcompo;j++) {rmad_C[j] /=(long double)ntest;rmad_CS[j] /=(long double)ntest;}
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparcompo;j++) rmse_C[k][j] = sqrt(rmse_C[k][j]/(long double)ntest);
+            for (int j=0;j<nparcompo;j++) {rmse_C[k][j] = sqrt(rmse_C[k][j]/(long double)ntest);rmse_CS[k][j] = sqrt(rmse_CS[k][j]/(long double)ntest);}
 		}
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparcompo;j++) rmb_C[k][j] =cal_medL(ntest,bmed_C[k][j]);
+            for (int j=0;j<nparcompo;j++) {rmb_C[k][j] =cal_medL(ntest,bmed_C[k][j]);rmb_CS[k][j] =cal_medL(ntest,bmed_CS[k][j]);}
 		}
-		for (int j=0;j<nparcompo;j++) rmedad_C[j] = cal_medL(ntest,bmedr_C[j]);
+		for (int j=0;j<nparcompo;j++) {rmedad_C[j] = cal_medL(ntest,bmedr_C[j]);rmedad_CS[j] = cal_medL(ntest,bmedr_CS[j]);}
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparcompo;j++) rmae_C[k][j] =cal_medL(ntest,bmeda_C[k][j]);
+            for (int j=0;j<nparcompo;j++) {rmae_C[k][j] =cal_medL(ntest,bmeda_C[k][j]);rmae_CS[k][j] =cal_medL(ntest,bmeda_CS[k][j]);}
 		}
 	}
 	
 	void finbiaisrelS(int ntest) {
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparscaled;j++) br_S[k][j] /=(long double)ntest;
+            for (int j=0;j<nparscaled;j++) {br_S[k][j] /=(long double)ntest;br_SS[k][j] /=(long double)ntest;}
 		}
-		for (int j=0;j<nparscaled;j++) rrmise_S[j] = sqrt(rrmise_S[j]/(long double)ntest);
-		for (int j=0;j<nparscaled;j++) rmad_S[j] /=(long double)ntest;
+		for (int j=0;j<nparscaled;j++) {rrmise_S[j] = sqrt(rrmise_S[j]/(long double)ntest);rrmise_SS[j] = sqrt(rrmise_SS[j]/(long double)ntest);}
+		for (int j=0;j<nparscaled;j++) {rmad_S[j] /=(long double)ntest;rmad_SS[j] /=(long double)ntest;}
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparscaled;j++) rmse_S[k][j] = sqrt(rmse_S[k][j]/(long double)ntest);
+            for (int j=0;j<nparscaled;j++) {rmse_S[k][j] = sqrt(rmse_S[k][j]/(long double)ntest);rmse_SS[k][j] = sqrt(rmse_SS[k][j]/(long double)ntest);}
 		}
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparscaled;j++) rmb_S[k][j] =cal_medL(ntest,bmed_S[k][j]);
+            for (int j=0;j<nparscaled;j++) {rmb_S[k][j] =cal_medL(ntest,bmed_S[k][j]);rmb_SS[k][j] =cal_medL(ntest,bmed_SS[k][j]);}
 		}
-		for (int j=0;j<nparscaled;j++) rmedad_S[j] = cal_medL(ntest,bmedr_S[j]);
+		for (int j=0;j<nparscaled;j++) {rmedad_S[j] = cal_medL(ntest,bmedr_S[j]);rmedad_SS[j] = cal_medL(ntest,bmedr_SS[j]);}
 		for (int k=0;k<3;k++) {
-            for (int j=0;j<nparscaled;j++) rmae_S[k][j] =cal_medL(ntest,bmeda_S[k][j]);
+            for (int j=0;j<nparscaled;j++) {rmae_S[k][j] =cal_medL(ntest,bmeda_S[k][j]);rmae_SS[k][j] =cal_medL(ntest,bmeda_SS[k][j]);}
 		}
 	}
     
