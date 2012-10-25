@@ -1360,10 +1360,10 @@ void HeaderC::calstatobs(string statobsfilename) {
 	cout<<this->dataobs.nloc<<"\n";
 	//vector<LocusC> tmp(41751);
 	//this->particuleobs.locuslist = &tmp[0]; //new LocusC[41752];
-	if (debuglevel==2)cout<<"avant la partie locus\n";
+	if (debuglevel==2) cout<<"avant la partie locus  nloc="<<this->dataobs.nloc<<"\n";
 	this->particuleobs.locuslist =new LocusC[this->dataobs.nloc];
 	for (int kloc=0;kloc<this->dataobs.nloc;kloc++){
-		this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type;
+		this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type; 
 		this->particuleobs.locuslist[kloc].groupe = this->dataobs.locus[kloc].groupe;
 		this->particuleobs.locuslist[kloc].coeffcoal =  this->dataobs.locus[kloc].coeffcoal;
 		cat = this->particuleobs.locuslist[kloc].type % 5;
@@ -1387,16 +1387,25 @@ void HeaderC::calstatobs(string statobsfilename) {
 				for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++)this->particuleobs.locuslist[kloc].haplomic[sa][i]=this->dataobs.locus[kloc].haplomic[sa][i];
 			}
 		}else if (this->dataobs.locus[kloc].type < 10) {
+			cout<<"type du locus = "<<this->dataobs.locus[kloc].type<<"\n";
 			this->particuleobs.locuslist[kloc].dnalength =  this->dataobs.locus[kloc].dnalength;
 			this->particuleobs.locuslist[kloc].pi_A = this->dataobs.locus[kloc].pi_A ;
 			this->particuleobs.locuslist[kloc].pi_C =  this->dataobs.locus[kloc].pi_C;
 			this->particuleobs.locuslist[kloc].pi_G =  this->dataobs.locus[kloc].pi_G;
 			this->particuleobs.locuslist[kloc].pi_T =  this->dataobs.locus[kloc].pi_T;
+			cout<<"apres les pi\n";
 			this->particuleobs.locuslist[kloc].haplodna = new string*[this->particuleobs.data.nsample];
+			cout<<"nsample="<<this->particuleobs.data.nsample<<"\n";
 			for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
 				this->particuleobs.locuslist[kloc].haplodna[sa] = new string[this->particuleobs.data.ss[cat][sa]];
-				for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++)this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i];
+				cout<<"sa="<<sa<<"  ss="<<this->particuleobs.data.ss[cat][sa]<<"\n";
+				for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++){
+					cout<<"i="<<i<<"   "<<this->dataobs.locus[kloc].haplodna[sa][i]<<"\n";
+					this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i];
+					
+				}
 			}
+			cout<<"apres type<10\n";
 		}else {
 			this->particuleobs.locuslist[kloc].weight = 1.0;
 			this->particuleobs.locuslist[kloc].haplosnp = new short int*[this->particuleobs.nsample];

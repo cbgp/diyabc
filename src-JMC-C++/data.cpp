@@ -773,6 +773,7 @@ cout<<"fin de ecribin\n";
 */
     void DataC::do_sequence(int loc){
         //cout<<"do_sequence locus"<<loc<<"\n";
+		cout<<"loc="<<loc<<"\n";
     	string geno,*gen;
     	int n,j0,j1,j2,ng,*ss;
     	gen = new string[2];
@@ -792,10 +793,11 @@ cout<<"fin de ecribin\n";
     				j1=geno.find("][");
     				j2=geno.find("]",j1+2);
     				if ((this->locus[loc].dnalength<0)and(j1-j0>0)) this->locus[loc].dnalength=j1-j0;
-    				if ((this->locus[loc].dnalength>0)and ((j1-j0!=this->locus[loc].dnalength)or(j2-(j1+2)!=this->locus[loc].dnalength))) {
+    				if ((this->locus[loc].dnalength>0)and ((j1-j0!=this->locus[loc].dnalength)or(j2-(j1+2)!=this->locus[loc].dnalength))and(j1>j0)) {
     					std::stringstream ss;
-    					ss <<"ERROR : At locus "<<loc+1<<" indivividual "<<this->indivname[ech][ind]<<", the sequence length has changed. Please, give it the same length as before.";
+    					ss <<"ERROR : At locus "<<loc+1<<" individual "<<this->indivname[ech][ind]<<", the sequence length has changed. Please, give it the same length as before.";
     					this->message=ss.str();
+						cout<<ss.str()<<"\n";
     					return;
     				}
     				gen[0]=geno.substr(j0,j1-j0);
@@ -807,8 +809,9 @@ cout<<"fin de ecribin\n";
     				if ((this->locus[loc].dnalength<0)and(j1-j0>0)) this->locus[loc].dnalength=j1-j0;
     				if ((this->locus[loc].dnalength>0)and (j1-j0!=this->locus[loc].dnalength)and(j1>j0)) {
     					std::stringstream ss;
-    					ss <<"ERROR : At locus "<<loc+1<<" indivividual "<<this->indivname[ech][ind]<<", the sequence length has changed. Please, give it the same length as before.";
+    					ss <<"ERROR : At locus "<<loc+1<<" individual "<<this->indivname[ech][ind]<<", the sequence length has changed. Please, give it the same length as before.";
     					this->message=ss.str();
+						cout<<ss.str()<<"\n";
     					return;
     				}
     				gen[0]=geno.substr(j0,j1-j0);
@@ -844,7 +847,7 @@ cout<<"fin de ecribin\n";
             for (int i=0;i<ng;i++) {
                 this->locus[loc].haplodna[ech][i]=haplo[i];
                 haplo[i].clear();
-                //cout<<"  "<<this->locus[loc].haplodna[ech][i]<<"("<<this->locus[loc].haplodna[ech][i].length()<<")";
+                if (loc==20) cout<<"ech_"<<ech<<"  ind_"<<i<<"  locus_"<<loc<<"  "<<this->locus[loc].haplodna[ech][i]<<"("<<this->locus[loc].haplodna[ech][i].length()<<")\n";
             }
             //cout<<"\n\n";
             if (not haplo.empty()) haplo.clear();
@@ -868,7 +871,14 @@ cout<<"fin de ecribin\n";
     	this->locus[loc].tabsit.resize(this->locus[loc].dnalength);
     	this->locus[loc].mutsit.resize(this->locus[loc].dnalength);
     	delete [] gen;
-        //if (loc==12) for (int i=0;i<this->locus[loc].ss[0];i++) cout<<i<<"   "<<this->locus[loc].haplodna[0][i]<<"\n";
+		cout<<"loc="<<loc<<"\n";
+        if (loc==20) {
+			for (int ech=0;ech<this->nsample;ech++){
+				for (int i=0;i<ss[ech];i++) {
+					cout<<"ech_"<<ech<<"  ind_"<<i<<"   "<<this->locus[loc].haplodna[ech][i]<<"\n";
+				}
+			}
+		}
     }
 
 /**
