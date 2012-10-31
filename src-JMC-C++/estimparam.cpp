@@ -971,6 +971,43 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 		}
     }
 
+    string fmLB(long double x,int largeur,int precision) {
+		string s;
+		size_t pos;
+		int lon,ifacteur=0,ix;
+		long double x1,facteur=1.0;
+		//cout<<"x="<<x;
+		if (x>100.0){ix=(int)x;s = LongDoubleToString(ix);}
+		else if (x>=1.0) {
+			s = LongDoubleToString(x);
+			if (s.find(".")==string::npos) s=s+".0";
+			s = s+"000000000000000";
+			pos = s.find(".");
+			s = s.substr(0,pos+precision+1);
+		}
+		if (x<1.0) {
+			s = LongDoubleToString(x);
+			/*if (s.find("e")==string::npos) {
+				s = s+"000000000000000";
+				pos = s.find(".");
+				s = s.substr(0,pos+precision+1);
+			} else {*/
+				do {
+					facteur *=10.0;ifacteur++;
+					x1 = facteur*x;
+				} while (x1<1.0);
+				s = LongDoubleToString(x1);
+				s = s+"000000000000000";
+				pos = s.find(".");
+				s = s.substr(0,pos+precision+1);
+				s = s + "e-"+IntToString(ifacteur);
+			//}
+		}
+		lon = s.length();
+		while (lon<largeur) {s=" "+s;lon++;}
+		//cout<<"   s final="<<s<<"\n";
+		return s;
+	}
 
 /**
 * effectue la sauvegarde des phistars dans le fichier path/ident/phistar.txt
@@ -983,9 +1020,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.open(nomphistar.c_str());
 			f1<<enteteO<<"\n";
 			for (int i=0;i<n;i++) {
-				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen<<"    ";
-				f1<<setiosflags(ios::scientific);
-				for (int j=0;j<nparamcom;j++) f1<<setw(12)<<setprecision(3)<<phistar[i][j]<<"  ";
+				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen;
+				for (int j=0;j<nparamcom;j++) f1<<fmLB(phistar[i][j],15,3);
 				f1<<"\n";
 			}
 			f1.close();
@@ -996,9 +1032,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.open(nomphistar.c_str());
 			f1<<enteteC<<"\n";
 			for (int i=0;i<n;i++) {
-				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen<<"    ";
-				f1<<setiosflags(ios::scientific);
-				for (int j=0;j<nparcompo;j++) f1<<setw(12)<<setprecision(3)<<phistarcompo[i][j]<<"  ";
+				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen;
+				for (int j=0;j<nparcompo;j++) f1<<fmLB(phistarcompo[i][j],16,3);
 				f1<<"\n";
 			}
 			f1.close();
@@ -1009,9 +1044,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.open(nomphistar.c_str());
 			f1<<enteteS<<"\n";
 			for (int i=0;i<n;i++) {
-				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen<<"    ";
-				f1<<setiosflags(ios::scientific);
-				for (int j=0;j<nparscaled;j++) f1<<setw(12)<<setprecision(3)<<phistarscaled[i][j]<<"  ";
+				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen;
+				for (int j=0;j<nparscaled;j++) f1<<fmLB(phistarscaled[i][j],16,3);
 				f1<<"\n";
 			}
 			f1.close();
