@@ -197,7 +197,7 @@ class ProjectReftable(Project):
             self.drawAnalysisFrame = ViewTextFile(data,self.returnToAnalysisList,self)
             self.drawAnalysisFrame.choiceFrame.hide()
         elif typestr == "bias":
-            f = open("%s/analysis/%s/bias.txt"%(self.dir,anDir),'r')
+            f = open("%s/analysis/%s/bias_original.txt"%(self.dir,anDir),'r')
             data = f.read()
             f.close()
             self.drawAnalysisFrame = ViewTextFile(data,self.returnToAnalysisList,self)
@@ -205,9 +205,9 @@ class ProjectReftable(Project):
             self.drawAnalysisFrame.anDir = anDir
             ui = self.drawAnalysisFrame
             log(3,"Viewing analysis results, bias")
-            if not os.path.exists("%s/analysis/%s/biascompo.txt"%(self.dir,self.drawAnalysisFrame.anDir)):
+            if not os.path.exists("%s/analysis/%s/bias_composite.txt"%(self.dir,self.drawAnalysisFrame.anDir)):
                 ui.cRadio.hide()
-            if not os.path.exists("%s/analysis/%s/biasscaled.txt"%(self.dir,self.drawAnalysisFrame.anDir)):
+            if not os.path.exists("%s/analysis/%s/bias_scaled.txt"%(self.dir,self.drawAnalysisFrame.anDir)):
                 ui.sRadio.hide()
 
             QObject.connect(ui.oRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
@@ -1115,12 +1115,12 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias_original.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_biascompo.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_biascompo.txt"%(self.dir,aid),"%s/analysis/%s/biascompo.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_biascompo.txt"%(self.dir,aid),"%s/analysis/%s/bias_composite.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_biasscaled.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_biasscaled.txt"%(self.dir,aid),"%s/analysis/%s/biasscaled.txt"%(self.dir,aDirName))
-                log(3,"Copy of '%s/%s_bias.txt' to '%s/analysis/%s/bias.txt' done"%(self.dir,aid,self.dir,aDirName))
+                    shutil.move("%s/%s_biasscaled.txt"%(self.dir,aid),"%s/analysis/%s/bias_scaled.txt"%(self.dir,aDirName))
+                log(3,"Copy of '%s/%s_bias.txt' to '%s/analysis/%s/bias_original.txt' done"%(self.dir,aid,self.dir,aDirName))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/bias.out"%(self.dir)):

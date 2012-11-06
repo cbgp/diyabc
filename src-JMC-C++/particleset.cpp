@@ -409,6 +409,40 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 }
 
 /**
+ * Structure ParticleSet : tirage des paramètres dans les priors (calcul du biais sans info)
+*/
+/*void ParticleSetC::drawparamfromprior(HeaderC const & header, int npart, bool dnatrue,bool multithread, int numscen,int seed)
+{
+	bool simuOK;
+	this->npart = npart;
+	this->particule = new ParticleC[this->npart];
+	this->header = header;
+	for (int p=0;p<this->npart;p++) {
+		if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
+		this->particule[p].dnatrue = dnatrue;
+		//if (debuglevel==5) cout <<"dnatrue\n";
+		this->setdata(p);
+		if (debuglevel==5) cout <<"setdata\n";
+		this->setgroup(p);
+		if (debuglevel==5) cout<<"setgroup\n";
+		this->setloci(p);
+		if (debuglevel==5) cout<<"setloci\n";
+		this->setscenarios(p);
+		if (debuglevel==5) cout << "                    apres set particule "<<p<<"\n";
+		this->particule[p].mw.randinit(p,seed);
+	}
+#pragma omp parallel for private(gr) if(multithread)
+	for (int ipart=0;ipart<this->npart;ipart++) {
+		this->particule[ipart].drawscenario(&numscen);
+		simuOK = this->setHistParamValue();
+		setMutParammoyValue();
+
+		
+	}
+///fin du pragma
+}*/
+
+/**
  * Structure ParticleSet : simulation des particules utilisées pour la table de référence, le biais et la confiance
  */
 void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int depuis)
