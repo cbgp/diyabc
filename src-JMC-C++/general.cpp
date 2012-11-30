@@ -423,10 +423,12 @@ try {
 
     	 // lit le fichier RNG_state
     	 mtss = loadRNG(countRNG, RNG_filename);
+    	 /*
     	 #pragma omp parallel
     	 {
     		 num_threads = omp_get_num_threads();
     	 }
+    	 */
     	 if(countRNG < num_threads){
     		 stringstream erreur;
     		 erreur << "I do not have enough states into " << RNG_filename;
