@@ -500,6 +500,7 @@ try {
 												//cout<<"simOK=true   nenr="<<nenr<<"\n";
 												//debutf=walltime(&clock_zero);
 												rt.writerecords(nenr,enreg);
+												saveRNG(mtss, countRNG, RNG_filename); // Ajout Pierre le 30/11/2012
 												//dureef=walltime(&debutf);time_file += dureef;
 												rt.nrec +=nenr;
 												cout<<rt.nrec;
@@ -543,6 +544,7 @@ try {
 													}
 												} 
 												rt.writerecords(nenrOK,enregOK);
+												saveRNG(mtss, countRNG, RNG_filename); // Ajout Pierre le 30/11/2012
 												rt.nrec +=nenrOK;
 												ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"OK\n"<<rt.nrec<<"\n"<<TimeToStr(remtime)<<"\n";f1.close();
 												if (((rt.nrec%1000)==0)and(rt.nrec<nrecneeded))cout<<"   ("<<TimeToStr(remtime)<<")""\n"; else cout<<"\n";
