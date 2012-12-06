@@ -3,39 +3,78 @@
 \subsection{Software design}
 $DIYABC$ v2 has been designed in a very different way compared to version 1. Version 1 was a single executable file were the GUI \footnote{Graphic User Interface} and computation codes were highly intricated and both written in the same language (\emph{Delphi}). In version 2, the GUI and the computation codes have been completely separated. Actually, the GUI is a script written in \emph{python} and all computations are included in a program written in \emph{C++}. In opposition to \emph{Delphi} which is restricted to a single OS (\texttt{Windows}), \textit{python} and \textit{C++} can be used with the main three OS (\texttt{Linux}, \texttt{Mac} and \texttt{Windows}), allowing version 2  to be operated under all three OS.\\
 The GUI uses the \textit{Qt} graphic library. The computation code is linked to the \textit{openmp} library allowing a better use of multicore/multiprocessor computers.\\
-The GUI can launch the computation program with the right parameters and keeps track of the progress of the latter through small log files. The GUI can launch as many computation programs as there are open projects, but no more than one computation program per project. A \textit{lock} file located in the project directory is created when the computation program is launched by the GUI and removed when the computation program has normally terminated. When the computation program has exited anormaly, the GUI   
+The GUI can launch the computation program with the right parameters and keeps track of the progress of the latter through small log files. The GUI can launch as many computation programs as there are open projects, but no more than one computation program per project. A \textit{lock} file located in the project directory is created when the computation program is launched by the GUI and removed when the computation program has normally terminated. When the computation program has exited anormaly, the GUI issues an error message trying to explain where the programm failed.    
 \subsection{Files}
 The program uses and produces various files which we will describe now.
 \subsubsection{data files}
-Data files are text files that contain information about the samples : number and names of microsatellite markers, multilocus genotypes of individuals. The basic  format is that of the Genepop software \citep{RR1995} and data files produced by DIYABC are under this format.  \textbf{Microsatellite genotypes must be noted with 3 (haploid) or 6 (diploid) digits, these three digit numbers being the length in nucleotides of the corresponding PCR products}. In addition, we have added some features to this basic format in order e.g. to use sequence data. All these additions are explained at the end of section 3.1.\\ Although data file names have usually the extension \texttt{.txt}, any extension is accepted, including no extension at all. The next page shows an example of a data set saved in Genepop format.
+Data files are text files that contain information about the samples : number and names of microsatellite markers, multilocus genotypes of individuals. The basic  format is that of the Genepop software \citep{RR1995} and data files produced by DIYABC are under this format.  \textbf{Microsatellite genotypes must be noted with 3 (haploid) or 6 (diploid) digits, these three digit numbers being the length in nucleotides of the corresponding PCR products}. In addition, we have added some features to this basic format in order to use sequence data. All these additions are explained in section 4.4.\\ 
+Any extension is accepted for datafile names, including no extension at all. If the data file is simulated with $DIYABC$, the extension is \texttt{mss} for microsatellite/DNA sequence data and \texttt{snp} for SNP data. The next page shows examples of data sets saved.
+
 \subsubsection{reference table files} 
-Reference table files are binary files which include two successive parts.\\ The first part is a header which contains all necessary information concerning how simulations were performed : the scenario(s), the prior distribution of parameters, motif length and size ranges of loci, the chosen summary statistics. The header part ends with the names of parameters and summary statistics that will be computed in the simulations. The second part provides all simulation results.\\
-As already mentionned, it is possible to visualize the content of the reference table by exporting (in full or just in part) the binary file to a text file (\texttt{Options} menu of the "run simulation" screen). The reference  text file is just an output file. It cannot be used to perform any computation with DIYABC.\\
-When a reference table is created, a text file is also automatically created which corresponds to the header of the reference table. It is identical to the header of the exported reference text file and includes all information necessary to simulate the reference table file. This file has the extension \texttt{.reftableHeader}. \textbf{Most importantly, it can be used as an alternate template for building a new reference table.}  
+Reference table files are binary files which include two successive parts :
+\begin{itemize}
+ \item The first part is a header which contains information necessary to read the second part, such as the number of scenarios, or the number of parameters of each scenario.
+ \item The second part contains simulated data set records, each record containing the scenario number, the parameter and summary statistics values.
+\end{itemize}
+ 
+ Each time a reference table is created or increased (each time the \fbox{\textsf{Run computation}} button is pressed), a text file is created in the project directory with the name \texttt{first\_records\_of\_the\_reference\_table\_X.txt} in which \texttt{X} is an integer number starting at 0 and increasing each time the \fbox{\textsf{Run computation}} button is pressed. This file provides a text version of the first $n$ newly created records of the reference table ($n$ being equal to the \emph{Particle loop size}, see section 3.7.3).\\
+
 \subsubsection{output files}
-As already seen, DIYABC achieves different analyses : comparison of scenarios, estimation of posterior distribution of parameters, model checking,  computation of bias and mean square errors and evaluation of confidence in scenario choice. Each analysis has its own output which can be printed and saved. Graphs are saved under bitmap format (extension \texttt{.bmp}) and non-graphic output are saved in text files.\\
+As already seen, DIYABC achieves different analyses : comparison of scenarios, estimation of posterior distribution of parameters, model checking,  computation of bias and mean square errors and evaluation of confidence in scenario choice. Each analysis has its own output which can be printed and saved. Graphs are saved under the chosen format and non-graphic output are saved in text files.\\
+
+We now describe all the files produced by each type of analysis. These files are located in directories (one directory per analysis) gathered in the \texttt{analysis} subdirectory of the project directory. Below is an example of the \texttt{TOYTEST2\_2012\_9\_26-1} project directory substructure:\\
+
+\includegraphics[scale=0.5]{gui_pictures/Capture-DIYABC-103.png}\\
+
+Note that each directory name starts with the name of analysis followed by the type of analysis, $e.g.$ \texttt{bias} for a bias/precision analysis or \texttt{comparison} for a comparison of scenarios. In addition, when a picture has been saved, the corresponding file is located under a subdirectory named \texttt{pictures} ($e.g.$ at the bottom of the figure above).
 When estimating parameters or comparing scenarios, the program computes the summary statistics of the observed data set. These are automatically written to a text file the name of which concatenates the names of the data set and the reference table (both without extension) and is given the extension \texttt{.statobs}. For instance, the name of this file will be \texttt{gps\_001\_gps\_001.statobs} if the data file name is \texttt{gps\_001.txt} and the reference table is \texttt{gps\_001.reftable}.\\
  When estimating parameters, the file named \texttt{phistar.tmp} is also produced. When clicking on the \fbox{\textsf{Save phistar}}, this file is just copied to another file.\\
  When the bias/precision option is run with parameter values drawn from priors, two files  are automatically produced. The first file (named \texttt{bias\_precision.tmp}) contains all drawn values of parameters as well as the corresponding point estimates and the second file (named \texttt{bias\_precision\_phistar.tmp}) contains the samples from the posterior distributions of parameters used to compute these point estimates.\\
 In addition, graphic representations of scenario(s) can also be printed and saved (in bitmap format).\\
 Similarly, when the confidence in scenario choice option is run with parameter values drawn from priors, the file named \texttt{conf\_scenX.tmp} is automatically produced (where \texttt{X} is the number of the scenario chosen for this option). This file is identical to what is seen on the result screen, but it also includes the values of parameters of each test data set.\\
 All graphic files have names imposed by the program (e.g.  \texttt{scenario\_1.bmp}),  thus it advised to rename or copy those that you want to keep for future use, as soon as possible. Saved graphic files can be modified using programs such as Gimp, Photoshop or Paint. 
+\subsubsection{log files}
 
 
 \subsection{Missing data}
-Missing or undetermined genotypes should be coded as \texttt{000} (haploid microsatellites, \texttt{000000}  (diploid microsatellites), \texttt{$<[]>$} (haploid sequences) or \texttt{$<[][]>$} (diploid sequences) in the data file. \\
+Missing or undetermined genotypes should be coded as \texttt{000} (haploid microsatellites, \texttt{000000}  (diploid microsatellites), \texttt{$<[]>$} (haploid sequences) or \texttt{$<[][]>$} (diploid sequences) and \texttt{9} (SNP) in the data file. \\
 Missing data are taken into account in the following way. For each appearance of a missing genotype in the observed data set, the programs records the individual and the locus. When simulating data sets, the program replaces the simulated genotype (obtained through the coalescence process algorithm) by the missing data code at all corresponding locations. All summary statistics are thus computed with the same missing data as for the observed data set. 
 
-\subsection{data file}
-Below are two examples of data set in Genepop format simulated by DIYABC.\\ In the first example, this data set includes two population samples, each of 12 diploid individuals (8 females and 4 males in the first sample and 5 females and 7 males in the second sample). As deduced from the letter between $<$ and $>$ on the locus name lines (see page 25), these individuals have been genotyped at 3 microsatellite loci (1 autosomal $<A>$, 1 X-linked $<X>$ and 1 Y-linked $<Y>$) and 3 DNA sequence loci (1 autosomal. 1 X-linked and 1 mitochondrial $<M>$). The species sex-ratio, given in the title line, is of three males for one female ($<NM=3NF>$) or in other words, the number of males equals three times the number of females. 
+\subsection{Data files}
+There are two different incompatible formats for data files, one for SNP loci and the other for microsatellite/DNA sequence data.\\ For the latter, the format already presented in version 1 of DIYABC is an extended Genepop format. The additional features are :
+\begin{enumerate}
+\item In the title line appears the sex ratio noted between \textsf{$<$} and \textsf{$>$} under the form \textsf{$<NM=1.00NF>$}. Since the title is generally only copied, this addition should not interfere with other programs using  Genepop datafiles. Also if there is no such sex ratio addition, DIYABC will consider by default that NM=NF.
+\item After the locus name, there is an indication for the category of the locus which is $<A>$ for autosomal diploid loci, $<H>$ for autosomal haploid loci, $<X>$ for X-linked (or haplo-diploid) loci, $<Y>$ for Y-linked loci and $<M>$ for mitochondrial loci. If no category is noted, DIYABC will consider the locus as autosomal diploid or autosomal haploid depending on the corresponding genotype of the first typed individual.
+\item Genotypes of microsatellite loci are noted with six digit numbers (e.g. 190188) if diploid and by three digit numbers (e.g. 190) if haploid.
+\item Sequence locus are noted between  \textsf{$<$} and \textsf{$>$} . In addition each sequence allele is noted between brackets. For instance, a haploid sequence locus  will be noted $<[$GTCTA$]>$ and a diploid sequence locus $<[$GTCTA$][$GTCTT$]>$.
+\item Missing microsatellite genotypes are noted \textsf{000} if haploid or \textsf{000000} if diploid.
+\item Missing sequence genotypes are noted $<[]>$ if haploid or $<[][]>$ if diploid.
+\end{enumerate}
+
+For SNP data, the format includes:
+\begin{itemize}
+ \item a first line providing the sex-ratio as above
+ \item a second line starting with the three keywords \texttt{IND  SEX  POP}, separated by at least one space, followed by as many letters as SNP loci, the letter giving the location of the locus as above ($<A>$ for autosomal diploid loci, $<H>$ for autosomal haploid loci, $<X>$ for X-linked (or haplo-diploid) loci, $<Y>$ for Y-linked loci and $<M>$ for mitochondrial loci). Letters are separated by a single space.
+ \item as many lines as there are genotyped individuals, with the code-name of the individual, a letter ($M$ or $F$) indicating its sex, a code-name for its population and the values (0, 1 or 2) of the number of the reference allele at each SNP locus. 
+\end{itemize}
+
+
+ 
+Below are three examples of data sets simulated by DIYABC.\\ In the first example, this data set includes two population samples, each of 12 diploid individuals (8 females and 4 males in the first sample and 5 females and 7 males in the second sample). As deduced from the letter between $<$ and $>$ on the locus name lines (see page 25), these individuals have been genotyped at 3 microsatellite loci (1 autosomal $<A>$, 1 X-linked $<X>$ and 1 Y-linked $<Y>$) and 3 DNA sequence loci (1 autosomal. 1 X-linked and 1 mitochondrial $<M>$). The species sex-ratio, given in the title line, is of three males for one female ($<NM=3NF>$) or in other words, the number of males equals three times the number of females. 
 \begin{figure}[h]
-\includegraphics[scale=0.7]{ss5png/screenga001.png}
+\includegraphics[scale=0.5]{gui_pictures/screenga001.png}
 \end{figure}
 
 In the second example, the species is haploid. Individuals have been genotyped at three autosomal microsatellite loci and one mitochondrial DNA sequence locus. The species being haploid (deduced from the presence of autosomal haploid loci), no indication of the sex-ratio appears in the title line.
 
 \begin{figure}[h]
-\includegraphics[scale=0.7]{ss5png/screenga002.png}
+\includegraphics[scale=0.5]{gui_pictures/screenga002.png}
+\end{figure}
+
+In the third example, the species is diploid and has been genotyped at a large number of SNP autosomal loci. The first line provides the species sex-ratio. The second line indicates what's in the different columns : individual name in column 1, individual sex in column 2, population name in column 3 and one column per SNP locus. Columns are sparated by one or more spaces. SNP are coded 0, 1 or 2 according to the number of reference alleles. Only the top left part of the data file is represented below :
+
+\begin{figure}[h]
+\includegraphics[scale=0.5]{gui_pictures/screenga003.png}
 \end{figure}
 
 
@@ -68,7 +107,7 @@ The process of simulating data sets is generally a time consuming part of the AB
 \clearpage
 \begin{figure}
 \caption{Bash script that can be run with Sun Grid Engine software}
-\includegraphics{ss5pdf/Script_SGE.pdf}
+\includegraphics{gui_pictures/script_SGE.pdf}
 \end{figure}
 
 \clearpage

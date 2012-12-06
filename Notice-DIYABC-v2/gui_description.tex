@@ -308,12 +308,14 @@ To view results, we click on the  \fbox{\textsf{View results}} button.
 
 The results are visible in a scrolling window :\\
 
-\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-52.png} \\
+\includegraphics[scale=0.32]{gui_pictures/Capture-DIYABC-52a.png} \\
+
+Note that there are two values given for each statistics. The upper value is that of the statistics computed from the \emph{posterior} distribution of parameters, $i.e.$ \textbf{using the genetic information provided by data}. The lower value, noted between parentheses, is that of the statistics computed from the \emph{prior} distribution of parameters, $i.e.$ \textbf{NOT using the genetic information provided by data but only that contained in prior distributions}.  
 
 \subsubsection{Model Checking}
 We now define another type of analysis called \texttt{Model Checking} which is used to evaluate how well the scenario and priors of parameters fit the data summarized by summary statistics. This is the last option on the following screen :\\
 
-\includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-53.png} \\
+\includegraphics[scale=0.32]{gui_pictures/Capture-DIYABC-53.png} \\
 
 We call this analysis \texttt{mc1} and check the box to get a PCA performed. This PCA is computed in the same way compared to that of the first option (\texttt{Pre-evaluate scenario prior combinations}). However, new datasets simulated with parameters drawn from the posterior distributions of parameters are also represented on the different planes of the PCA (but not taken in the PCA  computation). 
 
