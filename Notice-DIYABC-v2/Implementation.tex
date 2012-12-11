@@ -27,6 +27,54 @@ We now describe all the files produced by each type of analysis. These files are
 \includegraphics[scale=0.5]{gui_pictures/Capture-DIYABC-103.png}\\
 
 Note that each directory name starts with the name of analysis followed by the type of analysis, $e.g.$ \texttt{bias} for a bias/precision analysis or \texttt{comparison} for a comparison of scenarios. In addition, when a picture has been saved, the corresponding file is located under a subdirectory named \texttt{pictures} ($e.g.$ at the bottom of the figure above).
+\begin{description}
+ \item [Pre-evaluate scenario prior combinations :] This analysis can produce two output files named \texttt{ACP.txt} and \texttt{locate.txt}. The former is the output of the Principal Component Analysis and the latter that of the analysis giving the proportion of simulated data sets which have a value below the observed value for every summary statistics. This latter file is exactly what appears in the GUI. The structure of the  \texttt{ACP.txt} file is the following. The first line indicates the number of points of the PCA, the number of PCA components (axes) and the inertia of each component, all values are separated by a single space. The second line provides the components of the observed data. It starts with a zero which corresponds to the scenario number in the following lines. Each subsequent line provides the components of data simulated according to a given scenario which number is at the beginning of the line. If one or more PCA figures have been saved, the corresponding files are saved in the \texttt{pictures} subdirectory. They are named as \texttt{refTable\_PCA\_X\_Y\_N.pdf}, with \texttt{X} and  \texttt{Y} giving the axis numbers and \texttt{N} being the number of represented points. 
+ \item [Compute posterior probabilities of scenarios :] This analysis produces three output text files : \texttt{compdirect.txt}, \texttt{complogreg.txt} and \texttt{compdirlog.txt}. The latter is directly visualized in the GUI when clicking the \fbox{\textsf{view numerical results}} button. The first two files are used by the GUI to elaborate the two graphics (Direct approach and Logistic regression). Again, if graphics have been saved, the corresponding file(s) is(are) in the \texttt{pictures} subdirectory of the analysis directory.  
+ \item [Evaluate confidence in scenario choice :] This analysis produces a single output file, \texttt{confidence.txt}, the content of which is visualized in the GUI.
+ \item [Estimate posterior distributions of parameter :] Nine files are written as output of this type of analysis :
+  \begin{itemize}
+   \item three files \texttt{mmmq.txt}, \texttt{mmmqcompo.txt} and \texttt{mmmqscaled.txt} contain the statistics (mean, median, mode and quantiles) for the original, composite and scaled parameters, respectively. They are visualized in the GUI when clicking the \fbox{\textsf{view numerical results}} button. 
+   \item three files \texttt{paramstatdens.txt}, \texttt{paramcompostatdens.txt} and \texttt{paramscaledstatdens.txt} are used by the GUI to produce the graphics showing prior/posterior distribution.
+   \item three files \texttt{phistar.txt}, \texttt{phistarcompo.txt} and \texttt{phistarscaled.txt} contains the $\phi^*$ values of the original, composite and scaled parameters, respectively.
+  \end{itemize}
+As already mentionned, saved graphics are located in a \texttt{pictures} subdirectory.
+ \item [Compute bias and precision of parameter estimations :] Three files \texttt{bias.txt}, \texttt{biascompo.txt} and \texttt{biasscaled.txt} are produced by this type of analysis. All three files are visualized in the GUI. 
+ \item [Perform model-checking] The output files of this type of analysis are the same as those of the \textit{Pre-evaluate scenario prior combinations} analysis (see above). The only difference is in the names of the two text files which start with \texttt{mc} for \texttt{model checking}. 
+\end{description}
+~\\
+
+In addition, the GUI program writes several files in the project directory :
+\begin{description}
+ \item [command.txt :] this text file contains the history of commands issued by the GUI to be achieved by the computation program.
+ \item [conf.analysis :] this text file contains information about analyses.
+ \item [conf.gen.tmp :] this text file contains information about the loci, the genetic parameters and the summary statistics.
+ \item [conf.hist.tmp :] this text file contains information about the scenario and the historical parameters.
+ \item [conf.th.tmp :] This text file contains the title line of the reference table.
+ \item [conf.tmp :] This text file contains the name of the dataset and the number of parameters and summary statistics.
+ \item [header.txt :] This text file is a concatenation of the previous four files and is red by the computation program.
+ \item [xxx.diyabcproject :] This text file contains the path to the \texttt{xxx} project.
+ \item [RNG\_state\_0000.bin :] This binary file contains the current state of the random generator.
+ \item [init\_rng.out :] This text file contains information about the initialization of the random generator.
+\end{description}
+~\\
+
+Eventually, the computation program writes the following files :
+\begin{description}
+ \item [reftable.log :] This text file is produced when a reftable is increased. It provides the GUI with information about the progress of computations : achieved number of records, time left.
+ \item [statobs.txt :] This text file is written every time an analysis is performed. It contains the values of summary statistrics for the observed data set.
+\end{description}
+
+ 
+
+
+
+
+
+
+
+
+
+
 When estimating parameters or comparing scenarios, the program computes the summary statistics of the observed data set. These are automatically written to a text file the name of which concatenates the names of the data set and the reference table (both without extension) and is given the extension \texttt{.statobs}. For instance, the name of this file will be \texttt{gps\_001\_gps\_001.statobs} if the data file name is \texttt{gps\_001.txt} and the reference table is \texttt{gps\_001.reftable}.\\
  When estimating parameters, the file named \texttt{phistar.tmp} is also produced. When clicking on the \fbox{\textsf{Save phistar}}, this file is just copied to another file.\\
  When the bias/precision option is run with parameter values drawn from priors, two files  are automatically produced. The first file (named \texttt{bias\_precision.tmp}) contains all drawn values of parameters as well as the corresponding point estimates and the second file (named \texttt{bias\_precision\_phistar.tmp}) contains the samples from the posterior distributions of parameters used to compute these point estimates.\\
