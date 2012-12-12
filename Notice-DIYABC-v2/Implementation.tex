@@ -58,30 +58,24 @@ In addition, the GUI program writes several files in the project directory :
 \end{description}
 ~\\
 
-Eventually, the computation program writes the following files :
+The computation program writes the following files in the project directory :
 \begin{description}
  \item [reftable.log :] This text file is produced when a reftable is increased. It provides the GUI with information about the progress of computations : achieved number of records, time left.
  \item [statobs.txt :] This text file is written every time an analysis is performed. It contains the values of summary statistrics for the observed data set.
 \end{description}
 
- 
+The following files are output by the computation program everytime it has been launched by a specific command of the GUI (their use is only for debugging purposes and they are all in the project directory) :
+\begin{description}
+ \item [general.out :] when computing a reftable.
+ \item [pre-ev.out :] when performing a \textit{Pre-evaluate scenario prior combinations} analysis.
+ \item [compare.out :] when performing a \textit{Compare scenarios} analysis.
+ \item [confidence.out :] when performing a \textit{Confidence in scenario choice} analysis.
+ \item [estimate.out :] when performing a \textit{ABC parameter estimation} analysis.
+ \item [bias.out :] when performing a \textit{bias-precision} analysis.
+ \item [modelChecking.out :] when performing a \textit{model checking} analysis.
+\end{description}
 
-
-
-
-
-
-
-
-
-
-When estimating parameters or comparing scenarios, the program computes the summary statistics of the observed data set. These are automatically written to a text file the name of which concatenates the names of the data set and the reference table (both without extension) and is given the extension \texttt{.statobs}. For instance, the name of this file will be \texttt{gps\_001\_gps\_001.statobs} if the data file name is \texttt{gps\_001.txt} and the reference table is \texttt{gps\_001.reftable}.\\
- When estimating parameters, the file named \texttt{phistar.tmp} is also produced. When clicking on the \fbox{\textsf{Save phistar}}, this file is just copied to another file.\\
- When the bias/precision option is run with parameter values drawn from priors, two files  are automatically produced. The first file (named \texttt{bias\_precision.tmp}) contains all drawn values of parameters as well as the corresponding point estimates and the second file (named \texttt{bias\_precision\_phistar.tmp}) contains the samples from the posterior distributions of parameters used to compute these point estimates.\\
-In addition, graphic representations of scenario(s) can also be printed and saved (in bitmap format).\\
-Similarly, when the confidence in scenario choice option is run with parameter values drawn from priors, the file named \texttt{conf\_scenX.tmp} is automatically produced (where \texttt{X} is the number of the scenario chosen for this option). This file is identical to what is seen on the result screen, but it also includes the values of parameters of each test data set.\\
-All graphic files have names imposed by the program (e.g.  \texttt{scenario\_1.bmp}),  thus it advised to rename or copy those that you want to keep for future use, as soon as possible. Saved graphic files can be modified using programs such as Gimp, Photoshop or Paint. 
-\subsubsection{log files}
+When performing a \textit{Bias-precision} or a \textit{Confidence in scenario choice} analysis, the computation program simulates what we call \textit{pseudo-observed datasets}. The parameter and summary statistics values of these pseudo-observed datasets are written in a text file named \textbf{pseudo-observed\_datasets\_xxx.txt} in which \textbf{xxx} is the name given to the analysis.
 
 
 \subsection{Missing data}
