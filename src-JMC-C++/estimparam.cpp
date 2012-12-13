@@ -1015,7 +1015,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
     void savephistar(int n, string path,string ident, long double **phistar,long double **phistarcompo, long double **phistarscaled) {
         string nomphistar ;
 		if (original){
-			nomphistar =path+ident+"_phistar.txt";
+			nomphistar =path+ident+"_phistar_original.txt";
 			ofstream f1;
 			f1.open(nomphistar.c_str());
 			f1<<enteteO<<"\n";
@@ -1027,7 +1027,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.close();
 		}
 		if (composite) {
-			nomphistar =path+ident+"_phistarcompo.txt";
+			nomphistar =path+ident+"_phistar_composite.txt";
 			ofstream f1;
 			f1.open(nomphistar.c_str());
 			f1<<enteteC<<"\n";
@@ -1039,7 +1039,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.close();
 		} 
 		if (scaled) {
-			nomphistar =path+ident+"_phistarscaled.txt";
+			nomphistar =path+ident+"_phistar_scaled.txt";
 			ofstream f1;
 			f1.open(nomphistar.c_str());
 			f1<<enteteS<<"\n";
@@ -1607,7 +1607,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         string nomfiparstat;
 		ofstream f1;
 		if (original) {
-			nomfiparstat = path+ident+"_paramstatdens.txt";
+			nomfiparstat = path+ident+"_paramstatdens_original.txt";
 			cout <<nomfiparstat<<"\n";
 			f1.open(nomfiparstat.c_str());
 			for (int j=0;j<nparamcom;j++) {
@@ -1623,7 +1623,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 				for (int i=0;i<pardens[j].ncl;i++) f1<<"  "<<pardens[j].postd[i];f1<<"\n"; 
 			}
 			f1.close();
-			nomfiparstat = path+ident+"_mmmq.txt";
+			nomfiparstat = path+ident+"_mmmq_original.txt";
 			cout <<nomfiparstat<<"\n";
 			f1.open(nomfiparstat.c_str());
 			f1<<"DIYABC :                      ABC parameter estimation                         "<<asctime(timeinfo)<<"\n";
@@ -1650,7 +1650,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.close();
  		}
 		if (composite) {
-			nomfiparstat = path+ident+"_paramcompostatdens.txt";
+			nomfiparstat = path+ident+"_paramstatdens_composite.txt";
 			cout <<nomfiparstat<<"\n";
 			f1.open(nomfiparstat.c_str());
 			for (int j=0;j<nparcompo;j++) {
@@ -1664,7 +1664,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 				for (int i=0;i<pardenscompo[j].ncl;i++) f1<<"  "<<pardenscompo[j].postd[i];f1<<"\n"; 
 			}
 			f1.close();
-			nomfiparstat = path+ident+"_mmmqcompo.txt";
+			nomfiparstat = path+ident+"_mmmq_composite.txt";
 			cout <<nomfiparstat<<"\n";
 			f1.open(nomfiparstat.c_str());
 			f1<<"DIYABC :                      ABC parameter estimation                         "<<asctime(timeinfo)<<"\n";
@@ -1691,7 +1691,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.close();
 		}
 		if (scaled) {
-			nomfiparstat = path+ident+"_paramscaledstatdens.txt";
+			nomfiparstat = path+ident+"_paramstatdens_scaled.txt";
 			cout <<nomfiparstat<<"\n";
 			f1.open(nomfiparstat.c_str());
 			for (int j=0;j<nparscaled;j++) {
@@ -1705,7 +1705,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 				for (int i=0;i<pardensscaled[j].ncl;i++) f1<<"  "<<pardensscaled[j].postd[i];f1<<"\n"; 
 			}
 			f1.close();
-			nomfiparstat = path+ident+"_mmmqscaled.txt";
+			nomfiparstat = path+ident+"_mmmq_scaled.txt";
 			cout <<nomfiparstat<<"\n";
 			f1.open(nomfiparstat.c_str());
 			f1<<"DIYABC :                      ABC parameter estimation                         "<<asctime(timeinfo)<<"\n";

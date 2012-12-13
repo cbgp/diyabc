@@ -59,7 +59,7 @@ extern int nsimpar;
 parstatC **paramest, **paramestcompo, **paramestscaled;
 parstatC *paramestS, *paramestcompoS, *paramestscaledS;
 
-long double **simparsel,**simparcomposel,**simparscaledsel, *paramestmoyS, *paramestmedS;
+long double **simparsel,**simparcomposel,**simparscaledsel, *paramestmoyS, *paramestmedS, *paramestcompomoyS, *paramestcompomedS, *paramestscaledmoyS, *paramestscaledmedS;
 /*
  * paramestS[numero du parametre] contient les statistiques évaluées à partir des  10⁵ premiers enregistrements de la table de reference :
  * moyenne, médiane, mode, quantiles de la distribution a priori de chaque paramètre tiré selon son prior 
@@ -76,7 +76,7 @@ long double **paretoil,**paretoilcompo,**paretoilscaled;
 long double **paretoilS,**paretoilcompoS,**paretoilscaledS;
 ofstream ftrace;
 MwcGen mw;
-
+int *numero;
 
 /**
  * tire un échantillon avec remise dans les simpar
@@ -86,11 +86,9 @@ MwcGen mw;
 	long double** echantillon(int nsel, int nsimpar, int nparam, long double** simpar) {
 		long double **sp;
 		sp = new long double*[nsel];
-		int k;
 		for (int i=0;i<nsel;i++) {
-			k = mw.rand0(nsimpar);
 			sp[i] = new long double[nparam];
-			for (int j=0;j<nparam;j++) sp[i][j] = simpar[k][j];
+			for (int j=0;j<nparam;j++) sp[i][j] = simpar[numero[i]][j];
 		}
 //		for (int i=0;i<nsimpar;i++) delete []simpar[i];
 //		delete [] simpar;
@@ -416,6 +414,10 @@ MwcGen mw;
     void initbiasCS(int ntest, int nsel,int nparamcom) {
 		paretoilcompoS = new long double*[nsel];
 		for (int i=0;i<nsel;i++)paretoilcompoS[i] = new long double[nparcompo];
+		paramestcompomoyS = new long double[nparamcom];
+		for (int j=0;j<nparamcom;j++) paramestcompomoyS[j]=0.0;
+		paramestcompomedS = new long double[nparamcom];
+		for (int j=0;j<nparamcom;j++) paramestcompomedS[j]=0.0;
 //////////////// mean relative bias
         br_CS = new long double* [3];
         for (int k=0;k<3;k++) {
@@ -534,6 +536,10 @@ MwcGen mw;
 	void initbiasSS(int ntest, int nsel,int nparamcom) {
 		paretoilscaledS = new long double*[nsel];
 		for (int i=0;i<nsel;i++)paretoilscaledS[i] = new long double[nparscaled];
+		paramestscaledmoyS = new long double[nparamcom];
+		for (int j=0;j<nparamcom;j++) paramestscaledmoyS[j]=0.0;
+		paramestscaledmedS = new long double[nparamcom];
+		for (int j=0;j<nparamcom;j++) paramestscaledmedS[j]=0.0;
 //////////////// mean relative bias
         br_SS = new long double* [3];
         for (int k=0;k<3;k++) {
@@ -747,6 +753,13 @@ MwcGen mw;
 */
     void biaisrelC(int ntest,int nsel,int npv,int p) {
         long double s,d,ds;		
+		simparcomposel = echantillon(nsel,nsimpar,nparcompo,simparcompo);
+		if (p>0) delete []paramestcompoS;
+		paramestcompoS = calparstat(nsel,nparcompo,simparcomposel);
+		for (int j=0;j<nparamcom;j++){
+			paramestcompomoyS[j] +=paramestcompoS[j].moy;
+			paramestcompomedS[j] +=paramestcompoS[j].med;
+		}
 //////////////// mean relative bias
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {
@@ -869,6 +882,13 @@ MwcGen mw;
     void biaisrelS(int ntest,int nsel,int npv,int p) {
 		cout<<"debut de biaisrelS\n";
         long double s,d,ds;
+		simparscaledsel = echantillon(nsel,nsimpar,nparscaled,simparscaled);
+		if (p>0) delete []paramestscaledS;
+		paramestscaledS = calparstat(nsel,nparscaled,simparscaledsel);
+		for (int j=0;j<nparscaled;j++){
+			paramestscaledmoyS[j] +=paramestscaledS[j].moy;
+			paramestscaledmedS[j] +=paramestscaledS[j].med;
+		}
 //////////////// mean relative bias
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparscaled;j++) {
@@ -1007,6 +1027,7 @@ MwcGen mw;
 	}
 	
 	void finbiaisrelC(int ntest) {
+		for (int j=0;j<nparamcom;j++) {paramestcompomoyS[j] /=(long double)ntest;paramestcompomedS[j] /=(long double)ntest;}
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {br_C[k][j] /=(long double)ntest;br_CS[k][j] /=(long double)ntest;}
 		}
@@ -1025,6 +1046,7 @@ MwcGen mw;
 	}
 	
 	void finbiaisrelS(int ntest) {
+		for (int j=0;j<nparamcom;j++) {paramestscaledmoyS[j] /=(long double)ntest;paramestscaledmedS[j] /=(long double)ntest;}
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparscaled;j++) {br_S[k][j] /=(long double)ntest;br_SS[k][j] /=(long double)ntest;}
 		}
@@ -1243,8 +1265,8 @@ MwcGen mw;
         f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n\n";
-        f1<<"                                               Averages\n";
-        f1<<"Parameter                True values           Means             Medians             Modes\n";
+        f1<<"                                                                        Averages\n";
+        f1<<"Parameter                True values               Means                 Medians                 Modes\n";
 		f1<<setiosflags(ios::scientific)<<setiosflags(ios::right);
         for (int j=0;j<nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
@@ -1255,93 +1277,92 @@ MwcGen mw;
             for (int i=0;i<ntest;i++) x[i]=paramestcompo[i][j].med;mo[2]=cal_moyL(ntest,x);
             for (int i=0;i<ntest;i++) x[i]=paramestcompo[i][j].mod;mo[3]=cal_moyL(ntest,x);
             f1<<setw(10)<<setprecision(3)<<mo[0];
-			f1<<setw(20)<<setprecision(3)<<mo[1];
-			f1<<setw(19)<<setprecision(3)<<mo[2];
-			f1<<setw(19)<<setprecision(3)<<mo[3]<<"\n";
+			f1<<setw(24)<<setprecision(3)<<mo[1];
+			f1<<setw(24)<<setprecision(3)<<mo[2];
+			f1<<setw(22)<<setprecision(3)<<mo[3]<<"\n";
 			for (int i=0;i<35;i++) f1<<" ";
-			f1<<setw(10)<<setprecision(3)<<"("<<paramestcompoS[j].moy<<")";
-			f1<<setw(9)<<setprecision(3)<<"("<<paramestcompoS[j].med<<")";
-			f1<<setw(9)<<setprecision(3)<<"("<<paramestcompoS[j].mod<<")\n";
+			f1<<setw(14)<<setprecision(3)<<"("<<paramestcompoS[j].moy<<")";
+			f1<<setw(14)<<setprecision(3)<<"("<<paramestcompoS[j].med<<")\n";
         }
         f1<<"\n                                           Mean Relative Bias\n";
-        f1<<"Parameter                           Means          Medians        Modes\n";
-        for (int j=0;j<nparcompo;j++) {
-            //cout<<nomparam[j]<<"\n";
-            f1<<nomparamC[j];
-            for(int i=0;i<33-(int)nomparamC[j].length();i++) f1<<" ";
-			f1<<fmLD(br_C[0][j],8,4);
-			f1<<fmLD(br_C[1][j],15,4);
-			f1<<fmLD(br_C[2][j],15,4)<<"\n";
-			for (int i=0;i<34;i++) f1<<" ";
-			f1<<fmLDP(br_CS[0][j],8,4);
-			f1<<fmLDP(br_CS[1][j],15,4);
-			f1<<fmLDP(br_CS[2][j],15,4)<<"\n";
-        }
-        f1<<"\n                            RRMISE            RMeanAD            Square root of mean square error/true value\n";
-        f1<<"Parameter                                                         Mean             Median             Mode\n";
+        f1<<"Parameter                     Means                    Medians                    Modes\n";
         for (int j=0;j<nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamC[j];
             for(int i=0;i<24-(int)nomparamC[j].length();i++) f1<<" ";
-			f1<<fmLD(rrmise_C[j],10,3);
-			f1<<fmLD(rmad_C[j],18,3);
-			f1<<fmLD(rmse_C[0][j],18,3);
-			f1<<fmLD(rmse_C[1][j],19,3);
-			f1<<fmLD(rmse_C[2][j],17,3)<<"\n";
-			for (int i=0;i<25;i++) f1<<" ";
+			f1<<fmLD(br_C[0][j],7,3)<<" "<<fmLDP(br_CS[0][j],8,3);
+			f1<<fmLD(br_C[1][j],18,4)<<" "<<fmLDP(br_CS[1][j],8,3);
+			f1<<fmLD(br_C[2][j],20,4)<<"\n";
+			//for (int i=0;i<34;i++) f1<<" ";
+			//f1<<fmLDP(br_CS[0][j],8,4);
+			//f1<<fmLDP(br_CS[1][j],15,4);
+			//f1<<fmLDP(br_CS[2][j],15,4)<<"\n";
+        }
+        f1<<"\n                            RRMISE              RMeanAD            Square root of mean square error/true value\n";
+        f1<<"Parameter                                                           Mean                Median            Mode\n";
+        for (int j=0;j<nparcompo;j++) {
+            //cout<<nomparam[j]<<"\n";
+            f1<<nomparamC[j];
+            for(int i=0;i<20-(int)nomparamC[j].length();i++) f1<<" ";
+			f1<<fmLD(rrmise_C[j],10,3)<<" "<<fmLDP(rrmise_CS[j],8,3);
+			f1<<fmLD(rmad_C[j],11,3)<<" "<<fmLDP(rmad_CS[j],8,3);
+			f1<<fmLD(rmse_C[0][j],11,3)<<" "<<fmLDP(rmse_CS[0][j],8,3);
+			f1<<fmLD(rmse_C[1][j],11,3)<<" "<<fmLDP(rmse_CS[1][j],8,3);
+			f1<<fmLD(rmse_C[2][j],11,3)<<"\n";
+			/*for (int i=0;i<25;i++) f1<<" ";
 			f1<<fmLDP(rrmise_CS[j],10,3);
 			f1<<fmLDP(rmad_CS[j],18,3);
 			f1<<fmLDP(rmse_CS[0][j],18,3);
 			f1<<fmLDP(rmse_CS[1][j],19,3);
-			f1<<fmLDP(rmse_CS[2][j],17,3)<<"\n";
+			f1<<fmLDP(rmse_CS[2][j],17,3)<<"\n";*/
         }
-        f1<<"\n                                                                 Factor 2        Factor 2        Factor 2\n";
-        f1<<"Parameter               50% Coverage        95% Coverage         (Mean)          (Median)        (Mode)  \n";
+        f1<<"\n                                                                   Factor 2          Factor 2           Factor 2\n";
+        f1<<"Parameter               50% Coverage        95% Coverage           (Mean)            (Median)            (Mode)  \n";
         for (int j=0;j<nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamC[j];
-            for(int i=0;i<24-(int)nomparamC[j].length();i++) f1<<" ";
-			f1<<fmLD(cov50_C[j],10,3);
-			f1<<fmLD(cov95_C[j],18,3);
-			f1<<fmLD(fac2_C[0][j],18,3);
-			f1<<fmLD(fac2_C[1][j],19,3);
-			f1<<fmLD(fac2_C[2][j],17,3)<<"\n";
-			for (int i=0;i<25;i++) f1<<" ";
+            for(int i=0;i<19-(int)nomparamC[j].length();i++) f1<<" ";
+			f1<<fmLD(cov50_C[j],10,3)<<" "<<fmLDP(cov50_CS[j],7,3);
+			f1<<fmLD(cov95_C[j],12,3)<<" "<<fmLDP(cov95_CS[j],7,3);
+			f1<<fmLD(fac2_C[0][j],12,3)<<" "<<fmLDP(fac2_CS[0][j],7,3);
+			f1<<fmLD(fac2_C[1][j],11,3)<<" "<<fmLDP(fac2_CS[1][j],7,3);
+			f1<<fmLD(fac2_C[2][j],15,3)<<"\n";
+			/*for (int i=0;i<25;i++) f1<<" ";
 			f1<<fmLDP(cov50_CS[j],10,3);
 			f1<<fmLDP(cov95_CS[j],18,3);
-			f1<<fmLDP(fac2_CS[0][j],18,3);
+			f1<<fmLDP(fac2_CS[0][j],18,3);33
 			f1<<fmLDP(fac2_CS[1][j],19,3);
-			f1<<fmLDP(fac2_CS[2][j],17,3)<<"\n";
+			f1<<fmLDP(fac2_CS[2][j],17,3)<<"\n";*/
         }
         f1<<"\n                                          Median Relative Bias\n";
-        f1<<"Parameter                                     Means          Medians        Modes\n";
+        f1<<"Parameter                 Means                    Medians                  Modes\n";
         for (int j=0;j<nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamC[j];
-            for(int i=0;i<43-(int)nomparamC[j].length();i++) f1<<" ";
-				f1<<fmLD(rmb_C[0][j],8,3);
-				f1<<fmLD(rmb_C[1][j],15,3);
-				f1<<fmLD(rmb_C[2][j],15,3)<<"\n";
-			for (int i=0;i<44;i++) f1<<" ";
+            for(int i=0;i<19-(int)nomparamC[j].length();i++) f1<<" ";
+				f1<<fmLD(rmb_C[0][j],8,3)<<" "<<fmLDP(rmb_CS[0][j],8,3);
+				f1<<fmLD(rmb_C[1][j],18,3)<<" "<<fmLDP(rmb_CS[1][j],8,3);
+				f1<<fmLD(rmb_C[2][j],18,3)<<"\n";
+			/*for (int i=0;i<44;i++) f1<<" ";
 				f1<<fmLDP(rmb_CS[0][j],8,3);
 				f1<<fmLDP(rmb_CS[1][j],15,3);
-				f1<<fmLDP(rmb_CS[2][j],15,3)<<"\n";
+				f1<<fmLDP(rmb_CS[2][j],15,3)<<"\n";*/
         }
-        f1<<"\n                             RMedAD        Median of the absolute error/true value\n";
-        f1<<"Parameter                                     Means          Medians        Modes\n";
+        f1<<"\n                             RMedAD                  Median of the absolute error/true value\n";
+        f1<<"Parameter                                          Means                    Medians                  Modes\n";
         for (int j=0;j<nparcompo;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamC[j];
-            for(int i=0;i<24-(int)nomparamC[j].length();i++) f1<<" ";
-			f1<<fmLD(rmedad_C[j],11,3);
-			f1<<fmLD(rmae_C[0][j],16,3);
-			f1<<fmLD(rmae_C[1][j],16,3);
-			f1<<fmLD(rmae_C[2][j],16,3)<<"\n";
-			for (int i=0;i<25;i++) f1<<" ";
+            for(int i=0;i<20-(int)nomparamC[j].length();i++) f1<<" ";
+			f1<<fmLD(rmedad_C[j],10,3)<<" "<<fmLDP(rmedad_CS[j],8,3);
+			f1<<fmLD(rmae_C[0][j],15,3)<<" "<<fmLDP(rmae_CS[0][j],8,3);
+			f1<<fmLD(rmae_C[1][j],15,3)<<" "<<fmLDP(rmae_CS[1][j],8,3);
+			f1<<fmLD(rmae_C[2][j],19,3)<<"\n";
+			/*for (int i=0;i<25;i++) f1<<" ";
 			f1<<fmLDP(rmedad_CS[j],11,3);
 			f1<<fmLDP(rmae_CS[0][j],16,3);
 			f1<<fmLDP(rmae_CS[1][j],16,3);
-			f1<<fmLDP(rmae_CS[2][j],16,3)<<"\n";
+			f1<<fmLDP(rmae_CS[2][j],16,3)<<"\n";*/
         }
          f1.close();
 
@@ -1379,8 +1400,8 @@ MwcGen mw;
         f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n\n";
-        f1<<"                                               Averages\n";
-        f1<<"Parameter                True values           Means             Medians             Modes\n";
+        f1<<"                                                                        Averages\n";
+        f1<<"Parameter                True values               Means                 Medians                 Modes\n";
 		f1<<setiosflags(ios::scientific)<<setiosflags(ios::right);
         for (int j=0;j<nparscaled;j++) {
             //cout<<nomparam[j]<<"\n";
@@ -1391,93 +1412,92 @@ MwcGen mw;
             for (int i=0;i<ntest;i++) x[i]=paramestscaled[i][j].med;mo[2]=cal_moyL(ntest,x);
             for (int i=0;i<ntest;i++) x[i]=paramestscaled[i][j].mod;mo[3]=cal_moyL(ntest,x);
             f1<<setw(10)<<setprecision(3)<<mo[0];
-			f1<<setw(20)<<setprecision(3)<<mo[1];
-			f1<<setw(19)<<setprecision(3)<<mo[2];
-			f1<<setw(19)<<setprecision(3)<<mo[3]<<"\n";
+			f1<<setw(24)<<setprecision(3)<<mo[1];
+			f1<<setw(24)<<setprecision(3)<<mo[2];
+			f1<<setw(22)<<setprecision(3)<<mo[3]<<"\n";
 			for (int i=0;i<35;i++) f1<<" ";
-			f1<<setw(10)<<setprecision(3)<<"("<<paramestscaledS[j].moy<<")";
-			f1<<setw(9)<<setprecision(3)<<"("<<paramestscaledS[j].med<<")";
-			f1<<setw(9)<<setprecision(3)<<"("<<paramestscaledS[j].mod<<")\n";
-        }
+ 			f1<<setw(14)<<setprecision(3)<<"("<<paramestscaledS[j].moy<<")";
+			f1<<setw(14)<<setprecision(3)<<"("<<paramestscaledS[j].med<<")\n";
+       }
         f1<<"\n                                           Mean Relative Bias\n";
-        f1<<"Parameter                           Means          Medians        Modes\n";
-        for (int j=0;j<nparscaled;j++) {
-            //cout<<nomparam[j]<<"\n";
-            f1<<nomparamS[j];
-            for(int i=0;i<33-(int)nomparamS[j].length();i++) f1<<" ";
-			f1<<fmLD(br_S[0][j],8,4);
-			f1<<fmLD(br_S[1][j],15,4);
-			f1<<fmLD(br_S[2][j],15,4)<<"\n";
-			for (int i=0;i<34;i++) f1<<" ";
-			f1<<fmLDP(br_SS[0][j],8,4);
-			f1<<fmLDP(br_SS[1][j],15,4);
-			f1<<fmLDP(br_SS[2][j],15,4)<<"\n";
-        }
-        f1<<"\n                            RRMISE            RMeanAD            Square root of mean square error/true value\n";
-        f1<<"Parameter                                                         Mean             Median             Mode\n";
+        f1<<"Parameter                     Means                    Medians                    Modes\n";
         for (int j=0;j<nparscaled;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamS[j];
             for(int i=0;i<24-(int)nomparamS[j].length();i++) f1<<" ";
-			f1<<fmLD(rrmise_S[j],10,3);
-			f1<<fmLD(rmad_S[j],18,3);
-			f1<<fmLD(rmse_S[0][j],18,3);
-			f1<<fmLD(rmse_S[1][j],19,3);
-			f1<<fmLD(rmse_S[2][j],17,3)<<"\n";
-			for (int i=0;i<25;i++) f1<<" ";
+			f1<<fmLD(br_S[0][j],7,3)<<" "<<fmLDP(br_SS[0][j],8,3);
+			f1<<fmLD(br_S[1][j],18,4)<<" "<<fmLDP(br_SS[1][j],8,3);
+			f1<<fmLD(br_S[2][j],18,4)<<"\n";
+			/*for (int i=0;i<34;i++) f1<<" ";
+			f1<<fmLDP(br_SS[0][j],8,4);
+			f1<<fmLDP(br_SS[1][j],15,4);
+			f1<<fmLDP(br_SS[2][j],15,4)<<"\n";*/
+        }
+        f1<<"\n                            RRMISE              RMeanAD            Square root of mean square error/true value\n";
+        f1<<"Parameter                                                           Mean                Median            Mode\n";
+        for (int j=0;j<nparscaled;j++) {
+            //cout<<nomparam[j]<<"\n";
+            f1<<nomparamS[j];
+            for(int i=0;i<20-(int)nomparamS[j].length();i++) f1<<" ";
+			f1<<fmLD(rrmise_S[j],10,3)<<" "<<fmLDP(rrmise_SS[j],8,3);
+			f1<<fmLD(rmad_S[j],11,3)<<" "<<fmLDP(rmad_SS[j],8,3);
+			f1<<fmLD(rmse_S[0][j],11,3)<<" "<<fmLDP(rmse_SS[0][j],8,3);
+			f1<<fmLD(rmse_S[1][j],11,3)<<" "<<fmLDP(rmse_SS[1][j],8,3);
+			f1<<fmLD(rmse_S[2][j],11,3)<<"\n";
+			/*for (int i=0;i<25;i++) f1<<" ";
 			f1<<fmLDP(rrmise_SS[j],10,3);
 			f1<<fmLDP(rmad_SS[j],18,3);
 			f1<<fmLDP(rmse_SS[0][j],18,3);
 			f1<<fmLDP(rmse_SS[1][j],19,3);
-			f1<<fmLDP(rmse_SS[2][j],17,3)<<"\n";
+			f1<<fmLDP(rmse_SS[2][j],17,3)<<"\n";*/
         }
-        f1<<"\n                                                                 Factor 2        Factor 2        Factor 2\n";
-        f1<<"Parameter               50% Coverage        95% Coverage         (Mean)          (Median)        (Mode)  \n";
+        f1<<"\n                                                                   Factor 2          Factor 2           Factor 2\n";
+        f1<<"Parameter               50% Coverage        95% Coverage           (Mean)            (Median)            (Mode)  \n";
         for (int j=0;j<nparscaled;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamS[j];
-            for(int i=0;i<24-(int)nomparamS[j].length();i++) f1<<" ";
-			f1<<fmLD(cov50_S[j],10,3);
-			f1<<fmLD(cov95_S[j],18,3);
-			f1<<fmLD(fac2_S[0][j],18,3);
-			f1<<fmLD(fac2_S[1][j],19,3);
-			f1<<fmLD(fac2_S[2][j],17,3)<<"\n";
-			for (int i=0;i<25;i++) f1<<" ";
+            for(int i=0;i<19-(int)nomparamS[j].length();i++) f1<<" ";
+			f1<<fmLD(cov50_S[j],10,3)<<" "<<fmLDP(cov50_SS[j],7,3);
+			f1<<fmLD(cov95_S[j],12,3)<<" "<<fmLDP(cov95_SS[j],7,3);
+			f1<<fmLD(fac2_S[0][j],12,3)<<" "<<fmLDP(fac2_SS[0][j],7,3);
+			f1<<fmLD(fac2_S[1][j],11,3)<<" "<<fmLDP(fac2_SS[1][j],7,3);
+			f1<<fmLD(fac2_S[2][j],15,3)<<"\n";
+			/*for (int i=0;i<25;i++) f1<<" ";
 			f1<<fmLDP(cov50_SS[j],10,3);
 			f1<<fmLDP(cov95_SS[j],18,3);
 			f1<<fmLDP(fac2_SS[0][j],18,3);
 			f1<<fmLDP(fac2_SS[1][j],19,3);
-			f1<<fmLDP(fac2_SS[2][j],17,3)<<"\n";
+			f1<<fmLDP(fac2_SS[2][j],17,3)<<"\n";*/
         }
         f1<<"\n                                          Median Relative Bias\n";
-        f1<<"Parameter                                     Means          Medians        Modes\n";
+        f1<<"Parameter                 Means                    Medians                  Modes\n";
         for (int j=0;j<nparscaled;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamS[j];
-            for(int i=0;i<43-(int)nomparamS[j].length();i++) f1<<" ";
-				f1<<fmLD(rmb_S[0][j],8,3);
-				f1<<fmLD(rmb_S[1][j],15,3);
-				f1<<fmLD(rmb_S[2][j],15,3)<<"\n";
-			for (int i=0;i<44;i++) f1<<" ";
+            for(int i=0;i<19-(int)nomparamS[j].length();i++) f1<<" ";
+				f1<<fmLD(rmb_S[0][j],8,3)<<" "<<fmLDP(rmb_SS[0][j],8,3);
+				f1<<fmLD(rmb_S[1][j],18,3)<<" "<<fmLDP(rmb_SS[1][j],8,3);
+				f1<<fmLD(rmb_S[2][j],18,3)<<"\n";
+			/*for (int i=0;i<44;i++) f1<<" ";
 				f1<<fmLDP(rmb_SS[0][j],8,3);
 				f1<<fmLDP(rmb_SS[1][j],15,3);
-				f1<<fmLDP(rmb_SS[2][j],15,3)<<"\n";
+				f1<<fmLDP(rmb_SS[2][j],15,3)<<"\n";*/
         }
-        f1<<"\n                             RMedAD        Median of the absolute error/true value\n";
-        f1<<"Parameter                                     Means          Medians        Modes\n";
+        f1<<"\n                             RMedAD                  Median of the absolute error/true value\n";
+        f1<<"Parameter                                          Means                    Medians                  Modes\n";
         for (int j=0;j<nparscaled;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamS[j];
-            for(int i=0;i<24-(int)nomparamS[j].length();i++) f1<<" ";
-			f1<<fmLD(rmedad_S[j],11,3);
-			f1<<fmLD(rmae_S[0][j],16,3);
-			f1<<fmLD(rmae_S[1][j],16,3);
-			f1<<fmLD(rmae_S[2][j],16,3)<<"\n";
-			for (int i=0;i<25;i++) f1<<" ";
+            for(int i=0;i<20-(int)nomparamS[j].length();i++) f1<<" ";
+			f1<<fmLD(rmedad_S[j],10,3)<<" "<<fmLDP(rmedad_SS[j],8,3);
+			f1<<fmLD(rmae_S[0][j],15,3)<<" "<<fmLDP(rmae_SS[0][j],8,3);
+			f1<<fmLD(rmae_S[1][j],15,3)<<" "<<fmLDP(rmae_SS[1][j],8,3);
+			f1<<fmLD(rmae_S[2][j],19,3)<<"\n";
+			/*for (int i=0;i<25;i++) f1<<" ";
 			f1<<fmLDP(rmedad_SS[j],11,3);
 			f1<<fmLDP(rmae_SS[0][j],16,3);
 			f1<<fmLDP(rmae_SS[1][j],16,3);
-			f1<<fmLDP(rmae_SS[2][j],16,3)<<"\n";
+			f1<<fmLDP(rmae_SS[2][j],16,3)<<"\n";*/
         }
          f1.close();
 
@@ -1770,9 +1790,6 @@ MwcGen mw;
 			phistar = new long double* [nsel];
 			for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
 			lisimparO();
-			//simparsel = echantillon(nsel,nsimpar,nparamcom,simpar);
-			//paramestS = calparstat(nsel,nparamcom,simparsel);
-			cout<<"apres paramestS\n";
 		}
 		if (composite) {
 			initbiasC(ntest,nsel,nparcompo);
@@ -1780,9 +1797,6 @@ MwcGen mw;
 			phistarcompo = new long double* [nsel];
 			for (int i=0;i<nsel;i++) phistarcompo[i] = new long double[nparcompo];
 			lisimparC();
-			simparcomposel = echantillon(nsel,nsimpar,nparcompo,simparcompo);
-			paramestcompoS = calparstat(nsel,nparcompo,simparcomposel);
-			cout<<"apres paramestcompoS\n";
 		}
 		if (scaled) {
 			initbiasS(ntest,nsel,nparscaled);
@@ -1790,11 +1804,9 @@ MwcGen mw;
 			phistarscaled = new long double* [nsel];
 			for (int i=0;i<nsel;i++) phistarscaled[i] = new long double[nparscaled];
 			lisimparS();
-			simparscaledsel = echantillon(nsel,nsimpar,nparscaled,simparscaled);
-			paramestscaledS = calparstat(nsel,nparscaled,simparscaledsel);
-			cout<<"apres paramestscaledS\n";
 		}
 		ftrace.open(nomfitrace.c_str());
+		numero = new int[nsel];
         for (int p=0;p<ntest;p++) {
             cout<<"\nanalysing data test "<<p+1<<" \n";
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg2[p].stat[j];
@@ -1804,6 +1816,8 @@ MwcGen mw;
 			rempli_mat(nsel,stat_obs);            	if (debuglevel==11)	cout<<"apres rempli_mat\n";
 			matC = cal_matC(nsel);               	if (debuglevel==11)	cout<<"cal_matC\n";
 			
+			for (int kk=0;kk<nsel;kk++) numero[kk] = mw.rand0(nsimpar);
+
 			if (original) {
 				recalparamO(nsel);                    	if (debuglevel==11)	cout<<"apres recalparamO\n";
 				rempli_parsim(nsel,nparamcom);  		if (debuglevel==11)   cout<<"apres rempli_mat\n";
