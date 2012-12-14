@@ -1,0 +1,53 @@
+\contentsline {section}{\numberline {1.}Preface}{3}
+\contentsline {subsection}{\numberline {1.1}Acknowledgements}{4}
+\contentsline {subsection}{\numberline {1.2}References to cite}{4}
+\contentsline {subsection}{\numberline {1.3}Web site}{4}
+\contentsline {section}{\numberline {2.}Methodology}{5}
+\contentsline {subsection}{\numberline {2.1}Basic notions on ABC}{5}
+\contentsline {subsection}{\numberline {2.2}Historical model parameterization}{5}
+\contentsline {subsection}{\numberline {2.3}Mutation model parameterization (microsatellite and DNA sequence loci)}{10}
+\contentsline {subsubsection}{\numberline {2.3.1}Microsatellite loci}{10}
+\contentsline {subsubsection}{\numberline {2.3.2}DNA sequence loci}{10}
+\contentsline {subsection}{\numberline {2.4}SNPs do not require mutation model parameterization}{11}
+\contentsline {subsection}{\numberline {2.5}Prior distributions}{11}
+\contentsline {subsection}{\numberline {2.6}Algorithms for data simulation : main features}{11}
+\contentsline {subsection}{\numberline {2.7}Summary statistics}{12}
+\contentsline {subsubsection}{\numberline {2.7.1}for microsatellite loci}{12}
+\contentsline {subsubsection}{\numberline {2.7.2}for DNA sequence loci}{13}
+\contentsline {subsubsection}{\numberline {2.7.3}for SNP loci}{13}
+\contentsline {subsection}{\numberline {2.8}Pre-evaluation of scenarios and prior distributions}{14}
+\contentsline {subsection}{\numberline {2.9}Estimation of posterior distributions of parameters}{14}
+\contentsline {subsection}{\numberline {2.10}Model checking}{15}
+\contentsline {subsection}{\numberline {2.11}Measures of performances}{15}
+\contentsline {subsection}{\numberline {2.12}Comparison of scenarios}{16}
+\contentsline {subsubsection}{\numberline {2.12.1}Reference table}{16}
+\contentsline {subsubsection}{\numberline {2.12.2}Posterior probability of scenarios}{17}
+\contentsline {subsubsection}{\numberline {2.12.3}Confidence in scenario choice}{17}
+\contentsline {section}{\numberline {3.}The Graphic User Interface}{18}
+\contentsline {subsection}{\numberline {3.1}What is a $DIYABC$ Project ?}{18}
+\contentsline {subsection}{\numberline {3.2}Options of the home screen}{18}
+\contentsline {subsection}{\numberline {3.3}Defining a new project}{19}
+\contentsline {subsubsection}{\numberline {3.3.1}Step 1 : choosing the data file}{20}
+\contentsline {subsubsection}{\numberline {3.3.2}Inform the Historical model}{22}
+\contentsline {subsubsection}{\numberline {3.3.3}Inform the Genetic model}{24}
+\contentsline {subsection}{\numberline {3.4}Building the reference table}{28}
+\contentsline {subsection}{\numberline {3.5}Performing analyses}{29}
+\contentsline {subsubsection}{\numberline {3.5.1}ABC parameter estimation}{32}
+\contentsline {subsubsection}{\numberline {3.5.2}Bias and precision}{37}
+\contentsline {subsubsection}{\numberline {3.5.3}Model Checking}{42}
+\contentsline {subsection}{\numberline {3.6}Simulating data sets}{46}
+\contentsline {subsection}{\numberline {3.7}The \textsf {Settings} option of the \textsf {File} menu}{58}
+\contentsline {subsubsection}{\numberline {3.7.1}Tab \textsf {``cluster''}}{59}
+\contentsline {subsubsection}{\numberline {3.7.2}Tab \textsf {``various''}}{59}
+\contentsline {subsubsection}{\numberline {3.7.3}Tab \textsf {``appearance''}}{61}
+\contentsline {subsubsection}{\numberline {3.7.4}Tabs \textsf {``MM Microsats''} and \textsf {``MM Sequences''}}{63}
+\contentsline {section}{\numberline {4.}Implementation details}{64}
+\contentsline {subsection}{\numberline {4.1}Software design}{64}
+\contentsline {subsection}{\numberline {4.2}Files}{64}
+\contentsline {subsubsection}{\numberline {4.2.1}data files}{64}
+\contentsline {subsubsection}{\numberline {4.2.2}reference table files}{64}
+\contentsline {subsubsection}{\numberline {4.2.3}output files}{64}
+\contentsline {subsection}{\numberline {4.3}Missing data}{67}
+\contentsline {subsection}{\numberline {4.4}Data files}{67}
+\contentsline {section}{\numberline {5.}Cluster version}{70}
+\contentsline {subsection}{\numberline {5.1}A note about the random number generator used in DIYABC}{72}

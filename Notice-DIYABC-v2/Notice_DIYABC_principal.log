@@ -1,0 +1,1869 @@
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.12.17)  13 DEC 2012 15:16
+entering extended mode
+ %&-line parsing enabled.
+**Notice_DIYABC_principal.tex
+(./Notice_DIYABC_principal.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, farsi, arabic, croatian, bulgarian, ukrainian, russian, czech, slov
+ak, danish, dutch, finnish, french, basque, ngerman, german, german-x-2009-06-1
+9, ngerman-x-2009-06-19, ibycus, monogreek, greek, ancientgreek, hungarian, san
+skrit, italian, latin, latvian, lithuanian, mongolian2a, mongolian, bokmal, nyn
+orsk, romanian, irish, coptic, serbian, turkish, welsh, esperanto, uppersorbian
+, estonian, indonesian, interlingua, icelandic, kurmanji, slovenian, polish, po
+rtuguese, spanish, galician, catalan, swedish, ukenglish, pinyin, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/report.cls
+Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/etc/texmf/tex/latex/config/graphics.cfg
+File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2010/03/12 v0.04p Graphics/color for pdfTeX
+\Gread@gobject=\count88
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+(/usr/share/texmf-texlive/tex/latex/tools/array.sty
+Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
+\col@sep=\dimen105
+\extrarowheight=\dimen106
+\NC@list=\toks15
+\extratabsurround=\skip43
+\backup@length=\skip44
+)
+(/usr/share/texmf-texlive/tex/latex/natbib/natbib.sty
+Package: natbib 2009/07/16 8.31 (PWD, AO)
+\bibhang=\skip45
+\bibsep=\skip46
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count89
+)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip47
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks16
+\ex@=\dimen107
+))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen108
+)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count90
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count91
+\leftroot@=\count92
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count93
+\DOTSCASE@=\count94
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box26
+\strutbox@=\box27
+\big@size=\dimen109
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count95
+\c@MaxMatrixCols=\count96
+\dotsspace@=\muskip10
+\c@parentequation=\count97
+\dspbrk@lvl=\count98
+\tag@help=\toks17
+\row@=\count99
+\column@=\count100
+\maxfields@=\count101
+\andhelp@=\toks18
+\eqnshift@=\dimen110
+\alignsep@=\dimen111
+\tagshift@=\dimen112
+\tagwidth@=\dimen113
+\totwidth@=\dimen114
+\lineht@=\dimen115
+\@envbody=\toks19
+\multlinegap=\skip48
+\multlinetaggap=\skip49
+\mathdisplay@stack=\toks20
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+(/usr/share/texmf-texlive/tex/latex/tools/bm.sty
+Package: bm 2004/02/26 v1.1c Bold Symbol Support (DPC/FMi)
+\symboldoperators=\mathgroup4
+\symboldletters=\mathgroup5
+\symboldsymbols=\mathgroup6
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 138.
+LaTeX Info: Redefining \bm on input line 204.
+)
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+Package: geometry 2008/12/21 v4.2 Page Geometry
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2009/04/10 v2.0 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in pdf mode detected.
+)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2008/11/04 v1.4 Switches for detecting VTeX and its modes (HO)
+Package ifvtex Info: VTeX not detected.
+)
+\Gm@cnth=\count102
+\Gm@cntv=\count103
+\c@Gm@tempcnt=\count104
+\Gm@bindingoffset=\dimen116
+\Gm@wd@mp=\dimen117
+\Gm@odd@mp=\dimen118
+\Gm@even@mp=\dimen119
+\Gm@dimlist=\toks21
+
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/soul/soul.sty
+Package: soul 2003/11/17 v2.4 letterspacing/underlining (mf)
+\SOUL@word=\toks22
+\SOUL@lasttoken=\toks23
+\SOUL@cmds=\toks24
+\SOUL@buffer=\toks25
+\SOUL@token=\toks26
+\SOUL@spaceskip=\skip50
+\SOUL@ttwidth=\dimen120
+\SOUL@uldp=\dimen121
+\SOUL@ulht=\dimen122
+)
+(/usr/share/texmf-texlive/tex/latex/graphics/color.sty
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+(/etc/texmf/tex/latex/config/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+(/usr/share/texmf-texlive/tex/latex/lineno/lineno.sty
+Package: lineno 2005/11/02 line numbers on paragraphs v4.41
+\linenopenalty=\count105
+\output=\toks27
+\linenoprevgraf=\count106
+\linenumbersep=\dimen123
+\linenumberwidth=\dimen124
+\c@linenumber=\count107
+\c@pagewiselinenumber=\count108
+\c@LN@truepage=\count109
+\c@internallinenumber=\count110
+\c@internallinenumbers=\count111
+\quotelinenumbersep=\dimen125
+\bframerule=\dimen126
+\bframesep=\dimen127
+\bframebox=\box28
+LaTeX Info: Redefining \\ on input line 3056.
+)
+(/usr/share/texmf-texlive/tex/latex/setspace/setspace.sty
+Package: setspace 2000/12/01 6.7 Contributed and Supported LaTeX2e package
+
+Package: `setspace' 6.7 <2000/12/01>
+) (./Notice_DIYABC_principal.aux)
+\openout1 = `Notice_DIYABC_principal.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+
+(/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count112
+\scratchdimen=\dimen128
+\scratchbox=\box29
+\nofMPsegments=\count113
+\nofMParguments=\count114
+\everyMPshowfont=\toks28
+\MPscratchCnt=\count115
+\MPscratchDim=\dimen129
+\MPnumerator=\count116
+\everyMPtoPDFconversion=\toks29
+)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+-------------------- Geometry parameters
+paper: a4paper
+landscape: --
+twocolumn: --
+twoside: --
+asymmetric: --
+h-parts: 71.13188pt, 455.24411pt, 71.13188pt
+v-parts: 71.13188pt, 702.78308pt, 71.13188pt
+hmarginratio: --
+vmarginratio: --
+lines: --
+heightrounded: --
+bindingoffset: 0.0pt
+truedimen: --
+includehead: --
+includefoot: --
+includemp: --
+driver: pdftex
+-------------------- Page layout dimensions and switches
+\paperwidth  597.50787pt
+\paperheight 845.04684pt
+\textwidth  455.24411pt
+\textheight 702.78308pt
+\oddsidemargin  -1.1381pt
+\evensidemargin -1.1381pt
+\topmargin  -38.1381pt
+\headheight 12.0pt
+\headsep    25.0pt
+\footskip   30.0pt
+\marginparwidth 57.0pt
+\marginparsep   11.0pt
+\columnsep  10.0pt
+\skip\footins  9.0pt plus 4.0pt minus 2.0pt
+\hoffset 0.0pt
+\voffset 0.0pt
+\mag 1000
+
+(1in=72.27pt, 1cm=28.45pt)
+-----------------------
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+(./Notice_DIYABC_principal.toc [1
+
+])
+\tf@toc=\write3
+\openout3 = `Notice_DIYABC_principal.toc'.
+
+ [2]
+Underfull \hbox (badness 10000) in paragraph at lines 59--61
+
+ []
+
+[3]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 89.
+ (/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 89.
+
+Underfull \hbox (badness 10000) in paragraph at lines 104--105
+
+ []
+
+[4] (./methodology.tex
+Underfull \hbox (badness 10000) in paragraph at lines 2--36
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 38--43
+
+ []
+
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 107--118
+
+ []
+
+[6]
+Underfull \hbox (badness 10000) in paragraph at lines 170--173
+
+ []
+
+<code_scenario_01.pdf, id=38, 191.71625pt x 150.5625pt>
+File: code_scenario_01.pdf Graphic file (type pdf)
+
+<use code_scenario_01.pdf> <scenario_01.pdf, id=39, 511.9125pt x 411.5375pt>
+File: scenario_01.pdf Graphic file (type pdf)
+
+<use scenario_01.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 179--181
+
+ []
+
+<code_scenario_02.pdf, id=40, 273.02pt x 190.7125pt>
+File: code_scenario_02.pdf Graphic file (type pdf)
+
+<use code_scenario_02.pdf> <scenario_02.pdf, id=41, 511.9125pt x 411.5375pt>
+File: scenario_02.pdf Graphic file (type pdf)
+
+<use scenario_02.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 188--194
+
+ []
+
+[7 <./code_scenario_01.pdf> <./scenario_01.pdf> <./code_scenario_02.pdf> <./sce
+nario_02.pdf>] <code_scenario_03.pdf, id=80, 279.0425pt x 251.94125pt>
+File: code_scenario_03.pdf Graphic file (type pdf)
+
+<use code_scenario_03.pdf> <scenario_03.pdf, id=81, 511.9125pt x 411.5375pt>
+File: scenario_03.pdf Graphic file (type pdf)
+
+<use scenario_03.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 200--202
+
+ []
+
+<code_scenario_04.pdf, id=82, 282.05376pt x 255.95625pt>
+File: code_scenario_04.pdf Graphic file (type pdf)
+
+<use code_scenario_04.pdf> <scenario_04.pdf, id=83, 511.9125pt x 411.5375pt>
+File: scenario_04.pdf Graphic file (type pdf)
+
+<use scenario_04.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 210--214
+
+ []
+
+<code_scenario_05-1.pdf, id=84, 273.02pt x 290.08376pt>
+File: code_scenario_05-1.pdf Graphic file (type pdf)
+
+<use code_scenario_05-1.pdf>
+<test3pop_scenario_1.png, id=85, 376.40625pt x 338.76563pt>
+File: test3pop_scenario_1.png Graphic file (type png)
+
+<use test3pop_scenario_1.png> [8 <./code_scenario_03.pdf> <./scenario_03.pdf> <
+./code_scenario_04.pdf> <./scenario_04.pdf>]
+<code_scenario_05-2.pdf, id=121, 270.00874pt x 281.05pt>
+File: code_scenario_05-2.pdf Graphic file (type pdf)
+
+<use code_scenario_05-2.pdf>
+<test3pop_scenario_2.pdf, id=122, 376.367pt x 338.7303pt>
+File: test3pop_scenario_2.pdf Graphic file (type pdf)
+
+<use test3pop_scenario_2.pdf>
+<code_scenario_05-3.pdf, id=123, 276.03125pt x 287.0725pt>
+File: code_scenario_05-3.pdf Graphic file (type pdf)
+
+<use code_scenario_05-3.pdf>
+<test3pop_scenario_3.pdf, id=124, 376.367pt x 338.7303pt>
+File: test3pop_scenario_3.pdf Graphic file (type pdf)
+
+<use test3pop_scenario_3.pdf> [9 <./code_scenario_05-1.pdf> <./test3pop_scenari
+o_1.png (PNG copy)> <./code_scenario_05-2.pdf> <./test3pop_scenario_2.pdf> <./c
+ode_scenario_05-3.pdf> <./test3pop_scenario_3.pdf>]
+Overfull \hbox (2.62665pt too wide) in paragraph at lines 241--241
+[]\OT1/cmr/bx/n/12 Mutation model pa-ram-e-ter-i-za-tion (mi-crosatel-lite and 
+DNA se-quence loci) 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 242--243
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 244--245
+
+ []
+
+[10] [11] [12] [13]
+Missing character: There is no Ò in font cmr10!
+Missing character: There is no Ó in font cmr10!
+Missing character: There is no Ð in font cmr10!
+Missing character: There is no Ð in font cmr10!
+Missing character: There is no Ò in font cmr10!
+Missing character: There is no Ó in font cmr10!
+ [14]
+Underfull \hbox (badness 10000) in paragraph at lines 484--486
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 486--488
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 488--491
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 491--493
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 494--495
+
+ []
+
+[15]
+Underfull \hbox (badness 10000) in paragraph at lines 508--509
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 513--514
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 516--517
+
+ []
+
+[16]
+Underfull \hbox (badness 10000) in paragraph at lines 529--530
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 536--537
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 538--539
+
+ []
+
+[17]) (./gui_description.tex
+Underfull \hbox (badness 10000) in paragraph at lines 3--4
+
+ []
+
+<gui_pictures/Capture-DIYABC-1.png, id=207, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-1.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-1.png>
+Underfull \hbox (badness 10000) in paragraph at lines 13--14
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 15--18
+
+ []
+
+<gui_pictures/Capture-DIYABC-2.png, id=209, 397.485pt x 335.2525pt>
+File: gui_pictures/Capture-DIYABC-2.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-2.png>
+<gui_pictures/Capture-DIYABC-3.png, id=210, 401.5pt x 339.2675pt>
+File: gui_pictures/Capture-DIYABC-3.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-3.png> [18
+
+ <./gui_pictures/Capture-DIYABC-1.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 31--34
+
+ []
+
+<gui_pictures/Capture-DIYABC-4.png, id=217, 1002.74625pt x 202.7575pt>
+File: gui_pictures/Capture-DIYABC-4.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-4.png>
+Underfull \hbox (badness 10000) in paragraph at lines 35--36
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--38
+
+ []
+
+<gui_pictures/Capture-DIYABC-5.png, id=218, 1002.74625pt x 197.73875pt>
+File: gui_pictures/Capture-DIYABC-5.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-5.png>
+Underfull \hbox (badness 10000) in paragraph at lines 39--40
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--42
+
+ []
+
+<gui_pictures/Capture-DIYABC-6.png, id=219, 990.70125pt x 236.885pt>
+File: gui_pictures/Capture-DIYABC-6.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-6.png>
+Underfull \hbox (badness 10000) in paragraph at lines 43--44
+
+ []
+
+[19 <./gui_pictures/Capture-DIYABC-2.png> <./gui_pictures/Capture-DIYABC-3.png>
+ <./gui_pictures/Capture-DIYABC-4.png> <./gui_pictures/Capture-DIYABC-5.png> <.
+/gui_pictures/Capture-DIYABC-6.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 79--81
+
+ []
+
+<gui_pictures/Capture-DIYABC-7.png, id=227, 740.7675pt x 570.13pt>
+File: gui_pictures/Capture-DIYABC-7.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-7.png>
+Underfull \hbox (badness 10000) in paragraph at lines 84--86
+
+ []
+
+<gui_pictures/Capture-DIYABC-8.png, id=228, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-8.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-8.png>
+Underfull \hbox (badness 10000) in paragraph at lines 92--93
+
+ []
+
+<gui_pictures/Capture-DIYABC-9.png, id=229, 787.94376pt x 549.05125pt>
+File: gui_pictures/Capture-DIYABC-9.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-9.png>
+<gui_pictures/Capture-DIYABC-10.png, id=230, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-10.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-10.png>
+Underfull \hbox (badness 10000) in paragraph at lines 94--101
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 94--101
+
+ []
+
+[20 <./gui_pictures/Capture-DIYABC-7.png (PNG copy)> <./gui_pictures/Capture-DI
+YABC-8.png>] [21 <./gui_pictures/Capture-DIYABC-9.png (PNG copy)> <./gui_pictur
+es/Capture-DIYABC-10.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 103--104
+
+ []
+
+<gui_pictures/Capture-DIYABC-11.png, id=239, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-11.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-11.png>
+Underfull \hbox (badness 10000) in paragraph at lines 107--108
+
+ []
+
+<gui_pictures/Capture-DIYABC-12.png, id=240, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-12.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-12.png>
+Underfull \hbox (badness 10000) in paragraph at lines 111--112
+
+ []
+
+[22 <./gui_pictures/Capture-DIYABC-11.png> <./gui_pictures/Capture-DIYABC-12.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 113--114
+
+ []
+
+<gui_pictures/Capture-DIYABC-13.png, id=246, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-13.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-13.png>
+Underfull \hbox (badness 10000) in paragraph at lines 117--118
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 119--120
+
+ []
+
+<gui_pictures/Capture-DIYABC-14.png, id=247, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-14.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-14.png> [23 <./gui_pictures/Capture-DIYABC-13.
+png> <./gui_pictures/Capture-DIYABC-14.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 126--127
+
+ []
+
+<gui_pictures/Capture-DIYABC-15.png, id=253, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-15.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-15.png>
+Underfull \hbox (badness 10000) in paragraph at lines 130--132
+
+ []
+
+<gui_pictures/Capture-DIYABC-16.png, id=254, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-16.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-16.png>
+Underfull \hbox (badness 10000) in paragraph at lines 135--136
+
+ []
+
+[24 <./gui_pictures/Capture-DIYABC-15.png> <./gui_pictures/Capture-DIYABC-16.pn
+g>] <gui_pictures/Capture-DIYABC-17.png, id=261, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-17.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-17.png>
+Underfull \hbox (badness 10000) in paragraph at lines 139--140
+
+ []
+
+<gui_pictures/Capture-DIYABC-18.png, id=262, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-18.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-18.png>
+Underfull \hbox (badness 10000) in paragraph at lines 143--144
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 145--146
+
+ []
+
+<gui_pictures/Capture-DIYABC-19.png, id=263, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-19.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-19.png> [25 <./gui_pictures/Capture-DIYABC-17.
+png> <./gui_pictures/Capture-DIYABC-18.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 149--150
+
+ []
+
+<gui_pictures/Capture-DIYABC-20.png, id=269, 1010.77625pt x 851.18pt>
+File: gui_pictures/Capture-DIYABC-20.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-20.png>
+Underfull \hbox (badness 10000) in paragraph at lines 153--154
+
+ []
+
+<gui_pictures/Capture-DIYABC-21.png, id=270, 1010.77625pt x 851.18pt>
+File: gui_pictures/Capture-DIYABC-21.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-21.png> [26 <./gui_pictures/Capture-DIYABC-19.
+png> <./gui_pictures/Capture-DIYABC-20.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 157--158
+
+ []
+
+<gui_pictures/Capture-DIYABC-22.png, id=276, 1010.77625pt x 851.18pt>
+File: gui_pictures/Capture-DIYABC-22.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-22.png>
+<gui_pictures/Capture-DIYABC-23.png, id=277, 498.86375pt x 284.06125pt>
+File: gui_pictures/Capture-DIYABC-23.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-23.png> [27 <./gui_pictures/Capture-DIYABC-21.
+png> <./gui_pictures/Capture-DIYABC-22.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 168--169
+
+ []
+
+<gui_pictures/Capture-DIYABC-24.png, id=283, 901.3675pt x 234.8775pt>
+File: gui_pictures/Capture-DIYABC-24.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-24.png>
+Underfull \hbox (badness 10000) in paragraph at lines 173--174
+
+ []
+
+<gui_pictures/Capture-DIYABC-25.png, id=284, 905.3825pt x 280.04625pt>
+File: gui_pictures/Capture-DIYABC-25.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-25.png>
+Underfull \hbox (badness 10000) in paragraph at lines 177--178
+
+ []
+
+<gui_pictures/Capture-DIYABC-26.png, id=285, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-26.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-26.png> [28 <./gui_pictures/Capture-DIYABC-23.
+png> <./gui_pictures/Capture-DIYABC-24.png> <./gui_pictures/Capture-DIYABC-25.p
+ng (PNG copy)> <./gui_pictures/Capture-DIYABC-26.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 183--184
+
+ []
+
+<gui_pictures/Capture-DIYABC-27.png, id=292, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-27.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-27.png>
+Underfull \hbox (badness 10000) in paragraph at lines 187--188
+
+ []
+
+<gui_pictures/Capture-DIYABC-28.png, id=293, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-28.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-28.png>
+Underfull \hbox (badness 10000) in paragraph at lines 191--192
+
+ []
+
+[29 <./gui_pictures/Capture-DIYABC-27.png> <./gui_pictures/Capture-DIYABC-28.pn
+g>] <gui_pictures/Capture-DIYABC-29.png, id=299, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-29.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-29.png>
+Underfull \hbox (badness 10000) in paragraph at lines 193--194
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 195--196
+
+ []
+
+<gui_pictures/Capture-DIYABC-30.png, id=300, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-30.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-30.png>
+Underfull \hbox (badness 10000) in paragraph at lines 198--199
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 200--201
+
+ []
+
+[30 <./gui_pictures/Capture-DIYABC-29.png> <./gui_pictures/Capture-DIYABC-30.pn
+g>] <gui_pictures/Capture-DIYABC-31.png, id=307, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-31.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-31.png>
+Underfull \hbox (badness 10000) in paragraph at lines 202--203
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 204--205
+
+ []
+
+<gui_pictures/Capture-DIYABC-32.png, id=308, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-32.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-32.png>
+Underfull \hbox (badness 10000) in paragraph at lines 206--207
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 208--210
+
+ []
+
+[31 <./gui_pictures/Capture-DIYABC-31.png> <./gui_pictures/Capture-DIYABC-32.pn
+g>] <gui_pictures/Capture-DIYABC-33.png, id=314, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-33.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-33.png>
+Underfull \hbox (badness 10000) in paragraph at lines 211--212
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 213--214
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 215--216
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 221--222
+
+ []
+
+<gui_pictures/Capture-DIYABC-34.png, id=315, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-34.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-34.png>
+Underfull \hbox (badness 10000) in paragraph at lines 223--224
+
+ []
+
+[32 <./gui_pictures/Capture-DIYABC-33.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 225--226
+
+ []
+
+<gui_pictures/Capture-DIYABC-35.png, id=320, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-35.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-35.png>
+Underfull \hbox (badness 10000) in paragraph at lines 227--228
+
+ []
+
+[33 <./gui_pictures/Capture-DIYABC-34.png> <./gui_pictures/Capture-DIYABC-35.pn
+g>] <gui_pictures/Capture-DIYABC-36.png, id=326, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-36.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-36.png>
+Underfull \hbox (badness 10000) in paragraph at lines 237--238
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 239--240
+
+ []
+
+<gui_pictures/Capture-DIYABC-38.png, id=327, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-38.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-38.png>
+Underfull \hbox (badness 10000) in paragraph at lines 241--242
+
+ []
+
+[34 <./gui_pictures/Capture-DIYABC-36.png> <./gui_pictures/Capture-DIYABC-38.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 244--245
+
+ []
+
+<gui_pictures/Capture-DIYABC-38a.png, id=333, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-38a.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-38a.png>
+Underfull \hbox (badness 10000) in paragraph at lines 246--247
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 248--249
+
+ []
+
+<gui_pictures/Capture-DIYABC-39.png, id=334, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-39.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-39.png>
+Underfull \hbox (badness 10000) in paragraph at lines 250--251
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 252--253
+
+ []
+
+<gui_pictures/Capture-DIYABC-40.png, id=335, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-40.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-40.png>
+Underfull \hbox (badness 10000) in paragraph at lines 254--255
+
+ []
+
+[35 <./gui_pictures/Capture-DIYABC-38a.png> <./gui_pictures/Capture-DIYABC-39.p
+ng>]
+Underfull \hbox (badness 10000) in paragraph at lines 256--257
+
+ []
+
+<gui_pictures/Capture-DIYABC-41.png, id=341, 1055.945pt x 782.925pt>
+File: gui_pictures/Capture-DIYABC-41.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-41.png>
+Underfull \hbox (badness 10000) in paragraph at lines 258--259
+
+ []
+
+[36 <./gui_pictures/Capture-DIYABC-40.png> <./gui_pictures/Capture-DIYABC-41.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 262--263
+
+ []
+
+<gui_pictures/Capture-DIYABC-42.png, id=348, 1055.945pt x 782.925pt>
+File: gui_pictures/Capture-DIYABC-42.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-42.png>
+Underfull \hbox (badness 10000) in paragraph at lines 264--265
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--269
+
+ []
+
+<gui_pictures/Capture-DIYABC-43.png, id=349, 968.61874pt x 787.94376pt>
+File: gui_pictures/Capture-DIYABC-43.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-43.png>
+Underfull \hbox (badness 10000) in paragraph at lines 270--271
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 272--274
+
+ []
+
+[37 <./gui_pictures/Capture-DIYABC-42.png> <./gui_pictures/Capture-DIYABC-43.pn
+g>] <gui_pictures/Capture-DIYABC-44.png, id=355, 968.61874pt x 787.94376pt>
+File: gui_pictures/Capture-DIYABC-44.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-44.png>
+Underfull \hbox (badness 10000) in paragraph at lines 275--276
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 277--278
+
+ []
+
+<gui_pictures/Capture-DIYABC-45.png, id=356, 968.61874pt x 787.94376pt>
+File: gui_pictures/Capture-DIYABC-45.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-45.png>
+Underfull \hbox (badness 10000) in paragraph at lines 279--280
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 281--282
+
+ []
+
+<gui_pictures/Capture-DIYABC-46.png, id=357, 968.61874pt x 787.94376pt>
+File: gui_pictures/Capture-DIYABC-46.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-46.png>
+Underfull \hbox (badness 10000) in paragraph at lines 283--284
+
+ []
+
+[38 <./gui_pictures/Capture-DIYABC-44.png> <./gui_pictures/Capture-DIYABC-45.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 285--286
+
+ []
+
+<gui_pictures/Capture-DIYABC-47.png, id=363, 968.61874pt x 787.94376pt>
+File: gui_pictures/Capture-DIYABC-47.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-47.png>
+Underfull \hbox (badness 10000) in paragraph at lines 287--288
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 289--290
+
+ []
+
+<gui_pictures/Capture-DIYABC-48.png, id=364, 968.61874pt x 787.94376pt>
+File: gui_pictures/Capture-DIYABC-48.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-48.png>
+Underfull \hbox (badness 10000) in paragraph at lines 291--292
+
+ []
+
+[39 <./gui_pictures/Capture-DIYABC-46.png> <./gui_pictures/Capture-DIYABC-47.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 293--294
+
+ []
+
+<gui_pictures/Capture-DIYABC-49.png, id=370, 968.61874pt x 787.94376pt>
+File: gui_pictures/Capture-DIYABC-49.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-49.png>
+Underfull \hbox (badness 10000) in paragraph at lines 295--296
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 297--298
+
+ []
+
+<gui_pictures/Capture-DIYABC-50.png, id=371, 968.61874pt x 787.94376pt>
+File: gui_pictures/Capture-DIYABC-50.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-50.png>
+Underfull \hbox (badness 10000) in paragraph at lines 299--300
+
+ []
+
+[40 <./gui_pictures/Capture-DIYABC-48.png> <./gui_pictures/Capture-DIYABC-49.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 301--302
+
+ []
+
+<gui_pictures/Capture-DIYABC-51.png, id=377, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-51.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-51.png>
+Underfull \hbox (badness 10000) in paragraph at lines 303--304
+
+ []
+
+[41 <./gui_pictures/Capture-DIYABC-50.png> <./gui_pictures/Capture-DIYABC-51.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 309--310
+
+ []
+
+<gui_pictures/Capture-DIYABC-52a.png, id=383, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-52a.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-52a.png>
+Underfull \hbox (badness 10000) in paragraph at lines 311--312
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 316--317
+
+ []
+
+<gui_pictures/Capture-DIYABC-53.png, id=384, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-53.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-53.png>
+Underfull \hbox (badness 10000) in paragraph at lines 318--319
+
+ []
+
+[42 <./gui_pictures/Capture-DIYABC-52a.png> <./gui_pictures/Capture-DIYABC-53.p
+ng>]
+Underfull \hbox (badness 10000) in paragraph at lines 322--323
+
+ []
+
+<gui_pictures/Capture-DIYABC-54.png, id=391, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-54.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-54.png>
+Underfull \hbox (badness 10000) in paragraph at lines 324--325
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 326--327
+
+ []
+
+<gui_pictures/Capture-DIYABC-55.png, id=392, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-55.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-55.png>
+Underfull \hbox (badness 10000) in paragraph at lines 328--329
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 330--331
+
+ []
+
+[43 <./gui_pictures/Capture-DIYABC-54.png> <./gui_pictures/Capture-DIYABC-55.pn
+g>] <gui_pictures/Capture-DIYABC-56.png, id=398, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-56.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-56.png>
+Underfull \hbox (badness 10000) in paragraph at lines 332--333
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 334--335
+
+ []
+
+<gui_pictures/Capture-DIYABC-57.png, id=399, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-57.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-57.png>
+Underfull \hbox (badness 10000) in paragraph at lines 336--337
+
+ []
+
+[44 <./gui_pictures/Capture-DIYABC-56.png> <./gui_pictures/Capture-DIYABC-57.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 339--341
+
+ []
+
+<gui_pictures/Capture-DIYABC-58.png, id=405, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-58.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-58.png>
+Underfull \hbox (badness 10000) in paragraph at lines 342--343
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 344--345
+
+ []
+
+<gui_pictures/Capture-DIYABC-60.png, id=406, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-60.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-60.png>
+Underfull \hbox (badness 10000) in paragraph at lines 346--347
+
+ []
+
+[45 <./gui_pictures/Capture-DIYABC-58.png> <./gui_pictures/Capture-DIYABC-60.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 352--353
+
+ []
+
+<gui_pictures/Capture-DIYABC-62.png, id=412, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-62.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-62.png>
+Underfull \hbox (badness 10000) in paragraph at lines 354--355
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 356--357
+
+ []
+
+<gui_pictures/Capture-DIYABC-64.png, id=413, 638.385pt x 466.74374pt>
+File: gui_pictures/Capture-DIYABC-64.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-64.png>
+Underfull \hbox (badness 10000) in paragraph at lines 358--359
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 362--363
+
+ []
+
+<gui_pictures/Capture-DIYABC-65.png, id=414, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-65.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-65.png>
+Underfull \hbox (badness 10000) in paragraph at lines 364--365
+
+ []
+
+[46 <./gui_pictures/Capture-DIYABC-62.png> <./gui_pictures/Capture-DIYABC-64.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 366--367
+
+ []
+
+<gui_pictures/Capture-DIYABC-66.png, id=420, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-66.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-66.png>
+Underfull \hbox (badness 10000) in paragraph at lines 368--369
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 370--371
+
+ []
+
+<gui_pictures/Capture-DIYABC-67.png, id=421, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-67.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-67.png>
+Underfull \hbox (badness 10000) in paragraph at lines 372--373
+
+ []
+
+[47 <./gui_pictures/Capture-DIYABC-65.png> <./gui_pictures/Capture-DIYABC-66.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 374--375
+
+ []
+
+<gui_pictures/Capture-DIYABC-68.png, id=427, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-68.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-68.png>
+Underfull \hbox (badness 10000) in paragraph at lines 376--377
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 378--379
+
+ []
+
+<gui_pictures/Capture-DIYABC-69.png, id=428, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-69.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-69.png>
+Underfull \hbox (badness 10000) in paragraph at lines 380--381
+
+ []
+
+[48 <./gui_pictures/Capture-DIYABC-67.png> <./gui_pictures/Capture-DIYABC-68.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 382--383
+
+ []
+
+<gui_pictures/Capture-DIYABC-70.png, id=435, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-70.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-70.png>
+Underfull \hbox (badness 10000) in paragraph at lines 384--385
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 387--388
+
+ []
+
+<gui_pictures/Capture-DIYABC-71.png, id=436, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-71.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-71.png>
+Underfull \hbox (badness 10000) in paragraph at lines 389--390
+
+ []
+
+[49 <./gui_pictures/Capture-DIYABC-69.png> <./gui_pictures/Capture-DIYABC-70.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 391--392
+
+ []
+
+<gui_pictures/Capture-DIYABC-72.png, id=442, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-72.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-72.png>
+Underfull \hbox (badness 10000) in paragraph at lines 393--394
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 395--396
+
+ []
+
+<gui_pictures/Capture-DIYABC-73.png, id=443, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-73.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-73.png>
+Underfull \hbox (badness 10000) in paragraph at lines 397--398
+
+ []
+
+[50 <./gui_pictures/Capture-DIYABC-71.png> <./gui_pictures/Capture-DIYABC-72.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 399--400
+
+ []
+
+<gui_pictures/Capture-DIYABC-74.png, id=449, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-74.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-74.png>
+Underfull \hbox (badness 10000) in paragraph at lines 401--402
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 403--404
+
+ []
+
+<gui_pictures/Capture-DIYABC-75.png, id=450, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-75.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-75.png>
+Underfull \hbox (badness 10000) in paragraph at lines 405--406
+
+ []
+
+[51 <./gui_pictures/Capture-DIYABC-73.png> <./gui_pictures/Capture-DIYABC-74.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 407--408
+
+ []
+
+<gui_pictures/Capture-DIYABC-76.png, id=456, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-76.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-76.png>
+Underfull \hbox (badness 10000) in paragraph at lines 409--410
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 411--412
+
+ []
+
+<gui_pictures/Capture-DIYABC-77.png, id=457, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-77.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-77.png>
+Underfull \hbox (badness 10000) in paragraph at lines 413--414
+
+ []
+
+[52 <./gui_pictures/Capture-DIYABC-75.png> <./gui_pictures/Capture-DIYABC-76.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 415--416
+
+ []
+
+
+LaTeX Warning: File `gui_pictures/Capture-DIYABC-78.png' not found on input lin
+e 417.
+
+
+! Package pdftex.def Error: File `gui_pictures/Capture-DIYABC-78.png' not found
+.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.417 ...0.33]{gui_pictures/Capture-DIYABC-78.png}
+                                                   \\
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 417--418
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 419--420
+
+ []
+
+<gui_pictures/Capture-DIYABC-79.png, id=463, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-79.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-79.png>
+Underfull \hbox (badness 10000) in paragraph at lines 421--422
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 423--424
+
+ []
+
+[53 <./gui_pictures/Capture-DIYABC-77.png> <./gui_pictures/Capture-DIYABC-79.pn
+g>] <gui_pictures/Capture-DIYABC-80.png, id=469, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-80.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-80.png>
+Underfull \hbox (badness 10000) in paragraph at lines 425--426
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 427--428
+
+ []
+
+<gui_pictures/Capture-DIYABC-81.png, id=470, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-81.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-81.png>
+Underfull \hbox (badness 10000) in paragraph at lines 429--430
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 431--432
+
+ []
+
+<gui_pictures/Capture-DIYABC-82.png, id=471, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-82.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-82.png>
+Underfull \hbox (badness 10000) in paragraph at lines 433--434
+
+ []
+
+[54 <./gui_pictures/Capture-DIYABC-80.png> <./gui_pictures/Capture-DIYABC-81.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 435--436
+
+ []
+
+<gui_pictures/Capture-DIYABC-83.png, id=478, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-83.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-83.png>
+Underfull \hbox (badness 10000) in paragraph at lines 437--438
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 439--440
+
+ []
+
+<gui_pictures/Capture-DIYABC-84.png, id=479, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-84.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-84.png>
+Underfull \hbox (badness 10000) in paragraph at lines 441--442
+
+ []
+
+[55 <./gui_pictures/Capture-DIYABC-82.png> <./gui_pictures/Capture-DIYABC-83.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 443--444
+
+ []
+
+<gui_pictures/Capture-DIYABC-85.png, id=485, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-85.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-85.png>
+Underfull \hbox (badness 10000) in paragraph at lines 445--446
+
+ []
+
+[56 <./gui_pictures/Capture-DIYABC-84.png> <./gui_pictures/Capture-DIYABC-85.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 448--449
+
+ []
+
+<gui_pictures/Capture-DIYABC-86.png, id=491, 1009.7725pt x 859.21pt>
+File: gui_pictures/Capture-DIYABC-86.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-86.png>
+Underfull \hbox (badness 10000) in paragraph at lines 450--451
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 452--453
+
+ []
+
+<gui_pictures/Capture-DIYABC-87.png, id=492, 783.92876pt x 608.2725pt>
+File: gui_pictures/Capture-DIYABC-87.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-87.png>
+Underfull \hbox (badness 10000) in paragraph at lines 454--455
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 456--457
+
+ []
+
+<gui_pictures/Capture-DIYABC-88.png, id=493, 1425.325pt x 1011.78pt>
+File: gui_pictures/Capture-DIYABC-88.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-88.png>
+Overfull \hbox (30.1146pt too wide) in paragraph at lines 458--459
+[][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 458--459
+
+ []
+
+[57 <./gui_pictures/Capture-DIYABC-86.png> <./gui_pictures/Capture-DIYABC-87.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 465--466
+
+ []
+
+<gui_pictures/Capture-DIYABC-91.png, id=499, 420.57124pt x 380.42125pt>
+File: gui_pictures/Capture-DIYABC-91.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-91.png>
+Underfull \hbox (badness 10000) in paragraph at lines 467--468
+
+ []
+
+[58 <./gui_pictures/Capture-DIYABC-88.png> <./gui_pictures/Capture-DIYABC-91.pn
+g (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 471--472
+
+ []
+
+<gui_pictures/Capture-DIYABC-92.png, id=505, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-92.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-92.png>
+Underfull \hbox (badness 10000) in paragraph at lines 473--474
+
+ []
+
+<gui_pictures/Capture-DIYABC-94.png, id=506, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-94.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-94.png>
+Underfull \hbox (badness 10000) in paragraph at lines 493--495
+
+ []
+
+[59 <./gui_pictures/Capture-DIYABC-92.png>]
+<gui_pictures/Capture-DIYABC-95.png, id=511, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-95.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-95.png>
+Underfull \hbox (badness 10000) in paragraph at lines 496--498
+
+ []
+
+[60 <./gui_pictures/Capture-DIYABC-94.png> <./gui_pictures/Capture-DIYABC-95.pn
+g>] <gui_pictures/Capture-DIYABC-97.png, id=518, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-97.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-97.png>
+Underfull \hbox (badness 10000) in paragraph at lines 500--502
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 509--510
+
+ []
+
+<gui_pictures/Capture-DIYABC-98.png, id=519, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-98.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-98.png>
+Underfull \hbox (badness 10000) in paragraph at lines 511--512
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 513--514
+
+ []
+
+<gui_pictures/Capture-DIYABC-99.png, id=520, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-99.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-99.png>
+Underfull \hbox (badness 10000) in paragraph at lines 515--516
+
+ []
+
+[61 <./gui_pictures/Capture-DIYABC-97.png> <./gui_pictures/Capture-DIYABC-98.pn
+g>]
+Underfull \hbox (badness 10000) in paragraph at lines 517--518
+
+ []
+
+<gui_pictures/Capture-DIYABC-100.png, id=526, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-100.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-100.png>
+Underfull \hbox (badness 10000) in paragraph at lines 519--520
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 521--522
+
+ []
+
+<gui_pictures/Capture-DIYABC-101.png, id=527, 503.8825pt x 394.47375pt>
+File: gui_pictures/Capture-DIYABC-101.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-101.png>
+Underfull \hbox (badness 10000) in paragraph at lines 523--524
+
+ []
+
+[62 <./gui_pictures/Capture-DIYABC-99.png> <./gui_pictures/Capture-DIYABC-100.p
+ng>]
+Underfull \hbox (badness 10000) in paragraph at lines 528--529
+
+ []
+
+<gui_pictures/Capture-DIYABC-102.png, id=533, 1005.7575pt x 785.93625pt>
+File: gui_pictures/Capture-DIYABC-102.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-102.png>
+Underfull \hbox (badness 10000) in paragraph at lines 530--531
+
+ []
+
+Missing character: There is no á in font cmr10!
+) (./Implementation.tex [63 <./gui_pictures/Capture-DIYABC-101.png> <./gui_pict
+ures/Capture-DIYABC-102.png>]
+Overfull \hbox (5.76764pt too wide) in paragraph at lines 20--21
+\OT1/cmr/m/n/10 a text file is cre-ated in the project di-rec-tory with the nam
+e \OT1/cmtt/m/n/10 first[]records[]of[]the[]reference[]table[]X.txt
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 20--21
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 23--24
+
+ []
+
+[64
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 25--26
+
+ []
+
+<gui_pictures/Capture-DIYABC-103.png, id=542, 542.025pt x 564.1075pt>
+File: gui_pictures/Capture-DIYABC-103.png Graphic file (type png)
+
+<use gui_pictures/Capture-DIYABC-103.png>
+Underfull \hbox (badness 10000) in paragraph at lines 27--28
+
+ []
+
+
+Overfull \hbox (11.27142pt too wide) in paragraph at lines 31--32
+[]\OT1/cmr/m/n/10 This anal-y-sis can pro-duce two out-put files named \OT1/cmt
+t/m/n/10 ACP.txt
+ []
+
+
+Overfull \hbox (56.996pt too wide) in paragraph at lines 32--33
+[]\OT1/cmr/m/n/10 This anal-y-sis pro-duces three out-put text files : \OT1/cmt
+t/m/n/10 compdirect.txt\OT1/cmr/m/n/10 ,
+ []
+
+
+Overfull \hbox (7.37393pt too wide) in paragraph at lines 33--34
+[]\OT1/cmr/m/n/10 This anal-y-sis pro-duces a sin-gle out-put file, \OT1/cmtt/m
+/n/10 confidence.txt\OT1/cmr/m/n/10 ,
+ []
+
+[65 <./gui_pictures/Capture-DIYABC-103.png (PNG copy)>]
+Overfull \hbox (60.78691pt too wide) in paragraph at lines 37--38
+[]\OT1/cmr/m/n/10 three files \OT1/cmtt/m/n/10 paramstatdens[]original.txt\OT1/
+cmr/m/n/10 , \OT1/cmtt/m/n/10 paramstatdens[]composite.txt \OT1/cmr/m/n/10 and 
+\OT1/cmtt/m/n/10 paramstatdens[]scaled.txt
+ []
+
+
+Overfull \hbox (59.26276pt too wide) in paragraph at lines 41--42
+[]\OT1/cmr/m/n/10 Three files \OT1/cmtt/m/n/10 bias[]original.txt\OT1/cmr/m/n/1
+0 , \OT1/cmtt/m/n/10 bias[]composite.txt
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 44--45
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 59--60
+
+ []
+
+[66] <gui_pictures/screenga001.png, id=550, 573.342pt x 410.0118pt>
+File: gui_pictures/screenga001.png Graphic file (type png)
+
+<use gui_pictures/screenga001.png> [67]
+<gui_pictures/screenga002.png, id=554, 573.342pt x 328.1058pt>
+File: gui_pictures/screenga002.png Graphic file (type png)
+
+<use gui_pictures/screenga002.png> [68 <./gui_pictures/screenga001.png (PNG cop
+y)> <./gui_pictures/screenga002.png (PNG copy)>]
+<gui_pictures/screenga003.png, id=558, 663.47874pt x 598.235pt>
+File: gui_pictures/screenga003.png Graphic file (type png)
+
+<use gui_pictures/screenga003.png>
+Overfull \hbox (9.18784pt too wide) in paragraph at lines 119--120
+[][] 
+ []
+
+[69 <./gui_pictures/screenga003.png (PNG copy)>]
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 129.
+
+Overfull \hbox (32.19955pt too wide) in paragraph at lines 129--133
+\OT1/cmr/m/n/10 data sets ac-cord-ing to the ob-served data set and anal-y-sis 
+sum-ma-rized in \OT1/cmtt/m/n/10 mydataanalysis.reftableHeader\OT1/cmr/m/n/10 .
+ 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--141
+
+ []
+
+
+Overfull \hbox (2.81549pt too wide) in paragraph at lines 143--144
+[]\OT1/cmr/m/n/10 Transfer the reftable-Header file and the data file on the cl
+us-ter and us-ing \OT1/cmtt/m/n/10 diyabc[]sim \OT1/cmr/m/n/10 and \OT1/cmtt/m/
+n/10 diyabc[]cat
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 146--147
+
+ []
+
+[70
+
+] <gui_pictures/script_SGE.pdf, id=565, 341.43309pt x 625.96065pt>
+File: gui_pictures/script_SGE.pdf Graphic file (type pdf)
+
+<use gui_pictures/script_SGE.pdf> [71 <./gui_pictures/script_SGE.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 167--168
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 169--170
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 171--172
+
+ []
+
+
+Overfull \hbox (17.96268pt too wide) in paragraph at lines 173--176
+[]\OT1/cmr/m/n/10 In DIYABC, we chose a 24-bit gen-er-a-tor, mean-ing that the 
+\OT1/cmr/m/it/10 mod-ulo \OT1/cmr/m/n/10 pa-ram-e-ter is fixed to $\OML/cmm/m/i
+t/10 M$\OT1/cmr/m/n/10 =$2[]$=16777216. 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 173--176
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 177--179
+
+ []
+
+) (./biblio.tex [72
+
+
+]
+Missing character: There is no Ž in font cmr10!
+Missing character: There is no Ž in font cmr10!
+Missing character: There is no Ž in font cmr10!
+Missing character: There is no Ž in font cmr10!
+Missing character: There is no Ð in font cmr10!
+ [73
+
+]
+Underfull \hbox (badness 2409) in paragraph at lines 45--46
+[]\OT1/cmr/m/n/10 Lombaert E., T. Guille-maud, J.M. Cor-nuet, T. Malausa, B. Fa
+-con and A. Es-toup, 2010.
+ []
+
+[74]
+Missing character: There is no á in font cmr10!
+Missing character: There is no é in font cmr10!
+Missing character: There is no í in font cmr10!
+) [75] (./Notice_DIYABC_principal.aux) ) 
+Here is how much of TeX's memory you used:
+ 3762 strings out of 493848
+ 58905 string characters out of 1152822
+ 110596 words of memory out of 3000000
+ 6868 multiletter control sequences out of 15000+50000
+ 19100 words of font info for 66 fonts, out of 3000000 for 9000
+ 714 hyphenation exceptions out of 8191
+ 27i,11n,28p,1336b,307s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type1/p
+ublic/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfo
+nts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx
+ti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/
+texmf-texlive/fonts/type1/public/amsfonts/cmextra/cmex7.pfb></usr/share/texmf-t
+exlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/font
+s/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-texlive/fonts/type1/pub
+lic/amsfonts/cm/cmmi5.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts
+/cm/cmmi6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pf
+b></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/shar
+e/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texmf-te
+xlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/
+type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public
+/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
+/cmr5.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr6.pfb></u
+sr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texm
+f-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/fon
+ts/type1/public/amsfonts/cm/cmsl10.pfb></usr/share/texmf-texlive/fonts/type1/pu
+blic/amsfonts/cm/cmss10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
+ts/cm/cmss8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmssbx
+10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></us
+r/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texm
+f-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/f
+onts/type1/public/amsfonts/cm/cmti8.pfb></usr/share/texmf-texlive/fonts/type1/p
+ublic/amsfonts/cm/cmtt10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfo
+nts/cm/cmtt12.pfb>
+Output written on Notice_DIYABC_principal.pdf (76 pages, 7028627 bytes).
+PDF statistics:
+ 689 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 566 words of extra memory for PDF output out of 10000 (max. 10000000)
+
