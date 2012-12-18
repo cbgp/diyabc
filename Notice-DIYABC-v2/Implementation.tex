@@ -154,32 +154,7 @@ The process of simulating data sets is generally a time consuming part of the AB
 
 \clearpage
 \subsection{A note about the random number generator used in DIYABC}
-
-The random number generator used in DIYABC is of the \emph{Multiply With Carry} type invented by G. Marsaglia (see http://en.wikipedia.org/wiki/Multiply-with-carry for detailed explanations and references; see also http://www.rlmueller.net/MWC32.htm for a more condensed description).\\
-The major interests of this random generator are :
-\begin{itemize}
-\item  it is very simple to program 
-\item it is also very fast
-\item there is a large choice of random number sequences among which to choose
-\item the period of each sequence is a simple function of two parameters that define the sequence
-\end{itemize} 
-
-Four parameters define a unique sequence of pseudo random numbers. They are called the \emph{modulo} ($M$), the \emph{multiply}($m$), the \emph{initial x} ($x_0$) and the \emph{initial carry} ($c_0$). Only the last two parameters change when drawing a number, according to the following equations : \\
-
-$x_i$ =$ [(m * x_{i-1} + c_{i-1}] $ \textsf{modulo} $M$\\  
-
-$c_i$ = $[(m * x_{i-1} + c_{i-1}]$  \textsf{div}\footnote{\textsf{div} is the integer division, i.e. the result ($c_i$) is the integer part of the ratio.} $M$\\
-
-In DIYABC, we chose a 24-bit generator, meaning that the \emph{modulo} parameter is fixed to $M$=$2^{24}$=16777216.\\
-The \emph{multiply} parameter, which defines the sequence, is chosen among numbers that garanties a period larger than $10^{15}$. \\
-The last two parameters, \emph{initial x and carry} are drawn at random, using the Delphi \textsf{random} function. \\
-
-The multithreaded sections of the codes which require random draws are such that each thread uses its own random generator (defined by its own \emph{multiply} parameter). This solution spares writing conflicts from different threads since each call to a random generator involves writing new values of its $x$ and $carry$ parameters. 
-The current version of DIYABC contains 10,000 possible values for this \emph{multiply} parameter (over the 43,701 possible). Since the number of threads is set equal to the number of cores, that should be enough for the moment.\\
-
-\textbf{Important note for users of the cluster version}\\
-Concerning the program \texttt{diyabc\_sim}, the Delphi \textsf{random} function has been replaced by reading bytes from the \texttt{/dev/random} file. However, when several jobs are sent to the same computer, the latter being multicore, there is a risk that these jobs read the same bytes and hence that they draw the same sequence of random numbers. To avoid this situation, the program uses the second parameter which is different among jobs to define the \emph{multiply} parameter of the sequence. Consequently, if the cluster contains multicore computers, it is strongly advised to use successive integers as second parameters for  \texttt{diyabc\_sim}. Furthermore, \texttt{diyabc\_sim} can use multiple threads. If one knows the number of cores of the computer on which the job will run, one can  add a fourth parameter equal to this core number. In that case, all cores will use the same \emph{multiply} parameter (defined by the second parameter if the latter is an integer), but different values of $x_0$ and $c_0$, because all the latter are now red sequentially from \texttt{/dev/random}.
- 
+\input{RNG.tex}
 
 
   
