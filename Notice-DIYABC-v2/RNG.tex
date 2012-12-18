@@ -1,25 +1,60 @@
-The random number generator used in DIYABC is of the \emph{Multiply With Carry} type invented by G. Marsaglia (see http://en.wikipedia.org/wiki/Multiply-with-carry for detailed explanations and references; see also http://www.rlmueller.net/MWC32.htm for a more condensed description).\\
-The major interests of this random generator are :
-\begin{itemize}
-\item  it is very simple to program 
-\item it is also very fast
-\item there is a large choice of random number sequences among which to choose
-\item the period of each sequence is a simple function of two parameters that define the sequence
-\end{itemize} 
+By nature, a random number generator (RNG) is a sequential algorithm,
+as described in Figure~\ref{fig:rng1} below. Indeed, we shall describe a RNG
+by its updating function $f$ changing deterministically the internal
+state.  Each time the user requires a new realization of the uniform
+distribution over $[0;1)$, the algorithm derives a value $u_k$ from
+the current internal state $i_k$ and then updates this state with $f$.
+Hence a first and important issue for parallel Monte Carlo
+computations is to design independent RNGs that might run in parallel
+while minimizing the communications between processors. It is quite
+standard to use as many RNGs as computing cores in the computer or in
+the cluster of computers. 
 
-Four parameters define a unique sequence of pseudo random numbers. They are called the \emph{modulo} ($M$), the \emph{multiply}($m$), the \emph{initial x} ($x_0$) and the \emph{initial carry} ($c_0$). Only the last two parameters change when drawing a number, according to the following equations : \\
 
-$x_i$ =$ [(m * x_{i-1} + c_{i-1}] $ \textsf{modulo} $M$\\  
+\begin{figure}[htb]
+\centering \it
+\begin{minipage}[c]{.6\linewidth}
+  \includegraphics[width=\textwidth]{DCMT_rng.pdf}
+  \caption[width=.6\textwidth]{\label{fig:rng1} \it\footnotesize
+    \textbf{Random Number Generator.} A RNG is an algorithm
+    that produces a sequence
+    of floating numbers, says $u_0, u_1, \ldots$, that resembles a
+    sequence of independant random numbers, uniformly distributed over
+    $[0;1)$.
+    It uses a sequence of
+    internal states, say $i_0, i_1,\ldots$, which are computed by
+    reccurence, namely, $i_{k+1}=f(i_k)$. The first internal state
+    $i_0$ is often named the seed.}
+\end{minipage}
+\end{figure}
 
-$c_i$ = $[(m * x_{i-1} + c_{i-1}]$  \textsf{div}\footnote{\textsf{div} is the integer division, i.e. the result ($c_i$) is the integer part of the ratio.} $M$\\
+The second
+version of DIYABC uses the Dynamic Creator (DCMT) of
+\citet{DCMT} to look for a set of independent
+Mersenne-Twister generators. Actually, the updating function $f$ of a
+Mersenne-Twister generator is parametrized by a few integer
+numbers. 
+The output of the DCMT is a set of $N$ updating functions,
+say $\{f^{(1)}, \ldots, f^{(N)}\}$, producing independent streams. 
+That is, the $n$-th RNG is a sequence of iternal states
+$i_0^{(n)},i_1^{(n)}, i_2^{(n)}, \ldots$ satisfying
+$i_{k+1}^{(n)}=f^{(n)}(i_k^{(n)})$
+that gives rise to a sequence of independent, uniformly distributed numbers
+$u_0^{(n)}, u_1^{(n)}, u_2^{(n)},\ldots$.
+We found that the DCMT was simple to use and gave good results.  There
+is no limitation on the number $N$ of RNGs it produces. Once initialized,
+the different RNGs do not require any communication between them and
+each of them runs as quickly as a single Mersenne-Twister
+generator. But an important limitation is that it is impossible to add a
+new RNG to the set produced by the DCMT. Practically, this means that
+we have to know \textit{a priori} a bound on the number of
+jobs working together in parallel. See XXX Alex XXX.
 
-In DIYABC, we chose a 24-bit generator, meaning that the \emph{modulo} parameter is fixed to $M$=$2^{24}$=16777216.\\
-The \emph{multiply} parameter, which defines the sequence, is chosen among numbers that garanties a period larger than $10^{15}$. \\
-The last two parameters, \emph{initial x and carry} are drawn at random, using the Delphi \textsf{random} function. \\
 
-The multithreaded sections of the codes which require random draws are such that each thread uses its own random generator (defined by its own \emph{multiply} parameter). This solution spares writing conflicts from different threads since each call to a random generator involves writing new values of its $x$ and $carry$ parameters. 
-The current version of DIYABC contains 10,000 possible values for this \emph{multiply} parameter (over the 43,701 possible). Since the number of threads is set equal to the number of cores, that should be enough for the moment.\\
 
-\textbf{Important note for users of the cluster version}\\
-Concerning the program \texttt{diyabc\_sim}, the Delphi \textsf{random} function has been replaced by reading bytes from the \texttt{/dev/random} file. However, when several jobs are sent to the same computer, the latter being multicore, there is a risk that these jobs read the same bytes and hence that they draw the same sequence of random numbers. To avoid this situation, the program uses the second parameter which is different among jobs to define the \emph{multiply} parameter of the sequence. Consequently, if the cluster contains multicore computers, it is strongly advised to use successive integers as second parameters for  \texttt{diyabc\_sim}. Furthermore, \texttt{diyabc\_sim} can use multiple threads. If one knows the number of cores of the computer on which the job will run, one can  add a fourth parameter equal to this core number. In that case, all cores will use the same \emph{multiply} parameter (defined by the second parameter if the latter is an integer), but different values of $x_0$ and $c_0$, because all the latter are now red sequentially from \texttt{/dev/random}.
- 
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "Notice_DIYABC_principal"
+%%% End: 
