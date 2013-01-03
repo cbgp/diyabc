@@ -366,7 +366,7 @@ La description de l'objet (bouton, label...)\end{verbatim}
     et copie le nécessaire au bon endroit.
 
     \paragraph{La compilation} de l'exécutable de calcul s'effectue avec un makefile situé
-    à la racine du dépôt. Ce makefile prend un paramètre nommé CCVERSION qui est
+    à la racine du dépôt. Ce makefile prend un paramètre facultatif nommé CCVERSION qui est
     le suffixe à ajouter à gcc et g++ pour compiler.
 
     
@@ -405,9 +405,29 @@ La description de l'objet (bouton, label...)\end{verbatim}
         digital mars, Borland C++ et GCC (MinGW). Le seul avec lequel j'obtiens
         des résultats satisfaisants est GCC. 
 
-        Voici la marche à suivre pour compiler le programme en C++ sous windows
-        dans la machine virtuelle nommée ``pywin''.\\
+        Voici la marche à suivre pour compiler le programme en C++ sous windows 7.\\
 
+        Tout d'abord il faut avoir MinGW installé. Cela se fait simplement avec mingw-get
+        que l'on peut récupérer sur sourceforge. Ensuite, dans un terminal il faut 
+        mettre à jour la liste de paquets mingw-get :
+
+        mingw-get update
+
+        Puis installer les paquets suivants :
+        gcc-core
+        gcc-g++
+        binutils
+        mingw-runtime
+        w32api
+        mingw32-make
+        mpc
+        mpfr
+        gmp
+        expat
+
+        Les binaires vont se loger dans mingw-get/bin/ .
+
+        Ensuite il faut avoir ce dossier bin dans le path de son émulateur de terminal.
 
         \begin{itemize}
             \item Se rendre dans le dossier diyabc sur le bureau avec ``git
@@ -479,6 +499,11 @@ La description de l'objet (bouton, label...)\end{verbatim}
         à l'écriture d'un script batch, j'ai découvert que git installait un
         bash tout à fait fonctionnel. J'ai donc écrit le script de génération
         d'un exécutable en bash.
+
+        La génération d'un package directement distribuable (interface+binaire) est possible
+        avec le script package-win-i386.sh qui met à jour le dépôt, compile les sources C++,
+        et utilise pyinstaller pour générer un .exe de l'interface PyQt.
+
         \paragraph{Utilisation}
 
         Ce script est : python\_interface/docs/project\_builders/windows\_generation.sh . Une 
