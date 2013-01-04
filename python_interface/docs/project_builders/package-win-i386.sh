@@ -1,8 +1,20 @@
 #!/bin/bash
 
+# default values
 packageDir="/c/lastDiyabc"
 diyabc_git="/c/DiyabcGit/diyabc"
-MinGw_bindir='/c/MinGw/bin/'
+MinGw_bindir="/c/MinGw/bin/"
+
+# custom values
+if [[ $# > 0 ]]; then
+    packageDir="$1"
+fi
+if [[ $# > 1 ]]; then
+    diyabc_git="$2"
+fi
+if [[ $# > 2 ]]; then
+    MinGw_bindir="$3"
+fi
 
 rm -rf $packageDir
 cd $diyabc_git
@@ -19,5 +31,4 @@ cp $diyabc_git/src-JMC-C++/general.exe $diyabc_git/python_interface/docs/executa
 cd $diyabc_git/python_interface/docs/project_builders/
 ./windows_generation.sh ./pyinstaller_1355/pyinstaller.py ../icons/coccicon.ico $packageDir ../../diyabc.py
 
-
-
+exit
