@@ -472,15 +472,24 @@ Clicking on the \textsf{Settings} option opens up the following multitab window 
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-92.png} \\
 
-\subsubsection{Tab \textsf{``cluster''}}
-The first tab (on the left) is related to the use of a computer cluster to perform computations of the reference table. If your computer is connected with a computer cluster on which the necessary files (detailed in section 5) have been correctly installed, and if the computer cluster is run under SGE queuing system, then you can use it for generating the reference table. You then need to :
+\subsubsection{Tab \textsf{``cluster''}}\label{clustergui}
+The first tab (on the left) is related to the use of a computer cluster to perform computations of the reference table. If you have access to a computer cluster and if the computer cluster runs a scheduler queuing system, then you can use it to generate the reference table (detailed in section 5). You will need to :
 \begin{enumerate}
  \item check the box \textsf{Use a cluster (...)}
  \item indicate the number of data sets produced by each single job of the queue
- \item give the name of the SGE queue 
+ \item indicate the number of cores used by each single job of the queue
+ \item indicate the number of concurrent jobs running at the same time on the cluster
+ \item indicate the seed to start the generation of RNG files. Leave it blank or write \texttt{None} to use a random seed
 \end{enumerate}
 
-Clicking on the \fbox{\textsf{Run computation}} button will send the right script to the computer cluster, monitor the progression of computations and retrieve the reference table once all computations are done.
+The next two text frames deals with first and last parts of the main script running on the cluster. This bash script will submit jobs to the scheduler queuing system :
+\begin{enumerate}
+ \item the first part is not editable as it include the variables used by DIYABC GUI frontend
+ \item the last part deals with the jobs submission. You can edit it to match the specification of your scheduler : submission syntax, queue, ... By default, the code targets a Grid Engine cluster. Please ask for help to your cluster system administration.
+\end{enumerate}
+
+
+Clicking on the \fbox{\textsf{Run computation}} generate a bundle including all you need to generate your reference table. You need to transfer the bundle in your cluster account and run it (detailed in section 5). Once all conputations are done and all the reference table parts are merged in one, you have to transfert it back to your DIYABC project on your own computer.
 
 
 \subsubsection{Tab \textsf{``various''}}

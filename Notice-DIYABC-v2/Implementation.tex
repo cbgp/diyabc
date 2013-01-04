@@ -122,38 +122,177 @@ In the third example, the species is diploid and has been genotyped at a large n
 
 
 \clearpage
-\section{Cluster version}
-The process of simulating data sets is generally a time consuming part of the ABC approach. Typically, one to several millions  data sets are needed to build up a reference table and this process can last several hours to several days. For those  that can have access to a computer grid cluster, two additional programs are available. They both run under Linux. Source files are written in Delphi pascal and can be compiled with Free Pascal Compiler (http://www.freepascal.org/download.var) using the command line :\\
-\texttt{>fpc -Sd -m Delphi <filename>}
-  \begin{description}
-  \item[\texttt{diyabc\_sim}] :\\
-  This program simulates a given number of data sets according to the information given in a \texttt{reftableHeader} file. The simulated data sets are output in a \texttt{reftable} file. This program requires 3 parameters : the name of the reftableHeader file, a string that will be affixed to the name of the reftable file (to distinguish it from other reftable files) and the number of desired simulated data sets. This programs has two input files : the reftableHeader file and the data file. The data file must match the one written at the beginning of the reftableHeader file. The data file is just needed to evaluate sample sizes and number of loci as well as determining missing data. As an example, supposing a reftableHeader file named \texttt{mydataanalysis.reftableHeader}, a command such as :\\
-  \texttt{>diyabc\_sim mydataanalysis 01 5000}\\
-  will produce a reference table file named \texttt{mydataanalysis01.reftable}  containing 5,000 simulated data sets according to the observed data set and analysis summarized in   \texttt{mydataanalysis.reftableHeader}. 
-  
-  \item[\texttt{diyabc\_cat}]:\\
-  This program pools all reftable files of a directory into a single reftable file. This programs requires 2 parameters : the name of the reftableHeader file used to generate all the reftable files to be pooled and the name of the output reftable. \texttt{diyabc\_cat} reads the reftableHeader file (which has to be in the same directory), scans all available reftable files present in the directory and select all those with a header that matches the reftableHeader file.  The selected files are then copied to a single reftable file. Following with the example above, a command such as :\\
-  \texttt{>diyabc\_cat mydataanalysis mda}\\
-  will pool all reftable files with header matching \texttt{mydataanalysis.reftableHeader} in an output file named \texttt{mda.reftable}. 
-  \end{description}
-  
-  The cluster is just used to produce a reftable file ready to be analyzed by DIYABC. All treatments are thus performed (under Windows) with the DIYABC programs. A typical session will include :\\
-  \begin{enumerate}
-  \item Using DIYABC, input data file name, provide scenario(s), provide priors for historico-demographic and mutationnal parameters, provide motif lengths and ranges, select summary statistics, simulate a few datasets (in one wants to check that the ouput is OK, but this last step is not compulsary). 
-  \item Transfer the reftableHeader file and the data file on the cluster and using \texttt{diyabc\_sim} and \texttt{diyabc\_cat} as explained above, create a large reftable file.
-  \item Transfer the reftable file back to the Windows directory where the analysis began and rerun DIYABC to perform comparison of scenarios, estimation of parameters or computation of bias/precision as needed.  
-  \end{enumerate}
-  For those who have access to a cluster with Sun's Grid Engine software, they can use the following script to create multiple reference tables (see next page). However, this script will not exempt the user to  manually run \texttt{diyabc\_cat} to concatenate all reference tables in a single one. The script is run with the following four parameters :\\
-  
-  \texttt{>ScriptABC file.dat file.reftableHeader n\_jobs n\_iter\_per\_job}
-\clearpage
-\begin{figure}
-\caption{Bash script that can be run with Sun Grid Engine software}
-\includegraphics{gui_pictures/script_SGE.pdf}
-\end{figure}
+\section{Cluster version}\label{cluster}
+The ABC approach requires simulating data sets, which is a time consuming. Typically, one to several millions data sets are needed to build up a reference table and this process can last several hours to several days. To take advantage of a computer grid cluster, the user can activate the option on the cluster tab of the general settings. By checking \textsf{use a cluster}, the settings of the cluster tab are editable and, while this option remains checked, DIYABC will not compute any reftable on your computer. 
+
+Generate a reftable is done in 3 sequential steps :
+\begin{enumerate}
+ \item configure the required parameters in the GUI frontend and generate the cluster bundle
+ \item transfer the bundle to the cluster and run it
+ \item transfer back the reference table and include it to the project
+\end{enumerate}
+
+\subsection{configure the required parameters in the GUI frontend and generate the cluster bundle}\label{clusterconfigure}
+In the settings cluster tab /ref{clustergui}, you can configure some parameters which will be included in a bash script. This bash script named \texttt{launch.sh} will be executed on the cluster\ref{clusterrun}. The bash script is artificially split in two parts in the interface.
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-cluster.png} \\
+
+\subsubsection{parameters configuration}\label{paramconfig}
+You have to understand and edit four cluster settings. Each one will be used as a variable in the main script \texttt{launch.sh}.
+ 
+
+\subsubsection{number of data sets by job}
+\texttt{numSimulatedDatasetByJob} : This integer indicates the number of data sets produced by each single job. It represents the granularity of your computations on the cluster. It gives you the hand to optimize your cluster utilization, i.e. the larger \texttt{numSimulatedDatasetByJob}, the less jobs will be created that consume more time. This option enables to optimize your use of the cluster according to your access limitations. The number of jobs submitted on the cluster is given the total number of data sets divided by \texttt{numSimulatedDatasetByJob}. 
+
+A few examples illustrate the importance of this parameter:
+- if your cluster is overloaded and the waiting time in queue is long then prefer a high amount of data sets by job (less jobs)
+- if a queue for short jobs is free while the other ones are full then prefer a low amount of data sets by job (more jobs) and submit to the short queue
+
+\subsubsection{number of cores by job}
+\texttt{coresPerJob} : This integer indicates how many CPU cores to use by each job. Be carefull : if you use lots of cores, to generate the RNG states will be time consuming \ref{rngTimeGeneration}. Increasing the number of cores is generally increasing the queueing waiting time. Remember that a job with 40 cores will not run faster than 40 jobs with one core each. \\
+DIYABC includes openMP. It means that DIYABC can use several cores in a single computer but as it does not include MPI it can not use many cores on many computers for one same job. So please be sure to use an apropriate parallele environment to submit your jobs. Ask to your cluster system administrator. 
+
+\subsubsection{the number of concurrent jobs}
+\texttt{maxConcurrentJobs} : This integer indicates the maximum number of jobs permitted to run simultaneously on the cluster. Why is this informationn required ? One caveat of the RNG~ref{rng} is the need to simultaneously generate all RNG files, before starting the jobs queue submission. The main script \texttt{launch.sh} will produce a pool of RNG files and the scritp nodes.sh running on each cluster node will randomly draw a RNG file not currently in use. Once again, you should ask your cluster system administrator to know the running jobs limitation on your cluster. You can also evaluate this number considering your cluster load. Be carefull : if you use lots of RNG files, to generate the RNG states is time consuming \ref{rngTimeGeneration}
+
+\subsubsection{the seed to generate RNG files}
+\texttt{seed} : This integer indicates to DIYABC the seed to start producing RNG files. Leave it blank or write \texttt{None} to use a random seed. Using a user-defined seed is only for test or debbugging purposes. 
+
+\subsubsection{main script : launch.sh}
+The next two text boxes in the interface deal with first and last parts of the main script \texttt{launch.sh}. \texttt{launch.sh} will generate a pool of RNG files, submit jobs to the scheduler queuing system using a \texttt{node.sh} script, monitor the jobs and pool all reftable files into a single reftable file when all jobs are finished.
+
+\subsubsection{first part}
+The first part is not editable as it includes the variables used by DIYABC GUI frontend (\label{paramconfig}) and other variables from your project : \texttt{numSimulatedDataSet}, \texttt{projectName}, \texttt{dataFileName}. 
+
+\subsubsection{last part}
+The last part deals with the jobs submission. By default, \texttt{launch.sh} targets a Grid Engine cluster. You probably need to customise this script to fit your cluster configuration (scheduler system, queue name, ...). You should mainly need to modify the  \texttt{\#\#\#\#\# EDIT \#\#\#\#\#} section. Please ask for help to your cluster system administrator.
+
+
+\subsection{transfer the bundle to the cluster and run it}\label{clusterrun}
+Once you have checked the box \textsf{Use a cluster (...)}, configured the cluster parameters and the \texttt{launch.sh} script in the general settings and saved them, you need to click on the \fbox{\textsf{Run computation}} button from your project panel. Next, you will need to choose a name for a tar archive including all files necessary for the cluster run, and save it on your computer. In order to transfer the tar archive to your cluster account you will probably need an sftp client like FileZilla or WinSCP. Once the archive is stored on your cluster home directory, you will need to login on your cluster with a shell console and untar your archive typing :\\
+%\fbox{
+   \begin{minipage}{0.9\textwidth}
+\begin{lstlisting}
+tar -xvf <yourTarArchiveName.tar>
+cd yourTarArchiveName
+\end{lstlisting}
+   \end{minipage}
+%}
+ This will create a directory with all the files needed to run DIYABC :
+\begin{enumerate}
+    \item \textsf{general} : the DIYABC executable
+    \item \textsf{header.txt} : the header file
+    \item \textsf{launch.sh} : the main script to run
+    \item \textsf{node.sh} : the script that will be runned by your scheduler for each job
+    \item \textsf{<yourData.mss>} : the data file 
+\end{enumerate}
+Now, you have to run the main script launch.sh. launch.sh will run node.sh for each job
+
+\subsubsection{launch.sh}
+
+Once you are in the <yourTarArchiveName> directory, you can run \texttt{launch.sh}. Eg, for a 50000 datasets in 5 jobs :\\
+%\fbox{%
+   \begin{minipage}{0.9\textwidth}
+ 
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+ 
+\lstset{ 
+  language=bash,                % the language of the code
+  basicstyle=\footnotesize,           % the size of the fonts that are used for the code
+  numbers=left,                   % where to put the line-numbers
+  numberstyle=\tiny\color{gray},  % the style that is used for the line-numbers
+  stepnumber=1,                   % the step between two line-numbers. If it's 1, each line 
+                                  % will be numbered
+  numbersep=5pt,                  % how far the line-numbers are from the code
+  backgroundcolor=\color{white},      % choose the background color. You must add \usepackage{color}
+  showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  showtabs=false,                 % show tabs within strings adding particular underscores
+  frame=single,                   % adds a frame around the code
+  rulecolor=\color{black},        % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  tabsize=4,                      % sets default tabsize to 2 spaces
+  captionpos=b,                   % sets the caption-position to bottom
+  breaklines=true,                % sets automatic line breaking
+  breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+  title=\lstname,                   % show the filename of files included with \lstinputlisting;
+                                  % also try caption instead of title
+  keywordstyle=\color{blue},          % keyword style
+  commentstyle=\color{dkgreen},       % comment style
+  stringstyle=\color{mauve},         % string literal style
+  escapeinside={\%*}{*)},            % if you want to add LaTeX within your code
+  morekeywords={*},              % if you want to add more keywords to the set
+  deletekeywords={}              % if you want to delete keywords from the given language
+}
+
+
+\begin{lstlisting}
+>launch.sh
+** Generation of RNG files :
+./general -p ./ -n ""t:1;c:5;s:1038"
+
+** jobs submition :
+
+qsub -N n1_test -q short.q -cwd node.sh 10000 /home/dehneg/DIYABCtest 1  test.mss
+Your job 111598 ("n1_test") has been submitted
+
+qsub -N n2_test -q short.q -cwd node.sh 10000 /home/dehneg/DIYABCtest 2  test.mss
+Your job 111599 ("n2_test") has been submitted
+
+qsub -N n3_test -q short.q -cwd node.sh 10000 /home/dehneg/DIYABCtest 3  test.mss
+Your job 111600 ("n3_test") has been submitted
+
+qsub -N n4_test -q short.q -cwd node.sh 10000 /home/dehneg/DIYABCtest 4  test.mss
+Your job 111601 ("n4_test") has been submitted
+
+qsub -N n5_test -q short.q -cwd node.sh 10000 /home/dehneg/DIYABCtest 5  test.mss
+Your job 111602 ("n5_test") has been submitted
+
+** monitoring :
+0/5 finished 0%  (total : 0)
+1/5 finished 20% (total : 10000)
+1/5 finished 20% (total : 10000)
+2/5 finished 40% (total : 20000)
+4/5 finished 80% (total : 40000)
+5/5 finished 100% (total : 50000)
+
+** reftables concatenation  :
+./general -p /home/dehneg/DIYABCtest -q 2>&1 concat.out
+*************************************************************
+All the result files have been concatenated into reftable.bin
+See concat.out output file for logs
+*************************************************************
+\end{lstlisting}
+   \end{minipage}
+%}
+\begin{enumerate}
+    \item line 2 : generation of all RNG files : \textsf{RNG\_state\_0000.bin}, ..., \textsf{RNG\_state\_0005.bin}
+    \item lines 6, 9, 12, 15, 18 : job submission 
+    \item lines 22 to 27 : jobs status, every 30 seconds
+    \item line 30 : merge all \textsf{reftable\_<number>.bin} file in one reftable file \textsf{reftable.bin}. In case of any problem, please read \textsf{concat.out} output file.
+\end{enumerate}
+Once the monitoring phase starts, you can quit \texttt{launch.sh} and restart it at any time. Since all jobs are submitted by \texttt{launch.sh}, a lock file named launch.sh.lock is written in your yourTarArchiveName directory and inform any new execution of \texttt{launch.sh} to not submit any new job.
+
+\subsubsection{node.sh}
+\texttt{node.sh runs} on your cluster nodes for each jobs. Those are the sequential steps of node.sh :
+\begin{enumerate}
+    \item create a job id\_name according to the following pattern : \texttt{<node hostname>-n-<sequential number of the job>-pid<pid of nodes.sh execution>-<a random number>} (pid mean Process IDentifier).
+    \item Use the scheduler temporary directory if the scheduler provide a \texttt{TMPDIR} environment variable or create a working temporary directory \texttt{/tmp/tmpDiyabc\_<job id>} on the cluster node.
+    \item Choose a RNG file from the pool of RNG files created by \texttt{launch.sh}. It means that the node must access your diyabc <yourTarArchiveName> directory in your home directory. 
+    \item As long as node.sh is using the choosen RNG file, you won't see the RNG file in the <yourTarArchiveName> directory but a lock file named \texttt{<the choosen RNG file name>}.lock and a flag file named the \texttt{<choosen RNG file name>\_<date of the run>\_<job id>}. The flag file contain the local pid of the job on the node of DIYABC. Once DIYABC has finished and updated the RNG file, you will see it again, but not the lock and flag file.
+    \item run DIYABC (general file) of course !
+    \item copy periodically the reftable log file to the <yourTarArchiveName> directory. Thus, \texttt{launch.sh} can inform you of the status of the total dataset computed.
+\end{enumerate}
+
+
+
+\subsection{transfer back the reference table and include it to the project}\label{clusterback}
+Once you produced your final reftable.bin file, you need to transfer it from the cluster to you DIYABC project directory. Once again, you can use an sftp client.
+
 
 \clearpage
-\subsection{A note about the random number generator used in DIYABC}
+\subsection{A note about the random number generator used in DIYABC}\label{rng}
 \input{RNG.tex}
 
 
