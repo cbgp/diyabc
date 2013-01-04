@@ -502,7 +502,8 @@ La description de l'objet (bouton, label...)\end{verbatim}
 
         La génération d'un package directement distribuable (interface+binaire) est possible
         avec le script package-win-i386.sh qui met à jour le dépôt, compile les sources C++,
-        et utilise pyinstaller pour générer un .exe de l'interface PyQt.
+        et utilise pyinstaller pour générer un .exe de l'interface PyQt. S'il est exécuté sous windows
+        7, il génère un binaire et un .exe qui fonctionnent sous XP, win7, win8 i386 ou x64.
 
         \paragraph{Utilisation}
 
@@ -723,6 +724,10 @@ Description: Repository of CBGP softwares \end{verbatim}
             \item output\_path : dossier cible (existant ou non) dans lequel se trouvera l'application et les données du programme
             \item path\_to\_main.py : chemin vers le script python principal (diyabc.py dans notre cas)\\
         \end{itemize}
+
+        Un script englobe la compilation, la génération du .app et du .dmg : package-mac-i386.sh ou
+        package-mac-x64.sh . Il est à ajuster légèrement en fonction des chemins que l'on souhaite définir
+        sur la machine utilisée. Il faut générer les packages sur les deux machines apple de Raphael.
 
         \paragraph{Fonctionnement}
 
