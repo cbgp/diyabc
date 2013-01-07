@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# script à exécuter sur la machine virtuelle osxqt
+# script à exécuter sur la machine principale de Raph
 
-packageDir="/Users/user/lastDiyabc"
-diyabc_git="/Users/user/adocs/diyabc"
+packageDir="/Users/raph/Documents/julien/lastDiyabc"
+diyabc_git="/Users/raph/Documents/julien/diyabc"
 
 rm -rf $packageDir
 cd $diyabc_git
@@ -11,7 +11,7 @@ cd $diyabc_git
 git checkout .
 git pull --rebase 
 make clean
-make 
+CCVERSION="" make 
 cd $diyabc_git/src-JMC-C++/
 # modification de l'executable
 install_name_tool -change /opt/local/lib/gcc47/libstdc++.6.dylib  @executable_path/lib/libstdc++.6.dylib general
