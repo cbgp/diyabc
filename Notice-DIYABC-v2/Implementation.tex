@@ -133,11 +133,11 @@ Generate a reftable is done in 3 sequential steps :
 \end{enumerate}
 
 \subsection{configure the required parameters in the GUI frontend and generate the cluster bundle}\label{clusterconfigure}
-In the settings cluster tab /ref{clustergui}, you can configure some parameters which will be included in a bash script. This bash script named \texttt{launch.sh} will be executed on the cluster\ref{clusterrun}. The bash script is artificially split in two parts in the interface.
+In the settings cluster tab, you can configure some parameters which will be included in a bash script. This bash script named \texttt{launch.sh} will be executed on the cluster (cf section\ref{clusterrun}). The bash script is artificially split in two parts in the interface.
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-cluster.png} \\
 
-\subsubsection{parameters configuration}\label{paramconfig}
+
 You have to understand and edit four cluster settings. Each one will be used as a variable in the main script \texttt{launch.sh}.
  
 
@@ -145,15 +145,44 @@ You have to understand and edit four cluster settings. Each one will be used as 
 \texttt{numSimulatedDatasetByJob} : This integer indicates the number of data sets produced by each single job. It represents the granularity of your computations on the cluster. It gives you the hand to optimize your cluster utilization, i.e. the larger \texttt{numSimulatedDatasetByJob}, the less jobs will be created that consume more time. This option enables to optimize your use of the cluster according to your access limitations. The number of jobs submitted on the cluster is given the total number of data sets divided by \texttt{numSimulatedDatasetByJob}. 
 
 A few examples illustrate the importance of this parameter:
-- if your cluster is overloaded and the waiting time in queue is long then prefer a high amount of data sets by job (less jobs)
-- if a queue for short jobs is free while the other ones are full then prefer a low amount of data sets by job (more jobs) and submit to the short queue
+\begin{itemize}
+ \item  if your cluster is overloaded and the waiting time in queue is long then prefer a high amount of data sets by job (less jobs)
+ \item if a queue for short jobs is free while the other ones are full then prefer a low amount of data sets by job (more jobs) and submit to the short queue
+\end{itemize}
 
 \subsubsection{number of cores by job}
-\texttt{coresPerJob} : This integer indicates how many CPU cores to use by each job. Be carefull : if you use lots of cores, to generate the RNG states will be time consuming \ref{rngTimeGeneration}. Increasing the number of cores is generally increasing the queueing waiting time. Remember that a job with 40 cores will not run faster than 40 jobs with one core each. \\
+\texttt{coresPerJob} : This integer indicates how many CPU cores to use by each job. Be carefull : if you use lots of cores, to generate the RNG states will be time consuming (fig \ref{fig:rngTimeGeneration}). Increasing the number of cores is generally increasing the queueing waiting time. Remember that a job with 40 cores will not run faster than 40 jobs with one core each. \\
 DIYABC includes openMP. It means that DIYABC can use several cores in a single computer but as it does not include MPI it can not use many cores on many computers for one same job. So please be sure to use an apropriate parallele environment to submit your jobs. Ask to your cluster system administrator. 
 
 \subsubsection{the number of concurrent jobs}
-\texttt{maxConcurrentJobs} : This integer indicates the maximum number of jobs permitted to run simultaneously on the cluster. Why is this informationn required ? One caveat of the RNG~ref{rng} is the need to simultaneously generate all RNG files, before starting the jobs queue submission. The main script \texttt{launch.sh} will produce a pool of RNG files and the scritp nodes.sh running on each cluster node will randomly draw a RNG file not currently in use. Once again, you should ask your cluster system administrator to know the running jobs limitation on your cluster. You can also evaluate this number considering your cluster load. Be carefull : if you use lots of RNG files, to generate the RNG states is time consuming \ref{rngTimeGeneration}
+\texttt{maxConcurrentJobs} : This integer indicates the maximum number of jobs permitted to run simultaneously on the cluster. Why is this informationn required ? One caveat of the RNG (section \ref{rng}) is the need to simultaneously generate all RNG files, before starting the jobs queue submission. The main script \texttt{launch.sh} will produce a pool of RNG files and the script \texttt{nodes.sh} running on each cluster node will randomly draw a RNG file not currently in use. Once again, you should ask your cluster system administrator to know the running jobs limitation on your cluster. You can also evaluate this number considering your cluster load. Be carefull : if you use lots of RNG files, to generate the RNG states is time consuming (fig \ref{fig:rngTimeGeneration}).
+
+
+\begin{figure}[htb]
+\centering \it	
+  \begin{tabular}{|  l || c | c | c | c | c | c | c | }
+	   \hline
+	   number of jobs (t) & \multicolumn{7}{c|}{number of cores (c)} \\
+	          & 1 & 4   & 8     & 16 & 32 & 40 & 80 \\
+	   \hline \hline
+	   100 & 20''  & 1'20" & 3'  & 10'   & 20'   & 26'   & 30' \\
+	   \hline
+	   200 & 50" & 3'    & 7'  & 20'   & 40'   & 50'   & 1h10' \\
+	   \hline
+	   500 & 2'  & 8'    & 25' & 50'   & 1h40' & 2h06' & 2h45' \\
+	   \hline
+	   1000 & 4' & 16'   & 50' & 1h40' & 2h10' & 2h45' & \\
+	   \hline
+   \end{tabular}
+  \caption[width=.6\textwidth]{\label{fig:rngTimeGeneration} \it\footnotesize
+    \textbf{RNG files Time Generation.} As shown in section~\ref{rng}, one caveat of the RNG
+    method is the obligate generation of all the RNG files at once (generating the RNG files one by one 
+    for each job on a cluster is possible but will result in a dangerous bias). The second
+    caveat of the RNG method is a consequence of the first one, ie the time needed to generate the RNG
+    files increases depending on the number of RNG files \texttt{t} and the number of cores \texttt{c}
+    available for each RNG file. Once a file is generated is not possible to add cores. }
+\end{figure}
+
 
 \subsubsection{the seed to generate RNG files}
 \texttt{seed} : This integer indicates to DIYABC the seed to start producing RNG files. Leave it blank or write \texttt{None} to use a random seed. Using a user-defined seed is only for test or debbugging purposes. 
@@ -161,38 +190,39 @@ DIYABC includes openMP. It means that DIYABC can use several cores in a single c
 \subsubsection{main script : launch.sh}
 The next two text boxes in the interface deal with first and last parts of the main script \texttt{launch.sh}. \texttt{launch.sh} will generate a pool of RNG files, submit jobs to the scheduler queuing system using a \texttt{node.sh} script, monitor the jobs and pool all reftable files into a single reftable file when all jobs are finished.
 
-\subsubsection{first part}
-The first part is not editable as it includes the variables used by DIYABC GUI frontend (\label{paramconfig}) and other variables from your project : \texttt{numSimulatedDataSet}, \texttt{projectName}, \texttt{dataFileName}. 
-
-\subsubsection{last part}
-The last part deals with the jobs submission. By default, \texttt{launch.sh} targets a Grid Engine cluster. You probably need to customise this script to fit your cluster configuration (scheduler system, queue name, ...). You should mainly need to modify the  \texttt{\#\#\#\#\# EDIT \#\#\#\#\#} section. Please ask for help to your cluster system administrator.
-
+\begin{description}
+	\item[first part] The first part is not editable as it includes the variables used by DIYABC GUI frontend and other variables from your project : \texttt{numSimulatedDataSet}, \texttt{projectName}, \texttt{dataFileName}. 
+	
+	\item[last part] The last part deals with the jobs submission. By default, \texttt{launch.sh} targets a $Grid Engine$ cluster. You probably need to customise this script to fit your cluster configuration (scheduler system, queue name, ...). You should mainly need to modify the  \texttt{\#\#\#\#\# EDIT \#\#\#\#\#} section. Please ask for help to your cluster system administrator.
+\end{description}
 
 \subsection{transfer the bundle to the cluster and run it}\label{clusterrun}
-Once you have checked the box \textsf{Use a cluster (...)}, configured the cluster parameters and the \texttt{launch.sh} script in the general settings and saved them, you need to click on the \fbox{\textsf{Run computation}} button from your project panel. Next, you will need to choose a name for a tar archive including all files necessary for the cluster run, and save it on your computer. In order to transfer the tar archive to your cluster account you will probably need an sftp client like FileZilla or WinSCP. Once the archive is stored on your cluster home directory, you will need to login on your cluster with a shell console and untar your archive typing :\\
+Once you have checked the box \textsf{Use a cluster (...)}, configured the cluster parameters and the \texttt{launch.sh} script in the general settings and saved them, you need to click on the \fbox{\textsf{Run computation}} button from your project panel. Next, you will need to choose a name for a tar archive including all files necessary for the cluster run, and save it on your computer. In order to transfer the tar archive to your cluster account you will probably need an sftp client like FileZilla or WinSCP. Once the archive is stored on your cluster working directory, you will need to login on your cluster with a shell console and untar your archive typing :\\
 %\fbox{
    \begin{minipage}{0.9\textwidth}
 \begin{lstlisting}
 tar -xvf <yourTarArchiveName.tar>
 cd yourTarArchiveName
+
 \end{lstlisting}
    \end{minipage}
 %}
+
  This will create a directory with all the files needed to run DIYABC :
 \begin{enumerate}
     \item \textsf{general} : the DIYABC executable
     \item \textsf{header.txt} : the header file
     \item \textsf{launch.sh} : the main script to run
     \item \textsf{node.sh} : the script that will be runned by your scheduler for each job
-    \item \textsf{<yourData.mss>} : the data file 
+    \item \textsf{$<yourData.mss>$} : the data file 
 \end{enumerate}
-Now, you have to run the main script launch.sh. launch.sh will run node.sh for each job
+Now, you have to run the main script \texttt{launch.sh}. \texttt{launch.sh} will run node.sh for each job
 
 \subsubsection{launch.sh}
 
-Once you are in the <yourTarArchiveName> directory, you can run \texttt{launch.sh}. Eg, for a 50000 datasets in 5 jobs :\\
+Once you are in the $<yourTarArchiveName>$ directory, you can run \texttt{launch.sh}. Eg, for a 50000 datasets in 5 jobs :\\
 %\fbox{%
-   \begin{minipage}{0.9\textwidth}
+   \begin{minipage}{0.99\textwidth}
  
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -218,7 +248,7 @@ Once you are in the <yourTarArchiveName> directory, you can run \texttt{launch.s
   breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
   title=\lstname,                   % show the filename of files included with \lstinputlisting;
                                   % also try caption instead of title
-  keywordstyle=\color{blue},          % keyword style
+  keywordstyle=\color{black},          % keyword style
   commentstyle=\color{dkgreen},       % comment style
   stringstyle=\color{mauve},         % string literal style
   escapeinside={\%*}{*)},            % if you want to add LaTeX within your code
@@ -230,7 +260,7 @@ Once you are in the <yourTarArchiveName> directory, you can run \texttt{launch.s
 \begin{lstlisting}
 >launch.sh
 ** Generation of RNG files :
-./general -p ./ -n ""t:1;c:5;s:1038"
+./general -p ./ -n "t:1;c:5;s:1038"
 
 ** jobs submition :
 
@@ -267,28 +297,28 @@ See concat.out output file for logs
    \end{minipage}
 %}
 \begin{enumerate}
-    \item line 2 : generation of all RNG files : \textsf{RNG\_state\_0000.bin}, ..., \textsf{RNG\_state\_0005.bin}
-    \item lines 6, 9, 12, 15, 18 : job submission 
-    \item lines 22 to 27 : jobs status, every 30 seconds
-    \item line 30 : merge all \textsf{reftable\_<number>.bin} file in one reftable file \textsf{reftable.bin}. In case of any problem, please read \textsf{concat.out} output file.
+    \item line 3 : generation of all RNG files : \textsf{RNG\_state\_0000.bin}, ..., \textsf{RNG\_state\_0005.bin}
+    \item lines 7, 10, 13, 16, 19 : job submission 
+    \item lines 23 to 28 : jobs status, every 30 seconds
+    \item line 31 : merge all \textsf{reftable\_$<number>$.bin} file in one reftable file \textsf{reftable.bin}. In case of any problem, please read \textsf{concat.out} output file.
 \end{enumerate}
-Once the monitoring phase starts, you can quit \texttt{launch.sh} and restart it at any time. Since all jobs are submitted by \texttt{launch.sh}, a lock file named launch.sh.lock is written in your yourTarArchiveName directory and inform any new execution of \texttt{launch.sh} to not submit any new job.
+Once the monitoring phase starts, you can quit \texttt{launch.sh} and restart it at any time. Since all jobs are submitted by \texttt{launch.sh}, a lock file named \texttt{launch.sh.lock} is written in your $yourTarArchiveName$ directory and inform any new execution of \texttt{launch.sh} to not submit any new job.
 
 \subsubsection{node.sh}
-\texttt{node.sh runs} on your cluster nodes for each jobs. Those are the sequential steps of node.sh :
+\texttt{node.sh runs} on your cluster nodes for each jobs. Those are the sequential steps of \texttt{node.sh} :
 \begin{enumerate}
-    \item create a job id\_name according to the following pattern : \texttt{<node hostname>-n-<sequential number of the job>-pid<pid of nodes.sh execution>-<a random number>} (pid mean Process IDentifier).
+    \item create a $job id$ name according to the following pattern : \texttt{<node hostname>-n-<sequential number of the job>-pid<pid of nodes.sh execution>-<a random number>} ($pid$ mean Process IDentifier).
     \item Use the scheduler temporary directory if the scheduler provide a \texttt{TMPDIR} environment variable or create a working temporary directory \texttt{/tmp/tmpDiyabc\_<job id>} on the cluster node.
-    \item Choose a RNG file from the pool of RNG files created by \texttt{launch.sh}. It means that the node must access your diyabc <yourTarArchiveName> directory in your home directory. 
-    \item As long as node.sh is using the choosen RNG file, you won't see the RNG file in the <yourTarArchiveName> directory but a lock file named \texttt{<the choosen RNG file name>}.lock and a flag file named the \texttt{<choosen RNG file name>\_<date of the run>\_<job id>}. The flag file contain the local pid of the job on the node of DIYABC. Once DIYABC has finished and updated the RNG file, you will see it again, but not the lock and flag file.
+    \item Choose a RNG file from the pool of RNG files created by \texttt{launch.sh}. It means that the node must access your diyabc $yourTarArchiveName$ directory in your working directory. 
+    \item As long as \texttt{node.sh} is using the choosen RNG file, you won't see the RNG file in the $yourTarArchiveName$ directory but a lock file named \texttt{<the choosen RNG file name>}.lock and a flag file named the \texttt{<choosen RNG file name>\_<date of the run>\_<job id>}. The flag file contain the local pid of the job on the node of DIYABC. Once DIYABC has finished and updated the RNG file, you will see it again, but not the lock and flag files.
     \item run DIYABC (general file) of course !
-    \item copy periodically the reftable log file to the <yourTarArchiveName> directory. Thus, \texttt{launch.sh} can inform you of the status of the total dataset computed.
+    \item copy periodically the reftable log file to the $yourTarArchiveName$ directory. Thus, \texttt{launch.sh} can inform you of the status of the total dataset computed.
 \end{enumerate}
 
 
 
 \subsection{transfer back the reference table and include it to the project}\label{clusterback}
-Once you produced your final reftable.bin file, you need to transfer it from the cluster to you DIYABC project directory. Once again, you can use an sftp client.
+Once you produced your final \texttt{reftable.bin} file, you need to transfer it from the cluster to you DIYABC project directory. Once again, you can use an sftp client.
 
 
 \clearpage
