@@ -10,7 +10,7 @@ git checkout .
 git pull --rebase 
 make clean
 make 
-cd diyabc_git/src-JMC-C++/
+cd $diyabc_git/src-JMC-C++/
 # modification de l'executable
 install_name_tool -change /opt/local/lib/gcc47/libstdc++.6.dylib  @executable_path/lib/libstdc++.6.dylib general
 install_name_tool -change /opt/local/lib/gcc47/libgomp.1.dylib  @executable_path/lib/libgomp.1.dylib general
