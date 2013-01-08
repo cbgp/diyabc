@@ -14,6 +14,7 @@ make clean
 CCVERSION="-fsf-4.7" make 
 
 cp $diyabc_git/src-JMC-C++/general $diyabc_git/python_interface/docs/executables/diyabc-comput-mac-i386
+cp $diyabc_git/src-JMC-C++/general $diyabc_git/python_interface/docs/executables/diyabc-comput-mac-x64
 
 cd $diyabc_git/python_interface/docs/project_builders/
 
