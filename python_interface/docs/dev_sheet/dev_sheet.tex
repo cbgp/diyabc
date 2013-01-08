@@ -726,8 +726,11 @@ Description: Repository of CBGP softwares \end{verbatim}
         \end{itemize}
 
         Un script englobe la compilation, la génération du .app et du .dmg : package-mac-i386.sh ou
-        package-mac-x64.sh . Il est à ajuster légèrement en fonction des chemins que l'on souhaite définir
-        sur la machine utilisée. Il faut générer les packages sur les deux machines apple de Raphael.
+        package-mac-x86\_64.sh . Il est à ajuster légèrement en fonction des chemins que l'on souhaite définir
+        sur la machine utilisée. Le i386 marche sur la machine virtuelle osxqt, il compile en statique
+        le binaire, il produit un .app qui fonctionne sur les macos 32 et 64. Le script x32\_64 ne fonctionne pas
+        car pyinstaller ne fonctionne pas sur macos 64 bits. Il reste néanmoins intéressant de compiler le binaire
+        sur cette machine pour l'obtenir en x86\_64.
 
         \paragraph{Fonctionnement}
 

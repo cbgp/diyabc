@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # script à exécuter sur la machine de raph qui donne du x86_64
+# probleme : pyinstaller ne marche pas en 64 bits
 
 packageDir="/Users/raph/Documents/julien/lastDiyabc"
 diyabc_git="/Users/raph/Documents/julien/diyabc"
