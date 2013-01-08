@@ -2,8 +2,8 @@
 
 # script à exécuter sur la machine virtuelle osxqt
 
-packageDir="/Users/user/lastDiyabc"
-diyabc_git="/Users/user/adocs/diyabc"
+packageDir="./lastDiyabc"
+diyabc_git="../../../"
 
 rm -rf $packageDir
 cd $diyabc_git
@@ -13,9 +13,9 @@ git pull --rebase
 make clean
 CCVERSION="" make 
 
-cp $diyabc_git/src-JMC-C++/general $diyabc_git/python_interface/docs/executables/diyabc-comput-mac-i386
+cp ./src-JMC-C++/general ./python_interface/docs/executables/diyabc-comput-mac-i386
 
-cd $diyabc_git/python_interface/docs/project_builders/
+cd ./python_interface/docs/project_builders/
 
 ./mac_generation.sh ./pyinstaller_1355/pyinstaller.py ../icons/coccicon.icns $packageDir  ../../diyabc.py
 

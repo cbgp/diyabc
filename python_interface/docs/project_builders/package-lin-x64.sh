@@ -10,12 +10,10 @@ cd $diyabc_git
 make clean
 make 
 
-cp $diyabc_git/src-JMC-C++/general $diyabc_git/python_interface/docs/executables/diyabc-comput-linux-x64
+cp ./src-JMC-C++/general ./python_interface/docs/executables/diyabc-comput-linux-x64
 
 cd ./python_interface/docs/project_builders/
 
 ./linux_generation.sh ./pyinstaller_1743/pyinstaller.py $packageDir  ../../diyabc.py
 zip -r diyabc.zip lastDiyabc
-
-
 
