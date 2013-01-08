@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Ce script est à exécuter sur la machine virtuelle windows 7
+
 # default values
 packageDir="/c/lastDiyabc"
 diyabc_git="/c/DiyabcGit/diyabc"
