@@ -15,5 +15,6 @@ cp ./src-JMC-C++/general ./python_interface/docs/executables/diyabc-comput-linux
 cd ./python_interface/docs/project_builders/
 
 ./linux_generation.sh ./pyinstaller_1743/pyinstaller.py $packageDir  ../../diyabc.py
-zip -r diyabc.zip lastDiyabc
+cd lastDiyabc
+zip -r diyabc_linux64.zip *
 
