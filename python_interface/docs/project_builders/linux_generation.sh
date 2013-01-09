@@ -53,6 +53,6 @@ cp -r $SOURCEDIR/uis $output/dist/$APPNAME/
 rm -rf $TMPBUILD
 sleep 3
 mv $output/dist/$APPNAME $output/dist/$APPNAME-$VERSION
-mv $output/dist/$APPNAME-$VERSION $output/$APPNAME-$VERSION
+mv $output/dist/$APPNAME-$VERSION $output/$APPNAME-$VERSION-linux64
 rmdir $output/dist
 rm -rf $output/build $output/$APPNAME.spec
