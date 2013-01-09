@@ -21,8 +21,6 @@ fi
 rm -rf $packageDir
 cd $diyabc_git
 
-git checkout .
-git pull --rebase 
 $MinGw_bindir/mingw32-make.exe clean
 $MinGw_bindir/mingw32-make.exe
 cp $MinGw_bindir/*.dll ./python_interface/docs/executables/
