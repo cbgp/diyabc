@@ -7,6 +7,8 @@ diyabc_git="../../../"
 
 cd $diyabc_git
 
+git checkout .
+git pull --rebase
 make clean
 make 
 
