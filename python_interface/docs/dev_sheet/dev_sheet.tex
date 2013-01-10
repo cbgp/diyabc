@@ -335,9 +335,19 @@ La description de l'objet (bouton, label...)\end{verbatim}
     Pour construire le projet en vue de le distribuer, on dispose de trois
     scripts, un pour chaque système, qui vont générer un exécutable, une
     application ou un paquet. Cet objet généré est transportable et distribuable
-    tel quel avec un dossier contenant des données.\\
+    tel quel avec un dossier contenant des données. Ces scripts se trouvent dans
+    le dossier python\_interface/docs/project\_builders/ .\\
 
-    Pour générer un exécutable sous GNU/Linux, MacOS ou Windows, il faut : 
+    Il est également possible d'utiliser buildbot pour générer les ``packages''. 
+    Buildbot permet de gérer des machines esclaves à partir d'une machine maitre.
+    Buildbot s'occupe de transférer les sources sur les machines esclaves et permet
+    de définir les actions à exécuter sur ces différentes machines pour construire
+    le projet. On controle buildbot avec une interface web lancée par la machine maitre.
+    Le seul fichier de configuration important est celui de la machine maitre où l'on définit
+    les esclaves et leur processus de construction. Ce fichier se trouve aussi dans
+    python\_interface/docs/project\_builders/ .
+
+    Pour générer un package sous GNU/Linux, MacOS ou Windows, il faut : 
     \begin{itemize}
     \item Se trouver sur le système en question
     \item Posséder python et toutes les librairies nécessaires au programme
@@ -347,6 +357,31 @@ La description de l'objet (bouton, label...)\end{verbatim}
     J'ai aussi implémenté un script qui génère un paquet .deb.
     Pas de dépendance manuelle particulière pour générer un paquet sous Debian ou
     Ubuntu.\\
+
+    \paragraph{La mise en place de buildbot} se fait naturellement en deux temps,
+    l'installation et la configuration. Installer buildbot et buildslave sur la machine maitre
+    sous GNU/Linux se fait par le système de paquets. Sous windows, j'ai suivi la procédure
+    indiquée par le site officiel de buildbot à savoir installer pywin32, twisted, setuptools, zope.interface
+    et enfin buildbot par easy\_install . Sous MacOS, il se trouve dans les macports et dans fink. Rien n'est
+    à configurer sur les esclaves. La config du master est dans le dépôt. On crée le maitre comme ceci :
+
+    buildbot create-master master
+
+    Cela a pour effet de créer le dossier master dans le dossier courant.
+
+    On crée les esclaves comme ceci :
+
+    buildslave create-slave myslavefolder localhost:9989 myslavename pass
+    
+    On démarre le maitre comme ceci :
+
+    buildbot start master
+
+    Et les esclaves comme ceci :
+
+    buildslave start slave
+
+
 
     \paragraph{La génération de l'aide interne} est très simple.
     \label{howtoLatexml}
