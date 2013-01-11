@@ -8,6 +8,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
 from utils.visualizescenario import *
+from utils.matplotlib_example import *
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 from viewTextFile import ViewTextFile
@@ -59,6 +60,18 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         self.ui.PCAGraphFrame.setMaximumSize(QSize(860, 430))
 
         self.ui.parameterChoiceFrame.hide()
+
+        ## ADD
+        #main_widget = QtGui.QWidget(self)
+
+        #l = QtGui.QVBoxLayout(main_widget)
+        #sc = MyStaticMplCanvas(main_widget, width=5, height=4, dpi=100)
+        #dc = MyDynamicMplCanvas(main_widget, width=5, height=4, dpi=100)
+        #l.addWidget(sc)
+        #l.addWidget(dc)
+        #plop = NavigationToolbar(dc, self)
+        #l.addWidget(plop)
+        #self.verticalLayout.addWidget(main_widget)
 
     def viewLocate(self):
         """ clic sur le bouton view locate

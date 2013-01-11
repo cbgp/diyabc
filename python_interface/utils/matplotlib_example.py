@@ -123,9 +123,10 @@ modified versions may be distributed without limitation."""
 )
 
 
-qApp = QtGui.QApplication(sys.argv)
+if __name__ == "__main__":
+    qApp = QtGui.QApplication(sys.argv)
 
-aw = ApplicationWindow()
-aw.setWindowTitle("%s" % progname)
-aw.show()
-sys.exit(qApp.exec_())
+    aw = ApplicationWindow()
+    aw.setWindowTitle("%s" % progname)
+    aw.show()
+    sys.exit(qApp.exec_())
