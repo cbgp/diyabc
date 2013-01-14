@@ -32,7 +32,7 @@ from showLogFile import ShowLogFile
 from utils.cbgpUtils import Documentator,getLastRevisionDate
 import output
 import subprocess
-from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log,DirNFileDialog
+from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log,DirNFileDialog,isUnixText,dos2unix
 from utils.trayIconHandler import TrayIconHandler
 from threading import Thread
 from utils.data import isSNPDatafile

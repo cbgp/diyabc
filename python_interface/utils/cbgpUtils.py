@@ -485,3 +485,20 @@ class DirNFileDialog(QFileDialog):
         self.emit(SIGNAL("filesSelected(QStringList)"),files)
         super(QFileDialog,self).accept()
 
+def isUnixText(filename):
+    """ Determine if a file has Linux or Windows line separators
+    """
+    f = open(filename,'r')
+    srt = f.read()
+    f.close()
+    return not ('\r\n' in srt)
+
+def dos2unix(filename):
+    """ Traduce a windows-style text file into a Linux-style text file
+    """
+    f=open(filename,'r')
+    sw = f.read().replace('\r\n', '\n')
+    f.close()
+    f=open(filename,'w')
+    f.write(sw)
+    f.close()
