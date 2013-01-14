@@ -37,6 +37,7 @@ from utils.trayIconHandler import TrayIconHandler
 from threading import Thread
 from utils.data import isSNPDatafile
 import dataPath
+from utils.matplotlib_example import *
 
 # trick to get things working on windows
 if "win" in sys.platform and "darwin" not in sys.platform:
@@ -118,6 +119,25 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         # pour le dragNdrop des dossier projet
         self.setAcceptDrops(True)
+
+        ## ADD
+        main_widget = QtGui.QWidget(self)
+
+        l = QtGui.QVBoxLayout(main_widget)
+        sc = MyMplCanvas(main_widget, width=5, height=4, dpi=100)
+        l.addWidget(sc)
+        plop = NavigationToolbar(sc, self)
+        l.addWidget(plop)
+        self.verticalLayout_4.addWidget(main_widget)
+
+        sc.axes.set_ylabel("ylabel")
+        sc.axes.set_title("title")
+        sc.axes.plot([0,3],[0,3],'go',label="blam",c="#00FFFF")
+        sc.axes.plot([1,2,2,2],'ro',label="plaa")
+        sc.axes.grid(True)
+        p3 = sc.axes.plot([4,4,5,5],'yo',label="ploup")
+        plt.setp(p3,color='b', markersize=15.0)
+        sc.axes.legend(bbox_to_anchor=(1.1, 1.05))
 
         pic = QPixmap(dataPath.DATAPATH+"/accueil_pictures/blue_orange.png")
         self.ui.imgLabel.setPixmap(pic)

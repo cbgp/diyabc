@@ -17,6 +17,7 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 from numpy import arange, sin, pi
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 progname = os.path.basename(sys.argv[0])
 progversion = "0.1"
@@ -26,9 +27,10 @@ class MyMplCanvas(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
+        self.fig = fig
         self.axes = fig.add_subplot(111)
         # We want the axes cleared every time plot() is called
-        self.axes.hold(False)
+        #self.axes.hold(False)
 
         self.compute_initial_figure()
 
@@ -48,9 +50,17 @@ class MyMplCanvas(FigureCanvas):
 class MyStaticMplCanvas(MyMplCanvas):
     """Simple canvas with a sine plot."""
     def compute_initial_figure(self):
-        t = arange(0.0, 3.0, 0.01)
-        s = sin(2*pi*t)
-        self.axes.plot(t, s)
+        ##t = arange(0.0, 3.0, 0.01)
+        ##s = sin(2*pi*t)
+        ##self.axes.plot(t, s)
+        #Self.axes.set_ylabel("ylabel")
+        #Self.axes.plot([1,1,3,3],'go',label="blam")
+        #Self.axes.plot([1,2,2,2],'ro',label="plaa")
+        #P3 = self.axes.plot([4,4,5,5],'yo',label="ploup")
+        #Plt.setp(p3,color='b', markersize=15.0)
+        ##self.axes.legend(('Model length', 'Total message length',"plop"),
+        ##                   'upper right', shadow=True,loc=(0.74,0.1))
+        Self.axes.legend(bbox_to_anchor=(1.1, 1.05))
 
 
 class MyDynamicMplCanvas(MyMplCanvas):

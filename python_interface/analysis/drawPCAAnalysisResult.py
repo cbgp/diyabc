@@ -8,11 +8,11 @@ from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
 from utils.visualizescenario import *
-from utils.matplotlib_example import *
-from PyQt4.Qwt5 import *
-from PyQt4.Qwt5.qplt import *
+#from PyQt4.Qwt5 import *
+#from PyQt4.Qwt5.qplt import *
 from viewTextFile import ViewTextFile
 import output
+from utils.matplotlib_example import *
 
 formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 
@@ -37,9 +37,9 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         self.ui=self
         self.ui.setupUi(self)
 
-        QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printGraph)
+        #QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printGraph)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
-        QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.saveGraph)
+        #QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.saveGraph)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewLocate)
 
         QObject.connect(self.ui.scCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
@@ -56,8 +56,8 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
 
         self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
 
-        self.ui.PCAGraphFrame.setMinimumSize(QSize(860, 430))
-        self.ui.PCAGraphFrame.setMaximumSize(QSize(860, 430))
+        #self.ui.PCAGraphFrame.setMinimumSize(QSize(860, 430))
+        #self.ui.PCAGraphFrame.setMaximumSize(QSize(860, 430))
 
         self.ui.parameterChoiceFrame.hide()
 
@@ -179,56 +179,64 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                     self.ui.scCombo.setCurrentIndex(ind)
                     self.ui.scCombo.setDisabled(True)
 
-    def drawGraphToPlot(self,legend,plot,num_sc,compo_h,compo_v,nbp):
+    def drawGraphToPlot(self,plot,num_sc,compo_h,compo_v,nbp):
         """ dessine les points pour un scenario, deux components, sur plot et met à jour legend
         le tout limité à nbp points. retourne le curve du posterior ou None s'il n'y en a pas
         """
-        col = QColor(self.tab_colors[(num_sc%20)])
-        if "mod" in self.analysis.category.lower():
-            col.setAlpha(0)
-            pen = QPen(QColor(self.tab_colors[(num_sc%20)]))
-        else:
-            pen = QPen(Qt.black)
+        #col = QColor(self.tab_colors[(num_sc%20)])
+        col = self.tab_colors[(num_sc%20)]
+        #if "mod" in self.analysis.category.lower():
+        #    col.setAlpha(0)
+        #    pen = QPen(QColor(self.tab_colors[(num_sc%20)]))
+        #else:
+        #    pen = QPen(Qt.black)
 
         legend_txt = "Scenario %s prior"%num_sc
-        c = QwtPlotCurve(legend_txt)
-        c.setStyle(QwtPlotCurve.Dots)
-        c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
-              QBrush(col),
-                pen,
-                  QSize(7, 7)))
-        c.setData(self.dico_points[num_sc][compo_h][:nbp], self.dico_points[num_sc][compo_v][:nbp])
-        c.attach(plot)
-        c.updateLegend(legend)
+        mypoints = plot.axes.scatter(self.dico_points[num_sc][compo_h][:nbp], self.dico_points[num_sc][compo_v][:nbp],marker='o',label=legend_txt,c=col,s=20.0)
+        #plt.setp(mypoints, markersize=7.0)
+        #c = QwtPlotCurve(legend_txt)
+        #c.setStyle(QwtPlotCurve.Dots)
+        #c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+        #      QBrush(col),
+        #        pen,
+        #          QSize(7, 7)))
+        #c.setData(self.dico_points[num_sc][compo_h][:nbp], self.dico_points[num_sc][compo_v][:nbp])
+        #c.attach(plot)
+        #c.updateLegend(legend)
         # si on a des coordonnées pour le posterior, on les dessine
         # avec la meme couleur mais plus gros
         if num_sc in self.dico_points_posterior.keys():
             legend_txt = "Scenario %s posterior"%num_sc
-            c = QwtPlotCurve(legend_txt)
-            c.setStyle(QwtPlotCurve.Dots)
-            c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
-                  QBrush(QColor(self.tab_colors[(num_sc%20)])),
-                    QPen(Qt.black),
-                      QSize(12, 12)))
-            c.setData(self.dico_points_posterior[num_sc][compo_h][:nbp], self.dico_points_posterior[num_sc][compo_v][:nbp])
-            c.attach(plot)
-            c.updateLegend(legend)
-            return c
+            mypoints = plot.axes.scatter(self.dico_points_posterior[num_sc][compo_h][:nbp], self.dico_points_posterior[num_sc][compo_v][:nbp],marker='o',label=legend_txt,c=col,s=75)
+            #c = QwtPlotCurve(legend_txt)
+            #c.setStyle(QwtPlotCurve.Dots)
+            #c.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+            #      QBrush(QColor(self.tab_colors[(num_sc%20)])),
+            #        QPen(Qt.black),
+            #          QSize(12, 12)))
+            #c.setData(self.dico_points_posterior[num_sc][compo_h][:nbp], self.dico_points_posterior[num_sc][compo_v][:nbp])
+            #c.attach(plot)
+            #c.updateLegend(legend)
+            return mypoints
         return None
 
-    def drawObservedToPlot(self,legend,plot,compo_h,compo_v):
+    def drawObservedToPlot(self,plot,compo_h,compo_v):
         """ dessine le point observé sur plot pour les deux components donnés
         """
-        rp = QwtPlotCurve("Observed data set")
-        rp.setStyle(QwtPlotCurve.Dots)
-        rp.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
-             QBrush(Qt.yellow),
-               QPen(Qt.black),
-                 QSize(17, 17)))
-        rp.setData([self.dico_points[0][compo_h]],[self.dico_points[0][compo_v]])
-        rp.attach(plot)
-        rp.updateLegend(legend)
-        return rp
+        col="yellow"
+        legend_txt = "Observed data set"
+        mypoints = plot.axes.scatter([self.dico_points[0][compo_h]],[self.dico_points[0][compo_v]],marker='o',label=legend_txt,c=col,s=150)
+
+        #rp = QwtPlotCurve("Observed data set")
+        #rp.setStyle(QwtPlotCurve.Dots)
+        #rp.setSymbol(QwtSymbol(Qwt.QwtSymbol.Ellipse,
+        #     QBrush(Qt.yellow),
+        #       QPen(Qt.black),
+        #         QSize(17, 17)))
+        #rp.setData([self.dico_points[0][compo_h]],[self.dico_points[0][compo_v]])
+        #rp.attach(plot)
+        #rp.updateLegend(legend)
+        return mypoints
 
     def drawGraph(self):
         """ dessine le graphe entier en fonction des valeurs selectionnées
@@ -245,163 +253,138 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             graph_file_name = "PCA_%s_%s_%s%s"%(self.ui.compoHCombo.currentText(),self.ui.compoVCombo.currentText(),self.ui.nbpCombo.currentText(),sc_txt)
 
             # le conteneur auquel on va ajouter des curves
-            p = QwtPlot()
-            p.setCanvasBackground(Qt.white)
-            p.setTitle("Components %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
-            legend = QwtLegend()
+            #p = QwtPlot()
+            main_draw_widget = QtGui.QWidget(self)
+            l = QtGui.QVBoxLayout(main_draw_widget)
+            plotc = MyMplCanvas(main_draw_widget, width=12, height=4, dpi=100)
+            l.addWidget(plotc)
+            plotc.fig.subplots_adjust(right=0.7,top=0.9)
+            #plotc.axes.axes.set_bbox([0.09,0.1,0.62,0.8])
+            #plt.setp(plotc.fig.axes,"bbox",[0.09,0.1,0.62,0.8])
+            navtoolbar = NavigationToolbar(plotc, self)
+            l.addWidget(navtoolbar)
+
+            plotc.axes.set_title("Components %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
+            plotc.axes.grid(True)
+            #plotc.fig.set_size(8,6)
+
+            #p.setCanvasBackground(Qt.white)
+            #p.setTitle("Components %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
+            #legend = QwtLegend()
 
             posteriorList = []
             if self.ui.scCombo.currentText() == "all":
                 for i in self.dico_points.keys():
                     # on ne fait pas le observed pour l'instant
                     if i != 0 and i != -1:
-                        posteriorList.append(self.drawGraphToPlot(legend,p,i,compo_h,compo_v,nbp))
+                        posteriorList.append(self.drawGraphToPlot(plotc,i,compo_h,compo_v,nbp))
             else:
                 num_sc = int(self.ui.scCombo.currentText())
-                posteriorList.append(self.drawGraphToPlot(legend,p,num_sc,compo_h,compo_v,nbp))
+                posteriorList.append(self.drawGraphToPlot(plotc,num_sc,compo_h,compo_v,nbp))
 
             # on fait le observed à la fin pour qu'il soit au dessus des autres
             # et donc visible
-            obs = self.drawObservedToPlot(legend,p,compo_h,compo_v)
+            obs = self.drawObservedToPlot(plotc,compo_h,compo_v)
 
-            self.fancyfyGraph(legend,p,obs,posteriorList)
-            p.insertLegend(legend,QwtPlot.RightLegend)
-            pm = QwtPlotMagnifier(p.canvas())
-            pp = QwtPlotPanner(p.canvas())
-            #pz = QwtPlotZoomer(p.canvas())
-            #ppi = QwtPlotPicker(p.canvas())
-            print self.dico_points[-1][compo_v]
-            p.setAxisTitle(0,"P.C.%s (%8.2f%%)"%(compo_v+1,float(self.dico_points[-1][compo_v])*100))
-            p.setAxisTitle(2,"P.C.%s (%8.2f%%)"%(compo_h+1,float(self.dico_points[-1][compo_h])*100))
-            p.replot()
+            plotc.axes.legend(bbox_to_anchor=(1.53, 1.0))
+            #plotc.axes.legend()
+            #self.fancyfyGraph(legend,p,obs,posteriorList)
+            #p.insertLegend(legend,QwtPlot.RightLegend)
+            #pm = QwtPlotMagnifier(p.canvas())
+            #pp = QwtPlotPanner(p.canvas())
+            ##pz = QwtPlotZoomer(p.canvas())
+            ##ppi = QwtPlotPicker(p.canvas())
+            #print self.dico_points[-1][compo_v]
+            #p.setAxisTitle(0,"P.C.%s (%8.2f%%)"%(compo_v+1,float(self.dico_points[-1][compo_v])*100))
+            #p.setAxisTitle(2,"P.C.%s (%8.2f%%)"%(compo_h+1,float(self.dico_points[-1][compo_h])*100))
+            plotc.axes.set_xlabel("P.C.%s (%8.2f%%)"%(compo_v+1,float(self.dico_points[-1][compo_v])*100))
+            plotc.axes.set_ylabel("P.C.%s (%8.2f%%)"%(compo_h+1,float(self.dico_points[-1][compo_h])*100))
+            #p.replot()
 
-            fr = QFrame(self)
-            fr.setFrameShape(QFrame.StyledPanel)
-            fr.setFrameShadow(QFrame.Raised)
-            fr.setObjectName("frame")
-            #fr.setMinimumSize(QSize(800, 0))
-            #fr.setMaximumSize(QSize(800, 440))
-            vert = QVBoxLayout(fr)
-            vert.addWidget(p)
+            #fr = QFrame(self)
+            #fr.setFrameShape(QFrame.StyledPanel)
+            #fr.setFrameShadow(QFrame.Raised)
+            #fr.setObjectName("frame")
+            ##fr.setMinimumSize(QSize(800, 0))
+            ##fr.setMaximumSize(QSize(800, 440))
+            #vert = QVBoxLayout(fr)
+            #vert.addWidget(p)
 
             if self.ui.verticalLayout_3.itemAt(0) != None:
                 self.ui.verticalLayout_3.itemAt(0).widget().hide()
             self.ui.verticalLayout_3.removeItem(self.ui.verticalLayout_3.itemAt(0))
-            self.ui.verticalLayout_3.addWidget(fr)
+            self.ui.verticalLayout_3.addWidget(main_draw_widget)
 
-            self.plot = p
+            self.plot = main_draw_widget
 
-    def fancyfyGraph(self,legend,p,obs,posteriorList):
-        """ met en forme la légende et calcule l'intervale des divisions des axes
-        """
-        #print "ppppppppppp"
-        for it in legend.legendItems():
-            f = it.font()
-            f.setPointSize(14)
-            it.setFont(f)
-        litem = legend.find(obs)
-        if litem != None:
-            litem.symbol().setSize(QSize(17,17))
-            litem.setIdentifierWidth(17)
-        legend.setFrameShape(QFrame.Box)
-        legend.setFrameShadow(QFrame.Raised)
-        for postcurve in posteriorList:
-            litem = legend.find(postcurve)
-            if litem != None:
-                litem.symbol().setSize(QSize(12,12))
-                litem.setIdentifierWidth(12)
+    #def printGraph(self):
+    #    p = self.plot
+    #    im_result = QPrinter()
+    #    dial = QPrintDialog(im_result,self)
+    #    if dial.exec_():
+    #        painter = QPainter()
+    #        im_result.setOrientation(QPrinter.Landscape)
+    #        im_result.setPageMargins(20,20,20,20,QPrinter.Millimeter)
+    #        im_result.setResolution(80)
+    #        painter.begin(im_result)
+    #        pen = QPen(Qt.black,2)
+    #        painter.setPen(pen)
+    #        p.print_(painter, p.rect())
+    #        painter.end()
 
-        #p.replot()
-        #sd = p.axisScaleDiv(0)
-        #interval = sd.interval()
-        #minv = interval.minValue()
-        #maxv = interval.maxValue()
-        #inc = 1.0
-        #if maxv-minv < 9:
-        #    inc = 0.5
-        #if maxv-minv < 5:
-        #    inc = 0.2
-        #if maxv-minv < 3:
-        #    inc = 0.1
-        #ticks = []
-        #vv = minv
-        #while vv < maxv:
-        #    ticks.append(round(vv,1))
-        #    vv += inc
-        #sd.setTicks(QwtScaleDiv.MajorTick,ticks)
-        #p.setAxisScaleDiv(0,sd)
-        grid = QwtPlotGrid()
-        grid.attach(p)
-        p.replot()
+    #def saveGraph(self):
+    #    """ sauvegarde le graphe dans le dossier PCA_pictures du projet
+    #    """
+    #    if self.ui.verticalLayout_3.itemAt(0) != None:
+    #        proj_dir = self.parent.dir
+    #        graph_dir = self.parent.parent.PCA_dir_name
+    #        sc_txt = ""
+    #        if self.ui.scCombo.currentText() != "all":
+    #            sc_txt = "_sc_%s"%self.ui.scCombo.currentText()
+    #        graph_dir_path = "%s/analysis/%s/%s"%(proj_dir,self.directory,graph_dir)
+    #        if not os.path.exists(graph_dir_path):
+    #            os.mkdir(graph_dir_path)
 
-    def printGraph(self):
-        p = self.plot
-        im_result = QPrinter()
-        dial = QPrintDialog(im_result,self)
-        if dial.exec_():
-            painter = QPainter()
-            im_result.setOrientation(QPrinter.Landscape)
-            im_result.setPageMargins(20,20,20,20,QPrinter.Millimeter)
-            im_result.setResolution(80)
-            painter.begin(im_result)
-            pen = QPen(Qt.black,2)
-            painter.setPen(pen)
-            p.print_(painter, p.rect())
-            painter.end()
+    #        graph_file_path = "%s/refTable_PCA_%s_%s_%s%s"%(graph_dir_path,self.ui.compoHCombo.currentText(),self.ui.compoVCombo.currentText(),self.ui.nbpCombo.currentText(),sc_txt)
+    #        if os.path.exists(graph_file_path):
+    #            os.remove(graph_file_path)
 
-    def saveGraph(self):
-        """ sauvegarde le graphe dans le dossier PCA_pictures du projet
-        """
-        if self.ui.verticalLayout_3.itemAt(0) != None:
-            proj_dir = self.parent.dir
-            graph_dir = self.parent.parent.PCA_dir_name
-            sc_txt = ""
-            if self.ui.scCombo.currentText() != "all":
-                sc_txt = "_sc_%s"%self.ui.scCombo.currentText()
-            graph_dir_path = "%s/analysis/%s/%s"%(proj_dir,self.directory,graph_dir)
-            if not os.path.exists(graph_dir_path):
-                os.mkdir(graph_dir_path)
+    #        p = self.plot
 
-            graph_file_path = "%s/refTable_PCA_%s_%s_%s%s"%(graph_dir_path,self.ui.compoHCombo.currentText(),self.ui.compoVCombo.currentText(),self.ui.nbpCombo.currentText(),sc_txt)
-            if os.path.exists(graph_file_path):
-                os.remove(graph_file_path)
+    #        pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
 
-            p = self.plot
+    #        if pic_format == "svg":
+    #            svg = QSvgGenerator()
+    #            svg.setFileName("%s.svg"%(graph_file_path))
+    #            svg.setSize(p.rect().size())
 
-            pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
+    #            painter = QPainter(svg)
+    #            p.print_(painter, p.rect())
+    #            painter.end()
+    #        elif pic_format == "jpg" or pic_format == "png":
+    #            pix = QPixmap(p.rect().size().width(),p.rect().size().height())
+    #            pix.fill(Qt.white)
 
-            if pic_format == "svg":
-                svg = QSvgGenerator()
-                svg.setFileName("%s.svg"%(graph_file_path))
-                svg.setSize(p.rect().size())
-
-                painter = QPainter(svg)
-                p.print_(painter, p.rect())
-                painter.end()
-            elif pic_format == "jpg" or pic_format == "png":
-                pix = QPixmap(p.rect().size().width(),p.rect().size().height())
-                pix.fill(Qt.white)
-
-                painter = QPainter(pix)
-                pen = QPen(Qt.black,2)
-                painter.setPen(pen)
-                p.print_(painter, p.rect())
-                painter.end()
-                im = pix.toImage()
-                im.save("%s.%s"%(graph_file_path,pic_format))
-            elif pic_format == "pdf":
-                im_result = QPrinter()
-                im_result.setOrientation(QPrinter.Landscape)
-                im_result.setOutputFormat(QPrinter.PdfFormat)
-                im_result.setOutputFileName('%s.pdf'%graph_file_path)
-                painter = QPainter()
-                im_result.setResolution(80)
-                painter.begin(im_result)
-                pen = QPen(Qt.black,2)
-                painter.setPen(pen)
-                p.print_(painter, p.rect())
-                painter.end()
-            QMessageBox.information(self,"Graph saved","The graph has been saved in the project analysis directory :\n%s.%s"%(graph_file_path,pic_format))
+    #            painter = QPainter(pix)
+    #            pen = QPen(Qt.black,2)
+    #            painter.setPen(pen)
+    #            p.print_(painter, p.rect())
+    #            painter.end()
+    #            im = pix.toImage()
+    #            im.save("%s.%s"%(graph_file_path,pic_format))
+    #        elif pic_format == "pdf":
+    #            im_result = QPrinter()
+    #            im_result.setOrientation(QPrinter.Landscape)
+    #            im_result.setOutputFormat(QPrinter.PdfFormat)
+    #            im_result.setOutputFileName('%s.pdf'%graph_file_path)
+    #            painter = QPainter()
+    #            im_result.setResolution(80)
+    #            painter.begin(im_result)
+    #            pen = QPen(Qt.black,2)
+    #            painter.setPen(pen)
+    #            p.print_(painter, p.rect())
+    #            painter.end()
+    #        QMessageBox.information(self,"Graph saved","The graph has been saved in the project analysis directory :\n%s.%s"%(graph_file_path,pic_format))
 
     def exit(self):
         del self.dico_points
