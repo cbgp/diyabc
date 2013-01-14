@@ -48,7 +48,10 @@ if "win" in sys.platform and "darwin" not in sys.platform:
 
 
 if ('development vers' in VERSION):
-    VERSION_DATE=getLastRevisionDate("../")
+    try:
+        VERSION_DATE=getLastRevisionDate("../")
+    except Exception as e:
+        VERSION_DATE="unknown"
 formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
 
 ## @class Diyabc
