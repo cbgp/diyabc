@@ -1,0 +1,31 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}
+\BOOKMARK [2][-]{subsection.1.1}{Objectifs}{section.1}
+\BOOKMARK [2][-]{subsection.1.2}{Choix d'outils}{section.1}
+\BOOKMARK [1][-]{section.2}{Conception}{}
+\BOOKMARK [2][-]{subsection.2.1}{Documentation}{section.2}
+\BOOKMARK [2][-]{subsection.2.2}{Partie graphique}{section.2}
+\BOOKMARK [2][-]{subsection.2.3}{Coeur de l'application}{section.2}
+\BOOKMARK [2][-]{subsection.2.4}{Le mod\350le historique}{section.2}
+\BOOKMARK [2][-]{subsection.2.5}{Les donn\351es g\351n\351tiques}{section.2}
+\BOOKMARK [2][-]{subsection.2.6}{Les pr\351f\351rences}{section.2}
+\BOOKMARK [2][-]{subsection.2.7}{La g\351n\351ration de la table de r\351f\351rence}{section.2}
+\BOOKMARK [2][-]{subsection.2.8}{Les analyses}{section.2}
+\BOOKMARK [1][-]{section.3}{Tests}{}
+\BOOKMARK [2][-]{subsection.3.1}{Conception}{section.3}
+\BOOKMARK [2][-]{subsection.3.2}{Lancement}{section.3}
+\BOOKMARK [1][-]{section.4}{Construction du projet}{}
+\BOOKMARK [2][-]{subsection.4.1}{Introduction}{section.4}
+\BOOKMARK [2][-]{subsection.4.2}{Windows}{section.4}
+\BOOKMARK [3][-]{subsubsection.4.2.1}{pyinstaller}{subsection.4.2}
+\BOOKMARK [3][-]{subsubsection.4.2.2}{Inno setup compiler}{subsection.4.2}
+\BOOKMARK [3][-]{subsubsection.4.2.3}{Py2exe}{subsection.4.2}
+\BOOKMARK [3][-]{subsubsection.4.2.4}{Solution choisie}{subsection.4.2}
+\BOOKMARK [2][-]{subsection.4.3}{Linux}{section.4}
+\BOOKMARK [3][-]{subsubsection.4.3.1}{Installer PyQt4}{subsection.4.3}
+\BOOKMARK [3][-]{subsubsection.4.3.2}{pyinstaller}{subsection.4.3}
+\BOOKMARK [3][-]{subsubsection.4.3.3}{Script de g\351n\351ration du paquet Debian}{subsection.4.3}
+\BOOKMARK [2][-]{subsection.4.4}{MacOS 10.6 Snow Leopard}{section.4}
+\BOOKMARK [3][-]{subsubsection.4.4.1}{Installer PyQt4}{subsection.4.4}
+\BOOKMARK [3][-]{subsubsection.4.4.2}{pyinstaller}{subsection.4.4}
+\BOOKMARK [3][-]{subsubsection.4.4.3}{Solution choisie}{subsection.4.4}
+\BOOKMARK [1][-]{section.5}{Am\351liorations \340 apporter}{}

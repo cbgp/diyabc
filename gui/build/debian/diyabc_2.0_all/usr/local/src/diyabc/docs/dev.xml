@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?latexml searchpaths=".,//home/julien/vcs/git/diyabc.git/python_interface/docs/"?>
+<?latexml options="12pt,a4paper" class="article"?>
+<?latexml options="utf8" package="inputenc"?>
+<?latexml options="francais" package="babel"?>
+<?latexml options="T1" package="fontenc"?>
+<?latexml package="graphicx"?>
+<?latexml package="fancyhdr"?>
+<?latexml package="geometry"?>
+<?latexml package="hyperref"?>
+<!-- %\institute{Université de Montpellier 2} -->
+<!-- %\pagestyle{headings} -->
+<?latexml RelaxNGSchema="LaTeXML"?>
+<document xmlns="http://dlmf.nist.gov/LaTeXML">
+  <title>Documentation sur le développement de <break/>DIYABC en python</title>
+  <creator role="author">
+    <personname>Veyssier Julien</personname>
+  </creator>
+  <date role="creation">April 29, 2011</date>
+  <ERROR class="undefined">\fancyhf</ERROR>
+  <ERROR class="undefined">\fancyhead</ERROR>
+  <para xml:id="p1">
+    <p>[L]0[R]DIYACBpythondoc|Veyssier<ERROR class="undefined">\fancyhead</ERROR><!-- %\fancyhead[LE,RO]{\thesection} --></p>
+  </para>
+  <ERROR class="undefined">\geometry</ERROR>
+  <para xml:id="p2">
+    <p>hmargin=2.5cm,vmargin=2cm</p>
+  </para>
+  <!-- %**** dev_sheet.tex Line 25 **** 
+     %\begin{center}powered by \LaTeX\end{center}-->
+  <section refnum="1" xml:id="S1">
+    <title>Introduction</title>
+    <para xml:id="S1.p1">
+      <p>Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.</p>
+    </para>
+    <subsection refnum="1.1" xml:id="S1.SS1">
+      <title>Objectifs</title>
+      <para xml:id="S1.SS1.p1">
+        <p>Modulariser le code de sorte à permettre facilement l'ajout de nouveaux blocs, tant graphiques que fonctionnels.</p>
+      </para>
+    </subsection>
+    <subsection refnum="1.2" xml:id="S1.SS2">
+      <title>Choix d'outils</title>
+      <para xml:id="S1.SS2.p1">
+        <p>La librairie Qt a été choisie pour sa portabilité, sa flexibilité et sa facilité d'utilisation. Le langage python
+a été choisi pour sa clarté, sa réutilisabilité et son grand nombre de librairies. QtCreator est utilisé pour
+la production des objets graphiques.</p>
+      </para>
+    </subsection>
+  </section>
+  <section refnum="2" xml:id="S2">
+    <title>Conception</title>
+    <subsection refnum="2.1" xml:id="S2.SS1">
+      <title>Partie graphique</title>
+      <para xml:id="S2.SS1.p1">
+        <p>La partie graphique statique est découplée du fonctionnement. Des fichiers .ui sont produits à partir d'un IDE. Toute entité graphique
+étant succeptible d'être présente plusieurs fois dans l'application est produite indépendament dans un .ui et une classe associée.</p>
+      </para>
+      <!-- %**** dev_sheet.tex Line 50 **** -->
+      <para xml:id="S2.SS1.p2">
+        <p>L'ui principal est celui de la fenêtre principale.
+Un ui peut n'être qu'un widget. Un fichier source python produit à partir d'un .ui avec “pyuic” contient une classe non graphique
+qui crée tous les objets graphiques à l'intérieur de l'objet que l'on veut créer.</p>
+      </para>
+      <para xml:id="S2.SS1.p3">
+        <p>Exemple : Création d'une scroll area.</p>
+        <itemize xml:id="I1">
+          <item xml:id="I1.i1">
+            <para xml:id="I1.i1.p1">
+              <p>Création d'une ui pour QScrollArea</p>
+            </para>
+          </item>
+          <item xml:id="I1.i2">
+            <para xml:id="I1.i2.p1">
+              <p>Génération du code python avec pyuic4 :</p>
+              <verbatim font="typewriter"> pyuic4 mon.ui &gt; monui.py 
+</verbatim>
+            </para>
+          </item>
+          <item xml:id="I1.i3">
+            <para xml:id="I1.i3.p1">
+              <p>Instanciation d'un objet QScrollArea (on peut créer une classe qui dérive de QScrollArea ou bien instancier un vrai QScrollArea)</p>
+            </para>
+          </item>
+          <item xml:id="I1.i4">
+            <para xml:id="I1.i4.p1">
+              <p>Appel de la methode setupUi de la classe générée avec l'objet QScrollArea en paramètre</p>
+              <verbatim font="typewriter">
+                from monui.py import Ui_QScrollArea
+                maScrollArea = QScrollArea()
+                ui = Ui_QScrollArea()
+                ui.setupUi(maScrollArea)
+                
+</verbatim>
+            </para>
+          </item>
+        </itemize>
+      </para>
+    </subsection>
+    <subsection refnum="2.2" xml:id="S2.SS2">
+      <title>Coeur de l'application</title>
+      <para xml:id="S2.SS2.p1">
+        <p>La classe principale de l'application dérive de QMainWindow. Elle est instanciée dans le main du fichier qui la contient.</p>
+      </para>
+    </subsection>
+    <subsection refnum="2.3" xml:id="S2.SS3">
+      <title>Proposition d'architectures</title>
+      <para xml:id="S2.SS3.p1">
+        <p>On pourrait dissocier complètement la partie graphique du fonctionnement, c'est à dire avoir une partie du programme
+qui ne manipule que des objets conceptuels (projet, historical model…) qui appelle son système d'affichage à souhait.</p>
+      </para>
+      <!-- %**** dev_sheet.tex Line 75 **** -->
+      <para xml:id="S2.SS3.p2">
+        <p>On pourrait faire une classe abstraite Displayer dérivée en QtDisplayer et CliDisplayer.</p>
+      </para>
+    </subsection>
+  </section>
+  <section refnum="3" xml:id="S3" labels="LABEL:doc_nbGroupLabel">
+    <title>Documentation</title>
+    <para xml:id="S3.p1">
+      <p>nb group quoi</p>
+    </para>
+  </section>
+  <section refnum="4" xml:id="S4">
+    <title>Construction du projet</title>
+    <para xml:id="S4.p1">
+      <p>Pour générer un exécutable compatible avec un système, il faut :</p>
+      <itemize xml:id="I2">
+        <item xml:id="I2.i1">
+          <para xml:id="I2.i1.p1">
+            <p>Se trouver sur ce système</p>
+          </para>
+        </item>
+        <item xml:id="I2.i2">
+          <para xml:id="I2.i2.p1">
+            <p>Posséder python et toutes les librairies nécessaires au programme</p>
+          </para>
+        </item>
+        <item xml:id="I2.i3">
+          <para xml:id="I2.i3.p1">
+            <p>Disposer de pyinstaller</p>
+          </para>
+        </item>
+      </itemize>
+    </para>
+    <subsection refnum="4.1" xml:id="S4.SS1">
+      <title>Windows</title>
+      <para xml:id="S4.SS1.p1">
+        <p>Sous windows, plusieurs solutions sont envisageables. La première, plus simple pour l'utilisateur et le
+packageur : PyInstaller. L'exécutable produit est indépendant et léger.</p>
+      </para>
+      <para xml:id="S4.SS1.p2">
+        <p>La deuxième, Inno setup compiler, pour créer un installateur qui effectue une copie de fichier et certaines actions.
+Deux stratégies sont possibles. On peut copier en un bloc
+python contenant ses dépendances et diyabc. Le problème est le suivant, python.exe refuse de se lancer s'il n'a pas été
+installé avec l'installeur officiel Python. Donc il faut tout de même déclencher l'installation de Python en incluant
+l'installeur dans le setup de diyabc. Sinon on peut déclencher l'installeur de Python, PyQt, Numpy, PyQwt pendant le setup de
+diyabc ce qui marche à coup sur mais est lourd pour l'utilisateur.
+<!-- %**** dev_sheet.tex Line 100 **** --></p>
+      </para>
+      <para xml:id="S4.SS1.p3">
+        <p>La troisème, py2exe est satisfaisante mais impose l'installation à part de certaines dll.</p>
+      </para>
+      <para xml:id="S4.SS1.p4">
+        <p>Pour ces trois solutions j'utilise python2.6 et les librairies “imposées” par PyQwt5 (http://pyqwt.sourceforge.net/download.html).
+Il faut installer les versions suivantes des logiciels :</p>
+        <itemize xml:id="I3">
+          <item xml:id="I3.i1">
+            <para xml:id="I3.i1.p1">
+              <p>python-2.6.2.msi</p>
+            </para>
+          </item>
+          <item xml:id="I3.i2">
+            <para xml:id="I3.i2.p1">
+              <p>numpy-1.3.0-win32-superpack-python2.6.exe</p>
+            </para>
+          </item>
+          <item xml:id="I3.i3">
+            <para xml:id="I3.i3.p1">
+              <p>PyQt-Py2.6-gpl-4.5.4-1.exe</p>
+            </para>
+          </item>
+          <item xml:id="I3.i4">
+            <para xml:id="I3.i4.p1">
+              <p>PyQwt5.2.0-Python2.6-PyQt4.5.4-NumPy1.3.0-1.exe</p>
+            </para>
+          </item>
+        </itemize>
+      </para>
+      <subsubsection refnum="4.1.1" xml:id="S4.SS1.SSS1">
+        <title>pyinstaller</title>
+        <paragraph xml:id="S4.SS1.SSS1.P1">
+          <title>Anciennes versions</title>
+          <para xml:id="S4.SS1.SSS1.P1.p1">
+            <p>La version 1.4 nécessite une version de python &lt;= à 2.5. L'utilisation de pyinstaller est assez simple. Il faut,
+lancer “python Configure.py” pour que pyinstaller se configure par rapport au système sur lequel il est. Ensuite il faut
+lancer “python Makespec.py –onefile path_to_python_main_source.py” qui génère le specfile dans un dossier du même nom que
+notre source python. Ensuite “python Build.py specfile.spec” construit l'exécutable qui se trouvera dans le même dossier que le spec file
+dans un dossier nommé “dist”.</p>
+          </para>
+        </paragraph>
+        <paragraph xml:id="S4.SS1.SSS1.P2">
+          <title>Solution</title>
+          <para xml:id="S4.SS1.SSS1.P2.p1">
+            <p>La version svn est de loin la meilleure solution. Elle marche sans aucun problème sous windows. Son utilisation est simplifiée.
+Il suffit d'appeler le script pyinstaller.py avec le programme cible en paramètre. Les trois étapes (configure, makespec et build)
+sont exécutées automatiquement si besoin. Dans le fichier .spec produit, on peut ajouter l'option icon pour personnaliser l'icone
+de l'exécutable.
+dev doc et icones
+Utilisation :</p>
+            <verbatim font="typewriter"> python pyinstaller.py --onefile -w --icon=path\to\icon.ico 
+</verbatim>
+            <!-- %**** dev_sheet.tex Line 125 **** -->
+          </para>
+        </paragraph>
+      </subsubsection>
+    </subsection>
+    <subsection refnum="4.2" xml:id="S4.SS2">
+      <title>Inno setup compiler</title>
+      <para xml:id="S4.SS2.p1">
+        <p>http://www.jrsoftware.org/isdl.php</p>
+      </para>
+      <para xml:id="S4.SS2.p2">
+        <p>La création du fichier de config (.iss) est assistée et plutôt aisée. On donne les fichiers à inclure, le dossier de destination
+et quelques options. Pour plus de détails, consulter le fichier .iss inclut dans le dépot qui est commenté.</p>
+      </para>
+    </subsection>
+    <subsection refnum="4.3" xml:id="S4.SS3">
+      <title>Py2exe</title>
+      <para xml:id="S4.SS3.p1">
+        <p>Le site de py2exe contient un tuto simple auquel il faut ajouter quelques détails pour que ça fonctionne parfaitement. Le
+fonctionnement est simple. On écrit un setup.py puis on exécute</p>
+        <verbatim font="typewriter"> python setup.py py2exe 
+</verbatim>
+        <p>Cela Crée un dossier
+Build et Dist. Dans ce dernier se trouve léxecutable ainsi
+Voici un exemple de setup.py incluant la copie des données nécessaires au programme ainsi que la résolution du problème
+lié à la librairie SIP:</p>
+        <verbatim font="typewriter">
+    from distutils.core import setup
+    import py2exe
+    from glob import glob
+    import os
+
+    data_files = [("docs", glob(r'docs\*.*')),("docs/accueil_pictures",
+                    glob(r'docs/accueil_pictures/*.*'))]
+
+    setup(console=[{"script":"diyabc.py"}],data_files=data_files,
+                options={"py2exe":{"includes":["sip"]}})
+        
+</verbatim>
+        <p>L'option “window” plutôt que “console” ne fonctionne pas.
+<!-- %**** dev_sheet.tex Line 150 **** --></p>
+      </para>
+    </subsection>
+    <subsection refnum="4.4" xml:id="S4.SS4">
+      <title>Linux</title>
+      <subsubsection refnum="4.4.1" xml:id="S4.SS4.SSS1">
+        <title>Installer PyQt4</title>
+        <para xml:id="S4.SS4.SSS1.p1">
+          <p>PyQt4 et PyQwt5 sont packagés pour toutes les distributions. Aucun problème de ce côté.</p>
+        </para>
+      </subsubsection>
+      <subsubsection refnum="4.4.2" xml:id="S4.SS4.SSS2">
+        <title>pyinstaller</title>
+        <para xml:id="S4.SS4.SSS2.p1">
+          <p>Pyinstaller semble ne pas fonctionner parfaitement sous linux. L'exécutable produit ne marche que
+sur la machine qui l'a créé. Je suis d'avis qu'il faut plutôt faire un paquet debian et/ou rpm
+et distribuer le programme de cette façon.</p>
+        </para>
+      </subsubsection>
+    </subsection>
+    <subsection refnum="4.5" xml:id="S4.SS5">
+      <title>Script de génération du paquet Debian</title>
+      <para xml:id="S4.SS5.p1">
+        <p>Ce script se situe dans python_interface/docs/project_builders/debian . Il utilise le template se trouvant dans le même
+répertoire. Dans un premier temps, il modifie les fichiers d'information du paquet pour coller avec la version. Ensuite, il
+copie les sources nécessaires dans l'arborescence du paquet. Il écrit enfin le contenu du script de lancement qui sera dans
+/usr/local/bin.</p>
+      </para>
+    </subsection>
+    <subsection refnum="4.6" xml:id="S4.SS6" labels="LABEL:doc_nbMicrosatLabel">
+      <title>MacOs 10.6 Snow Leopard</title>
+      <para xml:id="S4.SS6.p1">
+        <p>Sous MacOs, on pourrait créer un pkg qui installe python et les dépendances de DIYABC. C'est un peu lourd
+pour l'utilisateur. Py2app ne fonctionne pas, après avoir compilé un apptemplate pour i386_x64
+il subsiste un problème dont l'origine m'est inconnue. Au lancement
+du .app, “DIYABC error” apparait et je n'ai aucun moyen de savoir pourquoi. J'ai donc retenu pyinstaller qui fonctionne parfaitement.</p>
+      </para>
+      <para xml:id="S4.SS6.p2">
+        <p>Sur la machine qui va générer le .app, il faut avoir un environnement de développement complet, à savoir
+python2.6, PyQt4 et PyQwt5.</p>
+      </para>
+      <subsubsection refnum="4.6.1" xml:id="S4.SS6.SSS1">
+        <title>Installer PyQt4</title>
+        <!-- %**** dev_sheet.tex Line 175 **** -->
+        <paragraph xml:id="S4.SS6.SSS1.P1">
+          <title>Problèmes</title>
+          <para xml:id="S4.SS6.SSS1.P1.p1">
+            <p>PyQt n'est pas disponible en binaire sur MacOs. Il faut donc avoir Qt et gcc pour le compiler.
+Gcc n'est que très difficilement installable sans Xcode. Il faut donc installer Xcode.
+En suivant à peu près les instructions données à cette adresse : 
+http://deanezra.com/2010/05/setting-up-pythonqt-pyqt4-on-mac-os-x-snow-leopard/
+, on arrive à bout de cette installation qui est tout de même un gros morceau pour pas grand chose.</p>
+          </para>
+          <para xml:id="S4.SS6.SSS1.P1.p2">
+            <p>Pour la version 4.8.3 de PyQt, je n'ai trouvé d'autre solution que de commenter les 3 lignes qui concernent
+“designer” pour que la compilation fonctionne. En cas d'erreurs incompréhensibles, bien penser à faire un “make clean”
+pour effacer les .o déjà compilés qui peuvent provenir d'une compilation précédente mal paramétrée.</p>
+          </para>
+        </paragraph>
+        <paragraph xml:id="S4.SS6.SSS1.P2">
+          <title>Solution</title>
+          <para xml:id="S4.SS6.SSS1.P2.p1">
+            <p>La solution est d'utiliser les macports pour installer PyQwt (py26-pyqwt), ce qui installera tout le nécessaire. Il faut tout de même
+faire attention à numpy qui pose un problème de version de lib vector. La solution est de désinstaller numpy et de l'installer avec l'option
+“-atlas”.</p>
+          </para>
+        </paragraph>
+      </subsubsection>
+      <subsubsection refnum="4.6.2" xml:id="S4.SS6.SSS2">
+        <title>pyinstaller</title>
+        <paragraph xml:id="S4.SS6.SSS2.P1" labels="LABEL:doc_nbSequencesLabel">
+          <title>description of nbSequencesLabel</title>
+          <para xml:id="S4.SS6.SSS2.P1.p1">
+            <p>Les version 1.4 et 1.5 ne fonctionnent pas. Par contre,
+pyinstaller svn est tout à fait opérationnel avec python2.6. Il faut tout de même effectuer une série d'opérations avant et après
+le build pour que le .app soit opérationnel.Se rérérer à 
+http ://diotavelli.net/PyQtWiki/PyInstallerOnMacOSX 
+<!-- %**** dev_sheet.tex Line 200 **** --></p>
+          </para>
+        </paragraph>
+        <paragraph xml:id="S4.SS6.SSS2.P2" labels="LABEL:doc_nbSumStatsLabel">
+          <title>description of nbMicrosatLabel</title>
+          <para xml:id="S4.SS6.SSS2.P2.p1">
+            <p>Protocole :</p>
+            <itemize xml:id="I4">
+              <item xml:id="I4.i1">
+                <para xml:id="I4.i1.p1">
+                  <p>Lancer une première fois “python pyinstaller.py diyabc.py”</p>
+                </para>
+              </item>
+              <item xml:id="I4.i2">
+                <para xml:id="I4.i2.p1">
+                  <p>Ajouter à la fin de diyabc.spec :</p>
+                  <verbatim font="typewriter">
+    import sys
+    if sys.platform.startswith(``darwin''):
+        app = BUNDLE(exe,
+        appname='DIYABC',
+        version='1.0')
+        
+</verbatim>
+                </para>
+              </item>
+              <item xml:id="I4.i3">
+                <para xml:id="I4.i3.p1">
+                  <p>Relancer pyinstaller sur le specfile: “python pyinstaller diyabc/diyabc.spec”</p>
+                </para>
+              </item>
+              <item xml:id="I4.i4">
+                <para xml:id="I4.i4.p1">
+                  <p>Changer une valeur dans le fichier Info.list</p>
+                </para>
+              </item>
+              <item xml:id="I4.i5">
+                <para xml:id="I4.i5.p1">
+                  <p>Copier le contenu du dossier dist/nom_du_projet dans le dossier MacOs du .app</p>
+                </para>
+              </item>
+              <item xml:id="I4.i6">
+                <para xml:id="I4.i6.p1">
+                  <p>Copier /Library/Frameworks/QtGui.framework/Versions/4/Resources/qt_menu.nib dans le dossier Ressources du .app</p>
+                </para>
+              </item>
+              <item xml:id="I4.i7">
+                <para xml:id="I4.i7.p1">
+                  <p>Copier l'icone dans le dossier Ressources avec le nom “App.icns”.</p>
+                </para>
+              </item>
+            </itemize>
+          </para>
+        </paragraph>
+      </subsubsection>
+    </subsection>
+  </section>
+  <section refnum="5" xml:id="S5">
+    <title>Utilisation</title>
+  </section>
+  <section refnum="6" xml:id="S6">
+    <title>Limites et améliorations</title>
+    <!-- %**** dev_sheet.tex Line 225 **** -->
+  </section>
+</document>

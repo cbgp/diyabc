@@ -1,0 +1,15 @@
+[Desktop Entry]
+Categories=Biology;CBGP;Qt;GNOME;
+Name=DIYABC
+Name[fr]=DIYABC
+GenericName=Inference on Bayesian
+GenericName[fr]=Inférence avec des modèles bayésiens
+Comment=Do It Yourself ABC
+Comment[fr]=DIY (faites par vous même) de l'ABC
+Version=2.0
+Exec=/usr/local/bin/diyabc
+Icon=/usr/local/src/diyabc/docs/icons/coccicon.png
+StartupNotify=true
+#StartupWMClass=Diyabc
+Terminal=false
+Type=Application
