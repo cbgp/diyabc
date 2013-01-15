@@ -9,9 +9,8 @@ from PyQt4.QtSvg import *
 from PyQt4 import uic
 from utils.visualizescenario import *
 from viewTextFile import ViewTextFile
-from PyQt4.Qwt5 import *
-from PyQt4.Qwt5.qplt import *
 from utils.cbgpUtils import log
+from utils.matplotlib_example import *
 
 formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 
@@ -152,10 +151,16 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         q95 = float(tabvalues[7])
         q975 = float(tabvalues[8])
 
-        p = QwtPlot()
-        p.setCanvasBackground(Qt.white)
-        p.setTitle("%s [%6.2e]"%(name,median))
-        legend = QwtLegend()
+        draw_widget = QtGui.QWidget(self)
+        l = QtGui.QVBoxLayout(draw_widget)
+        plotc = MyMplCanvas(draw_widget, width=12, height=4, dpi=100)
+        l.addWidget(plotc)
+        #plotc.fig.subplots_adjust(right=0.7,top=0.9,bottom=0.15)
+        navtoolbar = NavigationToolbar(plotc, self)
+        l.addWidget(navtoolbar)
+
+        plotc.axes.grid(True)
+        plotc.axes.set_title("%s [%6.2e]"%(name,median))
 
         labs = []
         for num in absv.strip().split('  '):
@@ -168,44 +173,13 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             lpo.append(float(num))
             
         legend_txt = "prior"
-        pr = QwtPlotCurve(legend_txt)
-        pr.setStyle(QwtPlotCurve.Lines)
-        pr.setPen(QPen(QColor(self.tab_colors[2]),2))
-        pr.setSymbol(QwtSymbol(Qwt.QwtSymbol.NoSymbol,
-              QBrush(QColor(self.tab_colors[1])),
-                QPen(QColor(self.tab_colors[1])),
-                  QSize(7, 7)))
-        pr.setData(labs,lpr)
-        pr.attach(p)
-        pr.updateLegend(legend)
+        plotc.axes.plot(labs,lpr,label=legend_txt,c=self.tab_colors[2])
 
         legend_txt = "posterior"
-        post = QwtPlotCurve(legend_txt)
-        post.setStyle(QwtPlotCurve.Lines)
-        post.setPen(QPen(QColor(self.tab_colors[1]),2))
-        post.setSymbol(QwtSymbol(Qwt.QwtSymbol.NoSymbol,
-              QBrush(QColor(self.tab_colors[2])),
-                QPen(QColor(self.tab_colors[2])),
-                  QSize(7, 7)))
-        post.setData(labs,lpo)
-        post.attach(p)
-        post.updateLegend(legend)
+        plotc.axes.plot(labs,lpo,label=legend_txt,c=self.tab_colors[1])
 
-        for it in legend.legendItems():
-            f = it.font()
-            f.setPointSize(11)
-            it.setFont(f)
-        legend.setFrameShape(QFrame.Box)
-        legend.setFrameShadow(QFrame.Raised)
-
-        p.replot()
-        grid = QwtPlotGrid()
-        grid.setPen(QPen(Qt.black,0.5))
-        grid.attach(p)
-        p.insertLegend(legend,QwtPlot.BottomLegend)
-
-        p.setAxisScaleEngine(QwtPlot.yLeft,None)
-
+        plotc.axes.legend(bbox_to_anchor=(0.74, -0.14),ncol=2,prop={'size':9})
+        plotc.fig.subplots_adjust(right=0.99,top=0.85,bottom=0.27)
 
         fr = QFrame(self)
         fr.setFrameShape(QFrame.StyledPanel)
@@ -214,10 +188,10 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         fr.setMinimumSize(QSize(400, 0))
         fr.setMaximumSize(QSize(400, 300))
         vert = QVBoxLayout(fr)
-        vert.addWidget(p)
+        vert.addWidget(draw_widget)
 
         self.ui.horizontalLayout_2.addWidget(fr)
-        self.dicoPlot[name] = p
+        self.dicoPlot[name] = plotc
 
         # frame des valeurs
         frame = QFrame(self.ui.scrollAreaWidgetContents)

@@ -9,10 +9,9 @@ from PyQt4.QtSvg import *
 from PyQt4 import uic
 from utils.visualizescenario import *
 from viewTextFile import ViewTextFile
-from PyQt4.Qwt5 import *
-from PyQt4.Qwt5.qplt import *
 from datetime import datetime 
 from utils.cbgpUtils import log
+from utils.matplotlib_example import *
 
 formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 
@@ -35,9 +34,9 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         self.ui=self
         self.ui.setupUi(self)
 
-        QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printGraphs)
+        #QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printGraphs)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
-        QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
+        #QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewCompDirectLogReg)
 
         self.ui.PCAFrame.hide()
@@ -128,41 +127,30 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
     def addDraw(self,first_line_tab,dico_coord,direct):
         """ dessine et affiche un graphe
         """        
-        p = QwtPlot()
-        p.setCanvasBackground(Qt.white)
+        draw_widget = QtGui.QWidget(self)
+        l = QtGui.QVBoxLayout(draw_widget)
+        plotc = MyMplCanvas(draw_widget, width=12, height=4, dpi=100)
+        l.addWidget(plotc)
+        #plotc.fig.subplots_adjust(right=0.7,top=0.9,bottom=0.15)
+        navtoolbar = NavigationToolbar(plotc, self)
+        l.addWidget(navtoolbar)
+
+        plotc.axes.grid(True)
+
         if direct:
-            p.setTitle("Direct")
+            plotc.axes.set_title("Direct")
         else:
-            p.setTitle("Logistic regression")
-        legend = QwtLegend()
+            plotc.axes.set_title("Logistic regression")
+
 
         labs = dico_coord['n']
             
         for i in range(len(first_line_tab)):    
             legend_txt = "Scenario %s"%first_line_tab[i]
-            pr = QwtPlotCurve(legend_txt)
-            pr.setStyle(QwtPlotCurve.Lines)
-            pr.setPen(QPen(QColor(self.tab_colors[i]),2))
-            pr.setSymbol(QwtSymbol(Qwt.QwtSymbol.NoSymbol,
-                  QBrush(QColor(self.tab_colors[1])),
-                    QPen(QColor(self.tab_colors[1])),
-                      QSize(7, 7)))
-            pr.setData(labs,dico_coord[first_line_tab[i]])
-            pr.attach(p)
-            pr.updateLegend(legend)
+            plotc.axes.plot(labs,dico_coord[first_line_tab[i]],label=legend_txt,c=self.tab_colors[i])
 
-        for it in legend.legendItems():
-            f = it.font()
-            f.setPointSize(11)
-            it.setFont(f)
-        legend.setFrameShape(QFrame.Box)
-        legend.setFrameShadow(QFrame.Raised)
-
-        p.replot()
-        grid = QwtPlotGrid()
-        grid.setPen(QPen(Qt.black,0.5))
-        grid.attach(p)
-        p.insertLegend(legend,QwtPlot.BottomLegend)
+        plotc.axes.legend(bbox_to_anchor=(0.74, -0.14),ncol=2,prop={'size':9})
+        plotc.fig.subplots_adjust(right=0.99,top=0.9,bottom=0.27)
 
         fr = QFrame(self)
         fr.setFrameShape(QFrame.StyledPanel)
@@ -171,175 +159,11 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         fr.setMinimumSize(QSize(400, 0))
         fr.setMaximumSize(QSize(400, 300))
         vert = QVBoxLayout(fr)
-        vert.addWidget(p)
+        vert.addWidget(draw_widget)
 
         self.ui.horizontalLayout_2.addWidget(fr)
         if direct:
-            self.dicoPlot['direct'] = p
+            self.dicoPlot['direct'] = plotc
         else:
-            self.dicoPlot['logistic'] = p
+            self.dicoPlot['logistic'] = plotc
 
-    def save(self):
-        """ clic sur le bouton save
-        """
-        # nettoyage radical : suppression du dossier
-        proj_dir = self.parent.dir
-        pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)
-        #if os.path.exists(pic_dir):
-        #    shutil.rmtree(pic_dir)
-        if not os.path.exists(pic_dir):
-            os.mkdir(pic_dir)
-
-        qmb = QMessageBox()
-        qmb.setText("Would you like to save all images in one file or 1 image per file ? (PDF or SVG or JPG or PNG)")
-        qmb.addButton("All in one file",0)
-        qmb.addButton("One per file",0)
-        qmb.addButton(QMessageBox.Cancel)
-        answer = qmb.exec_()
-        if (answer == QMessageBox.Cancel):
-            return
-        elif answer == 0:
-            self.saveDrawsToOne()
-        elif answer == 1:
-            self.saveEachDraws()
-
-    def saveEachDraws(self):
-        """ Sauve chaque graphe dans un fichier
-        """
-        proj_dir = self.parent.dir
-        pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)
-        pic_basename = "comparison"
-        pic_whole_path = "%s/%s_"%(pic_dir,pic_basename)
-
-        pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
-        if pic_format == "jpg" or pic_format == "png":
-            for name in self.dicoPlot.keys():
-                p = self.dicoPlot[name]
-                savename = "%s%s.%s"%(pic_whole_path,name,pic_format)
-                pix = QPixmap(p.rect().size().width(),p.rect().size().height())
-                pix.fill(Qt.white)
-                painter = QPainter(pix)
-                pen = QPen(Qt.black,2)
-                painter.setPen(pen)
-                p.print_(painter, p.rect())
-                painter.end()
-                im = pix.toImage()
-                im.save(savename)
-        else:
-            for name in self.dicoPlot.keys():
-                p = self.dicoPlot[name]
-                savename = "%s%s.svg"%(pic_whole_path,name)
-                svg = QSvgGenerator()
-                svg.setFileName(savename)
-                svg.setSize(p.rect().size())
-
-                painter = QPainter(svg)
-                p.print_(painter, p.rect())
-                painter.end()
-
-    def saveDrawsToOne(self):
-        pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
-        ind = 0
-        nbpix = len(self.dicoPlot.keys())
-        while ind < nbpix:
-            if ind + 5 < nbpix:
-                self.saveDrawsInterval(ind,ind+5)
-            else:
-                self.saveDrawsInterval(ind,nbpix-1)
-            ind += 6
-
-    def printGraphs(self):
-        ifrom = 0
-        ito = 1
-        nbPlot = (ito - ifrom)+1
-        largeur = 2
-        # resultat de la div entière plus le reste (modulo)
-        longueur = (nbPlot/largeur)+(nbPlot%largeur)
-        ind = ifrom
-        li=0
-
-        # on prend un des graphes pour savoir ses dimensions
-        size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
-
-        im_result = QPrinter()
-        painter = QPainter()
-
-        dial = QPrintDialog(im_result,self)
-        if dial.exec_():
-            im_result.setOrientation(QPrinter.Portrait)
-            im_result.setPageMargins(20,20,20,20,QPrinter.Millimeter)
-            im_result.setResolution(60)
-
-            painter.begin(im_result)
-
-            keys = self.dicoPlot.keys()
-            # on fait des lignes tant qu'on a des pix
-            while (ind <= ito):
-                col = 0
-                # une ligne
-                while (ind <= ito) and (col < largeur):
-                    plot = self.dicoPlot[keys[ind]]
-                    plot.print_(painter, QRect(QPoint(0*size.width(),(li*size.height())+li*30),QSize(size)))
-                    col+=1
-                    ind+=1
-                    li+=1
-                li+=1
-
-            painter.end()
-
-    def saveDrawsInterval(self,ifrom,ito):
-        """ Sauve tous les graphes dans une seule image ou un seul svg
-        """
-        proj_dir = self.parent.dir
-        pic_dir = "%s/analysis/%s/pictures"%(proj_dir,self.directory)
-        pic_basename = "posterior"
-        ind_list_str = "%s_to_%s"%(ifrom+1,ito+1)
-        pic_whole_path = "%s/%s_%s"%(pic_dir,pic_basename,ind_list_str)
-
-        pic_format = str(self.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
-
-        nbPlot = (ito - ifrom)+1
-        largeur = 2
-        # resultat de la div entière plus le reste (modulo)
-        longueur = (nbPlot/largeur)+(nbPlot%largeur)
-        ind = ifrom
-        li=0
-
-        # on prend un des graphes pour savoir ses dimensions
-        size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
-
-        if pic_format == "jpg" or pic_format == "png":
-            self.im_result = QImage(largeur*(size.width()),longueur*(size.height()),QImage.Format_RGB32)
-            self.im_result.fill(Qt.black)
-            painter = QPainter(self.im_result)
-            painter.fillRect(0, 0, largeur*(size.width()), longueur*(size.height()), Qt.white)
-        elif pic_format == "svg":
-            self.pic_result = QSvgGenerator()
-            self.pic_result.setViewBox(QRect(0,0,(largeur*(size.width()))+50,(longueur*(size.height()))+50))
-            self.pic_result.setFileName("%s.svg"%pic_whole_path)
-            painter = QPainter()
-            painter.begin(self.pic_result)
-        elif pic_format == "pdf":
-            self.im_result = QPrinter()
-            self.im_result.setOutputFormat(QPrinter.PdfFormat)
-            self.im_result.setOutputFileName('%s.pdf'%pic_whole_path)
-            painter = QPainter()
-            self.im_result.setResolution(100)
-            painter.begin(self.im_result)
-
-        keys = self.dicoPlot.keys()
-        # on fait des lignes tant qu'on a des pix
-        while (ind <= ito):
-            col = 0
-            # une ligne
-            while (ind <= ito) and (col < largeur):
-                plot = self.dicoPlot[keys[ind]]
-                plot.print_(painter, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
-                col+=1
-                ind+=1
-            li+=1
-
-        if pic_format == "jpg" or pic_format == "png":
-            self.im_result.save("%s.%s"%(pic_whole_path,pic_format))
-        else:
-            painter.end()
