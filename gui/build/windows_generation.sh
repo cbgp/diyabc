@@ -27,7 +27,7 @@ else
     fi
     echo "I assume you've intalled python-2.6, pyqwt, numpy, PyQt"
 fi
-VERSIONFILE="`dirname $pysrc`/version.txt"
+VERSIONFILE="`dirname $pysrc`/../version.txt"
 VERSION="`head -n 1 $VERSIONFILE`"
 
 APPNAME=`basename $pysrc | cut -d . -f 1`
@@ -36,13 +36,16 @@ TMPBUILD=/c/$APPNAME-tmp_build-$VERSION
 rm -rf $TMPBUILD
 mkdir $TMPBUILD
 SOURCEDIR=`dirname $pysrc`
-cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $TMPBUILD/
-pysrctmp=$TMPBUILD/`basename $pysrc`
+#cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $TMPBUILD/
+cp -r $SOURCEDIR $TMPBUILD/
+cp -r $SOURCEDIR/../data/ $TMPBUILD/
+cp -r $SOURCEDIR/../utils/ $TMPBUILD/src/
+pysrctmp=$TMPBUILD/src/`basename $pysrc`
 #sed -i "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
-sed -i "s/development\ version/$VERSION/g" $TMPBUILD/$APPNAME.py
-sed -i "s/01\/01\/1970/$BUILDDATE/g" $TMPBUILD/$APPNAME.py
-echo "sed -i 's/development\ version/$VERSION ($BUILDDATE)/g' $TMPBUILD/$APPNAME.py"
-echo `cat $TMPBUILD/$APPNAME.py | grep VERSION`
+sed -i "s/development\ version/$VERSION/g" $TMPBUILD/src/$APPNAME.py
+sed -i "s/01\/01\/1970/$BUILDDATE/g" $TMPBUILD/src/$APPNAME.py
+echo "sed -i 's/development\ version/$VERSION ($BUILDDATE)/g' $TMPBUILD/src/$APPNAME.py"
+echo `cat $TMPBUILD/src/$APPNAME.py | grep VERSION`
 
 # nettoyage de la config de pyinstaller
 rm -f `dirname $pyinst`/config.dat
@@ -50,8 +53,8 @@ rm -f `dirname $pyinst`/config.dat
 python $pyinst $pysrctmp --onefile -w --icon="$icon" -o "$output"
 
 # copy of needed images
-mkdir $output/dist/docs
-cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/executables $SOURCEDIR/docs/icons $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/dist/docs/
+mkdir $output/dist/data
+cp -r $SOURCEDIR/../data/accueil_pictures $SOURCEDIR/../data/executables $SOURCEDIR/../data/icons  $output/dist/data/
 cp -r $SOURCEDIR/uis $output/dist/
 rm -rf $TMPBUILD
 sleep 3

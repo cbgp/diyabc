@@ -37,7 +37,6 @@ from utils.trayIconHandler import TrayIconHandler
 from threading import Thread
 from utils.data import isSNPDatafile
 import dataPath
-exit()
 from utils.matplotlib_example import *
 
 # trick to get things working on windows
