@@ -36,7 +36,7 @@ SOURCEDIR=`dirname $pysrc`
 #cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $TMPBUILD/
 cp -r $SOURCEDIR $TMPBUILD/
 cp -r $SOURCEDIR/../data/ $TMPBUILD/
-cp -r $SOURCEDIR/../utils/ $TMPBUILD/src/
+cp -r $SOURCEDIR/../utils/ $TMPBUILD/
 pysrctmp=$TMPBUILD/src/`basename $pysrc`
 #sed -i "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
 sed -i "s/development\ version/$VERSION/g" $TMPBUILD/src/$APPNAME.py
@@ -52,8 +52,8 @@ python $pyinst $pysrctmp -o "$output"
 # copy of needed images
 mkdir $output/dist/$APPNAME/data/
 cp -r $SOURCEDIR/../data/accueil_pictures $SOURCEDIR/../data/executables $SOURCEDIR/../data/icons  $output/dist/$APPNAME/data/
-cp -r $SOURCEDIR/uis $output/dist/$APPNAME/
-rm -rf $TMPBUILD
+cp -r $SOURCEDIR/uis /etc/matplotlibrc $output/dist/$APPNAME/
+#rm -rf $TMPBUILD
 sleep 3
 mv $output/dist/$APPNAME $output/dist/$APPNAME-$VERSION
 mv $output/dist/$APPNAME-$VERSION $output/$APPNAME-$VERSION-linux64

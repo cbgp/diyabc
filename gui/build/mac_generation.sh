@@ -29,7 +29,7 @@ else
     fi
     echo "I assume you've intalled python-2.6, pyqwt, numpy, PyQt"
 fi
-VERSIONFILE="`dirname $pysrc`/version.txt"
+VERSIONFILE="`dirname $pysrc`/../version.txt"
 VERSION="`head -n 1 $VERSIONFILE`"
 
 APPNAME=`basename $pysrc | cut -d . -f 1`
@@ -39,10 +39,13 @@ TMPBUILD=/tmp/$APPNAME-tmp_build-$VERSION
 mkdir $TMPBUILD
 SOURCEDIR=`dirname $pysrc`
 cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $TMPBUILD/
-pysrctmp=$TMPBUILD/`basename $pysrc`
+cp -r $SOURCEDIR $TMPBUILD/
+cp -r $SOURCEDIR/../data/ $TMPBUILD/
+cp -r $SOURCEDIR/../utils/ $TMPBUILD/
+pysrctmp=$TMPBUILD/src/`basename $pysrc`
 #sed -i "" "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
-sed -i "" "s/development\ version/$VERSION/g" $TMPBUILD/$APPNAME.py
-sed -i "" "s/01\/01\/1970/$BUILDDATE/g" $TMPBUILD/$APPNAME.py
+sed -i "" "s/development\ version/$VERSION/g" $TMPBUILD/src/$APPNAME.py
+sed -i "" "s/01\/01\/1970/$BUILDDATE/g" $TMPBUILD/src/$APPNAME.py
 
 # nettoyage de la config de pyinstaller
 rm -f `dirname $pyinst`/config.dat
@@ -79,8 +82,9 @@ if [ `grep diyabc $output/Mac$APPNAME.app/Contents/Info.plist | wc -l` -eq 1 ]; 
 fi
 mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
 # copy of needed images
-mkdir $output/$APPNAME-$VERSION.app/Contents/Resources/docs
-cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/$APPNAME-$VERSION.app/Contents/Resources/docs/
+mkdir $output/$APPNAME-$VERSION.app/Contents/Resources/data
+#cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/$APPNAME-$VERSION.app/Contents/Resources/docs/
+cp -r $SOURCEDIR/../data/accueil_pictures $SOURCEDIR/../data/executables $SOURCEDIR/../data/icons  $output/$APPNAME-$VERSION.app/Contents/Resources/data/
 cp -r $SOURCEDIR/uis/ $output/$APPNAME-$VERSION.app/Contents/Resources/uis
 rm -rf $output/build $output/dist $output/$APPNAME.spec
 hdiutil create $output/$APPNAME-$VERSION.dmg -srcfolder $output/$APPNAME-$VERSION.app -volname $APPNAME-$VERSION
