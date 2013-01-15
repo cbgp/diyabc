@@ -37,6 +37,8 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewLocate)
+        self.ui.savePicturesButton.hide()
+        self.ui.printButton.hide()
 
         QObject.connect(self.ui.scCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         QObject.connect(self.ui.compoHCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)

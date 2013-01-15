@@ -38,6 +38,8 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         #QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewCompDirectLogReg)
+        self.ui.savePicturesButton.hide()
+        self.ui.printButton.hide()
 
         self.ui.PCAFrame.hide()
         self.ui.ACProgress.hide()
