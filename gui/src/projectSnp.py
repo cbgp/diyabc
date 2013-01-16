@@ -17,6 +17,7 @@ import output
 from utils.cbgpUtils import log
 from controlAscertBias import ControlAscertBias
 import dataPath
+from utils.cbgpUtils import log,isUnixText,dos2unix
 
 ## @class ProjectSnp
 # @brief Projets pour créer une table de référence SNP
