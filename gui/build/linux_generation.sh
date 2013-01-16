@@ -51,7 +51,7 @@ python $pyinst $pysrctmp -o "$output"
 
 # copy of needed images
 mkdir $output/dist/$APPNAME/data/
-cp -r $SOURCEDIR/../data/accueil_pictures $SOURCEDIR/../data/executables $SOURCEDIR/../data/icons  $output/dist/$APPNAME/data/
+cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/executables $SOURCEDIR/../data/icons  $output/dist/$APPNAME/data/
 cp -r $SOURCEDIR/uis /etc/matplotlibrc $output/dist/$APPNAME/
 #rm -rf $TMPBUILD
 sleep 3

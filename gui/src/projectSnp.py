@@ -50,12 +50,12 @@ class ProjectSnp(ProjectReftable):
         """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table
         """
         if self.gen_state_valid and self.hist_state_valid and self.ascert_state_valid:
-            self.setTabIcon(0,QIcon(variables.DATAPATH+"/icons/ok.png"))
+            self.setTabIcon(0,QIcon(variables.ICONPATH+"/ok.png"))
             self.ui.runReftableButton.setDisabled(False)
             self.ui.stopReftableButton.setDisabled(False)
             return True
         else:
-            self.setTabIcon(0,QIcon(variables.DATAPATH+"/icons/redcross.png"))
+            self.setTabIcon(0,QIcon(variables.ICONPATH+"/redcross.png"))
             self.ui.runReftableButton.setDisabled(True)
             self.ui.stopReftableButton.setDisabled(True)
             return False
@@ -70,9 +70,9 @@ class ProjectSnp(ProjectReftable):
         self.ascert_state_valid = yn
         self.verifyRefTableValid()
         if yn:
-            self.ui.ascertButton.setIcon(QIcon(variables.DATAPATH+"/icons/ok.png"))
+            self.ui.ascertButton.setIcon(QIcon(variables.ICONPATH+"/ok.png"))
         else:
-            self.ui.ascertButton.setIcon(QIcon(variables.DATAPATH+"/icons/redcross.png"))
+            self.ui.ascertButton.setIcon(QIcon(variables.ICONPATH+"/redcross.png"))
 
     def isSnp(self):
         return True

@@ -54,7 +54,7 @@ python $pyinst $pysrctmp --onefile -w --icon="$icon" -o "$output"
 
 # copy of needed images
 mkdir $output/dist/data
-cp -r $SOURCEDIR/../data/accueil_pictures $SOURCEDIR/../data/executables $SOURCEDIR/../data/icons  $output/dist/data/
+cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/executables $SOURCEDIR/../data/icons  $output/dist/data/
 cp -r $SOURCEDIR/uis $output/dist/
 rm -rf $TMPBUILD
 sleep 3

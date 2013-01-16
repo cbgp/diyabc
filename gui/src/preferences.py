@@ -247,6 +247,10 @@ class Preferences(AutoPreferences):
                     exPath = "%s/executables/diyabc-comput-linux-i386"%DATAPATH
                 else:
                     exPath = "%s/executables/diyabc-comput-linux-x64"%DATAPATH
+                # si on a le paquet deb installé et qu'aucun binaire n'est dans le datapath
+                if os.path.exist("/usr/bin/diyabc") and not os.path.exist("%s/executables/diyabc-comput-linux-x64"%DATAPATH)\
+                        and not os.path.exist("%s/executables/diyabc-comput-linux-i386"%DATAPATH):
+                    exPath = "/usr/bin/diyabc"
             # WINDOWS
             elif "win" in sys.platform and "darwin" not in sys.platform:
                 if os.environ.has_key("PROCESSOR_ARCHITECTURE") and "86" not in os.environ["PROCESSOR_ARCHITECTURE"]:

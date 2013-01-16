@@ -96,7 +96,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.preferences_win.loadPreferences()
         self.ui.stackedWidget.addWidget(self.preferences_win)
 
-        self.setWindowIcon(QIcon(variables.DATAPATH+"/icons/coccicon.png"))
+        self.setWindowIcon(QIcon(variables.ICONPATH+"/coccicon.png"))
 
         self.illegalProjectNameCharacters = ['-',"'",'"','.',"/"]
         self.illegalAnalysisNameCharacters = ["'",'"','.',"/"]
@@ -140,7 +140,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         #plt.setp(p3,color='b', markersize=15.0)
         #sc.axes.legend(bbox_to_anchor=(1.1, 1.05))
 
-        pic = QPixmap(variables.DATAPATH+"/accueil_pictures/blue_orange.png")
+        pic = QPixmap(variables.IMAGEPATH+"/blue_orange.png")
         self.ui.imgLabel.setPixmap(pic)
         pic.scaled(100,100)
         self.switchToWelcomeStack()
@@ -150,7 +150,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.aboutWindow.parent = self
         self.aboutWindow.setWindowTitle('About DIYABC')
         ui = self.aboutWindow
-        ui.logoLabel.setPixmap(QPixmap(variables.DATAPATH+"/icons/coccicon.png"))
+        ui.logoLabel.setPixmap(QPixmap(variables.ICONPATH+"/coccicon.png"))
         txt = str(self.aboutWindow.infoLabel.text())
         txt = txt.replace('vvv',VERSION).replace('ddd',VERSION_DATE)
         self.aboutWindow.infoLabel.setText(txt)
@@ -207,21 +207,21 @@ class Diyabc(formDiyabc,baseDiyabc):
                 width: 13px;\
                 height: 13px;\
                 }")
-        self.newMenu = file_menu.addMenu(QIcon(variables.DATAPATH+"/icons/folder-new.png"),"&New project")
-        self.newMenu.addAction(QIcon(variables.DATAPATH+"/icons/gene.png"),"&Microsatellites and/or sequences",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_M))
-        self.newMenu.addAction(QIcon(variables.DATAPATH+"/icons/dna.png"),"&SNP",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
-        file_menu.addAction(QIcon(variables.DATAPATH+"/icons/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
-        self.recent_menu = file_menu.addMenu(QIcon(variables.DATAPATH+"/icons/document-open-recent.png"),"Open recent projects")
+        self.newMenu = file_menu.addMenu(QIcon(variables.ICONPATH+"/folder-new.png"),"&New project")
+        self.newMenu.addAction(QIcon(variables.ICONPATH+"/gene.png"),"&Microsatellites and/or sequences",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_M))
+        self.newMenu.addAction(QIcon(variables.ICONPATH+"/dna.png"),"&SNP",self.newProject,QKeySequence(Qt.CTRL + Qt.Key_N))
+        file_menu.addAction(QIcon(variables.ICONPATH+"/fileopen.png"),"&Open project",self.openProject,QKeySequence(Qt.CTRL + Qt.Key_O))
+        self.recent_menu = file_menu.addMenu(QIcon(variables.ICONPATH+"/document-open-recent.png"),"Open recent projects")
         self.recent_menu.setDisabled(True)
-        self.saveAllProjActionMenu = file_menu.addAction(QIcon(variables.DATAPATH+"/icons/document-save-all.png"),"&Save all projects",self.saveAllProjects,QKeySequence(Qt.CTRL + Qt.Key_A))
+        self.saveAllProjActionMenu = file_menu.addAction(QIcon(variables.ICONPATH+"/document-save-all.png"),"&Save all projects",self.saveAllProjects,QKeySequence(Qt.CTRL + Qt.Key_A))
         self.saveAllProjActionMenu.setDisabled(True)
 
-        file_menu.addAction(QIcon(variables.DATAPATH+"/icons/redhat-system_settings.png"),"&Settings",self.switchToPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
-        self.simulate_menu = file_menu.addMenu(QIcon(variables.DATAPATH+"/icons/mask.jpeg"),"&Simulate data set(s)")
-        self.simulate_menu.addAction(QIcon(variables.DATAPATH+"/icons/gene.png"),"&Microsatellites and/or sequences (Genepop format)",self.simulateDataSets)
-        self.simulate_menu.addAction(QIcon(variables.DATAPATH+"/icons/dna.png"),"&SNP (ad-hoc format)",self.simulateDataSets)
+        file_menu.addAction(QIcon(variables.ICONPATH+"/redhat-system_settings.png"),"&Settings",self.switchToPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
+        self.simulate_menu = file_menu.addMenu(QIcon(variables.ICONPATH+"/mask.jpeg"),"&Simulate data set(s)")
+        self.simulate_menu.addAction(QIcon(variables.ICONPATH+"/gene.png"),"&Microsatellites and/or sequences (Genepop format)",self.simulateDataSets)
+        self.simulate_menu.addAction(QIcon(variables.ICONPATH+"/dna.png"),"&SNP (ad-hoc format)",self.simulateDataSets)
 
-        action = file_menu.addAction(QIcon(variables.DATAPATH+"/icons/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
+        action = file_menu.addAction(QIcon(variables.ICONPATH+"/window-close.png"),"&Quit",self.close,QKeySequence(Qt.CTRL + Qt.Key_Q))
         #mettre plusieurs raccourcis claviers pour le meme menu
         #action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q),QKeySequence(Qt.Key_Escape)])
         action.setShortcuts([QKeySequence(Qt.CTRL + Qt.Key_Q)])
@@ -231,8 +231,8 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         help_menu = self.ui.menubar.addMenu("&Help")
         self.help_menu = help_menu
-        help_menu.addAction(QIcon(variables.DATAPATH+"/icons/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
-        help_menu.addAction(QIcon(variables.DATAPATH+"/icons/gnome-mime-text.png"),"&Show logfile",self.showLogFile,QKeySequence(Qt.CTRL + Qt.Key_L))
+        help_menu.addAction(QIcon(variables.ICONPATH+"/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
+        help_menu.addAction(QIcon(variables.ICONPATH+"/gnome-mime-text.png"),"&Show logfile",self.showLogFile,QKeySequence(Qt.CTRL + Qt.Key_L))
 
         self.currentProjectMenu = None
         QObject.connect(self.ui.tabWidget,SIGNAL("currentChanged(int)"),self.updateCurrentProjectMenu)
@@ -245,7 +245,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.versionLabel.setText('%s'%VERSION)
 
         # TOOLBAR
-        newButton = QPushButton(QIcon(variables.DATAPATH+"/icons/folder-new.png"),"New MSS",self)
+        newButton = QPushButton(QIcon(variables.ICONPATH+"/folder-new.png"),"New MSS",self)
         newButton.setObjectName("newButton")
         newButton.setToolTip("New Microsatellite/Sequence project")
         newButton.setMaximumSize(QSize(85, 22))
@@ -255,7 +255,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.toolBar.addWidget(newButton)
         #self.ui.toolBar.addSeparator()
 
-        newSNPButton = QPushButton(QIcon(variables.DATAPATH+"/icons/folder-new.png"),"New SNP",self)
+        newSNPButton = QPushButton(QIcon(variables.ICONPATH+"/folder-new.png"),"New SNP",self)
         newSNPButton.setObjectName("newSNPButton")
         newSNPButton.setToolTip("New SNP project")
         newSNPButton.setMaximumSize(QSize(85, 22))
@@ -265,7 +265,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.toolBar.addWidget(newSNPButton)
         #self.ui.toolBar.addSeparator()
 
-        openButton = QPushButton(QIcon(variables.DATAPATH+"/icons/fileopen.png"),"Open",self)
+        openButton = QPushButton(QIcon(variables.ICONPATH+"/fileopen.png"),"Open",self)
         openButton.setObjectName("openButton")
         openButton.setToolTip("Open project")
         openButton.setMaximumSize(QSize(70, 22))
@@ -275,7 +275,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.ui.toolBar.addWidget(openButton)
         #self.ui.toolBar.addSeparator()
 
-        saveButton = QPushButton(QIcon(variables.DATAPATH+"/icons/document-save.png"),"Save",self)
+        saveButton = QPushButton(QIcon(variables.ICONPATH+"/document-save.png"),"Save",self)
         self.saveButton = saveButton
         saveButton.setObjectName("saveButton")
         saveButton.setToolTip("Save current project")
@@ -287,7 +287,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         saveButton.setDisabled(True)
         #self.ui.toolBar.addSeparator()
 
-        saveAllButton = QPushButton(QIcon(variables.DATAPATH+"/icons/document-save-all.png"),"Save all",self)
+        saveAllButton = QPushButton(QIcon(variables.ICONPATH+"/document-save-all.png"),"Save all",self)
         self.saveAllButton = saveAllButton
         saveAllButton.setObjectName("saveAllButton")
         saveAllButton.setToolTip("Save all projects")
@@ -302,7 +302,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.ui.toolBar.addWidget(spacer)
 
-        wtButton = QPushButton(QIcon(variables.DATAPATH+"/icons/whats.png"),"What's this ?",self)
+        wtButton = QPushButton(QIcon(variables.ICONPATH+"/whats.png"),"What's this ?",self)
         wtButton.setDisabled(False)
         wtButton.setToolTip("Click on this button and then on another object to get the documentation")
         self.wtButton = wtButton
@@ -316,7 +316,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         for but in [newButton,newSNPButton,openButton,saveButton,saveAllButton,wtButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
-        self.systrayHandler = TrayIconHandler(variables.DATAPATH+"/icons/coccicon.png",variables.DATAPATH+"/icons/coccicon.gif",self.file_menu,self)
+        self.systrayHandler = TrayIconHandler(variables.ICONPATH+"/coccicon.png",variables.ICONPATH+"/coccicon.gif",self.file_menu,self)
 
     def enterWhatsThisMode(self):
         """ Change le style du curseur de souris et attend un clic
@@ -393,12 +393,12 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.currentProjectMenu.setText("&Project %s"%curprojname)
             else:
                 self.currentProjectMenu = self.ui.menubar.insertMenu(self.navigate_menu.menuAction(),QMenu("Project %s"%curprojname,self))
-                self.saveProjActionMenu =   self.currentProjectMenu.menu().addAction(QIcon(variables.DATAPATH+"/icons/document-save.png"),"&Save project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
-                self.cloneProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.DATAPATH+"/icons/tab-duplicate.png"),"&Clone project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
-                self.RngProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.DATAPATH+"/icons/random.png"),"Re&generate RNG",self.rngCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_R))
-                self.deleteReftableActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.DATAPATH+"/icons/user-trash.png"),"D&elete reftable",self.deleteReftableCurrentProject)
-                self.closeProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.DATAPATH+"/icons/project-close.png"),"C&lose project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
-                self.deleteProjActionMenu = self.currentProjectMenu.menu().addAction(QIcon(variables.DATAPATH+"/icons/user-trash.png"),"&Delete project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
+                self.saveProjActionMenu =   self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/document-save.png"),"&Save project",self.saveCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_S))
+                self.cloneProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/tab-duplicate.png"),"&Clone project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
+                self.RngProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/random.png"),"Re&generate RNG",self.rngCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_R))
+                self.deleteReftableActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/user-trash.png"),"D&elete reftable",self.deleteReftableCurrentProject)
+                self.closeProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/project-close.png"),"C&lose project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
+                self.deleteProjActionMenu = self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/user-trash.png"),"&Delete project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
         else:
             # on supprime le menu
             self.menubar.removeAction(self.currentProjectMenu)
@@ -416,7 +416,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
             for i in range(self.ui.tabWidget.count()):
                 name = self.ui.tabWidget.widget(i).name
-                self.navigateProjectActions.append( self.navigate_menu.addAction(QIcon(variables.DATAPATH+"/icons/fileopen.png"),"Go to %s (%s)"%(name,i+1),self.goToProject) )
+                self.navigateProjectActions.append( self.navigate_menu.addAction(QIcon(variables.ICONPATH+"/fileopen.png"),"Go to %s (%s)"%(name,i+1),self.goToProject) )
                 if i == self.ui.tabWidget.currentIndex():
                     self.navigateProjectActions[-1].setDisabled(True)
 
@@ -493,7 +493,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         nb_added = 0
         for i,rec in enumerate(self.recentList):
             if os.path.exists(str(rec)):
-                self.recentMenuEntries.append( self.recent_menu.addAction(QIcon(variables.DATAPATH+"/icons/document-open-recent.png"),rec.split('/')[-1],self.openRecent) )
+                self.recentMenuEntries.append( self.recent_menu.addAction(QIcon(variables.ICONPATH+"/document-open-recent.png"),rec.split('/')[-1],self.openRecent) )
                 self.entryToRecent[ self.recentMenuEntries[-1] ] = rec
                 nb_added += 1
             else:

@@ -37,7 +37,7 @@ python /usr/local/src/diyabc/diyabc.py \$@" > $RPM_BUILD_ROOT/usr/local/bin/diya
 mkdir $RPM_BUILD_ROOT/usr/local/src/diyabc/
 cp -rp $RPM_SOURCE_DIR/*.py $RPM_SOURCE_DIR/clean.sh $RPM_SOURCE_DIR/analysis $RPM_SOURCE_DIR/uis $RPM_SOURCE_DIR/utils $RPM_SOURCE_DIR/summaryStatistics $RPM_SOURCE_DIR/mutationModel $RPM_SOURCE_DIR/historicalModel $RPM_SOURCE_DIR/geneticData $RPM_BUILD_ROOT/usr/local/src/diyabc/
 mkdir $RPM_BUILD_ROOT/usr/local/src/diyabc/docs
-cp -rp $RPM_SOURCE_DIR/docs/accueil_pictures $RPM_SOURCE_DIR/docs/icons $RPM_SOURCE_DIR/docs/executables $RPM_BUILD_ROOT/usr/local/src/diyabc/docs/
+cp -rp $RPM_SOURCE_DIR/docs/images $RPM_SOURCE_DIR/docs/icons $RPM_SOURCE_DIR/docs/executables $RPM_BUILD_ROOT/usr/local/src/diyabc/docs/
 cp -r $RPM_SOURCE_DIR/docs/dev* $RPM_SOURCE_DIR/docs/doc* $RPM_BUILD_ROOT/usr/local/src/diyabc/docs/
 cp $RPM_SOURCE_DIR/docs/project_builders/debian/diyabc-interface-pkg-template/usr/share/menu/diyabc $RPM_BUILD_ROOT/usr/share/menu/
 cp $RPM_SOURCE_DIR/docs/project_builders/debian/diyabc-interface-pkg-template/usr/share/applications/diyabc.desktop $RPM_BUILD_ROOT/usr/share/applications/

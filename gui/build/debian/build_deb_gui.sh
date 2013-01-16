@@ -46,7 +46,7 @@ sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 
 sed -i "s/ICON/\/usr\/share\/icons\/diyabc\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 
-cp -rp $SOURCEDIR/../data/accueil_pictures/* $PACKAGEDIR/usr/share/images/diyabc/
+cp -rp $SOURCEDIR/../data/images/* $PACKAGEDIR/usr/share/images/diyabc/
 cp -r $SOURCEDIR/../data/icons/* $PACKAGEDIR/usr/share/icons/diyabc/
 
 # generation of the launch script placed in /usr/bin

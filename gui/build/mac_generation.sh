@@ -84,7 +84,7 @@ mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
 # copy of needed images
 mkdir $output/$APPNAME-$VERSION.app/Contents/Resources/data
 #cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/$APPNAME-$VERSION.app/Contents/Resources/docs/
-cp -r $SOURCEDIR/../data/accueil_pictures $SOURCEDIR/../data/executables $SOURCEDIR/../data/icons  $output/$APPNAME-$VERSION.app/Contents/Resources/data/
+cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/executables $SOURCEDIR/../data/icons  $output/$APPNAME-$VERSION.app/Contents/Resources/data/
 cp -r $SOURCEDIR/uis/ $output/$APPNAME-$VERSION.app/Contents/Resources/uis
 rm -rf $output/build $output/dist $output/$APPNAME.spec
 hdiutil create $output/$APPNAME-$VERSION.dmg -srcfolder $output/$APPNAME-$VERSION.app -volname $APPNAME-$VERSION
