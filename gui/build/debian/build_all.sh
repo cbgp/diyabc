@@ -27,3 +27,6 @@ fakeroot ./build_deb_gui.sh ../../src/
 
 fakeroot ./build_deb_virtual.sh ../../version.txt
 
+rm -r ./lastDiyabc
+mkdir lastDiyabc
+mv *.deb ./lastDiyabc
