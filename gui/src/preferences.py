@@ -17,6 +17,7 @@ import output
 import utils.cbgpUtils as utilsPack
 from utils.cbgpUtils import log
 from utils.autoPreferences import AutoPreferences,visible,invisible
+from dataPath import DATAPATH
 
 ## @class Preferences
 # @brief Fenêtre pour gérer les préférences personnelles
@@ -243,21 +244,21 @@ class Preferences(AutoPreferences):
             # LINUX
             if "linux" in sys.platform:
                 if "86" in platform.machine() and "64" not in platform.machine():
-                    exPath = "docs/executables/diyabc-comput-linux-i386"
+                    exPath = "%s/executables/diyabc-comput-linux-i386"%DATAPATH
                 else:
-                    exPath = "docs/executables/diyabc-comput-linux-x64"
+                    exPath = "%s/executables/diyabc-comput-linux-x64"%DATAPATH
             # WINDOWS
             elif "win" in sys.platform and "darwin" not in sys.platform:
                 if os.environ.has_key("PROCESSOR_ARCHITECTURE") and "86" not in os.environ["PROCESSOR_ARCHITECTURE"]:
-                    exPath = ".\docs\executables\diyabc-comput-win-x64"
+                    exPath = ".\%s\executables\diyabc-comput-win-x64"%DATAPATH.replace('/','\\')
                 else:
-                    exPath = ".\docs\executables\diyabc-comput-win-i386"
+                    exPath = ".\%s\executables\diyabc-comput-win-i386"%DATAPATH.replace('/','\\')
             # MACOS
             elif "darwin" in sys.platform:
                 if "86" in platform.machine() and "64" not in platform.machine():
-                    exPath = "docs/executables/diyabc-comput-mac-i386"
+                    exPath = "%s/executables/diyabc-comput-mac-i386"%DATAPATH
                 else:
-                    exPath = "docs/executables/diyabc-comput-mac-x64"
+                    exPath = "%s/executables/diyabc-comput-mac-x64"%DATAPATH
         else:
             return str(self.ui.execPathPathEdit.text())
         return exPath

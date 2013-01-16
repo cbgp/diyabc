@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import sys,os.path
-from diyabc import VERSION
+#from diyabc import VERSION
+VERSION=2
 DATAPATH = ""
 DOCPATH = ""
 
