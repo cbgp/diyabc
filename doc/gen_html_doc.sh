@@ -1,4 +1,4 @@
-cd ../../Notice-DIYABC-v2/
+cd ../Notice-DIYABC-v2/
 # cleaning destination directory
 rm -rf Notice_DIYABC_principal2
 
@@ -16,7 +16,7 @@ echo "\usepackage{html}
 cat Notice_DIYABC_principal.tex | grep -v sectionv | grep -v renewcommand | grep -v documentclass >> Notice_DIYABC_principal2.tex
 
 # processing latex2html convertion
-latex2html Notice_DIYABC_principal2.tex -split 0 -show_section_numbers
+latex2html Notice_DIYABC_principal.tex -split 0 -show_section_numbers
 
-rm -rf ../python_interface/docs/documentation/
-mv Notice_DIYABC_principal2 ../python_interface/docs/documentation
+#rm -rf ../python_interface/docs/documentation/
+#mv Notice_DIYABC_principal2 ../python_interface/docs/documentation

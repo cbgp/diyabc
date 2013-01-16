@@ -1,8 +1,0 @@
-?package(diyabcCOMMANDVERSION): \
-   needs="X11" \
-   section="Applications/Biology" \
-   command="/usr/local/bin/diyabcCOMMANDVERSION" \
-   icon="/usr/local/src/diyabcCOMMANDVERSION/docs/icons/coccicon.xpm" \
-   title="Diyabc NAMEVERSION" \
-   longtitle="Diyabc: Version VVERSION" \
-   description="Do It Yourself ABC."

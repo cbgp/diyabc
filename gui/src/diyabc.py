@@ -112,6 +112,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         except Exception as e:
             log(1,"Documentation error : %s"%e)
             self.documentator = None
+            self.updateDoc()
 
     def createWidgets(self):
         self.ui=self

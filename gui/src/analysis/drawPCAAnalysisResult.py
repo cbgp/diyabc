@@ -230,8 +230,8 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             obs = self.drawObservedToPlot(plotc,compo_h,compo_v)
 
             plotc.axes.legend(bbox_to_anchor=(1.38, 1.0),prop={'size':10})
-            plotc.axes.set_xlabel("P.C.%s (%8.2f%%)"%(compo_v+1,float(self.dico_points[-1][compo_v])*100))
-            plotc.axes.set_ylabel("P.C.%s (%8.2f%%)"%(compo_h+1,float(self.dico_points[-1][compo_h])*100))
+            plotc.axes.set_ylabel("P.C.%s (%8.2f%%)"%(compo_v+1,float(self.dico_points[-1][compo_v])*100))
+            plotc.axes.set_xlabel("P.C.%s (%8.2f%%)"%(compo_h+1,float(self.dico_points[-1][compo_h])*100))
 
             if self.ui.verticalLayout_3.itemAt(0) != None:
                 self.ui.verticalLayout_3.itemAt(0).widget().hide()
