@@ -28,8 +28,6 @@ from utils.data import DataSnp,isSNPDatafile
 from utils.executableLauncherThread import LauncherThread
 from datetime import datetime 
 import os.path
-from PyQt4.Qwt5 import *
-from PyQt4.Qwt5.qplt import *
 import output
 from utils.cbgpUtils import log, addLine
 import tempfile

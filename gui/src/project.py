@@ -11,8 +11,6 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 from historicalModel.setHistoricalModel import SetHistoricalModel
-from PyQt4.Qwt5 import *
-from PyQt4.Qwt5.qplt import *
 from utils.cbgpUtils import log,addLine
 import variables
 

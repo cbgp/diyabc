@@ -18,7 +18,10 @@ if "darwin" in sys.platform and ".app/" in sys.argv[0]:
     mycwd = sys.argv[0].split(".app/")[0] + ".app/Contents/Resources/"
     os.chdir(mycwd)
 # pour connaitre les modules, on manipule le pythonpath
-sys.path.append("/".join(os.getcwd().split('/')[:-1]))
+if "win" in sys.platform and "darwin" not in sys.platform:
+    sys.path.append('\\'.join(os.getcwd().split('\\')[:-1]))
+else:
+    sys.path.append("/".join(os.getcwd().split('/')[:-1]))
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
