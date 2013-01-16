@@ -40,8 +40,8 @@ mkdir $TMPBUILD
 SOURCEDIR=`dirname $pysrc`
 #cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $TMPBUILD/
 cp -r $SOURCEDIR $TMPBUILD/
-cp -r $SOURCEDIR/../data/ $TMPBUILD/
-cp -r $SOURCEDIR/../utils/ $TMPBUILD/src/
+cp -r $SOURCEDIR/../data $TMPBUILD/
+cp -r $SOURCEDIR/../utils $TMPBUILD/src/
 pysrctmp=$TMPBUILD/src/`basename $pysrc`
 #sed -i "" "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
 sed -i "" "s/development\ version/$VERSION/g" $TMPBUILD/src/$APPNAME.py
