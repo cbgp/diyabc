@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import sys,os.path
-#from diyabc import VERSION
-VERSION=2
+
+# variable qui sera changée par le générateur d'exécutable
+VERSION='development version'
+VERSION_DATE='01/01/1970'
+
 DATAPATH = ""
 DOCPATH = ""
 

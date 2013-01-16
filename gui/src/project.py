@@ -14,7 +14,7 @@ from historicalModel.setHistoricalModel import SetHistoricalModel
 from PyQt4.Qwt5 import *
 from PyQt4.Qwt5.qplt import *
 from utils.cbgpUtils import log,addLine
-import dataPath
+import variables
 
 formProject,baseProject = uic.loadUiType("uis/Project.ui")
 
@@ -71,11 +71,11 @@ class Project(baseProject,formProject):
         QObject.connect(self.ui.setGeneticButton,SIGNAL("clicked()"),self.setGenetic)
 
         # inserer image
-        self.ui.setHistoricalButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
-        self.ui.setGeneticButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
+        self.ui.setHistoricalButton.setIcon(QIcon(variables.DATAPATH+"/icons/redcross.png"))
+        self.ui.setGeneticButton.setIcon(QIcon(variables.DATAPATH+"/icons/redcross.png"))
 
-        self.setTabIcon(0,QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
-        self.setTabIcon(1,QIcon(dataPath.DATAPATH+"/icons/gnome-color-browser.png"))
+        self.setTabIcon(0,QIcon(variables.DATAPATH+"/icons/redcross.png"))
+        self.setTabIcon(1,QIcon(variables.DATAPATH+"/icons/gnome-color-browser.png"))
 
         self.th = None
 
@@ -169,9 +169,9 @@ class Project(baseProject,formProject):
         self.hist_state_valid = valid
         self.verifyRefTableValid()
         if valid:
-            self.ui.setHistoricalButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/ok.png"))
+            self.ui.setHistoricalButton.setIcon(QIcon(variables.DATAPATH+"/icons/ok.png"))
         else:
-            self.ui.setHistoricalButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
+            self.ui.setHistoricalButton.setIcon(QIcon(variables.DATAPATH+"/icons/redcross.png"))
 
     def setGenValid(self,valid):
         """ met à jour l'état des genetic data
@@ -180,20 +180,20 @@ class Project(baseProject,formProject):
         self.gen_state_valid = valid
         self.verifyRefTableValid()
         if valid:
-            self.ui.setGeneticButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/ok.png"))
+            self.ui.setGeneticButton.setIcon(QIcon(variables.DATAPATH+"/icons/ok.png"))
         else:
-            self.ui.setGeneticButton.setIcon(QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
+            self.ui.setGeneticButton.setIcon(QIcon(variables.DATAPATH+"/icons/redcross.png"))
 
     def verifyRefTableValid(self):
         """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table
         """
         if self.gen_state_valid and self.hist_state_valid:
-            self.setTabIcon(0,QIcon(dataPath.DATAPATH+"/icons/ok.png"))
+            self.setTabIcon(0,QIcon(variables.DATAPATH+"/icons/ok.png"))
             self.ui.runReftableButton.setDisabled(False)
             self.ui.stopReftableButton.setDisabled(False)
             return True
         else:
-            self.setTabIcon(0,QIcon(dataPath.DATAPATH+"/icons/redcross.png"))
+            self.setTabIcon(0,QIcon(variables.DATAPATH+"/icons/redcross.png"))
             self.ui.runReftableButton.setDisabled(True)
             self.ui.stopReftableButton.setDisabled(True)
             return False

@@ -44,8 +44,8 @@ cp -r $SOURCEDIR/../data $TMPBUILD/
 cp -r $SOURCEDIR/../utils $TMPBUILD/src/
 pysrctmp=$TMPBUILD/src/`basename $pysrc`
 #sed -i "" "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
-sed -i "" "s/development\ version/$VERSION/g" $TMPBUILD/src/$APPNAME.py
-sed -i "" "s/01\/01\/1970/$BUILDDATE/g" $TMPBUILD/src/$APPNAME.py
+sed -i "" "s/development\ version/$VERSION/g" $TMPBUILD/src/dataPath.py
+sed -i "" "s/01\/01\/1970/$BUILDDATE/g" $TMPBUILD/src/dataPath.py
 
 # nettoyage de la config de pyinstaller
 rm -f `dirname $pyinst`/config.dat

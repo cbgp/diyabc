@@ -36,13 +36,13 @@ SOURCEDIR=`dirname $pysrc`
 #cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $TMPBUILD/
 cp -r $SOURCEDIR $TMPBUILD/
 cp -r $SOURCEDIR/../data/ $TMPBUILD/
-cp -r $SOURCEDIR/../utils/ $TMPBUILD/
+cp -r $SOURCEDIR/../utils/ $TMPBUILD/src/
 pysrctmp=$TMPBUILD/src/`basename $pysrc`
 #sed -i "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
-sed -i "s/development\ version/$VERSION/g" $TMPBUILD/src/$APPNAME.py
-sed -i "s/01\/01\/1970/$BUILDDATE/g" $TMPBUILD/src/$APPNAME.py
-echo "sed -i 's/development\ version/$VERSION ($BUILDDATE)/g' $TMPBUILD/src/$APPNAME.py"
-echo `cat $TMPBUILD/src/$APPNAME.py | grep VERSION`
+sed -i "s/development\ version/$VERSION/g" $TMPBUILD/src/dataPath.py
+sed -i "s/01\/01\/1970/$BUILDDATE/g" $TMPBUILD/src/dataPath.py
+echo "sed -i 's/development\ version/$VERSION ($BUILDDATE)/g' $TMPBUILD/src/dataPath.py"
+echo `cat $TMPBUILD/src/dataPath.py | grep VERSION`
 
 # nettoyage de la config de pyinstaller
 rm -f `dirname $pyinst`/config.dat

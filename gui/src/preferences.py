@@ -17,7 +17,7 @@ import output
 import utils.cbgpUtils as utilsPack
 from utils.cbgpUtils import log
 from utils.autoPreferences import AutoPreferences,visible,invisible
-from dataPath import DATAPATH
+from variables import DATAPATH
 
 ## @class Preferences
 # @brief Fenêtre pour gérer les préférences personnelles

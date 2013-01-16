@@ -36,7 +36,7 @@ import tempfile
 import utils.cbgpUtils as cbgpUtils
 import utils.diyabcUtils as diyabcUtils
 from project import Project
-import dataPath
+import variables
 
 ## @class ProjectReftable
 # @brief Projets pour créer une table de référence
@@ -716,7 +716,7 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         horizontalLayout_stop.setObjectName("horizontalLayout_stop")
         horizontalLayout_stop.setContentsMargins(-1, 1, -1, 1)
 
-        analysisStopButton = QtGui.QPushButton(QIcon(dataPath.DATAPATH+"/icons/stop.png"),"Stop",frame_9)
+        analysisStopButton = QtGui.QPushButton(QIcon(variables.DATAPATH+"/icons/stop.png"),"Stop",frame_9)
         analysisStopButton.setObjectName("analysisStopButton")
         analysisStopButton.setMinimumSize(QtCore.QSize(60, 20))
         analysisStopButton.setMaximumSize(QtCore.QSize(60, 20))
