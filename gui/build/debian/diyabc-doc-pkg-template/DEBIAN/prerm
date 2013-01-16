@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+cd /usr/local/src/diyabc
+./clean.sh
+cd -
+echo DIYABC source dir cleaned

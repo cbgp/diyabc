@@ -1,11 +1,15 @@
-Package: diyabc
+Package: diyabc-doc
 Version: X
 Section: biology
 Priority: optional
 Architecture: all
-Depends: bash (>=3.0), python (>=2.5), python-qt4 (>=4.5), python-qwt5-qt4 (>=5.0)
+Depends: 
 Maintainer: Julien Veyssier <julien@aiur.fr> 
 Description: User-friendly approach to Approximate Bayesian Computation
+ This package provides documentation (pdf and html) for DIYABC.
+ .
+ This documentation is also accessible from the gui by the what's this button.
+ .
  DIYABC is a computer program with a graphical user interface and a fully
  clickable environment. It allows population biologists to make inference based
  on Approximate Bayesian Computation (ABC), in which scenarios can be customized
