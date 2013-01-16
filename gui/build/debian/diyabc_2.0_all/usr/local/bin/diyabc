@@ -1,3 +1,0 @@
-#!/bin/bash
-cd /usr/local/src/diyabc/
-python /usr/local/src/diyabc/diyabc.py $@
