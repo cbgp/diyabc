@@ -2,10 +2,10 @@ BuildRoot:  %{_topdir}/BUILDROOT/
 Summary:   User-friendly approach to Approximate Bayesian Computation
 License:   GNU
 Name:    diyabc
-Version:   2.0
+Version:   X
 Release:   1
 Group:    Biology
-Requires: bash >= 3.0, python >= 2.5, PyQt4 >= 4.5, PyQwt >= 5.0
+Requires: bash >= 3.0, python >= 2.5, PyQt4 >= 4.5, diyabc-doc >= X
 
 %description
 DIYABC is a computer program with a graphical user interface and a fully
@@ -25,27 +25,29 @@ cd $RPM_SOURCE_DIR;
 
 %install
 rm -fR $RPM_BUILD_ROOT;
-mkdir -p $RPM_BUILD_ROOT/usr/local/bin;
-mkdir -p $RPM_BUILD_ROOT/usr/local/src;
+mkdir -p $RPM_BUILD_ROOT/usr/bin;
+mkdir -p $RPM_BUILD_ROOT/usr/local/src/diyabc;
 mkdir -p $RPM_BUILD_ROOT/usr/share/menu;
+mkdir -p $RPM_BUILD_ROOT/usr/share/icons/diyabc;
+mkdir -p $RPM_BUILD_ROOT/usr/share/images/diyabc;
 mkdir -p $RPM_BUILD_ROOT/usr/share/applications;
 
 echo "#!/bin/bash
 cd /usr/local/src/diyabc/
-python /usr/local/src/diyabc/diyabc.py \$@" > $RPM_BUILD_ROOT/usr/local/bin/diyabc
+python /usr/local/src/diyabc/diyabc.py \$@" > $RPM_BUILD_ROOT/usr/bin/diyabc-gui
+chmod +x $RPM_BUILD_ROOT/usr/bin/diyabc-gui
 
-mkdir $RPM_BUILD_ROOT/usr/local/src/diyabc/
-cp -rp $RPM_SOURCE_DIR/*.py $RPM_SOURCE_DIR/clean.sh $RPM_SOURCE_DIR/analysis $RPM_SOURCE_DIR/uis $RPM_SOURCE_DIR/utils $RPM_SOURCE_DIR/summaryStatistics $RPM_SOURCE_DIR/mutationModel $RPM_SOURCE_DIR/historicalModel $RPM_SOURCE_DIR/geneticData $RPM_BUILD_ROOT/usr/local/src/diyabc/
-mkdir $RPM_BUILD_ROOT/usr/local/src/diyabc/docs
-cp -rp $RPM_SOURCE_DIR/docs/images $RPM_SOURCE_DIR/docs/icons $RPM_SOURCE_DIR/docs/executables $RPM_BUILD_ROOT/usr/local/src/diyabc/docs/
-cp -r $RPM_SOURCE_DIR/docs/dev* $RPM_SOURCE_DIR/docs/doc* $RPM_BUILD_ROOT/usr/local/src/diyabc/docs/
-cp $RPM_SOURCE_DIR/docs/project_builders/debian/diyabc-interface-pkg-template/usr/share/menu/diyabc $RPM_BUILD_ROOT/usr/share/menu/
+cp -rp $RPM_SOURCE_DIR/src/* $RPM_BUILD_ROOT/usr/local/src/diyabc/
+cp -rp $RPM_SOURCE_DIR/images/* $RPM_BUILD_ROOT/usr/share/images/diyabc/
+cp -rp $RPM_SOURCE_DIR/icons/* $RPM_BUILD_ROOT/usr/share/icons/diyabc/
+cp $RPM_SOURCE_DIR/menu/diyabc $RPM_BUILD_ROOT/usr/share/menu/
+cp $RPM_SOURCE_DIR/applications/diyabc $RPM_BUILD_ROOT/usr/share/applications/
 cp $RPM_SOURCE_DIR/docs/project_builders/debian/diyabc-interface-pkg-template/usr/share/applications/diyabc.desktop $RPM_BUILD_ROOT/usr/share/applications/
 
 sed -i "s/ NAMEVERSION//" $RPM_BUILD_ROOT/usr/share/menu/diyabc
 sed -i "s/ICON/\/usr\/local\/src\/diyabc\/docs\/icons\/coccicon.png/" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
 sed -i "s/ NAMEVERSION//" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
-sed -i "s/DIYABCEXEC/\/usr\/local\/bin\/diyabc/" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
+sed -i "s/DIYABCEXEC/\/usr\/bin\/diyabc-gui/" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
 sed -i "s/COMMANDVERSION//" $RPM_BUILD_ROOT/usr/share/menu/diyabc
 
 
