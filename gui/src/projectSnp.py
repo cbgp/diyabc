@@ -242,9 +242,9 @@ class ProjectSnp(ProjectReftable):
         de l'ouverture d'un projet existant et lors du choix du fichier de données pour un nouveau projet
         """
         log(2,"Loading datafile '%s'"%name)
-        # conversion de dos à unix
-        if not isUnixText(name):
-            dos2unix(name)
+        ## conversion de dos à unix
+        #if not isUnixText(name):
+        #    dos2unix(name)
         try:
             self.data = DataSnp(name)
             typestr = ""
