@@ -2,7 +2,7 @@
 
 function printUsage(){
 echo "usage : 
-linux_generation.sh  path_to_pyinstaller.py  [output_path  path_to_main.py] 
+linux_generation.sh  path_to_pyinstaller.py  [output_path  path_to_main.py arch(32 or 64)] 
 "
 }
 
@@ -10,6 +10,7 @@ linux_generation.sh  path_to_pyinstaller.py  [output_path  path_to_main.py]
 pyinst=$1
 output=$2
 pysrc=$3
+ARCH=$4
 BUILDDATE=`date +%d-%m-%Y`
 
 if [ $# -eq 0 ] ; then
@@ -56,6 +57,6 @@ cp -r $SOURCEDIR/uis /etc/matplotlibrc $output/dist/$APPNAME/
 #rm -rf $TMPBUILD
 sleep 3
 mv $output/dist/$APPNAME $output/dist/$APPNAME-$VERSION
-mv $output/dist/$APPNAME-$VERSION $output/$APPNAME-$VERSION-linux64
+mv $output/dist/$APPNAME-$VERSION $output/$APPNAME-$VERSION-linux$ARCH
 rmdir $output/dist
 rm -rf $output/build $output/$APPNAME.spec
