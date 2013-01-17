@@ -135,6 +135,7 @@ string purgetab(string s) {
 		if (s0=="\t") s0=" ";
 		ss +=s0;
 	}
+//	if (ss.at(ss.length()-1)=='\r')cout<<"HELLO\n";
 	return ss;
 }
 

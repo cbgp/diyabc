@@ -95,6 +95,19 @@ void LocusC::libere(bool obs, int nsample) {
 		if (Anind) this->nind.clear();
 	}
 
+string  getligne(ifstream file) {
+	string s="";
+	char ch;
+	bool term;
+	do {
+		ch=file.get();
+		term=((ch=='\r')or(ch=='\n'));
+		if (not term) s.push_back(ch);
+	} while (not term);
+	if (ch=='\r') ch=file.get();
+	return s;
+}
+	
 /**
 * détermination du type de fichier de donnée
 * return=-1
@@ -130,23 +143,25 @@ void LocusC::libere(bool obs, int nsample) {
 			ligne=majuscules(ligne);
 			//cout<<ligne<<"\n";
 			trouvepop=(ligne.find("POP")!=string::npos);
-			//cout<<trouvepop<<"\n";
 			if (not trouvepop) nloc++;
 		}
 		cout<<"nloc="<<nloc<<"\n";
 		if (not trouvepop) return -2;
 		while (not file.eof()){
-			getline(file, ligne);//cout<<ligne<<"\n";
+			getline(file, ligne);
+			if((ligne.length()>2)and(ligne.at(ligne.length()-1)=='\r')) ligne=ligne.substr(ligne.length()-1);
 			ligne=purgetab(ligne);
 			if( (int)ligne.length() >= 2 + 3*nloc){
 				ligne=majuscules(ligne);
 				if ((ligne.find(",")==string::npos)and(ligne.find("POP")==string::npos)) return -2;
 				if(ligne.find(",")!=string::npos) {
 					ligne = ligne.substr(ligne.find(",") + 1);
-					//cout<<ligne<<"\n";
 					ss=splitwords(ligne," ",&nss);
-					//cout<<"nss="<<nss<<"\n";
+					cout<<"nss="<<nss<<"\n";
+					cout<<ss[nss-1]<<"\n";
 					if (nss!=nloc) return -2;
+					cout<<"avant exit(1)\n";
+					exit(1);
 				}
 			}
 		}
