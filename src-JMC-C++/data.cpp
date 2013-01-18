@@ -161,7 +161,7 @@ string  getligne(ifstream file) {
 					cout<<ss[nss-1]<<"\n";
 					if (nss!=nloc) return -2;
 					cout<<"avant exit(1)\n";
-					exit(1);
+					//exit(1);
 				}
 			}
 		}
