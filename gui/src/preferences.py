@@ -6,6 +6,7 @@
 # @brief Fenêtre pour gérer les préférences personnelles
 
 import os,sys,platform,multiprocessing
+import os.path
 import ConfigParser
 import codecs
 from PyQt4.QtCore import *
@@ -248,8 +249,8 @@ class Preferences(AutoPreferences):
                 else:
                     exPath = "%s/executables/diyabc-comput-linux-x64"%DATAPATH
                 # si on a le paquet deb installé et qu'aucun binaire n'est dans le datapath
-                if os.path.exist("/usr/bin/diyabc") and not os.path.exist("%s/executables/diyabc-comput-linux-x64"%DATAPATH)\
-                        and not os.path.exist("%s/executables/diyabc-comput-linux-i386"%DATAPATH):
+                if os.path.exists("/usr/bin/diyabc") and not os.path.exists("%s/executables/diyabc-comput-linux-x64"%DATAPATH)\
+                        and not os.path.exists("%s/executables/diyabc-comput-linux-i386"%DATAPATH):
                     exPath = "/usr/bin/diyabc"
             # WINDOWS
             elif "win" in sys.platform and "darwin" not in sys.platform:
@@ -264,7 +265,12 @@ class Preferences(AutoPreferences):
                 else:
                     exPath = "%s/executables/diyabc-comput-mac-x64"%DATAPATH
         else:
+            if not os.path.exists(self.ui.execPathPathEdit.text()):
+                output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found")
             return str(self.ui.execPathPathEdit.text())
+
+        if not os.path.exists(exPath):
+            output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found")
         return exPath
 
     def changeBackgroundColor(self,colorstr):
