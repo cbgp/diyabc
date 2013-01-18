@@ -6,6 +6,10 @@ Version:   X
 Release:   1
 Group:    Biology
 Requires: bash >= 3.0, python >= 2.5, PyQt4 >= 4.5, diyabc-doc >= X
+BuildArch: noarch
+URL: http://www1.montpellier.inra.fr/CBGP/diyabc/
+Distribution: whatever
+Packager: julien@aiur.fr
 
 %description
 DIYABC is a computer program with a graphical user interface and a fully
