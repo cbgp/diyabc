@@ -408,7 +408,7 @@ try {
      if (num_threads>0) omp_set_num_threads(num_threads);
 
      /* Debut: pour le nouveau RNG      */
-     if ((action != 'n') and (action != 'h') and (action != 'a')){
+     if ((action != 'n') and (action != 'h') and (action != 'a') and (action !='q')){
     	 // Je dois lire l'état courant des RNG
     	 mtss = NULL;
 
