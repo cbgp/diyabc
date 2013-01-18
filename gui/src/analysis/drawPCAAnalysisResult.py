@@ -22,6 +22,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         super(DrawPCAAnalysisResult,self).__init__(parent)
         self.parent=parent
         self.directory=directory
+        self.dico_points = {}
         self.analysis = analysis
         if self.directory.split('_')[-1] == "modelChecking":
             self.acpFile = "%s/analysis/%s/mcACP.txt"%(self.parent.dir,self.directory)
