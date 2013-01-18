@@ -7,6 +7,7 @@
 
 import subprocess,shutil
 import os
+import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic

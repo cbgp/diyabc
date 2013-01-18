@@ -1,7 +1,7 @@
 BuildRoot:  %{_topdir}/BUILDROOT/
 Summary:   User-friendly approach to Approximate Bayesian Computation
 License:   GNU
-Name:    diyabc
+Name:    diyabc-gui
 Version:   X
 Release:   1
 Group:    Biology
@@ -41,8 +41,7 @@ cp -rp $RPM_SOURCE_DIR/src/* $RPM_BUILD_ROOT/usr/local/src/diyabc/
 cp -rp $RPM_SOURCE_DIR/images/* $RPM_BUILD_ROOT/usr/share/images/diyabc/
 cp -rp $RPM_SOURCE_DIR/icons/* $RPM_BUILD_ROOT/usr/share/icons/diyabc/
 cp $RPM_SOURCE_DIR/menu/diyabc $RPM_BUILD_ROOT/usr/share/menu/
-cp $RPM_SOURCE_DIR/applications/diyabc $RPM_BUILD_ROOT/usr/share/applications/
-cp $RPM_SOURCE_DIR/docs/project_builders/debian/diyabc-interface-pkg-template/usr/share/applications/diyabc.desktop $RPM_BUILD_ROOT/usr/share/applications/
+cp $RPM_SOURCE_DIR/applications/diyabc.desktop $RPM_BUILD_ROOT/usr/share/applications/
 
 sed -i "s/ NAMEVERSION//" $RPM_BUILD_ROOT/usr/share/menu/diyabc
 sed -i "s/ICON/\/usr\/local\/src\/diyabc\/docs\/icons\/coccicon.png/" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
