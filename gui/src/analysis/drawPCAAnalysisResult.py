@@ -82,6 +82,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         """ charge le fichier ACP dans un dico
         et initialise les combo boxes
         """
+        QApplication.setOverrideCursor( Qt.WaitCursor )
         self.ui.ACProgress.setValue(0)
 
         if not os.path.exists(self.acpFile):
@@ -169,6 +170,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 if ind != -1:
                     self.ui.scCombo.setCurrentIndex(ind)
                     self.ui.scCombo.setDisabled(True)
+        QApplication.restoreOverrideCursor()
 
     def drawGraphToPlot(self,plot,num_sc,compo_h,compo_v,nbp):
         """ dessine les points pour un scenario, deux components, sur plot et met à jour legend
