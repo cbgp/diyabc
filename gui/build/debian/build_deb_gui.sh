@@ -44,7 +44,7 @@ sed -i "s/01\/01\/1970/$BUILDDATE/" $PACKAGEDIR/usr/local/src/diyabc/variables.p
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 
-sed -i "s/ICON/\/usr\/share\/icons\/diyabc\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
+#sed -i "s/ICON/\/usr\/share\/icons\/diyabc\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 
 cp -rp $SOURCEDIR/../data/images/* $PACKAGEDIR/usr/share/images/diyabc/
 cp -r $SOURCEDIR/../data/icons/* $PACKAGEDIR/usr/share/icons/diyabc/
