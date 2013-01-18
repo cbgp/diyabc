@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os,re
+import os,re,sys
 import shutil
 import codecs
 from PyQt4.QtCore import *
@@ -11,6 +11,7 @@ from utils.visualizescenario import *
 from viewTextFile import ViewTextFile
 import output
 from utils.matplotlib_example import *
+from utils.cbgpUtils import readlinesWindows
 
 formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 
@@ -86,9 +87,12 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         if not os.path.exists(self.acpFile):
             output.notify(self,"error","%s not found"%self.acpFile)
         else:
-            f = codecs.open(self.acpFile,"r","utf-8")
-            lines = f.readlines()
-            f.close()
+            if "win" in sys.platform and "darwin" not in sys.platform:
+                lines = readlinesWindows(self.acpFile)
+            else:
+                f = codecs.open(self.acpFile,"r","utf-8")
+                lines = f.readlines()
+                f.close()
             self.dico_points = {}
             self.dico_points_posterior = {}
 

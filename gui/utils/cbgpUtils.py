@@ -502,3 +502,13 @@ def dos2unix(filename):
     f=open(filename,'w')
     f.write(sw)
     f.close()
+
+def readlinesWindows(filename):
+    f=open(filename,'r')
+    li=f.readline()
+    res=[]
+    while li!='':
+        res.append(li)
+        li=f.readline()
+    return res
+
