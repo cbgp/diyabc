@@ -36,7 +36,12 @@ cp -rp $GITDIR/src-JMC-C++/general $PACKAGESRCDIR/usr/bin/diyabc
 cp ./rpmbuild/SPECS/diyabc-bin.spec  $PACKAGEDIR/SPECS/diyabc-bin.spec
 # spec file edition
 sed -i "s/Version:   X/Version:   $VERSION/" $PACKAGEDIR/SPECS/diyabc-bin.spec
-sed -i "s/noarch/x86_64/" $PACKAGEDIR/SPECS/diyabc-bin.spec
+if [ $ARCH == "32" ]; then
+    sed -i "s/noarch/i386/" $PACKAGEDIR/SPECS/diyabc-bin.spec
+    rpmbuild --target i386  -v -bb $PACKAGEDIR/SPECS/diyabc-bin.spec
+else
+    sed -i "s/noarch/x86_64/" $PACKAGEDIR/SPECS/diyabc-bin.spec
+    rpmbuild --target x86_64  -v -bb $PACKAGEDIR/SPECS/diyabc-bin.spec
+fi
 
-rpmbuild --target x86_64  -v -bb $PACKAGEDIR/SPECS/diyabc-bin.spec
 cp $PACKAGEDIR/RPMS/*/* ./
