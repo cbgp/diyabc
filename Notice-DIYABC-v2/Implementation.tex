@@ -7,7 +7,7 @@ The GUI can launch the computation program with the right parameters and keeps t
 \subsection{Files}
 The program uses and produces various files which we will describe now.
 \subsubsection{data files}
-Data files are text files that contain information about the samples : number and names of microsatellite markers, multilocus genotypes of individuals. The basic  format is that of the Genepop software \citep{RR1995} and data files produced by DIYABC are under this format.  \textbf{Microsatellite genotypes must be noted with 3 (haploid) or 6 (diploid) digits, these three digit numbers being the length in nucleotides of the corresponding PCR products}. In addition, we have added some features to this basic format in order to use sequence data. All these additions are explained in section 4.4.\\ 
+Data files are text files that contain information about the samples : number and names of microsatellite markers, multilocus genotypes of individuals. The basic  format is that of the Genepop software \citep{RR1995} and data files produced by DIYABC are under this format.  \textbf{Microsatellite genotypes must be noted with 3 (haploid) or 6 (diploid) digits, these three digit numbers being the length in nucleotides of the corresponding PCR products}. In addition, we have added some features to this basic format in order to use sequence data. All these additions are explained in section 4.4. SNP data correspond to a different file format, also detailed in section 4.4.\\ 
 Any extension is accepted for datafile names, including no extension at all. If the data file is simulated with $DIYABC$, the extension is \texttt{mss} for microsatellite/DNA sequence data and \texttt{snp} for SNP data. The next page shows examples of data sets saved.
 
 \subsubsection{reference table files} 
@@ -35,7 +35,7 @@ Note that each directory name starts with the name of analysis followed by the t
   \begin{itemize}
    \item three files \texttt{mmmq\_original.txt}, \texttt{mmmq\_composite.txt} and \texttt{mmmq\_scaled.txt} contain the statistics (mean, median, mode and quantiles) for the original, composite and scaled parameters, respectively. They are visualized in the GUI when clicking the \fbox{\textsf{view numerical results}} button. 
    \item three files \texttt{paramstatdens\_original.txt}, \texttt{paramstatdens\_composite.txt} and \texttt{paramstatdens\_scaled.txt} are used by the GUI to produce the graphics showing prior/posterior distribution.
-   \item three files \texttt{phistar\_original.txt}, \texttt{phistar\_composite.txt} and \texttt{phistar\_scaled.txt} contains the $\phi^*$ values of the original, composite and scaled parameters, respectively.
+   \item three files \texttt{phistar\_original.txt}, \texttt{phistar\_composite.txt} and \texttt{phistar\_scaled.txt} contains the $\phi^*$ values of the original, composite and scaled parameters, respectively. These files can be used for instance to redraw posterior distributions, $e.g.$ with the $R$ software.
   \end{itemize}
 As already mentionned, saved graphics are located in a \texttt{pictures} subdirectory.
  \item [Compute bias and precision of parameter estimations :] Three files \texttt{bias\_original.txt}, \texttt{bias\_composite.txt} and \texttt{bias\_scaled.txt} are produced by this type of analysis. All three files are visualized in the GUI. 
@@ -79,11 +79,11 @@ When performing a \textit{Bias-precision} or a \textit{Confidence in scenario ch
 
 
 \subsection{Missing data}
-Missing or undetermined genotypes should be coded as \texttt{000} (haploid microsatellites, \texttt{000000}  (diploid microsatellites), \texttt{$<[]>$} (haploid sequences) or \texttt{$<[][]>$} (diploid sequences) and \texttt{9} (SNP) in the data file. \\
+Missing or undetermined genotypes should be coded as \texttt{000} (haploid microsatellites), \texttt{000000}  (diploid microsatellites), \texttt{$<[~]>$} (haploid sequences) or \texttt{$<[~][~]>$} (diploid sequences) and \texttt{9} (SNP) in the data file. \\
 Missing data are taken into account in the following way. For each appearance of a missing genotype in the observed data set, the programs records the individual and the locus. When simulating data sets, the program replaces the simulated genotype (obtained through the coalescence process algorithm) by the missing data code at all corresponding locations. All summary statistics are thus computed with the same missing data as for the observed data set. 
 
 \subsection{Data files}
-There are two different incompatible formats for data files, one for SNP loci and the other for microsatellite/DNA sequence data.\\ For the latter, the format already presented in version 1 of DIYABC is an extended Genepop format. The additional features are :
+There are two different incompatible formats for data files, one for SNP loci and the other for microsatellite/DNA sequence data.\\ For the microsatellite/DNA sequence data, the format already presented in version 1 of DIYABC is an extended Genepop format. The additional features are :
 \begin{enumerate}
 \item In the title line appears the sex ratio noted between \textsf{$<$} and \textsf{$>$} under the form \textsf{$<NM=rNF>$}, in which $r$ is the ratio of the number of females per male ($e.g.$ \textsf{$<NM=2.5NF>$} means that the number of males is 2.5 times the number of females). Since the title is generally only copied, this addition should not interfere with other programs using  Genepop datafiles. Also if there is no such sex ratio addition, DIYABC will consider by default that NM=NF.
 \item After the locus name, there is an indication for the category of the locus which is $<A>$ for autosomal diploid loci, $<H>$ for autosomal haploid loci, $<X>$ for X-linked (or haplo-diploid) loci, $<Y>$ for Y-linked loci and $<M>$ for mitochondrial loci. If no category is noted, DIYABC will consider the locus as autosomal diploid or autosomal haploid depending on the corresponding genotype of the first typed individual.
@@ -95,28 +95,28 @@ There are two different incompatible formats for data files, one for SNP loci an
 
 For SNP data, the format includes:
 \begin{itemize}
- \item a first line providing the sex-ratio as above
+ \item a first line providing the sex-ratio as above and any text that can be used as a title (the sex ratio can be anywhere in this line).
  \item a second line starting with the three keywords \texttt{IND  SEX  POP}, separated by at least one space, followed by as many letters as SNP loci, the letter giving the location of the locus as above ($<A>$ for autosomal diploid loci, $<H>$ for autosomal haploid loci, $<X>$ for X-linked (or haplo-diploid) loci, $<Y>$ for Y-linked loci and $<M>$ for mitochondrial loci). Letters are separated by a single space.
  \item as many lines as there are genotyped individuals, with the code-name of the individual, a letter ($M$ or $F$) indicating its sex, a code-name for its population and the values (0, 1 or 2) of the number of the reference allele at each SNP locus. 
 \end{itemize}
 
 
  
-Below are three examples of data sets simulated by DIYABC.\\ In the first example, this data set includes two population samples, each of 12 diploid individuals (8 females and 4 males in the first sample and 5 females and 7 males in the second sample). As deduced from the letter between $<$ and $>$ on the locus name lines (see page 25), these individuals have been genotyped at 3 microsatellite loci (1 autosomal $<A>$, 1 X-linked $<X>$ and 1 Y-linked $<Y>$) and 3 DNA sequence loci (1 autosomal. 1 X-linked and 1 mitochondrial $<M>$). The species sex-ratio, given in the title line, is of three males for one female ($<NM=3NF>$) or in other words, the number of males equals three times the number of females. 
+Below are three examples of data sets that can be analyzed with DIYABC.\\ In the first example, this data set includes two population samples, each of 12 diploid individuals (8 females and 4 males in the first sample and 5 females and 7 males in the second sample). As deduced from the letter between $<$ and $>$ on the locus name lines (see page 25), these individuals have been genotyped at 3 microsatellite loci (1 autosomal $<A>$, 1 X-linked $<X>$ and 1 Y-linked $<Y>$) and 3 DNA sequence loci (1 autosomal. 1 X-linked and 1 mitochondrial $<M>$). The species sex-ratio, given in the title line, is of three males for one female ($<NM=3NF>$) or in other words, the number of males equals three times the number of females. 
 \begin{figure}[h]
-\includegraphics[scale=0.7]{gui_pictures/screenga001.png}
+\includegraphics[scale=0.6]{gui_pictures/screenga001.png}
 \end{figure}
-
+\newpage
 In the second example, the species is haploid. Individuals have been genotyped at three autosomal microsatellite loci and one mitochondrial DNA sequence locus. The species being haploid (deduced from the presence of autosomal haploid loci), no indication of the sex-ratio appears in the title line.
 
 \begin{figure}[h]
 \includegraphics[scale=0.6]{gui_pictures/screenga002.png}
 \end{figure}
 
-In the third example, the species is diploid and has been genotyped at a large number of SNP autosomal loci. The first line provides the species sex-ratio. The second line indicates what's in the different columns : individual name in column 1, individual sex in column 2, population name in column 3 and one column per SNP locus. Columns are sparated by one or more spaces. SNP are coded 0, 1 or 2 according to the number of reference alleles. Only the top left part of the data file is represented below :
+In the third example, the species is diploid and has been genotyped at a large number of SNP autosomal loci. The first line provides the title which includes the species sex-ratio. The second line indicates what's in the different columns : individual name in column 1, individual sex in column 2, population name in column 3 and one column per SNP locus (the letter \texttt{A} indicates that the autosomal locus is autosomal; it would be \texttt{X} for an X-linked locus, \texttt{Y} for a Y-linked locus and \texttt{M} for a mitochondrial locus) . Columns are sparated by one or more spaces. SNP are coded 0, 1 or 2 according to the number of reference alleles at the corresponding locus. Only the top left part of the data file is represented below :
 
 \begin{figure}[h]
-\includegraphics[scale=0.7]{gui_pictures/screenga003.png}
+\includegraphics[scale=0.5]{gui_pictures/screenga003.png}
 \end{figure}
 
 
@@ -125,20 +125,20 @@ In the third example, the species is diploid and has been genotyped at a large n
 \section{Cluster version}\label{cluster}
 The ABC approach requires simulating data sets, which is a time consuming. Typically, one to several millions data sets are needed to build up a reference table and this process can last several hours to several days. To take advantage of a computer grid cluster, the user can activate the option on the cluster tab of the general settings. By checking \textsf{use a cluster}, the settings of the cluster tab are editable and, while this option remains checked, DIYABC will not compute any reftable on your computer. 
 
-Generate a reftable is done in 3 sequential steps :
+A reftable is generated in 3 sequential steps :
 \begin{enumerate}
- \item configure the required parameters in the GUI frontend and generate the cluster bundle
+ \item configure the required parameters in the GUI frontend and generate the cluster bundle (set of zipped files)
  \item transfer the bundle to the cluster and run it
  \item transfer back the reference table and include it to the project
 \end{enumerate}
 
 \subsection{configure the required parameters in the GUI frontend and generate the cluster bundle}\label{clusterconfigure}
-In the settings cluster tab, you can configure some parameters which will be included in a bash script. This bash script named \texttt{launch.sh} will be executed on the cluster (cf section \ref{clusterrun}). The bash script is artificially split in two parts in the interface.
+In the settings cluster tab, you can configure some parameters which will be included in a bash script (cf section 3.7.1). This bash script named \texttt{launch.sh} will be executed on the cluster (cf section \ref{clusterrun}). The bash script is artificially split in two parts in the interface.
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-cluster.png} \\
 
 
-You have to understand and edit four cluster settings. Each one will be used as a variable in the main script \texttt{launch.sh}.
+You have to understand and edit four parameters of the cluster settings. Each one will be used as a variable in the main script \texttt{launch.sh}.
  
 
 \subsubsection{number of data sets by job}
@@ -146,17 +146,13 @@ You have to understand and edit four cluster settings. Each one will be used as 
 
 A few examples illustrate the importance of this parameter:
 \begin{itemize}
- \item  if your cluster is overloaded and the waiting time in queue is long then prefer a high amount of data sets by job (less jobs)
- \item if a queue for short jobs is free while the other ones are full then prefer a low amount of data sets by job (more jobs) and submit to the short queue
+ \item  if your cluster is overloaded and the waiting time in queue is long then it is preferable to choose a high amount of data sets by job (less jobs)
+ \item if a queue for short jobs is free while the other ones are full then it is preferable to choose a low amount of data sets by job (more jobs) and submit to the short queue
 \end{itemize}
 
 \subsubsection{number of cores by job}
-\texttt{coresPerJob} : This integer indicates how many CPU cores to use by each job. Be carefull : if you use lots of cores, to generate the RNG states will be time consuming (fig \ref{fig:rngTimeGeneration}). Increasing the number of cores is generally increasing the queueing waiting time. Remember that a job with 40 cores will not run faster than 40 jobs with one core each. \\
+\texttt{coresPerJob} : This integer indicates how many CPU cores will be used by each job. Be carefull : if you use lots of cores, to generate the RNG states will be time consuming (fig \ref{fig:rngTimeGeneration}). Increasing the number of cores generally increases the queueing waiting time. Remember that a job with 40 cores will not run faster than 40 jobs with one core each. \\
 DIYABC includes openMP. It means that DIYABC can use several cores in a single computer but as it does not include MPI it can not use many cores on many computers for one same job. So please be sure to use an apropriate parallele environment to submit your jobs. Ask to your cluster system administrator. 
-
-\subsubsection{the number of concurrent jobs}
-\texttt{maxConcurrentJobs} : This integer indicates the maximum number of jobs permitted to run simultaneously on the cluster. Why is this informationn required ? One caveat of the RNG (section \ref{rng}) is the need to simultaneously generate all RNG files, before starting the jobs queue submission. The main script \texttt{launch.sh} will produce a pool of RNG files and the script \texttt{nodes.sh} running on each cluster node will randomly draw a RNG file not currently in use. Once again, you should ask your cluster system administrator to know the running jobs limitation on your cluster. You can also evaluate this number considering your cluster load. Be carefull : if you use lots of RNG files, to generate the RNG states is time consuming (fig \ref{fig:rngTimeGeneration}).
-
 
 \begin{figure}[htb]
 \centering \it	
@@ -180,20 +176,24 @@ DIYABC includes openMP. It means that DIYABC can use several cores in a single c
     for each job on a cluster is possible but will result in a dangerous bias). The second
     caveat of the RNG method is a consequence of the first one, ie the time needed to generate the RNG
     files increases depending on the number of RNG files \texttt{t} and the number of cores \texttt{c}
-    available for each RNG file. Once a file is generated is not possible to add cores. }
+    available for each RNG file. Once a file is generated, it is not possible to add cores. }
 \end{figure}
+
+\subsubsection{the number of concurrent jobs}
+\texttt{maxConcurrentJobs} : This integer indicates the maximum number of jobs allowed to run simultaneously on the cluster. Why is this information required ? One caveat of the RNG (section \ref{rng}) is the need to simultaneously generate all RNG files, before starting the jobs queue submission. The main script \texttt{launch.sh} will produce a pool of RNG files and the script \texttt{nodes.sh} running on each cluster node will randomly draw a RNG file not currently in use. Once again, you should ask your cluster system administrator to know the running jobs limitation on your cluster. You can also evaluate this number by looking at your cluster load. Be carefull : if you use lots of RNG files, to generate the RNG states is time consuming (fig \ref{fig:rngTimeGeneration}).
+
 
 
 \subsubsection{the seed to generate RNG files}
 \texttt{seed} : This integer indicates to DIYABC the seed to start producing RNG files. Leave it blank or write \texttt{None} to use a random seed. Using a user-defined seed is only for test or debbugging purposes. 
 
 \subsubsection{main script : launch.sh}
-The next two text boxes in the interface deal with first and last parts of the main script \texttt{launch.sh}. \texttt{launch.sh} will generate a pool of RNG files, submit jobs to the scheduler queuing system using a \texttt{node.sh} script, monitor the jobs and pool all reftable files into a single reftable file when all jobs are finished.
+The next two text boxes in the interface deal with the first and last parts of the main script \texttt{launch.sh}. \texttt{launch.sh} will generate a pool of RNG files, submit jobs to the scheduler queuing system using a \texttt{node.sh} script, monitor the jobs and pool all reftable files into a single reftable file when all jobs are completed.
 
 \begin{description}
-	\item[first part] The first part is not editable as it includes the variables used by DIYABC GUI frontend and other variables from your project : \texttt{numSimulatedDataSet}, \texttt{projectName}, \texttt{dataFileName}. 
+	\item[first part] This part is not editable as it includes the variables used by DIYABC GUI frontend and other variables from your project : \texttt{numSimulatedDataSet}, \texttt{projectName}, \texttt{dataFileName}. 
 	
-	\item[last part] The last part deals with the jobs submission. By default, \texttt{launch.sh} targets a $Grid Engine$ cluster. You probably need to customise this script to fit your cluster configuration (scheduler system, queue name, ...). You should mainly need to modify the  \texttt{\#\#\#\#\# EDIT \#\#\#\#\#} section. Please ask for help to your cluster system administrator.
+	\item[last part] This part deals with the jobs submission. By default, \texttt{launch.sh} targets a $Grid Engine$ cluster. You probably need to customise this script to fit your cluster configuration (scheduler system, queue name, ...). You should mainly need to modify the  \texttt{\#\#\#\#\# EDIT \#\#\#\#\#} section. Please ask for help to your cluster system administrator.
 \end{description}
 
 \subsection{transfer the bundle to the cluster and run it}\label{clusterrun}
@@ -220,7 +220,7 @@ Now, you have to run the main script \texttt{launch.sh}. \texttt{launch.sh} will
 
 \subsubsection{launch.sh}
 
-Once you are in the $<yourTarArchiveName>$ directory, you can run \texttt{launch.sh}. Eg, for a 50000 datasets in 5 jobs :\\
+Once you are in the $<yourTarArchiveName>$ directory, you can run \texttt{launch.sh}. For instance, for a total of 50,000 data sets to be produced through 5 jobs of 10,000 data sets:\\
 %\fbox{%
    \begin{minipage}{0.99\textwidth}
  
@@ -299,7 +299,7 @@ See concat.out output file for logs
 \begin{enumerate}
     \item line 3 : generation of all RNG files : \textsf{RNG\_state\_0000.bin}, ..., \textsf{RNG\_state\_0005.bin}
     \item lines 7, 10, 13, 16, 19 : job submission 
-    \item lines 23 to 28 : jobs status, every 30 seconds
+    \item lines 23 to 28 : jobs status given every 30 seconds
     \item line 31 : merge all \textsf{reftable\_$<number>$.bin} file in one reftable file \textsf{reftable.bin}. In case of any problem, please read \textsf{concat.out} output file.
 \end{enumerate}
 Once the monitoring phase starts, you can quit \texttt{launch.sh} and restart it at any time. Since all jobs are submitted by \texttt{launch.sh}, a lock file named \texttt{launch.sh.lock} is written in your $yourTarArchiveName$ directory and inform any new execution of \texttt{launch.sh} to not submit any new job.
@@ -317,8 +317,8 @@ Once the monitoring phase starts, you can quit \texttt{launch.sh} and restart it
 
 
 
-\subsection{transfer back the reference table and include it to the project}\label{clusterback}
-Once you produced your final \texttt{reftable.bin} file, you need to transfer it from the cluster to you DIYABC project directory. Once again, you can use an sftp client.
+\subsection{transfer back the reference table and include it into your computer project}\label{clusterback}
+Once your final \texttt{reftable.bin} file has been produced, you need to transfer it from the cluster to you DIYABC project directory on your own computer. Once again, you can use an sftp client.
 
 
 \clearpage

@@ -24,7 +24,7 @@ almost impossible to find such simulated data sets. \citet{B2002}
 have hence proposed to measure similarity through the Euclidian
 distance between observed and simulated summary statistics, after normalization by standard
 deviations of simulated statistics. In addition, these authors introduced a
-step of local linear regression aimed at favoring simulated data
+step of weighted local linear regression aimed at favoring simulated data
 sets that are closer to the observed one.\\
  In practice, the ABC approach can be summarized in three successive
  steps \citep{Ex2005} : i) generating simulated data sets, ii)
@@ -32,17 +32,17 @@ sets that are closer to the observed one.\\
  estimating posterior distributions of parameters through a local
  linear regression procedure.\\ 
  In addition, this approach provides a way of comparing different
- scenarios that can explain observed data. Two measures of posterior probabilities of scenarios are proposed. The first measure is simply the relative proportion of each scenario in the simulated data sets closest to observed data sets \citep{ME2005,PC2007}. The second measure  is obtained by a logistic regression of each scenario probability on the deviations between simulated and observed summary statistics \citep{FR2007,B2008}. \\
+ models (hereafter named scenarios) that can explain observed data. Two measures of posterior probabilities of scenarios are proposed. The first measure is simply the relative proportion of each scenario in the simulated data sets closest to observed data sets \citep{ME2005,PC2007}. The second measure  is obtained by a logistic regression of each scenario probability on the deviations between simulated and observed summary statistics \citep{FR2007,B2008}. \\
  
  
  In order to simulate data, one has first to define one (or possibly
-several) model(s). Each model includes a historical model describing
+several) scenario(s). Each scenario includes a historical model describing
 how the sampled populations  are connected to their common ancestor
 and a mutational model describing how allelic states of the studied
 genes are changing along their genealogical trees.\\
 
 \subsection{Historical model parameterization}
-The evolutionary scenario, which is quantified by the historical
+The evolutionary scenario, which is characterized by the historical
 model, can be described as a succession in time of "events" and
 "inter event periods". The events considered in the program are a
 restricted set of possible events affecting populations evolution.
@@ -71,11 +71,11 @@ nature of the event, and ending with several other data depending on
 the nature of the event. Following is the syntax used for each
 category of event :
 \begin{description}
-\item[population sample] : $\langle time \rangle$ \texttt{sample} $\langle pop \rangle$  $[nmales$   $nfemales]$  \\ 
+\item[population sample] : $\langle time \rangle$ \texttt{sample} $\langle pop \rangle$  %$[nmales$   $nfemales]$  \\ 
 $\langle time \rangle$ is the time (always counted in number of generations) at which the sample was taken and\\
  $\langle pop \rangle$ is the population number from which is taken the sample. It is worth stressing here that \textbf{samples are considered
 in the same order as they appear in the data file}.\\
-$[nmales$   $nfemales]$ is only used for SNP loci to indicate the number of males (respectively females) from the sample that have been used to detect SNPs. Thes males and females appear in the corresponding sample of the data file.
+%$[nmales$   $nfemales]$ is only used for SNP loci to indicate the number of males (respectively females) from the sample that have been used to detect SNPs. Thes males and females appear in the corresponding sample of the data file.
  
 %\item[``reference'' sample] : $\langle time \rangle$ \texttt{refsample} $\langle pop \rangle$  $nmales$   $nfemales$  \textbf{ONLY FOR SNP loci}\\ 
 %$\langle time \rangle$ is the time (always counted in number of generations) at which the ``reference'' sample was taken and\\
@@ -104,7 +104,7 @@ $\langle pop0 \rangle$ joins population $\langle pop1 \rangle$
 \rangle$ (respectively 1-$\langle rate \rangle$).
 \end{description}
 
-A scenario is a succession of lines as described above. However, in
+A historical model is a succession of lines as described above. However, in
 order to cope with special situations (see explanations in Note
  9 below), we added a first line giving the effective sizes of sampled
 populations before the first event described, looking backward in time.
@@ -208,7 +208,7 @@ For simplicity sake, all populations are assumed to have identical effective siz
 
 
 Note that although there are only four samples, the scenario
-includes a fifth population. This population which diverged from
+includes a fifth unsampled population. This unsampled population which diverged from
 population 1 at time \texttt{t3} was a parent in the admixture event
 occurring at  time \texttt{t2}. Note also that the first line must include the effective sizes of the \emph{five} populations.\\
 
@@ -252,7 +252,7 @@ sufficient to consider only the simplest models \citep{C2006}. This
 has the non-negligible advantage of reducing the number of parameters, which
 can be a real issue when complex scenarios are considered. This is why we chose the Generalized Stepwise Mutation model \citep{E2002}. Under this model, a mutation increases or decreases the length of the microsatellite by a number of repeated motifs  following a geometric
 distribution. This model necessitates only two parameters : the mutation rate  (\texttt{$\mu$}) and the parameter of the
-geometric distribution (\texttt{$P$}). The same mutation model is imposed to all loci of a given group. However, each locus has its own parameters   (\texttt{$\mu_i$} and \texttt{$P_i$}) and, following a hierarchical scheme, each locus parameter is drawn from a gamma distribution with mean the mean parameter. Note also that :
+geometric distribution (\texttt{$P$}). The same mutation model is imposed to all loci of a given group. However, each locus has its own parameters   (\texttt{$\mu_i$} and \texttt{$P_i$}) and, following a hierarchical scheme, each locus parameter is drawn from a gamma distribution with mean equal to the mean parameter value. Note also that :
 \begin{enumerate}
 \item individual loci parameters (\texttt{$\mu_i$} and \texttt{$P_i$}) are considered as nuisance parameters and hence are never recorded. Only mean parameters are recorded.
 \item The variance or shape parameter of the gamma distributions are set by the user and are NOT considered as parameters.
@@ -270,12 +270,11 @@ As for microsatellites, all sequence loci of the same group are given the same m
 
 \subsection{SNPs do not require mutation model parameterization}
 
-SNPs have two characteristics that allow to get rid of mutation models : they are polymorphic and they present only two allelic (ancestral and derived) states. In order to be sure that all analyzed SNP loci have the two characteristics, non polymorphic loci are disgarded right from the beginning of analyses. Consequently, no matter \emph{how} it occurred, we can assume that there occured one and only one mutation in the coalescence tree of sampled genes. We will see below that this  largely simplifies (and speeds up) SNP data simulation. Also, this advantageously reduces the dimension of the parameter space (no mutation parameters which are often considered as nuisance parameters). There is however a potential drawback which is the absence of any calibration generally brought by priors on mutation parameters : only (time/effective size) ratios will be informative.  
+SNPs have two characteristics that allow to get rid of mutation models : they are polymorphic and they present only two allelic (ancestral and derived) states. In order to be sure that all analyzed SNP loci have the two characteristics, non polymorphic loci are disgarded right from the beginning of analyses. Consequently, no matter \emph{how} it occurred, we can assume that there occured one and only one mutation in the coalescence tree of sampled genes. We will see below that this  largely simplifies (and speeds up) SNP data simulation. Also, this advantageously reduces the dimension of the parameter space (as mutation parameters are not needed in this case). There is however a potential drawback which is the absence of any calibration generally brought by priors on mutation parameters. Consequently, (time/effective size) ratios rather than original time parameters will be informative.  
 
 \subsection{Prior distributions}
 The Bayesian aspect of the ABC approach implies that parameter
-estimations are based on prior knowledge about these parameters.
-This translates into prior distributions of parameters. The program
+estimations use prior knowledge about these parameters, prior knowledge given by prior distributions of parameters. The program
 offers a choice among usual probability distributions, i.e.
 Uniform, Log-Uniform, Normal or Log-Normal for historical parameters and Uniform, Log-Uniform or Gamma
  for mutation parameters. Extremum values and other parameters (e. g. mean and
@@ -284,7 +283,7 @@ user.  \\
 In addition, one can impose some simple conditions on historical
 parameters. For instance, there can be two times parameters with
 overlapping prior distributions. However, we want that the first
-one, say \texttt{t1}, to always be larger than the second one , say
+one, say \texttt{t1}, to always be larger than the second one, say
 \texttt{t2}. For that, we just need to set \texttt{t1} $>$
 \texttt{t2} in the corresponding edit-windows. Such a condition
 needs to be between two parameters (not a parameter and a number,
@@ -308,8 +307,8 @@ the sample.
   \item[merge two populations] : \\
 Move the lineages of the second population into the first
 population.
-  \item[split between two populations]: \\ Distribute the lineages of the admixed populations between the two
-parental population according to the admixture rate.
+  \item[split between two populations]: \\ Distribute the lineages of the admixed population among the two
+parental populations according to the admixture rate.
   \item[coalesce and mutate lineages within a population]: \\
 There are two possibilities here, depending on whether the
 population is \emph{terminal} or not. We call \emph{terminal} the
@@ -357,13 +356,13 @@ characterize a single, a pair or a trio of population samples. These are :
  \end{enumerate}
 \item[Two sample statistics] :
 \begin{enumerate}
-  \item $F_{ST}$ between two samples \citep{WC1984}
-  \item mean index of classification (two samples) \citep{RM1997,PC2007}
-  \item $(\delta\mu)^2$ distance between two samples \citep{GL1995}
   \item mean number of alleles across loci (two samples)
   \item mean gene diversity across loci (two samples)
   \item mean allele size variance across loci (two samples)
+  \item $F_{ST}$ between two samples \citep{WC1984}
+  \item mean index of classification (two samples) \citep{RM1997,PC2007}
   \item shared allele distance between two samples \citep{CJ1993}
+  \item $(\delta\mu)^2$ distance between two samples \citep{GL1995}
   \end{enumerate}
 \item[Three sample statistics] :
 \begin{enumerate}
@@ -406,22 +405,25 @@ characterize a single, a pair or a trio of population samples. These are :
   \item proportion of loci with null gene diverty (= proportion of monomorphic loci) 
   \item mean gene diversity across polymorphic loci \citep{N1987}
   \item variance of gene diversity across polymorphic loci 
-  \item mean gene diversity across all loci \citep{GW2001, Ex2005}
+  \item mean gene diversity across all loci
  \end{enumerate}
 \item[Two sample statistics] :
 \begin{enumerate}
-  \item proportion of loci with null Nei's distance between the two samples \citep{N1972}
-  \item mean across loci of non null Nei's distances between the two samples 
-  \item variance across loci of non null Nei's distances between the two samples
-  \item mean across loci of Nei's distances between the two samples
   \item proportion of loci with null $F_{ST}$ distance between the two samples \citep{WC1984}
   \item mean across loci of non null $F_{ST}$ distances between the two samples 
   \item variance across loci of non null $F_{ST}$ distances between the two samples
   \item mean across loci of $F_{ST}$ distances between the two samples
+  \item proportion of loci with null Nei's distance between the two samples \citep{N1972}
+  \item mean across loci of non null Nei's distances between the two samples 
+  \item variance across loci of non null Nei's distances between the two samples
+  \item mean across loci of Nei's distances between the two samples
   \end{enumerate}
 \item[Three sample statistics] :
 \begin{enumerate}
-  \item Maximum likelihood coefficient of admixture  \citep{CF2004} 
+  \item proportion of loci with null admixture estimate
+  \item mean across loci of non null admixture estimate
+  \item variance across loci of non null admixture estimated
+  \item mean across all locus admixture estimates
 \end{enumerate}
 \end{description}
 
@@ -443,7 +445,7 @@ data set, $s_j^{obs}$ is the $j$-th summary statistics from the
 \emph{obs}erved data set and $V_j$ is the variance of the the $j$-th
 summary statistics across all simulated data sets.
  Only the closest data sets are selected for further
-treatments. The latter includes a local linear regression step aimed
+treatments. The latter includes a weighted local linear regression step aimed
 at improving the posterior distributions of the parameters \citep{B2002}. Basically, a
 multiple linear regression is performed in which summary statistics
 are the independent variables and parameters the dependent
@@ -478,7 +480,7 @@ In the second analysis, each summary statistics of the observed data set is rank
  Since summary statistics are generally not sufficient, it is advised to use different sets of summary statistics to compute the posterior distribution of parameters on one hand and to check the model on the other hand \citep[see][]{C2010}. This has been implemented in $DIYABC$. 
 
 \subsection{Measures of performances}
-As stressed in previous studies \citep[e.g.][]{Ex2005}, the ABC appproach provides an efficient way of assessing its own performances for estimating posterior distributions of parameters. The reference table, the building of which represents generally 95 to 99\% of the computing time, can be reused with pseudo-observed (test) data sets which in fact have been obtained through simulation with known values of parameters. It is then rather quick and easy to evaluate the performance of the method for parameter estimation by computing statistics such as estimation biases or mean square errors.\\
+As stressed in previous studies \citep[e.g.][]{Ex2005}, the ABC appproach provides an efficient way of assessing its own performances for estimating posterior distributions of parameters. The reference table, the building of which represents generally 95 to 99\% of the computing time, can be reused to analyse pseudo-observed (test) data sets obtained through simulation with known values of parameters. It is then rather quick and easy to evaluate the performance of the method for parameter estimation by computing statistics such as estimation biases or mean square errors.\\
 These measures of performance have been fully integrated into $DIYABC$. The performance measures computed by $DIYABC$ are :
 \begin{description}
 \item[the average relative bias] : the difference between the point estimate ($e$) and the true value ($v$)divided by the true value, 
@@ -493,14 +495,14 @@ These measures of performance have been fully integrated into $DIYABC$. The perf
 
  \item[the 50\% and 95\% coverages] : the proportion of test data sets for which the 50\% and 95\% credibility intervals respectively include the true value.\\
  \item[the factor 2] :the proportion of test data sets for which the point estimate is at least half and at most twice the true value.
- \item[the Relative Median Bias (RMB)] : the 50\% quantile of the  bias (measured on each data set) divided by the true value. The bias is computed respectively for each point estimate 
+ \item[the Relative Median Bias (RMB)] : the 50\% quantile of the  bias (measured on each test data set) divided by the true value. The bias is computed respectively for each point estimate 
  \item[the Relative Median Absolute Deviation (RMedAD)] : the 50\% quantile (over test data sets) of the median (over each data set) of the absolute difference between each value of the posterior distribution sample and the true value divided by the true value.
  \item[the Relative Median of the Absolute Error (RMAE)] :  the 50\% quantile (over test data sets) of the absolute value of the difference between the point estimate (in each data set) and the true value divided by the true value.
 \end{description} 
 ~\
 $DIYABC$ considers the following three point estimates : mean, median and mode of the  $\phi_{ik}^*$  (sample of the posterior distribution of each parameter), as defined in subsection 1.7.
 ~\\
- Concerning the true value ($v$) appearing in the above formulae, DIYABC offers two possibilities :
+ Concerning the true value ($v$) appearing in the above formulae, $DIYABC$ offers two possibilities :
  \begin{enumerate}
  \item All values $v$ are fixed by the user. If any one of these values is outside the limits given to the prior for the corresponding parameter, a warning message is issued but the analysis can proceed if needed.
  \item All values $v$ are drawn from distributions. These distributions can be different from those of priors. They may even not be overlapping (no warning message is issued whatever the user's choice). 
@@ -510,7 +512,7 @@ $DIYABC$ considers the following three point estimates : mean, median and mode o
 In order to better assess the information brought by genetic data, $DIYABC$ provides a double estimate of all these bias/precision statistics. As expected, the first one is based on genetic data given in the data file. The second one is computed as if there was no genetic information, $i.e.$ estimates are based only on parameter priors. Technically, a sample of parameter values is drawn at random from the reference table. This sample of the same size of the sample of posterior values is used in place of the latter in all computations.
 
 \subsection{Comparison of scenarios}
-The ABC approach can also be used to compare possible scenarios for the same data file through the computation of the posterior probabilities of each scenario and this option is naturally implemented in DIYABC.\\
+The ABC approach can also be used to compare possible scenarios for the same data file through the computation of the posterior probabilities of each scenario and this option is naturally implemented in $DIYABC$.\\
 
 \subsubsection{Reference table} 
 First, the reference table can include as many scenarios as desired. By default, the prior probability of each scenario is uniform, that is each scenario will have approximately the same number of simulated data sets. But, if for any reason, one wants a different prior probability for each scenario, there is the possibility to do so.\\
@@ -521,21 +523,21 @@ When conditions apply to some parameters (see subsection 2.4), the program provi
 \item parameter sets are drawn in their respective prior distributions until all conditions are fulfilled.
 \item a single parameter set is drawn and only if all condition are fulfilled, the simulation is performed and the data set is recorded in the reference table.
 \end{enumerate}
-When there is only one scenario, both options are equivalent, although in the latter option, there might be less simulated data sets that are recorded than one asked. When there is more than one scenario, the second option can be viewed as a way to set prior probabilities on scenario that result from imposed conditions on parameters (see \citet{ME2005} for an example).  
+When there is only one scenario, both options are equivalent, although in option 2, there might be less simulated data sets that are recorded than one asked. When there is more than one scenario, the second option can be viewed as a way to set prior probabilities on scenario that result from imposed conditions on parameters (see \citet{ME2005} for an example).  
 
 \subsubsection{Posterior probability of scenarios}
 The program $DIYABC$ provides two estimates of the posterior probability of each scenario :
 \begin{description} 
-\item[a \emph{direct}  estimate :] This is simply the number of times that a given scenario is found in the first $n_{\delta}$ simulated data sets once the latter, produced under several scenarios, have been sorted by ascending distances to the observed data set.\\
+\item[a \emph{direct}  estimate :] This is simply the number of times that a given scenario is found in the first $n_{\delta}$ simulated data sets once the latter, produced under several scenarios, have been sorted by ascending distances to the observed data set ($i.e.$ the ``closest'' simulated data sets).\\
 \item[a logistic regression estimate :] Following M.A. Beaumont's suggestion \citep{FR2007,B2008}, a polychotomic weighted logistic regression is performed on the first  $n_{\delta}$ data sets with the proportion of the scenario as the dependent variable and the differences between observed and simulated data set summary statistics as the independent variables. The intercept of the regression (corresponding to an identity between simulated and observed summary statistics) is taken as the point estimate. In addition, 95\% confidence intervals are computed \citep{C2008}. 
 \end{description} 
 
 Since both estimates are dependent upon the chosen threshold ($\delta$), the program provides a range of 100 estimates for the direct approach (for each one 100-th of $n_{\delta}$ between 0 and $n_{\delta}$) and up to 10 estimates for the logistic regression estimates (e.g. one estimate for $kn_{\delta}/10$ with $k \in[1,2,...10]$ when the number of analyses is set to 10). These estimates are represented in two graphs, one for each kind of estimate. These two graphs can be printed and/or saved (in \emph{svg}, \emph{jpg}, \emph{png} or \emph{pdf} format). Values can also be output as a text file.\
 
-\subsubsection{Confidence in scenario choice}
-The program DIYABC offers a last option that allows one to evaluate the confidence in a scenario choice. Suppose that we compare 3 scenarios for a given data set and that e.g. scenario 2 had maximum posterior probability. By using this option, we can estimate type I and type II errors when choosing scenario 2 as the true scenario. To do so, we simulate a given number of data sets according to scenario 1, 2 and 3. Then we count the proportion of times that scenario 2 has not the highest posterior probability among the three competing scenarios when it is the true scenario (type I error, estimated from test data sets simulated under scenario 2) or the proportion of times that scenario 2 has highest posterior probability when it $not$ the true scenario (type II error, estimated from test data sets simulated under scenarios 1 and 3).\\
+In $DIYABCv2.0$, a new possibility is offered to the user that may be useful when dealing with many summary statistics and many scenarios. In this particular case, the logistic regression has to deal with large matrices and the amount of needed memory on one hand and the computation time on the other hand can become problematically large. An approximate solution is to replace summary statistics by the components of a factorial discriminant analysis which reduces the number of independent variables to the smallest of number of summary statistics and scenarios. Although the result is only approximate, it can be a useful guide in some specific cases. The gain in time can be large. For instance, the time can be reduced by a 100X factor \citep{EL2012}. \\
 
-In $DIYABCv2.0$, a new possibility is offered to the user that may be useful when dealing with many summary statistics and many scenarios. In this particular case, the logistic regression has to deal with large matrices and the amount of needed memory on one hand and the computation time on the other hand can become problematically large. An approximate solution is to replace summary statistics by the components of a factorial discriminant analysis which reduces the number of independent variables to the smallest of number of summary statistics and scenarios. Although the result is only approximate, it can be a useful guide in some specific cases. The gain in time can be large. For instance, the time can be reduced by a 30X factor. \\
+\subsubsection{Confidence in scenario choice}
+The program DIYABC offers a last option that allows one to evaluate the confidence in a scenario choice. Suppose that we compare 3 scenarios for a given data set and that e.g. scenario 2 had maximum posterior probability. By using this option, we can estimate type I and type II errors when choosing scenario 2 as the true scenario. To do so, we simulate a given number of data sets according to scenario 1, 2 and 3. Then we count the proportion of times that scenario 2 has not the highest posterior probability among the three competing scenarios when it is the true scenario (type I error, estimated from test data sets simulated under scenario 2) or the proportion of times that scenario 2 has highest posterior probability when it $not$ the true scenario (type II error, estimated from test data sets simulated under scenarios 1 and 3); in this case, we have two type II error values, one associated to scenario 2 and one to scenario 3.\\
 
 As for the bias/precision analysis, parameter values can be fixed to given values or drawn from given distributions (not necessarily the same as those used as priors for the reference table).
 

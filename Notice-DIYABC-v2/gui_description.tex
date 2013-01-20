@@ -108,7 +108,7 @@ Let's enter a simple scenario in scenario 1 edit window and click on the \fbox{\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-12.png} 
 
-The parameter prior frame allows to choose the prior density of each parameter. A parameter is anything in the scenario that is not a keyword (here \texttt{sample} and \texttt{merge}), nor a numeric value. In our little scenario, parameters are hence : \texttt{N1, N2, N3, t1} and \texttt{t2}. In our example, we need to set the priors on \texttt{t1} and \texttt{t2} such that \texttt{t2}$>$  \texttt{t1}. We can do it either by using the \texttt{set condition} button or by playing with the minimum and maximum values of the two parameters.\\
+The parameter prior frame allows to choose the prior density of each parameter. A parameter is anything in the scenario that is not a keyword (here \texttt{sample} and \texttt{merge}), nor a numeric value. In our example scenario, parameters are hence : \texttt{N1, N2, N3, t1} and \texttt{t2}. In our example, we need to set the priors on \texttt{t1} and \texttt{t2} such that \texttt{t2}$>$  \texttt{t1}. We can do it either by using the \texttt{set condition} button or by playing with the minimum and maximum values of the two parameters.\\
 
 If we click on the \fbox{\textsf{Check scenario}} button, the logic of the scenario is checked and if it is found OK, and if the scenario is drawable, the drawing appears on a new frame : \\
 
@@ -132,7 +132,7 @@ We then need to define at least one group of loci by clicking on the \fbox{\text
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-16.png} 
 
-Suppose we want the three loci in the same group. We select them like in any table, extending the selection with the \texttt{Shift} and \texttt{Control} keys (see below) : \\
+Suppose we want all loci in the same group because we consider that they all have similar mutational modalities. We select them like in any table, extending the selection with the \texttt{Shift} and \texttt{Control} keys (see below) : \\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-17.png} 
 
@@ -192,7 +192,7 @@ We need to choose among the six possible types of analyses (actually, only four 
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-29.png}\\ 
 
-After clicking on the \fbox{\textsf{VALIDATE}} button, we go back to the previous screen. However, the new analysis now appears on top of the analysis panel. For each analysis, this panel provides its name and type, the list of parameters that will transmitted (in a coded way) to the computation program, a progress bar that approximates the progress of the analysis run, and four buttons. The right button has to be clicked to launch the analysis. The three left buttons provide a way to copy an analysis (\fbox{\textsf{Copy}} button), to make some modifications (\fbox{\textsf{Edit}} button) before launching it or to delete the analysis (\fbox{\textsf{Del}} button).\\
+After clicking on the \fbox{\textsf{VALIDATE}} button, we go back to the previous screen. However, the new analysis now appears on top of the analysis panel. For each analysis, this panel provides its name and type, the list of parameters that will be transmitted (in a coded way) to the computation program, a progress bar that approximates the progress of the analysis run, and four buttons. The right button has to be clicked to launch the analysis. The three left buttons provide a way to copy an analysis (\fbox{\textsf{Copy}} button), to make some modifications (\fbox{\textsf{Edit}} button) before launching it or to delete the analysis (\fbox{\textsf{Del}} button).\\
  
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-30.png} \\
@@ -228,19 +228,19 @@ We click on the \fbox{\textsf{VALIDATE}} button and get the following screen in 
  
 We get then the following screen in which we can make several choices :
 \begin{itemize}
- \item on the left hand side, we can choose the number of simulated datasets that will be used for the local linear regression (cf section 2.1).
- \item below, we can select the transformation of parameter values that can generally improve the results (default = logit transform).
+ \item on the left hand side, we can choose the number of closest simulated datasets that will be used for the local linear regression (cf section 2.1).
+ \item below, we can select the transformation of parameter values that can generally improve the results (default = logit transformation).
  \item on the right hand, we can truncate the reference table to a specified number of datasets.
- \item eventually, estimations can be performed either on raw parameters, and/or combinations of parameters that are generally more estimable. \emph{Composite} parameters are products of effective population sizes or times by mean mutation rate whereas \emph{Scaled} parameters are ratios of effective population sizes or times by mean effective population size. 
+ \item eventually, estimations can be performed either on original ($i.e.$ raw) parameters, and/or combinations of parameters that are generally more estimable. \emph{Composite} parameters are products of effective population sizes or times by mean mutation rate whereas \emph{Scaled} parameters are ratios of effective population sizes or times by mean effective population size (computed from all terminal populations, $i.e.$ $N_1$, $N_2$ and $N_3$ in the present example). 
 \end{itemize}
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-36.png} \\
  
-Apart from the number of closest datasets that we set at 10,000, we keep all other default values and click on the \fbox{\textsf{VALIDATE}} button. We get back to the Analysis control panel which now looks like this:\\
+Apart from the number of closest datasets that we set at 10,000 (although 1,000 would be also a correct choice), we keep all other default values and click on the \fbox{\textsf{VALIDATE}} button. We get back to the Analysis control panel which now looks like this:\\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-38.png} \\
 
-\newpage
+%\newpage
 We click on the \fbox{\textsf{Launch}} button. The analysis progress is now visible :\\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-38a.png} \\
@@ -336,8 +336,7 @@ We decide to use all one-sample and two-sample summary stats :\\
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-57.png} \\
  
 
-Note that when the set of summary statistics is changed (as here), it is necessary to also simulate a large number of datasets using priors to get a new reference table.\\
- We validate twice and launch the analysis. When it is finished, we click on the  \fbox{\textsf{View results}} button and get this screen:\\
+Note that when the set of summary statistics is changed (as here), it is necessary to also simulate a large number of datasets using parameter priors to get corresponding values of the newly introduced summary statistics. We validate twice and launch the analysis. When it is finished, we click on the  \fbox{\textsf{View results}} button and get this screen:\\
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-58.png} \\
 
@@ -345,7 +344,60 @@ Clicking on the \fbox{\textsf{View numerical results}} leads to the following sc
  
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-60.png} \\
 
-Notice that in this computation, values that are in the interval $[s_{obs}-0.001,s_{obs}+0.001]$ are counted for one half those that are outside the interval. This explains why the fourth digit of the proportion can be 0 or 5 while having simulated 1000 data sets.
+
+Notice that in this computation, values that are in the interval $[s_{obs}-0.001,s_{obs}+0.001]$ are counted for one half those that are outside the interval. This explains why the fourth digit of the proportion can be 0 or 5 while having simulated 1000 data sets.\\
+Here the conclusion is that the chosen model/posterior explain correctly the observed dataset (see \cite{C2010} for further illustrations). 
+
+\subsubsection{Posterior probabilities of scenarios}
+Consider a new example dataset in which three populations have been sampled. We want to decide which scenario is the best supported by data, a divergence scenario (scenario 1) or a split scenario (scenario 2) :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-113.png} \\
+
+Suppose that we have already built a reference table with these two scenarios. We define a new analysis that we call \texttt{comp1} :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-105.png} \\
+ 
+Note here that it is possible to replace original summary statistics by discriminant scores by checking the box \texttt{Linear discriminant analysis on SS}. This option is useful when there are numerous scenarios and many summary statistics \citep{EL2012}. However, in the present case, this is not necessary since the analysis with original summary statistics takes only a few seconds. After clicking on the \fbox{\textsf{VALIDATE}} button, we fill in the required fields, taking default values except for the number of local linear regression (on the second screen) that we set to 10:\\
+
+\includegraphics[scale=0.38]{gui_pictures/Capture-DIYABC-109.png} \\
+
+So that we get the following screen :\\
+
+\includegraphics[scale=0.38]{gui_pictures/Capture-DIYABC-110.png} \\
+
+After validating the screen above, we launch the analysis which lasts a few seconds and press on the \fbox{\textsf{View results}} button. The following screen appears:\\
+
+ \includegraphics[scale=0.38]{gui_pictures/Capture-DIYABC-111.png} \\
+
+Both analyses agree that scenario 1 is the best supported scenario in this comparison. If we click on the \fbox{\textsf{View numerical results}}, the program shows a subset of numerical values used in the previous screen :\\
+
+ \includegraphics[scale=0.38]{gui_pictures/Capture-DIYABC-112.png} \\
+
+\subsubsection{Confidence in scenario choice}
+
+This last type of analysis is aimed at evaluating with which level of confidence we can trust the previous analysis. To do so, we simulate new datasets with each scenario, apply the same procedure for estimating their respective posterior probabilities and measure the proportion of times the right scenario has the highest posterior probability.\\
+We then define a new analysis, \texttt{conf1} as below:\\   
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-115.png} \\
+
+As for the previous analysis, it is possible to replace original summary statistics by discriminant scores. This is still more useful here since this type of analysis can last hours. However, with our current example, the analysis will not last more than a few minutes.\\
+The next screen (below) needs some editing :\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-116.png} \\
+
+We check the two scenario boxes on the right and decide to simulate datasets according to priors :\\
+
+\includegraphics[scale=0.38]{gui_pictures/Capture-DIYABC-117.png} \\
+
+After validating default values for historical and mutational parameters, we launch the analysis. When it is done, we click on the \fbox{\textsf{View results}} button and get the following screen:\\
+
+\includegraphics[scale=0.38]{gui_pictures/Capture-DIYABC-119.png} \\
+
+At the bottom, there is a summary of results, $i.e.$ the number of times each scenario has the highest posterior probability under each approach:\\
+
+\includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-120.png} \\
+
+We can deduce the type I error for scenario 1,  which is the probability with which it is rejected although it is the true scenario : 20 (or 19) over 500, $i.e.$ 0.04 (0.038). To have access to the type II error (probability of deciding for scenario 1 when it is not the true scenario), we need to run the same analysis but simulating according to all other scenarios (only scenario 2 in the present example) and counting decisions in favor of scenario 1. Running the example analysis with scenario 2 gives 77 (or 36) over 500 in favor of scenario 1. This gives an estimate of type II error of 0.154 (0.072) for scenario 1.
 
 \subsection{Simulating data sets}
 
@@ -408,7 +460,7 @@ We select the 6 microsatellite loci by clicking on the first locus name cell and
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-76.png} \\
 
-The six locus names are transferred into group 1 by clicking on the \fbox{\textsf{  >>  }} button :\\
+The six locus names are transferred into group 1 by clicking on the \fbox{\textsf{$>>$}} button :\\
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-77.png} \\
 
@@ -432,7 +484,7 @@ Once this done, we go back to the previous screen by clicking on the \fbox{\text
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-82.png} \\
 
-The default mean mutation rate is not suited to mitochondrial DNA which generally evolves at a faster rate than nuclear DNA. So we set its value to $10^{-8}$. For all other parameters, we just keep the default values:\\
+The default mean mutation rate is not suited to mitochondrial DNA which generally evolves at a faster rate than nuclear DNA \citep{HL2008}. So we set its value to $10^{-8}$. For all other parameters, we just keep the default values:\\
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-83.png} \\
 
@@ -489,7 +541,7 @@ The next two text frames deals with first and last parts of the main script runn
 \end{enumerate}
 
 
-Clicking on the \fbox{\textsf{Run computation}} generate a bundle including all you need to generate your reference table. You need to transfer the bundle in your cluster account and run it (detailed in section 5). Once all conputations are done and all the reference table parts are merged in one, you have to transfert it back to your DIYABC project on your own computer.
+Clicking on the \fbox{\textsf{Run computation}} button generates a bundle ($i.e.$ a set of zipped files) including all you need to generate your reference table. You need to transfer the bundle in your cluster account and run it. Once all conputations are done and all the reference table parts are merged in one, you have to transfert the merged reference table back to your DIYABC project on your own computer to proceed subsequent analyses with the $DIYABC$ GUI. All above steps are further detailed in section 5..
 
 
 \subsubsection{Tab \textsf{``various''}}
@@ -504,7 +556,7 @@ The second tab \textsf{``various''} contains the following settings :
  \item The next setting \textsf{Particle loop size} defines the number of data sets ($n$) that are simulated in a single block when building the reference table. The computation program proceeds as follows : it first simulate and compute summary statistics of $n$ data sets. When this is done, it writes the results to the reference table file. The reason of doing like this is that computation can be multithreaded but not the file writing.
  \item The graphic interface can detect the number of cores of the computer processor. By default, it sets the number of threads of the computation program to this core number. However, if the user wants to keep some cores for other purposes, the number of threads can be reduced by on the corresponding button (drop down menu shown below).\\
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-95.png} \\
- \item The next setting is for debugging pupose and/or signalling a bug.
+ \item The next setting (\texttt{Maximum log level}) is for debugging pupose and/or signalling a bug (from 1=low information level to 4=high information level).
  \item The graphic interface memorizes recently opened projects. The edit field is used to set the maximum of memorized recent projects.
  \item The last setting concerns the format of graphic files output by different analyses. Choice is shown below:\\
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-97.png} \\
