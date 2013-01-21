@@ -49,6 +49,7 @@ class Project(baseProject,formProject):
         self.ui.setHistoricalButton.setDisabled(True)
         self.ui.setGeneticButton.setDisabled(True)
         self.ui.runReftableButton.setDisabled(True)
+        self.ui.importButton.setDisabled(True)
         self.ui.newAnButton.setDisabled(True)
         self.ui.dataFileEdit.setReadOnly(True)
         self.ui.dirEdit.setReadOnly(True)
@@ -189,11 +190,13 @@ class Project(baseProject,formProject):
         if self.gen_state_valid and self.hist_state_valid:
             self.setTabIcon(0,QIcon(variables.ICONPATH+"/ok.png"))
             self.ui.runReftableButton.setDisabled(False)
+            self.ui.importButton.setDisabled(False)
             self.ui.stopReftableButton.setDisabled(False)
             return True
         else:
             self.setTabIcon(0,QIcon(variables.ICONPATH+"/redcross.png"))
             self.ui.runReftableButton.setDisabled(True)
+            self.ui.importButton.setDisabled(True)
             self.ui.stopReftableButton.setDisabled(True)
             return False
 

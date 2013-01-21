@@ -69,6 +69,7 @@ class ProjectReftable(Project):
 
         self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopRefTableGen)
+        self.connect(self.ui.importButton, SIGNAL("clicked()"),self.importRefTableFile)
 
     def canBeDeleted(self):
         return True
@@ -80,6 +81,26 @@ class ProjectReftable(Project):
         self.stopRefTableGen()
         self.stopAnalysis()
         self.unlock()
+
+    def importRefTableFile(self):
+        filename = QFileDialog.getOpenFileName(self,"Select reference table file","","Binary file (*.bin);;all files (*)")
+        if str(filename) == None or str(filename) == "":
+            return
+        else:
+            shutil.copy(filename,"%s/reftable_1.bin"%(self.dir))
+            if os.path.exists("%s/reftable.bin"%self.dir):
+                shutil.move("%s/reftable.bin"%self.dir,"%s/reftable_2.bin"%self.dir)
+            exPath = self.parent.preferences_win.getExecutablePath()
+            if exPath != "":
+                cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-q"]
+                outfile = "%s/import.out"%self.dir
+                fg = open(outfile,"w")
+                if os.path.exists(outfile):
+                    os.remove(outfile)
+                p = subprocess.check_call(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
+                fg.close()
+                self.parent.reloadCurrentProject()
+
 
     def deleteReftable(self):
         # si aucune manipulation sur la reftable :
@@ -491,11 +512,13 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         self.ui.progressBar.setValue(0)
         self.ui.progressBar.hide()
         self.ui.stopReftableButton.hide()
+        self.ui.importButton.show()
         self.ui.fromToFrame.hide()
 
     def startUiGenReftable(self):
         self.ui.runReftableButton.setText("Running ...")
         self.ui.runReftableButton.setDisabled(True)
+        self.ui.importButton.hide()
         self.ui.progressBar.show()
         self.ui.stopReftableButton.show()
         self.ui.fromToFrame.show()

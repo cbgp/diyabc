@@ -575,7 +575,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 return isSNPDatafile("%s/%s"%(dir,cont[0].strip()))
         return False
 
-    def openProject(self,dir=None):
+    def openProject(self,dir=None,tab_index=None):
         """ ouverture d'un projet existant
         """
         from projectMsatSeq import ProjectMsatSeq
@@ -657,7 +657,10 @@ class Diyabc(formDiyabc,baseDiyabc):
  If it persists with clean project files, please submit a bug to developpers\n\n%s"%(dir,tb))
                             return
                         self.project_list.append(proj_to_open)
-                        self.ui.tabWidget.addTab(proj_to_open,proj_to_open.name)
+                        if tab_index != None:
+                            self.ui.tabWidget.insertTab(tab_index,proj_to_open,proj_to_open.name)
+                        else:
+                            self.ui.tabWidget.addTab(proj_to_open,proj_to_open.name)
                         self.ui.tabWidget.setCurrentWidget(proj_to_open)
                         # verification generale pour mettre a jour l'etat du modèle historique et mutationnel
                         proj_to_open.checkAll()
@@ -892,6 +895,14 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ ferme le projet courant, celui de l'onglet séléctionné
         """
         self.closeProject(self.ui.tabWidget.currentIndex(),save)
+
+    def reloadCurrentProject(self,save=True):
+        """ ferme le projet courant et l'ouvre à nouveau
+        """
+        proj_dir = self.ui.tabWidget.currentWidget().dir
+        index = self.ui.tabWidget.currentIndex()
+        self.closeCurrentProject(save=save)
+        self.openProject(proj_dir,index)
 
     def deleteReftableCurrentProject(self):
         self.ui.tabWidget.currentWidget().deleteReftable()
