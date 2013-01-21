@@ -222,12 +222,12 @@ class ProjectReftable(Project):
     def biasResultFileChanged(self):
         but = self.sender()
         if but == self.drawAnalysisFrame.oRadio:
-            filename = ""
+            filename = "original"
         elif but == self.drawAnalysisFrame.cRadio:
-            filename = "compo"
+            filename = "composite"
         elif but == self.drawAnalysisFrame.sRadio:
             filename = "scaled"
-        f = open("%s/analysis/%s/bias%s.txt"%(self.dir,self.drawAnalysisFrame.anDir,filename),'r')
+        f = open("%s/analysis/%s/bias_%s.txt"%(self.dir,self.drawAnalysisFrame.anDir,filename),'r')
         data = f.read()
         f.close()
         self.drawAnalysisFrame.dataPlain.clear()
@@ -1033,31 +1033,31 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             os.remove("%s/%s_progress.txt"%(self.dir,aid))
 
         if atype == "estimate":
-            if os.path.exists("%s/%s_mmmqcompo.txt"%(self.dir,aid))\
-            or os.path.exists("%s/%s_mmmqscaled.txt"%(self.dir,aid))\
-            or os.path.exists("%s/%s_mmmq.txt"%(self.dir,aid)):
+            if os.path.exists("%s/%s_mmmq_composite.txt"%(self.dir,aid))\
+            or os.path.exists("%s/%s_mmmq_scaled.txt"%(self.dir,aid))\
+            or os.path.exists("%s/%s_mmmq_original.txt"%(self.dir,aid)):
                 # deplacement des fichiers de résultat
                 aDirName = "%s_estimation"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_paramstatdens.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_phistar.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_mmmq.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_paramstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_mmmq.txt"%(self.dir,aid),"%s/analysis/%s/mmmq.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_phistar.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_paramcompostatdens.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_phistarcompo.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_mmmqcompo.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_paramcompostatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramcompostatdens.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_mmmqcompo.txt"%(self.dir,aid),"%s/analysis/%s/mmmqcompo.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_phistarcompo.txt"%(self.dir,aid),"%s/analysis/%s/phistarcompo.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_paramscaledstatdens.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_phistarscaled.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_mmmqscaled.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_paramscaledstatdens.txt"%(self.dir,aid),"%s/analysis/%s/paramscaledstatdens.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_mmmqscaled.txt"%(self.dir,aid),"%s/analysis/%s/mmmqscaled.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_phistarscaled.txt"%(self.dir,aid),"%s/analysis/%s/phistarscaled.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_paramstatdens_original.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_phistar_original.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_mmmq_original.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_paramstatdens_original.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_mmmq_original.txt"%(self.dir,aid),"%s/analysis/%s/mmmq.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_phistar_original.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_paramstatdens_composite.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_phistar_composite.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_mmmq_composite.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_paramstatdens_composite.txt"%(self.dir,aid),"%s/analysis/%s/paramcompostatdens.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_mmmq_composite.txt"%(self.dir,aid),"%s/analysis/%s/mmmqcompo.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_phistar_composite.txt"%(self.dir,aid),"%s/analysis/%s/phistarcompo.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_paramstatdens_scaled.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_phistar_scaled.txt"%(self.dir,aid))\
+                and os.path.exists("%s/%s_mmmq_scaled.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_paramstatdens_scaled.txt"%(self.dir,aid),"%s/analysis/%s/paramscaledstatdens.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_mmmq_scaled.txt"%(self.dir,aid),"%s/analysis/%s/mmmqscaled.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_phistar_scaled.txt"%(self.dir,aid),"%s/analysis/%s/phistarscaled.txt"%(self.dir,aDirName))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/estimate.out"%(self.dir)):
@@ -1113,20 +1113,20 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                 self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "bias":
-            if os.path.exists("%s/%s_bias.txt"%(self.dir,aid))\
-            or os.path.exists("%s/%s_biasscaled.txt"%(self.dir,aid))\
-            or os.path.exists("%s/%s_biascompo.txt"%(self.dir,aid)):
-                log(3,"File %s/%s_bias.txt exists"%(self.dir,aid))
+            if os.path.exists("%s/%s_bias_original.txt"%(self.dir,aid))\
+            or os.path.exists("%s/%s_bias_scaled.txt"%(self.dir,aid))\
+            or os.path.exists("%s/%s_bias_composite.txt"%(self.dir,aid)):
+                log(3,"File %s/%s_bias_original.txt exists"%(self.dir,aid))
                 # deplacement des fichiers de résultat
                 aDirName = "%s_bias"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_bias.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_bias.txt"%(self.dir,aid),"%s/analysis/%s/bias_original.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_biascompo.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_biascompo.txt"%(self.dir,aid),"%s/analysis/%s/bias_composite.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_biasscaled.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_biasscaled.txt"%(self.dir,aid),"%s/analysis/%s/bias_scaled.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_bias_original.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_bias_original.txt"%(self.dir,aid),"%s/analysis/%s/bias_original.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_bias_composite.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_bias_composite.txt"%(self.dir,aid),"%s/analysis/%s/bias_composite.txt"%(self.dir,aDirName))
+                if os.path.exists("%s/%s_bias_scaled.txt"%(self.dir,aid)):
+                    shutil.move("%s/%s_bias_scaled.txt"%(self.dir,aid),"%s/analysis/%s/bias_scaled.txt"%(self.dir,aDirName))
                 log(3,"Copy of '%s/%s_bias.txt' to '%s/analysis/%s/bias_original.txt' done"%(self.dir,aid,self.dir,aDirName))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
