@@ -239,6 +239,10 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             plotc.axes.legend(bbox_to_anchor=(1.38, 1.0),prop={'size':10})
             plotc.axes.set_ylabel("P.C.%s (%8.2f%%)"%(compo_v+1,float(self.dico_points[-1][compo_v])*100))
             plotc.axes.set_xlabel("P.C.%s (%8.2f%%)"%(compo_h+1,float(self.dico_points[-1][compo_h])*100))
+            for tick in plotc.axes.axes.xaxis.get_major_ticks():
+                    tick.label1.set_fontsize(9)
+            for tick in plotc.axes.axes.yaxis.get_major_ticks():
+                    tick.label1.set_fontsize(9)
 
             if self.ui.verticalLayout_3.itemAt(0) != None:
                 self.ui.verticalLayout_3.itemAt(0).widget().hide()
