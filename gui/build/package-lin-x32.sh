@@ -12,7 +12,7 @@ git pull --rebase
 make clean
 make 
 
-cp ./src-JMC-C++/general ./gui/data/executables/diyabc-comput-linux-x32
+cp ./src-JMC-C++/general ./gui/data/executables/diyabc-comput-linux-i386
 
 cd ./gui/build/
 rm -rf $packageDir
