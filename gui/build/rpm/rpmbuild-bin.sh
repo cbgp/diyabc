@@ -12,6 +12,7 @@ if [ $# -eq 0 ] ; then
     exit
 fi
 
+ARCH=$1
 GITDIR=../../../
 PACKAGESRCDIR=~/rpmbuild/SOURCES
 PACKAGEDIR=~/rpmbuild
