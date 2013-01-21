@@ -19,4 +19,7 @@ rm -rf $packageDir
 
 ./linux_generation.sh ./pyinstaller_1743/pyinstaller.py $packageDir  ../src/diyabc.py 64
 cd lastDiyabc
-zip -r diyabc_linux64.zip *
+#zip -r diyabc_linux64.zip *
+zip -r "`ls | grep diyabc*64`" diyabc*64
+rm -r diyabc*64
+
