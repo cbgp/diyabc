@@ -4,7 +4,7 @@
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import os.path,subprocess,time
+import os.path,subprocess,time,sys
 
 class LauncherThread(QThread):
     """ Manage the execution of an external executable and
@@ -114,7 +114,12 @@ class LauncherThread(QThread):
 
     def realtimeOutputWatch(self):
         self.log(2,"Beginning realtime watch")
-        p = subprocess.Popen(self.cmd_args_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
+        if "win" in sys.platform and "darwin" not in sys.platform:
+            popen_options = subprocess.STARTUPINFO()
+            popen_options.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            p = subprocess.Popen(self.cmd_args_list,startupinfo=popen_options, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
+        else:
+            p = subprocess.Popen(self.cmd_args_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
         self.processus = p
         for line in iter(p.stdout.readline, ""):
             self.emit(SIGNAL(self.SIGNEWOUTPUT+"(QString)"),line)
@@ -129,7 +134,12 @@ class LauncherThread(QThread):
     def intervalWatch(self):
         self.log(2,"Beginning interval watch")
         f = open(self.outfile_path,"w")
-        p = subprocess.Popen(self.cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+        if "win" in sys.platform and "darwin" not in sys.platform:
+            popen_options = subprocess.STARTUPINFO()
+            popen_options.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            p = subprocess.Popen(self.cmd_args_list,startupinfo=self.popen_options, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+        else:
+            p = subprocess.Popen(self.cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         self.log(3,"Command launched in thread '%s' : %s"%(self.name," ".join(self.cmd_args_list)))
         self.processus = p
         self.log(3,"Popen procedure success")
