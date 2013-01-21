@@ -137,7 +137,7 @@ class LauncherThread(QThread):
         if "win" in sys.platform and "darwin" not in sys.platform:
             popen_options = subprocess.STARTUPINFO()
             popen_options.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            p = subprocess.Popen(self.cmd_args_list,startupinfo=self.popen_options, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+            p = subprocess.Popen(self.cmd_args_list,startupinfo=popen_options, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         else:
             p = subprocess.Popen(self.cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         self.log(3,"Command launched in thread '%s' : %s"%(self.name," ".join(self.cmd_args_list)))
