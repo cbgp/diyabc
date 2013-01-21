@@ -62,6 +62,9 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         and not os.path.exists("%s/analysis/%s/paramstatdens_scaled.txt"%(self.parent.dir,self.directory)):
             self.ui.sRadio.hide()
 
+        self.ui.horizontalLayout_2.setContentsMargins(0,0,0,0)
+        self.ui.horizontalLayout_3.setContentsMargins(0,0,0,0)
+
     def changeParamChoice(self):
         sd = self.sender()
         if sd == self.ui.oRadio:
@@ -155,6 +158,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
 
         draw_widget = QtGui.QWidget(self)
         l = QtGui.QVBoxLayout(draw_widget)
+        l.setContentsMargins(0,0,0,0)
         plotc = MyMplCanvas(draw_widget, width=12, height=4, dpi=100)
         l.addWidget(plotc)
         #plotc.fig.subplots_adjust(right=0.7,top=0.9,bottom=0.15)
@@ -181,7 +185,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         plotc.axes.plot(labs,lpo,label=legend_txt,c=self.tab_colors[1])
 
         plotc.axes.legend(bbox_to_anchor=(0.74, -0.14),ncol=2,prop={'size':9})
-        plotc.fig.subplots_adjust(right=0.99,top=0.85,bottom=0.27)
+        plotc.fig.subplots_adjust(left=0.17,right=0.99,top=0.85,bottom=0.27)
 
         fr = QFrame(self)
         fr.setFrameShape(QFrame.StyledPanel)
