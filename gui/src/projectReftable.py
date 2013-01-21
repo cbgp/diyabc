@@ -370,6 +370,8 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                 tarname += ".tar"
         if tarname != "":
             executablePath = self.parent.preferences_win.getExecutablePath()
+            if executablePath == "":
+                return
             dest = "%s/cluster_generation_tmp/"%self.dir
             if os.path.exists(dest):
                 shutil.rmtree(dest)
@@ -454,6 +456,9 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                     "newOutput" : "reftableNewOutput"
                 }
                 exPath = self.parent.preferences_win.getExecutablePath()
+                if exPath == "":
+                    self.stopUiGenReftable()
+                    return
                 particleLoopSize = str(self.parent.preferences_win.particleLoopSizeEdit.text())
                 nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
                 cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-r", "%s"%nb_to_gen , "-g", "%s"%particleLoopSize ,"-m", "-t", "%s"%nbMaxThread]
@@ -837,6 +842,10 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
             output.notify(self,"Action impossible","This analysis is already queued")
         else:
             # on veut la lancer
+            # on ne fait rien si on a pas d'exécutable
+            executablePath = self.parent.preferences_win.getExecutablePath()
+            if executablePath == "":
+                return
             self.analysisQueue.append(analysis)
             if analysis == self.analysisQueue[0] and self.thAnalysis == None and self.th == None:
                 # si c'est la premiere, qu'aucune autre ne tourne et que la generation de 

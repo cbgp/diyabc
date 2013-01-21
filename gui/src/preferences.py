@@ -267,10 +267,12 @@ class Preferences(AutoPreferences):
         else:
             if not os.path.exists(self.ui.execPathPathEdit.text()):
                 output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found")
+                return ""
             return str(self.ui.execPathPathEdit.text())
 
         if not os.path.exists(exPath):
             output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found")
+            return ""
         return exPath
 
     def changeBackgroundColor(self,colorstr):
