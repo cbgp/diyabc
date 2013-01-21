@@ -94,10 +94,12 @@ class ProjectReftable(Project):
             if exPath != "":
                 cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-q"]
                 outfile = "%s/import.out"%self.dir
-                fg = open(outfile,"w")
                 if os.path.exists(outfile):
                     os.remove(outfile)
-                p = subprocess.check_call(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
+                fg = open(outfile,"w")
+                p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
+                while p.poll() != None:
+                    time.sleep(1)
                 fg.close()
                 self.parent.reloadCurrentProject()
 
