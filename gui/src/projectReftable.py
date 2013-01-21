@@ -1043,21 +1043,21 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                 if os.path.exists("%s/%s_paramstatdens_original.txt"%(self.dir,aid))\
                 and os.path.exists("%s/%s_phistar_original.txt"%(self.dir,aid))\
                 and os.path.exists("%s/%s_mmmq_original.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_paramstatdens_original.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_mmmq_original.txt"%(self.dir,aid),"%s/analysis/%s/mmmq.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_phistar_original.txt"%(self.dir,aid),"%s/analysis/%s/phistar.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_paramstatdens_original.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens_original.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_mmmq_original.txt"%(self.dir,aid),"%s/analysis/%s/mmmq_original.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_phistar_original.txt"%(self.dir,aid),"%s/analysis/%s/phistar_original.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_paramstatdens_composite.txt"%(self.dir,aid))\
                 and os.path.exists("%s/%s_phistar_composite.txt"%(self.dir,aid))\
                 and os.path.exists("%s/%s_mmmq_composite.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_paramstatdens_composite.txt"%(self.dir,aid),"%s/analysis/%s/paramcompostatdens.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_mmmq_composite.txt"%(self.dir,aid),"%s/analysis/%s/mmmqcompo.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_phistar_composite.txt"%(self.dir,aid),"%s/analysis/%s/phistarcompo.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_paramstatdens_composite.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens_composite.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_mmmq_composite.txt"%(self.dir,aid),"%s/analysis/%s/mmmq_composite.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_phistar_composite.txt"%(self.dir,aid),"%s/analysis/%s/phistar_composite.txt"%(self.dir,aDirName))
                 if os.path.exists("%s/%s_paramstatdens_scaled.txt"%(self.dir,aid))\
                 and os.path.exists("%s/%s_phistar_scaled.txt"%(self.dir,aid))\
                 and os.path.exists("%s/%s_mmmq_scaled.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_paramstatdens_scaled.txt"%(self.dir,aid),"%s/analysis/%s/paramscaledstatdens.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_mmmq_scaled.txt"%(self.dir,aid),"%s/analysis/%s/mmmqscaled.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_phistar_scaled.txt"%(self.dir,aid),"%s/analysis/%s/phistarscaled.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_paramstatdens_scaled.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens_scaled.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_mmmq_scaled.txt"%(self.dir,aid),"%s/analysis/%s/mmmq_scaled.txt"%(self.dir,aDirName))
+                    shutil.move("%s/%s_phistar_scaled.txt"%(self.dir,aid),"%s/analysis/%s/phistar_scaled.txt"%(self.dir,aDirName))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/estimate.out"%(self.dir)):

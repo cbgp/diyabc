@@ -24,7 +24,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.directory=directory
         self.analysis = analysis
         self.paramChoice = "o"
-        self.file_subname = ""
+        self.file_subname = "_original"
         self.createWidgets()
         self.dicoPlot = {}  
         self.dicoFrame = {}
@@ -55,11 +55,11 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
         self.ui.PCAScroll.hide()
 
-        if not os.path.exists("%s/analysis/%s/mmmqcompo.txt"%(self.parent.dir,self.directory))\
-        and not os.path.exists("%s/analysis/%s/paramcompostatdens.txt"%(self.parent.dir,self.directory)):
+        if not os.path.exists("%s/analysis/%s/mmmq_composite.txt"%(self.parent.dir,self.directory))\
+        and not os.path.exists("%s/analysis/%s/paramstatdens_composite.txt"%(self.parent.dir,self.directory)):
             self.ui.cRadio.hide()
-        if not os.path.exists("%s/analysis/%s/mmmqscaled.txt"%(self.parent.dir,self.directory))\
-        and not os.path.exists("%s/analysis/%s/paramscaledstatdens.txt"%(self.parent.dir,self.directory)):
+        if not os.path.exists("%s/analysis/%s/mmmq_scaled.txt"%(self.parent.dir,self.directory))\
+        and not os.path.exists("%s/analysis/%s/paramstatdens_scaled.txt"%(self.parent.dir,self.directory)):
             self.ui.sRadio.hide()
 
     def changeParamChoice(self):
@@ -67,15 +67,15 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         if sd == self.ui.oRadio:
             parenthText = "(Original)"
             self.paramChoice = "o"
-            self.file_subname = ""
+            self.file_subname = "_original"
         elif sd == self.ui.cRadio:
             parenthText = "(Composite)"
             self.paramChoice = "c"
-            self.file_subname = "compo"
+            self.file_subname = "_composite"
         elif sd == self.ui.sRadio:
             parenthText = "(Scaled)"
             self.paramChoice = "s"
-            self.file_subname = "scaled"
+            self.file_subname = "_scaled"
 
         self.ui.viewLocateButton.setText("View numerical results " + parenthText)
         self.drawAll()
@@ -117,8 +117,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             del fr
         self.dicoPlot = {}
 
-        if os.path.exists("%s/analysis/%s/param%sstatdens.txt"%(self.parent.dir,self.directory,self.file_subname)):
-            f = codecs.open("%s/analysis/%s/param%sstatdens.txt"%(self.parent.dir,self.directory,self.file_subname),"r","utf-8")
+        if os.path.exists("%s/analysis/%s/paramstatdens%s.txt"%(self.parent.dir,self.directory,self.file_subname)):
+            f = codecs.open("%s/analysis/%s/paramstatdens%s.txt"%(self.parent.dir,self.directory,self.file_subname),"r","utf-8")
             lines = f.readlines()
             f.close()
             dico_info_draw = {}
@@ -136,7 +136,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             for name in keys:
                 self.addDraw(name,dico_info_draw[name][0],dico_info_draw[name][1],dico_info_draw[name][2],dico_info_draw[name][3])
         else:
-            log(3, "param%sstatdens.txt not found for analysis %s"%(self.file_subname,self.analysis.name))
+            log(3, "paramstatdens%s.txt not found for analysis %s"%(self.file_subname,self.analysis.name))
 
 
     def addDraw(self,name,values,absv,ordpr,ordpo):
