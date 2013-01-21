@@ -36,6 +36,7 @@ APPNAME=`basename $pysrc | cut -d . -f 1`
 echo "Name of the app : $APPNAME"
 
 TMPBUILD=/tmp/$APPNAME-tmp_build-$VERSION
+rm -rf $TMPBUILD
 mkdir $TMPBUILD
 SOURCEDIR=`dirname $pysrc`
 #cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $TMPBUILD/
