@@ -69,7 +69,6 @@ class ProjectReftable(Project):
 
         self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopRefTableGen)
-        self.connect(self.ui.importButton, SIGNAL("clicked()"),self.importRefTableFile)
 
     def canBeDeleted(self):
         return True
@@ -518,13 +517,11 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         self.ui.progressBar.setValue(0)
         self.ui.progressBar.hide()
         self.ui.stopReftableButton.hide()
-        self.ui.importButton.show()
         self.ui.fromToFrame.hide()
 
     def startUiGenReftable(self):
         self.ui.runReftableButton.setText("Running ...")
         self.ui.runReftableButton.setDisabled(True)
-        self.ui.importButton.hide()
         self.ui.progressBar.show()
         self.ui.stopReftableButton.show()
         self.ui.fromToFrame.show()

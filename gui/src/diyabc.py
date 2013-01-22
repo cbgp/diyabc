@@ -397,6 +397,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.cloneProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/tab-duplicate.png"),"&Clone project",self.cloneCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_K))
                 self.RngProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/random.png"),"Re&generate RNG",self.rngCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_R))
                 self.deleteReftableActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/user-trash.png"),"D&elete reftable",self.deleteReftableCurrentProject)
+                self.importReftableActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/import.png"),"&Import and merge reftable file",self.importReftableCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_I))
                 self.closeProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/project-close.png"),"C&lose project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
                 self.deleteProjActionMenu = self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/user-trash.png"),"&Delete project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
         else:
@@ -906,6 +907,9 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def deleteReftableCurrentProject(self):
         self.ui.tabWidget.currentWidget().deleteReftable()
+
+    def importReftableCurrentProject(self):
+        self.ui.tabWidget.currentWidget().importRefTableFile()
 
     def saveCurrentProject(self):
         """ sauve le projet courant, cad ecrit les fichiers temporaires de conf
