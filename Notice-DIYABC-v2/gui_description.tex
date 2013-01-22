@@ -357,7 +357,7 @@ Suppose that we have already built a reference table with these two scenarios. W
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-105.png} \\
  
-Note here that it is possible to replace original summary statistics by discriminant scores by checking the box \texttt{Linear discriminant analysis on SS}. This option is useful when there are numerous scenarios and many summary statistics \citep{EL2012}. However, in the present case, this is not necessary since the analysis with original summary statistics takes only a few seconds. After clicking on the \fbox{\textsf{VALIDATE}} button, we fill in the required fields, taking default values except for the number of local linear regression (on the second screen) that we set to 10:\\
+Note here that it is possible to replace original summary statistics (SS) by discriminant scores by checking the box \texttt{Linear discriminant analysis on SS}. This option is useful when there are numerous scenarios and many summary statistics \citep{EL2012}. However, in the present case, this is not necessary since the analysis with original summary statistics takes only a few seconds. After clicking on the \fbox{\textsf{VALIDATE}} button, we fill in the required fields, taking default values except for the number of local linear regression (on the second screen) that we set to 10:\\
 
 \includegraphics[scale=0.3]{gui_pictures/Capture-DIYABC-109.png} \\
 
@@ -369,7 +369,7 @@ After validating the screen above, we launch the analysis which lasts a few seco
 
  \includegraphics[scale=0.3]{gui_pictures/Capture-DIYABC-111.png} \\
 
-Both analyses agree that scenario 1 is the best supported scenario in this comparison. If we click on the \fbox{\textsf{View numerical results}}, the program shows a subset of numerical values used in the previous screen :\\
+Both analyses agree that scenario 1 is the best supported scenario in this comparison. If we click on the \fbox{\textsf{View numerical results}}, the program shows a subset of numerical values used in the previous screen (i.e. the probability values with their 95\% confidence intervals for the 10 subsets of closest simulated data). Note that the 95\% CIs can be used to ensure that probabilities are significantly different among scenarios.\\
 
  \includegraphics[scale=0.3]{gui_pictures/Capture-DIYABC-112.png} \\
 
@@ -397,7 +397,15 @@ At the bottom, there is a summary of results, $i.e.$ the number of times each sc
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-120.png} \\
 
-We can deduce the type I error for scenario 1,  which is the probability with which it is rejected although it is the true scenario : 20 (or 19) over 500, $i.e.$ 0.04 (0.038). To have access to the type II error (probability of deciding for scenario 1 when it is not the true scenario), we need to run the same analysis but simulating according to all other scenarios (only scenario 2 in the present example) and counting decisions in favor of scenario 1. Running the example analysis with scenario 2 gives 77 (or 36) over 500 in favor of scenario 1. This gives an estimate of type II error of 0.154 (0.072) for scenario 1.
+We can deduce the type I error for scenario 1,  which is the probability with
+which it is rejected although it is the true scenario : 20 using the direct
+method (or 19 using the regression method) over 500, $i.e.$ 0.04 (0.038). To
+have access to the type II error (probability of deciding for scenario 1 when it
+is not the true scenario), we need to run the same analysis but simulating
+according to all other scenarios (only scenario 2 in the present example) and
+counting decisions in favor of scenario 1. Running the example analysis with
+scenario 2 gives 77 (or 36) over 500 in favor of scenario 1. This gives an
+estimate of type II error of 0.154 (0.072) for scenario 1.
 
 \subsection{Simulating data sets}
 
