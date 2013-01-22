@@ -240,7 +240,11 @@ class ProjectReftable(Project):
         if (typestr == "pca" or typestr == "modelChecking")\
         and (os.path.exists("%s/analysis/%s/ACP.txt"%(self.dir,anDir))\
         or os.path.exists("%s/analysis/%s/mcACP.txt"%(self.dir,anDir))):
-            self.drawAnalysisFrame.loadACP()
+            try:
+                self.drawAnalysisFrame.loadACP()
+            except Exception as e:
+                output.notify(self,"ACP loading error","Error during ACP file parsing\n\n%s"%e)
+                QApplication.restoreOverrideCursor()
 
     def biasResultFileChanged(self):
         but = self.sender()
