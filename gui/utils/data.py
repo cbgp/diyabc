@@ -256,7 +256,7 @@ class Data(object):
             self.locuslist.append(locusc)
         self.nloc = len(self.locuslist)
         self.nsample = 0
-        self.indivname.append([])
+        #self.indivname.append([])
         self.genotype = []
         nindtot = 0
 # loop to read genotypes
@@ -265,7 +265,7 @@ class Data(object):
             if (line.find('POP')>-1) and(line.find(',')<1):
                 self.nsample +=1
                 self.nind.append(0)
-                self.indivname[-1].append([])
+                self.indivname.append([])
             else :    
 # now parsing individual's data lines as 
 #   1-001 ,    208208   000000   204206   220220 
@@ -373,7 +373,7 @@ class Data(object):
                             seqlen = len(g)
                             loc.dnalength = seqlen
                         if len(g) != seqlen :
-                            mes="At locus %s, individual %s has a sequence length different from previous sequences at the same locus"%(self.locuslist[iloc].name,self.indivname[sample][ind])
+                            mes="At locus %s, individual %s has a sequence length different from previous sequences at the same locus (%s /= %s)"%(self.locuslist[iloc].name,self.indivname[sample][ind],len(g),seqlen)
                             raise NotsamelengthsequencesError(mes)
                         self.haplo[-1][-1].append((0,g))
                         self.samplesize[-1][-1] += 1
