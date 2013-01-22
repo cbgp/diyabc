@@ -1084,7 +1084,8 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
                     shutil.move("%s/%s_mmmq_scaled.txt"%(self.dir,aid),"%s/analysis/%s/mmmq_scaled.txt"%(self.dir,aDirName))
                     shutil.move("%s/%s_phistar_scaled.txt"%(self.dir,aid),"%s/analysis/%s/phistar_scaled.txt"%(self.dir,aDirName))
             else:
-                self.thAnalysis.problem = "No output files produced\n"
+                self.thAnalysis.problem = "No output files produced\n(%s\n%s\n%s)"%("%s/%s_mmmq_composite.txt"%(self.dir,aid),\
+                        "%s/%s_mmmq_scaled.txt"%(self.dir,aid),"%s/%s_mmmq_original.txt"%(self.dir,aid))
                 if os.path.exists("%s/estimate.out"%(self.dir)):
                     f = open("%s/estimate.out"%(self.dir),"r")
                     lastLine = f.readlines()[-1]
