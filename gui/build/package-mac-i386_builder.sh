@@ -16,6 +16,7 @@ cp ./src-JMC-C++/general ./gui/data/executables/diyabc-comput-mac-i386
 cd ./gui/build/
 
 ./mac_generation.sh ./pyinstaller_1355/pyinstaller.py ../data/icons/coccicon.icns $packageDir  ../src/diyabc.py
+rm -rf $packageDir/*.app
 
 
 
