@@ -301,7 +301,10 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
                     w, h = int(bbox.width), int(bbox.height)
                     #l, t = bbox.ll().x().get(), bbox.ur().y().get()
                     reg = canvas.copy_from_bbox(bbox)
-                    stringBuffer = reg.to_string()
+                    if QtCore.QSysInfo.ByteOrder == QtCore.QSysInfo.LittleEndian:
+                        stringBuffer = canvas.renderer._renderer.tostring_bgra()
+                    else:
+                        stringBuffer = canvas.renderer._renderer.tostring_argb()
                     qImage = QtGui.QImage(stringBuffer, w, h, QtGui.QImage.Format_ARGB32)
 
                     #plot.print_(painter, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))

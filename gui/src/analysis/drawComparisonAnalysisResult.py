@@ -210,12 +210,13 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
                     bbox = plot.fig.bbox
                     canvas = plot.fig.canvas
                     w, h = int(bbox.width), int(bbox.height)
-                    #l, t = bbox.ll().x().get(), bbox.ur().y().get()
                     reg = canvas.copy_from_bbox(bbox)
-                    stringBuffer = reg.to_string()
+                    if QtCore.QSysInfo.ByteOrder == QtCore.QSysInfo.LittleEndian:
+                        stringBuffer = canvas.renderer._renderer.tostring_bgra()
+                    else:
+                        stringBuffer = canvas.renderer._renderer.tostring_argb()
                     qImage = QtGui.QImage(stringBuffer, w, h, QtGui.QImage.Format_ARGB32)
 
-                    #plot.print_(painter, QRect(QPoint(0*size.width(),(li*size.height())+li*30),QSize(size)))
                     painter.drawImage(QRect(QPoint(0*w,(li*h)+li*30),QPoint(1*w,((li+1)*h)+li*30)),qImage)
                     col+=1
                     ind+=1

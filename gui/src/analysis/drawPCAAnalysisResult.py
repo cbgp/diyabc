@@ -274,12 +274,13 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             bbox = plot.fig.bbox
             canvas = plot.fig.canvas
             w, h = int(bbox.width), int(bbox.height)
-            #l, t = bbox.ll().x().get(), bbox.ur().y().get()
             reg = canvas.copy_from_bbox(bbox)
-            stringBuffer = reg.to_string()
+            if QtCore.QSysInfo.ByteOrder == QtCore.QSysInfo.LittleEndian:
+                stringBuffer = canvas.renderer._renderer.tostring_bgra()
+            else:
+                stringBuffer = canvas.renderer._renderer.tostring_argb()
             qImage = QtGui.QImage(stringBuffer, w, h, QtGui.QImage.Format_ARGB32)
 
-            #p.print_(painter, p.rect())
             painter.drawImage(QRect(QPoint(0,0),QPoint(w,h)),qImage)
 
             painter.end()
