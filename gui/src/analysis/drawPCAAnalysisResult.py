@@ -238,7 +238,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             # et donc visible
             obs = self.drawObservedToPlot(plotc,compo_h,compo_v)
 
-            plotc.axes.legend(bbox_to_anchor=(1.38, 1.0),prop={'size':10},scatterpoints=1)
+            plotc.axes.legend(bbox_to_anchor=(1.38, 1.0),prop={'size':10},scatterpoints=1,borderpad=0.7)
             plotc.axes.set_ylabel("P.C.%s (%8.2f%%)"%(compo_v+1,float(self.dico_points[-1][compo_v])*100))
             plotc.axes.set_xlabel("P.C.%s (%8.2f%%)"%(compo_h+1,float(self.dico_points[-1][compo_h])*100))
             for tick in plotc.axes.axes.xaxis.get_major_ticks():
