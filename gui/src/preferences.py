@@ -30,6 +30,76 @@ class Preferences(AutoPreferences):
     - définir les actions à effectuer lors de changement de valeurs des préférences (style, showTrayIcon ...)
     - implémenter les fonctions d'accès aux valeurs des préférences (getMaxThreadNumber, getExecutablePath ...) 
     """
+    
+    DEFAULT_SECOND_PART_SCRIPT_CLUSTER = """
+
+function progress(){
+res=0
+sum=0
+# for each log file, if it exists, do the sum of done values
+for i in $(seq 1 $1); do
+    if [ -e reftable_$i.log ]; then
+        let sum=$sum+`head -n 2 reftable_$i.log | tail -n 1`
+    fi
+done
+let pct=$sum*100
+let pct=$pct/$numSimulatedDataSet
+echo `nbOk $1` "/ $1 finished"
+echo " $pct %"
+echo "somme $sum"
+}
+
+function nbOk(){
+nb=0
+# for each log file, check if the computation is terminated
+for i in $(seq 1 $1); do
+    if [ -e reftable_$i.log ]; then
+        numdone=`head -n 2 reftable_$i.log | tail -n 1`
+
+	if [ $i -ne $numJobs ]
+            then 
+            if [ $numdone -eq $numSimulatedDataSetByNode ]
+                then
+                let nb=$nb+1
+            fi
+        else
+            # case of last computation
+            if [ $numdone -eq $numSimulatedDataSetLastNode ]
+                then
+                let nb=$nb+1
+            fi
+    fi
+done
+echo $nb
+}
+seed=$RANDOM
+for i in $(seq 1 $numJobs); do 
+let seed=$seed+1
+
+############################## EDIT #########################################
+######## Modify this line to launch in your cluster scheduler ###############
+
+qsub -N _${i}_$projectName -q long.q -cwd node.sh $numSimulatedDataSetByNode `pwd` $i $seed $dataFile
+
+
+############################## END EDIT #####################################
+
+done;
+while ! [ "`nbOk $numOfJobs`" = "$numOfJobs" ]; do
+echo `progress $numOfJobs`
+sleep 3
+done
+echo `progress $numOfJobs`
+./general -p "`pwd`"/ -n "s:1" 2>&1 rng_gen.out
+./general -p "`pwd`"/ -q 2>&1 concat.out
+
+
+echo "*************************************************************"
+echo "All the result files have been concatenated into reftable.bin"
+echo "*************************************************************"
+
+"""
+
     def __init__(self,parent=None,configfile=None):
         super(Preferences,self).__init__(parent,configfile)
 
@@ -87,8 +157,12 @@ class Preferences(AutoPreferences):
         dico_fields = {
                 "cluster" : [
                     ["check","useCluster","Use a cluster (don't check if you don't know what it is)",False],
-                    ["lineEdit","nbRecByNode","Number of records to generate on each node (granularity)","10000"],
-                    ["lineEdit","queueName","Name of the SGE queue","long_queue.q"],
+                    ["lineEdit","numSimulatedDatasetByJob","Number of records to generate for each job (granularity)","50000"],
+                    ["lineEdit","coresPerJob","number of cores used by each job","1"],
+                    ["lineEdit","maxConcurrentJobs","Maximum number of jobs running a the same time in the cluster (number of RNG's to generate)","200"],
+                    ["lineEdit","seed","seed to generate all RNG files (if 'None' a random seed will be used)","None"],
+                    ["textEdit","scriptMasterFirst","NOT EDITABLE !\\nFirst part of the script\\n to run on your cluster master node\\n\\n(this first part will be merged\\nwith the second part in order\\nto obtain the launch.sh script)","#!/bin/bash\\nnumSimulatedDataSet=5000\\nnumSimulatedDatasetByJob=1000\\nmaxConcurrentJobs=1000\\ncoresPerJob=1\\nseed=0\\nprojectName=toto\\ndataFileName=test2popmicrosat_001.mss\\nreferenceTableHeaderName=header.txt", False, True],            
+                    ["textEdit","scriptMasterLast","Second part of the script\\nto run on master node\\n\\nModify it in order to fit\\n your cluster scheduler\\n(ask your cluster administrator)", """\\n""".join(Preferences.DEFAULT_SECOND_PART_SCRIPT_CLUSTER.splitlines()), True],                    
                 ],
                 "appearance" : [
                     ["check","showTrayIcon","Show tray icon",False],
@@ -122,6 +196,11 @@ class Preferences(AutoPreferences):
         self.changeLogLevel(self.ui.maxLogLvlCombo.currentIndex())
 
         QObject.connect(self.ui.useClusterCheck,SIGNAL("toggled(bool)"),self.toggleCluster)
+        QObject.connect(self.ui.numSimulatedDatasetByJobEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
+        QObject.connect(self.ui.coresPerJobEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
+        QObject.connect(self.ui.maxConcurrentJobsEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
+        QObject.connect(self.ui.seedEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
+        
         QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
         QObject.connect(self.ui.activateWhatsThisCheck,SIGNAL("toggled(bool)"),self.toggleWtSelection)
         QObject.connect(self.ui.showTrayIconCheck,SIGNAL("toggled(bool)"),self.toggleTrayIconCheck)
@@ -150,6 +229,35 @@ class Preferences(AutoPreferences):
         self.mutmodS.ui.frame_6.hide()
         self.mutmodS.ui.setMutSeqLabel.setText("Default values for mutation model of Sequences")
 
+    def checkClusterValues(self, Qstr):
+        numSimulatedDatasetByJob = str(self.ui.numSimulatedDatasetByJobEdit.text()).strip()
+        if numSimulatedDatasetByJob != '' :
+            try :
+                numSimulatedDatasetByJob = int(numSimulatedDatasetByJob)
+            except ValueError:
+                output.notify(self,"Value Error : numSimulatedDatasetByJob","Number of simulated data set by job must be a positive integer")
+            
+        coresPerJob =  str(self.ui.coresPerJobEdit.text()).strip()
+        if coresPerJob != '' :
+            try :
+                coresPerJob = int(coresPerJob)
+            except ValueError:
+                output.notify(self,"Value Error : coresPerJob","Number of cores per job must be a positive integer")
+        
+        maxConcurrentJobs = str(self.ui.maxConcurrentJobsEdit.text()).strip()
+        if maxConcurrentJobs != '' :
+            try :
+                maxConcurrentJobs= int(maxConcurrentJobs)
+            except ValueError:
+                output.notify(self,"Value Error : maxConcurrentJobs","Maximum number of concurrent job running on a cluster must be a positive integer")        
+        
+        seed = str(self.ui.seedEdit.text()).strip()
+        if seed not in ['','None'] :
+            try :
+                seed = int(seed)
+            except ValueError:
+                output.notify(self,"Value Error : seed","seed must be a positive integer or 'None' or blank")   
+        
     def close(self):
         if len(self.parent.project_list) == 0:
             self.parent.switchToWelcomeStack()
@@ -164,7 +272,9 @@ class Preferences(AutoPreferences):
             self.saveMMS()
             self.saveHM()
             self.saveRecent()
+            self.saveCluster()
             super(Preferences,self).savePreferences()
+            self.saveCluster()            
             self.close()
 
     def loadPreferences(self):
@@ -175,7 +285,9 @@ class Preferences(AutoPreferences):
         self.loadHM()
         self.loadRecent()
         self.loadToolBarPosition()
+        self.loadCluster()
         super(Preferences,self).loadPreferences()
+        
         self.updateFont()
 
     def changeLogLevel(self,index):
@@ -221,8 +333,12 @@ class Preferences(AutoPreferences):
 
 
     def toggleCluster(self,state):
-        self.ui.nbRecByNodeEdit.setDisabled(not state)
-        self.ui.queueNameEdit.setDisabled(not state)
+        self.ui.numSimulatedDatasetByJobEdit.setDisabled(not state)
+        self.ui.coresPerJobEdit.setDisabled(not state)
+        self.ui.maxConcurrentJobsEdit.setDisabled(not state)
+        self.ui.seedEdit.setDisabled(not state)
+        self.ui.scriptMasterFirstTextEdit.setDisabled(not state)
+        self.ui.scriptMasterLastTextEdit.setDisabled(not state)
 
     def toggleExeSelection(self,state):
         self.ui.execPathBrowseButton.setDisabled(state)
@@ -324,6 +440,10 @@ class Preferences(AutoPreferences):
                     log(4, "Loading recent : %s"%rec.strip())
             self.parent.setRecent(recent_list)
 
+    def loadCluster(self):
+        if self.config.has_key("cluster") and self.config["cluster"].has_key("scriptMasterFirst"):
+            del self.config["cluster"]["scriptMasterFirst"]
+        
     def getMaxRecentNumber(self):
         return int(str(self.ui.nbMaxRecentEdit.text()))
 
@@ -340,7 +460,12 @@ class Preferences(AutoPreferences):
         # delete last '\n'
         rec_cfg = rec_cfg[:-1]
         self.config["recent"]["projectPathList"] = rec_cfg
-
+    
+    def saveCluster(self):
+        if self.config.has_key("cluster") and self.config["cluster"].has_key("scriptMasterFirst"):
+            del self.config["cluster"]["scriptMasterFirst"]
+        
+        
     def saveMMM(self):
         """ sauvegarde de la partie mutation model microsats des préférences
         """

@@ -5,6 +5,7 @@
 #
 # @brief Projets pour créer une table de référence
 
+
 import hashlib,pickle,sys
 import socket
 from socket import *
@@ -279,109 +280,83 @@ class ProjectReftable(Project):
         """ génération du script à exécuter sur le noeud maitre
         """
         nbToGen = int(self.ui.nbSetsReqEdit.text())
-        nbRecByNode = int(self.parent.preferences_win.ui.nbRecByNodeEdit.text())
-        queueName = str(self.parent.preferences_win.ui.queueNameEdit.text())
- 
-        nbFullQsub = nbToGen / nbRecByNode
-        nbLastQsub = nbToGen % nbRecByNode
-
+        nbRecByJob = int(self.parent.preferences_win.ui.nbRecByJobEdit.text())
+        #queueName = str(self.parent.preferences_win.ui.queueNameEdit.text())
+            
+        if nbRecByJob > nbToGen :
+            nbRecByJob = nbToGen
+            
+        nbFullQsub = nbToGen / nbRecByJob
+        nbLastQsub = nbToGen % nbRecByJob   
+        
         if nbLastQsub == 0:
             nbQsub = nbFullQsub
         else:
             nbQsub = nbFullQsub+1
-
-        res = '\n\
-function progress(){\n\
-res=0\n\
-nbfin=%s\n\
-sum=0\n\
-# for each log file, if it exists, do the sum of done values\n\
-for i in $(seq 1 $1); do\n\
-    if [ -e reftable_$i.log ]; then\n\
-        let sum=$sum+`head -n 2 reftable_$i.log | tail -n 1`\n\
-    fi\n\
-done\n\
-let pct=$sum*100\n\
-let pct=$pct/$nbfin\n\
-echo `nbOk $1` "/ $1 finished"\n\
-echo " $pct %%"\n\
-echo "somme $sum"\n\
-}\n\
-function nbOk(){\n\
-nb=0\n\
-# for each log file, check if the computation is terminated\n\
-for i in $(seq 1 $1); do\n\
-    if [ -e reftable_$i.log ]; then\n\
-        numdone=`head -n 2 reftable_$i.log | tail -n 1`\n'%nbToGen
-
-        if nbLastQsub != 0:
-            res+='        # case of last computation, less thant %s\n\
-        if [ $i -eq %s ]; then\n\
-            if [ $numdone -eq %s ]; then\n\
-                let nb=$nb+1\n\
-            fi\n\
-        else\n\
-            if [ $numdone -eq %s ]; then\n\
-                let nb=$nb+1\n\
-            fi\n\
-        fi\n'%(nbRecByNode,nbFullQsub+1,nbLastQsub,nbRecByNode)
-        else:
-            res+='        if [ $numdone -eq %s ]; then\n\
-            let nb=$nb+1\n\
-        fi\n'%(nbRecByNode)
-
-        res+='    fi\n\
-done\n\
-echo $nb\n\
-}\n\
-seed=$RANDOM\n\
-for i in $(seq 1 %s); do \n\
-let seed=$seed+1\n\
-qsub -q %s -cwd node.sh %s `pwd` $i $seed\n\
-done;\n'%(nbFullQsub,queueName,nbRecByNode)
         
-        if nbLastQsub != 0:
-            res+='let last=$i+1\n\
-let seed=$seed+1\n\
-qsub -q %s -cwd node.sh %s `pwd` $last $seed\n'%(queueName,nbLastQsub)
+        projectName = str(self.ui.projNameLabelValue.text())
+        referenceTableHeaderName = self.parent.reftableheader_name
+        dataFileName = self.dataFileName
         
-        res+='while ! [ "`nbOk %s`" = "%s" ]; do\n\
-echo `progress %s`\n\
-sleep 3\n\
-done\n\
-echo `progress %s`\n\
-./general -p "`pwd`"/ -n "s:1" 2>&1 rng_gen.out\n\
-./general -p "`pwd`"/ -q 2>&1 concat.out\n\
-echo "*************************************************************"\n\
-echo "All the result files have been concatenated into reftable.bin"\n\
-echo "*************************************************************"\n\
-'%(nbQsub,nbQsub,nbQsub,nbQsub)
+        #str(self.ui.parent.preferences_win.ui.scriptMasterFirstTextEdit.toPlainText())
+        masterScriptFirstPart= \
+"""
+#!/bin/bash
+numSimulatedDataSet={0}
+numSimulatedDataSetByJob={1}
+numSimulatedDataSetLastJob={2}
+numJobs={3}
+projectName={4}
+dataFileName={5}
+referenceTableHeaderName={6}
+""".format(nbToGen, nbRecByJob, nbLastQsub, nbQsub, projectName, dataFileName, referenceTableHeaderName)
+        self.ui.parent.preferences_win.ui.scriptMasterFirstTextEdit.setText(masterScriptFirstPart)
+        res = str(self.ui.parent.preferences_win.ui.scriptMasterFirstTextEdit.toPlainText()) \
+                + str(self.ui.parent.preferences_win.ui.scriptMasterLastTextEdit.toPlainText())
         
         return res
 
     def genNodeScript(self):
         """ génération du script a exécuter sur chaque noeud
         """
+        script="""#!/bin/bash
 
-        return 'NBTOGEN=$1\n\
-USERDIR=$2\n\
-MYNUMBER=$3\n\
-SEED=$4\n\
-if ! [ -d $TMPDIR ]; then mkdir -p $TMPDIR ; fi \n\
-cp general $TMPDIR\n\
-cp %s $TMPDIR\n\
-cp %s $TMPDIR\n\
-# Generation of random numbers\n\
-$TMPDIR/general -p $TMPDIR/ -n "s:$SEED"\n\
-# Computations\n\
-$TMPDIR/general -p $TMPDIR/ -r $NBTOGEN & \n\
-while ! [ "`head -n 2 $TMPDIR/reftable.log | tail -n 1`" -eq $NBTOGEN ]; do\n\
-    cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
-    sleep 5\n\
-done\n\
-cp $TMPDIR/reftable.bin $USERDIR/reftable_$MYNUMBER.bin\n\
-cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
-'%(self.parent.reftableheader_name, self.dataFileName)
+NBTOGEN=$1
+USERDIR=$2
+MYNUMBER=$3
+SEED=$4
+DATAFILE=$5
+
+scriptMadeTMPDIR=false
+if test -z "$TMPDIR"
+    then
+	    TMPDIR="/tmp/tmpDiyabc_DATAFILE_${SEED}_${RANDOM}"  
+	    scriptMadeTMPDIR=true
+fi
+
+if ! [ -d $TMPDIR ]
+    then 
+        mkdir -p $TMPDIR  
+fi
+
+cp general $TMPDIR
+cp header.txt $TMPDIR
+cp $DATAFILE $TMPDIR
+# Generation of random numbers
+$TMPDIR/general -p $TMPDIR/ -n "s:$SEED"
+# Computations
+$TMPDIR/general -p $TMPDIR/ -r $NBTOGEN & 
+while ! [ "`head -n 2 $TMPDIR/reftable.log | tail -n 1`" -eq $NBTOGEN ]; do
+    cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log
+    sleep 5
+done
+cp $TMPDIR/reftable.bin $USERDIR/reftable_$MYNUMBER.bin
+cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log
+
+if "$scriptMadeTMPDIR" ; then rm -rf $TMPDIR ; fi
+
+#END"""    
+        return script
 
     def generateComputationTar(self,tarname=None):
         """ génère une archive tar contenant l'exécutable, les scripts node et master,
@@ -389,7 +364,7 @@ cp $TMPDIR/reftable.log $USERDIR/reftable_$MYNUMBER.log\n\
         """
         if tarname == None:
             output.notify(self,"Warning","You are about to generate an archive in order to compute on a cluster,\n This archive will contain the datafile, the header file and the scripts to launch computations on an SGE cluster main node")
-            tarname = str(QFileDialog.getSaveFileName(self,"Saving cluster archive","Reftable CLUSTER generation archive name","TAR archive (*.tar)"))
+            tarname = str(QFileDialog.getSaveFileName(self,"Saving cluster archive","%s_reftableCluster"%str(self.ui.projNameLabelValue.text()),"TAR archive (*.tar)"))
             if tarname == "":
                 return ""
             if not tarname.endswith(".tar"):

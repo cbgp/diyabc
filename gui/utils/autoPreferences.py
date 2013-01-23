@@ -130,7 +130,7 @@ class AutoPreferences(QFrame):
         for cat in dico_fields.keys():
             self.addCategory(cat)
             for f in dico_fields[cat]:
-                # *f[1:] is equivalent to f[1],f[2],f[3]... in a function call context
+                # *f[1:] is equivalent to f[1],f[2],f[3]... in a function call contex
                 exec('self.addProp%s(cat,*f[1:])'%(f[0][0].upper() + f[0][1:]))
                 #if f[0] == "combo":
                 #    self.addPropCombo(cat,f[1],f[2],f[3],f[4],f[5])
@@ -250,6 +250,47 @@ class AutoPreferences(QFrame):
             #print catname,propname," invisible"
             exec('self.frame_%s_%s.setVisible(False)'%(catname,propname))
 
+    def addPropTextEdit(self,catname,propname,labelText,default_value="",visibility=visible, readOnly=False):
+        """ Add a field which is composed by a label and a QTextEdit
+        The visibility can be set with a boolean parameter for example to save a 'non-user-set' value
+        @param propname: name of the field
+        @param labelText: text associated to the field (label)
+        """
+        self.dicoCategory[catname].append( [propname, "textEdit", labelText, default_value] )
+
+        exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
+        exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel)'%(catname,propname))
+        exec('self.frame_%s_%s.setFrameShadow(QtGui.QFrame.Raised)'%(catname,propname))
+        exec('self.frame_%s_%s.setObjectName("frame_%s_%s")'%(catname,propname,catname,propname))
+        exec('self.horizontalLayout_%s = QtGui.QHBoxLayout(self.frame_%s_%s)'%(propname,catname,propname))
+        exec('self.horizontalLayout_%s.setObjectName("horizontalLayout_%s")'%(propname,propname))
+        exec('self.label_%s = QtGui.QLabel(self.frame_%s_%s)'%(propname,catname,propname))
+        exec('self.label_%s.setText("%s")'%(propname,labelText))
+        exec('self.label_%s.setObjectName("label_%s")'%(propname,propname))
+        exec('self.horizontalLayout_%s.addWidget(self.label_%s)'%(propname,propname))
+        exec('self.%sTextEdit = QtGui.QTextEdit(self.frame_%s_%s)'%(propname,catname,propname))
+        #exec('self.%sTextEdit.setMinimumSize(QtCore.QSize(150, 0))'%(propname))
+        #exec('self.%sTextEdit.setMaximumSize(QtCore.QSize(150, 16777215))'%(propname))
+        exec('self.%sTextEdit.setObjectName("%sEdit")'%(propname,propname))
+        exec('self.%sTextEdit.setAlignment(Qt.AlignLeft)'%(propname))
+        exec('self.horizontalLayout_%s.addWidget(self.%sTextEdit)'%(propname,propname))
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        exec('self.horizontalLayout_%s.addItem(spacerItem)'%(propname))
+        exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s)'%(catname,catname,propname))
+        exec('self.%sTextEdit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)'%(propname))
+        exec('self.%sTextEdit.setLineWrapMode(QtGui.QTextEdit.NoWrap)'%(propname))
+        if visibility == invisible:
+            #print catname,propname," invisible"
+            exec('self.frame_%s_%s.setVisible(False)'%(catname,propname))
+        if readOnly :
+            exec('self.%sTextEdit.setReadOnly(True)'%(propname))
+            
+        #exec('self.%sTextEdit.setPlainText("""%s""")'%(propname,default_value))
+        for l in default_value.splitlines() :
+            #l = l + "\n"
+            exec('self.%sTextEdit.append(QString("""%s"""))' % (propname, l))
+
+
     def addPropPathEdit(self,catname,propname,labelText,default_value=""):
         """ Add a field which is composed by a label, a 'browse' button and a lineEdit
         @param propname: name of the field
@@ -304,6 +345,8 @@ class AutoPreferences(QFrame):
                     exec('val_to_save = str(self.%sCheck.isChecked())'%propname)
                 elif proptype == "lineEdit":
                     exec('val_to_save = str(self.ui.%sEdit.text())'%propname)
+                elif proptype == "textEdit":
+                    exec('val_to_save = str(self.ui.%sTextEdit.toHtml())'%propname)                    
                 elif proptype == "path":
                     exec('val_to_save = str(self.ui.%sPathEdit.text())'%propname)
                 elif proptype == "combo":
@@ -336,6 +379,8 @@ class AutoPreferences(QFrame):
                             exec('self.ui.%sCheck.setChecked(checked)'%propname)
                         elif proptype == "lineEdit":
                             exec('self.ui.%sEdit.setText(str(val).strip())'%propname)
+                        elif proptype == "textEdit":
+                            exec('self.ui.%sTextEdit.setText(str(val))'%propname)                            
                         elif proptype == "path":
                             exec('self.ui.%sPathEdit.setText(str(val).strip())'%propname)
                         elif proptype == "combo":
@@ -356,3 +401,4 @@ class AutoPreferences(QFrame):
 
     def allValid(self):
         return True
+        
