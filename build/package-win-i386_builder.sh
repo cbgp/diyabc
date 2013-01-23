@@ -4,7 +4,7 @@
 
 # default values
 packageDir="./lastDiyabc"
-diyabc_git="../../"
+diyabc_git="../"
 MinGw_bindir="/c/MinGw/bin/"
 
 # custom values
@@ -21,14 +21,14 @@ fi
 rm -rf $packageDir
 cd $diyabc_git
 
-git checkout .
-git pull --rebase 
 $MinGw_bindir/mingw32-make.exe clean
 $MinGw_bindir/mingw32-make.exe
 cp $MinGw_bindir/*.dll ./gui/data/executables/
 cp ./src-JMC-C++/general.exe ./gui/data/executables/diyabc-comput-win-i386
 cp ./src-JMC-C++/general.exe ./gui/data/executables/diyabc-comput-win-x64
 
-cd ./gui/build/
-./windows_generation.sh ./pyinstaller_1355/pyinstaller.py ../data/icons/coccicon.ico $packageDir ../src/diyabc.py
-
+cd ./build/
+./windows_generation.sh ./pyinstaller_1355/pyinstaller.py ../gui/data/icons/coccicon.ico $packageDir ../gui/src/diyabc.py
+cd $packageDir
+/c/Program\ Files/7-Zip/7z.exe a "`ls | grep diyabc*32`.zip" diyabc*32
+rm -r diyabc*32

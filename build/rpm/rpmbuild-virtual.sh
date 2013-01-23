@@ -1,7 +1,7 @@
-GITDIR=../../../
+GITDIR=../../
 PACKAGESRCDIR=~/rpmbuild/SOURCES
 PACKAGEDIR=~/rpmbuild
-VERSION="`head -n 1 ../../version.txt`"
+VERSION="`head -n 1 ../../gui/version.txt`"
 BUILDDATE=`LANG=en_EN.utf8 date +%d-%m-%Y`
 
 

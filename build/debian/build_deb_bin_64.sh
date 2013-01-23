@@ -16,7 +16,7 @@ MAKEPATH=$1
 VERSIONFILE=$2
 VERSION="`head -n 1 $VERSIONFILE`"
 
-PACKAGEDIR=diyabc-bin\_$VERSION\_i386
+PACKAGEDIR=diyabc-bin\_$VERSION\_amd64
 rm -rf $PACKAGEDIR
 
 # template copy 
@@ -29,13 +29,13 @@ make clean
 make
 cd -
 mkdir -p $PACKAGEDIR/usr/bin/
-cp -rp ../../../src-JMC-C++/general $PACKAGEDIR/usr/bin/diyabc
+cp -rp ../../src-JMC-C++/general $PACKAGEDIR/usr/bin/diyabc
 
 # package generation
 
 # control file edition
 sed -i "s/Version: X/Version: $VERSION/" $PACKAGEDIR/DEBIAN/control
-sed -i "s/Architecture: X/Architecture: i386/" $PACKAGEDIR/DEBIAN/control
+sed -i "s/Architecture: X/Architecture: amd64/" $PACKAGEDIR/DEBIAN/control
 
 cp -r $PACKAGEDIR /tmp
 chown -R root:root /tmp/$PACKAGEDIR

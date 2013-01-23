@@ -30,13 +30,13 @@ cp -rp diyabc-doc-pkg-template/ $PACKAGEDIR/
 cd `dirname $TEXPATH`
 pdflatex `basename $TEXPATH` ; pdflatex `basename $TEXPATH`
 cd -
-cp -rp ../../../Notice-DIYABC-v2/Notice_DIYABC_principal.pdf $PACKAGEDIR/usr/share/doc/diyabc/diyabc_notice.pdf
+cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal.pdf $PACKAGEDIR/usr/share/doc/diyabc/diyabc_notice.pdf
 
 # html generation
 cd `dirname $HTMLGENPATH`
 ./gen_html_doc.sh
 cd -
-cp -rp ../../../Notice-DIYABC-v2/Notice_DIYABC_principal $PACKAGEDIR/usr/share/doc/diyabc/html
+cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal $PACKAGEDIR/usr/share/doc/diyabc/html
 
 
 # package generation
