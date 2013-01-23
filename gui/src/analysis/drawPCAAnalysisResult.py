@@ -38,9 +38,10 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         self.ui.setupUi(self)
 
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
+        QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printGraph)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewLocate)
         self.ui.savePicturesButton.hide()
-        self.ui.printButton.hide()
+        #self.ui.printButton.hide()
 
         QObject.connect(self.ui.scCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         QObject.connect(self.ui.compoHCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
@@ -221,6 +222,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
 
             plotc.axes.set_title("Components %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
             plotc.axes.grid(True)
+            plotc.fig.patch.set_facecolor('white')
 
             posteriorList = []
             if self.ui.scCombo.currentText() == "all":
@@ -249,10 +251,36 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             self.ui.verticalLayout_3.removeItem(self.ui.verticalLayout_3.itemAt(0))
             self.ui.verticalLayout_3.addWidget(main_draw_widget)
 
-            self.plot = main_draw_widget
+            self.plot = plotc
 
     def exit(self):
         del self.dico_points
         self.parent.ui.analysisStack.removeWidget(self)
         self.parent.ui.analysisStack.setCurrentIndex(0)
+
+    def printGraph(self):
+        plot = self.plot
+        im_result = QPrinter()
+        dial = QPrintDialog(im_result,self)
+        if dial.exec_():
+            painter = QPainter()
+            im_result.setOrientation(QPrinter.Landscape)
+            im_result.setPageMargins(20,20,20,20,QPrinter.Millimeter)
+            im_result.setResolution(80)
+            painter.begin(im_result)
+            pen = QPen(Qt.black,2)
+            painter.setPen(pen)
+
+            bbox = plot.fig.bbox
+            canvas = plot.fig.canvas
+            w, h = int(bbox.width), int(bbox.height)
+            #l, t = bbox.ll().x().get(), bbox.ur().y().get()
+            reg = canvas.copy_from_bbox(bbox)
+            stringBuffer = reg.to_string()
+            qImage = QtGui.QImage(stringBuffer, w, h, QtGui.QImage.Format_ARGB32)
+
+            #p.print_(painter, p.rect())
+            painter.drawImage(QRect(QPoint(0,0),QPoint(w,h)),qImage)
+
+            painter.end()
 

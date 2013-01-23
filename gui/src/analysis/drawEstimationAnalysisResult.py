@@ -37,10 +37,10 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.ui=self
         self.ui.setupUi(self)
 
-        #QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printDraws)
+        QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printDraws)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
         self.ui.savePicturesButton.hide()
-        self.ui.printButton.hide()
+        #self.ui.printButton.hide()
         #QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewMmmq)
         
@@ -187,10 +187,11 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         plotc.axes.legend(bbox_to_anchor=(0.74, -0.14),ncol=2,prop={'size':9})
         plotc.fig.subplots_adjust(left=0.17,right=0.99,top=0.85,bottom=0.27)
         plotc.axes.axes.title.set_fontsize(10)
+        plotc.fig.patch.set_facecolor('white')
         for tick in plotc.axes.axes.xaxis.get_major_ticks():
-                tick.label1.set_fontsize(9)
+                tick.label1.set_fontsize(7)
         for tick in plotc.axes.axes.yaxis.get_major_ticks():
-                tick.label1.set_fontsize(9)
+                tick.label1.set_fontsize(7)
 
         fr = QFrame(self)
         fr.setFrameShape(QFrame.StyledPanel)
@@ -263,3 +264,55 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         frame.setMaximumSize(QSize(400, 9000))
         self.ui.horizontalLayout_3.addWidget(frame)
 
+    def printDraws(self):
+        nbpix = len(self.dicoPlot.keys())
+        largeur = 2
+        # resultat de la div entière plus le reste (modulo)
+        longueur = (nbpix/largeur)+(nbpix%largeur)
+        ind = 0
+        li=0
+        delta = 120
+
+        im_result = QPrinter()
+        painter = QPainter()
+
+        dial = QPrintDialog(im_result,self)
+        if dial.exec_():
+            im_result.setOrientation(QPrinter.Portrait)
+            im_result.setPageMargins(10,10,10,10,QPrinter.Millimeter)
+            im_result.setResolution(100)
+
+            painter.begin(im_result)
+
+            keys = self.dicoPlot.keys()
+            keys.sort()
+            # on prend un des graphes pour savoir ses dimensions
+            #size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
+
+            # on fait des lignes tant qu'on a des pix
+            while (ind < nbpix):
+                col = 0
+                # une ligne
+                while (ind < nbpix) and (col < largeur):
+                    plot = self.dicoPlot[keys[ind]]
+
+                    bbox = plot.fig.bbox
+                    canvas = plot.fig.canvas
+                    w, h = int(bbox.width), int(bbox.height)
+                    #l, t = bbox.ll().x().get(), bbox.ur().y().get()
+                    reg = canvas.copy_from_bbox(bbox)
+                    stringBuffer = reg.to_string()
+                    qImage = QtGui.QImage(stringBuffer, w, h, QtGui.QImage.Format_ARGB32)
+
+                    #plot.print_(painter, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
+                    painter.drawImage(QRect(QPoint(col*w,(li*h)+(delta*li)),QPoint((col+1)*w,((li+1)*h)+(delta*li))),qImage)
+                    if (ind+1)%6 == 0:
+                        im_result.newPage()
+                    col+=1
+                    ind+=1
+                if (ind)%6 == 0:
+                    li = 0
+                else:
+                    li+=1
+
+            painter.end()
