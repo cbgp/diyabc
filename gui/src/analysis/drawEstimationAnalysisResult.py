@@ -185,7 +185,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         plotc.axes.plot(labs,lpo,label=legend_txt,c=self.tab_colors[1])
 
         plotc.axes.legend(bbox_to_anchor=(0.74, -0.14),ncol=2,prop={'size':9})
-        plotc.fig.subplots_adjust(left=0.17,right=0.99,top=0.85,bottom=0.27)
+        plotc.fig.subplots_adjust(left=0.17,right=0.92,top=0.85,bottom=0.27)
         plotc.axes.axes.title.set_fontsize(10)
         plotc.fig.patch.set_facecolor('white')
         for tick in plotc.axes.axes.xaxis.get_major_ticks():

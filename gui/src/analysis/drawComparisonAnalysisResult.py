@@ -157,7 +157,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
                 tick.label1.set_fontsize(7)
         for tick in plotc.axes.axes.yaxis.get_major_ticks():
                 tick.label1.set_fontsize(7)
-        plotc.fig.subplots_adjust(right=0.99,top=0.9,bottom=0.27)
+        plotc.fig.subplots_adjust(right=0.92,top=0.9,bottom=0.27)
         plotc.fig.patch.set_facecolor('white')
 
         fr = QFrame(self)
