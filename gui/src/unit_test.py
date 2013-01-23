@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import sys
+import os.path
+import os
+sys.path.append("/".join(os.getcwd().split('/')[:-1]))
 from project import *
 
 #import time
-import os.path
 import unittest
-import sys
 import shutil
 from diyabc import Diyabc
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtTest import QTest
 from datetime import datetime
 from utils.cbgpUtils import log,TeeLogger
 import output
@@ -27,9 +30,9 @@ class testDiyabc(unittest.TestCase):
         setUp is called before each test function execution.
         """
 
-        self.testDir = "datafiles/test"
-        self.testProjectDir = "datafiles/test/ploop_2011_1_18-3"
-        self.testProjectDirHist = "datafiles/test/testSansReftable_2011_12_18-1"
+        self.testDir = "/tmp/"
+        self.testProjectDir = "/home/julien/TESTDIY/TOYTEST1/"
+        self.testProjectDirHist = "/home/julien/TESTDIY/TOYTEST1_noref/"
         self.saveTestProjectDir = "/tmp/ploopsave"
 
     def initialize(self):
@@ -38,7 +41,7 @@ class testDiyabc(unittest.TestCase):
         dd = datetime.now()
         logfile = os.path.expanduser("~/.diyabc/logs/test_%02d_%02d_%s-%02dh_%02dm-%s.log"%(dd.day,dd.month,dd.year,dd.hour,dd.minute,os.getpid()))
         diyabc = Diyabc(app,logfile=logfile)
-        diyabc.show()
+        #diyabc.show()
         # pour le dragNdrop des dossier projet
         diyabc.setAcceptDrops(True)
         # pour les logs dans un fichier et sur le terminal
