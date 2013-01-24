@@ -274,6 +274,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         delta = 120
 
         im_result = QPrinter()
+        im_result.setOutputFileName("%s/analysis/%s/%s.pdf"%(self.parent.dir,self.directory,self.analysis.name))
         painter = QPainter()
 
         dial = QPrintDialog(im_result,self)

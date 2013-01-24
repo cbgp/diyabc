@@ -261,6 +261,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
     def printGraph(self):
         plot = self.plot
         im_result = QPrinter()
+        im_result.setOutputFileName("%s/analysis/%s/%s.pdf"%(self.parent.dir,self.directory,self.analysis.name))
         dial = QPrintDialog(im_result,self)
         if dial.exec_():
             painter = QPainter()

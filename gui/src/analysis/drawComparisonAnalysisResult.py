@@ -189,6 +189,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         #size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
 
         im_result = QPrinter()
+        im_result.setOutputFileName("%s/analysis/%s/%s.pdf"%(self.parent.dir,self.directory,self.analysis.name))
         painter = QPainter()
 
         dial = QPrintDialog(im_result,self)
