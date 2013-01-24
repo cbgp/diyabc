@@ -30,73 +30,196 @@ class Preferences(AutoPreferences):
     - définir les actions à effectuer lors de changement de valeurs des préférences (style, showTrayIcon ...)
     - implémenter les fonctions d'accès aux valeurs des préférences (getMaxThreadNumber, getExecutablePath ...) 
     """
+
+    DEFAULT_FIRST_PART_SCRIPT_CLUSTER = """#!/bin/bash
+numSimulatedDataSet=
+numSimulatedDataSetByJob=
+maxConcurrentJobs=
+coresPerJob=
+seed=
+projectName=
+dataFileName=
+referenceTableHeaderName=
+"""    
     
     DEFAULT_SECOND_PART_SCRIPT_CLUSTER = """
+set -o nounset
+set -o errexit
+
+#====== functions ========
 
 function progress(){
-res=0
-sum=0
-# for each log file, if it exists, do the sum of done values
-for i in $(seq 1 $1); do
-    if [ -e reftable_$i.log ]; then
-        let sum=$sum+`head -n 2 reftable_$i.log | tail -n 1`
-    fi
-done
-let pct=$sum*100
-let pct=$pct/$numSimulatedDataSet
-echo `nbOk $1` "/ $1 finished"
-echo " $pct %"
-echo "somme $sum"
+    sum=0
+    jobsTot=$1
+    # for each log file, if it exists, do the sum of done values
+    for i in $(seq 1 $jobsTot); do
+        if [ -e reftable_$i.log ]; then
+            let sum=$sum+`head -n 2 reftable_$i.log | tail -n 1`
+        fi
+    done
+    pct=$(( $sum * 100 / $numSimulatedDataSet ))
+    echo `nbOk $jobsTot` "/ $jobsTot finished, $pct %, sum $sum/$numSimulatedDataSet"
 }
 
 function nbOk(){
-nb=0
-# for each log file, check if the computation is terminated
-for i in $(seq 1 $1); do
-    if [ -e reftable_$i.log ]; then
-        numdone=`head -n 2 reftable_$i.log | tail -n 1`
-
-	if [ $i -ne $numJobs ]
-            then 
-            if [ $numdone -eq $numSimulatedDataSetByNode ]
-                then
-                let nb=$nb+1
+    nb=0
+    # for each log file, check if the computation is terminated
+    for jobNum in $(seq 1 $1); do
+        if [ -e reftable_$jobNum.log ]; then
+            numDone=`head -n 2 reftable_$jobNum.log | tail -n 1`
+	        if [ $jobNum -ne $numJobs ]
+                    then 
+                    if [ $numDone -ge $numSimulatedDataSetByJob ]
+                        then
+                        let nb=$nb+1
+                    fi
+                else
+                    # case of last computation
+                    if [ $numDone -ge $numSimulatedDataSetLastJob ]
+                        then
+                        let nb=$nb+1
+                    fi
             fi
-        else
-            # case of last computation
-            if [ $numdone -eq $numSimulatedDataSetLastNode ]
-                then
-                let nb=$nb+1
-            fi
-    fi
-done
-echo $nb
+        fi
+    done
+    echo $nb
 }
-seed=$RANDOM
-for i in $(seq 1 $numJobs); do 
-let seed=$seed+1
 
-############################## EDIT #########################################
-######## Modify this line to launch in your cluster scheduler ###############
+function testJobsAllReadylaunched(){
+    # verify if the jobs are already submitted
+    lockFilesList=(./*lock)
+    reftableFilesList=(./*reftable*)
+    if [ ${#lockFilesList[@]} -ne "0" ]  ||  [ ${#reftableFilesList[@]} -ne "0" ]
+        then
+        return 1
+    else 
+        return 0
+    fi
+}
 
-qsub -N _${i}_$projectName -q long.q -cwd node.sh $numSimulatedDataSetByNode `pwd` $i $seed $dataFile
+function numRNGFiles(){
+    # verify if the RNG's are allready generated
+    RNGfilesList=(./*RNG_state*bin)
+    return ${#RNGfilesList[@]} 
+}
+
+function testRNGallReadyGenerated(){
+    # verify if the RNG's are allready generated
+    RNGfilesList=(./*RNG_state*bin)
+    if [ ${#RNGfilesList[@]} -ne "0" ]
+        then
+        return 1
+    else 
+        return 0
+    fi
+}
+
+function generateRNGs(){
+    # Generation of random numbers
+    cmd="./general -p ./ -n \"t:$coresPerJob;c:$maxConcurrentJobs;s:$seed\""
+    echo "Generation of random numbers :" 
+    echo $cmd
+    $cmd
+}
 
 
-############################## END EDIT #####################################
+function submitJobs(){
+    # submit jobs to the cluster scheduller
+    for jobNum in $(seq 1 $numJobs); do 
 
-done;
-while ! [ "`nbOk $numOfJobs`" = "$numOfJobs" ]; do
-echo `progress $numOfJobs`
-sleep 3
+        numSimulatedDataSetForThisJob=$numSimulatedDataSetByJob
+        if [ "$jobNum" -eq "$numJobs" ]
+            then
+            numSimulatedDataSetForThisJob=$numSimulatedDataSetLastJob
+        fi
+        
+        ############################## EDIT #########################################
+        ######## Modify this line to submit jobs to your cluster scheduler ###############
+        # node.sh arguments
+        ##1 NBTOGEN
+        ##2 USERDIR
+        ##3 MYNUMBER
+        ##5 DATAFILE
+        cmd="qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh $numSimulatedDataSetForThisJob \"`pwd`\" $jobNum  \"$PWD/$dataFileName\""
+    ############################## END EDIT #####################################
+        echo $cmd
+        qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
+        if [ $? -eq "0" ] 
+            then 
+            touch runningJobs.lock
+        fi 
+
+    done
+}
+
+
+#===== script core =======
+
+# job parameters
+numSimulatedDataSetLastJob=$(( $numSimulatedDataSet % $numSimulatedDataSetByJob ))
+if [ "$numSimulatedDataSetLastJob" -eq "0" ] 
+    then 
+    numJobs=$(( $numSimulatedDataSet / $numSimulatedDataSetByJob ))
+    numSimulatedDataSetLastJob=$numSimulatedDataSetByJob
+else 
+    numJobs=$(( $numSimulatedDataSet / $numSimulatedDataSetByJob + 1 ))
+fi
+
+if [ "$seed" -eq "-1" ]
+    then
+    $seed=$RANDOM
+fi
+
+
+if [ "$maxConcurrentJobs" -gt "$numJobs" ]
+    then
+    maxConcurrentJobs=$numJobs
+fi
+
+
+# test if the jobs had allready been submitted
+if [ `ls -1 | grep lock  | wc -l` -eq "0" ] 
+    then 
+    # test if the RNG had allready been generated
+    if  [ `ls -1 | grep RNG_state  | wc -l` -eq "0" ] 
+        then 
+        generateRNGs
+    else 
+        echo -e "/!\/!\      Becarefull       /!\/!\ "
+        echo -e "/!\/!\  `ls -1 | grep RNG_state  | wc -l` old RNG files found. Let's use them instead of generate $maxConcurrentJobs new ones /!\ /!\ " 
+        echo -e "/!\/!\  be sure the RNG's have enough cores /!\ /!\ "                
+    fi
+    submitJobs
+fi
+
+
+while ! [ "`nbOk $numJobs`" -ge "$numJobs" ]; do
+    echo `progress $numJobs`
+    sleep 30
 done
-echo `progress $numOfJobs`
-./general -p "`pwd`"/ -n "s:1" 2>&1 rng_gen.out
-./general -p "`pwd`"/ -q 2>&1 concat.out
+echo `progress $numJobs`
 
 
-echo "*************************************************************"
-echo "All the result files have been concatenated into reftable.bin"
-echo "*************************************************************"
+
+echo "Concatenating reftables :"
+cmd="./general -p \"$PWD/\" -q  &> concat.out"
+echo $cmd
+./general -p "$PWD/" -q  &> concat.out
+
+if [ $? -eq "0" ] 
+    then 
+    echo "*************************************************************"
+    echo "All the result files should have been concatenated into reftable.bin"
+    echo "See concat.out output file "
+    echo "*************************************************************"
+    rm runningJobs.lock
+fi 
+
+
+
+
+#END
+exit 0
 
 """
 
@@ -161,7 +284,7 @@ echo "*************************************************************"
                     ["lineEdit","coresPerJob","number of cores used by each job","1"],
                     ["lineEdit","maxConcurrentJobs","Maximum number of jobs running a the same time in the cluster (number of RNG's to generate)","200"],
                     ["lineEdit","seed","seed to generate all RNG files (if 'None' a random seed will be used)","None"],
-                    ["textEdit","scriptMasterFirst","NOT EDITABLE !\\nFirst part of the script\\n to run on your cluster master node\\n\\n(this first part will be merged\\nwith the second part in order\\nto obtain the launch.sh script)","#!/bin/bash\\nnumSimulatedDataSet=5000\\nnumSimulatedDatasetByJob=1000\\nmaxConcurrentJobs=1000\\ncoresPerJob=1\\nseed=0\\nprojectName=toto\\ndataFileName=test2popmicrosat_001.mss\\nreferenceTableHeaderName=header.txt", False, True],            
+                    ["textEdit","scriptMasterFirst","NOT EDITABLE !\\nFirst part of the script\\n to run on your cluster master node\\n\\n(this first part will be merged\\nwith the second part in order\\nto obtain the launch.sh script)","""\\n""".join(Preferences.DEFAULT_FIRST_PART_SCRIPT_CLUSTER.splitlines()), False, True],            
                     ["textEdit","scriptMasterLast","Second part of the script\\nto run on master node\\n\\nModify it in order to fit\\n your cluster scheduler\\n(ask your cluster administrator)", """\\n""".join(Preferences.DEFAULT_SECOND_PART_SCRIPT_CLUSTER.splitlines()), True],                    
                 ],
                 "appearance" : [
