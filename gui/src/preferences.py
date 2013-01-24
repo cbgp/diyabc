@@ -28,14 +28,14 @@ class Preferences(AutoPreferences):
     - redéfinir savePreferences et loadPreferences pour effectuer les sauvegardes/chargement 
       non prévus dans la classe mère (projets récents, modèle historique)
     - définir les actions à effectuer lors de changement de valeurs des préférences (style, showTrayIcon ...)
-    - implémenter les fonctions d'accès aux valeurs des préférences (getMaxThreadNumber, getExecutablePath ...) 
+    - implémenter les fonctions d'accès aux valeurs des préférences (getMaxThreadNumber, getExecutablePath, getClusterExecutablepath ...) 
     """
 
     DEFAULT_FIRST_PART_SCRIPT_CLUSTER = """#!/bin/bash
 numSimulatedDataSet=
 numSimulatedDataSetByJob=
-maxConcurrentJobs=
 coresPerJob=
+maxConcurrentJobs=
 seed=
 projectName=
 dataFileName=
@@ -569,7 +569,43 @@ exit 0
 
     def toggleTrayIconCheck(self,state):
         self.parent.systrayHandler.toggleTrayIcon(state)
+    
+    def getClusterExecutablePath(self):
+        exClusterPath = ""
+        if self.ui.useDefaultClusterExecutableCheck.isChecked():
+            # LINUX
+            if "linux" in sys.platform:
+                if "86" in platform.machine() and "64" not in platform.machine():
+                    exClusterpath = "%s/bin/diyabc-comput-linux-i386"%DATAPATH
+                else:
+                    exClusterpath = "%s/bin/diyabc-comput-linux-x64"%DATAPATH
+                # si on a le paquet deb installé et qu'aucun binaire n'est dans le datapath
+                if os.path.exists("/usr/bin/diyabc") and not os.path.exists("%s/bin/diyabc-comput-linux-x64"%DATAPATH)\
+                        and not os.path.exists("%s/bin/diyabc-comput-linux-i386"%DATAPATH):
+                    exClusterpath = "/usr/bin/diyabc"
+            # WINDOWS
+            elif "win" in sys.platform and "darwin" not in sys.platform:
+                if os.environ.has_key("PROCESSOR_ARCHITECTURE") and "86" not in os.environ["PROCESSOR_ARCHITECTURE"]:
+                    exClusterpath = ".\%s\\bin\diyabc-comput-win-x64"%DATAPATH.replace('/','\\')
+                else:
+                    exClusterpath = ".\%s\\bin\diyabc-comput-win-i386"%DATAPATH.replace('/','\\')
+            # MACOS
+            elif "darwin" in sys.platform:
+                if "86" in platform.machine() and "64" not in platform.machine():
+                    exClusterpath = "%s/bin/diyabc-comput-mac-i386"%DATAPATH
+                else:
+                    exClusterpath = "%s/bin/diyabc-comput-mac-x64"%DATAPATH
+        else:
+            if not os.path.exists(self.ui.execCluserPathPathEdit.text()):
+                output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%self.ui.execClusterPathPathEdit.text())
+                return ""
+            return str(self.ui.execClusterPathPathEdit.text())
 
+        if not os.path.exists(exClusterpath):
+            output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%exClusterpath)
+            return ""
+        return exClusterpath   
+    
     def getMaxThreadNumber(self):
         return int(self.ui.maxThreadCombo.currentText())
 

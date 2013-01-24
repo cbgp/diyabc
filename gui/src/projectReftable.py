@@ -278,16 +278,25 @@ class ProjectReftable(Project):
 
     def genMasterScript(self):
         """ génération du script à exécuter sur le noeud maitre
+                numSimulatedDataSet=
+                numSimulatedDataSetByJob=
+                coresPerJob=
+                maxConcurrentJobs=
+                seed=
+                projectName=""
+                dataFileName=""
+                referenceTableHeaderName=""
         """
-        nbToGen = int(self.ui.nbSetsReqEdit.text())
-        nbRecByJob = int(self.parent.preferences_win.ui.nbRecByJobEdit.text())
-        #queueName = str(self.parent.preferences_win.ui.queueNameEdit.text())
+        numSimulatedDataSet = int(self.ui.nbSetsReqEdit.text())
+        numSimulatedDataSetByJob = int(self.parent.preferences_win.ui.numSimulatedDataSetByJobEdit.text())
+        coresPerJob = int(self.parent.preferences_win.ui.coresPerJobEdit.text())
+        maxConcurrentJobs = int(self.parent.preferences_win.ui.maxConcurrentJobsEdit.text())
+        seed = int(self.parent.preferences_win.ui.seedEdit.text())
+        if numSimulatedDataSetByJob > numSimulatedDataSet :
+            numSimulatedDataSetByJob = numSimulatedDataSet
             
-        if nbRecByJob > nbToGen :
-            nbRecByJob = nbToGen
-            
-        nbFullQsub = nbToGen / nbRecByJob
-        nbLastQsub = nbToGen % nbRecByJob   
+        nbFullQsub = numSimulatedDataSet / numSimulatedDataSetByJob
+        nbLastQsub = numSimulatedDataSet % numSimulatedDataSetByJob   
         
         if nbLastQsub == 0:
             nbQsub = nbFullQsub
@@ -304,12 +313,19 @@ class ProjectReftable(Project):
 #!/bin/bash
 numSimulatedDataSet={0}
 numSimulatedDataSetByJob={1}
-numSimulatedDataSetLastJob={2}
-numJobs={3}
-projectName={4}
-dataFileName={5}
-referenceTableHeaderName={6}
-""".format(nbToGen, nbRecByJob, nbLastQsub, nbQsub, projectName, dataFileName, referenceTableHeaderName)
+coresPerJob={2}
+maxConcurrentJobs={3}
+seed={4}
+projectName={5}
+dataFileName={6}
+referenceTableHeaderName={7}
+""".format(numSimulatedDataSet, 
+           numSimulatedDataSetByJob,
+           coresPerJob,
+           seed,
+           projectName,
+           dataFileName,
+           referenceTableHeaderName)
         self.ui.parent.preferences_win.ui.scriptMasterFirstTextEdit.setText(masterScriptFirstPart)
         res = str(self.ui.parent.preferences_win.ui.scriptMasterFirstTextEdit.toPlainText()) \
                 + str(self.ui.parent.preferences_win.ui.scriptMasterLastTextEdit.toPlainText())
@@ -538,7 +554,7 @@ exit 0
             if not tarname.endswith(".tar"):
                 tarname += ".tar"
         if tarname != "":
-            executablePath = self.parent.preferences_win.getExecutablePath()
+            executablePath = self.parent.preferences_win.getClusterExecutablePath()
             if executablePath == "":
                 return
             dest = "%s/cluster_generation_tmp/"%self.dir
