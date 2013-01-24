@@ -11,6 +11,7 @@ from utils.visualizescenario import *
 from viewTextFile import ViewTextFile
 from utils.cbgpUtils import log
 from utils.matplotlib_example import *
+import output
 
 formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
 
@@ -39,9 +40,10 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
 
         QObject.connect(self.ui.printButton,SIGNAL("clicked()"),self.printDraws)
         QObject.connect(self.ui.closeButton,SIGNAL("clicked()"),self.exit)
-        self.ui.savePicturesButton.hide()
+        #self.ui.savePicturesButton.hide()
+        self.ui.savePicturesButton.setText("Export all to pdf")
         #self.ui.printButton.hide()
-        #QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.save)
+        QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.saveDrawsToOnePdf)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewMmmq)
         
         QObject.connect(self.ui.oRadio,SIGNAL("clicked()"),self.changeParamChoice)
@@ -320,3 +322,71 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
                     li+=1
 
             painter.end()
+
+    def saveDrawsToOnePdf(self):
+        """ Sauve tous les scenarios dans un seul pdf en découpant à 6 scenarios par page
+        """
+        proj_dir = self.parent.dir
+        pic_dir = "%s/analysis/%s"%(proj_dir,self.directory)
+        pic_basename = "posterior"
+        pic_whole_path = "%s/%s"%(pic_dir,pic_basename)
+
+        if self.ui.oRadio.isChecked():
+            file_subname = "_original"
+        elif self.ui.cRadio.isChecked():
+            file_subname = "_composite"
+        elif self.ui.sRadio.isChecked():
+            file_subname = "_scaled"
+
+        nbpix = len(self.dicoPlot.keys())
+        largeur = 2
+        # resultat de la div entière plus le reste (modulo)
+        longueur = (nbpix/largeur)+(nbpix%largeur)
+        ind = 0
+        li=0
+        delta = 120
+
+        self.im_result = QPrinter()
+        self.im_result.setOutputFormat(QPrinter.PdfFormat)
+        save_path = '%s%s_all.pdf'%(pic_whole_path,file_subname)
+        self.im_result.setOutputFileName(save_path)
+        painter = QPainter()
+        self.im_result.setResolution(100)
+        painter.begin(self.im_result)
+
+        keys = self.dicoPlot.keys()
+        # on prend un des graphes pour savoir ses dimensions
+        #size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
+        # on fait des lignes tant qu'on a des pix
+        while (ind < nbpix):
+            col = 0
+            # une ligne
+            while (ind < nbpix) and (col < largeur):
+                plot = self.dicoPlot[keys[ind]]
+
+                bbox = plot.fig.bbox
+                canvas = plot.fig.canvas
+                w, h = int(bbox.width), int(bbox.height)
+                #l, t = bbox.ll().x().get(), bbox.ur().y().get()
+                reg = canvas.copy_from_bbox(bbox)
+                if QtCore.QSysInfo.ByteOrder == QtCore.QSysInfo.LittleEndian:
+                    stringBuffer = canvas.renderer._renderer.tostring_bgra()
+                else:
+                    stringBuffer = canvas.renderer._renderer.tostring_argb()
+                qImage = QtGui.QImage(stringBuffer, w, h, QtGui.QImage.Format_ARGB32)
+
+                #plot.print_(painter, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
+                painter.drawImage(QRect(QPoint(col*w,(li*h)+(delta*li)),QPoint((col+1)*w,((li+1)*h)+(delta*li))),qImage)
+
+                #plot.print_(painter, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
+                if (ind+1)%6 == 0:
+                    self.im_result.newPage()
+                col+=1
+                ind+=1
+            if (ind)%6 == 0:
+                li = 0
+            else:
+                li+=1
+
+        painter.end()
+        output.notify(self,"pdf saved", 'The pdf has been saved in\n%s'%save_path)
