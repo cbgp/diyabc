@@ -14,8 +14,8 @@ git pull --rebase
 make clean
 CCVERSION="-fsf-4.7" make 
 
-cp ./src-JMC-C++/general ./gui/data/executables/diyabc-comput-mac-i386
-cp ./src-JMC-C++/general ./gui/data/executables/diyabc-comput-mac-x64
+cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-mac-i386
+cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-mac-x64
 
 cd ./build/
 

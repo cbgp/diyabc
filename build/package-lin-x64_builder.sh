@@ -10,7 +10,7 @@ cd $diyabc_git
 make clean
 make 
 
-cp ./src-JMC-C++/general ./gui/data/executables/diyabc-comput-linux-x64
+cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-linux-x64
 
 cd ./build/
 rm -rf $packageDir

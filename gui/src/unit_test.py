@@ -41,7 +41,7 @@ class testDiyabc(unittest.TestCase):
         dd = datetime.now()
         logfile = os.path.expanduser("~/.diyabc/logs/test_%02d_%02d_%s-%02dh_%02dm-%s.log"%(dd.day,dd.month,dd.year,dd.hour,dd.minute,os.getpid()))
         diyabc = Diyabc(app,logfile=logfile)
-        #diyabc.show()
+        diyabc.show()
         # pour le dragNdrop des dossier projet
         diyabc.setAcceptDrops(True)
         # pour les logs dans un fichier et sur le terminal

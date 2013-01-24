@@ -361,25 +361,25 @@ echo "*************************************************************"
             # LINUX
             if "linux" in sys.platform:
                 if "86" in platform.machine() and "64" not in platform.machine():
-                    exPath = "%s/executables/diyabc-comput-linux-i386"%DATAPATH
+                    exPath = "%s/bin/diyabc-comput-linux-i386"%DATAPATH
                 else:
-                    exPath = "%s/executables/diyabc-comput-linux-x64"%DATAPATH
+                    exPath = "%s/bin/diyabc-comput-linux-x64"%DATAPATH
                 # si on a le paquet deb installé et qu'aucun binaire n'est dans le datapath
-                if os.path.exists("/usr/bin/diyabc") and not os.path.exists("%s/executables/diyabc-comput-linux-x64"%DATAPATH)\
-                        and not os.path.exists("%s/executables/diyabc-comput-linux-i386"%DATAPATH):
+                if os.path.exists("/usr/bin/diyabc") and not os.path.exists("%s/bin/diyabc-comput-linux-x64"%DATAPATH)\
+                        and not os.path.exists("%s/bin/diyabc-comput-linux-i386"%DATAPATH):
                     exPath = "/usr/bin/diyabc"
             # WINDOWS
             elif "win" in sys.platform and "darwin" not in sys.platform:
                 if os.environ.has_key("PROCESSOR_ARCHITECTURE") and "86" not in os.environ["PROCESSOR_ARCHITECTURE"]:
-                    exPath = ".\%s\executables\diyabc-comput-win-x64"%DATAPATH.replace('/','\\')
+                    exPath = ".\%s\bin\diyabc-comput-win-x64"%DATAPATH.replace('/','\\')
                 else:
-                    exPath = ".\%s\executables\diyabc-comput-win-i386"%DATAPATH.replace('/','\\')
+                    exPath = ".\%s\bin\diyabc-comput-win-i386"%DATAPATH.replace('/','\\')
             # MACOS
             elif "darwin" in sys.platform:
                 if "86" in platform.machine() and "64" not in platform.machine():
-                    exPath = "%s/executables/diyabc-comput-mac-i386"%DATAPATH
+                    exPath = "%s/bin/diyabc-comput-mac-i386"%DATAPATH
                 else:
-                    exPath = "%s/executables/diyabc-comput-mac-x64"%DATAPATH
+                    exPath = "%s/bin/diyabc-comput-mac-x64"%DATAPATH
         else:
             if not os.path.exists(self.ui.execPathPathEdit.text()):
                 output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found")

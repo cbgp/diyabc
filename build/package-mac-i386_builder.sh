@@ -11,7 +11,7 @@ cd $diyabc_git
 make clean
 CCVERSION="" make 
 
-cp ./src-JMC-C++/general ./gui/data/executables/diyabc-comput-mac-i386
+cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-mac-i386
 
 cd ./build/
 
