@@ -346,7 +346,7 @@ class AutoPreferences(QFrame):
                 elif proptype == "lineEdit":
                     exec('val_to_save = str(self.ui.%sEdit.text())'%propname)
                 elif proptype == "textEdit":
-                    exec('val_to_save = str(self.ui.%sTextEdit.toHtml())'%propname)                    
+                    exec('val_to_save = str(self.ui.%sTextEdit.toPlainText())'%propname)                    
                 elif proptype == "path":
                     exec('val_to_save = str(self.ui.%sPathEdit.text())'%propname)
                 elif proptype == "combo":
