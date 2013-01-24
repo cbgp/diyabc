@@ -371,9 +371,9 @@ echo "*************************************************************"
             # WINDOWS
             elif "win" in sys.platform and "darwin" not in sys.platform:
                 if os.environ.has_key("PROCESSOR_ARCHITECTURE") and "86" not in os.environ["PROCESSOR_ARCHITECTURE"]:
-                    exPath = ".\%s\bin\diyabc-comput-win-x64"%DATAPATH.replace('/','\\')
+                    exPath = ".\%s\\bin\diyabc-comput-win-x64"%DATAPATH.replace('/','\\')
                 else:
-                    exPath = ".\%s\bin\diyabc-comput-win-i386"%DATAPATH.replace('/','\\')
+                    exPath = ".\%s\\bin\diyabc-comput-win-i386"%DATAPATH.replace('/','\\')
             # MACOS
             elif "darwin" in sys.platform:
                 if "86" in platform.machine() and "64" not in platform.machine():
@@ -382,12 +382,12 @@ echo "*************************************************************"
                     exPath = "%s/bin/diyabc-comput-mac-x64"%DATAPATH
         else:
             if not os.path.exists(self.ui.execPathPathEdit.text()):
-                output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found")
+                output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%self.ui.execPathPathEdit.text())
                 return ""
             return str(self.ui.execPathPathEdit.text())
 
         if not os.path.exists(exPath):
-            output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found")
+            output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%exPath)
             return ""
         return exPath
 
