@@ -283,6 +283,7 @@ class ProjectReftable(Project):
                 coresPerJob=
                 maxConcurrentJobs=
                 seed=
+                diyabcPath=
                 projectName=""
                 dataFileName=""
                 referenceTableHeaderName=""
@@ -292,17 +293,9 @@ class ProjectReftable(Project):
         coresPerJob = int(self.parent.preferences_win.ui.coresPerJobEdit.text())
         maxConcurrentJobs = int(self.parent.preferences_win.ui.maxConcurrentJobsEdit.text())
         seed = int(self.parent.preferences_win.ui.seedEdit.text())
-        if numSimulatedDataSetByJob > numSimulatedDataSet :
-            numSimulatedDataSetByJob = numSimulatedDataSet
-            
-        nbFullQsub = numSimulatedDataSet / numSimulatedDataSetByJob
-        nbLastQsub = numSimulatedDataSet % numSimulatedDataSetByJob   
-        
-        if nbLastQsub == 0:
-            nbQsub = nbFullQsub
-        else:
-            nbQsub = nbFullQsub+1
-        
+        diyabcPath = str(self.parent.preferences_win.ui.diyabcPathPathEdit.text())
+        if os.path.exists(diyabcPath) :
+            diyabcPath = os.path.join('./', os.path.basename(diyabcPath))
         projectName = str(self.ui.projNameLabelValue.text())
         referenceTableHeaderName = self.parent.reftableheader_name
         dataFileName = self.dataFileName
@@ -316,13 +309,16 @@ numSimulatedDataSetByJob={1}
 coresPerJob={2}
 maxConcurrentJobs={3}
 seed={4}
-projectName={5}
-dataFileName={6}
-referenceTableHeaderName={7}
+diyabcPath={5}
+projectName={6}
+dataFileName={7}
+referenceTableHeaderName={8}
 """.format(numSimulatedDataSet, 
            numSimulatedDataSetByJob,
            coresPerJob,
+           maxConcurrentJobs,
            seed,
+           diyabcPath,
            projectName,
            dataFileName,
            referenceTableHeaderName)
@@ -346,27 +342,36 @@ hostname
 # check script parameters
 function usage {
     echo -e "\tThis script runs DIYABC on a node cluster"
-    echo -e "\tUsage : $0 <numToGenerate> <workingDirectory> <numIdOfTheCurrentJob> <dataFile>"
+    echo -e "\tUsage : $0 <diyabcPath> <numToGenerate> <workingDirectory> <numIdOfTheCurrentJob> <dataFile>"
     echo -e "\texample : "
-    echo -e "\t\t $0 5000 $PWD 3 dyabcData.mss"
+    echo -e "\t\t $0 \"/usr/local/bin/diyabc\" 5000 \"$PWD\" 3 \"dyabcData.mss\""
 }
 
 # Test  parameters number
-if [ "$#" -lt 4 ]
+if [ "$#" -lt 5 ]
     then
     echo -e "\nERROR :"
-    echo -e "      Require 4  parameters, $# given\n\n"
+    echo -e "      Require 5  parameters, $# given\n\n"
     usage
     exit 2
 fi
 
-NBTOGEN=$1
-USERDIR=$2
-MYNUMBER=$3
-DATAFILE=$4
-# Get full path for dir and file
+DIYABCPATH=$1
+NBTOGEN=$2
+USERDIR=$3
+MYNUMBER=$4
+DATAFILE=$5
+# Get full path for diyabc, dir and file
+DIYABCPATH=`readlink -f "$DIYABCPATH"`
 USERDIR=`readlink -f "$USERDIR"`                   
 DATAFILE=`readlink -f "$DATAFILE"` 
+
+if [ ! -r "$DIYABCPATH" ]; then
+    echo -e "\nERROR :"
+    echo -e "      diyabc not found in $DIYABCPATH or you can not read it\n"
+    usage
+    exit 3
+fi
 
 if [ ! -r "$DATAFILE" ]; then
     echo -e "\nERROR :"
@@ -490,16 +495,17 @@ while [ $rngNotFound ]
     sleep 2
 done
 #copy files to tmp dir
-cp general "$TMPDIR/"
+cp "$DIYABCPATH" "$TMPDIR/"
+chmod +x "$TMPDIR/$DIYABCPATH"
 cp header.txt "$TMPDIR/"
 cp "$DATAFILE" "$TMPDIR/"
 
 # Computations
 rngNum=`echo ${rngFileName:10} | cut -d'.' -f1`
-cmd="\"$TMPDIR/general\" -p \"$TMPDIR/\" -w $rngNum -r $NBTOGEN "
+cmd="\""$TMPDIR/$DIYABCPATH"\" -p \"$TMPDIR/\" -w $rngNum -r $NBTOGEN "
 echo -e "Running computations :" 
 echo -e "$cmd\n"
-"$TMPDIR/general" -p "$TMPDIR/" -w $rngNum -r $NBTOGEN &> "$TMPDIR/diyabc.out" &
+""$TMPDIR/$DIYABCPATH"" -p "$TMPDIR/" -w $rngNum -r $NBTOGEN &> "$TMPDIR/diyabc.out" &
 cmdPID="$!"
 echo $cmdPID > "$rngFlagFile"
 sleep 5
@@ -554,9 +560,6 @@ exit 0
             if not tarname.endswith(".tar"):
                 tarname += ".tar"
         if tarname != "":
-            executablePath = self.parent.preferences_win.getClusterExecutablePath()
-            if executablePath == "":
-                return
             dest = "%s/cluster_generation_tmp/"%self.dir
             if os.path.exists(dest):
                 shutil.rmtree(dest)
@@ -590,7 +593,9 @@ exit 0
             tar.add(scnffile,'%s/node.sh'%tarRepName)
             tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
             tar.add(self.dataFileSource,"%s/%s"%(str(tarRepName),str(self.dataFileName)))
-            tar.add(executablePath,"%s/general"%tarRepName)
+            diyabcPath = str(self.parent.preferences_win.ui.diyabcPathPathEdit.text())
+            if os.path.exists(diyabcPath) :
+                tar.add(diyabcPath,"%s/%s"%(tarRepName, os.path.basename(diyabcPath)))
             tar.close()
 
             # nettoyage des fichiers temporaires de script

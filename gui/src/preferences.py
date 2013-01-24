@@ -37,6 +37,7 @@ numSimulatedDataSetByJob=
 coresPerJob=
 maxConcurrentJobs=
 seed=
+diyabcPath=
 projectName=
 dataFileName=
 referenceTableHeaderName=
@@ -116,10 +117,10 @@ function testRNGallReadyGenerated(){
 
 function generateRNGs(){
     # Generation of random numbers
-    cmd="./general -p ./ -n \"t:$coresPerJob;c:$maxConcurrentJobs;s:$seed\""
+    cmd="\"$diyabcPath\" -p ./ -n \"t:$coresPerJob;c:$maxConcurrentJobs;s:$seed\""
     echo "Generation of random numbers :" 
     echo $cmd
-    $cmd
+    "$diyabcPath" -p ./ -n "t:$coresPerJob;c:$maxConcurrentJobs;s:$seed"
 }
 
 
@@ -136,14 +137,15 @@ function submitJobs(){
         ############################## EDIT #########################################
         ######## Modify this line to submit jobs to your cluster scheduler ###############
         # node.sh arguments
-        ##1 NBTOGEN
-        ##2 USERDIR
-        ##3 MYNUMBER
+        ##1 DIYABCPATH
+        ##2 NBTOGEN
+        ##3 USERDIR
+        ##4 MYNUMBER
         ##5 DATAFILE
-        cmd="qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh $numSimulatedDataSetForThisJob \"`pwd`\" $jobNum  \"$PWD/$dataFileName\""
+        cmd="qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh \"$diyabcPath\" $numSimulatedDataSetForThisJob \"`pwd`\" $jobNum  \"$PWD/$dataFileName\""
     ############################## END EDIT #####################################
         echo $cmd
-        qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
+        qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh "$diyabcPath" $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
         if [ $? -eq "0" ] 
             then 
             touch runningJobs.lock
@@ -165,9 +167,9 @@ else
     numJobs=$(( $numSimulatedDataSet / $numSimulatedDataSetByJob + 1 ))
 fi
 
-if [ "$seed" -eq "-1" ]
+if [ "$seed" -lt "0" ] 
     then
-    $seed=$RANDOM
+    seed=$RANDOM
 fi
 
 
@@ -176,6 +178,7 @@ if [ "$maxConcurrentJobs" -gt "$numJobs" ]
     maxConcurrentJobs=$numJobs
 fi
 
+projectName=${$projectName//[-._ àâäçéèêëîïôöûü]/}
 
 # test if the jobs had allready been submitted
 if [ `ls -1 | grep lock  | wc -l` -eq "0" ] 
@@ -215,12 +218,8 @@ if [ $? -eq "0" ]
     rm runningJobs.lock
 fi 
 
-
-
-
 #END
 exit 0
-
 """
 
     def __init__(self,parent=None,configfile=None):
@@ -284,7 +283,7 @@ exit 0
                          "labelText":"Use a cluster (don't check if you don't know what it is)",
                          "defaultState":False},
                     {"proptype":"lineEdit",
-                         "propname":"numSimulatedDatasetByJob",
+                         "propname":"numSimulatedDataSetByJob",
                          "labelText":"Number of records to generate for each job (granularity)",
                          "default_value":"50000"},
                     {"proptype":"lineEdit",
@@ -297,8 +296,12 @@ exit 0
                          "default_value":"200"},
                     {"proptype":"lineEdit",
                          "propname":"seed",
-                         "labelText":"seed to generate all RNG files (if 'None' a random seed will be used)",
-                         "default_value":"None"},
+                         "labelText":"seed to generate all RNG files (if set to negative then a random seed will be used)",
+                         "default_value":"-1"},
+                    {"proptype":"pathEdit",
+                         "propname":"diyabcPath",
+                         "labelText":"Path to the diyabc binary on the cluster or on your computer",
+                         "default_value":""},
                     {"proptype":"textEdit",
                          "propname":"scriptMasterFirst",
                          "labelText":"NOT EDITABLE !\\nFirst part of the script\\n to run on your cluster master node\\n\\n(this first part will be merged\\nwith the second part in order\\nto obtain the launch.sh script)",
@@ -414,7 +417,7 @@ exit 0
         self.changeLogLevel(self.ui.maxLogLvlCombo.currentIndex())
 
         QObject.connect(self.ui.useClusterCheck,SIGNAL("toggled(bool)"),self.toggleCluster)
-        QObject.connect(self.ui.numSimulatedDatasetByJobEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
+        QObject.connect(self.ui.numSimulatedDataSetByJobEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
         QObject.connect(self.ui.coresPerJobEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
         QObject.connect(self.ui.maxConcurrentJobsEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
         QObject.connect(self.ui.seedEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
@@ -448,7 +451,7 @@ exit 0
         self.mutmodS.ui.setMutSeqLabel.setText("Default values for mutation model of Sequences")
 
     def checkClusterValues(self, Qstr):
-        numSimulatedDatasetByJob = str(self.ui.numSimulatedDatasetByJobEdit.text()).strip()
+        numSimulatedDatasetByJob = str(self.ui.numSimulatedDataSetByJobEdit.text()).strip()
         if numSimulatedDatasetByJob != '' :
             try :
                 numSimulatedDatasetByJob = int(numSimulatedDatasetByJob)
@@ -551,7 +554,7 @@ exit 0
 
 
     def toggleCluster(self,state):
-        self.ui.numSimulatedDatasetByJobEdit.setDisabled(not state)
+        self.ui.numSimulatedDataSetByJobEdit.setDisabled(not state)
         self.ui.coresPerJobEdit.setDisabled(not state)
         self.ui.maxConcurrentJobsEdit.setDisabled(not state)
         self.ui.seedEdit.setDisabled(not state)
@@ -597,9 +600,9 @@ exit 0
                     exClusterpath = "%s/bin/diyabc-comput-mac-x64"%DATAPATH
         else:
             if not os.path.exists(self.ui.execCluserPathPathEdit.text()):
-                output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%self.ui.execClusterPathPathEdit.text())
+                output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%self.ui.diyabcPathPathEdit.text())
                 return ""
-            return str(self.ui.execClusterPathPathEdit.text())
+            return str(self.ui.diyabcPathPathEdit.text())
 
         if not os.path.exists(exClusterpath):
             output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%exClusterpath)
