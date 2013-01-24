@@ -362,6 +362,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             col = 0
             # une ligne
             while (ind < nbpix) and (col < largeur):
+                if ind>0 and (ind)%6 == 0:
+                    self.im_result.newPage()
                 plot = self.dicoPlot[keys[ind]]
 
                 bbox = plot.fig.bbox
@@ -379,8 +381,6 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
                 painter.drawImage(QRect(QPoint(col*w,(li*h)+(delta*li)),QPoint((col+1)*w,((li+1)*h)+(delta*li))),qImage)
 
                 #plot.print_(painter, QRect(QPoint(col*size.width(),li*size.height()),QSize(size)))
-                if (ind+1)%6 == 0:
-                    self.im_result.newPage()
                 col+=1
                 ind+=1
             if (ind)%6 == 0:
