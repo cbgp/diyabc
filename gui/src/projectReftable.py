@@ -555,7 +555,7 @@ exit 0
         le datafile et le reftableheader.
         """
         if tarname == None:
-            output.notify(self,"Warning","You are about to generate an archive in order to compute on a cluster,\n This archive will contain the datafile, the header file and the scripts to launch computations on an SGE cluster main node")
+            output.notify(self,"Warning","You are about to generate an archive in order to compute on a cluster,\n This archive will contain the datafile, the header file, the diyabc binary (optional) and the scripts to launch computations on an cluster main node")
             tarname = str(QFileDialog.getSaveFileName(self,"Saving cluster archive","%s_reftableCluster"%str(self.ui.projNameLabelValue.text()),"TAR archive (*.tar)"))
             if tarname == "":
                 return ""
