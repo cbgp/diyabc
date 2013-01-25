@@ -4,7 +4,7 @@
 # @author Julien Veyssier
 #
 # @brief Fenêtre pour gérer les préférences personnelles
-
+backslash a corriger !!!!! + mettre le bon nb de simul et non le total
 import os,sys,platform,multiprocessing
 import os.path
 import ConfigParser
@@ -117,7 +117,7 @@ function testRNGallReadyGenerated(){
 
 function generateRNGs(){
     # Generation of random numbers
-    cmd="\"$diyabcPath\" -p ./ -n \"t:$coresPerJob;c:$maxConcurrentJobs;s:$seed\""
+    cmd="\\"$diyabcPath\\" -p ./ -n \\"t:$coresPerJob;c:$maxConcurrentJobs;s:$seed\\""
     echo "Generation of random numbers :" 
     echo $cmd
     "$diyabcPath" -p ./ -n "t:$coresPerJob;c:$maxConcurrentJobs;s:$seed"
@@ -142,7 +142,7 @@ function submitJobs(){
         ##3 USERDIR
         ##4 MYNUMBER
         ##5 DATAFILE
-        cmd="qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh \"$diyabcPath\" $numSimulatedDataSetForThisJob \"`pwd`\" $jobNum  \"$PWD/$dataFileName\""
+        cmd="qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh \\"$diyabcPath\\" $numSimulatedDataSetForThisJob \\"`pwd`\\" $jobNum  \\"$PWD/$dataFileName\\""
     ############################## END EDIT #####################################
         echo $cmd
         qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh "$diyabcPath" $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
@@ -178,7 +178,7 @@ if [ "$maxConcurrentJobs" -gt "$numJobs" ]
     maxConcurrentJobs=$numJobs
 fi
 
-projectName=${$projectName//[-._ àâäçéèêëîïôöûü]/}
+projectName=${projectName//[-._ \[\]\{\}]/}
 
 # test if the jobs had allready been submitted
 if [ `ls -1 | grep lock  | wc -l` -eq "0" ] 
@@ -205,7 +205,7 @@ echo `progress $numJobs`
 
 
 echo "Concatenating reftables :"
-cmd="./general -p \"$PWD/\" -q  &> concat.out"
+cmd="./general -p \\"$PWD/\\" -q  &> concat.out"
 echo $cmd
 ./general -p "$PWD/" -q  &> concat.out
 

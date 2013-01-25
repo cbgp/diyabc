@@ -288,7 +288,7 @@ class ProjectReftable(Project):
                 dataFileName=""
                 referenceTableHeaderName=""
         """
-        numSimulatedDataSet = int(self.ui.nbSetsReqEdit.text())
+        numSimulatedDataSet = int(self.ui.nbSetsReqEdit.text()) - int(self.ui.nbSetsDoneEdit.text())
         numSimulatedDataSetByJob = int(self.parent.preferences_win.ui.numSimulatedDataSetByJobEdit.text())
         coresPerJob = int(self.parent.preferences_win.ui.coresPerJobEdit.text())
         maxConcurrentJobs = int(self.parent.preferences_win.ui.maxConcurrentJobsEdit.text())
