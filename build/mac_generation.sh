@@ -62,7 +62,7 @@ if sys.platform.startswith('darwin'):
 # .app build
 python2.6 $pyinst -y $output/$APPNAME.spec
 # icon copy
-cp $icon $output/Mac$APPNAME.app/Contents/Resources/App.icns
+cp $icon $output/Mac$APPNAME.app/Contents/Resources/icon-windowed.icns
 # dist rep copy
 cp -r $output/dist/$APPNAME/* $output/Mac$APPNAME.app/Contents/MacOS/
 # qmenu copy
@@ -78,9 +78,9 @@ fi
 # config file modification
 sed -i "" "s/string>1</string>0</g" $output/Mac$APPNAME.app/Contents/Info.plist
 sed -i "" "s/Macdiyabc/Diyabc/g" $output/Mac$APPNAME.app/Contents/Info.plist
-if [ `grep diyabc $output/Mac$APPNAME.app/Contents/Info.plist | wc -l` -eq 1 ]; then
-    sed -i "" "s/diyabc/MacOS\/diyabc/g" $output/Mac$APPNAME.app/Contents/Info.plist
-fi
+#if [ `grep diyabc $output/Mac$APPNAME.app/Contents/Info.plist | wc -l` -eq 1 ]; then
+#    sed -i "" "s/diyabc/MacOS\/diyabc/g" $output/Mac$APPNAME.app/Contents/Info.plist
+#fi
 mv $output/Mac$APPNAME.app $output/$APPNAME-$VERSION.app
 # copy of needed images
 mkdir $output/$APPNAME-$VERSION.app/Contents/Resources/data
