@@ -134,6 +134,7 @@ class AutoPreferences(QFrame):
                 #exec('self.addProp%s(cat,*f[1:])'%(f[0][0].upper() + f[0][1:]))
                 pt = f["proptype"]
                 f.pop("proptype")
+                # super one line but incompatible with python 2.6
                 #exec('self.addProp%s(cat,**{key: value for key, value in f.items() if key != "proptype"})'%(f["proptype"][0].upper() + f["proptype"][1:]))
                 exec('self.addProp%s(cat,**f)'%(pt[0].upper() + pt[1:]))
                 #if f[0] == "combo":

@@ -49,15 +49,14 @@ echo `cat $TMPBUILD/src/variables.py | grep VERSION`
 # nettoyage de la config de pyinstaller
 rm -f `dirname $pyinst`/config.dat
 # lancement de la generation
-python $pyinst $pysrctmp -o "$output"
+python $pyinst --onefile $pysrctmp -o "$output"
 
 # copy of needed images
-mkdir $output/dist/$APPNAME/data/
-cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/bin $SOURCEDIR/../data/icons  $output/dist/$APPNAME/data/
-cp -r $SOURCEDIR/uis /etc/matplotlibrc $output/dist/$APPNAME/
+mkdir -p $output/$APPNAME-$VERSION-linux$ARCH/data/
+cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/bin $SOURCEDIR/../data/icons  $output/$APPNAME-$VERSION-linux$ARCH/data/
+cp -r $SOURCEDIR/uis /etc/matplotlibrc $output/$APPNAME-$VERSION-linux$ARCH/
 #rm -rf $TMPBUILD
 sleep 3
-mv $output/dist/$APPNAME $output/dist/$APPNAME-$VERSION
-mv $output/dist/$APPNAME-$VERSION $output/$APPNAME-$VERSION-linux$ARCH
+mv $output/dist/$APPNAME $output/$APPNAME-$VERSION-linux$ARCH/
 rmdir $output/dist
 rm -rf $output/build $output/$APPNAME.spec

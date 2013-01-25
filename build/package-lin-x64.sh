@@ -17,7 +17,7 @@ cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-linux-x64
 cd ./build/
 rm -rf $packageDir
 
-./linux_generation.sh ./pyinstaller_1743/pyinstaller.py $packageDir  ../gui/src/diyabc.py 64
+./linux_generation.sh ./pyinstaller-2.0/pyinstaller.py $packageDir  ../gui/src/diyabc.py 64
 cd lastDiyabc
 #zip -r diyabc_linux64.zip *
 zip -r "`ls | grep diyabc*64`.zip" diyabc*64
