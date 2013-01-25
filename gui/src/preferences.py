@@ -116,7 +116,7 @@ function testRNGallReadyGenerated(){
 
 function generateRNGs(){
     # Generation of random numbers
-    cmd="\\"$diyabcPath\\" -p ./ -n \\"t:$coresPerJob;c:$maxConcurrentJobs;s:$seed\\""
+    cmd="$diyabcPath -p ./ -n ""'""t:$coresPerJob;c:$maxConcurrentJobs;s:$seed""'"
     echo "Generation of random numbers :" 
     echo $cmd
     "$diyabcPath" -p ./ -n "t:$coresPerJob;c:$maxConcurrentJobs;s:$seed"
@@ -141,10 +141,10 @@ function submitJobs(){
         ##3 USERDIR
         ##4 MYNUMBER
         ##5 DATAFILE
-        cmd="qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh \\"$diyabcPath\\" $numSimulatedDataSetForThisJob \\"`pwd`\\" $jobNum  \\"$PWD/$dataFileName\\""
-    ############################## END EDIT #####################################
+        cmd="qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh ""'""$diyabcPath""'"" $numSimulatedDataSetForThisJob ""'""`pwd`""'"" $jobNum  ""'""$PWD/$dataFileName""'"
         echo $cmd
         qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh "$diyabcPath" $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
+        ############################## END EDIT #####################################
         if [ $? -eq "0" ] 
             then 
             touch runningJobs.lock

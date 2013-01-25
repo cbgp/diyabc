@@ -415,7 +415,7 @@ function trapActions(){
     echo -e "trap ls -al "$TMPDIR" :" >&2
     ls -al "$TMPDIR" >&2
     echo -e "\n=====  trap :  reftable.txt    ====="  >&2
-    cat"$TMPDIR/reftable.log"  >&2
+    cat "$TMPDIR/reftable.log"  >&2
     echo -e "\n=====  trap :  statobs.txt    ====="  >&2
     cat "$TMPDIR/statobs.txt"  >&2
     echo -e "\n=====  trap :   diyabc.out    ====="  >&2
@@ -496,16 +496,16 @@ while [ $rngNotFound ]
 done
 #copy files to tmp dir
 cp "$DIYABCPATH" "$TMPDIR/"
-chmod +x "$TMPDIR/$DIYABCPATH"
+chmod +x "$TMPDIR/`basename $DIYABCPATH`"
 cp header.txt "$TMPDIR/"
 cp "$DATAFILE" "$TMPDIR/"
 
 # Computations
 rngNum=`echo ${rngFileName:10} | cut -d'.' -f1`
-cmd="\""$TMPDIR/$DIYABCPATH"\" -p \"$TMPDIR/\" -w $rngNum -r $NBTOGEN "
+cmd="$TMPDIR/`basename $DIYABCPATH` -p \"$TMPDIR/\" -w $rngNum -r $NBTOGEN "
 echo -e "Running computations :" 
-echo -e "$cmd\n"
-""$TMPDIR/$DIYABCPATH"" -p "$TMPDIR/" -w $rngNum -r $NBTOGEN &> "$TMPDIR/diyabc.out" &
+echo -e "$cmd"
+"$TMPDIR/`basename $DIYABCPATH`" -p "$TMPDIR/" -w $rngNum -r $NBTOGEN &> "$TMPDIR/diyabc.out" &
 cmdPID="$!"
 echo $cmdPID > "$rngFlagFile"
 sleep 5
