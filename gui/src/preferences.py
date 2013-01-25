@@ -297,10 +297,20 @@ exit 0
                          "propname":"seed",
                          "labelText":"seed to generate all RNG files (if set to negative then a random seed will be used)",
                          "default_value":"-1"},
+                    {"proptype":"combo",
+                         "propname":"clusterBinLocation",
+                         "labelText":"The diabc binary is on :",
+                         "dicoValTxt":{'cluster':'cluster', 'local':'local'},
+                         "l_ordered_val":['cluster', 'local'],
+                         "default_value": 'cluster'},
+                    {"proptype":"lineEdit",
+                         "propname":"diyabcPathCluster",
+                         "labelText":"Absolut path to the diyabc binary on the cluster",
+                         "default_value":""},   
                     {"proptype":"pathEdit",
-                         "propname":"diyabcPath",
-                         "labelText":"Path to the diyabc binary on the cluster or on your computer",
-                         "default_value":""},
+                         "propname":"diyabcPathLocal",
+                         "labelText":"Path to the diyabc binary on your computer (local)",
+                         "default_value":""},                                              
                     {"proptype":"textEdit",
                          "propname":"scriptMasterFirst",
                          "labelText":"NOT EDITABLE !\\nFirst part of the script\\n to run on your cluster master node\\n\\n(this first part will be merged\\nwith the second part in order\\nto obtain the launch.sh script)",
@@ -420,6 +430,8 @@ exit 0
         QObject.connect(self.ui.coresPerJobEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
         QObject.connect(self.ui.maxConcurrentJobsEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
         QObject.connect(self.ui.seedEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
+        QObject.connect(self.ui.clusterBinLocationCombo,SIGNAL("currentIndexChanged(QString)"),self.toggleBinClusterPath)
+        QObject.connect(self.ui.diyabcPathLocalPathEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
         
         QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
         QObject.connect(self.ui.activateWhatsThisCheck,SIGNAL("toggled(bool)"),self.toggleWtSelection)
@@ -432,9 +444,10 @@ exit 0
         self.updateFont()
 
         self.toggleCluster(self.ui.useClusterCheck.isChecked())
+        self.toggleBinClusterPath(self.ui.clusterBinLocationCombo.currentText())
         self.toggleExeSelection(self.ui.useDefaultExecutableCheck.isChecked())
         self.toggleWtSelection(self.ui.activateWhatsThisCheck.isChecked())
-
+        
         self.hist_model = uic.loadUi("uis/historical_preferences_frame.ui")
         self.ui.tabWidget.addTab(self.hist_model,"Historical")
         self.hist_model.verticalLayout.setAlignment(Qt.AlignTop)
@@ -476,7 +489,10 @@ exit 0
             try :
                 seed = int(seed)
             except ValueError:
-                output.notify(self,"Value Error : seed","seed must be a positive integer or 'None' or blank")   
+                output.notify(self,"Value Error : seed","seed must be a positive integer or 'None' or blank")  
+        
+        if (self.ui.clusterBinLocationCombo.currentText() == 'local') and (not os.path.exists(self.ui.diyabcPathLocalPathEdit.text())) :
+            output.notify(self,"Value Error : cluster bin path","cluster binary not found. \n%s does not exists"%self.ui.diyabcPathLocalPathEdit.text())
         
     def close(self):
         if len(self.parent.project_list) == 0:
@@ -557,9 +573,20 @@ exit 0
         self.ui.coresPerJobEdit.setDisabled(not state)
         self.ui.maxConcurrentJobsEdit.setDisabled(not state)
         self.ui.seedEdit.setDisabled(not state)
+        #kkpz
         self.ui.scriptMasterFirstTextEdit.setDisabled(not state)
         self.ui.scriptMasterLastTextEdit.setDisabled(not state)
-
+        
+    def toggleBinClusterPath(self,pathPlace):
+        if self.ui.clusterBinLocationCombo.currentText() == "cluster" :
+            self.ui.frame_cluster_diyabcPathCluster.show()
+            self.ui.frame_cluster_diyabcPathLocal.hide()
+        elif self.ui.clusterBinLocationCombo.currentText() == "local" :
+            self.ui.frame_cluster_diyabcPathCluster.hide()
+            self.ui.frame_cluster_diyabcPathLocal.show()
+        else :
+            raise Exception("Place to find the cluster bin not allowed")
+        
     def toggleExeSelection(self,state):
         self.ui.execPathBrowseButton.setDisabled(state)
         self.ui.execPathPathEdit.setDisabled(state)

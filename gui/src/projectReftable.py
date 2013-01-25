@@ -293,9 +293,11 @@ class ProjectReftable(Project):
         coresPerJob = int(self.parent.preferences_win.ui.coresPerJobEdit.text())
         maxConcurrentJobs = int(self.parent.preferences_win.ui.maxConcurrentJobsEdit.text())
         seed = int(self.parent.preferences_win.ui.seedEdit.text())
-        diyabcPath = str(self.parent.preferences_win.ui.diyabcPathPathEdit.text())
-        if os.path.exists(diyabcPath) :
-            diyabcPath = os.path.join('./', os.path.basename(diyabcPath))
+        diyabcPath=""
+        if self.parent.preferences_win.ui.clusterBinLocationCombo.currentText() == "local" :
+            diyabcPath = os.path.join('./', os.path.basename(str(self.parent.preferences_win.ui.diyabcPathLocalPathEdit.text())))
+        elif self.parent.preferences_win.ui.clusterBinLocationCombo.currentText() == "cluster" :
+            diyabcPath = str(self.parent.preferences_win.ui.diyabcPathClusterEdit.text())
         projectName = str(self.ui.projNameLabelValue.text())
         referenceTableHeaderName = self.parent.reftableheader_name
         dataFileName = self.dataFileName
@@ -593,11 +595,12 @@ exit 0
             tar.add(scnffile,'%s/node.sh'%tarRepName)
             tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
             tar.add(self.dataFileSource,"%s/%s"%(str(tarRepName),str(self.dataFileName)))
-            diyabcPath = str(self.parent.preferences_win.ui.diyabcPathPathEdit.text())
-            if os.path.exists(diyabcPath) :
-                tar.add(diyabcPath,"%s/%s"%(tarRepName, os.path.basename(diyabcPath)))
+            if self.parent.preferences_win.ui.clusterBinLocationCombo.currentText() == "local" :
+                diyabcLocalPath = str(self.parent.preferences_win.ui.diyabcPathLocalPathEdit.text())
+                if not os.path.exists(diyabcLocalPath) :
+                    output.notify(self,"Value Error : cluster bin path","cluster binary not found. \n%s does not exists\Please verify cluster binary path options in preferences."%self.ui.diyabcPathLocalPathEdit.text())
+                tar.add(diyabcLocalPath,"%s/%s"%(tarRepName, os.path.basename(diyabcLocalPath)))
             tar.close()
-
             # nettoyage des fichiers temporaires de script
             if os.path.exists(dest):
                 shutil.rmtree(dest)
@@ -632,6 +635,9 @@ exit 0
                 if tname != "":
                     log(3,"Tar file created in %s"%tname)
                     output.notify(self,"Notify","The archive has been generated in %s"%tname)
+                else :
+                    log(1,"ERROR : Tar file not created in %s"%tname)
+                    output.notify(self,"Error Archive creation","An error occurs.\n The archive has not been been generated in %s"%tname)
                 #self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
                 self.startUiGenReftable()
