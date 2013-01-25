@@ -502,7 +502,7 @@ cp "$DATAFILE" "$TMPDIR/"
 
 # Computations
 rngNum=`echo ${rngFileName:10} | cut -d'.' -f1`
-cmd="$TMPDIR/`basename $DIYABCPATH` -p \"$TMPDIR/\" -w $rngNum -r $NBTOGEN "
+cmd="$TMPDIR/`basename $DIYABCPATH` -p $TMPDIR/ -w $rngNum -r $NBTOGEN "
 echo -e "Running computations :" 
 echo -e "$cmd"
 "$TMPDIR/`basename $DIYABCPATH`" -p "$TMPDIR/" -w $rngNum -r $NBTOGEN &> "$TMPDIR/diyabc.out" &
