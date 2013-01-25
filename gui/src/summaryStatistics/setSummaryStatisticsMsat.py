@@ -279,7 +279,7 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
 
         dico_stats["AML"] = []
         for box in self.oneSampleList:
-            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split()[1]
             if box.findChild(QCheckBox,"mnoaCheck").isChecked():
                 dico_stats["NAL"].append(lab)
                 nstat += 1
@@ -293,7 +293,7 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
                 dico_stats["MGW"].append(lab)
                 nstat += 1
         for box in self.twoSampleList:
-            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split()[1]
             if box.findChild(QCheckBox,"mnoa2Check").isChecked():
                 dico_stats["N2P"].append(lab)
                 nstat += 1
@@ -354,9 +354,9 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
         for line in lines:
             sline = line.strip()
             if sline.strip() != "":
-                t = sline.split(' ')[0]
+                t = sline.split()[0]
                 dico_stats[t] = []
-                for sample in sline.split(' ')[1:]:
+                for sample in sline.split()[1:]:
                     dico_stats[t].append(sample)
         #print "dico stats :",dico_stats
 
@@ -366,13 +366,13 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
             # pour chaque colonne chaque sample dans one Sample
             if k in ["NAL","HET","VAR","MGW"]:
                 for box in self.oneSampleList:
-                    num_sample = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1].strip()
+                    num_sample = str(box.findChild(QLabel,"oneSampleLabel").text()).split()[1].strip()
                     if num_sample in dico_stats[k]:
                         # on coche
                         box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
             elif k in ["H2P","V2P","FST","DAS","DM2","N2P"]:
                 for box in self.twoSampleList:
-                    num_sample = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1].strip()
+                    num_sample = str(box.findChild(QLabel,"twoSampleLabel").text()).split()[1].strip()
                     if num_sample in dico_stats[k]:
                         # on coche
                         box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
@@ -381,8 +381,8 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
                     num1 = int(lik.strip().split('&')[0])
                     num2 = int(lik.strip().split('&')[1])
                     ind_box = 0
-                    while ind_box < len(self.twoSampleList) and str(self.twoSampleList[ind_box].findChild(QLabel,"twoSampleLabel").text()).strip().split(' ')[1] != lik.strip() and\
-                            str(self.twoSampleList[ind_box].findChild(QLabel,"twoSampleLabel").text()).strip().split(' ')[1] != "%s&%s"%(num2,num1):
+                    while ind_box < len(self.twoSampleList) and str(self.twoSampleList[ind_box].findChild(QLabel,"twoSampleLabel").text()).strip().split()[1] != lik.strip() and\
+                            str(self.twoSampleList[ind_box].findChild(QLabel,"twoSampleLabel").text()).strip().split()[1] != "%s&%s"%(num2,num1):
                         ind_box += 1
                     if num1 > num2:
                         self.twoSampleList[ind_box].findChild(QCheckBox,"ci2RightCheck").setChecked(True)
@@ -423,7 +423,7 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
         "DM2" : [], 
         "AML" : []}
         for box in self.oneSampleList:
-            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split()[1]
             if box.findChild(QCheckBox,"mnoaCheck").isChecked():
                 stat_name = "NAL_%s_%s"%(gnumber,lab)
                 dico["NAL"].append(stat_name)
@@ -437,7 +437,7 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
                 stat_name = "MGW_%s_%s"%(gnumber,lab)
                 dico["MGW"].append(stat_name)
         for box in self.twoSampleList:
-            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split()[1]
             if box.findChild(QCheckBox,"mnoa2Check").isChecked():
                 stat_name = "N2P_%s_%s"%(gnumber,lab)
                 dico["N2P"].append(stat_name)

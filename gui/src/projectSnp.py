@@ -169,16 +169,16 @@ class ProjectSnp(ProjectReftable):
                 dicoStatLines = {}
                 while (lines[nl].strip() != ""):
                     ty = lines[nl].split('<')[1].split('>')[0]
-                    numGr = int(lines[nl].strip().split(' ')[2][1:])
-                    diconb[ty] = lines[nl].strip().split(' ')[0]
-                    dicoFrom[ty] = lines[nl].strip().split(' ')[4]
+                    numGr = int(lines[nl].strip().split()[2][1:])
+                    diconb[ty] = lines[nl].strip().split()[0]
+                    dicoFrom[ty] = lines[nl].strip().split()[4]
                     dicoGrTy[numGr] = ty
                     self.sum_stat_wins[ty].ui.takenEdit.setText(diconb[ty])
                     self.sum_stat_wins[ty].ui.fromEdit.setText(dicoFrom[ty])
                     nl += 1
                 nl += 2
                 while nl < len(lines) and lines[nl].strip() != "":
-                    numGroup = int(lines[nl].strip().split(' ')[1][1:])
+                    numGroup = int(lines[nl].strip().split()[1][1:])
                     ty = dicoGrTy[numGroup]
                     statlines = []
                     nl += 1
@@ -406,7 +406,7 @@ class ProjectSnp(ProjectReftable):
         res += "\ngroup summary statistics (%s)\n"%(totNbStat)
         if self.ascert_frame.ascYesRadio.isChecked():
             nb = int(statsdesc.split('group G')[-1].split(')')[0].split('(')[1])
-            num = int(statsdesc.split('group G')[-1].split(' ')[0])
+            num = int(statsdesc.split('group G')[-1].split()[0])
             statsdesc = statsdesc.replace('group G%s (%s)'%(num,nb),'group G%s (%s)'%(num,nb+1))
             statsdesc += "PPL\n"
         res += statsdesc

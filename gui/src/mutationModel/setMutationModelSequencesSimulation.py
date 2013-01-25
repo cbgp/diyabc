@@ -261,9 +261,9 @@ class SetMutationModelSequencesSimulation(formSetMutationModelSequencesFixed,bas
         #self.ui.ilc2MinEdit.setText("%s"%valilc2)
         self.ui.ilc2MinEdit.setText("2")
 
-        model = lines[6].split(' ')[1]
-        iss = lines[6].split(' ')[2]
-        sotg = lines[6].split(' ')[3]
+        model = lines[6].split()[1]
+        iss = lines[6].split()[2]
+        sotg = lines[6].split()[3]
         self.ui.isEdit.setText(iss)
         self.ui.sotgEdit.setText(sotg)
         if model == "K2P":

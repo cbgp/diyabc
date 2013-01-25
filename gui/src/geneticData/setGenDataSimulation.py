@@ -332,7 +332,7 @@ class SetGeneticDataSimulation(SetGeneticData):
                 l = 1
                 gmax = 0
                 while l < nloc+1:
-                    g = int(lines[l].split(' ')[3].replace('G',''))
+                    g = int(lines[l].split()[3].replace('G',''))
                     if g > gmax:
                         gmax = g
                     l+=1
@@ -343,11 +343,11 @@ class SetGeneticDataSimulation(SetGeneticData):
                 # recup des infos de chaque locus
                 l = 1
                 while l < nloc+1:
-                    lname = lines[l].split(' ')[0].replace('_',' ')
+                    lname = lines[l].split()[0].replace('_',' ')
                     #ltype = lines[l].split(' ')[1]
                     #ltype_num = LOC_TYP.index(ltype)
                     lmicroSeq = lines[l].split('[')[1].split(']')[0]
-                    num_group = int(lines[l].split(' ')[3].replace('G',''))
+                    num_group = int(lines[l].split()[3].replace('G',''))
                     # maj du dico
                     self.dico_num_and_numgroup_locus[lname] = [l,num_group]
                     if lmicroSeq == 'M':
@@ -356,8 +356,8 @@ class SetGeneticDataSimulation(SetGeneticData):
                            self.ui.tableWidget.setItemSelected(self.ui.tableWidget.item(l-1,0),True)
                            self.addToGroup(self.groupList[num_group-1])
                         # maj des infos dans le table
-                        ranger = lines[l].split(' ')[5]
-                        motif = lines[l].split(' ')[4]
+                        ranger = lines[l].split()[5]
+                        motif = lines[l].split()[4]
                         ran = QTableWidgetItem("%s"%(ranger))
                         mot = QTableWidgetItem("%s"%(motif))
                         ran.setTextAlignment(Qt.AlignRight|Qt.AlignVCenter)
@@ -383,7 +383,7 @@ class SetGeneticDataSimulation(SetGeneticData):
                     # on va jusqu'à la prochaine ligne vide ou la fin du fichier
                     while l<len(lines) and lines[l].strip() != "" and num_group_max_done < nb_groupes:
                         log(4,'prem ligne du groupe:%s'%lines[l])
-                        num_group = int(lines[l].split('group G')[1].split(' ')[0])
+                        num_group = int(lines[l].split('group G')[1].split()[0])
                         num_group_max_done = num_group
                         type_group = lines[l].split('[')[1].split(']')[0]
                         l+=1
@@ -404,7 +404,7 @@ class SetGeneticDataSimulation(SetGeneticData):
                     l+=1
                     # parcours de tous les groupes
                     while l<len(lines) and lines[l].strip() != "":
-                        num_group = int(lines[l].split('group G')[1].split(' ')[0])
+                        num_group = int(lines[l].split('group G')[1].split()[0])
                         type_group = lines[l].split('[')[1].split(']')[0]
                         l+=1
                         # parcours des lignes du groupe

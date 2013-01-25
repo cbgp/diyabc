@@ -1041,10 +1041,10 @@ class SetHistoricalModel(formHistModel,baseHistModel):
 
                 self.ui.otherRpRadio.setChecked(True)
 
-                nb_scenarios = int(lines[0].split(' ')[0])
+                nb_scenarios = int(lines[0].split()[0])
                 nb_line_sc = []
                 for i in range(nb_scenarios):
-                    nb_line_sc.append(int(lines[0].split(' ')[2+i]))
+                    nb_line_sc.append(int(lines[0].split()[2+i]))
                 l = 1
                 for i in range(nb_scenarios):
                     txt=""
@@ -1067,16 +1067,16 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 l+=1
                 lfirst_param = l
                 while l<(lfirst_param + nbparam):
-                    pname = lines[l].split(' ')[0]
-                    category = lines[l].split(' ')[1]
+                    pname = lines[l].split()[0]
+                    category = lines[l].split()[1]
                     values = lines[l].split('[')[1].split(']')[0]
                     min = values.split(',')[0]
                     max = values.split(',')[1]
                     mean = values.split(',')[2]
                     stdev = values.split(',')[3]
                     #step = values.split(',')[4]
-                    law = lines[l].split(' ')[2].split('[')[0]
-                    visible = lines[l].split(' ')[3].strip()
+                    law = lines[l].split()[2].split('[')[0]
+                    visible = lines[l].split()[3].strip()
                     if visible == "False":
                         setcond_visible = "unique"
                     else:
@@ -1104,8 +1104,8 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 while l < len(lines) and num_cond < nbcond:
                     line = lines[l].strip()
                     if line != "":
-                        if line.split(' ')[0] == "DRAW":
-                            if line.split(' ')[1] == "UNTIL":
+                        if line.split()[0] == "DRAW":
+                            if line.split()[1] == "UNTIL":
                                 self.ui.drawUntilRadio.setChecked(True)
                             else:
                                 self.ui.drawOnceRadio.setChecked(True)

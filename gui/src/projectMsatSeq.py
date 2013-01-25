@@ -204,7 +204,7 @@ class ProjectMsatSeq(ProjectReftable):
         l_groups = []
         for gb in self.gen_data_win.groupList:
             if "Micro" in gb.title() or "Sequen" in gb.title():
-                l_groups.append(str(gb.title()).split(' ')[1])
+                l_groups.append(str(gb.title()).split()[1])
         return l_groups
 
     def redefineSumStatsAnalysis(self,setupEst):

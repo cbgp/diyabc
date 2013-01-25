@@ -273,13 +273,13 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
             dico_stats[stat] = []
 
         for box in self.oneSampleList:
-            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split()[1]
             for stat in self.statList1:
                 if box.findChild(QCheckBox,"%sCheck"%self.confToStat1[stat]).isChecked():
                     dico_stats[stat].append(lab)
                     nstat += 1
         for box in self.twoSampleList:
-            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split()[1]
             for stat in self.statList2:
                 if box.findChild(QCheckBox,"%sCheck"%self.confToStat2[stat]).isChecked():
                     dico_stats[stat].append(lab)
@@ -304,9 +304,9 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         for line in lines:
             sline = line.strip()
             if sline.strip() != "":
-                t = sline.split(' ')[0]
+                t = sline.split()[0]
                 dico_stats[t] = []
-                for sample in sline.split(' ')[1:]:
+                for sample in sline.split()[1:]:
                     dico_stats[t].append(sample)
         #print "dico stats :",dico_stats
 
@@ -316,7 +316,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
             if k in self.statList1:
                 name_chk_box = self.confToStat1[k]
                 for box in self.oneSampleList:
-                    num_sample = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1].strip()
+                    num_sample = str(box.findChild(QLabel,"oneSampleLabel").text()).split()[1].strip()
                     if num_sample in dico_stats[k]:
                         # on coche
                         box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
@@ -324,7 +324,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
             elif k in self.statList2:
                 name_chk_box = self.confToStat2[k]
                 for box in self.twoSampleList:
-                    num_sample = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1].strip()
+                    num_sample = str(box.findChild(QLabel,"twoSampleLabel").text()).split()[1].strip()
                     if num_sample in dico_stats[k]:
                         # on coche
                         box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
@@ -359,13 +359,13 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         gnumber = numGroup
 
         for box in self.oneSampleList:
-            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split()[1]
             for statstr in self.statList1:
                 if box.findChild(QCheckBox,"%sCheck"%self.confToStat1[statstr]).isChecked():
                     stat_name = "%s_%s_%s"%(statstr,gnumber,lab)
                     dico[statstr].append(stat_name)
         for box in self.twoSampleList:
-            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split()[1]
             for statstr in self.statList2:
                 if box.findChild(QCheckBox,"%sCheck"%self.confToStat2[statstr]).isChecked():
                     stat_name = "%s_%s_%s"%(statstr,gnumber,lab)

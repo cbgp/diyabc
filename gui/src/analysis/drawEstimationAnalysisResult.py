@@ -171,13 +171,13 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         plotc.axes.set_title("%s [%6.2e]"%(name,median))
 
         labs = []
-        for num in absv.strip().split('  '):
+        for num in absv.strip().split():
             labs.append(float(num))
         lpr = []
-        for num in ordpr.strip().split('  '):
+        for num in ordpr.strip().split():
             lpr.append(float(num))
         lpo = []
-        for num in ordpo.strip().split('  '):
+        for num in ordpo.strip().split():
             lpo.append(float(num))
             
         legend_txt = "prior"

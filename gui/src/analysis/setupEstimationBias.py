@@ -233,8 +233,8 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                             strgr = gr.strip()
                             strgr = strgr.split('\n')
                             for j,elem in enumerate(strgr):
-                                if elem.split(' ')[0] != "MODEL":
-                                    to_add = strgr[j].split(' ')[1]
+                                if elem.split()[0] != "MODEL":
+                                    to_add = strgr[j].split()[1]
                                     strparam += "%s "%to_add
                             # virer le dernier espace
                             strparam = strparam[:-1]

@@ -280,7 +280,7 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         self.ui.mmrMaxEdit.setText(mmrValues[1])    
         self.ui.mmrMeanEdit.setText(mmrValues[2])   
         self.ui.mmrShapeEdit.setText(mmrValues[3])  
-        law = lines[0].split('[')[0].split(' ')[-1]
+        law = lines[0].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
@@ -309,7 +309,7 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         self.ui.mc1MaxEdit.setText(mc1Values[1])    
         self.ui.mc1MeanEdit.setText(mc1Values[2])   
         self.ui.mc1ShapeEdit.setText(mc1Values[3])  
-        law = lines[2].split('[')[0].split(' ')[-1]
+        law = lines[2].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
@@ -338,7 +338,7 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         self.ui.mc2MaxEdit.setText(mc2Values[1])    
         self.ui.mc2MeanEdit.setText(mc2Values[2])   
         self.ui.mc2ShapeEdit.setText(mc2Values[3])  
-        law = lines[4].split('[')[0].split(' ')[-1]
+        law = lines[4].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
@@ -358,9 +358,9 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         self.ui.ilc2MeanEdit.setText(ilc2Values[2])
         self.ui.ilc2ShapeEdit.setText(ilc2Values[3])
 
-        model = lines[6].split(' ')[1]
-        iss = lines[6].split(' ')[2]
-        sotg = lines[6].split(' ')[3]
+        model = lines[6].split()[1]
+        iss = lines[6].split()[2]
+        sotg = lines[6].split()[3]
         self.ui.isEdit.setText(iss)
         self.ui.sotgEdit.setText(sotg)
         if model == "K2P":

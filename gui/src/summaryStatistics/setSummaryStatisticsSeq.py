@@ -308,7 +308,7 @@ class SetSummaryStatisticsSeq(SetSummaryStatistics,formSetSummaryStatisticsSeq,b
 
         dico_stats["SML"] = []
         for box in self.oneSampleList:
-            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split()[1]
             if box.findChild(QCheckBox,"nohCheck").isChecked():
                 dico_stats["NHA"].append(lab)
                 nstat += 1
@@ -334,7 +334,7 @@ class SetSummaryStatisticsSeq(SetSummaryStatistics,formSetSummaryStatisticsSeq,b
                 dico_stats["VNS"].append(lab)
                 nstat += 1
         for box in self.twoSampleList:
-            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split()[1]
             if box.findChild(QCheckBox,"noh2Check").isChecked():
                 dico_stats["NH2"].append(lab)
                 nstat += 1
@@ -367,9 +367,9 @@ class SetSummaryStatisticsSeq(SetSummaryStatistics,formSetSummaryStatisticsSeq,b
         dico_stats = {}
         for line in lines:
             if line.strip():
-                t = line.split(' ')[0]
+                t = line.split()[0]
                 dico_stats[t] = []
-                for sample in line.split(' ')[1:]:
+                for sample in line.split()[1:]:
                     dico_stats[t].append(sample)
         #print "dico stats :",dico_stats
 
@@ -379,13 +379,13 @@ class SetSummaryStatisticsSeq(SetSummaryStatistics,formSetSummaryStatisticsSeq,b
             # pour chaque colonne chaque sample dans one Sample
             if k in ["NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS"]:
                 for box in self.oneSampleList:
-                    num_sample = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1].strip()
+                    num_sample = str(box.findChild(QLabel,"oneSampleLabel").text()).split()[1].strip()
                     if num_sample in dico_stats[k]:
                         # on coche
                         box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
             elif k in ["NH2","NS2","MP2","MPB","HST"]:
                 for box in self.twoSampleList:
-                    num_sample = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1].strip()
+                    num_sample = str(box.findChild(QLabel,"twoSampleLabel").text()).split()[1].strip()
                     if num_sample in dico_stats[k]:
                         # on coche
                         box.findChild(QCheckBox,"%sCheck"%name_chk_box).setChecked(True)
@@ -408,7 +408,7 @@ class SetSummaryStatisticsSeq(SetSummaryStatistics,formSetSummaryStatisticsSeq,b
             gnumber = self.numGroup
         dico = {"NHA":[],"NSS":[],"MPD":[],"VPD":[],"DTA":[],"PSS":[],"MNS":[],"VNS":[],"NH2":[],"NS2":[],"MP2":[],"MPB":[],"HST":[],"SML":[]}
         for box in self.oneSampleList:
-            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split()[1]
             if box.findChild(QCheckBox,"nohCheck").isChecked():
                 stat_name = "NHA_%s_%s"%(gnumber,lab)
                 dico["NHA"].append(stat_name)
@@ -434,7 +434,7 @@ class SetSummaryStatisticsSeq(SetSummaryStatistics,formSetSummaryStatisticsSeq,b
                 stat_name = "VNS_%s_%s"%(gnumber,lab)
                 dico["VNS"].append(stat_name)
         for box in self.twoSampleList:
-            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split(' ')[1]
+            lab = str(box.findChild(QLabel,"twoSampleLabel").text()).split()[1]
             if box.findChild(QCheckBox,"noh2Check").isChecked():
                 stat_name = "NH2_%s_%s"%(gnumber,lab)
                 dico["NH2"].append(stat_name)

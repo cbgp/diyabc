@@ -732,8 +732,8 @@ exit 0
         for l in lines.strip().split('\n'):
             ll = l.strip()
             if ll != "":
-                ti = ll.split(' ')[0]
-                law = ll.split(' ')[1].split('[')[0]
+                ti = ll.split()[0]
+                law = ll.split()[1].split('[')[0]
                 zero = ll.split('[')[1].split(',')[0]
                 one = ll.split(',')[1]
                 two = ll.split(',')[2]
@@ -768,15 +768,15 @@ exit 0
         for l in lines.strip().split('\n'):
             ll = l.strip()
             if ll != "":
-                ti = ll.split(' ')[0]
+                ti = ll.split()[0]
                 if ti == "MODEL":
-                    model = ll.split(' ')[1]
-                    inv_sites_pc = ll.split(' ')[2]
-                    gamma_shape = ll.split(' ')[3]
+                    model = ll.split()[1]
+                    inv_sites_pc = ll.split()[2]
+                    gamma_shape = ll.split()[3]
                     for f in ["model","inv_sites_pc","gamma_shape"]:
                         exec("self.config['mutation_s_default_values'][ti+'_{0}'] = {0}".format(f))
                 else:
-                    law = ll.split(' ')[1].split('[')[0]
+                    law = ll.split()[1].split('[')[0]
                     zero = ll.split('[')[1].split(',')[0]
                     one = ll.split(',')[1]
                     two = ll.split(',')[2]

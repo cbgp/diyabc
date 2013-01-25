@@ -1177,8 +1177,8 @@ exit 0
         if len(proglines) > 0:
             fl = str(proglines[0])
             fl = fl.strip()
-            t1 = float(fl.split(' ')[0])
-            t2 = float(fl.split(' ')[-1].strip())
+            t1 = float(fl.split()[0])
+            t2 = float(fl.split()[-1].strip())
             if t2 != 0:
                 prog = (t1*100/t2)
             else:

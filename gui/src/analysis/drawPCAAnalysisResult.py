@@ -98,11 +98,11 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             self.dico_points = {}
             self.dico_points_posterior = {}
 
-            nb_composantes = (len(lines[0].split(" "))-2)
-            nb_prior = int(lines[0].split(" ")[0])
+            nb_composantes = (len(lines[0].split())-2)
+            nb_prior = int(lines[0].split()[0])
             nb_lignes = len(lines)
-            self.dico_points[-1] = lines[0].split(" ")[2:]
-            self.dico_points[0] = lines[1].split(" ")[1:]
+            self.dico_points[-1] = lines[0].split()[2:]
+            self.dico_points[0] = lines[1].split()[1:]
             for i in range(len(self.dico_points[0])):
                 self.dico_points[0][i] = float(self.dico_points[0][i])
 
@@ -114,7 +114,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 if (int(pc) % 2) == 0:
                     self.ui.ACProgress.setValue(pc)
                     QCoreApplication.processEvents()
-                tab = l.split(" ")
+                tab = l.split()
                 num_sc = int(tab[0])
                 # si le sc n'est pas encore dans le dico
                 if num_sc not in self.dico_points.keys():
@@ -136,7 +136,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
                 if (int(pc) % 2) == 0:
                     self.ui.ACProgress.setValue(pc)
                     QCoreApplication.processEvents()
-                tab = l.split(" ")
+                tab = l.split()
                 num_sc = int(tab[0])
                 # si le sc n'est pas encore dans le dico
                 if num_sc not in self.dico_points_posterior.keys():

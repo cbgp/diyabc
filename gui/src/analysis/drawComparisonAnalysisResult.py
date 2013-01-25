@@ -75,9 +75,10 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         lines = f.readlines()
         f.close()
         l = 0
-        pat = re.compile(r'\s+')
+        #pat = re.compile(r'\s+')
         # on remplace les suites d'espace par un seul espace
-        first_line_tab = pat.sub(' ',lines[0].strip()).split(' ')
+        #first_line_tab = pat.sub(' ',lines[0].strip()).split(' ')
+        first_line_tab = lines[0].split()
         # on vire le 'n'
         first_line_tab = first_line_tab[1:]
 
@@ -93,7 +94,8 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         l=1
         while l < (len(lines)):
             if lines[l].strip() != "":
-                line_tab = pat.sub(' ',lines[l].strip()).split(' ')
+                #line_tab = pat.sub(' ',lines[l].strip()).split(' ')
+                line_tab = lines[l].split()
                 # on ajoute une abcisse
                 dico_coord['n'].append(float(line_tab[0]))
                 line_tab = line_tab[1:]

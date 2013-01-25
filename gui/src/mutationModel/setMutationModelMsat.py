@@ -244,7 +244,7 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
         self.ui.mmrMaxEdit.setText(mmrValues[1])    
         self.ui.mmrMeanEdit.setText(mmrValues[2])   
         self.ui.mmrShapeEdit.setText(mmrValues[3])  
-        law = lines[0].split('[')[0].split(' ')[-1]
+        law = lines[0].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
@@ -273,7 +273,7 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
         self.ui.mcpMaxEdit.setText(mcpValues[1])    
         self.ui.mcpMeanEdit.setText(mcpValues[2])   
         self.ui.mcpShapeEdit.setText(mcpValues[3])  
-        law = lines[2].split('[')[0].split(' ')[-1]
+        law = lines[2].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
@@ -302,7 +302,7 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
         self.ui.msrMaxEdit.setText(msrValues[1])    
         self.ui.msrMeanEdit.setText(msrValues[2])   
         self.ui.msrShapeEdit.setText(msrValues[3])  
-        law = lines[4].split('[')[0].split(' ')[-1]
+        law = lines[4].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":

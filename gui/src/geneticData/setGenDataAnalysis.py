@@ -322,7 +322,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
                 l = 1
                 gmax = 0
                 while l < nloc+1:
-                    g = int(lines[l].split(' ')[3].replace('G',''))
+                    g = int(lines[l].split()[3].replace('G',''))
                     if g > gmax:
                         gmax = g
                     l+=1
@@ -333,11 +333,11 @@ class SetGeneticDataAnalysis(SetGeneticData):
                 # recup des infos de chaque locus
                 l = 1
                 while l < nloc+1:
-                    lname = lines[l].split(' ')[0].replace('_',' ')
+                    lname = lines[l].split()[0].replace('_',' ')
                     #ltype = lines[l].split(' ')[1]
                     #ltype_num = LOC_TYP.index(ltype)
                     lmicroSeq = lines[l].split('[')[1].split(']')[0]
-                    num_group = int(lines[l].split(' ')[3].replace('G',''))
+                    num_group = int(lines[l].split()[3].replace('G',''))
                     # maj du dico
                     self.dico_num_and_numgroup_locus[lname] = [l,num_group]
                     if lmicroSeq == 'M':
@@ -346,8 +346,8 @@ class SetGeneticDataAnalysis(SetGeneticData):
                            self.ui.tableWidget.setItemSelected(self.ui.tableWidget.item(l-1,0),True)
                            self.addToGroup(self.groupList[num_group-1])
                         # maj des infos dans le table
-                        ranger = lines[l].split(' ')[4]
-                        motif = lines[l].split(' ')[5]
+                        ranger = lines[l].split()[4]
+                        motif = lines[l].split()[5]
                         self.ui.tableWidget.setItem(l-1,2,QTableWidgetItem("%s"%(ranger)))
                         self.ui.tableWidget.setItem(l-1,3,QTableWidgetItem("%s"%(motif)))
                     else:
@@ -366,7 +366,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     # on va jusqu'à la prochaine ligne vide ou la fin du fichier
                     while l<len(lines) and lines[l].strip() != "":
                         #print 'prem ligne du groupe:',lines[l]
-                        num_group = int(lines[l].split('group G')[1].split(' ')[0])
+                        num_group = int(lines[l].split('group G')[1].split()[0])
                         #num_group_max_done = num_group
                         type_group = lines[l].split('[')[1].split(']')[0]
                         l+=1
@@ -385,7 +385,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     l+=1
                     # parcours de tous les groupes
                     while l<len(lines) and lines[l].strip() != "":
-                        num_group = int(lines[l].split('group G')[1].split(' ')[0])
+                        num_group = int(lines[l].split('group G')[1].split()[0])
                         type_group = lines[l].split('[')[1].split(']')[0]
                         l+=1
                         # parcours des lignes du groupe

@@ -218,7 +218,7 @@ class SetGeneticData(formGenData,baseGenData):
         # renommage des groupes
         for i,box in enumerate(self.groupList):
             old_title = str(box.title())
-            box.setTitle("Group %i %s"%(i+1,' '.join(old_title.split(' ')[2:])))
+            box.setTitle("Group %i %s"%(i+1,' '.join(old_title.split()[2:])))
             # pour chaque groupe, on maj le numero de groupe de tous les locus du groupe
             lw = box.findChild(QListWidget,"locusGroupList")
             for j in range(lw.count()):
@@ -270,7 +270,7 @@ class SetGeneticData(formGenData,baseGenData):
                 elif first_type_found == 'S':
                     tt = "Sequences"
                 if tt != '':
-                    box.setTitle("%s %s : %s"%(old_title.split(' ')[0],old_title.split(' ')[1],tt))
+                    box.setTitle("%s %s : %s"%(old_title.split()[0],old_title.split()[1],tt))
                     # on met à jour le dico des groupes
                     self.group_info_dico[box][0] = tt
 
@@ -329,7 +329,7 @@ class SetGeneticData(formGenData,baseGenData):
         # si le groupe devient vide, on enleve le type dans le nom
         if listw_of_group.count() == 0:
             old_title = str(box.title())
-            box.setTitle("%s %s"%(old_title.split(' ')[0],old_title.split(' ')[1]))
+            box.setTitle("%s %s"%(old_title.split()[0],old_title.split()[1]))
             # on met à jour le dico des groupes
             self.group_info_dico[box][0] = ""
             ## on remet en gras les boutons de mutation model et sum stats
