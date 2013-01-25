@@ -132,7 +132,10 @@ class AutoPreferences(QFrame):
             for f in dico_fields[cat]:
                 # *f[1:] is equivalent to f[1],f[2],f[3]... in a function call contex
                 #exec('self.addProp%s(cat,*f[1:])'%(f[0][0].upper() + f[0][1:]))
-                exec('self.addProp%s(cat,**{key: value for key, value in f.items() if key != "proptype"})'%(f["proptype"][0].upper() + f["proptype"][1:]))
+                pt = f["proptype"]
+                f.pop("proptype")
+                #exec('self.addProp%s(cat,**{key: value for key, value in f.items() if key != "proptype"})'%(f["proptype"][0].upper() + f["proptype"][1:]))
+                exec('self.addProp%s(cat,**f)'%(pt[0].upper() + pt[1:]))
                 #if f[0] == "combo":
                 #    self.addPropCombo(cat,f[1],f[2],f[3],f[4],f[5])
                 #elif f[0] == "check":
