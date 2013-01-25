@@ -4,7 +4,6 @@
 # @author Julien Veyssier
 #
 # @brief Fenêtre pour gérer les préférences personnelles
-backslash a corriger !!!!! + mettre le bon nb de simul et non le total
 import os,sys,platform,multiprocessing
 import os.path
 import ConfigParser
