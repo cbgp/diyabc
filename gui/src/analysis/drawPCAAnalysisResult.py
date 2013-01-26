@@ -12,8 +12,10 @@ from viewTextFile import ViewTextFile
 import output
 from utils.matplotlib_example import *
 from utils.cbgpUtils import readlinesWindows
+import variables
+from variables import UIPATH
 
-formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
+formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult = uic.loadUiType("%s/drawScenarioFrame.ui"%UIPATH)
 
 class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse

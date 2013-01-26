@@ -5,8 +5,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.setMutationModelSequences_ui import Ui_Frame
+import variables
+from variables import UIPATH
 
-formSetMutationModelSequences,baseSetMutationModelSequences = uic.loadUiType("uis/setMutationModelSequences.ui")
+formSetMutationModelSequences,baseSetMutationModelSequences = uic.loadUiType("%s/setMutationModelSequences.ui"%UIPATH)
 
 class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationModelSequences):
     """ définition du modèle mutationnel pour les séquences

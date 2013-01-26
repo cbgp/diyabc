@@ -12,8 +12,10 @@ from geneticData.setGenDataAnalysis import SetGeneticDataAnalysis
 from output import *
 from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonConfidence import SetupComparisonConfidence
+import variables
+from variables import UIPATH
 
-formHistModelFixed,baseHistModelFixed= uic.loadUiType("uis/setHistFrame.ui")
+formHistModelFixed,baseHistModelFixed= uic.loadUiType("%s/setHistFrame.ui"%UIPATH)
 
 class HistFixed(formHistModelFixed,baseHistModelFixed):
     """ définition du modèle historique dans le cadre d'une analyse

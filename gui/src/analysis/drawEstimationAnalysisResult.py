@@ -12,8 +12,10 @@ from viewTextFile import ViewTextFile
 from utils.cbgpUtils import log
 from utils.matplotlib_example import *
 import output
+import variables
+from variables import UIPATH
 
-formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
+formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult = uic.loadUiType("%s/drawScenarioFrame.ui"%UIPATH)
 
 class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse

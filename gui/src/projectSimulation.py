@@ -18,6 +18,8 @@ import os.path
 import output
 from utils.cbgpUtils import log,addLine
 from datetime import datetime
+import variables
+from variables import UIPATH
 
 ## @class ProjectSimulation
 # @brief Projets pour simuler des données
@@ -58,7 +60,7 @@ class ProjectSimulation(Project):
         self.hist_model_win = SetHistoricalModelSimulation(self)
         self.hist_model_win.hide()
 
-        self.locusNumberFrame = uic.loadUi("uis/setLocusNumber.ui")
+        self.locusNumberFrame = uic.loadUi("%s/setLocusNumber.ui"%UIPATH)
         self.locusNumberFrame.setParent(self)
         self.locusNumberFrame.hide()
         QObject.connect(self.locusNumberFrame.okButton,SIGNAL("clicked()"),self.checkSampleNSetGenetic)

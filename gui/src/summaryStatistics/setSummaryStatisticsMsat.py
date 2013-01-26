@@ -11,8 +11,10 @@ from PyQt4 import uic
 #from uis.setSummaryStatisticsMsat_ui import Ui_Frame
 from setSummaryStatistics import SetSummaryStatistics
 import output
+import variables
+from variables import UIPATH
 
-formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat = uic.loadUiType("uis/setSummaryStatisticsMsat.ui")
+formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat = uic.loadUiType("%s/setSummaryStatisticsMsat.ui"%UIPATH)
 
 class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat):
     """ ecran de selection des summary statistics pour les microsats

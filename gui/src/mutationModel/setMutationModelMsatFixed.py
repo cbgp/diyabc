@@ -5,8 +5,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.setMutationModelMsat_ui import Ui_Frame
+import variables
+from variables import UIPATH
 
-formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed = uic.loadUiType("uis/setMutationModelMsat.ui")
+formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed = uic.loadUiType("%s/setMutationModelMsat.ui"%UIPATH)
 
 class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed):
     """ Classe qui utilise le fichier graphique des SetMutationModelMsat.

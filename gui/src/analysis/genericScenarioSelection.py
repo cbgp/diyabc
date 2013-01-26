@@ -6,8 +6,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 from utils.cbgpUtils import log
+import variables
+from variables import UIPATH
 
-formGenericScenarioSelection,baseGenericScenarioSelection = uic.loadUiType("uis/genericScenarioSelection.ui")
+formGenericScenarioSelection,baseGenericScenarioSelection = uic.loadUiType("%s/genericScenarioSelection.ui"%UIPATH)
 
 class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioSelection):
     """ Sélection du scenario dans la cadre d'une analyse de type comparison ou estimate

@@ -13,8 +13,10 @@ from geneticData.setGenDataAnalysis import SetGeneticDataAnalysis
 from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonConfidence import SetupComparisonConfidence
 from utils.cbgpUtils import log
+import variables
+from variables import UIPATH
 
-formHistModelDrawn,baseHistModelDrawn = uic.loadUiType("uis/setHistFrame.ui")
+formHistModelDrawn,baseHistModelDrawn = uic.loadUiType("%s/setHistFrame.ui"%UIPATH)
 
 class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
     """ définition du modèle historique dans le cadre d'une analyse

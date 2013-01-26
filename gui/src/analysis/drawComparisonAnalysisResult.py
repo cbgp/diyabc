@@ -12,8 +12,10 @@ from viewTextFile import ViewTextFile
 from datetime import datetime 
 from utils.cbgpUtils import log
 from utils.matplotlib_example import *
+import variables
+from variables import UIPATH
 
-formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult = uic.loadUiType("uis/drawScenarioFrame.ui")
+formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult = uic.loadUiType("%s/drawScenarioFrame.ui"%UIPATH)
 
 class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse

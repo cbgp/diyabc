@@ -4,8 +4,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.set_condition_ui import Ui_MainWindow
+import variables
+from variables import UIPATH
 
-formSetCondition,baseSetCondition= uic.loadUiType("uis/setCondition.ui")
+formSetCondition,baseSetCondition= uic.loadUiType("%s/setCondition.ui"%UIPATH)
 
 class SetCondition(formSetCondition,baseSetCondition):
     """ Fenetre de definition d'une condition

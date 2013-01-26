@@ -8,8 +8,10 @@ from PyQt4.QtSvg import *
 from PyQt4 import uic
 from utils.visualizescenario import *
 from utils.cbgpUtils import log
+import variables
+from variables import UIPATH
 
-formDrawScenario,baseDrawScenario = uic.loadUiType("uis/drawScenarioFrame.ui")
+formDrawScenario,baseDrawScenario = uic.loadUiType("%s/drawScenarioFrame.ui"%UIPATH)
 
 class DrawScenario(formDrawScenario,baseDrawScenario):
     """ Classe pour créer une fenêtre à l'intérieur de laquelle on dessine les scénarios (valides car déjà vérifiés)

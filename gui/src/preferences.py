@@ -17,7 +17,8 @@ import output
 import utils.cbgpUtils as utilsPack
 from utils.cbgpUtils import log
 from utils.autoPreferences import AutoPreferences,visible,invisible
-from variables import DATAPATH
+import variables
+from variables import DATAPATH,UIPATH
 
 ## @class Preferences
 # @brief Fenêtre pour gérer les préférences personnelles
@@ -448,7 +449,7 @@ exit 0
         self.toggleExeSelection(self.ui.useDefaultExecutableCheck.isChecked())
         self.toggleWtSelection(self.ui.activateWhatsThisCheck.isChecked())
         
-        self.hist_model = uic.loadUi("uis/historical_preferences_frame.ui")
+        self.hist_model = uic.loadUi("%s/historical_preferences_frame.ui"%UIPATH)
         self.ui.tabWidget.addTab(self.hist_model,"Historical")
         self.hist_model.verticalLayout.setAlignment(Qt.AlignTop)
 

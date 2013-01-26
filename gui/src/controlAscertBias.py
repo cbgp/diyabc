@@ -9,8 +9,10 @@ from utils.data import *
 import output
 from utils.cbgpUtils import log
 import codecs
+import variables
+from variables import UIPATH
 
-formControl,baseControl = uic.loadUiType("uis/controlAscertBias.ui")
+formControl,baseControl = uic.loadUiType("%s/controlAscertBias.ui"%UIPATH)
 
 class ControlAscertBias(formControl,baseControl):
     def __init__(self,parent=None):

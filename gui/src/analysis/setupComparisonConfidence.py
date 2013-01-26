@@ -8,8 +8,10 @@ from PyQt4 import uic
 #from uis.setupComparisonConfidence_ui import Ui_Frame
 from genericScenarioSelection import GenericScenarioSelection
 import output
+import variables
+from variables import UIPATH
 
-formSetupComparisonConfidence,baseSetupComparisonConfidence = uic.loadUiType("uis/setupComparisonConfidence.ui")
+formSetupComparisonConfidence,baseSetupComparisonConfidence = uic.loadUiType("%s/setupComparisonConfidence.ui"%UIPATH)
 
 class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupComparisonConfidence):
     """ dernière étape de définition d'une analyse de type comparison ou confidence

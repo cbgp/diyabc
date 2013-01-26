@@ -13,8 +13,10 @@ from utils.visualizescenario import *
 from utils.data import *
 import output
 from utils.cbgpUtils import log
+import variables
+from variables import UIPATH
 
-formGenData,baseGenData = uic.loadUiType("uis/setGenData.ui")
+formGenData,baseGenData = uic.loadUiType("%s/setGenData.ui"%UIPATH)
 
 class SetGeneticData(formGenData,baseGenData):
     """ Frame qui est créée pour faire des groupes de locus,

@@ -5,8 +5,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.setMutationModelSequences_ui import Ui_Frame
+import variables
+from variables import UIPATH
 
-formSetMutationModelSequencesFixed,baseSetMutationModelSequencesFixed = uic.loadUiType("uis/setMutationModelSequences.ui")
+formSetMutationModelSequencesFixed,baseSetMutationModelSequencesFixed = uic.loadUiType("%s/setMutationModelSequences.ui"%UIPATH)
 
 class SetMutationModelSequencesSimulation(formSetMutationModelSequencesFixed,baseSetMutationModelSequencesFixed):
     """ Classe qui utilise le fichier graphique des SetMutationModelSequences.

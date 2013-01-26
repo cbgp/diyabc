@@ -5,8 +5,10 @@ from PyQt4.QtGui import *
 from PyQt4 import uic
 from historicalModel.setHistDrawnAnalysis import HistDrawn
 from historicalModel.setHistFixedAnalysis import HistFixed
+import variables
+from variables import UIPATH
 
-formBiasScenarioSelection,baseBiasScenarioSelection = uic.loadUiType("uis/biasScenarioSelection.ui")
+formBiasScenarioSelection,baseBiasScenarioSelection = uic.loadUiType("%s/biasScenarioSelection.ui"%UIPATH)
 
 class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenarioSelection):
     """ Sélection du scenario dans la cadre d'une analyse de type bias ou confidence

@@ -8,8 +8,10 @@ from PyQt4 import QtGui
 from PyQt4 import uic
 #from uis.viewAnalysisParameters_ui import Ui_Frame
 import output
+import variables
+from variables import UIPATH
 
-formViewAnalysisParameters,baseViewAnalysisParameters = uic.loadUiType("uis/viewAnalysisParameters.ui")
+formViewAnalysisParameters,baseViewAnalysisParameters = uic.loadUiType("%s/viewAnalysisParameters.ui"%UIPATH)
 
 class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParameters):
     def __init__(self,parent,analysis):

@@ -12,8 +12,10 @@ from utils.history import *
 from setCondition import SetCondition
 import output
 from utils.cbgpUtils import log
+import variables
+from variables import UIPATH
 
-formHistModel,baseHistModel = uic.loadUiType("uis/setHistFrame.ui")
+formHistModel,baseHistModel = uic.loadUiType("%s/setHistFrame.ui"%UIPATH)
 
 class SetHistoricalModel(formHistModel,baseHistModel):
     """ Classe pour la définition du modèle historique dans le cadre 

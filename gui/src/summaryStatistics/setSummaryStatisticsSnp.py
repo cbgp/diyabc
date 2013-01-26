@@ -11,8 +11,10 @@ from PyQt4 import uic
 #from uis.setSummaryStatisticsMsat_ui import Ui_Frame
 from setSummaryStatistics import SetSummaryStatistics
 import output
+import variables
+from variables import UIPATH
 
-formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp = uic.loadUiType("uis/setSummaryStatisticsSnp.ui")
+formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp = uic.loadUiType("%s/setSummaryStatisticsSnp.ui"%UIPATH)
 
 class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp):
     """ ecran de selection des summary statistics pour les SNP

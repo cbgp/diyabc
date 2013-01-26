@@ -11,8 +11,10 @@ from PyQt4 import uic
 #from uis.setSummaryStatisticsSeq_ui import Ui_Frame
 from setSummaryStatistics import SetSummaryStatistics
 import output
+import variables
+from variables import UIPATH
 
-formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq = uic.loadUiType("uis/setSummaryStatisticsSeq.ui")
+formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq = uic.loadUiType("%s/setSummaryStatisticsSeq.ui"%UIPATH)
 
 class SetSummaryStatisticsSeq(SetSummaryStatistics,formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq):
     """ ecran de selection des summary statistics pour les sequences

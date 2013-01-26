@@ -14,8 +14,9 @@ from PyQt4 import uic
 from historicalModel.setHistoricalModel import SetHistoricalModel
 from utils.cbgpUtils import log,addLine
 import variables
+from variables import UIPATH
 
-formProject,baseProject = uic.loadUiType("uis/Project.ui")
+formProject,baseProject = uic.loadUiType("%s/Project.ui"%UIPATH)
 
 ## @class Project
 # @brief Classe mère abstraite de tous les projets

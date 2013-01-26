@@ -12,8 +12,10 @@ from biasScenarioSelection import BiasNConfidenceScenarioSelection
 from analysis import Analysis
 import output
 from utils.cbgpUtils import log
+import variables
+from variables import UIPATH
 
-formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType("uis/defineAnalysis.ui")
+formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType("%s/defineAnalysis.ui"%UIPATH)
 
 class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
     """ écran de définition d'une nouvelle analyse. demande

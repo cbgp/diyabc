@@ -4,8 +4,10 @@ from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
 from utils.cbgpUtils import log
+import variables
+from variables import UIPATH
 
-formTF,baseTF = uic.loadUiType("uis/viewTextFile.ui")
+formTF,baseTF = uic.loadUiType("%s/viewTextFile.ui"%UIPATH)
 
 class ViewTextFile(formTF,baseTF):
     def __init__(self,text,okFunction,parent=None):

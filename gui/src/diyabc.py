@@ -36,7 +36,7 @@ from utils.trayIconHandler import TrayIconHandler
 from threading import Thread
 from utils.data import isSNPDatafile
 import variables
-from variables import VERSION,VERSION_DATE
+from variables import VERSION,VERSION_DATE,UIPATH
 from utils.matplotlib_example import *
 
 # trick to get things working on windows
@@ -53,7 +53,7 @@ if ('development vers' in VERSION):
         VERSION_DATE=getLastRevisionDate("../../")
     except Exception as e:
         VERSION_DATE="unknown"
-formDiyabc,baseDiyabc = uic.loadUiType("uis/diyabc.ui")
+formDiyabc,baseDiyabc = uic.loadUiType("%s/diyabc.ui"%UIPATH)
 
 ## @class Diyabc
 # @brief Classe principale, fenêtre principale
@@ -146,7 +146,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.switchToWelcomeStack()
 
         # about window
-        self.aboutWindow = uic.loadUi("uis/about.ui")
+        self.aboutWindow = uic.loadUi("%s/about.ui"%UIPATH)
         self.aboutWindow.parent = self
         self.aboutWindow.setWindowTitle('About DIYABC')
         ui = self.aboutWindow

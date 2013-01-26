@@ -6,8 +6,10 @@ from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.preferences_ui import Ui_MainWindow
 from utils.cbgpUtils import log
+import variables
+from variables import UIPATH
 
-formLogFile,baseLogFile = uic.loadUiType("uis/showLogFile.ui")
+formLogFile,baseLogFile = uic.loadUiType("%s/showLogFile.ui"%UIPATH)
 
 class ShowLogFile(formLogFile,baseLogFile):
     """ Classe pour consulter les logs dans l'interface
