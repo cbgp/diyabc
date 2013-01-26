@@ -577,6 +577,9 @@ exit 0
         #kkpz
         self.ui.scriptMasterFirstTextEdit.setDisabled(not state)
         self.ui.scriptMasterLastTextEdit.setDisabled(not state)
+        self.ui.clusterBinLocationCombo.setDisabled(not state)
+        self.ui.diyabcPathClusterEdit.setDisabled(not state)
+        self.ui.diyabcPathLocalPathEdit.setDisabled(not state)
         
     def toggleBinClusterPath(self,pathPlace):
         if self.ui.clusterBinLocationCombo.currentText() == "cluster" :
