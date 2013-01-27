@@ -88,6 +88,9 @@ mkdir $output/$APPNAME-$VERSION.app/Contents/Resources/data
 cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/bin $SOURCEDIR/../data/icons  $output/$APPNAME-$VERSION.app/Contents/Resources/data/
 cp -r $SOURCEDIR/uis/ $output/$APPNAME-$VERSION.app/Contents/Resources/uis
 rm -rf $output/build $output/dist $output/$APPNAME.spec
-hdiutil create $output/$APPNAME-$VERSION-mac.dmg -srcfolder $output/$APPNAME-$VERSION.app -volname $APPNAME-$VERSION
+# a tester, sinon : yoursway-create-dmg
+ln -s /Applications "$output/Applications"
+hdiutil create $output/$APPNAME-$VERSION-mac.dmg -srcfolder $output/$APPNAME-$VERSION.app -srcfolder "$output/Applications" -volname $APPNAME-$VERSION
+#hdiutil create $output/$APPNAME-$VERSION-mac.dmg -srcfolder $output/$APPNAME-$VERSION.app -volname $APPNAME-$VERSION
 # clean
 rm -rf $TMPBUILD

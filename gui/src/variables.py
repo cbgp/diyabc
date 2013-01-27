@@ -13,7 +13,7 @@ ICONPATH = ""
 IMAGEPATH = ""
 UIPATH = "uis"
 
-# 3 cas : sources, tarball, deb/rpm
+# 3 cas : sources, tarball, deb/rpm, .app
 if "linux" in sys.platform and not os.path.exists("../data") and not os.path.exists("./data") and not getattr(sys, 'frozen', None):
     DATAPATH = "/usr/share/diyabc-%s"%VERSION
     ICONPATH = "/usr/share/icons/diyabc"
