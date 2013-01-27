@@ -138,7 +138,7 @@ In the settings cluster tab, you can configure some parameters which will be inc
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-cluster.png} \\
 
 
-You have to understand and edit four parameters of the cluster settings. Each one will be used as a variable in the main script \texttt{launch.sh}.
+You have to understand and edit five parameters of the cluster settings. Each one will be used as a variable in the main script \texttt{launch.sh}.
  
 
 \subsubsection{number of data sets by job}
@@ -182,10 +182,15 @@ DIYABC includes openMP. It means that DIYABC can use several cores in a single c
 \subsubsection{the number of concurrent jobs}
 \texttt{maxConcurrentJobs} : This integer indicates the maximum number of jobs allowed to run simultaneously on the cluster. Why is this information required ? One caveat of the RNG (section \ref{rng}) is the need to simultaneously generate all RNG files, before starting the jobs queue submission. The main script \texttt{launch.sh} will produce a pool of RNG files and the script \texttt{nodes.sh} running on each cluster node will randomly draw a RNG file not currently in use. Once again, you should ask your cluster system administrator to know the running jobs limitation on your cluster. You can also evaluate this number by looking at your cluster load. Be carefull : if you use lots of RNG files, to generate the RNG states is time consuming (fig \ref{fig:rngTimeGeneration}).
 
-
-
 \subsubsection{the seed to generate RNG files}
-\texttt{seed} : This integer indicates to DIYABC the seed to start producing RNG files. Leave it blank or write \texttt{None} to use a random seed. Using a user-defined seed is only for test or debbugging purposes. 
+\texttt{seed} : This integer indicates to DIYABC the seed to start producing RNG files. By wrinting \texttt{-1} you will ask to use a random seed (recommended). Using a user-defined seed is only for test or debbugging purposes. 
+
+\subsubsection{The diyabc executable}
+\texttt{diyabcPath} : This path is for the binary executable to be used on the cluster. There is to way of use it :
+\begin{itemize}
+ \item  By choosing \texttt{cluster}, you are invited to write the absolute path of a diyabc binary as it match to your cluster file architecture. By this way the script \texttt{node.sh} will know which diyabc cluster binary to use. Ask your cluster administrator in order to know this path. This absolut path need to be the same for all your cluster nodes. 
+ \item  By choosing \texttt{local}, you are invited to write the path of a diyabc binary executable on your personal computer. This binary will be added to the bundle to be tranfered to your cluster
+\end{itemize}
 
 \subsubsection{main script : launch.sh}
 The next two text boxes in the interface deal with the first and last parts of the main script \texttt{launch.sh}. \texttt{launch.sh} will generate a pool of RNG files, submit jobs to the scheduler queuing system using a \texttt{node.sh} script, monitor the jobs and pool all reftable files into a single reftable file when all jobs are completed.
