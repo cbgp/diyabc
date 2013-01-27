@@ -186,10 +186,10 @@ DIYABC includes openMP. It means that DIYABC can use several cores in a single c
 \texttt{seed} : This integer indicates to DIYABC the seed to start producing RNG files. By wrinting \texttt{-1} you will ask to use a random seed (recommended). Using a user-defined seed is only for test or debbugging purposes. 
 
 \subsubsection{The diyabc executable}
-\texttt{diyabcPath} : This path is for the binary executable to be used on the cluster. There is to way of use it :
+\texttt{diyabcPath} : This path is for the binary executable to be used on the cluster. There is two way of use it :
 \begin{itemize}
  \item  By choosing \texttt{cluster}, you are invited to write the absolute path of a diyabc binary as it match to your cluster file architecture. By this way the script \texttt{node.sh} will know which diyabc cluster binary to use. Ask your cluster administrator in order to know this path. This absolut path need to be the same for all your cluster nodes. 
- \item  By choosing \texttt{local}, you are invited to write the path of a diyabc binary executable on your personal computer. This binary will be added to the bundle to be tranfered to your cluster
+ \item  By choosing \texttt{local}, you are invited to choose the path of a diyabc binary executable on your personal computer. This binary will be added to the bundle to be tranfered to your cluster
 \end{itemize}
 
 \subsubsection{main script : launch.sh}
@@ -307,7 +307,7 @@ See concat.out output file for logs
     \item lines 23 to 28 : jobs status given every 30 seconds
     \item line 31 : merge all \textsf{reftable\_$<number>$.bin} file in one reftable file \textsf{reftable.bin}. In case of any problem, please read \textsf{concat.out} output file.
 \end{enumerate}
-Once the monitoring phase starts, you can quit \texttt{launch.sh} and restart it at any time. Since all jobs are submitted by \texttt{launch.sh}, a lock file named \texttt{launch.sh.lock} is written in your $yourTarArchiveName$ directory and inform any new execution of \texttt{launch.sh} to not submit any new job.
+Once the monitoring phase starts, you can quit \texttt{launch.sh} and restart it at any time. Since all jobs are submitted by \texttt{launch.sh}, a lock file named \texttt{runningJobs.lock} is written in your $yourTarArchiveName$ directory and inform any new execution of \texttt{launch.sh} to not submit any new job.
 
 \subsubsection{node.sh}
 \texttt{node.sh runs} on your cluster nodes for each jobs. Those are the sequential steps of \texttt{node.sh} :
