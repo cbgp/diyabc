@@ -31,7 +31,7 @@ cd -
 mkdir -p $PACKAGEDIR/usr/bin/
 chmod 755 $PACKAGEDIR/usr/bin/
 cp -rp ../../src-JMC-C++/general $PACKAGEDIR/usr/bin/diyabc
-chmod 755 $PACKAGEDIR/usr/bin/diyabc
+chmod 755 $PACKAGEDIR/usr/bin/diyabc  $PACKAGEDIR/usr  $PACKAGEDIR/usr/share  $PACKAGEDIR/usr/share/doc  $PACKAGEDIR/usr/share/doc/diyabc-bin
 
 # package generation
 

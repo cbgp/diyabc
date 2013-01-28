@@ -1,1 +1,3 @@
 - inclure la doc dans les packages zip et dmg
+- strip executable
+- faire les manpages de "general" et diyabc-gui
