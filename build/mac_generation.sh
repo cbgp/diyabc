@@ -96,7 +96,7 @@ rm -rf $output/build $output/dist $output/$APPNAME.spec
 ##hdiutil create $output/$APPNAME-$VERSION-mac.dmg -srcfolder $output/$APPNAME-$VERSION.app -volname $APPNAME-$VERSION
 cd yoursway-create-dmg/
 echo "./create-dmg --window-size 500 300 --background ../../gui/data/images/right-arrow.png --icon-size 96 --volname '$APPNAME-$VERSION' --volicon ../../gui/data/icons/coccicon.icns --app-drop-link 380 55 --icon '$APPNAME-$VERSION' 110 55 ../$output/$APPNAME-$VERSION-mac.dmg ../$output/$APPNAME-$VERSION.app"
-./create-dmg --window-size 500 300 --background ../../gui/data/images/right-arrow.png --icon-size 96 --volname "$APPNAME-$VERSION" --volicon ../../gui/data/icons/coccicon.icns --app-drop-link 380 55 --icon "$APPNAME-$VERSION" 110 55 ../$output/$APPNAME-$VERSION-mac.dmg ../$output/$APPNAME-$VERSION.app
+./create-dmg --window-size 500 300 --background ../../gui/data/images/right-arrow-bluegrey.png --icon-size 96 --volname "$APPNAME-$VERSION" --volicon ../../gui/data/icons/coccicon.icns --app-drop-link 380 55 --icon "$APPNAME-$VERSION" 110 55 ../$output/$APPNAME-$VERSION-mac.dmg ../$output/$APPNAME-$VERSION.app
 cd ..
 # clean
 rm -rf $TMPBUILD
