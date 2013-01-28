@@ -560,6 +560,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def switchToWelcomeStack(self):
         self.ui.stackedWidget.setCurrentIndex(1)
+        print "wellllll"
 
     def switchToPreferences(self):
         self.ui.stackedWidget.setCurrentIndex(2)
@@ -840,7 +841,12 @@ class Diyabc(formDiyabc,baseDiyabc):
 
                     # creation du dir en attendant la selection du datafile
                     newProj.dirCreation(path)
-                    newProj.initializeRNG()
+                    try:
+                        newProj.initializeRNG()
+                    except Exception as e:
+                        QApplication.restoreOverrideCursor()
+                        self.closeCurrentProject(save=False)
+                        return
 
                     if len(self.project_list) == 1:
                         self.saveAllProjActionMenu.setDisabled(False)

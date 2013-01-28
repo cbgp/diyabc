@@ -104,6 +104,8 @@ class Project(baseProject,formProject):
             else:
                 os.remove("%s/RNG_state_0000.bin"%self.dir)
         executablePath = self.parent.preferences_win.getExecutablePath()
+        if executablePath == '':
+            raise Exception("Impossible to initialize the RNGs")
         nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
         # en mode cluster les options sont différentes
         if nbNodes > 1 and dest != None:
