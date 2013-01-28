@@ -56,19 +56,21 @@ rm -f `dirname $pyinst`/config.dat
 python `dirname $pyinst`/utils/Makespec.py --onefile $pysrctmp -w --icon="$icon" -o "$output"
 datalist="a.datas+=["
 for filepath in $TMPBUILD/data/icons/*;do 
-    datalist=$datalist"('data/icons/`basename $filepath`','$filepath','DATA'),"
+    datalist=$datalist"('data/icons/`basename $filepath`','echo $filepath | sed s=/=xxx123=g','DATA'),"
 done
 for filepath in $TMPBUILD/data/images/*;do 
-    datalist=$datalist"('data/images/`basename $filepath`','$filepath','DATA'),"
+    datalist=$datalist"('data/images/`basename $filepath`','echo $filepath | sed s=/=xxx123=g','DATA'),"
 done
 for filepath in $TMPBUILD/data/bin/*;do 
-    datalist=$datalist"('data/bin/`basename $filepath`','$filepath','DATA'),"
+    datalist=$datalist"('data/bin/`basename $filepath`','echo $filepath | sed s=/=xxx123=g','DATA'),"
 done
 for filepath in $TMPBUILD/uis/*;do 
-    datalist=$datalist"('uis/`basename $filepath`','$filepath','DATA'),"
+    datalist=$datalist"('uis/`basename $filepath`','echo $filepath | sed s=/=xxx123=g','DATA'),"
 done
 datalist=$datalist"]"
 sed -i "s>pyz\ =>$datalist \npyz = >g" $output/diyabc.spec
+sed -i "s>xxx123cxxx123>c:\\\\>g" $output/diyabc.spec
+sed -i "s>xxx123>\\\\>g" $output/diyabc.spec
 python $pyinst $output/diyabc.spec
 
 # copy of needed images
