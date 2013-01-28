@@ -2,10 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import sys,os.path
+from utils.cbgpUtils import getLastRevisionDate
 
 # variable qui sera changée par le générateur d'exécutable
 VERSION='development version'
 VERSION_DATE='01/01/1970'
+if ('development vers' in VERSION):
+    try:
+        VERSION_DATE=getLastRevisionDate("../../")
+    except Exception as e:
+        VERSION_DATE="unknown"
 
 DATAPATH = ""
 DOCPATH = ""

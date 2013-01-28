@@ -5,7 +5,7 @@
 #
 # @brief Projets pour créer une table de référence SNP
 
-import os,shutil
+import os
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -14,7 +14,6 @@ from summaryStatistics.setSummaryStatisticsSnp import SetSummaryStatisticsSnp
 from utils.data import DataSnp
 import os.path
 import output
-from utils.cbgpUtils import log
 from controlAscertBias import ControlAscertBias
 import variables
 from utils.cbgpUtils import log,isUnixText,dos2unix

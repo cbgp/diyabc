@@ -5,7 +5,7 @@
 #
 # @brief Projets pour créer une table de référence Msat et Sequences
 
-import os,shutil
+import os
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *

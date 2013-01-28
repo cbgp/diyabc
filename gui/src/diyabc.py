@@ -28,10 +28,10 @@ from PyQt4 import QtGui
 from PyQt4 import uic
 from preferences import Preferences
 from showLogFile import ShowLogFile
-from utils.cbgpUtils import Documentator,getLastRevisionDate
+from utils.cbgpUtils import Documentator
 import output
 import subprocess
-from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log,DirNFileDialog,isUnixText,dos2unix
+from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log,DirNFileDialog
 from utils.trayIconHandler import TrayIconHandler
 from threading import Thread
 from utils.data import isSNPDatafile
@@ -48,11 +48,6 @@ if "win" in sys.platform and "darwin" not in sys.platform:
     Qt.ImhFormattedNumbersOnly = 0
 
 
-if ('development vers' in VERSION):
-    try:
-        VERSION_DATE=getLastRevisionDate("../../")
-    except Exception as e:
-        VERSION_DATE="unknown"
 formDiyabc,baseDiyabc = uic.loadUiType("%s/diyabc.ui"%UIPATH)
 
 ## @class Diyabc

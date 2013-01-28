@@ -16,7 +16,7 @@ from historicalModel.setHistoricalModelSimulation import SetHistoricalModelSimul
 from geneticData.setGenDataSimulation import SetGeneticDataSimulation
 import os.path
 import output
-from utils.cbgpUtils import log,addLine
+from utils.cbgpUtils import log
 from datetime import datetime
 import variables
 from variables import UIPATH

@@ -6,8 +6,7 @@
 # @brief Projets pour créer une table de référence
 
 
-import hashlib,pickle,sys
-import socket
+import pickle
 from socket import *
 import time
 import os,copy
@@ -18,20 +17,17 @@ import tarfile,stat
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui,QtCore
-from PyQt4 import uic
 from analysis.defineNewAnalysis import DefineNewAnalysis
 from analysis.drawEstimationAnalysisResult import DrawEstimationAnalysisResult
 from analysis.drawComparisonAnalysisResult import DrawComparisonAnalysisResult
 from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from analysis.viewAnalysisParameters import ViewAnalysisParameters
 from viewTextFile import ViewTextFile
-from utils.data import DataSnp,isSNPDatafile
 from utils.executableLauncherThread import LauncherThread
 from datetime import datetime 
 import os.path
 import output
 from utils.cbgpUtils import log, addLine
-import tempfile
 import utils.cbgpUtils as cbgpUtils
 import utils.diyabcUtils as diyabcUtils
 from project import Project
