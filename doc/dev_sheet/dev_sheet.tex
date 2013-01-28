@@ -52,7 +52,7 @@ Ce projet est la refonte de DIYABC, initialement programmé en delphi, en PyQt.
     spécifiques à python et par doxygen.  Je génère une documentation html du
     code avec Doxygen. Un fichier de configuration de doxygen nommé doxyconfig
     est versionné. Il se trouve à la racine des sources python, c'est à dire le
-    dossier python\_interface. En tête des fichiers, des commentaires type
+    dossier gui. En tête des fichiers, des commentaires type
     javadoc sont présent pour que les options comme @author soient pris en
     compte.\\
 
@@ -332,55 +332,68 @@ La description de l'objet (bouton, label...)\end{verbatim}
 \section{Construction du projet}
 
     \subsection{Introduction}
-    Pour construire le projet en vue de le distribuer, on dispose de trois
-    scripts, un pour chaque système, qui vont générer un exécutable, une
-    application ou un paquet. Cet objet généré est transportable et distribuable
-    tel quel avec un dossier contenant des données. Ces scripts se trouvent dans
-    le dossier python\_interface/docs/project\_builders/ .\\
+    Pour construire le projet en vue de le distribuer, on dispose d'un ensemble
+    de scripts. Ces scripts se trouvent dans le dossier diyabc.git/build/ .
+    Pour Windows, on génère un .exe avec pyinstaller qui est indépendant. Pour
+    MacOSX, on génère un .dmg contenant un .app qui est indépendant. Pour Linux,
+    on peut générer des paquets debian ou rpm. Les trois paquets diyabc-gui,
+    diyabc-bin diyabc-doc sont des dépendances du paquet diyabc. On peut aussi
+    générer un exécutable qui est indépendant.\\
 
-    Il est également possible d'utiliser buildbot pour générer les ``packages''. 
+    Il est possible d'utiliser buildbot pour générer les ``packages''. 
     Buildbot permet de gérer des machines esclaves à partir d'une machine maitre.
     Buildbot s'occupe de transférer les sources sur les machines esclaves et permet
     de définir les actions à exécuter sur ces différentes machines pour construire
     le projet. On controle buildbot avec une interface web lancée par la machine maitre.
     Le seul fichier de configuration important est celui de la machine maitre où l'on définit
     les esclaves et leur processus de construction. Ce fichier se trouve aussi dans
-    python\_interface/docs/project\_builders/ .
+    diyabc.git/build/buildbot/master.cfg .
 
-    Pour générer un package sous GNU/Linux, MacOS ou Windows, il faut : 
+    Pour générer un paquet ou un binaire complet sous GNU/Linux, MacOS ou Windows, il faut : 
     \begin{itemize}
     \item Se trouver sur le système en question
     \item Posséder python et toutes les librairies nécessaires au programme
-    \item Disposer de pyinstaller\\
+    \item Disposer d'un compilateur c++ qui gère openMP
+    \item Disposer de pyinstaller (fournit en version 2.0 dans le dépôt)\\
     \end{itemize}
-
-    J'ai aussi implémenté un script qui génère un paquet .deb.
-    Pas de dépendance manuelle particulière pour générer un paquet sous Debian ou
-    Ubuntu.\\
 
     \paragraph{La mise en place de buildbot} se fait naturellement en deux temps,
     l'installation et la configuration. Installer buildbot et buildslave sur la machine maitre
     sous GNU/Linux se fait par le système de paquets. Sous windows, j'ai suivi la procédure
     indiquée par le site officiel de buildbot à savoir installer pywin32, twisted, setuptools, zope.interface
     et enfin buildbot par easy\_install . Sous MacOS, il se trouve dans les macports et dans fink. Rien n'est
-    à configurer sur les esclaves. La config du master est dans le dépôt. On crée le maitre comme ceci :
+    à configurer sur les esclaves. La config du master est dans le dépôt. C'est
+    le fichier master.cfg qui contient toute la configuration importante. Les
+    slaves ne savent qu'une chose : identifier et se connecter au master.
+    Ensuite ils reçoivent les ordres du master.
 
-    buildbot create-master master
+    La procédure à respecter pour mettre en place l'architecture de buildbot une
+    fois les buildbot et buildslave installés sur les machines est la suivante :
 
-    Cela a pour effet de créer le dossier master dans le dossier courant.
+    \begin{itemize}
+    \item Créer le master avec le script create\_master.sh se trouvant dans le
+        dépôt.
+    \item Créer les slaves avec les scripts se trouvant dans le dépôt.
+    \item Lancer le master avec le script launch\_master.sh
+    \item Lancer les slaves sur chaque machine esclave avec les scripts du
+        dépôt.\\
+    \end{itemize}
 
-    On crée les esclaves comme ceci :
+    L'interface web nécessite une authentification qui est configurée dans
+    master.cfg. Une liste des builders est disponible et permet de lancer chaque
+    génération.
 
-    buildslave create-slave myslavefolder localhost:9989 myslavename pass
-    
-    On démarre le maitre comme ceci :
+    Les générations configurées sont de la forme :\\
 
-    buildbot start master
+    \begin{itemize}
+        \item Mise à jour du dépôt sur le slave
+        \item Lancement du script de génération qui crée un dossier lastDiyabc
+        \item Upload de lastDiyabc sur le master
+        \item Changement des droits de lastDiyabc pour qu'un serveur web puisse
+            y accéder
+    \end{itemize}
 
-    Et les esclaves comme ceci :
-
-    buildslave start slave
-
+    Le fichier
 
 
     \paragraph{La génération de l'aide interne} est très simple.
@@ -393,10 +406,10 @@ La description de l'objet (bouton, label...)\end{verbatim}
     avec ``latexml'' qui est présent dans les dépôts Debian et Ubuntu. \\
     \begin{verbatim}latexml notice.tex > documentation.xml\end{verbatim}
 
-    Il faut que le fichier documentation.xml soit placé dans le dossier python\_interface/docs/ .
+    Il faut que le fichier documentation.xml soit placé dans le dossier gui/docs/ .
 
     Pour générer la documentation en html, il faut disposer de latex2html. Un 
-    script ( python\_interface/docs/gen\_html\_doc.sh ) permet de manipuler 
+    script ( gui/docs/gen\_html\_doc.sh ) permet de manipuler 
     correctement les options de latex2html. Il se lance sans paramètre 
     et copie le nécessaire au bon endroit.
 
@@ -404,34 +417,37 @@ La description de l'objet (bouton, label...)\end{verbatim}
     à la racine du dépôt. Ce makefile prend un paramètre facultatif nommé CCVERSION qui est
     le suffixe à ajouter à gcc et g++ pour compiler.
 
+
+    \subsection{Commun à tous les OS}
+        Les opérations effectuées pour la génération d'un exécutable indépendant
+        (ou .app) avec pyinstaller sont les suivantes :
+
+        \begin{itemize}
+            \item compilation du binaire
+            \item copie du binaire dans les sources python
+            \item creation d'un dossier temporaire qui reçoit tous les fichiers
+                utiles
+            \item création du fichier de spécification de pyinstaller (sous
+                windows et linux, on fait du ``onefile'' donc on inclue tous les
+                fichiers de data dans la variable ``a.datas'' du fichier de
+                specifications)
+            \item génération du package
+            \item renommage et création du zip/dmg
+        \end{itemize}
+
     
     \subsection{Windows}
         Sous windows, plusieurs solutions sont envisageables. La première, plus
         simple pour l'utilisateur et le packageur : PyInstaller. L'ex\'ecutable
         produit est ind\'ependant et l\'eger. \newline
 
-        La deuxième, Inno setup compiler, pour cr\'eer un installateur qui
-        effectue une copie de fichier et certaines actions.  Deux strat\'egies
-        sont possibles. On peut copier en un bloc python contenant ses
-        d\'ependances et diyabc. Le problème est le suivant, python.exe refuse
-        de se lancer s'il n'a pas \'et\'e install\'e avec l'installeur officiel
-        Python. Donc il faut tout de même d\'eclencher l'installation de Python
-        en incluant l'installeur dans le setup de diyabc. Sinon on peut
-        d\'eclencher l'installeur de Python, PyQt, Numpy, PyQwt pendant le setup
-        de diyabc ce qui marche à coup sur mais est lourd pour
-        l'utilisateur.\newline
-        
-        La troisème, py2exe est satisfaisante mais impose l'installation à part
-        de certaines dll.\newline
-
-        Pour ces trois solutions j'utilise python2.6 et les librairies
-        ``impos\'ees'' par PyQwt5 (http://pyqwt.sourceforge.net/download.html).
-        Il faut installer les versions suivantes des logiciels :
+        Il faut installer les logiciels suivants :
         \begin{itemize}
-            \item python-2.6.2.msi
-            \item numpy-1.3.0-win32-superpack-python2.6.exe
-            \item PyQt-Py2.6-gpl-4.5.4-1.exe
-            \item PyQwt5.2.0-Python2.6-PyQt4.5.4-NumPy1.3.0-1.exe
+            \item python
+            \item numpy
+            \item PyQt
+            \item matplotlib
+            \item MinGW
         \end{itemize}
 
         \subsubsection{Compilation du programme de calcul}
@@ -462,87 +478,22 @@ La description de l'objet (bouton, label...)\end{verbatim}
 
         Les binaires vont se loger dans mingw-get/bin/ .
 
-        Ensuite il faut avoir ce dossier bin dans le path de son émulateur de terminal.
+        La compilation du c++ est effectuée dans les scripts package-win\*.
 
-        \begin{itemize}
-            \item Se rendre dans le dossier diyabc sur le bureau avec ``git
-                bash''
-            \item Effectuer un ``git checkout .'' si nécessaire
-            \item Effectuer ``git pull --rebase origin master''
-            \item Se rendre dans src-JMC-C++
-            \item Exécuter ``g++ -fopenmp -O3 general.cpp -o general''
-            \item Ou faire un make au sommet du dépôt
-            \item Récupérer libstdc++-6.dll et libgcc\_s\_dw2-1.dll qui sont
-                dans c:/MinGW/bin . Ces deux dll doivent se trouver à côté de
-                l'exécutable pour qu'il fonctionne sur un autre système.
-        \end{itemize}
         \subsubsection{pyinstaller}
 
-        \paragraph{Anciennes versions}
-
-        La version 1.4 nécessite une version de python <= à 2.5. L'utilisation
-        de pyinstaller est assez simple. Il faut, lancer ``python Configure.py''
-        pour que pyinstaller se configure par rapport au système sur lequel il
-        est. Ensuite il faut lancer ``python Makespec.py --onefile
-        path\_to\_python\_main\_source.py'' qui génère le specfile dans un
-        dossier du même nom que notre source python. Ensuite ``python Build.py
-        specfile.spec'' construit l'exécutable qui se trouvera dans le même
-        dossier que le spec file dans un dossier nommé ``dist''.
-
         \paragraph{Solution fonctionnelle}
-
-        La version svn est de loin la meilleure solution. Elle marche sans aucun
-        problème sous windows. Son utilisation est simplifi\'ee.  Il suffit
-        d'appeler le script pyinstaller.py avec le programme cible en paramètre.
-        Les trois \'etapes (configure, makespec et build) sont ex\'ecut\'ees
-        automatiquement si besoin. Dans le fichier .spec produit, on peut
-        ajouter l'option icon pour personnaliser l'icone de l'ex\'ecutable.
-		Utilisation : \begin{verbatim} python pyinstaller.py --onefile -w --icon=path\to\icon.ico main.py \end{verbatim}
-
-        \subsubsection{Inno setup compiler}
-        http://www.jrsoftware.org/isdl.php
-
-        La cr\'eation du fichier de config (.iss) est assist\'ee et plutôt
-        ais\'ee. On donne les fichiers à inclure, le dossier de destination et
-        quelques options. Pour plus de d\'etails, consulter le fichier .iss
-        inclut dans le d\'epot qui est comment\'e.
-
-        \subsubsection{Py2exe}
-        Le site de py2exe contient un tuto simple auquel il faut ajouter
-        quelques d\'etails pour que ça fonctionne parfaitement. Le
-        fonctionnement est simple. On \'ecrit un setup.py puis on ex\'ecute
-        \begin{verbatim} python setup.py py2exe \end{verbatim} Cela Cr\'ee un
-        dossier Build et Dist. Dans ce dernier se trouve l\'executable ainsi
-        Voici un exemple de setup.py incluant la copie des donn\'ees
-        n\'ecessaires au programme ainsi que la r\'esolution du problème li\'e à
-        la librairie SIP:
-        \begin{verbatim}
-    from distutils.core import setup
-    import py2exe
-    from glob import glob
-    import os
-
-    data_files = [("docs", glob(r'docs\*.*')),("docs/accueil_pictures",
-                    glob(r'docs/accueil_pictures/*.*'))]
-
-    setup(console=[{"script":"diyabc.py"}],data_files=data_files, 
-                options={"py2exe":{"includes":["sip"]}})
-        \end{verbatim}
-        L'option ``window'' plutôt que ``console'' ne fonctionne pas.
-        \subsubsection{Solution choisie}
-        Sous windows, j'utilise pyinstaller (révision 1355). Après avoir renoncé
-        à l'écriture d'un script batch, j'ai découvert que git installait un
-        bash tout à fait fonctionnel. J'ai donc écrit le script de génération
-        d'un exécutable en bash.
 
         La génération d'un package directement distribuable (interface+binaire) est possible
         avec le script package-win-i386.sh qui met à jour le dépôt, compile les sources C++,
         et utilise pyinstaller pour générer un .exe de l'interface PyQt. S'il est exécuté sous windows
         7, il génère un binaire et un .exe qui fonctionnent sous XP, win7, win8 i386 ou x64.
 
+        Le script package-win-i386.sh utilise win\_generation.sh . 
+
         \paragraph{Utilisation}
 
-        Ce script est : python\_interface/docs/project\_builders/windows\_generation.sh . Une 
+        Ce script est : build/windows\_generation.sh . Une 
         exécution sans paramètre affiche les paramètres à fournir : \\
 
         \begin{itemize}
@@ -577,36 +528,27 @@ La description de l'objet (bouton, label...)\end{verbatim}
         Chacun se fait sur le système correspondant ou avec l'option -m32 
         pour produire du 32bits sur un système 64bits.
 
-        \subsubsection{Installer PyQt4}
+        \subsubsection{Installer les librairies}
 
-        PyQt4 et PyQwt5 sont packagés pour toutes les distributions. Aucun
+        PyQt4 et matplotlib sont packagés pour toutes les distributions. Aucun
         problème de ce côté.
         \subsubsection{pyinstaller}
-
-        Pyinstaller ne fonctionnait pas parfaitement sous linux lorsque le projet
-        était à la version 1355. 6 mois plus tard, la version 1743 fonctionne.
-        J'ai donc aussi fait un script pour générer un bundle sous linux. Il se
-        trouve ici :\\
-        python\_interface/docs/project\_builders/linux\_generation.sh . \\
+        Pyinstaller 2.0 fait du onefile sous linux.
+        build/linux\_generation.sh . \\
 
         La syntaxe est la suivante :\\ 
         linux\_generation.sh  path\_to\_pyinstaller.py  [output\_path
         path\_to\_main.py]
 
-        \subsubsection{Script de génération du paquet Debian}
+        \subsubsection{Génération des paquets Debian}
 
-        Ce script se situe dans python\_interface/docs/project\_builders/debian/ .
+        Ces scripts se situent dans build/debian/ .
         \paragraph{Utilisation}
 
-        Une exécution du script sans paramètre affiche la liste des paramètres à fournir :\\
+        Une exécution d'un script sans paramètre affiche la liste des paramètres à fournir :\\
 
-        \begin{itemize}
-            \item directory\_of\_main\_source : chemin vers le dossier contenant le script python principal (python\_interface dans notre cas)
-            \item main\_flag : flag qui détermine si le paquet généré comprendra ou pas la version dans son nom. S'il vaut MAIN, le paquet généré
-                se nommera diyabc\ldots.deb, s'il vaut autre chose, le paquet se nommera diyabc-VERSION\ldots.deb .\\
-        \end{itemize}
-
-        Après exécution de ce script, le paquet debian se trouve dans le dossier courant.
+        Après exécution d'un script, le paquet debian se trouve dans le dossier
+        courant ou dans le dossier lastDiyabc.
 
         \paragraph{Fonctionnement}
         Ce script utilise le template se trouvant dans le même répertoire. Dans
@@ -614,7 +556,7 @@ La description de l'objet (bouton, label...)\end{verbatim}
         coller avec la version. Ensuite, il copie les sources nécessaires dans
         l'arborescence du paquet, modifie les fichiers nécessaires aux menus
         gnome et autres Il écrit enfin le contenu du script de lancement qui
-        sera dans /usr/local/bin.
+        sera dans /usr/bin.
 
         \paragraph{Dépôt debian}
         Peut-être auront nous par la suite envie de mettre en place un dépôt
@@ -662,6 +604,10 @@ Description: Repository of CBGP softwares \end{verbatim}
         \url{http://doc.ubuntu-fr.org/tutoriel/comment_creer_depot} . On peut
         vouloir signer un dépôt avec une clé GPG ou encore faire un mirroir d'un
         autre dépôt.
+
+        Le script create\_update\_debian\_repo.sh permet de créer et mettre à
+        jour un dépôt débian en lui fournissant le dossier du dépôt et le chemin
+        d'un dossier contenant des .deb à ajouter.
 
     \subsection{MacOS 10.6 Snow Leopard}
         Sous MacOS, on pourrait cr\'eer un pkg qui installe python et les
@@ -750,7 +696,7 @@ Description: Repository of CBGP softwares \end{verbatim}
 
         Comme sous windows, j'ai écrit un script bash qui utilise pyinstaller
         (révision 1355). Ce script se trouve dans
-        python\_interface/docs/project\_builders/ .  Une exécution sans
+        gui/docs/project\_builders/ .  Une exécution sans
         paramètre affiche les paramètres à fournir : \\
 
         \begin{itemize}
