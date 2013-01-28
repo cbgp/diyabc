@@ -1,4 +1,3 @@
-# création du master
-
 # lancement du master
+buildbot start ~/bbot/master/
 

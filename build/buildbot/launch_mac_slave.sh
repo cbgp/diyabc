@@ -1,2 +1,3 @@
+buildslave start ~/slavemac
 
 
