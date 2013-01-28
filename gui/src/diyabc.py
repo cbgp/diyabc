@@ -560,7 +560,6 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def switchToWelcomeStack(self):
         self.ui.stackedWidget.setCurrentIndex(1)
-        print "wellllll"
 
     def switchToPreferences(self):
         self.ui.stackedWidget.setCurrentIndex(2)
