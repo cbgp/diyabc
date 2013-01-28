@@ -1,46 +1,0 @@
-10
-
-dir
-1743
-http://svn.pyinstaller.org/trunk/support/loader
-http://svn.pyinstaller.org
-
-
-
-2011-11-14T00:29:04.509081Z
-1728
-matysek
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-8dd32b29-ccff-0310-8a9a-9233e24343b1
-
-Linux-32bit
-dir
-
-Windows-64bit
-dir
-
-Darwin-32bit
-dir
-
-Linux-64bit
-dir
-
-Darwin-64bit
-dir
-
-Windows-32bit
-dir
-
