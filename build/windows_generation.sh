@@ -69,8 +69,8 @@ for filepath in $TMPBUILD/uis/*;do
 done
 datalist=$datalist"]"
 sed -i "s>pyz\ =>$datalist \npyz = >g" $output/diyabc.spec
-sed -i "s>xxx123cxxx123>c:\\\\>g" $output/diyabc.spec
-sed -i "s>xxx123>\\\\>g" $output/diyabc.spec
+sed -i 's>xxx123cxxx123>c:\\\\>g' $output/diyabc.spec
+sed -i 's>xxx123>\\\\>g' $output/diyabc.spec
 python $pyinst $output/diyabc.spec
 
 # copy of needed images
