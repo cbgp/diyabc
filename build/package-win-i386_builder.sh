@@ -28,7 +28,7 @@ cp ./src-JMC-C++/general.exe ./gui/data/bin/diyabc-comput-win-i386
 cp ./src-JMC-C++/general.exe ./gui/data/bin/diyabc-comput-win-x64
 
 cd ./build/
-./windows_generation.sh ./pyinstaller_1355/pyinstaller.py ../gui/data/icons/coccicon.ico $packageDir ../gui/src/diyabc.py
+./windows_generation.sh ./pyinstaller-2.0/pyinstaller.py ../gui/data/icons/coccicon.ico $packageDir ../gui/src/diyabc.py
 cd $packageDir
 /c/Program\ Files/7-Zip/7z.exe a "`ls | grep diyabc*32`.zip" diyabc*32
 rm -r diyabc*32
