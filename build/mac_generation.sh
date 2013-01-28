@@ -89,10 +89,13 @@ cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/bin $SOURCEDIR/../data/icons 
 cp -r $SOURCEDIR/uis/ $output/$APPNAME-$VERSION.app/Contents/Resources/uis
 rm -rf $output/build $output/dist $output/$APPNAME.spec
 # a tester, sinon : yoursway-create-dmg
-ln -s /Applications "$output/Applications"
-#cp "$icon" "$output/.VolumeIcon.icns"
-#SetFile -c icnC "$output/.VolumeIcon.icns"
-hdiutil create $output/$APPNAME-$VERSION-mac.dmg -srcfolder "$output/" -volname $APPNAME-$VERSION
-#hdiutil create $output/$APPNAME-$VERSION-mac.dmg -srcfolder $output/$APPNAME-$VERSION.app -volname $APPNAME-$VERSION
+#ln -s /Applications "$output/Applications"
+##cp "$icon" "$output/.VolumeIcon.icns"
+##SetFile -c icnC "$output/.VolumeIcon.icns"
+#hdiutil create $output/$APPNAME-$VERSION-mac.dmg -srcfolder "$output/" -volname $APPNAME-$VERSION
+##hdiutil create $output/$APPNAME-$VERSION-mac.dmg -srcfolder $output/$APPNAME-$VERSION.app -volname $APPNAME-$VERSION
+cd yoursway-create-dmg/
+./create-dmg --window-size 500 300 --background ../../gui/data/images/right-arrow.png --icon-size 96 --volname "$APPNAME-$VERSION" --volicon ../../gui/data/icons/coccicon.icns --app-drop-link 380 55 --icon "$APPNAME-$VERSION" 110 55 $output/$APPNAME-$VERSION-mac.dmg $output/$APPNAME-$VERSION.app
+cd ..
 # clean
 rm -rf $TMPBUILD
