@@ -40,6 +40,7 @@ SOURCEDIR=`dirname $pysrc`
 cp -r $SOURCEDIR $TMPBUILD/
 cp -r $SOURCEDIR/../data/ $TMPBUILD/
 cp -r $SOURCEDIR/../utils/ $TMPBUILD/src/
+cp -r $SOURCEDIR/uis $TMPBUILD/
 pysrctmp=$TMPBUILD/src/`basename $pysrc`
 #sed -i "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
 sed -i "s/development\ version/$VERSION/g" $TMPBUILD/src/variables.py
@@ -50,12 +51,30 @@ echo `cat $TMPBUILD/src/variables.py | grep VERSION`
 # nettoyage de la config de pyinstaller
 rm -f `dirname $pyinst`/config.dat
 # lancement de la generation
-python $pyinst $pysrctmp --onefile -w --icon="$icon" -o "$output"
+#python $pyinst $pysrctmp --onefile -w --icon="$icon" -o "$output"
+
+python `dirname $pyinst`/utils/Makespec.py --onefile $pysrctmp -w --icon="$icon" -o "$output"
+datalist="a.datas+=["
+for filepath in $TMPBUILD/data/icons/*;do 
+    datalist=$datalist"('data/icons/`basename $filepath`','$filepath','DATA'),"
+done
+for filepath in $TMPBUILD/data/images/*;do 
+    datalist=$datalist"('data/images/`basename $filepath`','$filepath','DATA'),"
+done
+for filepath in $TMPBUILD/data/bin/*;do 
+    datalist=$datalist"('data/bin/`basename $filepath`','$filepath','DATA'),"
+done
+for filepath in $TMPBUILD/uis/*;do 
+    datalist=$datalist"('uis/`basename $filepath`','$filepath','DATA'),"
+done
+datalist=$datalist"]"
+sed -i "s>pyz\ =>$datalist \npyz = >g" $output/diyabc.spec
+python $pyinst $output/diyabc.spec
 
 # copy of needed images
-mkdir $output/dist/data
-cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/bin $SOURCEDIR/../data/icons  $output/dist/data/
-cp -r $SOURCEDIR/uis $output/dist/
+#mkdir $output/dist/data
+#cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/bin $SOURCEDIR/../data/icons  $output/dist/data/
+#cp -r $SOURCEDIR/uis $output/dist/
 rm -rf $TMPBUILD
 sleep 3
 mv $output/dist/$APPNAME.exe $output/dist/$APPNAME-$VERSION.exe

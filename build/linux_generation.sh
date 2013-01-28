@@ -72,7 +72,7 @@ python $pyinst $output/diyabc.spec
 #mkdir -p $output/$APPNAME-$VERSION-linux$ARCH/data/
 #cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/bin $SOURCEDIR/../data/icons  $output/$APPNAME-$VERSION-linux$ARCH/data/
 #cp -r $SOURCEDIR/uis /etc/matplotlibrc $output/$APPNAME-$VERSION-linux$ARCH/
-#rm -rf $TMPBUILD
+rm -rf $TMPBUILD
 sleep 3
 mv $output/dist/$APPNAME $output/$APPNAME-$VERSION-linux$ARCH/
 rmdir $output/dist

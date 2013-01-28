@@ -11,6 +11,8 @@
 *.so
 *.a
 
+!build/pyinstaller-2.0/support/loader/Windows-32bit/*
+
 
 
 # Logs
