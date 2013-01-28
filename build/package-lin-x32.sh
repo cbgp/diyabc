@@ -12,6 +12,7 @@ git pull --rebase
 make clean
 make 
 
+strip ./src-JMC-C++/general
 cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-linux-i386
 
 cd ./build/
