@@ -135,8 +135,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>857</width>
-        <height>253</height>
+        <width>842</width>
+        <height>277</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -246,7 +246,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -270,7 +270,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -317,7 +317,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -341,7 +341,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -388,7 +388,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -412,7 +412,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -459,7 +459,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -483,7 +483,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -530,7 +530,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -554,7 +554,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -601,7 +601,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -625,7 +625,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -673,7 +673,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -697,7 +697,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -745,7 +745,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -769,7 +769,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1361,7 +1361,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1385,7 +1385,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1420,7 +1420,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1444,7 +1444,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1479,7 +1479,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1503,7 +1503,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1538,7 +1538,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1562,7 +1562,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1597,7 +1597,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1621,7 +1621,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1961,7 +1961,7 @@ nucleotide at segregating sites</string>
         <x>0</x>
         <y>0</y>
         <width>857</width>
-        <height>148</height>
+        <height>147</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -2063,7 +2063,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>25</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -2087,7 +2087,7 @@ nucleotide at segregating sites</string>
                 <property name="minimumSize">
                  <size>
                   <width>35</width>
-                  <height>14</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="maximumSize">
