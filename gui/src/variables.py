@@ -32,8 +32,17 @@ elif getattr(sys, 'frozen', None):
     IMAGEPATH = sys._MEIPASS+"/data/images"
     UIPATH = sys._MEIPASS+"/uis"
 
-
+# paquet deb/rpm
 if "linux" in sys.platform and not os.path.exists("docs/documentation"):
-    DOCPATH = "/usr/share/doc/diyabc"
-else:
-    DOCPATH = "doc/documentation"
+    DOCPATH = "/usr/share/doc/diyabc-doc"
+# sources
+elif os.path.exists("../../doc/"):
+    DOCPATH = "../../doc/"
+# DMG
+elif os.path.exists("../doc/"):
+    DOCPATH = "../doc/"
+elif os.path.exists("./doc/"):
+    DOCPATH = "./doc/"
+# onefile
+elif getattr(sys, 'frozen', None):
+    DOCPATH = sys._MEIPASS+"/doc/"

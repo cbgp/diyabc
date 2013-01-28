@@ -29,9 +29,9 @@ cd $RPM_SOURCE_DIR;
 
 %install
 rm -fR $RPM_BUILD_ROOT;
-mkdir -p $RPM_BUILD_ROOT/usr/share/doc/diyabc/;
+mkdir -p $RPM_BUILD_ROOT/usr/share/doc/diyabc-doc/;
 
-cp -rp $RPM_SOURCE_DIR/* $RPM_BUILD_ROOT/usr/share/doc/diyabc/;
+cp -rp $RPM_SOURCE_DIR/* $RPM_BUILD_ROOT/usr/share/doc/diyabc-doc/;
 
 %clean
 rm -rf $RPM_BUILD_ROOT/

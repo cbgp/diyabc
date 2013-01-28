@@ -30,19 +30,24 @@ cp -rp diyabc-doc-pkg-template/ $PACKAGEDIR/
 cd `dirname $TEXPATH`
 pdflatex `basename $TEXPATH` ; pdflatex `basename $TEXPATH`
 cd -
-cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal.pdf $PACKAGEDIR/usr/share/doc/diyabc/diyabc_notice.pdf
+cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal.pdf $PACKAGEDIR/usr/share/doc/diyabc-doc/diyabc_notice.pdf
 
 # html generation
 cd `dirname $HTMLGENPATH`
 ./gen_html_doc.sh
 cd -
-cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal $PACKAGEDIR/usr/share/doc/diyabc/html
+cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal $PACKAGEDIR/usr/share/doc/diyabc-doc/html
 
 
 # package generation
 
 # control file edition
 sed -i "s/Version: X/Version: $VERSION/" $PACKAGEDIR/DEBIAN/control
+git log | head -n 100 > $PACKAGEDIR/usr/share/doc/diyabc-doc/changelog
+gzip -9 $PACKAGEDIR/usr/share/doc/diyabc-doc/changelog
+chmod 644 $PACKAGEDIR/usr/share/doc/diyabc-doc/changelog.gz
+chmod 644 $PACKAGEDIR/usr/share/doc/diyabc-doc/diyabc_notice.pdf $PACKAGEDIR/usr/share/doc/diyabc-doc/html/*
+chmod 755 $PACKAGEDIR/usr $PACKAGEDIR/usr/share $PACKAGEDIR/usr/share/doc $PACKAGEDIR/usr/share/doc/diyabc-doc
 
 cp -r $PACKAGEDIR /tmp
 chown -R root:root /tmp/$PACKAGEDIR
