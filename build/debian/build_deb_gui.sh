@@ -37,22 +37,32 @@ mkdir -p $PACKAGEDIR/usr/bin
 chmod 755 diyabc-gui-pkg-template/DEBIAN/*
 
 # file copy
-cp -rp $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/../utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $PACKAGEDIR/usr/local/src/diyabc/
+cd $SOURCEDIR/..
+./clean.sh
+cd -
+cp -rp $SOURCEDIR/*.py $SOURCEDIR/../clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/../utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $PACKAGEDIR/usr/local/src/diyabc/
+chmod -R 755 $PACKAGEDIR/usr
+chmod 644 $PACKAGEDIR/usr/local/src/diyabc/*.py $PACKAGEDIR/usr/local/src/diyabc/analysis/*.py $PACKAGEDIR/usr/local/src/diyabc/mutationModel/*.py $PACKAGEDIR/usr/local/src/diyabc/geneticData/*.py $PACKAGEDIR/usr/local/src/diyabc/historicalModel/*.py $PACKAGEDIR/usr/local/src/diyabc/utils/*.py  $PACKAGEDIR/usr/local/src/diyabc/uis/*.ui $PACKAGEDIR/usr/share/menu/diyabc $PACKAGEDIR/usr/share/applications/diyabc.desktop $PACKAGEDIR/usr/share/doc/diyabc-gui/copyright
 # version modification
 sed -i "s/VERSION='development version'/VERSION='$VERSION'/" $PACKAGEDIR/usr/local/src/diyabc/variables.py
 sed -i "s/01\/01\/1970/$BUILDDATE/" $PACKAGEDIR/usr/local/src/diyabc/variables.py
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
+git log | head -n 100 > $PACKAGEDIR/usr/share/doc/diyabc-gui/changelog
+gzip -9 $PACKAGEDIR/usr/share/doc/diyabc-gui/changelog
+chmod 644 $PACKAGEDIR/usr/share/doc/diyabc-gui/changelog.gz
 
 #sed -i "s/ICON/\/usr\/share\/icons\/diyabc\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 
 cp -rp $SOURCEDIR/../data/images/* $PACKAGEDIR/usr/share/images/diyabc/
 cp -r $SOURCEDIR/../data/icons/* $PACKAGEDIR/usr/share/icons/diyabc/
+chmod 644 $PACKAGEDIR/usr/share/icons/diyabc/* $PACKAGEDIR/usr/share/images/diyabc/*
 
 # generation of the launch script placed in /usr/bin
 echo "#!/bin/bash
 cd /usr/local/src/diyabc/
 python /usr/local/src/diyabc/diyabc.py \$@" > $PACKAGEDIR/usr/bin/diyabc-gui
+chmod 755 $PACKAGEDIR/usr/bin/diyabc-gui
 # change owner:group to root
 #echo "chown -R 0:0 /usr/local/bin/diyabc /usr/local/src/diyabc /usr/share/applications/diyabc.desktop /usr/share/menu/diyabc" >> $PACKAGEDIR/DEBIAN/postinst
 chmod +x $PACKAGEDIR/usr/bin/diyabc-gui

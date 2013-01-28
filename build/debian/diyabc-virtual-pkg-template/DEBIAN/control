@@ -1,13 +1,13 @@
 Package: diyabc
 Version: X
-Section: biology
+Section: science
 Priority: optional
 Architecture: all
 Depends: diyabc-doc (>=X), diyabc-bin (>=X), diyabc-gui (>=X)
 Maintainer: Julien Veyssier <julien@aiur.fr> 
 Description: User-friendly approach to Approximate Bayesian Computation
- This package provides the computation executable, the GUI and the documentation
- of DIYABC.
+ This empty package provides the computation executable, the GUI and the
+ documentation of DIYABC by its dependencies.
  .
  DIYABC is a computer program with a graphical user interface and a fully
  clickable environment. It allows population biologists to make inference based

@@ -1,7 +1,7 @@
 ?package(diyabc): \
    needs="X11" \
-   section="Applications/Biology" \
-   command="/usr/local/bin/diyabc" \
+   section="Applications/Science" \
+   command="/usr/bin/diyabc-gui" \
    icon="/usr/share/icons/diyabc/coccicon.xpm" \
    title="Diyabc" \
    longtitle="Diyabc: Version VVERSION" \

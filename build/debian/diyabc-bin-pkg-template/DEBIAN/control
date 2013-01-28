@@ -1,6 +1,6 @@
 Package: diyabc-bin
 Version: X
-Section: biology
+Section: science
 Priority: optional
 Architecture: X
 Depends: libc6 (>=1.0)

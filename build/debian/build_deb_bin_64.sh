@@ -30,12 +30,17 @@ make
 cd -
 mkdir -p $PACKAGEDIR/usr/bin/
 cp -rp ../../src-JMC-C++/general $PACKAGEDIR/usr/bin/diyabc
+chmod 755 $PACKAGEDIR/usr/bin/
+chmod 755 $PACKAGEDIR/usr/bin/diyabc
 
 # package generation
 
 # control file edition
 sed -i "s/Version: X/Version: $VERSION/" $PACKAGEDIR/DEBIAN/control
 sed -i "s/Architecture: X/Architecture: amd64/" $PACKAGEDIR/DEBIAN/control
+git log | head -n 100 > $PACKAGEDIR/usr/share/doc/diyabc-bin/changelog
+gzip -9 $PACKAGEDIR/usr/share/doc/diyabc-bin/changelog
+chmod 644 $PACKAGEDIR/usr/share/doc/diyabc-bin/changelog.gz
 
 cp -r $PACKAGEDIR /tmp
 chown -R root:root /tmp/$PACKAGEDIR

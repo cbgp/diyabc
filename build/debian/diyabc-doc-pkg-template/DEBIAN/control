@@ -1,6 +1,6 @@
 Package: diyabc-doc
 Version: X
-Section: biology
+Section: science
 Priority: optional
 Architecture: all
 Depends: 

@@ -27,7 +27,10 @@ cp -rp diyabc-virtual-pkg-template/ $PACKAGEDIR/
 # control file edition
 sed -i "s/Version: X/Version: $VERSION/" $PACKAGEDIR/DEBIAN/control
 sed -i "s/>=X/>=$VERSION/g" $PACKAGEDIR/DEBIAN/control
-cat $PACKAGEDIR/DEBIAN/control
+#cat $PACKAGEDIR/DEBIAN/control
+git log | head -n 100 > $PACKAGEDIR/usr/share/doc/diyabc/changelog
+gzip -9 $PACKAGEDIR/usr/share/doc/diyabc/changelog
+chmod 644 $PACKAGEDIR/usr/share/doc/diyabc/changelog.gz
 
 cp -r $PACKAGEDIR /tmp
 chown -R root:root /tmp/$PACKAGEDIR
