@@ -74,6 +74,7 @@ python $pyinst $output/diyabc.spec
 #cp -r $SOURCEDIR/uis /etc/matplotlibrc $output/$APPNAME-$VERSION-linux$ARCH/
 rm -rf $TMPBUILD
 sleep 3
+mkdir $output/$APPNAME-$VERSION-linux$ARCH/
 mv $output/dist/$APPNAME $output/$APPNAME-$VERSION-linux$ARCH/
 rmdir $output/dist
 rm -rf $output/build $output/$APPNAME.spec
