@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os,re
-import shutil
+import os
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -9,7 +8,6 @@ from PyQt4.QtSvg import *
 from PyQt4 import uic
 from utils.visualizescenario import *
 from viewTextFile import ViewTextFile
-from datetime import datetime 
 from utils.cbgpUtils import log
 from utils.matplotlib_example import *
 import variables

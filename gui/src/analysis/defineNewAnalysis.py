@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
-import shutil
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -11,7 +9,6 @@ from genericScenarioSelection import GenericScenarioSelection
 from biasScenarioSelection import BiasNConfidenceScenarioSelection
 from analysis import Analysis
 import output
-from utils.cbgpUtils import log
 import variables
 from variables import UIPATH
 

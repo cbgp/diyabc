@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import shutil
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *

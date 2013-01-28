@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import os
-import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyQt4 import QtGui
 from PyQt4 import uic
 #from uis.viewAnalysisParameters_ui import Ui_Frame
-import output
 import variables
 from variables import UIPATH
 
