@@ -1058,6 +1058,10 @@ def main():
     if "-cmd" in nargv:
         nargv.remove("-cmd")
         cmd=True
+    if "--version" in nargv:
+        print VERSION
+        print VERSION_DATE
+        return
 
     projects_to_open = []
     for arg in nargv[1:]:

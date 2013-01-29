@@ -43,6 +43,11 @@ cd -
 cp -rp $SOURCEDIR/*.py $SOURCEDIR/../clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/../utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $PACKAGEDIR/usr/local/src/diyabc/
 chmod -R 755 $PACKAGEDIR/usr
 chmod 644 $PACKAGEDIR/usr/local/src/diyabc/*.py $PACKAGEDIR/usr/local/src/diyabc/analysis/*.py $PACKAGEDIR/usr/local/src/diyabc/mutationModel/*.py $PACKAGEDIR/usr/local/src/diyabc/geneticData/*.py $PACKAGEDIR/usr/local/src/diyabc/historicalModel/*.py $PACKAGEDIR/usr/local/src/diyabc/utils/*.py  $PACKAGEDIR/usr/local/src/diyabc/uis/*.ui $PACKAGEDIR/usr/share/menu/diyabc $PACKAGEDIR/usr/share/applications/diyabc.desktop $PACKAGEDIR/usr/share/doc/diyabc-gui/copyright
+# gestion du man
+sed -i "s/BUILDDATE/$BUILDDATE/" $PACKAGEDIR/usr/share/man/man1/diyabc-gui.1
+sed -i "s/VersionX/Version $VERSION/" $PACKAGEDIR/usr/share/man/man1/diyabc-gui.1
+gzip -9 $PACKAGEDIR/usr/share/man/man1/diyabc-gui.1
+chmod 644 $PACKAGEDIR/usr/share/man/man1/diyabc-gui.1.gz
 # version modification
 sed -i "s/VERSION='development version'/VERSION='$VERSION'/" $PACKAGEDIR/usr/local/src/diyabc/variables.py
 sed -i "s/01\/01\/1970/$BUILDDATE/" $PACKAGEDIR/usr/local/src/diyabc/variables.py
