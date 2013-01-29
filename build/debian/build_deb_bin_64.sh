@@ -36,6 +36,11 @@ chmod 755 $PACKAGEDIR/usr/bin/diyabc  $PACKAGEDIR/usr  $PACKAGEDIR/usr/share  $P
 
 # package generation
 
+# gestion du man
+sed -i "s/BUILDDATE/$BUILDDATE/" $PACKAGEDIR/usr/share/man/man1/diyabc.1
+sed -i "s/VersionX/Version $VERSION/" $PACKAGEDIR/usr/share/man/man1/diyabc.1
+gzip -9 $PACKAGEDIR/usr/share/man/man1/diyabc.1
+chmod 644 $PACKAGEDIR/usr/share/man/man1/diyabc.1.gz
 # control file edition
 sed -i "s/Version: X/Version: $VERSION/" $PACKAGEDIR/DEBIAN/control
 sed -i "s/Architecture: X/Architecture: amd64/" $PACKAGEDIR/DEBIAN/control

@@ -1,6 +1,10 @@
 - inclure la doc dans les packages zip et dmg
 - faire les manpages de diyabc-bin
 - reporter changements paquets deb sur rpm (manpages par exemple)
+- recup exception qui remonte au sommet ds les logs
+- lire correctement l'output de general
+- RNG chagement de nb thread
+
 
 #- strip executable
 # manpage diyabc-gui
