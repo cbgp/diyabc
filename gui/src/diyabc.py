@@ -397,6 +397,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.closeProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/project-close.png"),"C&lose project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
                 self.deleteProjActionMenu = self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/user-trash.png"),"&Delete project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
 
+            # si on est encore en phase de creation de projet (bas de l'ecran caché)
+            # on n'active pas le menu projet
             if self.tabWidget.currentWidget().groupBox_6.isHidden():
                 self.currentProjectMenu.setDisabled(True)
             else:

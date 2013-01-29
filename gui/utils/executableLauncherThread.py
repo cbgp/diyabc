@@ -151,6 +151,7 @@ class LauncherThread(QThread):
             poll_check = p.poll()
             if poll_check != None:
                 f.close()
+                time.sleep(1)
                 f = open(self.outfile_path,"r")
                 lines = f.readlines()
                 f.close()

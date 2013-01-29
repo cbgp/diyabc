@@ -1,7 +1,7 @@
 - gérer quand on fait annuler au moment de la selection de chemin de la création d'un tar cluster
 - inclure la doc dans les packages zip et dmg
 - recup exception qui remonte au sommet ds les logs
-- lire correctement l'output de general
+- TENTATIVE A VERIFIER : mettre un sleep apres la fermeture du fichier qui reception stdout pour lire correctement l'output de general
 - RNG changement de nb thread
 
 
