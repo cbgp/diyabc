@@ -17,6 +17,14 @@ cp -r ../debian/diyabc-gui-pkg-template/usr/share/applications/ $PACKAGESRCDIR/
 
 cp -rp $SOURCEDIR/../data/images $SOURCEDIR/../data/icons   $PACKAGESRCDIR/
 cp ./rpmbuild/SPECS/diyabc-gui.spec  $PACKAGEDIR/SPECS/diyabc-bin.spec
+
+cp $SOURCEDIR/../../build/debian/diyabc-gui-pkg-template/usr/share/man/man1/diyabc-gui.1 $PACKAGESRCDIR/
+# gestion du man
+sed -i "s/BUILDDATE/$BUILDDATE/" $PACKAGESRCDIR/diyabc-gui.1
+sed -i "s/VersionX/Version $VERSION/" $PACKAGESRCDIR/diyabc-gui.1
+gzip -9 $PACKAGESRCDIR/diyabc-gui.1
+chmod 644 $PACKAGESRCDIR/diyabc-gui.1.gz
+
 # spec file edition
 sed -i "s/Version:   X/Version:   $VERSION/" $PACKAGEDIR/SPECS/diyabc-gui.spec
 sed -i "s/>= X/>= $VERSION/g" $PACKAGEDIR/SPECS/diyabc-gui.spec

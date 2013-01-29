@@ -32,6 +32,8 @@ cd $RPM_SOURCE_DIR;
 %install
 rm -fR $RPM_BUILD_ROOT;
 mkdir -p $RPM_BUILD_ROOT/usr/bin;
+mkdir -p $RPM_BUILD_ROOT/usr/share/man/man1/;
+cp $RPM_SOURCE_DIR/diyabc.1.gz $RPM_BUILD_ROOT/usr/share/man/man1/;
 
 cp -rp $RPM_SOURCE_DIR/usr/bin/diyabc $RPM_BUILD_ROOT/usr/bin/;
 

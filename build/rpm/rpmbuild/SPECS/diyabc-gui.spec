@@ -35,6 +35,8 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/menu;
 mkdir -p $RPM_BUILD_ROOT/usr/share/icons/diyabc;
 mkdir -p $RPM_BUILD_ROOT/usr/share/images/diyabc;
 mkdir -p $RPM_BUILD_ROOT/usr/share/applications;
+mkdir -p $RPM_BUILD_ROOT/usr/share/man/man1/;
+cp $RPM_SOURCE_DIR/diyabc-gui.1.gz $RPM_BUILD_ROOT/usr/share/man/man1/;
 
 echo "#!/bin/bash
 cd /usr/local/src/diyabc/

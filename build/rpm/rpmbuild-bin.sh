@@ -33,6 +33,13 @@ make
 cd -
 mkdir -p $PACKAGESRCDIR/usr/bin/
 cp -rp $GITDIR/src-JMC-C++/general $PACKAGESRCDIR/usr/bin/diyabc
+cp $GITDIR/build/debian/diyabc-bin-pkg-template/usr/share/man/man1/diyabc.1 $PACKAGESRCDIR/
+# gestion du man
+sed -i "s/BUILDDATE/$BUILDDATE/" $PACKAGESRCDIR/diyabc.1
+sed -i "s/VersionX/Version $VERSION/" $PACKAGESRCDIR/diyabc.1
+gzip -9 $PACKAGESRCDIR/diyabc.1
+chmod 644 $PACKAGESRCDIR/diyabc.1.gz
+
 
 cp ./rpmbuild/SPECS/diyabc-bin.spec  $PACKAGEDIR/SPECS/diyabc-bin.spec
 # spec file edition
