@@ -384,6 +384,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         # si -1 : plus d'onglet
         if projIndex != -1:
             curprojname = self.tabWidget.currentWidget().name
+
             if self.currentProjectMenu != None:
                 self.currentProjectMenu.setText("&Project %s"%curprojname)
             else:
@@ -395,6 +396,11 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.importReftableActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/import.png"),"&Import and merge reftable file",self.importReftableCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_I))
                 self.closeProjActionMenu =  self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/project-close.png"),"C&lose project",self.closeCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_W))
                 self.deleteProjActionMenu = self.currentProjectMenu.menu().addAction(QIcon(variables.ICONPATH+"/user-trash.png"),"&Delete project",self.deleteCurrentProject,QKeySequence(Qt.CTRL + Qt.Key_X))
+
+            if self.tabWidget.currentWidget().groupBox_6.isHidden():
+                self.currentProjectMenu.setDisabled(True)
+            else:
+                self.currentProjectMenu.setDisabled(False)
         else:
             # on supprime le menu
             self.menubar.removeAction(self.currentProjectMenu)

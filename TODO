@@ -1,3 +1,4 @@
+- gérer quand on fait annuler au moment de la selection de chemin de la création d'un tar cluster
 - inclure la doc dans les packages zip et dmg
 - recup exception qui remonte au sommet ds les logs
 - lire correctement l'output de general
@@ -8,3 +9,4 @@
 #- manpage diyabc-gui
 #- faire les manpages de diyabc-bin
 #- reporter changements paquets deb sur rpm (manpages par exemple)
+#- au moment de la creation d'un projet, faire apparaitre le menu projet APRES la selection du datafile
