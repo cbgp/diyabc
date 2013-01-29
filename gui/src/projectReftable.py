@@ -632,8 +632,7 @@ exit 0
                     log(3,"Tar file created in %s"%tname)
                     output.notify(self,"Notify","The archive has been generated in %s"%tname)
                 else :
-                    log(1,"ERROR : Tar file not created in %s"%tname)
-                    output.notify(self,"Error Archive creation","An error occurs.\n The archive has not been been generated in %s"%tname)
+                    log(1,"CANCEL : Tar file not created")
                 #self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
                 self.startUiGenReftable()
