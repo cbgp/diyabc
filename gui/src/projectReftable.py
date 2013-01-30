@@ -355,10 +355,11 @@ if [ "$#" -lt 5 ]
 fi
 
 DIYABCPATH=$1
-NBTOGEN=$2
-USERDIR=$3
-MYNUMBER=$4
-DATAFILE=$5
+NBCORES=$2
+NBTOGEN=$3
+USERDIR=$4
+MYNUMBER=$5
+DATAFILE=$6
 # Get full path for diyabc, dir and file
 DIYABCPATH=`readlink -f "$DIYABCPATH"`
 USERDIR=`readlink -f "$USERDIR"`                   
@@ -500,10 +501,10 @@ cp "$DATAFILE" "$TMPDIR/"
 
 # Computations
 rngNum=`echo ${rngFileName:10} | cut -d'.' -f1`
-cmd="$TMPDIR/`basename $DIYABCPATH` -p $TMPDIR/ -w $rngNum -r $NBTOGEN "
+cmd="$TMPDIR/`basename $DIYABCPATH` -t $NBCORES -p $TMPDIR/ -w $rngNum -r $NBTOGEN "
 echo -e "Running computations :" 
 echo -e "$cmd"
-"$TMPDIR/`basename $DIYABCPATH`" -p "$TMPDIR/" -w $rngNum -r $NBTOGEN &> "$TMPDIR/diyabc.out" &
+"$TMPDIR/`basename $DIYABCPATH`" -t $NBCORES -p "$TMPDIR/" -w $rngNum -r $NBTOGEN &> "$TMPDIR/diyabc.out" &
 cmdPID="$!"
 echo $cmdPID > "$rngFlagFile"
 sleep 5

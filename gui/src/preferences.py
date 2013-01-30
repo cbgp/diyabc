@@ -59,7 +59,7 @@ function progress(){
         fi
     done
     pct=$(( $sum * 100 / $numSimulatedDataSet ))
-    echo `nbOk $jobsTot` "/ $jobsTot finished, $pct %, sum $sum/$numSimulatedDataSet"
+    echo `nbOk $jobsTot` "/$jobsTot finished $pct% (total : $sum)"
 }
 
 function nbOk(){
@@ -142,9 +142,16 @@ function submitJobs(){
         ##3 USERDIR
         ##4 MYNUMBER
         ##5 DATAFILE
-        cmd="qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh ""'""$diyabcPath""'"" $numSimulatedDataSetForThisJob ""'""`pwd`""'"" $jobNum  ""'""$PWD/$dataFileName""'"
+        queueName="mem.q"
+        MPEnv=""
+        if [ "$coresPerJob" -gt 1 ]
+            then
+            MPEnv="-pe SMP $coresPerJob"
+        fi
+        
+        cmd="qsub -N n${jobNum}_$projectName -q $queueName $MPEnv -cwd node.sh ""'""$diyabcPath""'"" $coresPerJob $numSimulatedDataSetForThisJob ""'""`pwd`""'"" $jobNum  ""'""$PWD/$dataFileName""'"
         echo $cmd
-        qsub -N n${jobNum}_$projectName -q long.q -cwd node.sh "$diyabcPath" $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
+        qsub -N n${jobNum}_$projectName -q $queueName $MPEnv -cwd node.sh "$diyabcPath" $coresPerJob $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
         ############################## END EDIT #####################################
         if [ $? -eq "0" ] 
             then 
