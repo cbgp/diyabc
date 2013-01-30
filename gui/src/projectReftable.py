@@ -654,6 +654,11 @@ exit 0
                 nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
                 cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-r", "%s"%nb_to_gen , "-g", "%s"%particleLoopSize ,"-m", "-t", "%s"%nbMaxThread]
 
+                cmd_args_list_quoted = list(cmd_args_list)
+                for i in range(len(cmd_args_list_quoted)):
+                    if ";" in cmd_args_list_quoted[i] or " " in cmd_args_list_quoted[i] or ":" in cmd_args_list_quoted[i]:
+                        cmd_args_list_quoted[i] = '"'+cmd_args_list_quoted[i]+'"'
+
                 self.th = LauncherThread("%s reference table generation"%self.name,cmd_args_list,outfile_path=outfile,progressfile_path=progressfile,signalnames=signames)
                 self.th.nb_to_gen = nb_to_gen
                 self.th.connect(self.th,SIGNAL("reftableProgress(QString)"),self.reftableProgress)
@@ -661,7 +666,7 @@ exit 0
                 self.th.connect(self.th,SIGNAL("reftableProblem(QString)"),self.reftableProblem)
                 self.th.connect(self.th,SIGNAL("reftableLog(int,QString)"),self.reftableLog)
                 self.th.start()
-                addLine("%s/command.txt"%self.dir,"Command launched : %s\n\n"%" ".join(cmd_args_list))
+                addLine("%s/command.txt"%self.dir,"Command launched : %s\n\n"%" ".join(cmd_args_list_quoted))
         else:
             output.notify(self,"Impossible to launch","An analysis is processing,\
                     \nimpossible to launch reftable generation")
@@ -1116,7 +1121,13 @@ exit 0
         cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "%s"%option,
                 '%s'%params.replace(u'\xb5','u'), "-i", '%s'%analysis.name,
                 "-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
-        addLine("%s/command.txt"%self.dir,"Command launched for analysis '%s' : %s\n\n"%(analysis.name," ".join(cmd_args_list)))
+
+        cmd_args_list_quoted = list(cmd_args_list)
+        for i in range(len(cmd_args_list_quoted)):
+            if ";" in cmd_args_list_quoted[i] or " " in cmd_args_list_quoted[i] or ":" in cmd_args_list_quoted[i]:
+                cmd_args_list_quoted[i] = '"'+cmd_args_list_quoted[i]+'"'
+
+        addLine("%s/command.txt"%self.dir,"Command launched for analysis '%s' : %s\n\n"%(analysis.name," ".join(cmd_args_list_quoted)))
 
         self.thAnalysis = LauncherThread(analysis.name,cmd_args_list,outfile_path=outfile,progressfile_path=progressfile,signalnames=signames)
         self.thAnalysis.analysis = analysis

@@ -38,6 +38,11 @@ class LauncherThread(QThread):
         super(LauncherThread,self).__init__()
         self.name = name
         self.cmd_args_list = cmd_args_list
+        self.cmd_args_list_quoted = list(self.cmd_args_list)
+        for i in range(len(self.cmd_args_list_quoted)):
+            if ";" in self.cmd_args_list_quoted[i] or " " in self.cmd_args_list_quoted[i] or ":" in self.cmd_args_list_quoted[i]:
+                self.cmd_args_list_quoted[i] = '"'+self.cmd_args_list_quoted[i]+'"'
+
         self.realtime_output = realtime_output
         self.outfile_path = outfile_path
         self.progressfile_path = progressfile_path
@@ -140,7 +145,8 @@ class LauncherThread(QThread):
             p = subprocess.Popen(self.cmd_args_list,startupinfo=popen_options, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         else:
             p = subprocess.Popen(self.cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
-        self.log(3,"Command launched in thread '%s' : %s"%(self.name," ".join(self.cmd_args_list)))
+
+        self.log(3,"Command launched in thread '%s' : %s"%(self.name," ".join(self.cmd_args_list_quoted)))
         self.processus = p
         self.log(3,"Popen procedure success")
         outlastline = ""
