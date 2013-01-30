@@ -202,7 +202,7 @@ int readheadersim() {
 
 int main(int argc, char *argv[]){
 string RNG_filename;
-
+bool exception_caught = false;
 try {
 	cout<<"debut\n";
 	initstat_typenum();
@@ -643,9 +643,11 @@ try {
 	} catch (exception& e) {
 		cout << "\n\n!!! I have caught an exception which is: \n";
 		cout << e.what() << endl << endl;
+		exception_caught = true;
 
 	} catch (...) {
 		cout << "\n\n!!! I have caught an unknown exception. \n\n";
+		exception_caught = true;
 	}
 
 	if( RNG_must_be_saved ) {
@@ -655,5 +657,6 @@ try {
 		RNG_must_be_saved = false;
 	}
 	freeRNG();
+	if (exception_caught) return 1;
 	return 0;
 };
