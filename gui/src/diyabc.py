@@ -36,7 +36,7 @@ from utils.trayIconHandler import TrayIconHandler
 from threading import Thread
 from utils.data import isSNPDatafile
 import variables
-from variables import VERSION,VERSION_DATE,UIPATH
+from variables import VERSION,VERSION_DATE,UIPATH,DOCPATH
 from utils.matplotlib_example import *
 
 # trick to get things working on windows
@@ -102,7 +102,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.openProject(projDirName)
         try:
             #self.documentator = Documentator(variables.DOCPATH+"/index.html")
-            self.documentator = Documentator("docs/dodo/index.html")
+            self.documentator = Documentator(DOCPATH+"/html/index.html")
             self.updateDoc()
         except Exception as e:
             log(1,"Documentation error : %s"%e)

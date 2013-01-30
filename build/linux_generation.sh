@@ -38,6 +38,7 @@ SOURCEDIR=`dirname $pysrc`
 #cp -r $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $TMPBUILD/
 cp -r $SOURCEDIR $TMPBUILD/
 cp -r $SOURCEDIR/../data/ $TMPBUILD/
+cp -r $SOURCEDIR/../../Notice-DIYABC-v2/Notice_DIYABC_principal2 $TMPBUILD/html
 cp -r $SOURCEDIR/../utils/ $TMPBUILD/src/
 cp -r $SOURCEDIR/uis $TMPBUILD/
 pysrctmp=$TMPBUILD/src/`basename $pysrc`
@@ -63,6 +64,9 @@ for filepath in $TMPBUILD/data/bin/*;do
 done
 for filepath in $TMPBUILD/uis/*;do 
     datalist=$datalist"('uis/`basename $filepath`','$filepath','DATA'),"
+done
+for filepath in $TMPBUILD/html/*;do 
+    datalist=$datalist"('doc/html/`basename $filepath`','$filepath','DATA'),"
 done
 datalist=$datalist"]"
 sed -i "s>pyz\ =>$datalist \npyz = >g" $output/diyabc.spec

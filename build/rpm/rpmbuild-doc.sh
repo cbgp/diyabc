@@ -23,7 +23,7 @@ cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal.pdf $PACKAGESRCDIR/diyabc_
 cd `dirname $HTMLGENPATH`
 ./gen_html_doc.sh
 cd -
-cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal $PACKAGESRCDIR/html
+cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal2 $PACKAGESRCDIR/html
 
 
 cp ./rpmbuild/SPECS/diyabc-doc.spec  $PACKAGEDIR/SPECS/diyabc-doc.spec

@@ -36,7 +36,7 @@ cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal.pdf $PACKAGEDIR/usr/share/
 cd `dirname $HTMLGENPATH`
 ./gen_html_doc.sh
 cd -
-cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal $PACKAGEDIR/usr/share/doc/diyabc-doc/html
+cp -rp ../../Notice-DIYABC-v2/Notice_DIYABC_principal2 $PACKAGEDIR/usr/share/doc/diyabc-doc/html
 
 
 # package generation
