@@ -379,7 +379,7 @@ double cal_moy(int n, double *x) {
  * Calcule la moyenne d'un vecteur de long doubles
  */
 long double cal_moyL(int n, long double *x) {
-    double sx=0;
+    long double sx=0;
     for (int i=0;i<n;i++) sx +=x[i];
     if (n>0) return sx/(long double)n;
     else return 0.0;
@@ -392,7 +392,7 @@ double cal_mode(int n, double *x) {
     int l0=1,l2=n,dl,lmin;
     double min;
     dl=(l2-l0)/2;
-    while (x[l0-1] != x[l2-1]) {
+    while ((x[l0-1] != x[l2-1])and(l0 != l2)) {
         min=x[l0+dl-1] - x[l0-1];lmin=l0;
         for (int l=l0;l<l2-dl;l++) {
             if(x[l+dl-1]-x[l-1]<min) {
@@ -410,9 +410,9 @@ double cal_mode(int n, double *x) {
  */
 long double cal_modeL(int n, long double *x) {
     int l0=1,l2=n,dl,lmin;
-    double min;
+    long double min;
     dl=(l2-l0)/2;
-    while (x[l0-1] != x[l2-1]) {
+    while ((x[l0-1] != x[l2-1])and(l0 != l2)) {
         min=x[l0+dl-1] - x[l0-1];lmin=l0;
         for (int l=l0;l<l2-dl;l++) {
             if(x[l+dl-1]-x[l-1]<min) {
@@ -421,6 +421,7 @@ long double cal_modeL(int n, long double *x) {
             }
         }
         l0=lmin;l2=lmin+dl;dl=(l2-l0)/2;
+		//cout<<"l0="<<l0<<"    l2="<<l2<<"\n";
     }
     return x[l0-1];
 }

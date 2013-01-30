@@ -234,7 +234,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                                diff[j]=parmax[j]-parmin[j];
                        }
                    }
-                   //cout <<"fin du calcul de parmin/parmax rt.scenchoisi[0] = "<<rt.scenchoisi[0]<<"\n";
+                   for (int j=0;j<nparamcom;j++) if (parmin[j]<0.0) parmin[j]=0.0;
+					   //cout <<"fin du calcul de parmin/parmax rt.scenchoisi[0] = "<<rt.scenchoisi[0]<<"\n";
                    //for (int i=0;i<nparamcom;i++) cout <<parmin[i]<<"   "<<parmax[i]<<"\n";
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {
@@ -299,6 +300,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                                diff[j]=parmax[j]-parmin[j];
                        }
                    }
+                   for (int j=0;j<nparamcom;j++) if (parmin[j]<0.0) parmin[j]=0.0;
                    //cout <<"fin du calcul de parmin/parmax\n";
                    for (int i=0;i<n;i++) {
                        for (int j=0;j<nparamcom;j++) {
@@ -440,6 +442,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
 							marge=coefmarge*diffcompo[j];
 							parmincompo[j] -=marge;
+							if (parmincompo[j]<0.0) parmincompo[j]=0.0;
 							parmaxcompo[j] +=marge;
 							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
 						}
@@ -462,6 +465,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
 							marge=coefmarge*diffcompo[j];
 							parmincompo[j] -=marge;
+							if (parmincompo[j]<0.0) parmincompo[j]=0.0;
 							parmaxcompo[j] +=marge;
 							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
 						}
@@ -555,6 +559,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
 						marge=coefmarge*diffscaled[j];
 						parminscaled[j] -=marge;
+						if (parminscaled[j]<0.0) parminscaled[j]=0.0;
 						parmaxscaled[j] +=marge;
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
 						//cout<<"parminscaled["<<j<<"] = "<<parminscaled[j]<<"\n";
@@ -578,6 +583,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
 						marge=coefmarge*diffscaled[j];
 						parminscaled[j] -=marge;
+						if (parminscaled[j]<0.0) parminscaled[j]=0.0;
 						parmaxscaled[j] +=marge;
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
 					}
@@ -1033,6 +1039,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1<<enteteC<<"\n";
 			for (int i=0;i<n;i++) {
 				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen;
+				for (int j=0;j<nparcompo;j++) if(phistarcompo[i][j]<0.0){cout<<"i="<<i<<"   j="<<j<<"   "<<phistarcompo[i][j]<<"\n";exit(1);}
 				for (int j=0;j<nparcompo;j++) f1<<fmLB(phistarcompo[i][j],16,3);
 				f1<<"\n";
 			}
@@ -1045,6 +1052,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1<<enteteS<<"\n";
 			for (int i=0;i<n;i++) {
 				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen;
+				for (int j=0;j<nparscaled;j++) if(phistarscaled[i][j]<0.0){cout<<"i="<<i<<"   j="<<j<<"   "<<phistarscaled[i][j]<<"\n";exit(1);}
 				for (int j=0;j<nparscaled;j++) f1<<fmLB(phistarscaled[i][j],16,3);
 				f1<<"\n";
 			}
@@ -1579,8 +1587,10 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         parst = new parstatC[nparam];
         x = new long double[n];
         for (int j=0;j<nparam;j++) {
+			cout<<"calcul des stat du parametre "<<j<<" sur "<<nparam<<"\n";
             for (int i=0;i<n;i++) x[i] = par[i][j];
             sort(&x[0],&x[n]);
+			cout<<"apres le sort\n";
             parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
             parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
             parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
@@ -1588,8 +1598,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             parst[j].q750 = x[(int)floor(0.750*n+0.5)-1];
             parst[j].q950 = x[(int)floor(0.950*n+0.5)-1];
             parst[j].q975 = x[(int)floor(0.975*n+0.5)-1];
+			cout<<"apres les quantiles\n";
             parst[j].moy = cal_moyL(n,x);
+			cout<<"apres la moyenne\n";
             parst[j].mod = cal_modeL(n,x);
+			cout<<"apres le mode\n";
         }
         delete []x;
         return parst;
