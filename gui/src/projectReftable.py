@@ -78,36 +78,45 @@ class ProjectReftable(Project):
         self.stopAnalysis()
         self.unlock()
 
-    def importRefTableFile(self):
-        filename = QFileDialog.getOpenFileName(self,"Select reference table file","","Binary file (*.bin);;all files (*)")
-        if filename == None or str(filename) == "":
+    def importRefTableFile(self,filename=None):
+        """ Import reference table in given or selected file and merge it
+        with the current one if there was one
+        """
+        if filename == None:
+            filename = QFileDialog.getOpenFileName(self,"Select reference table file","","Binary file (*.bin);;all files (*)")
+            if filename == None or str(filename) == "":
+                return
+        elif not os.path.exists(filename):
             return
-        else:
-            if mimetypes.guess_type(str(filename))[0] != "application/octet-stream":
-               output.notify(self,"Bad reftable file","The file you want to import is not a binary file and probably not a reference table file.")
-               return
-            shutil.copy(filename,"%s/reftable_1.bin"%(self.dir))
-            if os.path.exists("%s/reftable.bin"%self.dir):
-                shutil.move("%s/reftable.bin"%self.dir,"%s/reftable_2.bin"%self.dir)
-            exPath = self.parent.preferences_win.getExecutablePath()
-            if exPath != "":
-                cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-q"]
-                outfile = "%s/import.out"%self.dir
-                if os.path.exists(outfile):
-                    os.remove(outfile)
-                fg = open(outfile,"w")
-                p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
-                while p.poll() == None:
-                    time.sleep(1)
-                fg.close()
-                if p.poll() == 0:
-                    log(3,"Reftable import and merge successfull")
-                    self.parent.reloadCurrentProject()
-                else:
-                    log(3,"Reftable import and merge FAILED with exit code %s"%p.poll())
+
+        if mimetypes.guess_type(str(filename))[0] != "application/octet-stream":
+           output.notify(self,"Bad reftable file","The file you want to import is not a binary file and probably not a reference table file.")
+           return
+        shutil.copy(filename,"%s/reftable_1.bin"%(self.dir))
+        if os.path.exists("%s/reftable.bin"%self.dir):
+            shutil.move("%s/reftable.bin"%self.dir,"%s/reftable_2.bin"%self.dir)
+        exPath = self.parent.preferences_win.getExecutablePath()
+        if exPath != "":
+            cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-q"]
+            outfile = "%s/import.out"%self.dir
+            if os.path.exists(outfile):
+                os.remove(outfile)
+            fg = open(outfile,"w")
+            p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
+            while p.poll() == None:
+                time.sleep(1)
+            fg.close()
+            if p.poll() == 0:
+                log(3,"Reftable import and merge successfull")
+                self.parent.reloadCurrentProject()
+            else:
+                log(3,"Reftable import and merge FAILED with exit code %s"%p.poll())
 
 
     def deleteReftable(self):
+        """ Delete the reftable binary file in the project
+        directory if it exists.
+        """
         # si aucune manipulation sur la reftable :
         if self.th == None:
             # si il existe une reftable
