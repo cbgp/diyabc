@@ -1,7 +1,6 @@
 - inclure la doc dans les packages zip et dmg (linux OK)
 - recup exception qui remonte au sommet ds les logs
-- TENTATIVE A VERIFIER : mettre un sleep apres la fermeture du fichier qui reception stdout pour lire correctement l'output de general
-- RNG changement de nb thread (PIERRE est sur le coup)
+- RNG changement de nb thread ([interf] check puis regen si mauvais) ([CPP] waiting for Pierre)
 
 
 #- strip executable
@@ -10,3 +9,4 @@
 #- reporter changements paquets deb sur rpm (manpages par exemple)
 #- au moment de la creation d'un projet, faire apparaitre le menu projet APRES la selection du datafile
 #- gérer quand on fait annuler au moment de la selection de chemin de la création d'un tar cluster
+#- OK (trop peu de lignes étaient lues et le prog écrit des lignes vides à la fin...) mettre un sleep apres la fermeture du fichier qui reception stdout pour lire correctement l'output de general

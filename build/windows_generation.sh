@@ -41,6 +41,7 @@ cp -r $SOURCEDIR $TMPBUILD/
 cp -r $SOURCEDIR/../data/ $TMPBUILD/
 cp -r $SOURCEDIR/../utils/ $TMPBUILD/src/
 cp -r $SOURCEDIR/uis $TMPBUILD/
+test -d $SOURCEDIR/../../../html && cp -r $SOURCEDIR/../../../html $TMPBUILD/html
 pysrctmp=$TMPBUILD/src/`basename $pysrc`
 #sed -i "s/development\ version/$VERSION ($BUILDDATE)/g" $TMPBUILD/$APPNAME.py
 sed -i "s/development\ version/$VERSION/g" $TMPBUILD/src/variables.py
@@ -66,6 +67,9 @@ for filepath in $TMPBUILD/data/bin/*;do
 done
 for filepath in $TMPBUILD/uis/*;do 
     datalist=$datalist"('uis/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
+done
+for filepath in $TMPBUILD/html/*;do 
+    datalist=$datalist"('doc/html/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
 done
 datalist=$datalist"]"
 sed -i "s>pyz\ =>$datalist \npyz = >g" $output/diyabc.spec
