@@ -87,6 +87,8 @@ mkdir $output/$APPNAME-$VERSION.app/Contents/Resources/data
 #cp -r $SOURCEDIR/docs/accueil_pictures $SOURCEDIR/docs/icons $SOURCEDIR/docs/executables $SOURCEDIR/docs/dev* $SOURCEDIR/docs/doc* $output/$APPNAME-$VERSION.app/Contents/Resources/docs/
 cp -r $SOURCEDIR/../data/images $SOURCEDIR/../data/bin $SOURCEDIR/../data/icons  $output/$APPNAME-$VERSION.app/Contents/Resources/data/
 cp -r $SOURCEDIR/uis/ $output/$APPNAME-$VERSION.app/Contents/Resources/uis
+test -d $SOURCEDIR/../../../html && mkdir $output/$APPNAME-$VERSION.app/Contents/Resources/doc && cp -r $SOURCEDIR/../../../html $output/$APPNAME-$VERSION.app/Contents/Resources/doc/html
+
 rm -rf $output/build $output/dist $output/$APPNAME.spec
 # a tester, sinon : yoursway-create-dmg
 #ln -s /Applications "$output/Applications"
