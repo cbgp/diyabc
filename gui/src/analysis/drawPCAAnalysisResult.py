@@ -9,7 +9,7 @@ from PyQt4 import uic
 from utils.visualizescenario import *
 from viewTextFile import ViewTextFile
 import output
-from utils.matplotlib_example import *
+from utils.matplotlibCanvas import *
 from utils.cbgpUtils import readlinesWindows
 import variables
 from variables import UIPATH

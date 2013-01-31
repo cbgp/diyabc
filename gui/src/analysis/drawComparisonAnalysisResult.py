@@ -9,7 +9,7 @@ from PyQt4 import uic
 from utils.visualizescenario import *
 from viewTextFile import ViewTextFile
 from utils.cbgpUtils import log
-from utils.matplotlib_example import *
+from utils.matplotlibCanvas import *
 import variables
 from variables import UIPATH
 
