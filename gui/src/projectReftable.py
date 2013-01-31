@@ -636,6 +636,10 @@ exit 0
                     log(1,"CANCEL : Tar file not created")
                 #self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
+                exPath = self.parent.preferences_win.getExecutablePath()
+                if exPath == "":
+                    self.stopUiGenReftable()
+                    return
                 if not self.goodRNGSize():
                     self.initializeRNG()
                 self.startUiGenReftable()
@@ -649,10 +653,6 @@ exit 0
                     "termProblem" : "reftableProblem",
                     "newOutput" : "reftableNewOutput"
                 }
-                exPath = self.parent.preferences_win.getExecutablePath()
-                if exPath == "":
-                    self.stopUiGenReftable()
-                    return
                 particleLoopSize = str(self.parent.preferences_win.particleLoopSizeEdit.text())
                 nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
                 cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-r", "%s"%nb_to_gen , "-g", "%s"%particleLoopSize ,"-m", "-t", "%s"%nbMaxThread]

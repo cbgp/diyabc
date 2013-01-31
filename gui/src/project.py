@@ -136,12 +136,14 @@ class Project(baseProject,formProject):
         """ Demande a l'exécutable le nombre de thread prévu dans les RNG existants dans le dossier du projet
         et le compare au nombre de thread des préférences
         """
+        if not os.path.exists("%s/RNG_state_0000.bin"%self.dir):
+            log(3,"RNG binary file cannot be found")
+            return False
         QApplication.setOverrideCursor( Qt.WaitCursor )
         nbThreadExpected = self.parent.preferences_win.getMaxThreadNumber()
 
         executablePath = self.parent.preferences_win.getExecutablePath()
-        # TODO lancer correctement la verif des RNGs
-        cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "-n"]
+        cmd_args_list = [executablePath,"-z", "%s/RNG_state_0000.bin"%self.dir ]
         log(3,"Command launched for RNGs check of project '%s' : %s"%(self.name," ".join(cmd_args_list)))
         cmd_args_list_quoted = list(cmd_args_list)
         for i in range(len(cmd_args_list_quoted)):
@@ -151,18 +153,30 @@ class Project(baseProject,formProject):
         outfile = "%s/rng_check.out"%(self.dir)
         f = open(outfile,"w")
         p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
-        #p = subprocess.Popen(cmd_args_list, stdout=f, stderr=subprocess.STDOUT)
         time.sleep(1)
         while (p.poll() == None):
             time.sleep(1)
         f.close()
-        # TODO récupération du nombre de RNG dans les fichiers du projet
-        nbRNGThread = 1
-        log(3,"RNGs check of project '%s' for cluster terminated with returncode : %s"%(self.name,p.poll()))
-        if (nbThreadExpected == nbRNGThread):
-            log(3,"Good RNGs check of project '%s'. No need to generate RNGs again."%(self.name))
+        if not os.path.exists("%s/RNG_state_0000_cores.txt"%self.dir):
+            log(3,"RNG info file cannot be found")
+            QApplication.restoreOverrideCursor()
+            return False
+        ff = open("%s/RNG_state_0000_cores.txt"%self.dir,'r')
+        try:
+            first_line = ff.readlines()[0].strip()
+            nbRNGThread = int(first_line)
+        except Exception as e:
+            log(3,"Malformed RNG info file")
+            QApplication.restoreOverrideCursor()
+            ff.close()
+            return False
+        ff.close()
+
+        log(3,"RNGs check of project '%s' terminated with returncode : %s"%(self.name,p.poll()))
+        if (nbThreadExpected <= nbRNGThread):
+            log(3,"GOOD RNG check of project '%s'. No need to generate RNGs again (%s needed, %s found)."%(self.name,nbThreadExpected,nbRNGThread))
         else:
-            log(3,"Bad RNGs check of project '%s'. They should be generated again."%(self.name))
+            log(3,"BAD RNG check of project '%s'. They should (and will be) be generated again (%s needed, %s found)."%(self.name,nbThreadExpected,nbRNGThread))
 
         QApplication.restoreOverrideCursor()
         return (nbThreadExpected == nbRNGThread)
