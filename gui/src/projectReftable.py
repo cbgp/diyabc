@@ -6,7 +6,7 @@
 # @brief Projets pour créer une table de référence
 
 
-import pickle
+import pickle,mimetypes
 from socket import *
 import time
 import os,copy
@@ -80,9 +80,12 @@ class ProjectReftable(Project):
 
     def importRefTableFile(self):
         filename = QFileDialog.getOpenFileName(self,"Select reference table file","","Binary file (*.bin);;all files (*)")
-        if str(filename) == None or str(filename) == "":
+        if filename == None or str(filename) == "":
             return
         else:
+            if mimetypes.guess_type(str(filename))[0] != "application/octet-stream":
+               output.notify(self,"Bad reftable file","The file you want to import is not a binary file and probably not a reference table file.")
+               return
             shutil.copy(filename,"%s/reftable_1.bin"%(self.dir))
             if os.path.exists("%s/reftable.bin"%self.dir):
                 shutil.move("%s/reftable.bin"%self.dir,"%s/reftable_2.bin"%self.dir)
@@ -94,10 +97,14 @@ class ProjectReftable(Project):
                     os.remove(outfile)
                 fg = open(outfile,"w")
                 p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
-                while p.poll() != None:
+                while p.poll() == None:
                     time.sleep(1)
                 fg.close()
-                self.parent.reloadCurrentProject()
+                if p.poll() == 0:
+                    log(3,"Reftable import and merge successfull")
+                    self.parent.reloadCurrentProject()
+                else:
+                    log(3,"Reftable import and merge FAILED with exit code %s"%p.poll())
 
 
     def deleteReftable(self):
