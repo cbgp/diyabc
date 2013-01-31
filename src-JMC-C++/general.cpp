@@ -196,6 +196,33 @@ int readheadersim() {
 	return k;
 }
 
+
+/**
+ *
+ */
+void analyseRNG(string & modpar) {
+	string RNGfilename = modpar;
+
+	ifstream fichier(RNGfilename.c_str(), ios::in|ios::binary);
+	if(fichier == NULL){
+		stringstream erreur;
+		    		 erreur << "File " << RNGfilename << " does not exist.\n"
+    			  << "I cannot analyse it.\n";
+    		 throw runtime_error(erreur.str());
+
+	}
+	fichier.seekg(0);
+	int sizeoffile;
+	fichier.read((char*)&sizeoffile, sizeof(int));
+	fichier.close();
+
+	string name = modpar.substr(0,modpar.find_last_of(".")) + "_cores.txt";
+	ofstream outfile(name.c_str());
+	outfile << sizeoffile << endl;
+	outfile.close();
+}
+
+
 /**
 * programme principal : lecture et interprétation des options et lancement des calculs choisis
 */
@@ -216,7 +243,7 @@ try {
     string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar, rngpar;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:x")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:x")) !=-1) {
 	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
 
@@ -233,7 +260,7 @@ try {
             cout << "          (each computer in the cluster is numbered between 0 and the maximal number of computers in the cluster.)\n";
 			
 			cout << "-x for translating a reftable.bin in reftable.txt";
-            
+			cout << "\n-z <path/RNGfilename.bin> write the number of streams of the RNG into path/RNGfilename_cores.txt\n";
 			cout << "\n-n for INITIALIZATION OF THE PARALLEL RNG'S (with parameters as a string including the following options separated par a semi-colon)\n";
             cout << "           t:<maximal number of the threads (per computers if cluster, 16 by default)>\n";
             cout << "           c:<maximal number of computers in the cluster (1 by default)>\n";
@@ -394,6 +421,12 @@ try {
 		case 'x':
 			action = 'x';
 			break;
+		case 'z':
+			rngpar = soptarg;
+			action = 'z';
+			cout << "RNGpar : " << rngpar << endl;
+			flagp = true;
+			break;
 	    }
 	}
 	 if (not flagp) {cout << "option -p is compulsory\n";exit(1);}
@@ -408,7 +441,7 @@ try {
      if (num_threads>0) omp_set_num_threads(num_threads);
 
      /* Debut: pour le nouveau RNG      */
-     if ((action != 'n') and (action != 'h') and (action != 'a') and (action !='q')){
+     if ((action != 'n') and (action != 'h') and (action != 'a') and (action !='q') and (action !='z')){
     	 // Je dois lire l'état courant des RNG
     	 mtss = NULL;
 
@@ -621,6 +654,9 @@ try {
 	   case 'x'  :
 				  k=rt.readheader(reftablefilename,reftablelogfilename);
 				  rt.bintotxt();
+				  break;
+	   case 'z'  :
+				  analyseRNG(rngpar);
 				  break;
 
   }
