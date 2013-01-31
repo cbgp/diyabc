@@ -64,7 +64,7 @@ class ProjectReftable(Project):
         QObject.connect(self.ui.newAnButton,SIGNAL("clicked()"),self.defineNewAnalysis)
         QObject.connect(self.ui.browseDataFileButton,SIGNAL("clicked()"),self.dataFileSelectionAndCopy)
 
-        self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
+        self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("launchReftableGeneration()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopRefTableGen)
 
     def canBeDeleted(self):
@@ -605,7 +605,7 @@ exit 0
         return tarname
 
     @pyqtSignature("")
-    def on_btnStart_clicked(self):
+    def launchReftableGeneration(self):
         """ Lance un thread de generation de la reftable
         """
         log(1,"Starting generation of the reference table")
@@ -636,6 +636,8 @@ exit 0
                     log(1,"CANCEL : Tar file not created")
                 #self.th = RefTableGenThreadCluster(self,tname,nb_to_gen)
             else:
+                if not self.goodRNGSize():
+                    self.initializeRNG()
                 self.startUiGenReftable()
                 self.nbReqBeforeComput = int(str(self.ui.nbSetsDoneEdit.text()))
                 progressfile = "%s/reftable.log"%self.dir

@@ -65,7 +65,7 @@ class ProjectSimulation(Project):
         self.locusNumberFrame.hide()
         QObject.connect(self.locusNumberFrame.okButton,SIGNAL("clicked()"),self.checkSampleNSetGenetic)
 
-        self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("on_btnStart_clicked()"))
+        self.connect(self.ui.runReftableButton, SIGNAL("clicked()"),self,SLOT("launchSimulation()"))
         self.connect(self.ui.stopReftableButton, SIGNAL("clicked()"),self.stopSimulation)
 
         self.ui.genDataLabel.setText('Genetic data')
@@ -145,7 +145,7 @@ class ProjectSimulation(Project):
         self.ui.refTableStack.setCurrentIndex(0)
 
     @pyqtSignature("")
-    def on_btnStart_clicked(self):
+    def launchSimulation(self):
         try:
             self.writeHeaderSim()
         except Exception as e:

@@ -132,6 +132,41 @@ class Project(baseProject,formProject):
             log(3,"Initialization of RNGs of project '%s' terminated with returncode : %s"%(self.name,p.poll()))
         QApplication.restoreOverrideCursor()
 
+    def goodRNGSize(self):
+        """ Demande a l'exécutable le nombre de thread prévu dans les RNG existants dans le dossier du projet
+        et le compare au nombre de thread des préférences
+        """
+        QApplication.setOverrideCursor( Qt.WaitCursor )
+        nbThreadExpected = self.parent.preferences_win.getMaxThreadNumber()
+
+        executablePath = self.parent.preferences_win.getExecutablePath()
+        # TODO lancer correctement la verif des RNGs
+        cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "-n"]
+        log(3,"Command launched for RNGs check of project '%s' : %s"%(self.name," ".join(cmd_args_list)))
+        cmd_args_list_quoted = list(cmd_args_list)
+        for i in range(len(cmd_args_list_quoted)):
+            if ";" in cmd_args_list_quoted[i] or " " in cmd_args_list_quoted[i] or ":" in cmd_args_list_quoted[i]:
+                cmd_args_list_quoted[i] = '"'+cmd_args_list_quoted[i]+'"'
+        addLine("%s/command.txt"%self.dir,"Command launched for RNGs check of project '%s' : %s\n\n"%(self.name," ".join(cmd_args_list_quoted)))
+        outfile = "%s/rng_check.out"%(self.dir)
+        f = open(outfile,"w")
+        p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+        #p = subprocess.Popen(cmd_args_list, stdout=f, stderr=subprocess.STDOUT)
+        time.sleep(1)
+        while (p.poll() == None):
+            time.sleep(1)
+        f.close()
+        # TODO récupération du nombre de RNG dans les fichiers du projet
+        nbRNGThread = 1
+        log(3,"RNGs check of project '%s' for cluster terminated with returncode : %s"%(self.name,p.poll()))
+        if (nbThreadExpected == nbRNGThread):
+            log(3,"Good RNGs check of project '%s'. No need to generate RNGs again."%(self.name))
+        else:
+            log(3,"Bad RNGs check of project '%s'. They should be generated again."%(self.name))
+
+        QApplication.restoreOverrideCursor()
+        return (nbThreadExpected == nbRNGThread)
+
     def returnTo(self,elem):
         self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)
         self.ui.analysisStack.setCurrentWidget(elem)

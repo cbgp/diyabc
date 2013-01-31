@@ -161,8 +161,8 @@ class LauncherThread(QThread):
                 f = open(self.outfile_path,"r")
                 lines = f.readlines()
                 f.close()
-                if len(lines) > 0:
-                    outlastline = lines[-1]
+                if len(lines) > 4:
+                    outlastline = "\n".join(lines[-5:-1])
                     # limitating length of last output line
                     if len(outlastline) > 300:
                         outlastline = outlastline[-300:]
