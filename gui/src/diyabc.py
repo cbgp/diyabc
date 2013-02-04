@@ -318,6 +318,22 @@ class Diyabc(formDiyabc,baseDiyabc):
         """
         QWhatsThis.enterWhatsThisMode()
 
+    def setDefaultPreferences(self):
+        """ Reviens à la configuration par défaut
+        """
+        if os.path.exists(os.path.expanduser("~/.diyabc/")+"config.cfg"):
+            os.remove(os.path.expanduser("~/.diyabc/")+"config.cfg")
+        if os.path.exists(os.path.expanduser("~/.diyabc/")+"recent"):
+            os.remove(os.path.expanduser("~/.diyabc/")+"recent")
+
+        self.stackedWidget.removeWidget(self.preferences_win)
+        del self.preferences_win
+        self.preferences_win = Preferences(self,os.path.expanduser("~/.diyabc/")+"config.cfg")
+        self.preferences_win.hide()
+        self.preferences_win.loadPreferences()
+        self.ui.stackedWidget.insertWidget(2,self.preferences_win)
+        self.switchToPreferences()
+
     def updateDoc(self,obj=None):
         """ Met à jour le "what's this" pour tous les
         objets fils de obj documentés dans Documentator

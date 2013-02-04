@@ -470,6 +470,14 @@ exit 0
         self.mutmodS.ui.frame_6.hide()
         self.mutmodS.ui.setMutSeqLabel.setText("Default values for mutation model of Sequences")
 
+        # gestion du bouton "set default values"
+        self.ui.defaultPreferencesButton = QPushButton(self.frame_button)
+        self.ui.defaultPreferencesButton.setText("Reset default values")
+        self.ui.defaultPreferencesButton.setObjectName("defaultPreferencesButton")
+        self.ui.bottomButtonsLayout.insertWidget(1,self.ui.defaultPreferencesButton)
+        QObject.connect(self.ui.defaultPreferencesButton,SIGNAL("clicked()"),self.setDefaultPreferences)
+
+
     def checkClusterValues(self, Qstr):
         numSimulatedDatasetByJob = str(self.ui.numSimulatedDataSetByJobEdit.text()).strip()
         if numSimulatedDatasetByJob != '' :
@@ -533,6 +541,10 @@ exit 0
         super(Preferences,self).loadPreferences()
         
         self.updateFont()
+
+    def setDefaultPreferences(self):
+        self.parent.setDefaultPreferences()
+
 
     def changeLogLevel(self,index):
         utilsPack.LOG_LEVEL = index + 1
