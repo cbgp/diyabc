@@ -4,6 +4,7 @@
 
 packageDir="./lastDiyabc"
 diyabc_git="../"
+HTMLGENPATH="../doc/gen_html_doc.sh"
 
 cd $diyabc_git
 
@@ -14,6 +15,7 @@ strip ./src-JMC-C++/general
 cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-linux-x64
 
 # html generation
+cd -
 cd `dirname $HTMLGENPATH`
 ./gen_html_doc.sh
 cd -
