@@ -36,12 +36,12 @@ class AutoPreferences(QFrame):
 
     >>> myconfStructure = {
     ...     category_1 : [
-    ...         ["check","showTrayIcon","Show tray icon",False],
-    ...         ["check","showTrayIcon","Show tray icon",False]
+    ...         {"proptype":"check","propname":"showTrayIcon","labelText":"Show tray icon","defaultState":False},
+    ...         {"proptype":"check","propname":"showTrayIcon","labelText":"Show tray icon","defaultState":False}
     ...     ]
     ...     category_2 : [
-    ...         ["check","showTrayIcon","Show tray icon",False],
-    ...         ["check","showTrayIcon","Show tray icon",False]
+    ...         {"proptype":"check","propname":"showTrayIcon","labelText":"Show tray icon","defaultState":False},
+    ...         {"proptype":"check","propname":"showTrayIcon","labelText":"Show tray icon","defaultState":False}
     ...     ]
     ... }
     >>> myconfManager = AutoPreferences(None,"/home/user/.myapp/config.cfg","Settings")

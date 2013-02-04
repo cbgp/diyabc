@@ -326,11 +326,13 @@ class Diyabc(formDiyabc,baseDiyabc):
         if os.path.exists(os.path.expanduser("~/.diyabc/")+"recent"):
             os.remove(os.path.expanduser("~/.diyabc/")+"recent")
 
+        index = self.preferences_win.ui.tabWidget.currentIndex()
         self.stackedWidget.removeWidget(self.preferences_win)
         del self.preferences_win
         self.preferences_win = Preferences(self,os.path.expanduser("~/.diyabc/")+"config.cfg")
         self.preferences_win.hide()
         self.preferences_win.loadPreferences()
+        self.preferences_win.ui.tabWidget.setCurrentIndex(index)
         self.ui.stackedWidget.insertWidget(2,self.preferences_win)
         self.switchToPreferences()
 
