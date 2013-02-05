@@ -19,6 +19,7 @@ from utils.cbgpUtils import log
 from utils.autoPreferences import AutoPreferences,visible,invisible
 import variables
 from variables import DATAPATH,UIPATH
+from utils.orderedDict import OrderedDict
 
 ## @class Preferences
 # @brief Fenêtre pour gérer les préférences personnelles
@@ -283,7 +284,7 @@ exit 0
             default_Psize = "12"
 
         # hashtable contenant les informations des champs
-        dico_fields = {
+        dico_fields = OrderedDict({
                 "cluster" : [
                     {"proptype":"check",
                          "propname":"useCluster",
@@ -424,7 +425,7 @@ exit 0
                          "l_ordered_val":formats,
                          "default_value":"pdf"}
                 ]
-        }
+        })
         self.digest(dico_fields)
 
         QObject.connect(self.ui.styleCombo,SIGNAL("currentIndexChanged(QString)"),self.changeStyle)
