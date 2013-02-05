@@ -458,13 +458,18 @@ exit 0
         self.toggleWtSelection(self.ui.activateWhatsThisCheck.isChecked())
         
         self.hist_model = uic.loadUi("%s/historical_preferences_frame.ui"%UIPATH)
+        self.hist_model.setObjectName("tab_historical")
         self.ui.tabWidget.addTab(self.hist_model,"Historical")
         self.hist_model.verticalLayout.setAlignment(Qt.AlignTop)
 
         self.mutmodM = SetMutationModelMsat(self)
         self.mutmodS = SetMutationModelSequences(self)
+        self.mutmodM.setObjectName("tab_mmm")
+        self.mutmodS.setObjectName("tab_mms")
         self.ui.tabWidget.addTab(self.mutmodM,"MM Microsats")
         self.ui.tabWidget.addTab(self.mutmodS,"MM Sequences")
+
+        self.ui.tabWidget.setMovable(True)
 
         self.mutmodM.ui.frame_6.hide()
         self.mutmodM.ui.setMutMsLabel.setText("Default values for mutation model of Microsatellites")
@@ -510,6 +515,27 @@ exit 0
         
         if (self.ui.clusterBinLocationCombo.currentText() == 'local') and (not os.path.exists(self.ui.diyabcPathLocalPathEdit.text())) :
             output.notify(self,"Value Error : cluster bin path","cluster binary not found. \n%s does not exists"%self.ui.diyabcPathLocalPathEdit.text())
+
+    def saveTabsOrder(self):
+        tabconf = ""
+        for i in range(self.ui.tabWidget.count()):
+            widg = self.ui.tabWidget.widget(i)
+            tabconf += str(widg.objectName()).replace('tab_','')+","
+        tabconf = tabconf[:-1]
+
+        if not self.config.has_key("appearance"):
+            self.config["appearance"] = {}
+        self.config["appearance"]["tabsOrder"] = tabconf
+
+    def loadTabOrder(self):
+        cfg = self.config
+        if cfg.has_key("appearance") and cfg["appearance"].has_key("tabsOrder"):
+            tabconf = cfg["appearance"]["tabsOrder"].strip()
+
+            for tname in tabconf.split(','):
+                widg = self.ui.tabWidget.findChild(QWidget,QString("tab_"+tname))
+                self.ui.tabWidget.removeTab(self.ui.tabWidget.indexOf(widg))
+                self.ui.tabWidget.addTab(self.ui.tabWidget.findChild(QWidget,QString("tab_"+tname)), tname.replace('mmm',"MM Microsats").replace("mms","MM Sequences"))
         
     def close(self):
         if len(self.parent.project_list) == 0:
@@ -526,6 +552,7 @@ exit 0
             self.saveHM()
             self.saveRecent()
             self.saveCluster()
+            self.saveTabsOrder()
             super(Preferences,self).savePreferences()
             self.saveCluster()            
             self.close()
@@ -539,6 +566,7 @@ exit 0
         self.loadRecent()
         self.loadToolBarPosition()
         self.loadCluster()
+        self.loadTabOrder()
         super(Preferences,self).loadPreferences()
         
         self.updateFont()
