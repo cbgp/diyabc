@@ -88,6 +88,7 @@ cd /tmp/
 #gpg -abs --local-user diyabc -o _gpgorigin /tmp/combined-contents
 #ar rc $PACKAGEDIR.deb  _gpgorigin debian-binary control.tar.gz data.tar.gz
 #debsigs --sign=origin --default-key=9273791D $PACKAGEDIR.deb
+#dpkg-sig -s builder -k 9273791D $PACKAGEDIR.deb
 cd -
 
 mv /tmp/$PACKAGEDIR.deb ./

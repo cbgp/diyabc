@@ -49,6 +49,9 @@ gzip -9 $PACKAGEDIR/usr/share/doc/diyabc-bin/changelog
 chmod 644 $PACKAGEDIR/usr/share/doc/diyabc-bin/changelog.gz
 
 cp -r $PACKAGEDIR /tmp
+cd /tmp/$PACKAGEDIR
+find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > DEBIAN/md5sums
+cd -
 chown -R root:root /tmp/$PACKAGEDIR
 
 dpkg-deb -b /tmp/$PACKAGEDIR

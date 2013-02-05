@@ -50,6 +50,9 @@ chmod 644 $PACKAGEDIR/usr/share/doc/diyabc-doc/diyabc_notice.pdf $PACKAGEDIR/usr
 chmod 755 $PACKAGEDIR/usr $PACKAGEDIR/usr/share $PACKAGEDIR/usr/share/doc $PACKAGEDIR/usr/share/doc/diyabc-doc
 
 cp -r $PACKAGEDIR /tmp
+cd /tmp/$PACKAGEDIR
+find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > DEBIAN/md5sums
+cd -
 chown -R root:root /tmp/$PACKAGEDIR
 
 dpkg-deb -b /tmp/$PACKAGEDIR
