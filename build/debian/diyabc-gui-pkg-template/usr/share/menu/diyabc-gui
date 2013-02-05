@@ -1,4 +1,4 @@
-?package(diyabc): \
+?package(diyabc-gui): \
    needs="X11" \
    section="Applications/Science" \
    command="/usr/bin/diyabc-gui" \

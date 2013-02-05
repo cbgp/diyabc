@@ -1,13 +1,9 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-# embedding_in_qt4.py --- Simple Qt4 application embedding matplotlib canvases
+## @package utils.matplotlibCanvas
+# @author Julien Veyssier
 #
-# Copyright (C) 2005 Florent Rougon
-#               2006 Darren Dale
-#
-# This file is an example program for matplotlib. It may be used and
-# modified with no restriction; raw copies as well as modified versions
-# may be distributed without limitation.
+# @brief Classe pour insérer une figure matplotlib dans Qt
 
 from __future__ import unicode_literals
 import sys, os

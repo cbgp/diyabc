@@ -42,7 +42,8 @@ cd $SOURCEDIR/..
 cd -
 cp -rp $SOURCEDIR/*.py $SOURCEDIR/../clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $SOURCEDIR/../utils $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $PACKAGEDIR/usr/local/src/diyabc/
 chmod -R 755 $PACKAGEDIR/usr
-chmod 644 $PACKAGEDIR/usr/local/src/diyabc/*.py $PACKAGEDIR/usr/local/src/diyabc/analysis/*.py $PACKAGEDIR/usr/local/src/diyabc/mutationModel/*.py $PACKAGEDIR/usr/local/src/diyabc/geneticData/*.py $PACKAGEDIR/usr/local/src/diyabc/historicalModel/*.py $PACKAGEDIR/usr/local/src/diyabc/utils/*.py  $PACKAGEDIR/usr/local/src/diyabc/uis/*.ui $PACKAGEDIR/usr/share/menu/diyabc $PACKAGEDIR/usr/share/applications/diyabc.desktop $PACKAGEDIR/usr/share/doc/diyabc-gui/copyright
+chmod 644 $PACKAGEDIR/usr/local/src/diyabc/*.py $PACKAGEDIR/usr/local/src/diyabc/analysis/*.py $PACKAGEDIR/usr/local/src/diyabc/mutationModel/*.py $PACKAGEDIR/usr/local/src/diyabc/geneticData/*.py $PACKAGEDIR/usr/local/src/diyabc/historicalModel/*.py $PACKAGEDIR/usr/local/src/diyabc/summaryStatistics/*.py $PACKAGEDIR/usr/local/src/diyabc/utils/*.py $PACKAGEDIR/usr/local/src/diyabc/utils/*.sh $PACKAGEDIR/usr/local/src/diyabc/utils/configobj/*.py  $PACKAGEDIR/usr/local/src/diyabc/uis/* $PACKAGEDIR/usr/share/menu/diyabc-gui $PACKAGEDIR/usr/share/applications/diyabc.desktop $PACKAGEDIR/usr/share/doc/diyabc-gui/copyright
+chmod 755 $PACKAGEDIR/usr/local/src/diyabc/utils/matplotlib_example.py $PACKAGEDIR/usr/local/src/diyabc/diyabc.py
 # gestion du man
 sed -i "s/BUILDDATE/$BUILDDATE/" $PACKAGEDIR/usr/share/man/man1/diyabc-gui.1
 sed -i "s/VersionX/Version $VERSION/" $PACKAGEDIR/usr/share/man/man1/diyabc-gui.1
@@ -51,7 +52,7 @@ chmod 644 $PACKAGEDIR/usr/share/man/man1/diyabc-gui.1.gz
 # version modification
 sed -i "s/VERSION='development version'/VERSION='$VERSION'/" $PACKAGEDIR/usr/local/src/diyabc/variables.py
 sed -i "s/01\/01\/1970/$BUILDDATE/" $PACKAGEDIR/usr/local/src/diyabc/variables.py
-sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc
+sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/menu/diyabc-gui
 sed -i "s/VVERSION/$VERSION/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 git log | head -n 100 > $PACKAGEDIR/usr/share/doc/diyabc-gui/changelog
 gzip -9 $PACKAGEDIR/usr/share/doc/diyabc-gui/changelog
@@ -73,12 +74,25 @@ chmod 755 $PACKAGEDIR/usr/bin/diyabc-gui
 chmod +x $PACKAGEDIR/usr/bin/diyabc-gui
 
 cp -r $PACKAGEDIR /tmp
+cd /tmp/$PACKAGEDIR
+#md5sum `find . -type f | awk '/.\// { print substr($0, 3) }'` >DEBIAN/md5sums
+find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > DEBIAN/md5sums
+cd -
 chown -R root:root /tmp/$PACKAGEDIR
 
 dpkg-deb -b /tmp/$PACKAGEDIR
+# signature GPG
+cd /tmp/
+#ar x $PACKAGEDIR.deb
+#cat debian-binary control.tar.gz data.tar.gz > /tmp/combined-contents
+#gpg -abs --local-user diyabc -o _gpgorigin /tmp/combined-contents
+#ar rc $PACKAGEDIR.deb  _gpgorigin debian-binary control.tar.gz data.tar.gz
+#debsigs --sign=origin --default-key=9273791D $PACKAGEDIR.deb
+cd -
+
 mv /tmp/$PACKAGEDIR.deb ./
 if $clean; then
-    rm -rf /tmp/$PACKAGEDIR $PACKAGEDIR
+    rm -rf /tmp/$PACKAGEDIR $PACKAGEDIR /tmp/_gpgorigin
 else
     echo "The package directory was not removed"
 fi
