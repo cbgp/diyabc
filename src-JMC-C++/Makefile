@@ -1,5 +1,5 @@
 CFLAGS = -fopenmp -O3   -g  #-Wall -Wextra
-LIBS =   -L. -ldcmt -static-libgcc  #-lstdc++ -lgomp -lm -lc
+LIBS =   -L. -ldcmt -static-libgcc -static  #-lstdc++ -lgomp -lm -lc
 CPPFILES = general.cpp acploc.cpp bias.cpp comparscen.cpp conf.cpp data.cpp estimparam.cpp header.cpp matrices.cpp mesutils.cpp modchec.cpp particleset.cpp particuleC.cpp randomgenerator.cpp reftable.cpp simfile.cpp testgen.cpp  
 HFILES = global.h particuleC.h history.h header.h 
 OBJS = acploc.o bias.o comparscen.o conf.o data.o estimparam.o general.o header.o history.o matrices.o mesutils.o particleset.o particuleC.o randomgenerator.o reftable.o simfile.o sumstat.o modchec.o  

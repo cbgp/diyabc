@@ -1125,6 +1125,15 @@ def main():
     except Exception as e:
         output.notify(None,"Log rotate failure","%s"%e)
 
+    # matplotlib plante s'il ne trouve pas de config
+    if "linux" in sys.platform and not os.path.exists("/etc/matplotlibrc") and not os.path.exists("matplotlibrc"):
+        conf = "backend      : TkAgg\n"
+        conf += "examples.download : False\n"
+        conf += "examples.directory : '/usr/share/matplotlib/sampledata'\n"
+        f = open("matplotlibrc","w")
+        f.write(conf)
+        f.close()
+
     # création du prompt
     if cmd:
         cmdT = cmdThread(myapp)
