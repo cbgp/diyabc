@@ -439,17 +439,13 @@ class ProjectSnp(ProjectReftable):
         self.ascert_frame.ui.scrollArea.setDisabled(yesno)
         if yesno:
             if "Set " in str(self.ui.ascertButton.text()):
-                print "1"
                 self.ui.ascertButton.setText(str(self.ui.ascertButton.text()).replace("Set ","View "))
             elif "View " not in str(self.ui.ascertButton.text()):
-                print "2"
                 self.ui.ascertButton.setText("View "+str(self.ui.ascertButton.text()))
         else:
             if "View " in str(self.ui.ascertButton.text()):
-                print "3"
                 self.ui.ascertButton.setText(str(self.ui.ascertButton.text()).replace("View ","Set "))
             elif "Set " not in str(self.ui.ascertButton.text()):
-                print "4"
                 self.ui.ascertButton.setText("Set "+str(self.ui.ascertButton.text()))
 
     def freezeGenData(self,yesno=True):

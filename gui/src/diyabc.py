@@ -225,6 +225,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         help_menu = self.ui.menubar.addMenu("&Help")
         self.help_menu = help_menu
+        help_menu.addAction(QIcon(variables.ICONPATH+"/whats.png"),"&What's this",self.enterWhatsThisMode)
         help_menu.addAction(QIcon(variables.ICONPATH+"/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
         help_menu.addAction(QIcon(variables.ICONPATH+"/gnome-mime-text.png"),"&Show logfile",self.showLogFile,QKeySequence(Qt.CTRL + Qt.Key_L))
 

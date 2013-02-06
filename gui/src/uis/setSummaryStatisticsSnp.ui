@@ -73,7 +73,7 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>Clear all data related to this historical model</string>
+         <string/>
         </property>
         <property name="text">
          <string>CLEAR</string>
@@ -91,7 +91,7 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>Test and save data (Alt+o)</string>
+         <string/>
         </property>
         <property name="text">
          <string>VALIDATE</string>
@@ -197,7 +197,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-55</y>
+        <y>0</y>
         <width>850</width>
         <height>177</height>
        </rect>
@@ -725,9 +725,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-60</y>
+        <y>0</y>
         <width>850</width>
-        <height>302</height>
+        <height>301</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -1567,9 +1567,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-25</y>
+        <y>0</y>
         <width>850</width>
-        <height>300</height>
+        <height>297</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">

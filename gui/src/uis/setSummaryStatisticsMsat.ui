@@ -73,13 +73,10 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>Clear all data related to this historical model</string>
+         <string/>
         </property>
         <property name="text">
          <string>CLEAR</string>
-        </property>
-        <property name="shortcut">
-         <string>Alt+C</string>
         </property>
        </widget>
       </item>
@@ -91,13 +88,10 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>Test and save data (Alt+o)</string>
+         <string/>
         </property>
         <property name="text">
          <string>VALIDATE</string>
-        </property>
-        <property name="shortcut">
-         <string>Alt+V</string>
         </property>
        </widget>
       </item>
@@ -136,7 +130,7 @@
         <x>0</x>
         <y>0</y>
         <width>865</width>
-        <height>201</height>
+        <height>191</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -763,7 +757,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>850</width>
+        <width>865</width>
         <height>255</height>
        </rect>
       </property>
@@ -1652,7 +1646,7 @@
         <x>0</x>
         <y>0</y>
         <width>865</width>
-        <height>200</height>
+        <height>190</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
