@@ -831,7 +831,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         # verification de l'existence du dossier dans lequel le dossier du projet 
         # va être créé
-        if not os.path.exists(os.path.dirname(path)):
+        if ok and not os.path.exists(os.path.dirname(path)):
             output.notify(self,"Creation impossible","Directory %s does not exist.\nImpossible to create the project in %s"%(os.path.dirname(path),path))
             return
 

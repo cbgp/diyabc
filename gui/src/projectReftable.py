@@ -798,6 +798,7 @@ exit 0
             self.ui.groupBox_8.show()
             # quand on a choisi le datafile, on active le menu projet en mettant à jour
             self.parent.updateCurrentProjectMenu(self.parent.tabWidget.currentIndex())
+            self.parent.addRecent(self.dir)
             return True
         return False
 

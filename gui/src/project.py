@@ -112,11 +112,11 @@ class Project(baseProject,formProject):
             cmd_args_list = [executablePath,"-p", dest, "-n", "c:%s"%nbNodes]
         else:
             cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "-n", "t:%s"%nbMaxThread]
-        log(3,"Command launched for initialization of RNGs of project '%s' : %s"%(self.name," ".join(cmd_args_list)))
         cmd_args_list_quoted = list(cmd_args_list)
         for i in range(len(cmd_args_list_quoted)):
             if ";" in cmd_args_list_quoted[i] or " " in cmd_args_list_quoted[i] or ":" in cmd_args_list_quoted[i]:
                 cmd_args_list_quoted[i] = '"'+cmd_args_list_quoted[i]+'"'
+        log(3,"Command launched for initialization of RNGs of project '%s' : %s"%(self.name," ".join(cmd_args_list_quoted)))
         addLine("%s/command.txt"%self.dir,"Command launched for initialization of RNGs of project '%s' : %s\n\n"%(self.name," ".join(cmd_args_list_quoted)))
         outfile = "%s/init_rng.out"%(self.dir)
         f = open(outfile,"w")
@@ -144,11 +144,11 @@ class Project(baseProject,formProject):
 
         executablePath = self.parent.preferences_win.getExecutablePath()
         cmd_args_list = [executablePath,"-z", "%s/RNG_state_0000.bin"%self.dir ]
-        log(3,"Command launched for RNGs check of project '%s' : %s"%(self.name," ".join(cmd_args_list)))
         cmd_args_list_quoted = list(cmd_args_list)
         for i in range(len(cmd_args_list_quoted)):
             if ";" in cmd_args_list_quoted[i] or " " in cmd_args_list_quoted[i] or ":" in cmd_args_list_quoted[i]:
                 cmd_args_list_quoted[i] = '"'+cmd_args_list_quoted[i]+'"'
+        log(3,"Command launched for RNGs check of project '%s' : %s"%(self.name," ".join(cmd_args_list_quoted)))
         addLine("%s/command.txt"%self.dir,"Command launched for RNGs check of project '%s' : %s\n\n"%(self.name," ".join(cmd_args_list_quoted)))
         outfile = "%s/rng_check.out"%(self.dir)
         f = open(outfile,"w")

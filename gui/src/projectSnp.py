@@ -45,6 +45,12 @@ class ProjectSnp(ProjectReftable):
     def getDataFileFilter(self):
         return "SNP datafile (*.snp);;all files (*)"
 
+    def dataFileSelectionAndCopy(self,name=None):
+        """ si tout s'est bien passé, on sauve
+        """
+        if super(ProjectSnp,self).dataFileSelectionAndCopy(name):
+            self.save()
+
     def verifyRefTableValid(self):
         """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table
         """

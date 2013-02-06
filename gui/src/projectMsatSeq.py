@@ -42,6 +42,7 @@ class ProjectMsatSeq(ProjectReftable):
         if super(ProjectMsatSeq,self).dataFileSelectionAndCopy(name):
             # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
             self.gen_data_win.fillLocusTableFromData()
+            self.save()
 
     def loadDataFile(self,name):
         """ Charge le fichier de données passé en paramètre. Cette fonction est appelée lors
