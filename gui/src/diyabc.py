@@ -448,7 +448,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def simulateDataSets(self):
         from projectSimulation import ProjectSimulationSnp,ProjectSimulationMsatSeq
-        fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)")
+        fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)","%s"%os.path.expanduser("~/"))
         fileDial.setAcceptMode(QFileDialog.AcceptSave)
         fileDial.setLabelText(QtGui.QFileDialog.Accept,"Ok")
         if "darwin" in sys.platform:
@@ -602,7 +602,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         from projectMsatSeq import ProjectMsatSeq
         from projectSnp import ProjectSnp
         if dir == None:
-            qq = DirNFileDialog(None,"Select project file or directory")
+            qq = DirNFileDialog(None,"Select project file or directory","%s"%os.path.expanduser("~/"))
             qq.setFilter("DIYABC project files (*.diyabcproject);;all files (*)")
             ret = qq.exec_()
             if ret:
@@ -727,7 +727,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             return
         ok = True
         if cloneName == None or cloneDir == None:
-            fileDial = QtGui.QFileDialog(self,"Select location of the clone project")
+            fileDial = QtGui.QFileDialog(self,"Select location of the clone project","%s"%os.path.dirname(current_project.dir))
             fileDial.setAcceptMode(QFileDialog.AcceptSave)
             fileDial.setLabelText(QtGui.QFileDialog.Accept,"Clone project")
             fileDial.setLabelText(QtGui.QFileDialog.FileName,"Clone name")
@@ -814,6 +814,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 msg = "Select location of the new MSS project"
             fileDial = QtGui.QFileDialog(self,msg)
             fileDial.setAcceptMode(QFileDialog.AcceptSave)
+            fileDial.setDirectory(os.path.expanduser("~/"))
             fileDial.setLabelText(QtGui.QFileDialog.Accept,"Create project")
             fileDial.setLabelText(QtGui.QFileDialog.FileName,"Project name")
             ok = (fileDial.exec_() == 1)

@@ -83,7 +83,7 @@ class ProjectReftable(Project):
         with the current one if there was one
         """
         if filename == None:
-            filename = QFileDialog.getOpenFileName(self,"Select reference table file","","Binary file (*.bin);;all files (*)")
+            filename = QFileDialog.getOpenFileName(self,"Select reference table file","%s"%self.dir,"Binary file (*.bin);;all files (*)")
             if filename == None or str(filename) == "":
                 return
         elif not os.path.exists(filename):

@@ -296,12 +296,13 @@ class AutoPreferences(QFrame):
             exec('self.%sTextEdit.append(QString("""%s"""))' % (propname, l))
 
 
-    def addPropPathEdit(self,catname,propname,labelText,default_value=""):
+    def addPropPathEdit(self,catname,propname,labelText,default_value="",default_explore_path="~/"):
         """ Add a field which is composed by a label, a 'browse' button and a lineEdit
         @param propname: name of the field
         @param labelText: text associated to the field (label)
+        @param default_explore_path: default path for the file dialog
         """
-        self.dicoCategory[catname].append( [propname, "path", labelText, default_value] )
+        self.dicoCategory[catname].append( [propname, "path", labelText, default_value, default_explore_path] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel)'%(catname,propname))
@@ -319,6 +320,10 @@ class AutoPreferences(QFrame):
         exec('self.horizontalLayout_%s.addWidget(self.%sBrowseButton)'%(propname,propname))
         exec('self.%sPathEdit = QtGui.QLineEdit(self.frame_%s_%s)'%(propname,catname,propname))
         exec('self.%sPathEdit.setObjectName("%sPathEdit")'%(propname,propname))
+        exec('self.label_%s_default_explore_path = QtGui.QLabel(self.frame_%s_%s)'%(propname,catname,propname))
+        exec('self.label_%s_default_explore_path.setText("%s")'%(propname,default_explore_path))
+        exec('self.label_%s_default_explore_path.setObjectName("label_%s_default_explore_path")'%(propname,propname))
+        exec('self.label_%s_default_explore_path.hide()'%(propname))
         qc = QCompleter()
         qc.setModel(QDirModel(qc))
         exec('self.%sPathEdit.setCompleter(qc)'%(propname))
@@ -331,9 +336,12 @@ class AutoPreferences(QFrame):
         """ Open a qt browsing window to fill interactively the pathEdit fields
         """
         but = self.sender()
+        propname = str(but.objectName()).replace("BrowseButton","")
         ed = but.parent().findChild(QLineEdit)
+        lab = but.parent().findChild(QLabel,"label_%s"%propname)
+        expl_path = but.parent().findChild(QLabel,"label_%s_default_explore_path"%propname).text()
         qfd = QFileDialog()
-        path = str(qfd.getOpenFileName(self,"Where is %s ?"%(str(ed.objectName()).replace("PathEdit",""))))
+        path = str(qfd.getOpenFileName(self,"Choose the %s"%(str(lab.text()).lower()),os.path.expanduser(str(expl_path))))
         ed.setText(path)
 
     def savePreferences(self):
