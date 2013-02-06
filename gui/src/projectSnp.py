@@ -32,7 +32,7 @@ class ProjectSnp(ProjectReftable):
 
         self.typesOrdered = ["A","H","X","Y","M"]
 
-        #self.ui.frame_11.show()
+        self.ui.frame_11.show()
         #self.ui.frame_12.show()
 
         self.ascert_frame = ControlAscertBias(self)
@@ -49,6 +49,7 @@ class ProjectSnp(ProjectReftable):
         """ si tout s'est bien passé, on sauve
         """
         if super(ProjectSnp,self).dataFileSelectionAndCopy(name):
+            self.updateNbStats()
             self.save()
 
     def verifyRefTableValid(self):
@@ -285,6 +286,13 @@ class ProjectSnp(ProjectReftable):
         self.ui.horizontalLayout_6.addWidget(self.typeCombo)
 
         return True
+
+    def clearSummaryStats(self):
+        self.sum_stat_wins = {}
+        for ty in self.data.ntypeloc.keys():
+            self.sum_stat_wins[ty] = SetSummaryStatisticsSnp(parent=self.dummy,numGroup=ty)
+            self.sum_stat_wins[ty].hide()
+
 
     def save(self):
         """ sauvegarde du projet -> mainconf, histconf, genconf, theadconf

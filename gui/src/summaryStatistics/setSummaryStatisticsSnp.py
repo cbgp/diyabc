@@ -348,7 +348,8 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
                                 break
 
     def clear(self):
-        self.parent.clearSummaryStats(self.box_group)
+        self.parent.parent.clearSummaryStats()
+        self.exit()
 
     def getSumStatsTableHeader(self,numGroup):
         """ retourne l'en-tête pour le tableau à écrire dans conf.th
