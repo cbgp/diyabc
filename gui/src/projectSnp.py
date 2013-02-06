@@ -114,9 +114,10 @@ class ProjectSnp(ProjectReftable):
         """
         nb = self.getNbSumStats()
         nbTaken = self.getNbTotalTaken()
+        if nb > 0:
+            self.setGenValid(True)
         if nb > 1:
             plur='s'
-            self.setGenValid(True)
         else:
             plur=''
         self.ui.nbSumStatsLabel.setText("Total : %s summary statistic%s"%(nb,plur))

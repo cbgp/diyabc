@@ -60,27 +60,6 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
                 name = dicoConf[stat]
                 exec('QObject.connect(self.ui.all%s%sButton,SIGNAL("clicked()"),self.allPressed)'%(name[0].upper(),name[1:]))
                 exec('QObject.connect(self.ui.none%s%sButton,SIGNAL("clicked()"),self.allPressed)'%(name[0].upper(),name[1:]))
-        #QObject.connect(self.ui.allMgdButton,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.allDgdButton,SIGNAL("clicked()"),self.allPressed)
-        ## none buttons
-        #QObject.connect(self.ui.noneMgdButton,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.noneDgdButton,SIGNAL("clicked()"),self.allPressed)
-
-        ## all buttons 2
-        #QObject.connect(self.ui.allMnd2Button,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.allDond2Button,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.allMfd2Button,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.allDofd2Button,SIGNAL("clicked()"),self.allPressed)
-        ##none buttons 2
-        #QObject.connect(self.ui.noneMnd2Button,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.noneDond2Button,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.noneMfd2Button,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.noneDofd2Button,SIGNAL("clicked()"),self.allPressed)
-        ## all and none for admixtures
-        #QObject.connect(self.ui.allMl3Button,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.noneMl3Button,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.allMld3Button,SIGNAL("clicked()"),self.allPressed)
-        #QObject.connect(self.ui.noneMld3Button,SIGNAL("clicked()"),self.allPressed)
 
         QObject.connect(self.ui.addAdmixButton,SIGNAL("clicked()"),self.addAdmix)
 
@@ -91,10 +70,6 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         self.ui.frame_12.hide()
         self.ui.frame_11.hide()
         self.ui.frame_9.hide()
-        #self.ui.allMl3Button.hide()
-        #self.ui.allMld3Button.hide()
-        #self.ui.noneMld3Button.hide()
-        #self.ui.noneMl3Button.hide()
 
         self.ui.sumStatLabel.setText("Set summary statistics for '%s' locus"%self.numGroup)
         self.ui.availableEdit.setText(str(self.parent.parent.data.ntypeloc[self.numGroup]))
@@ -107,13 +82,16 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
     def validate(self,silent=False):
         try:
             # pour voir si ça déclenche une exception
-            (a,b) = self.getStats()
+            (nbstats,b) = self.getStats()
 
             av = int(str(self.ui.availableEdit.text()))
             ta = int(str(self.ui.takenEdit.text()))
             fro = int(str(self.ui.fromEdit.text()))
             if fro+ta > av+1 or ta <= 0 or fro <= 0:
                 raise Exception("Number of taken loci must be positive and at most equal to available loci number")
+            #if self.parent.parent.getNbSumStats() == 0:
+            if nbstats == 0:
+                raise Exception("You must select at least one summary statistic")
             self.exit()
         except Exception as e:
             if not silent:
