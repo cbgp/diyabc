@@ -449,7 +449,11 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def simulateDataSets(self):
         from projectSimulation import ProjectSimulationSnp,ProjectSimulationMsatSeq
-        fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)","%s"%os.path.expanduser("~/"))
+        # selection du dernier chemin pour open
+        default_path = os.path.expanduser("~/")
+        if self.preferences_win.getLastFolder("open") != "":
+            default_path = self.preferences_win.getLastFolder("open")
+        fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)","%s"%default_path)
         fileDial.setAcceptMode(QFileDialog.AcceptSave)
         fileDial.setLabelText(QtGui.QFileDialog.Accept,"Ok")
         if "darwin" in sys.platform:
@@ -492,6 +496,8 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.switchToMainStack()
             log(1,"Simulation project '%s' successfully created"%(newSimProj.name))
             self.updateDoc(newSimProj)
+            # set dernier chemin 
+            self.preferences_win.setLastFolder("open",os.path.dirname(newSimProj.dir))
 
     def setRecent(self,rlist):
         self.recentList = rlist
@@ -603,7 +609,11 @@ class Diyabc(formDiyabc,baseDiyabc):
         from projectMsatSeq import ProjectMsatSeq
         from projectSnp import ProjectSnp
         if dir == None:
-            qq = DirNFileDialog(None,"Select project file or directory","%s"%os.path.expanduser("~/"))
+            # selection du dernier chemin pour open
+            default_path = os.path.expanduser("~/")
+            if self.preferences_win.getLastFolder("open") != "":
+                default_path = self.preferences_win.getLastFolder("open")
+            qq = DirNFileDialog(None,"Select project file or directory","%s"%default_path)
             qq.setFilter("DIYABC project files (*.diyabcproject);;all files (*)")
             ret = qq.exec_()
             if ret:
@@ -630,6 +640,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         if dir != "" and dir[-1] == "/":
             dir = dir[:-1]
         log(1,"attempting to open the project : %s"%dir)
+        # set dernier chemin pour open
+        self.preferences_win.setLastFolder("open",os.path.dirname(str(dir)))
         self.showStatus("Loading project %s"%dir.split('/')[-1])
         QApplication.setOverrideCursor( Qt.WaitCursor )
 
@@ -815,7 +827,11 @@ class Diyabc(formDiyabc,baseDiyabc):
                 msg = "Select location of the new MSS project"
             fileDial = QtGui.QFileDialog(self,msg)
             fileDial.setAcceptMode(QFileDialog.AcceptSave)
-            fileDial.setDirectory(os.path.expanduser("~/"))
+            # selection du dernier chemin pour open
+            default_path = os.path.expanduser("~/")
+            if self.preferences_win.getLastFolder("open") != "":
+                default_path = self.preferences_win.getLastFolder("open")
+            fileDial.setDirectory(default_path)
             fileDial.setLabelText(QtGui.QFileDialog.Accept,"Create project")
             fileDial.setLabelText(QtGui.QFileDialog.FileName,"Project name")
             ok = (fileDial.exec_() == 1)
@@ -877,6 +893,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                     self.switchToMainStack()
                     self.updateDoc(newProj)
                     log(1,'Project %s successfully created in %s'%(newProj.name,newProj.dir))
+                    # set dernier chemin 
+                    self.preferences_win.setLastFolder("open",os.path.dirname(newProj.dir))
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded."%name)
 

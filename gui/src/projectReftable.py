@@ -83,7 +83,7 @@ class ProjectReftable(Project):
         with the current one if there was one
         """
         if filename == None:
-            filename = QFileDialog.getOpenFileName(self,"Select reference table file","%s"%self.dir,"Binary file (*.bin);;all files (*)")
+            filename = QFileDialog.getOpenFileName(self,"Select reference table file","%s"%os.path.dirname(self.dir),"Binary file (*.bin);;all files (*)")
             if filename == None or str(filename) == "":
                 return
         elif not os.path.exists(filename):
@@ -784,7 +784,11 @@ exit 0
         S'il est valide, on le copie dans le dossier du projet
         """
         if name == None:
-            name = QFileDialog.getOpenFileName(self,"Select datafile","",self.getDataFileFilter())
+            # selection du dernier chemin pour open
+            default_path = os.path.expanduser("~/")
+            if self.parent.preferences_win.getLastFolder("open") != "":
+                default_path = self.parent.preferences_win.getLastFolder("open")
+            name = QFileDialog.getOpenFileName(self,"Select datafile","%s"%default_path,self.getDataFileFilter())
         if self.loadDataFile(name):
             # si on a reussi a charger le data file, on vire le bouton browse
             self.ui.browseDataFileButton.hide()

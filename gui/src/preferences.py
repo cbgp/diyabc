@@ -329,7 +329,12 @@ exit 0
                          "labelText":"Graphics and pictures save format \\n(scenario trees, PCA graphics)",
                          "dicoValTxt":dicoValTxtFormat,
                          "l_ordered_val":formats,
-                         "default_value":"pdf"}
+                         "default_value":"pdf"},
+                    {"proptype":"lineEdit",
+                         "propname":"lastOpenFolder",
+                         "labelText":"",
+                         "default_value":"~/",
+                         "visibility":invisible},
                 ]),
                 ("appearance" , [
                     {"proptype":"check",
@@ -537,6 +542,17 @@ exit 0
                 widg = self.ui.tabWidget.findChild(QWidget,QString("tab_"+tname))
                 self.ui.tabWidget.removeTab(self.ui.tabWidget.indexOf(widg))
                 self.ui.tabWidget.addTab(self.ui.tabWidget.findChild(QWidget,QString("tab_"+tname)), tname.replace('mmm',"MM Microsats").replace("mms","MM Sequences"))
+
+    def getLastFolder(self,name):
+        res = ""
+        name_maj = name[0].upper()+name[1:]
+        exec("res = os.path.expanduser(str(self.ui.last%sFolderEdit.text()))"%name_maj)
+        return res
+    
+    def setLastFolder(self,name,path):
+        name_maj = name[0].upper()+name[1:]
+        exec("self.ui.last%sFolderEdit.setText(path)"%name_maj)
+        self.savePreferences()
         
     def close(self):
         if len(self.parent.project_list) == 0:
