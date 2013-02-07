@@ -228,6 +228,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         help_menu.addAction(QIcon(variables.ICONPATH+"/whats.png"),"&What's this",self.enterWhatsThisMode)
         help_menu.addAction(QIcon(variables.ICONPATH+"/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
         help_menu.addAction(QIcon(variables.ICONPATH+"/gnome-mime-text.png"),"&Show logfile",self.showLogFile,QKeySequence(Qt.CTRL + Qt.Key_L))
+        help_menu.addAction(QIcon(variables.ICONPATH+"/bug.png"),"&Create bug report",self.createBugReport)
 
         self.currentProjectMenu = None
         QObject.connect(self.ui.tabWidget,SIGNAL("currentChanged(int)"),self.updateCurrentProjectMenu)
@@ -312,6 +313,9 @@ class Diyabc(formDiyabc,baseDiyabc):
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
         self.systrayHandler = TrayIconHandler(variables.ICONPATH+"/coccicon.png",variables.ICONPATH+"/coccicon.gif",self.file_menu,self)
+
+    def createBugReport(self):
+        log(2,"Beginning bug report creation")
 
     def enterWhatsThisMode(self):
         """ Change le style du curseur de souris et attend un clic

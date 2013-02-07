@@ -706,7 +706,7 @@ exit 0
         if not os.path.exists(exPath):
             output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%exPath)
             return ""
-        return exPath
+        return os.path.abspath(exPath)
 
     def changeBackgroundColor(self,colorstr):
         if str(colorstr) in self.tabColor.keys():

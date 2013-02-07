@@ -2,21 +2,81 @@
 
 function printUsage(){
 echo "usage : 
-build_deb_bin.sh  path_to_makefile  path_to_version.txt
+build_deb_bin.sh  (-m | --makefile) path_to_makefile (-v | --version)  path_to_version.txt (-a | --arch) architecture(amd64 | i386)
+
+You have to give all the parameters
 
 "
 }
 
-if [ $# -eq 0 ] ; then
+ARGS=$(getopt -o m:v:a: -l "makefile:version:arch:" -n "build_deb_bin.sh" -- "$@");
+
+#Bad arguments
+if [ $? -ne 0 ] || [ $# -eq 0 ];
+then
+      printUsage
+    exit
+fi
+MAKEFLAG=0
+VERSIONFLAG=0
+ARCHFLAG=0
+eval set -- "$ARGS";
+
+while true; do
+  case "$1" in
+    -a|--arch)
+      shift;
+      if [ -n "$1" ]; then
+        if [ "$1" != "amd64" ] && [ "$1" != "i386" ]; then
+            echo "invalid architecture"
+            exit
+        fi
+        ARCH=$1
+        ARCHFLAG=1
+        shift;
+      fi
+      ;;
+    -m|--makefile)
+      shift;
+      if [ -n "$1" ]; then
+        if [ -f "$1" ]; then
+            MAKEPATH=$1
+            MAKEFLAG=1
+        else
+            echo "Makefile does not exist"
+            exit
+        fi
+        shift;
+      fi
+      ;;
+    -v|--version)
+      shift;
+      if [ -n "$1" ]; then
+        if [ -f "$1" ]; then
+            VERSIONFILE=$1
+            VERSIONFLAG=1
+        else
+            echo "Version file does not exist"
+            exit
+        fi
+        shift;
+      fi
+      ;;
+    --)
+      shift;
+      break;
+      ;;
+  esac
+done
+
+if [ $ARCHFLAG == 0 ] && [ $MAKEFLAG == 0 ] && [ $VERSIONFLAG == 0 ]; then
     printUsage
     exit
 fi
 
-MAKEPATH=$1
-VERSIONFILE=$2
 VERSION="`head -n 1 $VERSIONFILE`"
 
-PACKAGEDIR=diyabc-bin\_$VERSION\_amd64
+PACKAGEDIR=diyabc-bin\_$VERSION\_$ARCH
 rm -rf $PACKAGEDIR
 
 # template copy 
@@ -43,7 +103,7 @@ gzip -9 $PACKAGEDIR/usr/share/man/man1/diyabc.1
 chmod 644 $PACKAGEDIR/usr/share/man/man1/diyabc.1.gz
 # control file edition
 sed -i "s/Version: X/Version: $VERSION/" $PACKAGEDIR/DEBIAN/control
-sed -i "s/Architecture: X/Architecture: amd64/" $PACKAGEDIR/DEBIAN/control
+sed -i "s/Architecture: X/Architecture: $ARCH/" $PACKAGEDIR/DEBIAN/control
 git log | head -n 100 > $PACKAGEDIR/usr/share/doc/diyabc-bin/changelog
 gzip -9 $PACKAGEDIR/usr/share/doc/diyabc-bin/changelog
 chmod 644 $PACKAGEDIR/usr/share/doc/diyabc-bin/changelog.gz

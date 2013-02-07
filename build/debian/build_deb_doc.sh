@@ -2,21 +2,77 @@
 
 function printUsage(){
 echo "usage : 
-build_deb.sh  path_to_notice.tex  path_to_html_notice_generator.sh  path_to_version.txt
+build_deb_doc.sh  (-t | --texfile) path_to_notice.tex (-g | --generator) path_to_html_notice_generator.sh (-v | --version) path_to_version.txt
 
 "
 }
 
-if [ $# -eq 0 ] ; then
+ARGS=$(getopt -o t:g:v: -l "texfile:generator:version:" -n "build_deb_doc.sh" -- "$@");
+
+#Bad arguments
+if [ $? -ne 0 ] || [ $# -eq 0 ];
+then
+      printUsage
+    exit
+fi
+GENFLAG=0
+TEXFLAG=0
+VERSIONFLAG=0
+eval set -- "$ARGS";
+
+while true; do
+  case "$1" in
+    -t|--texfile)
+      shift;
+      if [ -n "$1" ]; then
+        if [ -f "$1" ]; then
+            TEXPATH=$1
+            TEXFLAG=1
+        else
+            echo "Texfile does not exist"
+            exit
+        fi
+        shift;
+      fi
+      ;;
+    -g|--generator)
+      shift;
+      if [ -n "$1" ]; then
+        if [ -f "$1" ]; then
+            HTMLGENPATH=$1
+            GENFLAG=1
+        else
+            echo "Generator script does not exist"
+            exit
+        fi
+        shift;
+      fi
+      ;;
+    -v|--version)
+      shift;
+      if [ -n "$1" ]; then
+        if [ -f "$1" ]; then
+            VERSIONFILE=$1
+            VERSIONFLAG=1
+        else
+            echo "Version file does not exist"
+            exit
+        fi
+        shift;
+      fi
+      ;;
+    --)
+      shift;
+      break;
+      ;;
+  esac
+done
+
+if [ $TEXFLAG == 0 ] && [ $GENFLAG == 0 ] && [ $VERSIONFLAG == 0 ]; then
     printUsage
     exit
 fi
 
-TEXPATH=$1
-
-HTMLGENPATH=$2
-
-VERSIONFILE=$3
 VERSION="`head -n 1 $VERSIONFILE`"
 
 PACKAGEDIR=diyabc-doc\_$VERSION\_all

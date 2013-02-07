@@ -2,17 +2,41 @@
 
 function printUsage(){
 echo "usage : 
-build_deb.sh  path_to_main_source_dir
+build_deb.sh (-s | --src) path_to_main_source_dir
 
 "
 }
 
-if [ $# -eq 0 ] ; then
-    printUsage
+ARGS=$(getopt -o s: -l "src:" -n "build_deb_gui.sh" -- "$@");
+
+#Bad arguments
+if [ $? -ne 0 ] || [ $# -eq 0 ];
+then
+      printUsage
     exit
 fi
+eval set -- "$ARGS";
 
-SOURCEDIR=$1
+while true; do
+  case "$1" in
+    -s|--src)
+      shift;
+      if [ -n "$1" ]; then
+        if [ -d $1 ]; then
+            SOURCEDIR=$1
+        else
+            echo "Directory does not exist"
+            exit
+        fi
+        shift;
+      fi
+      ;;
+    --)
+      shift;
+      break;
+      ;;
+  esac
+done
 
 VERSIONFILE="$SOURCEDIR/../version.txt"
 VERSION="`head -n 1 $VERSIONFILE`"

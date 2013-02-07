@@ -2,17 +2,42 @@
 
 function printUsage(){
 echo "usage : 
-build_deb_bin.sh  path_to_version_file.txt
+build_deb_bin.sh (-v | --version) path_to_version_file.txt
 
 "
 }
 
-if [ $# -eq 0 ] ; then
-    printUsage
+ARGS=$(getopt -o v: -l "version:" -n "build_deb_virtual.sh" -- "$@");
+
+#Bad arguments
+if [ $? -ne 0 ] || [ $# -eq 0 ];
+then
+      printUsage
     exit
 fi
+eval set -- "$ARGS";
 
-VERSIONFILE=$1
+while true; do
+  case "$1" in
+    -v|--version)
+      shift;
+      if [ -n "$1" ]; then
+        if [ -f $1 ]; then
+            VERSIONFILE=$1
+        else
+            echo "Version file does not exist"
+            exit
+        fi
+        shift;
+      fi
+      ;;
+    --)
+      shift;
+      break;
+      ;;
+  esac
+done
+
 VERSION="`head -n 1 $VERSIONFILE`"
 
 PACKAGEDIR=diyabc\_$VERSION\_all
