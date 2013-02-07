@@ -37,6 +37,7 @@ from threading import Thread
 from utils.data import isSNPDatafile
 import variables
 from variables import VERSION,VERSION_DATE,UIPATH,DOCPATH
+from bugReport import BugReport
 
 # trick to get things working on windows
 if "win" in sys.platform and "darwin" not in sys.platform:
@@ -316,6 +317,8 @@ class Diyabc(formDiyabc,baseDiyabc):
 
     def createBugReport(self):
         log(2,"Beginning bug report creation")
+        bw = BugReport(self)
+        bw.show()
 
     def enterWhatsThisMode(self):
         """ Change le style du curseur de souris et attend un clic
