@@ -28,7 +28,7 @@ class ReftableC
 public:
     int nrec,*nrecscen,nscen,nreclus,nrec0;
     long posnrec;
-    std::string datapath, filename, filelog, filename0;
+    std::string datapath, filename, filelog, filename0, filerefscen;
     int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste,nparamut,*nhistparam;
     float *param,*sumstat;
     HistParameterC **histparam;
@@ -40,7 +40,7 @@ public:
     long double *var_stat;
 
     void sethistparamname(HeaderC const & header);
-    int readheader(std::string fname, std::string flogname);
+    int readheader(std::string fname, std::string flogname, std::string reftabscen);
     int writeheader();
     int readrecord(enregC *enr);
     int writerecords(int nenr, enregC *enr);

@@ -78,7 +78,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	cout<<"fin de sethisparamname\n";
 }
 
-int ReftableC::readheader(string fname,string flogname) {
+int ReftableC::readheader(string fname,string flogname,string freftabscen) {
 	//cout <<"debut de readheader\n";
 	fstream f0(fname.c_str(),ios::in|ios::out|ios::binary);
 	//cout<<"apres fstream\n";
@@ -89,9 +89,14 @@ int ReftableC::readheader(string fname,string flogname) {
 	//int p=strcspn(this->filelog,".");
 	//this->filelog[p]='\0';
 	//strcat(this->filelog,".log");
-	//cout<<"dans readheader this->filelog = '"<<this->filelog<<"\n";exit(1);
+	//cout<<"dans readheader this->filelog = '"<<this->filelog<<"\n";
+	//cout<<"dans readheader this->filelog = '"<<this->filelog<<"\n";
+	
+//	exit(1);
 	this->filename = fname;
 	this->filelog = flogname;
+	this->filerefscen = freftabscen;
+	cout<<"dans rt.readheader this->filerefscen = "<<this->filerefscen<<"\n";
 	if (!f0) {return 1;}  //fichier non ouvrable e.g. inexistant
 	else {
 		//cout<<"fichier OK\n";
@@ -210,6 +215,9 @@ int ReftableC::writerecords(int nenr, enregC *enr) {
 	f1<<this->nrec+nenr<<"\n";
 	f1<<TimeToStr(remtime)<<"\n";
 	f1.close();
+	ofstream f2(this->filerefscen.c_str(),ios::out);
+	for (int i=0;i<this->nscen;i++) {nb=this->nrecscen[i]+nrs[i];f2<<"scenario "<<i+1<<"   "<<nb<<" records\n";}
+	f2.close();
 	delete []nrs;
 	return 0;
 }

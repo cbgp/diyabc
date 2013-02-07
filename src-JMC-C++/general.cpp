@@ -155,6 +155,7 @@ enregC *enreg,*enregOK;
 //char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename, *progressfilename;
 //char *;
 string headerfilename,headersimfilename,reftablefilename, datafilename, statobsfilename,reftablelogfilename,path,ident,stopfilename,progressfilename,scsufilename;
+string reftabscen;
 bool multithread=false;
 int nrecneeded,nenr=100,nenrOK,*neOK,*netot;
 int debuglevel=0;
@@ -181,7 +182,7 @@ int readheaders() {
     header.calstatobs(statobsfilename);                                  if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename= header.datafilename;                                   if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
 	k=rt.testfile(reftablefilename,nenr);
-    k=rt.readheader(reftablefilename,reftablelogfilename);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
+    k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
     if (k==0) {rt.sethistparamname(header);if (debuglevel==1) cout<<"sethistparamname"<<"\n";}
     return k;
 }
@@ -346,7 +347,8 @@ try {
 			reftablefilename =  soptarg + "reftable.bin";
 			reftablelogfilename =  soptarg + "reftable.log";
 			statobsfilename = soptarg + "statobs.txt";
-			stopfilename = soptarg + ".stop"; 
+			stopfilename = soptarg + ".stop";
+			reftabscen = soptarg + "reftabscen.txt";
 			path = soptarg;
             flagp=true;
             if (stat(stopfilename.c_str(),&stFileInfo)==0) remove(stopfilename.c_str());
@@ -649,11 +651,11 @@ try {
                    break;
 				   
 	   case 'q'   : //header.readHeader(headerfilename);
-				  k=rt.readheader(reftablefilename,reftablelogfilename);
+				  k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);
 				  rt.concat();
 				  break;
 	   case 'x'  :
-				  k=rt.readheader(reftablefilename,reftablelogfilename);
+				  k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);
 				  rt.bintotxt();
 				  break;
 	   case 'z'  :
