@@ -2106,7 +2106,8 @@ void ParticleC::put_one_mutation(int loc) {
 	  // if (gtMexist) deletetree(GeneTreeM,dnaloc);
 	  //if (trace) cout << "Fin de dosimulpart \n";
 	  if (this->weight>0.0){
-		simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];}
+		simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];if (simulOK[loc]!=0) cout<<"locus="<<loc<<"   OK="<<simulOK[loc]<<"\n";}
+		if (simOK!=0) this->scen.ecris();
 	}
 	  if (debuglevel==11) cout<<"fin de dosimulpart   simOK="<<simOK<<"\n";fflush(stdin);
 	  if (debuglevel==7) {

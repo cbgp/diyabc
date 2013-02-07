@@ -541,6 +541,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 			enreg[ipart].message="OK";
 		}
 		else {
+			cout<<"A gene genealogy failed in scenario "<<this->particule[ipart].scen.number<<"\n";
 			enreg[ipart].message  = "A gene genealogy failed in scenario ";
 			enreg[ipart].message += IntToString(this->particule[ipart].scen.number);
 			enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";

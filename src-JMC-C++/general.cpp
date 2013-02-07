@@ -591,6 +591,7 @@ try {
 											}
 										}
                                         if (firsttime) firsttime=false;
+										//if (stoprun) cout<<"STOPRUN=TRUE\n";
                                   }
                                   //cout<<"fin du while\n";
                                   for (int i=0;i<nenr;i++) {
