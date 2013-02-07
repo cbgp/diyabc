@@ -59,7 +59,7 @@ class BugReport(formBugReport,baseBugReport):
         if not tarname.endswith(".tar"):
             tarname += ".tar"
 
-        repIntoTar = tarname.split("/")[-1]
+        repIntoTar = tarname.split("/")[-1].replace(".tar","")
         
         # creation du tar
         dest = "%s/bug_report_tmp/"%current_project.dir
