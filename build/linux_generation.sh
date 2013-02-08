@@ -2,30 +2,91 @@
 
 function printUsage(){
 echo "usage : 
-linux_generation.sh  path_to_pyinstaller.py  [output_path  path_to_main.py arch(32 or 64)] 
+linux_generation.sh  (-p | --pyinst) path_to_pyinstaller.py  (-o | --output) output_path  (-m | --main) path_to_main.py (-a | --arch) arch(32 or 64)
 "
 }
 
+ARGS=$(getopt -o p:o:m:a: -l "pyinst:output:main:arch:" -n "linux_generation.sh" -- "$@");
 
-pyinst=$1
-output=$2
-pysrc=$3
-ARCH=$4
-BUILDDATE=`date +%d-%m-%Y`
+#Bad arguments
+if [ $? -ne 0 ] || [ $# -eq 0 ];
+then
+      printUsage
+    exit
+fi
+MAINFLAG=0
+PYINSTFLAG=0
+OUTFLAG=0
+ARCHFLAG=0
+eval set -- "$ARGS";
 
-if [ $# -eq 0 ] ; then
+while true; do
+  case "$1" in
+    -p|--pyinst)
+      shift;
+      if [ -n "$1" ]; then
+        if [ -f "$1" ]; then
+            pyinst=$1
+            PYINSTFLAG=1
+        else
+            echo "Pyinstaller.py file does not exist"
+            exit
+        fi
+        shift;
+      fi
+      ;;
+    -o|--output)
+      shift;
+      if [ -n "$1" ]; then
+        if [ -d `dirname "$1"` ]; then
+            output=$1
+            OUTFLAG=1
+        else
+            echo "Impossible to use this location for output"
+            exit
+        fi
+        shift;
+      fi
+      ;;
+    -m|--main)
+      shift;
+      if [ -n "$1" ]; then
+        if [ -f "$1" ]; then
+            pysrc=$1
+            MAINFLAG=1
+        else
+            echo "main python file does not exist"
+            exit
+        fi
+        shift;
+      fi
+      ;;
+    -a|--arch)
+      shift;
+      if [ -n "$1" ]; then
+        if [ "$1" != "64" ] && [ "$1" != "32" ]; then
+            echo "invalid architecture"
+            exit
+        fi
+        ARCH=$1
+        ARCHFLAG=1
+        shift;
+      fi
+      ;;
+    --)
+      shift;
+      break;
+      ;;
+  esac
+done
+
+if [ $PYINSTFLAG == 0 ] && [ $MAINFLAG == 0 ] && [ $OUTFLAG == 0 ] && [ $ARCHFLAG == 0 ]; then
     printUsage
     exit
-else
-    if [ $# -eq 1 ]; then
-        output="./lingeneration_"+`date +%e-%m-%Y_%R`
-        echo "Your application will be generated in $output . Press enter to continue..."
-        read
-        pysrc="../../diyabc.py"
-        VERSION="development"
-    fi
-    echo "I assume you've intalled python-2.6, matplotlib, numpy, PyQt"
 fi
+
+BUILDDATE=`date +%d-%m-%Y`
+
 VERSIONFILE="`dirname $pysrc`/../version.txt"
 VERSION="`head -n 1 $VERSIONFILE`"
 

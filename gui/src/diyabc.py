@@ -229,7 +229,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         help_menu.addAction(QIcon(variables.ICONPATH+"/whats.png"),"&What's this",self.enterWhatsThisMode)
         help_menu.addAction(QIcon(variables.ICONPATH+"/dialog-question.png"),"&About DIYABC",self.aboutWindow.show)
         help_menu.addAction(QIcon(variables.ICONPATH+"/gnome-mime-text.png"),"&Show logfile",self.showLogFile,QKeySequence(Qt.CTRL + Qt.Key_L))
-        help_menu.addAction(QIcon(variables.ICONPATH+"/bug.png"),"&Create bug report",self.createBugReport)
+        help_menu.addAction(QIcon(variables.ICONPATH+"/bug.png"),"&Create bug report",self.createBugReport,QKeySequence(Qt.CTRL + Qt.Key_B))
 
         self.currentProjectMenu = None
         QObject.connect(self.ui.tabWidget,SIGNAL("currentChanged(int)"),self.updateCurrentProjectMenu)

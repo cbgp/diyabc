@@ -25,7 +25,7 @@ cd -
 cd ./build/
 rm -rf $packageDir
 
-./linux_generation.sh ./pyinstaller-2.0/pyinstaller.py $packageDir  ../gui/src/diyabc.py 32
+./linux_generation.sh -p ./pyinstaller-2.0/pyinstaller.py -o $packageDir  -m ../gui/src/diyabc.py -a 32
 cd lastDiyabc
 #zip -r diyabc_linux32.zip *
 zip -r "`ls | grep diyabc*32`.zip" diyabc*32

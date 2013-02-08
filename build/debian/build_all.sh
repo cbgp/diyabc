@@ -22,7 +22,6 @@ while true; do
     -a|--arch)
       shift;
       if [ -n "$1" ]; then
-        echo "-a used: $1";
         if [ "$1" != "amd64" ] && [ "$1" != "i386" ]; then
             echo "invalid architecture"
             exit
