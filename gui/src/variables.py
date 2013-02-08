@@ -38,7 +38,7 @@ elif getattr(sys, 'frozen', None):
     UIPATH = sys._MEIPASS+"/uis"
 
 # paquet deb/rpm
-if "linux" in sys.platform and not os.path.exists("docs/documentation"):
+if "linux" in sys.platform and not os.path.exists("docs/documentation") and not getattr(sys, 'frozen', None):
     DOCPATH = "/usr/share/doc/diyabc-doc"
 # sources
 elif os.path.exists("../../doc/"):
