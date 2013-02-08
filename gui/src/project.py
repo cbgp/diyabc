@@ -139,6 +139,8 @@ class Project(baseProject,formProject):
         if not os.path.exists("%s/RNG_state_0000.bin"%self.dir):
             log(3,"RNG binary file cannot be found")
             return False
+        if os.path.exists("%s/RNG_state_0000_cores.txt"%self.dir):
+            os.remove("%s/RNG_state_0000_cores.txt"%self.dir)
         QApplication.setOverrideCursor( Qt.WaitCursor )
         nbThreadExpected = self.parent.preferences_win.getMaxThreadNumber()
 
@@ -179,7 +181,7 @@ class Project(baseProject,formProject):
             log(3,"BAD RNG check of project '%s'. They should (and will be) be generated again (%s needed, %s found)."%(self.name,nbThreadExpected,nbRNGThread))
 
         QApplication.restoreOverrideCursor()
-        return (nbThreadExpected == nbRNGThread)
+        return (nbThreadExpected <= nbRNGThread)
 
     def returnTo(self,elem):
         self.ui.analysisStack.removeWidget(self.drawAnalysisFrame)
