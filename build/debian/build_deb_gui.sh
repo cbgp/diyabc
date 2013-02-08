@@ -58,7 +58,7 @@ mkdir -p $PACKAGEDIR/usr/local/src/diyabc/
 
 # for git errors
 mkdir -p $PACKAGEDIR/usr/bin 
-chmod 755 diyabc-gui-pkg-template/DEBIAN/*
+chmod 755 $PACKAGEDIR/DEBIAN/*
 
 # file copy
 cd $SOURCEDIR/..
