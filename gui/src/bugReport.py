@@ -4,9 +4,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.set_condition_ui import Ui_MainWindow
-import output,os,shutil,tarfile
+import output,os,shutil,tarfile,sys
 import variables
-from variables import UIPATH
+from variables import VERSION,VERSION_DATE,UIPATH
 
 formBugReport,baseBugReport= uic.loadUiType("%s/bugReport.ui"%UIPATH)
 
@@ -23,6 +23,8 @@ class BugReport(formBugReport,baseBugReport):
         self.ui.setupUi(self)
         QObject.connect(self.ui.cancelButton,SIGNAL("clicked()"),self.close)
         QObject.connect(self.ui.validateButton,SIGNAL("clicked()"),self.valid)
+        self.ui.infoLabel.setText(str(self.ui.infoLabel.text()).replace("CONF","%s"%self.parent.configFile))
+        self.ui.cancelButton.setShortcut(QKeySequence(Qt.Key_Escape))
 
     def valid(self):
         """ clic sur le bouton de validation qui entraine l'affichage de la condition dans setHistoricalModel
@@ -56,10 +58,10 @@ class BugReport(formBugReport,baseBugReport):
         if len(result) > 0:
             path = result[0]
         tarname = "%s"%path
-        if not tarname.endswith(".tar"):
-            tarname += ".tar"
+        if not tarname.endswith(".tar.gz"):
+            tarname += ".tar.gz"
 
-        repIntoTar = tarname.split("/")[-1].replace(".tar","")
+        repIntoTar = tarname.split("/")[-1].replace(".tar.gz","")
         
         # creation du tar
         dest = "%s/bug_report_tmp/"%current_project.dir
@@ -67,13 +69,15 @@ class BugReport(formBugReport,baseBugReport):
             shutil.rmtree(dest)
         os.mkdir(dest)
         
-        tar = tarfile.open(tarname,"w")
+        tar = tarfile.open(tarname,"w:gz")
 
         # copie du header
-        tar.add(os.path.expanduser("%s/header.txt"%current_project.dir),'%s/header.txt'%repIntoTar)
+        if self.ui.headerYesRadio.isChecked():
+            tar.add(os.path.expanduser("%s/header.txt"%current_project.dir),'%s/header.txt'%repIntoTar)
 
         # copie du datafile
-        tar.add(current_project.dataFileSource,'%s/datafile.txt'%repIntoTar)
+        if self.ui.dataYesRadio.isChecked():
+            tar.add(current_project.dataFileSource,'%s/datafile.txt'%repIntoTar)
 
         # copie du logfile
         tar.add(os.path.expanduser("%s"%self.parent.logfile),'%s/logfile.txt'%repIntoTar)
@@ -87,12 +91,20 @@ class BugReport(formBugReport,baseBugReport):
             cause = "interface"
         else:
             cause = "computations"
+        osname = sys.platform
+        version_info = VERSION + " " + VERSION_DATE
         desc = str(self.ui.descEdit.toPlainText())
         descf = open("%sdescription.txt"%dest,'w')
-        descf.write("Cause : %s\n\n"%cause)
+        descf.write("Version : %s\nOS : %s\nCause : %s\n\n"%(version_info,osname,cause))
         descf.write(desc)
         descf.close()
         tar.add(os.path.expanduser("%sdescription.txt"%dest),'%s/description.txt'%repIntoTar)
+
+        # les .out
+        listf = os.listdir("%s"%current_project.dir)
+        for fname in listf:
+            if fname.endswith(".out"):
+                tar.add(os.path.expanduser("%s/%s"%(current_project.dir,fname)),'%s/%s'%(repIntoTar,fname))
 
         tar.close()
 

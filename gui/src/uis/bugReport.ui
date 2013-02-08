@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>772</width>
-    <height>585</height>
+    <width>681</width>
+    <height>582</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,6 +36,12 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QLabel" name="label_7">
             <property name="text">
@@ -88,6 +94,12 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
@@ -137,6 +149,12 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QLabel" name="label_2">
             <property name="text">
@@ -186,6 +204,12 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
@@ -238,10 +262,16 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>Write a detailed
+             <string>Detailed
 description
 of your problem</string>
             </property>
@@ -254,6 +284,29 @@ of your problem</string>
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="infoLabel">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>By pressing the validate button and sending us the bug report, you agree to give us the following informations :
+
+- Information about your DIYABC version, OS name and version
+- The log file for this DIYABC instance
+- Your DIYABC configuration file located in CONF
+- Your data file if you decided to
+- Your header file if you decided to
+- The description you just wrote
+- All the &quot;.out&quot; files in the current project directory</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QFrame" name="frame_2">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -262,6 +315,12 @@ of your problem</string>
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QPushButton" name="validateButton">
             <property name="maximumSize">
@@ -301,7 +360,7 @@ of your problem</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>772</width>
+     <width>681</width>
      <height>22</height>
     </rect>
    </property>

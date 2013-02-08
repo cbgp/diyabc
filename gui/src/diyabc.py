@@ -85,8 +85,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         if not os.path.exists(confdir):
             os.mkdir(confdir)
 
-        configFile = confdir+"config.cfg"
-        self.preferences_win = Preferences(self,configFile)
+        self.configFile = confdir+"config.cfg"
+        self.preferences_win = Preferences(self,self.configFile)
         self.preferences_win.hide()
         self.preferences_win.loadPreferences()
         self.ui.stackedWidget.addWidget(self.preferences_win)
