@@ -73,7 +73,7 @@ modchec.o: modchec.cpp modchec.h
 	$(CC) $(CFLAGS) -o modchec.o -c modchec.cpp
 
 general:  $(OBJS) libdcmt.a
-	$(CC) $(CFLAGS) -o general $(OBJS) $(LIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o general $(OBJS) $(LIBS)
 
 initRNGproject: initRNGproject.o  randomgenerator.o
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o initRNGproject mesutils.o matrices.o initRNGproject.o randomgenerator.o $(LIBS)
