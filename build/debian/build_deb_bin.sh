@@ -86,7 +86,7 @@ cp -rp diyabc-bin-pkg-template/ $PACKAGEDIR/
 # bin compilation
 cd `dirname $MAKEPATH`
 make clean
-make
+make dpkg
 cd -
 mkdir -p $PACKAGEDIR/usr/bin/
 strip ../../src-JMC-C++/general
