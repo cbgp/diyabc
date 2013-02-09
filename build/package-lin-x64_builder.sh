@@ -9,7 +9,7 @@ HTMLGENPATH="../doc/gen_html_doc.sh"
 cd $diyabc_git
 
 make clean
-make 
+MYFLAGS="-static" make 
 
 strip ./src-JMC-C++/general
 cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-linux-x64
