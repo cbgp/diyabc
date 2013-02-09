@@ -68,9 +68,11 @@ done
 for filepath in $TMPBUILD/uis/*;do 
     datalist=$datalist"('uis/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
 done
-for filepath in $TMPBUILD/html/*;do 
-    datalist=$datalist"('doc/html/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
-done
+if [ -d $TMPBUILD/html ]; then
+    for filepath in $TMPBUILD/html/*;do
+        datalist=$datalist"('doc/html/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
+    done
+fi
 datalist=$datalist"]"
 sed -i "s>pyz\ =>$datalist \npyz = >g" $output/diyabc.spec
 sed -i 's>xxx123cxxx123>c:\\\\>g' $output/diyabc.spec

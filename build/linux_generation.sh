@@ -126,9 +126,11 @@ done
 for filepath in $TMPBUILD/uis/*;do 
     datalist=$datalist"('uis/`basename $filepath`','$filepath','DATA'),"
 done
-for filepath in $TMPBUILD/html/*;do 
-    datalist=$datalist"('doc/html/`basename $filepath`','$filepath','DATA'),"
-done
+if [ -d $TMPBUILD/html ]; then
+    for filepath in $TMPBUILD/html/*;do
+        datalist=$datalist"('doc/html/`basename $filepath`','$filepath','DATA'),"
+    done
+fi
 datalist=$datalist"]"
 sed -i "s>pyz\ =>$datalist \npyz = >g" $output/diyabc.spec
 python $pyinst $output/diyabc.spec

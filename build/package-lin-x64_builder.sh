@@ -15,12 +15,11 @@ strip ./src-JMC-C++/general
 cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-linux-x64
 
 # html generation
-cd -
+cd ./build
 cd `dirname $HTMLGENPATH`
 ./gen_html_doc.sh
-cd -
 
-cd ./build/
+cd ../build/
 rm -rf $packageDir
 
 ./linux_generation.sh -p ./pyinstaller-2.0/pyinstaller.py -o $packageDir  -m ../gui/src/diyabc.py -a 64
