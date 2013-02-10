@@ -7,6 +7,7 @@ from PyQt4 import uic
 import output,os,shutil,tarfile,sys
 import variables
 from variables import VERSION,VERSION_DATE,UIPATH
+import urllib, urllib2
 
 formBugReport,baseBugReport= uic.loadUiType("%s/bugReport.ui"%UIPATH)
 
@@ -47,7 +48,7 @@ class BugReport(formBugReport,baseBugReport):
 
     def generateBugReport(self):
         current_project = self.parent.ui.tabWidget.currentWidget()
-        fileDial = QFileDialog(self,"Select location of the bug report","%s"%os.path.dirname(current_project.dir))
+        fileDial = QFileDialog(self,"Select location of the bug report","%s"%os.path.dirname(str(current_project.dir)))
         fileDial.setAcceptMode(QFileDialog.AcceptSave)
         fileDial.setLabelText(QFileDialog.Accept,"Save bug report")
         fileDial.setLabelText(QFileDialog.FileName,"Bug report name")
@@ -110,7 +111,27 @@ class BugReport(formBugReport,baseBugReport):
 
         shutil.rmtree(dest)
 
-        output.notify(self,"Thank you","Thank you for creating a bug report, please send it to the development team")
+
+        # envoi par http :
+        ft = open(tarname,'r')
+        ftc = ft.read()
+        ft.close()
+
+        url = 'http://privas.dyndns.info/~julien/ff/write.php'
+        values = {"file":ftc}
+
+        data = urllib.urlencode(values)
+        req = urllib2.Request(url, data)
+        try:
+            response = urllib2.urlopen(req)
+        except Exception as e:
+            output.notify(self,"Thank you","Thank you for creating a bug report, please send it to the development team because the sending process went wrong\n\n%s"%str(e).decode("utf-8"))
+            self.close()
+            return
+
+        the_page = response.read()
+        if the_page.strip() == "OK":
+            output.notify(self,"Thank you","Thank you for creating a bug report, it was successfully sent to our development team !")
 
         self.close()
         
