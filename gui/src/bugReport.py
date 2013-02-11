@@ -100,9 +100,11 @@ class BugReport(formBugReport,baseBugReport):
             cause = "computations"
         osname = sys.platform
         version_info = VERSION + " " + VERSION_DATE
+        name = str(self.ui.nameLabel.text())
+        email = str(self.ui.emailLabel.text())
         desc = str(self.ui.descEdit.toPlainText())
         descf = open("%sdescription.txt"%dest,'w')
-        descf.write("Version : %s\nOS : %s\nCause : %s\n\n"%(version_info,osname,cause))
+        descf.write("Name : %s\nEmail : %s\nVersion : %s\nOS : %s\nCause : %s\n\n"%(name,email,version_info,osname,cause))
         descf.write(desc)
         descf.close()
         tar.add(os.path.expanduser("%sdescription.txt"%dest),'%s/description.txt'%repIntoTar)
