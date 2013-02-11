@@ -5,7 +5,7 @@ Name:    diyabc-gui
 Version:   X
 Release:   1
 Group:    Biology
-Requires: bash >= 3.0, python >= 2.5, PyQt4 >= 4.5, python-matplotlib >= 1.0, diyabc-doc >= X
+Requires: bash >= 3.0, python >= 2.5, PyQt4 >= 4.5, python-matplotlib >= 1.0, python-matplotlib-tk >= 1.0, diyabc-doc >= X
 BuildArch: noarch
 URL: http://www1.montpellier.inra.fr/CBGP/diyabc/
 Distribution: whatever
@@ -55,7 +55,7 @@ sed -i "s/ NAMEVERSION//" $RPM_BUILD_ROOT/usr/share/menu/diyabc-gui
 sed -i "s/ICON/\/usr\/local\/src\/diyabc\/docs\/icons\/coccicon.png/" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
 sed -i "s/ NAMEVERSION//" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
 sed -i "s/DIYABCEXEC/\/usr\/bin\/diyabc-gui/" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
-sed -i "s/COMMANDVERSION//" $RPM_BUILD_ROOT/usr/share/menu/diyabc
+sed -i "s/COMMANDVERSION//" $RPM_BUILD_ROOT/usr/share/menu/diyabc-gui
 
 
 

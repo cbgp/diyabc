@@ -1153,11 +1153,15 @@ def main():
         output.notify(None,"Log rotate failure","%s"%e)
 
     # matplotlib plante s'il ne trouve pas de config
-    if "linux" in sys.platform and not os.path.exists("/etc/matplotlibrc") and not os.path.exists("matplotlibrc"):
+    if "linux" in sys.platform and not os.path.exists("/etc/matplotlibrc")\
+            and not os.path.exists("matplotlibrc")\
+            and not os.path.exists(os.path.expanduser("~/.matplotlib/matplotlibrc")):
         conf = "backend      : TkAgg\n"
         conf += "examples.download : False\n"
         conf += "examples.directory : '/usr/share/matplotlib/sampledata'\n"
-        f = open("matplotlibrc","w")
+        if not os.path.exists(os.path.expanduser("~/.matplotlib"):
+            os.mkdir(os.path.expanduser("~/.matplotlib")
+        f = open(os.path.expanduser("~/.matplotlib/matplotlibrc"),"w")
         f.write(conf)
         f.close()
 

@@ -13,7 +13,7 @@ $SOURCEDIR/clean.sh
 rm $UTILSDIR/*.pyc
 cp -rp $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $UTILSDIR  $SOURCEDIR/summaryStatistics $SOURCEDIR/mutationModel $SOURCEDIR/historicalModel $SOURCEDIR/geneticData $PACKAGESRCDIR/src
 cp -r ../debian/diyabc-gui-pkg-template/usr/share/menu/ $PACKAGESRCDIR/
-cp -r ../debian/diyabc-gui-pkg-template/usr/share/applications/diyabc.desktop $PACKAGESRCDIR/
+cp -r ../debian/diyabc-gui-pkg-template/usr/share/applications/ $PACKAGESRCDIR/
 
 cp -r $SOURCEDIR/../data/txt $SOURCEDIR/../data/images $SOURCEDIR/../data/icons   $PACKAGESRCDIR/
 cp ./rpmbuild/SPECS/diyabc-gui.spec  $PACKAGEDIR/SPECS/diyabc-bin.spec
