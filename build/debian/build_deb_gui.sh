@@ -84,9 +84,11 @@ chmod 644 $PACKAGEDIR/usr/share/doc/diyabc-gui/changelog.gz
 
 #sed -i "s/ICON/\/usr\/share\/icons\/diyabc\/coccicon.png/" $PACKAGEDIR/usr/share/applications/diyabc.desktop
 
+mkdir -p $PACKAGEDIR/usr/share/diyabc/txt
+cp -rp $SOURCEDIR/../data/txt/*  $PACKAGEDIR/usr/share/diyabc/txt/
 cp -rp $SOURCEDIR/../data/images/* $PACKAGEDIR/usr/share/images/diyabc/
 cp -r $SOURCEDIR/../data/icons/* $PACKAGEDIR/usr/share/icons/diyabc/
-chmod 644 $PACKAGEDIR/usr/share/icons/diyabc/* $PACKAGEDIR/usr/share/images/diyabc/*
+chmod 644 $PACKAGEDIR/usr/share/icons/diyabc/* $PACKAGEDIR/usr/share/images/diyabc/* $PACKAGEDIR/usr/share/diyabc/txt/*
 
 # generation of the launch script placed in /usr/bin
 echo "#!/bin/bash

@@ -5,7 +5,7 @@
 #
 # @brief Fenêtre pour gérer les préférences personnelles
 import os,sys,platform,multiprocessing
-import os.path
+import os.path,re
 import ConfigParser
 import codecs
 from PyQt4.QtCore import *
@@ -32,206 +32,15 @@ class Preferences(AutoPreferences):
     - implémenter les fonctions d'accès aux valeurs des préférences (getMaxThreadNumber, getExecutablePath, getClusterExecutablepath ...) 
     """
 
-    DEFAULT_FIRST_PART_SCRIPT_CLUSTER = """#!/bin/bash
-numSimulatedDataSet=
-numSimulatedDataSetByJob=
-coresPerJob=
-maxConcurrentJobs=
-seed=
-diyabcPath=
-projectName=
-dataFileName=
-referenceTableHeaderName=
-"""    
-    
-    DEFAULT_SECOND_PART_SCRIPT_CLUSTER = """
-set -o nounset
-set -o errexit
-
-#====== functions ========
-
-function progress(){
-    sum=0
-    jobsTot=$1
-    # for each log file, if it exists, do the sum of done values
-    for i in $(seq 1 $jobsTot); do
-        if [ -e reftable_$i.log ]; then
-            let sum=$sum+`head -n 2 reftable_$i.log | tail -n 1`
-        fi
-    done
-    pct=$(( $sum * 100 / $numSimulatedDataSet ))
-    echo `nbOk $jobsTot` "/$jobsTot finished $pct% (total : $sum)"
-}
-
-function nbOk(){
-    nb=0
-    # for each log file, check if the computation is terminated
-    for jobNum in $(seq 1 $1); do
-        if [ -e reftable_$jobNum.log ]; then
-            numDone=`head -n 2 reftable_$jobNum.log | tail -n 1`
-	        if [ $jobNum -ne $numJobs ]
-                    then 
-                    if [ $numDone -ge $numSimulatedDataSetByJob ]
-                        then
-                        let nb=$nb+1
-                    fi
-                else
-                    # case of last computation
-                    if [ $numDone -ge $numSimulatedDataSetLastJob ]
-                        then
-                        let nb=$nb+1
-                    fi
-            fi
-        fi
-    done
-    echo $nb
-}
-
-function testJobsAllReadylaunched(){
-    # verify if the jobs are already submitted
-    lockFilesList=(./*lock)
-    reftableFilesList=(./*reftable*)
-    if [ ${#lockFilesList[@]} -ne "0" ]  ||  [ ${#reftableFilesList[@]} -ne "0" ]
-        then
-        return 1
-    else 
-        return 0
-    fi
-}
-
-function numRNGFiles(){
-    # verify if the RNG's are allready generated
-    RNGfilesList=(./*RNG_state*bin)
-    return ${#RNGfilesList[@]} 
-}
-
-function testRNGallReadyGenerated(){
-    # verify if the RNG's are allready generated
-    RNGfilesList=(./*RNG_state*bin)
-    if [ ${#RNGfilesList[@]} -ne "0" ]
-        then
-        return 1
-    else 
-        return 0
-    fi
-}
-
-function generateRNGs(){
-    # Generation of random numbers
-    cmd="$diyabcPath -p ./ -n ""'""t:$coresPerJob;c:$maxConcurrentJobs;s:$seed""'"
-    echo "Generation of random numbers :" 
-    echo $cmd
-    "$diyabcPath" -p ./ -n "t:$coresPerJob;c:$maxConcurrentJobs;s:$seed"
-}
-
-
-function submitJobs(){
-    # submit jobs to the cluster scheduller
-    for jobNum in $(seq 1 $numJobs); do 
-
-        numSimulatedDataSetForThisJob=$numSimulatedDataSetByJob
-        if [ "$jobNum" -eq "$numJobs" ]
-            then
-            numSimulatedDataSetForThisJob=$numSimulatedDataSetLastJob
-        fi
-        
-        ############################## EDIT #########################################
-        ######## Modify this line to submit jobs to your cluster scheduler ###############
-        # node.sh arguments
-        ##1 DIYABCPATH
-        ##2 NBTOGEN
-        ##3 USERDIR
-        ##4 MYNUMBER
-        ##5 DATAFILE
-        queueName="mem.q"
-        MPEnv=""
-        if [ "$coresPerJob" -gt 1 ]
-            then
-            MPEnv="-pe SMP $coresPerJob"
-        fi
-        
-        cmd="qsub -N n${jobNum}_$projectName -q $queueName $MPEnv -cwd node.sh ""'""$diyabcPath""'"" $coresPerJob $numSimulatedDataSetForThisJob ""'""`pwd`""'"" $jobNum  ""'""$PWD/$dataFileName""'"
-        echo $cmd
-        qsub -N n${jobNum}_$projectName -q $queueName $MPEnv -cwd node.sh "$diyabcPath" $coresPerJob $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
-        ############################## END EDIT #####################################
-        if [ $? -eq "0" ] 
-            then 
-            touch runningJobs.lock
-        fi 
-
-    done
-}
-
-
-#===== script core =======
-
-# job parameters
-numSimulatedDataSetLastJob=$(( $numSimulatedDataSet % $numSimulatedDataSetByJob ))
-if [ "$numSimulatedDataSetLastJob" -eq "0" ] 
-    then 
-    numJobs=$(( $numSimulatedDataSet / $numSimulatedDataSetByJob ))
-    numSimulatedDataSetLastJob=$numSimulatedDataSetByJob
-else 
-    numJobs=$(( $numSimulatedDataSet / $numSimulatedDataSetByJob + 1 ))
-fi
-
-if [ "$seed" -lt "0" ] 
-    then
-    seed=$RANDOM
-fi
-
-
-if [ "$maxConcurrentJobs" -gt "$numJobs" ]
-    then
-    maxConcurrentJobs=$numJobs
-fi
-
-projectName=${projectName//[-._ \[\]\{\}]/}
-
-# test if the jobs had allready been submitted
-if [ `ls -1 | grep lock  | wc -l` -eq "0" ] 
-    then 
-    # test if the RNG had allready been generated
-    if  [ `ls -1 | grep RNG_state  | wc -l` -eq "0" ] 
-        then 
-        generateRNGs
-    else 
-        echo -e "/!\/!\      Becarefull       /!\/!\ "
-        echo -e "/!\/!\  `ls -1 | grep RNG_state  | wc -l` old RNG files found. Let's use them instead of generate $maxConcurrentJobs new ones /!\ /!\ " 
-        echo -e "/!\/!\  be sure the RNG's have enough cores /!\ /!\ "                
-    fi
-    submitJobs
-fi
-
-
-while ! [ "`nbOk $numJobs`" -ge "$numJobs" ]; do
-    echo `progress $numJobs`
-    sleep 30
-done
-echo `progress $numJobs`
-
-
-
-echo "Concatenating reftables :"
-cmd="./general -p \\"$PWD/\\" -q  &> concat.out"
-echo $cmd
-./general -p "$PWD/" -q  &> concat.out
-
-if [ $? -eq "0" ] 
-    then 
-    echo "*************************************************************"
-    echo "All the result files should have been concatenated into reftable.bin"
-    echo "See concat.out output file "
-    echo "*************************************************************"
-    rm runningJobs.lock
-fi 
-
-#END
-exit 0
-"""
-
     def __init__(self,parent=None,configfile=None):
         super(Preferences,self).__init__(parent,configfile)
+
+        f = open(DATAPATH+"/txt/launch_header_cluster.sh",'r')
+        self.DEFAULT_FIRST_PART_SCRIPT_CLUSTER = f.read()
+        f.close()
+        f = open(DATAPATH+"/txt/launch_body_cluster.sh",'r')
+        self.DEFAULT_SECOND_PART_SCRIPT_CLUSTER = f.read()
+        f.close()
 
         self.tabColor = {"green": "#c3ffa6","blue":"#7373ff","red":"#ffb2a6","yellow":"#ffffb2","pink":"#ffbff2"}
 
@@ -283,6 +92,7 @@ exit 0
         elif "darwin" in sys.platform:
             default_Psize = "12"
 
+        BETWEEN_BRACKETS = re.compile("{.*}")
         # hashtable contenant les informations des champs
         dico_fields = OrderedDict([
                 ("various" , [
@@ -413,7 +223,7 @@ exit 0
                          "default_value": 'cluster'},
                     {"proptype":"lineEdit",
                          "propname":"diyabcPathCluster",
-                         "labelText":"Absolut path to the diyabc binary on the cluster",
+                         "labelText":"Absolute path to the diyabc binary on the cluster",
                          "default_value":""},   
                     {"proptype":"pathEdit",
                          "propname":"diyabcPathLocal",
@@ -422,13 +232,13 @@ exit 0
                     {"proptype":"textEdit",
                          "propname":"scriptMasterFirst",
                          "labelText":"NOT EDITABLE !\\nFirst part of the script\\n to run on your cluster master node\\n\\n(this first part will be merged\\nwith the second part in order\\nto obtain the launch.sh script)",
-                         "default_value":"""\\n""".join(Preferences.DEFAULT_FIRST_PART_SCRIPT_CLUSTER.splitlines()),
+                         "default_value":"""\\n""".join(BETWEEN_BRACKETS.sub("",self.DEFAULT_FIRST_PART_SCRIPT_CLUSTER).splitlines()),
                           "visibility":False,
                          "readOnly":True},
                     {"proptype":"textEdit",
                          "propname":"scriptMasterLast",
                          "labelText":"Second part of the script\\nto run on master node\\n\\nModify it in order to fit\\n your cluster scheduler\\n(ask your cluster administrator)",
-                         "default_value":"""\\n""".join(Preferences.DEFAULT_SECOND_PART_SCRIPT_CLUSTER.splitlines()),
+                         "default_value":"""\\n""".join(self.DEFAULT_SECOND_PART_SCRIPT_CLUSTER.splitlines()),
                          "visibility":True},
                 ]),
         ])

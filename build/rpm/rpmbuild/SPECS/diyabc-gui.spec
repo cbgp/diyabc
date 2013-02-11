@@ -35,6 +35,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/menu;
 mkdir -p $RPM_BUILD_ROOT/usr/share/icons/diyabc;
 mkdir -p $RPM_BUILD_ROOT/usr/share/images/diyabc;
 mkdir -p $RPM_BUILD_ROOT/usr/share/applications;
+mkdir -p $RPM_BUILD_ROOT/usr/share/diyabc/txt;
 mkdir -p $RPM_BUILD_ROOT/usr/share/man/man1/;
 cp $RPM_SOURCE_DIR/diyabc-gui.1.gz $RPM_BUILD_ROOT/usr/share/man/man1/;
 
@@ -46,6 +47,7 @@ chmod +x $RPM_BUILD_ROOT/usr/bin/diyabc-gui
 cp -rp $RPM_SOURCE_DIR/src/* $RPM_BUILD_ROOT/usr/local/src/diyabc/
 cp -rp $RPM_SOURCE_DIR/images/* $RPM_BUILD_ROOT/usr/share/images/diyabc/
 cp -rp $RPM_SOURCE_DIR/icons/* $RPM_BUILD_ROOT/usr/share/icons/diyabc/
+cp -rp $RPM_SOURCE_DIR/txt/* $RPM_BUILD_ROOT/usr/share/diyabc/txt/
 cp $RPM_SOURCE_DIR/menu/diyabc $RPM_BUILD_ROOT/usr/share/menu/
 cp $RPM_SOURCE_DIR/applications/diyabc.desktop $RPM_BUILD_ROOT/usr/share/applications/
 

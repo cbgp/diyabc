@@ -56,6 +56,9 @@ rm -f `dirname $pyinst`/config.dat
 
 python `dirname $pyinst`/utils/Makespec.py --onefile $pysrctmp -w --icon="$icon" -o "$output"
 datalist="a.datas+=["
+for filepath in $TMPBUILD/data/txt/*;do 
+    datalist=$datalist"('data/txt/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
+done
 for filepath in $TMPBUILD/data/icons/*;do 
     datalist=$datalist"('data/icons/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
 done

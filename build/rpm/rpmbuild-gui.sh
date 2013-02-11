@@ -15,7 +15,7 @@ cp -rp $SOURCEDIR/*.py $SOURCEDIR/clean.sh $SOURCEDIR/analysis $SOURCEDIR/uis $U
 cp -r ../debian/diyabc-gui-pkg-template/usr/share/menu/ $PACKAGESRCDIR/
 cp -r ../debian/diyabc-gui-pkg-template/usr/share/applications/ $PACKAGESRCDIR/
 
-cp -rp $SOURCEDIR/../data/images $SOURCEDIR/../data/icons   $PACKAGESRCDIR/
+cp -r $SOURCEDIR/../data/txt $SOURCEDIR/../data/images $SOURCEDIR/../data/icons   $PACKAGESRCDIR/
 cp ./rpmbuild/SPECS/diyabc-gui.spec  $PACKAGEDIR/SPECS/diyabc-bin.spec
 
 cp $SOURCEDIR/../../build/debian/diyabc-gui-pkg-template/usr/share/man/man1/diyabc-gui.1 $PACKAGESRCDIR/

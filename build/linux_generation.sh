@@ -114,6 +114,9 @@ rm -f `dirname $pyinst`/config.dat
 # lancement de la generation
 python `dirname $pyinst`/utils/Makespec.py --onefile $pysrctmp -o "$output"
 datalist="a.datas+=["
+for filepath in $TMPBUILD/data/txt/*;do 
+    datalist=$datalist"('data/txt/`basename $filepath`','$filepath','DATA'),"
+done
 for filepath in $TMPBUILD/data/icons/*;do 
     datalist=$datalist"('data/icons/`basename $filepath`','$filepath','DATA'),"
 done

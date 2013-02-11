@@ -20,7 +20,7 @@ UIPATH = "uis"
 
 # 3 cas : sources, tarball, deb/rpm, .app
 if "linux" in sys.platform and not os.path.exists("../data") and not os.path.exists("./data") and not getattr(sys, 'frozen', None):
-    DATAPATH = "/usr/share/diyabc-%s"%VERSION
+    DATAPATH = "/usr/share/diyabc"
     ICONPATH = "/usr/share/icons/diyabc"
     IMAGEPATH = "/usr/share/images/diyabc"
 elif os.path.exists("../data"):
