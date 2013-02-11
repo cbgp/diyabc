@@ -44,14 +44,14 @@ cd /usr/local/src/diyabc/
 python /usr/local/src/diyabc/diyabc.py \$@" > $RPM_BUILD_ROOT/usr/bin/diyabc-gui
 chmod +x $RPM_BUILD_ROOT/usr/bin/diyabc-gui
 
-cp -rp $RPM_SOURCE_DIR/src/* $RPM_BUILD_ROOT/usr/local/src/diyabc/
-cp -rp $RPM_SOURCE_DIR/images/* $RPM_BUILD_ROOT/usr/share/images/diyabc/
-cp -rp $RPM_SOURCE_DIR/icons/* $RPM_BUILD_ROOT/usr/share/icons/diyabc/
-cp -rp $RPM_SOURCE_DIR/txt/* $RPM_BUILD_ROOT/usr/share/diyabc/txt/
-cp $RPM_SOURCE_DIR/menu/diyabc $RPM_BUILD_ROOT/usr/share/menu/
+cp -r $RPM_SOURCE_DIR/src/* $RPM_BUILD_ROOT/usr/local/src/diyabc/
+cp -r $RPM_SOURCE_DIR/images/* $RPM_BUILD_ROOT/usr/share/images/diyabc/
+cp -r $RPM_SOURCE_DIR/icons/* $RPM_BUILD_ROOT/usr/share/icons/diyabc/
+cp -r $RPM_SOURCE_DIR/txt/* $RPM_BUILD_ROOT/usr/share/diyabc/txt/
+cp $RPM_SOURCE_DIR/menu/diyabc-gui $RPM_BUILD_ROOT/usr/share/menu/
 cp $RPM_SOURCE_DIR/applications/diyabc.desktop $RPM_BUILD_ROOT/usr/share/applications/
 
-sed -i "s/ NAMEVERSION//" $RPM_BUILD_ROOT/usr/share/menu/diyabc
+sed -i "s/ NAMEVERSION//" $RPM_BUILD_ROOT/usr/share/menu/diyabc-gui
 sed -i "s/ICON/\/usr\/local\/src\/diyabc\/docs\/icons\/coccicon.png/" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
 sed -i "s/ NAMEVERSION//" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
 sed -i "s/DIYABCEXEC/\/usr\/bin\/diyabc-gui/" $RPM_BUILD_ROOT/usr/share/applications/diyabc.desktop
