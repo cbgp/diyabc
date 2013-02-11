@@ -74,17 +74,23 @@ class BugReport(formBugReport,baseBugReport):
 
         # copie du header
         if self.ui.headerYesRadio.isChecked():
-            tar.add(os.path.expanduser("%s/header.txt"%current_project.dir),'%s/header.txt'%repIntoTar)
+            if os.path.exists(os.path.expanduser("%s/header.txt"%current_project.dir)):
+                tar.add(os.path.expanduser("%s/header.txt"%current_project.dir),'%s/header.txt'%repIntoTar)
 
         # copie du datafile
         if self.ui.dataYesRadio.isChecked():
-            tar.add(current_project.dataFileSource,'%s/datafile.txt'%repIntoTar)
+            if os.path.exists(current_project.dataFileSource):
+                tar.add(current_project.dataFileSource,'%s/datafile.txt'%repIntoTar)
 
-        # copie du logfile
-        tar.add(os.path.expanduser("%s"%self.parent.logfile),'%s/logfile.txt'%repIntoTar)
+        # copie des logfiles
+        if os.path.exists(os.path.expanduser("%s"%self.parent.logfile)):
+            tar.add(os.path.expanduser("%s"%self.parent.logfile),'%s/logfile.txt'%repIntoTar)
+        if os.path.exists("%s/command.txt"%(current_project.dir)):
+            tar.add(os.path.expanduser("%s/command.txt"%(current_project.dir)),'%s/command.txt'%(repIntoTar))
 
         # config file
-        tar.add(os.path.expanduser("~/.diyabc/config.cfg"),'%s/config.cfg'%repIntoTar)
+        if os.path.exists(os.path.expanduser("~/.diyabc/config.cfg")):
+            tar.add(os.path.expanduser("~/.diyabc/config.cfg"),'%s/config.cfg'%repIntoTar)
 
         # creation de la desc
         cause = ""
@@ -104,6 +110,8 @@ class BugReport(formBugReport,baseBugReport):
         # les .out
         listf = os.listdir("%s"%current_project.dir)
         for fname in listf:
+            if fname.startswith("conf."):
+                tar.add(os.path.expanduser("%s/%s"%(current_project.dir,fname)),'%s/%s'%(repIntoTar,fname))
             if fname.endswith(".out"):
                 tar.add(os.path.expanduser("%s/%s"%(current_project.dir,fname)),'%s/%s'%(repIntoTar,fname))
 
@@ -111,27 +119,28 @@ class BugReport(formBugReport,baseBugReport):
 
         shutil.rmtree(dest)
 
+        output.notify(self,"Thank you","Thank you for creating a bug report, please send it to the development team")
 
-        # envoi par http :
-        ft = open(tarname,'r')
-        ftc = ft.read()
-        ft.close()
+        ## envoi par http :
+        #ft = open(tarname,'r')
+        #ftc = ft.read()
+        #ft.close()
 
-        url = 'http://privas.dyndns.info/~julien/ff/write.php'
-        values = {"file":ftc}
+        #url = 'http://privas.dyndns.info/~julien/ff/write.php'
+        #values = {"file":ftc}
 
-        data = urllib.urlencode(values)
-        req = urllib2.Request(url, data)
-        try:
-            response = urllib2.urlopen(req)
-        except Exception as e:
-            output.notify(self,"Thank you","Thank you for creating a bug report, please send it to the development team because the sending process went wrong\n\n%s"%str(e).decode("utf-8"))
-            self.close()
-            return
+        #data = urllib.urlencode(values)
+        #req = urllib2.Request(url, data)
+        #try:
+        #    response = urllib2.urlopen(req)
+        #except Exception as e:
+        #    output.notify(self,"Thank you","Thank you for creating a bug report, please send it to the development team because the sending process went wrong\n\n%s"%str(e).decode("utf-8"))
+        #    self.close()
+        #    return
 
-        the_page = response.read()
-        if the_page.strip() == "OK":
-            output.notify(self,"Thank you","Thank you for creating a bug report, it was successfully sent to our development team !")
+        #the_page = response.read()
+        #if the_page.strip() == "OK":
+        #    output.notify(self,"Thank you","Thank you for creating a bug report, it was successfully sent to our development team !")
 
         self.close()
         
