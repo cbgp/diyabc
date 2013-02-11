@@ -1159,7 +1159,7 @@ def main():
         conf = "backend      : TkAgg\n"
         conf += "examples.download : False\n"
         conf += "examples.directory : '/usr/share/matplotlib/sampledata'\n"
-        if not os.path.exists(os.path.expanduser("~/.matplotlib"):
+        if not os.path.exists(os.path.expanduser("~/.matplotlib")):
             os.mkdir(os.path.expanduser("~/.matplotlib")
         f = open(os.path.expanduser("~/.matplotlib/matplotlibrc"),"w")
         f.write(conf)
