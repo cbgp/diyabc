@@ -390,7 +390,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     e.setWhatsThis(output.whatsthis_header + objnamestr + "<br/><br/>" + docstr + output.whatsthis_footer)
                 else:
                     e.setWhatsThis(output.whatsthis_header + docstr + output.whatsthis_footer)
-                log(4,"Adding documentation of "+"%s"%e.objectName())
+                log(4,"Adding documentation of "+"%s"%e.objectName() + "\n%s"%docstr)
             except Exception as ex:
                 if objname_debug:
                     e.setWhatsThis(output.whatsthis_header + objnamestr + output.whatsthis_footer)
