@@ -355,6 +355,9 @@ class AutoPreferences(QFrame):
                 propname = propl[0]
                 proptype = propl[1]
                 toBeSaved = propl[4]
+                # if we don't save, next loop turn
+                if not toBeSaved:
+                    continue
                 if proptype == "check":
                     exec('val_to_save = str(self.%sCheck.isChecked())'%propname)
                 elif proptype == "lineEdit":
@@ -371,9 +374,8 @@ class AutoPreferences(QFrame):
                             break
                     val_to_save = k
 
-                if toBeSaved:
-                    self.config[cat][propname] = val_to_save
-        
+                self.config[cat][propname] = val_to_save
+
         self.writeConfigFile()
 
     def loadPreferences(self):

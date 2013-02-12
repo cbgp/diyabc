@@ -379,10 +379,10 @@ class Preferences(AutoPreferences):
             self.saveMMS()
             self.saveHM()
             self.saveRecent()
-            self.saveCluster()
+            #self.saveCluster()
             self.saveTabsOrder()
             super(Preferences,self).savePreferences()
-            self.saveCluster()            
+            #self.saveCluster()            
             self.close()
 
     def loadPreferences(self):
@@ -393,7 +393,7 @@ class Preferences(AutoPreferences):
         self.loadHM()
         self.loadRecent()
         self.loadToolBarPosition()
-        self.loadCluster()
+        #self.loadCluster()
         self.loadTabOrder()
         super(Preferences,self).loadPreferences()
         
@@ -568,10 +568,6 @@ class Preferences(AutoPreferences):
                     log(4, "Loading recent : %s"%rec.strip())
             self.parent.setRecent(recent_list)
 
-    def loadCluster(self):
-        if self.config.has_key("cluster") and self.config["cluster"].has_key("scriptMasterFirst"):
-            del self.config["cluster"]["scriptMasterFirst"]
-        
     def getMaxRecentNumber(self):
         return int(str(self.ui.nbMaxRecentEdit.text()))
 
@@ -589,11 +585,6 @@ class Preferences(AutoPreferences):
         rec_cfg = rec_cfg[:-1]
         self.config["recent"]["projectPathList"] = rec_cfg
     
-    def saveCluster(self):
-        if self.config.has_key("cluster") and self.config["cluster"].has_key("scriptMasterFirst"):
-            del self.config["cluster"]["scriptMasterFirst"]
-        
-        
     def saveMMM(self):
         """ sauvegarde de la partie mutation model microsats des préférences
         """
