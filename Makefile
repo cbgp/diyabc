@@ -1,5 +1,9 @@
 all:
 	cd dcmt0.6.1/lib/; $(MAKE) $(MFLAGS) 
+	cd src-JMC-C++; staticgcc=-static-libgcc $(MAKE) $(MFLAGS) all
+
+valgrind:
+	cd dcmt0.6.1/lib/; $(MAKE) $(MFLAGS)
 	cd src-JMC-C++; $(MAKE) $(MFLAGS) all
 
 dpkg:
