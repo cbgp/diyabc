@@ -375,7 +375,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 doc_dico = self.documentator.getDocHashByTags("%s"%e.objectName())
                 # on remplace les SRC pour que les images soient bien chargées
                 for tag in doc_dico.keys():
-                    doc_dico[tag] = doc_dico[tag].replace('SRC="','SRC="%s/'%variables.DOCPATH)
+                    doc_dico[tag] = doc_dico[tag].replace('SRC="','SRC="%s/html'%variables.DOCPATH)
                 docstr = ""
                 # on n'encadre pas le default tag
                 if doc_dico.has_key("default_tag"):
@@ -390,7 +390,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     e.setWhatsThis(output.whatsthis_header + objnamestr + "<br/><br/>" + docstr + output.whatsthis_footer)
                 else:
                     e.setWhatsThis(output.whatsthis_header + docstr + output.whatsthis_footer)
-                log(4,"Adding documentation of "+"%s"%e.objectName() + "\n%s"%docstr)
+                log(4,"Adding documentation of "+"%s"%e.objectName())
             except Exception as ex:
                 if objname_debug:
                     e.setWhatsThis(output.whatsthis_header + objnamestr + output.whatsthis_footer)
