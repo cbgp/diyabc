@@ -375,7 +375,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 doc_dico = self.documentator.getDocHashByTags("%s"%e.objectName())
                 # on remplace les SRC pour que les images soient bien chargées
                 for tag in doc_dico.keys():
-                    doc_dico[tag] = doc_dico[tag].replace('SRC="','SRC="%s/html'%variables.DOCPATH)
+                    doc_dico[tag] = doc_dico[tag].replace('SRC="','SRC="%s/html/'%variables.DOCPATH)
                 docstr = ""
                 # on n'encadre pas le default tag
                 if doc_dico.has_key("default_tag"):
