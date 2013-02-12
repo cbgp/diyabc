@@ -226,7 +226,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.saveAllProjActionMenu.setDisabled(True)
 
         file_menu.addAction(QIcon(variables.ICONPATH+"/redhat-system_settings.png"),"&Settings",self.switchToPreferences,QKeySequence(Qt.CTRL + Qt.Key_P))
-        self.simulate_menu = file_menu.addMenu(QIcon(variables.ICONPATH+"/mask.jpeg"),"&Simulate data set(s)")
+        self.simulate_menu = file_menu.addMenu(QIcon(variables.ICONPATH+"/mask.png"),"&Simulate data set(s)")
         self.simulate_menu.addAction(QIcon(variables.ICONPATH+"/gene.png"),"&Microsatellites and/or sequences (Genepop format)",self.simulateDataSets)
         self.simulate_menu.addAction(QIcon(variables.ICONPATH+"/dna.png"),"&SNP (ad-hoc format)",self.simulateDataSets)
 
