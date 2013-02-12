@@ -174,6 +174,19 @@ class Diyabc(formDiyabc,baseDiyabc):
                 background-color: #FFD800;\
                 }\
                 \
+                QComboBox::item{\
+                height:20px;\
+                border-color: darkblue;\
+                /*background: rgba(100, 100, 100, 150);*/\
+                background-color: #FFFFFF;\
+                }\
+                \
+                QComboBox::item:selected {\
+                border-color: darkblue;\
+                /*background: rgba(100, 100, 100, 150);*/\
+                background-color: #FFD800;\
+                }\
+                \
                 QMenu::item:disabled {\
                 /*border-color: darkblue;*/\
                 /*background: rgba(100, 100, 100, 150);*/\
