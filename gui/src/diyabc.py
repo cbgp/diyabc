@@ -504,7 +504,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             log(1,"Simulation project '%s' successfully created"%(newSimProj.name))
             self.updateDoc(newSimProj)
             # set dernier chemin 
-            self.preferences_win.setLastFolder("open",os.path.dirname(newSimProj.dir))
+            self.preferences_win.setLastFolder("open",os.path.dirname(str(newSimProj.dir)))
 
     def setRecent(self,rlist):
         self.recentList = rlist
@@ -747,7 +747,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             return
         ok = True
         if cloneName == None or cloneDir == None:
-            fileDial = QtGui.QFileDialog(self,"Select location of the clone project","%s"%os.path.dirname(current_project.dir))
+            fileDial = QtGui.QFileDialog(self,"Select location of the clone project","%s"%os.path.dirname(str(current_project.dir)))
             fileDial.setAcceptMode(QFileDialog.AcceptSave)
             fileDial.setLabelText(QtGui.QFileDialog.Accept,"Clone project")
             fileDial.setLabelText(QtGui.QFileDialog.FileName,"Clone name")
@@ -763,7 +763,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 if path[-1] == "/":
                     path = path[:-1]
                 cloneName = path.split("/")[-1]
-                cloneDir = os.path.dirname(path)
+                cloneDir = os.path.dirname(str(path))
             else:
                 # on a eu un probleme inconnu, on a un path qui n'a pas de '/'
                 return
@@ -856,8 +856,8 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         # verification de l'existence du dossier dans lequel le dossier du projet 
         # va être créé
-        if ok and not os.path.exists(os.path.dirname(path)):
-            output.notify(self,"Creation impossible","Directory %s does not exist.\nImpossible to create the project in %s"%(os.path.dirname(path),path))
+        if ok and not os.path.exists(os.path.dirname(str(path))):
+            output.notify(self,"Creation impossible","Directory %s does not exist.\nImpossible to create the project in %s"%(os.path.dirname(str(path)),path))
             return
 
         if ok:
@@ -901,7 +901,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     self.updateDoc(newProj)
                     log(1,'Project %s successfully created in %s'%(newProj.name,newProj.dir))
                     # set dernier chemin 
-                    self.preferences_win.setLastFolder("open",os.path.dirname(newProj.dir))
+                    self.preferences_win.setLastFolder("open",os.path.dirname(str(newProj.dir)))
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded."%name)
 
