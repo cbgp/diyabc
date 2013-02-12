@@ -175,6 +175,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 }\
                 \
                 QComboBox::item{\
+                color: black;\
                 height:20px;\
                 border-color: darkblue;\
                 /*background: rgba(100, 100, 100, 150);*/\
