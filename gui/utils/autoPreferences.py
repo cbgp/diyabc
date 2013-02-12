@@ -173,13 +173,13 @@ class AutoPreferences(QFrame):
             exec('self.verticalLayout_%s.addWidget(self.scrollArea_%s) '%(catname,catname))
             exec('self.ui.tabWidget.addTab(self.tab_%s,"%s")'%(catname,catname))
 
-    def addPropCheck(self,catname,propname,labelText,defaultState):
+    def addPropCheck(self,catname,propname,labelText,defaultState,toBeSaved=True):
         """ Add a field which is composed by a label and a checkBox
         @param propname: name of the field
         @param labelText: text associated to the field (label)
         @param defaultState: checked or unchecked (True,False)
         """
-        self.dicoCategory[catname].append([propname,"check",labelText,defaultState])
+        self.dicoCategory[catname].append([propname,"check",labelText,defaultState,toBeSaved])
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s) '%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel) '%(catname,propname))
@@ -194,12 +194,12 @@ class AutoPreferences(QFrame):
         exec('self.horizontalLayout_%s_%s.addWidget(self.%sCheck) '%(catname,propname,propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s) '%(catname,catname,propname))
 
-    def addPropCombo(self,catname,propname,labelText,dicoValTxt,l_ordered_val,default_value=None):
+    def addPropCombo(self,catname,propname,labelText,dicoValTxt,l_ordered_val,default_value=None,toBeSaved=True):
         """ Add a field which is composed by a label and a comboBox
         @param propname: name of the field
         @param labelText: text associated to the field (label)
         """
-        self.dicoCategory[catname].append( [propname,"combo",dicoValTxt,l_ordered_val,default_value,labelText] )
+        self.dicoCategory[catname].append( [propname,"combo",dicoValTxt,l_ordered_val,toBeSaved,default_value,labelText] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel)'%(catname,propname))
@@ -223,13 +223,13 @@ class AutoPreferences(QFrame):
             if ind != -1:
                 exec('self.%sCombo.setCurrentIndex(%s)'%(propname,ind))
 
-    def addPropLineEdit(self,catname,propname,labelText,default_value="",visibility=visible):
+    def addPropLineEdit(self,catname,propname,labelText,default_value="",visibility=visible,toBeSaved=True):
         """ Add a field which is composed by a label and a lineEdit
         The visibility can be set with a boolean parameter for example to save a 'non-user-set' value
         @param propname: name of the field
         @param labelText: text associated to the field (label)
         """
-        self.dicoCategory[catname].append( [propname, "lineEdit", labelText, default_value] )
+        self.dicoCategory[catname].append( [propname, "lineEdit", labelText, default_value, toBeSaved] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel)'%(catname,propname))
@@ -255,13 +255,13 @@ class AutoPreferences(QFrame):
             #print catname,propname," invisible"
             exec('self.frame_%s_%s.setVisible(False)'%(catname,propname))
 
-    def addPropTextEdit(self,catname,propname,labelText,default_value="",visibility=visible, readOnly=False):
+    def addPropTextEdit(self,catname,propname,labelText,default_value="",visibility=visible, readOnly=False, toBeSaved=True):
         """ Add a field which is composed by a label and a QTextEdit
         The visibility can be set with a boolean parameter for example to save a 'non-user-set' value
         @param propname: name of the field
         @param labelText: text associated to the field (label)
         """
-        self.dicoCategory[catname].append( [propname, "textEdit", labelText, default_value] )
+        self.dicoCategory[catname].append( [propname, "textEdit", labelText, default_value,toBeSaved] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel)'%(catname,propname))
@@ -296,13 +296,13 @@ class AutoPreferences(QFrame):
             exec('self.%sTextEdit.append(QString("""%s"""))' % (propname, l))
 
 
-    def addPropPathEdit(self,catname,propname,labelText,default_value="",default_explore_path="~/"):
+    def addPropPathEdit(self,catname,propname,labelText,default_value="",default_explore_path="~/",toBeSaved=True):
         """ Add a field which is composed by a label, a 'browse' button and a lineEdit
         @param propname: name of the field
         @param labelText: text associated to the field (label)
         @param default_explore_path: default path for the file dialog
         """
-        self.dicoCategory[catname].append( [propname, "path", labelText, default_value, default_explore_path] )
+        self.dicoCategory[catname].append( [propname, "path", labelText, default_value,toBeSaved, default_explore_path] )
 
         exec('self.frame_%s_%s = QtGui.QFrame(self.scrollAreaWidgetContents_%s)'%(catname,propname,catname))
         exec('self.frame_%s_%s.setFrameShape(QtGui.QFrame.StyledPanel)'%(catname,propname))
@@ -354,6 +354,7 @@ class AutoPreferences(QFrame):
             for propl in self.dicoCategory[cat]:
                 propname = propl[0]
                 proptype = propl[1]
+                toBeSaved = propl[4]
                 if proptype == "check":
                     exec('val_to_save = str(self.%sCheck.isChecked())'%propname)
                 elif proptype == "lineEdit":
@@ -370,7 +371,8 @@ class AutoPreferences(QFrame):
                             break
                     val_to_save = k
 
-                self.config[cat][propname] = val_to_save
+                if toBeSaved:
+                    self.config[cat][propname] = val_to_save
         
         self.writeConfigFile()
 
