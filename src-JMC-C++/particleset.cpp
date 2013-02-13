@@ -83,7 +83,7 @@ void ParticleSetC::setdata(int p) {
 		}
 	}
 	this->particule[p].data.nmissnuc = this->header.dataobs.nmissnuc;
-	if (this->particule[p].data.nmisshap>0) {
+	if (this->particule[p].data.nmissnuc>0) {
 		this->particule[p].data.missnuc = new MissingNuc[this->particule[p].data.nmissnuc];
 		for (int i=0;i<this->header.dataobs.nmissnuc;i++) {
 			this->particule[p].data.missnuc[i].locus  = this->header.dataobs.missnuc[i].locus;
@@ -441,6 +441,21 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	}
 ///fin du pragma
 }*/
+
+void ParticleSetC::libere(int npart) {
+	for (int p=0;p<npart;p++) {
+		if (this->particule[p].data.nmisshap>0) delete [] this->particule[p].data.misshap;
+		if (this->particule[p].data.nmisssnp>0) delete [] this->particule[p].data.misssnp; 		
+		if (this->particule[p].data.nmissnuc>0) delete [] this->particule[p].data.missnuc;
+		delete [] this->particule[p].locuslist;
+		for (int gr=1;gr<=this->particule[p].ngr;gr++) delete [] this->particule[p].grouplist[gr].sumstat;
+		delete [] this->particule[p].grouplist;
+		delete [] this->particule[p].scenario;
+		this->particule[p].libere();
+	}
+	delete [] this->particule;
+}
+
 
 /**
  * Structure ParticleSet : simulation des particules utilisées pour la table de référence, le biais et la confiance

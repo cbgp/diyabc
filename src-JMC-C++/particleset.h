@@ -36,6 +36,8 @@ struct ParticleSetC
     void setscenarios (int p);
     // réinitialisation de la particule p
     void resetparticle (int p);
+	// liberation des particules
+	void libere(int npart);
     // simulation des particules utilisées pour le model checking
     void dosimulphistar(HeaderC const & header, int npart, bool dnatrue,
     		            bool multithread,bool firsttime, int numscen,int seed,int nsel);

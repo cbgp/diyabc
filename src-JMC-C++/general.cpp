@@ -601,7 +601,7 @@ try {
                                         delete [] enreg[i].stat;
                                   }
                                   delete [] enreg;
-								  
+								  ps.libere(nenr);
                                   rt.closefile();
 								  //cout<<"apres rt.closefile\n";
                                   if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}

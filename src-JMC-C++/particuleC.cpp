@@ -91,12 +91,25 @@ vector <int> melange2(MwcGen mw, int k, int n) {
   return ord;
 }
 
+  void ParticleC::libere() {
+    for (int cat=0;cat<5;cat++) {
+		//cout<<"cat="<<cat<<"\n";
+		if (this->data.catexist[cat]) {
+			for (int sa=0;sa<this->nsample;sa++){
+				//cout<<"         this->nsample = "<<this->nsample<<"\n";
+				delete []this->dat[cat][sa];
+				delete []this->ref[cat][sa];
+			}
+			delete []this->dat[cat];
+			delete []this->ref[cat];
+		}
+    }
+    delete []this->dat;
+    delete []this->ref;
+    delete []this->data.catexist;
+  }
 
-
-
-
-
-  void ParticleC::libere(bool obs) {
+  void ParticleC::libereobs(bool obs) {
     for (int i=0;i<this->nloc;i++) locuslist[i].libere(obs, this->nsample);
     delete []locuslist;
     for (int cat=0;cat<5;cat++) {
@@ -2116,6 +2129,7 @@ void ParticleC::put_one_mutation(int loc) {
 			  for(int sa=0;sa<this->nsample;sa++) {cout<<this->locuslist[loc].haplodna[sa][0]<<"\n";cout<<this->locuslist[loc].haplodna[sa][1]<<"\n\n";}
 		  }
 	  }
+	  //this->libere();
 	  return simOK;
   }
 

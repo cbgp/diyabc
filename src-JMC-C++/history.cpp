@@ -142,7 +142,15 @@ void LocusGroupC::libere(){
 
   }
 
-
+void ScenarioC::libere() {
+	if (this->nconditions>0) delete [] this->condition;
+	if (this->nparamvar>0) delete [] this->paramvar;
+	if (this->nparam>0) delete [] this->histparam;
+	if (this->nsamp>0) delete [] this->time_sample;
+	if (this->nn0>0) delete [] this->ne0;
+	if (this->nevent>0) delete [] this->event;
+}
+  
 
 /**
  * Copie du contenu d'une classe ScenarioC
@@ -186,12 +194,12 @@ ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
   if (this == &source)
     return *this;
 
-  if( paramvar != NULL) delete [] paramvar;
-  if( time_sample != NULL) delete [] time_sample;
-  if( event != NULL) delete [] event;
-  if( ne0 != NULL) delete [] ne0;
-  if( histparam != NULL) delete [] histparam;
-  if( condition != NULL) delete [] condition;
+  if( this->paramvar != NULL) delete [] this->paramvar;
+  if( time_sample != NULL) delete [] this->time_sample;
+  if( this->event != NULL) delete [] this->event;
+  if( this->ne0 != NULL) delete [] this->ne0;
+  if( this->histparam != NULL) delete [] this->histparam;
+  if( this->condition != NULL) delete [] this->condition;
 
 
 

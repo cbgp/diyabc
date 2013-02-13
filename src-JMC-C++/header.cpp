@@ -1467,7 +1467,7 @@ void HeaderC::calstatobs(string statobsfilename) {
 		}
 	}
 	if (debuglevel==2) cout<<"avant libere \n";
-	this->particuleobs.libere(true);
+	this->particuleobs.libereobs(true);
 	if (debuglevel==2) cout<<"fin de calstatobs\n";
 }
 

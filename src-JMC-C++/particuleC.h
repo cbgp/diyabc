@@ -47,7 +47,8 @@ class ParticleC
 	  double weight,locpol,sumweight,threshold;
 
    /* Déclaration des méthodes */
-	  void libere(bool obs);
+	  void libereobs(bool obs);
+	  void libere();
    void ecris();
 
    // calcule le nombre de copies de gènes de l'individu i de l'échantillon sa au locus loc

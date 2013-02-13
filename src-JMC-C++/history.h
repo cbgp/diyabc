@@ -182,6 +182,7 @@ public:
   /* verification d'un scénario*/
   std::string checklogic();
   void ecris();
+  void libere();
 }; /* fin classe ScenarioC */
 
 
