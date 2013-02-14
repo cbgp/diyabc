@@ -11,7 +11,8 @@ echo "\documentclass [a4paper]{article}" > Notice_DIYABC_principal2.tex
 echo "\usepackage{html}
 %\begin{htmlonly}
 %\newenvironment{tabularx}[2]{\begin{tabular}{#2}}{\end{tabular}}
-%\end{htmlonly}" >> Notice_DIYABC_principal2.tex
+%\end{htmlonly}
+" >> Notice_DIYABC_principal2.tex
 # avoiding mistakes on section numerotation
 cat Notice_DIYABC_principal.tex | grep -v sectionv | grep -v renewcommand | grep -v documentclass >> Notice_DIYABC_principal2.tex
 
