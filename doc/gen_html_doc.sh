@@ -1,6 +1,6 @@
 cd ../Notice-DIYABC-v2/
 # cleaning destination directory
-rm -rf Notice_DIYABC_principal2
+rm -rf Notice_DIYABC_principal2 Notice_DIYABC_principal2.tex
 
 # writing l2h config
 echo "\$DVIPSOPT = '';" > ~/.latex2html-init
