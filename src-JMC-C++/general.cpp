@@ -663,6 +663,15 @@ try {
 				  break;
 
   }
+	if (rt.mutparam !=NULL) {delete [] rt.mutparam;rt.mutparam=NULL;}
+	if (rt.nparam !=NULL) {delete [] rt.nparam;rt.nparam=NULL;}
+	if (rt.nrecscen !=NULL) {delete [] rt.nrecscen;rt.nrecscen=NULL;}
+	for (int iscen=0;iscen<header.nscenarios;iscen++) {
+		if (rt.histparam[iscen] !=NULL) delete [] rt.histparam[iscen];
+	} 
+	if (rt.histparam !=NULL) {delete [] rt.histparam; rt.histparam=NULL;}
+	delete [] stat_type;
+	delete [] stat_num;
 	/* Debut: pour le nouveau RNG      */
 	// sauvegarde des RNGs' states
 	if( RNG_must_be_saved ){

@@ -552,7 +552,7 @@ string ScenarioC::read_events(int nl,string *ls) {
 			}
 			//cout <<this->event[i].stime<<"  VARNE"<<"   "<<this->event[i].pop<<"\n";
 		}
-		delete []ss;
+		delete []ss;ss=NULL;
 	}
 	if (this->nsamp<1)
 		return "you forgot to indicate when samples are taken";

@@ -53,15 +53,20 @@ void MutParameterC::ecris() {
 
 
 void HeaderC::libere() {
-
+    cout<<"HeaderC::libere nconditions="<<this->nconditions<<"\n";
 	this->dataobs.libere();
 	//cout<<"apres dataobs.libere\n";
 	if(this->nconditions>0) delete []this->condition;
 	// for(int i=0;i<this->nscenarios;i++) this->scenario[i].libere();
 	//cout<<"apres scenario[i].libere\n";
 	delete []this->scenario;
+	delete [] this->histparam;
+	delete [] this->statname;
+	if (this->nparamut>0) delete []this->mutparam;
 	// this->scen.libere();
 	//for(int i=1;i<ngroupes+1;i++) this->groupe[i].libere();
+	for (int gr=1;gr<=this->ngroupes;gr++) delete [] this->groupe[gr].sumstat;
+	for (int gr=0;gr<=this->ngroupes;gr++) delete [] this->groupe[gr].loc;
 	delete []this->groupe;
 	//cout<<"apres delete group\n";
 }
@@ -228,8 +233,8 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 		this->histparam[i].prior.readprior(ss[2]);
 		//    cout<<"readHeader "<<this->histparam[i].name;
 		//    if (this->histparam[i].prior.constant) cout<<"   constant\n"; else cout<<"   variable\n";
+		delete [] ss;ss=NULL;
 	}
-	delete [] ss;
 	this->drawuntil=true;
 	if (this->nconditions>0) {
 		this->condition = new ConditionC[this->nconditions];
@@ -563,6 +568,7 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 						ss1=splitwords(ss[i],"&",&nss1);
 						this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
 						this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
+
 						this->groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
 						k++;
 						delete [] ss1;
@@ -687,8 +693,8 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 				}
 			}
 			if (debuglevel==2) cout<<"fin de la stat "<<k<<"\n";
+			if (ss !=NULL) {delete [] ss;ss=NULL;}
 		}
-		delete [] ss;
 		this->groupe[gr].nstatsnp=statsnp.size();
 		//cout<<"this->groupe[gr].nstatsnp="<<this->groupe[gr].nstatsnp<<"\n";
 		if (this->groupe[gr].nstatsnp>0){
@@ -760,7 +766,7 @@ int HeaderC::buildMutParam(){
 			cout<<"fin du calcul de nparamut = "<<this->nparamut<<"\n";
 		}
 	}
-	this->mutparam = new MutParameterC[nparamut];
+	this->mutparam = new MutParameterC[this->nparamut];
 	this->nparamut=0;
 	for (gr=1;gr<=this->ngroupes;gr++) {
 		if (this->groupe[gr].type==0) {
@@ -826,7 +832,7 @@ int HeaderC::readHeaderEntete(ifstream & file){
 	getline(file,s1);       //ligne vide
 	getline(file,this->entete);     //ligne entete
 	this->statname =new string[this->nstat];
-	ss=splitwords(entete," ",&nss);
+	ss=splitwords(this->entete," ",&nss);
 	
 	if (debuglevel==2) cout<<"nss="<<nss<<"   nparamtot="<<nparamtot<<"   nparamut="<<nparamut<<"   nstat="<<nstat<<"\n";
 	for (int i=nstat-1;i>=0;i--) this->statname[i]=ss[--nss];
@@ -838,7 +844,7 @@ int HeaderC::readHeaderEntete(ifstream & file){
 	if (debuglevel==2) cout<<">>>"<<this->entetemut<<"<<<\n";
 	if (debuglevel==2) cout<<">>>"<<this->entetestat<<"<<<\n";
 	for (int i=0;i<this->nstat;i++) cout<<this->statname[i]<<"   ";cout<<"\n";
-	delete []ss;
+	delete []ss;ss=NULL;
 	//cout<<"scenarios à la fin de readheader\n";
 	return 0;
 }

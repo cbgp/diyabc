@@ -89,7 +89,12 @@ void LocusC::libere(bool obs, int nsample) {
 		if (this->nmissnuc>0) delete [] this->missnuc;
 			//cout<<"apres delete misshap et missnuc\n";
 		if (Alocus) {
-			for (int loc=0;loc<this->nloc;loc++) this->locus[loc].libere(true,this->nsample);
+			for (int loc=0;loc<this->nloc;loc++) {
+				if (this->locus[loc].type<5) {for (int ech=0;ech<nsample;ech++) delete [] this->locus[loc].haplomic[ech];}
+				else if (this->locus[loc].type<10) {for (int ech=0;ech<nsample;ech++) delete [] this->locus[loc].haplodna[ech];}
+				else {for (int ech=0;ech<nsample;ech++) delete [] this->locus[loc].haplosnp[ech];}
+			this->locus[loc].libere(true,this->nsample);
+			}
 			delete [] this->locus;
 		}
 		if (Anind) this->nind.clear();
@@ -126,13 +131,16 @@ string  getligne(ifstream file) {
 		  prem=0;
 		  return 1;
 		}
+		delete []ss;
 		getline(file0,ligne);
         ss=splitwords(ligne," ",&nss);
 		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
 		  cout<<"Fichier "<<filename<<" : SNP\n";
 		  prem=1;
+		  delete [] ss;
 		  return 1;
 		}
+		delete [] ss;
 		file0.close();
 		ifstream file(filename.c_str(), ios::in);
 		getline(file,ligne);
@@ -159,12 +167,13 @@ string  getligne(ifstream file) {
 					ss=splitwords(ligne," ",&nss);
 					cout<<"nss="<<nss<<"\n";
 					cout<<ss[nss-1]<<"\n";
-					if (nss!=nloc) return -2;
+					if (nss!=nloc) {delete [] ss;ss=NULL;return -2;}
 					cout<<"avant exit(1)\n";
 					//exit(1);
 				}
 			}
 		}
+		if (ss!=NULL) {delete [] ss;ss=NULL;}
 		return 0;
 	}
 

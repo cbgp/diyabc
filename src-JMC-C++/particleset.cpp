@@ -448,10 +448,14 @@ void ParticleSetC::libere(int npart) {
 		if (this->particule[p].data.nmisssnp>0) delete [] this->particule[p].data.misssnp; 		
 		if (this->particule[p].data.nmissnuc>0) delete [] this->particule[p].data.missnuc;
 		delete [] this->particule[p].locuslist;
-		for (int gr=1;gr<=this->particule[p].ngr;gr++) delete [] this->particule[p].grouplist[gr].sumstat;
+		delete [] this->particule[p].grouplist[0].loc;
+		for (int gr=1;gr<=this->particule[p].ngr;gr++) {
+			delete [] this->particule[p].grouplist[gr].sumstat;
+			delete [] this->particule[p].grouplist[gr].loc;
+		}
 		delete [] this->particule[p].grouplist;
 		delete [] this->particule[p].scenario;
-		this->particule[p].libere();
+		delete [] this->particule[p].data.catexist;
 	}
 	delete [] this->particule;
 }
@@ -527,10 +531,11 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		ccc=ss[m][0];
 		if (not isalnum(ccc))  nn++;
 	}
+	delete []ss;
 	nph-=nn;
 	//nph--;
 	if (debuglevel==5) cout<<header.entetehist<<"\n";
-	if (header.entetemut.length()>10) {delete []ss;ss=splitwords(header.entetemut," ",&npm);} else npm=0;
+	if (header.entetemut.length()>10) {ss=splitwords(header.entetemut," ",&npm);delete []ss;} else npm=0;
 	//cout<<"nph="<<nph<<"   npm="<<npm<<"\n";
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		enreg[ipart].numscen=1;
@@ -587,7 +592,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		ss=splitwords(header.entetehist," ",&nph);
 		if (debuglevel==5) cout<<header.entetehist<<"\n";
 		if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;*/
-		delete []ss;
+		//if (ss!=NULL) {delete []ss;ss=NULL;}
 		ss=splitwords(header.entete," ",&ns);
 		cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
 		np=ns-header.nstat-1;
@@ -637,6 +642,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 				}
 			}
 		}
+		delete [] ss;
 		fclose(pFile);
 		if (debuglevel==5) cout<<"apres fclose\n";
 	}

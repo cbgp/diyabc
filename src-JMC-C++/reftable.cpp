@@ -261,7 +261,7 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 	float x;
 	cout<<this->nscen<<" scenario(s)\n";
 	for(k=0;k<this->nrec;k++) {
-		if ((k%npart)==0) cout<<k<<"\r";
+		if ((k%npart)==0) cout<<k+npart<<"\r";
 		this->fifo.read((char*)&(numscen),sizeof(int));
 		if (numscen<=this->nscen) {
 			this->nrecscen[numscen-1]++;
@@ -274,6 +274,8 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 		}
 	}
 	cout<<"\n";
+	delete [] this->nrecscen;
+	delete [] this->nparam;
 	if (not corrompu) {this->fifo.close();cout<<"fichier reftable OK\n\n";return 0;}
 	enregC e;
 	npmax=0;for (int i=0;i<this->nscen;i++) if(npmax<this->nparam[i]) npmax=this->nparam[i];
@@ -314,6 +316,9 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 		for (int i=0;i<this->nstat;i++) f1.write((char*)&(e.stat[i]),sizeof(float));
 		if ((((h+1)%npart)==0)or(h==this->nrec-1)) cout<<h+1<<"\r";
 	}
+	delete [] this->nparam;
+	delete [] e.param;
+	delete [] e.stat;
 	f1.close();
 	this->fifo.close();
 	remove(reftablefilename.c_str());

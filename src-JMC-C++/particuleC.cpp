@@ -106,12 +106,18 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     }
     delete []this->dat;
     delete []this->ref;
-    delete []this->data.catexist;
+    //delete []this->data.catexist;
   }
 
   void ParticleC::libereobs(bool obs) {
     for (int i=0;i<this->nloc;i++) locuslist[i].libere(obs, this->nsample);
     delete []locuslist;
+	for (int gr=1;gr<=this->ngr;gr++) {
+		delete [] this->grouplist[gr].sumstat;
+		delete [] this->grouplist[gr].loc;
+	}
+	delete [] this->grouplist;
+	
     for (int cat=0;cat<5;cat++) {
       if (this->catexist[cat]) {
 	for (int sa=0;sa<this->nsample;sa++){
@@ -1864,7 +1870,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  reference=(this->refnindtot>0);
 	  if (debuglevel==10) cout <<"avant setHistparamValue\n";fflush(stdin);
 	  simuOK = this->setHistParamValue();
-	  if (not simuOK) return notOK;
+	  if (not simuOK) {this->libere();return notOK;}
 	  if (debuglevel==10) cout << "apres setHistParamValue\n";fflush(stdin);
 	   if (debuglevel==-1) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
 	  if (debuglevel==-1) for (int k=0;k<this->scen.nparam;k++){
@@ -2129,7 +2135,8 @@ void ParticleC::put_one_mutation(int loc) {
 			  for(int sa=0;sa<this->nsample;sa++) {cout<<this->locuslist[loc].haplodna[sa][0]<<"\n";cout<<this->locuslist[loc].haplodna[sa][1]<<"\n\n";}
 		  }
 	  }
-	  //this->libere();
+	  this->libere();
+	  delete [] gtexist;
 	  return simOK;
   }
 
