@@ -301,7 +301,7 @@ try {
 			cout << "           x:<without genetic information<\n";
 
             cout << "\n-f for CONFIDENCE IN SCENARIO CHOICE COMPUTATIONS (idem)\n";
-            cout << "           s:<chosen scenarios among which to choose<\n";
+            cout << "           s:<chosen scenarios among which to choose>\n";
             cout << "           r:<chosen scenario to be tested<\n";
             cout << "           n:<number of simulated datasets taken from reftable>\n";
             cout << "           t:<number of requested test data sets>\n";
