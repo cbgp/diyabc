@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>457</width>
-    <height>228</height>
+    <width>463</width>
+    <height>294</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,18 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLabel" name="logoLabel">
+     <widget class="QLabel" name="infoLabel">
       <property name="text">
-       <string/>
+       <string>DIYABC : vvv (ddd) 
+
+ Jean-Marie CORNUET,  Pierre PUDLO,
+Julien VEYSSIER,  Alexandre DEHNE GARCIA ,  Arnaud ESTOUP
+
+Centre de Biologie pour la Gestion des Populations
+Campus International de Baillarguet CS 30016
+34988 Montferrier-sur-Lez cedex, France
+
+diyabc@supagro.inra.fr</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -29,16 +38,9 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="infoLabel">
+     <widget class="QLabel" name="logoLabel">
       <property name="text">
-       <string>DIYABC : vvv (ddd) 
-
- Jean-Marie CORNUET ,  Julien VEYSSIER, Pierre PUDLO,
-Virginie RAVIGNIE, Alexandre DEHNE-GARCIA ,  Arnaud ESTOUP
-
-Centre de Biologie pour la Gestion des Populations
-Campus International de Baillarguet CS 30016
-34988 Montferrier-sur-Lez cedex, France</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -115,8 +117,8 @@ Campus International de Baillarguet CS 30016
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>457</width>
-     <height>23</height>
+     <width>463</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>
