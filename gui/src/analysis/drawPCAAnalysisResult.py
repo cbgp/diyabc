@@ -181,7 +181,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         col = self.tab_colors[(num_sc%20)]
 
         legend_txt = "Scenario %s prior"%num_sc
-        mypoints = plot.axes.scatter(self.dico_points[num_sc][compo_h][:nbp], self.dico_points[num_sc][compo_v][:nbp],marker='o',label=legend_txt,c=col,s=20.0)
+        mypoints = plot.axes.scatter(self.dico_points[num_sc][compo_h][:nbp], self.dico_points[num_sc][compo_v][:nbp],marker="o",facecolors='none',edgecolors=col,label=legend_txt,s=20.0)
         # si on a des coordonnées pour le posterior, on les dessine
         # avec la meme couleur mais plus gros
         if num_sc in self.dico_points_posterior.keys():
