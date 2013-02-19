@@ -1,5 +1,5 @@
 \clearpage
- \section{Implementation details}
+\section{Implementation details}
 \subsection{Software design}
 $DIYABC$ v2 has been designed in a very different way compared to version 1. Version 1 was a single executable file were the GUI \footnote{Graphic User Interface} and computation codes were highly intricated and both written in the same language (\emph{Delphi}). In version 2, the GUI and the computation codes have been completely separated. Actually, the GUI is a script written in \emph{python} and all computations are included in a program written in \emph{C++}. In opposition to \emph{Delphi} which is restricted to a single OS (\texttt{Windows}), \textit{python} and \textit{C++} can be used with the main three OS (\texttt{Linux}, \texttt{Mac} and \texttt{Windows}), allowing version 2  to be operated under all three OS.\\
 The GUI uses the \textit{Qt} graphic library. The computation code is linked to the \textit{openmp} library allowing a better use of multicore/multiprocessor computers.\\
@@ -185,11 +185,15 @@ DIYABC includes openMP. It means that DIYABC can use several cores in a single c
 \subsubsection{the seed to generate RNG files}
 \texttt{seed} : This integer indicates to DIYABC the seed to start producing RNG files. By wrinting \texttt{-1} you will ask to use a random seed (recommended). Using a user-defined seed is only for test or debbugging purposes. 
 
-\subsubsection{The diyabc executable}
-\texttt{diyabcPath} : This path is for the binary executable to be used on the cluster. There is two way of use it :
+\subsubsection{the place of the diyabc binary}
+The binary can be on your local computer (the computer on which you run the diyabc interface) or on your cluster. 
+
+\subsubsection{the DIYABC binary}
+\texttt{diyabcPath} :  
 \begin{itemize}
- \item  By choosing \texttt{cluster}, you are invited to write the absolute path of a diyabc binary as it match to your cluster file architecture. By this way the script \texttt{node.sh} will know which diyabc cluster binary to use. Ask your cluster administrator in order to know this path. This absolut path need to be the same for all your cluster nodes. 
- \item  By choosing \texttt{local}, you are invited to choose the path of a diyabc binary executable on your personal computer. This binary will be added to the bundle to be tranfered to your cluster
+ \item   If the binary is on your computer, you have to browse your file system to choose a diyabc binary. Please remenber that this binary should be hable to be runned on your cluster system.  The binary will be included in the bundle.  
+
+ \item   If the binary is already on your cluster file system. You just have to give his absolute path. Ask your cluster administrator in order to know this path. It must be the same for each cluster node. If it could the retrieved by the PATH environment variable on each node, just write the name the diyabc binary. 
 \end{itemize}
 
 \subsubsection{main script : launch.sh}
@@ -323,7 +327,7 @@ Once the monitoring phase starts, you can quit \texttt{launch.sh} and restart it
 
 
 \subsection{transfer back the reference table and include it into your computer project}\label{clusterback}
-Once your final \texttt{reftable.bin} file has been produced, you need to transfer it from the cluster to you DIYABC project directory on your own computer. Once again, you can use an sftp client.
+Once your final \texttt{reftable.bin} file has been produced, you need to transfer it from the cluster to  your own computer. Once again, you can use an sftp client. Finally, use the \texttt{Import and merge reftable file} option from your project menu to include the new reftable to your project. Becareful, DIYABC do not check the imported reftable and do not backup the old reftable before merging. It's good to manually backup your old reftable. 
 
 
 \clearpage
