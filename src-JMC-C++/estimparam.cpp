@@ -59,7 +59,7 @@ pardensC *pardens, *pardenscompo, *pardensscaled;
 long double *var_stat, *parmin, *parmax, *parmincompo,*parmaxcompo,*parminscaled,*parmaxscaled,*diff,*diffcompo,*diffscaled;
 long double **beta,**simpar,**simparcompo,**simparscaled;
 int nparamcom,nparcompo,nparscaled,**numpar,numtransf = 3, npar,npar0;
-long double borne=10.0,xborne;
+long double borne=10.0,xborne,xbornecompo,xbornescaled;
 bool composite = false, scaled = false, original = true;
 string enteteO,enteteC,enteteS;
 int nsimpar=100000;
@@ -205,10 +205,19 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                            diff[j]=parmax[j]-parmin[j];
                        }
                    } else{
-                       xborne=borne;
-                       //k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k]) k++;
-                       //k=rt.scenchoisi[0]-1;
-                       //cout<<"k="<<k<<"\n";
+						xborne=borne;
+						for (int j=0;j<nparamcom-rt.nparamut;j++) {
+							parmin[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini;
+							parmax[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi;
+						}
+						for (int i=0;i<n;i++) {
+							for (int j=0;j<nparamcom;j++) {
+								k=0;while(rt.enrsel[i].numscen != rt.scenchoisi[k])k++;
+								if (rt.enrsel[i].param[numpar[k][j]]<=parmin[j]) alpsimrat[i][j] = -xborne;
+								else if (rt.enrsel[i].param[numpar[k][j]]>=parmax[j]) alpsimrat[i][j] = xborne;
+								else alpsimrat[i][j] =log((rt.enrsel[i].param[numpar[k][j]]-parmin[j])/(parmax[j]-rt.enrsel[i].param[numpar[k][j]]));
+							}
+						}
                        for (int j=0;j<nparamcom-rt.nparamut;j++) {
                            //cout<<"j="<<j<<"   nparamcom="<<nparamcom<<"\n";
                            if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].category<2) {
@@ -219,11 +228,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                                parmax[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi+0.0005;
                            }
                            diff[j]=parmax[j]-parmin[j];
-                           //cout<<rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].name<<"   ";
-                           //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
                        }
-                       //cout<<rt.nhistparam[rt.scenchoisi[0]-1]<<"\n";
-                       //cout<<nparamcom<<"\n";
                        for (int j=nparamcom-rt.nparamut;j<nparamcom;j++) {
                                jj=j+rt.nparamut-nparamcom;
                                //cout<<"jj="<<jj<<"\n";
@@ -232,25 +237,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                                //cout<<header.mutparam[jj].category<<"   ";
                                //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
                                diff[j]=parmax[j]-parmin[j];
-                       }
-                   }
-                   for (int j=0;j<nparamcom;j++) if (parmin[j]<0.0) parmin[j]=0.0;
-					   //cout <<"fin du calcul de parmin/parmax rt.scenchoisi[0] = "<<rt.scenchoisi[0]<<"\n";
-                   //for (int i=0;i<nparamcom;i++) cout <<parmin[i]<<"   "<<parmax[i]<<"\n";
-                   for (int i=0;i<n;i++) {
-                       for (int j=0;j<nparamcom;j++) {
-                           //cout<<"numscen = "<<rt.enrsel[i].numscen<<"  ";
-                           //for (int k0=0;k0<rt.nscenchoisi;k0++) cout<<rt.scenchoisi[k0]<<"  ";cout<<"\n";
-                           k=0;while(rt.enrsel[i].numscen != rt.scenchoisi[k])k++;
-                           //k = rt.enrsel[i].numscen-1;
-                           //cout <<"k="<<k<<"   j="<<j<<"\n";
-                           //cout<<numpar[k][j]<<"\n";
-                           if (rt.enrsel[i].param[numpar[k][j]]<=parmin[j]) alpsimrat[i][j] = -xborne;
-                           else if (rt.enrsel[i].param[numpar[k][j]]>=parmax[j]) alpsimrat[i][j] = xborne;
-                           else {
-                             //cout<<rt.enrsel[i].param[numpar[k][j]]<<"   "<<parmin[j]<<"   "<<parmax[j]<<"\n";
-                             alpsimrat[i][j] =log((rt.enrsel[i].param[numpar[k][j]]-parmin[j])/(parmax[j]-rt.enrsel[i].param[numpar[k][j]]));
-                           }
                        }
                    }
                    break;
@@ -276,8 +262,18 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                        }
                    } else{
                        xborne=borne;
-                       //k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
-                       //k=rt.scenchoisi[0]-1;
+						for (int j=0;j<nparamcom-rt.nparamut;j++) {
+							parmin[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini;
+							parmax[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.maxi;
+						}
+                   for (int i=0;i<n;i++) {
+                       for (int j=0;j<nparamcom;j++) {
+                           k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
+                           if (rt.enrsel[i].param[numpar[k][j]]<=parmin[j]) alpsimrat[i][j] = -xborne;
+                           else if (rt.enrsel[i].param[numpar[k][j]]>=parmax[j]) alpsimrat[i][j] = xborne;
+                           else alpsimrat[i][j] =log(tan((rt.enrsel[i].param[numpar[k][j]]-parmin[j])*c/diff[j]));
+                       }
+                   }
                        for (int j=0;j<nparamcom-rt.nparamut;j++) {
                            if (rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].category<2) {
                                parmin[j] = rt.histparam[rt.scenchoisi[0]-1][numpar[0][j]].prior.mini-0.5;
@@ -298,17 +294,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                                //cout<<rt.mutparam[jj].category<<"   ";
                                //cout<<"parmin = "<<parmin[j]<<"   parmax="<<parmax[j]<<"\n";
                                diff[j]=parmax[j]-parmin[j];
-                       }
-                   }
-                   for (int j=0;j<nparamcom;j++) if (parmin[j]<0.0) parmin[j]=0.0;
-                   //cout <<"fin du calcul de parmin/parmax\n";
-                   for (int i=0;i<n;i++) {
-                       for (int j=0;j<nparamcom;j++) {
-                           k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
-                           //k = rt.enrsel[i].numscen-1;
-                           if (rt.enrsel[i].param[numpar[k][j]]<=parmin[j]) alpsimrat[i][j] = -xborne;
-                           else if (rt.enrsel[i].param[numpar[k][j]]>=parmax[j]) alpsimrat[i][j] = xborne;
-                           else alpsimrat[i][j] =log(tan((rt.enrsel[i].param[numpar[k][j]]-parmin[j])*c/diff[j]));
                        }
                    }
                    break;
@@ -431,6 +416,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						}
 						break;
 				case 3 : //logit transform
+						xbornecompo=1000.0;
 						for (int j=kp0;j<kp;j++) {parmincompo[j]=1E100;parmaxcompo[j]=-1E100;}
 						for (int i=0;i<n;i++) {
 								for (int j=kp0;j<kp;j++) {
@@ -439,16 +425,14 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 							}
 						}
 						for (int j=kp0;j<kp;j++) {
-							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
-							marge=coefmarge*diffcompo[j];
-							parmincompo[j] -=marge;
-							if (parmincompo[j]<0.0) parmincompo[j]=0.0;
-							parmaxcompo[j] +=marge;
+							parmincompo[j] *=0.95;
+							parmaxcompo[j] *=1.05;
 							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
 						}
 						for (int i=0;i<n;i++) {
 							for (int j=kp0;j<kp;j++) {
-								if (diffcompo[j]>0.0) alpsimrat[i][j] = log((xx[i][j]-parmincompo[j])/(parmaxcompo[j]-xx[i][j]));
+								if (xx[i][j]==parmincompo[j]) alpsimrat[i][j]=-xbornecompo;
+								else if (diffcompo[j]>0.0) alpsimrat[i][j] = log((xx[i][j]-parmincompo[j])/(parmaxcompo[j]-xx[i][j]));
 								else alpsimrat[i][j] = 0.0;
 							}
 						}
@@ -465,13 +449,14 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
 							marge=coefmarge*diffcompo[j];
 							parmincompo[j] -=marge;
-							if (parmincompo[j]<0.0) parmincompo[j]=0.0;
+							if (parmincompo[j]<=0.0) parmincompo[j]=1E-12;
 							parmaxcompo[j] +=marge;
 							diffcompo[j]=parmaxcompo[j]-parmincompo[j];
 						}
 						for (int i=0;i<n;i++) {
 							for (int j=kp0;j<kp;j++) {
-								if (diffcompo[j]>0.0) alpsimrat[i][j] = log(tan((xx[i][j]-parmincompo[j])*c/diffcompo[j]));
+								if (xx[i][j]==parmincompo[j]) alpsimrat[i][j]=-xbornecompo;
+								else if (diffcompo[j]>0.0) alpsimrat[i][j] = log(tan((xx[i][j]-parmincompo[j])*c/diffcompo[j]));
 								else alpsimrat[i][j] = 0.0;
 							}
 						}
@@ -547,6 +532,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 					break;
 			case 3 : //logit transform
+					xbornescaled=1000.0;
 					for (int j=0;j<nparscaled;j++) {parminscaled[j]=1E100;parmaxscaled[j]=-1E100;}
 					for (int i=0;i<n;i++) {
 							for (int j=0;j<nparscaled;j++) {
@@ -555,23 +541,20 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						}
 					}
 					for (int j=0;j<nparscaled;j++) {
-						//cout<<"parminscaled["<<j<<"] = "<<parminscaled[j]<<"          ";
+						parminscaled[j] *=0.95;
+						parmaxscaled[j] *=1.05;
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
-						marge=coefmarge*diffscaled[j];
-						parminscaled[j] -=marge;
-						if (parminscaled[j]<0.0) parminscaled[j]=0.0;
-						parmaxscaled[j] +=marge;
-						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
-						//cout<<"parminscaled["<<j<<"] = "<<parminscaled[j]<<"\n";
 					}
 					for (int i=0;i<n;i++) {
 						for (int j=0;j<nparscaled;j++) {
-							if (diffscaled[j]>0) alpsimrat[i][j] = log((xx[i][j]-parminscaled[j])/(parmaxscaled[j]-xx[i][j]));
+							if (xx[i][j]==parminscaled[j]) alpsimrat[i][j]=-xbornescaled;
+							else if (diffscaled[j]>0) alpsimrat[i][j] = log((xx[i][j]-parminscaled[j])/(parmaxscaled[j]-xx[i][j]));
 							else alpsimrat[i][j]=0.0;
 						}
 					}
 					break;
 			case 4 : //log(tg) transform
+					xbornescaled=1000.0;
 					for (int j=0;j<nparscaled;j++) {parminscaled[j]=1E100;parmaxscaled[j]=-1E100;}
 					for (int i=0;i<n;i++) {
 							for (int j=0;j<nparscaled;j++) {
@@ -580,16 +563,14 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						}
 					}
 					for (int j=0;j<nparscaled;j++) {
-						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
-						marge=coefmarge*diffscaled[j];
-						parminscaled[j] -=marge;
-						if (parminscaled[j]<0.0) parminscaled[j]=0.0;
-						parmaxscaled[j] +=marge;
+						parminscaled[j] *=0.95;
+						parmaxscaled[j] *=1.05;
 						diffscaled[j]=parmaxscaled[j]-parminscaled[j];
 					}
 					for (int i=0;i<n;i++) {
 						for (int j=0;j<nparscaled;j++) {
-							if (diffscaled[j]>0) alpsimrat[i][j] = log(tan((xx[i][j]-parminscaled[j])*c/diffscaled[j]));
+							if (xx[i][j]==parminscaled[j]) alpsimrat[i][j]=-xbornescaled;
+							else if (diffscaled[j]>0) alpsimrat[i][j] = log(tan((xx[i][j]-parminscaled[j])*c/diffscaled[j]));
 							else alpsimrat[i][j]=0.0;
 						}
 					}
@@ -715,7 +696,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         }
         matAA = prodML(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
 		kap = kappa(nstatOKsel+1,matAA);
-        //printf("kappa (AA) = %16Le",kap);
+        printf("kappa (AA) = %16Le",kap);
 		if (kap>1.0E99) cout <<"   MATRICE SINGULIERE\n";
 		//cout<<"\n";
 		if (kap>1.0E99) cout <<"   MATRICE SINGULIERE\n";
@@ -740,10 +721,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 	void local_regression(int n, int npa, long double **matC) {
         beta = new long double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) beta[j] = new long double[npa];
+		for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nstatOKsel+1;j++) if (matC[i][j]!=matC[i][j]) {cout<<"matC["<<i<<"]["<<j<<"] = "<<matC[i][j]<<"\n";exit(1);}}
 		beta = prodML(nstatOKsel+1,n,npa,matC,parsim);
 		/*cout<<"regression locale\n";
 		for (int j=0;j<nstatOKsel+1;j++) {
-			for (int k=0;k<npa;k++) cout<<beta[j][k]<<"  ";
+			for (int k=0;k<npa;k++) cout<<"beta["<<j<<"]["<<k<<"] = "<<beta[j][k]<<"  ";
 			cout<<"\n";
 		}
 		cout<<"\n";*/
@@ -841,11 +823,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                   case 3 : if (phistar[i][j]<=-xborne) phistar[i][j] = parmin[j];
                            else if (phistar[i][j]>=xborne) phistar[i][j] = parmax[j];
                            else phistar[i][j] = (exp(phistar[i][j])*parmax[j]+parmin[j])/(1.0+exp(phistar[i][j]));
-                           //if(i<100) cout<< phistar[i][j]<<"   ("<<parmin[j]<<","<<parmax[j]<<")\n";
+                           if (phistar[i][j]<0.0) phistar[i][j]=0.0;
                            break;
                   case 4 : if (phistar[i][j]<=-xborne) phistar[i][j] = parmin[j];
                            else if (phistar[i][j]>=xborne) phistar[i][j] = parmax[j];
                            else phistar[i][j] =parmin[j] +(diff[j]/c*atan(exp(phistar[i][j])));
+                           if (phistar[i][j]<0.0) phistar[i][j]=0.0;
                            break;
                 }
             }
@@ -863,25 +846,29 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
     void calphistarC(int n, long double **phistarcompo){
         //cout<<"debut de calphistarC\n";
         int k,kk,qq;
-        long double pmut;
+        long double pmut,ppp;
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparcompo;j++) {
                 phistarcompo[i][j] = alpsimrat[i][j];
                 //if (i<100) cout<< phistarcompo[i][j]<<"   ";
                 for (int k=0;k<nstatOKsel;k++) phistarcompo[i][j] -= matX0[i][k]*beta[k+1][j];
+				ppp=phistarcompo[i][j];
+				//for (int k=0;k<nstatOKsel;k++) if (beta[k+1][j]!=beta[k+1][j])cout<<"beta=nan  k="<<k<<"   j="<<j<<"    "<<beta[k+1][j]<<"\n";
                 //if(i<100) cout<< phistarcompo[i][j]<<"   ";
                 switch(numtransf) {
                   case 1 : break;
                   case 2 : if (phistarcompo[i][j]<100.0) phistarcompo[i][j] = exp(phistarcompo[i][j]); else phistarcompo[i][j]=exp(100.0);
                            break;
-                  case 3 : if (phistarcompo[i][j]<=-xborne) phistarcompo[i][j] = parmincompo[j];
-                           else if (phistarcompo[i][j]>=xborne) phistarcompo[i][j] = parmaxcompo[j];
+                  case 3 : if (phistarcompo[i][j]<=-xbornecompo) phistarcompo[i][j] = parmincompo[j];
+                           else if (phistarcompo[i][j]>=xbornecompo) phistarcompo[i][j] = parmaxcompo[j];
                            else phistarcompo[i][j] = (exp(phistarcompo[i][j])*parmaxcompo[j]+parmincompo[j])/(1.0+exp(phistarcompo[i][j]));
                            //if(i<100) cout<< phistarcompo[i][j]<<"   ("<<parmincompo[j]<<","<<parmaxcompo[j]<<")\n";
+						   if (phistarcompo[i][j]<0.0) phistarcompo[i][j]=0.0;
                            break;
-                  case 4 : if (phistarcompo[i][j]<=-xborne) phistarcompo[i][j] = parmincompo[j];
-                           else if (phistarcompo[i][j]>=xborne) phistarcompo[i][j] = parmaxcompo[j];
+                  case 4 : if (phistarcompo[i][j]<=-xbornecompo) phistarcompo[i][j] = parmincompo[j];
+                           else if (phistarcompo[i][j]>=xbornecompo) phistarcompo[i][j] = parmaxcompo[j];
                            else phistarcompo[i][j] =parmincompo[j] +(diffcompo[j]/c*atan(exp(phistarcompo[i][j])));
+						   if (phistarcompo[i][j]<0.0) phistarcompo[i][j]=0.0;
                            break;
                 }
             }
@@ -911,14 +898,16 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                   case 1 : break;
                   case 2 : if (phistarscaled[i][j]<100.0) phistarscaled[i][j] = exp(phistarscaled[i][j]); else phistarscaled[i][j]=exp(100.0);
                            break;
-                  case 3 : if (phistarscaled[i][j]<-1000.0) phistarscaled[i][j] = parminscaled[j];
-                           else if (phistarscaled[i][j]>1000.0) phistarscaled[i][j] = parmaxscaled[j];
+                  case 3 : if (phistarscaled[i][j]<-xbornescaled) phistarscaled[i][j] = parminscaled[j];
+                           else if (phistarscaled[i][j]>xbornescaled) phistarscaled[i][j] = parmaxscaled[j];
 						   else phistarscaled[i][j] = (exp(phistarscaled[i][j])*parmaxscaled[j]+parminscaled[j])/(1.0+exp(phistarscaled[i][j]));
                            //if(i<10) cout<<"      "<< phistarscaled[i][j]<<"   ("<<parminscaled[j]<<","<<parmaxscaled[j]<<")\n";
+                           if (phistarscaled[i][j]<0.0) phistarscaled[i][j]=0.0;
                            break;
-                  case 4 : if (phistarscaled[i][j]<-1000.0) phistarscaled[i][j] = parminscaled[j];
-                           else if (phistarscaled[i][j]>1000.0) phistarscaled[i][j] = parmaxscaled[j];
+                  case 4 : if (phistarscaled[i][j]<-xbornescaled) phistarscaled[i][j] = parminscaled[j];
+                           else if (phistarscaled[i][j]>xbornescaled) phistarscaled[i][j] = parmaxscaled[j];
                            else phistarscaled[i][j] =parminscaled[j] +(diffscaled[j]/c*atan(exp(phistarscaled[i][j])));
+                           if (phistarscaled[i][j]<0.0) phistarscaled[i][j]=0.0;
                            break;
                 }
             }
@@ -978,40 +967,45 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
     }
 
     string fmLB(long double x,int largeur,int precision) {
-		string s;
+		string s,s1;
 		size_t pos;
 		int lon,ifacteur=0,ix;
-		long double x1,facteur=1.0;
-		//cout<<"x="<<x;
+		long double x1,facteur=1.0,y=0.5;
+		for (int i=0;i<precision;i++) y /=10.0;
+		//bool retenue;
+		cout<<"fmLB        x="<<x<<"`\n";
 		if (x>100.0){ix=(int)x;s = LongDoubleToString(ix);}
 		else if (x>=1.0) {
-			s = LongDoubleToString(x);
+			
+			s = LongDoubleToString(x+y);
 			if (s.find(".")==string::npos) s=s+".0";
 			s = s+"000000000000000";
 			pos = s.find(".");
+			//s1=s.substr(pos+precision+1,1);
+			//retenue = (s1=="5")or(s1=="5")
 			s = s.substr(0,pos+precision+1);
+			
 		}
 		if (x<1.0) {
-			s = LongDoubleToString(x);
-			/*if (s.find("e")==string::npos) {
-				s = s+"000000000000000";
-				pos = s.find(".");
-				s = s.substr(0,pos+precision+1);
-			} else {*/
+			if (x==0.0) {
+				s="0.";
+				for (int i=0;i<precision;i++) s = +"0";
+			} 
+			else {
 				do {
 					facteur *=10.0;ifacteur++;
 					x1 = facteur*x;
 				} while (x1<1.0);
-				s = LongDoubleToString(x1);
+				s = LongDoubleToString(x1+y);
 				s = s+"000000000000000";
 				pos = s.find(".");
 				s = s.substr(0,pos+precision+1);
 				s = s + "e-"+IntToString(ifacteur);
-			//}
+			}
 		}
 		lon = s.length();
 		while (lon<largeur) {s=" "+s;lon++;}
-		//cout<<"   s final="<<s<<"\n";
+		cout<<"                             s final="<<s<<"\n";
 		return s;
 	}
 
@@ -1851,9 +1845,9 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			calphistarS(nsel,phistarscaled);
 			cout<<"apres calphistarscaled\n";
 		}
-		for (int i=0;i<nsel;i++) delete []matX0[i]; delete []matX0;
-        det_nomparam();
-        savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     		cout<<"apres savephistar\n";
+		for (int i=0;i<nsel;i++) delete []matX0[i]; delete []matX0;			cout<<"apres delete matX0\n";
+        det_nomparam();														cout<<"apres det_nomparam\n";
+        savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);    cout<<"apres savephistar\n";
         if (original) {
 			lisimparO();                          cout<<"apres lisimparO\n";
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();

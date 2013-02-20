@@ -89,7 +89,14 @@ long double * * prodML (int n, int m, int p, long double * * A, long double * * 
 #pragma omp parallel for private(k,j) if(multithread)
     for (int i=0;i<n;i++) {
         for (j=0;j<p;j++) {
-            for (k=0;k<m;k++) C[i][j] += A[i][k]*B[k][j];
+            for (k=0;k<m;k++) {
+				C[i][j] += A[i][k]*B[k][j];
+				/*if (C[i][j]!=C[i][j]) {
+					cout<<"dans prodML\n";
+					cout<<"A["<<i<<"]["<<k<<"] = "<<A[i][k]<<"\n";
+					cout<<"B["<<k<<"]["<<j<<"] = "<<B[k][j]<<"\n";
+				}*/
+			}
         }
     }
     return C;
