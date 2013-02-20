@@ -75,7 +75,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 			this->mutparam[p].prior = header.mutparam[p].prior;
 		}
 	}
-	cout<<"fin de sethisparamname\n";
+	cout<<"fin de sethistparamname\n";
 }
 
 int ReftableC::readheader(string fname,string flogname,string freftabscen) {

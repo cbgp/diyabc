@@ -121,7 +121,7 @@ string  getligne(ifstream file) {
 */
 	int DataC::testfile(string filename){
 	    int nss,prem;
-	    string ligne,*ss;
+	    string ligne,*ss=NULL;
 		ifstream file0(filename.c_str(), ios::in);
 		if (file0 == NULL) return -1;
 		getline(file0,ligne);
@@ -157,9 +157,12 @@ string  getligne(ifstream file) {
 		if (not trouvepop) return -2;
 		while (not file.eof()){
 			getline(file, ligne);
-			if((ligne.length()>2)and(ligne.at(ligne.length()-1)=='\r')) ligne=ligne.substr(ligne.length()-1);
-			ligne=purgetab(ligne);
+			cout<<"longueur de la ligne = "<<ligne.length()<<"\n";
+			cout<<ligne<<"\n";
+			if(ligne.length()>2) {if(ligne.at(ligne.length()-1)=='\r') ligne=ligne.substr(ligne.length()-1);}
+			cout<<"apres le test DOS\n";
 			if( (int)ligne.length() >= 2 + 3*nloc){
+				ligne=purgetab(ligne);
 				ligne=majuscules(ligne);
 				if ((ligne.find(",")==string::npos)and(ligne.find("POP")==string::npos)) return -2;
 				if(ligne.find(",")!=string::npos) {
@@ -173,7 +176,10 @@ string  getligne(ifstream file) {
 				}
 			}
 		}
-		if (ss!=NULL) {delete [] ss;ss=NULL;}
+		cout<<"avant le delete\n";
+		if (ss!=NULL) {cout<<"ss != NULL\n";} else cout<<"ss = NULL\n";
+		//if (ss!=NULL) {delete [] ss;ss=NULL;}
+		cout<<"avant return 0 dans testfile\n";
 		return 0;
 	}
 

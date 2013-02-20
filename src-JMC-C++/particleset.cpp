@@ -100,16 +100,16 @@ void ParticleSetC::setdata(int p) {
  */
 void ParticleSetC::setgroup(int p) {
 	int ngr = this->header.ngroupes;
-	//cout<<"ngr="<<ngr<<"\n";
+	if (debuglevel==5) cout<<"ngr="<<ngr<<"\n";
 	this->particule[p].ngr = ngr;
 	this->particule[p].grouplist = new LocusGroupC[ngr+1];
 	this->particule[p].grouplist[0].nloc = this->header.groupe[0].nloc;
 	this->particule[p].grouplist[0].loc  = new int[this->header.groupe[0].nloc];
 	for (int i=0;i<this->header.groupe[0].nloc;i++) this->particule[p].grouplist[0].loc[i] = this->header.groupe[0].loc[i];
 	for (int gr=1;gr<=ngr;gr++) {
-		//cout <<"groupe "<<gr<<"\n";
 		this->particule[p].grouplist[gr].type =this->header.groupe[gr].type;
 		this->particule[p].grouplist[gr].nloc = this->header.groupe[gr].nloc;
+		if (debuglevel==5) cout <<"groupe "<<gr<<"   nloc="<<this->particule[p].grouplist[gr].nloc<<"\n";
 		this->particule[p].grouplist[gr].loc  = new int[this->header.groupe[gr].nloc];
 		for (int i=0;i<this->header.groupe[gr].nloc;i++) this->particule[p].grouplist[gr].loc[i] = this->header.groupe[gr].loc[i];
 		if (this->header.groupe[gr].type==0) {	//MICROSAT
@@ -518,6 +518,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		if (sOK[ipart]==0) {
 			if (debuglevel==5) cout<<"avant docalstat de la particule "<<ipart<<"\n";
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr,this->particule[ipart].weight);
+			this->particule[ipart].libere();
 		}
 		if (debuglevel==5) cout<<"apres docalstat de la particule "<<ipart<<"\n";
 	}

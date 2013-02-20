@@ -86,15 +86,21 @@ extern int debuglevel;
 		//cout << "calfreqsnp début   nloc="<<this->grouplist[gr].nloc<<"\n";
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			loc=this->grouplist[gr].loc[iloc];
+			//cout<<"locus "<<loc<<"\n";
 			if (this->locuslist[loc].weight>0.0) {
 				cat=this->locuslist[loc].type%5;
+				//cout<<"cat = "<<cat<<"   nsample="<<this->nsample<<"\n";
 				this->locuslist[loc].freq = new long double* [this->nsample];
 				for (int samp=0;samp<this->nsample;samp++) {
+					//cout<<"sample "<<samp<<"\n";
 					this->locuslist[loc].freq[samp] = new long double [2];
 					this->locuslist[loc].freq[samp][0] = 0.0;this->locuslist[loc].freq[samp][1] = 0.0;
+					//cout<<"avant la boucle i\n";
+					//cout<<"this->data.ss[cat][samp]="<<this->data.ss[cat][samp]<<"\n";
 					for (int i=0;i<this->data.ss[cat][samp];i++){
 						if ((this->locuslist[loc].haplosnp[samp][i] == g0)and(this->dat[cat][samp][i])) this->locuslist[loc].freq[samp][0] +=1.0;
 					}
+					//cout<<"apres la boucle i\n";
 					sasize = samplesize(loc,samp);
 					this->locuslist[loc].freq[samp][1] = sasize -this->locuslist[loc].freq[samp][0];
 					this->locuslist[loc].freq[samp][0] /=sasize;

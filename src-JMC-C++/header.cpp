@@ -53,7 +53,7 @@ void MutParameterC::ecris() {
 
 
 void HeaderC::libere() {
-    cout<<"HeaderC::libere nconditions="<<this->nconditions<<"\n";
+    //cout<<"HeaderC::libere nconditions="<<this->nconditions<<"\n";
 	this->dataobs.libere();
 	//cout<<"apres dataobs.libere\n";
 	if(this->nconditions>0) delete []this->condition;
@@ -113,7 +113,9 @@ int HeaderC::readHeaderDebut(ifstream & file){
 	int nl;
 	getline(file,this->datafilename);nl++;
 	this->pathbase=path;
+	cout <<"avant loadfromfile du fichier "<<this->datafilename<<"\n";
 	int error = this->dataobs.loadfromfile(path+this->datafilename);
+	cout<<"apres loadfromfile  error="<<error<<"\n";
 	if (error != 0) {
 		this->message = this->dataobs.message;
 		throw std::runtime_error(message);

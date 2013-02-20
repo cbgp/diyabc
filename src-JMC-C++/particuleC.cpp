@@ -2135,7 +2135,7 @@ void ParticleC::put_one_mutation(int loc) {
 			  for(int sa=0;sa<this->nsample;sa++) {cout<<this->locuslist[loc].haplodna[sa][0]<<"\n";cout<<this->locuslist[loc].haplodna[sa][1]<<"\n\n";}
 		  }
 	  }
-	  this->libere();
+	  //this->libere();
 	  delete [] gtexist;
 	  return simOK;
   }
