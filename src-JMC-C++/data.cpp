@@ -178,7 +178,7 @@ string  getligne(ifstream file) {
 		}
 		cout<<"avant le delete\n";
 		if (ss!=NULL) {cout<<"ss != NULL\n";} else cout<<"ss = NULL\n";
-		//if (ss!=NULL) {delete [] ss;ss=NULL;}
+		if (ss!=NULL) {delete [] ss;ss=NULL;}
 		cout<<"avant return 0 dans testfile\n";
 		return 0;
 	}
