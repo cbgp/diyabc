@@ -131,7 +131,7 @@ string  getligne(ifstream file) {
 		  prem=0;
 		  return 1;
 		}
-		delete []ss;
+		delete []ss; ss = NULL;
 		getline(file0,ligne);
         ss=splitwords(ligne," ",&nss);
 		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
@@ -140,7 +140,7 @@ string  getligne(ifstream file) {
 		  delete [] ss;
 		  return 1;
 		}
-		delete [] ss;
+		delete [] ss; ss = NULL;
 		file0.close();
 		ifstream file(filename.c_str(), ios::in);
 		getline(file,ligne);
