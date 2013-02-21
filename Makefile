@@ -1,10 +1,14 @@
 all:
 	cd dcmt0.6.1/lib/; $(MAKE) $(MFLAGS) 
-	cd src-JMC-C++; staticgcc=-static-libgcc $(MAKE) $(MFLAGS) all
+	cd src-JMC-C++; staticgcc=-static-libgcc debug=-g opti=-O3  $(MAKE) $(MFLAGS) all
+
+fast:
+	cd dcmt0.6.1/lib/; $(MAKE) $(MFLAGS)
+	cd src-JMC-C++; opti=-O0 $(MAKE) $(MFLAGS) all
 
 valgrind:
 	cd dcmt0.6.1/lib/; $(MAKE) $(MFLAGS)
-	cd src-JMC-C++; $(MAKE) $(MFLAGS) all
+	cd src-JMC-C++; opti=-O3 debug=-g $(MAKE) $(MFLAGS) all
 
 dpkg:
 	cd dcmt0.6.1/lib/; $(MAKE) $(MFLAGS) 
