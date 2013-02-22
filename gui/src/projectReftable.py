@@ -1092,13 +1092,18 @@ class ProjectReftable(Project):
                     g.close()
                     dd = datetime.now()
                     date = "%s/%s/%s"%(dd.day,dd.month,dd.year)
+                    fdaTextToDisplay = ""
+                    if self.thAnalysis.analysis.fda == '1' :
+                        fdaTextToDisplay = "Summury statistics have been replaced by FDA component\n"
                     textToDisplay = "\
                     COMPARISON OF SCENARIOS\n\
                     (%s)\n\n\
         Project directory : %s\n\
         Candidate scenarios : %s\n\
-        Number of simulated data sets : %s\n\n\
-        Direct approach\n\n"%(date,self.dir,the_analysis.candidateScList,self.ui.nbSetsDoneEdit.text())
+        Number of simulated data sets : %s\n\
+        %s\
+        \n\
+        Direct approach\n\n"%(date,self.dir,the_analysis.candidateScList,self.ui.nbSetsDoneEdit.text(),fdaTextToDisplay)
                     textDirect = datadir[0].replace("   n   ","closest")
                     i = 10
                     while i < len(datadir):
