@@ -121,7 +121,7 @@ class BugReport(formBugReport,baseBugReport):
 
         shutil.rmtree(dest)
 
-        output.notify(self,"Thank you","Thank you for creating a bug report, please send it to the development team")
+        output.notify(self,"Thank you","Thank you for creating a bug report, please send it to the development team : diyabc@supagro.inra.fr")
 
         ## envoi par http :
         #ft = open(tarname,'r')
