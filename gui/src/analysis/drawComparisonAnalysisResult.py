@@ -143,15 +143,17 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
 
         if direct:
             plotc.axes.set_title("Direct")
+            markerPlot=''
         else:
             plotc.axes.set_title("Logistic regression")
+            markerPlot='o'
 
 
         labs = dico_coord['n']
             
         for i in range(len(first_line_tab)):    
             legend_txt = "Scenario %s"%first_line_tab[i]
-            plotc.axes.plot(labs,dico_coord[first_line_tab[i]],label=legend_txt,c=self.tab_colors[i])
+            plotc.axes.plot(labs,dico_coord[first_line_tab[i]],label=legend_txt,c=self.tab_colors[i],marker='%s'%markerPlot)
 
         plotc.axes.legend(bbox_to_anchor=(0.74, -0.14),ncol=2,prop={'size':9})
         plotc.axes.axes.title.set_fontsize(10)
