@@ -35,7 +35,7 @@ class BugReport(formBugReport,baseBugReport):
             problems += "- You must have a currently opened project\n"
         if self.ui.lastThingNoRadio.isChecked():
             problems += "- You must produce the bug just before opening this bug report window\n"
-        if str(self.ui.descEdit.toPlainText()) == "":
+        if u"%s"%self.ui.descEdit.toPlainText() == "":
             problems += "- Please write at least a small description\n"
         if not self.ui.originInterfRadio.isChecked() and not self.ui.originCompRadio.isChecked():
             problems += "- You must select a possible origin\n"
@@ -100,9 +100,9 @@ class BugReport(formBugReport,baseBugReport):
             cause = "computations"
         osname = sys.platform
         version_info = VERSION + " " + VERSION_DATE
-        name = str(self.ui.nameLabel.text())
-        email = str(self.ui.emailLabel.text())
-        desc = str(self.ui.descEdit.toPlainText())
+        name = u"%s"%self.ui.nameLabel.text()
+        email = u"%s"%self.ui.emailLabel.text()
+        desc = u"%s"%self.ui.descEdit.toPlainText()
         descf = open("%sdescription.txt"%dest,'w')
         descf.write("Name : %s\nEmail : %s\nVersion : %s\nOS : %s\nCause : %s\n\n"%(name,email,version_info,osname,cause))
         descf.write(desc)
