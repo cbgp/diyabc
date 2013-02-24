@@ -19,6 +19,7 @@
 #include "matrices.h"
 #include "mesutils.h"
 #include "particleset.h"
+
 /*
 #ifndef HEADER
 #include "header.cpp"
@@ -77,6 +78,9 @@ long double **paretoilS,**paretoilcompoS,**paretoilscaledS;
 ofstream ftrace;
 MwcGen mw;
 int *numero;
+double zeroplus=1E-100;
+bool valinfinie=false;
+
 
 /**
  * tire un échantillon avec remise dans les simpar
@@ -1068,16 +1072,24 @@ int *numero;
 		string s;
 		size_t pos;
 		int lon;
-		s = LongDoubleToString(x);
-		if (s.find(".")==string::npos) s=s+".0";
-		s = s+"000000000000000";
-		cout<<"x="<<x<<"   s="<<s;
-		pos = s.find(".");
-		s = s.substr(0,pos+precision+1);
-		cout<<"   s'="<<s;
-		lon = s.length();
-		while (lon<largeur) {s=" "+s;lon++;}
-		cout<<"   s final="<<s<<"\n";
+		if (x<1E80){
+			s = LongDoubleToString(x);
+			if (s.find(".")==string::npos) s=s+".0";
+			s = s+"000000000000000";
+			//cout<<"x="<<x<<"   s="<<s;
+			pos = s.find(".");
+			s = s.substr(0,pos+precision+1);
+			//cout<<"   s'="<<s;
+			lon = s.length();
+			while (lon<largeur) {s=" "+s;lon++;}
+			//cout<<"   s final="<<s<<"\n";
+		} else {
+			s="+inf";
+			lon = s.length();
+			while (lon<largeur) {s=" "+s;lon++;}
+			valinfinie=true;
+			cout<<"valinfinie="<<valinfinie<<"\n";
+		}
 		return s;
 	}
     
@@ -1085,16 +1097,24 @@ int *numero;
 		string s;
 		size_t pos;
 		int lon;
-		s = LongDoubleToString(x);
-		if (s.find(".")==string::npos) s=s+".0";
-		s = s+"000000000000000";
-		cout<<"x="<<x<<"   s="<<s;
-		pos = s.find(".");
-		s = "("+s.substr(0,pos+precision+1)+")";
-		cout<<"   s'="<<s;
-		lon = s.length();
-		while (lon<largeur) {s=" "+s;lon++;}
-		cout<<"   s final="<<s<<"\n";
+		if (x<1E80){
+			s = LongDoubleToString(x);
+			if (s.find(".")==string::npos) s=s+".0";
+			s = s+"000000000000000";
+			//cout<<"x="<<x<<"   s="<<s;
+			pos = s.find(".");
+			s = "("+s.substr(0,pos+precision+1)+")";
+			//cout<<"   s'="<<s;
+			lon = s.length();
+			while (lon<largeur) {s=" "+s;lon++;}
+			//cout<<"   s final="<<s<<"\n";
+		} else {
+			s="+inf";
+			lon = s.length();
+			while (lon<largeur) {s=" "+s;lon++;}
+			valinfinie=true;
+			cout<<"valinfinie="<<valinfinie<<"\n";
+		}
 		return s;
 	}
     
@@ -1128,6 +1148,9 @@ int *numero;
         f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n\n";
+		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
+		if (valinfinie) cout<<"VALEUR INFINIE\n"; else cout<<"PAS DE VALEUR INFINIE\n"; 
+		f1<<"\n";
         f1<<"                                                                        Averages\n";
         f1<<"Parameter                True values               Means                 Medians                 Modes\n";
 		f1<<setiosflags(ios::scientific)<<setiosflags(ios::right);
@@ -1229,8 +1252,11 @@ int *numero;
 			f1<<fmLDP(rmae_OS[1][j],16,3);
 			f1<<fmLDP(rmae_OS[2][j],16,3)<<"\n";*/
         }
-         f1.close();
-
+		if (valinfinie) f1<<"\nN.B. Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
+		if (valinfinie) cout<<"VALEUR INFINIE\n"; else cout<<"PAS DE VALEUR INFINIE\n"; 
+		f1<<"\n";
+		valinfinie=false;
+		f1.close();
     }
 
 /**
@@ -1264,7 +1290,9 @@ int *numero;
         f1<<"Chosen scenario : "<<rt.scenteste<<"\n";
         f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
-        f1<<"Results based on "<<ntest<<" test data sets\n\n";
+        f1<<"Results based on "<<ntest<<" test data sets\n";
+		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
+		f1<<"\n";
         f1<<"                                                                        Averages\n";
         f1<<"Parameter                True values               Means                 Medians                 Modes\n";
 		f1<<setiosflags(ios::scientific)<<setiosflags(ios::right);
@@ -1358,12 +1386,19 @@ int *numero;
 			f1<<fmLD(rmae_C[0][j],15,3)<<" "<<fmLDP(rmae_CS[0][j],8,3);
 			f1<<fmLD(rmae_C[1][j],15,3)<<" "<<fmLDP(rmae_CS[1][j],8,3);
 			f1<<fmLD(rmae_C[2][j],19,3)<<"\n";
-			/*for (int i=0;i<25;i++) f1<<" ";
+			/*for         f1<<"Results based on "<<ntest<<" test data sets\n";
+		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
+		f1<<"\n";
+(int i=0;i<25;i++) f1<<" ";
 			f1<<fmLDP(rmedad_CS[j],11,3);
 			f1<<fmLDP(rmae_CS[0][j],16,3);
 			f1<<fmLDP(rmae_CS[1][j],16,3);
 			f1<<fmLDP(rmae_CS[2][j],16,3)<<"\n";*/
         }
+		if (valinfinie) f1<<"\nN.B. Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
+		if (valinfinie) cout<<"VALEUR INFINIE\n"; else cout<<"PAS DE VALEUR INFINIE\n"; 
+		f1<<"\n";
+		valinfinie=false;
          f1.close();
 
     }
@@ -1399,7 +1434,9 @@ int *numero;
         f1<<"Chosen scenario : "<<rt.scenteste<<"\n";
         f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
-        f1<<"Results based on "<<ntest<<" test data sets\n\n";
+        f1<<"Results based on "<<ntest<<" test data sets\n";
+		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
+		f1<<"\n";
         f1<<"                                                                        Averages\n";
         f1<<"Parameter                True values               Means                 Medians                 Modes\n";
 		f1<<setiosflags(ios::scientific)<<setiosflags(ios::right);
@@ -1452,7 +1489,7 @@ int *numero;
 			f1<<fmLDP(rmse_SS[2][j],17,3)<<"\n";*/
         }
         f1<<"\n                                                                   Factor 2          Factor 2           Factor 2\n";
-        f1<<"Parameter               50% Coverage        95% Coverage           (Mean)            (Median)            (Mode)  \n";
+        f1<<"Parameter               50% Coverage        95% Coverage          (Mean)            (Median)            (Mode)  \n";
         for (int j=0;j<nparscaled;j++) {
             //cout<<nomparam[j]<<"\n";
             f1<<nomparamS[j];
@@ -1499,6 +1536,10 @@ int *numero;
 			f1<<fmLDP(rmae_SS[1][j],16,3);
 			f1<<fmLDP(rmae_SS[2][j],16,3)<<"\n";*/
         }
+		if (valinfinie) f1<<"\nN.B. Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
+		if (valinfinie) cout<<"VALEUR INFINIE\n"; else cout<<"PAS DE VALEUR INFINIE\n"; 
+		f1<<"\n";
+		valinfinie=false;
          f1.close();
 
     }
@@ -1517,6 +1558,7 @@ int *numero;
                         for (int j=0;j<npar;j++) {
                             if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                                   enreg2[p].paramvvC[k]=pmut*enreg2[p].paramvv[j];
+								  if (enreg2[p].paramvvC[k]<zeroplus) enreg2[p].paramvvC[k]=zeroplus;
                                 k++;
                             }
                         }
@@ -1526,6 +1568,7 @@ int *numero;
                             if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                                 pmut = (long double)header.groupe[gr].mutmoy+(long double)enreg2[p].paramvv[npar+kk];
                                 enreg2[p].paramvvC[k]=pmut*enreg2[p].paramvv[j];
+								 if(enreg2[p].paramvvC[k]<zeroplus) enreg2[p].paramvvC[k]=zeroplus;
                                 k++;
                             }
                         }
@@ -1537,6 +1580,7 @@ int *numero;
                             if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                                 pmut =(long double)enreg2[p].paramvv[npar+kk] +(long double)header.groupe[gr].snimoy;
                                 enreg2[p].paramvvC[k]=pmut*enreg2[p].paramvv[j];
+								 if(enreg2[p].paramvvC[k]<zeroplus) enreg2[p].paramvvC[k]=zeroplus;
                                 k++;
                             }
                         }
@@ -1547,6 +1591,7 @@ int *numero;
                             if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                                 pmut =(long double)enreg2[p].paramvv[npar+kk]+(long double)enreg2[p].paramvv[npar+qq];
                                 enreg2[p].paramvvC[k]=pmut*enreg2[p].paramvv[j];
+								  if(enreg2[p].paramvvC[k]<zeroplus) enreg2[p].paramvvC[k]=zeroplus;
                                 k++;
                             }
                         }
@@ -1559,6 +1604,7 @@ int *numero;
                     for (int j=0;j<npar;j++) {
                         if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                             enreg2[p].paramvvC[k]=pmut*enreg2[p].paramvv[j];
+							if(enreg2[p].paramvvC[k]<zeroplus) enreg2[p].paramvvC[k]=zeroplus;
                             k++;
                         }
                     }
@@ -1568,6 +1614,7 @@ int *numero;
                         if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
                             pmut = enreg2[p].paramvv[npar+kk];
                             enreg2[p].paramvvC[k]=pmut*enreg2[p].paramvv[j];
+							if(enreg2[p].paramvvC[k]<zeroplus) enreg2[p].paramvvC[k]=zeroplus;
                             k++;
                         }
                     }
@@ -1610,6 +1657,7 @@ int *numero;
 		for (int j=0;j<npar;j++) {
 			if (header.scenario[rt.scenteste-1].histparam[numpar[0][j]].category<2){
 				enreg2[p].paramvvS[k]=enreg2[p].paramvv[j]/Ne;
+				if(enreg2[p].paramvvS[k]<zeroplus) enreg2[p].paramvvS[k]=zeroplus;
 				k++;
 			}
 		}
@@ -1767,6 +1815,7 @@ int *numero;
 			cout<<"bias.cpp   npv="<<npv<<"\n";
 			for (int i=0;i<npv;i++)  {
 				enreg2[p].paramvv[i]=atof(ss[paordre[i]+1].c_str());
+				if (enreg2[p].paramvv[i]<zeroplus) enreg2[p].paramvv[i]=zeroplus;
 				if (i<rt.nhistparam[rt.scenteste-1]) enreg2[p].name[i]=rt.histparam[rt.scenteste-1][i].name;
 				else enreg2[p].name[i]=paname[i+1];
 				if(p==0)cout<<"enreg2[p].name["<<i<<"]="<<enreg2[p].name[i]<<" = "<<enreg2[p].paramvv[i]<<"\n";
