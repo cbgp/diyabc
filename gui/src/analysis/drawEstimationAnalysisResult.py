@@ -163,6 +163,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         l = QtGui.QVBoxLayout(draw_widget)
         l.setContentsMargins(0,0,0,0)
         plotc = MyMplCanvas(draw_widget, width=12, height=4, dpi=100)
+        os.chdir("%s/analysis/%s/"%(self.parent.dir,self.directory))
         l.addWidget(plotc)
         #plotc.fig.subplots_adjust(right=0.7,top=0.9,bottom=0.15)
         navtoolbar = NavigationToolbar(plotc, self)
