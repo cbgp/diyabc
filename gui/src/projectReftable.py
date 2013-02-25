@@ -1094,7 +1094,7 @@ class ProjectReftable(Project):
                     date = "%s/%s/%s"%(dd.day,dd.month,dd.year)
                     fdaTextToDisplay = ""
                     if self.thAnalysis.analysis.fda == '1' :
-                        fdaTextToDisplay = "Summury statistics have been replaced by FDA component\n"
+                        fdaTextToDisplay = "Summary statistics have been replaced by LDA component\n"
                     textToDisplay = "\
                     COMPARISON OF SCENARIOS\n\
                     (%s)\n\n\
