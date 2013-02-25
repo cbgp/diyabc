@@ -1623,7 +1623,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 				f1<<nomparamO[j];
 				for(int i=0;i<17-(int)(nomparamO[j].length());i++) f1<<" ";
 				f1<<parstat[j].moy<<"  "<<parstat[j].med<<"  "<<parstat[j].mod<<"  "<<parstat[j].q025<<"  "<<parstat[j].q050;
-				f1<<"  "<<parstat[j].q250<<parstat[j].q750<<"  "<<parstat[j].q950<<"  "<<parstat[j].q975<<"\n";
+				f1<<"  "<<parstat[j].q250<<"  "<<parstat[j].q750<<"  "<<parstat[j].q950<<"  "<<parstat[j].q975<<"\n";
 			}
 			f1.close();
  		}
