@@ -1,20 +1,108 @@
+queueName="long.q"   # Your cluster queue 
+MPenv='SMP'          # Your cluster parallel environment
+
 
 set -o nounset
 set -o errexit
 
 #====== functions ========
 
-function progress(){
-    sum=0
-    jobsTot=$1
-    # for each log file, if it exists, do the sum of done values
-    for i in $(seq 1 $jobsTot); do
-        if [ -e reftable_$i.log ]; then
-            let sum=$sum+`head -n 2 reftable_$i.log | tail -n 1`
+function submitJobs(){
+    # submit jobs to the cluster scheduller
+    for jobNum in $(seq 1 $numJobs); do 
+
+        numSimulatedDataSetForThisJob=$numSimulatedDataSetByJob
+        if [ "$jobNum" -eq "$numJobs" ]
+            then
+            numSimulatedDataSetForThisJob=$numSimulatedDataSetLastJob
+        fi
+        
+        ############################## EDIT #########################################
+        ######## Modify this line to submit jobs to your cluster scheduler ###############
+        # node.sh arguments
+        ##1 DIYABCPATH
+        ##2 NBCORES
+        ##3 NBTOGEN
+        ##4 USERDIR
+        ##5 MYNUMBER
+        ##6 DATAFILE
+        MP=""
+        if [ "$coresPerJob" -gt 1 ]
+            then
+            MP="-pe $MPenv $coresPerJob"
+        fi
+        
+        cmd="qsub -N n${jobNum}_$projectName -q $queueName $MP -cwd node.sh ""'""$diyabcPath""'"" $coresPerJob $numSimulatedDataSetForThisJob ""'""`pwd`""'"" $jobNum  ""'""$PWD/$dataFileName""'"
+        echo $cmd
+        qsub -N n${jobNum}_$projectName -q $queueName $MP -cwd node.sh "$diyabcPath" $coresPerJob $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
+        ############################## END EDIT #####################################
+        if [ $? -eq "0" ] 
+            then 
+            touch runningJobs.lock
+        fi 
+    done
+}
+
+function getRecordsDone(){
+    refTableLogFile=$1
+    triesNum=0
+    triesAuthorized=20
+    while [ "$triesNum"  -ne "$triesAuthorized" ]
+        do
+        set  +e
+        records="`head -n 2 $refTableLogFile | tail -n 1`" 2> /dev/null
+        if [ "$records" -ne "$records" ] 2>/dev/null
+            then
+            #set -e
+            echo -e "Not found integer as record number in $refTableLogFile : $records"  >&2
+            let triesNum=$triesNum+1
+            sleep 1
+            continue
+        else 
+            set -e     
+            echo "$records" 
+            return 0
         fi
     done
-    pct=$(( $sum * 100 / $numSimulatedDataSet ))
-    echo `nbOk $jobsTot` "/$jobsTot finished $pct% (total : $sum)"
+    set -e
+    return 1
+}
+
+
+
+function progress(){
+    jobsTot=$1
+    sum=0
+    nbFinished=0
+    while [ "$nbFinished" -lt "$jobsTot" ]
+        do
+    # for each log file, if it exists, do the sum of done values
+        for jobNum in $(seq 1 $jobsTot)
+            do
+            if [ -e reftable_$jobNum.log ]; 
+                then
+                    numDone=0
+                    numDone=$(getRecordsDone reftable_$jobNum.log)
+	                if [ "$jobNum" -ne "$numJobs" ]
+                        then 
+                            if [ "$numDone" -ge "$numSimulatedDataSetByJob" ]
+                                then
+                                let nbFinished=$nbFinished+1
+                            fi
+                        else
+                            # case of last computation
+                            if [ "$numDone" -ge "$numSimulatedDataSetLastJob" ]
+                                then
+                                let nbFinished=$nbFinished+1
+                            fi
+                    fi
+                    let sum=$sum+$numDone
+            fi
+        done
+        pct=$(( $sum * 100 / $numSimulatedDataSet ))
+        echo "$nbFinished/$jobsTot finished $pct% (total : $sum)"
+        sleep 30
+    done  
 }
 
 function nbOk(){
@@ -22,7 +110,7 @@ function nbOk(){
     # for each log file, check if the computation is terminated
     for jobNum in $(seq 1 $1); do
         if [ -e reftable_$jobNum.log ]; then
-            numDone=`head -n 2 reftable_$jobNum.log | tail -n 1`
+            numDone=$(recordsDone reftable_$jobNum.log)
 	        if [ $jobNum -ne $numJobs ]
                     then 
                     if [ $numDone -ge $numSimulatedDataSetByJob ]
@@ -79,44 +167,6 @@ function generateRNGs(){
 }
 
 
-function submitJobs(){
-    # submit jobs to the cluster scheduller
-    for jobNum in $(seq 1 $numJobs); do 
-
-        numSimulatedDataSetForThisJob=$numSimulatedDataSetByJob
-        if [ "$jobNum" -eq "$numJobs" ]
-            then
-            numSimulatedDataSetForThisJob=$numSimulatedDataSetLastJob
-        fi
-        
-        ############################## EDIT #########################################
-        ######## Modify this line to submit jobs to your cluster scheduler ###############
-        # node.sh arguments
-        ##1 DIYABCPATH
-        ##2 NBTOGEN
-        ##3 USERDIR
-        ##4 MYNUMBER
-        ##5 DATAFILE
-        queueName="mem.q"
-        MPEnv=""
-        if [ "$coresPerJob" -gt 1 ]
-            then
-            MPEnv="-pe SMP $coresPerJob"
-        fi
-        
-        cmd="qsub -N n${jobNum}_$projectName -q $queueName $MPEnv -cwd node.sh ""'""$diyabcPath""'"" $coresPerJob $numSimulatedDataSetForThisJob ""'""`pwd`""'"" $jobNum  ""'""$PWD/$dataFileName""'"
-        echo $cmd
-        qsub -N n${jobNum}_$projectName -q $queueName $MPEnv -cwd node.sh "$diyabcPath" $coresPerJob $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
-        ############################## END EDIT #####################################
-        if [ $? -eq "0" ] 
-            then 
-            touch runningJobs.lock
-        fi 
-
-    done
-}
-
-
 #===== script core =======
 
 # job parameters
@@ -150,26 +200,24 @@ if [ `ls -1 | grep lock  | wc -l` -eq "0" ]
         then 
         generateRNGs
     else 
-        echo -e "/!\/!\      Becarefull       /!\/!\ "
+        echo -e "/!\/!\      BECAREFULL       /!\/!\ "
+        sleep 2
         echo -e "/!\/!\  `ls -1 | grep RNG_state  | wc -l` old RNG files found. Let's use them instead of generate $maxConcurrentJobs new ones /!\ /!\ " 
-        echo -e "/!\/!\  be sure the RNG's have enough cores /!\ /!\ "                
+        sleep 3
+        echo -e "/!\/!\  be sure the RNG's have enough cores /!\ /!\ " 
+        sleep 5       
     fi
     submitJobs
 fi
 
 
-while ! [ "`nbOk $numJobs`" -ge "$numJobs" ]; do
-    echo `progress $numJobs`
-    sleep 30
-done
-echo `progress $numJobs`
-
+progress $numJobs
 
 
 echo "Concatenating reftables :"
-cmd="./general -p \\"$PWD/\\" -q  &> concat.out"
+cmd="$diyabcPath -p "$PWD/" -q  &> concat.out"
 echo $cmd
-./general -p "$PWD/" -q  &> concat.out
+$diyabcPath -p "$PWD/" -q  &> concat.out
 
 if [ $? -eq "0" ] 
     then 
@@ -182,4 +230,3 @@ fi
 
 #END
 exit 0
-

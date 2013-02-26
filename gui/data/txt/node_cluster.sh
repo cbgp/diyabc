@@ -3,22 +3,22 @@ set -o errexit
 set -o errtrace
 set -o nounset
 #set -xv 
-hostname
+echo "host =  `hostname`"
 
 # ===============================================
 # check script parameters
 function usage {
     echo -e "\tThis script runs DIYABC on a node cluster"
-    echo -e "\tUsage : $0 <diyabcPath> <numToGenerate> <workingDirectory> <numIdOfTheCurrentJob> <dataFile>"
+    echo -e "\tUsage : $0 <diyabcPath> <numberOfCores> <numToGenerate> <workingDirectory> <numIdOfTheCurrentJob> <dataFile>"
     echo -e "\texample : "
-    echo -e "\t\t $0 \"/usr/local/bin/diyabc\" 5000 \"$PWD\" 3 \"dyabcData.mss\""
+    echo -e "\t\t $0 \"/usr/local/bin/diyabc\" 1 5000 \"$PWD\" 13 \"dyabcData.mss\""
 }
 
 # Test  parameters number
 if [ "$#" -lt 5 ]
     then
     echo -e "\nERROR :"
-    echo -e "      Require 5  parameters, $# given\n\n"
+    echo -e "      Require 6  parameters, $# given\n\n"
     usage
     exit 2
 fi
@@ -29,30 +29,31 @@ NBTOGEN=$3
 USERDIR=$4
 MYNUMBER=$5
 DATAFILE=$6
+
 # Get full path for diyabc, dir and file
 DIYABCPATH=`readlink -f "$DIYABCPATH"`
 USERDIR=`readlink -f "$USERDIR"`                   
 DATAFILE=`readlink -f "$DATAFILE"` 
 
 if [ ! -r "$DIYABCPATH" ]; then
-    echo -e "\nERROR :"
-    echo -e "      diyabc not found in $DIYABCPATH or you can not read it\n"
+    echo -e "\nERROR :" >&2
+    echo -e "      diyabc not found in $DIYABCPATH or you can not read it\n" >&2
     usage
     exit 3
 fi
 
 if [ ! -r "$DATAFILE" ]; then
-    echo -e "\nERROR :"
-    echo -e "      You do not have rights to read $DATAFILE  but you should !\n"
+    echo -e "\nERROR :" >&2
+    echo -e "      You do not have rights to read $DATAFILE  but you should !\n" >&2
     usage
     exit 3
 fi
 
 if [ ! -w "$USERDIR" ]; then
-    echo -e "\nERROR :"
-    echo -e "      You do not have the right to write in $USERDIR but you should !\n"
+    echo -e "\nERROR :"  >&2
+    echo -e "      You do not have the right to write in $USERDIR but you should ! (or dir does)\n" >&2
     usage
-    exit 4
+    exit 3
 fi
 
 echo -e "All parameters accepted"
@@ -68,7 +69,7 @@ rngFileName=""
 rngLockFile=""
 rngFlagFile=""
 rngBackupFile=""
-scriptMadeTMPDIR=false
+scriptMadeTMPDIR="false"
 
 # rollback actions if something fail 
 function trapActions(){
@@ -80,15 +81,15 @@ function trapActions(){
     fi
     echo -e "Job ERROR (trap) : `date`" >&2
     echo -e "Job $MYNUMBER ($jobId) exit with error : $errStatus -> rollback procedure started \n" >&2
-    echo -e "trap ls -al "$TMPDIR" :" >&2
-    ls -al "$TMPDIR" >&2
+    echo -e "\n=====  trap :  ls -al "$TMPDIR" :" >&2
+    \ls -al "$TMPDIR" >&2
     echo -e "\n=====  trap :  reftable.txt    ====="  >&2
-    cat "$TMPDIR/reftable.log"  >&2
+    \cat "$TMPDIR/reftable.log"  >&2
     echo -e "\n=====  trap :  statobs.txt    ====="  >&2
-    cat "$TMPDIR/statobs.txt"  >&2
+    \cat "$TMPDIR/statobs.txt"  >&2
     echo -e "\n=====  trap :   diyabc.out    ====="  >&2
     cat "$TMPDIR/diyabc.out"  >&2    
-    echo -e "\n\nTrap error : $1\n" >&2
+    echo -e "\n\n=====  Trap error : $1\n" >&2
     #rm -f "$rngFile"
     if [ -e "$rngBackupFile" ]; then mv  "$rngBackupFile" "$rngFile"  || echo -e "could not write back $rngFile" >&2 ; fi
     if [ $scriptMadeTMPDIR = "true" ]; then echo 'rm -rf "$TMPDIR"' || echo -e "could not erase $TMPDIR" >&2 ; fi
@@ -100,6 +101,38 @@ function trapActions(){
     exit $errStatus
 }
 
+function sumStatsDone(){
+    refTableLogFile=$1
+    triesNum=0
+    triesAuthorized=20
+    #if  [ ! -f "$refTableLogFile" ]
+    #    then 
+    #    errStatus=100
+    #    trapActions "`hostname` $0 : No $refTableLogFile found (sumStatsDone function)" 
+    #fi
+    while [ "$triesNum" -ne "$triesAuthorized" ]
+        do
+        set +e
+        sumStats="`head -n 2 $refTableLogFile | tail -n 1`"
+        if [ "$sumStats" -ne "$sumStats" ] 2>/dev/null
+            then
+            set -e
+            echo -e "Not found integer as sum stats number in $refTableLogFile = $sumStats"  >&2
+            let triesNum=$triesNum+1
+            sleep 5
+            continue
+        else 
+            set -e     
+            #echo "$sumStats" >&2
+            echo "$sumStats" 
+            return 0
+        fi
+    done
+    errStatus=101
+    trapActions "`hostname` $0 : no way to found a sum stats integer in $refTableLogFile : $trieNum  tries."
+}
+
+
 # start trap if errors
 trap 'trapActions' INT TERM EXIT
 
@@ -109,7 +142,7 @@ set +u
 if test -z "$TMPDIR"
     then
 	    TMPDIR="/tmp/tmpDiyabc_${jobId}"
-	    scriptMadeTMPDIR=true
+	    scriptMadeTMPDIR="true"
 fi
 set -u
 
@@ -149,6 +182,7 @@ while [ $rngNotFound ]
             touch "$rngFlagFile"
             rngBackupFile="${rngFile}_backup" 
             cp "$rngFile" "$rngBackupFile"
+            #cp "$rngFile" "$TMPDIR/`basename ${rngFile}`_$MYNUMBER"
             mv  "$rngFile" "$TMPDIR" 
             rngFileName=`basename "$rngFile"`     
             rngLockFile="${rngFile}.lock"          
@@ -176,26 +210,30 @@ echo -e "$cmd"
 "$TMPDIR/`basename $DIYABCPATH`" -t $NBCORES -p "$TMPDIR/" -w $rngNum -r $NBTOGEN &> "$TMPDIR/diyabc.out" &
 cmdPID="$!"
 echo $cmdPID > "$rngFlagFile"
-sleep 5
+sleep 30
 
-# test if the program has create the reftable.log file
-if ! [ -e "$TMPDIR"/reftable.log ]
-    then
-        errStatus=1
-        trapActions "`hostname` $0 : No $TMPDIR/reftable.log file found"
 
-fi
+while [ -d "/proc/$cmdPID" ]
+    do
+    set +e
+    cp "$TMPDIR"/reftable.log "$USERDIR"/reftable_$MYNUMBER.log
+    set -e
+    sleep 20
+done
+cp "$TMPDIR"/reftable.log "$USERDIR"/reftable_$MYNUMBER.log
 
 # Copy log file in user working directory till end of program 
 while [ ! "`head -n 2 "$TMPDIR"/reftable.log | tail -n 1`" -ge $NBTOGEN -a -d "/proc/$cmdPID" ]; do
     cp "$TMPDIR"/reftable.log "$USERDIR"/reftable_$MYNUMBER.log
     sleep 10
 done
-if ! [ "`head -n 2 "$TMPDIR"/reftable.log | tail -n 1`" -ge $NBTOGEN ]
+if ! [ "$(sumStatsDone $TMPDIR/reftable.log)" -ge "$NBTOGEN" ]
     then
-    echo `head -n 2 "$TMPDIR"/reftable.log | tail -n 1`
-    errStatus=1
-    trapActions "program died before normal end (`head -n 2 "$TMPDIR"/reftable.log | tail -n 1`/$NBTOGEN)" 
+    echo -e "head -n 2 "$TMPDIR"/reftable.log | tail -n 1 = `head -n 2 "$TMPDIR"/reftable.log | tail -n 1`" >&2
+    errStatus=1000
+    echo "ERROR ERROR ERROR PID : $cmdPID: `ps -edf | grep $cmdPID`" >&2
+    echo "ERROR ERROR ERROR ls /proc/$cmdPID: `ls /proc/$cmdPID`" >&2
+    trapActions "program died before normal end : not enough records ($(sumStatsDone $TMPDIR/reftable.log)/$NBTOGEN)" 
 fi
 
 #copy results to USERDIR and clean
@@ -205,7 +243,7 @@ mv "$TMPDIR"/reftable.log "$USERDIR"/reftable_$MYNUMBER.log
 mv "$TMPDIR/$rngFileName" "$rngFile"
 echo -e "cleaning temp files"
 rm -f "$rngBackupFile" "$rngLockFile" "$rngFlagFile"
-if [ $scriptMadeTMPDIR ]; then rm -rf "$TMPDIR"; fi
+if [ $scriptMadeTMPDIR = 'true' ]; then rm -rf "$TMPDIR"; fi
 echo -e "End with succes"
 echo -e " "
 
