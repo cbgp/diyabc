@@ -899,7 +899,7 @@ matligneC *matA;
                 cout<< "nombre de régressions logistiques à effectuer = "<<nlogreg<<"\n";
             } else if (s0=="f:") {
                 AFD=(s1=="1");
-                if (AFD) cout<<"Factorial Discriminant Analysis\n";
+                if (AFD) cout<<"Linear Discriminant Analysis\n";
             }
         }
         nsel=nseld;if(nsel<nselr)nsel=nselr;

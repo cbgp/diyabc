@@ -93,7 +93,7 @@ string nomficonfresult;
         f1<<"Mutation parameters are drawn from the following priors and/or are given the following values : "<<smut<<"\n";
         f1<<"Candidate scenarios : ";
         for (int i=0;i<rt.nscenchoisi;i++) {f1<<rt.scenchoisi[i];if (i<rt.nscenchoisi-1) f1<<", "; else f1<<"\n";}
-        if (AFD) f1<<"Summary statistics have been replaced by components of a Factorial Discriminant Analysis\n\n"; else f1<<"\n";
+        if (AFD) f1<<"Summary statistics have been replaced by components of a Linear Discriminant Analysis\n\n"; else f1<<"\n";
         //f1<<"         ");
         aprdir="direct approach";aprlog="logistic approach";
         s=centre(aprdir,9*rt.nscenchoisi);
