@@ -279,10 +279,16 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         xx = new long double*[n];
         for(int i=0;i<n;i++) xx[i] = new long double[nparcompo];
 		int kp=0,kp0;
+		if (numtransf>2){
+			parmincompo = new long double[nparcompo]; parmaxcompo = new long double[nparcompo]; 
+			diffcompo = new long double[nparcompo];
+			parmincompo0= new long double[nparcompo]; parmaxcompo0 = new long double[nparcompo];
+			for (int j=0;j<nparcompo;j++) {parmincompo0[j]=1E100;parmaxcompo0[j]=-1E100;}
+			xbornecompo=1000.0;
+		}
 		for (int gr=1;gr<header.ngroupes+1;gr++) {
 			kp0 = kp;
 			if (header.groupe[gr].type==0) {
-				cout<<""type=0\n";
 				if (header.groupe[gr].priormutmoy.constant) {
 					if (header.groupe[gr].priorsnimoy.constant) {
 						pmut = (long double)(header.groupe[gr].mutmoy+header.groupe[gr].snimoy);
@@ -339,7 +345,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 				}
 			}
 			if (header.groupe[gr].type==1) {
-				cout<<""type=1\n";
 				if (header.groupe[gr].priormusmoy.constant) {
 					pmut = (long double)header.groupe[gr].musmoy;
 					for (int j=0;j<npar;j++) {
@@ -365,7 +370,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 				}
 			}
-			cout<<"avant le switch\n";
 			switch (numtransf) {
 				case 1 :  //no transform
 						for (int i=0;i<n;i++) {
@@ -383,10 +387,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						}
 						break;
 				case 3 : //logit transform
-						parmincompo = new long double[nparamcom]; parmaxcompo = new long double[nparamcom]; diffcompo = new long double[nparamcom];
-						parmincompo0= new long double[nparamcom]; parmaxcompo0 = new long double[nparamcom];
-						xbornecompo=1000.0;
-						for (int j=kp0;j<kp;j++) {parmincompo0[j]=1E100;parmaxcompo0[j]=-1E100;}
 						for (int i=0;i<n;i++) {
 								for (int j=kp0;j<kp;j++) {
 									if (xx[i][j]<parmincompo0[j]) parmincompo0[j]=xx[i][j];
@@ -408,9 +408,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						}
 						break;
 				case 4 : //log(tg) transform
-						parmincompo = new long double[nparamcom]; parmaxcompo = new long double[nparamcom]; diffcompo = new long double[nparamcom];
-						parmincompo0= new long double[nparamcom]; parmaxcompo0 = new long double[nparamcom];
-						xbornecompo=1000.0;
 						for (int j=kp0;j<kp;j++) {parmincompo0[j]=1E100;parmaxcompo0[j]=-1E100;}
 						for (int i=0;i<n;i++) {
 								for (int j=kp0;j<kp;j++) {
@@ -480,6 +477,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 				cout<<"\n";
 			}*/
 		}
+		if (numtransf>2){
+			parminscaled = new long double[nparamcom]; parmaxscaled = new long double[nparamcom]; 
+			diffscaled = new long double[nparamcom];
+			parminscaled0= new long double[nparamcom]; parmaxscaled0 = new long double[nparamcom];
+			xbornescaled=1000.0;
+		}
 		switch (numtransf) {
 			case 1 :  //no transform
 					for (int i=0;i<n;i++) {
@@ -497,9 +500,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 					break;
 			case 3 : //logit transform
-					parminscaled = new long double[nparamcom]; parmaxscaled = new long double[nparamcom]; diffscaled = new long double[nparamcom];
-					parminscaled0= new long double[nparamcom]; parmaxscaled0 = new long double[nparamcom];
-					xbornescaled=1000.0;
 					for (int j=0;j<nparscaled;j++) {parminscaled0[j]=1E100;parmaxscaled0[j]=-1E100;}
 					for (int i=0;i<n;i++) {
 							for (int j=0;j<nparscaled;j++) {
@@ -522,9 +522,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 					break;
 			case 4 : //log(tg) transform
-					parminscaled = new long double[nparamcom]; parmaxscaled = new long double[nparamcom]; diffscaled = new long double[nparamcom];
-					parminscaled0= new long double[nparamcom]; parmaxscaled0 = new long double[nparamcom];
-					xbornescaled=1000.0;
 					for (int j=0;j<nparscaled;j++) {parminscaled0[j]=1E100;parmaxscaled0[j]=-1E100;}
 					for (int i=0;i<n;i++) {
 							for (int j=0;j<nparscaled;j++) {
