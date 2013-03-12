@@ -408,7 +408,6 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 						}
 						break;
 				case 4 : //log(tg) transform
-						for (int j=kp0;j<kp;j++) {parmincompo0[j]=1E100;parmaxcompo0[j]=-1E100;}
 						for (int i=0;i<n;i++) {
 								for (int j=kp0;j<kp;j++) {
 									if (xx[i][j]<parmincompo0[j]) parmincompo0[j]=xx[i][j];
