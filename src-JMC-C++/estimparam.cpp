@@ -282,6 +282,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 		for (int gr=1;gr<header.ngroupes+1;gr++) {
 			kp0 = kp;
 			if (header.groupe[gr].type==0) {
+				cout<<""type=0\n";
 				if (header.groupe[gr].priormutmoy.constant) {
 					if (header.groupe[gr].priorsnimoy.constant) {
 						pmut = (long double)(header.groupe[gr].mutmoy+header.groupe[gr].snimoy);
@@ -338,6 +339,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 				}
 			}
 			if (header.groupe[gr].type==1) {
+				cout<<""type=1\n";
 				if (header.groupe[gr].priormusmoy.constant) {
 					pmut = (long double)header.groupe[gr].musmoy;
 					for (int j=0;j<npar;j++) {
@@ -363,6 +365,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 				}
 			}
+			cout<<"avant le switch\n";
 			switch (numtransf) {
 				case 1 :  //no transform
 						for (int i=0;i<n;i++) {
