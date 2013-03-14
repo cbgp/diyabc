@@ -67,7 +67,7 @@ matligneC *matA;
         cmatYP  = new long double[nmodnco];
         cmatP   = new long double*[nli];;for (int i=0;i<nli;i++) cmatP[i]= new long double[nmodel];
         cmatY   = new long double*[nli];;for (int i=0;i<nli;i++) cmatY[i]= new long double[nmodel];
-        cloglik = new long double[50];
+        cloglik = new long double[51];
         csd     = new long double[nmodel+1];
         cbet    = new long double[nmodel+1];
         cpx0    = new long double[nmodel+1];
@@ -86,27 +86,27 @@ matligneC *matA;
     void liberecmat(int nmodel, int nli, int nco) {
         int nmodnco = nmodel*(nco+1);
 
-        for (int i=0;i<nmodel;i++) delete []cmatA[i];delete cmatA;
-        for (int i=0;i<nmodnco;i++) delete []cmatB[i];delete cmatB;
-         for (int i=0;i<nmodnco;i++) delete []cmatB0[i];delete cmatB0;
-       for (int i=0;i<nmodnco;i++) delete []cmatC[i];delete cmatC;
-        for (int i=0;i<nli;i++) delete []cmatX[i];delete cmatX;
-        for (int i=0;i<nco+1;i++) delete []cmatXT[i];delete cmatXT;
-        delete []cdeltabeta;
-        delete []cbeta0;
-        delete []cbeta;
-        delete []cmatYP;
-        for (int i=0;i<nli;i++) delete []cmatP[i];delete cmatP;
-        for (int i=0;i<nli;i++) delete []cmatY[i];delete cmatY;
-        delete []cloglik;
-        delete []csd;
-        delete []cbet;
-        delete []cpx0;
-        delete []csmatY;
-        delete []csmatP;
-        for (int i=0;i<nli;i++) delete []cmatX0[i];delete cmatX0;
+        for (int i=0;i<nmodel;i++) delete [] cmatA[i];delete [] cmatA;
+        for (int i=0;i<nmodnco;i++) delete [] cmatB[i];delete [] cmatB;
+        for (int i=0;i<nmodnco;i++) delete [] cmatB0[i];delete [] cmatB0;
+        for (int i=0;i<nmodnco;i++) delete [] cmatC[i];delete [] cmatC;
+        for (int i=0;i<nli;i++) delete [] cmatX[i];delete [] cmatX;
+        for (int i=0;i<nco+1;i++) delete [] cmatXT[i];delete [] cmatXT;
+        delete [] cdeltabeta;
+        delete [] cbeta0;
+        delete [] cbeta;
+        delete [] cmatYP;
+        for (int i=0;i<nli;i++) delete [] cmatP[i];delete [] cmatP;
+        for (int i=0;i<nli;i++) delete [] cmatY[i];delete [] cmatY;
+        delete [] cloglik;
+        delete [] csd;
+        delete [] cbet;
+        delete [] cpx0;
+        delete [] csmatY;
+        delete [] csmatP;
+        for (int i=0;i<nli;i++) delete [] cmatX0[i];delete [] cmatX0;
         delete [] matA;
-        delete []cvecW;
+        delete [] cvecW;
         delete [] vecY;
         delete [] vecYY;
     }
@@ -217,8 +217,8 @@ matligneC *matA;
 			}
 		}
         f1.close();
-        for (int i=0;i<nlogreg;i++) delete []postscenlog[i];
-        delete []postscenlog;
+        for (int i=0;i<nlogreg;i++) delete [] postscenlog[i];
+        delete [] postscenlog;
     }
 
 
@@ -686,8 +686,8 @@ matligneC *matA;
             //cout<<"apres calcul des betmin, betmax     rep="<<rep<<"\n";
 			if (rep>1){
 				fin=true;i=0;while ((fin==true)&&(i<nmodel+1)) {
-					fin= (fabs(px[i]-cpx0[i])<0.0001)or(fabs(cloglik[rep-1]/cloglik[rep-2]-1.0)<0.000001);
-					cout<<"abs(px-px0) = "<<setiosflags(ios::fixed)<<setw(12)<<setprecision<<fabs(px[i]-cpx0[i])<<"\n";
+					fin= (fabs(px[i]-cpx0[i])<0.0005)or(fabs(cloglik[rep-1]/cloglik[rep-2]-1.0)<0.000001);
+					cout<<"\nabs(px-px0) = "<<setiosflags(ios::fixed)<<setw(12)<<setprecision(4)<<fabs(px[i]-cpx0[i])<<"   (px[i]="<<px[i]<<"  px0[i]="<<cpx0[i]<<")";
 					i++;
 				}
 				fin=(fin or (betmax-betmin>50));
@@ -704,7 +704,8 @@ matligneC *matA;
                 //for(i=0;i<nmodel;i++) {for (j=0;j<nmodel;j++) cout<<cmatB[i*(nco+1)][i*(nco+1)]<<"  ";cout<<"\n";}
             }*/
 
-            cout<<"\niteration "<<rep<<"   fin="<<fin<<"\n";
+            cout<<"\n\niteration "<<rep<<"   fin="<<fin<<"    ";
+			cout<<"loglik="<<setiosflags(ios::fixed)<<setw(12)<<setprecision(4)<<cloglik[rep-1]<<"\n";
             for (i=0;i<nmodel+1;i++) {cout<<"  ";cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<px[i];}
             sx=0.0;sx2=0.0;for(i=0;i<nmodel+1;i++) {sx+=px[i];sx2+=px[i]*px[i];}
             //if ((sx<0.001)or(sx2>0.999)) {
@@ -923,14 +924,20 @@ matligneC *matA;
             k=0;
             while(k<nlogreg){
                 nts=(nselr/nlogreg)*(k+1);
-                postscenlog[k] = comp_logistic(nts,stat_obs);cout <<"apres la regression logistique n° "<<k<<"\n";
+				cout<<"\n\n*********************************************************************************\n";
+				cout<<"Regression logistique n° "<<k+1<<"   realisee sur "<<nts<<" enregistrements\n";
+                postscenlog[k] = comp_logistic(nts,stat_obs);cout <<"Fin de la regression logistique n° "<<k+1<<"\n";
                 k++;
                 iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
             }
             save_comp_logistic(nlogreg,nselr,postscenlog,path,ident);
+			cout<<"avant liberecmat\n";
             liberecmat(rt.nscenchoisi, nselr, rt.nstat);
+			cout<<"apres liberecmat\n";
         }
-        if(ss != NULL) delete []ss;
-        if(ss1 != NULL) delete []ss1;
+        cout<<"avant les delete ss et ss1\n";
+        if(ss != NULL) delete []ss;ss=NULL;
+        if(ss1 != NULL) delete []ss1;ss1=NULL;
+		cout<<"apres les delete ss et ss1\n";
         iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
     }
