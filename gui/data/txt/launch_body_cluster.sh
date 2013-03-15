@@ -80,6 +80,8 @@ function progress(){
     nbFinished=0
     while [ "$nbFinished" -lt "$jobsTot" ]
         do
+        sum=0
+        nbFinished=0
     # for each log file, if it exists, do the sum of done values
         for jobNum in $(seq 1 $jobsTot)
             do
@@ -109,29 +111,6 @@ function progress(){
     done  
 }
 
-function nbOk(){
-    nb=0
-    # for each log file, check if the computation is terminated
-    for jobNum in $(seq 1 $1); do
-        if [ -e reftable_$jobNum.log ]; then
-            numDone=$(recordsDone reftable_$jobNum.log)
-	        if [ $jobNum -ne $numJobs ]
-                    then 
-                    if [ $numDone -ge $numSimulatedDataSetByJob ]
-                        then
-                        let nb=$nb+1
-                    fi
-                else
-                    # case of last computation
-                    if [ $numDone -ge $numSimulatedDataSetLastJob ]
-                        then
-                        let nb=$nb+1
-                    fi
-            fi
-        fi
-    done
-    echo $nb
-}
 
 function testJobsAllReadylaunched(){
     # verify if the jobs are already submitted
