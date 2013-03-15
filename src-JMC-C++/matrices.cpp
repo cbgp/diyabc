@@ -443,5 +443,6 @@ int inverse_Tik2 (int n, long double * * A, long double * * C, long double coeff
 		t /= n;		
 		for (int i=0;i<n;i++)  AA[i][i] = A[i][i] + coeff*t;
 		err=inverse(n,AA,C);
+		for (int i=0;i<n;i++) delete [] AA[i];delete [] AA;
 		return err;  
 	}

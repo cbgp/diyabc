@@ -209,8 +209,8 @@ matligneC *matA;
 					f1<<setiosflags(ios::fixed)<<setw(7)<<setprecision(0)<<nts<<"   ";
 					for (int j=0;j<rt.nscenchoisi;j++) f1<<"   "<<setw(6)<<setprecision(4)<<postscenlog[i][j].x<<" ["<<postscenlog[i][j].inf<<","<<postscenlog[i][j].sup<<"]  ";f1<<"\n";
 					if (postscenlog[i][0].err==8) {
-						cout<<" LOGISTIC REGRESSION DID NOT CONVERGE AFTER 50 ITERATIONS\n";
-						f1<<" LOGISTIC REGRESSION DID NOT CONVERGE AFTER 50 ITERATIONS\n";
+						cout<<" LOGISTIC REGRESSION DID NOT CONVERGE AFTER 50 ITERATIONS - The given P-values are those of the direct method\n";
+						f1<<" LOGISTIC REGRESSION DID NOT CONVERGE AFTER 50 ITERATIONS - The given P-values are those of the direct method\n";
 						
 					} else {cout<<"\n";f1<<"\n";}
 				}

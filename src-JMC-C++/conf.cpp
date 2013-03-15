@@ -274,11 +274,11 @@ string nomficonfresult;
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
 		nbestdir = new int[rt.nscenchoisi];nbestlog = new int[rt.nscenchoisi];
 		for(int s=0;s<rt.nscenchoisi;s++){nbestdir[s]=0;nbestlog[s]=0;}
+		nstatOK = rt.cal_varstat();
         for (int p=0;p<ntest;p++) {
             clock_zero=0.0;debut=walltime(&clock_zero);
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
-			cout<<"jeu test "<<p+1<<"\n";
-            nstatOK = rt.cal_varstat();
+			cout<<"\n\njeu test "<<p+1<<"\n";
 			//cout<<"nstatOK="<<nstatOK<<"\n";
             rt.cal_dist(nrec,nsel,stat_obs);
             //cout<<"apres cal_dist\n";
@@ -324,6 +324,7 @@ string nomficonfresult;
             cout<<"durée ="<<TimeToStr(duree)<<"\n\n\n";
         }
         rt.desalloue_enrsel(nsel);
+        if (nlogreg==1) liberecmat(rt.nscenchoisi, nselr, rt.nstat);
 		f11<<"\nNumber of times the scenario has the highest posterior probability\nTotal  ";
 		for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(9)<<nbestdir[i];
 		for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(17)<<nbestlog[i]<<"         ";
