@@ -1,5 +1,6 @@
-queueName="long.q"   # Your cluster queue 
-MPenv='SMP'          # Your cluster parallel environment
+queueStd="long.q"     # Your cluster standard queue
+queuePEname="mem.q"   # Your cluster parallel queue, if this not make sense, just wright again your standart queue name
+PEenv='SMP'           # Your cluster parallel environment
 
 
 set -o nounset
@@ -9,39 +10,42 @@ set -o errexit
 
 function submitJobs(){
     # submit jobs to the cluster scheduller
-    for jobNum in $(seq 1 $numJobs); do 
-
+    for jobNum in $(seq 1 $numJobs);
+        do
         numSimulatedDataSetForThisJob=$numSimulatedDataSetByJob
         if [ "$jobNum" -eq "$numJobs" ]
             then
             numSimulatedDataSetForThisJob=$numSimulatedDataSetLastJob
         fi
-        
-        ############################## EDIT #########################################
-        ######## Modify this line to submit jobs to your cluster scheduler ###############
-        # node.sh arguments
-        ##1 DIYABCPATH
-        ##2 NBCORES
-        ##3 NBTOGEN
-        ##4 USERDIR
-        ##5 MYNUMBER
-        ##6 DATAFILE
+
+############################## EDIT #########################################
+######## Modify this line to submit jobs to your cluster scheduler ###############
+# node.sh arguments
+##1 DIYABCPATH
+##2 NBCORES
+##3 NBTOGEN
+##4 USERDIR
+##5 MYNUMBER
+##6 DATAFILE
         MP=""
+        queue=$queueStd
         if [ "$coresPerJob" -gt 1 ]
             then
-            MP="-pe $MPenv $coresPerJob"
+            MP="-pe $PEenv $coresPerJob"
+            queue=$queuePEname
         fi
-        
-        cmd="qsub -N n${jobNum}_$projectName -q $queueName $MP -cwd node.sh ""'""$diyabcPath""'"" $coresPerJob $numSimulatedDataSetForThisJob ""'""`pwd`""'"" $jobNum  ""'""$PWD/$dataFileName""'"
+
+        cmd="qsub -N n${jobNum}_$projectName -q $queue $MP -cwd node.sh ""'""$diyabcPath""'"" $coresPerJob $numSimulatedDataSetForThisJob ""'""`pwd`""'"" $jobNum  ""'""$PWD/$dataFileName""'"
         echo $cmd
-        qsub -N n${jobNum}_$projectName -q $queueName $MP -cwd node.sh "$diyabcPath" $coresPerJob $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
-        ############################## END EDIT #####################################
-        if [ $? -eq "0" ] 
-            then 
+        qsub -N n${jobNum}_$projectName -q $queue $MP -cwd node.sh "$diyabcPath" $coresPerJob $numSimulatedDataSetForThisJob "$PWD" $jobNum  "$PWD/$dataFileName"
+############################## END EDIT #####################################
+        if [ $? -eq "0" ]
+            then
             touch runningJobs.lock
-        fi 
+        fi
     done
 }
+
 
 function getRecordsDone(){
     refTableLogFile=$1

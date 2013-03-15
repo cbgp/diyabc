@@ -213,6 +213,7 @@ echo $cmdPID > "$rngFlagFile"
 sleep 30
 
 
+# Copy log file in user working directory till end of program 
 while [ -d "/proc/$cmdPID" ]
     do
     set +e
@@ -222,17 +223,16 @@ while [ -d "/proc/$cmdPID" ]
 done
 cp "$TMPDIR"/reftable.log "$USERDIR"/reftable_$MYNUMBER.log
 
-# Copy log file in user working directory till end of program 
-while [ ! "`head -n 2 "$TMPDIR"/reftable.log | tail -n 1`" -ge $NBTOGEN -a -d "/proc/$cmdPID" ]; do
-    cp "$TMPDIR"/reftable.log "$USERDIR"/reftable_$MYNUMBER.log
-    sleep 10
-done
+
 if ! [ "$(sumStatsDone $TMPDIR/reftable.log)" -ge "$NBTOGEN" ]
     then
-    echo -e "head -n 2 "$TMPDIR"/reftable.log | tail -n 1 = `head -n 2 "$TMPDIR"/reftable.log | tail -n 1`" >&2
+    set +e
     errStatus=1000
-    echo "ERROR ERROR ERROR PID : $cmdPID: `ps -edf | grep $cmdPID`" >&2
-    echo "ERROR ERROR ERROR ls /proc/$cmdPID: `ls /proc/$cmdPID`" >&2
+    echo "ERROR records num -> reftable.log =" >&2
+    cat $TMPDIR"/reftable.log  >&2
+    echo "ERROR records num -> PID : $cmdPID: `ps -edf | grep $cmdPID`" >&2
+    echo "ERROR records num -> ls /proc/$cmdPID: `ls /proc/$cmdPID`" >&2
+    
     trapActions "program died before normal end : not enough records ($(sumStatsDone $TMPDIR/reftable.log)/$NBTOGEN)" 
 fi
 
