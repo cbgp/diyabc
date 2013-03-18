@@ -327,7 +327,7 @@ string nomficonfresult;
         if (nlogreg==1) liberecmat(rt.nscenchoisi, nselr, rt.nstat);
 		f11<<"\nNumber of times the scenario has the highest posterior probability\nTotal  ";
 		for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(9)<<nbestdir[i];
-		for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(17)<<nbestlog[i]<<"         ";
+		if (nlogreg==1) {for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(17)<<nbestlog[i]<<"         ";}
         f11.close();
         iprog +=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 }
