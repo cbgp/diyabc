@@ -79,22 +79,29 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.deValLayout.removeWidget(w)
         self.lrInterValuesW = []
         self.deInterValuesW = []
+        
 
         try:
-            de = int(self.ui.deEdit.text())
+            #de = int(self.ui.deEdit.text())
             lr = int(self.ui.lrEdit.text())
             numreg = int(self.ui.numRegCombo.currentText())
-            dedec = de/numreg
-            lrdec = lr/numreg
-            for i in range(numreg):
-                lrlab = QLabel(str(lr))
-                delab = QLabel(str(de))
-                self.lrInterValuesW.append(lrlab)
-                self.deInterValuesW.append(delab)
-                self.ui.lrValLayout.addWidget(lrlab)
-                self.ui.deValLayout.addWidget(delab)
-                de -= dedec
-                lr -= lrdec
+            if numreg == 0:
+                self.ui.lrValuesFrame.setDisabled(True)
+                self.ui.lrEdit.setDisabled(True)
+            else :
+                self.ui.lrValuesFrame.setDisabled(False)
+                self.ui.lrEdit.setDisabled(False)
+                #dedec = de/numreg
+                lrdec = lr/numreg
+                for i in range(numreg):
+                    lrlab = QLabel(str(lr))
+                    #delab = QLabel(str(de))
+                    self.lrInterValuesW.append(lrlab)
+                    #self.deInterValuesW.append(delab)
+                    self.ui.lrValLayout.addWidget(lrlab)
+                    #self.ui.deValLayout.addWidget(delab)
+                    #de -= dedec
+                    lr -= lrdec
         except Exception as e:
             print e
 
