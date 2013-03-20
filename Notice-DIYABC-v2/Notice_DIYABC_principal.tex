@@ -96,7 +96,7 @@ Other improvements over version 0 included :
 
 We recommend non-expert users to use the GUI for their computations.\\
 
-Also, as DNA sequences have been added in the second version, a new category of markers has been added to the third version : Single Nucleotide Polymorphisms (SNPs). Instead of extending once more the Genepop format, a new data simple format has been designed for these markers. Note that SNP data are treated separately from other markers ($i.e.$ they cannot be analyzed together with microsatellite and/or DNA sequence data).\\  
+Also, as DNA sequences have been added in the second version, a new category of markers has been added to the third version : Single Nucleotide Polymorphisms (SNPs). Instead of extending once more the Genepop format, a new data simple format has been designed for these markers. Note that SNP data are treated separately from other markers ($i.e.$ they cannot be analyzed together with microsatellite and/or DNA sequence data). It is worth noting that, in the present version of the program, the analysed SNP data are assumed to correspond to independent selectively-neutral loci, without any ascertainment bias (i.e. the deviations from expected theoretical results due to the SNP discovery process in which a small number of individuals from selected populations are used as discovery panel). \\  
 
 This version includes all improvements of version 1.x and a few new improvements such as :
 \begin{itemize}
@@ -107,7 +107,7 @@ This version includes all improvements of version 1.x and a few new improvements
 \end{itemize}
 
 \subsection{Acknowledgements}
-We thank Mark Beaumont who has been at the origin of our interest for ABC. He offered us constant help and inspiration since the beginning. We also thank David Balding who welcomed one of us (JMC) in his team during the whole writing of the program and who organized several workshops on ABC during the same period. We are indebted to Christian Robert, Jean-Michel Marin, Stuart Baird, Thomas Guillemaud, Renaud Vitalis, Gael Kergoat, Gilles Guillot and David Welsh with whom we discussed many theoretical and practical aspect of DIYABC in the numerous meetings financed by a grant from the French Research National Agency (project $MISGEPOP$ ANR-05-BLAN-196). The same grant is also aknowledged for having paid for the 2-year salary of FS. This research was also supported by an EU grant awarded to JMC as an EIF Marie-Curie fellowship (project $StatInfPopGen$) and which allowed him to come to David Balding's place at Imperial College (London, UK). Current and future developments of DIYABC are financed by a new grant from the French Research National Agency (project $EMILE$ ANR-09-BLAN-0145) awarded in september 2009. We thank several “beta-users”, especially Eric Lombaert, Christophe Plantamp, Marie-Pierre Chapuis, Carine Brouat and Michael Fontaine, who tested the the DIYABC V2 software with their data.
+We thank Mark Beaumont who has been at the origin of our interest for ABC. He offered us constant help and inspiration since the beginning. We also thank David Balding who welcomed one of us (JMC) in his team during the whole writing of the program and who organized several workshops on ABC during the same period. We are indebted to Christian Robert, Jean-Michel Marin, Stuart Baird, Thomas Guillemaud, Renaud Vitalis, Gael Kergoat, Gilles Guillot and David Welsh with whom we discussed many theoretical and practical aspect of DIYABC in the numerous meetings financed by a grant from the French Research National Agency (project $MISGEPOP$ ANR-05-BLAN-196). The same grant is also aknowledged for having paid for the 2-year salary of FS. This research was also supported by an EU grant awarded to JMC as an EIF Marie-Curie fellowship (project $StatInfPopGen$) and which allowed him to come to David Balding's place at Imperial College (London, UK). Current and future developments of DIYABC are financed by a new grant from the French Research National Agency (project $EMILE$ ANR-09-BLAN-0145) awarded in september 2009. We thank several “beta-users”, especially Eric Lombaert, Michael Fontaine, Christophe Plantamp, Marie-Pierre Chapuis, Carine Brouat, Raphaël Leblois and Thomas Guillemaud, who tested the the DIYABC V2 software with their data.
 \subsection{References to cite}
 \begin{itemize}
 \item \textbf{version 0 :} Cornuet J.M., F. Santos, M.A. Beaumont, C.P. Robert, J.M. Marin, D.J. Balding, T. Guillemaud and A. Estoup. Inferring population history with DIYABC: a user-friendly approach to Approximate Bayesian Computations (2008) \emph{Bioinformatics}, \textbf{24} (23), 2713-2719.
@@ -117,6 +117,18 @@ We thank Mark Beaumont who has been at the origin of our interest for ABC. He of
 \subsection{Web site}
 http://www1.montpellier.inra.fr/CBGP/diyabc\\
 
+\subsection{How to create (and send) a bug report}
+DIYABC V2 provides an easy way to send to the program developers the different files and clues that are necessary to attempt solving a bug. Click on the “Help” menu. Then go on the “Create bug report” tab. You then just need to following the few instructions we give you at this stage, validate and save the created bug report tarred file somewhere on your computer. Please send the bug report file to the indicated email address (\texttt{(diyabc@cbgp.supagro.fr)}). Two remarks here: (i) the bug you describe has to be the last things that you did with the program; and (ii) please try to reproduce your bug one time and then create and send the bug report. Finally, it had to be noted that if the bug completely crash the application then no bug report can be created. We will do our best to solve your bug thanks to the bug report you provided us.
+
+\subsection{System requirements}
+\begin{itemize}
+\item DIYABC should run on any linux flavour, Microsoft Windows XP and Seven and OS x 10.5 (intel) or later.
+\item Minimum 4GB of RAM; 6GB of RAM recommended 
+\item 70MB free disk space for DIYABC binaries
+\item From 1 to 10GB free disk space for each project depending on the project configuration and the records number in the reftable file.
+\end{itemize}
+
+Caveat : on windows 32bits the reftable file will not grow more than 4Go.
 
 
 \newpage
