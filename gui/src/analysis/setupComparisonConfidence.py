@@ -54,11 +54,15 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.numRegCombo.clear()
             self.ui.numRegCombo.addItem("0")
             self.ui.numRegCombo.addItem("1")
-            self.ui.notdsEdit.setText("500")
-        else:
+            self.ui.notdsEdit.setText("500")        
+        else: # assume self.analysis.category == "compare"
             self.ui.notdsEdit.hide()
             self.ui.notdsLabel.hide()
             self.ui.candidateLabel.hide()
+            self.setScenarios([self.analysis.chosenSc])
+            self.setCandidateScenarios(self.analysis.candidateScList)
+            self.setRecordValues(self.analysis.candidateScList)
+        
         self.ui.numRegCombo.setCurrentIndex(1)
 
         self.ui.deEdit.setText("500")
