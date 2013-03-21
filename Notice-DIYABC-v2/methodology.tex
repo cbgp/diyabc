@@ -165,7 +165,7 @@ generated. For that reason, we decided to provide the effective size
 and the sampling description on two distinct lines.
 \end{enumerate}
 
-\textbf{Examples} Below are some usual scenarios with increasing complexity. Each scenario is coded on the left side and a graphic representation given by $DIYABC$ is printed on the right side
+\textbf{Examples} Below are some usual scenarios with increasing complexity. Each scenario is coded on the left side and a graphic representation given by DIYABC is printed on the right side
 \begin{enumerate}
 \item One population from which several samples have been taken at
 various generations : 0, 3 and 10. The only unknown parameter of the scenario\footnote{Of course, there are also one or more parameter(s) for the mutation model.} is the
@@ -477,11 +477,11 @@ an approximate sample of the posterior distribution of parameters \citep{B2002}.
 \emph{Checking the model is crucial to statistical analysis}  \citep[p161 in][]{GCSR1995}. Model checking (i.e. the assessment of the �goodness-of-fit� of a model � parameter posterior combination) is a facet of ABC analysis that has been so far neglected (but see Ingvarsson,  2008). Following Gelman et al. (1995; pp 159-163), we already implemented this option in $DIYABCv1.0$,  to measure the discrepancy between a model � parameter posterior combination and a �real� data set by considering various sets of test quantities. These test quantities can be chosen among the large set of ABC summary statistics proposed in the program. This option is based on the same kinds of analysis as section 2.7. The main difference is the set of simulated data. Whereas in section 2.7, prior distributions of parameters have been used to simulate data sets, here we use posterior distributions of the same parameters, hence simulating data from the \emph{posterior predictive distribution}. \\
 The first analysis is a principal component analysis in the space of summary statistics using data sets simulated with the \textbf{prior} distributions of parameters (exactly as in section 2.7) and the observed data as well as \textbf{data sets from the posterior predictive distribution} are represented on each plane of the PCA. If the model fits well the data, one should see on each PCA plane a wide cloud of data sets simulated from the prior, with the observed data set in the middle of a small cluster of datasets from the posterior predictive distribution.\\
 In the second analysis, each summary statistics of the observed data set is ranked against the distribution of the corresponding summary statistics from the posterior predictive distribution. Summary statistics play here the role of \emph{test statistics} \citep[p169 in][]{GCSR1995}.\\
- Since summary statistics are generally not sufficient, it is advised to use different sets of summary statistics to compute the posterior distribution of parameters on one hand and to check the model on the other hand \citep[see][]{C2010}. This has been implemented in $DIYABC$. 
+ Since summary statistics are generally not sufficient, it is advised to use different sets of summary statistics to compute the posterior distribution of parameters on one hand and to check the model on the other hand \citep[see][]{C2010}. This has been implemented in DIYABC. 
 
 \subsection{Measures of performances}
 As stressed in previous studies \citep[e.g.][]{Ex2005}, the ABC appproach provides an efficient way of assessing its own performances for estimating posterior distributions of parameters. The reference table, the building of which represents generally 95 to 99\% of the computing time, can be reused to analyse pseudo-observed (test) data sets obtained through simulation with known values of parameters. It is then rather quick and easy to evaluate the performance of the method for parameter estimation by computing statistics such as estimation biases or mean square errors.\\
-These measures of performance have been fully integrated into $DIYABC$. The performance measures computed by $DIYABC$ are :
+These measures of performance have been fully integrated into DIYABC. The performance measures computed by DIYABC are :
 \begin{description}
 \item[the average relative bias] : the difference between the point estimate ($e$) and the true value ($v$)divided by the true value, 
  $\frac{1}{n}\sum_{i=1}^n \frac{e_i - v_i}{v_i}$, averaged over the $n$ test data sets,\\
@@ -500,19 +500,19 @@ These measures of performance have been fully integrated into $DIYABC$. The perf
  \item[the Relative Median of the Absolute Error (RMAE)] :  the 50\% quantile (over test data sets) of the absolute value of the difference between the point estimate (in each data set) and the true value divided by the true value.
 \end{description} 
 ~\
-$DIYABC$ considers the following three point estimates : mean, median and mode of the  $\phi_{ik}^*$  (sample of the posterior distribution of each parameter), as defined in subsection 1.7.
+DIYABC considers the following three point estimates : mean, median and mode of the  $\phi_{ik}^*$  (sample of the posterior distribution of each parameter), as defined in subsection 1.7.
 ~\\
- Concerning the true value ($v$) appearing in the above formulae, $DIYABC$ offers two possibilities :
+ Concerning the true value ($v$) appearing in the above formulae, DIYABC offers two possibilities :
  \begin{enumerate}
  \item All values $v$ are fixed by the user. If any one of these values is outside the limits given to the prior for the corresponding parameter, a warning message is issued but the analysis can proceed if needed.
  \item All values $v$ are drawn from distributions. These distributions can be different from those of priors. They may even not be overlapping (no warning message is issued whatever the user's choice). 
  \end{enumerate}
  If you want to fix some parameter values and draw the other from distributions, choose the second option and give the same desired values as minimum and maximum for those fixed parameter values.\\
 
-In order to better assess the information brought by genetic data, $DIYABC$ provides a double estimate of all these bias/precision statistics. As expected, the first one is based on genetic data given in the data file. The second one is computed as if there was no genetic information, $i.e.$ estimates are based only on parameter priors. Technically, a sample of parameter values is drawn at random from the reference table. This sample of the same size of the sample of posterior values is used in place of the latter in all computations.
+In order to better assess the information brought by genetic data, DIYABC provides a double estimate of all these bias/precision statistics. As expected, the first one is based on genetic data given in the data file. The second one is computed as if there was no genetic information, $i.e.$ estimates are based only on parameter priors. Technically, a sample of parameter values is drawn at random from the reference table. This sample of the same size of the sample of posterior values is used in place of the latter in all computations.
 
 \subsection{Comparison of scenarios}
-The ABC approach can also be used to compare possible scenarios for the same data file through the computation of the posterior probabilities of each scenario and this option is naturally implemented in $DIYABC$.\\
+The ABC approach can also be used to compare possible scenarios for the same data file through the computation of the posterior probabilities of each scenario and this option is naturally implemented in DIYABC.\\
 
 \subsubsection{Reference table} 
 First, the reference table can include as many scenarios as desired. By default, the prior probability of each scenario is uniform, that is each scenario will have approximately the same number of simulated data sets. But, if for any reason, one wants a different prior probability for each scenario, there is the possibility to do so.\\
@@ -526,7 +526,7 @@ When conditions apply to some parameters (see subsection 2.4), the program provi
 When there is only one scenario, both options are equivalent, although in option 2, there might be less simulated data sets that are recorded than one asked. When there is more than one scenario, the second option can be viewed as a way to set prior probabilities on scenario that result from imposed conditions on parameters (see \citet{ME2005} for an example).  
 
 \subsubsection{Posterior probability of scenarios}
-The program $DIYABC$ provides two estimates of the posterior probability of each scenario :
+The program DIYABC provides two estimates of the posterior probability of each scenario :
 \begin{description} 
 \item[a \emph{direct}  estimate :] This is simply the number of times that a given scenario is found in the first $n_{\delta}$ simulated data sets once the latter, produced under several scenarios, have been sorted by ascending distances to the observed data set ($i.e.$ the ``closest'' simulated data sets).\\
 \item[a logistic regression estimate :] Following M.A. Beaumont's suggestion \citep{FR2007,B2008}, a polychotomic weighted logistic regression is performed on the first  $n_{\delta}$ data sets with the proportion of the scenario as the dependent variable and the differences between observed and simulated data set summary statistics as the independent variables. The intercept of the regression (corresponding to an identity between simulated and observed summary statistics) is taken as the point estimate. In addition, 95\% confidence intervals are computed \citep{C2008}. 
