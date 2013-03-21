@@ -25,16 +25,16 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.parent=parent
         self.directory=directory
         self.analysis = analysis
+        self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]       
         self.paramChoice = "o"
         self.file_subname = "_original"
         self.createWidgets()
         self.dicoPlot = {}  
         self.dicoFrame = {}
         self.svgList = []
-        self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
-        
         self.drawAll()
-
+        
+        
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -49,7 +49,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         
         QObject.connect(self.ui.oRadio,SIGNAL("clicked()"),self.changeParamChoice)
         QObject.connect(self.ui.cRadio,SIGNAL("clicked()"),self.changeParamChoice)
-        QObject.connect(self.ui.sRadio,SIGNAL("clicked()"),self.changeParamChoice)
+        QObject.connect(self.ui.sRadio,SIGNAL("clicked()"),self.changeParamChoice)          
 
         self.ui.PCAFrame.hide()
         self.ui.ACProgress.hide()
@@ -58,16 +58,32 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
         self.ui.PCAScroll.hide()
 
-        if not os.path.exists("%s/analysis/%s/mmmq_composite.txt"%(self.parent.dir,self.directory))\
-        and not os.path.exists("%s/analysis/%s/paramstatdens_composite.txt"%(self.parent.dir,self.directory)):
-            self.ui.cRadio.hide()
-        if not os.path.exists("%s/analysis/%s/mmmq_scaled.txt"%(self.parent.dir,self.directory))\
-        and not os.path.exists("%s/analysis/%s/paramstatdens_scaled.txt"%(self.parent.dir,self.directory)):
-            self.ui.sRadio.hide()
-
         self.ui.horizontalLayout_2.setContentsMargins(0,0,0,0)
         self.ui.horizontalLayout_3.setContentsMargins(0,0,0,0)
 
+        if not os.path.exists("%s/analysis/%s/mmmq_composite.txt"%(self.parent.dir,self.directory))\
+           and not os.path.exists("%s/analysis/%s/paramstatdens_composite.txt"%(self.parent.dir,self.directory)):
+            self.ui.cRadio.hide()
+        else :
+            self.ui.cRadio.setChecked(True)
+            self.paramChoice = "c"
+            self.file_subname = "_composite"
+        if not os.path.exists("%s/analysis/%s/mmmq_scaled.txt"%(self.parent.dir,self.directory))\
+           and not os.path.exists("%s/analysis/%s/paramstatdens_scaled.txt"%(self.parent.dir,self.directory)):
+            self.ui.sRadio.hide()
+        else : 
+            self.ui.sRadio.setChecked(True)
+            self.paramChoice = "s"
+            self.file_subname = "_scaled"
+        if not os.path.exists("%s/analysis/%s/mmmq_original.txt"%(self.parent.dir,self.directory))\
+           and not os.path.exists("%s/analysis/%s/paramstatdens_original.txt"%(self.parent.dir,self.directory)):
+            self.ui.oRadio.hide()
+        else :
+            self.ui.oRadio.setChecked(True)
+            self.paramChoice = "o"
+            self.file_subname = "_original"
+            
+            
     def changeParamChoice(self):
         sd = self.sender()
         if sd == self.ui.oRadio:
