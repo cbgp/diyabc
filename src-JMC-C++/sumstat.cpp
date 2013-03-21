@@ -530,7 +530,7 @@ extern int debuglevel;
   }
 
   long double ParticleC::cal_mgw1p(int gr,int st){
-    long double num=0.0,den=0.0;
+    long double num=0.0,den=0.0, un=1.0;
     int min,max;
     int iloc,loc;
     int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -542,7 +542,7 @@ extern int debuglevel;
 
 	min=0;while (this->locuslist[loc].freq[sample][min]<0.00001) min++;
 	max=this->locuslist[loc].kmax-this->locuslist[loc].kmin;while (this->locuslist[loc].freq[sample][max]<0.00001) max--;
-	den += (long double)(1+max-min)/(long double)this->locuslist[loc].motif_size;
+	den += un+(long double)(max-min)/(long double)this->locuslist[loc].motif_size;
       }
     }
     if (den>0) return num/den; else return 0.0;
