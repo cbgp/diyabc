@@ -88,9 +88,11 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             if numreg == 0:
                 self.ui.lrValuesFrame.setDisabled(True)
                 self.ui.lrEdit.setDisabled(True)
+                self.analysis.logreg = False
             else :
                 self.ui.lrValuesFrame.setDisabled(False)
                 self.ui.lrEdit.setDisabled(False)
+                self.analysis.logreg = True
                 #dedec = de/numreg
                 lrdec = lr/numreg
                 for i in range(numreg):

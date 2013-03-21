@@ -1075,53 +1075,63 @@ class ProjectReftable(Project):
                 self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "compare":
-            if os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) and\
-                    os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid)):
+            if (self.thAnalysis.analysis.logreg!=True and os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid))) \
+                or\
+                (self.thAnalysis.analysis.logreg==True and os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) and  os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid))) :
+                dd = datetime.now()
+                date = "%s/%s/%s"%(dd.day,dd.month,dd.year)
                 # deplacement des fichiers de résultat
                 aDirName = "%s_comparison"%aid
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
-                shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName)) and os.path.exists("%s/analysis/%s/complogreg.txt"%(self.dir,aDirName)):
+                g = open("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName),'r')
+                datadir = g.readlines()
+                g.close()             
+                if self.thAnalysis.analysis.logreg==True :
+                    shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))                
                     f = open("%s/analysis/%s/complogreg.txt"%(self.dir,aDirName),'r')
-                    g = open("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName),'r')
-                    datareg = f.read()
-                    datadir = g.readlines()
-                    f.close()
-                    g.close()
-                    dd = datetime.now()
-                    date = "%s/%s/%s"%(dd.day,dd.month,dd.year)
-                    fdaTextToDisplay = ""
-                    if self.thAnalysis.analysis.fda == '1' :
-                        fdaTextToDisplay = "Summary statistics have been replaced by LDA component\n"
-                    textToDisplay = "\
-                    COMPARISON OF SCENARIOS\n\
-                    (%s)\n\n\
-        Project directory : %s\n\
-        Candidate scenarios : %s\n\
-        Number of simulated data sets : %s\n\
-        %s\
-        \n\
-        Direct approach\n\n"%(date,self.dir,the_analysis.candidateScList,self.ui.nbSetsDoneEdit.text(),fdaTextToDisplay)
-                    textDirect = datadir[0].replace("   n   ","closest")
-                    i = 10
-                    while i < len(datadir):
-                        textDirect += datadir[i]
-                        i+=10
-                    textToDisplay += textDirect
+                    datareg = f.read()             
+                    f.close() 
+                fdaTextToDisplay = ""
+                if self.thAnalysis.analysis.fda == '1' :
+                    fdaTextToDisplay = "Summary statistics have been replaced by LDA component\n"
+                textToDisplay = "\
+                COMPARISON OF SCENARIOS\n\
+                (%s)\n\n\
+    Project directory : %s\n\
+    Candidate scenarios : %s\n\
+    Number of simulated data sets : %s\n\
+    %s\
+    \n\n Direct approach\n\n"%(date,self.dir,the_analysis.candidateScList,self.ui.nbSetsDoneEdit.text(),fdaTextToDisplay)
+                textDirect = datadir[0].replace("   n   ","closest")
+                i = 10
+                while i < len(datadir):
+                    textDirect += datadir[i]
+                    i+=10
+                textToDisplay += textDirect
+                if  self.thAnalysis.analysis.logreg==True :                   
                     textToDisplay += "\n\n Logistic approach\n\n"
                     textToDisplay += datareg
-                    dest = open("%s/analysis/%s/compdirlog.txt"%(self.dir,aDirName),'w')
-                    dest.write(textToDisplay)
-                    dest.close()
+                dest = open("%s/analysis/%s/compdirlog.txt"%(self.dir,aDirName),'w')
+                dest.write(textToDisplay)
+                dest.close()
             else:
-                self.thAnalysis.problem = "No output files produced\n"
+                self.thAnalysis.problem = "Missing output file(s)\n"
+                if os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) :
+                    self.thAnalysis.problem += "%s/%s_compdirect.txt found : OK\n"%(self.dir,aid)
+                else :
+                    self.thAnalysis.problem += "%s/%s_compdirect.txt NOT FOUND : ERROR\n"%(self.dir,aid)
+                if self.thAnalysis.analysis.logreg==True :
+                    if os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid)) :
+                        self.thAnalysis.problem += "%s/%s_complogreg.txt found : OK\n"%(self.dir,aid)
+                    else :
+                        self.thAnalysis.problem += "%s/%s_complogreg.txt not found : ERROR\n"%(self.dir,aid)    
                 if os.path.exists("%s/compare.out"%(self.dir)):
                     f = open("%s/compare.out"%(self.dir),"r")
                     lastLine = f.readlines()[-1]
                     f.close()
-                    self.thAnalysis.problem += "\n%s"%lastLine
+                    self.thAnalysis.problem += "\nThis is the last line of the output file %s/compare.out :\n%s"%(self.dir,lastLine)
                 self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "bias":
@@ -1355,6 +1365,8 @@ class ProjectReftable(Project):
                     a.sumStatsTHDico = {}
                 if "sumStatsConfDico" not in attr:
                     a.sumStatsConfDico = {}
+                if "logreg" not in attr:
+                    a.logreg = None                    
                 self.addAnalysis(a)
 
     def lock(self):

@@ -118,14 +118,16 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         """
         if os.path.exists("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory)):
             (first_line_tab,dico_coord) = self.getCoord("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory))
-            self.addDraw(first_line_tab,dico_coord,True)
+            self.addDraw(first_line_tab,dico_coord,True)         
+        else:
+            log(3, "compdirect.txt not found")
+            
+        if self.analysis.logreg==True :
             if os.path.exists("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory)):
                 (first_line_tab,dico_coord) = self.getCoord("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory))
                 self.addDraw(first_line_tab,dico_coord,False)
             else:
                 log(3, "complogreg.txt not found")
-        else:
-            log(3, "compdirect.txt not found")
 
 
     def addDraw(self,first_line_tab,dico_coord,direct):

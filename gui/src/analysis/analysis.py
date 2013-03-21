@@ -21,6 +21,7 @@ class Analysis():
         self.params = ""
         self.aParams = None
         self.fda = None
+        self.logreg = None
 
         self.status = status
 
