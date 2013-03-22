@@ -733,10 +733,10 @@ extern int debuglevel;
     int sample=stat.samp-1;
     int sample1=stat.samp1-1;
     int sample2=stat.samp2-1;
-    //cout<<"sample ="<<sample<<"   sample1="<<sample1<<"   sample2="<<sample2<<"\n";
+    cout<<"sample ="<<sample<<"   sample1="<<sample1<<"   sample2="<<sample2<<"\n";
     for (int rep=0;rep<2;rep++) {
       a=0.001*(long double)(i0+rep);li[rep]=0.0;
-      //cout << "rep = " << rep << "   a = "<< a << "  lik = "<< li[rep] << "\n";
+      cout << "rep = " << rep << "   a = "<< a << "  lik = "<< li[rep] << "\n";
       for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 	loc=this->grouplist[gr].loc[iloc];
 	cat=this->locuslist[loc].type % 5;
@@ -783,11 +783,13 @@ extern int debuglevel;
 	  //cout << "lik = " << li[rep] << "\n";
 	}
       }
-      //cout << "rep = " << rep << "   a = "<< a << "lik = "<< li[rep] << "\n";
+      cout << "rep = " << rep << "   a = "<< a << "lik = "<< li[rep] << "\n";
     }
-    //cout << "i0 = " <<i0 << "   li[i0] = "<< li[0] << "\n";
+    cout << "   li[i0] = "<< li[0] << "\n";
+    cout << "   li[i1] = "<< li[1] << "\n";
     li0=li[0];
     delta=li[1]-li[0];
+	cout<<"delta ="<<delta<<"\n";
     delete []li;
     return make_pair<long double, long double>(li0,delta);
   }
@@ -805,7 +807,7 @@ extern int debuglevel;
       c=pente_lik(gr,st,i3);lik3=c.first; p3=c.second;
       if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
       else		   {i1=i3;p1=p3;lik1=lik3;}
-    } while (abs(i2-i1)>1);
+   } while (abs(i2-i1)>1);
     if (lik1>lik2) return 0.001*(long double)i1; else return 0.001*(long double)i2;
   }
 
@@ -1468,7 +1470,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
     bool OK;
     long double res=0.0;
     pair<long double, long double> c;
-    //cout<<"debut de cal_aml3p\n";
+    cout<<"debut de cal_aml3p\n";
     int samp1=this->grouplist[gr].sumstat[st].samp1-1;
     int samp2=this->grouplist[gr].sumstat[st].samp2-1;
 
@@ -1480,15 +1482,18 @@ long double ParticleC::cal_nha2p(int gr,int st){
     }
     if(ss != NULL) delete []ss;
     if (nlocutil<1) return 0.5;
-    //cout<<"avant cal_freq\n";
+    cout<<"avant cal_freq\n";
     cal_freq(gr,st);
     c=pente_lik(gr,st,i1);lik1=c.first; p1=c.second;
     c=pente_lik(gr,st,i2);lik2=c.first; p2=c.second;
+	cout<<"apres les pente_lik  p1="<<p1<<"   p2="<<p2<<"   i1="<<i1<<"   i2="<<i2<<"\n";
+	cout<<"lik1="<<lik1<<"   lik2="<<lik2<<"\n";
     if ((p1<0.0)and(p2<0.0)) return 0.0;
     if ((p1>0.0)and(p2>0.0)) return 1.0;
     do {
       i3 = (i1+i2)/2;
       c=pente_lik(gr,st,i3);lik3=c.first; p3=c.second;
+	  cout<<"p3="<<p3<<"   i3="<<i3<<"   lik3="<<lik3<<"\n";
       if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
       else           {i1=i3;p1=p3;lik1=lik3;}
     } while (abs(i2-i1)>1);
@@ -1750,7 +1755,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
     }
     int numsnp;
     for (int st=0;st<this->grouplist[gr].nstat;st++) {
-		/*
+	/*	
       if (this->grouplist[gr].sumstat[st].cat<5)
 	{cout <<" calcul de la stat "<<st<<"   cat="<<this->grouplist[gr].sumstat[st].cat<<"   group="<<gr<<"   samp = "<<this->grouplist[gr].sumstat[st].samp  <<"\n";fflush(stdin);}
 	else if (this->grouplist[gr].sumstat[st].cat<12)
@@ -1882,7 +1887,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 	  this->grouplist[gr].sumstat[st].val = this->cal_moyL(this->grouplist[gr].sumstatsnp[numsnp]);break;
 	case    50 : this->grouplist[gr].sumstat[st].val = this->locpol;
 	}
-      //cout << "      stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
+     // cout << "      stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
     }
     //cout<<"\n";
     if ((this->grouplist[gr].type == 0)or(this->grouplist[gr].type>9)) liberefreq(gr);

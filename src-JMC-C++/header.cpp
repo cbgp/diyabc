@@ -53,22 +53,26 @@ void MutParameterC::ecris() {
 
 
 void HeaderC::libere() {
-    //cout<<"HeaderC::libere nconditions="<<this->nconditions<<"\n";
+    cout<<"HeaderC::libere nconditions="<<this->nconditions<<"\n";
 	this->dataobs.libere();
-	//cout<<"apres dataobs.libere\n";
+	cout<<"apres dataobs.libere\n";
 	if(this->nconditions>0) delete []this->condition;
-	// for(int i=0;i<this->nscenarios;i++) this->scenario[i].libere();
-	//cout<<"apres scenario[i].libere\n";
+	 for(int i=0;i<this->nscenarios;i++) this->scenario[i].libere();
+	cout<<"apres scenario[i].libere\n";
 	delete []this->scenario;
+	cout<<"apres delete this->scenario\n";
 	delete [] this->histparam;
+	cout<<"apres delete this->histparam\n";
 	delete [] this->statname;
+	cout<<"apres delete this->statname\n";
 	if (this->nparamut>0) delete []this->mutparam;
-	// this->scen.libere();
-	//for(int i=1;i<ngroupes+1;i++) this->groupe[i].libere();
+	cout<<"avant scen.libere\n";
+	 this->scen.libere();
+	for(int i=1;i<ngroupes+1;i++) this->groupe[i].libere();
 	for (int gr=1;gr<=this->ngroupes;gr++) delete [] this->groupe[gr].sumstat;
 	for (int gr=0;gr<=this->ngroupes;gr++) delete [] this->groupe[gr].loc;
 	delete []this->groupe;
-	//cout<<"apres delete group\n";
+	cout<<"apres delete group\n";
 }
 
 

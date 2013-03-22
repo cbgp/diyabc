@@ -562,10 +562,12 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 			enreg[ipart].message="OK";
 		}
 		else {
-			cout<<"A gene genealogy failed in scenario "<<this->particule[ipart].scen.number<<"\n";
-			enreg[ipart].message  = "A gene genealogy failed in scenario ";
-			enreg[ipart].message += IntToString(this->particule[ipart].scen.number);
-			enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
+			if (this->particule[ipart].drawuntil) {
+				cout<<"A gene genealogy failed in scenario "<<this->particule[ipart].scen.number<<"\n";
+				enreg[ipart].message  = "A gene genealogy failed in scenario ";
+				enreg[ipart].message += IntToString(this->particule[ipart].scen.number);
+				enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
+			} else enreg[ipart].message="NOTOK";
 		}
 	}
 	if (debuglevel==5) cout<<"apres remplissage des enreg\n";fflush(stdin);
@@ -601,7 +603,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		//cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
 		//cout<<"npart="<<this->npart<<"\n";
 		for (int ipart=0;ipart<this->npart;ipart++) {
-			//cout<<"ipart="<<ipart<<"    sOK[ipart]="<<sOK[ipart]<<"\n";
+			cout<<"ipart="<<ipart<<"    sOK[ipart]="<<sOK[ipart]<<"   message="<<enreg[ipart].message<<"\n";
 			if (sOK[ipart]==0){
 				//cout<<enreg[ipart].numscen<<"\n";
 				fprintf(pFile,"%3d  ",enreg[ipart].numscen);

@@ -509,7 +509,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     //cout<<"dans sethistparamvalue nconditions="<<this->scen.nconditions<<"   drawuntil="<<drawuntil<<"\n";
     bool OK=true;
     if (this->scen.nconditions>0) {
-		if (drawuntil) {
+		if (this->drawuntil) {
 			//cout <<"drawuntil\n";
 			OK=false;
 			while (not OK) {
@@ -1882,12 +1882,14 @@ void ParticleC::put_one_mutation(int loc) {
 	  checktree=this->verifytree();
 	  if (debuglevel==10) cout <<"apres verifytree\n";
 	  if (checktree!="") {
-		  FILE *flog;
-		  cout<<checktree<<"\n";
-		  this->scen.ecris();
-		  checktree="A gene genealogy failed in scenario "+IntToString(numscen)+". Check scenario and prior consistency.\n  ";
-		  flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",checktree.c_str());fclose(flog);
-		  exit(1);
+		  if (this->drawuntil){
+			FILE *flog;
+			cout<<checktree<<"\n";
+			this->scen.ecris();
+			checktree="A gene genealogy failed in scenario "+IntToString(numscen)+". Check scenario and prior consistency.\n  ";
+			flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",checktree.c_str());fclose(flog);
+			exit(1);
+		  } else return 1;
 	  }
 	  if (debuglevel==5) cout <<"apres checktree\n";
 	  bool gtYexist=false, gtMexist=false,*gtexist;

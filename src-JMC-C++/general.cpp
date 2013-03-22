@@ -489,7 +489,8 @@ try {
 					k=readheaders();
 
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"   ";fflush(stdin);
-                   if (k==1) {
+                   cout<<"k="<<k<<"\n";
+				   if (k==1) {
                               rt.datapath = datafilename;
                               rt.nscen = header.nscenarios;
                               rt.nrec=0;
@@ -504,6 +505,7 @@ try {
                         	  throw std::runtime_error("cannot create reftable file\n");
                         	  //cout<<"cannot create reftable file\n"; exit(1);
                           }
+                          cout<<"DEBUT  nrecneeded="<<nrecneeded<<"   rt.nrec="<<rt.nrec<<"\n";
                           if (nrecneeded>rt.nrec) {
                                 rt.openfile();
                                 enreg = new enregC[nenr];
@@ -552,7 +554,7 @@ try {
 										} else {
 											nenrOK=0;
 											for (int i=0;i<nenr;i++) {
-												if (enreg[i].message!="OK") {nenrOK++;neOK[enreg[i].numscen-1]++;}
+												if (enreg[i].message=="OK") {nenrOK++;neOK[enreg[i].numscen-1]++;}
 												netot[enreg[i].numscen-1]++;
 											}
 											fd.open (scsufilename.c_str());
@@ -561,6 +563,7 @@ try {
 											for (int p=0;p<header.nscenarios;p++) 
 												fd<<setiosflags(ios::fixed)<<setw(5)<<p+1<<setw(15)<<netot[p]<<setw(15)<<neOK[p]<<"\n";
 											fd.close();
+											cout<<"nenrOK="<<nenrOK<<"\n";
 											if (nenrOK>0){
 												enregOK = new enregC[nenrOK];
 												for (int p=0;p<nenrOK;p++) {
@@ -570,7 +573,7 @@ try {
 												}
 												nenrOK=0;
 												for (int i=0;i<nenr;i++){ 	
-													if (enreg[i].message!="OK"){
+													if (enreg[i].message=="OK"){
 														for (int p=0;p<header.nstat;p++) enregOK[nenrOK].stat[p] = enreg[i].stat[p];
 														for (int p=0;p<header.nparamtot+3*header.ngroupes;p++) enregOK[nenrOK].param[p] = enreg[i].param[p];
 														enregOK[nenrOK].numscen = enreg[i].numscen;
@@ -579,6 +582,7 @@ try {
 													}
 												} 
 												rt.writerecords(nenrOK,enregOK);
+												cout<<"apres rt.writerecords\n";
 												saveRNG(mtss, countRNG, RNG_filename); // Ajout Pierre le 30/11/2012
 												rt.nrec +=nenrOK;
 												ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"OK\n"<<rt.nrec<<"\n"<<TimeToStr(remtime)<<"\n";f1.close();
@@ -606,7 +610,7 @@ try {
 								  //cout<<"apres rt.closefile\n";
                                   if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}
                                   //cout<<"avant header.libere\n";
-                                  header.libere();
+                                  //header.libere();
 								  //cout<<"apres header.libere\n";
                                   //exit(1);
                           } else {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n\n";f1.close();}

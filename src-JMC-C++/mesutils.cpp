@@ -97,6 +97,7 @@ string* splitwords(string s,string sep,int *k){
 	while (s.find(sep)== 0) s=s.substr(1);
 	*k=0;
 	s.append(sep);
+	//cout<<"s="<<s<<"\n";
 	string *sb,s0,s1;
 	sb=NULL;
 	s1=string();
