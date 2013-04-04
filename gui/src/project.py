@@ -25,6 +25,8 @@ class Project(baseProject,formProject):
     par defaut, un projet est considéré comme nouveau, cad que l'affichage est celui d'un projet vierge
     pour un projet chargé, on modifie l'affichage en conséquence dans loadFromDir
     """
+
+    
     def __init__(self,name,dir=None,parent=None):
         self.parent=parent
         self.name=name
@@ -33,6 +35,7 @@ class Project(baseProject,formProject):
         self.data = None
         self.hist_state_valid = False
         self.gen_state_valid = False
+        self.MIN_NUM_DATA_SETS_BY_SCENARIO_FOR_ANALYSIS = 10000
 
         # utile seulement si on derive de QTabWidget
         super(Project,self).__init__(parent)
@@ -202,13 +205,21 @@ class Project(baseProject,formProject):
 
     def setNbScenarios(self,nb):
         """ ecrit le nombre de scenarios dans la zone "historical model"
-        """
-        self.ui.nbScLabel.setText(nb)
+            ecrit le waning sur le nombre de donnees simulees necessaires pas scenario
+        """        
+        pluriel = ""
+        if nb > 1:
+            pluriel = "s"
+        self.ui.nbScLabel.setText("{0} scenario{1}".format(nb,pluriel))
+        self.ui.warningNumLabel.setText("Warning : a minimum of {0} X {1} simulated data sets are needed for further analyses !".format(nb,self.MIN_NUM_DATA_SETS_BY_SCENARIO_FOR_ANALYSIS))
 
     def setNbParams(self,nb):
         """ écrit le nombre de paramètres dans la zone "historical model"
         """ 
-        self.ui.nbHistParamLabel.setText(nb)
+        pluriel = ""
+        if nb > 1:
+            pluriel = "s"
+        self.ui.nbHistParamLabel.setText("{0} historical parameter{1}".format(nb,pluriel))
 
     def clearHistoricalModel(self):
         """ détruit le modèle historique et en instancie un nouveau

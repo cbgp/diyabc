@@ -1266,7 +1266,8 @@ class ProjectReftable(Project):
 
     def putRefTableSize(self):
         """ met à jour l'affichage de la taille de la reftable
-        et verrouille les modèles hist et gen si une reftable existe
+            verrouille les modèles hist et gen si une reftable existe
+            actualise le warning sur le nombre min de data sets a simuler
         """
         size = self.readRefTableSize()
         if (size != None) and (size != 0):
@@ -1274,13 +1275,21 @@ class ProjectReftable(Project):
             self.freezeHistModel()
             self.freezeGenData()
             self.ui.newAnButton.setDisabled(False)
+            minSizeForAnalysis = len(self.hist_model_win.scList) * self.MIN_NUM_DATA_SETS_BY_SCENARIO_FOR_ANALYSIS
+            if size < minSizeForAnalysis :
+                self.ui.warningNumLabel.show()
+            else :
+                self.ui.warningNumLabel.hide()
+                
         else:
             # si on n'a pas de reftable, on empêche la définition d'analyse
             self.ui.nbSetsDoneEdit.setText("0")
             self.freezeHistModel(False)
             self.freezeGenData(False)
             self.ui.newAnButton.setDisabled(True)
-
+            self.ui.warningNumLabel.show()
+            
+            
     def freezeHistModel(self,yesno=True):
         """ empêche la modification du modèle historique tout en laissant
         la possibilité de le consulter

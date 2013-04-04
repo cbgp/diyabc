@@ -932,20 +932,14 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         return len(self.scList)
 
     def majProjectGui(self):
-        """ ecrit les infos sur le nombre de scenarios et de params
+        """ demande a ecrire les infos sur le nombre de scenarios et de params
         dans l'ecran general du projet
         """
         # gestion des valeurs, maj dans la GUI
         nb_sc = len(self.scList)
-        pluriel = ""
-        if nb_sc > 1:
-            pluriel = "s"
-        self.parent.setNbScenarios("%i scenario%s"%(nb_sc,pluriel))
+        self.parent.setNbScenarios(nb_sc)
         nb_params = len(self.paramList)
-        pluriel = ""
-        if nb_params > 1:
-            pluriel = "s"
-        self.parent.setNbParams("%i historical parameter%s"%(nb_params,pluriel))
+        self.parent.setNbParams(nb_params)
 
     def returnToProject(self):
         """ reactive les onglets du projet et efface celui du model historique

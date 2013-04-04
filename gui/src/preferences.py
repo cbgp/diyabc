@@ -505,9 +505,9 @@ class Preferences(AutoPreferences):
             # MACOS
             elif "darwin" in sys.platform:
                 if "86" in platform.machine() and "64" not in platform.machine():
-                    exPath = "%s/bin/diyabc-comput-mac-i386"%DATAPATH
+                    exPath = os.path.join(DATAPATH,"bin/diyabc-comput-mac-i386")
                 else:
-                    exPath = "%s/bin/diyabc-comput-mac-x64"%DATAPATH
+                    exPath = os.path.join(DATAPATH,"bin/comput-mac-x64")
         else:
             if not os.path.exists(self.ui.execPathPathEdit.text()):
                 output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%self.ui.execPathPathEdit.text())
