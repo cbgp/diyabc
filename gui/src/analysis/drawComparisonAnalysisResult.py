@@ -153,10 +153,10 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
 
 
         labs = dico_coord['n']
-            
         for i in range(len(first_line_tab)):    
             legend_txt = "Scenario %s"%first_line_tab[i]
-            plotc.axes.plot(labs,dico_coord[first_line_tab[i]],label=legend_txt,c=self.tab_colors[i],marker='%s'%markerPlot)
+            col = self.tab_colors[(int(first_line_tab[i])%len(self.tab_colors))]
+            plotc.axes.plot(labs,dico_coord[first_line_tab[i]],label=legend_txt,c=col,marker='%s'%markerPlot)
 
         plotc.axes.legend(bbox_to_anchor=(0.74, -0.14),ncol=2,prop={'size':9})
         plotc.axes.axes.title.set_fontsize(10)

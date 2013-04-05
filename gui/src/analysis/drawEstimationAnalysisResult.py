@@ -200,7 +200,6 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             
         legend_txt = "prior"
         plotc.axes.plot(labs,lpr,label=legend_txt,c=self.tab_colors[2])
-
         legend_txt = "posterior"
         plotc.axes.plot(labs,lpo,label=legend_txt,c=self.tab_colors[1])
 

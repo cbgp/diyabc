@@ -49,7 +49,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         QObject.connect(self.ui.compoVCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         QObject.connect(self.ui.nbpCombo,SIGNAL("currentIndexChanged(int)"),self.drawGraph)
         self.ui.ACProgress.setValue(0)
-        self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
+        #self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
 
         self.ui.scrollArea.hide()
         if not os.path.exists("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory))\
@@ -178,7 +178,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         """ dessine les points pour un scenario, deux components, sur plot et met à jour legend
         le tout limité à nbp points. retourne le curve du posterior ou None s'il n'y en a pas
         """
-        col = self.tab_colors[(num_sc%20)]
+        col = self.tab_colors[(num_sc%len(self.tab_colors))]
 
         legend_txt = "Scenario %s prior"%num_sc
         mypoints = plot.axes.scatter(self.dico_points[num_sc][compo_h][:nbp], self.dico_points[num_sc][compo_v][:nbp],marker="o",facecolors='none',edgecolors=col,label=legend_txt,s=20.0)
