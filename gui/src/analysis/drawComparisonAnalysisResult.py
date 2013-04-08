@@ -143,6 +143,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         l.addWidget(navtoolbar)
 
         plotc.axes.grid(True)
+        plotc.axes.set_ylim(0,1)
 
         if direct:
             plotc.axes.set_title("Direct")
