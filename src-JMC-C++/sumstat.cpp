@@ -150,9 +150,12 @@ extern int debuglevel;
     int kloc,iloc;
     for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
       kloc=this->grouplist[gr].loc[iloc];
-      for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[kloc].freq[samp];
+	  //cout<<"libere_freq 1  this-<nsample="<<this->nsample<<"\n";
+      for (int samp=0;samp<3;samp++) {delete []this->locuslist[kloc].freq[samp];}
+	  //cout<<"libere_freq 1a\n";
       delete []this->locuslist[kloc].freq;
-      for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[kloc].haplomic[samp];
+	  //cout<<"libere_freq 2\n";
+      for (int samp=0;samp<3;samp++) delete []this->locuslist[kloc].haplomic[samp];
       delete []this->locuslist[kloc].haplomic;
     }
   }
@@ -530,22 +533,22 @@ extern int debuglevel;
   }
 
   long double ParticleC::cal_mgw1p(int gr,int st){
-    long double num=0.0,den=0.0, un=1.0;
-    int min,max;
-    int iloc,loc;
-    int sample=this->grouplist[gr].sumstat[st].samp-1;
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      loc=this->grouplist[gr].loc[iloc];
-      if (samplesize(loc,sample)>0) {
-	for (int k=0;k<this->locuslist[loc].nal;k++) {
-	  if (this->locuslist[loc].freq[sample][k]>0.00001) num +=1.0;}
-
-	min=0;while (this->locuslist[loc].freq[sample][min]<0.00001) min++;
-	max=this->locuslist[loc].kmax-this->locuslist[loc].kmin;while (this->locuslist[loc].freq[sample][max]<0.00001) max--;
-	den += un+(long double)(max-min)/(long double)this->locuslist[loc].motif_size;
-      }
-    }
-    if (den>0) return num/den; else return 0.0;
+	long double num=0.0,den=0.0, un=1.0;
+	int min,max;
+	int iloc,loc;
+	int sample=this->grouplist[gr].sumstat[st].samp-1;
+	for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+		loc=this->grouplist[gr].loc[iloc];
+		if (samplesize(loc,sample)>0) {
+			for (int k=0;k<this->locuslist[loc].nal;k++) {
+				if (this->locuslist[loc].freq[sample][k]>0.00001) num +=1.0;
+			}
+				min=0;while (this->locuslist[loc].freq[sample][min]<0.00001) min++;
+				max=this->locuslist[loc].kmax-this->locuslist[loc].kmin;while (this->locuslist[loc].freq[sample][max]<0.00001) max--;
+				den += un+(long double)(max-min)/(long double)this->locuslist[loc].motif_size;
+		}
+	}
+	  if (den>0) return num/den; else return 0.0;
   }
 
   long double ParticleC::cal_Fst2p(int gr,int st){
@@ -733,10 +736,10 @@ extern int debuglevel;
     int sample=stat.samp-1;
     int sample1=stat.samp1-1;
     int sample2=stat.samp2-1;
-    cout<<"sample ="<<sample<<"   sample1="<<sample1<<"   sample2="<<sample2<<"\n";
+    //cout<<"sample ="<<sample<<"   sample1="<<sample1<<"   sample2="<<sample2<<"\n";
     for (int rep=0;rep<2;rep++) {
       a=0.001*(long double)(i0+rep);li[rep]=0.0;
-      cout << "rep = " << rep << "   a = "<< a << "  lik = "<< li[rep] << "\n";
+      //cout << "rep = " << rep << "   a = "<< a << "  lik = "<< li[rep] << "\n";
       for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 	loc=this->grouplist[gr].loc[iloc];
 	cat=this->locuslist[loc].type % 5;
@@ -783,13 +786,13 @@ extern int debuglevel;
 	  //cout << "lik = " << li[rep] << "\n";
 	}
       }
-      cout << "rep = " << rep << "   a = "<< a << "lik = "<< li[rep] << "\n";
+      //cout << "rep = " << rep << "   a = "<< a << "   lik = "<< li[rep] << "\n";
     }
-    cout << "   li[i0] = "<< li[0] << "\n";
-    cout << "   li[i1] = "<< li[1] << "\n";
+    //cout << "   li[i0] = "<< li[0] << "\n";
+    //cout << "   li[i1] = "<< li[1] << "\n";
     li0=li[0];
     delta=li[1]-li[0];
-	cout<<"delta ="<<delta<<"\n";
+	//cout<<"delta ="<<delta<<"\n";
     delete []li;
     return make_pair<long double, long double>(li0,delta);
   }
@@ -800,6 +803,7 @@ extern int debuglevel;
     pair<long double, long double> c;
     c=pente_lik(gr,st,i1);lik1=c.first; p1=c.second;
     c=pente_lik(gr,st,i2);lik2=c.first; p2=c.second;
+	if (abs(lik1)+abs(lik2)<1.0E-10) return -9999.0;
     if ((p1<0.0)and(p2<0.0)) return 0.0;
     if ((p1>0.0)and(p2>0.0)) return 1.0;
     do {
@@ -1401,8 +1405,8 @@ long double ParticleC::cal_nha2p(int gr,int st){
 		  cat = this->locuslist[kloc].type % 5;
 		  dmax=samplesize(kloc,samp0)+samplesize(kloc,samp1)+samplesize(kloc,samp2);
 		  //cout<<"Locus "<<kloc<<"   (cal_freq)\n";
-		  this->locuslist[kloc].freq = new long double*[this->nsample];
-		  this->locuslist[kloc].haplomic = new int*[this->nsample];
+		  this->locuslist[kloc].freq = new long double*[3];
+		  this->locuslist[kloc].haplomic = new int*[3];
 		  this->locuslist[kloc].kmin=100;
 		  nhaplo=0;
 		  if (this->locuslist[kloc].dnavar==0) { // construction pour ne pas deleter du vide (haplomic)
@@ -1457,8 +1461,12 @@ long double ParticleC::cal_nha2p(int gr,int st){
 						  this->locuslist[kloc].haplomic[sample][i]=this->locuslist[kloc].kmin+j;
 					  } else this->locuslist[kloc].haplomic[sample][i]=MICMISSING;
 				  }
+				  //for (j=0;j<nhaplo;j++) cout<<"freq[loc]["<<j<<"]="<<this->locuslist[kloc].freq[sample][j]<<"\n";
+				  //cout<<"\n";
 			  }
 			  delete []haplo;
+			  //cout<<"cal_freq  nhaplo="<<nhaplo<<"\n";
+			  
 		  }
 	  }
   }
@@ -1470,9 +1478,10 @@ long double ParticleC::cal_nha2p(int gr,int st){
     bool OK;
     long double res=0.0;
     pair<long double, long double> c;
-    cout<<"debut de cal_aml3p\n";
+    //cout<<"\ndebut de cal_aml3p\n";
     int samp1=this->grouplist[gr].sumstat[st].samp1-1;
     int samp2=this->grouplist[gr].sumstat[st].samp2-1;
+	  cout<<"DEBUT D AML3P\n";
 
 
     for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -1482,23 +1491,26 @@ long double ParticleC::cal_nha2p(int gr,int st){
     }
     if(ss != NULL) delete []ss;
     if (nlocutil<1) return 0.5;
-    cout<<"avant cal_freq\n";
+    //cout<<"avant cal_freq\n";
     cal_freq(gr,st);
     c=pente_lik(gr,st,i1);lik1=c.first; p1=c.second;
     c=pente_lik(gr,st,i2);lik2=c.first; p2=c.second;
 	cout<<"apres les pente_lik  p1="<<p1<<"   p2="<<p2<<"   i1="<<i1<<"   i2="<<i2<<"\n";
 	cout<<"lik1="<<lik1<<"   lik2="<<lik2<<"\n";
-    if ((p1<0.0)and(p2<0.0)) return 0.0;
+	if (abs(lik1)+abs(lik2)<1.0E-10) {libere_freq(gr);cout<<"AVANT RETURN -9999.0\n";exit(1);return -9999.0;}
+   if ((p1<0.0)and(p2<0.0)) return 0.0;
     if ((p1>0.0)and(p2>0.0)) return 1.0;
     do {
       i3 = (i1+i2)/2;
       c=pente_lik(gr,st,i3);lik3=c.first; p3=c.second;
-	  cout<<"p3="<<p3<<"   i3="<<i3<<"   lik3="<<lik3<<"\n";
+	  //cout<<"p3="<<p3<<"   i3="<<i3<<"   lik3="<<lik3<<"\n";
       if (p1*p3<0.0) {i2=i3;p2=p3;lik2=lik3;}
       else           {i1=i3;p1=p3;lik1=lik3;}
     } while (abs(i2-i1)>1);
     if (lik1>lik2) res=0.001*(long double)i1; else res = 0.001*(long double)i2;
-    libere_freq(gr);
+     cout<<"fin de cal_aml3p res="<<res<<"\n";
+   libere_freq(gr);
+   //cout<<"apreslibere_freq\n";
     return res;
   }
 

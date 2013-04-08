@@ -1247,9 +1247,10 @@ int HeaderC::readHeadersim(string headersimfilename){
 	return error;
 }
 
-void HeaderC::calstatobs(string statobsfilename) {
+string HeaderC::calstatobs(string statobsfilename) {
 	stringstream erreur;
 	int jstat,cat;
+	vector <vector <int> > ast;
 	//partie DATA
 	if (debuglevel==2) cout<<"debut de calstatobs\n";
 	this->particuleobs.threshold = this->threshold;
@@ -1449,15 +1450,42 @@ void HeaderC::calstatobs(string statobsfilename) {
 	fobs.open(statobsfilename.c_str());
 	fobs<<ent<<"\n";
 	fobs<<setiosflags(ios::fixed)<<setprecision(8);
+	ast.resize(this->particuleobs.ngr);
 	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
 		if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
 		this->particuleobs.docalstat(gr,1.0);
 		jstat +=this->particuleobs.grouplist[gr].nstat;
 		if (debuglevel==2)cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
-		for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fobs<<setw(12)<<this->particuleobs.grouplist[gr].sumstat[j].val<<"  ";
+		ast[gr].resize(0);
+		for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++){ 
+			cout<<"this->particuleobs.grouplist["<<gr<<"].sumstat["<<j<<"].val="<<this->particuleobs.grouplist[gr].sumstat[j].val<<"\n";
+			if (this->particuleobs.grouplist[gr].sumstat[j].val!=-9999.0){
+				fobs<<setw(12)<<this->particuleobs.grouplist[gr].sumstat[j].val<<"  ";
+			} else {
+				ast[gr].push_back(j);
+			};
+		}
 	}
 	fobs<<"\n";
 	fobs.close();
+	int nast=0;for(int gr=1;gr<=this->particuleobs.ngr;gr++) nast+=ast[gr].size();
+	if (nast>0) {
+		string message;
+		message = "The following introgression rate summary statistics : ";
+		for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
+			if (ast[gr].size()>0) {
+				message = message + "\nGroup "+IntToString(gr)+" : ";
+				for (int j=0;j<ast[gr].size();j++) {
+					message += IntToString(this->particuleobs.grouplist[gr].sumstat[ast[gr][j]].samp)+"&";
+					message += IntToString(this->particuleobs.grouplist[gr].sumstat[ast[gr][j]].samp1)+"&";
+					message += IntToString(this->particuleobs.grouplist[gr].sumstat[ast[gr][j]].samp2)+"  ";
+				}
+			}
+		}
+		if (nast==1)  message += "\ncannot be estimated in the observed data set. Please don't use it.";
+				else  message += "\ncannot be estimated in the observed data set. Please don't use them.";
+		return message;
+	}
 	/*FILE *fobs;
 	fobs=fopen(statobsfilename.c_str(),"w");
 	fputs(ent.c_str(),fobs);
@@ -1469,18 +1497,41 @@ void HeaderC::calstatobs(string statobsfilename) {
 		for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs,"%12.8Lf  ",this->particuleobs.grouplist[gr].sumstat[j].val);
 	}
 	fprintf(fobs,"\n");
-	fclose(fobs);*/
+	fclose(fobs);
+	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
+		ast.resize(0);
+		for (int j=this->particuleobs.grouplist[gr].nstat-1;j>=0;j--) 
+			if (this->particuleobs.grouplist[gr].sumstat[j].val=-9999.0) {
+				if ((this->particuleobs.grouplist[gr].sumstat[j].cat==12)or(this->particuleobs.grouplist[gr].sumstat[j].cat==-14)) {
+					ast.push_back(j);
+				}
+			}
+		if (ast.size()>0) {
+			for (int jj=0;jj<ast.size();jj++){
+				this->groupe[gr].nstat--;
+				for (int j=ast[jj];j<this->groupe[gr].nstat;j++) {
+					this->groupe[gr].sumstat[j].cat    =this->groupe[gr].sumstat[j+1].cat;
+					this->groupe[gr].sumstat[j].samp   =this->groupe[gr].sumstat[j+1].samp;
+					this->groupe[gr].sumstat[j].samp1  =this->groupe[gr].sumstat[j+1].samp1;
+					this->groupe[gr].sumstat[j].samp2  =this->groupe[gr].sumstat[j+1].samp2;
+					this->groupe[gr].sumstat[j].numsnp =this->groupe[gr].sumstat[j+1].numsnp;
+				}
+			}
+		}
+	}*/
+	
 	this->stat_obs = new float[jstat];
 	jstat=0;
 	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
 		for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) {
 			this->stat_obs[jstat]=(float)this->particuleobs.grouplist[gr].sumstat[j].val;
-			jstat++;
+			if (this->stat_obs[jstat]!=-9999.0) jstat++;
 		}
 	}
 	if (debuglevel==2) cout<<"avant libere \n";
 	this->particuleobs.libereobs(true);
 	if (debuglevel==2) cout<<"fin de calstatobs\n";
+	return "OK";
 }
 
 /**

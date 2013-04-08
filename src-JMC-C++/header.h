@@ -70,7 +70,7 @@ public:
 	int readHeadersimFin();
 	int readHeadersim(std::string headersimfilename);
 
-	void calstatobs(std::string statobsfilename);
+	string calstatobs(std::string statobsfilename);
 };
 
 

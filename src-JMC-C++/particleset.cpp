@@ -391,6 +391,12 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 			nstat=0;
 			for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){
+/////////////// filtrage des Aml et aml début
+					if (this->particule[ipart].grouplist[gr].sumstat[st].val==-9999.0){
+						if ((this->particule[ipart].grouplist[gr].sumstat[st].cat==12)or(this->particule[ipart].grouplist[gr].sumstat[st].cat==-14))
+							this->particule[ipart].grouplist[gr].sumstat[st].val=0.5;
+					}
+/////////////// filtrage des Aml et aml fin
 					enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;
 					//cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<" ("<<enreg[ipart].stat[nstat]<<")  ";
 					nstat++;
@@ -556,7 +562,16 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 				/*cout<<"\ngroupe "<<gr<<"\n";
 				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++) cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<"   \n";
 				cout<<"\n";*/
-				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;nstat++;/*cout<<nstat<<"\n";*/}
+				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){
+/////////////// filtrage des Aml et aml début
+					if (this->particule[ipart].grouplist[gr].sumstat[st].val==-9999.0){
+						if ((this->particule[ipart].grouplist[gr].sumstat[st].cat==12)or(this->particule[ipart].grouplist[gr].sumstat[st].cat==-14))
+							this->particule[ipart].grouplist[gr].sumstat[st].val=0.5;
+					}
+/////////////// filtrage des Aml et aml fin
+					enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;
+					nstat++;/*cout<<nstat<<"\n";*/
+				}
 			}
 			//for (int st=0;st<nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";cout<<"\n\n";
 			enreg[ipart].message="OK";
@@ -603,7 +618,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		//cout<<"nph="<<nph<<"    npm="<<npm<<"\n";
 		//cout<<"npart="<<this->npart<<"\n";
 		for (int ipart=0;ipart<this->npart;ipart++) {
-			cout<<"ipart="<<ipart<<"    sOK[ipart]="<<sOK[ipart]<<"   message="<<enreg[ipart].message<<"\n";
+			//cout<<"ipart="<<ipart<<"    sOK[ipart]="<<sOK[ipart]<<"   message="<<enreg[ipart].message<<"\n";
 			if (sOK[ipart]==0){
 				//cout<<enreg[ipart].numscen<<"\n";
 				fprintf(pFile,"%3d  ",enreg[ipart].numscen);

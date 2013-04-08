@@ -172,6 +172,7 @@ bool RNG_must_be_saved;
 
 int readheaders() {
     int k;
+	string message;
     if (debuglevel==1) cout<<"lecture des entêtes\n";
     k = header.readHeader(headerfilename);                               if (debuglevel==1) cout<<"apres header.readHeader\n";
 	if (k != 0) {
@@ -179,7 +180,7 @@ int readheaders() {
 		erreur << "Erreur dans readheaders().\n" << header.message;
 		throw std::runtime_error(erreur.str()); // exit(1)
 	}
-    header.calstatobs(statobsfilename);                                  if (debuglevel==1) cout <<"apres header.calstatobs\n";
+    message=header.calstatobs(statobsfilename);                          if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename= header.datafilename;                                   if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
 	k=rt.testfile(reftablefilename,nenr);
     k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
