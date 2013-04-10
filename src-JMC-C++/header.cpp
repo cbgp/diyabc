@@ -1450,7 +1450,7 @@ string HeaderC::calstatobs(string statobsfilename) {
 	fobs.open(statobsfilename.c_str());
 	fobs<<ent<<"\n";
 	fobs<<setiosflags(ios::fixed)<<setprecision(8);
-	ast.resize(this->particuleobs.ngr);
+	ast.resize(this->particuleobs.ngr+1);
 	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
 		if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
 		this->particuleobs.docalstat(gr,1.0);
@@ -1469,6 +1469,7 @@ string HeaderC::calstatobs(string statobsfilename) {
 	fobs<<"\n";
 	fobs.close();
 	int nast=0;for(int gr=1;gr<=this->particuleobs.ngr;gr++) nast+=ast[gr].size();
+	cout<<"nast="<<nast<<"\n";
 	if (nast>0) {
 		string message;
 		message = "The following introgression rate summary statistics : ";

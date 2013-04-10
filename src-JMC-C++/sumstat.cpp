@@ -1481,7 +1481,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
     //cout<<"\ndebut de cal_aml3p\n";
     int samp1=this->grouplist[gr].sumstat[st].samp1-1;
     int samp2=this->grouplist[gr].sumstat[st].samp2-1;
-	  cout<<"DEBUT D AML3P\n";
+	  //cout<<"DEBUT D AML3P\n";
 
 
     for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
@@ -1495,9 +1495,9 @@ long double ParticleC::cal_nha2p(int gr,int st){
     cal_freq(gr,st);
     c=pente_lik(gr,st,i1);lik1=c.first; p1=c.second;
     c=pente_lik(gr,st,i2);lik2=c.first; p2=c.second;
-	cout<<"apres les pente_lik  p1="<<p1<<"   p2="<<p2<<"   i1="<<i1<<"   i2="<<i2<<"\n";
-	cout<<"lik1="<<lik1<<"   lik2="<<lik2<<"\n";
-	if (abs(lik1)+abs(lik2)<1.0E-10) {libere_freq(gr);cout<<"AVANT RETURN -9999.0\n";exit(1);return -9999.0;}
+	//cout<<"apres les pente_lik  p1="<<p1<<"   p2="<<p2<<"   i1="<<i1<<"   i2="<<i2<<"\n";
+	//cout<<"lik1="<<lik1<<"   lik2="<<lik2<<"\n";
+	if (abs(lik1)+abs(lik2)<1.0E-10) {libere_freq(gr);return -9999.0;}
    if ((p1<0.0)and(p2<0.0)) return 0.0;
     if ((p1>0.0)and(p2>0.0)) return 1.0;
     do {
@@ -1508,7 +1508,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
       else           {i1=i3;p1=p3;lik1=lik3;}
     } while (abs(i2-i1)>1);
     if (lik1>lik2) res=0.001*(long double)i1; else res = 0.001*(long double)i2;
-     cout<<"fin de cal_aml3p res="<<res<<"\n";
+     //cout<<"fin de cal_aml3p res="<<res<<"\n";
    libere_freq(gr);
    //cout<<"apreslibere_freq\n";
     return res;
