@@ -153,7 +153,7 @@ class Scenario(object):
         for i in range(len(self.history.events)-1) :
             for j in range(i+1,len(self.history.events)) :
                 iev,jev = self.history.events[i],self.history.events[j]
-                if (iev.stime == None)and(jev.stime == None) :
+                if (iev.time != None)and(jev.time != None) :
                     if iev.time>jev.time :
                         self.history.events[i],self.history.events[j] = jev,iev
                         
