@@ -120,23 +120,30 @@ string  getligne(ifstream file) {
 * return=1 si snp
 */
 	int DataC::testfile(string filename){
+		//cout<<"debut de testfile fichier "<<filename<<"\n";
 	    int nss,prem;
 	    string ligne,*ss=NULL;
 		ifstream file0(filename.c_str(), ios::in);
-		if (file0 == NULL) return -1;
+		if (file0 == NULL) {cout<<"file0=NULL\n";return -1;}
 		getline(file0,ligne);
 		cout<<ligne<<"\n";
 		ligne=purgetab(ligne);
         ss=splitwords(ligne," ",&nss);
-		cout<<ss[0]<<" "<<ss[1]<<" "<<ss[2]<<"\n";
-		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
-		  cout<<"Fichier "<<filename<<" : SNP\n";
-		  prem=0;
-		  return 1;
+		if (nss>2) {
+			cout<<ss[0]<<" "<<ss[1]<<" "<<ss[2]<<"\n";
+			if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
+			cout<<"Fichier "<<filename<<" : SNP\n";
+			prem=0;
+			return 1;
+			}
 		}
+		//cout<<"avant le delete[]ss\n";
 		delete []ss; ss = NULL;
+		//cout<<"avant getline\n";
 		getline(file0,ligne);
+		//cout<<"ligne 2 =<"<<ligne<<">\n";
         ss=splitwords(ligne," ",&nss);
+		//cout<<"apres le deuxième splitwords\n";
 		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
 		  cout<<"Fichier "<<filename<<" : SNP\n";
 		  prem=1;
