@@ -80,7 +80,8 @@ class BugReport(formBugReport,baseBugReport):
         # copie du datafile
         if self.ui.dataYesRadio.isChecked():
             if os.path.exists(current_project.dataFileSource):
-                tar.add(current_project.dataFileSource,'%s/datafile.txt'%repIntoTar)
+                dataFileName = os.path.basename(current_project.dataFileSource)
+                tar.add(current_project.dataFileSource,'%s/%s'%(repIntoTar,dataFileName))
 
         # copie des logfiles
         if os.path.exists(os.path.expanduser("%s"%self.parent.logfile)):

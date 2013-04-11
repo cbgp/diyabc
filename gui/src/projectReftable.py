@@ -1277,9 +1277,9 @@ class ProjectReftable(Project):
             self.ui.newAnButton.setDisabled(False)
             minSizeForAnalysis = len(self.hist_model_win.scList) * self.MIN_NUM_DATA_SETS_BY_SCENARIO_FOR_ANALYSIS
             if size < minSizeForAnalysis :
-                self.ui.warningNumLabel.show()
+                self.ui.warningNumTextBrowser.show()
             else :
-                self.ui.warningNumLabel.hide()
+                self.ui.warningNumTextBrowser.hide()
                 
         else:
             # si on n'a pas de reftable, on empêche la définition d'analyse
@@ -1287,7 +1287,7 @@ class ProjectReftable(Project):
             self.freezeHistModel(False)
             self.freezeGenData(False)
             self.ui.newAnButton.setDisabled(True)
-            self.ui.warningNumLabel.show()
+            self.ui.warningNumTextBrowser.show()
             
             
     def freezeHistModel(self,yesno=True):

@@ -35,7 +35,7 @@ class Project(baseProject,formProject):
         self.data = None
         self.hist_state_valid = False
         self.gen_state_valid = False
-        self.MIN_NUM_DATA_SETS_BY_SCENARIO_FOR_ANALYSIS = 10000
+        self.MIN_NUM_DATA_SETS_BY_SCENARIO_FOR_ANALYSIS = 100000
 
         # utile seulement si on derive de QTabWidget
         super(Project,self).__init__(parent)
@@ -211,7 +211,9 @@ class Project(baseProject,formProject):
         if nb > 1:
             pluriel = "s"
         self.ui.nbScLabel.setText("{0} scenario{1}".format(nb,pluriel))
-        self.ui.warningNumLabel.setText("Warning : a minimum of {0} X {1} simulated data sets are needed for further analyses !".format(nb,self.MIN_NUM_DATA_SETS_BY_SCENARIO_FOR_ANALYSIS))
+        warningRichText = str(self.ui.warningNumTextBrowser.toHtml())
+        warningRichText = warningRichText.replace('nnn', str(nb))
+        self.ui.warningNumTextBrowser.setText(warningRichText)
 
     def setNbParams(self,nb):
         """ écrit le nombre de paramètres dans la zone "historical model"
