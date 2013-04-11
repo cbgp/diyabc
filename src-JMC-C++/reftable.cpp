@@ -51,7 +51,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	for (int i=0;i<header.nscenarios;i++) {
 		nparamvar=0;
 		for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) nparamvar++;
-		//cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
+		cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
 		this->histparam[i] = new HistParameterC[nparamvar];
 		this->nhistparam[i] = nparamvar;
 		pp=-1;
@@ -63,7 +63,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 			this->histparam[i][pp].category = header.scenario[i].histparam[p].category;
 			//cout<<"  OK\n";
 		}
-		//cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
+		cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
 		if (this->nparam[i]!=nparamvar+header.nparamut) {
 			cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
 			exit(1);
@@ -107,7 +107,7 @@ int ReftableC::readheader(string fname,string flogname,string freftabscen) {
 		this->nrecscen = new int[this->nscen];
 		for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
 		this->nparam = new int[nscen];
-		for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
+		for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nparam[i]),sizeof(int));cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";}
 		f0.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
 		f0.close();
 		this->nrec0=this->nrec;

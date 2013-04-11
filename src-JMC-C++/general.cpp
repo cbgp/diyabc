@@ -183,7 +183,7 @@ int readheaders() {
     message=header.calstatobs(statobsfilename);                          if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename= header.datafilename;                                   if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
 	k=rt.testfile(reftablefilename,nenr);
-    k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"\n";
+    k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"   rt.nparam[0]="<<rt.nparam[0]<<"\n";
     if (k==0) {rt.sethistparamname(header);if (debuglevel==1) cout<<"sethistparamname"<<"\n";}
     return k;
 }
