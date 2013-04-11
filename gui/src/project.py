@@ -212,7 +212,7 @@ class Project(baseProject,formProject):
             pluriel = "s"
         self.ui.nbScLabel.setText("{0} scenario{1}".format(nb,pluriel))
         warningRichText = str(self.ui.warningNumTextBrowser.toHtml())
-        warningRichText = warningRichText.replace('nnn', str(nb))
+        warningRichText = warningRichText.replace('ShouldBeDynamicallyReplacedByNumOfSceanrio', str(nb))
         self.ui.warningNumTextBrowser.setText(warningRichText)
 
     def setNbParams(self,nb):
