@@ -30,4 +30,4 @@ cp ./src-JMC-C++/general.exe ./gui/data/bin/diyabc-comput-win-i386
 #cp ./src-JMC-C++/general.exe ./gui/data/bin/diyabc-comput-win-x64
 
 cd ./build/
-./windows_generation.sh --pyinst ./pyinstaller-2.0/pyinstaller.py -icon ../gui/data/icons/coccicon.ico --output $packageDir --main ../gui/src/diyabc.py --arch 32
+./windows_generation.sh -p ./pyinstaller-2.0/pyinstaller.py -i ../gui/data/icons/coccicon.ico -o $packageDir --m ../gui/src/diyabc.py -a 32
