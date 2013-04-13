@@ -94,15 +94,6 @@ if [ "$PYINSTFLAG" == 0 ] && [ "$ICOFLAG" == 0 ] &&[ "$MAINFLAG" == 0 ] && [ "$O
     exit
 fi
 
- 
-
-exit 
-#---------------
-#pyinst=$1
-#icon=$2
-#output=$3
-#pysrc=$4
-#ARCH=$5
 
 BUILDDATE=`date +%d-%m-%Y`
 
@@ -118,8 +109,8 @@ if [ "$OUPUTFLAG" == "0" ]
         read
         pysrc="../../diyabc.py"
         VERSION="development"
-    fi
 fi
+
 echo "I assume you've intalled python-2.6, pyqwt, numpy, PyQt"
 VERSIONFILE="`dirname $pysrc`/../version.txt"
 VERSION="`head -n 1 $VERSIONFILE`"
