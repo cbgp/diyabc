@@ -2,106 +2,101 @@
 
 function printUsage(){
 echo "usage : 
-#windows_generation.sh  path_to_pyinstaller.py  [path_to_icon.ico  output_path  path_to_main.py] 
-
-windows_generation.sh  (-p | --pyinst) path_to_pyinstaller.py  (-i | --icon) path_to_icon.ico (-o | --output) output_path  (-m | --main) path_to_main.py (-a | --arch) arch(32 or 64)
-"
+#windows_generation.sh  -p  path_to_pyinstaller.py  -i  path_to_icon.ico -o output_path  -m  path_to_main.py -a (32 or 64)
+#" >&2
 }
-#-------------
-ARGS=$(getopt -o p:i:o:m:a: -l "pyinst:icon:output:main:arch:" -n "linux_generation.sh" -- "$@");
 
 #Bad arguments
 if [ $? -ne 0 ] || [ $# -eq 0 ];
 then
       printUsage
-    exit
+    exit 4
 fi
 MAINFLAG=0
 PYINSTFLAG=0
 ICOFLAG=0
 OUTFLAG=0
 ARCHFLAG=0
-eval set -- "$ARGS";
+#eval set -- "$ARGS";
 
-while true; do
-  case "$1" in
-    -p|--pyinst)
-      shift;
-      if [ -n "$1" ]; then
-        if [ -f "$1" ]; then
-            pyinst=$1
+while getopts :p:i:o:m:a: option; do
+  case $option in
+    p)
+      if [ -n "$OPTARG" ]; then
+        if [ -f "$OPTARG" ]; then
+            pyinst="$OPTARG"
             PYINSTFLAG=1
         else
-            echo "Pyinstaller.py file does not exist"
-            exit
+            echo "Pyinstaller.py file does not exist" >&2
+            exit 4
         fi
-        shift;
       fi
       ;;
-    -i|--icon)
-      shift;
-      if [ -n "$1" ]; then
-        if [ -f "$1" ]; then
-            ico=$1
+    i)
+      if [ -n "$OPTARG" ]; then
+        if [ -f "$OPTARG" ]; then
+            ico="$OPTARG"
             ICOFLAG=1
         else
-            echo "Icon $1 file does not exist"
-            exit
+            echo "Icon $OPTARG file does not exist" >&2
+             exit 4
         fi
-        shift;
       fi
       ;;  
-    -o|--output)
-      shift;
-      if [ -n "$1" ]; then
-        if [ -d `dirname "$1"` ]; then
-            output=$1
+    o)
+      if [ -n "$OPTARG" ]; then
+        if [ -d `dirname "$OPTARG"` ]; then
+            output="$OPTARG"
             OUTFLAG=1
         else
-            echo "Impossible to use this location for output"
-            exit
+            echo "Impossible to use this location for output" >&2
+            exit 4
         fi
-        shift;
       fi
       ;;
-    -m|--main)
-      shift;
-      if [ -n "$1" ]; then
-        if [ -f "$1" ]; then
-            pysrc=$1
+    m)
+      if [ -n "$OPTARG" ]; then
+        if [ -f "$OPTARG" ]; then
+            pysrc="$OPTARG"
             MAINFLAG=1
         else
-            echo "main python file does not exist"
-            exit
+            echo "main python file $OPTARG does not exist" >&2
+            exit 4
         fi
-        shift;
       fi
       ;;
-    -a|--arch)
-      shift;
-      if [ -n "$1" ]; then
-        if [ "$1" != "64" ] && [ "$1" != "32" ]; then
-            echo "invalid architecture"
-            exit
+    a)
+      if [ -n "$OPTARG" ]; then
+        if [ "$OPTARG" != "64" ] && [ "$OPTARG" != "32" ]; then
+            echo "invalid architecture, 64 or 32 expected, $OPTARG given" >&2
+            exit 4
         fi
-        ARCH=$1
+        ARCH=$OPTARG
         ARCHFLAG=1
-        shift;
       fi
       ;;
-    --)
-      shift;
-      break;
+    \?)
+       printUsage
+       echo "invalid option -$OPTARG" >&2
+       exit 4 
       ;;
+     :)
+       printUsage
+       echo "option -$OPTARG reaquire an argument" >&2
+       exit 4
+       ;;
   esac
 done
+
 
 if [ "$PYINSTFLAG" == 0 ] && [ "$ICOFLAG" == 0 ] &&[ "$MAINFLAG" == 0 ] && [ "$OUTFLAG" == 0 ] && [ "$ARCHFLAG" == 0 ]; then
     printUsage
     exit
 fi
 
+ 
 
+exit 
 #---------------
 #pyinst=$1
 #icon=$2
