@@ -500,7 +500,7 @@ string  getligne(ifstream file) {
 								if( (locustype == 0) or ( (locustype == 2)and(this->indivsexe[sa][ind]==2) ) ) {
 									this->ss[locustype][sa] +=2;
 								} else {
-									this->ss[locustype][sa] +=1;
+									if(this->indivsexe[sa][ind]>0) this->ss[locustype][sa] +=1;
 								}
 							}
 							//cout<<"data.ss["<<locustype<<"]["<<sa<<"]="<<this->ss[locustype][sa]<<"\n";

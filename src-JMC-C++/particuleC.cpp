@@ -2424,7 +2424,8 @@ void ParticleC::put_one_mutation(int loc) {
 							if (this->data.indivsexe[ech][ind] == 1){
 								ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]);
 								ig[loc] +=1;
-							} else {
+							} 
+							if (this->data.indivsexe[ech][ind] == 2){
 								ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]+this->locuslist[loc].haplosnp[ech][ig[loc]+1]);
 								ig[loc] +=2;
 							}
@@ -2433,7 +2434,8 @@ void ParticleC::put_one_mutation(int loc) {
 							if (this->data.indivsexe[ech][ind] == 1){
 								ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]);
 								ig[loc] +=1;
-							} else {
+							} 
+							if (this->data.indivsexe[ech][ind] == 2){
 								ligne +=" 9";
 							}
 							break;
