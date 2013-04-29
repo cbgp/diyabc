@@ -113,7 +113,17 @@ In the second example, the species is haploid. Individuals have been genotyped a
 \includegraphics[scale=0.6]{gui_pictures/screenga002.png}
 \end{figure}
 
-In the third example, the species is diploid and has been genotyped at a large number of SNP autosomal loci. The first line provides the title which includes the species sex-ratio. The second line indicates what's in the different columns : individual name in column 1, individual sex in column 2, population name in column 3 and one column per SNP locus (the letter \texttt{A} indicates that the autosomal locus is autosomal; it would be \texttt{X} for an X-linked locus, \texttt{Y} for a Y-linked locus and \texttt{M} for a mitochondrial locus) . Columns are sparated by one or more spaces. SNP are coded 0, 1 or 2 according to the number of reference alleles at the corresponding locus.  Only the top left part of the data file is represented below :
+In the third example, the species is diploid and was genotyped at 23 SNP loci: 20 autosomal loci, 1 
+ X-linked locus, 1 Y-linked locus and 1 mitochondrial locus. The first line provides the title which includes
+ the species sex-ratio. The second line indicates: individual name in column 1, individual sex in column 2 
+ (\texttt{M} for male, \texttt{F} for female, \texttt{9} or any other letter if unknown), population name in 
+column 3 and one column per SNP locus (letter \texttt{A} for an autosomal locus, \texttt{X} for an X-linked
+locus, \texttt{Y} for a Y-linked locus and \texttt{M} for a mitochondrial locus). Columns are separated by
+one or more spaces. SNP genotypes are coded \texttt{0}, \texttt{1} or \texttt{2} (\texttt{9} for missing data) according 
+ to the number of reference alleles at the corresponding locus. Note that the sex has no influence on simulations
+ for autosomal, mitochondrial or haploid loci (any sex can be hence declared). For individuals with an unknown sex 
+ (denoted \texttt{9}, see \texttt{IND P1\_2}, $P1\_3$  and $P2\_15$), data for autosomal (as well as mitochondrial and haploid) loci will be taken into account and simulated, whereas data for X-linked and Y-linked loci will not be taken into account and not 
+ simulated (cf. simulations are simply not possible to proceed in this case as the number of gene copy is sex dependent).
 
 \begin{figure}[h]
 \includegraphics[scale=0.5]{gui_pictures/screenga003.png}
