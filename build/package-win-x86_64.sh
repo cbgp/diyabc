@@ -24,9 +24,9 @@ cd $diyabc_git
 git checkout .
 git pull --rebase 
 $MinGw_bindir/mingw32-make.exe clean
-MYFLAGS="-static" $MinGw_bindir/mingw32-make.exe
+MYFLAGS="-static --enable-lib64" $MinGw_bindir/mingw32-make.exe
 cp $MinGw_bindir/*.dll ./gui/data/bin/
-#cp ./src-JMC-C++/general.exe ./gui/data/bin/diyabc-comput-win-i386
+cp ./src-JMC-C++/general.exe ./gui/data/bin/diyabc-comput-win-i386
 cp ./src-JMC-C++/general.exe ./gui/data/bin/diyabc-comput-win-x64
 
 cd ./build/
