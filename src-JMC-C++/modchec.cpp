@@ -218,7 +218,7 @@ long double **ssphistar,**ssref;
                         delete [] ss1;
                 }
                 //cout<<"fin\n";
-            } else if (header.groupe[gr].type>9) {   //SNP
+            } else if (header.groupe[gr].type==2) {   //SNP
 					catsnp = (stat_num[j]-21)/4;
 					if (debuglevel==2) cout<<"snp catsnp="<<catsnp<<"   stat_num["<<j<<"]="<<stat_num[j]<<"\n";
                     if (stat_num[j]<25) {
@@ -306,7 +306,7 @@ long double **ssphistar,**ssref;
             delete []qq;
         }
 		for (gr=1;gr<=header.ngroupes;gr++) {
-			if (header.groupe[gr].type>9) {
+			if (header.groupe[gr].type==2) {
 				header.groupe[gr].nstatsnp=statsnp[gr].size();
 				cout<<"header.groupe[gr].nstatsnp="<<header.groupe[gr].nstatsnp<<"\n";
 				if (header.groupe[gr].nstatsnp>0){

@@ -263,7 +263,7 @@ void ParticleSetC::resetparticle (int p) {
 			if (this->header.groupe[gr].mutmod>2){
 				this->particule[p].grouplist[gr].k2moy = this->header.groupe[gr].k2moy ;        //k2moy
 			}
-		} else if (this->header.groupe[gr].type>9) {		//SNP
+		} else if (this->header.groupe[gr].type==2) {		//SNP
 			for (int i=0;i<this->particule[p].grouplist[gr].nstatsnp;i++){
 				this->particule[p].grouplist[gr].sumstatsnp[i].defined=false;
 				this->particule[p].grouplist[gr].sumstatsnp[i].sorted=false;

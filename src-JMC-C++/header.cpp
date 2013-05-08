@@ -311,7 +311,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 
 int HeaderC::readHeaderLoci(ifstream & file){
 	string s1, *ss;
-	int k, k1, nss, gr, grm;
+	int k, k1, k2, nss, gr, grm, nsg, nl,typ;
 		//Partie loci description
 	//cout <<"avant partie loci\n";fflush(stdin);
 	getline(file,s1);       //ligne vide
@@ -341,28 +341,43 @@ int HeaderC::readHeaderLoci(ifstream & file){
 		for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].groupe=0;
 		for (gr=1;gr<=this->ngroupes;gr++) {
 			getline(file,s1);
-			this->groupe[gr].nloc=getwordint(s1,1);
+			ss=splitwords(s1," ",&nss);
+			nsg=(nss-3)/2;
+			this->groupe[gr].nloc=0;
+			this->groupe[gr].type=2;
+			int prem = getwordint(s1,nss)-1;
+			for (k=0;k<nsg;k++) this->groupe[gr].nloc +=getwordint(s1,2*k+1);
 			this->groupe[0].nloc -= this->groupe[gr].nloc;
 			this->groupe[gr].loc = new int[this->groupe[gr].nloc];
-			int prem = getwordint(s1,5)-1;
-			//cout<<"prem="<<prem<<"\n";
-			if (s1.find("<A>")!=string::npos) this->groupe[gr].type=10;
-			else if (s1.find("<H>")!=string::npos) this->groupe[gr].type=11;
-			else if (s1.find("<X>")!=string::npos) this->groupe[gr].type=12;
-			else if (s1.find("<Y>")!=string::npos) this->groupe[gr].type=13;
-			else if (s1.find("<M>")!=string::npos) this->groupe[gr].type=14;
-			cout<<"this->groupe[gr].type = "<<this->groupe[gr].type<<"\n";
 			k1=0;
-			for (int loc=prem;loc<this->dataobs.nloc;loc++) {
-				//cout<<this->dataobs.locus[loc].type<<" ";
-				if (this->dataobs.locus[loc].type==this->groupe[gr].type) {
-					this->groupe[gr].loc[k1]=loc;
-					this->dataobs.locus[loc].groupe=gr;
-					k1++;
+			for (k=0;k<nsg;k++) {
+				nl=getwordint(s1,2*k+1);
+				k2=0;
+				if (ss[2*k+1].find("<A>")!=string::npos) typ=10;
+				else if (ss[2*k+1].find("<H>")!=string::npos) typ=11;
+				else if (ss[2*k+1].find("<X>")!=string::npos) typ=12;
+				else if (ss[2*k+1].find("<Y>")!=string::npos) typ=13;
+				else if (ss[2*k+1].find("<M>")!=string::npos) typ=14;
+				for (int loc=prem;loc<this->dataobs.nloc;loc++){
+					if (this->dataobs.locus[loc].type==typ) {
+						this->groupe[gr].loc[k1]=loc;
+						this->dataobs.locus[loc].groupe=gr;
+						k1++;
+						k2++;
+					}
+					if (k2 == nl) break;
+					if ((loc==this->dataobs.nloc)and(k2<nl)) {
+						this->message = "Not enough loci of type ";
+						if (typ==10) this->message += "<A>";
+						if (typ==11) this->message += "<H>";
+						if (typ==12) this->message += "<X>";
+						if (typ==13) this->message += "<Y>";
+						if (typ==14) this->message += "<M>";
+						this->message += " found in the datafile from position "+IntToString(prem)+".";
+						return 1;
+					}
 				}
-				if (k1 == this->groupe[gr].nloc) break;
 			}
-			cout<<"\napres la boucle  k1="<<k1<<"\n";
 		}
 		//cout<<"this->groupe[0].nloc = "<<this->groupe[0].nloc<<"\n";
 		if (this->groupe[0].nloc>0) {
@@ -607,7 +622,7 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 						delete [] ss1;
 					}
 				}
-			} else if (this->groupe[gr].type>9) {   //SNP
+			} else if (this->groupe[gr].type==2) {   //SNP
 				cout<<"statnum="<<stat_num[j]<<"\n";
 				if (stat_num[j]<50) {
 					catsnp = (stat_num[j]-21)/4;

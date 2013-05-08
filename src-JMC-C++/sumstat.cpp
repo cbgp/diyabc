@@ -1902,8 +1902,9 @@ long double ParticleC::cal_nha2p(int gr,int st){
      // cout << "      stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
     }
     //cout<<"\n";
-    if ((this->grouplist[gr].type == 0)or(this->grouplist[gr].type>9)) liberefreq(gr);
-    else liberednavar(gr);
+    if (this->grouplist[gr].type == 1)liberednavar(gr); else liberefreq(gr);
+    //if ((this->grouplist[gr].type == 0)or(this->grouplist[gr].type==2)) liberefreq(gr);
+    //else liberednavar(gr);
     if (not this->afsdone.empty()) {
       for (int sa=0;sa<this->nsample;sa++) {
 	this->afsdone[sa].clear();
