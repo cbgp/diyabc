@@ -668,15 +668,24 @@ try {
 				  break;
 
   }
+	cout<<"avant les delete []\n";
 	if (rt.mutparam !=NULL) {delete [] rt.mutparam;rt.mutparam=NULL;}
+	//cout<<"1\n";
 	if (rt.nparam !=NULL) {delete [] rt.nparam;rt.nparam=NULL;}
+	//cout<<"2\n";
 	if (rt.nrecscen !=NULL) {delete [] rt.nrecscen;rt.nrecscen=NULL;}
+	//cout<<"3\n";
+	if (action !='k'){
 	for (int iscen=0;iscen<header.nscenarios;iscen++) {
 		if (rt.histparam[iscen] !=NULL) delete [] rt.histparam[iscen];
-	} 
+	} }
+	//cout<<"4\n";
 	if (rt.histparam !=NULL) {delete [] rt.histparam; rt.histparam=NULL;}
+	//cout<<"5\n";
 	delete [] stat_type;
+	//cout<<"6\n";
 	delete [] stat_num;
+	cout<<"apres les delete []\n";
 	/* Debut: pour le nouveau RNG      */
 	// sauvegarde des RNGs' states
 	if( RNG_must_be_saved ){

@@ -941,7 +941,7 @@ cout<<"fin de ecribin\n";
 			case 4 :  coeff = 2.0*(1.0-this->sexratio);break;
 		}
 		this->locus[loc].coeffcoal=coeff;
-        //cout<<"locus "<<loc<<"    sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeffcoal<<"\n";
+        cout<<"locus "<<loc<<"    sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeffcoal<<"\n";
     }
 
 

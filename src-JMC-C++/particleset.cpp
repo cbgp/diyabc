@@ -219,7 +219,7 @@ void ParticleSetC::setloci(int p) {
 /**
  * Structure ParticleSet : remplissage de la partie scenarios de la particule p
  */
-void ParticleSetC::setscenarios (int p) {
+void ParticleSetC::setscenarios (int p, bool simulfile) {
 	this->particule[p].nscenarios=this->header.nscenarios;
 	this->particule[p].drawuntil = this->header.drawuntil;
 	this->particule[p].scenario = new ScenarioC[this->header.nscenarios];
@@ -237,7 +237,26 @@ void ParticleSetC::setscenarios (int p) {
 	//this->header.scen.ecris();
 	this->particule[p].scen = this->header.scen;
 	//cout<<"\napres la copie du superscenario\n";
-	//this->particule[p].scen.ecris();
+	if (simulfile) {
+		int ip;
+		for (int i=0;i<this->header.nscenarios;i++) {
+			for (int ievent=0;ievent<this->particule[p].scenario[i].nevent;ievent++) {
+				//cout<<"ievent="<<ievent<<"   <"<<this->particule[p].scenario[i].event[ievent].time<<">   {"<<this->particule[p].scenario[i].event[ievent].stime <<"}\n";
+				if (this->particule[p].scenario[i].event[ievent].stime.length()>0) {
+					if (atoi(this->particule[p].scenario[i].event[ievent].stime.c_str())==0) {
+						for (ip=0;ip<this->particule[p].scenario[i].nparam;ip++) {if (this->particule[p].scenario[i].event[ievent].stime==this->particule[p].scenario[i].histparam[ip].name) break;}
+						this->particule[p].scenario[i].event[ievent].time=this->particule[p].scenario[i].histparam[ip].value;
+						this->particule[p].scenario[i].event[ievent].stime=IntToString(this->particule[p].scenario[i].event[ievent].time);
+						this->particule[p].scen.event[ievent].time=this->particule[p].scenario[i].event[ievent].time;
+						this->particule[p].scen.event[ievent].stime=this->particule[p].scenario[i].event[ievent].stime;
+					}
+				}
+				//cout<<"ievent="<<ievent<<"   <"<<this->particule[p].scenario[i].event[ievent].time<<">   {"<<this->particule[p].scenario[i].event[ievent].stime <<"}\n";
+				//cout<<"event "<<ievent<<"  action="<<this->particule[p].scenario[i].event[ievent].action<<"  time="<<this->particule[p].scenario[i].event[ievent].time<<"\n";
+			}
+		}
+	}
+	//this->particule[p].scen.ecris(simulfile);
 	//cout<<"setscenarios nloc="<<this->particule[p].nloc<<"\n";
 	//exit(1);
 
@@ -279,7 +298,7 @@ void ParticleSetC::resetparticle (int p) {
 void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
 	int scen=numscen-1;
 	int ii,ip1,ip2,ipart,gr,nstat,k,nparam=header.scenario[scen].nparam;
-	//bool phistarOK;
+	bool simulfile=false;
 	this->npart = npart;
 	int *sOK;
 	sOK = new int[npart];
@@ -299,7 +318,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 			if (debuglevel==5) cout<<"setgroup\n";
 			this->setloci(p);
 			if (debuglevel==5) cout<<"setloci\n";
-			this->setscenarios(p);
+			this->setscenarios(p,simulfile);
 			if (debuglevel==5) cout<< "                    apres set particule\n";
 			this->particule[p].mw.randinit(p,seed);
 		}
@@ -496,7 +515,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 			if (debuglevel==5) cout<<"setgroup\n";
 			this->setloci(p);
 			if (debuglevel==5) cout<<"setloci\n";
-			this->setscenarios(p);
+			this->setscenarios(p,false);
 			if (debuglevel==5) cout << "                    apres set particule "<<p<<"\n";
 			this->particule[p].mw.randinit(p,seed);
 		}
@@ -690,7 +709,7 @@ string* ParticleSetC::simulgenepop(HeaderC const & header, int npart, bool multi
 		this->setdata(p);//cout<<"apres setdata\n";
 		this->setgroup(p);//cout<<"apres setgroup\n";
 		this->setloci(p);//cout<<"apres setloci\n";
-		this->setscenarios(p);//cout<<"apres setscenario\n";
+		this->setscenarios(p,true);//cout<<"apres setscenario\n";
 		this->particule[p].mw.randinit(p,seed);
 	}
 	cout<<"avant omp\n";
@@ -721,17 +740,25 @@ string* ParticleSetC::simuldataSNP(HeaderC const & header, int npart, bool multi
 	cout<<"avant le remplissage des "<<this->npart<<" particules\n";
 	for (int p=0;p<this->npart;p++) {
 		//this->particule[p].dnatrue = dnatrue;
-		this->setdata(p);cout<<"apres setdata\n";
-		// this->setgroup(p);cout<<"apres setgroup\n"; // Je supprime cette ligne car pas de groupe de locus dans les parties simul de jeux de donnees. Pierre
-		this->setloci(p);cout<<"apres setloci\n";
-		this->setscenarios(p);cout<<"apres setscenario\n";
+		this->setdata(p);//cout<<"apres setdata\n";
+		//this->setgroup(p);cout<<"apres setgroup\n"; // Je supprime cette ligne car pas de groupe de locus dans les parties simul de jeux de donnees. Pierre
+		this->particule[p].ngr=this->header.ngroupes;
+		this->particule[p].grouplist = new LocusGroupC[this->particule[p].ngr+1];
+		for (int gr=0;gr<this->particule[p].ngr+1;gr++) {
+			this->particule[p].grouplist[gr].type=2;
+			this->particule[p].grouplist[gr].nloc=this->header.groupe[gr].nloc;
+			
+		}
+		this->setloci(p);//cout<<"apres setloci\n";
+		this->setscenarios(p,true);//cout<<"apres setscenario\n";
 		this->particule[p].mw.randinit(p,seed);
 	}
-	cout<<"avant omp\n";
+	//cout<<"avant omp\n";
 #pragma omp parallel for shared(sOK) if(multithread)
 	for (int ipart=0;ipart<this->npart;ipart++){
+		//cout<<"avant dosimulpart\n";
 		sOK[ipart] = this->particule[ipart].dosimulpart(numscen);
-		cout<<"sOK["<<ipart<<"]="<<sOK[ipart]<<"\n";
+		//cout<<"sOK["<<ipart<<"]="<<sOK[ipart]<<"\n";
 		if (sOK[ipart]==0) ss[ipart] = this->particule[ipart].dodataSNP();
 		else ss[ipart] = "";
 		//cout<<ss[ipart]<<"\n";

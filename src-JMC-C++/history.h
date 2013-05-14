@@ -112,7 +112,7 @@ public:
   double value;
   PriorC prior;
 
-  void ecris();
+  void ecris(bool simulfile);
 };
 
 
@@ -181,7 +181,7 @@ public:
   std::string read_events(int nl,std::string *ls);
   /* verification d'un scénario*/
   std::string checklogic();
-  void ecris();
+  void ecris(bool simulfile);
   void libere();
 }; /* fin classe ScenarioC */
 

@@ -266,7 +266,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 				//this->scenario[i].paramvar[this->scenario[i].nparamvar].prior = copyprior(this->histparam[k].prior);
 				this->scenario[i].nparamvar++;
 			}
-			this->scenario[i].histparam[j].ecris();
+			this->scenario[i].histparam[j].ecris(true);
 		}
 		//cout<<"scenario "<<i<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
 	}
@@ -932,6 +932,7 @@ int HeaderC::readHeadersimDebut(ifstream & file){
 	this->datafilename=ss[0];
 	this->nsimfile=atoi(ss[1].c_str());
 	if (nss>2) this->dataobs.sexratio=atof(ss[2].c_str()); else this->dataobs.sexratio=0.5;
+	cout<<"sexratio="<<this->dataobs.sexratio<<"\n";
 	getline(file,s1);
 	delete []ss;
 	ss = splitwords(s1," ",&nss);
@@ -980,6 +981,8 @@ int HeaderC::readHeadersimScenario(ifstream & file){
 	for (int j=0;j<nlscen;j++) {getline(file,sl[j]);/*cout<<sl[j]<<"\n";*/}
 	this->scenario[0].read_events(nlscen,sl);
 	//cout<<"apres read_events\n";
+	//cout<<"dans readHeadersimScenario\n";
+	//this->scenario[0].ecris();
 	delete [] sl;
 	delete [] ss;
 	if (debuglevel==2) cout<<"header.txt : fin de la lecture de la partie scénario(s)\n";
@@ -1069,11 +1072,14 @@ int HeaderC::readHeadersimLoci(std::ifstream & file){
 			s1=ss[3].substr(1);gr=atoi(s1.c_str());if (gr>grm) grm=gr;
 			this->ngroupes=grm;
 			for (int k=0;k<kloc;k++){
-				this->dataobs.cal_coeffcoal(loc+k);
 				this->dataobs.locus[loc+k].type =loctyp;
 				this->dataobs.locus[loc+k].groupe=gr;
+				//cout<<"locus "<<loc+k<<"  type="<<this->dataobs.locus[loc+k].type<<"  groupe="<<this->dataobs.locus[loc+k].groupe<<"\n";
+				//cout<<"locus "<<loc+k<<"   sexratio="<<this->dataobs.sexratio<<"\n";
+				this->dataobs.cal_coeffcoal(loc+k);
+				//cout<<"apres cal_coeffcoal\n";
 			}
-			loc +=kloc;
+			loc +=kloc-1;
 		}
 	}
 	

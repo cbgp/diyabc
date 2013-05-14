@@ -135,7 +135,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 
 
   void ParticleC::ecris(){
-    for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris();
+    for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris(true);
   }
 
   /**
@@ -531,18 +531,21 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 			OK = conditionsOK();
 		}
     }else {
+		//cout<<"coucou dans setHistParamValue\n";
 		for (int p=0;p<this->scen.nparam;p++) {
 			if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = this->scen.histparam[p].prior.drawfromprior(this->mw);
 			if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
 			//cout << this->scen.histparam[p].name<<" = "<<this->scen.histparam[p].value<<"\n";
 		}
 		OK=true;
+		//cout<<"fin du coucou\n";
 	}
 /*	for (int p=0;p<this->scen.nparam;p++) {
 		fpar.precision(5);
 		fpar<<this->scen.histparam[p].value<<"\t";
 	}*/
-	//if (OK) cout<<"tirage des paramètres OK \n"; else cout<<"tirage des paramètres rejeté \n";
+	if (OK) cout<<"tirage des paramètres OK \n"; else cout<<"tirage des paramètres rejeté \n";
+	//cout<<"coucou\n";
 	this->scen.ipv=0;
 	if (OK) {
 		for (int p=0;p<this->scen.nparam;p++) {
@@ -558,11 +561,12 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     if (debuglevel==10) {for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";cout <<"\n";}
     if (OK) {
       for (int ievent=0;ievent<this->scen.nevent;ievent++) {
+		  //cout<<"event "<<ievent<<"   action="<<this->scen.event[ievent].action<<"   time="<<this->scen.event[ievent].time<<"   "<<this->scen.event[ievent].stime<<"\n";
 	if (this->scen.event[ievent].action=='V') { if (this->scen.event[ievent].Ne<0) this->scen.event[ievent].Ne= (int)(0.5+this->getvalue(this->scen.event[ievent].sNe));}
 	if (this->scen.event[ievent].time==-9999) {this->scen.event[ievent].time = (int)(0.5+this->getvalue(this->scen.event[ievent].stime));}
 	if (this->scen.event[ievent].action=='S') {if (this->scen.event[ievent].admixrate<0) this->scen.event[ievent].admixrate = this->getvalue(this->scen.event[ievent].sadmixrate);}
       }
-      //TRI SUR LES TEMPS DES EVENEMENTS
+      cout<<"TRI SUR LES TEMPS DES EVENEMENTS\n";
       sort(&this->scen.event[0],&this->scen.event[this->scen.nevent]); 
       // compevent inutile: operator< est surchargé correctement (PP)
       checkorder();
@@ -571,10 +575,10 @@ vector <int> melange2(MwcGen mw, int k, int n) {
       //cout<<"fin des events\n";
       for (int i=0;i<this->scen.nn0;i++) {
 	if (this->scen.ne0[i].val<0) this->scen.ne0[i].val = (int)this->getvalue(this->scen.ne0[i].name);
-	//cout<<this->scen.ne0[i].name<<" = "<<this->scen.ne0[i].val<<"\n";
+	cout<<this->scen.ne0[i].name<<" = "<<this->scen.ne0[i].val<<"\n";
       }
     }
-    //cout<<OK<<"\n";
+    cout<<"fin de setHistparamvalue avec OK=";if (OK) cout<<"TRUE\n"; else cout<<"FALSE\n";
     return OK;
   }
 
@@ -583,7 +587,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    */
   void ParticleC::setMutParammoyValue(){
 	  int gr;
-	  if (debuglevel==5)cout<<"\nthis->scen.ipv="<<this->scen.ipv<<"\n";
+	  if (debuglevel==5)cout<<"\nthis->scen.ipv="<<this->scen.ipv<<"     nbre de groupes="<<this->ngr<<"\n";
 	  for (gr=1;gr<=this->ngr;gr++) {
 		  if (debuglevel==5)cout<<"groupe "<<gr<<"\n";
 		  //cout<<"   type="<<this->grouplist[gr].type<<"\n";
@@ -1875,17 +1879,20 @@ void ParticleC::put_one_mutation(int loc) {
 	   if (debuglevel==-1) cout<<"scen.nparam = "<<this->scen.nparam<<"\n";
 	  if (debuglevel==-1) for (int k=0;k<this->scen.nparam;k++){
 	           	cout << this->scen.histparam[k].value << "   ";fflush(stdin);}
+	  //cout<<"avant setSequence\n";
 	  this->setSequence();
+	  //cout<<"apres setSequence\n";
 	  if (debuglevel==10) cout <<"apres setSequence\n";
 	  if (debuglevel==5) cout <<"avant checktree\n";
 	  if (debuglevel==10) cout <<"avant verifytree\n";
 	  checktree=this->verifytree();
+	  //cout<<"apres verifytree checktree="<<checktree<<"\n";
 	  if (debuglevel==10) cout <<"apres verifytree\n";
 	  if (checktree!="") {
 		  if (this->drawuntil){
 			FILE *flog;
 			cout<<checktree<<"\n";
-			this->scen.ecris();
+			this->scen.ecris(true);
 			checktree="A gene genealogy failed in scenario "+IntToString(numscen)+". Check scenario and prior consistency.\n  ";
 			flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",checktree.c_str());fclose(flog);
 			exit(1);
@@ -1911,7 +1918,10 @@ void ParticleC::put_one_mutation(int loc) {
 	  for (int gr=1;gr<this->ngr+1;gr++) nlocutil +=this->grouplist[gr].nloc;
 	  this->sumweight = 0.0;
 	  if (debuglevel==12) cout<<"sumweight = "<<this->sumweight<<"\n";
+	  if (debuglevel==5) cout<<"dosimulpart avant la boucle des locus\n";
 	for (loc=0;loc<this->nloc;loc++) {
+		//cout<<"locus "<<loc<<"\n";
+		//cout<<"            groupe "<<this->locuslist[loc].groupe<<"\n";
 		if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
 			if ((debuglevel==16)and(loc%1000==0)) cout<<loc<<"\n";
 			if (debuglevel==10) cout<<"debut de la boucle du locus "<<loc<<"\n";fflush(stdin);
@@ -1937,6 +1947,8 @@ void ParticleC::put_one_mutation(int loc) {
 						cout<< "scenario "<<this->scen.number<<"\n";
 					}
 					for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
+					if (debuglevel==10) cout<<"apres la mise à 1 des emptyPop\n";
+						
 					//if (not gtexist[loc]) for (int p=0;p<this->scen.popmax+1;p++) {emptyPop[p]=1;} //True
 ///////////////////////////////////					
 /*					fpar.precision(5);
@@ -1950,7 +1962,8 @@ void ParticleC::put_one_mutation(int loc) {
 							if (this->seqlist[iseq].action == 'S') fpar <<"   pop2="<<this->seqlist[iseq].pop2;
 							fpar<<"\n";
 					}*/
-///////////////////////////////////////					
+///////////////////////////////////////
+					if (debuglevel==10) cout<<"nseq = "<<this->nseq<<"\n";
 					for (int iseq=0;iseq<this->nseq;iseq++) {
 						if ((debuglevel==10)or(debuglevel==20)) {
 							cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
@@ -1999,6 +2012,7 @@ void ParticleC::put_one_mutation(int loc) {
 						if (refmrca!=-1) break;
 					}	//LOOP ON iseq
 					/* copie de l'arbre si locus sur Y ou mitochondrie */
+					//cout<<"                       fin du traitement des iseq \n";
 					if (not gtYexist) {if ((locuslist[loc].type % 5) == 3) {GeneTreeY  = this->gt[loc]; gtYexist=true;}}
 					if (not gtMexist) {if ((locuslist[loc].type % 5) == 4) {GeneTreeM  = this->gt[loc]; gtMexist=true;}}
 				}
@@ -2014,11 +2028,14 @@ void ParticleC::put_one_mutation(int loc) {
 					this->sumweight +=1.0;
 				} else {
 				this->locuslist[loc].firstime = true;
+				//cout<<"avant cherche_branchesOK\n";
 				cherche_branchesOK(loc);
 				if (debuglevel==11) cout<<"locus "<<loc<<"   nbOK = "<<this->gt[loc].nbOK<<"   nbOKOK = "<<this->gt[loc].nbOKOK<<"\n";
 				put_one_mutation(loc);
+				//cout<<"apres put_one_mutation\n";
 				if (this->locuslist[loc].weight>0.0) {
 					simulOK[loc]=cree_haplo(loc);
+					//cout<<"apres cree_haplo\n";
 					if (debuglevel==11) cout<<"apres cree_haplo  weight="<<this->locuslist[loc].weight<<"\n";
 					if (polymref(loc)) {
 						this->naccept++;
@@ -2036,14 +2053,17 @@ void ParticleC::put_one_mutation(int loc) {
 					gtexist[loc]=true; 
 					loc--;
 				}
-				if (debuglevel==11) cout<<"weight = "<<this->sumweight<<"\n";
-				if (this->ntentes==nlocutil) this->locpol = this->sumweight/(double)this->ntentes;
+				if (debuglevel==11) cout<<"sumweight = "<<this->sumweight<<"\n";
+				if (debuglevel==11) cout<<"ntentes = "<<this->ntentes<<"\n";
+				if (debuglevel==11) cout<<"nlocutil = "<<nlocutil<<"\n";
+				//if (this->ntentes==nlocutil) this->locpol = this->sumweight/(double)this->ntentes;
+				//if (debuglevel==11) cout<<"locpol="<<this->locpol<<"\n";
 				if (debuglevel==20) {
 					cout<<"nlocutil="<<nlocutil<<"   ntentes="<<this->ntentes<<"   sumweight="<<this->sumweight<<"\n";
-					if (this->ntentes>=nlocutil) cout<<"locpol="<<this->locpol<<"\n";
+					//if (this->ntentes>=nlocutil) cout<<"locpol="<<this->locpol<<"\n";
 				}
-				if ((this->ntentes==nlocutil)and(this->locpol < this->threshold)) this->sumweight=-1.0;
-				if ((debuglevel==12)and(this->locpol<1)) cout<<"locus "<<loc<<"    this->locpol = "<<this->locpol<<"    (sumweight="<<this->sumweight<<"  ntentes="<<this->ntentes<<")\n";
+				//if ((this->ntentes==nlocutil)and(this->locpol < this->threshold)) this->sumweight=-1.0;
+				//if ((debuglevel==12)and(this->locpol<1)) cout<<"locus "<<loc<<"    this->locpol = "<<this->locpol<<"    (sumweight="<<this->sumweight<<"  ntentes="<<this->ntentes<<")\n";
 			}
 			if (this->sumweight<0.0) break;
 		}
@@ -2054,9 +2074,10 @@ void ParticleC::put_one_mutation(int loc) {
 	if (debuglevel==20) exit(1);
 	if (this->sumweight>=0.0) this->weight = this->sumweight/(double)nlocutil;
 	else this->weight = 0.0;
-	if ((debuglevel==13)or(debuglevel==20)) cout<<"poids de la particule = "<<this->weight<<"   taux de polymorphisme = "<<this->locpol;
+	//if ((debuglevel==13)or(debuglevel==20)) cout<<"poids de la particule = "<<this->weight<<"   taux de polymorphisme = "<<this->locpol;
 	if (debuglevel==13) cout<<"    "<<this->naccept<<" sur = "<<this->ntentes<<"\n";
 	if (this->weight>0.0){  
+		//cout<<"données manquantes ? \n";
 		if (debuglevel==10) cout<<this->data.nmisshap<<" donnees manquantes et "<<this->data.nmissnuc<<" nucleotides manquants\n";fflush(stdin);
 		if (this->data.nmisshap>0) {
 			for (int i=0;i<this->data.nmisshap;i++) {
@@ -2128,7 +2149,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  //if (trace) cout << "Fin de dosimulpart \n";
 	  if (this->weight>0.0){
 		simOK=0;for (int loc=0;loc<this->nloc;loc++) {if (this->locuslist[loc].groupe>0) simOK+=simulOK[loc];if (simulOK[loc]!=0) cout<<"locus="<<loc<<"   OK="<<simulOK[loc]<<"\n";}
-		if (simOK!=0) this->scen.ecris();
+		if (simOK!=0) this->scen.ecris(true);
 	}
 	  if (debuglevel==11) cout<<"fin de dosimulpart   simOK="<<simOK<<"\n";fflush(stdin);
 	  if (debuglevel==7) {
@@ -2410,7 +2431,7 @@ void ParticleC::put_one_mutation(int loc) {
 				else sex = " F    ";
 				ligne = sind+sex+spop;
 				for (int loc=0;loc<this->nloc;loc++){
-					cout<<"locus "<<loc<<"  type "<<this->locuslist[loc].type<<"\n";
+					//cout<<"locus "<<loc<<"  type "<<this->locuslist[loc].type<<"\n";
 					switch(this->locuslist[loc].type) {
 						case 10 : 
 							ligne +=" "+ShortIntToString(this->locuslist[loc].haplosnp[ech][ig[loc]]+this->locuslist[loc].haplosnp[ech][ig[loc]+1]);
@@ -2449,7 +2470,7 @@ void ParticleC::put_one_mutation(int loc) {
 				sgp +=ligne+"\n";
 			}
 		}
-		cout<<sgp;
+		//cout<<sgp;
 		cout<<"fin de dodatasnp\n";
 		return sgp;
 	}

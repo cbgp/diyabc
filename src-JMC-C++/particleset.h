@@ -33,7 +33,7 @@ struct ParticleSetC
     // remplissage de la partie locus de la particule p
     void setloci(int p);
     // remplissage de la partie scenarios de la particule p
-    void setscenarios (int p);
+    void setscenarios (int p, bool simulfile);
     // réinitialisation de la particule p
     void resetparticle (int p);
 	// liberation des particules

@@ -128,9 +128,9 @@ void EventC::ecris(){
 
 /* Méthodes de HistParameterC */
 
-void HistParameterC::ecris(){
+void HistParameterC::ecris(bool simulfile){
     cout<<"    name="<<this->name<<"   val="<<this->value<<"   category="<<this->category<<"\n";
-    prior.ecris();
+    if (not simulfile) prior.ecris();
   }
 
 /* Méthodes de LocusGroupC */
@@ -224,7 +224,14 @@ ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
   for (int i=0;i<this->nsamp;i++) this->time_sample[i] = source.time_sample[i];
   // cout<<"   apres copytime_sample\n";
   this->histparam = new HistParameterC[this->nparam];
-  for (int i=0;i<this->nparam;i++) {this->histparam[i] = source.histparam[i];/*cout<<this->histparam[i].name<<"\n"<<flush;*/}
+  for (int i=0;i<this->nparam;i++) {
+	  this->histparam[i] = source.histparam[i];
+	  /*cout<<"history.cpp/operator =\n";
+		cout<<this->histparam[i].name<<"\n"<<flush;
+		cout<<this->histparam[i].value<<"\n"<<flush;
+		cout<<this->histparam[i].category<<"\n"<<flush;*/
+	  
+}
   //  cout<<"   apres copyhistparam\n";
   this->paramvar = new double[this->nparamvar];
   for (int i=0;i<this->nparamvar;i++) {this->paramvar[i] = source.paramvar[i];/*cout<<this->histparam[i].name<<"\n"<<flush;*/}
@@ -237,7 +244,7 @@ ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
 };
 
 
-void ScenarioC::ecris() {
+void ScenarioC::ecris(bool simulfile) {
     cout <<"scenario "<<this->number<<"   ("<<this->prior_proba<<")\n";
     cout <<"    nevent="<<this->nevent<<"   nne0="<<nn0<<"\n";
     cout <<"    nsamp ="<<this->nsamp<<"   npop="<<this->npop<<"   popmax="<<this->popmax<< "\n";
@@ -246,7 +253,7 @@ void ScenarioC::ecris() {
     cout<<"    events:\n";
     for (int i=0;i<this->nevent;i++) this->event[i].ecris();
     cout<<"    histparam:\n";
-    for (int i=0;i<this->nparam;i++) this->histparam[i].ecris();
+    for (int i=0;i<this->nparam;i++) this->histparam[i].ecris(simulfile);
     cout<<"    nparamvar = "<<this->nparamvar<<"\n";cout<<" paramvar : ";
     for (int i=0;i<this->nparamvar;i++) cout<<this->paramvar[i]<<"   ";cout<<"\n";
     cout <<"   nconditions="<<this->nconditions<<"\n";
