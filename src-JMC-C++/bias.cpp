@@ -118,7 +118,7 @@ bool valinfinie=false;
         ss = splitwords(s,"=",&n);
         name=ss[0];
         i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
-        //cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
+        cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
             header.scenario[rt.scenteste-1].histparam[i].prior.readprior(ss[1]);
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=false;
@@ -1667,7 +1667,7 @@ bool valinfinie=false;
  */
 	void dobias(string opt,  int seed){
 		cout<<"debut de dobias\n";
-        int nstatOK, iprog,nprog,bidule;
+        int nstatOK, iprog,nprog,bidule,k;
         int nrec = 0, nsel = 0,ns,nrecpos = 0,ntest = 0,np,ng,npv,nn,ncond,nt,*paordre,*paordreabs;
         string *ss,s,*ss1,s0,s1,sg, entetelog, *paname, nomfitrace, nomfipar;
 		float *stat_obs;
@@ -1728,7 +1728,7 @@ bool valinfinie=false;
                 }
                 ncond=np-header.scenario[rt.scenteste-1].nparam;
                 for (int j=0;j<header.scenario[rt.scenteste-1].nparam;j++) resethistparam(ss1[j]);
-                if (ncond>0) {
+				if (ncond>0) {
                   cout<<header.scenario[rt.scenteste-1].nconditions<<"\n";
                     if (header.scenario[rt.scenteste-1].nconditions != ncond) {
                         if (header.scenario[rt.scenteste-1].nconditions>0) delete []header.scenario[rt.scenteste-1].condition;
@@ -1785,14 +1785,17 @@ bool valinfinie=false;
 		paordre =new int[npv];
 		for (int i=0;i<npv;i++)  {
 			if (i<rt.nhistparam[rt.scenteste-1]) {
-				int k=0;
+				k=0;
 				while ((paname[k].compare(rt.histparam[rt.scenteste-1][i].name)!=0)and(k<nt-1)) k++;
 				paordreabs[i]=k;
 				cout <<"i="<<i<<"    k="<<k<<"      ";
 				cout <<rt.histparam[rt.scenteste-1][i].name<<"   "<<paname[k]<<"\n";
 			} else {
-				cout <<"i="<<i<<"   "<<paname[i+1]<<"\n";
-				paordreabs[i]=i+1;
+				k=0;
+				while ((paname[k].compare(rt.mutparam[i-rt.nhistparam[rt.scenteste-1]].name)!=0)and(k<nt-1)) k++;
+				paordreabs[i]=k;
+				cout <<"i="<<i<<"    k="<<k<<"      ";
+				cout <<rt.mutparam[i-rt.nhistparam[rt.scenteste-1]].name<<"   "<<paname[k]<<"\n";
 			}
 			cout <<"paordreabs["<<i<<"]="<<paordreabs[i]<<"\n";
 		}		
@@ -1817,7 +1820,7 @@ bool valinfinie=false;
 				enreg2[p].paramvv[i]=atof(ss[paordre[i]+1].c_str());
 				if (enreg2[p].paramvv[i]<zeroplus) enreg2[p].paramvv[i]=zeroplus;
 				if (i<rt.nhistparam[rt.scenteste-1]) enreg2[p].name[i]=rt.histparam[rt.scenteste-1][i].name;
-				else enreg2[p].name[i]=paname[i+1];
+				else enreg2[p].name[i]=rt.mutparam[i-rt.nhistparam[rt.scenteste-1]].name;
 				if(p==0)cout<<"enreg2[p].name["<<i<<"]="<<enreg2[p].name[i]<<" = "<<enreg2[p].paramvv[i]<<"\n";
 			}
 			cout<<"avant setcompo\n";

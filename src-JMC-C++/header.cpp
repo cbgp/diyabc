@@ -792,7 +792,7 @@ int HeaderC::buildMutParam(){
 	for (gr=1;gr<=this->ngroupes;gr++) {
 		if (this->groupe[gr].type==0) {
 			if (not this->groupe[gr].priormutmoy.constant) {
-				this->mutparam[nparamut].name="umic_"+IntToString(gr);
+				this->mutparam[nparamut].name="µmic_"+IntToString(gr);
 				this->mutparam[nparamut].groupe=gr;
 				this->mutparam[nparamut].category=0;
 				//this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priormutmoy);
@@ -800,7 +800,7 @@ int HeaderC::buildMutParam(){
 				this->nparamut++;
 			}
 			if (not this->groupe[gr].priorPmoy.constant) {
-				this->mutparam[nparamut].name="Pmic_"+IntToString(gr);
+				this->mutparam[nparamut].name="pmic_"+IntToString(gr);
 				this->mutparam[nparamut].groupe=gr;
 				this->mutparam[nparamut].category=1;
 				//this->mutparam[nparamut].prior = copyprior(this->groupe[gr].priorPmoy);
