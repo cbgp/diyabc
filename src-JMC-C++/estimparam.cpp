@@ -1551,10 +1551,10 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         parst = new parstatC[nparam];
         x = new long double[n];
         for (int j=0;j<nparam;j++) {
-			cout<<"calcul des stat du parametre "<<j<<" sur "<<nparam<<"\n";
+			//cout<<"calcul des stat du parametre "<<j<<" sur "<<nparam<<"\n";
             for (int i=0;i<n;i++) x[i] = par[i][j];
             sort(&x[0],&x[n]);
-			cout<<"apres le sort\n";
+			//cout<<"apres le sort\n";
             parst[j].q025 = x[(int)floor(0.025*n+0.5)-1];
             parst[j].q050 = x[(int)floor(0.050*n+0.5)-1];
             parst[j].q250 = x[(int)floor(0.250*n+0.5)-1];
@@ -1562,11 +1562,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             parst[j].q750 = x[(int)floor(0.750*n+0.5)-1];
             parst[j].q950 = x[(int)floor(0.950*n+0.5)-1];
             parst[j].q975 = x[(int)floor(0.975*n+0.5)-1];
-			cout<<"apres les quantiles\n";
+			//cout<<"apres les quantiles\n";
             parst[j].moy = cal_moyL(n,x);
-			cout<<"apres la moyenne\n";
+			//cout<<"apres la moyenne\n";
             parst[j].mod = cal_modeL(n,x);
-			cout<<"apres le mode\n";
+			//cout<<"apres le mode\n";
         }
         delete []x;
         return parst;

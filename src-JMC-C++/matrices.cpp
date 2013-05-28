@@ -380,9 +380,8 @@ int jacobiL (int n, long double * * A, long double * D, long double * * V)
         delete []b;delete []z;
         return nrot;    
     }
-double kappa (int n, long double * * A)
-                                            {
-		long double **vcprop, *valprop,piv,**B;
+double kappa (int n, long double * * A) {
+		long double **vcprop, *valprop,piv,**B, vpn1,vp0;
         vcprop  = new long double*[n];for (int i=0;i<n;i++) vcprop[i]=new long double [n];
         valprop = new long double[n];
         B  = new long double*[n];for (int i=0;i<n;i++) B[i]=new long double [n];
@@ -393,8 +392,13 @@ double kappa (int n, long double * * A)
                 if (valprop[i]<valprop[j]) {piv=valprop[i];valprop[i]=valprop[j];valprop[j]=piv;}
             }
         }
-	    if (valprop[n-1]>0) return valprop[0]/valprop[n-1]; else return 1E100;
+		vpn1=valprop[n-1];vp0=valprop[0];
+		for (int i=0;i<n;i++) delete [] B[i];delete [] B;       
+		for (int i=0;i<n;i++) delete [] vcprop[i];delete [] vcprop;
+		delete [] valprop;
+	    if (vpn1>0) return vp0/vpn1; else return 1E100;
 	}
+	
 int inverse_Tik (int n, long double * * A, long double * * C)
                                                                  {
 		long double t,coeff,**AA,seuil_kappa=1E8;

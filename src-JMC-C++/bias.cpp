@@ -94,8 +94,6 @@ bool valinfinie=false;
 			sp[i] = new long double[nparam];
 			for (int j=0;j<nparam;j++) sp[i][j] = simpar[numero[i]][j];
 		}
-//		for (int i=0;i<nsimpar;i++) delete []simpar[i];
-//		delete [] simpar;
 		return sp;
 	}
 
@@ -729,6 +727,7 @@ bool valinfinie=false;
 			bmedr_OS[j][p] = cal_medL(nsel,cc);
         }            
         delete []cc;
+		for (int i=0;i<nsel;i++) delete [] simparsel[i];delete []simparsel;
 		//cout<<("8\n");
 ////////////  RMAE
 		for (int k=0;k<3;k++) {
@@ -747,8 +746,6 @@ bool valinfinie=false;
 			}
 		}
             //Il restera à calculer la médiane des bmeda_O[k][j]
-		for (int i=0;i<nsel;i++) delete [] simparsel[i];
-		delete []simparsel;
 	cout<<"fin de biaisrelO\n";
     }
 
@@ -760,10 +757,11 @@ bool valinfinie=false;
 		simparcomposel = echantillon(nsel,nsimpar,nparcompo,simparcompo);
 		if (p>0) delete []paramestcompoS;
 		paramestcompoS = calparstat(nsel,nparcompo,simparcomposel);
-		for (int j=0;j<nparamcom;j++){
+		for (int j=0;j<nparcompo;j++){
 			paramestcompomoyS[j] +=paramestcompoS[j].moy;
 			paramestcompomedS[j] +=paramestcompoS[j].med;
 		}
+		//if(debuglevel==11) cout<<"biaisrelC 1\n";
 //////////////// mean relative bias
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {
@@ -776,6 +774,7 @@ bool valinfinie=false;
 				br_CS[k][j] +=ds/enreg2[p].paramvvC[j]; // il restera à diviser par ntest
 			}
 		}
+		//if(debuglevel==11) cout<<"biaisrelC 2\n";
 ////////////  RRMISE
 		for (int j=0;j<nparcompo;j++) {
 			s=0.0;
@@ -785,6 +784,7 @@ bool valinfinie=false;
 			for (int i=0;i<nsel;i++) {d=simparcomposel[i][j]-enreg2[p].paramvvC[j];s += d*d;}
 			rrmise_CS[j] +=s/enreg2[p].paramvvC[j]/enreg2[p].paramvvC[j]/double(nsel);// il restera à diviser par ntest
 		}
+		//if(debuglevel==11) cout<<"biaisrelC 3\n";
 ////////////  RMAD
 		for (int j=0;j<nparcompo;j++) {
 			s=0.0;
@@ -794,6 +794,7 @@ bool valinfinie=false;
 			for (int i=0;i<nsel;i++) s += fabs(simparcomposel[i][j]-enreg2[p].paramvvC[j]);
 			rmad_CS[j] +=s/fabs(enreg2[p].paramvvC[j])/(long double)nsel;// il restera à diviser par ntest
 		}
+		//if(debuglevel==11) cout<<"biaisrelC 4\n";
 ////////////  RMSE
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {
@@ -807,6 +808,7 @@ bool valinfinie=false;
 				rmse_CS[k][j] += ds*ds/enreg2[p].paramvvC[j]/enreg2[p].paramvvC[j];
             }
         }
+		//if(debuglevel==11) cout<<"biaisrelC 5\n";
 /////////////// coverages
         long double atest=1.0/(long double)ntest;
         for (int j=0;j<nparcompo;j++) {
@@ -815,6 +817,7 @@ bool valinfinie=false;
 			if((paramestcompoS[j].q025<=enreg2[p].paramvvC[j])and(paramestcompoS[j].q975>=enreg2[p].paramvvC[j])) cov95_CS[j] += atest;
 			if((paramestcompoS[j].q250<=enreg2[p].paramvvC[j])and(paramestcompoS[j].q750>=enreg2[p].paramvvC[j])) cov50_CS[j] += atest;
 		}
+		//if(debuglevel==11) cout<<"biaisrelC 6\n";
 ///////////////// factors 2
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {
@@ -831,6 +834,7 @@ bool valinfinie=false;
 				}
             }
         }
+		//if(debuglevel==11) cout<<"biaisrelC 7\n";
 /////////////////// medianes du biais relatif
         for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {
@@ -848,6 +852,7 @@ bool valinfinie=false;
             }
             //Il restera à calculer la médiane des bmed[k][j]
         }
+		//if(debuglevel==11) cout<<"biaisrelC 8\n";
 ///////////////// Relative Median Absolute Deviation
         long double *cc;
         cc = new long double[nsel];
@@ -860,6 +865,8 @@ bool valinfinie=false;
 			bmedr_CS[j][p] = cal_medL(nsel,cc);
         }            
         delete []cc;
+		for (int i=0;i<nsel;i++) delete [] simparcomposel[i];delete []simparcomposel;
+		//if(debuglevel==11) cout<<"biaisrelC 9\n";
 ////////////  RMAE
 		for (int k=0;k<3;k++) {
 			for (int j=0;j<nparcompo;j++) {
@@ -877,6 +884,7 @@ bool valinfinie=false;
 			}
 		}
             //Il restera à calculer la médiane des bmeda_O[k][j]
+		//if(debuglevel==11) cout<<"biaisrelC 10\n";
     }
 
 
@@ -991,6 +999,7 @@ bool valinfinie=false;
 			bmedr_SS[j][p] = cal_medL(nsel,cc);
         }            
         delete []cc;
+		for (int i=0;i<nsel;i++) delete []simparscaledsel[i];delete simparscaledsel;
 ////////////  RMAE
 		for (int k=0;k<3;k++) {
 			for (int j=0;j<nparscaled;j++) {
@@ -1031,22 +1040,31 @@ bool valinfinie=false;
 	}
 	
 	void finbiaisrelC(int ntest) {
+		if (debuglevel==11) cout<<"debut de finbiaisrelC\n";
 		for (int j=0;j<nparamcom;j++) {paramestcompomoyS[j] /=(long double)ntest;paramestcompomedS[j] /=(long double)ntest;}
+		if (debuglevel==11) cout<<"finbiaisrelC 1\n";
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {br_C[k][j] /=(long double)ntest;br_CS[k][j] /=(long double)ntest;}
 		}
+		if (debuglevel==11) cout<<"finbiaisrelC 2\n";
 		for (int j=0;j<nparcompo;j++) {rrmise_C[j] = sqrt(rrmise_C[j]/(long double)ntest);rrmise_CS[j] = sqrt(rrmise_CS[j]/(long double)ntest);}
+		if (debuglevel==11) cout<<"finbiaisrelC 3\n";
 		for (int j=0;j<nparcompo;j++) {rmad_C[j] /=(long double)ntest;rmad_CS[j] /=(long double)ntest;}
+		if (debuglevel==11) cout<<"finbiaisrelC 4\n";
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {rmse_C[k][j] = sqrt(rmse_C[k][j]/(long double)ntest);rmse_CS[k][j] = sqrt(rmse_CS[k][j]/(long double)ntest);}
 		}
+		if (debuglevel==11) cout<<"finbiaisrelC 5\n";
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {rmb_C[k][j] =cal_medL(ntest,bmed_C[k][j]);rmb_CS[k][j] =cal_medL(ntest,bmed_CS[k][j]);}
 		}
+		if (debuglevel==11) cout<<"finbiaisrelC 6\n";
 		for (int j=0;j<nparcompo;j++) {rmedad_C[j] = cal_medL(ntest,bmedr_C[j]);rmedad_CS[j] = cal_medL(ntest,bmedr_CS[j]);}
+		if (debuglevel==11) cout<<"finbiaisrelC 7\n";
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {rmae_C[k][j] =cal_medL(ntest,bmeda_C[k][j]);rmae_CS[k][j] =cal_medL(ntest,bmeda_CS[k][j]);}
 		}
+		if (debuglevel==11) cout<<"fin de finbiaisrelC\n";
 	}
 	
 	void finbiaisrelS(int ntest) {
