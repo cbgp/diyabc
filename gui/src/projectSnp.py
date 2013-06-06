@@ -32,7 +32,7 @@ class ProjectSnp(ProjectReftable):
 
         self.typesOrdered = ["A","H","X","Y","M"]
 
-        self.ui.frame_11.show()
+        #self.ui.frame_11.show()
         #self.ui.frame_12.show()
 
         self.ascert_frame = ControlAscertBias(self)
@@ -87,24 +87,23 @@ class ProjectSnp(ProjectReftable):
         """ initie la définition des summary statistics
         """
         log(1,"Entering in Summary statistics")
-        ty = str(self.typeCombo.currentText())
-        self.ui.refTableStack.addWidget(self.sum_stat_wins[ty])
-        self.ui.refTableStack.setCurrentWidget(self.sum_stat_wins[ty])
+        #ty = str(self.typeCombo.currentText())
+        self.ui.refTableStack.addWidget(self.sum_stat_wins)
+        self.ui.refTableStack.setCurrentWidget(self.sum_stat_wins)
         self.setGenValid(False)
+        self.sum_stat_wins.lockLociSelection()
 
     def getNbSumStats(self):
-        nb = 0
-        for ty in self.sum_stat_wins.keys():
-            (nstat,stat_txt) = self.sum_stat_wins[ty].getSumConf()
-            nb += int(nstat)
+        (nstat,stat_txt) = self.sum_stat_wins.getSumConf()
+        nb = int(nstat)
         if self.ascert_frame.ascYesRadio.isChecked():
             nb += 1
         return nb
 
     def getNbTotalTaken(self):
         nb = 0
-        for ty in self.sum_stat_wins.keys():
-            nb += int(self.sum_stat_wins[ty].ui.takenEdit.text())
+        for ty in self.data.ntypeloc.keys() :
+            exec("nb += int(self.sum_stat_wins.ui.taken%sEdit.text())"%ty)
         return nb
 
     def updateNbStats(self):
@@ -128,7 +127,7 @@ class ProjectSnp(ProjectReftable):
         utilisé par setupEstimationBias pour remplir la liste de groupes dans le cadre
         de la redéfinition de sumstats
         """
-        return self.sum_stat_wins.keys()
+        return self.sum_stat_wins.types
 
     def redefineSumStatsAnalysis(self,setupEst):
         """ methode ping pong pour sélectionner la bonne methode
@@ -153,8 +152,7 @@ class ProjectSnp(ProjectReftable):
             self.setHistValid(True)
             self.hist_model_win.majProjectGui()
         # mutation model : plus facile d'utiliser directement la validation
-        for ty in self.sum_stat_wins.keys():
-            self.sum_stat_wins[ty].validate(silent=True)
+        self.sum_stat_wins.validate(silent=True)
         self.ascert_frame.validate(silent=True)
 
     def returnToMe(self):
@@ -174,16 +172,30 @@ class ProjectSnp(ProjectReftable):
                 dicoFrom = {}
                 dicoGrTy = {}
                 dicoStatLines = {}
+                tyUsed= []
                 while (lines[nl].strip() != ""):
-                    ty = lines[nl].split('<')[1].split('>')[0]
-                    numGr = int(lines[nl].strip().split()[2][1:])
-                    diconb[ty] = lines[nl].strip().split()[0]
-                    dicoFrom[ty] = lines[nl].strip().split()[4]
-                    dicoGrTy[numGr] = ty
-                    self.sum_stat_wins[ty].ui.takenEdit.setText(diconb[ty])
-                    self.sum_stat_wins[ty].ui.fromEdit.setText(dicoFrom[ty])
+                    numGr = int(lines[nl].split('G')[-1][0])   
+                    fro = lines[nl].split('from')[-1].split()[0]
+                    for couple in lines[nl].split('>')[:-1]:
+                        if '<' in couple :
+                            ty = couple[-1]
+                            numTy = couple.split('<')[0].split()
+                            if len(numTy) != 1 :
+                                raise  Exception("Read SNP loci : Parsing error on : %s" % lines[nl])
+                            numTy = numTy[0]
+                            exec("self.sum_stat_wins.ui.taken%sEdit.setText(numTy)"%ty)                           
+                            tyUsed += ty
+                            diconb[ty] = numTy                                              
+                            dicoFrom[ty] = fro
+                            dicoGrTy[numGr] = ty
+
+                    self.sum_stat_wins.ui.fromEdit.setText(fro)
+                    for tyOrdered in self.typesOrdered:
+                        if tyOrdered not in tyUsed:
+                            exec("self.sum_stat_wins.ui.taken%sEdit.setText('0')"%tyOrdered)
                     nl += 1
                 nl += 2
+                
                 while nl < len(lines) and lines[nl].strip() != "":
                     numGroup = int(lines[nl].strip().split()[1][1:])
                     ty = dicoGrTy[numGroup]
@@ -195,8 +207,8 @@ class ProjectSnp(ProjectReftable):
                     dicoStatLines[ty] = statlines
 
                 for ty in dicoStatLines.keys():
-                    self.sum_stat_wins[ty].setSumConf(dicoStatLines[ty])
-
+                    self.sum_stat_wins.setSumConf(dicoStatLines[ty])
+           
     def loadFromDir(self):
         """ charge les infos à partir du répertoire self.dir
         """
@@ -210,16 +222,21 @@ class ProjectSnp(ProjectReftable):
         self.ui.groupBox_8.show()
         self.ui.setHistoricalButton.setDisabled(False)
         self.ui.setGeneticButton.setDisabled(False)
-
-        try:
-            # lecture du meta project
-            self.loadMyConf()
-            # lecture de conf.hist.tmp
-            self.hist_model_win.loadHistoricalConf()
-            self.ascert_frame.loadAscertConf()
-            self.loadSumStatsConf()
-            self.loadAnalysis()
+        #kkpz kkpz kkpz # remttre le try 
+        #try:
+        # lecture du meta project
+        self.loadMyConf()
+        # lecture de conf.hist.tmp
+        self.hist_model_win.loadHistoricalConf()
+        self.ascert_frame.loadAscertConf()
+        self.loadSumStatsConf()
+        self.sum_stat_wins.lockLociSelection()
+        self.loadAnalysis()
+        
+        try :
+            pass
         except Exception as e:
+            
             raise Exception("Impossible to read the project configuration\n\n%s"%e)
             output.notify(self,"Load error","Impossible to read the project configuration\n\n%s"%e)
 
@@ -273,26 +290,21 @@ class ProjectSnp(ProjectReftable):
         # feinte pour que le parent.parent renvoie au projet
         self.dummy = QFrame()
         self.dummy.parent = self
-        self.sum_stat_wins = {}
-        for ty in self.data.ntypeloc.keys():
-            self.sum_stat_wins[ty] = SetSummaryStatisticsSnp(parent=self.dummy,numGroup=ty)
-            self.sum_stat_wins[ty].hide()
+        self.clearSummaryStats()
 
-        # selection du type de snp pour sumstats
-        self.typeCombo = QComboBox(self)
-        for ty in self.typesOrdered:
-            if ty in self.data.ntypeloc.keys():
-                self.typeCombo.addItem(ty)
-        self.ui.horizontalLayout_6.addWidget(QLabel("for locus type :"))
-        self.ui.horizontalLayout_6.addWidget(self.typeCombo)
+        # selection du type de snp pour sumstats kkpz a retirer
+        #self.typeCombo = QComboBox(self)
+        #for ty in self.typesOrdered:
+        #    if ty in self.data.ntypeloc.keys():
+        #        self.typeCombo.addItem(ty)
+        #self.ui.horizontalLayout_6.addWidget(QLabel("for locus type :"))
+        #self.ui.horizontalLayout_6.addWidget(self.typeCombo)
 
         return True
 
     def clearSummaryStats(self):
-        self.sum_stat_wins = {}
-        for ty in self.data.ntypeloc.keys():
-            self.sum_stat_wins[ty] = SetSummaryStatisticsSnp(parent=self.dummy,numGroup=ty)
-            self.sum_stat_wins[ty].hide()
+        self.sum_stat_wins = SetSummaryStatisticsSnp(parent=self.dummy,numGroup='A')
+        self.sum_stat_wins.hide()
 
 
     def save(self):
@@ -388,11 +400,8 @@ class ProjectSnp(ProjectReftable):
         """
         result = u""
         numGroup = 1
-        for ty in self.typesOrdered:
-            if ty in self.sum_stat_wins.keys():
-                sums_txt = self.sum_stat_wins[ty].getSumStatsTableHeader(numGroup)
-                result += sums_txt
-                numGroup += 1
+        sums_txt = self.sum_stat_wins.getSumStatsTableHeader(numGroup)
+        result += sums_txt
         if self.ascert_frame.ascYesRadio.isChecked():
             result += output.centerHeader("PPL",14)
         return result
@@ -402,19 +411,21 @@ class ProjectSnp(ProjectReftable):
         """
         locidesc = ""
         statsdesc = ""
+        res = ""
         numGr = 1
         totNbStat = 0
         if self.ascert_frame.ascYesRadio.isChecked():
             totNbStat += 1
-        for ty in self.typesOrdered:
-            if ty in self.sum_stat_wins.keys():
-                (nstat,statstr) = self.sum_stat_wins[ty].getSumConf()
-                totNbStat += nstat
-                if nstat > 0:
-                    locidesc += "%s <%s> G%s from %s\n"%(self.sum_stat_wins[ty].ui.takenEdit.text(),ty,numGr,self.sum_stat_wins[ty].ui.fromEdit.text())
-                    statsdesc += "group G%s (%s)\n%s"%(numGr,nstat,statstr)
-                    numGr += 1
-        res = "loci description (%s)\n"%(numGr - 1)
+        (nstat,statstr) = self.sum_stat_wins.getSumConf()
+        totNbStat += nstat
+        if nstat > 0:
+            for ty in self.data.ntypeloc.keys():
+                exec("taken = self.sum_stat_wins.ui.taken%sEdit.text()"%ty)
+                if int(taken) > 0 : 
+                    locidesc += "%s <%s> "%(taken,ty)
+            statsdesc += "group G%s (%s)\n%s"%(numGr,nstat,statstr)
+        locidesc += "G%s from %s\n"%(numGr,self.sum_stat_wins.ui.fromEdit.text())
+        res += "loci description (%s)\n"%(numGr)
         res += locidesc
 
         res += "\ngroup summary statistics (%s)\n"%(totNbStat)
@@ -450,17 +461,17 @@ class ProjectSnp(ProjectReftable):
 
     def freezeGenData(self,yesno=True):
         try:
-            for g in self.sum_stat_wins.values():
-                for e in g.findChildren(QLineEdit):
-                    e.setDisabled(yesno)
-                for e in g.findChildren(QPushButton):
-                    e.setDisabled(yesno)
-                for e in g.findChildren(QCheckBox):
-                    e.setDisabled(yesno)
-                g.ui.clearButton.setDisabled(yesno)
-                g.ui.exitButton.setDisabled(yesno)
-                g.ui.okButton.setDisabled(False)
-                g.ui.addAdmixButton.setDisabled(yesno)
+            g = self.sum_stat_wins
+            for e in g.findChildren(QLineEdit):
+                e.setDisabled(yesno)
+            for e in g.findChildren(QPushButton):
+                e.setDisabled(yesno)
+            for e in g.findChildren(QCheckBox):
+                e.setDisabled(yesno)
+            g.ui.clearButton.setDisabled(yesno)
+            g.ui.exitButton.setDisabled(yesno)
+            g.ui.okButton.setDisabled(False)
+            g.ui.addAdmixButton.setDisabled(yesno)
             if yesno:
                 self.ui.setGeneticButton.setText("            View")
             else:

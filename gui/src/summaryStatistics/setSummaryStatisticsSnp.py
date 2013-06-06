@@ -43,7 +43,6 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
                 "AV1" : "fae3",
                 "AMO" : "mod3"}
         self.statList = self.statList1 + self.statList2 + self.statList3
-
         super(SetSummaryStatisticsSnp,self).__init__(parent,box_group,numGroup)
 
     def createWidgets(self):
@@ -71,24 +70,34 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         self.ui.frame_11.hide()
         self.ui.frame_9.hide()
 
-        self.ui.sumStatLabel.setText("Set summary statistics for '%s' locus"%self.numGroup)
-        self.ui.availableEdit.setText(str(self.parent.parent.data.ntypeloc[self.numGroup]))
-        self.ui.takenEdit.setText(str(self.parent.parent.data.ntypeloc[self.numGroup]))
+        #self.ui.sumStatLabel.setText("Set summary statistics for all loci"%self.numGroup)
+        for ty in self.parent.parent.typesOrdered :
+            if ty in self.parent.parent.data.ntypeloc.keys() :
+                exec("self.ui.available%sLabel.setText(str(self.parent.parent.data.ntypeloc[ty]))"%ty)
+                exec("self.ui.taken%sEdit.setText(str(self.parent.parent.data.ntypeloc[ty]))"%ty)
+        self.lockLociSelection()
+
+            
 
     def exit(self):
         self.parent.parent.ui.refTableStack.removeWidget(self)
         self.parent.parent.ui.refTableStack.setCurrentIndex(0)
         self.parent.parent.updateNbStats()
+        
     def validate(self,silent=False):
         try:
             # pour voir si ça déclenche une exception
             (nbstats,b) = self.getStats()
-
-            av = int(str(self.ui.availableEdit.text()))
-            ta = int(str(self.ui.takenEdit.text()))
+            for ty in self.parent.parent.typesOrdered :
+                exec("av = int(str(self.ui.available%sLabel.text()))"%ty)
+                exec("ta = int(str(self.ui.taken%sEdit.text()))"%ty)
+                #if fro+ta > av+1 or ta <= 0 or fro <= 0: kkpz-rm
+                if ta > av or ta < 0 :
+                    raise Exception("Number of taken loci must be positive and at most equal to available loci number")
+            exec("hchoosen = int(str(self.ui.takenHEdit.text()))")
             fro = int(str(self.ui.fromEdit.text()))
-            if fro+ta > av+1 or ta <= 0 or fro <= 0:
-                raise Exception("Number of taken loci must be positive and at most equal to available loci number")
+            if fro <= 0 :
+                raise Exception('"from locus" numver must be positive')
             #if self.parent.parent.getNbSumStats() == 0:
             if nbstats == 0:
                 raise Exception("You must select at least one summary statistic")
@@ -96,11 +105,18 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         except Exception as e:
             if not silent:
                 output.notify(self,"Input error",str(e))
-
+    
+    def lockLociSelection(self):
+        """Disabled loci selection if not present in the datafile"""
+        for ty in self.parent.parent.typesOrdered:
+            if ty not in self.parent.parent.data.ntypeloc.keys():
+                exec("self.ui.taken%sEdit.setText('0')"%ty)
+                exec("self.ui.taken%sEdit.setDisabled(True)"%ty)
+    
     def addOneSample(self,num):
         """ methode d'ajout d'un bloc dans 'one sample sum stats'
         """
-        frame_9 = QtGui.QFrame(self.ui.scrollAreaWidgetContents)
+        frame_9 = QtGui.QFrame(self.ui.oneFrame)
         frame_9.setMinimumSize(QtCore.QSize(60, 0))
         frame_9.setMaximumSize(QtCore.QSize(60, 16777215))
         frame_9.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -141,7 +157,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
     def addTwoSample(self,num1,num2):
         """ methode d'ajout d'un bloc dans 'two samples sum stats'
         """
-        frame_11 = QtGui.QFrame(self.ui.scrollAreaWidgetContents_2)
+        frame_11 = QtGui.QFrame(self.ui.twoFrame)
         frame_11.setMinimumSize(QtCore.QSize(70, 0))
         frame_11.setMaximumSize(QtCore.QSize(70, 16777215))
         frame_11.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -186,7 +202,7 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
     def addAdmixSampleGui(self,num1,num2,num3):
         """ methode d'ajout d'un bloc dans 'three sample admix sum stats'
         """
-        frame_12 = QtGui.QFrame(self.ui.scrollAreaWidgetContents_3)
+        frame_12 = QtGui.QFrame(self.ui.admixFrame)
         frame_12.setMinimumSize(QtCore.QSize(85, 0))
         frame_12.setMaximumSize(QtCore.QSize(85, 16777215))
         frame_12.setFrameShape(QtGui.QFrame.StyledPanel)

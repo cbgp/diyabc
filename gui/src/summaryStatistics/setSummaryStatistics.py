@@ -38,10 +38,10 @@ class SetSummaryStatistics(QFrame):
             if self.parent.parent.data.nsample >= 3:
                 pass
             else:
-                self.ui.admixScroll.hide()
+                self.ui.admixFrame.hide()
         else:
-            self.ui.twoScroll.hide()
-            self.ui.admixScroll.hide()
+            self.ui.twoFrame.hide()
+            self.ui.admixFrame.hide()
 
         for i in range(self.parent.parent.data.nsample):
             self.ui.adm1Combo.addItem(str(i+1))

@@ -86,7 +86,7 @@ class Project(baseProject,formProject):
 
         self.stopUiGenReftable()
 
-        self.ui.frame_11.hide()
+        #self.ui.frame_11.hide()
         self.ui.frame_12.hide()
 
         self.ui.nbSetsDoneEdit.setStyleSheet("background-color: #DEF8FF")
