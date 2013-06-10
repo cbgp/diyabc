@@ -36,6 +36,7 @@ class ProjectSimulation(Project):
         self.ui.projNameLabel.setText("Data file generic name :")
         self.ui.dirLabel.setText("Target directory :")
         self.ui.dirEdit.setText("%s"%self.dir)
+        self.ui.runReftableButton.setText("Run data sets simulation")
         self.ui.nbSetsReqLabel.setText("Total number of data sets to be simulated :")
         fontLabel = QFont()
         fontLabel.setPointSize(14)
