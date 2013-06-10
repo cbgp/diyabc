@@ -731,6 +731,61 @@
                    <property name="horizontalSpacing">
                     <number>10</number>
                    </property>
+                   <item row="2" column="0" colspan="4">
+                    <widget class="QTextBrowser" name="warningNumTextBrowser">
+                     <property name="html">
+                      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000;&quot;&gt;Warning : a minimum of ShouldBeDynamicallyReplacedByNumOfSceanrio x 10&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000; vertical-align:super;&quot;&gt;5&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000;&quot;&gt; and optimally ShouldBeDynamicallyReplacedByNumOfSceanrio x 10&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000; vertical-align:super;&quot;&gt;6&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000;&quot;&gt; simulated datasets are needed for further analyses to get both computationally and statistically robust results when further ABC analyses will be processed. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="2">
+                    <widget class="QLineEdit" name="nbSetsDoneEdit">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>26</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>120</width>
+                       <height>26</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                     <property name="readOnly">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0">
+                    <spacer name="horizontalSpacer_5">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>10</width>
+                       <height>60</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
                    <item row="3" column="2">
                     <widget class="QLineEdit" name="nbSetsReqEdit">
                      <property name="sizePolicy">
@@ -756,19 +811,6 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="0">
-                    <spacer name="horizontalSpacer_5">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
                    <item row="4" column="0">
                     <spacer name="horizontalSpacer_6">
                      <property name="orientation">
@@ -776,7 +818,7 @@
                      </property>
                      <property name="sizeHint" stdset="0">
                       <size>
-                       <width>40</width>
+                       <width>10</width>
                        <height>20</height>
                       </size>
                      </property>
@@ -816,37 +858,6 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="1">
-                    <widget class="QLabel" name="nbSetsReqLabel">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>410</width>
-                       <height>40</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>410</width>
-                       <height>40</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>Total required number of simulated data sets</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignCenter</set>
-                     </property>
-                     <property name="wordWrap">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="3" column="3">
                     <spacer name="horizontalSpacer_3">
                      <property name="orientation">
@@ -873,45 +884,31 @@
                      </property>
                     </spacer>
                    </item>
-                   <item row="4" column="2">
-                    <widget class="QLineEdit" name="nbSetsDoneEdit">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
+                   <item row="3" column="1">
+                    <widget class="QLabel" name="nbSetsReqLabel">
                      <property name="minimumSize">
                       <size>
-                       <width>0</width>
-                       <height>26</height>
+                       <width>410</width>
+                       <height>40</height>
                       </size>
                      </property>
                      <property name="maximumSize">
                       <size>
-                       <width>120</width>
-                       <height>26</height>
+                       <width>410</width>
+                       <height>40</height>
                       </size>
                      </property>
                      <property name="text">
-                      <string>0</string>
+                      <string>Total required number of simulated data sets                                         </string>
                      </property>
-                     <property name="alignment">
-                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                     </property>
-                     <property name="readOnly">
+                     <property name="scaledContents">
                       <bool>true</bool>
                      </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0" colspan="4">
-                    <widget class="QTextBrowser" name="warningNumTextBrowser">
-                     <property name="html">
-                      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000;&quot;&gt;Warning : a minimum of ShouldBeDynamicallyReplacedByNumOfSceanrio x 10&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000; vertical-align:super;&quot;&gt;5&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000;&quot;&gt; and optimally ShouldBeDynamicallyReplacedByNumOfSceanrio x 10&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000; vertical-align:super;&quot;&gt;6&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000;&quot;&gt; simulated datasets are needed for further analyses to get both computationally and statistically robust results when further ABC analyses will be processed. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                     <property name="wordWrap">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -1279,8 +1276,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>98</width>
-               <height>28</height>
+               <width>931</width>
+               <height>680</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">
