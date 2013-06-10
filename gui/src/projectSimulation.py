@@ -32,6 +32,7 @@ class ProjectSimulation(Project):
         self.dico_loc_nb = None
         self.sexRatio = None
 
+        
         self.ui.projNameLabel.setText("Data file generic name :")
         self.ui.dirLabel.setText("Target directory :")
         self.ui.dirEdit.setText("%s"%self.dir)
@@ -40,6 +41,9 @@ class ProjectSimulation(Project):
         self.ui.dataFileEdit.hide()
         self.ui.dataFileInfoTitleLabel.hide()
         self.ui.dataFileInfoLabel.hide()
+        self.ui.warningNumTextBrowser.hide()
+        self.ui.dataSetsLabel.hide()
+        self.ui.separationFrame.hide()
 
         self.ui.nbSetsDoneLabel.hide()
         self.ui.nbSetsDoneEdit.hide()
