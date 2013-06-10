@@ -69,7 +69,7 @@ class SetSummaryStatistics(QFrame):
     def addAdmixSampleGui(self,num1,num2,num3):
         """ methode d'ajout d'un bloc dans 'three sample admix sum stats'
         """
-        frame_12 = QtGui.QFrame(self.ui.scrollAreaWidgetContents_3)
+        frame_12 = QtGui.QFrame(self.ui.admixFrame)
         frame_12.setMinimumSize(QtCore.QSize(55, 0))
         frame_12.setMaximumSize(QtCore.QSize(55, 16777215))
         frame_12.setFrameShape(QtGui.QFrame.StyledPanel)

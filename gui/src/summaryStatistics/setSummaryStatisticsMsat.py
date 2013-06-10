@@ -78,7 +78,7 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
     def addOneSample(self,num):
         """ methode d'ajout d'un bloc dans 'one sample sum stats'
         """
-        frame_9 = QtGui.QFrame(self.ui.scrollAreaWidgetContents)
+        frame_9 = QtGui.QFrame(self.ui.oneFrame)
         frame_9.setMinimumSize(QtCore.QSize(60, 0))
         frame_9.setMaximumSize(QtCore.QSize(60, 16777215))
         frame_9.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -153,7 +153,7 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
     def addTwoSample(self,num1,num2):
         """ methode d'ajout d'un bloc dans 'two samples sum stats'
         """
-        frame_11 = QtGui.QFrame(self.ui.scrollAreaWidgetContents_2)
+        frame_11 = QtGui.QFrame(self.ui.twoFrame)
         frame_11.setMinimumSize(QtCore.QSize(70, 0))
         frame_11.setMaximumSize(QtCore.QSize(70, 16777215))
         frame_11.setFrameShape(QtGui.QFrame.StyledPanel)

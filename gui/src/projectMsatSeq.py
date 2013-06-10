@@ -98,17 +98,18 @@ class ProjectMsatSeq(ProjectReftable):
         self.ui.groupBox_8.show()
         self.ui.setHistoricalButton.setDisabled(False)
         self.ui.setGeneticButton.setDisabled(False)
-
-        try:
+        #kkp kkpz remettre le try 
+        #try:
+        if True:
             # lecture du meta project
             self.loadMyConf()
             # lecture de conf.hist.tmp
             self.hist_model_win.loadHistoricalConf()
             self.gen_data_win.loadGeneticConf()
             self.loadAnalysis()
-        except Exception as e:
-            raise Exception("Impossible to load the project configuration\n\n%s"%e)
-            output.notify(self,"Load error","Impossible to load the project configuration\n\n%s"%e)
+        #except Exception as e:
+        #    raise Exception("Impossible to load the project configuration\n\n%s"%e)
+        #    output.notify(self,"Load error","Impossible to load the project configuration\n\n%s"%e)
 
     def freezeGenData(self,yesno=True):
         """ empêche la modification des genetic data tout en laissant
