@@ -58,7 +58,7 @@ extern string reftablelogfilename;
 extern ofstream fpar;
 
 //long int naccept,ntentes; à faire par particule et à sommer à la fin dans particleset
-
+double lontreemoy=0.0;
 /**
  * retourne un ordre aléatoire pour les éléments d'un vecteur
  */
@@ -195,7 +195,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 	  // fin copie
 	  
 	  //cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
-	  //this->scen.ecris();
+	  //this->scen.ecris(false);
 	  //cout<<"dans drawscenario    nsample="<<this->scen.nsamp<<"\n";
 	  //for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ss[0][sa]<<"   ";cout<<"\n";
 	  this->refnindtot=0;
@@ -242,9 +242,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 		  }
 	  }
 	  //cout<<"drawscenario : refnindtot="<<this->refnindtot<<"\n";
-	  
-	  //home/cornuet/workspace/diyabchg/src-JMC-C++/general -p /home/cornuet/diyabc/AVEC_BIAIS/S1F_2012_1_6-1/ -j s:1;n:99409;m:1000;t:3;v:;q:1000;a:pl -i mc1 -g 500 -m -t 8
-	  }
+  }
 
 
 
@@ -516,7 +514,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 				for (int p=0;p<this->scen.nparam;p++) {
 					if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = this->scen.histparam[p].prior.drawfromprior(this->mw);
 					if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-					//cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value<<"\n";
+					cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value<<"\n";
 					//cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
 				}
 				//cout <<"avant test conditions\n";
@@ -540,6 +538,13 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 		OK=true;
 		//cout<<"fin du coucou\n";
 	}
+	for (int i=0;i<this->scen.nsamp;i++) {
+		if (this->scen.time_sample[i]==-9999) {
+			for (int p=0;p<this->scen.nparam;p++) {
+				if(this->scen.histparam[p].name==this->scen.stime_sample[i]) this->scen.time_sample[i]=this->scen.histparam[p].value;
+			}
+		}
+	}
 /*	for (int p=0;p<this->scen.nparam;p++) {
 		fpar.precision(5);
 		fpar<<this->scen.histparam[p].value<<"\t";
@@ -558,13 +563,14 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 		}
 	}
     //cout<<"fin du tirage des parametres\n";
-    if (debuglevel==10) {for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";cout <<"\n";}
+    if (debuglevel==30) {for (int p=0;p<this->scen.nparam;p++) cout<<this->scen.histparam[p].name<<" = " <<this->scen.histparam[p].value<<"\n";cout <<"\n";}
     if (OK) {
       for (int ievent=0;ievent<this->scen.nevent;ievent++) {
 		  //cout<<"event "<<ievent<<"   action="<<this->scen.event[ievent].action<<"   time="<<this->scen.event[ievent].time<<"   "<<this->scen.event[ievent].stime<<"\n";
 	if (this->scen.event[ievent].action=='V') { if (this->scen.event[ievent].Ne<0) this->scen.event[ievent].Ne= (int)(0.5+this->getvalue(this->scen.event[ievent].sNe));}
 	if (this->scen.event[ievent].time==-9999) {this->scen.event[ievent].time = (int)(0.5+this->getvalue(this->scen.event[ievent].stime));}
 	if (this->scen.event[ievent].action=='S') {if (this->scen.event[ievent].admixrate<0) this->scen.event[ievent].admixrate = this->getvalue(this->scen.event[ievent].sadmixrate);}
+	if (debuglevel==30) cout<<"event "<<ievent<<"   action="<<this->scen.event[ievent].action<<"   time="<<this->scen.event[ievent].time<<"   "<<this->scen.event[ievent].stime<<"\n";
       }
       cout<<"TRI SUR LES TEMPS DES EVENEMENTS\n";
       sort(&this->scen.event[0],&this->scen.event[this->scen.nevent]); 
@@ -1064,7 +1070,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 					  gt.nodes[i].sample=sa+1;
 					  //cout << gt.nodes[i].sample  << "\n";
 					  gt.nodes[i].height=this->scen.time_sample[sa];
-					  //cout << gt.nodes[i].height  << "\n";
+					  if (debuglevel==31)cout<<"gt.nodes["<<i<<"].height=" << gt.nodes[i].height  << "\n";
 					  gt.nodes[i].pop=0;
 				  }
 				  n +=nn;
@@ -1140,7 +1146,8 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    * Struct ParticleC : coalesce les lignées ancestrales de la population requise
    */
   void ParticleC::coal_pop(int loc,int iseq, bool reference, int *refmrca) {
-    bool trace = false;
+    bool trace = true;
+	//trace=(loc==0);
     if (trace){
       cout <<"\n";
       cout << "debut COAL pop="<<this->seqlist[iseq].pop<<"  nbranches=" << this->gt[loc].nbranches <<"   nnodes="<<this->gt[loc].nnodes ;
@@ -1148,11 +1155,11 @@ vector <int> melange2(MwcGen mw, int k, int n) {
       cout<<"    coeffcoal="<<this->locuslist[loc].coeffcoal <<"\n";}
     int nLineages=0;
     bool final=false;
-    double lra;
+    double lra,longarbre;
     for (int i=0;i<this->gt[loc].nnodes;i++){
       if (this->gt[loc].nodes[i].pop == this->seqlist[iseq].pop) {nLineages +=1;}
     }
-    //cout<<"debut coal_pop nbranches="<< this->gt[loc].nbranches << "  nLineages=" << nLineages << "\n";
+    if (trace) cout<<"debut coal_pop nbranches="<< this->gt[loc].nbranches << "  nLineages=" << nLineages << "\n";
     if (this->seqlist[iseq].t1<0) {final=true;}
     if (this->seqlist[iseq].N<1) {std::cout << "coal_pop : population size <1 ("<<this->seqlist[iseq].N<<") \n" ;exit(100);}
     if (trace) cout<<"pop size>=1\n";
@@ -1183,7 +1190,11 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 				if (trace) cout << "retour second noeud tiré : " << this->gt[loc].branches[this->gt[loc].nbranches].bottom <<"\n";
 				this->gt[loc].branches[this->gt[loc].nbranches].length=this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].top].height-this->gt[loc].nodes[this->gt[loc].branches[this->gt[loc].nbranches].bottom].height;
 				this->gt[loc].nbranches++;
-				if (trace) cout << "nbranches = " << this->gt[loc].nbranches << "\n";
+				if (trace) {
+					cout << "nbranches = " << this->gt[loc].nbranches << "          ";
+					longarbre=0.0;for (int z=0;z<this->gt[loc].nbranches;z++) longarbre+=this->gt[loc].branches[z].length;
+					cout << "somme des longueurs de branches = "<<longarbre<<"\n";
+				}
 				if (reference) {
 					int b1=this->gt[loc].branches[this->gt[loc].nbranches-2].bottom;
 					int b2=this->gt[loc].branches[this->gt[loc].nbranches-1].bottom;
@@ -1359,7 +1370,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
       this->gt[loc].branches[b].nmut = this->mw.poisson(this->gt[loc].branches[b].length*mutrate);
       this->gt[loc].nmutot += this->gt[loc].branches[b].nmut;
     }
-    //cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
+    if (loc<10) cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
   }
 
 void ParticleC::cherche_branchesOK(int loc) {
@@ -1666,6 +1677,12 @@ void ParticleC::put_one_mutation(int loc) {
 		}
 		int br, numut=-1;
 		bool trouve;
+		if((debuglevel==31)) {
+			double lontree=0.0;
+			for (br=0;br<this->gt[loc].nbranches;br++) lontree+=this->gt[loc].branches[br].length;
+			lontreemoy+=lontree;
+			if (loc==0) cout<<"this->gt[0].nbranches="<<this->gt[loc].nbranches<<"\n";
+		}
 		int len = 0, cat = (this->locuslist[loc].type % 5);
 		if (debuglevel==10) cout <<"avant la boucle while ngenes="<<this->gt[loc].ngenes<<"\n";
 		while (anc>=this->gt[loc].ngenes) {
@@ -1919,6 +1936,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  this->sumweight = 0.0;
 	  if (debuglevel==12) cout<<"sumweight = "<<this->sumweight<<"\n";
 	  if (debuglevel==5) cout<<"dosimulpart avant la boucle des locus\n";
+	  if (debuglevel==31) lontreemoy=0.0;
 	for (loc=0;loc<this->nloc;loc++) {
 		//cout<<"locus "<<loc<<"\n";
 		//cout<<"            groupe "<<this->locuslist[loc].groupe<<"\n";
@@ -1965,7 +1983,8 @@ void ParticleC::put_one_mutation(int loc) {
 ///////////////////////////////////////
 					if (debuglevel==10) cout<<"nseq = "<<this->nseq<<"\n";
 					for (int iseq=0;iseq<this->nseq;iseq++) {
-						if ((debuglevel==10)or(debuglevel==20)) {
+						if ((debuglevel==10)or(debuglevel==20)or(debuglevel==30)) {
+							if (iseq==0) cout<<"\n";
 							cout << "traitement de l element de sequence " << iseq << "    action= "<<this->seqlist[iseq].action;
 							if (this->seqlist[iseq].action == 'C') cout <<"   "<<this->seqlist[iseq].t0<<" - "<<this->seqlist[iseq].t1;
 							else  cout <<"   "<<this->seqlist[iseq].t0;
@@ -2070,6 +2089,7 @@ void ParticleC::put_one_mutation(int loc) {
 		if (this->sumweight<0.0) break;
 		//if (loc==99) break;
 	}	//LOOP ON loc
+	if (debuglevel==31) cout<<"\nLongueur totale moyenne des arbres = "<<lontreemoy<<"\n\n";
 	if (debuglevel==20) cout<<"scenario choisi : "<<numscen<<"\n";
 	if (debuglevel==20) exit(1);
 	if (this->sumweight>=0.0) this->weight = this->sumweight/(double)nlocutil;

@@ -44,6 +44,46 @@ extern string * stat_type;
 extern int* stat_num;
 extern string path;
 
+/**
+ * Copie du contenu d'une classe HeaderC
+ */
+  HeaderC::(HeaderC const & source) {
+    this->message = source.message;
+    this->datafilename = source.datafilename;
+    this->entete = source.entete;
+    this->entetehist = source.entetehist;
+    this->entetemut = source.entetemut;
+    this->entetemut0 = source.entetemut0;
+    this->entetestat = source.entetestat;
+    this->pathbase = source.pathbase;
+    this->nparamtot = source.nparamtot;
+    this->nstat = source.nstat;
+    this->nscenarios = source.nscenarios;
+    this->nconditions = source.nconditions;
+    this->ngroupes = source.ngroupes;
+    this->nparamut = source.nparamut;
+    this->nsimfile = source.nsimfile;
+    this->drawuntil = source.drawuntil;
+    this->reference = source.reference;
+    this->message = source.message;
+	this->threshold = source.threshold;
+	this->reffreqmin = source.reffreqmin;
+	this->stat_obs = new float[this->nstat];
+	for (int i=0;i<this->nstat;i++) this->stat_obs[i]=source.stat_obs[i];
+	for (int i=0;i<this->nparamut;i++) this->mutparam[i]=source.mutparam[i];
+	
+    DataC dataobs;
+    std::string *paramname, *statname;
+    ScenarioC *scenario,scen;
+    HistParameterC *histparam;
+    ConditionC *condition;
+    LocusGroupC *groupe;
+    bool drawuntil,reference;
+    ParticleC particuleobs;
+	  
+}
+
+
 void MutParameterC::ecris() {
 	cout<<"    groupe="<<this->groupe<<"   category="<<this->category<<"\n";
 	//prior.ecris();
@@ -241,6 +281,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 		//    if (this->histparam[i].prior.constant) cout<<"   constant\n"; else cout<<"   variable\n";
 		delete [] ss;ss=NULL;
 	}
+	cout<<"apres les readprior\n";
 	this->drawuntil=true;
 	if (this->nconditions>0) {
 		this->condition = new ConditionC[this->nconditions];

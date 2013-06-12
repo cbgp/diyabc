@@ -144,6 +144,7 @@ class ScenarioC
 public:
   double *paramvar, prior_proba;
   int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0,nparamvar,nconditions,ipv;
+  std::string *stime_sample;
   EventC *event;
   Ne0C *ne0;
   HistParameterC *histparam;
@@ -158,6 +159,7 @@ public:
   ScenarioC(){
     paramvar = NULL;
     time_sample = NULL;
+    stime_sample = NULL;
     event = NULL;
     ne0 = NULL;
     histparam = NULL;
@@ -169,6 +171,7 @@ public:
   ~ScenarioC(){
     if( paramvar != NULL) delete [] paramvar;
     if( time_sample != NULL) delete [] time_sample;
+    if( stime_sample != NULL) delete [] stime_sample;
     if( event != NULL) delete [] event;
     if( ne0 != NULL) delete [] ne0;
     if( histparam != NULL) delete [] histparam;

@@ -147,6 +147,7 @@ void ScenarioC::libere() {
 	if (this->nparamvar>0) delete [] this->paramvar;
 	if (this->nparam>0) delete [] this->histparam;
 	if (this->nsamp>0) delete [] this->time_sample;
+	if (this->nsamp>0) delete [] this->stime_sample;
 	if (this->nn0>0) delete [] this->ne0;
 	if (this->nevent>0) delete [] this->event;
 }
@@ -176,7 +177,9 @@ ScenarioC::ScenarioC(ScenarioC const & source) {
   //  cout<<"   apres copyne0\n";
   this->time_sample = new int[this->nsamp];
   for (int i=0;i<this->nsamp;i++) this->time_sample[i] = source.time_sample[i];
-  // cout<<"   apres copytime_sample\n";
+   this->stime_sample = new string[this->nsamp];
+  for (int i=0;i<this->nsamp;i++) this->stime_sample[i] = source.stime_sample[i];
+ // cout<<"   apres copytime_sample\n";
   this->histparam = new HistParameterC[this->nparam];
   for (int i=0;i<this->nparam;i++) {this->histparam[i] = source.histparam[i];/*cout<<this->histparam[i].name<<"\n"<<flush;*/}
   //  cout<<"   apres copyhistparam\n";
@@ -191,17 +194,21 @@ ScenarioC::ScenarioC(ScenarioC const & source) {
 
 
 ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
+cout<<"\ndans operator= debut\n\n";
+	
   if (this == &source)
     return *this;
+cout<<"\ndans operator= avant les delete\n\n";
 
   if( this->paramvar != NULL) delete [] this->paramvar;
-  if( time_sample != NULL) delete [] this->time_sample;
+  if( this->time_sample != NULL) delete [] this->time_sample;
+  if( this->stime_sample != NULL) delete [] this->stime_sample;
   if( this->event != NULL) delete [] this->event;
   if( this->ne0 != NULL) delete [] this->ne0;
   if( this->histparam != NULL) delete [] this->histparam;
   if( this->condition != NULL) delete [] this->condition;
 
-
+cout<<"\ndans operator= apres les delete\n\n";
 
   this->prior_proba = source.prior_proba;
   this->number = source.number;
@@ -209,6 +216,7 @@ ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
   this->npop = source.npop;
   this->nsamp = source.nsamp;
   this->nparam = source.nparam;
+  cout<<"   this->nparam="<<this->nparam<<"\n";
   this->nparamvar = source.nparamvar;
   this->nevent = source.nevent;
   this->nn0 = source.nn0;
@@ -222,17 +230,21 @@ ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
   //  cout<<"   apres copyne0\n";
   this->time_sample = new int[this->nsamp];
   for (int i=0;i<this->nsamp;i++) this->time_sample[i] = source.time_sample[i];
-  // cout<<"   apres copytime_sample\n";
+  cout<<"apres les time_sample\n";
+  this->stime_sample = new string[this->nsamp];
+  for (int i=0;i<this->nsamp;i++) this->stime_sample[i] = source.stime_sample[i];
+   cout<<"apres les stime_sample\n";
+  cout<<"   this->nparam="<<this->nparam<<"\n";
   this->histparam = new HistParameterC[this->nparam];
   for (int i=0;i<this->nparam;i++) {
 	  this->histparam[i] = source.histparam[i];
-	  /*cout<<"history.cpp/operator =\n";
+	  cout<<"history.cpp/operator =\n";
 		cout<<this->histparam[i].name<<"\n"<<flush;
 		cout<<this->histparam[i].value<<"\n"<<flush;
-		cout<<this->histparam[i].category<<"\n"<<flush;*/
+		cout<<this->histparam[i].category<<"\n"<<flush;
 	  
 }
-  //  cout<<"   apres copyhistparam\n";
+    cout<<"   apres copyhistparam\n";
   this->paramvar = new double[this->nparamvar];
   for (int i=0;i<this->nparamvar;i++) {this->paramvar[i] = source.paramvar[i];/*cout<<this->histparam[i].name<<"\n"<<flush;*/}
   //  cout<<"   apres copyparamvar\n";
@@ -575,8 +587,16 @@ string ScenarioC::read_events(int nl,string *ls) {
 	}
 	histparname.clear();histparcat.clear();
 	this->time_sample = new int[this->nsamp];
+	this->stime_sample = new string[this->nsamp];
 	n=-1;
-	for (int i=0;i<this->nevent;i++) {if ((this->event[i].action=='E')or(this->event[i].action=='R')) {n++;this->time_sample[n]=this->event[i].time;}}
+	for (int i=0;i<this->nevent;i++) {
+		if ((this->event[i].action=='E')or(this->event[i].action=='R')) {
+			n++;
+			this->time_sample[n]=this->event[i].time;
+			if(this->event[i].time==-9999) this->stime_sample[n]=this->event[i].stime;
+			else this->stime_sample[n]=" ";
+		}
+	}
 	return "";
 }
 

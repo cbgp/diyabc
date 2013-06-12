@@ -46,8 +46,34 @@ public:
     float *stat_obs;
 	float reffreqmin;
 	float threshold;
+//////////////////////////////////// AJOUT
+  HeaderC(){
+    paramname = NULL;
+    statname = NULL;
+	scenario = NULL;
+    histparam = NULL;
+    condition = NULL;
+    groupe = NULL;
+    mutparam = NULL;
+    stat_obs = NULL;
+  };
+  HeaderC(HeaderC const & source);
+  HeaderC & operator= (HeaderC  const & source);
 
-	void libere();
+  ~HeaderC(){
+    if( paramname != NULL) delete [] paramname;
+    if( statname != NULL) delete [] statname;
+    if( scenario != NULL) delete [] scenario;
+    if( histparam != NULL) delete [] histparam;
+    if( condition != NULL) delete [] condition;
+    if( groupe != NULL) delete [] groupe;
+    if( mutparam != NULL) delete [] mutparam;
+    if( stat_obs != NULL) delete [] stat_obs;
+  };
+
+///////////////////////////////////
+  
+  void libere();
 	void assignloc(int gr);
 
 	int readHeaderDebut(std::ifstream & file);
