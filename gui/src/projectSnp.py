@@ -116,7 +116,7 @@ class ProjectSnp(ProjectReftable):
         txt = ""
         for ty in self.data.ntypeloc.keys() :
             exec("%sval= int(self.sum_stat_wins.ui.taken%sEdit.text())"%(ty,ty))
-            exec("txt += ' %s:%s'"%(ty, eval('%sval'%ty)))
+            exec("txt += ' %s:%s,'"%(ty, eval('%sval'%ty)))
         return txt    
         
         
