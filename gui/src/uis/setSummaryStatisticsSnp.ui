@@ -366,7 +366,7 @@
           <item>
            <widget class="QLabel" name="label_8">
             <property name="text">
-             <string>H locus  is not compatible with A, X and Y loci</string>
+             <string>H locus  are not compatible with A, X and Y loci</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -414,7 +414,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Summary statistics for all selected loci</string>
+             <string>Summary statistics for all selected SNP loci</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>

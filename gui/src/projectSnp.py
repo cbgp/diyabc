@@ -118,8 +118,8 @@ class ProjectSnp(ProjectReftable):
             if ty in self.data.ntypeloc.keys() :
                 exec("%sval= int(self.sum_stat_wins.ui.taken%sEdit.text())"%(ty,ty))
                 exec("txt += ' %s:%s,'"%(ty, eval('%sval'%ty)))
-        return txt    
-        
+        txt = txt[:-1] + " from locus %s"%self.sum_stat_wins.ui.fromEdit.text() 
+        return txt
         
     
     def updateNbStats(self):
