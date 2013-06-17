@@ -414,7 +414,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Summary statistics for all loci</string>
+             <string>Summary statistics for all selected loci</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>

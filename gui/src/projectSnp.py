@@ -105,7 +105,22 @@ class ProjectSnp(ProjectReftable):
         for ty in self.data.ntypeloc.keys() :
             exec("nb += int(self.sum_stat_wins.ui.taken%sEdit.text())"%ty)
         return nb
-
+    
+    def getLociTaken(self):
+        Aval=0
+        Hval=0
+        Xval=0
+        Yval=0
+        Mval=0
+        From=1
+        txt = ""
+        for ty in self.data.ntypeloc.keys() :
+            exec("%sval= int(self.sum_stat_wins.ui.taken%sEdit.text())"%(ty,ty))
+            exec("txt += ' %s:%s'"%(ty, eval('%sval'%ty)))
+        return txt    
+        
+        
+    
     def updateNbStats(self):
         """ met à jour les informations graphiques sur les
         summary stats : le nombre total de stats et le nombre
@@ -113,6 +128,7 @@ class ProjectSnp(ProjectReftable):
         """
         nb = self.getNbSumStats()
         nbTaken = self.getNbTotalTaken()
+        lociTaken = self.getLociTaken()
         if nb > 0:
             self.setGenValid(True)
         if nb > 1:
@@ -120,7 +136,7 @@ class ProjectSnp(ProjectReftable):
         else:
             plur=''
         self.ui.nbSumStatsLabel.setText("Total : %s summary statistic%s"%(nb,plur))
-        self.ui.nbSequencesLabel.setText("Total : %s taken locus"%(nbTaken))
+        self.ui.nbSequencesLabel.setText("Total : %s taken locus (%s) "%(nbTaken,lociTaken))
 
     def getLocusGroups(self):
         """ renvoie une liste des groupes de locus
