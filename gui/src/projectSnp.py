@@ -114,9 +114,10 @@ class ProjectSnp(ProjectReftable):
         Mval=0
         From=1
         txt = ""
-        for ty in self.data.ntypeloc.keys() :
-            exec("%sval= int(self.sum_stat_wins.ui.taken%sEdit.text())"%(ty,ty))
-            exec("txt += ' %s:%s,'"%(ty, eval('%sval'%ty)))
+        for ty in self.typesOrdered :
+            if ty in self.data.ntypeloc.keys() :
+                exec("%sval= int(self.sum_stat_wins.ui.taken%sEdit.text())"%(ty,ty))
+                exec("txt += ' %s:%s,'"%(ty, eval('%sval'%ty)))
         return txt    
         
         
@@ -288,8 +289,9 @@ class ProjectSnp(ProjectReftable):
         try:
             self.data = DataSnp(name)
             typestr = ""
-            for ty in self.data.ntypeloc.keys():
-                typestr += " %s : %s,"%(ty,self.data.ntypeloc[ty])
+            for ty in self.typesOrdered :
+                if ty in self.data.ntypeloc.keys():
+                    typestr += " %s : %s,"%(ty,self.data.ntypeloc[ty])
             typestr = typestr[:-1]
             self.ui.dataFileInfoLabel.setText("%s loci (SNP)\n%s individuals in %s samples\n%s" % (self.data.nloc,self.data.nindtot,self.data.nsample,typestr))
             self.ui.dataFileEdit.setText(name)
