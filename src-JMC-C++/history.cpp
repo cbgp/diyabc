@@ -19,10 +19,120 @@ vector <string> histparname;
 vector <int> histparcat;
 extern int debuglevel;
 
+/**
+ * Méthodes de StatC 
+ */
+
+/**
+ * Copie du contenu d'une classe StatC
+ */
+/*  StatC::StatC (const & source) {
+	this->cat = source.cat;
+	this->samp = source.samp;
+	this->samp1 = source.samp1;
+	this->samp2 = source.samp2;
+	this->group = source.group;
+	this->numsnp = source.numsnp;
+	this->val = source.val;
+}*/
+
+/**
+ * Definition de l'operateur = pour une instance de la classe StatC
+ */
+  StatC & StatC::operator= (StatC const & source) {
+	if (this== &source) return *this;
+	this->cat = source.cat;
+	this->samp = source.samp;
+	this->samp1 = source.samp1;
+	this->samp2 = source.samp2;
+	this->group = source.group;
+	this->numsnp = source.numsnp;
+	this->val = source.val;
+	return *this;
+}
+
+/**
+ * Méthodes de StatsnpC 
+ */
+
+/**
+ * Copie du contenu d'une classe StatsnpC
+ */
+/*  StatsnpC::StatsnpC (const & source) {
+	this->cat = source.cat;
+	this->samp = source.samp;
+	this->samp1 = source.samp1;
+	this->samp2 = source.samp2;
+	this->group = source.group;
+	this->n = source.n;
+	this->defined = source.defined;
+	this->sorted = source.sorted;
+	this->sw = source.sw;
+	this->x = new long double[n];
+	for (int i=0;i<n;i++) this->x[i] = source.x[i];
+	this->w = new long double[n];
+	for (int i=0;i<n;i++) this->w[i] = source.w[i];
+}*/
+
+/**
+ * Definition de l'operateur = pour une instance de la classe StatsnpC
+ */
+  StatsnpC & StatsnpC::operator= (StatsnpC const & source) {
+	if (this== &source) return *this;
+    if( x != NULL) delete [] x;
+    if( w != NULL) delete [] w;
+	this->cat = source.cat;
+	this->samp = source.samp;
+	this->samp1 = source.samp1;
+	this->samp2 = source.samp2;
+	this->group = source.group;
+	this->n = source.n;
+	this->defined = source.defined;
+	this->sorted = source.sorted;
+	this->sw = source.sw;
+	this->x = new long double[n];
+	for (int i=0;i<n;i++) this->x[i] = source.x[i];
+	this->w = new long double[n];
+	for (int i=0;i<n;i++) this->w[i] = source.w[i];
+	return *this;
+}
 
 
-/* Méthodes de PriorC */
+/**
+ * Méthodes de PriorC 
+ */
 
+
+/**
+ * Copie du contenu d'une classe PriorC
+ */
+/*
+  PriorC::PriorC( const & source) {
+	this->loi = source.loi;
+	this->mini = source.mini;
+	this->maxi = source.maxi;
+	this->mean = source.mean;
+	this->sdshape = source.sdshape;
+	this->ndec = source.ndec;
+	this->constant = source.constant;
+	this->fixed = source.fixed;
+}
+*/
+/**
+ * Definition de l'operateur = pour une instance de la classe PriorC
+ */
+  PriorC & PriorC::operator= (PriorC const & source) {
+	if (this== &source) return *this;
+	this->loi = source.loi;
+	this->mini = source.mini;
+	this->maxi = source.maxi;
+	this->mean = source.mean;
+	this->sdshape = source.sdshape;
+	this->ndec = source.ndec;
+	this->constant = source.constant;
+	this->fixed = source.fixed;
+	return *this;
+}
 void PriorC::ecris(){
 	cout <<"    loi="<<this->loi<<"   min="<<this->mini<<"   max="<<this->maxi<<"   ndec="<<this->ndec;
 	if (this->loi=="GA") cout <<"    shape="<<this->sdshape;
@@ -80,8 +190,30 @@ void PriorC::readprior(string ss){
     delete []sb;
 }
 
-/* Méthodes de ConditionC */
+/**
+ * Méthodes de ConditionC 
+ */
 
+/**
+ * Copie du contenu d'une classe ConditionC
+ */
+/*  ConditionC::ConditionC (const & source) { 
+	this->param1 = source.param1;
+	this->param2 = source.param2;
+	this->operateur = source.operateur;
+  }
+  */
+/**
+ * Definition de l'operateur = pour une instance de la classe ConditionC
+ */
+  ConditionC & ConditionC::operator= (ConditionC const & source) {
+	if (this== &source) return *this;
+	this->param1 = source.param1;
+	this->param2 = source.param2;
+	this->operateur = source.operateur;
+	return *this;
+  }
+  
 void ConditionC::ecris(){
 	cout<<this->param1<<"  "<<this->operateur<<"  "<<this->param2<<"\n";
 }
@@ -101,7 +233,9 @@ void ConditionC::readcondition(string ss){
 
 
 
-/* méthodes de EventC  */
+/**
+ * méthodes de EventC  
+ */
 
 bool operator< (const EventC & lhs, const EventC & rhs)
 {
@@ -126,15 +260,124 @@ void EventC::ecris(){
 }
 
 
-/* Méthodes de HistParameterC */
+/**
+ * Méthodes de HistParameterC 
+ */
 
+/**
+ * Copie du contenu d'une classe HistParameterC
+ */
+/*  HistParameterC::HistParameterC (const & source) {
+	this->name = source.name;
+	this->category = source.category;
+	this->value = source.value;
+	this->prior = source.prior;
+  }*/
+  
+/**
+ * Definition de l'operateur = pour une instance de la classe HistParameterC
+ */
+  HistParameterC & HistParameterC::operator= (HistParameterC const & source) {
+	if (this== &source) return *this;
+	this->name = source.name;
+	this->category = source.category;
+	this->value = source.value;
+	this->prior = source.prior;
+	return *this;
+  }
+  
 void HistParameterC::ecris(bool simulfile){
     cout<<"    name="<<this->name<<"   val="<<this->value<<"   category="<<this->category<<"\n";
     if (not simulfile) prior.ecris();
   }
 
-/* Méthodes de LocusGroupC */
+/**
+ * Méthodes de LocusGroupC 
+ */
 
+/**
+ * Copie du contenu d'une classe LocusGroupC
+ */
+/*  LocusGroupC::LocusGroupC (const & source) {
+	  this->nloc = source.nloc;
+	  this->nstat = source.nstat;
+	  this->nstatsnp = source.nstatsnp;
+	  this->type = source.type;
+	  this->p_fixe = source.p_fixe;
+	  this->gams = source.gams;
+	  this->musmoy = source.musmoy;
+	  this->mutmoy = source.mutmoy;
+	  this->Pmoy = source.Pmoy;
+	  this->snimoy = source.snimoy;
+	  this->k1moy = source.k1moy;
+	  this->k2moy = source.k2moy;
+	  this->mutmod = source.mutmod;
+	  this->priormusmoy = source.priormusmoy;
+	  this->priork1moy = source.priork1moy;
+	  this->priork2moy = source.priork2moy;
+	  this->priormusloc = source.priormusloc;
+	  this->priork1loc = source.priork1loc;
+	  this->priork2loc = source.priork2loc;
+	  this->priormutmoy = source.priormutmoy;
+	  this->priorPmoy = source.priorPmoy;
+	  this->priorsnimoy = source.priorsnimoy;
+	  this->priormutloc = source.priormutloc;
+	  this->priorPloc = source.priorPloc;
+	  this->priorsniloc = source.priorsniloc;
+	  this->loc = new int[this->nloc];
+	  for (int i=0;i<this->nloc;i++) this->loc[i] = source.loc[i];
+	  this->sumstat = new StatC[this->nstat];
+	  for (int i=0;i<this->nstat;i++) this->sumstat[i] = source.sumstat[i];
+	  this->sumstatsnp = new StatsnpC[this->nstatsnp];
+	  for (int i=0;i<this->nstatsnp;i++) this->sumstatsnp[i] = source.sumstatsnp[i];
+  }*/
+  
+/**
+ * Definition de l'operateur = pour une instance de la classe LocusGroupC
+ */
+  LocusGroupC & LocusGroupC::operator= (LocusGroupC const & source) {
+	if (this== &source) return *this;
+    if( loc != NULL) delete [] loc;
+    if( sumstat != NULL) delete [] sumstat;
+    if( sumstatsnp != NULL) delete [] sumstatsnp;
+	this->nloc = source.nloc;
+	this->nstat = source.nstat;
+	this->nstatsnp = source.nstatsnp;
+	this->type = source.type;
+	this->p_fixe = source.p_fixe;
+	this->gams = source.gams;
+	this->musmoy = source.musmoy;
+	this->mutmoy = source.mutmoy;
+	this->Pmoy = source.Pmoy;
+	this->snimoy = source.snimoy;
+	this->k1moy = source.k1moy;
+	this->k2moy = source.k2moy;
+	this->mutmod = source.mutmod;
+	this->priormusmoy = source.priormusmoy;
+	this->priork1moy = source.priork1moy;
+	this->priork2moy = source.priork2moy;
+	this->priormusloc = source.priormusloc;
+	this->priork1loc = source.priork1loc;
+	this->priork2loc = source.priork2loc;
+	this->priormutmoy = source.priormutmoy;
+	this->priorPmoy = source.priorPmoy;
+	this->priorsnimoy = source.priorsnimoy;
+	this->priormutloc = source.priormutloc;
+	this->priorPloc = source.priorPloc;
+	this->priorsniloc = source.priorsniloc;
+	this->loc = new int[this->nloc];
+	for (int i=0;i<this->nloc;i++) this->loc[i] = source.loc[i];
+	if (this->nstat>0) {
+		this->sumstat = new StatC[this->nstat];
+		for (int i=0;i<this->nstat;i++) this->sumstat[i] = source.sumstat[i];
+	}
+	if (this->nstatsnp>0) {
+		this->sumstatsnp = new StatsnpC[this->nstatsnp];
+		for (int i=0;i<this->nstatsnp;i++) this->sumstatsnp[i] = source.sumstatsnp[i];
+	}
+	return *this;
+  }
+  
 void LocusGroupC::libere(){
     delete []loc;
     for (int i=0;i<this->nstat;i++) free(&(this->sumstat[i]));
@@ -142,6 +385,9 @@ void LocusGroupC::libere(){
 
   }
 
+/**
+ * Méthodes de ScenarioC 
+ */
 void ScenarioC::libere() {
 	if (this->nconditions>0) delete [] this->condition;
 	if (this->nparamvar>0) delete [] this->paramvar;
@@ -192,13 +438,12 @@ ScenarioC::ScenarioC(ScenarioC const & source) {
   }
 }
 
+/**
+ * Definition de l'operateur = pour une instance de la classe ScenarioC
+ */
 
 ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
-cout<<"\ndans operator= debut\n\n";
-	
-  if (this == &source)
-    return *this;
-cout<<"\ndans operator= avant les delete\n\n";
+  if (this == &source)  return *this;
 
   if( this->paramvar != NULL) delete [] this->paramvar;
   if( this->time_sample != NULL) delete [] this->time_sample;
@@ -208,46 +453,33 @@ cout<<"\ndans operator= avant les delete\n\n";
   if( this->histparam != NULL) delete [] this->histparam;
   if( this->condition != NULL) delete [] this->condition;
 
-cout<<"\ndans operator= apres les delete\n\n";
-
   this->prior_proba = source.prior_proba;
   this->number = source.number;
   this->popmax = source.popmax;
   this->npop = source.npop;
   this->nsamp = source.nsamp;
   this->nparam = source.nparam;
-  cout<<"   this->nparam="<<this->nparam<<"\n";
   this->nparamvar = source.nparamvar;
   this->nevent = source.nevent;
   this->nn0 = source.nn0;
   this->nconditions = source.nconditions;
-  //cout<<"    fin des copy simples  this->nevent ="<<this->nevent<<"\n";
   this->event = new EventC[this->nevent];
   for (int i=0;i<this->nevent;i++) this->event[i] = source.event[i]; // copyevent supprimé (PP)
-  // cout<<"   apres copyevent\n";
   this->ne0 = new Ne0C[this->nn0];
   for (int i=0;i<this->nn0;i++) this->ne0[i] = source.ne0[i];
-  //  cout<<"   apres copyne0\n";
   this->time_sample = new int[this->nsamp];
   for (int i=0;i<this->nsamp;i++) this->time_sample[i] = source.time_sample[i];
-  cout<<"apres les time_sample\n";
   this->stime_sample = new string[this->nsamp];
+  //cout<<"apres le new\n";
+  //cout<<source.stime_sample[0]<<"\n";
   for (int i=0;i<this->nsamp;i++) this->stime_sample[i] = source.stime_sample[i];
-   cout<<"apres les stime_sample\n";
-  cout<<"   this->nparam="<<this->nparam<<"\n";
+   //cout<<"apres les stime_sample\n";
   this->histparam = new HistParameterC[this->nparam];
   for (int i=0;i<this->nparam;i++) {
 	  this->histparam[i] = source.histparam[i];
-	  cout<<"history.cpp/operator =\n";
-		cout<<this->histparam[i].name<<"\n"<<flush;
-		cout<<this->histparam[i].value<<"\n"<<flush;
-		cout<<this->histparam[i].category<<"\n"<<flush;
-	  
 }
-    cout<<"   apres copyhistparam\n";
   this->paramvar = new double[this->nparamvar];
   for (int i=0;i<this->nparamvar;i++) {this->paramvar[i] = source.paramvar[i];/*cout<<this->histparam[i].name<<"\n"<<flush;*/}
-  //  cout<<"   apres copyparamvar\n";
   if (this->nconditions>0) {
     this->condition = new ConditionC[this->nconditions];
     for (int i=0;i<this->nconditions;i++) this->condition[i] = source.condition[i];
@@ -589,14 +821,17 @@ string ScenarioC::read_events(int nl,string *ls) {
 	this->time_sample = new int[this->nsamp];
 	this->stime_sample = new string[this->nsamp];
 	n=-1;
+	cout<<"dans readevents : repérage des time_sample\n";
 	for (int i=0;i<this->nevent;i++) {
 		if ((this->event[i].action=='E')or(this->event[i].action=='R')) {
 			n++;
 			this->time_sample[n]=this->event[i].time;
 			if(this->event[i].time==-9999) this->stime_sample[n]=this->event[i].stime;
 			else this->stime_sample[n]=" ";
+			cout<<"this->stime_sample["<<n<<"] = ]"<<this->stime_sample[n]<<"[\n";
 		}
 	}
+	cout<<"dans readevents : APRES repérage des time_sample\n";
 	return "";
 }
 

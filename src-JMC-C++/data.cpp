@@ -34,17 +34,27 @@
 
 using namespace std;
 
+	MissingHaplo & MissingHaplo::operator=(MissingHaplo const & source) {
+		if (this== &source) return *this;
+		this->locus = source.locus;
+		this->sample = source.sample;
+		this->indiv = source.indiv;
+		return *this;
+	}
 
+	MissingNuc & MissingNuc::operator=(MissingNuc const & source) {
+		if (this== &source) return *this;
+		this->locus = source.locus;
+		this->sample = source.sample;
+		this->indiv = source.indiv;
+		this->nuc = source.nuc;
+		return *this;
+	}
+	
 /**
  *  Structure LocusC : libération de la mémoire occupée par la structure LocusC
  */
 void LocusC::libere(bool obs, int nsample) {
-	//cout<<"debut  nsample="<<nsample<<"\n";
-	//delete []this->name;
-	//cout<<"apres delete name\n";
-	//cout<<"apres delete ss\n";
-	//delete []this->samplesize;
-	//cout<<"apres delete samplesize\n";
 	if ((this->type>4)and(this->type<10)) {
 		if (not obs) {
 			if (not mutsit.empty()) mutsit.clear();
@@ -55,7 +65,173 @@ void LocusC::libere(bool obs, int nsample) {
 }
 
 
+	LocusC & LocusC::operator=(LocusC const & source) {
+		if (this== &source) return *this;
+		if (this->freq != NULL) {
+			for (int i=0;i<source.nsample;i++) delete [] freq[i];
+		}
+		if (this->haplodna != NULL) {
+			for (int i=0;i<source.nsample;i++) delete [] haplodna[i];
+		}
+		if (this->haplodnavar != NULL) {
+			for (int i=0;i<source.nsample;i++) delete [] haplodnavar[i];
+		}
+		if (this->haplomic != NULL) {
+			for (int i=0;i<source.nsample;i++) delete [] haplomic[i];
+		}
+		if (this->haplosnp != NULL) {
+			for (int i=0;i<source.nsample;i++) delete [] haplosnp[i];
+		}
+		if (not this->mutsit.empty()) this->mutsit.clear();
+		if (not this->sitmut.empty()) this->sitmut.clear();
+		if (not this->sitmut2.empty()) this->sitmut2.clear();
+		if (not this->tabsit.empty()) this->tabsit.clear();
+		this->name = source.name;
+		this->type = source.type;
+		this->groupe = source.groupe;
+		this->coeffcoal = source.coeffcoal;
+		this->pi_A = source.pi_A;
+		this->pi_C = source.pi_C;
+		this->pi_G = source.pi_G;
+		this->pi_T = source.pi_T;
+		this->dnalength = source.dnalength;
+		this->dnavar = source.dnavar;
+		this->mini = source.mini;
+		this->maxi = source.maxi;		
+		this->kmin = source.kmin;		
+		this->kmax = source.kmax;		
+		this->motif_size = source.motif_size;		
+		this->motif_range = source.motif_range;		
+		this->nal = source.nal;		
+		this->mut_rate = source.mut_rate;		
+		this->Pgeom = source.Pgeom;		
+		this->sni_rate = source.sni_rate;		
+		this->mus_rate = source.mus_rate;
+		this->k1 = source.k1;		
+		this->k2 = source.k2;		
+		this->firstime = source.firstime;		
+		this->mono	 = source.mono;	
+		this->weight = source.weight;		
+		this->nsample = source.nsample;
+		if (source.freq != NULL){
+			this->freq = new long double*[this->nsample];
+			for (int i=0;i<this->nsample;i++) {
+				this->freq[i] = new long double[this->nal];
+				for (int j=0;j<this->nal;j++) this->freq[i][j] = source.freq[i][j];
+			}
+		}
+		if (source.haplodna != NULL) {
+			this->haplodna = new string*[this->nsample];
+			for (int i=0;i<this->nsample;i++) {
+				this->haplodna[i] = new string[source.samplesize[i]];
+				for (int j=0;j<source.samplesize[i];j++) this->haplodna[i][j] = source.haplodna[i][j];
+			}
+		}
+		if (source.haplodnavar != NULL) {
+			this->haplodnavar = new string*[this->nsample];
+			for (int i=0;i<this->nsample;i++) {
+				this->haplodnavar[i] = new string[source.samplesize[i]];
+				for (int j=0;j<source.samplesize[i];j++) this->haplodnavar[i][j] = source.haplodnavar[i][j];
+			}
+		}
+		if (source.haplomic != NULL) {
+			this->haplomic = new int*[this->nsample];
+			for (int i=0;i<this->nsample;i++) {
+				this->haplomic[i] = new int[source.samplesize[i]];
+				for (int j=0;j<source.samplesize[i];j++) this->haplomic[i][j] = source.haplomic[i][j];
+			}
+		}
+		if (source.haplosnp != NULL) {
+			this->haplosnp = new short int*[this->nsample];
+			for (int i=0;i<this->nsample;i++) {
+				this->haplosnp[i] = new short int[source.samplesize[i]];
+				for (int j=0;j<source.samplesize[i];j++) this->haplosnp[i][j] = source.haplosnp[i][j];
+			}
+		}
+		if (not source.mutsit.empty()) {
+			for (int i=0;i<source.mutsit.size();i++) this->mutsit.push_back(source.mutsit[i]);
+		}
+		if (not source.sitmut.empty()) {
+			for (int i=0;i<source.mutsit.size();i++) this->mutsit.push_back(source.mutsit[i]);
+		}
+		if (not source.sitmut2.empty()) {
+			for (int i=0;i<source.mutsit.size();i++) this->mutsit.push_back(source.mutsit[i]);
+		}
+		if (not source.tabsit.empty()) {
+			for (int i=0;i<source.mutsit.size();i++) this->mutsit.push_back(source.mutsit[i]);
+		}
+		return *this;
+	}
 
+	DataC & DataC::operator=(DataC const & source) {
+		if (this== &source) return *this;
+		if(this->indivname != NULL) delete [] this->indivname;
+		if(this->genotype != NULL) delete [] this->genotype;
+		if(this->misshap != NULL) delete [] this->misshap;
+		if(this->misssnp != NULL) delete [] this->misssnp;
+		if(this->missnuc != NULL) delete [] this->missnuc;
+		if(this->locus != NULL) delete [] this->locus;
+		if(this->catexist != NULL) delete [] this->catexist;
+		if(not this->nind.empty()) this->nind.clear();
+		if(not this->ssize.empty()) {
+			for (int i=0;i<ssize.size();i++)this->ssize[i].clear();
+			this->ssize.clear();
+		}
+		if(not this->indivsexe.empty()) {
+			for (int i=0;i<indivsexe.size();i++)this->indivsexe[i].clear();
+			this->indivsexe.clear();
+		}
+		this->message = source.message;
+		this->title = source.title;
+		this->nsample = source.nsample;
+		this->nsample0 = source.nsample0;
+		this->nloc = source.nloc;
+		this->nmisshap = source.nmisshap;
+		this->nmissnuc = source.nmissnuc;
+		this->nmisssnp = source.nmisssnp;
+		this->filetype = source.filetype;
+		this->sexratio = source.sexratio;
+		this->Aindivname = source.Aindivname;
+		this->Agenotype = source.Agenotype;
+		this->Anind = source.Anind;
+		this->Aindivsexe = source.Aindivsexe;
+		this->Alocus = source.Alocus;
+		for (int i=0;i<source.nind.size();i++) this->nind.push_back(source.nind[i]);
+		this->indivname = new string*[this->nsample0];
+		for (int i=0;i<this->nsample0;i++) {
+			this->indivname[i] = new string[this->nind[i]];
+			for (int j=0;j<this->nind[i];j++) this->indivname[i][j] = source.indivname[i][j];
+		}
+		this->genotype = new string**[this->nsample0];
+		for (int i=0;i<this->nsample0;i++) {
+			this->genotype[i] = new string*[this->nind[i]];
+			for (int j=0;j<this->nind[i];j++) {
+				this->genotype[i][j] = new string[this->nloc];
+				for (int k=0;k<this->nloc;k++) this->genotype[i][j][k] = source.genotype[i][j][k];
+			}
+		}
+		this->misshap = new MissingHaplo[this->nmisshap];
+		for (int i=0;i<this->nmisshap;i++) this->misshap[i] = source.misshap[i];
+		this->misssnp = new MissingHaplo[this->nmisssnp];
+		for (int i=0;i<this->nmisssnp;i++) this->misssnp[i] = source.misssnp[i];
+		this->missnuc = new MissingNuc[this->nmissnuc];
+		for (int i=0;i<this->nmissnuc;i++) this->missnuc[i] = source.missnuc[i];
+		this->locus = new LocusC[this->nloc];
+		for (int i=0;i<this->nloc;i++) this->locus[i] = source.locus[i];
+		if (source.catexist != NULL) {
+			this->catexist = new bool[5];
+			for (int i=0;i<5;i++) this->catexist[i] = source.catexist[i];
+		}
+		this->ssize.resize(source.ssize.size());
+		for (int i=0;i<source.ssize.size();i++) {
+			for (int j=0;j<source.ssize[i].size();j++) this->ssize[i].push_back(source.ssize[i][j]);
+		}
+		this->indivsexe.resize(source.indivsexe.size());
+		for (int i=0;i<source.indivsexe.size();i++) {
+			for (int j=0;j<source.indivsexe[i].size();j++) this->indivsexe[i].push_back(source.indivsexe[i][j]);
+		}
+		return *this;
+	}
 
 /**
 * liberation de la mémoire occupée par la classe DataC
@@ -253,6 +429,7 @@ string  getligne(ifstream file) {
 			}
 		}
 		this->nsample = nech;  cout<<nech<<" échantillons : ";
+		for (int loc=0;loc<this->nloc;loc++) this->locus[loc].nsample = nech;
 		for (ech=0;ech<nech;ech++) cout<<popname[ech]<<"  ";cout<<"\n";
 		this->nind.resize(nech);
 		file.close();
@@ -376,7 +553,7 @@ string  getligne(ifstream file) {
 			}
 			delete[]this->locus;
 			this->locus = new LocusC[kloc];
-			for (int loc=0;loc<kloc;loc++) this->locus[loc].type = typ[loc];
+			for (int loc=0;loc<kloc;loc++) {this->locus[loc].type = typ[loc];this->locus[loc].nsample=this->nsample;}
 			delete[]typ;
 			for (ech=0;ech<this->nsample;ech++) {
 				for (ind=0;ind<this->nind[ech];ind++){
@@ -434,7 +611,7 @@ string  getligne(ifstream file) {
 		for (ech=0;ech<this->nsample;ech++) {
 			for (int loc=0;loc<this->nloc;loc++) {
 				typ=this->locus[loc].type % 5;
-				for (int i=0;i<this->ss[typ][ech];i++) {
+				for (int i=0;i<this->ssize[typ][ech];i++) {
 					if (this->locus[loc].haplosnp[ech][i]==misval) {
 							this->misssnp[this->nmisssnp].locus = loc;
 							this->misssnp[this->nmisssnp].sample = ech;
@@ -454,6 +631,7 @@ string  getligne(ifstream file) {
 		string misval="9";
 		short int g0=0,g1=1,g9=9;
 		this->locus[loc].haplosnp = new short int*[this->nsample];
+		this->locus[loc].samplesize = new int[this->nsample];
 		cout<<"\ndo_snp locus = "<<loc+1<<"\n";
 		for (ech=0;ech<this->nsample;ech++) {
 			ss=0;
@@ -476,6 +654,7 @@ string  getligne(ifstream file) {
 				}
 			}
 			//cout<<"avant transfert  ss="<<ss<<"   haplo.size = "<<haplo.size()<<"\n";
+			this->locus[loc].samplesize[ech] = ss;
 			this->locus[loc].haplosnp[ech] = new short int[ss];
 			for (int i=0;i<ss;i++) this->locus[loc].haplosnp[ech][i] = haplo[i];
 			if (not haplo.empty()) haplo.clear();
@@ -485,25 +664,25 @@ string  getligne(ifstream file) {
 
 	void DataC::calcule_ss() {
 		this->catexist = new bool[5];
-		this->ss.resize(5);
+		this->ssize.resize(5);
 		for (int i=0;i<5;i++) this->catexist[i]=false;
 		for (int locustype=0;locustype<5;locustype++) {
 			if (not this->catexist[locustype]) {
 				for (int loc=0;loc<this->nloc;loc++) {
 					if ((this->locus[loc].type % 5) == locustype) {
-						this->ss[locustype].resize(this->nsample);
+						this->ssize[locustype].resize(this->nsample);
 						for (int sa=0;sa<this->nsample;sa++) {
-							this->ss[locustype][sa]=0;
+							this->ssize[locustype][sa]=0;
 							for (int ind=0;ind<this->nind[sa];ind++) {
-								//if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[sa][ind]==2))) this->ss[locustype][sa] +=2;
-								//else if (not((this->locus[loc].type==13)and(this->indivsexe[sa][ind]==2))) this->ss[locustype][sa] +=1;
+								//if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[sa][ind]==2))) this->ssize[locustype][sa] +=2;
+								//else if (not((this->locus[loc].type==13)and(this->indivsexe[sa][ind]==2))) this->ssize[locustype][sa] +=1;
 								if( (locustype == 0) or ( (locustype == 2)and(this->indivsexe[sa][ind]==2) ) ) {
-									this->ss[locustype][sa] +=2;
+									this->ssize[locustype][sa] +=2;
 								} else {
-									if(this->indivsexe[sa][ind]>0) this->ss[locustype][sa] +=1;
+									if(this->indivsexe[sa][ind]>0) this->ssize[locustype][sa] +=1;
 								}
 							}
-							//cout<<"data.ss["<<locustype<<"]["<<sa<<"]="<<this->ss[locustype][sa]<<"\n";
+							//cout<<"data.ss["<<locustype<<"]["<<sa<<"]="<<this->ssize[locustype][sa]<<"\n";
 						}
 						this->catexist[locustype] = true;
 					}
@@ -545,8 +724,8 @@ string  getligne(ifstream file) {
 		for (int locustype=0;locustype<5;locustype++) {					//nombre total de gènes par catégorie de locus
 			if (this->catexist[locustype]){
 				for (int sa=0;sa<this->nsample;sa++) {
-					f1.write((char*)&(this->ss[locustype][sa]),sizeof(int));
-					cout<<"ecribin   this->ss["<<locustype<<"]["<<sa<<"]="<<this->ss[locustype][sa]<<"\n";
+					f1.write((char*)&(this->ssize[locustype][sa]),sizeof(int));
+					cout<<"ecribin   this->ssize["<<locustype<<"]["<<sa<<"]="<<this->ssize[locustype][sa]<<"\n";
 				}
 			}
 			
@@ -555,7 +734,7 @@ string  getligne(ifstream file) {
 			kloc = index[loc];
 			categ = this->locus[kloc].type % 5;
 			for (int ech=0;ech<this->nsample;ech++) {
-				for (int i=0;i<this->ss[categ][ech];i++) f1.write((char*)&(this->locus[kloc].haplosnp[ech][i]),sizeof(short int));
+				for (int i=0;i<this->ssize[categ][ech];i++) f1.write((char*)&(this->locus[kloc].haplosnp[ech][i]),sizeof(short int));
 			}
 		}
 		f1.close();
@@ -592,17 +771,18 @@ cout<<"fin de ecribin\n";
 			for (int j=0;j<this->nind[i];j++) f0.read((char*)&(this->indivsexe[i][j]),sizeof(int));
 		}
 		this->locus = new LocusC[this->nloc];
+		for (int loc=0;loc<this->nloc;loc++) this->locus[loc].nsample = this->nsample;
 		for (int loc=0;loc<this->nloc;loc++) f0.read((char*)&(this->locus[loc].type),sizeof(int)); //types des locus
 		this->catexist = new bool[5];																		
-		this->ss.resize(5);																		
+		this->ssize.resize(5);																		
 		for (int locustype=0;locustype<5;locustype++) f0.read((char*)&(this->catexist[locustype]),sizeof(bool));
 		for (int locustype=0;locustype<5;locustype++) cout<<" type "<<locustype<<"   catexist ="<<this->catexist[locustype]<<"\n";
 		for (int locustype=0;locustype<5;locustype++) {											//nombre total de gènes par catégorie de locus
 			if (this->catexist[locustype]) {
-				this->ss[locustype].resize(this->nsample);
-				for (int sa=0;sa<this->nsample;sa++) f0.read((char*)&(this->ss[locustype][sa]),sizeof(int));
+				this->ssize[locustype].resize(this->nsample);
+				for (int sa=0;sa<this->nsample;sa++) f0.read((char*)&(this->ssize[locustype][sa]),sizeof(int));
 				cout<<"type "<<locustype<<"\n";
-				for (int sa=0;sa<this->nsample;sa++) cout <<this->ss[locustype][sa]<<"   "; cout<<"\n"; 
+				for (int sa=0;sa<this->nsample;sa++) cout <<this->ssize[locustype][sa]<<"   "; cout<<"\n"; 
 			}
 		}
 		//cout<<"libin 2\n";
@@ -610,8 +790,8 @@ cout<<"fin de ecribin\n";
 			this->locus[loc].haplosnp = new short int*[this->nsample];
 			categ = this->locus[loc].type % 5;
 			for (int ech=0;ech<this->nsample;ech++) {
-				this->locus[loc].haplosnp[ech] = new short int[this->ss[categ][ech]];
-				for (int i=0;i<this->ss[categ][ech];i++) f0.read((char*)&(this->locus[loc].haplosnp[ech][i]),sizeof(short int));
+				this->locus[loc].haplosnp[ech] = new short int[this->ssize[categ][ech]];
+				for (int i=0;i<this->ssize[categ][ech];i++) f0.read((char*)&(this->locus[loc].haplosnp[ech][i]),sizeof(short int));
 			}
 		}
 		f0.close();
@@ -735,6 +915,7 @@ cout<<"fin de ecribin\n";
 			//this->locus[loc].name[s.length()]='\0';
 			this->locus[loc].name = s;
 		}
+		for (int loc=0;loc<this->nloc;loc++) this->locus[loc].nsample = this->nsample;
 		for (ech=0;ech<this->nsample;ech++) {
 			getline(file2,s);  //ligne "POP"
 //			cout << s <<"\n";
@@ -767,7 +948,8 @@ cout<<"fin de ecribin\n";
         vector <int> haplo;
     	this->locus[loc].mini=1000;this->locus[loc].maxi=0;
     	this->locus[loc].haplomic = new int*[this->nsample];
-        //cout<<"data Locus="<<loc<<"\n";
+     	this->locus[loc].samplesize = new int[this->nsample];
+       //cout<<"data Locus="<<loc<<"\n";
     	for (int ech=0;ech<this->nsample;ech++){
             ng=0;
     		for (int ind=0;ind<this->nind[ech];ind++){
@@ -802,6 +984,7 @@ cout<<"fin de ecribin\n";
     				ng++;
     			}
     		}
+    		this->locus[loc].samplesize[ech] = ng;
     		this->locus[loc].haplomic[ech] = new int[ng];
             for (int i=0;i<ng;i++) this->locus[loc].haplomic[ech][i]=haplo[i];
             if (not haplo.empty()) haplo.clear();
@@ -827,6 +1010,7 @@ cout<<"fin de ecribin\n";
     	char base[] ="ACGT";
         vector <string> haplo;
     	this->locus[loc].haplodna = new string*[this->nsample];
+    	this->locus[loc].samplesize = new int[this->nsample];
 		ss = new int[this->nsample];
     	this->locus[loc].dnalength = -1;
     	for (int ech=0;ech<this->nsample;ech++){
@@ -889,6 +1073,7 @@ cout<<"fin de ecribin\n";
     		}
     		ss[ech] = ng;
     		//cout <<"ng="<<ng<<"\n";
+			this->locus[loc].samplesize[ech] = ng;
             this->locus[loc].haplodna[ech] = new string[ng];
             for (int i=0;i<ng;i++) {
                 this->locus[loc].haplodna[ech][i]=haplo[i];

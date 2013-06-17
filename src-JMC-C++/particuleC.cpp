@@ -92,31 +92,40 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 }
 
   void ParticleC::libere() {
-    for (int cat=0;cat<5;cat++) {
+    /*for (int cat=0;cat<5;cat++) {
 		//cout<<"cat="<<cat<<"\n";
 		if (this->data.catexist[cat]) {
 			for (int sa=0;sa<this->nsample;sa++){
 				//cout<<"         this->nsample = "<<this->nsample<<"\n";
-				delete []this->dat[cat][sa];
-				delete []this->ref[cat][sa];
+				delete [] this->dat[cat][sa];
+				delete [] this->ref[cat][sa];
 			}
-			delete []this->dat[cat];
-			delete []this->ref[cat];
+			delete [] this->dat[cat];
+			delete [] this->ref[cat];
 		}
     }
-    delete []this->dat;
-    delete []this->ref;
-    //delete []this->data.catexist;
+    delete [] this->dat;
+    delete [] this->ref;
+    //delete []this->data.catexist;*/ 
   }
 
   void ParticleC::libereobs(bool obs) {
+	/*cout<<"debut de libereobs\n";
     for (int i=0;i<this->nloc;i++) locuslist[i].libere(obs, this->nsample);
     delete []locuslist;
+	cout<<"apres delete []locuslist;\n";
 	for (int gr=1;gr<=this->ngr;gr++) {
 		delete [] this->grouplist[gr].sumstat;
+		cout<<"apres delete [] this->grouplist[gr].sumstat;;\n";
 		delete [] this->grouplist[gr].loc;
+		cout<<"apres delete [] this->grouplist[gr].loc; du groupe" <<gr<<" sur "<<this->ngr<<"\n";
+		delete [] this->grouplist[gr].sumstatsnp;
+		cout<<"apres delete [] this->grouplist[gr].sumstatsnp; du groupe" <<gr<<" sur "<<this->ngr<<"\n";
+		
 	}
-	delete [] this->grouplist;
+	cout<<"avant delete []grouplist;\n";
+	//delete [] this->grouplist;
+	cout<<"apres delete []grouplist;\n";
 	
     for (int cat=0;cat<5;cat++) {
       if (this->catexist[cat]) {
@@ -130,9 +139,100 @@ vector <int> melange2(MwcGen mw, int k, int n) {
     }
     delete []this->dat;
     delete []this->ref;
-    delete []this->catexist;
+    delete []this->catexist;*/
   }
 
+	ParticleC & ParticleC::operator= (ParticleC const & source) {
+		if (this == &source)  return *this;
+		if (this->locuslist != NULL) delete [] this->locuslist;
+		if (this->grouplist != NULL) delete [] this->grouplist;
+		if (this->scenario != NULL) delete [] this->scenario;
+		if (this->seqlist != NULL) delete [] this->seqlist;
+		if (this->gt != NULL) delete [] this->gt;
+		if (this->condition != NULL) delete [] this->condition;
+		if (this->catexist != NULL) delete [] this->catexist;
+//		if (this->dat != NULL){
+//			for (int i=0;i<5;i++) {
+//				for (int j=0;j<this->nsample;j++) delete [] this->dat[i][j];
+//				delete [] this->dat[i];
+//			}
+//			delete [] this->dat;
+//		}
+//		if (this->ref != NULL){
+//			for (int i=0;i<5;i++) {
+//				for (int j=0;j<this->nsample;j++) delete [] this->ref[i][j];
+//				delete [] this->ref[i];
+//			}
+//			delete [] this->ref;
+//		}
+//		if (not this->afsdone.empty()) this->afsdone.clear();
+//		if (not this->t_afs.empty()) this->t_afs.clear();
+//		if (not this->n_afs.empty()) this->n_afs.clear();
+		this->data = source.data;
+
+		this->scen = source.scen;
+		this->mw = source.mw;
+		this->dnatrue = source.dnatrue;
+		this->drawuntil = source.drawuntil;
+		this->firstime = source.firstime;
+		this->sexratio = source.sexratio;
+		this->npart = source.npart;
+		this->nloc = source.nloc;
+		this->ngr = source.ngr;
+		this->nparam = source.nparam;
+		this->nseq = source.nseq;
+		this-> nstat= source.nstat;
+		this->nsample = source.nsample;
+		this->nscenarios = source.nscenarios;
+		this->nconditions = source.nconditions;
+		this->refnindtot = source.refnindtot;
+		this->reffreqmin = source.reffreqmin;
+		this->naccept = source.naccept;
+		this->ntentes = source.ntentes;
+		this->weight = source.weight;
+		this->locpol = source.locpol;
+		this->sumweight = source.sumweight;
+		this->threshold = source.threshold;
+		for (int i=0;i<4;i++) {for (int j=0;j<4;j++) this->matQ[i][j] = source.matQ[i][j];}
+		
+		this->catexist = new bool[5];
+		for (int i=0;i<5;i++) this->catexist[i] = source.catexist[i];
+		this->locuslist = new LocusC[this->nloc];
+		for (int i=0;i<this->nloc;i++) this->locuslist[i] = source.locuslist[i]; 
+		this->grouplist = new LocusGroupC[this->ngr];
+		for (int i=0;i<this->ngr;i++) this->grouplist[i] = source.grouplist[i]; 
+		this->scenario = new ScenarioC[this->nscenarios];
+		for (int i=0;i<this->nscenarios;i++)this->scenario[i] = source.scenario[i];
+		this->seqlist = new SequenceBitC[this->nseq];
+		for (int i=0;i<this->nseq;i++) this->seqlist[i] = source.seqlist[i];
+		this->gt = new GeneTreeC[this->nloc];
+		for (int i=0;i<this->nloc;i++) this->gt[i] = source.gt[i];
+		if (this->nconditions>0){
+			this->condition = new ConditionC[this->nconditions];
+			for (int i=0;i<this->nconditions;i++) this->condition[i] = source.condition[i];
+		}
+		this->afsdone.resize(source.afsdone.size());
+		for (int i=0;i<source.afsdone.size();i++) {
+			for (int j=0;j<source.afsdone[i].size();j++) this->afsdone[i].push_back(source.afsdone[i][j]);
+		}
+		this->n_afs.resize(source.n_afs.size());
+		for (int i=0;i<source.n_afs.size();i++) {
+			for (int j=0;j<source.n_afs[i].size();j++) this->n_afs[i].push_back(source.n_afs[i][j]);
+		}
+		this->t_afs.resize(source.t_afs.size());
+		for (int i=0;i<source.t_afs.size();i++) {
+			for (int j=0;j<source.t_afs[i].size();j++)
+				for (int k=0;k<source.t_afs[i][j].size();k++)
+			this->t_afs[i][j].push_back(source.t_afs[i][j][k]);
+		}
+		
+//	  int *nind,**indivsexe,**numvar,*nvar,;
+//	  bool ***dat,***ref;  //appartenance d'un gène aux data (dat) ou aux individus de référence (ref) par [locustype][sample][gene]
+	  
+	  dat = source.dat;
+	  ref = source.ref;
+		return *this;
+	}
 
   void ParticleC::ecris(){
     for (int i=0;i<this->nscenarios;i++) this->scenario[i].ecris(true);
@@ -176,6 +276,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 	  this->scen.nn0 = this->scenario[iscen].nn0;
 	  this->scen.nconditions = this->scenario[iscen].nconditions;
 	  for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i] = this->scenario[iscen].time_sample[i];
+	  for (int i=0;i<this->scen.nsamp;i++) this->scen.stime_sample[i] = this->scenario[iscen].stime_sample[i];
 	  for (int i=0;i<this->scen.nn0;i++) {
 		  //if ((i>5)or(iscen>2)) cout <<"i="<<i<<"   iscen="<<iscen<<"\n";
 		  this->scen.ne0[i].val = this->scenario[iscen].ne0[i].val;
@@ -197,19 +298,19 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 	  //cout<<"drawscenario nparamvar="<<this->scen.nparamvar<<"\n";
 	  //this->scen.ecris(false);
 	  //cout<<"dans drawscenario    nsample="<<this->scen.nsamp<<"\n";
-	  //for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ss[0][sa]<<"   ";cout<<"\n";
+	  //for (int sa=0;sa<this->scen.nsamp;sa++) cout<<this->data.ssize[0][sa]<<"   ";cout<<"\n";
 	  this->refnindtot=0;
-	  this->ref = new bool**[5];
-	  this->dat = new bool**[5];
+	  ref.resize(5); //this->ref = new bool**[5];
+	  dat.resize(5); //this->dat. = new bool**[5];
 	  //cout<<"this->scen.nsamp = "<<this->scen.nsamp<<"\n";
 	  for (int cat=0;cat<5;cat++) {
 		  if (this->data.catexist[cat]) {
-			  this->ref[cat] = new bool*[this->scen.nsamp];
-			  this->dat[cat] = new bool*[this->scen.nsamp];
+			  this->ref[cat].resize(this->scen.nsamp); // = new bool*[this->scen.nsamp];
+			  this->dat[cat].resize(this->scen.nsamp); // = new bool*[this->scen.nsamp];
 			  for (int sa=0;sa<this->scen.nsamp;sa++) {
-				  //cout<<"this->data.ss["<<cat<<"]["<<sa<<"] = "<<this->data.ss[cat][sa]<<"\n";
-				  this->ref[cat][sa] = new bool[this->data.ss[cat][sa]];
-				  this->dat[cat][sa] = new bool[this->data.ss[cat][sa]];
+				  //cout<<"this->data.ssize["<<cat<<"]["<<sa<<"] = "<<this->data.ssize[cat][sa]<<"\n";
+				  this->ref[cat][sa].resize(this->data.ssize[cat][sa]); // = new bool[this->data.ssize[cat][sa]];
+				  this->dat[cat][sa].resize(this->data.ssize[cat][sa]); //= new bool[this->data.ssize[cat][sa]];
 			}
 			  for (int sa=0;sa<this->scen.nsamp;sa++) {
 				  for (int ievent=0;ievent<this->scen.nevent;ievent++) {
@@ -221,7 +322,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 							case 3 : ngref=this->scen.event[ievent].nindMref;break;
 							case 4 : ngref=this->scen.event[ievent].nindMref + this->scen.event[ievent].nindFref;break;
 						}
-						  for (int i=0;i<this->data.ss[cat][sa];i++) {
+						  for (int i=0;i<this->data.ssize[cat][sa];i++) {
 							  this->dat[cat][sa][i] = true;
 							  this->ref[cat][sa][i] = (i<ngref);
 							  if (this->ref[cat][sa][i]) this->refnindtot++;
@@ -229,12 +330,12 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 						  //cout<<"drawscenario : this->scen.event[ievent].action=='E'"<<"    refnindtot="<<this->refnindtot<<"\n";
 					  }
 					  if ((this->scen.event[ievent].action=='R')and(this->scen.event[ievent].sample==sa+1)) {
-						  this->refnindtot +=this->data.ss[cat][sa];
-						  for (int i=0;i<this->data.ss[cat][sa];i++) {
+						  this->refnindtot +=this->data.ssize[cat][sa];
+						  for (int i=0;i<this->data.ssize[cat][sa];i++) {
 							  this->dat[cat][sa][i] = false;
 							  this->ref[cat][sa][i] = true;
 						  }
-						  //cout<<"drawscenario : this->scen.event[ievent].action=='R'"<<"    refnindtot="<<this->refnindtot<<"   ss="<<this->data.ss[cat][sa]<<"\n";
+						  //cout<<"drawscenario : this->scen.event[ievent].action=='R'"<<"    refnindtot="<<this->refnindtot<<"   ss="<<this->data.ssize[cat][sa]<<"\n";
 					  }
 					  
 				  }
@@ -514,7 +615,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 				for (int p=0;p<this->scen.nparam;p++) {
 					if (not this->scen.histparam[p].prior.fixed) this->scen.histparam[p].value = this->scen.histparam[p].prior.drawfromprior(this->mw);
 					if (this->scen.histparam[p].category<2) this->scen.histparam[p].value = floor(0.5+this->scen.histparam[p].value);
-					cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value<<"\n";
+					//cout<<this->scen.histparam[p].name <<" = "<<this->scen.histparam[p].value<<"\n";
 					//cout<<"    "<<this->scen.histparam[p].prior.loi <<"  ["<<this->scen.histparam[p].prior.mini<<","<<this->scen.histparam[p].prior.maxi <<"]\n";
 				}
 				//cout <<"avant test conditions\n";
@@ -549,7 +650,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 		fpar.precision(5);
 		fpar<<this->scen.histparam[p].value<<"\t";
 	}*/
-	if (OK) cout<<"tirage des paramètres OK \n"; else cout<<"tirage des paramètres rejeté \n";
+	//if (OK) cout<<"tirage des paramètres OK \n"; else cout<<"tirage des paramètres rejeté \n";
 	//cout<<"coucou\n";
 	this->scen.ipv=0;
 	if (OK) {
@@ -572,7 +673,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 	if (this->scen.event[ievent].action=='S') {if (this->scen.event[ievent].admixrate<0) this->scen.event[ievent].admixrate = this->getvalue(this->scen.event[ievent].sadmixrate);}
 	if (debuglevel==30) cout<<"event "<<ievent<<"   action="<<this->scen.event[ievent].action<<"   time="<<this->scen.event[ievent].time<<"   "<<this->scen.event[ievent].stime<<"\n";
       }
-      cout<<"TRI SUR LES TEMPS DES EVENEMENTS\n";
+      //cout<<"TRI SUR LES TEMPS DES EVENEMENTS\n";
       sort(&this->scen.event[0],&this->scen.event[this->scen.nevent]); 
       // compevent inutile: operator< est surchargé correctement (PP)
       checkorder();
@@ -581,10 +682,10 @@ vector <int> melange2(MwcGen mw, int k, int n) {
       //cout<<"fin des events\n";
       for (int i=0;i<this->scen.nn0;i++) {
 	if (this->scen.ne0[i].val<0) this->scen.ne0[i].val = (int)this->getvalue(this->scen.ne0[i].name);
-	cout<<this->scen.ne0[i].name<<" = "<<this->scen.ne0[i].val<<"\n";
+	//cout<<this->scen.ne0[i].name<<" = "<<this->scen.ne0[i].val<<"\n";
       }
     }
-    cout<<"fin de setHistparamvalue avec OK=";if (OK) cout<<"TRUE\n"; else cout<<"FALSE\n";
+    //cout<<"fin de setHistparamvalue avec OK=";if (OK) cout<<"TRUE\n"; else cout<<"FALSE\n";
     return OK;
   }
 
@@ -1051,7 +1152,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 	  
 	  int nnod=0,nn,n=0,cat=(this->locuslist[loc].type % 5);
 	  //cout << "nsample = " << this->nsample << "   samplesize[0] = " << this->locuslist[loc].samplesize[0] << "\n";
-	  for (int sa=0;sa<this->data.nsample;sa++) {nnod +=this->data.ss[cat][sa];}
+	  for (int sa=0;sa<this->data.nsample;sa++) {nnod +=this->data.ssize[cat][sa];}
 	  //cout << "nombre initial de noeuds = " << nnod  <<"\n";exit(6);
 	  gt.ngenes = nnod;
 	  gt.nnodes=nnod;
@@ -1092,7 +1193,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 			if (i<this->gt[loc].ngenes){        
 				if (this->ref[cat][sa][ind]) this->gt[loc].nodes[i].nref=1;
 				ind++;
-				if (ind==this->data.ss[cat][sa]) {ind=0;sa++;}
+				if (ind==this->data.ssize[cat][sa]) {ind=0;sa++;}
 			//cout<<this->gt[loc].nodes[i].nref<<"   ";
 			}
 		}
@@ -1146,7 +1247,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    * Struct ParticleC : coalesce les lignées ancestrales de la population requise
    */
   void ParticleC::coal_pop(int loc,int iseq, bool reference, int *refmrca) {
-    bool trace = true;
+    bool trace = false;
 	//trace=(loc==0);
     if (trace){
       cout <<"\n";
@@ -1172,7 +1273,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 			while (ra == 0.0) {ra = this->mw.random();}
 			lra = log(ra);
 			start -= (this->locuslist[loc].coeffcoal*this->seqlist[iseq].N/nLineages/(nLineages-1.0))*lra;
-			if (trace)  cout << "coeffcoal = " << this->locuslist[loc].coeffcoal << "   N = " << this->seqlist[iseq].N << "   nl/(nl-1) = " << nLineages/(nLineages-1.0) << "\n";
+			//if (trace)  cout << "coeffcoal = " << this->locuslist[loc].coeffcoal << "   N = " << this->seqlist[iseq].N << "   nl/(nl-1) = " << nLineages/(nLineages-1.0) << "\n";
 			if (trace) cout << "start courant= " << start << "  log(ra)=" << lra << "\n";
 			if ((final)or((not final)and(start<this->seqlist[iseq].t1))) {
 				this->gt[loc].nodes[this->gt[loc].nnodes].pop = this->seqlist[iseq].pop;
@@ -1370,7 +1471,7 @@ vector <int> melange2(MwcGen mw, int k, int n) {
       this->gt[loc].branches[b].nmut = this->mw.poisson(this->gt[loc].branches[b].length*mutrate);
       this->gt[loc].nmutot += this->gt[loc].branches[b].nmut;
     }
-    if (loc<10) cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
+    //if (loc<10) cout<<"Locus "<<loc<<"   mutrate = "<<mutrate<<"   nmutot="<<this->gt[loc].nmutot<<"\n";
   }
 
 void ParticleC::cherche_branchesOK(int loc) {
@@ -1388,7 +1489,7 @@ void ParticleC::cherche_branchesOK(int loc) {
 	for (int i=0;i<this->gt[loc].ngenes;i++) {
 		this->gt[loc].nodes[i].OK = this->ref[cat][sa][ind];
 		ind++;
-		if (ind==this->data.ss[cat][sa]) {ind=0;sa++;}
+		if (ind==this->data.ssize[cat][sa]) {ind=0;sa++;}
 	}
 	//calcul du nombre de descendants échantillonnés par noeud
 	sa=0,ind=0;
@@ -1397,7 +1498,7 @@ void ParticleC::cherche_branchesOK(int loc) {
 		if (i<this->gt[loc].ngenes){        
 			if (this->dat[cat][sa][ind]) this->gt[loc].nodes[i].ndat=1;
 			ind++;
-			if (ind==this->data.ss[cat][sa]) {ind=0;sa++;}
+			if (ind==this->data.ssize[cat][sa]) {ind=0;sa++;}
 		} else {
 			b=0;
 			while (i!=this->gt[loc].branches[b].top) b++;
@@ -1709,11 +1810,11 @@ void ParticleC::put_one_mutation(int loc) {
 		if((debuglevel==9)and(loc==10)) {
 			for (int sa=0;sa<this->nsample;sa++) {
 				cout<<"sample "<<sa<<"\n";
-				for (int ind=0;ind<this->data.ss[cat][sa];ind++) cout<<ind<<"  "<<this->gt[loc].nodes[ind+sa*this->data.ss[cat][sa]].dna<<"\n";
+				for (int ind=0;ind<this->data.ssize[cat][sa];ind++) cout<<ind<<"  "<<this->gt[loc].nodes[ind+sa*this->data.ssize[cat][sa]].dna<<"\n";
 			}
 		}
 		this->locuslist[loc].sitmut.clear();
-		int sa0=0,sa2=this->data.ss[cat][sa0];
+		int sa0=0,sa2=this->data.ssize[cat][sa0];
 		if (debuglevel==10) cout<<"sa2="<<sa2<<"\n";
 		int sa,ind,ngref;
 		if (debuglevel==10) cout<< "tirage au hasard des gènes avant attribution aux individus\n";
@@ -1722,36 +1823,36 @@ void ParticleC::put_one_mutation(int loc) {
 		ind=0;
 		for (sa=0;sa<this->data.nsample;sa++) {
 			if (this->locuslist[loc].type>=10){
-				ngref=0;for (int i=0;i<this->data.ss[cat][sa];i++) if (this->ref[cat][sa][i]) ngref++;
-				ordre[sa] = melange2(this->mw,ngref,this->data.ss[cat][sa]);
-				//for (int i=0;i<this->data.ss[cat][sa];i++) ordre[sa][i] = i;
+				ngref=0;for (int i=0;i<this->data.ssize[cat][sa];i++) if (this->ref[cat][sa][i]) ngref++;
+				ordre[sa] = melange2(this->mw,ngref,this->data.ssize[cat][sa]);
+				//for (int i=0;i<this->data.ssize[cat][sa];i++) ordre[sa][i] = i;
 			} else {
-				ordre[sa] = melange(this->mw,this->data.ss[cat][sa]);
+				ordre[sa] = melange(this->mw,this->data.ssize[cat][sa]);
 			}
-			if (sa>0) {for (int i=0;i<this->data.ss[cat][sa];i++) ordre[sa][i]+=ind;}
-			ind +=this->data.ss[cat][sa];
+			if (sa>0) {for (int i=0;i<this->data.ssize[cat][sa];i++) ordre[sa][i]+=ind;}
+			ind +=this->data.ssize[cat][sa];
 		}
 		if((debuglevel==9)and(loc==10)) {
 			for (int sa=0;sa<this->nsample;sa++) {
-				for (int ind=0;ind<this->data.ss[cat][sa];ind++) cout<<"ordre["<<sa<<"]["<<ind<<"] = "<<ordre[sa][ind]<<"\n";
+				for (int ind=0;ind<this->data.ssize[cat][sa];ind++) cout<<"ordre["<<sa<<"]["<<ind<<"] = "<<ordre[sa][ind]<<"\n";
 			}
 		}
 		if (debuglevel==10) cout<<"apres ordre\n";
 		if (this->locuslist[loc].type<5) {      //MICROSAT
 			this->locuslist[loc].haplomic = new int*[this->data.nsample];
-			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplomic[sa] = new int [this->data.ss[cat][sa]];
+			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplomic[sa] = new int [this->data.ssize[cat][sa]];
 			sa=0;ind=0;
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
 				this->locuslist[loc].haplomic[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].state;
 				ind++;
-				if (ind==this->data.ss[cat][sa]) {sa++;ind=0;}  // TODO: bug ici ?
+				if (ind==this->data.ssize[cat][sa]) {sa++;ind=0;}  // TODO: bug ici ?
 			}
 			if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
 		}
 		else if (this->locuslist[loc].type<10) {//DNA SEQUENCES
 			this->locuslist[loc].haplodna = new string*[this->data.nsample];
-			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplodna[sa] = new string [this->data.ss[cat][sa]];
+			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplodna[sa] = new string [this->data.ssize[cat][sa]];
 			sa=0;ind=0;
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {
@@ -1771,14 +1872,14 @@ void ParticleC::put_one_mutation(int loc) {
 					return 2;
 				}
 				this->locuslist[loc].haplodna[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].dna;
-				ind++;if (ind==this->data.ss[cat][sa]) {sa++;ind=0;}
+				ind++;if (ind==this->data.ssize[cat][sa]) {sa++;ind=0;}
 			}
 		}
 		else {									//SNP
 			if (debuglevel==10) cout << " firstime = " << firstime << endl;
 			if (this->locuslist[loc].firstime){
 				this->locuslist[loc].haplosnp = new short int*[this->data.nsample];
-				for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplosnp[sa] = new short int [this->data.ss[cat][sa]];
+				for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplosnp[sa] = new short int [this->data.ssize[cat][sa]];
 				this->locuslist[loc].firstime=false;
 			}
 			sa=0;ind=0;
@@ -1786,7 +1887,7 @@ void ParticleC::put_one_mutation(int loc) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
 				this->locuslist[loc].haplosnp[sa][ind] = (short int)this->gt[loc].nodes[ordre[sa][ind]].state;
 				 //if (loc<1) cout<<this->locuslist[loc].haplosnp[sa][ind]<<"   ";
-				ind++;if (ind==this->data.ss[cat][sa]) {sa++;ind=0;}
+				ind++;if (ind==this->data.ssize[cat][sa]) {sa++;ind=0;}
 				 //if ((loc<1)and(ind==0))cout<<"\n";
 			}
 			if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
@@ -1836,7 +1937,7 @@ void ParticleC::put_one_mutation(int loc) {
 			popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
 			}
 			}
-			for (int iseq=0;iseq<this->nseq;iseq++) delete []this->seqlist[iseq].popfull;
+			//for (int iseq=0;iseq<this->nseq;iseq++){ delete [] this->seqlist[iseq].popfull;this->seqlist[iseq].popfull=NULL;}
 				delete []popleine;
 			return "";
 			}
@@ -1849,7 +1950,7 @@ void ParticleC::put_one_mutation(int loc) {
 	if (this->refnindtot<1) return true;
     int cat = (this->locuslist[loc].type % 5);
     for (int sa=0;sa<this->nsample;sa++) {
-		for (int i=0;i<this->data.ss[cat][sa];i++) {
+		for (int i=0;i<this->data.ssize[cat][sa];i++) {
 			if (this->ref[cat][sa][i]) {
 				nr +=1;
 				n1r +=(int)this->locuslist[loc].haplosnp[sa][i];
@@ -2155,7 +2256,7 @@ void ParticleC::put_one_mutation(int loc) {
 	}
 	  if (debuglevel==11) cout<<"avant les delete\n";fflush(stdin);
 	  delete [] emptyPop;
-	  delete [] this->seqlist;
+	  delete [] this->seqlist;this->seqlist = NULL;
 	  for (int loc=0;loc<this->nloc;loc++) {
 		  if ((this->locuslist[loc].groupe>0)and(simulOK[loc]>-1)) {
 			  if (debuglevel==10) cout<<"deletetree du locus "<<loc<<"\n";
@@ -2163,7 +2264,7 @@ void ParticleC::put_one_mutation(int loc) {
 			  // else deletetree(this->gt[loc],false);
 		  }
 	  }
-	  delete [] this->gt;
+	  delete [] this->gt;this->gt=NULL;
 	  // if (gtYexist) deletetree(GeneTreeY,dnaloc);
 	  // if (gtMexist) deletetree(GeneTreeM,dnaloc);
 	  //if (trace) cout << "Fin de dosimulpart \n";
@@ -2351,7 +2452,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  k = new int[this->nloc];
 //	  cout << "*** ss=" << endl;
 //	  for(int sa = 0; sa < data.nsample; sa++)
-//		  cout << "ss[0][" << sa << "] = " <<this->data.ss[0][sa] << endl;
+//		  cout << "ss[0][" << sa << "] = " <<this->data.ssize[0][sa] << endl;
 	  ssr="<NM="+DoubleToString(this->sexratio/(1.0-this->sexratio))+"NF>";
 	  sgp="Simulated genepop file   "+ssr+"\n";
 	  //cout<<sgp<<"\n";
