@@ -393,9 +393,9 @@ class ProjectSimulationSnp(ProjectSimulation):
         super(ProjectSimulationSnp,self).__init__(name,dir,parent)
 
         self.locusNumberFrame.frame_8.hide()
-        self.locusNumberFrame.leftBlocLabel.setText("SNP locus")
-        self.locusNumberFrame.frame.setMaximumSize(QSize(300,1000))
-        self.locusNumberFrame.frame.setMinimumSize(QSize(300,0))
+        self.locusNumberFrame.leftBlocLabel.setText("SNP locus \n H loci are not compatible with A, X, Y loci.")
+        #self.locusNumberFrame.frame.setMaximumSize(QSize(300,1000))
+        #self.locusNumberFrame.frame.setMinimumSize(QSize(300,0))
 
         #self.ui.ascertSimFrame.show()
         #self.ui.frame_11.show()
