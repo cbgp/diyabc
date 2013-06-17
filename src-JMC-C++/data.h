@@ -14,8 +14,9 @@
 /**
 *  Structure LocusC : définition de la structure LocusC
 */
-struct LocusC
+class LocusC
 {
+public:
   std::string name;
   int type;  //0 à 14
   int groupe;    //numero du groupe auquel appartient le locus
@@ -39,18 +40,60 @@ struct LocusC
   short int **haplosnp; //array[sample][gene copy] 0,1,9
   bool mono;  //mono=true si un seul allèle dans l'échantillon global
   double weight; //poids du locus=1, sauf quand biais de recrutement
+  int nsample,*samplesize;
+  
+	LocusC() {
+		freq = NULL;
+		mutsit.clear();
+		sitmut.clear();
+		sitmut2.clear();
+		tabsit.clear();
+		haplodna = NULL;
+		haplodnavar = NULL;
+		haplomic = NULL;
+		haplosnp = NULL;
+	};
+	~LocusC() {
+		/*if (freq != NULL) delete [] freq;
+		if (haplodna != NULL){ 
+			for (int i=0;i<this->nsample;i++) delete [] haplodna[i];
+			delete [] haplodna;
+		}
+		if (haplodnavar != NULL) { 
+			for (int i=0;i<this->nsample;i++) delete [] haplodnavar[i];
+			delete [] haplodnavar;
+		}
+		if (haplomic != NULL) { 
+			for (int i=0;i<this->nsample;i++) delete [] haplomic[i];
+			delete [] haplomic;
+		}
+		if (haplosnp != NULL) { 
+			for (int i=0;i<this->nsample;i++) delete [] haplosnp[i];
+			delete [] haplosnp;
+		}
+		if (not mutsit.empty()) mutsit.clear();
+		if (not sitmut.empty()) sitmut.clear();
+		if (not sitmut2.empty()) sitmut2.clear();
+		if (not tabsit.empty()) tabsit.clear();*/
+	} ;
+	
+	LocusC & operator= (LocusC const & source);
 
   void libere(bool obs, int nsample);
 };
 
-struct MissingHaplo
+class MissingHaplo
 {
+public:
 	int locus,sample,indiv;
+	MissingHaplo & operator= (MissingHaplo const & source);
 };
 
-struct MissingNuc
+class MissingNuc
 {
+public:
 	int locus,sample,indiv,nuc;
+	MissingNuc & operator= (MissingNuc const & source);
 };
 
 
@@ -68,7 +111,7 @@ public:
     bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
 	//int **ss;  //nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
 	bool *catexist;
-	std::vector < std::vector <int> > ss;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
+	std::vector < std::vector <int> > ssize;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
 	std::vector <int> nind;
 	std::vector < std::vector <int> > indivsexe;
 	/*vector < vector <int> > ss;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
@@ -76,6 +119,28 @@ public:
 	vector < vector <int> > indivsexe;*/
 
 	/* Méthodes */
+	DataC(){
+		indivname = NULL;
+		genotype = NULL;
+		misshap = NULL;
+		misssnp = NULL;
+		missnuc = NULL;
+		locus = NULL;
+		catexist = NULL;
+		ssize.clear();
+		indivsexe.clear();
+	};
+	~DataC(){
+		/*if( indivname != NULL) delete [] indivname;
+		if( genotype != NULL) delete [] genotype;
+		if( misshap != NULL) delete [] misshap;
+		if( misssnp != NULL) delete [] misssnp;
+		if( missnuc != NULL) delete [] missnuc;
+		if( locus != NULL) delete [] locus;
+		if( catexist != NULL) delete [] catexist;*/
+	};
+	DataC & operator= (DataC const & source);
+	
 	void libere();
 	/**
 	 * détermination du type de fichier de donnée

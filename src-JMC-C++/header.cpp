@@ -40,39 +40,168 @@ extern int debuglevel;
 */
 
 #include "header.h"
+
 extern string * stat_type;
 extern int* stat_num;
 extern string path;
+ParticleC particuleobs;
 
+/**
+ * Copie du contenu d'une classe MutParameterC
+ */
+/*  MutParameterC::MutParameterC (MutParameterC const & source) {
+	this->name = source.name;
+	this->groupe = source.groupe;
+	this->category = source.category;
+	this->value = source.value;
+	this->prior = source.prior;
+  }*/
+  
+/**
+ * Definition de l'operateur = pour une instance de la classe MutParameterC
+ */
+  MutParameterC & MutParameterC::operator= (MutParameterC const & source) {
+	if (this== &source) return *this;
+	this->name = source.name;
+	this->groupe = source.groupe;
+	this->category = source.category;
+	this->value = source.value;
+	this->prior = source.prior;
+	return *this;
+  }
+  
+  
+/**
+ * Copie du contenu d'une classe HeaderC
+ */
+  HeaderC::HeaderC (HeaderC const & source) {
+    this->message = source.message;
+    this->datafilename = source.datafilename;
+    this->entete = source.entete;
+    this->entetehist = source.entetehist;
+    this->entetemut = source.entetemut;
+    this->entetemut0 = source.entetemut0;
+    this->entetestat = source.entetestat;
+    this->pathbase = source.pathbase;
+    this->nparamtot = source.nparamtot;
+    this->nstat = source.nstat;
+    this->nscenarios = source.nscenarios;
+    this->nconditions = source.nconditions;
+    this->ngroupes = source.ngroupes;
+    this->nparamut = source.nparamut;
+    this->nsimfile = source.nsimfile;
+    this->drawuntil = source.drawuntil;
+    this->reference = source.reference;
+    this->message = source.message;
+	this->threshold = source.threshold;
+	this->reffreqmin = source.reffreqmin;
+    this->drawuntil = source.drawuntil;
+	this->reference = source.reference;
+//
+	this->scen = source.scen;
+	this->dataobs = source.dataobs;
+///// Tableaux à dimmensionner	
+	this->stat_obs = new float[this->nstat];
+	for (int i=0;i<this->nstat;i++) this->stat_obs[i]=source.stat_obs[i];
+	this->mutparam = new MutParameterC[this->nparamut];
+	for (int i=0;i<this->nparamut;i++) this->mutparam[i]=source.mutparam[i];
+	this->statname = new string[this->nstat];
+	for (int i=0;i<this->nstat;i++) this->statname[i]=source.statname[i];
+	this->histparam = new HistParameterC[this->nparamtot];
+	for (int i=0;i<this->nparamtot;i++) this->histparam[i] = source.histparam[i];
+	this->condition = new ConditionC[this->nconditions];
+	for (int i=0;i<this->nconditions;i++) this->condition[i] = source.condition[i];
+	this->scenario = new ScenarioC[this->nscenarios];
+	for (int i=0;i<this->nscenarios;i++) this->scenario[i] = source.scenario[i];
+	this->groupe = new LocusGroupC[this->ngroupes];
+	for (int i=0;i<this->ngroupes;i++) this->groupe[i] = source.groupe[i];
+}
+
+/**
+ * Definition de l'operateur = pour une instance de la classe HeaderC
+ */
+  HeaderC & HeaderC::operator= (HeaderC const & source) {
+	if (this == &source)  return *this;
+// Suppression des tableaux non nuls
+	if (this->stat_obs != NULL) delete [] this->stat_obs;
+	if (this->mutparam != NULL) delete [] this->mutparam;
+	if (this->statname != NULL) delete [] this->statname;
+	if (this->histparam != NULL) delete [] this->histparam;
+	if (this->condition != NULL) delete [] this->condition;
+	if (this->scenario != NULL) delete [] this->scenario;
+	if (this->groupe != NULL) delete [] this->groupe;
+// recopie des constituants	
+    this->message = source.message;
+    this->datafilename = source.datafilename;
+    this->entete = source.entete;
+    this->entetehist = source.entetehist;
+    this->entetemut = source.entetemut;
+    this->entetemut0 = source.entetemut0;
+    this->entetestat = source.entetestat;
+    this->pathbase = source.pathbase;
+    this->nparamtot = source.nparamtot;
+    this->nstat = source.nstat;
+    this->nstatsnp = source.nstatsnp;
+	this->nscenarios = source.nscenarios;
+    this->nconditions = source.nconditions;
+    this->ngroupes = source.ngroupes;
+    this->nparamut = source.nparamut;
+    this->nsimfile = source.nsimfile;
+    this->drawuntil = source.drawuntil;
+    this->reference = source.reference;
+    this->message = source.message;
+	this->threshold = source.threshold;
+	this->reffreqmin = source.reffreqmin;
+    this->drawuntil = source.drawuntil;
+	this->reference = source.reference;
+
+	this->scen = source.scen;
+	this->dataobs = source.dataobs;
+	this->stat_obs = new float[this->nstat];
+	for (int i=0;i<this->nstat;i++) this->stat_obs[i]=source.stat_obs[i];
+	this->mutparam = new MutParameterC[this->nparamut];
+	for (int i=0;i<this->nparamut;i++) this->mutparam[i]=source.mutparam[i];
+	this->statname = new string[this->nstat];
+	for (int i=0;i<this->nstat;i++) this->statname[i]=source.statname[i];
+	this->histparam = new HistParameterC[this->nparamtot];
+	for (int i=0;i<this->nparamtot;i++) this->histparam[i] = source.histparam[i];
+	this->condition = new ConditionC[this->nconditions];
+	for (int i=0;i<this->nconditions;i++) this->condition[i] = source.condition[i];
+	this->scenario = new ScenarioC[this->nscenarios];
+	for (int i=0;i<this->nscenarios;i++) this->scenario[i] = source.scenario[i];
+	this->groupe = new LocusGroupC[this->ngroupes+1];
+	for (int i=0;i<this->ngroupes+1;i++) this->groupe[i] = source.groupe[i];
+	return *this;
+  }	
+	
+	
+	
 void MutParameterC::ecris() {
 	cout<<"    groupe="<<this->groupe<<"   category="<<this->category<<"\n";
 	//prior.ecris();
 }
 
-
-
-
 void HeaderC::libere() {
-    cout<<"HeaderC::libere nconditions="<<this->nconditions<<"\n";
+    //cout<<"HeaderC::libere nconditions="<<this->nconditions<<"\n";
 	this->dataobs.libere();
-	cout<<"apres dataobs.libere\n";
+	//cout<<"apres dataobs.libere\n";
 	if(this->nconditions>0) delete []this->condition;
 	 for(int i=0;i<this->nscenarios;i++) this->scenario[i].libere();
-	cout<<"apres scenario[i].libere\n";
+	//cout<<"apres scenario[i].libere\n";
 	delete []this->scenario;
-	cout<<"apres delete this->scenario\n";
+	//cout<<"apres delete this->scenario\n";
 	delete [] this->histparam;
-	cout<<"apres delete this->histparam\n";
+	//cout<<"apres delete this->histparam\n";
 	delete [] this->statname;
-	cout<<"apres delete this->statname\n";
+	//cout<<"apres delete this->statname\n";
 	if (this->nparamut>0) delete []this->mutparam;
-	cout<<"avant scen.libere\n";
+	//cout<<"avant scen.libere\n";
 	 this->scen.libere();
 	for(int i=1;i<ngroupes+1;i++) this->groupe[i].libere();
 	for (int gr=1;gr<=this->ngroupes;gr++) delete [] this->groupe[gr].sumstat;
 	for (int gr=0;gr<=this->ngroupes;gr++) delete [] this->groupe[gr].loc;
 	delete []this->groupe;
-	cout<<"apres delete group\n";
+	//cout<<"apres delete group\n";
 }
 
 
@@ -185,13 +314,13 @@ int HeaderC::readHeaderScenarios(ifstream & file){
 			for (int i=nm;i<nm+nf;i++) this->dataobs.indivsexe[this->dataobs.nsample-1][i] = 2;
 			for (int cat=0;cat<5;cat++) {
 				if (this->dataobs.catexist[cat]) {
-					this->dataobs.ss[cat].resize(this->dataobs.nsample);
+					this->dataobs.ssize[cat].resize(this->dataobs.nsample);
 					for (int sa=0;sa<this->dataobs.nsample;sa++) {
 						if (this->scenario[0].event[ievent].pop == sa+1) {
-							this->dataobs.ss[cat][sa]=0;
+							this->dataobs.ssize[cat][sa]=0;
 							for (int ind=0;ind<nm+nf;ind++) {
-								if ((cat==0)or((cat==2)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ss[cat][sa] +=2;
-								else if (not((cat==3)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ss[cat][sa] +=1;
+								if ((cat==0)or((cat==2)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ssize[cat][sa] +=2;
+								else if (not((cat==3)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ssize[cat][sa] +=1;
 							}
 						}
 					}
@@ -200,7 +329,7 @@ int HeaderC::readHeaderScenarios(ifstream & file){
 		}
 		if (this->scenario[0].event[ievent].nindMref+this->scenario[0].event[ievent].nindFref>0) this->reference=true;
 	}*/
-	for (int sa=0;sa<this->dataobs.nsample;sa++) cout<<this->dataobs.ss[0][sa]<<"   ";cout<<"\n";
+	for (int sa=0;sa<this->dataobs.nsample;sa++) cout<<this->dataobs.ssize[0][sa]<<"   ";cout<<"\n";
 
 	for (int i=0;i<this->nscenarios;i++) delete []sl[i];
 	delete [] sl;
@@ -224,6 +353,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 	this->nconditions = atoi(ss2[1].c_str());
 	cout<<"dans header nconditions="<<this->nconditions<<"\n";
 	delete [] ss2;
+	cout<<"avant  new HistParameterC[this->nparamtot]\n";
 	this->histparam = new HistParameterC[this->nparamtot];
 	if (this->nconditions>0) this->condition = new ConditionC[this->nconditions];
 	delete [] ss;
@@ -241,6 +371,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 		//    if (this->histparam[i].prior.constant) cout<<"   constant\n"; else cout<<"   variable\n";
 		delete [] ss;ss=NULL;
 	}
+	cout<<"apres les readprior\n";
 	this->drawuntil=true;
 	if (this->nconditions>0) {
 		this->condition = new ConditionC[this->nconditions];
@@ -545,7 +676,6 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 
 		//cout <<"s1="<<s1<<"   ss[3]="<< ss[3] <<"   atoi = "<< atoi(ss[3].c_str()) <<"\n";
 		this->groupe[gr].nstat = getwordint(ss[nss-1],0);
-		//cout << this->groupe[gr].nstat <<"\n";
 		this->nstat +=this->groupe[gr].nstat;
 		this->groupe[gr].sumstat = new StatC[this->groupe[gr].nstat];
 		delete [] ss;
@@ -756,10 +886,12 @@ int HeaderC::buildSuperScen(){
 	this->scen.ne0   = new Ne0C[this->scen.nn0];
 
 	this->scen.time_sample = new int[this->scen.nsamp];
+	this->scen.stime_sample = new string[this->scen.nsamp];
 	this->scen.histparam = new HistParameterC[this->scen.nparam];
 	this->scen.paramvar = new double[this->scen.nparamvar+3];
 	if (this->scen.nconditions>0) this->scen.condition = new ConditionC[this->scen.nconditions];
 	for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i]=0;
+	for (int i=0;i<this->scen.nsamp;i++) this->scen.stime_sample[i]=" ";
 	for (int i=0;i<this->scen.nparamvar+3;i++) this->scen.paramvar[i]=-1;
 	PriorC pr;pr.loi="uniforme";pr.mini=0.0;pr.maxi=1.0;pr.ndec=3;pr.constant=false;
 	HistParameterC pp;pp.name="bidon";pp.category=0;pp.value=-1; pp.prior = pr; //pp.prior=copyprior(pr);
@@ -900,7 +1032,7 @@ int HeaderC::readHeader(string headerfilename){
 
 	error = buildSuperScen();cout<<"----------------------------------------apres buildSuperScen\n";
 	if(error != 0) return error;
-
+	
 	error = readHeaderGroupStat(file);cout<<"----------------------------------------apres readHeaderGroupStat\n";
 	if(error != 0) return error;
 
@@ -915,10 +1047,10 @@ int HeaderC::readHeader(string headerfilename){
 		getline(file,s1);
 		this->reffreqmin = getwordfloat(s1,0);
 		getline(file, s1);
-		this->particuleobs.locpol = getwordfloat(s1,0);
+		particuleobs.locpol = getwordfloat(s1,0);
 		getline(file, s1);
 		this->threshold = getwordfloat(s1, 0);
-		cout <<"refreqmin="<<this->reffreqmin<<"   locpol="<<this->particuleobs.locpol<<"   threshold="<<this->threshold<<"\n";
+		cout <<"refreqmin="<<this->reffreqmin<<"   locpol="<<particuleobs.locpol<<"   threshold="<<this->threshold<<"\n";
 	}
 	return 0;
 }
@@ -1082,23 +1214,23 @@ int HeaderC::readHeadersimLoci(std::ifstream & file){
 			loc +=kloc-1;
 		}
 	}
-	
+	for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].nsample = this->dataobs.nsample;
 	this->dataobs.catexist = new bool[5];
-	this->dataobs.ss.resize(5);
+	this->dataobs.ssize.resize(5);
 	for (int i=0;i<5;i++) this->dataobs.catexist[i]=false;
 	for (int locustype=0;locustype<5;locustype++) {
 		if (not this->dataobs.catexist[locustype]) {
 			for (int loc=0;loc<this->dataobs.nloc;loc++) {
 				if ((this->dataobs.locus[loc].type % 5) == locustype) {
-					this->dataobs.ss[locustype].resize(this->dataobs.nsample);
+					this->dataobs.ssize[locustype].resize(this->dataobs.nsample);
 					for (int sa=0;sa<this->dataobs.nsample;sa++) {
-						this->dataobs.ss[locustype][sa]=0;
+						this->dataobs.ssize[locustype][sa]=0;
 						for (int ind=0;ind<this->dataobs.nind[sa];ind++) {
-							//if ((this->dataobs.locus[loc].type==10)or((this->dataobs.locus[loc].type==12)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ss[locustype][sa] +=2;
+							//if ((this->dataobs.locus[loc].type==10)or((this->dataobs.locus[loc].type==12)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ssize[locustype][sa] +=2;
 							if( (locustype == 0) or ( (locustype == 2)and(this->dataobs.indivsexe[sa][ind]==2) ) ) {
-								this->dataobs.ss[locustype][sa] +=2;
+								this->dataobs.ssize[locustype][sa] +=2;
 							} else {
-								this->dataobs.ss[locustype][sa] +=1;
+								this->dataobs.ssize[locustype][sa] +=1;
 							}
 						}
 					}
@@ -1274,73 +1406,73 @@ string HeaderC::calstatobs(string statobsfilename) {
 	vector <vector <int> > ast;
 	//partie DATA
 	if (debuglevel==2) cout<<"debut de calstatobs\n";
-	this->particuleobs.threshold = this->threshold;
-	this->particuleobs.dnatrue = true;
-	this->particuleobs.nsample = this->dataobs.nsample0;
+	particuleobs.threshold = this->threshold;
+	particuleobs.dnatrue = true;
+	particuleobs.nsample = this->dataobs.nsample0;
 	if (debuglevel==2) cout<<"this->dataobs.nsample="<<this->dataobs.nsample<<"   this->dataobs.nsample0="<<this->dataobs.nsample0<<"\n";
-	this->particuleobs.data.nsample = this->dataobs.nsample;
-	this->particuleobs.data.nind.resize(this->dataobs.nsample);
-	this->particuleobs.data.indivsexe.resize(this->dataobs.nsample);
+	particuleobs.data.nsample = this->dataobs.nsample;
+	particuleobs.data.nind.resize(this->dataobs.nsample);
+	particuleobs.data.indivsexe.resize(this->dataobs.nsample);
 	for (int i=0;i<this->dataobs.nsample;i++) {
-		this->particuleobs.data.nind[i] = this->dataobs.nind[i];
-		this->particuleobs.data.indivsexe[i].resize(this->dataobs.nind[i]);
-		for (int j=0;j<this->dataobs.nind[i];j++) this->particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
+		particuleobs.data.nind[i] = this->dataobs.nind[i];
+		particuleobs.data.indivsexe[i].resize(this->dataobs.nind[i]);
+		for (int j=0;j<this->dataobs.nind[i];j++) particuleobs.data.indivsexe[i][j] = this->dataobs.indivsexe[i][j];
 	}
 	if (debuglevel==2) cout<<"avant l'affectation des catexist et des ss'\n";
-	this->particuleobs.catexist = new bool[5];
-	for (int i=0;i<5;i++) this->particuleobs.catexist[i] = this->dataobs.catexist[i];
-	this->particuleobs.data.ss.resize(5);
+	particuleobs.catexist = new bool[5];
+	for (int i=0;i<5;i++) particuleobs.catexist[i] = this->dataobs.catexist[i];
+	particuleobs.data.ssize.resize(5);
 	for (int locustype=0;locustype<5;locustype++){
 		if (this->dataobs.catexist[locustype]) {
-			this->particuleobs.data.ss[locustype].resize(this->dataobs.nsample);
-			for (int sa=0;sa<this->dataobs.nsample;sa++) this->particuleobs.data.ss[locustype][sa] = this->dataobs.ss[locustype][sa];
+			particuleobs.data.ssize[locustype].resize(this->dataobs.nsample);
+			for (int sa=0;sa<this->dataobs.nsample;sa++) particuleobs.data.ssize[locustype][sa] = this->dataobs.ssize[locustype][sa];
 		} 
 	}
 	if (this->dataobs.filetype==0){ 
-		this->particuleobs.data.nmisshap = this->dataobs.nmisshap;
-		this->particuleobs.data.nmissnuc = this->dataobs.nmissnuc;
+		particuleobs.data.nmisshap = this->dataobs.nmisshap;
+		particuleobs.data.nmissnuc = this->dataobs.nmissnuc;
 		if (this->dataobs.nmisshap>0) {
-			this->particuleobs.data.misshap = new MissingHaplo[this->particuleobs.data.nmisshap];
+			particuleobs.data.misshap = new MissingHaplo[particuleobs.data.nmisshap];
 			for (int i=0;i<this->dataobs.nmisshap;i++) {
-				this->particuleobs.data.misshap[i].locus  = this->dataobs.misshap[i].locus;
-				this->particuleobs.data.misshap[i].sample = this->dataobs.misshap[i].sample;
-				this->particuleobs.data.misshap[i].indiv  = this->dataobs.misshap[i].indiv;
+				particuleobs.data.misshap[i].locus  = this->dataobs.misshap[i].locus;
+				particuleobs.data.misshap[i].sample = this->dataobs.misshap[i].sample;
+				particuleobs.data.misshap[i].indiv  = this->dataobs.misshap[i].indiv;
 			}
 		}
 		if (this->dataobs.nmissnuc>0) {
-			this->particuleobs.data.missnuc = new MissingNuc[this->particuleobs.data.nmissnuc];
+			particuleobs.data.missnuc = new MissingNuc[particuleobs.data.nmissnuc];
 			for (int i=0;i<this->dataobs.nmissnuc;i++) {
-				this->particuleobs.data.missnuc[i].locus  = this->dataobs.missnuc[i].locus;
-				this->particuleobs.data.missnuc[i].sample = this->dataobs.missnuc[i].sample;
-				this->particuleobs.data.missnuc[i].indiv  = this->dataobs.missnuc[i].indiv;
-				this->particuleobs.data.missnuc[i].nuc    = this->dataobs.missnuc[i].nuc;
+				particuleobs.data.missnuc[i].locus  = this->dataobs.missnuc[i].locus;
+				particuleobs.data.missnuc[i].sample = this->dataobs.missnuc[i].sample;
+				particuleobs.data.missnuc[i].indiv  = this->dataobs.missnuc[i].indiv;
+				particuleobs.data.missnuc[i].nuc    = this->dataobs.missnuc[i].nuc;
 			}
 		}
 	} else {
-		this->particuleobs.data.nmisssnp = this->dataobs.nmisssnp;
-		this->particuleobs.data.nmisssnp = this->dataobs.nmisssnp;
-		if (this->particuleobs.data.nmisssnp>0) {
-			this->particuleobs.data.misssnp = new MissingHaplo[this->particuleobs.data.nmisssnp];
+		particuleobs.data.nmisssnp = this->dataobs.nmisssnp;
+		particuleobs.data.nmisssnp = this->dataobs.nmisssnp;
+		if (particuleobs.data.nmisssnp>0) {
+			particuleobs.data.misssnp = new MissingHaplo[particuleobs.data.nmisssnp];
 			for (int i=0;i<this->dataobs.nmisssnp;i++) {
-				this->particuleobs.data.misssnp[i].locus  = this->dataobs.misssnp[i].locus;
-				this->particuleobs.data.misssnp[i].sample = this->dataobs.misssnp[i].sample;
-				this->particuleobs.data.misssnp[i].indiv  = this->dataobs.misssnp[i].indiv;
+				particuleobs.data.misssnp[i].locus  = this->dataobs.misssnp[i].locus;
+				particuleobs.data.misssnp[i].sample = this->dataobs.misssnp[i].sample;
+				particuleobs.data.misssnp[i].indiv  = this->dataobs.misssnp[i].indiv;
 			}
 		}
 	}
 	if (debuglevel==2) cout<<"avant l'affectation des dat et ref'\n";
-	this->particuleobs.dat = new bool**[5];
-	this->particuleobs.ref = new bool**[5];
+	particuleobs.dat.resize(5); // = new bool**[5];
+	particuleobs.ref.resize(5); // = new bool**[5];
 	for (int locustype=0;locustype<5;locustype++){
 		if (this->dataobs.catexist[locustype]) {
-			this->particuleobs.dat[locustype] = new bool*[this->dataobs.nsample];
-			this->particuleobs.ref[locustype] = new bool*[this->dataobs.nsample];
+			particuleobs.dat[locustype].resize(dataobs.nsample); // = new bool*[this->dataobs.nsample];
+			particuleobs.ref[locustype].resize(dataobs.nsample); // = new bool*[this->dataobs.nsample];
 			for (int sa=0;sa<this->dataobs.nsample;sa++) {
-				this->particuleobs.dat[locustype][sa] = new bool[this->dataobs.ss[locustype][sa]];
-				this->particuleobs.ref[locustype][sa] = new bool[this->dataobs.ss[locustype][sa]];
-				for (int i=0;i<this->dataobs.ss[locustype][sa];i++) {
-					this->particuleobs.dat[locustype][sa][i] = true;
-					this->particuleobs.ref[locustype][sa][i] = false;
+				particuleobs.dat[locustype][sa].resize(dataobs.ssize[locustype][sa]); // = new bool[this->dataobs.ssize[locustype][sa]];
+				particuleobs.ref[locustype][sa].resize(dataobs.ssize[locustype][sa]); // = new bool[this->dataobs.ssize[locustype][sa]];
+				for (int i=0;i<this->dataobs.ssize[locustype][sa];i++) {
+					particuleobs.dat[locustype][sa][i] = true;
+					particuleobs.ref[locustype][sa][i] = false;
 				}
 			}
 		}
@@ -1349,105 +1481,106 @@ string HeaderC::calstatobs(string statobsfilename) {
 	//partie GROUPES
 	int ngr = this->ngroupes;
 	if (debuglevel==2) cout<<"ngr="<<ngr<<"\n";
-	this->particuleobs.ngr = ngr;
-	this->particuleobs.grouplist = new LocusGroupC[ngr+1];
-	this->particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
+	particuleobs.ngr = ngr;
+	particuleobs.grouplist = new LocusGroupC[ngr+1];
+	particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
 	if (this->groupe[0].nloc>0){
-		this->particuleobs.grouplist[0].loc  = new int[this->groupe[0].nloc];
-		for (int i=0;i<this->groupe[0].nloc;i++) this->particuleobs.grouplist[0].loc[i] = this->groupe[0].loc[i];
+		particuleobs.grouplist[0].loc  = new int[this->groupe[0].nloc];
+		for (int i=0;i<this->groupe[0].nloc;i++) particuleobs.grouplist[0].loc[i] = this->groupe[0].loc[i];
 	}
 	for (int gr=1;gr<=ngr;gr++) {
 		if (debuglevel==2) cout <<"groupe "<<gr<<"\n";
-		this->particuleobs.grouplist[gr].type =this->groupe[gr].type;
-		this->particuleobs.grouplist[gr].nloc = this->groupe[gr].nloc;
-		this->particuleobs.grouplist[gr].loc  = new int[this->groupe[gr].nloc];
-		for (int i=0;i<this->groupe[gr].nloc;i++) this->particuleobs.grouplist[gr].loc[i] = this->groupe[gr].loc[i];
-		this->particuleobs.grouplist[gr].nstat=this->groupe[gr].nstat;
-		this->particuleobs.grouplist[gr].sumstat = new StatC[this->groupe[gr].nstat];
+		particuleobs.grouplist[gr].type =this->groupe[gr].type;
+		particuleobs.grouplist[gr].nloc = this->groupe[gr].nloc;
+		particuleobs.grouplist[gr].loc  = new int[this->groupe[gr].nloc];
+		for (int i=0;i<this->groupe[gr].nloc;i++) particuleobs.grouplist[gr].loc[i] = this->groupe[gr].loc[i];
+		particuleobs.grouplist[gr].nstat=this->groupe[gr].nstat;
+		particuleobs.grouplist[gr].sumstat = new StatC[this->groupe[gr].nstat];
 		//cout<<"calstatobs nstat["<<gr<<"]="<<this->groupe[gr].nstat<<"\n";
 		for (int i=0;i<this->groupe[gr].nstat;i++){
-			this->particuleobs.grouplist[gr].sumstat[i].cat   = this->groupe[gr].sumstat[i].cat;
-			this->particuleobs.grouplist[gr].sumstat[i].samp  = this->groupe[gr].sumstat[i].samp;
-			this->particuleobs.grouplist[gr].sumstat[i].samp1 = this->groupe[gr].sumstat[i].samp1;
-			this->particuleobs.grouplist[gr].sumstat[i].samp2 = this->groupe[gr].sumstat[i].samp2;
-			this->particuleobs.grouplist[gr].sumstat[i].numsnp = this->groupe[gr].sumstat[i].numsnp;
+			particuleobs.grouplist[gr].sumstat[i].cat   = this->groupe[gr].sumstat[i].cat;
+			particuleobs.grouplist[gr].sumstat[i].samp  = this->groupe[gr].sumstat[i].samp;
+			particuleobs.grouplist[gr].sumstat[i].samp1 = this->groupe[gr].sumstat[i].samp1;
+			particuleobs.grouplist[gr].sumstat[i].samp2 = this->groupe[gr].sumstat[i].samp2;
+			particuleobs.grouplist[gr].sumstat[i].numsnp = this->groupe[gr].sumstat[i].numsnp;
 		}
-		this->particuleobs.grouplist[gr].nstatsnp=this->groupe[gr].nstatsnp;
+		particuleobs.grouplist[gr].nstatsnp=this->groupe[gr].nstatsnp;
 		if (this->groupe[gr].nstatsnp>0){
-			this->particuleobs.grouplist[gr].sumstatsnp = new StatsnpC[this->groupe[gr].nstatsnp];
+			particuleobs.grouplist[gr].sumstatsnp = new StatsnpC[this->groupe[gr].nstatsnp];
 			for (int i=0;i<this->groupe[gr].nstatsnp;i++){
-				this->particuleobs.grouplist[gr].sumstatsnp[i].cat   = this->groupe[gr].sumstatsnp[i].cat;
-				this->particuleobs.grouplist[gr].sumstatsnp[i].samp  = this->groupe[gr].sumstatsnp[i].samp;
-				this->particuleobs.grouplist[gr].sumstatsnp[i].samp1 = this->groupe[gr].sumstatsnp[i].samp1;
-				this->particuleobs.grouplist[gr].sumstatsnp[i].samp2 = this->groupe[gr].sumstatsnp[i].samp2;
-				this->particuleobs.grouplist[gr].sumstatsnp[i].defined = this->groupe[gr].sumstatsnp[i].defined;
-				this->particuleobs.grouplist[gr].sumstatsnp[i].sorted = this->groupe[gr].sumstatsnp[i].sorted;
-				this->particuleobs.grouplist[gr].sumstatsnp[i].x = new long double[this->groupe[gr].nloc];
-				this->particuleobs.grouplist[gr].sumstatsnp[i].w = new long double[this->groupe[gr].nloc];
+				particuleobs.grouplist[gr].sumstatsnp[i].cat   = this->groupe[gr].sumstatsnp[i].cat;
+				particuleobs.grouplist[gr].sumstatsnp[i].samp  = this->groupe[gr].sumstatsnp[i].samp;
+				particuleobs.grouplist[gr].sumstatsnp[i].samp1 = this->groupe[gr].sumstatsnp[i].samp1;
+				particuleobs.grouplist[gr].sumstatsnp[i].samp2 = this->groupe[gr].sumstatsnp[i].samp2;
+				particuleobs.grouplist[gr].sumstatsnp[i].defined = this->groupe[gr].sumstatsnp[i].defined;
+				particuleobs.grouplist[gr].sumstatsnp[i].sorted = this->groupe[gr].sumstatsnp[i].sorted;
+				particuleobs.grouplist[gr].sumstatsnp[i].x = new long double[this->groupe[gr].nloc];
+				particuleobs.grouplist[gr].sumstatsnp[i].w = new long double[this->groupe[gr].nloc];
 			}
 		}
 	}
 	if (debuglevel==2) cout<<"apres GROUPS\n";
 	//partie LOCUSLIST
 	int kmoy;
-	this->particuleobs.nloc = this->dataobs.nloc;
+	particuleobs.nloc = this->dataobs.nloc;
 	cout<<this->dataobs.nloc<<"\n";
 	//vector<LocusC> tmp(41751);
-	//this->particuleobs.locuslist = &tmp[0]; //new LocusC[41752];
+	//particuleobs.locuslist = &tmp[0]; //new LocusC[41752];
 	if (debuglevel==2) cout<<"avant la partie locus  nloc="<<this->dataobs.nloc<<"\n";
-	this->particuleobs.locuslist =new LocusC[this->dataobs.nloc];
+	particuleobs.locuslist =new LocusC[this->dataobs.nloc];
 	for (int kloc=0;kloc<this->dataobs.nloc;kloc++){
-		this->particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type; 
-		this->particuleobs.locuslist[kloc].groupe = this->dataobs.locus[kloc].groupe;
-		this->particuleobs.locuslist[kloc].coeffcoal =  this->dataobs.locus[kloc].coeffcoal;
-		cat = this->particuleobs.locuslist[kloc].type % 5;
+		particuleobs.locuslist[kloc].nsample = this->dataobs.nsample;
+		particuleobs.locuslist[kloc].type = this->dataobs.locus[kloc].type; 
+		particuleobs.locuslist[kloc].groupe = this->dataobs.locus[kloc].groupe;
+		particuleobs.locuslist[kloc].coeffcoal =  this->dataobs.locus[kloc].coeffcoal;
+		cat = particuleobs.locuslist[kloc].type % 5;
 		if (debuglevel==2) cout<<"kloc="<<kloc<<"   cat="<<cat<<"\n";
-		//this->particuleobs.locuslist[kloc].name =  new char[strlen(this->dataobs.locus[kloc].name)+1];
-		//strcpy(this->particuleobs.locuslist[kloc].name,this->dataobs.locus[kloc].name);
-		if (debuglevel==2) cout<<"locus "<<kloc<<"   groupe "<<this->particuleobs.locuslist[kloc].groupe<<"\n";
+		//particuleobs.locuslist[kloc].name =  new char[strlen(this->dataobs.locus[kloc].name)+1];
+		//strcpy(particuleobs.locuslist[kloc].name,this->dataobs.locus[kloc].name);
+		if (debuglevel==2) cout<<"locus "<<kloc<<"   groupe "<<particuleobs.locuslist[kloc].groupe<<"\n";
 		if (this->dataobs.locus[kloc].type < 5) {
 			kmoy=(this->dataobs.locus[kloc].maxi+this->dataobs.locus[kloc].mini)/2;
-			this->particuleobs.locuslist[kloc].kmin=kmoy-((this->dataobs.locus[kloc].motif_range/2)-1)*this->dataobs.locus[kloc].motif_size;
-			this->particuleobs.locuslist[kloc].kmax=this->particuleobs.locuslist[kloc].kmin+(this->dataobs.locus[kloc].motif_range-1)*this->dataobs.locus[kloc].motif_size;
-			this->particuleobs.locuslist[kloc].motif_size = this->dataobs.locus[kloc].motif_size;
-			this->particuleobs.locuslist[kloc].motif_range = this->dataobs.locus[kloc].motif_range;
-			if ((this->particuleobs.locuslist[kloc].kmin>this->dataobs.locus[kloc].mini)or(this->particuleobs.locuslist[kloc].kmax<this->dataobs.locus[kloc].maxi)) {
+			particuleobs.locuslist[kloc].kmin=kmoy-((this->dataobs.locus[kloc].motif_range/2)-1)*this->dataobs.locus[kloc].motif_size;
+			particuleobs.locuslist[kloc].kmax=particuleobs.locuslist[kloc].kmin+(this->dataobs.locus[kloc].motif_range-1)*this->dataobs.locus[kloc].motif_size;
+			particuleobs.locuslist[kloc].motif_size = this->dataobs.locus[kloc].motif_size;
+			particuleobs.locuslist[kloc].motif_range = this->dataobs.locus[kloc].motif_range;
+			if ((particuleobs.locuslist[kloc].kmin>this->dataobs.locus[kloc].mini)or(particuleobs.locuslist[kloc].kmax<this->dataobs.locus[kloc].maxi)) {
 				erreur <<"Job aborted : motif range at locus "<<kloc+1<<" is not large enough to include all observed alleles.\n";
 				throw std::range_error( erreur.str() ); //exit(1);
 			}
-			this->particuleobs.locuslist[kloc].haplomic = new int*[this->particuleobs.data.nsample];
-			for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
-				this->particuleobs.locuslist[kloc].haplomic[sa] = new int[this->particuleobs.data.ss[cat][sa]];
-				for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++)this->particuleobs.locuslist[kloc].haplomic[sa][i]=this->dataobs.locus[kloc].haplomic[sa][i];
+			particuleobs.locuslist[kloc].haplomic = new int*[particuleobs.data.nsample];
+			for (int sa=0;sa<particuleobs.data.nsample;sa++){
+				particuleobs.locuslist[kloc].haplomic[sa] = new int[particuleobs.data.ssize[cat][sa]];
+				for (int i=0;i<particuleobs.data.ssize[cat][sa];i++)particuleobs.locuslist[kloc].haplomic[sa][i]=this->dataobs.locus[kloc].haplomic[sa][i];
 			}
 		}else if (this->dataobs.locus[kloc].type < 10) {
 			cout<<"type du locus = "<<this->dataobs.locus[kloc].type<<"\n";
-			this->particuleobs.locuslist[kloc].dnalength =  this->dataobs.locus[kloc].dnalength;
-			this->particuleobs.locuslist[kloc].pi_A = this->dataobs.locus[kloc].pi_A ;
-			this->particuleobs.locuslist[kloc].pi_C =  this->dataobs.locus[kloc].pi_C;
-			this->particuleobs.locuslist[kloc].pi_G =  this->dataobs.locus[kloc].pi_G;
-			this->particuleobs.locuslist[kloc].pi_T =  this->dataobs.locus[kloc].pi_T;
+			particuleobs.locuslist[kloc].dnalength =  this->dataobs.locus[kloc].dnalength;
+			particuleobs.locuslist[kloc].pi_A = this->dataobs.locus[kloc].pi_A ;
+			particuleobs.locuslist[kloc].pi_C =  this->dataobs.locus[kloc].pi_C;
+			particuleobs.locuslist[kloc].pi_G =  this->dataobs.locus[kloc].pi_G;
+			particuleobs.locuslist[kloc].pi_T =  this->dataobs.locus[kloc].pi_T;
 			cout<<"apres les pi\n";
-			this->particuleobs.locuslist[kloc].haplodna = new string*[this->particuleobs.data.nsample];
-			cout<<"nsample="<<this->particuleobs.data.nsample<<"\n";
-			for (int sa=0;sa<this->particuleobs.data.nsample;sa++){
-				this->particuleobs.locuslist[kloc].haplodna[sa] = new string[this->particuleobs.data.ss[cat][sa]];
-				cout<<"sa="<<sa<<"  ss="<<this->particuleobs.data.ss[cat][sa]<<"\n";
-				for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++){
+			particuleobs.locuslist[kloc].haplodna = new string*[particuleobs.data.nsample];
+			cout<<"nsample="<<particuleobs.data.nsample<<"\n";
+			for (int sa=0;sa<particuleobs.data.nsample;sa++){
+				particuleobs.locuslist[kloc].haplodna[sa] = new string[particuleobs.data.ssize[cat][sa]];
+				cout<<"sa="<<sa<<"  ss="<<particuleobs.data.ssize[cat][sa]<<"\n";
+				for (int i=0;i<particuleobs.data.ssize[cat][sa];i++){
 					cout<<"i="<<i<<"   "<<this->dataobs.locus[kloc].haplodna[sa][i]<<"\n";
-					this->particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i];
+					particuleobs.locuslist[kloc].haplodna[sa][i] =this->dataobs.locus[kloc].haplodna[sa][i];
 					
 				}
 			}
 			cout<<"apres type<10\n";
 		}else {
-			this->particuleobs.locuslist[kloc].weight = 1.0;
-			this->particuleobs.locuslist[kloc].haplosnp = new short int*[this->particuleobs.nsample];
+			particuleobs.locuslist[kloc].weight = 1.0;
+			particuleobs.locuslist[kloc].haplosnp = new short int*[particuleobs.nsample];
 			for (int cat=0;cat<5;cat++){
-				if (this->particuleobs.catexist[cat]){
-					for (int sa=0;sa<this->particuleobs.nsample;sa++){
-						this->particuleobs.locuslist[kloc].haplosnp[sa] = new short int[this->particuleobs.data.ss[cat][sa]];
-						for (int i=0;i<this->particuleobs.data.ss[cat][sa];i++)this->particuleobs.locuslist[kloc].haplosnp[sa][i] =this->dataobs.locus[kloc].haplosnp[sa][i];
+				if (particuleobs.catexist[cat]){
+					for (int sa=0;sa<particuleobs.nsample;sa++){
+						particuleobs.locuslist[kloc].haplosnp[sa] = new short int[particuleobs.data.ssize[cat][sa]];
+						for (int i=0;i<particuleobs.data.ssize[cat][sa];i++)particuleobs.locuslist[kloc].haplosnp[sa][i] =this->dataobs.locus[kloc].haplosnp[sa][i];
 					}
 				}
 			}
@@ -1471,17 +1604,17 @@ string HeaderC::calstatobs(string statobsfilename) {
 	fobs.open(statobsfilename.c_str());
 	fobs<<ent<<"\n";
 	fobs<<setiosflags(ios::fixed)<<setprecision(8);
-	ast.resize(this->particuleobs.ngr+1);
-	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
+	ast.resize(particuleobs.ngr+1);
+	for(int gr=1;gr<=particuleobs.ngr;gr++) {
 		if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
-		this->particuleobs.docalstat(gr,1.0);
-		jstat +=this->particuleobs.grouplist[gr].nstat;
+		particuleobs.docalstat(gr,1.0);
+		jstat +=particuleobs.grouplist[gr].nstat;
 		if (debuglevel==2)cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
 		ast[gr].resize(0);
-		for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++){ 
-			cout<<"this->particuleobs.grouplist["<<gr<<"].sumstat["<<j<<"].val="<<this->particuleobs.grouplist[gr].sumstat[j].val<<"\n";
-			if (this->particuleobs.grouplist[gr].sumstat[j].val!=-9999.0){
-				fobs<<setw(12)<<this->particuleobs.grouplist[gr].sumstat[j].val<<"  ";
+		for (int j=0;j<particuleobs.grouplist[gr].nstat;j++){ 
+			cout<<"particuleobs.grouplist["<<gr<<"].sumstat["<<j<<"].val="<<particuleobs.grouplist[gr].sumstat[j].val<<"\n";
+			if (particuleobs.grouplist[gr].sumstat[j].val!=-9999.0){
+				fobs<<setw(12)<<particuleobs.grouplist[gr].sumstat[j].val<<"  ";
 			} else {
 				ast[gr].push_back(j);
 			};
@@ -1489,18 +1622,18 @@ string HeaderC::calstatobs(string statobsfilename) {
 	}
 	fobs<<"\n";
 	fobs.close();
-	int nast=0;for(int gr=1;gr<=this->particuleobs.ngr;gr++) nast+=ast[gr].size();
+	int nast=0;for(int gr=1;gr<=particuleobs.ngr;gr++) nast+=ast[gr].size();
 	cout<<"nast="<<nast<<"\n";
 	if (nast>0) {
 		string message;
 		message = "The following introgression rate summary statistics : ";
-		for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
+		for(int gr=1;gr<=particuleobs.ngr;gr++) {
 			if (ast[gr].size()>0) {
 				message = message + "\nGroup "+IntToString(gr)+" : ";
 				for (int j=0;j<ast[gr].size();j++) {
-					message += IntToString(this->particuleobs.grouplist[gr].sumstat[ast[gr][j]].samp)+"&";
-					message += IntToString(this->particuleobs.grouplist[gr].sumstat[ast[gr][j]].samp1)+"&";
-					message += IntToString(this->particuleobs.grouplist[gr].sumstat[ast[gr][j]].samp2)+"  ";
+					message += IntToString(particuleobs.grouplist[gr].sumstat[ast[gr][j]].samp)+"&";
+					message += IntToString(particuleobs.grouplist[gr].sumstat[ast[gr][j]].samp1)+"&";
+					message += IntToString(particuleobs.grouplist[gr].sumstat[ast[gr][j]].samp2)+"  ";
 				}
 			}
 		}
@@ -1511,20 +1644,20 @@ string HeaderC::calstatobs(string statobsfilename) {
 	/*FILE *fobs;
 	fobs=fopen(statobsfilename.c_str(),"w");
 	fputs(ent.c_str(),fobs);
-	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
+	for(int gr=1;gr<=particuleobs.ngr;gr++) {
 		if (debuglevel==2)cout<<"avant calcul des statobs du groupe "<<gr<<"\n";
-		this->particuleobs.docalstat(gr,1.0);
-		jstat +=this->particuleobs.grouplist[gr].nstat;
+		particuleobs.docalstat(gr,1.0);
+		jstat +=particuleobs.grouplist[gr].nstat;
 		if (debuglevel==2)cout<<"apres calcul des statobs du groupe "<<gr<<"\n";
-		for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) fprintf(fobs,"%12.8Lf  ",this->particuleobs.grouplist[gr].sumstat[j].val);
+		for (int j=0;j<particuleobs.grouplist[gr].nstat;j++) fprintf(fobs,"%12.8Lf  ",particuleobs.grouplist[gr].sumstat[j].val);
 	}
 	fprintf(fobs,"\n");
 	fclose(fobs);
-	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
+	for(int gr=1;gr<=particuleobs.ngr;gr++) {
 		ast.resize(0);
-		for (int j=this->particuleobs.grouplist[gr].nstat-1;j>=0;j--) 
-			if (this->particuleobs.grouplist[gr].sumstat[j].val=-9999.0) {
-				if ((this->particuleobs.grouplist[gr].sumstat[j].cat==12)or(this->particuleobs.grouplist[gr].sumstat[j].cat==-14)) {
+		for (int j=particuleobs.grouplist[gr].nstat-1;j>=0;j--) 
+			if (particuleobs.grouplist[gr].sumstat[j].val=-9999.0) {
+				if ((particuleobs.grouplist[gr].sumstat[j].cat==12)or(particuleobs.grouplist[gr].sumstat[j].cat==-14)) {
 					ast.push_back(j);
 				}
 			}
@@ -1544,14 +1677,14 @@ string HeaderC::calstatobs(string statobsfilename) {
 	
 	this->stat_obs = new float[jstat];
 	jstat=0;
-	for(int gr=1;gr<=this->particuleobs.ngr;gr++) {
-		for (int j=0;j<this->particuleobs.grouplist[gr].nstat;j++) {
-			this->stat_obs[jstat]=(float)this->particuleobs.grouplist[gr].sumstat[j].val;
+	for(int gr=1;gr<=particuleobs.ngr;gr++) {
+		for (int j=0;j<particuleobs.grouplist[gr].nstat;j++) {
+			this->stat_obs[jstat]=(float)particuleobs.grouplist[gr].sumstat[j].val;
 			if (this->stat_obs[jstat]!=-9999.0) jstat++;
 		}
 	}
 	if (debuglevel==2) cout<<"avant libere \n";
-	this->particuleobs.libereobs(true);
+	particuleobs.libereobs(true);
 	if (debuglevel==2) cout<<"fin de calstatobs\n";
 	return "OK";
 }

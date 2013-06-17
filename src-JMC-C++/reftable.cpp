@@ -47,7 +47,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	this->nhistparam = new int[header.nscenarios];
 	this->histparam = new HistParameterC*[header.nscenarios];
 	this->mutparam = new MutParameterC[header.nparamut];
-	//cout<<"avant la boucle des scenarios\n";
+	cout<<"avant la boucle des scenarios\n";
 	for (int i=0;i<header.nscenarios;i++) {
 		nparamvar=0;
 		for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) nparamvar++;
@@ -56,24 +56,17 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 		this->nhistparam[i] = nparamvar;
 		pp=-1;
 		for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) {
-			pp++;//cout<<"pp="<<pp;
-			this->histparam[i][pp].name = header.scenario[i].histparam[p].name;
-			// this->histparam[i][pp].prior = copyprior( header.scenario[i].histparam[p].prior);
-			this->histparam[i][pp].prior =  header.scenario[i].histparam[p].prior;
-			this->histparam[i][pp].category = header.scenario[i].histparam[p].category;
-			//cout<<"  OK\n";
+			pp++;
+			this->histparam[i][pp] = header.scenario[i].histparam[p];
 		}
 		cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
 		if (this->nparam[i]!=nparamvar+header.nparamut) {
 			cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
 			exit(1);
 		}
-		//cout<<"couicou2\n";
-		for (int p=0;p<this->nparamut;p++) {
-			this->mutparam[p].name = header.mutparam[p].name;
-			// this->mutparam[p].prior = copyprior(header.mutparam[p].prior);
-			this->mutparam[p].prior = header.mutparam[p].prior;
-		}
+		cout<<"couicou2\n";
+		cout<<header.mutparam[0].name<<"\n";
+		for (int p=0;p<this->nparamut;p++) this->mutparam[p] = header.mutparam[p];
 	}
 	cout<<"fin de sethistparamname\n";
 }
@@ -81,18 +74,6 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 int ReftableC::readheader(string fname,string flogname,string freftabscen) {
 	//cout <<"debut de readheader\n";
 	fstream f0(fname.c_str(),ios::in|ios::out|ios::binary);
-	//cout<<"apres fstream\n";
-	//this->filename = new char[ strlen(fname)+1];
-	//this->filelog  = new char[ strlen(flogname)+1];
-	//strcpy(this->filename,fname);
-	//strcpy(this->filelog,flogname);
-	//int p=strcspn(this->filelog,".");
-	//this->filelog[p]='\0';
-	//strcat(this->filelog,".log");
-	//cout<<"dans readheader this->filelog = '"<<this->filelog<<"\n";
-	//cout<<"dans readheader this->filelog = '"<<this->filelog<<"\n";
-	
-//	exit(1);
 	this->filename = fname;
 	this->filelog = flogname;
 	this->filerefscen = freftabscen;

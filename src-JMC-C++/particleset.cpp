@@ -48,14 +48,14 @@ void ParticleSetC::setdata(int p) {
 	this->particule[p].data.indivsexe.resize(this->header.dataobs.nsample);
 	this->particule[p].data.catexist = new bool[5];
 	for (int cat=0;cat<5;cat++) this->particule[p].data.catexist[cat] =  this->header.dataobs.catexist[cat];
-	this->particule[p].data.ss.resize(5);
+	this->particule[p].data.ssize.resize(5);
 	for (int cat=0;cat<5;cat++) {
 		if (this->particule[p].data.catexist[cat]) {
-			this->particule[p].data.ss[cat].resize(this->header.dataobs.nsample);
-			for (int sa=0;sa<this->header.dataobs.nsample;sa++) this->particule[p].data.ss[cat][sa] = this->header.dataobs.ss[cat][sa];
+			this->particule[p].data.ssize[cat].resize(this->header.dataobs.nsample);
+			for (int sa=0;sa<this->header.dataobs.nsample;sa++) this->particule[p].data.ssize[cat][sa] = this->header.dataobs.ssize[cat][sa];
 			/*if (p==0) {
 					cout<<"dans particule[0]\n";
-					for (int sa=0;sa<this->header.dataobs.nsample;sa++) cout <<this->particule[p].data.ss[cat][sa]<<"   ";cout<<"\n";
+					for (int sa=0;sa<this->header.dataobs.nsample;sa++) cout <<this->particule[p].data.ssize[cat][sa]<<"   ";cout<<"\n";
 				}*/
 		}
 	}
@@ -113,7 +113,6 @@ void ParticleSetC::setgroup(int p) {
 		this->particule[p].grouplist[gr].loc  = new int[this->header.groupe[gr].nloc];
 		for (int i=0;i<this->header.groupe[gr].nloc;i++) this->particule[p].grouplist[gr].loc[i] = this->header.groupe[gr].loc[i];
 		if (this->header.groupe[gr].type==0) {	//MICROSAT
-			//cout <<"MICROSAT\n";
 			this->particule[p].grouplist[gr].mutmoy = this->header.groupe[gr].mutmoy;
 			this->particule[p].grouplist[gr].priormutmoy = this->header.groupe[gr].priormutmoy;
 			this->particule[p].grouplist[gr].priormutloc = this->header.groupe[gr].priormutloc;
@@ -183,9 +182,10 @@ void ParticleSetC::setgroup(int p) {
 void ParticleSetC::setloci(int p) {
 	int kmoy,cat;
 	this->particule[p].nloc = this->header.dataobs.nloc;
+	this->particule[p].nsample = this->header.dataobs.nsample;
 	this->particule[p].locuslist = new LocusC[this->header.dataobs.nloc];
 	for (int kloc=0;kloc<this->header.dataobs.nloc;kloc++){
-		this->particule[p].nsample = this->header.dataobs.nsample;
+		this->particule[p].locuslist[kloc].nsample = this->particule[p].nsample;
 		this->particule[p].locuslist[kloc].coeffcoal =  this->header.dataobs.locus[kloc].coeffcoal;
 		this->particule[p].locuslist[kloc].type = this->header.dataobs.locus[kloc].type;
 		this->particule[p].locuslist[kloc].groupe = this->header.dataobs.locus[kloc].groupe;
@@ -225,10 +225,8 @@ void ParticleSetC::setscenarios (int p, bool simulfile) {
 	this->particule[p].scenario = new ScenarioC[this->header.nscenarios];
 	for (int i=0;i<this->header.nscenarios;i++) {
 		//cout<<"avant la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
-		//cout << "\nscenario source\n";
 		//if (p==0) cout<<"header nconditions="<<this->header.scenario[i].nconditions<<"\n";
 		this->particule[p].scenario[i] = this->header.scenario[i];
-		//cout<<"this->particule[p].scenario["<<i<<"].nconditions = "<<this->particule[p].scenario[i].nconditions<<"\n";
 		//cout<<"apres la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
 		//if (p==0) this->header.scenario[i].ecris();
 		//if (p==0) cout<<"dans particule[0] scenario["<<i<<"] nconditions="<<this->particule[p].scenario[i].nconditions<<"\n";
@@ -305,7 +303,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	if (debuglevel==5) cout<<"avant firsttime="<<firsttime<<"\n";
 	if (firsttime) {
 		this->particule = new ParticleC[this->npart];
-		if (debuglevel==5) cout<<"avant this->header=header   this->npart="<<this->npart<<"\n";
+		if (debuglevel==5) cout<<"\n\navant this->header=header   this->npart="<<this->npart<<"\n";
 		this->header = header;
 		if (debuglevel==5) cout<<"apres this->header=header   this->npart="<<this->npart<<"\n";
 		for (int p=0;p<this->npart;p++) {
@@ -468,7 +466,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 }*/
 
 void ParticleSetC::libere(int npart) {
-	for (int p=0;p<npart;p++) {
+	/*for (int p=0;p<npart;p++) {
 		if (this->particule[p].data.nmisshap>0) delete [] this->particule[p].data.misshap;
 		if (this->particule[p].data.nmisssnp>0) delete [] this->particule[p].data.misssnp; 		
 		if (this->particule[p].data.nmissnuc>0) delete [] this->particule[p].data.missnuc;
@@ -481,7 +479,7 @@ void ParticleSetC::libere(int npart) {
 		delete [] this->particule[p].grouplist;
 		delete [] this->particule[p].scenario;
 		delete [] this->particule[p].data.catexist;
-	}
+	}*/
 	delete [] this->particule;
 }
 
@@ -504,7 +502,9 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	if (debuglevel==5) cout <<"dosimultabref npart = "<<npart<<"\n";
 	if (firsttime) {
 		this->particule = new ParticleC[this->npart];
+		//cout<<"\navant this->header = header;\n";
 		this->header = header;
+		//cout<<"apres this->header = header;\n\n";
 		for (int p=0;p<this->npart;p++) {
 			if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
 			this->particule[p].dnatrue = dnatrue;

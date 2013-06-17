@@ -19,6 +19,8 @@ struct StatC
 {
   int cat,samp,samp1,samp2,group,numsnp;
   long double val;
+//  StatC(StatC const & source);
+  StatC & operator= (StatC const & source);
 };
 
 /**
@@ -29,6 +31,16 @@ struct StatsnpC
   int cat,samp,samp1,samp2,group,n;
   long double *x,sw,*w;
   bool defined,sorted;
+//  StatsnpC(StatsnpC const & source);
+  StatsnpC & operator= (StatsnpC const & source);
+  StatsnpC(){
+	  x = NULL;
+	  w = NULL;
+}
+  ~StatsnpC(){
+    if( x != NULL) delete [] x;
+    if( w != NULL) delete [] w;
+  };
 };
 
 
@@ -45,7 +57,11 @@ public:
   double mini,maxi,mean,sdshape;
   int ndec;
   bool constant,fixed;
-
+  PriorC() {
+	  loi = "";
+}
+//  PriorC(PriorC const & source);
+  PriorC & operator= (PriorC const & source);
   void ecris();
   double drawfromprior(MwcGen & mw);
   void readprior(std::string ss);
@@ -59,7 +75,16 @@ class ConditionC
 {
 public:
   std::string param1,param2,operateur;
-
+	ConditionC(){
+		param1 = "";
+		param2 = "";
+		operateur = "";
+	};
+	~ConditionC(){
+		//std::cout<<"passage dans le destructeur de ConditionC\n";
+	}
+//  ConditionC(ConditionC const & source);
+  ConditionC & operator= (ConditionC const & source);
   void ecris();
   void readcondition(std::string ss);
 
@@ -111,7 +136,11 @@ public:
   int category;   //0 pour N, 1 pour T et 2 pour A
   double value;
   PriorC prior;
-
+  HistParameterC(){
+	  name = "";
+}
+//  HistParameterC(HistParameterC const & source);
+  HistParameterC & operator= (HistParameterC const & source);
   void ecris(bool simulfile);
 };
 
@@ -131,6 +160,24 @@ struct LocusGroupC
   PriorC priormutmoy,priorPmoy,priorsnimoy,priormutloc,priorPloc,priorsniloc;
   StatC *sumstat;
   StatsnpC *sumstatsnp;
+  /* Déclaration des méthodes */
+  LocusGroupC(){
+    loc = NULL;
+    sumstat = NULL;
+    sumstatsnp = NULL;
+	nstat = 0;
+	nstatsnp = 0;
+  };
+//  LocusGroupC(LocusGroupC const & source);
+  LocusGroupC & operator= (LocusGroupC  const & source);
+
+  ~LocusGroupC(){
+	  //std::cout<<"passage dans le destructeur de LocusGroupC\n";
+    if( loc != NULL) delete [] loc;
+    if( sumstat != NULL) delete [] sumstat;
+    if( sumstatsnp != NULL) delete [] sumstatsnp;
+	//std::cout<<" sortie du destructeur de LocusGroupC\n";
+  };
 
   void libere();
 
@@ -144,20 +191,16 @@ class ScenarioC
 public:
   double *paramvar, prior_proba;
   int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0,nparamvar,nconditions,ipv;
+  std::string *stime_sample;
   EventC *event;
   Ne0C *ne0;
   HistParameterC *histparam;
   ConditionC *condition;
-
-
-  /* action = 0 (varne), 1 (merge), 2 (split), 3 (adsamp)
-   * category=0 (Ne)   , 1 (time),  3 (admixrate)
-   */
-
   /* Déclaration des méthodes */
   ScenarioC(){
     paramvar = NULL;
     time_sample = NULL;
+    stime_sample = NULL;
     event = NULL;
     ne0 = NULL;
     histparam = NULL;
@@ -167,12 +210,14 @@ public:
   ScenarioC & operator= (ScenarioC  const & source);
 
   ~ScenarioC(){
-    if( paramvar != NULL) delete [] paramvar;
+	  //std::cout<<"passage dans le destructeur de ScenarioC\n";
+    /*if( paramvar != NULL) delete [] paramvar;
     if( time_sample != NULL) delete [] time_sample;
+    if( stime_sample != NULL) delete [] stime_sample;
     if( event != NULL) delete [] event;
     if( ne0 != NULL) delete [] ne0;
     if( histparam != NULL) delete [] histparam;
-    if( condition != NULL) delete [] condition;
+    if( condition != NULL) delete [] condition;*/
   };
 
   /* détermination du ou des paramètres contenus dans la std::string s */
@@ -199,7 +244,14 @@ struct SequenceBitC
   int N,t0,t1;
   double admixrate;
   bool *popfull;
-
+  SequenceBitC(){
+	  popfull = NULL;
+}
+  ~SequenceBitC(){
+	  //std::cout<<"passage dans le destructeur de SequenceBitC\n";
+	  if (popfull != NULL) delete [] popfull;
+	  //std::cout<<"   sortie du destructeur de SequenceBitC\n";
+}
   void ecris();
 };
 
@@ -214,6 +266,7 @@ struct NodeC
   double height;
   std::string dna;
   bool OK;
+  ~NodeC(){}
 };
 
 /**
@@ -224,6 +277,7 @@ struct BranchC
   int bottom,top,nmut;
   double length;
   bool OK,OKOK;
+  ~BranchC(){}
 };
 
 /**
@@ -242,7 +296,8 @@ public:
     branches = NULL;
   };
   ~GeneTreeC(){
-    if( nodes != NULL) delete [] nodes;
+	//std::cout<<"passage dans le destructeur de GeneTreeC\n";
+    if( nodes != NULL) {delete [] nodes;}
     if( branches != NULL) delete [] branches;
   };
 

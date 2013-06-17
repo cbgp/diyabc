@@ -600,21 +600,24 @@ try {
                                         if (firsttime) firsttime=false;
 										//if (stoprun) cout<<"STOPRUN=TRUE\n";
                                   }
-                                  //cout<<"fin du while\n";
+                                  cout<<"fin du while\n";
                                   for (int i=0;i<nenr;i++) {
                                         delete [] enreg[i].param;
                                         delete [] enreg[i].stat;
                                   }
+                                  cout<<"avant delete [] enreg\n";
                                   delete [] enreg;
-								  ps.libere(nenr);
+                                  cout<<"apres delete [] enreg\n";
+								  //ps.libere(nenr);
                                   rt.closefile();
-								  //cout<<"apres rt.closefile\n";
+								  cout<<"apres rt.closefile\n";
                                   if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}
                                   //cout<<"avant header.libere\n";
                                   //header.libere();
 								  //cout<<"apres header.libere\n";
                                   //exit(1);
                           } else {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n\n";f1.close();}
+                          cout<<"avant le break\n";
                       break;
       case 'n'  :
                   doinitRNG(rngpar);
@@ -675,10 +678,11 @@ try {
 	//cout<<"2\n";
 	if (rt.nrecscen !=NULL) {delete [] rt.nrecscen;rt.nrecscen=NULL;}
 	//cout<<"3\n";
-	if (action !='k'){
-	for (int iscen=0;iscen<header.nscenarios;iscen++) {
-		if (rt.histparam[iscen] !=NULL) delete [] rt.histparam[iscen];
-	} }
+	/*if (action !='k'){
+		for (int iscen=0;iscen<header.nscenarios;iscen++) {
+			if (rt.histparam[iscen] !=NULL) delete [] rt.histparam[iscen];
+		} 
+	}*/
 	//cout<<"4\n";
 	if (rt.histparam !=NULL) {delete [] rt.histparam; rt.histparam=NULL;}
 	//cout<<"5\n";

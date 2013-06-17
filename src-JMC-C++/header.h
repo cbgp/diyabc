@@ -14,7 +14,6 @@
 #include "particuleC.h"
 #include "header.h"
 
-
 class MutParameterC
 {
 public:
@@ -23,7 +22,9 @@ public:
     int category;   //0 pour mutmoy, 1 pour Pmoy, 2 pour snimoy, 3 pour musmoy, 4 pour k1moy et 5 pour k2moy
     double value;
     PriorC prior;
-
+//	MutParameterC(MutParameterC const & source);
+	MutParameterC & operator=(MutParameterC const & source);
+	
     void ecris();
 };
 
@@ -34,19 +35,42 @@ public:
     std::string message,datafilename,entete,entetehist,entetemut,entetemut0,entetestat;
     std::string pathbase;
     DataC dataobs;
-    int nparamtot,nstat,nscenarios,nconditions,ngroupes,nparamut,nsimfile;
-    std::string *paramname, *statname;
+    int nparamtot,nstat,nstatsnp,nscenarios,nconditions,ngroupes,nparamut,nsimfile;
+    std::string *statname;
     ScenarioC *scenario,scen;
     HistParameterC *histparam;
     ConditionC *condition;
     LocusGroupC *groupe;
     bool drawuntil,reference;
-    ParticleC particuleobs;
     MutParameterC *mutparam;
     float *stat_obs;
 	float reffreqmin;
 	float threshold;
+//////////////////////////////////// AJOUT
+  HeaderC(){
+    statname = NULL;
+	scenario = NULL;
+    histparam = NULL;
+    condition = NULL;
+    groupe = NULL;
+    mutparam = NULL;
+    stat_obs = NULL;
+  };
+  HeaderC(HeaderC const & source);
+  HeaderC & operator= (HeaderC  const & source);
 
+  ~HeaderC(){
+    if( statname != NULL) delete [] statname;
+    if( scenario != NULL) delete [] scenario;
+    if( histparam != NULL) delete [] histparam;
+    if( condition != NULL) delete [] condition;
+    if( groupe != NULL) delete [] groupe;
+    if( mutparam != NULL) delete [] mutparam;
+    if( stat_obs != NULL) delete [] stat_obs;
+  };
+
+///////////////////////////////////
+  
 	void libere();
 	void assignloc(int gr);
 
