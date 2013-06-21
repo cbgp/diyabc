@@ -82,6 +82,12 @@ class BugReport(formBugReport,baseBugReport):
             if os.path.exists(current_project.dataFileSource):
                 dataFileName = os.path.basename(current_project.dataFileSource)
                 tar.add(current_project.dataFileSource,'%s/%s'%(repIntoTar,dataFileName))
+        
+        # copie du diyabcproject file
+        if os.path.exists(("%s/%s.diyabcproject"%(current_project.dir,current_project.name))):
+            dataFileName = os.path.basename("%s/%s.diyabcproject"%(current_project.dir,current_project.name))
+            tar.add(current_project.dataFileSource,'%s/%s'%(repIntoTar,dataFileName))
+                
 
         # copie des logfiles
         if os.path.exists(os.path.expanduser("%s"%self.parent.logfile)):
