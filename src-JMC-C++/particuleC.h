@@ -43,8 +43,7 @@ class ParticleC
 	  //int **numvar,*nvar;
 	  float reffreqmin;
 	  //bool ***dat,***ref;  //appartenance d'un gène aux data (dat) ou aux individus de référence (ref) par [locustype][sample][gene]
-	  std::vector<std::vector<std::vector<bool> > > dat, ref;
-	  bool *catexist;
+	  //std::vector<std::vector<std::vector<bool> > > dat, ref;
 	  double matQ[4][4];
 	  long int naccept,ntentes;
 	  double weight,locpol,sumweight,threshold;
@@ -63,7 +62,6 @@ class ParticleC
 		//nvar = NULL;
 		//dat = NULL;
 		//ref = NULL;
-		catexist = NULL;
 	}
 	~ParticleC() {
 		//std::cout<<"dans le destructeur de ParticleC  0\n";
@@ -73,7 +71,6 @@ class ParticleC
 		if (seqlist != NULL) delete [] seqlist;
 		if (gt != NULL) delete [] gt;
 		if (condition != NULL) delete [] condition;
-		if (catexist != NULL) delete [] catexist;
 		//std::cout<<"dans le destructeur de ParticleC  1\n";
 /*		changé en vector<...>
         if (dat != NULL){
@@ -91,7 +88,7 @@ class ParticleC
 			delete [] ref;
 		}*/
 		//std::cout<<"dans le destructeur de ParticleC  2\n";
-//      Pierre: Les clear sont faits automatiquement à la destruction des objets
+//      Pierre: Les clear sont faits automatiquement à laparticule[ipart]. destruction des objets
 //		if (not afsdone.empty()) afsdone.clear();
 //		if (not t_afs.empty()) t_afs.clear();
 //		if (not n_afs.empty()) n_afs.clear();
@@ -170,7 +167,7 @@ class ParticleC
    // initialise l'arbre de coalescence, i.e. alloue la mémoire pour les noeuds et les branches,
    // initialise les propriétés "sample" et "height" des noeuds terminaux
    // initialise à 0 la propriété "pop" de tous les noeuds et à 0 la propriété "sample" des noeuds non-terminaux
-   void init_tree(GeneTreeC & gt,int loc, bool gtexist, bool reference);
+   void init_tree(GeneTreeC & gt,int loc, bool gtexist/*, bool reference*/);
 
    // évalue la pertinence de l'approximation continue pour le traitement de la coalescence
    // (1= approximation continue, 0 = generation par generation)
@@ -180,7 +177,7 @@ class ParticleC
    int draw_node(int loc,int iseq,int nLineages);
 
    // coalesce les lignées ancestrales de la population requise
-   void coal_pop(int loc,int iseq, bool reference, int *refmrca);
+   void coal_pop(int loc,int iseq/*, bool reference, int *refmrca*/);
 
    // FIXME: sens ???
    // debut modifications de l'arbre
@@ -205,7 +202,7 @@ class ParticleC
    // vérification de la topologie de l'arbre de coalescence
    std::string verifytree();
    // SNP: test si le locus est polymorphe chez les individus de reference
-   bool polymref(int loc);
+   //bool polymref(int loc);
 
    // tire le scenario, simule les paramatres et les haplotypes
    // (renvoie 0 si tout s'est bien passé, d'autres nombres si erreur (voir code))

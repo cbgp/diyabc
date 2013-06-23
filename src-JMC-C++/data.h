@@ -52,6 +52,19 @@ public:
 		haplodnavar = NULL;
 		haplomic = NULL;
 		haplosnp = NULL;
+		samplesize = NULL;
+		freq = NULL;
+		name="";
+		type=-1;
+		groupe=-1;
+		pi_A=pi_C=pi_G=pi_T=-1.0;
+		dnalength=dnavar=-1;
+		mini=maxi=kmin=kmax=-1;
+		motif_range=motif_size=-1;
+		mut_rate=Pgeom=sni_rate=mus_rate=k1=k2=0.0;
+		firstime=mono=true;
+		weight=1.0;
+		nsample=0;
 	};
 	~LocusC() {
 		/*if (freq != NULL) delete [] freq;
@@ -100,7 +113,7 @@ public:
 class DataC
 {
 public:
-	std::string message,title,**indivname,***genotype;
+	std::string message,title,**indivname;
 	int nsample,nsample0,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
 	//int *nind;
 	//int **indivsexe;
@@ -108,7 +121,7 @@ public:
 	MissingHaplo *misshap, *misssnp;
 	MissingNuc   *missnuc;
 	LocusC *locus;
-    bool Aindivname,Agenotype,Anind,Aindivsexe,Alocus;
+    bool Aindivname,Anind,Aindivsexe,Alocus;
 	//int **ss;  //nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
 	bool *catexist;
 	std::vector < std::vector <int> > ssize;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
@@ -121,7 +134,6 @@ public:
 	/* Méthodes */
 	DataC(){
 		indivname = NULL;
-		genotype = NULL;
 		misshap = NULL;
 		misssnp = NULL;
 		missnuc = NULL;

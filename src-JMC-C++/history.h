@@ -30,8 +30,8 @@ struct StatsnpC
 {
   int cat,samp,samp1,samp2,group,n;
   long double *x,sw,*w;
-  bool defined,sorted;
-//  StatsnpC(StatsnpC const & source);
+  bool defined;
+  StatsnpC(StatsnpC const & source);
   StatsnpC & operator= (StatsnpC const & source);
   StatsnpC(){
 	  x = NULL;

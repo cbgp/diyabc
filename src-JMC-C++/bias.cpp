@@ -118,8 +118,11 @@ bool valinfinie=false;
         i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
         cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
+			//cout<<"resethistparam   avant readprior\n ";
             header.scenario[rt.scenteste-1].histparam[i].prior.readprior(ss[1]);
+			//cout<<"resethistparam   apres readprior\n ";
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=false;
+			//cout<<"resethistparam   avant ecris\n ";
             header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
         }
         else {

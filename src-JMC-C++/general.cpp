@@ -512,6 +512,7 @@ try {
                                 enreg = new enregC[nenr];
                                 for (int p=0;p<nenr;p++) {
                                     enreg[p].stat = new float[header.nstat];
+									//cout<<"enreg.param = new float["<<header.nparamtot+3*header.ngroupes <<"]\n";
                                     enreg[p].param = new float[header.nparamtot+3*header.ngroupes];
                                     enreg[p].numscen = 1;
                                 }

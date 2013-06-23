@@ -44,14 +44,15 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	cout<<"debut de sethistparamname\n";
 	int nparamvar=0,pp;
 	this->nparamut = header.nparamut;
+	//cout<<"nparamut="<<header.nparamut<<"    nscenarios="<<header.nscenarios<<"\n";
 	this->nhistparam = new int[header.nscenarios];
 	this->histparam = new HistParameterC*[header.nscenarios];
-	this->mutparam = new MutParameterC[header.nparamut];
-	cout<<"avant la boucle des scenarios\n";
+	if (this->mutparam>0) this->mutparam = new MutParameterC[header.nparamut];
+	//cout<<"avant la boucle des scenarios\n";
 	for (int i=0;i<header.nscenarios;i++) {
 		nparamvar=0;
 		for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) nparamvar++;
-		cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
+		//cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
 		this->histparam[i] = new HistParameterC[nparamvar];
 		this->nhistparam[i] = nparamvar;
 		pp=-1;
@@ -59,14 +60,16 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 			pp++;
 			this->histparam[i][pp] = header.scenario[i].histparam[p];
 		}
-		cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
+		//cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
 		if (this->nparam[i]!=nparamvar+header.nparamut) {
 			cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
 			exit(1);
 		}
-		cout<<"couicou2\n";
-		cout<<header.mutparam[0].name<<"\n";
-		for (int p=0;p<this->nparamut;p++) this->mutparam[p] = header.mutparam[p];
+		//cout<<"couicou2\n";
+		if (this->mutparam>0) {
+			cout<<header.mutparam[0].name<<"\n";
+			for (int p=0;p<this->nparamut;p++) this->mutparam[p] = header.mutparam[p];
+		}
 	}
 	cout<<"fin de sethistparamname\n";
 }
@@ -534,8 +537,9 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 	//for (int j=0;j<this->nstat;j++) cout<<"var_stat["<<j<<"]="<<this->var_stat[j]<<"\n";
 	//cout<<"\n";
 	//for (int j=0;j<this->nstat;j++) cout<<"stat_obs["<<j<<"]="<<stat_obs[j]<<"\n";
-	//cout<<"\n";
+	//cout<<"avant openfile2() nrec="<<nrec<<"   nsel="<<nsel<<"\n";
 	this->openfile2();
+	//cout<<"apres openfile2()  firsloop="<<firstloop<<"   nn="<<nn<<"\n";
 	while ((this->nreclus<nrec)and(not fifo.eof())) {
 		if (firstloop) {nrecOK=0;firstloop=false;}
 		else nrecOK=nn;
@@ -551,11 +555,12 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 				iscen++;
 			}
 			if (scenOK) {
-				this->nreclus++;
+				this->nreclus++; //cout<<"nreclus = "<<nreclus<<"\n";
 				this->enrsel[nrecOK].dist=0.0;
 				for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>1E-20) {
 					diff =(long double)(this->enrsel[nrecOK].stat[j] - stat_obs[j]);
 					this->enrsel[nrecOK].dist += diff*diff/this->var_stat[j];
+					//cout<<"this->enrsel[nrecOK].dist = "<<this->enrsel[nrecOK].dist<<"\n";
 					//if (nreclus==1) printf("  %12.6f   %12.6f   %12.6Lf   %12.8Lf\n",this->enrsel[nrecOK].stat[j],stat_obs[j],diff*diff,this->enrsel[nrecOK].dist);
 				}
 				this->enrsel[nrecOK].dist =sqrt(this->enrsel[nrecOK].dist);
@@ -563,6 +568,7 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
 				nrecOK++;
 				if (this->nreclus==nrec) break;
 			}
+			//cout<<"nrecOK="<<nrecOK<<"\n";
 			//this->nreclus++;
 			if ((this->nreclus % step)==0) {cout<<"\rcal_dist : "<<this->nreclus/step<<"%";fflush(stdout);}
 		}

@@ -34,6 +34,9 @@
 
 using namespace std;
 
+string ***genotype;
+bool Agenotype;
+
 	MissingHaplo & MissingHaplo::operator=(MissingHaplo const & source) {
 		if (this== &source) return *this;
 		this->locus = source.locus;
@@ -68,20 +71,21 @@ void LocusC::libere(bool obs, int nsample) {
 	LocusC & LocusC::operator=(LocusC const & source) {
 		if (this== &source) return *this;
 		if (this->freq != NULL) {
-			for (int i=0;i<source.nsample;i++) delete [] freq[i];
+			for (int i=0;i<source.nsample;i++) delete [] this->freq[i];
 		}
 		if (this->haplodna != NULL) {
-			for (int i=0;i<source.nsample;i++) delete [] haplodna[i];
+			for (int i=0;i<source.nsample;i++) delete [] this->haplodna[i];
 		}
 		if (this->haplodnavar != NULL) {
-			for (int i=0;i<source.nsample;i++) delete [] haplodnavar[i];
+			for (int i=0;i<source.nsample;i++) delete [] this->haplodnavar[i];
 		}
 		if (this->haplomic != NULL) {
-			for (int i=0;i<source.nsample;i++) delete [] haplomic[i];
+			for (int i=0;i<source.nsample;i++) delete [] this->haplomic[i];
 		}
 		if (this->haplosnp != NULL) {
-			for (int i=0;i<source.nsample;i++) delete [] haplosnp[i];
+			for (int i=0;i<source.nsample;i++) delete [] this->haplosnp[i];
 		}
+		if (this->samplesize !=NULL) delete [] this->samplesize;
 		if (not this->mutsit.empty()) this->mutsit.clear();
 		if (not this->sitmut.empty()) this->sitmut.clear();
 		if (not this->sitmut2.empty()) this->sitmut2.clear();
@@ -119,6 +123,10 @@ void LocusC::libere(bool obs, int nsample) {
 				this->freq[i] = new long double[this->nal];
 				for (int j=0;j<this->nal;j++) this->freq[i][j] = source.freq[i][j];
 			}
+		}
+		if (source.samplesize != NULL){
+			this->samplesize = new int[this->nsample];
+			for (int i=0;i<this->nsample;i++) this->samplesize[i] = source.samplesize[i];
 		}
 		if (source.haplodna != NULL) {
 			this->haplodna = new string*[this->nsample];
@@ -166,7 +174,6 @@ void LocusC::libere(bool obs, int nsample) {
 	DataC & DataC::operator=(DataC const & source) {
 		if (this== &source) return *this;
 		if(this->indivname != NULL) delete [] this->indivname;
-		if(this->genotype != NULL) delete [] this->genotype;
 		if(this->misshap != NULL) delete [] this->misshap;
 		if(this->misssnp != NULL) delete [] this->misssnp;
 		if(this->missnuc != NULL) delete [] this->missnuc;
@@ -192,32 +199,33 @@ void LocusC::libere(bool obs, int nsample) {
 		this->filetype = source.filetype;
 		this->sexratio = source.sexratio;
 		this->Aindivname = source.Aindivname;
-		this->Agenotype = source.Agenotype;
 		this->Anind = source.Anind;
 		this->Aindivsexe = source.Aindivsexe;
 		this->Alocus = source.Alocus;
 		for (int i=0;i<source.nind.size();i++) this->nind.push_back(source.nind[i]);
-		this->indivname = new string*[this->nsample0];
-		for (int i=0;i<this->nsample0;i++) {
-			this->indivname[i] = new string[this->nind[i]];
-			for (int j=0;j<this->nind[i];j++) this->indivname[i][j] = source.indivname[i][j];
-		}
-		this->genotype = new string**[this->nsample0];
-		for (int i=0;i<this->nsample0;i++) {
-			this->genotype[i] = new string*[this->nind[i]];
-			for (int j=0;j<this->nind[i];j++) {
-				this->genotype[i][j] = new string[this->nloc];
-				for (int k=0;k<this->nloc;k++) this->genotype[i][j][k] = source.genotype[i][j][k];
+		if (source.indivname != NULL){
+			this->indivname = new string*[this->nsample0];
+			for (int i=0;i<this->nsample0;i++) {
+				this->indivname[i] = new string[this->nind[i]];
+				for (int j=0;j<this->nind[i];j++) this->indivname[i][j] = source.indivname[i][j];
 			}
 		}
-		this->misshap = new MissingHaplo[this->nmisshap];
-		for (int i=0;i<this->nmisshap;i++) this->misshap[i] = source.misshap[i];
-		this->misssnp = new MissingHaplo[this->nmisssnp];
-		for (int i=0;i<this->nmisssnp;i++) this->misssnp[i] = source.misssnp[i];
-		this->missnuc = new MissingNuc[this->nmissnuc];
-		for (int i=0;i<this->nmissnuc;i++) this->missnuc[i] = source.missnuc[i];
-		this->locus = new LocusC[this->nloc];
-		for (int i=0;i<this->nloc;i++) this->locus[i] = source.locus[i];
+		if (source.misshap != NULL) {
+			this->misshap = new MissingHaplo[this->nmisshap];
+			for (int i=0;i<this->nmisshap;i++) this->misshap[i] = source.misshap[i];
+		}
+		if (source.misssnp != NULL) {
+			this->misssnp = new MissingHaplo[this->nmisssnp];
+			for (int i=0;i<this->nmisssnp;i++) this->misssnp[i] = source.misssnp[i];
+		}
+		if (source.missnuc != NULL) {
+			this->missnuc = new MissingNuc[this->nmissnuc];
+			for (int i=0;i<this->nmissnuc;i++) this->missnuc[i] = source.missnuc[i];
+		}
+		if (source.locus != NULL) {
+			this->locus = new LocusC[this->nloc];
+			for (int i=0;i<this->nloc;i++) this->locus[i] = source.locus[i];
+		}
 		if (source.catexist != NULL) {
 			this->catexist = new bool[5];
 			for (int i=0;i<5;i++) this->catexist[i] = source.catexist[i];
@@ -251,13 +259,13 @@ void LocusC::libere(bool obs, int nsample) {
 		if (Agenotype) {
 			for (int  ech=0;ech<this->nsample0;ech++) {
 					for (int ind=0;ind<this->nind[ech];ind++) {
-							delete [] this->genotype[ech][ind];
+							delete [] genotype[ech][ind];
 							//cout <<"delete genotype[ech][ind]\n";
 					}
-					delete [] this->genotype[ech];
+					delete [] genotype[ech];
 					//cout <<"delete genotype[ech]\n";
 			}
-			delete [] this->genotype;
+			delete [] genotype;
 			//cout<<"delete genotype\n";
 		}
 		//cout<<"apres delete genotype\n";
@@ -456,10 +464,10 @@ string  getligne(ifstream file) {
 		this->indivsexe.resize(nech);this->Aindivsexe=true;
 		for (ech=0;ech<nech;ech++) this->indivname[ech] = new string[nindi[ech]];
 		for (ech=0;ech<nech;ech++) this->indivsexe[ech].resize(nindi[ech]);
-		this->genotype = new string**[nech];this->Agenotype=true;
+		genotype = new string**[nech];Agenotype=true;
 		for (ech=0;ech<nech;ech++) {
-			this->genotype[ech] = new string*[nindi[ech]];
-			for (ind=0;ind<nindi[ech];ind++) this->genotype[ech][ind] = new string[nloc];
+			genotype[ech] = new string*[nindi[ech]];
+			for (ind=0;ind<nindi[ech];ind++) genotype[ech][ind] = new string[nloc];
 		}
 		file.close();
 		file.open(filename.c_str(), ios::in);
@@ -476,9 +484,9 @@ string  getligne(ifstream file) {
 				if (ss[1]=="M")      this->indivsexe[ech][nindi[ech]]=1;
 				else if (ss[1]=="F") this->indivsexe[ech][nindi[ech]]=2;
 				this->indivname[ech][nindi[ech]]=ss[0];
-				for (int loc=0;loc<this->nloc;loc++) this->genotype[ech][nindi[ech]][loc]= ss[loc+3];
+				for (int loc=0;loc<this->nloc;loc++) genotype[ech][nindi[ech]][loc]= ss[loc+3];
 				cout<<"individu "<<nindi[ech]+1<<" de l'échantillon "<<ech+1<<"   "<<this->indivname[ech][nindi[ech]];
-				cout<<"  "<<this->indivsexe[ech][nindi[ech]]<<"  "<<popname[ech]<<"   "<<this->genotype[ech][nindi[ech]][0]<<"\r";
+				cout<<"  "<<this->indivsexe[ech][nindi[ech]]<<"  "<<popname[ech]<<"   "<<genotype[ech][nindi[ech]][0]<<"\r";
 				nindi[ech]++;
 				//for (int ec=0;ec<nech;ec++) cout<<nindi[ec]<<"   ";cout<<"\n";
 			}
@@ -500,7 +508,7 @@ string  getligne(ifstream file) {
 		for (int loc=0;loc<this->nloc;loc++) {
 			for (ech0=0;ech0<this->nsample;ech0++){
 				for (ind0=0;ind0<this->nind[ech0];ind0++) {
-					if (this->genotype[ech0][ind0][loc]!=misval) premier=this->genotype[ech0][ind0][loc];
+					if (genotype[ech0][ind0][loc]!=misval) premier=genotype[ech0][ind0][loc];
 					if (premier!="") break;
 				}
 				if (premier!="") break;
@@ -512,9 +520,9 @@ string  getligne(ifstream file) {
 				this->locus[loc].mono=true;
 				for (ech=ech0;ech<this->nsample;ech++) {
 					for (ind=ind0+1;ind<this->nind[ech];ind++) {
-					    if ((this->indivsexe[ech][ind]==2)and(this->genotype[ech][ind][loc]=="1")) this->locus[loc].mono=false;
+					    if ((this->indivsexe[ech][ind]==2)and(genotype[ech][ind][loc]=="1")) this->locus[loc].mono=false;
 						if (not this->locus[loc].mono) break;
-						this->locus[loc].mono=((this->genotype[ech][ind][loc]==premier)or(this->genotype[ech][ind][loc]==misval));
+						this->locus[loc].mono=((genotype[ech][ind][loc]==premier)or(genotype[ech][ind][loc]==misval));
 						if (not this->locus[loc].mono) break;
 					}
 					ind0=-1;
@@ -527,7 +535,7 @@ string  getligne(ifstream file) {
 				//cout<<"le locus "<<loc<<" est monomorphe"<<"   tous les génotypes sont égaux à "<<premier<<"\n";
 				/*for (ech=0;ech<this->nsample;ech++){
 					for (ind=0;ind<this->nind[ech];ind++) {
-						cout<<this->genotype[ech][ind][loc]<<" ";
+						cout<<genotype[ech][ind][loc]<<" ";
 					}
 					cout<<"\n";
 				}*/
@@ -545,7 +553,7 @@ string  getligne(ifstream file) {
 			for (int loc=0;loc<this->nloc;loc++) {
 				if (not this->locus[loc].mono) {
 					for (ech=0;ech<this->nsample;ech++) {
-						for (ind=0;ind<this->nind[ech];ind++) ge[ech][ind][kloc] = this->genotype[ech][ind][loc];
+						for (ind=0;ind<this->nind[ech];ind++) ge[ech][ind][kloc] = genotype[ech][ind][loc];
 					}
 					typ[kloc] = this->locus[loc].type;
 					kloc++;
@@ -557,9 +565,9 @@ string  getligne(ifstream file) {
 			delete[]typ;
 			for (ech=0;ech<this->nsample;ech++) {
 				for (ind=0;ind<this->nind[ech];ind++){
-					delete[]this->genotype[ech][ind];
-					this->genotype[ech][ind] = new string[kloc];
-					for (int loc=0;loc<kloc;loc++) this->genotype[ech][ind][loc] = ge[ech][ind][loc];
+					delete[]genotype[ech][ind];
+					genotype[ech][ind] = new string[kloc];
+					for (int loc=0;loc<kloc;loc++) genotype[ech][ind][loc] = ge[ech][ind][loc];
 				}
 			}
 			for (ech=0;ech<this->nsample;ech++) {
@@ -584,8 +592,8 @@ string  getligne(ifstream file) {
 				for (ind=0;ind<this->nind[ech];ind++){
 					plo=1;
 					if ((typ == 0)or((typ == 2)and(this->indivsexe[ech][ind] == 2))) plo=2;
-					cout<<"ech="<<ech<<"  ind="<<ind<<"  loc="<<loc<<"  plo="<<plo<<"   "<<this->genotype[ech][ind][loc]<<"\n";
-					if (this->genotype[ech][ind][loc]==misval) {
+					cout<<"ech="<<ech<<"  ind="<<ind<<"  loc="<<loc<<"  plo="<<plo<<"   "<<genotype[ech][ind][loc]<<"\n";
+					if (genotype[ech][ind][loc]==misval) {
 						if (plo==2){
 							this->misssnp[this->nmisssnp].locus = loc;
 							this->misssnp[this->nmisssnp].sample = ech;
@@ -608,6 +616,16 @@ string  getligne(ifstream file) {
 				}
 			}
 		}*/
+		for (ech=0;ech<this->nsample;ech++) {
+			for (int loc=0;loc<this->nloc;loc++) {
+				typ=this->locus[loc].type % 5;
+				for (int i=0;i<this->ssize[typ][ech];i++) {
+					if (this->locus[loc].haplosnp[ech][i]==misval) this->nmisssnp++;
+				}
+			}
+		}
+		this->misssnp = new MissingHaplo[nmisssnp];
+		this->nmisssnp=0;
 		for (ech=0;ech<this->nsample;ech++) {
 			for (int loc=0;loc<this->nloc;loc++) {
 				typ=this->locus[loc].type % 5;
@@ -636,25 +654,27 @@ string  getligne(ifstream file) {
 		for (ech=0;ech<this->nsample;ech++) {
 			ss=0;
 			for (ind=0;ind<this->nind[ech];ind++){
-				//cout<<"ech="<<ech<<"   ind="<<ind<<"    "<<this->genotype[ech][ind][loc]<<"\n";
+				//cout<<"ech="<<ech<<"   ind="<<ind<<"    "<<genotype[ech][ind][loc]<<"\n";
 				//cout<<"locustype="<<this->locus[loc].type<<"    indivsexe="<<this->indivsexe[ech][ind]<<"\n";
 				if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[ech][ind]==2))) {
 					ss +=2;
-					if (this->genotype[ech][ind][loc].substr(0,1)!=misval) {
-						if (this->genotype[ech][ind][loc].substr(0,1)=="0") {haplo.push_back(g0);haplo.push_back(g0);}
-						if (this->genotype[ech][ind][loc].substr(0,1)=="1") {haplo.push_back(g0);haplo.push_back(g1);}
-						if (this->genotype[ech][ind][loc].substr(0,1)=="2") {haplo.push_back(g1);haplo.push_back(g1);}
+					if (genotype[ech][ind][loc].substr(0,1)!=misval) {
+						if (genotype[ech][ind][loc].substr(0,1)=="0") {haplo.push_back(g0);haplo.push_back(g0);}
+						if (genotype[ech][ind][loc].substr(0,1)=="1") {haplo.push_back(g0);haplo.push_back(g1);}
+						if (genotype[ech][ind][loc].substr(0,1)=="2") {haplo.push_back(g1);haplo.push_back(g1);}
 					} else {haplo.push_back(g9);haplo.push_back(g9);}
 				} else {
 					ss +=1;
-					if (this->genotype[ech][ind][loc].substr(0,1)!=misval) {
-						if (this->genotype[ech][ind][loc].substr(0,1)=="0") {haplo.push_back(g0);}
-						if (this->genotype[ech][ind][loc].substr(0,1)=="1") {haplo.push_back(g1);}
+					if (genotype[ech][ind][loc].substr(0,1)!=misval) {
+						if (genotype[ech][ind][loc].substr(0,1)=="0") {haplo.push_back(g0);}
+						if (genotype[ech][ind][loc].substr(0,1)=="1") {haplo.push_back(g1);}
 					} else {haplo.push_back(g9);}
 				}
 			}
 			//cout<<"avant transfert  ss="<<ss<<"   haplo.size = "<<haplo.size()<<"\n";
 			this->locus[loc].samplesize[ech] = ss;
+			cout<<"Dans do_snp("<<loc<<")  samplesize[";
+			cout<<ech<<"]="<<this->locus[loc].samplesize[ech]<<"\n";
 			this->locus[loc].haplosnp[ech] = new short int[ss];
 			for (int i=0;i<ss;i++) this->locus[loc].haplosnp[ech][i] = haplo[i];
 			if (not haplo.empty()) haplo.clear();
@@ -788,14 +808,18 @@ cout<<"fin de ecribin\n";
 		//cout<<"libin 2\n";
 		for (int loc=0;loc<this->nloc;loc++) {
 			this->locus[loc].haplosnp = new short int*[this->nsample];
+			this->locus[loc].samplesize =new int[this->nsample];
 			categ = this->locus[loc].type % 5;
 			for (int ech=0;ech<this->nsample;ech++) {
+				this->locus[loc].samplesize[ech] = this->ssize[categ][ech];
 				this->locus[loc].haplosnp[ech] = new short int[this->ssize[categ][ech]];
 				for (int i=0;i<this->ssize[categ][ech];i++) f0.read((char*)&(this->locus[loc].haplosnp[ech][i]),sizeof(short int));
 			}
 		}
 		f0.close();
 		delete []buffer;
+		cout<<"dans libin     ";
+		cout<<"this->locus[0].haplosnp[0][0]="<<this->locus[0].haplosnp[0][0]<<"\n";
 	}
 
 /**
@@ -882,13 +906,13 @@ cout<<"fin de ecribin\n";
 		this->nmissnuc=0;
 		this->indivname = new string*[nech];this->Aindivname=true;
 		this->indivsexe.resize(nech);this->Aindivsexe=true;
-		this->genotype = new string**[nech];this->Agenotype=true;
+		genotype = new string**[nech];Agenotype=true;
 		for (int i=0;i<nech;i++) {
 			this->indivname[i]= new string[nind[i]];
 			this->indivsexe[i].resize(nind[i]);
 			for(j=0; (int)j < this->nind[i];j++) this->indivsexe[i][j] = 2;
-			this->genotype[i] = new string*[nind[i]];
-			for(j=0; (int)j < this->nind[i];j++) this->genotype[i][j] = new string[this->nloc];
+			genotype[i] = new string*[nind[i]];
+			for(j=0; (int)j < this->nind[i];j++) genotype[i][j] = new string[this->nloc];
 		}
 ///////////
 		ifstream file2(filename.c_str(), ios::in);
@@ -926,9 +950,9 @@ cout<<"fin de ecribin\n";
 				s = s.substr(j+1,s.length());
 			    istringstream iss(s);
 				for (int i=0;i<this->nloc;i++) {
-					iss >> this->genotype[ech][ind][i];
-					if ((this->genotype[ech][ind][i].find("[")!=string::npos)and(this->locus[i].type<5)) this->locus[i].type +=5;
-//					cout << this->genotype[ech][ind][i] << "   "<<this->locus[i].type<<"\n";
+					iss >> genotype[ech][ind][i];
+					if ((genotype[ech][ind][i].find("[")!=string::npos)and(this->locus[i].type<5)) this->locus[i].type +=5;
+//					cout << genotype[ech][ind][i] << "   "<<this->locus[i].type<<"\n";
 				}
 			}
 		}
@@ -953,7 +977,7 @@ cout<<"fin de ecribin\n";
     	for (int ech=0;ech<this->nsample;ech++){
             ng=0;
     		for (int ind=0;ind<this->nind[ech];ind++){
-    			geno=string(this->genotype[ech][ind][loc]);
+    			geno=string(genotype[ech][ind][loc]);
     			l=geno.length();
     			if (l>3){n=2;} else {n=1;}
     			if (n==2) {
@@ -1016,7 +1040,7 @@ cout<<"fin de ecribin\n";
     	for (int ech=0;ech<this->nsample;ech++){
             ng=0;
     		for (int ind=0;ind<this->nind[ech];ind++){
-    			geno=this->genotype[ech][ind][loc];
+    			geno=genotype[ech][ind][loc];
     			if (geno.find("][")==string::npos) n=1; else n=2;
     			if (n==2) {
     				j0=geno.find("[")+1;
@@ -1126,7 +1150,7 @@ cout<<"fin de ecribin\n";
 			case 4 :  coeff = 2.0*(1.0-this->sexratio);break;
 		}
 		this->locus[loc].coeffcoal=coeff;
-        cout<<"locus "<<loc<<"    sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeffcoal<<"\n";
+        //cout<<"locus "<<loc<<"    sexratio="<<this->sexratio<<"    coefficient="<<this->locus[loc].coeffcoal<<"\n";
     }
 
 
@@ -1188,6 +1212,7 @@ cout<<"fin de ecribin\n";
     			for (loc=0;loc<this->nloc;loc++) this->cal_coeffcoal(loc);
 				cout<<"apres le calcul des coefficients de coalescence\n\n";
     		}
+    		this->calcule_ss();
     		cout<<"avant missingdata\n";
     		this->missingdata();
 			cout<<"apres missingdata\n";

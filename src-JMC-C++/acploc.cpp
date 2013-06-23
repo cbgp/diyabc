@@ -157,7 +157,8 @@ int nacp=100000,nprog,iprog;
         int bidon,*numscen,k;
         resACPC rACP;
         //header.calstatobs(statobsfilename);
-		//stat_obs = header.stat_obs;  
+		//stat_obs = header.stat_obs; 
+		cout<<"header.nstat="<<header.nstat<<"\n";
 		for (int i=0;i<header.nstat;i++) cout<<header.stat_obs[i]<<"\n";
 		cout<<"apres read_statobs\n";
         int nparamax = 0;
@@ -328,7 +329,7 @@ int nacp=100000,nprog,iprog;
                 dopca=(s1.find("p")!=string::npos);
                 doloc=(s1.find("l")!=string::npos);
                 if (dopca) cout <<"Perform ACP  ";
-                if ((s1=="pl")or(s1=="lp")) cout <<"et ";
+                if ((s1=="pl")or(s1=="lp")) cout <<"and ";
                 if (doloc) cout<<"locate  ";
                 cout<< "\n";
             }            

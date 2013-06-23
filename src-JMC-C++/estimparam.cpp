@@ -1766,7 +1766,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 
         nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
         //header.calstatobs(statobsfilename);  cout<<"apres read_statobs\n";
-		stat_obs = header.stat_obs;
+		stat_obs = new float[header.nstat];
+		for (int i=0;i<header.nstat;i++) stat_obs[i]=header.stat_obs[i];
         nprog=200; 
 		iprog=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 		cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";

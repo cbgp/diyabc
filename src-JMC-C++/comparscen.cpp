@@ -908,7 +908,8 @@ matligneC *matA;
         iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         nstatOK = rt.cal_varstat();
         //header.calstatobs(statobsfilename);
-		stat_obs = header.stat_obs;
+		stat_obs = new float[header.nstat];
+		for (int i=0;i<header.nstat;i++) stat_obs[i]=header.stat_obs[i];
         rt.alloue_enrsel(nsel);
 //        clock_zero=0.0;debut=walltime(&clock_zero);
         rt.cal_dist(nrec,nsel,stat_obs);
@@ -940,4 +941,5 @@ matligneC *matA;
         if(ss1 != NULL) delete []ss1;ss1=NULL;
 		cout<<"apres les delete ss et ss1\n";
         iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+		delete [] stat_obs;
     }

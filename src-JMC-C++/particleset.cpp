@@ -40,12 +40,14 @@ long int ntentes,naccept;
  * Structure ParticleSet : remplissage de la partie data de la particule p
  */
 void ParticleSetC::setdata(int p) {
+//	cout<<"ParticleSetC::setdata(int p)    1\n";
 	this->particule[p].threshold = this->header.threshold;
 	this->particule[p].sexratio = this->header.dataobs.sexratio;
 	this->particule[p].data.nsample = this->header.dataobs.nsample;
 	this->particule[p].nsample = this->header.dataobs.nsample;
 	this->particule[p].data.nind.resize(this->header.dataobs.nsample);
 	this->particule[p].data.indivsexe.resize(this->header.dataobs.nsample);
+//	cout<<"ParticleSetC::setdata(int p)    2\n";
 	this->particule[p].data.catexist = new bool[5];
 	for (int cat=0;cat<5;cat++) this->particule[p].data.catexist[cat] =  this->header.dataobs.catexist[cat];
 	this->particule[p].data.ssize.resize(5);
@@ -59,11 +61,13 @@ void ParticleSetC::setdata(int p) {
 				}*/
 		}
 	}
+//	cout<<"ParticleSetC::setdata(int p)    3\n";
 	for (int i=0;i<this->header.dataobs.nsample;i++) {
 		this->particule[p].data.nind[i] = this->header.dataobs.nind[i];
 		this->particule[p].data.indivsexe[i].resize(this->header.dataobs.nind[i]);
 		for (int j=0;j<header.dataobs.nind[i];j++) this->particule[p].data.indivsexe[i][j] = this->header.dataobs.indivsexe[i][j];
 	}
+//	cout<<"ParticleSetC::setdata(int p)    4\n";
 	this->particule[p].data.nmisshap = this->header.dataobs.nmisshap;
 	if (this->particule[p].data.nmisshap>0) {
 		this->particule[p].data.misshap = new MissingHaplo[this->particule[p].data.nmisshap];
@@ -73,6 +77,7 @@ void ParticleSetC::setdata(int p) {
 			this->particule[p].data.misshap[i].indiv  = this->header.dataobs.misshap[i].indiv;
 		}
 	}
+//	cout<<"ParticleSetC::setdata(int p)    5\n";
 	this->particule[p].data.nmisssnp = this->header.dataobs.nmisssnp;
 	if (this->particule[p].data.nmisssnp>0) {
 		this->particule[p].data.misssnp = new MissingHaplo[this->particule[p].data.nmisssnp];
@@ -82,6 +87,7 @@ void ParticleSetC::setdata(int p) {
 			this->particule[p].data.misssnp[i].indiv  = this->header.dataobs.misssnp[i].indiv;
 		}
 	}
+//	cout<<"ParticleSetC::setdata(int p)    6\n";
 	this->particule[p].data.nmissnuc = this->header.dataobs.nmissnuc;
 	if (this->particule[p].data.nmissnuc>0) {
 		this->particule[p].data.missnuc = new MissingNuc[this->particule[p].data.nmissnuc];
@@ -92,6 +98,7 @@ void ParticleSetC::setdata(int p) {
 			this->particule[p].data.missnuc[i].nuc    = this->header.dataobs.missnuc[i].nuc;
 		}
 	}
+//	cout<<"ParticleSetC::setdata(int p)    7\n";
 	this->particule[p].reffreqmin = this->header.reffreqmin;
 }
 
@@ -168,7 +175,6 @@ void ParticleSetC::setgroup(int p) {
 				this->particule[p].grouplist[gr].sumstatsnp[i].samp1 = header.groupe[gr].sumstatsnp[i].samp1;
 				this->particule[p].grouplist[gr].sumstatsnp[i].samp2 = header.groupe[gr].sumstatsnp[i].samp2;
 				this->particule[p].grouplist[gr].sumstatsnp[i].defined = header.groupe[gr].sumstatsnp[i].defined;
-				this->particule[p].grouplist[gr].sumstatsnp[i].sorted = header.groupe[gr].sumstatsnp[i].sorted;
 				this->particule[p].grouplist[gr].sumstatsnp[i].x = new long double[header.groupe[gr].nloc];
 				this->particule[p].grouplist[gr].sumstatsnp[i].w = new long double[header.groupe[gr].nloc];
 			}
@@ -273,6 +279,11 @@ void ParticleSetC::resetparticle (int p) {
 		}
 		else if (this->header.groupe[gr].type==1) {        //SEQUENCES
 			//cout<<"SEQUENCE\n";
+			int kloc;
+			for (int iloc=0;iloc<this->particule[p].grouplist[gr].nloc;iloc++){
+				kloc=this->particule[p].grouplist[gr].loc[iloc];
+				if (not this->particule[p].locuslist[kloc].mutsit.empty())this->particule[p].locuslist[kloc].mutsit.clear();
+			}
 			this->particule[p].grouplist[gr].musmoy = this->header.groupe[gr].musmoy;       //musmoy
 			if (this->header.groupe[gr].mutmod>0){
 				this->particule[p].grouplist[gr].k1moy = this->header.groupe[gr].k1moy ;        //k1moy
@@ -283,7 +294,6 @@ void ParticleSetC::resetparticle (int p) {
 		} else if (this->header.groupe[gr].type==2) {		//SNP
 			for (int i=0;i<this->particule[p].grouplist[gr].nstatsnp;i++){
 				this->particule[p].grouplist[gr].sumstatsnp[i].defined=false;
-				this->particule[p].grouplist[gr].sumstatsnp[i].sorted=false;
 			}
 		}
 		//for (int loc=0;loc<this->nloc;loc++) this->particule[p].libere(false);
@@ -390,7 +400,6 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 		if (sOK[ipart]==0) {
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr,this->particule[ipart].weight);}
 		}
-		 //cout<<"apres docalstat de la particule "<<ipart<<"\n";
 	}
 	cout<<"apres la simulation de "<<npart<<" particules\n";
 ///////////////fin du pragma
@@ -541,7 +550,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		if (debuglevel==5) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 		
 		if (sOK[ipart]==0) {
-			if (debuglevel==5) cout<<"avant docalstat de la particule "<<ipart<<"\n";
+			/*if (debuglevel==5)*/ cout<<"\navant docalstat de la particule "<<ipart<<"   scenario "<<this->particule[ipart].scen.number<<"\n";
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr,this->particule[ipart].weight);
 			this->particule[ipart].libere();
 		}
@@ -570,7 +579,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 			if (debuglevel==5) cout<<"dans particleset ipart="<<ipart<<"     nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
 			for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
 			//for (int j=0;j<nph+npm;j++) {	
-				//cout<<"this->particule["<<ipart<<"].scen.paramvar["<<j<<"] = "<<this->particule[ipart].scen.paramvar[j]<<"\n";
+				if (debuglevel==5) cout<<"this->particule["<<ipart<<"].scen.paramvar["<<j<<"] = "<<this->particule[ipart].scen.paramvar[j]<<"\n";
 				enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
 				//cout<<"enreg["<<ipart<<"].param["<<j<<"] = "<<enreg[ipart].param[j]<<"\n";
 				if (debuglevel==5) cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
