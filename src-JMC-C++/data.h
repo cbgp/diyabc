@@ -83,11 +83,11 @@ public:
 		if (haplosnp != NULL) { 
 			for (int i=0;i<this->nsample;i++) delete [] haplosnp[i];
 			delete [] haplosnp;
-		}
+		}*/
 		if (not mutsit.empty()) mutsit.clear();
 		if (not sitmut.empty()) sitmut.clear();
 		if (not sitmut2.empty()) sitmut2.clear();
-		if (not tabsit.empty()) tabsit.clear();*/
+		if (not tabsit.empty()) tabsit.clear();
 	} ;
 	
 	LocusC & operator= (LocusC const & source);
