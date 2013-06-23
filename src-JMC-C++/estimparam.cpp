@@ -73,24 +73,32 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 * remplit le tableau numpar des numéros de paramètres communs par scénario
 */
     void det_numpar() {
-        //cout<<"debut de det_numpar\n";
+        cout<<"debut de det_numpar\n";
         vector <string>  parname;
         int ii,iscen;
         bool commun,trouve;
         npar=0;npar0=0;
         numpar = new int*[rt.nscenchoisi];
+		parname.resize(0);
         if (rt.nscenchoisi==1) {
             iscen=rt.scenchoisi[0]-1;
             //cout<<"rt.nparam[rt.scenchoisi[0]-1] = "<<rt.nparam[iscen]<<"\n";
             numpar[0] = new int[rt.nparam[iscen]];
+			//for (int i=0;i<rt.nparam[iscen];i++) {numpar[0][i]=0;cout<<"numpar[0]["<<i<<"]="<<numpar[0][i]<<"\n";}
             for (int i=0;i<rt.nhistparam[iscen];i++){
                 numpar[0][i]=i;
                 npar++;
-                parname.push_back(rt.histparam[rt.scenchoisi[0]-1][i].name);
+                parname.push_back(rt.histparam[iscen][i].name);
                 if (rt.histparam[iscen][i].category<2) npar0++;
             }
+            //cout<<"avant nparamcom=\n";
+			cout<<"npar="<<npar<<"\n";
+			cout<<"rt.nparamut="<<rt.nparamut<<"\n";
             nparamcom = npar+rt.nparamut;//rt.nparam[rt.scenchoisi[0]-1]-header.scenario[rt.scenchoisi[0]-1].nparam;
-            for (int i=rt.nhistparam[iscen];i<nparamcom;i++) numpar[0][i]=i;
+			cout<<"nparamcom="<<nparamcom<<"\n";
+			cout<<"rt.nparam[iscen] = "<<rt.nparam[iscen]<<"\n";
+			//for (int i=0;i<rt.nparam[iscen];i++) {cout<<"numpar[0]["<<i<<"]="<<numpar[0][i]<<"\n";}
+            for (int i=rt.nhistparam[iscen];i<nparamcom;i++){numpar[0][i]=i;/*cout<<"numpar[0]["<<i<<"]="<<numpar[0][i]<<"\n";*/}
             cout << "noms des parametres communs : ";
             for (int i=0;i<rt.nhistparam[iscen];i++) cout<<rt.histparam[iscen][i].name<<"   ";
             for (int i=0;i<rt.nparamut;i++) cout<<rt.mutparam[i].name<<"   ";
@@ -99,12 +107,12 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             iscen=rt.scenchoisi[0]-1;  //on prend les paramètres du premier scénario choisi et on les compare à ceux des autres scénarios
             for (int i=0;i<rt.nhistparam[iscen];i++) {
                 commun=true;
-                //cout<<"parametre teste : "<<rt.histparam[rt.scenchoisi[0]-1][i].name<<"\n";
+                cout<<"parametre teste : "<<rt.histparam[rt.scenchoisi[0]-1][i].name<<"\n";
                 for (int j=1;j<rt.nscenchoisi;j++) {
                     trouve=false;
-                    //cout<<"rt.nhistparam[rt.scenchoisi["<<j<<"]-1] = "<<rt.nhistparam[rt.scenchoisi[j]-1]<<"\n";
+                    cout<<"rt.nhistparam[rt.scenchoisi["<<j<<"]-1] = "<<rt.nhistparam[rt.scenchoisi[j]-1]<<"\n";
                     for (int k=0;k<rt.nhistparam[rt.scenchoisi[j]-1];k++) {
-                        //cout<<"   "<<rt.histparam[rt.scenchoisi[j]-1][k].name;
+                        cout<<"   "<<rt.histparam[rt.scenchoisi[j]-1][k].name;
                         trouve=(rt.histparam[rt.scenchoisi[0]-1][i].name.compare(rt.histparam[rt.scenchoisi[j]-1][k].name)==0);
                         if (trouve) {/*cout<< "\nparam commun : "<<rt.histparam[rt.scenchoisi[0]-1][i].name<<"\n";*/ break;}
                     }
@@ -118,11 +126,11 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
                         //cout<<parname[npar-1]<<"\n\n";
                         if (rt.histparam[rt.scenchoisi[0]-1][i].category<2) npar0++;
                     }
-                }// else cout<<"\nnon commun\n\n";
+                } else cout<<"\nnon commun\n\n";
             }
-            //cout<<"avant affichage des parname\n";
-            //for (int i=0;i<npar;i++) cout<<parname[i]<<"   ";
-            //cout<<"\n";
+            cout<<"avant affichage des parname\n";
+            for (int i=0;i<npar;i++) cout<<parname[i]<<"   ";
+            cout<<"\n";
             nparamcom = npar+rt.nparamut;//rt.nparam[rt.scenchoisi[0]-1]-header.scenario[rt.scenchoisi[0]-1].nparam;
             for (int j=0;j<rt.nscenchoisi;j++) {
                 numpar[j] = new int[nparamcom];

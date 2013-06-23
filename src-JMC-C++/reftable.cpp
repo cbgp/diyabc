@@ -47,7 +47,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	//cout<<"nparamut="<<header.nparamut<<"    nscenarios="<<header.nscenarios<<"\n";
 	this->nhistparam = new int[header.nscenarios];
 	this->histparam = new HistParameterC*[header.nscenarios];
-	if (this->mutparam>0) this->mutparam = new MutParameterC[header.nparamut];
+	if (header.nparamut>0) this->mutparam = new MutParameterC[header.nparamut];
 	//cout<<"avant la boucle des scenarios\n";
 	for (int i=0;i<header.nscenarios;i++) {
 		nparamvar=0;
@@ -66,7 +66,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 			exit(1);
 		}
 		//cout<<"couicou2\n";
-		if (this->mutparam>0) {
+		if (header.nparamut>0) {
 			cout<<header.mutparam[0].name<<"\n";
 			for (int p=0;p<this->nparamut;p++) this->mutparam[p] = header.mutparam[p];
 		}
