@@ -530,7 +530,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 #print self.parent.data
                 scChecker.checkread(sc.strip().split('\n'),self.parent.data)
                 scChecker.checklogic()
-                #for ev in scChecker.history.events : print ev
+                for ev in scChecker.history.events : print ev
                 #for  no in t.node : print no
                 #print "  "
                 #for  b in t.br : print b

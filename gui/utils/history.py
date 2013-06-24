@@ -156,7 +156,17 @@ class Scenario(object):
                 if (iev.time != None)and(jev.time != None) :
                     if iev.time>jev.time :
                         self.history.events[i],self.history.events[j] = jev,iev
-                        
+### Correction JMC pour la couleur des branches
+        for i in range(1,len(self.history.events)) :
+            j = i-1
+            while j>=0 :
+                if (self.history.events[i].pop == self.history.events[j].pop) :
+					if (self.history.events[i].action !='VARNE') :
+						self.history.events[i].sNe = self.history.events[j].sNe
+					if (self.history.events[j].action =='VARNE') :
+						break
+                j = j-1
+###
         if self.history.events[0].time == None  : self.history.time0,self.history.events[0].graphtime = 0,0
         else                                    : self.history.time0,self.history.events[0].graphtime = self.history.events[0].time,self.history.events[0].time
         self.history.time1 = self.history.time0
