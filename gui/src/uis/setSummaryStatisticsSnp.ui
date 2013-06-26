@@ -260,7 +260,7 @@
              <item>
               <widget class="QLabel" name="takenLabel">
                <property name="text">
-                <string>Number of selected loci :</string>
+                <string>Number of selected loci</string>
                </property>
               </widget>
              </item>
@@ -349,7 +349,7 @@
              <item>
               <widget class="QLabel" name="fromLabel">
                <property name="text">
-                <string>from locus</string>
+                <string>From locus</string>
                </property>
               </widget>
              </item>
