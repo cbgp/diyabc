@@ -143,8 +143,9 @@ class ProjectSnp(ProjectReftable):
         """ renvoie une liste des groupes de locus
         utilisé par setupEstimationBias pour remplir la liste de groupes dans le cadre
         de la redéfinition de sumstats
+        En SNP pas de groupes, renvoie juste le mot clef "SNP"
         """
-        return self.sum_stat_wins.types
+        return "SNP"
 
     def redefineSumStatsAnalysis(self,setupEst):
         """ methode ping pong pour sélectionner la bonne methode

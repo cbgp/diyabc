@@ -21,9 +21,19 @@ class SetSummaryStatisticsSnpAnalysis(SetSummaryStatisticsSnp):
         self.ui.clearButton.hide()
         self.ui.frame_2.setDisabled(True)
 
-        self.ui.availableEdit.setText(str(self.parent.parent.sum_stat_wins[numGroup].ui.availableEdit.text()))
-        self.ui.takenEdit.setText(str(self.parent.parent.sum_stat_wins[numGroup].ui.takenEdit.text()))
-        self.ui.fromEdit.setText(str(self.parent.parent.sum_stat_wins[numGroup].ui.fromEdit.text()))
+        self.ui.availableALabel.setText(str(self.parent.parent.sum_stat_wins.ui.availableALabel.text()))
+        self.ui.availableHLabel.setText(str(self.parent.parent.sum_stat_wins.ui.availableHLabel.text()))
+        self.ui.availableXLabel.setText(str(self.parent.parent.sum_stat_wins.ui.availableXLabel.text()))
+        self.ui.availableYLabel.setText(str(self.parent.parent.sum_stat_wins.ui.availableYLabel.text()))
+        self.ui.availableMLabel.setText(str(self.parent.parent.sum_stat_wins.ui.availableMLabel.text()))
+        
+        self.ui.takenAEdit.setText(str(self.parent.parent.sum_stat_wins.ui.takenAEdit.text()))
+        self.ui.takenHEdit.setText(str(self.parent.parent.sum_stat_wins.ui.takenHEdit.text()))
+        self.ui.takenXEdit.setText(str(self.parent.parent.sum_stat_wins.ui.takenXEdit.text()))
+        self.ui.takenYEdit.setText(str(self.parent.parent.sum_stat_wins.ui.takenYEdit.text()))
+        self.ui.takenMEdit.setText(str(self.parent.parent.sum_stat_wins.ui.takenMEdit.text()))
+               
+        self.ui.fromEdit.setText(str(self.parent.parent.sum_stat_wins.ui.fromEdit.text()))
 
     def exit(self):
         self.parent.parent.ui.analysisStack.removeWidget(self)
@@ -34,13 +44,6 @@ class SetSummaryStatisticsSnpAnalysis(SetSummaryStatisticsSnp):
         #print self.stackTarget.analysis.sumStatsDico
 
     def getGroupNumero(self):
-        allTypes = self.parent.parent.typesOrdered
-        presentTypes = self.parent.parent.sum_stat_wins.keys()
-        myType = self.numGroup
-        num = 1
-        for t in allTypes:
-            if t == myType:
-                return num
-            if t in presentTypes:
-                num += 1
+        # there is only one group for SNP
+        return 1
 

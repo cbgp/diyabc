@@ -53,9 +53,13 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
             self.ui.paramChoiceBox.hide()
             # remplissage de la liste des groupes
             groups = self.parent.parent.getLocusGroups()
-            groups.sort()
-            for i in groups:
-                self.ui.redefSumStatsCombo.addItem(i)
+            if groups == 'SNP' :
+                self.ui.redefSumStatsCombo.hide()
+                self.ui.redefSumStatsButton.setText("Redefine summary statistics")
+            else :
+                groups.sort()
+                for i in groups:
+                    self.ui.redefSumStatsCombo.addItem(i)
         else:
             self.ui.candidateLabel.hide()
             self.ui.notdsSubTitleLabel.hide()
@@ -143,13 +147,15 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
     def redefineSumStatsSnp(self):
         """ clic sur le bouton de redéfinition des sumstats pour le groupe sélectionné
         """
-        num_gr = str(self.ui.redefSumStatsCombo.currentText())
-
+        #num_gr = str(self.ui.redefSumStatsCombo.currentText())
+        num_gr = 1 # there is only one groupe for SNP
         sumStatFrame = SetSummaryStatisticsSnpAnalysis(self.parent,self,num_gr)
         if self.analysis.sumStatsConfDico.has_key(num_gr):
             sumStatFrame.setSumConf(self.analysis.sumStatsConfDico[num_gr][1].strip().split('\n'))
         else:
-            sumStatFrame.setSumConf(self.parent.parent.sum_stat_wins[num_gr].getSumConf()[1].strip().split('\n'))
+            sumStatFrame.setSumConf(self.parent.parent.sum_stat_wins.getSumConf()[1].strip().split('\n'))
+            print self.parent.parent.sum_stat_wins.getSumConf()
+            # kkpz sumStatFrame.setSumConf(self.parent.parent.sum_stat_wins[num_gr].getSumConf()[1].strip().split('\n'))
 
         sumStatFrame.ui.sumStatLabel.setText("%s"%(sumStatFrame.ui.sumStatLabel.text()))
 
