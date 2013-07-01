@@ -551,6 +551,7 @@ try {
 												if (stoprun) remove(stopfilename.c_str());
 											} else {
 												fprog.open(progressfilename.c_str());fprog<<message<<"\n";fprog.close();
+												cout<<"\n\n\n"<<message<<"\n";
 												stoprun=true;
 												}
 										} else {
@@ -695,12 +696,12 @@ try {
 	// sauvegarde des RNGs' states
 	if( RNG_must_be_saved ){
 		saveRNG(mtss, countRNG, RNG_filename);
-		if (debuglevel==1)cout << "I have saved current RNGs' states into " << RNG_filename << endl;
+		if (debuglevel<0)cout << "I have saved current RNGs' states into " << RNG_filename << endl;
 		RNG_must_be_saved = false;
 	}
 	/* Fin: pour le nouveau RNG      */
 	duree=walltime(&debut);
-    cout<<"durée ="<<TimeToStr(duree)<<"\n";
+    if (debuglevel<0) cout<<"durée ="<<TimeToStr(duree)<<"\n";
     //int aaa;
     //cin>>aaa;
     //fprintf(stdout,"durée = %.2f secondes (%.6f)\n",duree,time_file);
