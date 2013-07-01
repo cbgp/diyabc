@@ -601,24 +601,24 @@ try {
                                         if (firsttime) firsttime=false;
 										//if (stoprun) cout<<"STOPRUN=TRUE\n";
                                   }
-                                  cout<<"fin du while\n";
+                                  //cout<<"fin du while\n";
                                   for (int i=0;i<nenr;i++) {
                                         delete [] enreg[i].param;
                                         delete [] enreg[i].stat;
                                   }
-                                  cout<<"avant delete [] enreg\n";
+                                  //cout<<"avant delete [] enreg\n";
                                   delete [] enreg;
-                                  cout<<"apres delete [] enreg\n";
+                                  //cout<<"apres delete [] enreg\n";
 								  //ps.libere(nenr);
                                   rt.closefile();
-								  cout<<"apres rt.closefile\n";
+								  //cout<<"apres rt.closefile\n";
                                   if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}
                                   //cout<<"avant header.libere\n";
                                   //header.libere();
 								  //cout<<"apres header.libere\n";
                                   //exit(1);
                           } else {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n\n";f1.close();}
-                          cout<<"avant le break\n";
+                          //cout<<"avant le break\n";
                       break;
       case 'n'  :
                   doinitRNG(rngpar);
@@ -672,7 +672,7 @@ try {
 				  break;
 
   }
-	cout<<"avant les delete []\n";
+	//cout<<"avant les delete []\n";
 	if (rt.mutparam !=NULL) {delete [] rt.mutparam;rt.mutparam=NULL;}
 	//cout<<"1\n";
 	if (rt.nparam !=NULL) {delete [] rt.nparam;rt.nparam=NULL;}
@@ -690,12 +690,12 @@ try {
 	delete [] stat_type;
 	//cout<<"6\n";
 	delete [] stat_num;
-	cout<<"apres les delete []\n";
+	//cout<<"apres les delete []\n";
 	/* Debut: pour le nouveau RNG      */
 	// sauvegarde des RNGs' states
 	if( RNG_must_be_saved ){
 		saveRNG(mtss, countRNG, RNG_filename);
-		cout << "I have saved current RNGs' states into " << RNG_filename << endl;
+		if (debuglevel==1)cout << "I have saved current RNGs' states into " << RNG_filename << endl;
 		RNG_must_be_saved = false;
 	}
 	/* Fin: pour le nouveau RNG      */

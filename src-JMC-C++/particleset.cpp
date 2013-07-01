@@ -550,7 +550,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		if (debuglevel==5) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 		
 		if (sOK[ipart]==0) {
-			/*if (debuglevel==5)*/ cout<<"\navant docalstat de la particule "<<ipart<<"   scenario "<<this->particule[ipart].scen.number<<"\n";
+			if (debuglevel==5) cout<<"\navant docalstat de la particule "<<ipart<<"   scenario "<<this->particule[ipart].scen.number<<"\n";
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr,this->particule[ipart].weight);
 			this->particule[ipart].libere();
 		}
@@ -627,20 +627,22 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 				scurfile = this->header.pathbase + "first_records_of_the_reference_table_"+ IntToString(icur) +".txt";
 				}
 		}
-		cout<<"ecriture du fichier courant = "<<scurfile<<"\n";
+		if (debuglevel==5) cout<<"ecriture du fichier courant = "<<scurfile<<"\n";
 		pFile = fopen (scurfile.c_str(),"w");
 		fprintf(pFile,"%s\n",this->header.entete.c_str());
-		cout<<"FISTTIME\n";
-		cout<<header.entete<<"\n\n";
-		cout<<header.entetehist<<"\n\n";
-		cout<<header.entetemut<<"\n\n";
+		if (debuglevel==5) {
+			cout<<"FISTTIME\n";
+			cout<<header.entete<<"\n\n";
+			cout<<header.entetehist<<"\n\n";
+			cout<<header.entetemut<<"\n\n";
+		}
 		/*int nph,npm;
 		ss=splitwords(header.entetehist," ",&nph);
 		if (debuglevel==5) cout<<header.entetehist<<"\n";
 		if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;*/
 		//if (ss!=NULL) {delete []ss;ss=NULL;}
 		ss=splitwords(header.entete," ",&ns);
-		cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
+		if (debuglevel==5) cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
 		np=ns-header.nstat-1;
 		//cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
 		//cout<<"nph="<<nph<<"    npm="<<npm<<"\n";

@@ -444,7 +444,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 					}
 					if (np==2) {
 						this->scenario[i].condition[nc] = this->condition[j];
-						this->scenario[i].condition[nc].ecris();
+						//this->scenario[i].condition[nc].ecris();
 						nc++;
 					}
 				}
