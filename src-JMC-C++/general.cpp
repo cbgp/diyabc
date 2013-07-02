@@ -232,6 +232,7 @@ void analyseRNG(string & modpar) {
 int main(int argc, char *argv[]){
 string RNG_filename;
 bool exception_caught = false;
+bool erreur_scenario=false;
 try {
 	cout<<"debut\n";
 	initstat_typenum();
@@ -553,6 +554,7 @@ try {
 												fprog.open(progressfilename.c_str());fprog<<message<<"\n";fprog.close();
 												cout<<"\n\n\n"<<message<<"\n";
 												stoprun=true;
+												erreur_scenario=true;
 												}
 										} else {
 											nenrOK=0;
@@ -725,6 +727,6 @@ try {
 		RNG_must_be_saved = false;
 	}
 	freeRNG();
-	if (exception_caught) return 1;
+	if ((exception_caught)or(erreur_scenario)) return 1;
 	return 0;
 };
