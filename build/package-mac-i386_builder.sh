@@ -9,7 +9,7 @@ rm -rf $packageDir
 cd $diyabc_git
 
 make clean
-CCVERSION="" make 
+CCVERSION="-mp-4.7" make 
 
 cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-mac-i386
 cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-mac-x64
