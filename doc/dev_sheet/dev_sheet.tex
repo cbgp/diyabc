@@ -628,7 +628,10 @@ Description: Repository of CBGP softwares \end{verbatim}
         afin d'installer gcc47 qui supporte openmp.
 
         \paragraph{Installation des macports}
-        Installation des macports : installer xcode et installer macports avec le dmg, puis mettre à jour
+        Installation des macports : installer xcode. Si gcc n'est pas fournit
+         il faut aller dans les preferences et dans l'onglet download pour installer les
+         command line tools.
+        Une fois gcc installé, on peut installer macports avec le dmg, puis mettre à jour
         %avec un sync en file:// ou en http:// sur le fichier ports.tar.gz qui se trouve ici :
         %\\
         %www.macports.org/files/ports.tar.gz 
