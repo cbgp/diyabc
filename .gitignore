@@ -10,7 +10,8 @@
 *.o
 *.so
 *.a
-
+general
+initRNGproject
 !build/pyinstaller-2.0/support/loader/Windows-32bit/*
 
 
@@ -30,3 +31,8 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# Eclipse... #
+##############
+.cproject
+.settings/
