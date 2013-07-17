@@ -53,17 +53,19 @@ class ProjectSnp(ProjectReftable):
             self.save()
 
     def verifyRefTableValid(self):
-        """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table
+        """ Vérifie si tout est valide pour mettre à jour l'icone de l'onglet reference table, activer ou non le button de lancement du calcul de la reftable, affichage ou non des avertissements sur la taille du reftable.
         """
         if self.gen_state_valid and self.hist_state_valid and self.ascert_state_valid:
             self.setTabIcon(0,QIcon(variables.ICONPATH+"/ok.png"))
             self.ui.runReftableButton.setDisabled(False)
             self.ui.stopReftableButton.setDisabled(False)
+            self.ui.warningNumTextBrowser.show()
             return True
         else:
             self.setTabIcon(0,QIcon(variables.ICONPATH+"/redcross.png"))
             self.ui.runReftableButton.setDisabled(True)
             self.ui.stopReftableButton.setDisabled(True)
+            self.ui.warningNumTextBrowser.hide()
             return False
 
     def setAscertBias(self):
