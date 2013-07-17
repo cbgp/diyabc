@@ -366,7 +366,7 @@
           <item>
            <widget class="QLabel" name="label_8">
             <property name="text">
-             <string>H locus  are not compatible with A, X and Y loci</string>
+             <string>H loci are not compatible with A, X and Y loci</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
