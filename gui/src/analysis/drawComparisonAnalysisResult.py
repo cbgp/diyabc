@@ -45,6 +45,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         self.ui.ACProgress.hide()
         self.ui.viewLocateButton.setText("view numerical results")
         self.ui.PCAGraphFrame.hide()
+        self.ui.PCAScroll.hide()
         self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
 
         self.ui.parameterChoiceFrame.hide()
@@ -159,7 +160,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
             col = self.tab_colors[(int(first_line_tab[i])%len(self.tab_colors))]
             plotc.axes.plot(labs,dico_coord[first_line_tab[i]],label=legend_txt,c=col,marker='%s'%markerPlot)
 
-        plotc.axes.legend(bbox_to_anchor=(0.74, -0.14),ncol=2,prop={'size':9})
+        plotc.axes.legend(bbox_to_anchor=(0.68, -0.07),ncol=4,prop={'size':9})
         plotc.axes.axes.title.set_fontsize(10)
         for tick in plotc.axes.axes.xaxis.get_major_ticks():
                 tick.label1.set_fontsize(7)
@@ -173,7 +174,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         fr.setFrameShadow(QFrame.Raised)
         fr.setObjectName("frame")
         fr.setMinimumSize(QSize(400, 0))
-        fr.setMaximumSize(QSize(400, 300))
+        #fr.setMaximumSize(QSize(800, 600))
         vert = QVBoxLayout(fr)
         vert.addWidget(draw_widget)
 
