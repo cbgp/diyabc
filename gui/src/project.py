@@ -43,6 +43,7 @@ class Project(baseProject,formProject):
         #self.tab = QTabWidget()
 
         self.createWidgets()
+        self.verifyRefTableValid()
 
     def createWidgets(self):
 
