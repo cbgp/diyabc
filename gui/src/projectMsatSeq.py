@@ -30,6 +30,7 @@ class ProjectMsatSeq(ProjectReftable):
         self.gen_data_win = SetGeneticDataMsatSeq(self)
         self.gen_data_win.ui.okButton.setText("VALIDATE AND SAVE")
         self.gen_data_win.hide()
+        self.verifyRefTableValid()
 
     def getDataFileFilter(self):
         """ retourne le bon filtre de selection de fichier pour le chargement du datafile
