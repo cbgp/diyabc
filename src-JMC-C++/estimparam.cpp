@@ -53,7 +53,7 @@ long double **matX0, *vecW, **alpsimrat;
 long double **parsim;
 int nstatOKsel;
 //extern char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident;
-//extern string headerfilename,reftablefilename,datafilename,statobsfilename,reftablelogfilename,path,ident;
+extern string headerfilename,reftablefilename,datafilename,statobsfilename,reftablelogfilename,path,ident;
 extern bool multithread;
 pardensC *pardens, *pardenscompo, *pardensscaled;
 long double *var_stat, *parmin, *parmax, *parmincompo,*parmaxcompo,*parminscaled,*parmaxscaled,*diff,*diffcompo,*diffscaled;
