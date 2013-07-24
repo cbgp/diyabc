@@ -544,7 +544,6 @@ string ScenarioC::checklogic() {
 	//	return "the number of population sizes in line 1 is different from the number of populations found in subsequent lines";
 	bool *popexist;
 	popexist = new bool[maxpop+1];
-	bottompop.resize(maxpop+1);
 	for (int i=0;i<maxpop+1;i++) popexist[i] = false;
 	for (int ievent=0;ievent<this->nevent;ievent++) {
 		EventC & monevent = this->event[ievent];

@@ -9,7 +9,6 @@
 #define HISTORY_H_
 
 #include <string>
-#include <vector>
 #include "randomgenerator.h"
 
 
@@ -192,7 +191,6 @@ class ScenarioC
 public:
   double *paramvar, prior_proba;
   int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0,nparamvar,nconditions,ipv;
-  std::vector<bool> bottompop; // used to compute scaled param
   std::string *stime_sample;
   EventC *event;
   Ne0C *ne0;
