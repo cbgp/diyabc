@@ -1043,31 +1043,31 @@ bool valinfinie=false;
 	}
 	
 	void finbiaisrelC(int ntest) {
-		if (debuglevel==11) cout<<"debut de finbiaisrelC\n";
+		if (debuglevel==11) cerr<<"debut de finbiaisrelC\n";
 		for (int j=0;j<nparamcom;j++) {paramestcompomoyS[j] /=(long double)ntest;paramestcompomedS[j] /=(long double)ntest;}
-		if (debuglevel==11) cout<<"finbiaisrelC 1\n";
+		if (debuglevel==11) cerr<<"finbiaisrelC 1\n";
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {br_C[k][j] /=(long double)ntest;br_CS[k][j] /=(long double)ntest;}
 		}
-		if (debuglevel==11) cout<<"finbiaisrelC 2\n";
+		if (debuglevel==11) cerr<<"finbiaisrelC 2\n";
 		for (int j=0;j<nparcompo;j++) {rrmise_C[j] = sqrt(rrmise_C[j]/(long double)ntest);rrmise_CS[j] = sqrt(rrmise_CS[j]/(long double)ntest);}
-		if (debuglevel==11) cout<<"finbiaisrelC 3\n";
+		if (debuglevel==11) cerr<<"finbiaisrelC 3\n";
 		for (int j=0;j<nparcompo;j++) {rmad_C[j] /=(long double)ntest;rmad_CS[j] /=(long double)ntest;}
-		if (debuglevel==11) cout<<"finbiaisrelC 4\n";
+		if (debuglevel==11) cerr<<"finbiaisrelC 4\n";
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {rmse_C[k][j] = sqrt(rmse_C[k][j]/(long double)ntest);rmse_CS[k][j] = sqrt(rmse_CS[k][j]/(long double)ntest);}
 		}
-		if (debuglevel==11) cout<<"finbiaisrelC 5\n";
+		if (debuglevel==11) cerr<<"finbiaisrelC 5\n";
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {rmb_C[k][j] =cal_medL(ntest,bmed_C[k][j]);rmb_CS[k][j] =cal_medL(ntest,bmed_CS[k][j]);}
 		}
-		if (debuglevel==11) cout<<"finbiaisrelC 6\n";
+		if (debuglevel==11) cerr<<"finbiaisrelC 6\n";
 		for (int j=0;j<nparcompo;j++) {rmedad_C[j] = cal_medL(ntest,bmedr_C[j]);rmedad_CS[j] = cal_medL(ntest,bmedr_CS[j]);}
-		if (debuglevel==11) cout<<"finbiaisrelC 7\n";
+		if (debuglevel==11) cerr<<"finbiaisrelC 7\n";
 		for (int k=0;k<3;k++) {
             for (int j=0;j<nparcompo;j++) {rmae_C[k][j] =cal_medL(ntest,bmeda_C[k][j]);rmae_CS[k][j] =cal_medL(ntest,bmeda_CS[k][j]);}
 		}
-		if (debuglevel==11) cout<<"fin de finbiaisrelC\n";
+		if (debuglevel==11) cerr<<"fin de finbiaisrelC\n";
 	}
 	
 	void finbiaisrelS(int ntest) {
@@ -1865,15 +1865,15 @@ bool valinfinie=false;
 			lisimparO();
 		}
 		if (composite) {
-			initbiasC(ntest,nsel,nparcompo);
-			initbiasCS(ntest,nsel,nparcompo);
+			initbiasC(ntest,nsel,nparamcom); //PP: was nparcompo
+			initbiasCS(ntest,nsel,nparamcom); //PP: was nparcompo
 			phistarcompo = new long double* [nsel];
 			for (int i=0;i<nsel;i++) phistarcompo[i] = new long double[nparcompo];
 			lisimparC();
 		}
 		if (scaled) {
-			initbiasS(ntest,nsel,nparscaled);
-			initbiasSS(ntest,nsel,nparscaled);
+			initbiasS(ntest,nsel,nparamcom); //PP: was nparcompo
+			initbiasSS(ntest,nsel,nparamcom); //PP: was nparcompo
 			phistarscaled = new long double* [nsel];
 			for (int i=0;i<nsel;i++) phistarscaled[i] = new long double[nparscaled];
 			lisimparS();

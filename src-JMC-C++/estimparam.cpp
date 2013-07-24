@@ -455,13 +455,14 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         for(int i=0;i<n;i++) xx[i] = new long double[nparscaled];
 		for (int i=0;i<n;i++) {
 			kscen=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[kscen])kscen++;
+			ScenarioC & monscen = header.scenario[rt.scenchoisi[kscen]-1];
 			Ne=0.0;nNe=0;
-			for (int j=0;j<header.scenario[rt.scenchoisi[kscen]-1].npop;j++) {
-				for (int ievent=0;ievent<header.scenario[rt.scenchoisi[kscen]-1].nevent;ievent++) {
-					if ((header.scenario[rt.scenchoisi[kscen]-1].event[ievent].action=='E')and(header.scenario[rt.scenchoisi[kscen]-1].event[ievent].pop==j+1)){
-						kk=0;while ((kk<header.scenario[rt.scenchoisi[kscen]-1].nn0)and(header.scenario[rt.scenchoisi[kscen]-1].histparam[kk].name!=header.scenario[rt.scenchoisi[kscen]-1].ne0[j].name)) kk++;
-						if (header.scenario[rt.scenchoisi[kscen]-1].histparam[kk].prior.constant) 
-							Ne += (long double)header.scenario[rt.scenchoisi[kscen]-1].histparam[kk].prior.mini;
+			for (int j=0;j<monscen.npop;j++) {
+				for (int ievent=0;ievent<monscen.nevent;ievent++) {
+					if ((monscen.event[ievent].action=='E')and(monscen.event[ievent].pop==j+1)){
+						kk=0;while ((kk<monscen.nn0)and(monscen.histparam[kk].name!=monscen.ne0[j].name)) kk++;
+						if (monscen.histparam[kk].prior.constant)
+							Ne += (long double)monscen.histparam[kk].prior.mini;
 						else Ne +=(long double)rt.enrsel[i].param[numpar[kscen][kk]];
 						nNe++;
 						//if (i<10) cout<<"Ne = "<<Ne<<"\n";
@@ -471,7 +472,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			Ne = Ne/(long double)nNe;
 			kp=0;
 			for (int j=0;j<npar;j++) {
-				if (header.scenario[rt.scenchoisi[kscen]-1].histparam[numpar[kscen][j]].category<2){
+				if (monscen.histparam[numpar[kscen][j]].category<2){
 					xx[i][kp] = (long double)rt.enrsel[i].param[numpar[kscen][j]]/Ne;
 					kp++;
 				}
