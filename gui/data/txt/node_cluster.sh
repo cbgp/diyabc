@@ -1,6 +1,6 @@
 #!/bin/bash
-set -o errexit
-set -o errtrace
+#set -o errexit
+#set -o errtrace
 set -o nounset
 #set -xv 
 echo "host =  `hostname`"
@@ -98,7 +98,9 @@ function trapActions(){
         if [ -e "$file" ]; then rm -f "$file" || echo -e "could not erase $file" >&2 ; fi
     done
     
-    exit $errStatus
+    #debug
+    #exit $errStatus
+    
 }
 
 function sumStatsDone(){
@@ -112,17 +114,20 @@ function sumStatsDone(){
     #fi
     while [ "$triesNum" -ne "$triesAuthorized" ]
         do
-        set +e
+        #debug
+        #set +e
         sumStats="`head -n 2 $refTableLogFile | tail -n 1`"
         if [ "$sumStats" -ne "$sumStats" ] 2>/dev/null
             then
-            set -e
+            #debug
+            #set -e
             echo -e "Not found integer as sum stats number in $refTableLogFile = $sumStats"  >&2
             let triesNum=$triesNum+1
             sleep 5
             continue
         else 
-            set -e     
+            #debug
+            #set -e     
             #echo "$sumStats" >&2
             echo "$sumStats" 
             return 0
@@ -134,17 +139,20 @@ function sumStatsDone(){
 
 
 # start trap if errors
-trap 'trapActions' INT TERM EXIT
+#debug
+#trap 'trapActions' INT TERM EXIT
 
 
 #create tmp dir if necessary
-set +u
+#debug
+#set +u
 if test -z "$TMPDIR"
     then
 	    TMPDIR="/tmp/tmpDiyabc_${jobId}"
 	    scriptMadeTMPDIR="true"
 fi
-set -u
+#debug
+#set -u
 
 if ! [ -d "$TMPDIR" ]
     then 
@@ -173,10 +181,12 @@ while [ $rngNotFound ]
     # start race condition
     if [ -e "${rngList[$index]}" ]
         then
-        set +e
+        #debug
+        #set +e
         if  ( lockfile -r0 "${rngList[$index]}.lock") 2> /dev/null  
             then
-            set -e
+            #debug
+            #set -e
             rngFile="${rngList[$index]}"
             rngFlagFile="${rngFile}_`date +"%Y-%m-%d-%Hh%Mm%Ss"`_${jobId}"
             touch "$rngFlagFile"
@@ -191,7 +201,8 @@ while [ $rngNotFound ]
             break
         fi
     fi
-    set -e
+    #debug
+    #set -e
     let rngFoundCounter=$rngFoundCounter+1  
     echo -e "$rngFoundCounter try to find an unused RNG file"
     sleep 2
@@ -216,9 +227,11 @@ sleep 30
 # Copy log file in user working directory till end of program 
 while [ -d "/proc/$cmdPID" ]
     do
-    set +e
+    #debug
+    #set +e
     cp "$TMPDIR"/reftable.log "$USERDIR"/reftable_$MYNUMBER.log
-    set -e
+    #debug
+    #set -e
     sleep 20
 done
 cp "$TMPDIR"/reftable.log "$USERDIR"/reftable_$MYNUMBER.log
@@ -226,10 +239,11 @@ cp "$TMPDIR"/reftable.log "$USERDIR"/reftable_$MYNUMBER.log
 
 if ! [ "$(sumStatsDone $TMPDIR/reftable.log)" -ge "$NBTOGEN" ]
     then
-    set +e
+    #debug
+    #set +e
     errStatus=1000
     echo "ERROR records num -> reftable.log =" >&2
-    cat $TMPDIR"/reftable.log  >&2
+    cat "$TMPDIR"/reftable.log  >&2
     echo "ERROR records num -> PID : $cmdPID: `ps -edf | grep $cmdPID`" >&2
     echo "ERROR records num -> ls /proc/$cmdPID: `ls /proc/$cmdPID`" >&2
     
@@ -247,7 +261,8 @@ if [ $scriptMadeTMPDIR = 'true' ]; then rm -rf "$TMPDIR"; fi
 echo -e "End with succes"
 echo -e " "
 
-trap - INT TERM EXIT
+#debug
+#trap - INT TERM EXIT
 
 #END
 exit 0

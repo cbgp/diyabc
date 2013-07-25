@@ -1,5 +1,5 @@
 queueStd="long.q"     # Your cluster standard queue
-queuePEname="mem.q"   # Your cluster parallel queue, if this not make sense, just wright again your standart queue name
+queuePEname="mp.q"   # Your cluster parallel queue, if this not make sense, just wright again your standart queue name
 PEenv='SMP'           # Your cluster parallel environment
 
 
@@ -19,7 +19,7 @@ function submitJobs(){
         fi
 
 ############################## EDIT #########################################
-######## Modify this line to submit jobs to your cluster scheduler ###############
+######## Modify those lines to submit jobs to your cluster scheduler ###############
 # node.sh arguments
 ##1 DIYABCPATH
 ##2 NBCORES
