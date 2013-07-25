@@ -173,7 +173,7 @@ class AutoPreferences(QFrame):
             exec('self.verticalLayout_%s.addWidget(self.scrollArea_%s) '%(catname,catname))
             exec('self.ui.tabWidget.addTab(self.tab_%s,"%s")'%(catname,catname))
 
-    def addPropCheck(self,catname,propname,labelText,defaultState,toBeSaved=True):
+    def addPropCheck(self,catname,propname,labelText,defaultState,toBeSaved=True,visible=True):
         """ Add a field which is composed by a label and a checkBox
         @param propname: name of the field
         @param labelText: text associated to the field (label)
@@ -193,6 +193,8 @@ class AutoPreferences(QFrame):
         exec('self.%sCheck.setObjectName("%sCheck") '%(propname,propname))
         exec('self.horizontalLayout_%s_%s.addWidget(self.%sCheck) '%(catname,propname,propname))
         exec('self.verticalLayoutScroll_%s.addWidget(self.frame_%s_%s) '%(catname,catname,propname))
+        if not visible :
+            exec('self.frame_%s_%s.hide()'%(catname,propname))
 
     def addPropCombo(self,catname,propname,labelText,dicoValTxt,l_ordered_val,default_value=None,toBeSaved=True):
         """ Add a field which is composed by a label and a comboBox

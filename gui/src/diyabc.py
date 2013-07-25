@@ -48,6 +48,9 @@ if "win" in sys.platform and "darwin" not in sys.platform:
     Qt.ImhFormattedNumbersOnly = 0
 
 
+# global variable in oder to activate what's this functionality
+ACTIVATE_WHAT_S_THIS = False
+
 formDiyabc,baseDiyabc = uic.loadUiType("%s/diyabc.ui"%UIPATH)
 
 ## @class Diyabc
@@ -313,21 +316,28 @@ class Diyabc(formDiyabc,baseDiyabc):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.ui.toolBar.addWidget(spacer)
 
-        wtButton = QPushButton(QIcon(variables.ICONPATH+"/whats.png"),"What's this ?",self)
-        wtButton.setDisabled(False)
-        wtButton.setToolTip("Click on this button and then on another object to get the documentation")
-        self.wtButton = wtButton
-        wtButton.setMaximumSize(QSize(136, 22))
+        self.wtButton = QPushButton(QIcon(variables.ICONPATH+"/whats.png"),"What's this ?",self)
+        self.wtButton.setDisabled(False)
+        self.wtButton.setToolTip("Click on this button and then on another object to get the documentation")
+        self.wtButton.setMaximumSize(QSize(136, 22))
         #wtButton.setMinimumSize(QSize(16, 18))
-        wtButton.setFlat(True)
-        QObject.connect(wtButton,SIGNAL("clicked()"),self.enterWhatsThisMode)
-        self.ui.toolBar.addWidget(wtButton)
-        #wtButton.hide()
+        self.wtButton.setFlat(True)
+        QObject.connect(self.wtButton,SIGNAL("clicked()"),self.enterWhatsThisMode)
+        
+        #do not addwidget to desactivate what's this functionality :
+        global ACTIVATE_WHAT_S_THIS
+        if ACTIVATE_WHAT_S_THIS :
+            self.ui.toolBar.addWidget(self.wtButton)
+        else :
+            self.wtButton.hide()
+            
 
-        for but in [newButton,newSNPButton,openButton,saveButton,saveAllButton,wtButton]:
+
+        for but in [newButton,newSNPButton,openButton,saveButton,saveAllButton,self.wtButton]:
             but.setStyleSheet("QPushButton:hover { background-color: #FFD800;  border-style: outset; border-width: 1px; border-color: black;border-style: outset; border-radius: 5px; } QPushButton:pressed { background-color: #EE1C17; border-style: inset;} ")
 
         self.systrayHandler = TrayIconHandler(variables.ICONPATH+"/coccicon.png",variables.ICONPATH+"/coccicon.gif",self.file_menu,self)
+
 
     def createBugReport(self):
         log(2,"Beginning bug report creation")
@@ -1128,6 +1138,10 @@ def main():
         print VERSION
         print VERSION_DATE
         return
+        
+    if "--wst" in nargv:
+        global ACTIVATE_WHAT_S_THIS 
+        ACTIVATE_WHAT_S_THIS = True
 
     projects_to_open = []
     for arg in nargv[1:]:
