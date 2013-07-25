@@ -44,6 +44,7 @@ class ProjectSnp(ProjectReftable):
 
         QObject.connect(self.ui.ascertButton,SIGNAL("clicked()"),self.setAscertBias)
 
+
     def getDataFileFilter(self):
         return "SNP datafile (*.snp);;all files (*)"
 
@@ -230,6 +231,7 @@ class ProjectSnp(ProjectReftable):
 
                 for ty in dicoStatLines.keys():
                     self.sum_stat_wins.setSumConf(dicoStatLines[ty])
+            self.updateNbStats()
            
     def loadFromDir(self):
         """ charge les infos à partir du répertoire self.dir
