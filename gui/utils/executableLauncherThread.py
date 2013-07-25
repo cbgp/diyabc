@@ -160,11 +160,13 @@ class LauncherThread(QThread):
                 f = open(self.outfile_path,"r")
                 lines = f.readlines()              
                 f.close()
-                if len(lines) > 4:
+                if len(lines) >= 4:
                     outlastline = "\n".join(lines[-4:])
-                    # limitating length of last output line
-                    if len(outlastline) > 300:
-                        outlastline = outlastline[-300:]
+                else :
+                    outlastline = "\n".join(lines)
+                # limitating length of last output line
+                if len(outlastline) > 300:
+                    outlastline = outlastline[-300:]
                 # success
                 if poll_check == 0:
                     self.emit(SIGNAL(self.SIGTERMSUCCESS+"()"))
