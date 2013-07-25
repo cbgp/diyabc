@@ -34,11 +34,13 @@ class ProjectSnp(ProjectReftable):
 
         #self.ui.frame_11.show()
         #self.ui.frame_12.show()
-
+        
+        # until now set ascert bias functionality is not activated. (but waiting for further developpment)
+        # so self.ascert_state_valid is set to True
         self.ascert_frame = ControlAscertBias(self)
         self.ascert_frame.hide()
-        self.ascert_state_valid = False
-        self.setAscertValid(False)
+        self.ascert_state_valid = True
+        self.setAscertValid(True)
 
         QObject.connect(self.ui.ascertButton,SIGNAL("clicked()"),self.setAscertBias)
 
