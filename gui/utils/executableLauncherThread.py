@@ -124,6 +124,7 @@ class LauncherThread(QThread):
             p = subprocess.Popen(self.cmd_args_list,startupinfo=popen_options, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
         else:
             p = subprocess.Popen(self.cmd_args_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
+	self.log(3,"Command launched in thread '%s' : %s"%(self.name," ".join(self.cmd_args_list)))
         self.processus = p
         for line in iter(p.stdout.readline, ""):
             self.emit(SIGNAL(self.SIGNEWOUTPUT+"(QString)"),line)
@@ -156,12 +157,11 @@ class LauncherThread(QThread):
             poll_check = p.poll()
             if poll_check != None:
                 f.close()
-                time.sleep(1)
                 f = open(self.outfile_path,"r")
-                lines = f.readlines()
+                lines = f.readlines()              
                 f.close()
                 if len(lines) > 4:
-                    outlastline = "\n".join(lines[-5:-1])
+                    outlastline = "\n".join(lines[-4:])
                     # limitating length of last output line
                     if len(outlastline) > 300:
                         outlastline = outlastline[-300:]
@@ -170,8 +170,8 @@ class LauncherThread(QThread):
                     self.emit(SIGNAL(self.SIGTERMSUCCESS+"()"))
                 # failure
                 else:
-                    if self.progressfile_path != None:
-                        time.sleep(2)
+                    
+                    if self.progressfile_path != None:   
                         redProblem = self.readProblem()
                         problem = "Program of thread '%s' exited (with return code %s) unsuccessfully.\n\n%s\n\nContent of progress file :\n\n%s"%(self.name,poll_check,outlastline,redProblem)
                     else:
