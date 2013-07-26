@@ -1,2 +1,2 @@
-buildslave start ~/buildslave32
+buildslave start ~/bbot/buildslave32
 
