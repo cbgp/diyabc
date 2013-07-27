@@ -10,7 +10,9 @@ cd $diyabc_git
 
 git checkout .
 git pull --rebase 
+
 make clean
+cp ./src-JMC-C++/libmac/* ./src-JMC-C++/
 CCVERSION="" make 
 
 cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-mac-i386
