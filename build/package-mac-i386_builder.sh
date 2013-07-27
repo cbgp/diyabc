@@ -9,6 +9,7 @@ rm -rf $packageDir
 cd $diyabc_git
 
 make clean
+cp ./src-JMC-C++/libmac/* ./src-JMC-C++/
 CCVERSION="-mp-4.7" make 
 
 cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-mac-i386
