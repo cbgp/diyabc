@@ -17,7 +17,7 @@ cp ./src-JMC-C++/general ./gui/data/bin/diyabc-comput-linux-x64
 # html generation
 cd ./build
 cd `dirname $HTMLGENPATH`
-./gen_html_doc.sh
+#./gen_html_doc.sh
 
 cd ../build/
 rm -rf $packageDir
