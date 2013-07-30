@@ -22,7 +22,7 @@ rm -rf $packageDir
 cd $diyabc_git
 
 $MinGw_bindir/mingw32-make.exe clean
-MYFLAGS="-static" $MinGw_bindir/mingw32-make.exe
+MFLAGS="-static" $MinGw_bindir/mingw32-make.exe
 cp $MinGw_bindir/*.dll ./gui/data/bin/
 cp ./src-JMC-C++/general.exe ./gui/data/bin/diyabc-comput-win-i386
 cp ./src-JMC-C++/general.exe ./gui/data/bin/diyabc-comput-win-x64
