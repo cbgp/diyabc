@@ -13,21 +13,22 @@ How to compile :
    make clean
    MYFLAGS="-static" make
 
-DIYABC binary, named "general", should be in src-JMC-C++ directory. 
+DIYABC binary, named "general", should be in the src-JMC-C++ directory. 
 
 For HPC cluster, you must compile DIYABC on your cluster and set the binary in DIYABC 
 interface preferences>>cluster panel :
  - First choose "cluster" in  preferences>>cluster panel and can give the full path of 
-   "general" binary file on your cluster. 
+   the "general" binary file on your cluster. 
 or
- - Upload "general" to your own personal computer. Choose "local" in  preferences>>cluster
-   panel and browse your own personal computer to find the "general" binary file uploaded
-   ( the one you just compiled on your cluster).
+ - Upload the "general" file onto your own personal computer. Choose "local" in  
+   preferences>>cluster panel and browse your own personal computer to find the "general" 
+   binary file uploaded (the one you just compiled on your cluster).
 
 
 RUN ===============
 
 First, you must compile DIYABC sources to in order to obtain the "general" binary.
+Next, Use the following commands:
 
    cd diyabc-v2.xx 
    bash diyabc.sh
@@ -35,5 +36,6 @@ or
    cd diyabc-v2.xx/gui/src
    python gui/src/diyabc 
 
-Next, go to preferences>>various, uncheck "use default executable check" and browse "Path to executable file"
-in order to set the "general" binary file you just compile on your personal computer. 
+Finally, uncheck "use default executable check" and browse "Path to executable file" in the
+preferences>>various panel. This will set the "general" binary file you just compile on 
+your personal computer. 
