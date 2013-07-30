@@ -109,7 +109,7 @@ Let's enter a simple scenario in scenario 1 edit window and click on the \fbox{\
 
 \includegraphics[scale=0.35]{gui_pictures/Capture-DIYABC-12.png} 
 
-The parameter prior frame allows to choose the prior density of each parameter. A parameter is anything in the scenario that is not a keyword (here \texttt{sample} and \texttt{merge}), nor a numeric value. In our example scenario, parameters are hence : \texttt{N1, N2, N3, t1} and \texttt{t2}. In our example, we need to set the priors on \texttt{t1} and \texttt{t2} such that \texttt{t2}$>$  \texttt{t1}. We can do it either by using the \texttt{set condition} button or by playing with the minimum and maximum values of the two parameters.\\
+The parameter prior frame allows to choose the prior density of each parameter. A parameter is anything in the scenario that is not a keyword (here \texttt{sample} and \texttt{merge}), nor a numeric value. In our example scenario, parameters are hence : \texttt{N1, N2, N3, t1} and \texttt{t2}. In our example, we need to set the priors on \texttt{t1} and \texttt{t2} such that \texttt{t2}$>$  \texttt{t1}. We can do it either by using the \texttt{set condition} button or by playing with the minimum and maximum values of the two parameters. It is worth stressing that the omission of such conditional constraints on merge times (cf. a population needs to exists in the past to allow coalescence events in it) is one the most frequent implementation error made by DIYABC users. If forgotten a « gene genealogy failure » message pointing to the problematic scenario will appear when launching simulations. Note that the occurrence of a too large number of time conditional constraints within a scenario may substantially slow down simulations as a valid t parameter vector will be retain and run only once all conditions are fullfiled.\\
 
 If we click on the \fbox{\textsf{Check scenario}} button, the logic of the scenario is checked and if it is found OK, and if the scenario is drawable, the drawing appears on a new frame : \\
 
@@ -481,7 +481,7 @@ and transferred into group 2 in the same way :\\
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-79.png} \\
 
-We need now to define the mutation model of each group. Let's click on the \fbox{\textsf{Set Mutation Model}} button of group 1:\\
+We need now to define the mutation model of each group (note that we not any mutation model needs to be defined for SNP loci cf. section 2.4). Let's click on the \fbox{\textsf{Set Mutation Model}} button of group 1:\\
 
 \includegraphics[scale=0.33]{gui_pictures/Capture-DIYABC-80.png} \\
 
