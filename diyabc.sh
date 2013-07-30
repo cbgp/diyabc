@@ -1,3 +1,3 @@
 #!/bin/bash
-cd src/gui/
+cd ./gui/src/
 python diyabc.py

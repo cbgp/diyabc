@@ -34,7 +34,7 @@ Next, Use the following commands:
    bash diyabc.sh
 or 
    cd diyabc-v2.xx/gui/src
-   python gui/src/diyabc 
+   python diyabc.py
 
 Finally, uncheck "use default executable check" and browse "Path to executable file" in the
 preferences>>various panel. This will set the "general" binary file you just compile on 
