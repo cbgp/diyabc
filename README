@@ -1,0 +1,30 @@
+DIYABC V2.0
+
+COMPILE SOURCES =========== 
+
+DIYABC dependencies :
+Graphical User Interface : pyqt4, matplotlib
+DIYABC core : gcc (with open-mp)
+Documentation : latex
+
+How to compile :
+tar -xzf diyabc-v2.xx-source.tgz
+cd diyabc-v2.xx
+make clean
+MYFLAGS="-static" make
+
+DIYABC binary, named "general", should be in src-JMC-C++ directory. 
+
+For HPC cluster, you must compile DIYABC on your cluster and next give the full path of 
+"general" binary file to cluster preferences in the DIYABC interface.
+
+
+RUN ===============
+
+First, you must compile DIYABC sources to in order to obtain the "general" binary.
+
+cd diyabc-v2.xx 
+bash diyabc.sh
+or 
+cd diyabc-v2.xx/gui/src
+python gui/src/diyabc 
