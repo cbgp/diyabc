@@ -28,7 +28,7 @@ from PyQt4 import QtGui
 from PyQt4 import uic
 from preferences import Preferences
 from showLogFile import ShowLogFile
-from utils.cbgpUtils import Documentator
+#from utils.cbgpUtils import Documentator
 import output
 import subprocess
 from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log,DirNFileDialog
@@ -105,8 +105,9 @@ class Diyabc(formDiyabc,baseDiyabc):
                 self.openProject(projDirName)
         try:
             #self.documentator = Documentator(variables.DOCPATH+"/index.html")
-            self.documentator = Documentator(DOCPATH+"/html/index.html")
-            self.updateDoc()
+            #self.documentator = Documentator(DOCPATH+"/html/index.html")
+            #self.updateDoc()
+            pass
         except Exception as e:
             log(1,"Documentation error : %s"%e)
             self.documentator = None
