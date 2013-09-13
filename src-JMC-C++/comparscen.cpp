@@ -482,7 +482,7 @@ bool cal_loglik(int nli, int nmodel, int rep, long double *cloglik,
         }
         else{
             //cout<<"ma-mi="<<ma-mi<<"\n";
-            sum=0.0;for (i=1;i<nmodel+1;i++) {if (b0[i]>ma-1000) sum+=exp(b0[i]-ma);}
+            sum=0.0;for (i=0;i<nmodel+1;i++) {if (b0[i]>ma-1000) sum+=exp(b0[i]-ma);}
             for (imod=1;imod<nmodel+1;imod++){
                 if (b0[imod]>ma-1000){
                     ebma=exp(b0[imod]-ma);

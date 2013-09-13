@@ -1038,6 +1038,7 @@ extern int debuglevel;
     if ((nd>0)and(OK)and(e1*S+e2*S*(S-1.0)>0.0)) res=(pi-S/a1)/sqrt(e1*S+e2*S*(S-1.0));
     //cout<<"a1="<<a1<<"  a2="<<a2<<"b1="<<b1<<"  b2="<<b2<<"c1="<<c1<<"  c2="<<c2<<"e1="<<e1<<"  e2="<<e2<<"\n";
     //cout<<"nd="<<nd<<"   OK="<<OK<<"   pi="<<pi<<"   S="<<S<<"   res="<<res<<"\n";
+    delete []ss;
     return res;
   }
 
@@ -1493,7 +1494,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
       ss = this->cal_nss2pl(kloc,samp1,samp2,&nssl,&OK);
       if ((OK)and(nssl>0)) nlocutil++;
     }
-    if(ss != NULL) delete []ss;
+    if(nssl>0) delete []ss;
     if (nlocutil<1) return 0.5;
     //cout<<"avant cal_freq\n";
     cal_freq(gr,st);
