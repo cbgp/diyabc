@@ -1866,6 +1866,7 @@ void ParticleC::put_one_mutation(int loc) {
 					return 2;
 				}
 				this->locuslist[loc].haplodna[sa][ind] = this->gt[loc].nodes[ordre[sa][ind]].dna;
+				this->gt[loc].nodes[ordre[sa][ind]].dna.clear();
 				ind++;if (ind==this->data.ssize[cat][sa]) {sa++;ind=0;}
 			}
 		}

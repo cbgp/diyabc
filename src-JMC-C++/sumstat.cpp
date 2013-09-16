@@ -1098,42 +1098,42 @@ extern int debuglevel;
   }
 
   void ParticleC::afs(int sample,int iloc,int kloc) {
-    int nf[4],ii,jj,cat;
-    this->n_afs[sample][iloc]=0;
-    //cout<<"sample "<<sample<<"  locus "<<kloc<<"   dnavar = "<<this->locuslist[kloc].dnavar <<"\n";
-    if (this->locuslist[kloc].dnavar==0) this->n_afs[sample][iloc]=0;
-    else {
-      for (int j=0;j<this->locuslist[kloc].dnavar;j++) {
-	//cout <<"site "<<j+1<<" sur "<<this->locuslist[kloc].dnavar<<"\n";
-	for (int k=0;k<4;k++) nf[k]=0;
-	cat = this->locuslist[kloc].type % 5;
-	for (int i=0;i<this->data.ssize[cat][sample];i++) {
-	  //if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
-	  //cout<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"\n";
-	  switch(this->locuslist[kloc].haplodnavar[sample][i][j])
-	    { case 'A' :nf[0]++;break;
-	    case 'C' :nf[1]++;break;
-	    case 'G' :nf[2]++;break;
-	    case 'T' :nf[3]++;break;
-	    }
-	  //}
-	}
-	//tri des frequences dans l'ordre croissant
-	for (int i=0;i<3;i++) {for (int k=i+1;k<4;k++) if (nf[i]>nf[k]) {ii=nf[i];nf[i]=nf[k];nf[k]=ii;}}
-	//for (int i=0;i<4;i++) cout <<nf[i]<<"  ";cout<<"\n";
-	//recherche de la plus petite fréquence non nulle
-	jj=0;while ((nf[jj]==0)and(jj<4)) jj++;
-	if (jj<3) {
-	  this->n_afs[sample][iloc]++;
-	  this->t_afs[sample][iloc].push_back(nf[jj]);
-	}
-      }
-    }
-    //cout<<"sample "<<sample<<"  locus "<<iloc<<"   n_afs = "<<this->n_afs[sample][iloc]<<"\n";
-    //if (this->n_afs[sample][iloc]>0) {for (int i=0;i<n_afs[sample][iloc];i++) cout<<"  "<<t_afs[sample][iloc][i];cout<<"\n";}
-    this->afsdone[sample][iloc]=true;
+	  int nf[4],ii,jj,cat;
+	  this->n_afs[sample][iloc]=0;
+	  //cout<<"sample "<<sample<<"  locus "<<kloc<<"   dnavar = "<<this->locuslist[kloc].dnavar <<"\n";
+	  if (this->locuslist[kloc].dnavar==0) this->n_afs[sample][iloc]=0;
+	  else {
+		  for (int j=0;j<this->locuslist[kloc].dnavar;j++) {
+			  //cout <<"site "<<j+1<<" sur "<<this->locuslist[kloc].dnavar<<"\n";
+			  for (int k=0;k<4;k++) nf[k]=0;
+			  cat = this->locuslist[kloc].type % 5;
+			  for (int i=0;i<this->data.ssize[cat][sample];i++) {
+				  //if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
+					  //cout<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"\n";
+					  switch(this->locuslist[kloc].haplodnavar[sample][i][j])
+					  { case 'A' :nf[0]++;break;
+						  case 'C' :nf[1]++;break;
+						  case 'G' :nf[2]++;break;
+						  case 'T' :nf[3]++;break;
+				  }
+				  //}
+		  }
+		  //tri des frequences dans l'ordre croissant
+		  for (int i=0;i<3;i++) {for (int k=i+1;k<4;k++) if (nf[i]>nf[k]) {ii=nf[i];nf[i]=nf[k];nf[k]=ii;}}
+		  //for (int i=0;i<4;i++) cout <<nf[i]<<"  ";cout<<"\n";
+		  //recherche de la plus petite fréquence non nulle
+		  jj=0;while ((nf[jj]==0)and(jj<4)) jj++;
+		  if (jj<3) {
+			  this->n_afs[sample][iloc]++;
+			  this->t_afs[sample][iloc].push_back(nf[jj]);
+		  }
+	  }
   }
-
+  //cout<<"sample "<<sample<<"  locus "<<iloc<<"   n_afs = "<<this->n_afs[sample][iloc]<<"\n";
+  //if (this->n_afs[sample][iloc]>0) {for (int i=0;i<n_afs[sample][iloc];i++) cout<<"  "<<t_afs[sample][iloc][i];cout<<"\n";}
+  this->afsdone[sample][iloc]=true;
+  }
+  
   long double ParticleC::cal_mns1p(int gr,int st){
     int iloc,kloc,nl=0;
     long double res=0.0;
