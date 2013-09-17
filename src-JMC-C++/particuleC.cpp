@@ -1627,8 +1627,16 @@ void ParticleC::put_one_mutation(int loc) {
 		  dnb = dna[n];
 		  if (n<0) {cout<<"probleme n="<<n<<"\n";exit(1);}
 		  if ((dna[n]!='A')and(dna[n]!='C')and(dna[n]!='G')and(dna[n]!='T')) {
-			  cout<<"probleme dna[n]="<<dna[n]<<"\n";
-			  exit(1);
+			  cout<<"probleme dna["<<n<<"]=<"<<dna[n]<<"> au locus "<<loc+1<<" du groupe "<<this->locuslist[loc].groupe<<"\n";
+			  cout<<"sequence au noeud "<<this->gt[loc].branches[b].bottom<<":\n";
+			  n=0;int i=0;
+			  while (n<dna.length()){
+				  cout<<dna[n];
+				  i++;
+				  if (i=50) {cout<<"\n";i=0;}
+				  n++;
+			}
+			  //exit(1);
 		  }
 		  switch (dna[n])
 		  {  	case 'A' :
