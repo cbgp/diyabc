@@ -160,7 +160,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
             col = self.tab_colors[(int(first_line_tab[i])%len(self.tab_colors))]
             plotc.axes.plot(labs,dico_coord[first_line_tab[i]],label=legend_txt,c=col,marker='%s'%markerPlot)
 
-        plotc.axes.legend(bbox_to_anchor=(0.68, -0.07),ncol=4,prop={'size':9})
+        plotc.axes.legend(bbox_to_anchor=(0.8, -0.07),ncol=4,prop={'size':9})
         plotc.axes.axes.title.set_fontsize(10)
         for tick in plotc.axes.axes.xaxis.get_major_ticks():
                 tick.label1.set_fontsize(7)
