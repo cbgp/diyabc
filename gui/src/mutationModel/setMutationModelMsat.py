@@ -104,6 +104,20 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
                            self.ui.ilsrMeanEdit : [1,0,0],
                            self.ui.ilsrShapeEdit : [1,1,1]}
 
+    def checkGammaNoGamma(self):
+        if self.ui.mcpGammaRadio.isChecked():
+            self.mcpGamma(True)
+        else:
+            self.mcpNoGamma(True)
+        if self.ui.mmrGammaRadio.isChecked():
+            self.mmrGamma(True)
+        else:
+            self.mmrNoGamma(True)
+        if self.ui.msrGammaRadio.isChecked():
+            self.msrGamma(True)
+        else:
+            self.msrNoGamma(True)
+    
     def mmrGamma(self,act):
         """ [mmr] désactive mean et shape si gamma est coché
         """
@@ -323,6 +337,7 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
         self.ui.ilsrMaxEdit.setText(ilsrValues[1])
         self.ui.ilsrMeanEdit.setText(ilsrValues[2])
         self.ui.ilsrShapeEdit.setText(ilsrValues[3])
+        self.checkGammaNoGamma()
 
     def allValid(self,silent=False):
         """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur
