@@ -18,7 +18,7 @@ from variables import UIPATH
 formHistModel,baseHistModel = uic.loadUiType("%s/setHistFrame.ui"%UIPATH)
 
 class SetHistoricalModel(formHistModel,baseHistModel):
-    """ Classe pour la définition du modèle historique dans le cadre 
+    """ Classe pour la définition du modèle historique dans le cadre
     de la génération de la table de référence
     """
     def __init__(self,parent=None):
@@ -102,7 +102,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         """
         # le numero du nouveau scenario est la taille du tableau actuel de scenarios
         num_scenario = len(self.scList)+1
-        
+
         # creation de la groupbox a ajouter
         groupBox = QtGui.QGroupBox(self.ui.scScrollContent)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
@@ -219,7 +219,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         #fontt.setPointSize(fontt.pointSize() + 1)
         #self.ui.defPrButton.setText("Define\npriors")
         self.ui.defPrButton.setFont(fontt)
-    
+
     def rmSc(self):
         """ Suppression d'un scenario dans l'affichage et dans la liste locale
         """
@@ -244,7 +244,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         self.modifOnScenarios()
 
     def setUniformRp(self):
-        """ met les pourcentages à une valeur identique 
+        """ met les pourcentages à une valeur identique
         """
         if len(self.scList) != 0:
             val = 1.0/float(len(self.scList))
@@ -254,7 +254,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 lineEdit.setText(str(round(val,5)))
                 lineEdit.setDisabled(True)
 
-            
+
 
     def setOtherRp(self):
         """ redonne la possibilité de modifier à sa guise les pourcentages
@@ -422,7 +422,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             #print "param list",sc["checker"].parameters
             for param in sc["checker"].parameters:
                 params_order_list.append(param.name)
-                # si le paramètre était deja la, il reprend ses valeurs, 
+                # si le paramètre était deja la, il reprend ses valeurs,
                 # sinon les valeurs seront consultées plus tard à partir de la GUI
                 if param.name in dico_tmp.keys() and len(dico_tmp[param.name])>6:
                     #self.param_info_dico[param.name] = [param.category,dico_tmp[param.name][1],dico_tmp[param.name][2],dico_tmp[param.name][3],dico_tmp[param.name][4],dico_tmp[param.name][5],dico_tmp[param.name][6]]
@@ -535,7 +535,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 #print "  "
                 #for  b in t.br : print b
                 #print "  "
-                #for s in t.segments: 
+                #for s in t.segments:
                 #    print s
                 #    print type(s)
                 dico_sc_infos = {}
@@ -566,6 +566,8 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         sinon retourne None
         """
         errors = ""
+        errorsTimeConditions = ""
+        scenariosList = []
         # construction de la liste de scenarios
         sc_txt_list = []
         for sc in self.scList:
@@ -576,10 +578,12 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         for num,sc in enumerate(sc_txt_list):
             log(3,"Checking scenario. Data : %s"%self.parent.data)
             scChecker = Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
+            scenariosList.append(scChecker)
             try:
                 #print self.parent.data
                 scChecker.checkread(sc.strip().split('\n'),self.parent.data)
                 scChecker.checklogic()
+                #kkpzerrorsTimeConditions = scChecker.getMandatoryTimeConditions()
                 dico_sc_infos = {}
                 dico_sc_infos["text"] = sc.strip().split('\n')
                 dico_sc_infos["checker"] = scChecker
@@ -592,11 +596,52 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 nb_scenarios_invalides += 1
         # si tous les scenarios sont bons, on renvoie les données utiles, sinon on renvoie None
         if nb_scenarios_invalides == 0:
+            errorsTimeConditions = self.checkTimeConditions(scenariosList, silent)
             return self.scenarios_info_list
         else:
             if not silent:
                 output.notify(self,"Scenario error","%s"%errors)
             return None
+
+    def checkTimeConditions(self, scenariosList, silent=False):
+        "look for missing mandatory conditions in scenarios"
+        conditionsSet = set([])
+        mirror = {"<=":">=",">=":"<="}
+        allToEgal = {"<":"<=",">":">=","<=":"<=",">=":">="}
+        for sc in scenariosList :
+            for condition in sc.getMandatoryTimeConditions() :
+                conditionsSet.add(condition)
+        # check if times overlaps, if not delete
+        for condition in list(conditionsSet) :
+            try :
+                if self.param_info_dico[condition[0]][3] < self.param_info_dico[condition[0]][2] :
+                    conditionsSet.remove(condition)
+            except KeyError, e :
+                conditionsSet.remove(condition)
+        # check if user has already wrote the condition, if so , delete it
+        for cond in self.condList:
+                lab = cond.findChild(QLabel,"condLabel")
+                condText = str(lab.text()).strip()
+                for b in ['<=','<','>=','>'] :
+                    if b in condText :
+                        #b = comp
+                        a,c = condText.split(b)
+                        break
+                b = allToEgal[b]
+                conditionsSet = conditionsSet.difference(set([(a,b,c),(c,mirror[b],a)]))
+        if len(conditionsSet) == 0 :
+            return None
+        else :
+            if not silent :
+                warning = "The conditions below seem to avoid gene genealogy incongruencies :\n"
+                for cond in conditionsSet :
+                    warning += "".join(cond) + "\n"
+                warning += "Check this point before running simulations"
+                output.notify(self,"Time Conditions Warning","%s"%warning)
+            return conditionsSet
+
+
+
 
     def drawScenarios(self,scenarios_info_list):
         """ lance la fenetre ou se trouveront les graphes des scenarios
@@ -877,6 +922,8 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         if rpsum < 0.999 or rpsum > 1.001 and self.ui.otherRpRadio.isChecked():
             problems += "The sum of all posterior probabilities is equal to %s. It should be equal to 1"%rpsum
 
+
+
         if problems == "":
             if self.checkScenarios(silent=silent) != None:
                 if not self.scenarios_modified_since_define_priors:
@@ -1008,7 +1055,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             #visible = 0
             while i<len(self.paramList) and name != pname:
                 paramBox = self.paramList[i]
-                name = paramBox.findChild(QLabel,"paramNameLabel").text()                    
+                name = paramBox.findChild(QLabel,"paramNameLabel").text()
                 #visible = paramBox.findChild(QPushButton,"setCondButton").isVisible()
                 #print "visible : %s"%visible
                 i+=1
@@ -1108,7 +1155,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                         else:
                             self.addCondition(line)
                     l+=1
-            self.majProjectGui()                
+            self.majProjectGui()
         else:
             output.notify(self,"Error","The project directory does not exist anymore")
 

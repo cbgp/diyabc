@@ -16,14 +16,14 @@ class Error(Exception):
     pass
 
 class IOScreenError(Error):
-    """ Error editing texts"""  
+    """ Error editing texts"""
     pass
 
 class Event(object):
 
     EVENT_TYPE    = ('SAMPLE','REFSAMPLE','VARNE', 'MERGE', 'SPLIT', 'SEXUAL')
 
-    
+
     def __init__(self, action=None, pop=None, pop1=None, pop2=None, sample=None, Ne=None, N=None, time=None, graphtime =None, admixrate=None, numevent0=None,
                  sNe=None, stime=None, sadmixrate=None,xg=None,xc=None,xd=None,y=None, nindMref=0, nindFref=0):
         self.action     = action
@@ -42,24 +42,24 @@ class Event(object):
         self.xg         = xg
         self.xc         = xc
         self.xd         = xd
-        self.y          = y      
+        self.y          = y
         self.nindMref   = nindMref
         self.nindFref   = nindFref
-        
+
     def __repr__(self):
         return "Event (time=%s, graphtime=%s, stime=%s, action=%s, pop=%s, pop1=%s, pop2=%s, sample=%s, Ne=%s, sNe=%s, admixrate=%s, sadmixrate=%s, numevent0=%s, xg=%s, xc=%s, xd=%s, y=%s" % (self.time,self.graphtime,self.stime,self.action,self.pop,self.pop1,self.pop2,self.sample,self.Ne,self.sNe,self.admixrate,self.sadmixrate,self.numevent0,self.xg,self.xc,self.xd,self.y)
     def __gt__(self,other):
         return self.time>other.time
-    
-    def __lt__(self,other):        
+
+    def __lt__(self,other):
         return self.time<other.time
-    
+
     def __eq__(self,other):
         return self.time==other.time
-    
+
     def __ne__(self,other):
         return self.time != other.time
-    
+
 class History(object):
     def __init__(self,events=None,ne0s=None,time0=None,time1=None):
         if events == None : self.events = []
@@ -69,7 +69,7 @@ class History(object):
         self.time0 = time0
         self.time1 = time1
         self.NN = []
-        
+
     def sortEvents(self):
         self.events.sort()
         n=len(self.events)
@@ -79,9 +79,9 @@ class History(object):
                     a=self.events[i]
                     self.events[i]=self.events[j]
                     self.events[j]=a
-                    
+
 class SequenceBit(object):
-    def __init__(self, action=None, N=None, pop=None, pop1=None, pop2=None, sample=None, admixrate=None, t0=None, t1=None):                
+    def __init__(self, action=None, N=None, pop=None, pop1=None, pop2=None, sample=None, admixrate=None, t0=None, t1=None):
         self.action     = action
         self.pop        = pop
         self.pop1       = pop1
@@ -100,37 +100,37 @@ class SequenceBit(object):
             if (other.action=="ADSAMP")and(self.action!="ADSAMP"): return True
             elif (self.action=="ADSAMP")and(other.action!="ADSAMP"): return False
         return self.t0>other.t0
-    
-    def __lt__(self,other):        
+
+    def __lt__(self,other):
         if self.t0 == other.t0 :
             if (other.action=="ADSAMP")and(self.action!="ADSAMP"): return False
             elif (self.action=="ADSAMP")and(other.action!="ADSAMP"): return True
         return self.t0<other.t0
-    
+
     def __eq__(self,other):
         if self.t0 == other.t0 :
             if (other.action=="ADSAMP")and(self.action!="ADSAMP"): return False
             elif (self.action=="ADSAMP")and(other.action!="ADSAMP"): return False
             else : return True
         return False
-    
+
     def __ne__(self,other):
         if self.t0 == other.t0 :
             if (other.action=="ADSAMP")and(self.action!="ADSAMP"): return False
             elif (self.action=="ADSAMP")and(other.action!="ADSAMP"): return False
         return True
-        
+
 class Sequence(list) :
     def append(self,value):
         if isinstance(value,SequenceBit) :
             super(Sequence,self).append(value)
         else :
             raise ValueError , "This is not a SequenceBit"
-       
-    
-    
+
+
+
 class Scenario(object):
-    def __init__(self,parameters=None,history=None,refhistory=None, number=None, time_sample=None, 
+    def __init__(self,parameters=None,history=None,refhistory=None, number=None, time_sample=None,
 					prior_proba=None, nparamtot=None, popmax=None, npop=None, nsamp=None, nrefsamp=None):
         if parameters == None :  self.parameters = []
         else                  :  self.parameters = parameters
@@ -147,8 +147,8 @@ class Scenario(object):
         self.dicoPopRefNindRef = {}
         if time_sample == None : self.time_sample =[]
         else                   : self.time_sample= time_sample
-        
-          
+
+
     def setgraphtime(self):
         for i in range(len(self.history.events)-1) :
             for j in range(i+1,len(self.history.events)) :
@@ -195,8 +195,8 @@ class Scenario(object):
                     if trouve : ev.graphtime = self.history.events[k].graphtime
                     else      : ev.graphtime = self.history.events[iev-1].graphtime+1
             if ev.graphtime>self.history.time1 : self.history.time1=ev.graphtime
-                    
-         
+
+
     def detparam(self,s,category):
         s1 = s
         ss = []
@@ -227,17 +227,17 @@ class Scenario(object):
 					if not trouve : self.parameters.append(pr)
 				else :
 					self.parameters.append(pr)
-                     
 
-    
+
+
     def checkread(self,textarray,data=None):
         if len(self.parameters)>0 :
-            self.parametersbackup = copy.deepcopy(self.parameters) 
+            self.parametersbackup = copy.deepcopy(self.parameters)
             self.parameters = []
         else : self.parametersbackup = []
-        ligne0 = textarray[0]   #take the first line of the scenario 
+        ligne0 = textarray[0]   #take the first line of the scenario
         ligne  =ligne0.upper()  #put it in uppercase
-        if ligne.find('SAMPLE')+ligne.find('REFSAMPLE')+ligne.find('MERGE')+ligne.find('VARNE')+ligne.find('SPLIT')+ligne.find('SEXUAL')>-4: 
+        if ligne.find('SAMPLE')+ligne.find('REFSAMPLE')+ligne.find('MERGE')+ligne.find('VARNE')+ligne.find('SPLIT')+ligne.find('SEXUAL')>-4:
             raise IOScreenError, "The first line must provide effective population sizes"
         ls = ligne0.split()
         self.npop = len(ls)
@@ -250,14 +250,14 @@ class Scenario(object):
             else                          : NN.name, NN.val, NNc.name, NNc.val = l, None, l, None
             self.history.ne0s.append(NN)
             Ncur.append(NNc)
-            if NN.val == None : self.detparam(NN.name,"N")   
+            if NN.val == None : self.detparam(NN.name,"N")
         self.nsamp = 0
         self.nrefsamp = 0
         nevent = 0
         pat = re.compile(r'\s+')
         for i,li_n_c in enumerate(textarray[1:]):
             li = pat.sub(' ',li_n_c)
-            if li.upper().find('SAMPLE')+li.upper().find('REFSAMPLE') > -1 : 
+            if li.upper().find('SAMPLE')+li.upper().find('REFSAMPLE') > -1 :
                 self.nsamp+=1
                 if li.upper().find('REFSAMPLE') > -1 :
                     self.dicoPopRefNindRef[int(li.strip().split(' ')[-3])] = int(li.strip().split(' ')[-1]) + int(li.strip().split(' ')[-2])
@@ -265,9 +265,9 @@ class Scenario(object):
                 if (len(li.strip().split(' ')) < 3)or(len(li.strip().split(' ')) == 4):
                     raise IOScreenError, "At line %i, the number of words is incorrect"%(i+2)
                 # verif que le nombre apres "sample" est bien inférieur ou egal au nombre de pop (len(Ncur))
-                if (li.upper().find(' SAMPLE')>-1) and (int(li.strip().split(' ')[2]) > len(Ncur)): 
+                if (li.upper().find(' SAMPLE')>-1) and (int(li.strip().split(' ')[2]) > len(Ncur)):
                     raise IOScreenError, "At line %i, the population number (%s) is higher than the number of population (%s) defined at line 1"%((i+2),li.split(' ')[-1],len(Ncur))
-                
+
                 if (li.upper().find('REFSAMPLE')>-1) and (int(li.strip().split(' ')[2]) > len(Ncur)):
                     raise IOScreenError, "At line %i, the population number (%s) is higher than the number of population (%s) defined at line 1"%((i+2),li.split(' ')[-1],len(Ncur))
         if self.nsamp<1 :
@@ -281,7 +281,7 @@ class Scenario(object):
                 for ili1 in range(ili0+1,len(textarray)) :
                     li0tem = textarray[ili0].split()
                     li1tem = textarray[ili1].split()
-                    idem = False  
+                    idem = False
                     if len(li0tem) == len(li1tem) :
                         idem = True
                         j = 0
@@ -289,7 +289,7 @@ class Scenario(object):
                             idem = (li0tem[j] == li1tem[j])
                             j +=1
                     if idem :
-                        raise IOScreenError,"Lines %s and %s of scenario %s are identical"%(ili0+1,ili1+1,self.number)                 
+                        raise IOScreenError,"Lines %s and %s of scenario %s are identical"%(ili0+1,ili1+1,self.number)
             j,ns = 0, 0
             for jli0 in range(1,len(textarray)):
                 if len(textarray[jli0])>0:
@@ -298,22 +298,22 @@ class Scenario(object):
                     Li = li.upper()
                     litem = li.split()
                     nitems = len(litem)
-                    
+
                     if Li.find(" SAMPLE")+ Li.find("REFSAMPLE")>-1:
                         if (nitems<3)or(nitems==4):
                             raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
                         self.cevent = Event()
                         self.cevent.numevent0 = nevent
                         nevent +=1
-                        if Li.find(" SAMPLE")>-1 : 
+                        if Li.find(" SAMPLE")>-1 :
 							self.cevent.action = "SAMPLE"
-                        if Li.find("REFSAMPLE")>-1 : 
+                        if Li.find("REFSAMPLE")>-1 :
 							self.cevent.action = "REFSAMPLE"
                         self.cevent.stime = litem[0]
                         if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
                         if isaninteger(litem[2]):
-                            self.cevent.pop = int(litem[2]) 
+                            self.cevent.pop = int(litem[2])
                         else :
                             raise IOScreenError, "Unable to read population number on line %s of scenario %s"%(jli0+1,self.number)
                         self.cevent.Ne=Ncur[self.cevent.pop-1].val
@@ -335,8 +335,8 @@ class Scenario(object):
 							if Li.find(" SAMPLE") != -1 and (data!=None):
 								if self.cevent.nindMref+self.cevent.nindFref > data.nind[self.cevent.pop-1] :
 									raise IOScreenError, "The total number of reference individuals (%s) is larger than that of the data set (%s) on line %s of scenario %s"%(self.cevent.nindMref+self.cevent.nindFref,data.nind[self.cevent.pop-1],jli0+1,self.number)
-									
-								
+
+
                     elif Li.find("VARNE")>-1:
                         if nitems<4:
                             raise IOScreenError, "Line %s of scenario %s is incomplete"%(jli0+1,self.number)
@@ -348,7 +348,7 @@ class Scenario(object):
                         if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
                         if isaninteger(litem[2]):
-                            self.cevent.pop = int(litem[2]) 
+                            self.cevent.pop = int(litem[2])
                         else :
                             raise IOScreenError, "Unable to read population number on line %s of scenario %s"%(jli0+1,self.number)
                         if isaninteger(litem[3]):
@@ -371,11 +371,11 @@ class Scenario(object):
                         if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
                         if isaninteger(litem[2]):
-                            self.cevent.pop = int(litem[2]) 
+                            self.cevent.pop = int(litem[2])
                         else :
                             raise IOScreenError, "Unable to read the first population number on line %s of scenario %s"%(jli0+1,self.number)
                         if isaninteger(litem[3]):
-                            self.cevent.pop1 = int(litem[3]) 
+                            self.cevent.pop1 = int(litem[3])
                         else :
                             raise IOScreenError, "Unable to read the second population number on line %s of scenario %s"%(jli0+1,self.number)
                         self.cevent.Ne=Ncur[self.cevent.pop-1].val
@@ -391,22 +391,22 @@ class Scenario(object):
                         if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
                         if isaninteger(litem[2]):
-                            self.cevent.pop = int(litem[2]) 
+                            self.cevent.pop = int(litem[2])
                         else :
                             raise IOScreenError, "Unable to read the first population number on line %s of scenario %s"%(jli0+1,self.number)
                         if isaninteger(litem[3]):
-                            self.cevent.pop1 = int(litem[3]) 
+                            self.cevent.pop1 = int(litem[3])
                         else :
                             raise IOScreenError, "Unable to read the second population number on line %s of scenario %s"%(jli0+1,self.number)
                         if isaninteger(litem[4]):
-                            self.cevent.pop2 = int(litem[4]) 
+                            self.cevent.pop2 = int(litem[4])
                         else :
                             raise IOScreenError, "Unable to read the third population number on line %s of scenario %s"%(jli0+1,self.number)
                         if isafloat(litem[5]):
-                            self.cevent.admixrate = float(litem[5]) 
+                            self.cevent.admixrate = float(litem[5])
                         else :
                             self.cevent.sadmixrate = litem[5]
-                            self.detparam(litem[5],"A")    
+                            self.detparam(litem[5],"A")
                         self.cevent.Ne=Ncur[self.cevent.pop-1].val
                         self.cevent.sNe=Ncur[self.cevent.pop-1].name
                     elif Li.find("SEXUAL")>-1:
@@ -420,7 +420,7 @@ class Scenario(object):
                         if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
                         if isaninteger(litem[2]):
-                            self.cevent.pop = int(litem[2]) 
+                            self.cevent.pop = int(litem[2])
                         else :
                             raise IOScreenError, "Unable to read population number on line %s of scenario %s"%(jli0+1,self.number)
                         self.cevent.Ne=Ncur[self.cevent.pop-1].val
@@ -443,20 +443,22 @@ class Scenario(object):
                         trouve = (pb.name == p.name) and (pb.category == p.category)
                     if trouve : self.parameters[i].value = pb.value
 #                    self.smoothgraphtime()
-            
+
     def checklogic(self):
         maxpop = 0
         for ev in self.history.events :
-            if ev.pop>maxpop :  maxpop =ev.pop 
-            if ev.pop1>maxpop :  maxpop =ev.pop1 
+            if ev.pop>maxpop :  maxpop =ev.pop
+            if ev.pop1>maxpop :  maxpop =ev.pop1
             if ev.pop2>maxpop :  maxpop =ev.pop2
         if self.npop != maxpop :
             raise IOScreenError, "In scenario %s, the number of population sizes in line 1 is different from the number of populations"%(self.number)
         popexist = []
         for j in range(0,maxpop+1) : popexist.append(True)
         for iev,ev in enumerate(self.history.events):
+#             print "iev =======\n", iev # kkpz
+#             print "ev =======\n", ev, "\n\n\n"
             if (ev.action == "SAMPLE") and (not popexist[ev.pop]) :
-                raise IOScreenError, "In scenario %s line %s sample is taken from population %s which does not exist anymore"%(self.number,iev+1,ev.pop) 
+                raise IOScreenError, "In scenario %s line %s sample is taken from population %s which does not exist anymore"%(self.number,iev+1,ev.pop)
             elif ev.action == "MERGE" :
                 if ev.pop == ev.pop1 :
                     raise IOScreenError, "In scenario %s line %s, population %s merges with itself"%(self.number,iev+1,ev.pop)
@@ -464,7 +466,7 @@ class Scenario(object):
                     popexist[ev.pop1] = False
                 else :
                     if not popexist[ev.pop] :
-                        raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop) 
+                        raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop)
                     if not popexist[ev.pop1] :
                         raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop1)
             elif ev.action == "SPLIT" :
@@ -474,7 +476,7 @@ class Scenario(object):
                     popexist[ev.pop] = False
                 else :
                     if not popexist[ev.pop] :
-                        raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop) 
+                        raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop)
                     if not popexist[ev.pop1] :
                         raise IOScreenError, "In scenario %s line %s, population %s does not exist anymore"%(self.number,iev+1,ev.pop1)
                     if not popexist[ev.pop2] :
@@ -488,20 +490,45 @@ class Scenario(object):
                 s = s + " %s"%(ip)
         if np>1 :
             raise IOScreenError, "In scenario %s, more than one population (%s) are ancestral"%(self.number,s)
-        self.refhistory = copy.deepcopy(self.history)        
-                                           
+        self.refhistory = copy.deepcopy(self.history)
+
+
+    def getMandatoryTimeConditions(self):
+        "return theoritical mandatory time conditions. No verification is done on overlapping times"
+        mandatoryTimeConditions = []
+        maxpop = 0
+        for ev in self.history.events :
+            if ev.pop>maxpop :  maxpop =ev.pop
+            if ev.pop1>maxpop :  maxpop =ev.pop1
+            if ev.pop2>maxpop :  maxpop =ev.pop2
+        myEvents = [x  for x in self.history.events if x.action in ["MERGE", "VARNE", "SPLIT"]]
+        for i in range(len(myEvents)-1, -1, -1) :
+            ev = myEvents[i]
+            for ii in range(i-1,-1,-1) :
+                # for MERGE or varNE of any of the event, and for an old split
+                if  myEvents[ii].pop  in [myEvents[i].pop1, myEvents[i].pop2]:
+                    mandatoryTimeConditions.append((myEvents[i].stime, '>=', myEvents[ii].stime))
+                # if SPLIT  is the syounguest event
+                if myEvents[ii].action == "SPLIT" and len(set([myEvents[ii].pop1,myEvents[ii].pop2]).intersection(set([myEvents[i].pop1, myEvents[i].pop2]))):
+                    mandatoryTimeConditions.append((myEvents[i].stime, '>', myEvents[ii].stime))
+        return mandatoryTimeConditions
+
+
+
+
+
 class Scenarios(list):
     def append(self,value):
         if isinstance(value,Scenario) :
             super(Scenarios,self).append(value)
         else :
             raise ValueError , "This is not a Scenario"
-        
+
 class Ne0(object):
     def __init__(self, val=None, name=None):
         self.val    = val
         self.name   = name
-        
+
     def __str__ (self) :
         return "val=%s, name=%s" % (self.val,self.name)
 
@@ -510,8 +537,8 @@ class Ne0(object):
 
 
 
-    
-    
+
+
 def testCheckScenario():
     goodScenario = [
                      ['N N', '0 sample 1', '0 sample 2', "t1-db merge 1 2","t1 VarNe 1 Nb"],
@@ -522,7 +549,7 @@ def testCheckScenario():
                    ['N N N', '0 sample 1', '0 sample 2', "1 sample 3", "3 merge 1 2"],
                    ['N N N', '0 sample ', '0 sample 2', "1 sample 3", "3 merge 1 2"]
                    ]
-    
+
     # tests good scenario
     print "Good scenarios"
     for it,t in enumerate(goodScenario) :
@@ -541,7 +568,7 @@ def testCheckScenario():
         print " "
         for p in s.parameters : print p
         print " "
-            
+
     # tests bad scenario
     print "Bad scenarios"
     for it,t in enumerate(badScenario) :
@@ -559,8 +586,8 @@ def testCheckScenario():
         print"   "
         for p in s.parameters : print p
         print " "
-    
-        
+
+
 if __name__ == "__main__" :
     testCheckScenario()
-    
+
