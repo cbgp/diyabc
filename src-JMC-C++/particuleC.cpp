@@ -2014,7 +2014,7 @@ void ParticleC::put_one_mutation(int loc) {
 			FILE *flog;
 			cout<<checktree<<"\n";
 			this->scen.ecris(true);
-			checktree="A gene genealogy failed in scenario "+IntToString(numscen)+". Check scenario and prior consistency.\n  ";
+			checktree="A gene genealogy failed in scenario "+IntToString(numscen)+". Check consistency of this scenario over possible prior ranges of time event parameters.\n  ";
 			flog=fopen(reftablelogfilename.c_str(),"w");fprintf(flog,"%s",checktree.c_str());fclose(flog);
 			exit(1);
 		  } else return 1;
@@ -2312,7 +2312,7 @@ void ParticleC::put_one_mutation(int loc) {
 	FILE *flog;
 	cout<<checktree<<"\n";
 	this->scen.ecris();
-	checktree="A gene genealogy failed in scenario "+IntToString(numscen+1)+". Check scenario and prior consistency.\n  ";
+	checktree="A gene genealogy failed in scenario "+IntToString(numscen+1)+". Check consistency of this scenario over possible prior ranges of time event parameters..\n  ";
 	flog=fopen(reftablelogfilename,"w");fprintf(flog,"%s",checktree.c_str());fclose(flog);
 	exit(1);
         }
