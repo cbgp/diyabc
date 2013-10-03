@@ -529,17 +529,20 @@ class Scenario(object):
                         if ccc[2] == cc[0] and ccc[0] == c[0]:
                             toRM.append(c)
 
-        toRM = []
-        for c in lm :
-            toRM.append(self._f(m.difference(c), c[0], c))
+        mandatoryTimeConditions = [x for x in mandatoryTimeConditions if x not in toRM]
 
 
-
-        print " %%%%%%%%%%%%%%%%%%%%%%ù%% \n"
-        print mandatoryTimeConditions
-        print " *********************** \n"
-        print toRM
-        print " ++++++++++++++++++++++++ \n"
+#         toRM = []
+#         for c in lm :
+#             toRM.append(self._f(m.difference(c), c[0], c))
+#
+#
+#
+#         print " %%%%%%%%%%%%%%%%%%%%%%ù%% \n"
+#         print mandatoryTimeConditions
+#         print " *********************** \n"
+#         print toRM
+#         print " ++++++++++++++++++++++++ \n"
         return mandatoryTimeConditions
     def _f(self,lcs, a, setG):
         lm = list(lcs)
