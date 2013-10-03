@@ -434,7 +434,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 		else {
 			enreg[ipart].message  = "A gene genealogy failed in scenario ";
 			enreg[ipart].message += IntToString(this->particule[ipart].scen.number);
-			enreg[ipart].message += ". Check consistency of the scenario over possible historical parameter ranges.";
+			enreg[ipart].message += ". Check consistency of this scenario over possible prior ranges of time event parameters.";
 		}
 	}
 	cout<<"fin de dosimulphistar\n";

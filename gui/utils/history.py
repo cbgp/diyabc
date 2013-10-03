@@ -131,7 +131,7 @@ class Sequence(list) :
 
 class Scenario(object):
     def __init__(self,parameters=None,history=None,refhistory=None, number=None, time_sample=None,
-					prior_proba=None, nparamtot=None, popmax=None, npop=None, nsamp=None, nrefsamp=None):
+                    prior_proba=None, nparamtot=None, popmax=None, npop=None, nsamp=None, nrefsamp=None):
         if parameters == None :  self.parameters = []
         else                  :  self.parameters = parameters
         self.history     = history
@@ -161,10 +161,10 @@ class Scenario(object):
             j = i-1
             while j>=0 :
                 if (self.history.events[i].pop == self.history.events[j].pop) :
-					if (self.history.events[i].action !='VARNE') :
-						self.history.events[i].sNe = self.history.events[j].sNe
-					if (self.history.events[j].action =='VARNE') :
-						break
+                    if (self.history.events[i].action !='VARNE') :
+                        self.history.events[i].sNe = self.history.events[j].sNe
+                    if (self.history.events[j].action =='VARNE') :
+                        break
                 j = j-1
 ###
         if self.history.events[0].time == None  : self.history.time0,self.history.events[0].graphtime = 0,0
@@ -212,21 +212,21 @@ class Scenario(object):
                 ss.append(s1[:posigne])
                 s1 = s1[posigne+1:]
         for j in range(len(ss)) :
-			if not isaninteger(ss[j]):
-				pr = param.HistParameter()
-				pr.category,pr.prior = category, None
-				pr.name, pr.value = ss[j], None
-				if len(self.parameters) >0 :
-					trouve = False
-					i = -1
-					while (not trouve) and (i<len(self.parameters)-1) :
-						i +=1
-						trouve = pr.name == self.parameters[i].name
-						if trouve and (self.parameters[i].category != category):
-							raise IOScreenError, "%s is used as a %s parameter and %s parameter"%(pr.name,param.HistParameter.categorydict[category],param.HistParameter.categorydict[self.parameters[i].category] )
-					if not trouve : self.parameters.append(pr)
-				else :
-					self.parameters.append(pr)
+            if not isaninteger(ss[j]):
+                pr = param.HistParameter()
+                pr.category,pr.prior = category, None
+                pr.name, pr.value = ss[j], None
+                if len(self.parameters) >0 :
+                    trouve = False
+                    i = -1
+                    while (not trouve) and (i<len(self.parameters)-1) :
+                        i +=1
+                        trouve = pr.name == self.parameters[i].name
+                        if trouve and (self.parameters[i].category != category):
+                            raise IOScreenError, "%s is used as a %s parameter and %s parameter"%(pr.name,param.HistParameter.categorydict[category],param.HistParameter.categorydict[self.parameters[i].category] )
+                    if not trouve : self.parameters.append(pr)
+                else :
+                    self.parameters.append(pr)
 
 
 
@@ -306,9 +306,9 @@ class Scenario(object):
                         self.cevent.numevent0 = nevent
                         nevent +=1
                         if Li.find(" SAMPLE")>-1 :
-							self.cevent.action = "SAMPLE"
+                            self.cevent.action = "SAMPLE"
                         if Li.find("REFSAMPLE")>-1 :
-							self.cevent.action = "REFSAMPLE"
+                            self.cevent.action = "REFSAMPLE"
                         self.cevent.stime = litem[0]
                         if isaninteger(litem[0]) : self.cevent.time = int(litem[0])
                         else : self.detparam(litem[0],"T")
@@ -322,19 +322,19 @@ class Scenario(object):
                         self.cevent.sample = ns
                         self.time_sample.append(self.cevent.time)
                         if (nitems==5):
-							if isaninteger(litem[3]):
-								self.cevent.nindMref = int(litem[3])
-							else :
-								raise IOScreenError, "Unable to read number of males on line %s of scenario %s"%(jli0+1,self.number)
-							if isaninteger(litem[4]):
-								self.cevent.nindFref = int(litem[4])
-							else :
-								raise IOScreenError, "Unable to read number of females on line %s of scenario %s"%(jli0+1,self.number)
-							#print self.cevent.nindMref,"   ",self.cevent.nindFref
-							#print "                 ",data.nind[0]
-							if Li.find(" SAMPLE") != -1 and (data!=None):
-								if self.cevent.nindMref+self.cevent.nindFref > data.nind[self.cevent.pop-1] :
-									raise IOScreenError, "The total number of reference individuals (%s) is larger than that of the data set (%s) on line %s of scenario %s"%(self.cevent.nindMref+self.cevent.nindFref,data.nind[self.cevent.pop-1],jli0+1,self.number)
+                            if isaninteger(litem[3]):
+                                self.cevent.nindMref = int(litem[3])
+                            else :
+                                raise IOScreenError, "Unable to read number of males on line %s of scenario %s"%(jli0+1,self.number)
+                            if isaninteger(litem[4]):
+                                self.cevent.nindFref = int(litem[4])
+                            else :
+                                raise IOScreenError, "Unable to read number of females on line %s of scenario %s"%(jli0+1,self.number)
+                            #print self.cevent.nindMref,"   ",self.cevent.nindFref
+                            #print "                 ",data.nind[0]
+                            if Li.find(" SAMPLE") != -1 and (data!=None):
+                                if self.cevent.nindMref+self.cevent.nindFref > data.nind[self.cevent.pop-1] :
+                                    raise IOScreenError, "The total number of reference individuals (%s) is larger than that of the data set (%s) on line %s of scenario %s"%(self.cevent.nindMref+self.cevent.nindFref,data.nind[self.cevent.pop-1],jli0+1,self.number)
 
 
                     elif Li.find("VARNE")>-1:
@@ -496,6 +496,7 @@ class Scenario(object):
     def getMandatoryTimeConditions(self):
         "return theoritical mandatory time conditions. No verification is done on overlapping times"
         mandatoryTimeConditions = []
+        m = set()
         maxpop = 0
         for ev in self.history.events :
             if ev.pop>maxpop :  maxpop =ev.pop
@@ -508,16 +509,50 @@ class Scenario(object):
                 if myEvents[i].action == "SPLIT" :
                     if myEvents[i].pop  in  [myEvents[ii].pop, myEvents[ii].pop1, myEvents[ii].pop2]:
                         mandatoryTimeConditions.append((myEvents[ii].stime, '>', myEvents[i].stime))
+                        m.add((myEvents[ii].stime, '>', myEvents[i].stime))
                                 # if SPLIT  is the younguest event
                 #if myEvents[ii].action == "SPLIT" and len(set([myEvents[ii].pop1,myEvents[ii].pop2]).intersection(set([myEvents[i].pop1, myEvents[i].pop2]))):
                 elif myEvents[ii].action == "SPLIT" :
                     if myEvents[i].pop1 in [myEvents[ii].pop, myEvents[ii].pop1, myEvents[ii].pop2]:
                         mandatoryTimeConditions.append((myEvents[i].stime, '>', myEvents[ii].stime))
+                        m.add((myEvents[i].stime, '>', myEvents[ii].stime))
                 # for MERGE or varNE of any of the event,
                 elif  myEvents[ii].pop  in [myEvents[i].pop1, myEvents[i].pop2]:
                     mandatoryTimeConditions.append((myEvents[i].stime, '>=', myEvents[ii].stime))
+                    m.add((myEvents[i].stime, '>=', myEvents[ii].stime))
+        lm = list(m)
+        toRM = []
+        for c in lm :
+            for cc in list(m.difference(c)) :
+                if cc[2] == c[2] :
+                    for ccc in list(m.difference(c, cc)) :
+                        if ccc[2] == cc[0] and ccc[0] == c[0]:
+                            toRM.append(c)
 
+        toRM = []
+        for c in lm :
+            toRM.append(self._f(m.difference(c), c[0], c))
+
+
+
+        print " %%%%%%%%%%%%%%%%%%%%%%ù%% \n"
+        print mandatoryTimeConditions
+        print " *********************** \n"
+        print toRM
+        print " ++++++++++++++++++++++++ \n"
         return mandatoryTimeConditions
+    def _f(self,lcs, a, setG):
+        lm = list(lcs)
+        for c in lm :
+            for cc in list(lcs.difference(c)) :
+                if cc[2] == c[2] :
+                    for ccc in list(lcs.difference(c, cc)) :
+                        if ccc[2] == cc[0] :
+                            if ccc[0] == c[0]:
+                                return c
+                            else :
+                                return self._f(lcs.difference(c, cc, ccc), a, ccc)
+        return None
 
 
 
