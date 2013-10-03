@@ -505,12 +505,18 @@ class Scenario(object):
         for i in range(len(myEvents)-1, -1, -1) :
             ev = myEvents[i]
             for ii in range(i-1,-1,-1) :
-                # for MERGE or varNE of any of the event, and for an old split
-                if  myEvents[ii].pop  in [myEvents[i].pop1, myEvents[i].pop2]:
+                if myEvents[i].action == "SPLIT" :
+                    if myEvents[i].pop  in  [myEvents[ii].pop, myEvents[ii].pop1, myEvents[ii].pop2]:
+                        mandatoryTimeConditions.append((myEvents[ii].stime, '>', myEvents[i].stime))
+                                # if SPLIT  is the younguest event
+                #if myEvents[ii].action == "SPLIT" and len(set([myEvents[ii].pop1,myEvents[ii].pop2]).intersection(set([myEvents[i].pop1, myEvents[i].pop2]))):
+                elif myEvents[ii].action == "SPLIT" :
+                    if myEvents[i].pop1 in [myEvents[ii].pop, myEvents[ii].pop1, myEvents[ii].pop2]:
+                        mandatoryTimeConditions.append((myEvents[i].stime, '>', myEvents[ii].stime))
+                # for MERGE or varNE of any of the event,
+                elif  myEvents[ii].pop  in [myEvents[i].pop1, myEvents[i].pop2]:
                     mandatoryTimeConditions.append((myEvents[i].stime, '>=', myEvents[ii].stime))
-                # if SPLIT  is the syounguest event
-                if myEvents[ii].action == "SPLIT" and len(set([myEvents[ii].pop1,myEvents[ii].pop2]).intersection(set([myEvents[i].pop1, myEvents[i].pop2]))):
-                    mandatoryTimeConditions.append((myEvents[i].stime, '>', myEvents[ii].stime))
+
         return mandatoryTimeConditions
 
 

@@ -633,11 +633,11 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             return None
         else :
             if not silent :
-                warning = "The conditions below seem to avoid gene genealogy incongruencies :\n"
+                warning = "You may want to add the conditions below to avoid gene genealogies incongruenties :\n"
                 for cond in conditionsSet :
                     warning += "".join(cond) + "\n"
-                warning += "Check this point before running simulations"
-                output.notify(self,"Time Conditions Warning","%s"%warning)
+                warning += "This is an advisory warning ; you may prefer to ignore it."
+                output.notify(self,"Time Condition Warning","%s"%warning)
             return conditionsSet
 
 
