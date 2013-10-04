@@ -5,6 +5,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
+from collections import defaultdict
 #from uis.setHistFrame_ui import Ui_Frame
 from utils.visualizescenario import *
 from utils.history import *
@@ -230,18 +231,32 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
             self.param_info_dico[pname] = [self.param_info_dico[pname][0],val]
 
     def checkAll(self):
-        """ verification de la coherence des valeurs du modèle historique
+        """ verification de la coherence des valeurs du modèle historique. Vérification des conditions.
         """
         problems = ""
+        conditions = defaultdict(set)
+        for cond in self.parent.parent.findChildren(QtGui.QLabel, "condLabel") :
+            condText = str(cond.text()).strip()
+            for b in ['<=','<','>=','>'] :
+                if b in condText :
+                    a,c = condText.split(b)
+                    conditions[a].add((b,c))
+                    break
+        paramValues = {}
         for param in self.paramList:
             pname = str(param.findChild(QLabel,"paramNameLabel").text())
             try:
                 value =  float(param.findChild(QLineEdit,"meanValueParamEdit").text())
+                paramValues[pname] = value
                 if value < 0:
-                    problems += "Values for parameter %s are incoherent\n"%pname
+                    problems += "Values for parameter %s are incoherent.\n"%pname
             except Exception as e:
-                problems += "%s\n"%e
+                problems += "%s.\n"%e
 
+        for pname in paramValues.keys() :
+            for condition in conditions[pname] :
+                if not eval("{0} {1} {2}".format(paramValues[pname], condition[0], paramValues[condition[1]])) :
+                    problems += "Parameter {0} ({1}) must be {2} to parameter {3} ({4}).\n".format(pname, paramValues[pname], condition[0], condition[1], paramValues[condition[1]])
         if problems == "":
             return True
         else:
@@ -266,6 +281,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
     def validate(self):
         """ on vérifie ici que les valeurs sont bien des float et qu'elles sont bien supérieures à 0
         """
+
         if self.checkAll():
             self.majParamInfoDico()
             self.analysis.histParamsFixed = self.param_info_dico

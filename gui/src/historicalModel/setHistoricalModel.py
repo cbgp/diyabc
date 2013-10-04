@@ -598,7 +598,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         "look for missing mandatory conditions in scenarios"
         conditionsSet = set([])
         mirror = {"<=":">=", ">=":"<=", '<':'>', '>':'<'}
-        allToEgal = {"<":"<=", ">":">=", "<=":"<=", ">=":">="}
+        #allToEgal = {"<":"<=", ">":">=", "<=":"<=", ">=":">="}
         toggleEgal = {"<":"<=", ">":">=", "<=":"<", ">=":">"}
         for sc in scenariosList :
             for condition in sc.getMandatoryTimeConditions() :
@@ -618,7 +618,6 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                     if b in condText :
                         a,c = condText.split(b)
                         break
-                #b = allToEgal[b]
                 conditionsSet = conditionsSet.difference(set([(a,b,c),(c,mirror[b],a),(a,toggleEgal[b],c),(c,toggleEgal[mirror[b]],a)]))
         if len(conditionsSet) == 0 :
             return None
