@@ -494,7 +494,7 @@ class Scenario(object):
 
 
     def getMandatoryTimeConditions(self):
-        "return theoritical mandatory time conditions. No verification is done on overlapping times"
+        "return theoritical mandatory time conditions. Small verification is done on overlapping times, need a better one"
         mandatoryTimeConditions = []
         m = set()
         maxpop = 0
@@ -509,54 +509,22 @@ class Scenario(object):
                 if myEvents[i].action == "SPLIT" :
                     if myEvents[i].pop  in  [myEvents[ii].pop, myEvents[ii].pop1, myEvents[ii].pop2]:
                         mandatoryTimeConditions.append((myEvents[ii].stime, '>', myEvents[i].stime))
-                        m.add((myEvents[ii].stime, '>', myEvents[i].stime))
-                                # if SPLIT  is the younguest event
-                #if myEvents[ii].action == "SPLIT" and len(set([myEvents[ii].pop1,myEvents[ii].pop2]).intersection(set([myEvents[i].pop1, myEvents[i].pop2]))):
                 elif myEvents[ii].action == "SPLIT" :
                     if myEvents[i].pop1 in [myEvents[ii].pop, myEvents[ii].pop1, myEvents[ii].pop2]:
                         mandatoryTimeConditions.append((myEvents[i].stime, '>', myEvents[ii].stime))
-                        m.add((myEvents[i].stime, '>', myEvents[ii].stime))
                 # for MERGE or varNE of any of the event,
                 elif  myEvents[ii].pop  in [myEvents[i].pop1, myEvents[i].pop2]:
                     mandatoryTimeConditions.append((myEvents[i].stime, '>=', myEvents[ii].stime))
-                    m.add((myEvents[i].stime, '>=', myEvents[ii].stime))
         lm = list(m)
         toRM = []
         for c in lm :
-            for cc in list(m.difference(c)) :
+            for cc in list(m.difference([c])) :
                 if cc[2] == c[2] :
-                    for ccc in list(m.difference(c, cc)) :
+                    for ccc in list(m.difference([c, cc])) :
                         if ccc[2] == cc[0] and ccc[0] == c[0]:
                             toRM.append(c)
 
-        #mandatoryTimeConditions = [x for x in mandatoryTimeConditions if x not in toRM]
-
-
-        toRM = []
-        for c in lm :
-            toRM.append(self._f(m.difference(c), c[0], c))
-
-
-
-        print " %%%%%%%%%%%%%%%%%%%%%%ù%% \n"
-        print mandatoryTimeConditions
-        print " *********************** \n"
-        print toRM
-        print " ++++++++++++++++++++++++ \n"
-        return mandatoryTimeConditions
-
-    def _f(self,lcs, a, setG):
-        lm = list(lcs)
-        for c in lm :
-            for cc in list(lcs.difference(c)) :
-                if cc[2] == c[2] :
-                    for ccc in list(lcs.difference(c, cc)) :
-                        if ccc[2] == cc[0] :
-                            if ccc[0] == c[0]:
-                                return c
-                            else :
-                                return self._f(lcs.difference(c, cc, ccc), a, ccc)
-        return None
+        mandatoryTimeConditions = [x for x in mandatoryTimeConditions if x not in toRM]
 
 
 
