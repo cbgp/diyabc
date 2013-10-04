@@ -1914,37 +1914,37 @@ void ParticleC::put_one_mutation(int loc) {
 					return "probleme coal avec t1<t0";
 				}
 				/*if ((not popleine[this->seqlist[iseq].pop])and(this->seqlist[iseq].t1>this->seqlist[iseq].t0)) {
-					for (int jseq=0;jseq<=iseq;jseq++) {
-						this->seqlist[jseq].ecris();
-						for (int p=1;p<this->scen.popmax+1;p++) if (this->seqlist[jseq].popfull[p]) cout<<p<<"  ";
-				cout<<"\n";
-					}
-					cout<<"\n";
-					this->seqlist[iseq].ecris();return "probleme coal avec pop vide";
+				 * for (int jseq=0;jseq<=iseq;jseq++) {
+				 * this->seqlist[jseq].ecris();
+				 * for (int p=1;p<this->scen.popmax+1;p++) if (this->seqlist[jseq].popfull[p]) cout<<p<<"  ";
+				 * cout<<"\n";
+				 }
+				 cout<<"\n";
+				 this->seqlist[iseq].ecris();return "probleme coal avec pop vide";
 				}*/
-		}
-		else if (this->seqlist[iseq].action == 'M') {
-			if ((not popleine[this->seqlist[iseq].pop])and (not popleine[this->seqlist[iseq].pop1])) {
-				this->seqlist[iseq].ecris();return "probleme merge de deux pop vides";
 			}
-			popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
-			popleine[this->seqlist[iseq].pop1]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=false;
+			else if (this->seqlist[iseq].action == 'M') {
+				if ((not popleine[this->seqlist[iseq].pop])and (not popleine[this->seqlist[iseq].pop1])) {
+					this->seqlist[iseq].ecris();return "probleme merge de deux pop vides";
+				}
+				popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
+				popleine[this->seqlist[iseq].pop1]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=false;
+			}
+			else if (this->seqlist[iseq].action == 'S') {
+				if (not popleine[this->seqlist[iseq].pop]) {this->seqlist[iseq].ecris();return "probleme split avec pop vide";}
+				popleine[this->seqlist[iseq].pop]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=false;
+				popleine[this->seqlist[iseq].pop1]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=true;
+				popleine[this->seqlist[iseq].pop2]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop2]=true;
+			}
+			else if (this->seqlist[iseq].action == 'A') {
+				popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
+			}
+		}
+		//for (int iseq=0;iseq<this->nseq;iseq++){ delete [] this->seqlist[iseq].popfull;this->seqlist[iseq].popfull=NULL;}
+		delete []popleine;
+		return "";
 	}
-	else if (this->seqlist[iseq].action == 'S') {
-		if (not popleine[this->seqlist[iseq].pop]) {this->seqlist[iseq].ecris();return "probleme split avec pop vide";}
-		popleine[this->seqlist[iseq].pop]=false;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=false;
-		popleine[this->seqlist[iseq].pop1]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop1]=true;
-		popleine[this->seqlist[iseq].pop2]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop2]=true;
-		}
-		else if (this->seqlist[iseq].action == 'A') {
-			popleine[this->seqlist[iseq].pop]=true;this->seqlist[iseq].popfull[this->seqlist[iseq].pop]=true;
-			}
-			}
-			//for (int iseq=0;iseq<this->nseq;iseq++){ delete [] this->seqlist[iseq].popfull;this->seqlist[iseq].popfull=NULL;}
-				delete []popleine;
-			return "";
-			}
-			
+		
   /*bool ParticleC::polymref(int loc) {
     int nr=0,n1r=0,nd=0,n1d=0;
     double p;
