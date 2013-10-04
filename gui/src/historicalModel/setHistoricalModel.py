@@ -530,18 +530,9 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 #print self.parent.data
                 scChecker.checkread(sc.strip().split('\n'),self.parent.data)
                 scChecker.checklogic()
-                for ev in scChecker.history.events : print ev
-                #for  no in t.node : print no
-                #print "  "
-                #for  b in t.br : print b
-                #print "  "
-                #for s in t.segments:
-                #    print s
-                #    print type(s)
                 dico_sc_infos = {}
                 dico_sc_infos["text"] = sc.strip().split('\n')
                 dico_sc_infos["checker"] = scChecker
-                #print "nb param du sc ",num," ",scChecker.nparamtot
                 t = PopTree(scChecker)
                 t.do_tree()
                 dico_sc_infos["tree"] = t
@@ -606,8 +597,9 @@ class SetHistoricalModel(formHistModel,baseHistModel):
     def checkTimeConditions(self, scenariosList, silent=False):
         "look for missing mandatory conditions in scenarios"
         conditionsSet = set([])
-        mirror = {"<=":">=",">=":"<="}
-        allToEgal = {"<":"<=",">":">=","<=":"<=",">=":">="}
+        mirror = {"<=":">=", ">=":"<=", '<':'>', '>':'<'}
+        allToEgal = {"<":"<=", ">":">=", "<=":"<=", ">=":">="}
+        toggleEgal = {"<":"<=", ">":">=", "<=":"<", ">=":">"}
         for sc in scenariosList :
             for condition in sc.getMandatoryTimeConditions() :
                 conditionsSet.add(condition)
@@ -624,11 +616,10 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 condText = str(lab.text()).strip()
                 for b in ['<=','<','>=','>'] :
                     if b in condText :
-                        #b = comp
                         a,c = condText.split(b)
                         break
-                b = allToEgal[b]
-                conditionsSet = conditionsSet.difference(set([(a,b,c),(c,mirror[b],a)]))
+                #b = allToEgal[b]
+                conditionsSet = conditionsSet.difference(set([(a,b,c),(c,mirror[b],a),(a,toggleEgal[b],c),(c,toggleEgal[mirror[b]],a)]))
         if len(conditionsSet) == 0 :
             return None
         else :

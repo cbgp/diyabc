@@ -495,8 +495,7 @@ class Scenario(object):
 
     def getMandatoryTimeConditions(self):
         "return theoritical mandatory time conditions. Small verification is done on overlapping times, need a better one"
-        mandatoryTimeConditions = []
-        m = set()
+        mandatoryTimeConditions = set()
         maxpop = 0
         for ev in self.history.events :
             if ev.pop>maxpop :  maxpop =ev.pop
@@ -508,24 +507,22 @@ class Scenario(object):
             for ii in range(i-1,-1,-1) :
                 if myEvents[i].action == "SPLIT" :
                     if myEvents[i].pop  in  [myEvents[ii].pop, myEvents[ii].pop1, myEvents[ii].pop2]:
-                        mandatoryTimeConditions.append((myEvents[ii].stime, '>', myEvents[i].stime))
+                        mandatoryTimeConditions.add((myEvents[ii].stime, '>', myEvents[i].stime))
                 elif myEvents[ii].action == "SPLIT" :
                     if myEvents[i].pop1 in [myEvents[ii].pop, myEvents[ii].pop1, myEvents[ii].pop2]:
-                        mandatoryTimeConditions.append((myEvents[i].stime, '>', myEvents[ii].stime))
+                        mandatoryTimeConditions.add((myEvents[i].stime, '>', myEvents[ii].stime))
                 # for MERGE or varNE of any of the event,
                 elif  myEvents[ii].pop  in [myEvents[i].pop1, myEvents[i].pop2]:
-                    mandatoryTimeConditions.append((myEvents[i].stime, '>=', myEvents[ii].stime))
-        lm = list(m)
+                    mandatoryTimeConditions.add((myEvents[i].stime, '>=', myEvents[ii].stime))
         toRM = []
-        for c in lm :
-            for cc in list(m.difference([c])) :
+        for c in mandatoryTimeConditions :
+            for cc in mandatoryTimeConditions.difference([c]) :
                 if cc[2] == c[2] :
-                    for ccc in list(m.difference([c, cc])) :
+                    for ccc in mandatoryTimeConditions.difference([c, cc]) :
                         if ccc[2] == cc[0] and ccc[0] == c[0]:
                             toRM.append(c)
-
         mandatoryTimeConditions = [x for x in mandatoryTimeConditions if x not in toRM]
-
+        return mandatoryTimeConditions
 
 
 
