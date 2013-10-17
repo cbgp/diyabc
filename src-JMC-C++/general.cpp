@@ -528,7 +528,7 @@ try {
 									scsufilename=path+"scenariosuccess.txt";
 								}
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
-                                          //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"    nenr="<<nenr<<"\n";
+                                          cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"    nenr="<<nenr<<"\n";
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,0);
                                           //cout<<"retour de dosimultabref header.drawuntil="<<header.drawuntil<<"\n";
 										  
