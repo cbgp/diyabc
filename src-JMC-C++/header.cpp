@@ -406,9 +406,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 		this->scenario[i].nparamvar=0;
 		for (int j=0;j<this->scenario[i].nparam;j++) {
 			int k=0;
-			cout<<this->scenario[i].histparam[j].name<<"<\n";
 			while (this->scenario[i].histparam[j].name!=this->histparam[k].name) {k++;}
-			cout<<"k="<<k<<"\n";
 			//this->scenario[i].histparam[j].prior = copyprior(this->histparam[k].prior);
 			this->scenario[i].histparam[j].prior = this->histparam[k].prior;
 			if (not this->histparam[k].prior.constant) {
@@ -416,9 +414,8 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 				this->scenario[i].nparamvar++;
 			}
 			this->scenario[i].histparam[j].ecris(true);
-			cout<<"coucou   j="<<j<<"  sur "<< this->scenario[i].nparam<<"\n";
 		}
-		cout<<"scenario "<<i<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
+		cout<<"scenario "<<i+1<<"   "<<this->scenario[i].nparam<<" param et "<<this->scenario[i].nparamvar<<" paramvar\n "<<flush;
 	}
 	//retour sur les conditions spécifiques à chaque scenario
 	//cout <<"avant retour sur conditions\n";fflush(stdin);
@@ -1073,6 +1070,7 @@ int HeaderC::readHeader(string headerfilename){
 		this->threshold = getwordfloat(s1, 0);
 		cout <<"refreqmin="<<this->reffreqmin<<"   locpol="<<particuleobs.locpol<<"   threshold="<<this->threshold<<"\n";
 	}
+	cout<<"fin de readheader\n";
 	return 0;
 }
 

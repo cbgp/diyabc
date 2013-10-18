@@ -174,7 +174,7 @@ int readheaders() {
     int k;
 	string message;
     if (debuglevel==1) cout<<"lecture des entêtes\n";
-    k = header.readHeader(headerfilename);                               if (debuglevel==1) cout<<"apres header.readHeader\n";
+    k = header.readHeader(headerfilename);                               if (debuglevel==1) cout<<"apres header.readHeader k="<<k<<"\n";
 	if (k != 0) {
 		stringstream erreur;
 		erreur << "Erreur dans readheaders().\n" << header.message;
@@ -489,7 +489,7 @@ try {
       case 'r' :
     	           cout<<"debut de l'action r\n";
 					k=readheaders();
-
+					cout<<"apres readheader   k="<<k<<"\n";
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"   ";fflush(stdin);
                    cout<<"k="<<k<<"\n";
 				   if (k==1) {
