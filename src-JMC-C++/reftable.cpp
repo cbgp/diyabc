@@ -440,10 +440,11 @@ int ReftableC::cal_varstat() {
 	int nrecutil,iscen,nsOK,bidon,i;
 	long double *sx,*sx2,x,an,nr,*min,*max;
 	bool scenOK;
-	//cout <<"debut de cal_varstat\n";
+	cout <<"debut de cal_varstat   rt.nrec="<<this->nrec<<"\n";
 	enregC enr;
 	nrecutil=100000;if (nrecutil>this->nrec) nrecutil=this->nrec;
 	nr=0;for (int i=0;i<nscenchoisi;i++) nr+=nrecscen[this->scenchoisi[i]-1];
+	cout<<"nr="<<nr<<"   nscenchoisi="<<nscenchoisi<<"\n";
 	if (nrecutil>nr) nrecutil=nr;
 	cout <<"debut de cal_varstat   nrecutil="<<nrecutil<<"\n";
 	sx  = new long double[this->nstat];

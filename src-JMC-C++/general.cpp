@@ -300,7 +300,7 @@ try {
             cout << "                vx3=<mean P value/mean P prior for group x>   vx4=<shape value/locus P prior for group x>\n";
             cout << "                vx5 and vx6 correspond to sni mutation rate.\n";
             cout << "                For a DNA sequence group, replace P and sni by k1 and k2 respectively\n";
-			cout << "           x:<without genetic information<\n";
+			cout << "           po to draw parameters for the pseudo-observed data sets from parameter posterior distributions\n";
 
             cout << "\n-f for CONFIDENCE IN SCENARIO CHOICE COMPUTATIONS (idem)\n";
             cout << "           s:<chosen scenarios among which to choose>\n";

@@ -19,6 +19,7 @@
 #include "matrices.h"
 #include "mesutils.h"
 #include "particleset.h"
+#include "modchec.h"
 
 /*
 #ifndef HEADER
@@ -47,7 +48,7 @@ extern bool multithread;
 extern string progressfilename, path;
 extern string scurfile;
 extern HeaderC header;
-extern int nparamcom, nparcompo, nparscaled,**numpar, numtransf, npar,nstatOKsel;
+extern int nparamcom, nparcompo, nparscaled,**numpar, numtransf, npar,nstatOKsel,nenr;
 extern string ident, headerfilename;
 extern bool original, composite,scaled;
 extern string* nomparamO,*nomparamC,*nomparamS;
@@ -56,6 +57,7 @@ extern int debuglevel;
 extern ofstream fprog,fpar;
 extern long double **simpar,**simparcompo,**simparscaled;
 extern int nsimpar;
+extern long double **phistarOK;
 
 parstatC **paramest, **paramestcompo, **paramestscaled;
 parstatC *paramestS, *paramestcompoS, *paramestscaledS;
@@ -1688,11 +1690,13 @@ bool valinfinie=false;
  */
 	void dobias(string opt,  int seed){
 		cout<<"debut de dobias\n";
-        int nstatOK, iprog,nprog,bidule,k;
+        int nstatOK, iprog,nprog,bidule,k,nphistarOK;
         int nrec = 0, nsel = 0,ns,nrecpos = 0,ntest = 0,np,ng,npv,nn,ncond,nt,*paordre,*paordreabs;
+		int npvmax,nss;
         string *ss,s,*ss1,s0,s1,sg, entetelog, *paname, nomfitrace, nomfipar;
 		float *stat_obs;
 		long double **matC;
+		bool posterior=false;
         string bidon;
 		long double **phistar, **phistarcompo, **phistarscaled;
 		mw.randinit(0,seed);
@@ -1766,8 +1770,42 @@ bool valinfinie=false;
                     //exit(1);
                 }
                 for (int j=1;j<=ng;j++) resetmutparam(ss1[j-1]);
-            }
+            } else if (s0=="po") {
+				cout<<"paramètres tirés dans les posteriors\n";
+				posterior=true;
+			}
         }
+        rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
+        if (posterior) {
+			//calcul des posteriors
+			cout<<"rt.nrec="<<rt.nrec<<"\n";
+			nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
+			cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
+			rt.alloue_enrsel(nsel);
+			rt.cal_dist(nrec,nsel,header.stat_obs);                  cout<<"apres cal_dist\n";
+			det_numpar();
+			cout<<"apres det_numpar\n";
+			rempli_mat(nsel,header.stat_obs);                        cout<<"apres rempli_mat\n";
+			matC = cal_matC(nsel); 
+			recalparamO(nsel);                                 cout<<"apres recalparam\n";
+			rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
+			local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
+			phistar = new long double* [nsel];
+			for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
+			calphistarO(nsel,phistar);                       cout<<"apres calphistar\n";
+			det_nomparam();
+			savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     cout<<"apres savephistar\n";
+			phistarOK = new long double*[nsel];
+			for (int i=0;i<nsel;i++) phistarOK[i] = new long double[rt.nparam[rt.scenteste-1]];
+			cout<<"header.scenario[rt.scenteste-1].nparam = "<<header.scenario[rt.scenteste-1].nparam<<"\n";
+			nphistarOK=detphistarOK(nsel,phistar);               cout << "apres detphistarOK  nphistarOK="<<nphistarOK<<"\n";
+			cout<< "   nphistarOK="<< nphistarOK<<"   nstat="<<header.nstat<<"\n";
+			if(10*nphistarOK < ntest){
+				cout << "Not enough suitable particles ("<<nphistarOK<<")to perform model checking. Stopping computations." << endl;
+				exit(1);
+			}
+			
+		}
         npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[ntest];
         for (int p=0;p<ntest;p++) {
@@ -1776,15 +1814,20 @@ bool valinfinie=false;
             enreg[p].numscen = rt.scenteste;
         }
 		//fpar.open(nomfipar.c_str());
-		cout<<"avant dosimultabref\n";
-        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,1);
-		cout<<"apres dosimultabref\n";
+		if (posterior) {
+			cout<<"avant dosimulphistar\n";
+			ps.dosimulphistar(header,ntest,false,multithread,true,rt.scenteste,seed,nphistarOK);
+			cout<<"apres dosimulphistar\n";
+		} else {
+			cout<<"avant dosimultabref\n";
+			ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,1);
+			cout<<"apres dosimultabref\n";
+		}
 		//fpar.close();
 		//header.entete=header.entetehist+header.entetemut0+header.entetestat;
         nprog=10*ntest+6;iprog=5;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
         for (int p=0;p<ntest;p++) {delete []enreg[p].param;delete []enreg[p].stat;}delete []enreg;
-        rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
         det_numpar();
         cout<<"naparmcom = "<<nparamcom<<"   nparcomp = "<<nparcompo<<"   nparscaled = "<<nparscaled<<"\n";
 		cout<<"header.nstat="<<header.nstat<<"    rt.nstat="<<rt.nstat<<"\n";
@@ -1849,7 +1892,12 @@ bool valinfinie=false;
 			cout<<"avant setscaled\n";
 			if(scaled) setscaled(p);
 			cout<<"apres setscaled\n";
-			for (int i=0;i<rt.nstat;i++) enreg2[p].stat[i]=atof(ss[i+1+npv].c_str());
+			for (int i=0;i<rt.nstat;i++) {
+				cout<<"i="<<i<<"   i+1+npv="<<i+1+npv<<"\n";
+				cout<<"ss[i+1+npv]="<<ss[i+1+npv]<<"\n";
+				enreg2[p].stat[i]=atof(ss[i+1+npv].c_str());
+				
+			}
 			cout<<"apres copie des stat\n";
         }
         file.close();

@@ -1757,12 +1757,12 @@ void ParticleC::docalstat(int gr, double partweight) {
 		for (int st=0;st<this->grouplist[gr].nstat;st++) this->grouplist[gr].sumstat[st].val = 1.1+this->mw.random();
 		return;
 	}  
-	cout << "avant calfreq\n";
-	cout << this->grouplist[gr].type<<"\n";
+	//cout << "avant calfreq\n";
+	//cout << this->grouplist[gr].type<<"\n";
 	if (this->grouplist[gr].type == 0)  this->calfreq(gr);
 	else if (this->grouplist[gr].type == 1)  this->cal_numvar(gr);
 	else  this->calfreqsnp(gr);
-	cout << "apres calfreq\n";
+	//cout << "apres calfreq\n";
 	for (int st=0;st<this->grouplist[gr].nstat;st++) {
 		if ((this->grouplist[gr].sumstat[st].cat==-7)or(this->grouplist[gr].sumstat[st].cat==-8)) {
 			this->afsdone.resize(this->nsample);

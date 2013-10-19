@@ -305,10 +305,11 @@ void ParticleSetC::resetparticle (int p) {
  */
 void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
 	int scen=numscen-1;
-	int ii,ip1,ip2,ipart,gr,nstat,k,nparam=header.scenario[scen].nparam;
+	int ii,ip1,ip2,ipart,gr,nstat,k,nparam=header.scenario[scen].nparam,nm,np,iscen,categ;
 	bool simulfile=false;
 	this->npart = npart;
-	int *sOK;
+	int *sOK,ns;
+	string *ss;
 	sOK = new int[npart];
 	if (debuglevel==5) cout<<"avant firsttime="<<firsttime<<"\n";
 	if (firsttime) {
@@ -437,58 +438,74 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 			enreg[ipart].message += ". Check consistency of this scenario over possible prior ranges of time event parameters.";
 		}
 	}
+	if (firsttime) {
+		int nph,npm,nn=0,ccc,pa,ip,iq;
+		ss=splitwords(header.entetehist," ",&nph);
+		for (int m=0;m<nph;m++) {
+			ccc=ss[m][0];
+			if (not isalnum(ccc))  nn++;
+		}
+		delete []ss;
+		if (header.entetemut.length()>10) {ss=splitwords(header.entetemut," ",&npm);delete []ss;} else npm=0;
+		nph-=nn;
+		FILE * pFile;
+		bool trouve,trouve2;
+		pFile = fopen (scurfile.c_str(),"w");
+		fprintf(pFile,"%s\n",this->header.entete.c_str());
+		ss=splitwords(header.entete," ",&ns);
+		if (debuglevel==5) cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
+		np=ns-header.nstat-1;
+		for (int ipart=0;ipart<this->npart;ipart++) {
+			//cout<<"ipart="<<ipart<<"    sOK[ipart]="<<sOK[ipart]<<"   message="<<enreg[ipart].message<<"\n";
+			if (sOK[ipart]==0){
+				//cout<<enreg[ipart].numscen<<"\n";
+				fprintf(pFile,"%3d  ",enreg[ipart].numscen);
+				iscen=enreg[ipart].numscen-1;
+				//cout<<"scenario "<<enreg[ipart].numscen<<"\n";
+				if (debuglevel==5) cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"   "<<np<<"\n";
+				pa=0;
+				for (int j=1;j<nph;j++) {
+					trouve=false;ip=-1;
+					while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
+						ip++;
+						trouve=(ss[j] == rt.histparam[iscen][ip].name);
+						//cout<<"->"<<ss[j]<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
+					}
+					if (trouve) {
+						trouve2=false;iq=-1;
+						while ((not trouve2)and(iq<header.nparamtot-1)) {
+							iq++;
+							trouve2=(ss[j] == header.histparam[iq].name);
+						}
+						if (trouve2) categ=header.histparam[iq].category; else categ=0;
+						if (categ<2) fprintf(pFile,"  %12.0f",enreg[ipart].param[ip]);
+						else fprintf(pFile,"  %12.3f",enreg[ipart].param[ip]);
+						pa++;
+					}
+					else fprintf(pFile,"              ");
+				}
+				if (debuglevel==5) cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
+				for (int j=0;j<npm;j++) fprintf(pFile,"  %12.3e",enreg[ipart].param[pa+j]);
+				for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
+				fprintf(pFile,"\n");
+				if (debuglevel==5){
+					cout<<"parametres de la particule"<<ipart<<"\n";
+					for (int j=0;j<npm+pa;j++) cout<<enreg[ipart].param[j]<<"   ";
+					cout<<"\n";
+					cout<<"\nstat de la particule "<<ipart<<"\n";
+					for (int st=0;st<header.nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";
+					cout<<"\n";
+				}
+			}
+		}
+		delete [] ss;
+		fclose(pFile);
+		
+	}
 	cout<<"fin de dosimulphistar\n";
 }
 
-/**
- * Structure ParticleSet : tirage des paramètres dans les priors (calcul du biais sans info)
-*/
-/*void ParticleSetC::drawparamfromprior(HeaderC const & header, int npart, bool dnatrue,bool multithread, int numscen,int seed)
-{
-	bool simuOK;
-	this->npart = npart;
-	this->particule = new ParticleC[this->npart];
-	this->header = header;
-	for (int p=0;p<this->npart;p++) {
-		if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
-		this->particule[p].dnatrue = dnatrue;
-		//if (debuglevel==5) cout <<"dnatrue\n";
-		this->setdata(p);
-		if (debuglevel==5) cout <<"setdata\n";
-		this->setgroup(p);
-		if (debuglevel==5) cout<<"setgroup\n";
-		this->setloci(p);
-		if (debuglevel==5) cout<<"setloci\n";
-		this->setscenarios(p);
-		if (debuglevel==5) cout << "                    apres set particule "<<p<<"\n";
-		this->particule[p].mw.randinit(p,seed);
-	}
-#pragma omp parallel for private(gr) if(multithread)
-	for (int ipart=0;ipart<this->npart;ipart++) {
-		this->particule[ipart].drawscenario(&numscen);
-		simuOK = this->setHistParamValue();
-		setMutParammoyValue();
-
-		
-	}
-///fin du pragma
-}*/
-
 void ParticleSetC::libere(int npart) {
-	/*for (int p=0;p<npart;p++) {
-		if (this->particule[p].data.nmisshap>0) delete [] this->particule[p].data.misshap;
-		if (this->particule[p].data.nmisssnp>0) delete [] this->particule[p].data.misssnp; 		
-		if (this->particule[p].data.nmissnuc>0) delete [] this->particule[p].data.missnuc;
-		delete [] this->particule[p].locuslist;
-		delete [] this->particule[p].grouplist[0].loc;
-		for (int gr=1;gr<=this->particule[p].ngr;gr++) {
-			delete [] this->particule[p].grouplist[gr].sumstat;
-			delete [] this->particule[p].grouplist[gr].loc;
-		}
-		delete [] this->particule[p].grouplist;
-		delete [] this->particule[p].scenario;
-		delete [] this->particule[p].data.catexist;
-	}*/
 	delete [] this->particule;
 }
 
