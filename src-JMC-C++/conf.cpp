@@ -172,7 +172,7 @@ string nomficonfresult;
         string *ss,s,*ss1,s0,s1; 
 		float *stat_obs;
 		double duree,debut,clock_zero;
-        bool AFD=false;
+        bool AFD=false,posterior;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
         //cout <<"debut de doconf\n";
@@ -247,9 +247,42 @@ string nomficonfresult;
             } else if (s0=="f:") {
                 AFD=(s1=="1");
                 if (AFD) cout<<"Factorial Discriminant Analysis\n";
-            }
+            } else if (s0=="po") {
+				cout<<"paramètres tirés dans les posteriors\n";
+				posterior=true;
+			}
         }
         cout<<"fin de l'analyse de confpar\n";
+        if (posterior) {
+			//calcul des posteriors
+			cout<<"rt.nrec="<<rt.nrec<<"\n";
+			nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
+			cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
+			rt.alloue_enrsel(nsel);
+			rt.cal_dist(nrec,nsel,header.stat_obs,true);                  cout<<"apres cal_dist\n";
+			det_numpar();
+			cout<<"apres det_numpar\n";
+			rempli_mat(nsel,header.stat_obs);                        cout<<"apres rempli_mat\n";
+			matC = cal_matC(nsel); 
+			recalparamO(nsel);                                 cout<<"apres recalparam\n";
+			rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
+			local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
+			phistar = new long double* [nsel];
+			for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
+			calphistarO(nsel,phistar);                       cout<<"apres calphistar\n";
+			det_nomparam();
+			savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     cout<<"apres savephistar\n";
+			phistarOK = new long double*[nsel];
+			for (int i=0;i<nsel;i++) phistarOK[i] = new long double[rt.nparam[rt.scenteste-1]];
+			cout<<"header.scenario[rt.scenteste-1].nparam = "<<header.scenario[rt.scenteste-1].nparam<<"\n";
+			nphistarOK=detphistarOK(nsel,phistar);               cout << "apres detphistarOK  nphistarOK="<<nphistarOK<<"\n";
+			cout<< "   nphistarOK="<< nphistarOK<<"   nstat="<<header.nstat<<"\n";
+			if(10*nphistarOK < ntest){
+				cout << "Not enough suitable particles ("<<nphistarOK<<")to perform model checking. Stopping computations." << endl;
+				exit(1);
+			}
+			
+		}
         npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[ntest];
         for (int p=0;p<ntest;p++) {

@@ -58,7 +58,7 @@ public:
     void desalloue_enrsel(int nsel);
     // calcule la distance de chaque jeu de données simulé au jeu observé
     // et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
-    void cal_dist(int nrec, int nsel, float *stat_obs);
+    void cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste);
 
 };
 

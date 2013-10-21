@@ -1101,7 +1101,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 		for (int i=0;i<header.nstat;i++) stat_obs[i]=header.stat_obs[i];
         rt.alloue_enrsel(nsel);
 //        clock_zero=0.0;debut=walltime(&clock_zero);
-        rt.cal_dist(nrec,nsel,stat_obs);
+        rt.cal_dist(nrec,nsel,stat_obs,false);
 //        duree=walltime(&debut);time_readfile += duree;
 		if (AFD) transAFD(nrec,nsel,stat_obs);
         iprog+=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();

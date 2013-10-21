@@ -525,7 +525,7 @@ void ReftableC::desalloue_enrsel(int nsel) {
  * calcule la distance de chaque jeu de données simulé au jeu observé
  * et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
  */
-void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs) {
+void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste) {
 	int nn,nparamax,nrecOK=0,iscen,bidon,step;
 	bool firstloop=true,scenOK;
 	long double diff,distmin=1E100;

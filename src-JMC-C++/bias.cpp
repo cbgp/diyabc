@@ -1782,7 +1782,7 @@ bool valinfinie=false;
 			nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
 			cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
 			rt.alloue_enrsel(nsel);
-			rt.cal_dist(nrec,nsel,header.stat_obs);                  cout<<"apres cal_dist\n";
+			rt.cal_dist(nrec,nsel,header.stat_obs,false);                  cout<<"apres cal_dist\n";
 			det_numpar();
 			cout<<"apres det_numpar\n";
 			rempli_mat(nsel,header.stat_obs);                        cout<<"apres rempli_mat\n";
@@ -1931,7 +1931,7 @@ bool valinfinie=false;
         for (int p=0;p<ntest;p++) {
             cout<<"\nanalysing data test "<<p+1<<" \n";
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg2[p].stat[j];
-            rt.cal_dist(nrec,nsel,stat_obs);          if (debuglevel==11)   cout<<"apres cal_dist\n";
+            rt.cal_dist(nrec,nsel,stat_obs,false);          if (debuglevel==11)   cout<<"apres cal_dist\n";
             iprog +=6;fprog.open(progressfilename.c_str(),ios::out);fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
             if (p<1) det_nomparam();
 			rempli_mat(nsel,stat_obs);            	if (debuglevel==11)	cout<<"apres rempli_mat\n";
