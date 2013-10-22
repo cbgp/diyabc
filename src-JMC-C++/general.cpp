@@ -314,8 +314,9 @@ try {
             cout << "           u:<mutparameter values/priors for successive groups (as in bias/precision)\n";
             cout << "           f:<0 if logistic regression on SS, 1 if logistic regression on FDA components>\n";
 			cout << "           po to draw parameters for the pseudo-observed data sets from parameter posterior distributions\n";
-
-            cout << "\n-d for ABC PRIOR/SCENARIO CHECKING (idem)\n";
+			cout << "           z:<number of simulated datasets used for the local regression>\n";
+			
+			cout << "\n-d for ABC PRIOR/SCENARIO CHECKING (idem)\n";
             cout << "           a:<p for PCA, l for locate observed, pl for both>\n";
 
             cout << "\n-j for ABC MODEL CHECKING (idem)\n";
