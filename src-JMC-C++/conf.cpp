@@ -17,6 +17,8 @@
 #include "mesutils.h"
 #include "particleset.h"
 #include "comparscen.h"
+#include "estimparam.h"
+#include "modchec.h"
 
 /*
 #ifndef HEADER
@@ -55,8 +57,10 @@ extern HeaderC header;
 extern ReftableC rt;
 extern int ncs;
 extern bool multithread;
-
+extern int nparamcom;
 extern ofstream fprog;
+extern long double **phistarOK;
+
 string nomficonfresult;
 
 /**
@@ -167,12 +171,15 @@ string nomficonfresult;
  */
     void doconf(string opt, int seed) {
         string progressfilename;
-        int nstatOK, iprog,nprog,ncs1,*nbestdir,*nbestlog;
+        int nstatOK, iprog,nprog,ncs1,*nbestdir,*nbestlog,*scenchoibackup,nscenchoibackup;
         int nrec = 0, nsel,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond;
         string *ss,s,*ss1,s0,s1; 
 		float *stat_obs;
+		long double **matC;
 		double duree,debut,clock_zero;
         bool AFD=false,posterior;
+			long double **phistar;
+			int nphistarOK;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
         //cout <<"debut de doconf\n";
@@ -210,10 +217,13 @@ string nomficonfresult;
                 cout<<"nombre de jeux de données considérés pour la régression logistique = "<<nselr<<"\n";
            } else if (s0=="t:") {
                 ntest=atoi(s1.c_str());
-                cout<<"nombr de jeux de données tests = "<<ntest<<"\n";
+                cout<<"nombre de jeux de données tests = "<<ntest<<"\n";
             } else if (s0=="m:") {
                 nlogreg=atoi(s1.c_str());
                 cout<<"nombre de régressions logistiques = "<<nlogreg<<"\n";
+            } else if (s0=="z:") {
+                nsel=atoi(s1.c_str());
+                cout<<"nombre de jeux de données considérés pour la régression locale = "<<nsel<<"\n";
             } else if (s0=="h:") {
                 shist = s1;
                 ss1 = splitwords(s1," ",&np);
@@ -255,10 +265,15 @@ string nomficonfresult;
         cout<<"fin de l'analyse de confpar\n";
         if (posterior) {
 			//calcul des posteriors
+			nscenchoibackup = rt.nscenchoisi;
+			scenchoibackup = new int[rt.nscenchoisi];
+			for (int j=0;j<nscenchoibackup;j++) scenchoibackup[j]=rt.scenchoisi[j]; 
+			rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
 			cout<<"rt.nrec="<<rt.nrec<<"\n";
 			nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
 			cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
 			rt.alloue_enrsel(nsel);
+			cout<<"avant le cal_dist de posterior\n";
 			rt.cal_dist(nrec,nsel,header.stat_obs,true);                  cout<<"apres cal_dist\n";
 			det_numpar();
 			cout<<"apres det_numpar\n";
@@ -271,7 +286,7 @@ string nomficonfresult;
 			for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
 			calphistarO(nsel,phistar);                       cout<<"apres calphistar\n";
 			det_nomparam();
-			savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     cout<<"apres savephistar\n";
+			//savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     cout<<"apres savephistar\n";
 			phistarOK = new long double*[nsel];
 			for (int i=0;i<nsel;i++) phistarOK[i] = new long double[rt.nparam[rt.scenteste-1]];
 			cout<<"header.scenario[rt.scenteste-1].nparam = "<<header.scenario[rt.scenteste-1].nparam<<"\n";
@@ -281,7 +296,8 @@ string nomficonfresult;
 				cout << "Not enough suitable particles ("<<nphistarOK<<")to perform model checking. Stopping computations." << endl;
 				exit(1);
 			}
-			
+			rt.nscenchoisi = nscenchoibackup;
+			for (int j=0;j<nscenchoibackup;j++) rt.scenchoisi[j]=scenchoibackup[j];
 		}
         npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[ntest];
@@ -293,9 +309,15 @@ string nomficonfresult;
         nsel=nseld;if(nsel<nselr) nsel=nselr;
         if (nlogreg==1){nprog=10*(ntest+1)+1;iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();}
         else           {nprog=6*ntest+11;iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();}
-        cout<<"avant ps.dosimultabref\n";
-        ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,2);
-        cout<<"apres ps.dosimultabref\n";
+		if (posterior) {
+			cout<<"avant dosimulphistar\n";
+			ps.dosimulphistar(header,ntest,false,multithread,true,rt.scenteste,seed,nphistarOK);
+			cout<<"apres dosimulphistar\n";
+		} else {
+			cout<<"avant ps.dosimultabref\n";
+			ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,2);
+			cout<<"apres ps.dosimultabref\n";
+		}
         iprog=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         cout<<"apres ecriture dans progress\n";
         header.readHeader(headerfilename);cout<<"apres readHeader\n";
@@ -313,7 +335,7 @@ string nomficonfresult;
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
 			cout<<"\n\njeu test "<<p+1<<"\n";
 			//cout<<"nstatOK="<<nstatOK<<"\n";
-            rt.cal_dist(nrec,nsel,stat_obs);
+            rt.cal_dist(nrec,nsel,stat_obs,false);
             //cout<<"apres cal_dist\n";
             iprog +=6;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			//cout<<"avant transfAFD\n";

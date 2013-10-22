@@ -351,10 +351,10 @@ string  getligne(ifstream file) {
 		if (not trouvepop) return -2;
 		while (not file.eof()){
 			getline(file, ligne);
-			cout<<"longueur de la ligne = "<<ligne.length()<<"\n";
-			cout<<ligne<<"\n";
+			//cout<<"longueur de la ligne = "<<ligne.length()<<"\n";
+			//cout<<ligne<<"\n";
 			if(ligne.length()>2) {if(ligne.at(ligne.length()-1)=='\r') ligne=ligne.substr(ligne.length()-1);}
-			cout<<"apres le test DOS\n";
+			//cout<<"apres le test DOS\n";
 			if( (int)ligne.length() >= 2 + 3*nloc){
 				ligne=purgetab(ligne);
 				ligne=majuscules(ligne);
@@ -1003,7 +1003,7 @@ cout<<"fin de ecribin\n";
                         this->misshap[this->nmisshap-1].locus=loc;
                         this->misshap[this->nmisshap-1].indiv=ng;
                         haplo.push_back(-9999);
-    					cout <<"misshap["<<this->nmisshap-1 <<"]  sample="<<ech<<"  loc="<<loc<<"  indiv="<<ng<<"\n";
+    					//cout <<"misshap["<<this->nmisshap-1 <<"]  sample="<<ech<<"  loc="<<loc<<"  indiv="<<ng<<"\n";
     				}
     				ng++;
     			}

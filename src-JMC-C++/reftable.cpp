@@ -530,8 +530,9 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste
 	bool firstloop=true,scenOK;
 	long double diff,distmin=1E100;
 	this->nreclus=0;step=nrec/100;
+	if (scenarioteste) cout<<"cal_dist scenarioteste = "<<this->scenteste<<"\n";
 	nn=nsel;
-	//cout<<"nrec="<<nrec<<"   nscenchoisi="<< this->nscenchoisi<<"   nn="<<nn<<"\n";
+	cout<<"nrec="<<nrec<<"   nscenchoisi="<< this->nscenchoisi<<"   nn="<<nn<<"\n";
 	nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
 	//cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
 	//cout<<" apres allocation de enrsel\n";
@@ -549,14 +550,18 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste
 				bidon=this->readrecord(&(this->enrsel[nrecOK]));
 				if (bidon!=0) cout<<"bidon="<<bidon<<"\n";
 			} while (bidon!=0);
-			scenOK=false;iscen=0;
-			while((not scenOK)and(iscen<this->nscenchoisi)) {
-				scenOK=(this->enrsel[nrecOK].numscen==this->scenchoisi[iscen]);
-				//if (scenOK) cout<<" SCENOK pour this->enrsel["<<nrecOK<<"].numscen = "<<this->enrsel[nrecOK].numscen<<"\n";
-				iscen++;
+			scenOK=false;
+			if (scenarioteste) scenOK=(this->enrsel[nrecOK].numscen==this->scenteste);
+			else {
+				iscen=0;
+				while((not scenOK)and(iscen<this->nscenchoisi)) {
+					scenOK=(this->enrsel[nrecOK].numscen==this->scenchoisi[iscen]);
+					//if (scenOK) cout<<" SCENOK pour this->enrsel["<<nrecOK<<"].numscen = "<<this->enrsel[nrecOK].numscen<<"\n";
+					iscen++;
+				}
 			}
 			if (scenOK) {
-				this->nreclus++; //cout<<"nreclus = "<<nreclus<<"\n";
+				//this->nreclus++; cout<<"nreclus = "<<nreclus<<"   nrecOK="<<nrecOK<<"\n";
 				this->enrsel[nrecOK].dist=0.0;
 				for (int j=0;j<this->nstat;j++) if (this->var_stat[j]>1E-20) {
 					diff =(long double)(this->enrsel[nrecOK].stat[j] - stat_obs[j]);
@@ -570,7 +575,7 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste
 				if (this->nreclus==nrec) break;
 			}
 			//cout<<"nrecOK="<<nrecOK<<"\n";
-			//this->nreclus++;
+			this->nreclus++;
 			if ((this->nreclus % step)==0) {cout<<"\rcal_dist : "<<this->nreclus/step<<"%";fflush(stdout);}
 		}
 		sort(&this->enrsel[0],&this->enrsel[2*nn]);
