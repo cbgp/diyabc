@@ -60,22 +60,25 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 check.setChecked(num in self.analysis.candidateScList)
 
         if self.analysis.drawn != None:
-            self.ui.drawnRadio.setChecked(self.analysis.drawn)
-            self.ui.fixedRadio.setChecked(not self.analysis.drawn)
+            self.ui.fixedRadio.setChecked(self.analysis.drawn is False )
+            self.ui.drawnPriorRadio.setChecked(self.analysis.drawn is 'prior')
+            self.ui.drawnPosteriorRadio.setChecked(self.analysis.drawn is 'posterior')
 
     def validate(self):
         """ passe à l'étape suivante de la définition de l'analyse
         """
         if self.ui.fixedRadio.isChecked():
             self.analysis.drawn = False
-        else:
-            self.analysis.drawn = True
+        elif self.ui.drawnPriorRadio.isChecked():
+            self.analysis.drawn = 'prior'
+        elif self.ui.drawnPosteriorRadio.isChecked():
+            self.analysis.drawn = 'posterior'
         # pour confidence et bias, on a selectionné un scenario
         self.analysis.chosenSc = self.getSelectedScenario()
         # le cas du confidence, les sc à afficher dans le hist model sont ceux selectionnés
         if self.analysis.category == "confidence":
             if len(self.getListSelectedScenarios()) >= 2:
-                # pour confidence on a du selectionner au moins deux scenarios 
+                # pour confidence on a du selectionner au moins deux scenarios
                 self.analysis.candidateScList = self.getListSelectedScenarios()
                 if self.ui.fixedRadio.isChecked():
                     next_widget = HistFixed(self.analysis,self.parent)
@@ -94,7 +97,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         self.parent.parent.ui.analysisStack.addWidget(next_widget)
         self.parent.parent.ui.analysisStack.removeWidget(self)
         self.parent.parent.ui.analysisStack.setCurrentWidget(next_widget)
-        
+
         self.parent.parent.parent.updateDoc(next_widget)
 
     def getSelectedScenario(self):

@@ -54,7 +54,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.numRegCombo.clear()
             self.ui.numRegCombo.addItem("0")
             self.ui.numRegCombo.addItem("1")
-            self.ui.notdsEdit.setText("500")        
+            self.ui.notdsEdit.setText("500")
         else: # assume self.analysis.category == "compare"
             self.ui.notdsEdit.hide()
             self.ui.notdsLabel.hide()
@@ -62,7 +62,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.setScenarios([self.analysis.chosenSc])
             self.setCandidateScenarios(self.analysis.candidateScList)
             self.setRecordValues(self.analysis.candidateScList)
-        
+
         self.ui.numRegCombo.setCurrentIndex(1)
 
         self.ui.deEdit.setText("500")
@@ -79,7 +79,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.deValLayout.removeWidget(w)
         self.lrInterValuesW = []
         self.deInterValuesW = []
-        
+
 
         try:
             #de = int(self.ui.deEdit.text())
@@ -163,48 +163,51 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                 strparam += "l:%s;"%self.dico_values['lr']
                 strparam += "t:%s;"%self.dico_values['notds']
                 strparam += "f:%s;"%self.analysis.fda
-                strparam += "h:"
-                if self.analysis.drawn:
-                    for paramname in self.analysis.histParamsDrawn.keys():
-                        l = self.analysis.histParamsDrawn[paramname]
-                        strparam += "%s="%paramname
-                        strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
-                    for ctxt in self.analysis.condTxtList:
-                        strparam += "%s "%ctxt
-                else:
-                    for paramname in self.analysis.histParamsFixed.keys():
-                        l = self.analysis.histParamsFixed[paramname]
-                        strparam += "%s="%paramname
-                        strparam += "%s "%l[1]
-                strparam = strparam[:-1]
-                if self.analysis.drawn:
-                    mutmod = self.analysis.mutationModelDrawn
-                else:
-                    mutmod = self.analysis.mutationModelFixed
-                if len(mutmod)>0:
-                    strparam += ";u:"
-                    if type(mutmod[0]) == type(u'plop'):
-                        for ind,gr in enumerate(mutmod):
-                            strparam += "g%s("%(ind+1)
-                            strgr = gr.strip()
-                            strgr = strgr.split('\n')
-                            for j,elem in enumerate(strgr):
-                                if elem.split()[0] != "MODEL":
-                                    to_add = strgr[j].split()[1]
-                                    strparam += "%s "%to_add
-                            # virer le dernier espace
-                            strparam = strparam[:-1]
-                            strparam += ")*"
+                if self.analysis.drawn is 'posterior':
+                    strparam += "po"
+                else :
+                    strparam += "h:"
+                    if self.analysis.drawn:
+                        for paramname in self.analysis.histParamsDrawn.keys():
+                            l = self.analysis.histParamsDrawn[paramname]
+                            strparam += "%s="%paramname
+                            strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
+                        for ctxt in self.analysis.condTxtList:
+                            strparam += "%s "%ctxt
                     else:
-                        for ind,gr in enumerate(mutmod):
-                            strparam += "g%s("%(ind+1)
-                            for num in gr:
-                                strparam += "%s "%num
-                            # virer le dernier espace
-                            strparam = strparam[:-1]
-                            strparam += ")*"
-                    # virer le dernier '-'
+                        for paramname in self.analysis.histParamsFixed.keys():
+                            l = self.analysis.histParamsFixed[paramname]
+                            strparam += "%s="%paramname
+                            strparam += "%s "%l[1]
                     strparam = strparam[:-1]
+                    if self.analysis.drawn:
+                        mutmod = self.analysis.mutationModelDrawn
+                    else:
+                        mutmod = self.analysis.mutationModelFixed
+                    if len(mutmod)>0:
+                        strparam += ";u:"
+                        if type(mutmod[0]) == type(u'plop'):
+                            for ind,gr in enumerate(mutmod):
+                                strparam += "g%s("%(ind+1)
+                                strgr = gr.strip()
+                                strgr = strgr.split('\n')
+                                for j,elem in enumerate(strgr):
+                                    if elem.split()[0] != "MODEL":
+                                        to_add = strgr[j].split()[1]
+                                        strparam += "%s "%to_add
+                                # virer le dernier espace
+                                strparam = strparam[:-1]
+                                strparam += ")*"
+                        else:
+                            for ind,gr in enumerate(mutmod):
+                                strparam += "g%s("%(ind+1)
+                                for num in gr:
+                                    strparam += "%s "%num
+                                # virer le dernier espace
+                                strparam = strparam[:-1]
+                                strparam += ")*"
+                        # virer le dernier '-'
+                        strparam = strparam[:-1]
 
                 self.analysis.computationParameters = strparam
             if not analysis_in_edition:
@@ -234,7 +237,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         plur= ""
         if len(scList)>1:
             plur = "s"
-            
+
         lstxt=""
         self.scNumList = []
         for i in scList:
@@ -251,7 +254,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         plur= ""
         if len(scList)>1:
             plur = "s"
-            
+
         lstxt=""
         self.scNumList = []
         for i in scList:

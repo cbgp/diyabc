@@ -337,9 +337,16 @@ you want to perform computations</string>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="drawnRadio">
+             <widget class="QRadioButton" name="drawnPriorRadio">
               <property name="text">
                <string>are drawn from distributions</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="drawnPosteriorRadio">
+              <property name="text">
+               <string>are drawn from posterior distributions</string>
               </property>
              </widget>
             </item>

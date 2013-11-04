@@ -68,7 +68,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
             self.ui.redefSumStatsFrame.hide()
 
         self.ui.projectNameEdit.setText(self.parent.parent.dir)
-        
+
         if self.parent.parent.isSnp():
             self.ui.cCheck.setChecked(False)
             self.ui.cCheck.hide()
@@ -213,49 +213,52 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
                 strparam += "d:%s;"%self.dico_values['numberOfTestData']
                 strparam += "t:%s;"%self.dico_values['transformation']
                 strparam += "p:%s;"%self.dico_values['choice']
-                strparam += "h:"
-                if self.analysis.drawn:
-                    histParams = self.analysis.histParamsDrawn
-                else:
-                    histParams = self.analysis.histParamsFixed
-                for paramname in histParams.keys():
-                    l = histParams[paramname]
-                    strparam += "%s="%paramname
-                    if len(l) == 2:
-                        strparam += "%s "%l[1]
+                if self.analysis.drawn is 'posterior':
+                    strparam += "po"
+                else :
+                    strparam += "h:"
+                    if self.analysis.drawn :
+                        histParams = self.analysis.histParamsDrawn
                     else:
-                        strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
-                for ctxt in self.analysis.condTxtList:
-                    strparam += "%s "%ctxt
-                strparam = strparam[:-1]
-                if self.analysis.drawn:
-                    mutmod = self.analysis.mutationModelDrawn
-                else:
-                    mutmod = self.analysis.mutationModelFixed
-                if len(mutmod)>0:
-                    strparam += ";u:"
-                    if type(mutmod[0]) == type(u'plop'):
-                        for ind,gr in enumerate(mutmod):
-                            strparam += "g%s("%(ind+1)
-                            strgr = gr.strip()
-                            strgr = strgr.split('\n')
-                            for j,elem in enumerate(strgr):
-                                if elem.split()[0] != "MODEL":
-                                    to_add = strgr[j].split()[1]
-                                    strparam += "%s "%to_add
-                            # virer le dernier espace
-                            strparam = strparam[:-1]
-                            strparam += ")*"
-                    else:
-                        for ind,gr in enumerate(mutmod):
-                            strparam += "g%s("%(ind+1)
-                            for num in gr:
-                                strparam += "%s "%num
-                            # virer le dernier espace
-                            strparam = strparam[:-1]
-                            strparam += ")*"
-                    # virer le dernier '-'
+                        histParams = self.analysis.histParamsFixed
+                    for paramname in histParams.keys():
+                        l = histParams[paramname]
+                        strparam += "%s="%paramname
+                        if len(l) == 2:
+                            strparam += "%s "%l[1]
+                        else:
+                            strparam += "%s[%s,%s,%s,%s] "%(l[1],l[2],l[3],l[4],l[5])
+                    for ctxt in self.analysis.condTxtList:
+                        strparam += "%s "%ctxt
                     strparam = strparam[:-1]
+                    if self.analysis.drawn:
+                        mutmod = self.analysis.mutationModelDrawn
+                    else:
+                        mutmod = self.analysis.mutationModelFixed
+                    if len(mutmod)>0:
+                        strparam += ";u:"
+                        if type(mutmod[0]) == type(u'plop'):
+                            for ind,gr in enumerate(mutmod):
+                                strparam += "g%s("%(ind+1)
+                                strgr = gr.strip()
+                                strgr = strgr.split('\n')
+                                for j,elem in enumerate(strgr):
+                                    if elem.split()[0] != "MODEL":
+                                        to_add = strgr[j].split()[1]
+                                        strparam += "%s "%to_add
+                                # virer le dernier espace
+                                strparam = strparam[:-1]
+                                strparam += ")*"
+                        else:
+                            for ind,gr in enumerate(mutmod):
+                                strparam += "g%s("%(ind+1)
+                                for num in gr:
+                                    strparam += "%s "%num
+                                # virer le dernier espace
+                                strparam = strparam[:-1]
+                                strparam += ")*"
+                        # virer le dernier '-'
+                        strparam = strparam[:-1]
 
                 self.analysis.computationParameters = strparam
             if not analysis_in_edition:
@@ -269,7 +272,7 @@ class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
         plur= ""
         if len(scList)>1:
             plur = "s"
-            
+
         lstxt=""
         self.scNumList = []
         for i in scList:
