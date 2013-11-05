@@ -40,6 +40,9 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
+        QObject.connect(self.ui.fixedRadio,SIGNAL("clicked()"),self.checkParameterValues)
+        QObject.connect(self.ui.drawnPriorRadio,SIGNAL("clicked()"),self.checkParameterValues)
+        QObject.connect(self.ui.drawnPosteriorRadio,SIGNAL("clicked()"),self.checkParameterValues)
 
         if self.analysis.category == "bias":
             self.ui.analysisTypeLabel.setText("Bias and mean square error")
@@ -48,6 +51,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         self.ui.projectDirEdit.setText(self.parent.parent.dir)
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
+        self.checkParameterValues()
 
     def restoreAnalysisValues(self):
         if self.analysis.chosenSc != None:
@@ -64,17 +68,47 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             self.ui.drawnPriorRadio.setChecked(self.analysis.drawn is 'prior')
             self.ui.drawnPosteriorRadio.setChecked(self.analysis.drawn is 'posterior')
 
+        cp = self.analysis.computationParameters
+        posteriorDataSetNumber = ""
+        try:
+            posteriorDataSetNumber = cp.split('z:')[1].split(';')[0]
+        except IndexError:
+            pass
+        self.ui.posteriorDataSetNumberEdit.setText(posteriorDataSetNumber)
+        self.checkParameterValues()
+
+    def checkParameterValues(self):
+        self.ui.posteriorDataSetNumberFrame.hide()
+        if self.analysis.category == "confidence" and self.ui.drawnPosteriorRadio.isChecked():
+            nbRecordsSelectedScenario = self.parent.parent.readNbRecordsOfScenario(int(self.getSelectedScenario()))
+            self.ui.maxPosteriorDataSetNumberLabel.setText("max = %s"%nbRecordsSelectedScenario)
+            if str(self.ui.posteriorDataSetNumberEdit.text()) is '' :
+                self.ui.posteriorDataSetNumberEdit.setText(str(nbRecordsSelectedScenario/100))
+            self.ui.posteriorDataSetNumberFrame.show()
+
+
     def validate(self):
         """ passe à l'étape suivante de la définition de l'analyse
         """
+        # pour confidence et bias, on a selectionné un scenario
+        self.analysis.chosenSc = self.getSelectedScenario()
+
+
         if self.ui.fixedRadio.isChecked():
             self.analysis.drawn = False
         elif self.ui.drawnPriorRadio.isChecked():
             self.analysis.drawn = 'prior'
         elif self.ui.drawnPosteriorRadio.isChecked():
             self.analysis.drawn = 'posterior'
-        # pour confidence et bias, on a selectionné un scenario
-        self.analysis.chosenSc = self.getSelectedScenario()
+            try :
+                if int(str(self.ui.posteriorDataSetNumberEdit.text())) > self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) \
+                  or  int(str(self.ui.posteriorDataSetNumberEdit.text())) <= 0 :
+                    raise
+            except :
+                 QMessageBox.information(self,"Number error","The number of data sets for local regression should be a positive number and inferior to the number of records of the scenario %s : %s" \
+                                            %(self.analysis.chosenSc, self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) ))
+                 return 0
+
         # le cas du confidence, les sc à afficher dans le hist model sont ceux selectionnés
         if self.analysis.category == "confidence":
             if len(self.getListSelectedScenarios()) >= 2:
@@ -124,6 +158,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             radio = QRadioButton("Scenario %s"%num,self)
             self.radiolist.append(radio)
             self.ui.verticalLayout_4.addWidget(radio)
+            QObject.connect(radio,SIGNAL("clicked()"),self.checkParameterValues)
         self.radiolist[0].setChecked(True)
 
         if self.analysis.category == "confidence":

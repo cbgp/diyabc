@@ -164,7 +164,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                 strparam += "t:%s;"%self.dico_values['notds']
                 strparam += "f:%s;"%self.analysis.fda
                 if self.analysis.drawn is 'posterior':
-                    strparam += "po"
+                    strparam += "po;z:%s"% self.dico_values['posteriorNumDataSets']
                 else :
                     strparam += "h:"
                     if self.analysis.drawn:
@@ -280,6 +280,12 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         self.dico_values["lr"] = str(self.ui.lrEdit.text())
         self.dico_values["numReg"] = str(self.ui.numRegCombo.currentText())
         self.dico_values["notds"] = str(self.ui.notdsEdit.text())
+        #look for posteriorDataSetNumberEdit in BiasNConfidenceScenarioSelection
+        for child in  self.parent.parent.ui.analysisStack.children():
+            try :
+                self.dico_values['posteriorNumDataSets'] = child.posteriorDataSetNumberEdit.text()
+            except AttributeError as e :
+                pass
 
     def exit(self):
         ## reactivation des onglets
