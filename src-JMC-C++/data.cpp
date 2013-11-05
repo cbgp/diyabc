@@ -160,13 +160,13 @@ void LocusC::libere(bool obs, int nsample) {
 			for (int i=0;i<source.mutsit.size();i++) this->mutsit.push_back(source.mutsit[i]);
 		}
 		if (not source.sitmut.empty()) {
-			for (int i=0;i<source.sitmut.size();i++) this->mutsit.push_back(source.sitmut[i]);
+			for (int i=0;i<source.sitmut.size();i++) this->sitmut.push_back(source.sitmut[i]);
 		}
 		if (not source.sitmut2.empty()) {
-			for (int i=0;i<source.sitmut2.size();i++) this->mutsit.push_back(source.sitmut2[i]);
+			for (int i=0;i<source.sitmut2.size();i++) this->sitmut2.push_back(source.sitmut2[i]);
 		}
 		if (not source.tabsit.empty()) {
-			for (int i=0;i<source.tabsit.size();i++) this->mutsit.push_back(source.tabsit[i]);
+			for (int i=0;i<source.tabsit.size();i++) this->tabsit.push_back(source.tabsit[i]);
 		}
 		return *this;
 	}
