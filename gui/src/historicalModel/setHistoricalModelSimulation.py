@@ -12,7 +12,7 @@ import output
 from utils.cbgpUtils import log
 
 class SetHistoricalModelSimulation(SetHistoricalModel):
-    """ Classe pour la définition du modèle historique dans le cadre 
+    """ Classe pour la définition du modèle historique dans le cadre
     de la génération de la table de référence
     """
     def __init__(self,parent=None):
@@ -300,7 +300,21 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
             i = 0
             while i<len(self.paramList) and name != pname:
                 paramBox = self.paramList[i]
-                name = paramBox.findChild(QLabel,"paramNameLabel").text()                    
+                name = paramBox.findChild(QLabel,"paramNameLabel").text()
                 i+=1
             result+= "\n%s %s %s"%(pname,info[0],info[1])
         return result
+
+
+    def checkTimeConditions(self, scenariosList, silent=False):
+#         print "\n\n\n\n ---------------------------\n\n  MODE SIMULATION !!! \n\n\n"
+#         mandatoryTimeConditions = super(SetHistoricalModelSimulation,self).checkTimeConditions(scenariosList, silent=True)
+#         if len(mandatoryTimeConditions) :
+#             warning = "Please check your times values for the conditions below to avoid gene genealogies incongruenties :\n"
+#             for cond in conditionsSet :
+#                 warning += "".join(cond) + "\n"
+#                 warning += "This is an advisory warning ; you may prefer to ignore it."
+#                 output.notify(self,"Time Condition Warning","%s"%warning)
+        return set([])
+
+

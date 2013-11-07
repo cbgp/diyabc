@@ -557,7 +557,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         sinon retourne None
         """
         errors = ""
-        errorsTimeConditions = ""
+        missingTimeConditions = ""
         scenariosList = []
         # construction de la liste de scenarios
         sc_txt_list = []
@@ -571,23 +571,19 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             scChecker = Scenario(number=num+1,prior_proba=str(self.rpList[num].findChild(QLineEdit,"rpEdit").text()))
             scenariosList.append(scChecker)
             try:
-                #print self.parent.data
                 scChecker.checkread(sc.strip().split('\n'),self.parent.data)
                 scChecker.checklogic()
-                #kkpzerrorsTimeConditions = scChecker.getMandatoryTimeConditions()
                 dico_sc_infos = {}
                 dico_sc_infos["text"] = sc.strip().split('\n')
                 dico_sc_infos["checker"] = scChecker
-                #print "nb param du sc ",num," ",scChecker.nparamtot
                 dico_sc_infos["tree"] = None
                 self.scenarios_info_list.append(dico_sc_infos)
             except IOScreenError, e:
-                #print "Un scenario a une erreur : ", e
                 errors += "Scenario %s : %s\n"%(num+1,e)
                 nb_scenarios_invalides += 1
         # si tous les scenarios sont bons, on renvoie les données utiles, sinon on renvoie None
         if nb_scenarios_invalides == 0:
-            errorsTimeConditions = self.checkTimeConditions(scenariosList, silent)
+            missingTimeConditions = self.checkTimeConditions(scenariosList, silent)
             return self.scenarios_info_list
         else:
             if not silent:
@@ -604,8 +600,18 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             for condition in sc.getMandatoryTimeConditions() :
                 conditionsSet.add(condition)
         # check if times overlaps, if not delete
+        print '-------------'
+        print scenariosList , '   - scenariosList '
+        print self.param_info_dico, '   - self.param_info_dico'
+        print '-------------'
+        print conditionsSet
         for condition in list(conditionsSet) :
             try :
+                print condition , '  condition\n'
+                print condition[0] , " -  condition[0]\n"
+                print self.param_info_dico[condition[0]], ' - self.param_info_dico[condition[0]]\n'
+                print  self.param_info_dico[condition[0]][3], ' - self.param_info_dico[condition[0]][3]\n'
+                print  self.param_info_dico[condition[0]][2], ' - self.param_info_dico[condition[0]][2]\n'
                 if self.param_info_dico[condition[0]][3] < self.param_info_dico[condition[0]][2] :
                     conditionsSet.remove(condition)
             except KeyError, e :
@@ -619,16 +625,14 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                         a,c = condText.split(b)
                         break
                 conditionsSet = conditionsSet.difference(set([(a,b,c),(c,mirror[b],a),(a,toggleEgal[b],c),(c,toggleEgal[mirror[b]],a)]))
-        if len(conditionsSet) == 0 :
-            return None
-        else :
-            if not silent :
-                warning = "You may want to add the conditions below to avoid gene genealogies incongruenties :\n"
-                for cond in conditionsSet :
-                    warning += "".join(cond) + "\n"
-                warning += "This is an advisory warning ; you may prefer to ignore it or define your own conditions."
-                output.notify(self,"Time Condition Warning","%s"%warning)
-            return conditionsSet
+        print conditionsSet,   "   -    final conditionset"
+        if not silent and len(conditionsSet) > 0:
+            warning = "You may want to add the conditions below to avoid gene genealogies incongruenties :\n"
+            for cond in conditionsSet :
+                warning += "".join(cond) + "\n"
+            warning += "This is an advisory warning ; you may prefer to ignore it or define your own conditions."
+            output.notify(self,"Time Condition Warning","%s"%warning)
+        return conditionsSet
 
 
 
