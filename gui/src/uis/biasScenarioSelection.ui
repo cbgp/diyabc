@@ -262,6 +262,18 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QFrame" name="frame">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>450</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>350</width>
@@ -271,6 +283,12 @@
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QLabel" name="selectionLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -298,7 +316,34 @@ you want to perform computations</string>
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="label">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>(i.e. : simulation of pseudo-observed datasets)</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QFrame" name="scSelFrame">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
              <width>500</width>
@@ -316,6 +361,12 @@ you want to perform computations</string>
          </item>
          <item>
           <widget class="QGroupBox" name="parameterValuesGroupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
              <width>500</width>
@@ -328,6 +379,12 @@ you want to perform computations</string>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
              <widget class="QRadioButton" name="fixedRadio">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>are fixed by the user</string>
               </property>
@@ -338,13 +395,31 @@ you want to perform computations</string>
             </item>
             <item>
              <widget class="QRadioButton" name="drawnPriorRadio">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
-               <string>are drawn from distributions</string>
+               <string>are drawn from distributions (priors by default)</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QRadioButton" name="drawnPosteriorRadio">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>are drawn from posterior distributions</string>
               </property>
@@ -353,8 +428,53 @@ you want to perform computations</string>
            </layout>
           </widget>
          </item>
+         <item>
+          <widget class="QFrame" name="posteriorDataSetNumberFrame">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="posteriorDataSetNumberEdit"/>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="posteriorDataSetNumberLabel">
+              <property name="text">
+               <string>Number of datasets for local linear regression</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="maxPosteriorDataSetNumberLabel">
+              <property name="text">
+               <string>max : </string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
         </layout>
        </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -379,7 +499,28 @@ you want to perform computations</string>
           </property>
           <property name="text">
            <string>Select candidate scenarios
-You must choose at least two scenarios</string>
+ you want to discriminate</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="candidateScenariosTipLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>You must choose at least two scenarios</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -395,35 +536,6 @@ You must choose at least two scenarios</string>
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6"/>
-         </widget>
-        </item>
-        <item>
-         <widget class="QFrame" name="posteriorDataSetNumberFrame">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="posteriorDataSetNumberEdit"/>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="posteriorDataSetNumberLabel">
-             <property name="text">
-              <string>Datasets number for local regression</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="maxPosteriorDataSetNumberLabel">
-             <property name="text">
-              <string>max : </string>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
        </layout>

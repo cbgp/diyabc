@@ -100,14 +100,15 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             self.analysis.drawn = 'prior'
         elif self.ui.drawnPosteriorRadio.isChecked():
             self.analysis.drawn = 'posterior'
-            try :
-                if int(str(self.ui.posteriorDataSetNumberEdit.text())) > self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) \
-                  or  int(str(self.ui.posteriorDataSetNumberEdit.text())) <= 0 :
-                    raise
-            except :
-                 QMessageBox.information(self,"Number error","The number of data sets for local regression should be a positive number and inferior to the number of records of the scenario %s : %s" \
-                                            %(self.analysis.chosenSc, self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) ))
-                 return 0
+            if self.analysis.category == "confidence":
+                try :
+                    if int(str(self.ui.posteriorDataSetNumberEdit.text())) > self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) \
+                      or  int(str(self.ui.posteriorDataSetNumberEdit.text())) <= 0 :
+                        raise
+                except :
+                     QMessageBox.information(self,"Number error","The number of data sets for local regression should be a positive number and inferior to the number of records of the scenario %s : %s" \
+                                                %(self.analysis.chosenSc, self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) ))
+                     return 0
 
         # le cas du confidence, les sc à afficher dans le hist model sont ceux selectionnés
         if self.analysis.category == "confidence":
@@ -116,6 +117,11 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 self.analysis.candidateScList = self.getListSelectedScenarios()
                 if self.ui.fixedRadio.isChecked():
                     next_widget = HistFixed(self.analysis,self.parent)
+                elif self.ui.drawnPosteriorRadio.isChecked():
+                    #Quick and not so dirty patch to avoid prior config panel when confidence use posteriors
+                    tmpWidget = HistDrawn(self.analysis,self.parent)
+                    next_widget = tmpWidget.parent.parent.getNextWidget(tmpWidget)
+                # prior
                 else:
                     next_widget = HistDrawn(self.analysis,self.parent)
             else:
@@ -126,6 +132,10 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             # en fonction de fixed ou drawn, l'écran suivant présente un objet différent
             if self.ui.fixedRadio.isChecked():
                 next_widget = HistFixed(self.analysis,self.parent)
+            elif self.ui.drawnPosteriorRadio.isChecked():
+                #Quick and not so dirty patch to avoid prior config panel when confidence use posteriors
+                tmpWidget = HistDrawn(self.analysis,self.parent)
+                next_widget = tmpWidget.parent.parent.getNextWidget(tmpWidget)
             else:
                 next_widget = HistDrawn(self.analysis,self.parent)
         self.parent.parent.ui.analysisStack.addWidget(next_widget)
@@ -170,6 +180,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 self.ui.verticalLayout_6.addWidget(check)
         else:
             self.ui.candidateScenariosLabel.hide()
+            self.ui.candidateScenariosTipLabel.hide()
             self.ui.frame_3.hide()
 
     def exit(self):
