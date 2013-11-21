@@ -1024,12 +1024,24 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			f1.open(nomphistar.c_str());
 			f1<<enteteS<<"\n";
 			for (int i=0;i<n;i++) {
+	cout<<"i="<<i<<"\n";
 				f1<<setiosflags(ios::fixed)<<setw(4)<<rt.enrsel[i].numscen;
-				for (int j=0;j<nparscaled;j++) if(phistarscaled[i][j]<0.0){cout<<"i="<<i<<"   j="<<j<<"   "<<phistarscaled[i][j]<<"\n";exit(1);}
+	cout<<"1\n";
+	cout<<"nparscaled="<<nparscaled<<"\n";
+				for (int j=0;j<nparscaled;j++) {
+	cout<<"j="<<j<<"\n";
+					if(phistarscaled[i][j]<0.0){
+						cout<<"i="<<i<<"   j="<<j<<"   "<<phistarscaled[i][j]<<"\n";
+						exit(1);
+					}
+				}
+	cout<<"2\n";
 				for (int j=0;j<nparscaled;j++) f1<<fmLB(phistarscaled[i][j],16,3);
+	cout<<"3\n";
 				f1<<"\n";
 			}
 			f1.close();
+	cout<<"fin scaled\n";
 		} 
     }
 

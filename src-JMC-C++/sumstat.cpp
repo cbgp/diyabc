@@ -83,10 +83,10 @@ extern int debuglevel;
 		int loc,iloc,cat,sasize;
 		short int g0=0;
 		long double h0,h1,h2,m0=0.0,m1=0.0,m2=0.0;
-		cout << "calfreqsnp début   nloc="<<this->grouplist[gr].nloc<<"\n";
+		//cout << "calfreqsnp début   nloc="<<this->grouplist[gr].nloc<<"\n";
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			loc=this->grouplist[gr].loc[iloc];
-			cout<<"locus "<<loc<<"\n";
+			//cout<<"locus "<<loc<<"\n";
 			if (this->locuslist[loc].weight>0.0) {
 				cat=this->locuslist[loc].type%5;
 				//cout<<"cat = "<<cat<<"   nsample="<<this->nsample<<"\n";
