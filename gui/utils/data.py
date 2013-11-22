@@ -30,13 +30,13 @@ class MissingData(object):
         return "Missing data at (sample=%s, locus=%s, indiv=%s)" % (self.sample, self.locus, self.indiv)
     def __repr__(self):
         return "MissingData(sample=%s, locus=%s, indiv=%s)" % (self.sample, self.locus, self.indiv)
-        
+
 class MissingNucleotide(object):
     def __init__(self,sample=None,locus=None,indiv=None,nucleotide=None):
         self.sample = sample
         self.locus  = locus
         self.indiv  = indiv
-        self.nucleotide = nucleotide 
+        self.nucleotide = nucleotide
     def __str__(self):
         return "Missing nucleotide at (sample=%s, locus=%s, indiv=%s, nucleotide=%s)" % (self.sample, self.locus, self.indiv, self.nucleotide)
     def __repr__(self):
@@ -45,7 +45,7 @@ class MissingNucleotide(object):
 class LocusType(object):
     def __init__(self, type=None):
         self.type = type
-        
+
 
 LOC_TYP    = ('<A>','<H>', '<X>', '<Y>', '<M>')
 LOC_TYP1   = ('_A','_H','_X','_Y','_M')
@@ -54,11 +54,11 @@ SLOCUS_TYPE= ('Autosomal diploid microsatellites','Autosomal haploid microsatell
               'Autosomal diploid DNA sequences','Autosomal haploid DNA sequences','X-linked DNA sequences','Y-linked DNA sequences','Mitochondrial DNA sequences')
 class Locus(object):
     """ doc"""
-        
-    
+
+
     def __init__(self, type=None, name=None, group=None,
 #                 pi_A=None, pi_C=None, pi_G=None, pi_T=None,
-#                 mut_rate=-1,Pgeom=-1, sni_rate=-1, mus_rate=-1, k1=-1, k2=-1, 
+#                 mut_rate=-1,Pgeom=-1, sni_rate=-1, mus_rate=-1, k1=-1, k2=-1,
 #                 tabsit=[], mutsit=[], sitmut=[]
                  mini=None, maxi=None, kmin=None, kmax=None, motif_size=None, motif_range=None,
                  ngenes=None, dnalength=None):
@@ -72,8 +72,8 @@ class Locus(object):
 #        self.pi_C   = pi_C
 #        self.pi_G   = pi_G
 #        self.pi_T   = pi_T
-#        self.mutsit      = mutsit   #list of dnalength elements giving the relative probability of a mutation to a given site of the sequence 
-#        self.sitmut      = sitmut   #list of dna sites that are changed through a mutation  
+#        self.mutsit      = mutsit   #list of dnalength elements giving the relative probability of a mutation to a given site of the sequence
+#        self.sitmut      = sitmut   #list of dna sites that are changed through a mutation
         self.dnalength   = dnalength
 #        self.tabsit      = tabsit
 #Proprietes des locus microsatellites
@@ -84,7 +84,7 @@ class Locus(object):
         self.motif_size  = motif_size
         self.motif_range = motif_range
         self.ngenes      = ngenes
-        
+
     def __str__(self):
         if self.type<5 :
             return "%s (type=%s)"%(self.name, self.type)
@@ -95,17 +95,17 @@ class Locus(object):
             return "Locus(name=%s, type=%s)" % (self.name, self.type)
         else :
             return "Locus(name=%s, type=%s, length=%s)" % (self.name, self.type,  self.length)
-    
-        
+
+
 class LocusList(list):
     def append(self,value):
         if isinstance(value,Locus) :
             super(LocusList,self).append(value)
         else :
             raise ValueError , "This is not a locus"
-        
+
 class LocusGroup(object):
-                    
+
     def __init__(self,type=None,nloc=None,loclist=None,p_fixe=None,gams=None,mutmoy=None,Pmoy=None,snimoy=None,musmoy=None,k1moy=None,k2moy=None,mutmod=None,
                  priormusmoy=None,priormusloc=None,priork1moy=None,priork1loc=None,priork2moy=None,priork2loc=None,
                  priormutmoy=None,priormutloc=None,priorPmoy=None,priorPloc=None,priorsnimoy=None,priorsniloc=None):
@@ -174,16 +174,16 @@ class Data(object):
         gen = line3[iloc]
         if gen.find("<[")>-1 : return "seq_"
         else                 : return "mic_"
-        
+
     def __test_genepop(self):
-        try :    
+        try :
             #with open(self.filename,'r') as f: read_data = f.read()
             f = open(self.filename,'r')
             read_data = f.read()
         except :
             raise IOError , "Error when attempting to read data file"
         f=open(self.filename,'r')
-        read_data = f.read().strip() 
+        read_data = f.read().strip()
         lines = read_data.splitlines()
         f.close()
         if len(lines)<4 :
@@ -225,7 +225,7 @@ class Data(object):
     def __read_genepop(self):
         self.__test_genepop()
         f=open(self.filename,'r')
-        read_data = f.read().strip() 
+        read_data = f.read().strip()
         lines = read_data.splitlines()
         f.close()
         self.title = lines[0]
@@ -245,9 +245,9 @@ class Data(object):
                 itt=0
                 while (tt!=LOCUS_TYPE[itt]) : itt+=1
                 locusc = Locus(type=itt)
-                mots = lines[nl].split() 
+                mots = lines[nl].split()
                 locusc.name=lines[nl][0:c1-1]
-            else : 
+            else :
                 locusc =  Locus(type=0)
                 locusc.name = lines[nl].strip()
             nl+=1
@@ -266,9 +266,9 @@ class Data(object):
                 self.nsample +=1
                 self.nind.append(0)
                 self.indivname.append([])
-            else :    
-# now parsing individual's data lines as 
-#   1-001 ,    208208   000000   204206   220220 
+            else :
+# now parsing individual's data lines as
+#   1-001 ,    208208   000000   204206   220220
                 line=lines[nl].expandtabs(1)  #remplace les tabulations par des espaces
                 nindtot +=1
                 self.nind[-1] +=1
@@ -283,10 +283,10 @@ class Data(object):
                                 a=int(g)
                             except:
                                 self.locuslist[ig].type=5
-                               
+
                 #print self.genotype[-1]
             nl +=1
-        
+
 
     def __domicrosat(self,loc,iloc):
 # dealing with a microsatellite locus
@@ -306,10 +306,10 @@ class Data(object):
                 indtot+=1
 #                self.ss_mic[-1][-1] += 1
                 geno = self.genotype[indtot][iloc]
-                if len(geno)>3    : 
+                if len(geno)>3    :
                     gen =[geno[:len(geno)/2],geno[len(geno)/2:]]
                     self.nhaplo[-1][-1] +=2
-                else              : 
+                else              :
                     gen = [geno]
                     self.nhaplo[-1][-1] +=1
                 if (len(geno)<4)  :
@@ -317,12 +317,12 @@ class Data(object):
                     if (loc.type==3) and(gen!="000") :self.indivsexe[sample][ind]=2
                 for g in gen :
                     if g == "000" :
-                        if not ((self.indivsexe[sample][ind]==2)and(loc.type==3)) : 
+                        if not ((self.indivsexe[sample][ind]==2)and(loc.type==3)) :
 #                            print "g='000' pour sexe=",self.indivsexe[sample][ind],"   type=",loc.type
                             self.haplo[-1][-1].append((MICMISSING,str(MICMISSING)))
                             m = MissingData(locus=iloc,sample=sample,indiv=len(self.haplo[-1][-1])-1)
                             self.missdat.append(m)
-                    else : 
+                    else :
                         gg=int(g)
                         self.haplo[-1][-1].append((gg,g))
                         self.samplesize[-1][-1] += 1
@@ -358,7 +358,7 @@ class Data(object):
                     self.nhaplo[-1][-1] +=1
                 else :                #deux copies
                     g1 = geno[geno.find("[")+1:geno.find("]")]
-                    g2 = geno[geno.find("]")+2:]           
+                    g2 = geno[geno.find("]")+2:]
                     g2=g2[g2.find("[")+1:g2.find("]")]
                     gen = [g1,g2]
                     self.nhaplo[-1][-1] +=2
@@ -369,7 +369,7 @@ class Data(object):
                             m = MissingData(locus=iloc,sample=sample,indiv=len(self.haplo[-1][-1])-1)
                             self.missdat.append(m)
                     else :
-                        if seqlen==-1 : 
+                        if seqlen==-1 :
                             seqlen = len(g)
                             loc.dnalength = seqlen
                         if len(g) != seqlen :
@@ -385,11 +385,11 @@ class Data(object):
                             elif c == "T" : pi_T,nt = pi_T+1.0,nt+1
                             elif c != "-" :
                                 m = MissingNucleotide(locus=iloc,sample=sample,indiv=len(self.haplo[-1][-1])-1,nucleotide=i)
-                                self.missnuc.append(m) 
+                                self.missnuc.append(m)
         loc.pi_A, loc.pi_C, loc.pi_G, loc.pi_T = pi_A/nt, pi_C/nt, pi_G/nt, pi_T/nt
         loc.length = seqlen
-        self.nloc_seq +=1                                
-    
+        self.nloc_seq +=1
+
     def loadfromfile(self):
 # raw reading of the data file
         self.__read_genepop()
@@ -397,10 +397,10 @@ class Data(object):
         for sa in range(self.nsample) :
             self.indivsexe.append([])
             for ind in range(self.nind[sa]) :
-                self.indivsexe[-1].append(2)  #DEFAULT = FEMALE  
+                self.indivsexe[-1].append(2)  #DEFAULT = FEMALE
         for n in self.nind :
             self.nindtot += n
-            
+
 # reading genotypes
         for iloc,loc in enumerate(self.locuslist):
             if loc.type<5 :  self.__domicrosat(loc,iloc)
@@ -408,6 +408,9 @@ class Data(object):
         self.nloc = self.nloc_seq + self.nloc_mic
 
 class DataSnp():
+    __LOCUS_TYPES = set(['A','X','Y','M','H','a','x','y','m','h'])
+    __LOCUS_VALUES = set(['0','1','2','9'])
+    __IND_SEX_TYPES = set(['9','M','F','m','f'])
     def __init__(self,filename):
         self.filename = filename
         self.nloc = 0
@@ -421,6 +424,8 @@ class DataSnp():
 
     def readData(self):
         name = self.filename
+        # list ofsexual  locus index
+        sexLocus = []
         pat = re.compile(r'\s+')
         f=open(name,'r')
         data = f.read().strip()
@@ -430,6 +435,7 @@ class DataSnp():
         l1 = datalines[0].strip()
         l1compressed = pat.sub(' ',l1)
         l1parts = l1compressed.split(' ')
+
         prem = 0
         if not (len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP"):
 			l1 = datalines[1].strip()
@@ -437,14 +443,22 @@ class DataSnp():
 			l1parts = l1compressed.split(' ')
 			prem = 1
 			if not (len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP"):
-				raise Exception("Wrong first line format for data file : %s"%self.filename)
+				raise Exception("%s\n\nWrong description line format."% (self.filename))
         if len(datalines) < 1:
-            raise Exception("Not enough lines in SNP datafile %s"%self.filename)
-        for locty in l1parts[3:]:
-            if self.ntypeloc.has_key(locty):
-                self.ntypeloc[locty] += 1
-            else:
-                self.ntypeloc[locty] = 1
+            raise Exception("%s\n\nNot enough lines in SNP datafile."%self.filename)
+
+        for idx, locty in enumerate(l1parts):
+            if idx > 2 :
+                if locty not in DataSnp.__LOCUS_TYPES :
+                    raise Exception("%s\n\nFound an unknown locus type '%s' at locus %s. Should be one of : %s." % (self.filename,locty, str(idx-2), ", ".join(DataSnp.__LOCUS_TYPES)))
+                if self.ntypeloc.has_key(locty):
+                    self.ntypeloc[locty] += 1
+                else:
+                    self.ntypeloc[locty] = 1
+                if locty in ['X','Y','x','y'] :
+                    sexLocus.append(idx)
+
+
         nbX = 0
         nbY = 0
         if self.ntypeloc.has_key('X'):
@@ -463,10 +477,33 @@ class DataSnp():
         nbU = 0
         for i in range(len(datalines))[prem+1:]:
             line = pat.sub(' ',datalines[i].strip())
-            # si on n'a pas le bon nb de loci
-            if len(line.split(' ')) != (nbLoci + 3):
-                raise Exception("Wrong number of loci at line %s in %s : %s"%(i+1,self.filename,nbLoci))
-            ctype = line.split(' ')[2]
+            lineElements = line.split(' ')
+            # sex test
+            if lineElements[1] not in DataSnp.__IND_SEX_TYPES :
+                raise Exception('%s\n\nWrong sex type found : %s at line %s for individual %s' \
+                                % (self.filename,lineElements[1],str(i+prem),lineElements[0]) )
+            # loci number test
+            if len(lineElements) != (nbLoci + 3):
+                raise Exception("%s\n\nWrong number of loci at line %s for individual %s. It should have %s loci, got %s."\
+                                %(self.filename,str(i+1),lineElements[0],nbLoci,str(len(lineElements)-3) ))
+            # loci values test
+            print "loci values test"
+            for idx, locusValue in enumerate(lineElements[3:]) :
+                print "loci values test 1"
+                if locusValue not in DataSnp.__LOCUS_VALUES :
+                    print "loci values test2 %s" % locusValue
+                    raise Exception("%s\n\nIndividual %s has an unknown value (line %s, locus number %s is set to %s=%s). Expected value is one of %s" \
+                        % (self.filename,lineElements[0],str(i+prem),str(idx),l1parts[idx+3],locusValue, ", ".join(DataSnp.__LOCUS_VALUES) ))
+            # values for sexual loci test if sex in not set
+            if lineElements[1].lower() not in ['f','m']:
+                for index in sexLocus :
+                    if lineElements[index] != '9' :
+                        #raise Exception("Individual %s has unknown sex while some SNPs are on sex chromosomes"%line.split(' ')[0])
+                        raise Exception("%s\n\nIndividual %s has a sex SNP locus (line %s, locus number %s is set to %s=%s but it should be set to '9') set while is sex is set to unknown (%s)" \
+                                        % (self.filename,lineElements[0],str(i+prem),str(index-1),l1parts[index],lineElements[index],lineElements[1]))
+
+
+            ctype = lineElements[2]
             types.add(ctype)
 
             # gestion du nind version list
@@ -482,8 +519,7 @@ class DataSnp():
                 self.nind_hash[ctype] = 1
             else:
                 self.nind_hash[ctype] += 1
-            if sexPresent and line.split(' ')[1].lower() == 'u':
-                raise Exception("Individual %s has unknown sex while some SNPs are on sex chromosomes"%line.split(' ')[0])
+
         nbSample = len(types)
 
         self.nindtot = nbInd
