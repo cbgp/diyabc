@@ -51,6 +51,10 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         self.ui.projectDirEdit.setText(self.parent.parent.dir)
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
+
+        # hide posterior option
+        if self.analysis.name[0:4].upper() != 'CBGP' :
+             self.ui.drawnPosteriorRadio.hide()
         self.checkParameterValues()
 
     def restoreAnalysisValues(self):
@@ -92,7 +96,6 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         """
         # pour confidence et bias, on a selectionné un scenario
         self.analysis.chosenSc = self.getSelectedScenario()
-
 
         if self.ui.fixedRadio.isChecked():
             self.analysis.drawn = False
