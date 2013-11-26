@@ -172,7 +172,7 @@ string nomficonfresult;
     void doconf(string opt, int seed) {
         string progressfilename;
         int nstatOK, iprog,nprog,ncs1,*nbestdir,*nbestlog,*scenchoibackup,nscenchoibackup;
-        int nrec = 0, nsel,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond;
+        int nrec = 0,nreca, nsel,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond;
         string *ss,s,*ss1,s0,s1; 
 		float *stat_obs;
 		long double **matC;
@@ -209,7 +209,11 @@ string nomficonfresult;
                 nrec=atoi(s1.c_str());
                 if(nrec>nrecpos) nrec=nrecpos;
                 cout<<"nombre total de jeux de données considérés (pour les scénarios choisis )= "<<nrec<<"\n";
-           } else if (s0=="d:") {
+              } else if (s0=="a:") {
+                nreca=atoi(s1.c_str());
+                if(nreca>nrecpos) nreca=nrecpos;
+                cout<<"nombre total de jeux de données considérés (pour le calcul des posteriors)= "<<nreca<<"\n";
+          } else if (s0=="d:") {
                 nseld=atoi(s1.c_str());
                 cout<<"nombre de jeux de données considérés pour l'approche directe = "<<nseld<<"\n";
             } else if (s0=="l:") {
@@ -274,7 +278,7 @@ string nomficonfresult;
 			cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
 			rt.alloue_enrsel(nsel);
 			cout<<"avant le cal_dist de posterior\n";
-			rt.cal_dist(nrec,nsel,header.stat_obs,true);                  cout<<"apres cal_dist\n";
+			rt.cal_dist(nreca,nsel,header.stat_obs,true);                  cout<<"apres cal_dist\n";
 			det_numpar();
 			cout<<"apres det_numpar\n";
 			rempli_mat(nsel,header.stat_obs);                        cout<<"apres rempli_mat\n";

@@ -49,6 +49,7 @@ public:
     int testfile(std::string reftablefilename, int npart);
     int closefile();
 	void bintotxt();
+	void bintotxt2();
     void concat();
     // calcule les variances des statistiques résumées
     // sur les 100000 premiers enregistrements de la table de référence

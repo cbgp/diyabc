@@ -246,7 +246,7 @@ try {
     string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar, rngpar;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:x")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xy")) !=-1) {
 	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
 
@@ -262,7 +262,8 @@ try {
             cout << "-w <computer's number if in a cluster (0 by default) >\n";
             cout << "          (each computer in the cluster is numbered between 0 and the maximal number of computers in the cluster.)\n";
 			
-			cout << "-x for translating a reftable.bin in reftable.txt";
+			cout << "-x for translating a reftable.bin in reftable.txt\n";
+			cout << "-y for translating a reftable.bin in reftable.txt writing summary statistics before parameters\n";
 			cout << "\n-z <path/RNGfilename.bin> write the number of streams of the RNG into path/RNGfilename_cores.txt\n";
 			cout << "\n-n for INITIALIZATION OF THE PARALLEL RNG'S (with parameters as a string including the following options separated par a semi-colon)\n";
             cout << "           t:<maximal number of the threads (per computers if cluster, 16 by default)>\n";
@@ -306,7 +307,8 @@ try {
             cout << "           s:<chosen scenarios among which to choose>\n";
             cout << "           r:<chosen scenario to be tested<\n";
             cout << "           n:<number of simulated datasets taken from reftable>\n";
-            cout << "           t:<number of requested test data sets>\n";
+			cout << "           a:<number of simulated datasets taken from reftable>\n";
+			cout << "           t:<number of requested test data sets>\n";
             cout << "           d:<number of simulated datasets used in the direct approach>\n";
             cout << "           l:<number of simulated datasets used in the logistic regression>\n";
             cout << "           m:<number of requested logistic regressions>\n";
@@ -426,6 +428,9 @@ try {
 			
 		case 'x':
 			action = 'x';
+			break;
+		case 'y':
+			action = 'y';
 			break;
 		case 'z':
 			rngpar = soptarg;
@@ -671,6 +676,10 @@ try {
 	   case 'x'  :
 				  k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);
 				  rt.bintotxt();
+				  break;
+	   case 'y'  :
+				  k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);
+				  rt.bintotxt2();
 				  break;
 	   case 'z'  :
 				  analyseRNG(rngpar);
