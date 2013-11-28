@@ -143,6 +143,9 @@ class LocusGroupList(list):
 
 class Data(object):
     ''' this class describes an extended genepop format data set and read it from file'''
+    __LOCUS_TYPES = ["A", "H", "Y", "X", "M"]
+    __ACCEPTED_CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-<>[], \t'
+    __SEQUENCE_CODE = "ATGC"
     def __init__(self,filename):
         self.filename         = filename  # name of the genepop data file (string)
         self.message          = None  # message about the content of the data file if reading is successful or error message if not  (string)
@@ -186,10 +189,13 @@ class Data(object):
         read_data = f.read().strip()
         lines = read_data.splitlines()
         f.close()
+
+
         if len(lines)<4 :
 #data file with not enough lines
             raise NotGenepopFileError("data file with not enough lines")
         npop=0
+
         for ili,li in enumerate(lines) :
             lim= li.upper()
             if (ili>0)and(lim.find('POP')>-1)and(lim.find(',')<1) : npop +=1
@@ -221,6 +227,69 @@ class Data(object):
                         mes="Individual %s has a wrong number of loci"%(li3[0].strip())
 #an individual has a wrong number of loci
                         raise NotGenepopFileError(mes)
+        # others tests : unknown characters and locus section
+        popNum = 0
+        for ili,li in enumerate(lines[1:]) :
+            error_list = [c in Data.__ACCEPTED_CHARACTERS for c in li]
+            if not all(error_list) :
+                raise NotGenepopFileError("line : %s, found and unknown character : %s >%s< %s. \n Be careful, this can be a special character which could not be printed on screen !" \
+                        % (ili+2, li[:error_list.index(False)], li[error_list.index(False)] , li[error_list.index(False) + 1:]))
+            li = li.split()
+            if li[0].upper() == "POP":
+                popNum += 1
+#                 if len(li) > 1 :
+#                     raise NotGenepopFileError("line : %s, key word POP must be alone")
+            else :
+                #locus infos
+                if not popNum :
+                    if not li[0].upper() == "LOCUS" :
+                        raise NotGenepopFileError("line %s should start with key word Locus, found %s" % (ili+2, li[0]))
+                    if li[2] not in ['<%s>' % k for k in Data.__LOCUS_TYPES] :
+                        if li[2][0] != '<' :
+                            raise NotGenepopFileError("""line %s, unknown locus type %s, should start with '<'""" % ((ili+2), li[1]))
+                        if li[2][1] not in Data.__LOCUS_TYPES :
+                            raise NotGenepopFileError("""line %s, unknown locus type %s, should be one of %s""" % ((ili+2), li[1], Data.__LOCUS_TYPES))
+                        if li[2][2] != '>' :
+                            raise NotGenepopFileError("""line %s, unknown locus type %s, should start with '>'""" % ((ili+2), li[1]))
+                    if len(li) > 3 :
+                        raise NotGenepopFileError("line %s, unknown locus definition, found %s words, only 3 expected" % (ili+2, str(len(li))))
+                # pop individual infos
+                else :
+                    # if comma is stick on name or first locus, split it
+                    if li[1][0] == ',' and len(li[1]) > 1:
+                        li = [li[0]] + [','] + [li[1][1:]] + li[2:]
+                    elif li[0][-1] == ',' :
+                        li = [li[0][0:-1]] + [','] + li[1:]
+                    if li[1] != ',' :
+                        raise NotGenepopFileError("line %s, POP number %s,  missing comma between individual name and genotype" % (ili+2, popNum))
+                    # test individual locus
+                    for nlocus, locus in enumerate(li[2:]) :
+                        numbers = "1234567890"
+                        #microsat locus
+                        if locus[0] in numbers :
+                            error_list = [c in numbers for c in locus]
+                            if not all(error_list) :
+                                raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, found and unknown character for a microsat locus : %s >%s< %s. Only integer numbers are expected.\n Be careful, this can be a special character which could not be printed on screen !"\
+                                        % (ili+2, nlocus+1, li[0], popNum, locus[:error_list.index(False)], locus[error_list.index(False)] , locus[error_list.index(False) + 1:]))
+                        # seq locus
+                        elif locus[0] == '<' :
+                            if locus[0:2] != '<[' :
+                                raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, sequence locus should start with '<[" \
+                                    % (ili+2, nlocus+1, li[0], popNum))
+                            if locus[-2:] != ']>' :
+                                raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, sequence locus should end with ']>" \
+                                    % (ili+2, nlocus+1, li[0], popNum))
+
+                            seqs = locus[2:-2].split('][')
+                            for seq in seqs :
+                                error_list = [c in Data.__SEQUENCE_CODE for c in seq]
+                                if not all(error_list) :
+                                    raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, found and unknown character for a sequence  locus : %s >%s< %s. Only integer numbers are expected.\n Be careful, this can be a special character which could not be printed on screen !"\
+                                            % (ili+2, nlocus+1, li[0], popNum, seq[:error_list.index(False)], seq[error_list.index(False)] , seq[error_list.index(False) + 1:]))
+                        # unknown individual locus format
+                        else :
+                            raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, unknown individual locus format" \
+                                    % (ili+2, nlocus+1, li[0], popNum))
 
     def __read_genepop(self):
         self.__test_genepop()
