@@ -145,7 +145,7 @@ class Data(object):
     ''' this class describes an extended genepop format data set and read it from file'''
     __LOCUS_TYPES = ["A", "H", "Y", "X", "M"]
     __ACCEPTED_CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-<>[], \t'
-    __SEQUENCE_CODE = "ATGC"
+    __SEQUENCE_CODE = "ATGCN-"
     def __init__(self,filename):
         self.filename         = filename  # name of the genepop data file (string)
         self.message          = None  # message about the content of the data file if reading is successful or error message if not  (string)
@@ -242,15 +242,15 @@ class Data(object):
             else :
                 #locus infos
                 if not popNum :
-                    if not li[0].upper() == "LOCUS" :
-                        raise NotGenepopFileError("line %s should start with key word Locus, found %s" % (ili+2, li[0]))
-                    if li[2] not in ['<%s>' % k for k in Data.__LOCUS_TYPES] :
-                        if li[2][0] != '<' :
-                            raise NotGenepopFileError("""line %s, unknown locus type %s, should start with '<'""" % ((ili+2), li[1]))
-                        if li[2][1] not in Data.__LOCUS_TYPES :
-                            raise NotGenepopFileError("""line %s, unknown locus type %s, should be one of %s""" % ((ili+2), li[1], Data.__LOCUS_TYPES))
-                        if li[2][2] != '>' :
-                            raise NotGenepopFileError("""line %s, unknown locus type %s, should start with '>'""" % ((ili+2), li[1]))
+                    # test if locus types are defined
+                    if len(li) > 1 :
+                        if li[2] not in ['<%s>' % k for k in Data.__LOCUS_TYPES] :
+                            if li[2][0] != '<' :
+                                raise NotGenepopFileError("""line %s, unknown locus type %s, should start with '<'""" % ((ili+2), li[1]))
+                            if li[2][1] not in Data.__LOCUS_TYPES :
+                                raise NotGenepopFileError("""line %s, unknown locus type %s, should be one of %s""" % ((ili+2), li[1], Data.__LOCUS_TYPES))
+                            if li[2][2] != '>' :
+                                raise NotGenepopFileError("""line %s, unknown locus type %s, should start with '>'""" % ((ili+2), li[1]))
                     if len(li) > 3 :
                         raise NotGenepopFileError("line %s, unknown locus definition, found %s words, only 3 expected" % (ili+2, str(len(li))))
                 # pop individual infos
@@ -271,6 +271,10 @@ class Data(object):
                             if not all(error_list) :
                                 raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, found and unknown character for a microsat locus : %s >%s< %s. Only integer numbers are expected.\n Be careful, this can be a special character which could not be printed on screen !"\
                                         % (ili+2, nlocus+1, li[0], popNum, locus[:error_list.index(False)], locus[error_list.index(False)] , locus[error_list.index(False) + 1:]))
+                            if len(locus) not in [3,6] :
+                                raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, microsat locus are defined by 3 or 6 digits. Found  %s digits : %s  Be careful, this can be a insertion of a special character which could not be printed on screen !"\
+                                        % (ili+2, nlocus+1, li[0], popNum, len(locus), locus))
+
                         # seq locus
                         elif locus[0] == '<' :
                             if locus[0:2] != '<[' :

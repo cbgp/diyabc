@@ -26,7 +26,7 @@ class Project(baseProject,formProject):
     pour un projet chargé, on modifie l'affichage en conséquence dans loadFromDir
     """
 
-    
+
     def __init__(self,name,dir=None,parent=None):
         self.parent=parent
         self.name=name
@@ -76,8 +76,8 @@ class Project(baseProject,formProject):
 
         # Cacher l avertissement sur la taille des reftable tant que la reftable n'est pas calculable
         self.ui.warningNumTextBrowser.hide()
-        
-        
+
+
         # inserer image
         self.ui.setHistoricalButton.setIcon(QIcon(variables.ICONPATH+"/redcross.png"))
         self.ui.setGeneticButton.setIcon(QIcon(variables.ICONPATH+"/redcross.png"))
@@ -211,7 +211,7 @@ class Project(baseProject,formProject):
     def setNbScenarios(self,nb):
         """ ecrit le nombre de scenarios dans la zone "historical model"
             ecrit le waning sur le nombre de donnees simulees necessaires pas scenario
-        """        
+        """
         pluriel = ""
         if nb > 1:
             pluriel = "s"
@@ -222,7 +222,7 @@ class Project(baseProject,formProject):
 
     def setNbParams(self,nb):
         """ écrit le nombre de paramètres dans la zone "historical model"
-        """ 
+        """
         pluriel = ""
         if nb > 1:
             pluriel = "s"
@@ -266,7 +266,8 @@ class Project(baseProject,formProject):
             self.setTabIcon(0,QIcon(variables.ICONPATH+"/ok.png"))
             self.ui.runReftableButton.setDisabled(False)
             self.ui.stopReftableButton.setDisabled(False)
-            self.ui.warningNumTextBrowser.show()
+            if not hasattr(self, "stopSimulation" ) :
+                self.ui.warningNumTextBrowser.show()
             return True
         else:
             self.setTabIcon(0,QIcon(variables.ICONPATH+"/redcross.png"))
