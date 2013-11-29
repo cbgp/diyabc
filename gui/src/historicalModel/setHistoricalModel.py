@@ -594,24 +594,12 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         "look for missing mandatory conditions in scenarios"
         conditionsSet = set([])
         mirror = {"<=":">=", ">=":"<=", '<':'>', '>':'<'}
-        #allToEgal = {"<":"<=", ">":">=", "<=":"<=", ">=":">="}
         toggleEgal = {"<":"<=", ">":">=", "<=":"<", ">=":">"}
         for sc in scenariosList :
             for condition in sc.getMandatoryTimeConditions() :
                 conditionsSet.add(condition)
-        # check if times overlaps, if not delete
-        print '-------------'
-        print scenariosList , '   - scenariosList '
-        print self.param_info_dico, '   - self.param_info_dico'
-        print '-------------'
-        print conditionsSet
         for condition in list(conditionsSet) :
             try :
-                print condition , '  condition\n'
-                print condition[0] , " -  condition[0]\n"
-                print self.param_info_dico[condition[0]], ' - self.param_info_dico[condition[0]]\n'
-                print  self.param_info_dico[condition[0]][3], ' - self.param_info_dico[condition[0]][3]\n'
-                print  self.param_info_dico[condition[0]][2], ' - self.param_info_dico[condition[0]][2]\n'
                 if self.param_info_dico[condition[0]][3] < self.param_info_dico[condition[0]][2] :
                     conditionsSet.remove(condition)
             except KeyError, e :
@@ -625,7 +613,6 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                         a,c = condText.split(b)
                         break
                 conditionsSet = conditionsSet.difference(set([(a,b,c),(c,mirror[b],a),(a,toggleEgal[b],c),(c,toggleEgal[mirror[b]],a)]))
-        print conditionsSet,   "   -    final conditionset"
         if not silent and len(conditionsSet) > 0:
             warning = "You may want to add the conditions below to avoid gene genealogies incongruenties :\n"
             for cond in conditionsSet :

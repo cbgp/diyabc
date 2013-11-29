@@ -507,7 +507,7 @@ class Scenario(object):
             for ii in range(i-1,-1,-1) :
                 if myEvents[i].action == "SPLIT" :
                     if myEvents[i].pop  in  [myEvents[ii].pop, myEvents[ii].pop1, myEvents[ii].pop2]:
-                        mandatoryTimeConditions.add((myEvents[ii].stime, '>', myEvents[i].stime))
+                        mandatoryTimeConditions.add((myEvents[i].stime, '>=', myEvents[ii].stime))
                 elif myEvents[ii].action == "SPLIT" :
                     if myEvents[i].pop1 in [myEvents[ii].pop, myEvents[ii].pop1, myEvents[ii].pop2]:
                         mandatoryTimeConditions.add((myEvents[i].stime, '>', myEvents[ii].stime))
