@@ -311,11 +311,13 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
     def checkTimeConditions(self, scenariosList, silent=False):
         self.majParamInfoDico()
         mandatoryTimeConditions = super(SetHistoricalModelSimulation,self).checkTimeConditions(scenariosList, silent=True)
-        print "mandatoryTimeConditions = %s " % mandatoryTimeConditions
         if len(mandatoryTimeConditions) and silent==False:
-            warning = "Please check your times values for the conditions below to avoid gene genealogies incongruenties :\n"
+            warning = ""
             for cond in  mandatoryTimeConditions :
-                warning += "".join(cond) + "\n"
+                if not eval("%s %s %s" % (self.param_info_dico[cond[0]][1], cond[1], self.param_info_dico[cond[2]][1])) :
+                    warning += "".join(cond) + "\n"
+            if len(warning) > 0 :
+                warning = "Please check your times values for the conditions below to avoid gene genealogies incongruenties :\n" + warning
                 warning += "This is an advisory warning ; you may prefer to ignore it."
                 output.notify(self,"Time Condition Warning","%s"%warning)
         return mandatoryTimeConditions

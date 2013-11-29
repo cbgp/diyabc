@@ -600,8 +600,6 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 conditionsSet.add(condition)
         for condition in list(conditionsSet) :
             try :
-
-                print self.param_info_dico
                 if self.param_info_dico[condition[0]][3] < self.param_info_dico[condition[0]][2] :
                     conditionsSet.remove(condition)
             except KeyError, e :
