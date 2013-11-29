@@ -78,7 +78,13 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             posteriorDataSetNumber = cp.split('z:')[1].split(';')[0]
         except IndexError:
             pass
+        posteriorSimulatedDataSetNumber = ""
+        try:
+            posteriorSimulatedDataSetNumber = cp.split('a:')[1].split(';')[0]
+        except IndexError:
+            pass
         self.ui.posteriorDataSetNumberEdit.setText(posteriorDataSetNumber)
+        self.ui.posteriorSimulatedDataSetNumberEdit.setText(posteriorSimulatedDataSetNumber)
         self.checkParameterValues()
 
     def checkParameterValues(self):
@@ -88,6 +94,8 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             self.ui.maxPosteriorDataSetNumberLabel.setText("max = %s"%nbRecordsSelectedScenario)
             if str(self.ui.posteriorDataSetNumberEdit.text()) is '' :
                 self.ui.posteriorDataSetNumberEdit.setText(str(nbRecordsSelectedScenario/100))
+            if str(self.ui.posteriorSimulatedDataSetNumberEdit.text()) is '' :
+                self.ui.posteriorSimulatedDataSetNumberEdit.setText(str(nbRecordsSelectedScenario))
             self.ui.posteriorDataSetNumberFrame.show()
 
 
@@ -105,13 +113,22 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             self.analysis.drawn = 'posterior'
             if self.analysis.category == "confidence":
                 try :
-                    if int(str(self.ui.posteriorDataSetNumberEdit.text())) > self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) \
+                    if int(str(self.ui.posteriorSimulatedDataSetNumberEdit.text())) > self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) \
+                      or  int(str(self.ui.posteriorSimulatedDataSetNumberEdit.text())) <= 0 :
+                        raise
+                except :
+                     QMessageBox.information(self,"Number error","Total number of simulated data considered for local regression should be a positive number and inferior to the number of records of the scenario %s : %s" \
+                                                %(self.analysis.chosenSc, self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) ))
+                     return 0
+                try :
+                    if int(str(self.ui.posteriorDataSetNumberEdit.text())) > int(str(self.ui.posteriorSimulatedDataSetNumberEdit.text())) \
                       or  int(str(self.ui.posteriorDataSetNumberEdit.text())) <= 0 :
                         raise
                 except :
-                     QMessageBox.information(self,"Number error","The number of data sets for local regression should be a positive number and inferior to the number of records of the scenario %s : %s" \
-                                                %(self.analysis.chosenSc, self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) ))
+                     QMessageBox.information(self,"Number error","Number of datasets for local linear regression (simulate data closest to observed) should be a positive number and inferior to the number of records of the scenario %s : %s" \
+                                                %(self.analysis.chosenSc, str(self.ui.posteriorSimulatedDataSetNumberEdit.text()) ))
                      return 0
+
 
         # le cas du confidence, les sc à afficher dans le hist model sont ceux selectionnés
         if self.analysis.category == "confidence":

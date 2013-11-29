@@ -443,7 +443,8 @@ you want to perform computations</string>
             <item row="0" column="0">
              <widget class="QLabel" name="posteriorDataSetNumberLabel">
               <property name="text">
-               <string>Number of datasets for local linear regression</string>
+               <string>Number of datasets for local linear regression
+           (simulate data closest to observed)</string>
               </property>
              </widget>
             </item>
@@ -453,6 +454,16 @@ you want to perform computations</string>
                <string>max : </string>
               </property>
              </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Total number of simulated data considered</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="posteriorSimulatedDataSetNumberEdit"/>
             </item>
            </layout>
           </widget>

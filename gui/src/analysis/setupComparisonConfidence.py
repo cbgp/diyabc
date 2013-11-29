@@ -164,7 +164,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                 strparam += "t:%s;"%self.dico_values['notds']
                 strparam += "f:%s;"%self.analysis.fda
                 if self.analysis.drawn is 'posterior':
-                    strparam += "po;z:%s"% self.dico_values['posteriorNumDataSets']
+                    strparam += "po;z:%s;a:%s"% (self.dico_values['posteriorNumDataSets'], self.dico_values['posteriorSimNumDataSets'])
                 else :
                     strparam += "h:"
                     if self.analysis.drawn:
@@ -284,6 +284,10 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         for child in  self.parent.parent.ui.analysisStack.children():
             try :
                 self.dico_values['posteriorNumDataSets'] = child.posteriorDataSetNumberEdit.text()
+            except AttributeError as e :
+                pass
+            try :
+                self.dico_values['posteriorSimNumDataSets'] = child.posteriorSimulatedDataSetNumberEdit.text()
             except AttributeError as e :
                 pass
 
