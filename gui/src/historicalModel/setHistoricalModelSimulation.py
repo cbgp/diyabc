@@ -239,6 +239,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
     def validate(self):
         """ vérifie la validité du modèle historique et quitte
         """
+        self.majParamInfoDico()
         # VERIFS, si c'est bon, on change d'onglet, sinon on reste
         if self.checkAll() and self.checkSampleSize():
             self.parent.setHistValid(True)
@@ -308,14 +309,15 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
 
 
     def checkTimeConditions(self, scenariosList, silent=False):
-#         print "\n\n\n\n ---------------------------\n\n  MODE SIMULATION !!! \n\n\n"
-#         mandatoryTimeConditions = super(SetHistoricalModelSimulation,self).checkTimeConditions(scenariosList, silent=True)
-#         if len(mandatoryTimeConditions) :
-#             warning = "Please check your times values for the conditions below to avoid gene genealogies incongruenties :\n"
-#             for cond in conditionsSet :
-#                 warning += "".join(cond) + "\n"
-#                 warning += "This is an advisory warning ; you may prefer to ignore it."
-#                 output.notify(self,"Time Condition Warning","%s"%warning)
+        self.majParamInfoDico()
+        mandatoryTimeConditions = super(SetHistoricalModelSimulation,self).checkTimeConditions(scenariosList, silent=True)
+        print "mandatoryTimeConditions = %s " % mandatoryTimeConditions
+        if len(mandatoryTimeConditions) and silent==False:
+            warning = "Please check your times values for the conditions below to avoid gene genealogies incongruenties :\n"
+            for cond in  mandatoryTimeConditions :
+                warning += "".join(cond) + "\n"
+                warning += "This is an advisory warning ; you may prefer to ignore it."
+                output.notify(self,"Time Condition Warning","%s"%warning)
         return set([])
 
 

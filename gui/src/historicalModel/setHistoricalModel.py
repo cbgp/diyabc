@@ -600,6 +600,8 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 conditionsSet.add(condition)
         for condition in list(conditionsSet) :
             try :
+
+                print self.param_info_dico
                 if self.param_info_dico[condition[0]][3] < self.param_info_dico[condition[0]][2] :
                     conditionsSet.remove(condition)
             except KeyError, e :
@@ -945,7 +947,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
     def validate(self):
         """ vérifie la validité du modèle historique et quitte
         """
-        #self.majParamInfoDico()
+        self.majParamInfoDico()
         # VERIFS, si c'est bon, on change d'onglet, sinon on reste
         if self.checkAll():
             # creation et ecriture du fichier dans le rep choisi
