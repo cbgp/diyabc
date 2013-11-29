@@ -318,6 +318,6 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
                 warning += "".join(cond) + "\n"
                 warning += "This is an advisory warning ; you may prefer to ignore it."
                 output.notify(self,"Time Condition Warning","%s"%warning)
-        return set([])
+        return mandatoryTimeConditions
 
 
