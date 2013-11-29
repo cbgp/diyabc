@@ -247,9 +247,10 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
             self.majParamInfoDico()
 
             self.parent.ui.setGeneticButton.setDisabled(False)
-            self.parent.ui.setHistoricalButton.setDisabled(True)
+            self.parent.ui.setHistoricalButton.setDisabled(False)
 
             self.returnToProject()
+
 
     def checkSampleSize(self):
         # on verifie qu'on a le bon nombre de sample
