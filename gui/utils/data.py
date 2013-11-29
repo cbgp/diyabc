@@ -560,11 +560,8 @@ class DataSnp():
                 raise Exception("%s\n\nWrong number of loci at line %s for individual %s. It should have %s loci, got %s."\
                                 %(self.filename,str(i+1),lineElements[0],nbLoci,str(len(lineElements)-3) ))
             # loci values test
-            print "loci values test"
             for idx, locusValue in enumerate(lineElements[3:]) :
-                print "loci values test 1"
                 if locusValue not in DataSnp.__LOCUS_VALUES :
-                    print "loci values test2 %s" % locusValue
                     raise Exception("%s\n\nIndividual %s has an unknown value (line %s, locus number %s is set to %s=%s). Expected value is one of %s" \
                         % (self.filename,lineElements[0],str(i+prem),str(idx),l1parts[idx+3],locusValue, ", ".join(DataSnp.__LOCUS_VALUES) ))
             # values for sexual loci test if sex in not set
