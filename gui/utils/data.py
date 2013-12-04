@@ -179,6 +179,7 @@ class Data(object):
         else                 : return "mic_"
 
     def __test_genepop(self):
+        "not so quick but very dirty genepop file format tester"
         try :
             #with open(self.filename,'r') as f: read_data = f.read()
             f = open(self.filename,'r')
@@ -235,68 +236,92 @@ class Data(object):
                 raise NotGenepopFileError("line : %s, found and unknown character : %s >%s< %s. \n Be careful, this can be a special character which could not be printed on screen !" \
                         % (ili+2, li[:error_list.index(False)], li[error_list.index(False)] , li[error_list.index(False) + 1:]))
             li = li.split()
-            if li[0].upper() == "POP":
-                popNum += 1
-#                 if len(li) > 1 :
-#                     raise NotGenepopFileError("line : %s, key word POP must be alone")
-            else :
-                #locus infos
-                if not popNum :
-                    # test if locus types are defined
-                    if len(li) > 1 :
-                        if li[2] not in ['<%s>' % k for k in Data.__LOCUS_TYPES] :
-                            if li[2][0] != '<' :
-                                raise NotGenepopFileError("""line %s, unknown locus type %s, should start with '<'""" % ((ili+2), li[1]))
-                            if li[2][1] not in Data.__LOCUS_TYPES :
-                                raise NotGenepopFileError("""line %s, unknown locus type %s, should be one of %s""" % ((ili+2), li[1], Data.__LOCUS_TYPES))
-                            if li[2][2] != '>' :
-                                raise NotGenepopFileError("""line %s, unknown locus type %s, should start with '>'""" % ((ili+2), li[1]))
-                    if len(li) > 3 :
-                        raise NotGenepopFileError("line %s, unknown locus definition, found %s words, only 3 expected" % (ili+2, str(len(li))))
-                # pop individual infos
+            if len(li) >= 1 :
+                if li[0].upper() == "POP":
+                    popNum += 1
+    #                 if len(li) > 1 :
+    #                     raise NotGenepopFileError("line : %s, key word POP must be alone")
                 else :
-                    # if comma is stick on name or first locus, split it
-                    if li[1][0] == ',' and len(li[1]) > 1:
-                        li = [li[0]] + [','] + [li[1][1:]] + li[2:]
-                    elif li[0][-1] == ',' :
-                        li = [li[0][0:-1]] + [','] + li[1:]
-                    if li[1] != ',' :
-                        raise NotGenepopFileError("line %s, POP number %s,  missing comma between individual name and genotype" % (ili+2, popNum))
-                    # test individual locus
-                    for nlocus, locus in enumerate(li[2:]) :
-                        numbers = "1234567890"
-                        #microsat locus
-                        if locus[0] in numbers :
-                            error_list = [c in numbers for c in locus]
-                            if not all(error_list) :
-                                raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, found and unknown character for a microsat locus : %s >%s< %s. Only integer numbers are expected.\n Be careful, this can be a special character which could not be printed on screen !"\
-                                        % (ili+2, nlocus+1, li[0], popNum, locus[:error_list.index(False)], locus[error_list.index(False)] , locus[error_list.index(False) + 1:]))
-                            if len(locus) not in [3,6] :
-                                raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, microsat locus are defined by 3 or 6 digits. Found  %s digits : %s  Be careful, this can be a insertion of a special character which could not be printed on screen !"\
-                                        % (ili+2, nlocus+1, li[0], popNum, len(locus), locus))
+                    #locus infos
+                    if not popNum :
+                    # test if locus types are defined
+                        try :
+                            locusNotice = "\n Locus type should : \n - start with one and only one '<' \n - be a locus type in %s \n - end with one and only one '>'" % ", ".join(Data.__LOCUS_TYPES)
+                            if li[1] not in ['<%s>' % k for k in Data.__LOCUS_TYPES] :
+                                if li[1][0] != '<' or len(li[1]) == 1 :
+                                    raise NotGenepopFileError("""line %s, unknown locus type %s, %s """ % ((ili+2), li[1], locusNotice))
+                                elif li[1][1] not in Data.__LOCUS_TYPES or len(li[1]) == 2 :
+                                    raise NotGenepopFileError("""line %s, unknown locus type %s, %s""" % ((ili+2), li[1], locusNotice))
+                                elif len(li[1]) != 3 or li[1][2] != '>' :
+                                    raise NotGenepopFileError("""line %s, unknown locus type %s, %s""" % ((ili+2), li[1], locusNotice))
+                            elif len(li) > 2 :
+                                raise
+                        except NotGenepopFileError as e :
+                            raise e
+                        except :
+                            raise NotGenepopFileError("line %s, unknown locus definition, expect 1 or 2 words : first is the locus name without any spaces, second (optional) is the locus type" % (ili+2))
+                        if len(li) > 3 :
+                            raise NotGenepopFileError("line %s, unknown locus definition, found %s words, only 2 or one expected" % (ili+2, str(len(li))))
+                    # pop individual infos
+                    else :
+                        # if comma is add the end of the name
+                        if ',' in li[0] :
+                            index = li[0].index(',')
+                            if index and index == 0 :
+                                li = [',', li[0][index+1:] ] + li[1:]
+                            elif index and index == (len(li[0]) - 1) :
+                                li = [ li[0][0:index] , ',' ] + li[1:]
+                            elif index :
+                                li = [ li[0][0:index] , ',', li[0][index+1:] ] + li[1:]
+                        # if comma is stick on the forst value
+                        elif li[1][0] == ',' and len(li[1]) > 1:
+                             li = [li[0]] + [','] + [li[1][1:]] + li[2:]
 
-                        # seq locus
-                        elif locus[0] == '<' :
-                            if locus[0:2] != '<[' :
-                                raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, sequence locus should start with '<[" \
-                                    % (ili+2, nlocus+1, li[0], popNum))
-                            if locus[-2:] != ']>' :
-                                raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, sequence locus should end with ']>" \
-                                    % (ili+2, nlocus+1, li[0], popNum))
 
-                            seqs = locus[2:-2].split('][')
-                            for seq in seqs :
-                                error_list = [c in Data.__SEQUENCE_CODE for c in seq]
+                        if li[1] != ',' :
+                            raise NotGenepopFileError("line %s, POP number %s,  missing comma between individual name and genotype" % (ili+2, popNum))
+                        # test individual locus
+                        for nlocus, locus in enumerate(li[2:]) :
+                            numbers = "1234567890"
+                            #microsat locus
+                            if locus[0] in numbers :
+                                error_list = [c in numbers for c in locus]
                                 if not all(error_list) :
-                                    raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, found and unknown character for a sequence  locus : %s >%s< %s. Only integer numbers are expected.\n Be careful, this can be a special character which could not be printed on screen !"\
-                                            % (ili+2, nlocus+1, li[0], popNum, seq[:error_list.index(False)], seq[error_list.index(False)] , seq[error_list.index(False) + 1:]))
-                        # unknown individual locus format
-                        else :
-                            raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, unknown individual locus format" \
-                                    % (ili+2, nlocus+1, li[0], popNum))
+                                    raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, found and unknown character for a microsat locus : %s >%s< %s. Only integer numbers are expected.\n Be careful, this can be a special character which could not be printed on screen !"\
+                                            % (ili+2, nlocus+1, li[0], popNum, locus[:error_list.index(False)], locus[error_list.index(False)] , locus[error_list.index(False) + 1:]))
+                                if len(locus) not in [3,6] :
+                                    raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, microsat locus are defined by 3 or 6 digits. Found  %s digits : %s  Be careful, this can be a insertion of a special character which could not be printed on screen !"\
+                                            % (ili+2, nlocus+1, li[0], popNum, len(locus), locus))
+
+                            # seq locus
+                            elif locus[0] == '<' :
+                                if locus[0:2] != '<[' :
+                                    raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, sequence locus should start with '<[" \
+                                        % (ili+2, nlocus+1, li[0], popNum))
+                                if locus[-2:] != ']>' :
+                                    raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, sequence locus should end with ']>" \
+                                        % (ili+2, nlocus+1, li[0], popNum))
+
+                                seqs = locus[2:-2].split('][')
+                                for seq in seqs :
+                                    error_list = [c in Data.__SEQUENCE_CODE for c in seq]
+                                    if not all(error_list) :
+                                        raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, found and unknown character for a sequence  locus : %s >%s< %s. Only integer numbers are expected.\n Be careful, this can be a special character which could not be printed on screen !"\
+                                                % (ili+2, nlocus+1, li[0], popNum, seq[:error_list.index(False)], seq[error_list.index(False)] , seq[error_list.index(False) + 1:]))
+                            # unknown individual locus format
+                            else :
+                                raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, unknown individual locus format" \
+                                        % (ili+2, nlocus+1, li[0], popNum))
 
     def __read_genepop(self):
-        self.__test_genepop()
+
+        try :
+            self.__test_genepop()
+        except NotGenepopFileError as e :
+            raise e
+        except :
+            raise Error("Test on genepop format failed. Please check your file format. If all seems normal, send the file or a bug report to support")
+
         f=open(self.filename,'r')
         read_data = f.read().strip()
         lines = read_data.splitlines()
@@ -618,5 +643,5 @@ def isSNPDatafile(name):
 
 
 if __name__ == "__main__":
-    plop = Data("/home/cornuet/diyabc/commun/linux/simdat1_2011_10_10-1/datasim2_001")
+    plop = Data("/media/psf/Home/VMshare/Brouat/3pops_11loci_1mito.mss")
     plop.loadfromfile()
