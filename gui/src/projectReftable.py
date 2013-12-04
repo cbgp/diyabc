@@ -24,7 +24,7 @@ from analysis.drawPCAAnalysisResult import DrawPCAAnalysisResult
 from analysis.viewAnalysisParameters import ViewAnalysisParameters
 from viewTextFile import ViewTextFile
 from utils.executableLauncherThread import LauncherThread
-from datetime import datetime 
+from datetime import datetime
 import os.path
 import output
 from utils.cbgpUtils import log, addLine
@@ -103,7 +103,7 @@ class ProjectReftable(Project):
             if os.path.exists(outfile):
                 os.remove(outfile)
             fg = open(outfile,"w")
-            p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
+            p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
             while p.poll() == None:
                 time.sleep(1)
             fg.close()
@@ -138,7 +138,7 @@ class ProjectReftable(Project):
             output.notify(self,"Deletion error","Impossible to delete the reference table during its generation")
 
     def stopRefTableGen(self):
-        """ tue le thread de génération et crée le fichier .stop pour 
+        """ tue le thread de génération et crée le fichier .stop pour
         arrêter la génération de la reftable
         """
         if os.path.exists("%s"%self.dir):
@@ -314,11 +314,11 @@ class ProjectReftable(Project):
         projectName = str(self.ui.projNameLabelValue.text())
         referenceTableHeaderName = self.parent.reftableheader_name
         dataFileName = self.dataFileName
-        
+
         #str(self.ui.parent.preferences_win.ui.scriptMasterFirstTextEdit.toPlainText())
         masterScriptFirstPart= \
                self.parent.preferences_win.DEFAULT_FIRST_PART_SCRIPT_CLUSTER\
-               .format(numSimulatedDataSet, 
+               .format(numSimulatedDataSet,
                numSimulatedDataSetByJob,
                coresPerJob,
                maxConcurrentJobs,
@@ -330,7 +330,7 @@ class ProjectReftable(Project):
         self.ui.parent.preferences_win.ui.scriptMasterFirstTextEdit.setText(masterScriptFirstPart)
         res = str(self.ui.parent.preferences_win.ui.scriptMasterFirstTextEdit.toPlainText()) \
                 + str(self.ui.parent.preferences_win.ui.scriptMasterLastTextEdit.toPlainText())
-        
+
         return res
 
     def genNodeScript(self):
@@ -407,7 +407,8 @@ class ProjectReftable(Project):
         self.save()
         self.writeRefTableHeader()
         if self.th == None and self.thAnalysis == None:
-            cbgpUtils.checkRam()
+            # checkRam return false results. We deseable it
+            #cbgpUtils.checkRam()
             if not os.path.exists("%s/reftable.bin"%self.dir) and os.path.exists("%s/reftable.log"%self.dir):
                 os.remove("%s/reftable.log"%self.dir)
             try:
@@ -494,7 +495,7 @@ class ProjectReftable(Project):
         self.ui.fromToFrame.show()
         self.ui.nbReqFromLabel.setText("from %s"%self.ui.nbSetsDoneEdit.text())
         self.ui.nbReqToLabel.setText("to %s"%self.ui.nbSetsReqEdit.text())
- 
+
     def reftableProgress(self,progressFileContent):
         """Incremente la barre de progression de la génération de la reftable
         """
@@ -608,7 +609,7 @@ class ProjectReftable(Project):
                         self.dir = newdir
                         # verrouillage du projet
                         self.lock()
-                        # creation du fichier .diyabcproject 
+                        # creation du fichier .diyabcproject
                         if not os.path.exists("%s/%s.diyabcproject"%(self.dir,self.name)):
                             f = open("%s/%s.diyabcproject"%(self.dir,self.name),'w')
                             f.write("created in %s"%self.dir)
@@ -848,7 +849,7 @@ class ProjectReftable(Project):
                 return
             self.analysisQueue.append(analysis)
             if analysis == self.analysisQueue[0] and self.thAnalysis == None and self.th == None:
-                # si c'est la premiere, qu'aucune autre ne tourne et que la generation de 
+                # si c'est la premiere, qu'aucune autre ne tourne et que la generation de
                 # reftable est down, on la lance
                 self.launchAnalysis(analysis)
             else:
@@ -859,7 +860,7 @@ class ProjectReftable(Project):
                 frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #F4992B")
                 analysis.status = "queued"
 
-    def launchAnalysis(self,analysis):            
+    def launchAnalysis(self,analysis):
         """ lance un thread de traitement d'une analyse
         """
         if self.thAnalysis == None:
@@ -1087,12 +1088,12 @@ class ProjectReftable(Project):
                 shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
                 g = open("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName),'r')
                 datadir = g.readlines()
-                g.close()             
+                g.close()
                 if self.thAnalysis.analysis.logreg==True :
-                    shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))                
+                    shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))
                     f = open("%s/analysis/%s/complogreg.txt"%(self.dir,aDirName),'r')
-                    datareg = f.read()             
-                    f.close() 
+                    datareg = f.read()
+                    f.close()
                 fdaTextToDisplay = ""
                 if self.thAnalysis.analysis.fda == '1' :
                     fdaTextToDisplay = "Summary statistics have been replaced by LDA component\n"
@@ -1110,7 +1111,7 @@ class ProjectReftable(Project):
                     textDirect += datadir[i]
                     i+=10
                 textToDisplay += textDirect
-                if  self.thAnalysis.analysis.logreg==True :                   
+                if  self.thAnalysis.analysis.logreg==True :
                     textToDisplay += "\n\n Logistic approach\n\n"
                     textToDisplay += datareg
                 dest = open("%s/analysis/%s/compdirlog.txt"%(self.dir,aDirName),'w')
@@ -1126,7 +1127,7 @@ class ProjectReftable(Project):
                     if os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid)) :
                         self.thAnalysis.problem += "%s/%s_complogreg.txt found : OK\n"%(self.dir,aid)
                     else :
-                        self.thAnalysis.problem += "%s/%s_complogreg.txt not found : ERROR\n"%(self.dir,aid)    
+                        self.thAnalysis.problem += "%s/%s_complogreg.txt not found : ERROR\n"%(self.dir,aid)
                 if os.path.exists("%s/compare.out"%(self.dir)):
                     f = open("%s/compare.out"%(self.dir),"r")
                     lastLine = f.readlines()[-1]
@@ -1280,7 +1281,7 @@ class ProjectReftable(Project):
                 self.ui.warningNumTextBrowser.show()
             else :
                 self.ui.warningNumTextBrowser.hide()
-                
+
         else:
             # si on n'a pas de reftable, on empêche la définition d'analyse
             self.ui.nbSetsDoneEdit.setText("0")
@@ -1288,8 +1289,8 @@ class ProjectReftable(Project):
             self.freezeGenData(False)
             self.ui.newAnButton.setDisabled(True)
             self.ui.warningNumTextBrowser.show()
-            
-            
+
+
     def freezeHistModel(self,yesno=True):
         """ empêche la modification du modèle historique tout en laissant
         la possibilité de le consulter
@@ -1307,7 +1308,7 @@ class ProjectReftable(Project):
             e.setDisabled(yesno)
         for e in self.hist_model_win.findChildren(QPushButton,"rmCondButton"):
             e.setDisabled(yesno)
-        self.hist_model_win.findChild(QPushButton,"addScButton").setDisabled(yesno) 
+        self.hist_model_win.findChild(QPushButton,"addScButton").setDisabled(yesno)
         self.hist_model_win.findChild(QPushButton,"defPrButton").setDisabled(yesno)
         for param in self.hist_model_win.paramList:
             for e in param.findChildren(QLineEdit):
@@ -1375,11 +1376,11 @@ class ProjectReftable(Project):
                 if "sumStatsConfDico" not in attr:
                     a.sumStatsConfDico = {}
                 if "logreg" not in attr:
-                    a.logreg = None                    
+                    a.logreg = None
                 self.addAnalysis(a)
 
     def lock(self):
-        """ crée le fichier de verrouillage pour empêcher l'ouverture 
+        """ crée le fichier de verrouillage pour empêcher l'ouverture
         du projet par une autre instance de DIYABC
         """
         log(2,"Locking the project '%s'"%self.dir)
@@ -1388,7 +1389,7 @@ class ProjectReftable(Project):
         f.close()
 
     def unlock(self):
-        """ supprime le verrouillage sur le projet ssi le verrouillage 
+        """ supprime le verrouillage sur le projet ssi le verrouillage
         a été effectué par notre instance de DIYABC
         """
         log(2,"Unlocking the project '%s'"%self.dir)
