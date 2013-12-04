@@ -245,23 +245,24 @@ class Data(object):
                     #locus infos
                     if not popNum :
                     # test if locus types are defined
-                        try :
-                            locusNotice = "\n Locus type should : \n - start with one and only one '<' \n - be a locus type in %s \n - end with one and only one '>'" % ", ".join(Data.__LOCUS_TYPES)
-                            if li[1] not in ['<%s>' % k for k in Data.__LOCUS_TYPES] :
-                                if li[1][0] != '<' or len(li[1]) == 1 :
-                                    raise NotGenepopFileError("""line %s, unknown locus type %s, %s """ % ((ili+2), li[1], locusNotice))
-                                elif li[1][1] not in Data.__LOCUS_TYPES or len(li[1]) == 2 :
-                                    raise NotGenepopFileError("""line %s, unknown locus type %s, %s""" % ((ili+2), li[1], locusNotice))
-                                elif len(li[1]) != 3 or li[1][2] != '>' :
-                                    raise NotGenepopFileError("""line %s, unknown locus type %s, %s""" % ((ili+2), li[1], locusNotice))
-                            elif len(li) > 2 :
-                                raise
-                        except NotGenepopFileError as e :
-                            raise e
-                        except :
-                            raise NotGenepopFileError("line %s, unknown locus definition, expect 1 or 2 words : first is the locus name without any spaces, second (optional) is the locus type" % (ili+2))
-                        if len(li) > 3 :
-                            raise NotGenepopFileError("line %s, unknown locus definition, found %s words, only 2 or one expected" % (ili+2, str(len(li))))
+                        if len(li) != 1 :
+                            try :
+                                locusNotice = "\n Locus type should : \n - start with one and only one '<' \n - be a locus type in %s \n - end with one and only one '>'" % ", ".join(Data.__LOCUS_TYPES)
+                                if li[1] not in ['<%s>' % k for k in Data.__LOCUS_TYPES] :
+                                    if li[1][0] != '<' or len(li[1]) == 1 :
+                                        raise NotGenepopFileError("""line %s, unknown locus type %s, %s """ % ((ili+2), li[1], locusNotice))
+                                    elif li[1][1] not in Data.__LOCUS_TYPES or len(li[1]) == 2 :
+                                        raise NotGenepopFileError("""line %s, unknown locus type %s, %s""" % ((ili+2), li[1], locusNotice))
+                                    elif len(li[1]) != 3 or li[1][2] != '>' :
+                                        raise NotGenepopFileError("""line %s, unknown locus type %s, %s""" % ((ili+2), li[1], locusNotice))
+                                elif len(li) > 2 :
+                                    raise
+                            except NotGenepopFileError as e :
+                                raise e
+    #                         except :
+    #                             raise NotGenepopFileError("line %s, unknown locus definition, expect 1 or 2 words : first is the locus name without any spaces, second (optional) is the locus type" % (ili+2))
+                            if len(li) > 3 :
+                                raise NotGenepopFileError("line %s, unknown locus definition, found %s words, only 2 or one expected" % (ili+2, str(len(li))))
                     # pop individual infos
                     else :
                         # if comma is add the end of the name
@@ -314,7 +315,7 @@ class Data(object):
                                         % (ili+2, nlocus+1, li[0], popNum))
 
     def __read_genepop(self):
-
+        self.__test_genepop()
         try :
             self.__test_genepop()
         except NotGenepopFileError as e :
@@ -644,4 +645,6 @@ def isSNPDatafile(name):
 
 if __name__ == "__main__":
     plop = Data("/media/psf/Home/VMshare/Brouat/3pops_11loci_1mito.mss")
+    plop.loadfromfile()
+    plop = Data("/media/psf/Home/VMshare/louiT1_2013_5_2-1/loui10_new_ghostnat.dat")
     plop.loadfromfile()
