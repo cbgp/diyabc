@@ -92,10 +92,12 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         if self.analysis.category == "confidence" and self.ui.drawnPosteriorRadio.isChecked():
             nbRecordsSelectedScenario = self.parent.parent.readNbRecordsOfScenario(int(self.getSelectedScenario()))
             self.ui.maxPosteriorDataSetNumberLabel.setText("max = %s"%nbRecordsSelectedScenario)
-            if str(self.ui.posteriorDataSetNumberEdit.text()) is '' :
-                self.ui.posteriorDataSetNumberEdit.setText(str(nbRecordsSelectedScenario/100))
             if str(self.ui.posteriorSimulatedDataSetNumberEdit.text()) is '' :
                 self.ui.posteriorSimulatedDataSetNumberEdit.setText(str(nbRecordsSelectedScenario))
+            elif int(str(self.ui.posteriorSimulatedDataSetNumberEdit.text()))  >  nbRecordsSelectedScenario :
+                self.ui.posteriorSimulatedDataSetNumberEdit.setText(str(nbRecordsSelectedScenario))
+            #if str(self.ui.posteriorDataSetNumberEdit.text()) is '' :
+            self.ui.posteriorDataSetNumberEdit.setText(str(nbRecordsSelectedScenario/100))
             self.ui.posteriorDataSetNumberFrame.show()
 
 
