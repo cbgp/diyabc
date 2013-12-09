@@ -144,8 +144,8 @@ class LocusGroupList(list):
 class Data(object):
     ''' this class describes an extended genepop format data set and read it from file'''
     __LOCUS_TYPES = ["A", "H", "Y", "X", "M"]
-    __ACCEPTED_CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-<>[], \t'
-    __SEQUENCE_CODE = "ATGCN-"
+    __ACCEPTED_CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-<>[], \t.'
+    __SEQUENCE_CODE = "ATGCN-atgcn"
     def __init__(self,filename):
         self.filename         = filename  # name of the genepop data file (string)
         self.message          = None  # message about the content of the data file if reading is successful or error message if not  (string)
@@ -624,7 +624,7 @@ class DataSnp():
 
 def isSNPDatafile(name):
     if os.path.exists(name):
-        f=open(name,'r')
+        f=open(name,'rU')
         lines=f.readlines()
         f.close()
         if len(lines) > 0:
