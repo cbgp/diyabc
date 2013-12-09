@@ -315,7 +315,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
         #self.fillLocusTableFromData()
         if os.path.exists(self.parent.dir):
             if os.path.exists("%s/%s"%(self.parent.dir,self.parent.gen_conf_name)):
-                f = codecs.open("%s/%s"%(self.parent.dir,self.parent.gen_conf_name),"r","utf-8")
+                f = codecs.open("%s/%s"%(self.parent.dir,self.parent.gen_conf_name),"rU","utf-8")
                 lines = f.readlines()
                 nloc = int(lines[0].split('(')[1].split(')')[0])
                 # determination du nombre de groupes

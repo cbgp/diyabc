@@ -23,10 +23,10 @@ class LauncherThread(QThread):
     termProblem(QString) : program ended without susccess, the string is the problem description
 
     Here are the two classic scenarios to use this class :
-    - periodical scrutation : 
+    - periodical scrutation :
         every 2 seconds, check if the executable is still running and if the progress file has
-        changed. 
-    - real time scrutation : 
+        changed.
+    - real time scrutation :
         every line produced by the executable on its stdout is sent by a signal in real time
     """
     def __init__(self,name,cmd_args_list,realtime_output=False,outfile_path=None,progressfile_path=None,
@@ -78,7 +78,7 @@ class LauncherThread(QThread):
         """ read progress file and emit a signal if its content has changed
         """
         if os.path.exists(self.progressfile_path):
-            a = open(self.progressfile_path,"r")
+            a = open(self.progressfile_path,"rU")
             content = a.read()
             a.close()
             # we progressed !
@@ -95,7 +95,7 @@ class LauncherThread(QThread):
         """
         problem = ""
         if os.path.exists(self.progressfile_path):
-            a = open(self.progressfile_path,"r")
+            a = open(self.progressfile_path,"rU")
             lines = a.readlines()
             a.close()
             if len(lines) > 0:
@@ -157,8 +157,8 @@ class LauncherThread(QThread):
             poll_check = p.poll()
             if poll_check != None:
                 f.close()
-                f = open(self.outfile_path,"r")
-                lines = f.readlines()              
+                f = open(self.outfile_path,"rU")
+                lines = f.readlines()
                 f.close()
                 if len(lines) >= 4:
                     outlastline = "\n".join(lines[-4:])
@@ -172,8 +172,8 @@ class LauncherThread(QThread):
                     self.emit(SIGNAL(self.SIGTERMSUCCESS+"()"))
                 # failure
                 else:
-                    
-                    if self.progressfile_path != None:   
+
+                    if self.progressfile_path != None:
                         redProblem = self.readProblem()
                         problem = "Program of thread '%s' exited (with return code %s) unsuccessfully.\n\n%s\n\nContent of progress file :\n\n%s"%(self.name,poll_check,outlastline,redProblem)
                     else:

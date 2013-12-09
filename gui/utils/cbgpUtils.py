@@ -7,26 +7,26 @@
 #
 # Package regrouping generic tools created for DIYABC interface
 # but usefull for any graphical or user oriented program.
-# 
-# This package contains several classes : 
+#
+# This package contains several classes :
 #     - CmdPrompt and cmdThread : prompt which allows to execute python code
 #       interactively while program is running
 #     - Documentator : Extract infos from xml files produced by latexml or latex2html
 #       to get documentation of paragraphs* labeled like "doc_*"
 #     - TeeLogger : Replace a standard output in order to redirect the flows to :
 #       a file, the replaced output and an external function
-# 
+#
 # And several functions :
 #     - logRotate : recursively delete old files if the size of a directory
 #       exceeds a threshold
 #     - readRefTableSize : extract the record number of a DIYABC binary reference
-#       table 
+#       table
 #     - readNbRecordsOfScenario : extract the record number which concern a
 #       specific scenario
 #     - log : print the given string decorated by the date, the log level and the
 #       context (caller of calling function, calling function, parameters of
 #       calling function).
-# 
+#
 
 from threading import Thread
 import sys
@@ -54,7 +54,7 @@ class CmdPrompt(cmd.Cmd):
             exec line
         except Exception as e:
             print e
-    
+
     def do_EOF(self, line):
         return True
 
@@ -82,7 +82,7 @@ class Documentator():
     access primitives to this doc from keywords (qt objectnames in our case)
     """
     def __init__(self,myfile,maxDescriptionLength=2500,separator="+++",parent=None):
-        """ 
+        """
         @param myfile: Path of the html/xml documentation file
         @param maxDescriptionLength: Maximum number of characters to take for one description
         @param separator: string which separates tag names in label strings : doc_myObject+++tag_1+++tag_2
@@ -110,7 +110,7 @@ class Documentator():
         """ Loads the html file to fill the doc hashtable.
         The file is parsed line by line without any use of specific parser
         """
-        f = open(self.myfile,'r')
+        f = open(self.myfile,'rU')
         lines = f.readlines()
         f.close()
 
@@ -123,8 +123,8 @@ class Documentator():
         l = 0
         while l<len(lines):
             section = ""
-            # two cases : 
-            # - the label (doc_) is just after the section delimiter (<A NAME="SECTION000  ---->) : 
+            # two cases :
+            # - the label (doc_) is just after the section delimiter (<A NAME="SECTION000  ---->) :
             #   we find the section number after the label
             # - otherwise we find the section number before the label
             if '<A NAME="doc_' in lines[l]:
@@ -205,7 +205,7 @@ class Documentator():
                     value = value[:self.maxDescriptionLength]
                     value+="\n\nMore details in the documentation pdf at section : "
                     value+=i.getAttribute('xml:id').replace('S','').replace('p','').replace('P','')
-                    
+
                     self.addDescription(key,value,tags)
         #print self.dicoDoc
 
@@ -236,7 +236,7 @@ class Documentator():
             raise Exception("No documentation found for key %s"%key)
 
 
-from datetime import datetime 
+from datetime import datetime
 import time
 
 def sizedirectory(path):
@@ -254,7 +254,7 @@ def sizedirectory(path):
 
 
 def logRotate(logFolder,nbDaysOld,sizeThreshold):
-    """ Clean logFolder directory of all files older than nbDaysOld 
+    """ Clean logFolder directory of all files older than nbDaysOld
     only if logFolder is bigger than sizeThreshold Mo
     """
     try:
@@ -294,7 +294,7 @@ class TeeLogger(object):
         #self.logRotate(name)
 
         #self.file = open(name, mode)
-        self.filename = name 
+        self.filename = name
         self.out_or_err = out_or_err
         # on sauvegarde le out que l'on remplace
         if out_or_err:
@@ -504,7 +504,7 @@ def dos2unix(filename):
     f.close()
 
 def readlinesWindows(filename):
-    f=open(filename,'r')
+    f=open(filename,'rU')
     li=f.readline()
     res=[]
     while li!='':

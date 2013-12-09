@@ -25,16 +25,16 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.parent=parent
         self.directory=directory
         self.analysis = analysis
-        self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]       
+        self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
         self.paramChoice = "o"
         self.file_subname = "_original"
         self.createWidgets()
-        self.dicoPlot = {}  
+        self.dicoPlot = {}
         self.dicoFrame = {}
         self.svgList = []
         self.drawAll()
-        
-        
+
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -46,10 +46,10 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         #self.ui.printButton.hide()
         QObject.connect(self.ui.savePicturesButton,SIGNAL("clicked()"),self.saveDrawsToOnePdf)
         QObject.connect(self.ui.viewLocateButton,SIGNAL("clicked()"),self.viewMmmq)
-        
+
         QObject.connect(self.ui.oRadio,SIGNAL("clicked()"),self.changeParamChoice)
         QObject.connect(self.ui.cRadio,SIGNAL("clicked()"),self.changeParamChoice)
-        QObject.connect(self.ui.sRadio,SIGNAL("clicked()"),self.changeParamChoice)          
+        QObject.connect(self.ui.sRadio,SIGNAL("clicked()"),self.changeParamChoice)
 
         self.ui.PCAFrame.hide()
         self.ui.ACProgress.hide()
@@ -71,7 +71,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         if not os.path.exists("%s/analysis/%s/mmmq_scaled.txt"%(self.parent.dir,self.directory))\
            and not os.path.exists("%s/analysis/%s/paramstatdens_scaled.txt"%(self.parent.dir,self.directory)):
             self.ui.sRadio.hide()
-        else : 
+        else :
             self.ui.sRadio.setChecked(True)
             self.paramChoice = "s"
             self.file_subname = "_scaled"
@@ -82,8 +82,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             self.ui.oRadio.setChecked(True)
             self.paramChoice = "o"
             self.file_subname = "_original"
-            
-            
+
+
     def changeParamChoice(self):
         sd = self.sender()
         if sd == self.ui.oRadio:
@@ -140,7 +140,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.dicoPlot = {}
 
         if os.path.exists("%s/analysis/%s/paramstatdens%s.txt"%(self.parent.dir,self.directory,self.file_subname)):
-            f = codecs.open("%s/analysis/%s/paramstatdens%s.txt"%(self.parent.dir,self.directory,self.file_subname),"r","utf-8")
+            f = codecs.open("%s/analysis/%s/paramstatdens%s.txt"%(self.parent.dir,self.directory,self.file_subname),"rU","utf-8")
             lines = f.readlines()
             f.close()
             dico_info_draw = {}
@@ -163,7 +163,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
 
     def addDraw(self,name,values,absv,ordpr,ordpo):
         """ dessine et affiche un graphe
-        """        
+        """
         tabvalues = values.strip().split('  ')
         av = float(tabvalues[0])
         median = float(tabvalues[1])
@@ -197,7 +197,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         lpo = []
         for num in ordpo.strip().split():
             lpo.append(float(num))
-            
+
         legend_txt = "prior"
         plotc.axes.plot(labs,lpr,label=legend_txt,c=self.tab_colors[2])
         legend_txt = "posterior"

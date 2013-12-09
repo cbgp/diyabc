@@ -34,7 +34,7 @@ class ProjectSnp(ProjectReftable):
 
         #self.ui.frame_11.show()
         #self.ui.frame_12.show()
-        
+
         # until now set ascert bias functionality is not activated. (but waiting for further developpment)
         # so self.ascert_state_valid is set to True
         self.ascert_frame = ControlAscertBias(self)
@@ -110,7 +110,7 @@ class ProjectSnp(ProjectReftable):
         for ty in self.data.ntypeloc.keys() :
             exec("nb += int(self.sum_stat_wins.ui.taken%sEdit.text())"%ty)
         return nb
-    
+
     def getLociTaken(self):
         Aval=0
         Hval=0
@@ -123,10 +123,10 @@ class ProjectSnp(ProjectReftable):
             if ty in self.data.ntypeloc.keys() :
                 exec("%sval= int(self.sum_stat_wins.ui.taken%sEdit.text())"%(ty,ty))
                 exec("txt += ' %s:%s,'"%(ty, eval('%sval'%ty)))
-        txt = txt[:-1] + " from locus %s"%self.sum_stat_wins.ui.fromEdit.text() 
+        txt = txt[:-1] + " from locus %s"%self.sum_stat_wins.ui.fromEdit.text()
         return txt
-        
-    
+
+
     def updateNbStats(self):
         """ met à jour les informations graphiques sur les
         summary stats : le nombre total de stats et le nombre
@@ -169,7 +169,7 @@ class ProjectSnp(ProjectReftable):
         cette fonction est appelée au chargement du projet pour restituer l'etat du projet
         """
         log(2,"Checking validity of Historical Model and Sum Stats")
-        # historical model : 
+        # historical model :
         self.hist_model_win.definePriors(silent=True)
         if self.hist_model_win.checkAll(silent=True):
             self.setHistValid(True)
@@ -187,7 +187,7 @@ class ProjectSnp(ProjectReftable):
         """
         if os.path.exists(self.dir):
             if os.path.exists("%s/%s"%(self.dir,self.parent.gen_conf_name)):
-                f = codecs.open("%s/%s"%(self.dir,self.parent.gen_conf_name),"r","utf-8")
+                f = codecs.open("%s/%s"%(self.dir,self.parent.gen_conf_name),"rU","utf-8")
                 lines = f.readlines()
                 f.close()
                 nl = 1
@@ -197,7 +197,7 @@ class ProjectSnp(ProjectReftable):
                 dicoStatLines = {}
                 tyUsed= []
                 while (lines[nl].strip() != ""):
-                    numGr = int(lines[nl].split('G')[-1][0])   
+                    numGr = int(lines[nl].split('G')[-1][0])
                     fro = lines[nl].split('from')[-1].split()[0]
                     for couple in lines[nl].split('>')[:-1]:
                         if '<' in couple :
@@ -206,9 +206,9 @@ class ProjectSnp(ProjectReftable):
                             if len(numTy) != 1 :
                                 raise  Exception("Read SNP loci : Parsing error on : %s" % lines[nl])
                             numTy = numTy[0]
-                            exec("self.sum_stat_wins.ui.taken%sEdit.setText(numTy)"%ty)                           
+                            exec("self.sum_stat_wins.ui.taken%sEdit.setText(numTy)"%ty)
                             tyUsed += ty
-                            diconb[ty] = numTy                                              
+                            diconb[ty] = numTy
                             dicoFrom[ty] = fro
                             dicoGrTy[numGr] = ty
 
@@ -218,7 +218,7 @@ class ProjectSnp(ProjectReftable):
                             exec("self.sum_stat_wins.ui.taken%sEdit.setText('0')"%tyOrdered)
                     nl += 1
                 nl += 2
-                
+
                 while nl < len(lines) and lines[nl].strip() != "":
                     numGroup = int(lines[nl].strip().split()[1][1:])
                     ty = dicoGrTy[numGroup]
@@ -232,7 +232,7 @@ class ProjectSnp(ProjectReftable):
                 for ty in dicoStatLines.keys():
                     self.sum_stat_wins.setSumConf(dicoStatLines[ty])
             self.updateNbStats()
-           
+
     def loadFromDir(self):
         """ charge les infos à partir du répertoire self.dir
         """
@@ -246,7 +246,7 @@ class ProjectSnp(ProjectReftable):
         self.ui.groupBox_8.show()
         self.ui.setHistoricalButton.setDisabled(False)
         self.ui.setGeneticButton.setDisabled(False)
-        #kkpz kkpz kkpz # remttre le try 
+        #kkpz kkpz kkpz # remttre le try
         #try:
         # lecture du meta project
         self.loadMyConf()
@@ -256,11 +256,11 @@ class ProjectSnp(ProjectReftable):
         self.loadSumStatsConf()
         self.sum_stat_wins.lockLociSelection()
         self.loadAnalysis()
-        
+
         try :
             pass
         except Exception as e:
-            
+
             raise Exception("Impossible to read the project configuration\n\n%s"%e)
             output.notify(self,"Load error","Impossible to read the project configuration\n\n%s"%e)
 
@@ -269,7 +269,7 @@ class ProjectSnp(ProjectReftable):
         """
         log(2,"Reading '%s' to load datafile"%self.parent.main_conf_name)
         if os.path.exists(self.ui.dirEdit.text()+"/%s"%self.parent.main_conf_name):
-            f = open("%s/%s"%(self.dir,self.parent.main_conf_name),"r")
+            f = open("%s/%s"%(self.dir,self.parent.main_conf_name),"rU")
             lines = f.readlines()
             self.dataFileName = lines[0].strip()
             self.ui.dataFileEdit.setText(self.dataFileName)
@@ -391,7 +391,7 @@ class ProjectSnp(ProjectReftable):
         super(ProjectSnp,self).writeRefTableHeader()
 
         if os.path.exists(self.dir+"/%s"%self.parent.ascertainment_conf_name):
-            f = codecs.open(self.dir+"/%s"%self.parent.ascertainment_conf_name,"r","utf-8")
+            f = codecs.open(self.dir+"/%s"%self.parent.ascertainment_conf_name,"rU","utf-8")
             ascert_string = f.read()
             f.close()
         else:
@@ -419,7 +419,7 @@ class ProjectSnp(ProjectReftable):
         f = codecs.open(self.dir+"/%s"%self.parent.table_header_conf_name,'w',"utf-8")
         f.write("scenario%s%s"%(hist_params_txt,sum_stats_txt))
         f.close()
-        
+
     def getSumStatsTableHeader(self):
         """ retourne la partie sumstats du table header
         """
@@ -446,7 +446,7 @@ class ProjectSnp(ProjectReftable):
         if nstat > 0:
             for ty in self.data.ntypeloc.keys():
                 exec("taken = self.sum_stat_wins.ui.taken%sEdit.text()"%ty)
-                if int(taken) > 0 : 
+                if int(taken) > 0 :
                     locidesc += "%s <%s> "%(taken,ty)
             statsdesc += "group G%s (%s)\n%s"%(numGr,nstat,statstr)
         locidesc += "G%s from %s\n"%(numGr,self.sum_stat_wins.ui.fromEdit.text())

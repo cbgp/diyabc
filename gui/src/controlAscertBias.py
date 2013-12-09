@@ -45,7 +45,7 @@ class ControlAscertBias(formControl,baseControl):
 
     def loadAscertConf(self):
         if os.path.exists(self.parent.dir+"/%s"%self.parent.parent.ascertainment_conf_name):
-            f = codecs.open(self.parent.dir+"/%s"%self.parent.parent.ascertainment_conf_name,'r',"utf-8")
+            f = codecs.open(self.parent.dir+"/%s"%self.parent.parent.ascertainment_conf_name,'rU',"utf-8")
             lines = f.readlines()
             f.close()
             if len(lines) >= 3:

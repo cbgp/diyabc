@@ -171,7 +171,7 @@ class Project(baseProject,formProject):
             log(3,"RNG info file cannot be found")
             QApplication.restoreOverrideCursor()
             return False
-        ff = open("%s/RNG_state_0000_cores.txt"%self.dir,'r')
+        ff = open("%s/RNG_state_0000_cores.txt"%self.dir,'rU')
         try:
             first_line = ff.readlines()[0].strip()
             nbRNGThread = int(first_line)

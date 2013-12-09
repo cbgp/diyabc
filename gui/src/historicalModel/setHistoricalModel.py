@@ -1060,7 +1060,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         """
         if os.path.exists(self.parent.dir):
             if os.path.exists("%s/%s"%(self.parent.dir,self.parent.parent.hist_conf_name)):
-                f = open("%s/%s"%(self.parent.dir,self.parent.parent.hist_conf_name),"r")
+                f = open("%s/%s"%(self.parent.dir,self.parent.parent.hist_conf_name),"rU")
                 lines = f.readlines()
 
                 self.ui.otherRpRadio.setChecked(True)

@@ -66,7 +66,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         self.recentList = []
         self.recentMenuEntries = []
         self.wtEnabled = True
-        
+
         self.main_conf_name = "conf.tmp"
         self.hist_conf_name = "conf.hist.tmp"
         self.gen_conf_name = "conf.gen.tmp"
@@ -251,7 +251,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         self.currentProjectMenu = None
         QObject.connect(self.ui.tabWidget,SIGNAL("currentChanged(int)"),self.updateCurrentProjectMenu)
-	
+
         QObject.connect(self.ui.tabWidget,SIGNAL("tabCloseRequested(int)"),self.closeProject)
 
         QObject.connect(self.ui.openProjectButton,SIGNAL("clicked()"),self.openProject)
@@ -324,14 +324,14 @@ class Diyabc(formDiyabc,baseDiyabc):
         #wtButton.setMinimumSize(QSize(16, 18))
         self.wtButton.setFlat(True)
         QObject.connect(self.wtButton,SIGNAL("clicked()"),self.enterWhatsThisMode)
-        
+
         #do not addwidget to desactivate what's this functionality :
         global ACTIVATE_WHAT_S_THIS
         if ACTIVATE_WHAT_S_THIS :
             self.ui.toolBar.addWidget(self.wtButton)
         else :
             self.wtButton.hide()
-            
+
 
 
         for but in [newButton,newSNPButton,openButton,saveButton,saveAllButton,self.wtButton]:
@@ -528,7 +528,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.switchToMainStack()
             log(1,"Simulation project '%s' successfully created"%(newSimProj.name))
             self.updateDoc(newSimProj)
-            # set dernier chemin 
+            # set dernier chemin
             self.preferences_win.setLastFolder("open",os.path.dirname(str(newSimProj.dir)))
 
     def setRecent(self,rlist):
@@ -573,7 +573,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         return self.recentList
 
     def addRecent(self,rec):
-        """ Ajoute un projet recent. Garde les N derniers récents. 
+        """ Ajoute un projet recent. Garde les N derniers récents.
         Si le projet était déjà dans la liste, le met au sommet
         """
         # on vire les eventuelles occurences du projet que l'on veut ajouter
@@ -601,7 +601,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ Ouverture de la fenetre d'affichage des logs
         """
         self.showLogFile_win.show()
-        
+
     def showStatus(self,msg,time=None):
         """ Affiche 'msg' dans la statusbar pendant 'time'
         """
@@ -628,7 +628,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         est dir est un projet de type SNP
         """
         if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
-            f=open("%s/%s"%(dir,self.main_conf_name),'r')
+            f=open("%s/%s"%(dir,self.main_conf_name),'rU')
             cont = f.readlines()
             f.close()
             if len(cont)>0:
@@ -730,7 +730,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                         self.ui.tabWidget.setCurrentWidget(proj_to_open)
                         # verification generale pour mettre a jour l'etat du modèle historique et mutationnel
                         proj_to_open.checkAll()
-                        # si la reftable existe, on affiche le nombre d'enregistrement de celle ci et on 
+                        # si la reftable existe, on affiche le nombre d'enregistrement de celle ci et on
                         # verrouille (freeze) les modèles historique et génétique
                         proj_to_open.putRefTableSize()
                         # si c'est le premier projet, on permet la fermeture/del/save par le menu
@@ -763,7 +763,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     def cloneCurrentProject(self,cloneName=None,cloneDir=None):
         """ duplique un projet vers un autre répertoire
         demande le nom du clone puis le répertoire dans lequel mettre le clone du projet
-        """ 
+        """
         self.saveCurrentProject()
         current_project = self.ui.tabWidget.currentWidget()
         log(1,"attempting to clone the project : %s"%current_project.dir)
@@ -879,7 +879,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         else:
             name = path.split("/")[-1]
 
-        # verification de l'existence du dossier dans lequel le dossier du projet 
+        # verification de l'existence du dossier dans lequel le dossier du projet
         # va être créé
         if ok and not os.path.exists(os.path.dirname(str(path))):
             output.notify(self,"Creation impossible","Directory %s does not exist.\nImpossible to create the project in %s"%(os.path.dirname(str(path)),path))
@@ -925,7 +925,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     self.switchToMainStack()
                     self.updateDoc(newProj)
                     log(1,'Project %s successfully created in %s'%(newProj.name,newProj.dir))
-                    # set dernier chemin 
+                    # set dernier chemin
                     self.preferences_win.setLastFolder("open",os.path.dirname(str(newProj.dir)))
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded."%name)
@@ -948,7 +948,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     save = (reply == QtGui.QMessageBox.Save)
             else:
                 save = True
-        
+
         # est ce que l'index est out of range?
         if self.ui.tabWidget.widget(index) != 0:
             # deverrouillage du projet
@@ -1006,7 +1006,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         if self.ui.tabWidget.currentWidget().canBeDeleted():
             if not output.debug:
                 reply = QtGui.QMessageBox.question(self, 'Deletion confirmation',
-                    "Are you sure you want to delete Project %s ?"%(self.ui.tabWidget.currentWidget().name), QtGui.QMessageBox.Yes | 
+                    "Are you sure you want to delete Project %s ?"%(self.ui.tabWidget.currentWidget().name), QtGui.QMessageBox.Yes |
                     QtGui.QMessageBox.No, QtGui.QMessageBox.Yes)
                 ok = (reply == QtGui.QMessageBox.Yes)
             else:
@@ -1035,7 +1035,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             self.ui.tabWidget.setCurrentIndex((self.ui.tabWidget.currentIndex() - 1) % self.ui.tabWidget.count())
 
     def isProjDir(self,dir):
-        """ retourne vrai si le répertoire donné en paramètre est un 
+        """ retourne vrai si le répertoire donné en paramètre est un
         repertoire de projet ou s'il est dans un répertoire de projet
         """
         if os.path.exists("%s/%s"%(dir,self.main_conf_name))\
@@ -1105,7 +1105,7 @@ class Diyabc(formDiyabc,baseDiyabc):
 
 class ImportProjectThread(Thread):
     """ Classe qui effectue l'import de la classe project en parallèle au chargement
-    du programme. L'interface démarre beaucoup plus vite et charge la classe projet 
+    du programme. L'interface démarre beaucoup plus vite et charge la classe projet
     en même temps qu'elle apparait
     """
     def __init__(self):
@@ -1125,9 +1125,9 @@ def main():
         # sous linux, on appelle gconf pour voir les icones dans les menus et boutons
         if "linux" in sys.platform:
             cmd_args_list = ["gconftool-2", "--type", "boolean", "--set", "/desktop/gnome/interface/buttons_have_icons", "true"]
-            p = subprocess.Popen(cmd_args_list) 
+            p = subprocess.Popen(cmd_args_list)
             cmd_args_list = ["gconftool-2", "--type", "boolean", "--set", "/desktop/gnome/interface/menus_have_icons", "true"]
-            p = subprocess.Popen(cmd_args_list) 
+            p = subprocess.Popen(cmd_args_list)
 
     nargv = sys.argv
     # getting cmd option
@@ -1139,9 +1139,9 @@ def main():
         print VERSION
         print VERSION_DATE
         return
-        
+
     if "--wst" in nargv:
-        global ACTIVATE_WHAT_S_THIS 
+        global ACTIVATE_WHAT_S_THIS
         ACTIVATE_WHAT_S_THIS = True
 
     projects_to_open = []
@@ -1167,7 +1167,7 @@ def main():
         myapp.raise_()
 
     # pour les logs dans un fichier et sur le terminal
-    # chaque TeeLogger remplace une sortie et écrit dans 
+    # chaque TeeLogger remplace une sortie et écrit dans
     # le fichier qu'on lui donne
     myOut = TeeLogger(logfile,True,myapp.showLog)
     myErr = TeeLogger(logfile,False,myapp.showLog)

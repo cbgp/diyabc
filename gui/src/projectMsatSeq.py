@@ -99,7 +99,7 @@ class ProjectMsatSeq(ProjectReftable):
         self.ui.groupBox_8.show()
         self.ui.setHistoricalButton.setDisabled(False)
         self.ui.setGeneticButton.setDisabled(False)
-        #kkp kkpz remettre le try 
+        #kkp kkpz remettre le try
         #try:
         if True:
             # lecture du meta project
@@ -180,7 +180,7 @@ class ProjectMsatSeq(ProjectReftable):
         """
         log(2,"Reading '%s' to load datafile"%self.parent.main_conf_name)
         if os.path.exists(self.ui.dirEdit.text()+"/%s"%self.parent.main_conf_name):
-            f = open("%s/%s"%(self.dir,self.parent.main_conf_name),"r")
+            f = open("%s/%s"%(self.dir,self.parent.main_conf_name),"rU")
             lines = f.readlines()
             self.dataFileName = lines[0].strip()
             self.ui.dataFileEdit.setText(self.dataFileName)
@@ -271,7 +271,7 @@ class ProjectMsatSeq(ProjectReftable):
         cette fonction est appelée au chargement du projet pour restituer l'etat du projet
         """
         log(2,"Checking validity of Historical Model and Genetic Data")
-        # historical model : 
+        # historical model :
         self.hist_model_win.definePriors(silent=True)
         if self.hist_model_win.checkAll(silent=True):
             self.setHistValid(True)

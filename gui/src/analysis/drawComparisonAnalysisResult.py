@@ -25,9 +25,9 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         self.directory=directory
         self.analysis = analysis
         self.createWidgets()
-        self.dicoPlot = {}  
+        self.dicoPlot = {}
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
-        
+
         self.drawAll()
 
     def createWidgets(self):
@@ -72,7 +72,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
     def getCoord(self,filepath):
         """ extrait les coordonnées du fichier passé en paramètre
         """
-        f = codecs.open(filepath,"r","utf-8")
+        f = codecs.open(filepath,"rU","utf-8")
         lines = f.readlines()
         f.close()
         l = 0
@@ -119,10 +119,10 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         """
         if os.path.exists("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory)):
             (first_line_tab,dico_coord) = self.getCoord("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory))
-            self.addDraw(first_line_tab,dico_coord,True)         
+            self.addDraw(first_line_tab,dico_coord,True)
         else:
             log(3, "compdirect.txt not found")
-            
+
         if self.analysis.logreg==True :
             if os.path.exists("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory)):
                 (first_line_tab,dico_coord) = self.getCoord("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory))
@@ -133,7 +133,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
 
     def addDraw(self,first_line_tab,dico_coord,direct):
         """ dessine et affiche un graphe
-        """        
+        """
         draw_widget = QtGui.QWidget(self)
         l = QtGui.QVBoxLayout(draw_widget)
         plotc = MyMplCanvas(draw_widget, width=12, height=4, dpi=100)
@@ -155,7 +155,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
 
 
         labs = dico_coord['n']
-        for i in range(len(first_line_tab)):    
+        for i in range(len(first_line_tab)):
             legend_txt = "Scenario %s"%first_line_tab[i]
             col = self.tab_colors[(int(first_line_tab[i])%len(self.tab_colors))]
             plotc.axes.plot(labs,dico_coord[first_line_tab[i]],label=legend_txt,c=col,marker='%s'%markerPlot)

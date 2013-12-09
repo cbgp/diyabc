@@ -32,7 +32,7 @@ class ProjectSimulation(Project):
         self.dico_loc_nb = None
         self.sexRatio = None
 
-        
+
         self.ui.projNameLabel.setText("Data file generic name :")
         self.ui.dirLabel.setText("Target directory :")
         self.ui.dirEdit.setText("%s"%self.dir)
@@ -240,7 +240,7 @@ class SimulationThread(QThread):
             nbMaxThread = self.parent.parent.preferences_win.getMaxThreadNumber()
             cmd_args_list = [exPath,"-p", "%s/"%self.parent.dir, "-k", "-m", "-t", "%s"%nbMaxThread]
             self.log(3,"Command launched : %s"%" ".join(cmd_args_list))
-            p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) 
+            p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
             self.processus = p
         except Exception as e:
             self.problem = "Problem during program launch \n%s"%e
@@ -254,10 +254,10 @@ class SimulationThread(QThread):
             time.sleep(1)
             # verification de l'arret du programme
             if p.poll() != None:
-                # lecture 
+                # lecture
                 if os.path.exists("%s/progress.txt"%(self.parent.dir)):
                     #print 'open'
-                    f = open("%s/progress.txt"%(self.parent.dir),"r")
+                    f = open("%s/progress.txt"%(self.parent.dir),"rU")
                     lines = f.readlines()
                     f.close()
                     finished = True
@@ -265,7 +265,7 @@ class SimulationThread(QThread):
                     self.emit(SIGNAL("simulationTerminated"))
                 else:
                     fg.close()
-                    fout = open(outfile,'r')
+                    fout = open(outfile,'rU')
                     lastline = fout.readlines()
                     if len(lastline) > 0:
                         lastline = lastline[-1]
@@ -273,7 +273,7 @@ class SimulationThread(QThread):
                     self.problem = "Simulation program exited anormaly\n%s"%lastline
                     self.emit(SIGNAL("simulationProblem(QString)"),self.problem)
                     return
-                    
+
                 fg.close()
         fg.close()
 

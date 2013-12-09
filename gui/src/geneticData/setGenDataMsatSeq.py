@@ -51,8 +51,8 @@ class SetGeneticDataMsatSeq(SetGeneticData):
 
 
     def addGroup(self):
-        """ surcharge de addgroup de la classe mère qui crée les mutation model et 
-        les setsumstats 
+        """ surcharge de addgroup de la classe mère qui crée les mutation model et
+        les setsumstats
         """
         groupBox = super(SetGeneticDataMsatSeq,self).addGroup()
 
@@ -158,7 +158,7 @@ class SetGeneticDataMsatSeq(SetGeneticData):
                     if (kmin > mini) or (kmax < maxi):
                         problematicLocus += "%s,"%(i+1)
                         log(4,"locus %s  size:%s range:%s   mini=%s maxi=%s kmoy=%s kmin=%s kmax=%s"%(self.parent.data.locuslist[i].name,motif_size,motif_range,mini,maxi,kmoy,kmin,kmax))
-            #print "\n"; 
+            #print "\n";
             if problematicLocus != "":
                 problematicLocus = problematicLocus[:-1]
                 problem += "Motif range at locus %s is not large enough to include all observed alleles\n"%problematicLocus
@@ -177,7 +177,7 @@ class SetGeneticDataMsatSeq(SetGeneticData):
                 elif "Sequences" in title:
                     if box not in self.setMutationSeqValid_dico.keys():
                         self.setMutationSeqValid_dico[box] = self.setMutationSeq_dico[box].allValid(silent=True)
-                        
+
                     if not self.setMutationSeqValid_dico[box]:
                         problem += u"Mutation model of group %s is not considered as valid\n"%(i+1)
                     # recup du nb de stats
@@ -299,13 +299,13 @@ class SetGeneticDataMsatSeq(SetGeneticData):
                 (nstat_tmp,stat_txt) = self.setSum_dico[box].getSumConf()
                 stat_header_txt = "group G%i [M] (%i)\n"%((i+1),nstat_tmp)
                 nstat_tot += nstat_tmp
-                # construction de la chaine a ecrire pour ce groupe 
+                # construction de la chaine a ecrire pour ce groupe
                 stat_to_write = stat_header_txt+stat_txt
             elif "Sequences" in str(box.title()):
                 (nstat_tmp,stat_txt) = self.setSumSeq_dico[box].getSumConf()
                 stat_header_txt = "group G%i [S] (%i)\n"%((i+1),nstat_tmp)
                 nstat_tot += nstat_tmp
-                # construction de la chaine a ecrire pour ce groupe 
+                # construction de la chaine a ecrire pour ce groupe
                 stat_to_write = stat_header_txt+stat_txt
             stat_txt_list.append(stat_to_write)
 
@@ -323,7 +323,7 @@ class SetGeneticDataMsatSeq(SetGeneticData):
         #self.fillLocusTableFromData()
         if os.path.exists(self.parent.dir):
             if os.path.exists("%s/%s"%(self.parent.dir,self.parent.parent.gen_conf_name)):
-                f = codecs.open("%s/%s"%(self.parent.dir,self.parent.parent.gen_conf_name),"r","utf-8")
+                f = codecs.open("%s/%s"%(self.parent.dir,self.parent.parent.gen_conf_name),"rU","utf-8")
                 lines = f.readlines()
                 nloc = int(lines[0].split('(')[1].split(')')[0])
                 # determination du nombre de groupes

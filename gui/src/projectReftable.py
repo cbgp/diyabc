@@ -336,7 +336,7 @@ class ProjectReftable(Project):
     def genNodeScript(self):
         """ génération du script a exécuter sur chaque noeud
         """
-        f = open(DATAPATH+"/txt/node_cluster.sh","r")
+        f = open(DATAPATH+"/txt/node_cluster.sh","rU")
         script= f.read()
         f.close()
         return script
@@ -546,7 +546,7 @@ class ProjectReftable(Project):
 
             fdest = codecs.open(self.dir+"/%s"%self.parent.reftableheader_name,"w","utf-8")
             for name in [self.parent.main_conf_name,self.parent.hist_conf_name,self.parent.gen_conf_name,self.parent.table_header_conf_name]:
-                fo = codecs.open(self.dir+"/%s"%name,"r","utf-8")
+                fo = codecs.open(self.dir+"/%s"%name,"rU","utf-8")
                 folines = fo.read()
                 fo.close()
                 if name == self.parent.hist_conf_name:
@@ -1069,7 +1069,7 @@ class ProjectReftable(Project):
                 self.thAnalysis.problem = "No output files produced\n(%s\n%s\n%s)"%("%s/%s_mmmq_composite.txt"%(self.dir,aid),\
                         "%s/%s_mmmq_scaled.txt"%(self.dir,aid),"%s/%s_mmmq_original.txt"%(self.dir,aid))
                 if os.path.exists("%s/estimate.out"%(self.dir)):
-                    f = open("%s/estimate.out"%(self.dir),"r")
+                    f = open("%s/estimate.out"%(self.dir),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
@@ -1086,7 +1086,7 @@ class ProjectReftable(Project):
                 if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
                     os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
                 shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
-                g = open("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName),'r')
+                g = open("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName),'rU')
                 datadir = g.readlines()
                 g.close()
                 if self.thAnalysis.analysis.logreg==True :
@@ -1129,7 +1129,7 @@ class ProjectReftable(Project):
                     else :
                         self.thAnalysis.problem += "%s/%s_complogreg.txt not found : ERROR\n"%(self.dir,aid)
                 if os.path.exists("%s/compare.out"%(self.dir)):
-                    f = open("%s/compare.out"%(self.dir),"r")
+                    f = open("%s/compare.out"%(self.dir),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\nThis is the last line of the output file %s/compare.out :\n%s"%(self.dir,lastLine)
@@ -1154,7 +1154,7 @@ class ProjectReftable(Project):
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/bias.out"%(self.dir)):
-                    f = open("%s/bias.out"%(self.dir),"r")
+                    f = open("%s/bias.out"%(self.dir),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
@@ -1171,7 +1171,7 @@ class ProjectReftable(Project):
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/confidence.out"%(self.dir)):
-                    f = open("%s/confidence.out"%(self.dir),"r")
+                    f = open("%s/confidence.out"%(self.dir),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
@@ -1190,7 +1190,7 @@ class ProjectReftable(Project):
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/modelChecking.out"%(self.dir)):
-                    f = open("%s/modelChecking.out"%(self.dir),"r")
+                    f = open("%s/modelChecking.out"%(self.dir),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
@@ -1209,7 +1209,7 @@ class ProjectReftable(Project):
             else:
                 self.thAnalysis.problem = "No output files produced\n"
                 if os.path.exists("%s/pre-ev.out"%(self.dir)):
-                    f = open("%s/pre-ev.out"%(self.dir),"r")
+                    f = open("%s/pre-ev.out"%(self.dir),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine

@@ -31,9 +31,9 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         else:
             self.acpFile = "%s/analysis/%s/ACP.txt"%(self.parent.dir,self.directory)
         self.createWidgets()
-        self.dicoPlot = {}  
+        self.dicoPlot = {}
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
-        
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -93,7 +93,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             if "win" in sys.platform and "darwin" not in sys.platform:
                 lines = readlinesWindows(self.acpFile)
             else:
-                f = codecs.open(self.acpFile,"r","utf-8")
+                f = codecs.open(self.acpFile,"rU","utf-8")
                 lines = f.readlines()
                 f.close()
             self.dico_points = {}
