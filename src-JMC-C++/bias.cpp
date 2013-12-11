@@ -1804,7 +1804,7 @@ bool valinfinie=false;
 				cout << "Not enough suitable particles ("<<nphistarOK<<")to perform model checking. Stopping computations." << endl;
 				exit(1);
 			}
-			
+			rt.desalloue_enrsel(nsel);
 		}
         npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[ntest];

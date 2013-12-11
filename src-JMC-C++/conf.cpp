@@ -172,12 +172,12 @@ string nomficonfresult;
     void doconf(string opt, int seed) {
         string progressfilename;
         int nstatOK, iprog,nprog,ncs1,*nbestdir,*nbestlog,*scenchoibackup,nscenchoibackup;
-        int nrec = 0,nreca, nsel,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond;
+        int nrec = 0,nreca, nsel=0,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond;
         string *ss,s,*ss1,s0,s1; 
 		float *stat_obs;
 		long double **matC;
 		double duree,debut,clock_zero;
-        bool AFD=false,posterior;
+        bool AFD=false,posterior=false;
 			long double **phistar;
 			int nphistarOK;
         posteriorscenC **postsd,*postsr;
@@ -267,7 +267,7 @@ string nomficonfresult;
 			}
         }
         cout<<"fin de l'analyse de confpar\n";
-        if (posterior) {
+       if (posterior) {
 			//calcul des posteriors
 			nscenchoibackup = rt.nscenchoisi;
 			scenchoibackup = new int[rt.nscenchoisi];
@@ -277,7 +277,7 @@ string nomficonfresult;
 			nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
 			cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
 			rt.alloue_enrsel(nsel);
-			cout<<"avant le cal_dist de posterior\n";
+			cout<<"avant le cal_dist de posterior\n";fflush(stdout);
 			rt.cal_dist(nreca,nsel,header.stat_obs,true);                  cout<<"apres cal_dist\n";
 			det_numpar();
 			cout<<"apres det_numpar\n";
@@ -300,6 +300,7 @@ string nomficonfresult;
 				cout << "Not enough suitable particles ("<<nphistarOK<<")to perform model checking. Stopping computations." << endl;
 				exit(1);
 			}
+			rt.desalloue_enrsel(nsel);
 			rt.nscenchoisi = nscenchoibackup;
 			for (int j=0;j<nscenchoibackup;j++) rt.scenchoisi[j]=scenchoibackup[j];
 		}
