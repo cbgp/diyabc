@@ -143,6 +143,10 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                     #Quick and not so dirty patch to avoid prior config panel when confidence use posteriors
                     tmpWidget = HistDrawn(self.analysis,self.parent)
                     next_widget = tmpWidget.parent.parent.getNextWidget(tmpWidget)
+                    print "next widget 1 = " , next_widget
+                    # skip also  SNP group selection
+                    if self.parent.parent.isSnp() :
+                        next_widget.validate()
                 # prior
                 else:
                     next_widget = HistDrawn(self.analysis,self.parent)
