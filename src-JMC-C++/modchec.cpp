@@ -600,7 +600,7 @@ long double **ssphistar,**ssref;
         cout//<<"naparamcom="<<nparamcom<<"   nparcompo="<<nparcompo<<"   nenr="<<nenr
             << "   nphistarOK="<< nphistarOK<<"   nstat="<<header.nstat<<"\n";
         //cout <<"DEBUG: j'arrête là." << endl; exit(1);
-        if(10*nphistarOK < newsspart){
+        if(nphistarOK < 100){
         	cout << "Not enough suitable particles ("<<nphistarOK<<")to perform model checking. Stopping computations." << endl;
         	exit(1);
         }
