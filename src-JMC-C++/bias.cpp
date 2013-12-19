@@ -81,7 +81,8 @@ ofstream ftrace;
 MwcGen mw;
 int *numero;
 double zeroplus=1E-100;
-bool valinfinie=false;
+bool valinfinie=false,prior,posterior;
+string hpstring="",hmstring;
 
 
 /**
@@ -115,11 +116,13 @@ bool valinfinie=false;
     void resethistparam(string s) {
         string *ss,name,sprior,smini,smaxi;
         int n,i;
+		hpstring+=" "+s;
         ss = splitwords(s,"=",&n);
         name=ss[0];
         i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
         cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
+			prior=true;
 			//cout<<"resethistparam   avant readprior\n ";
             header.scenario[rt.scenteste-1].histparam[i].prior.readprior(ss[1]);
 			//cout<<"resethistparam   apres readprior\n ";
@@ -128,6 +131,7 @@ bool valinfinie=false;
             header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
         }
         else {
+			prior=false;
             header.scenario[rt.scenteste-1].histparam[i].value = atof(ss[1].c_str());
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=true;
             cout<<header.scenario[rt.scenteste-1].histparam[i].value<<"\n";
@@ -149,6 +153,7 @@ bool valinfinie=false;
 	    cout<<"debut de resetmutparam\n";
         string *ss,numgr,s1,sg;
         int n,gr,i0,i1;
+		hmstring=s;
         numgr = s.substr(1,s.find("(")-1);  gr=atoi(numgr.c_str());
         i0=s.find("(");i1=s.find(")"); cout <<"i0="<<i0<<"  i1="<<i1<<"\n";
         s1 = s.substr(i0+1,i1-i0-1); cout <<"groupe "<<gr<<"  "<<s1<<"\n";
@@ -1171,8 +1176,22 @@ bool valinfinie=false;
         f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n\n";
+		
 		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
 		if (valinfinie) cout<<"VALEUR INFINIE\n"; else cout<<"PAS DE VALEUR INFINIE\n"; 
+		if (prior) {
+			f1<<"Historical parameters have been drawn from the following prior distributions : "<<hpstring<<"\n";
+			f1<<"Mutational parameters have been drawn from the following prior distributions : "<<hmstring<<"\n";
+		} else {
+			if (posterior) {
+				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
+				f1<<"All parameters have been drawn from posterior distributions. \n";
+				
+			} else {
+			f1<<"Historical parameters have been given the following fixed values : "<<hpstring<<"\n";
+			f1<<"Mutational parameters have been given the following fixed values : "<<hmstring<<"\n";
+			}
+		}
 		f1<<"\n";
         f1<<"                                                                        Averages\n";
         f1<<"Parameter                True values               Means                 Medians                 Modes\n";
@@ -1315,6 +1334,18 @@ bool valinfinie=false;
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n";
 		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
+		if (prior) {
+			f1<<"Historical parameters have been drawn from the following prior distributions : "<<hpstring<<"\n";
+			f1<<"Mutational parameters have been drawn from the following prior distributions : "<<hmstring<<"\n";
+		} else {
+			if (posterior) {
+				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";				
+				f1<<"All parameters have been drawn from posterior distributions. \n";
+			} else {
+			f1<<"Historical parameters have been given the following fixed values : "<<hpstring<<"\n";
+			f1<<"Mutational parameters have been given the following fixed values : "<<hmstring<<"\n";
+			}
+		}
 		f1<<"\n";
         f1<<"                                                                        Averages\n";
         f1<<"Parameter                True values               Means                 Medians                 Modes\n";
@@ -1459,6 +1490,18 @@ bool valinfinie=false;
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n";
 		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
+		if (prior) {
+			f1<<"Historical parameters have been drawn from the following prior distributions : "<<hpstring<<"\n";
+			f1<<"Mutational parameters have been drawn from the following prior distributions : "<<hmstring<<"\n";
+		} else {
+			if (posterior) {
+				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";				
+				f1<<"All parameters have been drawn from posterior distributions. \n";
+			} else {
+			f1<<"Historical parameters have been given the following fixed values : "<<hpstring<<"\n";
+			f1<<"Mutational parameters have been given the following fixed values : "<<hmstring<<"\n";
+			}
+		}
 		f1<<"\n";
         f1<<"                                                                        Averages\n";
         f1<<"Parameter                True values               Means                 Medians                 Modes\n";
@@ -1696,7 +1739,6 @@ bool valinfinie=false;
         string *ss,s,*ss1,s0,s1,sg, entetelog, *paname, nomfitrace, nomfipar;
 		float *stat_obs;
 		long double **matC;
-		bool posterior=false;
         string bidon;
 		long double **phistar, **phistarcompo, **phistarscaled;
 		mw.randinit(0,seed);
@@ -1704,6 +1746,7 @@ bool valinfinie=false;
 		scurfile = path + "pseudo-observed_datasets_"+ ident +".txt";
 		nomfitrace = path + ident+"_trace.txt";
 		nomfipar = path + ident + "_param.txt";
+		posterior=false;
         cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
