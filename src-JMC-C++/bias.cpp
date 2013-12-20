@@ -82,7 +82,7 @@ MwcGen mw;
 int *numero;
 double zeroplus=1E-100;
 bool valinfinie=false,prior,posterior;
-string hpstring="",hmstring;
+string hpstring="",*hmstring;
 
 
 /**
@@ -153,14 +153,22 @@ string hpstring="",hmstring;
 	    cout<<"debut de resetmutparam\n";
         string *ss,numgr,s1,sg;
         int n,gr,i0,i1;
-		hmstring=s;
-        numgr = s.substr(1,s.find("(")-1);  gr=atoi(numgr.c_str());
-        i0=s.find("(");i1=s.find(")"); cout <<"i0="<<i0<<"  i1="<<i1<<"\n";
-        s1 = s.substr(i0+1,i1-i0-1); cout <<"groupe "<<gr<<"  "<<s1<<"\n";
+		cout<<s<<"\n";
+        i0=s.find("(");i1=s.find(")");sg=s.substr(1,i0-1); cout <<"i0="<<i0<<"  i1="<<i1<<"   sg="<<sg<<"\n";
+        s1 = s.substr(i0+1,i1-i0-1);gr=atoi(sg.c_str());
+		cout <<"groupe "<<gr<<"  "<<s1<<"\n";
         ss = splitwords(s1," ",&n);
+		hmstring[gr-1]="Group "+IntToString(gr);
         if (header.groupe[gr].type==0) {
 		    //cout<<"mutmoy : \n";
 			//header.groupe[gr].priormutmoy.ecris();
+			hmstring[gr-1] +="  mutmoy="+ss[0];
+			hmstring[gr-1] +=" mutloc="+ss[1];
+			hmstring[gr-1] +=" Pmoy="+ss[2];
+			hmstring[gr-1] +=" Ploc="+ss[2];
+			hmstring[gr-1] +=" snimoy="+ss[2];
+			hmstring[gr-1] +=" sniloc="+ss[2];
+			
             if (header.groupe[gr].priormutmoy.constant) header.groupe[gr].mutmoy=header.groupe[gr].priormutmoy.mini;
 			else {
 				if (ss[0].find("[")==string::npos) {
@@ -169,14 +177,12 @@ string hpstring="",hmstring;
 					cout<<"mutmoy="<<header.groupe[gr].mutmoy<<"\n";
 				} else {
 					header.groupe[gr].priormutmoy.readprior(ss[0]);header.groupe[gr].priormutmoy.fixed=false;
-					
 				}
 			}
 		    //cout<<"mutmoy : \n";
 			//header.groupe[gr].priormutmoy.ecris();
             if (ss[1].find("[")==string::npos) header.groupe[gr].priormutloc.sdshape=atof(ss[1].c_str());
             else header.groupe[gr].priormutloc.readprior(ss[1]);
-
 		    //cout<<"Pmoy : \n";
 			//header.groupe[gr].priorPmoy.ecris();
 			if (header.groupe[gr].priorPmoy.constant) header.groupe[gr].Pmoy=header.groupe[gr].priorPmoy.mini;
@@ -203,6 +209,12 @@ string hpstring="",hmstring;
        } else if (header.groupe[gr].type==1){
 		    //cout<<"resetmutparam type sequence\n";
 			//cout<<"modele "<< header.groupe[gr].mutmod<<"\n";
+			hmstring[gr-1] +="  musmoy="+ss[0];
+			hmstring[gr-1] +=" musloc="+ss[1];
+			hmstring[gr-1] +=" k1moy="+ss[2];
+			hmstring[gr-1] +=" k1loc="+ss[2];
+			hmstring[gr-1] +=" k2moy="+ss[2];
+			hmstring[gr-1] +=" k2loc="+ss[2];
 			if (header.groupe[gr].priormusmoy.constant) header.groupe[gr].musmoy=header.groupe[gr].priormusmoy.mini;
 			else {
 				if (ss[0].find("[")==string::npos) {header.groupe[gr].musmoy=atof(ss[0].c_str());header.groupe[gr].priormusmoy.fixed=true;}
@@ -1180,16 +1192,19 @@ string hpstring="",hmstring;
 		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
 		if (valinfinie) cout<<"VALEUR INFINIE\n"; else cout<<"PAS DE VALEUR INFINIE\n"; 
 		if (prior) {
-			f1<<"Historical parameters have been drawn from the following prior distributions : "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been drawn from the following prior distributions : "<<hmstring<<"\n";
+			f1<<"Historical parameters have been drawn from the following prior distributions : \n";
+			f1<<"     "<<hpstring<<"\n";
+			f1<<"Mutational parameters have been drawn from the following prior distributions : \n";
+			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
 		} else {
 			if (posterior) {
 				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
 				f1<<"All parameters have been drawn from posterior distributions. \n";
-				
 			} else {
-			f1<<"Historical parameters have been given the following fixed values : "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been given the following fixed values : "<<hmstring<<"\n";
+			f1<<"Historical parameters have been given the following fixed values : \n";
+			f1<<"     "<<hpstring<<"\n";
+			f1<<"\nMutational parameters have been given the following fixed values : \n";
+			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
 			}
 		}
 		f1<<"\n";
@@ -1335,15 +1350,19 @@ string hpstring="",hmstring;
         f1<<"Results based on "<<ntest<<" test data sets\n";
 		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
 		if (prior) {
-			f1<<"Historical parameters have been drawn from the following prior distributions : "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been drawn from the following prior distributions : "<<hmstring<<"\n";
+			f1<<"Historical parameters have been drawn from the following prior distributions : \n";
+			f1<<"     "<<hpstring<<"\n";
+			f1<<"Mutational parameters have been drawn from the following prior distributions : \n";
+			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
 		} else {
 			if (posterior) {
-				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";				
+				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
 				f1<<"All parameters have been drawn from posterior distributions. \n";
 			} else {
-			f1<<"Historical parameters have been given the following fixed values : "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been given the following fixed values : "<<hmstring<<"\n";
+			f1<<"Historical parameters have been given the following fixed values : \n";
+			f1<<"     "<<hpstring<<"\n";
+			f1<<"\nMutational parameters have been given the following fixed values : \n";
+			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
 			}
 		}
 		f1<<"\n";
@@ -1491,15 +1510,19 @@ string hpstring="",hmstring;
         f1<<"Results based on "<<ntest<<" test data sets\n";
 		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
 		if (prior) {
-			f1<<"Historical parameters have been drawn from the following prior distributions : "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been drawn from the following prior distributions : "<<hmstring<<"\n";
+			f1<<"Historical parameters have been drawn from the following prior distributions : \n";
+			f1<<"     "<<hpstring<<"\n";
+			f1<<"Mutational parameters have been drawn from the following prior distributions : \n";
+			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
 		} else {
 			if (posterior) {
-				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";				
+				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
 				f1<<"All parameters have been drawn from posterior distributions. \n";
 			} else {
-			f1<<"Historical parameters have been given the following fixed values : "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been given the following fixed values : "<<hmstring<<"\n";
+			f1<<"Historical parameters have been given the following fixed values : \n";
+			f1<<"     "<<hpstring<<"\n";
+			f1<<"\nMutational parameters have been given the following fixed values : \n";
+			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
 			}
 		}
 		f1<<"\n";
@@ -1812,6 +1835,7 @@ string hpstring="",hmstring;
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);
                 }
+                hmstring = new string[ng];
                 for (int j=1;j<=ng;j++) resetmutparam(ss1[j-1]);
             } else if (s0=="po") {
 				cout<<"paramètres tirés dans les posteriors\n";

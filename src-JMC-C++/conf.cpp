@@ -61,7 +61,7 @@ extern int nparamcom;
 extern ofstream fprog;
 extern long double **phistarOK;
 extern bool prior,posterior;
-extern string hpstring,hmstring;
+extern string hpstring,*hmstring;
 string nomficonfresult;
 
 
@@ -96,13 +96,19 @@ string nomficonfresult;
         }
         f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
 		if (prior) {
-			f1<<"Historical parameters have been drawn from the following prior distributions : "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been drawn from the following prior distributions : "<<hmstring<<"\n";
+			f1<<"Historical parameters have been drawn from the following prior distributions : \n";
+			f1<<"     "<<hpstring<<"\n";
+			f1<<"Mutational parameters have been drawn from the following prior distributions : \n";
+			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
 		} else {
-			if (posterior) f1<<"All parameters have been drawn from posterior distributions. \n";
-			else {
-			f1<<"Historical parameters have been given the following fixed values : "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been given the following fixed values : "<<hmstring<<"\n";
+			if (posterior) {
+				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
+				f1<<"All parameters have been drawn from posterior distributions. \n";
+			} else {
+			f1<<"Historical parameters have been given the following fixed values : \n";
+			f1<<"     "<<hpstring<<"\n";
+			f1<<"\nMutational parameters have been given the following fixed values : \n";
+			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
 			}
 		}
 		
@@ -266,7 +272,7 @@ string nomficonfresult;
                     //exit(1);
                 }
                 cout<<"avant resetmutparam\n";
-				
+				hmstring = new string[ng];
                 for (int j=1;j<ng+1;j++) resetmutparam(ss1[j-1]);
                 cout<<"apres resetmutparam\n";
             } else if (s0=="f:") {
