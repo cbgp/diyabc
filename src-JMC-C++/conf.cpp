@@ -102,7 +102,6 @@ string nomficonfresult;
 			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
 		} else {
 			if (posterior) {
-				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
 				f1<<"All parameters have been drawn from posterior distributions. \n";
 			} else {
 			f1<<"Historical parameters have been given the following fixed values : \n";
