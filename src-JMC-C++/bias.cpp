@@ -81,8 +81,7 @@ ofstream ftrace;
 MwcGen mw;
 int *numero;
 double zeroplus=1E-100;
-bool valinfinie=false,prior,posterior;
-string hpstring="",*hmstring;
+bool valinfinie=false;
 
 
 /**
@@ -116,13 +115,11 @@ string hpstring="",*hmstring;
     void resethistparam(string s) {
         string *ss,name,sprior,smini,smaxi;
         int n,i;
-		hpstring+=" "+s;
         ss = splitwords(s,"=",&n);
         name=ss[0];
         i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
         cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
-			prior=true;
 			//cout<<"resethistparam   avant readprior\n ";
             header.scenario[rt.scenteste-1].histparam[i].prior.readprior(ss[1]);
 			//cout<<"resethistparam   apres readprior\n ";
@@ -131,7 +128,6 @@ string hpstring="",*hmstring;
             header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
         }
         else {
-			prior=false;
             header.scenario[rt.scenteste-1].histparam[i].value = atof(ss[1].c_str());
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=true;
             cout<<header.scenario[rt.scenteste-1].histparam[i].value<<"\n";
@@ -153,22 +149,13 @@ string hpstring="",*hmstring;
 	    cout<<"debut de resetmutparam\n";
         string *ss,numgr,s1,sg;
         int n,gr,i0,i1;
-		cout<<s<<"\n";
-        i0=s.find("(");i1=s.find(")");sg=s.substr(1,i0-1); cout <<"i0="<<i0<<"  i1="<<i1<<"   sg="<<sg<<"\n";
-        s1 = s.substr(i0+1,i1-i0-1);gr=atoi(sg.c_str());
-		cout <<"groupe "<<gr<<"  "<<s1<<"\n";
+        numgr = s.substr(1,s.find("(")-1);  gr=atoi(numgr.c_str());
+        i0=s.find("(");i1=s.find(")"); cout <<"i0="<<i0<<"  i1="<<i1<<"\n";
+        s1 = s.substr(i0+1,i1-i0-1); cout <<"groupe "<<gr<<"  "<<s1<<"\n";
         ss = splitwords(s1," ",&n);
-		hmstring[gr-1]="Group "+IntToString(gr);
         if (header.groupe[gr].type==0) {
 		    //cout<<"mutmoy : \n";
 			//header.groupe[gr].priormutmoy.ecris();
-			hmstring[gr-1] +="  mutmoy="+ss[0];
-			hmstring[gr-1] +=" mutloc="+ss[1];
-			hmstring[gr-1] +=" Pmoy="+ss[2];
-			hmstring[gr-1] +=" Ploc="+ss[2];
-			hmstring[gr-1] +=" snimoy="+ss[2];
-			hmstring[gr-1] +=" sniloc="+ss[2];
-			
             if (header.groupe[gr].priormutmoy.constant) header.groupe[gr].mutmoy=header.groupe[gr].priormutmoy.mini;
 			else {
 				if (ss[0].find("[")==string::npos) {
@@ -177,12 +164,14 @@ string hpstring="",*hmstring;
 					cout<<"mutmoy="<<header.groupe[gr].mutmoy<<"\n";
 				} else {
 					header.groupe[gr].priormutmoy.readprior(ss[0]);header.groupe[gr].priormutmoy.fixed=false;
+					
 				}
 			}
 		    //cout<<"mutmoy : \n";
 			//header.groupe[gr].priormutmoy.ecris();
             if (ss[1].find("[")==string::npos) header.groupe[gr].priormutloc.sdshape=atof(ss[1].c_str());
             else header.groupe[gr].priormutloc.readprior(ss[1]);
+
 		    //cout<<"Pmoy : \n";
 			//header.groupe[gr].priorPmoy.ecris();
 			if (header.groupe[gr].priorPmoy.constant) header.groupe[gr].Pmoy=header.groupe[gr].priorPmoy.mini;
@@ -209,12 +198,6 @@ string hpstring="",*hmstring;
        } else if (header.groupe[gr].type==1){
 		    //cout<<"resetmutparam type sequence\n";
 			//cout<<"modele "<< header.groupe[gr].mutmod<<"\n";
-			hmstring[gr-1] +="  musmoy="+ss[0];
-			hmstring[gr-1] +=" musloc="+ss[1];
-			hmstring[gr-1] +=" k1moy="+ss[2];
-			hmstring[gr-1] +=" k1loc="+ss[2];
-			hmstring[gr-1] +=" k2moy="+ss[2];
-			hmstring[gr-1] +=" k2loc="+ss[2];
 			if (header.groupe[gr].priormusmoy.constant) header.groupe[gr].musmoy=header.groupe[gr].priormusmoy.mini;
 			else {
 				if (ss[0].find("[")==string::npos) {header.groupe[gr].musmoy=atof(ss[0].c_str());header.groupe[gr].priormusmoy.fixed=true;}
@@ -1188,25 +1171,8 @@ string hpstring="",*hmstring;
         f1<<"Number of simulated data sets : "<<rt.nreclus<<"\n";
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n\n";
-		
 		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
 		if (valinfinie) cout<<"VALEUR INFINIE\n"; else cout<<"PAS DE VALEUR INFINIE\n"; 
-		if (prior) {
-			f1<<"Historical parameters have been drawn from the following prior distributions : \n";
-			f1<<"     "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been drawn from the following prior distributions : \n";
-			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
-		} else {
-			if (posterior) {
-				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
-				f1<<"All parameters have been drawn from posterior distributions. \n";
-			} else {
-			f1<<"Historical parameters have been given the following fixed values : \n";
-			f1<<"     "<<hpstring<<"\n";
-			f1<<"\nMutational parameters have been given the following fixed values : \n";
-			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
-			}
-		}
 		f1<<"\n";
         f1<<"                                                                        Averages\n";
         f1<<"Parameter                True values               Means                 Medians                 Modes\n";
@@ -1349,22 +1315,6 @@ string hpstring="",*hmstring;
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n";
 		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
-		if (prior) {
-			f1<<"Historical parameters have been drawn from the following prior distributions : \n";
-			f1<<"     "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been drawn from the following prior distributions : \n";
-			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
-		} else {
-			if (posterior) {
-				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
-				f1<<"All parameters have been drawn from posterior distributions. \n";
-			} else {
-			f1<<"Historical parameters have been given the following fixed values : \n";
-			f1<<"     "<<hpstring<<"\n";
-			f1<<"\nMutational parameters have been given the following fixed values : \n";
-			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
-			}
-		}
 		f1<<"\n";
         f1<<"                                                                        Averages\n";
         f1<<"Parameter                True values               Means                 Medians                 Modes\n";
@@ -1509,22 +1459,6 @@ string hpstring="",*hmstring;
         f1<<"Number of selected data sets  : "<<nsel<<"\n";
         f1<<"Results based on "<<ntest<<" test data sets\n";
 		if (valinfinie) f1<<"Some statisics are noted '+inf' due to zero values of drawn parameters. Check prior minimum values.\n";
-		if (prior) {
-			f1<<"Historical parameters have been drawn from the following prior distributions : \n";
-			f1<<"     "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been drawn from the following prior distributions : \n";
-			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
-		} else {
-			if (posterior) {
-				f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
-				f1<<"All parameters have been drawn from posterior distributions. \n";
-			} else {
-			f1<<"Historical parameters have been given the following fixed values : \n";
-			f1<<"     "<<hpstring<<"\n";
-			f1<<"\nMutational parameters have been given the following fixed values : \n";
-			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
-			}
-		}
 		f1<<"\n";
         f1<<"                                                                        Averages\n";
         f1<<"Parameter                True values               Means                 Medians                 Modes\n";
@@ -1762,6 +1696,7 @@ string hpstring="",*hmstring;
         string *ss,s,*ss1,s0,s1,sg, entetelog, *paname, nomfitrace, nomfipar;
 		float *stat_obs;
 		long double **matC;
+		bool posterior=false;
         string bidon;
 		long double **phistar, **phistarcompo, **phistarscaled;
 		mw.randinit(0,seed);
@@ -1769,7 +1704,6 @@ string hpstring="",*hmstring;
 		scurfile = path + "pseudo-observed_datasets_"+ ident +".txt";
 		nomfitrace = path + ident+"_trace.txt";
 		nomfipar = path + ident + "_param.txt";
-		posterior=false;
         cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
         ss = splitwords(opt,";",&ns);
@@ -1835,7 +1769,6 @@ string hpstring="",*hmstring;
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);
                 }
-                hmstring = new string[ng];
                 for (int j=1;j<=ng;j++) resetmutparam(ss1[j-1]);
             } else if (s0=="po") {
 				cout<<"paramètres tirés dans les posteriors\n";

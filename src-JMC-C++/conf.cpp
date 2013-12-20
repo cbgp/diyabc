@@ -60,10 +60,8 @@ extern bool multithread;
 extern int nparamcom;
 extern ofstream fprog;
 extern long double **phistarOK;
-extern bool prior,posterior;
-extern string hpstring,*hmstring;
-string nomficonfresult;
 
+string nomficonfresult;
 
 /**
  * Ecriture de l'entete du fichier confidence.txt contenant les résultats
@@ -94,23 +92,9 @@ string nomficonfresult;
             f1<<"Logistic regression  : number of selected data sets : "<<nselr<<"\n";
             f1<<"Results obtained with plain summary statistics\n";
         }
-        f1<<"Pseudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
-		if (prior) {
-			f1<<"Historical parameters have been drawn from the following prior distributions : \n";
-			f1<<"     "<<hpstring<<"\n";
-			f1<<"Mutational parameters have been drawn from the following prior distributions : \n";
-			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
-		} else {
-			if (posterior) {
-				f1<<"All parameters have been drawn from posterior distributions. \n";
-			} else {
-			f1<<"Historical parameters have been given the following fixed values : \n";
-			f1<<"     "<<hpstring<<"\n";
-			f1<<"\nMutational parameters have been given the following fixed values : \n";
-			for (int g=0;g<header.ngroupes;g++) f1<<"     "<<hmstring[g]<<"\n";
-			}
-		}
-		
+        f1<<"Peudo-observed data sets simulated with scenario "<<rt.scenteste<<" \n";
+        f1<<"Historical parameters are drawn from the following priors and/or are given the following values : "<<shist<<"\n";
+        f1<<"Mutation parameters are drawn from the following priors and/or are given the following values : "<<smut<<"\n";
         f1<<"Candidate scenarios : ";
         for (int i=0;i<rt.nscenchoisi;i++) {f1<<rt.scenchoisi[i];if (i<rt.nscenchoisi-1) f1<<", "; else f1<<"\n";}
         if (AFD) f1<<"Summary statistics have been replaced by components of a Linear Discriminant Analysis\n\n"; else f1<<"\n";
@@ -193,7 +177,7 @@ string nomficonfresult;
 		float *stat_obs;
 		long double **matC;
 		double duree,debut,clock_zero;
-        bool AFD=false;
+        bool AFD=false,posterior=false;
 			long double **phistar;
 			int nphistarOK;
         posteriorscenC **postsd,*postsr;
@@ -203,7 +187,7 @@ string nomficonfresult;
         //strcpy(progressfilename,path);
         //strcat(progressfilename,ident);
         //strcat(progressfilename,"_progress.txt");
-		posterior=false;
+
 		scurfile = path + "pseudo-observed_datasets_"+ ident +".txt";
         cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
@@ -271,7 +255,7 @@ string nomficonfresult;
                     //exit(1);
                 }
                 cout<<"avant resetmutparam\n";
-				hmstring = new string[ng];
+				
                 for (int j=1;j<ng+1;j++) resetmutparam(ss1[j-1]);
                 cout<<"apres resetmutparam\n";
             } else if (s0=="f:") {
