@@ -118,21 +118,6 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.numRegCombo.setCurrentIndex(self.ui.numRegCombo.findText(numreg))
             if self.analysis.category == "confidence":
                 self.ui.notdsEdit.setText(cp.split('t:')[1].split(';')[0])
-#                 # drawn on posteriors
-#                 if po in cp :
-#                     #look for posteriorDataSetNumberEdit and  posteriorSimulatedDataSetNumberEdit in BiasNConfidenceScenarioSelection
-#                     for child in  self.parent.parent.ui.analysisStack.children():
-#                         try :
-#                             # posteriorNumDataSets
-#                             child.posteriorDataSetNumberEdit.setText(cp.split('Z:')[1].split(';')[0])
-#                         except AttributeError as e :
-#                             pass
-#                         try :
-#                             # 'posteriorSimNumDataSets'
-#                             child.posteriorSimulatedDataSetNumberEdit.setText(cp.split('a:')[1].split(';')[0])
-#                         except AttributeError as e :
-#                             pass
-#                         try :
 
 
     def checkAll(self):
