@@ -66,11 +66,10 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 num = i+1
                 check = self.checklist[i]
                 check.setChecked(num in self.analysis.candidateScList)
-
         if self.analysis.drawn != None:
             self.ui.fixedRadio.setChecked(self.analysis.drawn is False )
-            self.ui.drawnPriorRadio.setChecked(self.analysis.drawn is 'prior')
-            self.ui.drawnPosteriorRadio.setChecked(self.analysis.drawn is 'posterior')
+            self.ui.drawnPriorRadio.setChecked('prior' in self.analysis.drawn)
+            self.ui.drawnPosteriorRadio.setChecked('posterior' in self.analysis.drawn)
 
         cp = self.analysis.computationParameters
         posteriorDataSetNumber = ""
@@ -85,9 +84,9 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             pass
         self.ui.posteriorDataSetNumberEdit.setText(posteriorDataSetNumber)
         self.ui.posteriorSimulatedDataSetNumberEdit.setText(posteriorSimulatedDataSetNumber)
-        self.checkParameterValues()
+        self.checkParameterValues(reset=False)
 
-    def checkParameterValues(self):
+    def checkParameterValues(self, reset=True):
         self.ui.posteriorDataSetNumberFrame.hide()
         if self.analysis.category == "confidence" and self.ui.drawnPosteriorRadio.isChecked():
             nbRecordsSelectedScenario = self.parent.parent.readNbRecordsOfScenario(int(self.getSelectedScenario()))
@@ -96,8 +95,8 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 self.ui.posteriorSimulatedDataSetNumberEdit.setText(str(nbRecordsSelectedScenario))
             elif int(str(self.ui.posteriorSimulatedDataSetNumberEdit.text()))  >  nbRecordsSelectedScenario :
                 self.ui.posteriorSimulatedDataSetNumberEdit.setText(str(nbRecordsSelectedScenario))
-            #if str(self.ui.posteriorDataSetNumberEdit.text()) is '' :
-            self.ui.posteriorDataSetNumberEdit.setText(str(nbRecordsSelectedScenario/100))
+            if reset or str(self.ui.posteriorDataSetNumberEdit.text()) is ''  :
+                self.ui.posteriorDataSetNumberEdit.setText(str(nbRecordsSelectedScenario/100))
             self.ui.posteriorDataSetNumberFrame.show()
 
 
