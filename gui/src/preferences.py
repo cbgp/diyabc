@@ -26,10 +26,10 @@ from utils.orderedDict import OrderedDict
 class Preferences(AutoPreferences):
     """ Classe dérivée d'AutoPreferences qui va :
     - déclarer la structure des préférences en appelant la méthode 'digest' de la classe mère
-    - redéfinir savePreferences et loadPreferences pour effectuer les sauvegardes/chargement 
+    - redéfinir savePreferences et loadPreferences pour effectuer les sauvegardes/chargement
       non prévus dans la classe mère (projets récents, modèle historique)
     - définir les actions à effectuer lors de changement de valeurs des préférences (style, showTrayIcon ...)
-    - implémenter les fonctions d'accès aux valeurs des préférences (getMaxThreadNumber, getExecutablePath, getClusterExecutablepath ...) 
+    - implémenter les fonctions d'accès aux valeurs des préférences (getMaxThreadNumber, getExecutablePath, getClusterExecutablepath ...)
     """
 
     def __init__(self,parent=None,configfile=None):
@@ -72,7 +72,7 @@ class Preferences(AutoPreferences):
         default_style = None
         if "Cleanlooks" in self.styles:
             default_style = "Cleanlooks"
-        
+
         dicoValTxtStyle = {}
         for i in self.styles:
             dicoValTxtStyle[i] = i
@@ -226,11 +226,11 @@ class Preferences(AutoPreferences):
                     {"proptype":"lineEdit",
                          "propname":"diyabcPathCluster",
                          "labelText":"Absolute path to the diyabc binary on the cluster",
-                         "default_value":""},   
+                         "default_value":""},
                     {"proptype":"pathEdit",
                          "propname":"diyabcPathLocal",
                          "labelText":"Path to the diyabc binary on your computer (local)",
-                         "default_value":""},                                              
+                         "default_value":""},
                     {"proptype":"textEdit",
                          "propname":"scriptMasterFirst",
                          "labelText":"NOT EDITABLE !\\nFirst part of the script\\n to run on your cluster master node\\n\\n(this first part will be merged\\nwith the second part in order\\nto obtain the launch.sh script)",
@@ -260,7 +260,7 @@ class Preferences(AutoPreferences):
         QObject.connect(self.ui.seedEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
         QObject.connect(self.ui.clusterBinLocationCombo,SIGNAL("currentIndexChanged(QString)"),self.toggleBinClusterPath)
         QObject.connect(self.ui.diyabcPathLocalPathEdit,SIGNAL("textChanged(QString)"),self.checkClusterValues)
-        
+
         QObject.connect(self.ui.useDefaultExecutableCheck,SIGNAL("toggled(bool)"),self.toggleExeSelection)
         QObject.connect(self.ui.activateWhatsThisCheck,SIGNAL("toggled(bool)"),self.toggleWtSelection)
         QObject.connect(self.ui.showTrayIconCheck,SIGNAL("toggled(bool)"),self.toggleTrayIconCheck)
@@ -275,7 +275,7 @@ class Preferences(AutoPreferences):
         self.toggleBinClusterPath(self.ui.clusterBinLocationCombo.currentText())
         self.toggleExeSelection(self.ui.useDefaultExecutableCheck.isChecked())
         self.toggleWtSelection(self.ui.activateWhatsThisCheck.isChecked())
-        
+
         self.hist_model = uic.loadUi("%s/historical_preferences_frame.ui"%UIPATH)
         self.hist_model.setObjectName("tab_historical")
         self.ui.tabWidget.addTab(self.hist_model,"Historical")
@@ -310,28 +310,28 @@ class Preferences(AutoPreferences):
                 numSimulatedDatasetByJob = int(numSimulatedDatasetByJob)
             except ValueError:
                 output.notify(self,"Value Error : numSimulatedDatasetByJob","Number of simulated data set by job must be a positive integer")
-            
+
         coresPerJob =  str(self.ui.coresPerJobEdit.text()).strip()
         if coresPerJob != '' :
             try :
                 coresPerJob = int(coresPerJob)
             except ValueError:
                 output.notify(self,"Value Error : coresPerJob","Number of cores per job must be a positive integer")
-        
+
         maxConcurrentJobs = str(self.ui.maxConcurrentJobsEdit.text()).strip()
         if maxConcurrentJobs != '' :
             try :
                 maxConcurrentJobs= int(maxConcurrentJobs)
             except ValueError:
-                output.notify(self,"Value Error : maxConcurrentJobs","Maximum number of concurrent job running on a cluster must be a positive integer")        
-        
+                output.notify(self,"Value Error : maxConcurrentJobs","Maximum number of concurrent job running on a cluster must be a positive integer")
+
         seed = str(self.ui.seedEdit.text()).strip()
         if seed not in ['','None'] :
             try :
                 seed = int(seed)
             except ValueError:
-                output.notify(self,"Value Error : seed","seed must be a positive integer or 'None' or blank")  
-        
+                output.notify(self,"Value Error : seed","seed must be a positive integer or 'None' or blank")
+
         if (self.ui.clusterBinLocationCombo.currentText() == 'local') and (not os.path.exists(self.ui.diyabcPathLocalPathEdit.text())) :
             output.notify(self,"Value Error : cluster bin path","cluster binary not found. \n%s does not exists"%self.ui.diyabcPathLocalPathEdit.text())
 
@@ -361,12 +361,12 @@ class Preferences(AutoPreferences):
         name_maj = name[0].upper()+name[1:]
         exec("res = os.path.expanduser(str(self.ui.last%sFolderEdit.text()))"%name_maj)
         return res
-    
+
     def setLastFolder(self,name,path):
         name_maj = name[0].upper()+name[1:]
         exec("self.ui.last%sFolderEdit.setText(path)"%name_maj)
         self.savePreferences()
-        
+
     def close(self):
         if len(self.parent.project_list) == 0:
             self.parent.switchToWelcomeStack()
@@ -384,7 +384,7 @@ class Preferences(AutoPreferences):
             #self.saveCluster()
             self.saveTabsOrder()
             super(Preferences,self).savePreferences()
-            #self.saveCluster()            
+            #self.saveCluster()
             self.close()
 
     def loadPreferences(self):
@@ -398,7 +398,7 @@ class Preferences(AutoPreferences):
         #self.loadCluster()
         self.loadTabOrder()
         super(Preferences,self).loadPreferences()
-        
+
         self.updateFont()
 
     def setDefaultPreferences(self):
@@ -458,7 +458,7 @@ class Preferences(AutoPreferences):
         self.ui.clusterBinLocationCombo.setDisabled(not state)
         self.ui.diyabcPathClusterEdit.setDisabled(not state)
         self.ui.diyabcPathLocalPathEdit.setDisabled(not state)
-        
+
     def toggleBinClusterPath(self,pathPlace):
         if self.ui.clusterBinLocationCombo.currentText() == "cluster" :
             self.ui.frame_cluster_diyabcPathCluster.show()
@@ -468,7 +468,7 @@ class Preferences(AutoPreferences):
             self.ui.frame_cluster_diyabcPathLocal.show()
         else :
             raise Exception("Place to find the cluster bin not allowed")
-        
+
     def toggleExeSelection(self,state):
         self.ui.execPathBrowseButton.setDisabled(state)
         self.ui.execPathPathEdit.setDisabled(state)
@@ -480,8 +480,8 @@ class Preferences(AutoPreferences):
 
     def toggleTrayIconCheck(self,state):
         self.parent.systrayHandler.toggleTrayIcon(state)
-      
-    
+
+
     def getMaxThreadNumber(self):
         return int(self.ui.maxThreadCombo.currentText())
 
@@ -512,12 +512,12 @@ class Preferences(AutoPreferences):
                     exPath = os.path.join(DATAPATH,"bin/diyabc-comput-mac-x64")
         else:
             if not os.path.exists(self.ui.execPathPathEdit.text()):
-                output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%self.ui.execPathPathEdit.text())
+                output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s\n\If, and only if,  'use default executable check' is checked so this is a known bug. We apologize !\n Please, check if no analysis or reftable are running and restart diyabc.\nIt should work again."%self.ui.execPathPathEdit.text())
                 return ""
             return str(self.ui.execPathPathEdit.text())
 
         if not os.path.exists(exPath):
-            output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s"%exPath)
+            output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s\n\If, and only if,  'use default executable check' is checked so this is a known bug. We apologize !\n Please, check if no analysis or reftable are running and restart diyabc.\nIt should work again."%exPath)
             return ""
         return os.path.abspath(exPath)
 
@@ -586,7 +586,7 @@ class Preferences(AutoPreferences):
         # delete last '\n'
         rec_cfg = rec_cfg[:-1]
         self.config["recent"]["projectPathList"] = rec_cfg
-    
+
     def saveMMM(self):
         """ sauvegarde de la partie mutation model microsats des préférences
         """
@@ -619,7 +619,7 @@ class Preferences(AutoPreferences):
                 self.mutmodM.setMutationConf(lines)
             except Exception as e:
                 log(3,"Malformed mutation_m_default_values in configuration")
-                
+
         else:
             log(3,"No MMM conf found")
 
