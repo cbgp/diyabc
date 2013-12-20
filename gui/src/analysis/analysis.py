@@ -17,7 +17,7 @@ class Analysis():
         self.histParamsFixed = None
         self.histParamsDrawn = None
         self.condTxtList = []
-        self.drawn = None # must be  in [None, False, 'prior', 'posterior']
+        self.drawn = None # must be  in [None, False, 'prior', 'posterior'], legacy analysis use True for prior
         self.params = ""
         self.aParams = None
         self.fda = None

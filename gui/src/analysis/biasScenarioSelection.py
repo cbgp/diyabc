@@ -67,9 +67,15 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 check = self.checklist[i]
                 check.setChecked(num in self.analysis.candidateScList)
         if self.analysis.drawn != None:
-            self.ui.fixedRadio.setChecked(self.analysis.drawn is False )
-            self.ui.drawnPriorRadio.setChecked('prior' in self.analysis.drawn)
-            self.ui.drawnPosteriorRadio.setChecked('posterior' in self.analysis.drawn)
+            print "self.analysis.drawn = " , self.analysis.drawn
+            if self.analysis.drawn is False :
+                self.ui.fixedRadio.setChecked(True)
+            # in legacy analysis, drawn can be set to True for prior :
+            elif  self.analysis.drawn is True :
+                self.ui.drawnPriorRadio.setChecked(True)
+            else :
+                self.ui.drawnPriorRadio.setChecked('prior' in self.analysis.drawn)
+                self.ui.drawnPosteriorRadio.setChecked('posterior' in self.analysis.drawn)
 
         cp = self.analysis.computationParameters
         posteriorDataSetNumber = ""
