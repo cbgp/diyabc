@@ -482,6 +482,7 @@ int HeaderC::readHeaderLoci(ifstream & file){
 			delete [] ss;
 		}
 	} else {			//fichier SNP
+		//cout<<"fichier SNP dans redheaderLoci\n";
 		this->ngroupes=getwordint(s1,3); cout<<s1<<"\n";cout<<"this->ngroupes="<<this->ngroupes<<"\n";
 		this->groupe = new LocusGroupC[this->ngroupes+1];
 		this->groupe[0].nloc = this->dataobs.nloc;
@@ -497,7 +498,7 @@ int HeaderC::readHeaderLoci(ifstream & file){
 			//cout<<"prem = "<<prem<<"\n";
 			for (k=0;k<nsg;k++) this->groupe[gr].nloc +=getwordint(s1,2*k+1);
 			this->groupe[0].nloc -= this->groupe[gr].nloc;
-			//for (int kk=0;kk<=this->ngroupes;kk++) cout<<"groupe["<<kk<<"].nloc = "<<this->groupe[kk].nloc<<"\n";
+			if (debuglevel==2) for (int kk=0;kk<=this->ngroupes;kk++) cout<<"groupe["<<kk<<"].nloc = "<<this->groupe[kk].nloc<<"\n";
 			this->groupe[gr].loc = new int[this->groupe[gr].nloc];
 			k1=0;
 			for (k=0;k<nsg;k++) {
@@ -516,14 +517,14 @@ int HeaderC::readHeaderLoci(ifstream & file){
 						k2++;
 					}
 					if (k2 == nl) break;
-					if ((loc==this->dataobs.nloc)and(k2<nl)) {
+					if ((loc+1==this->dataobs.nloc)and(k2<nl)) {
 						this->message = "Not enough loci of type ";
 						if (typ==10) this->message += "<A>";
 						if (typ==11) this->message += "<H>";
 						if (typ==12) this->message += "<X>";
 						if (typ==13) this->message += "<Y>";
 						if (typ==14) this->message += "<M>";
-						this->message += " found in the datafile from position "+IntToString(prem)+".";
+						this->message += " found in the datafile from position "+IntToString(prem)+". This is perhaps due to the elimination of "+IntToString(-this->groupe[0].nloc)+" monomorphic loci from the original dataset.";
 						return 1;
 					}
 				}
@@ -1515,6 +1516,7 @@ string HeaderC::calstatobs(string statobsfilename) {
 	particuleobs.ngr = ngr;
 	particuleobs.grouplist = new LocusGroupC[ngr+1];
 	particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
+	if (debuglevel==2) cout<<"Dans calstatobs nloc="<<this->groupe[0].nloc<<"\n";
 	if (this->groupe[0].nloc>0){
 		particuleobs.grouplist[0].loc  = new int[this->groupe[0].nloc];
 		for (int i=0;i<this->groupe[0].nloc;i++) particuleobs.grouplist[0].loc[i] = this->groupe[0].loc[i];
