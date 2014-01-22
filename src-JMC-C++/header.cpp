@@ -1247,11 +1247,23 @@ int HeaderC::readHeadersimLoci(std::ifstream & file){
 						this->dataobs.ssize[locustype][sa]=0;
 						for (int ind=0;ind<this->dataobs.nind[sa];ind++) {
 							//if ((this->dataobs.locus[loc].type==10)or((this->dataobs.locus[loc].type==12)and(this->dataobs.indivsexe[sa][ind]==2))) this->dataobs.ssize[locustype][sa] +=2;
-							if( (locustype == 0) or ( (locustype == 2)and(this->dataobs.indivsexe[sa][ind]==2) ) ) {
+							switch(locustype) {
+								case 0 : this->dataobs.ssize[locustype][sa] +=2;
+								         break;
+								case 1 : this->dataobs.ssize[locustype][sa] +=1;
+								         break;
+								case 2 : this->dataobs.ssize[locustype][sa] +=this->dataobs.indivsexe[sa][ind];
+								         break;
+								case 3 : if (this->dataobs.indivsexe[sa][ind]==1) this->dataobs.ssize[locustype][sa] +=1;
+								         break;
+								case 4 : this->dataobs.ssize[locustype][sa] +=1;
+								         break;
+							}
+/*							if( (locustype == 0) or ( (locustype == 2)and(this->dataobs.indivsexe[sa][ind]==2) ) ) {
 								this->dataobs.ssize[locustype][sa] +=2;
 							} else {
 								this->dataobs.ssize[locustype][sa] +=1;
-							}
+							}*/
 						}
 					}
 					this->dataobs.catexist[locustype] = true;

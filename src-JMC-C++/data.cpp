@@ -532,13 +532,13 @@ string  getligne(ifstream file) {
 			if (not this->locus[loc].mono) {
 				nloc++;
 			} else {
-				//cout<<"le locus "<<loc<<" est monomorphe"<<"   tous les génotypes sont égaux à "<<premier<<"\n";
-				/*for (ech=0;ech<this->nsample;ech++){
+				cout<<"le locus "<<loc<<" est monomorphe"<<"   tous les génotypes sont égaux à "<<premier<<"\n";
+				for (ech=0;ech<this->nsample;ech++){
 					for (ind=0;ind<this->nind[ech];ind++) {
 						cout<<genotype[ech][ind][loc]<<" ";
 					}
 					cout<<"\n";
-				}*/
+				}
 			}
 			
 		}

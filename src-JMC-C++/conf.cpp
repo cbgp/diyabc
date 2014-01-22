@@ -232,7 +232,8 @@ string nomficonfresult;
                 shist = s1;
                 ss1 = splitwords(s1," ",&np);
                 if (np < header.scenario[rt.scenteste-1].nparam) {
-                    cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenteste<<" est de "<<header.scenario[rt.scenteste-1].nparam<<"\n";
+                    //cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenteste<<" est de "<<header.scenario[rt.scenteste-1].nparam<<"\n";
+                    cerr<<"the number of parameter transmitted ("<<np<<") is incorrect. The expected number for scenario "<<rt.scenteste<<" is "<<header.scenario[rt.scenteste-1].nparam<<"\n";
                     exit(1);
                 }
                 ncond=np-header.scenario[rt.scenteste-1].nparam;
