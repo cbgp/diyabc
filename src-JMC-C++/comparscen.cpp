@@ -233,10 +233,12 @@ matligneC *matA;
         resAFD afd;
         //cout<<"debut transfAFD\n";
         delta=rt.enrsel[nsel-1].dist;
-        rdelta=1.5/delta;
         w = new long double[nsel];
-        for (int i=0;i<nsel;i++) {a=rt.enrsel[i].dist/delta;w[i]=rdelta*(1.0-a*a);}
-        scenar = new int[nsel];for (int i=0;i<nsel;i++) scenar[i] = rt.enrsel[i].numscen;
+		if (delta>0.0) {
+			rdelta=1.5/delta;
+			for (int i=0;i<nsel;i++) {a=rt.enrsel[i].dist/delta;w[i]=rdelta*(1.0-a*a);}
+		} else for (int i=0;i<nsel;i++) w[i]=1.0;
+		scenar = new int[nsel];for (int i=0;i<nsel;i++) scenar[i] = rt.enrsel[i].numscen;
         X = new long double*[nsel];for (int i=0;i<nsel;i++) X[i] = new long double[rt.nstat];
         statpiv = new long double[rt.nstat];
 		sp = new float[rt.nstat];
@@ -312,8 +314,10 @@ void rempli_mat0(int n, float* stat_obs) {
         cmatX0[i][icc]=(long double)(rt.enrsel[i].stat[j]-stat_obs[j])/sqrt(var_statsel[j]);
       }
     }
-    x = rt.enrsel[i].dist / delta;
-    cvecW[i] = (1.5 / delta)*(1.0 - x*x);
+    if (delta >0.0){
+		x = rt.enrsel[i].dist / delta;
+		cvecW[i] = (1.5 / delta)*(1.0 - x*x);
+	} else cvecW[i] = 1.0;
     som = som + cvecW[i];
   }
   /*cout <<"\n cmatX0:\n";

@@ -58,6 +58,7 @@ extern ofstream fprog,fpar;
 extern long double **simpar,**simparcompo,**simparscaled;
 extern int nsimpar;
 extern long double **phistarOK;
+extern bool deltanul;
 
 parstatC **paramest, **paramestcompo, **paramestscaled;
 parstatC *paramestS, *paramestcompoS, *paramestscaledS;
@@ -618,7 +619,7 @@ bool valinfinie=false;
 * calcule les différentes statistiques de biais, rmse...
 */
     void biaisrelO(int ntest,int nsel,int npv,int p) {
-		cout<<"debut biaisrelO  p="<<p<<"\n";
+		//cout<<"debut biaisrelO  p="<<p<<"\n";
         long double s,d,ds;
 		simparsel = echantillon(nsel,nsimpar,nparamcom,simpar);
 		if (p>0) delete []paramestS;
@@ -638,9 +639,9 @@ bool valinfinie=false;
 				br_O[k][j]  +=d/enreg2[p].paramvv[j]; // il restera à diviser par ntest
 				br_OS[k][j] +=ds/enreg2[p].paramvv[j]; // il restera à diviser par ntest
 			}
-			cout <<br_OS[k][0]<<"    ";
+			//cout <<br_OS[k][0]<<"    ";
 		}
-		cout<<"\n";
+		//cout<<"\n";
 		//cout<<("1\n");
 ////////////  RRMISE
 		for (int j=0;j<nparamcom;j++) {
@@ -751,7 +752,7 @@ bool valinfinie=false;
 			}
 		}
             //Il restera à calculer la médiane des bmeda_O[k][j]
-	cout<<"fin de biaisrelO\n";
+	//cout<<"fin de biaisrelO\n";
     }
 
 /**
@@ -897,7 +898,7 @@ bool valinfinie=false;
 * calcule les différentes statistiques de biais, rmse... des paramètres scaled
 */
     void biaisrelS(int ntest,int nsel,int npv,int p) {
-		cout<<"debut de biaisrelS\n";
+		//cout<<"debut de biaisrelS\n";
         long double s,d,ds;
 		simparscaledsel = echantillon(nsel,nsimpar,nparscaled,simparscaled);
 		if (p>0) delete []paramestscaledS;
@@ -1022,7 +1023,7 @@ bool valinfinie=false;
 			}
 		}
             //Il restera à calculer la médiane des bmeda_O[k][j]
-            cout<<"fin de biaisrelS\n";
+            //cout<<"fin de biaisrelS\n";
     }
 
 	void finbiaisrelO(int ntest) {
@@ -1430,6 +1431,7 @@ bool valinfinie=false;
  *   Mise en forme des résultats pour les paramètres scaled
  */ 
 	void ecriresS(int ntest,int npv,int nsel) {
+		if (debuglevel==11) cout<<"debut de ecriresS\n";
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
@@ -1936,15 +1938,17 @@ bool valinfinie=false;
             iprog +=6;fprog.open(progressfilename.c_str(),ios::out);fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
             if (p<1) det_nomparam();
 			rempli_mat(nsel,stat_obs);            	if (debuglevel==11)	cout<<"apres rempli_mat\n";
-			matC = cal_matC(nsel);               	if (debuglevel==11)	cout<<"cal_matC\n";
+			if (not deltanul) matC = cal_matC(nsel);               	if (debuglevel==11)	cout<<"cal_matC\n";
 			
 			for (int kk=0;kk<nsel;kk++) numero[kk] = mw.rand0(nsimpar);
 
 			if (original) {
 				recalparamO(nsel);                    	if (debuglevel==11)	cout<<"apres recalparamO\n";
-				rempli_parsim(nsel,nparamcom);  		if (debuglevel==11)   cout<<"apres rempli_mat\n";
-				local_regression(nsel,nparamcom,matC);     	if (debuglevel==11)	cout<<"apres local_regression\n";
-				calphistarO(nsel,phistar);          	if (debuglevel==11)   cout<<"apres calphistarO\n";
+				if (not deltanul) {
+					rempli_parsim(nsel,nparamcom);  		if (debuglevel==11)   cout<<"apres rempli_mat\n";
+					local_regression(nsel,nparamcom,matC);     	if (debuglevel==11)	cout<<"apres local_regression\n";
+				}
+				if (not deltanul) calphistarO(nsel,phistar);else copyphistar(nsel,nparamcom,phistar);  	if (debuglevel==11)   cout<<"apres calphistarO\n";
 				paramest[p] = calparstat(nsel,nparamcom,phistar);      	if (debuglevel==11)   cout<<"apres calparstatO\n";
 				for (int i=0;i<nsel;i++) {
 					for (int j=0;j<nparamcom;j++) paretoil[i][j] = phistar[i][j];
@@ -1956,11 +1960,13 @@ bool valinfinie=false;
 			}
 			if (composite) {
 				recalparamC(nsel);                  	if (debuglevel==11)	cout<<"apres recalparamC\n";
-				rempli_parsim(nsel,nparcompo); 			if (debuglevel==11)    cout<<"apres rempli_mat\n";
-				local_regression(nsel,nparcompo,matC); 	if (debuglevel==11)	cout<<"apres local_regression\n";
+				if (not deltanul) {
+					rempli_parsim(nsel,nparcompo); 			if (debuglevel==11)    cout<<"apres rempli_mat\n";
+					local_regression(nsel,nparcompo,matC); 	if (debuglevel==11)	cout<<"apres local_regression\n";
+				}
 				//phistarcompo = new long double*[nsel];
 				//for (int i=0;i<nsel;i++) phistarcompo[i] = new long double[nparcompo];
-				calphistarC(nsel,phistarcompo);	 		if (debuglevel==11)	cout<<"apres calphistarC\n";
+				if (not deltanul) calphistarC(nsel,phistarcompo);else copyphistar(nsel,nparcompo,phistarcompo);	 		if (debuglevel==11)	cout<<"apres calphistarC\n";
 				paramestcompo[p] = calparstat(nsel,nparcompo,phistarcompo);	if (debuglevel==11)    cout<<"apres calparstatC\n";
 				for (int i=0;i<nsel;i++) {
 					for (int j=0;j<nparcompo;j++) paretoilcompo[i][j] = phistarcompo[i][j];
@@ -1974,9 +1980,11 @@ bool valinfinie=false;
 			}
 			if (scaled) {
 				recalparamS(nsel);                    	if (debuglevel==11)	cout<<"apres recalparamS\n";
-				rempli_parsim(nsel,nparscaled); 		if (debuglevel==11)   cout<<"apres rempli_mat\n";
-				local_regression(nsel,nparscaled,matC); if (debuglevel==11)	cout<<"apres local_regression\n";
-				calphistarS(nsel,phistarscaled);	  	if (debuglevel==11)	cout<<"apres calphistarS\n";
+				if (not deltanul) {
+					rempli_parsim(nsel,nparscaled); 		if (debuglevel==11)   cout<<"apres rempli_mat\n";
+					local_regression(nsel,nparscaled,matC); if (debuglevel==11)	cout<<"apres local_regression\n";
+				}
+				if (not deltanul) calphistarS(nsel,phistarscaled);else copyphistar(nsel,nparscaled,phistarcompo);	  	if (debuglevel==11)	cout<<"apres calphistarS\n";
 				paramestscaled[p] = calparstat(nsel,nparscaled,phistarscaled);	if (debuglevel==11)	cout<<"apres calparstatS\n";
 				for (int i=0;i<nsel;i++) {
 					for (int j=0;j<nparscaled;j++) paretoilscaled[i][j] = phistarscaled[i][j];
@@ -1985,8 +1993,10 @@ bool valinfinie=false;
 				}
 				biaisrelS(ntest,nsel,npv,p);			if (debuglevel==11)   cout<<"apres biaisrelS\n";
 			}
-			for (int i=0;i<nstatOKsel+1;i++) delete [] matC[i];delete [] matC;
-			delete_mat(nsel);
+			if (not deltanul){
+				for (int i=0;i<nstatOKsel+1;i++) delete [] matC[i];delete [] matC;
+				delete_mat(nsel);
+			}
             iprog +=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         }
         ftrace.close();

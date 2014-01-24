@@ -609,8 +609,9 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste
 					diff =(long double)(this->enrsel[nrecOK].stat[j] - stat_obs[j]);
 					this->enrsel[nrecOK].dist += diff*diff/this->var_stat[j];
 					//cout<<"this->enrsel[nrecOK].dist = "<<this->enrsel[nrecOK].dist<<"\n";
-					//if (nreclus==1) printf("  %12.6f   %12.6f   %12.6Lf   %12.8Lf\n",this->enrsel[nrecOK].stat[j],stat_obs[j],diff*diff,this->enrsel[nrecOK].dist);
+					//if (nreclus<10) printf("  %12.6f   %12.6f   %12.6Lf   %12.8Lf\n",this->enrsel[nrecOK].stat[j],stat_obs[j],diff*diff,this->enrsel[nrecOK].dist);
 				}
+				//if (nreclus<10) cout<<"\n";
 				this->enrsel[nrecOK].dist =sqrt(this->enrsel[nrecOK].dist);
 				if (distmin>this->enrsel[nrecOK].dist) {distmin=this->enrsel[nrecOK].dist;/*cout <<"distmin="<<distmin<<"\n";*/}
 				nrecOK++;
@@ -624,6 +625,9 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste
 	}
 	cout<<"\rcal_dist : fini   nreclus="<<nreclus<<"\n";
 	this->closefile();
+	int nnuls=0;
+	for (int i=0;i<2*nn;i++) if (this->enrsel[i].dist==0.0) nnuls++;
+	//cout<<nnuls<<" ont une distance nulle (2nn="<<2*nn<<")\n";
 	//cout<<"\nnrec_lus = "<<this->nreclus<<"   nrecOK = "<<nrecOK<<"\n";
 	//cout<<"    distmin = "<<this->enrsel[0].dist<<"    distmax = "<<this->enrsel[nsel-1].dist<<"\n";
 	//printf("    distmin = %12.8Lf   distmax = %12.8Lf\n",this->enrsel[0].dist/(long double)this->nstat,this->enrsel[nsel-1].dist/(long double)this->nstat);

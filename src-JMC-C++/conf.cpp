@@ -126,9 +126,11 @@ string nomficonfresult;
         resAFD afd;
         //cout<<"debut transfAFD\n";
         delta=rt.enrsel[nsel-1].dist;
-        rdelta=1.5/delta;
-        w = new long double[nsel];
-        for (int i=0;i<nsel;i++) {a=rt.enrsel[i].dist/delta;w[i]=rdelta*(1.0-a*a);}
+		w = new long double[nsel];
+		if (delta>0.0){
+			rdelta=1.5/delta;
+			for (int i=0;i<nsel;i++) {a=rt.enrsel[i].dist/delta;w[i]=rdelta*(1.0-a*a);}
+		} else for (int i=0;i<nsel;i++) w[i]=1.0;
         scenar = new int[nsel];for (int i=0;i<nsel;i++) scenar[i] = rt.enrsel[i].numscen;
         X = new long double*[nsel];for (int i=0;i<nsel;i++) X[i] = new long double[rt.nstat];
         statpiv = new long double[rt.nstat];

@@ -55,6 +55,7 @@ void local_regression(int n, int npa, long double **matC);
 void calphistarO(int n, long double **phistar);
 void calphistarC(int n, long double **phistarcompo);
 void calphistarS(int n, long double **phistarscaled);
+void copyphistar(int n, int nparam, long double **phistar);
 void det_nomparam();
 /**
 * effectue la sauvegarde des phistars dans le fichier path/ident/phistar.txt

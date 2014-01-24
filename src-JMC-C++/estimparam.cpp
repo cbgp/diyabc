@@ -66,6 +66,7 @@ string enteteO,enteteC,enteteS;
 int nsimpar=100000;
 string *nomparamO,*nomparamC,*nomparamS;
 parstatC *parstat,*parstatcompo,*parstatscaled;
+bool deltanul;
 
 
 /**
@@ -174,6 +175,15 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         int jj,k;
         alpsimrat = new long double*[n];
         for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparamcom];
+		if (deltanul) {
+			for (int i=0;i<n;i++) {
+				for (int j=0;j<nparamcom;j++) {
+					k=0;while(rt.enrsel[i].numscen!=rt.scenchoisi[k])k++;
+					alpsimrat[i][j] = rt.enrsel[i].param[numpar[k][j]];
+				}
+			}
+			return;
+		}
         switch (numtransf) {
 
           case 1 :  //no transform
@@ -378,6 +388,16 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 					}
 				}
 			}
+			if (deltanul) {
+				for (int i=0;i<n;i++) {
+					for (int j=kp0;j<kp;j++) {
+						alpsimrat[i][j] = xx[i][j];
+					}
+				}
+				for(int i=0;i<n;i++) delete [] xx[i];
+				delete [] xx;
+				return;
+			}
 			switch (numtransf) {
 				case 1 :  //no transform
 						for (int i=0;i<n;i++) {
@@ -491,6 +511,16 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			parminscaled0= new long double[nparamcom]; parmaxscaled0 = new long double[nparamcom];
 			xbornescaled=1000.0;
 		}
+		if (deltanul) {
+			for (int i=0;i<n;i++) {
+				for (int j=0;j<nparscaled;j++) {
+					alpsimrat[i][j] = xx[i][j];
+				}
+			}
+			for(int i=0;i<n;i++) delete [] xx[i];
+			delete [] xx;
+			return;
+		}
 		switch (numtransf) {
 			case 1 :  //no transform
 					for (int i=0;i<n;i++) {
@@ -566,6 +596,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         long double *sx,*sx2,*mo;
         nn=(long double)n;
         delta = rt.enrsel[n-1].dist;
+		deltanul=(delta==0.0);
+		if (deltanul) {cout<<"delta = "<<delta<<"    Local regression is impossible and useless anyway...\n";return;}
 		//printf("delta = %12.8Lf    (%12.8Lf,%12.8Lf)\n",delta,rt.enrsel[n-2].dist,rt.enrsel[n].dist);
         sx  = new long double[rt.nstat];
         sx2 = new long double[rt.nstat];
@@ -604,6 +636,7 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
             //cout<<"\n";
             x=rt.enrsel[i].dist/delta;
             vecW[i]=(1.5/delta)*(1.0-x*x);
+			if (vecW[i] != vecW[i]) {cout<<"vecW["<<i<<"]="<<vecW[i]<<"\n";exit(1);}
             som = som + vecW[i];
         }
         for (int i=0;i<n;i++) vecW[i]/=som;
@@ -665,15 +698,20 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         for (int j=0;j<nstatOKsel+1;j++) matBB[j] = new long double[nstatOKsel+1];
         matXT = transposeL(n,nstatOKsel+1,matX);
         for (int i=0;i<n;i++) {
-            for (int j=0;j<nstatOKsel+1;j++) matA[j][i] = matXT[j][i]*vecW[i];
+			if (vecW[i]!=vecW[i]){cout<<"vecW["<<i<<"] = "<<vecW[i]<<"\n";exit(1);}
+            for (int j=0;j<nstatOKsel+1;j++) {
+				if (matXT[j][i] != matXT[j][i]){cout<<"matXT["<<j<<"]["<<i<<"] = "<<matXT[j][i]<<"\n";exit(1);}
+				matA[j][i] = matXT[j][i]*vecW[i];
+				
+			}
         }
+		for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nstatOKsel+1;j++)if (matA[i][j]!=matA[i][j]) {cout<<"matA["<<i<<"]["<<j<<"] = "<<matA[i][j]<<"\n";exit(1);}}
+		//cout<<"matA OK\n";
         matAA = prodML(nstatOKsel+1,n,nstatOKsel+1,matA,matX);
 		kap = kappa(nstatOKsel+1,matAA);
         printf("kappa (AA) = %16Le",kap);
 		if (kap>1.0E99) cout <<"   MATRICE SINGULIERE\n";
-		//cout<<"\n";
-		if (kap>1.0E99) cout <<"   MATRICE SINGULIERE\n";
-		//cout<<"\n";
+		cout<<"\n";
 		if (kap>1.0E99) coeff=1.0E-15; else coeff=1.0E-21;
         err = inverse_Tik2(nstatOKsel+1,matAA,matB,coeff);
 		do {
@@ -681,6 +719,8 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 			if (err!=0) coeff *=sqrt(10.0);
 		} while ((err!=0)and(coeff<0.01));
 		if (debuglevel==11)	cout<<"cal_matC   err="<<err<<"    coeff="<<coeff<<"\n";
+		for (int i=0;i<nstatOKsel+1;i++) {for (int j=0;j<nstatOKsel+1;j++)if (matB[i][j]!=matB[i][j]) {cout<<"matB["<<i<<"]["<<j<<"] = "<<matB[i][j]<<"\n";exit(1);}}
+		//cout<<"matB OK\n";
 		matC = prodML(nstatOKsel+1,nstatOKsel+1,n,matB,matA);
         libereL(nstatOKsel+1,matA); 
         libereL(n,matX);
@@ -814,7 +854,16 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
         //for (int i=0;i<n;i++) delete []matX0[i]; delete []matX0;
         for (int i=0;i<nstatOKsel+1;i++) delete []beta[i]; delete []beta;
     }
-
+    
+    
+    void copyphistar(int n, int nparam, long double **phistar){
+		int k;
+		for (int i=0;i<n;i++) {
+			for (int j=0;j<nparam;j++) {
+				phistar[i][j] = alpsimrat[i][j];
+			}
+		}
+	}
  /**
 * calcule les phistars pour les paramètres composites
 */
@@ -1802,39 +1851,45 @@ parstatC *parstat,*parstatcompo,*parstatscaled;
 		if (composite) nprog +=6;
 		if (scaled)    nprog +=6;
 		rempli_mat(nsel,stat_obs);            	cout<<"apres rempli_mat\n";
-		matC = cal_matC(nsel);               	cout<<"cal_matC\n";
+		if (not deltanul) matC = cal_matC(nsel);               	cout<<"cal_matC\n";
 		cout<<"original\n";
 		if (original){											cout<<"\ntraitement des parametres originaux\n";
 			recalparamO(nsel);                             		cout<<"apres recalparamO\n";
-			rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
-			local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
+			if (not deltanul) {
+				rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
+				local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
+			}
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			cout<<"original--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistar = new long double*[nsel];
 			for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
-			calphistarO(nsel, phistar);
+			if (not deltanul) calphistarO(nsel, phistar); else copyphistar(nsel,nparamcom,phistar);
 			cout<<"apres calphistarO\n";
 		}
 		if (composite){											cout<<"\ntraitement des parametres composites\n";
 			recalparamC(nsel);                                 	cout<<"apres recalparamC\n";
-			rempli_parsim(nsel,nparcompo);                		cout<<"apres rempli_parsim(C)\n";
-			local_regression(nsel,nparcompo,matC);              cout<<"apres local_regression\n";
+			if (not deltanul) {
+				rempli_parsim(nsel,nparcompo);                		cout<<"apres rempli_parsim(C)\n";
+				local_regression(nsel,nparcompo,matC);              cout<<"apres local_regression\n";
+			}
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			cout<<"composite--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistarcompo = new long double*[nsel];
 			for (int i=0;i<nsel;i++) phistarcompo[i] = new long double[nparcompo];
-			calphistarC(nsel,phistarcompo);
+			if (not deltanul) calphistarC(nsel,phistarcompo); else copyphistar(nsel,nparcompo,phistarcompo);
 			cout<<"apres calphistarcompo\n";
 		}
 		if (scaled){											cout<<"\ntraitement des parametres scaled\n";
 			recalparamS(nsel);                                 	cout<<"apres recalparamS\n";
-			rempli_parsim(nsel,nparscaled);               		cout<<"apres rempli_parsim(S)\n";
-			local_regression(nsel,nparscaled,matC);             cout<<"apres local_regression\n";
+			if (not deltanul) {
+				rempli_parsim(nsel,nparscaled);               		cout<<"apres rempli_parsim(S)\n";
+				local_regression(nsel,nparscaled,matC);             cout<<"apres local_regression\n";
+			}
 			iprog+=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			cout<<"scaled--->"<<iprog<<"   sur "<<nprog<<"\n";
 			phistarscaled = new long double*[nsel];
 			for (int i=0;i<nsel;i++) phistarscaled[i] = new long double[nparscaled];
-			calphistarS(nsel,phistarscaled);
+			if (not deltanul) calphistarS(nsel,phistarscaled); else copyphistar(nsel,nparscaled,phistarscaled);
 			cout<<"apres calphistarscaled\n";
 		}
 		for (int i=0;i<nsel;i++) delete []matX0[i]; delete []matX0;			cout<<"apres delete matX0\n";
