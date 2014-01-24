@@ -54,6 +54,7 @@ extern string* stat_type;
 extern int* stat_num;
 extern bool multithread;
 extern string scurfile;
+extern bool deltanul;
 
 extern ofstream fprog;
 
@@ -580,14 +581,16 @@ long double **ssphistar,**ssref;
         det_numpar();
 		cout<<"apres det_numpar\n";
         rempli_mat(nsel,header.stat_obs);                        cout<<"apres rempli_mat\n";
-		matC = cal_matC(nsel); 
+		if (not deltanul) matC = cal_matC(nsel); 
         recalparamO(nsel);                                 cout<<"apres recalparam\n";
-		rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
-		local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
-        iprog+=20;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+		if (not deltanul) {
+			rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
+			local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
+		}
+		iprog+=20;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 		phistar = new long double* [nsel];
 		for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
-        calphistarO(nsel,phistar);                       cout<<"apres calphistar\n";
+        if (not deltanul) calphistarO(nsel,phistar);else copyphistar(nsel,nparamcom,phistar); cout<<"apres calphistar\n";
         det_nomparam();
 		savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     cout<<"apres savephistar\n";
         iprog+=20;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();

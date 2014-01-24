@@ -60,6 +60,7 @@ extern bool multithread;
 extern int nparamcom;
 extern ofstream fprog;
 extern long double **phistarOK;
+extern bool deltanul;
 
 string nomficonfresult;
 
@@ -285,13 +286,15 @@ string nomficonfresult;
 			det_numpar();
 			cout<<"apres det_numpar\n";
 			rempli_mat(nsel,header.stat_obs);                        cout<<"apres rempli_mat\n";
-			matC = cal_matC(nsel); 
+			if (not deltanul) matC = cal_matC(nsel); 
 			recalparamO(nsel);                                 cout<<"apres recalparam\n";
-			rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
-			local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
+			if (not deltanul) {
+				rempli_parsim(nsel,nparamcom);            			cout<<"apres rempli_parsim(O)\n";
+				local_regression(nsel,nparamcom,matC);              cout<<"apres local_regression\n";
+			}
 			phistar = new long double* [nsel];
 			for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
-			calphistarO(nsel,phistar);                       cout<<"apres calphistar\n";
+			if (not deltanul) calphistarO(nsel,phistar); else copyphistar(nsel,nparamcom,phistar); cout<<"apres calphistar\n";
 			det_nomparam();
 			//savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     cout<<"apres savephistar\n";
 			phistarOK = new long double*[nsel];
