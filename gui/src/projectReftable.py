@@ -826,13 +826,8 @@ class ProjectReftable(Project):
                     shutil.rmtree(anDir)
                     log(1, "Remove analys directory %s" % anDir)
                 except Exception as e :
-                    QMessageBox.information(self,"Error", "Could not erase all or a part of the analysis directory : \n\n %s" % anDir)
+                    QMessageBox.information(self,"Error", "Could not erase all or a part of the analysis directory : \n\n %s\n\n\ñ%s" % (anDir, e))
                     log(1, "Could not erase all or a part of the analysis directory : %s. Caught this exception :\n %s" % (anDir,e))
-
-
-
-
-
 
 
     def viewAnalysisParameters(self):
