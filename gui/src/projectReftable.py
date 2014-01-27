@@ -41,6 +41,18 @@ class ProjectReftable(Project):
     par defaut, un projet est considéré comme nouveau, cad que l'affichage est celui d'un projet vierge
     pour un projet chargé, on modifie l'affichage en conséquence dans loadFromDir
     """
+
+
+
+    __DICO_CATEGORY_DIR_NAME = {
+                "estimate" : "estimation",
+                "compare" : "comparison",
+                "confidence" : "confidence",
+                "modelChecking" : "modelChecking",
+                "pre-ev" : "pca",
+                "bias" : "bias"
+                }
+
     def __init__(self,name,dir=None,parent=None):
         self.dataFileSource = ""
         self.dataFileName = ""
@@ -192,19 +204,11 @@ class ProjectReftable(Project):
         """ en fonction du type d'analyse, met en forme les résultats
         """
         log(1,"Asking results of analysis %s, project %s"%(analysis.name,self.dir))
-        dicoCategoryDirName = {
-                "estimate" : "estimation",
-                "compare" : "comparison",
-                "confidence" : "confidence",
-                "modelChecking" : "modelChecking",
-                "pre-ev" : "pca",
-                "bias" : "bias"
-                }
         anDir = analysis.name
         anDir += "_"
-        anDir += dicoCategoryDirName[analysis.category]
+        anDir += self.__DICO_CATEGORY_DIR_NAME[analysis.category]
 
-        typestr = dicoCategoryDirName[analysis.category]
+        typestr = self.__DICO_CATEGORY_DIR_NAME[analysis.category]
         if typestr == 'estimation':
             self.drawAnalysisFrame = DrawEstimationAnalysisResult(analysis,anDir,self)
         elif typestr == 'comparison':
@@ -809,8 +813,27 @@ class ProjectReftable(Project):
                 the_frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
                 the_frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #F4992B")
 
+        anDir = "%s/analysis/" % (self.dir)
+        anDir += analysis.name
+        anDir += "_"
+        anDir += self.__DICO_CATEGORY_DIR_NAME[analysis.category]
         del self.dicoFrameAnalysis[frame]
         self.ui.verticalLayout_9.removeWidget(frame)
+        if os.path.exists(anDir) :
+            reply = QMessageBox.question(self,"Warning","The analysis has been removed from diyabc interface.\n\n Do you want to remove it also from your hard drive ?\n\n Delete directory : %s ?"%anDir,QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.Yes :
+                try :
+                    shutil.rmtree(anDir)
+                    log(1, "Remove analys directory %s" % anDir)
+                except Exception as e :
+                    QMessageBox.information(self,"Error", "Could not erase all or a part of the analysis directory : \n\n %s" % anDir)
+                    log(1, "Could not erase all or a part of the analysis directory : %s. Caught this exception :\n %s" % (anDir,e))
+
+
+
+
+
+
 
     def viewAnalysisParameters(self):
         """ bascule sur une frame qui affiche les valeurs des paramètres
