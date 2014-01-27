@@ -137,52 +137,57 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         draw_widget = QtGui.QWidget(self)
         l = QtGui.QVBoxLayout(draw_widget)
         plotc = MyMplCanvas(draw_widget, width=12, height=4, dpi=100)
-        os.chdir("%s/analysis/%s/"%(self.parent.dir,self.directory))
-        l.addWidget(plotc)
-        #plotc.fig.subplots_adjust(right=0.7,top=0.9,bottom=0.15)
-        navtoolbar = NavigationToolbar(plotc, self)
-        l.addWidget(navtoolbar)
+        originalWorkingDir = os.getcwd()
+        try :
+            os.chdir("%s/analysis/%s/"%(self.parent.dir,self.directory))
+            l.addWidget(plotc)
+            #plotc.fig.subplots_adjust(right=0.7,top=0.9,bottom=0.15)
+            navtoolbar = NavigationToolbar(plotc, self)
+            l.addWidget(navtoolbar)
 
-        plotc.axes.grid(True)
-        plotc.axes.set_ylim(0,1)
+            plotc.axes.grid(True)
+            plotc.axes.set_ylim(0,1)
 
-        if direct:
-            plotc.axes.set_title("Direct")
-            markerPlot=''
-        else:
-            plotc.axes.set_title("Logistic regression")
-            markerPlot='o'
+            if direct:
+                plotc.axes.set_title("Direct")
+                markerPlot=''
+            else:
+                plotc.axes.set_title("Logistic regression")
+                markerPlot='o'
 
 
-        labs = dico_coord['n']
-        for i in range(len(first_line_tab)):
-            legend_txt = "Scenario %s"%first_line_tab[i]
-            col = self.tab_colors[(int(first_line_tab[i])%len(self.tab_colors))]
-            plotc.axes.plot(labs,dico_coord[first_line_tab[i]],label=legend_txt,c=col,marker='%s'%markerPlot)
+            labs = dico_coord['n']
+            for i in range(len(first_line_tab)):
+                legend_txt = "Scenario %s"%first_line_tab[i]
+                col = self.tab_colors[(int(first_line_tab[i])%len(self.tab_colors))]
+                plotc.axes.plot(labs,dico_coord[first_line_tab[i]],label=legend_txt,c=col,marker='%s'%markerPlot)
 
-        plotc.axes.legend(bbox_to_anchor=(0.8, -0.07),ncol=4,prop={'size':9})
-        plotc.axes.axes.title.set_fontsize(10)
-        for tick in plotc.axes.axes.xaxis.get_major_ticks():
-                tick.label1.set_fontsize(7)
-        for tick in plotc.axes.axes.yaxis.get_major_ticks():
-                tick.label1.set_fontsize(7)
-        plotc.fig.subplots_adjust(right=0.92,top=0.9,bottom=0.27)
-        plotc.fig.patch.set_facecolor('white')
+            plotc.axes.legend(bbox_to_anchor=(0.8, -0.07),ncol=4,prop={'size':9})
+            plotc.axes.axes.title.set_fontsize(10)
+            for tick in plotc.axes.axes.xaxis.get_major_ticks():
+                    tick.label1.set_fontsize(7)
+            for tick in plotc.axes.axes.yaxis.get_major_ticks():
+                    tick.label1.set_fontsize(7)
+            plotc.fig.subplots_adjust(right=0.92,top=0.9,bottom=0.27)
+            plotc.fig.patch.set_facecolor('white')
 
-        fr = QFrame(self)
-        fr.setFrameShape(QFrame.StyledPanel)
-        fr.setFrameShadow(QFrame.Raised)
-        fr.setObjectName("frame")
-        fr.setMinimumSize(QSize(400, 0))
-        #fr.setMaximumSize(QSize(800, 600))
-        vert = QVBoxLayout(fr)
-        vert.addWidget(draw_widget)
+            fr = QFrame(self)
+            fr.setFrameShape(QFrame.StyledPanel)
+            fr.setFrameShadow(QFrame.Raised)
+            fr.setObjectName("frame")
+            fr.setMinimumSize(QSize(400, 0))
+            #fr.setMaximumSize(QSize(800, 600))
+            vert = QVBoxLayout(fr)
+            vert.addWidget(draw_widget)
 
-        self.ui.horizontalLayout_2.addWidget(fr)
-        if direct:
-            self.dicoPlot['direct'] = plotc
-        else:
-            self.dicoPlot['logistic'] = plotc
+            self.ui.horizontalLayout_2.addWidget(fr)
+            if direct:
+                self.dicoPlot['direct'] = plotc
+            else:
+                self.dicoPlot['logistic'] = plotc
+        finally:
+            os.chdir(originalWorkingDir)
+
 
     def printGraphs(self):
         ifrom = 0

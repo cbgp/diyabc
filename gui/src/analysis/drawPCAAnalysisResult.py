@@ -216,44 +216,48 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             main_draw_widget = QtGui.QWidget(self)
             l = QtGui.QVBoxLayout(main_draw_widget)
             plotc = MyMplCanvas(main_draw_widget, width=12, height=4, dpi=100)
-            os.chdir("%s/analysis/%s/"%(self.parent.dir,self.directory))
-            l.addWidget(plotc)
-            plotc.fig.subplots_adjust(right=0.76,top=0.9,bottom=0.15)
-            navtoolbar = NavigationToolbar(plotc, self)
-            l.addWidget(navtoolbar)
+            originalWorkingDir = os.getcwd()
+            try :
+                os.chdir("%s/analysis/%s/"%(self.parent.dir,self.directory))
+                l.addWidget(plotc)
+                plotc.fig.subplots_adjust(right=0.76,top=0.9,bottom=0.15)
+                navtoolbar = NavigationToolbar(plotc, self)
+                l.addWidget(navtoolbar)
 
-            plotc.axes.set_title("Components %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
-            plotc.axes.grid(True)
-            plotc.fig.patch.set_facecolor('white')
+                plotc.axes.set_title("Components %s and %s (%s)"%(compo_h+1,compo_v+1,graph_file_name))
+                plotc.axes.grid(True)
+                plotc.fig.patch.set_facecolor('white')
 
-            posteriorList = []
-            if self.ui.scCombo.currentText() == "all":
-                for i in self.dico_points.keys():
-                    # on ne fait pas le observed pour l'instant
-                    if i != 0 and i != -1:
-                        posteriorList.append(self.drawGraphToPlot(plotc,i,compo_h,compo_v,nbp))
-            else:
-                num_sc = int(self.ui.scCombo.currentText())
-                posteriorList.append(self.drawGraphToPlot(plotc,num_sc,compo_h,compo_v,nbp))
+                posteriorList = []
+                if self.ui.scCombo.currentText() == "all":
+                    for i in self.dico_points.keys():
+                        # on ne fait pas le observed pour l'instant
+                        if i != 0 and i != -1:
+                            posteriorList.append(self.drawGraphToPlot(plotc,i,compo_h,compo_v,nbp))
+                else:
+                    num_sc = int(self.ui.scCombo.currentText())
+                    posteriorList.append(self.drawGraphToPlot(plotc,num_sc,compo_h,compo_v,nbp))
 
-            # on fait le observed à la fin pour qu'il soit au dessus des autres
-            # et donc visible
-            obs = self.drawObservedToPlot(plotc,compo_h,compo_v)
+                # on fait le observed à la fin pour qu'il soit au dessus des autres
+                # et donc visible
+                obs = self.drawObservedToPlot(plotc,compo_h,compo_v)
 
-            plotc.axes.legend(bbox_to_anchor=(1.38, 1.0),prop={'size':8},scatterpoints=1,borderpad=0.7)
-            plotc.axes.set_ylabel("P.C.%s (%8.2f%%)"%(compo_v+1,float(self.dico_points[-1][compo_v])*100))
-            plotc.axes.set_xlabel("P.C.%s (%8.2f%%)"%(compo_h+1,float(self.dico_points[-1][compo_h])*100))
-            for tick in plotc.axes.axes.xaxis.get_major_ticks():
-                    tick.label1.set_fontsize(9)
-            for tick in plotc.axes.axes.yaxis.get_major_ticks():
-                    tick.label1.set_fontsize(9)
+                plotc.axes.legend(bbox_to_anchor=(1.38, 1.0),prop={'size':8},scatterpoints=1,borderpad=0.7)
+                plotc.axes.set_ylabel("P.C.%s (%8.2f%%)"%(compo_v+1,float(self.dico_points[-1][compo_v])*100))
+                plotc.axes.set_xlabel("P.C.%s (%8.2f%%)"%(compo_h+1,float(self.dico_points[-1][compo_h])*100))
+                for tick in plotc.axes.axes.xaxis.get_major_ticks():
+                        tick.label1.set_fontsize(9)
+                for tick in plotc.axes.axes.yaxis.get_major_ticks():
+                        tick.label1.set_fontsize(9)
 
-            if self.ui.verticalLayout_3.itemAt(0) != None:
-                self.ui.verticalLayout_3.itemAt(0).widget().hide()
-            self.ui.verticalLayout_3.removeItem(self.ui.verticalLayout_3.itemAt(0))
-            self.ui.verticalLayout_3.addWidget(main_draw_widget)
+                if self.ui.verticalLayout_3.itemAt(0) != None:
+                    self.ui.verticalLayout_3.itemAt(0).widget().hide()
+                self.ui.verticalLayout_3.removeItem(self.ui.verticalLayout_3.itemAt(0))
+                self.ui.verticalLayout_3.addWidget(main_draw_widget)
 
-            self.plot = plotc
+                self.plot = plotc
+            finally:
+                os.chdir(originalWorkingDir)
 
     def exit(self):
         del self.dico_points
