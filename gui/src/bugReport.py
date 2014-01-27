@@ -62,14 +62,18 @@ class BugReport(formBugReport,baseBugReport):
         if not tarname.endswith(".tar.gz"):
             tarname += ".tar.gz"
 
+        print tarname
+        print tarname.split("/")
+        print tarname.split("/")[-1]
+        print tarname.split("/")[-1].replace(".tar.gz","")
         repIntoTar = tarname.split("/")[-1].replace(".tar.gz","")
-        
+
         # creation du tar
         dest = "%s/bug_report_tmp/"%current_project.dir
         if os.path.exists(dest):
             shutil.rmtree(dest)
         os.mkdir(dest)
-        
+
         tar = tarfile.open(tarname,"w:gz")
 
         # copie du header
@@ -82,12 +86,12 @@ class BugReport(formBugReport,baseBugReport):
             if os.path.exists(current_project.dataFileSource):
                 dataFileName = os.path.basename(current_project.dataFileSource)
                 tar.add(current_project.dataFileSource,'%s/%s'%(repIntoTar,dataFileName))
-        
+
         # copie du diyabcproject file
         if os.path.exists(("%s/%s.diyabcproject"%(current_project.dir,current_project.name))):
             dataFileName = os.path.basename("%s/%s.diyabcproject"%(current_project.dir,current_project.name))
             tar.add(current_project.dataFileSource,'%s/%s'%(repIntoTar,dataFileName))
-                
+
 
         # copie des logfiles
         if os.path.exists(os.path.expanduser("%s"%self.parent.logfile)):
@@ -153,4 +157,4 @@ class BugReport(formBugReport,baseBugReport):
         #    output.notify(self,"Thank you","Thank you for creating a bug report, it was successfully sent to our development team !")
 
         self.close()
-        
+
