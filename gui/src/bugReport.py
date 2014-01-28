@@ -59,18 +59,18 @@ class BugReport(formBugReport,baseBugReport):
         result = fileDial.selectedFiles()
         if len(result) > 0:
             path = result[0]
-        tarname = "%s"%path.decode("utf-8")
-        if not tarname.endswith(".tar.gz"):
-            tarname += ".tar.gz"
+        tarname = u"%s"%path
+        if not tarname.endswith(u".tar.gz"):
+            tarname += u".tar.gz"
 
         print tarname
         print tarname.split("/")
         print tarname.split("/")[-1]
-        print tarname.split("/")[-1].replace(".tar.gz","")
-        repIntoTar = tarname.split("/")[-1].replace(".tar.gz","")
+        print tarname.split("/")[-1].replace(u".tar.gz","")
+        repIntoTar = tarname.split("/")[-1].replace(u".tar.gz","")
 
         # creation du tar
-        dest = "%s/bug_report_tmp/"%current_project.dir
+        dest = u"%s/bug_report_tmp/"%current_project.dir
         if os.path.exists(dest):
             try :
                 shutil.rmtree(dest)
@@ -82,30 +82,30 @@ class BugReport(formBugReport,baseBugReport):
 
         # copie du header
         if self.ui.headerYesRadio.isChecked():
-            if os.path.exists(os.path.expanduser("%s/header.txt"%current_project.dir)):
-                tar.add(os.path.expanduser("%s/header.txt"%current_project.dir),'%s/header.txt'%repIntoTar)
+            if os.path.exists(os.path.expanduser(u"%s/header.txt"%current_project.dir)):
+                tar.add(os.path.expanduser(u"%s/header.txt"%current_project.dir),u'%s/header.txt'%repIntoTar)
 
         # copie du datafile
         if self.ui.dataYesRadio.isChecked():
             if os.path.exists(current_project.dataFileSource):
                 dataFileName = os.path.basename(current_project.dataFileSource)
-                tar.add(current_project.dataFileSource,'%s/%s'%(repIntoTar,dataFileName))
+                tar.add(current_project.dataFileSource,u'%s/%s'%(repIntoTar,dataFileName))
 
         # copie du diyabcproject file
-        if os.path.exists(("%s/%s.diyabcproject"%(current_project.dir,current_project.name))):
-            dataFileName = os.path.basename("%s/%s.diyabcproject"%(current_project.dir,current_project.name))
-            tar.add(current_project.dataFileSource,'%s/%s'%(repIntoTar,dataFileName))
+        if os.path.exists((u"%s/%s.diyabcproject"%(current_project.dir,current_project.name))):
+            dataFileName = os.path.basename(u"%s/%s.diyabcproject"%(current_project.dir,current_project.name))
+            tar.add(current_project.dataFileSource,u'%s/%s'%(repIntoTar,dataFileName))
 
 
         # copie des logfiles
-        if os.path.exists(os.path.expanduser("%s"%self.parent.logfile)):
-            tar.add(os.path.expanduser("%s"%self.parent.logfile),'%s/logfile.txt'%repIntoTar)
-        if os.path.exists("%s/command.txt"%(current_project.dir)):
-            tar.add(os.path.expanduser("%s/command.txt"%(current_project.dir)),'%s/command.txt'%(repIntoTar))
+        if os.path.exists(os.path.expanduser(u"%s"%self.parent.logfile)):
+            tar.add(os.path.expanduser(u"%s"%self.parent.logfile),u'%s/logfile.txt'%repIntoTar)
+        if os.path.exists(u"%s/command.txt"%(current_project.dir)):
+            tar.add(os.path.expanduser(u"%s/command.txt"%(current_project.dir)),u'%s/command.txt'%(repIntoTar))
 
         # config file
-        if os.path.exists(os.path.expanduser("~/.diyabc/config.cfg")):
-            tar.add(os.path.expanduser("~/.diyabc/config.cfg"),'%s/config.cfg'%repIntoTar)
+        if os.path.exists(os.path.expanduser(u"~/.diyabc/config.cfg")):
+            tar.add(os.path.expanduser(u"~/.diyabc/config.cfg"),u'%s/config.cfg'%repIntoTar)
 
         # creation de la desc
         cause = ""
@@ -123,15 +123,15 @@ class BugReport(formBugReport,baseBugReport):
         descf.write(infos.encode('utf-8'))
         descf.write(desc.encode('utf-8'))
         descf.close()
-        tar.add(os.path.expanduser("%sdescription.txt"%dest),'%s/description.txt'%repIntoTar)
+        tar.add(os.path.expanduser(u"%sdescription.txt"%dest),u'%s/description.txt'%repIntoTar)
 
         # les .out
-        listf = os.listdir("%s"%current_project.dir)
+        listf = os.listdir(u"%s"%current_project.dir)
         for fname in listf:
             if fname.startswith("conf."):
-                tar.add(os.path.expanduser("%s/%s"%(current_project.dir,fname)),'%s/%s'%(repIntoTar,fname))
-            if fname.endswith(".out"):
-                tar.add(os.path.expanduser("%s/%s"%(current_project.dir,fname)),'%s/%s'%(repIntoTar,fname))
+                tar.add(os.path.expanduser(u"%s/%s"%(current_project.dir,fname)),u'%s/%s'%(repIntoTar,fname))
+            if fname.endswith(u".out"):
+                tar.add(os.path.expanduser(u"%s/%s"%(current_project.dir,fname)),u'%s/%s'%(repIntoTar,fname))
 
         tar.close()
 
