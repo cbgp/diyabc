@@ -63,10 +63,6 @@ class BugReport(formBugReport,baseBugReport):
         if not tarname.endswith(u".tar.gz"):
             tarname += u".tar.gz"
 
-        print tarname
-        print tarname.split("/")
-        print tarname.split("/")[-1]
-        print tarname.split("/")[-1].replace(u".tar.gz","")
         repIntoTar = tarname.split("/")[-1].replace(u".tar.gz","")
 
         # creation du tar

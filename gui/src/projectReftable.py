@@ -13,7 +13,7 @@ import os,copy
 import shutil
 import codecs
 import subprocess
-import tarfile,stat
+import tarfile,stat, sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui,QtCore
@@ -351,32 +351,32 @@ class ProjectReftable(Project):
         """
         if tarname == None:
             output.notify(self,"Warning","You are about to generate an archive in order to compute on a cluster,\n This archive will contain the datafile, the header file, the diyabc binary (optional) and the scripts to launch computations on an cluster main node")
-            tarname = str(QFileDialog.getSaveFileName(self,"Saving cluster archive","%s_reftableCluster"%str(self.ui.projNameLabelValue.text()),"TAR archive (*.tar)"))
-            if tarname == "":
+            tarname = u"%s" % (QFileDialog.getSaveFileName(self,"Saving cluster archive","%s_reftableCluster"%str(self.ui.projNameLabelValue.text()),"TAR archive (*.tar)"))
+            if tarname == u"":
                 return ""
-            if not tarname.endswith(".tar"):
-                tarname += ".tar"
+            if not tarname.endswith(u".tar"):
+                tarname += u".tar"
         if tarname != "":
-            dest = "%s/cluster_generation_tmp/"%self.dir
+            dest = u"%s/cluster_generation_tmp/"%self.dir
             if os.path.exists(dest):
                 shutil.rmtree(dest)
             os.mkdir(dest)
             # generation du master script
             script = self.genMasterScript()
-            scmffile = "%s/scmf"%dest
+            scmffile = u"%s/scmf"%dest
             if os.path.exists(scmffile):
                 os.remove(scmffile)
             scmf = open(scmffile,'w')
             scmf.write(script)
             scmf.close()
             os.chmod(scmffile,stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
-            tar = tarfile.open(tarname,"w")
+            tar = tarfile.open(tarname.encode(sys.getfilesystemencoding()),"w")
             # generation du node script
             script = self.genNodeScript()
-            scnffile = "%s/scnf"%dest
+            scnffile = u"%s/scnf"%dest
             if os.path.exists(scnffile):
                 os.remove(scnffile)
-            scnf = open(scnffile,'w')
+            scnf = open(scnffile.encode(sys.getfilesystemencoding()),'w')
             scnf.write(script)
             scnf.close()
             os.chmod(scnffile,stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
@@ -385,16 +385,16 @@ class ProjectReftable(Project):
             tarRepName = self.dir.split('/')[-1]
             if os.path.exists(tarname):
                 os.remove(tarname)
-            tar = tarfile.open(tarname,"w")
-            tar.add(scmffile,'%s/launch.sh'%tarRepName)
-            tar.add(scnffile,'%s/node.sh'%tarRepName)
-            tar.add("%s/%s"%(self.dir,self.parent.reftableheader_name),"%s/%s"%(tarRepName,self.parent.reftableheader_name))
+            tar = tarfile.open(tarname.encode(sys.getfilesystemencoding()),"w")
+            tar.add(scmffile,u'%s/launch.sh'%tarRepName)
+            tar.add(scnffile,u'%s/node.sh'%tarRepName)
+            tar.add(u"%s/%s"%(self.dir,self.parent.reftableheader_name),u"%s/%s"%(tarRepName,self.parent.reftableheader_name))
             tar.add(self.dataFileSource,"%s/%s"%(str(tarRepName),str(self.dataFileName)))
             if self.parent.preferences_win.ui.clusterBinLocationCombo.currentText() == "local" :
                 diyabcLocalPath = str(self.parent.preferences_win.ui.diyabcPathLocalPathEdit.text())
                 if not os.path.exists(diyabcLocalPath) :
                     output.notify(self,"Value Error : cluster bin path","cluster binary not found. \n%s does not exists\Please verify cluster binary path options in preferences."%self.ui.diyabcPathLocalPathEdit.text())
-                tar.add(diyabcLocalPath,"%s/%s"%(tarRepName, os.path.basename(diyabcLocalPath)))
+                tar.add(diyabcLocalPath,u"%s/%s"%(tarRepName, os.path.basename(diyabcLocalPath)))
             tar.close()
             # nettoyage des fichiers temporaires de script
             if os.path.exists(dest):
