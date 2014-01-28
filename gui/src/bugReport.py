@@ -46,6 +46,7 @@ class BugReport(formBugReport,baseBugReport):
             output.notify(self,"Invalid bug report",problems)
             return
 
+
     def generateBugReport(self):
         current_project = self.parent.ui.tabWidget.currentWidget()
         fileDial = QFileDialog(self,"Select location of the bug report","%s"%os.path.dirname(str(current_project.dir)))
@@ -58,7 +59,7 @@ class BugReport(formBugReport,baseBugReport):
         result = fileDial.selectedFiles()
         if len(result) > 0:
             path = result[0]
-        tarname = "%s"%path
+        tarname = "%s"%path.decode("utf-8")
         if not tarname.endswith(".tar.gz"):
             tarname += ".tar.gz"
 
@@ -71,10 +72,13 @@ class BugReport(formBugReport,baseBugReport):
         # creation du tar
         dest = "%s/bug_report_tmp/"%current_project.dir
         if os.path.exists(dest):
-            shutil.rmtree(dest)
+            try :
+                shutil.rmtree(dest)
+            except :
+                QMessageBox.information(self,'Fatal Error', "Unable to remove previous bug report temporary directory: \n\n %s\n\n Please go to this folder, delete it and try again to create a bug report." % dest)
         os.mkdir(dest)
 
-        tar = tarfile.open(tarname,"w:gz")
+        tar = tarfile.open(tarname.encode(sys.getfilesystemencoding()),"w:gz")
 
         # copie du header
         if self.ui.headerYesRadio.isChecked():
