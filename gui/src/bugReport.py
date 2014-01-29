@@ -49,6 +49,7 @@ class BugReport(formBugReport,baseBugReport):
 
     def generateBugReport(self):
         current_project = self.parent.ui.tabWidget.currentWidget()
+        fsCoding = sys.getfilesystemencoding()
         fileDial = QFileDialog(self,"Select location of the bug report","%s"%os.path.dirname(str(current_project.dir)))
         fileDial.setAcceptMode(QFileDialog.AcceptSave)
         fileDial.setLabelText(QFileDialog.Accept,"Save bug report")
@@ -67,41 +68,41 @@ class BugReport(formBugReport,baseBugReport):
 
         # creation du tar
         dest = u"%s/bug_report_tmp/"%current_project.dir
-        if os.path.exists(dest):
+        if os.path.exists(dest.encode(fsCoding)):
             try :
-                shutil.rmtree(dest)
+                shutil.rmtree(dest.encode(fsCoding))
             except :
                 QMessageBox.information(self,'Fatal Error', "Unable to remove previous bug report temporary directory: \n\n %s\n\n Please go to this folder, delete it and try again to create a bug report." % dest)
-        os.mkdir(dest)
+        os.mkdir(dest.encode(fsCoding))
 
-        tar = tarfile.open(tarname.encode(sys.getfilesystemencoding()),"w:gz")
+        tar = tarfile.open(tarname.encode(fsCoding),"w:gz")
 
         # copie du header
         if self.ui.headerYesRadio.isChecked():
-            if os.path.exists(os.path.expanduser(u"%s/header.txt"%current_project.dir)):
-                tar.add(os.path.expanduser(u"%s/header.txt"%current_project.dir),u'%s/header.txt'%repIntoTar)
+            if os.path.exists((os.path.expanduser(u"%s/header.txt"%current_project.dir)).encode(fsCoding)):
+                tar.add(os.path.expanduser((u"%s/header.txt"%current_project.dir).encode(fsCoding)),u'%s/header.txt'%repIntoTar)
 
         # copie du datafile
         if self.ui.dataYesRadio.isChecked():
-            if os.path.exists(current_project.dataFileSource):
+            if os.path.exists(current_project.dataFileSource.encode(fsCoding)):
                 dataFileName = os.path.basename(current_project.dataFileSource)
-                tar.add(current_project.dataFileSource,u'%s/%s'%(repIntoTar,dataFileName))
+                tar.add(current_project.dataFileSource.encode(fsCoding),u'%s/%s'%(repIntoTar,dataFileName))
 
         # copie du diyabcproject file
-        if os.path.exists((u"%s/%s.diyabcproject"%(current_project.dir,current_project.name))):
+        if os.path.exists((u"%s/%s.diyabcproject"%(current_project.dir,current_project.name)).encode(fsCoding)):
             dataFileName = os.path.basename(u"%s/%s.diyabcproject"%(current_project.dir,current_project.name))
-            tar.add(current_project.dataFileSource,u'%s/%s'%(repIntoTar,dataFileName))
+            tar.add(current_project.dataFileSource.encode(fsCoding),u'%s/%s'%(repIntoTar,dataFileName))
 
 
         # copie des logfiles
-        if os.path.exists(os.path.expanduser(u"%s"%self.parent.logfile)):
-            tar.add(os.path.expanduser(u"%s"%self.parent.logfile),u'%s/logfile.txt'%repIntoTar)
-        if os.path.exists(u"%s/command.txt"%(current_project.dir)):
-            tar.add(os.path.expanduser(u"%s/command.txt"%(current_project.dir)),u'%s/command.txt'%(repIntoTar))
+        if os.path.exists(os.path.expanduser((u"%s"%self.parent.logfile)).encode(fsCoding)):
+            tar.add(os.path.expanduser((u"%s"%self.parent.logfile).encode(fsCoding)),u'%s/logfile.txt'%repIntoTar)
+        if os.path.exists((u"%s/command.txt"%(current_project.dir)).encode(fsCoding)):
+            tar.add(os.path.expanduser((u"%s/command.txt"%(current_project.dir)).encode(fsCoding)),u'%s/command.txt'%(repIntoTar))
 
         # config file
-        if os.path.exists(os.path.expanduser(u"~/.diyabc/config.cfg")):
-            tar.add(os.path.expanduser(u"~/.diyabc/config.cfg"),u'%s/config.cfg'%repIntoTar)
+        if os.path.exists(os.path.expanduser((u"~/.diyabc/config.cfg")).encode(fsCoding)):
+            tar.add(os.path.expanduser((u"~/.diyabc/config.cfg").encode(fsCoding)),u'%s/config.cfg'%repIntoTar)
 
         # creation de la desc
         cause = ""
@@ -119,19 +120,19 @@ class BugReport(formBugReport,baseBugReport):
         descf.write(infos.encode('utf-8'))
         descf.write(desc.encode('utf-8'))
         descf.close()
-        tar.add(os.path.expanduser(u"%sdescription.txt"%dest),u'%s/description.txt'%repIntoTar)
+        tar.add(os.path.expanduser((u"%sdescription.txt"%dest).encode(fsCoding)),u'%s/description.txt'%repIntoTar)
 
         # les .out
-        listf = os.listdir(u"%s"%current_project.dir)
+        listf = os.listdir((u"%s"%current_project.dir).encode(fsCoding))
         for fname in listf:
             if fname.startswith("conf."):
-                tar.add(os.path.expanduser(u"%s/%s"%(current_project.dir,fname)),u'%s/%s'%(repIntoTar,fname))
+                tar.add(os.path.expanduser((u"%s/%s"%(current_project.dir,fname)).encode(fsCoding)),u'%s/%s'%(repIntoTar,fname))
             if fname.endswith(u".out"):
-                tar.add(os.path.expanduser(u"%s/%s"%(current_project.dir,fname)),u'%s/%s'%(repIntoTar,fname))
+                tar.add(os.path.expanduser((u"%s/%s"%(current_project.dir,fname)).encode(fsCoding)),u'%s/%s'%(repIntoTar,fname))
 
         tar.close()
 
-        shutil.rmtree(dest)
+        shutil.rmtree(dest.encode(fsCoding))
 
         output.notify(self,"Thank you","Thank you for creating a bug report : %s, please send it to the development team : diyabc@supagro.inra.fr"%tarname)
 

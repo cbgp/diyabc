@@ -349,6 +349,7 @@ class ProjectReftable(Project):
         """ génère une archive tar contenant l'exécutable, les scripts node et master,
         le datafile et le reftableheader.
         """
+        fsCoding = sys.getfilesystemencoding()
         if tarname == None:
             output.notify(self,"Warning","You are about to generate an archive in order to compute on a cluster,\n This archive will contain the datafile, the header file, the diyabc binary (optional) and the scripts to launch computations on an cluster main node")
             tarname = u"%s" % (QFileDialog.getSaveFileName(self,"Saving cluster archive","%s_reftableCluster"%str(self.ui.projNameLabelValue.text()),"TAR archive (*.tar)"))
@@ -358,16 +359,16 @@ class ProjectReftable(Project):
                 tarname += u".tar"
         if tarname != "":
             dest = u"%s/cluster_generation_tmp/"%self.dir
-            if os.path.exists(dest.encode(sys.getfilesystemencoding())):
-                shutil.rmtree(dest.encode(sys.getfilesystemencoding()))
-            os.mkdir(dest.encode(sys.getfilesystemencoding()))
+            if os.path.exists(dest.encode(fsCoding)):
+                shutil.rmtree(dest.encode(fsCoding))
+            os.mkdir(dest.encode(fsCoding))
 
             # generation du master script
             script = self.genMasterScript()
             scmffile = u"%s/scmf"%dest
-            if os.path.exists(scmffile.encode(sys.getfilesystemencoding())):
-                os.remove(scmffile.encode(sys.getfilesystemencoding()))
-            scmf = open(scmffile.encode(sys.getfilesystemencoding()),'w')
+            if os.path.exists(scmffile.encode(fsCoding)):
+                os.remove(scmffile.encode(fsCoding))
+            scmf = open(scmffile.encode(fsCoding),'w')
             scmf.write(script)
             scmf.close()
             os.chmod(scmffile,stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
@@ -375,31 +376,31 @@ class ProjectReftable(Project):
             # generation du node script
             script = self.genNodeScript()
             scnffile = u"%s/scnf"%dest
-            if os.path.exists(scnffile.encode(sys.getfilesystemencoding())):
-                os.remove(scnffile.encode(sys.getfilesystemencoding()))
-            scnf = open(scnffile.encode(sys.getfilesystemencoding()),'w')
+            if os.path.exists(scnffile.encode(fsCoding)):
+                os.remove(scnffile.encode(fsCoding))
+            scnf = open(scnffile.encode(fsCoding),'w')
             scnf.write(script)
             scnf.close()
             os.chmod(scnffile,stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
 
             # ajout des fichiers dans l'archive
             tarRepName = self.dir.split('/')[-1]
-            if os.path.exists(tarname.encode(sys.getfilesystemencoding())):
-                os.remove(tarname.encode(sys.getfilesystemencoding()))
-            tar = tarfile.open(tarname.encode(sys.getfilesystemencoding()),"w")
-            tar.add(scmffile.encode(sys.getfilesystemencoding()),u'%s/launch.sh'%tarRepName)
-            tar.add(scnffile.encode(sys.getfilesystemencoding()),u'%s/node.sh'%tarRepName)
-            tar.add((u"%s/%s"%(self.dir,self.parent.reftableheader_name)).encode(sys.getfilesystemencoding()),u"%s/%s"%(tarRepName,self.parent.reftableheader_name))
-            tar.add(self.dataFileSource.encode(sys.getfilesystemencoding()),u"%s/%s"%(str(tarRepName),str(self.dataFileName)))
+            if os.path.exists(tarname.encode(fsCoding)):
+                os.remove(tarname.encode(fsCoding))
+            tar = tarfile.open(tarname.encode(fsCoding),"w")
+            tar.add(scmffile.encode(fsCoding),u'%s/launch.sh'%tarRepName)
+            tar.add(scnffile.encode(fsCoding),u'%s/node.sh'%tarRepName)
+            tar.add((u"%s/%s"%(self.dir,self.parent.reftableheader_name)).encode(fsCoding),u"%s/%s"%(tarRepName,self.parent.reftableheader_name))
+            tar.add(self.dataFileSource.encode(fsCoding),u"%s/%s"%(str(tarRepName),str(self.dataFileName)))
             if self.parent.preferences_win.ui.clusterBinLocationCombo.currentText() == "local" :
                 diyabcLocalPath = str(self.parent.preferences_win.ui.diyabcPathLocalPathEdit.text())
-                if not os.path.exists(diyabcLocalPath.encode(sys.getfilesystemencoding())) :
+                if not os.path.exists(diyabcLocalPath.encode(fsCoding)) :
                     output.notify(self,"Value Error : cluster bin path","cluster binary not found. \n%s does not exists\Please verify cluster binary path options in preferences."%self.ui.diyabcPathLocalPathEdit.text())
-                tar.add(diyabcLocalPath.encode(sys.getfilesystemencoding()),u"%s/%s"%(tarRepName, os.path.basename(diyabcLocalPath)))
+                tar.add(diyabcLocalPath.encode(fsCoding),u"%s/%s"%(tarRepName, os.path.basename(diyabcLocalPath)))
             tar.close()
             # nettoyage des fichiers temporaires de script
-            if os.path.exists(dest.encode(sys.getfilesystemencoding())):
-                shutil.rmtree(dest.encode(sys.getfilesystemencoding()))
+            if os.path.exists(dest.encode(fsCoding)):
+                shutil.rmtree(dest.encode(fsCoding))
 
         return tarname
 
