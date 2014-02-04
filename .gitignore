@@ -36,3 +36,10 @@ Thumbs.db
 ##############
 .cproject
 .settings/
+*.aux
+
+Notice-DIYABC-v2/Notice_DIYABC_principal.pdf
+
+Notice-DIYABC-v2/Notice_DIYABC_principal.synctex.gz
+
+Notice-DIYABC-v2/Notice_DIYABC_principal.toc
