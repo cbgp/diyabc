@@ -841,7 +841,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             return False
         for c in self.illegalProjectNameCharacters:
             if c in name:
-                output.notify(self,"Name error","The following characters are not allowed in project name : . \" ' _ - /")
+                output.notify(self,"Name error","The following characters are not allowed in project name : . \" ' - /")
                 return False
         return True
 
