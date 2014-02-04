@@ -25,6 +25,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.parent=parent
         self.directory=directory
         self.analysis = analysis
+        self.fsCoding = sys.getfilesystemencoding()
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
         self.paramChoice = "o"
         self.file_subname = "_original"
@@ -61,22 +62,22 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.ui.horizontalLayout_2.setContentsMargins(0,0,0,0)
         self.ui.horizontalLayout_3.setContentsMargins(0,0,0,0)
 
-        if not os.path.exists("%s/analysis/%s/mmmq_composite.txt"%(self.parent.dir,self.directory))\
-           and not os.path.exists("%s/analysis/%s/paramstatdens_composite.txt"%(self.parent.dir,self.directory)):
+        if not os.path.exists((u"%s/analysis/%s/mmmq_composite.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding))\
+           and not os.path.exists((u"%s/analysis/%s/paramstatdens_composite.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding)):
             self.ui.cRadio.hide()
         else :
             self.ui.cRadio.setChecked(True)
             self.paramChoice = "c"
             self.file_subname = "_composite"
-        if not os.path.exists("%s/analysis/%s/mmmq_scaled.txt"%(self.parent.dir,self.directory))\
-           and not os.path.exists("%s/analysis/%s/paramstatdens_scaled.txt"%(self.parent.dir,self.directory)):
+        if not os.path.exists(("%s/analysis/%s/mmmq_scaled.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding))\
+           and not os.path.exists((u"%s/analysis/%s/paramstatdens_scaled.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding)):
             self.ui.sRadio.hide()
         else :
             self.ui.sRadio.setChecked(True)
             self.paramChoice = "s"
             self.file_subname = "_scaled"
-        if not os.path.exists("%s/analysis/%s/mmmq_original.txt"%(self.parent.dir,self.directory))\
-           and not os.path.exists("%s/analysis/%s/paramstatdens_original.txt"%(self.parent.dir,self.directory)):
+        if not os.path.exists((u"%s/analysis/%s/mmmq_original.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding))\
+           and not os.path.exists((u"%s/analysis/%s/paramstatdens_original.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding)):
             self.ui.oRadio.hide()
         else :
             self.ui.oRadio.setChecked(True)
@@ -109,8 +110,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
     def viewMmmq(self):
         """ clic sur le bouton view numerical
         """
-        if os.path.exists("%s/analysis/%s/mmmq%s.txt"%(self.parent.dir,self.directory,self.file_subname)):
-            f = open("%s/analysis/%s/mmmq%s.txt"%(self.parent.dir,self.directory,self.file_subname),'r')
+        if os.path.exists((u"%s/analysis/%s/mmmq%s.txt"%(self.parent.dir,self.directory,self.file_subname)).encode(self.fsCoding)):
+            f = open((u"%s/analysis/%s/mmmq%s.txt"%(self.parent.dir,self.directory,self.file_subname)).encode(self.fsCoding),'r')
             data = f.read()
             f.close()
 
@@ -139,8 +140,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             del fr
         self.dicoPlot = {}
 
-        if os.path.exists("%s/analysis/%s/paramstatdens%s.txt"%(self.parent.dir,self.directory,self.file_subname)):
-            f = codecs.open("%s/analysis/%s/paramstatdens%s.txt"%(self.parent.dir,self.directory,self.file_subname),"rU","utf-8")
+        if os.path.exists((u"%s/analysis/%s/paramstatdens%s.txt"%(self.parent.dir,self.directory,self.file_subname)).encode(self.fsCoding)):
+            f = codecs.open((u"%s/analysis/%s/paramstatdens%s.txt"%(self.parent.dir,self.directory,self.file_subname)).encode(self.fsCoding),"rU","utf-8")
             lines = f.readlines()
             f.close()
             dico_info_draw = {}
@@ -181,7 +182,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         plotc = MyMplCanvas(draw_widget, width=12, height=4, dpi=100)
         originalWorkingDir = os.getcwd()
         try :
-            os.chdir("%s/analysis/%s/"%(self.parent.dir,self.directory))
+            os.chdir((u"%s/analysis/%s/"%(self.parent.dir,self.directory)).encode(self.fsCoding))
             l.addWidget(plotc)
             #plotc.fig.subplots_adjust(right=0.7,top=0.9,bottom=0.15)
             navtoolbar = NavigationToolbar(plotc, self)
@@ -285,7 +286,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
             frame.setMaximumSize(QSize(400, 9000))
             self.ui.horizontalLayout_3.addWidget(frame)
         finally:
-            os.chdir(originalWorkingDir)
+            os.chdir(originalWorkingDir.encode(self.fsCoding))
 
     def printDraws(self):
         nbpix = len(self.dicoPlot.keys())
@@ -297,7 +298,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         delta = 120
 
         im_result = QPrinter()
-        im_result.setOutputFileName("%s/analysis/%s/%s.pdf"%(self.parent.dir,self.directory,self.analysis.name))
+        im_result.setOutputFileName((u"%s/analysis/%s/%s.pdf"%(self.parent.dir,self.directory,self.analysis.name)).encode(self.fsCoding))
         painter = QPainter()
 
         dial = QPrintDialog(im_result,self)
@@ -369,8 +370,8 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
 
         self.im_result = QPrinter()
         self.im_result.setOutputFormat(QPrinter.PdfFormat)
-        save_path = '%s%s_all.pdf'%(pic_whole_path,file_subname)
-        self.im_result.setOutputFileName(save_path)
+        save_path = u'%s%s_all.pdf'%(pic_whole_path,file_subname)
+        self.im_result.setOutputFileName(save_path.encode(self.fsCoding))
         painter = QPainter()
         self.im_result.setResolution(100)
         painter.begin(self.im_result)

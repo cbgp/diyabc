@@ -5,14 +5,13 @@
 #
 # @brief Projets pour créer une table de référence Msat et Sequences
 
-import os
+import os, os.path, sys
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from projectReftable import ProjectReftable
 from geneticData.setGenDataMsatSeq import SetGeneticDataMsatSeq
 from utils.data import Data
-import os.path
 import output
 from utils.cbgpUtils import log,isUnixText,dos2unix
 
@@ -26,7 +25,7 @@ class ProjectMsatSeq(ProjectReftable):
     """
     def __init__(self,name,dir=None,parent=None):
         super(ProjectMsatSeq,self).__init__(name,dir,parent)
-
+        self.fsCoding = sys.getfilesystemencoding()
         self.gen_data_win = SetGeneticDataMsatSeq(self)
         self.gen_data_win.ui.okButton.setText("VALIDATE AND SAVE")
         self.gen_data_win.hide()
@@ -179,14 +178,14 @@ class ProjectMsatSeq(ProjectReftable):
         """ lit le fichier conf.tmp pour charger le fichier de données
         """
         log(2,"Reading '%s' to load datafile"%self.parent.main_conf_name)
-        if os.path.exists(self.ui.dirEdit.text()+"/%s"%self.parent.main_conf_name):
-            f = open("%s/%s"%(self.dir,self.parent.main_conf_name),"rU")
+        if os.path.exists((self.ui.dirEdit.text()+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding)):
+            f = open((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding),"rU")
             lines = f.readlines()
             self.dataFileName = lines[0].strip()
             self.ui.dataFileEdit.setText(self.dataFileName)
             # lecture du dataFile pour les infos de Gui Projet
-            if os.path.exists("%s/%s"%(self.dir,self.dataFileName)):
-                if self.loadDataFile("%s/%s"%(self.dir,self.dataFileName)):
+            if os.path.exists((u"%s/%s"%(self.dir,self.dataFileName)).encode(self.fsCoding)):
+                if self.loadDataFile((u"%s/%s"%(self.dir,self.dataFileName)).encode(self.fsCoding)):
                     # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
                     self.gen_data_win.fillLocusTableFromData()
                 else:
@@ -225,10 +224,10 @@ class ProjectMsatSeq(ProjectReftable):
 
         if self.dir != None and self.dataFileName != "":
             # save meta project
-            if os.path.exists(self.dir+"/%s"%self.parent.main_conf_name):
-                os.remove("%s/%s"%(self.dir,self.parent.main_conf_name))
+            if os.path.exists((self.dir+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding)):
+                os.remove((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding))
 
-            f = codecs.open(self.dir+"/%s"%self.parent.main_conf_name,'w',"utf-8")
+            f = codecs.open((self.dir+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding),'w',"utf-8")
             f.write("%s\n"%self.dataFileName)
             # recup du nombre de params (depuis historical model et les mutational qui varient)
             nb_param = self.hist_model_win.getNbParam()
@@ -260,9 +259,9 @@ class ProjectMsatSeq(ProjectReftable):
         hist_params_txt = self.hist_model_win.getParamTableHeader()
         mut_params_txt = self.gen_data_win.getParamTableHeader()
         sum_stats_txt = self.gen_data_win.getSumStatsTableHeader()
-        if os.path.exists(self.dir+"/%s"%self.parent.table_header_conf_name):
-            os.remove("%s/%s"%(self.dir,self.parent.table_header_conf_name))
-        f = codecs.open(self.dir+"/%s"%self.parent.table_header_conf_name,'w',"utf-8")
+        if os.path.exists((self.dir+u"/%s"%self.parent.table_header_conf_name).encode(self.fsCoding)):
+            os.remove((u"%s/%s"%(self.dir,self.parent.table_header_conf_name)).encode(self.fsCoding))
+        f = codecs.open((self.dir+u"/%s"%self.parent.table_header_conf_name).encode(self.fsCoding),'w',"utf-8")
         f.write("scenario%s%s%s"%(hist_params_txt,mut_params_txt,sum_stats_txt))
         f.close()
 

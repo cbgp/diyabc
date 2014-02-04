@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os, sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -17,6 +17,7 @@ class ShowLogFile(formLogFile,baseLogFile):
     def __init__(self,parent=None):
         super(ShowLogFile,self).__init__(parent)
         self.parent = parent
+        self.fsCoding = sys.getfilesystemencoding()
         #dd = datetime.now()
         #self.logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%s.log"%(dd.day,dd.month,dd.year,os.getpid()))
         #self.logfile = self.parent.logfile
@@ -39,9 +40,9 @@ class ShowLogFile(formLogFile,baseLogFile):
         if fname != "":
             if not fname.endswith(".log"):
                 fname = "%s.log"%fname
-            sf=open(fname,'w')
+            sf=open(fname.encode(self.fsCoding),'w')
 
-            lf=open(self.parent.logfile,'r')
+            lf=open(self.parent.logfile.encode(self.fsCoding),'r')
             text=lf.read()
             lf.close()
 
@@ -51,8 +52,8 @@ class ShowLogFile(formLogFile,baseLogFile):
 
 
     def updateLogFile(self):
-        if os.path.exists(self.parent.logfile):
-            f=open(self.parent.logfile,'r')
+        if os.path.exists(self.parent.logfile.encode(self.fsCoding)):
+            f=open(self.parent.logfile.encode(self.fsCoding),'r')
             text=f.read()
             f.close()
             self.ui.logText.setPlainText(text)

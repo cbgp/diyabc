@@ -34,11 +34,11 @@ class Preferences(AutoPreferences):
 
     def __init__(self,parent=None,configfile=None):
         super(Preferences,self).__init__(parent,configfile)
-
-        f = open(DATAPATH+"/txt/launch_header_cluster.sh",'r')
+        self.fsCoding = sys.getfilesystemencoding()
+        f = open((DATAPATH+u"/txt/launch_header_cluster.sh").encode(self.fsCoding),'r')
         self.DEFAULT_FIRST_PART_SCRIPT_CLUSTER = f.read()
         f.close()
-        f = open(DATAPATH+"/txt/launch_body_cluster.sh",'r')
+        f = open((DATAPATH+u"/txt/launch_body_cluster.sh").encode(self.fsCoding),'r')
         self.DEFAULT_SECOND_PART_SCRIPT_CLUSTER = f.read()
         f.close()
 
@@ -359,7 +359,7 @@ class Preferences(AutoPreferences):
     def getLastFolder(self,name):
         res = ""
         name_maj = name[0].upper()+name[1:]
-        exec("res = os.path.expanduser(str(self.ui.last%sFolderEdit.text()))"%name_maj)
+        exec("res = os.path.expanduser((str(self.ui.last%sFolderEdit.text())).encode(self.fsCoding))"%name_maj)
         return res
 
     def setLastFolder(self,name,path):
@@ -495,8 +495,8 @@ class Preferences(AutoPreferences):
                 else:
                     exPath = "%s/bin/diyabc-comput-linux-x64"%DATAPATH
                 # si on a le paquet deb installé et qu'aucun binaire n'est dans le datapath
-                if os.path.exists("/usr/bin/diyabc") and not os.path.exists("%s/bin/diyabc-comput-linux-x64"%DATAPATH)\
-                        and not os.path.exists("%s/bin/diyabc-comput-linux-i386"%DATAPATH):
+                if os.path.exists(u"/usr/bin/diyabc".encode(self.fsCoding)) and not os.path.exists((u"%s/bin/diyabc-comput-linux-x64"%DATAPATH).encode(self.fsCoding))\
+                        and not os.path.exists((u"%s/bin/diyabc-comput-linux-i386"%DATAPATH).encode(self.fsCoding)):
                     exPath = "/usr/bin/diyabc"
             # WINDOWS
             elif "win" in sys.platform and "darwin" not in sys.platform:
@@ -511,15 +511,15 @@ class Preferences(AutoPreferences):
                 else:
                     exPath = os.path.join(DATAPATH,"bin/diyabc-comput-mac-x64")
         else:
-            if not os.path.exists(self.ui.execPathPathEdit.text()):
+            if not os.path.exists(self.ui.execPathPathEdit.text().encode(self.fsCoding)):
                 output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s\n\If, and only if,  'use default executable check' is checked, then this is a known bug. We apologize !\n Please, check if no analysis or reftable are running and restart diyabc.\nIt should work again."%self.ui.execPathPathEdit.text())
                 return ""
             return str(self.ui.execPathPathEdit.text())
 
-        if not os.path.exists(exPath):
+        if not os.path.exists(exPath.encode(self.fsCoding)):
             output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s\n\If, and only if,  'use default executable check' is checked, then this is a known bug. We apologize !\n Please, check if no analysis or reftable are running and restart diyabc.\nIt should work again."%exPath)
             return ""
-        return os.path.abspath(exPath)
+        return os.path.abspath(exPath.encode(self.fsCoding))
 
     def changeBackgroundColor(self,colorstr):
         if str(colorstr) in self.tabColor.keys():

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os,traceback
-import shutil
+import shutil, sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
@@ -20,9 +20,10 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
     def __init__(self,sc_info_list=None,parent=None):
         super(DrawScenario,self).__init__(parent)
         self.parent=parent
+        self.fsCoding = sys.getfilesystemencoding()
         self.createWidgets()
         self.sc_info_list = sc_info_list
-        self.pixList = []    
+        self.pixList = []
         self.svgList = []
 
     def createWidgets(self):
@@ -92,14 +93,14 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
     def addDraw(self,segments,scc,t):
         """ dessine un scenario et l'ajoute à la fenetre
         """
-        
+
         xmax = 500
         ymax = 450
         pix = QPixmap(xmax,ymax)
         pix.fill(Qt.white)
 
         painter = QPainter(pix)
-        
+
         try:
             self.paintScenario(painter,segments,scc,t,xmax,ymax)
         except Exception as e:
@@ -116,37 +117,37 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
     def DrawSvg(self,segments,scc,t,savename):
         """ dessine un scenario dans un fichier svg
         """
-        
+
         xmax = 500
         ymax = 450
         svgpic = QSvgGenerator()
-        svgpic.setFileName(savename)
+        svgpic.setFileName(savename.encode(self.fsCoding))
         self.svgList.append(svgpic)
 
         painter = QPainter()
         painter.begin(svgpic)
 
         self.paintScenario(painter,segments,scc,t,xmax,ymax)
-        
+
         painter.end()
 
     def DrawPdf(self,segments,scc,t,savename):
         """ dessine un scenario dans un fichier svg
         """
-        
+
         xmax = 500
         ymax = 450
 
 
         im_result = QPrinter()
         im_result.setOutputFormat(QPrinter.PdfFormat)
-        im_result.setOutputFileName(savename)
+        im_result.setOutputFileName(savename.encode(self.fsCoding))
         painter = QPainter()
         im_result.setResolution(65)
         painter.begin(im_result)
 
         self.paintScenario(painter,segments,scc,t,xmax,ymax)
-        
+
         painter.end()
 
     def paintScenario(self,painter,segments,scc,t,xmax,ymax,font_inc=0):
@@ -204,7 +205,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         painter.setFont(font)
         painter.drawText(xmax-170,14,"(Warning ! Time is not to scale.)");
 
-        
+
         # echantillons
         pen = QPen(Qt.black,1)
         painter.setPen(pen)
@@ -233,7 +234,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 font.setItalic(True)
                 font.setPixelSize(10+font_inc)
                 painter.setFont(font)
-                if t.node[i].ref :  
+                if t.node[i].ref :
                     #painter.drawText(x-10,y+25,'[Sa %i]'%t.node[i].pop)
                     painter.drawText(x-10,y+25,'%i ind'%scc.dicoPopRefNindRef[t.node[i].pop])
                     #print "ref, i:%s, ref:%s, pop:%s"%(i,t.node[i].ref,t.node[i].pop)
@@ -248,9 +249,9 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
                 if t.node[i].category == "sa" :
                     #print "Pop %i"%t.node[i].pop
                     #print "Scenario %i"%(scc.number)
-                    if t.node[i].ref :  
+                    if t.node[i].ref :
                         painter.drawText(x-19,y+50,"[Pop %i]"%t.node[i].pop)
-                    else :  
+                    else :
                         painter.drawText(x-19,y+50,"Pop %i"%t.node[i].pop)
 
 
@@ -315,8 +316,8 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         #if os.path.exists("%s/%s"%(proj_dir,pic_dir)):
         #    shutil.rmtree("%s/%s"%(proj_dir,pic_dir))
         # puis on le recrée, vide évidemment
-        if not os.path.exists("%s/%s"%(proj_dir,pic_dir)):
-            os.mkdir("%s/%s"%(proj_dir,pic_dir))
+        if not os.path.exists((u"%s/%s"%(proj_dir,pic_dir)).encode(self.fsCoding)):
+            os.mkdir((u"%s/%s"%(proj_dir,pic_dir)).encode(self.fsCoding))
 
         if str(self.parent.parent.parent.preferences_win.ui.picturesFormatCombo.currentText()) == "pdf":
             answer = QMessageBox.question(self,"Saving option","Would you like to save all scenarios images in one file or 1 scenario per file ? (PDF)",\
@@ -341,15 +342,15 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         if pic_format == "jpg" or pic_format == "png":
             for ind,pix in enumerate(self.pixList):
                 im = pix.toImage()
-                im.save("%s_%i.%s"%(pic_whole_path,ind+1,pic_format))
+                im.save((u"%s_%i.%s"%(pic_whole_path,ind+1,pic_format)).encode(self.fsCoding))
         elif pic_format == "svg" or pic_format == "pdf":
             for ind,sc_info in enumerate(self.sc_info_list):
                 if sc_info["tree"] != None:
                     savename = "%s_%i.%s"%(pic_whole_path,ind+1,pic_format)
                     if pic_format == "svg":
-                        self.DrawSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
+                        self.DrawSvg(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename.encode(self.fsCoding))
                     else:
-                        self.DrawPdf(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename)
+                        self.DrawPdf(sc_info["tree"].segments,sc_info["checker"],sc_info["tree"],savename.encode(self.fsCoding))
 
 
     def saveDrawsToOne(self):
@@ -418,7 +419,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
 
         self.im_result = QPrinter()
         self.im_result.setOutputFormat(QPrinter.PdfFormat)
-        self.im_result.setOutputFileName('%s_all.pdf'%pic_whole_path)
+        self.im_result.setOutputFileName((u'%s_all.pdf'%pic_whole_path).encode(self.fsCoding))
         painter = QPainter()
         self.im_result.setPageMargins(10,10,10,10,QPrinter.Millimeter)
         self.im_result.setResolution(135)
@@ -451,7 +452,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
         proj_dir = self.parent.parent.dir
         pic_dir = self.parent.parent.parent.scenario_pix_dir_name
         pic_basename = self.parent.parent.parent.scenario_pix_basename
-        pic_whole_path = "%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
+        pic_whole_path = u"%s/%s/%s_%s"%(proj_dir,pic_dir,self.parent.parent.name,pic_basename)
 
         pic_format = str(self.parent.parent.parent.preferences_win.ui.picturesFormatCombo.currentText())
 
@@ -474,7 +475,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
             self.pic_result = QSvgGenerator()
             #self.pic_result.setSize(QSize(largeur*500, longueur*450));
             #self.pic_result.setViewBox(QRect(0, 0, largeur*500, longueur*450));
-            self.pic_result.setFileName("%s_%s.svg"%(pic_whole_path,ind_list_str))
+            self.pic_result.setFileName((u"%s_%s.svg"%(pic_whole_path,ind_list_str)).encode(self.fsCoding))
             painter_pic = QPainter()
             painter_pic.begin(self.pic_result)
 
@@ -500,6 +501,6 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
             li+=1
 
         if pic_format == "jpg" or pic_format == "png":
-            self.im_result.save("%s_%s.%s"%(pic_whole_path,ind_list_str,pic_format))
+            self.im_result.save((u"%s_%s.%s"%(pic_whole_path,ind_list_str,pic_format)).encode(self.fsCoding))
         else:
             painter_pic.end()

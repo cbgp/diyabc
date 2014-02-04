@@ -6,7 +6,7 @@
 # @brief Projets pour simuler des données
 
 import time
-import os
+import os, os.path, sys
 import subprocess
 from project import Project
 from PyQt4.QtCore import *
@@ -14,7 +14,6 @@ from PyQt4.QtGui import *
 from PyQt4 import uic
 from historicalModel.setHistoricalModelSimulation import SetHistoricalModelSimulation
 from geneticData.setGenDataSimulation import SetGeneticDataSimulation
-import os.path
 import output
 from utils.cbgpUtils import log
 from datetime import datetime
@@ -28,6 +27,8 @@ class ProjectSimulation(Project):
     """
     def __init__(self,name,dir=None,parent=None):
         super(ProjectSimulation,self).__init__(name,dir,parent)
+
+        self.fsCoding = sys.getfilesystemencoding()
 
         self.dico_loc_nb = None
         self.sexRatio = None
@@ -70,7 +71,7 @@ class ProjectSimulation(Project):
         self.hist_model_win = SetHistoricalModelSimulation(self)
         self.hist_model_win.hide()
 
-        self.locusNumberFrame = uic.loadUi("%s/setLocusNumber.ui"%UIPATH)
+        self.locusNumberFrame = uic.loadUi((u"%s/setLocusNumber.ui"%UIPATH).encode(self.fsCoding))
         self.locusNumberFrame.setParent(self)
         self.locusNumberFrame.hide()
         QObject.connect(self.locusNumberFrame.okButton,SIGNAL("clicked()"),self.checkSampleNSetGenetic)
@@ -90,7 +91,7 @@ class ProjectSimulation(Project):
         # name_YYYY_MM_DD-num le plus elevé
         dd = datetime.now()
         cd = 100
-        while cd > 0 and not os.path.exists(path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,cd)):
+        while cd > 0 and not os.path.exists((path+u"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,cd)).encode(self.fsCoding)):
             cd -= 1
         if cd == 100:
             output.notify(self,"Error","With this version, you cannot have more than 100 \
@@ -99,7 +100,7 @@ class ProjectSimulation(Project):
             newdir = path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,(cd+1))
             self.ui.dirEdit.setText(newdir)
             try:
-                os.mkdir(newdir)
+                os.mkdir(newdir.encode(self.fsCoding))
                 self.ui.setHistoricalButton.setDisabled(False)
                 self.ui.setGeneticButton.setDisabled(False)
                 self.dir = newdir
@@ -124,7 +125,7 @@ class ProjectSimulation(Project):
         else:
             output.notify(self,"Value error","Required number of simulated data sets must be a positive integer")
             return
-        fdest = open("%s/headersim.txt"%self.dir,"w")
+        fdest = open((u"%s/headersim.txt"%self.dir).encode(self.fsCoding),"w")
         fdest.write("%s %s %s\n"%(self.name.replace(' ','_'),nb_rec,sexRatioTxt))
         fdest.write("%s\n\n"%self.hist_model_win.getConf())
         fdest.write(self.getLocusDescription())
@@ -194,8 +195,8 @@ class ProjectSimulation(Project):
             self.th.terminate()
             self.th.killProcess()
             self.th = None
-        if os.path.exists("%s/simulation.out"%(self.dir)):
-            os.remove("%s/simulation.out"%(self.dir))
+        if os.path.exists((u"%s/simulation.out"%(self.dir)).encode(self.fsCoding)):
+            os.remove((u"%s/simulation.out"%(self.dir)).encode(self.fsCoding))
         log(1,"Simulation stopped")
 
 class SimulationThread(QThread):
@@ -204,10 +205,10 @@ class SimulationThread(QThread):
     """
     def __init__(self,parent,nb_to_gen):
         super(SimulationThread,self).__init__(parent)
-        self.parent = parent
+
         self.nb_to_gen = nb_to_gen
         self.processus = None
-
+        self.fsCoding = sys.getfilesystemencoding()
         self.logmsg = ""
         self.loglvl = 3
 
@@ -228,12 +229,12 @@ class SimulationThread(QThread):
 
     def run(self):
         # lance l'executable
-        outfile = "%s/simulation.out"%self.parent.dir
-        if os.path.exists(outfile):
-            os.remove(outfile)
-        if os.path.exists("%s/progress.txt"%self.parent.dir):
-            os.remove("%s/progress.txt"%self.parent.dir)
-        fg = open(outfile,"w")
+        outfile = u"%s/simulation.out"%self.parent.dir
+        if os.path.exists(outfile.encode(self.fsCoding)):
+            os.remove(outfile.encode(self.fsCoding))
+        if os.path.exists((u"%s/progress.txt"%self.parent.dir).encode(self.fsCoding)):
+            os.remove((u"%s/progress.txt"%self.parent.dir).encode(self.fsCoding))
+        fg = open(outfile.encode(self.fsCoding),"w")
         try:
             self.log(2,"Running the executable for the simulation")
             exPath = self.parent.parent.preferences_win.getExecutablePath()
@@ -255,9 +256,9 @@ class SimulationThread(QThread):
             # verification de l'arret du programme
             if p.poll() != None:
                 # lecture
-                if os.path.exists("%s/progress.txt"%(self.parent.dir)):
+                if os.path.exists((u"%s/progress.txt"%(self.parent.dir)).encode(self.fsCoding)):
                     #print 'open'
-                    f = open("%s/progress.txt"%(self.parent.dir),"rU")
+                    f = open((u"%s/progress.txt"%(self.parent.dir)).encode(self.fsCoding),"rU")
                     lines = f.readlines()
                     f.close()
                     finished = True
@@ -265,7 +266,7 @@ class SimulationThread(QThread):
                     self.emit(SIGNAL("simulationTerminated"))
                 else:
                     fg.close()
-                    fout = open(outfile,'rU')
+                    fout = open(outfile.encode(self.fsCoding),'rU')
                     lastline = fout.readlines()
                     if len(lastline) > 0:
                         lastline = lastline[-1]
@@ -391,7 +392,7 @@ class ProjectSimulationSnp(ProjectSimulation):
     """
     def __init__(self,name,dir=None,parent=None):
         super(ProjectSimulationSnp,self).__init__(name,dir,parent)
-
+        self.fsCoding = sys.getfilesystemencoding()
         self.locusNumberFrame.frame_8.hide()
         self.locusNumberFrame.leftBlocLabel.setText("TYPES OF SNP LOCI \n \n (Note that H loci are not compatible with A, X and Y loci)")
         #self.locusNumberFrame.frame.setMaximumSize(QSize(300,1000))

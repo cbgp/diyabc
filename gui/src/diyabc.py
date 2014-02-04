@@ -15,8 +15,9 @@ if "darwin" in sys.platform and ".app/" in sys.argv[0]:
     # pour aller dans le rep où est le .app
     #mycwd = "/".join(sys.argv[0].split(".app/")[0].split('/')[:-1])
     # pour aller a l'interieur du .app
+    fsCoding = sys.getfilesystemencoding()
     mycwd = sys.argv[0].split(".app/")[0] + ".app/Contents/Resources/"
-    os.chdir(mycwd)
+    os.chdir(mycwd.encode(fsCoding))
 # pour connaitre les modules, on manipule le pythonpath
 if "win" in sys.platform and "darwin" not in sys.platform:
     sys.path.append('\\'.join(os.getcwd().split('\\')[:-1]))
@@ -60,6 +61,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     """
     def __init__(self,app,parent=None,projects=None,logfile=None):
         super(Diyabc,self).__init__(parent)
+        self.fsCoding = sys.getfilesystemencoding()
         self.app = app
         self.logfile = logfile
         self.project_list = []
@@ -84,9 +86,9 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         self.createWidgets()
 
-        confdir = os.path.expanduser("~/.diyabc/")
-        if not os.path.exists(confdir):
-            os.mkdir(confdir)
+        confdir = os.path.expanduser(u"~/.diyabc/".encode(self.fsCoding))
+        if not os.path.exists(confdir.encode(self.fsCoding)):
+            os.mkdir(confdir.encode(self.fsCoding))
 
         self.configFile = confdir+"config.cfg"
         self.preferences_win = Preferences(self,self.configFile)
@@ -354,15 +356,15 @@ class Diyabc(formDiyabc,baseDiyabc):
     def setDefaultPreferences(self):
         """ Reviens à la configuration par défaut
         """
-        if os.path.exists(os.path.expanduser("~/.diyabc/")+"config.cfg"):
-            os.remove(os.path.expanduser("~/.diyabc/")+"config.cfg")
-        if os.path.exists(os.path.expanduser("~/.diyabc/")+"recent"):
-            os.remove(os.path.expanduser("~/.diyabc/")+"recent")
+        if os.path.exists((os.path.expanduser(u"~/.diyabc/".encode(self.fsCoding))+u"config.cfg").encode(self.fsCoding)):
+            os.remove((os.path.expanduser(u"~/.diyabc/".encode(self.fsCoding))+u"config.cfg").encode(self.fsCoding))
+        if os.path.exists((os.path.expanduser(u"~/.diyabc/".encode(self.fsCoding))+u"recent").encode(self.fsCoding)):
+            os.remove((os.path.expanduser(u"~/.diyabc/".encode(self.fsCoding))+u"recent").encode(self.fsCoding))
 
         index = self.preferences_win.ui.tabWidget.currentIndex()
         self.stackedWidget.removeWidget(self.preferences_win)
         del self.preferences_win
-        self.preferences_win = Preferences(self,os.path.expanduser("~/.diyabc/")+"config.cfg")
+        self.preferences_win = Preferences(self,os.path.expanduser(u"~/.diyabc/".encode(self.fsCoding))+u"config.cfg".encode(self.fsCoding))
         self.preferences_win.hide()
         self.preferences_win.loadPreferences()
         self.preferences_win.ui.tabWidget.setCurrentIndex(index)
@@ -482,7 +484,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     def simulateDataSets(self):
         from projectSimulation import ProjectSimulationSnp,ProjectSimulationMsatSeq
         # selection du dernier chemin pour open
-        default_path = os.path.expanduser("~/")
+        default_path = os.path.expanduser(u"~/".encode(self.fsCoding))
         if self.preferences_win.getLastFolder("open") != "":
             default_path = self.preferences_win.getLastFolder("open")
         fileDial = QtGui.QFileDialog(self,"Select name and location of the new simulated data set(s)","%s"%default_path)
@@ -503,7 +505,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             if path[-1] == "/":
                 path = path[:-1]
             name = path.split("/")[-1]
-            directory = os.path.dirname(path)
+            directory = os.path.dirname(path.encode(self.fsCoding))
 
         if ok:
             if "Genepop" in self.sender().text():
@@ -529,7 +531,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             log(1,"Simulation project '%s' successfully created"%(newSimProj.name))
             self.updateDoc(newSimProj)
             # set dernier chemin
-            self.preferences_win.setLastFolder("open",os.path.dirname(str(newSimProj.dir)))
+            self.preferences_win.setLastFolder("open",os.path.dirname((str(newSimProj.dir)).encode(self.fsCoding)))
 
     def setRecent(self,rlist):
         self.recentList = rlist
@@ -552,7 +554,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         nbMaxRecent = self.preferences_win.getMaxRecentNumber()
         nb_added = 0
         for i,rec in enumerate(self.recentList):
-            if os.path.exists(str(rec)):
+            if os.path.exists((str(rec)).encode(self.fsCoding)):
                 self.recentMenuEntries.append( self.recent_menu.addAction(QIcon(variables.ICONPATH+"/document-open-recent.png"),rec.split('/')[-1],self.openRecent) )
                 self.entryToRecent[ self.recentMenuEntries[-1] ] = rec
                 nb_added += 1
@@ -627,8 +629,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ Renvoie vrai si le dossier dont le chemin (relatif ou absolu)
         est dir est un projet de type SNP
         """
-        if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
-            f=open("%s/%s"%(dir,self.main_conf_name),'rU')
+        if os.path.exists(dir.encode(self.fsCoding)) and os.path.exists((u"%s/%s"%(dir,self.main_conf_name)).encode(self.fsCoding)):
+            f=open((u"%s/%s"%(dir,self.main_conf_name)).encode(self.fsCoding),'rU')
             cont = f.readlines()
             f.close()
             if len(cont)>0:
@@ -642,7 +644,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         from projectSnp import ProjectSnp
         if dir == None:
             # selection du dernier chemin pour open
-            default_path = os.path.expanduser("~/")
+            default_path = os.path.expanduser("~/".encode(self.fsCoding))
             if self.preferences_win.getLastFolder("open") != "":
                 default_path = self.preferences_win.getLastFolder("open")
             qq = DirNFileDialog(None,"Select project file or directory","%s"%default_path)
@@ -655,12 +657,12 @@ class Diyabc(formDiyabc,baseDiyabc):
                 name = ""
             if name != "" and name != None:
                 # c'est un dossier
-                if os.path.isdir(name):
+                if os.path.isdir(name.encode(self.fsCoding)):
                     dir = name
                 # c'est un fichier
                 else:
                     dir = '/'.join(str(name).split('/')[:-1])
-                    if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
+                    if os.path.exists(dir.encode(self.fsCoding)) and os.path.exists((u"%s/%s"%(dir,self.main_conf_name)).encode(self.fsCoding)):
                         # le fichier est bien dans un projet
                         log(3,"%s is in a project directory, opening this project"%name)
                     else:
@@ -673,7 +675,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             dir = dir[:-1]
         log(1,"attempting to open the project : %s"%dir)
         # set dernier chemin pour open
-        self.preferences_win.setLastFolder("open",os.path.dirname(str(dir)))
+        self.preferences_win.setLastFolder("open",os.path.dirname((str(dir)).encode(self.fsCoding)))
         self.showStatus("Loading project %s"%dir.split('/')[-1])
         QApplication.setOverrideCursor( Qt.WaitCursor )
 
@@ -683,14 +685,14 @@ class Diyabc(formDiyabc,baseDiyabc):
             project_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
         if dir != "":
-            if os.path.exists(dir) and os.path.exists("%s/%s"%(dir,self.main_conf_name)):
+            if os.path.exists(dir.encode(self.fsCoding)) and os.path.exists((u"%s/%s"%(dir,self.main_conf_name)).encode(self.fsCoding)):
                 proj_name_list = []
                 for p in self.project_list:
                     proj_name_list.append(p.name)
                 if not project_name in proj_name_list:
                     proj_ready_to_be_opened = True
                     # si le projet est verrouillé
-                    if os.path.exists("%s/.DIYABC_lock"%dir):
+                    if os.path.exists((u"%s/.DIYABC_lock"%dir).encode(self.fsCoding)):
                         if not output.debug:
                             reply = QMessageBox.question(self,"Project is locked","The %s project is currently locked.\
     \nThere are two possible reasons for that : \
@@ -700,12 +702,12 @@ class Diyabc(formDiyabc,baseDiyabc):
     \nIf you say YES, think about closing potential other DIYABCs which manipulate this project"%project_name,
                                     QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,QtGui.QMessageBox.No)
                             if reply == QtGui.QMessageBox.Yes:
-                                os.remove("%s/.DIYABC_lock"%dir)
+                                os.remove((u"%s/.DIYABC_lock"%dir).encode(self.fsCoding))
                             else:
                                 proj_ready_to_be_opened = False
                         else:
                             # si on est en mode debug, on vire le verrou sans sommation
-                            os.remove("%s/.DIYABC_lock"%dir)
+                            os.remove((u"%s/.DIYABC_lock"%dir).encode(self.fsCoding))
                     if proj_ready_to_be_opened:
                         # on selectionne le type de projet
                         if self.isSNPProjectDir(dir):
@@ -744,7 +746,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                         # creation du lock
                         proj_to_open.lock()
                         # si les RNG n'existent pas, on les crée
-                        if not os.path.exists("%s/RNG_state_0000.bin"%dir):
+                        if not os.path.exists((u"%s/RNG_state_0000.bin"%dir).encode(self.fsCoding)):
                             proj_to_open.initializeRNG()
                         log(1,"Project '%s' opened successfully"%dir)
                         self.addRecent(dir)
@@ -772,7 +774,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             return
         ok = True
         if cloneName == None or cloneDir == None:
-            fileDial = QtGui.QFileDialog(self,"Select location of the clone project","%s"%os.path.dirname(str(current_project.dir)))
+            fileDial = QtGui.QFileDialog(self,"Select location of the clone project","%s"%os.path.dirname((str(current_project.dir)).encode(self.fsCoding)))
             fileDial.setAcceptMode(QFileDialog.AcceptSave)
             fileDial.setLabelText(QtGui.QFileDialog.Accept,"Clone project")
             fileDial.setLabelText(QtGui.QFileDialog.FileName,"Clone name")
@@ -788,7 +790,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 if path[-1] == "/":
                     path = path[:-1]
                 cloneName = path.split("/")[-1]
-                cloneDir = os.path.dirname(str(path))
+                cloneDir = os.path.dirname((str(path)).encode(self.fsCoding))
             else:
                 # on a eu un probleme inconnu, on a un path qui n'a pas de '/'
                 return
@@ -796,12 +798,12 @@ class Diyabc(formDiyabc,baseDiyabc):
         if ok:
             if self.checkProjectName(cloneName):
                 # on vire le nom à la fin du path pour obtenir le dossier du clone
-                if cloneDir != "" and os.path.exists(cloneDir):
+                if cloneDir != "" and os.path.exists(cloneDir.encode(self.fsCoding)):
                     if not self.isProjDir(cloneDir):
                         # name_YYYY_MM_DD-num le plus elevé
                         dd = datetime.now()
                         cd = 100
-                        while cd > 0 and not os.path.exists(cloneDir+"/%s_%i_%i_%i-%i"%(cloneName,dd.year,dd.month,dd.day,cd)):
+                        while cd > 0 and not os.path.exists((cloneDir+u"/%s_%i_%i_%i-%i"%(cloneName,dd.year,dd.month,dd.day,cd)).encode(self.fsCoding)):
                             cd -= 1
                         if cd == 100:
                                 output.notify(self,"Error","With this version, you cannot have more than 100 \
@@ -810,7 +812,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                             clonedir = cloneDir+"/%s_%i_%i_%i-%i"%(cloneName,dd.year,dd.month,dd.day,(cd+1))
                             try:
                                 # on crée le dossier de destination et on y copie les fichiers utiles
-                                os.mkdir(clonedir)
+                                os.mkdir(clonedir.encode(self.fsCoding))
                                 for filepath in [self.main_conf_name,
                                         self.hist_conf_name,
                                         self.gen_conf_name,
@@ -818,8 +820,8 @@ class Diyabc(formDiyabc,baseDiyabc):
                                         self.reftableheader_name,
                                         self.ascertainment_conf_name,
                                         current_project.dataFileName]:
-                                    if os.path.exists("%s/%s"%(current_project.dir,filepath)):
-                                         shutil.copy("%s/%s"%(current_project.dir,filepath),"%s/%s"%(clonedir,filepath))
+                                    if os.path.exists((u"%s/%s"%(current_project.dir,filepath)).encode(self.fsCoding)):
+                                         shutil.copy((u"%s/%s"%(current_project.dir,filepath)).encode(self.fsCoding),(u"%s/%s"%(clonedir,filepath)).encode(self.fsCoding))
 
                                 # si les noms sont différents, on le charge
                                 if cloneName != current_project.name:
@@ -860,7 +862,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             fileDial = QtGui.QFileDialog(self,msg)
             fileDial.setAcceptMode(QFileDialog.AcceptSave)
             # selection du dernier chemin pour open
-            default_path = os.path.expanduser("~/")
+            default_path = os.path.expanduser(u"~/".encode(self.fsCoding))
             if self.preferences_win.getLastFolder("open") != "":
                 default_path = self.preferences_win.getLastFolder("open")
             fileDial.setDirectory(default_path)
@@ -881,8 +883,8 @@ class Diyabc(formDiyabc,baseDiyabc):
 
         # verification de l'existence du dossier dans lequel le dossier du projet
         # va être créé
-        if ok and not os.path.exists(os.path.dirname(str(path))):
-            output.notify(self,"Creation impossible","Directory %s does not exist.\nImpossible to create the project in %s"%(os.path.dirname(str(path)),path))
+        if ok and not os.path.exists(os.path.dirname((str(path)).encode(self.fsCoding))):
+            output.notify(self,"Creation impossible","Directory %s does not exist.\nImpossible to create the project in %s"%(os.path.dirname((str(path)).encode(self.fsCoding)),path))
             return
 
         if ok:
@@ -926,7 +928,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                     self.updateDoc(newProj)
                     log(1,'Project %s successfully created in %s'%(newProj.name,newProj.dir))
                     # set dernier chemin
-                    self.preferences_win.setLastFolder("open",os.path.dirname(str(newProj.dir)))
+                    self.preferences_win.setLastFolder("open",os.path.dirname((str(newProj.dir)).encode(self.fsCoding)))
                 else:
                     output.notify(self,"Name error","A project named \"%s\" is already loaded."%name)
 
@@ -1022,7 +1024,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ efface le projet dont l'index est donné en paramètre
         """
         projdir = str(self.ui.tabWidget.widget(index).dir)
-        shutil.rmtree(projdir)
+        shutil.rmtree(projdir.encode(self.fsCoding))
         # on ferme le projet sans sauver
         self.closeProject(index,False)
 
@@ -1038,8 +1040,8 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ retourne vrai si le répertoire donné en paramètre est un
         repertoire de projet ou s'il est dans un répertoire de projet
         """
-        if os.path.exists("%s/%s"%(dir,self.main_conf_name))\
-                or os.path.exists("%s/%s"%(os.path.abspath(os.path.join(dir, '..')),self.main_conf_name)):
+        if os.path.exists((u"%s/%s"%(dir,self.main_conf_name)).encode(self.fsCoding))\
+                or os.path.exists((u"%s/%s"%(os.path.abspath(os.path.join(dir, '..')),self.main_conf_name)).encode(self.fsCoding)):
             return True
         else:
             return False
@@ -1120,7 +1122,8 @@ class ImportProjectThread(Thread):
 
 def main():
     output.debug = False
-    if not os.path.exists(os.path.expanduser("~/.diyabc/")):
+    fsCoding = sys.getfilesystemencoding()
+    if not os.path.exists((os.path.expanduser(u"~/.diyabc/").encode(fsCoding)).encode(fsCoding)):
         # c'est sans doute la première fois qu'on lance diyabc
         # sous linux, on appelle gconf pour voir les icones dans les menus et boutons
         if "linux" in sys.platform:
@@ -1150,12 +1153,12 @@ def main():
             projects_to_open.append(arg)
 
     # determine le nom du fichier de log
-    if not os.path.exists(os.path.expanduser("~/.diyabc/")):
-        os.mkdir(os.path.expanduser("~/.diyabc/"))
-    if not os.path.exists(os.path.expanduser("~/.diyabc/logs/")):
-        os.mkdir(os.path.expanduser("~/.diyabc/logs/"))
+    if not os.path.exists((os.path.expanduser(u"~/.diyabc/".encode(fsCoding))).encode(fsCoding)):
+        os.mkdir((os.path.expanduser(u"~/.diyabc/".encode(fsCoding))).encode(fsCoding))
+    if not os.path.exists((os.path.expanduser(u"~/.diyabc/logs/".encode(fsCoding))).encode(fsCoding)):
+        os.mkdir((os.path.expanduser(u"~/.diyabc/logs/".encode(fsCoding))).encode(fsCoding))
     dd = datetime.now()
-    logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%02dh_%02dm-%s.log"%(dd.day,dd.month,dd.year,dd.hour,dd.minute,os.getpid()))
+    logfile = os.path.expanduser((u"~/.diyabc/logs/%02d_%02d_%s-%02dh_%02dm-%s.log"%(dd.day,dd.month,dd.year,dd.hour,dd.minute,os.getpid())).encode(fsCoding))
 
     # instanciation des objets principaux
     app = QApplication(nargv)
@@ -1177,20 +1180,20 @@ def main():
 
     # effacement des logs de plus de N jours si le dossier de logs dépasse X Mo
     try:
-        logRotate(os.path.expanduser("~/.diyabc/logs/"),10,50)
+        logRotate(os.path.expanduser(u"~/.diyabc/logs/".encode(fsCoding)),10,50)
     except Exception as e:
         output.notify(None,"Log rotate failure","%s"%e)
 
     # matplotlib plante s'il ne trouve pas de config
-    if "linux" in sys.platform and not os.path.exists("/etc/matplotlibrc")\
-            and not os.path.exists("matplotlibrc")\
-            and not os.path.exists(os.path.expanduser("~/.matplotlib/matplotlibrc")):
+    if "linux" in sys.platform and not os.path.exists(u"/etc/matplotlibrc".encode(fsCoding))\
+            and not os.path.exists(u"matplotlibrc".encode(fsCoding))\
+            and not os.path.exists((os.path.expanduser(u"~/.matplotlib/matplotlibrc".encode(fsCoding))).encode(fsCoding)):
         conf = "backend      : TkAgg\n"
         conf += "examples.download : False\n"
         conf += "examples.directory : '/usr/share/matplotlib/sampledata'\n"
-        if not os.path.exists(os.path.expanduser("~/.matplotlib")):
-            os.mkdir(os.path.expanduser("~/.matplotlib"))
-        f = open(os.path.expanduser("~/.matplotlib/matplotlibrc"),"w")
+        if not os.path.exists((os.path.expanduser(u"~/.matplotlib".encode(fsCoding))).encode(fsCoding)):
+            os.mkdir((os.path.expanduser(u"~/.matplotlib".encode(fsCoding))).encode(fsCoding))
+        f = open((os.path.expanduser(u"~/.matplotlib/matplotlibrc".encode(fsCoding))).encode(fsCoding),"w")
         f.write(conf)
         f.close()
 

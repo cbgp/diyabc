@@ -6,8 +6,7 @@
 # @brief Classe mère abstraite de tous les projets
 
 import subprocess,shutil
-import os
-import time
+import os, time, sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -31,6 +30,9 @@ class Project(baseProject,formProject):
         self.parent=parent
         self.name=name
         self.dir=dir
+
+        self.fsCoding = sys.getfilesystemencoding()
+
         # objet data de cbgpUtils
         self.data = None
         self.hist_state_valid = False
@@ -104,30 +106,30 @@ class Project(baseProject,formProject):
         """ à lancer une fois que le dossier du projet a été créé
         """
         QApplication.setOverrideCursor( Qt.WaitCursor )
-        if os.path.exists("%s/RNG_state_0000.bin"%self.dir):
+        if os.path.exists((u"%s/RNG_state_0000.bin"%self.dir).encode(self.fsCoding)):
             # si on est en mode "cluster" (DEPRECATED)
             if dest != None:
-                shutil.copy("%s/RNG_state_0000.bin"%self.dir,"%s/RNG_save"%self.dir)
+                shutil.copy((u"%s/RNG_state_0000.bin"%self.dir).encode(self.fsCoding),(u"%s/RNG_save"%self.dir).encode(self.fsCoding))
 
             else:
-                os.remove("%s/RNG_state_0000.bin"%self.dir)
+                os.remove((u"%s/RNG_state_0000.bin"%self.dir).encode(self.fsCoding))
         executablePath = self.parent.preferences_win.getExecutablePath()
         if executablePath == '':
             raise Exception("Impossible to initialize the RNGs")
         nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
         # en mode cluster les options sont différentes
         if nbNodes > 1 and dest != None:
-            cmd_args_list = [executablePath,"-p", dest, "-n", "c:%s"%nbNodes]
+            cmd_args_list = [executablePath,"-p", dest.encode(self.fsCoding), "-n", "c:%s"%nbNodes]
         else:
-            cmd_args_list = [executablePath,"-p", "%s/"%self.dir, "-n", "t:%s"%nbMaxThread]
+            cmd_args_list = [executablePath,"-p", (u"%s/"%self.dir).encode(self.fsCoding), "-n", "t:%s"%nbMaxThread]
         cmd_args_list_quoted = list(cmd_args_list)
         for i in range(len(cmd_args_list_quoted)):
             if ";" in cmd_args_list_quoted[i] or " " in cmd_args_list_quoted[i] or ":" in cmd_args_list_quoted[i]:
                 cmd_args_list_quoted[i] = '"'+cmd_args_list_quoted[i]+'"'
         log(3,"Command launched for initialization of RNGs of project '%s' : %s"%(self.name," ".join(cmd_args_list_quoted)))
         addLine("%s/command.txt"%self.dir,"Command launched for initialization of RNGs of project '%s' : %s\n\n"%(self.name," ".join(cmd_args_list_quoted)))
-        outfile = "%s/init_rng.out"%(self.dir)
-        f = open(outfile,"w")
+        outfile = u"%s/init_rng.out"%(self.dir)
+        f = open(outfile.encode(self.fsCoding),"w")
         p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         #p = subprocess.Popen(cmd_args_list, stdout=f, stderr=subprocess.STDOUT)
         time.sleep(1)
@@ -144,34 +146,34 @@ class Project(baseProject,formProject):
         """ Demande a l'exécutable le nombre de thread prévu dans les RNG existants dans le dossier du projet
         et le compare au nombre de thread des préférences
         """
-        if not os.path.exists("%s/RNG_state_0000.bin"%self.dir):
+        if not os.path.exists((u"%s/RNG_state_0000.bin"%self.dir).encode(self.fsCoding)):
             log(3,"RNG binary file cannot be found")
             return False
-        if os.path.exists("%s/RNG_state_0000_cores.txt"%self.dir):
-            os.remove("%s/RNG_state_0000_cores.txt"%self.dir)
+        if os.path.exists((u"%s/RNG_state_0000_cores.txt"%self.dir).encode(self.fsCoding)):
+            os.remove((u"%s/RNG_state_0000_cores.txt"%self.dir).encode(self.fsCoding))
         QApplication.setOverrideCursor( Qt.WaitCursor )
         nbThreadExpected = self.parent.preferences_win.getMaxThreadNumber()
 
         executablePath = self.parent.preferences_win.getExecutablePath()
-        cmd_args_list = [executablePath,"-z", "%s/RNG_state_0000.bin"%self.dir ]
+        cmd_args_list = [executablePath,"-z", (u"%s/RNG_state_0000.bin"%self.dir).encode(self.fsCoding) ]
         cmd_args_list_quoted = list(cmd_args_list)
         for i in range(len(cmd_args_list_quoted)):
             if ";" in cmd_args_list_quoted[i] or " " in cmd_args_list_quoted[i] or ":" in cmd_args_list_quoted[i]:
                 cmd_args_list_quoted[i] = '"'+cmd_args_list_quoted[i]+'"'
         log(3,"Command launched for RNGs check of project '%s' : %s"%(self.name," ".join(cmd_args_list_quoted)))
         addLine("%s/command.txt"%self.dir,"Command launched for RNGs check of project '%s' : %s\n\n"%(self.name," ".join(cmd_args_list_quoted)))
-        outfile = "%s/rng_check.out"%(self.dir)
-        f = open(outfile,"w")
+        outfile = u"%s/rng_check.out"%(self.dir)
+        f = open(outfile.encode(self.fsCoding),"w")
         p = subprocess.Popen(cmd_args_list, stdout=f, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         time.sleep(1)
         while (p.poll() == None):
             time.sleep(1)
         f.close()
-        if not os.path.exists("%s/RNG_state_0000_cores.txt"%self.dir):
+        if not os.path.exists((u"%s/RNG_state_0000_cores.txt"%self.dir).encode(self.fsCoding)):
             log(3,"RNG info file cannot be found")
             QApplication.restoreOverrideCursor()
             return False
-        ff = open("%s/RNG_state_0000_cores.txt"%self.dir,'rU')
+        ff = open((u"%s/RNG_state_0000_cores.txt"%self.dir).encode(self.fsCoding),'rU')
         try:
             first_line = ff.readlines()[0].strip()
             nbRNGThread = int(first_line)

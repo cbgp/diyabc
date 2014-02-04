@@ -5,14 +5,13 @@
 #
 # @brief Projets pour créer une table de référence SNP
 
-import os
+import os, sys, os.path
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from projectReftable import ProjectReftable
 from summaryStatistics.setSummaryStatisticsSnp import SetSummaryStatisticsSnp
 from utils.data import DataSnp
-import os.path
 import output
 from controlAscertBias import ControlAscertBias
 import variables
@@ -25,7 +24,7 @@ class ProjectSnp(ProjectReftable):
     """
     def __init__(self,name,dir=None,parent=None):
         super(ProjectSnp,self).__init__(name,dir,parent)
-
+        self.fsCoding = sys.getfilesystemencoding()
         self.ui.nbMicrosatLabel.hide()
         self.setGenValid(False)
         self.ui.genDataLabel.setText("Summary statistics")
@@ -185,9 +184,9 @@ class ProjectSnp(ProjectReftable):
     def loadSumStatsConf(self):
         """ charge les summary statistics depuis le fichier gen_conf_name
         """
-        if os.path.exists(self.dir):
-            if os.path.exists("%s/%s"%(self.dir,self.parent.gen_conf_name)):
-                f = codecs.open("%s/%s"%(self.dir,self.parent.gen_conf_name),"rU","utf-8")
+        if os.path.exists(self.dir.encode(self.fsCoding)):
+            if os.path.exists((u"%s/%s"%(self.dir,self.parent.gen_conf_name)).encode(self.fsCoding)):
+                f = codecs.open((u"%s/%s"%(self.dir,self.parent.gen_conf_name)).encode(self.fsCoding),"rU","utf-8")
                 lines = f.readlines()
                 f.close()
                 nl = 1
@@ -246,19 +245,14 @@ class ProjectSnp(ProjectReftable):
         self.ui.groupBox_8.show()
         self.ui.setHistoricalButton.setDisabled(False)
         self.ui.setGeneticButton.setDisabled(False)
-        #kkpz kkpz kkpz # remttre le try
-        #try:
-        # lecture du meta project
-        self.loadMyConf()
-        # lecture de conf.hist.tmp
-        self.hist_model_win.loadHistoricalConf()
-        self.ascert_frame.loadAscertConf()
-        self.loadSumStatsConf()
-        self.sum_stat_wins.lockLociSelection()
-        self.loadAnalysis()
-
-        try :
-            pass
+        try:
+            self.loadMyConf()
+            # lecture de conf.hist.tmp
+            self.hist_model_win.loadHistoricalConf()
+            self.ascert_frame.loadAscertConf()
+            self.loadSumStatsConf()
+            self.sum_stat_wins.lockLociSelection()
+            self.loadAnalysis()
         except Exception as e:
 
             raise Exception("Impossible to read the project configuration\n\n%s"%e)
@@ -268,14 +262,14 @@ class ProjectSnp(ProjectReftable):
         """ lit le fichier conf.tmp pour charger le fichier de données
         """
         log(2,"Reading '%s' to load datafile"%self.parent.main_conf_name)
-        if os.path.exists(self.ui.dirEdit.text()+"/%s"%self.parent.main_conf_name):
-            f = open("%s/%s"%(self.dir,self.parent.main_conf_name),"rU")
+        if os.path.exists((self.ui.dirEdit.text()+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding)):
+            f = open((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding),"rU")
             lines = f.readlines()
             self.dataFileName = lines[0].strip()
             self.ui.dataFileEdit.setText(self.dataFileName)
             # lecture du dataFile pour les infos de Gui Projet
-            if os.path.exists("%s/%s"%(self.dir,self.dataFileName)):
-                if self.loadDataFile("%s/%s"%(self.dir,self.dataFileName)):
+            if os.path.exists((u"%s/%s"%(self.dir,self.dataFileName)).encode(self.fsCoding)):
+                if self.loadDataFile((u"%s/%s"%(self.dir,self.dataFileName)).encode(self.fsCoding)):
                     ## comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
                     pass
                 else:
@@ -341,10 +335,10 @@ class ProjectSnp(ProjectReftable):
 
         if self.dir != None and self.dataFileName != "":
             # save meta project
-            if os.path.exists(self.dir+"/%s"%self.parent.main_conf_name):
-                os.remove("%s/%s"%(self.dir,self.parent.main_conf_name))
+            if os.path.exists((self.dir+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding)):
+                os.remove((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding))
 
-            f = codecs.open(self.dir+"/%s"%self.parent.main_conf_name,'w',"utf-8")
+            f = codecs.open((self.dir+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding),'w',"utf-8")
             f.write("%s\n"%self.dataFileName)
             # recup du nombre de params (depuis historical model et les mutational qui varient)
             nb_param = self.hist_model_win.getNbParam()
@@ -379,9 +373,9 @@ class ProjectSnp(ProjectReftable):
             ascert_string = u"\n"
 
 
-        if os.path.exists(self.dir+"/%s"%self.parent.ascertainment_conf_name):
-            os.remove("%s/%s"%(self.dir,self.parent.ascertainment_conf_name))
-        f = codecs.open(self.dir+"/%s"%self.parent.ascertainment_conf_name,'w',"utf-8")
+        if os.path.exists((self.dir+u"/%s"%self.parent.ascertainment_conf_name).encode(self.fsCoding)):
+            os.remove((u"%s/%s"%(self.dir,self.parent.ascertainment_conf_name)).encode(self.fsCoding))
+        f = codecs.open((self.dir+u"/%s"%self.parent.ascertainment_conf_name).encode(self.fsCoding),'w',"utf-8")
         f.write("%s"%(ascert_string))
         f.close()
 
@@ -390,18 +384,18 @@ class ProjectSnp(ProjectReftable):
         """
         super(ProjectSnp,self).writeRefTableHeader()
 
-        if os.path.exists(self.dir+"/%s"%self.parent.ascertainment_conf_name):
-            f = codecs.open(self.dir+"/%s"%self.parent.ascertainment_conf_name,"rU","utf-8")
+        if os.path.exists((self.dir+u"/%s"%self.parent.ascertainment_conf_name).encode(self.fsCoding)):
+            f = codecs.open((self.dir+"/%s"%self.parent.ascertainment_conf_name).encode(self.fsCoding),"rU","utf-8")
             ascert_string = f.read()
             f.close()
         else:
             output.notify(self,"Header generation problem","Impossible to add ascertainment part to header : ascertainment file doesn't exist")
             return
 
-        if os.path.exists(self.dir+"/%s"%self.parent.reftableheader_name):
+        if os.path.exists((self.dir+u"/%s"%self.parent.reftableheader_name).encode(self.fsCoding)):
             log(2,"Adding ascertainment part to header")
 
-            fdest = codecs.open(self.dir+"/%s"%self.parent.reftableheader_name,"a","utf-8")
+            fdest = codecs.open((self.dir+u"/%s"%self.parent.reftableheader_name).encode(self.fsCoding),"a","utf-8")
             fdest.write("\n\n%s"%ascert_string)
             fdest.close()
         else:
@@ -414,9 +408,9 @@ class ProjectSnp(ProjectReftable):
         log(2,"Writing last part of the header (the parameter table header) in %s"%self.parent.table_header_conf_name)
         hist_params_txt = self.hist_model_win.getParamTableHeader()
         sum_stats_txt = self.getSumStatsTableHeader()
-        if os.path.exists(self.dir+"/%s"%self.parent.table_header_conf_name):
-            os.remove("%s/%s"%(self.dir,self.parent.table_header_conf_name))
-        f = codecs.open(self.dir+"/%s"%self.parent.table_header_conf_name,'w',"utf-8")
+        if os.path.exists((self.dir+u"/%s"%self.parent.table_header_conf_name).encode(self.fsCoding)):
+            os.remove((u"%s/%s"%(self.dir,self.parent.table_header_conf_name)).encode(self.fsCoding))
+        f = codecs.open((self.dir+u"/%s"%self.parent.table_header_conf_name).encode(self.fsCoding),'w',"utf-8")
         f.write("scenario%s%s"%(hist_params_txt,sum_stats_txt))
         f.close()
 
@@ -462,10 +456,10 @@ class ProjectSnp(ProjectReftable):
         res += statsdesc
         res += "\n"
 
-        if os.path.exists(self.dir+"/%s"%self.parent.gen_conf_name):
-            os.remove("%s/%s" % (self.dir,self.parent.gen_conf_name))
+        if os.path.exists((self.dir+u"/%s"%self.parent.gen_conf_name).encode(self.fsCoding)):
+            os.remove((u"%s/%s" % (self.dir,self.parent.gen_conf_name)).encode(self.fsCoding))
 
-        f = codecs.open(self.dir+"/%s"%self.parent.gen_conf_name,'w',"utf-8")
+        f = codecs.open((self.dir+u"/%s"%self.parent.gen_conf_name).encode(self.fsCoding),'w',"utf-8")
         f.write(res)
         f.close()
 

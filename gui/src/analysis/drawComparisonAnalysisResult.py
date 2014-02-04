@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os, sys
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -24,6 +24,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         self.parent=parent
         self.directory=directory
         self.analysis = analysis
+        self.fsCoding = sys.getfilesystemencoding()
         self.createWidgets()
         self.dicoPlot = {}
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
@@ -57,8 +58,8 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
     def viewCompDirectLogReg(self):
         """ clic sur le bouton view numerical results
         """
-        if os.path.exists("%s/analysis/%s/compdirlog.txt"%(self.parent.dir,self.directory)):
-            f = open("%s/analysis/%s/compdirlog.txt"%(self.parent.dir,self.directory))
+        if os.path.exists((u"%s/analysis/%s/compdirlog.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding)):
+            f = open((u"%s/analysis/%s/compdirlog.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding))
             textToDisplay = f.read()
             f.close()
             self.parent.drawAnalysisFrame = ViewTextFile(textToDisplay,self.returnToMe,self.parent)
@@ -72,7 +73,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
     def getCoord(self,filepath):
         """ extrait les coordonnées du fichier passé en paramètre
         """
-        f = codecs.open(filepath,"rU","utf-8")
+        f = codecs.open(filepath.encode(self.fsCoding),"rU","utf-8")
         lines = f.readlines()
         f.close()
         l = 0
@@ -117,14 +118,14 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
     def drawAll(self):
         """ dessine les graphes de tous les paramètres
         """
-        if os.path.exists("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory)):
+        if os.path.exists((u"%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding)):
             (first_line_tab,dico_coord) = self.getCoord("%s/analysis/%s/compdirect.txt"%(self.parent.dir,self.directory))
             self.addDraw(first_line_tab,dico_coord,True)
         else:
             log(3, "compdirect.txt not found")
 
         if self.analysis.logreg==True :
-            if os.path.exists("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory)):
+            if os.path.exists((u"%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding)):
                 (first_line_tab,dico_coord) = self.getCoord("%s/analysis/%s/complogreg.txt"%(self.parent.dir,self.directory))
                 self.addDraw(first_line_tab,dico_coord,False)
             else:
@@ -139,7 +140,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         plotc = MyMplCanvas(draw_widget, width=12, height=4, dpi=100)
         originalWorkingDir = os.getcwd()
         try :
-            os.chdir("%s/analysis/%s/"%(self.parent.dir,self.directory))
+            os.chdir((u"%s/analysis/%s/"%(self.parent.dir,self.directory)).encode(self.fsCoding))
             l.addWidget(plotc)
             #plotc.fig.subplots_adjust(right=0.7,top=0.9,bottom=0.15)
             navtoolbar = NavigationToolbar(plotc, self)
@@ -186,7 +187,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
             else:
                 self.dicoPlot['logistic'] = plotc
         finally:
-            os.chdir(originalWorkingDir)
+            os.chdir(originalWorkingDir.encode(self.fsCoding))
 
 
     def printGraphs(self):
@@ -203,7 +204,7 @@ class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComp
         #size = self.dicoPlot[self.dicoPlot.keys()[0]].rect().size()
 
         im_result = QPrinter()
-        im_result.setOutputFileName("%s/analysis/%s/%s.pdf"%(self.parent.dir,self.directory,self.analysis.name))
+        im_result.setOutputFileName((u"%s/analysis/%s/%s.pdf"%(self.parent.dir,self.directory,self.analysis.name)).encode(self.fsCoding))
         painter = QPainter()
 
         dial = QPrintDialog(im_result,self)

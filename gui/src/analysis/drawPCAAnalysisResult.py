@@ -24,6 +24,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         super(DrawPCAAnalysisResult,self).__init__(parent)
         self.parent=parent
         self.directory=directory
+        self.fsCoding = sys.getfilesystemencoding()
         self.dico_points = {}
         self.analysis = analysis
         if self.directory.split('_')[-1] == "modelChecking":
@@ -52,8 +53,8 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         #self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
 
         self.ui.scrollArea.hide()
-        if not os.path.exists("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory))\
-                and not os.path.exists("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory)):
+        if not os.path.exists((u"%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding))\
+                and not os.path.exists((u"%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding)):
             self.ui.viewLocateButton.hide()
 
         self.ui.analysisNameLabel.setText("Analysis : %s"%self.analysis.name)
@@ -66,10 +67,10 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
     def viewLocate(self):
         """ clic sur le bouton view locate
         """
-        if os.path.exists("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory)):
-            f = open("%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory),'r')
-        elif os.path.exists("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory)):
-            f = open("%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory),'r')
+        if os.path.exists((u"%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding)):
+            f = open((u"%s/analysis/%s/mclocate.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding),'r')
+        elif os.path.exists((u"%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding)):
+            f = open((u"%s/analysis/%s/locate.txt"%(self.parent.dir,self.directory)).encode(self.fsCoding),'r')
         data = f.read()
         f.close()
         self.parent.drawAnalysisFrame = ViewTextFile(data,self.returnToMe,self.parent)
@@ -87,7 +88,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         QApplication.setOverrideCursor( Qt.WaitCursor )
         self.ui.ACProgress.setValue(0)
 
-        if not os.path.exists(self.acpFile):
+        if not os.path.exists(self.acpFile.encode(self.fsCoding)):
             output.notify(self,"error","%s not found"%self.acpFile)
         else:
             if "win" in sys.platform and "darwin" not in sys.platform:
@@ -218,7 +219,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
             plotc = MyMplCanvas(main_draw_widget, width=12, height=4, dpi=100)
             originalWorkingDir = os.getcwd()
             try :
-                os.chdir("%s/analysis/%s/"%(self.parent.dir,self.directory))
+                os.chdir((u"%s/analysis/%s/"%(self.parent.dir,self.directory)).encode(self.fsCoding))
                 l.addWidget(plotc)
                 plotc.fig.subplots_adjust(right=0.76,top=0.9,bottom=0.15)
                 navtoolbar = NavigationToolbar(plotc, self)
@@ -257,7 +258,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
 
                 self.plot = plotc
             finally:
-                os.chdir(originalWorkingDir)
+                os.chdir(originalWorkingDir.encode(self.fsCoding))
 
     def exit(self):
         del self.dico_points

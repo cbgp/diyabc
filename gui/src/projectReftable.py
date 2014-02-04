@@ -63,10 +63,10 @@ class ProjectReftable(Project):
         self.thAnalysis = None
 
         super(ProjectReftable,self).__init__(name,dir,parent)
-
+        self.fsCoding = sys.getfilesystemencoding()
         # creation du fichier .diyabcproject au cas où il n'existe pas
-        if self.dir != None and not os.path.exists("%s/%s.diyabcproject"%(self.dir,self.name)):
-            f = open("%s/%s.diyabcproject"%(self.dir,self.name),'w')
+        if self.dir != None and not os.path.exists((u"%s/%s.diyabcproject"%(self.dir,self.name)).encode(self.fsCoding)):
+            f = open((u"%s/%s.diyabcproject"%(self.dir,self.name)).encode(self.fsCoding),'w')
             f.write("created in %s"%self.dir)
             f.close()
 
@@ -95,26 +95,27 @@ class ProjectReftable(Project):
         """ Import reference table in given or selected file and merge it
         with the current one if there was one
         """
+
         if filename == None:
-            filename = QFileDialog.getOpenFileName(self,"Select reference table file","%s"%os.path.dirname(str(self.dir)),"Binary file (*.bin);;all files (*)")
+            filename = QFileDialog.getOpenFileName(self,"Select reference table file","%s"%os.path.dirname((str(self.dir)).encode(self.fsCoding)),"Binary file (*.bin);;all files (*)")
             if filename == None or str(filename) == "":
                 return
-        elif not os.path.exists(filename):
+        elif not os.path.exists((u"%s"%filename).encode(self.fsCoding)):
             return
 
         if mimetypes.guess_type(str(filename))[0] != "application/octet-stream":
            output.notify(self,"Bad reftable file","The file you want to import is not a binary file and probably not a reference table file.")
            return
-        shutil.copy(filename,"%s/reftable_1.bin"%(self.dir))
-        if os.path.exists("%s/reftable.bin"%self.dir):
-            shutil.move("%s/reftable.bin"%self.dir,"%s/reftable_2.bin"%self.dir)
+        shutil.copy(filename,(u"%s/reftable_1.bin"%(self.dir)).encode(self.fsCoding))
+        if os.path.exists((u"%s/reftable.bin"%self.dir).encode(self.fsCoding)):
+            shutil.move((u"%s/reftable.bin"%self.dir).encode(self.fsCoding),(u"%s/reftable_2.bin"%self.dir).encode(self.fsCoding))
         exPath = self.parent.preferences_win.getExecutablePath()
         if exPath != "":
             cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-q"]
-            outfile = "%s/import.out"%self.dir
-            if os.path.exists(outfile):
-                os.remove(outfile)
-            fg = open(outfile,"w")
+            outfile = u"%s/import.out"%self.dir
+            if os.path.exists(outfile.encode(self.fsCoding)):
+                os.remove(outfile.encode(self.fsCoding))
+            fg = open(outfile.encode(self.fsCoding),"w")
             p = subprocess.Popen(cmd_args_list, stdout=fg, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
             while p.poll() == None:
                 time.sleep(1)
@@ -130,14 +131,15 @@ class ProjectReftable(Project):
         """ Delete the reftable binary file in the project
         directory if it exists.
         """
+
         # si aucune manipulation sur la reftable :
         if self.th == None:
             # si il existe une reftable
-            if os.path.exists("%s/reftable.bin"%self.dir):
+            if os.path.exists((u"%s/reftable.bin"%self.dir).encode(self.fsCoding)):
                 reply = QMessageBox.question(self,"Warning","If you delete the reference table, all analysis will also be deleted.\n\n Are you sure you want to delete the reference table of project %s"%self.name,QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,QtGui.QMessageBox.No)
                 if reply == QtGui.QMessageBox.Yes:
                     # effacer le fichier
-                    os.remove("%s/reftable.bin"%self.dir)
+                    os.remove((u"%s/reftable.bin"%self.dir).encode(self.fsCoding))
                     # effacer les analyses
                     for aframe in self.dicoFrameAnalysis.keys():
                         self.removeAnalysis(aframe)
@@ -153,10 +155,11 @@ class ProjectReftable(Project):
         """ tue le thread de génération et crée le fichier .stop pour
         arrêter la génération de la reftable
         """
-        if os.path.exists("%s"%self.dir):
+
+        if os.path.exists((u"%s"%self.dir).encode(self.fsCoding)):
             if self.th != None:
                 self.th.terminate()
-            f = open("%s/.stop"%self.dir,"w")
+            f = open((u"%s/.stop"%self.dir).encode(self.fsCoding),"w")
             f.write(" ")
             f.close()
             time.sleep(1)
@@ -165,8 +168,8 @@ class ProjectReftable(Project):
                 self.th.killProcess()
                 self.th = None
             self.stopUiGenReftable()
-            if os.path.exists("%s/reftable.log"%(self.dir)):
-                os.remove("%s/reftable.log"%(self.dir))
+            if os.path.exists((u"%s/reftable.log"%(self.dir)).encode(self.fsCoding)):
+                os.remove((u"%s/reftable.log"%(self.dir)).encode(self.fsCoding))
             log(1,"Generation of reference table stopped")
             # on démarre les analyses programmées
             if need_to_start_analysis:
@@ -214,13 +217,13 @@ class ProjectReftable(Project):
         elif typestr == 'comparison':
             self.drawAnalysisFrame = DrawComparisonAnalysisResult(analysis,anDir,self)
         elif typestr == "pca" or typestr == "modelChecking":
-            if os.path.exists("%s/analysis/%s/ACP.txt"%(self.dir,anDir)) or os.path.exists("%s/analysis/%s/mcACP.txt"%(self.dir,anDir)):
+            if os.path.exists((u"%s/analysis/%s/ACP.txt"%(self.dir,anDir)).encode(self.fsCoding)) or os.path.exists((u"%s/analysis/%s/mcACP.txt"%(self.dir,anDir)).encode(self.fsCoding)):
                 self.drawAnalysisFrame = DrawPCAAnalysisResult(analysis,anDir,self)
             else:
                 if typestr == "pca":
-                    f = open("%s/analysis/%s/locate.txt"%(self.dir,anDir),'r')
+                    f = open((u"%s/analysis/%s/locate.txt"%(self.dir,anDir)).encode(self.fsCoding),'r')
                 elif typestr == "modelChecking":
-                    f = open("%s/analysis/%s/mclocate.txt"%(self.dir,anDir),'r')
+                    f = open((u"%s/analysis/%s/mclocate.txt"%(self.dir,anDir)).encode(self.fsCoding),'r')
                 data = f.read()
                 f.close()
                 log(3,"Viewing analysis results, PCA or modelChecking")
@@ -228,14 +231,14 @@ class ProjectReftable(Project):
                 self.drawAnalysisFrame.choiceFrame.hide()
 
         elif typestr == "confidence":
-            f = open("%s/analysis/%s/confidence.txt"%(self.dir,anDir),'r')
+            f = open((u"%s/analysis/%s/confidence.txt"%(self.dir,anDir)).encode(self.fsCoding),'r')
             data = f.read()
             f.close()
             log(3,"Viewing analysis results, confidence in scenario choice")
             self.drawAnalysisFrame = ViewTextFile(data,self.returnToAnalysisList,self)
             self.drawAnalysisFrame.choiceFrame.hide()
         elif typestr == "bias":
-            f = open("%s/analysis/%s/bias_original.txt"%(self.dir,anDir),'r')
+            f = open((u"%s/analysis/%s/bias_original.txt"%(self.dir,anDir)).encode(self.fsCoding),'r')
             data = f.read()
             f.close()
             self.drawAnalysisFrame = ViewTextFile(data,self.returnToAnalysisList,self)
@@ -243,9 +246,9 @@ class ProjectReftable(Project):
             self.drawAnalysisFrame.anDir = anDir
             ui = self.drawAnalysisFrame
             log(3,"Viewing analysis results, bias")
-            if not os.path.exists("%s/analysis/%s/bias_composite.txt"%(self.dir,self.drawAnalysisFrame.anDir)):
+            if not os.path.exists((u"%s/analysis/%s/bias_composite.txt"%(self.dir,self.drawAnalysisFrame.anDir)).encode(self.fsCoding)):
                 ui.cRadio.hide()
-            if not os.path.exists("%s/analysis/%s/bias_scaled.txt"%(self.dir,self.drawAnalysisFrame.anDir)):
+            if not os.path.exists((u"%s/analysis/%s/bias_scaled.txt"%(self.dir,self.drawAnalysisFrame.anDir)).encode(self.fsCoding)):
                 ui.sRadio.hide()
 
             QObject.connect(ui.oRadio,SIGNAL("clicked()"),self.biasResultFileChanged)
@@ -255,8 +258,8 @@ class ProjectReftable(Project):
         self.ui.analysisStack.setCurrentWidget(self.drawAnalysisFrame)
 
         if (typestr == "pca" or typestr == "modelChecking")\
-        and (os.path.exists("%s/analysis/%s/ACP.txt"%(self.dir,anDir))\
-        or os.path.exists("%s/analysis/%s/mcACP.txt"%(self.dir,anDir))):
+        and (os.path.exists((u"%s/analysis/%s/ACP.txt"%(self.dir,anDir)).encode(self.fsCoding))\
+        or os.path.exists((u"%s/analysis/%s/mcACP.txt"%(self.dir,anDir)).encode(self.fsCoding))):
             try:
                 self.drawAnalysisFrame.loadACP()
             except Exception as e:
@@ -271,7 +274,7 @@ class ProjectReftable(Project):
             filename = "composite"
         elif but == self.drawAnalysisFrame.sRadio:
             filename = "scaled"
-        f = open("%s/analysis/%s/bias_%s.txt"%(self.dir,self.drawAnalysisFrame.anDir,filename),'r')
+        f = open((u"%s/analysis/%s/bias_%s.txt"%(self.dir,self.drawAnalysisFrame.anDir,filename)).encode(self.fsCoding),'r')
         data = f.read()
         f.close()
         self.drawAnalysisFrame.dataPlain.clear()
@@ -312,7 +315,7 @@ class ProjectReftable(Project):
         seed = int(self.parent.preferences_win.ui.seedEdit.text())
         diyabcPath=""
         if self.parent.preferences_win.ui.clusterBinLocationCombo.currentText() == "local" :
-            diyabcPath = os.path.join('./', os.path.basename(str(self.parent.preferences_win.ui.diyabcPathLocalPathEdit.text())))
+            diyabcPath = os.path.join('./', os.path.basename((str(self.parent.preferences_win.ui.diyabcPathLocalPathEdit.text())).encode(self.fsCoding)))
         elif self.parent.preferences_win.ui.clusterBinLocationCombo.currentText() == "cluster" :
             diyabcPath = str(self.parent.preferences_win.ui.diyabcPathClusterEdit.text())
         projectName = str(self.ui.projNameLabelValue.text())
@@ -340,7 +343,7 @@ class ProjectReftable(Project):
     def genNodeScript(self):
         """ génération du script a exécuter sur chaque noeud
         """
-        f = open(DATAPATH+"/txt/node_cluster.sh","rU")
+        f = open((DATAPATH+"/txt/node_cluster.sh").encode(self.fsCoding),"rU")
         script= f.read()
         f.close()
         return script
@@ -349,7 +352,7 @@ class ProjectReftable(Project):
         """ génère une archive tar contenant l'exécutable, les scripts node et master,
         le datafile et le reftableheader.
         """
-        fsCoding = sys.getfilesystemencoding()
+
         if tarname == None:
             output.notify(self,"Warning","You are about to generate an archive in order to compute on a cluster,\n This archive will contain the datafile, the header file, the diyabc binary (optional) and the scripts to launch computations on an cluster main node")
             tarname = u"%s" % (QFileDialog.getSaveFileName(self,"Saving cluster archive","%s_reftableCluster"%str(self.ui.projNameLabelValue.text()),"TAR archive (*.tar)"))
@@ -359,48 +362,48 @@ class ProjectReftable(Project):
                 tarname += u".tar"
         if tarname != "":
             dest = u"%s/cluster_generation_tmp/"%self.dir
-            if os.path.exists(dest.encode(fsCoding)):
-                shutil.rmtree(dest.encode(fsCoding))
-            os.mkdir(dest.encode(fsCoding))
+            if os.path.exists(dest.encode(self.fsCoding)):
+                shutil.rmtree(dest.encode(self.fsCoding))
+            os.mkdir(dest.encode(self.fsCoding))
 
             # generation du master script
             script = self.genMasterScript()
             scmffile = u"%s/scmf"%dest
-            if os.path.exists(scmffile.encode(fsCoding)):
-                os.remove(scmffile.encode(fsCoding))
-            scmf = open(scmffile.encode(fsCoding),'w')
+            if os.path.exists(scmffile.encode(self.fsCoding)):
+                os.remove(scmffile.encode(self.fsCoding))
+            scmf = open(scmffile.encode(self.fsCoding),'w')
             scmf.write(script)
             scmf.close()
-            os.chmod(scmffile,stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
+            os.chmod(scmffile.encode(self.fsCoding),stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
 
             # generation du node script
             script = self.genNodeScript()
             scnffile = u"%s/scnf"%dest
-            if os.path.exists(scnffile.encode(fsCoding)):
-                os.remove(scnffile.encode(fsCoding))
-            scnf = open(scnffile.encode(fsCoding),'w')
+            if os.path.exists(scnffile.encode(self.fsCoding)):
+                os.remove(scnffile.encode(self.fsCoding))
+            scnf = open(scnffile.encode(self.fsCoding),'w')
             scnf.write(script)
             scnf.close()
-            os.chmod(scnffile,stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
+            os.chmod(scnffile.encode(self.fsCoding),stat.S_IRUSR|stat.S_IWUSR|stat.S_IXUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IXGRP|stat.S_IROTH|stat.S_IWOTH|stat.S_IXOTH)
 
             # ajout des fichiers dans l'archive
             tarRepName = self.dir.split('/')[-1]
-            if os.path.exists(tarname.encode(fsCoding)):
-                os.remove(tarname.encode(fsCoding))
-            tar = tarfile.open(tarname.encode(fsCoding),"w")
-            tar.add(scmffile.encode(fsCoding),u'%s/launch.sh'%tarRepName)
-            tar.add(scnffile.encode(fsCoding),u'%s/node.sh'%tarRepName)
-            tar.add((u"%s/%s"%(self.dir,self.parent.reftableheader_name)).encode(fsCoding),u"%s/%s"%(tarRepName,self.parent.reftableheader_name))
-            tar.add(self.dataFileSource.encode(fsCoding),u"%s/%s"%(str(tarRepName),str(self.dataFileName)))
+            if os.path.exists(tarname.encode(self.fsCoding)):
+                os.remove(tarname.encode(self.fsCoding))
+            tar = tarfile.open(tarname.encode(self.fsCoding),"w")
+            tar.add(scmffile.encode(self.fsCoding),u'%s/launch.sh'%tarRepName)
+            tar.add(scnffile.encode(self.fsCoding),u'%s/node.sh'%tarRepName)
+            tar.add((u"%s/%s"%(self.dir,self.parent.reftableheader_name)).encode(self.fsCoding),u"%s/%s"%(tarRepName,self.parent.reftableheader_name))
+            tar.add(self.dataFileSource.encode(self.fsCoding),u"%s/%s"%(str(tarRepName),str(self.dataFileName)))
             if self.parent.preferences_win.ui.clusterBinLocationCombo.currentText() == "local" :
                 diyabcLocalPath = str(self.parent.preferences_win.ui.diyabcPathLocalPathEdit.text())
-                if not os.path.exists(diyabcLocalPath.encode(fsCoding)) :
+                if not os.path.exists(diyabcLocalPath.encode(self.fsCoding)) :
                     output.notify(self,"Value Error : cluster bin path","cluster binary not found. \n%s does not exists\Please verify cluster binary path options in preferences."%self.ui.diyabcPathLocalPathEdit.text())
-                tar.add(diyabcLocalPath.encode(fsCoding),u"%s/%s"%(tarRepName, os.path.basename(diyabcLocalPath)))
+                tar.add(diyabcLocalPath.encode(self.fsCoding),u"%s/%s"%(tarRepName, os.path.basename(diyabcLocalPath)))
             tar.close()
             # nettoyage des fichiers temporaires de script
-            if os.path.exists(dest.encode(fsCoding)):
-                shutil.rmtree(dest.encode(fsCoding))
+            if os.path.exists(dest.encode(self.fsCoding)):
+                shutil.rmtree(dest.encode(self.fsCoding))
 
         return tarname
 
@@ -415,8 +418,8 @@ class ProjectReftable(Project):
         if self.th == None and self.thAnalysis == None:
             # checkRam return false results. We deseable it
             #cbgpUtils.checkRam()
-            if not os.path.exists("%s/reftable.bin"%self.dir) and os.path.exists("%s/reftable.log"%self.dir):
-                os.remove("%s/reftable.log"%self.dir)
+            if not os.path.exists((u"%s/reftable.bin"%self.dir).encode(self.fsCoding)) and os.path.exists((u"%s/reftable.log"%self.dir).encode(self.fsCoding)):
+                os.remove((u"%s/reftable.log"%self.dir).encode(self.fsCoding))
             try:
                 nb_to_gen = int(self.ui.nbSetsReqEdit.text())
             except Exception as e:
@@ -545,14 +548,14 @@ class ProjectReftable(Project):
     def writeRefTableHeader(self):
         """ écriture du header.txt à partir des conf
         """
-        if os.path.exists(self.dir+"/%s"%self.parent.main_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.hist_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.gen_conf_name) and os.path.exists(self.dir+"/%s"%self.parent.table_header_conf_name):
-            if os.path.exists(self.dir+"/%s"%self.parent.reftableheader_name):
-                os.remove("%s/%s" %(self.dir,self.parent.reftableheader_name))
+        if os.path.exists((self.dir+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding)) and os.path.exists((self.dir+u"/%s"%self.parent.hist_conf_name).encode(self.fsCoding)) and os.path.exists((self.dir+u"/%s"%self.parent.gen_conf_name).encode(self.fsCoding)) and os.path.exists((self.dir+u"/%s"%self.parent.table_header_conf_name).encode(self.fsCoding)):
+            if os.path.exists((self.dir+u"/%s"%self.parent.reftableheader_name).encode(self.fsCoding)):
+                os.remove((u"%s/%s" %(self.dir,self.parent.reftableheader_name)).encode(self.fsCoding))
             log(2,"Writing reference table header from the conf files")
 
-            fdest = codecs.open(self.dir+"/%s"%self.parent.reftableheader_name,"w","utf-8")
+            fdest = codecs.open((self.dir+u"/%s"%self.parent.reftableheader_name).encode(self.fsCoding),"w","utf-8")
             for name in [self.parent.main_conf_name,self.parent.hist_conf_name,self.parent.gen_conf_name,self.parent.table_header_conf_name]:
-                fo = codecs.open(self.dir+"/%s"%name,"rU","utf-8")
+                fo = codecs.open((self.dir+u"/%s"%name).encode(self.fsCoding),"rU","utf-8")
                 folines = fo.read()
                 fo.close()
                 if name == self.parent.hist_conf_name:
@@ -570,7 +573,7 @@ class ProjectReftable(Project):
         """
         if name == None:
             # selection du dernier chemin pour open
-            default_path = os.path.expanduser("~/")
+            default_path = os.path.expanduser(u"~/".encode(self.fsCoding))
             if self.parent.preferences_win.getLastFolder("open") != "":
                 default_path = self.parent.preferences_win.getLastFolder("open")
             name = QFileDialog.getOpenFileName(self,"Select datafile","%s"%default_path,self.getDataFileFilter())
@@ -578,8 +581,8 @@ class ProjectReftable(Project):
             # si on a reussi a charger le data file, on vire le bouton browse
             self.ui.browseDataFileButton.hide()
             # et on copie ce datafile dans le dossier projet
-            if not os.path.exists("%s/%s"%(self.dir,self.dataFileSource.split('/')[-1])):
-                shutil.copy(self.dataFileSource,"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
+            if not os.path.exists((u"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1])).encode(self.fsCoding)):
+                shutil.copy(self.dataFileSource.encode(self.fsCoding),(u"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1])).encode(self.fsCoding))
             self.dataFileName = self.dataFileSource.split('/')[-1]
             self.ui.dataFileEdit.setText("%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
             self.ui.groupBox_6.show()
@@ -596,11 +599,11 @@ class ProjectReftable(Project):
         """
         log(2,"Creation and files copy of folder '%s'"%path)
         if path != "":
-            if not self.parent.isProjDir(path):
+            if not self.parent.isProjDir(path.encode(self.fsCoding)):
                 # name_YYYY_MM_DD-num le plus elevé
                 dd = datetime.now()
                 cd = 100
-                while cd > 0 and not os.path.exists(path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,cd)):
+                while cd > 0 and not os.path.exists((path+u"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,cd).encode(self.fsCoding))):
                     cd -= 1
                 if cd == 100:
                     output.notify(self,"Error","With this version, you cannot have more than 100 \
@@ -609,15 +612,15 @@ class ProjectReftable(Project):
                     newdir = path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,(cd+1))
                     self.ui.dirEdit.setText(newdir)
                     try:
-                        os.mkdir(newdir)
+                        os.mkdir(newdir.encode(self.fsCoding))
                         self.ui.setHistoricalButton.setDisabled(False)
                         self.ui.setGeneticButton.setDisabled(False)
                         self.dir = newdir
                         # verrouillage du projet
                         self.lock()
                         # creation du fichier .diyabcproject
-                        if not os.path.exists("%s/%s.diyabcproject"%(self.dir,self.name)):
-                            f = open("%s/%s.diyabcproject"%(self.dir,self.name),'w')
+                        if not os.path.exists((u"%s/%s.diyabcproject"%(self.dir,self.name)).encode(self.fsCoding)):
+                            f = open(u("%s/%s.diyabcproject"%(self.dir,self.name)).encode(self.fsCoding),'w')
                             f.write("created in %s"%self.dir)
                             f.close()
                     except OSError,e:
@@ -821,11 +824,11 @@ class ProjectReftable(Project):
         anDir += self.__DICO_CATEGORY_DIR_NAME[analysis.category]
         del self.dicoFrameAnalysis[frame]
         self.ui.verticalLayout_9.removeWidget(frame)
-        if os.path.exists(anDir) :
+        if os.path.exists(anDir.encode(self.fsCoding)) :
             reply = QMessageBox.question(self,"Warning","The analysis has been removed from diyabc interface.\n\n Do you want to remove it also from your hard drive ?\n\n Delete directory : %s ?"%anDir,QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.Yes :
                 try :
-                    shutil.rmtree(anDir)
+                    shutil.rmtree(anDir.encode(self.fsCoding))
                     log(1, "Remove analys directory %s" % anDir)
                 except Exception as e :
                     QMessageBox.information(self,"Error", "Could not erase all or a part of the analysis directory : \n\n %s\n\n\ñ%s" % (anDir, e))
@@ -847,8 +850,8 @@ class ProjectReftable(Project):
     def tryLaunchViewAnalysis(self):
         """ clic sur le bouton launch/view d'une analyse
         """
-        if not os.path.exists("%s/analysis/"%self.dir):
-            os.mkdir("%s/analysis/"%self.dir)
+        if not os.path.exists((u"%s/analysis/"%self.dir).encode(self.fsCoding)):
+            os.mkdir((u"%s/analysis/"%self.dir).encode(self.fsCoding))
 
         frame = self.sender().parent()
         # on associe l'analyse a sa frame
@@ -899,8 +902,8 @@ class ProjectReftable(Project):
             log(1,"Launching analysis '%s'"%analysis.name)
             self.save()
             log(3,"Cleaning '%s_progress.txt' file"%analysis.name)
-            if os.path.exists("%s/%s_progress.txt"%(self.dir,analysis.name)):
-                os.remove("%s/%s_progress.txt"%(self.dir,analysis.name))
+            if os.path.exists((u"%s/%s_progress.txt"%(self.dir,analysis.name)).encode(self.fsCoding)):
+                os.remove((u"%s/%s_progress.txt"%(self.dir,analysis.name)).encode(self.fsCoding))
             self.launchAnalysisThread(analysis)
             # on la vire de la queue
             self.analysisQueue.remove(analysis)
@@ -969,8 +972,8 @@ class ProjectReftable(Project):
         # nettoyage du progress.txt
         aid = self.thAnalysis.analysis.name
         self.thAnalysis.analysis.status = "new"
-        if os.path.exists("%s/%s_progress.txt"%(self.dir,aid)):
-            os.remove("%s/%s_progress.txt"%(self.dir,aid))
+        if os.path.exists((u"%s/%s_progress.txt"%(self.dir,aid)).encode(self.fsCoding)):
+            os.remove((u"%s/%s_progress.txt"%(self.dir,aid)).encode(self.fsCoding))
 
         frame = None
         for fr in self.dicoFrameAnalysis.keys():
@@ -1056,62 +1059,62 @@ class ProjectReftable(Project):
                 fr.findChild(QPushButton,"analysisEdButton").setDisabled(True)
                 break
         # nettoyage du progress.txt
-        if os.path.exists("%s/%s_progress.txt"%(self.dir,aid)):
-            os.remove("%s/%s_progress.txt"%(self.dir,aid))
+        if os.path.exists((u"%s/%s_progress.txt"%(self.dir,aid)).encode(self.fsCoding)):
+            os.remove((u"%s/%s_progress.txt"%(self.dir,aid)).encode(self.fsCoding))
 
         if atype == "estimate":
-            if os.path.exists("%s/%s_mmmq_composite.txt"%(self.dir,aid))\
-            or os.path.exists("%s/%s_mmmq_scaled.txt"%(self.dir,aid))\
-            or os.path.exists("%s/%s_mmmq_original.txt"%(self.dir,aid)):
+            if os.path.exists((u"%s/%s_mmmq_composite.txt"%(self.dir,aid)).encode(self.fsCoding))\
+            or os.path.exists((u"%s/%s_mmmq_scaled.txt"%(self.dir,aid)).encode(self.fsCoding))\
+            or os.path.exists((u"%s/%s_mmmq_original.txt"%(self.dir,aid)).encode(self.fsCoding)):
                 # deplacement des fichiers de résultat
                 aDirName = "%s_estimation"%aid
-                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
-                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_paramstatdens_original.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_phistar_original.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_mmmq_original.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_paramstatdens_original.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens_original.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_mmmq_original.txt"%(self.dir,aid),"%s/analysis/%s/mmmq_original.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_phistar_original.txt"%(self.dir,aid),"%s/analysis/%s/phistar_original.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_paramstatdens_composite.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_phistar_composite.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_mmmq_composite.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_paramstatdens_composite.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens_composite.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_mmmq_composite.txt"%(self.dir,aid),"%s/analysis/%s/mmmq_composite.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_phistar_composite.txt"%(self.dir,aid),"%s/analysis/%s/phistar_composite.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_paramstatdens_scaled.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_phistar_scaled.txt"%(self.dir,aid))\
-                and os.path.exists("%s/%s_mmmq_scaled.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_paramstatdens_scaled.txt"%(self.dir,aid),"%s/analysis/%s/paramstatdens_scaled.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_mmmq_scaled.txt"%(self.dir,aid),"%s/analysis/%s/mmmq_scaled.txt"%(self.dir,aDirName))
-                    shutil.move("%s/%s_phistar_scaled.txt"%(self.dir,aid),"%s/analysis/%s/phistar_scaled.txt"%(self.dir,aDirName))
+                if not os.path.exists((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding)):
+                    os.mkdir((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding))
+                if os.path.exists((u"%s/%s_paramstatdens_original.txt"%(self.dir,aid)).encode(self.fsCoding))\
+                and os.path.exists((u"%s/%s_phistar_original.txt"%(self.dir,aid)).encode(self.fsCoding))\
+                and os.path.exists((u"%s/%s_mmmq_original.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                    shutil.move((u"%s/%s_paramstatdens_original.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/paramstatdens_original.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                    shutil.move((u"%s/%s_mmmq_original.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/mmmq_original.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                    shutil.move((u"%s/%s_phistar_original.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/phistar_original.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                if os.path.exists((u"%s/%s_paramstatdens_composite.txt"%(self.dir,aid)).encode(self.fsCoding))\
+                and os.path.exists((u"%s/%s_phistar_composite.txt"%(self.dir,aid)).encode(self.fsCoding))\
+                and os.path.exists((u"%s/%s_mmmq_composite.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                    shutil.move((u"%s/%s_paramstatdens_composite.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/paramstatdens_composite.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                    shutil.move((u"%s/%s_mmmq_composite.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/mmmq_composite.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                    shutil.move((u"%s/%s_phistar_composite.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/phistar_composite.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                if os.path.exists((u"%s/%s_paramstatdens_scaled.txt"%(self.dir,aid)).encode(self.fsCoding))\
+                and os.path.exists((u"%s/%s_phistar_scaled.txt"%(self.dir,aid)).encode(self.fsCoding))\
+                and os.path.exists((u"%s/%s_mmmq_scaled.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                    shutil.move((u"%s/%s_paramstatdens_scaled.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/paramstatdens_scaled.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                    shutil.move((u"%s/%s_mmmq_scaled.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/mmmq_scaled.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                    shutil.move((u"%s/%s_phistar_scaled.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/phistar_scaled.txt"%(self.dir,aDirName)).encode(self.fsCoding))
             else:
                 self.thAnalysis.problem = "No output files produced\n(%s\n%s\n%s)"%("%s/%s_mmmq_composite.txt"%(self.dir,aid),\
                         "%s/%s_mmmq_scaled.txt"%(self.dir,aid),"%s/%s_mmmq_original.txt"%(self.dir,aid))
-                if os.path.exists("%s/estimate.out"%(self.dir)):
-                    f = open("%s/estimate.out"%(self.dir),"rU")
+                if os.path.exists((u"%s/estimate.out"%(self.dir)).encode(self.fsCoding)):
+                    f = open((u"%s/estimate.out"%(self.dir)).encode(self.fsCoding),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
                 self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "compare":
-            if (self.thAnalysis.analysis.logreg!=True and os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid))) \
+            if (self.thAnalysis.analysis.logreg!=True and os.path.exists((u"%s/%s_compdirect.txt"%(self.dir,aid)).encode(self.fsCoding))) \
                 or\
-                (self.thAnalysis.analysis.logreg==True and os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) and  os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid))) :
+                (self.thAnalysis.analysis.logreg==True and os.path.exists((u"%s/%s_compdirect.txt"%(self.dir,aid)).encode(self.fsCoding)) and  os.path.exists((u"%s/%s_complogreg.txt"%(self.dir,aid)).encode(self.fsCoding))) :
                 dd = datetime.now()
                 date = "%s/%s/%s"%(dd.day,dd.month,dd.year)
                 # deplacement des fichiers de résultat
                 aDirName = "%s_comparison"%aid
-                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
-                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                shutil.move("%s/%s_compdirect.txt"%(self.dir,aid),"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName))
-                g = open("%s/analysis/%s/compdirect.txt"%(self.dir,aDirName),'rU')
+                if not os.path.exists((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding)):
+                    os.mkdir((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding))
+                shutil.move((u"%s/%s_compdirect.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                g = open((u"%s/analysis/%s/compdirect.txt"%(self.dir,aDirName)).encode(self.fsCoding),'rU')
                 datadir = g.readlines()
                 g.close()
                 if self.thAnalysis.analysis.logreg==True :
-                    shutil.move("%s/%s_complogreg.txt"%(self.dir,aid),"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName))
-                    f = open("%s/analysis/%s/complogreg.txt"%(self.dir,aDirName),'r')
+                    shutil.move((u"%s/%s_complogreg.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                    f = open((u"%s/analysis/%s/complogreg.txt"%(self.dir,aDirName)).encode(self.fsCoding),'r')
                     datareg = f.read()
                     f.close()
                 fdaTextToDisplay = ""
@@ -1134,47 +1137,47 @@ class ProjectReftable(Project):
                 if  self.thAnalysis.analysis.logreg==True :
                     textToDisplay += "\n\n Logistic approach\n\n"
                     textToDisplay += datareg
-                dest = open("%s/analysis/%s/compdirlog.txt"%(self.dir,aDirName),'w')
+                dest = open((u"%s/analysis/%s/compdirlog.txt"%(self.dir,aDirName)).encode(self.fsCoding),'w')
                 dest.write(textToDisplay)
                 dest.close()
             else:
                 self.thAnalysis.problem = "Missing output file(s)\n"
-                if os.path.exists("%s/%s_compdirect.txt"%(self.dir,aid)) :
+                if os.path.exists((u"%s/%s_compdirect.txt"%(self.dir,aid)).encode(self.fsCoding)) :
                     self.thAnalysis.problem += "%s/%s_compdirect.txt found : OK\n"%(self.dir,aid)
                 else :
                     self.thAnalysis.problem += "%s/%s_compdirect.txt NOT FOUND : ERROR\n"%(self.dir,aid)
                 if self.thAnalysis.analysis.logreg==True :
-                    if os.path.exists("%s/%s_complogreg.txt"%(self.dir,aid)) :
+                    if os.path.exists((u"%s/%s_complogreg.txt"%(self.dir,aid)).encode(self.fsCoding)) :
                         self.thAnalysis.problem += "%s/%s_complogreg.txt found : OK\n"%(self.dir,aid)
                     else :
                         self.thAnalysis.problem += "%s/%s_complogreg.txt not found : ERROR\n"%(self.dir,aid)
-                if os.path.exists("%s/compare.out"%(self.dir)):
-                    f = open("%s/compare.out"%(self.dir),"rU")
+                if os.path.exists((u"%s/compare.out"%(self.dir)).encode(self.fsCoding)):
+                    f = open((u"%s/compare.out"%(self.dir)).encode(self.fsCoding),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\nThis is the last line of the output file %s/compare.out :\n%s"%(self.dir,lastLine)
                 self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "bias":
-            if os.path.exists("%s/%s_bias_original.txt"%(self.dir,aid))\
-            or os.path.exists("%s/%s_bias_scaled.txt"%(self.dir,aid))\
-            or os.path.exists("%s/%s_bias_composite.txt"%(self.dir,aid)):
-                log(3,"File %s/%s_bias_original.txt exists"%(self.dir,aid))
+            if os.path.exists((u"%s/%s_bias_original.txt"%(self.dir,aid)).encode(self.fsCoding))\
+            or os.path.exists((u"%s/%s_bias_scaled.txt"%(self.dir,aid)).encode(self.fsCoding))\
+            or os.path.exists((u"%s/%s_bias_composite.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                log(3,"File %s/%s_bias_original.txt exists"%(self.dir,aid)).encode(self.fsCoding)
                 # deplacement des fichiers de résultat
                 aDirName = "%s_bias"%aid
-                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
-                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_bias_original.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_bias_original.txt"%(self.dir,aid),"%s/analysis/%s/bias_original.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_bias_composite.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_bias_composite.txt"%(self.dir,aid),"%s/analysis/%s/bias_composite.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_bias_scaled.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_bias_scaled.txt"%(self.dir,aid),"%s/analysis/%s/bias_scaled.txt"%(self.dir,aDirName))
+                if not os.path.exists((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding)):
+                    os.mkdir((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding))
+                if os.path.exists((u"%s/%s_bias_original.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                    shutil.move((u"%s/%s_bias_original.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/bias_original.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                if os.path.exists((u"%s/%s_bias_composite.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                    shutil.move((u"%s/%s_bias_composite.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/bias_composite.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                if os.path.exists((u"%s/%s_bias_scaled.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                    shutil.move((u"%s/%s_bias_scaled.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/bias_scaled.txt"%(self.dir,aDirName)).encode(self.fsCoding))
                 log(3,"Copy of '%s/%s_bias.txt' to '%s/analysis/%s/bias_original.txt' done"%(self.dir,aid,self.dir,aDirName))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
-                if os.path.exists("%s/bias.out"%(self.dir)):
-                    f = open("%s/bias.out"%(self.dir),"rU")
+                if os.path.exists((u"%s/bias.out"%(self.dir)).encode(self.fsCoding)):
+                    f = open((u"%s/bias.out"%(self.dir)).encode(self.fsCoding),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
@@ -1182,54 +1185,54 @@ class ProjectReftable(Project):
                 log(3,"File %s/%s_bias.txt doesn't exist. Results cannot be moved"%(self.dir,aid))
                 return
         elif atype == "confidence":
-            if os.path.exists("%s/%s_confidence.txt"%(self.dir,aid)):
+            if os.path.exists((u"%s/%s_confidence.txt"%(self.dir,aid)).encode(self.fsCoding)):
                 # deplacement des fichiers de résultat
                 aDirName = "%s_confidence"%aid
-                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
-                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                shutil.move("%s/%s_confidence.txt"%(self.dir,aid),"%s/analysis/%s/confidence.txt"%(self.dir,aDirName))
+                if not os.path.exists((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding)):
+                    os.mkdir((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding))
+                shutil.move((u"%s/%s_confidence.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/confidence.txt"%(self.dir,aDirName)).encode(self.fsCoding))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
-                if os.path.exists("%s/confidence.out"%(self.dir)):
-                    f = open("%s/confidence.out"%(self.dir),"rU")
+                if os.path.exists((u"%s/confidence.out"%(self.dir)).encode(self.fsCoding)):
+                    f = open((u"%s/confidence.out"%(self.dir)).encode(self.fsCoding),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
                 self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "modelChecking":
-            if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)) or os.path.exists("%s/%s_mclocate.txt"%(self.dir,aid)):
+            if os.path.exists((u"%s/%s_mcACP.txt"%(self.dir,aid)).encode(self.fsCoding)) or os.path.exists((u"%s/%s_mclocate.txt"%(self.dir,aid)).encode(self.fsCoding)):
                 # deplacement des fichiers de résultat
                 aDirName = "%s_modelChecking"%aid
-                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
-                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_mclocate.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_mclocate.txt"%(self.dir,aid),"%s/analysis/%s/mclocate.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_mcACP.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_mcACP.txt"%(self.dir,aid),"%s/analysis/%s/mcACP.txt"%(self.dir,aDirName))
+                if not os.path.exists((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding)):
+                    os.mkdir((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding))
+                if os.path.exists((u"%s/%s_mclocate.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                    shutil.move((u"%s/%s_mclocate.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/mclocate.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                if os.path.exists((u"%s/%s_mcACP.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                    shutil.move((u"%s/%s_mcACP.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/mcACP.txt"%(self.dir,aDirName)).encode(self.fsCoding))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
-                if os.path.exists("%s/modelChecking.out"%(self.dir)):
-                    f = open("%s/modelChecking.out"%(self.dir),"rU")
+                if os.path.exists((u"%s/modelChecking.out"%(self.dir)).encode(self.fsCoding)):
+                    f = open((u"%s/modelChecking.out"%(self.dir)).encode(self.fsCoding),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
                 self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 return
         elif atype == "pre-ev":
-            if os.path.exists("%s/%s_locate.txt"%(self.dir,aid)) or os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
+            if os.path.exists((u"%s/%s_locate.txt"%(self.dir,aid)).encode(self.fsCoding)) or os.path.exists((u"%s/%s_ACP.txt"%(self.dir,aid)).encode(self.fsCoding)):
                 # deplacement des fichiers de résultat
                 aDirName = "%s_pca"%aid
-                if not os.path.exists("%s/analysis/%s"%(self.dir,aDirName)):
-                    os.mkdir("%s/analysis/%s"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_locate.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_locate.txt"%(self.dir,aid),"%s/analysis/%s/locate.txt"%(self.dir,aDirName))
-                if os.path.exists("%s/%s_ACP.txt"%(self.dir,aid)):
-                    shutil.move("%s/%s_ACP.txt"%(self.dir,aid),"%s/analysis/%s/ACP.txt"%(self.dir,aDirName))
+                if not os.path.exists((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding)):
+                    os.mkdir((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding))
+                if os.path.exists((u"%s/%s_locate.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                    shutil.move((u"%s/%s_locate.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/locate.txt"%(self.dir,aDirName)).encode(self.fsCoding))
+                if os.path.exists((u"%s/%s_ACP.txt"%(self.dir,aid)).encode(self.fsCoding)):
+                    shutil.move((u"%s/%s_ACP.txt"%(self.dir,aid)).encode(self.fsCoding),(u"%s/analysis/%s/ACP.txt"%(self.dir,aDirName)).encode(self.fsCoding))
             else:
                 self.thAnalysis.problem = "No output files produced\n"
-                if os.path.exists("%s/pre-ev.out"%(self.dir)):
-                    f = open("%s/pre-ev.out"%(self.dir),"rU")
+                if os.path.exists((u"%s/pre-ev.out"%(self.dir)).encode(self.fsCoding)):
+                    f = open((u"%s/pre-ev.out"%(self.dir)).encode(self.fsCoding),"rU")
                     lastLine = f.readlines()[-1]
                     f.close()
                     self.thAnalysis.problem += "\n%s"%lastLine
@@ -1367,7 +1370,7 @@ class ProjectReftable(Project):
         l_to_save = []
         for a in self.analysisList:
             l_to_save.append(a)
-        f=open("%s/%s"%(self.dir,self.parent.analysis_conf_name),"wb")
+        f=open((u"%s/%s"%(self.dir,self.parent.analysis_conf_name)).encode(self.fsCoding),"wb")
         pickle.dump(l_to_save,f)
         f.close()
 
@@ -1375,8 +1378,8 @@ class ProjectReftable(Project):
         """ charge les analyses sauvegardées
         """
         log(2,"Loading analysis from %s"%self.parent.analysis_conf_name)
-        if os.path.exists("%s/%s"%(self.dir,self.parent.analysis_conf_name)):
-            f=open("%s/%s"%(self.dir,self.parent.analysis_conf_name),"rb")
+        if os.path.exists((u"%s/%s"%(self.dir,self.parent.analysis_conf_name)).encode(self.fsCoding)):
+            f=open((u"%s/%s"%(self.dir,self.parent.analysis_conf_name)).encode(self.fsCoding),"rb")
             l = pickle.load(f)
             f.close()
             for a in l:
@@ -1404,7 +1407,7 @@ class ProjectReftable(Project):
         du projet par une autre instance de DIYABC
         """
         log(2,"Locking the project '%s'"%self.dir)
-        f = open("%s/.DIYABC_lock"%self.dir,"w")
+        f = open((u"%s/.DIYABC_lock"%self.dir).encode(self.fsCoding),"w")
         f.write("%s"%os.getpid())
         f.close()
 
@@ -1413,12 +1416,12 @@ class ProjectReftable(Project):
         a été effectué par notre instance de DIYABC
         """
         log(2,"Unlocking the project '%s'"%self.dir)
-        if os.path.exists("%s/.DIYABC_lock"%self.dir):
-            f = open("%s/.DIYABC_lock"%self.dir)
+        if os.path.exists((u"%s/.DIYABC_lock"%self.dir).encode(self.fsCoding)):
+            f = open((u"%s/.DIYABC_lock"%self.dir).encode(self.fsCoding))
             pid = f.read()
             f.close()
             # on ne deverrouille que si c'est nous qui avons verrouillé
             if pid == str(os.getpid()):
-                os.remove("%s/.DIYABC_lock"%self.dir)
+                os.remove((u"%s/.DIYABC_lock"%self.dir).encode(self.fsCoding))
 
 
