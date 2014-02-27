@@ -418,7 +418,7 @@ void ReftableC::bintocsv(HeaderC const & header) {
 	npm=0;for (int i=0;i<this->nscen;i++) if (npm<this->nparam[i]) npm=this->nparam[i];
 	enr.param = new float[npm];
 	enr.stat = new float[header.nstat];
-	while (not fifo.eof()) {
+	for (int j=0;j<this->nrec;j++) {
 		bidon=this->readrecord(&enr);
 		f2<<enr.numscen<<"\n";
 		for (int i=0;i<header.nstat;i++) {
