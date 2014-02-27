@@ -6,7 +6,7 @@
 # @brief Projets pour créer une table de référence SNP
 
 import os, sys, os.path
-import codecs
+import codecs, traceback
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from projectReftable import ProjectReftable
@@ -254,15 +254,16 @@ class ProjectSnp(ProjectReftable):
             self.sum_stat_wins.lockLociSelection()
             self.loadAnalysis()
         except Exception as e:
-
+            log(1, traceback.format_exc())
             raise Exception("Impossible to read the project configuration\n\n%s"%e)
             output.notify(self,"Load error","Impossible to read the project configuration\n\n%s"%e)
+
 
     def loadMyConf(self):
         """ lit le fichier conf.tmp pour charger le fichier de données
         """
         log(2,"Reading '%s' to load datafile"%self.parent.main_conf_name)
-        if os.path.exists((self.ui.dirEdit.text()+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding)):
+        if os.path.exists((u"%s/%s"%(self.ui.dirEdit.text(), self.parent.main_conf_name)).encode(self.fsCoding)):
             f = open((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding),"rU")
             lines = f.readlines()
             self.dataFileName = lines[0].strip()
@@ -273,10 +274,13 @@ class ProjectSnp(ProjectReftable):
                     ## comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
                     pass
                 else:
+                    log(1, traceback.format_exc())
                     raise Exception("Impossible to load the datafile (%s) because it is possibly malformed"%self.dataFileName)
             else:
+                log(1, traceback.format_exc())
                 raise Exception("Datafile doesn't exist (%s)"%self.dataFileName)
         else:
+            log(1, traceback.format_exc())
             raise Exception("Main conf file not found (%s)"%self.parent.main_conf_name)
 
     def loadDataFile(self,name):
@@ -294,7 +298,8 @@ class ProjectSnp(ProjectReftable):
                 if ty in self.data.ntypeloc.keys():
                     typestr += " %s : %s,"%(ty,self.data.ntypeloc[ty])
             typestr = typestr[:-1]
-            self.ui.dataFileInfoLabel.setText("%s loci (SNP)\n%s individuals in %s samples\n%s" % (self.data.nloc,self.data.nindtot,self.data.nsample,typestr))
+            self.ui.dataFileInfoLabel.setText("%s SNP loci (%s monomorphic)\n%s individuals in %s samples\n%s" % \
+                                            (self.data.nloc,(self.data.nloctot-self.data.nloc),self.data.nindtot,self.data.nsample,typestr))
             self.ui.dataFileEdit.setText(name)
             self.dataFileSource = name
 

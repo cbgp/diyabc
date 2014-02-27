@@ -516,6 +516,7 @@ class DataSnp():
     def __init__(self,filename):
         self.filename = filename
         self.nloc = 0
+        self.nloctot = 0
         self.nindtot = 0
         self.nsample = 0
         self.ntypeloc = {}
@@ -525,9 +526,16 @@ class DataSnp():
         self.readData()
 
     def readData(self):
+        """
+        Read SNP data file and infos from it
+
+        code is an ugly mix between ugly legacy code and ugly new code !
+        """
+        from collections import defaultdict
         name = self.filename
         # list ofsexual  locus index
         sexLocus = []
+        locus_type = defaultdict()
         pat = re.compile(r'\s+')
         f=open(name,'r')
         data = f.read().strip()
@@ -557,6 +565,7 @@ class DataSnp():
                     self.ntypeloc[locty] += 1
                 else:
                     self.ntypeloc[locty] = 1
+                locus_type[idx-3] = locty
                 if locty in ['X','Y','x','y'] :
                     sexLocus.append(idx)
 
@@ -577,6 +586,15 @@ class DataSnp():
         types = set()
         types_list = []
         nbU = 0
+        def nestedDefaultdictAndSet():
+            def nested2() :
+                return defaultdict(set)
+
+            return defaultdict(nested2)
+
+        pop_locus_values = nestedDefaultdictAndSet()
+        locus_values = defaultdict(set)
+
         for i in range(len(datalines))[prem+1:]:
             line = pat.sub(' ',datalines[i].strip())
             lineElements = line.split(' ')
@@ -593,6 +611,8 @@ class DataSnp():
                 if locusValue not in DataSnp.__LOCUS_VALUES :
                     raise Exception("%s\n\nIndividual %s has an unknown value (line %s, locus number %s is set to %s=%s). Expected value is one of %s" \
                         % (self.filename,lineElements[0],str(i+prem),str(idx),l1parts[idx+3],locusValue, ", ".join(DataSnp.__LOCUS_VALUES) ))
+                pop_locus_values[lineElements[2]][idx].add(locusValue)
+                locus_values[idx].add(locusValue)
             # values for sexual loci test if sex in not set
             if lineElements[1].lower() not in ['f','m']:
                 for index in sexLocus :
@@ -619,10 +639,26 @@ class DataSnp():
             else:
                 self.nind_hash[ctype] += 1
 
+        for pop in pop_locus_values.keys() :
+            for locus in  pop_locus_values[pop].keys() :
+                if len(pop_locus_values[pop][locus]) == 1 and '9' in pop_locus_values[pop][locus] :
+                    raise Exception("%s\n\nLocus %s in pop %s has only missing datas (value 9)). This not allowed. Please remove this locus from your data file." \
+                        % (self.filename, locus+1, pop))
+        nbLociPoly = 0
+        for locus in locus_values.keys() :
+            if len(locus_values[locus]) > 1 :
+                nbLociPoly += 1
+            else :
+                self.ntypeloc[locus_type[locus]] -= 1
+
+        if nbLociPoly == 0 :
+            raise Exception("%s\n\nFound only monomorphic loci !!!"%self.filename)
+
         nbSample = len(types)
 
         self.nindtot = nbInd
-        self.nloc = nbLoci
+        self.nloc = nbLociPoly
+        self.nloctot = nbLoci
         self.nsample = nbSample
 
 def isSNPDatafile(name):
@@ -648,12 +684,12 @@ def isSNPDatafile(name):
 
 if __name__ == "__main__":
     testMsatSeqsFiles = [
-                 "/media/psf/Home/VMshare/Brouat/3pops_11loci_1mito.mss",
                  "/media/psf/Home/VMshare/louiT1_2013_5_2-1/loui10_new_ghostnat.dat",
                  "/media/psf/Home/VMshare/example_1_microsat_data_one_pop_with_bottleneck_multisamples_2013_7_19-1/simu_dataset_microsat_one_pop_bottleneck_multisamples_001.mss",
                  "/media/psf/Home/VMshare/example_2_microsat_sequence_data_complexe_scenarios_ghost_pop_project_2013_7_9-1/toytest2_micro_seq_complexe_001.mss",
                  ]
     testSNPFiles = [
+                "/home/dehneg/P16.snp",
                  "/media/psf/Home/VMshare/example_3_SNP_data_divergence_and_admixture_project_2013_7_9-1/simu_dataset_test_divergence_admixture_001.snp",
                  ]
 
@@ -671,6 +707,8 @@ if __name__ == "__main__":
         plop = DataSnp(f)
         print isSNPDatafile(f)
         plop.readData()
+        print plop.nloc
+        print plop.nloctot
         print "file %s loaded" % f
         print "=======================\n"
 

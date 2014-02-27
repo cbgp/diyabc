@@ -629,7 +629,7 @@ class Diyabc(formDiyabc,baseDiyabc):
         """ Renvoie vrai si le dossier dont le chemin (relatif ou absolu)
         est dir est un projet de type SNP
         """
-        if os.path.exists(dir.encode(self.fsCoding)) and os.path.exists((u"%s/%s"%(dir,self.main_conf_name)).encode(self.fsCoding)):
+        if os.path.exists((str(dir)).encode(self.fsCoding)) and os.path.exists((u"%s/%s"%(dir,self.main_conf_name)).encode(self.fsCoding)):
             f=open((u"%s/%s"%(dir,self.main_conf_name)).encode(self.fsCoding),'rU')
             cont = f.readlines()
             f.close()
@@ -657,7 +657,7 @@ class Diyabc(formDiyabc,baseDiyabc):
                 name = ""
             if name != "" and name != None:
                 # c'est un dossier
-                if os.path.isdir(name.encode(self.fsCoding)):
+                if os.path.isdir((str(name)).encode(self.fsCoding)):
                     dir = name
                 # c'est un fichier
                 else:
@@ -685,7 +685,7 @@ class Diyabc(formDiyabc,baseDiyabc):
             project_name = str(dir).split('/')[-1].split('_')[0]
         # si le dossier existe et qu'il contient conf.hist.tmp
         if dir != "":
-            if os.path.exists(dir.encode(self.fsCoding)) and os.path.exists((u"%s/%s"%(dir,self.main_conf_name)).encode(self.fsCoding)):
+            if os.path.exists((str(dir)).encode(self.fsCoding)) and os.path.exists((u"%s/%s"%(dir,self.main_conf_name)).encode(self.fsCoding)):
                 proj_name_list = []
                 for p in self.project_list:
                     proj_name_list.append(p.name)

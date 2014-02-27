@@ -511,7 +511,7 @@ class Preferences(AutoPreferences):
                 else:
                     exPath = os.path.join(DATAPATH,"bin/diyabc-comput-mac-x64")
         else:
-            if not os.path.exists(self.ui.execPathPathEdit.text().encode(self.fsCoding)):
+            if not os.path.exists(str(self.ui.execPathPathEdit.text()).encode(self.fsCoding)):
                 output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s\n\If, and only if,  'use default executable check' is checked, then this is a known bug. We apologize !\n Please, check if no analysis or reftable are running and restart diyabc.\nIt should work again."%self.ui.execPathPathEdit.text())
                 return ""
             return str(self.ui.execPathPathEdit.text())
@@ -519,7 +519,7 @@ class Preferences(AutoPreferences):
         if not os.path.exists(exPath.encode(self.fsCoding)):
             output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s\n\If, and only if,  'use default executable check' is checked, then this is a known bug. We apologize !\n Please, check if no analysis or reftable are running and restart diyabc.\nIt should work again."%exPath)
             return ""
-        return os.path.abspath(exPath.encode(self.fsCoding))
+        return os.path.abspath(str(exPath).encode(self.fsCoding))
 
     def changeBackgroundColor(self,colorstr):
         if str(colorstr) in self.tabColor.keys():

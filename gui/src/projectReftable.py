@@ -582,7 +582,7 @@ class ProjectReftable(Project):
             self.ui.browseDataFileButton.hide()
             # et on copie ce datafile dans le dossier projet
             if not os.path.exists((u"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1])).encode(self.fsCoding)):
-                shutil.copy(self.dataFileSource.encode(self.fsCoding),(u"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1])).encode(self.fsCoding))
+                shutil.copy(str(self.dataFileSource).encode(self.fsCoding),(u"%s/%s"%(self.dir,self.dataFileSource.split('/')[-1])).encode(self.fsCoding))
             self.dataFileName = self.dataFileSource.split('/')[-1]
             self.ui.dataFileEdit.setText("%s/%s"%(self.dir,self.dataFileSource.split('/')[-1]))
             self.ui.groupBox_6.show()
@@ -603,7 +603,7 @@ class ProjectReftable(Project):
                 # name_YYYY_MM_DD-num le plus elevé
                 dd = datetime.now()
                 cd = 100
-                while cd > 0 and not os.path.exists((path+u"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,cd).encode(self.fsCoding))):
+                while cd > 0 and not os.path.exists((path+u"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,cd)).encode(self.fsCoding)):
                     cd -= 1
                 if cd == 100:
                     output.notify(self,"Error","With this version, you cannot have more than 100 \
@@ -620,7 +620,7 @@ class ProjectReftable(Project):
                         self.lock()
                         # creation du fichier .diyabcproject
                         if not os.path.exists((u"%s/%s.diyabcproject"%(self.dir,self.name)).encode(self.fsCoding)):
-                            f = open(u("%s/%s.diyabcproject"%(self.dir,self.name)).encode(self.fsCoding),'w')
+                            f = open((u"%s/%s.diyabcproject"%(self.dir,self.name)).encode(self.fsCoding),'w')
                             f.write("created in %s"%self.dir)
                             f.close()
                     except OSError,e:

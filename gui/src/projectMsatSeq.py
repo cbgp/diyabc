@@ -178,7 +178,7 @@ class ProjectMsatSeq(ProjectReftable):
         """ lit le fichier conf.tmp pour charger le fichier de données
         """
         log(2,"Reading '%s' to load datafile"%self.parent.main_conf_name)
-        if os.path.exists((self.ui.dirEdit.text()+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding)):
+        if os.path.exists((u"%s/%s"%(self.ui.dirEdit.text(), self.parent.main_conf_name)).encode(self.fsCoding)):
             f = open((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding),"rU")
             lines = f.readlines()
             self.dataFileName = lines[0].strip()
