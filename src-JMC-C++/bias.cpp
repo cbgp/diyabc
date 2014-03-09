@@ -1751,7 +1751,7 @@ bool valinfinie=false;
                 ss1 = splitwords(s1," ",&np);
                 if (np < header.scenario[rt.scenteste-1].nparam) {
                     //cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenteste<<" est de "<<header.scenario[rt.scenteste-1].nparam<<"\n";
-                    cerr<<"the number of parameter transmitted ("<<np<<") is incorrect. The expected number for scenario "<<rt.scenteste<<" is "<<header.scenario[rt.scenteste-1].nparam<<"\n";
+                    cout<<"the number of parameter transmitted ("<<np<<") is incorrect. The expected number for scenario "<<rt.scenteste<<" is "<<header.scenario[rt.scenteste-1].nparam<<"\n";
                     exit(1);
                 }
                 ncond=np-header.scenario[rt.scenteste-1].nparam;
@@ -1806,7 +1806,7 @@ bool valinfinie=false;
 			nphistarOK=detphistarOK(nsel,phistar);               cout << "apres detphistarOK  nphistarOK="<<nphistarOK<<"\n";
 			cout<< "   nphistarOK="<< nphistarOK<<"   nstat="<<header.nstat<<"\n";
 			if(10*nphistarOK < ntest){
-				cerr << "Not enough suitable particles ("<<nphistarOK<<")to perform model checking. Stopping computations." << endl;
+				cout << "Not enough suitable particles ("<<nphistarOK<<")to perform model checking. Stopping computations." << endl;
 				exit(1);
 			}
 			rt.desalloue_enrsel(nsel);
