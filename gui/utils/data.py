@@ -6,6 +6,7 @@ Created on 24 sept. 2009
 '''
 
 import re,os.path
+from sets import Set
 
 MICMISSING=-9999
 SEQMISSING="[]"
@@ -185,7 +186,7 @@ class Data(object):
             f = open(self.filename,'r')
             read_data = f.read()
         except :
-            raise IOError , "Error when attempting to read data file"
+            raise IOError , "Error when attempting to read data file %s" % self.filename
         f=open(self.filename,'r')
         read_data = f.read().strip()
         lines = read_data.splitlines()
@@ -277,7 +278,7 @@ class Data(object):
                                 li = [ li[0][0:index] , ',' ] + li[1:]
                             elif index :
                                 li = [ li[0][0:index] , ',', li[0][index+1:] ] + li[1:]
-                        # if comma is stick on the forst value
+                        # if comma is stick on the first value
                         elif li[1][0] == ',' and len(li[1]) > 1:
                              li = [li[0]] + [','] + [li[1][1:]] + li[2:]
 
@@ -317,10 +318,131 @@ class Data(object):
                                 raise NotGenepopFileError("line : %s, locus %s in individual %s in POP number %s, unknown individual locus format" \
                                         % (ili+2, nlocus+1, li[0], popNum))
 
+    def __test_genepop_ng(self):
+        """Other tests on data file
+
+        Rules =========================
+            Locus definition :
+                No blank lines
+                'Locus' key word alone accepted
+                locus name alone accepted
+                type tag alone accepted
+            POPs
+                no blank lines
+                "POP" key word must be alone in a single line
+                multiples commas accepted, the last one is the delimiter
+                for each individual, number of loci must a be egual to loci definitions number
+                if microsat is coded with 3 digits, locus type must be Y, H, M
+                if seqs is coded with only one seq, locus type must be Y, H, M
+
+        """
+        loci = {} # loci[number] = {'name' : 'xx', 'type' : '<x>', line : x }
+        pops = {} # pops[number] = [{'name' : 'xx', 'num' : x , line : x , loci : [locus1, locus2, ...]}, {...},  ]
+        try :
+            #with open(self.filename,'r') as f: read_data = f.read()
+            f = open(self.filename,'r')
+            read_data = f.read()
+        except :
+            raise IOError , "Error when attempting to read data file %s" % self.filename
+        f=open(self.filename,'r')
+        read_data = f.read().strip()
+        f.close()
+        p = re.compile("\\s^POP\\s$", re.MULTILINE)
+        parts = p.split(read_data)#, re.MULTILINE)
+        del read_data
+        dataDefLine = parts[0].splitlines()[0]
+        lociDefLines = parts[0].splitlines()[1:]
+        popsLinesPart = [ popPart.splitlines() for popPart in parts[1:]]
+
+        # loci -------------------------------------
+        re1 = '(Locus\\s)?'    # Locus key word
+        re2 = '(\\s+)?'     # White Spaces
+        re3 = '([\\w]+)?'   # locus name
+        re4 = '(\\s+)?'     # White Spaces
+        re5 = '(<[^>]+>)?'  # locus type 1
+        rg  =  re.compile(re1+re2+re3+re4+re5,re.IGNORECASE)
+        locusNum = 0
+        for locusLineNum, locusDefinition in enumerate(lociDefLines) :
+            locus = rg.search(locusDefinition)
+            if locus :
+                loci[locusNum] = {'name' : locus.group(3),  'type' : locus.group(5), 'line' : locusLineNum + 2}
+                locusNum += 1
+            if not locus or len(Set(locus.groups())) <= 1 :
+                raise NotGenepopFileError("Genepop file : %s\nline : %s, locus line '%s', unknown locus format" \
+                                        % (self.filename, locusLineNum+2, locusDefinition))
+
+
+        #POPs --------------------------------------
+
+        reMicroSat = re.compile('^\\d+$')
+        reSeqs = re.compile('^<\[.*\]>$', re.IGNORECASE)
+        re0 = ''
+        re1 = '(.+)?'  # individual name
+        re2 = '(,)'    # comma mandatory delimiter
+        re3 = '(.*)'   # loci values
+        rg = re.compile(re1+re2+re3,re.IGNORECASE)
+        fileLineNum = locusLineNum+2
+        for popNum, popLines in enumerate(popsLinesPart) :
+            fileLineNum +=1
+            pops[popNum] = []
+            popLines = popLines[1:] # remove first blank line (due to split by "pop" regexp)
+            for indNum, locusInd in enumerate(popLines) :
+                fileLineNum +=1
+                individual = rg.match(locusInd)
+                if individual :
+                    indName = individual.group(1).strip()
+                    indLoci = individual.group(3).strip()
+                    indLociList = indLoci.split()
+                    for indLocusNum, indLocus in enumerate(indLociList) :
+                        # microsat
+                        if reMicroSat.match(indLocus) :
+                            if len(indLocus) == 3 and loci[indLocusNum]['type'] not in ['<Y>','<H>','<M>'] :
+                                raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, loci number : %s.\n\nFound locus type %s (line %s, name %s) , expecting one of '<Y>','<H>' or '<M>' because locus is coded with only 3 digits !'" \
+                                        % (self.filename, fileLineNum, popNum+1, indNum+1, indName, indLocusNum+1, loci[indLocusNum]['type'], loci[indLocusNum]['line'], loci[indLocusNum]['name']))
+                        # seqs
+                        elif reSeqs.match(indLocus) :
+                            try :
+                                self.__testSeqLocusFormat(indLocus)
+                            except NotGenepopFileError as e :
+                                raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, loci number : %s.\n\n%s" \
+                                        % (self.filename, fileLineNum, popNum+1, indNum+1, indName, indLocusNum+1, loci[indLocusNum]['type'], loci[indLocusNum]['line'], loci[indLocusNum]['name'], e))
+
+                            if indLocus.count('[') < 2 and loci[indLocusNum]['type'] not in ['<Y>','<H>','<M>'] :
+                                raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, loci number : %s.\n\nFound locus type %s (line %s, name %s) , expecting one of '<Y>','<H>' or '<M>' because locus is coded with only 1 sequence !'" \
+                                        % (self.filename, fileLineNum, popNum+1, indNum+1, indName, indLocusNum+1, loci[indLocusNum]['type'], loci[indLocusNum]['line'], loci[indLocusNum]['name']))
+                        else :
+                            raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, locus number : %s, locus type : %s, locus name : %s.\n\n Unknown locus format : %s" \
+                                        % (self.filename, fileLineNum, popNum+1, indNum+1, indName, indLocusNum+1, loci[indLocusNum]['type'], loci[indLocusNum]['name'], indLocus))
+
+
+
+                    # test if number of locus is egual to locus definition
+                    if len(indLociList) != len(loci) :
+                        raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s.\n\nMust have %s loci, found %s" \
+                                        % (self.filename, fileLineNum, popNum+1, indNum+1, indName, len(loci), len(indLociList)))
+
+                else :
+                    raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number %s, unknown individual locus format : \n%s" \
+                                        % (self.filename, fileLineNum, popNum+1, locusInd))
+                pops[popNum].append({
+                                     'name' : indName,
+                                     'num'  : indLocusNum,
+                                     'line' : fileLineNum,
+                                     'loci' : indLociList
+                                     })
+
+
+
+
+    def __testSeqLocusFormat(self, locus):
+        return True
+
     def __read_genepop(self):
-        self.__test_genepop()
+        self.__test_genepop_ng()
+        return
         try :
             self.__test_genepop()
+            #self.__test_genepop_ng()
         except NotGenepopFileError as e :
             raise e
         except :
@@ -684,8 +806,8 @@ def isSNPDatafile(name):
 
 if __name__ == "__main__":
     testMsatSeqsFiles = [
-                 "/media/psf/Home/VMshare/louiT1_2013_5_2-1/loui10_new_ghostnat.dat",
-                 "/media/psf/Home/VMshare/example_1_microsat_data_one_pop_with_bottleneck_multisamples_2013_7_19-1/simu_dataset_microsat_one_pop_bottleneck_multisamples_001.mss",
+                 #"/media/psf/Home/VMshare/louiT1_2013_5_2-1/loui10_new_ghostnat.dat",
+                 #"/media/psf/Home/VMshare/example_1_microsat_data_one_pop_with_bottleneck_multisamples_2013_7_19-1/simu_dataset_microsat_one_pop_bottleneck_multisamples_001.mss",
                  "/media/psf/Home/VMshare/example_2_microsat_sequence_data_complexe_scenarios_ghost_pop_project_2013_7_9-1/toytest2_micro_seq_complexe_001.mss",
                  ]
     testSNPFiles = [
@@ -701,16 +823,16 @@ if __name__ == "__main__":
         print "file %s loaded" % f
         print "=======================\n"
 
-    for f in testSNPFiles :
-        print "\n======================="
-        print "Start loading %s" % f
-        plop = DataSnp(f)
-        print isSNPDatafile(f)
-        plop.readData()
-        print plop.nloc
-        print plop.nloctot
-        print "file %s loaded" % f
-        print "=======================\n"
+#     for f in testSNPFiles :
+#         print "\n======================="
+#         print "Start loading %s" % f
+#         plop = DataSnp(f)
+#         print isSNPDatafile(f)
+#         plop.readData()
+#         print plop.nloc
+#         print plop.nloctot
+#         print "file %s loaded" % f
+#         print "=======================\n"
 
 
 
