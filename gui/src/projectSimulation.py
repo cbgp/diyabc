@@ -6,7 +6,7 @@
 # @brief Projets pour simuler des données
 
 import time
-import os, os.path, sys
+import os, os.path, sys, codecs
 import subprocess
 from project import Project
 from PyQt4.QtCore import *

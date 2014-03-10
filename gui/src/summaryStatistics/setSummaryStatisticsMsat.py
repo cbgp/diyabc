@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import sys
+import sys, codecs
 import time
 import os
 from PyQt4 import QtCore, QtGui
@@ -14,7 +14,7 @@ import output
 import variables
 from variables import UIPATH
 
-formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat = uic.loadUiType("%s/setSummaryStatisticsMsat.ui"%UIPATH)
+formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat = uic.loadUiType((u"%s/setSummaryStatisticsMsat.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat):
     """ ecran de selection des summary statistics pour les microsats
@@ -345,7 +345,7 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
             #print "j'insere %s a %s"%(e,idest)
             res.insert(idest,e)
         return res
- 
+
     def setSumConf(self,lines):
         """ grace aux lignes du fichier de conf, remet les sum stats
         """
@@ -416,13 +416,13 @@ class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat
         "HET" : [],
         "VAR" : [],
         "MGW" : [],
-        "N2P" : [],  
+        "N2P" : [],
         "H2P" : [],
         "V2P" : [],
         "FST" : [],
         "LIK" : [],
         "DAS" : [],
-        "DM2" : [], 
+        "DM2" : [],
         "AML" : []}
         for box in self.oneSampleList:
             lab = str(box.findChild(QLabel,"oneSampleLabel").text()).split()[1]

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os,sys
+import os,sys, codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -15,7 +15,7 @@ from utils.cbgpUtils import log
 import variables
 from variables import UIPATH
 
-formHistModel,baseHistModel = uic.loadUiType("%s/setHistFrame.ui"%UIPATH)
+formHistModel,baseHistModel = uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetHistoricalModel(formHistModel,baseHistModel):
     """ Classe pour la définition du modèle historique dans le cadre
@@ -24,6 +24,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
     def __init__(self,parent=None):
         super(SetHistoricalModel,self).__init__(parent)
         self.parent=parent
+        self.fsCoding = sys.getfilesystemencoding()
         # [GUI] liste des scenarios, pourcentages et conditions non effacés
         self.scList = []
         self.rpList = []
@@ -996,10 +997,10 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         """
         log(3,"Writing historical save file of project %s"%self.parent.name)
         self.majParamInfoDico()
-        if os.path.exists(self.parent.ui.dirEdit.text()+"/%s"%self.parent.parent.hist_conf_name):
-            os.remove("%s/%s"%(self.parent.ui.dirEdit.text(),self.parent.parent.hist_conf_name))
+        if os.path.exists((u"%s/%s"%(self.parent.ui.dirEdit.text(),self.parent.parent.hist_conf_name)).encode(self.fsCoding)):
+            os.remove((u"%s/%s"%(self.parent.ui.dirEdit.text(),self.parent.parent.hist_conf_name)).encode(self.fsCoding))
 
-        f = open(self.parent.ui.dirEdit.text()+"/%s"%self.parent.parent.hist_conf_name,'w')
+        f = open((u"%s/%s"%(self.parent.ui.dirEdit.text(),self.parent.parent.hist_conf_name)).encode(self.fsCoding),'w')
         f.write("%s scenarios: "%(len(self.scList)))
 
         # affichage des nombres de lignes des scenarios
@@ -1059,8 +1060,8 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         """ Charge l'etat de setHistoricalModel à partir de conf.hist.tmp
         """
         if os.path.exists(self.parent.dir):
-            if os.path.exists("%s/%s"%(self.parent.dir,self.parent.parent.hist_conf_name)):
-                f = open("%s/%s"%(self.parent.dir,self.parent.parent.hist_conf_name),"rU")
+            if os.path.exists((u"%s/%s"%(self.parent.dir,self.parent.parent.hist_conf_name)).encode(self.fsCoding)):
+                f = open((u"%s/%s"%(self.parent.dir,self.parent.parent.hist_conf_name)).encode(self.fsCoding),"rU")
                 lines = f.readlines()
 
                 self.ui.otherRpRadio.setChecked(True)

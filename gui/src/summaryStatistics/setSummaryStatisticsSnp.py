@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import sys
+import sys, codecs
 import time
 import os
 from PyQt4 import QtCore, QtGui
@@ -14,7 +14,7 @@ import output
 import variables
 from variables import UIPATH
 
-formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp = uic.loadUiType("%s/setSummaryStatisticsSnp.ui"%UIPATH)
+formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp = uic.loadUiType((u"%s/setSummaryStatisticsSnp.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp):
     """ ecran de selection des summary statistics pour les SNP
@@ -77,13 +77,13 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
                 exec("self.ui.taken%sEdit.setText(str(self.parent.parent.data.ntypeloc[ty]))"%ty)
         self.lockLociSelection()
 
-            
+
 
     def exit(self):
         self.parent.parent.ui.refTableStack.removeWidget(self)
         self.parent.parent.ui.refTableStack.setCurrentIndex(0)
         self.parent.parent.updateNbStats()
-        
+
     def validate(self,silent=False):
         try:
             # pour voir si ça déclenche une exception
@@ -105,14 +105,14 @@ class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,b
         except Exception as e:
             if not silent:
                 output.notify(self,"Input error",str(e))
-    
+
     def lockLociSelection(self):
         """Disabled loci selection if not present in the datafile"""
         for ty in self.parent.parent.typesOrdered:
             if ty not in self.parent.parent.data.ntypeloc.keys():
                 exec("self.ui.taken%sEdit.setText('0')"%ty)
                 exec("self.ui.taken%sEdit.setDisabled(True)"%ty)
-    
+
     def addOneSample(self,num):
         """ methode d'ajout d'un bloc dans 'one sample sum stats'
         """

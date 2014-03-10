@@ -1,24 +1,25 @@
 # -*- coding: utf-8 -*-
 
+
+import sys, codecs, traceback
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 from utils.visualizescenario import *
 from utils.data import *
-import output
 from utils.cbgpUtils import log
-import codecs
+import output
 import variables
 from variables import UIPATH
 
-formControl,baseControl = uic.loadUiType("%s/controlAscertBias.ui"%UIPATH)
+formControl,baseControl = uic.loadUiType((u"%s/controlAscertBias.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class ControlAscertBias(formControl,baseControl):
     def __init__(self,parent=None):
         super(ControlAscertBias,self).__init__(parent)
         self.parent=parent
-
+        self.fsCoding = sys.getfilesystemencoding()
         self.createWidgets()
 
     def createWidgets(self):
@@ -44,8 +45,8 @@ class ControlAscertBias(formControl,baseControl):
                 self.ui.valuesFrame.hide()
 
     def loadAscertConf(self):
-        if os.path.exists(self.parent.dir+"/%s"%self.parent.parent.ascertainment_conf_name):
-            f = codecs.open(self.parent.dir+"/%s"%self.parent.parent.ascertainment_conf_name,'rU',"utf-8")
+        if os.path.exists((u"%s/%s"%(self.parent.dir,self.parent.parent.ascertainment_conf_name)).encode(self.fsCoding)):
+            f = codecs.open((u"%s/%s"%(self.parent.dir,self.parent.parent.ascertainment_conf_name)).encode(self.fsCoding),'rU',"utf-8")
             lines = f.readlines()
             f.close()
             if len(lines) >= 3:

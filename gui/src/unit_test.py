@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import sys
+import sys, codecs
 import os.path
 import os
-sys.path.append("/".join(os.getcwd().split('/')[:-1]))
+sys.path.append((u"/".join(os.getcwd().split('/')[:-1])).encode(sys.getfilesystemencoding()))
 from project import *
 
 #import time
@@ -31,8 +31,8 @@ class testDiyabc(unittest.TestCase):
         """
 
         self.testDir = "/tmp/"
-        self.testProjectDir = "/home/julien/TESTDIY/TOYTEST1/"
-        self.testProjectDirHist = "/home/julien/TESTDIY/TOYTEST1_noref/"
+        self.testProjectDir = "/home/dehneg/TESTDIY/TOYTEST1/"
+        self.testProjectDirHist = "/home/dehneg/TESTDIY/TOYTEST1_noref/"
         self.saveTestProjectDir = "/tmp/ploopsave"
 
     def initialize(self):
@@ -45,7 +45,7 @@ class testDiyabc(unittest.TestCase):
         # pour le dragNdrop des dossier projet
         diyabc.setAcceptDrops(True)
         # pour les logs dans un fichier et sur le terminal
-        # chaque TeeLogger remplace une sortie et écrit dans 
+        # chaque TeeLogger remplace une sortie et écrit dans
         # le fichier qu'on lui donne
         myOut = TeeLogger(logfile,True,diyabc.showLog)
         myErr = TeeLogger(logfile,False,diyabc.showLog)
@@ -57,7 +57,7 @@ class testDiyabc(unittest.TestCase):
     def testHistoricalModel(self):
         diyabc = self.initialize()
 
-        if os.path.exists(self.saveTestProjectDir): 
+        if os.path.exists(self.saveTestProjectDir):
             shutil.rmtree(self.saveTestProjectDir)
         shutil.copytree(self.testProjectDirHist,self.saveTestProjectDir)
 
@@ -96,7 +96,7 @@ class testDiyabc(unittest.TestCase):
             parambox.findChild(QLineEdit,"meanValueParamEdit").setText("5.1")
             parambox.findChild(QLineEdit,"stValueParamEdit").setText("0.1")
             parambox.findChild(QRadioButton,"uniformParamRadio").setChecked(True)
-                        
+
 
 
         # restitution de la sauvegarde du projet
@@ -111,7 +111,7 @@ class testDiyabc(unittest.TestCase):
             for i in valNameList:
                 exec("%s = float(str(pb.findChild(QLineEdit,'%s').text()))"%(i,i))
             print "normal %s < %s < %s, unif: %s, logunif: %s"%(minValueParamEdit,meanValueParamEdit,maxValueParamEdit,pb.findChild(QRadioButton,"uniformParamRadio").isChecked(),pb.findChild(QRadioButton,"logUniformRadio").isChecked())
-            
+
             if not (minValueParamEdit <= maxValueParamEdit):
                 print "prob min <= max"
                 return False
@@ -137,7 +137,7 @@ class testDiyabc(unittest.TestCase):
         diyabc = self.initialize()
 
         # copie de sauvegarde du projet dans /tmp
-        if os.path.exists(self.saveTestProjectDir): 
+        if os.path.exists(self.saveTestProjectDir):
             shutil.rmtree(self.saveTestProjectDir)
         shutil.copytree(self.testProjectDir,self.saveTestProjectDir)
 
@@ -162,7 +162,7 @@ class testDiyabc(unittest.TestCase):
         self.dicoPossibleClicks["genOkButton"] = self.dicoPossibleClicks["root"]
         self.dicoPossibleClicks["genExitButton"] = self.dicoPossibleClicks["root"]
         self.dicoPossibleClicks["genAddGroupButton"] = self.dicoPossibleClicks["setGeneticButton"]
-        
+
         self.butCount = {}
         l = self.buildClickLists("root",0,2)
         print l
@@ -274,7 +274,7 @@ class testDiyabc(unittest.TestCase):
     #    # pour le dragNdrop des dossier projet
     #    diyabc.setAcceptDrops(True)
     #    # pour les logs dans un fichier et sur le terminal
-    #    # chaque TeeLogger remplace une sortie et écrit dans 
+    #    # chaque TeeLogger remplace une sortie et écrit dans
     #    # le fichier qu'on lui donne
     #    myOut = output.TeeLogger(logfile,"a",diyabc,True)
     #    myErr = output.TeeLogger(logfile,"a",diyabc,False)
@@ -365,7 +365,7 @@ class testDiyabc(unittest.TestCase):
                 paramBox.findChild(QRadioButton,"normalRadio").setChecked(True)
             elif values[0] == "LU":
                 paramBox.findChild(QRadioButton,"logUniformRadio").setChecked(True)
-            
+
             paramBox.findChild(QLineEdit,"minValueParamEdit").setText(str(values[1]))
             paramBox.findChild(QLineEdit,"maxValueParamEdit").setText(str(values[2]))
             paramBox.findChild(QLineEdit,"meanValueParamEdit").setText(str(values[3]))
@@ -387,15 +387,15 @@ class testDiyabc(unittest.TestCase):
         self.assertEqual(len(diyabc.project_list) == nbproj,True)
 
     def tNewIllegalProject(self,diyabc,datafile,projectdir):
-        """ si on crée un projet avec un nouveau nom, 
+        """ si on crée un projet avec un nouveau nom,
         on ne doit pas faire augmenter le nombre de projets
         """
-        nbproj = len(diyabc.project_list)        
+        nbproj = len(diyabc.project_list)
         diyabc.newProject(projectdir)
         self.assertEqual(len(diyabc.project_list) , nbproj)
 
     def tNewProject(self,diyabc,datafile,projectdir):
-        nbproj = len(diyabc.project_list)        
+        nbproj = len(diyabc.project_list)
         diyabc.newProject(projectdir)
         self.assertEqual(len(diyabc.project_list) == nbproj+1,True)
         project = diyabc.project_list[-1]

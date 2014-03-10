@@ -9,12 +9,11 @@ import os, os.path, sys
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from utils.data import Data
+from utils.cbgpUtils import log,isUnixText,dos2unix
+import output
 from projectReftable import ProjectReftable
 from geneticData.setGenDataMsatSeq import SetGeneticDataMsatSeq
-from utils.data import Data
-import output
-from utils.cbgpUtils import log,isUnixText,dos2unix
-
 
 ## @class ProjectMsatSeq
 # @brief Projets pour créer une table de référence Msat et Sequences
@@ -224,10 +223,10 @@ class ProjectMsatSeq(ProjectReftable):
 
         if self.dir != None and self.dataFileName != "":
             # save meta project
-            if os.path.exists((self.dir+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding)):
+            if os.path.exists((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding)):
                 os.remove((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding))
 
-            f = codecs.open((self.dir+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding),'w',"utf-8")
+            f = codecs.open((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding),'w',"utf-8")
             f.write("%s\n"%self.dataFileName)
             # recup du nombre de params (depuis historical model et les mutational qui varient)
             nb_param = self.hist_model_win.getNbParam()
@@ -259,9 +258,9 @@ class ProjectMsatSeq(ProjectReftable):
         hist_params_txt = self.hist_model_win.getParamTableHeader()
         mut_params_txt = self.gen_data_win.getParamTableHeader()
         sum_stats_txt = self.gen_data_win.getSumStatsTableHeader()
-        if os.path.exists((self.dir+u"/%s"%self.parent.table_header_conf_name).encode(self.fsCoding)):
+        if os.path.exists((u"%s/%s"%(self.dir,self.parent.table_header_conf_name)).encode(self.fsCoding)):
             os.remove((u"%s/%s"%(self.dir,self.parent.table_header_conf_name)).encode(self.fsCoding))
-        f = codecs.open((self.dir+u"/%s"%self.parent.table_header_conf_name).encode(self.fsCoding),'w',"utf-8")
+        f = codecs.open((u"%s/%s"%(self.dir,self.parent.table_header_conf_name)).encode(self.fsCoding),'w',"utf-8")
         f.write("scenario%s%s%s"%(hist_params_txt,mut_params_txt,sum_stats_txt))
         f.close()
 

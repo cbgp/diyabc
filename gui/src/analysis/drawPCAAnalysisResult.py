@@ -14,7 +14,7 @@ from utils.cbgpUtils import readlinesWindows
 import variables
 from variables import UIPATH
 
-formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult = uic.loadUiType("%s/drawScenarioFrame.ui"%UIPATH)
+formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult = uic.loadUiType((u"%s/drawScenarioFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse

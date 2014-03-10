@@ -548,14 +548,17 @@ class ProjectReftable(Project):
     def writeRefTableHeader(self):
         """ écriture du header.txt à partir des conf
         """
-        if os.path.exists((self.dir+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding)) and os.path.exists((self.dir+u"/%s"%self.parent.hist_conf_name).encode(self.fsCoding)) and os.path.exists((self.dir+u"/%s"%self.parent.gen_conf_name).encode(self.fsCoding)) and os.path.exists((self.dir+u"/%s"%self.parent.table_header_conf_name).encode(self.fsCoding)):
-            if os.path.exists((self.dir+u"/%s"%self.parent.reftableheader_name).encode(self.fsCoding)):
+        if os.path.exists((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding)) and \
+           os.path.exists((u"%s/%s"%(self.dir,self.parent.hist_conf_name)).encode(self.fsCoding)) and \
+           os.path.exists((u"%s/%s"%(self.dir,self.parent.gen_conf_name)).encode(self.fsCoding)) and \
+           os.path.exists((u"%s/%s"%(self.dir,self.parent.table_header_conf_name)).encode(self.fsCoding)):
+            if os.path.exists((u"%s/%s"%(self.dir,self.parent.reftableheader_name)).encode(self.fsCoding)):
                 os.remove((u"%s/%s" %(self.dir,self.parent.reftableheader_name)).encode(self.fsCoding))
             log(2,"Writing reference table header from the conf files")
 
-            fdest = codecs.open((self.dir+u"/%s"%self.parent.reftableheader_name).encode(self.fsCoding),"w","utf-8")
+            fdest = codecs.open((u"%s/%s"%(self.dir,self.parent.reftableheader_name)).encode(self.fsCoding),"w","utf-8")
             for name in [self.parent.main_conf_name,self.parent.hist_conf_name,self.parent.gen_conf_name,self.parent.table_header_conf_name]:
-                fo = codecs.open((self.dir+u"/%s"%name).encode(self.fsCoding),"rU","utf-8")
+                fo = codecs.open((u"%s/%s"%(self.dir,name)).encode(self.fsCoding),"rU","utf-8")
                 folines = fo.read()
                 fo.close()
                 if name == self.parent.hist_conf_name:

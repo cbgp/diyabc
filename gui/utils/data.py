@@ -151,6 +151,7 @@ class Data(object):
     __SEQUENCE_CODE = "ATGCN-atgcn"
     def __init__(self,filename):
         self.filename         = filename  # name of the genepop data file (string)
+        self.fsCoding         = sys.getfilesystemencoding()
         self.message          = None  # message about the content of the data file if reading is successful or error message if not  (string)
         self.title            = None  # title of the data file  (string)
         self.nloc_mic         = 0     # number of microsatellite loci (integer)
@@ -185,11 +186,10 @@ class Data(object):
         "not so quick but very dirty genepop file format tester"
         try :
             #with open(self.filename,'r') as f: read_data = f.read()
-            f = open(self.filename,'r')
+            f = open(self.filename.encode(self.fsCoding),'r')
             read_data = f.read()
         except :
             raise IOError , "Error when attempting to read data file %s" % self.filename
-        f=open(self.filename,'r')
         read_data = f.read().strip()
         lines = read_data.splitlines()
         f.close()
@@ -342,11 +342,10 @@ class Data(object):
         pops = {} # pops[number] = [{'name' : 'xx', 'num' : x , line : x , loci : [locus1, locus2, ...]}, {...},  ]
         try :
             #with open(self.filename,'r') as f: read_data = f.read()
-            f = open(self.filename,'r')
+            f = open(self.filename.encode(self.fsCoding),'r')
             read_data = f.read()
         except :
             raise IOError , "Error when attempting to read data file %s" % self.filename
-        f=open(self.filename,'r')
         read_data = f.read().strip()
         f.close()
         p = re.compile("\\s^POP\\s$", re.MULTILINE)
@@ -440,9 +439,8 @@ class Data(object):
         return True
 
     def __read_genepop(self):
-        self.__test_genepop_ng()
-        return
         try :
+            self.__test_genepop_ng()
             self.__test_genepop()
             #self.__test_genepop_ng()
         except NotGenepopFileError as e :
@@ -450,7 +448,7 @@ class Data(object):
         except :
             raise Error("Test on genepop format failed. Please check your file format. If all seems normal, send the file or a bug report to support")
 
-        f=open(self.filename,'r')
+        f=open(self.filename.encode(self.fsCoding),'r')
         read_data = f.read().strip()
         lines = read_data.splitlines()
         f.close()
@@ -639,6 +637,7 @@ class DataSnp():
     __IND_SEX_TYPES = set(['9','M','F','m','f'])
     def __init__(self,filename):
         self.filename = filename
+        self.fsCoding = sys.getfilesystemencoding()
         self.nloc = 0
         self.nloctot = 0
         self.nindtot = 0
@@ -661,7 +660,7 @@ class DataSnp():
         sexLocus = []
         locus_type = defaultdict()
         pat = re.compile(r'\s+')
-        f=open(name,'r')
+        f=open(name.encode(self.fsCoding),'r')
         data = f.read().strip()
         f.close()
         datalines = data.split('\n')
@@ -786,8 +785,8 @@ class DataSnp():
         self.nsample = nbSample
 
 def isSNPDatafile(name):
-    if os.path.exists(name):
-        f=open(name,'rU')
+    if os.path.exists(name.encode(sys.getfilesystemencoding())):
+        f=open(name.encode(sys.getfilesystemencoding()),'rU')
         lines=f.readlines()
         f.close()
         if len(lines) > 0:

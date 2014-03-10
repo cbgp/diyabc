@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -8,7 +9,7 @@ from PyQt4 import uic
 import variables
 from variables import UIPATH
 
-formSetMutationModelSequencesFixed,baseSetMutationModelSequencesFixed = uic.loadUiType("%s/setMutationModelSequences.ui"%UIPATH)
+formSetMutationModelSequencesFixed,baseSetMutationModelSequencesFixed = uic.loadUiType((u"%s/setMutationModelSequences.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetMutationModelSequencesFixed):
     """ Classe qui utilise le fichier graphique des SetMutationModelSequences.
@@ -114,7 +115,7 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
         self.ui.ilmrLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilmrLabel.text())
         self.ui.ilc1Label.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilc1Label.text())
         self.ui.ilc2Label.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilc2Label.text())
-        self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0)) 
+        self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0))
         self.ui.ilc1Label.setMinimumSize(QtCore.QSize(150,0))
         self.ui.ilc2Label.setMinimumSize(QtCore.QSize(150,0))
 
@@ -181,7 +182,7 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
                 l_result.append(str(self.ui.ilc2MinEdit.text()))
 
         return l_result
-    
+
     def setMutationConfFromAnalysisValues(self,v):
         self.ui.mmrMinEdit.setText("%s"%v[0])
         self.ui.ilmrMinEdit.setText("%s"%v[1])

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -8,7 +9,7 @@ from PyQt4 import uic
 import variables
 from variables import UIPATH
 
-formSetMutationModelSequences,baseSetMutationModelSequences = uic.loadUiType("%s/setMutationModelSequences.ui"%UIPATH)
+formSetMutationModelSequences,baseSetMutationModelSequences = uic.loadUiType((u"%s/setMutationModelSequences.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationModelSequences):
     """ définition du modèle mutationnel pour les séquences
@@ -196,7 +197,7 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         else:
             law = "GA"
         result += "MEANMU %s[%s,%s,%s,%s]\n"%(law,mmrMin,mmrMax,mmrMean,mmrShape)
-        
+
         ilmrMin =    str(self.ui.ilmrMinEdit.text())
         ilmrMax =    str(self.ui.ilmrMaxEdit.text())
         ilmrMean =   u'%s'%(self.ui.ilmrMeanEdit.text())
@@ -267,7 +268,7 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         law = "GA"
         result += "GAMK2 %s[%s,%s,%s,%s]\n"%(law,ilc2Min,ilc2Max,ilc2Mean,ilc2Shape)
         result += "MODEL %s %s %s\n"%(model,str(self.ui.isEdit.text()).strip(),str(self.ui.sotgEdit.text()).strip())
-        
+
         return result
 
     def setMutationConf(self,lines):
@@ -279,19 +280,19 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         #if mmrValues[3] == "2":
         #    mmrValues[3] = ""
         self.ui.mmrMinEdit.setText(mmrValues[0])
-        self.ui.mmrMaxEdit.setText(mmrValues[1])    
-        self.ui.mmrMeanEdit.setText(mmrValues[2])   
-        self.ui.mmrShapeEdit.setText(mmrValues[3])  
+        self.ui.mmrMaxEdit.setText(mmrValues[1])
+        self.ui.mmrMeanEdit.setText(mmrValues[2])
+        self.ui.mmrShapeEdit.setText(mmrValues[3])
         law = lines[0].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
             self.ui.mmrUnifRadio.setChecked(True)
-        elif law == "LU": 
+        elif law == "LU":
             self.ui.mmrLogRadio.setChecked(True)
         else:
             self.ui.mmrGammaRadio.setChecked(True)
-        
+
         ilmrValues = lines[1].split('[')[1].split(']')[0].split(',')
         if ilmrValues[2] == "-9":
             ilmrValues[2] = ""
@@ -308,15 +309,15 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         #if mc1Values[3] == "2":
         #    mc1Values[3] = ""
         self.ui.mc1MinEdit.setText(mc1Values[0])
-        self.ui.mc1MaxEdit.setText(mc1Values[1])    
-        self.ui.mc1MeanEdit.setText(mc1Values[2])   
-        self.ui.mc1ShapeEdit.setText(mc1Values[3])  
+        self.ui.mc1MaxEdit.setText(mc1Values[1])
+        self.ui.mc1MeanEdit.setText(mc1Values[2])
+        self.ui.mc1ShapeEdit.setText(mc1Values[3])
         law = lines[2].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
             self.ui.mc1UnifRadio.setChecked(True)
-        elif law == "LU": 
+        elif law == "LU":
             self.ui.mc1LogRadio.setChecked(True)
         else:
             self.ui.mc1GammaRadio.setChecked(True)
@@ -337,15 +338,15 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
         #if mc2Values[3] == "2":
         #    mc2Values[3] = ""
         self.ui.mc2MinEdit.setText(mc2Values[0])
-        self.ui.mc2MaxEdit.setText(mc2Values[1])    
-        self.ui.mc2MeanEdit.setText(mc2Values[2])   
-        self.ui.mc2ShapeEdit.setText(mc2Values[3])  
+        self.ui.mc2MaxEdit.setText(mc2Values[1])
+        self.ui.mc2MeanEdit.setText(mc2Values[2])
+        self.ui.mc2ShapeEdit.setText(mc2Values[3])
         law = lines[4].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
             self.ui.mc2UnifRadio.setChecked(True)
-        elif law == "LU": 
+        elif law == "LU":
             self.ui.mc2LogRadio.setChecked(True)
         else:
             self.ui.mc2GammaRadio.setChecked(True)
@@ -399,17 +400,17 @@ class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationMod
             problems+="- Individual locus coefficient k_A/G has incoherent min and max values\n\n"
 
         if self.hasToBeVerified(self.ui.mmrMinEdit) and\
-        ( ( float(self.ui.mmrMinEdit.text()) < float(self.ui.ilmrMinEdit.text()) ) 
+        ( ( float(self.ui.mmrMinEdit.text()) < float(self.ui.ilmrMinEdit.text()) )
         or (float(self.ui.mmrMaxEdit.text()) > float(self.ui.ilmrMaxEdit.text())) ):
             problems+="- Mean mutation rate min/max values must be included in min/max values of Individual locus mutation rate\n\n"
         if self.hasToBeVerified(self.ui.mc1MinEdit) and\
-        ( ( float(self.ui.mc1MinEdit.text()) < float(self.ui.ilc1MinEdit.text()) ) 
+        ( ( float(self.ui.mc1MinEdit.text()) < float(self.ui.ilc1MinEdit.text()) )
         or (float(self.ui.mc1MaxEdit.text()) > float(self.ui.ilc1MaxEdit.text())) ):
             problems+="- Mean coefficient k_C/T min/max values must be included in min/max values of Individual locus coefficient k_C/T\n\n"
         if self.hasToBeVerified(self.ui.mc2MinEdit) and\
         ( ( float(self.ui.mc2MinEdit.text()) < float(self.ui.ilc2MinEdit.text()) )
         or (float(self.ui.mc2MaxEdit.text()) > float(self.ui.ilc2MaxEdit.text())) ):
-            problems+="- Mean coefficient k_A/G min/max values must be included in min/max values of Individual locus coefficient k_A/G\n\n" 
+            problems+="- Mean coefficient k_A/G min/max values must be included in min/max values of Individual locus coefficient k_A/G\n\n"
 
         for field in self.constraints_dico.keys():
             #print self.field_names_dico[field]

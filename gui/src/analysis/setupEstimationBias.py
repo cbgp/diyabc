@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import re
+import re, sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -14,7 +14,7 @@ from utils.cbgpUtils import log
 import variables
 from variables import UIPATH
 
-formSetupEstimationBias,baseSetupEstimationBias = uic.loadUiType("%s/setupEstimationBias.ui"%UIPATH)
+formSetupEstimationBias,baseSetupEstimationBias = uic.loadUiType((u"%s/setupEstimationBias.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
     """ dernière étape de définition d'une analyse de type estimation ou bias precision ou model checking

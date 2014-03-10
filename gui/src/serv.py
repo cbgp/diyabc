@@ -6,7 +6,7 @@ import hashlib
 import socket
 import time
 import string
-import sys,os
+import sys,os, codecs
 import thread
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
@@ -17,7 +17,7 @@ def main():
         filename = str(datetime.now())
         filename = filename.replace(' ','_').replace(":",".")
         filename+=".tar"
-        f=open( filename, 'wb')
+        f=open( filename.encode(sys.getfilesystemencoding()), 'wb')
 
         md5=csock.recv(33)
         md5 = str(md5).strip()
@@ -39,8 +39,8 @@ def main():
         print "sortie de boucle de reception"
          #3.close file
         f.close()
-        print filename, "Received\n"
-        f=open(filename,'r')
+        print filename.encode(sys.getfilesystemencoding()), "Received\n"
+        f=open(filename.encode(sys.getfilesystemencoding()),'r')
         fdata = f.read()
         f.close()
         print str(hashlib.md5(fdata).hexdigest())
@@ -49,17 +49,17 @@ def main():
 
         if checkfile:
             dirname = filename.replace('.tar','')
-            os.mkdir("%s/%s"%(os.getcwd(),dirname))
+            os.mkdir((u"%s/%s"%(os.getcwd()).encode(sys.getfilesystemencoding()),dirname.encode(sys.getfilesystemencoding())))
             #os.chdir("%s/%s"%(os.getcwd(),dirname))
-            a = os.popen("tar xvf %s -C ""%s"""%(filename,dirname))
+            a = os.popen("tar xvf %s -C ""%s"""%(filename.encode(sys.getfilesystemencoding()),dirname.encode(sys.getfilesystemencoding())))
             a.close()
             print "archive extracted"
             #os.chdir("./SBCN_jm/")
-            f=open("%s/SBCN_jm/command_output"%dirname,"w")
-            subprocess.Popen(["sh","./launch.sh"],stdout=f,cwd="%s/SBCN_jm/"%dirname)
+            f=open((u"%s/SBCN_jm/command_output"%dirname).encode(sys.getfilesystemencoding()),"w")
+            subprocess.Popen([u"sh".encode(sys.getfilesystemencoding()),u"./launch.sh".encode(sys.getfilesystemencoding())],stdout=f,cwd=(u"%s/SBCN_jm/"%dirname).encode(sys.getfilesystemencoding()))
             while True:
                 time.sleep(2)
-                a=os.popen("tail -n 1 %s/SBCN_jm/command_output"%dirname)
+                a=os.popen((u"tail -n 1 %s/SBCN_jm/command_output"%dirname).encode(sys.getfilesystemencoding()))
                 line = a.read()
                 print "[",dirname,"] ",line,"--------"
                 csock.send(line)

@@ -6,7 +6,7 @@
 # @brief Classe mère abstraite de tous les projets
 
 import subprocess,shutil
-import os, time, sys
+import os, time, sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -15,7 +15,7 @@ from utils.cbgpUtils import log,addLine
 import variables
 from variables import UIPATH
 
-formProject,baseProject = uic.loadUiType("%s/Project.ui"%UIPATH)
+formProject,baseProject = uic.loadUiType((u"%s/Project.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 ## @class Project
 # @brief Classe mère abstraite de tous les projets

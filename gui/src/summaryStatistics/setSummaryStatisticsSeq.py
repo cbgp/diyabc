@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import sys
+import sys, codecs
 import time
 import os
 from PyQt4 import QtCore, QtGui
@@ -14,7 +14,7 @@ import output
 import variables
 from variables import UIPATH
 
-formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq = uic.loadUiType("%s/setSummaryStatisticsSeq.ui"%UIPATH)
+formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq = uic.loadUiType((u"%s/setSummaryStatisticsSeq.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetSummaryStatisticsSeq(SetSummaryStatistics,formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq):
     """ ecran de selection des summary statistics pour les sequences

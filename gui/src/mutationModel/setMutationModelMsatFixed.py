@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -8,7 +9,7 @@ from PyQt4 import uic
 import variables
 from variables import UIPATH
 
-formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed = uic.loadUiType("%s/setMutationModelMsat.ui"%UIPATH)
+formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed = uic.loadUiType((u"%s/setMutationModelMsat.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed):
     """ Classe qui utilise le fichier graphique des SetMutationModelMsat.
@@ -82,17 +83,17 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
 
         self.field_names_dico ={self.ui.mmrMinEdit : "mean mutation rate",
                             self.ui.ilmrMinEdit : "individual locus mutation rate",
-                            self.ui.mcpMinEdit : "mean coefficient P",                                         
+                            self.ui.mcpMinEdit : "mean coefficient P",
                             self.ui.ilcpMinEdit :"individual locus coefficient P",
                             self.ui.msrMinEdit : "mean SNI rate",
                             self.ui.ilsrMinEdit :"individual locus SNI rate"}
 
         # [doit_etre_non_vide , doit_être_float]
         self.constraints_dico = { self.ui.mmrMinEdit : [1,1],
-                           self.ui.ilmrMinEdit : [1,1],  
-                           self.ui.mcpMinEdit : [1,1],   
-                           self.ui.ilcpMinEdit : [1,1],  
-                           self.ui.msrMinEdit : [1,1],   
+                           self.ui.ilmrMinEdit : [1,1],
+                           self.ui.mcpMinEdit : [1,1],
+                           self.ui.ilcpMinEdit : [1,1],
+                           self.ui.msrMinEdit : [1,1],
                            self.ui.ilsrMinEdit : [1,1]}
 
         self.ui.ilmrLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilmrLabel.text())
@@ -100,7 +101,7 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
         self.ui.msrLabel.setText("%s (3)"%self.ui.msrLabel.text())
         self.ui.ilcpLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilcpLabel.text())
         self.ui.ilsrLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilsrLabel.text())
-        self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0)) 
+        self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0))
         self.ui.ilcpLabel.setMinimumSize(QtCore.QSize(150,0))
         self.ui.ilsrLabel.setMinimumSize(QtCore.QSize(150,0))
 

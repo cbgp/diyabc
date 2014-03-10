@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -9,7 +10,7 @@ import output
 import variables
 from variables import UIPATH
 
-formSetupComparisonConfidence,baseSetupComparisonConfidence = uic.loadUiType("%s/setupComparisonConfidence.ui"%UIPATH)
+formSetupComparisonConfidence,baseSetupComparisonConfidence = uic.loadUiType((u"%s/setupComparisonConfidence.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupComparisonConfidence):
     """ dernière étape de définition d'une analyse de type comparison ou confidence

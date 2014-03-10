@@ -184,7 +184,7 @@ class ProjectSnp(ProjectReftable):
     def loadSumStatsConf(self):
         """ charge les summary statistics depuis le fichier gen_conf_name
         """
-        if os.path.exists(self.dir.encode(self.fsCoding)):
+        if os.path.exists(str(self.dir).encode(self.fsCoding)):
             if os.path.exists((u"%s/%s"%(self.dir,self.parent.gen_conf_name)).encode(self.fsCoding)):
                 f = codecs.open((u"%s/%s"%(self.dir,self.parent.gen_conf_name)).encode(self.fsCoding),"rU","utf-8")
                 lines = f.readlines()
@@ -340,10 +340,10 @@ class ProjectSnp(ProjectReftable):
 
         if self.dir != None and self.dataFileName != "":
             # save meta project
-            if os.path.exists((self.dir+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding)):
+            if os.path.exists((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding)):
                 os.remove((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding))
 
-            f = codecs.open((self.dir+u"/%s"%self.parent.main_conf_name).encode(self.fsCoding),'w',"utf-8")
+            f = codecs.open((u"%s/%s"%(self.dir,self.parent.main_conf_name)).encode(self.fsCoding),'w',"utf-8")
             f.write("%s\n"%self.dataFileName)
             # recup du nombre de params (depuis historical model et les mutational qui varient)
             nb_param = self.hist_model_win.getNbParam()
@@ -378,9 +378,9 @@ class ProjectSnp(ProjectReftable):
             ascert_string = u"\n"
 
 
-        if os.path.exists((self.dir+u"/%s"%self.parent.ascertainment_conf_name).encode(self.fsCoding)):
+        if os.path.exists((u"%s/%s"%(self.dir,self.parent.ascertainment_conf_name)).encode(self.fsCoding)):
             os.remove((u"%s/%s"%(self.dir,self.parent.ascertainment_conf_name)).encode(self.fsCoding))
-        f = codecs.open((self.dir+u"/%s"%self.parent.ascertainment_conf_name).encode(self.fsCoding),'w',"utf-8")
+        f = codecs.open((u"%s/%s"%(self.dir,self.parent.ascertainment_conf_name)).encode(self.fsCoding),'w',"utf-8")
         f.write("%s"%(ascert_string))
         f.close()
 
@@ -389,18 +389,18 @@ class ProjectSnp(ProjectReftable):
         """
         super(ProjectSnp,self).writeRefTableHeader()
 
-        if os.path.exists((self.dir+u"/%s"%self.parent.ascertainment_conf_name).encode(self.fsCoding)):
-            f = codecs.open((self.dir+"/%s"%self.parent.ascertainment_conf_name).encode(self.fsCoding),"rU","utf-8")
+        if os.path.exists((u"%s/%s"%(self.dir,self.parent.ascertainment_conf_name)).encode(self.fsCoding)):
+            f = codecs.open((u"%s/%s"%(self.dir,self.parent.ascertainment_conf_name)).encode(self.fsCoding),"rU","utf-8")
             ascert_string = f.read()
             f.close()
         else:
             output.notify(self,"Header generation problem","Impossible to add ascertainment part to header : ascertainment file doesn't exist")
             return
 
-        if os.path.exists((self.dir+u"/%s"%self.parent.reftableheader_name).encode(self.fsCoding)):
+        if os.path.exists((u"%s/%s"%(self.dir,self.parent.reftableheader_name)).encode(self.fsCoding)):
             log(2,"Adding ascertainment part to header")
 
-            fdest = codecs.open((self.dir+u"/%s"%self.parent.reftableheader_name).encode(self.fsCoding),"a","utf-8")
+            fdest = codecs.open((u"%s/%s"%(self.dir,self.parent.reftableheader_name)).encode(self.fsCoding),"a","utf-8")
             fdest.write("\n\n%s"%ascert_string)
             fdest.close()
         else:
@@ -413,9 +413,9 @@ class ProjectSnp(ProjectReftable):
         log(2,"Writing last part of the header (the parameter table header) in %s"%self.parent.table_header_conf_name)
         hist_params_txt = self.hist_model_win.getParamTableHeader()
         sum_stats_txt = self.getSumStatsTableHeader()
-        if os.path.exists((self.dir+u"/%s"%self.parent.table_header_conf_name).encode(self.fsCoding)):
+        if os.path.exists((u"%s/%s"%(self.dir,self.parent.table_header_conf_name)).encode(self.fsCoding)):
             os.remove((u"%s/%s"%(self.dir,self.parent.table_header_conf_name)).encode(self.fsCoding))
-        f = codecs.open((self.dir+u"/%s"%self.parent.table_header_conf_name).encode(self.fsCoding),'w',"utf-8")
+        f = codecs.open((u"%s/%s"%(self.dir,self.parent.table_header_conf_name)).encode(self.fsCoding),'w',"utf-8")
         f.write("scenario%s%s"%(hist_params_txt,sum_stats_txt))
         f.close()
 
@@ -461,10 +461,10 @@ class ProjectSnp(ProjectReftable):
         res += statsdesc
         res += "\n"
 
-        if os.path.exists((self.dir+u"/%s"%self.parent.gen_conf_name).encode(self.fsCoding)):
+        if os.path.exists((u"%s/%s"%(self.dir,self.parent.gen_conf_name)).encode(self.fsCoding)):
             os.remove((u"%s/%s" % (self.dir,self.parent.gen_conf_name)).encode(self.fsCoding))
 
-        f = codecs.open((self.dir+u"/%s"%self.parent.gen_conf_name).encode(self.fsCoding),'w',"utf-8")
+        f = codecs.open((u"%s/%s"%(self.dir,self.parent.gen_conf_name)).encode(self.fsCoding),'w',"utf-8")
         f.write(res)
         f.close()
 

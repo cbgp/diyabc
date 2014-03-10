@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import sys
+import sys, codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -16,7 +16,7 @@ from utils.cbgpUtils import log
 import variables
 from variables import UIPATH
 
-formHistModelDrawn,baseHistModelDrawn = uic.loadUiType("%s/setHistFrame.ui"%UIPATH)
+formHistModelDrawn,baseHistModelDrawn = uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
     """ définition du modèle historique dans le cadre d'une analyse
@@ -97,7 +97,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
                 log(3,"Hiding parameter %s because its value is fixed"%name)
 
     def addTheSc(self):
-        
+
         # creation de la groupbox a ajouter
         groupBox = QtGui.QGroupBox(self.ui.scScrollContent)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)

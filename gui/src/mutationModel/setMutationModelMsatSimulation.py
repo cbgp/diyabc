@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -7,7 +8,7 @@ from PyQt4 import uic
 import variables
 from variables import UIPATH
 
-formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed = uic.loadUiType("%s/setMutationModelMsat.ui"%UIPATH)
+formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed = uic.loadUiType((u"%s/setMutationModelMsat.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetMutationModelMsatSimulation(formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed):
     """ Classe qui utilise le fichier graphique des SetMutationModelMsat.
@@ -73,14 +74,14 @@ class SetMutationModelMsatSimulation(formSetMutationModelMsatFixed,baseSetMutati
                             self.ui.ilmrShapeEdit : "Shape of individual locus mutation rate",
 
                             self.ui.mcpMinEdit : "Mean coefficient P",
-                                             
+
                             self.ui.ilcpMinEdit :"Min of individual locus coefficient P",
                             self.ui.ilcpMaxEdit :"Max of individual locus coefficient P",
-                            self.ui.ilcpMeanEdit:"Mean of individual locus coefficient P", 
+                            self.ui.ilcpMeanEdit:"Mean of individual locus coefficient P",
                             self.ui.ilcpShapeEdit:"Shape of individual locus coefficient P",
-                                             
+
                             self.ui.msrMinEdit : "Mean SNI rate",
-                                             
+
                             self.ui.ilsrMinEdit :"Min of individual locus SNI rate",
                             self.ui.ilsrMaxEdit :"Max of individual locus SNI rate",
                             self.ui.ilsrMeanEdit :"Mean of individual locus SNI rate",
@@ -89,22 +90,22 @@ class SetMutationModelMsatSimulation(formSetMutationModelMsatFixed,baseSetMutati
         # [doit_etre_non_vide , doit_être_float, doit être > 0]
         self.constraints_dico = { self.ui.mmrMinEdit : [1,1,1],
 
-                           self.ui.ilmrMinEdit : [1,1,1],  
-                           self.ui.ilmrMaxEdit : [1,1,1], 
-                           self.ui.ilmrMeanEdit : [1,0,0], 
+                           self.ui.ilmrMinEdit : [1,1,1],
+                           self.ui.ilmrMaxEdit : [1,1,1],
+                           self.ui.ilmrMeanEdit : [1,0,0],
                            self.ui.ilmrShapeEdit : [1,1,0],
 
-                           self.ui.mcpMinEdit : [1,1,0],   
+                           self.ui.mcpMinEdit : [1,1,0],
 
-                           self.ui.ilcpMinEdit : [1,1,0],  
-                           self.ui.ilcpMaxEdit : [1,1,0], 
-                           self.ui.ilcpMeanEdit : [1,0,0], 
+                           self.ui.ilcpMinEdit : [1,1,0],
+                           self.ui.ilcpMaxEdit : [1,1,0],
+                           self.ui.ilcpMeanEdit : [1,0,0],
                            self.ui.ilcpShapeEdit : [1,1,0],
 
-                           self.ui.msrMinEdit : [1,1,0],   
+                           self.ui.msrMinEdit : [1,1,0],
 
-                           self.ui.ilsrMinEdit : [1,1,0],  
-                           self.ui.ilsrMaxEdit : [1,1,0],  
+                           self.ui.ilsrMinEdit : [1,1,0],
+                           self.ui.ilsrMaxEdit : [1,1,0],
                            self.ui.ilsrMeanEdit : [1,0,0],
                            self.ui.ilsrShapeEdit : [1,1,0]}
 
@@ -113,7 +114,7 @@ class SetMutationModelMsatSimulation(formSetMutationModelMsatFixed,baseSetMutati
         self.ui.msrLabel.setText("%s (3)"%self.ui.msrLabel.text())
         self.ui.ilcpLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilcpLabel.text())
         self.ui.ilsrLabel.setText("%s\n(shape of the gamma)\n(1)"%self.ui.ilsrLabel.text())
-        self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0)) 
+        self.ui.ilmrLabel.setMinimumSize(QtCore.QSize(150,0))
         self.ui.ilcpLabel.setMinimumSize(QtCore.QSize(150,0))
         self.ui.ilsrLabel.setMinimumSize(QtCore.QSize(150,0))
 

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import output
+import sys, codecs, traceback
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -11,12 +13,11 @@ from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from utils.visualizescenario import *
 from utils.data import *
-import output
 from utils.cbgpUtils import log
 import variables
 from variables import UIPATH
 
-formGenData,baseGenData = uic.loadUiType("%s/setGenData.ui"%UIPATH)
+formGenData,baseGenData = uic.loadUiType((u"%s/setGenData.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetGeneticData(formGenData,baseGenData):
     """ Frame qui est créée pour faire des groupes de locus,
@@ -72,7 +73,7 @@ class SetGeneticData(formGenData,baseGenData):
 
     def fillLocusTableFromData(self):
         """ rempli le tableau des locus en consultant l'instance de Data
-        On ne peut pas le faire à l'instanciation de l'objet SetGeneticData car on a pas 
+        On ne peut pas le faire à l'instanciation de l'objet SetGeneticData car on a pas
         encore lu le fichier de conf dans le cas d'un load project
         """
         data = self.parent.data
@@ -346,7 +347,7 @@ class SetGeneticData(formGenData,baseGenData):
 
     def getNbSumStats(self):
         """ retourne le nombre total de summary statistics (nb de cases cochées)
-        """ 
+        """
         nb_sum_stats = 0
         for box in self.groupList:
             if "Microsatellites" in str(box.title()):

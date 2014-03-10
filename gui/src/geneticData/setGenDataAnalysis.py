@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-import codecs
+import sys, codecs, traceback
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from setGenData import SetGeneticData
@@ -24,6 +24,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
         super(SetGeneticDataAnalysis,self).__init__(parent)
 
         self.analysis = analysis
+        self.fsCoding = sys.getfilesystemencoding()
         self.analysisFrame.show()
         self.analysisNameLabel.setText(self.analysis.name)
 
@@ -244,10 +245,10 @@ class SetGeneticDataAnalysis(SetGeneticData):
     def writeGeneticConfFromGui(self):
         """ on ecrit l'etat actuel des genetic data dans conf.gen.tmp
         """
-        if os.path.exists(self.parent.dir+"/%s"%self.parent.gen_conf_name):
-            os.remove("%s/%s"%(self.parent.dir,self.parent.gen_conf_name))
+        if os.path.exists((u"%s/%s"%(self.parent.dir,self.parent.gen_conf_name)).encode(self.fsCoding)):
+            os.remove((u"%s/%s"%(self.parent.dir,self.parent.gen_conf_name)).encode(self.fsCoding))
 
-        f = codecs.open(self.parent.dir+"/%s"%self.parent.gen_conf_name,'w',"utf-8")
+        f = codecs.open((u"%s/%s"%(self.parent.dir,self.parent.gen_conf_name)).encode(self.fsCoding),'w',"utf-8")
         # partie description des locus
         f.write("loci description (%i)\n"%self.nbLocusGui)
         data = self.parent.data
@@ -313,9 +314,9 @@ class SetGeneticDataAnalysis(SetGeneticData):
         """
         # de toute façon, on rempli le tableau de locus
         #self.fillLocusTableFromData()
-        if os.path.exists(self.parent.dir):
-            if os.path.exists("%s/%s"%(self.parent.dir,self.parent.gen_conf_name)):
-                f = codecs.open("%s/%s"%(self.parent.dir,self.parent.gen_conf_name),"rU","utf-8")
+        if os.path.exists(str(self.parent.dir).encode(self.fsCoding)):
+            if os.path.exists((u"%s/%s"%(self.parent.dir,self.parent.gen_conf_name)).encode(self.fsCoding)):
+                f = codecs.open((u"%s/%s"%(self.parent.dir,self.parent.gen_conf_name)).encode(self.fsCoding),"rU","utf-8")
                 lines = f.readlines()
                 nloc = int(lines[0].split('(')[1].split(')')[0])
                 # determination du nombre de groupes

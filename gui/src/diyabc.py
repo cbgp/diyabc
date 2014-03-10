@@ -8,7 +8,7 @@
 
 from datetime import datetime
 import shutil,traceback
-import sys
+import sys, codecs
 import os
 # les .app démarrent python avec '/' comme cwd
 if "darwin" in sys.platform and ".app/" in sys.argv[0]:
@@ -52,7 +52,7 @@ if "win" in sys.platform and "darwin" not in sys.platform:
 # global variable in oder to activate what's this functionality
 ACTIVATE_WHAT_S_THIS = False
 
-formDiyabc,baseDiyabc = uic.loadUiType("%s/diyabc.ui"%UIPATH)
+formDiyabc,baseDiyabc = uic.loadUiType((u"%s/diyabc.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 ## @class Diyabc
 # @brief Classe principale, fenêtre principale

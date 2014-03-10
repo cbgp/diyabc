@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -7,7 +8,7 @@ from PyQt4 import uic
 import variables
 from variables import UIPATH
 
-formViewAnalysisParameters,baseViewAnalysisParameters = uic.loadUiType("%s/viewAnalysisParameters.ui"%UIPATH)
+formViewAnalysisParameters,baseViewAnalysisParameters = uic.loadUiType((u"%s/viewAnalysisParameters.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParameters):
     def __init__(self,parent,analysis):
@@ -120,7 +121,7 @@ class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParamete
         if row == 0 and col == 1:
             val = str(self.ui.tableWidget.item(0,1).text())
             self.parent.changeAnalysisName(self.analysis,val)
-        
+
     def addRow(self,name,value,editable=False):
         self.ui.tableWidget.insertRow(self.ui.tableWidget.rowCount())
         self.ui.tableWidget.setItem(self.ui.tableWidget.rowCount()-1,0,QTableWidgetItem("%s"%name))

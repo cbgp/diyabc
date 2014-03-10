@@ -13,7 +13,7 @@ from utils.matplotlibCanvas import *
 import variables
 from variables import UIPATH
 
-formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult = uic.loadUiType("%s/drawScenarioFrame.ui"%UIPATH)
+formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult = uic.loadUiType((u"%s/drawScenarioFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class DrawComparisonAnalysisResult(formDrawComparisonAnalysisResult,baseDrawComparisonAnalysisResult):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse

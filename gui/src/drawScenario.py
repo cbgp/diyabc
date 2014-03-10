@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os,traceback
+import os,traceback, codecs
 import shutil, sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -11,7 +11,7 @@ from utils.cbgpUtils import log
 import variables
 from variables import UIPATH
 
-formDrawScenario,baseDrawScenario = uic.loadUiType("%s/drawScenarioFrame.ui"%UIPATH)
+formDrawScenario,baseDrawScenario = uic.loadUiType((u"%s/drawScenarioFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class DrawScenario(formDrawScenario,baseDrawScenario):
     """ Classe pour créer une fenêtre à l'intérieur de laquelle on dessine les scénarios (valides car déjà vérifiés)

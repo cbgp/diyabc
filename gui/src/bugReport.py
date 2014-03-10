@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -9,7 +10,7 @@ import variables
 from variables import VERSION,VERSION_DATE,UIPATH
 import urllib, urllib2
 
-formBugReport,baseBugReport= uic.loadUiType("%s/bugReport.ui"%UIPATH)
+formBugReport,baseBugReport= uic.loadUiType((u"%s/bugReport.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class BugReport(formBugReport,baseBugReport):
     """ Fenetre de definition d'un rapport de bug

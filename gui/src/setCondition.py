@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -7,7 +8,7 @@ from PyQt4 import uic
 import variables
 from variables import UIPATH
 
-formSetCondition,baseSetCondition= uic.loadUiType("%s/setCondition.ui"%UIPATH)
+formSetCondition,baseSetCondition= uic.loadUiType((u"%s/setCondition.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetCondition(formSetCondition,baseSetCondition):
     """ Fenetre de definition d'une condition

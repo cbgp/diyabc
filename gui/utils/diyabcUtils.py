@@ -4,20 +4,20 @@
 # @author Julien Veyssier
 #
 #     - readRefTableSize : extract the record number of a DIYABC binary reference
-#       table 
+#       table
 #     - readNbRecordsOfScenario : extract the record number which concern a
 #       specific scenario
 
-import array
+import array, sys, codecs
 import os, os.path
 
 def readRefTableSize(reftablefile):
     """ @rtype: int
     @return: the record number in binary reftable header
     """
-    if os.path.exists(reftablefile):
+    if os.path.exists(reftablefile.encode(sys.getfilesystemencoding())):
         binint = array.array('i')
-        f = open(reftablefile,'rb')
+        f = open(reftablefile.encode(sys.getfilesystemencoding()),'rb')
         binint.read(f,1)
         f.close()
         rtSize = binint[0]
@@ -30,9 +30,9 @@ def readNbRecordsOfScenario(reftablefile,numSc):
     @return: record number of a given scenario
     in binary reftable header
     """
-    if os.path.exists(reftablefile):
+    if os.path.exists(reftablefile.encode(sys.getfilesystemencoding())):
         binint = array.array('i')
-        f = open(reftablefile,'rb')
+        f = open(reftablefile.encode(sys.getfilesystemencoding()),'rb')
         binint.read(f,numSc+2)
         f.close()
         nbRec = binint[-1]

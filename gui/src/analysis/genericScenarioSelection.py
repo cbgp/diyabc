@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -7,7 +8,7 @@ from utils.cbgpUtils import log
 import variables
 from variables import UIPATH
 
-formGenericScenarioSelection,baseGenericScenarioSelection = uic.loadUiType("%s/genericScenarioSelection.ui"%UIPATH)
+formGenericScenarioSelection,baseGenericScenarioSelection = uic.loadUiType((u"%s/genericScenarioSelection.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioSelection):
     """ Sélection du scenario dans la cadre d'une analyse de type comparison ou estimate
@@ -49,7 +50,7 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
         self.ui.analysisNameLabel.setText(self.analysis.name)
 
     def restoreAnalysisValues(self):
-        """ Si on est en edition d'analyse, elle possède déjà des valeurs que 
+        """ Si on est en edition d'analyse, elle possède déjà des valeurs que
         l'on doit afficher
         """
         if self.analysis.candidateScList != []:

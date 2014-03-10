@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, sys
+import os, sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -9,7 +9,7 @@ from utils.cbgpUtils import log
 import variables
 from variables import UIPATH
 
-formLogFile,baseLogFile = uic.loadUiType("%s/showLogFile.ui"%UIPATH)
+formLogFile,baseLogFile = uic.loadUiType((u"%s/showLogFile.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class ShowLogFile(formLogFile,baseLogFile):
     """ Classe pour consulter les logs dans l'interface

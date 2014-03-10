@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 
 import os
-import codecs
+import sys, codecs, traceback
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
+from utils.visualizescenario import *
+from utils.data import *
+from utils.cbgpUtils import log
 from setGenData import SetGeneticData
 from mutationModel.setMutationModelMsatSimulation import SetMutationModelMsatSimulation
 from mutationModel.setMutationModelSequencesSimulation import SetMutationModelSequencesSimulation
-from utils.visualizescenario import *
-from utils.data import *
 import output
-from utils.cbgpUtils import log
 
 class SetGeneticDataSimulation(SetGeneticData):
     """ set genetic data pour une simulation de données
     """
     def __init__(self,parent=None):
         super(SetGeneticDataSimulation,self).__init__(parent)
+        self.fsCoding = sys.getfilesystemencoding()
 
         self.ui.tableWidget.setColumnWidth(0,90)
         self.ui.tableWidget.setColumnWidth(1,40)
@@ -255,10 +257,10 @@ class SetGeneticDataSimulation(SetGeneticData):
     def writeGeneticConfFromGui(self):
         """ on ecrit l'etat actuel des genetic data dans conf.gen.tmp
         """
-        if os.path.exists(self.parent.dir+"/%s"%self.parent.parent.gen_conf_name):
-            os.remove("%s/%s" % (self.parent.dir,self.parent.parent.gen_conf_name))
+        if os.path.exists((u"%s/%s"%(self.parent.dir,self.parent.parent.gen_conf_name)).encode(self.fsCoding)):
+            os.remove((u"%s/%s" % (self.parent.dir,self.parent.parent.gen_conf_name)).encode(self.fsCoding))
 
-        f = codecs.open(self.parent.dir+"/%s"%self.parent.parent.gen_conf_name,'w',"utf-8")
+        f = codecs.open((u"%s/%s"%(self.parent.dir,self.parent.parent.gen_conf_name)).encode(self.fsCoding),'w',"utf-8")
         # partie description des locus
         f.write("loci description (%i)\n"%self.nbLocusGui)
         data = self.parent.data
@@ -324,8 +326,8 @@ class SetGeneticDataSimulation(SetGeneticData):
         # de toute façon, on rempli le tableau de locus
         #self.fillLocusTableFromData()
         if os.path.exists(self.parent.dir):
-            if os.path.exists("%s/%s"%(self.parent.dir,self.parent.parent.gen_conf_name)):
-                f = codecs.open("%s/%s"%(self.parent.dir,self.parent.parent.gen_conf_name),"rU","utf-8")
+            if os.path.exists((u"%s/%s"%(self.parent.dir,self.parent.parent.gen_conf_name)).encode(self.fsCoding)):
+                f = codecs.open((u"%s/%s"%(self.parent.dir,self.parent.parent.gen_conf_name)).encode(self.fsCoding),"rU","utf-8")
                 lines = f.readlines()
                 nloc = int(lines[0].split('(')[1].split(')')[0])
                 # determination du nombre de groupes

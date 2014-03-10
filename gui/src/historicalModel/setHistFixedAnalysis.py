@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import sys
+import sys, codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -16,7 +16,7 @@ from analysis.setupComparisonConfidence import SetupComparisonConfidence
 import variables
 from variables import UIPATH
 
-formHistModelFixed,baseHistModelFixed= uic.loadUiType("%s/setHistFrame.ui"%UIPATH)
+formHistModelFixed,baseHistModelFixed= uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class HistFixed(formHistModelFixed,baseHistModelFixed):
     """ définition du modèle historique dans le cadre d'une analyse

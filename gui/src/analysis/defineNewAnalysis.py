@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -12,7 +13,7 @@ import output
 import variables
 from variables import UIPATH
 
-formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType("%s/defineAnalysis.ui"%UIPATH)
+formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType((u"%s/defineAnalysis.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
     """ écran de définition d'une nouvelle analyse. demande
@@ -160,7 +161,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
     def validate(self):
         """ on poursuit la définition de l'analyse
         """
-        # on passe à la suite seulement si le nom est valide ou 
+        # on passe à la suite seulement si le nom est valide ou
         # que l'on a une analyse à éditer. Ne marche que si les 'OU' sont
         # des 'OU SINON' et les 'ET' des 'ET ALORS'
         if self.analysis_to_edit != None or self.checkName():

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
@@ -8,7 +9,7 @@ from historicalModel.setHistFixedAnalysis import HistFixed
 import variables
 from variables import UIPATH
 
-formBiasScenarioSelection,baseBiasScenarioSelection = uic.loadUiType("%s/biasScenarioSelection.ui"%UIPATH)
+formBiasScenarioSelection,baseBiasScenarioSelection = uic.loadUiType((u"%s/biasScenarioSelection.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenarioSelection):
     """ Sélection du scenario dans la cadre d'une analyse de type bias ou confidence

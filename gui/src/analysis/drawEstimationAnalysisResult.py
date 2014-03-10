@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os, sys
 import codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -14,7 +14,7 @@ import output
 import variables
 from variables import UIPATH
 
-formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult = uic.loadUiType("%s/drawScenarioFrame.ui"%UIPATH)
+formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult = uic.loadUiType((u"%s/drawScenarioFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse

@@ -32,7 +32,7 @@ class AutoPreferences(QFrame):
 
     To use an instance of this class, create a hashtable describing the structure
     of your settings and call the 'digest' method to initialize the data and the
-    QFrame shape. For example : 
+    QFrame shape. For example :
 
     >>> myconfStructure = {
     ...     category_1 : [
@@ -53,10 +53,10 @@ class AutoPreferences(QFrame):
         - "check" : labeled check box
         - "lineEdit" : labeled lineEdit
         - "combo" : labeled combo box
-        - "pathEdit : labeled line edit with a 'browse' button to select a path with 
+        - "pathEdit : labeled line edit with a 'browse' button to select a path with
           a Qt file dialog
 
-    It is of course possible to inherit from this class to add more complicated 
+    It is of course possible to inherit from this class to add more complicated
     functionnalities like handling field change events or adding complex settings
     which call external views...
     """
@@ -70,7 +70,7 @@ class AutoPreferences(QFrame):
         # liste pour retenir l'ordre des catégories
         self.categoryList = []
 
-        self.configFile = confFilePath
+        self.configFile = confFilePath.encode(sys.getfilesystemencoding())
         self.config = ConfigObj(self.configFile)
 
         self.createWidgets()
@@ -291,7 +291,7 @@ class AutoPreferences(QFrame):
             exec('self.frame_%s_%s.setVisible(False)'%(catname,propname))
         if readOnly :
             exec('self.%sTextEdit.setReadOnly(True)'%(propname))
-            
+
         #exec('self.%sTextEdit.setPlainText("""%s""")'%(propname,default_value))
         for l in default_value.splitlines() :
             #l = l + "\n"
@@ -365,7 +365,7 @@ class AutoPreferences(QFrame):
                 elif proptype == "lineEdit":
                     exec('val_to_save = str(self.ui.%sEdit.text())'%propname)
                 elif proptype == "textEdit":
-                    exec('val_to_save = str(self.ui.%sTextEdit.toPlainText())'%propname)                    
+                    exec('val_to_save = str(self.ui.%sTextEdit.toPlainText())'%propname)
                 elif proptype == "path":
                     exec('val_to_save = str(self.ui.%sPathEdit.text())'%propname)
                 elif proptype == "combo":
@@ -399,7 +399,7 @@ class AutoPreferences(QFrame):
                         elif proptype == "lineEdit":
                             exec('self.ui.%sEdit.setText(str(val).strip())'%propname)
                         elif proptype == "textEdit":
-                            exec('self.ui.%sTextEdit.setText(str(val))'%propname)                            
+                            exec('self.ui.%sTextEdit.setText(str(val))'%propname)
                         elif proptype == "path":
                             exec('self.ui.%sPathEdit.setText(str(val).strip())'%propname)
                         elif proptype == "combo":
@@ -420,4 +420,4 @@ class AutoPreferences(QFrame):
 
     def allValid(self):
         return True
-        
+

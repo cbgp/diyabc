@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import sys
+import sys, codecs
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -9,7 +9,7 @@ from PyQt4 import uic
 import variables
 from variables import UIPATH
 
-formSetMutationModelMsat,baseSetMutationModelMsat = uic.loadUiType("%s/setMutationModelMsat.ui"%UIPATH)
+formSetMutationModelMsat,baseSetMutationModelMsat = uic.loadUiType((u"%s/setMutationModelMsat.ui"%UIPATH).encode(sys.getfilesystemencoding()))
 
 class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
     """ définition du modèle mutationnel pour les microsats
@@ -56,18 +56,18 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
                             self.ui.mcpMinEdit : "Min of mean coefficient P",
                             self.ui.mcpMaxEdit : "Max of mean coefficient P",
                             self.ui.mcpMeanEdit :"Mean of mean coefficient P",
-                            self.ui.mcpShapeEdit:"Shape of mean coefficient P", 
-                                             
+                            self.ui.mcpShapeEdit:"Shape of mean coefficient P",
+
                             self.ui.ilcpMinEdit :"Min of individual locus coefficient P",
                             self.ui.ilcpMaxEdit :"Max of individual locus coefficient P",
-                            self.ui.ilcpMeanEdit:"Mean of individual locus coefficient P", 
+                            self.ui.ilcpMeanEdit:"Mean of individual locus coefficient P",
                             self.ui.ilcpShapeEdit:"Shape of individual locus coefficient P",
-                                             
+
                             self.ui.msrMinEdit : "Min of mean SNI rate",
                             self.ui.msrMaxEdit : "Max of mean SNI rate",
                             self.ui.msrMeanEdit :"Mean of mean SNI rate",
                             self.ui.msrShapeEdit :"Shape of mean SNI rate",
-                                             
+
                             self.ui.ilsrMinEdit :"Min of individual locus SNI rate",
                             self.ui.ilsrMaxEdit :"Max of individual locus SNI rate",
                             self.ui.ilsrMeanEdit :"Mean of individual locus SNI rate",
@@ -79,28 +79,28 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
                            self.ui.mmrMeanEdit : [1,0,0],
                            self.ui.mmrShapeEdit : [1,1,1],
 
-                           self.ui.ilmrMinEdit : [1,1,1],  
-                           self.ui.ilmrMaxEdit : [1,1,1], 
-                           self.ui.ilmrMeanEdit : [1,0,0], 
+                           self.ui.ilmrMinEdit : [1,1,1],
+                           self.ui.ilmrMaxEdit : [1,1,1],
+                           self.ui.ilmrMeanEdit : [1,0,0],
                            self.ui.ilmrShapeEdit : [1,1,1],
 
-                           self.ui.mcpMinEdit : [1,1,1],   
-                           self.ui.mcpMaxEdit : [1,1,1],   
-                           self.ui.mcpMeanEdit : [1,0,0],  
-                           self.ui.mcpShapeEdit : [1,1,1], 
+                           self.ui.mcpMinEdit : [1,1,1],
+                           self.ui.mcpMaxEdit : [1,1,1],
+                           self.ui.mcpMeanEdit : [1,0,0],
+                           self.ui.mcpShapeEdit : [1,1,1],
 
-                           self.ui.ilcpMinEdit : [1,1,1],  
-                           self.ui.ilcpMaxEdit : [1,1,1], 
-                           self.ui.ilcpMeanEdit : [1,0,0], 
+                           self.ui.ilcpMinEdit : [1,1,1],
+                           self.ui.ilcpMaxEdit : [1,1,1],
+                           self.ui.ilcpMeanEdit : [1,0,0],
                            self.ui.ilcpShapeEdit : [1,1,1],
 
-                           self.ui.msrMinEdit : [1,1,1],   
-                           self.ui.msrMaxEdit : [1,1,1],   
-                           self.ui.msrMeanEdit : [1,0,0],  
-                           self.ui.msrShapeEdit : [1,1,1], 
+                           self.ui.msrMinEdit : [1,1,1],
+                           self.ui.msrMaxEdit : [1,1,1],
+                           self.ui.msrMeanEdit : [1,0,0],
+                           self.ui.msrShapeEdit : [1,1,1],
 
-                           self.ui.ilsrMinEdit : [1,1,1],  
-                           self.ui.ilsrMaxEdit : [1,1,1],  
+                           self.ui.ilsrMinEdit : [1,1,1],
+                           self.ui.ilsrMaxEdit : [1,1,1],
                            self.ui.ilsrMeanEdit : [1,0,0],
                            self.ui.ilsrShapeEdit : [1,1,1]}
 
@@ -117,7 +117,7 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
             self.msrGamma(True)
         else:
             self.msrNoGamma(True)
-    
+
     def mmrGamma(self,act):
         """ [mmr] désactive mean et shape si gamma est coché
         """
@@ -175,7 +175,7 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
         else:
             law = "GA"
         result += "MEANMU %s[%s,%s,%s,%s]\n"%(law,mmrMin,mmrMax,mmrMean,mmrShape)
-        
+
         ilmrMin =    str(self.ui.ilmrMinEdit.text())
         ilmrMax =    str(self.ui.ilmrMaxEdit.text())
         ilmrMean =   u'%s'%(self.ui.ilmrMeanEdit.text())
@@ -244,7 +244,7 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
 
         law = "GA"
         result += "GAMSNI %s[%s,%s,%s,%s]\n"%(law,ilsrMin,ilsrMax,ilsrMean,ilsrShape)
-        
+
         return result
 
     def setMutationConf(self,lines):
@@ -257,19 +257,19 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
         #if mmrValues[3] == "2":
         #    mmrValues[3] = ""
         self.ui.mmrMinEdit.setText(mmrValues[0])
-        self.ui.mmrMaxEdit.setText(mmrValues[1])    
-        self.ui.mmrMeanEdit.setText(mmrValues[2])   
-        self.ui.mmrShapeEdit.setText(mmrValues[3])  
+        self.ui.mmrMaxEdit.setText(mmrValues[1])
+        self.ui.mmrMeanEdit.setText(mmrValues[2])
+        self.ui.mmrShapeEdit.setText(mmrValues[3])
         law = lines[0].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
             self.ui.mmrUnifRadio.setChecked(True)
-        elif law == "LU": 
+        elif law == "LU":
             self.ui.mmrLogRadio.setChecked(True)
         else:
             self.ui.mmrGammaRadio.setChecked(True)
-        
+
         ilmrValues = lines[1].split('[')[1].split(']')[0].split(',')
         if ilmrValues[2] == "-9":
             ilmrValues[2] = ""
@@ -286,15 +286,15 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
         #if mcpValues[3] == "2":
         #    mcpValues[3] = ""
         self.ui.mcpMinEdit.setText(mcpValues[0])
-        self.ui.mcpMaxEdit.setText(mcpValues[1])    
-        self.ui.mcpMeanEdit.setText(mcpValues[2])   
-        self.ui.mcpShapeEdit.setText(mcpValues[3])  
+        self.ui.mcpMaxEdit.setText(mcpValues[1])
+        self.ui.mcpMeanEdit.setText(mcpValues[2])
+        self.ui.mcpShapeEdit.setText(mcpValues[3])
         law = lines[2].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
             self.ui.mcpUnifRadio.setChecked(True)
-        elif law == "LU": 
+        elif law == "LU":
             self.ui.mcpLogRadio.setChecked(True)
         else:
             self.ui.mcpGammaRadio.setChecked(True)
@@ -315,15 +315,15 @@ class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
         #if msrValues[3] == "2":
         #    msrValues[3] = ""
         self.ui.msrMinEdit.setText(msrValues[0])
-        self.ui.msrMaxEdit.setText(msrValues[1])    
-        self.ui.msrMeanEdit.setText(msrValues[2])   
-        self.ui.msrShapeEdit.setText(msrValues[3])  
+        self.ui.msrMaxEdit.setText(msrValues[1])
+        self.ui.msrMeanEdit.setText(msrValues[2])
+        self.ui.msrShapeEdit.setText(msrValues[3])
         law = lines[4].split('[')[0].split()[-1]
 
         #print "law:",law
         if law == "UN":
             self.ui.msrUnifRadio.setChecked(True)
-        elif law == "LU": 
+        elif law == "LU":
             self.ui.msrLogRadio.setChecked(True)
         else:
             self.ui.msrGammaRadio.setChecked(True)

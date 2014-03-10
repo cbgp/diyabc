@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import os.path,subprocess,time,sys, codecs
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import os.path,subprocess,time,sys
 
 class LauncherThread(QThread):
     """ Manage the execution of an external executable and
@@ -37,6 +37,7 @@ class LauncherThread(QThread):
         super(LauncherThread,self).__init__()
         self.name = name
         self.cmd_args_list = cmd_args_list
+        self.fsCoding = sys.getfilesystemencoding()
         self.cmd_args_list_quoted = list(self.cmd_args_list)
         for i in range(len(self.cmd_args_list_quoted)):
             if ";" in self.cmd_args_list_quoted[i] or " " in self.cmd_args_list_quoted[i] or ":" in self.cmd_args_list_quoted[i]:
@@ -77,8 +78,8 @@ class LauncherThread(QThread):
     def readProgress(self):
         """ read progress file and emit a signal if its content has changed
         """
-        if os.path.exists(self.progressfile_path):
-            a = open(self.progressfile_path,"rU")
+        if os.path.exists(self.progressfile_path.encode(self.fsCoding)):
+            a = open(self.progressfile_path.encode(self.fsCoding),"rU")
             content = a.read()
             a.close()
             # we progressed !
@@ -94,8 +95,8 @@ class LauncherThread(QThread):
         """ read progress file and returns its first line
         """
         problem = ""
-        if os.path.exists(self.progressfile_path):
-            a = open(self.progressfile_path,"rU")
+        if os.path.exists(self.progressfile_path.encode(self.fsCoding)):
+            a = open(self.progressfile_path.encode(self.fsCoding),"rU")
             lines = a.readlines()
             a.close()
             if len(lines) > 0:
@@ -138,7 +139,7 @@ class LauncherThread(QThread):
 
     def intervalWatch(self):
         self.log(2,"Beginning interval watch")
-        f = open(self.outfile_path,"w")
+        f = open(self.outfile_path.encode(self.fsCoding),"w")
         if "win" in sys.platform and "darwin" not in sys.platform:
             popen_options = subprocess.STARTUPINFO()
             popen_options.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -157,7 +158,7 @@ class LauncherThread(QThread):
             poll_check = p.poll()
             if poll_check != None:
                 f.close()
-                f = open(self.outfile_path,"rU")
+                f = open(self.outfile_path.encode(self.fsCoding),"rU")
                 lines = f.readlines()
                 f.close()
                 if len(lines) >= 4:
