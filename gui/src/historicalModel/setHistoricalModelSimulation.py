@@ -308,7 +308,7 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
         return result
 
         
-   def checkTimeConditions(self, scenariosList, silent=False):
+    def checkTimeConditions(self, scenariosList, silent=False):
         "look for missing mandatory conditions in scenarios"
         conditionsSet = set([])
         mirror = {"<=":">=", ">=":"<=", '<':'>', '>':'<'}
