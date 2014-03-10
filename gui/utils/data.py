@@ -5,7 +5,7 @@ Created on 24 sept. 2009
 @author: cornuet
 '''
 
-import re,os.path
+import re,os.path, sys, codecs
 from sets import Set
 
 MICMISSING=-9999
@@ -53,6 +53,8 @@ LOC_TYP1   = ('_A','_H','_X','_Y','_M')
 LOCUS_TYPE = ('mic_A','mic_H','mic_X','mic_Y','mic_M','seq_A','seq_H','seq_X','seq_Y','seq_M')
 SLOCUS_TYPE= ('Autosomal diploid microsatellites','Autosomal haploid microsatellites','X-linked microsatellites','Y-linked microsatellites','Mitochondrial microsatellites',
               'Autosomal diploid DNA sequences','Autosomal haploid DNA sequences','X-linked DNA sequences','Y-linked DNA sequences','Mitochondrial DNA sequences')
+
+
 class Locus(object):
     """ doc"""
 
@@ -396,8 +398,8 @@ class Data(object):
                     for indLocusNum, indLocus in enumerate(indLociList) :
                         # microsat
                         if reMicroSat.match(indLocus) :
-                            if len(indLocus) == 3 and loci[indLocusNum]['type'] not in ['<Y>','<H>','<M>'] :
-                                raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, loci number : %s.\n\nFound locus type %s (line %s, name %s) , expecting one of '<Y>','<H>' or '<M>' because locus is coded with only 3 digits !'" \
+                            if len(indLocus) == 3 and loci[indLocusNum]['type'] not in ['<Y>','<H>','<M>', '<X>'] :
+                                raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, loci number : %s, has a single allele : \nThis locus must be defined as '<X>','<M>', <Y> or '<H>' instead of  locus type %s (line %s, name %s)." \
                                         % (self.filename, fileLineNum, popNum+1, indNum+1, indName, indLocusNum+1, loci[indLocusNum]['type'], loci[indLocusNum]['line'], loci[indLocusNum]['name']))
                         # seqs
                         elif reSeqs.match(indLocus) :
@@ -407,8 +409,8 @@ class Data(object):
                                 raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, loci number : %s.\n\n%s" \
                                         % (self.filename, fileLineNum, popNum+1, indNum+1, indName, indLocusNum+1, loci[indLocusNum]['type'], loci[indLocusNum]['line'], loci[indLocusNum]['name'], e))
 
-                            if indLocus.count('[') < 2 and loci[indLocusNum]['type'] not in ['<Y>','<H>','<M>'] :
-                                raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, loci number : %s.\n\nFound locus type %s (line %s, name %s) , expecting one of '<Y>','<H>' or '<M>' because locus is coded with only 1 sequence !'" \
+                            if indLocus.count('[') < 2 and loci[indLocusNum]['type'] not in ['<Y>','<H>','<M>', '<X>'] :
+                                raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, loci number : %s, has a single allele : \nThis locus must be defined as '<X>','<M>', <Y> or '<H>' instead of locus type %s (line %s, name %s)." \
                                         % (self.filename, fileLineNum, popNum+1, indNum+1, indName, indLocusNum+1, loci[indLocusNum]['type'], loci[indLocusNum]['line'], loci[indLocusNum]['name']))
                         else :
                             raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, locus number : %s, locus type : %s, locus name : %s.\n\n Unknown locus format : %s" \
