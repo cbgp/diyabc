@@ -6,7 +6,7 @@
 # @brief Projets pour créer une table de référence Msat et Sequences
 
 import os, os.path, sys
-import codecs
+import codecs, traceback
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from utils.data import Data
@@ -69,6 +69,7 @@ class ProjectMsatSeq(ProjectReftable):
             self.ui.dataFileEdit.setText(name)
             self.dataFileSource = name
         except Exception as e:
+            log(1, traceback.format_exc())
             keep = ""
             if self.ui.dataFileEdit.text() != "":
                 keep = "\n\nThe file was not loaded, nothing was changed"
@@ -188,10 +189,13 @@ class ProjectMsatSeq(ProjectReftable):
                     # comme on a lu le datafile, on peut remplir le tableau de locus dans setGeneticData
                     self.gen_data_win.fillLocusTableFromData()
                 else:
+                    log(1, traceback.format_exc())
                     raise Exception("Impossible to load the datafile (%s) which is possibly malformed"%self.dataFileName)
             else:
+                log(1, traceback.format_exc())
                 raise Exception("Datafile doesn't exist (%s)"%self.dataFileName)
         else:
+            log(1, traceback.format_exc())
             raise Exception("Main conf file not found (%s)"%self.parent.main_conf_name)
 
     def getNbSumStats(self):

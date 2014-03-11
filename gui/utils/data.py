@@ -5,8 +5,9 @@ Created on 24 sept. 2009
 @author: cornuet
 '''
 
-import re,os.path, sys, codecs
+import re,os.path, sys, codecs, traceback
 from sets import Set
+from cbgpUtils import log
 
 MICMISSING=-9999
 SEQMISSING="[]"
@@ -186,8 +187,7 @@ class Data(object):
         "not so quick but very dirty genepop file format tester"
         try :
             #with open(self.filename,'r') as f: read_data = f.read()
-            f = open(self.filename.encode(self.fsCoding),'r')
-            read_data = f.read()
+            f = open(str(self.filename).encode(self.fsCoding),'r')
         except :
             raise IOError , "Error when attempting to read data file %s" % self.filename
         read_data = f.read().strip()
@@ -342,13 +342,13 @@ class Data(object):
         pops = {} # pops[number] = [{'name' : 'xx', 'num' : x , line : x , loci : [locus1, locus2, ...]}, {...},  ]
         try :
             #with open(self.filename,'r') as f: read_data = f.read()
-            f = open(self.filename.encode(self.fsCoding),'r')
-            read_data = f.read()
+            f = open(str(self.filename).encode(self.fsCoding),'r')
         except :
-            raise IOError , "Error when attempting to read data file %s" % self.filename
+            log(1, traceback.format_exc())
+            raise IOError , "Error when attempting to read data file %s : %s" % (self.filename)
         read_data = f.read().strip()
         f.close()
-        p = re.compile("\\s^POP\\s$", re.MULTILINE)
+        p = re.compile("^\\s*POP\\s*$", re.MULTILINE|re.IGNORECASE)
         parts = p.split(read_data)#, re.MULTILINE)
         del read_data
         dataDefLine = parts[0].splitlines()[0]
@@ -371,7 +371,6 @@ class Data(object):
             if not locus or len(Set(locus.groups())) <= 1 :
                 raise NotGenepopFileError("Genepop file : %s\nline : %s, locus line '%s', unknown locus format" \
                                         % (self.filename, locusLineNum+2, locusDefinition))
-
 
         #POPs --------------------------------------
 
@@ -415,8 +414,6 @@ class Data(object):
                             raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s, locus number : %s, locus type : %s, locus name : %s.\n\n Unknown locus format : %s" \
                                         % (self.filename, fileLineNum, popNum+1, indNum+1, indName, indLocusNum+1, loci[indLocusNum]['type'], loci[indLocusNum]['name'], indLocus))
 
-
-
                     # test if number of locus is egual to locus definition
                     if len(indLociList) != len(loci) :
                         raise NotGenepopFileError("Genepop file : %s\nline : %s, pop number : %s, individual number : %s, individual name : %s.\n\nMust have %s loci, found %s" \
@@ -444,11 +441,13 @@ class Data(object):
             self.__test_genepop()
             #self.__test_genepop_ng()
         except NotGenepopFileError as e :
+            log(1, traceback.format_exc())
             raise e
         except :
+            log(1, traceback.format_exc())
             raise Error("Test on genepop format failed. Please check your file format. If all seems normal, send the file or a bug report to support")
 
-        f=open(self.filename.encode(self.fsCoding),'r')
+        f=open(str(self.filename).encode(self.fsCoding),'r')
         read_data = f.read().strip()
         lines = read_data.splitlines()
         f.close()
@@ -660,7 +659,7 @@ class DataSnp():
         sexLocus = []
         locus_type = defaultdict()
         pat = re.compile(r'\s+')
-        f=open(name.encode(self.fsCoding),'r')
+        f=open(str(name).encode(self.fsCoding),'r')
         data = f.read().strip()
         f.close()
         datalines = data.split('\n')
@@ -785,8 +784,8 @@ class DataSnp():
         self.nsample = nbSample
 
 def isSNPDatafile(name):
-    if os.path.exists(name.encode(sys.getfilesystemencoding())):
-        f=open(name.encode(sys.getfilesystemencoding()),'rU')
+    if os.path.exists(str(name).encode(sys.getfilesystemencoding())):
+        f=open(str(name).encode(sys.getfilesystemencoding()),'rU')
         lines=f.readlines()
         f.close()
         if len(lines) > 0:
@@ -809,10 +808,10 @@ if __name__ == "__main__":
     testMsatSeqsFiles = [
                  #"/media/psf/Home/VMshare/louiT1_2013_5_2-1/loui10_new_ghostnat.dat",
                  #"/media/psf/Home/VMshare/example_1_microsat_data_one_pop_with_bottleneck_multisamples_2013_7_19-1/simu_dataset_microsat_one_pop_bottleneck_multisamples_001.mss",
-                 "/media/psf/Home/VMshare/example_2_microsat_sequence_data_complexe_scenarios_ghost_pop_project_2013_7_9-1/toytest2_micro_seq_complexe_001.mss",
+                 #"/media/psf/Home/VMshare/example_2_microsat_sequence_data_complexe_scenarios_ghost_pop_project_2013_7_9-1/toytest2_micro_seq_complexe_001.mss",
                  ]
     testSNPFiles = [
-                "/home/dehneg/P16.snp",
+                #"/home/dehneg/P16.snp",
                  "/media/psf/Home/VMshare/example_3_SNP_data_divergence_and_admixture_project_2013_7_9-1/simu_dataset_test_divergence_admixture_001.snp",
                  ]
 
@@ -824,16 +823,16 @@ if __name__ == "__main__":
         print "file %s loaded" % f
         print "=======================\n"
 
-#     for f in testSNPFiles :
-#         print "\n======================="
-#         print "Start loading %s" % f
-#         plop = DataSnp(f)
-#         print isSNPDatafile(f)
-#         plop.readData()
-#         print plop.nloc
-#         print plop.nloctot
-#         print "file %s loaded" % f
-#         print "=======================\n"
+    for f in testSNPFiles :
+        print "\n======================="
+        print "Start loading %s" % f
+        plop = DataSnp(f)
+        print isSNPDatafile(f)
+        plop.readData()
+        print plop.nloc
+        print plop.nloctot
+        print "file %s loaded" % f
+        print "=======================\n"
 
 
 

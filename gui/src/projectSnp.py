@@ -304,6 +304,7 @@ class ProjectSnp(ProjectReftable):
             self.dataFileSource = name
 
         except Exception as e:
+            log(1, traceback.format_exc())
             keep = ""
             if self.ui.dataFileEdit.text() != "":
                 keep = "\n\nThe file was not loaded, nothing was changed"
