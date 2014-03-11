@@ -400,6 +400,38 @@ void ReftableC::bintotxt2() {
 	this->closefile();
 }
 
+void ReftableC::bintocsv(HeaderC const & header) {
+	enregC enr;
+	int bidon,npm;
+	ofstream f1,f2;
+	string nomfi=path+"reftable.csv";
+	f1.open(nomfi.c_str());
+	nomfi=path+"scenario.txt";
+	f2.open(nomfi.c_str());
+	this->openfile2();
+	cout<<"header.nstat="<<header.nstat<<"\n";
+	for (int i=0;i<header.nstat;i++) {
+		f1<<header.statname[i];
+		if(i<header.nstat-1) f1<<","; 
+		else f1<<"\n";
+	}
+	npm=0;for (int i=0;i<this->nscen;i++) if (npm<this->nparam[i]) npm=this->nparam[i];
+	enr.param = new float[npm];
+	enr.stat = new float[header.nstat];
+	for (int j=0;j<this->nrec;j++) {
+		bidon=this->readrecord(&enr);
+		f2<<enr.numscen<<"\n";
+		for (int i=0;i<header.nstat;i++) {
+			f1<<enr.stat[i];
+			if(i<header.nstat-1) f1<<","; 
+			else f1<<"\n";
+		}
+	}
+	f1.close();
+	f2.close();
+	this->closefile();
+}
+
 void ReftableC::concat() {
 	cout<<"debut de concat\n";
 	char *reftabname,*reftab,*reflogname,*num,*buffer;

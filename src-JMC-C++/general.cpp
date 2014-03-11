@@ -156,7 +156,7 @@ enregC *enreg,*enregOK;
 //char *;
 string headerfilename,headersimfilename,reftablefilename, datafilename, statobsfilename,reftablelogfilename,path,ident,stopfilename,progressfilename,scsufilename;
 string reftabscen;
-bool multithread=false;
+bool multithread=false,randomforest=false;
 int nrecneeded,nenr=100,nenrOK,*neOK,*netot;
 int debuglevel=0;
 int num_threads=0;
@@ -246,7 +246,7 @@ try {
     string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar, rngpar;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xy")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xyl:")) !=-1) {
 	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
 
@@ -261,7 +261,7 @@ try {
             cout << "-t <required number of threads>\n";
             cout << "-w <computer's number if in a cluster (0 by default) >\n";
             cout << "          (each computer in the cluster is numbered between 0 and the maximal number of computers in the cluster.)\n";
-			
+			cout << "-l for producing a csv reftable file (reftable.csv) and a scenario file (scenario.txt) used by program rf\n";
 			cout << "-x for translating a reftable.bin in reftable.txt\n";
 			cout << "-y for translating a reftable.bin in reftable.txt writing summary statistics before parameters\n";
 			cout << "\n-z <path/RNGfilename.bin> write the number of streams of the RNG into path/RNGfilename_cores.txt\n";
@@ -407,6 +407,13 @@ try {
             action='k';
             break;
 
+        case 'l' :
+            nrecneeded = atoi(optarg);
+            action='r';
+            randomforest=true;
+			cout<<"simulating for random forest\n";
+            break;
+
         case 'q' :
 			action='q';
             break;
@@ -514,7 +521,7 @@ try {
                         	  throw std::runtime_error("cannot create reftable file\n");
                         	  //cout<<"cannot create reftable file\n"; exit(1);
                           }
-                          cout<<"DEBUT  nrecneeded="<<nrecneeded<<"   rt.nrec="<<rt.nrec<<"\n";
+                          cout<<"DEBUT  nrecneeded="<<nrecneeded<<"   rt.nrec="<<rt.nrec<<"    rt.nstat="<<rt.nstat<<"\n";
                           if (nrecneeded>rt.nrec) {
                                 rt.openfile();
                                 enreg = new enregC[nenr];
@@ -621,6 +628,9 @@ try {
                                   //cout<<"apres delete [] enreg\n";
 								  //ps.libere(nenr);
                                   rt.closefile();
+								  if (randomforest) {
+									  cout<<"ecriture du fichier csv  rt.nstat = "<<rt.nstat<<"\n";
+									  rt.bintocsv(header);}
 								  //cout<<"apres rt.closefile\n";
                                   if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}
                                   //cout<<"avant header.libere\n";

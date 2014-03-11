@@ -44,6 +44,7 @@ extern int debuglevel;
 extern string * stat_type;
 extern int* stat_num;
 extern string path;
+extern bool randomforest;
 ParticleC particuleobs;
 
 /**
@@ -679,6 +680,252 @@ int HeaderC::readHeaderGroupPrior(ifstream & file){
 	return 0;
 }
 
+int HeaderC::readHeaderAllStat(ifstream & file) {
+	string s1, *ss, *ss1;
+	int j, k, nss, nss1, gr,nstatgr,nsamp=this->dataobs.nsample;
+	cout<<"debut de readHeaderAllStat\n";
+	cout<<"nsamp="<<nsamp<<"    "<<"nstat="<<this->nstat<<"\n";
+//////   Lecture bidon du header
+	getline(file,s1);cout<<s1<<"\n";       //ligne vide
+	do {getline(file,s1);cout<<s1<<"\n";} while (s1!="");
+	getline(file,this->entete);     //ligne entete
+	this->entetehist=this->entete.substr(0,this->entete.length()-14*(nparamut+nstat));
+	if (nparamut>0) this->entetemut=this->entete.substr(this->entetehist.length(),14*nparamut);else this->entetemut="";
+	cout<<this->entete<<"\n";
+	
+	this->nstat=0;
+//////  Fin de la lecture bidon du header
+	vector <StatsnpC> statsnp;
+	StatsnpC stsnp;
+	bool trouve;
+	statsnp.resize(0);
+	int catsnp;
+	k=0;
+	for (gr=1;gr<=this->ngroupes;gr++) {
+// COMPTAGE DES STAT
+		nstatgr=0;
+		if (this->groupe[gr].type==0) {   //MICROSAT
+			nstatgr +=4*nsamp;   //"NAL","HET","VAR","MGW"
+			if (nsamp>1) nstatgr +=7*nsamp*(nsamp-1)/2;  //"N2P","H2P","V2P","FST","LIK","DAS","DM2"
+			if (nsamp>2) nstatgr +=nsamp*(nsamp-1)*(nsamp-2)/2;   //AML
+		} else 
+		if (this->groupe[gr].type==1) {   //DNA SEQUENCE
+			nstatgr +=8*nsamp;   //"NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS"
+			if (nsamp>1) nstatgr +=5*nsamp*(nsamp-1)/2;  //"NH2","NS2","MP2","MPB","HST"
+			if (nsamp>2) nstatgr +=nsamp*(nsamp-1)*(nsamp-2)/2;   //"SML"
+		} else 
+		if (this->groupe[gr].type==2) {   //SNP
+			nstatgr +=4*nsamp;   //"HP0","HM1","HV1","HMO"
+			if (nsamp>1) nstatgr +=8*nsamp*(nsamp-1)/2;  //"NP0","NM1","NV1","NMO","FP0","FM1","FV1","FMO"
+			if (nsamp>2) nstatgr +=4*nsamp*(nsamp-1)*(nsamp-2)/2;   //"AP0","AM1","AV1","AMO"
+		}
+		this->nstat += nstatgr;
+		this->groupe[gr].nstat=nstatgr;
+//DEFINITION DES STAT
+		this->groupe[gr].sumstat = new StatC[nstatgr];
+		if (this->groupe[gr].type==0) {   //MICROSAT
+			for (int i=1;i<=4;i++) {
+				for (int sa=1;sa<=nsamp;sa++){
+					this->groupe[gr].sumstat[k].cat=i;
+					this->groupe[gr].sumstat[k].samp=sa;
+					s1=stat_type[i]+"_"+IntToString(gr)+"_"+IntToString(sa);
+					this->entetestat +=centre(s1,14);
+					//cout<<"k="<<k<<"  "<<this->entetestat<<"\n";
+					k++;
+				}
+			}
+			if (nsamp>1) {
+				for (int i=5;i<=11;i++) {
+					for (int sa=1;sa<=nsamp;sa++) {
+						for (int sa1=sa+1;sa1<=nsamp;sa1++) {
+							this->groupe[gr].sumstat[k].cat=i;
+							this->groupe[gr].sumstat[k].samp=sa;
+							this->groupe[gr].sumstat[k].samp1=sa1;
+							s1=stat_type[i]+"_"+IntToString(gr)+"_"+IntToString(sa)+"&"+IntToString(sa1);
+							this->entetestat +=centre(s1,14);
+					//cout<<"k="<<k<<"  "<<this->entetestat<<"\n";
+							k++;
+						}
+					}
+				}
+			}
+			if (nsamp>2) {
+				for (int i=12;i<=12;i++) {
+					for (int sa=1;sa<=nsamp;sa++) {
+						for (int sa1=1;sa1<=nsamp;sa1++) {
+							if (sa1 !=sa) for (int sa2=sa1+1;sa2<=nsamp;sa2++) {
+								if (sa2 !=sa){
+									this->groupe[gr].sumstat[k].cat=i;
+									this->groupe[gr].sumstat[k].samp=sa;
+									this->groupe[gr].sumstat[k].samp1=sa1;
+									this->groupe[gr].sumstat[k].samp2=sa2;
+									s1=stat_type[i]+"_"+IntToString(gr)+"_"+IntToString(sa)+"&"+IntToString(sa1)+"&"+IntToString(sa2);
+									this->entetestat +=centre(s1,14);
+									k++;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if (this->groupe[gr].type==1) {   //DNA SEQUENCE
+			for (int i=-1;i>=-8;i--) {
+				for (int sa=1;sa<=nsamp;sa++){
+					this->groupe[gr].sumstat[k].cat=i;
+					this->groupe[gr].sumstat[k].samp=sa;
+					j=12;do {j++;}while(i!=stat_num[j]);
+					s1=stat_type[j]+"_"+IntToString(gr)+"_"+IntToString(sa);
+					this->entetestat +=centre(s1,14);
+					
+					k++;
+				}
+			}
+			if (nsamp>1) {
+				for (int i=-9;i>=-13;i--) {
+					for (int sa=1;sa<=nsamp;sa++) {
+						for (int sa1=sa+1;sa1<=nsamp;sa1++) {
+							this->groupe[gr].sumstat[k].cat=i;
+							this->groupe[gr].sumstat[k].samp=sa;
+							this->groupe[gr].sumstat[k].samp1=sa1;
+							j=12;do {j++;}while(i!=stat_num[j]);
+							s1=stat_type[j]+"_"+IntToString(gr)+"_"+IntToString(sa)+"&"+IntToString(sa1);
+							this->entetestat +=centre(s1,14);
+							k++;
+						}
+					}
+				}
+			}
+			if (nsamp>2) {
+				for (int i=-14;i>=-14;i--) {
+					for (int sa=1;sa<=nsamp;sa++) {
+						for (int sa1=1;sa1<=nsamp;sa1++) {
+							if (sa1 !=sa) for (int sa2=sa1+1;sa2<=nsamp;sa2++) {
+								this->groupe[gr].sumstat[k].cat=i;
+								this->groupe[gr].sumstat[k].samp=sa;
+								this->groupe[gr].sumstat[k].samp1=sa1;
+								this->groupe[gr].sumstat[k].samp2=sa2;
+								j=12;do {j++;}while(i!=stat_num[j]);
+								s1=stat_type[j]+"_"+IntToString(gr)+"_"+IntToString(sa)+"&"+IntToString(sa1)+"&"+IntToString(sa2);
+								this->entetestat +=centre(s1,14);
+								k++;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (this->groupe[gr].type==2) {   //SNP
+			for (int i=21;i<=24;i++) {
+				catsnp = (i-21)/4;
+				for (int sa=1;sa<=nsamp;sa++){
+					this->groupe[gr].sumstat[k].cat=i;
+					this->groupe[gr].sumstat[k].samp=sa;
+					j=25;do {j++;}while(i!=stat_num[j]);
+					s1=stat_type[j]+"_"+IntToString(gr)+"_"+IntToString(sa);
+					this->entetestat +=centre(s1,14);
+					trouve=false;
+					if (statsnp.size()>0){
+						for (int jj=0; jj < (int)statsnp.size();jj++) {
+							trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==this->groupe[gr].sumstat[k].samp));
+							if (trouve) {this->groupe[gr].sumstat[k].numsnp=jj;break;}
+						}
+					}
+					if (not trouve) {
+						stsnp.cat=catsnp;
+						stsnp.samp=this->groupe[gr].sumstat[k].samp;
+						stsnp.defined=false;
+						this->groupe[gr].sumstat[k].numsnp=statsnp.size();
+						statsnp.push_back(stsnp);
+					}
+					k++;
+				}
+			}
+			if (nsamp>1) {
+				for (int i=25;i<=32;i++) {
+					for (int sa=1;sa<=nsamp;sa++) {
+						for (int sa1=sa+1;sa1<=nsamp;sa1++) {
+							this->groupe[gr].sumstat[k].cat=i;
+							this->groupe[gr].sumstat[k].samp=sa;
+							this->groupe[gr].sumstat[k].samp1=sa1;
+							j=25;do {j++;}while(i!=stat_num[j]);
+							s1=stat_type[j]+"_"+IntToString(gr)+"_"+IntToString(sa)+"&"+IntToString(sa1);
+							this->entetestat +=centre(s1,14);
+							trouve=false;
+							if (statsnp.size()>0){
+								for (int jj=0; jj < (int)statsnp.size(); jj++) {
+									trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==this->groupe[gr].sumstat[k].samp)and(statsnp[jj].samp1==this->groupe[gr].sumstat[k].samp1));
+									if (trouve) {this->groupe[gr].sumstat[k].numsnp=jj;break;}
+								}
+							}
+							if (not trouve) {
+								stsnp.cat=catsnp;
+								stsnp.samp=this->groupe[gr].sumstat[k].samp;
+								stsnp.samp1=this->groupe[gr].sumstat[k].samp1;
+								stsnp.defined=false;
+								this->groupe[gr].sumstat[k].numsnp=statsnp.size();
+								statsnp.push_back(stsnp);
+							}
+							k++;
+						}
+					}
+				}
+			}
+			if (nsamp>2) {
+				for (int i=33;i<=36;i++) {
+					for (int sa=1;sa<=nsamp;sa++) {
+						for (int sa1=1;sa1<=nsamp;sa1++) {
+							if (sa1 !=sa) for (int sa2=sa1+1;sa2<=nsamp;sa2++) {
+								this->groupe[gr].sumstat[k].cat=i;
+								this->groupe[gr].sumstat[k].samp=sa;
+								this->groupe[gr].sumstat[k].samp1=sa1;
+								this->groupe[gr].sumstat[k].samp2=sa2;
+								j=25;do {j++;}while(i!=stat_num[j]);
+								s1=stat_type[j]+"_"+IntToString(gr)+"_"+IntToString(sa)+"&"+IntToString(sa1)+"&"+IntToString(sa2);
+								this->entetestat +=centre(s1,14);
+								trouve=false;
+								if (statsnp.size()>0){
+									for (int jj = 0; jj < (int)statsnp.size(); jj++) {
+										trouve=((statsnp[jj].cat==catsnp)and(statsnp[jj].samp==this->groupe[gr].sumstat[k].samp)and(statsnp[jj].samp1==this->groupe[gr].sumstat[k].samp1)and(statsnp[jj].samp2==this->groupe[gr].sumstat[k].samp2));
+										if (trouve) {this->groupe[gr].sumstat[k].numsnp=jj;break;}
+									}
+								}
+								if (not trouve) {
+									stsnp.cat=catsnp;
+									stsnp.samp=this->groupe[gr].sumstat[k].samp;
+									stsnp.samp1=this->groupe[gr].sumstat[k].samp1;
+									stsnp.samp2=this->groupe[gr].sumstat[k].samp2;
+									stsnp.defined=false;
+									this->groupe[gr].sumstat[k].numsnp=statsnp.size();
+									statsnp.push_back(stsnp);
+								}
+								k++;
+							}
+						}
+					}
+				}
+			}
+		}
+		this->groupe[gr].nstatsnp=statsnp.size();
+		//cout<<"this->groupe[gr].nstatsnp="<<this->groupe[gr].nstatsnp<<"\n";
+		if (this->groupe[gr].nstatsnp>0){
+			this->groupe[gr].sumstatsnp = new StatsnpC[this->groupe[gr].nstatsnp];
+			for (int i=0;i<this->groupe[gr].nstatsnp;i++){
+				this->groupe[gr].sumstatsnp[i].cat=statsnp[i].cat;
+				this->groupe[gr].sumstatsnp[i].samp=statsnp[i].samp;
+				this->groupe[gr].sumstatsnp[i].samp1=statsnp[i].samp1;
+				this->groupe[gr].sumstatsnp[i].samp2=statsnp[i].samp2;
+				this->groupe[gr].sumstatsnp[i].defined=statsnp[i].defined;
+			}
+			statsnp.clear();
+		}
+	}
+	this->statname=splitwords(this->entetestat," ",&nss);
+	for(int i=0;i<nss;i++) cout<<this->statname[i]<<"  ";cout<<"\n";
+	cout<<"nstat="<<this->nstat<<"      nss="<<nss<<"\n";
+	return 0;
+}
+
 int HeaderC::readHeaderGroupStat(ifstream & file) {
 	string s1, *ss, *ss1;
 	int j, k, nss, nss1, gr;
@@ -738,7 +985,6 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 						ss1=splitwords(ss[i],"&",&nss1);
 						this->groupe[gr].sumstat[k].samp=atoi(ss1[0].c_str());
 						this->groupe[gr].sumstat[k].samp1=atoi(ss1[1].c_str());
-
 						this->groupe[gr].sumstat[k].samp2=atoi(ss1[2].c_str());
 						k++;
 						delete [] ss1;
@@ -1052,14 +1298,16 @@ int HeaderC::readHeader(string headerfilename){
 	error = buildSuperScen();cout<<"----------------------------------------apres buildSuperScen\n";
 	if(error != 0) return error;
 	
-	error = readHeaderGroupStat(file);cout<<"----------------------------------------apres readHeaderGroupStat\n";
+	if (not randomforest) {error = readHeaderGroupStat(file);cout<<"----------------------------------------apres readHeaderGroupStat\n";}
+	else {error =readHeaderAllStat(file);cout<<"----------------------------------------apres readHeaderAllStat\n";}
 	if(error != 0) return error;
 
 	error = buildMutParam();cout<<"----------------------------------------apres buildMutParam\n";
 	if(error != 0) return error;
 
+	if (not randomforest){
 	error = readHeaderEntete(file);cout<<"----------------------------------------apres readHeaderEntete\n";
-	if(error != 0) return error;
+	if(error != 0) return error;}
     this->threshold = 0.;
 	if (not file.eof()){
 		getline(file,s1);

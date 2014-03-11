@@ -375,7 +375,6 @@ extern int debuglevel;
   }
 
   long double ParticleC::cal_nal1p(int gr,int st){
-
     long double nal,nalm=0.0;
     int iloc,kloc,nl=0;
     int sample=this->grouplist[gr].sumstat[st].samp-1;
@@ -1777,6 +1776,7 @@ void ParticleC::docalstat(int gr, double partweight) {
 		}
 	}
 	int numsnp,kloc;
+	//cout<<"Docalstat groupe "<<gr<<"    nstat="<<this->grouplist[gr].nstat<<"\n";
 	for (int st=0;st<this->grouplist[gr].nstat;st++) {
 /*	
 if (this->grouplist[gr].sumstat[st].cat<5)
