@@ -1034,7 +1034,7 @@ class ProjectReftable(Project):
             if prog < 1 and prog > 0:
                 prog = 1
             frame.findChild(QProgressBar,"analysisStatusBar").setValue(int(prog))
-            log(3,"Line red for progress : '%s', new state of progress : %s"%(fl,prog))
+            log(3,"Line read for progress : '%s', new state of progress : %s"%(fl,prog))
 
             # TODO peut etre à enlever car on a le signal termsuccess
             #if prog >= 100.0:
