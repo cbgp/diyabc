@@ -1165,7 +1165,7 @@ class ProjectReftable(Project):
             if os.path.exists((u"%s/%s_bias_original.txt"%(self.dir,aid)).encode(self.fsCoding))\
             or os.path.exists((u"%s/%s_bias_scaled.txt"%(self.dir,aid)).encode(self.fsCoding))\
             or os.path.exists((u"%s/%s_bias_composite.txt"%(self.dir,aid)).encode(self.fsCoding)):
-                log(3,(u"File %s/%s_bias_original.txt exists"%(self.dir,aid)).encode(self.fsCoding)
+                log(3,(u"File %s/%s_bias_original.txt exists"%(self.dir,aid)).encode(self.fsCoding))
                 # deplacement des fichiers de résultat
                 aDirName = "%s_bias"%aid
                 if not os.path.exists((u"%s/analysis/%s"%(self.dir,aDirName)).encode(self.fsCoding)):
