@@ -645,9 +645,9 @@ class DataSnp():
         # taille des populations
         self.nind = []
         self.nind_hash = {}
-        self.readData()
+        self.__readData()
 
-    def readData(self):
+    def __readData(self):
         """
         Read SNP data file and infos from it
 
@@ -768,7 +768,7 @@ class DataSnp():
                         % (self.filename, locus+1, pop))
         nbLociPoly = 0
         for locus in locus_values.keys() :
-            if len(locus_values[locus]) > 1 :
+            if not (True in [locus_values[locus].issubset(x) for x in [Set(['9','0']), Set(['9','2']), Set(['9']), Set(['2']), Set(['0'])]]):
                 nbLociPoly += 1
             else :
                 self.ntypeloc[locus_type[locus]] -= 1
@@ -777,11 +777,13 @@ class DataSnp():
             raise Exception("%s\n\nFound only monomorphic loci !!!"%self.filename)
 
         nbSample = len(types)
-
         self.nindtot = nbInd
         self.nloc = nbLociPoly
         self.nloctot = nbLoci
         self.nsample = nbSample
+
+
+
 
 def isSNPDatafile(name):
     if os.path.exists(str(name).encode(sys.getfilesystemencoding())):
@@ -827,10 +829,8 @@ if __name__ == "__main__":
         print "\n======================="
         print "Start loading %s" % f
         plop = DataSnp(f)
-        print isSNPDatafile(f)
-        plop.readData()
-        print plop.nloc
-        print plop.nloctot
+        print "isSNPDatafile  = " , isSNPDatafile(f)
+        print "nloctot = ", plop.nloctot, ",  nlcc = poly = ", plop.nloc, ", ntypeloc  =   ", plop.ntypeloc
         print "file %s loaded" % f
         print "=======================\n"
 
