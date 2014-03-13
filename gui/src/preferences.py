@@ -512,12 +512,12 @@ class Preferences(AutoPreferences):
                     exPath = os.path.join(DATAPATH,"bin/diyabc-comput-mac-x64")
         else:
             if not os.path.exists(str(self.ui.execPathPathEdit.text()).encode(self.fsCoding)):
-                output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s\n\If, and only if,  'use default executable' is checked, then this is a known bug. We apologize !\n Please, check if no analysis or reftable are running and restart diyabc.\nIt should work again."%self.ui.execPathPathEdit.text())
+                output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s\n\If, and only if,  'use default executable' is checked, then this is a bug. We apologize !\n Please send us a b!ug report.\n\n Next, check if no analysis or reftable are running and restart diyabc.\nIt should work again."%self.ui.execPathPathEdit.text())
                 return ""
             return str(self.ui.execPathPathEdit.text())
 
         if not os.path.exists(exPath.encode(self.fsCoding)):
-            output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s\n\If, and only if,  'use default executable' is checked, then this is a known bug. We apologize !\n Please, check if no analysis or reftable are running and restart diyabc.\nIt should work again."%exPath)
+            output.notify(self,"executable not found","The executable set in DIYABC settings cannot be found\n%s\n\If, and only if,  'use default executable' is checked, then this is a bug. We apologize !\n Pleasesend us a bug report.\n\n Next, check if no analysis or reftable are running and restart diyabc.\nIt should work again."%exPath)
             return ""
         return os.path.abspath(str(exPath).encode(self.fsCoding))
 
