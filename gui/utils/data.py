@@ -7,6 +7,7 @@ Created on 24 sept. 2009
 
 import re,os.path, sys, codecs, traceback
 from sets import Set
+from collections import defaultdict
 from cbgpUtils import log
 
 MICMISSING=-9999
@@ -338,7 +339,7 @@ class Data(object):
                 if seqs is coded with only one seq, locus type must be Y, H, M
 
         """
-        loci = {} # loci[number] = {'name' : 'xx', 'type' : '<x>', line : x }
+        loci = {} # loci[number] = {'name' : 'xx', 'type' : '<x>', line : x, 'num' : x }
         pops = {} # pops[number] = [{'name' : 'xx', 'num' : x , line : x , loci : [locus1, locus2, ...]}, {...},  ]
         try :
             #with open(self.filename,'r') as f: read_data = f.read()
@@ -430,6 +431,26 @@ class Data(object):
                                      })
 
 
+            def nestedDefaultdictAndSet():
+                def nested2() :
+                    return defaultdict(set)
+
+                return defaultdict(nested2)
+
+            pop_locus_valuesSet = nestedDefaultdictAndSet()
+            locus_values = defaultdict(set)
+            # test if a locus of a same pop in only made of missing data
+            #pops = {} # pops[number] = [{'name' : 'xx', 'num' : x , 'line' : x , 'loci' : [locus1, locus2, ...]}, {...},  ]
+            for  popNum in pops.keys() :
+                for ind in pops[popNum] :
+                    for locusNum, locusValue in enumerate(ind['loci']) :
+                        pop_locus_valuesSet[popNum][locusNum].add(locusValue)
+            for  popNum in pops.keys() :
+                for locusNum in loci.keys() :
+                    if True in [pop_locus_valuesSet[popNum][locusNum].issubset(x) for x in [Set(["000"]),  Set(["000000"]), Set(["000","000000"]),\
+                                                                          Set(["<[]>"]), Set(["<[][]>"]), Set(["<[]>", "<[][]>"]) ] ] :
+                        raise Exception("Genepop file : %s\nLocus %s (name : %s, type : %s) has only missing data in pop %s : intractable configuration" %\
+                                        (self.filename, locusNum+1, loci[locusNum]['name'], loci[locusNum]['type'],  popNum+1))
 
 
     def __testSeqLocusFormat(self, locus):
@@ -653,7 +674,7 @@ class DataSnp():
 
         code is an ugly mix between ugly legacy code and ugly new code !
         """
-        from collections import defaultdict
+
         name = self.filename
         # list ofsexual  locus index
         sexLocus = []
@@ -810,11 +831,13 @@ if __name__ == "__main__":
     testMsatSeqsFiles = [
                  #"/media/psf/Home/VMshare/louiT1_2013_5_2-1/loui10_new_ghostnat.dat",
                  #"/media/psf/Home/VMshare/example_1_microsat_data_one_pop_with_bottleneck_multisamples_2013_7_19-1/simu_dataset_microsat_one_pop_bottleneck_multisamples_001.mss",
-                 #"/media/psf/Home/VMshare/example_2_microsat_sequence_data_complexe_scenarios_ghost_pop_project_2013_7_9-1/toytest2_micro_seq_complexe_001.mss",
+                 "/media/psf/Home/VMshare/example_2_microsat_sequence_data_complexe_scenarios_ghost_pop_project_2013_7_9-1/toytest2_micro_seq_complexe_001.mss",
+                 "/tmp//toytest2_micro_seq_complexe_001.mss",
+
                  ]
     testSNPFiles = [
                 #"/home/dehneg/P16.snp",
-                 "/media/psf/Home/VMshare/example_3_SNP_data_divergence_and_admixture_project_2013_7_9-1/simu_dataset_test_divergence_admixture_001.snp",
+                 #"/media/psf/Home/VMshare/example_3_SNP_data_divergence_and_admixture_project_2013_7_9-1/simu_dataset_test_divergence_admixture_001.snp",
                  ]
 
     for f in testMsatSeqsFiles :
