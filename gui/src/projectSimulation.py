@@ -208,6 +208,7 @@ class SimulationThread(QThread):
 
         self.nb_to_gen = nb_to_gen
         self.processus = None
+        self.parent = parent
         self.fsCoding = sys.getfilesystemencoding()
         self.logmsg = ""
         self.loglvl = 3
