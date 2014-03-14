@@ -155,7 +155,7 @@ enregC *enreg,*enregOK;
 //char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename, *progressfilename;
 //char *;
 string headerfilename,headersimfilename,reftablefilename, datafilename, statobsfilename,reftablelogfilename,path,ident,stopfilename,progressfilename,scsufilename;
-string reftabscen;
+string reftabscen,paramfilename,statfilename;
 bool multithread=false,randomforest=false;
 int nrecneeded,nenr=100,nenrOK,*neOK,*netot;
 int debuglevel=0;
@@ -246,7 +246,7 @@ try {
     string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar, rngpar;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xyl:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xyl:o:")) !=-1) {
 	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
 
@@ -330,6 +330,7 @@ try {
             cout << "           v:<list of summary stat names separated by a comma (if empty keep those of reftable)>\n";
 
             cout << "\n-k for SIMULATE GENEPOP DATA FILES\n";
+			cout << "\n-o to simulate summary statistics from a text file containing scenario and parameter values\n";
             action = 'h';
            break;
 
@@ -347,7 +348,12 @@ try {
             flagi=true;
             break;
 
-        case 'p' :
+		case 'o' :
+			paramfilename = soptarg;
+			action = 'o';
+			break;
+		
+		case 'p' :
 			headerfilename = soptarg + "header.txt";
 			headersimfilename = soptarg + "headersim.txt";
 			reftablefilename =  soptarg + "reftable.bin";
@@ -454,6 +460,7 @@ try {
                      if (action=='f') ident=strdup("conf1");
                      if (action=='d') ident=strdup("pcaloc1");
                      if (action=='j') ident=strdup("modchec1");
+					 if (action=='o') ident=strdup("statfile.txt");
      }
      if (not flags) seed=time(NULL); // TODO: remove this
      if (num_threads>0) omp_set_num_threads(num_threads);
@@ -693,6 +700,19 @@ try {
 				  break;
 	   case 'z'  :
 				  analyseRNG(rngpar);
+				  break;
+		
+	   case 'o'  :k = header.readHeader(headerfilename);
+				  if (debuglevel==1) cout<<"apres header.readHeader k="<<k<<"\n";
+				  if (k != 0) {
+						stringstream erreur;
+						erreur << "Erreur dans readheaders().\n" << header.message;
+						throw std::runtime_error(erreur.str()); // exit(1)
+					}
+				  if (k==0) {rt.sethistparamname(header);if (debuglevel==1) cout<<"sethistparamname"<<"\n";}
+				  paramfilename = path + paramfilename;
+				  statfilename = path +ident;
+				  dosimstat(seed);
 				  break;
 
   }

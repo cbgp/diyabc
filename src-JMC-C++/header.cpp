@@ -44,7 +44,7 @@ extern int debuglevel;
 extern string * stat_type;
 extern int* stat_num;
 extern string path;
-extern bool randomforest;
+extern bool randomforest,datafile;
 ParticleC particuleobs;
 
 /**
@@ -463,7 +463,7 @@ int HeaderC::readHeaderLoci(ifstream & file){
 		//Partie loci description
 	//cout <<"avant partie loci\n";fflush(stdin);
 	getline(file,s1);       //ligne vide
-	getline(file,s1);       //ligne "loci description"
+	getline(file,s1);      cout<<"readHeaderLoci  s1="<<s1<<"\n"; //ligne "loci description"
 	if (this->dataobs.filetype==0){ //fichier GENEPOP
 		grm=1;                  //nombre maximal de groupes
 		for (int loc=0;loc<this->dataobs.nloc;loc++){
@@ -554,7 +554,7 @@ int HeaderC::readHeaderGroupPrior(ifstream & file){
 
 		//cout <<"avant partie group priors\n";fflush(stdin);
 		getline(file,s1);       //ligne vide
-		getline(file,s1);       //ligne "group prior"
+		getline(file,s1);      cout<<"readHeaderGroupPrior s1="<<s1<<"\n"; //ligne "group prior"
 		this->ngroupes=getwordint(s1,3);
 		//cout<<"header.ngroupes="<<this->ngroupes;
 		this->groupe = new LocusGroupC[this->ngroupes+1];

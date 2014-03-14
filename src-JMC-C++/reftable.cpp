@@ -55,17 +55,21 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 		cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
 		this->histparam[i] = new HistParameterC[nparamvar];
 		this->nhistparam[i] = nparamvar;
-		pp=-1;
+		pp=-1;//cout<<header.scenario[i].nparam<<"\n";
 		for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) {
 			pp++;
 			this->histparam[i][pp] = header.scenario[i].histparam[p];
 		}
-		cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
-		if (this->nparam[i]!=nparamvar+header.nparamut) {
-			cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
-			exit(1);
+		if (this->nparam !=NULL){
+			cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
+			{if (this->nparam[i]!=nparamvar+header.nparamut) {
+				cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
+				exit(1);
+				}
+				
+			}
 		}
-		cout<<"coucou2\n";
+		//cout<<"coucou2\n";
 		if (header.nparamut>0) {
 			cout<<header.mutparam[0].name<<"\n";
 			for (int p=0;p<this->nparamut;p++) this->mutparam[p] = header.mutparam[p];

@@ -38,7 +38,9 @@ struct ParticleSetC
     void resetparticle (int p);
 	// liberation des particules
 	void libere(int npart);
-    // simulation des particules utilisées pour le model checking
+	// simulation de particules de paramètres fixées
+	void dosimulstat(HeaderC const & header, int debut, int npart, bool dnatrue, bool multithread, int numscen, int seed, double **stat);    
+	// simulation des particules utilisées pour le model checking
     void dosimulphistar(HeaderC const & header, int npart, bool dnatrue,
     		            bool multithread,bool firsttime, int numscen,int seed,int nsel);
     // simulation des particules utilisées pour la table de référence, le biais et la confiance

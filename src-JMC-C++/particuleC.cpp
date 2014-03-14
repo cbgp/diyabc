@@ -2449,6 +2449,7 @@ void ParticleC::put_one_mutation(int loc) {
   /***********************************************************************************************************************/
 
   string ParticleC::dogenepop(){
+	  cout<<"début de ParticuleC::dogenepop\n";
 	  string sgp,sind,snum,ssr;
 	  int iloc,*k,ty;
 	  k = new int[this->nloc];
