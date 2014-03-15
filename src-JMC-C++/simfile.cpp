@@ -94,10 +94,10 @@ void dosimfile(int seed){
 		char c;
         bool OK;
         int ip1,ip2,nphistarOK=0,k1,k0;
-		cout<<"depstarOK 0  npv="<<npv<<"   nsel="<<nsel<<"   scen="<<scen<<"  nparamhist="<<header.scenario[scen].nparam<<"   nparamut="<<header.nparamut<<"\n";
-		cout<<"nparamvar="<<header.scenario[scen].nparamvar<<"\n";
+		//cout<<"depstarOK 0  npv="<<npv<<"   nsel="<<nsel<<"   scen="<<scen<<"  nparamhist="<<header.scenario[scen].nparam<<"   nparamut="<<header.nparamut<<"\n";
+		//cout<<"nparamvar="<<header.scenario[scen].nparamvar<<"\n";
 		for (int i=0;i<nsel;i++) {
-			for(int j=0;j<header.scenario[scen].nparam+header.nparamut;j++) cout<<phistar[i][j]<<"  ";cout<<"\n";
+			//for(int j=0;j<header.scenario[scen].nparam+header.nparamut;j++) cout<<phistar[i][j]<<"  ";cout<<"\n";
             OK=true;k0=0;
 			for (int k=0;k<header.scenario[scen].nparam;k++) {
 				while (header.scenario[scen].histparam[k].prior.constant) k++;
@@ -112,15 +112,18 @@ void dosimfile(int seed){
 			//cout<<"depstarOK 1\n";
 			//if (OK) cout<<"  histparam OK\n";else {cout<<" histparam["<<k0-1<<"] not OK\n";}
 			if (OK){
-				k1=header.scenario[scen].nparamvar;cout<<"k1="<<k1<<"\n";
+				k1=header.scenario[scen].nparamvar;//cout<<"k1="<<k1<<"\n";
 				k1=k0;
 				for (int k=0;k<header.nparamut;k++) {
-					cout<<"phistar["<<i<<"]["<<k1+k<<"]="<<phistar[i][k1+k]<<"   mini="<<header.mutparam[k].prior.mini<<"   maxi="<<header.mutparam[k].prior.maxi<<"\n";
 					OK=((header.mutparam[k].prior.mini<=phistar[i][k1+k])and(header.mutparam[k].prior.maxi>=phistar[i][k1+k]));
-					if (not OK )break;
+					if (not OK ){
+						cout<<header.mutparam[k].name<<"   phistar["<<i<<"]["<<k1+k<<"]="<<phistar[i][k1+k]<<"   mini="<<header.mutparam[k].prior.mini<<"   maxi="<<header.mutparam[k].prior.maxi;
+						//for(int j=0;j<header.scenario[scen].nparam+header.nparamut;j++) cout<<phistar[i][j]<<"  ";cout<<"\n";
+						break;
+					}
 				}
 			}
-			cout<<"depstarOK 1";if (OK) cout<<"  mutparam OK\n";else cout<<"mutparam not OK\n";
+			//cout<<"depstarOK 1";if (OK) cout<<"  mutparam OK\n";else cout<<"mutparam not OK\n";
 			//cout<<"nconditions="<<header.scenario[scen].nconditions<<"\n";
             if ((header.scenario[scen].nconditions>0)and(OK)) {
                 for (int j=0;j<header.scenario[scen].nconditions;j++) {
@@ -157,7 +160,7 @@ void dosimfile(int seed){
                     if (not OK) break;
                 }
             }
-			cout<<"depstarOK 2";if (OK) cout<<"  OK\n";else cout<<"  not OK\n";
+			//cout<<"depstarOK 2";if (OK) cout<<"  OK\n";else cout<<"  not OK\n";
             if (OK) { //cout<<nphistarOK<<"    ";
                 for (int j=0;j<npv;j++) {
                     phistarOK[nphistarOK][j] = phistar[i][j];
@@ -166,7 +169,7 @@ void dosimfile(int seed){
                 //cout<<"\n";
                 nphistarOK++;
 				//if ((nphistarOK % 10)==0) cin >>c;
-            }
+            } else cout <<" -->rejecting particle "<<i<<"\n";
         }
         return nphistarOK;
     }
@@ -178,7 +181,7 @@ void dosimstat(int seed) {
 	string ligne,*ss;
 	cout<<"path="<<path<<"\n";
 	cout<<"paramfilename ="<<paramfilename<<"\n";
-	cout<<header.nscenarios<<" scenarios  "<<header.nparamtot<<" historical and "<<header.nparamut<<" mutation parameters    and "<<header.nstat<<" nstat\n";
+	cout<<header.nscenarios<<" scenarios  "<<header.nparamtot<<" historical and "<<header.nparamut<<" mutation parameters    and "<<header.nstat<<" sumstat\n";
 	nrecscen = new int[header.nscenarios];
 	nparam = new int[header.nscenarios];
 	for (int i=0;i<header.nscenarios;i++) {nrecscen[i]=0;nparam[i]=0;}
@@ -188,7 +191,7 @@ void dosimstat(int seed) {
 		getline(fp0,ligne);if (ligne.length()>5) nsel0++;
 	}
 	fp0.close();
-	cout<<"Le fichier "<<paramfilename<<" contient "<<nsel0<<" lignes\n";
+	cout<<"File "<<paramfilename<<" contains "<<nsel0<<" lignes\n";
 	numscen = new int[nsel0];
 	phistar0 = new long double*[nsel0];
 	for (int i=0;i<nsel0;i++) phistar0[i] = new long double[header.nparamtot+header.nparamut];
@@ -219,21 +222,21 @@ void dosimstat(int seed) {
 		}
 	}
 	fp.close();
-	cout<<"fin de la lecture du fichier "<<paramfilename<<"\n";
+	//cout<<"fin de la lecture du fichier "<<paramfilename<<"\n";
 	ofstream fs;
 	fs.open(statfilename.c_str());
 	for (int iscen=0;iscen<header.nscenarios;iscen++) {
-		nsel = nrecscen[iscen];cout<<"scenario "<<iscen+1<<"    nsel="<<nsel<<"   nparam="<<nparam[iscen]<<"\n";
+		nsel = nrecscen[iscen];cout<<"\nscenario "<<iscen+1<<"    nsel="<<nsel<<"   nparam="<<nparam[iscen]<<"\n";
 		nsel=0;
 		for (int i=0;i<nsel0;i++) {
 			if (numscen[i]-1==iscen) {
 				for (int j=0;j<nparam[iscen];j++) phistar[nsel][j]=phistar0[i][j];
-				if (nsel==0) for (int j=0;j<nparam[iscen];j++) cout<<phistar0[i][j]<<"  "<<phistar[nsel][j]<<"\n";
+				//if (nsel==0) for (int j=0;j<nparam[iscen];j++) cout<<phistar0[i][j]<<"  "<<phistar[nsel][j]<<"\n";
 				nsel++;
 			}
 		}
 		rt.scenteste=iscen+1;
-		cout<<"avant detphistar\n";
+		//cout<<"avant detphistar\n";
 		nphistarOK=detpstarOK(nsel,iscen,nparam[iscen],phistar);
 		cout<<"nphistarOK="<<nphistarOK<<"\n";
 		
@@ -247,10 +250,11 @@ void dosimstat(int seed) {
 			ps.dosimulstat(header,nn,npart,false,multithread,iscen+1,seed,stat);
 			nn +=npart;
 		}
-		if (nn<nsel) ps.dosimulstat(header,nn,nsel-nn,false,multithread,iscen+1,seed,stat);
+		//cout<<"nsel="<<nsel<<"   nphistarOK="<<nphistarOK<<"   nn="<<nn<<"\n";
+		if (nn<nphistarOK) ps.dosimulstat(header,nn,nphistarOK-nn,false,multithread,iscen+1,seed,stat);
 		for (int i=0;i<nsel;i++) {
-			fs<<iscen+1<<"  ";//cout<<iscen+1<<"  ";
 			if (stat[i][0] !=-99.0) {
+				fs<<iscen+1<<"  ";//cout<<iscen+1<<"  ";
 				for (int j=0;j<header.nstat;j++) fs<<fixed<<setw(10)<<setprecision(4)<<stat[i][j];
 				fs<<"\n";
 				//for (int j=0;j<header.nstat;j++) cout<<fixed<<setw(14)<<setprecision(6)<<"  "<<stat[i][j];
@@ -259,6 +263,6 @@ void dosimstat(int seed) {
 		}
 	}
 	fs.close();
-	cout<<"fin de l'écriture des sumstats dans le fichier "<<statfilename<<"\n";
+	cout<<"\nSimulated summary statistics are in file "<<statfilename<<"\n";
 }
 
