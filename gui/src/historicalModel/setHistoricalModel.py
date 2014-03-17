@@ -397,6 +397,8 @@ class SetHistoricalModel(formHistModel,baseHistModel):
             #self.ui.defPrButton.setText("Define priors")
             # dessin des aperçus
             self.drawPreviews()
+            self.majParamInfoDico()
+            missingTimeConditions = self.checkTimeConditions([dico_sc_infos["checker"] for dico_sc_infos in self.scenarios_info_list], silent)
         else:
             if not silent:
                 output.notify(self,"Scenario error","Correct your scenarios to be able to extract the parameters.")
@@ -584,7 +586,6 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 nb_scenarios_invalides += 1
         # si tous les scenarios sont bons, on renvoie les données utiles, sinon on renvoie None
         if nb_scenarios_invalides == 0:
-            missingTimeConditions = self.checkTimeConditions(scenariosList, silent)
             return self.scenarios_info_list
         else:
             if not silent:
@@ -599,12 +600,24 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         for sc in scenariosList :
             for condition in sc.getMandatoryTimeConditions() :
                 conditionsSet.add(condition)
-        for condition in list(conditionsSet) :
-            try :
-                if self.param_info_dico[condition[0]][3] < self.param_info_dico[condition[0]][2] :
+        if self.param_info_dico != {} :
+            for condition in list(conditionsSet) :
+                try :
+                    if '<' in condition[1] :
+                        if eval("%s %s %s" %(self.param_info_dico[condition[2]][3], condition[1], self.param_info_dico[condition[0]][2])) :
+                            conditionsSet.remove(condition)
+                    else :
+                        if eval("%s %s %s" %(self.param_info_dico[condition[0]][2], condition[1], self.param_info_dico[condition[2]][3])) :
+                            conditionsSet.remove(condition)
+
+                    if self.param_info_dico[condition[0]][3] < self.param_info_dico[condition[0]][2] :
+                        log(1, "\n\n\n\n!!!!!!!!!! Enter in stupid test for condition %s values  in param_info_dico ( =%s)], removing condition but do not remember why !!!\n\n\n" % \
+                        (condition, self.param_info_dico ) )
+                        conditionsSet.remove(condition)
+                except KeyError, e :
+                    log(1, "Enable to find conditions %s values  in param_info_dico ( =%s)], removing condition " % \
+                        (condition, self.param_info_dico ) )
                     conditionsSet.remove(condition)
-            except KeyError, e :
-                conditionsSet.remove(condition)
         # check if user has already wrote the condition, if so , delete it
         for cond in self.condList:
                 lab = cond.findChild(QLabel,"condLabel")
@@ -907,7 +920,23 @@ class SetHistoricalModel(formHistModel,baseHistModel):
 
 
         if problems == "":
-            if self.checkScenarios(silent=silent) != None:
+            scenariosList = self.checkScenarios(silent=silent)
+            if scenariosList != None:
+                if not silent :
+                    missingTimeConditions = self.checkTimeConditions([dico_sc_infos["checker"] for dico_sc_infos in self.scenarios_info_list], silent=True)
+                    if len(missingTimeConditions) > 0 :
+                        warning = "You may want to add the conditions below to avoid gene genealogies incongruenties :\n"
+                        for cond in missingTimeConditions :
+                            warning += "".join(cond) + "\n"
+                        warning += "This is an advisory warning ; you may prefer to ignore it or define your own conditions."
+                        warning += "\n\n\nDo you want to cancel and edit your time conditions or continue the validation process ?"
+                        qmb = QMessageBox()
+                        qmb.setText(warning)
+                        qmb.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes )
+                        qmb.setDefaultButton(QMessageBox.Cancel)
+                        reply = qmb.exec_()
+                        if (reply == QMessageBox.Cancel):
+                            return False
                 if not self.scenarios_modified_since_define_priors:
                     return True
                 else:
@@ -948,7 +977,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
         """
         self.majParamInfoDico()
         # VERIFS, si c'est bon, on change d'onglet, sinon on reste
-        if self.checkAll():
+        if self.checkAll(silent=False):
             # creation et ecriture du fichier dans le rep choisi
             self.writeHistoricalConfFromGui()
             self.parent.setHistValid(True)

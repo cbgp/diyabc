@@ -306,36 +306,3 @@ class SetHistoricalModelSimulation(SetHistoricalModel):
                 i+=1
             result+= "\n%s %s %s"%(pname,info[0],info[1])
         return result
-
-        
-    def checkTimeConditions(self, scenariosList, silent=False):
-        "look for missing mandatory conditions in scenarios"
-        conditionsSet = set([])
-        mirror = {"<=":">=", ">=":"<=", '<':'>', '>':'<'}
-        toggleEgal = {"<":"<=", ">":">=", "<=":"<", ">=":">"}
-        for sc in scenariosList :
-            for condition in sc.getMandatoryTimeConditions() :
-                conditionsSet.add(condition)
-        for condition in list(conditionsSet) :
-            try :
-                if self.param_info_dico[condition[0]][3] < self.param_info_dico[condition[0]][2] :
-                    conditionsSet.remove(condition)
-            except KeyError, e :
-                conditionsSet.remove(condition)
-        # check if user has already wrote the condition, if so , delete it
-        for cond in self.condList:
-                lab = cond.findChild(QLabel,"condLabel")
-                condText = str(lab.text()).strip()
-                for b in ['<=','<','>=','>'] :
-                    if b in condText :
-                        a,c = condText.split(b)
-                        break
-                conditionsSet = conditionsSet.difference(set([(a,b,c),(c,mirror[b],a),(a,toggleEgal[b],c),(c,toggleEgal[mirror[b]],a)]))
-        if not silent and len(conditionsSet) > 0:
-            warning = "You may want to add the conditions below to avoid gene genealogies incongruenties :\n"
-            for cond in conditionsSet :
-                warning += "".join(cond) + "\n"
-            warning += "This is an advisory warning ; you may prefer to ignore it or define your own conditions."
-            output.notify(self,"Time Condition Warning","%s"%warning)
-        return conditionsSet
-
