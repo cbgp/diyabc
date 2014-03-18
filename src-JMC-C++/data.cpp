@@ -324,7 +324,7 @@ string  getligne(ifstream file) {
 		//cout<<"avant le delete[]ss\n";
 		delete []ss; ss = NULL;
 		//cout<<"avant getline\n";
-		getline(file0,ligne);
+		getline(file0,ligne);ligne=purgetab(ligne);
 		//cout<<"ligne 2 =<"<<ligne<<">\n";
         ss=splitwords(ligne," ",&nss);
 		//cout<<"apres le deuxième splitwords\n";
@@ -337,11 +337,11 @@ string  getligne(ifstream file) {
 		delete [] ss; ss = NULL;
 		file0.close();
 		ifstream file(filename.c_str(), ios::in);
-		getline(file,ligne);
+		getline(file,ligne); ligne=purgetab(ligne);
 		int nloc=0;
 		bool trouvepop=false;
 		while (not trouvepop) {
-			getline(file, ligne);
+			getline(file, ligne);ligne=purgetab(ligne);
 			ligne=majuscules(ligne);
 			//cout<<ligne<<"\n";
 			trouvepop=(ligne.find("POP")!=string::npos);
@@ -350,7 +350,7 @@ string  getligne(ifstream file) {
 		cout<<"nloc="<<nloc<<"\n";
 		if (not trouvepop) return -2;
 		while (not file.eof()){
-			getline(file, ligne);
+			getline(file, ligne);ligne=purgetab(ligne);
 			//cout<<"longueur de la ligne = "<<ligne.length()<<"\n";
 			//cout<<ligne<<"\n";
 			if(ligne.length()>2) {if(ligne.at(ligne.length()-1)=='\r') ligne=ligne.substr(ligne.length()-1);}
