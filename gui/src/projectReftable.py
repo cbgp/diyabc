@@ -411,6 +411,26 @@ class ProjectReftable(Project):
     def launchReftableGeneration(self):
         """ Lance un thread de generation de la reftable
         """
+        particleLoopSize = str(self.parent.preferences_win.particleLoopSizeEdit.text())
+        try:
+            nb_to_gen = int(self.ui.nbSetsReqEdit.text())
+        except Exception as e:
+            output.notify(self,"value error","Check the value of required number of data sets. Must be a positive integer.\n\n%s"%e)
+            return
+        if nb_to_gen < int(self.ui.nbSetsDoneEdit.text()):
+            output.notify(self,"value error","Please ask for more records than it already exists")
+            return
+        modLoop = (nb_to_gen-int(self.ui.nbSetsDoneEdit.text()))%int(particleLoopSize)
+        if modLoop != 0 :
+            warning = "Your loop size being %s you will obtain a total of %s simulated datasets." \
+                                      % (particleLoopSize,(nb_to_gen-modLoop+int(particleLoopSize)))
+            qmb = QMessageBox()
+            qmb.setText(warning)
+            qmb.setStandardButtons(QMessageBox.Cancel | QMessageBox.Ok )
+            qmb.setDefaultButton(QMessageBox.Cancel)
+            reply = qmb.exec_()
+            if (reply == QMessageBox.Cancel):
+                return
         log(1,"Starting generation of the reference table")
 
         self.save()
@@ -420,14 +440,7 @@ class ProjectReftable(Project):
             #cbgpUtils.checkRam()
             if not os.path.exists((u"%s/reftable.bin"%self.dir).encode(self.fsCoding)) and os.path.exists((u"%s/reftable.log"%self.dir).encode(self.fsCoding)):
                 os.remove((u"%s/reftable.log"%self.dir).encode(self.fsCoding))
-            try:
-                nb_to_gen = int(self.ui.nbSetsReqEdit.text())
-            except Exception as e:
-                output.notify(self,"value error","Check the value of required number of data sets\n\n%s"%e)
-                return
-            if nb_to_gen < int(self.ui.nbSetsDoneEdit.text()):
-                output.notify(self,"value error","Please ask for more records than it already exists")
-                return
+
 
             # on demarre le thread local ou cluster
             if self.parent.preferences_win.ui.useClusterCheck.isChecked():
@@ -457,7 +470,7 @@ class ProjectReftable(Project):
                     "termProblem" : "reftableProblem",
                     "newOutput" : "reftableNewOutput"
                 }
-                particleLoopSize = str(self.parent.preferences_win.particleLoopSizeEdit.text())
+
                 nbMaxThread = self.parent.preferences_win.getMaxThreadNumber()
                 cmd_args_list = [exPath,"-p", "%s/"%self.dir, "-r", "%s"%nb_to_gen , "-g", "%s"%particleLoopSize ,"-m", "-t", "%s"%nbMaxThread]
 
