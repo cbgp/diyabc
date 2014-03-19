@@ -108,7 +108,6 @@ class SetGeneticDataAnalysis(SetGeneticData):
                     # on transfere la conf depuis le mutmod reftable
                     #print "mut conf : %s"%gen_data_ref.setMutationSeq_dico[box].getMutationConf()
                     if self.analysis.mutationModelFixed != "":
-                        print "oooo:",self.analysis.mutationModelFixed[numgr]
                         self.setMutationSeq_dico[self.groupList[-1]].setMutationConfFromAnalysisValues(self.analysis.mutationModelFixed[numgr])
                     else:
                         self.setMutationSeq_dico[self.groupList[-1]].setMutationConf(gen_data_ref.setMutationSeq_dico[box].getMutationConf().split('\n'))
