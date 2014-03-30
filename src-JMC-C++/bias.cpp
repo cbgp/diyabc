@@ -114,11 +114,11 @@ bool valinfinie=false;
  *  modifie les paramètres historiques en accord avec les priors/valeurs des pseudo-observés
  */ 
     void resethistparam(string s) {
-        string *ss,name,sprior,smini,smaxi;
-        int n,i;
-        ss = splitwords(s,"=",&n);
+        string name,sprior,smini,smaxi;
+        vector<string> ss; splitwords(s,"=",ss);
+        int n = ss.size();
         name=ss[0];
-        i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
+        int i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
         cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
 			//cout<<"resethistparam   avant readprior\n ";
@@ -148,12 +148,14 @@ bool valinfinie=false;
  */ 
     void resetmutparam(string s) {
 	    cout<<"debut de resetmutparam\n";
-        string *ss,numgr,s1,sg;
+        string numgr,s1,sg;
+        vector<string> ss;
         int n,gr,i0,i1;
         numgr = s.substr(1,s.find("(")-1);  gr=atoi(numgr.c_str());
         i0=s.find("(");i1=s.find(")"); cout <<"i0="<<i0<<"  i1="<<i1<<"\n";
         s1 = s.substr(i0+1,i1-i0-1); cout <<"groupe "<<gr<<"  "<<s1<<"\n";
-        ss = splitwords(s1," ",&n);
+        splitwords(s1," ",ss);
+        n = ss.size();
         if (header.groupe[gr].type==0) {
 		    //cout<<"mutmoy : \n";
 			//header.groupe[gr].priormutmoy.ecris();
@@ -1693,9 +1695,10 @@ bool valinfinie=false;
 	void dobias(string opt,  int seed){
 		cout<<"debut de dobias\n";
         int nstatOK, iprog,nprog,bidule,k,nphistarOK;
-        int nrec = 0, nsel = 0,ns,nrecpos = 0,ntest = 0,np,ng,npv,nn,ncond,nt,*paordre,*paordreabs;
+        int nrec = 0, nsel = 0,nrecpos = 0,ntest = 0,np,ng,npv,ncond,nt,*paordre,*paordreabs;
 		int npvmax,nss;
-        string *ss,s,*ss1,s0,s1,sg, entetelog, *paname, nomfitrace, nomfipar;
+        string s, s0,s1,sg, entetelog, nomfitrace, nomfipar;
+        vector<string> paname;
 		float *stat_obs;
 		long double **matC;
 		bool posterior=false;
@@ -1708,12 +1711,14 @@ bool valinfinie=false;
 		nomfipar = path + ident + "_param.txt";
         cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
-        ss = splitwords(opt,";",&ns);
+        vector<string> ss;  splitwords(opt,";",ss);
+        int ns = ss.size();
+        vector<string> ss1; int nn = ss1.size();
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
             if (s0=="s:") {
-                ss1 = splitwords(s1,",",&nn);
+                splitwords(s1,",",ss1); nn = ss1.size();
                 rt.scenteste = atoi(ss1[0].c_str());
                 nrecpos=0;nrecpos +=rt.nrecscen[rt.scenteste-1];
                 cout <<"scenario choisi : "<<rt.scenteste<<"\n";
@@ -1748,7 +1753,7 @@ bool valinfinie=false;
                 ntest=atoi(s1.c_str());
                 cout<<"nombre de jeux-tests à simuler = "<<ntest<<"\n";
             } else if (s0=="h:") {
-                ss1 = splitwords(s1," ",&np);
+            	splitwords(s1, " ", ss1); np = ss1.size();
                 if (np < header.scenario[rt.scenteste-1].nparam) {
                     //cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenteste<<" est de "<<header.scenario[rt.scenteste-1].nparam<<"\n";
                     cout<<"the number of parameter transmitted ("<<np<<") is incorrect. The expected number for scenario "<<rt.scenteste<<" is "<<header.scenario[rt.scenteste-1].nparam<<"\n";
@@ -1767,7 +1772,7 @@ bool valinfinie=false;
                 }
             } else if (s0=="u:") {
                 cout<<s1<<"\n";
-                ss1 = splitwords(s1,"*",&ng);
+                splitwords(s1, "*", ss1); ng=ss1.size();
                 if (ng != header.ngroupes) {
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);
@@ -1849,7 +1854,7 @@ bool valinfinie=false;
         ifstream file(scurfile.c_str(), ios::in);
         getline(file,entetelog);
 		cout<<"entetelog=\n"<<entetelog<<"\n";
-		paname = splitwords(entetelog," ",&nt);
+		splitwords(entetelog," ", paname); nt=paname.size();
 		paordreabs = new int[npv];
 		paordre =new int[npv];
 		for (int i=0;i<npv;i++)  {
@@ -1881,7 +1886,7 @@ bool valinfinie=false;
 			cout<<"ligne "<<p+1<<" du fichier\n";
 			cout<<bidon<<"\n";
 			//cout<<bidon<<"\n";
-			ss = splitwords(bidon," ",&ns);
+			splitwords(bidon," ",ss); ns = ss.size();
 			cout<<"ns="<<ns<<"    npv="<<npv<<"\n";
 			enreg2[p].numscen=atoi(ss[0].c_str());
 			cout<<"bias.cpp   npv="<<npv<<"\n";

@@ -117,15 +117,31 @@ extern int debuglevel;
 			loc=this->grouplist[gr].loc[iloc];
 			if (this->locuslist[loc].groupe>0){
 				if (this->locuslist[loc].type<5) {
-					for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].freq[samp];
+					for (int samp=0;samp<this->nsample;samp++){
+						delete []this->locuslist[loc].freq[samp];
+						this->locuslist[loc].freq[samp]=NULL;
+
+					}
 					delete []this->locuslist[loc].freq;
-					for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].haplomic[samp];
+					for (int samp=0;samp<this->nsample;samp++){
+						delete []this->locuslist[loc].haplomic[samp];
+						this->locuslist[loc].haplomic[samp]=NULL;
+					}
 					delete []this->locuslist[loc].haplomic;
+					this->locuslist[loc].haplomic=NULL;
 				} else if ((this->locuslist[loc].type>9)and(this->locuslist[loc].weight>0.0)) {
-					for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].freq[samp];
+					for (int samp=0;samp<this->nsample;samp++){
+						delete []this->locuslist[loc].freq[samp];
+						this->locuslist[loc].freq[samp]=NULL;
+					}
 					delete []this->locuslist[loc].freq;
-					for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].haplosnp[samp];
+					this->locuslist[loc].freq=NULL;
+					for (int samp=0;samp<this->nsample;samp++) {
+						delete []this->locuslist[loc].haplosnp[samp];
+						this->locuslist[loc].haplosnp[samp]=NULL;
+					}
 					delete []this->locuslist[loc].haplosnp;
+					this->locuslist[loc].haplosnp=NULL;
 				}
 			}
 		}
@@ -137,10 +153,18 @@ extern int debuglevel;
 			loc=this->grouplist[gr].loc[iloc];
 			if (this->locuslist[loc].groupe>0){
 				if (this->locuslist[loc].type<5) {
-					for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].freq[samp];
+					for (int samp=0;samp<this->nsample;samp++){
+						delete []this->locuslist[loc].freq[samp];
+						this->locuslist[loc].freq[samp]=NULL;
+					}
 					delete []this->locuslist[loc].freq;
-					for (int samp=0;samp<this->nsample;samp++) delete []this->locuslist[loc].haplomic[samp];
+					this->locuslist[loc].freq=NULL;
+					for (int samp=0;samp<this->nsample;samp++){
+						delete []this->locuslist[loc].haplomic[samp];
+						this->locuslist[loc].haplomic[samp]=NULL;
+					}
 					delete []this->locuslist[loc].haplomic;
+					this->locuslist[loc].haplomic=NULL;
 				}
 			}
 		}
@@ -151,12 +175,18 @@ extern int debuglevel;
     for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
       kloc=this->grouplist[gr].loc[iloc];
 	  //cout<<"libere_freq 1  this-<nsample="<<this->nsample<<"\n";
-      for (int samp=0;samp<3;samp++) {delete []this->locuslist[kloc].freq[samp];}
+      for (int samp=0;samp<3;samp++) {
+    	  delete []this->locuslist[kloc].freq[samp];
+    	  this->locuslist[kloc].freq[samp]=NULL;
+      }
 	  //cout<<"libere_freq 1a\n";
       delete []this->locuslist[kloc].freq;
 	  this->locuslist[kloc].freq = NULL;
 	  //cout<<"libere_freq 2\n";
-      for (int samp=0;samp<3;samp++) delete []this->locuslist[kloc].haplomic[samp];
+      for (int samp=0;samp<3;samp++){
+    	  delete []this->locuslist[kloc].haplomic[samp];
+    	  this->locuslist[kloc].haplomic[samp]=NULL;
+      }
       delete []this->locuslist[kloc].haplomic;
 	  this->locuslist[kloc].haplomic = NULL;
     }
@@ -175,10 +205,14 @@ extern int debuglevel;
 				  this->locuslist[kloc].haplodna[samp][ind].clear();
 			  }
 			  delete []this->locuslist[kloc].haplodnavar[samp];
+			  this->locuslist[kloc].haplodnavar[samp]=NULL;
 			  delete []this->locuslist[kloc].haplodna[samp];
+			  this->locuslist[kloc].haplodna[samp]=NULL;
 		  }
 		  delete []this->locuslist[kloc].haplodnavar;
+		  this->locuslist[kloc].haplodnavar=NULL;
 		  delete []this->locuslist[kloc].haplodna;
+		  this->locuslist[kloc].haplodna=NULL;
 	  }
   }
   /*
@@ -1262,13 +1296,13 @@ long double ParticleC::cal_nha2p(int gr,int st){
     } else *OK=false;
     ss = new int[nss];
     for (j=0;j<nss;j++) ss[j]=nuvar[j];
-    if (not nuvar.empty()) nuvar.clear();
     *nssl=nss;
     return ss;
   }
 
   long double ParticleC::cal_nss2p(int gr,int st){
     int iloc,kloc,nssl,nssm=0,nl=0,*ss;
+    ss = NULL;
     long double res=0.0;
     bool OK;
     //cout<<"\n";
@@ -1276,12 +1310,13 @@ long double ParticleC::cal_nha2p(int gr,int st){
     int samp1=this->grouplist[gr].sumstat[st].samp1-1;
     for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
       kloc=this->grouplist[gr].loc[iloc];
+      if(ss != NULL) {delete [] ss; ss=NULL;}
       ss = this->cal_nss2pl(kloc,samp0,samp1,&nssl,&OK);
       //cout<<"nssl = "<<nssl<<"\n";
       //for (int k=0;k<nssl;k++) cout<<"  "<<ss[k];if(nssl>0) cout<<"\n";
       if (OK) {nl++;nssm += nssl;}
       //cout<<"cumul nl="<<nl<<"   cumul nssm="<<nssm<<"\n";
-      if (nssl>0) delete []ss;
+      delete []ss; ss = NULL;
     }
     if (nl>0) res=(long double)nssm/(long double)nl;
     return res;

@@ -65,33 +65,13 @@ class ParticleC
 	}
 	~ParticleC() {
 		//std::cout<<"dans le destructeur de ParticleC  0\n";
-		if (locuslist != NULL) delete [] locuslist;
-		if (grouplist != NULL) delete [] grouplist;
-		if (scenario != NULL) delete [] scenario;
-		if (seqlist != NULL) delete [] seqlist;
-		if (gt != NULL) delete [] gt;
-		if (condition != NULL) delete [] condition;
+		if (locuslist != NULL) {delete [] locuslist; locuslist=NULL;}
+		if (grouplist != NULL) {delete [] grouplist; grouplist=NULL;}
+		if (scenario != NULL) {delete [] scenario; scenario=NULL;}
+		if (seqlist != NULL) {delete [] seqlist; seqlist=NULL;}
+		if (gt != NULL) {delete [] gt; gt=NULL;}
+		if (condition != NULL) {delete [] condition; condition=NULL;}
 		//std::cout<<"dans le destructeur de ParticleC  1\n";
-/*		changé en vector<...>
-        if (dat != NULL){
-			for (int i=0;i<5;i++) {
-				for (int j=0;j<this->nsample;j++) delete [] dat[i][j];
-				delete [] dat[i]; 
-			}
-			delete [] dat;
-		}
-		if (ref != NULL){ 
-			for (int i=0;i<5;i++) {
-				for (int j=0;j<this->nsample;j++) delete [] ref[i][j];
-				delete [] ref[i]; 
-			}
-			delete [] ref;
-		}*/
-		//std::cout<<"dans le destructeur de ParticleC  2\n";
-//      Pierre: Les clear sont faits automatiquement à laparticule[ipart]. destruction des objets
-//		if (not afsdone.empty()) afsdone.clear();
-//		if (not t_afs.empty()) t_afs.clear();
-//		if (not n_afs.empty()) n_afs.clear();
 	}
   ParticleC & operator= (ParticleC  const & source);
 

@@ -211,13 +211,13 @@ public:
 
   ~ScenarioC(){
 	  //std::cout<<"passage dans le destructeur de ScenarioC\n";
-    /*if( paramvar != NULL) delete [] paramvar;
-    if( time_sample != NULL) delete [] time_sample;
-    if( stime_sample != NULL) delete [] stime_sample;
-    if( event != NULL) delete [] event;
-    if( ne0 != NULL) delete [] ne0;
-    if( histparam != NULL) delete [] histparam;
-    if( condition != NULL) delete [] condition;*/
+    if( paramvar != NULL) {delete [] paramvar; paramvar=NULL;}
+    if( time_sample != NULL) {delete [] time_sample; time_sample=NULL;}
+    if( stime_sample != NULL) {delete [] stime_sample; stime_sample=NULL;}
+    if( event != NULL) {delete [] event; event=NULL;}
+    if( ne0 != NULL) {delete [] ne0; ne0=NULL;}
+    if( histparam != NULL) {delete [] histparam; histparam=NULL;}
+    if( condition != NULL) {delete [] condition; condition=NULL;}
   };
 
   /* détermination du ou des paramètres contenus dans la std::string s */

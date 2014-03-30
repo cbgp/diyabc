@@ -45,14 +45,36 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	int nparamvar=0,pp;
 	this->nparamut = header.nparamut;
 	cout<<"nparamut="<<header.nparamut<<"    nscenarios="<<header.nscenarios<<"\n";
+	if(this->nhistparam != NULL) {
+		delete [] nhistparam;
+		nhistparam = NULL;
+	}
 	this->nhistparam = new int[header.nscenarios];
+	if(this->histparam != NULL) {
+		for(int u =0; u < histparamlength; u++)
+			if(histparam[u] != NULL) {
+				delete[] histparam[u];
+				histparam[u] = NULL;
+			}
+		histparam = NULL;
+	}
 	this->histparam = new HistParameterC*[header.nscenarios];
+	this->histparamlength = header.nscenarios;
+	for(int u =0; u < histparamlength; u++) histparam[u] = NULL;
+	if (this->mutparam != NULL) {
+		delete [] mutparam;
+		mutparam = NULL;
+	}
 	if (header.nparamut>0) this->mutparam = new MutParameterC[header.nparamut];
 	cout<<"avant la boucle des scenarios\n";
 	for (int i=0;i<header.nscenarios;i++) {
 		nparamvar=0;
 		for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) nparamvar++;
 		cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
+		if (this->histparam[i] != NULL) {
+			delete [] this->histparam[i];
+			this->histparam[i]= NULL;
+		}
 		this->histparam[i] = new HistParameterC[nparamvar];
 		this->nhistparam[i] = nparamvar;
 		pp=-1;
@@ -88,8 +110,14 @@ int ReftableC::readheader(string fname,string flogname,string freftabscen) {
 		f0.read((char*)&(this->nrec),sizeof(int));
 		f0.read((char*)&(this->nscen),sizeof(int));
 		//cout <<"readheader.readheader    nscen = "<<this->nscen<<"   nrec="<<this->nrec<<"\n";
+		if (nrecscen != NULL) {
+			delete[] nrecscen; nrecscen = NULL;
+		}
 		this->nrecscen = new int[this->nscen];
 		for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
+		if (nparam != NULL) {
+			delete [] nparam; nparam = NULL;
+		}
 		this->nparam = new int[nscen];
 		for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nparam[i]),sizeof(int));cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";}
 		f0.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
@@ -167,8 +195,8 @@ int ReftableC::writerecords(int nenr, enregC *enr) {
 	//cout<<"avant ouverture de reftable.log nscen="<< this->nscen <<"\n";fflush(stdin);
 	ofstream f1(this->filelog.c_str(),ios::out);
 	f1<<"OK\n";
-	int *nrs,nb;
-	nrs = new int[this->nscen];
+	int nb;
+	int * nrs = new int[this->nscen];
 	for (int i=0;i<this->nscen;i++) nrs[i]=0;
 	//cout<<"avant le seekp\n";fflush(stdin);
 	this->fifo.seekp(0,ios::end);
@@ -217,8 +245,16 @@ int ReftableC::openfile2() {
 	this->fifo.read((char*)&(this->nrec),sizeof(int));
 	this->fifo.read((char*)&(this->nscen),sizeof(int));
 	//cout <<"dans openfile2 nrec = "<<nrec<<"\n";
+	if (nrecscen != NULL) {
+		delete [] nrecscen;
+		nrecscen = NULL;
+	}
 	this->nrecscen = new int[this->nscen];
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
+	if (nparam != NULL) {
+		delete [] nparam;
+		nparam = NULL;
+	}
 	this->nparam = new int[nscen];
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
 	this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
@@ -234,8 +270,16 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 	this->fifo.read((char*)&(this->nrec),sizeof(int));
 	this->fifo.read((char*)&(this->nscen),sizeof(int));
 	cout <<"nrec = "<<nrec<<"\n";
+	if (this->nrecscen != NULL) {
+		delete [] nrecscen;
+		nrecscen = NULL;
+	}
 	this->nrecscen = new int[this->nscen];
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
+	if (this->nparam != NULL) {
+		delete [] nparam;
+		nparam = NULL;
+	}
 	this->nparam = new int[this->nscen];
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
 	this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
@@ -258,8 +302,13 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 		}
 	}
 	cout<<"\n";
-	delete [] this->nrecscen;
-	delete [] this->nparam;
+	if (nrecscen != NULL) {
+	delete [] this->nrecscen; nrecscen = NULL;
+	}
+	if (nparam != NULL) {
+		delete [] this->nparam;
+		this->nparam = NULL;
+	}
 	if (not corrompu) {this->fifo.close();cout<<"fichier reftable OK\n\n";return 0;}
 	enregC e;
 	npmax=0;for (int i=0;i<this->nscen;i++) if(npmax<this->nparam[i]) npmax=this->nparam[i];
@@ -273,6 +322,10 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 	this->fifo.read((char*)&(k),sizeof(int));
 	this->fifo.read((char*)&(this->nscen),sizeof(int));
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
+	if (nparam != NULL) {
+		delete [] nparam;
+		nparam = NULL;
+	}
 	this->nparam = new int[this->nscen];
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
 	this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
@@ -300,7 +353,9 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 		for (int i=0;i<this->nstat;i++) f1.write((char*)&(e.stat[i]),sizeof(float));
 		if ((((h+1)%npart)==0)or(h==this->nrec-1)) cout<<h+1<<"\r";
 	}
-	delete [] this->nparam;
+	if (this->nparam != NULL) {
+		delete [] this->nparam; this->nparam = NULL;
+	}
 	delete [] e.param;
 	delete [] e.stat;
 	f1.close();
@@ -357,6 +412,8 @@ void ReftableC::bintotxt() {
 		fprintf(f1,"\n");
 	}
 	this->closefile();
+	delete [] enr.param;
+	delete [] enr.stat;
 }
 
 void ReftableC::bintotxt2() {
@@ -398,6 +455,8 @@ void ReftableC::bintotxt2() {
 		fprintf(f1,"\n");
 	}
 	this->closefile();
+	delete [] enr.param;
+	delete [] enr.stat;
 }
 
 void ReftableC::bintocsv(HeaderC const & header) {
@@ -430,24 +489,25 @@ void ReftableC::bintocsv(HeaderC const & header) {
 	f1.close();
 	f2.close();
 	this->closefile();
+	delete [] enr.param;
+	delete [] enr.stat;
 }
 
 void ReftableC::concat() {
 	cout<<"debut de concat\n";
-	char *reftabname,*reftab,*reflogname,*num,*buffer;
 	char extbin[]=".bin\0";
 	char extlog[]=".log\0";
 	int i,n,nu=1,nrecc,*nrecscenc,size,ns;
 	bool premier=true;
 	this->openfile();
-	reftabname = new char[ this->filename.length()+10];
-	reflogname = new char[this->filename.length()+10];
-	reftab = new char[ this->filename.length()+1];
+	char* reftabname = new char[ this->filename.length()+10];
+	char* reflogname = new char[this->filename.length()+10];
+	char* reftab = new char[ this->filename.length()+1];
 	strcpy(reftab,this->filename.c_str());
 	i=strlen(this->filename.c_str());
 	while (this->filename.c_str()[i]!='.') i--;
 	reftab[i]='\0';
-	num = new char[9];
+	char* num = new char[9];
 	n=sprintf (num, "_%d",nu++);
 	strcpy(reftabname,reftab);
 	strcat(reftabname,num);
@@ -478,7 +538,7 @@ void ReftableC::concat() {
 			f0.seekp(0,ios::end);size=f0.tellp();
 			f0.seekp(0,ios::beg);
 			//cout<<"position ="<<f0.tellp()<<"   size = "<<size<<"\n";
-			buffer = new char[size];
+			char* buffer = new char[size];
 			f0.read((char*)&(nrecc),sizeof(int));this->nrec +=nrecc;size -=4;
 			//cout<<"nrecc="<<nrecc<<"\n";
 			f0.read((char*)&(ns),sizeof(int));size -=4;
@@ -500,9 +560,14 @@ void ReftableC::concat() {
 			f1<<"OK\n";
 			f1<<this->nrec<<"\n";
 			f1.close();
+			delete [] buffer;
 		}
 	}
 	this->fifo.close();
+	delete [] reftabname;
+	delete [] reftab;
+	delete [] reflogname;
+	delete [] num;
 }
 
 /**
@@ -565,6 +630,7 @@ int ReftableC::cal_varstat() {
 		printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
 	}
 	delete []sx;delete []sx2;
+	delete []min; delete []max;
 	cout<<"\nnstatOK = "<<nsOK<<"\n";
 //	exit(1);
 	return nsOK;

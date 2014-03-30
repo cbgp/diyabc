@@ -299,14 +299,14 @@ string convertInt4(int number)
 
 void doinitRNG(string rngpar){
 	string progressfilename=path+"RNG_progress.txt";
-	string* ss = new string[10];
+	vector<string> ss;
 	int ns, number_of_threads = 16, number_of_computers = 1;
 	int seed = time(NULL);
 	bool force = false;
 	int countRNGs;
 
 	cout<<"Beginning of doinitRNG  options : "<<rngpar<<"\n";
-	ss = splitwords(rngpar,";",&ns);
+	splitwords(rngpar,";", ss); ns = ss.size();
 	for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
 		string s0=ss[i].substr(0,2);
 		string s1=ss[i].substr(2);
@@ -324,7 +324,6 @@ void doinitRNG(string rngpar){
 			cout << "Force creation of new RNG's and overwrite existing RNG's states.\n";
 		} // fin if
 	} // fin for
-	delete [] ss;
 	cout << "End of doinitRNG options\n";
 
 	// Quitter si RNG_state_0000.bin existe deja

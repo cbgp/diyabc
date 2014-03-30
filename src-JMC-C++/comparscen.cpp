@@ -1057,7 +1057,8 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
     void docompscen(string opt){
         int nstatOK,iprog,nprog;;
         int nrec = 0,nseld = 0,nselr = 0,nsel = 0,ns,nlogreg = 0,k,nts;
-        string *ss = NULL,s,*ss1 = NULL,s0,s1;
+        string s, s0, s1;
+        vector<string> ss, ss1;
         float  *stat_obs;
         bool AFD=false;
 		/*double duree,debut,clock_zero;*/
@@ -1067,15 +1068,14 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
         //strcat(progressfilename,ident);
         //strcat(progressfilename,"_progress.txt");
 
-        ss = splitwords(opt,";",&ns);
+        splitwords(opt,";",ss); ns=ss.size();
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
             if (s0=="s:") {
-                ss1 = splitwords(s1,",",&rt.nscenchoisi);
+                splitwords(s1,",",ss1); rt.nscenchoisi = ss1.size();
                 rt.scenchoisi = new int[rt.nscenchoisi];
                 for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());
-                delete [] ss1; ss1 = NULL;
                 cout <<"scenario(s) choisi(s) : ";
                 for (int j=0;j<rt.nscenchoisi;j++) {cout<<rt.scenchoisi[j]; if (j<rt.nscenchoisi-1) cout <<",";}cout<<"\n";
             } else if (s0=="n:") {
@@ -1130,8 +1130,6 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 			cout<<"apres liberecmat\n";
         }
         cout<<"avant les delete ss et ss1\n";
-        if(ss != NULL) delete []ss;ss=NULL;
-        if(ss1 != NULL) delete []ss1;ss1=NULL;
 		cout<<"apres les delete ss et ss1\n";
         iprog+=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 		delete [] stat_obs;

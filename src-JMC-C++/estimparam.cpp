@@ -1787,18 +1787,19 @@ bool deltanul;
     void doestim(string opt) {
         int nstatOK, iprog,nprog;
         int nrec,nsel = 0,ns,nrecpos = 0;
-        string *ss,s,*ss1,s0,s1;
+        string s,s0,s1;
+        vector<string> ss, ss1;
         float  *stat_obs;
 		long double **matC;
 		long double **phistar, **phistarcompo,**phistarscaled;
         progressfilename=path+ident+"_progress.txt";
         cout<<"debut doestim  options : "<<opt<<"\n";
-        ss = splitwords(opt,";",&ns);
+        splitwords(opt,";",ss); ns = ss.size();
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
             if (s0=="s:") {
-                ss1 = splitwords(s1,",",&rt.nscenchoisi);
+                splitwords(s1,",",ss1); rt.nscenchoisi=ss1.size();
                 rt.scenchoisi = new int[rt.nscenchoisi];
                 for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());
                 nrecpos=0;for (int j=0;j<rt.nscenchoisi;j++) nrecpos +=rt.nrecscen[rt.scenchoisi[j]-1];

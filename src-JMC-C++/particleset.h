@@ -26,6 +26,25 @@ struct ParticleSetC
 	double sexratio;
     MwcGen *mw;
 
+    ParticleSetC():particule(0), locuslist(0), grouplist(0),
+    		nind(0), indivsexe(0), scenario(0), mw(0) {};
+    ~ParticleSetC(){
+      if (particule != 0) delete [] particule;
+      if (locuslist != 0) delete [] locuslist;
+      if (grouplist != 0) delete [] grouplist;
+      if (nind != 0) delete [] nind;
+      if (indivsexe != 0){
+    	  for(int u = 0; u<nsample ;++u){
+    		  if (indivsexe[u] != NULL) {
+    			  delete [] indivsexe[u]; indivsexe[u]=NULL;
+    		  }
+    	  }
+    	  delete[] indivsexe;
+      }
+      if (scenario !=0) delete[] scenario;
+      if (mw !=0) delete[] mw;
+    };
+
     // remplissage de la partie data de la particule p
     void setdata(int p);
     // remplissage de la partie groupe de la particule p

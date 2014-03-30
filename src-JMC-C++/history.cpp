@@ -175,10 +175,11 @@ double PriorC::drawfromprior(MwcGen & mw){
 }
 
 void PriorC::readprior(string ss){
-    string s1,*sb;
+    string s1;
+    vector<string> sb;
     int j;
     s1 = ss.substr(3,ss.length()-4);
-    sb = splitwords(s1,",",&j);
+    splitwords(s1,",", sb); j =sb.size();
     this->mini=atof(sb[0].c_str());
     this->maxi=atof(sb[1].c_str());
             this->ndec=ndecimales(this->mini,this->maxi);
@@ -193,7 +194,6 @@ void PriorC::readprior(string ss){
 	this->fixed=false;
     //cout<<ss<<"   ";
     //if (this->constant) cout<<"constant\n"; else cout<<"variable\n";
-    delete []sb;
 }
 
 /**
@@ -453,13 +453,13 @@ ScenarioC::ScenarioC(ScenarioC const & source) {
 ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
 	if (this == &source)  return *this;
 
-	if( this->paramvar != NULL) delete [] this->paramvar;
-	if( this->time_sample != NULL) delete [] this->time_sample;
-	if( this->stime_sample != NULL) delete [] this->stime_sample;
-	if( this->event != NULL) delete [] this->event;
-	if( this->ne0 != NULL) delete [] this->ne0;
-	if( this->histparam != NULL) delete [] this->histparam;
-	if( this->condition != NULL) delete [] this->condition;
+	if( this->paramvar != NULL) {delete [] this->paramvar; this->paramvar=NULL;}
+	if( this->time_sample != NULL) {delete [] this->time_sample;this->time_sample=NULL;}
+	if( this->stime_sample != NULL) {delete [] this->stime_sample; this->stime_sample=NULL;}
+	if( this->event != NULL) {delete [] this->event; this->event=NULL;}
+	if( this->ne0 != NULL) {delete [] this->ne0; this->ne0=NULL;}
+	if( this->histparam != NULL) {delete [] this->histparam; this->histparam=NULL;}
+	if( this->condition != NULL) {delete [] this->condition; this->condition=NULL;}
 
 	this->prior_proba = source.prior_proba;
 	this->number = source.number;
@@ -500,7 +500,7 @@ ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
 		for (int i=0;i<this->nconditions;i++) this->condition[i] = source.condition[i];
 	}
 	return *this;
-	};
+};
 
 
 void ScenarioC::ecris(bool simulfile) {
@@ -695,14 +695,15 @@ void ScenarioC::detparam(string s,int cat) {
 
 
 string ScenarioC::read_events(int nl,string *ls) {
-	string *ss,sevent,ligne;
+	string sevent,ligne;
+	vector<string> ss;
 	int n;
 	size_t absent=string::npos;
 	ligne=majuscules(ls[0]);
 	if ((ligne.find("SAMPLE")!=absent)or(ligne.find("REFSAMPLE")!=absent)or(ligne.find("MERGE")!=absent)or(ligne.find("VARNE")!=absent)or(ligne.find("SPLIT")!=absent)or(ligne.find("SEXUAL")!=absent)) {
 		return "the first line must provide effective population size(s)";
 	}
-	ss = splitwords(ls[0]," ",&n);
+	splitwords(ls[0]," ",ss); n = ss.size();
 	this->nn0=n;this->nparam=0;
 	this->ne0 = new Ne0C[this->nn0];
 	for (int i=0;i<this->nn0;i++) {
@@ -717,9 +718,8 @@ string ScenarioC::read_events(int nl,string *ls) {
 	this->nevent = nl-1;
 	this->event = new EventC[nl-1];
 	this->nsamp=0;this->npop=this->nn0;this->popmax=this->nn0;
-	delete []ss;
 	for (int i=0;i<nl-1;i++) {
-		ss = splitwords(ls[i+1]," ",&n);
+		splitwords(ls[i+1]," ",ss); n = ss.size();
 		if (ss[0]=="0") {this->event[i].time=0;}
 		else if (atoi(ss[0].c_str())==0) {
 			this->event[i].time=-9999;
@@ -820,7 +820,6 @@ string ScenarioC::read_events(int nl,string *ls) {
 			}
 			//cout <<this->event[i].stime<<"  VARNE"<<"   "<<this->event[i].pop<<"\n";
 		}
-		delete []ss;ss=NULL;
 	}
 	if (this->nsamp<1)
 		return "you forgot to indicate when samples are taken";

@@ -64,7 +64,7 @@ long double **ssphistar,**ssref;
 		cout<<"debut de resetstats\n";
 		cout<<s<<"\n";
         int j,ns,nq,nss1,gr,lonentstat,*groupmodif,ngroupmodif,*nustat;
-        string *ss,*qq,*ss1;
+        vector<string> ss, qq, ss1;
 		vector < vector <StatsnpC > > statsnp;
 		vector < vector <string > > statname;
 		StatsnpC stsnp;
@@ -91,9 +91,9 @@ long double **ssphistar,**ssref;
 		groupmodif = new int[header.ngroupes];
 		for(gr=0;gr<header.ngroupes;gr++) groupmodif[gr]=0;
 		ngroupmodif=0;
-		ss =splitwords(s," ",&ns);
+		splitwords(s," ",ss); ns = ss.size();
         for (int i=0;i<ns;i++) {
-            qq=splitwords(ss[i],"_",&nq);
+            splitwords(ss[i],"_",qq); nq = qq.size();
             if (nq!=3) return false;
             gr=atoi(qq[1].c_str());
 			if (ngroupmodif==0) {
@@ -106,7 +106,6 @@ long double **ssphistar,**ssref;
 					ngroupmodif++;
 				}
 			}
-			delete [] qq;
 		}
 //comptage des stat
 		if ((ngroupmodif>0)and(debuglevel==2)) {
@@ -120,13 +119,12 @@ long double **ssphistar,**ssref;
         //ss =splitwords(s," ",&ns);
         if (debuglevel==2) cout<<"ns="<<ns<<"\n";
         for (int i=0;i<ns;i++) {
-            qq=splitwords(ss[i],"_",&nq);
+            splitwords(ss[i],"_",qq); nq = qq.size();
             if (nq!=3) return false;
             if (debuglevel==2) cout<<"nq="<<nq<<"   qq[1]="<<qq[1]<<"\n";
             gr=atoi(qq[1].c_str());
             if (debuglevel==2) cout<<"gr="<<gr<<"\n";
             header.groupe[gr].nstat++;
-            delete []qq;
 		}
 		header.nstat=0;for (gr=1;gr<=header.ngroupes;gr++) header.nstat +=header.groupe[gr].nstat;
         if (debuglevel==2) {
@@ -170,7 +168,7 @@ long double **ssphistar,**ssref;
 		cout<<"\n"<<header.entete<<"\n";
         for (int i=0;i<ns;i++) {
 			if (debuglevel==2)cout<<"\nss["<<i<<"] = "<<ss[i]<<"\n";
-            qq=splitwords(ss[i],"_",&nq);
+            splitwords(ss[i],"_",qq); nq = qq.size();
             gr=atoi(qq[1].c_str());
             j=0;while (qq[0]!=stat_type[j]) j++;
             if (debuglevel==2) cout<<"ss["<<i<<"] = "<<ss[i]<<"   j="<<j<<"\n";
@@ -181,19 +179,17 @@ long double **ssphistar,**ssref;
                       nustat[gr]++;
                 } else if (stat_num[j]<12) {
                       header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                      ss1=splitwords(qq[2],"&",&nss1);
+                      splitwords(qq[2],"&",ss1); nss1 = ss1.size();
                       header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                       header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
                       nustat[gr]++;
-                      delete [] ss1;
                 } else if (stat_num[j]==12) {
                       header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                      ss1=splitwords(qq[2],"&",&nss1);
+                      splitwords(qq[2],"&",ss1); nss1 = ss1.size();
                       header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                       header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
                       header.groupe[gr].sumstat[nustat[gr]].samp2=atoi(ss1[2].c_str());
                       nustat[gr]++;
-                      delete [] ss1;
                 }
             } else if (header.groupe[gr].type==1) {   //DNA SEQUENCE
 				if (debuglevel==2) cout<<"DNA SEQUENCE stat_num["<<j<<"] = "<<stat_num[j]<<"   qq[2]="<<qq[2]<<"\n";
@@ -204,19 +200,17 @@ long double **ssphistar,**ssref;
                       nustat[gr]++;
                 } else if (stat_num[j]>-14) {
                         header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                        ss1=splitwords(qq[2],"&",&nss1);
+                        splitwords(qq[2],"&", ss1); nss1 = ss1.size();
                         header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                         header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
                         nustat[gr]++;
-                        delete [] ss1;
                 } else if (stat_num[j]==-14) {
                         header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                        ss1=splitwords(qq[2],"&",&nss1);
+                        splitwords(qq[2],"&",ss1); nss1 = ss1.size();
                         header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                         header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
                         header.groupe[gr].sumstat[nustat[gr]].samp2=atoi(ss1[2].c_str());
                         nustat[gr]++;
-                        delete [] ss1;
                 }
                 //cout<<"fin\n";
             } else if (header.groupe[gr].type==2) {   //SNP
@@ -246,7 +240,7 @@ long double **ssphistar,**ssref;
                         
                     } else if ((stat_num[j]>24)and(stat_num[j]<33)) {
 						header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                        ss1=splitwords(qq[2],"&",&nss1);
+                        splitwords(qq[2],"&",ss1); nss1 = ss1.size();
                         header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                         header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
 						trouve=false;
@@ -269,12 +263,11 @@ long double **ssphistar,**ssref;
 								statsnp[gr].push_back(stsnp);
 						}
 						//cout<<"numsnp = "<<statsnp.size()<<"\n";
-						delete [] ss1;
 						nustat[gr]++;
                         
                     } else if (stat_num[j]>32) {
 						header.groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                        ss1=splitwords(qq[2],"&",&nss1);
+                        splitwords(qq[2],"&",ss1); nss1 = ss1.size();
                         header.groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                         header.groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
                         header.groupe[gr].sumstat[nustat[gr]].samp2=atoi(ss1[2].c_str());
@@ -297,11 +290,9 @@ long double **ssphistar,**ssref;
 								cout<<"statsnp["<<gr<<"]["<<statsnp[gr].size()<<"]   cat="<<stsnp.cat<<"   samp="<<stsnp.samp<<"   samp1="<<stsnp.samp1<<"   samp2="<<stsnp.samp2<<"\n";
 								statsnp[gr].push_back(stsnp);
 						}
-						delete [] ss1;
 						nustat[gr]++;
                     }
 			}
-            delete []qq;
         }
 		for (gr=1;gr<=header.ngroupes;gr++) {
 			if (header.groupe[gr].type==2) {
@@ -514,7 +505,8 @@ long double **ssphistar,**ssref;
     void domodchec(string opt,int seed){
         int nstatOK, nphistarOK, iprog,nprog;
         int nrec = 0,nsel = 0, ns,nrecpos = 0,newsspart = 0,npv,npvmax,nss,nsr,newrefpart,*numscen,nparamax,bidon;
-        string *ss,s,*ss1,s0,s1,snewstat;
+        string s,s0,s1,snewstat;
+        vector<string> ss, ss1;
         //float  *stat_obs;
         bool usestats,firsttime,dopca = false,doloc = false, newstat=false;
         long double** matC, **phistar, **phistarcompo, **phistarscaled;
@@ -523,13 +515,13 @@ long double **ssphistar,**ssref;
 		scurfile = path + "first_records_of_the_reference_table_"+ ident +".txt";
         cout<<"debut domodchec  options : "<<opt<<"\n";
 		original=true;composite=false;scaled=false;
-        ss = splitwords(opt,";",&ns);
+        splitwords(opt,";",ss); ns = ss.size();
         numtransf=3;
         for (int i=0;i<ns;i++) { cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
             if (s0=="s:") {
-                ss1 = splitwords(s1,",",&rt.nscenchoisi);
+                splitwords(s1,",",ss1); rt.nscenchoisi = ss1.size();
                 if (rt.nscenchoisi>1) rt.nscenchoisi=1;
                 rt.scenchoisi = new int[rt.nscenchoisi];
                 for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());

@@ -41,13 +41,10 @@ public:
   bool mono;  //mono=true si un seul allèle dans l'échantillon global
   double weight; //poids du locus=1, sauf quand biais de recrutement
   int nsample,*samplesize;
+  bool observation;
   
 	LocusC() {
 		freq = NULL;
-		mutsit.clear();
-		sitmut.clear();
-		sitmut2.clear();
-		tabsit.clear();
 		haplodna = NULL;
 		haplodnavar = NULL;
 		haplomic = NULL;
@@ -65,25 +62,31 @@ public:
 		firstime=mono=true;
 		weight=1.0;
 		nsample=0;
+		observation=false;
 	};
 	~LocusC() {
-		/*if (freq != NULL) delete [] freq;
-		if (haplodna != NULL){ 
-			for (int i=0;i<this->nsample;i++) delete [] haplodna[i];
-			delete [] haplodna;
+		if(this->observation) return;
+		if (this->freq != NULL) {
+			for (int i=0;i<this->nsample;i++) {delete [] this->freq[i]; this->freq[i]=NULL;}
+			this->freq = NULL;
 		}
-		if (haplodnavar != NULL) { 
-			for (int i=0;i<this->nsample;i++) delete [] haplodnavar[i];
-			delete [] haplodnavar;
+		if (this->haplodna != NULL) {
+			for (int i=0;i<this->nsample;i++) {delete [] this->haplodna[i]; this->haplodna[i]=NULL;}
+			this->haplodna = NULL;
 		}
-		if (haplomic != NULL) { 
-			for (int i=0;i<this->nsample;i++) delete [] haplomic[i];
-			delete [] haplomic;
+		if (this->haplodnavar != NULL) {
+			for (int i=0;i<this->nsample;i++) {delete [] this->haplodnavar[i]; this->haplodnavar[i]=NULL;}
+			this->haplodnavar=NULL;
 		}
-		if (haplosnp != NULL) { 
-			for (int i=0;i<this->nsample;i++) delete [] haplosnp[i];
-			delete [] haplosnp;
-		}*/
+		if (this->haplomic != NULL) {
+			for (int i=0;i<this->nsample;i++) {delete [] this->haplomic[i]; this->haplomic[i]=NULL;}
+			this->haplomic=NULL;
+		}
+		if (this->haplosnp != NULL) {
+			for (int i=0;i<this->nsample;i++) {delete [] this->haplosnp[i]; this->haplosnp[i]=NULL;}
+			this->haplosnp=NULL;
+		}
+		if (this->samplesize !=NULL) {delete [] this->samplesize; this->samplesize=NULL;}
 		if (not mutsit.empty()) mutsit.clear();
 		if (not sitmut.empty()) sitmut.clear();
 		if (not sitmut2.empty()) sitmut2.clear();
@@ -99,14 +102,12 @@ class MissingHaplo
 {
 public:
 	int locus,sample,indiv;
-	MissingHaplo & operator= (MissingHaplo const & source);
 };
 
 class MissingNuc
 {
 public:
 	int locus,sample,indiv,nuc;
-	MissingNuc & operator= (MissingNuc const & source);
 };
 
 

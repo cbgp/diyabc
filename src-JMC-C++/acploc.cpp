@@ -316,28 +316,30 @@ int nacp=100000,nprog,iprog;
  * interprète la commande de l'option pre-evaluate prior-scenario combination et lance les calculs correspondants
  */
     void doacpl(string opt,bool multithread, int seed){
-        string *ss,s,s0,s1;
-        bool dopca = false,doloc = false;
-        int ns;
- 		cout<<"doacpl "<<opt<<"\n";
-       ss = splitwords(opt,";",&ns);
-        progressfilename = path + ident + "_progress.txt";
-        for (int i=0;i<ns;i++) { cout<<ss[i]<<"\n";
-            s0=ss[i].substr(0,2);
-            s1=ss[i].substr(2);
-            if (s0=="a:") {
-                dopca=(s1.find("p")!=string::npos);
-                doloc=(s1.find("l")!=string::npos);
-                if (dopca) cout <<"Perform ACP  ";
-                if ((s1=="pl")or(s1=="lp")) cout <<"and ";
-                if (doloc) cout<<"locate  ";
-                cout<< "\n";
-            }            
-        }
-        nprog=1;
-        if (dopca) nprog+=8;
-		if (doloc) nprog+=1;
-		iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
-        if (dopca) cal_acp();
-        if (doloc) cal_loc();
-   }
+    	string s,s0,s1;
+    	vector<string> ss;
+    	bool dopca = false,doloc = false;
+    	cout<<"doacpl "<<opt<<"\n";
+    	splitwords(opt, ";", ss);
+    	int ns = ss.size();
+    	progressfilename = path + ident + "_progress.txt";
+    	for (int i=0;i<ss.size();i++) {
+    		cout<<ss[i]<<"\n";
+    		s0=ss[i].substr(0,2);
+    		s1=ss[i].substr(2);
+    		if (s0=="a:") {
+    			dopca=(s1.find("p")!=string::npos);
+    			doloc=(s1.find("l")!=string::npos);
+    			if (dopca) cout <<"Perform ACP  ";
+    			if ((s1=="pl")or(s1=="lp")) cout <<"and ";
+    			if (doloc) cout<<"locate  ";
+    			cout<< "\n";
+    		}
+    	}
+    	nprog=1;
+    	if (dopca) nprog+=8;
+    	if (doloc) nprog+=1;
+    	iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+    	if (dopca) cal_acp();
+    	if (doloc) cal_loc();
+    }

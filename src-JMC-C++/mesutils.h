@@ -6,6 +6,7 @@
 
 using namespace std;
 #include <string>
+#include <vector>
 
 struct matC
 {
@@ -26,7 +27,9 @@ double walltime (double * t0);
 int getwordint (std::string s, int num);
 double getwordfloat (std::string s, int num);
 std::string * splitwords (std::string s, std::string sep, int * k);
+void splitwords (std::string s, std::string sep, std::vector<std::string> &resultat);
 std::string * splitwordsR (std::string s, std::string sep, int m, int * k);
+void splitwordsR(std::string s, std::string sep, int m, std::vector<std::string> &resultat);
 std::string centre (std::string const & s, int k);
 int strpos (char * st1, char * st2);
 int ndecimales (double mini, double maxi);

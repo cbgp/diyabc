@@ -48,6 +48,10 @@ void ParticleSetC::setdata(int p) {
 	this->particule[p].data.nind.resize(this->header.dataobs.nsample);
 	this->particule[p].data.indivsexe.resize(this->header.dataobs.nsample);
 //	cout<<"ParticleSetC::setdata(int p)    2\n";
+	if(this->particule[p].data.catexist != NULL) {
+		delete [] this->particule[p].data.catexist;
+		this->particule[p].data.catexist = NULL;
+	}
 	this->particule[p].data.catexist = new bool[5];
 	for (int cat=0;cat<5;cat++) this->particule[p].data.catexist[cat] =  this->header.dataobs.catexist[cat];
 	this->particule[p].data.ssize.resize(5);
@@ -68,6 +72,10 @@ void ParticleSetC::setdata(int p) {
 		for (int j=0;j<header.dataobs.nind[i];j++) this->particule[p].data.indivsexe[i][j] = this->header.dataobs.indivsexe[i][j];
 	}
 //	cout<<"ParticleSetC::setdata(int p)    4\n";
+	if(this->particule[p].data.misshap != NULL) {
+		delete [] particule[p].data.misshap;
+		particule[p].data.misshap = NULL;
+	}
 	this->particule[p].data.nmisshap = this->header.dataobs.nmisshap;
 	if (this->particule[p].data.nmisshap>0) {
 		this->particule[p].data.misshap = new MissingHaplo[this->particule[p].data.nmisshap];
@@ -78,6 +86,10 @@ void ParticleSetC::setdata(int p) {
 		}
 	}
 //	cout<<"ParticleSetC::setdata(int p)    5\n";
+	if(this->particule[p].data.misssnp != NULL) {
+		delete [] particule[p].data.misssnp;
+		particule[p].data.misssnp = NULL;
+	}
 	this->particule[p].data.nmisssnp = this->header.dataobs.nmisssnp;
 	if (this->particule[p].data.nmisssnp>0) {
 		this->particule[p].data.misssnp = new MissingHaplo[this->particule[p].data.nmisssnp];
@@ -88,6 +100,10 @@ void ParticleSetC::setdata(int p) {
 		}
 	}
 //	cout<<"ParticleSetC::setdata(int p)    6\n";
+	if(this->particule[p].data.missnuc != NULL) {
+		delete [] particule[p].data.missnuc;
+		particule[p].data.missnuc = NULL;
+	}
 	this->particule[p].data.nmissnuc = this->header.dataobs.nmissnuc;
 	if (this->particule[p].data.nmissnuc>0) {
 		this->particule[p].data.missnuc = new MissingNuc[this->particule[p].data.nmissnuc];
@@ -109,6 +125,10 @@ void ParticleSetC::setgroup(int p) {
 	int ngr = this->header.ngroupes;
 	if (debuglevel==5) cout<<"ngr="<<ngr<<"\n";
 	this->particule[p].ngr = ngr;
+	if(this->particule[p].grouplist != NULL) {
+		delete [] this->particule[p].grouplist;
+		this->particule[p].grouplist = NULL;
+	}
 	this->particule[p].grouplist = new LocusGroupC[ngr+1];
 	this->particule[p].grouplist[0].nloc = this->header.groupe[0].nloc;
 	this->particule[p].grouplist[0].loc  = new int[this->header.groupe[0].nloc];
@@ -189,6 +209,10 @@ void ParticleSetC::setloci(int p) {
 	int kmoy,cat;
 	this->particule[p].nloc = this->header.dataobs.nloc;
 	this->particule[p].nsample = this->header.dataobs.nsample;
+	if(particule[p].locuslist != NULL) {
+		delete [] particule[p].locuslist;
+		particule[p].locuslist = NULL;
+	}
 	this->particule[p].locuslist = new LocusC[this->header.dataobs.nloc];
 	for (int kloc=0;kloc<this->header.dataobs.nloc;kloc++){
 		this->particule[p].locuslist[kloc].nsample = this->particule[p].nsample;
@@ -228,6 +252,10 @@ void ParticleSetC::setloci(int p) {
 void ParticleSetC::setscenarios (int p, bool simulfile) {
 	this->particule[p].nscenarios=this->header.nscenarios;
 	this->particule[p].drawuntil = this->header.drawuntil;
+	if(particule[p].scenario != NULL){
+		delete [] particule[p].scenario;
+		particule[p].scenario = NULL;
+	}
 	this->particule[p].scenario = new ScenarioC[this->header.nscenarios];
 	for (int i=0;i<this->header.nscenarios;i++) {
 		//cout<<"avant la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
@@ -309,7 +337,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	bool simulfile=false;
 	this->npart = npart;
 	int *sOK,ns;
-	string *ss;
+	vector<string> ss;
 	sOK = new int[npart];
 	if (debuglevel==5) cout<<"avant firsttime="<<firsttime<<"\n";
 	if (firsttime) {
@@ -440,19 +468,18 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	}
 	if (firsttime) {
 		int nph,npm,nn=0,ccc,pa,ip,iq;
-		ss=splitwords(header.entetehist," ",&nph);
+		splitwords(header.entetehist," ", ss); nph = ss.size();
 		for (int m=0;m<nph;m++) {
 			ccc=ss[m][0];
 			if (not isalnum(ccc))  nn++;
 		}
-		delete []ss;
-		if (header.entetemut.length()>10) {ss=splitwords(header.entetemut," ",&npm);delete []ss;} else npm=0;
+		if (header.entetemut.length()>10) {splitwords(header.entetemut," ",ss);npm = ss.size();} else npm=0;
 		nph-=nn;
 		FILE * pFile;
 		bool trouve,trouve2;
 		pFile = fopen (scurfile.c_str(),"w");
 		fprintf(pFile,"%s\n",this->header.entete.c_str());
-		ss=splitwords(header.entete," ",&ns);
+		splitwords(header.entete," ",ss); ns = ss.size();
 		if (debuglevel==5) cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
 		np=ns-header.nstat-1;
 		for (int ipart=0;ipart<this->npart;ipart++) {
@@ -498,7 +525,6 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 				}
 			}
 		}
-		delete [] ss;
 		fclose(pFile);
 		
 	}
@@ -507,6 +533,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 
 void ParticleSetC::libere(int npart) {
 	delete [] this->particule;
+	this->particule = NULL;
 }
 
 
@@ -519,7 +546,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	bool trouve;
 	this->npart = npart;
 	int *sOK;
-	string *ss;
+	vector<string> ss;
 	if (debuglevel==5)  cout <<"debut de dosimultabref\n";fflush(stdin);
 	sOK = new int[npart];
 	//if (this->defined) cout <<"particleSet defined\n";
@@ -578,16 +605,15 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	//cout<<"acceptation ="<<(double)(100*naccept)/(double)ntentes<<"   ("<<naccept<<" sur "<<ntentes<<")\n";
 	//exit(1);
 	int nph,npm,nn=0;
-	ss=splitwords(header.entetehist," ",&nph);
+	splitwords(header.entetehist," ",ss); nph = ss.size();
 	for (int m=0;m<nph;m++) {
 		ccc=ss[m][0];
 		if (not isalnum(ccc))  nn++;
 	}
-	delete []ss;
 	nph-=nn;
 	//nph--;
 	if (debuglevel==5) cout<<header.entetehist<<"\n";
-	if (header.entetemut.length()>10) {ss=splitwords(header.entetemut," ",&npm);delete []ss;} else npm=0;
+	if (header.entetemut.length()>10) {splitwords(header.entetemut," ",ss);npm = ss.size();} else npm=0;
 	//cout<<"nph="<<nph<<"   npm="<<npm<<"\n";
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		enreg[ipart].numscen=1;
@@ -658,7 +684,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 		if (debuglevel==5) cout<<header.entetehist<<"\n";
 		if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;*/
 		//if (ss!=NULL) {delete []ss;ss=NULL;}
-		ss=splitwords(header.entete," ",&ns);
+		splitwords(header.entete," ",ss); ns = ss.size();
 		if (debuglevel==5) cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
 		np=ns-header.nstat-1;
 		//cout<<"ns="<<ns<<"  nparam="<<np<<"   nparamut="<<rt.nparamut<<"   nstat="<<header.nstat<<"\n";
@@ -707,13 +733,12 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 				}
 			}
 		}
-		delete [] ss;
 		fclose(pFile);
 		if (debuglevel==5) cout<<"apres fclose\n";
 	}
 	//cout<<"apres remise en ordre des enreg.param\n";
 	if (debuglevel==5) cout<<"avant delete sOK\n";
-	delete [] sOK;
+	delete [] sOK; sOK = NULL;
 	if (debuglevel==5) cout<<"apres delete sOK\n";
 	//exit(1);
 }

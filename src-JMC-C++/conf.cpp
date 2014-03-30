@@ -176,7 +176,8 @@ string nomficonfresult;
         string progressfilename;
         int nstatOK, iprog,nprog,ncs1,*nbestdir,*nbestlog,*scenchoibackup,nscenchoibackup;
         int nrec = 0,nreca, nsel=0,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond;
-        string *ss,s,*ss1,s0,s1; 
+        string s,s0,s1;
+        vector<string> ss, ss1;
 		float *stat_obs;
 		long double **matC;
 		double duree,debut,clock_zero;
@@ -194,12 +195,12 @@ string nomficonfresult;
 		scurfile = path + "pseudo-observed_datasets_"+ ident +".txt";
         cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
-        ss = splitwords(opt,";",&ns);
+        splitwords(opt,";",ss); ns = ss.size();
         for (int i=0;i<ns;i++) {
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);cout<<ss[i]<<"   s0="<<s0<<"s1="<<s1<<"\n";
             if (s0=="s:") {
-                ss1 = splitwords(s1,",",&rt.nscenchoisi);
+                splitwords(s1,",",ss1); rt.nscenchoisi=ss1.size();
                 rt.scenchoisi = new int[rt.nscenchoisi];
                 for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());
                 nrecpos=0;for (int j=0;j<rt.nscenchoisi;j++) nrecpos +=rt.nrecscen[rt.scenchoisi[j]-1];
@@ -233,7 +234,7 @@ string nomficonfresult;
                 cout<<"nombre de jeux de données considérés pour la régression locale = "<<nsel<<"\n";
             } else if (s0=="h:") {
                 shist = s1;
-                ss1 = splitwords(s1," ",&np);
+                splitwords(s1," ",ss1); np = ss1.size();
                 if (np < header.scenario[rt.scenteste-1].nparam) {
                     //cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenteste<<" est de "<<header.scenario[rt.scenteste-1].nparam<<"\n";
                     cout<<"the number of parameter transmitted ("<<np<<") is incorrect. The expected number for scenario "<<rt.scenteste<<" is "<<header.scenario[rt.scenteste-1].nparam<<"\n";
@@ -253,7 +254,7 @@ string nomficonfresult;
             } else if ((s0=="u:")and(s1!="")) {
                 smut = s1;
                 cout<<s1<<"\n";
-                ss1 = splitwords(s1,"*",&ng);
+                splitwords(s1,"*",ss1); ng = ss1.size();
                 if (ng != header.ngroupes) {
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);
