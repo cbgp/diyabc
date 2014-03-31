@@ -52,10 +52,10 @@ extern int debuglevel;
 		cat=this->locuslist[loc].type%5;
 		//cout <<"\nLocus "<< loc <<"   kmin="<<this->locuslist[loc].kmin<<"   kmax="<<this->locuslist[loc].kmax<<"\n";
 		this->locuslist[loc].nal = this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;
-		this->locuslist[loc].freq = new long double* [this->nsample];
+		this->locuslist[loc].freq = vector<vector<long double> >(this->nsample);
 		//cout <<"nal ="<<this->locuslist[loc].nal<<"\n";
 		for (int samp=0;samp<this->nsample;samp++) {
-			this->locuslist[loc].freq[samp] = new long double [this->locuslist[loc].nal];
+			this->locuslist[loc].freq[samp] = vector<long double>(this->locuslist[loc].nal);
 			for (int i=0;i<this->locuslist[loc].nal;i++) this->locuslist[loc].freq[samp][i]=0.0;
 			//cout << this->data.ssize[cat][samp] <<"\n";
 			for (int i=0;i<this->data.ssize[cat][samp];i++){
@@ -90,10 +90,10 @@ extern int debuglevel;
 			if (this->locuslist[loc].weight>0.0) {
 				cat=this->locuslist[loc].type%5;
 				//cout<<"cat = "<<cat<<"   nsample="<<this->nsample<<"\n";
-				this->locuslist[loc].freq = new long double* [this->nsample];
+				this->locuslist[loc].freq = vector<vector<long double> >(this->nsample);
 				for (int samp=0;samp<this->nsample;samp++) {
 					//cout<<"sample "<<samp<<"\n";
-					this->locuslist[loc].freq[samp] = new long double [2];
+					this->locuslist[loc].freq[samp] = vector<long double>(2);
 					this->locuslist[loc].freq[samp][0] = 0.0;this->locuslist[loc].freq[samp][1] = 0.0;
 					//cout<<"avant la boucle i\n";
 					//cout<<"this->data.ssize[cat][samp]="<<this->data.ssize[cat][samp]<<"\n";
@@ -117,31 +117,11 @@ extern int debuglevel;
 			loc=this->grouplist[gr].loc[iloc];
 			if (this->locuslist[loc].groupe>0){
 				if (this->locuslist[loc].type<5) {
-					for (int samp=0;samp<this->nsample;samp++){
-						delete []this->locuslist[loc].freq[samp];
-						this->locuslist[loc].freq[samp]=NULL;
-
-					}
-					delete []this->locuslist[loc].freq;
-					for (int samp=0;samp<this->nsample;samp++){
-						delete []this->locuslist[loc].haplomic[samp];
-						this->locuslist[loc].haplomic[samp]=NULL;
-					}
-					delete []this->locuslist[loc].haplomic;
-					this->locuslist[loc].haplomic=NULL;
+					this->locuslist[loc].freq.clear();
+					this->locuslist[loc].haplomic.clear();
 				} else if ((this->locuslist[loc].type>9)and(this->locuslist[loc].weight>0.0)) {
-					for (int samp=0;samp<this->nsample;samp++){
-						delete []this->locuslist[loc].freq[samp];
-						this->locuslist[loc].freq[samp]=NULL;
-					}
-					delete []this->locuslist[loc].freq;
-					this->locuslist[loc].freq=NULL;
-					for (int samp=0;samp<this->nsample;samp++) {
-						delete []this->locuslist[loc].haplosnp[samp];
-						this->locuslist[loc].haplosnp[samp]=NULL;
-					}
-					delete []this->locuslist[loc].haplosnp;
-					this->locuslist[loc].haplosnp=NULL;
+					this->locuslist[loc].freq.clear();
+					this->locuslist[loc].haplosnp.clear();
 				}
 			}
 		}
@@ -153,18 +133,8 @@ extern int debuglevel;
 			loc=this->grouplist[gr].loc[iloc];
 			if (this->locuslist[loc].groupe>0){
 				if (this->locuslist[loc].type<5) {
-					for (int samp=0;samp<this->nsample;samp++){
-						delete []this->locuslist[loc].freq[samp];
-						this->locuslist[loc].freq[samp]=NULL;
-					}
-					delete []this->locuslist[loc].freq;
-					this->locuslist[loc].freq=NULL;
-					for (int samp=0;samp<this->nsample;samp++){
-						delete []this->locuslist[loc].haplomic[samp];
-						this->locuslist[loc].haplomic[samp]=NULL;
-					}
-					delete []this->locuslist[loc].haplomic;
-					this->locuslist[loc].haplomic=NULL;
+					this->locuslist[loc].freq.clear();
+					this->locuslist[loc].haplomic.clear();
 				}
 			}
 		}
@@ -175,20 +145,9 @@ extern int debuglevel;
     for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
       kloc=this->grouplist[gr].loc[iloc];
 	  //cout<<"libere_freq 1  this-<nsample="<<this->nsample<<"\n";
-      for (int samp=0;samp<3;samp++) {
-    	  delete []this->locuslist[kloc].freq[samp];
-    	  this->locuslist[kloc].freq[samp]=NULL;
-      }
-	  //cout<<"libere_freq 1a\n";
-      delete []this->locuslist[kloc].freq;
-	  this->locuslist[kloc].freq = NULL;
+	  this->locuslist[kloc].freq.clear();
 	  //cout<<"libere_freq 2\n";
-      for (int samp=0;samp<3;samp++){
-    	  delete []this->locuslist[kloc].haplomic[samp];
-    	  this->locuslist[kloc].haplomic[samp]=NULL;
-      }
-      delete []this->locuslist[kloc].haplomic;
-	  this->locuslist[kloc].haplomic = NULL;
+	  this->locuslist[kloc].haplomic.clear();
     }
   }
 
@@ -197,22 +156,8 @@ extern int debuglevel;
 	  for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 		  kloc=this->grouplist[gr].loc[iloc];
 		  cat= this->locuslist[kloc].type % 5;
-		  for (int samp=0;samp<this->nsample;samp++) {
-			  for (int ind=0;ind<this->data.ssize[cat][samp];ind++) {
-				  //cout<<"avant delete this->locuslist["<<kloc<<"].haplodnavar["<<samp<<"]["<<ind<<"]\n";
-				  //delete []this->locuslist[kloc].haplodnavar[samp][ind];
-				  this->locuslist[kloc].haplodnavar[samp][ind].clear();
-				  this->locuslist[kloc].haplodna[samp][ind].clear();
-			  }
-			  delete []this->locuslist[kloc].haplodnavar[samp];
-			  this->locuslist[kloc].haplodnavar[samp]=NULL;
-			  delete []this->locuslist[kloc].haplodna[samp];
-			  this->locuslist[kloc].haplodna[samp]=NULL;
-		  }
-		  delete []this->locuslist[kloc].haplodnavar;
-		  this->locuslist[kloc].haplodnavar=NULL;
-		  delete []this->locuslist[kloc].haplodna;
-		  this->locuslist[kloc].haplodna=NULL;
+		  this->locuslist[kloc].haplodnavar.clear();
+		  this->locuslist[kloc].haplodna.clear();
 	  }
   }
   /*
@@ -1444,17 +1389,18 @@ long double ParticleC::cal_nha2p(int gr,int st){
 		  cat = this->locuslist[kloc].type % 5;
 		  dmax=samplesize(kloc,samp0)+samplesize(kloc,samp1)+samplesize(kloc,samp2);
 		  //cout<<"Locus "<<kloc<<"   (cal_freq)\n";
-		  this->locuslist[kloc].freq = new long double*[3];
-		  this->locuslist[kloc].haplomic = new int*[3];
+		  this->locuslist[kloc].freq = vector<vector<long double> >(3);
+		  this->locuslist[kloc].haplomic = vector<vector<int> >(3);
 		  this->locuslist[kloc].kmin=100;
 		  nhaplo=0;
 		  if (this->locuslist[kloc].dnavar==0) { // construction pour ne pas deleter du vide (haplomic)
 			  for (isamp=0;isamp<3;isamp++) {
 				  if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
-				  this->locuslist[kloc].freq[sample] = new long double[1];
+				  this->locuslist[kloc].freq[sample] = vector<long double>(1);
 				  this->locuslist[kloc].freq[sample][0]=1.0;
-				  this->locuslist[kloc].haplomic[sample] = new int[this->data.ssize[cat][sample]];
-				  for (int j=0;j<this->data.ssize[cat][sample];j++) this->locuslist[kloc].haplomic[sample][j]=this->locuslist[kloc].kmin;
+				  this->locuslist[kloc].haplomic[sample] = vector<int>(this->data.ssize[cat][sample]);
+				  for (int j=0;j<this->data.ssize[cat][sample];j++)
+					  this->locuslist[kloc].haplomic[sample][j]=this->locuslist[kloc].kmin;
 			  }
 			  //haplo[nhaplo] = "";
 			  nhaplo++;
@@ -1485,10 +1431,10 @@ long double ParticleC::cal_nha2p(int gr,int st){
 			  }
 			  for (isamp=0;isamp<3;isamp++) {
 				  if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
-				  this->locuslist[kloc].freq[sample] = new long double[nhaplo];
+				  this->locuslist[kloc].freq[sample] = vector<long double>(nhaplo);
 				  for (j=0;j<nhaplo;j++) this->locuslist[kloc].freq[sample][j] = 0.0;
 				  d=1.0/(long double)samplesize(kloc,sample);
-				  this->locuslist[kloc].haplomic[sample] = new int[this->data.ssize[cat][sample]];
+				  this->locuslist[kloc].haplomic[sample] = vector<int>(this->data.ssize[cat][sample]);
 				  for (int i=0;i<this->data.ssize[cat][sample];i++) {
 					  if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
 						  trouve=false;j=0;
@@ -1582,9 +1528,9 @@ long double ParticleC::cal_nha2p(int gr,int st){
 				}
 			}
 			//cout<<"coucou\n";
-			this->locuslist[locus].haplodnavar = new string*[this->nsample];
+			this->locuslist[locus].haplodnavar = vector<vector<string> >(this->nsample);
 			for (pop=0;pop<this->nsample;pop++) {
-			this->locuslist[locus].haplodnavar[pop] = new string[this->data.ssize[cat][pop]];
+			this->locuslist[locus].haplodnavar[pop] = vector<string>(this->data.ssize[cat][pop]);
 				for (i=0;i<this->data.ssize[cat][pop];i++) {
 					if (    (int)this->locuslist[locus].haplodna[pop][i].length() == this->locuslist[locus].dnavar   ) {
 						this->locuslist[locus].haplodnavar[pop][i] = this->locuslist[locus].haplodna[pop][i];
@@ -1599,7 +1545,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 		for (int iloc=0;iloc<nlocs;iloc++) {
 			locus= this->grouplist[gr].loc[iloc];
 			cat = this->locuslist[locus].type % 5;
-			this->locuslist[locus].haplodnavar = new string*[this->nsample];
+			this->locuslist[locus].haplodnavar = vector<vector<string> >(this->nsample);
 			ns=0; for (pop=0;pop<this->nsample;pop++) ns += this->data.ssize[cat][pop];
 			site = new char[ns];
 			this->locuslist[locus].dnavar=0;
@@ -1632,7 +1578,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 			}
 	//cout<<"locus "<<locus<<"   dnavar = "<<this->locuslist[locus].dnavar<<"\n";
 	for (pop=0;pop<this->nsample;pop++) {
-	  this->locuslist[locus].haplodnavar[pop] = new string[this->data.ssize[cat][pop]];
+	  this->locuslist[locus].haplodnavar[pop] = vector<string>(this->data.ssize[cat][pop]);
 	  for (i=0;i<this->data.ssize[cat][pop];i++) {
 	    ss="";
 	    for (int k=0;k<this->locuslist[locus].dnavar;k++) {

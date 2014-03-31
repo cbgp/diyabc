@@ -1841,8 +1841,9 @@ void ParticleC::put_one_mutation(int loc) {
 		}
 		if (debuglevel==10) cout<<"apres ordre\n";
 		if (this->locuslist[loc].type<5) {      //MICROSAT
-			this->locuslist[loc].haplomic = new int*[this->data.nsample];
-			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplomic[sa] = new int [this->data.ssize[cat][sa]];
+			this->locuslist[loc].haplomic = vector<vector<int> >(this->data.nsample);
+			for (sa=0;sa<this->data.nsample;sa++)
+				this->locuslist[loc].haplomic[sa] = vector<int>(this->data.ssize[cat][sa]);
 			sa=0;ind=0;
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {ordre.clear();return 2;}
@@ -1853,8 +1854,9 @@ void ParticleC::put_one_mutation(int loc) {
 			if (debuglevel==10) cout<<"apres repartition dans le sample 0\n";
 		}
 		else if (this->locuslist[loc].type<10) {//DNA SEQUENCES
-			this->locuslist[loc].haplodna = new string*[this->data.nsample];
-			for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplodna[sa] = new string [this->data.ssize[cat][sa]];
+			this->locuslist[loc].haplodna = vector<vector<string> >(this->data.nsample);
+			for (sa=0;sa<this->data.nsample;sa++)
+				this->locuslist[loc].haplodna[sa] = vector<string>(this->data.ssize[cat][sa]);
 			sa=0;ind=0;
 			for (int i=0;i<this->gt[loc].ngenes;i++) {
 				if (this->gt[loc].nodes[ordre[sa][ind]].state == 10000) {
@@ -1881,8 +1883,9 @@ void ParticleC::put_one_mutation(int loc) {
 		else {									//SNP
 			if (debuglevel==10) cout << " firstime = " << firstime << endl;
 			if (this->locuslist[loc].firstime){
-				this->locuslist[loc].haplosnp = new short int*[this->data.nsample];
-				for (sa=0;sa<this->data.nsample;sa++) this->locuslist[loc].haplosnp[sa] = new short int [this->data.ssize[cat][sa]];
+				this->locuslist[loc].haplosnp = vector<vector<short int> >(this->data.nsample);
+				for (sa=0;sa<this->data.nsample;sa++)
+					this->locuslist[loc].haplosnp[sa] = vector<short int>(this->data.ssize[cat][sa]);
 				this->locuslist[loc].firstime=false;
 			}
 			sa=0;ind=0;

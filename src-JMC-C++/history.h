@@ -150,7 +150,8 @@ public:
  */
 struct LocusGroupC
 {
-  int *loc,nloc,nstat,nstatsnp;           // *loc=numeros des locus du groupe
+  std::vector<int> loc;     // loc=numeros des locus du groupe
+  int nloc,nstat,nstatsnp;
   int type;                      //O= microsat, 1=sequence
   double p_fixe,gams;
   double musmoy,mutmoy,Pmoy,snimoy;
@@ -158,24 +159,25 @@ struct LocusGroupC
   int  mutmod;
   PriorC priormusmoy,priork1moy,priork2moy,priormusloc,priork1loc,priork2loc;
   PriorC priormutmoy,priorPmoy,priorsnimoy,priormutloc,priorPloc,priorsniloc;
-  StatC *sumstat;
-  StatsnpC *sumstatsnp;
+  std::vector<StatC> sumstat;
+  std::vector<StatsnpC> sumstatsnp;
   /* Déclaration des méthodes */
   LocusGroupC(){
-    loc = NULL;
+/*    loc = NULL;
     sumstat = NULL;
     sumstatsnp = NULL;
 	nstat = 0;
 	nstatsnp = 0;
+	*/
   };
 //  LocusGroupC(LocusGroupC const & source);
-  LocusGroupC & operator= (LocusGroupC  const & source);
+//  LocusGroupC & operator= (LocusGroupC  const & source);
 
   ~LocusGroupC(){
 	  //std::cout<<"passage dans le destructeur de LocusGroupC\n";
-    if( loc != NULL) delete [] loc;
+   /* if( loc != NULL) delete [] loc;
     if( sumstat != NULL) delete [] sumstat;
-    if( sumstatsnp != NULL) delete [] sumstatsnp;
+    if( sumstatsnp != NULL) delete [] sumstatsnp;*/
 	//std::cout<<" sortie du destructeur de LocusGroupC\n";
   };
 
@@ -189,24 +191,18 @@ struct LocusGroupC
 class ScenarioC
 {
 public:
-  double *paramvar, prior_proba;
-  int number,popmax,npop,nsamp,*time_sample,nparam,nevent,nn0,nparamvar,nconditions,ipv;
-  std::string *stime_sample;
-  EventC *event;
-  Ne0C *ne0;
-  HistParameterC *histparam;
-  ConditionC *condition;
+  std::vector<double> paramvar;
+  double prior_proba;
+  int number,popmax,npop,nsamp,nparam,nevent,nn0,nparamvar,nconditions,ipv;
+  std::vector<int> time_sample;
+  std::vector<std::string> stime_sample;
+  std::vector<EventC> event;
+  std::vector<Ne0C> ne0;
+  std::vector<HistParameterC> histparam;
+  std::vector<ConditionC> condition;
   /* Déclaration des méthodes */
-  ScenarioC(){
-    paramvar = NULL;
-    time_sample = NULL;
-    stime_sample = NULL;
-    event = NULL;
-    ne0 = NULL;
-    histparam = NULL;
-    condition = NULL;
-  };
-  ScenarioC(ScenarioC const & source);
+
+  /*ScenarioC(ScenarioC const & source);
   ScenarioC & operator= (ScenarioC  const & source);
 
   ~ScenarioC(){
@@ -219,7 +215,7 @@ public:
     if( histparam != NULL) {delete [] histparam; histparam=NULL;}
     if( condition != NULL) {delete [] condition; condition=NULL;}
   };
-
+	*/
   /* détermination du ou des paramètres contenus dans la std::string s */
   void detparam(std::string s,int cat);
   /* lecture/interprétation des lignes d'un scénario */

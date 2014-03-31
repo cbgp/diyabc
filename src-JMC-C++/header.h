@@ -9,6 +9,7 @@
 #define HEADER_H_
 #include <string>
 #include <fstream>
+#include <vector>
 #include "data.h"
 #include "history.h"
 #include "particuleC.h"
@@ -36,40 +37,17 @@ public:
     std::string pathbase;
     DataC dataobs;
     int nparamtot,nstat,nstatsnp,nscenarios,nconditions,ngroupes,nparamut,nsimfile;
-    std::string *statname;
-    ScenarioC *scenario,scen;
-    HistParameterC *histparam;
-    ConditionC *condition;
-    LocusGroupC *groupe;
+    std::vector<std::string> statname;
+    std::vector<ScenarioC> scenario;
+    ScenarioC scen;
+    std::vector<HistParameterC> histparam;
+    std::vector<ConditionC> condition;
+    std::vector<LocusGroupC> groupe;
     bool drawuntil,reference;
-    MutParameterC *mutparam;
-    float *stat_obs;
+    std::vector<MutParameterC> mutparam;
+    std::vector<float> stat_obs;
 	float reffreqmin;
 	float threshold;
-//////////////////////////////////// AJOUT
-  HeaderC(){
-    statname = NULL;
-	scenario = NULL;
-    histparam = NULL;
-    condition = NULL;
-    groupe = NULL;
-    mutparam = NULL;
-    stat_obs = NULL;
-  };
-  HeaderC(HeaderC const & source);
-  HeaderC & operator= (HeaderC  const & source);
-
-  ~HeaderC(){
-    if( statname != NULL) delete [] statname;
-    if( scenario != NULL) delete [] scenario;
-    if( histparam != NULL) delete [] histparam;
-    if( condition != NULL) delete [] condition;
-    if( groupe != NULL) delete [] groupe;
-    if( mutparam != NULL) delete [] mutparam;
-    if( stat_obs != NULL) delete [] stat_obs;
-  };
-
-///////////////////////////////////
   
 	void libere();
 	void assignloc(int gr);
@@ -96,6 +74,9 @@ public:
 	int readHeadersim(std::string headersimfilename);
 
 	string calstatobs(std::string statobsfilename);
+ private:
+	//HeaderC(const HeaderC & source) {};
+	//HeaderC & operator=(const HeaderC & source) { return *this;} ;
 };
 
 

@@ -8,7 +8,7 @@ fast:
 
 valgrind:
 	cd dcmt0.6.1/lib/; $(MAKE) $(MFLAGS)
-	cd src-JMC-C++; opti=-O3 debug=-g $(MAKE) $(MFLAGS) all
+	export GLIBCXX_FORCE_NEW=1; cd src-JMC-C++; opti=-O3 debug=-g $(MAKE) $(MFLAGS) all
 
 dpkg:
 	cd dcmt0.6.1/lib/; $(MAKE) $(MFLAGS) 

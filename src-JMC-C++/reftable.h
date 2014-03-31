@@ -32,7 +32,7 @@ public:
     int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste,nparamut,*nhistparam;
     float *param,*sumstat;
     int histparamlength;
-    HistParameterC **histparam;
+    std::vector<std::vector<HistParameterC> > histparam;
     MutParameterC  *mutparam;
     std::fstream fifo;
     int nstatOK,nsel,nenr;
@@ -40,7 +40,7 @@ public:
     float *stat_obs;
     long double *var_stat;
     ReftableC():nrecscen(NULL),nparam(NULL),scenchoisi(NULL),
-    		nhistparam(NULL),param(NULL),sumstat(NULL),histparam(NULL),
+    		nhistparam(NULL),param(NULL),sumstat(NULL),histparam(0),
     		mutparam(NULL), enrsel(NULL),stat_obs(NULL),var_stat(NULL){
     	histparamlength=0;
     };
@@ -65,14 +65,6 @@ public:
     	}
     	if (sumstat != NULL) {
     		delete [] sumstat; sumstat=NULL;
-    	}
-    	if (histparam != NULL) {
-    		for(int p =0; p<histparamlength; p++){
-    			if(histparam[p] != NULL) {
-    				delete[] histparam[p]; histparam[p]=NULL;
-    			}
-    		}
-    		delete [] histparam; histparam=NULL;
     	}
     	if (mutparam != NULL) {
     		delete [] mutparam; mutparam=NULL;

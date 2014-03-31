@@ -67,6 +67,7 @@ extern "C"
 
 #include "particuleC.h"
 
+extern "C" void __libc_freeres(void);
 
 #define NSTAT 44
 
@@ -230,6 +231,7 @@ void analyseRNG(string & modpar) {
 */
 
 int main(int argc, char *argv[]){
+atexit(__libc_freeres);
 string RNG_filename;
 bool exception_caught = false;
 bool erreur_scenario=false;
@@ -709,7 +711,7 @@ try {
 		} 
 	}*/
 	//cout<<"4\n";
-	if (rt.histparam !=NULL) {delete [] rt.histparam; rt.histparam=NULL;}
+	//if (rt.histparam !=NULL) {delete [] rt.histparam; rt.histparam=NULL;}
 	//cout<<"5\n";
 	delete [] stat_type;
 	//cout<<"6\n";

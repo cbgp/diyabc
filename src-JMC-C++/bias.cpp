@@ -1764,8 +1764,8 @@ bool valinfinie=false;
 				if (ncond>0) {
                   cout<<header.scenario[rt.scenteste-1].nconditions<<"\n";
                     if (header.scenario[rt.scenteste-1].nconditions != ncond) {
-                        if (header.scenario[rt.scenteste-1].nconditions>0) delete []header.scenario[rt.scenteste-1].condition;
-                        header.scenario[rt.scenteste-1].condition = new ConditionC[ncond];
+                        //if (header.scenario[rt.scenteste-1].nconditions>0) delete []header.scenario[rt.scenteste-1].condition;
+                        header.scenario[rt.scenteste-1].condition = vector<ConditionC>(ncond);
                     }
                     for (int j=0;j<ncond;j++)
                          header.scenario[rt.scenteste-1].condition[j].readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]);
@@ -1790,10 +1790,10 @@ bool valinfinie=false;
 			nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
 			cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
 			rt.alloue_enrsel(nsel);
-			rt.cal_dist(nrec,nsel,header.stat_obs,false);                  cout<<"apres cal_dist\n";
+			rt.cal_dist(nrec,nsel,&header.stat_obs[0],false);                  cout<<"apres cal_dist\n";
 			det_numpar();
 			cout<<"apres det_numpar\n";
-			rempli_mat(nsel,header.stat_obs);                        cout<<"apres rempli_mat\n";
+			rempli_mat(nsel,&header.stat_obs[0]);                        cout<<"apres rempli_mat\n";
 			if (not deltanul) matC = cal_matC(nsel); 
 			recalparamO(nsel);                                 cout<<"apres recalparam\n";
 			if (not deltanul) {

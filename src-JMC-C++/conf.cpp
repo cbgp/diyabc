@@ -245,8 +245,7 @@ string nomficonfresult;
                 if (ncond>0) {
                   cout<<header.scenario[rt.scenteste-1].nconditions<<"\n";
                     if (header.scenario[rt.scenteste-1].nconditions != ncond) {
-                        if (header.scenario[rt.scenteste-1].nconditions>0) delete []header.scenario[rt.scenteste-1].condition;
-                        header.scenario[rt.scenteste-1].condition = new ConditionC[ncond];
+                        header.scenario[rt.scenteste-1].condition = vector<ConditionC>(ncond);
                     }
                     for (int j=0;j<ncond;j++)
                          header.scenario[rt.scenteste-1].condition[j].readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]);
@@ -283,10 +282,10 @@ string nomficonfresult;
 			cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
 			rt.alloue_enrsel(nsel);
 			cout<<"avant le cal_dist de posterior\n";fflush(stdout);
-			rt.cal_dist(nreca,nsel,header.stat_obs,true);                  cout<<"apres cal_dist\n";
+			rt.cal_dist(nreca,nsel,&header.stat_obs[0],true);                  cout<<"apres cal_dist\n";
 			det_numpar();
 			cout<<"apres det_numpar\n";
-			rempli_mat(nsel,header.stat_obs);                        cout<<"apres rempli_mat\n";
+			rempli_mat(nsel,&header.stat_obs[0]);                        cout<<"apres rempli_mat\n";
 			if (not deltanul) matC = cal_matC(nsel); 
 			recalparamO(nsel);                                 cout<<"apres recalparam\n";
 			if (not deltanul) {

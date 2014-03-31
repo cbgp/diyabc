@@ -341,7 +341,7 @@ void HistParameterC::ecris(bool simulfile){
 /**
  * Definition de l'operateur = pour une instance de la classe LocusGroupC
  */
-  LocusGroupC & LocusGroupC::operator= (LocusGroupC const & source) {
+ /* LocusGroupC & LocusGroupC::operator= (LocusGroupC const & source) {
 	if (this== &source) return *this;
     if( this->loc != NULL) delete [] this->loc;
     if( this->sumstat != NULL) delete [] this->sumstat;
@@ -385,11 +385,10 @@ void HistParameterC::ecris(bool simulfile){
 	}
 	return *this;
   }
-  
+  */
 void LocusGroupC::libere(){
-    delete []loc;
-    for (int i=0;i<this->nstat;i++) free(&(this->sumstat[i]));
-    delete []this->sumstat;
+    loc.clear();
+    this->sumstat.clear();
 
   }
 
@@ -397,20 +396,20 @@ void LocusGroupC::libere(){
  * Méthodes de ScenarioC 
  */
 void ScenarioC::libere() {
-	if (this->nconditions>0) delete [] this->condition;
-	if (this->nparamvar>0) delete [] this->paramvar;
-	if (this->nparam>0) delete [] this->histparam;
-	if (this->nsamp>0) delete [] this->time_sample;
-	if (this->nsamp>0) delete [] this->stime_sample;
-	if (this->nn0>0) delete [] this->ne0;
-	if (this->nevent>0) delete [] this->event;
+	if (this->nconditions>0) this->condition.clear();
+	if (this->nparamvar>0) this->paramvar.clear();
+	if (this->nparam>0) this->histparam.clear();
+	if (this->nsamp>0) this->time_sample.clear();
+	if (this->nsamp>0) this->stime_sample.clear();
+	if (this->nn0>0) this->ne0.clear();
+	if (this->nevent>0) this->event.clear();
 }
   
 
 /**
  * Copie du contenu d'une classe ScenarioC
  */
-ScenarioC::ScenarioC(ScenarioC const & source) {
+/*ScenarioC::ScenarioC(ScenarioC const & source) {
   //cout<<"debut de copyscenario\n";
   this->prior_proba = source.prior_proba;
   this->number = source.number;
@@ -435,22 +434,22 @@ ScenarioC::ScenarioC(ScenarioC const & source) {
   for (int i=0;i<this->nsamp;i++) this->stime_sample[i] = source.stime_sample[i];
  // cout<<"   apres copytime_sample\n";
   this->histparam = new HistParameterC[this->nparam];
-  for (int i=0;i<this->nparam;i++) {this->histparam[i] = source.histparam[i];/*cout<<this->histparam[i].name<<"\n"<<flush;*/}
+  for (int i=0;i<this->nparam;i++) {this->histparam[i] = source.histparam[i];cout<<this->histparam[i].name<<"\n"<<flush;}
   //  cout<<"   apres copyhistparam\n";
   this->paramvar = new double[this->nparamvar];
-  for (int i=0;i<this->nparamvar;i++) {this->paramvar[i] = source.paramvar[i];/*cout<<this->histparam[i].name<<"\n"<<flush;*/}
+  for (int i=0;i<this->nparamvar;i++) {this->paramvar[i] = source.paramvar[i];cout<<this->histparam[i].name<<"\n"<<flush;}
   //  cout<<"   apres copyparamvar\n";
   if (this->nconditions>0) {
     this->condition = new ConditionC[this->nconditions];
     for (int i=0;i<this->nconditions;i++) this->condition[i] = source.condition[i];
   }
-}
+}*/
 
 /**
  * Definition de l'operateur = pour une instance de la classe ScenarioC
  */
 
-ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
+/*ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
 	if (this == &source)  return *this;
 
 	if( this->paramvar != NULL) {delete [] this->paramvar; this->paramvar=NULL;}
@@ -501,7 +500,7 @@ ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
 	}
 	return *this;
 };
-
+*/
 
 void ScenarioC::ecris(bool simulfile) {
     cout <<"scenario "<<this->number<<"   ("<<this->prior_proba<<")\n";
@@ -705,7 +704,7 @@ string ScenarioC::read_events(int nl,string *ls) {
 	}
 	splitwords(ls[0]," ",ss); n = ss.size();
 	this->nn0=n;this->nparam=0;
-	this->ne0 = new Ne0C[this->nn0];
+	this->ne0 = vector<Ne0C>(this->nn0);
 	for (int i=0;i<this->nn0;i++) {
 		if (atoi(ss[i].c_str())==0) {
 			this->ne0[i].name = ss[i];
@@ -716,7 +715,7 @@ string ScenarioC::read_events(int nl,string *ls) {
 		}
 	}
 	this->nevent = nl-1;
-	this->event = new EventC[nl-1];
+	this->event = vector<EventC>(nl-1);
 	this->nsamp=0;this->npop=this->nn0;this->popmax=this->nn0;
 	for (int i=0;i<nl-1;i++) {
 		splitwords(ls[i+1]," ",ss); n = ss.size();
@@ -823,7 +822,7 @@ string ScenarioC::read_events(int nl,string *ls) {
 	}
 	if (this->nsamp<1)
 		return "you forgot to indicate when samples are taken";
-	this->histparam = new HistParameterC[this->nparam];
+	this->histparam = vector<HistParameterC>(this->nparam);
 	//this->paramvar = new HistParameterC[this->nparamvar];
 	//cout << "this->nparam = "<<this->nparam<<"   size= "<<histparname.size()<<"\n";
 	for (int i=0;i<this->nparam;i++){
@@ -834,8 +833,8 @@ string ScenarioC::read_events(int nl,string *ls) {
 		if (this->histparam[i].category=='T')this->histparam[i].value=-9999; else this->histparam[i].value=-1;
 	}
 	histparname.clear();histparcat.clear();
-	this->time_sample = new int[this->nsamp];
-	this->stime_sample = new string[this->nsamp];
+	this->time_sample = vector<int>(this->nsamp);
+	this->stime_sample = vector<string>(this->nsamp);
 	n=-1;
 	cout<<"dans readevents : repérage des time_sample\n";
 	for (int i=0;i<this->nevent;i++) {

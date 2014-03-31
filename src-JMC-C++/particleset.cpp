@@ -48,72 +48,24 @@ void ParticleSetC::setdata(int p) {
 	this->particule[p].data.nind.resize(this->header.dataobs.nsample);
 	this->particule[p].data.indivsexe.resize(this->header.dataobs.nsample);
 //	cout<<"ParticleSetC::setdata(int p)    2\n";
-	if(this->particule[p].data.catexist != NULL) {
-		delete [] this->particule[p].data.catexist;
-		this->particule[p].data.catexist = NULL;
-	}
-	this->particule[p].data.catexist = new bool[5];
-	for (int cat=0;cat<5;cat++) this->particule[p].data.catexist[cat] =  this->header.dataobs.catexist[cat];
-	this->particule[p].data.ssize.resize(5);
-	for (int cat=0;cat<5;cat++) {
-		if (this->particule[p].data.catexist[cat]) {
-			this->particule[p].data.ssize[cat].resize(this->header.dataobs.nsample);
-			for (int sa=0;sa<this->header.dataobs.nsample;sa++) this->particule[p].data.ssize[cat][sa] = this->header.dataobs.ssize[cat][sa];
-			/*if (p==0) {
-					cout<<"dans particule[0]\n";
-					for (int sa=0;sa<this->header.dataobs.nsample;sa++) cout <<this->particule[p].data.ssize[cat][sa]<<"   ";cout<<"\n";
-				}*/
-		}
-	}
+	this->particule[p].data.catexist = vector<bool>(5);
+	this->particule[p].data.catexist = this->header.dataobs.catexist;
+	this->particule[p].data.ssize = this->header.dataobs.ssize;
+	this->particule[p].data.nind = this->header.dataobs.nind;
+	this->particule[p].data.indivsexe = this->header.dataobs.indivsexe;
 //	cout<<"ParticleSetC::setdata(int p)    3\n";
-	for (int i=0;i<this->header.dataobs.nsample;i++) {
-		this->particule[p].data.nind[i] = this->header.dataobs.nind[i];
-		this->particule[p].data.indivsexe[i].resize(this->header.dataobs.nind[i]);
-		for (int j=0;j<header.dataobs.nind[i];j++) this->particule[p].data.indivsexe[i][j] = this->header.dataobs.indivsexe[i][j];
-	}
+
 //	cout<<"ParticleSetC::setdata(int p)    4\n";
-	if(this->particule[p].data.misshap != NULL) {
-		delete [] particule[p].data.misshap;
-		particule[p].data.misshap = NULL;
-	}
 	this->particule[p].data.nmisshap = this->header.dataobs.nmisshap;
-	if (this->particule[p].data.nmisshap>0) {
-		this->particule[p].data.misshap = new MissingHaplo[this->particule[p].data.nmisshap];
-		for (int i=0;i<this->header.dataobs.nmisshap;i++) {
-			this->particule[p].data.misshap[i].locus  = this->header.dataobs.misshap[i].locus;
-			this->particule[p].data.misshap[i].sample = this->header.dataobs.misshap[i].sample;
-			this->particule[p].data.misshap[i].indiv  = this->header.dataobs.misshap[i].indiv;
-		}
-	}
+	this->particule[p].data.misshap = this->header.dataobs.misshap;
 //	cout<<"ParticleSetC::setdata(int p)    5\n";
-	if(this->particule[p].data.misssnp != NULL) {
-		delete [] particule[p].data.misssnp;
-		particule[p].data.misssnp = NULL;
-	}
+
 	this->particule[p].data.nmisssnp = this->header.dataobs.nmisssnp;
-	if (this->particule[p].data.nmisssnp>0) {
-		this->particule[p].data.misssnp = new MissingHaplo[this->particule[p].data.nmisssnp];
-		for (int i=0;i<this->header.dataobs.nmisssnp;i++) {
-			this->particule[p].data.misssnp[i].locus  = this->header.dataobs.misssnp[i].locus;
-			this->particule[p].data.misssnp[i].sample = this->header.dataobs.misssnp[i].sample;
-			this->particule[p].data.misssnp[i].indiv  = this->header.dataobs.misssnp[i].indiv;
-		}
-	}
+	this->particule[p].data.misssnp = this->header.dataobs.misssnp;
+
 //	cout<<"ParticleSetC::setdata(int p)    6\n";
-	if(this->particule[p].data.missnuc != NULL) {
-		delete [] particule[p].data.missnuc;
-		particule[p].data.missnuc = NULL;
-	}
 	this->particule[p].data.nmissnuc = this->header.dataobs.nmissnuc;
-	if (this->particule[p].data.nmissnuc>0) {
-		this->particule[p].data.missnuc = new MissingNuc[this->particule[p].data.nmissnuc];
-		for (int i=0;i<this->header.dataobs.nmissnuc;i++) {
-			this->particule[p].data.missnuc[i].locus  = this->header.dataobs.missnuc[i].locus;
-			this->particule[p].data.missnuc[i].sample = this->header.dataobs.missnuc[i].sample;
-			this->particule[p].data.missnuc[i].indiv  = this->header.dataobs.missnuc[i].indiv;
-			this->particule[p].data.missnuc[i].nuc    = this->header.dataobs.missnuc[i].nuc;
-		}
-	}
+	this->particule[p].data.missnuc = this->header.dataobs.missnuc;
 //	cout<<"ParticleSetC::setdata(int p)    7\n";
 	this->particule[p].reffreqmin = this->header.reffreqmin;
 }
@@ -131,14 +83,12 @@ void ParticleSetC::setgroup(int p) {
 	}
 	this->particule[p].grouplist = new LocusGroupC[ngr+1];
 	this->particule[p].grouplist[0].nloc = this->header.groupe[0].nloc;
-	this->particule[p].grouplist[0].loc  = new int[this->header.groupe[0].nloc];
-	for (int i=0;i<this->header.groupe[0].nloc;i++) this->particule[p].grouplist[0].loc[i] = this->header.groupe[0].loc[i];
+	this->particule[p].grouplist[0].loc = this->header.groupe[0].loc;
 	for (int gr=1;gr<=ngr;gr++) {
 		this->particule[p].grouplist[gr].type =this->header.groupe[gr].type;
 		this->particule[p].grouplist[gr].nloc = this->header.groupe[gr].nloc;
 		if (debuglevel==5) cout <<"groupe "<<gr<<"   nloc="<<this->particule[p].grouplist[gr].nloc<<"\n";
-		this->particule[p].grouplist[gr].loc  = new int[this->header.groupe[gr].nloc];
-		for (int i=0;i<this->header.groupe[gr].nloc;i++) this->particule[p].grouplist[gr].loc[i] = this->header.groupe[gr].loc[i];
+		this->particule[p].grouplist[gr].loc = this->header.groupe[gr].loc;
 		if (this->header.groupe[gr].type==0) {	//MICROSAT
 			this->particule[p].grouplist[gr].mutmoy = this->header.groupe[gr].mutmoy;
 			this->particule[p].grouplist[gr].priormutmoy = this->header.groupe[gr].priormutmoy;
@@ -176,7 +126,7 @@ void ParticleSetC::setgroup(int p) {
 		}
 		//cout<<"nstat = "<<this->header.groupe[gr].nstat<<"\n";
 		this->particule[p].grouplist[gr].nstat=this->header.groupe[gr].nstat;
-		this->particule[p].grouplist[gr].sumstat = new StatC[header.groupe[gr].nstat];
+		this->particule[p].grouplist[gr].sumstat = vector<StatC>(header.groupe[gr].nstat);
 		for (int i=0;i<this->header.groupe[gr].nstat;i++){
 			this->particule[p].grouplist[gr].sumstat[i].cat   = header.groupe[gr].sumstat[i].cat;
 			this->particule[p].grouplist[gr].sumstat[i].samp  = header.groupe[gr].sumstat[i].samp;
@@ -188,7 +138,7 @@ void ParticleSetC::setgroup(int p) {
 		//cout<<"dans particleset  setgroup  nstatsnp = "<<this->header.groupe[gr].nstatsnp<<"\n";
 		this->particule[p].grouplist[gr].nstatsnp=this->header.groupe[gr].nstatsnp;
 		if (this->header.groupe[gr].nstatsnp>0) {
-			this->particule[p].grouplist[gr].sumstatsnp = new StatsnpC[header.groupe[gr].nstatsnp];
+			this->particule[p].grouplist[gr].sumstatsnp = vector<StatsnpC>(header.groupe[gr].nstatsnp);
 			for (int i=0;i<this->header.groupe[gr].nstatsnp;i++){
 				this->particule[p].grouplist[gr].sumstatsnp[i].cat   = header.groupe[gr].sumstatsnp[i].cat;
 				this->particule[p].grouplist[gr].sumstatsnp[i].samp  = header.groupe[gr].sumstatsnp[i].samp;
@@ -341,7 +291,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 	sOK = new int[npart];
 	if (debuglevel==5) cout<<"avant firsttime="<<firsttime<<"\n";
 	if (firsttime) {
-		this->particule = new ParticleC[this->npart];
+		this->particule = vector<ParticleC>(this->npart);
 		if (debuglevel==5) cout<<"\n\navant this->header=header   this->npart="<<this->npart<<"\n";
 		this->header = header;
 		if (debuglevel==5) cout<<"apres this->header=header   this->npart="<<this->npart<<"\n";
@@ -532,8 +482,7 @@ void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatru
 }
 
 void ParticleSetC::libere(int npart) {
-	delete [] this->particule;
-	this->particule = NULL;
+
 }
 
 
@@ -554,7 +503,7 @@ void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue
 	//this->header = header;
 	if (debuglevel==5) cout <<"dosimultabref npart = "<<npart<<"\n";
 	if (firsttime) {
-		this->particule = new ParticleC[this->npart];
+		this->particule = vector<ParticleC>(this->npart);
 		//cout<<"\navant this->header = header;\n";
 		this->header = header;
 		//cout<<"apres this->header = header;\n\n";
@@ -753,7 +702,7 @@ string* ParticleSetC::simulgenepop(HeaderC const & header, int npart, bool multi
 	int *sOK;
 	string *ss;
 	sOK = new int[npart];
-	this->particule = new ParticleC[this->npart];
+	this->particule = vector<ParticleC>(this->npart);
 	ss = new string[npart];
 	this->header = header;
 	cout<<"avant le remplissage des "<<this->npart<<" particules\n";
@@ -787,7 +736,7 @@ string* ParticleSetC::simuldataSNP(HeaderC const & header, int npart, bool multi
 	int *sOK;
 	string *ss;
 	sOK = new int[npart];
-	this->particule = new ParticleC[this->npart];
+	this->particule = vector<ParticleC>(this->npart);
 	ss = new string[npart];
 	this->header = header;
 	cout<<"avant le remplissage des "<<this->npart<<" particules\n";

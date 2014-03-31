@@ -75,7 +75,7 @@ ParticleC particuleobs;
 /**
  * Copie du contenu d'une classe HeaderC
  */
-  HeaderC::HeaderC (HeaderC const & source) {
+ /* HeaderC::HeaderC (HeaderC const & source) {
     this->message = source.message;
     this->datafilename = source.datafilename;
     this->entete = source.entete;
@@ -117,11 +117,11 @@ ParticleC particuleobs;
 	this->groupe = new LocusGroupC[this->ngroupes];
 	for (int i=0;i<this->ngroupes;i++) this->groupe[i] = source.groupe[i];
 }
-
+*/
 /**
  * Definition de l'operateur = pour une instance de la classe HeaderC
  */
-  HeaderC & HeaderC::operator= (HeaderC const & source) {
+  /*HeaderC & HeaderC::operator= (HeaderC const & source) {
 	if (this == &source)  return *this;
 // Suppression des tableaux non nuls
 	if (this->stat_obs != NULL) delete [] this->stat_obs;
@@ -188,7 +188,7 @@ ParticleC particuleobs;
 	}
 	return *this;
   }	
-	
+	*/
 	
 	
 void MutParameterC::ecris() {
@@ -200,34 +200,9 @@ void HeaderC::libere() {
     //cout<<"HeaderC::libere nconditions="<<this->nconditions<<"\n";
 	this->dataobs.libere();
 	//cout<<"apres dataobs.libere\n";
-	if(this->nconditions>0) {
-		delete []this->condition;
-		condition = NULL;
-	}
-	 for(int i=0;i<this->nscenarios;i++) this->scenario[i].libere();
-	//cout<<"apres scenario[i].libere\n";
-	delete []this->scenario; scenario = NULL;
-	//cout<<"apres delete this->scenario\n";
-	delete [] this->histparam; histparam = NULL;
-	//cout<<"apres delete this->histparam\n";
-	delete [] this->statname; statname = NULL;
-	//cout<<"apres delete this->statname\n";
-	if (this->nparamut>0) {
-		delete []this->mutparam;
-		mutparam = NULL;
-	}
+
 	//cout<<"avant scen.libere\n";
 	 this->scen.libere();
-	for(int i=1;i<ngroupes+1;i++) this->groupe[i].libere();
-	for (int gr=1;gr<=this->ngroupes;gr++){
-		delete [] this->groupe[gr].sumstat;
-		this->groupe[gr].sumstat= NULL;
-	}
-	for (int gr=0;gr<=this->ngroupes;gr++){
-		delete [] this->groupe[gr].loc;
-		this->groupe[gr].loc=NULL;
-	}
-	delete []this->groupe;
 	//cout<<"apres delete group\n";
 }
 
@@ -241,7 +216,7 @@ void HeaderC::assignloc(int gr){
 		if (dataobs.locus[loc].groupe==gr) this->groupe[gr].nloc++;
 	}
 	if (debuglevel==2) cout<<"assignloc nloc="<<this->groupe[gr].nloc<<"\n";
-	this->groupe[gr].loc = new int[this->groupe[gr].nloc];
+	this->groupe[gr].loc = vector<int>(this->groupe[gr].nloc);
 	int iloc=-1;
 	for (int i=0;i<dataobs.nloc;i++) {
 		if (dataobs.locus[i].groupe==gr) {iloc++;this->groupe[gr].loc[iloc] = i;}
@@ -297,9 +272,9 @@ int HeaderC::readHeaderScenarios(ifstream & file){
 	getline(file,s1);nl++;    //cout<<s1<<"\n";    // nombre de scenarios
 	this->nscenarios=getwordint(s1,1); cout<<this->nscenarios<<" scenario(s)\n";
 	string** sl; sl = new string*[this->nscenarios];
-	int * nlscen; nlscen = new int[this->nscenarios];
+	int * nlscen = new int[this->nscenarios];
 
-	this->scenario = new ScenarioC[this->nscenarios];
+	this->scenario = vector<ScenarioC>(this->nscenarios);
 	for (int i=0;i<this->nscenarios;i++) {nlscen[i]=getwordint(s1,3+i);}
 	for (int i=0;i<this->nscenarios;i++) {
 		sl[i] = new string[nlscen[i]];
@@ -383,13 +358,9 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 	this->nconditions = atoi(ss2[1].c_str());
 	cout<<"dans header nconditions="<<this->nconditions<<"\n";
 	cout<<"avant  new HistParameterC[this->nparamtot]\n";
-	if(histparam != NULL) {
-		delete [] histparam; histparam = NULL;
-	}
-	this->histparam = new HistParameterC[this->nparamtot];
-	if(this->condition != NULL) {
-		delete condition; condition=NULL;
-	}
+
+	this->histparam = vector<HistParameterC>(this->nparamtot);
+	this->condition.clear();
 	for (int i=0;i<this->nparamtot;i++) {
 		getline(file,s1);
 		cout<<s1<<"\n";
@@ -406,7 +377,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 	cout<<"apres les readprior\n";
 	this->drawuntil=true;
 	if (this->nconditions>0) {
-		this->condition = new ConditionC[this->nconditions];
+		this->condition = vector<ConditionC>(this->nconditions);
 		for (int i=0;i<this->nconditions;i++) {
 			getline(file,s1);
 			cout<<s1<<"\n";
@@ -449,7 +420,7 @@ int HeaderC::readHeaderHistParam(ifstream & file){
 			}
 			this->scenario[i].nconditions=nc;
 			//cout <<"header.scenario["<<i<<"].nconditions="<<this->scenario[i].nconditions<<"\n";
-			this->scenario[i].condition = new ConditionC[nc];
+			this->scenario[i].condition = vector<ConditionC>(nc);
 			nc=0;
 			while (nc<this->scenario[i].nconditions) {
 				for (j=0;j<this->nconditions;j++) {
@@ -500,7 +471,7 @@ int HeaderC::readHeaderLoci(ifstream & file){
 	} else {			//fichier SNP
 		//cout<<"fichier SNP dans redheaderLoci\n";
 		this->ngroupes=getwordint(s1,3); cout<<s1<<"\n";cout<<"this->ngroupes="<<this->ngroupes<<"\n";
-		this->groupe = new LocusGroupC[this->ngroupes+1];
+		this->groupe = vector<LocusGroupC>(this->ngroupes+1);
 		this->groupe[0].nloc = this->dataobs.nloc;
 		for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].groupe=0;
 		for (gr=1;gr<=this->ngroupes;gr++) {
@@ -515,7 +486,7 @@ int HeaderC::readHeaderLoci(ifstream & file){
 			for (k=0;k<nsg;k++) this->groupe[gr].nloc +=getwordint(s1,2*k+1);
 			this->groupe[0].nloc -= this->groupe[gr].nloc;
 			if (debuglevel==2) for (int kk=0;kk<=this->ngroupes;kk++) cout<<"groupe["<<kk<<"].nloc = "<<this->groupe[kk].nloc<<"\n";
-			this->groupe[gr].loc = new int[this->groupe[gr].nloc];
+			this->groupe[gr].loc = vector<int>(this->groupe[gr].nloc);
 			k1=0;
 			for (k=0;k<nsg;k++) {
 				nl=getwordint(s1,2*k+1);
@@ -548,7 +519,7 @@ int HeaderC::readHeaderLoci(ifstream & file){
 		}
 		//cout<<"this->groupe[0].nloc = "<<this->groupe[0].nloc<<"\n";
 		if (this->groupe[0].nloc>0) {
-			this->groupe[0].loc = new int[this->groupe[0].nloc];
+			this->groupe[0].loc = vector<int>(this->groupe[0].nloc);
 			k1=0;
 			for (int loc=0;loc<this->dataobs.nloc;loc++) {
 				//cout<<"loc="<<loc<<"\n";
@@ -573,7 +544,7 @@ int HeaderC::readHeaderGroupPrior(ifstream & file){
 		getline(file,s1);       //ligne "group prior"
 		this->ngroupes=getwordint(s1,3);
 		//cout<<"header.ngroupes="<<this->ngroupes;
-		this->groupe = new LocusGroupC[this->ngroupes+1];
+		this->groupe = vector<LocusGroupC>(this->ngroupes+1);
 		this->assignloc(0);
 		cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
 		for (gr=1;gr<=this->ngroupes;gr++){
@@ -696,7 +667,7 @@ int HeaderC::readHeaderGroupPrior(ifstream & file){
 	} //fin de la condition fichier=GENEPOP
 	//Mise à jour des paramvar
 	for (int i=0;i<this->nscenarios;i++) {
-		this->scenario[i].paramvar = new double[this->scenario[i].nparamvar];
+		this->scenario[i].paramvar = vector<double>(this->scenario[i].nparamvar);
 		for (int j=0;j<this->scenario[i].nparamvar;j++)this->scenario[i].paramvar[j]=-1.0;
 		//this->scenario[i].ecris();
 	}
@@ -746,7 +717,7 @@ int HeaderC::readHeaderAllStat(ifstream & file) {
 		this->nstat += nstatgr;
 		this->groupe[gr].nstat=nstatgr;
 //DEFINITION DES STAT
-		this->groupe[gr].sumstat = new StatC[nstatgr];
+		this->groupe[gr].sumstat = vector<StatC>(nstatgr);
 		if (this->groupe[gr].type==0) {   //MICROSAT
 			for (int i=1;i<=4;i++) {
 				for (int sa=1;sa<=nsamp;sa++){
@@ -933,7 +904,7 @@ int HeaderC::readHeaderAllStat(ifstream & file) {
 		this->groupe[gr].nstatsnp=statsnp.size();
 		//cout<<"this->groupe[gr].nstatsnp="<<this->groupe[gr].nstatsnp<<"\n";
 		if (this->groupe[gr].nstatsnp>0){
-			this->groupe[gr].sumstatsnp = new StatsnpC[this->groupe[gr].nstatsnp];
+			this->groupe[gr].sumstatsnp = vector<StatsnpC>(this->groupe[gr].nstatsnp);
 			for (int i=0;i<this->groupe[gr].nstatsnp;i++){
 				this->groupe[gr].sumstatsnp[i].cat=statsnp[i].cat;
 				this->groupe[gr].sumstatsnp[i].samp=statsnp[i].samp;
@@ -944,7 +915,7 @@ int HeaderC::readHeaderAllStat(ifstream & file) {
 			statsnp.clear();
 		}
 	}
-	this->statname=splitwords(this->entetestat," ",&nss);
+	splitwords(this->entetestat, " ", statname); nss=statname.size();
 	for(int i=0;i<nss;i++) cout<<this->statname[i]<<"  ";cout<<"\n";
 	cout<<"nstat="<<this->nstat<<"      nss="<<nss<<"\n";
 	return 0;
@@ -968,7 +939,7 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 		//cout <<"s1="<<s1<<"   ss[3]="<< ss[3] <<"   atoi = "<< atoi(ss[3].c_str()) <<"\n";
 		this->groupe[gr].nstat = getwordint(ss[nss-1],0);
 		this->nstat +=this->groupe[gr].nstat;
-		this->groupe[gr].sumstat = new StatC[this->groupe[gr].nstat];
+		this->groupe[gr].sumstat = vector<StatC>(this->groupe[gr].nstat);
 		k=0;
 		vector <StatsnpC> statsnp;
 		StatsnpC stsnp;
@@ -1132,7 +1103,7 @@ int HeaderC::readHeaderGroupStat(ifstream & file) {
 		this->groupe[gr].nstatsnp=statsnp.size();
 		//cout<<"this->groupe[gr].nstatsnp="<<this->groupe[gr].nstatsnp<<"\n";
 		if (this->groupe[gr].nstatsnp>0){
-			this->groupe[gr].sumstatsnp = new StatsnpC[this->groupe[gr].nstatsnp];
+			this->groupe[gr].sumstatsnp = vector<StatsnpC>(this->groupe[gr].nstatsnp);
 			for (int i=0;i<this->groupe[gr].nstatsnp;i++){
 				this->groupe[gr].sumstatsnp[i].cat=statsnp[i].cat;
 				this->groupe[gr].sumstatsnp[i].samp=statsnp[i].samp;
@@ -1164,14 +1135,14 @@ int HeaderC::buildSuperScen(){
 	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nparamvar<this->scenario[i].nparamvar) this->scen.nparamvar=this->scenario[i].nparamvar;}
 	this->scen.nconditions=0;
 	for (int i=0;i<this->nscenarios;i++) {if (this->scen.nconditions<this->scenario[i].nconditions) this->scen.nconditions=this->scenario[i].nconditions;}
-	this->scen.event = new EventC[this->scen.nevent];
-	this->scen.ne0   = new Ne0C[this->scen.nn0];
+	this->scen.event = vector<EventC>(this->scen.nevent);
+	this->scen.ne0   = vector<Ne0C>(this->scen.nn0);
 
-	this->scen.time_sample = new int[this->scen.nsamp];
-	this->scen.stime_sample = new string[this->scen.nsamp];
-	this->scen.histparam = new HistParameterC[this->scen.nparam];
-	this->scen.paramvar = new double[this->scen.nparamvar+3];
-	if (this->scen.nconditions>0) this->scen.condition = new ConditionC[this->scen.nconditions];
+	this->scen.time_sample = vector<int>(this->scen.nsamp);
+	this->scen.stime_sample = vector<string>(this->scen.nsamp);
+	this->scen.histparam = vector<HistParameterC>(this->scen.nparam);
+	this->scen.paramvar = vector<double>(this->scen.nparamvar+3);
+	if (this->scen.nconditions>0) this->scen.condition = vector<ConditionC>(this->scen.nconditions);
 	for (int i=0;i<this->scen.nsamp;i++) this->scen.time_sample[i]=0;
 	for (int i=0;i<this->scen.nsamp;i++) this->scen.stime_sample[i]=" ";
 	for (int i=0;i<this->scen.nparamvar+3;i++) this->scen.paramvar[i]=-1;
@@ -1201,7 +1172,7 @@ int HeaderC::buildMutParam(){
 			cout<<"fin du calcul de nparamut = "<<this->nparamut<<"\n";
 		}
 	}
-	this->mutparam = new MutParameterC[this->nparamut];
+	this->mutparam = vector<MutParameterC>(this->nparamut);
 	this->nparamut=0;
 	for (gr=1;gr<=this->ngroupes;gr++) {
 		if (this->groupe[gr].type==0) {
@@ -1267,7 +1238,7 @@ int HeaderC::readHeaderEntete(ifstream & file){
 	//Entete du fichier reftable
 	getline(file,s1);       //ligne vide
 	getline(file,this->entete);     //ligne entete
-	this->statname =new string[this->nstat];
+	this->statname = vector<string>(this->nstat);
 	splitwords(this->entete," ",ss); nss = ss.size();
 	
 	if (debuglevel==2) cout<<"nss="<<nss<<"   nparamtot="<<nparamtot<<"   nparamut="<<nparamut<<"   nstat="<<nstat<<"\n";
@@ -1388,7 +1359,7 @@ int HeaderC::readHeadersimScenario(ifstream & file){
 	this->nscenarios=1; //cout<<this->nscenarios<<"\n";
 	splitwords(s1," ",ss); nss = ss.size();
 	nlscen=getwordint(ss[1],1);
-	this->scenario = new ScenarioC[this->nscenarios];
+	this->scenario = vector<ScenarioC>(this->nscenarios);
 	vector<string>sl (nlscen);
 	this->scenario[0].number = 1;
 	this->scenario[0].prior_proba = 1.0;
@@ -1413,8 +1384,8 @@ int HeaderC::readHeadersimHistParam(std::ifstream & file){
 	splitwords(s1," ",ss); nss = ss.size();
 	this->nparamtot=getwordint(ss[2],1);
 	this->scenario[0].nconditions=0;
-	this->histparam = new HistParameterC[this->nparamtot];
-	this->scenario[0].histparam = new HistParameterC[this->nparamtot];
+	this->histparam = vector<HistParameterC>(this->nparamtot);
+	this->scenario[0].histparam = vector<HistParameterC>(this->nparamtot);
 	this->scenario[0].nparam = this->nparamtot;
 	for (int i=0;i<this->nparamtot;i++) {
 		getline(file,s1);  //cout<<s1<<"\n";
@@ -1442,9 +1413,7 @@ int HeaderC::readHeadersimLoci(std::ifstream & file){
 	splitwords(s1," ",ss); nss = ss.size();
 	this->dataobs.nloc=getwordint(s1,3);
 	cout<<"nloc="<<this->dataobs.nloc<<"\n";
-	this->dataobs.locus = new LocusC[this->dataobs.nloc];
-	for(int loc=0; loc<this->dataobs.nloc; loc++)
-		this->dataobs.locus[loc].observation=true;
+	this->dataobs.locus = vector<LocusC>(this->dataobs.nloc);
 	grm=1;
 	this->dataobs.filetype=0;
 	for (int loc=0;loc<this->dataobs.nloc;loc++){
@@ -1498,7 +1467,7 @@ int HeaderC::readHeadersimLoci(std::ifstream & file){
 		}
 	}
 	for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].nsample = this->dataobs.nsample;
-	this->dataobs.catexist = new bool[5];
+	this->dataobs.catexist = vector<bool>(5);
 	this->dataobs.ssize.resize(5);
 	for (int i=0;i<5;i++) this->dataobs.catexist[i]=false;
 	for (int locustype=0;locustype<5;locustype++) {
@@ -1546,7 +1515,7 @@ int HeaderC::readHeadersimGroupPrior(std::ifstream & file){
 	getline(file,s1);       //ligne "group prior"
 	this->ngroupes=getwordint(s1,2);
 	cout<<"header.ngroupes="<<this->ngroupes<<"\n";
-	this->groupe = new LocusGroupC[this->ngroupes+1];
+	this->groupe = vector<LocusGroupC>(this->ngroupes+1);
 	this->assignloc(0);
 	//cout<<"on attaque les groupes : analyse des priors nombre de groupes="<<this->ngroupes <<"\n";
 	for (int gr=1;gr<=this->ngroupes;gr++){
@@ -1602,7 +1571,7 @@ int HeaderC::readHeadersimGroupPrior(std::ifstream & file){
 }
 
 int HeaderC::readHeadersimGroupSNP(){
-	this->groupe = new LocusGroupC[this->ngroupes+1];
+	this->groupe = vector<LocusGroupC>(this->ngroupes+1);
 	this->assignloc(0);
 	for (int gr=1;gr<=this->ngroupes;gr++) {
 		this->assignloc(gr);
@@ -1792,7 +1761,7 @@ string HeaderC::calstatobs(string statobsfilename) {
 	particuleobs.grouplist[0].nloc = this->groupe[0].nloc;
 	if (debuglevel==2) cout<<"Dans calstatobs nloc="<<this->groupe[0].nloc<<"\n";
 	if (this->groupe[0].nloc>0){
-		particuleobs.grouplist[0].loc  = new int[this->groupe[0].nloc];
+		particuleobs.grouplist[0].loc  = vector<int>(this->groupe[0].nloc);
 		for (int i=0;i<this->groupe[0].nloc;i++) particuleobs.grouplist[0].loc[i] = this->groupe[0].loc[i];
 	}
 	for (int gr=1;gr<=ngr;gr++) {
@@ -1842,8 +1811,6 @@ string HeaderC::calstatobs(string statobsfilename) {
 	//particuleobs.locuslist = &tmp[0]; //new LocusC[41752];
 	if (debuglevel==2) cout<<"avant la partie locus  nloc="<<this->dataobs.nloc<<"\n";
 	particuleobs.locuslist =new LocusC[this->dataobs.nloc];
-	for(int kloc=0; kloc<this->dataobs.nloc; kloc++)
-		particuleobs.locuslist[kloc].observation=true;
 	
 	for (int kloc=0;kloc<this->dataobs.nloc;kloc++){
 		particuleobs.locuslist[kloc].nsample = this->dataobs.nsample;
@@ -1991,7 +1958,7 @@ string HeaderC::calstatobs(string statobsfilename) {
 		}
 	}*/
 	
-	this->stat_obs = new float[jstat];
+	this->stat_obs = vector<float>(jstat);
 	jstat=0;
 	for(int gr=1;gr<=particuleobs.ngr;gr++) {
 		for (int j=0;j<particuleobs.grouplist[gr].nstat;j++) {

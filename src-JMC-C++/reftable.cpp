@@ -50,17 +50,8 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 		nhistparam = NULL;
 	}
 	this->nhistparam = new int[header.nscenarios];
-	if(this->histparam != NULL) {
-		for(int u =0; u < histparamlength; u++)
-			if(histparam[u] != NULL) {
-				delete[] histparam[u];
-				histparam[u] = NULL;
-			}
-		histparam = NULL;
-	}
-	this->histparam = new HistParameterC*[header.nscenarios];
+	this->histparam.resize(header.nscenarios,vector<HistParameterC>(0));
 	this->histparamlength = header.nscenarios;
-	for(int u =0; u < histparamlength; u++) histparam[u] = NULL;
 	if (this->mutparam != NULL) {
 		delete [] mutparam;
 		mutparam = NULL;
@@ -69,19 +60,18 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	cout<<"avant la boucle des scenarios\n";
 	for (int i=0;i<header.nscenarios;i++) {
 		nparamvar=0;
-		for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) nparamvar++;
+		for (int p=0;p<header.scenario[i].nparam;p++)
+			if (not header.scenario[i].histparam[p].prior.constant)
+				nparamvar++;
 		cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
-		if (this->histparam[i] != NULL) {
-			delete [] this->histparam[i];
-			this->histparam[i]= NULL;
-		}
-		this->histparam[i] = new HistParameterC[nparamvar];
+		this->histparam[i].reserve(nparamvar+2);
 		this->nhistparam[i] = nparamvar;
 		pp=-1;
-		for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) {
-			pp++;
-			this->histparam[i][pp] = header.scenario[i].histparam[p];
-		}
+		for (int p=0;p<header.scenario[i].nparam;p++)
+			if (not header.scenario[i].histparam[p].prior.constant) {
+				pp++;
+				this->histparam[i].push_back(header.scenario[i].histparam[p]);
+			}
 		cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
 		if (this->nparam[i]!=nparamvar+header.nparamut) {
 			cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
