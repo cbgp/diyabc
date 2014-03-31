@@ -34,7 +34,7 @@
 
 using namespace std;
 
-string ***genotype;
+vector<vector<vector<string> > >genotype;
 bool Agenotype;
 
 	
@@ -264,15 +264,7 @@ void LocusC::libere(bool obs, int nsample) {
                     //cout<<"delete indivsexe\n";
 		}
 		if (Agenotype) {
-			for (int  ech=0;ech<this->nsample0;ech++) {
-					for (int ind=0;ind<this->nind[ech];ind++) {
-							delete [] genotype[ech][ind];
-							//cout <<"delete genotype[ech][ind]\n";
-					}
-					delete [] genotype[ech];
-					//cout <<"delete genotype[ech]\n";
-			}
-			delete [] genotype;
+			genotype.clear();
 			//cout<<"delete genotype\n";
 		}
 		//cout<<"apres delete genotype\n";
@@ -459,10 +451,10 @@ string  getligne(ifstream file) {
 		this->indivsexe.resize(nech);this->Aindivsexe=true;
 		for (ech=0;ech<nech;ech++) this->indivname[ech] = vector<string>(nindi[ech]);
 		for (ech=0;ech<nech;ech++) this->indivsexe[ech].resize(nindi[ech]);
-		genotype = new string**[nech];Agenotype=true;
+		genotype = vector<vector<vector<string> > >(nech);Agenotype=true;
 		for (ech=0;ech<nech;ech++) {
-			genotype[ech] = new string*[nindi[ech]];
-			for (ind=0;ind<nindi[ech];ind++) genotype[ech][ind] = new string[nloc];
+			genotype[ech] = vector<vector<string> >(nindi[ech]);
+			for (ind=0;ind<nindi[ech];ind++) genotype[ech][ind] = vector<string>(nloc);
 		}
 		file.close();
 		file.open(filename.c_str(), ios::in);
@@ -559,8 +551,7 @@ string  getligne(ifstream file) {
 			delete[]typ;
 			for (ech=0;ech<this->nsample;ech++) {
 				for (ind=0;ind<this->nind[ech];ind++){
-					delete[]genotype[ech][ind];
-					genotype[ech][ind] = new string[kloc];
+					genotype[ech][ind] = vector<string>(kloc);
 					for (int loc=0;loc<kloc;loc++) genotype[ech][ind][loc] = ge[ech][ind][loc];
 				}
 			}
@@ -913,13 +904,13 @@ string  getligne(ifstream file) {
 		this->nmissnuc=0;
 		this->indivname = vector<vector<string> >(nech);this->Aindivname=true;
 		this->indivsexe.resize(nech);this->Aindivsexe=true;
-		genotype = new string**[nech];Agenotype=true;
+		genotype = vector<vector<vector<string> > >(nech);Agenotype=true;
 		for (int i=0;i<nech;i++) {
 			this->indivname[i]= vector<string>(nind[i]);
 			this->indivsexe[i].resize(nind[i]);
 			for(j=0; (int)j < this->nind[i];j++) this->indivsexe[i][j] = 2;
-			genotype[i] = new string*[nind[i]];
-			for(j=0; (int)j < this->nind[i];j++) genotype[i][j] = new string[this->nloc];
+			genotype[i] = vector<vector<string> >(nind[i]);
+			for(j=0; (int)j < this->nind[i];j++) genotype[i][j] = vector<string>(this->nloc);
 		}
 ///////////
 		ifstream file2(filename.c_str(), ios::in);

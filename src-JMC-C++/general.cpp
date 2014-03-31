@@ -231,7 +231,9 @@ void analyseRNG(string & modpar) {
 */
 
 int main(int argc, char *argv[]){
+#ifdef ___VALGRIND___
 atexit(__libc_freeres);
+#endif
 string RNG_filename;
 bool exception_caught = false;
 bool erreur_scenario=false;
