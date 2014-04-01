@@ -970,7 +970,7 @@ string  getligne(ifstream file) {
         vector <int> haplo;
     	this->locus[loc].mini=1000;this->locus[loc].maxi=0;
     	this->locus[loc].haplomic = vector<vector<int> >(this->nsample);
-    	this->locus[loc].nsample = this->nsample;
+    	//this->locus[loc].nsample = this->nsample;
      	this->locus[loc].samplesize = vector<int>(this->nsample);
        //cout<<"data Locus="<<loc<<"\n";
     	for (int ech=0;ech<this->nsample;ech++){
@@ -1010,6 +1010,7 @@ string  getligne(ifstream file) {
     		this->locus[loc].samplesize[ech] = ng;
     		this->locus[loc].haplomic[ech] = vector<int>(ng);
             for (int i=0;i<ng;i++) this->locus[loc].haplomic[ech][i]=haplo[i];
+            if (not haplo.empty()) haplo.clear();
             //cout<<"sample "<<ech<<"\n";
             //for (int i=0;i<this->locus[loc].ss[ech];i++) cout<<"  "<<this->locus[loc].haplomic[ech][i];
             //cout<<"\n";
@@ -1032,7 +1033,7 @@ string  getligne(ifstream file) {
     	char base[] ="ACGT";
         vector <string> haplo;
     	this->locus[loc].haplodna = vector<vector<string> >(this->nsample);
-    	this->locus[loc].nsample = this->nsample;
+    	//this->locus[loc].nsample = this->nsample;
     	this->locus[loc].samplesize = vector<int>(this->nsample);
     	this->locus[loc].nsample=this->nsample;
 		int *ss = new int[this->nsample];
