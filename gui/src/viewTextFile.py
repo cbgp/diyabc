@@ -47,7 +47,7 @@ class ViewTextFile(formTF,baseTF):
     def save(self):
         path = QFileDialog.getSaveFileName(self,filter="Text files (*.txt);;All files (*)")
         if path!="":
-            f=open(path.encode(sys.getfilesystemencoding()),'w')
+            f=open(str(path).encode(sys.getfilesystemencoding()),'w')
             f.write(self.text)
             f.close()
 
