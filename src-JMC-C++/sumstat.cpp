@@ -867,7 +867,7 @@ extern int debuglevel;
   int* ParticleC::cal_nsspl(int kloc,int sample, int *nssl,bool *OK) {
     char c0;
     bool ident;
-    int j,*ss,nss=0,cat=this->locuslist[kloc].type % 5;
+    int j,nss=0,cat=this->locuslist[kloc].type % 5;
     vector <int> nuvar;
     if(samplesize(kloc,sample)>0) {
       *OK=true;
@@ -895,7 +895,7 @@ extern int debuglevel;
 	}
       }
     } else *OK=false;
-    ss = new int[nss];
+    int* ss = new int[nss];
     for (j=0;j<nss;j++) ss[j]=nuvar[j];
     if (not nuvar.empty()) nuvar.clear();
     *nssl=nss;
@@ -1036,43 +1036,43 @@ extern int debuglevel;
   }
 
   long double ParticleC::cal_pss1p(int gr,int st){
-    int iloc,kloc,nl=0,nps=0,**ssa,*nssa;
-    bool trouve,OK;
-    long double res=0.0;
-    int sample=this->grouplist[gr].sumstat[st].samp-1;
-    for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      kloc=this->grouplist[gr].loc[iloc];
-      ssa = new int*[this->nsample];
-      nssa = new int[this->nsample];
-      //on cherche les sites variables des différents échantillons
-      for (int sa=0;sa<this->nsample;sa++) ssa[sa]=this->cal_nsspl(kloc,sa,&nssa[sa],&OK);
-      //cout<<"\nlocus "<<kloc<<"\n";
-      for (int sa=0;sa<this->nsample;sa++) {
-	//cout<<"sample "<<sa+1<<"   nssa="<<nssa[sa]<<"\n";
-	//for (int k=0;k<nssa[sa];k++) cout<<"   "<<ssa[sa][k];
-	//cout<<"\n";
-      }
-      //on compte le nombre de sites variables de l'échantillon cible qui ne sont pas variables dans les autres échantillons
-      nl++;
-      for (int j=0;j<nssa[sample];j++) {
-	trouve=false;
-	for (int sa=0;sa<this->nsample;sa++) {
-	  if ((sa!=sample)and(nssa[sa]>0)) {
-	    for (int k=0;k<nssa[sa];k++) {
-	      trouve = (ssa[sample][j]==ssa[sa][k]);
-	      if (trouve) break;
-	    }
+	  int iloc,kloc,nl=0,nps=0,**ssa,*nssa;
+	  bool trouve,OK;
+	  long double res=0.0;
+	  int sample=this->grouplist[gr].sumstat[st].samp-1;
+	  for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+		  kloc=this->grouplist[gr].loc[iloc];
+		  ssa = new int*[this->nsample];
+		  nssa = new int[this->nsample];
+		  //on cherche les sites variables des différents échantillons
+		  for (int sa=0;sa<this->nsample;sa++) ssa[sa]=this->cal_nsspl(kloc,sa,&nssa[sa],&OK);
+		  //cout<<"\nlocus "<<kloc<<"\n";
+		  for (int sa=0;sa<this->nsample;sa++) {
+			  //cout<<"sample "<<sa+1<<"   nssa="<<nssa[sa]<<"\n";
+			  //for (int k=0;k<nssa[sa];k++) cout<<"   "<<ssa[sa][k];
+			  //cout<<"\n";
+		  }
+		  //on compte le nombre de sites variables de l'échantillon cible qui ne sont pas variables dans les autres échantillons
+		  nl++;
+		  for (int j=0;j<nssa[sample];j++) {
+			  trouve=false;
+			  for (int sa=0;sa<this->nsample;sa++) {
+				  if ((sa!=sample)and(nssa[sa]>0)) {
+					  for (int k=0;k<nssa[sa];k++) {
+						  trouve = (ssa[sample][j]==ssa[sa][k]);
+						  if (trouve) break;
+					  }
+				  }
+				  if (trouve) break;
+			  }
+			  if (not trouve) nps++;
+		  }
+		  for (int sa=0;sa<this->nsample;sa++)  delete [] ssa[sa];
+		  delete []ssa;delete []nssa;
 	  }
-	  if (trouve) break;
-	}
-	if (not trouve) nps++;
-      }
-      for (int sa=0;sa<this->nsample;sa++) if (nssa[sa]>0) delete [] ssa[sa];
-      delete []ssa;delete []nssa;
-    }
-    if (nl>0) res = (long double)nps/(long double)nl;
-    //cout<<"PSS_"<<this->grouplist[gr].sumstat[st].samp<<" = "<<res<<"   (nps="<<nps<<" nl="<<nl<<")\n";
-    return res;
+	  if (nl>0) res = (long double)nps/(long double)nl;
+	  //cout<<"PSS_"<<this->grouplist[gr].sumstat[st].samp<<" = "<<res<<"   (nps="<<nps<<" nl="<<nl<<")\n";
+	  return res;
   }
 
   void ParticleC::afs(int sample,int iloc,int kloc) {
@@ -1473,8 +1473,8 @@ long double ParticleC::cal_nha2p(int gr,int st){
       kloc=this->grouplist[gr].loc[iloc];
       ss = this->cal_nss2pl(kloc,samp1,samp2,&nssl,&OK);
       if ((OK)and(nssl>0)) nlocutil++;
+      delete [] ss;
     }
-    if(nssl>0) delete []ss;
     if (nlocutil<1) return 0.5;
     //cout<<"avant cal_freq\n";
     cal_freq(gr,st);
