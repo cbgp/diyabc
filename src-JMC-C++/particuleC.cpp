@@ -144,12 +144,12 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 
 	ParticleC & ParticleC::operator= (ParticleC const & source) {
 		if (this == &source)  return *this;
-		if (this->locuslist != NULL) delete [] this->locuslist;
-		if (this->grouplist != NULL) delete [] this->grouplist;
-		if (this->scenario != NULL) delete [] this->scenario;
-		if (this->seqlist != NULL) delete [] this->seqlist;
-		if (this->gt != NULL) delete [] this->gt;
-		if (this->condition != NULL) delete [] this->condition;
+		if (this->locuslist != NULL) {delete [] this->locuslist; locuslist=NULL;}
+		if (this->grouplist != NULL) {delete [] this->grouplist; grouplist=NULL;}
+		if (this->scenario != NULL) {delete [] this->scenario; scenario=NULL;}
+		if (this->seqlist != NULL) {delete [] this->seqlist; seqlist=NULL;}
+		if (this->gt != NULL) {delete [] this->gt; gt==NULL;}
+		if (this->condition != NULL) {delete [] this->condition; condition=NULL;}
 
 		this->data = source.data;
 

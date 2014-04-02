@@ -649,6 +649,7 @@ void ReftableC::desalloue_enrsel(int nsel) {
 		delete []this->enrsel[i].stat;
 	}
 	delete []this->enrsel;
+	this->enrsel = NULL;
 }
 
 /**

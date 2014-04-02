@@ -174,7 +174,7 @@ string nomficonfresult;
  */
     void doconf(string opt, int seed) {
         string progressfilename;
-        int nstatOK, iprog,nprog,ncs1,*nbestdir,*nbestlog,*scenchoibackup,nscenchoibackup;
+        int nstatOK, iprog,nprog,ncs1,*scenchoibackup,nscenchoibackup;
         int nrec = 0,nreca, nsel=0,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond;
         string s,s0,s1;
         vector<string> ss, ss1;
@@ -338,7 +338,8 @@ string nomficonfresult;
         ofstream f11(nomficonfresult.c_str(),ios::app);
         rt.alloue_enrsel(nsel);
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
-		nbestdir = new int[rt.nscenchoisi];nbestlog = new int[rt.nscenchoisi];
+        vector<int> nbestdir(rt.nscenchoisi);
+        vector<int> nbestlog(rt.nscenchoisi);
 		for(int s=0;s<rt.nscenchoisi;s++){nbestdir[s]=0;nbestlog[s]=0;}
 		nstatOK = rt.cal_varstat();
         for (int p=0;p<ntest;p++) {
