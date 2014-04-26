@@ -158,6 +158,18 @@ int ReftableC::readrecord(enregC *enr) {
 	return bidon;
 }
 
+int ReftableC::readparam(float *param) {
+	int numscen,nm;
+	float *pa;
+	this->fifo.read((char*)&(numscen),sizeof(int));
+	nm=this->nparam[numscen-1];if(nm<nstat) nm=nstat;
+	pa = new float[nm];
+	for (int i=0;i<this->nparam[numscen-1];i++) this->fifo.read((char*)&(param[i]),sizeof(float));
+	for (int i=0;i<this->nstat;i++) this->fifo.read((char*)&(pa[i]),sizeof(float));
+	delete []pa;
+	return numscen;
+}
+
 int ReftableC::writerecords(int nenr, enregC *enr) {
 	int bidon;
 	for (int i=0;i<nenr;i++){
@@ -226,6 +238,7 @@ int ReftableC::openfile2() {
 	this->nparam = new int[nscen];
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
 	this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
+	this->nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>this->nparamax) this->nparamax=this->nparam[i];
 	return 0;
 }
 
@@ -517,7 +530,7 @@ int ReftableC::cal_varstat() {
 	int nrecutil,iscen,nsOK,bidon,i;
 	long double *sx,*sx2,x,an,nr,*min,*max;
 	bool scenOK;
-	cout <<"debut de cal_varstat   rt.nrec="<<this->nrec<<"\n";
+	cout <<"debut de cal_varstat   rt.nrec="<<this->nrec<<"   scenchoisi="<<this->scenchoisi[0]<<"\n";
 	enregC enr;
 	nrecutil=100000;if (nrecutil>this->nrec) nrecutil=this->nrec;
 	nr=0;for (int i=0;i<nscenchoisi;i++) nr+=nrecscen[this->scenchoisi[i]-1];
@@ -603,14 +616,14 @@ void ReftableC::desalloue_enrsel(int nsel) {
  * calcule la distance de chaque jeu de données simulé au jeu observé
  * et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
  */
-void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste) {
+void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste, bool allscenarios) {
 	int nn,nparamax,nrecOK=0,iscen,bidon,step;
 	bool firstloop=true,scenOK;
 	long double diff,distmin=1E100;
 	this->nreclus=0;step=nrec/100;
 	if (scenarioteste) cout<<"cal_dist scenarioteste = "<<this->scenteste<<"\n";
 	nn=nsel;
-	cout<<"nrec="<<nrec<<"   nscenchoisi="<< this->nscenchoisi<<"   nn="<<nn<<"\n";
+	//cout<<"nrec="<<nrec<<"   nscenchoisi="<< this->nscenchoisi<<"   nn="<<nn<<"\n";
 	nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
 	//cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
 	//cout<<" apres allocation de enrsel\n";
@@ -628,16 +641,18 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste
 				bidon=this->readrecord(&(this->enrsel[nrecOK]));
 				if (bidon!=0) cout<<"bidon="<<bidon<<"\n";
 			} while (bidon!=0);
-			scenOK=false;
-			if (scenarioteste) scenOK=(this->enrsel[nrecOK].numscen==this->scenteste);
-			else {
-				iscen=0;
-				while((not scenOK)and(iscen<this->nscenchoisi)) {
-					scenOK=(this->enrsel[nrecOK].numscen==this->scenchoisi[iscen]);
-					//if (scenOK) cout<<" SCENOK pour this->enrsel["<<nrecOK<<"].numscen = "<<this->enrsel[nrecOK].numscen<<"\n";
-					iscen++;
+			if (not allscenarios){
+				scenOK=false;
+				if (scenarioteste) scenOK=(this->enrsel[nrecOK].numscen==this->scenteste);
+				else {
+					iscen=0;
+					while((not scenOK)and(iscen<this->nscenchoisi)) {
+						scenOK=(this->enrsel[nrecOK].numscen==this->scenchoisi[iscen]);
+						//if (scenOK) cout<<" SCENOK pour this->enrsel["<<nrecOK<<"].numscen = "<<this->enrsel[nrecOK].numscen<<"\n";
+						iscen++;
+					}
 				}
-			}
+			} else scenOK=true;
 			if (scenOK) {
 				if (not scenarioteste) this->nreclus++; //cout<<"nreclus = "<<nreclus<<"   nrecOK="<<nrecOK<<"\n";
 				this->enrsel[nrecOK].dist=0.0;

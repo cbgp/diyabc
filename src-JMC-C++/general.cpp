@@ -317,6 +317,9 @@ try {
             cout << "           f:<0 if logistic regression on SS, 1 if logistic regression on FDA components>\n";
 			cout << "           po to draw parameters for the pseudo-observed data sets from parameter posterior distributions\n";
 			cout << "           z:<number of simulated datasets used for the local regression>\n";
+			cout << "           b:<number of simulated datasets used for the prior predictive error>\n";
+			cout << "           c:<number of simulated datasets used for the posterior predictive error>\n";
+			
 			
 			cout << "\n-d for ABC PRIOR/SCENARIO CHECKING (idem)\n";
             cout << "           a:<p for PCA, l for locate observed, pl for both>\n";
@@ -549,7 +552,7 @@ try {
 									scsufilename=path+"scenariosuccess.txt";
 								}
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
-                                          cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"    nenr="<<nenr<<"\n";
+                                          //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"    nenr="<<nenr<<"\n";
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,0);
                                           //cout<<"retour de dosimultabref header.drawuntil="<<header.drawuntil<<"\n";
 										  

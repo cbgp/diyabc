@@ -865,9 +865,9 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 				  bool b0 = (fabs(px[i]-cpx0[i])<0.0005),
 				       b1 = (fabs(cloglik[rep-1]/cloglik[rep-2]-1.0)<0.000001);
 					fin = b0 or b1;
-					cout<<"\nabs(px-px0) = ";
-					cout<<setiosflags(ios::fixed)<<setw(12)<<setprecision(4)<<fabs(px[i]-cpx0[i]);
-					cout <<"   (px[i]="<<px[i]<<"  px0[i]="<<cpx0[i]<<")";
+					//cout<<"\nabs(px-px0) = ";
+					//cout<<setiosflags(ios::fixed)<<setw(12)<<setprecision(4)<<fabs(px[i]-cpx0[i]);
+					//cout <<"   (px[i]="<<px[i]<<"  px0[i]="<<cpx0[i]<<")";
 					i++;
 				} // end while fin == true...
 				fin = (fin or (betmax-betmin>50));
@@ -884,14 +884,14 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
                 //for(i=0;i<nmodel;i++) {for (j=0;j<nmodel;j++) cout<<cmatB[i*(nco+1)][i*(nco+1)]<<"  ";cout<<"\n";}
             }*/
 
-			cout<<"\n\niteration "<<rep<<"   fin="<<fin<<"    ";
+			/*cout<<"\n\niteration "<<rep<<"   fin="<<fin<<"    ";
 			cout<<"loglik=";
 			cout<<setiosflags(ios::fixed)<<setw(12)<<setprecision(4)<<cloglik[rep-1];
 			cout<<"\n";
 			for (int i=0;i<nmodel+1;i++) {
 			  cout<<"  ";
 			  cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<px[i];
-			}
+			}*/
 			double sx=0.0 ,sx2=0.0;
 			for(int i=0; i<nmodel+1; i++) {
 			  sx+=px[i];
@@ -905,21 +905,21 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 //////////////////////////
   } // end while fin == false
   if (err>1) return err;
-  cout<<"\n";
+  //cout<<"\n";
   for (int imod=0; imod<nmodel+1; imod++) {
     pxi[imod] = px[imod] - 1.96 * csd[imod];
     if (pxi[imod]<0.0) pxi[imod]=0.0;
     pxs[imod] = px[imod] + 1.96 * csd[imod];
     if (pxs[imod]>1.0) pxs[imod]=1.0;
-    cout << "### csd[" << imod << "] = " << csd[imod] << endl;
+    //cout << "### csd[" << imod << "] = " << csd[imod] << endl;
   }
   reordonne(nmodel,numod,px,pxi,pxs);
-  cout<<"\niteration "<<rep;
+  /*cout<<"\niteration "<<rep;
   for (int i=0; i<nmodel+1; i++) {
     cout<<"  ";
     cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<px[i];
   }
-  cout<<"\n";
+  cout<<"\n";*/
   //if ((rep==2)and(sx2<0.9999)) exit(1); // FIXME
   return err;
 }
@@ -1105,7 +1105,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 		for (int i=0;i<header.nstat;i++) stat_obs[i]=header.stat_obs[i];
         rt.alloue_enrsel(nsel);
 //        clock_zero=0.0;debut=walltime(&clock_zero);
-        rt.cal_dist(nrec,nsel,stat_obs,false);
+        rt.cal_dist(nrec,nsel,stat_obs,false,false);
 //        duree=walltime(&debut);time_readfile += duree;
 		if (AFD) transAFD(nrec,nsel,stat_obs);
         iprog+=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();

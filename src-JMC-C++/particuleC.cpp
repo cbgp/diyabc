@@ -834,23 +834,23 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    */
   void ParticleC::setMutParamValue(int loc){
     int gr = this->locuslist[loc].groupe;
-    //cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
+    if (debuglevel==10) cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
     if (this->locuslist[loc].type<5) {  //MICROSAT
       this->grouplist[gr].priormutloc.mean = this->grouplist[gr].mutmoy;
       if ((this->grouplist[gr].priormutloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mut_rate = this->grouplist[gr].priormutloc.drawfromprior(this->mw);
       else this->locuslist[loc].mut_rate =this->grouplist[gr].mutmoy;
-      //cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
+      if (debuglevel==10) cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
 
       this->grouplist[gr].priorPloc.mean = this->grouplist[gr].Pmoy;
       if ((this->grouplist[gr].priorPloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].Pgeom = this->grouplist[gr].priorPloc.drawfromprior(this->mw);
       else this->locuslist[loc].Pgeom =this->grouplist[gr].Pmoy;
-      //cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
+      if (debuglevel==10) cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
 
       this->grouplist[gr].priorsniloc.mean = this->grouplist[gr].snimoy;
       //cout <<"coucou\n";fflush(stdin);
       if ((this->grouplist[gr].priorsniloc.sdshape>0.001 )and(this->grouplist[gr].nloc>1)) this->locuslist[loc].sni_rate = this->grouplist[gr].priorsniloc.drawfromprior(this->mw);
       else this->locuslist[loc].sni_rate =this->grouplist[gr].snimoy;
-      //cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
+      if (debuglevel==10) cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
 
 
     }
@@ -2042,7 +2042,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  if (debuglevel==5) cout<<"dosimulpart avant la boucle des locus\n";
 	  if (debuglevel==31) lontreemoy=0.0;
 	for (loc=0;loc<this->nloc;loc++) {
-		//cout<<"locus "<<loc<<"\n";
+		if (debuglevel==5) cout<<"locus "<<loc<<"\n";
 		//cout<<"            groupe "<<this->locuslist[loc].groupe<<"\n";
 		if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
 			if ((debuglevel==16)and(loc%1000==0)) cout<<loc<<"\n";

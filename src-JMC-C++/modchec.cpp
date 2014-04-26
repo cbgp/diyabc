@@ -576,7 +576,7 @@ long double **ssphistar,**ssref;
 		//stat_obs = header.stat_obs;  cout<<"apres read_statobs\n";
         cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
         rt.alloue_enrsel(nsel);
-        rt.cal_dist(nrec,nsel,header.stat_obs,false);                  cout<<"apres cal_dist\n";
+        rt.cal_dist(nrec,nsel,header.stat_obs,false,false);                  cout<<"apres cal_dist\n";
         iprog+=40;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         det_numpar();
 		cout<<"apres det_numpar\n";
