@@ -593,7 +593,7 @@ int ReftableC::cal_varstat() {
 void ReftableC::alloue_enrsel(int nsel) {
 	int nparamax=0;
 	for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
-	cout<<"alloue_enrsel nsel="<<nsel<<"   nparamax="<<nparamax<<"\n";fflush(stdout);
+	//cout<<"alloue_enrsel nsel="<<nsel<<"   nparamax="<<nparamax<<"\n";fflush(stdout);
 	this->enrsel = new enregC[2*nsel];
 	for (int i=0;i<2*nsel;i++) {
 		this->enrsel[i].param = new float[nparamax];
@@ -670,6 +670,7 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste
 			}
 			//cout<<"nrecOK="<<nrecOK<<"\n";
 			if (scenarioteste) this->nreclus++;
+			//cout<<"nreclus = "<<nreclus<<"\n";
 			if ((this->nreclus % step)==0) {cout<<"\rcal_dist : "<<this->nreclus/step<<"%";fflush(stdout);}
 		}
 		sort(&this->enrsel[0],&this->enrsel[2*nn]);

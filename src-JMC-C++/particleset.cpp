@@ -336,12 +336,14 @@ void ParticleSetC::dosimulstat(HeaderC const & header, int debut, int npart, boo
 		ii=0;
 		for (int i=0;i<nparam;i++) {
 			if (not header.scenario[scen].histparam[i].prior.constant) {
-				if (debuglevel==5) cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"\n";
 				this->particule[p].scenario[scen].histparam[i].value=phistarOK[k][ii];
 				this->particule[p].scenario[scen].histparam[i].prior.fixed=true;
 				ii++;
 			} else this->particule[p].scenario[scen].histparam[i].value=header.scenario[scen].histparam[i].prior.mini;
-			if (debuglevel==5) cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
+			if (debuglevel==5) {
+				cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
+				cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"\n";
+			}
 		}
 		if (debuglevel==5) cout<<"\n";
 		//cout<<"apres la copie des paramètres historiques\n";
@@ -392,9 +394,9 @@ void ParticleSetC::dosimulstat(HeaderC const & header, int debut, int npart, boo
 	//if (multithread) cout<<"calcul multithread\n"; else cout<<"pas de calcul multithread\n";
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
 	for (ipart=0;ipart<this->npart;ipart++){
-		//cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
+		if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"   avec scenario "<<numscen<<"\n";
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
-		//cout<<sOK[ipart]<<"apres dosimulpart de la particule "<<ipart<<"\n";
+		if (debuglevel==5) cout<<sOK[ipart]<<"apres dosimulpart de la particule "<<ipart<<"\n";
 		if (sOK[ipart]==0) {
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr,this->particule[ipart].weight);}
 		}
@@ -406,13 +408,16 @@ void ParticleSetC::dosimulstat(HeaderC const & header, int debut, int npart, boo
 			nstat=0;
 			for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){
+					//cout<<"ipart="<<ipart<<"   gr="<<gr<<"   st="<<st<<"\n";
 /////////////// filtrage des Aml et aml début
 					if (this->particule[ipart].grouplist[gr].sumstat[st].val==-9999.0){
 						if ((this->particule[ipart].grouplist[gr].sumstat[st].cat==12)or(this->particule[ipart].grouplist[gr].sumstat[st].cat==-14))
 							this->particule[ipart].grouplist[gr].sumstat[st].val=0.5;
 					}
+					//cout<<"avant la fin du filtrage debut+ipart="<<debut+ipart<<"   nstat="<<nstat<<"\n";
 /////////////// filtrage des Aml et aml fin
 					stat[debut+ipart][nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;
+					//cout<<"coucou\n";
 					//cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<" ("<<enreg[ipart].stat[nstat]<<")  ";
 					nstat++;
 				}
@@ -420,6 +425,7 @@ void ParticleSetC::dosimulstat(HeaderC const & header, int debut, int npart, boo
 			}
 		}
 	}
+	cout<<"fin de dosimulstat\n";
 }
 
 

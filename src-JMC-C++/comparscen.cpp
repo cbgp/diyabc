@@ -304,7 +304,7 @@ void rempli_mat0(int n, float* stat_obs) {
     if (var_statsel[j]>1E-20) nstatOKsel++;
     mo[j] = sx[j]/nn;
   }
-  //cout <<"hello\n";
+  //cout <<"nstatOKsel="<<nstatOKsel<<"\n";
   som=0.0;
   for (int i=0; i<n; i++) {
     icc = -1;
@@ -321,7 +321,8 @@ void rempli_mat0(int n, float* stat_obs) {
     som = som + cvecW[i];
   }
   /*cout <<"\n cmatX0:\n";
-   for (int i=0;i<5;i++) { cout<<rt.enrsel[i].numscen<<"   ";
+   for (int i=0;i<5;i++) { 
+	cout<<rt.enrsel[i].numscen<<"   ";
      for (int j=0;j<nstatOKsel;j++) cout<<cmatX0[i][j]<<"  ";cout<<"\n";
    }*/
   for (int i=0; i<n; i++) cvecW[i]/=som;
@@ -395,6 +396,8 @@ void remplimatriceYP(int nli, int nco, int nmodel, long double **cmatP,
 					if (cmatYP[imod*(nco+1)+j] != cmatYP[imod*(nco+1)+j]) {
 						cout <<"probleme NAN dans cmatYP pour i="<<i<<" et j="<<j<<"\n";
 						cout<<" cmatY="<<cmatY[i][imod]<<"   cmatP="<<cmatP[i][imod]<<"   cmatX="<<cmatX[i][j]<<"   cvecW="<<cvecW[i]<<"\n";
+
+						exit(1);
 					}
       }
     }
@@ -542,6 +545,7 @@ void calcul_psd(int nmodel, long double *b0, long double **matV,
     }
 
   // calcul des probas et des sd
+//cout<<"\ndans calcul_psd";for(int kk=0;kk<nmodel+1;kk++) cout<<"  b0["<<kk<<"]="<<b0[kk];cout<<"\n";
 
   sum = 0.0;
   for (imod=0; imod<nmodel+1; imod++)
@@ -568,7 +572,7 @@ void calcul_psd(int nmodel, long double *b0, long double **matV,
   }
 
   px[0] = exp_safe(b0[0]-ma) / sum;
-
+//cout<<"dans calcul_psd";for(int kk=0;kk<nmodel+1;kk++) cout<<"  px["<<kk<<"]="<<px[kk];cout<<"\n";
   for (j=0;j<nmodel;j++)
     vecD[j] = - exp_safe(b0[j+1]-ma) / (sum*sum);
   sd[0] = 0.0;
@@ -692,13 +696,14 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
     long double *pxi, long double *pxs) {
 //        double clock_zero;
   int nmodel = cherche_max(vecY, nli); // int no;
+//  cout<<"debut de polytom_logistic_regression nmodel="<<nmodel<<"\n";
 //        double debut, duree;
   double sx, sx2;
   int *numod = new int[nmodel+1];
   if (nmodel<1) {
     px[0]=1.0;pxi[0]=1.0;pxs[0]=1.0;return 0;
   }
-  //cout << "   nmodel="<<nmodel<<"   nco="<<nco<<"   nmodnco="<<nmodel*(nco+1)<<endl;
+//  cout << "   nmodel="<<nmodel<<"   nco="<<nco<<"   nmodnco="<<nmodel*(nco+1)<<endl;
 
   ordonne(nmodel, nli, nco, vecY, numod);
   //cout <<"apres ordonne\n";
@@ -709,7 +714,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
     cmatX[i][0]=1.0;
     for (int j=0; j<nco; j++) cmatX[i][j+1]=cmatX0[i][j];
   }
-        //cout<<"\n";cout<<"\n";for (i=0;i<10;i++) {for (j=0;j<11;j++) cout<<cmatX[i][j]<<"  "; cout<<"\n";} cout<<"\n";
+//        cout<<"\n";cout<<"\n";for (int i=0;i<10;i++) {for (int j=0;j<11;j++) cout<<cmatX[i][j]<<"  "; cout<<"\n";} cout<<"\n";
   for (int imod=0; imod<nmodel; imod++) {
     long double imody = imod + 1;
     for (int i=0; i<nli; i++) {
@@ -736,7 +741,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
     rep++;
     remplimatriceYP(nli, nco, nmodel, cmatP, cmatYP, cbeta, cmatX, cvecW,
         cmatY, csmatP);
-
+//for (int i=0; i<nmodnco; i++) cout<<"cbeta["<<i<<"]="<<cbeta[i]<<"  ";cout<<"\n";
     for (int i=0; i<nmodnco; i++)
       for (int j=0; j<nmodnco; j++)
         cmatC[i][j]=0.0;
@@ -810,7 +815,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 
 			for (int i=0; i<nmodnco; i++)
 			  cbeta[i] = cbeta0[i] + cdeltabeta[i];
-
+//for (int i=0; i<nmodnco; i++) cout<<"cbeta0[i]="<<cbeta0[i]<<"  cdeltabeta[i]="<<cdeltabeta[i]<<"    ";cout<<"\n";
 			remplimatriceYP(nli,nco,nmodel,cmatP,cmatYP,cbeta,cmatX,cvecW,cmatY,csmatP);
 			bool caloglik=false;
 			if (rep==1) {
@@ -883,7 +888,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
                 for(i=0;i<nmodel;i++) cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<cdeltabeta[i*(nco+1)]<<"  ";cout<<"\n\n";
                 //for(i=0;i<nmodel;i++) {for (j=0;j<nmodel;j++) cout<<cmatB[i*(nco+1)][i*(nco+1)]<<"  ";cout<<"\n";}
             }*/
-
+///////////////////////////
 			/*cout<<"\n\niteration "<<rep<<"   fin="<<fin<<"    ";
 			cout<<"loglik=";
 			cout<<setiosflags(ios::fixed)<<setw(12)<<setprecision(4)<<cloglik[rep-1];
@@ -892,6 +897,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 			  cout<<"  ";
 			  cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<px[i];
 			}*/
+/////////////////////			
 			double sx=0.0 ,sx2=0.0;
 			for(int i=0; i<nmodel+1; i++) {
 			  sx+=px[i];
@@ -934,6 +940,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
         long double som, *px,*pxi,*pxs;
 //		double duree,debut,clock_zero;
 //        clock_zero=0.0;debut=walltime(&clock_zero);
+		//cout<<"debut de call_polytom_logistic_regression  nts="<<nts<<"   nscenutil="<<nscenutil<<"\n";
         postlog = new posteriorscenC[rt.nscenchoisi];
         for (int i=0;i<rt.nscenchoisi;i++) {
 		      postlog[i].err=0;
@@ -952,7 +959,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 				if (trouve) vecY[i]=j;
 				else {vecY[i]=-1;ntt--;}
 			}
-			//cout<<"call_polytom_logistic_regression 1\n";
+			//cout<<"call_polytom_logistic_regression 1   nstatOKsel="<<nstatOKsel<<"\n";
 			if (ntt<=nts) {
 				for (int i=0;i<nts;i++) matA[i].x = new long double[nstatOKsel+2];
 				kk=0;
@@ -978,6 +985,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 			for (int i=0;i<ntt;i++) cvecW[i] = cvecW[i]/som*(long double)ntt;
 			px = new long double[rt.nscenchoisi];pxi = new long double[rt.nscenchoisi];pxs = new long double[rt.nscenchoisi];
 			err = polytom_logistic_regression(nts, nstatOKsel, cmatX0, vecYY, cvecW, px, pxi, pxs);
+			//cout<<"err de retour de polytom_logistic_regression = "<<err<<"\n";
 			if (err>1) {
 				long double d,a=1.0/(long double)nts;
 				for (int i=0;i<rt.nscenchoisi;i++) {
@@ -991,7 +999,14 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 				}
 			  
 			} else {
-				if (nscenutil==rt.nscenchoisi) for (int i=0;i<nscenutil;i++) {postlog[i].x=px[i];postlog[i].inf=pxi[i];postlog[i].sup=pxs[i];}
+				//cout<<"nscenutil="<<nscenutil<<"    rt.nscenchoisi="<<rt.nscenchoisi<<"\n";
+				if (nscenutil==rt.nscenchoisi) {
+					for (int i=0;i<nscenutil;i++) {
+						postlog[i].x=px[i];postlog[i].inf=pxi[i];postlog[i].sup=pxs[i];
+						//cout<<"px["<<i<<"]="<<px[i]<<"   ";
+					}
+					//cout<<"\n";//exit(1);
+				}
 				else {
 					for (int i=0;i<rt.nscenchoisi;i++) {postlog[i].x=0.0;postlog[i].inf=0.0;postlog[i].sup=0.0;}
 					for  (int i=0;i<nscenutil;i++)  {
@@ -1030,8 +1045,8 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
             postdir[i]=0;
             for (int j=0;j<nts;j++) if (rt.scenchoisi[i]==rt.enrsel[j].numscen) postdir[i]++;
         }
-        //for (int i=0;i<rt.nscenchoisi;i++) cout<<"\nscenario "<<rt.scenchoisi[i]<<"  : "<<postdir[i]<<"\n";
-        //cout<<"\n";
+        /*for (int i=0;i<rt.nscenchoisi;i++) cout<<"\nscenario "<<rt.scenchoisi[i]<<"  : "<<postdir[i]<<"\n";
+        cout<<"\n";*/
         nscenutil=0;
         for (int i=0;i<rt.nscenchoisi;i++) if((postdir[i]>2)and(postdir[i]>nts/1000)) nscenutil++;
         scenchoisiutil = new int[nscenutil];
