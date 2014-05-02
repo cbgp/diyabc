@@ -61,7 +61,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 			this->histparam[i][pp] = header.scenario[i].histparam[p];
 		}
 		if (this->nparam !=NULL){
-			cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
+			//cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
 			{if (this->nparam[i]!=nparamvar+header.nparamut) {
 				cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
 				exit(1);
@@ -71,7 +71,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 		}
 		//cout<<"coucou2\n";
 		if (header.nparamut>0) {
-			cout<<header.mutparam[0].name<<"\n";
+			//cout<<header.mutparam[0].name<<"\n";
 			for (int p=0;p<this->nparamut;p++) this->mutparam[p] = header.mutparam[p];
 		}
 	}
@@ -530,13 +530,13 @@ int ReftableC::cal_varstat() {
 	int nrecutil,iscen,nsOK,bidon,i;
 	long double *sx,*sx2,x,an,nr,*min,*max;
 	bool scenOK;
-	cout <<"debut de cal_varstat   rt.nrec="<<this->nrec<<"   scenchoisi="<<this->scenchoisi[0]<<"\n";
+	//cout <<"debut de cal_varstat   rt.nrec="<<this->nrec<<"   scenchoisi="<<this->scenchoisi[0]<<"\n";
 	enregC enr;
 	nrecutil=100000;if (nrecutil>this->nrec) nrecutil=this->nrec;
 	nr=0;for (int i=0;i<nscenchoisi;i++) nr+=nrecscen[this->scenchoisi[i]-1];
-	cout<<"nr="<<nr<<"   nscenchoisi="<<nscenchoisi<<"\n";
+	cout<<"debut de cal_varstat   nr="<<nr<<"   nscenchoisi="<<nscenchoisi;
 	if (nrecutil>nr) nrecutil=nr;
-	cout <<"debut de cal_varstat   nrecutil="<<nrecutil<<"\n";
+	cout <<"    nrecutil="<<nrecutil<<"\n";
 	sx  = new long double[this->nstat];
 	sx2 = new long double[this->nstat];
 	min = new long double[this->nstat];
@@ -569,20 +569,20 @@ int ReftableC::cal_varstat() {
 			}
 		}
 	}
-	    cout<<i<<"   "<<nrecutil<<"\n";
+	    //cout<<i<<"   "<<nrecutil<<"\n";
 	if (i<nrecutil) nrecutil=i;
-	    cout<<i<<"   "<<nrecutil<<"\n";
+	    //cout<<i<<"   "<<nrecutil<<"\n";
 	this->closefile();
 	nsOK=0;
 	an=(long double)nrecutil;
 	for (int j=0;j<this->nstat;j++) {
 		this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
 		if (this->var_stat[j]>1E-20) nsOK++;
-		printf("sx2[%3d] = %12.8Le   sx[%3d] = %12.8Le\n",j,sx2[j],j,sx[j]);
-		printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
+		//printf("sx2[%3d] = %12.8Le   sx[%3d] = %12.8Le\n",j,sx2[j],j,sx[j]);
+		//printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
 	}
 	delete []sx;delete []sx2;
-	cout<<"\nnstatOK = "<<nsOK<<"\n";
+	cout<<"nstatOK = "<<nsOK<<"\n";
 //	exit(1);
 	return nsOK;
 }

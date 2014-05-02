@@ -119,19 +119,19 @@ bool valinfinie=false;
         ss = splitwords(s,"=",&n);
         name=ss[0];
         i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
-        cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
+        //cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
 			//cout<<"resethistparam   avant readprior\n ";
             header.scenario[rt.scenteste-1].histparam[i].prior.readprior(ss[1]);
 			//cout<<"resethistparam   apres readprior\n ";
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=false;
 			//cout<<"resethistparam   avant ecris\n ";
-            header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
+            //header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
         }
         else {
             header.scenario[rt.scenteste-1].histparam[i].value = atof(ss[1].c_str());
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=true;
-            cout<<header.scenario[rt.scenteste-1].histparam[i].value<<"\n";
+            //cout<<header.scenario[rt.scenteste-1].histparam[i].value<<"\n";
         }
     }
 

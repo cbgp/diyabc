@@ -52,12 +52,13 @@
 extern ParticleSetC ps;
 extern enregC* enreg;
 double time_readfile=0.0;
-extern string scurfile, path, ident, headerfilename;
+extern string scurfile, path, ident, headerfilename,progressfilename;
 extern HeaderC header;
 extern ReftableC rt;
 extern int ncs;
 extern bool multithread;
 extern int nparamcom;
+extern int iprog,nprog;
 extern ofstream fprog;
 extern long double **phistarOK;
 extern bool deltanul;
@@ -236,7 +237,7 @@ string nomficonfresult;
 			for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
 			cout<<"\nComputing "<<s<<" predictive error\njeu test "<<p+1<<"   nsel="<<nsel<<"     bon scenario="<<enreg[p].numscen<<"\n";
 			rt.cal_dist(nrec,nsel,stat_obs,false,true);
-			//iprog +=6;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+			iprog +=6;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			if (AFD) stat_obs = transfAFD(nrec,nsel,p);
 			postsd = comp_direct(nseld);
 			ncs1=ncs-1;
@@ -248,7 +249,8 @@ string nomficonfresult;
 				int s=0;for (int i=1;i<rt.nscen;i++) {if (postsr[i].x>postsr[s].x) s=i;}
 				if (s==enreg[p].numscen-1) nclog++;
 				cout<<"scenario estimé par l'approche logistique : "<<s+1<<"\n";
-				//iprog +=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+				iprog +=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+				cout<<"                                                       --->"<<setprecision(2)<<(double)(100*iprog)/(double)nprog<<" %\n";
 				delete []postsd;
 				delete []postsr;
 			}
@@ -303,6 +305,7 @@ string nomficonfresult;
 					delete [] phistarOK;delete [] stat;
 				}
 			}
+			iprog+=9;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			traitenreg("prior",nrec,nseld,nselr,nrecp,nlogreg,prop);
 		} else {
 			rt.alloue_enrsel(nsel0);
@@ -340,6 +343,7 @@ string nomficonfresult;
 				}
 			}
 			rt.desalloue_enrsel(nsel0);
+			iprog+=9;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			traitenreg("posterior",nrec,nseld,nselr,nrecp,nlogreg,prop);
 		}
 		for (int p=0;p<nrecp;p++) {
@@ -353,8 +357,7 @@ string nomficonfresult;
  * Interprête la ligne de paramètres de l'option "confiance dans le choix du scénario" et lance les calculs correspondants
  */
     void doconf(string opt, int seed) {
-        string progressfilename;
-        int nstatOK, iprog,nprog,ncs1,*nbestdir,*nbestlog,*scenchoibackup,nscenchoibackup;
+        int nstatOK,ncs1,*nbestdir,*nbestlog,*scenchoibackup,nscenchoibackup;
         int nrec = 0,nreca, nsel=0,nsel0=0,nseld = 0,nselr = 0,ns,nr, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond,nrecb,nrecc;
 		int ncordir,ncorlog,ncdir,nclog,ii,jj;
 		string *ss,s,*ss1,s0,s1; 
@@ -367,6 +370,7 @@ string nomficonfresult;
         posteriorscenC **postsd,*postsr;
         string shist,smut;
 		nrecb=nrecc=0;
+		clock_zero=0.0;debut=walltime(&clock_zero);
         //cout <<"debut de doconf\n";
         progressfilename = path + ident + "_progress.txt";
         //strcpy(progressfilename,path);
@@ -449,10 +453,10 @@ string nomficonfresult;
                     cout<<"le nombre de groupes transmis ("<<ng<<") est incorrect. Le nombre attendu  est de "<< header.ngroupes<<"\n";
                     //exit(1);
                 }
-                cout<<"avant resetmutparam\n";
+                //cout<<"avant resetmutparam\n";
 				
                 for (int j=1;j<ng+1;j++) resetmutparam(ss1[j-1]);
-                cout<<"apres resetmutparam\n";
+                //cout<<"apres resetmutparam\n";
             } else if (s0=="f:") {
                 AFD=(s1=="1");
                 if (AFD) cout<<"Factorial Discriminant Analysis\n";
@@ -462,10 +466,19 @@ string nomficonfresult;
 			}
         }
         cout<<"fin de l'analyse de confpar\n";
+        if (nlogreg==1){
+			nprog=10*(ntest+nrecb+nrecc)+2;
+			if (ntest>0) nprog +=9;if (nrecb>0) nprog +=9;if (nrecc>0) nprog +=9;
+			iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+		} else {
+			nprog=6*(ntest+nrecb+nrecc)+2;
+			if (ntest>0) nprog +=9;if (nrecb>0) nprog +=9;if (nrecc>0) nprog +=9;
+			iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+		}
 		
 //Calcul de la prior predictive error
 		if (nrecb>0) {
-			cout<<"---------------------------------------------------------------\n";
+			cout<<"\n---------------------------------------------------------------\n";
 			cout<<"\nDebut du calcul de la prior predictive error  nrecb="<<nrecb<<"\n";
 			nscenchoibackup = rt.nscenchoisi;
 			scenchoibackup = new int[rt.nscenchoisi];
@@ -484,12 +497,13 @@ string nomficonfresult;
 			delete [] rt.scenchoisi;
 			rt.scenchoisi = new int[rt.nscenchoisi];
 			for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j]=scenchoibackup[j];
+			cout<<"---------------------------------------------------------------\n";
 		}
 //FIN du calcul de la prior predictive error
 		
 //DEBut du calcul de la posterior predictive error
 		if (nrecc>0) {
-			cout<<"---------------------------------------------------------------\n";
+			cout<<"\n---------------------------------------------------------------\n";
 			cout<<"\nDebut du calcul de la posterior predictive error  nrecc="<<nrecc<<"\n";
 			nscenchoibackup = rt.nscenchoisi;
 			scenchoibackup = new int[rt.nscenchoisi];
@@ -508,6 +522,7 @@ string nomficonfresult;
 			delete [] rt.scenchoisi;
 			rt.scenchoisi = new int[rt.nscenchoisi];
 			for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j]=scenchoibackup[j];
+			cout<<"---------------------------------------------------------------\n";
 		}
 //FIN du calcul de la posterior predictive error
 		
@@ -553,6 +568,9 @@ string nomficonfresult;
 			rt.scenchoisi = new int[rt.nscenchoisi];
 			for (int j=0;j<nscenchoibackup;j++) rt.scenchoisi[j]=scenchoibackup[j];
 		}
+		cout<<"\n---------------------------------------------------------------\n";
+		cout<<"\nDebut du calcul de la confiance  pour le scenario "<<rt.scenchoisi[0]<<"\n";
+		
         npv = rt.nparam[rt.scenteste-1];
         enreg = new enregC[ntest];
         for (int p=0;p<ntest;p++) {
@@ -561,10 +579,8 @@ string nomficonfresult;
             enreg[p].numscen = rt.scenteste;
         }
         nsel=nseld;if(nsel<nselr) nsel=nselr;
-        if (nlogreg==1){nprog=10*(ntest+1)+1;iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();}
-        else           {nprog=6*ntest+11;iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();}
 		if (posterior) {
-			cout<<"avant dosimulphistar\n";
+			cout<<"\n\navant dosimulphistar\n";
 			ps.dosimulphistar(header,ntest,false,multithread,true,rt.scenteste,seed,nphistarOK);
 			cout<<"apres dosimulphistar\n";
 		} else {
@@ -572,12 +588,12 @@ string nomficonfresult;
 			ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,2);
 			cout<<"apres ps.dosimultabref\n";
 		}
-        iprog=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
-        cout<<"apres ecriture dans progress\n";
-        header.readHeader(headerfilename);cout<<"apres readHeader\n";
+        iprog+=9;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+        //cout<<"apres ecriture dans progress\n";
+        header.readHeader(headerfilename);//cout<<"apres readHeader\n";
         //nstatOK = rt.cal_varstat();
         stat_obs = new float[rt.nstat];
-        ecrientete(nrec,ntest,nseld,nselr,nlogreg,shist,smut,AFD); cout<<"apres ecrientete\n";
+        ecrientete(nrec,ntest,nseld,nselr,nlogreg,shist,smut,AFD); //cout<<"apres ecrientete\n";
         ofstream f11(nomficonfresult.c_str(),ios::app);
         rt.alloue_enrsel(nsel);
         if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
@@ -585,9 +601,9 @@ string nomficonfresult;
 		for(int s=0;s<rt.nscenchoisi;s++){nbestdir[s]=0;nbestlog[s]=0;}
 		nstatOK = rt.cal_varstat();
         for (int p=0;p<ntest;p++) {
-            clock_zero=0.0;debut=walltime(&clock_zero);
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
-			cout<<"\n\njeu test "<<p+1<<"\n";
+			cout<<"\nComputing confidence in scenario choice for scenario "<<rt.scenchoisi[0]<<"\n";
+			cout<<"jeu test "<<p+1<<"\n";
 			//cout<<"nstatOK="<<nstatOK<<"\n";
             rt.cal_dist(nrec,nsel,stat_obs,false,false);
             //cout<<"apres cal_dist\n";
@@ -601,17 +617,22 @@ string nomficonfresult;
             if (p<9)  f11<<"    "<<(p+1); else if (p<99)  f11<<"   "<<(p+1); else if (p<999)  f11<<"  "<<(p+1);else  f11<<" "<<(p+1);
             f11<<"   ";
             ncs1=ncs-1;
-			int s=0;for (int i=1;i<rt.nscenchoisi;i++) {if (postsd[ncs1][i].x>postsd[ncs1][s].x) s=i;}nbestdir[s]++;
+			int s=0;for (int i=1;i<rt.nscenchoisi;i++) {if (postsd[ncs1][i].x>postsd[ncs1][s].x) s=i;}
+			nbestdir[s]++;
+			cout<<"scenario estimé par l'approche directe : "<<s+1<<"\n";
             for (int i=0;i<rt.nscenchoisi;i++) f11<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;
-            for (int i=0;i<rt.nscenchoisi;i++) cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;cout<<"\n";
+            //for (int i=0;i<rt.nscenchoisi;i++) cout<< setiosflags(ios::fixed)<<setw(9)<<setprecision(3)<<postsd[ncs1][i].x;cout<<"\n";
             if (nlogreg==1) {
                 postsr = comp_logistic(nselr,stat_obs);
-				int s=0;for (int i=1;i<rt.nscenchoisi;i++) {if (postsr[i].x>postsr[s].x) s=i;}nbestlog[s]++;
+				int s=0;for (int i=1;i<rt.nscenchoisi;i++) {if (postsr[i].x>postsr[s].x) s=i;}
+				nbestlog[s]++;
+				cout<<"scenario estimé par l'approche logistique : "<<s+1<<"\n";
                 iprog +=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+				cout<<"                                                       --->"<<setprecision(2)<<(double)(100*iprog)/(double)nprog<<" %\n";
 				for (int i=0;i<rt.nscenchoisi;i++) {
-					cout<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x;
-					cout<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf;
-					cout<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"] ";
+					//cout<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x;
+					//cout<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf;
+					//cout<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"] ";
 					f11<<"  "<<setiosflags(ios::fixed)<<setw(8)<<setprecision(4)<<postsr[i].x;
 					f11<<" ["<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].inf;
 					f11<<","<<setiosflags(ios::fixed)<<setw(6)<<setprecision(4)<<postsr[i].sup<<"] ";
@@ -629,8 +650,6 @@ string nomficonfresult;
             }
             f11<<"\n";f11.flush();
             cout<<"\n";
-            duree=walltime(&debut);
-            cout<<"durée ="<<TimeToStr(duree)<<"\n";
         }
         rt.desalloue_enrsel(nsel);
         if (nlogreg==1) liberecmat(rt.nscenchoisi, nselr, rt.nstat);
@@ -644,7 +663,10 @@ string nomficonfresult;
 		f11<<"\n\nPosterior predictive error (computed over "<<nrecc<<" data sets):\n";
 		f11<<"Direct approach :   "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcordirposterior<<"\n";
 		f11<<"Logistic approach : "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcorlogposterior<<"\n";
+		duree=walltime(&debut);
+		f11<<"\nTotal duration ="<<TimeToStr(duree)<<"\n";
 		
 		f11.close();
         iprog +=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
+		cout<<"durée ="<<TimeToStr(duree)<<"\n";
 }
