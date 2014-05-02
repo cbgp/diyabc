@@ -342,28 +342,29 @@ void ParticleSetC::dosimulstat(HeaderC const & header, int debut, int npart, boo
 			} else this->particule[p].scenario[scen].histparam[i].value=header.scenario[scen].histparam[i].prior.mini;
 			if (debuglevel==5) {
 				cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
-				cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"\n";
+				cout<<"phistar["<<k<<"]["<<ii-1<<"]="<<phistarOK[k][ii-1]<<"\n";
 			}
 		}
+		
 		if (debuglevel==5) cout<<"\n";
 		//cout<<"apres la copie des paramètres historiques\n";
 		for (gr=1;gr<=header.ngroupes;gr++)
 			if (header.groupe[gr].type==0) {  //MICROSAT
-				//cout <<"MICROSAT "<<p<<"\n";
-				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    ";
+				//cout <<"MICROSAT "<<p<<"   k="<<k<<"   ii="<<ii<<"\n";
+				//cout<<"phistarOK["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
 				if (not header.groupe[gr].priormutmoy.constant) {
 					//cout<<" priormutmoy non constant "<<phistarOK[k][ii]<<"  ";
 					this->particule[p].grouplist[gr].mutmoy = phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priormutmoy.fixed=true;
 				}
 				//cout<<this->particule[p].grouplist[gr].mutmoy<<"\n";
-				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    ";
+				//cout<<"phistarOK["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
 				if (not header.groupe[gr].priorPmoy.constant)   {
 					this->particule[p].grouplist[gr].Pmoy  =  phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priorPmoy.fixed=true;
 				}
 				//cout<<this->particule[p].grouplist[gr].Pmoy<<"\n";
-				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
+				//cout<<"phistarOK["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
 				if (not header.groupe[gr].priorsnimoy.constant) {
 					this->particule[p].grouplist[gr].snimoy = phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priorsnimoy.fixed=true;
