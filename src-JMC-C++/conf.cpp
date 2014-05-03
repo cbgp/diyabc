@@ -91,13 +91,13 @@ string nomficonfresult;
         f1<<"Direct approach : number of selected data sets : "<<nseld<<"\n";
         if (nlogreg==1) {
             f1<<"Logistic regression  : number of selected data sets : "<<nselr<<"\n";
-            f1<<"Results obtained with plain summary statistics\n";
         }
         f1<<"Historical parameters are drawn from the following priors and/or are given the following values : "<<shist<<"\n";
         f1<<"Mutation parameters are drawn from the following priors and/or are given the following values : "<<smut<<"\n";
         f1<<"Candidate scenarios : ";
         for (int i=0;i<rt.nscenchoisi;i++) {f1<<rt.scenchoisi[i];if (i<rt.nscenchoisi-1) f1<<", "; else f1<<"\n";}
-        if (AFD) f1<<"Summary statistics have been replaced by components of a Linear Discriminant Analysis\n\n"; else f1<<"\n";
+        if (AFD) f1<<"Summary statistics have been replaced by components of a Linear Discriminant Analysis\n\n"; else 
+			f1<<"Results obtained with plain summary statistics\n\n";
         //f1<<"         ");
 		if (ntest>0){
 			string aprdir,aprlog;
