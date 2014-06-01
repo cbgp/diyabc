@@ -11,6 +11,13 @@
 #include <string>
 #include <vector>
 
+class MissingSnp
+{
+public:
+	int sample,indiv;
+	MissingSnp & operator= (MissingSnp const & source);
+};
+
 /**
 *  Structure LocusC : définition de la structure LocusC
 */
@@ -40,7 +47,9 @@ public:
   short int **haplosnp; //array[sample][gene copy] 0,1,9
   bool mono;  //mono=true si un seul allèle dans l'échantillon global
   double weight; //poids du locus=1, sauf quand biais de recrutement
-  int nsample,*samplesize;
+  int nsample,*samplesize,nmisssnp;
+  MissingSnp *misssnp;
+  
   
 	LocusC() {
 		freq = NULL;
@@ -65,6 +74,7 @@ public:
 		firstime=mono=true;
 		weight=1.0;
 		nsample=0;
+		misssnp = NULL;
 	};
 	~LocusC() {
 		/*if (freq != NULL) delete [] freq;
@@ -117,7 +127,7 @@ public:
 	int nsample,nsample0,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
 	//int *nind;
 	//int **indivsexe;
-	double sexratio;
+	double sexratio,maf;
 	MissingHaplo *misshap, *misssnp;
 	MissingNuc   *missnuc;
 	LocusC *locus;

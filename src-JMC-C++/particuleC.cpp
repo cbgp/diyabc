@@ -1977,6 +1977,28 @@ void ParticleC::put_one_mutation(int loc) {
 	//}  
 	//return poly;*/
   //}
+  
+bool ParticleC::mafreached(int loc) {
+	int sa,indiv,n0,n1,cat;
+	double fam;
+	if (this->locuslist[loc].nmisssnp>0) {
+		for (int i=0;i<this->locuslist[loc].nmisssnp;i++) {
+			sa=this->locuslist[loc].misssnp[i].sample;indiv=this->locuslist[loc].misssnp[i].indiv;
+			this->locuslist[loc].haplosnp[sa][indiv] = (short int)SNPMISSING;
+		}
+	} 
+	n0=0;n1=0;
+	cat = (this->locuslist[loc].type % 5);
+	for (sa=0;sa<this->data.nsample;sa++) {
+		for (indiv=0;indiv<this->data.ssize[cat][sa];indiv++) {
+			if(this->locuslist[loc].haplosnp[sa][indiv]==0) n0++;
+			else if(this->locuslist[loc].haplosnp[sa][indiv]==1) n1++;
+		}
+	}
+	if (n0<=n1) fam=(double)n0/(double)(n0+n1);
+	else		fam=(double)n1/(double)(n0+n1);
+	return (fam>=this->maf);
+}
 	
   int ParticleC::dosimulpart(int numscen){
 	  if (debuglevel==5)        {cout<<"debut de dosimulpart  nloc="<<this->nloc<<"\n";fflush(stdin);}
@@ -2191,6 +2213,9 @@ void ParticleC::put_one_mutation(int loc) {
 			if (this->sumweight<0.0) break;
 		}
 		if (this->sumweight<0.0) break;
+		if ((this->locuslist[loc].type>=10)and(this->maf>0.0)) {
+			if  (not this->mafreached(loc)) loc--;
+		}
 		//if (loc==99) break;
 	}	//LOOP ON loc
 	if (debuglevel==31) cout<<"\nLongueur totale moyenne des arbres = "<<lontreemoy<<"\n\n";

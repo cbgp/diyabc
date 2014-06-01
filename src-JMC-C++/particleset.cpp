@@ -43,6 +43,7 @@ void ParticleSetC::setdata(int p) {
 //	cout<<"ParticleSetC::setdata(int p)    1\n";
 	this->particule[p].threshold = this->header.threshold;
 	this->particule[p].sexratio = this->header.dataobs.sexratio;
+	this->particule[p].maf = this->header.dataobs.maf;
 	this->particule[p].data.nsample = this->header.dataobs.nsample;
 	this->particule[p].nsample = this->header.dataobs.nsample;
 	this->particule[p].data.nind.resize(this->header.dataobs.nsample);
@@ -217,6 +218,14 @@ void ParticleSetC::setloci(int p) {
 			for (int i=0;i<this->particule[p].locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = this->header.dataobs.locus[kloc].mutsit[i];
 			//std::cout <<"\n";
 		} else  if (this->header.dataobs.locus[kloc].type >= 10) {
+			this->particule[p].locuslist[kloc].nmisssnp=this->header.dataobs.locus[kloc].nmisssnp;
+			if (this->header.dataobs.locus[kloc].nmisssnp>0) {
+				this->particule[p].locuslist[kloc].misssnp= new MissingSnp[this->header.dataobs.locus[kloc].nmisssnp];
+				for (int i=0;i<this->header.dataobs.locus[kloc].nmisssnp;i++) {
+					this->particule[p].locuslist[kloc].misssnp[i].sample = this->header.dataobs.locus[kloc].misssnp[i].sample;
+					this->particule[p].locuslist[kloc].misssnp[i].indiv = this->header.dataobs.locus[kloc].misssnp[i].indiv;
+				}
+			}
 		}
 		//cout << "samplesize[0]="<<this->particule[p].locuslist[kloc].samplesize[0]<<"\n";
 	}
