@@ -48,7 +48,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	this->nhistparam = new int[header.nscenarios];
 	this->histparam = new HistParameterC*[header.nscenarios];
 	if (header.nparamut>0) this->mutparam = new MutParameterC[header.nparamut];
-	cout<<"avant la boucle des scenarios\n";
+	cout<<"avant la boucle des scenarios  nscenarios ="<<header.nscenarios<<"\n";
 	for (int i=0;i<header.nscenarios;i++) {
 		nparamvar=0;
 		for (int p=0;p<header.scenario[i].nparam;p++) if (not header.scenario[i].histparam[p].prior.constant) nparamvar++;
@@ -107,7 +107,7 @@ int ReftableC::writeheader() {
 	int nb;
 	ofstream f1(this->filename.c_str(),ios::out|ios::binary);
 	if (!f1.is_open()) {
-		throw std::runtime_error("Unable to open " + filename +"\n"); //return 1;
+		throw std::runtime_error("Unable to open " + this->filename +"\n"); //return 1;
 	}  //fichier impossible à ouvrir
 	nb=this->nrec;f1.write((char*)&nb,sizeof(int));
 	//cout <<"reftable.writeheader     nscen = "<<this->nscen<<"\n";
@@ -249,8 +249,9 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 	this->fifo.open(reftablefilename.c_str(),ios::in|ios::out|ios::binary);
 	this->fifo.seekg(0);
 	this->fifo.read((char*)&(this->nrec),sizeof(int));
+	cout <<"nrec = "<<this->nrec<<"\n";
+	if (this->nrec<1) {this->fifo.close();cout<<"fichier reftable.bin vide\n\n";return 1;}
 	this->fifo.read((char*)&(this->nscen),sizeof(int));
-	cout <<"nrec = "<<nrec<<"\n";
 	this->nrecscen = new int[this->nscen];
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
 	this->nparam = new int[this->nscen];

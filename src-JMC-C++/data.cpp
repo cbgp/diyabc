@@ -393,7 +393,7 @@ string  getligne(ifstream file) {
 			return 1;
 		} else this->message="";
 		getline(file,s1);s1=purgetab(s1);
-		j0=s1.find("<NM=");k0=s1.find("<MAF=");
+		j0=s1.find("<NM=");k0=s1.find("<MAF=");cout<<"k0="<<k0<<"\n";
 		if ((j0!=string::npos)or(k0!=string::npos)) {
 			if (j0!=string::npos){ 
 							//cout<<"j0="<<j0<<"\n";
@@ -402,9 +402,9 @@ string  getligne(ifstream file) {
 				this->sexratio=atof(s.c_str())/(1.0+atof(s.c_str()));
 			}
 			if (k0!=string::npos){
-				s=s1.substr(k0,s1.length());
-				k1=s.find(">");
-				s=s.substr(k0+5,k1-(k0+5));
+				s=s1.substr(k0,s1.length());cout<<"s="<<s<<"\n";
+				k1=s.find(">");cout<<"k1="<<k1<<"\n";
+				s=s.substr(5,k1-5);cout<<"s="<<s<<"\n";
 				this->maf=atof(s.c_str());
 				cout<<"MAF="<<this->maf<<"\n";
 			}
@@ -505,7 +505,7 @@ string  getligne(ifstream file) {
 		file.close();
 		cout<<"avant les delete\n";
 		delete []nindi;delete []ss;
-		cout<<"fin de la lecture du fichier\n";
+		cout<<"fin de la lecture du fichier txt\n";
 		return 0;
 	}
 /**
@@ -556,8 +556,9 @@ string  getligne(ifstream file) {
 		} else {
 			for (int loc=0;loc<this->nloc;loc++) {
 				n0=0;n2=0;
-				for (ech=ech0;ech<this->nsample;ech++) {
-					for (ind=ind0+1;ind<this->nind[ech];ind++) {
+				for (ech=0;ech<this->nsample;ech++) {
+					for (ind=0;ind<this->nind[ech];ind++) {
+						//cout<<"sexe="<<this->indivsexe[ech][ind]<<"   genotype="<<genotype[ech][ind][loc]<<"\n";
 						if (this->indivsexe[ech][ind]==2) {
 							if (genotype[ech][ind][loc]=="0") n0+=2;
 							else if (genotype[ech][ind][loc]=="1") {n0++;n2++;}
@@ -708,7 +709,7 @@ string  getligne(ifstream file) {
 		short int g0=0,g1=1,g9=9;
 		this->locus[loc].haplosnp = new short int*[this->nsample];
 		this->locus[loc].samplesize = new int[this->nsample];
-		cout<<"\ndo_snp locus = "<<loc+1<<"\n";
+		//cout<<"\ndo_snp locus = "<<loc+1<<"\n";
 		for (ech=0;ech<this->nsample;ech++) {
 			ss=0;
 			for (ind=0;ind<this->nind[ech];ind++){
@@ -731,13 +732,13 @@ string  getligne(ifstream file) {
 			}
 			//cout<<"avant transfert  ss="<<ss<<"   haplo.size = "<<haplo.size()<<"\n";
 			this->locus[loc].samplesize[ech] = ss;
-			cout<<"Dans do_snp("<<loc<<")  samplesize[";
-			cout<<ech<<"]="<<this->locus[loc].samplesize[ech]<<"\n";
+			//cout<<"Dans do_snp("<<loc<<")  samplesize[";
+			//cout<<ech<<"]="<<this->locus[loc].samplesize[ech]<<"\n";
 			this->locus[loc].haplosnp[ech] = new short int[ss];
 			for (int i=0;i<ss;i++) this->locus[loc].haplosnp[ech][i] = haplo[i];
 			if (not haplo.empty()) haplo.clear();
 		}
-		cout<<"sortie de do_snp\n";
+		//cout<<"sortie de do_snp\n";
 	}
 
 	void DataC::calcule_ss() {
@@ -875,11 +876,13 @@ cout<<"fin de ecribin\n";
 				for (int i=0;i<this->ssize[categ][ech];i++) f0.read((char*)&(this->locus[loc].haplosnp[ech][i]),sizeof(short int));
 			}
 		}
+		cout<<"avant libin maf\n";
 		if (not f0.eof()) f0.read((char*)&(this->maf),sizeof(double));
 		else (this->maf=0.0);
+		cout<<"this->maf="<<this->maf<<"\n";
 		f0.close();
 		delete []buffer;
-		cout<<"dans libin     ";
+		cout<<"dans libin     \n";
 		cout<<"this->locus[0].haplosnp[0][0]="<<this->locus[0].haplosnp[0][0]<<"\n";
 	}
 
@@ -1257,6 +1260,7 @@ cout<<"fin de ecribin\n";
     			for (loc=0;loc<this->nloc;loc++) this->cal_coeffcoal(loc);
     			cout<<"fin de la lecture du fichier binaire\n";
     		} else {
+				cout<<"\nlecture du fichier txt\n";
     			error = this->readfilesnp(filename);
     			if (error != 0) return error;
     			cout<<"fin de la lecture\n";

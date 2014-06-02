@@ -183,8 +183,12 @@ int readheaders() {
     message=header.calstatobs(statobsfilename);                          if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename= header.datafilename;                                   if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
 	k=rt.testfile(reftablefilename,nenr);
-    k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"   rt.nparam[0]="<<rt.nparam[0]<<"\n";
-    if (k==0) {rt.sethistparamname(header);if (debuglevel==1) cout<<"sethistparamname"<<"\n";}
+	if (k==0) {
+		k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);  
+		if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"   rt.nparam[0]="<<rt.nparam[0]<<"\n";
+		rt.sethistparamname(header);
+		if (debuglevel==1) cout<<"sethistparamname"<<"\n";
+	}
     return k;
 }
 
@@ -516,7 +520,7 @@ try {
 					cout<<"apres readheader   k="<<k<<"\n";
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"   ";fflush(stdin);
                    cout<<"k="<<k<<"\n";
-				   if (k==1) {
+				   if (k==1) { cout<<"general k==1\n";
                               rt.datapath = datafilename;
                               rt.nscen = header.nscenarios;
                               rt.nrec=0;
@@ -525,6 +529,8 @@ try {
                               rt.nparam = new int[header.nscenarios];
                               for (int i=0;i<header.nscenarios;i++) rt.nparam[i]=header.scenario[i].nparamvar;
                               rt.nstat=header.nstat;
+							  cout<<"general avant rt.writeheader\n";
+							  rt.filename=reftablefilename;
                               rt.writeheader();
                               rt.sethistparamname(header);
                           } else if (k==2) {

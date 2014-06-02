@@ -483,10 +483,10 @@ int HeaderC::readHeaderLoci(ifstream & file){
 			delete [] ss;
 		}
 	} else {			//fichier SNP
-		//cout<<"fichier SNP dans redheaderLoci\n";
+		cout<<"fichier SNP dans redheaderLoci\n";
 		this->ngroupes=getwordint(s1,3); cout<<s1<<"\n";cout<<"this->ngroupes="<<this->ngroupes<<"\n";
 		this->groupe = new LocusGroupC[this->ngroupes+1];
-		this->groupe[0].nloc = this->dataobs.nloc;
+		this->groupe[0].nloc = this->dataobs.nloc;cout<<"groupe[0].nloc="<<this->groupe[0].nloc<<"\n";
 		for (int loc=0;loc<this->dataobs.nloc;loc++) this->dataobs.locus[loc].groupe=0;
 		for (gr=1;gr<=this->ngroupes;gr++) {
 			getline(file,s1);
@@ -531,7 +531,7 @@ int HeaderC::readHeaderLoci(ifstream & file){
 				}
 			}
 		}
-		//cout<<"this->groupe[0].nloc = "<<this->groupe[0].nloc<<"\n";
+		cout<<"this->groupe[0].nloc = "<<this->groupe[0].nloc<<"\n";
 		if (this->groupe[0].nloc>0) {
 			this->groupe[0].loc = new int[this->groupe[0].nloc];
 			k1=0;
