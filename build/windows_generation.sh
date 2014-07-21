@@ -141,19 +141,19 @@ rm -f `dirname $pyinst`/config.dat
 
 python `dirname $pyinst`/utils/Makespec.py --onefile $pysrctmp -w --icon="$icon" -o "$output"
 datalist="a.datas+=["
-for filepath in $TMPBUILD/data/txt/*;do 
+for filepath in $TMPBUILD/data/txt/*;do
     datalist=$datalist"('data/txt/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
 done
-for filepath in $TMPBUILD/data/icons/*;do 
+for filepath in $TMPBUILD/data/icons/*;do
     datalist=$datalist"('data/icons/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
 done
-for filepath in $TMPBUILD/data/images/*;do 
+for filepath in $TMPBUILD/data/images/*;do
     datalist=$datalist"('data/images/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
 done
-for filepath in $TMPBUILD/data/bin/*;do 
+for filepath in $TMPBUILD/data/bin/*;do
     datalist=$datalist"('data/bin/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
 done
-for filepath in $TMPBUILD/uis/*;do 
+for filepath in $TMPBUILD/uis/*;do
     datalist=$datalist"('uis/`basename $filepath`','`echo $filepath | sed s=/=xxx123=g`','DATA'),"
 done
 #Documention removed   
