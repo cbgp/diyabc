@@ -48,7 +48,7 @@ public:
   bool mono;  //mono=true si un seul allèle dans l'échantillon global
   double weight; //poids du locus=1, sauf quand biais de recrutement
   int nsample,nmisssnp;
-  MissingSnp *misssnp
+  MissingSnp *misssnp;
     std::vector<int> samplesize;
   
   
