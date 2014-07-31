@@ -337,7 +337,7 @@ string  getligne(ifstream file) {
 			trouvepop=(ligne.find("POP")!=string::npos);
 			if (not trouvepop) nloc++;
 		}
-		cout<<"nloc="<<nloc<<"\n";
+		//cout<<"nloc="<<nloc<<"\n";
 		if (not trouvepop) return -2;
 		while (not file.eof()){
 			getline(file, ligne);ligne=purgetab(ligne);
@@ -352,10 +352,10 @@ string  getligne(ifstream file) {
 				if(ligne.find(",")!=string::npos) {
 					ligne = ligne.substr(ligne.find(",") + 1);
 					splitwords(ligne," ", ss); nss = ss.size();
-					cout<<"nss="<<nss<<"\n";
-					cout<<ss[nss-1]<<"\n";
+					//cout<<"nss="<<nss<<"\n";
+					//cout<<ss[nss-1]<<"\n";
 					if (nss!=nloc) {return -2;}
-					cout<<"avant exit(1)\n";
+					//cout<<"avant exit(1)\n";
 					//exit(1);
 				}
 			}
@@ -369,24 +369,34 @@ string  getligne(ifstream file) {
 * lecture d'un fichier de donnée SNP et stockage des informations dans une structure DataC
 */
 	int  DataC::readfilesnp(string filename){
-		int ech,ind,nech,nss,j0,j1,prem;
+		int ech,ind,nech,nss,j0,j1,k0,k1,prem;
 		bool deja;
 		string s1,s,sss;
 		vector<string> ss;
 		vector <string> popname;
 		Aindivname=false;Agenotype=false;Anind=false;Aindivsexe=false;Alocus=false;
 		ifstream file(filename.c_str(), ios::in);
+		this->maf=0.0;
 		if (file == NULL) {
 			this->message = "Data.cpp File "+filename+" not found";
 			return 1;
 		} else this->message="";
 		getline(file,s1);s1=purgetab(s1);
-		j0=s1.find("<NM=");
-		if (j0!=string::npos) {
-                        //cout<<"j0="<<j0<<"\n";
-			j1=s1.find("NF>",j0+3);
-			s=s1.substr(j0+4,j1-(j0+4));
-			this->sexratio=atof(s.c_str())/(1.0+atof(s.c_str()));
+		j0=s1.find("<NM=");k0=s1.find("<MAF=");cout<<"k0="<<k0<<"\n";
+		if ((j0!=string::npos)or(k0!=string::npos)) {
+			if (j0!=string::npos){ 
+							//cout<<"j0="<<j0<<"\n";
+				j1=s1.find("NF>",j0+3);
+				s=s1.substr(j0+4,j1-(j0+4));
+				this->sexratio=atof(s.c_str())/(1.0+atof(s.c_str()));
+			}
+			if (k0!=string::npos){
+				s=s1.substr(k0,s1.length());cout<<"s="<<s<<"\n";
+				k1=s.find(">");cout<<"k1="<<k1<<"\n";
+				s=s.substr(5,k1-5);cout<<"s="<<s<<"\n";
+				this->maf=atof(s.c_str());
+				cout<<"MAF="<<this->maf<<"\n";
+			}
 			getline(file,s1);s1=purgetab(s1);
 			prem=1;
 		} else {this->sexratio=0.5;prem=0;}
@@ -481,54 +491,87 @@ string  getligne(ifstream file) {
 		file.close();
 		cout<<"avant les delete\n";
 		delete []nindi;
-		cout<<"fin de la lecture du fichier\n";
+		cout<<"fin de la lecture du fichier txt\n";
 		return 0;
 	}
 /**
 * supprime les locus monomorphes
 */
 	void DataC::purgelocmonomorphes(){
-		int ind,ech,ind0 = 0,ech0,kloc=0,nloc=0,*typ;
+		int ind,ech,ind0 = 0,ech0,kloc=0,nloc=0,*typ,n0,n2;
+		double fam;
 		string ***ge,misval="9";
 		string premier="";
-		for (int loc=0;loc<this->nloc;loc++) {
-			for (ech0=0;ech0<this->nsample;ech0++){
-				for (ind0=0;ind0<this->nind[ech0];ind0++) {
-					if (genotype[ech0][ind0][loc]!=misval) premier=genotype[ech0][ind0][loc];
+		if (this->maf == 0.0) {
+			for (int loc=0;loc<this->nloc;loc++) {
+				for (ech0=0;ech0<this->nsample;ech0++){
+					for (ind0=0;ind0<this->nind[ech0];ind0++) {
+						if (genotype[ech0][ind0][loc]!=misval) premier=genotype[ech0][ind0][loc];
+						if (premier!="") break;
+					}
 					if (premier!="") break;
 				}
-				if (premier!="") break;
+				if (premier=="") {
+					this->locus[loc].mono=true; //le locus n'a que des données manquantes
+					cout<<"premier="<<premier<<" au locus"<<loc<<"\n";
+				} else {
+					this->locus[loc].mono=true;
+					for (ech=ech0;ech<this->nsample;ech++) {
+						for (ind=ind0+1;ind<this->nind[ech];ind++) {
+							if ((this->indivsexe[ech][ind]==2)and(genotype[ech][ind][loc]=="1")) this->locus[loc].mono=false;
+							if (not this->locus[loc].mono) break;
+							this->locus[loc].mono=((genotype[ech][ind][loc]==premier)or(genotype[ech][ind][loc]==misval));
+							if (not this->locus[loc].mono) break;
+						}
+						ind0=-1;
+						if (not this->locus[loc].mono) break;
+					}
+				}
+				if (not this->locus[loc].mono) {
+					nloc++;
+				} else {
+					cout<<"le locus "<<loc<<" est monomorphe"<<"   tous les génotypes sont égaux à "<<premier<<"\n";
+					for (ech=0;ech<this->nsample;ech++){
+						for (ind=0;ind<this->nind[ech];ind++) {
+							cout<<genotype[ech][ind][loc]<<" ";
+						}
+						cout<<"\n";
+					}
+				}
 			}
-			if (premier=="") {
-				this->locus[loc].mono=true; //le locus n'a que des données manquantes
-				cout<<"premier="<<premier<<" au locus"<<loc<<"\n";
-			} else {
-				this->locus[loc].mono=true;
-				for (ech=ech0;ech<this->nsample;ech++) {
-					for (ind=ind0+1;ind<this->nind[ech];ind++) {
-					    if ((this->indivsexe[ech][ind]==2)and(genotype[ech][ind][loc]=="1")) this->locus[loc].mono=false;
-						if (not this->locus[loc].mono) break;
-						this->locus[loc].mono=((genotype[ech][ind][loc]==premier)or(genotype[ech][ind][loc]==misval));
-						if (not this->locus[loc].mono) break;
+		} else {
+			for (int loc=0;loc<this->nloc;loc++) {
+				n0=0;n2=0;
+				for (ech=0;ech<this->nsample;ech++) {
+					for (ind=0;ind<this->nind[ech];ind++) {
+						//cout<<"sexe="<<this->indivsexe[ech][ind]<<"   genotype="<<genotype[ech][ind][loc]<<"\n";
+						if (this->indivsexe[ech][ind]==2) {
+							if (genotype[ech][ind][loc]=="0") n0+=2;
+							else if (genotype[ech][ind][loc]=="1") {n0++;n2++;}
+							else if (genotype[ech][ind][loc]=="2") n2+=2;
+						} else {
+							if (this->indivsexe[ech][ind]==1) {
+								if (genotype[ech][ind][loc]=="0") n0++;
+								else if (genotype[ech][ind][loc]=="1") n2++;
+							}
+						}
 					}
 					ind0=-1;
-					if (not this->locus[loc].mono) break;
+				}
+				this->locus[loc].mono=(n0+n2<1);
+				if (not this->locus[loc].mono) {
+					if (n0<=n2) fam=(double)n0/(double)(n0+n2);
+					else 		fam=(double)n2/(double)(n0+n2);
+					this->locus[loc].mono=(fam<this->maf);
+				}
+				if (not this->locus[loc].mono) {
+					nloc++;
+				} else {
+					cout<<"le locus "<<loc<<" a une maf ("<<fam<<") inférieure à la limite ("<<this->maf<<")\n";
 				}
 			}
-			if (not this->locus[loc].mono) {
-				nloc++;
-			} else {
-				cout<<"le locus "<<loc<<" est monomorphe"<<"   tous les génotypes sont égaux à "<<premier<<"\n";
-				for (ech=0;ech<this->nsample;ech++){
-					for (ind=0;ind<this->nind[ech];ind++) {
-						cout<<genotype[ech][ind][loc]<<" ";
-					}
-					cout<<"\n";
-				}
-			}
-			
 		}
-	if (nloc<this->nloc){
+		if (nloc<this->nloc){
 			cout<<"purge de "<<this->nloc-nloc<<" locus monomorphes\n";
 			ge = new string**[this->nsample];
 			typ = new int[nloc];
@@ -567,7 +610,7 @@ string  getligne(ifstream file) {
 	}
 
 	void DataC::missingdata(){
-		int ind,ech,ng,typ,plo;
+		int ind,ech,ng,typ,plo,ii;
 		short int misval=9;
 		this->nmisssnp=0;
 		/*for (ech=0;ech<this->nsample;ech++) {
@@ -624,6 +667,22 @@ string  getligne(ifstream file) {
 				}
 			}
 		}
+		for (int loc=0;loc<this->nloc;loc++) {
+			this->locus[loc].nmisssnp=0;
+			for (int i=0;i<this->nmisssnp;i++) {
+				if (this->misssnp[i].locus==loc)this->locus[loc].nmisssnp++;
+			}
+			if (this->locus[loc].nmisssnp>0) {
+				this->locus[loc].misssnp = new MissingSnp[this->locus[loc].nmisssnp];
+				ii=0;
+				for (int i=0;i<this->nmisssnp;i++) {
+					if (this->misssnp[i].locus==loc) {
+						this->locus[loc].misssnp[ii].sample = this->misssnp[i].sample;
+						this->locus[loc].misssnp[ii].indiv  = this->misssnp[i].indiv;
+					}
+				}
+			}
+		}
 	}
 /**
 * traitement des locus snp
@@ -637,7 +696,7 @@ string  getligne(ifstream file) {
 
 		this->locus[loc].nsample = this->nsample;
 		this->locus[loc].samplesize = vector<int>(this->nsample);
-		cout<<"\ndo_snp locus = "<<loc+1<<"\n";
+		//cout<<"\ndo_snp locus = "<<loc+1<<"\n";
 		for (ech=0;ech<this->nsample;ech++) {
 			ss=0;
 			for (ind=0;ind<this->nind[ech];ind++){
@@ -660,13 +719,13 @@ string  getligne(ifstream file) {
 			}
 			//cout<<"avant transfert  ss="<<ss<<"   haplo.size = "<<haplo.size()<<"\n";
 			this->locus[loc].samplesize[ech] = ss;
-			cout<<"Dans do_snp("<<loc<<")  samplesize[";
-			cout<<ech<<"]="<<this->locus[loc].samplesize[ech]<<"\n";
+			//cout<<"Dans do_snp("<<loc<<")  samplesize[";
+			//cout<<ech<<"]="<<this->locus[loc].samplesize[ech]<<"\n";
 			this->locus[loc].haplosnp[ech] = vector<short int>(ss);
 			for (int i=0;i<ss;i++) this->locus[loc].haplosnp[ech][i] = haplo[i];
 			if (not haplo.empty()) haplo.clear();
 		}
-		cout<<"sortie de do_snp\n";
+		//cout<<"sortie de do_snp\n";
 	}
 
 	void DataC::calcule_ss() {
@@ -748,6 +807,7 @@ string  getligne(ifstream file) {
 				for (int i=0;i<this->ssize[categ][ech];i++) f1.write((char*)&(this->locus[kloc].haplosnp[ech][i]),sizeof(short int));
 			}
 		}
+		f1.write((char*)&(this->maf),sizeof(double));
 		f1.close();
 		cout<<"fin de ecribin\n";
 		delete [] indexx;
@@ -813,9 +873,13 @@ string  getligne(ifstream file) {
 				for (int i=0;i<this->ssize[categ][ech];i++) f0.read((char*)&(this->locus[loc].haplosnp[ech][i]),sizeof(short int));
 			}
 		}
+		cout<<"avant libin maf\n";
+		if (not f0.eof()) f0.read((char*)&(this->maf),sizeof(double));
+		else (this->maf=0.0);
+		cout<<"this->maf="<<this->maf<<"\n";
 		f0.close();
 		delete []buffer;
-		cout<<"dans libin     ";
+		cout<<"dans libin     \n";
 		cout<<"this->locus[0].haplosnp[0][0]="<<this->locus[0].haplosnp[0][0]<<"\n";
 	}
 
@@ -1197,6 +1261,7 @@ string  getligne(ifstream file) {
     			for (loc=0;loc<this->nloc;loc++) this->cal_coeffcoal(loc);
     			cout<<"fin de la lecture du fichier binaire\n";
     		} else {
+				cout<<"\nlecture du fichier txt\n";
     			error = this->readfilesnp(filename);
     			if (error != 0) return error;
     			cout<<"fin de la lecture\n";

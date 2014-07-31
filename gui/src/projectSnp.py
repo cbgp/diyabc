@@ -298,8 +298,12 @@ class ProjectSnp(ProjectReftable):
                 if ty in self.data.ntypeloc.keys():
                     typestr += " %s : %s,"%(ty,self.data.ntypeloc[ty])
             typestr = typestr[:-1]
-            self.ui.dataFileInfoLabel.setText("%s polymorphic loci  + %s monomorphic loci\n%s individuals in %s samples\n%s" % \
-                                            (self.data.nloc,(self.data.nloctot-self.data.nloc),self.data.nindtot,self.data.nsample,typestr))
+            if str(self.data.commentValuesDict['maf']).lower() == "hudson" :
+                self.ui.dataFileInfoLabel.setText("MAF = HUDSON   : %s polymorphic loci  + %s monomorphic loci\n%s individuals in %s samples\n%s" % \
+                                                (self.data.nloc,(self.data.nloctot-self.data.nloc),self.data.nindtot,self.data.nsample,typestr))
+            else :
+                self.ui.dataFileInfoLabel.setText("MAF = %s  : %s loci fitting the  MAF (over %s)\n%s individuals in %s samples\n%s" % \
+                                                (self.data.commentValuesDict['maf'], self.data.nloc,self.data.nloctot,self.data.nindtot,self.data.nsample,typestr))
             self.ui.dataFileEdit.setText(name)
             self.dataFileSource = name
 

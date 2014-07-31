@@ -156,7 +156,7 @@ enregC *enreg,*enregOK;
 //char *headerfilename, *reftablefilename,*datafilename,*statobsfilename, *reftablelogfilename,*path,*ident,*stopfilename, *progressfilename;
 //char *;
 string headerfilename,headersimfilename,reftablefilename, datafilename, statobsfilename,reftablelogfilename,path,ident,stopfilename,progressfilename,scsufilename;
-string reftabscen;
+string reftabscen,paramfilename,statfilename;
 bool multithread=false,randomforest=false;
 int nrecneeded,nenr=100,nenrOK,*neOK,*netot;
 int debuglevel=0;
@@ -184,8 +184,12 @@ int readheaders() {
     message=header.calstatobs(statobsfilename);                          if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename= header.datafilename;                                   if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
 	k=rt.testfile(reftablefilename,nenr);
-    k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);  if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"   rt.nparam[0]="<<rt.nparam[0]<<"\n";
-    if (k==0) {rt.sethistparamname(header);if (debuglevel==1) cout<<"sethistparamname"<<"\n";}
+	if (k==0) {
+		k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);  
+		if (debuglevel==1) cout<<"apres rt.readheader k="<<k<<"   rt.nparam[0]="<<rt.nparam[0]<<"\n";
+		rt.sethistparamname(header);
+		if (debuglevel==1) cout<<"sethistparamname"<<"\n";
+	}
     return k;
 }
 
@@ -250,7 +254,7 @@ try {
     string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar, rngpar;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xyl:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xyl:o:")) !=-1) {
 	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
 
@@ -321,6 +325,9 @@ try {
             cout << "           f:<0 if logistic regression on SS, 1 if logistic regression on FDA components>\n";
 			cout << "           po to draw parameters for the pseudo-observed data sets from parameter posterior distributions\n";
 			cout << "           z:<number of simulated datasets used for the local regression>\n";
+			cout << "           b:<number of simulated datasets used for the prior predictive error>\n";
+			cout << "           c:<number of simulated datasets used for the posterior predictive error>\n";
+			
 			
 			cout << "\n-d for ABC PRIOR/SCENARIO CHECKING (idem)\n";
             cout << "           a:<p for PCA, l for locate observed, pl for both>\n";
@@ -334,6 +341,7 @@ try {
             cout << "           v:<list of summary stat names separated by a comma (if empty keep those of reftable)>\n";
 
             cout << "\n-k for SIMULATE GENEPOP DATA FILES\n";
+			cout << "\n-o to simulate summary statistics from a text file containing scenario and parameter values\n";
             action = 'h';
            break;
 
@@ -351,7 +359,12 @@ try {
             flagi=true;
             break;
 
-        case 'p' :
+		case 'o' :
+			paramfilename = soptarg;
+			action = 'o';
+			break;
+		
+		case 'p' :
 			headerfilename = soptarg + "header.txt";
 			headersimfilename = soptarg + "headersim.txt";
 			reftablefilename =  soptarg + "reftable.bin";
@@ -458,6 +471,7 @@ try {
                      if (action=='f') ident=strdup("conf1");
                      if (action=='d') ident=strdup("pcaloc1");
                      if (action=='j') ident=strdup("modchec1");
+					 if (action=='o') ident=strdup("statfile.txt");
      }
      if (not flags) seed=time(NULL); // TODO: remove this
      if (num_threads>0) omp_set_num_threads(num_threads);
@@ -510,7 +524,7 @@ try {
 					cout<<"apres readheader   k="<<k<<"\n";
                    cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"   ";fflush(stdin);
                    cout<<"k="<<k<<"\n";
-				   if (k==1) {
+				   if (k==1) { cout<<"general k==1\n";
                               rt.datapath = datafilename;
                               rt.nscen = header.nscenarios;
                               rt.nrec=0;
@@ -519,6 +533,8 @@ try {
                               rt.nparam = new int[header.nscenarios];
                               for (int i=0;i<header.nscenarios;i++) rt.nparam[i]=header.scenario[i].nparamvar;
                               rt.nstat=header.nstat;
+							  cout<<"general avant rt.writeheader\n";
+							  rt.filename=reftablefilename;
                               rt.writeheader();
                               rt.sethistparamname(header);
                           } else if (k==2) {
@@ -546,7 +562,7 @@ try {
 									scsufilename=path+"scenariosuccess.txt";
 								}
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
-                                          cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"    nenr="<<nenr<<"\n";
+                                          //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"    nenr="<<nenr<<"\n";
                                           ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,0);
                                           //cout<<"retour de dosimultabref header.drawuntil="<<header.drawuntil<<"\n";
 										  
@@ -697,6 +713,19 @@ try {
 				  break;
 	   case 'z'  :
 				  analyseRNG(rngpar);
+				  break;
+		
+	   case 'o'  :k = header.readHeader(headerfilename);
+				  if (debuglevel==1) cout<<"apres header.readHeader k="<<k<<"\n";
+				  if (k != 0) {
+						stringstream erreur;
+						erreur << "Erreur dans readheaders().\n" << header.message;
+						throw std::runtime_error(erreur.str()); // exit(1)
+					}
+				  if (k==0) {rt.sethistparamname(header);if (debuglevel==1) cout<<"sethistparamname"<<"\n";}
+				  paramfilename = path + paramfilename;
+				  statfilename = path +ident;
+				  dosimstat(seed);
 				  break;
 
   }

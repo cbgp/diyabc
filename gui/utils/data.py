@@ -438,16 +438,16 @@ class Data(object):
                 return defaultdict(nested2)
 
             pop_locus_valuesSet = nestedDefaultdictAndSet()
-            locus_values = defaultdict(set)
+            locus_valuesSet = defaultdict(set)
             # test if a locus of a same pop in only made of missing data
             #pops = {} # pops[number] = [{'name' : 'xx', 'num' : x , 'line' : x , 'loci' : [locus1, locus2, ...]}, {...},  ]
             for  popNum in pops.keys() :
                 for ind in pops[popNum] :
                     for locusNum, locusValue in enumerate(ind['loci']) :
-                        pop_locus_valuesSet[popNum][locusNum].add(locusValue)
+                        pop_locus_valuesSetSet[popNum][locusNum].add(locusValue)
             for  popNum in pops.keys() :
                 for locusNum in loci.keys() :
-                    if True in [pop_locus_valuesSet[popNum][locusNum].issubset(x) for x in [Set(["000"]),  Set(["000000"]), Set(["000","000000"]),\
+                    if True in [pop_locus_valuesSetSet[popNum][locusNum].issubset(x) for x in [Set(["000"]),  Set(["000000"]), Set(["000","000000"]),\
                                                                           Set(["<[]>"]), Set(["<[][]>"]), Set(["<[]>", "<[][]>"]) ] ] :
                         raise Exception("Genepop file : %s\nLocus %s (name : %s, type : %s) has only missing data in pop %s : intractable configuration" %\
                                         (self.filename, locusNum+1, loci[locusNum]['name'], loci[locusNum]['type'],  popNum+1))
@@ -666,7 +666,9 @@ class DataSnp():
         # taille des populations
         self.nind = []
         self.nind_hash = {}
+        self.commentValuesDict = {'maf' : 'HUDSON'}
         self.__readData()
+
 
     def __readData(self):
         """
@@ -674,8 +676,8 @@ class DataSnp():
 
         code is an ugly mix between ugly legacy code and ugly new code !
         """
-
         name = self.filename
+        nLocFam = 0
         # list ofsexual  locus index
         sexLocus = []
         locus_type = defaultdict()
@@ -688,15 +690,15 @@ class DataSnp():
         l1 = datalines[0].strip()
         l1compressed = pat.sub(' ',l1)
         l1parts = l1compressed.split(' ')
-
         prem = 0
         if not (len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP"):
-			l1 = datalines[1].strip()
-			l1compressed = pat.sub(' ',l1)
-			l1parts = l1compressed.split(' ')
-			prem = 1
-			if not (len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP"):
-				raise Exception("%s\n\nWrong description line format."% (self.filename))
+            self.__parseCommentWords(l1parts)
+            l1 = datalines[1].strip()
+            l1compressed = pat.sub(' ',l1)
+            l1parts = l1compressed.split(' ')
+            prem = 1
+            if not (len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP"):
+                raise Exception("%s\n\nWrong description line format."% (self.filename))
         if len(datalines) < 1:
             raise Exception("%s\n\nNot enough lines in SNP datafile."%self.filename)
 
@@ -726,6 +728,8 @@ class DataSnp():
         l0 = pat.sub(' ',datalines[prem].strip())
         nbLoci = len(l0.split(' ')) - 3
 
+        #-----------------------------
+
         types = set()
         types_list = []
         nbU = 0
@@ -735,8 +739,10 @@ class DataSnp():
 
             return defaultdict(nested2)
 
-        pop_locus_values = nestedDefaultdictAndSet()
-        locus_values = defaultdict(set)
+        pop_locus_valuesSet = nestedDefaultdictAndSet()
+        locus_valuesSet = defaultdict(set)
+        locus_values = defaultdict(list)
+        indivSex = []
 
         for i in range(len(datalines))[prem+1:]:
             line = pat.sub(' ',datalines[i].strip())
@@ -754,9 +760,11 @@ class DataSnp():
                 if locusValue not in DataSnp.__LOCUS_VALUES :
                     raise Exception("%s\n\nIndividual %s has an unknown value (line %s, locus number %s is set to %s=%s). Expected value is one of %s" \
                         % (self.filename,lineElements[0],str(i+prem),str(idx),l1parts[idx+3],locusValue, ", ".join(DataSnp.__LOCUS_VALUES) ))
-                pop_locus_values[lineElements[2]][idx].add(locusValue)
-                locus_values[idx].add(locusValue)
+                pop_locus_valuesSet[lineElements[2]][idx].add(locusValue)
+                locus_valuesSet[idx].add(locusValue)
+                locus_values[idx].append(locusValue)
             # values for sexual loci test if sex in not set
+            indivSex.append(lineElements[1].lower())
             if lineElements[1].lower() not in ['f','m']:
                 for index in sexLocus :
                     if lineElements[index] != '9' :
@@ -782,20 +790,68 @@ class DataSnp():
             else:
                 self.nind_hash[ctype] += 1
 
-        for pop in pop_locus_values.keys() :
-            for locus in  pop_locus_values[pop].keys() :
-                if len(pop_locus_values[pop][locus]) == 1 and '9' in pop_locus_values[pop][locus] :
+
+
+
+
+        for pop in pop_locus_valuesSet.keys() :
+            for locus in  pop_locus_valuesSet[pop].keys() :
+                if len(pop_locus_valuesSet[pop][locus]) == 1 and '9' in pop_locus_valuesSet[pop][locus] :
                     raise Exception("%s\n\nLocus %s in pop %s has only missing datas (value 9)). This not allowed. Please remove this locus from your data file." \
                         % (self.filename, locus+1, pop))
         nbLociPoly = 0
-        for locus in locus_values.keys() :
-            if not (True in [locus_values[locus].issubset(x) for x in [Set(['9','0']), Set(['9','2']), Set(['9']), Set(['2']), Set(['0'])]]):
+        for locus in locus_valuesSet.keys() :
+            if not (True in [locus_valuesSet[locus].issubset(x) for x in [Set(['9','0']), Set(['9','2']), Set(['9']), Set(['2']), Set(['0'])]]):
                 nbLociPoly += 1
             else :
                 self.ntypeloc[locus_type[locus]] -= 1
-
         if nbLociPoly == 0 :
             raise Exception("%s\n\nFound only monomorphic loci !!!"%self.filename)
+
+        if str(self.commentValuesDict['maf']).lower() != "hudson" :
+            try :
+                float(self.commentValuesDict['maf'])
+            except :
+                raise Exception("MAF value must be a float or the key word 'hudson', '%s' given." % self.commentValuesDict['maf'])
+            if float(self.commentValuesDict['maf']) <= 0.0 or float(self.commentValuesDict['maf']) >= 1.0 :
+                raise Exception("MAF value must be upper to 0 and lower to 1 , '%s' given." % self.commentValuesDict['maf'])
+
+            for locus in locus_type.keys() :
+                n0 = 0
+                n2 = 0
+                for indiv in range(len(indivSex)) :
+                    # 1 copy
+                    if indivSex[indiv] == "m" and locus_type[locus] in ["X","Y","x","y"]:
+                        if locus_values[locus][indiv] == "0" :
+                            n0 += 1
+                        elif locus_values[locus][indiv] == "1" :
+                            n2 += 1
+                        else :
+                            pass
+                    # 2 copies
+                    else :
+                        if locus_values[locus][indiv] == "0" :
+                            n0 += 1
+                        elif locus_values[locus][indiv] == "1" :
+                            n0 +=1
+                            n2 += 1
+                        elif locus_values[locus][indiv] == "2" :
+                            n2 += 1
+                        else :
+                            pass
+                fam = 0
+                if (n0+n2) > 1 :
+                    fam = 0
+                    if n0 <= n2 :
+                        fam = float(n0)/float(n0+n2)
+                    else :
+                        fam = float(n2)/float(n0+n2)
+                    if fam < float(self.commentValuesDict['maf']) :
+                        nLocFam +=1
+                    else :
+                        #locus rejected
+                        pass
+            nbLociPoly = nLocFam
 
         nbSample = len(types)
         self.nindtot = nbInd
@@ -804,6 +860,12 @@ class DataSnp():
         self.nsample = nbSample
 
 
+
+    def __parseCommentWords(self,words):
+        for word in words :
+            if word[0] == '<' and "=" in word and word[-1] == '>' :
+                valName, val = word.split("=")
+                self.commentValuesDict[valName[1:].lower()] = val[:-1].lower()
 
 
 def isSNPDatafile(name):
@@ -831,12 +893,12 @@ if __name__ == "__main__":
     testMsatSeqsFiles = [
                  #"/media/psf/Home/VMshare/louiT1_2013_5_2-1/loui10_new_ghostnat.dat",
                  #"/media/psf/Home/VMshare/example_1_microsat_data_one_pop_with_bottleneck_multisamples_2013_7_19-1/simu_dataset_microsat_one_pop_bottleneck_multisamples_001.mss",
-                 "/media/psf/Home/VMshare/example_2_microsat_sequence_data_complexe_scenarios_ghost_pop_project_2013_7_9-1/toytest2_micro_seq_complexe_001.mss",
-                 "/tmp//toytest2_micro_seq_complexe_001.mss",
+                 #"/media/psf/Home/VMshare/example_2_microsat_sequence_data_complexe_scenarios_ghost_pop_project_2013_7_9-1/toytest2_micro_seq_complexe_001.mss",
+                 #"/tmp//toytest2_micro_seq_complexe_001.mss",
 
                  ]
     testSNPFiles = [
-                #"/home/dehneg/P16.snp",
+                "/home/dehneg/P16.snp",
                  #"/media/psf/Home/VMshare/example_3_SNP_data_divergence_and_admixture_project_2013_7_9-1/simu_dataset_test_divergence_admixture_001.snp",
                  ]
 
@@ -856,7 +918,6 @@ if __name__ == "__main__":
         print "nloctot = ", plop.nloctot, ",  nlcc = poly = ", plop.nloc, ", ntypeloc  =   ", plop.ntypeloc
         print "file %s loaded" % f
         print "=======================\n"
-
 
 
 

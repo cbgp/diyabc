@@ -57,7 +57,7 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 		mutparam = NULL;
 	}
 	if (header.nparamut>0) this->mutparam = new MutParameterC[header.nparamut];
-	cout<<"avant la boucle des scenarios\n";
+	cout<<"avant la boucle des scenarios  nscenarios ="<<header.nscenarios<<"\n";
 	for (int i=0;i<header.nscenarios;i++) {
 		nparamvar=0;
 		for (int p=0;p<header.scenario[i].nparam;p++)
@@ -66,20 +66,24 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 		cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
 		this->histparam[i].reserve(nparamvar+2);
 		this->nhistparam[i] = nparamvar;
-		pp=-1;
+		pp=-1;//cout<<header.scenario[i].nparam<<"\n";
 		for (int p=0;p<header.scenario[i].nparam;p++)
 			if (not header.scenario[i].histparam[p].prior.constant) {
 				pp++;
 				this->histparam[i].push_back(header.scenario[i].histparam[p]);
 			}
-		cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
-		if (this->nparam[i]!=nparamvar+header.nparamut) {
-			cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
-			exit(1);
+		if (this->nparam !=NULL){
+			//cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
+			{if (this->nparam[i]!=nparamvar+header.nparamut) {
+				cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
+				exit(1);
+				}
+				
+			}
 		}
-		cout<<"coucou2\n";
+		//cout<<"coucou2\n";
 		if (header.nparamut>0) {
-			cout<<header.mutparam[0].name<<"\n";
+			//cout<<header.mutparam[0].name<<"\n";
 			for (int p=0;p<this->nparamut;p++) this->mutparam[p] = header.mutparam[p];
 		}
 	}
@@ -121,7 +125,7 @@ int ReftableC::writeheader() {
 	int nb;
 	ofstream f1(this->filename.c_str(),ios::out|ios::binary);
 	if (!f1.is_open()) {
-		throw std::runtime_error("Unable to open " + filename +"\n"); //return 1;
+		throw std::runtime_error("Unable to open " + this->filename +"\n"); //return 1;
 	}  //fichier impossible à ouvrir
 	nb=this->nrec;f1.write((char*)&nb,sizeof(int));
 	//cout <<"reftable.writeheader     nscen = "<<this->nscen<<"\n";
@@ -170,6 +174,18 @@ int ReftableC::readrecord(enregC *enr) {
 	//cout<<"fin de readrecord\n";
 	//cin>>bidon;
 	return bidon;
+}
+
+int ReftableC::readparam(float *param) {
+	int numscen,nm;
+	float *pa;
+	this->fifo.read((char*)&(numscen),sizeof(int));
+	nm=this->nparam[numscen-1];if(nm<nstat) nm=nstat;
+	pa = new float[nm];
+	for (int i=0;i<this->nparam[numscen-1];i++) this->fifo.read((char*)&(param[i]),sizeof(float));
+	for (int i=0;i<this->nstat;i++) this->fifo.read((char*)&(pa[i]),sizeof(float));
+	delete []pa;
+	return numscen;
 }
 
 int ReftableC::writerecords(int nenr, enregC *enr) {
@@ -248,6 +264,7 @@ int ReftableC::openfile2() {
 	this->nparam = new int[nscen];
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
 	this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
+	this->nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>this->nparamax) this->nparamax=this->nparam[i];
 	return 0;
 }
 
@@ -258,8 +275,9 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 	this->fifo.open(reftablefilename.c_str(),ios::in|ios::out|ios::binary);
 	this->fifo.seekg(0);
 	this->fifo.read((char*)&(this->nrec),sizeof(int));
+	cout <<"nrec = "<<this->nrec<<"\n";
+	if (this->nrec<1) {this->fifo.close();cout<<"fichier reftable.bin vide\n\n";return 1;}
 	this->fifo.read((char*)&(this->nscen),sizeof(int));
-	cout <<"nrec = "<<nrec<<"\n";
 	if (this->nrecscen != NULL) {
 		delete [] nrecscen;
 		nrecscen = NULL;
@@ -568,13 +586,13 @@ int ReftableC::cal_varstat() {
 	int nrecutil,iscen,nsOK,bidon,i;
 	long double *sx,*sx2,x,an,nr,*min,*max;
 	bool scenOK;
-	cout <<"debut de cal_varstat   rt.nrec="<<this->nrec<<"\n";
+	//cout <<"debut de cal_varstat   rt.nrec="<<this->nrec<<"   scenchoisi="<<this->scenchoisi[0]<<"\n";
 	enregC enr;
 	nrecutil=100000;if (nrecutil>this->nrec) nrecutil=this->nrec;
 	nr=0;for (int i=0;i<nscenchoisi;i++) nr+=nrecscen[this->scenchoisi[i]-1];
-	cout<<"nr="<<nr<<"   nscenchoisi="<<nscenchoisi<<"\n";
+	cout<<"debut de cal_varstat   nr="<<nr<<"   nscenchoisi="<<nscenchoisi;
 	if (nrecutil>nr) nrecutil=nr;
-	cout <<"debut de cal_varstat   nrecutil="<<nrecutil<<"\n";
+	cout <<"    nrecutil="<<nrecutil<<"\n";
 	sx  = new long double[this->nstat];
 	sx2 = new long double[this->nstat];
 	min = new long double[this->nstat];
@@ -607,21 +625,21 @@ int ReftableC::cal_varstat() {
 			}
 		}
 	}
-	    cout<<i<<"   "<<nrecutil<<"\n";
+	    //cout<<i<<"   "<<nrecutil<<"\n";
 	if (i<nrecutil) nrecutil=i;
-	    cout<<i<<"   "<<nrecutil<<"\n";
+	    //cout<<i<<"   "<<nrecutil<<"\n";
 	this->closefile();
 	nsOK=0;
 	an=(long double)nrecutil;
 	for (int j=0;j<this->nstat;j++) {
 		this->var_stat[j]=(sx2[j] -sx[j]*sx[j]/an)/(an-1.0);
 		if (this->var_stat[j]>1E-20) nsOK++;
-		printf("sx2[%3d] = %12.8Le   sx[%3d] = %12.8Le\n",j,sx2[j],j,sx[j]);
-		printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
+		//printf("sx2[%3d] = %12.8Le   sx[%3d] = %12.8Le\n",j,sx2[j],j,sx[j]);
+		//printf("var_stat[%3d] = %12.8Lf   min=%12.8Lf   max=%12.8Lf\n",j,this->var_stat[j],min[j],max[j]);
 	}
 	delete []sx;delete []sx2;
 	delete []min; delete []max;
-	cout<<"\nnstatOK = "<<nsOK<<"\n";
+	cout<<"nstatOK = "<<nsOK<<"\n";
 //	exit(1);
 	return nsOK;
 }
@@ -632,7 +650,7 @@ int ReftableC::cal_varstat() {
 void ReftableC::alloue_enrsel(int nsel) {
 	int nparamax=0;
 	for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
-	cout<<"alloue_enrsel nsel="<<nsel<<"   nparamax="<<nparamax<<"\n";fflush(stdout);
+	//cout<<"alloue_enrsel nsel="<<nsel<<"   nparamax="<<nparamax<<"\n";fflush(stdout);
 	this->enrsel = new enregC[2*nsel];
 	for (int i=0;i<2*nsel;i++) {
 		this->enrsel[i].param = new float[nparamax];
@@ -655,14 +673,14 @@ void ReftableC::desalloue_enrsel(int nsel) {
  * calcule la distance de chaque jeu de données simulé au jeu observé
  * et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
  */
-void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste) {
+void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste, bool allscenarios) {
 	int nn,nparamax,nrecOK=0,iscen,bidon,step;
 	bool firstloop=true,scenOK;
 	long double diff,distmin=1E100;
 	this->nreclus=0;step=nrec/100;
 	if (scenarioteste) cout<<"cal_dist scenarioteste = "<<this->scenteste<<"\n";
 	nn=nsel;
-	cout<<"nrec="<<nrec<<"   nscenchoisi="<< this->nscenchoisi<<"   nn="<<nn<<"\n";
+	//cout<<"nrec="<<nrec<<"   nscenchoisi="<< this->nscenchoisi<<"   nn="<<nn<<"\n";
 	nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>nparamax) nparamax=this->nparam[i];
 	//cout<<"cal_dist nsel="<<nsel<<"   nparamax="<<nparamax<<"   nrec="<<nrec<<"   nreclus="<<this->nreclus<<"   nstat="<<this->nstat<<"   2*nn="<<2*nn<<"\n";
 	//cout<<" apres allocation de enrsel\n";
@@ -680,16 +698,18 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste
 				bidon=this->readrecord(&(this->enrsel[nrecOK]));
 				if (bidon!=0) cout<<"bidon="<<bidon<<"\n";
 			} while (bidon!=0);
-			scenOK=false;
-			if (scenarioteste) scenOK=(this->enrsel[nrecOK].numscen==this->scenteste);
-			else {
-				iscen=0;
-				while((not scenOK)and(iscen<this->nscenchoisi)) {
-					scenOK=(this->enrsel[nrecOK].numscen==this->scenchoisi[iscen]);
-					//if (scenOK) cout<<" SCENOK pour this->enrsel["<<nrecOK<<"].numscen = "<<this->enrsel[nrecOK].numscen<<"\n";
-					iscen++;
+			if (not allscenarios){
+				scenOK=false;
+				if (scenarioteste) scenOK=(this->enrsel[nrecOK].numscen==this->scenteste);
+				else {
+					iscen=0;
+					while((not scenOK)and(iscen<this->nscenchoisi)) {
+						scenOK=(this->enrsel[nrecOK].numscen==this->scenchoisi[iscen]);
+						//if (scenOK) cout<<" SCENOK pour this->enrsel["<<nrecOK<<"].numscen = "<<this->enrsel[nrecOK].numscen<<"\n";
+						iscen++;
+					}
 				}
-			}
+			} else scenOK=true;
 			if (scenOK) {
 				if (not scenarioteste) this->nreclus++; //cout<<"nreclus = "<<nreclus<<"   nrecOK="<<nrecOK<<"\n";
 				this->enrsel[nrecOK].dist=0.0;
@@ -707,6 +727,7 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste
 			}
 			//cout<<"nrecOK="<<nrecOK<<"\n";
 			if (scenarioteste) this->nreclus++;
+			//cout<<"nreclus = "<<nreclus<<"\n";
 			if ((this->nreclus % step)==0) {cout<<"\rcal_dist : "<<this->nreclus/step<<"%";fflush(stdout);}
 		}
 		sort(&this->enrsel[0],&this->enrsel[2*nn]);

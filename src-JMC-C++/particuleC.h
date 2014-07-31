@@ -37,7 +37,7 @@ class ParticleC
 	  vector < vector < vector <int> > > t_afs;
 	  vector < vector <int> > n_afs;
 	  bool firstime;
-	  double sexratio;
+	  double sexratio,maf;
 	  int npart,nloc,ngr,nparam,nseq,nstat,nsample,nscenarios,nconditions,refnindtot;
 	  //int *nind,**indivsexe;
 	  //int **numvar,*nvar;
@@ -190,6 +190,7 @@ class ParticleC
    // idem, mais pour la simulation de fichier
    std::string dogenepop();
    std::string dodataSNP();
+   bool mafreached(int loc);
    
    /* Partie calcul des summary stat */
    int samplesize(int loc, int sample);

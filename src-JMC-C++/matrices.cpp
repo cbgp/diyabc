@@ -409,7 +409,7 @@ int inverse_Tik (int n, long double * * A, long double * * C)
 		coeff=0;
 		
 		kap=kappa(n,A);
-		std::cout<<"coeff = "<<coeff<<"   err="<<err<<"   kappa="<<kap<<"\n";
+		//std::cout<<"coeff = "<<coeff<<"   err="<<err<<"   kappa="<<kap<<"\n";
 		/*for (int i=0;i<n;i++) {
 			for (int j=0;j<n;j++) printf(" %Le8",A[i][j]);printf("\n");
 		}*/

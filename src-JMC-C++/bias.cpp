@@ -119,19 +119,19 @@ bool valinfinie=false;
         int n = ss.size();
         name=ss[0];
         int i=0;while((i<header.scenario[rt.scenteste-1].nparam)and(name != header.scenario[rt.scenteste-1].histparam[i].name)) i++;
-        cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
+        //cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
         if (ss[1].find("[")!=string::npos) {
 			//cout<<"resethistparam   avant readprior\n ";
             header.scenario[rt.scenteste-1].histparam[i].prior.readprior(ss[1]);
 			//cout<<"resethistparam   apres readprior\n ";
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=false;
 			//cout<<"resethistparam   avant ecris\n ";
-            header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
+            //header.scenario[rt.scenteste-1].histparam[i].prior.ecris();
         }
         else {
             header.scenario[rt.scenteste-1].histparam[i].value = atof(ss[1].c_str());
             header.scenario[rt.scenteste-1].histparam[i].prior.fixed=true;
-            cout<<header.scenario[rt.scenteste-1].histparam[i].value<<"\n";
+            //cout<<header.scenario[rt.scenteste-1].histparam[i].value<<"\n";
         }
     }
 
@@ -1790,7 +1790,7 @@ bool valinfinie=false;
 			nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
 			cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
 			rt.alloue_enrsel(nsel);
-			rt.cal_dist(nrec,nsel,&header.stat_obs[0],false);                  cout<<"apres cal_dist\n";
+			rt.cal_dist(nrec,nsel,&header.stat_obs[0],false,false);                        cout<<"apres cal_dist\n";
 			det_numpar();
 			cout<<"apres det_numpar\n";
 			rempli_mat(nsel,&header.stat_obs[0]);                        cout<<"apres rempli_mat\n";
@@ -1941,7 +1941,7 @@ bool valinfinie=false;
         for (int p=0;p<ntest;p++) {
             cout<<"\nanalysing data test "<<p+1<<" \n";
             for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg2[p].stat[j];
-            rt.cal_dist(nrec,nsel,stat_obs,false);          if (debuglevel==11)   cout<<"apres cal_dist\n";
+            rt.cal_dist(nrec,nsel,stat_obs,false,false);          if (debuglevel==11)   cout<<"apres cal_dist\n";
             iprog +=6;fprog.open(progressfilename.c_str(),ios::out);fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
             if (p<1) det_nomparam();
 			rempli_mat(nsel,stat_obs);            	if (debuglevel==11)	cout<<"apres rempli_mat\n";

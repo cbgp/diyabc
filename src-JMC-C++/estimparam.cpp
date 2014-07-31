@@ -1843,7 +1843,7 @@ bool deltanul;
 		iprog=2;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 		cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
         rt.alloue_enrsel(nsel);
-        rt.cal_dist(nrec,nsel,stat_obs,false);                  //cout<<"apres cal_dist\n";
+        rt.cal_dist(nrec,nsel,stat_obs,false,false);                  //cout<<"apres cal_dist\n";
         iprog+=8;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 		cout<<"--->"<<iprog<<"   sur "<<nprog<<"\n";
         det_numpar();                                     cout<<"apres det_numpar\n";

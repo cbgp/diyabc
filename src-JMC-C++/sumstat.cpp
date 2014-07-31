@@ -71,12 +71,12 @@ extern int debuglevel;
 				if (sasize>0) this->locuslist[loc].freq[samp][k]/=sasize;
 				
 			}
-			/*cout << "loc "<<loc <<"  sa "<<samp;
-			for (int k=0;k<this->locuslist[loc].nal;k++) {if (this->locuslist[loc].freq[samp][k]>0.0) cout << "   "<<this->locuslist[loc].freq[samp][k]<<"("<<k+this->locuslist[loc].kmin<<")";}
-			cout << "\n";*/
+			//cout << "loc "<<loc <<"  sa "<<samp;
+			//for (int k=0;k<this->locuslist[loc].nal;k++) {if (this->locuslist[loc].freq[samp][k]>0.0) cout << "   "<<this->locuslist[loc].freq[samp][k]<<"("<<k+this->locuslist[loc].kmin<<")";}
+			//cout << "\n";
 		}
 	}
-	//cout <<"fin de calfreq \n";
+	//cout <<"fin de calfreq \n";exit(1);
   }
 
 	void ParticleC::calfreqsnp(int gr) {

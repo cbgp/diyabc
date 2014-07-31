@@ -834,23 +834,23 @@ vector <int> melange2(MwcGen mw, int k, int n) {
    */
   void ParticleC::setMutParamValue(int loc){
     int gr = this->locuslist[loc].groupe;
-    //cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
+    if (debuglevel==10) cout <<"\n SetMutParamValue pour le locus "<<loc<< " (groupe "<< gr <<")\n";
     if (this->locuslist[loc].type<5) {  //MICROSAT
       this->grouplist[gr].priormutloc.mean = this->grouplist[gr].mutmoy;
       if ((this->grouplist[gr].priormutloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].mut_rate = this->grouplist[gr].priormutloc.drawfromprior(this->mw);
       else this->locuslist[loc].mut_rate =this->grouplist[gr].mutmoy;
-      //cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
+      if (debuglevel==10) cout << "mutloc["<<loc<<"]="<<this->locuslist[loc].mut_rate <<"\n";
 
       this->grouplist[gr].priorPloc.mean = this->grouplist[gr].Pmoy;
       if ((this->grouplist[gr].priorPloc.sdshape>0.001)and(this->grouplist[gr].nloc>1)) this->locuslist[loc].Pgeom = this->grouplist[gr].priorPloc.drawfromprior(this->mw);
       else this->locuslist[loc].Pgeom =this->grouplist[gr].Pmoy;
-      //cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
+      if (debuglevel==10) cout << "Ploc["<<loc<<"]="<<this->locuslist[loc].Pgeom <<"\n";
 
       this->grouplist[gr].priorsniloc.mean = this->grouplist[gr].snimoy;
       //cout <<"coucou\n";fflush(stdin);
       if ((this->grouplist[gr].priorsniloc.sdshape>0.001 )and(this->grouplist[gr].nloc>1)) this->locuslist[loc].sni_rate = this->grouplist[gr].priorsniloc.drawfromprior(this->mw);
       else this->locuslist[loc].sni_rate =this->grouplist[gr].snimoy;
-      //cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
+      if (debuglevel==10) cout << "sniloc["<<loc<<"]="<<this->locuslist[loc].sni_rate <<"\n";
 
 
     }
@@ -1980,6 +1980,28 @@ void ParticleC::put_one_mutation(int loc) {
 	//}  
 	//return poly;*/
   //}
+  
+bool ParticleC::mafreached(int loc) {
+	int sa,indiv,n0,n1,cat;
+	double fam;
+	if (this->locuslist[loc].nmisssnp>0) {
+		for (int i=0;i<this->locuslist[loc].nmisssnp;i++) {
+			sa=this->locuslist[loc].misssnp[i].sample;indiv=this->locuslist[loc].misssnp[i].indiv;
+			this->locuslist[loc].haplosnp[sa][indiv] = (short int)SNPMISSING;
+		}
+	} 
+	n0=0;n1=0;
+	cat = (this->locuslist[loc].type % 5);
+	for (sa=0;sa<this->data.nsample;sa++) {
+		for (indiv=0;indiv<this->data.ssize[cat][sa];indiv++) {
+			if(this->locuslist[loc].haplosnp[sa][indiv]==0) n0++;
+			else if(this->locuslist[loc].haplosnp[sa][indiv]==1) n1++;
+		}
+	}
+	if (n0<=n1) fam=(double)n0/(double)(n0+n1);
+	else		fam=(double)n1/(double)(n0+n1);
+	return (fam>=this->maf);
+}
 	
   int ParticleC::dosimulpart(int numscen){
 	  if (debuglevel==5)        {cout<<"debut de dosimulpart  nloc="<<this->nloc<<"\n";fflush(stdin);}
@@ -2045,7 +2067,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  if (debuglevel==5) cout<<"dosimulpart avant la boucle des locus\n";
 	  if (debuglevel==31) lontreemoy=0.0;
 	for (loc=0;loc<this->nloc;loc++) {
-		//cout<<"locus "<<loc<<"\n";
+		if (debuglevel==5) cout<<"locus "<<loc<<"\n";
 		//cout<<"            groupe "<<this->locuslist[loc].groupe<<"\n";
 		if (this->locuslist[loc].groupe>0) { //On se limite aux locus inclus dans un groupe
 			if ((debuglevel==16)and(loc%1000==0)) cout<<loc<<"\n";
@@ -2194,6 +2216,9 @@ void ParticleC::put_one_mutation(int loc) {
 			if (this->sumweight<0.0) break;
 		}
 		if (this->sumweight<0.0) break;
+		if ((this->locuslist[loc].type>=10)and(this->maf>0.0)) {
+			if  (not this->mafreached(loc)) loc--;
+		}
 		//if (loc==99) break;
 	}	//LOOP ON loc
 	if (debuglevel==31) cout<<"\nLongueur totale moyenne des arbres = "<<lontreemoy<<"\n\n";
@@ -2452,6 +2477,7 @@ void ParticleC::put_one_mutation(int loc) {
   /***********************************************************************************************************************/
 
   string ParticleC::dogenepop(){
+	  cout<<"début de ParticuleC::dogenepop\n";
 	  string sgp,sind,snum,ssr;
 	  int iloc,*k,ty;
 	  k = new int[this->nloc];
