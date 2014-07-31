@@ -311,7 +311,7 @@ string nomficonfresult;
 			traitenreg("prior",nrec,nseld,nselr,nrecp,nlogreg,prop);
 		} else {
 			rt.alloue_enrsel(nsel0);
-			rt.cal_dist(nrec,nsel0,header.stat_obs,false,true);
+			rt.cal_dist(nrec,nsel0,&header.stat_obs[0],false,true);
 			num = new int[nrecp];
 			for (int i=0;i<nrecp;i++) num[i]=mw.rand0(nsel0);
 			for (int p=0;p<nrecp;p++) {

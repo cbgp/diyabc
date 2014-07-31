@@ -298,7 +298,7 @@ void ParticleSetC::dosimulstat(HeaderC const & header, int debut, int npart, boo
 	sOK = new int[npart];
 	bool simulfile=false;
 	if (debut<1) {
-		this->particule = new ParticleC[this->npart];
+		this->particule = vector<ParticleC>(this->npart);
 		if (debuglevel==5) cout<<"\n\navant this->header=header   this->npart="<<this->npart<<"\n";
 		this->header = header;
 		if (debuglevel==5) cout<<"apres this->header=header   this->npart="<<this->npart<<"\n";
