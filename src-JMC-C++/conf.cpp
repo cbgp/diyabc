@@ -602,6 +602,7 @@ string nomficonfresult;
 			rt.alloue_enrsel(nsel);
 			if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
 			nbestdir = new int[rt.nscenchoisi];nbestlog = new int[rt.nscenchoisi];
+        vector<int> nbestlog(rt.nscenchoisi);
 			for(int s=0;s<rt.nscenchoisi;s++){nbestdir[s]=0;nbestlog[s]=0;}
 			nstatOK = rt.cal_varstat();
 			for (int p=0;p<ntest;p++) {
