@@ -338,7 +338,7 @@ class TeeLogger(object):
 def log(level,message):
     """ Print the message after fancyfying it
     """
-    if level <= LOG_LEVEL:
+    if level not in [None, False] and level <= LOG_LEVEL:
         dd = datetime.now()
         color = tabcolors[level]
 
@@ -513,4 +513,28 @@ def readlinesWindows(filename):
         res.append(li)
         li=f.readline()
     return res
+
+def getFsEncoding(logLevel=False):
+    fSCoding = sys.getfilesystemencoding()
+    if fSCoding == None :
+        locale.setlocale(locale.LC_ALL,)
+        fSCoding = sys.getfilesystemencoding()
+        if fSCoding == None :
+            if locale.getpreferredencoding() != None :
+                fSCoding = locale.getpreferredencoding()
+                log(logLevel,"File system encoding set to system preferred encoding : %s" % fSCoding)
+            else :
+                fSCoding = u"UTF-8"
+                log(logLevel,"Unable to determine file system encoding. Set to default encoding : %s" % fSCoding)
+        else :
+            log(logLevel,"File system encoding set from LC_ALL : %s" % fSCoding)
+    else :
+        log(logLevel,"File system encoding : %s" % fSCoding)
+    return fSCoding
+
+
+
+
+
+
 
