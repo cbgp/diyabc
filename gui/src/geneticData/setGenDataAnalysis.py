@@ -15,7 +15,7 @@ from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonConfidence import SetupComparisonConfidence
 from utils.visualizescenario import *
 from utils.data import *
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 
 class SetGeneticDataAnalysis(SetGeneticData):
     """ set genetic data pour les informations concernant une analyse bias ou confidence
@@ -24,7 +24,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
         super(SetGeneticDataAnalysis,self).__init__(parent)
 
         self.analysis = analysis
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.analysisFrame.show()
         self.analysisNameLabel.setText(self.analysis.name)
 

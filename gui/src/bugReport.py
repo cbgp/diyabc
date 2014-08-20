@@ -9,8 +9,9 @@ import output,os,shutil,tarfile,sys
 import variables
 from variables import VERSION,VERSION_DATE,UIPATH
 import urllib, urllib2
+from utils.cbgpUtils import getLastRevisionDate,getFsEncoding
 
-formBugReport,baseBugReport= uic.loadUiType((u"%s/bugReport.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formBugReport,baseBugReport= uic.loadUiType((u"%s/bugReport.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class BugReport(formBugReport,baseBugReport):
     """ Fenetre de definition d'un rapport de bug
@@ -50,7 +51,7 @@ class BugReport(formBugReport,baseBugReport):
 
     def generateBugReport(self):
         current_project = self.parent.ui.tabWidget.currentWidget()
-        fsCoding = sys.getfilesystemencoding()
+        fsCoding = getFsEncoding(logLevel=False)
         fileDial = QFileDialog(self,"Select location of the bug report","%s"%os.path.dirname(str(current_project.dir)))
         fileDial.setAcceptMode(QFileDialog.AcceptSave)
         fileDial.setLabelText(QFileDialog.Accept,"Save bug report")

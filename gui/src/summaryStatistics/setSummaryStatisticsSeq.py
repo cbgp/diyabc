@@ -13,8 +13,9 @@ from setSummaryStatistics import SetSummaryStatistics
 import output
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq = uic.loadUiType((u"%s/setSummaryStatisticsSeq.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq = uic.loadUiType((u"%s/setSummaryStatisticsSeq.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetSummaryStatisticsSeq(SetSummaryStatistics,formSetSummaryStatisticsSeq,baseSetSummaryStatisticsSeq):
     """ ecran de selection des summary statistics pour les sequences

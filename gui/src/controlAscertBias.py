@@ -8,18 +8,18 @@ from PyQt4.QtGui import *
 from PyQt4 import uic
 from utils.visualizescenario import *
 from utils.data import *
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 import output
 import variables
 from variables import UIPATH
 
-formControl,baseControl = uic.loadUiType((u"%s/controlAscertBias.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formControl,baseControl = uic.loadUiType((u"%s/controlAscertBias.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class ControlAscertBias(formControl,baseControl):
     def __init__(self,parent=None):
         super(ControlAscertBias,self).__init__(parent)
         self.parent=parent
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.createWidgets()
 
     def createWidgets(self):

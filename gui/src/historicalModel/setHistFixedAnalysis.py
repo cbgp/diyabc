@@ -15,8 +15,9 @@ from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonConfidence import SetupComparisonConfidence
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formHistModelFixed,baseHistModelFixed= uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formHistModelFixed,baseHistModelFixed= uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class HistFixed(formHistModelFixed,baseHistModelFixed):
     """ définition du modèle historique dans le cadre d'une analyse

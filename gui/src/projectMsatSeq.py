@@ -10,7 +10,7 @@ import codecs, traceback
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from utils.data import Data
-from utils.cbgpUtils import log,isUnixText,dos2unix
+from utils.cbgpUtils import log,isUnixText,dos2unix,getFsEncoding
 import output
 from projectReftable import ProjectReftable
 from geneticData.setGenDataMsatSeq import SetGeneticDataMsatSeq
@@ -24,7 +24,7 @@ class ProjectMsatSeq(ProjectReftable):
     """
     def __init__(self,name,dir=None,parent=None):
         super(ProjectMsatSeq,self).__init__(name,dir,parent)
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.gen_data_win = SetGeneticDataMsatSeq(self)
         self.gen_data_win.ui.okButton.setText("VALIDATE AND SAVE")
         self.gen_data_win.hide()

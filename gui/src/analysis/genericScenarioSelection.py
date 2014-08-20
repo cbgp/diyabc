@@ -4,11 +4,11 @@ import sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 import variables
 from variables import UIPATH
 
-formGenericScenarioSelection,baseGenericScenarioSelection = uic.loadUiType((u"%s/genericScenarioSelection.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formGenericScenarioSelection,baseGenericScenarioSelection = uic.loadUiType((u"%s/genericScenarioSelection.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioSelection):
     """ Sélection du scenario dans la cadre d'une analyse de type comparison ou estimate

@@ -7,8 +7,9 @@ from PyQt4 import uic
 #from uis.viewAnalysisParameters_ui import Ui_Frame
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formViewAnalysisParameters,baseViewAnalysisParameters = uic.loadUiType((u"%s/viewAnalysisParameters.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formViewAnalysisParameters,baseViewAnalysisParameters = uic.loadUiType((u"%s/viewAnalysisParameters.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class ViewAnalysisParameters(formViewAnalysisParameters,baseViewAnalysisParameters):
     def __init__(self,parent,analysis):

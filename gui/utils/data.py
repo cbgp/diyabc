@@ -8,7 +8,7 @@ Created on 24 sept. 2009
 import re,os.path, sys, codecs, traceback
 from sets import Set
 from collections import defaultdict
-from cbgpUtils import log
+from cbgpUtils import log,getFsEncoding
 
 MICMISSING=-9999
 SEQMISSING="[]"
@@ -153,7 +153,7 @@ class Data(object):
     __SEQUENCE_CODE = "ATGCN-atgcn"
     def __init__(self,filename):
         self.filename         = filename  # name of the genepop data file (string)
-        self.fsCoding         = sys.getfilesystemencoding()
+        self.fsCoding         = getFsEncoding(logLevel=False)
         self.message          = None  # message about the content of the data file if reading is successful or error message if not  (string)
         self.title            = None  # title of the data file  (string)
         self.nloc_mic         = 0     # number of microsatellite loci (integer)
@@ -657,7 +657,7 @@ class DataSnp():
     __IND_SEX_TYPES = set(['9','M','F','m','f'])
     def __init__(self,filename):
         self.filename = filename
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.nloc = 0
         self.nloctot = 0
         self.nindtot = 0
@@ -869,8 +869,8 @@ class DataSnp():
 
 
 def isSNPDatafile(name):
-    if os.path.exists(str(name).encode(sys.getfilesystemencoding())):
-        f=open(str(name).encode(sys.getfilesystemencoding()),'rU')
+    if os.path.exists(str(name).encode(getFsEncoding(logLevel=False))):
+        f=open(str(name).encode(getFsEncoding(logLevel=False)),'rU')
         lines=f.readlines()
         f.close()
         if len(lines) > 0:

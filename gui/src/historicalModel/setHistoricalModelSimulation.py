@@ -9,7 +9,7 @@ from setHistoricalModel import SetHistoricalModel
 from utils.visualizescenario import *
 from utils.history import *
 import output
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 
 class SetHistoricalModelSimulation(SetHistoricalModel):
     """ Classe pour la définition du modèle historique dans le cadre

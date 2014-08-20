@@ -10,11 +10,11 @@ from utils.visualizescenario import *
 from viewTextFile import ViewTextFile
 import output
 from utils.matplotlibCanvas import *
-from utils.cbgpUtils import readlinesWindows
+from utils.cbgpUtils import readlinesWindows,getFsEncoding
 import variables
 from variables import UIPATH
 
-formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult = uic.loadUiType((u"%s/drawScenarioFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult = uic.loadUiType((u"%s/drawScenarioFrame.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse
@@ -24,7 +24,7 @@ class DrawPCAAnalysisResult(formDrawPCAAnalysisResult,baseDrawPCAAnalysisResult)
         super(DrawPCAAnalysisResult,self).__init__(parent)
         self.parent=parent
         self.directory=directory
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.dico_points = {}
         self.analysis = analysis
         if self.directory.split('_')[-1] == "modelChecking":

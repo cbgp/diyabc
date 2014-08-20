@@ -5,11 +5,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 #from uis.preferences_ui import Ui_MainWindow
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 import variables
 from variables import UIPATH
 
-formLogFile,baseLogFile = uic.loadUiType((u"%s/showLogFile.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formLogFile,baseLogFile = uic.loadUiType((u"%s/showLogFile.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class ShowLogFile(formLogFile,baseLogFile):
     """ Classe pour consulter les logs dans l'interface
@@ -17,7 +17,7 @@ class ShowLogFile(formLogFile,baseLogFile):
     def __init__(self,parent=None):
         super(ShowLogFile,self).__init__(parent)
         self.parent = parent
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         #dd = datetime.now()
         #self.logfile = os.path.expanduser("~/.diyabc/logs/%02d_%02d_%s-%s.log"%(dd.day,dd.month,dd.year,os.getpid()))
         #self.logfile = self.parent.logfile

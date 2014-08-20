@@ -11,11 +11,11 @@ from utils.visualizescenario import *
 from utils.history import *
 from setCondition import SetCondition
 import output
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 import variables
 from variables import UIPATH
 
-formHistModel,baseHistModel = uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formHistModel,baseHistModel = uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetHistoricalModel(formHistModel,baseHistModel):
     """ Classe pour la définition du modèle historique dans le cadre
@@ -24,7 +24,7 @@ class SetHistoricalModel(formHistModel,baseHistModel):
     def __init__(self,parent=None):
         super(SetHistoricalModel,self).__init__(parent)
         self.parent=parent
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         # [GUI] liste des scenarios, pourcentages et conditions non effacés
         self.scList = []
         self.rpList = []

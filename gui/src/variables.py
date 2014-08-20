@@ -3,9 +3,6 @@
 import sys,os.path
 from utils.cbgpUtils import getLastRevisionDate,getFsEncoding
 
-
-fsCoding = sys.getfilesystemencoding()
-
 # variable qui sera changée par le générateur d'exécutable
 VERSION='development version'
 VERSION_DATE='01/01/1970'

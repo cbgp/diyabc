@@ -10,11 +10,11 @@ from summaryStatistics.setSummaryStatisticsMsatAnalysis import SetSummaryStatist
 from summaryStatistics.setSummaryStatisticsSeqAnalysis import SetSummaryStatisticsSeqAnalysis
 from summaryStatistics.setSummaryStatisticsSnpAnalysis import SetSummaryStatisticsSnpAnalysis
 import output
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 import variables
 from variables import UIPATH
 
-formSetupEstimationBias,baseSetupEstimationBias = uic.loadUiType((u"%s/setupEstimationBias.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formSetupEstimationBias,baseSetupEstimationBias = uic.loadUiType((u"%s/setupEstimationBias.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetupEstimationBias(formSetupEstimationBias,baseSetupEstimationBias):
     """ dernière étape de définition d'une analyse de type estimation ou bias precision ou model checking

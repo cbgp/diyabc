@@ -3,7 +3,7 @@
 import sys, codecs
 import os.path
 import os
-sys.path.append((u"/".join(os.getcwd().split('/')[:-1])).encode(sys.getfilesystemencoding()))
+sys.path.append((u"/".join(os.getcwd().split('/')[:-1])).encode(getFsEncoding(logLevel=False)))
 from project import *
 
 #import time
@@ -14,7 +14,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtTest import QTest
 from datetime import datetime
-from utils.cbgpUtils import log,TeeLogger
+from utils.cbgpUtils import log,TeeLogger,getFsEncoding
 import output
 # pour eviter les popups de notification
 output.debug = True

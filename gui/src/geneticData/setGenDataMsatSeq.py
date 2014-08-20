@@ -7,7 +7,7 @@ from PyQt4.QtGui import *
 
 from utils.visualizescenario import *
 from utils.data import *
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 import output
 from setGenData import SetGeneticData
 from mutationModel.setMutationModelMsatRefTable import SetMutationModelMsatRefTable
@@ -22,7 +22,7 @@ class SetGeneticDataMsatSeq(SetGeneticData):
     """
     def __init__(self,parent=None):
         super(SetGeneticDataMsatSeq,self).__init__(parent)
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.ui.autoGroupButton.show()
         QObject.connect(self.ui.autoGroupButton,SIGNAL("clicked()"),self.autoGroup)
 

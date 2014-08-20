@@ -15,7 +15,7 @@ from utils.data import DataSnp
 import output
 from controlAscertBias import ControlAscertBias
 import variables
-from utils.cbgpUtils import log,isUnixText,dos2unix
+from utils.cbgpUtils import log,isUnixText,dos2unix,getFsEncoding
 
 ## @class ProjectSnp
 # @brief Projets pour créer une table de référence SNP
@@ -24,7 +24,7 @@ class ProjectSnp(ProjectReftable):
     """
     def __init__(self,name,dir=None,parent=None):
         super(ProjectSnp,self).__init__(name,dir,parent)
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.ui.nbMicrosatLabel.hide()
         self.setGenValid(False)
         self.ui.genDataLabel.setText("Summary statistics")

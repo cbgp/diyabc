@@ -3,11 +3,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 import variables
 from variables import UIPATH
 
-formTF,baseTF = uic.loadUiType((u"%s/viewTextFile.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formTF,baseTF = uic.loadUiType((u"%s/viewTextFile.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class ViewTextFile(formTF,baseTF):
     def __init__(self,text,okFunction,parent=None):
@@ -47,7 +47,7 @@ class ViewTextFile(formTF,baseTF):
     def save(self):
         path = QFileDialog.getSaveFileName(self,filter="Text files (*.txt);;All files (*)")
         if path!="":
-            f=open(str(path).encode(sys.getfilesystemencoding()),'w')
+            f=open(str(path).encode(getFsEncoding(logLevel=False)),'w')
             f.write(self.text)
             f.close()
 

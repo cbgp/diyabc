@@ -1,6 +1,7 @@
 from mod_python import apache
 from mod_python import util
 import datetime,os, codecs
+from cbgpUtils import log,getFsEncoding
 
 def handler(req):
         req.log_error('handler')
@@ -12,7 +13,7 @@ def handler(req):
                 date =  datetime.datetime.now().strftime("%Y %m %d %H:%M:%S")
                 ip = req.connection.remote_ip
                 name = u"%s/%s %s.tar.gz"%(os.path.dirname(os.path.abspath(__file__)),date,ip)
-                f = open(name.encode(sys.getfilesystemencoding()),"w")
+                f = open(name.encode(getFsEncoding(logLevel=False)),"w")
                 f.write(util.FieldStorage(req)["file"])
                 f.close()
                 req.write('OK')

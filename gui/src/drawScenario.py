@@ -7,11 +7,11 @@ from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 from PyQt4 import uic
 from utils.visualizescenario import *
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 import variables
 from variables import UIPATH
 
-formDrawScenario,baseDrawScenario = uic.loadUiType((u"%s/drawScenarioFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formDrawScenario,baseDrawScenario = uic.loadUiType((u"%s/drawScenarioFrame.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class DrawScenario(formDrawScenario,baseDrawScenario):
     """ Classe pour créer une fenêtre à l'intérieur de laquelle on dessine les scénarios (valides car déjà vérifiés)
@@ -20,7 +20,7 @@ class DrawScenario(formDrawScenario,baseDrawScenario):
     def __init__(self,sc_info_list=None,parent=None):
         super(DrawScenario,self).__init__(parent)
         self.parent=parent
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.createWidgets()
         self.sc_info_list = sc_info_list
         self.pixList = []

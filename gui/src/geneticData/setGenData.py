@@ -13,11 +13,11 @@ from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from utils.visualizescenario import *
 from utils.data import *
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 import variables
 from variables import UIPATH
 
-formGenData,baseGenData = uic.loadUiType((u"%s/setGenData.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formGenData,baseGenData = uic.loadUiType((u"%s/setGenData.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetGeneticData(formGenData,baseGenData):
     """ Frame qui est créée pour faire des groupes de locus,

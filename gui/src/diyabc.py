@@ -15,7 +15,7 @@ if "darwin" in sys.platform and ".app/" in sys.argv[0]:
     # pour aller dans le rep où est le .app
     #mycwd = "/".join(sys.argv[0].split(".app/")[0].split('/')[:-1])
     # pour aller a l'interieur du .app
-    fsCoding = sys.getfilesystemencoding()
+    fsCoding = getFsEncoding(logLevel=False)
     mycwd = sys.argv[0].split(".app/")[0] + ".app/Contents/Resources/"
     os.chdir(mycwd.encode(fsCoding))
 # pour connaitre les modules, on manipule le pythonpath
@@ -29,10 +29,10 @@ from PyQt4 import QtGui
 from PyQt4 import uic
 from preferences import Preferences
 from showLogFile import ShowLogFile
-#from utils.cbgpUtils import Documentator
+#from utils.cbgpUtils import Documentator,getFsEncoding
 import output
 import subprocess
-from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log,DirNFileDialog
+from utils.cbgpUtils import cmdThread,logRotate,TeeLogger,log,DirNFileDialog,getFsEncoding
 from utils.trayIconHandler import TrayIconHandler
 from threading import Thread
 from utils.data import isSNPDatafile
@@ -52,7 +52,7 @@ if "win" in sys.platform and "darwin" not in sys.platform:
 # global variable in oder to activate what's this functionality
 ACTIVATE_WHAT_S_THIS = False
 
-formDiyabc,baseDiyabc = uic.loadUiType((u"%s/diyabc.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formDiyabc,baseDiyabc = uic.loadUiType((u"%s/diyabc.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 ## @class Diyabc
 # @brief Classe principale, fenêtre principale
@@ -61,7 +61,7 @@ class Diyabc(formDiyabc,baseDiyabc):
     """
     def __init__(self,app,parent=None,projects=None,logfile=None):
         super(Diyabc,self).__init__(parent)
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.app = app
         self.logfile = logfile
         self.project_list = []
@@ -1122,7 +1122,7 @@ class ImportProjectThread(Thread):
 
 def main():
     output.debug = False
-    fsCoding = sys.getfilesystemencoding()
+    fsCoding = getFsEncoding(logLevel=False)
     if not os.path.exists((os.path.expanduser(u"~/.diyabc/").encode(fsCoding)).encode(fsCoding)):
         # c'est sans doute la première fois qu'on lance diyabc
         # sous linux, on appelle gconf pour voir les icones dans les menus et boutons

@@ -14,7 +14,7 @@ from PyQt4 import QtGui
 from PyQt4 import QtCore
 import output
 import utils.cbgpUtils as utilsPack
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 from utils.configobj.configobj import *
 
 visible = "1"
@@ -70,7 +70,7 @@ class AutoPreferences(QFrame):
         # liste pour retenir l'ordre des catégories
         self.categoryList = []
 
-        self.configFile = confFilePath.encode(sys.getfilesystemencoding())
+        self.configFile = confFilePath.encode(getFsEncoding(logLevel=False))
         self.config = ConfigObj(self.configFile)
 
         self.createWidgets()

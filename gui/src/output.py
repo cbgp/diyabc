@@ -3,7 +3,7 @@
 #from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 #import codecs
 
 # mettre à vrai pour ne pas afficher les popups

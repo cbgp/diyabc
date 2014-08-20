@@ -8,13 +8,13 @@ from PyQt4.QtSvg import *
 from PyQt4 import uic
 from utils.visualizescenario import *
 from viewTextFile import ViewTextFile
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 from utils.matplotlibCanvas import *
 import output
 import variables
 from variables import UIPATH
 
-formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult = uic.loadUiType((u"%s/drawScenarioFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult = uic.loadUiType((u"%s/drawScenarioFrame.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEstimationAnalysisResult):
     """ Classe pour créer une frame à l'intérieur de laquelle on dessine les resultats d'une analyse
@@ -25,7 +25,7 @@ class DrawEstimationAnalysisResult(formDrawEstimationAnalysisResult,baseDrawEsti
         self.parent=parent
         self.directory=directory
         self.analysis = analysis
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.tab_colors = ["#0000FF","#00FF00","#FF0000","#00FFFF","#FF00FF","#FFFF00","#000000","#808080","#008080","#800080","#808000","#000080","#008000","#800000","#A4A0A0","#A0A4A0","#A0A0A4","#A00000","#00A000","#00A0A0"]
         self.paramChoice = "o"
         self.file_subname = "_original"

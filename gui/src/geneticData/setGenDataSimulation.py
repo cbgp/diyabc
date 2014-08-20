@@ -7,7 +7,7 @@ from PyQt4.QtGui import *
 
 from utils.visualizescenario import *
 from utils.data import *
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 from setGenData import SetGeneticData
 from mutationModel.setMutationModelMsatSimulation import SetMutationModelMsatSimulation
 from mutationModel.setMutationModelSequencesSimulation import SetMutationModelSequencesSimulation
@@ -18,7 +18,7 @@ class SetGeneticDataSimulation(SetGeneticData):
     """
     def __init__(self,parent=None):
         super(SetGeneticDataSimulation,self).__init__(parent)
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
 
         self.ui.tableWidget.setColumnWidth(0,90)
         self.ui.tableWidget.setColumnWidth(1,40)

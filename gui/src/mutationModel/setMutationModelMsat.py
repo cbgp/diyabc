@@ -8,8 +8,9 @@ from PyQt4 import uic
 #from uis.setMutationModelMsat_ui import Ui_Frame
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formSetMutationModelMsat,baseSetMutationModelMsat = uic.loadUiType((u"%s/setMutationModelMsat.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formSetMutationModelMsat,baseSetMutationModelMsat = uic.loadUiType((u"%s/setMutationModelMsat.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetMutationModelMsat(formSetMutationModelMsat,baseSetMutationModelMsat):
     """ définition du modèle mutationnel pour les microsats

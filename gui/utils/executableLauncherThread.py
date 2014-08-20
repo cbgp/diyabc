@@ -4,7 +4,7 @@ import os.path,subprocess,time,sys, codecs
 from PyQt4.QtCore import QThread
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
+from cbgpUtils import getLastRevisionDate,getFsEncoding
 class LauncherThread(QThread):
     """ Manage the execution of an external executable and
     communicate informations by QT Signals
@@ -37,7 +37,7 @@ class LauncherThread(QThread):
         super(LauncherThread,self).__init__()
         self.name = name
         self.cmd_args_list = cmd_args_list
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.cmd_args_list_quoted = list(self.cmd_args_list)
         for i in range(len(self.cmd_args_list_quoted)):
             if ";" in self.cmd_args_list_quoted[i] or " " in self.cmd_args_list_quoted[i] or ":" in self.cmd_args_list_quoted[i]:

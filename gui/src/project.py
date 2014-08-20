@@ -11,11 +11,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
 from historicalModel.setHistoricalModel import SetHistoricalModel
-from utils.cbgpUtils import log,addLine
+from utils.cbgpUtils import log,addLine,getFsEncoding
 import variables
 from variables import UIPATH
 
-formProject,baseProject = uic.loadUiType((u"%s/Project.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formProject,baseProject = uic.loadUiType((u"%s/Project.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 ## @class Project
 # @brief Classe mère abstraite de tous les projets
@@ -31,7 +31,7 @@ class Project(baseProject,formProject):
         self.name=name
         self.dir=dir
 
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
 
         # objet data de cbgpUtils
         self.data = None

@@ -92,7 +92,7 @@ class Documentator():
         self.myfile = myfile
         self.maxDescriptionLength = maxDescriptionLength
         self.separator = separator
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.dicoDoc = {}
         if os.path.exists(myfile):
             self.loadDocFile()
@@ -112,7 +112,7 @@ class Documentator():
         """ Loads the html file to fill the doc hashtable.
         The file is parsed line by line without any use of specific parser
         """
-        f = open(self.myfile.encode(sys.getfilesystemencoding()),'rU')
+        f = open(self.myfile.encode(getFsEncoding(logLevel=False)),'rU')
         lines = f.readlines()
         f.close()
 
@@ -249,9 +249,9 @@ def sizedirectory(path):
     123456
     """
     size = 0
-    for root, dirs, files in os.walk(path.encode(sys.getfilesystemencoding())):
+    for root, dirs, files in os.walk(path.encode(getFsEncoding(logLevel=False))):
         for fic in files:
-            size += os.path.getsize((os.path.join(root, fic)).encode(sys.getfilesystemencoding()))
+            size += os.path.getsize((os.path.join(root, fic)).encode(getFsEncoding(logLevel=False)))
     return size
 
 
@@ -264,7 +264,7 @@ def logRotate(logFolder,nbDaysOld,sizeThreshold):
         if (logSize / (1024*1024)) > sizeThreshold:
             log(2,"Logrotate process launched")
             ddNow = datetime.now()
-            for root,dirs,files in os.walk(os.path.expanduser("~/.diyabc/logs/".encode(sys.getfilesystemencoding()))):
+            for root,dirs,files in os.walk(os.path.expanduser("~/.diyabc/logs/".encode(getFsEncoding(logLevel=False)))):
                 for name in files:
                     dateLastModif = time.gmtime(os.stat(os.path.join(root, name)).st_mtime)
                     ddMod = datetime(dateLastModif.tm_year,dateLastModif.tm_mon,dateLastModif.tm_mday)
@@ -325,7 +325,7 @@ class TeeLogger(object):
         if self.showExternal != None:
             self.showExternal("%s"%pattern.sub('',data_without_color.strip()))
 
-        ftmp = open(self.filename.encode(sys.getfilesystemencoding()),'a')
+        ftmp = open(self.filename.encode(getFsEncoding(logLevel=False)),'a')
         ftmpdata = data_without_color
         try:
             ftmp.write(ftmpdata)
@@ -358,7 +358,7 @@ def log(level,message):
 def addLine(filepath,content):
     """ Add a content at the end of a file
     """
-    f = open(filepath.encode(sys.getfilesystemencoding()),'a')
+    f = open(filepath.encode(getFsEncoding(logLevel=False)),'a')
     f.write(content)
     f.close()
 
@@ -371,7 +371,7 @@ def getRamInfo():
     if "linux" in sys.platform:
         import re
         pat = re.compile(r'\s+')
-        f = open(u"/proc/meminfo".encode(sys.getfilesystemencoding()),'r')
+        f = open(u"/proc/meminfo".encode(getFsEncoding(logLevel=False)),'r')
         s = f.read().strip()
         f.close()
         s = s.split('\n')
@@ -412,7 +412,7 @@ def getRamInfo():
     elif "darwin" in sys.platform:
         import os
         cmd =  u"echo $(( $(vm_stat | grep free | awk '{ print $3 }' | sed 's/\\.//')*4096/1048576 ))"
-        p = os.popen(cmd.encode(sys.getfilesystemencoding()))
+        p = os.popen(cmd.encode(getFsEncoding(logLevel=False)))
         s = p.read()
         p.close()
         availRam = int(s)
@@ -458,7 +458,7 @@ def getLastRevisionDate(repoPath):
     @return: The date of the last revision of the given repository
     """
     # determine if this is a git or hg repo
-    if os.path.exists((u"%s.git/"%(repoPath)).encode(sys.getfilesystemencoding())):
+    if os.path.exists((u"%s.git/"%(repoPath)).encode(getFsEncoding(logLevel=False))):
         cmd_args = ["git","log","-n","1"]
     elif os.path.exists(repoPath+".hg/"):
         cmd_args = ["hg","tip"]
@@ -490,7 +490,7 @@ class DirNFileDialog(QFileDialog):
 def isUnixText(filename):
     """ Determine if a file has Linux or Windows line separators
     """
-    f = open(filename.encode(sys.getfilesystemencoding()),'r')
+    f = open(filename.encode(getFsEncoding(logLevel=False)),'r')
     srt = f.read()
     f.close()
     return not ('\r\n' in srt)
@@ -498,15 +498,15 @@ def isUnixText(filename):
 def dos2unix(filename):
     """ Traduce a windows-style text file into a Linux-style text file
     """
-    f=open(filename.encode(sys.getfilesystemencoding()),'r')
+    f=open(filename.encode(getFsEncoding(logLevel=False)),'r')
     sw = f.read().replace('\r\n', '\n')
     f.close()
-    f=open(filename.encode(sys.getfilesystemencoding()),'w')
+    f=open(filename.encode(getFsEncoding(logLevel=False)),'w')
     f.write(sw)
     f.close()
 
 def readlinesWindows(filename):
-    f=open(filename.encode(sys.getfilesystemencoding()),'rU')
+    f=open(filename.encode(getFsEncoding(logLevel=False)),'rU')
     li=f.readline()
     res=[]
     while li!='':

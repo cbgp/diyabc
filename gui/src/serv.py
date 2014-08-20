@@ -10,6 +10,7 @@ import sys,os, codecs
 import thread
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
+from utils.cbgpUtils import getLastRevisionDate,getFsEncoding
 
 def main():
     def treatment(csock,qued):
@@ -17,7 +18,7 @@ def main():
         filename = str(datetime.now())
         filename = filename.replace(' ','_').replace(":",".")
         filename+=".tar"
-        f=open( filename.encode(sys.getfilesystemencoding()), 'wb')
+        f=open( filename.encode(getFsEncoding(logLevel=False)), 'wb')
 
         md5=csock.recv(33)
         md5 = str(md5).strip()
@@ -39,8 +40,8 @@ def main():
         print "sortie de boucle de reception"
          #3.close file
         f.close()
-        print filename.encode(sys.getfilesystemencoding()), "Received\n"
-        f=open(filename.encode(sys.getfilesystemencoding()),'r')
+        print filename.encode(getFsEncoding(logLevel=False)), "Received\n"
+        f=open(filename.encode(getFsEncoding(logLevel=False)),'r')
         fdata = f.read()
         f.close()
         print str(hashlib.md5(fdata).hexdigest())
@@ -49,17 +50,17 @@ def main():
 
         if checkfile:
             dirname = filename.replace('.tar','')
-            os.mkdir((u"%s/%s"%(os.getcwd()).encode(sys.getfilesystemencoding()),dirname.encode(sys.getfilesystemencoding())))
+            os.mkdir((u"%s/%s"%(os.getcwd()).encode(getFsEncoding(logLevel=False)),dirname.encode(getFsEncoding(logLevel=False))))
             #os.chdir("%s/%s"%(os.getcwd(),dirname))
-            a = os.popen("tar xvf %s -C ""%s"""%(filename.encode(sys.getfilesystemencoding()),dirname.encode(sys.getfilesystemencoding())))
+            a = os.popen("tar xvf %s -C ""%s"""%(filename.encode(getFsEncoding(logLevel=False)),dirname.encode(getFsEncoding(logLevel=False))))
             a.close()
             print "archive extracted"
             #os.chdir("./SBCN_jm/")
-            f=open((u"%s/SBCN_jm/command_output"%dirname).encode(sys.getfilesystemencoding()),"w")
-            subprocess.Popen([u"sh".encode(sys.getfilesystemencoding()),u"./launch.sh".encode(sys.getfilesystemencoding())],stdout=f,cwd=(u"%s/SBCN_jm/"%dirname).encode(sys.getfilesystemencoding()))
+            f=open((u"%s/SBCN_jm/command_output"%dirname).encode(getFsEncoding(logLevel=False)),"w")
+            subprocess.Popen([u"sh".encode(getFsEncoding(logLevel=False)),u"./launch.sh".encode(getFsEncoding(logLevel=False))],stdout=f,cwd=(u"%s/SBCN_jm/"%dirname).encode(getFsEncoding(logLevel=False)))
             while True:
                 time.sleep(2)
-                a=os.popen((u"tail -n 1 %s/SBCN_jm/command_output"%dirname).encode(sys.getfilesystemencoding()))
+                a=os.popen((u"tail -n 1 %s/SBCN_jm/command_output"%dirname).encode(getFsEncoding(logLevel=False)))
                 line = a.read()
                 print "[",dirname,"] ",line,"--------"
                 csock.send(line)

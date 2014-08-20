@@ -13,8 +13,9 @@ from setSummaryStatistics import SetSummaryStatistics
 import output
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp = uic.loadUiType((u"%s/setSummaryStatisticsSnp.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp = uic.loadUiType((u"%s/setSummaryStatisticsSnp.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetSummaryStatisticsSnp(SetSummaryStatistics,formSetSummaryStatisticsSnp,baseSetSummaryStatisticsSnp):
     """ ecran de selection des summary statistics pour les SNP

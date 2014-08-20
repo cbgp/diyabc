@@ -13,8 +13,9 @@ from setSummaryStatistics import SetSummaryStatistics
 import output
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat = uic.loadUiType((u"%s/setSummaryStatisticsMsat.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat = uic.loadUiType((u"%s/setSummaryStatisticsMsat.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetSummaryStatisticsMsat(SetSummaryStatistics,formSetSummaryStatisticsMsat,baseSetSummaryStatisticsMsat):
     """ ecran de selection des summary statistics pour les microsats

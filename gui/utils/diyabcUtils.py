@@ -10,14 +10,15 @@
 
 import array, sys, codecs
 import os, os.path
+from cbgpUtils import log,getFsEncoding
 
 def readRefTableSize(reftablefile):
     """ @rtype: int
     @return: the record number in binary reftable header
     """
-    if os.path.exists(reftablefile.encode(sys.getfilesystemencoding())):
+    if os.path.exists(reftablefile.encode(getFsEncoding(logLevel=False))):
         binint = array.array('i')
-        f = open(reftablefile.encode(sys.getfilesystemencoding()),'rb')
+        f = open(reftablefile.encode(getFsEncoding(logLevel=False)),'rb')
         binint.read(f,1)
         f.close()
         rtSize = binint[0]
@@ -30,9 +31,9 @@ def readNbRecordsOfScenario(reftablefile,numSc):
     @return: record number of a given scenario
     in binary reftable header
     """
-    if os.path.exists(reftablefile.encode(sys.getfilesystemencoding())):
+    if os.path.exists(reftablefile.encode(getFsEncoding(logLevel=False))):
         binint = array.array('i')
-        f = open(reftablefile.encode(sys.getfilesystemencoding()),'rb')
+        f = open(reftablefile.encode(getFsEncoding(logLevel=False)),'rb')
         binint.read(f,numSc+2)
         f.close()
         nbRec = binint[-1]

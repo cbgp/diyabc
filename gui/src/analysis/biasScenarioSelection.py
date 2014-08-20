@@ -8,8 +8,9 @@ from historicalModel.setHistDrawnAnalysis import HistDrawn
 from historicalModel.setHistFixedAnalysis import HistFixed
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formBiasScenarioSelection,baseBiasScenarioSelection = uic.loadUiType((u"%s/biasScenarioSelection.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formBiasScenarioSelection,baseBiasScenarioSelection = uic.loadUiType((u"%s/biasScenarioSelection.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenarioSelection):
     """ Sélection du scenario dans la cadre d'une analyse de type bias ou confidence

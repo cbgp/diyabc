@@ -15,7 +15,7 @@ from PyQt4 import uic
 from historicalModel.setHistoricalModelSimulation import SetHistoricalModelSimulation
 from geneticData.setGenDataSimulation import SetGeneticDataSimulation
 import output
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 from datetime import datetime
 import variables
 from variables import UIPATH
@@ -28,7 +28,7 @@ class ProjectSimulation(Project):
     def __init__(self,name,dir=None,parent=None):
         super(ProjectSimulation,self).__init__(name,dir,parent)
 
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
 
         self.dico_loc_nb = None
         self.sexRatio = None
@@ -209,7 +209,7 @@ class SimulationThread(QThread):
         self.nb_to_gen = nb_to_gen
         self.processus = None
         self.parent = parent
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.logmsg = ""
         self.loglvl = 3
 
@@ -393,7 +393,7 @@ class ProjectSimulationSnp(ProjectSimulation):
     """
     def __init__(self,name,dir=None,parent=None):
         super(ProjectSimulationSnp,self).__init__(name,dir,parent)
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.locusNumberFrame.frame_8.hide()
         self.locusNumberFrame.leftBlocLabel.setText("TYPES OF SNP LOCI \n \n (Note that H loci are not compatible with A, X and Y loci)")
         #self.locusNumberFrame.frame.setMaximumSize(QSize(300,1000))

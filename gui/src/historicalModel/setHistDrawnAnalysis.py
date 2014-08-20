@@ -12,11 +12,11 @@ from setCondition import SetCondition
 from geneticData.setGenDataAnalysis import SetGeneticDataAnalysis
 from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonConfidence import SetupComparisonConfidence
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 import variables
 from variables import UIPATH
 
-formHistModelDrawn,baseHistModelDrawn = uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formHistModelDrawn,baseHistModelDrawn = uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
     """ définition du modèle historique dans le cadre d'une analyse

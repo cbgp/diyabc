@@ -8,8 +8,9 @@ from PyQt4 import uic
 #from uis.setMutationModelSequences_ui import Ui_Frame
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formSetMutationModelSequences,baseSetMutationModelSequences = uic.loadUiType((u"%s/setMutationModelSequences.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formSetMutationModelSequences,baseSetMutationModelSequences = uic.loadUiType((u"%s/setMutationModelSequences.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetMutationModelSequences(formSetMutationModelSequences,baseSetMutationModelSequences):
     """ définition du modèle mutationnel pour les séquences

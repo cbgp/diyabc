@@ -27,7 +27,7 @@ from utils.executableLauncherThread import LauncherThread
 from datetime import datetime
 import os.path
 import output
-from utils.cbgpUtils import log, addLine
+from utils.cbgpUtils import log, addLine,getFsEncoding
 import utils.cbgpUtils as cbgpUtils
 import utils.diyabcUtils as diyabcUtils
 from project import Project
@@ -63,7 +63,7 @@ class ProjectReftable(Project):
         self.thAnalysis = None
 
         super(ProjectReftable,self).__init__(name,dir,parent)
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         # creation du fichier .diyabcproject au cas où il n'existe pas
         if self.dir != None and not os.path.exists((u"%s/%s.diyabcproject"%(self.dir,self.name)).encode(self.fsCoding)):
             f = open((u"%s/%s.diyabcproject"%(self.dir,self.name)).encode(self.fsCoding),'w')

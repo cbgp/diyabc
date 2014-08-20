@@ -15,7 +15,7 @@ from mutationModel.setMutationModelMsat import SetMutationModelMsat
 from mutationModel.setMutationModelSequences import SetMutationModelSequences
 import output
 import utils.cbgpUtils as utilsPack
-from utils.cbgpUtils import log
+from utils.cbgpUtils import log,getFsEncoding
 from utils.autoPreferences import AutoPreferences,visible,invisible
 import variables
 from variables import DATAPATH,UIPATH
@@ -34,7 +34,7 @@ class Preferences(AutoPreferences):
 
     def __init__(self,parent=None,configfile=None):
         super(Preferences,self).__init__(parent,configfile)
-        self.fsCoding = sys.getfilesystemencoding()
+        self.fsCoding = getFsEncoding(logLevel=False)
         f = open((DATAPATH+u"/txt/launch_header_cluster.sh").encode(self.fsCoding),'r')
         self.DEFAULT_FIRST_PART_SCRIPT_CLUSTER = f.read()
         f.close()

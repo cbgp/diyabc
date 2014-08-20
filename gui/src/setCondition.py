@@ -7,8 +7,9 @@ from PyQt4 import uic
 #from uis.set_condition_ui import Ui_MainWindow
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getLastRevisionDate,getFsEncoding
 
-formSetCondition,baseSetCondition= uic.loadUiType((u"%s/setCondition.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formSetCondition,baseSetCondition= uic.loadUiType((u"%s/setCondition.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetCondition(formSetCondition,baseSetCondition):
     """ Fenetre de definition d'une condition

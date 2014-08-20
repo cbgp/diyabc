@@ -9,8 +9,9 @@ from genericScenarioSelection import GenericScenarioSelection
 import output
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formSetupComparisonConfidence,baseSetupComparisonConfidence = uic.loadUiType((u"%s/setupComparisonConfidence.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formSetupComparisonConfidence,baseSetupComparisonConfidence = uic.loadUiType((u"%s/setupComparisonConfidence.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupComparisonConfidence):
     """ dernière étape de définition d'une analyse de type comparison ou confidence

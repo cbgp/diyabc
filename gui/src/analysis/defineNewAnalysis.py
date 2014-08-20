@@ -12,8 +12,9 @@ from analysis import Analysis
 import output
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType((u"%s/defineAnalysis.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType((u"%s/defineAnalysis.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
     """ écran de définition d'une nouvelle analyse. demande

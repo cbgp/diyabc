@@ -8,8 +8,10 @@ from PyQt4 import uic
 #from uis.setMutationModelMsat_ui import Ui_Frame
 import variables
 from variables import UIPATH
+from utils.cbgpUtils import getFsEncoding
 
-formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed = uic.loadUiType((u"%s/setMutationModelMsat.ui"%UIPATH).encode(sys.getfilesystemencoding()))
+
+formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed = uic.loadUiType((u"%s/setMutationModelMsat.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
 class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed):
     """ Classe qui utilise le fichier graphique des SetMutationModelMsat.
