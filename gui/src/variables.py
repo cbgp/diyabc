@@ -12,8 +12,7 @@ if ('development vers' in VERSION):
     except Exception as e:
         VERSION_DATE="unknown"
 
-#FSENCODING = getFsEncoding(logLevel=1)
-FSENCODING = getFsEncoding()
+FSENCODING = getFsEncoding(logLevel=1)
 DATAPATH = ""
 DOCPATH = ""
 ICONPATH = ""

@@ -30,6 +30,7 @@
 
 from threading import Thread
 import sys
+import locale
 import cmd
 import inspect
 import re
