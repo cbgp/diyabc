@@ -813,8 +813,8 @@ class DataSnp():
                 float(self.commentValuesDict['maf'])
             except :
                 raise Exception("MAF value must be a float or the key word 'hudson', '%s' given." % self.commentValuesDict['maf'])
-            if float(self.commentValuesDict['maf']) <= 0.0 or float(self.commentValuesDict['maf']) >= 1.0 :
-                raise Exception("MAF value must be upper to 0 and lower to 1 , '%s' given." % self.commentValuesDict['maf'])
+            if float(self.commentValuesDict['maf']) <= 0.0 or float(self.commentValuesDict['maf']) > 0.5 :
+                raise Exception("MAF value must be upper to 0 and lower or egual to 0.5 , '%s' given." % self.commentValuesDict['maf'])
 
             for locus in locus_type.keys() :
                 n0 = 0
