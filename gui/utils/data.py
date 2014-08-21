@@ -846,10 +846,11 @@ class DataSnp():
                         fam = float(n0)/float(n0+n2)
                     else :
                         fam = float(n2)/float(n0+n2)
-                    if fam < float(self.commentValuesDict['maf']) :
+                    if fam > float(self.commentValuesDict['maf']) :
                         nLocFam +=1
                     else :
                         #locus rejected
+                        log(2,"Locus %s has a MAF (%s) below the limit (%s)"%(locus,fam,self.commentValuesDict['maf']))
                         pass
             nbLociPoly = nLocFam
 
