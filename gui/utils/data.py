@@ -444,10 +444,10 @@ class Data(object):
             for  popNum in pops.keys() :
                 for ind in pops[popNum] :
                     for locusNum, locusValue in enumerate(ind['loci']) :
-                        pop_locus_valuesSetSet[popNum][locusNum].add(locusValue)
+                        pop_locus_valuesSet[popNum][locusNum].add(locusValue)
             for  popNum in pops.keys() :
                 for locusNum in loci.keys() :
-                    if True in [pop_locus_valuesSetSet[popNum][locusNum].issubset(x) for x in [Set(["000"]),  Set(["000000"]), Set(["000","000000"]),\
+                    if True in [pop_locus_valuesSet[popNum][locusNum].issubset(x) for x in [Set(["000"]),  Set(["000000"]), Set(["000","000000"]),\
                                                                           Set(["<[]>"]), Set(["<[][]>"]), Set(["<[]>", "<[][]>"]) ] ] :
                         raise Exception("Genepop file : %s\nLocus %s (name : %s, type : %s) has only missing data in pop %s : intractable configuration" %\
                                         (self.filename, locusNum+1, loci[locusNum]['name'], loci[locusNum]['type'],  popNum+1))
