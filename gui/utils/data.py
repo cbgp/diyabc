@@ -815,7 +815,7 @@ class DataSnp():
                 raise Exception("MAF value must be a float or the key word 'hudson', '%s' given." % self.commentValuesDict['maf'])
             if float(self.commentValuesDict['maf']) <= 0.0 or float(self.commentValuesDict['maf']) > 0.5 :
                 raise Exception("MAF value must be upper to 0 and lower or egual to 0.5 , '%s' given." % self.commentValuesDict['maf'])
-
+            rejectedLocus = {}
             for locus in locus_type.keys() :
                 n0 = 0
                 n2 = 0
@@ -847,14 +847,16 @@ class DataSnp():
                         fam = float(n0)/float(n0+n2)
                     else :
                         fam = float(n2)/float(n0+n2)
-                    if locus in [141, "141"] :
-                        print 100 * ("maf 141 = %s, n0\n" % fam)
                     if fam > float(self.commentValuesDict['maf']) :
                         nLocFam +=1
                     else :
                         #locus rejected
-                        log(2,"Locus %s has a MAF (%s) below the limit (%s)"%(locus,fam,self.commentValuesDict['maf']))
+                        rejectedLocusMAF[locus] = fam
                         pass
+                rejectedLocusText = ""
+                for lo in sorted(rejectedLocusMAF.keys()) :
+                    rejectedLocusText += "Locus %s has a MAF (%s) below the limit (%s)\n"%(lo,rejectedLocusMAF[lo],self.commentValuesDict['maf'])
+                log(2,rejectedLocusText)
             nbLociPoly = nLocFam
 
         nbSample = len(types)
