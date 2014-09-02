@@ -449,7 +449,7 @@ class Data(object):
                 for locusNum in loci.keys() :
                     if True in [pop_locus_valuesSet[popNum][locusNum].issubset(x) for x in [Set(["000"]),  Set(["000000"]), Set(["000","000000"]),\
                                                                           Set(["<[]>"]), Set(["<[][]>"]), Set(["<[]>", "<[][]>"]) ] ] :
-                        raise Exception("Genepop file : %s\nLocus %s (name : %s, type : %s) has only missing data in pop %s : intractable configuration" %\
+                        raise NotGenepopFileError("Genepop file : %s\nLocus %s (name : %s, type : %s) has only missing data in pop %s : intractable configuration" %\
                                         (self.filename, locusNum+1, loci[locusNum]['name'], loci[locusNum]['type'],  popNum+1))
 
 
@@ -831,21 +831,24 @@ class DataSnp():
                     # 2 copies
                     else :
                         if locus_values[locus][indiv] == "0" :
-                            n0 += 1
+                            n0 += 2
                         elif locus_values[locus][indiv] == "1" :
                             n0 +=1
                             n2 += 1
                         elif locus_values[locus][indiv] == "2" :
-                            n2 += 1
+                            n2 += 2
                         else :
                             pass
                 fam = 0
                 if (n0+n2) > 1 :
                     fam = 0
+                    #from fractions import Fraction
                     if n0 <= n2 :
                         fam = float(n0)/float(n0+n2)
                     else :
                         fam = float(n2)/float(n0+n2)
+                    if locus in [141, "141"] :
+                        print 100 * ("maf 141 = %s, n0\n" % fam)
                     if fam > float(self.commentValuesDict['maf']) :
                         nLocFam +=1
                     else :
