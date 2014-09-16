@@ -4,6 +4,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import QtGui
+from utils.cbgpUtils import Parents
 from setMutationModelSequences import SetMutationModelSequences
 
 class SetMutationModelSequencesAnalysis(SetMutationModelSequences):
@@ -11,7 +12,7 @@ class SetMutationModelSequencesAnalysis(SetMutationModelSequences):
     """
     def __init__(self,parent=None,box_group=None):
         super(SetMutationModelSequencesAnalysis,self).__init__(parent,box_group)
-
+        self.parents= Parents(self.parent)
         self.ui.clearButton.hide()
 
     def exit(self):
@@ -19,9 +20,9 @@ class SetMutationModelSequencesAnalysis(SetMutationModelSequences):
         #self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
-        self.parent.parent.ui.analysisStack.removeWidget(self)
+        self.ui.parents.analysisStack.removeWidget(self)
         #self.parent.parent.ui.analysisStack.setCurrentIndex(0)
-        self.parent.parent.ui.analysisStack.setCurrentWidget(self.parent)
+        self.ui.parents.analysisStack.setCurrentWidget(self.parent)
 
     def clear(self):
         pass
@@ -32,7 +33,7 @@ class SetMutationModelSequencesAnalysis(SetMutationModelSequences):
         """
         if self.allValid():
             self.exit()
-            self.parent.setMutationSeqValid_dico[self.box_group] = True
+            self.parents.setMutationSeqValid_dico[self.box_group] = True
 
     def hideFixedParameters(self):
         for prefix in ["mmr","mc1","mc2"]:

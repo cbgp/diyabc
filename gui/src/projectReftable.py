@@ -48,6 +48,9 @@ class ProjectReftable(Project):
                 "estimate" : "estimation",
                 "compare" : "comparison",
                 "confidence" : "confidence",
+                "confidence_posterior_global" : "confidence",
+                "confidence_prior_global" : "confidence",
+                "confidence_prior_specific" : "confidence",
                 "modelChecking" : "modelChecking",
                 "pre-ev" : "pca",
                 "bias" : "bias"
@@ -660,7 +663,7 @@ class ProjectReftable(Project):
             self.addAnalysisGui(analysis,analysis.name,"bias and precision",str(analysis.chosenSc),analysis.status)
         elif type_analysis == "compare":
             self.addAnalysisGui(analysis,analysis.name,"compare scenarios","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
-        elif type_analysis == "confidence":
+        elif "confidence" in type_analysis :
             self.addAnalysisGui(analysis,analysis.name,"confidence in scenario choice","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
         elif type_analysis == "modelChecking":
             self.addAnalysisGui(analysis,analysis.name,"model checking","%s | %s"%(analysis.candidateScList,analysis.chosenSc),analysis.status)
@@ -931,9 +934,8 @@ class ProjectReftable(Project):
                     frame.findChild(QPushButton,"analysisButton").setText("Queued (%s)"%index)
                     frame.findChild(QPushButton,"analysisButton").setStyleSheet("background-color: #F4992B")
 
-    def launchAnalysisThread(self,analysis):
-        outfile = "%s/%s.out"%(self.dir,analysis.category)
-        progressfile = "%s/%s_progress.txt"%(self.dir,analysis.name)
+    def getAnalysisCmdArgsList(self, analysis, quoted=True):
+        cmd_args_list = []
         signames = {
                 "progress" : "analysisProgress",
                 "log" : "analysisLog",
@@ -952,9 +954,14 @@ class ProjectReftable(Project):
         elif analysis.category == "bias":
             option = "-b"
             particleLoopSize = int(params.split('d:')[1].split(';')[0])
-        elif analysis.category == "confidence":
+        elif "confidence" in analysis.category:
             option = "-f"
-            particleLoopSize = int(params.split('t:')[1].split(';')[0])
+            suboption = "t"
+            if analysis.category == "confidence_posterior_global" :
+                suboption = "c"
+            elif analysis.category == "confidence_prior_global" :
+                suboption = "b"
+            particleLoopSize = int(params.split('%s:'%suboption)[1].split(';')[0])
         elif analysis.category == "modelChecking":
             option = "-j"
         elif analysis.category == "pre-ev":
@@ -964,10 +971,27 @@ class ProjectReftable(Project):
                 '%s'%params.replace(u'\xb5','u'), "-i", '%s'%analysis.name,
                 "-g" ,"%s"%particleLoopSize , "-m", "-t", "%s"%nbMaxThread]
 
+        if not quoted :
+            return cmd_args_list
+
         cmd_args_list_quoted = list(cmd_args_list)
         for i in range(len(cmd_args_list_quoted)):
             if ";" in cmd_args_list_quoted[i] or " " in cmd_args_list_quoted[i] or ":" in cmd_args_list_quoted[i]:
                 cmd_args_list_quoted[i] = '"'+cmd_args_list_quoted[i]+'"'
+        return cmd_args_list_quoted
+
+    def launchAnalysisThread(self,analysis):
+        outfile = "%s/%s.out"%(self.dir,analysis.category)
+        progressfile = "%s/%s_progress.txt"%(self.dir,analysis.name)
+        signames = {
+                "progress" : "analysisProgress",
+                "log" : "analysisLog",
+                "termSuccess" : "analysisTermSuccess",
+                "termProblem" : "analysisProblem",
+                "newOutput" : "newOutput"
+                }
+        cmd_args_list = self.getAnalysisCmdArgsList(analysis, quoted=False)
+        cmd_args_list_quoted = self.getAnalysisCmdArgsList(analysis, quoted=True)
 
         addLine("%s/command.txt"%self.dir,"Command launched for analysis '%s' : %s\n\n"%(analysis.name," ".join(cmd_args_list_quoted)))
 
@@ -1200,7 +1224,7 @@ class ProjectReftable(Project):
                 self.thAnalysis.emit(SIGNAL("analysisProblem(QString)"),self.thAnalysis.problem)
                 log(3,"File %s/%s_bias.txt doesn't exist. Results cannot be moved"%(self.dir,aid))
                 return
-        elif atype == "confidence":
+        elif "confidence" in atype :
             if os.path.exists((u"%s/%s_confidence.txt"%(self.dir,aid)).encode(self.fsCoding)):
                 # deplacement des fichiers de résultat
                 aDirName = "%s_confidence"%aid

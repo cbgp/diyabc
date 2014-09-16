@@ -8,7 +8,7 @@ from PyQt4 import uic
 #from uis.setMutationModelMsat_ui import Ui_Frame
 import variables
 from variables import UIPATH
-from utils.cbgpUtils import getFsEncoding
+from utils.cbgpUtils import getFsEncoding, Parents
 
 
 formSetMutationModelMsatFixed,baseSetMutationModelMsatFixed = uic.loadUiType((u"%s/setMutationModelMsat.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
@@ -20,6 +20,7 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
     def __init__(self,parent=None,box_group=None):
         super(SetMutationModelMsatFixed,self).__init__(parent)
         self.parent=parent
+        self.parents = Parents(self.parent)
         self.box_group = box_group
         self.createWidgets()
 
@@ -174,9 +175,9 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
         #self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
-        self.parent.parent.ui.analysisStack.removeWidget(self)
+        self.ui.parents.analysisStack.removeWidget(self)
         #self.parent.parent.ui.analysisStack.setCurrentIndex(0)
-        self.parent.parent.ui.analysisStack.setCurrentWidget(self.parent)
+        self.ui.parents.analysisStack.setCurrentWidget(self.parent)
 
     def validate(self):
         """ vérifie la validité des informations entrées dans le mutation model
@@ -184,7 +185,7 @@ class SetMutationModelMsatFixed(formSetMutationModelMsatFixed,baseSetMutationMod
         """
         if self.allValid():
             self.exit()
-            self.parent.setMutationValid_dico[self.box_group] = True
+            self.parents.setMutationValid_dico[self.box_group] = True
 
     def allValid(self,silent=False):
         """ vérifie chaque zone de saisie, si un probleme est présent, affiche un message pointant l'erreur

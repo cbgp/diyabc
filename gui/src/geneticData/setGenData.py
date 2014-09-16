@@ -13,7 +13,7 @@ from summaryStatistics.setSummaryStatisticsMsat import SetSummaryStatisticsMsat
 from summaryStatistics.setSummaryStatisticsSeq import SetSummaryStatisticsSeq
 from utils.visualizescenario import *
 from utils.data import *
-from utils.cbgpUtils import log,getFsEncoding
+from utils.cbgpUtils import log,getFsEncoding,Parents
 import variables
 from variables import UIPATH
 
@@ -26,6 +26,7 @@ class SetGeneticData(formGenData,baseGenData):
     def __init__(self,parent=None):
         super(SetGeneticData,self).__init__(parent)
         self.parent=parent
+        self.parents=Parents(self.parent)
         # liste des box
         self.groupList = []
         # dicos de frames indexé par les box
@@ -69,14 +70,14 @@ class SetGeneticData(formGenData,baseGenData):
         Fonctionne tant que les instances de SetGeneticData ont pour parent.parent
         l'objet Diyabc
         """
-        self.parent.parent.updateDoc(obj)
+        self.parents.updateDoc(obj)
 
     def fillLocusTableFromData(self):
         """ rempli le tableau des locus en consultant l'instance de Data
         On ne peut pas le faire à l'instanciation de l'objet SetGeneticData car on a pas
         encore lu le fichier de conf dans le cas d'un load project
         """
-        data = self.parent.data
+        data = self.parents.data
         nb_m = 0
         nb_s = 0
         for i in range(data.nloc):

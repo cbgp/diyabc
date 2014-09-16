@@ -12,9 +12,10 @@ from setCondition import SetCondition
 from geneticData.setGenDataAnalysis import SetGeneticDataAnalysis
 from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonConfidence import SetupComparisonConfidence
-from utils.cbgpUtils import log,getFsEncoding
+from utils.cbgpUtils import log, getFsEncoding, Parents
 import variables
 from variables import UIPATH
+import output
 
 formHistModelDrawn,baseHistModelDrawn = uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
@@ -25,6 +26,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
     def __init__(self,analysis,parent=None):
         super(HistDrawn,self).__init__(parent)
         self.parent=parent
+        self.parents = Parents(parent)
         self.analysis = analysis
         self.sc_to_show = self.analysis.chosenSc
         self.list_selected_evaluate_sc = self.analysis.candidateScList
@@ -89,7 +91,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
                             param.findChild(QRadioButton,'logUniformRadio').setChecked(True)
 
     def hideFixedParams(self):
-        fixed_params_list = self.parent.parent.hist_model_win.getFixedParamList()
+        fixed_params_list = self.parents.hist_model_win.getFixedParamList()
         for box in self.paramList:
             name = str(box.findChild(QLabel,"paramNameLabel").text())
             if name in fixed_params_list:
@@ -129,7 +131,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
     def getScText(self):
         """ récupère le texte du scenario concerné dans le modèle historique de la reftable
         """
-        return self.parent.parent.hist_model_win.scList[self.sc_to_show-1].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()
+        return self.parents.hist_model_win.scList[self.sc_to_show-1].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()
 
     def addTheParams(self):
         """ trouve et ajoute les paramètres du scenario concerné
@@ -137,14 +139,14 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
         try:
             sc = str(self.getScText())
             scChecker = Scenario(number=self.sc_to_show)
-            scChecker.checkread(sc.strip().split('\n'),self.parent.parent.data)
+            scChecker.checkread(sc.strip().split('\n'),self.parents.data)
             scChecker.checklogic()
             dico_sc_infos = {}
             dico_sc_infos["text"] = sc.strip().split('\n')
             dico_sc_infos["checker"] = scChecker
             #print "nb param du sc ",num," ",scChecker.nparamtot
         except Exception as e:
-            output.notify(str(e))
+            output.notify(self,"Unexpected Error",str(e))
             self.exit()
             return
 
@@ -158,7 +160,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
                 lprem.append(param.name)
                 dico_cat[param.category] = 1
 
-        dico_param = self.parent.parent.hist_model_win.param_info_dico
+        dico_param = self.parents.hist_model_win.param_info_dico
         for param in scChecker.parameters:
             pname = param.name
             pcat = param.category
@@ -176,7 +178,7 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
         uniquement des paramètre du scenarion concerné
         """
         self.majParamInfoDico()
-        for condbox in self.parent.parent.hist_model_win.condList:
+        for condbox in self.parents.hist_model_win.condList:
             txt = str(condbox.findChild(QLabel,"condLabel").text())
             if "<=" in txt:
                 sep = "<="
@@ -475,13 +477,13 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
                 lCond.append(str(cb.findChild(QLabel,"condLabel").text()))
             self.analysis.condTxtList = lCond
             # appel ping pong
-            next_widget = self.parent.parent.getNextWidget(self)
+            next_widget = self.parents.getNextWidget(self)
 
-            self.parent.parent.ui.analysisStack.addWidget(next_widget)
-            self.parent.parent.ui.analysisStack.removeWidget(self)
-            self.parent.parent.ui.analysisStack.setCurrentWidget(next_widget)
+            self.ui.parents.analysisStack.addWidget(next_widget)
+            self.ui.parents.analysisStack.removeWidget(self)
+            self.ui.parents.analysisStack.setCurrentWidget(next_widget)
 
-            self.parent.parent.parent.updateDoc(next_widget)
+            self.parents.updateDoc(next_widget)
 
     def exit(self):
         ## reactivation des onglets
@@ -489,8 +491,8 @@ class HistDrawn(formHistModelDrawn,baseHistModelDrawn):
         #self.parent.parent.setTabEnabled(0,True)
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentIndex(1)
-        self.parent.parent.ui.analysisStack.removeWidget(self)
-        self.parent.parent.ui.analysisStack.setCurrentIndex(0)
+        self.ui.parents.analysisStack.removeWidget(self)
+        self.ui.parents.analysisStack.setCurrentIndex(0)
 
 
     def getNbParam(self):

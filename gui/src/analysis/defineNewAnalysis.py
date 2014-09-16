@@ -8,6 +8,7 @@ from setupComparisonConfidence import SetupComparisonConfidence
 from setupEstimationBias import SetupEstimationBias
 from genericScenarioSelection import GenericScenarioSelection
 from biasScenarioSelection import BiasNConfidenceScenarioSelection
+from confidenceTypeSelection import ConfidenceTypeSelection
 from analysis import Analysis
 import output
 import variables
@@ -114,7 +115,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
             elif self.analysis_to_edit.category == "bias":
                 self.ui.biasRadio.setDisabled(False)
                 self.ui.biasRadio.setChecked(True)
-            elif self.analysis_to_edit.category == "confidence":
+            elif "confidence" in self.analysis_to_edit.category:
                 self.ui.confFdaCheck.setDisabled(False)
                 self.ui.confFdaCheck.setChecked(self.analysis_to_edit.fda == "1")
                 self.ui.confidenceRadio.setChecked(True)
@@ -256,7 +257,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                 else:
                     paramtxt="0"
                 analysis.fda = paramtxt
-                genSel = BiasNConfidenceScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
+                genSel = ConfidenceTypeSelection(len(self.parent.hist_model_win.scList),analysis,self)
             else:
                 output.notify(self,"category error","Choose an analysis type")
             if genSel != None:

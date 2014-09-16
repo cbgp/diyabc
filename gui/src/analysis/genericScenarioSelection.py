@@ -4,7 +4,7 @@ import sys, codecs
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4 import uic
-from utils.cbgpUtils import log,getFsEncoding
+from utils.cbgpUtils import log,getFsEncoding,Parents
 import variables
 from variables import UIPATH
 
@@ -16,6 +16,7 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
     def __init__(self,nb_sc,label,next_widget,next_title,nb_min_sel,analysis,parent):
         super(GenericScenarioSelection,self).__init__(parent)
         self.parent=parent
+        self.parents = Parents(self.parent)
         self.analysis = analysis
         self.nb_sc = nb_sc
         self.nb_min_sel = nb_min_sel
@@ -26,7 +27,7 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
         self.ui.selectionLabel.setText(label)
 
         self.ui.analysisTypeLabel.setText(self.next_title)
-        self.ui.projectDirEdit.setText(self.parent.parent.dir)
+        self.ui.projectDirEdit.setText(self.parents.dir)
 
         self.putChoices()
 
@@ -66,10 +67,10 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
             analysis_in_edition = (self.analysis.computationParameters != "")
             if self.analysis.category == "compare" and not analysis_in_edition:
                 self.next_widget.setRecordValues(self.analysis.candidateScList)
-            self.parent.parent.ui.analysisStack.addWidget(self.next_widget)
-            self.parent.parent.ui.analysisStack.removeWidget(self)
-            self.parent.parent.ui.analysisStack.setCurrentWidget(self.next_widget)
-            self.parent.parent.parent.updateDoc(self.next_widget)
+            self.ui.parents.analysisStack.addWidget(self.next_widget)
+            self.ui.parents.analysisStack.removeWidget(self)
+            self.ui.parents.analysisStack.setCurrentWidget(self.next_widget)
+            self.parents.updateDoc(self.next_widget)
         else:
             QMessageBox.information(self,"Selection error","At least %s scenarios have to be selected"%self.nb_min_sel)
 
@@ -117,6 +118,6 @@ class GenericScenarioSelection(formGenericScenarioSelection,baseGenericScenarioS
 
     def exit(self):
         # reactivation des onglets
-        self.parent.parent.ui.analysisStack.removeWidget(self)
-        self.parent.parent.ui.analysisStack.setCurrentIndex(0)
+        self.ui.parents.analysisStack.removeWidget(self)
+        self.ui.parents.analysisStack.setCurrentIndex(0)
 

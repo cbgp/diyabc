@@ -9,6 +9,7 @@
 # but usefull for any graphical or user oriented program.
 #
 # This package contains several classes :
+#     - GetFirstParentAttr : retrieve attributes values in pyQt objects chained by the parent attr
 #     - CmdPrompt and cmdThread : prompt which allows to execute python code
 #       interactively while program is running
 #     - Documentator : Extract infos from xml files produced by latexml or latex2html
@@ -47,6 +48,109 @@ CYAN='\033[36m'
 CYAN_BLINK='\033[5;36m'
 tabcolors=[WHITE,RED,BLUE,GREEN,YELLOW,CYAN,CYAN_BLINK]
 
+
+
+class Parents() :
+    """
+    Retrieve attribute values for chained objects with 'parent' attribute for heredity.
+    ex :
+    a.v = 1
+    b.parent = a
+    c.parent = b
+    d.parent = c
+    d.parents = getFirstParentAttr(d.parent)
+    d.parents.v ->  1
+    d.parents.getParents = [c,b,a]
+    """
+
+    def __init__(self, parent):
+        self.parent = parent
+
+    def __getattr__(self, attr):
+        parent = self.parent
+        parents = []
+        #while  getattr(parent, attr, "diyabcParentTest") == "diyabcParentTest" :
+        while True :
+            parents.append(parent.__class__.__name__)
+            try :
+                return getattr(parent, attr)
+            except (AttributeError, TypeError) as e:
+                pass
+            try:
+                parent = parent.parent
+            except (AttributeError, TypeError) as e:
+                msg, = e.args
+                msg += "\nCould not found property %s in classes : %s.\nLast tried class %s has no parent class." % \
+                                                           (attr, ", ".join(parents), parents[-1].__class__.__name__)
+                e.args = (msg,)
+                raise e
+
+                #print e , "====", parent.__class__.__name__ ,"====", e.args
+        #return getattr(parent, attr)
+
+    def getFirstMatch(self,attrstr, *arguments, **options):
+        attrstr = str(attrstr)
+        parent = self.parent
+        parents = []
+        val = False
+        method = False
+        isMethod = False
+        if attrstr[0] == '.' :
+           attrstr =  attrstr[1:]
+        if attrstr[-1] == ')' and attrstr[-2] != '(' :
+            err = ValueError()
+            msg = "if attrstr is a function to call, you must give the function parameters in the getFirstMatch paremeters.\n"
+            msg += "ie :  parents.getFirstMatch('goto(house, how=byCar)') must be written parents.('goto()', house, how=byCar)\n"
+            msg += "ie : maybe like this parents.getFirstMatch('%s()', %s)" % (  "(".join(attrstr.split('(')[:-1])   , attrstr.split('(')[-1][:-1]  )
+            err.args = (msg,)
+            raise err
+        if len(arguments) > 0 or len(options) > 0 or attrstr[-2:] == '()' :
+            isMethod = True
+            if attrstr[-2:] == '()' :
+                attr = attrstr[:-2]
+            else :
+                attr = attrstr
+        else :
+            attr = attrstr
+        while True :
+            parents.append(parent.__class__.__name__)
+            try :
+                exec("val = parent.%s" % attr)
+                break
+            except  (AttributeError, TypeError) as e:
+                pass
+            try:
+                parent = parent.parent
+            except (AttributeError, TypeError) as e:
+                err = AttributeError()
+                err.args = ("Could not found '%s' in any of those object classes : %s" % (attr,parents),)
+                raise err
+        if isMethod :
+            val = val(*arguments, **options)
+        return val
+
+    def getParents(self):
+        parent = self.parent
+        parents = []
+        while True :
+            parents.append(parent.__class__.__name__)
+            try:
+                parent = parent.parent
+            except (AttributeError, TypeError) as e:
+                break
+        return parents
+
+    def getParentsNames(self):
+        return [x.__class__.__name__ for x in self.getParents()]
+
+    def __repr__(self):
+        return self.getParentsNames().__repr__()
+
+    def __str__(self):
+        return self.__repr__()
+
+
+
 class CmdPrompt(cmd.Cmd):
     """ prompt which execute python code given by the user
     with the "do" command
@@ -73,6 +177,8 @@ class cmdThread(Thread):
         theCmd = CmdPrompt()
         theCmd.obj = self.obj
         theCmd.cmdloop()
+
+
 
 
 from xml.dom.minidom import parse
@@ -532,10 +638,6 @@ def getFsEncoding(logLevel=False):
     else :
         log(logLevel,"File system encoding : %s" % fSCoding)
     return fSCoding
-
-
-
-
 
 
 

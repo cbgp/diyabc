@@ -15,7 +15,7 @@ from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonConfidence import SetupComparisonConfidence
 import variables
 from variables import UIPATH
-from utils.cbgpUtils import getFsEncoding
+from utils.cbgpUtils import getFsEncoding, Parents
 
 formHistModelFixed,baseHistModelFixed= uic.loadUiType((u"%s/setHistFrame.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
@@ -26,6 +26,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
     def __init__(self,analysis,parent=None):
         super(HistFixed,self).__init__(parent)
         self.parent=parent
+        self.parents = Parents(self.parent)
         self.analysis = analysis
         self.sc_to_show = self.analysis.chosenSc
         self.list_selected_evaluate_sc = self.analysis.candidateScList
@@ -115,7 +116,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
     def getScText(self):
         """ récupère le texte du scenario concerné dans le modèle historique de la reftable
         """
-        return self.parent.parent.hist_model_win.scList[self.sc_to_show-1].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()
+        return self.parents.hist_model_win.scList[self.sc_to_show-1].findChild(QPlainTextEdit,"scplainTextEdit").toPlainText()
 
     def addTheParams(self):
         """ trouve et ajoute les paramètres du scenario concerné
@@ -123,7 +124,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
         try:
             sc = str(self.getScText())
             scChecker = Scenario(number=self.sc_to_show)
-            scChecker.checkread(sc.strip().split('\n'),self.parent.parent.data)
+            scChecker.checkread(sc.strip().split('\n'),self.parents.data)
             scChecker.checklogic()
             dico_sc_infos = {}
             dico_sc_infos["text"] = sc.strip().split('\n')
@@ -135,7 +136,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
             return
 
         visible = False
-        dico_param = self.parent.parent.hist_model_win.param_info_dico
+        dico_param = self.parents.hist_model_win.param_info_dico
         for param in scChecker.parameters:
             pname = param.name
             pcat = param.category
@@ -236,7 +237,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
         """
         problems = ""
         conditions = defaultdict(set)
-        for cond in self.parent.parent.findChildren(QtGui.QLabel, "condLabel") :
+        for cond in self.parents.findChildren(QtGui.QLabel, "condLabel") :
             condText = str(cond.text()).strip()
             for b in ['<=','<','>=','>'] :
                 if b in condText :
@@ -287,13 +288,13 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
             self.majParamInfoDico()
             self.analysis.histParamsFixed = self.param_info_dico
             # appel ping pong
-            next_widget = self.parent.parent.getNextWidget(self)
+            next_widget = self.parents.getNextWidget(self)
 
-            self.parent.parent.ui.analysisStack.addWidget(next_widget)
-            self.parent.parent.ui.analysisStack.removeWidget(self)
-            self.parent.parent.ui.analysisStack.setCurrentWidget(next_widget)
+            self.ui.parents.analysisStack.addWidget(next_widget)
+            self.ui.parents.analysisStack.removeWidget(self)
+            self.ui.parents.analysisStack.setCurrentWidget(next_widget)
 
-            self.parent.parent.parent.updateDoc(next_widget)
+            self.parents.updateDoc(next_widget)
 
     def exit(self):
         ## reactivation des onglets
@@ -301,8 +302,8 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
         #self.parent.parent.setTabEnabled(0,True)
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentIndex(1)
-        self.parent.parent.ui.analysisStack.removeWidget(self)
-        self.parent.parent.ui.analysisStack.setCurrentIndex(0)
+        self.ui.parents.analysisStack.removeWidget(self)
+        self.ui.parents.analysisStack.setCurrentIndex(0)
 
     def getNbParam(self):
         return len(self.paramList)

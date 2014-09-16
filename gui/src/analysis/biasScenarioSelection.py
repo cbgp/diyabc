@@ -8,16 +8,18 @@ from historicalModel.setHistDrawnAnalysis import HistDrawn
 from historicalModel.setHistFixedAnalysis import HistFixed
 import variables
 from variables import UIPATH
-from utils.cbgpUtils import getFsEncoding
+from utils.cbgpUtils import getFsEncoding, Parents
 
 formBiasScenarioSelection,baseBiasScenarioSelection = uic.loadUiType((u"%s/biasScenarioSelection.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
+
 class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenarioSelection):
-    """ Sélection du scenario dans la cadre d'une analyse de type bias ou confidence
+    """ Selection du scenario dans la cadre d'une analyse de type bias ou confidence
     """
     def __init__(self,nb_sc,analysis,parent=None):
         super(BiasNConfidenceScenarioSelection,self).__init__(parent)
         self.parent=parent
+        self.parents = Parents(self.parent)
         self.analysis = analysis
         self.nb_sc = nb_sc
         self.checklist = []
@@ -35,6 +37,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
 
         self.restoreAnalysisValues()
 
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)
@@ -50,7 +53,8 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             self.ui.analysisTypeLabel.setText("Bias and mean square error")
         else:
             self.ui.analysisTypeLabel.setText("Confidence in scenario choice")
-        self.ui.projectDirEdit.setText(self.parent.parent.dir)
+
+        self.ui.projectDirEdit.setText(self.parents.dir)
 
         self.ui.analysisNameLabel.setText(self.analysis.name)
 
@@ -63,7 +67,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         if self.analysis.chosenSc != None:
             self.radiolist[self.analysis.chosenSc - 1].setChecked(True)
 
-        if self.analysis.category == "confidence":
+        if self.analysis.category == "confidence_prior_specific":
             for i in range(self.nb_sc):
                 num = i+1
                 check = self.checklist[i]
@@ -96,8 +100,8 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
 
     def checkParameterValues(self, reset=True):
         self.ui.posteriorDataSetNumberFrame.hide()
-        if self.analysis.category == "confidence" and self.ui.drawnPosteriorRadio.isChecked():
-            nbRecordsSelectedScenario = self.parent.parent.readNbRecordsOfScenario(int(self.getSelectedScenario()))
+        if self.analysis.category == "confidence_prior_specific" and self.ui.drawnPosteriorRadio.isChecked():
+            nbRecordsSelectedScenario = self.parents.readNbRecordsOfScenario(int(self.getSelectedScenario()))
             self.ui.maxPosteriorDataSetNumberLabel.setText("max = %s"%nbRecordsSelectedScenario)
             if str(self.ui.posteriorSimulatedDataSetNumberEdit.text()) is '' :
                 self.ui.posteriorSimulatedDataSetNumberEdit.setText(str(nbRecordsSelectedScenario))
@@ -120,14 +124,14 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             self.analysis.drawn = 'prior'
         elif self.ui.drawnPosteriorRadio.isChecked():
             self.analysis.drawn = 'posterior'
-            if self.analysis.category == "confidence":
+            if self.analysis.category == "confidence_prior_specific":
                 try :
-                    if int(str(self.ui.posteriorSimulatedDataSetNumberEdit.text())) > self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) \
+                    if int(str(self.ui.posteriorSimulatedDataSetNumberEdit.text())) > self.parents.readNbRecordsOfScenario(int(self.analysis.chosenSc)) \
                       or  int(str(self.ui.posteriorSimulatedDataSetNumberEdit.text())) <= 0 :
                         raise
                 except :
                      QMessageBox.information(self,"Number error","Total number of simulated data considered for local regression should be a positive number and inferior to the number of records of the scenario %s : %s" \
-                                                %(self.analysis.chosenSc, self.parent.parent.readNbRecordsOfScenario(int(self.analysis.chosenSc)) ))
+                                                %(self.analysis.chosenSc, self.parents.readNbRecordsOfScenario(int(self.analysis.chosenSc)) ))
                      return 0
                 try :
                     if int(str(self.ui.posteriorDataSetNumberEdit.text())) > int(str(self.ui.posteriorSimulatedDataSetNumberEdit.text())) \
@@ -140,7 +144,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
 
 
         # le cas du confidence, les sc à afficher dans le hist model sont ceux selectionnés
-        if self.analysis.category == "confidence":
+        if self.analysis.category == "confidence_prior_specific":
             if len(self.getListSelectedScenarios()) >= 2:
                 # pour confidence on a du selectionner au moins deux scenarios
                 self.analysis.candidateScList = self.getListSelectedScenarios()
@@ -167,14 +171,14 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 next_widget = tmpWidget.parent.parent.getNextWidget(tmpWidget)
             else:
                 next_widget = HistDrawn(self.analysis,self.parent)
-        self.parent.parent.ui.analysisStack.addWidget(next_widget)
-        self.parent.parent.ui.analysisStack.removeWidget(self)
-        self.parent.parent.ui.analysisStack.setCurrentWidget(next_widget)
+        self.ui.parents.analysisStack.addWidget(next_widget)
+        self.ui.parents.analysisStack.removeWidget(self)
+        self.ui.parents.analysisStack.setCurrentWidget(next_widget)
         # skip   group loci selection for microsat and seqs analysis
-        if not self.parent.parent.isSnp() :
+        if not self.parents.isSnp() :
             next_widget.validate()
 
-        self.parent.parent.parent.updateDoc(next_widget)
+        self.parents.updateDoc(next_widget)
 
     def getSelectedScenario(self):
         """ retourne le numero du scenario choisi
@@ -203,7 +207,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             QObject.connect(radio,SIGNAL("clicked()"),self.checkParameterValues)
         self.radiolist[0].setChecked(True)
 
-        if self.analysis.category == "confidence":
+        if self.analysis.category == "confidence_prior_specific":
             for i in range(self.nb_sc):
                 num = i+1
                 check = QCheckBox("Scenario %s"%num,self)
@@ -217,6 +221,6 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
 
     def exit(self):
         ## reactivation des onglets
-        self.parent.parent.ui.analysisStack.removeWidget(self)
-        self.parent.parent.ui.analysisStack.setCurrentIndex(0)
+        self.ui.parents.analysisStack.removeWidget(self)
+        self.ui.parents.analysisStack.setCurrentIndex(0)
 

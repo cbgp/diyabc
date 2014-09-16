@@ -8,7 +8,7 @@ from PyQt4 import uic
 #from uis.setMutationModelSequences_ui import Ui_Frame
 import variables
 from variables import UIPATH
-from utils.cbgpUtils import getFsEncoding
+from utils.cbgpUtils import getFsEncoding, Parents
 
 formSetMutationModelSequencesFixed,baseSetMutationModelSequencesFixed = uic.loadUiType((u"%s/setMutationModelSequences.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
@@ -19,6 +19,7 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
     def __init__(self,parent=None,box_group=None):
         super(SetMutationModelSequencesFixed,self).__init__(parent)
         self.parent=parent
+        self.parents = Parents(self.parent)
         self.box_group = box_group
         self.createWidgets()
 
@@ -136,9 +137,9 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
         #self.parent.parent.setTabEnabled(self.parent.parent.indexOf(self.parent),True)
         #self.parent.parent.removeTab(self.parent.parent.indexOf(self))
         #self.parent.parent.setCurrentIndex(self.parent.parent.indexOf(self.parent))
-        self.parent.parent.ui.analysisStack.removeWidget(self)
+        self.ui.parents.analysisStack.removeWidget(self)
         #self.parent.parent.ui.analysisStack.setCurrentIndex(0)
-        self.parent.parent.ui.analysisStack.setCurrentWidget(self.parent)
+        self.ui.parents.analysisStack.setCurrentWidget(self.parent)
 
     def validate(self):
         """ vérifie la validité des informations entrées dans le mutation model
@@ -146,7 +147,7 @@ class SetMutationModelSequencesFixed(formSetMutationModelSequencesFixed,baseSetM
         """
         if self.allValid():
             self.exit()
-            self.parent.setMutationSeqValid_dico[self.box_group] = True
+            self.parents.setMutationSeqValid_dico[self.box_group] = True
 
 
     def showJukes(self):

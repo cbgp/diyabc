@@ -15,14 +15,15 @@ from analysis.setupEstimationBias import SetupEstimationBias
 from analysis.setupComparisonConfidence import SetupComparisonConfidence
 from utils.visualizescenario import *
 from utils.data import *
-from utils.cbgpUtils import log,getFsEncoding
+from utils.cbgpUtils import log,getFsEncoding,Parents
 
 class SetGeneticDataAnalysis(SetGeneticData):
     """ set genetic data pour les informations concernant une analyse bias ou confidence
     """
     def __init__(self,analysis,parent=None):
         super(SetGeneticDataAnalysis,self).__init__(parent)
-
+        self.parent = parent
+        self.parents = Parents(self.parent)
         self.analysis = analysis
         self.fsCoding = getFsEncoding(logLevel=False)
         self.analysisFrame.show()
@@ -34,7 +35,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
 
         self.fillLocusTableFromData()
 
-        gen_data_ref = self.parent.gen_data_win
+        gen_data_ref = self.parents.gen_data_win
         # copie des valeurs de range et size
         for locusrow in range(gen_data_ref.ui.tableWidget.rowCount()):
             self.ui.tableWidget.setItem(locusrow,2,QTableWidgetItem("%s"%gen_data_ref.ui.tableWidget.item(locusrow,2).text()))
@@ -166,8 +167,8 @@ class SetGeneticDataAnalysis(SetGeneticData):
     def switchTo(self,widget):
         """ on switche dans la stack analysis
         """
-        self.parent.ui.analysisStack.addWidget(widget)
-        self.parent.ui.analysisStack.setCurrentWidget(widget)
+        self.ui.parents.analysisStack.addWidget(widget)
+        self.ui.parents.analysisStack.setCurrentWidget(widget)
 
     def exit(self):
         ## reactivation des onglets
@@ -175,8 +176,8 @@ class SetGeneticDataAnalysis(SetGeneticData):
         #self.parent.setTabEnabled(1,True)
         #self.parent.removeTab(self.parent.indexOf(self))
         #self.parent.setCurrentIndex(1)
-        self.parent.ui.analysisStack.removeWidget(self)
-        self.parent.ui.analysisStack.setCurrentIndex(0)
+        self.ui.parents.analysisStack.removeWidget(self)
+        self.ui.parents.analysisStack.setCurrentIndex(0)
 
     def validate(self):
         """ clic sur le bouton validate
@@ -203,7 +204,7 @@ class SetGeneticDataAnalysis(SetGeneticData):
                 problem += u"Group %s is empty\n"%(i+1)
         if problem != u"":
             QMessageBox.information(self,"Impossible to validate the genetic data",problem)
-            self.parent.setGenValid(False)
+            self.parents.setGenValid(False)
         else:
             # c'est valide, on passe à la dernière phase de paramètrage
             if self.analysis.drawn:
@@ -219,9 +220,9 @@ class SetGeneticDataAnalysis(SetGeneticData):
             #self.parent.addTab(last_parametrisation,next_title)
             #self.parent.removeTab(self.parent.indexOf(self))
             #self.parent.setCurrentWidget(last_parametrisation)
-            self.parent.ui.analysisStack.addWidget(last_parametrisation)
-            self.parent.ui.analysisStack.removeWidget(self)
-            self.parent.ui.analysisStack.setCurrentWidget(last_parametrisation)
+            self.ui.parents.analysisStack.addWidget(last_parametrisation)
+            self.ui.parents.analysisStack.removeWidget(self)
+            self.ui.parents.analysisStack.setCurrentWidget(last_parametrisation)
             #self.parent.addAnalysis(self.analysis)
             #self.exit()
 
@@ -244,13 +245,13 @@ class SetGeneticDataAnalysis(SetGeneticData):
     def writeGeneticConfFromGui(self):
         """ on ecrit l'etat actuel des genetic data dans conf.gen.tmp
         """
-        if os.path.exists((u"%s/%s"%(self.parent.dir,self.parent.gen_conf_name)).encode(self.fsCoding)):
-            os.remove((u"%s/%s"%(self.parent.dir,self.parent.gen_conf_name)).encode(self.fsCoding))
+        if os.path.exists((u"%s/%s"%(self.parents.dir,self.parents.gen_conf_name)).encode(self.fsCoding)):
+            os.remove((u"%s/%s"%(self.parents.dir,self.parents.gen_conf_name)).encode(self.fsCoding))
 
-        f = codecs.open((u"%s/%s"%(self.parent.dir,self.parent.gen_conf_name)).encode(self.fsCoding),'w',"utf-8")
+        f = codecs.open((u"%s/%s"%(self.parents.dir,self.parents.gen_conf_name)).encode(self.fsCoding),'w',"utf-8")
         # partie description des locus
         f.write("loci description (%i)\n"%self.nbLocusGui)
-        data = self.parent.data
+        data = self.parents.data
         for i in range(data.nloc):
             name = data.locuslist[i].name
             type = data.locuslist[i].type
@@ -313,9 +314,9 @@ class SetGeneticDataAnalysis(SetGeneticData):
         """
         # de toute façon, on rempli le tableau de locus
         #self.fillLocusTableFromData()
-        if os.path.exists(str(self.parent.dir).encode(self.fsCoding)):
-            if os.path.exists((u"%s/%s"%(self.parent.dir,self.parent.gen_conf_name)).encode(self.fsCoding)):
-                f = codecs.open((u"%s/%s"%(self.parent.dir,self.parent.gen_conf_name)).encode(self.fsCoding),"rU","utf-8")
+        if os.path.exists(str(self.parents.dir).encode(self.fsCoding)):
+            if os.path.exists((u"%s/%s"%(self.parents.dir,self.parents.gen_conf_name)).encode(self.fsCoding)):
+                f = codecs.open((u"%s/%s"%(self.parents.dir,self.parents.gen_conf_name)).encode(self.fsCoding),"rU","utf-8")
                 lines = f.readlines()
                 nloc = int(lines[0].split('(')[1].split(')')[0])
                 # determination du nombre de groupes
