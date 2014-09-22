@@ -121,14 +121,20 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.numRegCombo.setCurrentIndex(self.ui.numRegCombo.findText(numreg))
             if "confidence" in self.analysis.category :
                 if self.analysis.category == "confidence_posterior_global":
-                    self.ui.lrEdit.setText(cp.split('z:')[1].split(';')[0])
-                    self.ui.notdsEdit.setText(cp.split('c:')[1].split(';')[0])
+                    if "z:" in cp :
+                        self.ui.lrEdit.setText(cp.split('z:')[1].split(';')[0])
+                    if "c:" in  cp :
+                        self.ui.notdsEdit.setText(cp.split('c:')[1].split(';')[0])
                 elif  self.analysis.category == "confidence_prior_global":
-                    self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
-                    self.ui.notdsEdit.setText(cp.split('b:')[1].split(';')[0])
+                    if "l:" in cp :
+                        self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
+                    if "b:" in cp :
+                        self.ui.notdsEdit.setText(cp.split('b:')[1].split(';')[0])
                 elif  self.analysis.category in ["confidence_prior_specific", "confidence"]:
-                    self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
-                    self.ui.notdsEdit.setText(cp.split('t:')[1].split(';')[0])
+                    if "l:" in cp :
+                        self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
+                    if "t:" in cp :
+                        self.ui.notdsEdit.setText(cp.split('t:')[1].split(';')[0])
             else :
                 self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
 

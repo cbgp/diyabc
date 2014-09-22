@@ -246,7 +246,7 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
                     analysis = Analysis(name,"bias")
                 genSel = BiasNConfidenceScenarioSelection(len(self.parent.hist_model_win.scList),analysis,self)
 
-            elif (self.analysis_to_edit != None and self.analysis_to_edit.category == "confidence") or self.ui.confidenceRadio.isChecked():
+            elif (self.analysis_to_edit != None and "confidence" in self.analysis_to_edit.category) or self.ui.confidenceRadio.isChecked():
                 if self.analysis_to_edit != None:
                     analysis = self.analysis_to_edit
                     self.parent.changeAnalysisName(analysis,name)

@@ -26,13 +26,6 @@ class ConfidenceTypeSelection(formConfidenceTypeSelection,baseConfidenceTypeSele
         self.createWidgets()
 
 
-#         self.ui.verticalLayout_3.setAlignment(Qt.AlignHCenter)
-#         self.ui.verticalLayout_3.setAlignment(Qt.AlignTop)
-#         self.ui.verticalLayout_2.setAlignment(Qt.AlignHCenter)
-#         self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)
-#         self.ui.verticalLayout.setAlignment(Qt.AlignHCenter)
-#         self.ui.verticalLayout.setAlignment(Qt.AlignTop)
-
         self.restoreAnalysisValues()
 
     def createWidgets(self):
@@ -97,8 +90,6 @@ class ConfidenceTypeSelection(formConfidenceTypeSelection,baseConfidenceTypeSele
             elif self.ui.priorSpecificConfidenceButton.isChecked() :
                 self.analysis.category = "confidence_prior_specific"
                 next_widget = BiasNConfidenceScenarioSelection(len(self.parents.hist_model_win.scList),self.analysis,self)
-                if not self.parents.isSnp() :
-                    next_widget.validate()
             else :
                 QMessageBox.information(self,"No prior selection error","You must choose a prior type : GLOBAL or SCENARIO SPECIFIC.")
                 return 0

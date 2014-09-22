@@ -43,6 +43,7 @@ class HistFixed(formHistModelFixed,baseHistModelFixed):
 
         self.restoreAnalysisValues()
 
+
     def createWidgets(self):
         self.ui=self
         self.ui.setupUi(self)

@@ -333,6 +333,7 @@ class SetGeneticDataMsatSeq(SetGeneticData):
                 l = 1
                 gmax = 0
                 while l < nloc+1:
+                    print lines[l]
                     g = int(lines[l].split()[3].replace('G',''))
                     if g > gmax:
                         gmax = g

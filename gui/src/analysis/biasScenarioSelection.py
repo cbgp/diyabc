@@ -6,6 +6,7 @@ from PyQt4.QtGui import *
 from PyQt4 import uic
 from historicalModel.setHistDrawnAnalysis import HistDrawn
 from historicalModel.setHistFixedAnalysis import HistFixed
+from setupEstimationBias import SetupEstimationBias
 import variables
 from variables import UIPATH
 from utils.cbgpUtils import getFsEncoding, Parents
@@ -59,7 +60,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
         self.ui.analysisNameLabel.setText(self.analysis.name)
 
         # hide posterior option
-        if self.analysis.name[0:4].upper() != 'CBGP' :
+        if  self.analysis.category != "bias":
              self.ui.drawnPosteriorRadio.hide()
         self.checkParameterValues()
 
@@ -73,7 +74,6 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 check = self.checklist[i]
                 check.setChecked(num in self.analysis.candidateScList)
         if self.analysis.drawn != None:
-            print "self.analysis.drawn = " , self.analysis.drawn
             if self.analysis.drawn is False :
                 self.ui.fixedRadio.setChecked(True)
             # in legacy analysis, drawn can be set to True for prior :
@@ -150,10 +150,6 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
                 self.analysis.candidateScList = self.getListSelectedScenarios()
                 if self.ui.fixedRadio.isChecked():
                     next_widget = HistFixed(self.analysis,self.parent)
-                elif self.ui.drawnPosteriorRadio.isChecked():
-                    #Quick and not so dirty patch to avoid prior config panel when confidence use posteriors
-                    tmpWidget = HistDrawn(self.analysis,self.parent)
-                    next_widget = tmpWidget.parent.parent.getNextWidget(tmpWidget)
                 # prior
                 else:
                     next_widget = HistDrawn(self.analysis,self.parent)
@@ -166,17 +162,15 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             if self.ui.fixedRadio.isChecked():
                 next_widget = HistFixed(self.analysis,self.parent)
             elif self.ui.drawnPosteriorRadio.isChecked():
-                #Quick and not so dirty patch to avoid prior config panel when confidence use posteriors
-                tmpWidget = HistDrawn(self.analysis,self.parent)
-                next_widget = tmpWidget.parent.parent.getNextWidget(tmpWidget)
+                next_widget = SetupEstimationBias(self.analysis,self.parent)
             else:
                 next_widget = HistDrawn(self.analysis,self.parent)
         self.ui.parents.analysisStack.addWidget(next_widget)
         self.ui.parents.analysisStack.removeWidget(self)
         self.ui.parents.analysisStack.setCurrentWidget(next_widget)
         # skip   group loci selection for microsat and seqs analysis
-        if not self.parents.isSnp() :
-            next_widget.validate()
+#         if self.ui.drawnPosteriorRadio.isChecked() and not self.parents.isSnp() :
+#             next_widget.validate()
 
         self.parents.updateDoc(next_widget)
 
