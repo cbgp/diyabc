@@ -354,6 +354,15 @@ string nomficonfresult;
 		}
 		delete [] enreg;
 	}
+	
+	int calnrecpos() {
+		int nrpos=0;
+		rt.nscenchoisi=rt.nscen;
+		rt.scenchoisi = new int[rt.nscenchoisi];
+		for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = j;
+		for (int j=0;j<rt.nscenchoisi;j++) nrpos +=rt.nrecscen[rt.scenchoisi[j]-1];
+		return nrpos;
+	}
     
 /**
  * Interprête la ligne de paramètres de l'option "confiance dans le choix du scénario" et lance les calculs correspondants
@@ -384,15 +393,16 @@ string nomficonfresult;
         cout<<scurfile<<"\n";
         cout<<"options : "<<opt<<"\n";
         splitwords(opt,";",ss); ns = ss.size();
+		cout<<"ns="<<ns<<"\n";
+		nrecb=nrecc=0;rt.nscenchoisi=0;
         for (int i=0;i<ns;i++) {
             s0=ss[i].substr(0,2);
-            s1=ss[i].substr(2);cout<<ss[i]<<"   s0="<<s0<<"s1="<<s1<<"\n";
+            s1=ss[i].substr(2);cout<<"ss["<<i<<"]="<<ss[i]<<"   s0="<<s0<<"  s1="<<s1<<"\n";
             if (s0=="s:") {
                 splitwords(s1,",",ss1); rt.nscenchoisi=ss1.size();
                 rt.scenchoisi = new int[rt.nscenchoisi];
                 for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = atoi(ss1[j].c_str());
                 nrecpos=0;for (int j=0;j<rt.nscenchoisi;j++) nrecpos +=rt.nrecscen[rt.scenchoisi[j]-1];
-				nreca=nrecb=nrecc=nrecpos;
 				cout <<"scenarios à tester : ";
                 for (int j=0;j<rt.nscenchoisi;j++) {cout<<rt.scenchoisi[j]; if (j<rt.nscenchoisi-1) cout <<",";}cout<<"\n";
             } else if (s0=="r:") {
@@ -400,20 +410,13 @@ string nomficonfresult;
                 cout<<"scenario choisi pour le test : "<<rt.scenteste<<"\n";
              } else if (s0=="n:") {
                 nrec=atoi(s1.c_str());
-                if(nrec>nrecpos) nrec=nrecpos;
-                cout<<"nombre total de jeux de données considérés (pour les scénarios choisis )= "<<nrec<<"\n";
-              } else if (s0=="a:") {
+				nreca=nrec;
+             } else if (s0=="a:") {
                 nreca=atoi(s1.c_str());
-                if(nreca>nrecpos) nreca=nrecpos;
-                cout<<"nombre total de jeux de données considérés (pour le calcul des posteriors)= "<<nreca<<"\n";
 			} else if (s0=="b:") {
-				nrecb=atoi(s1.c_str());
-                if(nrecb>nrecpos) nrecb=nrecpos;
-				cout<<"nombre total de jeux de données considérés pour le calcul de la prior predictive error= "<<nrecb<<"\n";
+				nrecb=atoi(s1.c_str());cout<<"nrecb="<<nrecb<<"\n";
 			}else if (s0=="c:") {
 				nrecc=atoi(s1.c_str());
-                if(nrecc>nrecpos) nrecc=nrecpos;
-				cout<<"nombre total de jeux de données considérés pour le calcul de la posterior predictive error= "<<nrecc<<"\n";
           } else if (s0=="d:") {
                 nseld=atoi(s1.c_str());
                 cout<<"nombre de jeux de données considérés pour l'approche directe = "<<nseld<<"\n";
@@ -467,6 +470,22 @@ string nomficonfresult;
 				posterior=true;
 			}
         }
+		if (rt.nscenchoisi==0) {
+			rt.nscenchoisi=rt.nscen;
+			rt.scenchoisi = new int[rt.nscenchoisi];
+			for (int j=0;j<rt.nscenchoisi;j++) rt.scenchoisi[j] = j+1;
+			nrecpos=0;for (int j=0;j<rt.nscenchoisi;j++) nrecpos +=rt.nrecscen[rt.scenchoisi[j]-1];
+			if(nrec>nrecpos) nrec=nrecpos;
+			cout<<"nombre total de jeux de données considérés (pour les scénarios choisis )= "<<nrec<<"\n";
+			cout<<"nreca="<<nreca<<"   nrecb="<<nrecb<<"   nrecc="<<nrecc<<"\n";
+			if(nreca>nrecpos) nreca=nrecpos;
+			cout<<"nombre total de jeux de données considérés (pour le calcul des posteriors)= "<<nreca<<"\n";
+			if(nrecb>nrecpos) nrecb=nrecpos;
+			cout<<"nombre total de jeux de données considérés pour le calcul de la prior predictive error= "<<nrecb<<"\n";
+			if(nrecc>nrecpos) nrecc=nrecpos;
+			cout<<"nombre total de jeux de données considérés pour le calcul de la posterior predictive error= "<<nrecc<<"\n";
+
+		}
         cout<<"fin de l'analyse de confpar\n";
         if (nlogreg==1){
 			nprog=10*(ntest+nrecb+nrecc)+2;
@@ -662,13 +681,16 @@ string nomficonfresult;
 			for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(9)<<nbestdir[i];
 			if (nlogreg==1) {for (int i=0;i<rt.nscenchoisi;i++) f11<<setiosflags(ios::fixed)<<setw(17)<<nbestlog[i]<<"         ";}
 		}
+		if (nrecb>0){
 		f11<<"\n\nPrior predictive error (computed over "<<nrecb<<" data sets):\n";
 		f11<<"Direct approach :   "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcordirprior<<"\n";
 		f11<<"Logistic approach : "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcorlogprior<<"\n";
-		
+		}
+		if (nrecc>0){
 		f11<<"\n\nPosterior predictive error (computed over "<<nrecc<<" data sets):\n";
 		f11<<"Direct approach :   "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcordirposterior<<"\n";
 		f11<<"Logistic approach : "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcorlogposterior<<"\n";
+		}
 		duree=walltime(&debut);
 		f11<<"\nTotal duration ="<<TimeToStr(duree)<<"\n";
 		

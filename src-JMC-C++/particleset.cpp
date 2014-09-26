@@ -389,7 +389,7 @@ void ParticleSetC::dosimulstat(HeaderC const & header, int debut, int npart, boo
 			for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr,this->particule[ipart].weight);}
 		}
 	}
-	cout<<"after simulation of "<<npart<<" particles\n";
+	cout<<"after simulation of "<<npart<<" particles (scenario "<<numscen<<")\n";
 ///////////////fin du pragma
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		if (sOK[ipart]==0){
