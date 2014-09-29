@@ -41,6 +41,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
 
         self.ui.projectNameEdit.setText(self.parents.dir)
         self.ui.gridLayout.setAlignment(Qt.AlignTop)
+        self.ui.linearRegressionFrame.hide()
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
@@ -48,6 +49,9 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         QObject.connect(self.ui.numRegCombo,SIGNAL("currentIndexChanged(QString)"),self.updateInterValues)
         QObject.connect(self.ui.deEdit,SIGNAL("textChanged(QString)"),self.updateInterValues)
         QObject.connect(self.ui.lrEdit,SIGNAL("textChanged(QString)"),self.updateInterValues)
+        QObject.connect(self.ui.linearRegressionEdit,SIGNAL("textChanged(QString)"),self.updateInterValues)
+
+        print self.analysis.candidateScList * 100
 
         if "confidence" in self.analysis.category :
             self.ui.label.setText("Confidence in scenario choice")
@@ -59,6 +63,8 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.numRegCombo.addItem("0")
             self.ui.numRegCombo.addItem("1")
             self.ui.notdsEdit.setText("500")
+            if self.analysis.category == "confidence_posterior_global" :
+                self.ui.linearRegressionFrame.show()
         else: # assume self.analysis.category == "compare"
             self.ui.notdsEdit.hide()
             self.ui.notdsLabel.hide()
@@ -122,7 +128,9 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             if "confidence" in self.analysis.category :
                 if self.analysis.category == "confidence_posterior_global":
                     if "z:" in cp :
-                        self.ui.lrEdit.setText(cp.split('z:')[1].split(';')[0])
+                        self.ui.linearRegressionEdit.setText(cp.split('z:')[1].split(';')[0])
+                    if "l:" in cp :
+                        self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
                     if "c:" in  cp :
                         self.ui.notdsEdit.setText(cp.split('c:')[1].split(';')[0])
                 elif  self.analysis.category == "confidence_prior_global":
@@ -144,6 +152,8 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         try:
             if "confidence" in self.analysis.category :
                 notds = int(self.ui.notdsEdit.text())
+            if self.analysis.category == "confidence_posterior_global":
+                linearRegrassion = int(self.ui.linearRegressionEdit.text())
             lr = int(self.ui.lrEdit.text())
             de = int(self.ui.deEdit.text())
             cnosd = int(self.ui.cnosdEdit.text())
@@ -213,7 +223,8 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                 strparam += "f:%s;"%self.analysis.fda
 
                 if self.analysis.category == "confidence_posterior_global":
-                    strparam += "z:%s;" % self.dico_values['lr']
+                    strparam += "z:%s;" % self.dico_values['linearRegression']
+                    strparam += "l:%s;" % self.dico_values['lr']
                     strparam += "c:%s;"%self.dico_values['notds']
                     strparam += ""
                 elif  self.analysis.category == "confidence_prior_global":
@@ -295,6 +306,11 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                 onePc = 1000
         self.ui.lrEdit.setText(str(onePc))
 
+        # linear regression default
+        onePcScn = (sumRec / 100 ) / len(scList)
+        self.ui.linearRegressionEdit.setText(str(onePcScn))
+
+
     def setCandidateScenarios(self,scList):
         """ ecrit la liste des scenarios candidats
         """
@@ -347,6 +363,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
     def majDicoValues(self):
         self.dico_values["choNumberOfsimData"] = str(self.ui.cnosdEdit.text())
         self.dico_values["de"] = str(self.ui.deEdit.text())
+        self.dico_values["linearRegression"] = str(self.ui.linearRegressionEdit.text())
         self.dico_values["lr"] = str(self.ui.lrEdit.text())
         self.dico_values["numReg"] = str(self.ui.numRegCombo.currentText())
         self.dico_values["notds"] = str(self.ui.notdsEdit.text())

@@ -13,7 +13,7 @@ from analysis import Analysis
 import output
 import variables
 from variables import UIPATH
-from utils.cbgpUtils import getFsEncoding
+from utils.cbgpUtils import getFsEncoding, Parents
 
 formDefineNewAnalysis,baseDefineNewAnalysis = uic.loadUiType((u"%s/defineAnalysis.ui"%UIPATH).encode(getFsEncoding(logLevel=False)))
 
@@ -26,7 +26,9 @@ class DefineNewAnalysis(formDefineNewAnalysis,baseDefineNewAnalysis):
         super(DefineNewAnalysis,self).__init__(parent)
         self.parent=parent
         self.nbScenario = nbScenario
+        self.nb_sc = nbScenario
         self.analysis_to_edit = analysis_to_edit
+        self.parents = Parents(self.parent)
         self.createWidgets()
         self.ui.verticalLayout_2.setAlignment(Qt.AlignHCenter)
         self.ui.verticalLayout_2.setAlignment(Qt.AlignTop)
