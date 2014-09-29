@@ -65,6 +65,13 @@ extern bool deltanul;
 
 string nomficonfresult;
 
+class resdata
+{
+public:
+	int number,truescen,directscen,logisticscen;
+};
+resdata *resprior,*respost;
+
 /**
  * Ecriture de l'entete du fichier confidence.txt contenant les résultats
  */
@@ -228,6 +235,7 @@ string nomficonfresult;
 	void traitenreg(string s, int nrec, int nseld, int nselr,int nrecp, int nlogreg, double *prop) {
  		float *stat_obs;
 		int ncs1,nsel;
+		bool prior=(s=="prior");
 		nsel=nseld;if(nsel<nselr) nsel=nselr;
         posteriorscenC **postsd,*postsr;
 		int ncdir,nclog;
@@ -235,9 +243,12 @@ string nomficonfresult;
 		rt.alloue_enrsel(nsel);
 		if (nlogreg==1) allouecmat(rt.nscen, nselr, rt.nstat);
 		ncdir = nclog = 0;
+		if (prior) resprior = new resdata[nrecp]; else respost = new resdata[nrecp];
 		for (int p=0;p<nrecp;p++) {
+			if (prior) resprior[p].number=p+1;else respost[p].number=p+1; 
 			for (int j=0;j<rt.nstat;j++) stat_obs[j]=enreg[p].stat[j];
 			cout<<"\nComputing "<<s<<" predictive error\njeu test "<<p+1<<"   nsel="<<nsel<<"     bon scenario="<<enreg[p].numscen<<"\n";
+			if (prior) resprior[p].truescen=enreg[p].numscen;else respost[p].truescen=enreg[p].numscen; 
 			rt.cal_dist(nrec,nsel,stat_obs,false,true);
 			iprog +=6;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 			if (AFD) stat_obs = transfAFD(nrec,nsel,p);
@@ -246,11 +257,13 @@ string nomficonfresult;
 			int s=0;for (int i=1;i<rt.nscen;i++) {if (postsd[ncs1][i].x>postsd[ncs1][s].x) s=i;}
 			if (s==enreg[p].numscen-1) ncdir++;
 			cout<<"scenario estimé par l'approche directe : "<<s+1<<"\n";
+			if (prior) resprior[p].directscen=s+1;else respost[p].directscen=s+1; 
 			if (nlogreg==1) {
 				postsr = comp_logistic(nselr,stat_obs);
 				int s=0;for (int i=1;i<rt.nscen;i++) {if (postsr[i].x>postsr[s].x) s=i;}
 				if (s==enreg[p].numscen-1) nclog++;
 				cout<<"scenario estimé par l'approche logistique : "<<s+1<<"\n";
+				if (prior) resprior[p].logisticscen=s+1;else respost[p].logisticscen=s+1;
 				iprog +=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 				cout<<"                                                       --->"<<setprecision(2)<<(double)(100*iprog)/(double)nprog<<" %\n";
 				delete []postsd;
@@ -684,12 +697,17 @@ string nomficonfresult;
 		if (nrecb>0){
 		f11<<"\n\nPrior predictive error (computed over "<<nrecb<<" data sets):\n";
 		f11<<"Direct approach :   "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcordirprior<<"\n";
-		f11<<"Logistic approach : "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcorlogprior<<"\n";
+		f11<<"Logistic approach : "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcorlogprior<<"\n\n";
+		f11<<"Test data     True scenario    Direct     Logistic \n";
+		for (int i=0;i<nrecb;i++) f11<<setw(6)<<resprior[i].number<<setw(14)<<resprior[i].truescen<<setw(14)<<resprior[i].directscen<<setw(12)<<resprior[i].logisticscen<<"\n";
+		
 		}
 		if (nrecc>0){
 		f11<<"\n\nPosterior predictive error (computed over "<<nrecc<<" data sets):\n";
 		f11<<"Direct approach :   "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcordirposterior<<"\n";
 		f11<<"Logistic approach : "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcorlogposterior<<"\n";
+		f11<<"Test data     True scenario    Direct     Logistic \n";
+		for (int i=0;i<nrecb;i++) f11<<setw(6)<<respost[i].number<<setw(14)<<respost[i].truescen<<setw(14)<<respost[i].directscen<<setw(12)<<respost[i].logisticscen<<"\n";
 		}
 		duree=walltime(&debut);
 		f11<<"\nTotal duration ="<<TimeToStr(duree)<<"\n";

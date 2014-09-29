@@ -9,6 +9,8 @@
 #define CONF_H_
 #include <string>
 
+
+
 // Ecriture de l'entete du fichier confidence.txt contenant les résultats
 void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,std::string shist,std::string smut, bool AFD);
 
