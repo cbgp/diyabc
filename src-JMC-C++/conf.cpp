@@ -707,7 +707,7 @@ resdata *resprior,*respost;
 		f11<<"Direct approach :   "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcordirposterior<<"\n";
 		f11<<"Logistic approach : "<<fixed<<setw(9)<<setprecision(3)<<1.0-propcorlogposterior<<"\n";
 		f11<<"Test data     True scenario    Direct     Logistic \n";
-		for (int i=0;i<nrecb;i++) f11<<setw(6)<<respost[i].number<<setw(14)<<respost[i].truescen<<setw(14)<<respost[i].directscen<<setw(12)<<respost[i].logisticscen<<"\n";
+		for (int i=0;i<nrecc;i++) f11<<setw(6)<<respost[i].number<<setw(14)<<respost[i].truescen<<setw(14)<<respost[i].directscen<<setw(12)<<respost[i].logisticscen<<"\n";
 		}
 		duree=walltime(&debut);
 		f11<<"\nTotal duration ="<<TimeToStr(duree)<<"\n";
