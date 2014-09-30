@@ -72,6 +72,7 @@ public:
 };
 resdata *resprior,*respost;
 
+int nrecc;
 /**
  * Ecriture de l'entete du fichier confidence.txt contenant les résultats
  */
@@ -95,12 +96,13 @@ resdata *resprior,*respost;
         f1<<"Data file       : "<<header.datafilename<<"\n";
         f1<<"Reference table : "<<rt.filename<<"\n";
         f1<<"Number of simulated data sets : "<<nrec<<"\n";
+		if (nrecc>0) f1<<"Computation of posterior distribution using plain summary statistics\n";
         f1<<"Direct approach : number of selected data sets : "<<nseld<<"\n";
         if (nlogreg==1) {
             f1<<"Logistic regression  : number of selected data sets : "<<nselr<<"\n";
         }
-        f1<<"Historical parameters are drawn from the following priors and/or are given the following values : "<<shist<<"\n";
-        f1<<"Mutation parameters are drawn from the following priors and/or are given the following values : "<<smut<<"\n";
+        if (shist != "") f1<<"Historical parameters are drawn from the following priors and/or are given the following values : "<<shist<<"\n";
+        if (smut != "") f1<<"Mutation parameters are drawn from the following priors and/or are given the following values : "<<smut<<"\n";
         f1<<"Candidate scenarios : ";
         for (int i=0;i<rt.nscenchoisi;i++) {f1<<rt.scenchoisi[i];if (i<rt.nscenchoisi-1) f1<<", "; else f1<<"\n";}
         if (AFD) f1<<"Summary statistics have been replaced by components of a Linear Discriminant Analysis\n\n"; else 
@@ -382,7 +384,7 @@ resdata *resprior,*respost;
  */
     void doconf(string opt, int seed) {
         int nstatOK,ncs1,*nbestdir,*nbestlog,*scenchoibackup,nscenchoibackup;
-        int nrec = 0,nreca, nsel=0,nsel0=0,nseld = 0,nselr = 0,ns,nr, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond,nrecb,nrecc;
+        int nrec = 0,nreca, nsel=0,nsel0=0,nseld = 0,nselr = 0,ns,nr, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond,nrecb;
 		int ncordir,ncorlog,ncdir,nclog,ii,jj;
         string s,s0,s1;
         vector<string> ss, ss1;
@@ -393,7 +395,7 @@ resdata *resprior,*respost;
 		long double **phistar;
 		int nphistarOK;
         posteriorscenC **postsd,*postsr;
-        string shist,smut;
+        string shist,smut;shist=smut="";
 		nrecb=nrecc=0;
 		clock_zero=0.0;debut=walltime(&clock_zero);
         //cout <<"debut de doconf\n";
