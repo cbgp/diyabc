@@ -76,7 +76,7 @@ int nrecc;
 /**
  * Ecriture de l'entete du fichier confidence.txt contenant les résultats
  */
-	void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,string shist,string smut, bool AFD) {
+	void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,string shist,string smut, bool AFD, int nsel0) {
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
@@ -96,7 +96,10 @@ int nrecc;
         f1<<"Data file       : "<<header.datafilename<<"\n";
         f1<<"Reference table : "<<rt.filename<<"\n";
         f1<<"Number of simulated data sets : "<<nrec<<"\n";
-		if (nrecc>0) f1<<"Computation of posterior distribution using plain summary statistics\n";
+		if (nrecc>0) {
+			f1<<"Computation of posterior sample using plain summary statistics\n";
+			f1<<"Sample size of the posterior distribution (=simulated datasets closest to observed) : "<<nsel0<<"\n";
+		}
         f1<<"Direct approach : number of selected data sets : "<<nseld<<"\n";
         if (nlogreg==1) {
             f1<<"Logistic regression  : number of selected data sets : "<<nselr<<"\n";
@@ -561,7 +564,7 @@ int nrecc;
 			cout<<"---------------------------------------------------------------\n";
 		}
 //FIN du calcul de la posterior predictive error
-		ecrientete(nrec,ntest,nseld,nselr,nlogreg,shist,smut,AFD); //cout<<"apres ecrientete\n";
+		ecrientete(nrec,ntest,nseld,nselr,nlogreg,shist,smut,AFD,nsel0); //cout<<"apres ecrientete\n";
 		ofstream f11(nomficonfresult.c_str(),ios::app);
 		if (ntest>0) {
 			cout<<ntest<<" test data sets\n";

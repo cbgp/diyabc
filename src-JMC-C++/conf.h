@@ -12,7 +12,7 @@
 
 
 // Ecriture de l'entete du fichier confidence.txt contenant les résultats
-void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,std::string shist,std::string smut, bool AFD);
+void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,std::string shist,std::string smut, bool AFD, int nsel0);
 
 // Appelle l'analyse factorielle discriminante et remplace les summary stats par les composantes des jeux simulés
 // sur les axes discriminants
