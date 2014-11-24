@@ -701,7 +701,7 @@ int HeaderC::readHeaderAllStat(ifstream & file) {
 		nstatgr=0;
 		if (this->groupe[gr].type==0) {   //MICROSAT
 			nstatgr +=4*nsamp;   //"NAL","HET","VAR","MGW"
-			if (nsamp>1) nstatgr +=7*nsamp*(nsamp-1)/2;  //"N2P","H2P","V2P","FST","LIK","DAS","DM2"
+			if (nsamp>1) nstatgr +=8*nsamp*(nsamp-1)/2;  //"N2P","H2P","V2P","FST","LIK","DAS","DM2"
 			if (nsamp>2) nstatgr +=nsamp*(nsamp-1)*(nsamp-2)/2;   //AML
 		} else 
 		if (this->groupe[gr].type==1) {   //DNA SEQUENCE
@@ -738,8 +738,13 @@ int HeaderC::readHeaderAllStat(ifstream & file) {
 							this->groupe[gr].sumstat[k].samp1=sa1;
 							s1=stat_type[i]+"_"+IntToString(gr)+"_"+IntToString(sa)+"&"+IntToString(sa1);
 							this->entetestat +=centre(s1,14);
-					//cout<<"k="<<k<<"  "<<this->entetestat<<"\n";
 							k++;
+							if (i==9){
+								s1=stat_type[i]+"_"+IntToString(gr)+"_"+IntToString(sa1)+"&"+IntToString(sa);
+								this->entetestat +=centre(s1,14);
+								k++;
+							}
+					//cout<<"k="<<k<<"  "<<this->entetestat<<"\n";
 						}
 					}
 				}

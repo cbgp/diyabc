@@ -428,6 +428,8 @@ try {
             nrecneeded = atoi(optarg);
             action='r';
             randomforest=true;
+			reftablefilename= path + "reftableRF.bin";
+			statobsfilename = path + "statobsRF.txt";
 			cout<<"simulating for random forest\n";
             break;
 
@@ -649,8 +651,11 @@ try {
 								  //ps.libere(nenr);
                                   rt.closefile();
 								  if (randomforest) {
-									  cout<<"ecriture du fichier csv  rt.nstat = "<<rt.nstat<<"\n";
-									  rt.bintocsv(header);}
+									  cout<<"ecriture du fichier reftableRF.bin  rt.nstat = "<<rt.nstat<<"\n";
+									  rename("reftable.bin","reftableRF.bin");
+									  
+								  }
+									  //rt.bintocsv(header);}
 								  //cout<<"apres rt.closefile\n";
                                   if (nrecneeded==rt.nrec) {ofstream f1(reftablelogfilename.c_str(),ios::out);f1<<"END\n"<<rt.nrec<<"\n";f1.close();}
                                   //cout<<"avant header.libere\n";
