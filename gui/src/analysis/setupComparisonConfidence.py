@@ -41,7 +41,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
 
         self.ui.projectNameEdit.setText(self.parents.dir)
         self.ui.gridLayout.setAlignment(Qt.AlignTop)
-        self.ui.linearRegressionFrame.hide()
+        self.ui.posteriorDistributionFrame.hide()
 
         QObject.connect(self.ui.exitButton,SIGNAL("clicked()"),self.exit)
         QObject.connect(self.ui.okButton,SIGNAL("clicked()"),self.validate)
@@ -49,9 +49,9 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
         QObject.connect(self.ui.numRegCombo,SIGNAL("currentIndexChanged(QString)"),self.updateInterValues)
         QObject.connect(self.ui.deEdit,SIGNAL("textChanged(QString)"),self.updateInterValues)
         QObject.connect(self.ui.lrEdit,SIGNAL("textChanged(QString)"),self.updateInterValues)
-        QObject.connect(self.ui.linearRegressionEdit,SIGNAL("textChanged(QString)"),self.updateInterValues)
+        QObject.connect(self.ui.posteriorDistributionSampleSizeEdit,SIGNAL("textChanged(QString)"),self.updateInterValues)
+        QObject.connect(self.ui.logisticRegressioncheckBox,SIGNAL("stateChanged(int)"),self.updateInterValues)
 
-        print self.analysis.candidateScList * 100
 
         if "confidence" in self.analysis.category :
             self.ui.label.setText("Confidence in scenario choice")
@@ -63,9 +63,13 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.numRegCombo.addItem("0")
             self.ui.numRegCombo.addItem("1")
             self.ui.notdsEdit.setText("500")
+            self.ui.intermediateValuesFrame.hide()
             if self.analysis.category == "confidence_posterior_global" :
-                self.ui.linearRegressionFrame.show()
+                self.ui.posteriorDistributionFrame.show()
+                self.ui.notdsLabel.setText("Number of pseudo-observed test data sets")
         else: # assume self.analysis.category == "compare"
+            self.ui.logisticRegressioncheckBox.setChecked(True)
+            self.ui.logisticRegressioncheckBox.hide()
             self.ui.notdsEdit.hide()
             self.ui.notdsLabel.hide()
             self.ui.candidateLabel.hide()
@@ -81,6 +85,16 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
 
 
     def updateInterValues(self,numstr):
+
+        if self.ui.logisticRegressioncheckBox.isChecked() :
+            self.lrEdit.setEnabled(True)
+            if "confidence" in self.analysis.category :
+                self.ui.numRegCombo.setCurrentIndex(self.ui.numRegCombo.findText("1"))
+        else :
+            self.lrEdit.setDisabled(True)
+            if "confidence" in self.analysis.category :
+                self.ui.numRegCombo.setCurrentIndex(self.ui.numRegCombo.findText("0"))
+
         for w in self.lrInterValuesW:
             w.hide()
             self.ui.lrValLayout.removeWidget(w)
@@ -125,26 +139,24 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.deEdit.setText(cp.split('d:')[1].split(';')[0])
             numreg = cp.split('m:')[1].split(';')[0]
             self.ui.numRegCombo.setCurrentIndex(self.ui.numRegCombo.findText(numreg))
+            if numreg in [1, "1"] :
+                self.ui.logisticRegressioncheckBox.setChecked(True)
+            else :
+                self.ui.logisticRegressioncheckBox.setChecked(False)
+            self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
             if "confidence" in self.analysis.category :
                 if self.analysis.category == "confidence_posterior_global":
                     if "z:" in cp :
-                        self.ui.linearRegressionEdit.setText(cp.split('z:')[1].split(';')[0])
-                    if "l:" in cp :
-                        self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
+                        self.ui.posteriorDistributionSampleSizeEdit.setText(cp.split('z:')[1].split(';')[0])
                     if "c:" in  cp :
                         self.ui.notdsEdit.setText(cp.split('c:')[1].split(';')[0])
                 elif  self.analysis.category == "confidence_prior_global":
-                    if "l:" in cp :
-                        self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
                     if "b:" in cp :
                         self.ui.notdsEdit.setText(cp.split('b:')[1].split(';')[0])
                 elif  self.analysis.category in ["confidence_prior_specific", "confidence"]:
-                    if "l:" in cp :
-                        self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
                     if "t:" in cp :
                         self.ui.notdsEdit.setText(cp.split('t:')[1].split(';')[0])
-            else :
-                self.ui.lrEdit.setText(cp.split('l:')[1].split(';')[0])
+
 
 
     def checkAll(self):
@@ -153,7 +165,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             if "confidence" in self.analysis.category :
                 notds = int(self.ui.notdsEdit.text())
             if self.analysis.category == "confidence_posterior_global":
-                linearRegrassion = int(self.ui.linearRegressionEdit.text())
+                linearRegrassion = int(self.ui.posteriorDistributionSampleSizeEdit.text())
             lr = int(self.ui.lrEdit.text())
             de = int(self.ui.deEdit.text())
             cnosd = int(self.ui.cnosdEdit.text())
@@ -308,7 +320,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
 
         # linear regression default
         onePcScn = (sumRec / 100 ) / len(scList)
-        self.ui.linearRegressionEdit.setText(str(onePcScn))
+        self.ui.posteriorDistributionSampleSizeEdit.setText(str(onePcScn))
 
 
     def setCandidateScenarios(self,scList):
@@ -363,7 +375,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
     def majDicoValues(self):
         self.dico_values["choNumberOfsimData"] = str(self.ui.cnosdEdit.text())
         self.dico_values["de"] = str(self.ui.deEdit.text())
-        self.dico_values["linearRegression"] = str(self.ui.linearRegressionEdit.text())
+        self.dico_values["linearRegression"] = str(self.ui.posteriorDistributionSampleSizeEdit.text())
         self.dico_values["lr"] = str(self.ui.lrEdit.text())
         self.dico_values["numReg"] = str(self.ui.numRegCombo.currentText())
         self.dico_values["notds"] = str(self.ui.notdsEdit.text())
