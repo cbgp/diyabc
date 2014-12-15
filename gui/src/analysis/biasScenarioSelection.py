@@ -72,7 +72,7 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             for i in range(self.nb_sc):
                 num = i+1
                 check = self.checklist[i]
-                check.setChecked(num in self.analysis.candidateScList)
+                check.setChecked(len(self.analysis.candidateScList) == 0 or num in self.analysis.candidateScList)
         if self.analysis.drawn != None:
             if self.analysis.drawn is False :
                 self.ui.fixedRadio.setChecked(True)
@@ -205,7 +205,6 @@ class BiasNConfidenceScenarioSelection(formBiasScenarioSelection,baseBiasScenari
             for i in range(self.nb_sc):
                 num = i+1
                 check = QCheckBox("Scenario %s"%num,self)
-                check.setChecked(True)
                 self.checklist.append(check)
                 self.ui.verticalLayout_6.addWidget(check)
         else:
