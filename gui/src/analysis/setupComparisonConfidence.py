@@ -67,6 +67,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             if self.analysis.category == "confidence_posterior_global" :
                 self.ui.posteriorDistributionFrame.show()
                 self.ui.notdsLabel.setText("Number of pseudo-observed test data sets")
+            self.ui.scenarioProbaExplainLabel.setText(self.ui.scenarioProbaExplainLabel.text().replace("[TO-REPLACE]", "pseudo-observed"))
         else: # assume self.analysis.category == "compare"
             self.ui.logisticRegressioncheckBox.setChecked(True)
             self.ui.logisticRegressioncheckBox.hide()
@@ -76,6 +77,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.setScenarios([self.analysis.chosenSc])
             self.setCandidateScenarios(self.analysis.candidateScList)
             self.setRecordValues(self.analysis.candidateScList)
+            self.ui.scenarioProbaExplainLabel.setText(self.ui.scenarioProbaExplainLabel.text().replace("[TO-REPLACE]", "observed"))
 
         self.ui.numRegCombo.setCurrentIndex(1)
 
