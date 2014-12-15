@@ -322,7 +322,7 @@
           <item row="2" column="0">
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>Sample size  (Number of simulated data sets closests to the real observed data set)</string>
+             <string>Sample size  (number of simulated data sets closests to the observed data set)</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -672,7 +672,7 @@ intermediate values</string>
              </font>
             </property>
             <property name="text">
-             <string>Scenario probabilities computation</string>
+             <string>Computation of scenario probabilities</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -722,6 +722,9 @@ intermediate values</string>
               <widget class="QCheckBox" name="logisticRegressioncheckBox">
                <property name="text">
                 <string/>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
