@@ -631,7 +631,7 @@ intermediate values</string>
                      <x>0</x>
                      <y>0</y>
                      <width>227</width>
-                     <height>55</height>
+                     <height>72</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="lrValLayout"/>
@@ -734,7 +734,7 @@ intermediate values</string>
           <item row="1" column="0" colspan="3">
            <widget class="QLabel" name="scenarioProbaExplainLabel">
             <property name="text">
-             <string>Number of selected data sets closest to the XXXXXX data set</string>
+             <string>Number of selected data sets closest to the [TO-REPLACE] data set</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
