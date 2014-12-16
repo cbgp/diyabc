@@ -62,11 +62,11 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.ui.numRegCombo.clear()
             self.ui.numRegCombo.addItem("0")
             self.ui.numRegCombo.addItem("1")
-            self.ui.notdsEdit.setText("500")
+            #self.ui.notdsEdit.setText("500")
             self.ui.intermediateValuesFrame.hide()
             if self.analysis.category == "confidence_posterior_global" :
                 self.ui.posteriorDistributionFrame.show()
-                self.ui.notdsLabel.setText("Number of pseudo-observed test data sets")
+            self.ui.notdsLabel.setText(self.ui.notdsLabel.text().replace("[TO-REPLACE]", "pseudo-observed"))
             self.ui.scenarioProbaExplainLabel.setText(self.ui.scenarioProbaExplainLabel.text().replace("[TO-REPLACE]", "pseudo-observed"))
         else: # assume self.analysis.category == "compare"
             self.ui.logisticRegressioncheckBox.setChecked(True)
@@ -77,6 +77,7 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
             self.setScenarios([self.analysis.chosenSc])
             self.setCandidateScenarios(self.analysis.candidateScList)
             self.setRecordValues(self.analysis.candidateScList)
+            self.ui.notdsLabel.setText(self.ui.notdsLabel.text().replace("[TO-REPLACE]", "observed"))
             self.ui.scenarioProbaExplainLabel.setText(self.ui.scenarioProbaExplainLabel.text().replace("[TO-REPLACE]", "observed"))
 
         self.ui.numRegCombo.setCurrentIndex(1)
@@ -320,9 +321,9 @@ class SetupComparisonConfidence(formSetupComparisonConfidence,baseSetupCompariso
                 onePc = 1000
         self.ui.lrEdit.setText(str(onePc))
 
-        # linear regression default
-        onePcScn = (sumRec / 100 ) / len(scList)
-        self.ui.posteriorDistributionSampleSizeEdit.setText(str(onePcScn))
+        # posteriorDistributionSampleSize default
+        #onePcScn = (sumRec / 100 ) / len(scList)
+        #self.ui.posteriorDistributionSampleSizeEdit.setText(str(onePcScn))
 
 
     def setCandidateScenarios(self,scList):

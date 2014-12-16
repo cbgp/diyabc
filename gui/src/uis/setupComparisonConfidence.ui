@@ -315,7 +315,7 @@
           <item row="2" column="1">
            <widget class="QLineEdit" name="posteriorDistributionSampleSizeEdit">
             <property name="text">
-             <string>100</string>
+             <string>500</string>
             </property>
            </widget>
           </item>
@@ -364,29 +364,16 @@
           <enum>QFrame::Box</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
           <property name="spacing">
            <number>7</number>
           </property>
-          <item row="12" column="2">
-           <widget class="QLineEdit" name="notdsEdit">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>100</width>
-              <height>16777215</height>
-             </size>
-            </property>
-           </widget>
-          </item>
           <item row="12" column="0">
            <widget class="QLabel" name="notdsLabel">
             <property name="text">
-             <string>Number of requested
+             <string>Number of [TO-REPLACE] requested
  test data sets</string>
             </property>
            </widget>
@@ -630,8 +617,8 @@ intermediate values</string>
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>227</width>
-                     <height>72</height>
+                     <width>182</width>
+                     <height>55</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="lrValLayout"/>
@@ -754,6 +741,25 @@ intermediate values</string>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="2">
+           <widget class="QLineEdit" name="notdsEdit">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>1000</string>
             </property>
            </widget>
           </item>
