@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os,sys, codecs
+import os,sys, codecs, traceback
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -617,7 +617,11 @@ class SetHistoricalModel(formHistModel,baseHistModel):
                 except KeyError, e :
                     log(1, "Enable to find conditions %s values  in param_info_dico ( =%s)], removing condition " % \
                         (condition, self.param_info_dico ) )
-                    conditionsSet.remove(condition)
+                    log(1,"Get this error (this is normal) : %s" % traceback.format_exc())
+                    try :
+                        conditionsSet.remove(condition)
+                    except Exception as e :
+                        pass
         # check if user has already wrote the condition, if so , delete it
         for cond in self.condList:
                 lab = cond.findChild(QLabel,"condLabel")

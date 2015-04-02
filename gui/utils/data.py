@@ -674,7 +674,7 @@ class DataSnp():
         """
         Read SNP data file and infos from it
 
-        code is an ugly mix between ugly legacy code and ugly new code !
+        code is an ugly mix between ugly legacy code and ugly new code. Enjoy !
         """
         name = self.filename
         nLocFam = 0
@@ -815,7 +815,7 @@ class DataSnp():
                 raise Exception("MAF value must be a float or the key word 'hudson', '%s' given." % self.commentValuesDict['maf'])
             if float(self.commentValuesDict['maf']) <= 0.0 or float(self.commentValuesDict['maf']) > 0.5 :
                 raise Exception("MAF value must be upper to 0 and lower or egual to 0.5 , '%s' given." % self.commentValuesDict['maf'])
-            rejectedLocus = {}
+            rejectedLocusMAF = {}
             for locus in locus_type.keys() :
                 n0 = 0
                 n2 = 0
