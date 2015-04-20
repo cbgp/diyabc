@@ -19,6 +19,11 @@ ICONPATH = ""
 IMAGEPATH = ""
 UIPATH = "uis"
 
+
+if FSENCODING == None :
+    FSENCODING = "utf8"
+
+
 # 3 cas : sources, tarball, deb/rpm, .app
 if "linux" in sys.platform and not os.path.exists(u"../data".encode(FSENCODING)) and not os.path.exists(u"./data".encode(FSENCODING)) and not getattr(sys, 'frozen', None):
     DATAPATH = "/usr/share/diyabc"
