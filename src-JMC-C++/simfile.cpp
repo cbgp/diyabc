@@ -54,7 +54,8 @@ extern ReftableC rt;
 extern int nenr;
 long double **phistar;
 extern long double **phistarOK;
-
+extern DataC dataobs;
+extern vector <ScenarioC> scenario;
 
 void dosimfile(int seed){
 	string nomfigp;
@@ -67,10 +68,10 @@ void dosimfile(int seed){
 	progressfilename =path + "progress.txt";
 	nomfisim=header.datafilename;
 	ntest = header.nsimfile;
-	if (header.dataobs.filetype==0) cout<<"nombre de fichiers genepop à simuler = "<<ntest<<"\n";
-	if (header.dataobs.filetype==1) cout<<"nombre de fichiers snp à simuler = "<<ntest<<"\n";
-	if (header.dataobs.filetype==0) sgp = ps.simulgenepop(header, ntest, multithread, seed);
-	if (header.dataobs.filetype==1) sgp = ps.simuldataSNP(header, ntest, multithread, seed);
+	if (dataobs.filetype==0) cout<<"nombre de fichiers genepop à simuler = "<<ntest<<"\n";
+	if (dataobs.filetype==1) cout<<"nombre de fichiers snp à simuler = "<<ntest<<"\n";
+	if (dataobs.filetype==0) sgp = ps.simulgenepop(ntest, multithread, seed);
+	if (dataobs.filetype==1) sgp = ps.simuldataSNP(ntest, multithread, seed);
 	cout<<"apres les simulations\n";
 	for (int i=0;i<ntest;i++) {
 		string sn=IntToString(i+1);
@@ -80,8 +81,8 @@ void dosimfile(int seed){
 		if (sgp[i]=="") cout<<"une erreur s'est produite lors de la simulation du fichier numero "<<i+1<<"\n";
 		else {
 			nomfigp = path + nomfisim + sn;
-			if (header.dataobs.filetype==0) nomfigp +=".mss";
-			if (header.dataobs.filetype==1) nomfigp +=".snp";
+			if (dataobs.filetype==0) nomfigp +=".mss";
+			if (dataobs.filetype==1) nomfigp +=".snp";
 			cout<<"écriture du fichier "<<nomfigp<<"\n";
 			sgp[i] +="\n";
 			fgp = fopen(nomfigp.c_str(),"w");fprintf(fgp,"%s", sgp[i].c_str());fclose(fgp);
@@ -94,17 +95,17 @@ void dosimfile(int seed){
 		char c;
         bool OK;
         int ip1,ip2,nphistarOK=0,k1,k0;
-		//cout<<"depstarOK 0  npv="<<npv<<"   nsel="<<nsel<<"   scen="<<scen<<"  nparamhist="<<header.scenario[scen].nparam<<"   nparamut="<<header.nparamut<<"\n";
-		//cout<<"nparamvar="<<header.scenario[scen].nparamvar<<"\n";
+		//cout<<"depstarOK 0  npv="<<npv<<"   nsel="<<nsel<<"   scen="<<scen<<"  nparamhist="<<scenario[scen].nparam<<"   nparamut="<<header.nparamut<<"\n";
+		//cout<<"nparamvar="<<scenario[scen].nparamvar<<"\n";
 		for (int i=0;i<nsel;i++) {
-			//for(int j=0;j<header.scenario[scen].nparam+header.nparamut;j++) cout<<phistar[i][j]<<"  ";cout<<"\n";
+			//for(int j=0;j<scenario[scen].nparam+header.nparamut;j++) cout<<phistar[i][j]<<"  ";cout<<"\n";
             OK=true;k0=0;
-			for (int k=0;k<header.scenario[scen].nparam;k++) {
-				while (header.scenario[scen].histparam[k].prior.constant) k++;
-				//cout<<"k="<<k<<"  k0="<<k0<<"  "<<header.scenario[scen].histparam[k].name<<"\n";
-				OK=((header.scenario[scen].histparam[k].prior.mini<=phistar[i][k0])and(header.scenario[scen].histparam[k].prior.maxi>=phistar[i][k0]));
+			for (int k=0;k<scenario[scen].nparam;k++) {
+				while (scenario[scen].histparam[k].prior.constant) k++;
+				//cout<<"k="<<k<<"  k0="<<k0<<"  "<<scenario[scen].histparam[k].name<<"\n";
+				OK=((scenario[scen].histparam[k].prior.mini<=phistar[i][k0])and(scenario[scen].histparam[k].prior.maxi>=phistar[i][k0]));
 				if (not OK){
-					cout<<header.scenario[scen].histparam[k].name<<"  ["<<header.scenario[scen].histparam[k].prior.mini<<","<<header.scenario[scen].histparam[k].prior.maxi<<"]  "<<phistar[i][k0]<<"\n";
+					cout<<scenario[scen].histparam[k].name<<"  ["<<scenario[scen].histparam[k].prior.mini<<","<<scenario[scen].histparam[k].prior.maxi<<"]  "<<phistar[i][k0]<<"\n";
 					break;
 				} else k0++;
 				//cout<<"fin\n";
@@ -112,49 +113,49 @@ void dosimfile(int seed){
 			//cout<<"depstarOK 1\n";
 			//if (OK) cout<<"  histparam OK\n";else {cout<<" histparam["<<k0-1<<"] not OK\n";}
 			if (OK){
-				k1=header.scenario[scen].nparamvar;//cout<<"k1="<<k1<<"\n";
+				k1=scenario[scen].nparamvar;//cout<<"k1="<<k1<<"\n";
 				k1=k0;
 				for (int k=0;k<header.nparamut;k++) {
 					OK=((header.mutparam[k].prior.mini<=phistar[i][k1+k])and(header.mutparam[k].prior.maxi>=phistar[i][k1+k]));
 					if (not OK ){
 						cout<<header.mutparam[k].name<<"   phistar["<<i<<"]["<<k1+k<<"]="<<phistar[i][k1+k]<<"   mini="<<header.mutparam[k].prior.mini<<"   maxi="<<header.mutparam[k].prior.maxi;
-						//for(int j=0;j<header.scenario[scen].nparam+header.nparamut;j++) cout<<phistar[i][j]<<"  ";cout<<"\n";
+						//for(int j=0;j<scenario[scen].nparam+header.nparamut;j++) cout<<phistar[i][j]<<"  ";cout<<"\n";
 						break;
 					}
 				}
 			}
 			//cout<<"depstarOK 1";if (OK) cout<<"  mutparam OK\n";else cout<<"mutparam not OK\n";
-			//cout<<"nconditions="<<header.scenario[scen].nconditions<<"\n";
-            if ((header.scenario[scen].nconditions>0)and(OK)) {
-                for (int j=0;j<header.scenario[scen].nconditions;j++) {
+			//cout<<"nconditions="<<scenario[scen].nconditions<<"\n";
+            if ((scenario[scen].nconditions>0)and(OK)) {
+                for (int j=0;j<scenario[scen].nconditions;j++) {
                     ip1=0;
-                    for(int k =0; k < header.scenario[scen].nparam; ++k){
-                    	if(header.scenario[scen].condition[j].param1 == header.scenario[scen].histparam[k].name){
+                    for(int k =0; k < scenario[scen].nparam; ++k){
+                    	if(scenario[scen].condition[j].param1 == scenario[scen].histparam[k].name){
 							k1=k;
                     		break;
                     	} else {
-                    		if(not header.scenario[scen].histparam[k].prior.constant) ip1++;
+                    		if(not scenario[scen].histparam[k].prior.constant) ip1++;
                     	}
                     }
 
                     ip2=0;
-                    for(int k =0; k < header.scenario[scen].nparam; ++k){
-                    	if(header.scenario[scen].condition[j].param2 == header.scenario[scen].histparam[k].name){
+                    for(int k =0; k < scenario[scen].nparam; ++k){
+                    	if(scenario[scen].condition[j].param2 == scenario[scen].histparam[k].name){
                     		break;
                     	} else {
-                    		if(not header.scenario[scen].histparam[k].prior.constant) ip2++;
+                    		if(not scenario[scen].histparam[k].prior.constant) ip2++;
                     	}
                     }
-                    if (header.scenario[scen].histparam[k1].category<2){
-						if (header.scenario[scen].condition[j].operateur==">")       OK=(floor(0.5+phistar[i][ip1]) >  floor(0.5+phistar[i][ip2]));
-						else if (header.scenario[scen].condition[j].operateur=="<")  OK=(floor(0.5+phistar[i][ip1]) <  floor(0.5+phistar[i][ip2]));
-						else if (header.scenario[scen].condition[j].operateur==">=") OK=(floor(0.5+phistar[i][ip1]) >= floor(0.5+phistar[i][ip2]));
-						else if (header.scenario[scen].condition[j].operateur=="<=") OK=(floor(0.5+phistar[i][ip1]) <= floor(0.5+phistar[i][ip2]));
+                    if (scenario[scen].histparam[k1].category<2){
+						if (scenario[scen].condition[j].operateur==">")       OK=(floor(0.5+phistar[i][ip1]) >  floor(0.5+phistar[i][ip2]));
+						else if (scenario[scen].condition[j].operateur=="<")  OK=(floor(0.5+phistar[i][ip1]) <  floor(0.5+phistar[i][ip2]));
+						else if (scenario[scen].condition[j].operateur==">=") OK=(floor(0.5+phistar[i][ip1]) >= floor(0.5+phistar[i][ip2]));
+						else if (scenario[scen].condition[j].operateur=="<=") OK=(floor(0.5+phistar[i][ip1]) <= floor(0.5+phistar[i][ip2]));
 					} else {
-						if (header.scenario[scen].condition[j].operateur==">")       OK=(phistar[i][ip1] >  phistar[i][ip2]);
-						else if (header.scenario[scen].condition[j].operateur=="<")  OK=(phistar[i][ip1] <  phistar[i][ip2]);
-						else if (header.scenario[scen].condition[j].operateur==">=") OK=(phistar[i][ip1] >= phistar[i][ip2]);
-						else if (header.scenario[scen].condition[j].operateur=="<=") OK=(phistar[i][ip1] <= phistar[i][ip2]);
+						if (scenario[scen].condition[j].operateur==">")       OK=(phistar[i][ip1] >  phistar[i][ip2]);
+						else if (scenario[scen].condition[j].operateur=="<")  OK=(phistar[i][ip1] <  phistar[i][ip2]);
+						else if (scenario[scen].condition[j].operateur==">=") OK=(phistar[i][ip1] >= phistar[i][ip2]);
+						else if (scenario[scen].condition[j].operateur=="<=") OK=(phistar[i][ip1] <= phistar[i][ip2]);
 					}
 					if (not OK) cout<<"condition "<<j<<"non remplie\n";
                     if (not OK) break;
@@ -247,11 +248,11 @@ void dosimstat(int seed) {
 		}
 		npart=nenr;nn=0;
 		while (nphistarOK>npart+nn) {
-			ps.dosimulstat(header,nn,npart,false,multithread,iscen+1,seed,stat);
+			ps.dosimulstat(nn,npart,false,multithread,iscen+1,seed,stat);
 			nn +=npart;
 		}
 		//cout<<"nsel="<<nsel<<"   nphistarOK="<<nphistarOK<<"   nn="<<nn<<"\n";
-		if (nn<nphistarOK) ps.dosimulstat(header,nn,nphistarOK-nn,false,multithread,iscen+1,seed,stat);
+		if (nn<nphistarOK) ps.dosimulstat(nn,nphistarOK-nn,false,multithread,iscen+1,seed,stat);
 		for (int i=0;i<nsel;i++) {
 			if (stat[i][0] !=-99.0) {
 				fs<<iscen+1<<"  ";//cout<<iscen+1<<"  ";

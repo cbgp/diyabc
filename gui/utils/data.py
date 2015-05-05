@@ -847,16 +847,15 @@ class DataSnp():
                         fam = float(n0)/float(n0+n2)
                     else :
                         fam = float(n2)/float(n0+n2)
-                    if fam > float(self.commentValuesDict['maf']) :
+                    if fam >= float(self.commentValuesDict['maf']) :
                         nLocFam +=1
                     else :
                         #locus rejected
                         rejectedLocusMAF[locus] = fam
-                        pass
-                rejectedLocusText = ""
-                for lo in sorted(rejectedLocusMAF.keys()) :
-                    rejectedLocusText += "Locus %s has a MAF (%s) below the limit (%s)\n"%(lo,rejectedLocusMAF[lo],self.commentValuesDict['maf'])
-                log(2,rejectedLocusText)
+                        self.ntypeloc[locus_type[locus]] = self.ntypeloc[locus_type[locus]] - 1
+            rejectedLocusText = "Those locuses have been rejected because there MAF are below the limit (%s) :\n%s\n"%\
+                                (self.commentValuesDict['maf'],",".join([str(x) for x in sorted(rejectedLocusMAF.keys())]))
+            log(1,rejectedLocusText)
             nbLociPoly = nLocFam
 
         nbSample = len(types)
