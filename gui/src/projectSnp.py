@@ -299,6 +299,8 @@ class ProjectSnp(ProjectReftable):
                     typestr += " %s : %s,"%(ty,self.data.ntypeloc[ty])
             typestr = typestr[:-1]
             if str(self.data.commentValuesDict['maf']).lower() == "hudson" :
+                if self.data.nloctot != self.data.nloc :
+                    output.notify(self,"Monomorphic Loci warning","Your dataset includes a fraction of monomorphic loci :\n\nONLY POLYMORPHIC LOCI WILL BE CONSIDERED AFTERWARDS.")
                 self.ui.dataFileInfoLabel.setText("MAF = HUDSON   : %s polymorphic loci  + %s monomorphic loci\n%s individuals in %s samples\n%s" % \
                                                 (self.data.nloc,(self.data.nloctot-self.data.nloc),self.data.nindtot,self.data.nsample,typestr))
             else :
@@ -314,6 +316,8 @@ class ProjectSnp(ProjectReftable):
                 keep = "\n\nThe file was not loaded, nothing was changed"
             output.notify(self,"Data file error","%s%s"%(e,keep))
             return False
+
+
 
         # on declare les sumstats apres avoir chargé le datafile car c'est nécessaire
         # feinte pour que le parent.parent renvoie au projet
