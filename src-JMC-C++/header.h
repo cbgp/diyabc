@@ -35,11 +35,14 @@ class HeaderC
 public:
     std::string message,datafilename,entete,entetehist,entetemut,entetemut0,entetestat;
     std::string pathbase;
+    DataC dataobs;
     int nparamtot,nstat,nstatsnp,nscenarios,nconditions,ngroupes,nparamut,nsimfile;
     std::vector<std::string> statname;
+    std::vector<ScenarioC> scenario;
     ScenarioC scen;
     std::vector<HistParameterC> histparam;
     std::vector<ConditionC> condition;
+    std::vector<LocusGroupC> groupe;
     bool drawuntil,reference;
     std::vector<MutParameterC> mutparam;
     std::vector<float> stat_obs;

@@ -1,15 +1,22 @@
 /*
  * data.h
  *
- *  Created on: 24 janvier 2015
- *      Author: jmc
- *
-*/
+ *  Created on: 9 déc. 2011
+ *      Author: ppudlo
+ */
+
 #ifndef DATA_H_
 #define DATA_H_
 
 #include <string>
 #include <vector>
+
+class MissingSnp
+{
+public:
+	int sample,indiv;
+	MissingSnp & operator= (MissingSnp const & source);
+};
 
 /**
 *  Structure LocusC : définition de la structure LocusC
@@ -41,8 +48,8 @@ public:
   bool mono;  //mono=true si un seul allèle dans l'échantillon global
   double weight; //poids du locus=1, sauf quand biais de recrutement
   int nsample,nmisssnp;
-  std::vector<int> samplesize;
-  std::vector <std::vector <short int> > ploidie;
+  MissingSnp *misssnp;
+    std::vector<int> samplesize;
   
   
 	LocusC() {
@@ -57,48 +64,10 @@ public:
 		firstime=mono=true;
 		weight=1.0;
 		nsample=0;
-		nmisssnp=0;
-	};
-	
-	~LocusC() {
-		if (not mutsit.empty()) mutsit.clear();
-		if (not sitmut.empty()) sitmut.clear();
-		if (not sitmut2.empty()) sitmut2.clear();
-		if (not tabsit.empty()) tabsit.clear();
-		if (not freq.empty()) {
-			for (int i=0;i<freq.size();i++) {
-				if (not freq[i].empty()) freq[i].clear();
-			}
-		}
-		if (not haplomic.empty()) {
-			for (int i=0;i<haplomic.size();i++) {
-				if (not haplomic[i].empty()) haplomic[i].clear();
-			}
-		}
-		if (not haplodna.empty()) {
-			for (int i=0;i<haplodna.size();i++) {
-				if (not haplodna[i].empty()) haplodna[i].clear();
-			}
-		}
-		if (not haplodnavar.empty()) {
-			for (int i=0;i<haplodnavar.size();i++) {
-				if (not haplodnavar[i].empty()) haplodnavar[i].clear();
-			}
-		}
-		if (not haplosnp.empty()) {
-			for (int i=0;i<haplosnp.size();i++) {
-				if (not haplosnp[i].empty()) haplosnp[i].clear();
-			}
-		}
-		if (not ploidie.empty()) {
-			for (int i=0;i<ploidie.size();i++) {
-				if (not ploidie[i].empty()) ploidie[i].clear();
-			}
-		}
-
+		misssnp = NULL;
 	};
 
-	LocusC & operator= (LocusC const & source);
+	//LocusC & operator= (LocusC const & source);
 
   void libere(bool obs, int nsample);
 };
@@ -107,14 +76,12 @@ class MissingHaplo
 {
 public:
 	int locus,sample,indiv;
-	MissingHaplo & operator= (MissingHaplo const & source);
 };
 
 class MissingNuc
 {
 public:
 	int locus,sample,indiv,nuc;
-	MissingNuc & operator= (MissingNuc const & source);
 };
 
 
@@ -124,19 +91,27 @@ public:
 	std::string message,title;
 	std::vector<std::vector<std::string> > indivname;
 	int nsample,nsample0,nloc,nmisshap,nmissnuc,nmisssnp,filetype;
+	//int *nind;
+	//int **indivsexe;
 	double sexratio,maf;
-	std::vector<MissingHaplo> misshap;
+	std::vector<MissingHaplo> misshap, misssnp;
 	std::vector<MissingNuc>   missnuc;
+	std::vector<LocusC> locus;
+    bool Aindivname,Anind,Aindivsexe,Alocus;
+	//int **ss;  //nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
 	std::vector<bool> catexist;
 	std::vector < std::vector <int> > ssize;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
 	std::vector <int> nind;
 	std::vector < std::vector <int> > indivsexe;
-	std::vector <LocusC> locus;
+	/*vector < vector <int> > ss;//nombre de copies de gènes (manquantes incluses) par [locustype][sample], locustype variant de 0 à 4.
+	vector <int> nind;
+	vector < vector <int> > indivsexe;*/
 
 	/* Méthodes */
 
-	DataC & operator= (DataC const & source);
+	//DataC & operator= (DataC const & source);
 	
+	void libere();
 	/**
 	 * détermination du type de fichier de donnée
 	 * return=-1
@@ -186,8 +161,6 @@ public:
 	void cal_coeffcoal(int loc);
 
 	void calcule_ss();
-	
-	void calploidie();
 	/**
 	 * chargement des données dans une structure DataC
 	 */

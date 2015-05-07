@@ -24,58 +24,59 @@
 class ParticleC
  {
  public:
-	  std::vector <LocusC> locuslist;
-	  std::vector <LocusGroupC> grouplist;
-	  std::vector <ScenarioC> scenario;
-	  std::vector <SequenceBitC> seqlist;
-	  std::vector <GeneTreeC> gt;
-	  std::vector <ConditionC> condition;
-	  std::vector<int> samplesizeY;
-	  std::vector<int> samplesizeM;
-	  std::vector < std::vector <bool> > afsdone;
-	  std::vector < std::vector < std::vector <int> > > t_afs;
-	  std::vector < std::vector <int> > n_afs;
+	  LocusC *locuslist;
+	  LocusGroupC *grouplist;
+	  DataC  data;
+	  ScenarioC *scenario,scen;
+	  SequenceBitC *seqlist;
+	  GeneTreeC *gt;
 	  MwcGen mw;
-	  ScenarioC scen;
-	  bool firstime,dnatrue,drawuntil;
-	  int nloc,ngr,nparam,nseq,nstat,nsample,nscenarios,nconditions;
+	  ConditionC *condition;
+	  bool dnatrue,drawuntil;
+	  vector < vector <bool> > afsdone;
+	  vector < vector < vector <int> > > t_afs;
+	  vector < vector <int> > n_afs;
+	  bool firstime;
 	  double sexratio,maf;
+	  int npart,nloc,ngr,nparam,nseq,nstat,nsample,nscenarios,nconditions,refnindtot;
+	  //int *nind,**indivsexe;
+	  //int **numvar,*nvar;
+	  float reffreqmin;
+	  //bool ***dat,***ref;  //appartenance d'un gène aux data (dat) ou aux individus de référence (ref) par [locustype][sample][gene]
+	  //std::vector<std::vector<std::vector<bool> > > dat, ref;
 	  double matQ[4][4];
 	  long int naccept,ntentes;
+	  double weight,locpol,sumweight,threshold;
 
    /* Déclaration des méthodes */
+    ParticleC() {
+		locuslist = NULL;
+		grouplist = NULL;
+		scenario = NULL;
+		seqlist = NULL;
+		gt = NULL;
+		condition = NULL;
+		//nind = NULL;
+		//indivsexe = NULL;
+		//numvar = NULL;
+		//nvar = NULL;
+		//dat = NULL;
+		//ref = NULL;
+	}
 	~ParticleC() {
 		//std::cout<<"dans le destructeur de ParticleC  0\n";
-		if (not locuslist.empty()) locuslist.clear();
-		if (not grouplist.empty()) grouplist.clear();
-		if (not scenario.empty()) scenario.clear();
-		if (not seqlist.empty()) seqlist.clear();
-		if (not gt.empty()) gt.clear();
-		if (not condition.empty()) condition.clear();
-		if (not samplesizeY.empty()) samplesizeY.clear();
-		if (not samplesizeM.empty()) samplesizeM.clear();
-		if (not afsdone.empty()) {
-			for (int i=0;i<afsdone.size();i++) {
-				if (not afsdone[i].empty())	afsdone[i].clear();
-			}
-		}
-		if (not n_afs.empty()) {
-			for (int i=0;i<n_afs.size();i++) {
-				if (not n_afs[i].empty()) n_afs[i].clear();
-			}
-		}
-		if (not t_afs.empty()) {
-			for (int i=0;i<t_afs.size();i++) {
-				if (not t_afs[i].empty()) {
-					for (int j=0;j<t_afs[i].size();j++) t_afs[i][j].clear();
-				}
-			}
-		}
+		if (locuslist != NULL) {delete [] locuslist; locuslist=NULL;}
+		if (grouplist != NULL) {delete [] grouplist; grouplist=NULL;}
+		if (scenario != NULL) {delete [] scenario; scenario=NULL;}
+		if (seqlist != NULL) {delete [] seqlist; seqlist=NULL;}
+		if (gt != NULL) {delete [] gt; gt=NULL;}
+		if (condition != NULL) {delete [] condition; condition=NULL;}
+		//std::cout<<"dans le destructeur de ParticleC  1\n";
 	}
-	
   ParticleC & operator= (ParticleC  const & source);
 
 	void libereobs(bool obs);
+	void libere();
 	void ecris();
 
    // calcule le nombre de copies de gènes de l'individu i de l'échantillon sa au locus loc
@@ -252,7 +253,7 @@ class ParticleC
    long double cal_moyL0(StatsnpC stsnp);
    long double cal_moyL(StatsnpC stsnp);
    long double cal_varL0(StatsnpC stsnp);
-   void docalstat(int gr);
+   void docalstat(int gr,double weight);
 
  };
 #endif /* PARTICULEC_H_ */

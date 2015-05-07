@@ -4,19 +4,16 @@
  *  Created on: 8 déc. 2011
  *      Author: ppudlo
  */
-#include <vector>
-
 extern"C"{
 #include "../dcmt0.6.1/include/dc.h"
 }
 #include <fstream>
 #include <iostream>
 #include <string>
-
 #ifndef RANDOMGENERATOR_H_
 #define RANDOMGENERATOR_H_
 
-using namespace std;
+//using namespace std;
 
 double sqr(double);
 
@@ -49,8 +46,6 @@ public:
 	double ggamma (double shape, double rate);
 	double ggamma2(double mean, double sd);
 	double ggamma3(double mean, double shape);
-	void resample(int nw,int n, vector <int>& index);
-	void samplewith(int nw,int n, vector <int>& index);
 };
 
 void write_mt_struct(std::ofstream & fout, mt_struct* mt);

@@ -15,9 +15,7 @@
 class enregC {
 public:
     int numscen;
-    vector <float> param;
-    vector <float> paramvv;
-    vector <float> stat;
+    float *param,*paramvv,*stat;
     long double dist;
     std::string message;
     friend bool operator<(const enregC & lhs, const enregC & rhs);
@@ -28,14 +26,10 @@ public:
 class ReftableC
 {
 public:
-    int nrec,nscen,nreclus,nrec0;
-    vector <int> nrecscen;
+    int nrec,*nrecscen,nscen,nreclus,nrec0;
     long posnrec;
     std::string datapath, filename, filelog, filename0, filerefscen;
-    int nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste,nparamut,*nhistparam;
-    vector <int> nparam;
-    
-    
+    int *nparam,nstat,po,nparamax,nscenchoisi,*scenchoisi,scenteste,nparamut,*nhistparam;
     float *param,*sumstat;
     int histparamlength;
     std::vector<std::vector<HistParameterC> > histparam;
@@ -45,14 +39,18 @@ public:
     enregC* enrsel;
     float *stat_obs;
     long double *var_stat;
-    ReftableC(): scenchoisi(NULL),
+    ReftableC():nrecscen(NULL),nparam(NULL),scenchoisi(NULL),
     		nhistparam(NULL),param(NULL),sumstat(NULL),histparam(0),
     		mutparam(NULL), enrsel(NULL),stat_obs(NULL),var_stat(NULL){
     	histparamlength=0;
     };
     ~ReftableC(){
-    	if (not nrecscen.empty()) nrecscen.clear();
-    	if (not nparam.empty()) nparam.clear();
+    	if (nrecscen != NULL) {
+    		delete [] nrecscen; nrecscen=NULL;
+    	}
+    	if (nparam != NULL) {
+    		delete [] nparam; nparam=NULL;
+    	}
     	if (scenchoisi != NULL) {
     		delete [] scenchoisi; scenchoisi=NULL;
     	}
@@ -103,7 +101,7 @@ public:
     // calcule la distance de chaque jeu de données simulé au jeu observé
     // et sélectionne les nsel enregistrements les plus proches (copiés dans enregC *enrsel)
     void cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste, bool allscenarios);
-    int readparam(vector <float>& param);
+    int readparam(float *param);
 };
 
 

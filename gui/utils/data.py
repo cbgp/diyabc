@@ -667,6 +667,7 @@ class DataSnp():
         self.nind = []
         self.nind_hash = {}
         self.commentValuesDict = {'maf' : 'HUDSON'}
+                                  #'nm'  : "1.0nf"}
         self.__readData()
 
 
@@ -702,6 +703,18 @@ class DataSnp():
         if len(datalines) < 1:
             raise Exception("%s\n\nNot enough lines in SNP datafile."%self.filename)
 
+
+        #test NM values
+        errorStrNMformat = "NM value bad format :\n NM type format is like : <(NM keyword)=(float number)(NF keyword)>  with no spaces\nNM must be > or = to NF\nFor example :\n   <NM=1.0NF> (for equal sex ratio)\n   <NM=0.3NF>\n"
+        if not self.commentValuesDict.has_key('nm') :
+            raise Exception("Please specify sex ratio in the headline\n\n"+errorStrNMformat)
+        if self.commentValuesDict['nm'][-2:] != "nf" :
+                raise Exception("Can not find NF keyword\n\n"+errorStrNMformat)
+        try :
+            if float(self.commentValuesDict['nm'][:-2]) > 1 :
+                raise Exception("Foun\n\n"+errorStrNMformat)
+        except ValueError:
+            raise Exception("Can not detect a float before NF keyword\n\n"+errorStrNMformat)
         for idx, locty in enumerate(l1parts):
             if idx > 2 :
                 if locty not in DataSnp.__LOCUS_TYPES :

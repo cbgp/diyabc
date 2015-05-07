@@ -20,28 +20,25 @@
 #include "particuleC.h"
 
 extern int debuglevel;
-extern DataC dataobs;
 
   /***********************************************************************************************************************/
 
   int ParticleC::samplesize(int loc, int sample) {
 	  int cat = this->locuslist[loc].type % 5 ;
-	  int n=dataobs.ssize[cat][sample];
+	  int n=this->data.ssize[cat][sample];
 	  if (this->locuslist[loc].type<10) {
-		  //cout<<"samplesize["<<loc<<"]["<<sample<<"]   nmisshap="<<dataobs.nmisshap<<"\n";
-		  if (dataobs.nmisshap>0) {
-			  for (int i=0;i<dataobs.nmisshap;i++){
-				  if ((dataobs.misshap[i].locus == loc)and(dataobs.misshap[i].sample == sample)) n--;
+		  //cout<<"samplesize["<<loc<<"]["<<sample<<"]   nmisshap="<<this->data.nmisshap<<"\n";
+		  if (this->data.nmisshap>0) {
+			  for (int i=0;i<this->data.nmisshap;i++){
+				  if ((this->data.misshap[i].locus == loc)and(this->data.misshap[i].sample == sample)) n--;
 			  }
 		  }
 	  } else {
-	  	  n=this->locuslist[loc].samplesize[sample];
-	  	  /*
-		  if (dataobs.nmisssnp>0) {
-			  for (int i=0;i<dataobs.nmisssnp;i++){
-				  if ((dataobs.misssnp[i].locus == loc)and(dataobs.misssnp[i].sample == sample)) n--;
+		  if (this->data.nmisssnp>0) {
+			  for (int i=0;i<this->data.nmisssnp;i++){
+				  if ((this->data.misssnp[i].locus == loc)and(this->data.misssnp[i].sample == sample)) n--;
 			  }
-		  }*/
+		  }
 	  }
 	  return n;
   }
@@ -56,18 +53,14 @@ extern DataC dataobs;
 		//cout <<"\nLocus "<< loc <<"   kmin="<<this->locuslist[loc].kmin<<"   kmax="<<this->locuslist[loc].kmax<<"\n";
 		this->locuslist[loc].nal = this->locuslist[loc].kmax-this->locuslist[loc].kmin+1;
 		this->locuslist[loc].freq = vector<vector<long double> >(this->nsample);
-//		this->locuslist[loc].freq.resize(this->nsample);
 		//cout <<"nal ="<<this->locuslist[loc].nal<<"\n";
 		for (int samp=0;samp<this->nsample;samp++) {
 			this->locuslist[loc].freq[samp] = vector<long double>(this->locuslist[loc].nal);
 			for (int i=0;i<this->locuslist[loc].nal;i++) this->locuslist[loc].freq[samp][i]=0.0;
-			//cout << dataobs.ssize[cat][samp] <<"\n";
-			for (int i=0;i<dataobs.ssize[cat][samp];i++){
-				//cout<<"i="<<i<<"\n";
-				//cout<<"this->locuslist[loc].haplomic[samp][i]="<<this->locuslist[loc].haplomic[samp][i]<<"\n";
-				//exit(1);
+			//cout << this->data.ssize[cat][samp] <<"\n";
+			for (int i=0;i<this->data.ssize[cat][samp];i++){
 				if (this->locuslist[loc].haplomic[samp][i] != MICMISSING) {
-					//cout <<"  "<<this->locuslist[loc].haplomic[samp][i]<<"\n";
+					//cout <<"  "<<this->locuslist[loc].haplomic[samp][i];
 					this->locuslist[loc].freq[samp][this->locuslist[loc].haplomic[samp][i]-this->locuslist[loc].kmin] +=1.0;
 					//n++;
 				}
@@ -100,18 +93,19 @@ extern DataC dataobs;
 				this->locuslist[loc].freq = vector<vector<long double> >(this->nsample);
 				for (int samp=0;samp<this->nsample;samp++) {
 					//cout<<"sample "<<samp<<"\n";
-					sasize = this->locuslist[loc].samplesize[samp];
 					this->locuslist[loc].freq[samp] = vector<long double>(2);
 					this->locuslist[loc].freq[samp][0] = 0.0;this->locuslist[loc].freq[samp][1] = 0.0;
 					//cout<<"avant la boucle i\n";
-					//cout<<"dataobs.ssize[cat][samp]="<<dataobs.ssize[cat][samp]<<"\n";
-					for (int i=0;i<sasize;i++){
+					//cout<<"this->data.ssize[cat][samp]="<<this->data.ssize[cat][samp]<<"\n";
+					for (int i=0;i<this->data.ssize[cat][samp];i++){
 						if ((this->locuslist[loc].haplosnp[samp][i] == g0)/*and(this->dat[cat][samp][i])*/) this->locuslist[loc].freq[samp][0] +=1.0;
 					}
 					//cout<<"apres la boucle i\n";
+					sasize = samplesize(loc,samp);
+					this->locuslist[loc].freq[samp][1] = sasize -this->locuslist[loc].freq[samp][0];
 					this->locuslist[loc].freq[samp][0] /=sasize;
-					this->locuslist[loc].freq[samp][1] = 1.0 - this->locuslist[loc].freq[samp][0];
-					//if (loc<10) printf("loc %3d    sa %d     samplesize %3d   freq[0]=%10.6Lf\n",loc,samp,this->locuslist[loc].samplesize[samp],this->locuslist[loc].freq[samp][0]);
+					this->locuslist[loc].freq[samp][1] /=sasize;
+					//printf("loc %3d    sa %d     freq[0]=%10.6Lf\n",loc,samp,this->locuslist[loc].freq[samp][0]);
 				}
 			}
 		}
@@ -217,7 +211,6 @@ extern DataC dataobs;
 		}
 		//f10.close();
 		this->grouplist[gr].sumstatsnp[numsnp].defined=true;
-		//cout<<"fin de cal_snhet\n";
 		//exit(3);
 	}
 
@@ -343,9 +336,9 @@ extern DataC dataobs;
       kloc=this->grouplist[gr].loc[iloc];
       cat = this->locuslist[kloc].type % 5;
       if(samplesize(kloc,sample)>1) {
-	for (int i=0;i<dataobs.ssize[cat][sample]-1;i++){
+	for (int i=0;i<this->data.ssize[cat][sample]-1;i++){
 	  if (this->locuslist[kloc].haplomic[sample][i] != MICMISSING) {
-	    for (int j=i+1;j<dataobs.ssize[cat][sample];j++){
+	    for (int j=i+1;j<this->data.ssize[cat][sample];j++){
 	      if (this->locuslist[kloc].haplomic[sample][j] != MICMISSING) {
 		nt++;
 		if (this->locuslist[kloc].haplomic[sample][i]==this->locuslist[kloc].haplomic[sample][j]) ni++;
@@ -469,7 +462,7 @@ extern DataC dataobs;
       loc=this->grouplist[gr].loc[iloc];
       cat = this->locuslist[loc].type % 5;
       v=0.0;s=0.0;n=0;
-      for (int i=0;i<dataobs.ssize[cat][sample];i++){
+      for (int i=0;i<this->data.ssize[cat][sample];i++){
 	if (this->locuslist[loc].haplomic[sample][i] != MICMISSING) {
 	  n++;
 	  s+=this->locuslist[loc].haplomic[sample][i];
@@ -497,14 +490,14 @@ extern DataC dataobs;
       loc=this->grouplist[gr].loc[iloc];
       cat = this->locuslist[loc].type % 5;
       v=0.0;s=0.0;n=0;
-      for (int i=0;i<dataobs.ssize[cat][sample];i++){
+      for (int i=0;i<this->data.ssize[cat][sample];i++){
 	if (this->locuslist[loc].haplomic[sample][i] != MICMISSING) {
 	  n++;
 	  s+=this->locuslist[loc].haplomic[sample][i];
 	  v+=sqr(this->locuslist[loc].haplomic[sample][i]);
 	}
       }
-      for (int i=0;i<dataobs.ssize[cat][sample1];i++){
+      for (int i=0;i<this->data.ssize[cat][sample1];i++){
 	if (this->locuslist[loc].haplomic[sample1][i] != MICMISSING) {
 	  n++;
 	  s+=this->locuslist[loc].haplomic[sample1][i];
@@ -562,7 +555,7 @@ extern DataC dataobs;
 	  nA=0;AA=0;ni=0;ind=0;
 	  //ind est le numéro de l'individu (haploïde ou diploïde ou même sans génotype si Y femelle)
 	  //i est le numéro de la copie du gène
-	  for (i=0;i<dataobs.ssize[cat][pop];){
+	  for (i=0;i<this->data.ssize[cat][pop];){
 	    nn=calploidy(loc,pop,ind);
 	    ind++;
 	    switch (nn)
@@ -627,9 +620,9 @@ extern DataC dataobs;
 	  if (frt>0.000001) nal++;
 	}
 	b = 1.0/(long double)nal;
-	a = 1.0/(long double)dataobs.nind[sample];
+	a = 1.0/(long double)this->data.nind[sample];
 	ind = 0;
-	for (i=0;i<dataobs.ssize[cat][sample];i++){
+	for (i=0;i<this->data.ssize[cat][sample];i++){
 	  nn=calploidy(loc,sample,ind);
 	  ind++;
 	  switch (nn)
@@ -680,7 +673,7 @@ extern DataC dataobs;
 			  for (int kpop=0;kpop<2;kpop++) {
 				  if (kpop==0) pop=sample; else pop=sample1;
 				  s = 0.0;moy[kpop]=0.0;
-				  for (int i=0;i<dataobs.ssize[cat][pop];i++) {
+				  for (int i=0;i<this->data.ssize[cat][pop];i++) {
 					  if (this->locuslist[loc].haplomic[pop][i]!=MICMISSING) s += this->locuslist[loc].haplomic[pop][i];
 				  }
 				  moy[kpop]=s/(long double)samplesize(loc,pop);
@@ -703,9 +696,9 @@ extern DataC dataobs;
     for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
       loc=this->grouplist[gr].loc[iloc];
       cat=this->locuslist[loc].type % 5;
-      for (int i=0;i<dataobs.ssize[cat][sample];i++) {
+      for (int i=0;i<this->data.ssize[cat][sample];i++) {
 	if (this->locuslist[loc].haplomic[sample][i]!=MICMISSING) {
-	  for (int j=0;j<dataobs.ssize[cat][sample1];j++) {
+	  for (int j=0;j<this->data.ssize[cat][sample1];j++) {
 	    if (this->locuslist[loc].haplomic[sample1][j]!=MICMISSING) {
 	      nl++;
 	      if (this->locuslist[loc].haplomic[sample][i] == this->locuslist[loc].haplomic[sample1][j]) s+=1.0;
@@ -734,7 +727,7 @@ extern DataC dataobs;
 	cat=this->locuslist[loc].type % 5;
 	//cout << "\n\n locus "<< loc<< "\n";
 	ind=0;
-	for (int i=0;i<dataobs.ssize[cat][sample];) {
+	for (int i=0;i<this->data.ssize[cat][sample];) {
 	  nn = calploidy(loc,sample,ind);
 	  //cout <<"ploidie="<<nn<<"\n";
 	  ind++;
@@ -833,14 +826,14 @@ extern DataC dataobs;
       nhl=0;
       kloc=this->grouplist[gr].loc[iloc];
       cat = this->locuslist[kloc].type % 5;
-      haplo = new string[dataobs.ssize[cat][sample]];
+      haplo = new string[this->data.ssize[cat][sample]];
       if(samplesize(kloc,sample)>0) {
 	nl++;
 	if (this->locuslist[kloc].dnavar==0) {
 	  haplo[nhl]="";
 	  nhl++;
 	} else {
-	  for (int i=0;i<dataobs.ssize[cat][sample];i++) {
+	  for (int i=0;i<this->data.ssize[cat][sample];i++) {
 	    if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
 	      //cout<<"not seqmissing nhl="<<nhl<<"\n";
 	      if (nhl==0) {
@@ -881,9 +874,9 @@ extern DataC dataobs;
       if((debuglevel==9)and(kloc==10)) cout<<"OK=true  dnavar="<<this->locuslist[kloc].dnavar<<"\n";
       if (this->locuslist[kloc].dnavar>0) {
 	for (j=0;j<this->locuslist[kloc].dnavar;j++) {
-	  if((debuglevel==9)and(kloc==10)) cout<<"j="<<j<<"  ss="<<dataobs.ssize[cat][sample]<<"\n";
+	  if((debuglevel==9)and(kloc==10)) cout<<"j="<<j<<"  ss="<<this->data.ssize[cat][sample]<<"\n";
 	  c0='z';ident=true;
-	  for (int i=0;i<dataobs.ssize[cat][sample];i++) {
+	  for (int i=0;i<this->data.ssize[cat][sample];i++) {
 	    /*if((debuglevel==9)and(kloc==10)) {
 	      cout<<this->locuslist[kloc].haplodnavar[sample][i]<<"   "<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"   "<<c0;
 	      cout<<"  "<<(this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING);
@@ -927,7 +920,7 @@ extern DataC dataobs;
 	cout<<"\ndnavar ="<<this->locuslist[kloc].dnavar<<"\n";
 	for (int sa=0;sa<this->nsample;sa++) {
 	  cout<<" dans cal_nss1p   sample "<<sa<<"\n";
-	  for (int ind=0;ind<dataobs.ssize[cat][sa];ind++) cout<<ind<<"  "<<this->locuslist[kloc].haplodna[sa][ind]<<"\n";
+	  for (int ind=0;ind<this->data.ssize[cat][sa];ind++) cout<<ind<<"  "<<this->locuslist[kloc].haplodna[sa][ind]<<"\n";
 	}
 	cout <<"nssl = "<<nssl<<"\n";
       }
@@ -940,8 +933,8 @@ extern DataC dataobs;
   long double ParticleC::cal_mpdpl(int kloc,int sample,int *nd) {
     int npdl=0,di,k,ndd=0,cat= this->locuslist[kloc].type % 5;
     long double res=0.0;
-    for (int i=0;i<dataobs.ssize[cat][sample]-1;i++) {
-      for (int j=i+1;j<dataobs.ssize[cat][sample];j++) {
+    for (int i=0;i<this->data.ssize[cat][sample]-1;i++) {
+      for (int j=i+1;j<this->data.ssize[cat][sample];j++) {
 	if ((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodna[sample][j]!=SEQMISSING)) {
 	  ndd++;
 	  di=0;
@@ -980,8 +973,8 @@ extern DataC dataobs;
       nd=0;mpd=0.0;spd=0.0;
       kloc=this->grouplist[gr].loc[iloc];
       cat = this->locuslist[kloc].type % 5;
-      for (int i=0;i<dataobs.ssize[cat][sample]-1;i++) {
-	for (int j=i+1;j<dataobs.ssize[cat][sample];j++) {
+      for (int i=0;i<this->data.ssize[cat][sample]-1;i++) {
+	for (int j=i+1;j<this->data.ssize[cat][sample];j++) {
 	  if ((this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)and(this->locuslist[kloc].haplodna[sample][j]!=SEQMISSING)) {
 	    nd++;
 	    di=0;
@@ -1007,7 +1000,7 @@ extern DataC dataobs;
     *OKK=true;
     if (this->locuslist[kloc].dnavar<1) return 0.0;
     long double res=0.0;
-    for (int i=0;i<dataobs.ssize[cat][sample];i++) if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) n++;
+    for (int i=0;i<this->data.ssize[cat][sample];i++) if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) n++;
     if (n<2) {*OKK=false;return 0.0;}
     a1=0;for(int i=1;i<n;i++) a1 += 1.0/(long double)i;
     a2=0;for(int i=1;i<n;i++) a2 += 1.0/(long double)(i*i);
@@ -1092,7 +1085,7 @@ extern DataC dataobs;
 			  //cout <<"site "<<j+1<<" sur "<<this->locuslist[kloc].dnavar<<"\n";
 			  for (int k=0;k<4;k++) nf[k]=0;
 			  cat = this->locuslist[kloc].type % 5;
-			  for (int i=0;i<dataobs.ssize[cat][sample];i++) {
+			  for (int i=0;i<this->data.ssize[cat][sample];i++) {
 				  //if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
 					  //cout<<this->locuslist[kloc].haplodnavar[sample][i][j]<<"\n";
 					  switch(this->locuslist[kloc].haplodnavar[sample][i][j])
@@ -1174,7 +1167,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 		nhl=0;
 		kloc=this->grouplist[gr].loc[iloc];
 		cat = this->locuslist[kloc].type % 5;
-		dmax=dataobs.ssize[cat][samp0]+dataobs.ssize[cat][samp1];
+		dmax=this->data.ssize[cat][samp0]+this->data.ssize[cat][samp1];
 		haplo = new string[dmax];
 		if(samplesize(kloc,samp0)+samplesize(kloc,samp1)>0) {
 			nl++;
@@ -1184,7 +1177,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 			}else {
 				for (int samp=0;samp<2;samp++) {
 					if (samp==0) sample=samp0; else sample=samp1;
-					for (int i=0;i<dataobs.ssize[cat][sample];i++) {
+					for (int i=0;i<this->data.ssize[cat][sample];i++) {
 						if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING)  {
 							if (nhl==0) {
 								haplo[nhl] = this->locuslist[kloc].haplodnavar[sample][i];
@@ -1224,7 +1217,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
       if (not this->locuslist[kloc].dnavar==0) {
 	for (j=0;j<this->locuslist[kloc].dnavar;j++) {
 	  c0='\0';ident=true;
-	  for (int i=0;i<dataobs.ssize[cat][samp0];i++) {
+	  for (int i=0;i<this->data.ssize[cat][samp0];i++) {
 	    if ((this->locuslist[kloc].haplodna[samp0][i]!=SEQMISSING)and(this->locuslist[kloc].haplodnavar[samp0][i][j]!='N')) {
 	      if (c0=='\0') c0=this->locuslist[kloc].haplodnavar[samp0][i][j];
 	      else ident=(c0==this->locuslist[kloc].haplodnavar[samp0][i][j]);
@@ -1233,7 +1226,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 	    if (not ident) break;
 	  }
 	  if (ident) {
-	    for (int i=0;i<dataobs.ssize[cat][samp1];i++) {
+	    for (int i=0;i<this->data.ssize[cat][samp1];i++) {
 	      if ((this->locuslist[kloc].haplodna[samp1][i]!=SEQMISSING)and(this->locuslist[kloc].haplodnavar[samp1][i][j]!='N')) {
 		if (c0=='\0') c0=this->locuslist[kloc].haplodnavar[samp1][i][j];
 		else ident=(c0==this->locuslist[kloc].haplodnavar[samp1][i][j]);
@@ -1283,10 +1276,10 @@ long double ParticleC::cal_nha2p(int gr,int st){
 	for (isamp=0;isamp<2;isamp++) {
 	  if (isamp==0) samp=samp0; else samp=samp1;
 	  //cout<<" sample "<<samp<<"   ss="<< this->locuslist[kloc].ss[samp]<<"\n";
-	  for (int i=0;i<dataobs.ssize[cat][samp]-1;i++) {
+	  for (int i=0;i<this->data.ssize[cat][samp]-1;i++) {
 	    if (this->locuslist[kloc].haplodna[samp][i]!=SEQMISSING) {
 	      //cout <<"coucou i\n";
-	      for (int j=i+1;j<dataobs.ssize[cat][samp];j++) {
+	      for (int j=i+1;j<this->data.ssize[cat][samp];j++) {
 		if (this->locuslist[kloc].haplodna[samp][j]!=SEQMISSING) {
 		  //cout<<"coucou j\n";
 		  nd++;
@@ -1328,10 +1321,10 @@ long double ParticleC::cal_nha2p(int gr,int st){
     if(samplesize(kloc,samp0)+samplesize(kloc,samp1)) {
       *OK=true;
       if (not this->locuslist[kloc].dnavar==0) {
-	for (int i=0;i<dataobs.ssize[cat][samp0];i++) {
+	for (int i=0;i<this->data.ssize[cat][samp0];i++) {
 	  if (this->locuslist[kloc].haplodna[samp0][i]!=SEQMISSING) {
 	    //cout <<"coucou i\n";
-	    for (int j=0;j<dataobs.ssize[cat][samp1];j++) {
+	    for (int j=0;j<this->data.ssize[cat][samp1];j++) {
 	      if (this->locuslist[kloc].haplodna[samp1][j]!=SEQMISSING) {
 		//cout<<"coucou j\n";
 		nd++;
@@ -1405,8 +1398,8 @@ long double ParticleC::cal_nha2p(int gr,int st){
 				  if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
 				  this->locuslist[kloc].freq[sample] = vector<long double>(1);
 				  this->locuslist[kloc].freq[sample][0]=1.0;
-				  this->locuslist[kloc].haplomic[sample] = vector<int>(dataobs.ssize[cat][sample]);
-				  for (int j=0;j<dataobs.ssize[cat][sample];j++)
+				  this->locuslist[kloc].haplomic[sample] = vector<int>(this->data.ssize[cat][sample]);
+				  for (int j=0;j<this->data.ssize[cat][sample];j++)
 					  this->locuslist[kloc].haplomic[sample][j]=this->locuslist[kloc].kmin;
 			  }
 			  //haplo[nhaplo] = "";
@@ -1415,7 +1408,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 			  haplo = new string[dmax];
 			  for (isamp=0;isamp<3;isamp++) {
 				  if (isamp==0) sample=samp0; else if (isamp==1) sample=samp1; else sample=samp2;
-				  for (int i=0;i<dataobs.ssize[cat][sample];i++) {
+				  for (int i=0;i<this->data.ssize[cat][sample];i++) {
 					  if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
 						  if (nhaplo==0) {
 							  haplo[nhaplo] = this->locuslist[kloc].haplodnavar[sample][i];
@@ -1441,8 +1434,8 @@ long double ParticleC::cal_nha2p(int gr,int st){
 				  this->locuslist[kloc].freq[sample] = vector<long double>(nhaplo);
 				  for (j=0;j<nhaplo;j++) this->locuslist[kloc].freq[sample][j] = 0.0;
 				  d=1.0/(long double)samplesize(kloc,sample);
-				  this->locuslist[kloc].haplomic[sample] = vector<int>(dataobs.ssize[cat][sample]);
-				  for (int i=0;i<dataobs.ssize[cat][sample];i++) {
+				  this->locuslist[kloc].haplomic[sample] = vector<int>(this->data.ssize[cat][sample]);
+				  for (int i=0;i<this->data.ssize[cat][sample];i++) {
 					  if (this->locuslist[kloc].haplodna[sample][i]!=SEQMISSING) {
 						  trouve=false;j=0;
 						  while ((not trouve)and(j<nhaplo)) {
@@ -1522,7 +1515,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 			cat = this->locuslist[locus].type % 5;
 			this->locuslist[locus].dnavar = 0;
 			for (pop=0;pop<this->nsample;pop++) {
-				for (i=0;i<dataobs.ssize[cat][pop];i++) {
+				for (i=0;i<this->data.ssize[cat][pop];i++) {
 					if ((int)this->locuslist[locus].haplodna[pop][i].length() > this->locuslist[locus].dnavar) {
 					this->locuslist[locus].dnavar=this->locuslist[locus].haplodna[pop][i].length();
 					//cout<<"  >"<<this->locuslist[locus].haplodna[pop][i]<<"<  ("<<this->locuslist[locus].haplodna[pop][i].length()<<")\n";
@@ -1537,8 +1530,8 @@ long double ParticleC::cal_nha2p(int gr,int st){
 			//cout<<"coucou\n";
 			this->locuslist[locus].haplodnavar = vector<vector<string> >(this->nsample);
 			for (pop=0;pop<this->nsample;pop++) {
-			this->locuslist[locus].haplodnavar[pop] = vector<string>(dataobs.ssize[cat][pop]);
-				for (i=0;i<dataobs.ssize[cat][pop];i++) {
+			this->locuslist[locus].haplodnavar[pop] = vector<string>(this->data.ssize[cat][pop]);
+				for (i=0;i<this->data.ssize[cat][pop];i++) {
 					if (    (int)this->locuslist[locus].haplodna[pop][i].length() == this->locuslist[locus].dnavar   ) {
 						this->locuslist[locus].haplodnavar[pop][i] = this->locuslist[locus].haplodna[pop][i];
 					} else {
@@ -1553,7 +1546,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 			locus= this->grouplist[gr].loc[iloc];
 			cat = this->locuslist[locus].type % 5;
 			this->locuslist[locus].haplodnavar = vector<vector<string> >(this->nsample);
-			ns=0; for (pop=0;pop<this->nsample;pop++) ns += dataobs.ssize[cat][pop];
+			ns=0; for (pop=0;pop<this->nsample;pop++) ns += this->data.ssize[cat][pop];
 			site = new char[ns];
 			this->locuslist[locus].dnavar=0;
 			if (this->locuslist[locus].dnalength>0) {
@@ -1561,7 +1554,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
 				for (k=0;k<this->locuslist[locus].dnalength;k++) {
 					j=-1;
 					for (pop=0;pop<this->nsample;pop++) {
-						for (i=0;i<dataobs.ssize[cat][pop];i++) {
+						for (i=0;i<this->data.ssize[cat][pop];i++) {
 							j++;
 							if (this->locuslist[locus].haplodna[pop][i] == SEQMISSING) site[j]='N';
 							else site[j] = this->locuslist[locus].haplodna[pop][i][k];
@@ -1585,8 +1578,8 @@ long double ParticleC::cal_nha2p(int gr,int st){
 			}
 	//cout<<"locus "<<locus<<"   dnavar = "<<this->locuslist[locus].dnavar<<"\n";
 	for (pop=0;pop<this->nsample;pop++) {
-	  this->locuslist[locus].haplodnavar[pop] = vector<string>(dataobs.ssize[cat][pop]);
-	  for (i=0;i<dataobs.ssize[cat][pop];i++) {
+	  this->locuslist[locus].haplodnavar[pop] = vector<string>(this->data.ssize[cat][pop]);
+	  for (i=0;i<this->data.ssize[cat][pop];i++) {
 	    ss="";
 	    for (int k=0;k<this->locuslist[locus].dnavar;k++) {
 	      if ( this->locuslist[locus].haplodna[pop][i]!=SEQMISSING) {
@@ -1631,8 +1624,8 @@ long double ParticleC::cal_nha2p(int gr,int st){
 		if (stsnp.x[i]<0.000000001) p0 += stsnp.w[i];
 	}
 	//exit(3);
-	stsnp.w.clear();
-	stsnp.x.clear();
+	delete [] stsnp.w;stsnp.w = NULL;
+	delete [] stsnp.x;stsnp.x = NULL;
     return p0/stsnp.sw;
   }
   
@@ -1646,8 +1639,8 @@ long double ParticleC::cal_nha2p(int gr,int st){
 			}
 		}
 	}
-	stsnp.w.clear();
-	stsnp.x.clear();
+	delete [] stsnp.w;stsnp.w = NULL;
+	delete [] stsnp.x;stsnp.x = NULL;
     if (sw>0.0) return sx/sw;
     else return 0.0;
   }
@@ -1666,8 +1659,8 @@ long double ParticleC::cal_nha2p(int gr,int st){
 			}
 		}
 	}
-	stsnp.w.clear();
-	stsnp.x.clear();
+	delete [] stsnp.w;stsnp.w = NULL;
+	delete [] stsnp.x;stsnp.x = NULL;
     if (sw2<1.0) return (sx2-sx*sx)/(1.0-sw2);
     else return 0.0;
   }
@@ -1738,7 +1731,12 @@ long double ParticleC::cal_nha2p(int gr,int st){
       return a;*/
   }
 
-void ParticleC::docalstat(int gr) {
+void ParticleC::docalstat(int gr, double partweight) {
+	if (partweight<0.5) {
+		cout<<"PARTICULE A POIDS NUL\n";
+		for (int st=0;st<this->grouplist[gr].nstat;st++) this->grouplist[gr].sumstat[st].val = 1.1+this->mw.random();
+		return;
+	}  
 	//cout << "avant calfreq\n";
 	//cout << this->grouplist[gr].type<<"\n";
 	if (this->grouplist[gr].type == 0)  this->calfreq(gr);
@@ -1771,7 +1769,7 @@ else
 */  
 		int categ;
 		categ=this->grouplist[gr].sumstat[st].cat;
-		//cout<<"categ = "<<categ<<"\n";
+
 
 
 		switch (categ) {
@@ -1860,10 +1858,32 @@ else
 			case    36 : numsnp=this->grouplist[gr].sumstat[st].numsnp;
 						if (not this->grouplist[gr].sumstatsnp[numsnp].defined) cal_snaml(gr,numsnp);
 						this->grouplist[gr].sumstat[st].val = this->cal_moyL(this->grouplist[gr].sumstatsnp[numsnp]);break;
+			case    50 : this->grouplist[gr].sumstat[st].val = this->locpol;
 		}
-		 //cout << "      stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
+		// cout << "      stat["<<st<<"]="<<this->grouplist[gr].sumstat[st].val<<"\n";fflush(stdin);
+		/*for (int iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
+			kloc=this->grouplist[gr].loc[iloc];
+			for (int samp=0;samp<this->nsample;samp++) {
+				if(this->locuslist[kloc].haplomic != NULL) {
+					cout<<"category = "<<categ<<"     libere haplomic  1   locus "<<kloc<<"\n";
+					for (int samp=0;samp<this->nsample;samp++) delete [] this->locuslist[kloc].haplomic[samp];
+					delete [] this->locuslist[kloc].haplomic; 
+					this->locuslist[kloc].haplomic = NULL;
+				}
+				if(this->locuslist[kloc].freq != NULL) {
+					cout<<"libere freq  2a\n";
+					for (int samp=0;samp<this->nsample;samp++) {cout<<"samp "<<samp<<"\n";delete [] this->locuslist[kloc].freq[samp];} 
+					cout<<"libere freq  2b\n";
+					delete [] this->locuslist[kloc].freq; 
+					this->locuslist[kloc].freq = NULL;
+					cout<<"libere freq 2c\n";
+				}
+			}
+		}*/
 	}
-	//cout<<"sumstat avant liberefreq\n";
+	//cout<<"\n";
+	//if ((this->grouplist[gr].type == 0)or(this->grouplist[gr].type==2)) liberefreq(gr);
+	//else liberednavar(gr);
 	if (this->grouplist[gr].type == 1) liberednavar(gr); else liberefreq(gr);
 	if (not this->afsdone.empty()) {
 		for (int sa=0;sa<this->nsample;sa++) {
@@ -1876,7 +1896,11 @@ else
 			this->t_afs.clear();
 			this->n_afs.clear();
 	}
-	//cout<<"sumstat après les clear\n";
+	/*if (this->grouplist[gr].nstatsnp>0){
+	for (int i=0;i<this->grouplist[gr].nstatsnp;i++) {
+	delete []this->grouplist[gr].sumstatsnp[i].x;
+	}
+	}*/
 }
 
 

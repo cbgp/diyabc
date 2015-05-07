@@ -12,13 +12,11 @@
 #include <string>
 #include <stdexcept>
 #include <time.h>
-#include <vector>
 extern"C"{
 #include "../dcmt0.6.1/include/dc.h"
 }
 #include "mesutils.h"
 #include "randomgenerator.h"
-#include "particleset.h"
 //#include <time.h>
 
 //#define MODULO 16777216
@@ -193,21 +191,6 @@ double MwcGen::ggamma3(double mean, double shape) {
 	sd = mean/sqrt(shape);
 	return this->ggamma2(mean,sd);
 }
-void MwcGen::resample(int nw,int n, vector <int>& index) {
-	bool *deja;
-	deja =new bool[nw];
-	for (int i=0;i<nw;i++) deja[i]=false;
-	for (int i=0;i<n;i++) {
-		do {index[i] = this->rand0(nw);} while (deja[index[i]]);
-		deja[index[i]] = true;
-	}
-	delete []deja;
-}
-
-void MwcGen::samplewith(int nw,int n, vector <int>& index) {
-	for (int i=0;i<n;i++) index[i]=	this->rand0(nw);
-}
-	
 
 void write_mt_struct(ofstream & fout, mt_struct* mt){
 	fout.write((char*)&(mt->aaa), sizeof(uint32_t));

@@ -1,5 +1,5 @@
 /*
- * particleset.cppF
+ * particleset.cpp
  *
  *  Created on: 23 sept. 2010
  *      Author: cornuet
@@ -32,31 +32,123 @@ extern long double **phistarOK;
 extern int debuglevel;
 extern ReftableC rt;
 extern string scurfile;
-extern DataC dataobs,datasim;
-extern HeaderC header;
-extern vector <LocusGroupC> groupe;
-extern vector <ScenarioC> scenario;
 
 long int ntentes,naccept;
 
 
 /**
+ * Structure ParticleSet : remplissage de la partie data de la particule p
+ */
+void ParticleSetC::setdata(int p) {
+//	cout<<"ParticleSetC::setdata(int p)    1\n";
+	this->particule[p].threshold = this->header.threshold;
+	this->particule[p].sexratio = this->header.dataobs.sexratio;
+	this->particule[p].maf = this->header.dataobs.maf;
+	this->particule[p].data.nsample = this->header.dataobs.nsample;
+	this->particule[p].nsample = this->header.dataobs.nsample;
+	this->particule[p].data.nind.resize(this->header.dataobs.nsample);
+	this->particule[p].data.indivsexe.resize(this->header.dataobs.nsample);
+//	cout<<"ParticleSetC::setdata(int p)    2\n";
+	this->particule[p].data.catexist = vector<bool>(5);
+	this->particule[p].data.catexist = this->header.dataobs.catexist;
+	this->particule[p].data.ssize = this->header.dataobs.ssize;
+	this->particule[p].data.nind = this->header.dataobs.nind;
+	this->particule[p].data.indivsexe = this->header.dataobs.indivsexe;
+//	cout<<"ParticleSetC::setdata(int p)    3\n";
+
+//	cout<<"ParticleSetC::setdata(int p)    4\n";
+	this->particule[p].data.nmisshap = this->header.dataobs.nmisshap;
+	this->particule[p].data.misshap = this->header.dataobs.misshap;
+//	cout<<"ParticleSetC::setdata(int p)    5\n";
+
+	this->particule[p].data.nmisssnp = this->header.dataobs.nmisssnp;
+	this->particule[p].data.misssnp = this->header.dataobs.misssnp;
+
+//	cout<<"ParticleSetC::setdata(int p)    6\n";
+	this->particule[p].data.nmissnuc = this->header.dataobs.nmissnuc;
+	this->particule[p].data.missnuc = this->header.dataobs.missnuc;
+//	cout<<"ParticleSetC::setdata(int p)    7\n";
+	this->particule[p].reffreqmin = this->header.reffreqmin;
+}
+
+/**
  * Structure ParticleSet : remplissage de la partie groupe de la particule p
  */
 void ParticleSetC::setgroup(int p) {
-	int ngr;
-	ngr = groupe.size();
-	if (debuglevel==5) cout<<"Dans setgroup ngr="<<ngr<<"\n";
+	int ngr = this->header.ngroupes;
+	if (debuglevel==5) cout<<"ngr="<<ngr<<"\n";
 	this->particule[p].ngr = ngr;
-	if(not this->particule[p].grouplist.empty()) this->particule[p].grouplist.clear();
-	this->particule[p].grouplist = vector <LocusGroupC>(ngr);
-	for (int gr=0;gr<ngr;gr++) this->particule[p].grouplist[gr] = groupe[gr];
-	//cout<<"Dans Particleset setgroup("<<p<<") groupe[1].mutmoy="<<groupe[1].mutmoy<<"\n";
-	for (int gr=1;gr<ngr;gr++) {
-		//particuleobs.grouplist[gr] = groupe[gr];
-		for (int i=0;i<groupe[gr].nstatsnp;i++){
-			this->particule[p].grouplist[gr].sumstatsnp[i].x = vector <long double>(groupe[gr].nloc);
-			this->particule[p].grouplist[gr].sumstatsnp[i].w = vector <long double>(groupe[gr].nloc);
+	if(this->particule[p].grouplist != NULL) {
+		delete [] this->particule[p].grouplist;
+		this->particule[p].grouplist = NULL;
+	}
+	this->particule[p].grouplist = new LocusGroupC[ngr+1];
+	this->particule[p].grouplist[0].nloc = this->header.groupe[0].nloc;
+	this->particule[p].grouplist[0].loc = this->header.groupe[0].loc;
+	for (int gr=1;gr<=ngr;gr++) {
+		this->particule[p].grouplist[gr].type =this->header.groupe[gr].type;
+		this->particule[p].grouplist[gr].nloc = this->header.groupe[gr].nloc;
+		if (debuglevel==5) cout <<"groupe "<<gr<<"   nloc="<<this->particule[p].grouplist[gr].nloc<<"\n";
+		this->particule[p].grouplist[gr].loc = this->header.groupe[gr].loc;
+		if (this->header.groupe[gr].type==0) {	//MICROSAT
+			this->particule[p].grouplist[gr].mutmoy = this->header.groupe[gr].mutmoy;
+			this->particule[p].grouplist[gr].priormutmoy = this->header.groupe[gr].priormutmoy;
+			this->particule[p].grouplist[gr].priormutloc = this->header.groupe[gr].priormutloc;
+
+			this->particule[p].grouplist[gr].Pmoy = this->header.groupe[gr].Pmoy;
+			this->particule[p].grouplist[gr].priorPmoy = this->header.groupe[gr].priorPmoy;
+			this->particule[p].grouplist[gr].priorPloc = this->header.groupe[gr].priorPloc;
+
+			this->particule[p].grouplist[gr].snimoy = this->header.groupe[gr].snimoy;
+			this->particule[p].grouplist[gr].priorsnimoy = this->header.groupe[gr].priorsnimoy;
+			this->particule[p].grouplist[gr].priorsniloc = this->header.groupe[gr].priorsniloc;
+		}
+		else if (this->header.groupe[gr].type==1) {							//SEQUENCES
+			//cout<<"SEQUENCE\n";
+			this->particule[p].grouplist[gr].mutmod = this->header.groupe[gr].mutmod;	//mutmod
+			this->particule[p].grouplist[gr].p_fixe = this->header.groupe[gr].p_fixe;	//p_fixe
+			this->particule[p].grouplist[gr].gams   = this->header.groupe[gr].gams;	//gams
+
+			this->particule[p].grouplist[gr].musmoy = this->header.groupe[gr].musmoy;	//musmoy
+			this->particule[p].grouplist[gr].priormusmoy = this->header.groupe[gr].priormusmoy;
+			this->particule[p].grouplist[gr].priormusloc = this->header.groupe[gr].priormusloc;
+
+			if (this->header.groupe[gr].mutmod>0){
+				this->particule[p].grouplist[gr].k1moy = this->header.groupe[gr].k1moy ;	//k1moy
+				this->particule[p].grouplist[gr].priork1moy = this->header.groupe[gr].priork1moy;
+				this->particule[p].grouplist[gr].priork1loc = this->header.groupe[gr].priork1loc;
+			}
+			
+			if (this->header.groupe[gr].mutmod>2){
+				this->particule[p].grouplist[gr].k2moy = this->header.groupe[gr].k2moy ;	//k2moy
+				this->particule[p].grouplist[gr].priork2moy = this->header.groupe[gr].priork2moy;
+				this->particule[p].grouplist[gr].priork2loc = this->header.groupe[gr].priork2loc;
+			}
+		}
+		//cout<<"nstat = "<<this->header.groupe[gr].nstat<<"\n";
+		this->particule[p].grouplist[gr].nstat=this->header.groupe[gr].nstat;
+		this->particule[p].grouplist[gr].sumstat = vector<StatC>(header.groupe[gr].nstat);
+		for (int i=0;i<this->header.groupe[gr].nstat;i++){
+			this->particule[p].grouplist[gr].sumstat[i].cat   = header.groupe[gr].sumstat[i].cat;
+			this->particule[p].grouplist[gr].sumstat[i].samp  = header.groupe[gr].sumstat[i].samp;
+			this->particule[p].grouplist[gr].sumstat[i].samp1 = header.groupe[gr].sumstat[i].samp1;
+			this->particule[p].grouplist[gr].sumstat[i].samp2 = header.groupe[gr].sumstat[i].samp2;
+			this->particule[p].grouplist[gr].sumstat[i].numsnp = header.groupe[gr].sumstat[i].numsnp;
+			//cout<<"this->particule["<<p<<"].grouplist["<<gr<<"].sumstat["<<i<<"].cat="<<this->particule[p].grouplist[gr].sumstat[i].cat<<"\n";
+		}
+		//cout<<"dans particleset  setgroup  nstatsnp = "<<this->header.groupe[gr].nstatsnp<<"\n";
+		this->particule[p].grouplist[gr].nstatsnp=this->header.groupe[gr].nstatsnp;
+		if (this->header.groupe[gr].nstatsnp>0) {
+			this->particule[p].grouplist[gr].sumstatsnp = vector<StatsnpC>(header.groupe[gr].nstatsnp);
+			for (int i=0;i<this->header.groupe[gr].nstatsnp;i++){
+				this->particule[p].grouplist[gr].sumstatsnp[i].cat   = header.groupe[gr].sumstatsnp[i].cat;
+				this->particule[p].grouplist[gr].sumstatsnp[i].samp  = header.groupe[gr].sumstatsnp[i].samp;
+				this->particule[p].grouplist[gr].sumstatsnp[i].samp1 = header.groupe[gr].sumstatsnp[i].samp1;
+				this->particule[p].grouplist[gr].sumstatsnp[i].samp2 = header.groupe[gr].sumstatsnp[i].samp2;
+				this->particule[p].grouplist[gr].sumstatsnp[i].defined = header.groupe[gr].sumstatsnp[i].defined;
+				this->particule[p].grouplist[gr].sumstatsnp[i].x = new long double[header.groupe[gr].nloc];
+				this->particule[p].grouplist[gr].sumstatsnp[i].w = new long double[header.groupe[gr].nloc];
+			}
 		}
 	}
 }
@@ -66,64 +158,50 @@ void ParticleSetC::setgroup(int p) {
  */
 void ParticleSetC::setloci(int p) {
 	int kmoy,cat;
-	this->particule[p].nloc = dataobs.nloc;
-	this->particule[p].nsample = dataobs.nsample;
-	if(not particule[p].locuslist.empty()) particule[p].locuslist;
-	this->particule[p].locuslist = vector <LocusC>(dataobs.nloc);
-	for (int kloc=0;kloc<dataobs.nloc;kloc++){
+	this->particule[p].nloc = this->header.dataobs.nloc;
+	this->particule[p].nsample = this->header.dataobs.nsample;
+	if(particule[p].locuslist != NULL) {
+		delete [] particule[p].locuslist;
+		particule[p].locuslist = NULL;
+	}
+	this->particule[p].locuslist = new LocusC[this->header.dataobs.nloc];
+	for (int kloc=0;kloc<this->header.dataobs.nloc;kloc++){
 		this->particule[p].locuslist[kloc].nsample = this->particule[p].nsample;
-		this->particule[p].locuslist[kloc].coeffcoal =  dataobs.locus[kloc].coeffcoal;
-		this->particule[p].locuslist[kloc].type = dataobs.locus[kloc].type;
-		this->particule[p].locuslist[kloc].groupe = dataobs.locus[kloc].groupe;
-		if (dataobs.locus[kloc].type < 5) {
-			kmoy=(dataobs.locus[kloc].maxi+dataobs.locus[kloc].mini)/2;
-			this->particule[p].locuslist[kloc].kmin=kmoy-((dataobs.locus[kloc].motif_range/2)-1)*dataobs.locus[kloc].motif_size;
-			this->particule[p].locuslist[kloc].kmax=this->particule[p].locuslist[kloc].kmin+(dataobs.locus[kloc].motif_range-1)*dataobs.locus[kloc].motif_size;
-			this->particule[p].locuslist[kloc].motif_size = dataobs.locus[kloc].motif_size;
-			this->particule[p].locuslist[kloc].motif_range = dataobs.locus[kloc].motif_range;
-			//this->particule[p].locuslist[kloc].mut_rate = dataobs.locus[kloc].mut_rate;
-			//this->particule[p].locuslist[kloc].Pgeom = dataobs.locus[kloc].Pgeom;
-			//this->particule[p].locuslist[kloc].sni_rate = dataobs.locus[kloc].sni_rate;
-		} else if (dataobs.locus[kloc].type < 10) {
-			this->particule[p].locuslist[kloc].dnalength =  dataobs.locus[kloc].dnalength;
+		this->particule[p].locuslist[kloc].coeffcoal =  this->header.dataobs.locus[kloc].coeffcoal;
+		this->particule[p].locuslist[kloc].type = this->header.dataobs.locus[kloc].type;
+		this->particule[p].locuslist[kloc].groupe = this->header.dataobs.locus[kloc].groupe;
+		if (this->header.dataobs.locus[kloc].type < 5) {
+			kmoy=(this->header.dataobs.locus[kloc].maxi+this->header.dataobs.locus[kloc].mini)/2;
+			this->particule[p].locuslist[kloc].kmin=kmoy-((this->header.dataobs.locus[kloc].motif_range/2)-1)*this->header.dataobs.locus[kloc].motif_size;
+			this->particule[p].locuslist[kloc].kmax=this->particule[p].locuslist[kloc].kmin+(this->header.dataobs.locus[kloc].motif_range-1)*this->header.dataobs.locus[kloc].motif_size;
+			this->particule[p].locuslist[kloc].motif_size = this->header.dataobs.locus[kloc].motif_size;
+			this->particule[p].locuslist[kloc].motif_range = this->header.dataobs.locus[kloc].motif_range;
+			//this->particule[p].locuslist[kloc].mut_rate = this->header.dataobs.locus[kloc].mut_rate;
+			//this->particule[p].locuslist[kloc].Pgeom = this->header.dataobs.locus[kloc].Pgeom;
+			//this->particule[p].locuslist[kloc].sni_rate = this->header.dataobs.locus[kloc].sni_rate;
+		} else if (this->header.dataobs.locus[kloc].type < 10) {
+			this->particule[p].locuslist[kloc].dnalength =  this->header.dataobs.locus[kloc].dnalength;
 			this->particule[p].locuslist[kloc].kmin =  0;
 			this->particule[p].locuslist[kloc].kmax =  0;
-			//this->particule[p].locuslist[kloc].k2 =  dataobs.locus[kloc].k2;
-			this->particule[p].locuslist[kloc].pi_A = dataobs.locus[kloc].pi_A ;
-			this->particule[p].locuslist[kloc].pi_C =  dataobs.locus[kloc].pi_C;
-			this->particule[p].locuslist[kloc].pi_G =  dataobs.locus[kloc].pi_G;
-			this->particule[p].locuslist[kloc].pi_T =  dataobs.locus[kloc].pi_T;
-			this->particule[p].locuslist[kloc].mutsit.resize(dataobs.locus[kloc].dnalength);
-			for (int i=0;i<this->particule[p].locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = dataobs.locus[kloc].mutsit[i];
+			//this->particule[p].locuslist[kloc].k2 =  this->header.dataobs.locus[kloc].k2;
+			this->particule[p].locuslist[kloc].pi_A = this->header.dataobs.locus[kloc].pi_A ;
+			this->particule[p].locuslist[kloc].pi_C =  this->header.dataobs.locus[kloc].pi_C;
+			this->particule[p].locuslist[kloc].pi_G =  this->header.dataobs.locus[kloc].pi_G;
+			this->particule[p].locuslist[kloc].pi_T =  this->header.dataobs.locus[kloc].pi_T;
+			this->particule[p].locuslist[kloc].mutsit.resize(this->header.dataobs.locus[kloc].dnalength);
+			for (int i=0;i<this->particule[p].locuslist[kloc].dnalength;i++) this->particule[p].locuslist[kloc].mutsit[i] = this->header.dataobs.locus[kloc].mutsit[i];
 			//std::cout <<"\n";
-		} else  if (dataobs.locus[kloc].type >= 10) {
-		//cout << "dans setloci locus "<<kloc<<"\n";
-			this->particule[p].locuslist[kloc].samplesize =  vector<int>(this->particule[p].nsample);
-			for (int ech=0;ech<this->particule[p].nsample;ech++) 
-				this->particule[p].locuslist[kloc].samplesize[ech] = dataobs.locus[kloc].samplesize[ech];
-			this->particule[p].locuslist[kloc].ploidie = vector<vector<short int> >(this->particule[p].nsample);
-			for (int ech=0;ech<this->particule[p].nsample;ech++) {
-				this->particule[p].locuslist[kloc].ploidie[ech] = vector <short int>(dataobs.nind[ech]);
-				for (int i=0;i<dataobs.nind[ech];i++)
-					this->particule[p].locuslist[kloc].ploidie[ech][i] = dataobs.locus[kloc].ploidie[ech][i];		
-			}
-			if (dataobs.locus[kloc].type == 13) {
-				if (this->particule[p].samplesizeY.empty()) this->particule[p].samplesizeY = vector<int>(this->particule[p].nsample);
-				for (int ech=0;ech<this->particule[p].nsample;ech++) {
-					if (this->particule[p].samplesizeY[ech]<this->particule[p].locuslist[kloc].samplesize[ech]) {
-						this->particule[p].samplesizeY[ech]=this->particule[p].locuslist[kloc].samplesize[ech];
-					}
-				}
-			}
-			if (dataobs.locus[kloc].type == 14) {
-				if (this->particule[p].samplesizeM.empty()) this->particule[p].samplesizeM = vector<int>(this->particule[p].nsample);
-				for (int ech=0;ech<this->particule[p].nsample;ech++) {
-					if (this->particule[p].samplesizeM[ech]<this->particule[p].locuslist[kloc].samplesize[ech]) {
-						this->particule[p].samplesizeM[ech]=this->particule[p].locuslist[kloc].samplesize[ech];
-					}
+		} else  if (this->header.dataobs.locus[kloc].type >= 10) {
+			this->particule[p].locuslist[kloc].nmisssnp=this->header.dataobs.locus[kloc].nmisssnp;
+			if (this->header.dataobs.locus[kloc].nmisssnp>0) {
+				this->particule[p].locuslist[kloc].misssnp= new MissingSnp[this->header.dataobs.locus[kloc].nmisssnp];
+				for (int i=0;i<this->header.dataobs.locus[kloc].nmisssnp;i++) {
+					this->particule[p].locuslist[kloc].misssnp[i].sample = this->header.dataobs.locus[kloc].misssnp[i].sample;
+					this->particule[p].locuslist[kloc].misssnp[i].indiv = this->header.dataobs.locus[kloc].misssnp[i].indiv;
 				}
 			}
 		}
+		//cout << "samplesize[0]="<<this->particule[p].locuslist[kloc].samplesize[0]<<"\n";
 	}
 }
 
@@ -131,17 +209,28 @@ void ParticleSetC::setloci(int p) {
  * Structure ParticleSet : remplissage de la partie scenarios de la particule p
  */
 void ParticleSetC::setscenarios (int p, bool simulfile) {
-	//cout<<"particuleset::setscenarios  nscenarios = "<<scenario.size()<<"   particule "<<p<<"\n";
-	this->particule[p].nscenarios=scenario.size();
-	//cout<<"particule["<<p<<"].nscenarios = "<<this->particule[p].nscenarios<<"\n";
-	this->particule[p].drawuntil = header.drawuntil;
-	if(not particule[p].scenario.empty()) particule[p].scenario.clear();
-	this->particule[p].scenario =vector <ScenarioC>(scenario.size());
-	for (int i=0;i<scenario.size();i++) this->particule[p].scenario[i] = scenario[i];
-	this->particule[p].scen = header.scen;
+	this->particule[p].nscenarios=this->header.nscenarios;
+	this->particule[p].drawuntil = this->header.drawuntil;
+	if(particule[p].scenario != NULL){
+		delete [] particule[p].scenario;
+		particule[p].scenario = NULL;
+	}
+	this->particule[p].scenario = new ScenarioC[this->header.nscenarios];
+	for (int i=0;i<this->header.nscenarios;i++) {
+		//cout<<"avant la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
+		//if (p==0) cout<<"header nconditions="<<this->header.scenario[i].nconditions<<"\n";
+		this->particule[p].scenario[i] = this->header.scenario[i];
+		//cout<<"apres la copie du scenario "<<i<<" dans la particule "<<p<<"\n";
+		//if (p==0) this->header.scenario[i].ecris();
+		//if (p==0) cout<<"dans particule[0] scenario["<<i<<"] nconditions="<<this->particule[p].scenario[i].nconditions<<"\n";
+	}
+	//cout<<"\navant la copie du superscenario\n";
+	//this->header.scen.ecris();
+	this->particule[p].scen = this->header.scen;
+	//cout<<"\napres la copie du superscenario\n";
 	if (simulfile) {
 		int ip;
-		for (int i=0;i<scenario.size();i++) {
+		for (int i=0;i<this->header.nscenarios;i++) {
 			for (int ievent=0;ievent<this->particule[p].scenario[i].nevent;ievent++) {
 				//cout<<"ievent="<<ievent<<"   <"<<this->particule[p].scenario[i].event[ievent].time<<">   {"<<this->particule[p].scenario[i].event[ievent].stime <<"}\n";
 				if (this->particule[p].scenario[i].event[ievent].stime.length()>0) {
@@ -160,6 +249,7 @@ void ParticleSetC::setscenarios (int p, bool simulfile) {
 	}
 	//this->particule[p].scen.ecris(simulfile);
 	//cout<<"setscenarios nloc="<<this->particule[p].nloc<<"\n";
+	//exit(1);
 
 }
 
@@ -167,28 +257,28 @@ void ParticleSetC::setscenarios (int p, bool simulfile) {
  * Structure ParticleSet : réinitialisation de la particule p
  */
 void ParticleSetC::resetparticle (int p) {
-	for (int gr=0;gr<this->particule[p].ngr;gr++) {
-		if (groupe[gr].type==0) {  //MICROSAT
+	for (int gr=1;gr<=this->particule[p].ngr;gr++) {
+		if (this->header.groupe[gr].type==0) {  //MICROSAT
 			//cout <<"MICROSAT "<<p<<"\n";
-			this->particule[p].grouplist[gr].mutmoy = groupe[gr].mutmoy;
-			this->particule[p].grouplist[gr].Pmoy = groupe[gr].Pmoy;
-			this->particule[p].grouplist[gr].snimoy = groupe[gr].snimoy;
+			this->particule[p].grouplist[gr].mutmoy = this->header.groupe[gr].mutmoy;
+			this->particule[p].grouplist[gr].Pmoy = this->header.groupe[gr].Pmoy;
+			this->particule[p].grouplist[gr].snimoy = this->header.groupe[gr].snimoy;
 		}
-		else if (groupe[gr].type==1) {        //SEQUENCES
+		else if (this->header.groupe[gr].type==1) {        //SEQUENCES
 			//cout<<"SEQUENCE\n";
 			int kloc;
 			for (int iloc=0;iloc<this->particule[p].grouplist[gr].nloc;iloc++){
 				kloc=this->particule[p].grouplist[gr].loc[iloc];
 				if (not this->particule[p].locuslist[kloc].mutsit.empty())this->particule[p].locuslist[kloc].mutsit.clear();
 			}
-			this->particule[p].grouplist[gr].musmoy = groupe[gr].musmoy;       //musmoy
-			if (groupe[gr].mutmod>0){
-				this->particule[p].grouplist[gr].k1moy = groupe[gr].k1moy ;        //k1moy
+			this->particule[p].grouplist[gr].musmoy = this->header.groupe[gr].musmoy;       //musmoy
+			if (this->header.groupe[gr].mutmod>0){
+				this->particule[p].grouplist[gr].k1moy = this->header.groupe[gr].k1moy ;        //k1moy
 			}
-			if (groupe[gr].mutmod>2){
-				this->particule[p].grouplist[gr].k2moy = groupe[gr].k2moy ;        //k2moy
+			if (this->header.groupe[gr].mutmod>2){
+				this->particule[p].grouplist[gr].k2moy = this->header.groupe[gr].k2moy ;        //k2moy
 			}
-		} else if (groupe[gr].type==2) {		//SNP
+		} else if (this->header.groupe[gr].type==2) {		//SNP
 			for (int i=0;i<this->particule[p].grouplist[gr].nstatsnp;i++){
 				this->particule[p].grouplist[gr].sumstatsnp[i].defined=false;
 			}
@@ -197,99 +287,91 @@ void ParticleSetC::resetparticle (int p) {
 	}
 }
 
-void ParticleSetC::init_particule(int npart, bool dnatrue, bool simulfile,int seed) {
-	this->particule = vector<ParticleC>(npart);
-	for (int p=0;p<npart;p++) {
-		if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
-		this->particule[p].dnatrue = dnatrue;
-		this->particule[p].maf = dataobs.maf;
-		if (debuglevel==5) cout <<"dnatrue\n";
-		this->setgroup(p);
-		if (debuglevel==5) cout<<"setgroup\n";
-		this->setloci(p);
-		if (debuglevel==5) cout<<"setloci\n";
-		this->setscenarios(p,simulfile);
-		if (debuglevel==5) cout<<"setscenarios\n";
-		this->particule[p].mw.randinit(p,seed);
-		if (debuglevel==5) cout<< "                    apres set particule "<<p<<"\n";
-	}
-	
-}
-
-
 /**
- * Structure ParticleSet : simulation de particules de paramètres fixés
+ * Structure ParticleSet : simulation de particules de paramètres fixées
  */
-void ParticleSetC::dosimulstat(int debut, int npart, bool dnatrue, bool multithread, int numscen, int seed, double **stat) {
+void ParticleSetC::dosimulstat(HeaderC const & header, int debut, int npart, bool dnatrue, bool multithread, int numscen, int seed, double **stat) {
 	int scen=numscen-1;
 	this->npart = npart;
-	int *sOK,ns,k,ii,gr,ipart,nstat,nparam=scenario[scen].nparam;
+	int *sOK,ns,k,ii,gr,ipart,nstat,nparam=header.scenario[scen].nparam;
 	string *ss;
 	sOK = new int[npart];
 	bool simulfile=false;
-	if (debut<1) init_particule(npart,dnatrue,simulfile,seed);
-	else {
+	if (debut<1) {
+		this->particule = vector<ParticleC>(this->npart);
+		if (debuglevel==5) cout<<"\n\navant this->header=header   this->npart="<<this->npart<<"\n";
+		this->header = header;
+		if (debuglevel==5) cout<<"apres this->header=header   this->npart="<<this->npart<<"\n";
 		for (int p=0;p<this->npart;p++) {
-			this->resetparticle(p);
+			if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
+			this->particule[p].dnatrue = dnatrue;
+			if (debuglevel==5) cout <<"dnatrue\n";
+			this->setdata(p);
+			if (debuglevel==5) cout <<"setdata\n";
+			this->setgroup(p);
+			if (debuglevel==5) cout<<"setgroup\n";
+			this->setloci(p);
+			if (debuglevel==5) cout<<"setloci\n";
+			this->setscenarios(p,simulfile);
+			if (debuglevel==5) cout<< "                    apres set particule\n";
+			this->particule[p].mw.randinit(p,seed);
 		}
-	}	
+	}
 	for (int p=0;p<this->npart;p++) {
 		k=debut+p;
 		if (debuglevel==5) cout<<"p="<<p<<"    k="<<k<<"\n";
 		ii=0;
 		for (int i=0;i<nparam;i++) {
-			if (not scenario[scen].histparam[i].prior.constant) {
+			if (not header.scenario[scen].histparam[i].prior.constant) {
 				this->particule[p].scenario[scen].histparam[i].value=phistarOK[k][ii];
 				this->particule[p].scenario[scen].histparam[i].prior.fixed=true;
 				ii++;
-			} else this->particule[p].scenario[scen].histparam[i].value=scenario[scen].histparam[i].prior.mini;
+			} else this->particule[p].scenario[scen].histparam[i].value=header.scenario[scen].histparam[i].prior.mini;
 			if (debuglevel==5) {
-				cout<<scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
+				cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
 				cout<<"phistar["<<k<<"]["<<ii-1<<"]="<<phistarOK[k][ii-1]<<"\n";
 			}
 		}
 		
 		if (debuglevel==5) cout<<"\n";
 		//cout<<"apres la copie des paramètres historiques\n";
-		for (gr=1;gr<groupe.size();gr++)
-			if (groupe[gr].type==0) {  //MICROSAT
-				//cout <<"MICROSAT particule "<<p<<"   gr="<<gr<<"   k="<<k<<"   ii="<<ii<<"\n";
-				//cout<<"phistarOK["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"\n";
-				if (not groupe[gr].priormutmoy.constant) {
-					//cout<<" priormutmoy non constant "<<phistarOK[k][ii]<<" \n";
+		for (gr=1;gr<=header.ngroupes;gr++)
+			if (header.groupe[gr].type==0) {  //MICROSAT
+				//cout <<"MICROSAT "<<p<<"   k="<<k<<"   ii="<<ii<<"\n";
+				//cout<<"phistarOK["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
+				if (not header.groupe[gr].priormutmoy.constant) {
+					//cout<<" priormutmoy non constant "<<phistarOK[k][ii]<<"  ";
 					this->particule[p].grouplist[gr].mutmoy = phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priormutmoy.fixed=true;
 				}
-			//cout<<this->particule[p].grouplist[gr].mutmoy<<"\n";
+				//cout<<this->particule[p].grouplist[gr].mutmoy<<"\n";
 				//cout<<"phistarOK["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
-				if (not groupe[gr].priorPmoy.constant)   {
-					//cout<<" priorPmoy non constant "<<phistarOK[k][ii]<<" \n";
+				if (not header.groupe[gr].priorPmoy.constant)   {
 					this->particule[p].grouplist[gr].Pmoy  =  phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priorPmoy.fixed=true;
 				}
 				//cout<<this->particule[p].grouplist[gr].Pmoy<<"\n";
 				//cout<<"phistarOK["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
-				if (not groupe[gr].priorsnimoy.constant) {
-					//cout<<" priorsnimoy non constant "<<phistarOK[k][ii]<<" \n";
+				if (not header.groupe[gr].priorsnimoy.constant) {
 					this->particule[p].grouplist[gr].snimoy = phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priorsnimoy.fixed=true;
 				}
 				//cout<<this->particule[p].grouplist[gr].snimoy<<"\n";
 			}
-			else if (groupe[gr].type==1) {       //SEQUENCES
+			else if (header.groupe[gr].type==1) {       //SEQUENCES
 				//cout<<"SEQUENCE\n";
-				if (not groupe[gr].priormusmoy.constant) {         //musmoy
+				if (not header.groupe[gr].priormusmoy.constant) {         //musmoy
 					this->particule[p].grouplist[gr].musmoy = phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priormusmoy.fixed=true;
 				}   
-				if (groupe[gr].mutmod>0){
-					if (not groupe[gr].priork1moy.constant){        //k1moy
+				if (header.groupe[gr].mutmod>0){
+					if (not header.groupe[gr].priork1moy.constant){        //k1moy
 						this->particule[p].grouplist[gr].k1moy =phistarOK[k][ii];ii++;
 						this->particule[p].grouplist[gr].priork1moy.fixed=true;
 					}
 				}
-				if (groupe[gr].mutmod>2){
-					if (not groupe[gr].priork2moy.constant){        //k2moy
+				if (header.groupe[gr].mutmod>2){
+					if (not header.groupe[gr].priork2moy.constant){        //k2moy
 						this->particule[p].grouplist[gr].k2moy =phistarOK[k][ii];ii++;
 						this->particule[p].grouplist[gr].priork2moy.fixed=true;
 					}
@@ -304,7 +386,7 @@ void ParticleSetC::dosimulstat(int debut, int npart, bool dnatrue, bool multithr
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
 		if (debuglevel==5) cout<<sOK[ipart]<<"apres dosimulpart de la particule "<<ipart<<"\n";
 		if (sOK[ipart]==0) {
-			for(gr=1;gr<this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr);}
+			for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr,this->particule[ipart].weight);}
 		}
 	}
 	cout<<"after simulation of "<<npart<<" particles (scenario "<<numscen<<")\n";
@@ -312,7 +394,7 @@ void ParticleSetC::dosimulstat(int debut, int npart, bool dnatrue, bool multithr
 	for (int ipart=0;ipart<this->npart;ipart++) {
 		if (sOK[ipart]==0){
 			nstat=0;
-			for(int gr=1;gr<this->particule[ipart].ngr;gr++){
+			for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){
 					//cout<<"ipart="<<ipart<<"   gr="<<gr<<"   st="<<st<<"\n";
 /////////////// filtrage des Aml et aml début
@@ -331,81 +413,101 @@ void ParticleSetC::dosimulstat(int debut, int npart, bool dnatrue, bool multithr
 			}
 		}
 	}
-	delete [] sOK;
-	if (debuglevel==5) cout<<"fin de dosimulstat\n";
+	cout<<"fin de dosimulstat\n";
 }
+
+
+
+
+
+
+
+
 
 /**
  * Structure ParticleSet : simulation des particules utilisées pour le model checking
  */
-void ParticleSetC::dosimulphistar(int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
+void ParticleSetC::dosimulphistar(HeaderC const & header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
 	int scen=numscen-1;
-	int ii,ip1,ip2,ipart,gr,nstat,k,nparam=scenario[scen].nparam,nm,np,iscen,categ;
+	int ii,ip1,ip2,ipart,gr,nstat,k,nparam=header.scenario[scen].nparam,nm,np,iscen,categ;
 	bool simulfile=false;
 	this->npart = npart;
-	int ns;
-	vector <int> sOK;
+	int *sOK,ns;
 	vector<string> ss;
-	sOK = vector <int>(npart);
+	sOK = new int[npart];
 	if (debuglevel==5) cout<<"avant firsttime="<<firsttime<<"\n";
-	if (firsttime) init_particule(npart,dnatrue,simulfile,seed);
-	else {
+	if (firsttime) {
+		this->particule = vector<ParticleC>(this->npart);
+		if (debuglevel==5) cout<<"\n\navant this->header=header   this->npart="<<this->npart<<"\n";
+		this->header = header;
+		if (debuglevel==5) cout<<"apres this->header=header   this->npart="<<this->npart<<"\n";
 		for (int p=0;p<this->npart;p++) {
-			this->resetparticle(p);
+			if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
+			this->particule[p].dnatrue = dnatrue;
+			if (debuglevel==5) cout <<"dnatrue\n";
+			this->setdata(p);
+			if (debuglevel==5) cout <<"setdata\n";
+			this->setgroup(p);
+			if (debuglevel==5) cout<<"setgroup\n";
+			this->setloci(p);
+			if (debuglevel==5) cout<<"setloci\n";
+			this->setscenarios(p,simulfile);
+			if (debuglevel==5) cout<< "                    apres set particule\n";
+			this->particule[p].mw.randinit(p,seed);
 		}
 	}
 	if (debuglevel==5) cout<<"apres firsttime\n";
 	for (int p=0;p<this->npart;p++) {
 		k=this->particule[0].mw.rand0(nsel);
-		if (debuglevel==55) cout<<"p="<<p<<"    k="<<k<<"\n";
+		if (debuglevel==5) cout<<"p="<<p<<"    k="<<k<<"\n";
 		ii=0;
 		for (int i=0;i<nparam;i++) {
-			if (not scenario[scen].histparam[i].prior.constant) {
-				if (debuglevel==55) cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"\n";
+			if (not header.scenario[scen].histparam[i].prior.constant) {
+				if (debuglevel==5) cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"\n";
 				this->particule[p].scenario[scen].histparam[i].value=phistarOK[k][ii];
 				this->particule[p].scenario[scen].histparam[i].prior.fixed=true;
 				ii++;
-			} else this->particule[p].scenario[scen].histparam[i].value=scenario[scen].histparam[i].prior.mini;
-			if (debuglevel==5) cout<<scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
+			} else this->particule[p].scenario[scen].histparam[i].value=header.scenario[scen].histparam[i].prior.mini;
+			if (debuglevel==5) cout<<header.scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
 		}
 		if (debuglevel==5) cout<<"\n";
 		//cout<<"apres la copie des paramètres historiques\n";
-		for (gr=1;gr<groupe.size();gr++)
-			if (groupe[gr].type==0) {  //MICROSAT
+		for (gr=1;gr<=header.ngroupes;gr++)
+			if (header.groupe[gr].type==0) {  //MICROSAT
 				//cout <<"MICROSAT "<<p<<"\n";
 				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    \n";
-				if (not groupe[gr].priormutmoy.constant) {
+				if (not header.groupe[gr].priormutmoy.constant) {
 					this->particule[p].grouplist[gr].mutmoy = phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priormutmoy.fixed=true;
 				}
 				//cout<<this->particule[p].grouplist[gr].mutmoy<<"\n";
 				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    ";
-				if (not groupe[gr].priorPmoy.constant)   {
+				if (not header.groupe[gr].priorPmoy.constant)   {
 					this->particule[p].grouplist[gr].Pmoy  =  phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priorPmoy.fixed=true;
 				}
 				//cout<<this->particule[p].grouplist[gr].Pmoy<<"\n";
 				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"    ";
-				if (not groupe[gr].priorsnimoy.constant) {
+				if (not header.groupe[gr].priorsnimoy.constant) {
 					this->particule[p].grouplist[gr].snimoy = phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priorsnimoy.fixed=true;
 				}
 				//cout<<this->particule[p].grouplist[gr].snimoy<<"\n";
 			}
-			else if (groupe[gr].type==1) {       //SEQUENCES
+			else if (header.groupe[gr].type==1) {       //SEQUENCES
 				//cout<<"SEQUENCE\n";
-				if (not groupe[gr].priormusmoy.constant) {         //musmoy
+				if (not header.groupe[gr].priormusmoy.constant) {         //musmoy
 					this->particule[p].grouplist[gr].musmoy = phistarOK[k][ii];ii++;
 					this->particule[p].grouplist[gr].priormusmoy.fixed=true;
 				}   
-				if (groupe[gr].mutmod>0){
-					if (not groupe[gr].priork1moy.constant){        //k1moy
+				if (header.groupe[gr].mutmod>0){
+					if (not header.groupe[gr].priork1moy.constant){        //k1moy
 						this->particule[p].grouplist[gr].k1moy =phistarOK[k][ii];ii++;
 						this->particule[p].grouplist[gr].priork1moy.fixed=true;
 					}
 				}
-				if (groupe[gr].mutmod>2){
-					if (not groupe[gr].priork2moy.constant){        //k2moy
+				if (header.groupe[gr].mutmod>2){
+					if (not header.groupe[gr].priork2moy.constant){        //k2moy
 						this->particule[p].grouplist[gr].k2moy =phistarOK[k][ii];ii++;
 						this->particule[p].grouplist[gr].priork2moy.fixed=true;
 					}
@@ -413,7 +515,7 @@ void ParticleSetC::dosimulphistar(int npart, bool dnatrue,bool multithread,bool 
 			}
 		//cout<<"\n";
 	}
-	//cout<<"apres le remplissage de "<<npart<<" particules\n";
+	cout<<"apres le remplissage de "<<npart<<" particules\n";
 	//if (num_threads>0) omp_set_num_threads(num_threads);_
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
 	for (ipart=0;ipart<this->npart;ipart++){
@@ -421,11 +523,7 @@ void ParticleSetC::dosimulphistar(int npart, bool dnatrue,bool multithread,bool 
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
 		//cout<<sOK[ipart]<<"apres dosimulpart de la particule "<<ipart<<"\n";
 		if (sOK[ipart]==0) {
-			for(gr=1;gr<this->particule[ipart].ngr;gr++) {
-				this->particule[ipart].docalstat(gr);
-				//cout<<"statistiques de la particules : \n";
-				//for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++) cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<"  ";cout<<"\n";
-			}
+			for(gr=1;gr<=this->particule[ipart].ngr;gr++) {this->particule[ipart].docalstat(gr,this->particule[ipart].weight);}
 		}
 	}
 	cout<<"apres la simulation de "<<npart<<" particules\n";
@@ -442,7 +540,7 @@ void ParticleSetC::dosimulphistar(int npart, bool dnatrue,bool multithread,bool 
 			}
 			//cout <<"\n";
 			nstat=0;
-			for(int gr=1;gr<this->particule[ipart].ngr;gr++){
+			for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){
 /////////////// filtrage des Aml et aml début
 					if (this->particule[ipart].grouplist[gr].sumstat[st].val==-9999.0){
@@ -451,10 +549,10 @@ void ParticleSetC::dosimulphistar(int npart, bool dnatrue,bool multithread,bool 
 					}
 /////////////// filtrage des Aml et aml fin
 					enreg[ipart].stat[nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;
-					cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<" ("<<enreg[ipart].stat[nstat]<<")  ";
+					//cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<" ("<<enreg[ipart].stat[nstat]<<")  ";
 					nstat++;
 				}
-				cout<<"\n";
+				//cout<<"\n";
 			}
 			enreg[ipart].message="OK";
 		}
@@ -464,69 +562,69 @@ void ParticleSetC::dosimulphistar(int npart, bool dnatrue,bool multithread,bool 
 			enreg[ipart].message += ". Check consistency of this scenario over possible prior ranges of time event parameters.";
 		}
 	}
-
-	int nph,npm,nn=0,ccc,pa,ip,iq;
-	splitwords(header.entetehist," ", ss); nph = ss.size();
-	for (int m=0;m<nph;m++) {
-		ccc=ss[m][0];
-		if (not isalnum(ccc))  nn++;
-	}
-	if (header.entetemut.length()>10) {splitwords(header.entetemut," ",ss);npm = ss.size();} else npm=0;
-	nph-=nn;
-	FILE * pFile;
-	bool trouve,trouve2;
-	if (firsttime) pFile = fopen (scurfile.c_str(),"w");
-	else pFile = fopen (scurfile.c_str(),"a");
-	if (firsttime) fprintf(pFile,"%s\n",header.entete.c_str());
-	splitwords(header.entete," ",ss); ns = ss.size();
-	if (debuglevel==5) cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
-	np=ns-header.nstat-1;
-	for (int ipart=0;ipart<this->npart;ipart++) {
-		//cout<<"ipart="<<ipart<<"    sOK[ipart]="<<sOK[ipart]<<"   message="<<enreg[ipart].message<<"\n";
-		if (sOK[ipart]==0){
-			//cout<<enreg[ipart].numscen<<"\n";
-			fprintf(pFile,"%3d  ",enreg[ipart].numscen);
-			iscen=enreg[ipart].numscen-1;
-			//cout<<"scenario "<<enreg[ipart].numscen<<"\n";
-			if (debuglevel==5) cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"   "<<np<<"\n";
-			pa=0;
-			for (int j=1;j<nph;j++) {
-				trouve=false;ip=-1;
-				while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
-					ip++;
-					trouve=(ss[j] == rt.histparam[iscen][ip].name);
-					//cout<<"->"<<ss[j]<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
-				}
-				if (trouve) {
-					trouve2=false;iq=-1;
-					while ((not trouve2)and(iq<header.nparamtot-1)) {
-						iq++;
-						trouve2=(ss[j] == header.histparam[iq].name);
+	if (firsttime) {
+		int nph,npm,nn=0,ccc,pa,ip,iq;
+		splitwords(header.entetehist," ", ss); nph = ss.size();
+		for (int m=0;m<nph;m++) {
+			ccc=ss[m][0];
+			if (not isalnum(ccc))  nn++;
+		}
+		if (header.entetemut.length()>10) {splitwords(header.entetemut," ",ss);npm = ss.size();} else npm=0;
+		nph-=nn;
+		FILE * pFile;
+		bool trouve,trouve2;
+		pFile = fopen (scurfile.c_str(),"w");
+		fprintf(pFile,"%s\n",this->header.entete.c_str());
+		splitwords(header.entete," ",ss); ns = ss.size();
+		if (debuglevel==5) cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
+		np=ns-header.nstat-1;
+		for (int ipart=0;ipart<this->npart;ipart++) {
+			//cout<<"ipart="<<ipart<<"    sOK[ipart]="<<sOK[ipart]<<"   message="<<enreg[ipart].message<<"\n";
+			if (sOK[ipart]==0){
+				//cout<<enreg[ipart].numscen<<"\n";
+				fprintf(pFile,"%3d  ",enreg[ipart].numscen);
+				iscen=enreg[ipart].numscen-1;
+				//cout<<"scenario "<<enreg[ipart].numscen<<"\n";
+				if (debuglevel==5) cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"   "<<np<<"\n";
+				pa=0;
+				for (int j=1;j<nph;j++) {
+					trouve=false;ip=-1;
+					while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
+						ip++;
+						trouve=(ss[j] == rt.histparam[iscen][ip].name);
+						//cout<<"->"<<ss[j]<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
 					}
-					if (trouve2) categ=header.histparam[iq].category; else categ=0;
-					if (categ<2) fprintf(pFile,"  %12.0f",enreg[ipart].param[ip]);
-					else fprintf(pFile,"  %12.3f",enreg[ipart].param[ip]);
-					pa++;
+					if (trouve) {
+						trouve2=false;iq=-1;
+						while ((not trouve2)and(iq<header.nparamtot-1)) {
+							iq++;
+							trouve2=(ss[j] == header.histparam[iq].name);
+						}
+						if (trouve2) categ=header.histparam[iq].category; else categ=0;
+						if (categ<2) fprintf(pFile,"  %12.0f",enreg[ipart].param[ip]);
+						else fprintf(pFile,"  %12.3f",enreg[ipart].param[ip]);
+						pa++;
+					}
+					else fprintf(pFile,"              ");
 				}
-				else fprintf(pFile,"              ");
-			}
-			if (debuglevel==5) cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
-			for (int j=0;j<npm;j++) fprintf(pFile,"  %12.3e",enreg[ipart].param[pa+j]);
-			for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
-			fprintf(pFile,"\n");
-			if (debuglevel==55){
-				cout<<"parametres de la particule"<<ipart<<"\n";
-				for (int j=0;j<npm+pa;j++) cout<<enreg[ipart].param[j]<<"   ";
-				cout<<"\n";
-				cout<<"stat de la particule "<<ipart<<"\n";
-				for (int st=0;st<header.nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";
-				cout<<"\n\n";
+				if (debuglevel==5) cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
+				for (int j=0;j<npm;j++) fprintf(pFile,"  %12.3e",enreg[ipart].param[pa+j]);
+				for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
+				fprintf(pFile,"\n");
+				if (debuglevel==5){
+					cout<<"parametres de la particule"<<ipart<<"\n";
+					for (int j=0;j<npm+pa;j++) cout<<enreg[ipart].param[j]<<"   ";
+					cout<<"\n";
+					cout<<"\nstat de la particule "<<ipart<<"\n";
+					for (int st=0;st<header.nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";
+					cout<<"\n";
+				}
 			}
 		}
+		fclose(pFile);
+		
 	}
-	fclose(pFile);
-	sOK.clear();
-	//cout<<"fin de dosimulphistar\n";
+	cout<<"fin de dosimulphistar\n";
 }
 
 void ParticleSetC::libere(int npart) {
@@ -537,18 +635,39 @@ void ParticleSetC::libere(int npart) {
 /**
  * Structure ParticleSet : simulation des particules utilisées pour la table de référence, le biais et la confiance
  */
-void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int depuis)
+void ParticleSetC::dosimultabref(HeaderC const & header, int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int depuis)
 {
 	int ipart,gr,nstat,pa,ip,iscen,np,ns,ccc;
 	bool trouve;
 	this->npart = npart;
 	int *sOK;
 	vector<string> ss;
-	//cout <<"debut de dosimultabref  nscenarios="<<scenario.size()<<"  ngroupes="<<groupe.size()<<"\n";
 	if (debuglevel==5)  cout <<"debut de dosimultabref\n";fflush(stdin);
 	sOK = new int[npart];
+	//if (this->defined) cout <<"particleSet defined\n";
+	//else cout<<"particleSet UNdefined\n";
+	//this->header = header;
 	if (debuglevel==5) cout <<"dosimultabref npart = "<<npart<<"\n";
-	if (firsttime) init_particule(npart,dnatrue,false,seed);
+	if (firsttime) {
+		this->particule = vector<ParticleC>(this->npart);
+		//cout<<"\navant this->header = header;\n";
+		this->header = header;
+		//cout<<"apres this->header = header;\n\n";
+		for (int p=0;p<this->npart;p++) {
+			if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
+			this->particule[p].dnatrue = dnatrue;
+			//if (debuglevel==5) cout <<"dnatrue\n";
+			this->setdata(p);
+			if (debuglevel==5) cout <<"setdata\n";
+			this->setgroup(p);
+			if (debuglevel==5) cout<<"setgroup\n";
+			this->setloci(p);
+			if (debuglevel==5) cout<<"setloci\n";
+			this->setscenarios(p,false);
+			if (debuglevel==5) cout << "                    apres set particule "<<p<<"\n";
+			this->particule[p].mw.randinit(p,seed);
+		}
+	}
 	else {
 		for (int p=0;p<this->npart;p++) {
 			this->resetparticle(p);
@@ -564,12 +683,15 @@ void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool f
 		if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 		//cout <<"   nloc="<<this->particule[ipart].nloc<<"\n";
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
+		if (debuglevel==14) cout<<"particule "<<ipart<<"   taux de polymorphisme = "<<this->particule[ipart].locpol<<"   poids = "<<this->particule[ipart].weight<<"\n";
+		//ntentes += this->particule[ipart].ntentes;
+		//naccept += this->particule[ipart].naccept;
 		if (debuglevel==5) cout<<"apres dosimulpart de la particule "<<ipart<<"\n";
 		
 		if (sOK[ipart]==0) {
 			if (debuglevel==5) cout<<"\navant docalstat de la particule "<<ipart<<"   scenario "<<this->particule[ipart].scen.number<<"\n";
-			for(gr=1;gr<this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr);
-			//this->particule[ipart].libere();
+			for(gr=1;gr<=this->particule[ipart].ngr;gr++) this->particule[ipart].docalstat(gr,this->particule[ipart].weight);
+			this->particule[ipart].libere();
 		}
 		if (debuglevel==5) cout<<"apres docalstat de la particule "<<ipart<<"\n";
 	}
@@ -595,14 +717,14 @@ void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool f
 			if (debuglevel==5) cout<<"dans particleset ipart="<<ipart<<"     nparamvar="<<this->particule[ipart].scen.nparamvar<<"\n";
 			for (int j=0;j<this->particule[ipart].scen.nparamvar;j++) {
 			//for (int j=0;j<nph+npm;j++) {	
-				if (debuglevel==5) cout<<"this->particule["<<ipart<<"].scen.paramvar["<<j<<"] = "<<this->particule[ipart].scen.paramvar[j]<<"     ";
+				if (debuglevel==5) cout<<"this->particule["<<ipart<<"].scen.paramvar["<<j<<"] = "<<this->particule[ipart].scen.paramvar[j]<<"\n";
 				enreg[ipart].param[j]=this->particule[ipart].scen.paramvar[j];
 				//cout<<"enreg["<<ipart<<"].param["<<j<<"] = "<<enreg[ipart].param[j]<<"\n";
-				if (debuglevel==5) cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")\n";
+				if (debuglevel==5) cout<<this->particule[ipart].scen.paramvar[j]<<"  ("<<enreg[ipart].param[j]<<")     ";
 			}
 			if (debuglevel==5) cout <<"\n";
 			nstat=0;
-			for(int gr=1;gr<this->particule[ipart].ngr;gr++){
+			for(int gr=1;gr<=this->particule[ipart].ngr;gr++){
 				/*cout<<"\ngroupe "<<gr<<"\n";
 				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++) cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<"   \n";
 				cout<<"\n";*/
@@ -617,7 +739,7 @@ void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool f
 					nstat++;/*cout<<nstat<<"\n";*/
 				}
 			}
-			if (debuglevel==5) {for (int st=0;st<nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";cout<<"\n\n";}
+			//for (int st=0;st<nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";cout<<"\n\n";
 			enreg[ipart].message="OK";
 		}
 		else {
@@ -626,7 +748,6 @@ void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool f
 				enreg[ipart].message  = "A gene genealogy failed in scenario ";
 				enreg[ipart].message += IntToString(this->particule[ipart].scen.number);
 				enreg[ipart].message += ". Check consistency of this scenario over possible prior ranges of time event parameters.";
-				enreg[ipart].message = "sOK[ipart] = "+IntToString(sOK[ipart]);
 			} else enreg[ipart].message="NOTOK";
 		}
 	}
@@ -637,16 +758,16 @@ void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool f
 		int categ,iq,icur=0;
 		bool trouve2;
 		if (depuis==0){
-			scurfile = header.pathbase + "first_records_of_the_reference_table_"+ IntToString(icur) +".txt";
+			scurfile = this->header.pathbase + "first_records_of_the_reference_table_"+ IntToString(icur) +".txt";
 			while (ifstream(scurfile.c_str())) {
 				icur++;
 				//scurfile=this->header.pathbase+"courant_"+IntToString(icur)+".log";
-				scurfile = header.pathbase + "first_records_of_the_reference_table_"+ IntToString(icur) +".txt";
+				scurfile = this->header.pathbase + "first_records_of_the_reference_table_"+ IntToString(icur) +".txt";
 				}
 		}
 		if (debuglevel==5) cout<<"ecriture du fichier courant = "<<scurfile<<"\n";
 		pFile = fopen (scurfile.c_str(),"w");
-		fprintf(pFile,"%s\n",header.entete.c_str());
+		fprintf(pFile,"%s\n",this->header.entete.c_str());
 		if (debuglevel==5) {
 			cout<<"FISTTIME\n";
 			cout<<header.entete<<"\n\n";
@@ -657,6 +778,7 @@ void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool f
 		ss=splitwords(header.entetehist," ",&nph);
 		if (debuglevel==5) cout<<header.entetehist<<"\n";
 		if (header.entetemut.length()>10) ss=splitwords(header.entetemut," ",&npm); else npm=0;*/
+		//if (ss!=NULL) {delete []ss;ss=NULL;}
 		splitwords(header.entete," ",ss); ns = ss.size();
 		if (debuglevel==5) cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
 		np=ns-header.nstat-1;
@@ -708,59 +830,6 @@ void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool f
 		}
 		fclose(pFile);
 		if (debuglevel==5) cout<<"apres fclose\n";
-	} else {
-		if (depuis != 0) {
-			FILE * pFile;
-			int categ,iq,icur=0;
-			bool trouve2;
-			pFile = fopen (scurfile.c_str(),"a");
-			splitwords(header.entete," ",ss); ns = ss.size();
-			if (debuglevel==5) cout<<"nph="<<nph<<"   npm="<<npm<<"   ns="<<ns<<"\n";
-			np=ns-header.nstat-1;
-			for (int ipart=0;ipart<this->npart;ipart++) {
-				if (sOK[ipart]==0){
-					//cout<<enreg[ipart].numscen<<"\n";
-					fprintf(pFile,"%3d  ",enreg[ipart].numscen);
-					iscen=enreg[ipart].numscen-1;
-					//cout<<"scenario "<<enreg[ipart].numscen<<"\n";
-					if (debuglevel==5) cout<<header.nparamtot<<"   "<<rt.nhistparam[iscen]<<"   "<<np<<"\n";
-					pa=0;
-					for (int j=1;j<nph;j++) {
-						trouve=false;ip=-1;
-						while ((not trouve)and(ip<rt.nhistparam[iscen]-1)) {
-							ip++;
-							trouve=(ss[j] == rt.histparam[iscen][ip].name);
-							//cout<<"->"<<ss[j]<<"<-   ?   ->"<< header.scenario[iscen].histparam[ip].name<<"<-"<<trouve<<"\n";
-						}
-						if (trouve) {
-							trouve2=false;iq=-1;
-							while ((not trouve2)and(iq<header.nparamtot-1)) {
-								iq++;
-								trouve2=(ss[j] == header.histparam[iq].name);
-							}
-							if (trouve2) categ=header.histparam[iq].category; else categ=0;
-							if (categ<2) fprintf(pFile,"  %12.0f",enreg[ipart].param[ip]);
-							else fprintf(pFile,"  %12.3f",enreg[ipart].param[ip]);
-							pa++;
-						}
-						else fprintf(pFile,"              ");
-					}
-					if (debuglevel==5) cout<<"pa="<<pa<<"   rt.nparam[iscen]="<<rt.nparam[iscen]<<"\n";
-					for (int j=0;j<npm;j++) fprintf(pFile,"  %12.3e",enreg[ipart].param[pa+j]);
-					for (int st=0;st<header.nstat;st++) fprintf(pFile,"  %12.6f",enreg[ipart].stat[st]);
-					fprintf(pFile,"\n");
-					if (debuglevel==5){
-						cout<<"parametres de la particule"<<ipart<<"\n";
-						for (int j=0;j<npm+pa;j++) cout<<enreg[ipart].param[j]<<"   ";
-						cout<<"\n";
-						cout<<"\nstat de la particule "<<ipart<<"\n";
-						for (int st=0;st<header.nstat;st++) cout<<enreg[ipart].stat[st]<<"   ";
-						cout<<"\n";
-					}
-				}
-			}
-			fclose(pFile);
-		}
 	}
 	//cout<<"apres remise en ordre des enreg.param\n";
 	if (debuglevel==5) cout<<"avant delete sOK\n";
@@ -772,7 +841,7 @@ void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool f
 /**
  * Structure ParticleSet : simulation des particules utilisées pour la création de fichiers genepop
  */
-string* ParticleSetC::simulgenepop(int npart, bool multithread, int seed) {
+string* ParticleSetC::simulgenepop(HeaderC const & header, int npart, bool multithread, int seed) {
 	bool dnatrue=true;
 	int numscen=1;
 	this->npart=npart;
@@ -781,10 +850,11 @@ string* ParticleSetC::simulgenepop(int npart, bool multithread, int seed) {
 	sOK = new int[npart];
 	this->particule = vector<ParticleC>(this->npart);
 	ss = new string[npart];
+	this->header = header;
 	cout<<"avant le remplissage des "<<this->npart<<" particules\n";
 	for (int p=0;p<this->npart;p++) {
 		this->particule[p].dnatrue = dnatrue;
-		//this->setdata(p);//cout<<"apres setdata\n";
+		this->setdata(p);//cout<<"apres setdata\n";
 		this->setgroup(p);//cout<<"apres setgroup\n";
 		this->setloci(p);//cout<<"apres setloci\n";
 		this->setscenarios(p,true);//cout<<"apres setscenario\n";
@@ -805,7 +875,7 @@ string* ParticleSetC::simulgenepop(int npart, bool multithread, int seed) {
 /**
  * Structure ParticleSet : simulation des particules utilisées pour la création de fichiers SNP
  */
-string* ParticleSetC::simuldataSNP(int npart, bool multithread, int seed) {
+string* ParticleSetC::simuldataSNP(HeaderC const & header, int npart, bool multithread, int seed) {
 	bool dnatrue=true;
 	int numscen=1;
 	this->npart=npart;
@@ -814,21 +884,21 @@ string* ParticleSetC::simuldataSNP(int npart, bool multithread, int seed) {
 	sOK = new int[npart];
 	this->particule = vector<ParticleC>(this->npart);
 	ss = new string[npart];
+	this->header = header;
 	cout<<"avant le remplissage des "<<this->npart<<" particules\n";
 	for (int p=0;p<this->npart;p++) {
 		//this->particule[p].dnatrue = dnatrue;
-		this->particule[p].maf = datasim.maf;
-		//this->setdata(p);//cout<<"apres setdata\n";
+		this->setdata(p);//cout<<"apres setdata\n";
 		//this->setgroup(p);cout<<"apres setgroup\n"; // Je supprime cette ligne car pas de groupe de locus dans les parties simul de jeux de donnees. Pierre
-		this->particule[p].ngr=groupe.size();
-		this->particule[p].grouplist = vector <LocusGroupC>(this->particule[p].ngr+1);
+		this->particule[p].ngr=this->header.ngroupes;
+		this->particule[p].grouplist = new LocusGroupC[this->particule[p].ngr+1];
 		for (int gr=0;gr<this->particule[p].ngr+1;gr++) {
 			this->particule[p].grouplist[gr].type=2;
-			this->particule[p].grouplist[gr].nloc=groupe[gr].nloc;
+			this->particule[p].grouplist[gr].nloc=this->header.groupe[gr].nloc;
 			
-		} cout<<"avant setloci\n";
-		this->setloci(p);cout<<"apres setloci\n";
-		this->setscenarios(p,true);cout<<"apres setscenario\n";
+		}
+		this->setloci(p);//cout<<"apres setloci\n";
+		this->setscenarios(p,true);//cout<<"apres setscenario\n";
 		this->particule[p].mw.randinit(p,seed);
 	}
 	//cout<<"avant omp\n";
@@ -844,3 +914,35 @@ string* ParticleSetC::simuldataSNP(int npart, bool multithread, int seed) {
 	return ss;
 }
 
+/**
+ * Structure ParticleSet : simulation de sumstat pour des particules fixées
+ */
+/*
+string* ParticleSetC::simulstat(HeaderC const & header, int npart, bool multithread, int seed) {
+	this->npart=npart;
+	int *sOK;
+	string *ss;
+	sOK = new int[npart];
+	this->particule = new ParticleC[this->npart];
+	ss = new string[npart];
+	this->header = header;
+	cout<<"avant le remplissage des "<<this->npart<<" particules\n";
+	for (int p=0;p<this->npart;p++) {
+		this->particule[p].dnatrue = false;
+		this->setdata(p);//cout<<"apres setdata\n";
+		this->setgroup(p);//cout<<"apres setgroup\n";
+		this->setloci(p);//cout<<"apres setloci\n";
+		this->setscenarios(p,true);//cout<<"apres setscenario\n";
+		this->particule[p].mw.randinit(p,seed);
+	}
+	cout<<"avant omp\n";
+#pragma omp parallel for shared(sOK) if(multithread)
+	for (int ipart=0;ipart<this->npart;ipart++){
+		sOK[ipart] = this->particule[ipart].dosimulpart(numscen);
+		//cout<<"sOK["<<ipart<<"]="<<sOK[ipart]<<"\n";
+		if (sOK[ipart]==0) ss[ipart] = this->particule[ipart].dogenepop();
+		else ss[ipart] = "";
+		//cout<<ss[ipart]<<"\n";
+	}
+	return ss;
+}*/

@@ -62,7 +62,6 @@ extern int iprog,nprog;
 extern ofstream fprog;
 extern long double **phistarOK;
 extern bool deltanul;
-extern vector <ScenarioC> scenario;
 
 string nomficonfresult;
 
@@ -295,13 +294,11 @@ int nrecc;
 		if (prior) {
 			rt.openfile2();
 			for (int p=0;p<nrecp;p++) {
-				enreg[p].stat = vector <float>(header.nstat);
-				enreg[p].param = vector <float>(rt.nparamax);
+				enreg[p].stat = new float[header.nstat];
+				enreg[p].param = new float[rt.nparamax];
 				enreg[p].numscen = rt.readparam(enreg[p].param);
-				//cout<<enreg[p].numscen<<"     ";
-				//for (int i=0;i<rt.nparam[enreg[p].numscen-1];i++) cout<<enreg[p].param[i]<<"  ";cout<<"\n";
 			}
-			rt.closefile(); cout<<"fin de la lecture des "<<nrecp<<" enregistrements de la reftable\n";
+			rt.closefile();
 			for (int iscen=0;iscen<rt.nscen;iscen++) {
 				//cout<<rt.nparam[iscen]<<"\n";
 				nphistarOK=0;
@@ -317,10 +314,8 @@ int nrecc;
 						ns++;
 					}
 					//for (int j=0;j<rt.nparam[iscen];j++) cout<<phistarOK[0][j]<<"\n";
-					cout<<"pperror ns="<<ns<<" sur "<<nrecp<<" pour le scenario "<<iscen+1<<"\n";
-					cout<<"avant le dosimulstat\n";
-					ps.dosimulstat(0,ns,false,multithread,iscen+1,seed,stat);
-					cout<<"apres le dosimulstat\n";
+					//cout<<"pperror ns="<<ns<<" sur "<<nrecp<<" pour le scenario "<<iscen+1<<"\n";
+					ps.dosimulstat(header,0,ns,false,multithread,iscen+1,seed,stat);
 					ns=0;
 					for (int p=0;p<nrecp;p++) if (enreg[p].numscen-1==iscen) {
 						for (int j=0;j<rt.nstat;j++) enreg[p].stat[j] = stat[ns][j];
@@ -331,25 +326,19 @@ int nrecc;
 				}
 			}
 			iprog+=9;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
-			cout<<"avant le traitenreg\n";
 			traitenreg("prior",nrec,nseld,nselr,nrecp,nlogreg,prop);
 		} else {
-			cout<<"debut du calcul de la posterior predictive error\n";
 			rt.alloue_enrsel(nsel0);
-			cout<<"1\n";
 			rt.cal_dist(nrec,nsel0,&header.stat_obs[0],false,true);
-			cout<<"2\n";
 			num = new int[nrecp];
 			for (int i=0;i<nrecp;i++) num[i]=mw.rand0(nsel0);
-			cout<<"3\n";
 			for (int p=0;p<nrecp;p++) {
-				enreg[p].stat = vector <float>(rt.nstat);
-				enreg[p].param = vector <float>(rt.nparamax);
+				enreg[p].stat = new float[rt.nstat];
+				enreg[p].param = new float[rt.nparamax];
 				enreg[p].numscen = rt.enrsel[num[p]].numscen;
 				for (int j=0;j<rt.nparam[enreg[p].numscen-1];j++) enreg[p].param[j] = rt.enrsel[num[p]].param[j];
 				for (int j=0;j<rt.nstat;j++) enreg[p].stat[j] = rt.enrsel[num[p]].stat[j];
 			}
-			cout<<"apres tirage dans leposterior\n";
 			for (int iscen=0;iscen<rt.nscen;iscen++) {
 				nphistarOK=0;
 				for (int p=0;p<nrecp;p++) if (enreg[p].numscen-1==iscen) nphistarOK++;
@@ -363,7 +352,7 @@ int nrecc;
 						for (int j=0;j<rt.nparam[iscen];j++) phistarOK[ns][j]=(long double)enreg[p].param[j];
 						ns++;
 					}
-					ps.dosimulstat(0,ns,false,multithread,iscen+1,seed,stat);
+					ps.dosimulstat(header,0,ns,false,multithread,iscen+1,seed,stat);
 					ns=0;
 					for (int p=0;p<nrecp;p++) if (enreg[p].numscen-1==iscen) {
 						for (int j=0;j<rt.nstat;j++) {enreg[p].stat[j]=(float)stat[ns][j];}
@@ -378,8 +367,8 @@ int nrecc;
 			traitenreg("posterior",nrec,nseld,nselr,nrecp,nlogreg,prop);
 		}
 		for (int p=0;p<nrecp;p++) {
-			enreg[p].stat.clear();
-			enreg[p].param.clear();
+			delete [] enreg[p].stat;
+			delete [] enreg[p].param;
 		}
 		delete [] enreg;
 	}
@@ -464,20 +453,20 @@ int nrecc;
             } else if (s0=="h:") {
                 shist = s1;
                 splitwords(s1," ",ss1); np = ss1.size();
-                if (np < scenario[rt.scenteste-1].nparam) {
-                    //cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenteste<<" est de "<<scenario[rt.scenteste-1].nparam<<"\n";
-                    cout<<"the number of parameter transmitted ("<<np<<") is incorrect. The expected number for scenario "<<rt.scenteste<<" is "<<scenario[rt.scenteste-1].nparam<<"\n";
+                if (np < header.scenario[rt.scenteste-1].nparam) {
+                    //cout<<"le nombre de paramètres transmis ("<<np<<") est incorrect. Le nombre attendu pour le scénario "<<rt.scenteste<<" est de "<<header.scenario[rt.scenteste-1].nparam<<"\n";
+                    cout<<"the number of parameter transmitted ("<<np<<") is incorrect. The expected number for scenario "<<rt.scenteste<<" is "<<header.scenario[rt.scenteste-1].nparam<<"\n";
                     exit(1);
                 }
-                ncond=np-scenario[rt.scenteste-1].nparam;
-                for (int j=0;j<scenario[rt.scenteste-1].nparam;j++) resethistparam(ss1[j]);
+                ncond=np-header.scenario[rt.scenteste-1].nparam;
+                for (int j=0;j<header.scenario[rt.scenteste-1].nparam;j++) resethistparam(ss1[j]);
                 if (ncond>0) {
-                  cout<<scenario[rt.scenteste-1].nconditions<<"\n";
-                    if (scenario[rt.scenteste-1].nconditions != ncond) {
-                        scenario[rt.scenteste-1].condition = vector<ConditionC>(ncond);
+                  cout<<header.scenario[rt.scenteste-1].nconditions<<"\n";
+                    if (header.scenario[rt.scenteste-1].nconditions != ncond) {
+                        header.scenario[rt.scenteste-1].condition = vector<ConditionC>(ncond);
                     }
                     for (int j=0;j<ncond;j++)
-                         scenario[rt.scenteste-1].condition[j].readcondition(ss1[j+scenario[rt.scenteste-1].nparam]);
+                         header.scenario[rt.scenteste-1].condition[j].readcondition(ss1[j+header.scenario[rt.scenteste-1].nparam]);
                 }
             } else if ((s0=="u:")and(s1!="")) {
                 smut = s1;
@@ -608,7 +597,7 @@ int nrecc;
 				//savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     cout<<"apres savephistar\n";
 				phistarOK = new long double*[nsel];
 				for (int i=0;i<nsel;i++) phistarOK[i] = new long double[rt.nparam[rt.scenteste-1]];
-				cout<<"scenario[rt.scenteste-1].nparam = "<<scenario[rt.scenteste-1].nparam<<"\n";
+				cout<<"header.scenario[rt.scenteste-1].nparam = "<<header.scenario[rt.scenteste-1].nparam<<"\n";
 				nphistarOK=detphistarOK(nsel,phistar);               cout << "apres detphistarOK  nphistarOK="<<nphistarOK<<"\n";
 				cout<< "   nphistarOK="<< nphistarOK<<"   nstat="<<header.nstat<<"\n";
 				if(10*nphistarOK < ntest){
@@ -628,18 +617,18 @@ int nrecc;
 			npv = rt.nparam[rt.scenteste-1];
 			enreg = new enregC[ntest];
 			for (int p=0;p<ntest;p++) {
-				enreg[p].stat = vector <float>(header.nstat);
-				enreg[p].param = vector <float>(npv);
+				enreg[p].stat = new float[header.nstat];
+				enreg[p].param = new float[npv];
 				enreg[p].numscen = rt.scenteste;
 			}
 			nsel=nseld;if(nsel<nselr) nsel=nselr;
 			if (posterior) {
 				cout<<"\n\navant dosimulphistar\n";
-				ps.dosimulphistar(ntest,false,multithread,true,rt.scenteste,seed,nphistarOK);
+				ps.dosimulphistar(header,ntest,false,multithread,true,rt.scenteste,seed,nphistarOK);
 				cout<<"apres dosimulphistar\n";
 			} else {
 				cout<<"avant ps.dosimultabref\n";
-				ps.dosimultabref(ntest,false,multithread,true,rt.scenteste,seed,2);
+				ps.dosimultabref(header,ntest,false,multithread,true,rt.scenteste,seed,2);
 				cout<<"apres ps.dosimultabref\n";
 			}
 			iprog+=9;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();

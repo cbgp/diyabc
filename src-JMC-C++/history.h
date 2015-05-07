@@ -24,19 +24,22 @@ struct StatC
 };
 
 /**
- * Classe StatsnpC :éléments de définition d'une summary statistic pour les snp
+ * struct StatsnpC :éléments de définition d'une summary statistic pour les snp
  */
-class StatsnpC
+struct StatsnpC
 {
-public:
   int cat,samp,samp1,samp2,group,n;
-  std::vector <long double> x,w;
-  long double sw;
+  long double *x,sw,*w;
   bool defined;
+  StatsnpC(StatsnpC const & source);
   StatsnpC & operator= (StatsnpC const & source);
+  StatsnpC(){
+	  x = NULL;
+	  w = NULL;
+}
   ~StatsnpC(){
-    if(not x.empty()) x.clear();
-    if(not w.empty()) w.clear();
+    if( x != NULL) delete [] x;
+    if( w != NULL) delete [] w;
   };
 };
 
@@ -77,6 +80,10 @@ public:
 		param2 = "";
 		operateur = "";
 	};
+	~ConditionC(){
+		//std::cout<<"passage dans le destructeur de ConditionC\n";
+	}
+//  ConditionC(ConditionC const & source);
   ConditionC & operator= (ConditionC const & source);
   void ecris();
   void readcondition(std::string ss);
@@ -141,30 +148,40 @@ public:
 /**
  * struct LocusGroupC : éléments de définition d'un groupe de locus
  */
-class LocusGroupC
+struct LocusGroupC
 {
-  public:
-    std::vector<int> loc;     // loc=numeros des locus du groupe
-    int nloc,nstat,nstatsnp;
-    int type;                      //O= microsat, 1=sequence
-    double p_fixe,gams;
-    double musmoy,mutmoy,Pmoy,snimoy;
-    double k1moy,k2moy;
-    int  mutmod;
-    PriorC priormusmoy,priork1moy,priork2moy,priormusloc,priork1loc,priork2loc;
-    PriorC priormutmoy,priorPmoy,priorsnimoy,priormutloc,priorPloc,priorsniloc;
-    std::vector<StatC> sumstat;
-    std::vector<StatsnpC> sumstatsnp;
+  std::vector<int> loc;     // loc=numeros des locus du groupe
+  int nloc,nstat,nstatsnp;
+  int type;                      //O= microsat, 1=sequence
+  double p_fixe,gams;
+  double musmoy,mutmoy,Pmoy,snimoy;
+  double k1moy,k2moy;
+  int  mutmod;
+  PriorC priormusmoy,priork1moy,priork2moy,priormusloc,priork1loc,priork2loc;
+  PriorC priormutmoy,priorPmoy,priorsnimoy,priormutloc,priorPloc,priorsniloc;
+  std::vector<StatC> sumstat;
+  std::vector<StatsnpC> sumstatsnp;
   /* Déclaration des méthodes */
+  LocusGroupC(){
+/*    loc = NULL;
+    sumstat = NULL;
+    sumstatsnp = NULL;
+	nstat = 0;
+	nstatsnp = 0;
+	*/
+  };
 //  LocusGroupC(LocusGroupC const & source);
-  LocusGroupC & operator= (LocusGroupC  const & source);
+//  LocusGroupC & operator= (LocusGroupC  const & source);
 
   ~LocusGroupC(){
-    if (not loc.empty()) loc.clear();
-    if (not sumstat.empty()) sumstat.clear();
-    if (not sumstatsnp.empty()) sumstatsnp.clear();
+	  //std::cout<<"passage dans le destructeur de LocusGroupC\n";
+   /* if( loc != NULL) delete [] loc;
+    if( sumstat != NULL) delete [] sumstat;
+    if( sumstatsnp != NULL) delete [] sumstatsnp;*/
+	//std::cout<<" sortie du destructeur de LocusGroupC\n";
   };
 
+  void libere();
 
 };
 
@@ -185,9 +202,9 @@ public:
   std::vector<ConditionC> condition;
   /* Déclaration des méthodes */
 
- // ScenarioC(ScenarioC const & source);
+  /*ScenarioC(ScenarioC const & source);
   ScenarioC & operator= (ScenarioC  const & source);
-/*
+
   ~ScenarioC(){
 	  //std::cout<<"passage dans le destructeur de ScenarioC\n";
     if( paramvar != NULL) {delete [] paramvar; paramvar=NULL;}
@@ -222,11 +239,13 @@ struct SequenceBitC
   int pop,pop1,pop2,sample;
   int N,t0,t1;
   double admixrate;
-  std::vector<bool> popfull;
-
+  bool *popfull;
+  SequenceBitC(){
+	  popfull = NULL;
+}
   ~SequenceBitC(){
 	  //std::cout<<"passage dans le destructeur de SequenceBitC\n";
-	  if (not popfull.empty()) popfull.clear();
+	  if (popfull != NULL) delete [] popfull;
 	  //std::cout<<"   sortie du destructeur de SequenceBitC\n";
 }
   void ecris();
@@ -263,19 +282,23 @@ struct BranchC
 class GeneTreeC
 {
 public:
-  std::vector <NodeC> nodes;
-  std::vector <BranchC> branches;
+  NodeC *nodes;
+  BranchC *branches;
   int nmutot,nnodes,nbranches,ngenes,nbOK,nbOKOK;
 
   /* Déclaration des méthodes */
+  GeneTreeC(){
+    nodes = NULL;
+    branches = NULL;
+  };
   ~GeneTreeC(){
 	//std::cout<<"passage dans le destructeur de GeneTreeC\n";
-    if(not nodes.empty()) nodes.clear();
-    if(not branches.empty()) branches.clear();
+    if( nodes != NULL) {delete [] nodes;}
+    if( branches != NULL) delete [] branches;
   };
 
+  GeneTreeC(GeneTreeC const & source);
   GeneTreeC & operator=(GeneTreeC const & source);
-  void ecris();
 
 };
 
