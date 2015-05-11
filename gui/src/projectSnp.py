@@ -283,6 +283,7 @@ class ProjectSnp(ProjectReftable):
             log(1, traceback.format_exc())
             raise Exception("Main conf file not found (%s)"%self.parent.main_conf_name)
 
+
     def loadDataFile(self,name):
         """ Charge le fichier de données passé en paramètre. Cette fonction est appelée lors
         de l'ouverture d'un projet existant et lors du choix du fichier de données pour un nouveau projet
